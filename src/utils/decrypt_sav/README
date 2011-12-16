@@ -1,0 +1,6 @@
+Here's BARIS Decryption utility for DOS.  This will decrypt the original
+save games.
+
+Usage:  Decrypt <infile> <outfile>
+
+

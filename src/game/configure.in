@@ -1,0 +1,153 @@
+dnl ===========================
+dnl === Initialize autoconf ===
+dnl ===========================
+
+AC_INIT(Race Into Space,1.0.0,mkmccarty@raceintospace.org,raceintospace)
+
+AC_CONFIG_MACRO_DIR([m4])
+
+ACLOCAL="$ACLOCAL -I m4 $ACLOCAL_FLAGS"
+
+dnl ==========================
+dnl === Check for programs ===
+dnl ==========================
+
+AC_PROG_CC
+
+dnl ===========================
+dnl === Check for libraries ===
+dnl ===========================
+
+AC_CHECK_LIB(m,main)
+
+dnl Check for SDL
+
+dnl FIXME: what exact version is enough???
+AM_PATH_SDL(1.2.0,:,
+	AC_MSG_ERROR([[*** SDL library is required ***]]))
+
+dnl OGG and friends
+
+XIPH_PATH_OGG(,
+	AC_MSG_ERROR([[*** Ogg library is required ***]]))
+
+XIPH_PATH_VORBIS(,
+	AC_MSG_ERROR([[*** Vorbis library is required ***]]))
+
+XIPH_PATH_THEORA(,
+	AC_MSG_ERROR([[*** Theora library is required ***]]))
+
+dnl ==============================
+dnl === Check for header files ===
+dnl ==============================
+
+AC_HEADER_DIRENT
+
+dnl =======================
+dnl === Check for types ===
+dnl =======================
+
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+
+AX_CREATE_STDINT_H(int_types.h)
+
+dnl ==========================
+dnl === Check for compiler ===
+dnl ==========================
+
+AC_C_INLINE
+AC_C_CONST
+AC_C_BIGENDIAN(
+   AC_DEFINE([__BIG_ENDIAN__], 1,
+			 [Define to 1 if building for big endian machine.]))
+
+dnl ===========================
+dnl === Check for functions ===
+dnl ===========================
+
+AC_FUNC_MKDIR
+
+AC_CHECK_FUNC(getenv,
+	AC_DEFINE([HAVE_GETENV], 1,
+			  [Define to 1 if you have the `getenv' function.]))
+
+dnl Probably another approach is to check for higher SDL library version.
+save_libs="$LIBS";
+save_cflags="$CFLAGS"
+LIBS="$SDL_LIBS $LIBS";
+CFLAGS="$CFLAGS $SDL_CFLAGS"
+AC_MSG_CHECKING([[for SDL_getenv]])
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM(
+		[[#include <SDL.h>]],
+		[[SDL_getenv("HOME")]])],
+	[
+		AC_DEFINE([HAVE_SDL_GETENV], 1,
+				  [Define to 1 if you have the `SDL_getenv' function.])
+		AC_MSG_RESULT(yes)
+	],
+	AC_MSG_RESULT(no))
+LIBS="$save_libs"
+CFLAGS="$save_cflags"
+
+dnl =============================
+dnl === Check system services ===
+dnl =============================
+
+dnl Get the operating system and version number...
+uname=`uname`
+
+dnl cross-compile specific configuration
+cross=""
+if test "x$cross_compiling" = xyes ; then
+	cross="${host}-"
+	case "$host" in
+	i?86-mingw32msvc)
+		dnl Windows/CygWin configuration
+		AC_DEFINE([CONFIG_WIN32], 1,
+				  [Define to 1 if building for win32 platform.])
+		build_win=yes
+		;;
+	*)
+		dnl Everyone else
+		dnl PROG_NAME=raceintospace
+		dnl LIBS="`sdl-config --libs` $LIBS"
+		;;
+	esac
+fi
+AC_SUBST([CROSS], $cross)
+
+dnl XXX: this gives the build configuration, not host configuration!
+if test -z "$build_win" ; then
+	case "$uname" in
+	Darwin)
+		dnl Darwin/Mac OS X configuration
+		AC_DEFINE([CONFIG_MACOSX], 1,
+				  [Define to 1 if building for Mac OS X.])
+		;;
+	Linux)
+		AC_DEFINE([CONFIG_LINUX], 1,
+				  [Define to 1 if building for Linux])
+		;;
+	CYGWIN*)
+		dnl Cygwin
+		dnl CYGWIN already defines __CYGWIN__
+		;;
+	*)
+		dnl unknown system
+		;;
+	esac
+fi
+
+dnl =================================
+dnl === Write configuration files ===
+dnl =================================
+
+AC_CONFIG_HEADER(race.h)
+if test -n "$build_win" ; then
+	AC_CONFIG_FILES(installer.nsi, chmod a-w installer.nsi)
+fi
+AC_CONFIG_FILES(mkrpm raceintospace.spec, chmod a+x mkrpm)
+
+AC_OUTPUT(Makefile, chmod a-w Makefile race.h)

@@ -1,0 +1,30 @@
+/** \page SPOT SPOT_ANIMATIONS REFERENCE
+
+
+\section ref SPOT_ANIMATIONS REFERENCE
+
+\verbatim
+Index   Spot Description
+
+ 0      USA LM TEST
+ 1      USA PLANE FLY_BY
+ 2      USA HELICOPTER
+ 3      USA LM CRASH
+ 4      USA ROCKET TO THE PAD
+ 5      SOV LM TEST
+ 6      SOV PLANE FLY_BY
+ 7      SOV HELICOPTER
+ 8      SOV LM CRASH
+ 9      (open spot)                  old spot: SOV ROCKET TO THE PAD
+ 10     SOV Gate Open/Close
+ 11     USA Rotating Radar Dish 
+ 12     SOV Storm Clouds
+ 13     SOV Small BAB Doors
+ 14     USA Storm Clouds
+ 15     USA Door and Rocket Delivery Truck
+ 16     SOV Large VAB Doors && Rocket to the Pad
+ 17     SOV Tracking Station (double)
+ 18     SOV new plane with landing gear
+ 19     USA Rotating Crane
+\endverbatim
+*/

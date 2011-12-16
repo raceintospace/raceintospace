@@ -1,0 +1,144 @@
+;NSIS Modern User Interface
+;Basic Example Script
+;Written by Joost Verburg
+
+;Adapted for @PACKAGE_NAME@ by Krzysztof Kosciuszkiewicz
+
+;--------------------------------
+;Include Modern UI
+
+!include "MUI.nsh"
+
+;--------------------------------
+;General
+
+!define PNAME "@PACKAGE_NAME@"
+!define PVERSION "@PACKAGE_VERSION@"
+!define PTARNAME "@PACKAGE_TARNAME@"
+!define PSTRING "@PACKAGE_STRING@"
+!define DATA_DIR ".."
+
+  ;Name and file
+  Name "${PSTRING}"
+  OutFile "${PTARNAME}-${PVERSION}.exe"
+
+  ;Default installation folder
+  InstallDir "$PROGRAMFILES\${PTARNAME}"
+  
+  ;Get installation folder from registry if available
+  InstallDirRegKey HKCU "Software\${PNAME}" ""
+
+  ;Set compression
+  SetCompressor /FINAL lzma
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+
+;--------------------------------
+;Pages
+
+  !insertmacro MUI_PAGE_LICENSE "COPYING.txt"
+  ;!insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+
+  ;Optins for finish page
+  !define MUI_FINISHPAGE_SHOWREADME "README.txt"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
+  !insertmacro MUI_PAGE_FINISH
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+
+;--------------------------------
+;Languages
+ 
+  !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+
+Section "Dummy Section" SecDummy
+
+  SetOutPath "$INSTDIR"
+  
+  ;Executable
+  File ${PTARNAME}.exe
+  ;Libraries
+  File *.dll
+  ;Documentation
+  File README.txt
+  File DEVELOPER.txt
+  File AUTHORS.txt
+  File COPYING.txt
+  ;Icon
+  File Moon.ico
+  ;Data files
+  File /r ${DATA_DIR}\audio
+  File /r ${DATA_DIR}\video
+  File /r ${DATA_DIR}\gamedata
+  File /r ${DATA_DIR}\images
+
+  CreateShortCut "$INSTDIR\${PTARNAME}.lnk" \
+  		"$INSTDIR\${PTARNAME}.exe" \
+		'"BARIS_DATA=$INSTDIR"' \
+		"$INSTDIR\Moon.ico" \
+		0 \
+		SW_SHOWNORMAL
+  
+  CreateShortCut "$DESKTOP\${PNAME}.lnk" \
+  		"$INSTDIR\${PTARNAME}.exe" \
+		'"BARIS_DATA=$INSTDIR"' \
+		"$INSTDIR\Moon.ico" \
+		0 \
+		SW_SHOWNORMAL
+  
+  ;Store installation folder
+  WriteRegStr HKCU "Software\${PNAME}" "" $INSTDIR
+  
+  ;Create uninstaller
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+SectionEnd
+
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  ;LangString DESC_SecDummy ${LANG_ENGLISH} "A test section."
+
+  ;Assign language strings to sections
+  ;!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  ;  !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
+  ;!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+  Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\README.txt"
+  Delete "$INSTDIR\COPYING.txt"
+  Delete "$INSTDIR\AUTHORS.txt"
+  Delete "$INSTDIR\DEVELOPER.txt"
+  Delete "$INSTDIR\*.dll"
+  Delete "$INSTDIR\${PTARNAME}.exe"
+  Delete "$INSTDIR\${PTARNAME}.lnk"
+  Delete "$INSTDIR\Moon.ico"
+  ;SDL creates these, we don't want them to float around.
+  Delete "$INSTDIR\stdout.txt"
+  Delete "$INSTDIR\stderr.txt"
+  Delete "$DESKTOP\${PNAME}.lnk"
+  RMDir /r "$INSTDIR\gamedata"
+  RMDir /r "$INSTDIR\audio"
+  RMDir /r "$INSTDIR\video"
+  RMDir /r "$INSTDIR\images"
+  RMDir "$INSTDIR"
+
+  DeleteRegKey /ifempty HKCU "Software\${PNAME}"
+
+SectionEnd

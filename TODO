@@ -1,0 +1,75 @@
+/** \page manualtodo manual Todolist
+\section bugs BUGS
+
+These should be fixed as soon as possible as they crash the binary or
+seriously affect gameplay.
+
+ \bug * [5] news video is not clipped, green band appears (pace, linux).
+
+ \bug * [3] aipur.c(RDafford):562, class == 2 && MaxRD == 80 && Safety == 90 (???).
+
+\section notimplemented NOT IMPLEMENTED
+
+Features present in the original BARIS but not implemented or not working
+properly in Race Into Space.
+
+ \todo * [5] Autosave does work, but reloading the game after failures does not
+ bring back the prestige lost (look at president's ranking).
+
+ \todo * [5] Configuration option for still images instead of videos (do we need it?)
+
+\section enhancements ENCHANCEMENTS
+
+Incremental enchancements that would improve quality of software but do not
+change anything considered essential to playability. This includes code
+refactoring as well.
+
+ \todo * [9] Reduce dependencies between game logic and game engine.
+
+ \todo * [5] Remove temporary files on exit.
+ 
+ \todo * [5] Remove extra gr_sync calls.
+
+ \todo * [5] Preload next frame during mission playback.
+
+ \todo * [5] Newscaster animations and sounds should be better synced.
+
+ \todo * [5] Music is too loud during newscasts (pace, linux)
+
+ \todo * [5] Bar graphs during mission tests pause audio and video.
+
+ \todo * [5] Baby pictures shown on missions are downsampled and upsampled.
+
+ \todo * [3] Optimize grPutPixel and grGetPixel (I'm not sure it's needed)
+
+ \todo * [3] Clipping in gx* routines.
+
+\section extension EXTENSIONS
+
+Improvements that might change rules and/or gameplay balance.
+
+ * Plenty of them, just look at
+ http://peyre.sqweebs.com/BARIS/Enhancement_Requests.doc
+
+\section refactor CODE REFACTORING
+
+ \todo * [9] Comment undocumented game-logic structures.
+
+ \todo * [7] Remove "magic numbers" (at least as many as possible).
+
+ \todo * [7] Reduce number and visibility of global variables, rename some.
+
+ \todo * [7] Move game strings into a separate string table or file.
+
+ \todo * [5] Clean up header files, separate functionality.
+
+ \todo * [5] Factor video display code out from mis_c.c and replay.c
+
+ \todo * [5] Fix need for fortify_workaround.h (check fread returns everywhere)
+
+\section other OTHER IDEAS
+
+ \todo * Release checklist: valgrind, electric fence, CFLAGS=-O2 -DNDEBUG
+Everything that does not fit into previous sections.
+
+*/

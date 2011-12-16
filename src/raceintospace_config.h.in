@@ -1,0 +1,16 @@
+#ifndef __RACEINTOSPACE_CONFIG_H__
+#define __RACEINTOSPACE_CONFIG_H__
+
+#define RACEINTOSPACE_VERSION_MAJOR @raceintospace_VERSION_MAJOR@
+#define RACEINTOSPACE_VERSION_MINOR @raceintospace_VERSION_MINOR@
+
+#define PACKAGE_STRING "Race Into Space"
+#define PACKAGE_TARNAME "raceintospace"
+
+#cmakedefine HAVE_MKDIR
+#cmakedefine HAVE_DIRENT_H
+#cmakedefine HAVE_SYS_DIR_H
+#cmakedefine HAVE_SYS_NDIR_H
+#cmakedefine HAVE_NDIR_H
+
+#endif /* __RACEINTOSPACE_CONFIG_H__ */

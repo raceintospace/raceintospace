@@ -1,0 +1,12 @@
+#!/bin/sh
+
+target=i586-mingw32msvc
+cross_tools=$HOME/cross-tools/$target
+export PATH="$cross_tools/bin:$PATH"
+exec ../configure --build=`/usr/share/misc/config.guess` --host=$target \
+	--with-sdl=$cross_tools --disable-sdltest \
+	--with-ogg=$cross_tools --disable-oggtest \
+	--with-vorbis=$cross_tools --disable-vorbistest \
+	--with-theora=$cross_tools \
+	CPPFLAGS="-I. -I.." \
+	"$@"

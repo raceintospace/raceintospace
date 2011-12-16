@@ -1,0 +1,9 @@
+/** \page plan PLAN
+\li convert to sdl
+
+\li music on program startup, or maybe at install time, synthesize each
+snippet, some of which are loopable
+
+
+
+*/

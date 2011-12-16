@@ -1,0 +1,65 @@
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_BINARY_DIR}/config)
+include_directories(SYSTEM ${SDL_INCLUDE_DIR})
+
+add_library(
+  game_module STATIC
+  admin.c
+  aimast.c
+  aimis.c
+  aipur.c
+  ast0.c
+  ast1.c
+  ast2.c
+  ast3.c
+  ast4.c
+  budget.c
+  crew.c
+  decode.c
+  endgame.c
+  endianness.c
+  fortify_workaround.c
+  fs.c
+  futbub.c
+  future.c
+  gamedata.c
+  gr.c
+  gx.c
+  hardef.c
+  imgsplit.c
+  intel.c
+  intro.c
+  log4c.c
+  log_default.c
+  logging.c
+  main.c
+  mc.c
+  mc2.c
+  mis_c.c
+  mis_m.c
+  mmfile.c
+  mtest.c
+  museum.c
+  music_vorbis.c
+  newmis.c
+  news.c
+  news_sup.c
+  news_suq.c
+  options.c
+  pace.c
+  place.c
+  port.c
+  prefs.c
+  prest.c
+  radar.c
+  randomize.c
+  rdplex.c
+  records.c
+  replay.c
+  review.c
+  rush.c
+  sdl.c
+  start.c
+  utils.c
+  vab.c
+  )
