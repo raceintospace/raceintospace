@@ -49,14 +49,14 @@
   char *buffer;
   GXHEADER vhptr,vhptr2;
   char * oldpal,pNeg[NUM_PLAYERS][MAX_MISSIONS];
-  long xMODE;
+  int32_t xMODE;
   HTIMER server;
   char Option=-1,MAIL=-1;
   int SEG=15,FadeVal,fOFF=-1;
   extern struct mStr Mis;
   extern struct Prest_Upd MP[3];
   struct cdtable *cdt;
-  long PalOff;
+  int32_t PalOff;
   uint16_t LetHand;
   char BIG, 			   /**< 1 for fullscreen mission playback, 0 otherwise */
 	manOnMoon=0, dayOnMoon=20;

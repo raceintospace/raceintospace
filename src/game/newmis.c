@@ -369,7 +369,7 @@ void AI_Begin(char plr)
 {
   int i;
   FILE *fin;
-  long len[2];
+  int32_t len[2];
 
 
   for (i=0;i<768;i++) pal[i]=0;

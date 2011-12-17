@@ -23,9 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-#include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 

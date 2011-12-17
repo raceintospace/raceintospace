@@ -13,4 +13,6 @@
 #cmakedefine HAVE_SYS_NDIR_H
 #cmakedefine HAVE_NDIR_H
 
+#cmakedefine SET_SDL_ICON
+
 #endif /* __RACEINTOSPACE_CONFIG_H__ */

@@ -41,7 +41,7 @@ extern char STEPnum, loc[4];
 extern struct MisEval Mev[60];
 extern char MANNED[2], STEP, pal2[768], AI[2];
 extern int tFrames, cFrame;
-extern long aLoc;
+extern int32_t aLoc;
 extern GXHEADER dply;
 extern struct AnimType AHead;
 extern struct BlockHead BHead;
@@ -176,7 +176,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height, char *Type)
 	int keep_going;
 	int i, kk, mode, max;
 	FILE *seqf, *fseqf;
-	long offset;
+	int32_t offset;
 	struct oGROUP group;
 	struct oFGROUP fgroup;
 	struct Table table;
@@ -309,7 +309,7 @@ DispBaby(int x, int y, int loc, char neww)
 	FILE *fin;
 	GXHEADER boob;
 	uint16_t *bot, off = 0;
-	long locl;
+	int32_t locl;
 
 	off = 224;
 
@@ -317,7 +317,7 @@ DispBaby(int x, int y, int loc, char neww)
 	bot = (uint16_t *) boob.vptr;
 
 	fin = sOpen("BABYPICX.CDR", "rb", 0);
-	locl = (long) 1612 *loc;	// First Image
+	locl = (int32_t) 1612 *loc;	// First Image
 
 	fseek(fin, locl, SEEK_SET);
 	for (i = 0; i < 48; i++)

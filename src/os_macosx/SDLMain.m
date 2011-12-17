@@ -5,7 +5,8 @@
     Feel free to customize this file to suit your needs
 */
 
-#import "SDL.h"
+#include "SDLMain.h"
+#import <SDL.h>
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
@@ -13,34 +14,23 @@
 
 int game_main(int argc, char *argv[]);
 
-/* Portions of CPS.h */
-typedef struct CPSProcessSerNum
-{
-	UInt32		lo;
-	UInt32		hi;
-} CPSProcessSerNum;
-
-extern OSErr	CPSGetCurrentProcess( CPSProcessSerNum *psn);
-extern OSErr 	CPSEnableForegroundOperation( CPSProcessSerNum *psn, UInt32 _arg2, UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
-extern OSErr	CPSSetFrontProcess( CPSProcessSerNum *psn);
-
-
 static int    gArgc;
 static char  **gArgv;
 static BOOL   gFinderLaunch;
 static BOOL   gCalledAppMainline = FALSE;
 
 @interface SDLApplication : NSApplication
+- (void) terminate:(id)sender;
 @end
 
-@implementation SDLApplication
+@implementation SDLApplication : NSApplication
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
 {
-    /* Post a SDL_QUIT event */
-    SDL_Event event;
-    event.type = SDL_QUIT;
-    SDL_PushEvent(&event);
+   /* Post a SDL_QUIT event */
+   SDL_Event event;
+   event.type = SDL_QUIT;
+   SDL_PushEvent(&event);
 }
 @end
 
@@ -180,6 +170,17 @@ static BOOL   gCalledAppMainline = FALSE;
 }
 @end
 
+int SDL_main(int argc, char * argv[])
+{
+  abort();
+  return game_main(argc, argv);
+}
+
+/* Ensure that we're actually defining main(), and not an SDL alias */
+#ifdef main
+#undef main
+#endif
+
 /* Main entry point to executable - should *not* be SDL_main! */
 int main (int argc,  const char *argv[])
 {
@@ -200,7 +201,6 @@ int main (int argc,  const char *argv[])
         gFinderLaunch = NO;
     }
 
-    [SDLApplication poseAsClass:[NSApplication class]];
     NSApplicationMain (argc, argv);
 
     return 0;

@@ -218,7 +218,7 @@ void FileAccess(char mode)
 // mode==0 if save allowed
 {
   char sc=0;
-  long size;
+  int32_t size;
   int tFiles,i,now,done,BarB,temp,left;
   FILE *fin,*fout;
   char Name[12];
@@ -1316,7 +1316,7 @@ char RequestX(char *s,char md)
 #ifdef DEAD_CODE
 void SaveMail(void)
 {
- long size;
+ int32_t size;
  int tFiles,i,done=0,temp,left;
  FILE *fin,*fout;
  char Name[12];

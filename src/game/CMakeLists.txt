@@ -1,9 +1,9 @@
-include_directories(${PROJECT_SOURCE_DIR})
+# include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(SYSTEM ${SDL_INCLUDE_DIR})
 
 add_library(
-  game_module STATIC
+  raceintospace_game STATIC
   admin.c
   aimast.c
   aimis.c
@@ -15,7 +15,6 @@ add_library(
   ast4.c
   budget.c
   crew.c
-  decode.c
   endgame.c
   endianness.c
   fortify_workaround.c

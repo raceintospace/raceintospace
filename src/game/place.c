@@ -234,7 +234,7 @@ void PatchMe(char plr,int x,int y,char prog,char poff,unsigned char coff)
 void
 AstFaces(char plr, int x, int y, char face)
 {
-	long offset;
+	int32_t offset;
 	GXHEADER local, local2, local3;
 	int fx, fy;
 	unsigned int j;
@@ -243,11 +243,11 @@ AstFaces(char plr, int x, int y, char face)
 
 	memset(&pal[192], 0x00, 192);
 	fin = sOpen("FACES.BUT", "rb", 0);
-	fseek(fin, 87 * sizeof(long), SEEK_SET);
+	fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
 	fread(&pal[192], 96, 1, fin);
 	face_offset = ((int)face) * sizeof(int32_t);
 	fseek(fin, face_offset, SEEK_SET);	// Get Face
-	fread(&offset, sizeof(long), 1, fin);
+	fread(&offset, sizeof(int32_t), 1, fin);
 	Swap32bit(offset);
 	fseek(fin, offset, SEEK_SET);
 	GV(&local, 18, 15);
@@ -256,7 +256,7 @@ AstFaces(char plr, int x, int y, char face)
 
 	face_offset = ((int)(85+plr)) * sizeof(int32_t);
 	fseek(fin, face_offset, SEEK_SET);	// Get Helmet
-	fread(&offset, sizeof(long), 1, fin);
+	fread(&offset, sizeof(int32_t), 1, fin);
 	Swap32bit(offset);
 	fseek(fin, offset, SEEK_SET);
 	GV(&local2, 80, 50);
@@ -335,13 +335,13 @@ void BigHardMe(char plr,int x,int y,char hw,char unit,char sh,unsigned char coff
 	SimpleHdr table;
   char ch;
   GXHEADER local,local2;
-  long size;
+  int32_t size;
   unsigned int j, n;
   FILE *in,*fin;
   struct TM {
       char ID[4];
-      long offset;
-      long size;
+      int32_t offset;
+      int32_t size;
       } AIndex;
 
   extern struct AnimType AHead;

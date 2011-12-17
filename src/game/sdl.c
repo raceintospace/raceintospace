@@ -310,7 +310,7 @@ av_setup(void)
 		NOTICE1("fullscreen mode enabled");
 	}
 
-#ifndef CONFIG_MACOSX
+#ifdef SET_SDL_ICON
 	if ((icon_path = locate_file("moon_32x32.bmp", FT_IMAGE)))
 	{
 		SDL_Surface *icon = SDL_LoadBMP(icon_path);

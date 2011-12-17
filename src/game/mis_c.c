@@ -62,7 +62,7 @@ struct Infin *Mob;
 struct OF *Mob2;
 int tFrames,cFrame;
 char SHTS[4];
-long aLoc;
+int32_t aLoc;
 GXHEADER dply;
 struct AnimType AHead;
 struct BlockHead BHead;
@@ -151,7 +151,7 @@ void PlaySequence(char plr,int step,char *Seq,char mode)
 	char lnch=0,AEPT,BABY,Tst2,Tst3;
 	unsigned char sts=0,fem=0;
 	FILE *fin,*fout,*ffin,*nfin;
-	long offset;
+	int32_t offset;
 	struct oGROUP *bSeq,aSeq;
 	struct oFGROUP *dSeq,cSeq;
 	struct Table *F;
@@ -621,7 +621,7 @@ void DoPack(char plr,FILE *ffin,char mode,char *cde,char *fName)
  int i,x,y,try,which,mx2,mx1;
  GXHEADER boob;
  uint16_t *bot,off=0;
- long locl;
+ int32_t locl;
  static char kk=0,bub=0;
  char Val1[12],Val2[12],loc;
 
@@ -734,10 +734,10 @@ void DoPack(char plr,FILE *ffin,char mode,char *cde,char *fName)
   };
 
   //Specs: which holds baby num
-  locl=(long) 1612*which;
+  locl=(int32_t) 1612*which;
   if (which<580) memset(&pal[off*3],0x00,48);
   if(loc!=0 && which<580) {VBlank();gxSetDisplayPalette(pal);}
-  fseek(ffin,(long)locl,SEEK_SET);
+  fseek(ffin,(int32_t)locl,SEEK_SET);
   fread(&pal[off*3],48,1,ffin);
   fread(boob.vptr,1564,1,ffin);
   for (i=0;i<782;i++) {
@@ -991,8 +991,8 @@ FILE *OpenAnim(char *fname)
     FILE  *fin;
     struct TM {
         char ID[4];
-        long offset;
-        long size;
+        int32_t offset;
+        int32_t size;
     } AIndex;
 
     fin=open_gamedat("LIFTOFF.ABZ");

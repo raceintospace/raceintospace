@@ -43,10 +43,18 @@ int game_main(int argc, char *argv[]);
 
 #include "logging.h"
 
+#include "gamedata.h"
+
+#include "proto.h"    // prototypes and general defines
+#include "music.h"    // defines for music names
+#include "endianness.h"
+#include "options.h"
+
 /* FIXME: non-portable. Used to get struct layout like in DOS days */
 #pragma pack(1)
 
 #include "data.h"     // main data structures
+#include "externs.h"
 
 /* get the alignment back to defaults */
 /* #pragma pack() */
@@ -57,10 +65,6 @@ int game_main(int argc, char *argv[]);
  * code use the gamedata.c interfaces. */
 #define ALTERED_STRUCTURE_PACKING
 
-#include "proto.h"    // prototypes and general defines
-#include "music.h"    // defines for music names
-
-#include "endianness.h"
 
 #include "macros.h"		// Collected Macros
 

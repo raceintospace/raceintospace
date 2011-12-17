@@ -202,14 +202,6 @@ bzdelay (int ticks)
 	idle_loop_secs (ticks / 100.0);
 }
 
-#ifdef DEAD_CODE
-int
-CDAccess (int drive,int track,char op)
-{
-	return (0);
-}
-#endif
-
 int
 brandom (int limit)
 {
@@ -218,7 +210,7 @@ brandom (int limit)
 	return (int) (limit * (rand() / (RAND_MAX + 1.0)));
 }
 
-long RLEC (char *src, char *dest, unsigned int src_size)
+int32_t RLEC (char *src, char *dest, unsigned int src_size)
 {
 	unsigned int src_i;
 	int dest_i,cpr;

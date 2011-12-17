@@ -18,9 +18,9 @@
 /** \file future.c This is responsible for Future Mission planning screen.
  * 
  */
+#include <assert.h>
 #include "Buzz_inc.h"
 #include "externs.h"
-#include <assert.h>
 #include "logging.h"
 
   //Used to read steps from missStep.dat

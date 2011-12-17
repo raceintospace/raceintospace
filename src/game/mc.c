@@ -300,7 +300,7 @@ void MissionPast(char plr,char pad,int prest)
   int loc,i,j,loop,mc;
   FILE *fout,*fin;
   unsigned int num;
-  long size;
+  int32_t size;
   char dys[7]={0,2,5,7,12,16,20};
 
   loc=Data->P[plr].PastMis;

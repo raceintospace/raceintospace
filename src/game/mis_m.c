@@ -57,10 +57,10 @@ void GetFailStat(struct XFails *Now,char *FName,int rnum)
   DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)", rnum);
   int i;
   FILE *fin;
-  long count;
+  int32_t count;
   struct Fdt {
     char Code[6];
-    long offset;
+    int32_t offset;
     int16_t size;
   } Pul;
 

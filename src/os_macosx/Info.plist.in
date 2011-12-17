@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array/>
+	<key>CFBundleExecutable</key>
+	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>moon</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.raceintospace.RaceIntoSpace</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLongVersionString</key>
+	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
+	<key>CFBundleVersion</key>
+	<string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
+	<key>CFBundleName</key>
+	<string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>RiSP</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.strategy-games</string>
+	<key>NSMainNibFile</key>
+	<string>SDLMain</string>
+	<key>NSPrincipalClass</key>
+	<string>SDLApplication</string>
+	<key>SUFeedURL</key>
+	<string>http://update.raceintospace.org/appcast/osx/</string>
+	<key>SUPublicDSAKey</key>
+	<string>
+-----BEGIN PUBLIC KEY-----
+MIIDOjCCAi0GByqGSM44BAEwggIgAoIBAQDOLH6f5spFVKI+NyZlzhmphX/hZ+pd
+8MXKc6ZnIrBrMIsvobUk+GJmVTLEzKOk+GM46g4ARRxznh8tO5EFMByNKFpRh5PA
+9z75p/XFN2M197ysYJkI8APwIkKQB5u4zmzthd+sOvd/dk42YDMG5n5VJmjgvdSc
+yifQSt/FNGYV3beDHNjETJxWMNS4IDzZVPBk7Vk5vBYckiWWyd1tjXN1vRcDLXSv
+MPWlIE4zzDesDVyL8PZujN7dkS0ZX8JsAa0LgR4nK+8HIfTqANVBfdO/NFo3Hi0S
+sFUhyy1t/qhMmuP4wQ1Z7bZboSF8PdzjRSV4Ojd0twXSDMVt0sMmXXiHAhUAiL0P
+COsxYi9/aYxIZUZ4bDTN/9sCggEAXp664viKt+IDOQmFg6HGepUGQlCQ4efyNgkt
+ggPY+1YoW5Cp2NhzSRtxiMqxUPRP1eEjKzllo+ekCjF0ktJTcgC+/AKaNdkAfm5k
+uG1VI/g2pK7LhiCR/Z3sxk/79xSEVS70bJmYh1RQ588A3IbE/6F/nkRlSts3LLd7
+QPL1jSi50YVsgB1BSbtX9dJkHGLYFk9rqta944BLpnoKFmiciqpWqfXnq8ld2YbI
++LGfyZyeP3q7gwO7+H5rn7PGuZ5XG3muwJR3SjizlDo8NX8lP345GZmGgplIcrXO
+nwWezyu7/sd+x60Tz6R66D+9Yi2jb7Uw1r71e0c4WTRiAZQGGwOCAQUAAoIBAFUm
+of6cu9CtcmgS1oSQyfg7WRKk++oW9333ONRoVkbNKSQysl3vQL47hbQBlp0W9/RR
+34LnjxuKPi7G1Y3q2ayCbuutEWwNOtl6cDPG4rALlf/oL+r0uaZ2SGsIrTCHU3P7
+DacI6yXrB8u4e6xOg+VYiBvNuAqTJeNTZYVHDItXvzY2w1zc8hyTcewpKG+Gm/Fk
+BteEtyu9sXyZd7/J7gIpw7u7fnz1MdxTKQSv+zElqlJRlQQm9V7Y1PR9hV+1tf5Z
+ormrj3pNR7lKQVVKrjy19zFuiIxN1slWaJu6CUAPFrnNmHWbg1GzVE2xJMlTzUmZ
+hIO1NT2CJJt0nh2tebU=
+-----END PUBLIC KEY-----
+	</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>604800</integer>
+	<key>SUShowReleaseNotes</key>
+	<false/>
+	<key>SmartCrashReports_CommentsTemplate</key>
+	<string>Please include your e-mail address if you wish to be contacted in regard to this crash.</string>
+	<key>SmartCrashReports_CompanyName</key>
+	<string>RaceIntoSpace.org</string>
+	<key>SmartCrashReports_URL</key>
+	<string>http://crash.raceintospace.org/crash/osx/</string>
+</dict>
+</plist>

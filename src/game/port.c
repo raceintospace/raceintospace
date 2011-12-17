@@ -23,8 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
-#include "gamedata.h"
 #include "Buzz_inc.h"
+#include "gamedata.h"
 #include "externs.h"
 #include "macros.h"
 #include "av.h"
@@ -61,13 +61,13 @@ PORTOUTLINE *pPortOutlineRestore;
 
 struct FHead {
   char Text[28];  /**< File Copyright Notice */
-  long oMObj;     /**< Offset to MObj data table */
-  long oTab;      /**< Offset to Table of data */
-  long oPal;      /**< Offset to Palette */
-  long oPort;     /**< Offset to start of Port Images */
-  long oMse;      /**< Offset to Mouse Objects */
-  long oOut;      /**< Offset to port Outlines */
-  long oAnim;     /**< Offset to start of Port Anims */
+  int32_t oMObj;     /**< Offset to MObj data table */
+  int32_t oTab;      /**< Offset to Table of data */
+  int32_t oPal;      /**< Offset to Palette */
+  int32_t oPort;     /**< Offset to start of Port Images */
+  int32_t oMse;      /**< Offset to Mouse Objects */
+  int32_t oOut;      /**< Offset to port Outlines */
+  int32_t oAnim;     /**< Offset to start of Port Anims */
    } PHead;
 
 typedef struct cBoxx {
@@ -75,7 +75,7 @@ typedef struct cBoxx {
    } BOUND;
 
 typedef struct Img {
-  long Size;         /**<  Size of Image (bytes) */
+  int32_t Size;         /**<  Size of Image (bytes) */
   char Comp;         /**<  Type of Compression Used */
   int16_t Width;         /**<  Width of Image */
   int16_t Height;        /**<  Height of Image */
@@ -339,7 +339,7 @@ void WaveFlagDel(void)
  * when the data is bigger than needed.  there's still a bug somewhere,
  * so this table is a useful list of funny images to check later
  */
-long fix_width[] = {
+int32_t fix_width[] = {
 	// normal
 	80615, // 4/0 VAB in mode 0
 	101712, // 8/1 Medical center
@@ -359,7 +359,7 @@ long fix_width[] = {
 };
 
 int
-need_to_fix_width (long table)
+need_to_fix_width (int32_t table)
 {
 	int i;
 	for (i = 0; fix_width[i]; i++) {
@@ -369,7 +369,7 @@ need_to_fix_width (long table)
 	return (0);
 }
 
-void PortPlace(FILE * fin,long table)
+void PortPlace(FILE * fin,int32_t table)
 {
   IMG Img;
   GXHEADER local,local2;
@@ -413,7 +413,7 @@ void PortPal(char plr)
 
 void DrawSpaceport(char plr)
 {
-  long table[S_QTY];
+  int32_t table[S_QTY];
   int i,fm,idx;
   FILE *fin;
   GXHEADER local,local2;
@@ -907,7 +907,7 @@ int i,j,kMode,kEnt,k;
 char good, res;
 int kPad,pKey,gork;
 FILE *fin;
-long stable[55];
+int32_t stable[55];
 uint16_t Count,*bone;
 
   strcpy(IDT,"i043");strcpy(IKEY,"k043");

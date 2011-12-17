@@ -23,6 +23,13 @@ check_include_file(sys/dir.h HAVE_SYS_DIR_H)
 check_include_file(sys/ndir.h HAVE_SYS_NDIR_H)
 check_include_file(ndir.h HAVE_NDIR_H)
 
+# Set some build options
+if (APPLE)
+  set(SET_SDL_ICON FALSE)
+else (APPLE)
+  set(SET_SDL_ICON TRUE)
+endif (APPLE)
+
 # generate the raceintospace_config.h
 configure_file(
   "raceintospace_config.h.in"
@@ -32,13 +39,10 @@ configure_file(
 # so we can find raceintospace_config.h
 include_directories(${PROJECT_BINARY_DIR}/config)
 
+# pull in src/game/* defines and build rules
+include("game/Global.cmake")
 add_subdirectory("game")
 
 if (APPLE)
   add_subdirectory("os_macosx")
 endif (APPLE)
-
-add_executable("raceintospace" WIN32 MACOSX_BUNDLE main.c)
-
-target_link_libraries("raceintospace" game_module ${SDL_LIBRARY})
-target_link_libraries(raceintospace ${Vorbis_LIBRARY} ${Theora_LIBRARY} ${Ogg_LIBRARY})

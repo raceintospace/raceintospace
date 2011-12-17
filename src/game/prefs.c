@@ -242,7 +242,7 @@ int i,num,hum1=0,hum2=0;
 FILE *fin;
 char ch,Name[20],ksel=0;
 GXHEADER local2;
-long size;
+int32_t size;
 
  if (where!=3)
   {
