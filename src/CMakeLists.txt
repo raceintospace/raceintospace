@@ -26,8 +26,13 @@ check_include_file(ndir.h HAVE_NDIR_H)
 # Set some build options
 if (APPLE)
   set(SET_SDL_ICON FALSE)
+  set(DEFAULT_DATADIR "Contents/Resources")
+  set(DEFAULT_SAVEDIR ".")
+  #set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
 else (APPLE)
   set(SET_SDL_ICON TRUE)
+  set(DEFAULT_DATADIR ".")
+  set(DEFAULT_SAVEDIR ".")
 endif (APPLE)
 
 # generate the raceintospace_config.h

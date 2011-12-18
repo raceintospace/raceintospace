@@ -34,6 +34,7 @@
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")
 
+/*
 #if CONFIG_WIN32
 #  define DEFAULT_DATADIR ("c:/" PACKAGE_TARNAME )
 #  define DEFAULT_SAVEDIR ("c:/" PACKAGE_TARNAME "/savedat")
@@ -44,6 +45,7 @@
 #  define DEFAULT_DATADIR CONFIG_DATADIR
 #  define DEFAULT_SAVEDIR (".")
 #endif
+*/
 
 /* and provide defaults for unspecified OS */
 #ifndef DEFAULT_DATADIR
