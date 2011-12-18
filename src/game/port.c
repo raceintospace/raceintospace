@@ -1442,27 +1442,7 @@ void Port(char plr)
 
                             switch (res) {
                             case pNOREDRAW:
-#ifdef DEAD_CODE
-                                if (!(i == 28 || i == 29 || i == 0 || i == 31 || i == 33
-                                      || (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
-                                    PreLoadMusic((plr == 0) ? M_USPORT : M_SVPORT);
-#if SPOT_ON
-                                    memcpy(screen, vhptr.vptr, MAX_X * MAX_Y);
-                                    av_need_update_xy(0, 0, MAX_X, MAX_Y);
-#endif
-                                }
-
-#endif
-
                                 PortText(5, 196, MObj[i].Name, 11);
-#ifdef DEAD_CODE
-
-                                if (!(i == 28 || i == 29 || i == 0 || i == 31 || i == 33
-                                      || (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
-                                    PlayMusic(0);
-                                }
-
-#endif
                                 break;
 
                             case pREDRAW:

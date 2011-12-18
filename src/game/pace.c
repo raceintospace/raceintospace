@@ -34,14 +34,6 @@ int put_serial(unsigned char n)
 }
 void MesCenter(void) {}
 
-#ifdef DEAD_CODE
-int
-AquireDrive(void)
-{
-    return 'K' - 'A';
-}
-#endif
-
 char *letter_dat;
 
 void

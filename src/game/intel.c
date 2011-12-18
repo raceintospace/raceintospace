@@ -1247,32 +1247,6 @@ void SaveIntel(char p, char prg, char ind)
     }
 }
 
-#ifdef DEAD_CODE
-void Bad(char plr, char pt)
-{
-
-    if (pt == 1) {
-        ShBox(6, 29, 130, 133);
-        InBox(8, 31, 128, 131);
-        grSetColor(9);
-        PrintAt(17, 37, "AGENTS IN THE FIELD");
-        PrintAt(17, 51, "REPORTED HEAVY");
-        PrintAt(17, 65, "ACTIVITY AT ");
-
-        if (plr == 1) {
-            PrintAt(0, 0, "THE CAPE");
-        } else {
-            PrintAt(0, 0, "BAIKONUR");
-        }
-    }
-
-    if (pt == 0) {
-        Data->P[plr].PastIntel[Data->Year - 58].prog = -1;
-    }
-
-}
-#endif
-
 void ImpHard(char plr, char hd, char dx)
 {
     // based on the hardware improve safety factor

@@ -106,12 +106,6 @@ extern struct order Order[6];
 extern struct ManPool *Men;
 char AI[2] = {0, 0};
 
-#ifdef DEAD_CODE
-static char BUZZ_DIR[32];
-
-void Plop(char plr, char mode);
-#endif
-
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 int game_main(int argc, char *argv[])
@@ -1790,92 +1784,3 @@ int MisRandom(void)
 
     return nval - 50;
 }
-
-#ifdef DEAD_CODE
-#   ifdef CONFIG_THEORA_VIDEO
-#      include "av.h"
-#      include "mmfile.h"
-#   endif
-
-void
-Plop(char plr, char mode)
-{
-    char sName[20];
-
-#   ifndef CONFIG_THEORA_VIDEO
-    int wlen;
-    FILE *fin;
-    char *ext = "frm";
-#   else
-    char *ext = "ogg";
-    mm_file vidfile;
-    char fname[1000];
-#   endif
-
-    if (mode == 0)
-        sprintf(sName, "%s%d.%s", (plr == 0) ? "us" : "sviet",
-                random(5) + 1, ext);
-    else if (mode == 1) {
-        sprintf(sName, "passt%02d.%s", random(11) + 1, ext);
-    } else {
-        sprintf(sName, "static.%s", ext);
-    }
-
-#   ifndef CONFIG_THEORA_VIDEO
-    fin = sOpen(sName, "rb", 0);
-
-    if (!fin) {
-        return;
-    }
-
-    wlen = 8;
-    fread(&vhptr.vptr[40000], 1, wlen * 2048, fin);
-    vhptr.vptr[40000] = vhptr.vptr[40001] = vhptr.vptr[40002] =
-            vhptr.vptr[40005];
-    vhptr.vptr[55999] = vhptr.vptr[55995];
-    vhptr.vptr[55998] = vhptr.vptr[55994];
-    memcpy(&pal[384], &vhptr.vptr[56000], 384);
-
-    /* SetPal(pal); FIXME */
-    if (BIG == 0) {
-        SMove(&vhptr.vptr[40000], 80, 3 + plr * 10);
-    } else {
-        LMove(&vhptr.vptr[40000]);
-    }
-
-    fclose(fin);
-    return;
-#   else
-    sprintf(fname, "%s/%s", movies_dir, sName);
-
-    if (mm_open(&vidfile, fname) <= 0) {
-        return;
-    }
-
-    if (mm_video_info(&vidfile, NULL, NULL, NULL) <= 0) {
-        goto end;
-    }
-
-    if (mm_decode_video(&vidfile, video_overlay) <= 0) {
-        goto end;
-    }
-
-    if (BIG == 0) {
-        video_rect.w = 160;
-        video_rect.h = 100;
-        video_rect.x = 80;
-        video_rect.y = 3 + plr * 10;
-    } else {
-        video_rect.x = MAX_X / 4;
-        video_rect.y = MAX_Y / 4;
-        video_rect.w = MAX_X / 2;
-        video_rect.h = MAX_Y / 2;
-    }
-
-end:
-    mm_close(&vidfile);
-#   endif
-}
-
-#endif
-// EOF

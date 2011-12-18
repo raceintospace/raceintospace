@@ -69,13 +69,6 @@ char tame[29][40] = {
 int16_t TPoints[2];
 extern char Mon[12][4];
 
-#ifdef DEAD_CODE
-void BigArrowLt(int, int);
-void BigArrowRt(int, int);
-void EndRt(int, int);
-void EndLt(int, int);
-#endif
-
 void Display_ARROW(char num, int x, int y)
 {
     /* Look for explanations in place.c:PatchMe() */
@@ -947,93 +940,6 @@ void DrawMisHist(char plr, int *where)
     return;
 }
 
-#ifdef DEAD_CODE
-void BigArrowLt(int a, int b)
-{
-    grSetColor(4);
-    grMoveTo(a, b);
-    grLineTo(a, b + 13);
-    grMoveTo(a + 9, b);
-    grLineTo(a + 9, b + 13);
-    grSetColor(2);
-    grMoveTo(a + 1, b);
-    grLineTo(a + 8, b + 6);
-    grMoveTo(a + 1, b + 13);
-    grLineTo(a + 8, b + 7);
-    grMoveTo(a + 10, b);
-    grLineTo(a + 17, b + 6);
-    grMoveTo(a + 10, b + 13);
-    grLineTo(a + 17, b + 7);
-    return;
-}
-#endif
-
-#ifdef DEAD_CODE
-void BigArrowRt(int a, int b)
-{
-    grSetColor(4);
-    grMoveTo(a, b);
-    grLineTo(a, b + 13);
-    grMoveTo(a + 9, b);
-    grLineTo(a + 9, b + 13);
-    grSetColor(2);
-    grMoveTo(a - 1, b);
-    grLineTo(a - 8, b + 6);
-    grMoveTo(a - 1, b + 13);
-    grLineTo(a - 8, b + 7);
-    grMoveTo(a + 8, b);
-    grLineTo(a + 1, b + 6);
-    grMoveTo(a + 8, b + 13);
-    grLineTo(a + 1, b + 7);
-    return;
-}
-#endif
-
-#ifdef DEAD_CODE
-void EndLt(int a, int b)
-{
-    grSetColor(4);
-    grMoveTo(a, b);
-    grLineTo(a, b + 11);
-    grMoveTo(a + 9, b - 1);
-    grLineTo(a + 9, b + 12);
-    grSetColor(2);
-    grMoveTo(a, b - 1);
-    grLineTo(a - 2, b - 1);
-    grLineTo(a - 2, b + 12);
-    grLineTo(a, b + 12);
-
-//grMoveTo(a+8,b-1);grLineTo(a+1,b+5);
-    grMoveTo(a + 1, b + 5);
-    grLineTo(a + 8, b - 1);
-    grMoveTo(a + 1, b + 6);
-    grLineTo(a + 8, b + 12);
-//grMoveTo(a+8,b+12);grLineTo(a+1,b+6);
-    return;
-}
-#endif
-
-#ifdef DEAD_CODE
-void EndRt(int a, int b)
-{
-    grSetColor(4);
-    grMoveTo(a, b);
-    grLineTo(a, b + 13);
-    grMoveTo(a + 9, b + 1);
-    grLineTo(a + 9, b + 12);
-    grSetColor(2);
-    grMoveTo(a + 9, b);
-    grLineTo(a + 11, b);
-    grLineTo(a + 11, b + 13);
-    grLineTo(a + 9, b + 13);
-    grMoveTo(a + 1, b);
-    grLineTo(a + 8, b + 6);
-    grMoveTo(a + 1, b + 13);
-    grLineTo(a + 8, b + 7);
-    return;
-}
-#endif
-
 void ShowAstrosHist(char plr)
 {
     char pos = 0, pos2 = 0, glorf = 0;
@@ -1104,10 +1010,6 @@ void ShowAstrosHist(char plr)
     ORBox(241, 177, 276, 194, 3);
     ORBox(278, 177, 313, 194, 3);
 
-    //IRBox(6,185,153,196,0);
-    //ORBox(8,187,151,194,3);
-    //RBox(6,27,153,38,0);
-    //ORBox(8,29,151,36,3);
     Display_ARROW(0, 179, 179); //left
     Display_ARROW(1, 213, 179); //left arrow
     Display_ARROW(2, 250, 179); //right

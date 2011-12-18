@@ -27,35 +27,6 @@
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
-#ifdef DEAD_CODE
-int ALSpec(int att)
-{
-    int col = 0;
-
-    if (att >= 65) {
-        col = 16;
-    }
-
-    if (att < 65 && att >= 40) {
-        col = 11;
-    }
-
-    if (att < 40 && att >= 20) {
-        col = 8;
-    }
-
-    if (att < 20) {
-        col = 0;
-    }
-
-    if (att == 0) {
-        col = 3;
-    }
-
-    return col;
-}
-#endif
-
 int missions;     // Variable for how many missions each 'naut has flown
 static char program;  /* Variable to store prog data for "Draws Astronaut attributes" section: 1=Mercury/Vostok...5=Jupiter/Kvartet */
 int retdel;  /* Variable to store whether a given 'naut has announced retirement */
@@ -632,55 +603,6 @@ void DamProb(char plr, char prog, int chk)
         }
     }
 }
-
-
-#ifdef DEAD_CODE
-void CrewProb(char plr, char prog)
-{
-    if (prog) {
-        EMPTY_BODY;
-    }
-
-    ShBox(75, 43, 244, 173);
-    IOBox(81, 152, 238, 167);
-    InBox(81, 70, 238, 106);
-    RectFill(82, 71, 237, 105, 7 + 3 * plr);
-    grSetColor(11);
-    PrintAt(136, 162, "CONTINUE");
-    DispBig(122, 50, "PROBLEM", 0, -1);
-    PrintAt(90, 80, "THERE ARE CURRENTLY NOT");
-    PrintAt(90, 88, "ENOUGH ");
-
-    if (plr == 1) {
-        PrintAt(0, 0, "COSM");
-    } else {
-        PrintAt(0, 0, "ASTR");
-    }
-
-    PrintAt(0, 0, "ONAUTS IN THE");
-    PrintAt(90, 96, "PROGRAM TO ASSIGN CREWS.");
-
-    WaitForMouseUp();
-
-    while (1) {
-        key = 0;
-        GetMouse();
-
-        if (mousebuttons > 0 || key > 0) {
-            if ((x >= 83 && y >= 154 && x <= 236 && y <= 165 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(83, 154, 236, 165);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                return;  // Abort - Redo Mission
-            }
-        }
-    }
-}
-#endif
 
 void DrawPosition(char prog, int pos)
 {

@@ -1688,43 +1688,4 @@ void Missions(char plr, int X, int Y, int val, char bub)
     TRACE1("<-Missions()");
 }  // end function missions
 
-#ifdef DEAD_CODE
-/** Draws stuff about choosing a program and having < 2 groups available
- *
- * \deprecated This function appears to be depricated.
- */
-char FutBad(void)
-{
-    char i;
-
-    grSetColor(0);
-    ShBox(84, 41, 232, 128);
-    InBox(91, 47, 225, 103);
-    IOBox(91, 107, 225, 123);
-    grSetColor(1);
-    PrintAt(150, 117, "EXIT");
-    grSetColor(11);
-    PrintAt(96, 60, "YOU HAVE SELECTED A");
-    PrintAt(96, 70, "PROGRAM WITH LESS THAN");
-    PrintAt(96, 80, "TWO GROUPS AVAILABLE.");
-
-    WaitForMouseUp();
-    i = 0;
-
-    while (i == 0) {
-        GetMouse();
-
-        if (mousebuttons != 0) {
-            if (x >= 93 && y >= 109 && x <= 223 && y <= 121) {
-                InBox(93, 109, 223, 123);
-                i = 3;
-                delay(50);
-            };
-        };
-    }; /* End while */
-
-    return (i);
-}
-#endif
-
 /* vim: set noet ts=4 sw=4 tw=77: */

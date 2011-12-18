@@ -46,9 +46,6 @@ double load_news_anim_start;
 int evflag;
 static int bufsize, LOAD_US = 0, LOAD_SV = 0;
 static int Frame, MaxFrame, AnimIndex = 255;
-#ifdef DEAD_CODE
-ui16 handle0, handle1, handle2, handle3, handle4, handle5;
-#endif
 extern char Option;
 
 SimpleHdr table[99];
@@ -76,19 +73,6 @@ struct rNews {
     char chrs;
 };
 
-#ifdef DEAD_CODE
-void
-NFrame(int x1, int y1, int x2, int y2)
-{
-    grSetColor(0);
-    Box(x1, y1, x2, y2 + 1);
-    OutBox(x1, y1, x2, y2);
-    grSetColor(3);
-    Box(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
-    Box(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
-    InBox(x1 + 3, y1 + 3, x2 - 3, y2 - 3);
-}
-#endif
 
 void
 GoNews(char plr)
@@ -464,85 +448,6 @@ DispNews(char plr, char *src, char *dest)
     };
 }
 
-#ifdef DEAD_CODE
-FILE *
-PreLoadAnim(char plr, char bw)
-{
-    FILE *fp = NULL;
-
-    gxClearDisplay(0, 0);
-    ShBox(49, 54, 262, 122);
-    InBox(53, 57, 258, 105);
-    InBox(53, 108, 258, 119);
-    RectFill(54, 109, 257, 118, 11);
-    InBox(56, 60, 255, 72);
-    RectFill(57, 61, 254, 71, 7);
-    grSetColor(11);
-    PrintAt(73, 68, "UPDATING NEWSCASTER ANIMATION");
-    grSetColor(11);
-    PrintAt(64, 81, "INSTALLING YOUR NEW");
-
-    if (bw) {
-        PrintAt(64, 90, "BLACK AND WHITE TV SET.");
-    } else {
-        PrintAt(64, 90, "COLOR TV SET.");
-    }
-
-    grSetColor(9);
-
-    if (plr == 0) {
-        PrintAt(64, 99, "TYPE: ");
-        grSetColor(1);
-        PrintAt(0, 0, "U.S. NEWSCASTER");
-    } else {
-        PrintAt(64, 99, "TYPE: ");
-        grSetColor(1);
-        PrintAt(0, 0, "SOVIET NEWSCASTER");
-    }
-
-    FadeIn(2, pal, 10, 0, 0);
-    bw = !!bw;
-    fp = LoadNewsAnim(plr, bw, NEWS_ANGLE, BUFFR_FRAMES, NULL);
-    LoadNewsAnim(plr, bw, NEWS_CLOSING, BUFFR_FRAMES, fp);
-    LoadNewsAnim(plr, bw, NEWS_OPENING, BUFFR_FRAMES, fp);
-    FadeOut(2, pal, 10, 0, 0);
-
-    return fp;
-}
-#endif
-
-#ifdef DEAD_CODE
-void
-DrawNews(char plr)
-{
-
-    gxClearDisplay(0, 0);
-    memset(screen, 0xff, 320 * 113);
-    pal[767] = pal[766] = pal[765] = 0x00;
-    OutBox(0, 0, 319, 113);
-    grSetColor(3);
-    Box(1, 1, 318, 112);
-    Box(2, 2, 317, 111);
-    InBox(3, 3, 316, 110);
-    ShBox(240, 3, 316, 22);
-    RectFill(315, 20, 317, 21, 3);
-    RectFill(241, 2, 242, 4, 3);
-    IOBox(243, 3, 316, 19);
-    grSetColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    ShBox(0, 115, 319, 199);
-    InBox(4, 118, 297, 196);
-    RectFill(5, 119, 296, 195, 7 + 3 * plr);
-    InBox(301, 118, 315, 196);
-    RectFill(302, 119, 314, 195, 0);
-    ShBox(303, 120, 313, 156);
-    ShBox(303, 158, 313, 194);
-    UPArrow(305, 126);
-    DNArrow(305, 163);
-
-}
-#endif
-
 void
 DrawNText(char plr, char got)
 {
@@ -661,53 +566,6 @@ News(char plr)
 
     memset(fp, 0, sizeof(*fp));
 
-#ifdef DEAD_CODE
-
-    /* no need to preload anims */
-    //: LOAD_US & LOAD_SV  0 None 1 B/W 2 Color
-    if (Data->Year <= 63) {
-        BW = 1;
-
-        if (plr == 0 && LOAD_US == 2) {
-            LOAD_US = 0;
-        };
-
-        if (plr == 1 && LOAD_SV == 2) {
-            LOAD_SV = 0;
-        };
-    } else {
-        BW = 0;
-
-        if (plr == 0 && LOAD_US == 1) {
-            LOAD_US = 0;
-        };
-
-        if (plr == 1 && LOAD_SV == 1) {
-            LOAD_SV = 0;
-        };
-    };
-
-    ///Specs: preload anims
-    if (plr == 0 && LOAD_US == 0) {
-        fp = PreLoadAnim(plr, BW);
-
-        if (BW == 1) {
-            LOAD_US = 1;
-        } else {
-            LOAD_US = 2;
-        }
-    } else if (plr == 1 && LOAD_SV == 0) {
-        fp = PreLoadAnim(plr, BW);
-
-        if (BW == 1) {
-            LOAD_SV = 1;
-        } else {
-            LOAD_SV = 2;
-        }
-    }
-
-#endif
-//  DrawNews(plr);
     GoNews(plr);
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {
@@ -839,13 +697,6 @@ News(char plr)
                 PlayVoice();
                 /* the "mysterious" delay of soviet newscaster.
                  * she is out of sync anyway... */
-#ifdef DEAD_CODE
-
-                if (plr == 1) {
-                    bzdelay(170);
-                };
-
-#endif
                 loc++;
 
                 break;
@@ -998,53 +849,6 @@ ResolveEvent(char plr)
     return bad;                    // zero if card is good
 }
 
-#ifdef DEAD_CODE
-void
-Breakgrp(char plr)
-{
-    int i, j, k, l, temp;
-
-    j = plr;
-
-    if (plr == 4)
-        for (k = 0; k < 6; k++) {
-            for (l = 0; l < 8; l++) {
-                temp = 0;
-
-                if (Data->P[j].Gcnt[k][l] > 0) {
-                    for (i = 0; i < Data->P[j].Gcnt[k][l]; i++) {
-                        if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Status == AST_ST_DEAD
-                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Status == AST_ST_RETIRED
-                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Status == AST_ST_INJURED) {
-                            temp++;
-                        }
-                    };             /* for i */
-
-                    if (temp > 0) {
-                        for (i = 0; i < Data->P[j].Gcnt[k][l]; i++) {
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].oldAssign =
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Assign;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Assign = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Crew = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Prime = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Task = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Moved = 0;
-
-                            if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special == 0) {
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special = 6;
-                            }
-
-                            Data->P[j].Crew[k][l][i] = 0;
-                        };         /* for i */
-
-                        Data->P[j].Gcnt[k][l] = 0;
-                    };             /* it temp */
-                };                 /* if Gcnt */
-            };                     /* for l */
-        };                         /* for k */
-}
-#endif
-
 /* modified to return true if end of anim */
 int
 PlayNewsAnim(mm_file *fp)
@@ -1122,81 +926,6 @@ mm_file *
 LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 {
     int Index = news_index[plr][bw][type];
-#ifdef DEAD_CODE
-    unsigned MAX = 0, TOT = 0;
-    int aframe;
-#endif
-
-#ifdef DEAD_CODE
-
-    if (Mode == 1) {
-        switch (Index) {
-        case 0:
-            TOT = 118;
-            MAX = 170;
-            break;
-
-        case 1:
-            TOT = 135;
-            MAX = 181;
-            break;
-
-        case 2:
-            TOT = 58;
-            MAX = 170;
-            break;
-
-        case 3:
-            TOT = 75;
-            MAX = 181;
-            break;
-
-        case 4:
-            TOT = 151;
-            MAX = 211;
-            break;
-
-        case 5:
-            TOT = 167;
-            MAX = 227;
-            break;
-
-        case 6:
-            TOT = 66;
-            MAX = 211;
-            break;
-
-        case 7:
-            TOT = 68;
-            MAX = 227;
-            break;
-
-        case 8:
-            TOT = 0;
-            MAX = 170;
-            break;
-
-        case 9:
-            TOT = 0;
-            MAX = 181;
-            break;
-
-        case 10:
-            TOT = 0;
-            MAX = 211;
-            break;
-
-        case 11:
-            TOT = 0;
-            MAX = 227;
-            break;
-
-        default:
-            break;
-        }
-    };
-
-#endif
 
     if (AnimIndex != Index) {
         char fname[100];

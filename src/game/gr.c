@@ -2,27 +2,6 @@
 #include "externs.h"
 #include <assert.h>
 
-#ifdef DEAD_CODE
-/** Unknown function
- * \deprecated This function is probably depricated
- */
-int
-grInitMouse(void)
-{
-    return gxSUCCESS;
-}
-#endif
-
-#ifdef DEAD_CODE
-/** Unknown function
- * \deprecated This function is probably depricated
- */
-void
-grSetMousePos(int x, int y)
-{
-}
-#endif
-
 int
 grGetMouseButtons(void)
 {

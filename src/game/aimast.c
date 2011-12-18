@@ -829,33 +829,6 @@ void MoonVoting(char plr)
     return;
 }
 
-#ifdef DEAD_CODE
-int CheckLimit(char plr, char m)
-{
-    switch (m) {
-    case 5:
-        return(Data->P[plr].Manned[0].Num);
-
-    case 6:
-        return(Data->P[plr].Manned[1].Num);
-
-    case 8:
-        return(Data->P[plr].Manned[2].Num);
-
-    case 9:
-        return(Data->P[plr].Manned[3].Num);
-
-    case 10:
-        return(Data->P[plr].Manned[4].Num);
-
-    default:
-        break;
-    }
-
-    return 0;
-}
-#endif
-
 int CheckSafety(char plr, char m)
 {
     switch (m) {
