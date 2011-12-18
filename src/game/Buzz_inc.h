@@ -66,7 +66,7 @@ int game_main(int argc, char *argv[]);
 #define ALTERED_STRUCTURE_PACKING
 
 
-#include "macros.h"		// Collected Macros
+#include "macros.h"     // Collected Macros
 
 #include "fs.h"
 

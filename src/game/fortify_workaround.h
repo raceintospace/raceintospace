@@ -14,8 +14,8 @@
 #define fread fread_fortify_workaround
 #endif
 
-size_t fread_fortify_workaround (void *buf,
-				 size_t size, size_t n, FILE *stream);
+size_t fread_fortify_workaround(void *buf,
+                                size_t size, size_t n, FILE *stream);
 
 #endif /* _FORTIFY_WORKAROUND_ */
 

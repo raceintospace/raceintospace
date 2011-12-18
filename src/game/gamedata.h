@@ -25,9 +25,9 @@ extern size_t fwrite_int16_t(const int16_t *src, size_t nelem, FILE *file);
 extern size_t fwrite_int32_t(const int32_t *src, size_t nelem, FILE *file);
 
 /** \defgroup datafiles Datafile descriptions
- * 
+ *
  * @{
- * 
+ *
  *  Document every game data file: name, structures, layout.
  *  Each structure that can exist in a file should define total
  *  size in bytes. Also declare functions for reading/writing
@@ -43,7 +43,7 @@ extern size_t fwrite_int32_t(const int32_t *src, size_t nelem, FILE *file);
  *      u8[8]* - filenames, each should be 0 terminated
  * \endverbatim
  *
- * \verbatim 
+ * \verbatim
  * File: SEQ.DAT
  * Desc: Indexes to video and audio files for successful mission stages.
  * Structure:
@@ -61,7 +61,7 @@ extern size_t fwrite_int32_t(const int32_t *src, size_t nelem, FILE *file);
  *   char[768]   -- palette
  *   uint16_t    -- length of following PCX compressed image
  *   image_data[]
- * 
+ *
  * \endverbatim
  *
  * \verbatim
@@ -97,7 +97,7 @@ struct oGROUP {
 extern size_t fread_oGROUP(struct oGROUP *dst, size_t num, FILE *f);
 
 /** Lookup table for filename to offsets
- * 
+ *
  */
 struct Table {
     char fname[8];          /**< File name */
@@ -125,8 +125,8 @@ extern size_t fread_SimpleHdr(SimpleHdr *dst, size_t num, FILE *f);
 
 #if 0
 typedef struct ReplayItem {
-   uint8_t Qty;             /* Number of Animated Sequences */
-   uint16_t Off[35];        /* Offsets to Each animated Part */
+    uint8_t Qty;             /* Number of Animated Sequences */
+    uint16_t Off[35];        /* Offsets to Each animated Part */
 } REPLAY;
 #define sizeof_REPLAY (1 + 35*2)
 extern size_t fread_REPLAY(REPLAY *dst, size_t num, FILE *f);

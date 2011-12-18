@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /** \file fs.h Definitions for filesystem
- * 
+ *
  */
 
 /** types of files - they have different locations in filesystem */
@@ -20,20 +20,20 @@ enum {
 
 /** used for saved games */
 struct ffblk {
-	char ff_name[64];
-	int ff_ftime;
-	int ff_fdate;
+    char ff_name[64];
+    int ff_ftime;
+    int ff_fdate;
 };
 
-extern FILE* sOpen(const char *name, const char *mode, int type);
-extern char* locate_file(const char *name, int type);
-extern FILE* open_gamedat(const char *name);
-extern FILE* open_savedat(const char *name, const char *mode);
+extern FILE *sOpen(const char *name, const char *mode, int type);
+extern char *locate_file(const char *name, int type);
+extern FILE *open_gamedat(const char *name);
+extern FILE *open_savedat(const char *name, const char *mode);
 extern char *slurp_gamedat(const char *name);
 extern int create_save_dir(void);
 extern int remove_savedat(const char *name);
-extern int first_saved_game (struct ffblk *ffblk);
-extern int next_saved_game (struct ffblk *ffblk);
+extern int first_saved_game(struct ffblk *ffblk);
+extern int next_saved_game(struct ffblk *ffblk);
 extern void fix_pathsep(char *path);
 
 #endif /* _FS_H */

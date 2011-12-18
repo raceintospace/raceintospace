@@ -24,141 +24,146 @@
 LOG_DEFAULT_CATEGORY(utils)
 
 double
-get_time (void)
+get_time(void)
 {
 #ifdef CONFIG_WIN32
     /* mingw was complaining */
-	struct _timeb tb;
+    struct _timeb tb;
 
-	_ftime(&tb);
-	return tb.time + tb.millitm / 1e3;
+    _ftime(&tb);
+    return tb.time + tb.millitm / 1e3;
 #else
-	struct timeval tv;
+    struct timeval tv;
 
-	gettimeofday(&tv, NULL);
-	return tv.tv_sec + tv.tv_usec / 1e6;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + tv.tv_usec / 1e6;
 #endif
 }
 
 int
-xstrcasecmp (const char *a, const char *b)
+xstrcasecmp(const char *a, const char *b)
 {
-	while (*a) {
-		if (tolower (*a & 0xff) != tolower (*b & 0xff))
-			break;
-		a++;
-		b++;
-	}
-	return (tolower(*a) - tolower(*b));
+    while (*a) {
+        if (tolower(*a & 0xff) != tolower(*b & 0xff)) {
+            break;
+        }
+
+        a++;
+        b++;
+    }
+
+    return (tolower(*a) - tolower(*b));
 }
 
 int
-xstrncasecmp (const char *a, const char *b, size_t n)
+xstrncasecmp(const char *a, const char *b, size_t n)
 {
-	while (n && *a) {
-		if (tolower (*a & 0xff) != tolower (*b & 0xff))
-			break;
-		a++;
-		b++;
-		n--;
-	}
-	return (tolower(*a) - tolower(*b));
+    while (n && *a) {
+        if (tolower(*a & 0xff) != tolower(*b & 0xff)) {
+            break;
+        }
+
+        a++;
+        b++;
+        n--;
+    }
+
+    return (tolower(*a) - tolower(*b));
 }
 
 void *
-xmalloc (size_t n)
+xmalloc(size_t n)
 {
-	void *p = malloc(n);
+    void *p = malloc(n);
 
-	if (!p)
-	{
-		CRITICAL2("allocation failure: %s", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+    if (!p) {
+        CRITICAL2("allocation failure: %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
-	return (p);
+    return (p);
 }
 
 void *
-xcalloc (size_t a, size_t b)
+xcalloc(size_t a, size_t b)
 {
-	void *p = calloc(a, b);
+    void *p = calloc(a, b);
 
-	if (!p)
-	{
-		CRITICAL2("callocation failure: %s", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+    if (!p) {
+        CRITICAL2("callocation failure: %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
-	return (p);
+    return (p);
 }
 
 /** duplicates a string and returns a pointer to the new string
  */
 char *
-xstrdup (const char *s)
+xstrdup(const char *s)
 {
-	void *p;
+    void *p;
 
-	p = xmalloc (strlen (s) + 1);
-	strcpy (p, s);
-	return (p);
+    p = xmalloc(strlen(s) + 1);
+    strcpy(p, s);
+    return (p);
 }
 
 char *
-xstrcat2 (const char* s1, const char* s2)
+xstrcat2(const char *s1, const char *s2)
 {
-	char *s = NULL;
-	assert(s1 && s2);
-	s = xmalloc(strlen(s1) + strlen(s2) + 1);
-	strcpy(s, s1);
-	strcat(s, s2);
-	return s;
+    char *s = NULL;
+    assert(s1 && s2);
+    s = xmalloc(strlen(s1) + strlen(s2) + 1);
+    strcpy(s, s1);
+    strcat(s, s2);
+    return s;
 }
 
 void *
 xrealloc(void *ptr, size_t size)
 {
-	void *p = realloc(ptr, size);
+    void *p = realloc(ptr, size);
 
-	if (!p)
-    {
-		CRITICAL2("reallocation failure: %s", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+    if (!p) {
+        CRITICAL2("reallocation failure: %s", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
-	return (p);
+    return (p);
 }
 
 ssize_t
 fread_dyn(char **destp, size_t *n, FILE *stream)
 {
     const unsigned bsize = 8192;
-    size_t total = 0, cnt = 0; 
+    size_t total = 0, cnt = 0;
 
     assert(destp);
     assert(n);
     assert(stream);
 
-    if (!*destp) 
+    if (!*destp) {
         *destp = xmalloc(*n = bsize);
+    }
 
     while (1) {
-        cnt = fread(*destp+total, 1, *n-total, stream);
-        if (cnt != *n-total)
-        {
-            if (feof(stream))
-                return total+cnt;
-            else if (ferror(stream))
-			{
-				CWARNING3(filesys, "read error: %s", strerror(errno));
+        cnt = fread(*destp + total, 1, *n - total, stream);
+
+        if (cnt != *n - total) {
+            if (feof(stream)) {
+                return total + cnt;
+            } else if (ferror(stream)) {
+                CWARNING3(filesys, "read error: %s", strerror(errno));
                 return -1;
-			}
+            }
         }
+
         total += cnt;
 
-        if (*n <= total)
+        if (*n <= total) {
             *destp = xrealloc(*destp, *n *= 2);
+        }
     }
 }
 

@@ -23,631 +23,999 @@ extern char AI[2];
 extern struct mStr Mis;
 
 /**
- * 
+ *
  * \return true (1) if need to scrub mission because of crews
  */
-char CheckCrewOK(char plr,char pad)
+char CheckCrewOK(char plr, char pad)
 {
- char RT_value=0;
- int P_crew,B_crew,prog,mis;
- P_crew=Data->P[plr].Mission[pad].PCrew-1;
- B_crew=Data->P[plr].Mission[pad].BCrew-1;
- prog=Data->P[plr].Mission[pad].Prog;
- mis=Data->P[plr].Mission[pad].MissionCode;
- if (mis!=0 && Data->P[plr].Gcnt[prog][P_crew]==0 && Data->P[plr].Gcnt[prog][B_crew]==0
-     && Data->P[plr].Mission[pad].Men>0)
-  {
-   if (!AI[plr])
-    {
-     switch(pad)
-      {
-       case 0:Help("i138");break;
-       case 1:Help("i139");break;
-       case 2:Help("i140");break;
-       default:break;
-      };
-     RT_value=1;
-    }  
-  }
- return(RT_value);
- }
+    char RT_value = 0;
+    int P_crew, B_crew, prog, mis;
+    P_crew = Data->P[plr].Mission[pad].PCrew - 1;
+    B_crew = Data->P[plr].Mission[pad].BCrew - 1;
+    prog = Data->P[plr].Mission[pad].Prog;
+    mis = Data->P[plr].Mission[pad].MissionCode;
+
+    if (mis != 0 && Data->P[plr].Gcnt[prog][P_crew] == 0 && Data->P[plr].Gcnt[prog][B_crew] == 0
+        && Data->P[plr].Mission[pad].Men > 0) {
+        if (!AI[plr]) {
+            switch (pad) {
+            case 0:
+                Help("i138");
+                break;
+
+            case 1:
+                Help("i139");
+                break;
+
+            case 2:
+                Help("i140");
+                break;
+
+            default:
+                break;
+            };
+
+            RT_value = 1;
+        }
+    }
+
+    return(RT_value);
+}
 
 
 void Replace_Snaut(char plr)
 {
- int i,j,k,temp;
- for (k=0;k<6;k++)
-  {
-   for (j=0;j<8;j++)
-    {
-     temp=0;
-     if (Data->P[plr].Gcnt[k][j]>0)
-      {
-	    for (i=0;i<Data->P[plr].Gcnt[k][j]+1;i++)
-        {
-	      if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Status==AST_ST_DEAD ||
-	       Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Status==AST_ST_RETIRED ||
-	       Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Status==AST_ST_INJURED)
-		     temp++;
-	     }
-  	    if (temp>0)
-        {
-	      for (i=0;i<Data->P[plr].Gcnt[k][j]+1;i++)
-          {
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].oldAssign=
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Assign;
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Assign=0;
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Crew=0;
-           Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Prime=0;
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Task=0;
-	        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Moved=0;
-	        if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Special==0)
-		      Data->P[plr].Pool[Data->P[plr].Crew[k][j][i]-1].Special=6;
-		     Data->P[plr].Crew[k][j][i]=0;
-	       }
-	      Data->P[plr].Gcnt[k][j]=0;
-	    }
-	  }
+    int i, j, k, temp;
+
+    for (k = 0; k < 6; k++) {
+        for (j = 0; j < 8; j++) {
+            temp = 0;
+
+            if (Data->P[plr].Gcnt[k][j] > 0) {
+                for (i = 0; i < Data->P[plr].Gcnt[k][j] + 1; i++) {
+                    if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_DEAD ||
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_RETIRED ||
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_INJURED) {
+                        temp++;
+                    }
+                }
+
+                if (temp > 0) {
+                    for (i = 0; i < Data->P[plr].Gcnt[k][j] + 1; i++) {
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].oldAssign =
+                            Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign;
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign = 0;
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Crew = 0;
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Prime = 0;
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Task = 0;
+                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Moved = 0;
+
+                        if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Special == 0) {
+                            Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Special = 6;
+                        }
+
+                        Data->P[plr].Crew[k][j][i] = 0;
+                    }
+
+                    Data->P[plr].Gcnt[k][j] = 0;
+                }
+            }
+        }
     }
-  }
- return;
+
+    return;
 }
 
 char REvent(char plr)
 {
-  FILE *fin;
-  int32_t NoMods=1,i=0,j=0;
-  int16_t m;
-  if (NoMods==1)
-  {
-    m=0;
-    if (Data->P[plr].Budget<40) Data->P[plr].Budget=40;
-    if (Data->P[plr].Budget<=50) j=0;
-    if (Data->P[plr].Budget>50 && Data->P[plr].Budget<=90) j=1;
-    if (Data->P[plr].Budget>90 && Data->P[plr].Budget<=110) j=2;
-    if (Data->P[plr].Budget>110 && Data->P[plr].Budget<=140) j=3;
-    if (Data->P[plr].Budget>140 && Data->P[plr].Budget<=160) j=4;
-    if (Data->P[plr].Budget>160) j=5;
+    FILE *fin;
+    int32_t NoMods = 1, i = 0, j = 0;
+    int16_t m;
 
-    fin=sOpen("NTABLE.DAT","rb",0);
-    fseek(fin,(sizeof (int16_t)) * ((plr*60) + (j*10) + random(10)) ,SEEK_SET);
-    fread(&m,sizeof m,1,fin);
-		Swap16bit(m);
+    if (NoMods == 1) {
+        m = 0;
+
+        if (Data->P[plr].Budget < 40) {
+            Data->P[plr].Budget = 40;
+        }
+
+        if (Data->P[plr].Budget <= 50) {
+            j = 0;
+        }
+
+        if (Data->P[plr].Budget > 50 && Data->P[plr].Budget <= 90) {
+            j = 1;
+        }
+
+        if (Data->P[plr].Budget > 90 && Data->P[plr].Budget <= 110) {
+            j = 2;
+        }
+
+        if (Data->P[plr].Budget > 110 && Data->P[plr].Budget <= 140) {
+            j = 3;
+        }
+
+        if (Data->P[plr].Budget > 140 && Data->P[plr].Budget <= 160) {
+            j = 4;
+        }
+
+        if (Data->P[plr].Budget > 160) {
+            j = 5;
+        }
+
+        fin = sOpen("NTABLE.DAT", "rb", 0);
+        fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + random(10)) , SEEK_SET);
+        fread(&m, sizeof m, 1, fin);
+        Swap16bit(m);
 //    m=BudgetMods[Data->P[plr].Level][(j*10)+random(10)];  // orig code
-    fclose(fin);
+        fclose(fin);
 
-    Data->P[plr].Budget+=m;
-    /*grSetColor(15);
-    PrintAt(200,30,"BUDGET MOD: ");
-    if (m<0) {PrintAt(0,0,"-");m*=-1;};
-    DispNum(0,0,m);
-    PrintAt(200,40,"BUDGET: ");
-    DispNum(0,0,Data->P[plr].Budget);
-    DispNum(100,10,Data->Events[Data->Count]);*/
-  } /* end if */
+        Data->P[plr].Budget += m;
+        /*grSetColor(15);
+        PrintAt(200,30,"BUDGET MOD: ");
+        if (m<0) {PrintAt(0,0,"-");m*=-1;};
+        DispNum(0,0,m);
+        PrintAt(200,40,"BUDGET: ");
+        DispNum(0,0,Data->P[plr].Budget);
+        DispNum(100,10,Data->Events[Data->Count]);*/
+    } /* end if */
 
-  if (Data->Year<=60 && Data->Events[Data->Count]>44) return 1;
-  if (Data->Year<=62 && Data->Events[Data->Count]>63) return 1;
-  if (Data->Year<=65 && Data->Events[Data->Count]>80) return 1;
+    if (Data->Year <= 60 && Data->Events[Data->Count] > 44) {
+        return 1;
+    }
 
-  switch(Data->Events[Data->Count])
-  {
-   case  0: NoMods=0;break;    // Nothing Event
-   case  1: case 44: case 59: case 63:  // Nothing Events
-   case 67: case 68: case 69: case 70:
-   case 71: case 72: case 73: case 74:
-   case 75: case 81: case 86:
-   case 87: case 88: case 90: case 97:
-   case 98: break;
+    if (Data->Year <= 62 && Data->Events[Data->Count] > 63) {
+        return 1;
+    }
 
-   // Cash Modifier Events --------------------------
+    if (Data->Year <= 65 && Data->Events[Data->Count] > 80) {
+        return 1;
+    }
 
-     case 30: case 32:
-	      evflag=random(10)+1;
-	      Data->P[plr].Cash+=evflag;
-	      break;
+    switch (Data->Events[Data->Count]) {
+    case  0:
+        NoMods = 0;
+        break;    // Nothing Event
 
-     case 31: evflag=random(6)+random(6)+random(6)+3;
-	      Data->P[plr].Cash+=evflag;
-	      break;
+    case  1:
+    case 44:
+    case 59:
+    case 63:  // Nothing Events
+    case 67:
+    case 68:
+    case 69:
+    case 70:
+    case 71:
+    case 72:
+    case 73:
+    case 74:
+    case 75:
+    case 81:
+    case 86:
+    case 87:
+    case 88:
+    case 90:
+    case 97:
+    case 98:
+        break;
 
-     case 33:if (Data->P[plr].Cash<10) return 1;
-         evflag=Data->P[plr].Cash/10;
-	      Data->P[plr].Cash-=evflag;
-	      break;
+        // Cash Modifier Events --------------------------
 
-   // Budget Modifier Events ------------------------
+    case 30:
+    case 32:
+        evflag = random(10) + 1;
+        Data->P[plr].Cash += evflag;
+        break;
 
-     case  9: case 76: // Budget increase of 15 MB
-	      Data->P[plr].Budget+=15;
-	      NoMods=0;
-	      break;
+    case 31:
+        evflag = random(6) + random(6) + random(6) + 3;
+        Data->P[plr].Cash += evflag;
+        break;
 
-     case 45: // increase budget by total two 10 side dice this year
-	      evflag=random(10)+random(10)+2;
-	      Data->P[plr].Budget+=evflag;
-	      NoMods=0;
-	      break;
+    case 33:
+        if (Data->P[plr].Cash < 10) {
+            return 1;
+        }
 
-     case 46: // increase budget by 5 MB's
-	      Data->P[plr].Budget+=5;
-	      NoMods=0;
-	      break;
+        evflag = Data->P[plr].Cash / 10;
+        Data->P[plr].Cash -= evflag;
+        break;
 
-     case 91: // increase budget by 20MB's in the budget
-	      if (Data->Year>65) return 1;
-	      Data->P[plr].Budget+=20;
-	      NoMods=0;
-	      break;
+        // Budget Modifier Events ------------------------
 
-     case 92: // 20% or 20MB's whichever is less
-	      if ((Data->P[plr].Budget/5) < 20) evflag=Data->P[plr].Budget*4/5;
-	       else evflag=20;
-	      Data->P[plr].Budget-=evflag;
-	      break;
+    case  9:
+    case 76: // Budget increase of 15 MB
+        Data->P[plr].Budget += 15;
+        NoMods = 0;
+        break;
 
-     case 95: // 30% or 30MB's whichever is less
-	      if ((Data->P[plr].Budget/3) < 30) evflag=Data->P[plr].Budget*7/10;
-	       else evflag=30;
-	      Data->P[plr].Budget-=evflag;
-	      evflag=Data->P[plr].Budget;
-	      break;
+    case 45: // increase budget by total two 10 side dice this year
+        evflag = random(10) + random(10) + 2;
+        Data->P[plr].Budget += evflag;
+        NoMods = 0;
+        break;
 
-     case 96: // 25% or 25Mb's whichever is less
-	      if (Data->Year>72) return 1;
-	      if ((Data->P[plr].Budget/4) < 25) evflag=Data->P[plr].Budget*3/4;
-	       else evflag=25;
-	      Data->P[plr].Budget-=evflag;
-	      evflag=Data->P[plr].Budget;
-	      break;
+    case 46: // increase budget by 5 MB's
+        Data->P[plr].Budget += 5;
+        NoMods = 0;
+        break;
 
-     case 99:// deduct 5 M.B.s from budget
-         Data->P[plr].Budget-=5;
-         break;
+    case 91: // increase budget by 20MB's in the budget
+        if (Data->Year > 65) {
+            return 1;
+        }
 
-   // RD Modifier Events ----------------------------
+        Data->P[plr].Budget += 20;
+        NoMods = 0;
+        break;
 
-     case  2: case 12: case 13: case 14:  // RD improve by 1 : season
-     case 15: case 16: case 17: case 18:
-	      Data->P[plr].RDMods+=1;
-	      break;
+    case 92: // 20% or 20MB's whichever is less
+        if ((Data->P[plr].Budget / 5) < 20) {
+            evflag = Data->P[plr].Budget * 4 / 5;
+        } else {
+            evflag = 20;
+        }
 
-     case  3: case 61: case 62:// Minus one on all R&D for ONE year
-	      Data->P[plr].RDMods-=1;
-	      Data->P[plr].RDYear=-1;
-	      break;
+        Data->P[plr].Budget -= evflag;
+        break;
 
-     case 19: // minus 2 on each die roll for R&D this turn
-	      Data->P[plr].RDMods-=2;
-	      break;
+    case 95: // 30% or 30MB's whichever is less
+        if ((Data->P[plr].Budget / 3) < 30) {
+            evflag = Data->P[plr].Budget * 7 / 10;
+        } else {
+            evflag = 30;
+        }
 
-     case 41: // R&D will decrease for one year
-	      Data->P[plr].RDMods-=2;
-	      Data->P[plr].RDYear-=2;
-	      break;
+        Data->P[plr].Budget -= evflag;
+        evflag = Data->P[plr].Budget;
+        break;
 
-     case 42: case 43: /* increment R&D cost by 1 on particular program */
-	      evflag=RDMods(plr,0,1,1);
-	      if (evflag==0) return 1;
-	      break;
+    case 96: // 25% or 25Mb's whichever is less
+        if (Data->Year > 72) {
+            return 1;
+        }
 
+        if ((Data->P[plr].Budget / 4) < 25) {
+            evflag = Data->P[plr].Budget * 3 / 4;
+        } else {
+            evflag = 25;
+        }
 
-   // Improve/Subtract Tech to Other players -------------------
+        Data->P[plr].Budget -= evflag;
+        evflag = Data->P[plr].Budget;
+        break;
 
-     case 5: case 47: // Improve tech of plr prog to other's prog
-	      evflag=Steal(plr,0,1);
-	      if (evflag==0) return 1;
-	      break;
+    case 99:// deduct 5 M.B.s from budget
+        Data->P[plr].Budget -= 5;
+        break;
 
-     case 6: case  7:
-	      // Lower tech of plr prog to other's prog
-	      evflag=Steal(plr,0,-1);
-	      if (evflag==0) return 1;
-	      break;
+        // RD Modifier Events ----------------------------
 
-   // Special Events -------------------------------------------
+    case  2:
+    case 12:
+    case 13:
+    case 14:  // RD improve by 1 : season
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+        Data->P[plr].RDMods += 1;
+        break;
 
-     case  8: // Allow females into space program
-	      Data->P[plr].Female=1;
-	      break;
+    case  3:
+    case 61:
+    case 62:// Minus one on all R&D for ONE year
+        Data->P[plr].RDMods -= 1;
+        Data->P[plr].RDYear = -1;
+        break;
 
-   // Launch Affected ------------------------------------------
+    case 19: // minus 2 on each die roll for R&D this turn
+        Data->P[plr].RDMods -= 2;
+        break;
 
-     case 4: // Next Launch must be a manned launch.  If the launch
-	      // is not so then -10 on Budget
-	      //Data->P[plr].Plans=1;
-	      break;
+    case 41: // R&D will decrease for one year
+        Data->P[plr].RDMods -= 2;
+        Data->P[plr].RDYear -= 2;
+        break;
 
-     case 10: /* Launch window for Launch #x is blocked */
-          { 
-              int choice[3] = {0,0,0};
+    case 42:
+    case 43: /* increment R&D cost by 1 on particular program */
+        evflag = RDMods(plr, 0, 1, 1);
 
-              evflag=0;
-              if (Data->P[plr].Mission[0].MissionCode > 0)
-                  choice[evflag++] = 1;
-              if (Data->P[plr].Mission[1].MissionCode > 0)
-                  choice[evflag++] = 2;
-              if (Data->P[plr].Mission[2].MissionCode > 0)
-                  choice[evflag++] = 3;
-              if (evflag==0)
-                  return 1;
-              evflag = choice[random(evflag)] - 1;
-              xMODE |= xMODE_CLOUDS;
-              ClrMiss(plr,evflag+3);
-          }
-          break;
-     case 35: // may launch only one mission this year ??? Season?!?
-         evflag=0;
-         if (Data->P[plr].Mission[0].Joint==1 ||
-              Data->P[plr].Mission[1].Joint==1) return 1;
-	      if (Data->P[plr].Mission[0].MissionCode > 0) evflag+=1;
-	      if (Data->P[plr].Mission[1].MissionCode > 0) evflag+=2;
-	      if (Data->P[plr].Mission[2].MissionCode > 0) evflag+=4;
-	      if (evflag==0) return 1;
-	      switch (evflag)
-	      {
-		    case 1: evflag=0;break;
-	       case 2: evflag=0;break;
-		    case 3: ClrMiss(plr,1+3);break;
-	     	 case 4: evflag=0;break;
-		    case 5: ClrMiss(plr,2+3);break;
-		    case 6: ClrMiss(plr,2+3);break;
-		    case 7: ClrMiss(plr,1+3);ClrMiss(plr,2+3);break;
-         };
-         if (evflag==0) return 1;
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     case 36: /* damage launch facility */
-         if (Data->P[plr].Mission[0].MissionCode==0) Data->P[plr].LaunchFacility[0]=15;
-          else return 1;
-	      break;
-
-   // Program Saving cards ------------------------------------
-
-     case 11: /* Select program and set safety save to 1 */
-	      evflag=SaveMods(plr,0);
-	      if (evflag==0) return 1;
-	      break;
-
-     case 77: // set Save for Capsule Program
-	      evflag=SaveMods(plr,3);
-	      if (evflag==0) return 1;
-	      break;
-
-     case 93: // set Save for LEM Program
-	      evflag=SaveMods(plr,4);
-	      if (evflag==0) return 1;
-	      break;
-
-     case 20: /* the most advanced rocket program is affected.
- 		   drop the safety factor in half. */
-	      evflag=0;
-	      for (i=3;i>=0;i--)
-	      if (Data->P[plr].Rocket[i].Num>=0 && Data->P[plr].Rocket[i].Safety>50) evflag++;
-	      if (evflag==0) return 1;
-	      for (i=3;i>=0;i--)
-	       if (Data->P[plr].Rocket[i].Num>=0 && Data->P[plr].Rocket[i].Safety>50)
-           {
-		      evflag=Data->P[plr].Rocket[i].Safety/2;
-		      Data->P[plr].Rocket[i].Safety-=evflag;
-		      strcpy(&Name[0],&Data->P[plr].Rocket[i].Name[0]);
-		      break;
-		    };
-	      break;
-
-     case 21: // Probes' and Sats' Max SF and RD up 5% */
-	      for (i=1;i<3;i++)
-           {
-		      Data->P[plr].Probe[i].MaxRD+=5;
-		      Data->P[plr].Probe[i].MaxSafety+=5;
-		     };
-	      for (i=1;i<3;i++)
-          {
-           if (Data->P[plr].Probe[i].MaxSafety>=99)
-		      Data->P[plr].Probe[i].MaxSafety=99;
-		     if (Data->P[plr].Probe[i].MaxRD>Data->P[plr].Probe[i].MaxSafety)
-		      Data->P[plr].Probe[i].MaxRD=Data->P[plr].Probe[i].MaxSafety;
-	       };
-	      break;
-
-   case 22: case 84: /* roll six 6-sided dice and add to the current safety
-		   factor of the program */
-	      x=random(6)+random(6)+random(6)+random(6)+random(6)+random(6)+6;
-	      evflag=NMod(plr,3,1,x);
-	      if (evflag==0) return 1;
-	      evflag=x;
-	      break;
-
-     case 23: /* this applies to the most advanced rocket program.
-	      roll six 6-sided dice and add to the current
-	      safety factor. */
-	      x=random(6)+random(6)+random(6)+random(6)+random(6)+random(6)+6;
-	      evflag=NMod(plr,2,1,x);
-	      if (evflag==0) return 1;
-	      evflag=x;
-	      break;
-
-     case 24:  /* this for most adv. satellites, roll four 6-sided
-	       dice and add to safety factor. */
-	      x=random(6)+random(6)+random(6)+random(6)+4;
-	      evflag=NMod(plr,1,1,x);
-	      if (evflag==0) return 1;
-	      evflag=x;
-	      break;
-
-     case 94:  /* this for most adv capsule, roll four 6-sided
-	       dice and add to safety factor. */
-	      x=random(6)+random(6)+random(6)+random(6)+4;
-	      evflag=NMod(plr,3,1,x);
-	      if (evflag==0) return 1;
-	      evflag=x;
-	      break;
+        break;
 
 
-     case 25:  /* the blank is all rockets. R&D can't cure it.
-	      the options are to launch one rocket at this setback,
-	      or cancel launch. - 20% if no visit to repairs.*/
-	       evflag=DamMod(plr,2,-20,15);
-	      if (evflag==0) return 1;
-	      break;
+        // Improve/Subtract Tech to Other players -------------------
 
-     case 26:  /* select most advanced manned program and reduce safety by 25%	*/
-	      evflag=NMod(plr,3,-1,25);
-	      if (evflag==0) return 1;
-	      evflag=25;
-	      break;
+    case 5:
+    case 47: // Improve tech of plr prog to other's prog
+        evflag = Steal(plr, 0, 1);
 
-     case 27:  /* select most advanced probe program and reduce safety by 15%	*/
-	      evflag=NMod(plr,1,-1,15);
-	      if (evflag==0) return 1;
-	      evflag=15;
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     case 79: evflag=NMod(plr,0,-1,20);
-	      if (evflag==0) return 1;
-	      evflag=20;
-	      break;
+        break;
 
-     case 28: // hardware cost 50% less this season
-	      Data->P[plr].TurnOnly=3;
-	      break;
+    case 6:
+    case  7:
+        // Lower tech of plr prog to other's prog
+        evflag = Steal(plr, 0, -1);
 
-     case 29: // set the delay of the rockets to 2 == one year
-	      for (i=0;i<5;i++)
-		    Data->P[plr].Rocket[i].Delay=2;
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     case 34: /* 20% loss most advanced capsule */
-	      evflag=NMod(plr,3,-1,20);
-	      if (evflag==0) return 1;
-	      evflag=20;
-	      break;
+        break;
 
-     case 37:  /* cost 10MB repear or 10% safety loss on the most advanced probe */
-	      evflag=DamMod(plr,1,-10,10);
-	      if (evflag==0) return 1;
-	      break;
+        // Special Events -------------------------------------------
 
-     case 38: case  39: /* most adv. rocket program 10 MB's or 5% safety loss */
-	      evflag=DamMod(plr,2,-5,10);
-	      if (evflag==0) return 1;
-	      break;
+    case  8: // Allow females into space program
+        Data->P[plr].Female = 1;
+        break;
 
-     case 40: /* blank a program 10 MB's or 10% safety loss */
-	      evflag=DamMod(plr,0,-10,10);
-	      if (evflag==0) return 1;
-	      break;
+        // Launch Affected ------------------------------------------
 
-     case 54: /* most advanced rocket program 15 MB's or 20% safety loss */
-	      evflag=DamMod(plr,2,-20,15);
-	      if (evflag==0) return 1;
-	      break;
+    case 4: // Next Launch must be a manned launch.  If the launch
+        // is not so then -10 on Budget
+        //Data->P[plr].Plans=1;
+        break;
 
-     case 55: /* most advanced rocket program 20 MB's or 10% safety loss */
-	      evflag=DamMod(plr,3,-10,20);
-	      if (evflag==0) return 1;
-	      break;
+    case 10: { /* Launch window for Launch #x is blocked */
+        int choice[3] = {0, 0, 0};
 
-     case 48: // safety increased for rockets up 5%
-	      evflag=SaveMods(plr,2);
-	      if (evflag==0) return 1;
-	      break;
+        evflag = 0;
+
+        if (Data->P[plr].Mission[0].MissionCode > 0) {
+            choice[evflag++] = 1;
+        }
+
+        if (Data->P[plr].Mission[1].MissionCode > 0) {
+            choice[evflag++] = 2;
+        }
+
+        if (Data->P[plr].Mission[2].MissionCode > 0) {
+            choice[evflag++] = 3;
+        }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = choice[random(evflag)] - 1;
+        xMODE |= xMODE_CLOUDS;
+        ClrMiss(plr, evflag + 3);
+    }
+    break;
+
+    case 35: // may launch only one mission this year ??? Season?!?
+        evflag = 0;
+
+        if (Data->P[plr].Mission[0].Joint == 1 ||
+            Data->P[plr].Mission[1].Joint == 1) {
+            return 1;
+        }
+
+        if (Data->P[plr].Mission[0].MissionCode > 0) {
+            evflag += 1;
+        }
+
+        if (Data->P[plr].Mission[1].MissionCode > 0) {
+            evflag += 2;
+        }
+
+        if (Data->P[plr].Mission[2].MissionCode > 0) {
+            evflag += 4;
+        }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        switch (evflag) {
+        case 1:
+            evflag = 0;
+            break;
+
+        case 2:
+            evflag = 0;
+            break;
+
+        case 3:
+            ClrMiss(plr, 1 + 3);
+            break;
+
+        case 4:
+            evflag = 0;
+            break;
+
+        case 5:
+            ClrMiss(plr, 2 + 3);
+            break;
+
+        case 6:
+            ClrMiss(plr, 2 + 3);
+            break;
+
+        case 7:
+            ClrMiss(plr, 1 + 3);
+            ClrMiss(plr, 2 + 3);
+            break;
+        };
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 36: /* damage launch facility */
+        if (Data->P[plr].Mission[0].MissionCode == 0) {
+            Data->P[plr].LaunchFacility[0] = 15;
+        } else {
+            return 1;
+        }
+
+        break;
+
+        // Program Saving cards ------------------------------------
+
+    case 11: /* Select program and set safety save to 1 */
+        evflag = SaveMods(plr, 0);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 77: // set Save for Capsule Program
+        evflag = SaveMods(plr, 3);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 93: // set Save for LEM Program
+        evflag = SaveMods(plr, 4);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 20: /* the most advanced rocket program is affected.
+           drop the safety factor in half. */
+        evflag = 0;
+
+        for (i = 3; i >= 0; i--)
+            if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
+                evflag++;
+            }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        for (i = 3; i >= 0; i--)
+            if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
+                evflag = Data->P[plr].Rocket[i].Safety / 2;
+                Data->P[plr].Rocket[i].Safety -= evflag;
+                strcpy(&Name[0], &Data->P[plr].Rocket[i].Name[0]);
+                break;
+            };
+
+        break;
+
+    case 21: // Probes' and Sats' Max SF and RD up 5% */
+        for (i = 1; i < 3; i++) {
+            Data->P[plr].Probe[i].MaxRD += 5;
+            Data->P[plr].Probe[i].MaxSafety += 5;
+        };
+
+        for (i = 1; i < 3; i++) {
+            if (Data->P[plr].Probe[i].MaxSafety >= 99) {
+                Data->P[plr].Probe[i].MaxSafety = 99;
+            }
+
+            if (Data->P[plr].Probe[i].MaxRD > Data->P[plr].Probe[i].MaxSafety) {
+                Data->P[plr].Probe[i].MaxRD = Data->P[plr].Probe[i].MaxSafety;
+            }
+        };
+
+        break;
+
+    case 22:
+    case 84: /* roll six 6-sided dice and add to the current safety
+           factor of the program */
+        x = random(6) + random(6) + random(6) + random(6) + random(6) + random(6) + 6;
+        evflag = NMod(plr, 3, 1, x);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = x;
+        break;
+
+    case 23: /* this applies to the most advanced rocket program.
+          roll six 6-sided dice and add to the current
+          safety factor. */
+        x = random(6) + random(6) + random(6) + random(6) + random(6) + random(6) + 6;
+        evflag = NMod(plr, 2, 1, x);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = x;
+        break;
+
+    case 24:  /* this for most adv. satellites, roll four 6-sided
+           dice and add to safety factor. */
+        x = random(6) + random(6) + random(6) + random(6) + 4;
+        evflag = NMod(plr, 1, 1, x);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = x;
+        break;
+
+    case 94:  /* this for most adv capsule, roll four 6-sided
+           dice and add to safety factor. */
+        x = random(6) + random(6) + random(6) + random(6) + 4;
+        evflag = NMod(plr, 3, 1, x);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = x;
+        break;
+
+
+    case 25:  /* the blank is all rockets. R&D can't cure it.
+          the options are to launch one rocket at this setback,
+          or cancel launch. - 20% if no visit to repairs.*/
+        evflag = DamMod(plr, 2, -20, 15);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 26:  /* select most advanced manned program and reduce safety by 25%  */
+        evflag = NMod(plr, 3, -1, 25);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = 25;
+        break;
+
+    case 27:  /* select most advanced probe program and reduce safety by 15%   */
+        evflag = NMod(plr, 1, -1, 15);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = 15;
+        break;
+
+    case 79:
+        evflag = NMod(plr, 0, -1, 20);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = 20;
+        break;
+
+    case 28: // hardware cost 50% less this season
+        Data->P[plr].TurnOnly = 3;
+        break;
+
+    case 29: // set the delay of the rockets to 2 == one year
+        for (i = 0; i < 5; i++) {
+            Data->P[plr].Rocket[i].Delay = 2;
+        }
+
+        break;
+
+    case 34: /* 20% loss most advanced capsule */
+        evflag = NMod(plr, 3, -1, 20);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = 20;
+        break;
+
+    case 37:  /* cost 10MB repear or 10% safety loss on the most advanced probe */
+        evflag = DamMod(plr, 1, -10, 10);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 38:
+    case  39: /* most adv. rocket program 10 MB's or 5% safety loss */
+        evflag = DamMod(plr, 2, -5, 10);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 40: /* blank a program 10 MB's or 10% safety loss */
+        evflag = DamMod(plr, 0, -10, 10);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 54: /* most advanced rocket program 15 MB's or 20% safety loss */
+        evflag = DamMod(plr, 2, -20, 15);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 55: /* most advanced rocket program 20 MB's or 10% safety loss */
+        evflag = DamMod(plr, 3, -10, 20);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 48: // safety increased for rockets up 5%
+        evflag = SaveMods(plr, 2);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
 
 // Astronaut Portion ------------------------------------
 
-     case 49: /* pick random astronaut retire, budget minus 5 MB's */
-	      evflag=0;
-     	      for (i=0;i<Data->P[plr].AstroCount;i++){
-		if (!(Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED))  
-		  evflag++;
-     	      }
-	      if (evflag==0) return 1;
-	      Data->P[plr].Budget-=5;
-	      i=random(Data->P[plr].AstroCount);
-	      while (Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED)  
-	        i=random(Data->P[plr].AstroCount);
-	      Data->P[plr].Pool[i].RDelay=2;
-	      Data->P[plr].Pool[i].Mood=10;
-	      strcpy(&Name[0],&Data->P[plr].Pool[i].Name[0]);
-	      if (plr==1) {
-	     	  Data->P[plr].Pool[i].Status=AST_ST_RETIRED;
-		     Data->P[plr].Pool[i].RDelay=0;
-	      };
-         if (Data->P[plr].Pool[i].Status==AST_ST_RETIRED)
-          Replace_Snaut(plr);
-	      break;
+    case 49: /* pick random astronaut retire, budget minus 5 MB's */
+        evflag = 0;
 
-     case 50: // backup crew will fly mission
-         evflag=0;
-	      for (i=0;i<3;i++)
-   		if (Data->P[plr].Mission[i].MissionCode>0) evflag++;
-	       if (evflag==0) return 1;
-	      i=0;
-	      while (Data->P[plr].Mission[i].MissionCode==0) i++;
-         Data->P[plr].Mission[i].PCrew=0;
-	      Data->P[plr].Mission[i].Crew=Data->P[plr].Mission[i].BCrew;
-         evflag=i;
-	      break;
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED)) {
+                evflag++;
+            }
+        }
 
-     case 51: /* astronaut killed delay all manned missons = 1 */
-	      evflag=0;
-     	   for (i=0;i<Data->P[plr].AstroCount;i++)
-		    if (!(Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED))  evflag++;
-	      if (evflag==0) return 1;
-	      Data->P[plr].Budget-=5;
-	      i=random(Data->P[plr].AstroCount);
-	      while (Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED)  
-	        i=random(Data->P[plr].AstroCount);
-	      strcpy(&Name[0],&Data->P[plr].Pool[i].Name[0]);
-	      Data->P[plr].Pool[i].Status=AST_ST_DEAD;
-	      Data->P[plr].Other=2;
-         xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
-         //cancel manned missions
-        ClrMiss(plr,0+3);ClrMiss(plr,1+3);ClrMiss(plr,2+3);
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     case 52: 
-	      evflag=0;
-     	   for (i=0;i<Data->P[plr].AstroCount;i++)
-		    if (!(Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED))  evflag++;
-	      if (evflag==0) return 1;
-	      i=random(Data->P[plr].AstroCount);
-	      while (Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED)  
-	        i=random(Data->P[plr].AstroCount);
-         strcpy(&Name[0],&Data->P[plr].Pool[i].Name[0]);
-	      Data->P[plr].Pool[i].Status=AST_ST_DEAD;
-	      Data->P[plr].Other=2;
-	      Replace_Snaut(plr);
-	      break;
+        Data->P[plr].Budget -= 5;
+        i = random(Data->P[plr].AstroCount);
 
-     case 60: case 53: evflag=0;
-     	   for (i=0;i<Data->P[plr].AstroCount;i++)
-		    if (!(Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED))  evflag++;
-	      if (evflag==0) return 1;
-	      i=random(Data->P[plr].AstroCount);
-	      while (Data->P[plr].Pool[i].Status==AST_ST_DEAD || Data->P[plr].Pool[i].Status==AST_ST_RETIRED)  
-	        i=random(Data->P[plr].AstroCount);
-         strcpy(&Name[0],&Data->P[plr].Pool[i].Name[0]);
-	      Data->P[plr].Pool[i].Status=AST_ST_INJURED;
-	      Data->P[plr].Pool[i].IDelay=2;
-	      Data->P[plr].Pool[i].Special=4;
-         Replace_Snaut(plr);
-	      break;
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            i = random(Data->P[plr].AstroCount);
+        }
 
-     case 56: /* hardware 50% less this season */
-	      Data->P[plr].TurnOnly=3;
-	      break;
+        Data->P[plr].Pool[i].RDelay = 2;
+        Data->P[plr].Pool[i].Mood = 10;
+        strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
 
-     case 57:
-          for (i=0;i<3;i++) {
-	         if (i==0 && plr==0) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"MANKE");
-	         else if (i==1 && plr==0) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"POWELL");
-	         else if (i==2 && plr==0) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"YEAGER");
-	         else if (i==0 && plr==1) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"ILYUSHIN");
-	         else if (i==1 && plr==1) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"SHIBORIN");
-	         else if (i==2 && plr==1) strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0],"DOLGOV");
-		 /* The original bonus astronauts & cosmonauts were:
-		    REEVES, CHAMBERLAIN, YEAGER & STIPPOV, SCHLICKBERND, FARGOV -Leon */
+        if (plr == 1) {
+            Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
+            Data->P[plr].Pool[i].RDelay = 0;
+        };
 
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Status=AST_ST_TRAIN_BASIC_1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Face=random(10)+1;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].Service=1;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].Compat=random(10)+1;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].CR=random(2)+1;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].CL=random(2)+1;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].Group=9;
-	         Data->P[plr].Pool[Data->P[plr].AstroCount].Mood=85+5*random(4);
- 	         Data->P[plr].AstroCount++;
-          }; 
-	      break;
+        if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            Replace_Snaut(plr);
+        }
 
-     case 58: // 50% chance explosion on pad
-	      Data->P[plr].TurnOnly=5;
-	      break;
+        break;
 
-     case 64: /* launch facility repair 10MB's */
-         for (j=0;j<20;j++)
-          {
-           i=rand()%3;
-           if (Data->P[plr].LaunchFacility[i]==1 && Data->P[plr].Mission[i].MissionCode==0) break;
-          }
-         if (j==20) return 1;
-	      /* get which of the three facilities damaged */
-	      Data->P[plr].LaunchFacility[i]=10;
-	      break;
+    case 50: // backup crew will fly mission
+        evflag = 0;
 
-     case 65: // Gemini or Voskhod will cost additional 2MB's per spacecraft
-	      if (Data->P[plr].Manned[1].Num<0) return 1;
-	      Data->P[plr].Manned[1].UnitCost+=2;  // Used to say "InitCost", which effectively disabled this newscast -Leon
-	      break;
+        for (i = 0; i < 3; i++)
+            if (Data->P[plr].Mission[i].MissionCode > 0) {
+                evflag++;
+            }
 
-     case 83: // Apollo or Soyuz will cost additional 3MB's per spacecraft
-	      if (Data->P[plr].Manned[2].Num<0) return 1;
-	      Data->P[plr].Manned[2].UnitCost+=3;
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     case 66:// mission delay
-         evflag=0;
-         for (i=0;i<3;i++) {
-          if (Data->P[plr].Mission[i].MissionCode>0) {
-           GetMisType(Data->P[plr].Mission[i].MissionCode);
-           if (!Mis.Jt) evflag++;
-           }
-         }
-         if (evflag==0) return 1;
-         i=random(3);
-         while(Data->P[plr].Mission[i].MissionCode==0 || Data->P[plr].Mission[i].Joint==1) i=random(3);
-         evflag=i;
-         memcpy(&Data->P[plr].Future[i],&Data->P[plr].Mission[i],sizeof(struct MissionType)); 
-         memset(&Data->P[plr].Mission[i],0x00,sizeof(struct MissionType));
-         for (i=0;i<Data->P[plr].Future[evflag].Men+1;i++)
-          {
-           j=Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].PCrew-1][i]-1;
-           Data->P[plr].Pool[j].Prime++;
-           j=Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].BCrew-1][i]-1;
-           Data->P[plr].Pool[j].Prime++;
-          }
-	      break;
+        i = 0;
 
-     case 78: /* most advanced capsule 10MB's or 10% safety */
-	      evflag=DamMod(plr,3,-10,10);
-	      if (evflag==0) return 1;
-	      break;
+        while (Data->P[plr].Mission[i].MissionCode == 0) {
+            i++;
+        }
 
-     case 80: // Can't Deliver any Cap/Mods this year
-        for (i=0;i<5;i++)
-          Data->P[plr].Manned[i].Delay=2;
-	      break;
+        Data->P[plr].Mission[i].PCrew = 0;
+        Data->P[plr].Mission[i].Crew = Data->P[plr].Mission[i].BCrew;
+        evflag = i;
+        break;
 
-     case 82: // Duration E Mission Required
-	      Data->P[plr].FuturePlans=5;
-	      break;
+    case 51: /* astronaut killed delay all manned missons = 1 */
+        evflag = 0;
 
-     case 85: // Primary Crew Scrubbed - Backup Will Fly
-	      evflag=0;
-	      for (i=0;i<3;i++)
-   		if (Data->P[plr].Mission[i].MissionCode>0) evflag++;
-	       if (evflag==0) return 1;
-	      i=0;
-	      while (Data->P[plr].Mission[i].MissionCode==0) i++;
-	      Data->P[plr].Mission[i].Crew=Data->P[plr].Mission[i].BCrew;
-         evflag=i;
-	      break;
+        for (i = 0; i < Data->P[plr].AstroCount; i++)
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+                evflag++;
+            }
 
-     case 89: /* random astronaut not active */
-        evflag=0;
-        for (i=0;i<Data->P[plr].AstroCount;i++)
-           if (Data->P[plr].Pool[i].Status==AST_ST_ACTIVE) evflag++;
-	      if (evflag==0) return 1;
-	      i=random(Data->P[plr].AstroCount);
-	      while(Data->P[plr].Pool[i].Status!=AST_ST_ACTIVE) i=random(Data->P[plr].AstroCount);
-	      strcpy(&Name[0],&Data->P[plr].Pool[i].Name[0]);
-	      Data->P[plr].Pool[i].Status= AST_ST_INJURED;
-	      Data->P[plr].Pool[i].IDelay=2;
-	      break;
+        if (evflag == 0) {
+            return 1;
+        }
 
-     default: break;
-  } // End of Switch
+        Data->P[plr].Budget -= 5;
+        i = random(Data->P[plr].AstroCount);
 
-  return 0;
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            i = random(Data->P[plr].AstroCount);
+        }
+
+        strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
+        Data->P[plr].Pool[i].Status = AST_ST_DEAD;
+        Data->P[plr].Other = 2;
+        xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
+        //cancel manned missions
+        ClrMiss(plr, 0 + 3);
+        ClrMiss(plr, 1 + 3);
+        ClrMiss(plr, 2 + 3);
+        break;
+
+    case 52:
+        evflag = 0;
+
+        for (i = 0; i < Data->P[plr].AstroCount; i++)
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+                evflag++;
+            }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        i = random(Data->P[plr].AstroCount);
+
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            i = random(Data->P[plr].AstroCount);
+        }
+
+        strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
+        Data->P[plr].Pool[i].Status = AST_ST_DEAD;
+        Data->P[plr].Other = 2;
+        Replace_Snaut(plr);
+        break;
+
+    case 60:
+    case 53:
+        evflag = 0;
+
+        for (i = 0; i < Data->P[plr].AstroCount; i++)
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+                evflag++;
+            }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        i = random(Data->P[plr].AstroCount);
+
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            i = random(Data->P[plr].AstroCount);
+        }
+
+        strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
+        Data->P[plr].Pool[i].Status = AST_ST_INJURED;
+        Data->P[plr].Pool[i].IDelay = 2;
+        Data->P[plr].Pool[i].Special = 4;
+        Replace_Snaut(plr);
+        break;
+
+    case 56: /* hardware 50% less this season */
+        Data->P[plr].TurnOnly = 3;
+        break;
+
+    case 57:
+        for (i = 0; i < 3; i++) {
+            if (i == 0 && plr == 0) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "MANKE");
+            } else if (i == 1 && plr == 0) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "POWELL");
+            } else if (i == 2 && plr == 0) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "YEAGER");
+            } else if (i == 0 && plr == 1) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "ILYUSHIN");
+            } else if (i == 1 && plr == 1) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "SHIBORIN");
+            } else if (i == 2 && plr == 1) {
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "DOLGOV");
+            }
+
+            /* The original bonus astronauts & cosmonauts were:
+               REEVES, CHAMBERLAIN, YEAGER & STIPPOV, SCHLICKBERND, FARGOV -Leon */
+
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Face = random(10) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = random(10) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].CR = random(2) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].CL = random(2) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * random(4);
+            Data->P[plr].AstroCount++;
+        };
+
+        break;
+
+    case 58: // 50% chance explosion on pad
+        Data->P[plr].TurnOnly = 5;
+        break;
+
+    case 64: /* launch facility repair 10MB's */
+        for (j = 0; j < 20; j++) {
+            i = rand() % 3;
+
+            if (Data->P[plr].LaunchFacility[i] == 1 && Data->P[plr].Mission[i].MissionCode == 0) {
+                break;
+            }
+        }
+
+        if (j == 20) {
+            return 1;
+        }
+
+        /* get which of the three facilities damaged */
+        Data->P[plr].LaunchFacility[i] = 10;
+        break;
+
+    case 65: // Gemini or Voskhod will cost additional 2MB's per spacecraft
+        if (Data->P[plr].Manned[1].Num < 0) {
+            return 1;
+        }
+
+        Data->P[plr].Manned[1].UnitCost += 2; // Used to say "InitCost", which effectively disabled this newscast -Leon
+        break;
+
+    case 83: // Apollo or Soyuz will cost additional 3MB's per spacecraft
+        if (Data->P[plr].Manned[2].Num < 0) {
+            return 1;
+        }
+
+        Data->P[plr].Manned[2].UnitCost += 3;
+        break;
+
+    case 66:// mission delay
+        evflag = 0;
+
+        for (i = 0; i < 3; i++) {
+            if (Data->P[plr].Mission[i].MissionCode > 0) {
+                GetMisType(Data->P[plr].Mission[i].MissionCode);
+
+                if (!Mis.Jt) {
+                    evflag++;
+                }
+            }
+        }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        i = random(3);
+
+        while (Data->P[plr].Mission[i].MissionCode == 0 || Data->P[plr].Mission[i].Joint == 1) {
+            i = random(3);
+        }
+
+        evflag = i;
+        memcpy(&Data->P[plr].Future[i], &Data->P[plr].Mission[i], sizeof(struct MissionType));
+        memset(&Data->P[plr].Mission[i], 0x00, sizeof(struct MissionType));
+
+        for (i = 0; i < Data->P[plr].Future[evflag].Men + 1; i++) {
+            j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].PCrew - 1][i] - 1;
+            Data->P[plr].Pool[j].Prime++;
+            j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].BCrew - 1][i] - 1;
+            Data->P[plr].Pool[j].Prime++;
+        }
+
+        break;
+
+    case 78: /* most advanced capsule 10MB's or 10% safety */
+        evflag = DamMod(plr, 3, -10, 10);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        break;
+
+    case 80: // Can't Deliver any Cap/Mods this year
+        for (i = 0; i < 5; i++) {
+            Data->P[plr].Manned[i].Delay = 2;
+        }
+
+        break;
+
+    case 82: // Duration E Mission Required
+        Data->P[plr].FuturePlans = 5;
+        break;
+
+    case 85: // Primary Crew Scrubbed - Backup Will Fly
+        evflag = 0;
+
+        for (i = 0; i < 3; i++)
+            if (Data->P[plr].Mission[i].MissionCode > 0) {
+                evflag++;
+            }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        i = 0;
+
+        while (Data->P[plr].Mission[i].MissionCode == 0) {
+            i++;
+        }
+
+        Data->P[plr].Mission[i].Crew = Data->P[plr].Mission[i].BCrew;
+        evflag = i;
+        break;
+
+    case 89: /* random astronaut not active */
+        evflag = 0;
+
+        for (i = 0; i < Data->P[plr].AstroCount; i++)
+            if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE) {
+                evflag++;
+            }
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        i = random(Data->P[plr].AstroCount);
+
+        while (Data->P[plr].Pool[i].Status != AST_ST_ACTIVE) {
+            i = random(Data->P[plr].AstroCount);
+        }
+
+        strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
+        Data->P[plr].Pool[i].Status = AST_ST_INJURED;
+        Data->P[plr].Pool[i].IDelay = 2;
+        break;
+
+    default:
+        break;
+    } // End of Switch
+
+    return 0;
 }

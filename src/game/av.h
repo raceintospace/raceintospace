@@ -20,24 +20,24 @@
  * minimal = 1
  */
 #define AV_DTREE_DEPTH       5
-/* 
+/*
  * Whole rectangle will be marked as dirty if fill area is higher than this
  */
 #define AV_DTREE_FILL_RATIO .8
 
-extern void av_step (void);
-extern void av_block (void);
-extern void av_setup (void);
-extern void av_silence (int channel);
-extern void av_sync (void);
+extern void av_step(void);
+extern void av_block(void);
+extern void av_setup(void);
+extern void av_silence(int channel);
+extern void av_sync(void);
 
 struct audio_chunk {
-	struct audio_chunk *next;
-	void *data;
-	unsigned size;
-	int loop;
+    struct audio_chunk *next;
+    void *data;
+    unsigned size;
+    int loop;
 };
-extern void play (struct audio_chunk *cp, int channel);
+extern void play(struct audio_chunk *cp, int channel);
 
 struct audio_channel {
     unsigned                volume;
@@ -46,17 +46,17 @@ struct audio_channel {
     unsigned                fade;            /* actual fade value */
     int                     fade_inc;        /* fade inc or dec */
 #endif
-    struct audio_chunk*     chunk;           /**< played chunk */
-    struct audio_chunk**    chunk_tailp;     /**< tail of chunk list? */
+    struct audio_chunk     *chunk;           /**< played chunk */
+    struct audio_chunk    **chunk_tailp;     /**< tail of chunk list? */
     unsigned                offset;          /**< data offset in chunk */
 };
 
 extern char AnimSoundCheck(void);
-extern void UpdateAudio (void);
+extern void UpdateAudio(void);
 extern void MuteChannel(int channel, int mute);
 
-extern double get_time (void);
-extern int bioskey (int peek);
+extern double get_time(void);
+extern int bioskey(int peek);
 
 extern int av_mouse_cur_x, av_mouse_cur_y;
 extern int av_mouse_pressed_x, av_mouse_pressed_y;

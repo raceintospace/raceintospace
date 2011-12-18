@@ -11,7 +11,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -48,7 +48,7 @@
  * resides in its ability to disable certain log statements while allowing
  * others to print unhindered. This capability assumes that the logging space,
  * that is, the space of all possible logging statements, is categorized
- * according to some developer-chosen criteria.  
+ * according to some developer-chosen criteria.
  *
  * This observation led to choosing category as the central concept of the
  * system. Every category is declared by providing a name and an optional
@@ -84,7 +84,7 @@
  * category always has an assigned threshold priority.
  *
  * Logging requests are made by invoking a logging macro on a category.
- * All of the macros have a printf-style format string followed by arguments. 
+ * All of the macros have a printf-style format string followed by arguments.
  * Because most C compilers do not support vararg macros, there is a version of
  * the macro for any number of arguments from 0 to 6. The macro name ends with
  * the total number of arguments.
@@ -144,10 +144,10 @@
  *             CWARN2(VSS, "Low fuel level.");
  *
  *             // This request is disabled, because DEBUG < INFO.
- *             CDEBUG2(VSS, "Starting search for nearest gas station."); 
+ *             CDEBUG2(VSS, "Starting search for nearest gas station.");
  *
  *             // The default category SA inherits its priority from VSS. Thus,
- *             // the following request is enabled because INFO >= INFO.  
+ *             // the following request is enabled because INFO >= INFO.
  *             INFO1("Located nearest gas station.");
  *
  *             // This request is disabled, because DEBUG < INFO.
@@ -175,7 +175,7 @@
  *
  * WHen a category is passed a message by one of the logging macros, the
  * category performs the following actions:
- * 
+ *
  * 1. if the category has an appender, the message is passed to the appender's
  *    doAppend() function,
  *
@@ -235,7 +235,7 @@
  * All logging with priority < LOG_STATIC_THRESHOLD is disabled at compile
  * time, i.e., compiled out.
  */
-  #define LOG_STATIC_THRESHOLD LP_NONE
+#define LOG_STATIC_THRESHOLD LP_NONE
 #endif
 
 /*@}*/
@@ -273,7 +273,7 @@
  */
 
 #define LOG_DEFAULT_CATEGORY(cname) \
-	static struct LogCategory* _log_defaultCategory = &_LOGV(cname);
+    static struct LogCategory* _log_defaultCategory = &_LOGV(cname);
 
 /**
  * Creates a new subcategory of the root category and makes it the default
@@ -302,7 +302,7 @@
  * where <category> is one the category names and keyword is one of the
  * following:
  *
- *      thresh  	value is an integer priority level. Sets the category's
+ *      thresh      value is an integer priority level. Sets the category's
  *                        threshold priority.
  *
  * @warning
@@ -311,7 +311,7 @@
  *
  * @todo should allow symbolic priority values.
  */
-extern const char* log_setControlString(const char* cs);
+extern const char *log_setControlString(const char *cs);
 #endif
 
 // Forward declarations
@@ -333,15 +333,15 @@ struct LogCategory {
 };
 
 struct LogAppender {
-    void (*doAppend) (struct LogAppender* thisLogAppender,
-                      struct LogEvent* event);
+    void (*doAppend)(struct LogAppender *thisLogAppender,
+                     struct LogEvent *event);
 };
 
 struct LogEvent {
-    struct LogCategory* cat;
+    struct LogCategory *cat;
     int priority;
-    char* fileName;
-    char* functionName;
+    char *fileName;
+    char *functionName;
     int lineNum;
     char *fmt;
     va_list ap;
@@ -350,22 +350,22 @@ struct LogEvent {
 /**
  * Programatically alters a category's threshold priority.
  */
-extern void log_setThreshold(struct LogCategory* cat, int thresholdPriority);
+extern void log_setThreshold(struct LogCategory *cat, int thresholdPriority);
 
 /**
  * Programatically alter a category's parent.
  */
-extern void log_setParent(struct LogCategory* cat, struct LogCategory* parent);
+extern void log_setParent(struct LogCategory *cat, struct LogCategory *parent);
 
 /**
  * Sets the category's appender.
  */
-extern void log_setAppender(struct LogCategory* cat, struct LogAppender* app);
+extern void log_setAppender(struct LogCategory *cat, struct LogAppender *app);
 
-// Functions that you shouldn't call. 
-extern void _log_logEvent(struct LogCategory* category,
-                          struct LogEvent*ev,...);
-extern int _log_initCat(int priority, struct LogCategory* category);
+// Functions that you shouldn't call.
+extern void _log_logEvent(struct LogCategory *category,
+                          struct LogEvent *ev, ...);
+extern int _log_initCat(int priority, struct LogCategory *category);
 
 extern struct LogCategory _LOGV(LOG_ROOT_CAT);
 extern struct LogAppender *log_defaultLogAppender;
@@ -401,7 +401,7 @@ extern struct LogAppender *log_defaultLogAppender;
  * structure. Since these values will be usually be passed to at least 3
  * functions, this is a win.
  * It also allows adding new values (such as a timestamp) without breaking
- * code. 
+ * code.
  * Setting the LogEvent's valist member is done inside _log_logEvent.
  * UPDATE: we set va_list to 0 to shut up the compiler.
  * UPDATE2: we don't set va_list at all to shut up the compiler :)
@@ -422,7 +422,7 @@ extern struct LogAppender *log_defaultLogAppender;
                         );                      \
      } } while(0)
 //@}
-     
+
 /** @name Logging Macros */
 //@{
 // Thank God for Emacs...

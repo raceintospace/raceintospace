@@ -32,10 +32,10 @@
 
 #ifdef DEADCODE
 
-#define FRM_Delay		25
+#define FRM_Delay       25
 
-#define STL_OFF			26715
-#define ANIM_PARTS		297
+#define STL_OFF         26715
+#define ANIM_PARTS      297
 
 extern char STEPnum, loc[4];
 extern struct MisEval Mev[60];
@@ -53,339 +53,374 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 void
 RLEF(char *dest, char *src, unsigned int src_size)
 {
-	asm push es;				// preserve ES
-	asm push ds;				// preserve DS
-	asm les di, dest;			// move dest into ES:DI
-	asm lds si, src;			// move src into DS:SI
-	asm mov cx, 0;				// clear CX
-	asm mov bx, src_size;		// move counter into BX
+    asm push es;                // preserve ES
+    asm push ds;                // preserve DS
+    asm les di, dest;           // move dest into ES:DI
+    asm lds si, src;            // move src into DS:SI
+    asm mov cx, 0;              // clear CX
+    asm mov bx, src_size;       // move counter into BX
 
-  loa:
-	asm lodsb;					   // move byte into AL
-	asm dec bx;					// decrement CX
-	asm cmp al, 0;				// compare AL to 0
-	asm jl repeat;				// if al < 0 jump to repeat
+    loa:
+    asm lodsb;                     // move byte into AL
+    asm dec bx;                 // decrement CX
+    asm cmp al, 0;              // compare AL to 0
+    asm jl repeat;              // if al < 0 jump to repeat
 
-	// copy bytes
-	asm mov ah, 0;				// clear AH
-	asm inc al;					// increment AL
-	asm mov cl, al;				// put value of AL into CL
-	asm rep movsb;				// move CX bytes from DS:SI to ES:DI
-	asm sub bx, ax;				// increment BX by approp value
-	asm cmp bx, 0;				// see if finished
-	asm jg loa;					// if not then loop
-	asm jmp bot;				// else jump to bottom
+    // copy bytes
+    asm mov ah, 0;              // clear AH
+    asm inc al;                 // increment AL
+    asm mov cl, al;             // put value of AL into CL
+    asm rep movsb;              // move CX bytes from DS:SI to ES:DI
+    asm sub bx, ax;             // increment BX by approp value
+    asm cmp bx, 0;              // see if finished
+    asm jg loa;                 // if not then loop
+    asm jmp bot;                // else jump to bottom
 
-  repeat:
-	asm neg al;					   // negate AL
-	asm inc al;					// increment AL by 1
-	asm mov cl, al;				// move counter value to CX
-	asm lodsb;					// load value to copy
+    repeat:
+    asm neg al;                    // negate AL
+    asm inc al;                 // increment AL by 1
+    asm mov cl, al;             // move counter value to CX
+    asm lodsb;                  // load value to copy
 
-  lob:
-	asm stosb;					   // copy AL into ES:DI
-	asm loop lob;				// do while CX >0
-	asm dec bx;					// decrement bx;
+    lob:
+    asm stosb;                     // copy AL into ES:DI
+    asm loop lob;               // do while CX >0
+    asm dec bx;                 // decrement bx;
 
-	asm cmp bx, 100 h;
-	asm jg sk;
-	asm int 03 h;
+    asm cmp bx, 100 h;
+    asm jg sk;
+    asm int 03 h;
 
-  sk:
-	asm cmp bx, 0;				   // see if finished
-	asm jg loa;					// if not then loop
+    sk:
+    asm cmp bx, 0;                 // see if finished
+    asm jg loa;                 // if not then loop
 
-  bot:							   // bottom of routine
-	asm pop ds;					   // restore ds
-	asm pop es;					// restore es
+    bot:                             // bottom of routine
+    asm pop ds;                    // restore ds
+    asm pop es;                 // restore es
 
-	return;
+    return;
 }
 #endif
 
 /** find and fill REPLAY structure and return 0, or -1 if failed.
  * if grp != NULL and oGROUP at offset rep->off[0] is found, then fill grp too
- * 
+ *
  * \return -1 on bad sequence
  * \return  0 in all other cases
  */
 static int
-find_replay(REPLAY * rep, struct oGROUP *grp, char player, int num,
-	const char *type)
+find_replay(REPLAY *rep, struct oGROUP *grp, char player, int num,
+            const char *type)
 {
-	FILE *fseq = NULL;
-	struct oGROUP group;
-	size_t offset = 0;
-	int retval = 0;
+    FILE *fseq = NULL;
+    struct oGROUP group;
+    size_t offset = 0;
+    int retval = 0;
 
-	assert(rep);
+    assert(rep);
 
-	/** \note uses SEQ.DAT */
-	fseq = sOpen("SEQ.DAT", "rb", 0);
-	if (!fseq)
-		return -1;
+    /** \note uses SEQ.DAT */
+    fseq = sOpen("SEQ.DAT", "rb", 0);
 
-	if (strncmp("OOOO", type, 4) == 0)
-	{
-		FILE *f = sOpen("REPLAY.DAT", "rb", 1);
+    if (!fseq) {
+        return -1;
+    }
 
-		offset = (player * 100) + num;
-		fseek(f, offset * (sizeof *rep), SEEK_SET);
-		/** \todo Uses fread() here - should be fread_REPLAY(&Rep, 1, f); */
-		fread(rep, (sizeof *rep), 1, f);
-		fclose(f);
-		if (grp && fseek(fseq, sizeof_oGROUP * rep->Off[0], SEEK_SET) == 0)
-			fread_oGROUP(grp, 1, fseq);
-	}
-	else
-	{
-		int j = 0;
+    if (strncmp("OOOO", type, 4) == 0) {
+        FILE *f = sOpen("REPLAY.DAT", "rb", 1);
 
-		while (fread_oGROUP(&group, 1, fseq))
-		{
-			if (strncmp(group.ID, "XXXX", 4) == 0)
-			{
-				/* bad sequence? */
-				retval = -1;
-				goto done;
-			}
-			if (strcmp(&group.ID[3], type) == 0)
-				break;
-			j++;
-		}
-		rep->Qty = 1;
-		rep->Off[0] = j;
-		if (grp)
-			memcpy(grp, &group, sizeof(group));
-	}
-  done:
-	if (fseq)
-		fclose(fseq);
+        offset = (player * 100) + num;
+        fseek(f, offset * (sizeof * rep), SEEK_SET);
+        /** \todo Uses fread() here - should be fread_REPLAY(&Rep, 1, f); */
+        fread(rep, (sizeof * rep), 1, f);
+        fclose(f);
 
-	return retval;
+        if (grp && fseek(fseq, sizeof_oGROUP * rep->Off[0], SEEK_SET) == 0) {
+            fread_oGROUP(grp, 1, fseq);
+        }
+    } else {
+        int j = 0;
+
+        while (fread_oGROUP(&group, 1, fseq)) {
+            if (strncmp(group.ID, "XXXX", 4) == 0) {
+                /* bad sequence? */
+                retval = -1;
+                goto done;
+            }
+
+            if (strcmp(&group.ID[3], type) == 0) {
+                break;
+            }
+
+            j++;
+        }
+
+        rep->Qty = 1;
+        rep->Off[0] = j;
+
+        if (grp) {
+            memcpy(grp, &group, sizeof(group));
+        }
+    }
+
+done:
+
+    if (fseq) {
+        fclose(fseq);
+    }
+
+    return retval;
 }
 
 /**
- * 
+ *
  * \returns nothing if find_replay() fails
  * \returns nothing if it can't open the [f]seq.dat file
  */
 void
 Replay(char plr, int num, int dx, int dy, int width, int height, char *Type)
 {
-	int keep_going;
-	int i, kk, mode, max;
-	FILE *seqf, *fseqf;
-	int32_t offset;
-	struct oGROUP group;
-	struct oFGROUP fgroup;
-	struct Table table;
-	REPLAY Rep;
+    int keep_going;
+    int i, kk, mode, max;
+    FILE *seqf, *fseqf;
+    int32_t offset;
+    struct oGROUP group;
+    struct oFGROUP fgroup;
+    struct Table table;
+    REPLAY Rep;
 
-	mm_file vidfile;
-	float fps;
-	double last_time;
-	if (find_replay(&Rep, NULL, plr, num, Type) < 0)
-		return;
+    mm_file vidfile;
+    float fps;
+    double last_time;
 
-	/** \note uses SEQ.DAT
-	 *  \note uses FSEQ.DAT
-	 */
-	seqf = sOpen("SEQ.DAT", "rb", 0);
-	fseqf = sOpen("FSEQ.DAT", "rb", 0);
+    if (find_replay(&Rep, NULL, plr, num, Type) < 0) {
+        return;
+    }
 
-	if (!seqf || !fseqf)
-	{
-		if (!seqf)
-			fclose(seqf);
-		if (!fseqf)
-			fclose(fseqf);
-		return;
-	}
+    /** \note uses SEQ.DAT
+     *  \note uses FSEQ.DAT
+     */
+    seqf = sOpen("SEQ.DAT", "rb", 0);
+    fseqf = sOpen("FSEQ.DAT", "rb", 0);
 
-	WaitForMouseUp();
+    if (!seqf || !fseqf) {
+        if (!seqf) {
+            fclose(seqf);
+        }
+
+        if (!fseqf) {
+            fclose(fseqf);
+        }
+
+        return;
+    }
+
+    WaitForMouseUp();
 
     DEBUG2("video sequence: %d segments", Rep.Qty);
-	for (kk = 0; kk < Rep.Qty; kk++)
-	{
-		DEBUG3("playing segment %d: %d", kk, Rep.Off[kk]);
-		if (Rep.Off[kk] < 1000)	   //Specs: success seq
-		{
-			fseek(seqf, Rep.Off[kk] * sizeof_oGROUP, SEEK_SET);
-			fread_oGROUP(&group, 1, seqf);
-			max = group.ID[1] - '0';
-			mode = 0;
-		}
-		else
-		{						   //Specs: failure seq
-			int j = 0;
-			// MAX 50 Tables
-			i = Rep.Off[kk] / 1000;
-			j = Rep.Off[kk] % 1000;
-			if (i == 0 || i == 50)
-				goto done;
-			i--;				   //Specs: offset index klugge
-			fseek(fseqf, i * sizeof_Table, SEEK_SET);
-			fread_Table(&table, 1, fseqf);
-			offset = table.foffset;
-			fseek(fseqf, offset + j * sizeof_oFGROUP, SEEK_SET);
-			fread_oFGROUP(&fgroup, 1, fseqf);
-			mode = 1;
-			max = fgroup.ID[1] - '0';
-		};
 
-		i = 0;
-		keep_going = 1;
-		//	update_map = 0;
-		while (keep_going && i < max)
-		{
-			int frm_idx;
-			char *seq_fname = NULL;
-			char fname[20];
+    for (kk = 0; kk < Rep.Qty; kk++) {
+        DEBUG3("playing segment %d: %d", kk, Rep.Off[kk]);
 
-			if (mode == 1)		   /* failure */
-				frm_idx = fgroup.oLIST[i].aIdx;
-			else
-				frm_idx = group.oLIST[i].aIdx;
+        if (Rep.Off[kk] < 1000) {  //Specs: success seq
+            fseek(seqf, Rep.Off[kk] * sizeof_oGROUP, SEEK_SET);
+            fread_oGROUP(&group, 1, seqf);
+            max = group.ID[1] - '0';
+            mode = 0;
+        } else {
+            //Specs: failure seq
+            int j = 0;
+            // MAX 50 Tables
+            i = Rep.Off[kk] / 1000;
+            j = Rep.Off[kk] % 1000;
 
-			/* here we should create YUV Overlay, but we can't use it on
-			 * pallettized surface, so we use a global Overlay initialized in
-			 * sdl.c. */
-			seq_fname = seq_filename(frm_idx, mode);
-			if (!seq_fname)
-				seq_fname = "(unknown)";
+            if (i == 0 || i == 50) {
+                goto done;
+            }
 
-			/** \todo assumption on file extension */
-			snprintf(fname, sizeof(fname), "%s.ogg", seq_fname);
+            i--;                   //Specs: offset index klugge
+            fseek(fseqf, i * sizeof_Table, SEEK_SET);
+            fread_Table(&table, 1, fseqf);
+            offset = table.foffset;
+            fseek(fseqf, offset + j * sizeof_oFGROUP, SEEK_SET);
+            fread_oFGROUP(&fgroup, 1, fseqf);
+            mode = 1;
+            max = fgroup.ID[1] - '0';
+        };
 
-			INFO2("opening video file `%s'", fname);
+        i = 0;
 
-			if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0)
-				goto done;
+        keep_going = 1;
 
-			/** \todo do not ignore width/height */
-			if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0)
-				goto done;
+        //  update_map = 0;
+        while (keep_going && i < max) {
+            int frm_idx;
+            char *seq_fname = NULL;
+            char fname[20];
 
-			last_time = get_time();
+            if (mode == 1) {       /* failure */
+                frm_idx = fgroup.oLIST[i].aIdx;
+            } else {
+                frm_idx = group.oLIST[i].aIdx;
+            }
 
-			while (keep_going)
-			{
-				video_rect.x = dx;
-				video_rect.y = dy;
-				video_rect.w = width;
-				video_rect.h = height;
+            /* here we should create YUV Overlay, but we can't use it on
+             * pallettized surface, so we use a global Overlay initialized in
+             * sdl.c. */
+            seq_fname = seq_filename(frm_idx, mode);
 
-				screen_dirty = 1;
+            if (!seq_fname) {
+                seq_fname = "(unknown)";
+            }
 
-				/** \todo track decoding time and adjust delays */
-				if (mm_decode_video(&vidfile, video_overlay) <= 0)
-					break;
+            /** \todo assumption on file extension */
+            snprintf(fname, sizeof(fname), "%s.ogg", seq_fname);
 
-				if (bioskey(0) || grGetMouseButtons())
-					keep_going = 0;
+            INFO2("opening video file `%s'", fname);
 
-				/** \todo idle_loop is too inaccurate for this */
-				idle_loop_secs(1.0 / fps);
-			}
+            if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0) {
+                goto done;
+            }
 
-			mm_close(&vidfile);
-			i++;
-		}
-	}
-  done:
-	mm_close(&vidfile);
-	video_rect.w = 0;
-	video_rect.h = 0;
-	fclose(fseqf);
-	fclose(seqf);
-	return;
+            /** \todo do not ignore width/height */
+            if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0) {
+                goto done;
+            }
+
+            last_time = get_time();
+
+            while (keep_going) {
+                video_rect.x = dx;
+                video_rect.y = dy;
+                video_rect.w = width;
+                video_rect.h = height;
+
+                screen_dirty = 1;
+
+                /** \todo track decoding time and adjust delays */
+                if (mm_decode_video(&vidfile, video_overlay) <= 0) {
+                    break;
+                }
+
+                if (bioskey(0) || grGetMouseButtons()) {
+                    keep_going = 0;
+                }
+
+                /** \todo idle_loop is too inaccurate for this */
+                idle_loop_secs(1.0 / fps);
+            }
+
+            mm_close(&vidfile);
+            i++;
+        }
+    }
+
+done:
+    mm_close(&vidfile);
+    video_rect.w = 0;
+    video_rect.h = 0;
+    fclose(fseqf);
+    fclose(seqf);
+    return;
 }
 
 void
 DispBaby(int x, int y, int loc, char neww)
 {
-	int i;
-	FILE *fin;
-	GXHEADER boob;
-	uint16_t *bot, off = 0;
-	int32_t locl;
+    int i;
+    FILE *fin;
+    GXHEADER boob;
+    uint16_t *bot, off = 0;
+    int32_t locl;
 
-	off = 224;
+    off = 224;
 
-	GV(&boob, 68, 46);
-	bot = (uint16_t *) boob.vptr;
+    GV(&boob, 68, 46);
+    bot = (uint16_t *) boob.vptr;
 
-	fin = sOpen("BABYPICX.CDR", "rb", 0);
-	locl = (int32_t) 1612 *loc;	// First Image
+    fin = sOpen("BABYPICX.CDR", "rb", 0);
+    locl = (int32_t) 1612 * loc; // First Image
 
-	fseek(fin, locl, SEEK_SET);
-	for (i = 0; i < 48; i++)
-		pal[off * 3 + i] = 0;
-	if (neww)
-		gxSetDisplayPalette(pal);
-	fread(&pal[off * 3], 48, 1, fin);
-	fread(boob.vptr, 1564, 1, fin);
-	fclose(fin);
+    fseek(fin, locl, SEEK_SET);
 
-	for (i = 0; i < 782; i++)
-	{
-		bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
-		bot[i] = (bot[i] & 0x0F0F);
-	}
-	for (i = 0; i < 1564; i++)
-	{
-		boob.vptr[i] += off;
-		boob.vptr[1564 + i] += off;
-	}
+    for (i = 0; i < 48; i++) {
+        pal[off * 3 + i] = 0;
+    }
 
-	gxPutImage(&boob, gxSET, x, y, 0);
-	if (neww)
-		gxSetDisplayPalette(pal);
-	DV(&boob);
+    if (neww) {
+        gxSetDisplayPalette(pal);
+    }
 
-	return;
+    fread(&pal[off * 3], 48, 1, fin);
+    fread(boob.vptr, 1564, 1, fin);
+    fclose(fin);
+
+    for (i = 0; i < 782; i++) {
+        bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
+        bot[i] = (bot[i] & 0x0F0F);
+    }
+
+    for (i = 0; i < 1564; i++) {
+        boob.vptr[i] += off;
+        boob.vptr[1564 + i] += off;
+    }
+
+    gxPutImage(&boob, gxSET, x, y, 0);
+
+    if (neww) {
+        gxSetDisplayPalette(pal);
+    }
+
+    DV(&boob);
+
+    return;
 }
 
 void
 AbzFrame(char plr, int num, int dx, int dy, int width, int height,
-	char *Type, char mode)
+         char *Type, char mode)
 {
-	int idx = 0;
-	struct oGROUP grp;
-	REPLAY Rep;
+    int idx = 0;
+    struct oGROUP grp;
+    REPLAY Rep;
 
-	/* force mode to zero */
-	mode = 0;
+    /* force mode to zero */
+    mode = 0;
 
-	char fname[100];
-	mm_file vidfile;
+    char fname[100];
+    mm_file vidfile;
 
-	memset(&grp, 0, sizeof grp);
+    memset(&grp, 0, sizeof grp);
 
-	if (find_replay(&Rep, &grp, plr, num, Type) < 0)
-		return;
+    if (find_replay(&Rep, &grp, plr, num, Type) < 0) {
+        return;
+    }
 
-	idx = grp.oLIST[0].aIdx;
+    idx = grp.oLIST[0].aIdx;
 
-	/* XXX use a generic function */
-	snprintf(fname, sizeof(fname), "%s.ogg", seq_filename(idx, mode));
+    /* XXX use a generic function */
+    snprintf(fname, sizeof(fname), "%s.ogg", seq_filename(idx, mode));
 
-	INFO2("opening video file `%s'", fname);
-	if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0)
-		return;
+    INFO2("opening video file `%s'", fname);
 
-	if (mm_video_info(&vidfile, NULL, NULL, NULL) <= 0)
-		goto done;
+    if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0) {
+        return;
+    }
 
-	if (mm_decode_video(&vidfile, video_overlay) <= 0)
-		goto done;
+    if (mm_video_info(&vidfile, NULL, NULL, NULL) <= 0) {
+        goto done;
+    }
 
-	video_rect.x = dx;
-	video_rect.y = dy;
-	video_rect.w = width;
-	video_rect.h = height;
+    if (mm_decode_video(&vidfile, video_overlay) <= 0) {
+        goto done;
+    }
 
-  done:
-	mm_close(&vidfile);
+    video_rect.x = dx;
+    video_rect.y = dy;
+    video_rect.w = width;
+    video_rect.h = height;
+
+done:
+    mm_close(&vidfile);
 }

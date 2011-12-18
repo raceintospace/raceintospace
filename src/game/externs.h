@@ -16,17 +16,17 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 // Key EXTERN Support File
-  extern struct Players *Data;
-  extern int x,y,mousebuttons,key;
-  extern unsigned char *screen;
-  extern unsigned char LOAD,ZOND,QUIT,FADE,XMAS;
-  extern unsigned char pal[3*256];
-  extern char plr[2],Name[20],IDT[5],IKEY[5];
-  extern char * buffer;
-  extern GXHEADER vhptr,vhptr2;
-  extern char * oldpal;
-  extern int32_t xMODE;
-  extern char *S_Name[];
-  extern int cdROM,hDISK;
-  extern int screen_dirty;
-  extern int evflag; /* news.c, used in news_seq.c */
+extern struct Players *Data;
+extern int x, y, mousebuttons, key;
+extern unsigned char *screen;
+extern unsigned char LOAD, ZOND, QUIT, FADE, XMAS;
+extern unsigned char pal[3 * 256];
+extern char plr[2], Name[20], IDT[5], IKEY[5];
+extern char *buffer;
+extern GXHEADER vhptr, vhptr2;
+extern char *oldpal;
+extern int32_t xMODE;
+extern char *S_Name[];
+extern int cdROM, hDISK;
+extern int screen_dirty;
+extern int evflag; /* news.c, used in news_seq.c */

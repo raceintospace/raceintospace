@@ -28,14 +28,14 @@ get_uint8_t(const void *buf)
         return get_uint ## from ##_t (buf) \
         | (get_uint ## from##_t ((const char*)buf + (from)/8) << (from)); \
     } \
-
+ 
 #define DECL_SIGNED_GET(bits) \
     static inline int ## bits ## _t \
     get_int ## bits ##_t (const void *buf) \
     { \
         return (int ## bits ## _t) get_uint ## bits ##_t (buf);  \
     } \
-
+ 
 DECL_UNSIGNED_GET(16, 8)
 DECL_UNSIGNED_GET(32, 16)
 DECL_SIGNED_GET(8)
@@ -57,14 +57,14 @@ put_uint8_t(void *buf, uint8_t v)
         put_uint ## from ##_t ((char*)buf + (from)/8, \
                 (v >> (from)) & ((1L << (from))-1)); \
     } \
-
+ 
 #define DECL_SIGNED_PUT(bits) \
     static inline void \
     put_int ## bits ##_t (void *buf, int##bits##_t v) \
     { \
         put_uint ## bits ## _t (buf, (uint##bits##_t)v); \
     } \
-
+ 
 DECL_UNSIGNED_PUT(16, 8)
 DECL_UNSIGNED_PUT(32, 16)
 DECL_SIGNED_PUT(8)
@@ -81,7 +81,7 @@ DECL_SIGNED_PUT(32)
         } \
         return elems; \
     } \
-
+ 
 #define DECL_xINT_FWRITE(bits, sign) \
     size_t fwrite_##sign##int##bits##_t \
         (const sign##int##bits##_t *p, size_t n, FILE *f) { \
@@ -98,19 +98,19 @@ DECL_SIGNED_PUT(32)
         } \
         return total; \
     } \
-
-DECL_xINT_FREAD(8, )
-DECL_xINT_FREAD(16, )
-DECL_xINT_FREAD(32, )
+ 
+DECL_xINT_FREAD(8,)
+DECL_xINT_FREAD(16,)
+DECL_xINT_FREAD(32,)
 DECL_xINT_FREAD(8, u)
-DECL_xINT_FREAD(16,u)
-DECL_xINT_FREAD(32,u)
-DECL_xINT_FWRITE(8, )
-DECL_xINT_FWRITE(16, )
-DECL_xINT_FWRITE(32, )
+DECL_xINT_FREAD(16, u)
+DECL_xINT_FREAD(32, u)
+DECL_xINT_FWRITE(8,)
+DECL_xINT_FWRITE(16,)
+DECL_xINT_FWRITE(32,)
 DECL_xINT_FWRITE(8, u)
-DECL_xINT_FWRITE(16,u)
-DECL_xINT_FWRITE(32,u)
+DECL_xINT_FWRITE(16, u)
+DECL_xINT_FWRITE(32, u)
 
 /* Boilerplate macrology for structure types */
 
@@ -133,7 +133,7 @@ fread_##type(struct type *dst, size_t num, FILE *f) \
     } \
     return total; \
 } \
-
+ 
 #define DECL_FWRITE(struct, type, bufelems) \
 size_t \
 fwrite_##type(const struct type *src, size_t num, FILE *f) \
@@ -153,27 +153,27 @@ fwrite_##type(const struct type *src, size_t num, FILE *f) \
     } \
     return total; \
 } \
-
+ 
 #define DECL_GET_START(struct, type) \
 static inline void \
 get_##type (struct type *dst, const uint8_t *src) \
 { \
     int i = 0; \
-
+ 
 #define DECL_GET_FIELD_SCALAR(type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         *(((type *)&dst->name)+i) = get_##type(src); \
         src += sizeof_##type; \
     } \
-
+ 
 #define DECL_GET_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         get_##type((((str type *)&dst->name)+i), src); \
         src += sizeof_##type; \
     } \
-
+ 
 #define DECL_GET_END }
 
 #define DECL_PUT_START(struct, type) \
@@ -181,21 +181,21 @@ static inline void \
 put_##type (uint8_t *dst, const struct type *src) \
 { \
     int i = 0; \
-
+ 
 #define DECL_PUT_FIELD_SCALAR(type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, *(((type *)&src->name)+i)); \
         dst += sizeof_##type; \
     } \
-
+ 
 #define DECL_PUT_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, ((str type *)(&src->name))+i); \
         dst += sizeof_##type; \
     } \
-
+ 
 #define DECL_PUT_END }
 
 /* START STRUCTURES */
@@ -211,13 +211,13 @@ put_##type (uint8_t *dst, const struct type *src) \
 /* oLIST */
 
 DECL_GET_START(struct, oLIST)
-    DECL_GET_FIELD_SCALAR(int16_t, aIdx, 1)
-    DECL_GET_FIELD_SCALAR(int16_t, sIdx, 1)
+DECL_GET_FIELD_SCALAR(int16_t, aIdx, 1)
+DECL_GET_FIELD_SCALAR(int16_t, sIdx, 1)
 DECL_GET_END
 
 DECL_PUT_START(struct, oLIST)
-    DECL_PUT_FIELD_SCALAR(int16_t, aIdx, 1)
-    DECL_PUT_FIELD_SCALAR(int16_t, sIdx, 1)
+DECL_PUT_FIELD_SCALAR(int16_t, aIdx, 1)
+DECL_PUT_FIELD_SCALAR(int16_t, sIdx, 1)
 DECL_PUT_END
 
 /* DECL_FREAD(struct, oLIST, 32) */
@@ -226,13 +226,13 @@ DECL_PUT_END
 /* oGROUP */
 
 DECL_GET_START(struct, oGROUP)
-    DECL_GET_FIELD_SCALAR(uint8_t, ID, 10)
-    DECL_GET_FIELD_STRUCT(struct, oLIST, oLIST, 5)
+DECL_GET_FIELD_SCALAR(uint8_t, ID, 10)
+DECL_GET_FIELD_STRUCT(struct, oLIST, oLIST, 5)
 DECL_GET_END
 
 DECL_PUT_START(struct, oGROUP)
-    DECL_PUT_FIELD_SCALAR(uint8_t, ID, 10)
-    DECL_PUT_FIELD_STRUCT(struct, oLIST, oLIST, 5)
+DECL_PUT_FIELD_SCALAR(uint8_t, ID, 10)
+DECL_PUT_FIELD_STRUCT(struct, oLIST, oLIST, 5)
 DECL_PUT_END
 
 DECL_FREAD(struct, oGROUP, 32)
@@ -241,15 +241,15 @@ DECL_FREAD(struct, oGROUP, 32)
 /* Table */
 
 DECL_GET_START(struct, Table)
-    DECL_GET_FIELD_SCALAR(uint8_t, fname, 8)
-    DECL_GET_FIELD_SCALAR(int32_t, foffset, 1)
-    DECL_GET_FIELD_SCALAR(uint16_t, size, 1)
+DECL_GET_FIELD_SCALAR(uint8_t, fname, 8)
+DECL_GET_FIELD_SCALAR(int32_t, foffset, 1)
+DECL_GET_FIELD_SCALAR(uint16_t, size, 1)
 DECL_GET_END
 
 DECL_PUT_START(struct, Table)
-    DECL_PUT_FIELD_SCALAR(uint8_t, fname, 8)
-    DECL_PUT_FIELD_SCALAR(int32_t, foffset, 1)
-    DECL_PUT_FIELD_SCALAR(uint16_t, size, 1)
+DECL_PUT_FIELD_SCALAR(uint8_t, fname, 8)
+DECL_PUT_FIELD_SCALAR(int32_t, foffset, 1)
+DECL_PUT_FIELD_SCALAR(uint16_t, size, 1)
 DECL_PUT_END
 
 DECL_FREAD(struct, Table, 32)
@@ -258,13 +258,13 @@ DECL_FREAD(struct, Table, 32)
 /* oFGROUP */
 
 DECL_GET_START(struct, oFGROUP)
-    DECL_GET_FIELD_SCALAR(uint8_t, ID, 15)
-    DECL_GET_FIELD_STRUCT(struct, oLIST, oLIST, 5)
+DECL_GET_FIELD_SCALAR(uint8_t, ID, 15)
+DECL_GET_FIELD_STRUCT(struct, oLIST, oLIST, 5)
 DECL_GET_END
 
 DECL_PUT_START(struct, oFGROUP)
-    DECL_PUT_FIELD_SCALAR(uint8_t, ID, 15)
-    DECL_PUT_FIELD_STRUCT(struct, oLIST, oLIST, 5)
+DECL_PUT_FIELD_SCALAR(uint8_t, ID, 15)
+DECL_PUT_FIELD_STRUCT(struct, oLIST, oLIST, 5)
 DECL_PUT_END
 
 DECL_FREAD(struct, oFGROUP, 32)
@@ -273,13 +273,13 @@ DECL_FREAD(struct, oFGROUP, 32)
 /* SimpleHdr */
 
 DECL_GET_START(, SimpleHdr)
-    DECL_GET_FIELD_SCALAR(uint16_t, size, 1)
-    DECL_GET_FIELD_SCALAR(uint32_t, offset, 1)
+DECL_GET_FIELD_SCALAR(uint16_t, size, 1)
+DECL_GET_FIELD_SCALAR(uint32_t, offset, 1)
 DECL_GET_END
 
 DECL_PUT_START(, SimpleHdr)
-    DECL_PUT_FIELD_SCALAR(uint16_t, size, 1)
-    DECL_PUT_FIELD_SCALAR(uint32_t, offset, 1)
+DECL_PUT_FIELD_SCALAR(uint16_t, size, 1)
+DECL_PUT_FIELD_SCALAR(uint32_t, offset, 1)
 DECL_PUT_END
 
 DECL_FREAD(, SimpleHdr, 32)
@@ -288,13 +288,13 @@ DECL_FREAD(, SimpleHdr, 32)
 #if 0
 /* REPLAY */
 DECL_GET_START(, REPLAY)
-    DECL_GET_FIELD_SCALAR(uint8_t, Qty, 1)
-    DECL_GET_FIELD_SCALAR(uint16_t, Off, 35)
+DECL_GET_FIELD_SCALAR(uint8_t, Qty, 1)
+DECL_GET_FIELD_SCALAR(uint16_t, Off, 35)
 DECL_GET_END
 
 DECL_PUT_START(, REPLAY)
-    DECL_PUT_FIELD_SCALAR(uint8_t, Qty, 1)
-    DECL_PUT_FIELD_SCALAR(uint16_t, Off, 35)
+DECL_PUT_FIELD_SCALAR(uint8_t, Qty, 1)
+DECL_PUT_FIELD_SCALAR(uint16_t, Off, 35)
 DECL_PUT_END
 
 DECL_FREAD(, REPLAY, 32)
@@ -304,7 +304,7 @@ DECL_FWRITE(, REPLAY, 32)
 #if 0
 #include <stdio.h>
 uint8_t arr[1000];
-int main (void)
+int main(void)
 {
     char *fname = "/tmp/data.test";
     FILE *f = fopen(fname, "w+b");
@@ -316,7 +316,8 @@ int main (void)
             { 0x0234, 0x4301 },
             { 0x1204, 0x4021 },
             { 0x1230, 0x4320 }
-        } };
+        }
+    };
     fwrite_oGROUP(&b, 1, f);
     fseek(f, 0, SEEK_SET);
     fread_oGROUP(&a, 1, f);

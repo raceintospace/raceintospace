@@ -23,6 +23,6 @@ typedef struct {
 } game_options;
 
 extern game_options options;
-extern int setup_options(int argc, char ** argv);
+extern int setup_options(int argc, char **argv);
 
 #endif /* _OPTIONS_H */
