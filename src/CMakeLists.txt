@@ -51,3 +51,5 @@ add_subdirectory("game")
 if (APPLE)
   add_subdirectory("os_macosx")
 endif (APPLE)
+
+add_subdirectory("utils")
