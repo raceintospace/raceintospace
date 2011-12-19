@@ -57,6 +57,20 @@ typedef struct  {
     int16_t size;
     int32_t offset;
 } SimpleHdr;
+
+typedef struct {
+    int16_t w;
+    int16_t h;
+    uint16_t size;
+    uint32_t offset;
+} PatchHdr;
+
+typedef struct {
+    int8_t w;
+    int8_t h;
+    uint16_t size;
+    uint32_t offset;
+} PatchHdrSmall;
 #pragma pack(pop)
 
 uint8_t raw_data[320 * 240];
@@ -352,20 +366,21 @@ int translate_vab(FILE * fp)
     return 0;
 }
 
-#define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single) \
+#define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
+        if (transparent) color_is_transparent[0] = 1; \
         return simplehdrs(fp, colors, pal, offset, single); \
     }
 
-SIMPLEHDRS_FILE(moon, 104, 82, 128, 128, 1, 0);
-SIMPLEHDRS_FILE(aprog, 80, 50, 256, 0, 0, 14);
-SIMPLEHDRS_FILE(lmer, 156, 89, 224, 32, 0, 8);
-SIMPLEHDRS_FILE(intel, 157, 100, 256, 0, 0, 71);
-SIMPLEHDRS_FILE(rdfull, 104, 77, 96, 32, 1, 0);
-SIMPLEHDRS_FILE(prfx, 127, 80, 96, 112, 1, 0);
-SIMPLEHDRS_FILE(lfacil, 148, 148, 256, 0, 0, 6);
-SIMPLEHDRS_FILE(presr, 126, 84, 224, 32, 0, 0);
+SIMPLEHDRS_FILE(moon, 104, 82, 128, 128, 1, 0, 0);
+SIMPLEHDRS_FILE(aprog, 80, 50, 256, 0, 0, 14, 1);
+SIMPLEHDRS_FILE(lmer, 156, 89, 224, 32, 0, 8, 0);
+SIMPLEHDRS_FILE(intel, 157, 100, 256, 0, 0, 71, 0);
+SIMPLEHDRS_FILE(rdfull, 104, 77, 96, 32, 1, 0, 0);
+SIMPLEHDRS_FILE(prfx, 127, 80, 96, 112, 1, 0, 0);
+SIMPLEHDRS_FILE(lfacil, 148, 148, 256, 0, 0, 6, 0);
+SIMPLEHDRS_FILE(presr, 126, 84, 224, 32, 0, 0, 0);
 
 int translate_port(FILE * fin)
 {
