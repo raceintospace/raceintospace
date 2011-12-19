@@ -16,16 +16,20 @@
     utils/but2png ../gamedata/lfacil.but lfacil
     utils/but2png ../gamedata/usa_port.dat port
     utils/but2png ../gamedata/sov_port.dat port
+    utils/but2png ../gamedata/winner.but winner
+    utils/but2png ../gamedata/satbld.but satbld
+    utils/but2png ../gamedata/budd.but budd         # XXX: unknown palette
+    utils/but2png ../gamedata/endgame.but endgame
+    utils/but2png ../gamedata/loser.but loser
+    utils/but2png ../gamedata/beggam.but beggam
+    utils/but2png ../gamedata/patches.but patches   # XXX: missing palettes, PatchMe() data hack
 
     mv ../gamedata/*.png ../images/
 */
 
 /* unknown strategies:
     utils/but2png ../gamedata/arrows.but
-    utils/but2png ../gamedata/beggam.but
-    utils/but2png ../gamedata/budd.but
     utils/but2png ../gamedata/cia.but
-    utils/but2png ../gamedata/endgame.but
     utils/but2png ../gamedata/faces.but
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
@@ -34,13 +38,10 @@
     utils/but2png ../gamedata/lpads.but
     utils/but2png ../gamedata/mhist.but
     utils/but2png ../gamedata/nfutbut.but
-    utils/but2png ../gamedata/patches.but
     utils/but2png ../gamedata/portbut.but
     utils/but2png ../gamedata/presr.but
     utils/but2png ../gamedata/rdbox.but
-    utils/but2png ../gamedata/satbld.but
     utils/but2png ../gamedata/tracker.but
-    utils/but2png ../gamedata/winner.but
     utils/but2png ../gamedata/control.img
     utils/but2png ../gamedata/first.img
     utils/but2png ../gamedata/fmin.img
@@ -320,6 +321,120 @@ int simplehdrs(FILE * fp, int colors, int palette_offset, int shift_data, int si
     return 0;
 }
 
+int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
+{
+    PatchHdr headers[100];
+    PatchHdrSmall small_headers[100];
+    int rv, i, last_valid_offset, palette_offset;
+
+    memset(pal, 0, sizeof(pal));
+    
+    if (palette_style == 1) {
+        // 256 colors
+        fread(pal, 1, sizeof(pal), fp);
+        palette_offset = 0;
+
+    } else if (palette_style == 2) {
+        // 128 colors, starting at 128
+        fread(&pal[128], 128, sizeof(pal[0]), fp);
+        palette_offset = 128;
+        
+    } else if (palette_style == 2) {
+        // 32 colors, starting at 32, but data does not need shifting
+        fread(&pal[32], 32, sizeof(pal[0]), fp);
+        palette_offset = 32;
+    }
+    
+    // read as many headers as possible
+    if (use_small_headers) {
+        fread(small_headers, sizeof(small_headers), 1, fp);
+    } else {
+        fread(headers, sizeof(headers), 1, fp);
+    }
+    
+    // see how many of them seem reasonable
+    last_valid_offset = 0;
+    for (i = 0; i < 100; i++) {
+        int offset, size;
+        if (use_small_headers) {
+            offset = small_headers[i].offset;
+            size = small_headers[i].size;
+            width = small_headers[i].w;
+            height = small_headers[i].h;
+        } else {
+            offset = headers[i].offset;
+            size = headers[i].size;
+            width = headers[i].w;
+            height = headers[i].h;
+        }
+
+        printf("header %i: offset %u, size %i\n", i, offset, size);
+        
+        // compare offset to the last, and break if we're going backwards
+        if (offset < last_valid_offset)
+            continue;
+        
+        if (offset < 0) // this is bogus
+            continue;
+        if (offset > 460000) // this is the largest file
+            continue;
+        
+        if (size < 50)       // this seems unreasonably small
+            continue;
+        if (size > (encoding == 1 ? 30000 : 64000))    // this seems unreasonably large
+            continue;
+        
+        // seems valid
+        printf("  valid\n");
+
+        // seek to it
+        fseek(fp, offset, SEEK_SET);
+        
+        // read and decode the image data
+        fread(raw_data, size, 1, fp);
+        
+        switch (encoding) {
+        case 0:
+            // raw
+            memcpy(screen, raw_data, size);
+            break;
+            
+        case 1:
+            // RLE
+            RLED_img(raw_data, screen, size, width, height);
+            break;
+        
+        case 2:
+            // raw, but the data file contains an extra column
+            {
+                int y = 0;
+                for (y = 0; y < height; y++) {
+                    memcpy(screen + width * y, raw_data + (width + 1) * y, width);
+                }
+            }
+            break;
+        }
+        
+        // shift around the pixel data if appropriate
+        if (palette_offset) {
+            int pixels = width * height;
+            int j;
+            for (j = 0; j < pixels; j++) {
+                screen[j] += palette_offset;
+            }
+        }
+        
+        // export using the correct image number
+        output_number = i;
+        if (rv = write_image())
+            return rv;
+        
+        last_valid_offset = offset;
+    }
+    
+    return 0;
+}
+
 // decoding strategies
 
 int translate_320x240_rle(FILE * fp)
@@ -366,6 +481,20 @@ int translate_vab(FILE * fp)
     return 0;
 }
 
+// half palette PCX-encoded 320x240
+int translate_winner(FILE * fp)
+{
+    int size;
+    
+    memset(pal, 0, sizeof(pal));
+    fread(pal, 384, 1, fp);
+    size = fread(raw_data, 1, sizeof(raw_data), fp);
+    PCX_D(raw_data, screen, size);
+    
+    width = 320; height = 240;
+    return write_image();
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -381,6 +510,18 @@ SIMPLEHDRS_FILE(rdfull, 104, 77, 96, 32, 1, 0, 0);
 SIMPLEHDRS_FILE(prfx, 127, 80, 96, 112, 1, 0, 0);
 SIMPLEHDRS_FILE(lfacil, 148, 148, 256, 0, 0, 6, 0);
 SIMPLEHDRS_FILE(presr, 126, 84, 224, 32, 0, 0, 0);
+
+#define PATCHHDRS_FILE(name, use_small_headers, palette_style, encoding) \
+    int translate_ ## name (FILE * fp) { \
+        return patchhdrs(fp, use_small_headers, palette_style, encoding); \
+    }
+
+PATCHHDRS_FILE(satbld, 1, 1, 1);
+PATCHHDRS_FILE(budd, 1, 0, 1);
+PATCHHDRS_FILE(endgame, 1, 2, 2);
+PATCHHDRS_FILE(loser, 0, 2, 0);
+PATCHHDRS_FILE(beggam, 0, 2, 0);
+PATCHHDRS_FILE(patches, 1, 3, 2);
 
 int translate_port(FILE * fin)
 {
@@ -487,6 +628,13 @@ struct {
     FILE_STRATEGY(lfacil),
     FILE_STRATEGY(presr),
     FILE_STRATEGY(port),
+    FILE_STRATEGY(winner),
+    FILE_STRATEGY(satbld),
+    FILE_STRATEGY(budd),
+    FILE_STRATEGY(endgame),
+    FILE_STRATEGY(loser),
+    FILE_STRATEGY(beggam),
+    FILE_STRATEGY(patches),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
