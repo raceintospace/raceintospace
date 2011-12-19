@@ -23,14 +23,14 @@
     utils/but2png ../gamedata/loser.but loser
     utils/but2png ../gamedata/beggam.but beggam
     utils/but2png ../gamedata/patches.but patches   # XXX: missing palettes, PatchMe() data hack
+    utils/but2png ../gamedata/cia.but cia
+    utils/but2png ../gamedata/faces.but faces       # XXX: unknown palette
 
     mv ../gamedata/*.png ../images/
 */
 
 /* unknown strategies:
     utils/but2png ../gamedata/arrows.but
-    utils/but2png ../gamedata/cia.but
-    utils/but2png ../gamedata/faces.but
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
     utils/but2png ../gamedata/lenin.but
@@ -495,6 +495,55 @@ int translate_winner(FILE * fp)
     return write_image();
 }
 
+// pull palette PCX-encoded 320x240
+int translate_cia(FILE * fp)
+{
+    int size;
+    
+    fread(pal, sizeof(pal), 1, fp);
+    size = fread(raw_data, 1, sizeof(raw_data), fp);
+    PCX_D(raw_data, screen, size);
+    
+    width = 320; height = 240;
+    return write_image();
+}
+
+int translate_faces(FILE * fp)
+{
+    uint32_t offsets[87];
+    int i, j, rv;
+    
+    // file starts with 86 32-bit offsets
+    fread(offsets, 1, sizeof(offsets), fp);
+    
+    // followed by 32 colors which aren't even used
+    memset(pal, 0, sizeof(pal));
+    fread(&pal[64], 32, sizeof(pal[0]), fp);
+    
+    // followed by 85 astronaut faces at the indicated offsets
+    width = 18; height = 15;
+    for (i = 0; i < 86; i++) {
+        fseek(fp, offsets[i], SEEK_SET);
+        fread(screen, width * height, 1, fp);
+        
+        if (rv = write_image()) {
+            return rv;
+        }
+    }
+    
+    // the 86th image is, in fact, a helmet with different dimensions and transparency
+    // the game composites them over each other, so might as well store them separately
+    width = 80; height = 50;
+    color_is_transparent[0] = 1;
+    fseek(fp, offsets[86], SEEK_SET);
+    fread(screen, width * height, 1, fp);
+    if (rv = write_image()) {
+        return rv;
+    }
+    
+    return 0;
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -635,6 +684,8 @@ struct {
     FILE_STRATEGY(loser),
     FILE_STRATEGY(beggam),
     FILE_STRATEGY(patches),
+    FILE_STRATEGY(cia),
+    FILE_STRATEGY(faces),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
