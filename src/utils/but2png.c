@@ -7,6 +7,7 @@
 /* known strategies:
     utils/but2png ../gamedata/prefs.but "320x240 RLE"
     utils/but2png ../gamedata/turn.but "320x240 RLE"
+    utils/but2png ../gamedata/fmin.img "320x240 RLE"
     utils/but2png ../gamedata/vab.img vab
     utils/but2png ../gamedata/moon.but moon
     utils/but2png ../gamedata/aprog.but aprog
@@ -37,7 +38,6 @@
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
     utils/but2png ../gamedata/lenin.but
-    utils/but2png ../gamedata/fmin.img
     utils/but2png ../gamedata/nfutbut.but
     utils/but2png ../gamedata/portbut.but
     utils/but2png ../gamedata/presr.but
