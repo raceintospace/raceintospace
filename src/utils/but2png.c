@@ -23,10 +23,11 @@
     utils/but2png ../gamedata/endgame.but endgame
     utils/but2png ../gamedata/loser.but loser
     utils/but2png ../gamedata/beggam.but beggam
-    utils/but2png ../gamedata/patches.but patches   # XXX: missing palettes, PatchMe() data hack
+    utils/but2png ../gamedata/patches.but patches   # XXX: missing transparency
     utils/but2png ../gamedata/cia.but cia
     utils/but2png ../gamedata/faces.but faces       # XXX: unknown palette
     utils/but2png ../gamedata/lpads.but lpads
+    utils/but2png ../gamedata/mhist.but mhist
 
     mv ../gamedata/*.png ../images/
 */
@@ -36,7 +37,6 @@
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
     utils/but2png ../gamedata/lenin.but
-    utils/but2png ../gamedata/mhist.but
     utils/but2png ../gamedata/nfutbut.but
     utils/but2png ../gamedata/portbut.but
     utils/but2png ../gamedata/presr.but
@@ -337,8 +337,8 @@ int simplehdrs(FILE * fp, int colors, int palette_offset, int shift_data, int si
 
 int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
 {
-    PatchHdr headers[100];
-    PatchHdrSmall small_headers[100];
+    PatchHdr headers[150];
+    PatchHdrSmall small_headers[150];
     int rv, i, last_valid_offset, palette_offset;
 
     memset(pal, 0, sizeof(pal));
@@ -353,9 +353,14 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
         fread(&pal[128], 128, sizeof(pal[0]), fp);
         palette_offset = 128;
         
-    } else if (palette_style == 2) {
+    } else if (palette_style == 3) {
         // 32 colors, starting at 32, but data does not need shifting
         fread(&pal[32], 32, sizeof(pal[0]), fp);
+        palette_offset = 32;
+        
+    } else if (palette_style == 4) {
+        // 64 colors, starting at 32
+        fread(&pal[32], 64, sizeof(pal[0]), fp);
         palette_offset = 32;
     }
     
@@ -368,7 +373,7 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
     
     // see how many of them seem reasonable
     last_valid_offset = 0;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < (sizeof(headers) / sizeof(headers[0])); i++) {
         int offset, size;
         if (use_small_headers) {
             offset = small_headers[i].offset;
@@ -397,9 +402,11 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
             continue;
         if (size > (encoding == 1 ? 30000 : 64000))    // this seems unreasonably large
             continue;
-        
-        // seems valid
-        printf("  valid\n");
+            
+        if (width <= 1 || height <= 1)
+            continue;
+        if (width > 321 || height > 241)
+            continue;
 
         // seek to it
         fseek(fp, offset, SEEK_SET);
@@ -419,15 +426,23 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
             break;
         
         case 2:
-            // raw, but the data file contains an extra column
-            {
+            // raw, but the data is possibly mis-measured
+            if (size == width * height) {
+                memcpy(screen, raw_data, size);
+            } else if (size == (width + 1) * height) {
                 int y = 0;
                 for (y = 0; y < height; y++) {
                     memcpy(screen + width * y, raw_data + (width + 1) * y, width);
                 }
+            } else {
+                printf("  data is %i bytes, but %ix%i = %i bytes; skipping\n", size, width, height, width * height);
+                continue;
             }
             break;
         }
+        
+        // seems valid
+        printf("  valid\n");
         
         // shift around the pixel data if appropriate
         if (palette_offset) {
@@ -605,6 +620,7 @@ PATCHHDRS_FILE(endgame, 1, 2, 2);
 PATCHHDRS_FILE(loser, 0, 2, 0);
 PATCHHDRS_FILE(beggam, 0, 2, 0);
 PATCHHDRS_FILE(patches, 1, 3, 2);
+PATCHHDRS_FILE(mhist, 1, 4, 2);
 
 int translate_port(FILE * fin)
 {
@@ -730,6 +746,7 @@ struct {
     FILE_STRATEGY(cia),
     FILE_STRATEGY(faces),
     FILE_STRATEGY(lpads),
+    FILE_STRATEGY(mhist),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
