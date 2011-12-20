@@ -288,21 +288,21 @@ void Intel(char plr)
 
         }
 
-        strncpy(IDT, (plr == 0) ? "i704" : "i705", 4);
-        strncpy(IKEY, (plr == 0) ? "k605" : "k606", 4);
+        strncpy(helptextIndex, (plr == 0) ? "i704" : "i705", 4);
+        strncpy(keyhelpIndex, (plr == 0) ? "k605" : "k606", 4);
 
         i = BChoice(plr, 3, &IName[0][0], &IImg[0]);
 
         switch (i) {
         case 1:
-            strcpy(IDT, "i024");
-            strcpy(IKEY, "k024");
+            strcpy(helptextIndex, "i024");
+            strcpy(keyhelpIndex, "k024");
             Bre(plr);
             break;
 
         case 2:
-            strcpy(IDT, "i026");
-            strcpy(IKEY, "k026");
+            strcpy(helptextIndex, "i026");
+            strcpy(keyhelpIndex, "k026");
             IStat(plr);
             break;
 

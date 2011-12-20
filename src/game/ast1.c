@@ -273,8 +273,8 @@ void DrawAstCheck(char plr)
 void DrawAstSel(char plr)
 {
 
-    strcpy(IDT, "i012");
-    strcpy(IKEY, "k012");
+    strcpy(helptextIndex, "i012");
+    strcpy(keyhelpIndex, "k012");
     FadeOut(2, pal, 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);

@@ -138,8 +138,8 @@ void DrawRD(char player_index)
 {
     int i;
     FILE *fin;
-    strcpy(IDT, "i009");
-    strcpy(IKEY, "k009");
+    strcpy(helptextIndex, "i009");
+    strcpy(keyhelpIndex, "k009");
 
     FadeOut(2, pal, 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
@@ -321,8 +321,8 @@ char RD(char player_index)
 
     hardware = HARD1;
     unit = UNIT1;
-    strcpy(IDT, "i009");
-    strcpy(IKEY, "k009");
+    strcpy(helptextIndex, "i009");
+    strcpy(keyhelpIndex, "k009");
 
     DrawRD(player_index);
     BButs(1, hardware);
@@ -337,9 +337,9 @@ char RD(char player_index)
 
     ManSel(decodeNumRolls(buy[hardware - 1][unit - 1]));
 
-    strcpy(IDT, "i009");
+    strcpy(helptextIndex, "i009");
 
-    strcpy(IKEY, "k009");
+    strcpy(keyhelpIndex, "k009");
 
     FadeIn(2, pal, 10, 0, 0);
 
@@ -392,9 +392,9 @@ char RD(char player_index)
 
                     ManSel(decodeNumRolls(buy[hardware - 1][unit - 1]));
 
-                    strcpy(IDT, "i009");
+                    strcpy(helptextIndex, "i009");
 
-                    strcpy(IKEY, "k009");
+                    strcpy(keyhelpIndex, "k009");
 
                     FadeIn(2, pal, 10, 0, 0);
                 }
@@ -1172,8 +1172,8 @@ void DrawHPurc(char player_index)
     grSetColor(1);
     PrintAt(258, 13, "CONTINUE");
     ShowUnit(1, 1, player_index);
-    strcpy(IDT, "i008");
-    strcpy(IKEY, "k008");
+    strcpy(helptextIndex, "i008");
+    strcpy(keyhelpIndex, "k008");
 
     return;
 }
@@ -1190,8 +1190,8 @@ char HPurc(char player_index)
 
     hardware = HARD1;
     unit = UNIT1;
-    strcpy(IDT, "i008");
-    strcpy(IKEY, "k008");
+    strcpy(helptextIndex, "i008");
+    strcpy(keyhelpIndex, "k008");
     DrawHPurc(player_index);
     BButs(1, hardware);
     ShowUnit(hardware, unit, player_index);
@@ -1235,8 +1235,8 @@ char HPurc(char player_index)
             if (EqDmg) {
                 InBox(283, 90, 302, 100);
                 DamProb(player_index, hardware - 1, unit - 1);
-                strcpy(IDT, "i008");
-                strcpy(IKEY, "k008");
+                strcpy(helptextIndex, "i008");
+                strcpy(keyhelpIndex, "k008");
                 DrawHPurc(player_index);
                 BButs(1, hardware);
                 ShowUnit(hardware, unit, player_index);

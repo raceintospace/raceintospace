@@ -112,8 +112,8 @@ void Admin(char plr)
 
         music_start(M_GOOD);
 
-        strncpy(IDT, (plr == 0) ? "i702" : "i703", 4);
-        strncpy(IKEY, (plr == 0) ? "k601" : "k602", 4);
+        strncpy(helptextIndex, (plr == 0) ? "i702" : "i703", 4);
+        strncpy(keyhelpIndex, (plr == 0) ? "k601" : "k602", 4);
 
         i = BChoice(plr, 7, (char *)AName, (char *) AImg);
 
@@ -121,8 +121,8 @@ void Admin(char plr)
         case 1:
             music_stop();
             music_start(M_DRUMSM);
-            strcpy(IDT, "i007");
-            strcpy(IKEY, "k007");
+            strcpy(helptextIndex, "i007");
+            strcpy(keyhelpIndex, "k007");
             Budget(plr);
             key = 0;
             music_stop();
@@ -130,14 +130,14 @@ void Admin(char plr)
 
         case 2:
             music_stop();
-            strcpy(IDT, "i008");
+            strcpy(helptextIndex, "i008");
             HPurc(plr);
             key = 0;
             break;
 
         case 3:
-            strcpy(IDT, "i010");
-            strcpy(IKEY, "k010");
+            strcpy(helptextIndex, "i010");
+            strcpy(keyhelpIndex, "k010");
             music_stop();
             music_start(M_MISSPLAN);
             Future(plr);
@@ -147,23 +147,23 @@ void Admin(char plr)
 
         case 4:
             music_stop();
-            strcpy(IDT, "i012");
-            strcpy(IKEY, "k012");
+            strcpy(helptextIndex, "i012");
+            strcpy(keyhelpIndex, "k012");
             AstSel(plr);
             key = 0;
             break;
 
         case 5:
             music_stop();
-            strcpy(IDT, "i013");
-            strcpy(IKEY, "k013");
+            strcpy(helptextIndex, "i013");
+            strcpy(keyhelpIndex, "k013");
             Prefs(1);
             key = 0;
             break;
 
         case 6:
-            strcpy(IDT, "i128");
-            strcpy(IKEY, "k128");
+            strcpy(helptextIndex, "i128");
+            strcpy(keyhelpIndex, "k128");
             FileAccess(0);
             key = 0;
             break;
@@ -183,8 +183,8 @@ void Admin(char plr)
     } while (!(i == 7 || (i == 6 && (QUIT || LOAD))));
 
     music_stop();
-    strcpy(IDT, "i000");
-    strcpy(IKEY, "k000");
+    strcpy(helptextIndex, "i000");
+    strcpy(keyhelpIndex, "k000");
     WaitForMouseUp();
 }
 
@@ -290,8 +290,8 @@ void FileAccess(char mode)
     }
 
 
-    strcpy(IDT, "i128");
-    strcpy(IKEY, "k128");
+    strcpy(helptextIndex, "i128");
+    strcpy(keyhelpIndex, "k128");
     FadeOut(2, pal, 10, 0, 0);
     gxClearDisplay(0, 0);
 
@@ -1382,11 +1382,11 @@ int FutureCheck(char plr, char type)
     RLED_img(screen, vhptr.vptr, i, vhptr.w, vhptr.h);
 
     if (type == 0) {
-        strcpy(IDT, "i010");
-        strcpy(IKEY, "k010");
+        strcpy(helptextIndex, "i010");
+        strcpy(keyhelpIndex, "k010");
     } else {
-        strcpy(IDT, "i015");
-        strcpy(IKEY, "k015");
+        strcpy(helptextIndex, "i015");
+        strcpy(keyhelpIndex, "k015");
     }
 
     gxClearDisplay(0, 0);

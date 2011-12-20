@@ -40,8 +40,8 @@ void DrawPrefs(int where, char a1, char a2)
     FILE *fin;
 
     FadeOut(2, pal, 10, 0, 0);
-    strcpy(IDT, "i013");
-    strcpy(IKEY, "K013");
+    strcpy(helptextIndex, "i013");
+    strcpy(keyhelpIndex, "K013");
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(&pal[0], 768, 1, fin);
     i = fread((char *)screen, 1, MAX_X * MAX_Y, fin);
@@ -462,8 +462,8 @@ void Prefs(int where)
                 music_stop();
                 music_start(M_FILLER);
                 EditAst();
-                strcpy(IDT, "i013");
-                strcpy(IKEY, "K013");
+                strcpy(helptextIndex, "i013");
+                strcpy(keyhelpIndex, "K013");
                 music_stop();
                 music_start((where == 0 || where == 3) ? M_SOVTYP : M_DRUMSM);
 
@@ -744,8 +744,8 @@ void EditAst(void)
     int now, now2, BarA, BarB, i;
     FILE *fin;
     char Cur, Cnt, temp, b;
-    strcpy(IDT, "i040");
-    strcpy(IKEY, "k040");
+    strcpy(helptextIndex, "i040");
+    strcpy(keyhelpIndex, "k040");
     FadeOut(2, pal, 10, 0, 0);
 
     gxClearDisplay(0, 0);
