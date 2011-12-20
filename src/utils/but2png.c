@@ -37,6 +37,7 @@
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
     utils/but2png ../gamedata/lenin.but
+    utils/but2png ../gamedata/fmin.img
     utils/but2png ../gamedata/nfutbut.but
     utils/but2png ../gamedata/portbut.but
     utils/but2png ../gamedata/presr.but
