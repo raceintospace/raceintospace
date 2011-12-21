@@ -17,6 +17,7 @@
     utils/but2png ../gamedata/rdfull.but rdfull
     utils/but2png ../gamedata/prfx.but prfx
     utils/but2png ../gamedata/lfacil.but lfacil
+    utils/but2png ../gamedata/presr.but presr
     utils/but2png ../gamedata/usa_port.dat port
     utils/but2png ../gamedata/sov_port.dat port
     utils/but2png ../gamedata/winner.but winner
@@ -32,20 +33,19 @@
     utils/but2png ../gamedata/mhist.but mhist
     utils/but2png ../gamedata/nfutbut.but nfutbut
     utils/but2png ../gamedata/portbut.but portbut
+    utils/but2png ../gamedata/first.img first
 
     mv ../gamedata/*.png ../images/
 */
 
 /* unknown strategies:
-    utils/but2png ../gamedata/arrows.but
-    utils/but2png ../gamedata/flagger.but
-    utils/but2png ../gamedata/inte_1.but
-    utils/but2png ../gamedata/lenin.but
-    utils/but2png ../gamedata/presr.but
+    utils/but2png ../gamedata/inte_1.but        # used only by the CD -> disk installer
     utils/but2png ../gamedata/rdbox.but
     utils/but2png ../gamedata/tracker.but
     utils/but2png ../gamedata/control.img
-    utils/but2png ../gamedata/first.img
+    utils/but2png ../gamedata/arrows.but
+    utils/but2png ../gamedata/flagger.but
+    utils/but2png ../gamedata/lenin.but
     utils/but2png ../gamedata/fmin.img
     utils/but2png ../gamedata/news.img
 */
@@ -631,6 +631,25 @@ int translate_portbut(FILE * fp)
     return 0;
 }
 
+// { palette, compressed length, 320x240 PCX-compressed data } tuples, concatenated
+int translate_first(FILE * fp)
+{
+    int bytes, rv;
+    uint32_t length;
+    
+    width = 320; height = 240;
+    while (fread(pal, sizeof(pal), 1, fp)) {
+        fread(&length, sizeof(length), 1, fp);
+        fread(raw_data, 1, length, fp);
+        PCX_D(raw_data, screen, length);
+        
+        if (rv = write_image())
+            return rv;
+    }
+    
+    return 0;
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -787,6 +806,7 @@ struct {
     FILE_STRATEGY(mhist),
     FILE_STRATEGY(nfutbut),
     FILE_STRATEGY(portbut),
+    FILE_STRATEGY(first),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
