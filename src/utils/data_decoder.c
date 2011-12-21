@@ -276,6 +276,37 @@ void write_failure_modes(FILE * fp)
 
 }
 
+void write_animation_key(FILE * fp, const char * name)
+{
+    // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index
+    uint16_t count;
+    struct SeqKey {
+        int Index;
+        char Sequence[8];
+    }record; 
+    
+    record.Index = 0;
+    fread(&count, 2, 1, fp);  // Initial 16-bit value is the count
+    printf("struct MissionSequenceKey %s[] = {\n", name);
+    while (fread(&record.Sequence, 8, 1, fp)) {
+        RecordStart();
+        Number(Index);
+        String(Sequence);
+        RecordEnd();
+        record.Index++;
+    }
+    printf("};\n\n");
+}
+
+
+void write_mission_animation_success_key(FILE * fp) {
+    write_animation_key(fp, "success_animation_key");
+}
+
+void write_mission_animation_failure_key(FILE * fp) {
+    write_animation_key(fp, "failure_animation_key");
+}
+
 void decode(const char * dir, const char * filename, void(*function)(FILE *))
 {
     char full_path[512];
@@ -315,6 +346,11 @@ int main(int argc, char ** argv)
     decode(argv[1], "news.dat", write_news);
     
     decode(argv[1], "fails.cdr", write_failure_modes);
+    
+    decode(argv[1], "seq.key", write_mission_animation_success_key);
+    decode(argv[1], "fseq.key", write_mission_animation_failure_key);
+    //decode(argv[1], "seq.dat", write_mission_success_sequence);
+    //decode(argv[1], "fseq.dat", write_mission_failure_sequence);
     
     return 0;
 }
