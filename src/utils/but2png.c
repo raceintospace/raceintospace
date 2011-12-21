@@ -34,6 +34,7 @@
     utils/but2png ../gamedata/nfutbut.but nfutbut
     utils/but2png ../gamedata/portbut.but portbut
     utils/but2png ../gamedata/first.img first
+    utils/but2png ../gamedata/control.img first
 
     mv ../gamedata/*.png ../images/
 */
@@ -42,7 +43,6 @@
     utils/but2png ../gamedata/inte_1.but        # used only by the CD -> disk installer
     utils/but2png ../gamedata/rdbox.but
     utils/but2png ../gamedata/tracker.but
-    utils/but2png ../gamedata/control.img
     utils/but2png ../gamedata/arrows.but
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/lenin.but
