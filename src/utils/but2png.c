@@ -22,7 +22,7 @@
     utils/but2png ../gamedata/sov_port.dat port
     utils/but2png ../gamedata/winner.but winner
     utils/but2png ../gamedata/satbld.but satbld
-    utils/but2png ../gamedata/budd.but budd         # XXX: unknown palette
+    utils/but2png ../gamedata/budd.but budd
     utils/but2png ../gamedata/endgame.but endgame
     utils/but2png ../gamedata/loser.but loser
     utils/but2png ../gamedata/beggam.but beggam
@@ -371,7 +371,13 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
         // 64 colors, starting at 32
         fread(&pal[32], 64, sizeof(pal[0]), fp);
         palette_offset = 32;
+
+    } else if (palette_style == 5) {
+        // use default port palette
+        PortPal(0);
+        palette_offset = 0;
     }
+    
     
     // read as many headers as possible
     if (use_small_headers) {
@@ -554,7 +560,7 @@ int translate_faces(FILE * fp)
     // file starts with 86 32-bit offsets
     fread(offsets, 1, sizeof(offsets), fp);
     
-    // followed by 32 colors which aren't even used
+    // followed by 32 colors which aren't even used -- presumably overlaid on the base
     memset(pal, 0, sizeof(pal));
     fread(&pal[64], 32, sizeof(pal[0]), fp);
     
@@ -703,7 +709,7 @@ SIMPLEHDRS_FILE(presr, 126, 84, 224, 32, 0, 0, 0);
     }
 
 PATCHHDRS_FILE(satbld, 1, 1, 1);
-PATCHHDRS_FILE(budd, 1, 0, 1);
+PATCHHDRS_FILE(budd, 1, 5, 2);
 PATCHHDRS_FILE(endgame, 1, 2, 2);
 PATCHHDRS_FILE(loser, 0, 2, 0);
 PATCHHDRS_FILE(beggam, 0, 2, 0);
