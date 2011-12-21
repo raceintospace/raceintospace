@@ -24,7 +24,7 @@
     utils/but2png ../gamedata/endgame.but endgame
     utils/but2png ../gamedata/loser.but loser
     utils/but2png ../gamedata/beggam.but beggam
-    utils/but2png ../gamedata/patches.but patches   # XXX: missing transparency
+    utils/but2png ../gamedata/patches.but patches
     utils/but2png ../gamedata/cia.but cia
     utils/but2png ../gamedata/faces.but faces       # XXX: unknown palette
     utils/but2png ../gamedata/lpads.but lpads
@@ -185,7 +185,8 @@ int write_image()
     png_infop info_ptr;
     char filename[256];
     uint8_t * rows[240];
-    uint8_t transparent_index[256], transparent_colors;
+    uint8_t alpha_values[256];
+    int maximum_transparent_color;
     int i;
     
     snprintf(filename, sizeof(filename), output_pattern, output_number++);
@@ -234,15 +235,18 @@ int write_image()
     }
     png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
     
-    // copy any transparent palette entries
-    transparent_colors = 0;
+    // set up a buffer of alpha values as needed
+    memset(alpha_values, 255, sizeof(alpha_values));
+    maximum_transparent_color = -1;
     for (i = 0; i < 256; i ++) {
         if (color_is_transparent[i]) {
-            transparent_index[transparent_colors++] = i;
+            maximum_transparent_color = i;
+            alpha_values[i] = 0;
         }
     }
-    if (transparent_colors > 0) {
-        png_set_tRNS(png_ptr, info_ptr, transparent_index, transparent_colors, NULL);
+    if (maximum_transparent_color >= 0) {
+        printf("setting transparency\n");
+        png_set_tRNS(png_ptr, info_ptr, alpha_values, maximum_transparent_color + 1, NULL);
     }
     
     // copy the offset, if any
@@ -357,9 +361,10 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
         palette_offset = 128;
         
     } else if (palette_style == 3) {
-        // 32 colors, starting at 32, but data does not need shifting
+        // 32 colors, starting at 32, and one of them is transparent
         fread(&pal[32], 32, sizeof(pal[0]), fp);
         palette_offset = 32;
+        color_is_transparent[32] = 1;
         
     } else if (palette_style == 4) {
         // 64 colors, starting at 32
