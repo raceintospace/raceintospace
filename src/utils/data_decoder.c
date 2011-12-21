@@ -43,6 +43,7 @@ void print_escaped_string(const char * string, int max_length)
     printf("\",\n"); \
     }
 
+
 void write_mission(FILE * fp)
 {
     struct {
@@ -287,29 +288,11 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
         char MissionIdSequence[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
         char Step[6];   // The step for the failures
         
+        int16_t avIndex[10];
+        
         // using the key file index
-        char video_0[10];
-        char audio_0[10];
-        char video_1[10];
-        char audio_1[10];
-        char video_2[10];
-        char audio_2[10];
-        char video_3[10];
-        char audio_3[10];
-        char video_4[10];
-        char audio_4[10];
-
-        // From the actual file
-        int16_t video_0x;
-        int16_t audio_0x;
-        int16_t video_1x;
-        int16_t audio_1x;
-        int16_t video_2x;
-        int16_t audio_2x;
-        int16_t video_3x;
-        int16_t audio_3x;
-        int16_t video_4x;
-        int16_t audio_4x;
+        char video[5][10];
+        char audio[5][10];
     }record; 
 
     // Read index of animation sequences
@@ -325,31 +308,18 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
     
     printf("struct MissionSequenceKey %s[] = {\n", name);
     while (fread(&record.MissionIdSequence, 10, 1, fp)) {
-        fread(&record.video_0x, 10, 2, fp);
-        
-        strcpy(record.video_0, keys[record.video_0x].Sequence);
-        strcpy(record.audio_0, keys[record.audio_0x].Sequence);
-        strcpy(record.video_1, keys[record.video_1x].Sequence);
-        strcpy(record.audio_1, keys[record.audio_1x].Sequence);
-        strcpy(record.video_2, keys[record.video_2x].Sequence);
-        strcpy(record.audio_2, keys[record.audio_2x].Sequence);
-        strcpy(record.video_3, keys[record.video_3x].Sequence);
-        strcpy(record.audio_3, keys[record.audio_3x].Sequence);
-        strcpy(record.video_4, keys[record.video_4x].Sequence);
-        strcpy(record.audio_4, keys[record.audio_4x].Sequence);
-
+        fread(&record.avIndex, 10, 2, fp);
+    
         RecordStart();
         String(MissionIdSequence);
-        String(video_0);
-        String(audio_0);
-        String(video_1);
-        String(audio_1);
-        String(video_2);
-        String(audio_2);
-        String(video_3);
-        String(audio_3);
-        String(video_4);
-        String(audio_4);
+        printf("    .video[] = { \"%s\", \"%s\", \"%s\",\"%s\",\"%s\" },\n",
+               keys[record.avIndex[0]].Sequence,keys[record.avIndex[2]].Sequence,
+               keys[record.avIndex[4]].Sequence,keys[record.avIndex[6]].Sequence,
+               keys[record.avIndex[8]].Sequence);
+        printf("    .audio[] = { \"%s\", \"%s\", \"%s\",\"%s\",\"%s\" },\n",
+               keys[record.avIndex[1]].Sequence,keys[record.avIndex[2]].Sequence,
+               keys[record.avIndex[5]].Sequence,keys[record.avIndex[7]].Sequence,
+               keys[record.avIndex[9]].Sequence);
         RecordEnd();
         memset(&record, 0, sizeof(record));
     }
@@ -372,29 +342,11 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
         char MissionIdSequence[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
         char MissionStep[6];   // The step for the failures
         
-        // using the key file index
-        char video_0[10];
-        char audio_0[10];
-        char video_1[10];
-        char audio_1[10];
-        char video_2[10];
-        char audio_2[10];
-        char video_3[10];
-        char audio_3[10];
-        char video_4[10];
-        char audio_4[10];
+        int16_t avIndex[10];
         
-        // From the actual file
-        int16_t video_0x;
-        int16_t audio_0x;
-        int16_t video_1x;
-        int16_t audio_1x;
-        int16_t video_2x;
-        int16_t audio_2x;
-        int16_t video_3x;
-        int16_t audio_3x;
-        int16_t video_4x;
-        int16_t audio_4x;
+        // using the key file index
+        char video[5][10];
+        char audio[5][10];
     }record; 
     
     
@@ -425,34 +377,22 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
         int size = offsetTable[i].size;
         while (size) {
             fread(&record.MissionIdSequence,15, 1, fp);  // read name
-            fread(&record.video_0x, 10, 2, fp);
+            fread(&record.avIndex, 10, 2, fp);
             strcpy(record.MissionStep, offsetTable[i].MissionStep);
             
-            strcpy(record.video_0, keys[record.video_0x].Sequence);
-            strcpy(record.audio_0, keys[record.audio_0x].Sequence);
-            strcpy(record.video_1, keys[record.video_1x].Sequence);
-            strcpy(record.audio_1, keys[record.audio_1x].Sequence);
-            strcpy(record.video_2, keys[record.video_2x].Sequence);
-            strcpy(record.audio_2, keys[record.audio_2x].Sequence);
-            strcpy(record.video_3, keys[record.video_3x].Sequence);
-            strcpy(record.audio_3, keys[record.audio_3x].Sequence);
-            strcpy(record.video_4, keys[record.video_4x].Sequence);
-            strcpy(record.audio_4, keys[record.audio_4x].Sequence);
             size -= (15 + 10*2);  // string + 5 ui16 pairs
             
             RecordStart();
             String(MissionStep);
             String(MissionIdSequence);
-            String(video_0);
-            String(audio_0);
-            String(video_1);
-            String(audio_1);
-            String(video_2);
-            String(audio_2);
-            String(video_3);
-            String(audio_3);
-            String(video_4);
-            String(audio_4);
+            printf("    .video[] = { \"%s\", \"%s\", \"%s\",\"%s\",\"%s\" },\n",
+                   keys[record.avIndex[0]].Sequence,keys[record.avIndex[2]].Sequence,
+                   keys[record.avIndex[4]].Sequence,keys[record.avIndex[6]].Sequence,
+                   keys[record.avIndex[8]].Sequence);
+            printf("    .audio[] = { \"%s\", \"%s\", \"%s\",\"%s\",\"%s\" },\n",
+                   keys[record.avIndex[1]].Sequence,keys[record.avIndex[2]].Sequence,
+                   keys[record.avIndex[5]].Sequence,keys[record.avIndex[7]].Sequence,
+                   keys[record.avIndex[9]].Sequence);
             RecordEnd();
             memset(&record, 0, sizeof(record));
         }
