@@ -123,15 +123,24 @@ void write_custom_men(FILE * fp) {
 
 void write_events(FILE * fp)
 {
+    int i;
     struct event {
+        int player;
+        int bud;        // this is the parameter to OpenNews(), but I don't know what it means
         char description[250];
-    } __attribute__((packed)) record;
+    } record;
     
     printf("struct event_t events[] = {\n");
-    while (fread(&record, sizeof(record), 1, fp)) {
+    while (fread(&record.description, sizeof(record.description), 1, fp)) {
+        record.player = i % 2;
+        record.bud = i / 2;
         RecordStart();
+        Number(player);
+        Number(bud);
         String(description);
         RecordEnd();
+
+        i ++;
     }
     printf("};\n\n");
 }
@@ -171,6 +180,8 @@ int main(int argc, char ** argv)
     decode(argv[1], "user.dat", write_custom_men);
     
     decode(argv[1], "event.dat", write_events);
+
+    decode(argv[1], "news.dat", write_news);
     
     return 0;
 }
