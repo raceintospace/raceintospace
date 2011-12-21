@@ -28,7 +28,7 @@
     utils/but2png ../gamedata/beggam.but beggam
     utils/but2png ../gamedata/patches.but patches
     utils/but2png ../gamedata/cia.but cia
-    utils/but2png ../gamedata/faces.but faces       # XXX: unknown palette
+    utils/but2png ../gamedata/faces.but faces
     utils/but2png ../gamedata/lpads.but lpads
     utils/but2png ../gamedata/mhist.but mhist
     utils/but2png ../gamedata/nfutbut.but nfutbut
@@ -560,15 +560,19 @@ int translate_faces(FILE * fp)
     // file starts with 86 32-bit offsets
     fread(offsets, 1, sizeof(offsets), fp);
     
-    // followed by 32 colors which aren't even used -- presumably overlaid on the base
+    // followed by 32 colors
     memset(pal, 0, sizeof(pal));
     fread(&pal[64], 32, sizeof(pal[0]), fp);
     
-    // followed by 85 astronaut faces at the indicated offsets
+    // followed by 84 astronaut faces at the indicated offsets
     width = 18; height = 15;
-    for (i = 0; i < 86; i++) {
+    for (i = 0; i < 85; i++) {
         fseek(fp, offsets[i], SEEK_SET);
         fread(screen, width * height, 1, fp);
+        
+        for (j = 0; j < width * height; j++) {
+            screen[j] -= 160;
+        }
         
         if (rv = write_image()) {
             return rv;
@@ -581,6 +585,12 @@ int translate_faces(FILE * fp)
     color_is_transparent[0] = 1;
     fseek(fp, offsets[86], SEEK_SET);
     fread(screen, width * height, 1, fp);
+    
+    for (j = 0; j < width * height; j++) {
+        if (screen[j])
+            screen[j] -= 160;
+    }
+    
     if (rv = write_image()) {
         return rv;
     }
