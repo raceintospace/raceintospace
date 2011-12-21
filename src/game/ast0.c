@@ -35,8 +35,8 @@ void Moon(char plr)
     FILE *in;
     GXHEADER local;
     long size;
-    strcpy(IDT, "i029");
-    strcpy(IKEY, "k029");
+    strcpy(helptextIndex, "i029");
+    strcpy(keyhelpIndex, "k029");
     val = Data->P[plr].Misc[5].Safety;
     FadeOut(2, pal, 0, 0, 0);
 
@@ -674,8 +674,8 @@ void SatBld(char plr)
     plan = 0;
     SatDraw(plr);
     SatText(plr);
-    strcpy(IDT, "i019");
-    strcpy(IKEY, "k019");
+    strcpy(helptextIndex, "i019");
+    strcpy(keyhelpIndex, "k019");
 
     if (Data->P[plr].Probe[1].Num >= 0) {
         PlanText(plr, plan);

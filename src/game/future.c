@@ -80,8 +80,8 @@ void DrawFuture(char plr, int mis, char pad)
     int i, j;
     FILE *fin;
     unsigned sz;
-    strcpy(IKEY, "k011");
-    strcpy(IDT, "i011");
+    strcpy(keyhelpIndex, "k011");
+    strcpy(helptextIndex, "i011");
 
     JointFlag = 0; // initialize joint flag
     F1 = F2 = F3 = F4 = FMen = F5 = 0;
@@ -847,7 +847,7 @@ begfut:
     }
 
     SetParameters();
-    strcpy(IDT, "i011");
+    strcpy(helptextIndex, "i011");
     Pad = MisNum;
     DuraType = FMen = MisType = 0;
     ClrFut(plr, MisNum);

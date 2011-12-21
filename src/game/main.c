@@ -45,7 +45,7 @@ char Name[20];
 struct Players *Data;
 int x, y, mousebuttons, key, oldx, oldy;
 unsigned char LOAD, QUIT, HARD1, UNIT1, BUTLOAD, FADE, AL_CALL, XMAS;
-char plr[NUM_PLAYERS], IDT[5], IKEY[5], df, IDLE[2];
+char plr[NUM_PLAYERS], helptextIndex[5], keyhelpIndex[5], df, IDLE[2];
 char *buffer;
 GXHEADER vhptr, vhptr2;
 char *oldpal, pNeg[NUM_PLAYERS][MAX_MISSIONS];
@@ -142,8 +142,8 @@ int game_main(int argc, char *argv[])
 
     av_setup();
 
-    strcpy(IDT, "i000\0");
-    strcpy(IKEY, "k000\0");
+    strcpy(helptextIndex, "i000\0");
+    strcpy(keyhelpIndex, "k000\0");
 
     LOAD = QUIT = 0;
 
@@ -187,8 +187,8 @@ int game_main(int argc, char *argv[])
         gxClearDisplay(0, 0);
         PortPal(0);
         key = 0;
-        strcpy(IDT, "i000\0");
-        strcpy(IKEY, "i000\0");
+        strcpy(helptextIndex, "i000\0");
+        strcpy(keyhelpIndex, "i000\0");
         df = 1;
 
 tommy:
@@ -217,7 +217,7 @@ tommy:
             HARD1 = UNIT1 = 1;
             MAIL = -1;
             Option = -1;
-            strcpy(IDT, "i013");
+            strcpy(helptextIndex, "i013");
             Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
             plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
             plr[1] = Data->Def.Plr2;
@@ -420,9 +420,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             if ((IDLE[0] > 12 || IDLE[1] > 12) || ((AI[i] && plr[other(i)] < NUM_PLAYERS && ((Data->Def.Lev1 != 0 && other(i) == 0) || (Data->Def.Lev2 != 0 && other(i) == 1))))) {
                 if (IDLE[0] > 12 || IDLE[1] > 12 || Data->P[abs(i - 1)].PresRev[0] >= 16) {
-                    strncpy(IDT, "i136", 4);
+                    strncpy(helptextIndex, "i136", 4);
                     Data->P[abs(i - 1)].PresRev[0] = 0x7F;
-                    strncpy(IDT, "i000", 4);
+                    strncpy(helptextIndex, "i000", 4);
 
                     if (IDLE[0] > 12 || IDLE[1] > 12) {
                         SpecialEnd();
@@ -451,8 +451,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
                 VerifyCrews(plr[i]);
                 VerifySF(plr[i]);
-                strncpy(IDT, "i000", 4);
-                strncpy(IKEY, "k000", 4);
+                strncpy(helptextIndex, "i000", 4);
+                strncpy(keyhelpIndex, "k000", 4);
                 FixPrograms(plr[i]);
 
                 //soften sound
@@ -748,10 +748,10 @@ void GetMouse_fast(void)
         CloseEmUp(0, 0);
     } else if (XMAS && AL_CALL == 0 && (key >> 8 == 0x3B)) {
         if (mousebuttons != 1) {
-            Help(IDT);
+            Help(helptextIndex);
         }
     } else if (AL_CALL == 0 && ((key >> 8) == 0x3C)) {
-        Help(IKEY);
+        Help(keyhelpIndex);
     } else if (AL_CALL == 0 && ((key >> 8) == 0x3D)) {
         Help("i123");
     }

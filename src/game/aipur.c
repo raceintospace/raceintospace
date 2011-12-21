@@ -40,8 +40,8 @@ void DrawStatistics(char Win)
     char Digit[2];
     int starty, qty, i;
     FILE *fin;
-    strncpy(IDT, "i145", 4);
-    strncpy(IKEY, "k045", 4);
+    strncpy(helptextIndex, "i145", 4);
+    strncpy(keyhelpIndex, "k045", 4);
     FadeOut(2, pal, 10, 0, 0);
     PortPal(0);
 
@@ -194,12 +194,12 @@ void Stat(char Win)
                     InBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
                     WaitForMouseUp();
                     key = 0;
-                    strncpy(IKEY, "k999", 4);
+                    strncpy(keyhelpIndex, "k999", 4);
 
                     switch (j) {
                     case 0:
-                        strncpy(IDT, "i130", 4);
-                        strncpy(IKEY, "k031", 4);
+                        strncpy(helptextIndex, "i130", 4);
+                        strncpy(keyhelpIndex, "k031", 4);
 
                         if (Option == -1 || (Option == Win)) {
                             ShowSpHist(Win);
@@ -209,25 +209,25 @@ void Stat(char Win)
                         break;
 
                     case 1:
-                        strncpy(IDT, "i131", 4);
-                        strncpy(IKEY, "k321", 4);
+                        strncpy(helptextIndex, "i131", 4);
+                        strncpy(keyhelpIndex, "k321", 4);
                         Records(Win);
                         break;
 
                     case 2:
-                        strncpy(IDT, "i132", 4);
-                        strncpy(IKEY, "k033", 4);
+                        strncpy(helptextIndex, "i132", 4);
+                        strncpy(keyhelpIndex, "k033", 4);
                         ShowPrest(Win);
                         break;
 
                     case 3:
-                        strncpy(IDT, "i034", 4);
+                        strncpy(helptextIndex, "i034", 4);
                         ShowHard(Win);
                         break;
 
                     case 4:
-                        strncpy(IDT, (Win == 0) ? "i133" : "i134", 4);
-                        strncpy(IKEY, (Win == 0) ? "k035" : "k441", 4);
+                        strncpy(helptextIndex, (Win == 0) ? "i133" : "i134", 4);
+                        strncpy(keyhelpIndex, (Win == 0) ? "k035" : "k441", 4);
 
                         if (Data->P[Win].AstroCount > 0)
                             if (Option == -1 || Option == Win) {
@@ -238,8 +238,8 @@ void Stat(char Win)
                         break;
                     }
 
-                    strncpy(IDT, "i000", 4);
-                    strncpy(IKEY, "k000", 4);
+                    strncpy(helptextIndex, "i000", 4);
+                    strncpy(keyhelpIndex, "k000", 4);
                     DrawStatistics(Win);
                     key = 0;
                     i = 0;
@@ -284,8 +284,8 @@ void Stat(char Win)
 
                     switch (j) {
                     case 0:
-                        strncpy(IDT, "i130", 4);
-                        strncpy(IKEY, "k031", 4);
+                        strncpy(helptextIndex, "i130", 4);
+                        strncpy(keyhelpIndex, "k031", 4);
 
                         if (Option == -1 || Option == other(Win)) {
                             ShowSpHist(other(Win));
@@ -295,26 +295,26 @@ void Stat(char Win)
                         break;
 
                     case 1:
-                        strncpy(IDT, "i131", 4);
-                        strncpy(IKEY, "k321", 4);
+                        strncpy(helptextIndex, "i131", 4);
+                        strncpy(keyhelpIndex, "k321", 4);
                         Records(other(Win));
                         break;
 
                     case 2:
-                        strncpy(IDT, "i132", 4);
-                        strncpy(IKEY, "k033", 4);
+                        strncpy(helptextIndex, "i132", 4);
+                        strncpy(keyhelpIndex, "k033", 4);
                         ShowPrest(other(Win));
                         break;
 
                     case 3:
-                        strncpy(IDT, "i034", 4);
-                        strncpy(IKEY, "k999", 4);
+                        strncpy(helptextIndex, "i034", 4);
+                        strncpy(keyhelpIndex, "k999", 4);
                         ShowHard(other(Win));
                         break;
 
                     case 4:
-                        strncpy(IDT, (Win == 0) ? "i133" : "i134", 4);
-                        strncpy(IKEY, (Win == 0) ? "k035" : "k441", 4);
+                        strncpy(helptextIndex, (Win == 0) ? "i133" : "i134", 4);
+                        strncpy(keyhelpIndex, (Win == 0) ? "k035" : "k441", 4);
 
                         if (Data->P[other(Win)].AstroCount > 0)
                             if (Option == -1 || Option == other(Win)) {
@@ -327,8 +327,8 @@ void Stat(char Win)
                         break;
                     }
 
-                    strncpy(IDT, "i000", 4);
-                    strncpy(IKEY, "k000", 4);
+                    strncpy(helptextIndex, "i000", 4);
+                    strncpy(keyhelpIndex, "k000", 4);
                     DrawStatistics(Win);
                     key = 0;
                     i = 0;

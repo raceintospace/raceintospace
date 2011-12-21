@@ -33,8 +33,8 @@ void DrawLimbo(char plr)
     int i;
     FadeOut(2, pal, 10, 0, 0);
 
-    strcpy(IDT, "i039");
-    strcpy(IKEY, "k039");
+    strcpy(helptextIndex, "i039");
+    strcpy(keyhelpIndex, "k039");
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

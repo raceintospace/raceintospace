@@ -36,11 +36,11 @@ void DrawTrain(char plr, char lvl)
     char *Trner = "TRAINING\0";
 
     if (lvl == 0) {
-        strcpy(IDT, "i038");
-        strcpy(IKEY, "k038");
+        strcpy(helptextIndex, "i038");
+        strcpy(keyhelpIndex, "k038");
     } else {
-        strcpy(IDT, "i037");
-        strcpy(IKEY, "k037");
+        strcpy(helptextIndex, "i037");
+        strcpy(keyhelpIndex, "k037");
     }
 
     FadeOut(2, pal, 10, 0, 0);
@@ -626,11 +626,11 @@ void Hospital(char plr, int sel)
     long size;
 
     if (sel == 0) {
-        strcpy(IDT, "i041");
-        strcpy(IKEY, "k041");
+        strcpy(helptextIndex, "i041");
+        strcpy(keyhelpIndex, "k041");
     } else {
-        strcpy(IDT, "i020");
-        strcpy(IKEY, "k020");
+        strcpy(helptextIndex, "i020");
+        strcpy(keyhelpIndex, "k020");
     }
 
     for (i = 0; i < 100; i++) {

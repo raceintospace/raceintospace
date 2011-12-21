@@ -1,4 +1,5 @@
 #include <png.h>
+#include <zlib.h>
 #include <stdio.h>
 #include <errno.h>
 #include <stdint.h>

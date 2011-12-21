@@ -117,7 +117,7 @@ void Credits(void)
 {
     int k, i;
     int32_t len;
-    strcpy(IKEY, "i999\0");
+    strcpy(keyhelpIndex, "i999\0");
     FILE *fin;
 
     fin = sOpen("FIRST.IMG", "rb", 0);
@@ -172,7 +172,7 @@ void Credits(void)
 
     FadeOut(2, pal, 30, 0, 0);
     memset(screen, 0x00, 64000);
-    strcpy(IKEY, "k000\0");
+    strcpy(keyhelpIndex, "k000\0");
     return;
 }
 
@@ -297,8 +297,8 @@ void NextTurn(char plr)
 
     memset(pal, 0x00, sizeof(pal));
     gxSetDisplayPalette(pal);
-    strcpy(IDT, "i000");
-    strcpy(IKEY, "k000");
+    strcpy(helptextIndex, "i000");
+    strcpy(keyhelpIndex, "k000");
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(&pal, 768, 1, fin);
