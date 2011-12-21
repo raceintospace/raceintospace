@@ -215,6 +215,67 @@ void write_news(FILE * fp)
     printf("};\n\n");
 }
 
+
+void write_failure_modes(FILE * fp)
+{
+    int i;
+    uint32_t count;  // number of failure modes
+
+    struct FailureHeaderStruct {
+        char Code[6];
+        int32_t offset;
+        int16_t size;
+    } failsHdr[44];
+
+    struct XFails {
+        int32_t percentage;
+        int16_t code,value,extra;
+        int16_t fail;  // Failure value
+        char description[200];
+    } record;
+
+    fread(&count, 4, 1, fp);
+    
+    memset(&failsHdr,0, sizeof(failsHdr));
+    
+    for (i = 0; i < count; i++) {
+        fread(failsHdr[i].Code, 6, 1, fp);
+        fread(&failsHdr[i].offset, 4, 1, fp);
+        fread(&failsHdr[i].size, 2, 1, fp);
+    }
+    
+    // Read each failure sequence
+    for (i = 0; i < count; i++) {
+        size_t sz = failsHdr[i].size;
+        
+        fseek(fp, failsHdr[i].offset, SEEK_SET);
+        printf("struct failuretext_t failuretext_%s[] = {\n", failsHdr[i].Code);
+
+        while (sz) {
+            fread(&record.percentage, 4, 1, fp);
+            fread(&record.code, 2, 1, fp);
+            fread(&record.value, 2, 1, fp);
+            fread(&record.extra, 2, 1, fp);
+            fread(&record.fail, 2, 1, fp);
+            fread(&record.description, 200, 1, fp);
+
+            //fread(&record, 208, 1, fp);
+            RecordStart();
+            Number(percentage);
+            Number(code);
+            Number(value);
+            Number(extra);
+            Number(fail);
+            String(description);
+            RecordEnd();
+            sz -= 212;
+        }
+        printf("};\n\n");
+
+    }
+
+}
+
 void decode(const char * dir, const char * filename, void(*function)(FILE *))
 {
     char full_path[512];
@@ -252,6 +313,8 @@ int main(int argc, char ** argv)
     decode(argv[1], "event.dat", write_events);
 
     decode(argv[1], "news.dat", write_news);
+    
+    decode(argv[1], "fails.cdr", write_failure_modes);
     
     return 0;
 }
