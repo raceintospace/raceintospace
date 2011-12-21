@@ -35,6 +35,7 @@
     utils/but2png ../gamedata/portbut.but portbut
     utils/but2png ../gamedata/first.img first
     utils/but2png ../gamedata/control.img first
+    utils/but2png ../gamedata/cem.img first
     utils/but2png ../gamedata/rdbox.but rdbox
 
     mv ../gamedata/*.png ../images/
