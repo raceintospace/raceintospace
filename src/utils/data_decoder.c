@@ -227,7 +227,7 @@ void write_help(FILE * fp)
     
     struct {
         char Code[6];
-        char description[1024];
+        char description[40][60];
     } record;
     
 
@@ -246,14 +246,30 @@ void write_help(FILE * fp)
     // Now just description blobs of text.
     for (i = 0; i < count; i++)
     {
+        char buffer[1024];
+        char * token;
+        int n = 0;
+        int j;
         fseek(fp, helpHdr[i].offset, SEEK_SET);
-        fread(record.description, helpHdr[i].size, 1, fp);
+        memset(buffer, 0, sizeof(buffer));
+        fread(buffer, helpHdr[i].size, 1, fp);
         
         strcpy(record.Code, helpHdr[i].Code);
-        // TODO: Maybe tokenize the output and list this as individual lines
+        token = strtok(buffer, "\n\r");
+        while (token != NULL)
+        {
+            strcpy(&record.description[n++][0], token);
+            token = strtok(NULL, "\n\r");
+        }
+                   
         RecordStart();        
         String(Code);
-        String(description);
+        printf("    .description[][] = {\n");
+
+        for (j = 0; j < n; j++)  {
+            printf("      \"%s\",\n",record.description[j]);
+        }
+        printf("    },\n");
         RecordEnd();
     }
     printf("};\n\n");
