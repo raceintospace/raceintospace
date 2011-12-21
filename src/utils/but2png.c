@@ -31,6 +31,7 @@
     utils/but2png ../gamedata/lpads.but lpads
     utils/but2png ../gamedata/mhist.but mhist
     utils/but2png ../gamedata/nfutbut.but nfutbut
+    utils/but2png ../gamedata/portbut.but portbut
 
     mv ../gamedata/*.png ../images/
 */
@@ -40,7 +41,6 @@
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/inte_1.but
     utils/but2png ../gamedata/lenin.but
-    utils/but2png ../gamedata/portbut.but
     utils/but2png ../gamedata/presr.but
     utils/but2png ../gamedata/rdbox.but
     utils/but2png ../gamedata/tracker.but
@@ -615,6 +615,22 @@ int translate_nfutbut(FILE * fp)
     return write_image();
 }
 
+// 30x19, no headers, uses PortPal (?)
+int translate_portbut(FILE * fp)
+{
+    int bytes, rv;
+    PortPal(0);
+
+    width = 30; height = 19;
+    while (bytes = fread(screen, 1, width * height, fp)) {
+        if (rv = write_image()) {
+            return rv;
+        }
+    }
+    
+    return 0;
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -770,6 +786,7 @@ struct {
     FILE_STRATEGY(lpads),
     FILE_STRATEGY(mhist),
     FILE_STRATEGY(nfutbut),
+    FILE_STRATEGY(portbut),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
