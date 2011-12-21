@@ -234,7 +234,7 @@ void write_help(FILE * fp)
     int count;
     fread(&count, 4, 1, fp);
     
-    // First is 
+    // First is a table with offsets to the data
     for (i = 0; i< count; i++) {
         fread(helpHdr[i].Code, 6, 1, fp);
         fread(&helpHdr[i].offset, 4, 1, fp);
@@ -242,14 +242,15 @@ void write_help(FILE * fp)
     }
     
     printf("struct helptext_t helptext[] = {\n");
-
+    
+    // Now just description blobs of text.
     for (i = 0; i < count; i++)
     {
         fseek(fp, helpHdr[i].offset, SEEK_SET);
         fread(record.description, helpHdr[i].size, 1, fp);
         
         strcpy(record.Code, helpHdr[i].Code);
-        
+        // TODO: Maybe tokenize the output and list this as individual lines
         RecordStart();        
         String(Code);
         String(description);
