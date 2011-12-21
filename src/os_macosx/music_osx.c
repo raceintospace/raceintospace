@@ -119,7 +119,7 @@ void music_load(enum music_track track)
 	char name[80] = "";
 	FILE * midi_f;
 	char * midi_data = NULL;
-	int len;
+	size_t fileLength;
 	int i;
 	OSStatus rv;
 	
@@ -144,13 +144,13 @@ void music_load(enum music_track track)
 	// Read the MIDI file into memory
 	midi_f = sOpen(name, "rb", FT_MIDI);
 	if (midi_f == NULL) {
-		len = -1;
+		fileLength = -1;
 	} else {
-		len = fread_dyn(&midi_data, &len, midi_f);
+		fileLength = fread_dyn(&midi_data, &fileLength, midi_f);
 		fclose(midi_f);
 	}
 	
-	if (len < 0 || midi_data == NULL) {
+	if (fileLength < 0 || midi_data == NULL) {
 		WARNING2("could not read MIDI file `%s'", name);
 		music_files[track].unplayable = 1;
 		return;
@@ -160,7 +160,7 @@ void music_load(enum music_track track)
 	rv = NewMusicSequence(&music_files[track].sequence);
 	if (rv == 0) {
 		// Try to load the sequence out of this buffer
-		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, len), 0);
+		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0);
 	}
 		
 	// Regardless, free the buffer we read off disk, if any

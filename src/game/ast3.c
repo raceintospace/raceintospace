@@ -623,7 +623,7 @@ void Hospital(char plr, int sel)
 {
     int now2, BarA, count, i, j, M[100];
     FILE *fin;
-    long size;
+    size_t size=0;
 
     if (sel == 0) {
         strcpy(helptextIndex, "i041");
