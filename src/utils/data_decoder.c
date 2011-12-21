@@ -216,6 +216,49 @@ void write_news(FILE * fp)
     printf("};\n\n");
 }
 
+void write_help(FILE * fp)
+{
+    int i;
+    struct HelpTextHdr {
+        char Code[6];
+        uint32_t offset;
+        uint16_t size;
+    } helpHdr[200];
+    
+    struct {
+        char Code[6];
+        char description[1024];
+    } record;
+    
+
+    int count;
+    fread(&count, 4, 1, fp);
+    
+    // First is 
+    for (i = 0; i< count; i++) {
+        fread(helpHdr[i].Code, 6, 1, fp);
+        fread(&helpHdr[i].offset, 4, 1, fp);
+        fread(&helpHdr[i].size, 2, 1, fp);
+    }
+    
+    printf("struct helptext_t helptext[] = {\n");
+
+    for (i = 0; i < count; i++)
+    {
+        fseek(fp, helpHdr[i].offset, SEEK_SET);
+        fread(record.description, helpHdr[i].size, 1, fp);
+        
+        strcpy(record.Code, helpHdr[i].Code);
+        
+        RecordStart();        
+        String(Code);
+        String(description);
+        RecordEnd();
+    }
+    printf("};\n\n");
+
+}
+
 
 void write_failure_modes(FILE * fp)
 {
@@ -485,6 +528,8 @@ int main(int argc, char ** argv)
     decode(argv[1], "event.dat", write_events);
 
     decode(argv[1], "news.dat", write_news);
+    
+    decode(argv[1], "help.cdr", write_help);
 
     decode(argv[1], "fails.cdr", write_failure_modes);    
 
