@@ -284,7 +284,7 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
 {
     // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index    
     struct Sequence {
-        char Id[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
+        char MissionIdSequence[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
         char Step[6];   // The step for the failures
         
         // using the key file index
@@ -324,7 +324,7 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
     memset(&record, 0, sizeof(record));
     
     printf("struct MissionSequenceKey %s[] = {\n", name);
-    while (fread(&record.Id, 10, 1, fp)) {
+    while (fread(&record.MissionIdSequence, 10, 1, fp)) {
         fread(&record.video_0x, 10, 2, fp);
         
         strcpy(record.video_0, keys[record.video_0x].Sequence);
@@ -339,7 +339,7 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
         strcpy(record.audio_4, keys[record.audio_4x].Sequence);
 
         RecordStart();
-        String(Id);
+        String(MissionIdSequence);
         String(video_0);
         String(audio_0);
         String(video_1);
@@ -368,7 +368,7 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
 
     
     struct Sequence {
-        char Id[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
+        char MissionIdSequence[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
         char MissionStep[6];   // The step for the failures
         
         // using the key file index
@@ -423,7 +423,7 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
         printf("struct MissionSequenceKey %s[] = {\n", name);
         int size = offsetTable[i].size;
         while (size) {
-            fread(&record.Id,15, 1, fp);  // read name
+            fread(&record.MissionIdSequence,15, 1, fp);  // read name
             fread(&record.video_0x, 10, 2, fp);
             strcpy(record.MissionStep, offsetTable[i].MissionStep);
             
@@ -441,7 +441,7 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
             
             RecordStart();
             String(MissionStep);
-            String(Id);
+            String(MissionIdSequence);
             String(video_0);
             String(audio_0);
             String(video_1);
