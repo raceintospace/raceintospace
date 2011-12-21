@@ -121,6 +121,21 @@ void write_custom_men(FILE * fp) {
     write_men(fp, "custom_men");
 }
 
+void write_events(FILE * fp)
+{
+    struct event {
+        char description[250];
+    } __attribute__((packed)) record;
+    
+    printf("struct event_t events[] = {\n");
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        String(description);
+        RecordEnd();
+    }
+    printf("};\n\n");
+}
+
 void decode(const char * dir, const char * filename, void(*function)(FILE *))
 {
     char full_path[512];
@@ -151,9 +166,11 @@ int main(int argc, char ** argv)
     }
     
     decode(argv[1], "mission.dat", write_mission);
-
+    
     decode(argv[1], "crew.dat", write_historical_men);
     decode(argv[1], "user.dat", write_custom_men);
-
+    
+    decode(argv[1], "event.dat", write_events);
+    
     return 0;
 }
