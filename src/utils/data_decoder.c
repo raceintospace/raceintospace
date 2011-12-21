@@ -40,7 +40,7 @@ void print_escaped_string(const char * string, int max_length)
 #define String(name) { \
     printf("    ." #name " = \""); \
     print_escaped_string(record.name, sizeof(record.name)); \
-    printf("\",\n", record.name); \
+    printf("\",\n"); \
     }
 
 void write_mission(FILE * fp)
@@ -358,6 +358,7 @@ void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
 
 void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
 {
+    int i;
     // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index
     
     struct Table {
@@ -403,7 +404,7 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
     } keys[1000]; 
 
     
-    for (int i = 0; i < 46; i++) {
+    for (i = 0; i < 46; i++) {
         fread(&offsetTable[i].MissionStep, 8, 1, fp);
         fread(&offsetTable[i].foffset, 4, 1, fp);
         fread(&offsetTable[i].size, 2, 1, fp);
@@ -415,7 +416,7 @@ void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
     while (fread(keys, 8, count, fp2));    
 
     
-    for (int i = 0; i < 46; i++ ) {
+    for (i = 0; i < 46; i++ ) {
         
         fseek(fp, offsetTable[i].foffset, SEEK_SET);
         memset(&record, 0, sizeof(record));
