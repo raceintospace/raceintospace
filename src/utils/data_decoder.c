@@ -145,6 +145,76 @@ void write_events(FILE * fp)
     printf("};\n\n");
 }
 
+void write_news(FILE * fp)
+{
+    int i;
+    struct {
+        uint32_t us_news;
+        uint32_t soviet_news;
+        uint32_t unknown[3];
+    }  __attribute__((packed)) lengths;
+    
+    struct {
+        uint32_t us_news;
+        uint32_t soviet_news;
+    } offsets;
+
+    struct {
+        int i;
+        int player;
+        int year;
+        int season;
+        char description[256];
+    } record;
+    
+    // the file contains lengths, and we want offsets
+    fread(&lengths, sizeof(lengths), 1, fp);
+    offsets.us_news = sizeof(lengths);
+    offsets.soviet_news = offsets.us_news + lengths.us_news;
+    
+    printf("struct news_t news[] = {\n");
+    
+    fseek(fp, offsets.us_news, SEEK_SET);
+    record.player = 0;
+    for (i = 0; i <= 122; i++) {
+        fread(record.description, 232, 1, fp);
+
+        // i = ((Data->Year - 57) * 6 + Data->Season * 3 + random(3))
+        record.i = i;
+        record.season = (i / 3) % 2;
+        record.year = i / 6 + 1957;
+        
+        RecordStart();
+        Number(i);
+        Number(year);
+        Number(season);
+        Number(player);
+        String(description);
+        RecordEnd();
+    }
+    
+    fseek(fp, offsets.soviet_news, SEEK_SET);
+    record.player = 1;
+    for (i = 0; i <= 122; i++) {
+        fread(record.description, 177, 1, fp);
+        
+        // i = ((Data->Year - 57) * 4 + Data->Season * 2 + random(2))
+        record.i = i;
+        record.season = (i / 2) % 2;
+        record.year = i / 4 + 1957;
+        
+        RecordStart();
+        Number(i);
+        Number(year);
+        Number(season);
+        Number(player);
+        String(description);
+        RecordEnd();
+    }
+    
+    printf("};\n\n");
+}
+
 void decode(const char * dir, const char * filename, void(*function)(FILE *))
 {
     char full_path[512];
