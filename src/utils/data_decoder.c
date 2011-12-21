@@ -222,12 +222,13 @@ void write_failure_modes(FILE * fp)
     uint32_t count;  // number of failure modes
 
     struct FailureHeaderStruct {
-        char Code[6];
+        char MissionStep[6];
         int32_t offset;
         int16_t size;
     } failsHdr[44];
 
     struct XFails {
+        char MissionStep[6];
         int32_t percentage;
         int16_t code,value,extra;
         int16_t fail;  // Failure value
@@ -239,17 +240,18 @@ void write_failure_modes(FILE * fp)
     memset(&failsHdr,0, sizeof(failsHdr));
     
     for (i = 0; i < count; i++) {
-        fread(failsHdr[i].Code, 6, 1, fp);
+        fread(failsHdr[i].MissionStep, 6, 1, fp);
         fread(&failsHdr[i].offset, 4, 1, fp);
         fread(&failsHdr[i].size, 2, 1, fp);
     }
     
     // Read each failure sequence
+    printf("struct failuretext_t failuretext[] = {\n");
     for (i = 0; i < count; i++) {
         size_t sz = failsHdr[i].size;
+        strcpy(record.MissionStep, failsHdr[i].MissionStep);
         
         fseek(fp, failsHdr[i].offset, SEEK_SET);
-        printf("struct failuretext_t failuretext_%s[] = {\n", failsHdr[i].Code);
 
         while (sz) {
             fread(&record.percentage, 4, 1, fp);
@@ -261,6 +263,7 @@ void write_failure_modes(FILE * fp)
 
             //fread(&record, 208, 1, fp);
             RecordStart();
+            String(MissionStep);
             Number(percentage);
             Number(code);
             Number(value);
@@ -270,42 +273,240 @@ void write_failure_modes(FILE * fp)
             RecordEnd();
             sz -= 212;
         }
-        printf("};\n\n");
 
     }
+    printf("};\n\n");
 
 }
 
-void write_animation_key(FILE * fp, const char * name)
+
+void write_animation_sequence(FILE * fp, FILE * fp2, const char * name)
 {
-    // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index
-    uint16_t count;
-    struct SeqKey {
-        int Index;
-        char Sequence[8];
+    // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index    
+    struct Sequence {
+        char Id[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
+        char Step[6];   // The step for the failures
+        
+        // using the key file index
+        char video_0[10];
+        char audio_0[10];
+        char video_1[10];
+        char audio_1[10];
+        char video_2[10];
+        char audio_2[10];
+        char video_3[10];
+        char audio_3[10];
+        char video_4[10];
+        char audio_4[10];
+
+        // From the actual file
+        int16_t video_0x;
+        int16_t audio_0x;
+        int16_t video_1x;
+        int16_t audio_1x;
+        int16_t video_2x;
+        int16_t audio_2x;
+        int16_t video_3x;
+        int16_t audio_3x;
+        int16_t video_4x;
+        int16_t audio_4x;
     }record; 
+
+    // Read index of animation sequences
+    struct SeqKey {
+        char Sequence[8];
+    } keys[1000]; 
     
-    record.Index = 0;
-    fread(&count, 2, 1, fp);  // Initial 16-bit value is the count
+    int index = 0;
+    uint16_t count;    
+    fread(&count, 2, 1, fp2);  // Initial 16-bit value is the count
+    while (fread(&keys[index].Sequence, 8, count, fp2));    
+    memset(&record, 0, sizeof(record));
+    
     printf("struct MissionSequenceKey %s[] = {\n", name);
-    while (fread(&record.Sequence, 8, 1, fp)) {
+    while (fread(&record.Id, 10, 1, fp)) {
+        fread(&record.video_0x, 10, 2, fp);
+        
+        strcpy(record.video_0, keys[record.video_0x].Sequence);
+        strcpy(record.audio_0, keys[record.audio_0x].Sequence);
+        strcpy(record.video_1, keys[record.video_1x].Sequence);
+        strcpy(record.audio_1, keys[record.audio_1x].Sequence);
+        strcpy(record.video_2, keys[record.video_2x].Sequence);
+        strcpy(record.audio_2, keys[record.audio_2x].Sequence);
+        strcpy(record.video_3, keys[record.video_3x].Sequence);
+        strcpy(record.audio_3, keys[record.audio_3x].Sequence);
+        strcpy(record.video_4, keys[record.video_4x].Sequence);
+        strcpy(record.audio_4, keys[record.audio_4x].Sequence);
+
         RecordStart();
-        Number(Index);
-        String(Sequence);
+        String(Id);
+        String(video_0);
+        String(audio_0);
+        String(video_1);
+        String(audio_1);
+        String(video_2);
+        String(audio_2);
+        String(video_3);
+        String(audio_3);
+        String(video_4);
+        String(audio_4);
         RecordEnd();
-        record.Index++;
+        memset(&record, 0, sizeof(record));
     }
     printf("};\n\n");
 }
 
+void write_animation_fsequence(FILE * fp, FILE * fp2, const char * name)
+{
+    // These are the filenames of the animations.  The SEQ.DAT and FSEQ.DAT reference these by index
+    
+    struct Table {
+        char MissionStep[8];
+        int32_t foffset;
+        uint16_t size;
+    } offsetTable[50];
 
-void write_mission_animation_success_key(FILE * fp) {
-    write_animation_key(fp, "success_animation_key");
+    
+    struct Sequence {
+        char Id[16];    // 10 for SEQ.DAT, 15 for FSEQ.DAT
+        char MissionStep[6];   // The step for the failures
+        
+        // using the key file index
+        char video_0[10];
+        char audio_0[10];
+        char video_1[10];
+        char audio_1[10];
+        char video_2[10];
+        char audio_2[10];
+        char video_3[10];
+        char audio_3[10];
+        char video_4[10];
+        char audio_4[10];
+        
+        // From the actual file
+        int16_t video_0x;
+        int16_t audio_0x;
+        int16_t video_1x;
+        int16_t audio_1x;
+        int16_t video_2x;
+        int16_t audio_2x;
+        int16_t video_3x;
+        int16_t audio_3x;
+        int16_t video_4x;
+        int16_t audio_4x;
+    }record; 
+    
+    
+    // Read index of animation sequences
+    struct SeqKey {
+        char Sequence[8];
+    } keys[1000]; 
+
+    
+    for (int i = 0; i < 46; i++) {
+        fread(&offsetTable[i].MissionStep, 8, 1, fp);
+        fread(&offsetTable[i].foffset, 4, 1, fp);
+        fread(&offsetTable[i].size, 2, 1, fp);
+    }
+ 
+    // Read the keyfile
+    uint16_t count;    
+    fread(&count, 2, 1, fp2);  // Initial 16-bit value is the count
+    while (fread(keys, 8, count, fp2));    
+
+    
+    for (int i = 0; i < 46; i++ ) {
+        
+        fseek(fp, offsetTable[i].foffset, SEEK_SET);
+        memset(&record, 0, sizeof(record));
+        
+        printf("struct MissionSequenceKey %s[] = {\n", name);
+        int size = offsetTable[i].size;
+        while (size) {
+            fread(&record.Id,15, 1, fp);  // read name
+            fread(&record.video_0x, 10, 2, fp);
+            strcpy(record.MissionStep, offsetTable[i].MissionStep);
+            
+            strcpy(record.video_0, keys[record.video_0x].Sequence);
+            strcpy(record.audio_0, keys[record.audio_0x].Sequence);
+            strcpy(record.video_1, keys[record.video_1x].Sequence);
+            strcpy(record.audio_1, keys[record.audio_1x].Sequence);
+            strcpy(record.video_2, keys[record.video_2x].Sequence);
+            strcpy(record.audio_2, keys[record.audio_2x].Sequence);
+            strcpy(record.video_3, keys[record.video_3x].Sequence);
+            strcpy(record.audio_3, keys[record.audio_3x].Sequence);
+            strcpy(record.video_4, keys[record.video_4x].Sequence);
+            strcpy(record.audio_4, keys[record.audio_4x].Sequence);
+            size -= (15 + 10*2);  // string + 5 ui16 pairs
+            
+            RecordStart();
+            String(MissionStep);
+            String(Id);
+            String(video_0);
+            String(audio_0);
+            String(video_1);
+            String(audio_1);
+            String(video_2);
+            String(audio_2);
+            String(video_3);
+            String(audio_3);
+            String(video_4);
+            String(audio_4);
+            RecordEnd();
+            memset(&record, 0, sizeof(record));
+        }
+    }
+        printf("};\n\n");
 }
 
-void write_mission_animation_failure_key(FILE * fp) {
-    write_animation_key(fp, "failure_animation_key");
+
+void write_mission_animation_success_sequence(FILE * fp, FILE *fp2) {
+    write_animation_sequence(fp, fp2, "success_animation_sequence");
 }
+
+void write_mission_animation_failure_sequence(FILE * fp, FILE *fp2) {
+    write_animation_fsequence(fp, fp2, "failure_animation_sequence");
+}
+
+
+// Decode mission sequence files.  This requires a data file and a keyfile
+void decode_seq(const char * dir, const char * filename, void(*function)(FILE *, FILE *))
+{
+    char full_seq_path[512];
+    char full_key_path[512];
+
+    FILE * fp;
+    FILE * fp2;
+
+    
+    snprintf(full_seq_path, sizeof(full_seq_path), "%s/%s.dat", dir, filename);
+    fp = fopen(full_seq_path, "rb");
+    
+    if (!fp) {
+        char error[600];
+        snprintf(error, sizeof(error), "unable to open %s", full_seq_path);
+        perror(error);
+        exit(1);
+    }
+    
+    snprintf(full_key_path, sizeof(full_key_path), "%s/%s.key", dir, filename);
+    fp2 = fopen(full_key_path, "rb");
+    
+    if (!fp2) {
+        char error[600];
+        fclose(fp2);
+        snprintf(error, sizeof(error), "unable to open %s", full_key_path);
+        perror(error);
+        exit(1);
+    }
+    
+    function(fp, fp2);
+    
+    fclose(fp);
+    fclose(fp2);
+}
+
+
 
 void decode(const char * dir, const char * filename, void(*function)(FILE *))
 {
@@ -328,13 +529,12 @@ void decode(const char * dir, const char * filename, void(*function)(FILE *))
 }
 
 int main(int argc, char ** argv)
-{
-    FILE * fp;
-    
+{    
     if (argc != 2) {
         fprintf(stderr, "usage: %s path/to/gamedata\n", argv[0]);
         return 1;
     }
+    
     
     decode(argv[1], "mission.dat", write_mission);
     
@@ -344,13 +544,11 @@ int main(int argc, char ** argv)
     decode(argv[1], "event.dat", write_events);
 
     decode(argv[1], "news.dat", write_news);
-    
-    decode(argv[1], "fails.cdr", write_failure_modes);
-    
-    decode(argv[1], "seq.key", write_mission_animation_success_key);
-    decode(argv[1], "fseq.key", write_mission_animation_failure_key);
-    //decode(argv[1], "seq.dat", write_mission_success_sequence);
-    //decode(argv[1], "fseq.dat", write_mission_failure_sequence);
-    
+
+    decode(argv[1], "fails.cdr", write_failure_modes);    
+
+    decode_seq(argv[1], "seq", write_mission_animation_success_sequence);
+    decode_seq(argv[1], "fseq", write_mission_animation_failure_sequence);
+
     return 0;
 }
