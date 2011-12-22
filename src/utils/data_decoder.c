@@ -257,7 +257,7 @@ void write_help(FILE * fp)
         
         strncpy(record.Code, helpHdr[i].Code,6);
         token = strtok(buffer, "\n\r");
-        while (token != NULL) {
+        while (token != NULL && n < 100) {
             strncpy(record.description[n++], token, 40);
             token = strtok(NULL, "\n\r");
         }
