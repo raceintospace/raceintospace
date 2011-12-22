@@ -219,6 +219,8 @@ void write_news(FILE * fp)
 void write_help(FILE * fp)
 {
     int i;
+    char *buffer = malloc(2048);  // Covers the largest helptext size
+
     struct HelpTextHdr {
         char Code[6];
         uint32_t offset;
@@ -227,11 +229,11 @@ void write_help(FILE * fp)
     
     struct {
         char Code[6];
-        char description[40][60];
+        int index;
+        char description[100][40];
     } record;
     
-
-    int count;
+    uint32_t count = 0;
     fread(&count, 4, 1, fp);
     
     // First is a table with offsets to the data
@@ -244,26 +246,25 @@ void write_help(FILE * fp)
     printf("struct helptext_t helptext[] = {\n");
     
     // Now just description blobs of text.
-    for (i = 0; i < count; i++)
-    {
-        char buffer[1024];
+    for (i = 0; i < count; i++) {
         char * token;
         int n = 0;
         int j;
+                    
+        memset(buffer, 0, 2048);
         fseek(fp, helpHdr[i].offset, SEEK_SET);
-        memset(buffer, 0, sizeof(buffer));
         fread(buffer, helpHdr[i].size, 1, fp);
         
-        strcpy(record.Code, helpHdr[i].Code);
+        strncpy(record.Code, helpHdr[i].Code,6);
         token = strtok(buffer, "\n\r");
-        while (token != NULL)
-        {
-            strcpy(&record.description[n++][0], token);
+        while (token != NULL) {
+            strncpy(record.description[n++], token, 40);
             token = strtok(NULL, "\n\r");
         }
-                   
+                           
         RecordStart();        
         String(Code);
+        Number(index);
         printf("    .description[][] = {\n");
 
         for (j = 0; j < n; j++)  {
@@ -273,6 +274,8 @@ void write_help(FILE * fp)
         RecordEnd();
     }
     printf("};\n\n");
+    
+    free(buffer);
 
 }
 
@@ -535,7 +538,6 @@ int main(int argc, char ** argv)
         fprintf(stderr, "usage: %s path/to/gamedata\n", argv[0]);
         return 1;
     }
-    
     
     decode(argv[1], "mission.dat", write_mission);
     
