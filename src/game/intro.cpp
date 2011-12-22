@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/png_image.h"
+
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "utils.h"
@@ -179,92 +181,29 @@ void Credits(void)
 
 #define INTRO_IMAGE_COUNT 15
 
-struct intro_image {
-    unsigned char map[256 * 3];
-    unsigned char pixels[320 * 200];
-};
-struct intro_image *intro_images;
-
-int
-read_img_frame(FILE *inf, struct intro_image *ip)
-{
-    unsigned long len;
-    char compressed[64 * 1024];
-
-    len = fread(&ip->map, 1, sizeof ip->map, inf);
-
-    if (len == 0) {
-        return (-1);
-    }
-
-    if (len != sizeof ip->map) {
-        goto bad;
-    }
-
-
-    if (fread(&len, 4, 1, inf) != 1) {
-        goto bad;
-    }
-
-    Swap32bit(len);
-
-    if (len > sizeof compressed) {
-        WARNING1("frame too big");
-        goto bad;
-    }
-
-    if (fread(compressed, 1, len, inf) != len) {
-        goto bad;
-    }
-
-    PCX_D(compressed, ip->pixels, len);
-
-    return (0);
-
-bad:
-    CRITICAL1("corrupted image file");
-    /* XXX: quite drastic */
-    exit(EXIT_FAILURE);
-}
-
-void
-read_intro_images(void)
-{
-    FILE *fin;
-    int i;
-
-    intro_images = (intro_image *)xmalloc(sizeof(struct intro_image) * INTRO_IMAGE_COUNT);
-
-    fin = sOpen("FIRST.IMG", "rb", 0);
-
-    for (i = 0; i < 15; i++) {
-        if (read_img_frame(fin, &intro_images[i]) < 0) {
-            CRITICAL1("error reading first.img");
-            /* XXX: quite drastic */
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    fclose(fin);
-}
-
 void Introd(void)
 {
     int k;
-    struct intro_image *ip;
     double start;
-
-    read_intro_images();
 
     music_start(M_LIFTOFF);
 
     /* Frame 0 is Interplay, and frame 1 is Strategic Visions */
     /* These are both defunct, so start at frame 2 instead */
     for (k = 2; k < INTRO_IMAGE_COUNT; k++) {
-        ip = &intro_images[k];
+        char filename[64];
+        snprintf(filename, sizeof(filename), "first.img.%i.png", k);
 
-        gr_set_color_map(ip->map);
-        memcpy(screen, ip->pixels, MAX_X * MAX_Y);
+        FILE * fp = sOpen(filename, "rb", FT_IMAGE);
+        if (!fp)
+            break;
+
+        display::PNGImage image(fp);
+        fclose(fp);
+
+        image.export_to_legacy_palette();
+        image.draw();
+
         FadeIn(2, pal, 30, 0, 0);
 
         start = get_time();
@@ -287,7 +226,6 @@ void Introd(void)
 
 done:
     gxClearDisplay(0, 0);
-    free(intro_images);
 }
 
 void NextTurn(char plr)

@@ -25,6 +25,7 @@ file(GLOB_RECURSE game_datafiles
   RELATIVE ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/gamedata/*.*
   ${PROJECT_SOURCE_DIR}/audio/*.*
+  ${PROJECT_SOURCE_DIR}/images/*.*
   ${PROJECT_SOURCE_DIR}/video/*.*
   ${PROJECT_SOURCE_DIR}/midi/*.*
   )
@@ -47,6 +48,7 @@ add_executable("${app}" MACOSX_BUNDLE
 
 target_link_libraries("${app}"
   raceintospace_game ${raceintospace_game_libraries}
+  raceintospace_display ${raceintospace_display_libraries}
   ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY}
   )
 

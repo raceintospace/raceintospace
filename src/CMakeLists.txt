@@ -48,7 +48,8 @@ configure_file(
 # so we can find raceintospace_config.h
 include_directories(${PROJECT_BINARY_DIR}/config)
 
-# pull in the display library
+# pull in src/display/* defines and build rules
+include("display/Global.cmake")
 add_subdirectory("display")
 
 # pull in src/game/* defines and build rules

@@ -102,13 +102,15 @@ char *S_Name[] = {
 #define SLAVE 1
 #define MODEM_ERROR 4
 
+#include <stdexcept>
+
 extern struct order Order[6];
 extern struct ManPool *Men;
 char AI[2] = {0, 0};
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-int game_main(int argc, char *argv[])
+int game_main_impl(int argc, char *argv[])
 {
     int i;
     FILE *fin;
@@ -285,6 +287,17 @@ tommy:
 
     CloseEmUp(0, 0); // Normal Exit
     exit(EXIT_SUCCESS);
+}
+
+int game_main(int argc, char *argv[])
+{
+    // Do all the work in game_main_impl(), but trap exceptions here, since we're called from C
+    try {
+        return game_main_impl(argc, argv);
+    } catch (std::exception& e) {
+        fprintf(stderr, "unhandled exception: %s\n", e.what());
+        abort();
+    }
 }
 
 /** utility fn for AI to see if it should scrub the mission
