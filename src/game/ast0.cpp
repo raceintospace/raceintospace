@@ -26,7 +26,6 @@
 #include "Buzz_inc.h"
 
 char MCol[110], sel[25], MaxSel;
-int missions;    // Variable for how many missions each 'naut has flown
 
 void Moon(char plr)
 {
@@ -136,9 +135,8 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
             PrintAt(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
 
             if (Data->P[plr].Pool[ary[i]].Missions > 0) {
-                missions = Data->P[plr].Pool[ary[i]].Missions;
                 PrintAt(0, 0, " (");
-                DispNum(0, 0, missions);
+                DispNum(0, 0, Data->P[plr].Pool[ary[i]].Missions);
                 PrintAt(0, 0, ")");
             }
         }

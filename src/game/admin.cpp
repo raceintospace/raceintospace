@@ -48,8 +48,6 @@ extern int fOFF;
 SaveFileHdr *SaveHdr;
 SFInfo *FList;
 
-int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
-
 extern struct mStr Mis;
 
 void Admin(char plr)
@@ -434,7 +432,7 @@ void FileAccess(char mode)
                 }
 
                 readLen = SaveHdr->compSize;
-                load_buffer = malloc(readLen);
+                load_buffer = (char*)malloc(readLen);
 
                 readLen = fread(load_buffer, 1, readLen, fin);
 
@@ -473,7 +471,7 @@ void FileAccess(char mode)
                     }
 
                     // Read the Replay Data
-                    load_buffer = malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+                    load_buffer = (char*)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
                     readLen = fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
 
                     if (endianSwap) {
@@ -499,7 +497,7 @@ void FileAccess(char mode)
                     eventSize = fileLength - ftell(fin);
 
                     // Read the Event Data
-                    load_buffer = malloc(eventSize);
+                    load_buffer = (char*)malloc(eventSize);
                     readLen = fread(load_buffer, 1, eventSize, fin);
                     fclose(fin);
 
@@ -1353,6 +1351,7 @@ void FileText(char *name)
 
 int FutureCheck(char plr, char type)
 {
+    int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     int i, pad, p[3], m[3], t = 0, tx[3] = {0, 0, 0};
     FILE *fin;
 

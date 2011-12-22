@@ -147,7 +147,6 @@ void MisAnn(char plr, char pad)
         pal[i] = 0;
     }
 
-    gxSetDisplayPalette(pal);
     gxClearDisplay(0, 0);
 
     PortPal(plr);
@@ -496,8 +495,6 @@ void AI_Begin(char plr)
     for (i = 0; i < 768; i++) {
         pal[i] = 0;
     }
-
-    gxSetDisplayPalette(pal);
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(&pal, 768, 1, fin);

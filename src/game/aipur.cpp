@@ -818,39 +818,39 @@ void CheckAdv(char plr)
     return;
 }
 
-void RDafford(char plr, int class, int index)
+void RDafford(char plr, int equipment_class, int index)
 {
     int16_t b = 0, roll = 0, ok = 0;
 
-    if (class == 0) {
+    if (equipment_class == 0) {
         b += Data->P[plr].Probe[index].RDCost;
     }
 
-    if (class == 1) {
+    if (equipment_class == 1) {
         b += Data->P[plr].Rocket[index].RDCost;
     }
 
-    if (class == 2) {
+    if (equipment_class == 2) {
         b += Data->P[plr].Manned[index].RDCost;
     }
 
-    if (class == 3) {
+    if (equipment_class == 3) {
         b += Data->P[plr].Misc[index].RDCost;
     }
 
-    if (class == 0) {
+    if (equipment_class == 0) {
         roll += Data->P[plr].Probe[index].MaxRD - Data->P[plr].Probe[index].Safety;
     }
 
-    if (class == 1) {
+    if (equipment_class == 1) {
         roll += Data->P[plr].Rocket[index].MaxRD - Data->P[plr].Rocket[index].Safety;
     }
 
-    if (class == 2) {
+    if (equipment_class == 2) {
         roll += Data->P[plr].Manned[index].MaxRD - Data->P[plr].Manned[index].Safety;
     }
 
-    if (class == 3) {
+    if (equipment_class == 3) {
         roll += Data->P[plr].Misc[index].MaxRD - Data->P[plr].Misc[index].Safety;
     }
 
@@ -861,14 +861,14 @@ void RDafford(char plr, int class, int index)
         roll = 5;
     }
 
-    if (Data->P[plr].Buy[class][index] > 0) {
+    if (Data->P[plr].Buy[equipment_class][index] > 0) {
         return;
     }
 
     while (ok == 0 && roll != 0) {
-        if ((b *roll <= Data->P[plr].Cash) && QueryUnit(class, index, plr) == 1
-            && MaxChk(class + 1, index + 1, plr)) {
-            Data->P[plr].Buy[class][index] = RDUnit(class + 1, index + 1, roll, plr);
+        if ((b *roll <= Data->P[plr].Cash) && QueryUnit(equipment_class, index, plr) == 1
+            && MaxChk(equipment_class + 1, index + 1, plr)) {
+            Data->P[plr].Buy[equipment_class][index] = RDUnit(equipment_class + 1, index + 1, roll, plr);
             Data->P[plr].Cash = (Data->P[plr].Cash - (b * roll));
             ok = 1; // jump out of the loop
         } else {

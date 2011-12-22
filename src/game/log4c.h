@@ -324,7 +324,7 @@ struct LogEvent;
 struct LogCategory {
     struct LogCategory *parent;
     struct LogCategory *firstChild, *nextSibling;
-    char *name;
+    const char *name;
     int thresholdPriority;
     int isThreshInherited;
     struct LogAppender *appender;
@@ -340,10 +340,10 @@ struct LogAppender {
 struct LogEvent {
     struct LogCategory *cat;
     int priority;
-    char *fileName;
-    char *functionName;
+    const char *fileName;
+    const char *functionName;
     int lineNum;
-    char *fmt;
+    const char *fmt;
     va_list ap;
 };
 
@@ -413,7 +413,7 @@ extern struct LogAppender *log_defaultLogAppender;
          _log_ev.cat = &(catv);                                         \
          _log_ev.priority = (prio);                                     \
          _log_ev.fileName = __FILE__;                                   \
-         _log_ev.functionName = (char *)__func__;                       \
+         _log_ev.functionName = (const char *)__func__;                 \
          _log_ev.lineNum = __LINE__;                                    \
          _log_ev.fmt = (format);                                           \
          _log_logEvent(&(catv), &_log_ev

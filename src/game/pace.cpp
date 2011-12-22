@@ -45,16 +45,14 @@ OpenEmUp(void)
 
     GV(&vhptr, 320, 200);   // Allocate only Virtual Buffer
 
-    XMAS = 1; /* we do have a mouse */
-
     letter_dat = slurp_gamedat("letter.dat");
 }
 
 int
 PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
 {
-    char *src = src_raw;
-    char *dest = dest_raw;
+    char *src = (char *)src_raw;
+    char *dest = (char *)dest_raw;
     char num;
     char *orig_dest = dest;
 
@@ -81,8 +79,8 @@ PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
 int
 RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 {
-    signed char *src = src_raw;
-    signed char *dest = dest_raw;
+    signed char *src = (signed char *)src_raw;
+    signed char *dest = (signed char *)dest_raw;
     unsigned int used;
     int count, val;
     int i;
@@ -118,7 +116,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 int
 RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
 {
-    signed char *src = src_raw;
+    signed char *src = (signed char *)src_raw;
     signed char *dest;
     unsigned int used;
     int count, val;
@@ -153,7 +151,7 @@ RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
         return (w * h);
     }
 
-    dest = dest_raw;
+    dest = (signed char *)dest_raw;
 
     for (row = 0; row < h; row++) {
         memcpy(dest, &buf[row * (w + 1)], w);
@@ -174,7 +172,7 @@ RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
  * @param mode if mode == 1 then preserve non-faded colors, else make black
  */
 void
-FadeIn(char wh, char *palx, int steps, int val, char mode)
+FadeIn(char wh, void *palx, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;
@@ -191,7 +189,7 @@ FadeIn(char wh, char *palx, int steps, int val, char mode)
 }
 
 void
-FadeOut(char wh, char *palx, int steps, int val, char mode)
+FadeOut(char wh, void *palx, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;
@@ -311,7 +309,7 @@ frm_read_tbl(char *keyname, struct tblinfo *tbl)
     tbl->count = (hi << 8) | lo;
 
     /* alloc enough memory for all the sequence names */
-    tbl->strings = xcalloc(tbl->count, sizeof * tbl->strings);
+    tbl->strings = (char **)xcalloc(tbl->count, sizeof * tbl->strings);
 
     idx = 0;
 
@@ -333,7 +331,7 @@ frm_read_tbl(char *keyname, struct tblinfo *tbl)
     /* now idx is number of read strings */
     if (tbl->count != idx) {
         tbl->count = idx;
-        tbl->strings = xrealloc(tbl->strings, sizeof * tbl->strings);
+        tbl->strings = (char **)xrealloc(tbl->strings, sizeof * tbl->strings);
     }
 
     fclose(fin);
@@ -488,7 +486,7 @@ load_audio_file(const char *name, char **data, size_t *size)
     }
 
     if (!*data) {
-        *data = xmalloc(*size = def_size);
+        *data = (char *)xmalloc(*size = def_size);
     }
 
     while (0 < (read = mm_decode_audio(&mf,
@@ -496,7 +494,7 @@ load_audio_file(const char *name, char **data, size_t *size)
         offset += read;
 
         if (*size <= offset) {
-            *data = xrealloc(*data, *size *= 2);
+            *data = (char *)xrealloc(*data, *size *= 2);
         }
     }
 

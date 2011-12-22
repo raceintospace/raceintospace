@@ -380,9 +380,9 @@ void GetMouse(void);
 void WaitForMouseUp(void);
 void WaitForKeyOrMouseDown(void) ;
 void PauseMouse(void);
-void PrintAt(int x, int y, char *s);
-void PrintAtKey(int x, int y, char *s, char val);
-void DispBig(int x, int y, char *txt, char mode, char te);
+void PrintAt(int x, int y, const char *s);
+void PrintAtKey(int x, int y, const char *s, char val);
+void DispBig(int x, int y, const char *txt, char mode, char te);
 void DispNum(int xx, int yy, int num);
 void DispMB(int x, int y, int val);
 void ShBox(int x1, int y1, int x2, int y2);
@@ -428,7 +428,7 @@ void MisRush(char plr, char rush_level);
 
 // MIS_C.C
 void RLEE(void *dest, void *src, unsigned int src_size);
-void PlaySequence(char plr, int step, char *Seq, char mode);
+void PlaySequence(char plr, int step, const char *Seq, char mode);
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName);
 void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
@@ -516,8 +516,8 @@ void Replace_Snaut(char plr);
 // PACE.C
 int PCX_D(void *src, void *dest, unsigned src_size);
 int32_t RLEC(char *src, char *dest, unsigned int src_size);
-void FadeIn(char wh, char *palx, int steps, int val, char mode);
-void FadeOut(char wh, char *palx, int steps, int val, char mode);
+void FadeIn(char wh, void *palx, int steps, int val, char mode);
+void FadeOut(char wh, void *palx, int steps, int val, char mode);
 int RLED(void *src, void *dest, unsigned int src_size);
 
 // PLACE.C
@@ -529,7 +529,7 @@ void AstFaces(char plr, int x, int y, char face);
 void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff);
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned char coff);
 void DispHelp(char top, char bot, char *txt);
-int Help(char *FName);
+int Help(const char *FName);
 void Draw_Mis_Stats(char plr, char index, int *where, char mode);
 void writePrestigeFirst(char index);
 
@@ -649,7 +649,7 @@ void UpdateRecords(char Ty);
 void RLEF(void *dest, void *src, unsigned int src_size);
 void DispBaby(int x, int y, int loc, char neww);
 void AbzFrame(char plr, int num, int dx, int dy, int width, int height, char *Type, char mode);
-void Replay(char plr, int num, int dx, int dy, int width, int height, char *Type);
+void Replay(char plr, int num, int dx, int dy, int width, int height, const char *Type);
 
 // REVIEW.C
 void DrawReview(char plr);

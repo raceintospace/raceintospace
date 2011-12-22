@@ -19,7 +19,14 @@
 #ifndef __BUZZ_INC_H__
 #define __BUZZ_INC_H__ 1
 
+extern "C" {
 int game_main(int argc, char *argv[]);
+}
+
+#ifdef __GNUG__
+// suppress literal-strings-as-char* warning
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 #include "raceintospace_config.h"
 #include "pace.h"

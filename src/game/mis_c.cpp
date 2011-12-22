@@ -141,7 +141,7 @@ void RLEE(char *dest, char *src, unsigned int src_size)
  * \param Seq Sequence-Code for the movies (?)
  * \param mode mode 1 branches to fseq.dat so it's probably failure. However mode 2 is defined by a female 'naut's presence
  */
-void PlaySequence(char plr, int step, char *Seq, char mode)
+void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
     DEBUG1("->PlaySequence()");
     //DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %s)", step, Seq, mode);
@@ -162,7 +162,11 @@ void PlaySequence(char plr, int step, char *Seq, char mode)
     FILE *mmfp;
     float fps;
     int hold_count;
-
+    
+    // since Seq apparently needs to be mutable, copy the input parameter
+    char Seq[128];
+    strncpy(Seq, InSeq, sizeof(Seq));
+    
     F = NULL; /* XXX check uninitialized */
     dSeq = NULL; /* XXX check uninitialized */
     bSeq = NULL; /* XXX check uninitialized */
@@ -613,7 +617,7 @@ void PlaySequence(char plr, int step, char *Seq, char mode)
 
                 if (Data->Def.Anim) {
                     idle_loop(FRM_Delay * 3);
-                };
+                }
 
                 j++;
             }
@@ -830,7 +834,7 @@ void Clock(char plr, char clck, char mode, char tm)
 
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 {
-    int i, x, y, try, which, mx2, mx1;
+    int i, x, y, attempt, which, mx2, mx1;
     GXHEADER boob;
     uint16_t *bot, off = 0;
     int32_t locl;
@@ -888,19 +892,22 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         which = 580 + bub; //Specs: static frames
         ++bub;
     } else if (mode == 1) {
-        try = 0;
+        attempt = 0;
 
         which = 0;
 
-        while (try < SCND_TABLE) {
-                if (xstrncasecmp(fName, Mob2[try].Name, strlen(Mob2[try].Name)) == 0) break;
-                else try++;
-            };
+        while (attempt < SCND_TABLE) {
+            if (xstrncasecmp(fName, Mob2[attempt].Name, strlen(Mob2[attempt].Name)) == 0)
+                break;
+            else
+                attempt++;
+        };
 
-        if (try >= SCND_TABLE) which = 415 + random(25);
-        else {
+        if (attempt >= SCND_TABLE) {
+            which = 415 + random(25);
+        } else {
             if (Val1[0] != '#')
-                switch (Mob2[try].idx) {
+                switch (Mob2[attempt].idx) {
                     case 0:
                         strcat(Val1, "0\0");
                         break;
@@ -954,57 +961,60 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                     }
 
             if (which == 0) {
-                try = 0;
+                attempt = 0;
 
-                while (try < CLIF_TABLE) {
+                while (attempt < CLIF_TABLE) {
 
-                        strcpy(Val2, &Mob[try].Code[0]);
+                        strcpy(Val2, &Mob[attempt].Code[0]);
 
                         if (xstrncasecmp(Val1, Val2, strlen(Val1)) == 0) {
                             break;
-                        } else try++;
+                        } else {
+                            attempt++;
+                        }
                     };
 
-                if (try >= CLIF_TABLE) which = 415 + random(25);
-                else {
+                if (attempt >= CLIF_TABLE) {
+                    which = 415 + random(25);
+                } else {
 
-                    which = random(Mob[try].Qty);
+                    which = random(Mob[attempt].Qty);
 
                     if (which >= 10) {
                         locl = ((which - (which % 10)) / 10) - 1;
 
-                        which = Mob[try].List[which % 10];
+                        which = Mob[attempt].List[which % 10];
                     } else {
 
-                        which = Mob[try].List[which];
+                        which = Mob[attempt].List[which];
                     }
                 }
             }
         }
     } else {
-        try = 0;
+        attempt = 0;
 
-        while (try < NORM_TABLE) {
+        while (attempt < NORM_TABLE) {
 
-                strcpy(Val2, &Mob[try].Code[0]);
+                strcpy(Val2, &Mob[attempt].Code[0]);
 
                 if (strncmp(Val1, Val2, strlen(Val2)) == 0) {
                     break;
-                } else try++;
+                } else attempt++;
             };
 
-        if (try >= NORM_TABLE) which = 415 + random(25);
+        if (attempt >= NORM_TABLE) which = 415 + random(25);
         else {
 
-            which = random(Mob[try].Qty);
+            which = random(Mob[attempt].Qty);
 
             if (which >= 10) {
                 locl = ((which - (which % 10)) / 10) - 1;
 
-                which = Mob[try].List[which % 10];
+                which = Mob[attempt].List[which % 10];
             } else {
 
-                which = Mob[try].List[which];
+                which = Mob[attempt].List[which];
             }
         }
     };
@@ -1018,7 +1028,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     if (loc != 0 && which < 580) {
         VBlank();
-        gxSetDisplayPalette(pal);
     }
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
@@ -1040,8 +1049,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     gxPutImage(&boob, gxSET, x, y, 0);
 
     VBlank();
-
-    gxSetDisplayPalette(pal);
 
     DV(&boob);
 }

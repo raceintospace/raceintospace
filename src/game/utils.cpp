@@ -102,9 +102,9 @@ xcalloc(size_t a, size_t b)
 char *
 xstrdup(const char *s)
 {
-    void *p;
+    char *p;
 
-    p = xmalloc(strlen(s) + 1);
+    p = (char *)xmalloc(strlen(s) + 1);
     strcpy(p, s);
     return (p);
 }
@@ -114,7 +114,7 @@ xstrcat2(const char *s1, const char *s2)
 {
     char *s = NULL;
     assert(s1 && s2);
-    s = xmalloc(strlen(s1) + strlen(s2) + 1);
+    s = (char *)xmalloc(strlen(s1) + strlen(s2) + 1);
     strcpy(s, s1);
     strcat(s, s2);
     return s;
@@ -144,7 +144,7 @@ fread_dyn(char **destp, size_t *n, FILE *stream)
     assert(stream);
 
     if (!*destp) {
-        *destp = xmalloc(*n = bsize);
+        *destp = (char *)xmalloc(*n = bsize);
     }
 
     while (1) {
@@ -162,7 +162,7 @@ fread_dyn(char **destp, size_t *n, FILE *stream)
         total += cnt;
 
         if (*n <= total) {
-            *destp = xrealloc(*destp, *n *= 2);
+            *destp = (char *)xrealloc(*destp, *n *= 2);
         }
     }
 }

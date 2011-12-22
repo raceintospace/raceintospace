@@ -26,11 +26,10 @@
 #include "Buzz_inc.h"
 #include "externs.h"
 
-int lenprogname;  // Variable to hold and manipulate length of program name
-
 void DrawLimbo(char plr)
 {
     int i;
+    int lenprogname;  // Variable to hold and manipulate length of program name
     FadeOut(2, pal, 10, 0, 0);
 
     strcpy(helptextIndex, "i039");

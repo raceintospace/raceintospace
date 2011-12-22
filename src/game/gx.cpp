@@ -22,7 +22,7 @@ gxCreateVirtual(int mode, GXHEADER *hp,
     memset(hp, 0, sizeof * hp);
     hp->w = w;
     hp->h = h;
-    hp->vptr = xmalloc(w * h);
+    hp->vptr = (unsigned char*)xmalloc(w * h);
     return gxSUCCESS;
 }
 
@@ -195,11 +195,6 @@ gxDisplayVirtual(int from_x0, int from_y0,
         to_idx = (to_y + row) * hp->w + to_x;
         memcpy(&hp->vptr[to_idx], &screen[from_idx], width);
     }
-}
-
-void
-gxSetDisplayPalette(char *pal)
-{
 }
 
 void

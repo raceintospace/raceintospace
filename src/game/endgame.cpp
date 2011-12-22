@@ -583,7 +583,6 @@ void NewEnd(char win, char loc)
 
                 gxPutImage(&local, gxSET, 149, 9, 0);
                 memset(&pal[384], 0, 384);
-                gxSetDisplayPalette(pal);
                 gxClearVirtual(&local, 0);
                 Load_LenFlag(win);
                 FadeIn(1, pal, 40, 128, 1);

@@ -21,9 +21,6 @@
 
 extern struct mStr Mis;
 
-int lenprogname;  // Variable to hold and manipulate length of program name
-int missions;     // Variable for how many missions each 'naut has flown
-
 int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 {
     int M = 0;
@@ -638,12 +635,11 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             PrintAt(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
-            missions = Data->P[plr].Pool[m[i] - 1].Missions;
             grSetColor(3);
 
-            if (missions > 0) {
+            if (Data->P[plr].Pool[m[i] - 1].Missions > 0) {
                 PrintAt(0, 0, " (");
-                DispNum(0, 0, missions);
+                DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Missions);
                 PrintAt(0, 0, ")");
             }
 
@@ -692,6 +688,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
 void DrawHard(char mode, char pad, char mis, char plr)
 {
+    int lenprogname;  // Variable to hold and manipulate length of program name
+
     strcpy(keyhelpIndex, "k201");
     ShBox(75, 43, 244, 173);
     InBox(81, 60, 238, 95);

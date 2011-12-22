@@ -121,7 +121,7 @@ void music_load(enum music_track track)
     // This should really be done on the Vorbis files, rather than in the player
     if (bytes > 2 * 11025) {
         music_files[track].buf_size -= 2 * 11025;
-        music_files[track].buf = xrealloc(music_files[track].buf, music_files[track].buf_size);
+        music_files[track].buf = (char *)xrealloc(music_files[track].buf, music_files[track].buf_size);
     }
 }
 
@@ -175,7 +175,7 @@ void music_stop()
     // Iterate through the list and stop any playing tracks by calling music_stop_track()
     for (i = 0; i < M_MAX_MUSIC; i ++) {
         if (music_files[i].playing) {
-            music_stop_track(i);
+            music_stop_track((music_track)i);
         }
     }
 }

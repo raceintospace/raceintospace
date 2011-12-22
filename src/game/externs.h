@@ -19,7 +19,7 @@
 extern struct Players *Data;
 extern int x, y, mousebuttons, key;
 extern unsigned char *screen;
-extern unsigned char LOAD, ZOND, QUIT, FADE, XMAS;
+extern unsigned char LOAD, ZOND, QUIT, FADE;
 extern unsigned char pal[3 * 256];
 extern char plr[2], Name[20], helptextIndex[5], keyhelpIndex[5];
 extern char *buffer;

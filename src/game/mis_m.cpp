@@ -599,7 +599,6 @@ void MisCheck(char plr, char mpad)
         if (!AI[plr]) {
             if (BIG == 0) {
                 memset(&pal[64 * 3], 0x00, 64 * 3); //Specs: 0x08
-                gxSetDisplayPalette(pal);
 
                 if (plr == 0) {
                     RectFill(2, 107, 140, 115, 3);

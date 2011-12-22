@@ -32,7 +32,7 @@
  * The root category's default logging function.
  */
 
-static char *priorityNames[] = {
+static const char *priorityNames[] = {
     "Zero Priority",
     "TRACE",
     "DEBUG",
@@ -45,7 +45,7 @@ static char *priorityNames[] = {
     "EMERGENCY",
 };
 
-static void doAppend(struct LogAppender *this, struct LogEvent *ev);
+static void doAppend(struct LogAppender *appender, struct LogEvent *ev);
 
 static struct DefaultLogAppender {
     struct LogAppender appender;
@@ -59,12 +59,12 @@ static void doAppend(struct LogAppender *this0, struct LogEvent *ev)
 {
 
     // TODO: define a format field in struct for timestamp, etc.
-    char *pn = NULL;
+    const char *pn = NULL;
     char buf[20];
-    struct DefaultLogAppender *this = (struct DefaultLogAppender *)this0;
+    struct DefaultLogAppender *appender = (struct DefaultLogAppender *)this0;
 
-    if (this->file == NULL) {
-        this->file = stderr;
+    if (appender->file == NULL) {
+        appender->file = stderr;
     }
 
     if (ev->priority < 0) {
@@ -77,15 +77,15 @@ static void doAppend(struct LogAppender *this0, struct LogEvent *ev)
                 ev->priority - (int) sizeof(priorityNames) + 1);
     }
 
-    fprintf(this->file, "%-7s ", pn);
+    fprintf(appender->file, "%-7s ", pn);
 
-    if (this->printLoc)
-        fprintf(this->file, "%s:%d:%s\t",
+    if (appender->printLoc)
+        fprintf(appender->file, "%s:%d:%s\t",
                 ev->fileName, ev->lineNum, ev->functionName);
     else
-        fprintf(this->file, "%s: ",
+        fprintf(appender->file, "%s: ",
                 ev->cat->name);
 
-    vfprintf(this->file, ev->fmt, ev->ap);
-    fprintf(this->file, "\n");
+    vfprintf(appender->file, ev->fmt, ev->ap);
+    fprintf(appender->file, "\n");
 }

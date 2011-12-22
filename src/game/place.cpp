@@ -25,8 +25,6 @@ extern char helptextIndex[5], keyhelpIndex[5], AL_CALL, AI[2];
 extern struct mStr Mis;
 extern char Option, MAIL;
 
-int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
-
 void BCDraw(int y)
 {
     ShBox(23, y, 54, 20 + y); //ShBox(56,y,296,20+y);
@@ -420,10 +418,6 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 
         local.vptr[n - 1] = 0;
 
-        if (FADE == 0) {
-            gxSetDisplayPalette(pal);
-        }
-
         gxPutImage(&local, gxSET, x, y, 0);
         DV(&local);
         DV(&local2);
@@ -491,10 +485,6 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 
         local.vptr[0] = 0x00;
 
-        if (FADE == 0) {
-            gxSetDisplayPalette(pal);
-        }
-
         gxVirtualDisplay(&local, 0, 0, x + 1, y, x + 102, y + 76, 0);
         //gxPutImage(&dply,mode,x,y,0);
 
@@ -537,7 +527,7 @@ DispHelp(char top, char bot, char *txt)
     return;
 }
 
-int Help(char *FName)
+int Help(const char *FName)
 {
     int i, j, line, top = 0, bot = 0, plc = 0;
     char *Help, *NTxt, mode;
@@ -579,7 +569,7 @@ int Help(char *FName)
     Swap16bit(Pul.size);
 
     AL_CALL = 1;
-    Help = xmalloc(Pul.size);
+    Help = (char *)xmalloc(Pul.size);
     fseek(fin, Pul.offset, SEEK_SET);
     fread(Help, Pul.size, 1, fin);
     fclose(fin);
@@ -597,7 +587,7 @@ int Help(char *FName)
             fsize = 10 * (Help[i] - 0x30) + (Help[i + 1] - 0x30) + 1;
             bot = fsize;
 
-            NTxt = xmalloc((unsigned int)(42 * fsize));
+            NTxt = (char *)xmalloc((unsigned int)(42 * fsize));
             memset(NTxt, 0x00, (unsigned int)(42 * fsize));
             j = line * 42; // should be 0
             mode = Help[i + 3] - 0x30;

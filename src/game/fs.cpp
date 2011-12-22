@@ -132,7 +132,7 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
     file f = {NULL, NULL};
     int serrno;
     char *p = NULL;
-    char *cooked = xmalloc(1024);
+    char *cooked = (char *)xmalloc(1024);
     size_t len = 1024, len2 = 0;
     size_t len_base = strlen(base), len_name = strlen(name);
     va_list ap;
@@ -151,7 +151,7 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
         len2 = len_base + len_name + len_p + 3;
 
         if (len2 > len) {
-            cooked = xrealloc(cooked, (len = len2));
+            cooked = (char*)xrealloc(cooked, (len = len2));
         }
 
         if (strlen(p)) {
@@ -337,7 +337,7 @@ remove_savedat(const char *name)
 {
     size_t len_base = strlen(options.dir_savegame) + 1;
     size_t len_name = strlen(name) + 1;
-    char *cooked = xmalloc(len_base + len_name);
+    char *cooked = (char *)xmalloc(len_base + len_name);
     int rv = 0;
 
     sprintf(cooked, "%s/%s", options.dir_savegame, name);

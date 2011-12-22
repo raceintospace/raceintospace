@@ -17,12 +17,15 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+extern "C" {
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreMIDI/CoreMIDI.h>
+}
 
 #include "raceintospace_config.h"
+#include "utils.h"
 #include "fs.h"
 #include "music.h"
 #include "logging.h"
@@ -32,7 +35,7 @@ LOG_DEFAULT_CATEGORY(music);
 // A map of music_tracks to filenames
 struct music_key {
 	enum music_track track;
-	char *name;
+	const char *name;
 } music_key[] = {
 	{ M_ASSEMBLY, "assembly" },
 	{ M_ASTTRNG, "asttrng" },
@@ -288,7 +291,7 @@ void music_stop()
 	// Iterate through the list and stop any playing tracks by calling music_stop_track()
 	for (i = 0; i < M_MAX_MUSIC; i ++) {
 		if (music_files[i].playing || music_files[i].muted) {
-			music_stop_track(i);
+			music_stop_track((music_track)i);
 		}
 	}
 }
@@ -355,7 +358,7 @@ void music_set_mute(int muted)
 			if (music_files[i].playing) {
 				// Found a track that should be muted
 				// Stop the track
-				music_stop_track(i);
+				music_stop_track((music_track)i);
 				
 				// Mark the track as muted
 				music_files[i].muted = 1;
@@ -378,7 +381,7 @@ void music_set_mute(int muted)
 				music_files[i].muted = 0;
 				
 				// Start the track, preserving the loop flag
-				music_start_loop(i, music_files[i].loop);
+				music_start_loop((music_track)i, music_files[i].loop);
 			}
 		}
 	}

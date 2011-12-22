@@ -28,11 +28,11 @@
 #include "externs.h"
 
 extern char AI[2];
-int missions;     // Variable for how many missions each 'naut has flown
 
 void PadDraw(char plr, char pad)
 {
     int i, j, k, l;
+    int missions;     // Variable for how many missions each 'naut has flown
 
     FadeOut(2, pal, 10, 0, 0);
     gxClearDisplay(0, 0);

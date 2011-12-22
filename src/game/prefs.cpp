@@ -182,10 +182,6 @@ void HModel(char mode, char tx)
 
     RectFill(96, 114, 223, 194, 0);
 
-    if (tx == 0) {
-        gxSetDisplayPalette(pal);
-    }
-
     gxPutImage(&local, gxSET, 97, 115, 0);
     DV(&local);
     grSetColor(11);

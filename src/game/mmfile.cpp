@@ -157,7 +157,7 @@ init_theora(mm_file *mf, ogg_page *pg)
     ogg_stream_state stream;
 
     assert(mf);
-    th_info = xmalloc(sizeof(*mf->video_info));
+    th_info = (theora_info *)xmalloc(sizeof(*mf->video_info));
     theora_info_init(th_info);
     theora_comment_init(&th_comm);
     ogg_stream_init(&stream, ogg_page_serialno(pg));
@@ -201,8 +201,8 @@ init_theora(mm_file *mf, ogg_page *pg)
         ogg_stream_packetout(&stream, &pkt);
     }
 
-    mf->video_ctx = xmalloc(sizeof(*mf->video_ctx));
-    mf->video = xmalloc(sizeof(*mf->video));
+    mf->video_ctx = (theora_state *)xmalloc(sizeof(*mf->video_ctx));
+    mf->video = (ogg_stream_state *)xmalloc(sizeof(*mf->video));
     memcpy(mf->video, &stream, sizeof(stream));
     theora_decode_init(mf->video_ctx, th_info);
     mf->video_info = th_info;
@@ -233,7 +233,7 @@ init_vorbis(mm_file *mf, ogg_page *pg)
     ogg_stream_state stream;
 
     assert(mf);
-    vo_info = xmalloc(sizeof(*vo_info));
+    vo_info = (vorbis_info *)xmalloc(sizeof(*vo_info));
     vorbis_info_init(vo_info);
     vorbis_comment_init(&vo_comm);
     ogg_stream_init(&stream, ogg_page_serialno(pg));
@@ -279,9 +279,9 @@ init_vorbis(mm_file *mf, ogg_page *pg)
 
     /* maybe print something about comment or etc? */
 
-    mf->audio_ctx = xmalloc(sizeof(*mf->audio_ctx));
-    mf->audio = xmalloc(sizeof(*mf->audio));
-    vo_blk = xmalloc(sizeof(*vo_blk));
+    mf->audio_ctx = (vorbis_dsp_state *)xmalloc(sizeof(*mf->audio_ctx));
+    mf->audio = (ogg_stream_state *)xmalloc(sizeof(*mf->audio));
+    vo_blk = (vorbis_block *)xmalloc(sizeof(*vo_blk));
     memcpy(mf->audio, &stream, sizeof(stream));
     vorbis_synthesis_init(mf->audio_ctx, vo_info);
     vorbis_block_init(mf->audio_ctx, vo_blk);

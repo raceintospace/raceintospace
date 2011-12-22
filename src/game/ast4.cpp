@@ -27,8 +27,9 @@
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
-int missions;     // Variable for how many missions each 'naut has flown
 static char program;  /* Variable to store prog data for "Draws Astronaut attributes" section: 1=Mercury/Vostok...5=Jupiter/Kvartet */
+
+int missions;     // Variable for how many missions each 'naut has flown
 int retdel;  /* Variable to store whether a given 'naut has announced retirement */
 int sex;  /* Variable to store a given 'naut sex */
 

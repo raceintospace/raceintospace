@@ -22,8 +22,6 @@ ssize_t load_audio_file(const char *, char **data, size_t *size);
 #define grTRACK 1
 #define grCARROW 2
 
-unsigned char XMAS;
-
 int grInitMouse(void);
 void grSetColor(int);
 void grMoveTo(int x, int y);
@@ -58,7 +56,6 @@ void gxVirtualDisplay(GXHEADER *hp, int a, int b, int c,
 void gxDisplayVirtual(int a, int b, int c, int d, int e,
                       GXHEADER *hp, int f, int g);
 void gxClearVirtual(GXHEADER *hp, int a);
-void gxSetDisplayPalette(char *pal);
 void gxVirtualVirtual(GXHEADER *hp, int a, int b, int c, int d,
                       GXHEADER *hp2, int x, int y, int mode);
 #define gxVGA_13 1 /* 320x200 ... note: non-square pixels */
@@ -102,9 +99,9 @@ int getch(void);
 
 double get_time(void);
 
-int show_intro_flag;
+extern int show_intro_flag;
 
-char *letter_dat;
+extern char *letter_dat;
 
 void gr_sync(void);
 void gr_maybe_sync(void);

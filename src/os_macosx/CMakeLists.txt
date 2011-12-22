@@ -41,7 +41,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 set(app "Race Into Space")
 
 add_executable("${app}" MACOSX_BUNDLE
-  SDLMain.m music_osx.c
+  SDLMain.m music_osx.cpp
   ${BundleResources}
   )
 

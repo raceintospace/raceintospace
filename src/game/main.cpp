@@ -44,7 +44,7 @@ int cdROM, hDISK;
 char Name[20];
 struct Players *Data;
 int x, y, mousebuttons, key, oldx, oldy;
-unsigned char LOAD, QUIT, HARD1, UNIT1, BUTLOAD, FADE, AL_CALL, XMAS;
+unsigned char LOAD, QUIT, HARD1, UNIT1, BUTLOAD, FADE, AL_CALL;
 char plr[NUM_PLAYERS], helptextIndex[5], keyhelpIndex[5], df, IDLE[2];
 char *buffer;
 GXHEADER vhptr, vhptr2;
@@ -151,8 +151,8 @@ int game_main(int argc, char *argv[])
 
     xMODE |= xMODE_NOCOPRO;
 
-    Data = xmalloc(sizeof(struct Players) + 1);
-    buffer = xmalloc(BUFFER_SIZE);
+    Data = (Players *)xmalloc(sizeof(struct Players) + 1);
+    buffer = (char *)xmalloc(BUFFER_SIZE);
 
     DEBUG3("main buffer %p (%d)", buffer, BUFFER_SIZE);
 
@@ -719,14 +719,12 @@ void GetMouse_fast(void)
     gr_maybe_sync();
     av_step();
 
-    if (XMAS != 0) {
-        if (grGetMouseButtons()) {
-            mousebuttons = 1;
-            grGetMousePressedPos(&x, &y);
-        } else {
-            mousebuttons = 0;
-            grGetMouseCurPos(&x, &y);
-        }
+    if (grGetMouseButtons()) {
+        mousebuttons = 1;
+        grGetMousePressedPos(&x, &y);
+    } else {
+        mousebuttons = 0;
+        grGetMouseCurPos(&x, &y);
     }
 
     while (bioskey(1)) {
@@ -746,7 +744,7 @@ void GetMouse_fast(void)
 
     if (key >> 8 == 15) {
         CloseEmUp(0, 0);
-    } else if (XMAS && AL_CALL == 0 && (key >> 8 == 0x3B)) {
+    } else if (AL_CALL == 0 && (key >> 8 == 0x3B)) {
         if (mousebuttons != 1) {
             Help(helptextIndex);
         }
@@ -801,7 +799,7 @@ void PauseMouse(void)
  * \param s pointer to char-array (string) to print
  *
  */
-void PrintAt(int x, int y, char *s)
+void PrintAt(int x, int y, const char *s)
 {
     short i;
 
@@ -821,7 +819,7 @@ void PrintAt(int x, int y, char *s)
     return;
 }
 
-void PrintAtKey(int x, int y, char *s, char val)
+void PrintAtKey(int x, int y, const char *s, char val)
 {
     PrintAt(x, y, s);
     grMoveTo(x, y);
@@ -830,7 +828,7 @@ void PrintAtKey(int x, int y, char *s, char val)
     return;
 }
 
-void DispBig(int x, int y, char *txt, char mode, char te)
+void DispBig(int x, int y, const char *txt, char mode, char te)
 {
     int i, k, l, px;
     struct LET {

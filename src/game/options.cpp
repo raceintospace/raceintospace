@@ -207,7 +207,7 @@ parse_var_value(FILE *f, int index)
 
     if (need_alloc > 0) {
         /* config_strings[].dest points to a pointer */
-        void **target = config_strings[i].dest;
+        void **target = (void **)config_strings[i].dest;
 
         *target = xrealloc(*target, need_alloc);
 
@@ -407,7 +407,7 @@ setup_options(int argc, char *argv[])
                    && (str = get_homedir())) {
             size_t len = strlen(str) + strlen(PACKAGE_TARNAME) + 3;
 
-            *env_vars[i].dest = xmalloc(len);
+            *env_vars[i].dest = (char *)xmalloc(len);
             sprintf(*env_vars[i].dest, "%s/.%s", str, PACKAGE_TARNAME);
             free(str);
         } else {

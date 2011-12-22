@@ -233,7 +233,7 @@ read_intro_images(void)
     FILE *fin;
     int i;
 
-    intro_images = xmalloc(sizeof(struct intro_image) * INTRO_IMAGE_COUNT);
+    intro_images = (intro_image *)xmalloc(sizeof(struct intro_image) * INTRO_IMAGE_COUNT);
 
     fin = sOpen("FIRST.IMG", "rb", 0);
 
@@ -296,7 +296,6 @@ void NextTurn(char plr)
     int32_t len = 0;
 
     memset(pal, 0x00, sizeof(pal));
-    gxSetDisplayPalette(pal);
     strcpy(helptextIndex, "i000");
     strcpy(keyhelpIndex, "k000");
 

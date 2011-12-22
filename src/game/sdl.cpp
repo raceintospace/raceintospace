@@ -108,11 +108,11 @@ alloc_dirty_tree(void)
     }
 
     bytes = (1 - ratio) / (1 - 4);
-    dirty_tree = xcalloc(bytes, 1);
+    dirty_tree = (unsigned char *)xcalloc(bytes, 1);
     dirty_tree_length = bytes;
 
     ratio /= 4;
-    dirty_rect_list = xcalloc(ratio, sizeof(SDL_Rect));
+    dirty_rect_list = (SDL_Rect *)xcalloc(ratio, sizeof(SDL_Rect));
 }
 
 static int get_dirty_rect_list();
@@ -340,7 +340,7 @@ av_setup(void)
         exit(EXIT_FAILURE);
     }
 
-    screen = xcalloc(MAX_X * MAX_Y, 1);
+    screen = (unsigned char *)xcalloc(MAX_X * MAX_Y, 1);
     screen_surf = SDL_CreateRGBSurfaceFrom(screen, MAX_X, MAX_Y, 8, MAX_X,
                                            0, 0, 0, 0);
 

@@ -978,8 +978,6 @@ DoCycle(void)                   // Three ranges of color cycling
 
     pal[j + 3 * i + 2] = tmp3;
 
-    gxSetDisplayPalette(pal);
-
     for (i = 0; i < (int) ARRAY_LENGTH(r); ++i) {
         av_need_update_xy(r[i].x1, r[i].y1, r[i].x2, r[i].y2);
     }
@@ -995,7 +993,7 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
 
-    pPortOutlineRestore = xrealloc(pPortOutlineRestore,
+    pPortOutlineRestore = (PORTOUTLINE*)xrealloc(pPortOutlineRestore,
                                    sizeof(PORTOUTLINE) * Count);
 
     for (i = 0; i < Count; i++) {
@@ -1576,7 +1574,7 @@ void Port(char plr)
                     strcpy(keyhelpIndex, "k043");
                 } // if
 
-            if (kMode == 0 && XMAS == 1) {
+            if (kMode == 0) {
                 i++;
             }
 

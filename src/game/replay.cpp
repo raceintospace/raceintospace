@@ -179,7 +179,7 @@ done:
  * \returns nothing if it can't open the [f]seq.dat file
  */
 void
-Replay(char plr, int num, int dx, int dy, int width, int height, char *Type)
+Replay(char plr, int num, int dx, int dy, int width, int height, const char *Type)
 {
     int keep_going;
     int i, kk, mode, max;
@@ -348,10 +348,6 @@ DispBaby(int x, int y, int loc, char neww)
         pal[off * 3 + i] = 0;
     }
 
-    if (neww) {
-        gxSetDisplayPalette(pal);
-    }
-
     fread(&pal[off * 3], 48, 1, fin);
     fread(boob.vptr, 1564, 1, fin);
     fclose(fin);
@@ -367,10 +363,6 @@ DispBaby(int x, int y, int loc, char neww)
     }
 
     gxPutImage(&boob, gxSET, x, y, 0);
-
-    if (neww) {
-        gxSetDisplayPalette(pal);
-    }
 
     DV(&boob);
 

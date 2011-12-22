@@ -28,8 +28,6 @@
 
 #define DELAYCNT 10
 
-int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
-
 extern struct mStr Mis;
 char olderMiss;
 
@@ -472,6 +470,7 @@ void Budget(char player)
 void DrawPreviousMissions(char plr)
 {
     int i, misnum = 0;
+    int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     extern char *Months[12];
     InBox(5, 41, 314, 91);
     RectFill(6, 42, 313, 90, 0);
