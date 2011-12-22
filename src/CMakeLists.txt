@@ -10,6 +10,9 @@ find_path(Theora_INCLUDE_DIR theora/theora.h)
 find_library(Ogg_LIBRARY NAMES ogg)
 find_path(Ogg_INCLUDE_DIR ogg/ogg.h)
 
+find_library(png_LIBRARY NAMES png REQUIRED PATHS /usr/X11/lib)
+find_path(png_INCLUDE_DIR png.h PATHS /usr/X11/include)
+
 # Probe the system
 include(CheckIncludeFile)
 include(CheckLibraryExists)
@@ -44,6 +47,9 @@ configure_file(
 
 # so we can find raceintospace_config.h
 include_directories(${PROJECT_BINARY_DIR}/config)
+
+# pull in the display library
+add_subdirectory("display")
 
 # pull in src/game/* defines and build rules
 include("game/Global.cmake")
