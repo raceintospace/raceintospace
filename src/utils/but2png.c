@@ -37,6 +37,7 @@
     utils/but2png ../gamedata/control.img first
     utils/but2png ../gamedata/cem.img first
     utils/but2png ../gamedata/rdbox.but rdbox
+    utils/but2png ../gamedata/letter.dat letter
 
     mv ../gamedata/*.png ../images/
 */
@@ -247,7 +248,6 @@ int write_image()
         }
     }
     if (maximum_transparent_color >= 0) {
-        printf("setting transparency\n");
         png_set_tRNS(png_ptr, info_ptr, alpha_values, maximum_transparent_color + 1, NULL);
     }
     
@@ -698,6 +698,37 @@ int translate_rdbox(FILE * fp)
     return 0;
 }
 
+// up to 21x15, wacky header
+// image normally inherits global palette, so make one up for export
+int translate_letter(FILE * fp)
+{
+    struct {
+        char width, img[15][21];
+    } __attribute__((packed)) letter;
+    
+    int rv, i;
+    
+    memset(pal, 0, sizeof(pal));
+    pal[0].r = pal[0].g = pal[0].b = 0;
+    pal[1].r = pal[1].g = pal[1].b = 255;
+    pal[2].r = pal[2].g = pal[2].b = 127;
+    color_is_transparent[3] = 1;
+    
+    height = 15;
+    while (fread(&letter, sizeof(letter), 1, fp)) {
+        width = letter.width;
+        for (i = 0; i < height; i++) {
+            memcpy(screen + (i * width), letter.img[i], width);
+        }
+        
+        if (rv = write_image()) {
+            return rv;
+        }
+    }
+    
+    return 0;
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -856,6 +887,7 @@ struct {
     FILE_STRATEGY(portbut),
     FILE_STRATEGY(first),
     FILE_STRATEGY(rdbox),
+    FILE_STRATEGY(letter),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
