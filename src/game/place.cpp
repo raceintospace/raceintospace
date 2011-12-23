@@ -15,6 +15,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#include "display/png_image.h"
+
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
@@ -33,54 +36,17 @@ void BCDraw(int y)
 
 int MChoice(char qty, char *Name)
 {
-    PatchHdr P;
-    GXHEADER local, local2;
-    int starty, coff;
-    int i, j;
-    char poff;
-    FILE *in;
+    int i, j, starty;
 
+    {
+        FILE * fp = sOpen("beggam.but.0.png", "rb", FT_IMAGE);
+        display::PNGImage image(fp);
+        fclose(fp);
 
-    //FadeOut(2,pal,30,0,0);
-
-    ShBox(21, 9, 180, 34);
-    ShBox(21, 36, 180, 61);
-    ShBox(21, 63, 180, 88);
-    ShBox(21, 90, 180, 115);
-    ShBox(21, 117, 180, 142);
-    ShBox(21, 144, 180, 169);
-
-    DispBig(34, 15, "NEW GAME", 1, 0);
-    DispBig(34, 42, "OLD GAME", 1, 0);
-    DispBig(34, 69, "MODEM", 1, 0);
-    DispBig(34, 96, "PLAY BY MAIL", 1, 0);
-    DispBig(34, 123, "CREDITS", 1, 0);
-    DispBig(34, 150, "EXIT", 1, 0);
-
-    in = sOpen("BEGGAM.BUT", "rb", 0);
-    poff = 0;
-    coff = 128;
-    fread(&pal[coff * 3], 384, 1, in);
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdr(&P);
-
-    fseek(in, P.offset, SEEK_SET);
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
-    gxGetImage(&local2, 0, 0, P.w - 1, P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
-    fclose(in);
-
-    for (j = 0; j < P.size; j++)
-        if (local.vptr[j] != 0) {
-            local2.vptr[j] = local.vptr[j] + coff;
-        }
-
-    gxPutImage(&local2, gxSET, 0, 0, 0);
-    DV(&local);
-    DV(&local2);
-
+        image.export_to_legacy_palette();
+        image.draw();
+    }
+    
     ShBox(21, 9, 180, 34);
     ShBox(21, 36, 180, 61);
     ShBox(21, 63, 180, 88);
@@ -104,8 +70,7 @@ int MChoice(char qty, char *Name)
         GetMouse();
 
         for (i = 0; i < qty; i++) // keyboard stuff
-            if ((char)key == Name[i * 22]) {
-
+            if (key == Name[i * 22]) {
                 InBox(21, starty + 27 * i, 180, starty + 25 + 27 * i);
 
                 delay(50);
