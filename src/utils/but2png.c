@@ -358,7 +358,8 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
         palette_offset = 0;
 
     } else if (palette_style == 2) {
-        // 128 colors, starting at 128
+        // 128 colors, starting at 128, on top of PortPal(0)
+        PortPal(0);
         fread(&pal[128], 128, sizeof(pal[0]), fp);
         palette_offset = 128;
         
