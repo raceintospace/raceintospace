@@ -24,7 +24,7 @@ void read_png_from_memory(png_structp png_ptr, png_bytep output, png_size_t leng
     read_png_from_memory_t * data = (read_png_from_memory_t *)png_get_io_ptr(png_ptr);
     
     if (data->length - data->cursor < length) {
-        png_error(png_ptr, "libpng requested more data than is available");
+        png_error((png_structp)png_ptr, "libpng requested more data than is available");
     }
     
     memcpy(output, data->buffer + data->cursor, length);
@@ -43,29 +43,29 @@ void throw_exception_on_png_error(png_structp png_ptr, png_const_charp error_msg
 void PNGImage::init_png()
 {
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
-    info_ptr = png_create_info_struct(png_ptr);
+    info_ptr = png_create_info_struct((png_structp)png_ptr);
 }
 
 void PNGImage::read_png()
 {
-    png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
+    png_read_png((png_structp)png_ptr, (png_infop)info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
 
-    width = png_get_image_width(png_ptr, info_ptr);
-    height = png_get_image_height(png_ptr, info_ptr);
+    width = png_get_image_width((png_structp)png_ptr, (png_infop)info_ptr);
+    height = png_get_image_height((png_structp)png_ptr, (png_infop)info_ptr);
     
-    switch (png_get_color_type(png_ptr, info_ptr))
+    switch (png_get_color_type((png_structp)png_ptr, (png_infop)info_ptr))
     {
     case PNG_COLOR_TYPE_PALETTE:
         {
             // read the palette into a local
             png_color * png_palette;
             int num_palette;
-            png_get_PLTE(png_ptr, info_ptr, &png_palette, &num_palette);
+            png_get_PLTE((png_structp)png_ptr, (png_infop)info_ptr, &png_palette, &num_palette);
             
             // read the alpha values into a local
             uint8_t * trans;
             int num_trans;
-            png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, NULL);
+            png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, NULL);
             
             // copy both into the instance-wide palette
             for (int i = 0; i < 256; i++) {
@@ -93,7 +93,7 @@ void PNGImage::read_png()
     // copy the image data
     {
         png_bytep * row_pointers;
-        row_pointers = png_get_rows(png_ptr, info_ptr);
+        row_pointers = png_get_rows((png_structp)png_ptr, (png_infop)info_ptr);
         pixel_data = new uint8_t[width * height];
         
         // this assumes 8-bit images
@@ -107,7 +107,7 @@ void PNGImage::read_png()
 
 void PNGImage::destroy_png()
 {
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    png_destroy_read_struct((png_structpp)(&png_ptr), (png_infopp)(&info_ptr), NULL);
 }
 
 PNGImage::PNGImage(const char * filename)
@@ -123,7 +123,7 @@ PNGImage::PNGImage(const char * filename)
     try
     {
         init_png();
-        png_init_io(png_ptr, fp);
+        png_init_io((png_structp)png_ptr, fp);
         read_png();
         fclose(fp);
     }
@@ -144,7 +144,7 @@ PNGImage::PNGImage(FILE * fp)
     try
     {
         init_png();
-        png_init_io(png_ptr, fp);
+        png_init_io((png_structp)png_ptr, fp);
         read_png();
     }
     catch (std::runtime_error& e)
@@ -165,7 +165,7 @@ PNGImage::PNGImage(const void * buffer, size_t length)
     try
     {
         init_png();
-        png_set_read_fn(png_ptr, &descriptor, read_png_from_memory);
+        png_set_read_fn((png_structp)png_ptr, &descriptor, read_png_from_memory);
         read_png();
     }
     catch (std::runtime_error& e)

@@ -5,11 +5,6 @@
 
 #include "display/palette.h"
 
-// we avoid including <png.h> here to minimize the number of global symbols -- however,
-// PNGImage wants to hold onto some libpng pointers, so we need to declare them as structs
-struct png_struct_def;
-struct png_info_struct;
-
 namespace display {
 
 class PNGImage
@@ -43,8 +38,8 @@ public:
     
 protected:
     // these exist just long enough to read everything in the constructor
-    png_struct_def * png_ptr;
-    png_info_struct * info_ptr;
+    void * png_ptr;
+    void * info_ptr;
     
     int width, height;
     uint8_t * pixel_data;
