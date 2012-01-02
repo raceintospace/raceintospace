@@ -171,13 +171,21 @@ int game_main_impl(int argc, char *argv[])
     while (ex == 0) {
 
         MakeRecords();
-
+ 
+#define UNCOMPRESSED_RAST 1        
+        
+#ifndef UNCOMPRESSED_RAST
         fin = sOpen("RAST.DAT", "rb", 0);
         i = fread(buffer, 1, BUFFER_SIZE, fin);
         fclose(fin);
 
         DEBUG2("reading Players: size = %d", (int)sizeof(struct Players));
         RLED(buffer, (char *)Data, i);
+#else
+        fin = sOpen("URAST.DAT", "rb", 0);
+        i = fread(Data, 1, (sizeof(struct Players)), fin);
+        fclose(fin);
+#endif
         SwapGameDat();  // Take care of endian read
 
         if (Data->Checksum != (sizeof(struct Players))) {
