@@ -215,6 +215,155 @@ void write_news(FILE * fp)
     
     printf("};\n\n");
 }
+#pragma mark
+
+// End of game message text
+void write_endgame(FILE * fp)
+{
+    // 600 byte blocks
+    struct EndGameText {
+        char Text[600];
+    } __attribute__((packed)) record;
+    
+    printf("struct endgame_t endgame[] = {\n");
+    
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        String(Text);
+        RecordEnd();
+    }
+    printf("};\n\n");
+}
+
+void write_vab_drawing_offsets(FILE *fp)
+{
+    struct VabDrawingOffsets {
+        int16_t x1,y1,x2,y2,o;
+    } record;
+    
+    // TODO: represent this in a better way
+    printf("struct vab_drawing_offsets_t vab_drawing_offsets[] = {\n");
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        Number(x1);
+        Number(y1);
+        Number(x2);
+        Number(y2);
+        Number(o);
+        RecordEnd();
+    }
+    printf("};\n\n");
+}
+
+void write_budget_mods(FILE *fp)
+{
+    int level, modifier, i;
+    
+    struct {
+        int16_t modifiers[10];
+    } record;
+    
+    // [3=levels] [6] [10]
+
+    for ( level = 0; level < 3; level++ ) {
+        printf("struct budget_mods_t budget_mods_Level_%d[6] = {\n", level+1);
+    
+        for ( modifier = 0; modifier < 6; modifier++)
+        {
+            fread(&record, sizeof(record), 1, fp);
+            printf("    .modifiers[%d] = {", modifier);
+            
+            for (i = 0; i < 10; i++)  {
+                printf("%d%s", record.modifiers[i], (i!=9)?", ":"");
+            }
+            printf(" },\n");
+        }
+        printf("};\n\n");
+    }
+}
+
+void write_historical_equip(FILE *fp)
+{
+    /*
+    fread(&Data->P[0].Probe[0], 28 * (sizeof(Equipment)), 1, fin);
+    fread(&Data->P[1].Probe[0], 28 * (sizeof(Equipment)), 1, fin);
+     */
+
+    struct Equipment {
+        char Name[20];      /**< Name of Hardware */
+        char ID[2];         /**< EquipID "C0 C1 C2 C3 : Acts as Index */
+        int16_t Safety;     /**< current safety factor */
+        int16_t MisSaf;     /**< Safety During Mission */
+        int16_t MSF;        /**< used only to hold safety for docking kludge / Base Max R&D for others (from 1.0.0)*/
+        char Base;          /**< initial safety factor */
+        int16_t InitCost;   /**< Startup Cost of Unit */
+        char UnitCost;      /**< Individual Cost */
+        int16_t UnitWeight; /**< Weight of the Item */
+        int16_t MaxPay;     /**< Maximum payload */
+        char RDCost;        /**< Cost of R&D per roll */
+        char Code;          /**< Equipment Code for qty scheduled */
+        char Num;           /**< quantity in inventory */
+        char Spok;          /**< qty being used on missions */
+        char Seas;          /**< Seasons Program is Active */
+        char Used;          /**< total number used in space */
+        char IDX[2];        /**< EquipID "C0 C1 C2 C3 : Acts as Index */
+        int16_t Steps;      /**< Program Steps Used */
+        int16_t Failures;   /**< number of program failures */
+        char MaxRD;         /**< maximum R & D */
+        char MaxSafety;     /**< maximum safety factor */
+        char SMods;         /**< safety factor mods for next launch */
+        char SaveCard;      /**< counter next failure in this prog */
+        char Delay;         /**< delay in purchase - in seasons */
+        char Duration;      /**< Days it can last in space */
+        char Damage;        /**< Damage percent for next launch */
+        char DCost;         /**< Cost to repair damage */
+        char MisSucc;       /**< Mission Successes */
+        char MisFail;       /**< Mission Failures */
+    } __attribute__((packed)) record;
+    
+    printf("struct equipment_t historical_equipment[] = {\n");
+    
+    // Some of these values shouldn't be read in as they are for record keeping
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        String(Name);
+        printf("    .ID[2] = '%c%c'\n", record.ID[0],record.ID[1]);
+        Number(Safety);
+        Number(MisSaf);
+        Number(MSF);
+        Number(Base);
+        Number(InitCost);
+        Number(UnitCost);
+        Number(UnitWeight);
+        Number(MaxPay);
+        Number(RDCost);
+        Number(Code);
+        Number(Num);
+        Number(Spok);
+        Number(Seas);
+        Number(Used);
+        printf("    .IDX[2] = '%c%c'\n", record.IDX[0],record.IDX[1]);
+        Number(Steps);
+        Number(Failures);
+        Number(MaxRD);
+        Number(MaxSafety);
+        Number(SMods);
+        Number(SaveCard);
+        Number(Delay);
+        Number(Duration);
+        Number(Damage);
+        Number(DCost);
+        Number(MisSucc);
+        Number(MisFail);  
+
+        RecordEnd();
+    }
+    printf("};\n\n");
+}
+
+
+
+#pragma mark
 
 void write_help(FILE * fp)
 {
@@ -539,19 +688,25 @@ int main(int argc, char ** argv)
         return 1;
     }
     
-    decode(argv[1], "mission.dat", write_mission);
-    
+    // copy.dat  -- copy protection for the installer??
     decode(argv[1], "crew.dat", write_historical_men);
-    decode(argv[1], "user.dat", write_custom_men);
-    
+    decode(argv[1], "endgame.dat", write_endgame);
     decode(argv[1], "event.dat", write_events);
-
-    decode(argv[1], "news.dat", write_news);
-    
+    decode(argv[1], "fails.cdr", write_failure_modes);  
+    decode(argv[1], "hist.dat", write_historical_equip);
     decode(argv[1], "help.cdr", write_help);
-
-    decode(argv[1], "fails.cdr", write_failure_modes);    
-
+    // missSteps.dat -- already a text file
+    decode(argv[1], "mission.dat", write_mission);
+    decode(argv[1], "news.dat", write_news);
+    decode(argv[1], "ntable.dat", write_vab_drawing_offsets);
+    // p-rev.dat
+    // rast.dat   -- RLED Players
+    // records.dat
+    decode(argv[1], "user.dat", write_custom_men);
+    // table.crc
+    // vision.dat
+    decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
+    
     decode_seq(argv[1], "seq", write_mission_animation_success_sequence);
     decode_seq(argv[1], "fseq", write_mission_animation_failure_sequence);
 
