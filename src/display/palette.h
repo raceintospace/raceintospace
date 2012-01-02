@@ -17,7 +17,6 @@ public:
     
     inline void copy_from(const PaletteInterface &other, uint8_t start=0, uint8_t count=255)
     {
-        uint8_t end = start + count;
         for (uint8_t i = 0 ; i < count; i++) {
             set(i, other.get(i));
         }
