@@ -519,6 +519,17 @@ int translate_vab(FILE * fp)
     
     uint16_t bytes;
     
+    // These can be separated into individual pieces.  Use the VTABLE.DAT table 
+    // (also found as a commented block in vab.c) for the cut-out coordinates.
+    //
+    // It's probably a more flexible solution to save these individual pieces 
+    // and reference them from a control structure with player number and part
+    // number
+    // {
+    //   .part = "VAB_0_0.png",
+    //   .yOffset = 0
+    // }
+    
     for (i = 0; i < 2; i++) {
         fread(pal, sizeof(pal), 1, fp);
         fread(&bytes, sizeof(bytes), 1, fp);
