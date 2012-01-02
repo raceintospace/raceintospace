@@ -146,14 +146,12 @@ void music_load(enum music_track track)
 	
 	// Read the MIDI file into memory
 	midi_f = sOpen(name, "rb", FT_MIDI);
-	if (midi_f == NULL) {
-		fileLength = -1;
-	} else {
+	if (midi_f != NULL) {
 		fileLength = fread_dyn(&midi_data, &fileLength, midi_f);
 		fclose(midi_f);
 	}
 	
-	if (fileLength < 0 || midi_data == NULL) {
+	if (midi_data == NULL) {
 		WARNING2("could not read MIDI file `%s'", name);
 		music_files[track].unplayable = 1;
 		return;
