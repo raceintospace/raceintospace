@@ -238,6 +238,26 @@ void write_endgame(FILE * fp)
     printf("};\n\n");
 }
 
+void write_post_mission_review(FILE *fp)
+{
+    int count = 0;
+    struct MissionReview {
+        char Text[204];
+    } __attribute__((packed)) record;
+    
+    printf("struct mission_review_t mission_review[] = {\n");
+    
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        printf("    .Country = \"%s\"\n", (count<18)?"US":"SOV");
+        String(Text);
+        RecordEnd();
+        count++;
+    }
+    printf("};\n\n");
+    
+}
+
 void write_vab_drawing_offsets(FILE *fp)
 {
     struct VabDrawingOffsets {
@@ -691,6 +711,7 @@ int main(int argc, char ** argv)
         return 1;
     }
     
+    
     // copy.dat  -- copy protection for the installer??
     decode(argv[1], "crew.dat", write_historical_men);
     decode(argv[1], "endgame.dat", write_endgame);
@@ -702,11 +723,11 @@ int main(int argc, char ** argv)
     decode(argv[1], "mission.dat", write_mission);
     decode(argv[1], "news.dat", write_news);
     decode(argv[1], "ntable.dat", write_vab_drawing_offsets);
-    // p-rev.dat
+    decode(argv[1], "p_rev.dat", write_post_mission_review);
     // rast.dat   -- RLED Players
     // records.dat
     decode(argv[1], "user.dat", write_custom_men);
-    // table.crc
+    // table.crc  -- Not used
     // vision.dat
     decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
     
