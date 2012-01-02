@@ -507,6 +507,14 @@ struct MXM {
     int32_t Offset[6];
 };
 
+// Vehicle assembly working structure
+// qty = quantity of this item
+// ac = number spoken for with launches
+// sf = safety factor
+// dex = index into the player Equipment structs (Manned[], MISC[], Probe[], etc)
+// img = the image to use for this, -1 for none
+// wt = unit weight, used to deterine launch vehicle
+// dmg = Equipment->Damage flag
 struct VInfo {
     char name[15], qty, ac, sf, dex, img;
     int16_t wt;
