@@ -49,6 +49,11 @@
     utils/but2png ../gamedata/flagger.but
     utils/but2png ../gamedata/lenin.but
     utils/but2png ../gamedata/news.img
+ 
+    utils/liftoff.abz ../gamedat/liftoff.abz    # mission animation
+    babypicx.cdr  # small mission control images
+    babyclif.cdr
+    babynorm.cdr
 */
 
 
