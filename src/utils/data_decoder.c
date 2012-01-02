@@ -44,6 +44,8 @@ void print_escaped_string(const char * string, int max_length)
     }
 
 
+
+
 void write_mission(FILE * fp)
 {
     struct {
@@ -91,6 +93,43 @@ void write_mission(FILE * fp)
         RecordEnd();
     }
     printf("};\n\n");
+}
+
+int
+RLED(void *src_raw, void *dest_raw, unsigned int src_size)
+{
+    signed char *src = (signed char *)src_raw;
+    signed char *dest = (signed char *)dest_raw;
+    unsigned int used;
+    int count, val;
+    int i;
+    
+    used = 0;
+    
+    while (used < src_size) {
+        count = src[used++];
+        
+        if (count < 0) {
+            count = -count + 1;
+            val = src[used++];
+            
+            for (i = 0; i < count; i++) {
+                *dest++ = val;
+            }
+        } else {
+            count++;
+            
+            for (i = 0; i < count; i++) {
+                *dest++ = src[used++];
+            }
+        }
+    }
+    
+    if (0) {
+        printf("total bytes %d\n", (int)((char *)dest - (char *)dest_raw));
+    }
+    
+    return ((char *)dest - (char *)dest_raw);
 }
 
 void write_men(FILE * fp, const char * name)
@@ -338,6 +377,43 @@ void write_budget_mods(FILE *fp)
         }
         printf("};\n\n");
     }
+}
+
+#include "../game/data.h"
+
+void write_player_data(FILE *fp)
+{
+    char *buffer;
+    size_t bytes_read = 0;
+    size_t bytes_uncompressed = 0;
+
+    buffer = malloc(4096);
+      struct {
+        struct Players players[2];
+    } record;
+    
+    
+    bytes_read = fread(buffer, 1, 4096, fp);
+    bytes_uncompressed = RLED(buffer, &record, bytes_read);
+
+//#define WRITE_UNCOMPRESSED_RAST_DAT_FILE 
+#ifdef WRITE_UNCOMPRESSED_RAST_DAT_FILE
+    FILE *fout = NULL;
+    fout = fopen("URAST.DAT","wb");
+    fwrite(&record, bytes_uncompressed,1, fout);
+    fclose(fout);
+#endif
+    // TODO: represent this in a better way
+    printf("struct players_t players[] = {\n");
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        //String(players[0].BUZZ);
+        //String(players[1].BUZZ);
+        RecordEnd();
+    }
+    printf("};\n\n");
+    
+    free(buffer);
 }
 
 void write_historical_equip(FILE *fp)
@@ -746,11 +822,14 @@ int main(int argc, char ** argv)
         return 1;
     }
     
+    decode(argv[1], "rast.dat", write_player_data); // overlay for historical equipment
+    
+    
     decode(argv[1], "crew.dat", write_historical_men);
     decode(argv[1], "endgame.dat", write_endgame);
     decode(argv[1], "event.dat", write_events);
     decode(argv[1], "fails.cdr", write_failure_modes);  
-    decode(argv[1], "hist.dat", write_historical_equip);
+    decode(argv[1], "hist.dat", write_historical_equip); // overlay for historical equipment
     decode(argv[1], "help.cdr", write_help);
     // missSteps.dat -- already a text file
     decode(argv[1], "mission.dat", write_mission);
