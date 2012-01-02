@@ -47,68 +47,75 @@ char hasDelay;//Used  to display the cost of autopurchase
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 struct MDA {
-    int16_t x1, y1, x2, y2, o;
-} MI[2 * 28]; //  MI[2][28] = {
-#if 0
-104, 1, 119, 55, 0, // Atlas  0
-     143, 1, 153, 67, 0, // Titan  1
-     177, 1, 217, 133, 0, // Saturn 2
-     219, 1, 262, 139, 0, // Nova   3
-     121, 1, 141, 53, 0, // Atlas+B 4
-     155, 1, 175, 67, 0, // Titan+B 5
-     177, 1, 217, 133, 0, // Saturn+B 6
-     83, 1, 102, 57, 0, // Casing Small 7
-     264, 1, 318, 145, 0, // Casing Large 8
-     59, 48, 75, 67, 0, // Orbital 9
-     59, 69, 73, 84, 0, // InterPlan 10
-     59, 86, 72, 100, 0, // Lunar Probe 11
-     130, 55, 141, 59, 0, // Docking 12
-     2, 1, 18, 39, 13, // Merc 13
-     79, 69, 111, 117, 2, // Gemini 14
-     20, 1, 57, 59, 12, // Apollo 15
-     59, 1, 81, 46, 7, // MiniSh 16
-     137, 69, 175, 139, 7, // Four Cap 17
-     223, 141, 262, 178, 0, // Two Lem 18
-     188, 141, 221, 177, 0, // One Lem 19
-     138, 141, 160, 166, 0, // KickA 20
-     162, 141, 186, 172, 0, // KickB 21
-     0, 0, 0, 0, 0,    // KickC 22
-     0, 0, 0, 0, 0,    // None : Zond 23
-     0, 0, 0, 0, 0,    // Filler Sm
-     20, 61, 57, 141, 0, // Filler Lg
-     113, 69, 132, 98, 0, // smShroud
-     81, 119, 135, 153, 0, // LgShroud
+    int16_t x1, y1, x2, y2, yOffset;
+} MI[2 * 28]; 
 
-     86, 1, 113, 74, 0, // A-Series 0
-     115, 1, 137, 82, 0, // Proton 1
-     192, 1, 227, 130, 0, // N-1      2
-     229, 0, 263, 131, 0, // Energia  3
-     139, 1, 166, 85, 0, // A-Series 4
-     168, 1, 190, 95, 0, // Proton+B   5
-     192, 1, 227, 130, 0, // N-1+B      6
-     3, 60, 22, 116, 0, // Casing Small 7
-     277, 1, 318, 145, 0, // Casing Large 8
-     5, 32, 22, 51, 0,  // Orbital  9
-     79, 132, 89, 157, 0, // InterPlan 10
-     3, 1, 20, 30, 0,   // Lunar Probe 11
-     5, 53, 19, 58, 0,  // Docking 12
-     91, 132, 118, 166, 15, // Vostok 13
-     120, 132, 148, 167, 15, // Voshod 14
-     176, 132, 211, 194, 15, // Soyuz 15
-     249, 132, 275, 193, 11, // MiniSh 16
-     213, 132, 247, 196, 11, // Four Cap 17
-     25, 1, 55, 36, 0,  // Two Lem 18
-     57, 1, 84, 37, 0,  // One Lem 19
-     24, 39, 36, 72, 0, // KicA 20
-     38, 39, 58, 75, 0, // KicB 21
-     60, 39, 84, 94, 0, // KicC 22
-     150, 132, 174, 177, 22, // Zond 23
-     0, 0, 0, 0, 0,     // Filler Sm
-     24, 77, 48, 183, 0, // Filler Lg
-     3, 118, 22, 147, 0, // smShroud
-     149, 97, 190, 124, 0 // LgShroud
+/*
+ // The VAB images are found in two different image files, these are the cutout locations
+
+//  
+ struct MDA {
+    int16_t x1, y1, x2, y2, o;
+ } MI[2][28] = {
+     {104, 1, 119, 55, 0}, // Atlas  0
+     {143, 1, 153, 67, 0}, // Titan  1
+     {177, 1, 217, 133, 0}, // Saturn 2
+     {219, 1, 262, 139, 0}, // Nova   3
+     {121, 1, 141, 53, 0}, // Atlas+B 4
+     {155, 1, 175, 67, 0}, // Titan+B 5
+     {177, 1, 217, 133, 0}, // Saturn+B 6
+     {83, 1, 102, 57, 0}, // Casing Small 7
+     {264, 1, 318, 145, 0}, // Casing Large 8
+     {59, 48, 75, 67, 0}, // Orbital 9
+     {59, 69, 73, 84, 0}, // InterPlan 10
+     {59, 86, 72, 100, 0}, // Lunar Probe 11
+     {130, 55, 141, 59, 0}, // Docking 12
+     {2, 1, 18, 39, 13}, // Merc 13
+     {79, 69, 111, 117, 2}, // Gemini 14
+     {20, 1, 57, 59, 12}, // Apollo 15
+     {59, 1, 81, 46, 7}, // MiniSh 16
+     {137, 69, 175, 139, 7}, // Four Cap 17
+     {223, 141, 262, 178, 0}, // Two Lem 18
+     {188, 141, 221, 177, 0}, // One Lem 19
+     {138, 141, 160, 166, 0}, // KickA 20
+     {162, 141, 186, 172, 0}, // KickB 21
+     {0, 0, 0, 0, 0},    // KickC 22
+     {0, 0, 0, 0, 0},    // None : Zond 23
+     {0, 0, 0, 0, 0},    // Filler Sm
+     {20, 61, 57, 141, 0}, // Filler Lg
+     {113, 69, 132, 98, 0}, // smShroud
+     {81, 119, 135, 153, 0}, // LgShroud
+
+     {86, 1, 113, 74, 0}, // A-Series 0
+     {115, 1, 137, 82, 0}, // Proton 1
+     {192, 1, 227, 130, 0}, // N-1      2
+     {229, 0, 263, 131, 0}, // Energia  3
+     {139, 1, 166, 85, 0}, // A-Series 4
+     {168, 1, 190, 95, 0}, // Proton+B   5
+     {192, 1, 227, 130, 0}, // N-1+B      6
+     {3, 60, 22, 116, 0}, // Casing Small 7
+     {277, 1, 318, 145, 0}, // Casing Large 8
+     {5, 32, 22, 51, 0},  // Orbital  9
+     {79, 132, 89, 157, 0}, // InterPlan 10
+     {3, 1, 20, 30, 0},   // Lunar Probe 11
+     {5, 53, 19, 58, 0},  // Docking 12
+     {91, 132, 118, 166, 15}, // Vostok 13
+     {120, 132, 148, 167, 15}, // Voshod 14
+     {176, 132, 211, 194, 15}, // Soyuz 15
+     {249, 132, 275, 193, 11}, // MiniSh 16
+     {213, 132, 247, 196, 11}, // Four Cap 17
+     {25, 1, 55, 36, 0},  // Two Lem 18
+     {57, 1, 84, 37, 0},  // One Lem 19
+     {24, 39, 36, 72, 0}, // KicA 20
+     {38, 39, 58, 75, 0}, // KicB 21
+     {60, 39, 84, 94, 0}, // KicC 22
+     {150, 132, 174, 177, 22}, // Zond 23
+     {0, 0, 0, 0, 0},     // Filler Sm
+     {24, 77, 48, 183, 0}, // Filler Lg
+     {3, 118, 22, 147, 0}, // smShroud
+     {149, 97, 190, 124, 0} // LgShroud
 };
-#endif
+*/
 
      void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
@@ -589,7 +596,7 @@ void DispVA(char plr, char f)
         if (VAS[f][0].img == 13 && plr == 0) {
             IncY = 0;
         } else {
-            IncY = MI[plr * 28 + VAS[f][0].img].o;
+            IncY = MI[plr * 28 + VAS[f][0].img].yOffset;
         }
     }
 
@@ -793,7 +800,7 @@ void VAB(char plr)
         Swap16bit(MI[i].y1);
         Swap16bit(MI[i].x2);
         Swap16bit(MI[i].y2);
-        Swap16bit(MI[i].o);
+        Swap16bit(MI[i].yOffset);
     }
 
     music_start(M_HARDWARE);
