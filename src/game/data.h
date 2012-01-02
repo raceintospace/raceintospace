@@ -509,9 +509,8 @@ struct MXM {
 
 // Vehicle Assemble structure
 struct VInfo {
-    char name[15];  // equipment name
-    int qty, ac, sf, dex, img;  
-    int wt;
+    char name[15],qty, ac, sf, dex, img;  
+    uint16_t wt;
     char dmg;
 };
 struct ManPool {
