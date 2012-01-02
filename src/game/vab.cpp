@@ -37,7 +37,7 @@
 extern char AI[2];
 
 struct VInfo VAS[7][4];
-char VASqty, CV;
+int VASqty;
 extern struct mStr Mis;
 extern char Vab_Spot;
 int TotalCost;
@@ -797,7 +797,7 @@ void VAB(char plr)
     }
 
     music_start(M_HARDWARE);
-    CV = 0;
+
 begvab:
     mis = FutureCheck(plr, 1);
 
