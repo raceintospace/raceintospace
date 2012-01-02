@@ -161,7 +161,11 @@ void music_load(enum music_track track)
 	rv = NewMusicSequence(&music_files[track].sequence);
 	if (rv == 0) {
 		// Try to load the sequence out of this buffer
+#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */        
 		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0);
+#else  /* not deprecated, but requires 10.5 or later */
+        rv = MusicSequenceFileLoadData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0, 0);
+#endif
 	}
 		
 	// Regardless, free the buffer we read off disk, if any
