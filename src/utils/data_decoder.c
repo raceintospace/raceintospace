@@ -258,6 +258,39 @@ void write_post_mission_review(FILE *fp)
     
 }
 
+void write_records(FILE *fp)
+{
+    // This is where user records are stored, it will be created
+    struct  {
+        char country;
+        char month; 
+        char yr;
+        char program;
+        int16_t  tag;
+        char type;
+        char place;
+        char name[20];
+        char astro[14];
+    } record;
+    
+    // TODO: represent this in a better way
+    printf("struct vab_drawing_offsets_t vab_drawing_offsets[] = {\n");
+    while (fread(&record, sizeof(record), 1, fp)) {
+        RecordStart();
+        Number(country);
+        Number(month);
+        Number(yr);
+        Number(program);
+        Number(tag);
+        Number(type);
+        Number(place);
+        String(name);
+        String(astro);
+        RecordEnd();
+    }
+    printf("};\n\n");
+}
+
 void write_vab_drawing_offsets(FILE *fp)
 {
     struct VabDrawingOffsets {
@@ -277,6 +310,8 @@ void write_vab_drawing_offsets(FILE *fp)
     }
     printf("};\n\n");
 }
+
+
 
 void write_budget_mods(FILE *fp)
 {
@@ -711,8 +746,6 @@ int main(int argc, char ** argv)
         return 1;
     }
     
-    
-    // copy.dat  -- copy protection for the installer??
     decode(argv[1], "crew.dat", write_historical_men);
     decode(argv[1], "endgame.dat", write_endgame);
     decode(argv[1], "event.dat", write_events);
@@ -725,10 +758,9 @@ int main(int argc, char ** argv)
     decode(argv[1], "ntable.dat", write_vab_drawing_offsets);
     decode(argv[1], "p_rev.dat", write_post_mission_review);
     // rast.dat   -- RLED Players
-    // records.dat
+    
+    //decode(argv[1], "records.dat", write_records);      // This isn't really a data file
     decode(argv[1], "user.dat", write_custom_men);
-    // table.crc  -- Not used
-    // vision.dat
     decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
     
     decode_seq(argv[1], "seq", write_mission_animation_success_sequence);
