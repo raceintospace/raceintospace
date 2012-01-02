@@ -95,6 +95,7 @@ void write_mission(FILE * fp)
 
 void write_men(FILE * fp, const char * name)
 {
+    int count = 0;
     struct ManPool {
         char Name[14], Sex, Cap, LM, EVA, Docking, Endurance;
     } __attribute__((packed)) record;
@@ -103,6 +104,7 @@ void write_men(FILE * fp, const char * name)
     while (fread(&record, sizeof(record), 1, fp)) {
         RecordStart();
         String(Name);
+        printf("    .Country = \"%s\"\n", (count<106)?"US":"SOV");
         Number(Sex);
         Number(Cap);
         Number(LM);
@@ -110,6 +112,7 @@ void write_men(FILE * fp, const char * name)
         Number(Docking);
         Number(Endurance);
         RecordEnd();
+        count++;
     }
     printf("};\n\n");
 }
