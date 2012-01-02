@@ -507,9 +507,11 @@ struct MXM {
     int32_t Offset[6];
 };
 
+// Vehicle Assemble structure
 struct VInfo {
-    char name[15], qty, ac, sf, dex, img;
-    int16_t wt;
+    char name[15];  // equipment name
+    int qty, ac, sf, dex, img;  
+    int wt;
     char dmg;
 };
 struct ManPool {
