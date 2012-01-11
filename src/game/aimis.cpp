@@ -210,7 +210,7 @@ void CalcSaf(char plr, char vs)
 {
     int i, j, k, sum = 0, co = 0, t = 0;
 
-    for (i = 0; i < 14; i++) {
+    for (i = 0; i < 5; i++) {
         Mew[i].cost = Mew[i].sf = 0;    // Clear thing
     }
 
