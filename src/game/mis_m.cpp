@@ -781,11 +781,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
 
 void F_IRCrew(char mode, struct Astros *Guy)
 {
-    if (Guy->Status == AST_ST_DEAD) {
-        return;
-    }
-
-    if (Guy == NULL) {
+    if (Guy == NULL || Guy->Status == AST_ST_DEAD) {
         return;
     }
 
