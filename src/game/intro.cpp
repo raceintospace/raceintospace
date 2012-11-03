@@ -31,8 +31,6 @@
 #include "logging.h"
 GXHEADER local2;
 
-LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
-
 struct CREDIT {
     char page;
     int col;
