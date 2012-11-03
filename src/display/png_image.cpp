@@ -65,7 +65,10 @@ void PNGImage::read_png()
             // read the alpha values into a local
             uint8_t * trans;
             int num_trans;
-            png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, NULL);
+            if (png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, NULL) == 0) {
+                // no transparency
+                num_trans = 0;
+            }
             
             // copy both into the instance-wide palette
             for (int i = 0; i < 256; i++) {
