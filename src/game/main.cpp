@@ -111,11 +111,9 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 int game_main_impl(int argc, char *argv[])
 {
-    int i;
     FILE *fin;
     const char *see_readme = "look for further instructions in the README file";
 
-    char AName[6][22] = {"NEW GAME", "OLD GAME", "MODEM", "PLAY BY MAIL", "CREDITS", "EXIT TO DOS"};
     char ex;
 
     setup_options(argc, argv);
@@ -200,28 +198,10 @@ int game_main_impl(int argc, char *argv[])
         strcpy(keyhelpIndex, "i000");
         df = 1;
 
-tommy:
         music_start(M_LIFTOFF);
 
-        i = 99;
-
-        while (i == 99) {
-            i = MChoice(6, (char *)AName);
-
-            if (i == 98) {
-                goto tommy;
-            }
-
-            IDLE[0] = IDLE[1] = 0;
-
-            if (i == 99) {
-                Introd();
-                PortPal(0);
-            }
-        }
-
-        switch (i) {
-        case 1:  // New Game
+        switch (MainMenuChoice()) {
+        case 0:  // New Game
             LOAD = QUIT = 0, BUTLOAD = 0;
             HARD1 = UNIT1 = 1;
             MAIL = -1;
@@ -250,7 +230,7 @@ tommy:
             gxClearDisplay(0, 0);
             break;
 
-        case 2: // Play Old Game
+        case 1: // Play Old Game
             LOAD = QUIT = BUTLOAD = 0;
             HARD1 = UNIT1 = 1;
             MAIL = -1;
@@ -272,19 +252,13 @@ tommy:
             gxClearDisplay(0, 0);
             break;
 
-        case 3:
-            break;
-
-        case 4:
-            break;
-
-        case 5:
+        case 2:
             df = 0;
             Credits();
             df = 1;
             break;
 
-        case 6:
+        case 3:
             //KillMusic();
             ex = 1;
             FadeOut(2, pal, 10, 0, 0);

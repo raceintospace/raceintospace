@@ -522,7 +522,7 @@ int RLED(void *src, void *dest, unsigned int src_size);
 
 // PLACE.C
 void BCDraw(int y);
-int MChoice(char qty, char *Name);
+int MainMenuChoice();
 int BChoice(char plr, char qty, char *Name, char *Imx);
 void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff);
 void AstFaces(char plr, int x, int y, char face);

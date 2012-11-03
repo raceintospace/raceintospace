@@ -34,9 +34,21 @@ void BCDraw(int y)
     return;
 }
 
-int MChoice(char qty, char *Name)
+int MainMenuChoice()
 {
-    int i, j, starty;
+    struct {
+        const char * label;
+        int y;
+        const char * hotkeys;
+    } const menu_options[] = {
+        { "NEW GAME", 9, "N" },
+        { "OLD GAME", 36, "O" },
+        { "CREDITS", 117, "C" },
+        { "EXIT", 144, "EXQ" }
+    };
+    const int menu_option_count = sizeof(menu_options) / sizeof(menu_options[0]);
+    
+    int selected_option = -1;
 
     {
         FILE * fp = sOpen("beggam.but.0.png", "rb", FT_IMAGE);
@@ -47,50 +59,51 @@ int MChoice(char qty, char *Name)
         image.draw();
     }
     
-    ShBox(21, 9, 180, 34);
-    ShBox(21, 36, 180, 61);
-    ShBox(21, 63, 180, 88);
-    ShBox(21, 90, 180, 115);
-    ShBox(21, 117, 180, 142);
-    ShBox(21, 144, 180, 169);
-
-    DispBig(34, 15, "NEW GAME", 1, 0);
-    DispBig(34, 42, "OLD GAME", 1, 0);
-    DispBig(34, 69, "MODEM", 1, 0);
-    DispBig(34, 96, "PLAY BY MAIL", 1, 0);
-    DispBig(34, 123, "CREDITS", 1, 0);
-    DispBig(34, 150, "EXIT", 1, 0);
-
+    for (int i = 0; i < menu_option_count; i++) {
+        ShBox(21, menu_options[i].y, 180, menu_options[i].y + 25);
+        DispBig(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
+    }
+    
     FadeIn(2, pal, 30, 0, 0);
     WaitForMouseUp();
-    j = -1;
-    starty = 9;
-
-    while (j == -1) {
+    
+    while (selected_option == -1) {
         GetMouse();
-
-        for (i = 0; i < qty; i++) // keyboard stuff
-            if (key == Name[i * 22]) {
-                InBox(21, starty + 27 * i, 180, starty + 25 + 27 * i);
-
-                delay(50);
-                j = i + 1;
-                key = 0;
-            }
-
-        if (mousebuttons != 0) {
-            for (i = 0; i < qty; i++)
-                if (x >= 21 && x <= 180 && y >= starty + 27 * i && y <= starty + 25 + 27 * i) {
-
-                    InBox(21, starty + 27 * i, 180, starty + 25 + 27 * i);
-
-                    delay(50);
-                    j = i + 1;
+        
+        if (key) {
+            // Check for hotkeys
+            for (int i = 0; i < menu_option_count; i++) {
+                // Iterate over each hotkey
+                const char * hotkey = menu_options[i].hotkeys;
+                for (hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
+                    if (*hotkey == key) {
+                        // Match!
+                        selected_option = i;
+                        break;
+                    }
                 }
+            }
         }
-    }   //while(j=...
+        
+        if (mousebuttons) {
+            for (int i = 0; i < menu_option_count; i++) {
+                if (x >= 21 && x <= 180 && y >= menu_options[i].y && y <= menu_options[i].y + 27) {
+                    selected_option = i;
+                    break;
+                }
+            }
+        }
+    }
 
-    return j;
+    // Draw a highlighted box
+    InBox(21, menu_options[selected_option].y, 180, menu_options[selected_option].y + 25);
+    
+    // Let it sink in
+    delay(50);
+    
+    // Pass back the selected option
+    key = 0;
+    return selected_option;
 }
 
 int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
