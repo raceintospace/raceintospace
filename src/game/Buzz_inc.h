@@ -28,6 +28,11 @@ int game_main(int argc, char *argv[]);
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 
+#if __clang__
+// suppress "char as array subscript" warning
+#pragma clang diagnostic ignored "-Wchar-subscripts"
+#endif
+
 #include "raceintospace_config.h"
 #include "pace.h"
 
