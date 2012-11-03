@@ -1927,7 +1927,10 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
                 Rec_Change = -1;
             }
 
-            if (rec[k][loop].type == 2 && strcmp(&rec[k][loop].astro[0], &Data->P[rec[k][loop].country].Pool[temp].Name[0]) == 0) {
+            // rec[k][loop].country is sometimes -1
+            // guard against this case
+            // (is this the issue cited above?)
+            if (rec[k][loop].type == 2 && rec[k][loop].country >= 0 && strcmp(&rec[k][loop].astro[0], &Data->P[rec[k][loop].country].Pool[temp].Name[0]) == 0) {
                 Rec_Change = -1;
             }
         }
