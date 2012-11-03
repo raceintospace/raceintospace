@@ -30,23 +30,6 @@
 #include "av.h"
 #include "logging.h"
 
-#ifdef DEADCODE
-
-#define FRM_Delay       25
-
-#define STL_OFF         26715
-#define ANIM_PARTS      297
-
-extern char STEPnum, loc[4];
-extern struct MisEval Mev[60];
-extern char MANNED[2], STEP, pal2[768], AI[2];
-extern int tFrames, cFrame;
-extern int32_t aLoc;
-extern GXHEADER dply;
-extern struct AnimType AHead;
-extern struct BlockHead BHead;
-#endif
-
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 /** find and fill REPLAY structure and return 0, or -1 if failed.

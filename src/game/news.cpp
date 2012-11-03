@@ -202,8 +202,6 @@ OpenNews(char plr, char *buf, int bud)
     //------------------------------------------------------
     //Specs: check tracking station for director's message |
     //------------------------------------------------------
-#if 1
-
     if (Option != -1) {
         if ((gork = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", 0)) != NULL) {
             fread(&old, sizeof(old), 1, gork);
@@ -221,8 +219,6 @@ OpenNews(char plr, char *buf, int bud)
             fclose(gork);
         }
     };
-
-#endif
 
     bufsize = strlen(buf);
 

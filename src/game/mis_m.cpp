@@ -30,8 +30,6 @@
 #include "options.h"
 #include "logging.h"
 
-#define MIS_SET 0             // FAILURES ON
-
 LOG_DEFAULT_CATEGORY(mission)
 
 extern struct MisAst MA[2][4];
@@ -344,20 +342,6 @@ void MisCheck(char plr, char mpad)
         }
 
 
-        // Debug Code Only
-#if MIS_SET
-
-        if (!AI[plr]) {               //&& TOM && NOFAIL
-            memset(Text, 0x00, sizeof Text);
-            strcpy(Text, "FAIL:\0");
-            strcpy(&Text[5], S_Name[Mev[STEP].loc]);
-
-            PROBLEM = Request(0, Text, 6);
-
-        }
-
-#endif
-
         // Fix wrong anim thing for the Jt Durations
         if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
             strcpy(Mev[STEP].Name, (plr == 0) ? "_BUSC0\0" : "_BSVC0");
@@ -365,14 +349,6 @@ void MisCheck(char plr, char mpad)
         }
 
         if (PROBLEM == 1) {  //Step Problem
-
-#if MIS_SET
-            if (!AI[plr]) {
-                DebugSetFailure(Text);    // && TOM && NOFAIL
-            }
-
-#endif
-
             // for the unmanned mission
             if (MANNED[Mev[STEP].pad] == 0 && MANNED[other(Mev[STEP].pad)] == 0) {
                 Mev[STEP].rnum = (-1) * (random(5) + 1);
@@ -1318,164 +1294,3 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     return FNote;
 }
 
-
-// EOF
-#if MIS_SET
-
-void DebugSetFailure(char *Text)
-{
-    int fin, k = 0, i, j;
-    long len[2], length;
-    char D[4], A[6];
-    GXHEADER local;
-
-    GV(&local, 216, 84);
-    gxGetImage(&local, 70, 29, 285, 112, 0);
-
-    grSetColor(1);
-    ShBox(70, 29, 285, 112);
-    InBox(76, 34, 279, 46);
-    RectFill(77, 35, 278, 45, 7);
-    grSetColor(1);
-    PrintAt(139, 42, "FAILURE ENTRY");
-    InBox(76, 49, 279, 68);
-    RectFill(77, 50, 278, 67, 7);
-    InBox(141, 76, 174, 86);
-    RectFill(142, 77, 173, 85, 10);
-
-    grSetColor(1);
-    PrintAt(112, 83, "RNUM:   ");
-    DispNum(0, 0, Mev[STEP].rnum);
-    InBox(141, 91, 174, 101);
-    RectFill(142, 92, 173, 100, 10);
-    grSetColor(1);
-    PrintAt(102, 98, "NEW:");
-
-    for (i = 0; i < 5; i++) {
-        OutBox(187 + i * 12, 74, 197 + i * 12, 82);
-        sprintf(&D[0], "%d", i);
-        grSetColor(11);
-        PrintAt(190 + i * 12, 80, &D[0]);
-    }
-
-    grSetColor(11);
-
-    for (i = 0; i < 5; i++) {
-        OutBox(187 + i * 12, 84, 197 + i * 12, 92);
-        sprintf(&D[0], "%d", i + 5);
-        grSetColor(11);
-        PrintAt(190 + i * 12, 90, &D[0]);
-    }
-
-    OutBox(187, 95, 245, 103);
-    grSetColor(11);
-    PrintAt(202, 101, "ENTER");
-    grSetColor(11);
-    PrintAt(82, 57, "ENTER THE NEW FAILURE NUMBER FOR");
-    PrintAt(82, 64, Text);
-    memset(A, 0x00, sizeof A);
-    i = 0; //reset i
-
-    while (1) {
-        key = 0;
-        WaitForMouseUp();
-        GetMouse();
-
-        if ((key == K_ENTER) || (x >= 187 && y >= 95 && x <= 245 && y <= 103 && mousebuttons > 0)) {
-            InBox(187, 95, 245, 103);
-            WaitForMouseUp();
-
-            if (i > 0) {
-                i = atoi(&A[0]);
-                Mev[STEP].rnum = maxx(minn(9999, i), 0);
-            }
-
-            gxPutImage(&local, gxSET, 70, 29, 0);
-            DV(&local);
-            key = 0;
-            return;
-        }
-
-        if (i < 4 && key >= '0' && key <= '9') {
-            j = key - 0x30;
-
-            if (j < 5) {
-                InBox(187 + j * 12, 74, 197 + j * 12, 82);
-            } else {
-                InBox(187 + (j - 5) * 12, 84, 197 + (j - 5) * 12, 92);
-            }
-
-            A[i++] = key;
-
-            if (key > 0) {
-                delay(150);
-            }
-
-            RectFill(142, 92, 173, 100, 10);
-            grSetColor(1);
-            PrintAt(144, 98, &A[0]);
-
-            if (j < 5) {
-                OutBox(187 + j * 12, 74, 197 + j * 12, 82);
-            } else {
-                OutBox(187 + (j - 5) * 12, 84, 197 + (j - 5) * 12, 92);
-            }
-
-            key = 0;
-        }
-
-        if (i > 0 && key == 0x08) {
-
-            A[--i] = 0x00;
-            grSetColor(1);
-            RectFill(142, 92, 173, 100, 10);
-            PrintAt(144, 98, &A[0]);
-
-            key = 0;
-        }
-
-        for (j = 0; j < 5; j++) {
-            if (x >= 187 + j * 12 && y >= 74 && x <= 197 + j * 12 && y <= 82 && mousebuttons > 0 && i < 4) {
-
-                InBox(187 + j * 12, 74, 197 + j * 12, 82);
-                key = j + 0x30;
-                A[i++] = key;
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                RectFill(142, 92, 173, 100, 10);
-                grSetColor(1);
-                PrintAt(150, 98, &A[0]);
-                key = 0;
-                OutBox(187 + j * 12, 74, 197 + j * 12, 82);
-
-            }
-        }
-
-        for (j = 0; j < 5; j++) {
-            if (x >= 187 + j * 12 && y >= 84 && x <= 197 + j * 12 && y <= 92 && mousebuttons > 0 && i < 4) {
-
-                InBox(187 + j * 12, 84, 197 + j * 12, 92);
-                key = j + 0x35;
-                A[i++] = key;
-                WaitForMouseUp();
-
-                if (k > 0) {
-                    delay(150);
-                }
-
-                RectFill(142, 92, 173, 100, 10);
-                grSetColor(1);
-                PrintAt(150, 98, &A[0]);
-                key = 0;
-                OutBox(187 + j * 12, 84, 197 + j * 12, 92);
-
-            }
-        }
-    }
-}
-
-#endif
