@@ -7,7 +7,7 @@ if (PLATFORM_MUSIC)
 else (PLATFORM_MUSIC)
   set(music_vorbis music_vorbis.cpp)
 endif (PLATFORM_MUSIC)
-  
+
 add_library(
   raceintospace_game STATIC
   admin.cpp
@@ -31,7 +31,6 @@ add_library(
   gr.cpp
   gx.cpp
   hardef.cpp
-  imgsplit.cpp
   intel.cpp
   intro.cpp
   log4c.cpp
