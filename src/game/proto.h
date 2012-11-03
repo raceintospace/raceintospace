@@ -569,18 +569,7 @@ int xmit_file(int (*error_handler)(int c, int32_t p, char *s), char *files[]);
 int recv_file(int(*error_handler)(int c, int32_t p, char *s), char *path);
 
 // PREFS.C
-void DrawPrefs(int where, char a1, char a2);
-void HModel(char mode, char tx);
-void Levels(char plr, char which, char x);
-void BinT(int x, int y, char st);
-void PLevels(char side, char wh);
-void CLevels(char side, char wh);
 void Prefs(int where);
-void EditAst(void);
-void ChangeStat(char mum, char Cur, char Cnt);
-void DrawStats(char mum, char chce);
-void First(char now, char loc);
-void Second(int nw, int lc);
 
 // PREST.C
 void Set_Dock(char plr, char total);

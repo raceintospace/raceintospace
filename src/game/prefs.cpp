@@ -34,6 +34,13 @@ struct ManPool *Sov;
 char M_Us[106], M_Sv[106];
 extern char Option;
 
+void DrawPrefs(int where, char a1, char a2);
+void HModel(char mode, char tx);
+void Levels(char plr, char which, char x);
+void BinT(int x, int y, char st);
+void PLevels(char side, char wh);
+void CLevels(char side, char wh);
+
 void DrawPrefs(int where, char a1, char a2)
 {
     int i, mode = 0;
@@ -298,7 +305,6 @@ void Prefs(int where)
     int i, num, hum1 = 0, hum2 = 0;
     FILE *fin;
     char ch, Name[20], ksel = 0;
-    GXHEADER local2;
     int32_t size;
 
     if (where != 3) {
