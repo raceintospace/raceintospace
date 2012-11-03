@@ -57,11 +57,8 @@ project file:
     $ cmake -G Xcode ..
     $ open raceintospace.xcodeproj
 
-Easy. On my system, the Makefile-driven build can find
-`/usr/local/{include,lib}` by default, while Xcode cannot. This is solved by
-adding the appropriate header and library search paths to the generated
-project. Be careful that libpng uses either the OSX-provided library/headers
-or Homebrew-provided library/headers; mixing them produces warnings on stderr
+Be careful that libpng uses either the OSX-provided library/headers or
+Homebrew-provided library/headers; mixing them produces warnings on stderr
 as well as spectacular crashes.
 
 Note that the resulting executables are dynamically linked against the
