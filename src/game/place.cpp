@@ -74,8 +74,7 @@ int MainMenuChoice()
             // Check for hotkeys
             for (int i = 0; i < menu_option_count; i++) {
                 // Iterate over each hotkey
-                const char * hotkey = menu_options[i].hotkeys;
-                for (hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
+                for (const char * hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
                     if (*hotkey == key) {
                         // Match!
                         selected_option = i;
