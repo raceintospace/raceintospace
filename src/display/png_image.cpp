@@ -200,7 +200,7 @@ void PNGImage::draw(int x, int y)
     if (width_to_copy > width)
         width_to_copy = width;
     
-    height_to_copy = 240 - x;
+    height_to_copy = 200 - x;
     if (height_to_copy > height)
         height_to_copy = height;
     
