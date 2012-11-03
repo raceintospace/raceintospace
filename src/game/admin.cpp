@@ -66,8 +66,6 @@ void Admin(char plr)
         AImg[3] = 5;
     }
 
-    //FadeOut(2,pal,10,0,0);
-    i = 0;
     beg = 1;
 
     do {
@@ -396,7 +394,7 @@ void FileAccess(char mode)
         if ((sc == 0 || sc == 2) && tFiles > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
             int endianSwap = 0;   // Default this to false
-            char *load_buffer = NULL;
+            REPLAY *load_buffer = NULL;
             size_t fileLength = 0, eventSize = 0;
             size_t readLen = 0;
 
@@ -432,9 +430,9 @@ void FileAccess(char mode)
                 }
 
                 readLen = SaveHdr->compSize;
-                load_buffer = (char*)malloc(readLen);
+                load_buffer = (REPLAY*)malloc(readLen);
 
-                readLen = fread(load_buffer, 1, readLen, fin);
+                fread(load_buffer, 1, readLen, fin);
 
                 if (SaveHdr->dataSize == sizeof(struct Players)) {
 #ifdef OLD_DOS_ENCRYPT_SAVEDATA
@@ -471,8 +469,8 @@ void FileAccess(char mode)
                     }
 
                     // Read the Replay Data
-                    load_buffer = (char*)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-                    readLen = fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+                    load_buffer = (REPLAY*)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+                    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
 
                     if (endianSwap) {
                         REPLAY *r = NULL;
@@ -497,8 +495,8 @@ void FileAccess(char mode)
                     eventSize = fileLength - ftell(fin);
 
                     // Read the Event Data
-                    load_buffer = (char*)malloc(eventSize);
-                    readLen = fread(load_buffer, 1, eventSize, fin);
+                    load_buffer = (REPLAY*)malloc(eventSize);
+                    fread(load_buffer, 1, eventSize, fin);
                     fclose(fin);
 
                     if (endianSwap) {

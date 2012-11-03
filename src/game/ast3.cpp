@@ -537,7 +537,6 @@ void Train(char plr, int level)
 
                 OutBox(168, 181, 314, 193);
                 // Help box are you sure
-                temp = 0;
 
                 if (plr == 0) {
                     temp = Help("i102");

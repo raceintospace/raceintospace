@@ -1193,8 +1193,6 @@ void NewAI(char plr, char frog)
                     mis3 = 4;
                 }
             }
-
-            frog = prg[0] = Data->P[plr].AISec - 6;
         }
 
         if (mis3 == 0)

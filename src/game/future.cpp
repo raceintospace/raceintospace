@@ -1333,7 +1333,6 @@ begfut_noredraw:
                 MisType = UpSearchRout(MisType, plr);
                 Data->P[plr].Future[MisNum].MissionCode = MisType;
                 Missions(plr, 8, 37, MisType, 3);
-                DuraType = status[0];
                 delay(100);
                 key = 0;
                 GetMouse();
@@ -1386,7 +1385,6 @@ begfut_noredraw:
                 MisType = DownSearchRout(MisType, plr);
                 Data->P[plr].Future[MisNum].MissionCode = MisType;
                 Missions(plr, 8, 37, MisType, 3);
-                DuraType = status[0];
                 delay(100);
                 key = 0;
                 GetMouse();

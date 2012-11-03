@@ -175,9 +175,6 @@ char REvent(char plr)
 
     switch (Data->Events[Data->Count]) {
     case  0:
-        NoMods = 0;
-        break;    // Nothing Event
-
     case  1:
     case 44:
     case 59:
@@ -227,18 +224,15 @@ char REvent(char plr)
     case  9:
     case 76: // Budget increase of 15 MB
         Data->P[plr].Budget += 15;
-        NoMods = 0;
         break;
 
     case 45: // increase budget by total two 10 side dice this year
         evflag = random(10) + random(10) + 2;
         Data->P[plr].Budget += evflag;
-        NoMods = 0;
         break;
 
     case 46: // increase budget by 5 MB's
         Data->P[plr].Budget += 5;
-        NoMods = 0;
         break;
 
     case 91: // increase budget by 20MB's in the budget
@@ -247,7 +241,6 @@ char REvent(char plr)
         }
 
         Data->P[plr].Budget += 20;
-        NoMods = 0;
         break;
 
     case 92: // 20% or 20MB's whichever is less

@@ -50,7 +50,6 @@ char *buffer;
 GXHEADER vhptr, vhptr2;
 char *oldpal, pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
-HTIMER server;
 char Option = -1, MAIL = -1;
 int SEG = 15, FadeVal, fOFF = -1;
 extern struct mStr Mis;
@@ -119,7 +118,7 @@ int game_main_impl(int argc, char *argv[])
     char AName[6][22] = {"NEW GAME", "OLD GAME", "MODEM", "PLAY BY MAIL", "CREDITS", "EXIT TO DOS"};
     char ex;
 
-    argc = setup_options(argc, argv);
+    setup_options(argc, argv);
     /* hacking... */
     log_setThreshold(&_LOGV(LOG_ROOT_CAT), maxx(0, LP_NOTICE - (int)options.want_debug));
 
@@ -144,8 +143,8 @@ int game_main_impl(int argc, char *argv[])
 
     av_setup();
 
-    strcpy(helptextIndex, "i000\0");
-    strcpy(keyhelpIndex, "k000\0");
+    strcpy(helptextIndex, "i000");
+    strcpy(keyhelpIndex, "k000");
 
     LOAD = QUIT = 0;
 
@@ -183,7 +182,7 @@ int game_main_impl(int argc, char *argv[])
         RLED(buffer, (char *)Data, i);
 #else
         fin = sOpen("URAST.DAT", "rb", 0);
-        i = fread(Data, 1, (sizeof(struct Players)), fin);
+        fread(Data, 1, (sizeof(struct Players)), fin);
         fclose(fin);
 #endif
         SwapGameDat();  // Take care of endian read
@@ -197,8 +196,8 @@ int game_main_impl(int argc, char *argv[])
         gxClearDisplay(0, 0);
         PortPal(0);
         key = 0;
-        strcpy(helptextIndex, "i000\0");
-        strcpy(keyhelpIndex, "i000\0");
+        strcpy(helptextIndex, "i000");
+        strcpy(keyhelpIndex, "i000");
         df = 1;
 
 tommy:

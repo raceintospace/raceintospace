@@ -225,7 +225,6 @@ void ClrFut(char plr, char pad)
 int AsnCrew(char plr, char pad, char part)
 {
     int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
-    char temp;
 
     strcpy(keyhelpIndex, "k200");
     men = Data->P[plr].Future[pad].Men;
@@ -257,12 +256,9 @@ int AsnCrew(char plr, char pad, char part)
     Data->P[plr].Future[pad].BCrew = 0;
     prime = -1;
     back = -1;
-    bug = 0;
     count = 0;
 
     for (i = 0; i < ASTRONAUT_CREW_MAX; i++) { // Flight Crew Settings
-        stflag = 0;
-
         if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
             || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
             stflag = 0;
@@ -277,12 +273,6 @@ int AsnCrew(char plr, char pad, char part)
 
     if ((count >= 7 && options.feat_no_backup == 0) || (count >= 8 && options.feat_no_backup > 0)) {
 
-        if (temp) {
-            EMPTY_BODY;
-        }
-
-        temp = Help("i107");
-        bug = 1;
         return 0;
     } else {
         bug = 0;
@@ -359,8 +349,6 @@ int AsnCrew(char plr, char pad, char part)
         GetMouse();
 
         for (i = 0; i < ASTRONAUT_CREW_MAX; i++) { // Flight Crew Settings
-            stflag = 0;
-
             if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
                 || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
                 stflag = 0;

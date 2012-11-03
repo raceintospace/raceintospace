@@ -786,7 +786,6 @@ int AllotPrest(char plr, char mis)
     GetMisType(mcode);
 
     other = MaxFail();
-    total = negs = 0;
 
     for (i = 0; i < STEPnum; i++) {
         if (Mev[i].PComp == 5 && Mev[i].StepInfo == 0) {

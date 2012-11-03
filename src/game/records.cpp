@@ -1333,7 +1333,6 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 29:
-                            temp = 0;
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
@@ -1935,15 +1934,12 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
     switch (Rec_Change) {
     case 0:
-        hold = j;
-
         if (k >= 35 && k <= 41) {
             j = temp; // holds astronaut
             temp = max; // holds record
         }
 
         WriteRecord(i, j, k, temp);
-        j = hold;
         break;
 
     case 1:
@@ -2014,8 +2010,6 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
         break;
 
     case 3:
-        hold = j;
-
         if (k >= 35 && k <= 41) {
             j = temp; // holds astronaut
             temp = max; // holds record
@@ -2065,8 +2059,6 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
         default:
             break;
         }
-
-        j = hold; //klugge
         break;
 
     case 4:

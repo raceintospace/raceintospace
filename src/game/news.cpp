@@ -226,7 +226,7 @@ OpenNews(char plr, char *buf, int bud)
 
     bufsize = strlen(buf);
 
-    if (Data->P[plr].Plans && 0xff) {
+    if (Data->P[plr].Plans & 0xff) {
         strcpy(&buf[bufsize], "xPLANETARY MISSION UPDATES...x");
     }
 
@@ -553,7 +553,6 @@ DrawNText(char plr, char got)
 void
 News(char plr)
 {
-    double last_secs;
     int bline = 0, ctop = 0, i;
     char cYr[5];
     ONEWS oNews;
@@ -608,13 +607,12 @@ News(char plr)
     loc = 1;
     Status = 0;
 
-    strcpy(helptextIndex, "i002\0");
+    strcpy(helptextIndex, "i002");
     WaitForMouseUp();
 
     while (1) {
         key = 0;
         GetMouse_fast();
-        last_secs = get_time();
 
         if (!(loc == 0 && Status == 1)) {
             NUpdateVoice();
@@ -792,7 +790,6 @@ News(char plr)
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
             key = 0;
-            i = 0;
             music_stop();
             KillVoice();
             break;

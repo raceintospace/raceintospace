@@ -267,10 +267,6 @@ av_setup(void)
 {
     unsigned video_flags = SDL_SWSURFACE;
 
-#ifndef CONFIG_MACOSX
-    char *icon_path = NULL;
-#endif
-
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
         CRITICAL2("SDL_Init error: %s", SDL_GetError());
         exit(EXIT_FAILURE);

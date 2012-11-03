@@ -1242,7 +1242,6 @@ int MapKey(char plr, int key, int old)
 
 void Port(char plr)
 {
-    double last_secs;
     int i, j, kMode, kEnt, k;
     char good, res;
     int kPad, pKey, gork;
@@ -1282,7 +1281,6 @@ void Port(char plr)
 
     music_start((plr == 0) ? M_USPORT : M_SVPORT);
     kMode = kPad = kEnt = 0;
-    last_secs = get_time();
     i = 0; // this is used to loop through all the selection regions on the port
 
     while (1) {
@@ -1630,7 +1628,6 @@ char PortSel(char plr, char loc)
         }
 
         strcpy(helptextIndex, "i015");
-        MisOK = 0;
         VAB(plr);
         return pREDRAW;
 
@@ -1819,7 +1816,6 @@ char PortSel(char plr, char loc)
             Help("i005");
             return pNOREDRAW;
         } else if (MisOK == 0) {
-            MisOK = 0;
             i = Request(plr, "END TURN", 1);
 
             if (i) {

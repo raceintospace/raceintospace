@@ -128,7 +128,6 @@ int Steal(int p, int prog, int type)
     }
 
     if (j >= 0 && j < 7) {
-        lo = 0;
         Data->P[p].Probe[j].Safety += (save[j] * type);
         strcpy(&Name[0], &Data->P[p].Probe[j].Name[0]);
     };

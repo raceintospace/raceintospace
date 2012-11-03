@@ -564,8 +564,6 @@ void DispVA(char plr, char f)
 
     gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local, 0, 0 + off, gxSET);
 
-    spix = local.vptr;
-
     GV(&local2, w, h);
 
     /* TODO: magic numbers */
@@ -587,8 +585,6 @@ void DispVA(char plr, char f)
     //};
 
     gxClearVirtual(&local2, 0);
-
-    cx = 0;
 
     IncY = (h - TotY) / 2;
 
@@ -654,10 +650,8 @@ void DispVA(char plr, char f)
         x1 = MI[plr * 28 + 25].x1;
         y1 = MI[plr * 28 + 25].y1;
         x2 = MI[plr * 28 + 25].x2;
-        y2 = MI[plr * 28 + 25].y2;
         y2 = y1 + TotY - IncY - 1;
         w2 = x2 - x1 + 1;
-        h2 = y2 - y1 + 1;
         cx = w / 2 - w2 / 2 - 1;
         gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, cx, IncY, gxSET);
 
@@ -681,8 +675,6 @@ void DispVA(char plr, char f)
 
         y2 = MI[plr * 28 + 27].y2;
 
-        w2 = x2 - x1 + 1;
-
         h2 = y2 - y1 + 1;
 
         gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, 0, h - h2, gxSET);
@@ -704,7 +696,6 @@ void DispVA(char plr, char f)
         y1 = MI[plr * 28 + 26].y1;
         x2 = MI[plr * 28 + 26].x2;
         y2 = MI[plr * 28 + 26].y2;
-        w2 = x2 - x1 + 1;
         h2 = y2 - y1 + 1;
         gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, 0, h - h2, gxSET);
         spix = local.vptr;
@@ -891,8 +882,6 @@ begvab:
 
     wgt = 0;
 
-    ccc = (VASqty > 0) ? 1 : 0;
-
     for (i = 0; i < 4; i++) {
         wgt += VAS[1][i].wt;
     }
@@ -954,7 +943,6 @@ begvab:
                 InBox(6, 86, 163, 94);
                 key = 0;
                 // NEED A DELAY CHECK
-                ac = 0;
                 ac = ChkDelVab(plr, ccc);
 
                 if (ac != 0) {
@@ -1069,7 +1057,7 @@ begvab:
                         Help("i155");    // No docking module in orbit
                     }
 
-                    j = j2 = 0;
+                    j2 = 0;
 
                     if (strncmp((char *)VAS[ccc][0].name, "NONE", 4) != 0) {
                         j++;

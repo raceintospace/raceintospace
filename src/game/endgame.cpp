@@ -292,8 +292,6 @@ void EndGame(char win, char pad)
     DispNum(0, 0, Data->Year);
 
 // correct mission pictures
-    bud = 0; // initialize bud
-    gork = 0;
 
     if (Option == -1 && MAIL == -1) {
         gork = Data->P[win].PastMis - 1;
@@ -612,7 +610,6 @@ void NewEnd(char win, char loc)
             Draw_NewEnd(win);
             strncpy(helptextIndex, "i144", 4);
             strncpy(keyhelpIndex, "k044", 4);
-            R_V = 0;
             R_V = Burst(win);
         }
 
@@ -634,7 +631,6 @@ void NewEnd(char win, char loc)
             Draw_NewEnd(win);
             strncpy(helptextIndex, "i144", 4);
             strncpy(keyhelpIndex, "k044", 4);
-            R_V = 0;
             R_V = Burst(win);
         }
 
@@ -760,12 +756,6 @@ void FakeWin(char win)
     PrintAt(10, 50, "MISSION TYPE: ");
     grSetColor(8);
 
-    if (miss == 55  || miss == 56) {
-        i = 1;
-    } else {
-        i = 0;
-    }
-
     MissionName(miss, 80, 50, 24);
     grSetColor(6);
 
@@ -804,7 +794,6 @@ void FakeWin(char win)
     PrintAt(0, 0, Month[monthWin]);
     PrintAt(0, 0, "19");
     DispNum(0, 0, yr);
-    bud = 0; // initialize bud
     r = random(100);
 
     if (win == 1 && prog == 5) {
@@ -1024,7 +1013,6 @@ void PrintOne(char *buf, char tken)
 {
     int i, k;
     grSetColor(7);
-    k = 0;
 
     if (tken == 0)  {
         k = 127;

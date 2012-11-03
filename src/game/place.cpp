@@ -720,7 +720,6 @@ void writePrestigeFirst(char index)   ///index==plr
                 if (Data->Prestige[12].Place == index && Data->PD[index][12] == 0) {
                     PrintAt(0, 0, ", B");
                     Data->PD[index][12] = 1;
-                    i = 11;
                 }
 
             case 12:
@@ -779,7 +778,6 @@ void writePrestigeFirst(char index)   ///index==plr
                 if (Data->Prestige[12].mPlace == index && Data->PD[index][12] == 0) {
                     PrintAt(0, 0, ", B");
                     Data->PD[index][12] = 1;
-                    i = 11;
                 }
 
             case 12:

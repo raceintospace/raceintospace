@@ -192,7 +192,6 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
 
     mm_file vidfile;
     float fps;
-    double last_time;
 
     if (find_replay(&Rep, NULL, plr, num, Type) < 0) {
         return;
@@ -283,8 +282,6 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
             if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0) {
                 goto done;
             }
-
-            last_time = get_time();
 
             while (keep_going) {
                 video_rect.x = dx;

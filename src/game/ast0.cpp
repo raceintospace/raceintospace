@@ -265,7 +265,6 @@ void LMDraw(char plr)
     }
 
     LMPict(ind);
-    ind = 0;
 
     if (Data->P[plr].Manned[5].Num >= 0) {
         ind = 6 + plr;

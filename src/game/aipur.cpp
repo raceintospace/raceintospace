@@ -486,14 +486,11 @@ void SelectBest(char plr, int pos)
 
     count = 0;
 
-    done = 0;
-
     for (i = 16; i > 0; i--) {
         done = 0;
 
         while (count <= AIMaxSel && done == 0) {
             for (j = now; j < now + MaxMen + 1; j++) {
-                tot = 0;
                 tot = Men[j].Cap + Men[j].LM + Men[j].EVA + Men[j].Docking;
 
                 if (i == tot) {
@@ -645,10 +642,6 @@ void TransAstro(char plr, int inx)
 
     while (bug == 1) {
         count = 0;
-        max = 0;
-        found = 0;
-        flt1 = 0;
-        flt2 = 0;
 
         if (inx == 5) {
             max = 4;
@@ -687,7 +680,6 @@ void TransAstro(char plr, int inx)
             return;
         }
 
-        found = 0;
         flt1 = -1;
         flt2 = -1;
 
@@ -1276,9 +1268,6 @@ int GenPur(char plr, int hardware_index, int unit_index)
     if (hardware_index == 3 && newf == 1) {
         n1 = Data->P[plr].Rocket[0].Safety; /* One - A     */
         n2 = Data->P[plr].Rocket[1].Safety; /* Two - B     */
-        n3 = Data->P[plr].Rocket[2].Safety; /* Three - C   */
-        n4 = Data->P[plr].Rocket[3].Safety; /* Mega - G    */
-        n5 = Data->P[plr].Rocket[4].Safety; /* Booster - D */
 
         switch (unit_index) {
         case 0:

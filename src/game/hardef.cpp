@@ -265,7 +265,6 @@ PInfo(char plr, char loc)
 
     for (i = 0; i < Data->P[plr].PastMis; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
-            stge = 0;
             stge = Data->P[plr].History[i].Prestige;
             j = 0;
 
@@ -1660,14 +1659,12 @@ DrawRank(char plr)
     //Win=Data->Prestige[22].Place;
     i = 0;
     t1 = 152;
-    t2 = 0;
     grSetColor(5);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==0 || MAIL==0)
 
     if (Option == -1 || Option == 0)
         while (i < Data->P[0].PastMis) {
-            t2 = 0;
             t2 = Data->P[0].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[0].History[i].MissionYear -
@@ -1677,14 +1674,12 @@ DrawRank(char plr)
 
     i = 0;
     t1 = 152;
-    t2 = 0;
     grSetColor(9);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==1 || MAIL==1)
 
     if (Option == -1 || Option == 1)
         while (i < Data->P[1].PastMis) {
-            t2 = 0;
             t2 = Data->P[1].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[1].History[i].MissionYear -
@@ -1704,7 +1699,6 @@ DrawRank(char plr)
         InBox(55, 21, 116, 29);
         grSetColor(1);
         PrintAt(57, 27, "SCORE:");
-        score = 0;
         score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
         sprintf(&Digit[0], "%d", score);
         PrintAt(92, 27, &Digit[0]);

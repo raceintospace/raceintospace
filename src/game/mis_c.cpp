@@ -151,7 +151,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     char lnch = 0, AEPT, BABY, Tst2, Tst3;
     unsigned char sts = 0, fem = 0;
     FILE *fin, *fout, *ffin, *nfin;
-    int32_t offset;
     struct oGROUP *bSeq, aSeq;
     struct oFGROUP *dSeq, cSeq;
     struct Table *F;
@@ -274,7 +273,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     if (mode == 0) {
         fin = open_gamedat(SEQ_DAT);
-        offset = fread(&vhptr.vptr[35000], 1, vhptr.h * vhptr.w - 35000, fin);
+        fread(&vhptr.vptr[35000], 1, vhptr.h * vhptr.w - 35000, fin);
     } else {
         fin = open_gamedat(FSEQ_DAT);
         F = (struct Table *)&vhptr.vptr[0];
@@ -352,10 +351,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     // Specs  Success Sequence Variation :
     //::::::::::::::::::::::::::::::::::::
     if (mode == 0 && (bSeq[j].ID[0] - 0x30 != 1)) {
-        fres = 0;
         fres = (unsigned)(bSeq[j].ID[0] - 0x30);
         max = (unsigned)fres;
-        fres = fres - 1;
         wlen = 0;
 
         while (1) {
@@ -381,10 +378,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     // Specs: Failure Sequence Variation :
     //::::::::::::::::::::::::::::::::::::
     if (mode == 1 && (dSeq[j].ID[0] - 0x30 != 1)) {
-        fres = 0;
         fres = (unsigned)(dSeq[j].ID[0] - 0x30);
         max = (unsigned)fres;
-        fres = fres - 1;
         wlen = 0;
 
         while (1) {
@@ -981,7 +976,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                     which = random(Mob[attempt].Qty);
 
                     if (which >= 10) {
-                        locl = ((which - (which % 10)) / 10) - 1;
 
                         which = Mob[attempt].List[which % 10];
                     } else {
@@ -1009,8 +1003,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
             which = random(Mob[attempt].Qty);
 
             if (which >= 10) {
-                locl = ((which - (which % 10)) / 10) - 1;
-
                 which = Mob[attempt].List[which % 10];
             } else {
 

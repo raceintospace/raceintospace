@@ -300,7 +300,6 @@ void BudPict(char poff)
     gxPutImage(&local, gxSET, 245, 4, 0);
     DV(&local);
     x = 134;
-    y = 141;
 
     for (i = 2; i < 6; i++) {
         y = 141 + ((i - 2) * 14);
@@ -391,8 +390,8 @@ void Budget(char player)
 {
     char pStatus[] = {1, 1, 1, 1};
     DrawBudget(player, pStatus);
-    strcpy(helptextIndex, "i007\0");
-    strcpy(keyhelpIndex, "k007\0");
+    strcpy(helptextIndex, "i007");
+    strcpy(keyhelpIndex, "k007");
     WaitForMouseUp();
 
     while (1) {

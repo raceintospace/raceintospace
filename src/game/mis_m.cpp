@@ -490,8 +490,6 @@ void MisCheck(char plr, char mpad)
             // third parameter (0 -> MALE) (2 -> FEMALE)
             //:::::::::::::::::::::::::::::
 
-            gork = 0;
-
             gork = ((MA[0][0].A != NULL && MA[0][0].A->Sex && EVA[0] == 0)
                     || (MA[0][1].A != NULL && MA[0][1].A->Sex && EVA[0] == 1)
                     || (MA[0][2].A != NULL && MA[0][2].A->Sex && EVA[0] == 2)
@@ -800,7 +798,7 @@ void F_IRCrew(char mode, struct Astros *Guy)
 
 int FailEval(char plr, int type, char *text, int val, int xtra)
 {
-    int FNote = 0, temp, k, ctr;
+    int FNote = 0, temp, k, ctr = 0;
     char PROBLEM = 0;
     struct Astros *crw;
 
@@ -821,7 +819,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         if (!AI[plr]) {
-            temp = FailureMode(plr, FNote, text);
+            FailureMode(plr, FNote, text);
         }
 
         //Special Case for PhotoRecon with Lunar Probe
@@ -859,10 +857,6 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     case 5:  // Stranded Step  (temp)
     case 3:  // Kill ALL Crew and END Mission
-        if (type == 5) {
-            FNote = 4;
-        }
-
         FNote = 8;
 
         if (InSpace > 0 && MANNED[Mev[STEP].pad] == 0 && strncmp(Mev[STEP].E->ID, "M2", 2) == 0) {
@@ -1211,10 +1205,6 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 33:  // Kill Crew on All Capsules (happens only on dockings)
-        if (type == 5) {
-            FNote = 4;
-        }
-
         FNote = 8;
 
         if (MANNED[Mev[STEP].pad] > 0) {

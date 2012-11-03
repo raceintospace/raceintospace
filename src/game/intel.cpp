@@ -636,7 +636,6 @@ void Special(char p, int ind)
 void BackIntel(char p, char year)
 {
     int prg, ind, dur = 0, xc, yc;
-    FILE *fin;
     char code, w;
 
     grSetColor(6);
@@ -2241,8 +2240,6 @@ void IInfo(char plr, char loc, char w)
             RectFill(246, 159 - sfs * 136 / 100, 253, 158, 8);
             DispIt(77, 129, 88, 151, 240, 134);
         };
-
-        sfu = -1;
 
         sfs = -1;
 

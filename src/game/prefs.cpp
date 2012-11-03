@@ -864,7 +864,6 @@ void EditAst(void)
             if ((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
-                temp = 0;
                 temp = Help("i106");
 
                 if (temp == 1) {
@@ -1620,8 +1619,6 @@ ChangeStat(char mum, char Cur, char Cnt)    // Cur holds current setting
         default:
             break;
         }
-
-        mxc = 0;
 
         if (Cnt == 0) {
             mxc = M_Us[mum];

@@ -73,7 +73,6 @@ void Display_ARROW(char num, int x, int y)
 {
     /* Look for explanations in place.c:PatchMe() */
     PatchHdrSmall P;
-    int do_fix = 0;
     GXHEADER local, local2;
     FILE *in;
     in = sOpen("ARROWS.BUT", "rb", 0);
@@ -89,7 +88,6 @@ void Display_ARROW(char num, int x, int y)
         if ((P.w + 1) * P.h == P.size) {
             /* fprintf(stderr, "Display_ARROW(): P.w++ saves the day!\n"); */
             P.w++;
-            do_fix = 1;
         }
 
         P.size = P.w * P.h;

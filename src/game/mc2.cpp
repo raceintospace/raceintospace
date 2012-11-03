@@ -574,7 +574,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
     // name the mission step for failures.
 
-    strcpy(Mev[step].FName, "F000\0");
+    strcpy(Mev[step].FName, "F000");
 
     Mev[step].FName[3] = (char) 0x30 + (Mev[step].loc % 10);
 

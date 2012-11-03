@@ -581,8 +581,8 @@ void ShowPad(char plr, char pad)
         return;
     }
 
-    strcpy(helptextIndex, "i028\0");
-    strcpy(keyhelpIndex, "k028\0");
+    strcpy(helptextIndex, "i028");
+    strcpy(keyhelpIndex, "k028");
     WaitForMouseUp();
 
     while (1) {
@@ -610,7 +610,6 @@ void ShowPad(char plr, char pad)
             WaitForMouseUp();
 
             if (Data->P[plr].Cash >= Data->P[plr].LaunchFacility[pad]) {
-                temp = 0;
                 temp = Help("i115");
 
                 if (temp == 1) {
@@ -618,9 +617,7 @@ void ShowPad(char plr, char pad)
                     Data->P[plr].LaunchFacility[pad] = 1;
                 }
             } else {
-                temp = 0;
-                temp = Help("i116");
-                temp = 0;
+                Help("i116");
             }
 
             OutBox(169, 181, 314, 193);

@@ -867,6 +867,10 @@ void ShowUnit(char hw, char un, char player_index)
     case 4:
         PL = (Equipment *)&Data->P[player_index].Misc[un - 1].Name[0];
         break;
+    
+    default:
+        // invalid hw value
+        assert(false);
     }
 
     grSetColor(1);
@@ -1455,7 +1459,6 @@ BuyUnit(char category, char unit, char player_index)
     char new_program = 0;
     int Init_Cost, Unit_Cost;
     Equipment *unit_ptr = NULL;
-    Unit_Cost = Init_Cost = 0;
 
     assert(1 <= category && category <= 4);
 
@@ -1715,9 +1718,6 @@ BuyUnit(char category, char unit, char player_index)
     if (new_program && category == 4) {
         n1 = Data->P[player_index].Rocket[0].Safety; /* One - A    */
         n2 = Data->P[player_index].Rocket[1].Safety; /* Two - B    */
-        n3 = Data->P[player_index].Rocket[2].Safety; /* Three - C   */
-        n4 = Data->P[player_index].Rocket[3].Safety; /* Mega - G    */
-        n5 = Data->P[player_index].Rocket[4].Safety; /* Booster - D */
 
         switch (unit - 1) {
         case 0:

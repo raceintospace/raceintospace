@@ -421,7 +421,7 @@ void AstSel(char plr)
 {
     char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, min, count, fem = 0, ksel = 0;
     FILE *fin;
-    i = j = k = BarA = BarB = MaxMen = Index = now = now2 = max = min = count = 0;
+    MaxMen = Index = now = now2 = max = min = count = 0;
     music_start(M_DRUMSM);
     DrawAstCheck(plr);
     WaitForMouseUp();

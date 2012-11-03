@@ -120,8 +120,6 @@ rcard:
 
 #endif
 
-
-    i = -1;
     fout = sOpen("REPLAY.DAT", "wb", 1);
 
     for (j = 0; j < 200; j++) {
@@ -359,8 +357,6 @@ AstroTurn(void)
 
                         cnt++;
                     };
-
-                    cnt = 0;
                 };
 
                 /* Training Washout */

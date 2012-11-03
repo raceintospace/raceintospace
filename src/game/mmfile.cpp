@@ -418,7 +418,7 @@ mm_open_fp(mm_file *mf, FILE *file)
     }
 
     if (have_vorbis) {
-        unsigned c, r;
+        unsigned c = 0, r = 0;
         mm_audio_info(mf, &c, &r);
         INFO3("audio %u channel(s) at %u Hz", c, r);
     }

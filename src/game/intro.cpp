@@ -118,7 +118,7 @@ int nCREDIT = sizeof CREDIT / sizeof CREDIT[0];
 void Credits(void)
 {
     int k, i;
-    strcpy(keyhelpIndex, "i999\0");
+    strcpy(keyhelpIndex, "i999");
 
     FadeOut(2, pal, 30, 0, 0);
 
@@ -165,7 +165,7 @@ void Credits(void)
 
     FadeOut(2, pal, 30, 0, 0);
     memset(screen, 0x00, 64000);
-    strcpy(keyhelpIndex, "k000\0");
+    strcpy(keyhelpIndex, "k000");
 }
 
 
