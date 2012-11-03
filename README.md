@@ -23,6 +23,7 @@ Building
 
 You need:
 
+* CMake
 * git
 * SDL
 * libpng (and zlib)
@@ -37,3 +38,33 @@ On UNIXy systems (including Mac OS X), you can build everything with:
     $ mkdir build; cd build
     $ cmake ..
     $ make
+
+Mac OS X
+========
+
+Mac OS X ships with libpng, but platform help ends there. You'll want to grab
+[SDL.framework](http://www.libsdl.org/download-1.2.php) if you don't have it
+already. It's easiest to use [Homebrew](http://mxcl.github.com/homebrew/) to
+get the rest:
+
+    $ brew install libogg libvorbis theora
+
+You might want to use Xcode for development. CMake can generate an Xcode
+project file:
+
+    $ rm -r build
+    $ mkdir build; cd build
+    $ cmake -G Xcode ..
+    $ open raceintospace.xcodeproj
+
+Easy. On my system, the Makefile-driven build can find
+`/usr/local/{include,lib}` by default, while Xcode cannot. This is solved by
+adding the appropriate header and library search paths to the generated
+project. Be careful that libpng uses either the OSX-provided library/headers
+or Homebrew-provided library/headers; mixing them produces warnings on stderr
+as well as spectacular crashes.
+
+Note that the resulting executables are dynamically linked against the
+Homebrew-compiled Ogg/Vorbis/Theora libs, adding a runtime dependency. We need
+a way to internalize these dependencies before shipping anything generated
+from this build process.
