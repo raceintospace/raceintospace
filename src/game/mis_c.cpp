@@ -81,55 +81,6 @@ void Clock(char plr, char clck, char mode, char tm);
 
 // Who and What the hell are "Shining Happy People?"
 
-#if 0
-void RLEE(char *dest, char *src, unsigned int src_size)
-{
-    asm push es;          // preserve ES
-    asm push ds;          // preserve DS
-    asm les di, dest;     // move dest into ES:DI
-    asm lds si, src;      // move src into DS:SI
-    asm mov cx, 0;        // clear CX
-    asm mov bx, src_size; // move counter into BX
-    loa:
-    asm lodsb;            // move byte into AL
-    asm dec bx;           // decrement CX
-    asm cmp al, 0;        // compare AL to 0
-    asm jl repeat;        // if al < 0 jump to repeat
-    // copy bytes
-    asm mov ah, 0;        // clear AH
-    asm inc al;           // increment AL
-    asm mov cl, al;       // put value of AL into CL
-    asm rep movsb;        // move CX bytes from DS:SI to ES:DI
-    asm sub bx, ax;       // increment BX by approp value
-    asm cmp bx, 0;        // see if finished
-    asm jg loa;           // if not then loop
-    asm jmp bot;          // else jump to bottom
-
-    repeat:
-    asm neg al;           // negate AL
-    asm inc al;           // increment AL by 1
-    asm mov cl, al;       // move counter value to CX
-    asm lodsb;            // load value to copy
-    lob:
-    asm stosb;            // copy AL into ES:DI
-    asm loop lob;         // do while CX >0
-    asm dec bx;           // decrement bx;
-
-    asm cmp bx, 100h;
-    asm jg  sk;
-    asm int   03h;
-
-    sk:
-    asm cmp bx, 0;        // see if finished
-    asm jg loa;           // if not then loop
-
-    bot:                          // bottom of routine
-    asm pop ds;           // restore ds
-    asm pop es;           // restore es
-
-    return;
-}
-#endif
 
 /** Finds the video fitting to the current mission step and plays it.
  *

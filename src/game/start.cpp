@@ -90,35 +90,6 @@ rcard:
 
 
     // EVENT.AI is nowhere to be found so this doesn't make any sense MKM 9/3/93
-#if 0
-
-    for (j = 0; j < 30; j++) {
-
-        in = sOpen("EVENT.AI", "rb", 0);
-        fseek(in, 23 * Data->Events[j] + (j & 0x01) * 23, 0);
-        fread(&chai[0], sizeof chai, 1, in);
-        fclose(in);
-
-        if (j & 0x01) { // Player 1  SOV
-            for (i = 0; i < 23; i++) {
-                if (j == 5 && chai[i] > 0) {
-                    Data->P[1].AIpath[i] = chai[i] + 2;
-                } else {
-                    Data->P[1].AIpath[i] += chai[i];
-                }
-            }
-        } else {       // Player 0  US
-            for (i = 0; i < 23; i++) {
-                if (j == 4 && chai[i] > 0) {
-                    Data->P[0].AIpath[i] = chai[i] + 2;
-                } else {
-                    Data->P[0].AIpath[i] += chai[i];
-                }
-            }
-        }
-    }
-
-#endif
 
     fout = sOpen("REPLAY.DAT", "wb", 1);
 

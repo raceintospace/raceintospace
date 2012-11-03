@@ -625,19 +625,6 @@ News(char plr)
             case 0:        //: Angle In
                 AnimIndex = 255;
                 LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
-                /* TODO this is skipped as it will be overlaid by movie frame anyway */
-#if 0
-                sprintf(cYr, "%d", 1900 + Data->Year);
-
-                if (Data->Season == 1) {
-                    DispBig(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
-                } else {
-                    DispBig(37 + (BW * 200), 40 - (plr * 4), "SPRING", 0, -1);
-                }
-
-                DispBig(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
-                VBlank();
-#endif
                 Status = 0;
                 loc++;
                 break;
@@ -701,20 +688,6 @@ News(char plr)
 
             case 4:        //: Angle Out
                 LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
-                /* TODO this is skipped as it will be overlaid by movie frame anyway */
-#if 0
-
-                sprintf(cYr, "%d", 1900 + Data->Year);
-
-                if (Data->Season == 1) {
-                    DispBig(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
-                } else {
-                    DispBig(37 + (BW * 200), 40 - (plr * 4), "SPRING", 0, -1);
-                }
-
-                DispBig(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
-
-#endif
                 Status = 0;
                 loc++;
                 break;

@@ -505,16 +505,6 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
             Mev[step].Name[2] = '*';    // Placeholder
         }
 
-#if 0
-        Mev[step].Name[2] = 'R'; // Mercury
-        Mev[step].Name[2] = 'V'; // Venus
-        Mev[step].Name[2] = 'E'; // Earth
-        Mev[step].Name[2] = 'M'; // Mars
-        Mev[step].Name[2] = 'J'; // Jupiter
-        Mev[step].Name[2] = 'S'; // Saturn
-#endif
-
-
         if (Mev[step].Class == 5) {
             if (MH[0][1] && MH[0][1]->ID[1] == 0x32) {
                 strncat(Mev[step].Name, "M2", 2);    //Kicker-C
@@ -713,17 +703,6 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-
-        // This code is to buffer any difficulties when a mission gets through
-        // all the checks to this point without having a docking module assigned
-#if 0
-
-        if ((Mis.mVab[j] & 0x10) > 0 && Data->P[plr].DMod == 0) { // DMO Patch
-            Data->P[plr].Mission[mis + j].Hard[Mission_Probe_DM] = 4;
-            DMFake = 1;
-        }
-
-#endif
 
         for (i = Mission_Capsule; i <= Mission_PhotoRecon; i++) {
             t = Data->P[plr].Mission[mis + j].Hard[i];
@@ -976,57 +955,6 @@ MisSkip(char plr, char ms)
     int i, j, diff;
 
     diff = PrestMin(plr);
-#if 0
-    nv = ms;
-
-    if (nv == 22 && Coml(plr, nv)) {
-        diff = 3;
-        nv = 20;
-    } else {
-        diff = 0;
-    }
-
-    if (nv == 20 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 19;
-    }
-
-    if (nv == 19 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 7;
-    }
-
-    if (nv == 7 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 1;
-    }
-
-    if (nv == 1 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 18;
-    }
-
-    if (nv == 18 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 27;
-    }
-
-    if (nv == 27 && Coml(plr, nv)) {
-        diff += 3;
-        nv = 0;
-    }
-
-    if (nv == 0 && Coml(plr, nv)) {
-        diff += 3;
-    }
-
-    if (diff > 3 && AI[plr]) {
-        diff -= 3;
-    } else if (diff > 3) {
-        diff -= (2 - ((plr == 0) ? Data->Def.Lev1 : Data->Def.Lev2));    // fixed addition problem
-    }
-
-#endif
 
     diff = maxx(diff, 0);
 

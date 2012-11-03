@@ -110,18 +110,6 @@ void DrawRush(char plr)
 
     FadeOut(2, pal, 10, 0, 0);
 
-#if 0
-    fin = sOpen("CONTROL.IMG", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
-
-    if (plr == 1) {
-        fread(&len[0], 4, 1, fin);
-        fseek(fin, len[0], SEEK_CUR);
-        fread(&pal[0], 768, 1, fin);
-    }
-
-    fclose(fin);
-#endif
     fin = sOpen("LPADS.BUT", "rb", 0);
     i = fread(screen, 1, MAX_X * MAX_Y, fin);
     fclose(fin);

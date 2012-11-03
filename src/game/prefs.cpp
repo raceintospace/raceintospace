@@ -481,14 +481,6 @@ void Prefs(int where)
                 HModel(Data->Def.Input, 0);
             } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
                 /* disable this option right now */
-#if 0
-                InBox(146, 70, 219, 101);
-                WaitForMouseUp();
-                Data->Def.Anim = abs(Data->Def.Anim - 1);
-                gxVirtualDisplay(&vhptr, 72 * (Data->Def.Anim), 90, 147, 71, 218, 100, 0);
-                OutBox(146, 70, 219, 101);
-                /* Anim Level */
-#endif
             } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
                 InBox(100, 30, 135, 61);
                 WaitForMouseUp();
@@ -507,24 +499,6 @@ void Prefs(int where)
                 OutBox(100, 70, 135, 101);
                 /* Sound Level */
             }
-
-#if 0
-            else if (((x >= 8 && y >= 54 && x <= 19 && y <= 75 && where == 0) || (x >= 20 && y >= 54 && x <= 81 && y <= 85 && where == 0))
-                     || (where == 0 && ksel == 0 && key == 'C')) {
-                BinT(8, 54, 1);
-                WaitForMouseUp();
-                Data->Def.Plr1++;
-
-                if (Data->Def.Plr1 > 1) {
-                    Data->Def.Plr1 = 0;
-                }
-
-                PLevels(0, Data->Def.Plr1);
-                BinT(8, 54, 0);
-                /* Player 1 Select */
-            }
-
-#endif
 
             else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && where == 0 && mousebuttons > 0) ||
                      (where == 0 && ksel == 0 && key == 'H')) {
@@ -576,22 +550,6 @@ void Prefs(int where)
                 /* P1: Astro Level */
             }
 
-#if 0
-            else if (((x >= 238 && y >= 54 && x <= 249 && y <= 75 && ((where == 3 || where == 0) && mousebuttons > 0) || (x >= 250 && y >= 54 && x <= 311 && y <= 85 && where == 0))
-            || (where == 0 && ksel == 1 && key == 'C')) {
-            BinT(238, 54, 1);
-                WaitForMouseUp();
-                Data->Def.Plr2++;
-
-                if (Data->Def.Plr2 > 1) {
-                    Data->Def.Plr2 = 0;
-                }
-
-                PLevels(1, Data->Def.Plr2);
-                BinT(238, 54, 0);
-                /* Player 2 Select */
-            }
-#endif
             else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) ||
             (where == 0 && ksel == 1 && key == 'H')) {
             InBox(238, 77, 248, 85);

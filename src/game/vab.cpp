@@ -1285,18 +1285,6 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
             VAS[i][j].dex = VAS[i][j].img = -1;
         };
 
-#if 0
-    if (Mis.EVA == 1) {
-        for (i = 1; i < 7; i++) {
-            VAS[i][4].qty = 1; // Set Flag to signal EVA on Mission
-            VAS[i][4].dex = Data->P[plr].Misc[3].Num; // Copy qty if have stuff
-            VAS[i][4].sf = Data->P[plr].Misc[3].Safety; // EVA safety factor
-            VAS[i][4].dmg = Data->P[plr].Misc[3].Damage != 0 ? 1 : 0;
-        }
-    }
-
-#endif
-
     VASqty = 0;
 
     if (VX & 0x80) { // Capsule

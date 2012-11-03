@@ -1150,50 +1150,6 @@ int MapKey(char plr, int key, int old)
         mousebuttons = 1;
         break;
 
-#if 0
-
-        // Possibly hotkeys for astronaut training buildings
-    case '1':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
-        }
-
-        mousebuttons = 1;
-        break;
-
-    case '2':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
-        }
-
-        mousebuttons = 1;
-        break;
-
-    case '3':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
-        }
-
-        mousebuttons = 1;
-        break;
-
-    case '4':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
-        }
-
-        mousebuttons = 1;
-        break;
-
-    case 'S':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
-        }
-
-        mousebuttons = 1;
-        break;
-#endif
-
     case UP_ARROW:
         if (old == high) {
             old = 0;
@@ -1285,30 +1241,6 @@ void Port(char plr)
 
     while (1) {
         av_block();
-#if 0
-
-        if (get_time() - last_secs > 25) {
-            SpotCrap(0, SPOT_KILL);
-            gork = random(100);
-
-            if (gork < 50) {
-                if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-                    SpotCrap(18, SPOT_LOAD);
-                } else {
-                    SpotCrap(1 + (5 * plr), SPOT_LOAD);
-                }
-            } else if (plr == 1 && gork < 90) {
-                SpotCrap(10, SPOT_LOAD);
-            } else if (plr == 0 && gork < 90) {
-                SpotCrap(2 + (5 * plr), SPOT_LOAD);
-            } else {
-                SpotCrap(1 + (5 * plr), SPOT_LOAD);    //Specs: Default
-            }
-
-            last_secs = get_time();
-        }
-
-#endif
 
         if (kMode == 0) {
             i = 0;
