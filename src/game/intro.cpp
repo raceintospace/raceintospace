@@ -118,22 +118,15 @@ int nCREDIT = sizeof CREDIT / sizeof CREDIT[0];
 void Credits(void)
 {
     int k, i;
-    int32_t len;
     strcpy(keyhelpIndex, "i999\0");
-    FILE *fin;
 
-    fin = sOpen("FIRST.IMG", "rb", 0);
     FadeOut(2, pal, 30, 0, 0);
 
-    fread(pal, 768, 1, fin);
-    fread(&len, 4, 1, fin);
-    Swap32bit(len);
-    fseek(fin, len, SEEK_CUR);
-    fread(pal, 768, 1, fin);
-    fread(&len, 4, 1, fin);
-    Swap32bit(len);
-    fread(vhptr.vptr, len, 1, fin);
-    fclose(fin);
+    FILE * fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
+    display::PNGImage image(fp);
+    fclose(fp);
+
+    image.export_to_legacy_palette();
 
     for (k = 0; k < 2; k++) {
 
@@ -141,9 +134,8 @@ void Credits(void)
             FadeOut(2, pal, 30, 0, 0);    // Screen #2
         }
 
-        PCX_D((char *)vhptr.vptr, screen, len);
-        memset(&pal[431], 0x00, 96);
-        screen[63999] = 0;
+        image.export_to_legacy_palette();
+        image.draw();
 
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
@@ -166,7 +158,6 @@ void Credits(void)
 
         while (mousebuttons == 0 && key == 0) {
             GetMouse();
-            //UpdateMusic();
         }
 
         key = 0;
@@ -175,7 +166,6 @@ void Credits(void)
     FadeOut(2, pal, 30, 0, 0);
     memset(screen, 0x00, 64000);
     strcpy(keyhelpIndex, "k000\0");
-    return;
 }
 
 
