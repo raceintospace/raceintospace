@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <unistd.h>
 
 /** path separator setup */
 #ifndef PATHSEP

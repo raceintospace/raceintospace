@@ -97,7 +97,7 @@
 #define ASTRONAUT_MOOD_THRESHOLD    40
 /*@}*/
 
-#pragma pack (1)
+#pragma pack(1)
 
 struct Prest_Upd {
     char Poss[10];

@@ -16,7 +16,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "display/png_image.h"
+#include <png_image.h>
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -24,7 +24,8 @@
 #include "av.h"
 #include "utils.h"
 
-extern char helptextIndex[5], keyhelpIndex[5], AL_CALL, AI[2];
+extern char helptextIndex[5], keyhelpIndex[5], AI[2];
+extern unsigned char AL_CALL;
 extern struct mStr Mis;
 extern char Option, MAIL;
 

@@ -45,7 +45,7 @@ extern struct mStr Mis;
 
 extern uint16_t MisStat;
 extern char pCnt, tMen, BIG;          // Counter for pAry
-extern int16_t pAry[15];         /**< Array for Presige Firsts compelted */
+extern int pAry[15];         /**< Array for Presige Firsts compelted */
 extern REPLAY Rep;
 
 void Tick(char);

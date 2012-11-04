@@ -39,7 +39,7 @@ extern char AI[2];
 struct VInfo VAS[7][4];
 int VASqty;
 extern struct mStr Mis;
-extern char Vab_Spot;
+extern int16_t Vab_Spot;
 int TotalCost;
 char hasDelay;//Used  to display the cost of autopurchase
 
@@ -1279,7 +1279,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
     VX = Mis.mVab[part];
 
     for (i = 0; i < 7; i++)
-        for (j = 0; j < 5; j++) {
+        for (j = 0; j < 4; j++) {
             strcpy(&VAS[i][j].name[0], "NONE");
             VAS[i][j].qty = VAS[i][j].sf = VAS[i][j].wt = VAS[i][j].dmg = 0;
             VAS[i][j].dex = VAS[i][j].img = -1;

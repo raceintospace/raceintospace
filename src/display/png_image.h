@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "display/palette.h"
+#include <palette.h>
 
 namespace display {
 

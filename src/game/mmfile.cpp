@@ -28,6 +28,8 @@
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <theora/theora.h>
+#include <unistd.h>
+#include <stdint.h>
 #include <SDL.h>
 
 LOG_DEFAULT_CATEGORY(multimedia)

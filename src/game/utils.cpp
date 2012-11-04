@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <raceintospace_config.h>
 
 /* taken from ffmpeg project */
 #ifdef CONFIG_WIN32

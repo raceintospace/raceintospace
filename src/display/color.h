@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 // Represents an 8-bit RGBA color
+#pragma pack(push, 1)
 struct Color {
     Color()
         : r(0), g(0), b(0), a(255) {};
@@ -28,6 +29,7 @@ struct Color {
     
     // is this color totally opaque?
     inline bool opaque() const { return a == 255; };
-} __attribute__((packed));
+};// __attribute__((packed));
+#pragma pack(pop)
 
 #endif // DISPLAY__COLOR_H

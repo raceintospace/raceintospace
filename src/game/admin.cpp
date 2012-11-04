@@ -1714,7 +1714,7 @@ void EndOfTurnSave(char *inData, int dataLen)
 {
     FILE *fout = NULL;
     int compressedLen = 0;
-    char buffer[dataLen * 2];
+	char * buffer = (char *)xmalloc( dataLen * 2);
 
     // Remove old save data
     remove_savedat("ENDTURN.TMP");
@@ -1739,6 +1739,7 @@ void EndOfTurnSave(char *inData, int dataLen)
 
     fwrite(buffer, compressedLen, 1, fout);
     fclose(fout);
+	free( buffer );
 }
 
 // EOF

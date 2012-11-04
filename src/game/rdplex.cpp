@@ -31,7 +31,7 @@
 
 int call, wh;
 GXHEADER but, mans;
-extern char HARD1, UNIT1, BUTLOAD;
+extern unsigned char HARD1, UNIT1, BUTLOAD;
 
 /* We need to mask number of rolls into R&D history for current turn
  * Max number rolled on 5 dice with mods is 5*7 = 35

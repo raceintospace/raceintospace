@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-#include "display/png_image.h"
+#include <png_image.h>
 
 #include "Buzz_inc.h"
 #include "externs.h"

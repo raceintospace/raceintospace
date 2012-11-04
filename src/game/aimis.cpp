@@ -33,7 +33,7 @@ struct cStr {
 int whe[2], rck[2];
 char pc[2], bc[2], Alt_A[2] = {0, 0}, Alt_B[2] = {0, 0}, Alt_C[2] = {0, 0};
 extern struct VInfo VAS[7][4];
-extern char VASqty;
+extern int VASqty;
 extern struct mStr Mis;
 extern enum Opponent_Status Cur_Status;
 void Strategy_One(char plr, int *m_1, int *m_2, int *m_3);

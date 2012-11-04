@@ -81,9 +81,11 @@ typedef struct {
 int getdisk(void);
 void getcurdir(int drive, char *buf);
 
+#ifndef CONFIG_WIN32
 struct diskfree_t {
     int dummy;
 };
+#endif
 
 //#define RED 2
 //#define WHITE 3
@@ -119,6 +121,10 @@ void play_audio(int sidx, int mode);
 void bzdelay(int ticks);
 void GetMouse_fast(void);
 
+#ifdef CONFIG_WIN32
+void dbg(char const *fmt, ...);
+#else
 void dbg(char const *fmt, ...) __attribute__((format(printf, 1, 2)));
+#endif
 
 #endif /* __PACE_H__ */

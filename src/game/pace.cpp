@@ -295,7 +295,7 @@ frm_read_tbl(char *keyname, struct tblinfo *tbl)
     int lo, hi;
     int idx;
     char *p;
-    size_t max_name_len = 8;
+    const size_t max_name_len = 8;
     char name[max_name_len + 1];
 
     if ((fin = sOpen(keyname, "rb", 0)) == NULL) {
