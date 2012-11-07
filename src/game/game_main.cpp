@@ -654,18 +654,17 @@ void DestroyPad(char plr, char pad, int cost, char mode)
     Data->P[plr].LaunchFacility[pad] = cost; // Destroys pad
 
     AMis = (mode == 0) ? &Data->P[plr].Future[pad] : &Data->P[plr].Mission[pad];
-
-    if (AMis->Joint == 1) {
-        if (AMis->part == 0) {
-            BMis = &AMis[1];
-        }
-
-        if (AMis->part == 1) {
-            BMis = &AMis[-1];
-        }
-    }
-
     if (AMis != NULL) {
+        if (AMis->Joint == 1) {
+				    if (AMis->part == 0) {
+                BMis = &AMis[1];
+            }
+
+            if (AMis->part == 1) {
+                BMis = &AMis[-1];
+            }
+        }
+
         if (AMis->Men != 0) {
             FreePadMen(plr, AMis);
         }
