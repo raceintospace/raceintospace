@@ -1046,13 +1046,11 @@ void GradRect(int x1, int y1, int x2, int y2, char plr)
 
 void FlagSm(char plr, int xm, int ym)
 {
-    int i;
-
     if (plr == 0) {
         RectFill(xm, ym, xm + 25, ym + 14, 1);
         grSetColor(8);
 
-        for (i = 0; i < 15; i++) {
+        for (int i = 0; i < 15; i++) {
             grMoveTo(xm, ym + i);
             grLineTo(xm + 25, ym + i);
             i++;
@@ -1062,14 +1060,14 @@ void FlagSm(char plr, int xm, int ym)
 
         xm++;
 
-        for (i = 0; i < 11; i++) {
+        for (int i = 0; i < 11; i++) {
             grPutPixel(xm + i, ym + 1, 2);
             grPutPixel(xm + i, ym + 3, 2);
             grPutPixel(xm + i, ym + 5, 2);
             i++;
         };
 
-        for (i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++) {
             grPutPixel(xm + i, ym + 2, 2);
             grPutPixel(xm + i, ym + 4, 2);
             grPutPixel(xm + i, ym + 6, 2);
@@ -1094,9 +1092,8 @@ void FlagSm(char plr, int xm, int ym)
 
 void Flag(int x, int y, char plr)
 {
-    int i, j;
-
     if (plr == 0) {
+			int i, j;
         for (i = 0; i < 7; i++) {
             RectFill(x, y + i * 6, x + 69, y + 2 + i * 6, 8);
         }

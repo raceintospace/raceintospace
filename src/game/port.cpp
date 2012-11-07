@@ -167,8 +167,6 @@ char PName[20];
 void SpotCrap(char loc, char mode)
 {
     GXHEADER SP1, SP2, SP3;
-    int w, h, i;
-    int xx;
     static char turnoff = 0;
 
     if (SUSPEND == 1) {
@@ -200,6 +198,7 @@ void SpotCrap(char loc, char mode)
         SpotCrap(0, SPOT_STEP);
         // All opened up
     } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount > 0) { // Play Next Seq
+        int xx = 0;
         fseek(sFin, pLoc, SEEK_SET);     // position at next path
         fread(&sPath, sizeof(sPath), 1, sFin); // get the next sPath struct
 
@@ -229,10 +228,8 @@ void SpotCrap(char loc, char mode)
 
 
         if (sPath.Scale != 1.0) {
-            w = (int)((float) sImg.w * sPath.Scale);
-            h = (int)((float) sImg.h * sPath.Scale);
-            sImg.w = w;
-            sImg.h = h;
+            sImg.w = (int)((float) sImg.w * sPath.Scale);
+            sImg.h = (int)((float) sImg.h * sPath.Scale);
             gxVirtualScale(&SP1, &SP2);
         }
 
@@ -248,7 +245,7 @@ void SpotCrap(char loc, char mode)
         if (sPath.Scale != 1.0) {
             xx = hSPOT.size;
 
-            for (i = 0; i < xx; i++) {
+            for (int i = 0; i < xx; i++) {
                 if (SP2.vptr[i] == 0) {
                     SP2.vptr[i] = SP3.vptr[i];
                 }
@@ -262,7 +259,7 @@ void SpotCrap(char loc, char mode)
         } else {
             xx = hSPOT.size;
 
-            for (i = 0; i < xx; i++) {
+            for (int i = 0; i < xx; i++) {
                 if (SP1.vptr[i] == 0) {
                     SP1.vptr[i] = SP3.vptr[i];
                 }
@@ -437,6 +434,7 @@ int32_t fix_width[] = {
     0
 };
 
+/* This function is no longer used, commented out below
 int
 need_to_fix_width(int32_t table)
 {
@@ -450,6 +448,7 @@ need_to_fix_width(int32_t table)
 
     return (0);
 }
+*/
 
 void PortPlace(FILE *fin, int32_t table)
 {
@@ -846,7 +845,6 @@ void Master(char plr)
 
 void GetMse(char plr, char fon)
 {
-    int i;
     GXHEADER local, local2;
     static double last_wave_step;
     double now;
@@ -883,7 +881,7 @@ void GetMse(char plr, char fon)
             gxVirtualVirtual(&flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, &local2, 0, 0, gxSET);
         }
 
-        for (i = 0; i < (22 * 22); i++)
+        for (int i = 0; i < (22 * 22); i++)
             if (local2.vptr[i] == 0) {
                 local2.vptr[i] = local.vptr[i];
             }
@@ -1461,7 +1459,6 @@ void Port(char plr)
 
                             case pQUIT:
                                 FadeOut(2, pal, 10, 0, 0);
-                                fclose(fin);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {
