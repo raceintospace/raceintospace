@@ -33,6 +33,9 @@ if (APPLE)
   set(DEFAULT_SAVEDIR ".")
   set(PLATFORM_MUSIC true)
   #set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
+
+  include_directories(SYSTEM /usr/X11/include)
+  link_directories(/usr/X11/lib)
   
   # this is so we can find Homebrew components
   include_directories(SYSTEM /usr/local/include)
