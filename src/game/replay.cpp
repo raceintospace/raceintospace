@@ -136,7 +136,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
 
     fseqf = sOpen("FSEQ.DAT", "rb", 0);
 		if (!fseqf) {
-			fclose(fseqf);
+			fclose(seqf);
 			return;
 		}
 
