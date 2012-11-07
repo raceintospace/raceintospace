@@ -28,6 +28,7 @@ add_library(
   futbub.cpp
   future.cpp
   gamedata.cpp
+  game_main.cpp
   gr.cpp
   gx.cpp
   hardef.cpp
@@ -36,7 +37,6 @@ add_library(
   log4c.cpp
   log_default.cpp
   logging.cpp
-  main.cpp
   mc.cpp
   mc2.cpp
   mis_c.cpp
