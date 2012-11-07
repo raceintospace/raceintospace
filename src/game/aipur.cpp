@@ -880,10 +880,14 @@ void AIPur(char plr)
     }
 
     if (Data->P[plr].Probe[0].Num <= Data->P[plr].Rocket[0].Num) {
+        GenPur(plr, 0, 0);
         RDafford(plr, 0, 0);
+        GenPur(plr, 1, 0);
         RDafford(plr, 1, 0);
     } else {
+        GenPur(plr, 1, 0);
         RDafford(plr, 1, 0);
+        GenPur(plr, 0, 0);
         RDafford(plr, 0, 0);
     }
 
