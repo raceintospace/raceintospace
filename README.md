@@ -26,6 +26,7 @@ You need:
 * CMake
 * git
 * SDL
+* Boost
 * libpng (and zlib)
 * libogg
 * libvorbis
@@ -47,7 +48,7 @@ Mac OS X ships with libpng, but platform help ends there. You'll want to grab
 already. It's easiest to use [Homebrew](http://mxcl.github.com/homebrew/) to
 get the rest:
 
-    $ brew install libogg libvorbis theora
+    $ brew install libogg libvorbis theora boost
 
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:

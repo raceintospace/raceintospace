@@ -1,4 +1,6 @@
 # Find our dependencies
+find_package(Boost)
+
 include(${CMAKE_ROOT}/Modules/FindSDL.cmake)
 
 find_library(Vorbis_LIBRARY NAMES vorbis)
