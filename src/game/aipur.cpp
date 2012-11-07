@@ -747,8 +747,6 @@ void TransAstro(char plr, int inx)
                                 w = Skill(plr, 4);
                             } else if (j == 2) {
                                 w = Skill(plr, 4);
-                            } else if (j == 3) {
-                                w = Skill(plr, 5);
                             } else {
                                 w = Skill(plr, 5);
                             }
@@ -882,29 +880,11 @@ void AIPur(char plr)
     }
 
     if (Data->P[plr].Probe[0].Num <= Data->P[plr].Rocket[0].Num) {
-        if (GenPur(plr, 0, 0)) {
-            RDafford(plr, 0, 0);
-        } else {
-            RDafford(plr, 0, 0);
-        }
-
-        if (GenPur(plr, 1, 0)) {
-            RDafford(plr, 1, 0);
-        } else {
-            RDafford(plr, 1, 0);
-        }
+        RDafford(plr, 0, 0);
+        RDafford(plr, 1, 0);
     } else {
-        if (GenPur(plr, 1, 0)) {
-            RDafford(plr, 1, 0);
-        } else {
-            RDafford(plr, 1, 0);
-        }
-
-        if (GenPur(plr, 0, 0)) {
-            RDafford(plr, 0, 0);
-        } else {
-            RDafford(plr, 0, 0);
-        }
+        RDafford(plr, 1, 0);
+        RDafford(plr, 0, 0);
     }
 
     return;
