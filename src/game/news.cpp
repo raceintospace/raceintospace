@@ -24,6 +24,7 @@
 //
 // NewsCaster Main Files
 
+#include "news.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
@@ -31,6 +32,10 @@
 #include "av.h"
 #include "mmfile.h"
 #include "logging.h"
+#include "game_main.h"
+#include "news_suq.h"
+#include "sdlhelper.h"
+#include "pace.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
@@ -72,6 +77,19 @@ struct rNews {
     int16_t offset;
     char chrs;
 };
+
+
+void GoNews(char plr);
+void OpenNews(char plr, char *buf, int bud);
+void DispNews(char plr, char *src, char *dest);
+FILE *PreLoadAnim(char plr, char mode);
+void CloseNewsAnim(void);
+void DrawNText(char plr, char got);
+void DeAlloc(BYTE Page);
+char ResolveEvent(char plr);
+int PlayNewsAnim(mm_file *);
+mm_file *LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp);
+void ShowEvt(char plr, char crd);
 
 
 void

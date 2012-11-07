@@ -18,16 +18,27 @@
 
 #include "display/png_image.h"
 
+#include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "av.h"
 #include "utils.h"
+#include "game_main.h"
+#include "museum.h"
+#include "port.h"
+#include "replay.h"
 
 extern char helptextIndex[5], keyhelpIndex[5], AI[2];
 extern unsigned char AL_CALL;
 extern struct mStr Mis;
 extern char Option, MAIL;
+
+
+void BCDraw(int y);
+void DispHelp(char top, char bot, char *txt);
+void writePrestigeFirst(char index);
+
 
 void BCDraw(int y)
 {

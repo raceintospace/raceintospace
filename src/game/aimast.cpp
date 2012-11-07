@@ -25,8 +25,12 @@
 /** \file aimast.c AI Master Routines
  */
 
+#include "aimast.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "aimis.h"
+#include "aipur.h"
+#include "vab.h"
 
 extern char Month[12][11];
 extern char AI[2];
@@ -43,6 +47,20 @@ enum Opponent_Status Cur_Status;
 // AILunar  - way to the moon
 // AIPrim   - primary program
 // AISec    - secondary program
+
+
+char NoFail(char plr);
+void RDPrograms(char plr);
+void CheckVoting(char plr);
+void KeepRD(char plr, int m);
+void PickModule(char plr);
+void MoonVoting(char plr);
+int CheckSafety(char plr, char m);
+void MoonProgram(char plr, char m);
+void ProgramVoting(char plr);
+
+
+
 
 void AIMaster(char plr)
 {

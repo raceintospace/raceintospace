@@ -15,12 +15,20 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include "news_suq.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
+#include "news_sup.h"
+#include "place.h"
+#include "radar.h"
 
 //extern char BudgetMods[3][6][10];
 extern char AI[2];
 extern struct mStr Mis;
+
+void Replace_Snaut(char plr);
+
 
 /**
  *

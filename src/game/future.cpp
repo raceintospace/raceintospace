@@ -18,10 +18,18 @@
 /** \file future.c This is responsible for Future Mission planning screen.
  *
  */
+#include "future.h"
 #include <assert.h>
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "logging.h"
+#include "admin.h"
+#include "crew.h"
+#include "futbub.h"
+#include "game_main.h"
+#include "mc2.h"
+#include "prest.h"
+#include "records.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;
@@ -63,6 +71,24 @@ extern int Bub_Count;
 extern struct mStr Mis;
 extern struct MisEval Mev[60];
 extern int SEG;
+
+
+void Load_FUT_BUT(void);
+void DrawFuture(char plr, int mis, char pad);
+void ClearDisplay(void);
+int GetMinus(char plr);
+void SetParameters(void);
+void DrawLocks(void);
+void Toggle(int wh, int i);
+void TogBox(int x, int y, int st);
+void PianoKey(int X);
+void draw_Pie(int s);
+void PlaceRX(int s);
+void ClearRX(int s);
+int UpSearchRout(int num, char plr);
+int DownSearchRout(int num, char plr);
+void DurPri(int x) ;
+
 
 void Load_FUT_BUT(void)
 {

@@ -27,11 +27,31 @@
 //****************************************************************
 
 #include "Buzz_inc.h"
+#include "game_main.h"
 #include "options.h"
 #include "utils.h"
 #include "logging.h"
 #include "externs.h"
 #include <ctype.h>
+#include "admin.h"
+#include "aimast.h"
+#include "ast4.h"
+#include "endgame.h"
+#include "intel.h"
+#include "intro.h"
+#include "mc.h"
+#include "mis_c.h"
+#include "museum.h"
+#include "newmis.h"
+#include "news.h"
+#include "place.h"
+#include "port.h"
+#include "prefs.h"
+#include "prest.h"
+#include "radar.h"
+#include "records.h"
+#include "review.h"
+#include "start.h"
 
 #include "display/png_image.h"
 
@@ -111,6 +131,23 @@ extern struct ManPool *Men;
 char AI[2] = {0, 0};
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
+
+
+void Rout_Debug(int line, char *file);
+void RestoreDir(void);
+int CheckIfMissionGo(char plr, char launchIdx);
+void oclose(int fil);
+void InitData(void);
+void MMainLoop(void);
+void Progress(char mode);
+void MainLoop(void);
+void DockingKludge(void);
+void OpenEmUp(void);
+void CloseEmUp(unsigned char error, unsigned int value);
+void FreePadMen(char plr, struct MissionType *XMis);
+void VerifyCrews(char plr);
+
+
 
 int game_main_impl(int argc, char *argv[])
 {

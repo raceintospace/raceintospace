@@ -15,11 +15,27 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#include "crew.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
+#include "game_main.h"
+#include "place.h"
 
 extern struct mStr Mis;
+
+
+int AsnCrew(char plr, char pad, char part);
+void FutFltsTxt(char nw, char col);
+void FutSt(char plr, int pr, int p, int b);
+void FutSt2(int num, int type);
+void FutAstList(char plr, char men, int M1, int M2, int M3, int M4);
+void DrawHard(char mode, char pad, char mis, char plr);
+int HardRequest(char plr, char mode, char mis, char pad);
+int SecondHard(char plr, char mode, char mis, char pad);
+
+
 
 int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 {

@@ -1,3 +1,6 @@
+#ifndef RECORDS_H
+#define RECORDS_H
+
 /*
     Copyright (C) 2005 Michael K. McCarty & Fritz Bronner
 
@@ -16,22 +19,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-
-
-void Drec(char *, char *, char);
-void Records(char);
-void Move2rec(char *, char *, char);
-void Back1rec(char *, char *);
-void For1rec(char *, char *);
-void ClearRecord(char *);
-void WriteRecord(int, int, int, int);
-void UpdateRecords(char);
-char CheckSucess(int, int);
+void Records(char plr);
+void UpdateRecords(char Ty);
+void SafetyRecords(char plr, int temp);
 void MakeRecords(void);
-void SwapRec(int, int, int);
-void SafetyRecords(char, int);
 
 typedef struct pEtype {
     char country;
@@ -45,7 +36,7 @@ typedef struct pEtype {
     char astro[14];
 }  Record_Entry;
 
-Record_Entry rec[56][3];
+extern Record_Entry rec[56][3];
 
 /* The beauty of awk */
 
@@ -109,77 +100,11 @@ Record_Entry rec[56][3];
 #define  DIRECT_ASCENT   54
 #define  HISTORICAL      55
 
+extern int Pict[56];
 
-int Pict[56] = {
-    411, 2, 1, 177, 272, 275, 409, 501, 504, 507, 414,
-    497, 476, 571, 162, 210, 574, 185, 506, 180, 181,
-    496, 530, 521, 286, 325, 495, 172, 537, 441, 404,
-    326, 572, 324, 301, 3, 17, 4, 18, 22, 19,
-    295, 296, 262, 78, 282, 400, 309, 322, 308, 285,
-    317, 247, 239, 322, 291
-};
+extern char * Record_Names[56];
 
-char *Record_Names[56] = {
-    "ORBITAL SATELLITE",
-    "MAN IN SPACE",
-    "WOMAN IN SPACE",
-    "PERSON IN ORBIT",
-    "SPACEWALK (MALE)",
-    "SPACEWALK (FEMALE)",
-    "LUNAR FLYBY",
-    "MERCURY FLYBY",
-    "VENUS FLYBY",
-    "MARS FLYBY",
-    "JUPITER FLYBY",
-    "SATURN FLYBY",
-    "LUNAR PROBE LANDING",
-    "ONE-PERSON CRAFT",
-    "TWO-PERSON CRAFT",
-    "THREE-PERSON CRAFT",
-    "MINISHUTTLE",
-    "FOUR-PERSON CRAFT",
-    "SPACECRAFT PRESTIGE POINTS",
-    "MANNED LUNAR PASS",
-    "MANNED LUNAR ORBIT",
-    "MANNED LUNAR LANDING",
-    "FEWEST CASUALTIES IN A GAME",
-    "MOST CASUALTIES IN A GAME",
-    "HIGHEST SAFETY AVG LUNAR LANDING",
-    "LOWEST SAFETY AVG LUNAR LANDING",
-    "FIRST DOCKING",
-    "FIRST MANNED DOCKING",
-    "FIRST ORBITAL LABORATORY",
-    "LONGEST MISSION DURATION",
-    "MISSION W/ MOST PRESTIGE POINTS",
-    "FEWEST MISSIONS IN GAME",
-    "MOST MISSIONS IN GAME",
-    "MOST MANNED MISSIONS ATTEMPTED",
-    "MOST SUCCESSFUL MANNED MISSIONS",
-    "MOST SPACE MISSIONS (MALE)",
-    "MOST SPACE MISSIONS (FEMALE)",
-    "HIGHEST PRESTIGE POINTS (MALE)",
-    "HIGHEST PRESTIGE POINTS (FEMALE)",
-    "MOST DAYS IN SPACE (MALE)",
-    "MOST DAYS IN SPACE (FEMALE)",
-    "LONGEST TERM OF DUTY",
-    "HIGHEST DIRECTOR RATING ",
-    "HIGHEST AVERAGE BUDGET",
-    "LOWEST AVERAGE BUDGET",
-    "GREATEST PRESTIGE TOTAL",
-    "EARLIEST LOR LANDING",
-    "EARLIEST EOR LANDING",
-    "EARLIEST DIRECT ASCENT LANDING",
-    "EARLIEST HISTORICAL LANDING",
-    "UNITED STATES VICTORIES",
-    "SOVIET UNION VICTORIES",
-    "LOR VICTORIES",
-    "EOR VICTORIES",
-    "DIRECT ASCENT VICTORIES",
-    "HISTORICAL VICTORIES"
-};
+extern char * Months[12];
 
 
-char *Months[12] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-                     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-                   };
-
+#endif // RECORDS_H

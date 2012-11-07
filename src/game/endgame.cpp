@@ -18,8 +18,14 @@
 /** \file endgame.c End Game Routines
  */
 
+#include "endgame.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "aipur.h"
+#include "future.h"
+#include "game_main.h"
+#include "place.h"
+#include "replay.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -48,6 +54,20 @@ char PF[29][40] = {
     "MANNED RESCUE ATTEMPT", "MANNED LUNAR LANDING", "ORBITING LAB",
     "MANNED DOCKING", "WOMAN IN SPACE", "SPACE WALK", "MANNED SPACE MISSION"
 };
+
+
+char Burst(char win);
+void EndGame(char win, char pad);
+void Load_LenFlag(char win);
+void Draw_NewEnd(char win);
+void FakeHistory(char plr, char Fyear);
+void HistFile(char *buf, unsigned char bud);
+void PrintHist(char *buf);
+void PrintOne(char *buf, char tken);
+void AltHistory(char plr);
+void EndPict(int x, int y, char poff, unsigned char coff);
+void LoserPict(char poff, unsigned char coff);
+
 
 
 char

@@ -23,11 +23,17 @@
  * It also draws the splines.
  */
 
+#include "futbub.h"
 #include  "Buzz_inc.h"
 #include "externs.h"
+#include "future.h"
 
 extern int SEG;
 int Bub_Num, Bub_Count;
+
+
+void drawBspline(int segments, char color, ...);
+
 
 void drawBspline(int segments, char color, ...)
 {

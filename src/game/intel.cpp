@@ -27,6 +27,12 @@
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "future.h"
+#include "intel.h"
+#include "game_main.h"
+#include "place.h"
+#include "port.h"
+#include "rdplex.h"
 
 extern struct mStr Mis;
 
@@ -233,6 +239,23 @@ const char * code_names[] = {
     "",
     ""
 };
+
+
+void MisIntel(char plr, char acc);
+void XSpec(char plr, char mis, char year);
+void Special(char p, int ind);
+void BackIntel(char p, char year);
+void HarIntel(char p, char acc);
+void TopSecret(char plr, char poff);
+void SaveIntel(char p, char prg, char ind);
+void ImpHard(char plr, char hd, char dx);
+void UpDateTable(char plr);
+void DrawBre(char plr);
+void Bre(char plr);
+void DrawIStat(char plr);
+void IStat(char plr);
+void IInfo(char plr, char loc, char w);
+
 
 
 void Intel(char plr)

@@ -23,9 +23,11 @@
 // Programmed by Michael K McCarty
 //
 
+#include "start.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "options.h"
+#include "prest.h"
 
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern char MAIL;
@@ -37,6 +39,13 @@ char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
                    };
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
+
+void AstroTurn(void);
+void UpdAll(char side);
+void TestFMis(int j, int i);
+void UpdateHardTurn(char plr);
+
+
 
 void SetEvents(void)
 {

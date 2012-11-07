@@ -25,12 +25,22 @@
 /** \file ast1.c Astronaut Recruitment
  */
 
+#include "ast1.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
+#include "game_main.h"
+#include "place.h"
 
 extern char MCol[110], sel[30], MaxSel;
 extern struct ManPool *Men;
+
+
+void DispEight(char now, char loc);
+void DispEight2(int nw, int lc, int cnt);
+void DrawAstCheck(char plr);
+void DrawAstSel(char plr);
+
 
 /** display list of 'naut names
  *

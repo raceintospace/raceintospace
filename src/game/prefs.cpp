@@ -23,11 +23,14 @@
 // Programmed by Michael K McCarty
 //
 
+#include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include <assert.h>
 #include "options.h"
+#include "game_main.h"
+#include "randomize.h"
 
 extern struct ManPool *Men;
 struct ManPool *Sov;

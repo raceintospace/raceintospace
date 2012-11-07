@@ -20,6 +20,11 @@
 #include "records.h"
 #include "externs.h"
 #include "logging.h"
+#include "hardef.h"
+#include "game_main.h"
+#include "place.h"
+#include "port.h"
+#include "replay.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -31,6 +36,89 @@ int ISDOCK(int a);
 extern struct mStr Mis;
 extern char AI[2];
 char NREC[56][3];
+Record_Entry rec[56][3];
+
+void Move2rec(char *pos, char *pos2, char val);
+void ClearRecord(char *pos2);
+void Back1rec(char *pos, char *pos2);
+void For1rec(char *pos, char *pos2);
+void Drec(char *pos, char *pos2, char mde);
+void WriteRecord(int i, int j, int k, int temp);
+void SwapRec(int Rc, int pl1, int pl2);
+char CheckSucess(int i, int j);
+
+int Pict[56] = {
+    411, 2, 1, 177, 272, 275, 409, 501, 504, 507, 414,
+    497, 476, 571, 162, 210, 574, 185, 506, 180, 181,
+    496, 530, 521, 286, 325, 495, 172, 537, 441, 404,
+    326, 572, 324, 301, 3, 17, 4, 18, 22, 19,
+    295, 296, 262, 78, 282, 400, 309, 322, 308, 285,
+    317, 247, 239, 322, 291
+};
+
+char *Record_Names[56] = {
+    "ORBITAL SATELLITE",
+    "MAN IN SPACE",
+    "WOMAN IN SPACE",
+    "PERSON IN ORBIT",
+    "SPACEWALK (MALE)",
+    "SPACEWALK (FEMALE)",
+    "LUNAR FLYBY",
+    "MERCURY FLYBY",
+    "VENUS FLYBY",
+    "MARS FLYBY",
+    "JUPITER FLYBY",
+    "SATURN FLYBY",
+    "LUNAR PROBE LANDING",
+    "ONE-PERSON CRAFT",
+    "TWO-PERSON CRAFT",
+    "THREE-PERSON CRAFT",
+    "MINISHUTTLE",
+    "FOUR-PERSON CRAFT",
+    "SPACECRAFT PRESTIGE POINTS",
+    "MANNED LUNAR PASS",
+    "MANNED LUNAR ORBIT",
+    "MANNED LUNAR LANDING",
+    "FEWEST CASUALTIES IN A GAME",
+    "MOST CASUALTIES IN A GAME",
+    "HIGHEST SAFETY AVG LUNAR LANDING",
+    "LOWEST SAFETY AVG LUNAR LANDING",
+    "FIRST DOCKING",
+    "FIRST MANNED DOCKING",
+    "FIRST ORBITAL LABORATORY",
+    "LONGEST MISSION DURATION",
+    "MISSION W/ MOST PRESTIGE POINTS",
+    "FEWEST MISSIONS IN GAME",
+    "MOST MISSIONS IN GAME",
+    "MOST MANNED MISSIONS ATTEMPTED",
+    "MOST SUCCESSFUL MANNED MISSIONS",
+    "MOST SPACE MISSIONS (MALE)",
+    "MOST SPACE MISSIONS (FEMALE)",
+    "HIGHEST PRESTIGE POINTS (MALE)",
+    "HIGHEST PRESTIGE POINTS (FEMALE)",
+    "MOST DAYS IN SPACE (MALE)",
+    "MOST DAYS IN SPACE (FEMALE)",
+    "LONGEST TERM OF DUTY",
+    "HIGHEST DIRECTOR RATING ",
+    "HIGHEST AVERAGE BUDGET",
+    "LOWEST AVERAGE BUDGET",
+    "GREATEST PRESTIGE TOTAL",
+    "EARLIEST LOR LANDING",
+    "EARLIEST EOR LANDING",
+    "EARLIEST DIRECT ASCENT LANDING",
+    "EARLIEST HISTORICAL LANDING",
+    "UNITED STATES VICTORIES",
+    "SOVIET UNION VICTORIES",
+    "LOR VICTORIES",
+    "EOR VICTORIES",
+    "DIRECT ASCENT VICTORIES",
+    "HISTORICAL VICTORIES"
+};
+
+
+char *Months[12] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+                     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+                   };
 
 int ISDOCK(int a)
 {

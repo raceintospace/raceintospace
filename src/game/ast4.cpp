@@ -24,6 +24,10 @@
 //
 
 #include "Buzz_inc.h"
+#include "ast0.h"
+#include "ast4.h"
+#include "game_main.h"
+#include "place.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
@@ -32,6 +36,21 @@ static char program;  /* Variable to store prog data for "Draws Astronaut attrib
 int missions;     // Variable for how many missions each 'naut has flown
 int retdel;  /* Variable to store whether a given 'naut has announced retirement */
 int sex;  /* Variable to store a given 'naut sex */
+
+
+void AstLevel(char plr, char prog, char crew, char ast);
+void PlaceEquip(char plr, char prog);
+void DrawProgs(char plr, char prog);
+int CheckProgram(char plr, char prog);
+void DrawPosition(char prog, int pos);
+void ClearIt(void);
+void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4);
+void AstStats(char plr, char man, char num);
+void AstNames(int man, char *name, char att);
+void Flts(char old, char nw);
+void FltsTxt(char nw, char col);
+
+
 
 void AstLevel(char plr, char prog, char crew, char ast)
 {

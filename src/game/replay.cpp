@@ -22,6 +22,7 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
+#include "replay.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
@@ -29,8 +30,12 @@
 #include "mmfile.h"
 #include "av.h"
 #include "logging.h"
+#include "game_main.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
+
+void RLEF(void *dest, void *src, unsigned int src_size);
+
 
 /** find and fill REPLAY structure and return 0, or -1 if failed.
  * if grp != NULL and oGROUP at offset rep->off[0] is found, then fill grp too

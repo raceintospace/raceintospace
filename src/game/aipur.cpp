@@ -25,13 +25,29 @@
 /** \file aipur.c AI Purchasing Routines
  */
 
+#include "aipur.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
+#include "hardef.h"
+#include "game_main.h"
+#include "museum.h"
+#include "port.h"
+#include "rdplex.h"
+#include "records.h"
 
 struct ManPool *Men;
 char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5
 extern char AI[2], Option;
+
+
+
+void DrawStatistics(char Win);
+void SelectBest(char plr, int pos);
+char Skill(char plr, char type);
+void CheckAdv(char plr);
+
+
 
 void DrawStatistics(char Win)
 {

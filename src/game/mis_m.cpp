@@ -23,12 +23,16 @@
 // Programmed by Michael K McCarty
 //
 
+#include "mis_m.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "mis.h"
 #include "utils.h"
 #include "options.h"
 #include "logging.h"
+#include "game_main.h"
+#include "mc.h"
+#include "mis_c.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 
@@ -49,6 +53,19 @@ extern int pAry[15];         /**< Array for Presige Firsts compelted */
 extern REPLAY Rep;
 
 void Tick(char);
+
+
+
+void MevDebug(FILE *fout, char i);
+void GetFailStat(struct XFails *Now, char *FName, int rnum);
+int MCGraph(char plr, int lc, int safety, int val, char prob);
+void F_KillCrew(char mode, struct Astros *Victim);
+void F_IRCrew(char mode, struct Astros *Guy);
+int FailEval(char plr, int type, char *text, int val, int xtra);
+void DebugSetFailure(char *Text);
+
+
+
 
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {

@@ -24,8 +24,14 @@
 //
 // AI Master Routines
 
+#include "aimis.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "aipur.h"
+#include "game_main.h"
+#include "mis_c.h"
+#include "radar.h"
+#include "vab.h"
 
 struct cStr {
     int16_t cost, sf, i;
@@ -39,6 +45,15 @@ extern enum Opponent_Status Cur_Status;
 void Strategy_One(char plr, int *m_1, int *m_2, int *m_3);
 void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3);
 void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3);
+
+void AIVabCheck(char plr, char mis, char prog);
+char Best(void);
+int ICost(char plr, char h, char i);
+void CalcSaf(char plr, char vs);
+char Panic_Level(char plr, int *m_1, int *m_2);
+
+
+
 
 void AIVabCheck(char plr, char mis, char prog)
 {

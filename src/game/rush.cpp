@@ -23,8 +23,11 @@
 // Programmed by Michael K McCarty
 //
 
+#include "rush.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
+#include "place.h"
 
 // Function Prototype
 
@@ -101,6 +104,11 @@ char dg[62][6] = {
     {00, 00, 00, 00, 00, 00}, // 60
     {00, 00, 00, 00, 00, 00} // 61
 };
+
+void DrawRush(char plr);
+void ResetRush(int mode, int val);
+void SetRush(int mode, int val);
+
 
 
 void DrawRush(char plr)

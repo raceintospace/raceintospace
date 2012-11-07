@@ -34,14 +34,20 @@ Unit Cost is loosly based in the basic model, but depends on initial cost
 RD cost is loosly based in the basic model
 */
 
+#include "randomize.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include <assert.h>
+#include "game_main.h"
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */
 /*random_min is used to give more chances of getting a 1 */
+
+
+char GetNewName(char name[20]);
+
 
 static inline int
 random_aux(int x, int y)

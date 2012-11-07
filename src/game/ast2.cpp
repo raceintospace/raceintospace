@@ -23,8 +23,20 @@
 // Programmed by Michael K McCarty
 //
 
+#include "ast2.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "ast0.h"
+#include "ast3.h"
+#include "ast4.h"
+#include "game_main.h"
+#include "place.h"
+#include "replay.h"
+
+void DrawLimbo(char plr);
+void Clear(void);
+void LimboText(char plr, int astro);
+
 
 void DrawLimbo(char plr)
 {

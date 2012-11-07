@@ -24,12 +24,21 @@
 //
 // Review Main Files
 
+#include "review.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
+#include "place.h"
+#include "port.h"
 
 extern struct MisAst MA[2][4];
 extern char AI[2];
+
+void DrawReview(char plr);
+void PresPict(char poff);
+void DrawRevText(char plr, int val);
+
 
 void DrawReview(char plr)
 {

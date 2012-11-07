@@ -23,13 +23,26 @@
 // Programmed by Michael K McCarty
 //
 
+#include "budget.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
 
 #define DELAYCNT 10
 
 extern struct mStr Mis;
 char olderMiss;
+
+
+void DrawBudget(char player, char *pStatus);
+void BudPict(char poff);
+void DrawPastExp(char player, char *pStatus);
+void DrawViewing(char plr);
+void DrawVText(char got);
+int RetFile(char plr, int card);
+void DrawPreviousMissions(char plr);
+
+
 
 void DrawBudget(char player, char *pStatus)
 {

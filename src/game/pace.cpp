@@ -6,12 +6,14 @@
 #include "options.h"
 #include "utils.h"
 #include "logging.h"
+#include "game_main.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 extern GXHEADER vhptr;
 
 void seq_init(void);
+
 
 char
 DoModem(int sel)

@@ -29,6 +29,9 @@
 #include "externs.h"
 #include "utils.h"
 #include "logging.h"
+#include "intro.h"
+#include "game_main.h"
+
 GXHEADER local2;
 
 struct CREDIT {

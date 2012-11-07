@@ -121,6 +121,22 @@ void play_audio(int sidx, int mode);
 void bzdelay(int ticks);
 void GetMouse_fast(void);
 
+void FadeIn(char wh, void *palx, int steps, int val, char mode);
+void FadeOut(char wh, void *palx, int steps, int val, char mode);
+int PCX_D(void *src, void *dest, unsigned src_size);
+int32_t RLEC(char *src, char *dest, unsigned int src_size);
+int RLED(void *src, void *dest, unsigned int src_size);
+void NGetVoice(char plr, char val);
+void StopVoice(void);
+void StopAudio(char mode);
+void PlayAudio(char *name, char mode);
+void PlayVoice(void);
+void KillVoice(void);
+char DoModem(int sel);
+void MesCenter(void);
+char MPrefs(char mode);
+
+
 #ifdef CONFIG_WIN32
 void dbg(char const *fmt, ...);
 #else

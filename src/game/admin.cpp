@@ -27,11 +27,20 @@
  *
  */
 
+#include "admin.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "av.h"
 #include "utils.h"
 #include "logging.h"
+#include "ast1.h"
+#include "budget.h"
+#include "future.h"
+#include "game_main.h"
+#include "place.h"
+#include "port.h"
+#include "prefs.h"
+#include "rdplex.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -49,6 +58,17 @@ SaveFileHdr *SaveHdr;
 SFInfo *FList;
 
 extern struct mStr Mis;
+
+
+int GenerateTables(SaveGameType saveType);
+char GetBlockName(char *Nam);
+void DrawFiles(char now, char loc, char tFiles);
+void BadFileType(void);
+void FileText(char *name);
+int FutureCheck(char plr, char type);
+char RequestX(char *s, char md);
+
+
 
 void Admin(char plr)
 {

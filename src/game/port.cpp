@@ -23,12 +23,29 @@
 // Programmed by Michael K McCarty
 //
 
+#include "port.h"
 #include "Buzz_inc.h"
 #include "gamedata.h"
 #include "externs.h"
 #include "macros.h"
 #include "av.h"
 #include "utils.h"
+#include "admin.h"
+#include "ast0.h"
+#include "ast2.h"
+#include "ast3.h"
+#include "ast4.h"
+#include "budget.h"
+#include "intel.h"
+#include "game_main.h"
+#include "museum.h"
+#include "place.h"
+#include "radar.h"
+#include "rdplex.h"
+#include "review.h"
+#include "rush.h"
+#include "sdlhelper.h"
+#include "vab.h"
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -163,6 +180,26 @@ char PName[20];
 #define SPOT_STEP 1
 #define SPOT_DONE 2
 #define SPOT_KILL 3
+
+
+void Seek_sOff(int where);
+void Seek_pOff(int where);
+void SpotCrap(char loc, char mode);
+void WaveFlagSetup(void);
+void WaveFlagDel(void);
+void PadBub(int x, int y, int col);
+void PortPlace(FILE *fin, int32_t table);
+void PortText(int x, int y, char *txt, char col);
+void UpdatePortOverlays(void);
+void DoCycle(void);
+void PortOutLine(unsigned int Count, uint16_t *buf, char mode);
+void PortRestore(unsigned int Count);
+int MapKey(char plr, int key, int old) ;
+void Port(char plr);
+char PortSel(char plr, char loc);
+char Request(char plr, char *s, char md);
+char MisReq(char plr);
+
 
 void SpotCrap(char loc, char mode)
 {

@@ -27,12 +27,19 @@
  *
  */
 
+#include "vab.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "utils.h"
 #include "logging.h"
 #include "options.h"
+#include "admin.h"
+#include "game_main.h"
+#include "mis_c.h"
+#include "news_suq.h"
+#include "place.h"
+#include "radar.h"
 
 extern char AI[2];
 
@@ -116,6 +123,22 @@ struct MDA {
      {149, 97, 190, 124, 0} // LgShroud
 };
 */
+
+
+int ChkDelVab(char plr, char f);
+int ChkVabRkt(char plr, int rk, int *q);
+void GradRect2(int x1, int y1, int x2, int y2, char plr);
+void DispVAB(char plr, char pad);
+int FillVab(char plr, char f, char mode);
+int  BuyVabRkt(char plr, int rk, int *q, char mode);
+void ShowVA(char f);
+void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg);
+void DispVA(char plr, char f);
+void DispRck(char plr, char wh);
+void DispWts(int two, int one);
+void LMAdd(char plr, char prog, char kic, char part);
+void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
+
 
      void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {

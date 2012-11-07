@@ -24,8 +24,15 @@
 //
 // Museum Main Files
 
+#include "museum.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "hardef.h"
+#include "game_main.h"
+#include "place.h"
+#include "port.h"
+#include "records.h"
+
 extern char Month[12][11];
 extern char Nums[30][7], AI[2];
 extern struct mStr Mis;
@@ -68,6 +75,29 @@ char tame[29][40] = {
 
 int16_t TPoints[2];
 extern char Mon[12][4];
+
+
+void Move2(char plr, char *pos, char *pos2, char val);
+void BackOne(char plr, char *pos, char *pos2);
+void ForOne(char plr, char *pos, char *pos2);
+void DPrest(char plr, char *pos, char *pos2);
+void Mission_Data_Buttons(char plr, int *where);
+void Draw_Mis_Stats(char plr, char index, int *where, char mode);
+void FastOne(char plr, int *where);
+void FullRewind(char plr, int *where);
+void RewindOne(char plr, int *where);
+void FullFast(char plr, int *where);
+void DisplAst(char plr, char *where, char *where2);
+void ShowAstroUp(char plr, char *where, char *where2);
+void ShowAstroDown(char plr, char *where, char *where2);
+void ShowAstroBack(char plr, char *where, char *where2);
+void ShowAstroFor(char plr, char *where, char *where2);
+void DispLoc(char plr, char *where);
+void DisplAstData(char plr, char *where, char *where2);
+void DownAstroData(char plr, char *where, char *where2);
+void UpAstroData(char plr, char *where, char *where2);
+int astcomp(const void *no1, const void *no2);
+
 
 void Display_ARROW(char num, int x, int y)
 {

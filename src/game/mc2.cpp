@@ -23,11 +23,15 @@
 // Programmed by Michael K McCarty
 //
 
+#include "mc2.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "macros.h"
 #include "logging.h"
 #include "options.h"
+#include "game_main.h"
+#include "mc.h"
+#include "prest.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -42,6 +46,11 @@ extern char MANNED[2], CAP[2], LM[2], DOC[2], EVA[2], STEP, FINAL, JOINT, pal2[7
 extern char STEPnum, AI[2];
 
 extern char DMFake;
+
+void MissionParse(char plr, char *MCode, char *LCode, char pad);
+char WhichPart(char plr, int which);
+void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad);
+
 
 //********************************************************************
 // Set up for the Mission

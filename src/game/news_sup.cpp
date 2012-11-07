@@ -24,9 +24,12 @@
 //
 // Support files for NEWS.C
 
+#include "news_sup.h"
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "options.h"   //Damaged Equipment Cheat, Nikakd, 10/8/10
+#include "radar.h"
+
 
 /** ???
  *

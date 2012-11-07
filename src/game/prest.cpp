@@ -18,8 +18,10 @@
 /** \file prest.c Handles all the prestige related code.
  */
 
+#include "prest.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
 
 extern struct mStr Mis;
 extern struct MisEval Mev[60];
@@ -32,6 +34,20 @@ extern char Option, MAIL;
 
 char tYr, tMo, tIDX, bIDX;
 FILE *ft;
+
+
+void Set_Dock(char plr, char total);
+void Set_LM(char plr, char total);
+int Check_Photo(void);
+int Check_Dock(int limit);
+int PrestCheck(char plr);
+char Was_Goal(char total, char which);
+char Did_Fail(void);
+char PosGoal(char *PVal);
+char NegGoal(char *PVal);
+char SupGoal(char *PVal);
+char PosGoal_Check(char *PVal);
+
 
 void Set_Dock(char plr, char total)
 {

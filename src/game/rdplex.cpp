@@ -26,12 +26,28 @@
  */
 
 #include "Buzz_inc.h"
+#include "rdplex.h"
 #include "externs.h"
 #include "options.h"
+#include "ast4.h"
+#include "game_main.h"
+#include "place.h"
 
 int call, wh;
 GXHEADER but, mans;
 extern unsigned char HARD1, UNIT1, BUTLOAD;
+
+
+void SRPrintAt(int x, int y, char *text, char fgd, char bck);
+void DrawRD(char plr);
+void BButs(char old, char nw);
+void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
+void ManSel(int activeButtonIndex);
+void ShowUnit(char hw, char un, char plr);
+void OnHand(char qty);
+void DrawHPurc(char plr);
+void BuyUnit(char hw2, char un2, char plr);
+
 
 /* We need to mask number of rolls into R&D history for current turn
  * Max number rolled on 5 dice with mods is 5*7 = 35

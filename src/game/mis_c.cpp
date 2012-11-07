@@ -23,6 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
+#include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "externs.h"
@@ -32,6 +33,9 @@
 #include "utils.h"
 #include "logging.h"
 #include "options.h"
+#include "game_main.h"
+#include "mc.h"
+#include "sdlhelper.h"
 
 #include <assert.h>
 
@@ -80,6 +84,16 @@ void Clock(char plr, char clck, char mode, char tm);
 // void Plop(char plr,char mode);
 
 // Who and What the hell are "Shining Happy People?"
+
+
+void RLEE(void *dest, void *src, unsigned int src_size);
+void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName);
+void InRFBox(int a, int b, int c, int d, int col);
+void GuyDisp(int xa, int ya, struct Astros *Guy);
+FILE *OpenAnim(char *fname);
+int CloseAnim(FILE *fin);
+int StepAnim(int x, int y, FILE *fin);
+char DrawMoonSelection(char nauts, char plr);
 
 
 /** Finds the video fitting to the current mission step and plays it.

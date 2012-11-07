@@ -23,9 +23,22 @@
 // Programmed by Michael K McCarty
 //
 
+#include "ast0.h"
 #include "Buzz_inc.h"
+#include "game_main.h"
+#include "place.h"
 
 char MCol[110], sel[30], MaxSel;
+
+
+void SatDraw(char plr);
+void LMDraw(char plr);
+void SatText(char plr);
+void PlanText(char plr, char plan);
+void LMPict(char poff);
+
+
+
 
 void Moon(char plr)
 {

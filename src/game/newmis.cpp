@@ -15,8 +15,14 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+#include "newmis.h"
 #include "Buzz_inc.h"
 #include "externs.h"
+#include "game_main.h"
+#include "mis_c.h"
+#include "place.h"
+#include "port.h"
+#include "radar.h"
 
 char Month[12][11] = {
     "JANUARY ", "FEBRUARY ", "MARCH ", "APRIL ", "MAY ", "JUNE ",
@@ -29,6 +35,10 @@ extern char AI[2];
 extern struct mStr Mis;
 extern char dg[62][6];
 extern char Option, MAIL, BIG;
+
+
+void MisOrd(char num);
+
 
 /** Function to compare two Missions
  *
