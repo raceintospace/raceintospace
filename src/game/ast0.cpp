@@ -25,7 +25,7 @@
 
 #include "Buzz_inc.h"
 
-char MCol[110], sel[25], MaxSel;
+char MCol[110], sel[30], MaxSel;
 
 void Moon(char plr)
 {
