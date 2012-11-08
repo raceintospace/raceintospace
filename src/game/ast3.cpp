@@ -142,7 +142,8 @@ void DrawTrain(char plr, char lvl)
 
     grSetColor(7);
 
-    PrintAt(169, 115, "STATUS:");
+    PrintAt(169, 111, "STATUS:");
+    PrintAt(169, 120, "MOOD:");
 
     grSetColor(9);
 
@@ -181,6 +182,7 @@ TrainText(char plr, int astro, int cnt)
     char Fritz[20];
 
     RectFill(200, 83, 291, 88, 3);
+    RectFill(200, 116, 220, 120, 3);
     RectFill(202, 93, 220, 97, 3);
     RectFill(216, 102, 294, 106, 3);
     RectFill(212, 111, 317, 124, 3);
@@ -197,7 +199,26 @@ TrainText(char plr, int astro, int cnt)
 
     grSetColor(1);
     PrintAt(200, 88, &Data->P[plr].Pool[astro].Name[0]);
-    grMoveTo(212, 115);
+    int col;
+    if (Data->P[plr].Pool[astro].Mood>=65) {
+        col=16;
+    }
+    if (Data->P[plr].Pool[astro].Mood<65 && Data->P[plr].Pool[astro].Mood>=40) {
+        col=11;
+    }
+    if (Data->P[plr].Pool[astro].Mood<40 && Data->P[plr].Pool[astro].Mood>=20) {
+        col=8;
+    }
+    if (Data->P[plr].Pool[astro].Mood<20) {
+        col=0;
+    }
+    if (Data->P[plr].Pool[astro].Mood==0) {
+        col=3;
+    }
+    grSetColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    PrintAt(200, 120, "   "); 
+    DispNum(200, 120, Data->P[plr].Pool[astro].Mood);
+    grMoveTo(212, 111);
     grSetColor(11);
     memset(Fritz, 0x00, sizeof(Fritz));
 
