@@ -58,10 +58,6 @@ project file:
     $ cmake -G Xcode ..
     $ open raceintospace.xcodeproj
 
-Be careful that libpng uses either the OSX-provided library/headers or
-Homebrew-provided library/headers; mixing them produces warnings on stderr
-as well as spectacular crashes.
-
 Note that the resulting executables are dynamically linked against the
 Homebrew-compiled Ogg/Vorbis/Theora libs, adding a runtime dependency. We need
 a way to internalize these dependencies before shipping anything generated

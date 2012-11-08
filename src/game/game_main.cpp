@@ -33,6 +33,8 @@
 #include "externs.h"
 #include <ctype.h>
 
+#include "display/png_image.h"
+
 #ifdef CONFIG_MACOSX
 // SDL.h needs to be included here to replace the original main() with
 // what it needs for the Mac
@@ -101,6 +103,7 @@ char *S_Name[] = {
 #define SLAVE 1
 #define MODEM_ERROR 4
 
+#include <sstream>
 #include <stdexcept>
 
 extern struct order Order[6];
@@ -115,6 +118,14 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex;
+    
+    if (!display::PNGImage::libpng_versions_match()) {
+        std::stringstream message;
+        message
+            << "This build was compiled against libpng " << display::PNGImage::libpng_headers_version()
+            << ", but is running with libpng " << display::PNGImage::libpng_runtime_version() << ".";
+        crash("libpng mismatch", message.str());
+    }
 
     setup_options(argc, argv);
     /* hacking... */
@@ -142,7 +153,7 @@ int game_main_impl(int argc, char *argv[])
     }
 
     av_setup();
-
+    
     strcpy(helptextIndex, "i000");
     strcpy(keyhelpIndex, "k000");
 
@@ -160,7 +171,7 @@ int game_main_impl(int argc, char *argv[])
     memset(buffer, 0x00, BUFFER_SIZE);
 
     OpenEmUp();                   // OPEN SCREEN AND SETUP GOODIES
-
+    
     if (options.want_intro) {
         Introd();
     }
