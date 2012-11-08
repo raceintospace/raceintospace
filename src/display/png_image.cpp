@@ -78,10 +78,7 @@ void PNGImage::read_png()
                     c.r = png_palette[i].red;
                     c.g = png_palette[i].green;
                     c.b = png_palette[i].blue;
-                }
-                
-                if (i < num_trans) {
-                    c.a = trans[i];
+                    c.a = (i < num_trans) ? trans[i] : 255;
                 }
                 
                 palette.set(i, c);
@@ -196,11 +193,16 @@ void PNGImage::draw(int x, int y)
     int width_to_copy;
     int height_to_copy;
     
+    assert(x >= 0);
+    assert(y >= 0);
+    assert(x < 320);
+    assert(y < 200);
+    
     width_to_copy = 320 - x;
     if (width_to_copy > width)
         width_to_copy = width;
     
-    height_to_copy = 200 - x;
+    height_to_copy = 200 - y;
     if (height_to_copy > height)
         height_to_copy = height;
     
