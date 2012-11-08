@@ -984,6 +984,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 }
             } else {
                 if (pData->Rocket[unit_index].Num == 1 && (pData->Rocket[unit_index].Safety < pData->Rocket[unit_index].MaxRD - 15)) {
+                    // AI Player does R&D on this purchased item
                     RDafford(plr, ROCKET_HARDWARE, unit_index);
                     pData->Buy[ROCKET_HARDWARE][unit_index] = 0; // Reset the record of this?
                     itemPurchased = true;
@@ -993,10 +994,14 @@ int GenPur(char plr, int hardware_index, int unit_index)
                         pData->Cash = pData->Cash - pData->Rocket[unit_index].UnitCost;
                         ++pData->Rocket[unit_index].Num;
                         itemPurchased = true;
-                    } else {
+                    } 
+#ifndef DISABLE_AI_CHEAT
+                    else {
+                        // Just give them one anyway
                         itemPurchased = true;
                         ++pData->Rocket[unit_index].Num;
                     }
+#endif
                 }
             }
         }; // end case ROCKET_HARDWARE
@@ -1023,6 +1028,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 }
             } else {
                 if (pData->Manned[unit_index].Num == 1 && (pData->Manned[unit_index].Safety < pData->Manned[unit_index].MaxRD - 15)) {
+                    // AI Player does R&D on this purchased item
                     RDafford(plr, MANNED_HARDWARE, unit_index);
                     pData->Buy[MANNED_HARDWARE][unit_index] = 0;  // reset the record of this?
                     itemPurchased = true;
