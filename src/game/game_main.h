@@ -52,4 +52,4 @@ extern unsigned char BUTLOAD;
 extern char plr[NUM_PLAYERS];
 
 
-#endif GAME_MAIN_H
+#endif // GAME_MAIN_H
