@@ -27,4 +27,4 @@ void DrawZ(void);
 
 extern int Bub_Count;
 
-#endif FUTBUB_H
+#endif // FUTBUB_H
