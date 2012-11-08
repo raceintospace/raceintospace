@@ -54,6 +54,7 @@ int game_main(int argc, char *argv[]);
 #include "fortify_workaround.h"
 
 #include "logging.h"
+#include "crash.h"
 
 #include "gamedata.h"
 

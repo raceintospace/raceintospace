@@ -246,7 +246,4 @@ void hangup(void);
 void modem_control_string(char *s);
 #endif
 
-// crash.cpp
-void crash(const std::string &title, const std::string &message);
-
 // EOF
