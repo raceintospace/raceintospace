@@ -1707,19 +1707,19 @@ DrawRank(char plr)
     if (Option == -1 || Option == 0) {
         InBox(55, 21, 116, 29);
         grSetColor(1);
-        PrintAt(57, 27, "SCORE:");
+        PrintAt(60, 27, "SCORE:");
         score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
         sprintf(&Digit[0], "%d", score);
-        PrintAt(92, 27, &Digit[0]);
+        PrintAt(95, 27, &Digit[0]);
     }
 
     if (Option == -1 || Option == 1) {
         InBox(203, 21, 264, 29);
         grSetColor(1);
-        PrintAt(205, 27, "SCORE:");
+        PrintAt(208, 27, "SCORE:");
         score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
         sprintf(&Digit[0], "%d", score);
-        PrintAt(240, 27, &Digit[0]);
+        PrintAt(243, 27, &Digit[0]);
     }
 
 }

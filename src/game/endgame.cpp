@@ -260,7 +260,7 @@ void EndGame(char win, char pad)
 
     FlagSm(win, 4, 4);
     grSetColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    PrintAt(256, 13, "CONTINUE");
 
     if (Option == -1 && MAIL == -1) {
         miss = Data->P[win].Mission[pad].MissionCode;

@@ -199,8 +199,10 @@ void DrawRD(char player_index)
     //GradRect(27,95,130,171,player_index*16+128);
     RectFill(27, 95, 130, 171, 0);
 
+    grSetColor(9);
+    PrintAt(13,80,"V");
     grSetColor(1);
-    PrintAt(13, 80, "VISIT PURCHASING FACILITY");
+    PrintAt(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
         gxVirtualDisplay(&mans, i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174, 0);
@@ -307,7 +309,11 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Scre
     }
 
     if (diceRoll == 0) {
-        PrintAt(169, 191, "RESEARCH PROGRAM FOR ");
+        PrintAt(169, 191, "RE");
+        grSetColor(9);
+        PrintAt(0,0,"S");
+        grSetColor(1);
+        PrintAt(0,0,"EARCH PROGRAM FOR ");
         grSetColor(9);
         DispNum(0, 0, cost);
         grSetColor(1);
@@ -936,13 +942,14 @@ void ShowUnit(char hw, char un, char player_index)
     }
 
     if (Data->P[player_index].RDMods != 0) { 
-        PrintAt(170,153,"RESEARCH ");
         if (Data->P[player_index].RDMods > 0) { 
-            PrintAt(0,0,"STRONG:   "); 
-            RectFill(264,149,264,153,1); 
-            RectFill(262,151,266,151,1);  // This is to fake a plus sign, which the game apparently can't draw -Leon
+            grSetColor(5);
+            PrintAt(170,153,"RESEARCH STRONG:   "); 
+            RectFill(264,149,264,153,5); 
+            RectFill(262,151,266,151,5);  // This fakes a plus sign, which the game apparently can't draw -Leon
         } else { 
-            PrintAt(0,0,"WEAK: ");
+            grSetColor(8);
+            PrintAt(170,153,"RESEARCH WEAK: ");
         }
         DispNum(0,0,Data->P[player_index].RDMods);
         PrintAt(0,0,"%/TEAM");
@@ -1214,16 +1221,20 @@ void DrawHPurc(char player_index)
 
     LTArrow(24, 186);
     RTArrow(101, 186);
+    grSetColor(9);
+    PrintAt(34,80,"V");
     grSetColor(1);
-    PrintAt(34, 80, "VISIT R&D FACILITY");
+    PrintAt(0,0,"ISIT R&D FACILITY");
 
     gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
     gxVirtualDisplay(&but, 68, 0, 84, 30, 155, 59, 0); // Rocket
     gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
     gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
 
+    grSetColor(9);
+    PrintAt(191,190,"P");
     grSetColor(11);
-    PrintAt(191, 190, "PURCHASE EQUIPMENT");
+    PrintAt(0,0,"URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
         PrintAt(158, 8, "SPRING");
