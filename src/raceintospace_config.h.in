@@ -18,4 +18,6 @@
 
 #cmakedefine SET_SDL_ICON
 
+#cmakedefine PLATFORM_PROVIDES_UGLY_CRASH
+
 #endif /* __RACEINTOSPACE_CONFIG_H__ */

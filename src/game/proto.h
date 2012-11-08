@@ -15,6 +15,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#include <string>
+
 /* XXX clean this up */
 #include "mmfile.h"
 #include "data.h"
@@ -779,5 +782,8 @@ void hangup(void);
 void modem_control_string(char *s);
 
 void save_game(char *filename);
+
+// crash.cpp
+void crash(const std::string &title, const std::string &message);
 
 // EOF

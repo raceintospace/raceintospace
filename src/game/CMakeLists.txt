@@ -20,6 +20,7 @@ add_library(
   ast3.cpp
   ast4.cpp
   budget.cpp
+  crash.cpp
   crew.cpp
   endgame.cpp
   endianness.cpp

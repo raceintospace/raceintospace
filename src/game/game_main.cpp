@@ -126,7 +126,8 @@ int game_main_impl(int argc, char *argv[])
         CRITICAL1("can't find game data files");
         NOTICE1("set environment variable BARIS_DATA or edit config file");
         NOTICE2("%s", see_readme);
-        exit(EXIT_FAILURE);
+        
+        crash("Data missing", "Unable to locate game data files.");
     }
 
     fclose(fin);
@@ -136,7 +137,8 @@ int game_main_impl(int argc, char *argv[])
                   options.dir_savegame, strerror(errno));
         NOTICE1("set environment variable BARIS_SAVE to a writable directory");
         NOTICE2("%s", see_readme);
-        exit(EXIT_FAILURE);
+
+        crash("Save directory", "Couldn't create save directory");
     }
 
     av_setup();

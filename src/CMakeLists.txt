@@ -34,6 +34,7 @@ if (APPLE)
   set(DEFAULT_DATADIR "Contents/Resources")
   set(DEFAULT_SAVEDIR ".")
   set(PLATFORM_MUSIC true)
+  set(PLATFORM_PROVIDES_UGLY_CRASH true)
   #set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
 
   include_directories(SYSTEM /usr/X11/include)
