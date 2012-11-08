@@ -858,6 +858,7 @@ void DrawMisHist(char plr, int *where)
                         Data->P[plr].History[index].Patch[1], 32);
             }
 
+            // FIXME: Same test on either side of this.  Need to research what was intended.
             if (Data->P[plr].History[index].Hard[1][0] != -1 && Data->P[plr].History[index].Hard[1][0] != -1) {
                 if (Data->P[plr].History[index].Hard[0][0] != -1 && Data->P[plr].History[index].Man[0][0] != -1) {
                     planet = 0;
@@ -1332,7 +1333,7 @@ void DisplAstData(char plr, char *where, char *where2)
 
     num2 = abuf[*where].MissionNum[*where2 + 1];
 
-    if (num2 < 1 && num2 > 56) {
+    if (num2 < 1 || num2 > 56) {
         return;
     }
 
