@@ -1261,7 +1261,7 @@ void NewAI(char plr, char frog)
             }
         }
 
-        if (mis3 != 2 || mis3 != 4) {
+        if (mis3 != 2 && mis3 != 4) {
             prg[0] = 0;
         }
 
