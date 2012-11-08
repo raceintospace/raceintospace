@@ -128,11 +128,45 @@ struct PrestType {
 };
 
 enum EquipmentIndex {
-    EQUIP_PROBE = 0,    /**< unmanned satelite */
-    EQUIP_ROCKET = 1,   /**< propulsion system */
-    EQUIP_MANNED = 2,   /**< vehicle to transport humans */
-    EQUIP_TECH = 3,     /**< piece of hardware to support other stuff */
+    PROBE_HARDWARE  = 0,   /**< unmanned satelite */
+    ROCKET_HARDWARE = 1,   /**< propulsion system */
+    MANNED_HARDWARE = 2,   /**< vehicle to transport humans */
+    MISC_HARDWARE   = 3,   /**< piece of hardware to support other stuff */
 };
+
+enum EquipProbeIndex {
+    PROBE_HW_ORBITAL,        // 0
+    PROBE_HW_INTERPLANETARY, // 1
+    PROBE_HW_LUNAR           // 2
+    };
+
+enum EquipRocketIndex {
+    ROCKET_HW_ONE_STAGE,   // 0
+    ROCKET_HW_TWO_STAGE,   // 1
+    ROCKET_HW_THREE_STAGE, // 2
+    ROCKET_HW_MEGA_STAGE,  // 3
+    ROCKET_HW_BOOSTERS,    // 4
+};
+
+enum EquipMannedIndex {
+    MANNED_HW_ONE_MAN_CAPSULE,   // 0
+    MANNED_HW_TWO_MAN_CAPSULE,   // 1
+    MANNED_HW_THREE_MAN_CAPSULE, // 2
+    MANNED_HW_MINISHUTTLE,       // 3
+    MANNED_HW_FOUR_MAN_CAPSULE,  // 4
+    MANNED_HW_TWO_MAN_MODULE,    // 5
+    MANNED_HW_ONE_MAN_MODULE     // 6
+};
+
+enum EquipMiscIndex {
+    MISC_HW_KICKER_A,       // 0
+    MISC_HW_KICKER_B,       // 1
+    MISC_HW_KICKER_C,       // 2
+    MISC_HW_EVA_SUITS,      // 3
+    MISC_HW_DOCKING_MODULE, // 4
+    MISC_HW_PHOTO_RECON     // 5
+};
+
 
 typedef struct _Equipment {
     char Name[20];      /**< Name of Hardware */
