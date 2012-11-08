@@ -10,7 +10,7 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-extern GXHEADER vhptr;
+struct Prest_Upd MP[3];
 
 void seq_init(void);
 
@@ -27,8 +27,6 @@ MPrefs(char mode)
 {
     return (0);
 }
-
-struct Prest_Upd MP[3];
 
 int put_serial(unsigned char n)
 {

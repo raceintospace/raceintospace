@@ -28,11 +28,9 @@
 #include "museum.h"
 #include "port.h"
 #include "replay.h"
-
-extern char helptextIndex[5], keyhelpIndex[5], AI[2];
-extern unsigned char AL_CALL;
-extern struct mStr Mis;
-extern char Option, MAIL;
+#include "mc.h"
+#include "mis_c.h"
+#include "endgame.h"
 
 
 void BCDraw(int y);
@@ -382,10 +380,6 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         int32_t size;
     } AIndex;
 
-    extern struct AnimType AHead;
-    extern struct BlockHead BHead;
-
-
     if (sh == 0) {
         size = (plr * 32) + (hw * 8) + unit;
         in = sOpen("RDFULL.BUT", "rb", 0);
@@ -695,7 +689,6 @@ int Help(const char *FName)
 void writePrestigeFirst(char index)   ///index==plr
 {
     char w = 0, i, draw = 0;
-    extern char PF[29][40];
 
     for (i = 0; i < 28; i++) {
         //Preestige First

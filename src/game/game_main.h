@@ -31,4 +31,25 @@ void DestroyPad(char plr, char pad, int cost, char mode);
 void PauseMouse(void);
 void PrintAtKey(int x, int y, const char *s, char val);
 
+extern char Option;
+extern char MAIL;
+extern int fOFF;
+extern char AI[2];
+extern char manOnMoon;
+extern char dayOnMoon;
+extern int SEG;
+extern GXHEADER vhptr;
+extern char BIG;
+extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
+extern unsigned char AL_CALL;
+extern char helptextIndex[5];
+extern char keyhelpIndex[5];
+extern int oldx;
+extern int oldy;
+extern unsigned char HARD1;
+extern unsigned char UNIT1;
+extern unsigned char BUTLOAD;
+extern char plr[NUM_PLAYERS];
+
+
 #endif GAME_MAIN_H

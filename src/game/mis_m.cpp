@@ -36,21 +36,19 @@
 
 LOG_DEFAULT_CATEGORY(mission)
 
-extern struct MisAst MA[2][4];
-extern Equipment *MH[2][8];
-extern struct MisEval Mev[60];
-extern char MANNED[2], pal2[768], STEPnum, FINAL, AI[2], CAP[2], LM[2], DOC[2], EVA[2], fEarly, mcc, JOINT;
-extern char STEP; /**< Index of current mission step */
-extern char DMFake;
-extern int AUDIO;
-char MFlag, death, durx, MPad, Unm, SCRUBS, noDock, InSpace;
+char MFlag;
+char death;
+char durx;
+char MPad;
+char Unm;
+char SCRUBS;
+char noDock;
+char InSpace;
 char Dock_Skip; /**< used for mission branching */
-extern struct mStr Mis;
 
 extern uint16_t MisStat;
 extern char pCnt, tMen, BIG;          // Counter for pAry
 extern int pAry[15];         /**< Array for Presige Firsts compelted */
-extern REPLAY Rep;
 
 void Tick(char);
 

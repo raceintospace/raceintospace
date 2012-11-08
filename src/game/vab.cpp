@@ -40,12 +40,10 @@
 #include "news_suq.h"
 #include "place.h"
 #include "radar.h"
-
-extern char AI[2];
+#include "mc.h"
 
 struct VInfo VAS[7][4];
 int VASqty;
-extern struct mStr Mis;
 extern int16_t Vab_Spot;
 int TotalCost;
 char hasDelay;//Used  to display the cost of autopurchase

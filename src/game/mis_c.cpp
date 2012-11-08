@@ -36,6 +36,8 @@
 #include "game_main.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "newmis.h"
+#include "game_main.h"
 
 #include <assert.h>
 
@@ -71,12 +73,8 @@ GXHEADER dply;
 struct AnimType AHead;
 struct BlockHead BHead;
 
-extern char Month[12][11];
-char STEPnum, loc[4];
-extern struct MisAst MA[2][4];
-extern struct MisEval Mev[60];
-extern char MANNED[2], STEP, pal2[768], AI[2], fEarly, LM[2], EVA[2];
-extern char BIG, manOnMoon, dayOnMoon;
+char STEPnum;
+char loc[4];
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);

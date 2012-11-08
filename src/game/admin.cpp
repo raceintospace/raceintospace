@@ -41,6 +41,7 @@
 #include "port.h"
 #include "prefs.h"
 #include "rdplex.h"
+#include "mc.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -51,14 +52,8 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-extern char Sounds, Option, MAIL;
-extern int fOFF;
-
 SaveFileHdr *SaveHdr;
 SFInfo *FList;
-
-extern struct mStr Mis;
-
 
 int GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
@@ -292,7 +287,6 @@ void FileAccess(char mode)
     int tFiles, i, now, done, BarB, temp, left;
     FILE *fin, *fout;
     char Name[12];
-    extern char plr[2], AI[2];
     SaveGameType saveType = SAVEGAME_Normal;
 
     //sp. case -> no regular save off mail/modem game

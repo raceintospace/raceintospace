@@ -35,6 +35,7 @@
 #include <ctype.h>
 #include "admin.h"
 #include "aimast.h"
+#include "aipur.h"
 #include "ast4.h"
 #include "endgame.h"
 #include "intel.h"
@@ -52,6 +53,7 @@
 #include "records.h"
 #include "review.h"
 #include "start.h"
+#include "pace.h"
 
 #include "display/png_image.h"
 
@@ -62,25 +64,43 @@
 #endif
 
 int cdROM, hDISK;
-
 char Name[20];
 struct Players *Data;
-int x, y, mousebuttons, key, oldx, oldy;
-unsigned char LOAD, QUIT, HARD1, UNIT1, BUTLOAD, FADE, AL_CALL;
-char plr[NUM_PLAYERS], helptextIndex[5], keyhelpIndex[5], df, IDLE[2];
+int x;
+int y;
+int mousebuttons;
+int key;
+int oldx;
+int oldy;
+unsigned char LOAD;
+unsigned char QUIT;
+unsigned char HARD1;
+unsigned char UNIT1;
+unsigned char BUTLOAD;
+unsigned char FADE;
+unsigned char AL_CALL;
+char plr[NUM_PLAYERS];
+char helptextIndex[5];
+char keyhelpIndex[5];
+char df;
+char IDLE[2];
 char *buffer;
 GXHEADER vhptr, vhptr2;
-char *oldpal, pNeg[NUM_PLAYERS][MAX_MISSIONS];
+char *oldpal;
+char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
-char Option = -1, MAIL = -1;
-int SEG = 15, FadeVal, fOFF = -1;
-extern struct mStr Mis;
-extern struct Prest_Upd MP[3];
+char MAIL = -1;
+char Option = -1;
+int SEG = 15;
+int FadeVal;
+int fOFF = -1;
 struct cdtable *cdt;
 int32_t PalOff;
 uint16_t LetHand;
-char BIG,                /**< 1 for fullscreen mission playback, 0 otherwise */
-     manOnMoon = 0, dayOnMoon = 20;
+char BIG;                /**< 1 for fullscreen mission playback, 0 otherwise */
+char manOnMoon = 0;
+char dayOnMoon = 20;
+char AI[2] = {0, 0};
 
 char *S_Name[] = {
     "LAUNCH",
@@ -125,10 +145,6 @@ char *S_Name[] = {
 
 #include <sstream>
 #include <stdexcept>
-
-extern struct order Order[6];
-extern struct ManPool *Men;
-char AI[2] = {0, 0};
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

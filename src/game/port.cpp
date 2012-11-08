@@ -46,6 +46,7 @@
 #include "rush.h"
 #include "sdlhelper.h"
 #include "vab.h"
+#include "mc.h"
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -65,9 +66,6 @@
 int put_serial(unsigned char n);
 
 char RUSH, SUSPEND;
-extern int oldx, oldy;
-extern struct mStr Mis;
-extern char Option;
 
 typedef struct portoutlinerestore {
     uint16_t loc;

@@ -25,4 +25,6 @@ void LefGap(char x);
 void S_Patch(char x);
 void DrawZ(void);
 
+extern int Bub_Count;
+
 #endif FUTBUB_H

@@ -30,6 +30,7 @@
 #include "mc2.h"
 #include "prest.h"
 #include "records.h"
+#include "mc.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;
@@ -67,9 +68,6 @@ struct Parameter {
     char Z;   /**< A duaration mission only */
 } V[62];
 
-extern int Bub_Count;
-extern struct mStr Mis;
-extern struct MisEval Mev[60];
 extern int SEG;
 
 

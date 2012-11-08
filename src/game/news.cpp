@@ -51,7 +51,6 @@ double load_news_anim_start;
 int evflag;
 static int bufsize, LOAD_US = 0, LOAD_SV = 0;
 static int Frame, MaxFrame, AnimIndex = 255;
-extern char Option;
 
 SimpleHdr table[99];
 

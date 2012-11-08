@@ -34,6 +34,8 @@
 #include "prest.h"
 #include "radar.h"
 #include "records.h"
+#include "game_main.h"
+#include "mis_c.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -41,17 +43,24 @@ struct MisEval Mev[60];  // was *Mev;
 struct mStr Mis;
 struct MXM *AList;
 REPLAY Rep;
-extern char BIG;
 
 char pCnt, tMen;    // Counter for pAry
 int pAry[15]; // Array for Presige Firsts compelted
 
-char MANNED[2], CAP[2], LM[2], DOC[2], EVA[2], STEP, FINAL, JOINT, pal2[768], PastBANG, mcc;
+char MANNED[2];
+char CAP[2];
+char LM[2];
+char DOC[2];
+char EVA[2];
+char STEP;
+char FINAL;
+char JOINT;
+char pal2[768];
+char PastBANG;
+char mcc;
 char fEarly; /**< kind of a boolean indicating early missions */
-char hero, DMFake;
-extern char STEPnum;
-extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
-extern char AI[2];
+char hero;
+char DMFake;
 uint16_t MisStat;
 /* STEP tracks mission step numbers             */
 /* FINAL is the ultimate result of safety check */

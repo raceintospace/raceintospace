@@ -23,19 +23,16 @@
 #include "place.h"
 #include "port.h"
 #include "radar.h"
+#include "mc.h"
+#include "rush.h"
+
+struct order Order[7] ;
+unsigned int colss, VBlank;
 
 char Month[12][11] = {
     "JANUARY ", "FEBRUARY ", "MARCH ", "APRIL ", "MAY ", "JUNE ",
     "JULY ", "AUGUST ", "SEPTEMBER ", "OCTOBER ", "NOVEMBER ", "DECEMBER "
 };
-
-struct order Order[7] ;
-unsigned int colss, VBlank;
-extern char AI[2];
-extern struct mStr Mis;
-extern char dg[62][6];
-extern char Option, MAIL, BIG;
-
 
 void MisOrd(char num);
 

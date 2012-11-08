@@ -32,10 +32,11 @@
 #include "place.h"
 #include "port.h"
 #include "records.h"
+#include "newmis.h"
+#include "mc.h"
+#include "start.h"
+#include "rush.h"
 
-extern char Month[12][11];
-extern char Nums[30][7], AI[2];
-extern struct mStr Mis;
 #define DELAYCNT 50
 
 struct Astros *abuf;
@@ -74,7 +75,6 @@ char tame[29][40] = {
 #endif
 
 int16_t TPoints[2];
-extern char Mon[12][4];
 
 
 void Move2(char plr, char *pos, char *pos2, char val);

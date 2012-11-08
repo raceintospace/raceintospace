@@ -31,9 +31,7 @@
 #include "game_main.h"
 #include "place.h"
 #include "port.h"
-
-extern struct MisAst MA[2][4];
-extern char AI[2];
+#include "mc.h"
 
 void DrawReview(char plr);
 void PresPict(char poff);

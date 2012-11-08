@@ -1,6 +1,8 @@
 #ifndef __DATA_H__
 #define __DATA_H__
 
+#include <stdint.h>
+
 /*
     Copyright (C) 2005 Michael K. McCarty & Fritz Bronner
 
@@ -97,7 +99,7 @@
 #define ASTRONAUT_MOOD_THRESHOLD    40
 /*@}*/
 
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct Prest_Upd {
     char Poss[10];
@@ -631,6 +633,8 @@ typedef struct {
     char Name[15], Title[23];
     uint16_t time, date;
 } SFInfo;
+
+#pragma pack(pop)
 
 
 #endif // __DATA_H__

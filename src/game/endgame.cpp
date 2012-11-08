@@ -26,6 +26,9 @@
 #include "game_main.h"
 #include "place.h"
 #include "replay.h"
+#include "newmis.h"
+#include "start.h"
+#include "mis_c.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -38,11 +41,6 @@
 
 const int draw_projectiles = 0;
 
-extern char Month[12][11];
-extern char AI[2];
-extern char Nums[30][7];
-extern char Option, MAIL, manOnMoon, dayOnMoon;
-extern char daysAMonth[12];
 char month, firstOnMoon, capName[30];
 char PF[29][40] = {
     "ORBITAL SATELLITE", "LUNAR FLYBY", "MERCURY FLYBY", "VENUS FLYBY",

@@ -28,7 +28,9 @@
 #include "game_main.h"
 #include "place.h"
 
-char MCol[110], sel[30], MaxSel;
+char MCol[110];
+char sel[30];
+char MaxSel;
 
 
 void SatDraw(char plr);

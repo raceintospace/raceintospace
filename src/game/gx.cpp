@@ -5,8 +5,8 @@
 #include "av.h"
 #include "utils.h"
 #include <SDL.h>
+#include "game_main.h"
 
-extern GXHEADER vhptr;
 
 int
 gxVirtualSize(int mode, int w, int h)

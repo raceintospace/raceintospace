@@ -33,9 +33,6 @@
 #include "port.h"
 #include "rdplex.h"
 
-extern GXHEADER but;
-extern char Option, MAIL;
-
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);
 void PInfo(char plr, char loc);

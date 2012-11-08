@@ -24,12 +24,13 @@
  */
 
 #include "futbub.h"
-#include  "Buzz_inc.h"
+#include "Buzz_inc.h"
 #include "externs.h"
 #include "future.h"
+#include "game_main.h"
 
-extern int SEG;
-int Bub_Num, Bub_Count;
+int Bub_Num;
+int Bub_Count;
 
 
 void drawBspline(int segments, char color, ...);

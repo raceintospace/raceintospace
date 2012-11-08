@@ -22,10 +22,7 @@
 #include "news_sup.h"
 #include "place.h"
 #include "radar.h"
-
-//extern char BudgetMods[3][6][10];
-extern char AI[2];
-extern struct mStr Mis;
+#include "mc.h"
 
 void Replace_Snaut(char plr);
 

@@ -35,7 +35,6 @@
 
 int call, wh;
 GXHEADER but, mans;
-extern unsigned char HARD1, UNIT1, BUTLOAD;
 
 
 void SRPrintAt(int x, int y, char *text, char fgd, char bck);

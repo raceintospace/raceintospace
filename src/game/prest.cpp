@@ -22,15 +22,10 @@
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "game_main.h"
-
-extern struct mStr Mis;
-extern struct MisEval Mev[60];
-extern struct Prest_Upd MP[3];
-extern struct MisAst MA[2][4];
-extern char STEPnum, AI[2], MANNED[2];
-//extern char tame[29][40];
-extern char hero, death;
-extern char Option, MAIL;
+#include "mc.h"
+#include "pace.h"
+#include "mis_c.h"
+#include "mis_m.h"
 
 char tYr, tMo, tIDX, bIDX;
 FILE *ft;
@@ -787,7 +782,6 @@ int PrestNeg(char plr, int i)
 int AllotPrest(char plr, char mis)
 {
     int i, total, other, negs, mcode, mike, P_Goal, N_Goal, S_Goal, ival, cval;
-    extern struct mStr Mis;
     char PVal[28];
 
     hero = 0;
@@ -1101,7 +1095,6 @@ int Find_MaxGoal(void)
 int U_AllotPrest(char plr, char mis)
 {
     int i = 0, total, other, negs, mcode, lun;
-    extern struct mStr Mis;
     char PVal[28];
 
     memset(PVal, 0x00, sizeof PVal);   // CLEAR TOTAL VALUE

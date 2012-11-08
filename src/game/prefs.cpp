@@ -31,11 +31,10 @@
 #include "options.h"
 #include "game_main.h"
 #include "randomize.h"
+#include "aipur.h"
 
-extern struct ManPool *Men;
 struct ManPool *Sov;
 char M_Us[106], M_Sv[106];
-extern char Option;
 
 void DrawPrefs(int where, char a1, char a2);
 void HModel(char mode, char tx);

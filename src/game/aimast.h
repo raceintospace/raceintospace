@@ -3,4 +3,6 @@
 
 void AIMaster(char plr);
 
+extern enum Opponent_Status Cur_Status;
+
 #endif // AIMAST_H

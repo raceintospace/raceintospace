@@ -38,8 +38,6 @@
 
 struct ManPool *Men;
 char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5
-extern char AI[2], Option;
-
 
 
 void DrawStatistics(char Win);

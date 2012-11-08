@@ -33,10 +33,7 @@
 #include "place.h"
 #include "port.h"
 #include "rdplex.h"
-
-extern struct mStr Mis;
-
-extern GXHEADER but;
+#include "mc.h"
 
 // imported from CODENAME.DAT
 const char * code_names[] = {

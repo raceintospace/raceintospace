@@ -32,8 +32,6 @@
 #include "news_suq.h"
 #include "place.h"
 
-extern char AI[2];
-
 void PadDraw(char plr, char pad);
 void PadPict(char poff);
 

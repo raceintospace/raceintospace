@@ -22,9 +22,7 @@
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "game_main.h"
 #include "place.h"
-
-extern struct mStr Mis;
-
+#include "mc.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);

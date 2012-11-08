@@ -6,4 +6,6 @@ void NewEnd(char win, char loc);
 void PlayFirst(char plr, char first);
 void SpecialEnd(void);
 
+extern char PF[29][40];
+
 #endif // ENDGAME_H

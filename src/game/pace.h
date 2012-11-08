@@ -136,6 +136,9 @@ char DoModem(int sel);
 void MesCenter(void);
 char MPrefs(char mode);
 
+extern struct Prest_Upd MP[3];
+
+
 
 #ifdef CONFIG_WIN32
 void dbg(char const *fmt, ...);

@@ -31,11 +31,9 @@
 #include "aimis.h"
 #include "aipur.h"
 #include "vab.h"
+#include "game_main.h"
 
-extern char Month[12][11];
-extern char AI[2];
 char Level_Check;
-extern char Nums[30][7];
 enum Opponent_Status Cur_Status;
 
 // Track[0] - orbital satellite

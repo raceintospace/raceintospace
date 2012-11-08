@@ -9,5 +9,6 @@ void RDafford(char plr, int Class, int index);
 void Stat(char Win);
 void TransAstro(char plr, int inx);
 
+extern struct ManPool *Men;
 
 #endif // AIPUR_H

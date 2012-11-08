@@ -7,4 +7,8 @@ void LMBld(char plr);
 void Moon(char plr);
 void SatBld(char plr);
 
+extern char MCol[110];
+extern char sel[30];
+extern char MaxSel;
+
 #endif // AST0_H

@@ -25,6 +25,7 @@
 #include "place.h"
 #include "port.h"
 #include "replay.h"
+#include "mc.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -33,8 +34,6 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hold);
 int ISDOCK(int a);
 
-extern struct mStr Mis;
-extern char AI[2];
 char NREC[56][3];
 Record_Entry rec[56][3];
 

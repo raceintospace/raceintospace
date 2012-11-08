@@ -27,10 +27,11 @@
 #include "Buzz_inc.h"
 #include "externs.h"
 #include "game_main.h"
+#include "mc.h"
+#include "records.h"
 
 #define DELAYCNT 10
 
-extern struct mStr Mis;
 char olderMiss;
 
 
@@ -483,7 +484,6 @@ void DrawPreviousMissions(char plr)
 {
     int i, misnum = 0;
     int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
-    extern char *Months[12];
     InBox(5, 41, 314, 91);
     RectFill(6, 42, 313, 90, 0);
     i = Data->P[plr].PastMis - olderMiss;

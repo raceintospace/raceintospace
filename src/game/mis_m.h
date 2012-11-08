@@ -3,4 +3,6 @@
 
 void MisCheck(char plr, char mpad);
 
+extern char death;
+
 #endif // MIS_M_H

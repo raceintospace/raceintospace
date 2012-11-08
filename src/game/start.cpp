@@ -28,9 +28,7 @@
 #include "externs.h"
 #include "options.h"
 #include "prest.h"
-
-extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
-extern char MAIL;
+#include "game_main.h"
 
 char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
                     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",

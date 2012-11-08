@@ -28,6 +28,7 @@
 #include "externs.h"
 #include "game_main.h"
 #include "place.h"
+#include "mc.h"
 
 // Function Prototype
 
@@ -37,8 +38,6 @@ char Mon[12][4] = {
 };
 
 int fCsh; //rush cash
-extern struct mStr Mis;
-extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 
 char dg[62][6] = {
     {00, 00, 00, 00, 00, 00}, // 0
