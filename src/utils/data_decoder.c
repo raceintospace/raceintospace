@@ -166,7 +166,7 @@ void write_custom_men(FILE * fp) {
 
 void write_events(FILE * fp)
 {
-    int i;
+    int i = 0;
     struct event {
         int player;
         int bud;        // this is the parameter to OpenNews(), but I don't know what it means
