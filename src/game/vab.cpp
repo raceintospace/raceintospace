@@ -224,7 +224,7 @@ void DispVAB(char plr, char pad)
     grSetColor(9); 
     PrintAt(22,188,"R");
     grSetColor(1); 
-    PrintAt(0,0,"ROCKET:     ");
+    PrintAt(0,0,"OCKET:     ");
 
     Name[0] = 'A' + pad;
     Name[1] = 0x00;

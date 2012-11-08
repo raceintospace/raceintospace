@@ -900,9 +900,11 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
 
-    IOBox(214, 134, 310, 148);
+    IOBox(214,134,310,148); 
+    grSetColor(9);
+    PrintAt(224,143,"R");
     grSetColor(1);
-    PrintAt(224, 143, "REPLAY MISSION");
+    PrintAt(0,0,"EPLAY MISSION");
 
     if (mode == 0) {
         IOBox(214, 151, 310, 165);
