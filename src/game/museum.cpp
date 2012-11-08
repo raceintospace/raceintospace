@@ -1134,16 +1134,16 @@ void DisplAst(char plr, char *where, char *where2)
         Display_ARROW(6, 245, 83);
     }
 
-    DispNum(213, 78, abuf[*where].Missions);
-    DispNum(216, 89, abuf[*where].Prestige);
-    DispNum(250, 149, abuf[*where].Days);
-    DispNum(252, 107, abuf[*where].Cap);
-    DispNum(225, 115, abuf[*where].LM);
-    DispNum(202, 123, abuf[*where].EVA);
-    DispNum(218, 131, abuf[*where].Docking);
-    DispNum(232, 139, abuf[*where].Endurance);
+    DispNum(214, 78, abuf[*where].Missions);
+    DispNum(217, 89, abuf[*where].Prestige);
+    DispNum(258, 149, abuf[*where].Days);
+    DispNum(253, 107, abuf[*where].Cap);
+    DispNum(227, 115, abuf[*where].LM);
+    DispNum(204, 123, abuf[*where].EVA);
+    DispNum(220, 131, abuf[*where].Docking);
+    DispNum(234, 139, abuf[*where].Endurance);
     DispNum(173, 68, abuf[*where].Active / 2);
-    PrintAt(0, 0, "  YEAR");
+    PrintAt(0, 0, " YEAR");
 
     if (abuf[*where].Active / 2 != 1) {
         PrintAt(0, 0, "S");
@@ -1153,7 +1153,7 @@ void DisplAst(char plr, char *where, char *where2)
     strncpy(Ast_Name, abuf[*where].Name, 10);
 
     if (abuf[*where].Sex == 1) {
-        grSetColor(5);
+        grSetColor(5); // Show females in blue
     }
 
     PrintAt(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
