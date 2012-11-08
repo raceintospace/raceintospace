@@ -4,6 +4,7 @@
 #include "display/png_image.h"
 
 #include "Buzz_inc.h"
+#include "game_main.h"
 
 enum vertical_alignment {
     ALIGN_TOP,
