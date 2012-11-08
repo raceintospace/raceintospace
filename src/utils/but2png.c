@@ -340,7 +340,7 @@ int simplehdrs(FILE * fp, int colors, int palette_offset, int shift_data, int si
         
         // export using the correct image number
         output_number = i;
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
         
         last_valid_header = i;
@@ -477,7 +477,7 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
         
         // export using the correct image number
         output_number = i;
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
         
         last_valid_offset = offset;
@@ -592,7 +592,7 @@ int translate_faces(FILE * fp)
             screen[j] -= 160;
         }
         
-        if (rv = write_image()) {
+        if ((rv = write_image())) {
             return rv;
         }
     }
@@ -609,7 +609,7 @@ int translate_faces(FILE * fp)
             screen[j] -= 160;
     }
     
-    if (rv = write_image()) {
+    if ((rv = write_image())) {
         return rv;
     }
     
@@ -629,7 +629,7 @@ int translate_lpads(FILE * fp)
     
     for (player = 0; player < 2; player ++) {
         PortPal(player);
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
     }
     
@@ -656,8 +656,8 @@ int translate_portbut(FILE * fp)
     PortPal(0);
 
     width = 30; height = 19;
-    while (bytes = fread(screen, 1, width * height, fp)) {
-        if (rv = write_image()) {
+    while ((bytes = fread(screen, 1, width * height, fp))) {
+        if ((rv = write_image())) {
             return rv;
         }
     }
@@ -668,7 +668,7 @@ int translate_portbut(FILE * fp)
 // { palette, compressed length, 320x240 PCX-compressed data } tuples, concatenated
 int translate_first(FILE * fp)
 {
-    int bytes, rv;
+    int rv;
     uint32_t length;
     
     width = 320; height = 240;
@@ -677,7 +677,7 @@ int translate_first(FILE * fp)
         fread(raw_data, 1, length, fp);
         PCX_D(raw_data, screen, length);
         
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
     }
     
@@ -706,7 +706,7 @@ int translate_rdbox(FILE * fp)
         fread(raw_data, length, 1, fp);
         RLED_img(raw_data, screen, length, width, height);
         
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
         
         i ++;
@@ -738,7 +738,7 @@ int translate_letter(FILE * fp)
             memcpy(screen + (i * width), letter.img[i], width);
         }
         
-        if (rv = write_image()) {
+        if ((rv = write_image())) {
             return rv;
         }
     }
@@ -866,7 +866,7 @@ int translate_port(FILE * fin)
 
         // write it back out
         output_number = i;
-        if (rv = write_image())
+        if ((rv = write_image()))
             return rv;
     }
     
