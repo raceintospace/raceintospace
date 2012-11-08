@@ -829,7 +829,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     InBox(9, 123, 206, 165);
     ShBox(62, 117, 154, 127);
     grSetColor(1);
-    PrintAt(80, 124, "FLIGHT CREW");
+    PrintAt(79, 124, "FLIGHT CREW");
     grSetColor(11);
     PrintAt(58, 41, "MISSION INFORMATION");
     PrintAt(12, 104, "MISSION DURATION: ");
