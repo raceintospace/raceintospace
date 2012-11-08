@@ -53,15 +53,15 @@ int MainMenuChoice()
     } const menu_options[] = {
         { "NEW GAME", 9, "N" },
         { "OLD GAME", 36, "O" },
-        { "CREDITS", 117, "C" },
-        { "EXIT", 144, "EXQ" }
+        { "CREDITS", 63, "C" },
+        { "EXIT", 90, "EXQ" }
     };
     const int menu_option_count = sizeof(menu_options) / sizeof(menu_options[0]);
     
     int selected_option = -1;
 
     {
-        FILE * fp = sOpen("beggam.but.0.png", "rb", FT_IMAGE);
+        FILE * fp = sOpen("main_menu.png", "rb", FT_IMAGE);
         display::PNGImage image(fp);
         fclose(fp);
 
