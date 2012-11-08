@@ -62,7 +62,7 @@ add_library(
   replay.cpp
   review.cpp
   rush.cpp
-  sdl.cpp
+  sdlhelper.cpp
   start.cpp
   utils.cpp
   vab.cpp
