@@ -609,7 +609,8 @@ void Clear(void)
     RectFill(44, 31, 145, 40, 3);
     RectFill(49, 112, 60, 119, 3);
     RectFill(123, 62, 145, 77, 3);
-    RectFill(128, 79, 145, 92, 3);
+    RectFill(125, 79, 145, 85, 3);
+    RectFill(128, 86, 145, 93, 3);
     RectFill(123, 95, 145, 101, 3);
     RectFill(127, 113, 141, 120, 3);
     RectFill(130, 54, 155, 61, 3);
