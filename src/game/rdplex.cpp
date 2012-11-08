@@ -632,30 +632,18 @@ char RD(char player_index)
                 // b is the cost per roll
                 if (hardware == 1) {
                     b = Data->P[player_index].Probe[unit - 1].RDCost;
-                    if (Data->P[player_index].Probe[unit - 1].SaveCard > 0) {
-                        PrintAt( 170, 90, "AVOID" );
-                    }
                 }
 
                 if (hardware == 2) {
                     b = Data->P[player_index].Rocket[unit - 1].RDCost;
-                    if (Data->P[player_index].Rocket[unit - 1].SaveCard > 0) {
-                        PrintAt( 170, 90, "AVOID" );
-                    }
                 }
 
                 if (hardware == 3) {
                     b = Data->P[player_index].Manned[unit - 1].RDCost;
-                    if (Data->P[player_index].Manned[unit - 1].SaveCard > 0) {
-                        PrintAt( 50, 10, "XX" );
-                    }
                 }
 
                 if (hardware == 4) {
                     b = Data->P[player_index].Misc[unit - 1].RDCost;
-                    if (Data->P[player_index].Misc[unit - 1].SaveCard > 0) {
-                        PrintAt( 170, 90, "AVOID" );
-                    }
                 }
 
                 // Add to the expenditure data
@@ -937,13 +925,13 @@ void ShowUnit(char hw, char un, char player_index)
         break;
     }
     if (avoidf> 0 ) {
-        RectFill(286,91,316,91,5);
-        RectFill(286,106,316,106,5);
-        RectFill(286,92,286,105,5);
-        RectFill(316,92,316,105,5);
+        RectFill(286,71,316,71,5);
+        RectFill(286,86,316,86,5);
+        RectFill(286,72,286,85,5);
+        RectFill(316,72,316,85,5);
         grSetColor(11);
-        PrintAt(288,97,"AVOID");
-        PrintAt(291,104,"FAIL");
+        PrintAt(288,77,"AVOID");
+        PrintAt(291,84,"FAIL");
         grSetColor(1);
     }
 
