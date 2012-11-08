@@ -47,7 +47,7 @@ gxGetImage(GXHEADER *hp, int x0, int y0, int x1, int y1, int op)
     assert(0 <= y0 && y0 < MAX_Y);
     assert(0 <= y1 && y1 < MAX_Y);
     assert(x0 <= x1);
-    assert(y0 <= y0);
+    assert(y0 <= y1);
 
     w = x1 - x0 + 1;
     h = y1 - y0 + 1;
@@ -180,7 +180,7 @@ gxDisplayVirtual(int from_x0, int from_y0,
     assert(0 <= from_y0 && from_y0 < MAX_Y);
     assert(0 <= from_y1 && from_y1 < MAX_Y);
     assert(from_x0 <= from_x1);
-    assert(from_y0 <= from_y0);
+    assert(from_y0 <= from_y1);
     assert(0 <= to_x && to_x < hp->w);
     assert(0 <= to_y && to_y < hp->h);
 
