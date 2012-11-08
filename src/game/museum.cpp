@@ -297,7 +297,7 @@ void ShowPrest(char plr)
     PrintAt(212, 120, "SUBS:");
     PrintAt(254, 120, "FAIL:");
     grSetColor(1);
-    PrintAt(255, 13, "CONTINUE");
+    PrintAt(257, 13, "CONTINUE");
     PrintAt(17, 39, "FIRST:");
     PrintAt(19, 81, "DATE:");
     grSetColor(11);
@@ -648,7 +648,7 @@ void ShowSpHist(char plr)
     InBox(3, 3, 31, 19); // USA inbox
     FlagSm(plr, 4, 4);
     grSetColor(1);
-    PrintAt(259, 13, "CONTINUE");
+    PrintAt(257, 13, "CONTINUE");
 
     ORBox(0, 24, 319, 199, 3);
     IRBox(4, 28, 315, 170, 0);

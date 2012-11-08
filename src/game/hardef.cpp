@@ -81,7 +81,7 @@ DrawHardef(char plr)
     DispBig(40, 5, "EFFICIENCY", 1, -1);
     FlagSm(plr, 4, 4);
     grSetColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    PrintAt(257, 13, "CONTINUE");
     RectFill(149, 2, 157, 10, 9);
     RectFill(149, 2, 156, 9, 8);
     grSetColor(9);
