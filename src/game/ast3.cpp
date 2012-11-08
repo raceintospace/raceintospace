@@ -143,6 +143,7 @@ void DrawTrain(char plr, char lvl)
     grSetColor(7);
 
     PrintAt(169, 111, "STATUS:");
+
     PrintAt(169, 120, "MOOD:");
 
     grSetColor(9);
@@ -200,23 +201,29 @@ TrainText(char plr, int astro, int cnt)
     grSetColor(1);
     PrintAt(200, 88, &Data->P[plr].Pool[astro].Name[0]);
     int col;
-    if (Data->P[plr].Pool[astro].Mood>=65) {
-        col=16;
+
+    if (Data->P[plr].Pool[astro].Mood >= 65) {
+        col = 16;
     }
-    if (Data->P[plr].Pool[astro].Mood<65 && Data->P[plr].Pool[astro].Mood>=40) {
-        col=11;
+
+    if (Data->P[plr].Pool[astro].Mood < 65 && Data->P[plr].Pool[astro].Mood >= 40) {
+        col = 11;
     }
-    if (Data->P[plr].Pool[astro].Mood<40 && Data->P[plr].Pool[astro].Mood>=20) {
-        col=8;
+
+    if (Data->P[plr].Pool[astro].Mood < 40 && Data->P[plr].Pool[astro].Mood >= 20) {
+        col = 8;
     }
-    if (Data->P[plr].Pool[astro].Mood<20) {
-        col=0;
+
+    if (Data->P[plr].Pool[astro].Mood < 20) {
+        col = 0;
     }
-    if (Data->P[plr].Pool[astro].Mood==0) {
-        col=3;
+
+    if (Data->P[plr].Pool[astro].Mood == 0) {
+        col = 3;
     }
+
     grSetColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
-    PrintAt(200, 120, "   "); 
+    PrintAt(200, 120, "   ");
     DispNum(200, 120, Data->P[plr].Pool[astro].Mood);
     grMoveTo(212, 111);
     grSetColor(11);
@@ -574,21 +581,24 @@ void Train(char plr, int level)
                 }
 
                 if (temp == 1) {
-                    if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_1) {
-                        Data->P[plr].Cash+=3; // refunds
-                    }
-                    if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_2) {
-                        Data->P[plr].Cash+=2; // for early
-                    }
-                    if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_3) {
-                        Data->P[plr].Cash+=1; // withdrawal
+                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1) {
+                        Data->P[plr].Cash += 3; // refunds
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_1 || Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_2) { 
-                        Data->P[plr].Pool[M[now2]].TrainingLevel=0; 
-                    } else { 
-                        Data->P[plr].Pool[M[now2]].TrainingLevel=Data->P[plr].Pool[M[now2]].Status; 
+                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
+                        Data->P[plr].Cash += 2; // for early
                     }
+
+                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_3) {
+                        Data->P[plr].Cash += 1; // withdrawal
+                    }
+
+                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1 || Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
+                        Data->P[plr].Pool[M[now2]].TrainingLevel = 0;
+                    } else {
+                        Data->P[plr].Pool[M[now2]].TrainingLevel = Data->P[plr].Pool[M[now2]].Status;
+                    }
+
                     Data->P[plr].Pool[M[now2]].Status = AST_ST_ACTIVE;
                     Data->P[plr].Pool[M[now2]].Assign = 0;
 
@@ -665,7 +675,7 @@ void Hospital(char plr, int sel)
 {
     int now2, BarA, count, i, j, M[100];
     FILE *fin;
-    uint32_t size=0;
+    uint32_t size = 0;
 
     if (sel == 0) {
         strcpy(helptextIndex, "i041");

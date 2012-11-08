@@ -225,7 +225,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         {
             assert((unsigned) astro->Focus <= NUM_SKILLS);
             /* Increase trained skill by 1 ('naut is halfway through adv training) */
-            char* skill = skills[astro->Focus - 1];
+            char *skill = skills[astro->Focus - 1];
             *skill = MIN(*skill + 1, skillMax);
         }
 

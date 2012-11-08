@@ -536,8 +536,8 @@ void Prefs(int where)
             }
 
             else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) ||
-            (where == 0 && ksel == 1 && key == 'H')) {
-            InBox(238, 77, 248, 85);
+                     (where == 0 && ksel == 1 && key == 'H')) {
+                InBox(238, 77, 248, 85);
                 WaitForMouseUp();
                 hum2++;
 
@@ -558,8 +558,8 @@ void Prefs(int where)
 
                 Levels(1, Data->Def.Lev2, 1);
             } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) ||
-            ((where == 0 || where == 3) && ksel == 1 && key == 'G')) {
-            InBox(238, 107, 311, 138);
+                       ((where == 0 || where == 3) && ksel == 1 && key == 'G')) {
+                InBox(238, 107, 311, 138);
                 WaitForMouseUp();
                 OutBox(238, 107, 311, 138);
                 Data->Def.Lev2++;
@@ -571,8 +571,8 @@ void Prefs(int where)
                 Levels(1, Data->Def.Lev2, 1);
                 /* P2: Game Level */
             } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && (where == 0 || where == 3) && mousebuttons > 0) ||
-            ((where == 0 || where == 3) && ksel == 1 && key == 'L')) {
-            InBox(238, 160, 311, 191);
+                       ((where == 0 || where == 3) && ksel == 1 && key == 'L')) {
+                InBox(238, 160, 311, 191);
                 WaitForMouseUp();
                 OutBox(238, 160, 311, 191);
                 Data->Def.Ast2++;
@@ -584,8 +584,8 @@ void Prefs(int where)
                 Levels(1, Data->Def.Ast2, 0);
                 /* P2: Astro Level */
             } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
-            ((where == 3 || where == 0) && ksel == 0 && key == 'N')) {
-            RectFill(7, 35, 82, 41, 0);
+                       ((where == 3 || where == 0) && ksel == 0 && key == 'N')) {
+                RectFill(7, 35, 82, 41, 0);
 
                 for (i = 0; i < 20; i++) {
                     Data->P[0].Name[i] = 0x00;
@@ -629,8 +629,8 @@ void Prefs(int where)
                 av_sync();
                 /* P1: Director Name */
             } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
-            ((where == 3 || where == 0) && ksel == 1 && key == 'N')) {
-            RectFill(237, 35, 312, 41, 0);
+                       ((where == 3 || where == 0) && ksel == 1 && key == 'N')) {
+                RectFill(237, 35, 312, 41, 0);
 
                 for (i = 0; i < 20; i++) {
                     Data->P[1].Name[i] = 0x00;

@@ -152,7 +152,7 @@ char REvent(char plr)
         // This is ignoring the budget mods based on the selected game level.
         fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + random(10)) , SEEK_SET);
         fread(&m, sizeof m, 1, fin);
-        Swap16bit(m); 
+        Swap16bit(m);
         //    m=BudgetMods[Data->P[plr].Level][(j*10)+random(10)];  // orig code
         fclose(fin);
 

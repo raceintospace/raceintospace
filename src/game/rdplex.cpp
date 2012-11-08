@@ -200,7 +200,7 @@ void DrawRD(char player_index)
     RectFill(27, 95, 130, 171, 0);
 
     grSetColor(9);
-    PrintAt(13,80,"V");
+    PrintAt(13, 80, "V");
     grSetColor(1);
     PrintAt(0, 0, "ISIT PURCHASING FACILITY");
 
@@ -311,9 +311,9 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Scre
     if (diceRoll == 0) {
         PrintAt(169, 191, "RE");
         grSetColor(9);
-        PrintAt(0,0,"S");
+        PrintAt(0, 0, "S");
         grSetColor(1);
-        PrintAt(0,0,"EARCH PROGRAM FOR ");
+        PrintAt(0, 0, "EARCH PROGRAM FOR ");
         grSetColor(9);
         DispNum(0, 0, cost);
         grSetColor(1);
@@ -654,7 +654,7 @@ char RD(char player_index)
 
                 // Add to the expenditure data
 
-                if ((b *roll <= Data->P[player_index].Cash) && QueryUnit(hardware, unit, player_index)
+                if ((b * roll <= Data->P[player_index].Cash) && QueryUnit(hardware, unit, player_index)
                     && MaxChk(hardware, unit, player_index)) {
                     buy[hardware - 1][unit - 1] = RDUnit(hardware, unit, roll, player_index);
 
@@ -889,7 +889,7 @@ void ShowUnit(char hw, char un, char player_index)
     case 4:
         PL = (Equipment *)&Data->P[player_index].Misc[un - 1].Name[0];
         break;
-    
+
     default:
         // invalid hw value
         assert(false);
@@ -907,52 +907,62 @@ void ShowUnit(char hw, char un, char player_index)
     PrintAt(170, 132, "MAXIMUM PAYLOAD:");
     PrintAt(170, 146, "MAXIMUM SAFETY:");
 
-    avoidf=0;
-    switch(hw) {
-    case 1: 
-        if (Data->P[player_index].Probe[un-1].SaveCard > 0) {
+    avoidf = 0;
+
+    switch (hw) {
+    case 1:
+        if (Data->P[player_index].Probe[un - 1].SaveCard > 0) {
             avoidf = 1;
         }
+
         break;
-    case 2: 
-        if (Data->P[player_index].Rocket[un-1].SaveCard > 0) {
+
+    case 2:
+        if (Data->P[player_index].Rocket[un - 1].SaveCard > 0) {
             avoidf = 1;
         }
+
         break;
-    case 3: 
-        if (Data->P[player_index].Manned[un-1].SaveCard > 0) {
+
+    case 3:
+        if (Data->P[player_index].Manned[un - 1].SaveCard > 0) {
             avoidf = 1;
         }
+
         break;
-    case 4: 
-        if (Data->P[player_index].Misc[un-1].SaveCard > 0) {
+
+    case 4:
+        if (Data->P[player_index].Misc[un - 1].SaveCard > 0) {
             avoidf = 1;
         }
+
         break;
     }
-    if (avoidf> 0 ) {
-        RectFill(286,71,316,71,5);
-        RectFill(286,86,316,86,5);
-        RectFill(286,72,286,85,5);
-        RectFill(316,72,316,85,5);
+
+    if (avoidf > 0) {
+        RectFill(286, 71, 316, 71, 5);
+        RectFill(286, 86, 316, 86, 5);
+        RectFill(286, 72, 286, 85, 5);
+        RectFill(316, 72, 316, 85, 5);
         grSetColor(11);
-        PrintAt(288,77,"AVOID");
-        PrintAt(291,84,"FAIL");
+        PrintAt(288, 77, "AVOID");
+        PrintAt(291, 84, "FAIL");
         grSetColor(1);
     }
 
-    if (Data->P[player_index].RDMods != 0) { 
-        if (Data->P[player_index].RDMods > 0) { 
+    if (Data->P[player_index].RDMods != 0) {
+        if (Data->P[player_index].RDMods > 0) {
             grSetColor(5);
-            PrintAt(170,153,"RESEARCH STRONG:   "); 
-            RectFill(264,149,264,153,5); 
-            RectFill(262,151,266,151,5);  // This fakes a plus sign, which the game apparently can't draw -Leon
-        } else { 
+            PrintAt(170, 153, "RESEARCH STRONG:   ");
+            RectFill(264, 149, 264, 153, 5);
+            RectFill(262, 151, 266, 151, 5); // This fakes a plus sign, which the game apparently can't draw -Leon
+        } else {
             grSetColor(8);
-            PrintAt(170,153,"RESEARCH WEAK: ");
+            PrintAt(170, 153, "RESEARCH WEAK: ");
         }
-        DispNum(0,0,Data->P[player_index].RDMods);
-        PrintAt(0,0,"%/TEAM");
+
+        DispNum(0, 0, Data->P[player_index].RDMods);
+        PrintAt(0, 0, "%/TEAM");
     }
 
     grSetColor(20);
@@ -1222,9 +1232,9 @@ void DrawHPurc(char player_index)
     LTArrow(24, 186);
     RTArrow(101, 186);
     grSetColor(9);
-    PrintAt(34,80,"V");
+    PrintAt(34, 80, "V");
     grSetColor(1);
-    PrintAt(0,0,"ISIT R&D FACILITY");
+    PrintAt(0, 0, "ISIT R&D FACILITY");
 
     gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
     gxVirtualDisplay(&but, 68, 0, 84, 30, 155, 59, 0); // Rocket
@@ -1232,9 +1242,9 @@ void DrawHPurc(char player_index)
     gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
 
     grSetColor(9);
-    PrintAt(191,190,"P");
+    PrintAt(191, 190, "P");
     grSetColor(11);
-    PrintAt(0,0,"URCHASE EQUIPMENT");
+    PrintAt(0, 0, "URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
         PrintAt(158, 8, "SPRING");
@@ -1587,6 +1597,7 @@ BuyUnit(char category, char unit, char player_index)
     }
 
     float tt = 0.0f;  // initialize variable for tech transfer
+
     /* compute technology transfer for Probe category */
     if (new_program && category == 1) {
         n1 = Data->P[player_index].Probe[0].Safety;
@@ -1598,32 +1609,39 @@ BuyUnit(char category, char unit, char player_index)
             if (n2 > 40) {
                 tt = (float)(n2 - 40) / 3.5f;
             }
+
             //old code: Data->P[player_index].Probe[0].Safety = 50;
             if (n3 > 40 && n3 > n1) {
-                tt = (float)(n3-40) / 3.5f;
+                tt = (float)(n3 - 40) / 3.5f;
             }
+
             //old code: Data->P[player_index].Probe[0].Safety = 60;
             if (tt > 10.0f) {
                 tt = 10.0f;
             }
+
             Data->P[player_index].Probe[0].Safety = 40 + tt;
 
             break;
 
         case 1:    // Ranger/Cosmos
             if (n1 > 40) {
-                tt = (float)(n1-40) / 7.0f;
+                tt = (float)(n1 - 40) / 7.0f;
             }
+
             if (tt > 5.0f) {
                 tt = 5.0f;
             }
+
             //old code: Data->P[player_index].Probe[1].Safety = 45;
             if (n3 > 40 && n3 > n1) {
-                tt = (float)(n3-40) / 3.5f;
+                tt = (float)(n3 - 40) / 3.5f;
             }
+
             if (tt > 10) {
                 tt = 10.0f;
             }
+
             //old code: Data->P[player_index].Probe[1].Safety = 50;
             Data->P[player_index].Probe[1].Safety = 40 + tt;
 
@@ -1631,18 +1649,22 @@ BuyUnit(char category, char unit, char player_index)
 
         case 2:    // Surveyor/Luna
             if (n1 > 40) {
-                tt = (float)(n1-40) / 7.0f;
+                tt = (float)(n1 - 40) / 7.0f;
             }
+
             if (tt > 5.0f) {
                 tt = 5.0f;
             }
+
             //old code: Data->P[player_index].Probe[2].Safety = 45;
             if (n2 > 40 && n2 > n1) {
-                tt = (float)(n2-40) / 3.5f;
+                tt = (float)(n2 - 40) / 3.5f;
             }
+
             if (tt > 10.0f) {
                 tt = 10.0f;
             }
+
             //old code: Data->P[player_index].Probe[2].Safety = 50;
             Data->P[player_index].Probe[2].Safety = 40 + tt;
 
@@ -1661,31 +1683,41 @@ BuyUnit(char category, char unit, char player_index)
         switch (unit - 1) {
         case 0:    // Atlas/R-7
             if (n2 > 10) {  // Tech from Titan/Proton
-                tt = (float)(n2-10) / 2.6f;
+                tt = (float)(n2 - 10) / 2.6f;
             }
+
             if (tt > 25.0f) {
                 tt = 25.0f;
             }
+
             Data->P[player_index].Rocket[0].Safety = 10 + tt;
+
             if (n3 > 5) {    // Tech from Saturn/N1
-                tt = (float)(n3-5) / 2.8f;
+                tt = (float)(n3 - 5) / 2.8f;
             }
+
             if (tt > 25.0f) {
                 tt = 25.0f;
             }
+
             Data->P[player_index].Rocket[0].Safety = 10 + tt;
+
             if (n4 > 5) {    // Tech from Nova/UR-700
-                tt = (float)(n4-5) / 2.8f;
+                tt = (float)(n4 - 5) / 2.8f;
             }
+
             if (tt > 25.0f) {
                 tt = 25.0f;
             }
+
             if (n5 > 10) { // Tech from Boosters
-                tt = (float)(n5-10) / 2.6f;
+                tt = (float)(n5 - 10) / 2.6f;
             }
+
             if (tt > 25.0f) {
                 tt = 25.0f;
             }
+
             Data->P[player_index].Rocket[0].Safety = 10 + tt;
             //old code: if (n2 >= 75 || n3 >= 75 || n4 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Rocket[0].Safety = 35;
@@ -1694,75 +1726,95 @@ BuyUnit(char category, char unit, char player_index)
 
         case 1:    // Titan/Proton
             if (n1 > 10) {
-                tt = (float)(n1-10) / 4.3f;
+                tt = (float)(n1 - 10) / 4.3f;
             }
+
             if (tt > 15.0f) {
                 tt = 15.0f;
             }
+
             if (n5 > 10 && n5 > n1) {
-                tt = (float)(n5-10) / 4.3f;
+                tt = (float)(n5 - 10) / 4.3f;
             }
+
             if (tt > 15.0f) {
                 tt = 15.0f;
             }
+
             //old code: if (n1 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Rocket[1].Safety = 25;
             if (n3 > 5) {
-                if ((n3-5)/4.6 > tt) {
-                    tt = (float)(n3-5) / 2.3f;
+                if ((n3 - 5) / 4.6 > tt) {
+                    tt = (float)(n3 - 5) / 2.3f;
                 }
             }
-            if (tt>30) {
+
+            if (tt > 30) {
                 tt = 30.0f;
             }
+
             if (n4 > 5) {
-                if ((float)(n4-5) / 4.6f > tt) {
-                    tt = (float)(n4-5) / 2.3f;
+                if ((float)(n4 - 5) / 4.6f > tt) {
+                    tt = (float)(n4 - 5) / 2.3f;
                 }
             }
-            if (tt > 30.0f) { 
+
+            if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             //old code: if (n3 >= 75 || n4 >= 75)
             //old code: Data->P[player_index].Rocket[1].Safety = 40;
             Data->P[player_index].Rocket[1].Safety = 10 + tt;
-            if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75))  // Tech from multiple programs
-            //old code: Data->P[player_index].Rocket[1].Safety = 65;
 
-            break;
+            if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75))  // Tech from multiple programs
+                //old code: Data->P[player_index].Rocket[1].Safety = 65;
+
+            {
+                break;
+            }
 
         case 2:    // Saturn/N1
             if (n1 > 10) {
-                tt = (float)(n1-10) / 6.5f;
+                tt = (float)(n1 - 10) / 6.5f;
             }
+
             if (tt > 10.0f) {
                 tt = 10.0f;
             }
-            if (n5 >10 && n5 > n1) {
-                tt = (float)(n5-10) / 6.5f;
+
+            if (n5 > 10 && n5 > n1) {
+                tt = (float)(n5 - 10) / 6.5f;
             }
+
             if (tt > 10.0f) {
                 tt = 10.0f;
             }
+
             //old code: if (n1 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Rocket[2].Safety = 15;
             if (n2 > 10) {
-                tt = (float)(n2-10) / 2.16f;
+                tt = (float)(n2 - 10) / 2.16f;
             }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             if (n4 > 5) {
-                if ((float)(n4-5) / 3.5f > tt) {
-                    tt = (float)(n4-5) / 2.3f;
+                if ((float)(n4 - 5) / 3.5f > tt) {
+                    tt = (float)(n4 - 5) / 2.3f;
                 }
             }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             //old code: if (n2 >= 75 || n4 >= 75)
             //old code: Data->P[player_index].Rocket[2].Safety = 35;
             Data->P[player_index].Rocket[2].Safety = 5 + tt;
+
             if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) { // Tech from multiple programs
                 Data->P[player_index].Rocket[2].Safety = 60;
             }
@@ -1771,34 +1823,43 @@ BuyUnit(char category, char unit, char player_index)
 
         case 3:    // Nova/UR-700
             if (n1 > 10) {
-                tt = (float)(n1-10) / 13.0f;
+                tt = (float)(n1 - 10) / 13.0f;
             }
+
             if (tt > 5.0f) {
                 tt = 5.0f;
             }
+
             if (n5 > 10 && n5 > n1) {
-                tt = (float)(n5-10) / 13.0f;
+                tt = (float)(n5 - 10) / 13.0f;
             }
+
             if (tt > 5.0f) {
                 tt = 5.0f;
             }
+
             //old code: if (n1 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Rocket[3].Safety = 10;
             if (n2 > 10) {
-                tt = (float)(n2-5) / 3.25f;
+                tt = (float)(n2 - 5) / 3.25f;
             }
-            if (tt > 5.0f) {
-                tt= 20.0f;
-            }
-            if (n3 > 10) {
-                if ((float)(n3-5) / 3.5f > tt) {
-                    tt = (float)(n3-5) / 3.5f;
-                }
-            }
+
             if (tt > 5.0f) {
                 tt = 20.0f;
             }
+
+            if (n3 > 10) {
+                if ((float)(n3 - 5) / 3.5f > tt) {
+                    tt = (float)(n3 - 5) / 3.5f;
+                }
+            }
+
+            if (tt > 5.0f) {
+                tt = 20.0f;
+            }
+
             Data->P[player_index].Rocket[3].Safety = 5 + tt;
+
             //old code: if (n2 >= 75 || n3 >= 75)
             //old code: Data->P[player_index].Rocket[3].Safety = 25;
             if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n3 >= 75)) {  // Tech from multiple programs
@@ -1809,26 +1870,31 @@ BuyUnit(char category, char unit, char player_index)
 
         case 4:    // Boosters
             if (n1 > 10) {  // Tech from Atlas/R-7
-                tt = (float)(n1-10) / 3.25f;
+                tt = (float)(n1 - 10) / 3.25f;
             }
+
             if (n2 > 10) {  // Tech from Titan/Proton
-                if ((float)(n2-10) / 3.25f > tt) {
-                    tt = (float)(n2-10) / 3.25f;
+                if ((float)(n2 - 10) / 3.25f > tt) {
+                    tt = (float)(n2 - 10) / 3.25f;
                 }
             }
+
             if (n3 > 5) {    // Tech from Saturn/N1
-                if ((float)(n3-5) / 3.5f > tt) {
-                    tt = (float)(n3-5) / 3.5f;
+                if ((float)(n3 - 5) / 3.5f > tt) {
+                    tt = (float)(n3 - 5) / 3.5f;
                 }
             }
+
             if (n4 > 5) {    // Tech from Nova/UR-700
-                if ((float)(n4-5) / 3.5f > tt) {
-                    tt = (float)(n4-5) / 3.5f;
+                if ((float)(n4 - 5) / 3.5f > tt) {
+                    tt = (float)(n4 - 5) / 3.5f;
                 }
             }
+
             if (tt > 20.0f) {
                 tt = 20.0f;
             }
+
             Data->P[player_index].Rocket[4].Safety = 10 + tt;
             // old code: if (n1 >= 75 || n2 >= 75 || n3 >= 75 || n4 >= 75)
             //old code: Data->P[player_index].Rocket[4].Safety = 30;
@@ -1849,21 +1915,25 @@ BuyUnit(char category, char unit, char player_index)
         switch (unit - 1) {
         case 0:  // Mercury/Vostok
             if (n2 > 5) { // tech from Gemini/Voskhod
-                tt = (float)(n2-5) / 2.0f;
+                tt = (float)(n2 - 5) / 2.0f;
             }
+
             if (n3 > 5) {  // tech from Apollo/Soyuz
-                if ((float)(n3-5) / 2.0f > tt) {
-                    tt = (float)(n3-5) / 2.0f;
+                if ((float)(n3 - 5) / 2.0f > tt) {
+                    tt = (float)(n3 - 5) / 2.0f;
                 }
             }
+
             if (n5 > 5) {  // tech from Jupiter/LK-700
-                if ((float)(n5-5) / 2.0f > tt) {
-                    tt = (float)(n5-5) / 2.0f;
+                if ((float)(n5 - 5) / 2.0f > tt) {
+                    tt = (float)(n5 - 5) / 2.0f;
                 }
             }
+
             if (tt > 35.0f) {
                 tt = 35.0f;
             }
+
             Data->P[player_index].Manned[0].Safety = 5 + tt;
             //old code: if (n2 >= 75 || n3 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Manned[0].Safety = 40;
@@ -1871,26 +1941,31 @@ BuyUnit(char category, char unit, char player_index)
 
         case 1:  // Gemini/Voskhod
             if (n1 > 1) {  // tech from Mercury/Vostok
-                tt = (float)(n1-5) / 4.66f;
+                tt = (float)(n1 - 5) / 4.66f;
             }
+
             if (tt > 15.0f) {
                 tt = 15.0f;
             }
+
             //old code: if (n1 >= 75)
             //old code: Data->P[player_index].Manned[1].Safety = 20;
             if (n3 > 5) { // tech from Apollo/Soyuz
-                if ((float)(n3-5) / 2.0f > tt) {
-                    tt = (float)(n3-5) / 2.0f;
+                if ((float)(n3 - 5) / 2.0f > tt) {
+                    tt = (float)(n3 - 5) / 2.0f;
                 }
             }
+
             if (n5 > 5) {  // tech from Jupiter/LK-700
-                if ((float)(n5-5) / 2.3f > tt) {
-                    tt = (float)(n5-5) / 2.3f;
+                if ((float)(n5 - 5) / 2.3f > tt) {
+                    tt = (float)(n5 - 5) / 2.3f;
                 }
             }
+
             if (tt > 35.0f) {
                 tt = 35.0f;
             }
+
             Data->P[player_index].Manned[1].Safety = 5 + tt;
             //old code: if (n3 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Manned[1].Safety = 40;
@@ -1898,30 +1973,37 @@ BuyUnit(char category, char unit, char player_index)
 
         case 2:  // Apollo/Soyuz
             if (n1 > 5) {  // tech from Mercury/Vostok
-                tt = (float)(n1-5) / 4.66f;
+                tt = (float)(n1 - 5) / 4.66f;
             }
+
             if (tt > 15.0f) {
                 tt = 15.0f;
             }
+
             if (n5 > 5) {  // tech from Jupiter/LK-700
-                if ((float)(n5-5) / 2.3f > tt) {
-                    tt = (float)(n5-5) / 2.3f;
+                if ((float)(n5 - 5) / 2.3f > tt) {
+                    tt = (float)(n5 - 5) / 2.3f;
                 }
             }
+
             if (tt > 35.0f) {
                 tt = 35.0f;
             }
+
             //old code: if (n1 >= 75 || n5 >= 75)
             //old code: Data->P[player_index].Manned[2].Safety = 20;
             if (n2 > 5) {  // tech from Gemini/Voskhod
-                if ((float)(n2-5) / 2.3f > tt) {
-                    tt = (float)(n2-5) / 2.3f;
+                if ((float)(n2 - 5) / 2.3f > tt) {
+                    tt = (float)(n2 - 5) / 2.3f;
                 }
             }
-            if (tt > 35.0f) { 
+
+            if (tt > 35.0f) {
                 tt = 35.0f;
             }
+
             Data->P[player_index].Manned[2].Safety = 5 + tt;
+
             //old code: if (n2 >= 75 || n4 >= 75)
             //old code: Data->P[player_index].Manned[2].Safety = 30;
             if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {  // Tech from multiple programs
@@ -1935,32 +2017,39 @@ BuyUnit(char category, char unit, char player_index)
 
         case 4:  // Jupiter/LK-700
             if (n1 > 5) {  // tech from Mercury/Vostok
-                tt = (float)(n1-5) / 14.0f;
+                tt = (float)(n1 - 5) / 14.0f;
             }
+
             if (tt > 5.0f) {
                 tt = 5.0f;
             }
+
             //old code: if (n1 >= 75)
             //old code: Data->P[player_index].Manned[4].Safety = 10;
             if (n2 > 5) { // tech from Gemini/Voskhod
-                if ((float)(n2-5) / 7.0f > tt) { 
-                    tt = (float)(n2-5) / 7.0f;
+                if ((float)(n2 - 5) / 7.0f > tt) {
+                    tt = (float)(n2 - 5) / 7.0f;
                 }
             }
+
             if (tt > 10.0f) {
                 tt = 10.0f;
             }
+
             //old code: if (n2 >= 75)
             //old code: Data->P[player_index].Manned[4].Safety = 15;
             if (n3 > 5) { // tech from Apollo/Soyuz
-                if ((float)(n3-5) / 3.5f > tt) {
-                    tt = (float)(n3-5) / 3.5f;
+                if ((float)(n3 - 5) / 3.5f > tt) {
+                    tt = (float)(n3 - 5) / 3.5f;
                 }
             }
+
             if (tt > 20.0f) {
                 tt = 20.0f;
             }
+
             Data->P[player_index].Manned[4].Safety = 5 + tt;
+
             //old code: if (n3 >= 75)
             //old code: Data->P[player_index].Manned[4].Safety = 25;
             if ((n1 >= 75 || n2 >= 75 || n3 >= 75) && (n6 >= 75  || n7 >= 75)) { // Tech from multiple programs
@@ -1971,21 +2060,25 @@ BuyUnit(char category, char unit, char player_index)
 
         case 5:  // Eagle/LKM
             if (n7 > 10) { // tech from Cricket/LK
-                tt = (float)(n7-10) / 3.25f;
+                tt = (float)(n7 - 10) / 3.25f;
             }
+
             if (tt > 20.0f) {
                 tt = 20.0f;
             }
+
             //old code: if (n7 >= 75)
             //old code: Data->P[player_index].Manned[5].Safety = 30;
             if (n5 > 5) {  // tech from Jupiter/LK-700
-                if ((float)(n5-5) / 2.3f > tt) {
-                    tt = (float)(n5-5) / 2.3f;
+                if ((float)(n5 - 5) / 2.3f > tt) {
+                    tt = (float)(n5 - 5) / 2.3f;
                 }
             }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             Data->P[player_index].Manned[5].Safety = 10 + tt;
             //old code: if (n5 >= 75)
             //old code: Data->P[player_index].Manned[5].Safety = 40;
@@ -1994,21 +2087,25 @@ BuyUnit(char category, char unit, char player_index)
 
         case 6:  // Cricket/LK
             if (n6 > 10) {  // tech from Eagle/LKM
-                tt = (float)(n6-10) / 3.25f;
+                tt = (float)(n6 - 10) / 3.25f;
             }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             //old code: if (n6 >= 75)
             //old code: Data->P[player_index].Manned[6].Safety = 30;
             if (n5 > 5) { // tech from Jupiter/LK-700
-                if ((float)(n5-5) / 2.3f > tt) {
-                    tt = (float)(n5-5) / 2.3f;
+                if ((float)(n5 - 5) / 2.3f > tt) {
+                    tt = (float)(n5 - 5) / 2.3f;
                 }
             }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             Data->P[player_index].Manned[6].Safety = 10 + tt;
             //old code: if (n5 >= 75)
             //old code: Data->P[player_index].Manned[6].Safety = 40;
@@ -2024,11 +2121,14 @@ BuyUnit(char category, char unit, char player_index)
 
         switch (unit - 1) {
         case 0:  // Kicker-A
-            if (n2 > 10)  // tech from Titan/Proton
-                tt = (float)(n2-10) / 2.16f;
+            if (n2 > 10) { // tech from Titan/Proton
+                tt = (float)(n2 - 10) / 2.16f;
+            }
+
             if (tt > 30.0f) {
                 tt = 30.0f;
             }
+
             Data->P[player_index].Misc[0].Safety = 10 + tt;
             //old code: if (n2 >= 75)
             //old code: Data->P[player_index].Misc[0].Safety = 40;
@@ -2037,11 +2137,13 @@ BuyUnit(char category, char unit, char player_index)
 
         case 1:  // Kicker-B
             if (n1 > 10)  { // tech from Atlas/R-7
-                tt = (float)(n1-10) / 2.6f;
+                tt = (float)(n1 - 10) / 2.6f;
             }
+
             if (tt > 25.0f) {
                 tt = 25.0f;
             }
+
             Data->P[player_index].Misc[1].Safety = 10 + tt;
             //old code: if (n1 >= 75)
             //old code: Data->P[player_index].Misc[1].Safety = 35;
@@ -2050,16 +2152,19 @@ BuyUnit(char category, char unit, char player_index)
 
         case 2:  // Kicker-C
             if (n1 > 10) { // tech from R-7
-                tt = (float)(n1-10) / 3.25f;
+                tt = (float)(n1 - 10) / 3.25f;
             }
+
             if (n2 > 10) {  // tech from Proton
-                if ((float)(n2-10) / 3.25f > tt) {
-                    tt = (float)(n2-10) / 3.25f;
+                if ((float)(n2 - 10) / 3.25f > tt) {
+                    tt = (float)(n2 - 10) / 3.25f;
                 }
             }
+
             if (tt > 20.0f) {
                 tt = 20.0f;
             }
+
             Data->P[player_index].Misc[2].Safety = 5 + tt;
             //old code: if (n1 >= 75 || n2 >= 75)
             //old code: Data->P[player_index].Misc[2].Safety = 25;

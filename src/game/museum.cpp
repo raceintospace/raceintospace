@@ -111,7 +111,7 @@ void Display_ARROW(char num, int x, int y)
     SwapPatchHdrSmall(&P);
     fseek(in, P.offset, SEEK_SET);
 
-    if (P.w *P.h != P.size) {
+    if (P.w * P.h != P.size) {
         /* fprintf(stderr,
                 "Display_ARROW(): w*h != size (%hhd*%hhd == %d != %hd)\n",
                 P.w, P.h, P.w*P.h, P.size); */

@@ -36,7 +36,7 @@
 #include "sdlhelper.h"
 
 // imported from CODENAME.DAT
-const char * code_names[] = {
+const char *code_names[] = {
     "BASEBALL",
     "TUMBLEWEED",
     "BUMBLEBEE",
@@ -697,7 +697,7 @@ void BackIntel(char p, char year)
         PrintAt(xc, yc, "TOP SECRET");
     } else {
         w = Data->P[p].PastIntel[year].cdex;
-        
+
         int code_name_index = code * 6 + w;
         assert(code_name_index >= 0);
         assert(code_name_index < (sizeof(code_names) / sizeof(code_names[0])));

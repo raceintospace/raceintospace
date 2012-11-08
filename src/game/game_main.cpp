@@ -171,12 +171,12 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex;
-    
+
     if (!display::PNGImage::libpng_versions_match()) {
         std::stringstream message;
         message
-            << "This build was compiled against libpng " << display::PNGImage::libpng_headers_version()
-            << ", but is running with libpng " << display::PNGImage::libpng_runtime_version() << ".";
+                << "This build was compiled against libpng " << display::PNGImage::libpng_headers_version()
+                << ", but is running with libpng " << display::PNGImage::libpng_runtime_version() << ".";
         crash("libpng mismatch", message.str());
     }
 
@@ -190,7 +190,7 @@ int game_main_impl(int argc, char *argv[])
         CRITICAL1("can't find game data files");
         NOTICE1("set environment variable BARIS_DATA or edit config file");
         NOTICE2("%s", see_readme);
-        
+
         crash("Data missing", "Unable to locate game data files.");
     }
 
@@ -206,7 +206,7 @@ int game_main_impl(int argc, char *argv[])
     }
 
     av_setup();
-    
+
     strcpy(helptextIndex, "i000");
     strcpy(keyhelpIndex, "k000");
 
@@ -224,7 +224,7 @@ int game_main_impl(int argc, char *argv[])
     memset(buffer, 0x00, BUFFER_SIZE);
 
     OpenEmUp();                   // OPEN SCREEN AND SETUP GOODIES
-    
+
     if (options.want_intro) {
         Introd();
     }
@@ -234,9 +234,9 @@ int game_main_impl(int argc, char *argv[])
     while (ex == 0) {
 
         MakeRecords();
- 
-#define UNCOMPRESSED_RAST 1        
-        
+
+#define UNCOMPRESSED_RAST 1
+
 #ifndef UNCOMPRESSED_RAST
         fin = sOpen("RAST.DAT", "rb", 0);
         i = fread(buffer, 1, BUFFER_SIZE, fin);
@@ -341,7 +341,7 @@ int game_main(int argc, char *argv[])
     // Do all the work in game_main_impl(), but trap exceptions here, since we're called from C
     try {
         return game_main_impl(argc, argv);
-    } catch (std::exception& e) {
+    } catch (std::exception &e) {
         fprintf(stderr, "unhandled exception: %s\n", e.what());
         abort();
     }
@@ -720,9 +720,10 @@ void DestroyPad(char plr, char pad, int cost, char mode)
     Data->P[plr].LaunchFacility[pad] = cost; // Destroys pad
 
     AMis = (mode == 0) ? &Data->P[plr].Future[pad] : &Data->P[plr].Mission[pad];
+
     if (AMis != NULL) {
         if (AMis->Joint == 1) {
-				    if (AMis->part == 0) {
+            if (AMis->part == 0) {
                 BMis = &AMis[1];
             }
 
@@ -1159,7 +1160,8 @@ void FlagSm(char plr, int xm, int ym)
 void Flag(int x, int y, char plr)
 {
     if (plr == 0) {
-			int i, j;
+        int i, j;
+
         for (i = 0; i < 7; i++) {
             RectFill(x, y + i * 6, x + 69, y + 2 + i * 6, 8);
         }

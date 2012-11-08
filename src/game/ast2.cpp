@@ -488,39 +488,46 @@ void Limbo(char plr)
                 key = 0;
                 OutBox(244, 95 + 21 * i, 313, 109 + 21 * i);
 
-                skilLev=0;  // Figure out relevant skill level bfr sending to Adv Training -Leon
-                if (i==0) {
-                    skilLev=Data->P[plr].Pool[M[now2]].Cap;
+                skilLev = 0; // Figure out relevant skill level bfr sending to Adv Training -Leon
+
+                if (i == 0) {
+                    skilLev = Data->P[plr].Pool[M[now2]].Cap;
                 }
-                if (i==1) {
-                    skilLev=Data->P[plr].Pool[M[now2]].LM;
+
+                if (i == 1) {
+                    skilLev = Data->P[plr].Pool[M[now2]].LM;
                 }
-                if (i==2) {
-                    skilLev=Data->P[plr].Pool[M[now2]].EVA;
+
+                if (i == 2) {
+                    skilLev = Data->P[plr].Pool[M[now2]].EVA;
                 }
-                if (i==3) {
-                    skilLev=Data->P[plr].Pool[M[now2]].Docking;
+
+                if (i == 3) {
+                    skilLev = Data->P[plr].Pool[M[now2]].Docking;
                 }
-                if (i==4) {
-                    skilLev=Data->P[plr].Pool[M[now2]].Endurance;
+
+                if (i == 4) {
+                    skilLev = Data->P[plr].Pool[M[now2]].Endurance;
                 }
+
                 grSetColor(2);
 
                 if (Data->P[plr].Pool[M[now2]].TrainingLevel > 6) {
                     Help("i120");
                 } else if (skilLev > 3) {
-                    OutBox(244,95+21*i,313,109+21*i);  // If they have a 4 in that skill, don't send to Adv Training for it
+                    OutBox(244, 95 + 21 * i, 313, 109 + 21 * i); // If they have a 4 in that skill, don't send to Adv Training for it
                 } else if (Data->P[plr].Cash < 3) {
                     Help("i121");
                 } else {
-                    if (skilLev>2) {  // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB
-                        Data->P[plr].Pool[M[now2]].Status=AST_ST_TRAIN_ADV_3;
-                        Data->P[plr].Cash-=2;
+                    if (skilLev > 2) { // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB
+                        Data->P[plr].Pool[M[now2]].Status = AST_ST_TRAIN_ADV_3;
+                        Data->P[plr].Cash -= 2;
                     } else {
-                        Data->P[plr].Pool[M[now2]].Status=AST_ST_TRAIN_ADV_1;
-                        Data->P[plr].Cash-=3;
+                        Data->P[plr].Pool[M[now2]].Status = AST_ST_TRAIN_ADV_1;
+                        Data->P[plr].Cash -= 3;
                     }
-                    Data->P[plr].Pool[M[now2]].Focus=i+1;
+
+                    Data->P[plr].Pool[M[now2]].Focus = i + 1;
                     Data->P[plr].Pool[M[now2]].Assign = 0;
                     Data->P[plr].Pool[M[now2]].Una = 0;
                     Data->P[plr].Pool[M[now2]].Moved = 0;

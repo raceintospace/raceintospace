@@ -589,7 +589,7 @@ void SelectBest(char plr, int pos)
 
 void DumpAstro(char plr, int inx)
 {
-    struct BuzzData *pData = &Data->P[plr];    
+    struct BuzzData *pData = &Data->P[plr];
 
     for (int i = 0; i < pData->AstroCount; i++)
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
@@ -828,11 +828,11 @@ void CheckAdv(char plr)
 
 /**
  AI Research & Development improvements
- 
+
  @param plr The player this equipment purchase is for.
  @param hardware_index The class of hardware to R&D
  @param index The unit index is the type hardware in the specified class
- 
+
  */
 void RDafford(char plr, int equipment_class, int index)
 {
@@ -842,7 +842,7 @@ void RDafford(char plr, int equipment_class, int index)
     if (pData->Buy[equipment_class][index] > 0) {
         return;
     }
-    
+
     if (equipment_class == PROBE_HARDWARE) {
         cost = pData->Probe[index].RDCost;
         roll = pData->Probe[index].MaxRD - pData->Probe[index].Safety;
@@ -863,11 +863,11 @@ void RDafford(char plr, int equipment_class, int index)
         roll = pData->Misc[index].MaxRD - pData->Misc[index].Safety;
     }
 
-    roll = MAX(((roll * 10) / 35),5);
+    roll = MAX(((roll * 10) / 35), 5);
     ok = 0;
 
     while (ok == 0 && roll != 0) {
-        if ((cost *roll <= pData->Cash) && QueryUnit(equipment_class, index, plr) == 1
+        if ((cost * roll <= pData->Cash) && QueryUnit(equipment_class, index, plr) == 1
             && MaxChk(equipment_class + 1, index + 1, plr)) {
             pData->Buy[equipment_class][index] = RDUnit(equipment_class + 1, index + 1, roll, plr);
             pData->Cash = (pData->Cash - (cost * roll));
@@ -879,8 +879,8 @@ void RDafford(char plr, int equipment_class, int index)
 }
 
 /**
- Purchase Orbital Probe & One Stage Rocket 
- 
+ Purchase Orbital Probe & One Stage Rocket
+
  @param plr The player this equipment purchase is for.
  */
 void AIPur(char plr)
@@ -910,23 +910,23 @@ void AIPur(char plr)
 }
 
 /**
- Generic Purchase routine.  Given the hardware and unit indicies equipment 
+ Generic Purchase routine.  Given the hardware and unit indicies equipment
  is purchased for (or given to) the AI player.
- 
+
  @param plr The player this equipment purchase is for.
- @param hardware_index 
+ @param hardware_index
  @param unit_index
- 
+
  @return 0 No hardware was purchased
  @return 1 Hardware was purchased
- 
+
  */
 int GenPur(char plr, int hardware_index, int unit_index)
 {
     bool newProgramStarted = false;
     bool itemPurchased = false;
     int n1, n2, n3, n4, n5, n6, n7; // scratch variables for base saftey value init
-    
+
     struct BuzzData *pData = &Data->P[plr];
 
     // Force the Docking Module Instead before Kickers
@@ -954,15 +954,18 @@ int GenPur(char plr, int hardware_index, int unit_index)
                     pData->Probe[unit_index].Num = pData->Probe[unit_index].Num + 1;
                     itemPurchased = true;
                 }
+
 #ifndef DISABLE_AI_CHEAT
                 else {
                     // Just give it to the them anyway
                     itemPurchased = true;
                     ++pData->Probe[unit_index].Num;
                 }
+
 #endif
             }
         }; // end case PROBE_HARDWARE
+
         break;
 
     case ROCKET_HARDWARE: // Rockets
@@ -994,17 +997,20 @@ int GenPur(char plr, int hardware_index, int unit_index)
                         pData->Cash = pData->Cash - pData->Rocket[unit_index].UnitCost;
                         ++pData->Rocket[unit_index].Num;
                         itemPurchased = true;
-                    } 
+                    }
+
 #ifndef DISABLE_AI_CHEAT
                     else {
                         // Just give them one anyway
                         itemPurchased = true;
                         ++pData->Rocket[unit_index].Num;
                     }
+
 #endif
                 }
             }
         }; // end case ROCKET_HARDWARE
+
         break;
 
     case MANNED_HARDWARE: // Manned Capsules
@@ -1023,6 +1029,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
                     } else {
                         ++pData->Manned[unit_index].Num;
                     }
+
                     itemPurchased = true;
                     newProgramStarted = true;
                 }
@@ -1039,16 +1046,19 @@ int GenPur(char plr, int hardware_index, int unit_index)
                         ++pData->Manned[unit_index].Num;
                         itemPurchased = true;
                     }
+
 #ifndef DISABLE_AI_CHEAT
                     else {
                         // Just give it to them anyway
                         itemPurchased = true;
                         ++pData->Manned[unit_index].Num;
                     }
+
 #endif
                 }
             }
         }; // end case MANNED_HARDWARE
+
         break;
 
     case MISC_HARDWARE: // Misc hardware (Kicker, EVA, Docking Module)
@@ -1079,12 +1089,14 @@ int GenPur(char plr, int hardware_index, int unit_index)
                     ++pData->Misc[unit_index].Num;
                     itemPurchased = true;
                 }
+
 #ifndef DISABLE_AI_CHEAT
                 else {
                     // Just give them one anyway
                     itemPurchased = true;
                     ++pData->Misc[unit_index].Num;
                 }
+
 #endif
             }
         }; // end case MISC_HARDWARE
@@ -1100,36 +1112,39 @@ int GenPur(char plr, int hardware_index, int unit_index)
         Equipment *e = &pData->Probe[unit_index];  // Hardware we're modifying
 
         switch (unit_index) {
-            case PROBE_HW_ORBITAL:
-                if (pData->Probe[PROBE_HW_INTERPLANETARY].Safety >= 75) {
-                    e->Safety = 50;
-                }
+        case PROBE_HW_ORBITAL:
+            if (pData->Probe[PROBE_HW_INTERPLANETARY].Safety >= 75) {
+                e->Safety = 50;
+            }
 
-                if (pData->Probe[PROBE_HW_LUNAR].Safety >= 75) {
-                    e->Safety = 60;
-                }
-                break;
+            if (pData->Probe[PROBE_HW_LUNAR].Safety >= 75) {
+                e->Safety = 60;
+            }
 
-            case PROBE_HW_INTERPLANETARY:
-                if (pData->Probe[PROBE_HW_ORBITAL].Safety >= 75) {
-                    e->Safety = 45;
-                }
+            break;
 
-                if (pData->Probe[PROBE_HW_LUNAR].Safety >= 75) {
-                    e->Safety = 50;
-                }
-                break;
+        case PROBE_HW_INTERPLANETARY:
+            if (pData->Probe[PROBE_HW_ORBITAL].Safety >= 75) {
+                e->Safety = 45;
+            }
 
-            case PROBE_HW_LUNAR:
-                if (pData->Probe[PROBE_HW_ORBITAL].Safety >= 75) {
-                    e->Safety = 45;
-                }
+            if (pData->Probe[PROBE_HW_LUNAR].Safety >= 75) {
+                e->Safety = 50;
+            }
 
-                if (pData->Probe[PROBE_HW_INTERPLANETARY].Safety >= 75) {
-                    e->Safety = 50;
-                }
-                break;
-            };
+            break;
+
+        case PROBE_HW_LUNAR:
+            if (pData->Probe[PROBE_HW_ORBITAL].Safety >= 75) {
+                e->Safety = 45;
+            }
+
+            if (pData->Probe[PROBE_HW_INTERPLANETARY].Safety >= 75) {
+                e->Safety = 50;
+            }
+
+            break;
+        };
 
         e->Base = e->Safety; // Set the base safety level
     };
@@ -1145,59 +1160,64 @@ int GenPur(char plr, int hardware_index, int unit_index)
         n5 = pData->Rocket[ROCKET_HW_BOOSTERS].Safety;
 
         switch (unit_index) {
-            case ROCKET_HW_ONE_STAGE:
-                if (n2 >= 75 || n3 >= 75 || n4 >= 75 || n5 >= 75) {
-                    e->Safety = 35;
-                }
-                break;
+        case ROCKET_HW_ONE_STAGE:
+            if (n2 >= 75 || n3 >= 75 || n4 >= 75 || n5 >= 75) {
+                e->Safety = 35;
+            }
 
-            case ROCKET_HW_TWO_STAGE:
-                if (n1 >= 75 || n5 >= 75) {
-                    e->Safety = 25;
-                }
+            break;
 
-                if (n3 >= 75 || n4 >= 75) {
-                    e->Safety = 40;
-                }
+        case ROCKET_HW_TWO_STAGE:
+            if (n1 >= 75 || n5 >= 75) {
+                e->Safety = 25;
+            }
 
-                if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75)) {
-                    e->Safety = 65;
-                }
-                break;
+            if (n3 >= 75 || n4 >= 75) {
+                e->Safety = 40;
+            }
 
-            case ROCKET_HW_THREE_STAGE:
-                if (n1 >= 75 || n5 >= 75) {
-                    e->Safety = 15;
-                }
+            if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75)) {
+                e->Safety = 65;
+            }
 
-                if (n2 >= 75 || n4 >= 75) {
-                    e->Safety = 35;
-                }
+            break;
 
-                if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {
-                    e->Safety = 60;
-                }
-                break;
+        case ROCKET_HW_THREE_STAGE:
+            if (n1 >= 75 || n5 >= 75) {
+                e->Safety = 15;
+            }
 
-            case ROCKET_HW_MEGA_STAGE:
-                if (n1 >= 75 || n5 >= 75) {
-                    e->Safety = 10;
-                }
+            if (n2 >= 75 || n4 >= 75) {
+                e->Safety = 35;
+            }
 
-                if (n2 >= 75 || n3 >= 75) {
-                    e->Safety = 25;
-                }
+            if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {
+                e->Safety = 60;
+            }
 
-                if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n3 >= 75)) {
-                    e->Safety = 35;
-                }
-                break;
+            break;
 
-            case ROCKET_HW_BOOSTERS:
-                if (n1 >= 75 || n2 >= 75 || n3 >= 75 || n4 >= 75) {
-                    e->Safety = 30;
-                }
-                break;
+        case ROCKET_HW_MEGA_STAGE:
+            if (n1 >= 75 || n5 >= 75) {
+                e->Safety = 10;
+            }
+
+            if (n2 >= 75 || n3 >= 75) {
+                e->Safety = 25;
+            }
+
+            if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n3 >= 75)) {
+                e->Safety = 35;
+            }
+
+            break;
+
+        case ROCKET_HW_BOOSTERS:
+            if (n1 >= 75 || n2 >= 75 || n3 >= 75 || n4 >= 75) {
+                e->Safety = 30;
+            }
+
+            break;
         };
 
         e->Base = e->Safety; // Set the base safety level
@@ -1216,76 +1236,82 @@ int GenPur(char plr, int hardware_index, int unit_index)
         n7 = pData->Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
 
         switch (unit_index) {
-            case MANNED_HW_ONE_MAN_CAPSULE:
-                if (n2 >= 75 || n3 >= 75 || n5 >= 75) {
-                    e->Safety = 40;
-                }
-                break;
+        case MANNED_HW_ONE_MAN_CAPSULE:
+            if (n2 >= 75 || n3 >= 75 || n5 >= 75) {
+                e->Safety = 40;
+            }
 
-            case MANNED_HW_TWO_MAN_CAPSULE:
-                if (n1 >= 75) {
-                    e->Safety = 20;
-                }
+            break;
 
-                if (n3 >= 75 || n5 >= 75) {
-                    e->Safety = 40;
-                }
-                break;
+        case MANNED_HW_TWO_MAN_CAPSULE:
+            if (n1 >= 75) {
+                e->Safety = 20;
+            }
 
-            case MANNED_HW_THREE_MAN_CAPSULE:
-                if (n1 >= 75 || n5 >= 75) {
-                    e->Safety = 20;
-                }
+            if (n3 >= 75 || n5 >= 75) {
+                e->Safety = 40;
+            }
 
-                if (n2 >= 75 || n4 >= 75) {
-                    e->Safety = 30;
-                }
+            break;
 
-                if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {
-                    e->Safety = 40;
-                }
-                break;
+        case MANNED_HW_THREE_MAN_CAPSULE:
+            if (n1 >= 75 || n5 >= 75) {
+                e->Safety = 20;
+            }
 
-            case MANNED_HW_MINISHUTTLE:
-                break;
+            if (n2 >= 75 || n4 >= 75) {
+                e->Safety = 30;
+            }
 
-            case MANNED_HW_FOUR_MAN_CAPSULE:
-                if (n1 >= 75) {
-                    e->Safety = 10;
-                }
+            if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {
+                e->Safety = 40;
+            }
 
-                if (n2 >= 75) {
-                    e->Safety = 15;
-                }
+            break;
 
-                if (n3 >= 75) {
-                    e->Safety = 25;
-                }
+        case MANNED_HW_MINISHUTTLE:
+            break;
 
-                if ((n1 >= 75 || n2 >= 75 || n3 >= 75) && (n6 >= 75 || n7 >= 75)) {
-                    e->Safety = 35;
-                }
-                break;
+        case MANNED_HW_FOUR_MAN_CAPSULE:
+            if (n1 >= 75) {
+                e->Safety = 10;
+            }
 
-            case MANNED_HW_TWO_MAN_MODULE:
-                if (n7 >= 75) {
-                    e->Safety = 30;
-                }
+            if (n2 >= 75) {
+                e->Safety = 15;
+            }
 
-                if (n5 >= 75) {
-                    e->Safety = 40;
-                }
-                break;
+            if (n3 >= 75) {
+                e->Safety = 25;
+            }
 
-            case MANNED_HW_ONE_MAN_MODULE:
-                if (n6 >= 75) {
-                    e->Safety = 30;
-                }
+            if ((n1 >= 75 || n2 >= 75 || n3 >= 75) && (n6 >= 75 || n7 >= 75)) {
+                e->Safety = 35;
+            }
 
-                if (n5 >= 75) {
-                    e->Safety = 40;
-                }
-                break;
+            break;
+
+        case MANNED_HW_TWO_MAN_MODULE:
+            if (n7 >= 75) {
+                e->Safety = 30;
+            }
+
+            if (n5 >= 75) {
+                e->Safety = 40;
+            }
+
+            break;
+
+        case MANNED_HW_ONE_MAN_MODULE:
+            if (n6 >= 75) {
+                e->Safety = 30;
+            }
+
+            if (n5 >= 75) {
+                e->Safety = 40;
+            }
+
+            break;
         };
 
         e->Base = e->Safety; // Set the base safety level
@@ -1300,12 +1326,14 @@ int GenPur(char plr, int hardware_index, int unit_index)
             if (pData->Rocket[ROCKET_HW_TWO_STAGE].Safety >= 75) {
                 e->Safety = 40;
             }
+
             break;
 
         case MISC_HW_KICKER_B:
             if (pData->Rocket[ROCKET_HW_ONE_STAGE].Safety >= 75) {
                 e->Safety = 35;
             }
+
             break;
 
         case MISC_HW_KICKER_C:
@@ -1313,6 +1341,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 pData->Rocket[ROCKET_HW_TWO_STAGE].Safety >= 75) {
                 e->Safety = 25;
             }
+
             break;
 
         default:

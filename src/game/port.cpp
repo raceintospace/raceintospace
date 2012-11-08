@@ -147,7 +147,7 @@ struct sIMG {
 
 
 int16_t sCount;     // sCount is the number of steps
-int16_t Vab_Spot;       
+int16_t Vab_Spot;
 FILE *sFin;
 SimpleHdr hSPOT;  // Filled by Seek_sOff();
 struct sPATH sPath, sPathOld;
@@ -1026,8 +1026,8 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
 
-    pPortOutlineRestore = (PORTOUTLINE*)xrealloc(pPortOutlineRestore,
-                                   sizeof(PORTOUTLINE) * Count);
+    pPortOutlineRestore = (PORTOUTLINE *)xrealloc(pPortOutlineRestore,
+                          sizeof(PORTOUTLINE) * Count);
 
     for (i = 0; i < Count; i++) {
         if (mode == 1) {

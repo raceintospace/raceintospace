@@ -135,15 +135,17 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
      *  \note uses FSEQ.DAT
      */
     seqf = sOpen("SEQ.DAT", "rb", 0);
-		if (!seqf) {
-			return;
-		}
+
+    if (!seqf) {
+        return;
+    }
 
     fseqf = sOpen("FSEQ.DAT", "rb", 0);
-		if (!fseqf) {
-			fclose(seqf);
-			return;
-		}
+
+    if (!fseqf) {
+        fclose(seqf);
+        return;
+    }
 
     WaitForMouseUp();
 

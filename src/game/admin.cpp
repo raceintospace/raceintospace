@@ -444,7 +444,7 @@ void FileAccess(char mode)
                 }
 
                 readLen = SaveHdr->compSize;
-                load_buffer = (REPLAY*)malloc(readLen);
+                load_buffer = (REPLAY *)malloc(readLen);
 
                 fread(load_buffer, 1, readLen, fin);
 
@@ -483,7 +483,7 @@ void FileAccess(char mode)
                     }
 
                     // Read the Replay Data
-                    load_buffer = (REPLAY*)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+                    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
                     fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
 
                     if (endianSwap) {
@@ -509,7 +509,7 @@ void FileAccess(char mode)
                     eventSize = fileLength - ftell(fin);
 
                     // Read the Event Data
-                    load_buffer = (REPLAY*)malloc(eventSize);
+                    load_buffer = (REPLAY *)malloc(eventSize);
                     fread(load_buffer, 1, eventSize, fin);
                     fclose(fin);
 
@@ -1728,7 +1728,7 @@ void EndOfTurnSave(char *inData, int dataLen)
 {
     FILE *fout = NULL;
     int compressedLen = 0;
-	char * buffer = (char *)xmalloc( dataLen * 2);
+    char *buffer = (char *)xmalloc(dataLen * 2);
 
     // Remove old save data
     remove_savedat("ENDTURN.TMP");
@@ -1753,7 +1753,7 @@ void EndOfTurnSave(char *inData, int dataLen)
 
     fwrite(buffer, compressedLen, 1, fout);
     fclose(fout);
-	free( buffer );
+    free(buffer);
 }
 
 // EOF

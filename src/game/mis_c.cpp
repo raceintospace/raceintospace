@@ -123,11 +123,11 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     FILE *mmfp;
     float fps;
     int hold_count;
-    
+
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
     strncpy(Seq, InSeq, sizeof(Seq));
-    
+
     F = NULL; /* XXX check uninitialized */
     dSeq = NULL; /* XXX check uninitialized */
     bSeq = NULL; /* XXX check uninitialized */
@@ -854,10 +854,11 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         which = 0;
 
         while (attempt < SCND_TABLE) {
-            if (xstrncasecmp(fName, Mob2[attempt].Name, strlen(Mob2[attempt].Name)) == 0)
+            if (xstrncasecmp(fName, Mob2[attempt].Name, strlen(Mob2[attempt].Name)) == 0) {
                 break;
-            else
+            } else {
                 attempt++;
+            }
         };
 
         if (attempt >= SCND_TABLE) {
@@ -865,71 +866,71 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         } else {
             if (Val1[0] != '#')
                 switch (Mob2[attempt].idx) {
-                    case 0:
-                        strcat(Val1, "0\0");
-                        break;
+                case 0:
+                    strcat(Val1, "0\0");
+                    break;
 
-                    case 1:
-                        strcat(Val1, "1\0");
-                        break;
+                case 1:
+                    strcat(Val1, "1\0");
+                    break;
 
-                    case 2:
-                        strcat(Val1, "2\0");
-                        break;
+                case 2:
+                    strcat(Val1, "2\0");
+                    break;
 
-                    case 3:
-                        strcat(Val1, "3\0");
-                        break;
+                case 3:
+                    strcat(Val1, "3\0");
+                    break;
 
-                    case 4:
-                        strcat(Val1, "0\0");
-                        break;
+                case 4:
+                    strcat(Val1, "0\0");
+                    break;
 
-                    case 5:
-                        strcat(Val1, "1\0");
-                        break;
+                case 5:
+                    strcat(Val1, "1\0");
+                    break;
 
-                    case 6:
-                        strcat(Val1, "2\0");
-                        break;
+                case 6:
+                    strcat(Val1, "2\0");
+                    break;
 
-                    case 7:
-                        strcat(Val1, "0\0");
-                        break;
+                case 7:
+                    strcat(Val1, "0\0");
+                    break;
 
-                    case 8:
-                        strcat(Val1, "1\0");
-                        break;
+                case 8:
+                    strcat(Val1, "1\0");
+                    break;
 
-                    case 9:
-                        strcat(Val1, "2\0");
-                        break;
+                case 9:
+                    strcat(Val1, "2\0");
+                    break;
 
-                    case 10:
-                        strcat(Val1, "0\0");
-                        break;
+                case 10:
+                    strcat(Val1, "0\0");
+                    break;
 
-                    case 11:
-                        strcat(Val1, "1\0");
-                        break;
+                case 11:
+                    strcat(Val1, "1\0");
+                    break;
 
-                    default:
-                        which = 415 + random(25);
-                    }
+                default:
+                    which = 415 + random(25);
+                }
 
             if (which == 0) {
                 attempt = 0;
 
                 while (attempt < CLIF_TABLE) {
 
-                        strcpy(Val2, &Mob[attempt].Code[0]);
+                    strcpy(Val2, &Mob[attempt].Code[0]);
 
-                        if (xstrncasecmp(Val1, Val2, strlen(Val1)) == 0) {
-                            break;
-                        } else {
-                            attempt++;
-                        }
-                    };
+                    if (xstrncasecmp(Val1, Val2, strlen(Val1)) == 0) {
+                        break;
+                    } else {
+                        attempt++;
+                    }
+                };
 
                 if (attempt >= CLIF_TABLE) {
                     which = 415 + random(25);
@@ -952,15 +953,18 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
         while (attempt < NORM_TABLE) {
 
-                strcpy(Val2, &Mob[attempt].Code[0]);
+            strcpy(Val2, &Mob[attempt].Code[0]);
 
-                if (strncmp(Val1, Val2, strlen(Val2)) == 0) {
-                    break;
-                } else attempt++;
-            };
+            if (strncmp(Val1, Val2, strlen(Val2)) == 0) {
+                break;
+            } else {
+                attempt++;
+            }
+        };
 
-        if (attempt >= NORM_TABLE) which = 415 + random(25);
-        else {
+        if (attempt >= NORM_TABLE) {
+            which = 415 + random(25);
+        } else {
 
             which = random(Mob[attempt].Qty);
 

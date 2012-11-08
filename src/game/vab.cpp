@@ -54,12 +54,12 @@ char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
-} MI[2 * 28]; 
+} MI[2 * 28];
 
 /*
  // The VAB images are found in two different image files, these are the cutout locations
 
-//  
+//
  struct MDA {
     int16_t x1, y1, x2, y2, o;
  } MI[2][28] = {
@@ -139,7 +139,7 @@ void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
 
 
-     void GradRect2(int x1, int y1, int x2, int y2, char plr)
+void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
     register int i, j, val;
 
@@ -206,25 +206,25 @@ void DispVAB(char plr, char pad)
     IOBox(4, 84, 165, 96);
 
     grSetColor(9);
-    PrintAt(200,192,"E");
+    PrintAt(200, 192, "E");
     grSetColor(1);
-    PrintAt(0,0,"XIT");
+    PrintAt(0, 0, "XIT");
     grSetColor(9);
-    PrintAt(268,192,"S");
+    PrintAt(268, 192, "S");
     grSetColor(1);
-    PrintAt(0,0,"CRUB");
+    PrintAt(0, 0, "CRUB");
     PrintAt(263, 13, "ASSIGN");
-    grSetColor(9); 
-    PrintAt(18,136,"P");
-    grSetColor(1); 
-    PrintAt(0,0,"RIMARY:");
+    grSetColor(9);
+    PrintAt(18, 136, "P");
+    grSetColor(1);
+    PrintAt(0, 0, "RIMARY:");
     PrintAt(24, 148, "KICKER:");
     PrintAt(42, 160, "L.M.:");
     PrintAt(16, 172, "PAYLOAD:");
-    grSetColor(9); 
-    PrintAt(22,188,"R");
-    grSetColor(1); 
-    PrintAt(0,0,"OCKET:     ");
+    grSetColor(9);
+    PrintAt(22, 188, "R");
+    grSetColor(1);
+    PrintAt(0, 0, "OCKET:     ");
 
     Name[0] = 'A' + pad;
     Name[1] = 0x00;
@@ -951,13 +951,15 @@ begvab:
     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
     RectFill(7, 87, 162, 93, 3);
     grSetColor(9);
-    PrintAt(13,92,"A");
+    PrintAt(13, 92, "A");
     grSetColor(1);
-    if (hasDelay==0 || TotalCost>Data->P[plr].Cash) {
+
+    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
         grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
     }
-    PrintAt(0,0,"UTOPURCHASE (");
-    DispNum(0,0,TotalCost);
+
+    PrintAt(0, 0, "UTOPURCHASE (");
+    DispNum(0, 0, TotalCost);
     PrintAt(0, 0, " OF ");
     DispMB(0, 0, Data->P[plr].Cash);
     PrintAt(0, 0, ")");
@@ -1026,14 +1028,16 @@ begvab:
                     TotalCost = FillVab(plr, ccc, 0);
                     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                     RectFill(7, 87, 162, 93, 3);
-                    grSetColor(9); 
-                    PrintAt(13,92,"A");
-                    grSetColor(1); 
-                    if (hasDelay==0 || TotalCost>Data->P[plr].Cash) {
+                    grSetColor(9);
+                    PrintAt(13, 92, "A");
+                    grSetColor(1);
+
+                    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                         grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
                     }
-                    PrintAt(0,0,"UTOPURCHASE (");
-                    DispNum(0,0,TotalCost);
+
+                    PrintAt(0, 0, "UTOPURCHASE (");
+                    DispNum(0, 0, TotalCost);
                     PrintAt(0, 0, " OF ");
                     DispMB(0, 0, Data->P[plr].Cash);
                     PrintAt(0, 0, ")");
@@ -1120,7 +1124,7 @@ begvab:
                         j++;
 
                         if (((Data->P[plr].Probe[VAS[ccc][3].dex].Num - Data->P[plr].Probe[VAS[ccc][3].dex].Spok) > 0)
-                        || ((Data->P[plr].Misc[VAS[ccc][3].dex].Num - Data->P[plr].Misc[VAS[ccc][3].dex].Spok) > 0)) {
+                            || ((Data->P[plr].Misc[VAS[ccc][3].dex].Num - Data->P[plr].Misc[VAS[ccc][3].dex].Spok) > 0)) {
                             j2++;
                         }
                     }
@@ -1204,13 +1208,15 @@ begvab:
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                 RectFill(7, 87, 162, 93, 3);
                 grSetColor(9);
-                PrintAt(13,92,"A");
-                grSetColor(1); 
-                if (hasDelay==0 || TotalCost>Data->P[plr].Cash) {
+                PrintAt(13, 92, "A");
+                grSetColor(1);
+
+                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                     grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
-                PrintAt(0,0,"UTOPURCHASE (");
-                DispNum(0,0,TotalCost);
+
+                PrintAt(0, 0, "UTOPURCHASE (");
+                DispNum(0, 0, TotalCost);
                 PrintAt(0, 0, " OF ");
                 DispMB(0, 0, Data->P[plr].Cash);
                 PrintAt(0, 0, ")");
@@ -1256,13 +1262,15 @@ begvab:
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                 RectFill(7, 87, 162, 93, 3);
                 grSetColor(9);
-                PrintAt(13,92,"A");
-                grSetColor(1); 
-                if (hasDelay==0 || TotalCost>Data->P[plr].Cash) {
+                PrintAt(13, 92, "A");
+                grSetColor(1);
+
+                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                     grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
-                PrintAt(0,0,"UTOPURCHASE (");
-                DispNum(0,0,TotalCost);
+
+                PrintAt(0, 0, "UTOPURCHASE (");
+                DispNum(0, 0, TotalCost);
                 PrintAt(0, 0, " OF ");
                 DispMB(0, 0, Data->P[plr].Cash);
                 PrintAt(0, 0, ")");

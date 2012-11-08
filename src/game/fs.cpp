@@ -144,7 +144,7 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
         len2 = len_base + len_name + len_p + 3;
 
         if (len2 > len) {
-            cooked = (char*)xrealloc(cooked, (len = len2));
+            cooked = (char *)xrealloc(cooked, (len = len2));
         }
 
         if (strlen(p)) {

@@ -2149,6 +2149,7 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
         default:
             break;
         }
+
         break;
 
     case 4:

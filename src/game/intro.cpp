@@ -123,7 +123,7 @@ void Credits(void)
 
     FadeOut(2, pal, 30, 0, 0);
 
-    FILE * fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
+    FILE *fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
     display::PNGImage image(fp);
     fclose(fp);
 
@@ -185,9 +185,11 @@ void Introd(void)
         char filename[64];
         snprintf(filename, sizeof(filename), "first.img.%i.png", k);
 
-        FILE * fp = sOpen(filename, "rb", FT_IMAGE);
-        if (!fp)
+        FILE *fp = sOpen(filename, "rb", FT_IMAGE);
+
+        if (!fp) {
             break;
+        }
 
         display::PNGImage image(fp);
         fclose(fp);

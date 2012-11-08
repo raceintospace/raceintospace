@@ -20,7 +20,7 @@
 #define __BUZZ_INC_H__ 1
 
 extern "C" {
-int game_main(int argc, char *argv[]);
+    int game_main(int argc, char *argv[]);
 }
 
 #ifdef __GNUG__

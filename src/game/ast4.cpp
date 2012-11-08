@@ -337,21 +337,21 @@ void DrawProgs(char plr, char prog)
     }
 
     FlagSm(plr, 4, 4);
-    grSetColor(9); 
-    PrintAt(250,96,"A");
-    grSetColor(1); 
-    PrintAt(0,0,"SSIGN CREW");
-    grSetColor(9); 
-    PrintAt(252,114,"B");
-    grSetColor(1); 
-    PrintAt(0,0,"REAK CREW");
+    grSetColor(9);
+    PrintAt(250, 96, "A");
+    grSetColor(1);
+    PrintAt(0, 0, "SSIGN CREW");
+    grSetColor(9);
+    PrintAt(252, 114, "B");
+    grSetColor(1);
+    PrintAt(0, 0, "REAK CREW");
     PrintAt(258, 13, "CONTINUE");
-    grSetColor(5); 
-    PrintAt(183,133,"FLIGHT ");
-    grSetColor(9); 
-    PrintAt(0,0,"C");
-    grSetColor(5); 
-    PrintAt(0,0,"REW SELECTION");
+    grSetColor(5);
+    PrintAt(183, 133, "FLIGHT ");
+    grSetColor(9);
+    PrintAt(0, 0, "C");
+    grSetColor(5);
+    PrintAt(0, 0, "REW SELECTION");
     grSetColor(7);
     PrintAt(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
     grSetColor(9);

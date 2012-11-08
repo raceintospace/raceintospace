@@ -47,9 +47,9 @@ void BCDraw(int y)
 int MainMenuChoice()
 {
     struct {
-        const char * label;
+        const char *label;
         int y;
-        const char * hotkeys;
+        const char *hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9, "N" },
         { "OLD GAME", 36, "O" },
@@ -57,34 +57,34 @@ int MainMenuChoice()
         { "EXIT", 90, "EXQ" }
     };
     const int menu_option_count = sizeof(menu_options) / sizeof(menu_options[0]);
-    
+
     int selected_option = -1;
 
     {
-        FILE * fp = sOpen("main_menu.png", "rb", FT_IMAGE);
+        FILE *fp = sOpen("main_menu.png", "rb", FT_IMAGE);
         display::PNGImage image(fp);
         fclose(fp);
 
         image.export_to_legacy_palette();
         image.draw();
     }
-    
+
     for (int i = 0; i < menu_option_count; i++) {
         ShBox(21, menu_options[i].y, 180, menu_options[i].y + 25);
         DispBig(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
     }
-    
+
     FadeIn(2, pal, 30, 0, 0);
     WaitForMouseUp();
-    
+
     while (selected_option == -1) {
         GetMouse();
-        
+
         if (key) {
             // Check for hotkeys
             for (int i = 0; i < menu_option_count; i++) {
                 // Iterate over each hotkey
-                for (const char * hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
+                for (const char *hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
                     if (*hotkey == key) {
                         // Match!
                         selected_option = i;
@@ -93,7 +93,7 @@ int MainMenuChoice()
                 }
             }
         }
-        
+
         if (mousebuttons) {
             for (int i = 0; i < menu_option_count; i++) {
                 if (x >= 21 && x <= 180 && y >= menu_options[i].y && y <= menu_options[i].y + 27) {
@@ -106,10 +106,10 @@ int MainMenuChoice()
 
     // Draw a highlighted box
     InBox(21, menu_options[selected_option].y, 180, menu_options[selected_option].y + 25);
-    
+
     // Let it sink in
     delay(50);
-    
+
     // Pass back the selected option
     key = 0;
     return selected_option;
@@ -197,7 +197,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     SwapPatchHdrSmall(&P);
     fseek(in, P.offset, SEEK_SET);
 
-    if (P.w *P.h != P.size) {
+    if (P.w * P.h != P.size) {
         /* fprintf(stderr, "PatchMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
                 P.w, P.h, P.w*P.h, P.size); */
         if ((P.w + 1) * P.h == P.size) {
@@ -323,7 +323,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     SwapPatchHdrSmall(&P);
     fseek(in, P.offset, SEEK_SET);
 
-    if (P.w *P.h != P.size) {
+    if (P.w * P.h != P.size) {
         /* fprintf(stderr, "SmHardMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
                 P.w, P.h, P.w*P.h, P.size); */
         if ((P.w + 1) * P.h == P.size) {
@@ -900,11 +900,11 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
 
-    IOBox(214,134,310,148); 
+    IOBox(214, 134, 310, 148);
     grSetColor(9);
-    PrintAt(224,143,"R");
+    PrintAt(224, 143, "R");
     grSetColor(1);
-    PrintAt(0,0,"EPLAY MISSION");
+    PrintAt(0, 0, "EPLAY MISSION");
 
     if (mode == 0) {
         IOBox(214, 151, 310, 165);

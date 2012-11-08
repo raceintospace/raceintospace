@@ -138,7 +138,7 @@ enum EquipProbeIndex {
     PROBE_HW_ORBITAL,        // 0
     PROBE_HW_INTERPLANETARY, // 1
     PROBE_HW_LUNAR           // 2
-    };
+};
 
 enum EquipRocketIndex {
     ROCKET_HW_ONE_STAGE,   // 0

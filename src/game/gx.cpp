@@ -22,7 +22,7 @@ gxCreateVirtual(int mode, GXHEADER *hp,
     memset(hp, 0, sizeof * hp);
     hp->w = w;
     hp->h = h;
-    hp->vptr = (unsigned char*)xmalloc(w * h);
+    hp->vptr = (unsigned char *)xmalloc(w * h);
     return gxSUCCESS;
 }
 
