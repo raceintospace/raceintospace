@@ -1005,7 +1005,7 @@ ShowEvt(char plr, char crd)
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
         fread(&pal[384], 384, 1, ffin);
-        fread(screen, (size_t) min(length, MAX_X * 110), 1, ffin);
+        fread(screen, (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }
 

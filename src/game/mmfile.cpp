@@ -312,8 +312,8 @@ yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
     assert(yuv);
     assert(ovl);
 
-    h = min(mf->video_info->frame_height, (unsigned) ovl->h);
-    w = min(mf->video_info->frame_width, (unsigned) ovl->w);
+    h = MIN(mf->video_info->frame_height, (unsigned) ovl->h);
+    w = MIN(mf->video_info->frame_width, (unsigned) ovl->w);
     xoff = mf->video_info->offset_x;
     yoff = mf->video_info->offset_y;
 
@@ -642,7 +642,7 @@ mm_decode_audio(mm_file *mf, void *buf, int buflen)
             int i = 0;
             unsigned ch = 0;
 
-            samples = min(samples, left);
+            samples = MIN(samples, left);
 
             for (i = 0; i < samples; ++i) {
                 for (ch = 0; ch < channels; ++ch) {

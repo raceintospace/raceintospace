@@ -133,7 +133,7 @@ audio_callback(void *userdata, Uint8 *stream, int len)
 
             while (ac) {
                 int bytes =
-                    min(len - pos, (int) ac->size - (int) chp->offset);
+                    MIN(len - pos, (int) ac->size - (int) chp->offset);
 
                 int i = 0;
                 int16_t *dst = (int16_t *)(stream + pos);
@@ -894,7 +894,7 @@ intersect_area(SDL_Rect *first, SDL_Rect *second)
     if (first->x + first->w < second->x) {
         return 0;
     } else {
-        isect_w = min(second->w, first->x + first->w - second->x);
+        isect_w = MIN(second->w, first->x + first->w - second->x);
     }
 
     if (first->y > second->y) {
@@ -906,7 +906,7 @@ intersect_area(SDL_Rect *first, SDL_Rect *second)
     if (first->y + first->h < second->y) {
         return 0;
     } else {
-        isect_h = min(second->h, first->y + first->h - second->y);
+        isect_h = MIN(second->h, first->y + first->h - second->y);
     }
 
     return isect_h * isect_w;

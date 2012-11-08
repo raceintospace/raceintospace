@@ -4,12 +4,12 @@
 
 #define ARRAY_LENGTH(arr) ((sizeof (arr)) / (sizeof ((arr)[0])))
 
-#ifndef min
-#define min(a, b) (((a) <= (b)) ? (a) : (b))
+#ifndef MIN
+#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 #endif
 
-#ifndef max
-#define max(a, b) (((a) >= (b)) ? (a) : (b))
+#ifndef MAX
+#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #endif
 
 #define STRINGIFY(x) _STRINGIFY(x)

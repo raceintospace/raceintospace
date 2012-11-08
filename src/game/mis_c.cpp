@@ -1648,7 +1648,7 @@ int RocketBoosterSafety(int safetyRocket, int safetyBooster)
     }
 
     if (options.boosterSafety == 1) {
-        return (min(safetyRocket, safetyBooster));
+        return (MIN(safetyRocket, safetyBooster));
     } else {
         return ((safetyRocket + safetyBooster) / 2);
     }

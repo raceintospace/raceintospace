@@ -189,7 +189,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         if (j > 0) {
             /* If found, pick one skill at random */
             char *skill = skills[choices[random(j)]];
-            *skill = min(*skill + delta, skillMax);
+            *skill = MIN(*skill + delta, skillMax);
         }
 
         /* Not sure why do it here, but let's keep it */
@@ -232,7 +232,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
         /* Increase trained skill by 2 */
         char *skill = skills[astro->Focus - 1];
-        *skill = min(*skill + 2, skillMax);
+        *skill = MIN(*skill + 2, skillMax);
 
         break;
     }

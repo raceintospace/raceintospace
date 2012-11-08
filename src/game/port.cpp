@@ -1004,10 +1004,10 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
         }
 
         screen[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
-        min_x = min(min_x, outline[i] % MAX_X);
-        min_y = min(min_y, outline[i] / MAX_X);
-        max_x = max(max_x, outline[i] % MAX_X);
-        max_y = max(max_y, outline[i] / MAX_X);
+        min_x = MIN(min_x, outline[i] % MAX_X);
+        min_y = MIN(min_y, outline[i] / MAX_X);
+        max_x = MAX(max_x, outline[i] % MAX_X);
+        max_y = MAX(max_y, outline[i] / MAX_X);
     }
 
     if (Count) {
@@ -1025,10 +1025,10 @@ PortRestore(unsigned int Count)
     for (i = 0; i < Count; i++) {
         loc = pPortOutlineRestore[i].loc;
         screen[loc] = pPortOutlineRestore[i].val;
-        min_x = min(min_x, loc % MAX_X);
-        min_y = min(min_y, loc / MAX_X);
-        max_x = max(max_x, loc % MAX_X);
-        max_y = max(max_y, loc / MAX_X);
+        min_x = MIN(min_x, loc % MAX_X);
+        min_y = MIN(min_y, loc / MAX_X);
+        max_x = MAX(max_x, loc % MAX_X);
+        max_y = MAX(max_y, loc / MAX_X);
     }
 
     if (Count) {
