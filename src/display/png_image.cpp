@@ -2,6 +2,8 @@
 #include <zlib.h>
 #include <assert.h>
 
+#include <boost/format.hpp>
+#include <string>
 #include <stdexcept>
 
 #include "png_image.h"
@@ -209,6 +211,31 @@ void PNGImage::draw(int x, int y)
     for (int i = 0; i < height_to_copy; i++) {
         // this assumes an 8-bit screen buffer and 8-bit pixel_data, both with no padding
         memcpy(&screen[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
+    }
+}
+
+#define formatted_libpng_version(version) ((boost::format("%1%.%2%.%3%") % (version / 10000) % ((version / 100) % 100) % (version % 100)).str())
+
+std::string PNGImage::libpng_runtime_version()
+{
+    png_uint_32 version = png_access_version_number();
+    return formatted_libpng_version(version);
+}
+
+std::string PNGImage::libpng_headers_version()
+{
+    return formatted_libpng_version(PNG_LIBPNG_VER);
+}
+
+bool PNGImage::libpng_versions_match()
+{
+    if (PNG_LIBPNG_VER > 10000) {
+        // xx.yy.zz = xxyyzz
+        // compare only on xx.yy
+        return (png_access_version_number() / 100) == (PNG_LIBPNG_VER / 100);
+    } else {
+        // who knows?
+        return png_access_version_number() == PNG_LIBPNG_VER;
     }
 }
 

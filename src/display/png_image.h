@@ -5,6 +5,8 @@
 
 #include "display/palette.h"
 
+#include <string>
+
 namespace display {
 
 class PNGImage
@@ -35,6 +37,10 @@ public:
     
     // draw this PNG onto the global screen
     void draw(int x = 0, int y = 0);
+    
+    static std::string libpng_headers_version();
+    static std::string libpng_runtime_version();
+    static bool libpng_versions_match();
     
 protected:
     // these exist just long enough to read everything in the constructor
