@@ -4,6 +4,7 @@
 #include "palette.h"
 
 // the global palette, defined somewhere in RIS
+// as an array, it is unaffected by structure packing
 extern unsigned char pal[3 * 256];
 
 namespace display {

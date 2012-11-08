@@ -41,7 +41,6 @@ protected:
 
 // Presents a PaletteInterface for the "pal" 768-byte { r, g, b } array, where r/g/b
 // have 6 significant bits but use 8 in RAM
-#pragma pack( push, 1 )
 class LegacyPalette : public PaletteInterface
 {
 public:
@@ -51,7 +50,6 @@ public:
     virtual void set(uint8_t index, const Color& color);
     virtual const Color get(uint8_t index) const;
 };
-#pragma pack( pop )
 
 extern LegacyPalette legacy_palette;
 
