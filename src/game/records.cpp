@@ -18,7 +18,6 @@
 
 #include "Buzz_inc.h"
 #include "records.h"
-#include "externs.h"
 #include "logging.h"
 #include "hardef.h"
 #include "game_main.h"
@@ -26,6 +25,7 @@
 #include "port.h"
 #include "replay.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

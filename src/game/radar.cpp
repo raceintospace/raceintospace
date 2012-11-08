@@ -26,11 +26,11 @@
 #include "radar.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "future.h"
 #include "game_main.h"
 #include "news_suq.h"
 #include "place.h"
+#include "sdlhelper.h"
 
 void PadDraw(char plr, char pad);
 void PadPict(char poff);

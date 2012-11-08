@@ -27,7 +27,6 @@
 #include "news.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "macros.h"
 #include "av.h"
 #include "mmfile.h"

@@ -27,12 +27,12 @@
 
 #include "ast3.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "options.h"
 #include "ast0.h"
 #include "game_main.h"
 #include "place.h"
 #include "replay.h"
+#include "sdlhelper.h"
 
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);

@@ -25,7 +25,6 @@
 
 #include "mis_m.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "mis.h"
 #include "utils.h"
 #include "options.h"
@@ -33,6 +32,7 @@
 #include "game_main.h"
 #include "mc.h"
 #include "mis_c.h"
+#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 

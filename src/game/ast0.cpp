@@ -27,6 +27,7 @@
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "place.h"
+#include "sdlhelper.h"
 
 char MCol[110];
 char sel[30];

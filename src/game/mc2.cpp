@@ -25,7 +25,6 @@
 
 #include "mc2.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "macros.h"
 #include "logging.h"
 #include "options.h"

@@ -24,7 +24,6 @@
 //
 #include "mc.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "mis.h"
 #include "av.h"
 #include "mc2.h"
@@ -36,6 +35,7 @@
 #include "records.h"
 #include "game_main.h"
 #include "mis_c.h"
+#include "sdlhelper.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]

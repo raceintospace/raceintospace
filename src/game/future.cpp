@@ -21,7 +21,6 @@
 #include "future.h"
 #include <assert.h>
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "logging.h"
 #include "admin.h"
 #include "crew.h"
@@ -31,6 +30,7 @@
 #include "prest.h"
 #include "records.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;

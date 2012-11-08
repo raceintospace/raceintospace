@@ -17,7 +17,6 @@
 */
 #include "newmis.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "game_main.h"
 #include "mis_c.h"
 #include "place.h"
@@ -25,6 +24,7 @@
 #include "radar.h"
 #include "mc.h"
 #include "rush.h"
+#include "sdlhelper.h"
 
 struct order Order[7] ;
 unsigned int colss, VBlank;

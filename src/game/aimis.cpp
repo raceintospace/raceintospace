@@ -26,7 +26,6 @@
 
 #include "aimis.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "aipur.h"
 #include "game_main.h"
 #include "mis_c.h"

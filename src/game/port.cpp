@@ -26,7 +26,6 @@
 #include "port.h"
 #include "Buzz_inc.h"
 #include "gamedata.h"
-#include "externs.h"
 #include "macros.h"
 #include "av.h"
 #include "utils.h"
@@ -147,7 +146,8 @@ struct sIMG {
 
 
 
-int16_t sCount, Vab_Spot;       // sCount is the number of steps
+int16_t sCount;     // sCount is the number of steps
+int16_t Vab_Spot;       
 FILE *sFin;
 SimpleHdr hSPOT;  // Filled by Seek_sOff();
 struct sPATH sPath, sPathOld;

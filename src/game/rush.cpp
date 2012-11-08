@@ -25,10 +25,10 @@
 
 #include "rush.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "game_main.h"
 #include "place.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 // Function Prototype
 

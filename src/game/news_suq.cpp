@@ -17,12 +17,12 @@
 */
 #include "news_suq.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "game_main.h"
 #include "news_sup.h"
 #include "place.h"
 #include "radar.h"
 #include "mc.h"
+#include "news.h"
 
 void Replace_Snaut(char plr);
 

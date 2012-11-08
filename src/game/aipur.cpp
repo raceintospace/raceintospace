@@ -27,7 +27,6 @@
 
 #include "aipur.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "hardef.h"
 #include "game_main.h"
@@ -35,6 +34,7 @@
 #include "port.h"
 #include "rdplex.h"
 #include "records.h"
+#include "sdlhelper.h"
 
 struct ManPool *Men;
 char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5

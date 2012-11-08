@@ -27,7 +27,6 @@
 
 #include "aimast.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "aimis.h"
 #include "aipur.h"
 #include "vab.h"

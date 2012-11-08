@@ -27,11 +27,11 @@
 #include "review.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "game_main.h"
 #include "place.h"
 #include "port.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 void DrawReview(char plr);
 void PresPict(char poff);

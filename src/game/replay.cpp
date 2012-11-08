@@ -25,12 +25,12 @@
 #include "replay.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include <assert.h>
 #include "mmfile.h"
 #include "av.h"
 #include "logging.h"
 #include "game_main.h"
+#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

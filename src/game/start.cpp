@@ -25,7 +25,6 @@
 
 #include "start.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "options.h"
 #include "prest.h"
 #include "game_main.h"

@@ -67,7 +67,6 @@ int game_main(int argc, char *argv[]);
 #pragma pack(1)
 
 #include "data.h"     // main data structures
-#include "externs.h"
 
 /* get the alignment back to defaults */
 /* #pragma pack() */

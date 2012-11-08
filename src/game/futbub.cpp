@@ -25,7 +25,6 @@
 
 #include "futbub.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "future.h"
 #include "game_main.h"
 

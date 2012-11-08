@@ -26,7 +26,6 @@
 #include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "mis.h"
 #include "av.h"
 #include "mmfile.h"

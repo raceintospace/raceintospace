@@ -28,6 +28,7 @@
 #include "ast4.h"
 #include "game_main.h"
 #include "place.h"
+#include "sdlhelper.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 

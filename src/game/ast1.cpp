@@ -27,12 +27,12 @@
 
 #include "ast1.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
 #include "game_main.h"
 #include "place.h"
 #include "ast0.h"
 #include "aipur.h"
+#include "sdlhelper.h"
 
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);

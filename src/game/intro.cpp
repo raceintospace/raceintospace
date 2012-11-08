@@ -26,11 +26,11 @@
 #include "display/png_image.h"
 
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "utils.h"
 #include "logging.h"
 #include "intro.h"
 #include "game_main.h"
+#include "sdlhelper.h"
 
 GXHEADER local2;
 

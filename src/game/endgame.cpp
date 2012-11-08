@@ -20,7 +20,6 @@
 
 #include "endgame.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "aipur.h"
 #include "future.h"
 #include "game_main.h"
@@ -29,6 +28,7 @@
 #include "newmis.h"
 #include "start.h"
 #include "mis_c.h"
+#include "sdlhelper.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20

@@ -21,7 +21,6 @@
 #include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "av.h"
 #include "utils.h"
 #include "game_main.h"
@@ -31,6 +30,7 @@
 #include "mc.h"
 #include "mis_c.h"
 #include "endgame.h"
+#include "sdlhelper.h"
 
 
 void BCDraw(int y);

@@ -26,7 +26,6 @@
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "future.h"
 #include "intel.h"
 #include "game_main.h"
@@ -34,6 +33,7 @@
 #include "port.h"
 #include "rdplex.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 // imported from CODENAME.DAT
 const char * code_names[] = {

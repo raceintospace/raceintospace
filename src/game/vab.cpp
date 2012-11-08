@@ -30,7 +30,6 @@
 #include "vab.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "utils.h"
 #include "logging.h"
 #include "options.h"
@@ -41,10 +40,12 @@
 #include "place.h"
 #include "radar.h"
 #include "mc.h"
+#include "game_main.h"
+#include "sdlhelper.h"
+#include "port.h"
 
 struct VInfo VAS[7][4];
 int VASqty;
-extern int16_t Vab_Spot;
 int TotalCost;
 char hasDelay;//Used  to display the cost of autopurchase
 

@@ -39,6 +39,7 @@ extern char manOnMoon;
 extern char dayOnMoon;
 extern int SEG;
 extern GXHEADER vhptr;
+extern GXHEADER vhptr2;
 extern char BIG;
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern unsigned char AL_CALL;
@@ -49,7 +50,18 @@ extern int oldy;
 extern unsigned char HARD1;
 extern unsigned char UNIT1;
 extern unsigned char BUTLOAD;
+extern unsigned char LOAD;
+extern unsigned char QUIT;
+extern unsigned char FADE;
 extern char plr[NUM_PLAYERS];
-
+extern struct Players *Data;
+extern int x;
+extern int y;
+extern int mousebuttons;
+extern int key;
+extern char Name[20];
+extern char *buffer;
+extern int32_t xMODE;
+extern char *S_Name[];
 
 #endif // GAME_MAIN_H

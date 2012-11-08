@@ -29,7 +29,6 @@
 
 #include "admin.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "av.h"
 #include "utils.h"
 #include "logging.h"
@@ -42,6 +41,7 @@
 #include "prefs.h"
 #include "rdplex.h"
 #include "mc.h"
+#include "sdlhelper.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2

@@ -1,6 +1,6 @@
 #include "Buzz_inc.h"
-#include "externs.h"
 #include <assert.h>
+#include "sdlhelper.h"
 
 int
 grGetMouseButtons(void)

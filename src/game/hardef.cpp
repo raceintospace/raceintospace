@@ -26,12 +26,12 @@
 // Museum Main Files
 
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "hardef.h"
 #include "intel.h"
 #include "game_main.h"
 #include "port.h"
 #include "rdplex.h"
+#include "sdlhelper.h"
 
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);

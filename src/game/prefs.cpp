@@ -26,12 +26,12 @@
 #include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include <assert.h>
 #include "options.h"
 #include "game_main.h"
 #include "randomize.h"
 #include "aipur.h"
+#include "sdlhelper.h"
 
 struct ManPool *Sov;
 char M_Us[106], M_Sv[106];

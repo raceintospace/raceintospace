@@ -26,7 +26,6 @@
 
 #include "museum.h"
 #include "Buzz_inc.h"
-#include "externs.h"
 #include "hardef.h"
 #include "game_main.h"
 #include "place.h"
@@ -36,6 +35,7 @@
 #include "mc.h"
 #include "start.h"
 #include "rush.h"
+#include "sdlhelper.h"
 
 #define DELAYCNT 50
 

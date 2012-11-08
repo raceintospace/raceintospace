@@ -27,11 +27,11 @@
 
 #include "Buzz_inc.h"
 #include "rdplex.h"
-#include "externs.h"
 #include "options.h"
 #include "ast4.h"
 #include "game_main.h"
 #include "place.h"
+#include "sdlhelper.h"
 
 int call, wh;
 GXHEADER but, mans;

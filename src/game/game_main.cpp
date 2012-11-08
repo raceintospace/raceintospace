@@ -31,7 +31,6 @@
 #include "options.h"
 #include "utils.h"
 #include "logging.h"
-#include "externs.h"
 #include <ctype.h>
 #include "admin.h"
 #include "aimast.h"
@@ -54,6 +53,7 @@
 #include "review.h"
 #include "start.h"
 #include "pace.h"
+#include "sdlhelper.h"
 
 #include "display/png_image.h"
 
