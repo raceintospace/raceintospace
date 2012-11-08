@@ -60,7 +60,7 @@
 #  if HAVE_SDL_GETENV
 #    define getenv SDL_getenv
 #  else
-#    warn I dont know a way to read environment on this system
+#    warn I don't know a way to read environment on this system
 #    define getenv(a) (NULL)
 #  endif
 #endif
@@ -69,7 +69,7 @@ game_options options;
 
 LOG_DEFAULT_CATEGORY(config)
 
-/*set-up array for environment vars */
+/*set up array for environment vars */
 static struct {
     char *name;
     char **dest;
@@ -132,11 +132,11 @@ static struct {
     },   // No Backup crew required -Leon
     {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
-        "Set to non-zero to disable damaged equipment (Will prevent future damage)."
+        "Set to non-zero to disable damaged equipment (will prevent future damage)."
     },
     {
         "random_eq", &options.feat_random_eq, "%u", 0,
-        "Set to non-zero to enable random equipment Model (Will break game balance and possibly break the AI)."
+        "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
     },
     {
         "eq_name_change", &options.feat_eq_new_name, "%u", 0,
@@ -144,15 +144,15 @@ static struct {
     },
     {
         "altasLunar", &options.cheat_altasOnMoon, "%u", 0,
-        "Set to non-zero to enable Altas rockets in lunar missions."
+        "Set to non-zero to enable Atlas rockets in lunar missions."
     },
     {
         "succesRDMax", &options.cheat_addMaxS, "%u", 0,
-        "Set to zero to make MaxRD not change with succesful missions."
+        "Set to zero to make MaxRD not change with successful missions."
     },
     {
         "boosterSafety", &options.boosterSafety, "%u", 0,
-        "0: Stadistical Safety (default) - 1: Min Safety - 2: Average Safety"
+        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety"
     },
 };
 
@@ -515,7 +515,7 @@ setup_options(int argc, char *argv[])
         shift_argv(argv + pos, argc - pos, 1);
 
         /*
-         * now we have one less arg, pos points to the next arg,
+         * now we have one fewer arg, pos points to the next arg,
          * keep it this way after incrementing it on top of the loop
          */
         pos--;

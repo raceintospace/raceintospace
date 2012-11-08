@@ -155,7 +155,7 @@ void DrawLimbo(char plr)
     PrintAt(187, 37, "OPERATION SELECTION");
 
     grSetColor(20);
-    //PrintAt(258,13,"CONTINUE");
+    //PrintAt(256,13,"CONTINUE");
     PrintAt(15, 37, "NAME:");
     PrintAt(17, 118, "GROUP:");
     PrintAt(88, 118, "TENURE:");

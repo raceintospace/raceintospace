@@ -297,7 +297,7 @@ void ShowPrest(char plr)
     PrintAt(212, 120, "SUBS:");
     PrintAt(254, 120, "FAIL:");
     grSetColor(1);
-    PrintAt(257, 13, "CONTINUE");
+    PrintAt(255, 13, "CONTINUE");
     PrintAt(17, 39, "FIRST:");
     PrintAt(19, 81, "DATE:");
     grSetColor(11);
@@ -984,8 +984,8 @@ void ShowAstrosHist(char plr)
 
     FadeOut(2, pal, 5, 0, 0);
     RectFill(1, 39, 157, 184, 3);
-    DispBig(65, 71, "NO", 0, -1);
-    DispBig(42, 90, "MISSION", 0, -1);
+    DispBig(68, 71, "NO", 0, -1);
+    DispBig(46, 90, "MISSION", 0, -1);
     DispBig(27, 109, "EXPERIENCE", 0, -1);
     gxGetImage(&vhptr2, 22, 69, 133, 123, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
@@ -1010,7 +1010,7 @@ void ShowAstrosHist(char plr)
     }
 
     grSetColor(1);
-    PrintAt(259, 13, "CONTINUE");
+    PrintAt(257, 13, "CONTINUE");
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
     InBox(233, 29, 314, 80);

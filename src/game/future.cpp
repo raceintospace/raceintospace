@@ -42,7 +42,7 @@ static inline char B_Mis(char x)
 /*missStep.dat is plain text, with:
 Mission Number (2 first bytes of each line)
 A Coded letter, each drawing a different line (1105-1127 for all possible letters)
-Numbers folowing each letter, which are the parameters of the function
+Numbers following each letter, which are the parameters of the function
 Each line must finish with a Z, so the game stops reading
 Any other char is ignored, but it's easier to read for a human that way */
 
@@ -65,7 +65,7 @@ struct Parameter {
     char D;   /**< JOINT */
     char E;     /**< MANNED/UNMANNED/Duration 0==unmanned 1-6==duration */
     char X;     /**< the type of mission for assign crew and hardware */
-    char Z;   /**< A duaration mission only */
+    char Z;   /**< A duration mission only */
 } V[62];
 
 extern int SEG;
