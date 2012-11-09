@@ -269,7 +269,7 @@ int game_main_impl(int argc, char *argv[])
         switch (MainMenuChoice()) {
         case 0:  // New Game
             LOAD = QUIT = 0, BUTLOAD = 0;
-            HARD1 = UNIT1 = 1;
+            HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
             strcpy(helptextIndex, "i013");
@@ -298,7 +298,7 @@ int game_main_impl(int argc, char *argv[])
 
         case 1: // Play Old Game
             LOAD = QUIT = BUTLOAD = 0;
-            HARD1 = UNIT1 = 1;
+            HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
             FileAccess(1);

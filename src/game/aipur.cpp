@@ -868,8 +868,8 @@ void RDafford(char plr, int equipment_class, int index)
 
     while (ok == 0 && roll != 0) {
         if ((cost * roll <= pData->Cash) && QueryUnit(equipment_class, index, plr) == 1
-            && MaxChk(equipment_class + 1, index + 1, plr)) {
-            pData->Buy[equipment_class][index] = RDUnit(equipment_class + 1, index + 1, roll, plr);
+            && MaxChk(equipment_class, index, plr)) {
+            pData->Buy[equipment_class][index] = RDUnit(equipment_class, index, roll, plr);
             pData->Cash = (pData->Cash - (cost * roll));
             ok = 1; // jump out of the loop
         } else {
