@@ -1,6 +1,8 @@
 #ifndef __ENDIANNESS_H__
 #define __ENDIANNESS_H__
 
+#include <boost/detail/endian.hpp>
+
 #include "data.h"
 
 uint32_t _Swap32bit(uint32_t value);
@@ -11,7 +13,7 @@ void _SwapEquipment(void);
 void _SwapPatchHdr(PatchHdr *hdr);
 void _SwapPatchHdrSmall(PatchHdrSmall *hdr);
 
-#ifdef __BIG_ENDIAN__
+#ifdef BOOST_BIG_ENDIAN
 
 #define Swap32bit(a)  (a) = _Swap32bit((a))
 #define Swap16bit(a)  (a) = _Swap16bit((a))
@@ -22,7 +24,7 @@ void _SwapPatchHdrSmall(PatchHdrSmall *hdr);
 #define SwapPatchHdrSmall(a) _SwapPatchHdrSmall((a))
 
 #else
-#ifdef __LITTLE_ENDIAN__
+#ifdef BOOST_LITTLE_ENDIAN
 
 #define Swap32bit(a)
 #define Swap16bit(a)
