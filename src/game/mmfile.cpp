@@ -610,8 +610,8 @@ mm_decode_video(mm_file *mf, SDL_Overlay *ovl)
 int
 mm_decode_audio(mm_file *mf, void *buf, int buflen)
 {
-    const int max_val = INT16_MAX;
-    const int min_val = INT16_MIN;
+    const int max_val = 32767;
+    const int min_val = -32768;
     const int bytes_per_sample = 2;
 
     int rv = 0, samples = 0, left = 0, total = 0;
