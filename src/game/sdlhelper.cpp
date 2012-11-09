@@ -308,7 +308,7 @@ av_setup(void)
     }
 
 #ifdef SET_SDL_ICON
-
+    char * icon_path;
     if ((icon_path = locate_file("moon_32x32.bmp", FT_IMAGE))) {
         SDL_Surface *icon = SDL_LoadBMP(icon_path);
 
