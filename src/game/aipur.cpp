@@ -37,6 +37,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 struct ManPool *Men;
 char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5
@@ -414,11 +415,11 @@ void AIRandomizeNauts()
     int i;
 
     for (i = 0; i < 106; i++) {
-        Men[i].Cap = random(5);
-        Men[i].LM  = random(5);
-        Men[i].EVA = random(5);
-        Men[i].Docking = random(5);
-        Men[i].Endurance = random(5);
+        Men[i].Cap = brandom(5);
+        Men[i].LM  = brandom(5);
+        Men[i].EVA = brandom(5);
+        Men[i].Docking = brandom(5);
+        Men[i].Endurance = brandom(5);
     }
 }
 
@@ -534,21 +535,21 @@ void SelectBest(char plr, int pos)
         pData->Pool[i + pData->AstroCount].oldAssign = -1;
         pData->Pool[i + pData->AstroCount].TrainingLevel = 1;
         pData->Pool[i + pData->AstroCount].Group = pData->AstroLevel;
-        pData->Pool[i + pData->AstroCount].CR = random(2) + 1;
-        pData->Pool[i + pData->AstroCount].CL = random(2) + 1;
+        pData->Pool[i + pData->AstroCount].CR = brandom(2) + 1;
+        pData->Pool[i + pData->AstroCount].CL = brandom(2) + 1;
         pData->Pool[i + pData->AstroCount].Task = 0;
         pData->Pool[i + pData->AstroCount].Crew = 0;
         pData->Pool[i + pData->AstroCount].Una = 0;
         pData->Pool[i + pData->AstroCount].Pool = 0;
-        pData->Pool[i + pData->AstroCount].Compat = random(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
+        pData->Pool[i + pData->AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
         pData->Pool[i + pData->AstroCount].Mood = 100;
-        pData->Pool[i + pData->AstroCount].Face = random(77);
+        pData->Pool[i + pData->AstroCount].Face = brandom(77);
 
         if (pData->Pool[i + pData->AstroCount].Sex == 1) {
-            pData->Pool[i + pData->AstroCount].Face = 77 + random(8);
+            pData->Pool[i + pData->AstroCount].Face = 77 + brandom(8);
         }
 
-        k = random(10) + 1;
+        k = brandom(10) + 1;
     };
 
     pData->AstroLevel++;
@@ -811,7 +812,7 @@ void CheckAdv(char plr)
     if (count <= 3) {
         for (int i = 0; i < pData->AstroCount; i++)
             if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
-                pData->Pool[i].Focus = random(4) + 1;
+                pData->Pool[i].Focus = brandom(4) + 1;
 
                 if (pData->Pool[i].Focus > 0) {
                     pData->Cash -= 3;

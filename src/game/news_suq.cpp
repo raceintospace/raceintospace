@@ -23,6 +23,8 @@
 #include "radar.h"
 #include "mc.h"
 #include "news.h"
+#include "pace.h"
+#include "endianness.h"
 
 void Replace_Snaut(char plr);
 
@@ -150,7 +152,7 @@ char REvent(char plr)
 
         fin = sOpen("NTABLE.DAT", "rb", 0);
         // This is ignoring the budget mods based on the selected game level.
-        fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + random(10)) , SEEK_SET);
+        fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + brandom(10)) , SEEK_SET);
         fread(&m, sizeof m, 1, fin);
         Swap16bit(m);
         //    m=BudgetMods[Data->P[plr].Level][(j*10)+random(10)];  // orig code
@@ -206,12 +208,12 @@ char REvent(char plr)
 
     case 30:
     case 32:
-        evflag = random(10) + 1;
+        evflag = brandom(10) + 1;
         Data->P[plr].Cash += evflag;
         break;
 
     case 31:
-        evflag = random(6) + random(6) + random(6) + 3;
+        evflag = brandom(6) + brandom(6) + brandom(6) + 3;
         Data->P[plr].Cash += evflag;
         break;
 
@@ -232,7 +234,7 @@ char REvent(char plr)
         break;
 
     case 45: // increase budget by total two 10 side dice this year
-        evflag = random(10) + random(10) + 2;
+        evflag = brandom(10) + brandom(10) + 2;
         Data->P[plr].Budget += evflag;
         break;
 
@@ -385,7 +387,7 @@ char REvent(char plr)
             return 1;
         }
 
-        evflag = choice[random(evflag)] - 1;
+        evflag = choice[brandom(evflag)] - 1;
         xMODE |= xMODE_CLOUDS;
         ClrMiss(plr, evflag + 3);
     }
@@ -534,7 +536,7 @@ char REvent(char plr)
     case 22:
     case 84: /* roll six 6-sided dice and add to the current safety
            factor of the program */
-        x = random(6) + random(6) + random(6) + random(6) + random(6) + random(6) + 6;
+        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
         evflag = NMod(plr, 3, 1, x);
 
         if (evflag == 0) {
@@ -547,7 +549,7 @@ char REvent(char plr)
     case 23: /* this applies to the most advanced rocket program.
           roll six 6-sided dice and add to the current
           safety factor. */
-        x = random(6) + random(6) + random(6) + random(6) + random(6) + random(6) + 6;
+        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
         evflag = NMod(plr, 2, 1, x);
 
         if (evflag == 0) {
@@ -559,7 +561,7 @@ char REvent(char plr)
 
     case 24:  /* this for most adv. satellites, roll four 6-sided
            dice and add to safety factor. */
-        x = random(6) + random(6) + random(6) + random(6) + 4;
+        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
         evflag = NMod(plr, 1, 1, x);
 
         if (evflag == 0) {
@@ -571,7 +573,7 @@ char REvent(char plr)
 
     case 94:  /* this for most adv capsule, roll four 6-sided
            dice and add to safety factor. */
-        x = random(6) + random(6) + random(6) + random(6) + 4;
+        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
         evflag = NMod(plr, 3, 1, x);
 
         if (evflag == 0) {
@@ -715,10 +717,10 @@ char REvent(char plr)
         }
 
         Data->P[plr].Budget -= 5;
-        i = random(Data->P[plr].AstroCount);
+        i = brandom(Data->P[plr].AstroCount);
 
         while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            i = random(Data->P[plr].AstroCount);
+            i = brandom(Data->P[plr].AstroCount);
         }
 
         Data->P[plr].Pool[i].RDelay = 2;
@@ -772,10 +774,10 @@ char REvent(char plr)
         }
 
         Data->P[plr].Budget -= 5;
-        i = random(Data->P[plr].AstroCount);
+        i = brandom(Data->P[plr].AstroCount);
 
         while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            i = random(Data->P[plr].AstroCount);
+            i = brandom(Data->P[plr].AstroCount);
         }
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
@@ -800,10 +802,10 @@ char REvent(char plr)
             return 1;
         }
 
-        i = random(Data->P[plr].AstroCount);
+        i = brandom(Data->P[plr].AstroCount);
 
         while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            i = random(Data->P[plr].AstroCount);
+            i = brandom(Data->P[plr].AstroCount);
         }
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
@@ -825,10 +827,10 @@ char REvent(char plr)
             return 1;
         }
 
-        i = random(Data->P[plr].AstroCount);
+        i = brandom(Data->P[plr].AstroCount);
 
         while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            i = random(Data->P[plr].AstroCount);
+            i = brandom(Data->P[plr].AstroCount);
         }
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
@@ -862,13 +864,13 @@ char REvent(char plr)
                REEVES, CHAMBERLAIN, YEAGER & STIPPOV, SCHLICKBERND, FARGOV -Leon */
 
             Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Face = random(10) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
             Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = random(10) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].CR = random(2) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].CL = random(2) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = brandom(10) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].CR = brandom(2) + 1;
+            Data->P[plr].Pool[Data->P[plr].AstroCount].CL = brandom(2) + 1;
             Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * random(4);
+            Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
             Data->P[plr].AstroCount++;
         };
 
@@ -928,10 +930,10 @@ char REvent(char plr)
             return 1;
         }
 
-        i = random(3);
+        i = brandom(3);
 
         while (Data->P[plr].Mission[i].MissionCode == 0 || Data->P[plr].Mission[i].Joint == 1) {
-            i = random(3);
+            i = brandom(3);
         }
 
         evflag = i;
@@ -1001,10 +1003,10 @@ char REvent(char plr)
             return 1;
         }
 
-        i = random(Data->P[plr].AstroCount);
+        i = brandom(Data->P[plr].AstroCount);
 
         while (Data->P[plr].Pool[i].Status != AST_ST_ACTIVE) {
-            i = random(Data->P[plr].AstroCount);
+            i = brandom(Data->P[plr].AstroCount);
         }
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);

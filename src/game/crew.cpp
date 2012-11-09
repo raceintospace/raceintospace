@@ -24,6 +24,7 @@
 #include "mc.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);

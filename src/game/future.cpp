@@ -33,6 +33,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;

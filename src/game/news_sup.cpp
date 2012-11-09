@@ -29,7 +29,7 @@
 #include "options.h"   //Damaged Equipment Cheat, Nikakd, 10/8/10
 #include "radar.h"
 #include "game_main.h"
-
+#include "pace.h"
 
 /** ???
  *
@@ -116,10 +116,10 @@ int Steal(int p, int prog, int type)
         return 0;
     }
 
-    j = random(hi - lo);
+    j = brandom(hi - lo);
 
     while ((k < 100) && (save[j + lo] <= 0)) { // finds candidate
-        j = random(hi - lo) + lo;
+        j = brandom(hi - lo) + lo;
         k++;
     };
 

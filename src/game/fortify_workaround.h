@@ -1,6 +1,8 @@
 #ifndef _FORTIFY_WORKAROUND_
 #define _FORTIFY_WORKAROUND_
 
+#include <stdio.h>
+
 /*
  * there are over 100 places that call fread without checking the
  * return value, and they all make warnings with the new

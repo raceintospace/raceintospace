@@ -48,6 +48,8 @@
 #include "mc.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -844,7 +846,7 @@ void Master(char plr)
             t_value = 1;
         }
 
-    r_value = random(1000);
+    r_value = brandom(1000);
 
     if (xMODE & xMODE_CLOUDS) {
         if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
@@ -1431,7 +1433,7 @@ void Port(char plr)
 
 #if SPOT_ON
                                 memcpy(vhptr.vptr, screen, MAX_X * MAX_Y);
-                                gork = random(100);
+                                gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
                                     Data->P[plr].Port[PORT_LaunchPad_A] = 1;

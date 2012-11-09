@@ -35,6 +35,9 @@
 #include "gr.h"
 #include "gx.h"
 #include "av.h"
+#include "pace.h"
+#include "endianness.h"
+#include <assert.h>
 
 int call, wh;
 GXHEADER but, mans;

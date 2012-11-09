@@ -44,6 +44,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -457,7 +459,7 @@ void FileAccess(char mode)
                         srand(SaveHdr->compSize);
 
                         for (moo = 0; moo < SaveHdr->compSize; moo++) {
-                            load_buffer[moo] ^= random(256);
+                            load_buffer[moo] ^= brandom(256);
                         }
 
                         randomize();
@@ -1744,7 +1746,7 @@ void EndOfTurnSave(char *inData, int dataLen)
         srand(compressedLen);       // Seed the random number generator with file length
 
         for (moo = 0; moo < j; moo++) {
-            buffer[moo] ^= random(256); //
+            buffer[moo] ^= brandom(256); //
         }
 
         // Reseed the random number generator

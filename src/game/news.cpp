@@ -37,6 +37,7 @@
 #include "pace.h"
 #include "gr.h"
 #include "gx.h"
+#include "endianness.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
@@ -293,9 +294,9 @@ OpenNews(char plr, char *buf, int bud)
     }
 
     if (plr == 0) {
-        i = ((Data->Year - 57) * 6 + Data->Season * 3 + random(3)) * size;
+        i = ((Data->Year - 57) * 6 + Data->Season * 3 + brandom(3)) * size;
     } else {
-        i = ((Data->Year - 57) * 4 + Data->Season * 2 + random(2)) * size;
+        i = ((Data->Year - 57) * 4 + Data->Season * 2 + brandom(2)) * size;
     }
 
     fseek(fp, i, SEEK_CUR);
@@ -816,7 +817,7 @@ ResolveEvent(char plr)
         // News event was bad, find an open slot to record the bad event
         do {
             ctr++;
-            bad = random(14);
+            bad = brandom(14);
 
             if (ctr > 30) {
                 // After 30 good faith random attemptes to find an open slot

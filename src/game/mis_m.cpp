@@ -35,6 +35,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "endianness.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 
@@ -214,10 +215,10 @@ void MisCheck(char plr, char mpad)
                 if ((Data->Def.Lev1 == 0 && plr == 0) || (Data->Def.Lev2 == 0 && plr == 1)) {
                     Mev[STEP].dice = MisRandom();
                 } else {
-                    Mev[STEP].dice = random(100) + 1;
+                    Mev[STEP].dice = brandom(100) + 1;
                 }
 
-                Mev[STEP].rnum = random(10000); // reroll failure type
+                Mev[STEP].rnum = brandom(10000); // reroll failure type
                 Mev[STEP].trace = STEP;
             }
         }
@@ -368,12 +369,12 @@ void MisCheck(char plr, char mpad)
         if (PROBLEM == 1) {  //Step Problem
             // for the unmanned mission
             if (MANNED[Mev[STEP].pad] == 0 && MANNED[other(Mev[STEP].pad)] == 0) {
-                Mev[STEP].rnum = (-1) * (random(5) + 1);
+                Mev[STEP].rnum = (-1) * (brandom(5) + 1);
             }
 
             // Unmanned also
             if (MANNED[Mev[STEP].pad] == 0 && noDock == 0) {
-                Mev[STEP].rnum = (-1) * (random(5) + 1);
+                Mev[STEP].rnum = (-1) * (brandom(5) + 1);
             }
 
             memset(&Now, 0x00, sizeof Now);
@@ -950,7 +951,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     case 15:  // Give option to Scrub  1%->20% negative of part
         FNote = 3;
-        Mev[STEP].E->MisSaf -= random(20) + 1;
+        Mev[STEP].E->MisSaf -= brandom(20) + 1;
 
         if (Mev[STEP].E->MisSaf <= 0) {
             Mev[STEP].E->MisSaf = 1;
@@ -964,7 +965,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (random(100) >= val) {
+            if (brandom(100) >= val) {
                 F_IRCrew(F_INJ, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2100 + Mev[STEP].loc;
                 FNote = 9;
@@ -975,7 +976,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (Data->P[plr].Pool[temp].Status == AST_ST_RETIRED) {
-                if (random(100) > xtra) {
+                if (brandom(100) > xtra) {
                     F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
                     Mev[STEP].StepInfo = 3100 + Mev[STEP].loc;
                     FNote = 8;
@@ -1005,7 +1006,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (random(100) >= xtra) {
+            if (brandom(100) >= xtra) {
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2300 + Mev[STEP].loc;
                 FNote = 9;
@@ -1015,7 +1016,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         ctr = 0;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (random(100) >= val) {
+            if (brandom(100) >= val) {
                 F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 3300 + Mev[STEP].loc;
                 FNote = 8;
@@ -1081,7 +1082,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     case 22: // one man % survival :: EVA
         Mev[STEP].StepInfo = 19;
 
-        if (random(100) > val) {
+        if (brandom(100) > val) {
             FNote = 8;
             crw = (EVA[Mev[STEP].pad] != -1) ? MA[Mev[STEP].pad][EVA[Mev[STEP].pad]].A : MA[other(Mev[STEP].pad)][EVA[other(Mev[STEP].pad)]].A;
             F_KillCrew(F_ONE, crw);
@@ -1101,7 +1102,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 23 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (random(100) >= val) {
+            if (brandom(100) >= val) {
                 FNote = 9;
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2400 + Mev[STEP].loc;
@@ -1123,7 +1124,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     case 24:   // Reduce Safety by VAL% perm :: hardware recovered
         FNote = 5;
-        Mev[STEP].E->Safety -= random(10);
+        Mev[STEP].E->Safety -= brandom(10);
 
         if (Mev[STEP].E->Safety <= 0) {
             Mev[STEP].E->Safety = 1;
@@ -1143,7 +1144,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     case 26: // Subtract VAL% from Equip perm and branch to alternate
         FNote = 1;
         Mev[STEP].StepInfo = 1926;
-        Mev[STEP].E->Safety -= random(10);
+        Mev[STEP].E->Safety -= brandom(10);
 
         if (Mev[STEP].E->Safety <= 0) {
             Mev[STEP].E->Safety = 1;
@@ -1303,8 +1304,8 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     if (type == 9 || type == 19) {
         Mev[STEP].trace = STEP;
-        Mev[STEP].rnum = random(10000) + 1; // new failure roll
-        Mev[STEP].dice = random(100) + 1; // new die roll
+        Mev[STEP].rnum = brandom(10000) + 1; // new failure roll
+        Mev[STEP].dice = brandom(100) + 1; // new die roll
     }
 
     death = 0;
