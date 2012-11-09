@@ -38,6 +38,8 @@ extern "C" {
 #include <winsock2.h>
 #endif
 
+#include <string.h>
+#include <math.h>
 #include "raceintospace_config.h"
 #include "logging.h"
 #include "gamedata.h"
