@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <errno.h>
 
 /** path separator setup */
 #ifndef PATHSEP

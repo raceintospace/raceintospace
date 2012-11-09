@@ -26,6 +26,8 @@
 //*                                                              *
 //****************************************************************
 
+#include <errno.h>
+
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "options.h"
