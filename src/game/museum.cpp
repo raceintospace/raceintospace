@@ -36,6 +36,8 @@
 #include "start.h"
 #include "rush.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 #define DELAYCNT 50
 

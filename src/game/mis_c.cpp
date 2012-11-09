@@ -37,6 +37,8 @@
 #include "sdlhelper.h"
 #include "newmis.h"
 #include "game_main.h"
+#include "gr.h"
+#include "gx.h"
 
 #include <assert.h>
 

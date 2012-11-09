@@ -1,3 +1,4 @@
+#include "gx.h"
 #include "Buzz_inc.h"
 #include <limits.h>
 #include <assert.h>
@@ -6,6 +7,12 @@
 #include <SDL.h>
 #include "game_main.h"
 #include "sdlhelper.h"
+
+
+
+
+#define gxSUCCESS 0
+
 
 
 int

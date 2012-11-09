@@ -31,6 +31,8 @@
 #include "records.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;

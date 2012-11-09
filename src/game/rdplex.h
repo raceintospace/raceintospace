@@ -1,6 +1,8 @@
 #ifndef RDPLEX_H
 #define RDPLEX_H
 
+#include "gxdatatypes.h"
+
 char RD(char plr);
 void Load_RD_BUT(char plr);
 void Del_RD_BUT(void);

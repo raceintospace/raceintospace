@@ -43,6 +43,8 @@
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "port.h"
+#include "gr.h"
+#include "gx.h"
 
 struct VInfo VAS[7][4];
 int VASqty;

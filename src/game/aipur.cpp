@@ -35,6 +35,8 @@
 #include "rdplex.h"
 #include "records.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 struct ManPool *Men;
 char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5
@@ -548,10 +550,6 @@ void SelectBest(char plr, int pos)
 
         k = random(10) + 1;
     };
-
-    if (k) {
-        EMPTY_BODY;
-    }
 
     pData->AstroLevel++;
     pData->AstroCount = pData->AstroCount + pos;

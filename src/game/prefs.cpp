@@ -32,6 +32,9 @@
 #include "randomize.h"
 #include "aipur.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "av.h"
 
 struct ManPool *Sov;
 char M_Us[106], M_Sv[106];

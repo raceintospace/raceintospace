@@ -27,6 +27,7 @@
 #include "Buzz_inc.h"
 #include "future.h"
 #include "game_main.h"
+#include "gr.h"
 
 int Bub_Num;
 int Bub_Count;

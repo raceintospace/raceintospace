@@ -31,7 +31,8 @@
 #include "mis_c.h"
 #include "endgame.h"
 #include "sdlhelper.h"
-
+#include "gr.h"
+#include "gx.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, char *txt);

@@ -39,6 +39,8 @@ RD cost is loosly based in the basic model
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "game_main.h"
+#include "gr.h"
+#include "av.h"
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */

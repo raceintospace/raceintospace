@@ -36,6 +36,7 @@
 #include "game_main.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
+#include "gx.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]

@@ -33,6 +33,8 @@
 #include "ast0.h"
 #include "aipur.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);

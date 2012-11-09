@@ -1,6 +1,8 @@
 #ifndef __ENDIANNESS_H__
 #define __ENDIANNESS_H__
 
+#include "data.h"
+
 uint32_t _Swap32bit(uint32_t value);
 uint16_t _Swap16bit(uint16_t value);
 float _SwapFloat(float value);

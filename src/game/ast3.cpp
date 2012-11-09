@@ -33,6 +33,8 @@
 #include "place.h"
 #include "replay.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);

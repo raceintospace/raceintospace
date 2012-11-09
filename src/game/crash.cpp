@@ -5,6 +5,8 @@
 
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "gr.h"
+#include "av.h"
 
 enum vertical_alignment {
     ALIGN_TOP,

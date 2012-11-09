@@ -1,6 +1,22 @@
+#include "gr.h"
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "sdlhelper.h"
+#include "av.h"
+
+
+#define grTRACK 1
+#define grCARROW 2
+#define grLBUTTON 1
+#define grRBUTTON 2
+
+int grInitMouse(void);
+void grSetMousePos(int x, int y);
+
+
+void gr_set_color_map(unsigned char *map);
+
+
 
 int
 grGetMouseButtons(void)

@@ -22,6 +22,8 @@
 #include "game_main.h"
 #include "place.h"
 #include "mc.h"
+#include "gr.h"
+#include "gx.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);

@@ -29,6 +29,9 @@
 #include "start.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "av.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20

@@ -26,6 +26,8 @@
 #include "replay.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

@@ -23,6 +23,7 @@
 #include "mmfile.h"
 #include "pace.h"
 #include "utils.h"
+#include "av.h"
 
 // A map of music_tracks to filenames
 struct music_key {

@@ -32,6 +32,8 @@
 #include "port.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 void DrawReview(char plr);
 void PresPict(char poff);

@@ -31,6 +31,8 @@
 #include "logging.h"
 #include "game_main.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

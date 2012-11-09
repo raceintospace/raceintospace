@@ -25,6 +25,8 @@
 #include "mc.h"
 #include "rush.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 struct order Order[7] ;
 unsigned int colss, VBlank;

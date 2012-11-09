@@ -28,6 +28,8 @@
 #include "game_main.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 char MCol[110];
 char sel[30];

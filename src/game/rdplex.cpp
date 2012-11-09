@@ -32,6 +32,9 @@
 #include "game_main.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "av.h"
 
 int call, wh;
 GXHEADER but, mans;

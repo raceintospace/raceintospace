@@ -34,6 +34,8 @@
 #include "rdplex.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -1404,10 +1406,6 @@ void IntelPhase(char plr, char pt)
 
     if (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)) {
         return;
-    }
-
-    if (pt) {
-        EMPTY_BODY;
     }
 
     splt = random(1000);

@@ -42,6 +42,8 @@
 #include "rdplex.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2

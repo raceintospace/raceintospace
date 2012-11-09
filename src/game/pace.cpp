@@ -7,6 +7,19 @@
 #include "logging.h"
 #include "game_main.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "mmfile.h"
+
+
+int inp(int port);
+int getdisk(void);
+void getcurdir(int drive, char *buf);
+void randomize(void);
+void SMove(void *p, int x, int y);
+void LMove(void *p);
+double get_time(void);
+
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -15,15 +28,13 @@ struct Prest_Upd MP[3];
 void seq_init(void);
 
 
-char
-DoModem(int sel)
+char DoModem(int sel)
 {
     NOTICE1("DoModem not implemented");
     return (0);
 }
 
-char
-MPrefs(char mode)
+char MPrefs(char mode)
 {
     return (0);
 }
@@ -36,8 +47,7 @@ void MesCenter(void) {}
 
 char *letter_dat;
 
-void
-OpenEmUp(void)
+void OpenEmUp(void)
 {
     randomize();
 
@@ -48,8 +58,7 @@ OpenEmUp(void)
     letter_dat = slurp_gamedat("letter.dat");
 }
 
-int
-PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
+int PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
 {
     char *src = (char *)src_raw;
     char *dest = (char *)dest_raw;
@@ -76,8 +85,7 @@ PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
     return (dest - orig_dest);
 }
 
-int
-RLED(void *src_raw, void *dest_raw, unsigned int src_size)
+int RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 {
     signed char *src = (signed char *)src_raw;
     signed char *dest = (signed char *)dest_raw;
@@ -113,8 +121,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
     return ((char *)dest - (char *)dest_raw);
 }
 
-int
-RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
+int RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
 {
     signed char *src = (signed char *)src_raw;
     signed char *dest;
@@ -171,8 +178,7 @@ RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
  * @param val pivot index in palette array
  * @param mode if mode == 1 then preserve non-faded colors, else make black
  */
-void
-FadeIn(char wh, void *palx, int steps, int val, char mode)
+void FadeIn(char wh, void *palx, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;
@@ -188,8 +194,7 @@ FadeIn(char wh, void *palx, int steps, int val, char mode)
     av_set_fading(AV_FADE_IN, from, to, steps, !!mode);
 }
 
-void
-FadeOut(char wh, void *palx, int steps, int val, char mode)
+void FadeOut(char wh, void *palx, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;
@@ -205,20 +210,17 @@ FadeOut(char wh, void *palx, int steps, int val, char mode)
     av_set_fading(AV_FADE_OUT, from, to, steps, !!mode);
 }
 
-void
-delay(int millisecs)
+void delay(int millisecs)
 {
     idle_loop_secs(millisecs / 1000.0);
 }
 
-void
-bzdelay(int ticks)
+void bzdelay(int ticks)
 {
     idle_loop_secs(ticks / 100.0);
 }
 
-int
-brandom(int limit)
+int brandom(int limit)
 {
     if (limit == 0) {
         return (0);
@@ -263,14 +265,12 @@ int32_t RLEC(char *src, char *dest, unsigned int src_size)
     return (dest_i);
 }
 
-void
-StopAudio(char mode)
+void StopAudio(char mode)
 {
     av_silence(AV_SOUND_CHANNEL);
 }
 
-void
-CloseEmUp(unsigned char error, unsigned int value)
+void CloseEmUp(unsigned char error, unsigned int value)
 {
     /* DEBUG */ /* fprintf (stderr, "CloseEmUp()\n"); */
     exit(EXIT_SUCCESS);
@@ -288,8 +288,7 @@ struct tblinfo {
  * \param keyname Name of the file to read from
  * \param tbl Pointer to the tblinfo to fill
  */
-void
-frm_read_tbl(char *keyname, struct tblinfo *tbl)
+void frm_read_tbl(char *keyname, struct tblinfo *tbl)
 {
     FILE *fin;
     int lo, hi;
@@ -347,8 +346,7 @@ static struct tblinfo frm_ftbl;
  *
  * Reads success and failure sequences
  */
-void
-seq_init(void)
+void seq_init(void)
 {
     frm_read_tbl("SEQ.KEY", &frm_tbl);
     frm_read_tbl("FSEQ.KEY", &frm_ftbl);
@@ -363,8 +361,7 @@ seq_init(void)
  * \return name of the sequence file as string
  *
  */
-char *
-seq_filename(int seq, int mode)
+char * seq_filename(int seq, int mode)
 {
     struct tblinfo *tp;
 
@@ -381,8 +378,7 @@ seq_filename(int seq, int mode)
     return (tp->strings[seq]);
 }
 
-void
-SMove(void *p, int x, int y)
+void SMove(void *p, int x, int y)
 {
     GXHEADER local;
 
@@ -392,8 +388,7 @@ SMove(void *p, int x, int y)
     DV(&local);
 }
 
-void
-LMove(void *p)
+void LMove(void *p)
 {
     GXHEADER local;
 
@@ -405,8 +400,7 @@ LMove(void *p)
     DV(&local);
 }
 
-void
-randomize(void)
+void randomize(void)
 {
     srand(get_time() * 1000);
 }
@@ -417,8 +411,7 @@ randomize(void)
  *
  * \param secs Number of seconds to wait.
  */
-void
-idle_loop_secs(double secs)
+void idle_loop_secs(double secs)
 {
     double start;
 
@@ -439,8 +432,7 @@ idle_loop_secs(double secs)
  *
  * \param ticks Number of ticks to wait.
  */
-void
-idle_loop(int ticks)
+void idle_loop(int ticks)
 {
     idle_loop_secs(ticks / 2000.0);
 }
@@ -452,8 +444,7 @@ size_t soundbuf_size = 0;
 size_t soundbuf_used = 0;
 struct audio_chunk news_chunk;
 
-ssize_t
-load_audio_file(const char *name, char **data, size_t *size)
+ssize_t load_audio_file(const char *name, char **data, size_t *size)
 {
     mm_file mf;
     unsigned channels, rate;
@@ -506,8 +497,7 @@ load_audio_file(const char *name, char **data, size_t *size)
     return offset;
 }
 
-void
-NGetVoice(char plr, char val)
+void NGetVoice(char plr, char val)
 {
     char fname[100];
     ssize_t bytes = 0;
@@ -517,8 +507,7 @@ NGetVoice(char plr, char val)
     soundbuf_used = (bytes > 0) ? bytes : 0;
 }
 
-void
-PlayVoice(void)
+void PlayVoice(void)
 {
     if (!soundbuf_used) {
         return;
@@ -530,20 +519,17 @@ PlayVoice(void)
     play(&news_chunk, AV_SOUND_CHANNEL);
 }
 
-void
-KillVoice(void)
+void KillVoice(void)
 {
     av_silence(AV_SOUND_CHANNEL);
 }
 
-void
-StopVoice(void)
+void StopVoice(void)
 {
     av_silence(AV_SOUND_CHANNEL);
 }
 
-void
-PlayAudio(char *name, char mode)
+void PlayAudio(char *name, char mode)
 {
     ssize_t bytes = 0;
     bytes = load_audio_file(name, &soundbuf, &soundbuf_size);
@@ -551,8 +537,7 @@ PlayAudio(char *name, char mode)
     PlayVoice();
 }
 
-int
-getch(void)
+int getch(void)
 {
     int c;
 
@@ -565,8 +550,7 @@ getch(void)
     }
 }
 
-void
-play_audio(int sidx, int mode)
+void play_audio(int sidx, int mode)
 {
     char filename[40];
     ssize_t size;

@@ -16,21 +16,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <string>
-
-/* XXX clean this up */
-#include "mmfile.h"
-#include "data.h"
 // ***************************
 //   USEFUL AND RARE DEFINES
 // ***************************
 
-#define MR grMoveRel
-#define LR grLineRel
-#define PP grPutPixel
-#define LT grLineTo
-#define MT grMoveTo
-#define SC grSetColor
 #define BUFFER_SIZE 20*1024   /**< Allocated Buffer in Beginning */
 #define MINSAFETY 50          /**< Minimum Safety */
 #define READYFACTOR 48        /**< Ready Safetyfactor */
@@ -131,119 +120,5 @@
 #define MAX_X   320
 #define MAX_Y   200
 
-// ***************************
-//   PROTOTYPES FOR ROUTINES
-// ***************************
-
-#ifdef DEAD_CODE
-// PROTOCOL.C
-void Read_CRC(void);
-void SaveSide(char side);
-void UpdPrestige();
-void RecvSide(char side);
-//static int timed_get(int n);
-//static int build_block(int l, FILE *file);
-//static void abort_transfer(void);
-int xmit_file(int (*error_handler)(int c, int32_t p, char *s), char *files[]);
-//static int getblock(int block, int crc);
-int recv_file(int(*error_handler)(int c, int32_t p, char *s), char *path);
-
-// SEL.C
-void DFrame(int x1, int y1, int x2, int y2);
-void SFrame(int x1, int y1, int x2, int y2);
-void SFWin(int x1, int y1, int x2, int y2, char *txt);
-
-// SOUND.C
-void GetVoice(char val);
-void UpdateVoice(void);
-void NGetVoice(char plr, char val);
-void NUpdateVoice(void);
-char AnimSoundCheck(void);
-void U_GetVoice(char val);
-void U_UpdateVoice(void);
-void KillVoice(void);
-void FadeVoiceIn(int maxvolume, unsigned rate);
-void FadeVoiceOut(unsigned rate);
-void SetVoiceVolume(int percent);
-void PlayVoice(void);
-void StopVoice(void);
-void *load_global_timbre(FILE *GTL, unsigned bank, unsigned patch);
-void GetMusic(FILE *fin, int32_t size)  ;
-void KillMusic(void);
-void FadeMusicIn(int maxvolume, unsigned rate);
-void FadeMusicOut(unsigned rate);
-void PlayMusic(char mode);
-void UpdateMusic(void);
-void StopMusic(void);
-int board_ID(drvr_desc *desc);
-void PreLoadMusic(char val);
-void Buzz_SoundDestroy(void);
-unsigned int ABXframe(char *scratch, char *dest, int frameno, FILE *fhand);
-int GetBuzzEnv(drvr_desc *desc, char *envs);
-void PlayAudio(char *name, char mode);
-void UpdateAudio(void);
-void StopAudio(char mode);
-void MuteChannel(int channel, int mute);
-int IsChannelMute(int channel);
-
-// SERIAL_F.C
-void SaveFirst(char);
-void CheckFirst(char);
-void UpdateFirst(void);
-void SendFirst(void);
-void RecvFirst(void);
-int e_handler(int c, int32_t p, char *s);
-void SaveFirst(char mode);
-void SendFirst(void);
-void UpdateFirst(void);
-void CheckFirst(char Hmode);
-void RecvFirst(void);
-int port_exist(int port);
-void open_port(int port, int inlen);
-void close_port(void);
-void purge_in(void);
-void set_baud(int32_t baud);
-int32_t get_baud(void);
-int get_bits(void);
-int get_parity(void);
-int get_stopbits(void);
-void set_data_format(int bits, int parity, int stopbit);
-void set_port(int32_t baud, int bits, int parity, int stopbit);
-int in_ready(void);
-int carrier(void);
-void set_dtr(int n);
-
-// CDROM.C
-int CDAccess(int drive, int track, char mode);
-int AquireDrive(void);
-
-// TRACK.C
-void Message(int msg, int tr);
-void AAset(void);
-void DialAt(int x, int y, char *s);
-void get_dial(char *old);
-void Read_Config(void);
-int e_handler(int c, int32_t p, char *s);
-void Dnload(void);
-void Upload(void);
-void ReadMsg(void);
-void WriteMsg(void);
-void Write_Config(void);
-void DrawCenter();
-void MesCenter(void);
-char MPrefs(char mode);
-void Toggle_Cfg(int opt, int old);
-void TrackPict(char mode);
-
-// MODEM.CPP
-char dial(void);
-char CheckCarrier(void);
-void Modem_Config(void);
-char *get_modem_string(char *s, char *d);
-char DoModem(int sel);
-void exit_program(void);
-void hangup(void);
-void modem_control_string(char *s);
-#endif
 
 // EOF

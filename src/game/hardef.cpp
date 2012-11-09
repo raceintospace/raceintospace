@@ -32,6 +32,8 @@
 #include "port.h"
 #include "rdplex.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);

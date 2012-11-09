@@ -1,6 +1,8 @@
 #ifndef GAME_MAIN_H
 #define GAME_MAIN_H
 
+#include "gxdatatypes.h"
+
 void InBox(int x1, int y1, int x2, int y2);
 void OutBox(int x1, int y1, int x2, int y2);
 void WaitForMouseUp(void);
@@ -30,6 +32,7 @@ int MisRandom(void);
 void DestroyPad(char plr, char pad, int cost, char mode);
 void PauseMouse(void);
 void PrintAtKey(int x, int y, const char *s, char val);
+void GetMouse_fast(void);
 
 extern char Option;
 extern char MAIL;

@@ -46,6 +46,8 @@
 #include "sdlhelper.h"
 #include "vab.h"
 #include "mc.h"
+#include "gr.h"
+#include "gx.h"
 
 #define LET_A   0x09
 #define LET_M   0x0A

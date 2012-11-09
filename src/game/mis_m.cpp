@@ -33,6 +33,8 @@
 #include "mc.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "pace.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 

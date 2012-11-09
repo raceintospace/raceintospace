@@ -31,6 +31,9 @@
 #include "intro.h"
 #include "game_main.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "av.h"
 
 GXHEADER local2;
 

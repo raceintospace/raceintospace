@@ -29,6 +29,8 @@
 #include "mc.h"
 #include "records.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 #define DELAYCNT 10
 

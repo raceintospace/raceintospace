@@ -29,6 +29,8 @@
 #include "place.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 // Function Prototype
 

@@ -54,6 +54,9 @@
 #include "start.h"
 #include "pace.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
+#include "av.h"
 
 #include "display/png_image.h"
 
@@ -162,7 +165,6 @@ void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
 void FreePadMen(char plr, struct MissionType *XMis);
 void VerifyCrews(char plr);
-
 
 
 int game_main_impl(int argc, char *argv[])
@@ -899,10 +901,6 @@ void DispBig(int x, int y, const char *txt, char mode, char te)
 
     y--;
 
-    if (mode) {
-        EMPTY_BODY;
-    }
-
     for (i = 0; i < (int)strlen(txt); i++) {
         if (txt[i] == 0x20) {
             x += 6;
@@ -1156,6 +1154,15 @@ void FlagSm(char plr, int xm, int ym)
 
     return;
 }
+
+// Convenience defines, it seems the implementor didn't feel like typing much
+#define MR grMoveRel
+#define LR grLineRel
+#define PP grPutPixel
+#define LT grLineTo
+#define MT grMoveTo
+#define SC grSetColor
+
 
 void Flag(int x, int y, char plr)
 {

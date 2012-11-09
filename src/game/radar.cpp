@@ -31,6 +31,8 @@
 #include "news_suq.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "gr.h"
+#include "gx.h"
 
 void PadDraw(char plr, char pad);
 void PadPict(char poff);

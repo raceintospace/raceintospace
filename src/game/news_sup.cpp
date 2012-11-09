@@ -39,9 +39,6 @@ int Steal(int p, int prog, int type)
 {
     int i = 0, j = 0, k = 0, save[28], lo = 0, hi = 28;
 
-    if (prog) {
-        EMPTY_BODY;
-    }
 
     memset(save, 0x00, sizeof save);
 
