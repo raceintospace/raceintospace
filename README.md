@@ -1,4 +1,4 @@
-Race into Space
+Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/raceintospace.png?branch=master)](https://travis-ci.org/raceintospace/raceintospace)
 ===============
 
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
@@ -40,6 +40,16 @@ On UNIXy systems (including Mac OS X), you can build everything with:
     $ cmake ..
     $ make
 
+Linux
+=====
+
+Build as described above.
+
+If you're on a Debian-based system, you can get all the dependencies with:
+
+    $ sudo apt-get install libsdl-dev libboost-dev libpng-dev \
+        libogg-dev libvorbis-dev libtheora-dev
+
 Mac OS X
 ========
 
@@ -48,7 +58,7 @@ Mac OS X ships with libpng, but platform help ends there. You'll want to grab
 already. It's easiest to use [Homebrew](http://mxcl.github.com/homebrew/) to
 get the rest:
 
-    $ brew install libogg libvorbis theora boost
+    $ brew install boost libogg libvorbis theora
 
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:
