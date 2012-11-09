@@ -1,0 +1,10 @@
+language: cpp
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libsdl-dev libboost-dev libpng-dev libogg-dev libvorbis-dev libtheora-dev
+script:
+  - mkdir build && cd build && cmake .. && make
+compiler:
+  - clang
+  - gcc
+
