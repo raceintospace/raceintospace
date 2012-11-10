@@ -2,6 +2,10 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(SYSTEM ${SDL_INCLUDE_DIR})
 
+# Make sure we can access our local includes
+include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
+include_directories(SYSTEM ${LocalPrefix}/include)
+
 if (PLATFORM_MUSIC)
   # do nothing
 else (PLATFORM_MUSIC)
