@@ -27,6 +27,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 struct order Order[7] ;
 unsigned int colss, VBlank;
@@ -62,7 +63,7 @@ cmp_order(const void *p1, const void *p2)
         if (o1->budget > o2->budget) {
             return -1;
         } else if (o1->budget == o2->budget) {
-            char whoFirst = random(2);
+            char whoFirst = brandom(2);
 
             if (whoFirst == 1) {
                 return 1;

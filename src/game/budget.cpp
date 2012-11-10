@@ -31,6 +31,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 #define DELAYCNT 10
 

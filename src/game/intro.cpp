@@ -34,6 +34,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "av.h"
+#include "pace.h"
 
 GXHEADER local2;
 

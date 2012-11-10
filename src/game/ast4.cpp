@@ -31,6 +31,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 

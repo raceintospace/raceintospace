@@ -32,6 +32,8 @@
 #include "gr.h"
 #include "gx.h"
 #include "av.h"
+#include "pace.h"
+#include "endianness.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -92,27 +94,27 @@ Burst(char win)
     gxGetImage(&vhptr, 0, 0, 319, 199, 0);
 
     while (1) {
-        Region = random(100);
+        Region = brandom(100);
 
         if (Region < 60) {
-            Spsn[0] = 132 + random(187);
-            Spsn[1] = 5 + random(39);
+            Spsn[0] = 132 + brandom(187);
+            Spsn[1] = 5 + brandom(39);
         } else {
-            Spsn[0] = 178 + random(66);
-            Spsn[1] = 11 + random(33);
+            Spsn[0] = 178 + brandom(66);
+            Spsn[1] = 11 + brandom(33);
         }
 
-        InitSpd = random(MAXINITSPEED);
+        InitSpd = brandom(MAXINITSPEED);
 
         for (lp1 = 0; lp1 < NUM_LIGHTS; lp1++) {
-            Ang = random(2 * PI);
-            Spd = random(InitSpd);
+            Ang = brandom(2 * PI);
+            Spd = brandom(InitSpd);
             Bomb[lp1].psn[0] = Spsn[0];
             Bomb[lp1].psn[1] = Spsn[1];
             Bomb[lp1].vel[0] = Spd * cos(Ang);
             Bomb[lp1].vel[1] = Spd * sin(Ang);
             Bomb[lp1].clr = clr;
-            Bomb[lp1].per = random(FLY_TIME);
+            Bomb[lp1].per = brandom(FLY_TIME);
         }
 
         for (lp1 = 0; lp1 < FLY_TIME; lp1++) {
@@ -343,19 +345,19 @@ void EndGame(char win, char pad)
     r = Data->P[win].AstroCount;
 
     if (man1 <= -1) {
-        man1 = random(r);
+        man1 = brandom(r);
     }
 
     if (man2 <= -1) {
-        man2 = random(r);
+        man2 = brandom(r);
     }
 
     if (man3 <= -1) {
-        man3 = random(r);
+        man3 = brandom(r);
     }
 
     if (man4 <= -1) {
-        man4 = random(r);
+        man4 = brandom(r);
     }
 
     if (!(Option == -1 || Option == win)) {
@@ -738,7 +740,7 @@ void FakeWin(char win)
 {
     int i, r;
     char miss, prog, man1, man2, man3, man4, bud, yr, monthWin;
-    monthWin = random(12);
+    monthWin = brandom(12);
 
     FadeOut(2, pal, 10, 0, 0);
     gxClearDisplay(0, 0);
@@ -761,7 +763,7 @@ void FakeWin(char win)
     FlagSm(win, 4, 4);
     grSetColor(1);
     PrintAt(258, 13, "CONTINUE");
-    r = random(100);
+    r = brandom(100);
 
     if (r < 45) {
         miss = 53;
@@ -781,15 +783,15 @@ void FakeWin(char win)
     grSetColor(6);
 
     if (Data->Year <= 65) {
-        r = 65 + random(5);
+        r = 65 + brandom(5);
     } else if (Data->Year <= 70) {
-        r = 70 + random(3);
+        r = 70 + brandom(3);
     } else if (Data->Year <= 77) {
         r = Data->Year;
     }
 
     yr = r;
-    r = random(100);
+    r = brandom(100);
 
     if (miss == 54) {
         prog = 5;
@@ -806,16 +808,16 @@ void FakeWin(char win)
     grSetColor(8);
     PrintAt(0, 0, &Data->P[win].Manned[prog - 1].Name[0]);
     PrintAt(0, 0, " ");
-    PrintAt(0, 0, &Nums[random(15) + 1][0]);
+    PrintAt(0, 0, &Nums[brandom(15) + 1][0]);
     grSetColor(6);
     PrintAt(0, 0, "  -  ");
     grSetColor(8);;
-    DispNum(0, 0, random(daysAMonth[monthWin]) + 1);
+    DispNum(0, 0, brandom(daysAMonth[monthWin]) + 1);
     PrintAt(0, 0, " ");
     PrintAt(0, 0, Month[monthWin]);
     PrintAt(0, 0, "19");
     DispNum(0, 0, yr);
-    r = random(100);
+    r = brandom(100);
 
     if (win == 1 && prog == 5) {
         bud = 5;
@@ -831,12 +833,12 @@ void FakeWin(char win)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, prog - 1, random(9), 32);
+    PatchMe(win, 270, 34, prog - 1, brandom(9), 32);
     r = Data->P[win].AstroCount;
-    man1 = random(r);
-    man2 = random(r);
-    man3 = random(r);
-    man4 = random(r);
+    man1 = brandom(r);
+    man2 = brandom(r);
+    man3 = brandom(r);
+    man4 = brandom(r);
 
     while (1) {
         if ((man1 != man2) && (man1 != man3) && (man2 != man4) &&
@@ -845,27 +847,27 @@ void FakeWin(char win)
         }
 
         while (man1 == man2) {
-            man2 = random(r);
+            man2 = brandom(r);
         }
 
         while (man1 == man3) {
-            man3 = random(r);
+            man3 = brandom(r);
         }
 
         while (man2 == man4) {
-            man2 = random(r);
+            man2 = brandom(r);
         }
 
         while (man2 == man3) {
-            man3 = random(r);
+            man3 = brandom(r);
         }
 
         while (man3 == man4) {
-            man4 = random(r);
+            man4 = brandom(r);
         }
 
         while (man1 == man4) {
-            man4 = random(r);
+            man4 = brandom(r);
         }
     }
 

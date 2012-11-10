@@ -59,6 +59,9 @@
 #include "gr.h"
 #include "gx.h"
 #include "av.h"
+#include "crash.h"
+#include "endianness.h"
+#include <assert.h>
 
 #include "display/png_image.h"
 
@@ -454,9 +457,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         Data->P[1].BudgetHistory[Data->Year - 53] = Data->P[1].Budget;
 
         Data->P[0].BudgetHistoryF[Data->Year - 53] =  // MAKE ESTIMATE OF BUDGETS
-            (Data->P[0].Budget * (random(40) + 80)) / 100;
+            (Data->P[0].Budget * (brandom(40) + 80)) / 100;
         Data->P[1].BudgetHistoryF[Data->Year - 53] =
-            (Data->P[1].Budget * (random(40) + 80)) / 100;
+            (Data->P[1].Budget * (brandom(40) + 80)) / 100;
 
         for (t1 = 0; t1 < NUM_PLAYERS; t1++) {          // Move Expenditures down one
             for (t2 = 4; t2 >= 0; t2--)
@@ -634,7 +637,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 sign = (Data->P[t1].Prestige < 0) ? -1 : 1;
 
                 Data->P[t1].PrestHist[0][t3] = (t3 == 0) ? Data->P[t1].Prestige
-                                               : (Data->P[t1].Prestige * 4) / 5 + sign * random(Data->P[t1].Prestige * 2 / 5) + 1;
+                                               : (Data->P[t1].Prestige * 4) / 5 + sign * brandom(Data->P[t1].Prestige * 2 / 5) + 1;
 
                 if (t3 == 0) {
                     Data->P[t1].tempPrestige[Data->Season] += Data->P[t1].Prestige;
@@ -1843,7 +1846,7 @@ int MisRandom(void)
         nval = 107;
 
         for (i = 0; i < 250; i++) {
-            nval += (random(7) - 3);
+            nval += (brandom(7) - 3);
         }
     } while (nval < 50 || nval > 150);
 

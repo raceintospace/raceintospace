@@ -33,6 +33,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

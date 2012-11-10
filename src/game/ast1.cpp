@@ -35,6 +35,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);
@@ -419,11 +420,11 @@ void RandomizeNauts()
     int i;
 
     for (i = 0; i < 106; i++) {
-        Men[i].Cap = random(5);
-        Men[i].LM  = random(5);
-        Men[i].EVA = random(5);
-        Men[i].Docking = random(5);
-        Men[i].Endurance = random(5);
+        Men[i].Cap = brandom(5);
+        Men[i].LM  = brandom(5);
+        Men[i].EVA = brandom(5);
+        Men[i].Docking = brandom(5);
+        Men[i].Endurance = brandom(5);
     }
 }
 
@@ -977,24 +978,24 @@ void AstSel(char plr)
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].TrainingLevel = 1;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Group = Data->P[plr].AstroLevel;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CR = random(2) + 1;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CL = random(2) + 1;
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CR = brandom(2) + 1;
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CL = brandom(2) + 1;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Task = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Crew = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Una = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Pool = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Compat = random(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Mood = 85 + 5 * random(4);
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = random(77);
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = brandom(77);
 
                     if (Data->P[plr].Pool[i + Data->P[plr].AstroCount].Sex == 1) {
-                        Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = 77 + random(8);
+                        Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = 77 + brandom(8);
                     }
 
-                    k = random(10) + 1;
+                    k = brandom(10) + 1;
 
                     if (k > 6) {
-                        k = random(2);
+                        k = brandom(2);
 
                         if (k == 0) {
                             Data->P[plr].Pool[i + Data->P[plr].AstroCount].Endurance--;
@@ -1004,7 +1005,7 @@ void AstSel(char plr)
                     };
 
                     for (j = 0; j < 3; j++) {
-                        k = random(3);
+                        k = brandom(3);
 
                         switch (k) {
                         case 0:

@@ -36,6 +36,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include <assert.h>
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -395,7 +397,7 @@ void MisIntel(char plr, char acc)
         }
 
         seg = W[i][0];
-        j = random(100);
+        j = brandom(100);
         k = 2;
         nf = 0;
         tot = 0;
@@ -466,12 +468,12 @@ void MisIntel(char plr, char acc)
             return;
         }
 
-        j = random(hi - lo);
+        j = brandom(hi - lo);
         k = 0;
 
         while ((k < (hi - lo)) && (save[j] == 0)) {
             // finds candidate
-            j = random(hi - lo);
+            j = brandom(hi - lo);
             k++;
         };
 
@@ -1041,7 +1043,7 @@ void HarIntel(char p, char acc)
         }
 
         seg = W[i][0];
-        j = random(100);
+        j = brandom(100);
         k = 2;
         nf = 0;
         tot = 0;
@@ -1127,12 +1129,12 @@ void HarIntel(char p, char acc)
             return;
         }
 
-        j = random(hi - lo);
+        j = brandom(hi - lo);
         k = 0;
 
         while ((k < (hi - lo)) && (save[j] != 1)) { // finds candidate
 // DispNum(100,5+k*6,j);
-            j = random(hi - lo);
+            j = brandom(hi - lo);
             k++;
         };
 
@@ -1233,13 +1235,13 @@ void SaveIntel(char p, char prg, char ind)
         ind = 1;
     }
 
-    mr = random(9998) + 1;
-    ky = 65 + random(26);
+    mr = brandom(9998) + 1;
+    ky = 65 + brandom(26);
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].code = ky;
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].num = mr;
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].prog = prg;
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].index = ind;
-    j = random(100);
+    j = brandom(100);
 
     if (j < 33) {
         k = 0;
@@ -1258,7 +1260,7 @@ void SaveIntel(char p, char prg, char ind)
     if (prg == 5) {
         sf = Op[ind];
     } else {
-        sf = random(22) + 77;
+        sf = brandom(22) + 77;
     }
 
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].sf = sf;
@@ -1273,19 +1275,19 @@ void ImpHard(char plr, char hd, char dx)
     // based on the hardware improve safety factor
     switch (hd) {
     case 0:
-        Data->P[plr].Table[0][dx] = Data->P[plr].Probe[dx].MaxRD - random(Data->P[plr].Probe[dx].MaxSafety - Data->P[plr].Probe[dx].MaxRD);
+        Data->P[plr].Table[0][dx] = Data->P[plr].Probe[dx].MaxRD - brandom(Data->P[plr].Probe[dx].MaxSafety - Data->P[plr].Probe[dx].MaxRD);
         break;
 
     case 1:
-        Data->P[plr].Table[1][dx] = Data->P[plr].Rocket[dx].MaxRD - random(Data->P[plr].Rocket[dx].MaxSafety - Data->P[plr].Rocket[dx].MaxRD);
+        Data->P[plr].Table[1][dx] = Data->P[plr].Rocket[dx].MaxRD - brandom(Data->P[plr].Rocket[dx].MaxSafety - Data->P[plr].Rocket[dx].MaxRD);
         break;
 
     case 2:
-        Data->P[plr].Table[2][dx] = Data->P[plr].Manned[dx].MaxRD - random(Data->P[plr].Manned[dx].MaxSafety - Data->P[plr].Manned[dx].MaxRD);
+        Data->P[plr].Table[2][dx] = Data->P[plr].Manned[dx].MaxRD - brandom(Data->P[plr].Manned[dx].MaxSafety - Data->P[plr].Manned[dx].MaxRD);
         break;
 
     case 3:
-        Data->P[plr].Table[3][dx] = Data->P[plr].Misc[dx].MaxRD - random(Data->P[plr].Misc[dx].MaxSafety - Data->P[plr].Misc[dx].MaxRD);
+        Data->P[plr].Table[3][dx] = Data->P[plr].Misc[dx].MaxRD - brandom(Data->P[plr].Misc[dx].MaxSafety - Data->P[plr].Misc[dx].MaxRD);
         break;
 
     default:
@@ -1300,7 +1302,7 @@ void UpDateTable(char plr)
     p = other(plr);
 
     if (Data->P[p].LMpts > 0) {
-        j = random(100);
+        j = brandom(100);
 
         if (j < 60) {
             ImpHard(plr, 2, 5);
@@ -1362,7 +1364,7 @@ void UpDateTable(char plr)
 
             case 19:
                 ImpHard(plr, 1, 4);
-                j = random(100);
+                j = brandom(100);
 
                 if (j < 70) {
                     ImpHard(plr, 3, 1);
@@ -1374,7 +1376,7 @@ void UpDateTable(char plr)
 
             case 20:
                 ImpHard(plr, 1, 4);
-                j = random(100);
+                j = brandom(100);
 
                 if (j < 70) {
                     ImpHard(plr, 3, 1);
@@ -1408,8 +1410,8 @@ void IntelPhase(char plr, char pt)
         return;
     }
 
-    splt = random(1000);
-    i = random(1000);
+    splt = brandom(1000);
+    i = brandom(1000);
 
     if (plr == 0) {
         Plr_Level = Data->Def.Lev1;

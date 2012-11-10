@@ -33,6 +33,8 @@
 #include "vab.h"
 #include "mc.h"
 #include "aimast.h"
+#include <string.h>
+#include <math.h>
 
 struct cStr {
     int16_t cost, sf, i;

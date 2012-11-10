@@ -41,6 +41,7 @@ RD cost is loosly based in the basic model
 #include "game_main.h"
 #include "gr.h"
 #include "av.h"
+#include "pace.h"
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */
@@ -53,7 +54,7 @@ char GetNewName(char name[20]);
 static inline int
 random_aux(int x, int y)
 {
-    return (random((y) - (x) + 1) + (x));
+    return (brandom((y) - (x) + 1) + (x));
 }
 
 static inline int

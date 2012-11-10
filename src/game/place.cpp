@@ -33,6 +33,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, char *txt);

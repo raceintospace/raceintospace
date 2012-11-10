@@ -33,38 +33,22 @@ extern "C" {
 #pragma clang diagnostic ignored "-Wchar-subscripts"
 #endif
 
-#include "raceintospace_config.h"
-#include "pace.h"
-
 #ifdef _WIN32
+// Note, this cannot be removed until the packing problem (below) is worked out
 #include <winsock2.h>
 #endif
 
-#include <assert.h>
-#include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <fcntl.h>
-#include <time.h>
 #include <math.h>
-#include <sys/stat.h>
-
-#include "fortify_workaround.h"
-
+#include <stdlib.h>
+#include "raceintospace_config.h"
 #include "logging.h"
-#include "crash.h"
-
 #include "gamedata.h"
-
 #include "proto.h"    // prototypes and general defines
 #include "music.h"    // defines for music names
-#include "endianness.h"
-#include "options.h"
 
 /* FIXME: non-portable. Used to get struct layout like in DOS days */
-#pragma pack(1)
+#pragma pack( 1 )
 
 #include "data.h"     // main data structures
 
@@ -79,9 +63,6 @@ extern "C" {
 
 
 #include "macros.h"     // Collected Macros
-
 #include "fs.h"
-
-#define random brandom
 
 #endif /* __BUZZ_INC_H__ */

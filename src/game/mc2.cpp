@@ -32,6 +32,7 @@
 #include "mc.h"
 #include "prest.h"
 #include "mis_c.h"
+#include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -456,10 +457,10 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         if ((Data->Def.Lev1 == 0 && plr == 0) || (Data->Def.Lev2 == 0 && plr == 1)) {
             Mev[STEP].dice = MisRandom();
         } else {
-            Mev[STEP].dice = random((AI[plr]) ? 98 : 100) + 1;
+            Mev[STEP].dice = brandom((AI[plr]) ? 98 : 100) + 1;
         }
 
-        Mev[step].rnum = random(10000) + 1;
+        Mev[step].rnum = brandom(10000) + 1;
         Mev[step].sgoto = 0;
 
         Mev[step].fgoto = (Mgoto == -2) ? step + 1 : Mgoto; // prevents mission looping
