@@ -34,6 +34,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 void DrawReview(char plr);
 void PresPict(char poff);

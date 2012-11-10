@@ -30,6 +30,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 char MCol[110];
 char sel[30];

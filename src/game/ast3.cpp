@@ -35,6 +35,8 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);

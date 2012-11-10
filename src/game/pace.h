@@ -28,6 +28,7 @@ int32_t RLEC(char *src, char *dest, unsigned int src_size);
 int RLED(void *src, void *dest, unsigned int src_size);
 char MPrefs(char mode);
 int bioskey(int wait);
+int brandom(int limit);
 
 extern struct Prest_Upd MP[3];
 extern int show_intro_flag;

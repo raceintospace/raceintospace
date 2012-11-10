@@ -39,6 +39,8 @@
 #include "game_main.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
+#include "endianness.h"
 
 #include <assert.h>
 
@@ -136,10 +138,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     i = j = 0; /* XXX check uninitialized */
 
     memset(buffer, 0x00, BUFFER_SIZE);
-    SHTS[0] = random(10);
-    SHTS[1] = random(10);
-    SHTS[2] = random(10);
-    SHTS[3] = random(10);
+    SHTS[0] = brandom(10);
+    SHTS[1] = brandom(10);
+    SHTS[2] = brandom(10);
+    SHTS[3] = brandom(10);
 
     if (fEarly && step != 0) {
         return;    //Specs: unmanned mission cut short
@@ -320,7 +322,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         wlen = 0;
 
         while (1) {
-            fres = random(10000);
+            fres = brandom(10000);
             fres %= 10;
 
             if (fres < max) {
@@ -347,7 +349,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         wlen = 0;
 
         while (1) {
-            fres = random(10000);
+            fres = brandom(10000);
             fres %= 10;
 
             if (fres < max) {
@@ -829,7 +831,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
             loc = (SHTS[1] > SHTS[3]) ? 1 : 3 ;
         }
 
-        SHTS[loc] = random(3);
+        SHTS[loc] = brandom(3);
         kk = loc;
         return;
     };
@@ -864,7 +866,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         };
 
         if (attempt >= SCND_TABLE) {
-            which = 415 + random(25);
+            which = 415 + brandom(25);
         } else {
             if (Val1[0] != '#')
                 switch (Mob2[attempt].idx) {
@@ -917,7 +919,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                     break;
 
                 default:
-                    which = 415 + random(25);
+                    which = 415 + brandom(25);
                 }
 
             if (which == 0) {
@@ -935,10 +937,10 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                 };
 
                 if (attempt >= CLIF_TABLE) {
-                    which = 415 + random(25);
+                    which = 415 + brandom(25);
                 } else {
 
-                    which = random(Mob[attempt].Qty);
+                    which = brandom(Mob[attempt].Qty);
 
                     if (which >= 10) {
 
@@ -965,10 +967,10 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         };
 
         if (attempt >= NORM_TABLE) {
-            which = 415 + random(25);
+            which = 415 + brandom(25);
         } else {
 
-            which = random(Mob[attempt].Qty);
+            which = brandom(Mob[attempt].Qty);
 
             if (which >= 10) {
                 which = Mob[attempt].List[which % 10];
@@ -1456,7 +1458,7 @@ int StepAnim(int x, int y, FILE *fin)
 void FirstManOnMoon(char plr, char isAI, char misNum)
 {
     int nautsOnMoon = 0;
-    dayOnMoon = random(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
+    dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
 
     if (misNum == 57 && plr == 1) {
         nautsOnMoon = 3;
@@ -1487,7 +1489,7 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
     if (!AI[plr]) {
         manOnMoon = DrawMoonSelection(nautsOnMoon, plr);
     } else {
-        manOnMoon = random(nautsOnMoon) + 1;
+        manOnMoon = brandom(nautsOnMoon) + 1;
     }
 
     EVA[0] = EVA[1] = manOnMoon - 1;

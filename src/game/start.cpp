@@ -28,6 +28,8 @@
 #include "options.h"
 #include "prest.h"
 #include "game_main.h"
+#include "pace.h"
+#include <assert.h>
 
 char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
                     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",
@@ -66,7 +68,7 @@ void SetEvents(void)
     for (i = 0; i < 6; i++)
         for (k = 0; k < qant[i]; k++) {
 rcard:
-            rans = random(100) + 1;
+            rans = brandom(100) + 1;
             j = tag = 0;
 
             while (rans > tag) {
@@ -79,7 +81,7 @@ rcard:
                 goto rcard;
             }
 
-            tag = random(D[j].qty) + D[j].fir;
+            tag = brandom(D[j].qty) + D[j].fir;
 
             while (s[tag] == 1) {
                 tag = (tag == (D[j].qty + D[j].fir - 1)) ? D[j].fir : tag + 1;
@@ -180,7 +182,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         }
 
         /* 70% for increase by 1, 30% for increase by 2 */
-        char delta = (random(100) > 70) ? 2 : 1;
+        char delta = (brandom(100) > 70) ? 2 : 1;
 
         /* Find skills that are below maximum */
         unsigned choices[NUM_SKILLS];
@@ -194,7 +196,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
         if (j > 0) {
             /* If found, pick one skill at random */
-            char *skill = skills[choices[random(j)]];
+            char *skill = skills[choices[brandom(j)]];
             *skill = MIN(*skill + delta, skillMax);
         }
 
@@ -297,7 +299,7 @@ AstroTurn(void)
                 if ((Data->P[j].Pool[i].Active >= 8)
                     && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
                     && Data->P[j].Pool[i].RDelay == 0) {
-                    num = random(100);
+                    num = brandom(100);
 
                     if (num > 89) {
                         /* Guy retires */
@@ -311,14 +313,14 @@ AstroTurn(void)
                             Data->P[j].Pool[i].Special = 1;
                         };
 
-                        Data->P[j].Pool[i].RetReas = random(6) + 1; /* Reason for Retirement */
+                        Data->P[j].Pool[i].RetReas = brandom(6) + 1; /* Reason for Retirement */
                     }
                 }
 
                 if (Data->P[j].Other & 1 && Data->P[j].Pool[i].RDelay == 0 &&
                     Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                     /* Catastrophic Failure */
-                    num = random(100);
+                    num = brandom(100);
 
                     if (j == 1) {
                         temp = 89;
@@ -348,10 +350,10 @@ AstroTurn(void)
                 if (Data->P[j].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
                     && Data->P[j].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
                     && strncmp(Data->P[j].Pool[i].Name, "ALDRIN", 6) != 0) {
-                    num = random(100);
+                    num = brandom(100);
 
                     if (num > 94) {
-                        num = random(100);
+                        num = brandom(100);
 
                         if (num > 74) {
                             Data->P[j].Pool[i].Status = AST_ST_INJURED;
@@ -424,7 +426,7 @@ AstroTurn(void)
 
                 if (Data->Season == 1) {
                     /* End of turn what the hell 5% happy */
-                    num = random(100);
+                    num = brandom(100);
 
                     if (num > 94) {
                         Data->P[j].Pool[i].Mood += 5;
@@ -495,7 +497,7 @@ AstroTurn(void)
 
                 /* card death */
                 if (Data->P[j].Other & 2) {
-                    Data->P[j].Pool[i].Mood -= random(2) + 1;
+                    Data->P[j].Pool[i].Mood -= brandom(2) + 1;
                 }
 
                 /* Compatibility */
@@ -832,7 +834,7 @@ void Update(void)
                     TestFMis(1, p1);
                     p1++;
                 } else if ((p0 < Data->P[0].PastMis) && (p1 < Data->P[1].PastMis)) {
-                    if (random(100) < 50) {
+                    if (brandom(100) < 50) {
                         TestFMis(0, p0);
                         p0++;
                     } else {
@@ -1022,7 +1024,7 @@ void UpdAll(char side)
                         TestFMis(1, p1);
                         p1++;
                     } else if ((p0 < Data->P[0].PastMis) && (p1 < Data->P[1].PastMis)) {
-                        if (random(100) < 50) {
+                        if (brandom(100) < 50) {
                             TestFMis(0, p0);
                             p0++;
                         } else {
@@ -1110,7 +1112,7 @@ TestFMis(int j, int i)
     if (Data->P[j].History[i].Event > 0) {
         Data->P[j].History[i].Event--;
 
-        if (random(100) > Data->P[j].History[i].Saf) {
+        if (brandom(100) > Data->P[j].History[i].Saf) {
             /* Failed Mission */
             k = Data->P[j].History[i].MissionCode;
             Data->P[j].History[i].Event = Data->P[j].History[i].Saf = 0;

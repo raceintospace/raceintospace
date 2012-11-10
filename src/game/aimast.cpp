@@ -31,6 +31,7 @@
 #include "aipur.h"
 #include "vab.h"
 #include "game_main.h"
+#include "pace.h"
 
 char Level_Check;
 enum Opponent_Status Cur_Status;
@@ -71,7 +72,7 @@ void AIMaster(char plr)
     }
 
 //select strategy
-    P_total = random(100);
+    P_total = brandom(100);
 
     if (Data->P[plr].Track[3] == 0) {
         if (P_total < 33) {
@@ -799,7 +800,7 @@ void PickModule(char plr)
 void MoonVoting(char plr)
 {
     int high = -1, val;
-    val = random(100) + 1;
+    val = brandom(100) + 1;
 
     if (val < 70) {
         high = 0;
@@ -928,7 +929,7 @@ void MoonProgram(char plr, char m)
 void ProgramVoting(char plr)
 {
     int i = 0;
-    i = random(100);
+    i = brandom(100);
 
     if (i < 65) {
         Data->P[plr].AIPrim = 8;

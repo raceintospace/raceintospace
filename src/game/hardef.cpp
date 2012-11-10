@@ -34,6 +34,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
+#include "pace.h"
 
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);
