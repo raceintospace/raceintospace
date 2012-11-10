@@ -72,3 +72,18 @@ Note that the resulting executables are dynamically linked against the
 Homebrew-compiled Ogg/Vorbis/Theora libs, adding a runtime dependency. We need
 a way to internalize these dependencies before shipping anything generated
 from this build process.
+
+Windows
+=======
+
+Ingredients:
+
+* [Visual Studio Express 2012](http://www.microsoft.com/visualstudio/eng/downloads#d-express-windows-desktop) ($0; other versions likely work too)
+* [CMake](http://www.cmake.org/cmake/resources/software.html) (free)
+* A checkout of the source (e.g. from [GitHub for Windows](http://windows.github.com/))
+
+From here, use CMake-GUI or the command-line CMake to generate Visual Studio
+project files.
+
+CMake will fail until you get all the other dependencies into your search path
+somehow. We should really work on getting those packed up into `lib/`...
