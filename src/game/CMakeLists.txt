@@ -65,9 +65,14 @@ add_library(
   records.cpp
   replay.cpp
   review.cpp
+  roster.cpp
+  roster_group.cpp
+  roster_entry.cpp
   rush.cpp
   sdlhelper.cpp
   start.cpp
   utils.cpp
   vab.cpp
   )
+
+add_dependencies(raceintospace_game jsoncpp)

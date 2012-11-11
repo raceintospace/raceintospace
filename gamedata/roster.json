@@ -1,0 +1,1786 @@
+[
+    {
+        "groups": [
+            {
+                "entries": [
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GRISSOM"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SHEPARD"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GLENN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "CARPENTER"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SCHIRRA"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "COOPER"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SLAYTON"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "KINCHELOE"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "WALKER"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "WOOD"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "ROGERS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 0,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "HURRLE"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "CAGLE"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "COBB"
+                    }
+                ],
+                "number_to_choose": 7,
+                "recruiting_delay": 6
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 4,
+                        "name": "YOUNG"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "MCDIVITT"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 4,
+                        "lunar": 1,
+                        "name": "E.WHITE"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "CONRAD"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 3,
+                        "name": "STAFFORD"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "BORMAN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 4,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "LOVELL"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "ARMSTRONG"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "SEE"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "KNIGHT"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "CREWS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "GIVENS"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "A.WHITE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "R.WHITE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "CROSSFIELD"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "LOUSMA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "RUSHWORTH"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "PETERSEN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "J.DIETRICH"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "M.DIETRICH"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "HART"
+                    }
+                ],
+                "number_to_choose": 9,
+                "recruiting_delay": 4
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 0,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "GRAVELINE"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 2,
+                        "name": "CERNAN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "BASSETT"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "SCOTT"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 3,
+                        "lunar": 2,
+                        "name": "COLLINS"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "CHAFFEE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "GORDON"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 4,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 3,
+                        "name": "ALDRIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "EISELE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "CUNNINGHAM"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ANDERS"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 0,
+                        "eva": 2,
+                        "lunar": 3,
+                        "name": "SCHWEICKART"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "WILLIAMS"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "MCCANDLESS"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SWIGERT"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "HAISE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ROOSA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "MITCHELL"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "WORDEN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "IRWIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "BEESON"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "GORELICK"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "FUNK"
+                    }
+                ],
+                "number_to_choose": 14,
+                "recruiting_delay": 4
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "BRAND"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "BEAN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "BULL"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 4,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "CARR"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "DUKE"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "ENGLE"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "EVANS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "FREEMAN"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "MUSGRAVE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 3,
+                        "lunar": 0,
+                        "name": "KERWIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 0,
+                        "name": "GIBSON"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "GARRIOTT"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "MATTINGLY"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ENGLAND"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "POGUE"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "SCHMITT"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "WEITZ"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "MICHEL"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 4,
+                        "lunar": 1,
+                        "name": "LIND"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 0,
+                        "name": "LLEWELLYN"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "CRIPPEN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "FULLERTON"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "HARTSFIELD"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 3,
+                        "name": "OVERMYER"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 0,
+                        "endurance": 0,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "PETERSON"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "TRULY"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "MCKAY"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "HENIZE"
+                    }
+                ],
+                "number_to_choose": 16,
+                "recruiting_delay": 8
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "ADAMS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "FINLEY"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ABRAHAMSON"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "LAWYER"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "LAWRENCE"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "MACLEAY"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "ALLEN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "NEUBECK"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "BOBKO"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 3,
+                        "name": "HERRES"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "TAYLOR"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "HOLMQUEST"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "O'LEARY"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "LENOIR"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "BLUFORD"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "THORNTON"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 0,
+                        "lunar": 3,
+                        "name": "PARKER"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "DANA"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "THOMPSON"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "CHAPMAN"
+                    }
+                ],
+                "number_to_choose": 14,
+                "recruiting_delay": 99
+            }
+        ],
+        "player": 0
+    },
+    {
+        "groups": [
+            {
+                "entries": [
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "NELYUBOV"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GAGARIN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "TITOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "NIKOLAYEV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "POPOVICH"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "BYKOVSKY"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "KOMAROV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "BONDARENKO"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "FILATYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "RAFIKOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "ANIKEYEV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "PONOMARYOVA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "KVASOVA"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "KUZNETSOVA"
+                    }
+                ],
+                "number_to_choose": 7,
+                "recruiting_delay": 6
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 3,
+                        "name": "YEGOROV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 4,
+                        "name": "FEOKTISTOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "BELYAYEV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 4,
+                        "lunar": 2,
+                        "name": "LEONOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 0,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "BEREGOVOY"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 4,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SHATALOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "VOLYNOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 3,
+                        "name": "YELISEYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "KHRUNOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "SARAFANOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "GUBAREV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "AKSYONOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GLAZKOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 4,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "RYUMIN"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 3,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "DZHANIBEKOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 4,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "LYAKHOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "POPOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 4,
+                        "eva": 4,
+                        "lunar": 0,
+                        "name": "KIZIM"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "TERESHKOVA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "SOLOVYOVA"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "SOKOLOVA"
+                    }
+                ],
+                "number_to_choose": 9,
+                "recruiting_delay": 4
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "SHONIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "KUBASOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "VOLKOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "FILIPCHENKO"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GORBATKO"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "SEVASTYANOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "RUKAVISHNIKOV"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "DOBROVOLSKY"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "PATSAYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "LAZAREV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "MAKAROV"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "KLIMUK"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "LEBEDEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 3,
+                        "name": "ARTYUKHIN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "GRECHKO"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ZHOLOBOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 4,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "KOVALYANOK"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "IVANCHENKOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "MALYSHEV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "ALEXANDROV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "YORKINA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "SAVITSKAYA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "YEFREMOVA"
+                    }
+                ],
+                "number_to_choose": 14,
+                "recruiting_delay": 4
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "ANDREYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 0,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "ANOKHIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "GLAZKOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ILLARIANOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "SOLOVYEV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "LEBEDEV"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "SEREBROV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 2,
+                        "name": "BEREZOVOI"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "GURRAGCHAA"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "SAVINYKH"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "STREKALOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "VIKTORENKO"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "ATKOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "VOLK"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 2,
+                        "name": "IVANOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "REMEK"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 3,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "VASYUTIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "LAVEIKIN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "JAEHN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "TUAN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 3,
+                        "name": "VOLOSHIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 0,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "KOLESNIKOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "BELOUSOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "VORONOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "YAZDOVSKY"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "ZYKOV"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 0,
+                        "name": "MATINCHENKO"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "ZAIKIN"
+                    }
+                ],
+                "number_to_choose": 16,
+                "recruiting_delay": 8
+            },
+            {
+                "entries": [
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 1,
+                        "name": "VARLAMOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "KARTASHOV"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "lunar": 2,
+                        "name": "FASTOVETS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 4,
+                        "endurance": 1,
+                        "eva": 3,
+                        "lunar": 3,
+                        "name": "SHCHUKIN"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "BORODAY"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 3,
+                        "lunar": 3,
+                        "name": "BACHURIN"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 4,
+                        "name": "STANKEVICIUS"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "KONONENKO"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "GULYAYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 3,
+                        "lunar": 0,
+                        "name": "ZUDOV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 0,
+                        "eva": 1,
+                        "lunar": 0,
+                        "name": "ROZHDESTVENSKY"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "DYOMIN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "LISUN"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 2,
+                        "name": "PREOBRAZHENSKY"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 3,
+                        "lunar": 1,
+                        "name": "SHCHEGLOV"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 1,
+                        "name": "KHLUDEYEV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 3,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "FYODOROV"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 0,
+                        "name": "ROMANOV"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 2,
+                        "lunar": 0,
+                        "name": "STEPANOV"
+                    },
+                    {
+                        "capsule": 0,
+                        "docking": 3,
+                        "endurance": 1,
+                        "eva": 0,
+                        "lunar": 1,
+                        "name": "PETRUSHENKO"
+                    }
+                ],
+                "number_to_choose": 14,
+                "recruiting_delay": 99
+            }
+        ],
+        "player": 1
+    }
+]

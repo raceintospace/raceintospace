@@ -24,7 +24,6 @@ Building
 You need:
 
 * CMake
-* git
 * SDL
 * Boost
 * libpng (and zlib)
@@ -47,7 +46,7 @@ Build as described above.
 
 If you're on a Debian-based system, you can get all the dependencies with:
 
-    $ sudo apt-get install libsdl-dev libboost-dev libpng-dev \
+    $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
         libogg-dev libvorbis-dev libtheora-dev
 
 Mac OS X
