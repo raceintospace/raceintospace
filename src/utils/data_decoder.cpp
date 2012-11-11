@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <string.h>
 
+#include <json/json.h>
+#include <assert.h>
+
 void print_escaped_string(const char * string, int max_length)
 {
     int i;
@@ -139,21 +142,65 @@ void write_men(FILE * fp, const char * name)
         char Name[14], Sex, Cap, LM, EVA, Docking, Endurance;
     } __attribute__((packed)) record;
     
-    printf("struct ManPool %s[] = {\n", name);
-    while (fread(&record, sizeof(record), 1, fp)) {
-        RecordStart();
-        String(Name);
-        printf("    .Country = \"%s\"\n", (count<106)?"US":"SOV");
-        Number(Sex);
-        Number(Cap);
-        Number(LM);
-        Number(EVA);
-        Number(Docking);
-        Number(Endurance);
-        RecordEnd();
-        count++;
+    // magic hardcoded group data
+    struct group_t {
+        int entries, delay, number;
+    } groups[] = {
+        { 11 + 3, 6,  7 },
+        { 18 + 3, 4,  9 },
+        { 20 + 3, 4,  14 },
+        { 28,     8,  16 },
+        { 20,     99, 14 },
+    };
+    const int groups_size = 5;
+    
+    Json::Value json(Json::arrayValue);
+    
+    for (int player = 0; player < 2; player++) {
+        Json::Value json_player(Json::objectValue);
+        json_player["player"] = player;
+        
+        Json::Value json_groups(Json::arrayValue);
+        
+        for (int group_number = 0; group_number < groups_size; group_number++) {
+            group_t& group = groups[group_number];
+            
+            Json::Value json_group(Json::objectValue);
+            json_group["recruiting_delay"] = group.delay;
+            json_group["number_to_choose"] = group.number;
+            
+            Json::Value json_entries(Json::arrayValue);
+
+            for (int i = 0; i < group.entries; i++) {
+                ssize_t records = fread(&record, sizeof(record), 1, fp);
+                assert(records == 1);
+                
+                Json::Value json_entry(Json::objectValue);
+                json_entry["endurance"] = record.Endurance;
+                json_entry["docking"] = record.Docking;
+                json_entry["eva"] = record.EVA;
+                json_entry["lunar"] = record.LM;
+                json_entry["capsule"] = record.Cap;
+                if (record.Sex == 1)
+                    json_entry["female"] = true;
+                json_entry["name"] = record.Name;
+                json_entries.append(json_entry);
+            }
+            
+            json_group["entries"] = json_entries;
+            json_groups.append(json_group);
+        }
+
+        json_player["groups"] = json_groups;
+        json.append(json_player);
     }
-    printf("};\n\n");
+    
+    // ensure we're at EOF
+    assert(fread(&record, sizeof(record), 1, fp) < 1);
+    
+    std::cout << json << std::endl << std::endl;
+    
+    exit(0);
 }
 
 void write_historical_men(FILE * fp) {
@@ -383,11 +430,10 @@ void write_budget_mods(FILE *fp)
 
 void write_player_data(FILE *fp)
 {
-    char *buffer;
+    char buffer[4096];
     size_t bytes_read = 0;
     size_t bytes_uncompressed = 0;
 
-    buffer = malloc(4096);
       struct {
         struct Players players[2];
     } record;
@@ -412,8 +458,6 @@ void write_player_data(FILE *fp)
         RecordEnd();
     }
     printf("};\n\n");
-    
-    free(buffer);
 }
 
 void write_historical_equip(FILE *fp)
@@ -502,7 +546,7 @@ void write_historical_equip(FILE *fp)
 void write_help(FILE * fp)
 {
     int i;
-    char *buffer = malloc(2048);  // Covers the largest helptext size
+    char buffer[2048];  // Covers the largest helptext size
 
     struct HelpTextHdr {
         char Code[6];
@@ -557,9 +601,6 @@ void write_help(FILE * fp)
         RecordEnd();
     }
     printf("};\n\n");
-    
-    free(buffer);
-
 }
 
 
@@ -821,11 +862,15 @@ int main(int argc, char ** argv)
         fprintf(stderr, "usage: %s path/to/gamedata\n", argv[0]);
         return 1;
     }
+
+    // already converted:
+    decode(argv[1], "crew.dat", write_historical_men);
+    //decode(argv[1], "user.dat", write_custom_men);
+
     
     decode(argv[1], "rast.dat", write_player_data); // overlay for historical equipment
     
     
-    decode(argv[1], "crew.dat", write_historical_men);
     decode(argv[1], "endgame.dat", write_endgame);
     decode(argv[1], "event.dat", write_events);
     decode(argv[1], "fails.cdr", write_failure_modes);  
@@ -839,7 +884,6 @@ int main(int argc, char ** argv)
     // rast.dat   -- RLED Players
     
     //decode(argv[1], "records.dat", write_records);      // This isn't really a data file
-    decode(argv[1], "user.dat", write_custom_men);
     decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
     
     decode_seq(argv[1], "seq", write_mission_animation_success_sequence);
