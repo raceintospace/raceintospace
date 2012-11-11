@@ -1,63 +1,64 @@
 #include "roster.h"
+#include "roster_group.h"
 
-#include "options.h"
-#include "pace.h"
+#include <json/json.h>
+#include <assert.h>
 
-RosterEntry::RosterEntry(const Json::Value& json_object)
+#include <boost/foreach.hpp>
+
+Roster::Roster(std::istream &input_stream)
 {
-    m_name = json_object["name"].asString();
-    m_player = json_object["player"].asInt();
-    m_group = json_object["group"].asInt();
-    m_female = json_object.get("female", false).asBool();
-    m_capsule = json_object.get("capsule", 0).asInt();
-    m_lunar = json_object.get("lunar", 0).asInt();
-    m_eva = json_object.get("eva", 0).asInt();
-    m_docking = json_object.get("docking", 0).asInt();
-    m_endurance = json_object.get("endurance", 0).asInt();
+    // parse the input_stream as a JSON document
+    Json::Value doc;
+    Json::Reader reader;
+    bool success;
+
+    success = reader.parse(input_stream, doc);
+    assert(success);
+
+    // the document should look like:
+    // [
+    //   { player: 0, groups: [ /* group */, /* group */, /* group */ ] },
+    //   { player: 1, groups: [ /* group */, /* group */, /* group */ ] }
+    // ]
+
+    assert(doc.isArray());
+
+    for (int i = 0; i < doc.size(); i++) {
+        Json::Value &player_object = doc[i];
+        assert(player_object.isObject());
+
+        int player_number = player_object.get("player", -1).asInt();
+        assert(player_number == 0 || player_number == 1);
+
+        // walk the groups array
+        Json::Value &groups = player_object["groups"];
+        assert(groups.isArray());
+
+        for (int j = 0; j < groups.size(); j++) {
+            // parse each array of astronauts into a RosterGroup
+            Json::Value &group_array = groups[j];
+            RosterGroup group(player_number, j + 1, group_array);
+
+            // hang onto this group
+            m_groups.push_back(group);
+        }
+    }
 }
 
-RosterEntry::~RosterEntry()
+Roster::~Roster()
 {
 }
-    
-void RosterEntry::randomize()
+
+RosterGroup &Roster::getGroup(int player, int group_number)
 {
-    // FIXME: this is entirely too generous compared to the historical roster
-    m_capsule = brandom(5);
-    m_lunar = brandom(5);
-    m_eva = brandom(5);
-    m_docking = brandom(5);
-    m_endurance = brandom(5);
-}
+    BOOST_FOREACH(RosterGroup & roster_group, m_groups) {
+        if (roster_group.getPlayer() == player && roster_group.getGroupNumber() == group_number) {
+            return roster_group;
+        }
+    }
 
-Astros* RosterEntry::recruit(BuzzData& player)
-{
-    // get a pointer to the next Astros, and increment the count
-    Astros * astronaut = &player.Pool[(uint8_t)player.AstroCount++];
-    
-    // zero this
-    memset(astronaut, 0, sizeof(Astros));
-    strncpy(astronaut->Name, getName().c_str(), sizeof(astronaut->Name) - 1);
-    astronaut->Name[sizeof(astronaut->Name) - 1] = '\0';    // ensure NUL-terminated
-    astronaut->Group = getGroup() - 1; // is this correct?
-    astronaut->Sex = isFemale() ? 1 : 0;
-    astronaut->Cap = getCapsule();
-    astronaut->LM = getLunar();
-    astronaut->EVA = getEVA();
-    astronaut->Docking = getDocking();
-    astronaut->Endurance = getEndurance();
-    astronaut->Status = AST_ST_ACTIVE;
-    astronaut->oldAssign = -1;
-    astronaut->TrainingLevel = 1;
-    astronaut->CR = brandom(2) + 1;
-    astronaut->CL = brandom(2) + 1;
-    astronaut->Compat = brandom(options.feat_compat_nauts) + 1;
-    astronaut->Mood = 100;
-
-    if (astronaut->Sex == 0)
-        astronaut->Face = brandom(77);
-    else
-        astronaut->Face = 77 + brandom(8);
-
-    return astronaut;
+    // FIXME: this shouldn't happen unless there's a data problem
+    // still... should probably trap this better
+    assert(false);
 }
