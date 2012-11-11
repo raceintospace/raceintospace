@@ -1,10 +1,14 @@
-#include "roster.h"
-#include "roster_group.h"
-
 #include <json/json.h>
 #include <assert.h>
 
 #include <boost/foreach.hpp>
+
+#include <fstream>
+
+#include "roster.h"
+#include "roster_group.h"
+
+#include "fs.h"
 
 Roster::Roster(std::istream &input_stream)
 {
@@ -61,4 +65,17 @@ RosterGroup &Roster::getGroup(int player, int group_number)
     // FIXME: this shouldn't happen unless there's a data problem
     // still... should probably trap this better
     assert(false);
+}
+
+Roster Roster::load(const std::string filename_str)
+{
+    char *filename = locate_file(filename_str.c_str(), FT_DATA);
+    assert(filename);
+
+    std::ifstream roster_file(filename);
+    Roster roster(roster_file);
+
+    free(filename);
+
+    return roster;
 }

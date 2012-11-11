@@ -66,6 +66,8 @@ add_library(
   replay.cpp
   review.cpp
   roster.cpp
+  roster_group.cpp
+  roster_entry.cpp
   rush.cpp
   sdlhelper.cpp
   start.cpp
