@@ -11,6 +11,9 @@ find_library(AudioUnit_LIBRARY NAMES AudioUnit REQUIRED)
 # Sparkle!
 #file(DOWNLOAD http://sparkle.andymatuschak.org/files/Sparkle%201.5b6.zip sparkle.zip)
 
+# Local libraries
+include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
+
 # Set up the bundle
 include(CopyNIB.cmake)
 CopyNIB(SDLMain.nib ${CMAKE_CURRENT_BINARY_DIR}/SDLMain.nib)
@@ -50,7 +53,10 @@ target_link_libraries("${app}"
   raceintospace_game ${raceintospace_game_libraries}
   raceintospace_display ${raceintospace_display_libraries}
   ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY}
+  jsoncpp
   )
+
+add_dependencies("${app}" jsoncpp_build)
 
 set_target_properties("${app}" PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/src/os_macosx/Info.plist.in
