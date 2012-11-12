@@ -250,7 +250,6 @@ void MisAnn(char plr, char pad)
     PrintAt(139, 78, "PLAY FULL");
     PrintAt(221, 78, "SCRUB");
     grSetColor(9);
-    MisCod = Data->P[plr].Mission[pad].MissionCode;
     PrintAt(65, 78, "C");
     PrintAt(139, 78, "P");
     PrintAt(221, 78, "S");

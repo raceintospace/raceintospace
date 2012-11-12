@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <assert.h>
+
 #include "display/png_image.h"
 
 #include "place.h"
@@ -580,10 +582,12 @@ int Help(const char *FName)
             i += 6;
         } else if (Help[i] == 0x2e) { // Period
             i++;
+            assert(NTxt != NULL);
             NTxt[j++] = (char) 0xcc;
             NTxt[j++] = (Help[i] - 0x30) * 100 + (Help[i + 1] - 0x30) * 10 + (Help[i + 2] - 0x30);
             i += 5;
         } else { // Text of Line
+            assert(NTxt != NULL);
             while (Help[i] != 0x0d) {
                 NTxt[j++] = Help[i++];
             }
