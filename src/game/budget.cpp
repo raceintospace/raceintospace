@@ -427,7 +427,7 @@ void Budget(char player)
 
                 OutBox(167, 29, 236, 41);
                 return;  /* Done */
-            };
+            }
 
             if ((x >= 133 && y >= 140 && x <= 152 && y < 152 && mousebuttons > 0) || key == 'U') {
                 pStatus[0] = (pStatus[0] == 0) ? 1 : 0;

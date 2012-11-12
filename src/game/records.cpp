@@ -18,13 +18,11 @@
 
 #include "Buzz_inc.h"
 #include "records.h"
-#include "logging.h"
 #include "hardef.h"
 #include "game_main.h"
 #include "place.h"
 #include "port.h"
 #include "replay.h"
-#include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
@@ -1789,7 +1787,7 @@ void UpdateRecords(char Ty)
                                         max = loop - 1;
                                     }
 
-                                temp = (int)temp / (int)max;
+                                temp = temp / max;
 
                                 if (rec[k][0].place == 0) {
                                     Rec_Change = 0;
@@ -1814,7 +1812,7 @@ void UpdateRecords(char Ty)
                                         max = loop - 1;
                                     }
 
-                                temp = (int)temp / (int)max;
+                                temp = temp / max;
 
                                 if (rec[k][0].place == 0) {
                                     Rec_Change = 0;

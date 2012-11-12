@@ -28,7 +28,6 @@
 #include <assert.h>
 #include "mmfile.h"
 #include "av.h"
-#include "logging.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -36,9 +35,6 @@
 #include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
-
-void RLEF(void *dest, void *src, unsigned int src_size);
-
 
 /** find and fill REPLAY structure and return 0, or -1 if failed.
  * if grp != NULL and oGROUP at offset rep->off[0] is found, then fill grp too

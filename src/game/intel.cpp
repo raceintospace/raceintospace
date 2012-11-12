@@ -1729,10 +1729,11 @@ void IStat(char plr)
                 OutBox(244, 5, 314, 17);
                 Del_RD_BUT();
                 break;  /* Done */
-            };
+            }
         }
-    };
+    }
 }
+
 void DispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
     GXHEADER local, local2;
@@ -2278,11 +2279,7 @@ void IInfo(char plr, char loc, char w)
         };
 
         break;
-
-    default:
-        break;
-    };
-
+    }
 }
 
 /* EOF */

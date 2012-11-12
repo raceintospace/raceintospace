@@ -121,10 +121,7 @@ void DrawTrain(char plr, char lvl)
         strcat(TrnName, Trner);
         DispBig(37, 5, TrnName, 0, -1);
         break;
-
-    default:
-        break;
-    };
+    }
 
     grSetColor(1);
 
@@ -278,10 +275,7 @@ TrainText(char plr, int astro, int cnt)
         }
 
         break;
-
-    default:
-        break;
-    };
+    }
 
     grSetColor(11);
 
@@ -303,7 +297,7 @@ TrainText(char plr, int astro, int cnt)
     case 3:
         PrintAt(0, 0, "IV");
         break;
-    };
+    }
 
     DispNum(282, 97, Data->P[plr].Pool[astro].Active);
 
@@ -417,7 +411,7 @@ void Train(char plr, int level)
 
     default:
         break;
-    };
+    }
 
     WaitForMouseUp();
 
@@ -884,8 +878,8 @@ void Hospital(char plr, int sel)
             WaitForMouseUp();
             music_stop();
             return;  /* Done */
-        }; /* end x-y if */
-    };  /* end while */
+        } /* end x-y if */
+    }  /* end while */
 }
 
 

@@ -22,19 +22,11 @@
  */
 
 #include "Buzz_inc.h"
-#include "fs.h"
 #include "options.h"
 #include "pace.h"
 #include "utils.h"
-#include "logging.h"
 #include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <unistd.h>
 #include <errno.h>
 
 /** path separator setup */
@@ -221,15 +213,15 @@ try_find_file(const char *name, const char *mode, int type)
         if (strchr(mode, 'w')
             || strchr(mode, 'a')
             || strncmp(mode, "r+", 2) == 0) {
-            char *newmode;
+            char *inner_newmode;
 
             if (strchr(mode, 'b')) {
-                newmode = "rb";
+                inner_newmode = "rb";
             } else {
-                newmode = "r";
+                inner_newmode = "r";
             }
 
-            DEBUG3("access mode changed from `%s' to `%s'", mode, newmode);
+            DEBUG3("access mode changed from `%s' to `%s'", mode, inner_newmode);
         }
     }
 

@@ -30,7 +30,7 @@
 #include "pace.h"
 
 struct order Order[7] ;
-unsigned int colss, VBlank;
+unsigned int colss;
 
 char Month[12][11] = {
     "JANUARY ", "FEBRUARY ", "MARCH ", "APRIL ", "MAY ", "JUNE ",
@@ -279,7 +279,7 @@ void MisAnn(char plr, char pad)
         case 2:
             PrintAt(0, 0, "C");
             break;
-        };
+        }
 
         PrintAt(160, 101, "PART TWO");
 
@@ -298,7 +298,7 @@ void MisAnn(char plr, char pad)
         case 2:
             PrintAt(0, 0, "C");
             break;
-        };
+        }
 
     }
 

@@ -6,7 +6,6 @@
 #include <fstream>
 
 #include "roster.h"
-#include "roster_group.h"
 
 #include "fs.h"
 

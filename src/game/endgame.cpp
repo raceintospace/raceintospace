@@ -41,10 +41,7 @@
 #define FRICTION 0.3
 #define PI 3.1415926
 #define MAXINITSPEED 270
-#define MAXWAIT 1
 #define PutPixel(x,y,col) grPutPixel(x,y,col)
-
-const int draw_projectiles = 0;
 
 char month, firstOnMoon, capName[30];
 char PF[29][40] = {
@@ -125,20 +122,12 @@ Burst(char win)
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
                     PutPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
-
-                    if (draw_projectiles) {
-                        av_need_update_xy(xx, yy, xx, yy);
-                    }
                 }
 
                 key = 0;
 
                 /* We can't wait 30 ms on default timer */
-                if (draw_projectiles) {
-                    GetMouse_fast();
-                } else {
-                    GetMouse();
-                }
+                GetMouse();
 
                 if (key > 0 || mousebuttons > 0) {
                     if ((x >= 14 && y >= 182 && x <= 65 && y <= 190
@@ -181,9 +170,9 @@ Burst(char win)
                 Bomb[lp2].vel[1] = Bomb[lp2].vel[1] * FRICTION;
 
                 Bomb[lp2].psn[0] =
-                    (float) Bomb[lp2].psn[0] + Bomb[lp2].vel[0];
+                    Bomb[lp2].psn[0] + Bomb[lp2].vel[0];
                 Bomb[lp2].psn[1] =
-                    (float) Bomb[lp2].psn[1] + Bomb[lp2].vel[1];
+                    Bomb[lp2].psn[1] + Bomb[lp2].vel[1];
                 xx = Bomb[lp2].psn[0];
                 yy = Bomb[lp2].psn[1];
 
@@ -208,16 +197,7 @@ Burst(char win)
                 if (lp1 < Bomb[lp2].per && (xx >= 0 && xx < 320 && yy >= 0
                                             && yy <= 172)) {
                     PutPixel(xx, yy, clr);
-
-                    if (draw_projectiles) {
-                        av_need_update_xy(xx, yy, xx, yy);
-                    }
                 }
-            }
-
-            /* XXX: need to optimize SDL_Scale2x for this to work */
-            if (draw_projectiles) {
-                av_sync();
             }
         }
 
@@ -227,10 +207,6 @@ Burst(char win)
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
                 PutPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
-
-                if (draw_projectiles) {
-                    av_need_update_xy(xx, yy, xx, yy);
-                }
             }
         }
     }                              // end while

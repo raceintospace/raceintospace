@@ -32,13 +32,8 @@
  * See log4c.h for documentation.
  */
 #include "logging.h"
-#include "log4c.h"
 #include "macros.h"
-#include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
-#include <limits.h>
-#include <string.h>
 #include <assert.h>
 
 struct LogCategory _LOGV(LOG_ROOT_CAT) = {

@@ -57,10 +57,7 @@ char CheckCrewOK(char plr, char pad)
             case 2:
                 Help("i140");
                 break;
-
-            default:
-                break;
-            };
+            }
 
             RT_value = 1;
         }
@@ -446,7 +443,7 @@ char REvent(char plr)
             ClrMiss(plr, 1 + 3);
             ClrMiss(plr, 2 + 3);
             break;
-        };
+        }
 
         if (evflag == 0) {
             return 1;

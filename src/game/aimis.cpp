@@ -33,14 +33,12 @@
 #include "vab.h"
 #include "mc.h"
 #include "aimast.h"
-#include <string.h>
-#include <math.h>
 
-struct cStr {
+struct {
     int16_t cost, sf, i;
 } Mew[5];
 int whe[2], rck[2];
-char pc[2], bc[2], Alt_A[2] = {0, 0}, Alt_B[2] = {0, 0}, Alt_C[2] = {0, 0};
+char pc[2], bc[2], Alt_A[2] = {0, 0}, Alt_B[2] = {0, 0};
 void Strategy_One(char plr, int *m_1, int *m_2, int *m_3);
 void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3);
 void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3);

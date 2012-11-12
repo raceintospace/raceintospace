@@ -21,15 +21,12 @@
 // ***************************
 
 #define BUFFER_SIZE 20*1024   /**< Allocated Buffer in Beginning */
-#define MINSAFETY 50          /**< Minimum Safety */
-#define READYFACTOR 48        /**< Ready Safetyfactor */
 #define MAXBUB 30             /**< Maximum Bubbles */
 #define pline(a,b,c,d)        {grMoveTo(a,b) ; grLineTo(c,d);}
 #define other(a)          abs( (a)-1 )
 #define maxx(a,b)         (((a) > (b)) ? (a) : (b))
 #define minn(a,b)         (((a) < (b)) ? (a) : (b))
 #define MisStep(a,b,c) PrintAt((a),(b),S_Name[(c)])
-//#define VBlank() while(!(inp(0x3da)&0x08))  // the all important VBlank
 #define VBlank() do{}while(0)
 #define PROGRAM_NOT_STARTED -1  /* Hardware program not started when Num is set to this */
 
@@ -42,21 +39,13 @@
 #define WORD unsigned short
 #endif
 
-#define xMODE_HIST 0x0001
-#define xMODE_CHEAT 0x0002
 #define xMODE_NOFAIL 0x0020
-#define xMODE_TOM 0x0040
-#define xMODE_DOANIM 0x0080
 #define xMODE_NOCOPRO 0x00800
 #define xMODE_PUSSY 0x0400
 #define xMODE_CLOUDS 0x1000
 #define xMODE_SPOT_ANIM 0x2000
 
-#define HIST    (xMODE&xMODE_HIST)
-#define CHEAT   (xMODE&xMODE_CHEAT)
 #define NOFAIL  (xMODE&xMODE_NOFAIL)
-#define TOM     (xMODE&xMODE_TOM)
-#define DOANIM  (xMODE&xMODE_DOANIM)
 #define NOCOPRO (xMODE&xMODE_NOCOPRO)
 #define PUSSY   (xMODE&xMODE_PUSSY)
 
@@ -69,7 +58,6 @@
 #define K_HOME         0x4700
 #define K_END          0x4F00
 #define K_ENTER     0x000D
-#define K_QUIT         0x000F
 #define K_ESCAPE       0x001B
 #define K_SPACE     0x0020
 
@@ -92,7 +80,6 @@
 #define EORBIT       18
 #define LPASS        19
 #define LORBIT       20
-#define LRESCUE      21
 #define LLAND        22
 #define ORBSAT       0
 #define LUNFLY       1

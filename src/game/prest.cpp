@@ -27,15 +27,12 @@
 #include "mis_m.h"
 
 char tYr, tMo, tIDX, bIDX;
-FILE *ft;
-
 
 void Set_Dock(char plr, char total);
 void Set_LM(char plr, char total);
 int Check_Photo(void);
 int Check_Dock(int limit);
 int PrestCheck(char plr);
-char Was_Goal(char total, char which);
 char Did_Fail(void);
 char PosGoal(char *PVal);
 char NegGoal(char *PVal);
@@ -50,11 +47,9 @@ void Set_Dock(char plr, char total)
     for (i = 0; i < total; i++) {
         if (Mev[i].loc == 8 && Mev[i].StepInfo == 1) {
             Data->Prestige[24].Goal[plr]++;
-            return;
-        };
+            break;
+        }
     }
-
-    return;
 }
 
 void Set_LM(char plr, char total)
@@ -118,27 +113,6 @@ int Check_Dock(int limit)
         }
 
         if (Mev[i].loc == 8 && Mev[i].StepInfo > limit) {
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-int Check_EVA(int limit)
-{
-    int i;
-
-    for (i = 0; i < STEPnum; i++) {
-        if (Mev[i].loc == 7 && Mev[i].StepInfo == 0) {
-            return 0;
-        }
-
-        if (Mev[i].loc == 7 && Mev[i].StepInfo <= limit) {
-            return 2;
-        }
-
-        if (Mev[i].loc == 7 && Mev[i].StepInfo > limit) {
             return 1;
         }
     }
@@ -464,7 +438,7 @@ char Set_Goal(char plr, char which, char control)
 
                 default:
                     break;
-                };
+                }
             }
         } else if (Data->Prestige[which].mPlace == -1 && Data->Prestige[which].Place != plr) {
             Data->P[plr].Other |= 4; // for astros
@@ -702,8 +676,6 @@ int MaxFail(void)
 #define SSTS(a)  (PVal[a]==3)
 #define STSp(a)  (PVal[a]==1 || PVal[a]==2)
 #define STSn(a)  (PVal[a]==4)
-#define IsGoal(a) ( (18)==18 || (a)==19 || (a)==20 || (a)==22 || (a)==27) )
-
 
 char PosGoal(char *PVal)
 {
@@ -983,7 +955,7 @@ int AllotPrest(char plr, char mis)
     // TOTAL ALL MISSION FIRSTS
     for (i = 0; i < 28; i++)
         if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
-            total += (char) Set_Goal(plr, i, 0);
+            total += Set_Goal(plr, i, 0);
         }
 
     //else if (PVal[i]==4) negs+=Set_Goal(plr,i,0);
@@ -1023,7 +995,7 @@ int AllotPrest(char plr, char mis)
 
         for (i = 0; i < 28; i++)
             if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
-                total += (char) Set_Goal(plr, i, 0);
+                total += Set_Goal(plr, i, 0);
             } else if (PVal[i] == 3) {
                 Set_Goal(plr, i, 0);
             }

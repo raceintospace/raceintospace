@@ -178,7 +178,7 @@ void DrawAstCheck(char plr)
         PrintAt(0, 0, "V");
         pos = ASTRO_POOL_LVL5;
         break;
-    };
+    }
 
     if (Data->Season == 0) {
         PrintAt(160, 73, "SPRING 19");
@@ -354,7 +354,7 @@ void DrawAstSel(char plr)
     case 4:
         PrintAt(0, 0, "V");
         break;
-    };
+    }
 
     PrintAt(185, 41, "REMAINING POSITIONS:");
 
@@ -559,7 +559,7 @@ void AstSel(char plr)
         MaxSel = ASTRO_POOL_LVL5;
         Index = 86;
         break;
-    }; /* End of switch */
+    }
 
     Data->P[plr].Cash -= 15;
 
@@ -1047,14 +1047,14 @@ void AstSel(char plr)
                 case 5:
                     Data->P[plr].AstroDelay = 99;
                     break;
-                };
+                }
 
                 OutBox(245, 5, 314, 17);
 
                 music_stop();
 
                 return;  /* Done */
-            };
-        };
+            }
+        }
     }
 }

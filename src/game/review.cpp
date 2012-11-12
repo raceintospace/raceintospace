@@ -30,7 +30,6 @@
 #include "game_main.h"
 #include "place.h"
 #include "port.h"
-#include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
@@ -269,9 +268,9 @@ void Review(char plr)
                 WaitForMouseUp();
                 music_stop();
                 return;  /* Done */
-            };
+            }
         }
-    };
+    }
 }
 
 // Mission Review

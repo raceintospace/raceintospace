@@ -149,7 +149,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
         }
 
         break;
-    };
+    }
 
     GV(&local, 143, 74);
 
@@ -509,28 +509,28 @@ void DamProb(char plr, char prog, int chk)
         D_Cost = Data->P[plr].Probe[chk].DCost;
         Saf_Loss = Data->P[plr].Probe[chk].Damage;
         ESafety = Data->P[plr].Probe[chk].Safety;
-        strcpy((char *)Name, Data->P[plr].Probe[chk].Name);
+        strcpy(Name, Data->P[plr].Probe[chk].Name);
         break;
 
     case 1:
         D_Cost = Data->P[plr].Rocket[chk].DCost;
         Saf_Loss = Data->P[plr].Rocket[chk].Damage;
         ESafety = Data->P[plr].Rocket[chk].Safety;
-        strcpy((char *)Name, Data->P[plr].Rocket[chk].Name);
+        strcpy(Name, Data->P[plr].Rocket[chk].Name);
         break;
 
     case 2:
         D_Cost = Data->P[plr].Manned[chk].DCost;
         Saf_Loss = Data->P[plr].Manned[chk].Damage;
         ESafety = Data->P[plr].Manned[chk].Safety;
-        strcpy((char *)Name, Data->P[plr].Manned[chk].Name);
+        strcpy(Name, Data->P[plr].Manned[chk].Name);
         break;
 
     case 3:
         D_Cost = Data->P[plr].Misc[chk].DCost;
         Saf_Loss = Data->P[plr].Misc[chk].Damage;
         ESafety = Data->P[plr].Misc[chk].Safety;
-        strcpy((char *)Name, Data->P[plr].Misc[chk].Name);
+        strcpy(Name, Data->P[plr].Misc[chk].Name);
         break;
 
     default:
@@ -559,7 +559,7 @@ void DamProb(char plr, char prog, int chk)
     grSetColor(6);
     PrintAt(121, 104, "DAMAGE: ");
     grSetColor(11);
-    strcat((char *)Name, " PROGRAM");
+    strcat(Name, " PROGRAM");
     PrintAt(0, 0, &Name[0]);
     grSetColor(6);
     PrintAt(121, 113, "DAMAGE COST: ");
@@ -1180,7 +1180,7 @@ Programs(char plr, char prog)
                         Data->P[plr].Pool[M[now2]].Una = 0;
                         Gcnt[grp]--;
                         count++;
-                    };
+                    }
 
                     ClearIt();
 
@@ -1379,10 +1379,7 @@ void AstNames(int man, char *name, char att)
         RectFill(16, 114, 75, 118, 3);
         RectFill(5, 114, 11, 118, 3);
         break;
-
-    default:
-        break;
-    };
+    }
 
     grSetColor(1);
 
@@ -1442,10 +1439,7 @@ void AstNames(int man, char *name, char att)
         }
 
         break;
-
-    default:
-        break;
-    };
+    }
 
     if (att >= 65) {
         col = 16;
@@ -1484,12 +1478,7 @@ void AstNames(int man, char *name, char att)
     case 3:
         RectFill(5, 114, 11, 118, col);
         break;
-
-    default:
-        break;
-    };
-
-    return;
+    }
 }
 
 void Flts(char old, char nw)
@@ -1527,7 +1516,7 @@ void Flts(char old, char nw)
     case 7:
         OutBox(241, 184, 315, 196);
         break;
-    };
+    }
 
     switch (nw) {
     case 0:
@@ -1561,9 +1550,7 @@ void Flts(char old, char nw)
     case 7:
         InBox(241, 184, 315, 196);
         break;
-    };
-
-    return;
+    }
 } /* End of Flts */
 
 void FltsTxt(char nw, char col)
@@ -1602,9 +1589,7 @@ void FltsTxt(char nw, char col)
     case 7:
         PrintAt(246, 192, "FLT. CREW VIII");
         break;
-    };
-
-    return;
+    }
 } /* End of FltsTxt */
 
 /* vi: set noet ts=4 sw=4 tw=78: */

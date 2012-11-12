@@ -1,20 +1,6 @@
 #include <stdio.h>
 #include "gamedata.h"
 
-/* Definitions for scalar types */
-
-#define sizeof_char (sizeof(char))
-#define sizeof_int8_t (sizeof(int8_t))
-#define sizeof_int16_t (sizeof(int16_t))
-#define sizeof_int32_t (sizeof(int32_t))
-#define sizeof_uint8_t (sizeof(uint8_t))
-#define sizeof_uint16_t (sizeof(uint16_t))
-#define sizeof_uint32_t (sizeof(uint32_t))
-
-/* XXX: check if char is signed or unsigned */
-#define get_char (char)get_uint8_t
-#define put_char (char)get_uint8_t
-
 static inline uint8_t
 get_uint8_t(const void *buf)
 {
@@ -134,26 +120,6 @@ fread_##type(struct type *dst, size_t num, FILE *f) \
     return total; \
 } \
  
-#define DECL_FWRITE(struct, type, bufelems) \
-size_t \
-fwrite_##type(const struct type *src, size_t num, FILE *f) \
-{ \
-    uint8_t tmp[(bufelems)*sizeof_##type]; \
-    int i = 0, total = 0, elems = 0; \
-    while (num > 0) \
-    { \
-        elems = (num < (bufelems)) ? num : (bufelems); \
-        for (i = 0; i < elems; ++i) \
-            put_##type(tmp+i*sizeof_##type, src++); \
-        elems = fwrite(tmp, sizeof_##type, elems, f); \
-        if (!elems) \
-            break; \
-        total += elems; \
-        num -= elems; \
-    } \
-    return total; \
-} \
- 
 #define DECL_GET_START(struct, type) \
 static inline void \
 get_##type (struct type *dst, const uint8_t *src) \
@@ -164,14 +130,14 @@ get_##type (struct type *dst, const uint8_t *src) \
     for (i = 0; i < (num); ++i) \
     { \
         *(((type *)&dst->name)+i) = get_##type(src); \
-        src += sizeof_##type; \
+        src += sizeof(type); \
     } \
  
 #define DECL_GET_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         get_##type((((str type *)&dst->name)+i), src); \
-        src += sizeof_##type; \
+        src += sizeof(type); \
     } \
  
 #define DECL_GET_END }
@@ -186,14 +152,14 @@ put_##type (uint8_t *dst, const struct type *src) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, *(((type *)&src->name)+i)); \
-        dst += sizeof_##type; \
+        dst += sizeof(type); \
     } \
  
 #define DECL_PUT_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, ((str type *)(&src->name))+i); \
-        dst += sizeof_##type; \
+        dst += sizeof(type); \
     } \
  
 #define DECL_PUT_END }

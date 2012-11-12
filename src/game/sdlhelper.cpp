@@ -25,20 +25,11 @@
  */
 
 #include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <sys/time.h>
-#include <math.h>
-#include <signal.h>
 #include <memory.h>
 #include <SDL.h>
 #include "Buzz_inc.h"
-#include "macros.h"
 #include "options.h"
 #include "utils.h"
-#include "logging.h"
 #include "av.h"
 #define MAX_X   320
 #define MAX_Y   200
@@ -72,7 +63,7 @@ static struct audio_channel Channels[AV_NUM_CHANNELS];
 unsigned char pal[3 * 256];
 
 /* information about current fading operation */
-static struct fade_information {
+static struct {
     unsigned from;
     unsigned to;
     unsigned step;
@@ -308,7 +299,8 @@ av_setup(void)
     }
 
 #ifdef SET_SDL_ICON
-    char * icon_path;
+    char *icon_path;
+
     if ((icon_path = locate_file("moon_32x32.bmp", FT_IMAGE))) {
         SDL_Surface *icon = SDL_LoadBMP(icon_path);
 

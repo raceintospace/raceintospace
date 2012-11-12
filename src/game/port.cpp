@@ -25,8 +25,6 @@
 
 #include "port.h"
 #include "Buzz_inc.h"
-#include "gamedata.h"
-#include "macros.h"
 #include "av.h"
 #include "utils.h"
 #include "admin.h"
@@ -77,7 +75,7 @@ typedef struct portoutlinerestore {
 
 PORTOUTLINE *pPortOutlineRestore;
 
-struct FHead {
+struct {
     char Text[28];  /**< File Copyright Notice */
     int32_t oMObj;     /**< Offset to MObj data table */
     int32_t oTab;      /**< Offset to Table of data */
@@ -127,10 +125,8 @@ char HotKeyList[] = "AIMRPVCQETB\0";
 int FCtr;
 GXHEADER flaggy;
 
-#define SPOTS 100
-
 /** SPOT structures and data structure variables */
-struct mSPOT {        // Main SPOT Header
+struct {        // Main SPOT Header
     uint8_t ID[40];     /**< Copyright notice */
     uint8_t Qty;        /**< Number of Paths */
     uint32_t sOff;      /**< Spot Offsets */
@@ -189,7 +185,6 @@ void Seek_pOff(int where);
 void SpotCrap(char loc, char mode);
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
-void PadBub(int x, int y, int col);
 void PortPlace(FILE *fin, int32_t table);
 void PortText(int x, int y, char *txt, char col);
 void UpdatePortOverlays(void);
@@ -200,7 +195,6 @@ int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
 char Request(char plr, char *s, char md);
-char MisReq(char plr);
 
 
 void SpotCrap(char loc, char mode)
@@ -419,10 +413,7 @@ void SpotCrap(char loc, char mode)
             case 15:
                 PlayAudio("truck.ogg", 0);
                 break;
-
-            default:
-                break;
-            };
+            }
 
             turnoff = 1;
         };
@@ -1801,7 +1792,7 @@ char PortSel(char plr, char loc)
 
                 RUSH = 0;
                 return pEXIT;
-            };
+            }
         } else if (RUSH == 0) {
             Help("i103");
         }

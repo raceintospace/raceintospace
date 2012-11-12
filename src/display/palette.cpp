@@ -7,7 +7,8 @@
 // as an array, it is unaffected by structure packing
 extern unsigned char pal[3 * 256];
 
-namespace display {
+namespace display
+{
 
 // the global palette, defined in the display library
 LegacyPalette legacy_palette;
@@ -31,7 +32,7 @@ Palette::~Palette()
 {
 }
 
-void Palette::set(uint8_t index, const Color& color)
+void Palette::set(uint8_t index, const Color &color)
 {
     colors[index] = color;
 }
@@ -51,7 +52,7 @@ LegacyPalette::~LegacyPalette()
 {
 }
 
-void LegacyPalette::set(uint8_t index, const Color& color)
+void LegacyPalette::set(uint8_t index, const Color &color)
 {
     // this unfortunately discards the alpha channel
     // chop the lowest two bits while copying
@@ -63,16 +64,16 @@ void LegacyPalette::set(uint8_t index, const Color& color)
 const Color LegacyPalette::get(uint8_t index) const
 {
     uint8_t
-        r = ::pal[index * 3 + 0],
-        g = ::pal[index * 3 + 0],
-        b = ::pal[index * 3 + 0];
-    
+    r = ::pal[index * 3 + 0],
+    g = ::pal[index * 3 + 0],
+    b = ::pal[index * 3 + 0];
+
     // copy the top two bits to the lowest two, so 0 = 0 and 63 = 255
     return Color(
-        (r << 2) | (r >> 6),
-        (g << 2) | (g >> 6),
-        (b << 2) | (b >> 6)
-        );
+               (r << 2) | (r >> 6),
+               (g << 2) | (g >> 6),
+               (b << 2) | (b >> 6)
+           );
 }
 
 }

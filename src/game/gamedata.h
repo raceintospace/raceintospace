@@ -87,7 +87,6 @@ struct oLIST {
     int16_t sIdx;   /**< index of audio filename in {SEQ,FSEQ}.KEY */
 };
 #define sizeof_oLIST 4
-extern size_t fread_oLIST(struct oLIST *dst, size_t num, FILE *f);
 
 struct oGROUP {
     char ID[10];            /**< Sequence identifier */

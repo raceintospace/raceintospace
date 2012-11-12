@@ -26,19 +26,14 @@
 #include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include <assert.h>
 #include "options.h"
 #include "game_main.h"
 #include "randomize.h"
-#include "aipur.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
 #include "av.h"
 #include "pace.h"
-
-struct ManPool *Sov;
-char M_Us[106], M_Sv[106];
 
 void DrawPrefs(int where, char a1, char a2);
 void HModel(char mode, char tx);
@@ -308,7 +303,7 @@ void CLevels(char side, char wh)
 
 void Prefs(int where)
 {
-    int i, num, hum1 = 0, hum2 = 0;
+    int num, hum1 = 0, hum2 = 0;
     FILE *fin;
     char ch, Name[20], ksel = 0;
     int32_t size;
@@ -369,15 +364,17 @@ void Prefs(int where)
 
                 if (Data->Def.Plr1 != Data->Def.Plr2) {
                     if (Data->Def.Plr1 == 1) {
+                        int tmp;
+
                         strcpy(&Name[0], &Data->P[0].Name[0]);
                         strcpy(&Data->P[0].Name[0], &Data->P[1].Name[0]);
                         strcpy(&Data->P[1].Name[0], &Name[0]);
-                        i = Data->Def.Lev1;
+                        tmp = Data->Def.Lev1;
                         Data->Def.Lev1 = Data->Def.Lev2;
-                        Data->Def.Lev2 = i;
-                        i = Data->Def.Ast1;
+                        Data->Def.Lev2 = tmp;
+                        tmp = Data->Def.Ast1;
                         Data->Def.Ast1 = Data->Def.Ast2;
-                        Data->Def.Ast2 = i;
+                        Data->Def.Ast2 = tmp;
                     }
 
                     Data->Def.Plr1 += hum1 * 2;
@@ -436,7 +433,7 @@ void Prefs(int where)
 
                     music_stop();
                     return;
-                };
+                }
             } else if (key == 'P' && (where == 0 || where == 3)) {
                 RectFill(59, 26, 68, 31, 3);
                 RectFill(290, 26, 298, 31, 3);
@@ -591,7 +588,7 @@ void Prefs(int where)
                        ((where == 3 || where == 0) && ksel == 0 && key == 'N')) {
                 RectFill(7, 35, 82, 41, 0);
 
-                for (i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++) {
                     Data->P[0].Name[i] = 0x00;
                 }
 
@@ -636,7 +633,7 @@ void Prefs(int where)
                        ((where == 3 || where == 0) && ksel == 1 && key == 'N')) {
                 RectFill(237, 35, 312, 41, 0);
 
-                for (i = 0; i < 20; i++) {
+                for (int i = 0; i < 20; i++) {
                     Data->P[1].Name[i] = 0x00;
                 }
 

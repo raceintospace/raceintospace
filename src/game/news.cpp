@@ -27,10 +27,8 @@
 #include "news.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "macros.h"
 #include "av.h"
 #include "mmfile.h"
-#include "logging.h"
 #include "game_main.h"
 #include "news_suq.h"
 #include "sdlhelper.h"
@@ -53,8 +51,6 @@ double load_news_anim_start;
 int evflag;
 static int bufsize, LOAD_US = 0, LOAD_SV = 0;
 static int Frame, MaxFrame, AnimIndex = 255;
-
-SimpleHdr table[99];
 
 enum news_type {
     NEWS_ANGLE,
@@ -83,10 +79,7 @@ struct rNews {
 void GoNews(char plr);
 void OpenNews(char plr, char *buf, int bud);
 void DispNews(char plr, char *src, char *dest);
-FILE *PreLoadAnim(char plr, char mode);
-void CloseNewsAnim(void);
 void DrawNText(char plr, char got);
-void DeAlloc(BYTE Page);
 char ResolveEvent(char plr);
 int PlayNewsAnim(mm_file *);
 mm_file *LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp);
@@ -345,7 +338,7 @@ DispNews(char plr, char *src, char *dest)
             case 2:
                 strcpy(&Name[0], "THIRD");
                 break;
-            };
+            }
 
             strncpy(&dest[j], &Name[0], strlen(Name));
 
@@ -455,7 +448,7 @@ DispNews(char plr, char *src, char *dest)
 
         default:
             break;
-        };
+        }
 
         j++;
 

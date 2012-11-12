@@ -1,5 +1,4 @@
 #include "roster_group.h"
-#include "roster_entry.h"
 
 #include <assert.h>
 #include <boost/foreach.hpp>

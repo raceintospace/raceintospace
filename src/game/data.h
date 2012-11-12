@@ -95,8 +95,6 @@
 #define ASTRONAUT_POOLS             5
 #define ASTRONAUT_CREW_MAX          8
 #define ASTRONAUT_FLT_CREW_MAX      4
-
-#define ASTRONAUT_MOOD_THRESHOLD    40
 /*@}*/
 
 #pragma pack(push, 1)
@@ -318,7 +316,7 @@ struct PastInfo {
 struct BuzzData {                   // master data list for Buzz Aldrin's
     char Header[4];                  // Sync information
     char Name[20];                   // Player Name
-    char Level;                      // Level of Play
+    char Level; // unused
     int16_t Cash;                      // Current Cash on Hand
     int16_t Budget;                    // Next Season's Budget
     int16_t Prestige;                    // Prestige Earned
@@ -337,9 +335,6 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char FuturePlans;                // Special future mission
     char DurLevel;                      // Current Duration Level
     char LMpts;                      // Accumulation of any LM Test points
-#if 0
-    Equipment Hardware[4][7];
-#else
     Equipment Probe[7];       // 0 = Orbital
     // 1 = Inter Planetary
     // 2 = Lunar Probe
@@ -361,9 +356,8 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     // 3 = EVA Suits
     // 4 = Docking Modules
     // 5 = Photo Recon
-#endif
-    char ZCost;                      // Cost for Zond upgrade 10-20
-    char ZFlag;                      // Flag for Zond program
+    char ZCost; // unused
+    char ZFlag; // unused
     char DMod;                       // Docking Module in Orbit
     /** \todo what is LaunchFacility == 1? */
     char LaunchFacility[MAX_LAUNCHPADS];    /**< Cost to repair (-1=no facility; 0 = all okay) */
@@ -371,14 +365,14 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char AstroLevel;                 // Level of selection
     char AstroDelay;                 // Wait until next selection
     struct Astros Pool[65];          // Pool of SpaceMen
-    struct WantList {
+    struct {
         char Vle;
         char Asp;
-    } WList[5];
+    } WList[5]; // unused
     struct Prest_Upd Udp[3];
-    char WTop;
-    char VList[5];
-    char VTop;
+    char WTop; // unused
+    char VList[5]; // unused
+    char VTop; // unused
     char Table[5][7];                // safety factor for intelligence
     char Gcnt[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
     char Crew[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
@@ -397,7 +391,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     // 3 = Program First
     uint8_t Buy[4][7];  // Record of R&D for Turn - encoded dices & rolls
     char eCount;
-    struct Intelligence {
+    struct {
         char code;
         int16_t num;
         char prog;
@@ -406,18 +400,18 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         char sf;
         char cdex;
     } PastIntel[30];
-    char AIpath[23];                 // Track AI choices from evts
+    char AIpath[23]; // unused
     char Track[10];                  // Misc Values
     char AILunar,                    // Flag to tell way to moon
          AIPrim,                     // Currect Primary Prog
          AISec,                      // Currect Secondary Prog
-         AIEva,
-         AIDur,
-         AIDck,
+         AIEva, // unused
+         AIDur, // unused
+         AIDck, // unused
          AIStat,                     // the status of program
-         AITech,                     // Level of AI technology
-         AILem;
-    char X[20];                      // AI where the hell am I status
+         AITech, // unused
+         AILem; // unused
+    char X[20]; // unused
     char M[62];                      // How many missions of type done
     char BadCard[15];                // Flag for Bad Events
     char Port[40];                   // Levels for SPort display
@@ -563,14 +557,6 @@ struct order {
     int16_t plr, loc, budget, date;
 };
 
-struct mfab {
-    char Text[2][75];
-    char qty;
-    int16_t idx[4];
-};
-
-
-
 // Space port overlays
 enum SpacePortOverlays {
     PORT_Monument = 0,        // 00 Washington's Monument
@@ -628,7 +614,6 @@ typedef struct {
 
 
 #define MAX_REPLAY_ITEMS        200L
-#define MAX_REPLAY_ITEM_OFFSETS 35
 
 // Mission Replay Data Structure
 typedef struct ReplayItem {
@@ -647,7 +632,6 @@ typedef struct oldNews {
 //#define RaceIntoSpace_Signature   'RiSP'
 #define RaceIntoSpace_Signature 0x52695350
 #define RaceIntoSpace_Old_Sig 0x49443a00  //'ID:\0"
-#define SAVEFILE_UNK_MAGIC  0x1A
 
 typedef enum {
     SAVEGAME_Normal = 0,

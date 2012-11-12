@@ -1460,12 +1460,7 @@ HInfo(char plr, char loc, char w)
         }
 
         break;
-
-    default:
-        break;
-    };
-
-    return;
+    }
 }
 
 void

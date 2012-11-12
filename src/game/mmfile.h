@@ -6,11 +6,9 @@
 #include <vorbis/codec.h>
 #include <theora/theora.h>
 #include <SDL.h>
-
-#define MM_AUDIO_FORMAT AUDIO_U16SYS
-
 enum stream_type {
     MEDIA_AUDIO = 1,
+
     MEDIA_VIDEO = 2
 };
 

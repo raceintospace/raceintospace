@@ -678,9 +678,9 @@ void Rush(char plr)
 
                 music_stop();
                 return;  // Done
-            };
+            }
         }
-    };
+    }
 }
 
 void ResetRush(int mode, int val)

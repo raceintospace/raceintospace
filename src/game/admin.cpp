@@ -33,7 +33,6 @@
 #include "Buzz_inc.h"
 #include "av.h"
 #include "utils.h"
-#include "logging.h"
 #include "ast1.h"
 #include "budget.h"
 #include "future.h"
@@ -51,10 +50,8 @@
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
-#define SAME_REPLACE 1
 #define SAME_ABORT 0
 #define YES 1
-#define NO 0
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -132,7 +129,7 @@ void Admin(char plr)
         strncpy(helptextIndex, (plr == 0) ? "i702" : "i703", 4);
         strncpy(keyhelpIndex, (plr == 0) ? "k601" : "k602", 4);
 
-        i = BChoice(plr, 7, (char *)AName, (char *) AImg);
+        i = BChoice(plr, 7, (char *)AName, AImg);
 
         switch (i) {
         case 1:
@@ -455,18 +452,6 @@ void FileAccess(char mode)
                 fread(load_buffer, 1, readLen, fin);
 
                 if (SaveHdr->dataSize == sizeof(struct Players)) {
-#ifdef OLD_DOS_ENCRYPT_SAVEDATA
-                    {
-                        int moo = 0;
-                        srand(SaveHdr->compSize);
-
-                        for (moo = 0; moo < SaveHdr->compSize; moo++) {
-                            load_buffer[moo] ^= brandom(256);
-                        }
-
-                        randomize();
-                    }
-#endif
                     RLED((char *) load_buffer, (char *)Data, SaveHdr->compSize);
                     free(load_buffer);
 
@@ -477,14 +462,14 @@ void FileAccess(char mode)
 
                     //MSF now holds MaxRDBase (from 1.0.0)
                     if (Data->P[0].Probe[0].MSF == 0) {
-                        int i, k;
+                        int j, k;
 
-                        for (i = 0; i < NUM_PLAYERS; i++)
+                        for (j = 0; j < NUM_PLAYERS; j++)
                             for (k = 0; k < 7; k++) {
-                                Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
-                                Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
-                                Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
-                                Data->P[i].Misc[k].MSF = Data->P[i].Misc[k].MaxRD;
+                                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+                                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+                                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+                                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
                             }
                     }
 
@@ -494,16 +479,12 @@ void FileAccess(char mode)
 
                     if (endianSwap) {
                         REPLAY *r = NULL;
-                        r = (REPLAY *) load_buffer;
-                        int i;
+                        r = load_buffer;
 
-                        for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-                            int ii;
-
-                            for (ii = 0; ii < r->Qty; ii++) {
-                                r[i].Off[ii] = _Swap16bit(r[i].Off[ii]);
+                        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+                            for (int k = 0; k < r->Qty; k++) {
+                                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
                             }
-
                         }
                     }
 
@@ -520,10 +501,8 @@ void FileAccess(char mode)
                     fclose(fin);
 
                     if (endianSwap) {
-                        int i;
-
-                        for (i = 0; i < 84; i++) {
-                            ONEWS *on = (ONEWS *) load_buffer + (i * sizeof(ONEWS));
+                        for (int j = 0; j < 84; j++) {
+                            ONEWS *on = (ONEWS *) load_buffer + (j * sizeof(ONEWS));
 
                             if (on->offset) {
                                 on->offset = _Swap32bit(on->offset);
@@ -1296,7 +1275,7 @@ void FileText(char *name)
         grSetColor(11);
         PrintAt(70, 147, "NO HISTORY RECORDED");
         return;
-    };
+    }
 
     fread(SaveHdr, sizeof(SaveFileHdr), 1, fin);
 

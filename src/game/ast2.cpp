@@ -30,7 +30,6 @@
 #include "ast4.h"
 #include "game_main.h"
 #include "place.h"
-#include "replay.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
@@ -356,7 +355,7 @@ void Limbo(char plr)
             OutBox(245, 5, 314, 17);
             music_stop();
             return;
-        };
+        }
 
         // Select Transfer Button
         if ((mousebuttons > 0 && x >= 167 && y >= 48 && x <= 239 && y <= 65) || key == LT_ARROW) {
