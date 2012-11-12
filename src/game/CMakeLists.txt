@@ -68,12 +68,13 @@ set(game_sources
   )
 
 set(game_libraries
-  ${SDL_LIBRARY} ogg vorbis ${Theora_LIBRARY}
+  ${SDL_LIBRARY} ogg vorbis theora
   jsoncpp
   )
 
 set(game_dependencies
   jsoncpp_build
+  libogg_build libvorbis_build libtheora_build
   )
 
 # Defer to the platform-specific CMakeLists for building the actual game target
