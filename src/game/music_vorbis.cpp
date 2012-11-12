@@ -22,7 +22,6 @@
 #include "Buzz_inc.h"
 #include "pace.h"
 #include "utils.h"
-#include "av.h"
 #include "sdlhelper.h"
 
 // A map of music_tracks to filenames

@@ -40,7 +40,6 @@ RD cost is loosly based in the basic model
 #include <assert.h>
 #include "game_main.h"
 #include "gr.h"
-#include "av.h"
 #include "pace.h"
 #include "sdlhelper.h"
 
