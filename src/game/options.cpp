@@ -16,13 +16,20 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <assert.h>
-#include <errno.h>
-
 #include "Buzz_inc.h"
 #include "options.h"
+#include "macros.h"
 #include "pace.h"
+#include "fs.h"
 #include "utils.h"
+#include "logging.h"
+#include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <SDL.h>
 
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")
@@ -53,7 +60,7 @@
 #  if HAVE_SDL_GETENV
 #    define getenv SDL_getenv
 #  else
-#    warn I don't know a way to read environment on this system
+#    warn I do not know a way to read environment on this system
 #    define getenv(a) (NULL)
 #  endif
 #endif
@@ -68,9 +75,9 @@ static struct {
     char **dest;
     char *def_val;
 } env_vars[] = {
-                   {ENVIRON_DATADIR, &options.dir_gamedata, DEFAULT_DATADIR},
-                   {ENVIRON_SAVEDIR, &options.dir_savegame, DEFAULT_SAVEDIR},
-               };
+    {ENVIRON_DATADIR, &options.dir_gamedata, DEFAULT_DATADIR},
+    {ENVIRON_SAVEDIR, &options.dir_savegame, DEFAULT_SAVEDIR},
+};
 
 static struct {
     char *name; /**< name of option */
@@ -79,93 +86,87 @@ static struct {
     int need_alloc; /**< max memory size to be allocated for value */
     char *comment; /**< a note to the user */
 } config_strings[] = {
-                         {
-                             "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
-                             "Path to directory with game data files."
-                         },
-                         {
-                             "audio", &options.want_audio, "%u", 0,
-                             "Set to 0 if you don't want audio in game."
-                         },
-                         {
-                             "nofail",  &options.want_cheats, " % u", 0,
-
-                             "Set to 1 if you want every mission step check to succeed."
-                         },
-                         {
-                             "intro", &options.want_intro, " % u", 0,
-                             "Set to 0 if do not want intro displayed at startup."
-                         },
-                         {
-                             "fullscreen", &options.want_fullscreen, " % u", 0,
-                             "Set to 1 if you want(ugly) full screen game."
-                         },
-                         {
-                             "debuglevel", &options.want_debug, " % u", 0,
-                             "Set to positive values to increase debugging verbosity."
-                         },
-                         {
-                             "short_training", &options.feat_shorter_advanced_training, " % u", 0,
-                             "Set to non - zero to shorten Advanced Training duration from 4 to 3 seasons."
-                         },
-                         {
-                             "random_nauts", &options.feat_random_nauts, " % u", 0,
-                             "Set to non - zero to enable randomization of nauts."
-                         },  //Naut Randomize, Nikakd, 10/8/10
-                         {
-                             "compt_nauts", &options.feat_compat_nauts, " % u", 0,
-                             "Set the compatibility level of nauts(10 is default, 1 complete)."
-                         }, //Naut Compatibility, Nikakd, 10/8/10
-                         {
-                             "no_c_training", &options.feat_no_cTraining, " % u", 0,
-                             "Set to zero to disable skipping capsule training."
-                         },   //No Capsule Training, Nikakd, 10/8/10
-                         {
-                             "no_backup", &options.feat_no_backup, " % u", 0,
-                             "Set to zero to require assigning a Backup crew."
-                         },   // No Backup crew required -Leon
-                         {
-                             "cheat_no_damage", &options.cheat_no_damage, " % u", 0,
-                             "Set to non - zero to disable damaged equipment(will prevent future damage)."
-                         },
-                         {
-                             "random_eq", &options.feat_random_eq, " % u", 0,
-                             "Set to non - zero to enable random equipment model(will break game balance and possibly break the AI)."
-                         },
-                         {
-                             "eq_name_change", &options.feat_eq_new_name, " % u", 0,
-                             "Set to non - zero to be able to change equipment name when starting a new game."
-                         },
-                         {
-                             "altasLunar", &options.cheat_altasOnMoon, " % u", 0,
-                             "Set to non - zero to enable Atlas rockets in lunar missions."
-                         },
-                         {
-                             "succesRDMax", &options.cheat_addMaxS, " % u", 0,
-                             "Set to zero to make MaxRD not change with successful missions."
-                         },
-                         {
-                             "boosterSafety", &options.boosterSafety, " % u", 0,
-                             "0:
-                             Statistical Safety(default) - 1:
-                             Min Safety - 2:
-                             Average Safety"
-                         },
-                     };
+    {
+        "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
+        "Path to directory with game data files."
+    },
+    {
+        "audio", &options.want_audio, "%u", 0,
+        "Set to 0 if you don't want audio in game."
+    },
+    {
+        "nofail",  &options.want_cheats, "%u", 0,
+        "Set to 1 if you want every mission step check to succeed."
+    },
+    {
+        "intro", &options.want_intro, "%u", 0,
+        "Set to 0 if do not want intro displayed at startup."
+    },
+    {
+        "fullscreen", &options.want_fullscreen, "%u", 0,
+        "Set to 1 if you want (ugly) full screen game."
+    },
+    {
+        "debuglevel", &options.want_debug, "%u", 0,
+        "Set to positive values to increase debugging verbosity."
+    },
+    {
+        "short_training", &options.feat_shorter_advanced_training, "%u", 0,
+        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons."
+    },
+    {
+        "random_nauts", &options.feat_random_nauts, "%u", 0,
+        "Set to non-zero to enable randomization of nauts."
+    },  //Naut Randomize, Nikakd, 10/8/10
+    {
+        "compt_nauts", &options.feat_compat_nauts, "%u", 0,
+        "Set the compatibility level of nauts (10 is default, 1 complete)."
+    }, //Naut Compatibility, Nikakd, 10/8/10
+    {
+        "no_c_training", &options.feat_no_cTraining, "%u", 0,
+        "Set to zero to disable skipping capsule training."
+    },   //No Capsule Training, Nikakd, 10/8/10
+    {
+        "no_backup", &options.feat_no_backup, "%u", 0,
+        "Set to zero to require assigning a Backup crew."
+    },   // No Backup crew required -Leon
+    {
+        "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
+        "Set to non-zero to disable damaged equipment (will prevent future damage)."
+    },
+    {
+        "random_eq", &options.feat_random_eq, "%u", 0,
+        "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
+    },
+    {
+        "eq_name_change", &options.feat_eq_new_name, "%u", 0,
+        "Set to non-zero to be able to change equipment name when starting a new game."
+    },
+    {
+        "altasLunar", &options.cheat_altasOnMoon, "%u", 0,
+        "Set to non-zero to enable Atlas rockets in lunar missions."
+    },
+    {
+        "succesRDMax", &options.cheat_addMaxS, "%u", 0,
+        "Set to zero to make MaxRD not change with successful missions."
+    },
+    {
+        "boosterSafety", &options.boosterSafety, "%u", 0,
+        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety"
+    },
+};
 
 /** prints the minimal usage information to stderr
-*
-* \param fail sets the exit code
-*/
+ *
+ * \param fail sets the exit code
+ */
 static void
 usage(int fail)
 {
-    fprintf(stderr, "usage:
-            raceintospace [options...]\n"
-            "options:
-            -a - i - f - v - n\n"
-            "\t - v verbose mode\n\t\tadd this several times to get to DEBUG level\n"
-            "\t - f fullscreen mode\n\t\tugly\n"
+    fprintf(stderr, "usage:   raceintospace [options...]\n"
+            "options: -a -i -f -v -n\n"
+            "\t-v verbose mode\n\t\tadd this several times to get to DEBUG level\n"
+            "\t-f fullscreen mode\n\t\tugly\n"
            );
     exit((fail) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -188,7 +189,7 @@ static int
 skip_past_newline(FILE *f)
 {
     assert(f);
-    return fscanf(f, " % *[ ^ \r\n] ");
+    return fscanf(f, "%*[^\r\n] ");
 }
 
 static int
@@ -202,7 +203,7 @@ parse_var_value(FILE *f, int index)
     assert(i >= 0 && i < (int)ARRAY_LENGTH(config_strings));
 
     need_alloc = config_strings[i].need_alloc;
-    sprintf(format, " % s % % n", config_strings[i].format);
+    sprintf(format, " %s%%n", config_strings[i].format);
 
     if (need_alloc > 0) {
         /* config_strings[].dest points to a pointer */
@@ -234,11 +235,11 @@ parse_var_value(FILE *f, int index)
 }
 
 /** read the config file
-*
-*
-*
-* \return -1 if the config file is unavailable
-*/
+ *
+ *
+ *
+ * \return -1 if the config file is unavailable
+ */
 static int
 read_config_file(void)
 {
@@ -254,7 +255,7 @@ read_config_file(void)
 
     while (1) {
         /* skip comments */
-        if ((res = fscanf(f, " % 1[#]", c)) == 1) {
+        if ((res = fscanf(f, " %1[#]", c)) == 1) {
             goto skip_newline;
         }
 
@@ -264,7 +265,7 @@ read_config_file(void)
 
         /* get configuration variable name */
         /** \note config variables may be 32 characters of alphas plus dash and underscore */
-        res = fscanf(f, " % 32[a - zA - Z_ - ]", config_word);
+        res = fscanf(f, "%32[a-zA-Z_-]", config_word);
 
         /* do we have a match? */
         if (res == 1) {
@@ -275,7 +276,7 @@ read_config_file(void)
                     if (res != 0 && feof(f)) {
                         goto skip_newline;
                     } else if (res != 0) {
-                        NOTICE2("wrong value type for variable ` % s'",
+                        NOTICE2("wrong value type for variable `%s'",
                                 config_word);
                         goto skip_newline;
                     } else {
@@ -322,11 +323,11 @@ write_default_config(void)
     f = open_savedat("config", "wt");
 
     if (!f) {
-        WARNING4("can't write defaults to file `%s/%s': % s\n",
+        WARNING4("can't write defaults to file `%s/%s': %s\n",
                  options.dir_savegame, "config", strerror(errno));
         return -1;
     } else
-        NOTICE3("written defaults to file ` % s / % s'",
+        NOTICE3("written defaults to file `%s/%s'",
                 options.dir_savegame, "config");
 
     fprintf(f, "# This is template configuration file for %s\n",
@@ -351,39 +352,38 @@ write_default_config(void)
 }
 
 /* return a location of user's home directory, or NULL if unknown.
-* returned string is malloc - ed * /
-static char *
-get_homedir(void)
+ * returned string is malloc-ed */
+static char *get_homedir(void)
 {
-char *s = NULL;
+    char *s = NULL;
 
-if ((s = getenv("HOME"))) {
-return xstrdup(s);
-}
+    if ((s = getenv("HOME"))) {
+        return xstrdup(s);
+    }
 
 #if CONFIG_WIN32
 
-if ((s = getenv("HOMEPATH"))) {
-char *s2 = NULL;
+    if ((s = getenv("HOMEPATH"))) {
+        char *s2 = NULL;
 
-if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
-return xstrcat2(s2, s);
-}
-}
+        if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
+            return xstrcat2(s2, s);
+        }
+    }
 
-if ((s = getenv("USERPROFILE"))) {
-return xstrdup(s);
-}
+    if ((s = getenv("USERPROFILE"))) {
+        return xstrdup(s);
+    }
 
 #endif
-return NULL;
+    return NULL;
 }
 
 static void
 fixpath_options(void)
 {
-fix_pathsep(options.dir_savegame);
-fix_pathsep(options.dir_gamedata);
+    fix_pathsep(options.dir_savegame);
+    fix_pathsep(options.dir_gamedata);
 }
 
 /** read the commandline options
@@ -393,7 +393,7 @@ fix_pathsep(options.dir_gamedata);
  * \todo possibly maintain a list of dirs to search??
  */
 int
-setup_options(int argc, char **argv)
+setup_options(int argc, char *argv[])
 {
     char *str = NULL;
     int pos, i;
