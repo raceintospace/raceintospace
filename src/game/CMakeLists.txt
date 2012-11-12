@@ -1,19 +1,12 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
+include_directories(${PROJECT_SOURCE_DIR}/src/game)
 include_directories(SYSTEM ${SDL_INCLUDE_DIR})
 
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
-include_directories(SYSTEM ${LocalPrefix}/include)
 
-if (PLATFORM_MUSIC)
-  # do nothing
-else (PLATFORM_MUSIC)
-  set(music_vorbis music_vorbis.cpp)
-endif (PLATFORM_MUSIC)
-
-add_library(
-  raceintospace_game STATIC
+set(game_sources
   admin.cpp
   aimast.cpp
   aimis.cpp
@@ -48,7 +41,6 @@ add_library(
   mis_m.cpp
   mmfile.cpp
   museum.cpp
-  ${music_vorbis}
   newmis.cpp
   news.cpp
   news_sup.cpp
@@ -75,4 +67,19 @@ add_library(
   vab.cpp
   )
 
-add_dependencies(raceintospace_game jsoncpp)
+set(game_libraries
+  ${SDL_LIBRARY} ${Ogg_LIBRARY} ${Vorbis_LIBRARY} ${Theora_LIBRARY}
+  jsoncpp
+  )
+
+set(game_dependencies
+  jsoncpp_build
+  )
+
+# Defer to the platform-specific CMakeLists for building the actual game target
+if (APPLE)
+  include(CMakeLists.macosx.txt)
+else (APPLE)
+  add_library(raceintospace_game ${game_sources} music_vorbis.cpp)
+  add_dependencies(raceintospace_game ${game_dependencies})
+endif (APPLE)

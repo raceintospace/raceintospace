@@ -33,13 +33,8 @@ if (APPLE)
   set(SET_SDL_ICON FALSE)
   set(DEFAULT_DATADIR "Contents/Resources")
   set(DEFAULT_SAVEDIR ".")
-  set(PLATFORM_MUSIC true)
   set(PLATFORM_PROVIDES_UGLY_CRASH true)
-  #set(CMAKE_OSX_ARCHITECTURES "i386;x86_64")
 
-  include_directories(SYSTEM /usr/X11/include)
-  link_directories(/usr/X11/lib)
-  
   # this is so we can find Homebrew components
   include_directories(SYSTEM /usr/local/include)
   link_directories(/usr/local/lib)
@@ -63,11 +58,6 @@ include("display/Global.cmake")
 add_subdirectory("display")
 
 # pull in src/game/* defines and build rules
-include("game/Global.cmake")
 add_subdirectory("game")
-
-if (APPLE)
-  add_subdirectory("os_macosx")
-endif (APPLE)
 
 add_subdirectory("utils")
