@@ -40,8 +40,8 @@ RD cost is loosly based in the basic model
 #include <assert.h>
 #include "game_main.h"
 #include "gr.h"
-#include "av.h"
 #include "pace.h"
+#include "sdlhelper.h"
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */

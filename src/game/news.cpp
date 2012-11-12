@@ -27,7 +27,6 @@
 #include "news.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "av.h"
 #include "mmfile.h"
 #include "game_main.h"
 #include "news_suq.h"
@@ -36,6 +35,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "endianness.h"
+#include "utils.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 

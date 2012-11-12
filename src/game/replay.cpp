@@ -27,7 +27,6 @@
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "mmfile.h"
-#include "av.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"

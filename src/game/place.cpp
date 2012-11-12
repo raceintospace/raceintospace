@@ -23,7 +23,6 @@
 #include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "av.h"
 #include "utils.h"
 #include "game_main.h"
 #include "museum.h"
