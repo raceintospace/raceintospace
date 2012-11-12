@@ -4,7 +4,6 @@ include_directories(SYSTEM "${LocalPrefix}/include")
 include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
-file(GLOB sources RELATIVE "${PROJECT_SOURCE_DIR}" lib/*.c)
 add_library(vorbis
   lib/mdct.c
   lib/smallft.c

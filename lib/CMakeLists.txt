@@ -72,3 +72,27 @@ if (BUILD_XIPH)
   set_property(TARGET vorbis APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
   set_target_properties(vorbis PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libvorbis.a)
 endif (BUILD_XIPH)
+
+
+###
+# libtheora
+
+if (BUILD_XIPH)
+  set (libtheora_Version 1.1.1)
+  set (libtheora_URL http://downloads.xiph.org/releases/theora/libtheora-${libtheora_Version}.tar.gz)
+  set (libtheora_Dir ${CMAKE_CURRENT_BINARY_DIR}/libtheora-${libtheora_Version})
+
+  ExternalProject_Add(libtheora_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${libtheora_URL}
+    PREFIX ${libtheora_Dir}
+    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/libtheora/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
+    )
+  
+  add_dependencies(libtheora_build libogg_build)
+  
+  add_library(theora STATIC IMPORTED)
+  set_property(TARGET theora APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(theora PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libtheora.a)
+endif (BUILD_XIPH)
