@@ -27,6 +27,8 @@
  *
  */
 
+#include <assert.h>
+
 #include "admin.h"
 #include "Buzz_inc.h"
 #include "av.h"
@@ -1376,10 +1378,11 @@ int FutureCheck(char plr, char type)
 
         if (type == 0) {
             m[i] = Data->P[plr].Future[i].MissionCode;
-        }
-
-        if (type == 1) {
+        } else if (type == 1) {
             m[i] = (Data->P[plr].Mission[i].Hard[4] > 0) ? 1 : 0;
+        } else {
+            // only types 0 and 1 are valid
+            assert(false);
         }
     };
 
