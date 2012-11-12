@@ -24,6 +24,7 @@
  * For API and general overview visit http://www.libsdl.org/.
  */
 
+#include "sdlhelper.h"
 #include <assert.h>
 #include <memory.h>
 #include <SDL.h>
@@ -40,8 +41,10 @@ LOG_DEFAULT_CATEGORY(sdl)
 static int keybuf[KEYBUF_SIZE];
 static int keybuf_in_idx, keybuf_out_idx;
 
-int av_mouse_cur_x, av_mouse_cur_y;
-int av_mouse_pressed_x, av_mouse_pressed_y;
+int av_mouse_cur_x;
+int av_mouse_cur_y;
+int av_mouse_pressed_x;
+int av_mouse_pressed_y;
 int av_mouse_pressed_cur;
 int av_mouse_pressed_latched;
 

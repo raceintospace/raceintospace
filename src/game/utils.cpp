@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <memory.h>
+#include <raceintospace_config.h>
 
 /* taken from ffmpeg project */
 #ifdef CONFIG_WIN32

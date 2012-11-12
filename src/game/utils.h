@@ -14,6 +14,6 @@ char *xstrcat2(const char *s1, const char *s2);
 int xstrcasecmp(const char *a, const char *b);
 int xstrncasecmp(const char *a, const char *b, size_t len);
 ssize_t fread_dyn(char **destp, size_t *n, FILE *stream);
-double get_time(void);
+extern double get_time(void);
 
 #endif /* _UTILS_H */

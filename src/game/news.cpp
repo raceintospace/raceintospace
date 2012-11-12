@@ -36,6 +36,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "endianness.h"
+#include "utils.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 

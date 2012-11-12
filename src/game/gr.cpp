@@ -2,7 +2,6 @@
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "sdlhelper.h"
-#include "av.h"
 
 void gr_set_color_map(unsigned char *map);
 
