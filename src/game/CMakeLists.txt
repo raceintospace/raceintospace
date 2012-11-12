@@ -68,7 +68,7 @@ set(game_sources
   )
 
 set(game_libraries
-  ${SDL_LIBRARY} ${Ogg_LIBRARY} ${Vorbis_LIBRARY} ${Theora_LIBRARY}
+  ${SDL_LIBRARY} ogg vorbis ${Theora_LIBRARY}
   jsoncpp
   )
 

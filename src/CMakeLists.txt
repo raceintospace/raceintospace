@@ -3,9 +3,6 @@ find_package(Boost)
 
 include(${CMAKE_ROOT}/Modules/FindSDL.cmake)
 
-find_library(Vorbis_LIBRARY NAMES vorbis)
-find_path(Vorbis_INCLUDE_DIR vorbis/codec.h)
-
 find_library(Theora_LIBRARY NAMES theora)
 find_path(Theora_INCLUDE_DIR theora/theora.h)
 

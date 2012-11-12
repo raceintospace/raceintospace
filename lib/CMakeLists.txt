@@ -31,7 +31,7 @@ set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefi
 ###
 # libogg
 
-if (!BUILD_XIPH)
+if (BUILD_XIPH)
   set (libogg_Version 1.3.0)
   set (libogg_URL http://downloads.xiph.org/releases/ogg/libogg-${libogg_Version}.tar.gz)
   set (libogg_Dir ${CMAKE_CURRENT_BINARY_DIR}/libogg-${libogg_Version})
@@ -47,4 +47,28 @@ if (!BUILD_XIPH)
   add_library(ogg STATIC IMPORTED)
   set_property(TARGET ogg APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
   set_target_properties(ogg PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libogg.a)
-endif (!BUILD_XIPH)
+endif (BUILD_XIPH)
+
+
+###
+# libvorbis
+
+if (BUILD_XIPH)
+  set (libvorbis_Version 1.3.3)
+  set (libvorbis_URL http://downloads.xiph.org/releases/vorbis/libvorbis-${libvorbis_Version}.tar.gz)
+  set (libvorbis_Dir ${CMAKE_CURRENT_BINARY_DIR}/libvorbis-${libvorbis_Version})
+
+  ExternalProject_Add(libvorbis_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${libvorbis_URL}
+    PREFIX ${libvorbis_Dir}
+    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/libvorbis/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
+    )
+  
+  add_dependencies(libvorbis_build libogg_build)
+  
+  add_library(vorbis STATIC IMPORTED)
+  set_property(TARGET vorbis APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(vorbis PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libvorbis.a)
+endif (BUILD_XIPH)
