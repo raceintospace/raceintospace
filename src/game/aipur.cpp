@@ -428,7 +428,7 @@ void AIRandomizeNauts()
  */
 void SelectBest(char plr, int pos)
 {
-    int count = 0, now, MaxMen = 0, Index, AIMaxSel = 0, i, j, k;
+    int count = 0, now, MaxMen = 0, Index, AIMaxSel = 0, i, j;
     FILE *fin;
     char tot, done;
     struct BuzzData *pData = &Data->P[plr];
