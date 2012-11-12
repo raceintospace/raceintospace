@@ -4,19 +4,7 @@
 #include "sdlhelper.h"
 #include "av.h"
 
-
-#define grTRACK 1
-#define grCARROW 2
-#define grLBUTTON 1
-#define grRBUTTON 2
-
-int grInitMouse(void);
-void grSetMousePos(int x, int y);
-
-
 void gr_set_color_map(unsigned char *map);
-
-
 
 int
 grGetMouseButtons(void)
@@ -216,7 +204,6 @@ grMoveRel(int dx, int dy)
 void
 grDrawRect(int x1, int y1, int x2, int y2, int mode)
 {
-    SDL_Rect r;
     int t;
 
     assert(mode == grOUTLINE);
@@ -238,10 +225,6 @@ grDrawRect(int x1, int y1, int x2, int y2, int mode)
     grLineTo(x2, y2);
     grLineTo(x1, y2);
     grLineTo(x1, y1);
-    r.x = x1;
-    r.y = y1;
-    r.w = x2 - x1 + 1;
-    r.h = y2 - y1 + 1;
 }
 
 void

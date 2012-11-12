@@ -1146,7 +1146,7 @@ UpdateHardTurn(char plr)
     Equipment *px;
 
     for (i = 0; i < 28; i++) {
-        px = (Equipment *) & Data->P[plr].Probe[i];
+        px = &Data->P[plr].Probe[i];    // FIXME: this looks broken -- Probe[27]?
 
         if (px->Delay > 0) {
             px->Delay--;

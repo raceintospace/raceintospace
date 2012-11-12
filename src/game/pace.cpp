@@ -1,10 +1,9 @@
-#include "Buzz_inc.h"
 #include <assert.h>
+
+#include "Buzz_inc.h"
 #include "pace.h"
 #include "av.h"
-#include "options.h"
 #include "utils.h"
-#include "logging.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -12,9 +11,6 @@
 #include "mmfile.h"
 
 
-int inp(int port);
-int getdisk(void);
-void getcurdir(int drive, char *buf);
 void randomize(void);
 void SMove(void *p, int x, int y);
 void LMove(void *p);
@@ -112,10 +108,6 @@ int RLED(void *src_raw, void *dest_raw, unsigned int src_size)
                 *dest++ = src[used++];
             }
         }
-    }
-
-    if (0) {
-        printf("total bytes %d\n", (int)((char *)dest - (char *)dest_raw));
     }
 
     return ((char *)dest - (char *)dest_raw);
@@ -361,7 +353,7 @@ void seq_init(void)
  * \return name of the sequence file as string
  *
  */
-char * seq_filename(int seq, int mode)
+char *seq_filename(int seq, int mode)
 {
     struct tblinfo *tp;
 
@@ -436,8 +428,6 @@ void idle_loop(int ticks)
 {
     idle_loop_secs(ticks / 2000.0);
 }
-
-long VoiceOff;
 
 char *soundbuf;
 size_t soundbuf_size = 0;
@@ -568,5 +558,3 @@ void play_audio(int sidx, int mode)
     soundbuf_used = (size > 0) ? size : 0;
     PlayVoice();
 }
-
-#define debug_file stdout

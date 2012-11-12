@@ -24,7 +24,6 @@ extern "C" {
 #include <CoreMIDI/CoreMIDI.h>
 }
 
-#include "raceintospace_config.h"
 #include "utils.h"
 #include "fs.h"
 #include "music.h"

@@ -46,7 +46,7 @@ main(int argc, char **argv)
 
   if (argc != 3)
   {
-	printf("Usage: %s <infile> <outfile>\n\n");
+	printf("Usage: %s <infile> <outfile>\n\n", argv[0]);
 	return EXIT_FAILURE;
   }
 
@@ -81,7 +81,7 @@ main(int argc, char **argv)
 
 	if (strncmp(buffer+1,"BOLO",4)!=0)
 	{
-		printf("%s is not an encrypted BARIS Save game\n");
+		printf("%s is not an encrypted BARIS Save game\n", argv[1]);
 		return EXIT_FAILURE;
 	}
 

@@ -105,7 +105,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         } else {
             DV(&local3);
             return 0;
-        };
+        }
 
         Data->P[plr].Future[Pad].part = 0;
 
@@ -157,7 +157,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 
     default:
         break;
-    };
+    }
 
     return M; // all the proper hardware and crews have been assigned
 }
@@ -527,7 +527,7 @@ void FutFltsTxt(char nw, char col)
 
     default:
         break;
-    };
+    }
 
     return;
 }
@@ -609,10 +609,7 @@ void FutSt2(int num, int type)
         grSetColor(10);
         PrintAt(0, 0, "ASSIGNED");
         break;
-
-    default:
-        break;
-    };
+    }
 
     return;
 }
@@ -941,7 +938,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     if (men == 0) {
         Help("i126");
         return 0;
-    };
+    }
 
     if (mode == 1) {
         pad++;    // if second part of Joint mission

@@ -30,8 +30,6 @@
 #include "vab.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "utils.h"
-#include "logging.h"
 #include "options.h"
 #include "admin.h"
 #include "game_main.h"
@@ -40,7 +38,6 @@
 #include "place.h"
 #include "radar.h"
 #include "mc.h"
-#include "game_main.h"
 #include "sdlhelper.h"
 #include "port.h"
 #include "gr.h"
@@ -840,7 +837,7 @@ begvab:
         Vab_Spot = (Data->P[plr].Mission[0].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
         music_stop();
         return;
-    };
+    }
 
     temp = CheckCrewOK(plr, mis);
 
@@ -1100,7 +1097,7 @@ begvab:
 
                     j2 = 0;
 
-                    if (strncmp((char *)VAS[ccc][0].name, "NONE", 4) != 0) {
+                    if (strncmp(VAS[ccc][0].name, "NONE", 4) != 0) {
                         j++;
 
                         if ((Data->P[plr].Manned[VAS[ccc][0].dex].Num - Data->P[plr].Manned[VAS[ccc][0].dex].Spok) > 0) {
@@ -1108,7 +1105,7 @@ begvab:
                         }
                     }
 
-                    if (strncmp((char *)VAS[ccc][1].name, "NONE", 4) != 0) {
+                    if (strncmp(VAS[ccc][1].name, "NONE", 4) != 0) {
                         j++;
 
                         if ((Data->P[plr].Misc[VAS[ccc][1].dex].Num - Data->P[plr].Misc[VAS[ccc][1].dex].Spok) > 0) {
@@ -1116,7 +1113,7 @@ begvab:
                         }
                     }
 
-                    if (strncmp((char *)VAS[ccc][2].name, "NONE", 4) != 0) {
+                    if (strncmp(VAS[ccc][2].name, "NONE", 4) != 0) {
                         j++;
 
                         if ((Data->P[plr].Manned[VAS[ccc][2].dex].Num - Data->P[plr].Manned[VAS[ccc][2].dex].Spok) > 0) {
@@ -1124,7 +1121,7 @@ begvab:
                         }
                     }
 
-                    if (strncmp((char *)VAS[ccc][3].name, "NONE", 4) != 0) {
+                    if (strncmp(VAS[ccc][3].name, "NONE", 4) != 0) {
                         j++;
 
                         if (((Data->P[plr].Probe[VAS[ccc][3].dex].Num - Data->P[plr].Probe[VAS[ccc][3].dex].Spok) > 0)

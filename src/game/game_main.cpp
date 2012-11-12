@@ -27,16 +27,15 @@
 //****************************************************************
 
 #include <errno.h>
+#include <ctype.h>
+#include <assert.h>
 
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "options.h"
 #include "utils.h"
-#include "logging.h"
-#include <ctype.h>
 #include "admin.h"
 #include "aimast.h"
-#include "aipur.h"
 #include "ast4.h"
 #include "endgame.h"
 #include "intel.h"
@@ -49,7 +48,6 @@
 #include "place.h"
 #include "port.h"
 #include "prefs.h"
-#include "prest.h"
 #include "radar.h"
 #include "records.h"
 #include "review.h"
@@ -61,7 +59,6 @@
 #include "av.h"
 #include "crash.h"
 #include "endianness.h"
-#include <assert.h>
 
 #include "display/png_image.h"
 
@@ -71,7 +68,6 @@
 #include <SDL.h>
 #endif
 
-int cdROM, hDISK;
 char Name[20];
 struct Players *Data;
 int x;
@@ -94,17 +90,13 @@ char df;
 char IDLE[2];
 char *buffer;
 GXHEADER vhptr, vhptr2;
-char *oldpal;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;
 char Option = -1;
 int SEG = 15;
-int FadeVal;
 int fOFF = -1;
 struct cdtable *cdt;
-int32_t PalOff;
-uint16_t LetHand;
 char BIG;                /**< 1 for fullscreen mission playback, 0 otherwise */
 char manOnMoon = 0;
 char dayOnMoon = 20;
@@ -145,11 +137,6 @@ char *S_Name[] = {
     "MID-COURSE CORR. BURN",
     "EARTH ORBITAL INS. BURN"
 };
-
-#define BSOUND 1
-#define HOST 0
-#define SLAVE 1
-#define MODEM_ERROR 4
 
 #include <sstream>
 #include <stdexcept>
@@ -402,7 +389,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
 
             // YYY  Safety check for this is never reached
             if (idx > Mission_PrimaryBooster) { // implies
-                E->MisSaf = (int) RocketBoosterSafety(E->Safety, Data->P[plr].Manned[pMission->Hard[Mission_PrimaryBooster]].Safety);
+                E->MisSaf = RocketBoosterSafety(E->Safety, Data->P[plr].Manned[pMission->Hard[Mission_PrimaryBooster]].Safety);
             }
 
             break;
@@ -1777,7 +1764,7 @@ void VerifySF(char plr)
     Equipment *px;
 
     for (i = 0; i < 28; i++) {
-        px = (Equipment *) &Data->P[plr].Probe[i];
+        px = &Data->P[plr].Probe[i];        // XXX FIXME: this looks broken -- Probe[27]?
 
         if (px->Safety > px->MaxSafety) {
             px->Safety = px->MaxSafety;

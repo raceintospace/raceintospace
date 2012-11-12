@@ -68,7 +68,7 @@ void Moon(char plr)
     RectFill(114, 131, 217, 145, 7 + 3 * other(plr));
     IOBox(113, 150, 218, 164);
 
-    size = (int)((val - 55) / 3);
+    size = ((val - 55) / 3);
 
     if (size > 13) {
         size = 13;

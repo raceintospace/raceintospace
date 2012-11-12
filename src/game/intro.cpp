@@ -27,7 +27,6 @@
 
 #include "Buzz_inc.h"
 #include "utils.h"
-#include "logging.h"
 #include "intro.h"
 #include "game_main.h"
 #include "sdlhelper.h"
@@ -35,8 +34,6 @@
 #include "gx.h"
 #include "av.h"
 #include "pace.h"
-
-GXHEADER local2;
 
 struct CREDIT {
     char page;

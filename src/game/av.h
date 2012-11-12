@@ -8,7 +8,6 @@
 #define AV_ALL_CHANNELS     -1
 #define AV_SOUND_CHANNEL    0
 #define AV_MUSIC_CHANNEL    1
-#define AV_MIN_VOLUME       0
 #define AV_MAX_VOLUME       SDL_MIX_MAXVOLUME
 
 #define AV_FADE_IN          0

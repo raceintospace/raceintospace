@@ -239,11 +239,8 @@ int Launch(char plr, char mis)
             EVA[i] = 2;
             DOC[i] = 3;
             break;
-
-        default:
-            break;
-        };
-    };
+        }
+    }
 
     // END MEN SETUP ****************************
 
@@ -313,8 +310,6 @@ int Launch(char plr, char mis)
     } else if (BIG == 1) {
         gxClearDisplay(0, 0);
     }
-
-#define fpf(a,b) fprintf(a,#b ": %d\n",b)
 
     memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct
 

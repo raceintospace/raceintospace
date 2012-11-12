@@ -29,23 +29,11 @@
                             OutBox((a),(b),(c),(d));\
                             };
 
-// Notice the f!=g
-#define pnButton(a,b,c,d,e,f,g) if ((x>=(a) && y>=(b) && x<=(c) && y<=(d) && mousebuttons==1) || ((f)!=(g)))\
-                { \
-                InBox((a),(b),(c),(d)); \
-                WaitForMouseUp(); \
-                (e); \
-                    if((f)>0) delay(150); \
-                OutBox((a),(b),(c),(d)); \
-                };
-
 #define Button2(a,b,c,d,e,f,g) if ((x>=(a) && y>=(b) && x<=(c) && y<=(d) && mousebuttons==1) || ((f)==(g)))\
                             { \
                             WaitForMouseUp(); \
                             (e); \
                             };
-
-#define poz(a) (((a)<0)?0:(a))
 
 // AI related macro
 #define PreChe(a,b) (Data->Prestige[(b)].Place==(a) || Data->Prestige[(b)].mPlace==(a))

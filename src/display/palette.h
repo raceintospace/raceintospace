@@ -4,25 +4,27 @@
 #include "color.h"
 #include <stdio.h>
 
-namespace display {
+namespace display
+{
 
 // Represents a set of 256 { r, g, b, a } values
 class PaletteInterface
 {
 public:
     virtual ~PaletteInterface();
-    
-    virtual void set(uint8_t index, const Color& color) = 0;
+
+    virtual void set(uint8_t index, const Color &color) = 0;
     virtual const Color get(uint8_t index) const = 0;
-    
-    inline void copy_from(const PaletteInterface &other, uint8_t start=0, uint8_t count=255)
-    {
+
+    inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t count = 255) {
         for (uint8_t i = 0 ; i < count; i++) {
             set(i, other.get(i));
         }
     };
-    
-    inline const Color operator[](uint8_t index) const { return get(index); };
+
+    inline const Color operator[](uint8_t index) const {
+        return get(index);
+    };
 };
 
 class Palette : public PaletteInterface
@@ -32,9 +34,9 @@ public:
     Palette(const Palette &copy);
     virtual ~Palette();
 
-    virtual void set(uint8_t index, const Color& color);
+    virtual void set(uint8_t index, const Color &color);
     virtual const Color get(uint8_t index) const;
-    
+
 protected:
     Color colors[256];
 };
@@ -47,7 +49,7 @@ public:
     LegacyPalette();
     virtual ~LegacyPalette();
 
-    virtual void set(uint8_t index, const Color& color);
+    virtual void set(uint8_t index, const Color &color);
     virtual const Color get(uint8_t index) const;
 };
 

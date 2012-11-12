@@ -137,13 +137,13 @@ void Load_RD_BUT(char player_index)
             Swap32bit(Boo.size);
         }
 
-    fread((char *)buffer, Boo.size, 1, fin);
-    RLED_img((char *)buffer, (char *)but.vptr, Boo.size, but.w, but.h);
+    fread(buffer, Boo.size, 1, fin);
+    RLED_img(buffer, (char *)but.vptr, Boo.size, but.w, but.h);
     fread(&Boo, sizeof Boo, 1, fin);
     Swap32bit(Boo.size);
-    fread((char *)buffer, Boo.size, 1, fin);
+    fread(buffer, Boo.size, 1, fin);
     fclose(fin);
-    RLED_img((char *)buffer, mans.vptr, Boo.size, mans.w, mans.h);
+    RLED_img(buffer, mans.vptr, Boo.size, mans.w, mans.h);
     BUTLOAD = 1;
     return;
 }
@@ -588,10 +588,7 @@ char RD(char player_index)
                     }
 
                     break;
-
-                default:
-                    break;
-                };
+                }
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
 
@@ -644,10 +641,7 @@ char RD(char player_index)
                     }
 
                     break;   //DM Screen, Nikakd, 10/8/10
-
-                default:
-                    break;
-                };
+                }
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
 
@@ -1062,10 +1056,7 @@ void ShowUnit(char hw, char un, char player_index)
         case PROBE_HW_LUNAR:
             PrintAt(0, 0, " PROBE");
             break;
-
-        default:
-            break;
-        };
+        }
 
         break;
 
@@ -1086,10 +1077,7 @@ void ShowUnit(char hw, char un, char player_index)
             }
 
             break;
-
-        default:
-            break;
-        };
+        }
 
         break;
 
@@ -1113,10 +1101,7 @@ void ShowUnit(char hw, char un, char player_index)
         case MANNED_HW_ONE_MAN_MODULE:
             PrintAt(0, 0, " MODULE");
             break;
-
-        default:
-            break;
-        };
+        }
 
         break;
 
@@ -1444,10 +1429,7 @@ char HPurc(char player_index)
                 }
 
                 break;
-
-            default:
-                break;
-            };
+            }
 
             ShowUnit(hardware, unit, player_index);
         } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) { /* RIGHT ARROW */
@@ -1489,10 +1471,7 @@ char HPurc(char player_index)
                 }
 
                 break;   //DM Screen, Nikakd, 10/8/10
-
-            default:
-                break;
-            };
+            }
 
             ShowUnit(hardware, unit, player_index);
         } else if ((y >= 182 && y <= 195 && x >= 166 && x <= 314 && mousebuttons > 0) || key == 'P') { /* PURCHASE */
@@ -1961,8 +1940,8 @@ BuyUnit(char category, char unit, char player_index)
             // old code: if (n1 >= 75 || n2 >= 75 || n3 >= 75 || n4 >= 75)
             //old code: Data->P[player_index].Rocket[4].Safety = 30;
             break;
-        };
-    };
+        }
+    }
 
     /* compute technology transfer for Manned category */
     if (new_program && category == MANNED_HARDWARE) {

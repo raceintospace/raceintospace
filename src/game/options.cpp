@@ -60,7 +60,7 @@
 #  if HAVE_SDL_GETENV
 #    define getenv SDL_getenv
 #  else
-#    warn I don't know a way to read environment on this system
+#    warn I do not know a way to read environment on this system
 #    define getenv(a) (NULL)
 #  endif
 #endif
@@ -353,8 +353,7 @@ write_default_config(void)
 
 /* return a location of user's home directory, or NULL if unknown.
  * returned string is malloc-ed */
-static char *
-get_homedir(void)
+static char *get_homedir(void)
 {
     char *s = NULL;
 

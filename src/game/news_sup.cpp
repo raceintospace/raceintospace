@@ -26,8 +26,7 @@
 
 #include "news_sup.h"
 #include "Buzz_inc.h"
-#include "options.h"   //Damaged Equipment Cheat, Nikakd, 10/8/10
-#include "radar.h"
+#include "options.h"
 #include "game_main.h"
 #include "pace.h"
 
@@ -173,7 +172,7 @@ int NMod(int p, int prog, int type, int per)
     /* drvee: this loop was going to 25, not 28 */
     for (i = 0; i < (int)ARRAY_LENGTH(Eptr); i++) {
         /** \bug Mismatch between data.h(250) and this code here */
-        Eptr[i] = (Equipment *) &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[p].Probe[i];
         save[i] = ((Eptr[i]->Safety + per * type) <= (Eptr[i]->MaxSafety) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety + per * type : 0;
 
         if (Eptr[i]->Num < 0) {
@@ -224,7 +223,7 @@ int DamMod(int p, int prog, int dam, int cost)
     hi = (prog > 0) ? lo + 7 : 28;
 
     for (i = 0; i < 25; i++) {
-        Eptr[i] = (Equipment *) &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[p].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     };
 
@@ -273,7 +272,7 @@ int RDMods(int p, int prog, int type, int val)
     hi = (prog > 0) ? lo + 7 : 28;
 
     for (i = 0; i < 25; i++) {
-        Eptr[i] = (Equipment *) &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[p].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     };
 
@@ -336,7 +335,7 @@ int SaveMods(char p, char prog)
         lo = 18;
         hi = 21;
         break;  // check LEM   programs
-    };
+    }
 
     for (i = 0; i < 7; i++) {
         if (Data->P[p].Probe[i].Num >= 0) {

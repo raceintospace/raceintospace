@@ -21,14 +21,12 @@
 #include "future.h"
 #include <assert.h>
 #include "Buzz_inc.h"
-#include "logging.h"
 #include "admin.h"
 #include "crew.h"
 #include "futbub.h"
 #include "game_main.h"
 #include "mc2.h"
 #include "prest.h"
-#include "records.h"
 #include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -61,7 +59,7 @@ struct StepInfo {
     int16_t y_cor;
 } StepBub[MAXBUB];
 
-struct Parameter {
+struct {
     char A;   /**< DOCKING */
     char B;   /**< EVA */
     char C;   /**< LEM */
@@ -98,7 +96,7 @@ void Load_FUT_BUT(void)
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
     i = fread(screen, 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img((char *)screen, (char *)vh.vptr, (unsigned)i, vh.w, vh.h);
+    RLED_img((char *)screen, (char *)vh.vptr, i, vh.w, vh.h);
     return;
 }
 
@@ -258,10 +256,7 @@ void DrawFuture(char plr, int mis, char pad)
     case 2:
         PrintAt(8, 30, "PAD C:");
         break;
-
-    default:
-        break;
-    };
+    }
 
     grSetColor(1);
 
@@ -959,9 +954,7 @@ begfut_noredraw:
                 goto begfut_noredraw;
                 // DrawFuture(plr, MisType, MisNum);
             }
-
-            key = 0;
-        };
+        }
 
         // continue
 
@@ -1496,10 +1489,7 @@ void DurPri(int x)
     case 6:
         PrintAt(112, 30, "17 - 20 DAYS");
         break;
-
-    default:
-        break;
-    };
+    }
 
     return;
 }

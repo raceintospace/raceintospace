@@ -4,10 +4,6 @@
 #include <errno.h>
 #include <ctype.h>
 #include <memory.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <raceintospace_config.h>
 
 /* taken from ffmpeg project */
 #ifdef CONFIG_WIN32
@@ -17,8 +13,6 @@
 #   include <string.h>
 #   include <sys/time.h>
 #else
-#   include <unistd.h>
-#   include <fcntl.h>
 #   include <sys/time.h>
 #endif
 

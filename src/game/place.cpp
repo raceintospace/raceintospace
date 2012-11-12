@@ -588,6 +588,7 @@ int Help(const char *FName)
             i += 5;
         } else { // Text of Line
             assert(NTxt != NULL);
+
             while (Help[i] != 0x0d) {
                 NTxt[j++] = Help[i++];
             }
@@ -840,7 +841,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     grSetColor(11);
     PrintAt(58, 41, "MISSION INFORMATION");
     PrintAt(12, 104, "MISSION DURATION: ");
-    Name[0] = (char)Data->P[plr].History[index].Duration + 'A' - 1;
+    Name[0] = Data->P[plr].History[index].Duration + 'A' - 1;
     Name[1] = 0;
 
     if (Name[0] >= 'A') {
@@ -1083,10 +1084,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                         case 13:
                             Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUS1" : "WSS1");
                             break;
-
-                        default:
-                            break;
-                        };
+                        }
                     } else {
                         Replay(plr, index, 215, 56, 94, 60, "OOOO");
                     }

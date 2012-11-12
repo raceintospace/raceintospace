@@ -25,10 +25,8 @@
 
 #include "mis_m.h"
 #include "Buzz_inc.h"
-#include "mis.h"
 #include "utils.h"
 #include "options.h"
-#include "logging.h"
 #include "game_main.h"
 #include "mc.h"
 #include "mis_c.h"
@@ -57,16 +55,11 @@ void Tick(char);
 
 
 
-void MevDebug(FILE *fout, char i);
 void GetFailStat(struct XFails *Now, char *FName, int rnum);
 int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
-void DebugSetFailure(char *Text);
-
-
-
 
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
@@ -822,7 +815,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         return 0;
-    };
+    }
 
     Mev[STEP].StepInfo = 0;
 
@@ -1235,7 +1228,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         break; // nothing : continue steps
-    };
+    }
 
     if ((Mev[STEP].Name[0] == 'A') && MH[Mev[STEP].pad][7] != NULL) {
         // boosters involved

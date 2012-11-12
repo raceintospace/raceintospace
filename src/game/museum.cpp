@@ -41,8 +41,6 @@
 #include "pace.h"
 #include "endianness.h"
 
-#define DELAYCNT 50
-
 struct Astros *abuf;
 
 #if 1
@@ -1162,7 +1160,7 @@ void DisplAst(char plr, char *where, char *where2)
 
     PrintAt(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
     grSetColor(11);
-    strcat(temp, (char *)Nums[abuf[*where].Group]);
+    strcat(temp, Nums[abuf[*where].Group]);
     PrintAt(165, 49, temp);
     grSetColor(12);
     DispNum(225, 169, *where + 1);

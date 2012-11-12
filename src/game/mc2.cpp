@@ -25,13 +25,10 @@
 
 #include "mc2.h"
 #include "Buzz_inc.h"
-#include "macros.h"
-#include "logging.h"
 #include "options.h"
 #include "game_main.h"
 #include "mc.h"
 #include "prest.h"
-#include "mis_c.h"
 #include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
@@ -135,13 +132,8 @@ MissionParse(char plr, char *MCode, char *LCode, char pad)
 
             MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad);
             break;
-
-        default:
-            break;
-        };                         /* End of Switch */
-    };
-
-    return;
+        }
+    }
 }
 
 
@@ -278,7 +270,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'd':  //Special
     default:
         break;
-    };
+    }
 
     Mev[step].Prest = -100;
 
@@ -786,10 +778,7 @@ void MissionSetup(char plr, char mis)
                 case Mission_PhotoRecon:  // Photo Recon
                     MH[j][i] = &Data->P[plr].Misc[5];
                     break;
-
-                default:
-                    break;
-                };
+                }
 
                 if (MH[j][i] != NULL) {
                     MH[j][i]->SMods += MH[j][i]->Damage;    //Damaged Equipment, Nikakd, 10/8/10

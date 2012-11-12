@@ -1,19 +1,11 @@
 #include "gx.h"
 #include "Buzz_inc.h"
-#include <limits.h>
 #include <assert.h>
 #include "av.h"
 #include "utils.h"
-#include <SDL.h>
-#include "game_main.h"
 #include "sdlhelper.h"
 
-
-
-
 #define gxSUCCESS 0
-
-
 
 int
 gxVirtualSize(int mode, int w, int h)

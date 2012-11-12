@@ -431,7 +431,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 		}
 	}
 
-	return ((void *) dest - (void *) dest_raw);
+	return ((void *) dest - dest_raw);
 }
 
 void

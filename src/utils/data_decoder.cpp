@@ -127,11 +127,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
             }
         }
     }
-    
-    if (0) {
-        printf("total bytes %d\n", (int)((char *)dest - (char *)dest_raw));
-    }
-    
+
     return ((char *)dest - (char *)dest_raw);
 }
 

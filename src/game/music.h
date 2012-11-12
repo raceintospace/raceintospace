@@ -54,7 +54,6 @@ enum music_track {
 
 // Start a given track, and indicate if the track should loop when complete
 #define music_start(track) music_start_loop(track, 1)
-#define music_start_once(track) music_start_loop(track, 0)
 void music_start_loop(enum music_track track, int loop);
 
 // Stop a given track from playing, or all playing tracks

@@ -40,7 +40,7 @@
 #include "pace.h"
 
 struct ManPool *Men;
-char AIsel[25], AIMaxSel, Obs[6]; //indexed 1 thru 5
+char AIsel[25];
 
 
 void DrawStatistics(char Win);
@@ -397,15 +397,10 @@ void AIAstroPur(char plr)
     case 4:
         astrosInPool = ASTRO_POOL_LVL5;
         break;
-
-    default:
-        break;
-    };
+    }
 
     // Select best astronauts out of number of positions to fill
     SelectBest(plr, astrosInPool);
-
-    return;
 }
 
 
@@ -499,7 +494,7 @@ void SelectBest(char plr, int pos)
         AIMaxSel = 0;
         Index = 0;
         break;
-    };
+    }
 
     now = Index;
 
@@ -570,10 +565,7 @@ void SelectBest(char plr, int pos)
     case 5:
         pData->AstroDelay = 99;
         break;
-
-    default:
-        break;
-    };
+    }
 
     // remove from the bottom up out of training
     for (i = 0; i < pData->AstroCount; i++)
@@ -1141,7 +1133,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             }
 
             break;
-        };
+        }
 
         e->Base = e->Safety; // Set the base safety level
     };
@@ -1215,7 +1207,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             }
 
             break;
-        };
+        }
 
         e->Base = e->Safety; // Set the base safety level
     };
@@ -1309,11 +1301,11 @@ int GenPur(char plr, int hardware_index, int unit_index)
             }
 
             break;
-        };
+        }
 
         e->Base = e->Safety; // Set the base safety level
 
-    };
+    }
 
     if (hardware_index == MISC_HARDWARE && newProgramStarted) {
         Equipment *e = &pData->Misc[unit_index];  // Hardware we're modifying
@@ -1340,14 +1332,11 @@ int GenPur(char plr, int hardware_index, int unit_index)
             }
 
             break;
-
-        default:
-            break;
-        };
+        }
 
         e->Base = e->Safety; // Set the base safety level
 
-    };
+    }
 
     return (itemPurchased == true);
 }

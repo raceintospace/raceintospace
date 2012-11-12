@@ -26,17 +26,14 @@
 #include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "mis.h"
 #include "av.h"
 #include "mmfile.h"
 #include "utils.h"
-#include "logging.h"
 #include "options.h"
 #include "game_main.h"
 #include "mc.h"
 #include "sdlhelper.h"
 #include "newmis.h"
-#include "game_main.h"
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
@@ -48,14 +45,9 @@
 
 #define NORM_TABLE 397
 #define CLIF_TABLE 240
-#define ANIM_PARTS 297
 #define SCND_TABLE 486
 
 LOG_DEFAULT_CATEGORY(mission)
-
-struct NTable {
-    char ID[8];
-};
 
 struct Infin {
     char Code[9], Qty;
@@ -77,7 +69,6 @@ struct AnimType AHead;
 struct BlockHead BHead;
 
 char STEPnum;
-char loc[4];
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
@@ -87,7 +78,6 @@ void Clock(char plr, char clck, char mode, char tm);
 // Who and What the hell are "Shining Happy People?"
 
 
-void RLEE(void *dest, void *src, unsigned int src_size);
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName);
 void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
@@ -211,8 +201,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 Tst3 = Seq[5];
                 Seq[4] = Seq[2];
                 Seq[5] = Seq[3];
-                Seq[2] = (char)Tst2;
-                Seq[3] = (char)Tst3;
+                Seq[2] = Tst2;
+                Seq[3] = Tst3;
                 strncpy(Mev[STEP].FName, "F115", 4);
             }
         }
@@ -318,7 +308,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     //::::::::::::::::::::::::::::::::::::
     if (mode == 0 && (bSeq[j].ID[0] - 0x30 != 1)) {
         fres = (unsigned)(bSeq[j].ID[0] - 0x30);
-        max = (unsigned)fres;
+        max = fres;
         wlen = 0;
 
         while (1) {
@@ -345,7 +335,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     //::::::::::::::::::::::::::::::::::::
     if (mode == 1 && (dSeq[j].ID[0] - 0x30 != 1)) {
         fres = (unsigned)(dSeq[j].ID[0] - 0x30);
-        max = (unsigned)fres;
+        max = fres;
         wlen = 0;
 
         while (1) {
@@ -437,10 +427,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
         // Endianness swap
         for (i = 0; i < NORM_TABLE; i++) {
-            int j;
-
-            for (j = 0; j < 10; j++) {
-                Swap16bit(Mob[i].List[j]);
+            for (int k = 0; k < 10; k++) {
+                Swap16bit(Mob[i].List[k]);
             }
         }
     }
@@ -709,11 +697,9 @@ void Tick(char plr)
 
                 Clock(plr, 0, 1, Sec);
                 break;
-            };
-        };
-    };
-
-    return;
+            }
+        }
+    }
 }
 
 void Clock(char plr, char clck, char mode, char tm)
@@ -783,10 +769,7 @@ void Clock(char plr, char clck, char mode, char tm)
     case 7:
         grPutPixel(sx - 1, sy - 1, mode);
         break;
-
-    default:
-        break;
-    };
+    }
 
     av_need_update_xy(sx - 2, sy - 2, sx + 2, sy - 2);
 
@@ -1161,11 +1144,8 @@ char FailureMode(char plr, int prelim, char *text)
         case 9:
             PrintAt(10, 122, "CREW INJURIES");
             break;
-
-        default:
-            break;
-        };
-    };
+        }
+    }
 
 
     // Flight Crew Info
@@ -1232,11 +1212,8 @@ char FailureMode(char plr, int prelim, char *text)
         case 3:
             grDrawLine(182, 148, 305, 148);
             break;
-
-        default:
-            break;
-        };
-    };
+        }
+    }
 
     // Display Failure Text
     InRFBox(4, 154, 315, 196, 0);
@@ -1334,7 +1311,7 @@ char FailureMode(char plr, int prelim, char *text)
             FadeIn(2, pal, 10, 0, 0);
             key = 0;
             return 0;  /* Continue */
-        };
+        }
 
         if ((x >= 6 && y >= 114 && x <= 151 && y <= 126 && prelim == 3 && mousebuttons > 0) || (prelim == 7 && key == 'S')) {
             InBox(6, 114, 151, 126);
@@ -1351,8 +1328,8 @@ char FailureMode(char plr, int prelim, char *text)
             FadeIn(2, pal, 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
-        };
-    };
+        }
+    }
 }
 
 /** open the animations file and seek the proper animation
