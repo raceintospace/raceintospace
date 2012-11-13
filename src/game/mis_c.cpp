@@ -1257,8 +1257,6 @@ char FailureMode(char plr, int prelim, char *text)
     // Build Name
     memset(Name, 0x00, sizeof Name);
 
-    VerifyData();
-
     if (plr == 0) {
         strcat(Name, "US");
     } else {
@@ -1515,8 +1513,6 @@ char DrawMoonSelection(char nauts, char plr)
     // Place Image Here
     // Build Name
     memset(Name, 0x00, sizeof Name);
-
-    VerifyData();
 
     if (plr == 0) {
         strcat(Name, "US");

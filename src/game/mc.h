@@ -3,7 +3,6 @@
 
 #include "data.h"
 
-void VerifyData(void);
 int Launch(char plr, char mis);
 
 extern struct mStr Mis;
