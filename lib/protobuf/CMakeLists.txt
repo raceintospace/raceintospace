@@ -1,34 +1,39 @@
 cmake_minimum_required(VERSION 2.8)
 
+set(PACKAGE_VERSION 2.4.1)
+
 include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
 
-include(CheckIncludeFile)
-check_include_file(fcntl.h HAVE_FCNTL_H)
-check_include_file(inttypes.h HAVE_INTTYPES_H)
-check_include_file(limits.h HAVE_LIMITS_H)
-check_include_file(stdlib.h HAVE_STDLIB_H)
-check_include_file(stdint.h INCLUDE_STDINT_H)
-check_include_file(unistd.h INCLUDE_UNISTD_H)
+if (WINDOWS)
+  # Use the config.h intended for Windows shipped by Google
+  include_directories(${PROJECT_SOURCE_DIR}/vsprojects)
+else (WINDOWS)
+  include(CheckIncludeFile)
+  check_include_file(fcntl.h HAVE_FCNTL_H)
+  check_include_file(inttypes.h HAVE_INTTYPES_H)
+  check_include_file(limits.h HAVE_LIMITS_H)
+  check_include_file(stdlib.h HAVE_STDLIB_H)
+  check_include_file(stdint.h INCLUDE_STDINT_H)
+  check_include_file(unistd.h INCLUDE_UNISTD_H)
 
-include(CheckFunctionExists)
-check_function_exists(ftruncate HAVE_FTRUNCATE)
-check_function_exists(memcmp HAVE_MEMCMP)
-check_function_exists(memset HAVE_MEMSET)
-check_function_exists(mkdir HAVE_MKDIR)
-check_function_exists(strchr HAVE_STRCHR)
-check_function_exists(strerror HAVE_STRERROR)
-check_function_exists(strtol HAVE_STRTOL)
-check_function_exists(strtod HAVE_STRTOD)
+  include(CheckFunctionExists)
+  check_function_exists(ftruncate HAVE_FTRUNCATE)
+  check_function_exists(memcmp HAVE_MEMCMP)
+  check_function_exists(memset HAVE_MEMSET)
+  check_function_exists(mkdir HAVE_MKDIR)
+  check_function_exists(strchr HAVE_STRCHR)
+  check_function_exists(strerror HAVE_STRERROR)
+  check_function_exists(strtol HAVE_STRTOL)
+  check_function_exists(strtod HAVE_STRTOD)
 
-check_include_file(zlib.h HAVE_ZLIB)
-check_include_file(pthread.h HAVE_PTHREAD)
+  check_include_file(pthread.h HAVE_PTHREAD)
 
-set(PACKAGE_NAME protobuf)
-set(PACKAGE_VERSION 2.4.1)
-set(PACKAGE_TARNAME protobuf)
-set(PACKAGE_STRING ${PACKAGE_TARNAME}-${PACKAGE_VERSION})
-
-configure_file(${CONFIG_H_IN} "${PROJECT_SOURCE_DIR}/config.h")
+  set(PACKAGE_NAME protobuf)
+  set(PACKAGE_TARNAME protobuf)
+  set(PACKAGE_STRING ${PACKAGE_TARNAME}-${PACKAGE_VERSION})
+  
+  configure_file(${CONFIG_H_IN} "${PROJECT_SOURCE_DIR}/config.h")
+endif (WINDOWS)
 
 include_directories(.)
 include_directories(SYSTEM src)
@@ -118,7 +123,7 @@ add_executable(protoc
   src/google/protobuf/compiler/main.cc
   )
 
-target_link_libraries(protoc z protobuf)
+target_link_libraries(protoc protobuf)
 
 install(
   TARGETS protobuf_lite protobuf protoc
