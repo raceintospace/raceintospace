@@ -35,6 +35,7 @@ compiles:
 * libogg
 * libvorbis
 * libtheora
+* libprotobuf / protoc
 
 On UNIXy systems (including Mac OS X), you can build everything with:
 
@@ -52,7 +53,7 @@ most of the dependencies. If you're on a Debian-based system, you can get
 everything with:
 
     $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
-        libogg-dev libvorbis-dev libtheora-dev
+        libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
 Mac OS X
 ========
