@@ -121,7 +121,7 @@ void DrawFuture(char plr, int mis, char pad)
     FadeOut(2, display::graphics.pal(), 10, 0, 0);
     Load_FUT_BUT();
     fin = sOpen("FMIN.IMG", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     sz = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);

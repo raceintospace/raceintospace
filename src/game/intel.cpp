@@ -1194,7 +1194,7 @@ void TopSecret(char plr, char poff)
     in = sOpen("INTEL.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 71 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&display::graphics.pal()[0], 768, 1, in);
+    fread(display::graphics.pal(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
     GV(&local, 157, 100);
@@ -1562,7 +1562,7 @@ void Load_CIA_BUT(void)
     FILE *fin;
 
     fin = sOpen("CIA.BUT", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     PCX_D(display::graphics.screen(), (char *)vhptr.vptr, i);
     fclose(fin);

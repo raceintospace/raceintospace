@@ -228,7 +228,7 @@ void SatDraw(char plr)
     loc[3] = (Data->P[plr].Probe[2].Num < 0) ? 0 : 3 + plr * 3;
 
     fin = sOpen("SATBLD.BUT", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
 
     for (i = 0; i < 4; i++) {
 

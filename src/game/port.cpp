@@ -522,7 +522,7 @@ void PortPal(char plr)
     fread(&PHead, sizeof PHead, 1, fin);
     Swap32bit(PHead.oPal);
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     fclose(fin);
     return;
 }
@@ -570,7 +570,7 @@ void DrawSpaceport(char plr)
     }
 
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
 
     fseek(fin, table[0], SEEK_SET);
     fread(&Img, sizeof Img, 1, fin); // Read in main image Header

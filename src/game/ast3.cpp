@@ -697,7 +697,7 @@ void Hospital(char plr, int sel)
 // pal, len, image
 
     fin = sOpen("CEM.IMG", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     fread(&size, 4, 1, fin);
     Swap32bit(size);
 
@@ -705,7 +705,7 @@ void Hospital(char plr, int sel)
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // place on the Sov cem
-            fread(&display::graphics.pal()[0], 768, 1, fin);
+            fread(display::graphics.pal(), 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }
@@ -713,18 +713,18 @@ void Hospital(char plr, int sel)
 
     if (sel == 0) {
         fseek(fin, size, SEEK_CUR); // Skip past US cem
-        fread(&display::graphics.pal()[0], 768, 1, fin);
+        fread(display::graphics.pal(), 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         fseek(fin, size, SEEK_CUR); // Place on the US hosp
-        fread(&display::graphics.pal()[0], 768, 1, fin);
+        fread(display::graphics.pal(), 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // Skip to Sov hosp
-            fread(&display::graphics.pal()[0], 768, 1, fin);
+            fread(display::graphics.pal(), 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }

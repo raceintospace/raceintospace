@@ -52,7 +52,7 @@ void DrawPrefs(int where, char a1, char a2)
     strcpy(helptextIndex, "i013");
     strcpy(keyhelpIndex, "K013");
     fin = sOpen("PREFS.BUT", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 

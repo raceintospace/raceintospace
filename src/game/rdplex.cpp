@@ -166,7 +166,7 @@ void DrawRD(char player_index)
 
     FadeOut(2, display::graphics.pal(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     fclose(fin);
 
     gxClearDisplay(0, 0);
@@ -1215,7 +1215,7 @@ void DrawHPurc(char player_index)
 
     FadeOut(2, display::graphics.pal(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     fclose(fin);
 
     Load_RD_BUT(player_index);

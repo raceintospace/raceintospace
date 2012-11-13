@@ -275,7 +275,7 @@ void PlaceEquip(char plr, char prog)
     fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, fin);
     fseek(fin, 14 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&display::graphics.pal()[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
 
     fseek(fin, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, fin);
