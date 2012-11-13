@@ -176,6 +176,12 @@ if (BUILD_XIPH)
     )
 
   add_dependencies(libs ext_libogg)
+
+else (BUILD_XIPH)
+  add_library(ogg STATIC IMPORTED)
+  set_property(TARGET ogg APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(ogg PROPERTIES IMPORTED_LOCATION_NOCONFIG ${Ogg_LIBRARY})
+
 endif (BUILD_XIPH)
 
 
@@ -197,6 +203,12 @@ if (BUILD_XIPH)
   
   add_dependencies(libs ext_libogg)
   add_dependencies(ext_libvorbis ext_libogg)
+
+else (BUILD_XIPH)
+  add_library(vorbis STATIC IMPORTED)
+  set_property(TARGET vorbis APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(vorbis PROPERTIES IMPORTED_LOCATION_NOCONFIG ${Vorbis_LIBRARY})
+
 endif (BUILD_XIPH)
 
 
@@ -218,4 +230,10 @@ if (BUILD_XIPH)
   
   add_dependencies(libs ext_libtheora)
   add_dependencies(ext_libtheora ext_libogg)
+
+else (BUILD_XIPH)
+  add_library(theora STATIC IMPORTED)
+  set_property(TARGET theora APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(theora PROPERTIES IMPORTED_LOCATION_NOCONFIG ${Theora_LIBRARY})
+  
 endif (BUILD_XIPH)
