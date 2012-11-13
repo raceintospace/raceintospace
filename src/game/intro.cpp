@@ -122,7 +122,7 @@ void Credits(void)
     int k, i;
     strcpy(keyhelpIndex, "i999");
 
-    FadeOut(2, pal, 30, 0, 0);
+    FadeOut(2, display::graphics.pal(), 30, 0, 0);
 
     FILE *fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
     display::PNGImage image(fp);
@@ -133,7 +133,7 @@ void Credits(void)
     for (k = 0; k < 2; k++) {
 
         if (k != 0) {
-            FadeOut(2, pal, 30, 0, 0);    // Screen #2
+            FadeOut(2, display::graphics.pal(), 30, 0, 0);    // Screen #2
         }
 
         image.export_to_legacy_palette();
@@ -146,7 +146,7 @@ void Credits(void)
             }
         }
 
-        FadeIn(2, pal, 30, 0, 0);
+        FadeIn(2, display::graphics.pal(), 30, 0, 0);
 
         while (1)  {
             GetMouse();
@@ -165,7 +165,7 @@ void Credits(void)
         key = 0;
     }
 
-    FadeOut(2, pal, 30, 0, 0);
+    FadeOut(2, display::graphics.pal(), 30, 0, 0);
     display::graphics.clearScreen(0);
     strcpy(keyhelpIndex, "k000");
 }
@@ -198,7 +198,7 @@ void Introd(void)
         image.export_to_legacy_palette();
         image.draw();
 
-        FadeIn(2, pal, 30, 0, 0);
+        FadeIn(2, display::graphics.pal(), 30, 0, 0);
 
         start = get_time();
 
@@ -215,7 +215,7 @@ void Introd(void)
             }
         }
 
-        FadeOut(2, pal, 30, 0, 0);
+        FadeOut(2, display::graphics.pal(), 30, 0, 0);
     }
 
 done:
@@ -227,12 +227,12 @@ void NextTurn(char plr)
     FILE *fin = NULL;
     int32_t len = 0;
 
-    memset(pal, 0x00, sizeof(pal));
+    memset(display::graphics.pal(), 0x00, 3 * 256);
     strcpy(helptextIndex, "i000");
     strcpy(keyhelpIndex, "k000");
 
     fin = sOpen("TURN.BUT", "rb", 0);
-    fread(&pal, 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     len = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
@@ -262,7 +262,7 @@ void NextTurn(char plr)
     DispNum(0, 0, Data->Year);
     gxVirtualDisplay(&vhptr, 110 * plr, 0, 30, 85, 31 + 107, 85 + 94, 0);
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
 
     WaitForMouseUp();
@@ -270,7 +270,7 @@ void NextTurn(char plr)
     key = 0;
 
     music_stop();
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     return;
 }

@@ -305,7 +305,7 @@ int game_main_impl(int argc, char *argv[])
                     break;
                 }
             } else if (!QUIT) {
-                FadeOut(2, pal, 10, 0, 0);
+                FadeOut(2, display::graphics.pal(), 10, 0, 0);
             }
 
             QUIT = 0;
@@ -321,7 +321,7 @@ int game_main_impl(int argc, char *argv[])
         case 3:
             //KillMusic();
             ex = 1;
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
             break;
         }
     }
@@ -486,7 +486,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         FakeWin(plr[i] - 2);
                     }
 
-                    FadeOut(2, pal, 10, 0, 0);
+                    FadeOut(2, display::graphics.pal(), 10, 0, 0);
                     QUIT = 1;
                     return;
                 }
@@ -574,7 +574,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         if (Data->Prestige[22].Place != -1) {
                             UpdateRecords(1);
                             NewEnd(Data->Prestige[22].Place, Order[i].loc);
-                            FadeOut(2, pal, 10, 0, 0);
+                            FadeOut(2, display::graphics.pal(), 10, 0, 0);
                             return;
                         }
 
@@ -600,7 +600,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[22].Place == -1) {
             // nobody wins .....
             SpecialEnd();
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
             return;
         }
 
@@ -655,7 +655,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
     };
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     Museum(0);
 

@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-namespace display {
+namespace display
+{
 
 class Graphics
 {
@@ -27,6 +28,10 @@ public:
     SDL_Surface *screenSurface() const {
         return _screen;
     }
+
+    inline uint8_t *pal() {
+        return _pal;
+    };
 
     SDL_Surface *scaledScreenSurface() const {
         return _scaledScreen;
@@ -70,6 +75,7 @@ private:
     SDL_Rect _videoRect;
     SDL_Rect _newsRect;
     bool _fullscreen;
+    uint8_t _pal[3 * 256];
 };
 
 extern Graphics graphics;

@@ -283,7 +283,7 @@ void Intel(char plr)
             beg = 0;
         } else {
 
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
             DrawSpaceport(plr);
             PortPal(plr);
             RectFill(166, 191, 318, 198, 3);
@@ -311,7 +311,7 @@ void Intel(char plr)
             }
 
             DispNum(0, 0, Data->Year);
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
         }
 
@@ -1194,7 +1194,7 @@ void TopSecret(char plr, char poff)
     in = sOpen("INTEL.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 71 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&pal[0], 768, 1, in);
+    fread(display::graphics.pal(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
     GV(&local, 157, 100);
@@ -1451,7 +1451,7 @@ void IntelPhase(char plr, char pt)
 void DrawBre(char plr)
 {
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -1497,7 +1497,7 @@ void Bre(char plr)
     DrawBre(plr);
     TopSecret(plr, 100); // just the blue background
     BackIntel(plr, year);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -1562,7 +1562,7 @@ void Load_CIA_BUT(void)
     FILE *fin;
 
     fin = sOpen("CIA.BUT", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     PCX_D(display::graphics.screen(), (char *)vhptr.vptr, i);
     fclose(fin);
@@ -1573,7 +1573,7 @@ void DrawIStat(char plr)
 {
     int i;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     Load_CIA_BUT();
     gxClearDisplay(0, 0);
@@ -1613,7 +1613,7 @@ void DrawIStat(char plr)
     FlagSm(plr, 4, 4);
     grSetColor(1);
     PrintAt(256, 13, "CONTINUE");
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
 }
 

@@ -48,11 +48,11 @@ void DrawPrefs(int where, char a1, char a2)
     int i, mode = 0;
     FILE *fin;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     strcpy(helptextIndex, "i013");
     strcpy(keyhelpIndex, "K013");
     fin = sOpen("PREFS.BUT", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
@@ -161,7 +161,7 @@ void DrawPrefs(int where, char a1, char a2)
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     return;
 }
 
@@ -178,7 +178,7 @@ void HModel(char mode, char tx)
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     GV(&local, 127, 80);
-    fread(&pal[112 * 3], 96 * 3, 1, in); // Individual Palette
+    fread(&display::graphics.pal()[112 * 3], 96 * 3, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
@@ -382,7 +382,7 @@ void Prefs(int where)
                     Data->Def.Plr2 += hum2 * 2;
 
                     if (where == 0 || where == 3) {
-                        FadeOut(2, pal, 10, 0, 0);
+                        FadeOut(2, display::graphics.pal(), 10, 0, 0);
                     }
 
                     key = 0;

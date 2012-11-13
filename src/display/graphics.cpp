@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdexcept>
 
+#include <memory.h>
+
 // FIXME: let's try to avoid this
 #include "../game/sdlhelper.h"
 
@@ -21,6 +23,7 @@ Graphics::Graphics():
     _news(NULL),
     _fullscreen(false)
 {
+    memset(_pal, 0, sizeof(_pal));
 }
 
 Graphics::~Graphics()

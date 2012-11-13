@@ -98,13 +98,13 @@ void DrawControl(char plr)
     FILE *fin;
     int32_t len;
     fin = sOpen("CONTROL.IMG", "rb", 0);
-    fread(pal, 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     fread(&len, 4, 1, fin);
     Swap32bit(len);
 
     if (plr == 1) {
         fseek(fin, len, SEEK_CUR);
-        fread(pal, 768, 1, fin);
+        fread(display::graphics.pal(), 768, 1, fin);
         fread(&len, 4, 1, fin);
         Swap32bit(len);
     }
@@ -308,7 +308,7 @@ int Launch(char plr, char mis)
 
     if (!AI[plr] && BIG == 0) {
         DrawControl(plr);
-        FadeIn(2, pal, 10, 0, 0);
+        FadeIn(2, display::graphics.pal(), 10, 0, 0);
     } else if (BIG == 1) {
         gxClearDisplay(0, 0);
     }

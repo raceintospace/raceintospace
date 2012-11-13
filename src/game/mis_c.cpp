@@ -969,7 +969,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     locl = (int32_t) 1612 * which;
 
     if (which < 580) {
-        memset(&pal[off * 3], 0x00, 48);
+        memset(&display::graphics.pal()[off * 3], 0x00, 48);
     }
 
     if (loc != 0 && which < 580) {
@@ -977,7 +977,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
-    fread(&pal[off * 3], 48, 1, ffin);
+    fread(&display::graphics.pal()[off * 3], 48, 1, ffin);
     fread(boob.vptr, 1564, 1, ffin);
 
     for (i = 0; i < 782; i++) {
@@ -1053,11 +1053,11 @@ char FailureMode(char plr, int prelim, char *text)
     double last_secs;
     char save_screen[64000], save_pal[768];
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     // this destroys what's in the current page frames
     memcpy(save_screen, display::graphics.screen(), 64000);
-    memcpy(save_pal, pal, 768);
+    memcpy(save_pal, display::graphics.pal(), 768);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -1278,7 +1278,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     last_secs = get_time();
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -1306,10 +1306,10 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
             screen_dirty = 1;
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 0;  /* Continue */
         }
@@ -1324,9 +1324,9 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
             screen_dirty = 1;
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
         }
@@ -1367,7 +1367,7 @@ FILE *OpenAnim(char *fname)
     fread(&AHead, sizeof AHead, 1, fin);
     Swap16bit(AHead.w);
     Swap16bit(AHead.h);
-    fread(&pal[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
+    fread(&display::graphics.pal()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
     aLoc = ftell(fin);
     tFrames = AHead.fNum;
     cFrame = 0;
@@ -1495,9 +1495,9 @@ char DrawMoonSelection(char nauts, char plr)
         return 2;
     }
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     memcpy(save_screen, display::graphics.screen(), 64000);
-    memcpy(save_pal, pal, 768);
+    memcpy(save_pal, display::graphics.pal(), 768);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -1564,7 +1564,7 @@ char DrawMoonSelection(char nauts, char plr)
         GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     WaitForMouseUp();
     key = 0;
 
@@ -1584,9 +1584,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 1;
         }
@@ -1599,9 +1599,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 2;
         }
@@ -1614,9 +1614,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 3;
         }
@@ -1629,9 +1629,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(pal, save_pal, 768);
+            memcpy(display::graphics.pal(), save_pal, 768);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             key = 0;
             return 4;
         }

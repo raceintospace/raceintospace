@@ -50,7 +50,7 @@ DrawHardef(char plr)
 {
     int i;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     Load_CIA_BUT();
     gxClearDisplay(0, 0);
@@ -95,7 +95,7 @@ DrawHardef(char plr)
     RectFill(149, 12, 156, 19, 5);
     grSetColor(6);
     PrintAt(163, 18, "SUCCESS");
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     return;
 }
@@ -134,7 +134,7 @@ ShowHard(char plr)
             } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
                         && mousebuttons > 0) || key == 'T') {
 
-                FadeOut(2, pal, 10, 0, 0);
+                FadeOut(2, display::graphics.pal(), 10, 0, 0);
                 RectFill(33, 1, 239, 21, 3);
                 RectFill(4, 23, 315, 159, 0);
                 GradRect(4, 23, 315, 159, 0);
@@ -165,7 +165,7 @@ ShowHard(char plr)
                     HInfo(plr, place, 0);
                 }
 
-                FadeIn(2, pal, 10, 0, 0);
+                FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
             } else if (((x >= 83 && y >= 164 && x <= 156 && y <= 195
                          && mousebuttons > 0) || key == 'R') && place != 1) {
@@ -1470,7 +1470,7 @@ RankMe(char plr)
 {
     int i;
 
-    FadeOut(2, pal, 5, 0, 0);
+    FadeOut(2, display::graphics.pal(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(52, 0, 267, 32);
@@ -1522,7 +1522,7 @@ RankMe(char plr)
         PrintAt(56, 82, "U.S.S.R.");
     }
 
-    FadeIn(2, pal, 5, 0, 0);
+    FadeIn(2, display::graphics.pal(), 5, 0, 0);
 
     WaitForMouseUp();
 

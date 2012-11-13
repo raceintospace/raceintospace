@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "ast2.h"
 #include "Buzz_inc.h"
 #include "ast0.h"
@@ -46,7 +48,7 @@ void DrawLimbo(char plr)
 {
     int i;
     int lenprogname;  // Variable to hold and manipulate length of program name
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     strcpy(helptextIndex, "i039");
     strcpy(keyhelpIndex, "k039");
@@ -196,7 +198,7 @@ void Limbo(char plr)
         LimboText(plr, M[now2]);
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     while (1) {
         key = 0;
@@ -473,7 +475,7 @@ void Limbo(char plr)
                 //   ShBox(26,130+BarA*8,152,138+BarA*8);
                 //   DispLeft(plr,BarA,count,now2,&M[0]);
                 //   LimboText(plr,M[now2]);
-                FadeIn(2, pal, 10, 0, 0);
+                FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
             }
 
@@ -605,7 +607,7 @@ void Limbo(char plr)
                     LimboText(plr, M[now2]);
                 }
 
-                FadeIn(2, pal, 10, 0, 0);
+                FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
             }
         }

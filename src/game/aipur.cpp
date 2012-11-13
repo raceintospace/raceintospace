@@ -25,6 +25,8 @@
 /** \file aipur.c AI Purchasing Routines
  */
 
+#include "display/graphics.h"
+
 #include "aipur.h"
 #include "Buzz_inc.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
@@ -59,7 +61,7 @@ void DrawStatistics(char Win)
     FILE *fin;
     strncpy(helptextIndex, "i145", 4);
     strncpy(keyhelpIndex, "k045", 4);
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     PortPal(0);
 
     gxClearDisplay(0, 0);
@@ -134,7 +136,7 @@ void DrawStatistics(char Win)
 
     fclose(fin);
     DV(&local);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     return;
 }

@@ -220,7 +220,7 @@ void EndGame(char win, char pad)
     char miss, prog, man1, man2, man3, man4, bud;
 
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     strncpy(helptextIndex, "i000", 4);
     strncpy(keyhelpIndex, "k000", 4);
     gxClearDisplay(0, 0);
@@ -423,7 +423,7 @@ void EndGame(char win, char pad)
 
     grSetColor(6);
     AltHistory(win);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -471,7 +471,7 @@ void Load_LenFlag(char win)
 
     poff = 0;
     coff = 128;
-    fread(&pal[coff * 3], 384, 1, in);
+    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
@@ -508,10 +508,10 @@ void Draw_NewEnd(char win)
 
     music_start(M_VICTORY);
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     in = sOpen("WINNER.BUT", "rb", 0);
-    fread(pal, 384, 1, in);
+    fread(display::graphics.pal(), 384, 1, in);
     size = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, in);
     fclose(in);
     PCX_D(vhptr.vptr, display::graphics.screen(), size);
@@ -528,9 +528,9 @@ void Draw_NewEnd(char win)
     PrintAt(142, 188, "PARADE");
     PrintAt(198, 188, "MOON EVA");
     PrintAt(269, 188, "EXIT");
-    FadeIn(0, pal, 10, 128, 0);
+    FadeIn(0, display::graphics.pal(), 10, 128, 0);
     Load_LenFlag(win);
-    FadeIn(1, pal, 40, 128, 1);
+    FadeIn(1, display::graphics.pal(), 40, 128, 1);
 }
 
 void NewEnd(char win, char loc)
@@ -580,10 +580,10 @@ void NewEnd(char win, char loc)
                 }
 
                 gxPutImage(&local, gxSET, 149, 9, 0);
-                memset(&pal[384], 0, 384);
+                memset(&display::graphics.pal()[384], 0, 384);
                 gxClearVirtual(&local, 0);
                 Load_LenFlag(win);
-                FadeIn(1, pal, 40, 128, 1);
+                FadeIn(1, display::graphics.pal(), 40, 128, 1);
 
                 if (R_V == 0 || R_V == -1) {
                     R_V = Burst(win);
@@ -652,7 +652,7 @@ void NewEnd(char win, char loc)
             key = 0;
             Re_Draw = 1;
             OutBox(134, 182, 185, 190);
-            FadeOut(1, pal, 40, 128, 1);
+            FadeOut(1, display::graphics.pal(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
             gxGetImage(&local, 149, 9, 309, 100, 0);
             ShBox(149, 9, 309, 100);
@@ -682,7 +682,7 @@ void NewEnd(char win, char loc)
             key = 0;
             OutBox(194, 182, 245, 190);
             Re_Draw = 1;
-            FadeOut(1, pal, 40, 128, 1);
+            FadeOut(1, display::graphics.pal(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
             gxGetImage(&local, 149, 9, 309, 100, 0);
             ShBox(149, 9, 309, 100);
@@ -719,7 +719,7 @@ void FakeWin(char win)
     char miss, prog, man1, man2, man3, man4, bud, yr, monthWin;
     monthWin = brandom(12);
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -929,7 +929,7 @@ void FakeWin(char win)
     grSetColor(6);
     FakeHistory(win, yr);
     music_start(M_INTERLUD);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -1088,7 +1088,7 @@ void SpecialEnd(void)
     memset(buffer, 0x00, BUFFER_SIZE);
     HistFile(buffer + 1000, 11);
     PrintOne(buffer + 1000, 1);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -1124,7 +1124,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("ENDGAME.BUT", "rb", 0);
-    fread(&pal[coff * 3], 384, 1, in);
+    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -1164,7 +1164,7 @@ LoserPict(char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("LOSER.BUT", "rb", 0);
-    fread(&pal[coff * 3], 384, 1, in);
+    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
@@ -1192,7 +1192,7 @@ void PlayFirst(char plr, char first)
     char i, w = 0, index;
     int Check = 0;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
@@ -1235,7 +1235,7 @@ void PlayFirst(char plr, char first)
     }
 
     grSetColor(7);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     if (Option == -1 && MAIL == -1) {
         Replay(plr, Data->P[plr].PastMis - 1, 85, 46, 151, 82, "OOOO");
@@ -1244,7 +1244,7 @@ void PlayFirst(char plr, char first)
     }
 
     PauseMouse();
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     music_stop();
     return;

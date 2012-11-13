@@ -41,7 +41,7 @@ grGetMouseCurPos(int *xp, int *yp)
 void
 gr_set_color_map(unsigned char *map)
 {
-    memcpy(pal, map, 256 * 3);
+    memcpy(display::graphics.pal(), map, 256 * 3);
 }
 
 void
