@@ -73,8 +73,10 @@ set(game_libraries
 
 # Defer to the platform-specific CMakeLists for building the actual game target
 if (APPLE)
-  include(CMakeLists.macosx.txt)
-else (APPLE)
+  include(platform_macosx/platform.cmake)
+elseif (WINDOWS)
+  include(platform_windows/platform.cmake)
+else()
   add_library(raceintospace_game ${game_sources} music_vorbis.cpp)
   add_dependencies(raceintospace_game libs)
-endif (APPLE)
+endif()
