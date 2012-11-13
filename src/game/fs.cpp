@@ -21,6 +21,8 @@
  *
  */
 
+#include "raceintospace_config.h"
+
 #include "Buzz_inc.h"
 #include "options.h"
 #include "pace.h"
@@ -45,7 +47,7 @@
 #  define mkdir(a, b) mkdir(a)
 # endif
 #else
-# if HAVE__MKDIR
+# ifdef HAVE__MKDIR
 /* plain Windows 32 */
 #  define mkdir(a, b) _mkdir(a)
 # else
@@ -53,23 +55,9 @@
 # endif
 #endif
 
-/** see how we get the length of a directory's name */
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# ifdef HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# ifdef HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
+// dirent.h is a platform-specific include on Windows
+#include <dirent.h>
+#define NAMLEN(dirent) strlen((dirent)->d_name)
 
 LOG_DEFAULT_CATEGORY(filesys)
 

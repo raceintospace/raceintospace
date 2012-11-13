@@ -7,12 +7,12 @@ include(TestBigEndian)
 
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 
-check_function_exists(mkdir HAVE_MKDIR)
-check_function_exists(_mkdir HAVE__MKDIR)
-
-set(CMAKE_REQUIRED_INCLUDES math.h)
-set(CMAKE_REQUIRED_LIBRARIES m)
-check_function_exists(lrint HAVE_LRINT)
+if (NOT WINDOWS)
+  check_function_exists(mkdir HAVE_MKDIR)
+  set (HAVE_LRINT true)
+else ()
+  check_function_exists(_mkdir HAVE__MKDIR)
+endif ()
 
 check_include_file(dirent.h HAVE_DIRENT_H)
 check_include_file(sys/dir.h HAVE_SYS_DIR_H)
