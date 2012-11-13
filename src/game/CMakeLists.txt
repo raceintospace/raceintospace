@@ -1,7 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(${PROJECT_SOURCE_DIR}/src/game)
-include_directories(SYSTEM ${SDL_INCLUDE_DIR})
 
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
@@ -72,15 +71,12 @@ set(game_libraries
   jsoncpp
   )
 
-set(game_dependencies
-  jsoncpp_build
-  libogg_build libvorbis_build libtheora_build
-  )
-
 # Defer to the platform-specific CMakeLists for building the actual game target
 if (APPLE)
-  include(CMakeLists.macosx.txt)
-else (APPLE)
+  include(platform_macosx/platform.cmake)
+elseif (WINDOWS)
+  include(platform_windows/platform.cmake)
+else()
   add_library(raceintospace_game ${game_sources} music_vorbis.cpp)
-  add_dependencies(raceintospace_game ${game_dependencies})
-endif (APPLE)
+  add_dependencies(raceintospace_game libs)
+endif()

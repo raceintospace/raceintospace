@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 2.6)
+
+install(
+  DIRECTORY "${PROJECT_SOURCE_DIR}/include"
+  DESTINATION .
+  )
+
+if (WIN32)
+  file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x86/*")
+else (WIN32)
+  file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x64/*")
+endif (WIN32)
+
+install(
+  FILES ${libs}
+  DESTINATION lib
+  )

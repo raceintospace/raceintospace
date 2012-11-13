@@ -1,7 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(SYSTEM ${png_INCLUDE_DIR})
-include_directories(SYSTEM ${Boost_INCLUDE_DIR})
-include_directories(SYSTEM ${SDL_INCLUDE_DIR})
+
+include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 
 add_library(
   raceintospace_display STATIC
@@ -9,3 +8,5 @@ add_library(
   palette.cpp
   png_image.cpp
   )
+
+add_dependencies(raceintospace_display libs)

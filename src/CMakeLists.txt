@@ -1,11 +1,3 @@
-# Find our dependencies
-find_package(Boost)
-
-include(${CMAKE_ROOT}/Modules/FindSDL.cmake)
-
-find_library(png_LIBRARY NAMES png REQUIRED PATHS /usr/X11/lib)
-find_path(png_INCLUDE_DIR png.h PATHS /usr/X11/include)
-
 # Probe the system
 include(CheckIncludeFile)
 include(CheckLibraryExists)
@@ -13,11 +5,24 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(TestBigEndian)
 
-check_function_exists(mkdir HAVE_MKDIR)
+include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
+
+if (NOT WINDOWS)
+  check_function_exists(mkdir HAVE_MKDIR)
+  set (HAVE_LRINT true)
+else ()
+  check_function_exists(_mkdir HAVE__MKDIR)
+endif ()
+
 check_include_file(dirent.h HAVE_DIRENT_H)
 check_include_file(sys/dir.h HAVE_SYS_DIR_H)
 check_include_file(sys/ndir.h HAVE_SYS_NDIR_H)
+check_include_file(sys/types.h HAVE_SYS_TYPES_H)
+check_include_file(sys/time.h HAVE_SYS_TIME_H)
+check_include_file(sys/timeb.h HAVE_SYS_TIMEB_H)
 check_include_file(ndir.h HAVE_NDIR_H)
+check_include_file(int_types.h HAVE_INTTYPES_H)
+check_include_file(unistd.h HAVE_UNISTD_H)
 
 # Set some build options
 if (APPLE)
@@ -44,11 +49,12 @@ configure_file(
 # so we can find raceintospace_config.h
 include_directories(${PROJECT_BINARY_DIR}/config)
 
-# pull in src/display/* defines and build rules
+# build src/display
 include("display/Global.cmake")
 add_subdirectory("display")
 
-# pull in src/game/* defines and build rules
+# build src/game
 add_subdirectory("game")
 
+# build the targets in src/utils too
 add_subdirectory("utils")

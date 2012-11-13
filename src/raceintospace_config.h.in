@@ -10,11 +10,22 @@
 #define PACKAGE_STRING "Race Into Space"
 #define PACKAGE_TARNAME "raceintospace"
 
+#cmakedefine HAVE_LRINT
+
 #cmakedefine HAVE_MKDIR
+#cmakedefine HAVE__MKDIR
 #cmakedefine HAVE_DIRENT_H
 #cmakedefine HAVE_SYS_DIR_H
 #cmakedefine HAVE_SYS_NDIR_H
+
+#ifndef HAVE_SYS_TYPES_H
+#cmakedefine HAVE_SYS_TYPES_H
+#endif  // some compilers define this by default
+
+#cmakedefine HAVE_SYS_TIME_H
+#cmakedefine HAVE_SYS_TIMEB_H
 #cmakedefine HAVE_NDIR_H
+#cmakedefine HAVE_UNISTD_H
 
 #cmakedefine SET_SDL_ICON
 

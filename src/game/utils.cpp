@@ -3,18 +3,18 @@
 #include <assert.h>
 #include <errno.h>
 #include <ctype.h>
+#include <string.h>
 #include <memory.h>
-#include <raceintospace_config.h>
+#include "raceintospace_config.h"
 
-/* taken from ffmpeg project */
-#ifdef CONFIG_WIN32
-#   include <sys/types.h>
-#   include <sys/timeb.h>
-#elif defined(CONFIG_OS2)
-#   include <string.h>
-#   include <sys/time.h>
-#else
-#   include <sys/time.h>
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_TIMEB_H
+#include <sys/timeb.h>
+#endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
 #endif
 
 LOG_DEFAULT_CATEGORY(utils)
