@@ -29,6 +29,8 @@
 
 #include <assert.h>
 
+#include "display/graphics.h"
+
 #include "admin.h"
 #include "Buzz_inc.h"
 #include "utils.h"
@@ -46,7 +48,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -1372,11 +1373,11 @@ int FutureCheck(char plr, char type)
 
     fin = sOpen("LPADS.BUT", "rb", 0);
 
-    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
 
     fclose(fin);
 
-    RLED_img(graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
 
     if (type == 0) {
         strcpy(helptextIndex, "i010");

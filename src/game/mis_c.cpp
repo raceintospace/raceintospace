@@ -23,6 +23,10 @@
 // Programmed by Michael K McCarty
 //
 
+#include <assert.h>
+
+#include "display/graphics.h"
+
 #include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -37,9 +41,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
-
-#include <assert.h>
 
 #define FRM_Delay 22
 
@@ -497,7 +498,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             if (hold_count == 0) {
 
                 /** \todo track decoding time and adjust delays */
-                if (mm_decode_video(&vidfile, graphics.videoOverlay()) <= 0) {
+                if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
                     break;
                 }
 
@@ -531,18 +532,18 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 DEBUG1("need to come out of hold");
             }
 
-            graphics.videoRect().w = 160;
-            graphics.videoRect().h = 100;
+            display::graphics.videoRect().w = 160;
+            display::graphics.videoRect().h = 100;
 
             if (BIG == 0) {
-                graphics.videoRect().x = 80;
-                graphics.videoRect().y = 3 + plr * 10;
+                display::graphics.videoRect().x = 80;
+                display::graphics.videoRect().y = 3 + plr * 10;
             } else {
-				graphics.clearScreen( 0 );
-                graphics.videoRect().x = MAX_X / 4;
-                graphics.videoRect().y = MAX_Y / 4;
-                graphics.videoRect().h = MAX_Y / 2;
-                graphics.videoRect().w = MAX_X / 2;
+                display::graphics.clearScreen(0);
+                display::graphics.videoRect().x = MAX_X / 4;
+                display::graphics.videoRect().y = MAX_Y / 4;
+                display::graphics.videoRect().h = MAX_Y / 2;
+                display::graphics.videoRect().w = MAX_X / 2;
             }
 
             /** \todo idle_loop is too inaccurate for this */
@@ -609,8 +610,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     fclose(ffin);  // Specs: babypicx.cdr
     mm_close(&vidfile);
-    graphics.videoRect().h = 0;
-    graphics.videoRect().w = 0;
+    display::graphics.videoRect().h = 0;
+    display::graphics.videoRect().w = 0;
     DEBUG1("<-PlaySequence()");
 }
 
@@ -735,39 +736,39 @@ void Clock(char plr, char clck, char mode, char tm)
 
     switch (tm) {
     case 0:
-        graphics.setPixel(sx, sy - 1, mode);
-        graphics.setPixel(sx, sy - 2, mode);
+        display::graphics.setPixel(sx, sy - 1, mode);
+        display::graphics.setPixel(sx, sy - 2, mode);
         break;
 
     case 1:
-        graphics.setPixel(sx + 1, sy - 1, mode);
+        display::graphics.setPixel(sx + 1, sy - 1, mode);
         break;
 
     case 2:
-        graphics.setPixel(sx + 1, sy, mode);
-        graphics.setPixel(sx + 2, sy, mode);
+        display::graphics.setPixel(sx + 1, sy, mode);
+        display::graphics.setPixel(sx + 2, sy, mode);
         break;
 
     case 3:
-        graphics.setPixel(sx + 1, sy + 1, mode);
+        display::graphics.setPixel(sx + 1, sy + 1, mode);
         break;
 
     case 4:
-        graphics.setPixel(sx, sy + 1, mode);
-        graphics.setPixel(sx, sy + 2, mode);
+        display::graphics.setPixel(sx, sy + 1, mode);
+        display::graphics.setPixel(sx, sy + 2, mode);
         break;
 
     case 5:
-        graphics.setPixel(sx - 1, sy + 1, mode);
+        display::graphics.setPixel(sx - 1, sy + 1, mode);
         break;
 
     case 6:
-        graphics.setPixel(sx - 1, sy, mode);
-        graphics.setPixel(sx - 2, sy, mode);
+        display::graphics.setPixel(sx - 1, sy, mode);
+        display::graphics.setPixel(sx - 2, sy, mode);
         break;
 
     case 7:
-        graphics.setPixel(sx - 1, sy - 1, mode);
+        display::graphics.setPixel(sx - 1, sy - 1, mode);
         break;
     }
 
@@ -1055,7 +1056,7 @@ char FailureMode(char plr, int prelim, char *text)
     FadeOut(2, pal, 10, 0, 0);
 
     // this destroys what's in the current page frames
-    memcpy(save_screen, graphics.screen(), 64000);
+    memcpy(save_screen, display::graphics.screen(), 64000);
     memcpy(save_pal, pal, 768);
 
     gxClearDisplay(0, 0);
@@ -1304,7 +1305,7 @@ char FailureMode(char plr, int prelim, char *text)
             //  DrawControl(plr);
             CloseAnim(fin);
 
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
             screen_dirty = 1;
 
@@ -1322,7 +1323,7 @@ char FailureMode(char plr, int prelim, char *text)
             //   DrawControl(plr);
             CloseAnim(fin);
 
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
             screen_dirty = 1;
             FadeIn(2, pal, 10, 0, 0);
@@ -1495,7 +1496,7 @@ char DrawMoonSelection(char nauts, char plr)
     }
 
     FadeOut(2, pal, 10, 0, 0);
-    memcpy(save_screen, graphics.screen(), 64000);
+    memcpy(save_screen, display::graphics.screen(), 64000);
     memcpy(save_pal, pal, 768);
 
     gxClearDisplay(0, 0);
@@ -1582,7 +1583,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 102, 133, 113);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
 
             FadeIn(2, pal, 10, 0, 0);
@@ -1597,7 +1598,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 127, 133, 138);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
 
             FadeIn(2, pal, 10, 0, 0);
@@ -1612,7 +1613,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 152, 133, 163);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
 
             FadeIn(2, pal, 10, 0, 0);
@@ -1627,7 +1628,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 177, 133, 188);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(graphics.screen(), save_screen, 64000);
+            memcpy(display::graphics.screen(), save_screen, 64000);
             memcpy(pal, save_pal, 768);
 
             FadeIn(2, pal, 10, 0, 0);

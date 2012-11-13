@@ -24,6 +24,10 @@
 //
 // Museum Main Files
 
+#include <assert.h>
+
+#include "display/graphics.h"
+
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "future.h"
@@ -37,8 +41,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
-#include <assert.h>
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -1561,8 +1563,8 @@ void Load_CIA_BUT(void)
 
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(&pal[0], 768, 1, fin);
-    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
-    PCX_D(graphics.screen(), (char *)vhptr.vptr, i);
+    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    PCX_D(display::graphics.screen(), (char *)vhptr.vptr, i);
     fclose(fin);
 }
 
@@ -1590,9 +1592,9 @@ void DrawIStat(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        graphics.setPixel(i, 57, 11);
-        graphics.setPixel(i, 91, 11);
-        graphics.setPixel(i, 125, 11);
+        display::graphics.setPixel(i, 57, 11);
+        display::graphics.setPixel(i, 91, 11);
+        display::graphics.setPixel(i, 125, 11);
     }
 
     grSetColor(9);
@@ -1775,9 +1777,9 @@ void IInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            graphics.setPixel(i, 57, 11);
-            graphics.setPixel(i, 91, 11);
-            graphics.setPixel(i, 125, 11);
+            display::graphics.setPixel(i, 57, 11);
+            display::graphics.setPixel(i, 91, 11);
+            display::graphics.setPixel(i, 125, 11);
         }
 
         grSetColor(9);

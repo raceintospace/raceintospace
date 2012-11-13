@@ -13,9 +13,9 @@ struct audio_chunk {
 struct audio_channel {
     unsigned                volume;
     unsigned                mute;
-    struct audio_chunk     *chunk;           // played chunk 
-    struct audio_chunk    **chunk_tailp;     // tail of chunk list? 
-    unsigned                offset;          // data offset in chunk 
+    struct audio_chunk     *chunk;           // played chunk
+    struct audio_chunk    **chunk_tailp;     // tail of chunk list?
+    unsigned                offset;          // data offset in chunk
 };
 
 

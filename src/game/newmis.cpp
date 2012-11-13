@@ -15,6 +15,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#include "display/graphics.h"
+
 #include "newmis.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -28,7 +31,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 struct order Order[7] ;
 unsigned int colss;
@@ -508,9 +510,9 @@ void AI_Begin(char plr)
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(&pal, 768, 1, fin);
-    len[0] = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    len[0] = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(graphics.screen(), vhptr.vptr, (unsigned int)len[0],
+    RLED_img(display::graphics.screen(), vhptr.vptr, (unsigned int)len[0],
              vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
@@ -545,6 +547,6 @@ void AI_Done(void)
 {
     music_stop();
     FadeOut(2, pal, 10, 0, 0);
-	graphics.clearScreen( 0 );
+    display::graphics.clearScreen(0);
 }
 

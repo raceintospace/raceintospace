@@ -24,6 +24,8 @@
 //
 // Museum Main Files
 
+#include "display/graphics.h"
+
 #include "museum.h"
 #include "Buzz_inc.h"
 #include "hardef.h"
@@ -40,7 +42,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 struct Astros *abuf;
 
@@ -638,7 +639,7 @@ void ShowSpHist(char plr)
 
     FadeOut(2, pal, 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
-	graphics.clearScreen( 0 );
+    display::graphics.clearScreen(0);
 
     if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMis == 0) {
         pos = (Data->Year - 57) * 2 + Data->Season;

@@ -23,12 +23,13 @@
  * It also draws the splines.
  */
 
+#include "display/graphics.h"
+
 #include "futbub.h"
 #include "Buzz_inc.h"
 #include "future.h"
 #include "game_main.h"
 #include "gr.h"
-#include "graphics.h"
 
 int Bub_Num;
 int Bub_Count;
@@ -82,7 +83,7 @@ void drawBspline(int segments, char color, ...)
             SamCol = grGetPixel(x, y);
 
             if (yyy == 1) {
-                graphics.setPixel(yx, yy, 5);
+                display::graphics.setPixel(yx, yy, 5);
                 yyy = 0;
             };
 
@@ -91,7 +92,7 @@ void drawBspline(int segments, char color, ...)
                 grLineTo(x, y);
 
                 if (i < (last - 3)) {
-                    graphics.setPixel(x, y, 40);
+                    display::graphics.setPixel(x, y, 40);
                     yx = x;
                     yy = y;
                     yyy = 1;

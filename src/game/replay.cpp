@@ -22,17 +22,20 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
+
+#include <assert.h>
+
+#include "display/graphics.h"
+
 #include "replay.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include <assert.h>
 #include "mmfile.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -219,15 +222,15 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
             }
 
             while (keep_going) {
-                graphics.videoRect().x = dx;
-                graphics.videoRect().y = dy;
-                graphics.videoRect().w = width;
-                graphics.videoRect().h = height;
+                display::graphics.videoRect().x = dx;
+                display::graphics.videoRect().y = dy;
+                display::graphics.videoRect().w = width;
+                display::graphics.videoRect().h = height;
 
                 screen_dirty = 1;
 
                 /** \todo track decoding time and adjust delays */
-                if (mm_decode_video(&vidfile, graphics.videoOverlay()) <= 0) {
+                if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
                     break;
                 }
 
@@ -246,8 +249,8 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
 
 done:
     mm_close(&vidfile);
-    graphics.videoRect().w = 0;
-    graphics.videoRect().h = 0;
+    display::graphics.videoRect().w = 0;
+    display::graphics.videoRect().h = 0;
     fclose(fseqf);
     fclose(seqf);
     return;
@@ -332,14 +335,14 @@ AbzFrame(char plr, int num, int dx, int dy, int width, int height,
         goto done;
     }
 
-    if (mm_decode_video(&vidfile, graphics.videoOverlay()) <= 0) {
+    if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
         goto done;
     }
 
-    graphics.videoRect().x = dx;
-    graphics.videoRect().y = dy;
-    graphics.videoRect().w = width;
-    graphics.videoRect().h = height;
+    display::graphics.videoRect().x = dx;
+    display::graphics.videoRect().y = dy;
+    display::graphics.videoRect().w = width;
+    display::graphics.videoRect().h = height;
 
 done:
     mm_close(&vidfile);

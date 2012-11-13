@@ -3,10 +3,15 @@
 #include <SDL.h>
 #include <string>
 #include <vector>
-#include "sdlhelper.h"
+#include <stdexcept>
+
+// FIXME: let's try to avoid this
+#include "../game/sdlhelper.h"
+
+namespace display
+{
 
 Graphics graphics;
-
 
 Graphics::Graphics():
     _screen(NULL),
@@ -131,8 +136,6 @@ void Graphics::setPixel(int x, int y, char color)
 
 
 
-
-
 /*
 void Display::present() {
     doScale();
@@ -156,3 +159,5 @@ void Display::doScale() {
     }
 }
 */
+
+};

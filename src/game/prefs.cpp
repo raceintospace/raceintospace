@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -33,7 +35,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 void DrawPrefs(int where, char a1, char a2);
 void HModel(char mode, char tx);
@@ -52,10 +53,10 @@ void DrawPrefs(int where, char a1, char a2)
     strcpy(keyhelpIndex, "K013");
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(&pal[0], 768, 1, fin);
-    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img(graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);

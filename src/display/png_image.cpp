@@ -6,11 +6,8 @@
 #include <string>
 #include <stdexcept>
 
-// I'm not big on including "upwards", but this wants to access the screen buffer for some reason
-//TODO: Figure out why this needs the buffer and fix it
-#include "game/graphics.h"
-
 #include "png_image.h"
+#include "graphics.h"
 
 namespace display
 {

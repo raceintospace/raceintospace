@@ -24,6 +24,8 @@
  * For API and general overview visit http://www.libsdl.org/.
  */
 
+#include "display/graphics.h"
+
 #include "sdlhelper.h"
 #include <assert.h>
 #include <memory.h>
@@ -31,7 +33,6 @@
 #include "Buzz_inc.h"
 #include "options.h"
 #include "utils.h"
-#include "graphics.h"
 
 #define MAX_X   320
 #define MAX_Y   200
@@ -251,13 +252,13 @@ void
 av_setup(void)
 {
 #ifdef PACKAGE_BUILD
-	std::string title( PACKAGE_NAME " " PACKAGE_VERSION " build " PACKAGE_BUILD );
+    std::string title(PACKAGE_NAME " " PACKAGE_VERSION " build " PACKAGE_BUILD);
 #else
-	std::string title( PACKAGE_STRING );
+    std::string title(PACKAGE_STRING);
 #endif
 
 
-	graphics.create( title, (options.want_fullscreen == 1) );
+    display::graphics.create(title, (options.want_fullscreen == 1));
 
 
 #ifdef SET_SDL_ICON
@@ -675,32 +676,32 @@ av_sync(void)
     Uint32 ticks = SDL_GetTicks();
 #endif
 
-    SDL_Scale2x( graphics.screenSurface(), graphics.scaledScreenSurface());
+    SDL_Scale2x(display::graphics.screenSurface(), display::graphics.scaledScreenSurface());
     /* copy palette and handle fading! */
     transform_palette();
-    SDL_SetColors(graphics.scaledScreenSurface(), pal_colors, 0, 256);
-    SDL_BlitSurface(graphics.scaledScreenSurface(), NULL, graphics.displaySurface(), NULL);
+    SDL_SetColors(display::graphics.scaledScreenSurface(), pal_colors, 0, 256);
+    SDL_BlitSurface(display::graphics.scaledScreenSurface(), NULL, display::graphics.displaySurface(), NULL);
 
-    if (graphics.videoRect().h && graphics.videoRect().w) {
-        av_need_update(&graphics.videoRect());
-        r.h = 2 * graphics.videoRect().h;
-        r.w = 2 * graphics.videoRect().w;
-        r.x = 2 * graphics.videoRect().x;
-        r.y = 2 * graphics.videoRect().y;
-        SDL_DisplayYUVOverlay(graphics.videoOverlay(), &r);
+    if (display::graphics.videoRect().h && display::graphics.videoRect().w) {
+        av_need_update(&display::graphics.videoRect());
+        r.h = 2 * display::graphics.videoRect().h;
+        r.w = 2 * display::graphics.videoRect().w;
+        r.x = 2 * display::graphics.videoRect().x;
+        r.y = 2 * display::graphics.videoRect().y;
+        SDL_DisplayYUVOverlay(display::graphics.videoOverlay(), &r);
     }
 
-    if (graphics.newsRect().h && graphics.newsRect().w) {
-        av_need_update(&graphics.newsRect());
-        r.h = 2 * graphics.newsRect().h;
-        r.w = 2 * graphics.newsRect().w;
-        r.x = 2 * graphics.newsRect().x;
-        r.y = 2 * graphics.newsRect().y;
-        SDL_DisplayYUVOverlay(graphics.newsOverlay(), &r);
+    if (display::graphics.newsRect().h && display::graphics.newsRect().w) {
+        av_need_update(&display::graphics.newsRect());
+        r.h = 2 * display::graphics.newsRect().h;
+        r.w = 2 * display::graphics.newsRect().w;
+        r.x = 2 * display::graphics.newsRect().x;
+        r.y = 2 * display::graphics.newsRect().y;
+        SDL_DisplayYUVOverlay(display::graphics.newsOverlay(), &r);
     }
 
     num_rect = get_dirty_rect_list();
-    SDL_UpdateRects(graphics.displaySurface(), num_rect, dirty_rect_list);
+    SDL_UpdateRects(display::graphics.displaySurface(), num_rect, dirty_rect_list);
 #ifdef PROFILE_GRAPHICS
 
     for (i = 0; i < num_rect; ++i) {

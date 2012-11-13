@@ -25,6 +25,8 @@
 //
 // Museum Main Files
 
+#include "display/graphics.h"
+
 #include "Buzz_inc.h"
 #include "hardef.h"
 #include "intel.h"
@@ -35,7 +37,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);
@@ -68,9 +69,9 @@ DrawHardef(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        graphics.setPixel(i, 57, 11);
-        graphics.setPixel(i, 91, 11);
-        graphics.setPixel(i, 125, 11);
+        display::graphics.setPixel(i, 57, 11);
+        display::graphics.setPixel(i, 91, 11);
+        display::graphics.setPixel(i, 125, 11);
     }
 
     grSetColor(9);
@@ -139,9 +140,9 @@ ShowHard(char plr)
                 GradRect(4, 23, 315, 159, 0);
 
                 for (i = 4; i < 316; i += 2) {
-                    graphics.setPixel(i, 57, 11);
-                    graphics.setPixel(i, 91, 11);
-                    graphics.setPixel(i, 125, 11);
+                    display::graphics.setPixel(i, 57, 11);
+                    display::graphics.setPixel(i, 91, 11);
+                    display::graphics.setPixel(i, 125, 11);
                 }
 
                 if (Cnt == 0) {
@@ -266,9 +267,9 @@ PInfo(char plr, char loc)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        graphics.setPixel(i, 57, 11);
-        graphics.setPixel(i, 91, 11);
-        graphics.setPixel(i, 125, 11);
+        display::graphics.setPixel(i, 57, 11);
+        display::graphics.setPixel(i, 91, 11);
+        display::graphics.setPixel(i, 125, 11);
     }
 
     for (i = 0; i < 4; i++)
@@ -796,9 +797,9 @@ HInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            graphics.setPixel(i, 57, 11);
-            graphics.setPixel(i, 91, 11);
-            graphics.setPixel(i, 125, 11);
+            display::graphics.setPixel(i, 57, 11);
+            display::graphics.setPixel(i, 91, 11);
+            display::graphics.setPixel(i, 125, 11);
         }
 
         // determine scale x5

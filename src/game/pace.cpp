@@ -1,5 +1,7 @@
 #include <assert.h>
 
+#include "display/graphics.h"
+
 #include "Buzz_inc.h"
 #include "pace.h"
 #include "utils.h"
@@ -8,7 +10,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "mmfile.h"
-#include "graphics.h"
 
 void randomize(void);
 void SMove(void *p, int x, int y);
@@ -383,7 +384,7 @@ void LMove(void *p)
 {
     GXHEADER local;
 
-	graphics.clearScreen( 0 );
+    display::graphics.clearScreen(0);
 
     GV(&local, 160, 100);
     memcpy(local.vptr, p, 160 * 100);

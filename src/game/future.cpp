@@ -18,6 +18,9 @@
 /** \file future.c This is responsible for Future Mission planning screen.
  *
  */
+
+#include "display/graphics.h"
+
 #include "future.h"
 #include <assert.h>
 #include "Buzz_inc.h"
@@ -32,7 +35,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;
@@ -95,9 +97,9 @@ void Load_FUT_BUT(void)
     FILE *fin;
     unsigned i;
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
-    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(graphics.screen(), (char *)vh.vptr, i, vh.w, vh.h);
+    RLED_img(display::graphics.screen(), (char *)vh.vptr, i, vh.w, vh.h);
     return;
 }
 
@@ -120,9 +122,9 @@ void DrawFuture(char plr, int mis, char pad)
     Load_FUT_BUT();
     fin = sOpen("FMIN.IMG", "rb", 0);
     fread(&pal[0], 768, 1, fin);
-    sz = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    sz = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
     gxClearDisplay(0, 0);
 
     gr_sync();

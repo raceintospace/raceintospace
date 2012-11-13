@@ -22,6 +22,9 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
+
+#include "display/graphics.h"
+
 #include "mc.h"
 #include "Buzz_inc.h"
 #include "mis.h"
@@ -38,7 +41,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -109,7 +111,7 @@ void DrawControl(char plr)
 
     fread(vhptr.vptr, len, 1, fin);
     fclose(fin);
-    PCX_D((char *)vhptr.vptr, graphics.screen(), (unsigned) len);
+    PCX_D((char *)vhptr.vptr, display::graphics.screen(), (unsigned) len);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 }

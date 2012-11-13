@@ -1,8 +1,9 @@
+#include "display/graphics.h"
+
 #include "gr.h"
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "sdlhelper.h"
-#include "graphics.h"
 
 void gr_set_color_map(unsigned char *map);
 
@@ -133,9 +134,9 @@ grLineTo(int x_arg, int y_arg)
 
     for (x = x0; x <= x1; x++) {
         if (steep) {
-            graphics.setPixel(y, x, gr_fg_color);
+            display::graphics.setPixel(y, x, gr_fg_color);
         } else {
-            graphics.setPixel(x, y, gr_fg_color);
+            display::graphics.setPixel(x, y, gr_fg_color);
         }
 
         error = error + deltay;
@@ -201,5 +202,5 @@ grGetPixel(int x, int y)
     assert(x >= 0 && x < MAX_X);
     assert(y >= 0 && y < MAX_Y);
 
-    return graphics.screen()[y * MAX_X + x];
+    return display::graphics.screen()[y * MAX_X + x];
 }

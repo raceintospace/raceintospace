@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "rush.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -32,7 +34,6 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
-#include "graphics.h"
 
 // Function Prototype
 
@@ -122,9 +123,9 @@ void DrawRush(char plr)
     FadeOut(2, pal, 10, 0, 0);
 
     fin = sOpen("LPADS.BUT", "rb", 0);
-    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
     gxClearDisplay(0, 0);
     JR = 0;
 

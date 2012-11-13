@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "port.h"
 #include "Buzz_inc.h"
 #include "utils.h"
@@ -47,7 +49,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -226,7 +227,7 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        memcpy(vhptr.vptr, graphics.screen(), MAX_X * MAX_Y);
+        memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -578,7 +579,7 @@ void DrawSpaceport(char plr)
     Swap16bit(Img.Height);
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
-    fread(graphics.screen(), Img.Size, 1, fin); // Read in main image
+    fread(display::graphics.screen(), Img.Size, 1, fin); // Read in main image
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
     UpdatePortOverlays();
@@ -823,7 +824,7 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, pal, 10, 0, 0);
 
-    memcpy(vhptr.vptr, graphics.screen(), MAX_X * MAX_Y);
+    memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 #if SPOT_ON
@@ -1028,12 +1029,12 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
         if (mode == 1) {
             // Save value from the screen
             pPortOutlineRestore[i].loc = outline[i];    // Offset of the outline into the buffer
-            pPortOutlineRestore[i].val = graphics.screen()[outline[i]];    // Save original pixel value
+            pPortOutlineRestore[i].val = display::graphics.screen()[outline[i]];    // Save original pixel value
         } else {                   // dunno
             outline[i] = pPortOutlineRestore[i].loc;
         }
 
-        graphics.screen()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
+        display::graphics.screen()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
         min_x = MIN(min_x, outline[i] % MAX_X);
         min_y = MIN(min_y, outline[i] / MAX_X);
         max_x = MAX(max_x, outline[i] % MAX_X);
@@ -1054,7 +1055,7 @@ PortRestore(unsigned int Count)
 
     for (i = 0; i < Count; i++) {
         loc = pPortOutlineRestore[i].loc;
-        graphics.screen()[loc] = pPortOutlineRestore[i].val;
+        display::graphics.screen()[loc] = pPortOutlineRestore[i].val;
         min_x = MIN(min_x, loc % MAX_X);
         min_y = MIN(min_y, loc / MAX_X);
         max_x = MAX(max_x, loc % MAX_X);
@@ -1423,7 +1424,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                memcpy(vhptr.vptr, graphics.screen(), MAX_X * MAX_Y);
+                                memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {

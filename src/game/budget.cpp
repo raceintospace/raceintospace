@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "budget.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -33,7 +35,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 #define DELAYCNT 10
 
@@ -249,10 +250,10 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(311, 107);
 
     for (i = 187; i < 312; i += 2) {
-        graphics.setPixel(i, 157, 4);
-        graphics.setPixel(i, 137, 4);
-        graphics.setPixel(i, 117, 4);
-        graphics.setPixel(i, 97, 4);
+        display::graphics.setPixel(i, 157, 4);
+        display::graphics.setPixel(i, 137, 4);
+        display::graphics.setPixel(i, 117, 4);
+        display::graphics.setPixel(i, 97, 4);
     }
 
     grSetColor(4);

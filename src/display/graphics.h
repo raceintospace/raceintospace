@@ -1,9 +1,11 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef DISPLAY__GRAPHICS_H
+#define DISPLAY__GRAPHICS_H
 
 #include <SDL.h>
 #include <string>
 #include <vector>
+
+namespace display {
 
 class Graphics
 {
@@ -72,4 +74,6 @@ private:
 
 extern Graphics graphics;
 
-#endif // GRAPHICS_H
+};
+
+#endif // DISPLAY__GRAPHICS_H

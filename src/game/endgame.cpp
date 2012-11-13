@@ -18,6 +18,8 @@
 /** \file endgame.c End Game Routines
  */
 
+#include "display/graphics.h"
+
 #include "endgame.h"
 #include "Buzz_inc.h"
 #include "aipur.h"
@@ -33,7 +35,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -121,7 +122,7 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    graphics.setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
+                    display::graphics.setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
                 }
 
                 key = 0;
@@ -196,7 +197,7 @@ Burst(char win)
 
                 if (lp1 < Bomb[lp2].per && (xx >= 0 && xx < 320 && yy >= 0
                                             && yy <= 172)) {
-                    graphics.setPixel(xx, yy, clr);
+                    display::graphics.setPixel(xx, yy, clr);
                 }
             }
         }
@@ -206,7 +207,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                graphics.setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
+                display::graphics.setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
             }
         }
     }                              // end while
@@ -513,7 +514,7 @@ void Draw_NewEnd(char win)
     fread(pal, 384, 1, in);
     size = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, in);
     fclose(in);
-    PCX_D(vhptr.vptr, graphics.screen(), size);
+    PCX_D(vhptr.vptr, display::graphics.screen(), size);
     ShBox(0, 173, 319, 199);
     InBox(5, 178, 314, 194);
     IOBox(12, 180, 67, 192);

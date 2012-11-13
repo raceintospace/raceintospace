@@ -19,6 +19,7 @@
 #include <assert.h>
 
 #include "display/png_image.h"
+#include "display/graphics.h"
 
 #include "place.h"
 #include "gamedata.h"
@@ -36,7 +37,6 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
-#include "graphics.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, char *txt);
@@ -1025,10 +1025,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
                 fwrite(pal, sizeof pal, 1, tin);
-                fwrite(graphics.screen(), 64000, 1, tin);
+                fwrite(display::graphics.screen(), 64000, 1, tin);
                 fclose(tin);
                 FadeOut(2, pal, 10, 0, 0);
-				graphics.clearScreen( 0 );
+                display::graphics.clearScreen(0);
                 FadeIn(2, pal, 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == 10 ||
@@ -1059,7 +1059,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 FadeOut(2, pal, 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
                 fread(pal, sizeof pal, 1, tin);
-                fread(graphics.screen(), 64000, 1, tin);
+                fread(display::graphics.screen(), 64000, 1, tin);
                 fclose(tin);
                 FadeIn(2, pal, 10, 0, 0);
                 key = 0;
@@ -1108,8 +1108,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     }; // while
 
-    graphics.videoRect().w = 0;
-    graphics.videoRect().h = 0;
+    display::graphics.videoRect().w = 0;
+
+    display::graphics.videoRect().h = 0;
 
 }
 
