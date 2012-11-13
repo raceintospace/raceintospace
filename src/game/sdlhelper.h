@@ -34,13 +34,8 @@ void av_sync(void);
 void av_setup(void);
 void play(struct audio_chunk *cp, int channel);
 
-extern unsigned char *screen;
 extern unsigned char pal[3 * 256];
 extern int screen_dirty;
-extern SDL_Overlay *video_overlay;
-extern SDL_Rect video_rect;
-extern SDL_Overlay *news_overlay;
-extern SDL_Rect news_rect;
 extern int av_mouse_cur_x;
 extern int av_mouse_cur_y;
 extern int av_mouse_pressed_x;

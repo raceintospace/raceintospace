@@ -31,6 +31,8 @@
 #include "Buzz_inc.h"
 #include "options.h"
 #include "utils.h"
+#include "graphics.h"
+
 #define MAX_X   320
 #define MAX_Y   200
 
@@ -46,16 +48,6 @@ int av_mouse_pressed_x;
 int av_mouse_pressed_y;
 int av_mouse_pressed_cur;
 int av_mouse_pressed_latched;
-
-unsigned char *screen;
-
-SDL_Surface *display;
-SDL_Overlay *video_overlay;
-SDL_Overlay *news_overlay;
-SDL_Rect video_rect;
-SDL_Rect news_rect;
-static SDL_Surface *screen_surf;
-static SDL_Surface *screen_surf2x;
 
 static SDL_Color pal_colors[256];
 
@@ -258,47 +250,15 @@ sdl_timer_callback(Uint32 interval, void *param)
 void
 av_setup(void)
 {
-    unsigned video_flags = SDL_SWSURFACE;
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
-        CRITICAL2("SDL_Init error: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    atexit(SDL_Quit);
-
-    if (options.want_audio) {
-#ifdef CONFIG_WIN32
-
-        /*
-         * default direct-audio-something has got unreasonably long audio buffers,
-         * but if user knows what he's doing then no problemo...
-         */
-        if (!SDL_getenv("SDL_AUDIODRIVER")) {
-            INFO1("fixing WIN32 audio driver setup");
-            SDL_putenv("SDL_AUDIODRIVER=waveout");
-        }
-
-        /*
-         * also some sources mention that on win audio needs to be initialised
-         * together with video. Maybe, it works for me as it is now.
-         */
+#ifdef PACKAGE_BUILD
+	std::string title( PACKAGE_NAME " " PACKAGE_VERSION " build " PACKAGE_BUILD );
+#else
+	std::string title( PACKAGE_STRING );
 #endif
 
-        if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
-            ERROR2("audio initialization failed: %s", SDL_GetError());
-        } else {
-            INFO1("audio subsystem initialized");
-            have_audio = 1;
-        }
-    } else {
-        NOTICE1("no audio");
-    }
 
-    if (options.want_fullscreen) {
-        video_flags |= SDL_FULLSCREEN;
-        NOTICE1("fullscreen mode enabled");
-    }
+	graphics.create( title, (options.want_fullscreen == 1) );
+
 
 #ifdef SET_SDL_ICON
     char *icon_path;
@@ -317,51 +277,6 @@ av_setup(void)
 
 #endif
 
-#ifdef PACKAGE_BUILD
-    SDL_WM_SetCaption(PACKAGE_NAME " " PACKAGE_VERSION
-                      " build " PACKAGE_BUILD, NULL);
-#else
-    SDL_WM_SetCaption(PACKAGE_STRING, NULL);
-#endif
-
-    if ((display = SDL_SetVideoMode(MAX_X * 2, MAX_Y * 2, 24, video_flags))
-        == NULL) {
-        CRITICAL2("SDL_SetVideoMode failed: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    screen = (unsigned char *)xcalloc(MAX_X * MAX_Y, 1);
-    screen_surf = SDL_CreateRGBSurfaceFrom(screen, MAX_X, MAX_Y, 8, MAX_X,
-                                           0, 0, 0, 0);
-
-    if (!screen_surf) {
-        CRITICAL2("can't create screen surface: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    screen_surf2x = SDL_CreateRGBSurface(SDL_SWSURFACE, MAX_X * 2, MAX_Y * 2,
-                                         8, ~0, ~0, ~0, 0);
-
-    if (!screen_surf2x) {
-        CRITICAL2("can't create screen_2x surface: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    /* XXX: Hardcoded video width & height */
-    video_overlay = SDL_CreateYUVOverlay(160, 100, SDL_YV12_OVERLAY, display);
-
-    if (!video_overlay) {
-        CRITICAL2("can't create video_overlay: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    news_overlay = SDL_CreateYUVOverlay(312, 106, SDL_YV12_OVERLAY, display);
-
-    /* XXX: Hardcoded video width & height */
-    if (!news_overlay) {
-        CRITICAL2("can't create news_overlay: %s", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
 
     fade_info.step = 1;
     fade_info.steps = 1;
@@ -760,32 +675,32 @@ av_sync(void)
     Uint32 ticks = SDL_GetTicks();
 #endif
 
-    SDL_Scale2x(screen_surf, screen_surf2x);
+    SDL_Scale2x( graphics.screenSurface(), graphics.scaledScreenSurface());
     /* copy palette and handle fading! */
     transform_palette();
-    SDL_SetColors(screen_surf2x, pal_colors, 0, 256);
-    SDL_BlitSurface(screen_surf2x, NULL, display, NULL);
+    SDL_SetColors(graphics.scaledScreenSurface(), pal_colors, 0, 256);
+    SDL_BlitSurface(graphics.scaledScreenSurface(), NULL, graphics.displaySurface(), NULL);
 
-    if (video_rect.h && video_rect.w) {
-        av_need_update(&video_rect);
-        r.h = 2 * video_rect.h;
-        r.w = 2 * video_rect.w;
-        r.x = 2 * video_rect.x;
-        r.y = 2 * video_rect.y;
-        SDL_DisplayYUVOverlay(video_overlay, &r);
+    if (graphics.videoRect().h && graphics.videoRect().w) {
+        av_need_update(&graphics.videoRect());
+        r.h = 2 * graphics.videoRect().h;
+        r.w = 2 * graphics.videoRect().w;
+        r.x = 2 * graphics.videoRect().x;
+        r.y = 2 * graphics.videoRect().y;
+        SDL_DisplayYUVOverlay(graphics.videoOverlay(), &r);
     }
 
-    if (news_rect.h && news_rect.w) {
-        av_need_update(&news_rect);
-        r.h = 2 * news_rect.h;
-        r.w = 2 * news_rect.w;
-        r.x = 2 * news_rect.x;
-        r.y = 2 * news_rect.y;
-        SDL_DisplayYUVOverlay(news_overlay, &r);
+    if (graphics.newsRect().h && graphics.newsRect().w) {
+        av_need_update(&graphics.newsRect());
+        r.h = 2 * graphics.newsRect().h;
+        r.w = 2 * graphics.newsRect().w;
+        r.x = 2 * graphics.newsRect().x;
+        r.y = 2 * graphics.newsRect().y;
+        SDL_DisplayYUVOverlay(graphics.newsOverlay(), &r);
     }
 
     num_rect = get_dirty_rect_list();
-    SDL_UpdateRects(display, num_rect, dirty_rect_list);
+    SDL_UpdateRects(graphics.displaySurface(), num_rect, dirty_rect_list);
 #ifdef PROFILE_GRAPHICS
 
     for (i = 0; i < num_rect; ++i) {

@@ -37,6 +37,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "graphics.h"
 #include <assert.h>
 
 // imported from CODENAME.DAT
@@ -1560,8 +1561,8 @@ void Load_CIA_BUT(void)
 
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(&pal[0], 768, 1, fin);
-    i = fread(screen, 1, MAX_X * MAX_Y, fin);
-    PCX_D(screen, (char *)vhptr.vptr, i);
+    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    PCX_D(graphics.screen(), (char *)vhptr.vptr, i);
     fclose(fin);
 }
 
@@ -1589,9 +1590,9 @@ void DrawIStat(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        grPutPixel(i, 57, 11);
-        grPutPixel(i, 91, 11);
-        grPutPixel(i, 125, 11);
+        graphics.setPixel(i, 57, 11);
+        graphics.setPixel(i, 91, 11);
+        graphics.setPixel(i, 125, 11);
     }
 
     grSetColor(9);
@@ -1774,9 +1775,9 @@ void IInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            grPutPixel(i, 57, 11);
-            grPutPixel(i, 91, 11);
-            grPutPixel(i, 125, 11);
+            graphics.setPixel(i, 57, 11);
+            graphics.setPixel(i, 91, 11);
+            graphics.setPixel(i, 125, 11);
         }
 
         grSetColor(9);

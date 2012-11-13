@@ -33,6 +33,7 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
+#include "graphics.h"
 
 #define DELAYCNT 10
 
@@ -248,10 +249,10 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(311, 107);
 
     for (i = 187; i < 312; i += 2) {
-        grPutPixel(i, 157, 4);
-        grPutPixel(i, 137, 4);
-        grPutPixel(i, 117, 4);
-        grPutPixel(i, 97, 4);
+        graphics.setPixel(i, 157, 4);
+        graphics.setPixel(i, 137, 4);
+        graphics.setPixel(i, 117, 4);
+        graphics.setPixel(i, 97, 4);
     }
 
     grSetColor(4);

@@ -36,6 +36,7 @@
 #include "gx.h"
 #include "endianness.h"
 #include "utils.h"
+#include "graphics.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
@@ -788,7 +789,8 @@ News(char plr)
 
     mm_close(fp);
 
-    news_rect.w = news_rect.h = 0;
+    graphics.newsRect().w = 0;
+	graphics.newsRect().h = 0;
 }
 
 void
@@ -845,7 +847,7 @@ PlayNewsAnim(mm_file *fp)
         skip_frame = 1;
     }
 
-    if (mm_decode_video(fp, news_overlay) <= 0) {
+    if (mm_decode_video(fp, graphics.newsOverlay()) <= 0) {
         MaxFrame = Frame;
         return 1;
     }
@@ -910,7 +912,8 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         unsigned h, w;
 
         mm_close(fp);
-        news_rect.w = news_rect.h = 0;
+        graphics.newsRect().w = 0;
+		graphics.newsRect().h = 0;
 
         sprintf(fname, "%s_%s_%s.ogg",
                 plr ? "sov" : "usa",
@@ -922,10 +925,10 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
         /* XXX we know fps anyway */
         mm_video_info(fp, &w, &h, NULL);
-        news_rect.h = h;
-        news_rect.w = w;
-        news_rect.x = 4;
-        news_rect.y = 4;
+        graphics.newsRect().h = h;
+        graphics.newsRect().w = w;
+        graphics.newsRect().x = 4;
+        graphics.newsRect().y = 4;
     }
 
     Frame = 1;
@@ -935,7 +938,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     // Specs: Display Single Frame
     if (Mode == FIRST_FRAME) {
         /* XXX: error checking */
-        mm_decode_video(fp, news_overlay);
+        mm_decode_video(fp, graphics.newsOverlay());
         screen_dirty = 1;
     };
 
@@ -948,7 +951,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         DrawBottomNewsBox(plr);
 
         /* XXX: error checking */
-        mm_decode_video(fp, news_overlay);
+        mm_decode_video(fp, graphics.newsOverlay());
         screen_dirty = 1;
 
         /* This fade was too long given current fades impl. */
@@ -1017,11 +1020,12 @@ ShowEvt(char plr, char crd)
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
         fread(&pal[384], 384, 1, ffin);
-        fread(screen, (size_t) MIN(length, MAX_X * 110), 1, ffin);
+        fread(graphics.screen(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }
 
-    news_rect.w = news_rect.h = 0;
+    graphics.newsRect().w = 0;
+	graphics.newsRect().h = 0;
 
     fclose(ffin);
 }

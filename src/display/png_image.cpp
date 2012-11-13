@@ -6,10 +6,11 @@
 #include <string>
 #include <stdexcept>
 
-#include "png_image.h"
+// I'm not big on including "upwards", but this wants to access the screen buffer for some reason
+//TODO: Figure out why this needs the buffer and fix it
+#include "../game/graphics.h"
 
-// the global screen buffer, defined somewhere in RIS
-extern unsigned char *screen;
+#include "png_image.h"
 
 namespace display
 {
@@ -206,7 +207,7 @@ void PNGImage::draw(int x, int y)
 
     for (int i = 0; i < height_to_copy; i++) {
         // this assumes an 8-bit screen buffer and 8-bit pixel_data, both with no padding
-        memcpy(&screen[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
+        memcpy(&graphics.screen()[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
     }
 }
 

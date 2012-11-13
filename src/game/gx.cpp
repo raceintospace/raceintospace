@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "utils.h"
 #include "sdlhelper.h"
+#include "graphics.h"
 
 #define gxSUCCESS 0
 
@@ -56,7 +57,7 @@ gxGetImage(GXHEADER *hp, int x0, int y0, int x1, int y1, int op)
     for (row = 0; row < h; row++) {
         from_idx = (y0 + row) * MAX_X + x0;
         to_idx = row * hp->w;
-        memcpy(&hp->vptr[to_idx], &screen[from_idx], w);
+        memcpy(&hp->vptr[to_idx], &graphics.screen()[from_idx], w);
     }
 }
 
@@ -81,7 +82,7 @@ gxPutImage(GXHEADER *hp, int mode, int x, int y, int op2)
         for (row = 0; row < clip_y; row++) {
             from_idx = row * hp->w;
             to_idx = (y + row) * MAX_X + x;
-            memcpy(&screen[to_idx], &hp->vptr[from_idx], clip_x);
+            memcpy(&graphics.screen()[to_idx], &hp->vptr[from_idx], clip_x);
         }
 
         break;
@@ -92,7 +93,7 @@ gxPutImage(GXHEADER *hp, int mode, int x, int y, int op2)
             to_idx = (y + row) * MAX_X + x;
 
             for (col = 0; col < clip_x; col++) {
-                screen[to_idx + col] ^= hp->vptr[from_idx + col];
+                graphics.screen()[to_idx + col] ^= hp->vptr[from_idx + col];
             }
         }
 
@@ -113,7 +114,7 @@ gxClearDisplay(int a, int b)
     SDL_Rect r = {0, 0, MAX_X, MAX_Y};
     assert(a == 0 && b == 0);
 
-    memset(screen, 0, MAX_X * MAX_Y);
+	graphics.clearScreen( 0 );
     av_need_update(&r);
     screen_dirty = 1;
 }
@@ -150,7 +151,7 @@ gxVirtualDisplay(GXHEADER *hp,
     for (row = 0; row < clip_y; row++) {
         from_idx = (from_y + row) * hp->w + from_x;
         to_idx = (to_y0 + row) * MAX_X + to_x0;
-        memcpy(&screen[to_idx], &hp->vptr[from_idx], clip_x);
+        memcpy(&graphics.screen()[to_idx], &hp->vptr[from_idx], clip_x);
     }
 
     r.x = to_x0;
@@ -191,7 +192,7 @@ gxDisplayVirtual(int from_x0, int from_y0,
     for (row = 0; row < height; row++) {
         from_idx = (from_y0 + row) * MAX_X + from_x0;
         to_idx = (to_y + row) * hp->w + to_x;
-        memcpy(&hp->vptr[to_idx], &screen[from_idx], width);
+        memcpy(&hp->vptr[to_idx], &graphics.screen()[from_idx], width);
     }
 }
 

@@ -58,6 +58,7 @@
 #include "gx.h"
 #include "crash.h"
 #include "endianness.h"
+#include "graphics.h"
 
 #include "display/png_image.h"
 
@@ -325,6 +326,7 @@ int game_main_impl(int argc, char *argv[])
         }
     }
 
+	graphics.destroy();
     CloseEmUp(0, 0); // Normal Exit
     exit(EXIT_SUCCESS);
 }
@@ -916,9 +918,9 @@ void DispBig(int x, int y, const char *txt, char mode, char te)
             for (l = 0; l < letter.width; l++) {
                 if (letter.img[k][l] != 0x03) {
                     if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
-                        grPutPixel(x + l, y + k, letter.img[k][l] + 7);
+                        graphics.setPixel(x + l, y + k, letter.img[k][l] + 7);
                     } else {
-                        grPutPixel(x + l, y + k, letter.img[k][l]);
+                        graphics.setPixel(x + l, y + k, letter.img[k][l]);
                     }
                 }
             }
@@ -1078,7 +1080,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 void RectFill(int x1, int y1, int x2, int y2, char col)
 {
     grSetBkColor(col);
-    grClearArea(x1, y1, x2, y2);
+	graphics.fillRect( x1, y1, x2, y2, col );
     return;
 }
 
@@ -1117,16 +1119,16 @@ void FlagSm(char plr, int xm, int ym)
         xm++;
 
         for (int i = 0; i < 11; i++) {
-            grPutPixel(xm + i, ym + 1, 2);
-            grPutPixel(xm + i, ym + 3, 2);
-            grPutPixel(xm + i, ym + 5, 2);
+            graphics.setPixel(xm + i, ym + 1, 2);
+            graphics.setPixel(xm + i, ym + 3, 2);
+            graphics.setPixel(xm + i, ym + 5, 2);
             i++;
         };
 
         for (int i = 1; i < 10; i++) {
-            grPutPixel(xm + i, ym + 2, 2);
-            grPutPixel(xm + i, ym + 4, 2);
-            grPutPixel(xm + i, ym + 6, 2);
+            graphics.setPixel(xm + i, ym + 2, 2);
+            graphics.setPixel(xm + i, ym + 4, 2);
+            graphics.setPixel(xm + i, ym + 6, 2);
             i++;
         };
     } else {
@@ -1137,10 +1139,10 @@ void FlagSm(char plr, int xm, int ym)
         grLineTo(xm + 4, ym + 5);
         grLineTo(xm + 5, ym + 5);
         grLineTo(xm + 5, ym + 3);
-        grPutPixel(xm + 3, ym + 4, 11);
-        grPutPixel(xm + 4, ym + 2, 11);
-        grPutPixel(xm + 5, ym + 1, 11);
-        grPutPixel(xm + 6, ym + 2, 11);
+        graphics.setPixel(xm + 3, ym + 4, 11);
+        graphics.setPixel(xm + 4, ym + 2, 11);
+        graphics.setPixel(xm + 5, ym + 1, 11);
+        graphics.setPixel(xm + 6, ym + 2, 11);
     }
 
     return;
@@ -1149,7 +1151,6 @@ void FlagSm(char plr, int xm, int ym)
 // Convenience defines, it seems the implementor didn't feel like typing much
 #define MR grMoveRel
 #define LR grLineRel
-#define PP grPutPixel
 #define LT grLineTo
 #define MT grMoveTo
 #define SC grSetColor
@@ -1172,67 +1173,67 @@ void Flag(int x, int y, char plr)
         RectFill(x, y, x + 32, y + 20, 5);
 
         for (j = 0; j < 5; j++) for (i = 0; i < 8; i++) {
-                PP(x + 2 + i * 4, y + 2 + 4 * j, 2);
+                graphics.setPixel(x + 2 + i * 4, y + 2 + 4 * j, 2);
             }
 
         for (j = 0; j < 4; j++) for (i = 0; i < 7; i++) {
-                PP(x + 4 + i * 4, y + 4 + 4 * j, 2);
+                graphics.setPixel(x + 4 + i * 4, y + 4 + 4 * j, 2);
             }
     } else {
         RectFill(x, y, x + 69, 38 + y, 8);
-        PP(10 + x, 2 + y, 11);
-        PP(8 + x, 3 + y, 11);
-        PP(9 + x, 3 + y, 11);
-        PP(11 + x, 3 + y, 11);
-        PP(12 + x, 3 + y, 11);
-        PP(9 + x, 5 + y, 11);
-        PP(11 + x, 5 + y, 11);
-        PP(12 + x, 6 + y, 11);
-        PP(10 + x, 7 + y, 11);
-        PP(13 + x, 7 + y, 11);
-        PP(9 + x, 8 + y, 11);
-        PP(10 + x, 8 + y, 11);
-        PP(11 + x, 8 + y, 11);
-        PP(14 + x, 8 + y, 11);
-        PP(8 + x, 9 + y, 11);
-        PP(9 + x, 9 + y, 11);
-        PP(10 + x, 9 + y, 11);
-        PP(14 + x, 9 + y, 11);
-        PP(15 + x, 9 + y, 11);
-        PP(7 + x, 10 + y, 11);
-        PP(8 + x, 10 + y, 11);
-        PP(9 + x, 10 + y, 11);
-        PP(10 + x, 10 + y, 11);
-        PP(14 + x, 10 + y, 11);
-        PP(15 + x, 10 + y, 11);
-        PP(11 + x, 11 + y, 11);
-        PP(14 + x, 11 + y, 11);
-        PP(12 + x, 12 + y, 11);
-        PP(13 + x, 12 + y, 11);
-        PP(14 + x, 12 + y, 11);
-        PP(7 + x, 13 + y, 11);
-        PP(8 + x, 13 + y, 11);
-        PP(12 + x, 13 + y, 11);
-        PP(13 + x, 13 + y, 11);
-        PP(6 + x, 14 + y, 11);
-        PP(9 + x, 14 + y, 11);
-        PP(10 + x, 14 + y, 11);
-        PP(11 + x, 14 + y, 11);
-        PP(12 + x, 14 + y, 11);
-        PP(13 + x, 14 + y, 11);
-        PP(14 + x, 15 + y, 11);
-        PP(9 + x, 4 + y, 12);
-        PP(10 + x, 4 + y, 12);
-        PP(11 + x, 4 + y, 12);
-        PP(14 + x, 7 + y, 12);
-        PP(8 + x, 11 + y, 12);
-        PP(10 + x, 11 + y, 12);
-        PP(15 + x, 11 + y, 12);
-        PP(11 + x, 12 + y, 12);
-        PP(14 + x, 13 + y, 12);
-        PP(7 + x, 14 + y, 12);
-        PP(5 + x, 15 + y, 12);
-        PP(15 + x, 15 + y, 12);
+        graphics.setPixel(10 + x, 2 + y, 11);
+        graphics.setPixel(8 + x, 3 + y, 11);
+        graphics.setPixel(9 + x, 3 + y, 11);
+        graphics.setPixel(11 + x, 3 + y, 11);
+        graphics.setPixel(12 + x, 3 + y, 11);
+        graphics.setPixel(9 + x, 5 + y, 11);
+        graphics.setPixel(11 + x, 5 + y, 11);
+        graphics.setPixel(12 + x, 6 + y, 11);
+        graphics.setPixel(10 + x, 7 + y, 11);
+        graphics.setPixel(13 + x, 7 + y, 11);
+        graphics.setPixel(9 + x, 8 + y, 11);
+        graphics.setPixel(10 + x, 8 + y, 11);
+        graphics.setPixel(11 + x, 8 + y, 11);
+        graphics.setPixel(14 + x, 8 + y, 11);
+        graphics.setPixel(8 + x, 9 + y, 11);
+        graphics.setPixel(9 + x, 9 + y, 11);
+        graphics.setPixel(10 + x, 9 + y, 11);
+        graphics.setPixel(14 + x, 9 + y, 11);
+        graphics.setPixel(15 + x, 9 + y, 11);
+        graphics.setPixel(7 + x, 10 + y, 11);
+        graphics.setPixel(8 + x, 10 + y, 11);
+        graphics.setPixel(9 + x, 10 + y, 11);
+        graphics.setPixel(10 + x, 10 + y, 11);
+        graphics.setPixel(14 + x, 10 + y, 11);
+        graphics.setPixel(15 + x, 10 + y, 11);
+        graphics.setPixel(11 + x, 11 + y, 11);
+        graphics.setPixel(14 + x, 11 + y, 11);
+        graphics.setPixel(12 + x, 12 + y, 11);
+        graphics.setPixel(13 + x, 12 + y, 11);
+        graphics.setPixel(14 + x, 12 + y, 11);
+        graphics.setPixel(7 + x, 13 + y, 11);
+        graphics.setPixel(8 + x, 13 + y, 11);
+        graphics.setPixel(12 + x, 13 + y, 11);
+        graphics.setPixel(13 + x, 13 + y, 11);
+        graphics.setPixel(6 + x, 14 + y, 11);
+        graphics.setPixel(9 + x, 14 + y, 11);
+        graphics.setPixel(10 + x, 14 + y, 11);
+        graphics.setPixel(11 + x, 14 + y, 11);
+        graphics.setPixel(12 + x, 14 + y, 11);
+        graphics.setPixel(13 + x, 14 + y, 11);
+        graphics.setPixel(14 + x, 15 + y, 11);
+        graphics.setPixel(9 + x, 4 + y, 12);
+        graphics.setPixel(10 + x, 4 + y, 12);
+        graphics.setPixel(11 + x, 4 + y, 12);
+        graphics.setPixel(14 + x, 7 + y, 12);
+        graphics.setPixel(8 + x, 11 + y, 12);
+        graphics.setPixel(10 + x, 11 + y, 12);
+        graphics.setPixel(15 + x, 11 + y, 12);
+        graphics.setPixel(11 + x, 12 + y, 12);
+        graphics.setPixel(14 + x, 13 + y, 12);
+        graphics.setPixel(7 + x, 14 + y, 12);
+        graphics.setPixel(5 + x, 15 + y, 12);
+        graphics.setPixel(15 + x, 15 + y, 12);
     };
 
     return;

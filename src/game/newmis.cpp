@@ -28,6 +28,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "graphics.h"
 
 struct order Order[7] ;
 unsigned int colss;
@@ -507,9 +508,9 @@ void AI_Begin(char plr)
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(&pal, 768, 1, fin);
-    len[0] = fread(screen, 1, MAX_X * MAX_Y, fin);
+    len[0] = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img((char *)screen, vhptr.vptr, (unsigned int)len[0],
+    RLED_img(graphics.screen(), vhptr.vptr, (unsigned int)len[0],
              vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
@@ -544,7 +545,6 @@ void AI_Done(void)
 {
     music_stop();
     FadeOut(2, pal, 10, 0, 0);
-    memset(screen, 0x00, 64000);
-
+	graphics.clearScreen( 0 );
 }
 

@@ -44,6 +44,7 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
+#include "graphics.h"
 
 struct VInfo VAS[7][4];
 int VASqty;
@@ -150,7 +151,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     for (j = x1; j <= x2; j += 3)
         for (i = y1; i <= y2; i += 3) {
-            screen[j + 320 * i] = val;
+            graphics.screen()[j + 320 * i] = val;
         }
 
     return;
@@ -177,10 +178,10 @@ void DispVAB(char plr, char pad)
         fread_uint16_t(&image_len, 1, fp);
     }
 
-    fread((char *)screen, image_len, 1, fp);
+    fread(graphics.screen(), image_len, 1, fp);
     fclose(fp);
 
-    PCX_D((char *)screen, vhptr.vptr, image_len);
+    PCX_D(graphics.screen(), vhptr.vptr, image_len);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
