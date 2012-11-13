@@ -1,7 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(${PROJECT_SOURCE_DIR}/src/game)
-include_directories(SYSTEM ${SDL_INCLUDE_DIR})
 
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
