@@ -68,7 +68,7 @@ if (BUILD_SDL)
   set (SDL_Version 1.2.15)
   set (SDL_Dir ${CMAKE_CURRENT_BINARY_DIR}/sdl-${SDL_Version})
   
-  if (WINDOWS OR APPLE)
+  if (WINDOWS)
     set (SDL_URL http://www.libsdl.org/release/SDL-devel-${SDL_Version}-VC.zip)
     ExternalProject_Add(sdl_build
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
