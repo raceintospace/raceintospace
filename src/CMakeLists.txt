@@ -1,7 +1,3 @@
-# Find our dependencies
-find_library(png_LIBRARY NAMES png REQUIRED PATHS /usr/X11/lib)
-find_path(png_INCLUDE_DIR png.h PATHS /usr/X11/include)
-
 # Probe the system
 include(CheckIncludeFile)
 include(CheckLibraryExists)

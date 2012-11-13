@@ -24,6 +24,43 @@ if (BUILD_BOOST)
     )
 endif (BUILD_BOOST)
 
+
+###
+# zlib
+
+if (BUILD_ZLIB)
+  set (zlib_Version 1.2.7)
+  set (zlib_URL http://zlib.net/zlib-${zlib_Version}.tar.gz)
+  set (zlib_Dir ${CMAKE_CURRENT_BINARY_DIR}/zlib-${zlib_Version})
+
+  # zlib uses CMake, but it doesn't build on Mac OS X:
+  #  https://github.com/madler/zlib/pull/26
+  ExternalProject_Add(zlib_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${zlib_URL}
+    PREFIX ${zlib_Dir}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
+    )
+endif (BUILD_ZLIB)
+
+###
+# libpng
+
+if (BUILD_LIBPNG)
+  set (libpng_Version 1.5.13)
+  set (libpng_URL http://download.sourceforge.net/libpng/libpng-${libpng_Version}.tar.gz)
+  set (libpng_Dir ${CMAKE_CURRENT_BINARY_DIR}/libpng-${libpng_Version})
+
+  # zlib uses CMake, but it doesn't build on Mac OS X:
+  #  https://github.com/madler/zlib/pull/26
+  ExternalProject_Add(libpng_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${libpng_URL}
+    PREFIX ${libpng_Dir}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
+    )
+endif (BUILD_LIBPNG)
+
 ###
 # SDL
 
