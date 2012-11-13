@@ -25,6 +25,28 @@ if (BUILD_BOOST)
 endif (BUILD_BOOST)
 
 ###
+# SDL
+
+if (BUILD_SDL)
+  set (SDL_Version 1.2.15)
+  set (SDL_Dir ${CMAKE_CURRENT_BINARY_DIR}/sdl-${SDL_Version})
+  
+  if (WINDOWS OR APPLE)
+    set (SDL_URL http://www.libsdl.org/release/SDL-devel-${SDL_Version}-VC.zip)
+    ExternalProject_Add(sdl_build
+      DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+      URL ${SDL_URL}
+      PREFIX ${SDL_Dir}
+      PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/sdl/CMakeLists.windows.txt <SOURCE_DIR>/CMakeLists.txt
+      )
+
+  else (WINDOWS)
+    message(FATAL_ERROR "I don't know how to build CMake on this platform.")
+  endif (WINDOWS)
+
+endif (BUILD_SDL)
+
+###
 # JsonCPP
 
 set (JsonCPP_Version 0.5.0)

@@ -1,8 +1,4 @@
 # Find our dependencies
-find_package(Boost)
-
-include(${CMAKE_ROOT}/Modules/FindSDL.cmake)
-
 find_library(png_LIBRARY NAMES png REQUIRED PATHS /usr/X11/lib)
 find_path(png_INCLUDE_DIR png.h PATHS /usr/X11/include)
 
