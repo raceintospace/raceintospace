@@ -19,7 +19,7 @@ ExternalProject_Add(jsoncpp_build
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
   URL ${JsonCPP_URL}
   PREFIX ${JsonCPP_Dir}
-  PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+  PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
   )
 
