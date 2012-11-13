@@ -37,6 +37,7 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
+#include "graphics.h"
 
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);
@@ -728,9 +729,9 @@ void Hospital(char plr, int sel)
         }
     }
 
-    fread(screen, size, 1, fin);
+    fread(graphics.screen(), size, 1, fin);
     fclose(fin);
-    PCX_D(screen, vhptr.vptr, (unsigned int)size);
+    PCX_D(graphics.screen(), vhptr.vptr, (unsigned int)size);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);

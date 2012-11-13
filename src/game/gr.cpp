@@ -2,8 +2,14 @@
 #include "Buzz_inc.h"
 #include <assert.h>
 #include "sdlhelper.h"
+#include "graphics.h"
 
 void gr_set_color_map(unsigned char *map);
+
+static int gr_cur_x;
+static int gr_cur_y;
+static int gr_fg_color; /**< current foreground color to use */
+static int gr_bg_color; /**< current background color to use */
 
 int
 grGetMouseButtons(void)
@@ -30,9 +36,6 @@ grGetMouseCurPos(int *xp, int *yp)
     *yp = av_mouse_cur_y / 2;
     return (0);
 }
-
-static int gr_fg_color; /**< current foreground color to use */
-static int gr_bg_color; /**< current background color to use */
 
 void
 gr_set_color_map(unsigned char *map)
@@ -77,53 +80,12 @@ grSetBkColor(int color)
     gr_bg_color = color;
 }
 
-void
-grClearArea(int x1, int y1, int x2, int y2)
-{
-    int y, t;
-    SDL_Rect r;
-
-    assert(0 <= x1 && x1 < MAX_X);
-    assert(0 <= x2 && x2 < MAX_X);
-    assert(0 <= y1 && y1 < MAX_Y);
-    assert(0 <= y2 && y2 < MAX_Y);
-
-    if (x1 > x2) {
-        t = x1;
-        x1 = x2;
-        x2 = t;
-    }
-
-    if (y1 > y2) {
-        t = y1;
-        y1 = y2;
-        y2 = t;
-    }
-
-    for (y = y1; y <= y2; ++y) {
-        memset(&screen[y * MAX_X + x1], gr_bg_color, x2 - x1 + 1);
-    }
-
-    r.x = x1;
-    r.y = y1;
-    r.h = y2 - y1 + 1;
-    r.w = x2 - x1 + 1;
-    av_need_update(&r);
-}
-
-static int gr_cur_x, gr_cur_y;
 
 void
 grMoveTo(int x, int y)
 {
     gr_cur_x = x;
     gr_cur_y = y;
-}
-
-void
-grPutPixel(int x, int y, int color)
-{
-    screen[y * MAX_X + x] = color;
 }
 
 //#define abs(a) (((a) >= 0) ? (a) : (0))
@@ -171,9 +133,9 @@ grLineTo(int x_arg, int y_arg)
 
     for (x = x0; x <= x1; x++) {
         if (steep) {
-            grPutPixel(y, x, gr_fg_color);
+            graphics.setPixel(y, x, gr_fg_color);
         } else {
-            grPutPixel(x, y, gr_fg_color);
+            graphics.setPixel(x, y, gr_fg_color);
         }
 
         error = error + deltay;
@@ -239,5 +201,5 @@ grGetPixel(int x, int y)
     assert(x >= 0 && x < MAX_X);
     assert(y >= 0 && y < MAX_Y);
 
-    return screen[y * MAX_X + x];
+    return graphics.screen()[y * MAX_X + x];
 }

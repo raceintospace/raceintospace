@@ -33,6 +33,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "graphics.h"
 
 struct CREDIT {
     char page;
@@ -165,7 +166,7 @@ void Credits(void)
     }
 
     FadeOut(2, pal, 30, 0, 0);
-    memset(screen, 0x00, 64000);
+	graphics.clearScreen( 0 );
     strcpy(keyhelpIndex, "k000");
 }
 
@@ -232,10 +233,10 @@ void NextTurn(char plr)
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(&pal, 768, 1, fin);
-    len = fread(screen, 1, MAX_X * MAX_Y, fin);
+    len = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img((char *)screen, vhptr.vptr, (unsigned int)len,
+    RLED_img(graphics.screen(), vhptr.vptr, (unsigned int)len,
              vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);

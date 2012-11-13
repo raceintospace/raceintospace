@@ -32,6 +32,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "graphics.h"
 
 // Function Prototype
 
@@ -121,9 +122,9 @@ void DrawRush(char plr)
     FadeOut(2, pal, 10, 0, 0);
 
     fin = sOpen("LPADS.BUT", "rb", 0);
-    i = fread(screen, 1, MAX_X * MAX_Y, fin);
+    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(screen, vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
     gxClearDisplay(0, 0);
     JR = 0;
 

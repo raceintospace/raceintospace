@@ -32,6 +32,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "graphics.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -218,15 +219,15 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
             }
 
             while (keep_going) {
-                video_rect.x = dx;
-                video_rect.y = dy;
-                video_rect.w = width;
-                video_rect.h = height;
+                graphics.videoRect().x = dx;
+                graphics.videoRect().y = dy;
+                graphics.videoRect().w = width;
+                graphics.videoRect().h = height;
 
                 screen_dirty = 1;
 
                 /** \todo track decoding time and adjust delays */
-                if (mm_decode_video(&vidfile, video_overlay) <= 0) {
+                if (mm_decode_video(&vidfile, graphics.videoOverlay()) <= 0) {
                     break;
                 }
 
@@ -245,8 +246,8 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
 
 done:
     mm_close(&vidfile);
-    video_rect.w = 0;
-    video_rect.h = 0;
+    graphics.videoRect().w = 0;
+    graphics.videoRect().h = 0;
     fclose(fseqf);
     fclose(seqf);
     return;
@@ -331,14 +332,14 @@ AbzFrame(char plr, int num, int dx, int dy, int width, int height,
         goto done;
     }
 
-    if (mm_decode_video(&vidfile, video_overlay) <= 0) {
+    if (mm_decode_video(&vidfile, graphics.videoOverlay()) <= 0) {
         goto done;
     }
 
-    video_rect.x = dx;
-    video_rect.y = dy;
-    video_rect.w = width;
-    video_rect.h = height;
+    graphics.videoRect().x = dx;
+    graphics.videoRect().y = dy;
+    graphics.videoRect().w = width;
+    graphics.videoRect().h = height;
 
 done:
     mm_close(&vidfile);

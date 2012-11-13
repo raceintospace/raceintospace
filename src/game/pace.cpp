@@ -8,7 +8,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "mmfile.h"
-
+#include "graphics.h"
 
 void randomize(void);
 void SMove(void *p, int x, int y);
@@ -383,7 +383,7 @@ void LMove(void *p)
 {
     GXHEADER local;
 
-    memset(screen, 0, 320 * 200);
+	graphics.clearScreen( 0 );
 
     GV(&local, 160, 100);
     memcpy(local.vptr, p, 160 * 100);

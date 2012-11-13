@@ -46,6 +46,7 @@
 #include "gx.h"
 #include "pace.h"
 #include "endianness.h"
+#include "graphics.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -1371,11 +1372,11 @@ int FutureCheck(char plr, char type)
 
     fin = sOpen("LPADS.BUT", "rb", 0);
 
-    i = fread(screen, 1, MAX_X * MAX_Y, fin);
+    i = fread(graphics.screen(), 1, MAX_X * MAX_Y, fin);
 
     fclose(fin);
 
-    RLED_img(screen, vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
 
     if (type == 0) {
         strcpy(helptextIndex, "i010");
