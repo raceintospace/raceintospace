@@ -10,6 +10,8 @@
 #define PACKAGE_STRING "Race Into Space"
 #define PACKAGE_TARNAME "raceintospace"
 
+#cmakedefine HAVE_LRINT
+
 #cmakedefine HAVE_MKDIR
 #cmakedefine HAVE__MKDIR
 #cmakedefine HAVE_DIRENT_H
