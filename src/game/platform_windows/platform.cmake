@@ -1,7 +1,20 @@
-# This should really build an executable using sources in the platform_windows/ directory.
-# It doesn't -- it builds a library instead.
+# I would really like to be able to remove this, but we need to convert all
+# the users to raceintospace_config.h instead.
+add_definitions(-DCONFIG_WIN32)
 
+# Here too. This depends on probing the libsdl that may not have existed
+# until after we started the build process.
+add_definitions(-DHAVE_SDL_GETENV)
+
+# Make sure we can fine fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
 
-add_library(raceintospace_game ${game_sources} music_vorbis.cpp)
-add_dependencies(raceintospace_game libs)
+set(app "Race Into Space")
+
+add_executable(${app} ${game_sources} platform_windows/dirent.c)
+target_link_libraries(${app}
+  ${game_libraries}
+  raceintospace_display ${raceintospace_display_libraries}
+  )
+
+add_dependencies(${app} libs)

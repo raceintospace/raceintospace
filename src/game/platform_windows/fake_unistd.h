@@ -8,7 +8,6 @@
 typedef SSIZE_T ssize_t;
 
 #define snprintf _snprintf
-#define mkdir(a, b) _mkdir(a)
 
 // this really doesn't belong here...
 #define __func__ __FUNCTION__
