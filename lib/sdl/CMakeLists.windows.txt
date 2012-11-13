@@ -6,13 +6,12 @@ install(
   )
 
 if (WIN32)
-  install(
-    DIRECTORY "${PROJECT_SOURCE_DIR}/lib/x86"
-    DESTINATION lib
-    )
+  file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x86/*")
 else (WIN32)
-  install(
-    DIRECTORY "${PROJECT_SOURCE_DIR}/lib/x64"
-    DESTINATION lib
-    )
+  file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x64/*")
 endif (WIN32)
+
+install(
+  FILES ${libs}
+  DESTINATION lib
+  )
