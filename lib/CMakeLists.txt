@@ -29,6 +29,31 @@ set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefi
 
 
 ###
+# PhysicsFS
+
+set (physfs_Version 2.0.3)
+set (physfs_URL http://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+set (physfs_Dir ${CMAKE_CURRENT_BINARY_DIR}/physfs-${physfs_Version})
+
+# physfs 2.0.3 complains about FSPathMakeRef et al being deprecated, and warnings are treated as errors
+# Turn it back into a warning instead
+if (APPLE)
+  set (physfs_Flags -Wno-error=deprecated-declarations)
+endif (APPLE)
+
+ExternalProject_Add(physfs_build
+  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+  URL ${physfs_URL}
+  PREFIX ${physfs_Dir}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DCMAKE_C_FLAGS=${physfs_Flags}
+  )
+
+add_library(physfs STATIC IMPORTED)
+set_property(TARGET physfs APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+set_target_properties(physfs PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libphysfs.a)
+
+
+###
 # libogg
 
 if (BUILD_XIPH)
