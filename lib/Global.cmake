@@ -9,6 +9,7 @@ link_directories(${LocalPrefix}/lib)
 # Set flags indicating what we should build
 if (APPLE)
   set(BUILD_XIPH true)
+  set(BUILD_PROTOBUF true)
 endif (APPLE)
 
 if (BUILD_XIPH)

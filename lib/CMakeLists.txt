@@ -54,6 +54,24 @@ set_target_properties(physfs PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix
 
 
 ###
+# Protocol Buffers
+
+if (BUILD_PROTOBUF)
+  set (protobuf_Version 2.4.1)
+  set (protobuf_URL http://protobuf.googlecode.com/files/protobuf-${protobuf_Version}.tar.gz)
+  set (protobuf_Dir ${CMAKE_CURRENT_BINARY_DIR}/protobuf-${protobuf_Version})
+
+  ExternalProject_Add(protobuf_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${protobuf_URL}
+    PREFIX ${protobuf_Dir}
+    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DCONFIG_H_IN=${CMAKE_CURRENT_SOURCE_DIR}/protobuf/config.h.in
+    )
+
+endif (BUILD_PROTOBUF)
+
+###
 # libogg
 
 if (BUILD_XIPH)
