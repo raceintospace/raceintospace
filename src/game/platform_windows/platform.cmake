@@ -11,7 +11,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
 
 set(app "Race Into Space")
 
-add_executable(${app} ${game_sources} platform_windows/dirent.c)
+add_executable(${app}
+  ${game_sources}
+  music_vorbis.cpp
+  platform_windows/dirent.c
+  platform_windows/main.c
+  )
+
 target_link_libraries(${app}
   ${game_libraries}
   raceintospace_display ${raceintospace_display_libraries}
