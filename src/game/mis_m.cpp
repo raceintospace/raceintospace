@@ -421,7 +421,6 @@ void MisCheck(char plr, char mpad)
             }
 
 
-            VerifyData();
             memset(Name, 0x00, sizeof Name);
             memcpy(Name, Mev[STEP].Name, strlen(Mev[STEP].Name)); // copy orig failure
             Name[strlen(Name)] = 0x30 + (Now.fail / 10);
@@ -490,8 +489,6 @@ void MisCheck(char plr, char mpad)
 
             //if (!((mcc==9 || mcc==11) && (Mev[STEP].Name[0]=='W')))
             PlaySequence(plr, STEP, Mev[STEP].Name, (gork == 1) ? 2 : 0); // Play Animations
-
-            VerifyData();
 
             if (Mev[STEP].sgoto == 100) {
                 Mev[STEP].trace = 0x7F;

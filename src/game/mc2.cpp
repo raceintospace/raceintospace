@@ -473,8 +473,6 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
             }
         }
 
-        VerifyData();
-
         if (plr == 0) {
             strcat(Mev[step].Name, "U\0");
         } else {
