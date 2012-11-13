@@ -1,3 +1,5 @@
+# This file is included elsewhere to provide access to the libraries we need
+
 # We install locally-compiled stuff to somewhere inside the CMake build path
 # Specifically -- ${CMAKE_BINARY_DIR}/local/{lib,include}
 set (LocalPrefix ${CMAKE_BINARY_DIR}/local)
@@ -14,6 +16,7 @@ elseif (WINDOWS)
   set(BUILD_XIPH true)
   set(BUILD_PROTOBUF true)
   set(BUILD_BOOST true)
+  set(BUILD_SDL true)
 endif (APPLE)
 
 if (BUILD_BOOST)
@@ -21,6 +24,12 @@ if (BUILD_BOOST)
 else (BUILD_BOOST)
   find_package(Boost)
 endif (BUILD_BOOST)
+
+if (BUILD_SDL)
+else (BUILD_SDL)
+  include(${CMAKE_ROOT}/Modules/FindSDL.cmake)
+  include(SYSTEM ${SDL_INCLUDE_DIR})
+endif (BUILD_SDL)
 
 if (BUILD_XIPH)
   set(Ogg_LIBRARY ogg)

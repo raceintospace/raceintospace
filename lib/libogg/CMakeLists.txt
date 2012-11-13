@@ -14,8 +14,6 @@ add_library(ogg
   src/framing.c
   )
 
-file(GLOB headers RELATIVE ${PROJECT_SOURCE_DIR} include/ogg/*.h)
-
 install(
   TARGETS ogg
   ARCHIVE DESTINATION lib
