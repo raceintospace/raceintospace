@@ -5,11 +5,15 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(TestBigEndian)
 
-check_function_exists(mkdir HAVE_MKDIR)
 check_include_file(dirent.h HAVE_DIRENT_H)
 check_include_file(sys/dir.h HAVE_SYS_DIR_H)
 check_include_file(sys/ndir.h HAVE_SYS_NDIR_H)
+check_include_file(sys/types.h HAVE_SYS_TYPES_H)
+check_include_file(sys/time.h HAVE_SYS_TIME_H)
+check_include_file(sys/timeb.h HAVE_SYS_TIMEB_H)
 check_include_file(ndir.h HAVE_NDIR_H)
+check_include_file(int_types.h HAVE_INTTYPES_H)
+check_include_file(unistd.h HAVE_UNISTD_H)
 
 # Set some build options
 if (APPLE)

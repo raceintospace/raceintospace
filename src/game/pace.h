@@ -1,7 +1,15 @@
 #ifndef __PACE_H__
 #define __PACE_H__
-#include <unistd.h>
+
 #include <SDL.h>
+
+#include "raceintospace_config.h"
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#include "fake_unistd.h"
+#endif
 
 void delay(int millisecs);
 void FadeIn(char wh, void *palx, int steps, int val, char mode);

@@ -15,10 +15,6 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "mmfile.h"
-#include "macros.h"
-#include "utils.h"
-#include "logging.h"
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
@@ -28,9 +24,21 @@
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <theora/theora.h>
-#include <unistd.h>
 #include <stdint.h>
 #include <SDL.h>
+
+#include "raceintospace_config.h"
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#include "fake_unistd.h"
+#endif
+
+#include "mmfile.h"
+#include "macros.h"
+#include "utils.h"
+#include "logging.h"
 
 LOG_DEFAULT_CATEGORY(multimedia)
 

@@ -23,13 +23,14 @@
 // Programmed by Michael K McCarty
 //
 
+#include <assert.h>
+
 #include "start.h"
+#include "pace.h"
 #include "Buzz_inc.h"
 #include "options.h"
 #include "prest.h"
 #include "game_main.h"
-#include "pace.h"
-#include <assert.h>
 
 char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
                     "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",

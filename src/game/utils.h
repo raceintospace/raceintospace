@@ -4,7 +4,14 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "raceintospace_config.h"
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#else
+#include "fake_unistd.h"
+#endif
 
 void *xmalloc(size_t size);
 void *xcalloc(size_t nelems, size_t size);
