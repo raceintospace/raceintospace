@@ -19,7 +19,7 @@ if (BUILD_BOOST)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${Boost_URL}
     PREFIX ${Boost_Dir}
-    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/boost/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/boost/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
 endif (BUILD_BOOST)
@@ -74,7 +74,7 @@ if (BUILD_SDL)
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
       URL ${SDL_URL}
       PREFIX ${SDL_Dir}
-      PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/sdl/CMakeLists.windows.txt <SOURCE_DIR>/CMakeLists.txt
+      PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sdl/CMakeLists.windows.txt <SOURCE_DIR>/CMakeLists.txt
       )
 
   else (WINDOWS)
@@ -96,7 +96,7 @@ ExternalProject_Add(jsoncpp_build
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
   URL ${JsonCPP_URL}
   PREFIX ${JsonCPP_Dir}
-  PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+  PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
   )
 
@@ -142,7 +142,7 @@ if (BUILD_PROTOBUF)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${protobuf_URL}
     PREFIX ${protobuf_Dir}
-    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DCONFIG_H_IN=${CMAKE_CURRENT_SOURCE_DIR}/protobuf/config.h.in
     )
 
@@ -160,7 +160,7 @@ if (BUILD_XIPH)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libogg_URL}
     PREFIX ${libogg_Dir}
-    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/libogg/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libogg/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DCONFIG_TYPES_H_IN=${CMAKE_CURRENT_SOURCE_DIR}/libogg/config_types.h.in
     )
 
@@ -182,7 +182,7 @@ if (BUILD_XIPH)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libvorbis_URL}
     PREFIX ${libvorbis_Dir}
-    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/libvorbis/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libvorbis/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
     )
   
@@ -206,7 +206,7 @@ if (BUILD_XIPH)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libtheora_URL}
     PREFIX ${libtheora_Dir}
-    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/libtheora/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libtheora/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
     )
   
