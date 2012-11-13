@@ -10,7 +10,17 @@ link_directories(${LocalPrefix}/lib)
 if (APPLE)
   set(BUILD_XIPH true)
   set(BUILD_PROTOBUF true)
+elseif (WINDOWS)
+  set(BUILD_XIPH true)
+  set(BUILD_PROTOBUF true)
+  set(BUILD_BOOST true)
 endif (APPLE)
+
+if (BUILD_BOOST)
+  # Boost_INCLUDE_DIR can remain unset, since it's already in the path
+else (BUILD_BOOST)
+  find_package(Boost)
+endif (BUILD_BOOST)
 
 if (BUILD_XIPH)
   set(Ogg_LIBRARY ogg)
