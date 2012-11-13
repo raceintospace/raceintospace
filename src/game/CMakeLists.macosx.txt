@@ -49,7 +49,7 @@ target_link_libraries("${app}"
   ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY}
   )
 
-add_dependencies("${app}" ${game_dependencies})
+add_dependencies("${app}" libs)
 
 set_target_properties("${app}" PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/src/game/platform_macosx/Info.plist.in

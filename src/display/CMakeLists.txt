@@ -13,3 +13,5 @@ add_library(
   palette.cpp
   png_image.cpp
   )
+
+add_dependencies(raceintospace_display libs)
