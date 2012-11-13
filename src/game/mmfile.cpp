@@ -654,8 +654,12 @@ mm_decode_audio(mm_file *mf, void *buf, int buflen)
 
             for (i = 0; i < samples; ++i) {
                 for (ch = 0; ch < channels; ++ch) {
-                    /* XXX: lrint requires C99 */
+                    // lrint is not available on MSVC
+#ifdef HAVE_LRINT
                     int val = lrint(pcm[ch][i] * max_val);
+#else
+                    int val = (int)floor(pcm[ch][i] * max_val);
+#endif
 
                     if (val > max_val) {
                         val = max_val;

@@ -5,6 +5,8 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(TestBigEndian)
 
+check_function_exists(lrint HAVE_LRINT)
+
 check_include_file(dirent.h HAVE_DIRENT_H)
 check_include_file(sys/dir.h HAVE_SYS_DIR_H)
 check_include_file(sys/ndir.h HAVE_SYS_NDIR_H)
