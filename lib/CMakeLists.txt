@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 include(ExternalProject)
 include(Global.cmake)
 
+# Make a "libs" target that later chunks of code can depend on
+add_custom_target(libs)
 
 ###
 # Boost
@@ -15,13 +17,15 @@ if (BUILD_BOOST)
   set (Boost_URL http://downloads.sourceforge.net/boost/boost/${Boost_Version}/boost_${Boost_UnderscoreVersion}.tar.gz)
   set (Boost_Dir ${CMAKE_CURRENT_BINARY_DIR}/boost-${Boost_Version})
 
-  ExternalProject_Add(boost_build
+  ExternalProject_Add(ext_boost
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${Boost_URL}
     PREFIX ${Boost_Dir}
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/boost/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
+  
+  add_dependencies(libs ext_boost)
 endif (BUILD_BOOST)
 
 
@@ -35,12 +39,14 @@ if (BUILD_ZLIB)
 
   # zlib uses CMake, but it doesn't build on Mac OS X:
   #  https://github.com/madler/zlib/pull/26
-  ExternalProject_Add(zlib_build
+  ExternalProject_Add(ext_zlib
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${zlib_URL}
     PREFIX ${zlib_Dir}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
+
+  add_dependencies(libs ext_zlib)
 endif (BUILD_ZLIB)
 
 ###
@@ -53,15 +59,17 @@ if (BUILD_LIBPNG)
 
   # zlib uses CMake, but it doesn't build on Mac OS X:
   #  https://github.com/madler/zlib/pull/26
-  ExternalProject_Add(libpng_build
+  ExternalProject_Add(ext_libpng
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libpng_URL}
     PREFIX ${libpng_Dir}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
   
+  add_dependencies(libs ext_zlib)
+  
   if (BUILD_ZLIB)
-    add_dependency(zlib_build libpng_build)
+    add_dependencies(ext_libpng ext_zlib)
   endif (BUILD_ZLIB)
 endif (BUILD_LIBPNG)
 
@@ -74,7 +82,7 @@ if (BUILD_SDL)
   
   if (WINDOWS)
     set (SDL_URL http://www.libsdl.org/release/SDL-devel-${SDL_Version}-VC.zip)
-    ExternalProject_Add(sdl_build
+    ExternalProject_Add(ext_sdl
       DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
       URL ${SDL_URL}
       PREFIX ${SDL_Dir}
@@ -85,6 +93,7 @@ if (BUILD_SDL)
     message(FATAL_ERROR "I don't know how to build CMake on this platform.")
   endif (WINDOWS)
 
+  add_dependencies(libs ext_sdl)
 endif (BUILD_SDL)
 
 ###
@@ -96,7 +105,7 @@ set (JsonCPP_Dir ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp-${JsonCPP_Version})
 
 # JsonCPP uses scons, but it's actually really simple, so instead we ship and
 # build with our own jsoncpp-CMakeLists.txt
-ExternalProject_Add(jsoncpp_build
+ExternalProject_Add(ext_jsoncpp
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
   URL ${JsonCPP_URL}
   PREFIX ${JsonCPP_Dir}
@@ -104,9 +113,7 @@ ExternalProject_Add(jsoncpp_build
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
   )
 
-add_library(jsoncpp STATIC IMPORTED)
-set_property(TARGET jsoncpp APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
-set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libjsoncpp.a)
+add_dependencies(libs ext_jsoncpp)
 
 
 ###
@@ -122,16 +129,14 @@ if (APPLE)
   set (physfs_Flags -Wno-error=deprecated-declarations)
 endif (APPLE)
 
-ExternalProject_Add(physfs_build
+ExternalProject_Add(ext_physfs
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
   URL ${physfs_URL}
   PREFIX ${physfs_Dir}
   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DCMAKE_C_FLAGS=${physfs_Flags}
   )
 
-add_library(physfs STATIC IMPORTED)
-set_property(TARGET physfs APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
-set_target_properties(physfs PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libphysfs.a)
+add_dependencies(libs ext_physfs)
 
 
 ###
@@ -142,7 +147,7 @@ if (BUILD_PROTOBUF)
   set (protobuf_URL http://protobuf.googlecode.com/files/protobuf-${protobuf_Version}.tar.gz)
   set (protobuf_Dir ${CMAKE_CURRENT_BINARY_DIR}/protobuf-${protobuf_Version})
 
-  ExternalProject_Add(protobuf_build
+  ExternalProject_Add(ext_protobuf
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${protobuf_URL}
     PREFIX ${protobuf_Dir}
@@ -150,6 +155,7 @@ if (BUILD_PROTOBUF)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DCONFIG_H_IN=${CMAKE_CURRENT_SOURCE_DIR}/protobuf/config.h.in
     )
 
+  add_dependencies(libs ext_protobuf)
 endif (BUILD_PROTOBUF)
 
 ###
@@ -160,7 +166,7 @@ if (BUILD_XIPH)
   set (libogg_URL http://downloads.xiph.org/releases/ogg/libogg-${libogg_Version}.tar.gz)
   set (libogg_Dir ${CMAKE_CURRENT_BINARY_DIR}/libogg-${libogg_Version})
 
-  ExternalProject_Add(libogg_build
+  ExternalProject_Add(ext_libogg
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libogg_URL}
     PREFIX ${libogg_Dir}
@@ -168,9 +174,7 @@ if (BUILD_XIPH)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DCONFIG_TYPES_H_IN=${CMAKE_CURRENT_SOURCE_DIR}/libogg/config_types.h.in
     )
 
-  add_library(ogg STATIC IMPORTED)
-  set_property(TARGET ogg APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
-  set_target_properties(ogg PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libogg.a)
+  add_dependencies(libs ext_libogg)
 endif (BUILD_XIPH)
 
 
@@ -182,7 +186,7 @@ if (BUILD_XIPH)
   set (libvorbis_URL http://downloads.xiph.org/releases/vorbis/libvorbis-${libvorbis_Version}.tar.gz)
   set (libvorbis_Dir ${CMAKE_CURRENT_BINARY_DIR}/libvorbis-${libvorbis_Version})
 
-  ExternalProject_Add(libvorbis_build
+  ExternalProject_Add(ext_libvorbis
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libvorbis_URL}
     PREFIX ${libvorbis_Dir}
@@ -190,11 +194,8 @@ if (BUILD_XIPH)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
     )
   
-  add_dependencies(libvorbis_build libogg_build)
-  
-  add_library(vorbis STATIC IMPORTED)
-  set_property(TARGET vorbis APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
-  set_target_properties(vorbis PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libvorbis.a)
+  add_dependencies(libs ext_libogg)
+  add_dependencies(ext_libvorbis ext_libogg)
 endif (BUILD_XIPH)
 
 
@@ -206,7 +207,7 @@ if (BUILD_XIPH)
   set (libtheora_URL http://downloads.xiph.org/releases/theora/libtheora-${libtheora_Version}.tar.gz)
   set (libtheora_Dir ${CMAKE_CURRENT_BINARY_DIR}/libtheora-${libtheora_Version})
 
-  ExternalProject_Add(libtheora_build
+  ExternalProject_Add(ext_libtheora
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libtheora_URL}
     PREFIX ${libtheora_Dir}
@@ -214,9 +215,6 @@ if (BUILD_XIPH)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
     )
   
-  add_dependencies(libtheora_build libogg_build)
-  
-  add_library(theora STATIC IMPORTED)
-  set_property(TARGET theora APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
-  set_target_properties(theora PROPERTIES IMPORTED_LOCATION_NOCONFIG ${LocalPrefix}/lib/libtheora.a)
+  add_dependencies(libs ext_libtheora)
+  add_dependencies(ext_libtheora ext_libogg)
 endif (BUILD_XIPH)

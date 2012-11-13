@@ -71,11 +71,6 @@ set(game_libraries
   jsoncpp
   )
 
-set(game_dependencies
-  jsoncpp_build
-  libogg_build libvorbis_build libtheora_build
-  )
-
 # Defer to the platform-specific CMakeLists for building the actual game target
 if (APPLE)
   include(CMakeLists.macosx.txt)
