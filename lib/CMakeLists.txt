@@ -87,6 +87,7 @@ if (BUILD_SDL)
       URL ${SDL_URL}
       PREFIX ${SDL_Dir}
       PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sdl/CMakeLists.windows.txt <SOURCE_DIR>/CMakeLists.txt
+      CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
       )
 
   else (WINDOWS)
