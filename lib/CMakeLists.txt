@@ -7,6 +7,24 @@ include(Global.cmake)
 
 
 ###
+# Boost
+
+if (BUILD_BOOST)
+  set (Boost_Version 1.52.0)
+  string (REPLACE "." "_" Boost_UnderscoreVersion ${Boost_Version})
+  set (Boost_URL http://downloads.sourceforge.net/boost/boost/${Boost_Version}/boost_${Boost_UnderscoreVersion}.tar.gz)
+  set (Boost_Dir ${CMAKE_CURRENT_BINARY_DIR}/boost-${Boost_Version})
+
+  ExternalProject_Add(boost_build
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${Boost_URL}
+    PREFIX ${Boost_Dir}
+    PATCH_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/boost/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
+    )
+endif (BUILD_BOOST)
+
+###
 # JsonCPP
 
 set (JsonCPP_Version 0.5.0)
