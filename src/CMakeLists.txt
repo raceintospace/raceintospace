@@ -5,6 +5,13 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(TestBigEndian)
 
+include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
+
+check_function_exists(mkdir HAVE_MKDIR)
+check_function_exists(_mkdir HAVE__MKDIR)
+
+set(CMAKE_REQUIRED_INCLUDES math.h)
+set(CMAKE_REQUIRED_LIBRARIES m)
 check_function_exists(lrint HAVE_LRINT)
 
 check_include_file(dirent.h HAVE_DIRENT_H)
@@ -42,11 +49,12 @@ configure_file(
 # so we can find raceintospace_config.h
 include_directories(${PROJECT_BINARY_DIR}/config)
 
-# pull in src/display/* defines and build rules
+# build src/display
 include("display/Global.cmake")
 add_subdirectory("display")
 
-# pull in src/game/* defines and build rules
+# build src/game
 add_subdirectory("game")
 
+# build the targets in src/utils too
 add_subdirectory("utils")
