@@ -60,7 +60,7 @@
 #pragma pack(push, 1)
 struct {
     uint8_t r, g, b;
-} display::graphics.pal()[256];
+} pal[256];
 
 typedef struct  {
     int16_t size;
@@ -102,9 +102,9 @@ const uint8_t VabPal[] = {0,0,0, 59,59,59, 44,44,44, 34,35,35, 20,20,20, 0,0,55,
 void PortPal(int player)
 {
     if (player == 0) {
-        memcpy(display::graphics.pal(), PortPal0, sizeof(display::graphics.pal()));
+        memcpy(pal, PortPal0, sizeof(pal));
     } else if (player == 1) {
-        memcpy(display::graphics.pal(), PortPal1, sizeof(display::graphics.pal()));
+        memcpy(pal, PortPal1, sizeof(pal));
     } else {
         abort();
     }
@@ -237,9 +237,9 @@ int write_image()
         // pal[i].{r,g,b} are 0-63, and we want to map to 0-255
         // fill in the right two bits with the first two
         // this gives the desirable properties that 0 = 0 and 63 = 255
-        png_pal[i].red = (display::graphics.pal()[i].r << 2 | display::graphics.pal()[i].r >> 6);
-        png_pal[i].green = (display::graphics.pal()[i].g << 2 | display::graphics.pal()[i].g >> 6);
-        png_pal[i].blue = (display::graphics.pal()[i].b << 2 | display::graphics.pal()[i].b >> 6);
+        png_pal[i].red = (pal[i].r << 2 | pal[i].r >> 6);
+        png_pal[i].green = (pal[i].g << 2 | pal[i].g >> 6);
+        png_pal[i].blue = (pal[i].b << 2 | pal[i].b >> 6);
     }
     png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
     
@@ -288,8 +288,8 @@ int simplehdrs(FILE * fp, int colors, int palette_offset, int shift_data, int si
     // read the file-wide pallete if applicable
     if (single_palette) {
         fseek(fp, sizeof(headers[0]) * single_palette, SEEK_SET);
-        memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
-        fread(display::graphics.pal() + palette_offset, colors, sizeof(display::graphics.pal()[0]), fp);
+        memset(pal, 0, sizeof(pal));
+        fread(pal + palette_offset, colors, sizeof(pal[0]), fp);
     }
     
     // see how many of them seem reasonable
@@ -321,8 +321,8 @@ int simplehdrs(FILE * fp, int colors, int palette_offset, int shift_data, int si
         
         // read the individual palette, if applicable
         if (!single_palette) {
-            memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
-            fread(display::graphics.pal() + palette_offset, colors, sizeof(display::graphics.pal()[0]), fp);
+            memset(pal, 0, sizeof(pal));
+            fread(pal + palette_offset, colors, sizeof(pal[0]), fp);
         }
         
         // read and decode the image data
@@ -355,28 +355,28 @@ int patchhdrs(FILE * fp, int use_small_headers, int palette_style, int encoding)
     PatchHdrSmall small_headers[150];
     int rv, i, last_valid_offset, palette_offset;
 
-    memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
+    memset(pal, 0, sizeof(pal));
     
     if (palette_style == 1) {
         // 256 colors
-        fread(display::graphics.pal(), 1, sizeof(display::graphics.pal()), fp);
+        fread(pal, 1, sizeof(pal), fp);
         palette_offset = 0;
 
     } else if (palette_style == 2) {
         // 128 colors, starting at 128, on top of PortPal(0)
         PortPal(0);
-        fread(&display::graphics.pal()[128], 128, sizeof(display::graphics.pal()[0]), fp);
+        fread(&pal[128], 128, sizeof(pal[0]), fp);
         palette_offset = 128;
         
     } else if (palette_style == 3) {
         // 32 colors, starting at 32, and one of them is transparent
-        fread(&display::graphics.pal()[32], 32, sizeof(display::graphics.pal()[0]), fp);
+        fread(&pal[32], 32, sizeof(pal[0]), fp);
         palette_offset = 32;
         color_is_transparent[32] = 1;
         
     } else if (palette_style == 4) {
         // 64 colors, starting at 32
-        fread(&display::graphics.pal()[32], 64, sizeof(display::graphics.pal()[0]), fp);
+        fread(&pal[32], 64, sizeof(pal[0]), fp);
         palette_offset = 32;
 
     } else if (palette_style == 5) {
@@ -495,7 +495,7 @@ int translate_320x240_rle(FILE * fp)
     width = 320;
     height = 240;
     
-    bytes = fread(display::graphics.pal(), sizeof(display::graphics.pal()), 1, fp);
+    bytes = fread(pal, sizeof(pal), 1, fp);
     if (bytes < 1) {
         fprintf(stderr, "short read while reading palette\n");
         return 3;
@@ -531,7 +531,7 @@ int translate_vab(FILE * fp)
     // }
     
     for (i = 0; i < 2; i++) {
-        fread(display::graphics.pal(), sizeof(display::graphics.pal()), 1, fp);
+        fread(pal, sizeof(pal), 1, fp);
         fread(&bytes, sizeof(bytes), 1, fp);
         fread(raw_data, 1, bytes, fp);
         PCX_D(raw_data, screen, bytes);
@@ -548,8 +548,8 @@ int translate_winner(FILE * fp)
 {
     int size;
     
-    memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
-    fread(display::graphics.pal(), 384, 1, fp);
+    memset(pal, 0, sizeof(pal));
+    fread(pal, 384, 1, fp);
     size = fread(raw_data, 1, sizeof(raw_data), fp);
     PCX_D(raw_data, screen, size);
     
@@ -562,7 +562,7 @@ int translate_cia(FILE * fp)
 {
     int size;
     
-    fread(display::graphics.pal(), sizeof(display::graphics.pal()), 1, fp);
+    fread(pal, sizeof(pal), 1, fp);
     size = fread(raw_data, 1, sizeof(raw_data), fp);
     PCX_D(raw_data, screen, size);
     
@@ -579,8 +579,8 @@ int translate_faces(FILE * fp)
     fread(offsets, 1, sizeof(offsets), fp);
     
     // followed by 32 colors
-    memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
-    fread(&display::graphics.pal()[64], 32, sizeof(display::graphics.pal()[0]), fp);
+    memset(pal, 0, sizeof(pal));
+    fread(&pal[64], 32, sizeof(pal[0]), fp);
     
     // followed by 84 astronaut faces at the indicated offsets
     width = 18; height = 15;
@@ -640,7 +640,7 @@ int translate_lpads(FILE * fp)
 int translate_nfutbut(FILE * fp)
 {
     int bytes;
-    memcpy(display::graphics.pal(), MissionPal, sizeof(display::graphics.pal()));
+    memcpy(pal, MissionPal, sizeof(pal));
 
     width = 240; height = 90;
     bytes = fread(raw_data, 1, width * height, fp);
@@ -672,7 +672,7 @@ int translate_first(FILE * fp)
     uint32_t length;
     
     width = 320; height = 240;
-    while (fread(display::graphics.pal(), sizeof(display::graphics.pal()), 1, fp)) {
+    while (fread(pal, sizeof(pal), 1, fp)) {
         fread(&length, sizeof(length), 1, fp);
         fread(raw_data, 1, length, fp);
         PCX_D(raw_data, screen, length);
@@ -692,7 +692,7 @@ int translate_rdbox(FILE * fp)
     char name[4];
     uint32_t length;
     
-    memcpy(display::graphics.pal(), VabPal, sizeof(display::graphics.pal()));
+    memcpy(pal, VabPal, sizeof(pal));
     
     i = 0;
     while (fread(name, sizeof(name), 1, fp)) {
@@ -725,10 +725,10 @@ int translate_letter(FILE * fp)
     
     int rv, i;
     
-    memset(display::graphics.pal(), 0, sizeof(display::graphics.pal()));
-    display::graphics.pal()[0].r = display::graphics.pal()[0].g = display::graphics.pal()[0].b = 0;
-    display::graphics.pal()[1].r = display::graphics.pal()[1].g = display::graphics.pal()[1].b = 255;
-    display::graphics.pal()[2].r = display::graphics.pal()[2].g = display::graphics.pal()[2].b = 127;
+    memset(pal, 0, sizeof(pal));
+    pal[0].r = pal[0].g = pal[0].b = 0;
+    pal[1].r = pal[1].g = pal[1].b = 255;
+    pal[2].r = pal[2].g = pal[2].b = 127;
     color_is_transparent[3] = 1;
     
     height = 15;
@@ -824,7 +824,7 @@ int translate_port(FILE * fin)
     fread(table, sizeof table, 1, fin);
 
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(display::graphics.pal(), sizeof(display::graphics.pal()), 1, fin);
+    fread(pal, sizeof(pal), 1, fin);
     
     /*
     // for creating the PortPal[] arrays
