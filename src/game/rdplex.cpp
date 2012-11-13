@@ -25,6 +25,8 @@
 /** \file rdplex.c Research and Development Complex
  */
 
+#include "display/graphics.h"
+
 #include "Buzz_inc.h"
 #include "rdplex.h"
 #include "options.h"
@@ -162,9 +164,9 @@ void DrawRD(char player_index)
     strcpy(helptextIndex, "i009");
     strcpy(keyhelpIndex, "k009");
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
     fclose(fin);
 
     gxClearDisplay(0, 0);
@@ -366,7 +368,7 @@ char RD(char player_index)
 
     strcpy(keyhelpIndex, "k009");
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     music_start(M_HARDWARE);
 
@@ -421,7 +423,7 @@ char RD(char player_index)
 
                     strcpy(keyhelpIndex, "k009");
 
-                    FadeIn(2, pal, 10, 0, 0);
+                    FadeIn(2, display::graphics.pal(), 10, 0, 0);
                 }
             } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
                 if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* Unmanned */
@@ -760,7 +762,7 @@ char RD(char player_index)
                     InBox(165, 184, 315, 194);
                 };
 
-                FadeIn(2, pal, 10, 0, 0);
+                FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
                 music_start(M_HARDWARE);
 
@@ -1211,9 +1213,9 @@ void DrawHPurc(char player_index)
 {
     FILE *fin;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
     fclose(fin);
 
     Load_RD_BUT(player_index);
@@ -1310,7 +1312,7 @@ char HPurc(char player_index)
     //memset(vhptr.vptr,0x00,64000);
     //memcpy(vhptr.vptr,Data,sizeof(struct Players));
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     music_start(M_FILLER);
     WaitForMouseUp();
 
@@ -1351,7 +1353,7 @@ char HPurc(char player_index)
                 BButs(PROBE_HARDWARE, hardware);
                 ShowUnit(hardware, unit, player_index);
 
-                FadeIn(2, pal, 10, 0, 0);
+                FadeIn(2, display::graphics.pal(), 10, 0, 0);
                 music_start(M_FILLER);
                 WaitForMouseUp();
             }
@@ -1563,7 +1565,7 @@ char HPurc(char player_index)
             fwrite(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
             music_start(M_FILLER);
             WaitForMouseUp();
         };

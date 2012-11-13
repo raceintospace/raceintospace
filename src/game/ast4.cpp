@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "Buzz_inc.h"
 #include "ast0.h"
 #include "ast4.h"
@@ -273,7 +275,7 @@ void PlaceEquip(char plr, char prog)
     fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, fin);
     fseek(fin, 14 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
 
     fseek(fin, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, fin);
@@ -297,7 +299,7 @@ void DrawProgs(char plr, char prog)
     int i, j, Name[30];
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     grSetColor(1);
     ShBox(0, 0, 319, 22);
@@ -500,7 +502,7 @@ void DamProb(char plr, char prog, int chk)
 
     Saf_Loss = D_Cost = ESafety = 0; /* XXX check uninitialized */
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     gxClearDisplay(0, 0);
 
@@ -578,7 +580,7 @@ void DamProb(char plr, char prog, int chk)
     sprintf(&Digit[0], "%d", ESafety);
     PrintAt(0, 0, &Digit[0]);
     PrintAt(0, 0, "%)");
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -743,7 +745,7 @@ Programs(char plr, char prog)
     NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
                Data->P[plr].Crew[prog][grp][1],
                Data->P[plr].Crew[prog][grp][2], Data->P[plr].Crew[prog][grp][3]);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     chk = CheckProgram(plr, prog);
 

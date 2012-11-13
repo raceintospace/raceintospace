@@ -946,7 +946,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
     // *************** TCS001 my kludge (tom) 3/15/94
     if (Mode == TOMS_BUGFIX) {
-        FadeOut(2, pal, 1, 0, 0);
+        FadeOut(2, display::graphics.pal(), 1, 0, 0);
 
         gxClearDisplay(0, 0);
         DrawTopNewsBox(plr);
@@ -957,7 +957,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         screen_dirty = 1;
 
         /* This fade was too long given current fades impl. */
-        FadeIn(2, pal, 10, 0, 0); /* was: 50 */
+        FadeIn(2, display::graphics.pal(), 10, 0, 0); /* was: 50 */
     }
 
     load_news_anim_start = get_time();
@@ -972,7 +972,7 @@ ShowEvt(char plr, char crd)
     uint32_t offset;
     uint32_t length;
 
-    memset(&pal[96], 0, 672);
+    memset(&display::graphics.pal()[96], 0, 672);
 
     if (plr == 0) {
         switch (crd) {
@@ -1021,7 +1021,7 @@ ShowEvt(char plr, char crd)
      */
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
-        fread(&pal[384], 384, 1, ffin);
+        fread(&display::graphics.pal()[384], 384, 1, ffin);
         fread(display::graphics.screen(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }

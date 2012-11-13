@@ -120,7 +120,7 @@ void DrawRush(char plr)
     int i, k = 0, l = 0, JR = 0;
     FILE *fin;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
     fin = sOpen("LPADS.BUT", "rb", 0);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
@@ -315,7 +315,7 @@ void Rush(char plr)
     fCsh = Data->P[plr].Cash;
     grSetColor(1);
     music_start((plr == 1) ? M_USMIL : M_USSRMIL);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {

@@ -57,7 +57,7 @@ void DrawTrain(char plr, char lvl)
         strcpy(keyhelpIndex, "k037");
     }
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 114);
@@ -365,7 +365,7 @@ void Train(char plr, int level)
         TrainText(plr, M[0], count);
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     if (level == 0) {
         if (m > 4) {
@@ -692,12 +692,12 @@ void Hospital(char plr, int sel)
     now2 = 0;
     BarA = count = 0;
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
 // pal, len, image
 
     fin = sOpen("CEM.IMG", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
     fread(&size, 4, 1, fin);
     Swap32bit(size);
 
@@ -705,7 +705,7 @@ void Hospital(char plr, int sel)
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // place on the Sov cem
-            fread(&pal[0], 768, 1, fin);
+            fread(&display::graphics.pal()[0], 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }
@@ -713,18 +713,18 @@ void Hospital(char plr, int sel)
 
     if (sel == 0) {
         fseek(fin, size, SEEK_CUR); // Skip past US cem
-        fread(&pal[0], 768, 1, fin);
+        fread(&display::graphics.pal()[0], 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         fseek(fin, size, SEEK_CUR); // Place on the US hosp
-        fread(&pal[0], 768, 1, fin);
+        fread(&display::graphics.pal()[0], 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // Skip to Sov hosp
-            fread(&pal[0], 768, 1, fin);
+            fread(&display::graphics.pal()[0], 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }
@@ -802,7 +802,7 @@ void Hospital(char plr, int sel)
 
     DispLeft(plr, BarA, count, now2, &M[0]);
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
 

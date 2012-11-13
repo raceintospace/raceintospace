@@ -25,6 +25,8 @@
 /** \file ast1.c Astronaut Recruitment
  */
 
+#include "display/graphics.h"
+
 #include "ast1.h"
 #include "Buzz_inc.h"
 #include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
@@ -134,7 +136,7 @@ void DrawAstCheck(char plr)
         ad = 1;
     }
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
@@ -273,7 +275,7 @@ void DrawAstCheck(char plr)
 
     FlagSm(plr, 4, 4);
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     return;
 }
@@ -286,7 +288,7 @@ void DrawAstSel(char plr)
 
     strcpy(helptextIndex, "i012");
     strcpy(keyhelpIndex, "k012");
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
@@ -579,7 +581,7 @@ void AstSel(char plr)
 
     DispEight2(now2, BarA, count);
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
 

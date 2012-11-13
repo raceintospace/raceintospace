@@ -24,6 +24,8 @@
 //
 // Review Main Files
 
+#include "display/graphics.h"
+
 #include "review.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -46,7 +48,7 @@ void DrawReview(char plr)
     char Fired_Flag = 0, Reset_Flag = 0;
 
     if (Data->P[plr].PresRev[0] != 0x7F) {
-        FadeOut(2, pal, 10, 0, 0);
+        FadeOut(2, display::graphics.pal(), 10, 0, 0);
     }
 
     PortPal(plr);
@@ -246,7 +248,7 @@ void DrawReview(char plr)
         Data->P[plr].PresRev[0] = 16;
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     return;
 }
@@ -281,7 +283,7 @@ void MisRev(char plr, int pres)
         music_start((pres > 0) ? M_SUCCESS : M_UNSUCC);
     }
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -308,7 +310,7 @@ void PresPict(char poff)
     fseek(in, poff * sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    fread(&pal[96], 672, 1, in);
+    fread(&display::graphics.pal()[96], 672, 1, in);
     fread(buffer, table.size, 1, in);
     fclose(in);
     GV(&local, 126, 84);

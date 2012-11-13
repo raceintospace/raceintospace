@@ -118,10 +118,10 @@ void DrawFuture(char plr, int mis, char pad)
         lck[i] = status[i] = 0;
     }
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     Load_FUT_BUT();
     fin = sOpen("FMIN.IMG", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
     sz = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
@@ -280,7 +280,7 @@ void DrawFuture(char plr, int mis, char pad)
     grSetColor(1);
     FlagSm(plr, 4, 4);
     DispBig(40, 5, "FUTURE MISSIONS", 0, -1);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     return;
 }

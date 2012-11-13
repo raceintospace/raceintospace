@@ -137,7 +137,7 @@ void MisOrd(char num)
         j++;
     };
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -145,7 +145,7 @@ void MisOrd(char num)
 
     WaitForMouseUp();
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 }
 
 
@@ -157,7 +157,7 @@ void MisAnn(char plr, char pad)
     char pad_str[2] = {'A' + pad, '\0'};
 
     for (i = 0; i < 768; i++) {
-        pal[i] = 0;
+        display::graphics.pal()[i] = 0;
     }
 
     gxClearDisplay(0, 0);
@@ -451,7 +451,7 @@ void MisAnn(char plr, char pad)
         }
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -468,14 +468,14 @@ void MisAnn(char plr, char pad)
             InBox(59, 70, 116, 82);
             WaitForMouseUp();
             OutBox(59, 70, 116, 82);
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
             BIG = 0;
             return;
         } else if ((x >= 133 && y >= 70 && x <= 195 && y <= 82 && mousebuttons > 0) || key == K_ENTER || key == 'P') {
             InBox(133, 70, 195, 82);
             WaitForMouseUp();
             OutBox(133, 70, 195, 82);
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
             BIG = 1;
             return;
         }
@@ -489,7 +489,7 @@ void MisAnn(char plr, char pad)
             }
 
             if (Data->P[plr].Mission[pad].MissionCode == 0) {
-                FadeOut(2, pal, 10, 0, 0);
+                FadeOut(2, display::graphics.pal(), 10, 0, 0);
                 return;
             }
         }
@@ -505,11 +505,11 @@ void AI_Begin(char plr)
 
 
     for (i = 0; i < 768; i++) {
-        pal[i] = 0;
+        display::graphics.pal()[i] = 0;
     }
 
     fin = sOpen("TURN.BUT", "rb", 0);
-    fread(&pal, 768, 1, fin);
+    fread(display::graphics.pal(), 768, 1, fin);
     len[0] = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen(), vhptr.vptr, (unsigned int)len[0],
@@ -539,14 +539,14 @@ void AI_Begin(char plr)
     grSetColor(11);
     PrintAt(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
     colss = 0;
 }
 
 void AI_Done(void)
 {
     music_stop();
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     display::graphics.clearScreen(0);
 }
 

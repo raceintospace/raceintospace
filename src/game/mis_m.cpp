@@ -585,7 +585,7 @@ void MisCheck(char plr, char mpad)
         // Mission Death
         if (!AI[plr]) {
             if (BIG == 0) {
-                memset(&pal[64 * 3], 0x00, 64 * 3); //Specs: 0x08
+                memset(&display::graphics.pal()[64 * 3], 0x00, 64 * 3); //Specs: 0x08
 
                 if (plr == 0) {
                     RectFill(2, 107, 140, 115, 3);

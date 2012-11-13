@@ -276,10 +276,10 @@ DispBaby(int x, int y, int loc, char neww)
     fseek(fin, locl, SEEK_SET);
 
     for (i = 0; i < 48; i++) {
-        pal[off * 3 + i] = 0;
+        display::graphics.pal()[off * 3 + i] = 0;
     }
 
-    fread(&pal[off * 3], 48, 1, fin);
+    fread(&display::graphics.pal()[off * 3], 48, 1, fin);
     fread(boob.vptr, 1564, 1, fin);
     fclose(fin);
 

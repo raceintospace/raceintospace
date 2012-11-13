@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include "display/graphics.h"
+
 #include "ast0.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -57,7 +59,7 @@ void Moon(char plr)
     strcpy(helptextIndex, "i029");
     strcpy(keyhelpIndex, "k029");
     val = Data->P[plr].Misc[5].Safety;
-    FadeOut(2, pal, 0, 0, 0);
+    FadeOut(2, display::graphics.pal(), 0, 0, 0);
 
 
     gxClearDisplay(0, 0);
@@ -79,7 +81,7 @@ void Moon(char plr)
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     GV(&local, 104, 82);
-    fread(&pal[384], 384, 1, in); // Individual Palette
+    fread(&display::graphics.pal()[384], 384, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
     RLED_img(buffer, local.vptr, table.size, local.w, local.h);
@@ -105,7 +107,7 @@ void Moon(char plr)
     FlagSm(plr, 114, 43);
 
     music_start(M_HISTORY);
-    FadeIn(2, pal, 0, 0, 0);
+    FadeIn(2, display::graphics.pal(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -196,7 +198,7 @@ void SatDraw(char plr)
     FILE *fin;
 
     GXHEADER local;
-    FadeOut(2, pal, 0, 0, 0);
+    FadeOut(2, display::graphics.pal(), 0, 0, 0);
 
     gxClearDisplay(0, 0);
     ShBox(1, 0, 319, 22);
@@ -226,7 +228,7 @@ void SatDraw(char plr)
     loc[3] = (Data->P[plr].Probe[2].Num < 0) ? 0 : 3 + plr * 3;
 
     fin = sOpen("SATBLD.BUT", "rb", 0);
-    fread(&pal[0], 768, 1, fin);
+    fread(&display::graphics.pal()[0], 768, 1, fin);
 
     for (i = 0; i < 4; i++) {
 
@@ -268,7 +270,7 @@ void SatDraw(char plr)
 void LMDraw(char plr)
 {
     char ind = 0;
-    FadeOut(2, pal, 0, 0, 0);
+    FadeOut(2, display::graphics.pal(), 0, 0, 0);
 
     gxClearDisplay(0, 0);
     ShBox(1, 0, 319, 22);
@@ -582,7 +584,7 @@ void LMPict(char poff)
     in = sOpen("LMER.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 8 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&pal[32 * 3], 672, 1, in);
+    fread(&display::graphics.pal()[32 * 3], 672, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
     GV(&local, 156, 89);
@@ -663,7 +665,7 @@ void LMBld(char plr)
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, pal, 0, 0, 0);
+    FadeIn(2, display::graphics.pal(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -699,7 +701,7 @@ void SatBld(char plr)
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, pal, 0, 0, 0);
+    FadeIn(2, display::graphics.pal(), 0, 0, 0);
 
     key = 0;
     WaitForMouseUp();

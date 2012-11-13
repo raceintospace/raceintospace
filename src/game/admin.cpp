@@ -92,7 +92,7 @@ void Admin(char plr)
             beg = 0;
         } else {
 
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
             DrawSpaceport(plr);
             PortPal(plr);
@@ -122,7 +122,7 @@ void Admin(char plr)
 
             DispNum(0, 0, Data->Year);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
         }
 
         music_start(M_GOOD);
@@ -306,7 +306,7 @@ void FileAccess(char mode)
 
     strcpy(helptextIndex, "i128");
     strcpy(keyhelpIndex, "k128");
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
     gxClearDisplay(0, 0);
 
     saveType = SAVEGAME_Normal;
@@ -388,7 +388,7 @@ void FileAccess(char mode)
         FileText(&FList[now].Name[0]);
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
 
     while (!done) {
@@ -1055,7 +1055,7 @@ void FileAccess(char mode)
     }
 
     if (mode == 1 && QUIT == 1) {
-        FadeOut(2, pal, 10, 0, 0);
+        FadeOut(2, display::graphics.pal(), 10, 0, 0);
     }
 }
 
@@ -1366,7 +1366,7 @@ int FutureCheck(char plr, char type)
         }
     };
 
-    FadeOut(2, pal, 10, 0, 0);
+    FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
 
     PortPal(plr);
@@ -1577,7 +1577,7 @@ int FutureCheck(char plr, char type)
         gxVirtualDisplay(&vhptr, 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51, 0);
     }
 
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
     pad = -1;

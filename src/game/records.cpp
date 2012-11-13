@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "display/graphics.h"
+
 #include "Buzz_inc.h"
 #include "records.h"
 #include "hardef.h"
@@ -166,7 +168,7 @@ void Records(char plr)
     fread(rec, sizeof rec, 1, file);
     fclose(file);
 
-    FadeOut(2, pal, 5, 0, 0);
+    FadeOut(2, display::graphics.pal(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -202,7 +204,7 @@ void Records(char plr)
     PrintAt(238, 94, "CLEAR RECORD");
     InBox(237, 34, 306, 81);
     Drec(&pos, &pos2, 0);
-    FadeIn(2, pal, 10, 0, 0);
+    FadeIn(2, display::graphics.pal(), 10, 0, 0);
 
     WaitForMouseUp();
 

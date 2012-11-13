@@ -165,7 +165,7 @@ void Museum(char plr)
         if (beg == 0) {
             beg = (Data->P[plr].AstroCount > 0) ? 7 : 6;    // mods for astros
         } else {
-            FadeOut(2, pal, 10, 0, 0);
+            FadeOut(2, display::graphics.pal(), 10, 0, 0);
 
             DrawSpaceport(plr);
             PortPal(plr);
@@ -195,7 +195,7 @@ void Museum(char plr)
 
             DispNum(0, 0, Data->Year);
 
-            FadeIn(2, pal, 10, 0, 0);
+            FadeIn(2, display::graphics.pal(), 10, 0, 0);
         }
 
         strncpy(helptextIndex, (plr == 0) ? "i700" : "i701", 4);
@@ -264,7 +264,7 @@ void ShowPrest(char plr)
         }
 
 
-    FadeOut(2, pal, 5, 0, 0);
+    FadeOut(2, display::graphics.pal(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -317,7 +317,7 @@ void ShowPrest(char plr)
     UPArrow(299, 131);
     DNArrow(299, 162);
     DPrest(plr, &pos, &pos2);
-    FadeIn(2, pal, 5, 0, 0);
+    FadeIn(2, display::graphics.pal(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -637,7 +637,7 @@ void ShowSpHist(char plr)
 {
     int pos;
 
-    FadeOut(2, pal, 5, 0, 0);
+    FadeOut(2, display::graphics.pal(), 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
     display::graphics.clearScreen(0);
 
@@ -667,7 +667,7 @@ void ShowSpHist(char plr)
     Display_ARROW(2, 239, 178); //right
     Display_ARROW(3, 285, 178); //right arrow
     DrawMisHist(plr, &pos);
-    FadeIn(2, pal, 5, 0, 0);
+    FadeIn(2, display::graphics.pal(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -986,7 +986,7 @@ void ShowAstrosHist(char plr)
     memcpy(abuf, Data->P[plr].Pool, sizeof(Data->P[plr].Pool));
     qsort((void *)abuf, Data->P[plr].AstroCount, sizeof(struct Astros), astcomp);
 
-    FadeOut(2, pal, 5, 0, 0);
+    FadeOut(2, display::graphics.pal(), 5, 0, 0);
     RectFill(1, 39, 157, 184, 3);
     DispBig(68, 71, "NO", 0, -1);
     DispBig(46, 90, "MISSION", 0, -1);
@@ -1052,7 +1052,7 @@ void ShowAstrosHist(char plr)
     PrintAt(47, 193, "NEXT MISSION");
     DisplAst(plr, &pos, &pos2);
     DisplAstData(plr, &pos, &pos2);
-    FadeIn(2, pal, 5, 0, 0);
+    FadeIn(2, display::graphics.pal(), 5, 0, 0);
 
     WaitForMouseUp();
 
