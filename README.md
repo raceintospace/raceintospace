@@ -21,21 +21,21 @@ Race  Into Space  is distributed  under GNU  General Public  License
 Building
 ========
 
-You need:
+You need CMake.
 
-* CMake
+The build system automatically finds, downloads, and/or compiles:
+
 * SDL
 * Boost
-* libpng (and zlib)
-
-On most platforms, the build system automatically downloads and
-compiles:
-
+* zlib
+* libpng
 * jsoncpp
 * libogg
 * libvorbis
 * libtheora
 * libprotobuf / protoc
+
+The specifics of which things come from where depend on your platform.
 
 On UNIXy systems (including Mac OS X), you can build everything with:
 
@@ -48,9 +48,8 @@ On UNIXy systems (including Mac OS X), you can build everything with:
 Linux
 =====
 
-Build as described above, except we rely on the operating system to provide
-most of the dependencies. If you're on a Debian-based system, you can get
-everything with:
+We rely on the operating system to provide most of the dependencies. If you're
+on a Debian-based system, you can get everything with:
 
     $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
         libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
@@ -58,12 +57,14 @@ everything with:
 Mac OS X
 ========
 
-Mac OS X ships with libpng, but platform help ends there. You'll want to grab
-[SDL.framework](http://www.libsdl.org/download-1.2.php) if you don't have it
-already. It's easiest to use [Homebrew](http://mxcl.github.com/homebrew/) to
-get the rest:
+[Homebrew](http://mxcl.github.com/homebrew/) has a nice Boost package, and it
+doesn't cause any runtime linkage issues, so we also need that:
 
     $ brew install boost
+
+CMake automatically handles the other dependencies. Mac OS X sometimes includes
+libpng, and sometimes it doesn't, so we don't use it. We do, however, rely on
+the platform-provided zlib.
 
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:
@@ -78,10 +79,10 @@ Windows
 
 Ingredients:
 
-* [Visual Studio Express 2012](http://www.microsoft.com/visualstudio/eng/downloads#d-express-windows-desktop) ($0; other versions likely work too)
+* [Visual C++ Express 2010](http://www.microsoft.com/visualstudio/eng/downloads#d-2010-express) ($0; other versions likely work too)
 * [CMake](http://www.cmake.org/cmake/resources/software.html) (free)
-* [Boost](https://sourceforge.net/projects/boost/) (free)
 * A checkout of the source (e.g. from [GitHub for Windows](http://windows.github.com/))
 
 From here, use CMake-GUI or the command-line CMake to generate Visual Studio
-project files.
+project files. Literally every dependency will be downloaded and compiled
+automatically.
