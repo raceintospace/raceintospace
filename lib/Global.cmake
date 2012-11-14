@@ -43,8 +43,8 @@ if (BUILD_LIBPNG)
   endif ()
 
 else (BUILD_LIBPNG)
-  find_library(png_LIBRARY NAMES png REQUIRED PATHS /usr/X11/lib)
-  find_path(png_INCLUDE_DIR png.h PATHS /usr/X11/include)
+  find_library(png_LIBRARY NAMES png REQUIRED)
+  find_path(png_INCLUDE_DIR png.h)
 endif (BUILD_LIBPNG)
 
 if (BUILD_SDL)
