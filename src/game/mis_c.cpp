@@ -1572,7 +1572,7 @@ char DrawMoonSelection(char nauts, char plr)
 
         GetMouse();
 
-        if (MX[cPad][0].A->Status != 1 &&
+        if (MX[cPad][0].A->Status != AST_ST_DEAD &&
             (key == '1' || (x >= 25 && x <= 135 && y >= 100 && y <= 115 && mousebuttons > 0))) {
             InBox(27, 102, 133, 113);
             WaitForMouseUp();
@@ -1587,7 +1587,7 @@ char DrawMoonSelection(char nauts, char plr)
             return 1;
         }
 
-        if (MX[cPad][1].A->Status != 1 &&
+        if (MX[cPad][1].A->Status != AST_ST_DEAD &&
             (key == '2' || (x >= 25 && x <= 135 && y >= 125 && y <= 140 && mousebuttons > 0))) {
             InBox(27, 127, 133, 138);
             WaitForMouseUp();
@@ -1602,7 +1602,7 @@ char DrawMoonSelection(char nauts, char plr)
             return 2;
         }
 
-        if (nauts >= 3 && MX[cPad][2].A->Status != 1 &&
+        if (nauts >= 3 && MX[cPad][2].A->Status != AST_ST_DEAD &&
             (key == '3' || (x >= 25 && x <= 135 && y >= 150 && y <= 165 && mousebuttons > 0))) {
             InBox(27, 152, 133, 163);
             WaitForMouseUp();
@@ -1617,7 +1617,7 @@ char DrawMoonSelection(char nauts, char plr)
             return 3;
         }
 
-        if (nauts >= 4 && MX[cPad][3].A->Status != 1 &&
+        if (nauts >= 4 && MX[cPad][3].A->Status != AST_ST_DEAD &&
             (key == '4' || (x >= 25 && x <= 135 && y >= 175 && y <= 190 && mousebuttons > 0))) {
             InBox(27, 177, 133, 188);
             WaitForMouseUp();
