@@ -55,14 +55,7 @@ grMoveTo(int x, int y)
     gr_cur_y = y;
 }
 
-inline void swap(int x, int y)
-{
-    if (x != y) {
-        x ^= y;
-        y ^= x;
-        x ^= y;
-    }
-}
+#define swap(a,b) (t = a, a = b, b = t)
 
 void
 grLineTo(int x_arg, int y_arg)
@@ -73,6 +66,7 @@ grLineTo(int x_arg, int y_arg)
     int x, y;
     int x0, y0, x1, y1;
     int steep;
+    int t;
 
     x0 = gr_cur_x;
     y0 = gr_cur_y;

@@ -286,8 +286,8 @@ void DrawAstCheck(char plr)
 void DrawAstSel(char plr)
 {
 
-    strcpy(helptextIndex, "i012");
-    strcpy(keyhelpIndex, "k012");
+    helpText = "i012";
+    keyHelpText = "k012";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);

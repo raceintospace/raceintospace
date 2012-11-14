@@ -808,8 +808,8 @@ void Master(char plr)
 {
     int i, r_value, t_value = 0, g_value = 0;
     sFin = NULL;
-    strcpy(helptextIndex, "i000");
-    strcpy(keyhelpIndex, "i000");
+    helpText = "i000";
+    keyHelpText = "i000";
     WaveFlagSetup();
     sCount = -1;
     SUSPEND = Vab_Spot = 0;
@@ -864,8 +864,8 @@ void Master(char plr)
 #endif
 
     Port(plr);
-    strcpy(helptextIndex, "i000");
-    strcpy(keyhelpIndex, "i000");
+    helpText = "i000";
+    keyHelpText = "i000";
     WaveFlagDel();
 
     if (sFin) {
@@ -1234,8 +1234,8 @@ void Port(char plr)
     int32_t stable[55];
     uint16_t Count, *bone;
 
-    strcpy(helptextIndex, "i043");
-    strcpy(keyhelpIndex, "k043");
+    helpText = "i043";
+    keyHelpText = "k043";
     bone = (uint16_t *) buffer;
 
     fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
@@ -1334,7 +1334,7 @@ void Port(char plr)
                         fread_uint16_t(&Count, 1, fin);
                         fread_uint16_t(bone, Count, fin);
                         PortOutLine(Count, bone, 1);
-                        strncpy(&helptextIndex[1], MObj[i].Help, 3);
+                        strncpy(&helpText[1], MObj[i].Help, 3);
                     }
 
                     good = 0;
@@ -1528,8 +1528,8 @@ void Port(char plr)
 
                     PortRestore(Count);
                     Count = 0;
-                    strcpy(helptextIndex, "i043");
-                    strcpy(keyhelpIndex, "k043");
+                    helpText = "i043";
+                    keyHelpText = "k043";
                 } // if
 
             if (kMode == 0) {
@@ -1556,7 +1556,7 @@ char PortSel(char plr, char loc)
     switch (loc) {
     case PORT_Monument:
         Help((plr == 0) ? "i023" : "i022");
-        strcpy(keyhelpIndex, "k022");
+        keyHelpText = "k022";
         return pNOREDRAW; // Monuments
 
     case PORT_Pentagon:
@@ -1565,18 +1565,18 @@ char PortSel(char plr, char loc)
             return pNOREDRAW;
         }
 
-        strcpy(helptextIndex, "i027\0");
+        helpText = "i027\0";
         Intel(plr);
         return pNEWMUSIC;
 
     case PORT_Capitol:
-        strcpy(helptextIndex, (plr == 0) ? "i021" : "i532");
-        strcpy(keyhelpIndex, (plr == 0) ? "k021" : "k532");
+        helpText = (plr == 0) ? "i021" : "i532";
+        keyHelpText = (plr == 0) ? "k021" : "k532";
         Review(plr);
         return pREDRAW;
 
     case PORT_Cemetery:
-        strcpy(helptextIndex, "i020");
+        helpText = "i020";
         Hospital(plr, 1);
         return pREDRAW;
 
@@ -1587,7 +1587,7 @@ char PortSel(char plr, char loc)
             put_serial(LET_V);
         }
 
-        strcpy(helptextIndex, "i015");
+        helpText = "i015";
         VAB(plr);
         return pREDRAW;
 
@@ -1598,7 +1598,7 @@ char PortSel(char plr, char loc)
             put_serial(LET_M);
         }
 
-        strcpy(helptextIndex, "i027");
+        helpText = "i027";
         Museum(plr);
         return pNEWMUSIC;
 
@@ -1609,7 +1609,7 @@ char PortSel(char plr, char loc)
             put_serial(LET_A);
         }
 
-        strcpy(helptextIndex, "i027");
+        helpText = "i027";
         Admin(plr);
 
         if (LOAD == 1) {
@@ -1625,78 +1625,78 @@ char PortSel(char plr, char loc)
         }
 
     case PORT_AstroComplex:
-        strcpy(helptextIndex, "i039");
+        helpText = "i039";
         Limbo(plr);
         return pREDRAW; // Astro Complex
 
     case PORT_MedicalCtr:
-        strcpy(helptextIndex, "i041");
+        helpText = "i041";
         Hospital(plr, 0);
         return pREDRAW;
 
     case PORT_BasicTraining:
-        strcpy(helptextIndex, "i038");
+        helpText = "i038";
         Train(plr, 0);
         return pREDRAW;
 
     case PORT_Helipad:
-        strcpy(helptextIndex, "i037");
+        helpText = "i037";
         Train(plr, 2);
         return pREDRAW;
 
     case PORT_Pool:
-        strcpy(helptextIndex, "i037");
+        helpText = "i037";
         Train(plr, 3);
         return pREDRAW;
 
     case PORT_Planetarium:
-        strcpy(helptextIndex, "i037");
+        helpText = "i037";
         Train(plr, 4);
         return pREDRAW;
 
     case PORT_Centrifuge:
-        strcpy(helptextIndex, "i037");
+        helpText = "i037";
         Train(plr, 5);
         return pREDRAW;
 
     case PORT_Airfield:
-        strcpy(helptextIndex, "i037");
+        helpText = "i037";
         Train(plr, 1);
         return pREDRAW;
 
     case PORT_Satellite:
-        strcpy(helptextIndex, "i019");
+        helpText = "i019";
         SatBld(plr);
         return pREDRAW;
 
     case PORT_LM:
-        strcpy(helptextIndex, "i044");
-        strcpy(keyhelpIndex, "k209");
+        helpText = "i044";
+        keyHelpText = "k209";
         LMBld(plr);
         return pREDRAW; // LM Program
 
     case PORT_Jupiter:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 5);
         return pREDRAW;
 
     case PORT_XMS:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 4);
         return pREDRAW;
 
     case PORT_Apollo:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 3);
         return pREDRAW;
 
     case PORT_Gemini:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 2);
         return pREDRAW;
 
     case PORT_Mercury:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 1);
         return pREDRAW;
 
@@ -1707,7 +1707,7 @@ char PortSel(char plr, char loc)
             put_serial(LET_R);
         }
 
-        strcpy(helptextIndex, "i009");
+        helpText = "i009";
         RD(plr);
 
         if (plr == 1) {
@@ -1719,13 +1719,13 @@ char PortSel(char plr, char loc)
     case PORT_LaunchPad_A:
     case PORT_LaunchPad_B:
     case PORT_LaunchPad_C:
-        strcpy(helptextIndex, "i028");
+        helpText = "i028";
         ShowPad(plr, loc - 23);
         return pREDRAW;
 
     case PORT_MissionControl:
-        strcpy(helptextIndex, "i018");
-        strcpy(keyhelpIndex, "k018");
+        helpText = "i018";
+        keyHelpText = "k018";
         MisOK = 0;
 
         for (i = 0; i < 3; i++) {
@@ -1752,8 +1752,8 @@ char PortSel(char plr, char loc)
         return pNOFADE;
 
     case PORT_ViewingStand:
-        strcpy(helptextIndex, "i017");
-        strcpy(keyhelpIndex, "k017");
+        helpText = "i017";
+        keyHelpText = "k017";
         Viewing(plr);
         return pREDRAW;
 
@@ -1814,7 +1814,7 @@ char PortSel(char plr, char loc)
         return pNOREDRAW;
 
     case PORT_Moon:
-        strcpy(helptextIndex, "i029");
+        helpText = "i029";
         Moon(plr);
         return pREDRAW; // Moon
 
@@ -1823,7 +1823,7 @@ char PortSel(char plr, char loc)
         return pNOREDRAW; // Sov Mon #2
 
     case PORT_Zond:
-        strcpy(helptextIndex, "i036");
+        helpText = "i036";
         Programs(plr, 3);
         return pREDRAW; // Zond
 

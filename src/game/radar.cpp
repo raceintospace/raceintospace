@@ -593,8 +593,8 @@ void ShowPad(char plr, char pad)
         return;
     }
 
-    strcpy(helptextIndex, "i028");
-    strcpy(keyhelpIndex, "k028");
+    helpText = "i028";
+    keyHelpText = "k028";
     WaitForMouseUp();
 
     while (1) {
