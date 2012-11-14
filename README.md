@@ -57,14 +57,16 @@ on a Debian-based system, you can get everything with:
 Mac OS X
 ========
 
-[Homebrew](http://mxcl.github.com/homebrew/) has a nice Boost package, and it
-doesn't cause any runtime linkage issues, so we also need that:
+You need CMake, which is readily obtained from
+[Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway.
+Homebrew also has a nice Boost package that doesn't cause any runtime linkage
+issues, so install that too:
 
-    $ brew install boost
+    $ brew install cmake boost
 
-CMake automatically handles the other dependencies. Mac OS X sometimes includes
-libpng, and sometimes it doesn't, so we don't use it. We do, however, rely on
-the platform-provided zlib.
+CMake automatically handles the other dependencies using the stuff in `lib/`.
+Mac OS X sometimes includes libpng, and sometimes it doesn't, so we build our
+own. We do, however, rely on the platform-provided zlib.
 
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:
