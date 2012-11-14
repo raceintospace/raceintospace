@@ -442,7 +442,7 @@ struct Players {
     char Season;                     /**< Season of Year */
     struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
     struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
-    char EMark[4];                   /**< Event Marker */
+    char EMark[4];                   /**< unused - Event Marker */
     char Events[100];                /**< History of Event Cards */
     char Count;                      /**< Number of Events Picked */
     char PD[NUM_PLAYERS][28];
