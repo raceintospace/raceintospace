@@ -397,7 +397,7 @@ char Set_Goal(char plr, char which, char control)
                     ++Data->P[0].Udp[pd].Qty;
                 } else {
                     Data->Prestige[which].Place = plr;
-                    Data->Prestige[which].Indec = Data->P[plr].PastMis;
+                    Data->Prestige[which].Index = Data->P[plr].PastMis;
                     Data->Prestige[which].Year = tYr;
                     Data->Prestige[which].Month = tMo;
                     Data->Prestige[which].Goal[plr]++;  // increment count
@@ -431,7 +431,7 @@ char Set_Goal(char plr, char which, char control)
                         ++Data->P[0].Udp[pd].Qty;
                     } else {
                         Data->Prestige[which].Place = plr;
-                        Data->Prestige[which].Indec = Data->P[plr].PastMis;
+                        Data->Prestige[which].Index = Data->P[plr].PastMis;
                         Data->Prestige[which].Year = tYr;
                         Data->Prestige[which].Month = tMo;
                     }
