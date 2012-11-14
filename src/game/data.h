@@ -107,8 +107,17 @@ struct Prest_Upd {
     char Mnth;
 };
 
+/** 
+ * Player default settings
+ */
 struct Defl {
-    char Plr1, Plr2, Lev1, Lev2, Ast1, Ast2, Input, Anim, Music, Sound;
+    char Plr1, Plr2; 	/**< 0=USA,1=USSR,2=AI+USA,3=AI+USSR,6=Remote+USA,7=Remote+USSR */
+		char Lev1, Lev2;  /**< 0=Easy, 1=Medium, 2=Hard */
+		char Ast1, Ast2;  /**< 0=Easy, 1=Medium, 2=Hard */
+		char Input;       /**< 0=Mouse, 1=Keyboard, 2=Joystick */
+		char Anim;        /**< 0=Full, 1=Partial, 2=Results Only */
+		char Music;       /**< 0=Full, 1=Partial, 2=None */
+		char Sound;       /**< 0=On, 1=Off */
 };
 
 /** The Prestige for any achievement is stored in this.
