@@ -249,6 +249,14 @@ enum AstronautStatus {
     AST_ST_TRAIN_ADV_4 = 10,
 };
 
+enum AstronautAdvancedFocus {
+		AST_FOCUS_CAPSULE = 1,
+		AST_FOCUS_LEM = 2,
+		AST_FOCUS_EVA = 3,
+		AST_FOCUS_DOCKING = 4,
+		AST_FOCUS_ENDURANCE = 5,
+};
+
 /**
 \brief This is a structure representing astronauts/cosmonauts.
 */

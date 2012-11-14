@@ -1227,7 +1227,7 @@ void DispLoc(char plr, char *where)
     ass = abuf[*where].Assign;
 
     switch (abuf[*where].Status) {
-    case 0:
+    case AST_ST_ACTIVE:
         if (ass == 0) {
             if (plr == 0) {
                 PrintAt(216, 159, "ASTRONAUT COMPLEX");
@@ -1242,7 +1242,7 @@ void DispLoc(char plr, char *where)
         PrintAt(0, 0, " PROGRAM");
         return;
 
-    case 1:
+    case AST_ST_DEAD:
         if (plr == 0) {
             PrintAt(216, 159, "ARLINGTON CEMETERY");
         } else {
@@ -1251,42 +1251,42 @@ void DispLoc(char plr, char *where)
 
         return;
 
-    case 2:
+    case AST_ST_RETIRED:
         PrintAt(216, 159, "RETIRED");
         return;
 
-    case 3:
+    case AST_ST_INJURED:
         PrintAt(216, 159, "INJURED");
         return;
 
-    case 4:
-    case 5:
-    case 6:
+    case AST_ST_TRAIN_BASIC_1:
+    case AST_ST_TRAIN_BASIC_2:
+    case AST_ST_TRAIN_BASIC_3:
         PrintAt(216, 159, "BASIC TRAINING");
         return;
 
-    case 7:
-    case 8:
-    case 9:
-    case 10:
+    case AST_ST_TRAIN_ADV_1:
+    case AST_ST_TRAIN_ADV_2:
+    case AST_ST_TRAIN_ADV_3:
+    case AST_ST_TRAIN_ADV_4:
         switch (abuf[*where].Focus) {
-        case 1:
+        case AST_FOCUS_CAPSULE:
             PrintAt(216, 159, "ADV. CAPSULE");
             return;
 
-        case 2:
+        case AST_FOCUS_LEM:
             PrintAt(216, 159, "ADV. L.E.M.");
             return;
 
-        case 3:
+        case AST_FOCUS_EVA:
             PrintAt(216, 159, "ADV. E.V.A.");
             return;
 
-        case 4:
+        case AST_FOCUS_DOCKING:
             PrintAt(216, 159, "ADV. DOCKING");
             return;
 
-        case 5:
+        case AST_FOCUS_ENDURANCE:
             PrintAt(216, 159, "ADV. ENDURANCE");
             return;
         }
