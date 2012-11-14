@@ -120,8 +120,11 @@ add_dependencies(libs ext_jsoncpp)
 ###
 # PhysicsFS
 
-set (physfs_Version 2.0.3)
-set (physfs_URL http://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+# I want 2.1 features, even if they're not out yet, so I made my own tarball
+#set (physfs_Version 2.0.3)
+#set (physfs_URL http://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+set (physfs_Version 2.1.0-pre20121013)
+set (physfs_URL https://s3.amazonaws.com/willglynn/physfs-${physfs_Version}.tgz)
 set (physfs_Dir ${CMAKE_CURRENT_BINARY_DIR}/physfs-${physfs_Version})
 
 # physfs 2.0.3 complains about FSPathMakeRef et al being deprecated, and warnings are treated as errors
