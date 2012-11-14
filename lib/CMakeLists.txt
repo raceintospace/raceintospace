@@ -57,8 +57,6 @@ if (BUILD_LIBPNG)
   set (libpng_URL http://download.sourceforge.net/libpng/libpng-${libpng_Version}.tar.gz)
   set (libpng_Dir ${CMAKE_CURRENT_BINARY_DIR}/libpng-${libpng_Version})
 
-  # zlib uses CMake, but it doesn't build on Mac OS X:
-  #  https://github.com/madler/zlib/pull/26
   ExternalProject_Add(ext_libpng
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libpng_URL}
@@ -66,7 +64,7 @@ if (BUILD_LIBPNG)
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
   
-  add_dependencies(libs ext_zlib)
+  add_dependencies(libs ext_libpng)
   
   if (BUILD_ZLIB)
     add_dependencies(ext_libpng ext_zlib)
