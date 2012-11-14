@@ -39,7 +39,7 @@ if (BUILD_LIBPNG)
   if (WINDOWS)
     set(png_LIBRARY libpng15d)
   else ()
-    set(png_LIBRARY png)
+    set(png_LIBRARY ${LocalPrefix}/lib/libpng15d.a)
   endif ()
 
 else (BUILD_LIBPNG)
