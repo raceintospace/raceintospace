@@ -127,8 +127,8 @@ void Admin(char plr)
 
         music_start(M_GOOD);
 
-        strncpy(helptextIndex, (plr == 0) ? "i702" : "i703", 4);
-        strncpy(keyhelpIndex, (plr == 0) ? "k601" : "k602", 4);
+        helpText = (plr == 0) ? "i702" : "i703";
+        keyHelpText = (plr == 0) ? "k601" : "k602"; 
 
         i = BChoice(plr, 7, (char *)AName, AImg);
 
@@ -136,8 +136,8 @@ void Admin(char plr)
         case 1:
             music_stop();
             music_start(M_DRUMSM);
-            strcpy(helptextIndex, "i007");
-            strcpy(keyhelpIndex, "k007");
+            helpText = "i007";
+            keyHelpText = "k007";
             Budget(plr);
             key = 0;
             music_stop();
@@ -145,14 +145,14 @@ void Admin(char plr)
 
         case 2:
             music_stop();
-            strcpy(helptextIndex, "i008");
+            helpText = "i008";
             HPurc(plr);
             key = 0;
             break;
 
         case 3:
-            strcpy(helptextIndex, "i010");
-            strcpy(keyhelpIndex, "k010");
+            helpText = "i010";
+            keyHelpText = "k010";
             music_stop();
             music_start(M_MISSPLAN);
             Future(plr);
@@ -162,23 +162,23 @@ void Admin(char plr)
 
         case 4:
             music_stop();
-            strcpy(helptextIndex, "i012");
-            strcpy(keyhelpIndex, "k012");
+            helpText = "i012";
+            keyHelpText = "k012";
             AstSel(plr);
             key = 0;
             break;
 
         case 5:
             music_stop();
-            strcpy(helptextIndex, "i013");
-            strcpy(keyhelpIndex, "k013");
+            helpText = "i013";
+            keyHelpText = "k013";
             Prefs(1);
             key = 0;
             break;
 
         case 6:
-            strcpy(helptextIndex, "i128");
-            strcpy(keyhelpIndex, "k128");
+            helpText = "i128";
+            keyHelpText = "k128";
             FileAccess(0);
             key = 0;
             break;
@@ -198,8 +198,8 @@ void Admin(char plr)
     } while (!(i == 7 || (i == 6 && (QUIT || LOAD))));
 
     music_stop();
-    strcpy(helptextIndex, "i000");
-    strcpy(keyhelpIndex, "k000");
+    helpText = "i000";
+    keyHelpText = "k000";
     WaitForMouseUp();
 }
 
@@ -304,8 +304,8 @@ void FileAccess(char mode)
     }
 
 
-    strcpy(helptextIndex, "i128");
-    strcpy(keyhelpIndex, "k128");
+    helpText = "i128";
+    keyHelpText = "k128";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
 
@@ -1380,11 +1380,11 @@ int FutureCheck(char plr, char type)
     RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
 
     if (type == 0) {
-        strcpy(helptextIndex, "i010");
-        strcpy(keyhelpIndex, "k010");
+        helpText = "i010";
+        keyHelpText = "k010";
     } else {
-        strcpy(helptextIndex, "i015");
-        strcpy(keyhelpIndex, "k015");
+        helpText = "i015";
+        keyHelpText = "k015";
     }
 
     gxClearDisplay(0, 0);

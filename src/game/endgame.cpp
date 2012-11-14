@@ -87,8 +87,8 @@ Burst(char win)
     char clr = 1;
 
     key = 0;
-    strncpy(helptextIndex, "i144", 4);
-    strncpy(keyhelpIndex, "k044", 4);
+    helpText = "i144";
+    keyHelpText = "k044";
     gxGetImage(&vhptr, 0, 0, 319, 199, 0);
 
     while (1) {
@@ -159,8 +159,8 @@ Burst(char win)
                     if (R_value > 0) {
 
                         gxPutImage(&vhptr, gxSET, 0, 0, 0);
-                        strncpy(helptextIndex, "i144", 4);
-                        strncpy(keyhelpIndex, "k044", 4);
+                        helpText = "i144";
+                        keyHelpText = "k044";
 
                         return (R_value);
                     }
@@ -221,8 +221,8 @@ void EndGame(char win, char pad)
 
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    strncpy(helptextIndex, "i000", 4);
-    strncpy(keyhelpIndex, "k000", 4);
+    helpText = "i000";
+    keyHelpText = "k000";
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -552,8 +552,8 @@ void NewEnd(char win, char loc)
     while (i == 0) {
         key = 0;
         GetMouse();
-        strncpy(helptextIndex, "i144", 4);
-        strncpy(keyhelpIndex, "k044", 4);
+        helpText = "i144";
+        keyHelpText = "k044";
 
         music_start(M_VICTORY);
 
@@ -590,8 +590,8 @@ void NewEnd(char win, char loc)
                 }
 
                 Re_Draw = 0;
-                strncpy(helptextIndex, "i144", 4);
-                strncpy(keyhelpIndex, "k044", 4);
+                helpText = "i144";
+                keyHelpText = "k044";
             }
 
         if (((x >= 14 && y >= 182 && x <= 65 && y <= 190 && mousebuttons > 0) || key == 'H') || R_V == 1) {
@@ -608,8 +608,8 @@ void NewEnd(char win, char loc)
             OutBox(14, 182, 65, 190);
             EndGame(win, loc);
             Draw_NewEnd(win);
-            strncpy(helptextIndex, "i144", 4);
-            strncpy(keyhelpIndex, "k044", 4);
+            helpText = "i144";
+            keyHelpText = "k044";
             R_V = Burst(win);
         }
 
@@ -629,8 +629,8 @@ void NewEnd(char win, char loc)
             music_start(M_THEME);
             Stat(win);
             Draw_NewEnd(win);
-            strncpy(helptextIndex, "i144", 4);
-            strncpy(keyhelpIndex, "k044", 4);
+            helpText = "i144";
+            keyHelpText = "k044";
             R_V = Burst(win);
         }
 
@@ -660,8 +660,8 @@ void NewEnd(char win, char loc)
             music_start(M_PRGMTRG);
             Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "UPAR" : "SPAR");
             music_stop();
-            strncpy(helptextIndex, "i144", 4);
-            strncpy(keyhelpIndex, "k044", 4);
+            helpText = "i144";
+            keyHelpText = "k044";
         }
 
         if (((x >= 194 && y >= 182 && x <= 245 && y <= 190 && mousebuttons > 0) || key == 'M') || R_V == 4) {
@@ -690,8 +690,8 @@ void NewEnd(char win, char loc)
             music_start(M_MISSPLAN);
             Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "PUM3C6" : "PSM3C6");
             music_stop();
-            strncpy(helptextIndex, "i144", 4);
-            strncpy(keyhelpIndex, "k044", 4);
+            helpText = "i144";
+            keyHelpText = "k044";
         }
 
         if (((x >= 254 && y >= 182 && x <= 305 && y <= 190 && mousebuttons > 0) || key == K_ENTER) || R_V == 5) {

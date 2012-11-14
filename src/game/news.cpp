@@ -617,7 +617,7 @@ News(char plr)
     loc = 1;
     Status = 0;
 
-    strcpy(helptextIndex, "i002");
+    helpText = "i002";
     WaitForMouseUp();
 
     while (1) {

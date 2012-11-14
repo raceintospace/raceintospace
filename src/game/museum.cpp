@@ -198,8 +198,8 @@ void Museum(char plr)
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
         }
 
-        strncpy(helptextIndex, (plr == 0) ? "i700" : "i701", 4);
-        strncpy(keyhelpIndex, (plr == 0) ? "k603" : "k604", 4);
+        helpText = (plr == 0) ? "i700" : "i701";
+        keyHelpText = (plr == 0) ? "k603" : "k604";
         i = BChoice(plr, tots, &AName[0][0], &AImg[0]);
 
         switch (i) {
@@ -208,31 +208,31 @@ void Museum(char plr)
             break;
 
         case 2:
-            strncpy(helptextIndex, "i130", 4);
-            strncpy(keyhelpIndex, "k031", 4);
+            helpText = "i130";
+            keyHelpText = "k031";
             ShowSpHist(plr);
             break;
 
         case 3:
-            strncpy(helptextIndex, "i131", 4);
-            strncpy(keyhelpIndex, "k321", 4);
+            helpText = "i131";
+            keyHelpText = "k321";
             Records(plr);
             break;
 
         case 4:
-            strncpy(helptextIndex, "i132", 4);
-            strncpy(keyhelpIndex, "k033", 4);
+            helpText = "i132";
+            keyHelpText = "k033";
             ShowPrest(plr);
             break;
 
         case 5:
-            strncpy(helptextIndex, "i034", 4);
+            helpText = "i034";
             ShowHard(plr);
             break;
 
         case 6:
-            strncpy(helptextIndex, (plr == 0) ? "i133" : "i134", 4);
-            strncpy(keyhelpIndex, (plr == 0) ? "k035" : "k441", 4);
+            helpText = (plr == 0) ? "i133" : "i134";
+            keyHelpText = (plr == 0) ? "k035" : "k441";
 
             if (Data->P[plr].AstroCount > 0) {
                 ShowAstrosHist(plr);
@@ -245,8 +245,8 @@ void Museum(char plr)
             break;
         }
 
-        strncpy(helptextIndex, "i000", 4);
-        strncpy(keyhelpIndex, "k000", 4);
+        helpText = "i000";
+        keyHelpText = "k000";
     } while (i != beg);
 
     music_stop();
@@ -339,9 +339,9 @@ void ShowPrest(char plr)
 
             key = 0;
 
-            strcpy(helptextIndex, "i000");
+            helpText = "i000";
 
-            strcpy(keyhelpIndex, "k000");
+            keyHelpText = "k000";
 
             return;
         }

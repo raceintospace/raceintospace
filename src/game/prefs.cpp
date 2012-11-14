@@ -49,8 +49,8 @@ void DrawPrefs(int where, char a1, char a2)
     FILE *fin;
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    strcpy(helptextIndex, "i013");
-    strcpy(keyhelpIndex, "K013");
+    helpText = "i013";
+    keyHelpText = "K013";
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
