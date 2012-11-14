@@ -247,7 +247,7 @@ void EndGame(char win, char pad)
     if (Option == -1 && MAIL == -1) {
         miss = Data->P[win].Mission[pad].MissionCode;
     } else {
-        miss = Data->P[win].History[Data->Prestige[22].Indec].MissionCode;
+        miss = Data->P[win].History[Data->Prestige[22].Index].MissionCode;
     }
 
     grSetColor(6);
@@ -269,9 +269,9 @@ void EndGame(char win, char pad)
         month   = Data->Prestige[22].Month;
 
         if (MAIL != -1 || Option == win) {
-            strcpy(capName , Data->P[win].History[Data->Prestige[22].Indec].MissionName[0]);
+            strcpy(capName , Data->P[win].History[Data->Prestige[22].Index].MissionName[0]);
         } else {
-            prog = Data->P[win].History[Data->Prestige[22].Indec].Hard[i][0] + 1;
+            prog = Data->P[win].History[Data->Prestige[22].Index].Hard[i][0] + 1;
             strcpy(capName , &Data->P[win].Manned[prog - 1].Name[0]);
             strcat(capName , " ");
             strcat(capName , Nums[Data->P[win].Manned[prog - 1].Used]);
@@ -296,7 +296,7 @@ void EndGame(char win, char pad)
     if (Option == -1 && MAIL == -1) {
         gork = Data->P[win].PastMis - 1;
     } else {
-        gork = Data->Prestige[22].Indec;
+        gork = Data->Prestige[22].Index;
     }
 
     if (win == 1 && Data->P[win].History[gork].Hard[i][0] >= 3) {
@@ -1206,7 +1206,7 @@ void PlayFirst(char plr, char first)
     grSetColor(6);
 
 //Modem Opponent => assure prestige first that mission
-    Check = Data->Prestige[first].Indec;
+    Check = Data->Prestige[first].Index;
     index = plr;
 
     if (index == 0) {
@@ -1225,7 +1225,7 @@ void PlayFirst(char plr, char first)
                 Data->PD[index][i] = 1;
             } else {
                 //Found prestige first same mission
-                if (Data->Prestige[i].Indec == Check) {
+                if (Data->Prestige[i].Index == Check) {
                     PrintAt(84, 148 + w * 8, &PF[i][0]);
                     ++w;
                     Data->PD[index][i] = 1;
@@ -1240,7 +1240,7 @@ void PlayFirst(char plr, char first)
     if (Option == -1 && MAIL == -1) {
         Replay(plr, Data->P[plr].PastMis - 1, 85, 46, 151, 82, "OOOO");
     } else {
-        Replay(index, Data->Prestige[first].Indec, 85, 46, 151, 82, "OOOO");
+        Replay(index, Data->Prestige[first].Index, 85, 46, 151, 82, "OOOO");
     }
 
     PauseMouse();

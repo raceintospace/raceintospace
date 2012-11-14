@@ -117,8 +117,7 @@ struct PrestType {
     char Add[4];        /**< 4&5 used for qty completed */
     char Goal[2];       /**< Goal steps used for prest calculations */
     int16_t Points[2];  /**< Total points earned */
-    char Indec;         /**< the index for the first into .History[] */
-    /**< \bug Indec is probably a typo. Should be Index. */
+    char Index;         /**< the index for the first into .History[] */
     char Place;         /**< Who got the prestige first. */
     char mPlace;        /**< If you've done it at all */
     char Month;         /**< Date of the First */
