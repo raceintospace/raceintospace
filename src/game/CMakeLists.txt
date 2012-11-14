@@ -20,6 +20,8 @@ set(game_sources
   crew.cpp
   endgame.cpp
   endianness.cpp
+  file.cpp
+  filesystem.cpp
   fortify_workaround.cpp
   fs.cpp
   futbub.cpp
@@ -68,7 +70,7 @@ set(game_sources
 
 set(game_libraries
   ${SDL_LIBRARY} ogg vorbis theora
-  jsoncpp
+  jsoncpp physfs ${zlib_LIBRARY}
   )
 
 # Defer to the platform-specific CMakeLists for building the actual game target
