@@ -107,8 +107,17 @@ struct Prest_Upd {
     char Mnth;
 };
 
+/** 
+ * Player default settings
+ */
 struct Defl {
-    char Plr1, Plr2, Lev1, Lev2, Ast1, Ast2, Input, Anim, Music, Sound;
+    char Plr1, Plr2; 	/**< 0=USA,1=USSR,2=AI+USA,3=AI+USSR,6=Remote+USA,7=Remote+USSR */
+		char Lev1, Lev2;  /**< 0=Easy, 1=Medium, 2=Hard */
+		char Ast1, Ast2;  /**< 0=Easy, 1=Medium, 2=Hard */
+		char Input;       /**< 0=Mouse, 1=Keyboard, 2=Joystick */
+		char Anim;        /**< 0=Full, 1=Partial, 2=Results Only */
+		char Music;       /**< 0=Full, 1=Partial, 2=None */
+		char Sound;       /**< 0=On, 1=Off */
 };
 
 /** The Prestige for any achievement is stored in this.
@@ -117,8 +126,7 @@ struct PrestType {
     char Add[4];        /**< 4&5 used for qty completed */
     char Goal[2];       /**< Goal steps used for prest calculations */
     int16_t Points[2];  /**< Total points earned */
-    char Indec;         /**< the index for the first into .History[] */
-    /**< \bug Indec is probably a typo. Should be Index. */
+    char Index;         /**< the index for the first into .History[] */
     char Place;         /**< Who got the prestige first. */
     char mPlace;        /**< If you've done it at all */
     char Month;         /**< Date of the First */
@@ -455,7 +463,7 @@ enum MissionHardwareType {
     Mission_PrimaryBooster,     // 4
     Mission_EVA,                            // 5
     Mission_PhotoRecon,             // 6
-    Mission_SecondaryBooster    // 7
+    Mission_SecondaryBooster    // 7 - unused
 };
 
 struct MisAst {  // This struct will be -1's if empty
