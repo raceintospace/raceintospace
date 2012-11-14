@@ -161,8 +161,8 @@ void DrawRD(char player_index)
 {
     int i;
     FILE *fin;
-    strcpy(helptextIndex, "i009");
-    strcpy(keyhelpIndex, "k009");
+    helpText = "i009";
+    keyHelpText = "k009";
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
@@ -348,8 +348,8 @@ char RD(char player_index)
             buy[i][j] = Data->P[player_index].Buy[i][j];
         }
 
-    strcpy(helptextIndex, "i009");
-    strcpy(keyhelpIndex, "k009");
+    helpText = "i009";
+    keyHelpText = "k009";
 
     DrawRD(player_index);
     BButs(PROBE_HARDWARE, hardware);
@@ -364,9 +364,9 @@ char RD(char player_index)
 
     ManSel(decodeNumRolls(buy[hardware][unit]));
 
-    strcpy(helptextIndex, "i009");
+    helpText = "i009";
 
-    strcpy(keyhelpIndex, "k009");
+    keyHelpText = "k009";
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
@@ -419,9 +419,9 @@ char RD(char player_index)
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
-                    strcpy(helptextIndex, "i009");
+                    helpText = "i009";
 
-                    strcpy(keyhelpIndex, "k009");
+                    keyHelpText = "k009";
 
                     FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 }
@@ -1284,8 +1284,8 @@ void DrawHPurc(char player_index)
     display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
-    strcpy(helptextIndex, "i008");
-    strcpy(keyhelpIndex, "k008");
+    helpText = "i008";
+    keyHelpText = "k008";
 
     return;
 }
@@ -1302,8 +1302,8 @@ char HPurc(char player_index)
 
     hardware = HARD1;
     unit = UNIT1;
-    strcpy(helptextIndex, "i008");
-    strcpy(keyhelpIndex, "k008");
+    helpText = "i008";
+    keyHelpText = "k008";
     DrawHPurc(player_index);
     BButs(PROBE_HARDWARE, hardware);
     ShowUnit(hardware, unit, player_index);
@@ -1347,8 +1347,8 @@ char HPurc(char player_index)
             if (EqDmg) {
                 InBox(283, 90, 302, 100);
                 DamProb(player_index, hardware, unit);
-                strcpy(helptextIndex, "i008");
-                strcpy(keyhelpIndex, "k008");
+                helpText = "i008";
+                keyHelpText = "k008";
                 DrawHPurc(player_index);
                 BButs(PROBE_HARDWARE, hardware);
                 ShowUnit(hardware, unit, player_index);

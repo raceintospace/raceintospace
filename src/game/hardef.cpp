@@ -107,8 +107,8 @@ ShowHard(char plr)
     char Cnt = 0;               // switch between screens
 
     DrawHardef(plr);
-    strcpy(helptextIndex, "i034");
-    strcpy(keyhelpIndex, "k034");
+    helpText = "i034";
+    keyHelpText = "k034";
     WaitForMouseUp();
 
     while (1) {
@@ -1552,8 +1552,8 @@ DrawRank(char plr)
                                   12, score;
     char Digit[4];
 
-    strcpy(helptextIndex, "i030");
-    strcpy(keyhelpIndex, "k030");
+    helpText = "i030";
+    keyHelpText = "k030";
 
     //Win=Data->Prestige[22].Place;
     InBox(12, 4, 39, 20);

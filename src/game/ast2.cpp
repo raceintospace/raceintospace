@@ -50,8 +50,8 @@ void DrawLimbo(char plr)
     int lenprogname;  // Variable to hold and manipulate length of program name
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-    strcpy(helptextIndex, "i039");
-    strcpy(keyhelpIndex, "k039");
+    helpText = "i039";
+    keyHelpText = "k039";
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

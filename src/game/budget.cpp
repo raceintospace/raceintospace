@@ -410,8 +410,8 @@ void Budget(char player)
 {
     char pStatus[] = {1, 1, 1, 1};
     DrawBudget(player, pStatus);
-    strcpy(helptextIndex, "i007");
-    strcpy(keyhelpIndex, "k007");
+    helpText = "i007";
+    keyHelpText = "k007";
     WaitForMouseUp();
 
     while (1) {

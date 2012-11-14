@@ -243,7 +243,7 @@ int AsnCrew(char plr, char pad, char part)
 {
     int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
 
-    strcpy(keyhelpIndex, "k200");
+    keyHelpText = "k200";
     men = Data->P[plr].Future[pad].Men;
     prg = Data->P[plr].Future[pad].Prog;
 
@@ -715,7 +715,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
 {
     int lenprogname;  // Variable to hold and manipulate length of program name
 
-    strcpy(keyhelpIndex, "k201");
+    keyHelpText = "k201";
     ShBox(75, 43, 244, 173);
     InBox(81, 60, 238, 95);
     IOBox(81, 154, 238, 167); // continue

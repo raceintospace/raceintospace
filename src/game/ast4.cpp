@@ -699,8 +699,8 @@ Programs(char plr, char prog)
     int M[100], Gcnt[8];
     char ksel = 0;
 
-    strcpy(helptextIndex, "i036");
-    strcpy(keyhelpIndex, "k036");
+    helpText = "i036";
+    keyHelpText = "k036";
 
     for (i = 0; i < 100; i++) {
         M[i] = -1;

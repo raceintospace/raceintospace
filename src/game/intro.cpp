@@ -121,7 +121,7 @@ int nCREDIT = sizeof CREDIT / sizeof CREDIT[0];
 void Credits(void)
 {
     int k, i;
-    strcpy(keyhelpIndex, "i999");
+    keyHelpText = "i999";
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
 
@@ -166,7 +166,7 @@ void Credits(void)
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
     display::graphics.clearScreen(0);
-    strcpy(keyhelpIndex, "k000");
+    keyHelpText = "k000";
 }
 
 
@@ -220,8 +220,8 @@ void NextTurn(char plr)
     int32_t len = 0;
 
     memset(display::graphics.palette(), 0x00, 3 * 256);
-    strcpy(helptextIndex, "i000");
-    strcpy(keyhelpIndex, "k000");
+    helpText = "i000";
+    keyHelpText = "k000";
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);

@@ -2,6 +2,7 @@
 #define GAME_MAIN_H
 
 #include "gxdatatypes.h"
+#include <string>
 
 void InBox(int x1, int y1, int x2, int y2);
 void OutBox(int x1, int y1, int x2, int y2);
@@ -45,8 +46,8 @@ extern GXHEADER vhptr2;
 extern char BIG;
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern unsigned char AL_CALL;
-extern char helptextIndex[5];
-extern char keyhelpIndex[5];
+extern std::string helpText;
+extern std::string keyHelpText;
 extern int oldx;
 extern int oldy;
 extern unsigned char HARD1;

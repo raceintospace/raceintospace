@@ -50,11 +50,11 @@ void DrawTrain(char plr, char lvl)
     char *Trner = "TRAINING\0";
 
     if (lvl == 0) {
-        strcpy(helptextIndex, "i038");
-        strcpy(keyhelpIndex, "k038");
+        helpText = "i038";
+        keyHelpText = "k038";
     } else {
-        strcpy(helptextIndex, "i037");
-        strcpy(keyhelpIndex, "k037");
+        helpText = "i037";
+        keyHelpText = "k037";
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
@@ -678,11 +678,11 @@ void Hospital(char plr, int sel)
     uint32_t size = 0;
 
     if (sel == 0) {
-        strcpy(helptextIndex, "i041");
-        strcpy(keyhelpIndex, "k041");
+        helpText = "i041";
+        keyHelpText = "k041";
     } else {
-        strcpy(helptextIndex, "i020");
-        strcpy(keyhelpIndex, "k020");
+        helpText = "i020";
+        keyHelpText = "k020";
     }
 
     for (i = 0; i < 100; i++) {

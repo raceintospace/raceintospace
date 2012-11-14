@@ -85,8 +85,9 @@ unsigned char BUTLOAD;
 unsigned char FADE;
 unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
-char helptextIndex[5];
-char keyhelpIndex[5];
+std::string helpText;
+std::string keyHelpText;
+//char keyHelpText[5];
 char df;
 char IDLE[2];
 char *buffer;
@@ -205,8 +206,8 @@ int game_main_impl(int argc, char *argv[])
 
     av_setup();
 
-    strcpy(helptextIndex, "i000");
-    strcpy(keyhelpIndex, "k000");
+    helpText = "i000";
+    keyHelpText = "k000";
 
     LOAD = QUIT = 0;
 
@@ -258,8 +259,8 @@ int game_main_impl(int argc, char *argv[])
         gxClearDisplay(0, 0);
         PortPal(0);
         key = 0;
-        strcpy(helptextIndex, "i000");
-        strcpy(keyhelpIndex, "i000");
+        helpText = "i000";
+        keyHelpText = "i000";
         df = 1;
 
         music_start(M_LIFTOFF);
@@ -270,7 +271,7 @@ int game_main_impl(int argc, char *argv[])
             HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
-            strcpy(helptextIndex, "i013");
+            helpText = "i013";
             Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
             plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
             plr[1] = Data->Def.Plr2;
@@ -485,9 +486,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             if ((IDLE[0] > 12 || IDLE[1] > 12) || ((AI[i] && plr[other(i)] < NUM_PLAYERS && ((Data->Def.Lev1 != 0 && other(i) == 0) || (Data->Def.Lev2 != 0 && other(i) == 1))))) {
                 if (IDLE[0] > 12 || IDLE[1] > 12 || Data->P[abs(i - 1)].PresRev[0] >= 16) {
-                    strncpy(helptextIndex, "i136", 4);
+                    helpText = "i136";
                     Data->P[abs(i - 1)].PresRev[0] = 0x7F;
-                    strncpy(helptextIndex, "i000", 4);
+                    helpText = "i000";
 
                     if (IDLE[0] > 12 || IDLE[1] > 12) {
                         SpecialEnd();
@@ -516,8 +517,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
                 VerifyCrews(plr[i]);
                 VerifySF(plr[i]);
-                strncpy(helptextIndex, "i000", 4);
-                strncpy(keyhelpIndex, "k000", 4);
+                helpText = "i000";
+                keyHelpText = "k000";
                 FixPrograms(plr[i]);
 
                 //soften sound
@@ -811,10 +812,10 @@ void GetMouse_fast(void)
         CloseEmUp(0, 0);
     } else if (AL_CALL == 0 && (key >> 8 == 0x3B)) {
         if (mousebuttons != 1) {
-            Help(helptextIndex);
+            Help(helpText.c_str());
         }
     } else if (AL_CALL == 0 && ((key >> 8) == 0x3C)) {
-        Help(keyhelpIndex);
+        Help(keyHelpText.c_str());
     } else if (AL_CALL == 0 && ((key >> 8) == 0x3D)) {
         Help("i123");
     }

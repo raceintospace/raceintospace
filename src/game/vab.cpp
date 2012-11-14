@@ -164,8 +164,8 @@ void DispVAB(char plr, char pad)
     FILE *fp = NULL;
     uint16_t image_len = 0;
 
-    strcpy(helptextIndex, "i016");
-    strcpy(keyhelpIndex, "k016");
+    helpText = "i016";
+    keyHelpText = "k016";
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
@@ -848,7 +848,7 @@ begvab:
         goto begvab;
     }
 
-    strcpy(helptextIndex, "i016");
+    helpText = "i016";
 
     if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 0) {
         for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
