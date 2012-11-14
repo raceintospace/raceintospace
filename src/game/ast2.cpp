@@ -48,7 +48,7 @@ void DrawLimbo(char plr)
 {
     int i;
     int lenprogname;  // Variable to hold and manipulate length of program name
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     strcpy(helptextIndex, "i039");
     strcpy(keyhelpIndex, "k039");
@@ -56,7 +56,7 @@ void DrawLimbo(char plr)
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
 
     if (plr == 0) {
@@ -93,7 +93,7 @@ void DrawLimbo(char plr)
     InBox(9, 28, 148, 42);
     InBox(9, 108, 148, 123);
 
-    grSetColor(20);
+    display::graphics.setForegroundColor(20);
     PrintAt(180, 55, "TRANSFER");
 
     if (plr == 0) {
@@ -106,7 +106,7 @@ void DrawLimbo(char plr)
     PrintAt(254, 62, "TRANSFER");
 
     RectFill(166, 78, 314, 88, 10);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(185, 85, "TRANSFER TO LOCATION");
 
     for (i = 0; i < 5; i++) {
@@ -115,9 +115,9 @@ void DrawLimbo(char plr)
 
         if (Data->P[plr].Manned[i].Num < 0) {
             InBox(167, 95 + 21 * i, 236, 109 + 21 * i);
-            grSetColor(17);
+            display::graphics.setForegroundColor(17);
         } else {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3;
@@ -125,7 +125,7 @@ void DrawLimbo(char plr)
         PrintAt(181 + lenprogname, 101 + 21 * i, Data->P[plr].Manned[i].Name);
         PrintAt(181, 107 + 21 * i, "PROGRAM");
 
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(257, 107 + 21 * i, "TRAINING");
         //grMoveTo(254,101+21*i);  This remmed out to manually place the Adv. Training names so they could be centered -Leon
 
@@ -157,15 +157,15 @@ void DrawLimbo(char plr)
 
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(187, 37, "OPERATION SELECTION");
 
-    grSetColor(20);
+    display::graphics.setForegroundColor(20);
     //PrintAt(256,13,"CONTINUE");
     PrintAt(15, 37, "NAME:");
     PrintAt(17, 118, "GROUP:");
     PrintAt(88, 118, "TENURE:");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(102, 60, "MOOD:");
     PrintAt(102, 68, "CAP:");
     PrintAt(102, 76, "L.M.:");
@@ -198,7 +198,7 @@ void Limbo(char plr)
         LimboText(plr, M[now2]);
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     while (1) {
         key = 0;
@@ -365,7 +365,7 @@ void Limbo(char plr)
             InBox(167, 48, 239, 65);
             OutBox(241, 48, 313, 65);
             RectFill(166, 78, 314, 88, 10);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(185, 85, "TRANSFER TO LOCATION");
 
         }
@@ -376,7 +376,7 @@ void Limbo(char plr)
             InBox(241, 48, 313, 65);
             OutBox(167, 48, 239, 65);
             RectFill(166, 78, 314, 88, 10);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(203, 85, "VISIT LOCATION");
 
         }
@@ -455,7 +455,7 @@ void Limbo(char plr)
                 InBox(241, 48, 313, 65);
                 OutBox(167, 48, 239, 65);
                 RectFill(166, 78, 314, 88, 10);
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 PrintAt(203, 85, "VISIT LOCATION");
                 RectFill(26, 129, 153, 195, 0);
                 now2 = BarA = count = 0;
@@ -475,7 +475,7 @@ void Limbo(char plr)
                 //   ShBox(26,130+BarA*8,152,138+BarA*8);
                 //   DispLeft(plr,BarA,count,now2,&M[0]);
                 //   LimboText(plr,M[now2]);
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
             }
 
@@ -514,7 +514,7 @@ void Limbo(char plr)
                     skilLev = Data->P[plr].Pool[M[now2]].Endurance;
                 }
 
-                grSetColor(2);
+                display::graphics.setForegroundColor(2);
 
                 if (Data->P[plr].Pool[M[now2]].TrainingLevel > 6) {
                     Help("i120");
@@ -588,7 +588,7 @@ void Limbo(char plr)
                 music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
 
                 RectFill(166, 78, 314, 88, 10);
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 PrintAt(203, 85, "VISIT LOCATION");
                 InBox(241, 48, 313, 65);
                 OutBox(167, 48, 239, 65);
@@ -607,7 +607,7 @@ void Limbo(char plr)
                     LimboText(plr, M[now2]);
                 }
 
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
             }
         }
@@ -631,7 +631,7 @@ void Clear(void)
 void LimboText(char plr, int astro)
 {
     RectFill(44, 31, 145, 40, 3);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     int col;
 
     if (Data->P[plr].Pool[astro].Mood >= 65) {
@@ -654,16 +654,16 @@ void LimboText(char plr, int astro)
         col = 3;
     }
 
-    grSetColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
 
     if (Data->P[plr].Pool[astro].RDelay > 0) {
-        grSetColor(0);    // Print name in black if 'naut has announced retirement (override mood) -Leon
+        display::graphics.setForegroundColor(0);    // Print name in black if 'naut has announced retirement (override mood) -Leon
     }
 
     PrintAt(46, 37, Data->P[plr].Pool[astro].Name);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     RectFill(49, 112, 80, 119, 3);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     switch (Data->P[plr].Pool[astro].Group) {
     case 0:
@@ -692,16 +692,16 @@ void LimboText(char plr, int astro)
     RectFill(131, 86, 145, 92, 3);
     RectFill(123, 95, 145, 101, 3);
     RectFill(130, 54, 155, 61, 3);
-    grSetColor(col); // Print 'naut mood in green/yellow/red/black depending on mood -Leon
+    display::graphics.setForegroundColor(col); // Print 'naut mood in green/yellow/red/black depending on mood -Leon
     DispNum(132, 60, Data->P[plr].Pool[astro].Mood);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(125, 68, Data->P[plr].Pool[astro].Cap);
     DispNum(123, 76, Data->P[plr].Pool[astro].LM);
     DispNum(125, 84, Data->P[plr].Pool[astro].EVA);
     DispNum(131, 92, Data->P[plr].Pool[astro].Docking);
     DispNum(125, 100, Data->P[plr].Pool[astro].Endurance);
     RectFill(127, 113, 141, 120, 3);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(130, 118, Data->P[plr].Pool[astro].Active);
     AstFaces(plr, 10, 52, Data->P[plr].Pool[astro].Face);
     return;

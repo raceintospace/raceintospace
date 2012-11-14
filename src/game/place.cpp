@@ -79,7 +79,7 @@ int MainMenuChoice()
         DispBig(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
     }
 
-    FadeIn(2, display::graphics.pal(), 30, 0, 0);
+    FadeIn(2, display::graphics.palette(), 30, 0, 0);
     WaitForMouseUp();
 
     while (selected_option == -1) {
@@ -196,7 +196,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     unsigned int j, do_fix = 0;
     FILE *in;
     in = sOpen("PATCHES.BUT", "rb", 0);
-    fread(&display::graphics.pal()[coff * 3], 96, 1, in);
+    fread(&display::graphics.palette()[coff * 3], 96, 1, in);
     fseek(in, (50 * plr + prog * 10 + poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -247,10 +247,10 @@ AstFaces(char plr, int x, int y, char face)
     int face_offset = 0;
     FILE *fin;
 
-    memset(&display::graphics.pal()[192], 0x00, 192);
+    memset(&display::graphics.palette()[192], 0x00, 192);
     fin = sOpen("FACES.BUT", "rb", 0);
     fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
-    fread(&display::graphics.pal()[192], 96, 1, fin);
+    fread(&display::graphics.palette()[192], 96, 1, fin);
     face_offset = ((int)face) * sizeof(int32_t);
     fseek(fin, face_offset, SEEK_SET);  // Get Face
     fread(&offset, sizeof(int32_t), 1, fin);
@@ -316,7 +316,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     FILE *in;
 
     in = sOpen("MHIST.BUT", "rb", 0);
-    fread(&display::graphics.pal()[coff * 3], 64 * 3, 1, in);
+    fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, in);
 
     if (planet > 0) {
         fseek(in, (planet - 1) * (sizeof P), SEEK_CUR);
@@ -393,7 +393,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, table.offset, SEEK_SET);
         GV(&local, 104, 77);
         GV(&local2, 104, 77);
-        fread(&display::graphics.pal()[coff * 3], 96 * 3, 1, in); // Individual Palette
+        fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
         fread(local2.vptr, table.size, 1, in); // Get Image
         fclose(in);
         RLED_img(local2.vptr, local.vptr, table.size, local.w, local.h);
@@ -455,7 +455,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fread(&AHead, sizeof AHead, 1, fin);
         Swap16bit(AHead.w);
         Swap16bit(AHead.h);
-        fread(&display::graphics.pal()[coff * 3], 64 * 3, 1, fin);
+        fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, fin);
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
         GV(&local, AHead.w, AHead.h);
 
@@ -493,7 +493,7 @@ DispHelp(char top, char bot, char *txt)
 
     while (i++ < top) {
         if (txt[i * 42] == (char) 0xcc) {
-            grSetColor(txt[i * 42 + 1]);
+            display::graphics.setForegroundColor(txt[i * 42 + 1]);
         }
     }
 
@@ -502,7 +502,7 @@ DispHelp(char top, char bot, char *txt)
 
     while (i <= bot && pl < 11) {
         if (txt[i * 42] == (char) 0xCC) {
-            grSetColor(txt[i * 42 + 1]);
+            display::graphics.setForegroundColor(txt[i * 42 + 1]);
             PrintAt(45, 55 + 7 * pl, &txt[i * 42 + 2]);
         } else {
             PrintAt(45, 55 + 7 * pl, &txt[i * 42]);
@@ -629,7 +629,7 @@ int Help(const char *FName)
     }
 
     // Display Title
-    grSetColor(NTxt[1]);
+    display::graphics.setForegroundColor(NTxt[1]);
     fsize = strlen(&NTxt[2]);
     PrintAt(157 - fsize * 3, 42, &NTxt[2]);
     top = plc = 1;
@@ -710,12 +710,12 @@ void writePrestigeFirst(char index)   ///index==plr
                 InBox(219, 159, 311, 169);
                 RectFill(216, 171, 216, 171, 3);
                 RectFill(312, 172, 313, 172, 3);
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 PrintAt(224, 166, "PRESTIGE FIRSTS");
                 draw = 1;
             }
 
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(w > 2 ? 170 : 14,
                     w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
                     &PF[i][0]);
@@ -768,12 +768,12 @@ void writePrestigeFirst(char index)   ///index==plr
                 InBox(219, 159, 311, 169);
                 RectFill(216, 171, 216, 171, 3);
                 RectFill(312, 172, 313, 172, 3);
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 PrintAt(224, 166, "PRESTIGE FIRSTS");
                 draw = 1;
             }
 
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(w > 2 ? 170 : 14,
                     w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
                     &PF[i][0]);
@@ -836,9 +836,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     RectFill(10, 124, 205, 164, 7);
     InBox(9, 123, 206, 165);
     ShBox(62, 117, 154, 127);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(79, 124, "FLIGHT CREW");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(58, 41, "MISSION INFORMATION");
     PrintAt(12, 104, "MISSION DURATION: ");
     Name[0] = Data->P[plr].History[index].Duration + 'A' - 1;
@@ -862,14 +862,14 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     GetMisType(mcode);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(12, 56, "MISSION NAME: ");
     PrintAt(0, 0, (char *)Data->P[plr].History[index].MissionName);
     PrintAt(12, 64, "MISSION TYPE:");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(15, 72, Mis.Abbr);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(12, 80, "RESULT: ");
 
     if (Data->P[plr].History[index].Duration != 0) {
@@ -902,26 +902,26 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     ShBox(211, 30, 313, 168); // Right Side
     RectFill(215, 34, 309, 44, 9);
     InBox(214, 33, 310, 45);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(225, 41, "MISSION REPLAY");
     InBox(214, 55, 310, 116);
 
     AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
 
     IOBox(214, 134, 310, 148);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(224, 143, "R");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "EPLAY MISSION");
 
     if (mode == 0) {
         IOBox(214, 151, 310, 165);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(250, 160, "EXIT");
     }
 
     // Crew Stuff
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].History[index].Man[0][0] == -1 && Data->P[plr].History[index].Man[1][0] == -1) {
         PrintAt(13, 137, "UNMANNED MISSION");
@@ -932,14 +932,14 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 k = Data->P[plr].History[index].Man[0][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
-                    grSetColor(18);    // Display women in blue, not yellow
+                    display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
                 }
 
                 if (k != -1) {
                     PrintAt(13, 137 + j * 7, Data->P[plr].Pool[k].Name);
                 }
 
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
             }
 
             let = 1; // Men on Part 1
@@ -953,14 +953,14 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 k = Data->P[plr].History[index].Man[1][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
-                    grSetColor(18);    // Display women in blue, not yellow
+                    display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
                 }
 
                 if (k != -1) {
                     PrintAt(13 + let * 100, 137 + j * 7, Data->P[plr].Pool[k].Name);
                 }
 
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
             }
         }
 
@@ -969,7 +969,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     writePrestigeFirst(plr);
 
     if (mode == 1) {
-        FadeIn(2, display::graphics.pal(), 10, 0, 0);
+        FadeIn(2, display::graphics.palette(), 10, 0, 0);
     };
 
     WaitForMouseUp();
@@ -1004,7 +1004,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 music_stop();
             }
 
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             break;
         } else if ((x >= 216 && y >= 136 && x <= 308 && y <= 146 && mousebuttons == 1) || (key == 'R')) {
@@ -1014,22 +1014,22 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 InBox(216, 153, 309, 163);
             }
 
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(225, 125, "PLAYING...");
 
             WaitForMouseUp();
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
 
             if (x == 0 && y == 0) {
                 FILE *tin;
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
-                fwrite(display::graphics.pal(), sizeof display::graphics.pal(), 1, tin);
+                fwrite(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
                 fwrite(display::graphics.screen(), 64000, 1, tin);
                 fclose(tin);
-                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 display::graphics.clearScreen(0);
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == 10 ||
                     Data->P[plr].History[index].MissionCode == 12 ||
@@ -1056,12 +1056,12 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                     Replay(plr, index, 0, 0, 320, 200, "OOOO");
                 }
 
-                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
-                fread(display::graphics.pal(), sizeof display::graphics.pal(), 1, tin);
+                fread(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
                 fread(display::graphics.screen(), 64000, 1, tin);
                 fclose(tin);
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 key = 0;
                 remove_savedat("REPL.TMP");
 

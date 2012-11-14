@@ -51,7 +51,7 @@ LegacyPalette::~LegacyPalette()
 
 void LegacyPalette::set(uint8_t index, const Color &color)
 {
-    uint8_t *pal = graphics.pal();
+    uint8_t *pal = graphics.palette();
 
     // this unfortunately discards the alpha channel
     // chop the lowest two bits while copying
@@ -62,7 +62,7 @@ void LegacyPalette::set(uint8_t index, const Color &color)
 
 const Color LegacyPalette::get(uint8_t index) const
 {
-    uint8_t *pal = graphics.pal();
+    uint8_t *pal = graphics.palette();
     uint8_t
     r = pal[index * 3 + 0],
     g = pal[index * 3 + 1],

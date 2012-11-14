@@ -55,9 +55,9 @@ void DispEight(char now, char loc)
 
     for (i = start; i < start + 8; i++) {
         if (MCol[i] == 1) {
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
         } else {
-            grSetColor(6 + (Men[i].Sex + 1) * 6);
+            display::graphics.setForegroundColor(6 + (Men[i].Sex + 1) * 6);
         }
 
         PrintAt(189, 136 + (i - start) * 8, &Men[i].Name[0]);
@@ -71,7 +71,7 @@ void DispEight(char now, char loc)
 
     RectFill(274, 98, 281, 102, 3);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (Men[now].Sex == 0) {
         PrintAt(206, 52, "MR. ");
@@ -91,11 +91,11 @@ void DispEight2(int nw, int lc, int cnt)
     start = nw - lc;
     num = (cnt < 8) ? cnt : 8;
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     for (i = start; i < start + num; i++) {
         if (sel[i] != -1) {
-            grSetColor(6 + (Men[sel[i]].Sex + 1) * 6);
+            display::graphics.setForegroundColor(6 + (Men[sel[i]].Sex + 1) * 6);
             PrintAt(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
         }
     }
@@ -105,11 +105,11 @@ void DispEight2(int nw, int lc, int cnt)
     RectFill(132, 66, 140, 70, 3);
     RectFill(113, 98, 120, 102, 3);
     RectFill(292, 36, 310, 41, 7);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(292, 41, MaxSel - cnt);
 
     if (cnt > 0) {
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
 
         if (Men[sel[nw]].Sex == 0) {
             PrintAt(45, 52, "MR. ");
@@ -136,14 +136,14 @@ void DrawAstCheck(char plr)
         ad = 1;
     }
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
     RectFill(88, 50, 229, 102, 7 + plr * 3);
     IOBox(98, 133, 150, 149);
     IOBox(166, 133, 218, 149);
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     if (plr == 0) {
         PrintAt(99, 60, "ASTRONAUT");
@@ -152,7 +152,7 @@ void DrawAstCheck(char plr)
     }
 
     PrintAt(0, 0, " RECRUITMENT");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(100, 73, "GROUP ");
 
     switch (Data->P[plr].AstroLevel) {
@@ -224,7 +224,7 @@ void DrawAstCheck(char plr)
         PrintAt(104, 97, "FOR THE NEW RECRUITS");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (ad == 1) {
         PrintAt(102, 113, "  YOU CANNOT RECRUIT");
@@ -235,7 +235,7 @@ void DrawAstCheck(char plr)
             PrintAt(102, 122, "COSMONAUTS THIS TURN");
         }
 
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(114, 143, "EXIT");
         PrintAt(182, 143, "EXIT");
     };
@@ -250,7 +250,7 @@ void DrawAstCheck(char plr)
                 PrintAt(103, 122, "COSMONAUTS THIS TURN");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
             PrintAt(113, 143, "EXIT");
             PrintAt(181, 143, "EXIT");
         } else {
@@ -262,20 +262,20 @@ void DrawAstCheck(char plr)
                 PrintAt(100, 122, "COSMONAUTS THIS TURN?");
             }
 
-            grSetColor(6);
+            display::graphics.setForegroundColor(6);
             PrintAt(116, 143, "Y");
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
             PrintAt(0, 0, "ES");
-            grSetColor(6);
+            display::graphics.setForegroundColor(6);
             PrintAt(187, 143, "N");
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
             PrintAt(0, 0, "O");
         };
     };
 
     FlagSm(plr, 4, 4);
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }
@@ -288,7 +288,7 @@ void DrawAstSel(char plr)
 
     strcpy(helptextIndex, "i012");
     strcpy(keyhelpIndex, "k012");
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
@@ -313,7 +313,7 @@ void DrawAstSel(char plr)
     DNArrow(9, 166); //Left
     UPArrow(170, 133);
     DNArrow(170, 166); //Right
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     DispBig(35, 5, "RECRUITMENT", 0, -1);
     FlagSm(plr, 4, 4);
@@ -323,7 +323,7 @@ void DrawAstSel(char plr)
     InBox(164, 27, 316, 44);
     RectFill(165, 28, 315, 43, 7);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
         PrintAt(22, 34, "ASTRONAUT SELECTION");
@@ -333,7 +333,7 @@ void DrawAstSel(char plr)
 
     PrintAt(192, 34, "POOL OF APPLICANTS");
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(12, 41, "GROUP ");
 
     switch (Data->P[plr].AstroLevel) {
@@ -367,50 +367,50 @@ void DrawAstSel(char plr)
     }
 
     DispNum(0, 0, Data->Year);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(12, 52, "NAME:");
     PrintAt(173, 52, "NAME:");
     PrintAt(12, 61, "SERVICE:");
     PrintAt(173, 61, "SERVICE:");
     PrintAt(12, 70, "SKILLS:");
     PrintAt(173, 70, "SKILLS:");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(54, 70, "CAPSULE PILOT:");
     PrintAt(215, 70, "CAPSULE PILOT:");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(54, 78, "L.M. PILOT: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(215, 78, "L.M. PILOT: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(54, 86, "E.V.A.: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(215, 86, "E.V.A.: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(54, 94, "DOCKING: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(215, 94, "DOCKING: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "--");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(54, 102, "ENDURANCE:");
     PrintAt(215, 102, "ENDURANCE:");
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(33, 119, "D");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "ISMISS APPLICANT");
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(194, 119, "R");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "ECRUIT APPLICANT");
 
     return;
@@ -581,7 +581,7 @@ void AstSel(char plr)
 
     DispEight2(now2, BarA, count);
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
 

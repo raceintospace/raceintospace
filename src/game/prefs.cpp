@@ -48,11 +48,11 @@ void DrawPrefs(int where, char a1, char a2)
     int i, mode = 0;
     FILE *fin;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     strcpy(helptextIndex, "i013");
     strcpy(keyhelpIndex, "K013");
     fin = sOpen("PREFS.BUT", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
@@ -132,15 +132,15 @@ void DrawPrefs(int where, char a1, char a2)
     Levels(1, Data->Def.Ast2, 0);
 
     if (where == 0 || where == 2) {
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
     } else {
-        grSetColor(34);
+        display::graphics.setForegroundColor(34);
     }
 
     PrintAt(23, 30, "PLAYER 1");
-    grSetColor(34);
+    display::graphics.setForegroundColor(34);
     PrintAt(253, 30, "PLAYER 2");
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
     PrintAt(23, 49, "COUNTRY");
     PrintAt(254, 49, "COUNTRY");
     PrintAt(17, 101, "GAME LEVEL");
@@ -149,7 +149,7 @@ void DrawPrefs(int where, char a1, char a2)
     PrintAt(250, 155, "SELECTION");
     PrintAt(19, 148, "ASTRONAUT");
     PrintAt(20, 155, "SELECTION");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     PrintAt(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     PrintAt(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
@@ -161,7 +161,7 @@ void DrawPrefs(int where, char a1, char a2)
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     return;
 }
 
@@ -178,7 +178,7 @@ void HModel(char mode, char tx)
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     GV(&local, 127, 80);
-    fread(&display::graphics.pal()[112 * 3], 96 * 3, 1, in); // Individual Palette
+    fread(&display::graphics.palette()[112 * 3], 96 * 3, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
@@ -193,7 +193,7 @@ void HModel(char mode, char tx)
 
     gxPutImage(&local, gxSET, 97, 115, 0);
     DV(&local);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {
         PrintAt(100, 122, "HISTORICAL MODEL");
@@ -203,7 +203,7 @@ void HModel(char mode, char tx)
         PrintAt(100, 122, "RANDOM MODEL");
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (mode == 0 || mode == 2 || mode == 4) {
         PrintAt(100, 128, "HISTORICAL ROSTER");
@@ -228,13 +228,13 @@ void BinT(int x, int y, char st)
 {
     char sta[2][2] = {{2, 4}, {4, 2}};
 
-    grSetColor(sta[st][0]);
+    display::graphics.setForegroundColor(sta[st][0]);
     grMoveTo(0 + x, y + 20);
     grLineTo(0 + x, y + 0);
     grLineTo(72 + x, y + 0);
     grMoveTo(12 + x, y + 21);
     grLineTo(12 + x, y + 30);
-    grSetColor(sta[st][1]);
+    display::graphics.setForegroundColor(sta[st][1]);
     grMoveTo(0 + x, y + 21);
     grLineTo(11 + x, y + 21);
     grMoveTo(12 + x, y + 31);
@@ -382,7 +382,7 @@ void Prefs(int where)
                     Data->Def.Plr2 += hum2 * 2;
 
                     if (where == 0 || where == 3) {
-                        FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                        FadeOut(2, display::graphics.palette(), 10, 0, 0);
                     }
 
                     key = 0;
@@ -441,15 +441,15 @@ void Prefs(int where)
 
                 if (ksel == 0) {
                     ksel = 1;
-                    grSetColor(9);
+                    display::graphics.setForegroundColor(9);
                     PrintAt(253, 30, "PLAYER 2");
-                    grSetColor(34);
+                    display::graphics.setForegroundColor(34);
                     PrintAt(23, 30, "PLAYER 1");
                 } else {
                     ksel = 0;
-                    grSetColor(34);
+                    display::graphics.setForegroundColor(34);
                     PrintAt(253, 30, "PLAYER 2");
-                    grSetColor(9);
+                    display::graphics.setForegroundColor(9);
                     PrintAt(23, 30, "PLAYER 1");
                 }
             } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0) || key == 'E') {
@@ -595,7 +595,7 @@ void Prefs(int where)
 
                 num = 0;
                 ch = 0;
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 grMoveTo(8, 40);
                 DispChr(0x14);
                 av_sync();
@@ -618,7 +618,7 @@ void Prefs(int where)
                     }
 
                     RectFill(7, 35, 82, 41, 0);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(8, 40, &Data->P[0].Name[0]);
                     DispChr(0x14);
                     av_sync();
@@ -626,7 +626,7 @@ void Prefs(int where)
 
                 Data->P[0].Name[num] = 0x00;
                 RectFill(7, 35, 82, 41, 0);
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 PrintAt(8, 40, &Data->P[0].Name[0]);
                 av_sync();
                 /* P1: Director Name */
@@ -640,7 +640,7 @@ void Prefs(int where)
 
                 num = 0;
                 ch = 0;
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 grMoveTo(238, 40);
                 DispChr(0x14);
                 av_sync();
@@ -663,7 +663,7 @@ void Prefs(int where)
                     }
 
                     RectFill(237, 35, 312, 41, 0);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(238, 40, &Data->P[1].Name[0]);
                     DispChr(0x14);
                     av_sync();
@@ -671,7 +671,7 @@ void Prefs(int where)
 
                 Data->P[1].Name[num] = 0x00;
                 RectFill(237, 35, 312, 41, 0);
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 PrintAt(238, 40, &Data->P[1].Name[0]);
                 av_sync();
                 /* P2: Director Name */

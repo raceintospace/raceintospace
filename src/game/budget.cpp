@@ -57,7 +57,7 @@ void DrawBudget(char player, char *pStatus)
     char name[20], str[10];
 
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 47);
     ShBox(0, 49, 319, 67);
@@ -75,7 +75,7 @@ void DrawBudget(char player, char *pStatus)
     InBox(133, 168, 152, 180);
     InBox(133, 182, 152, 194);
     Flag(4, 4, player);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(180, 37, "CONTINUE");
     PrintAt(60, 81, "PRESTIGE");
     PrintAt(43, 145, "EXPENDITURES");
@@ -84,17 +84,17 @@ void DrawBudget(char player, char *pStatus)
     GradRect(185, 88, 312, 166, player);
     GradRect(30, 86, 140, 120, player);
     GradRect(31, 149, 124, 182, player);
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     // Draw Prestige Box
-    Box(30, 148, 125, 183);
-    Box(57, 85, 85, 121);
-    Box(85, 121, 113, 85);
-    Box(29, 94, 141, 103);
-    Box(29, 103, 141, 112);
-    Box(54, 148, 77, 183);
-    Box(77, 148, 101, 183);
-    Box(30, 157, 125, 165);
-    Box(30, 165, 125, 174);
+	display::graphics.outlineRect(30, 148, 125, 183, 4);
+	display::graphics.outlineRect(57, 85, 85, 121, 4);
+	display::graphics.outlineRect(85, 121, 113, 85, 4);
+	display::graphics.outlineRect(29, 94, 141, 103, 4);
+	display::graphics.outlineRect(29, 103, 141, 112, 4);
+	display::graphics.outlineRect(54, 148, 77, 183, 4);
+	display::graphics.outlineRect(77, 148, 101, 183, 4);
+	display::graphics.outlineRect(30, 157, 125, 165, 4);
+	display::graphics.outlineRect(30, 165, 125, 174, 4);
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
     // Draw the Prestige Screen
@@ -138,11 +138,11 @@ void DrawBudget(char player, char *pStatus)
     if (player == 0) {
         i = 0;
         j = 1;
-        grSetColor(5);
+        display::graphics.setForegroundColor(5);
     } else {
         i = 1;
         j = 0;
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
     }
 
     grMoveTo(30, 103 - Data->P[i].PrestHist[4][0] * 8 / pscale);
@@ -152,9 +152,9 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(140, 103 - Data->P[i].PrestHist[0][0] * 8 / pscale);
 
     if (player == 0) {
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
     } else {
-        grSetColor(5);
+        display::graphics.setForegroundColor(5);
     }
 
     grMoveTo(30, 103 - Data->P[j].PrestHist[4][1] * 8 / pscale);
@@ -163,13 +163,13 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(113, 103 - Data->P[j].PrestHist[1][1] * 8 / pscale);
     grLineTo(140, 103 - Data->P[j].PrestHist[0][1] * 8 / pscale);
 
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
     PrintAt(165, 89, "200");
     PrintAt(167, 109, "150");
     PrintAt(167, 129, "100");
     PrintAt(171, 149, "50");
     PrintAt(164, 169, "0 MB");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (Data->Season == 0) {
         strcpy(&name[0], "SPRING 19");
@@ -183,15 +183,15 @@ void DrawBudget(char player, char *pStatus)
     DispBig(122, 5, &name[0], 0, -1);
     //DispNum(0,0,Data->Year);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(177, 59, "PROJECTED BUDGET: ");
     DispMB(0, 0, Data->P[player].Budget);
     PrintAt(42, 59, "CASH: ");
     DispMB(0, 0, Data->P[player].Cash);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(13, 105, "0");
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     if (Data->Season == 1) {
         DispNum(21, 130, Data->Year - 2);
@@ -241,7 +241,7 @@ void DrawBudget(char player, char *pStatus)
         DispChr('S');
     }
 
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     grMoveTo(187, 147);
     grLineTo(311, 147);
     grMoveTo(187, 127);
@@ -256,7 +256,7 @@ void DrawBudget(char player, char *pStatus)
         display::graphics.setPixel(i, 97, 4);
     }
 
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     DispNum(298, 174, Data->Year);
     DispNum(271, 174, Data->Year - 1);
     DispNum(248, 174, Data->Year - 2);
@@ -275,7 +275,7 @@ void DrawBudget(char player, char *pStatus)
         RectFill(170, 185, 175, 188, 5);
         RectFill(297, 185, 303, 189, 9);
         RectFill(297, 185, 302, 188, 8);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(181, 189, "U.S.A.");
         PrintAt(262, 189, "U.S.S.R.");
     }
@@ -292,13 +292,13 @@ void DrawBudget(char player, char *pStatus)
         RectFill(170, 185, 175, 188, 8);
         RectFill(297, 185, 303, 189, 6);
         RectFill(297, 185, 302, 188, 5);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(181, 189, "U.S.S.R.");
         PrintAt(262, 189, "U.S.A.");
     }
 
     DrawPastExp(player, pStatus);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }
@@ -345,12 +345,12 @@ void DrawPastExp(char player, char *pStatus)
     int pScale = 25;
 
     RectFill(31, 149, 124, 182, 7 + 3 * player);
-    grSetColor(4);
-    Box(30, 148, 125, 183);
-    Box(54, 148, 77, 183);
-    Box(77, 148, 101, 183);
-    Box(30, 157, 125, 165);
-    Box(30, 165, 125, 174);
+    display::graphics.setForegroundColor(4);
+	display::graphics.outlineRect(30, 148, 125, 183, 4);
+	display::graphics.outlineRect(54, 148, 77, 183, 4);
+	display::graphics.outlineRect(77, 148, 101, 183, 4);
+	display::graphics.outlineRect(30, 157, 125, 165, 4);
+	display::graphics.outlineRect(30, 165, 125, 174, 4);
 
     for (j = 0; j < 5; j++)
         for (i = 0; i < 4; i++) {
@@ -379,19 +379,19 @@ void DrawPastExp(char player, char *pStatus)
         if (pStatus[i] == 1) {
             switch (i) {
             case 0:
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 break;
 
             case 1:
-                grSetColor(8);
+                display::graphics.setForegroundColor(8);
                 break;
 
             case 2:
-                grSetColor(5);
+                display::graphics.setForegroundColor(5);
                 break;
 
             case 3:
-                grSetColor(16);
+                display::graphics.setForegroundColor(16);
                 break;
             }
 
@@ -493,7 +493,7 @@ void DrawPreviousMissions(char plr)
     InBox(5, 41, 314, 91);
     RectFill(6, 42, 313, 90, 0);
     i = Data->P[plr].PastMis - olderMiss;
-    grSetColor(2);
+    display::graphics.setForegroundColor(2);
 
     while (i > (Data->P[plr].PastMis - olderMiss - 3) && i >= 0) {
 
@@ -546,7 +546,7 @@ void DrawPreviousMissions(char plr)
     };
 
     if (misnum < 3) {
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(9, 49 + 16 * misnum, "NO PAST MISSIONS REMAINING");
     }
 }
@@ -554,7 +554,7 @@ void DrawPreviousMissions(char plr)
 void DrawViewing(char plr)
 {
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
@@ -584,11 +584,11 @@ void DrawViewing(char plr)
     ShBox(302, 147, 312, 176);
     DNArrow(304, 149);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(113, 35, "PREVIOUS MISSIONS");
     PrintAt(106, 108, "PAST CURRENT EVENTS");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     DispBig(45, 5, "VIEWING STAND", 0, -1);
 
@@ -612,7 +612,7 @@ void DrawVText(char got)
     int xx = 10, yy = 122, i;
     char *buf;
     buf = buffer;
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     for (i = 0; i < got; i++) {
         while (*buf != 'x') {
@@ -622,35 +622,35 @@ void DrawVText(char got)
         buf++;
 
         if (strncmp(&buf[0], "IN THE NEWS TODAY", 18) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "DEVELOPMENTS IN THE WORLD", 24) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
     }
 
@@ -659,35 +659,35 @@ void DrawVText(char got)
         grMoveTo(xx, yy);
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "AND THAT'S THE NEWS", 19) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "THIS CONCLUDES OUR NEWS", 23) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         while (buf[0] != 'x' && buf[0] != '\0') {
@@ -728,7 +728,7 @@ int RetFile(char plr, int card)
     bline -= 8;
 
     RectFill(82, 183, 237, 195, 7);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if ((card % 2) == 1) {
         PrintAt(131, 191, "FALL 19");
@@ -751,7 +751,7 @@ void Viewing(char plr)
     ctop = 0;
     DrawVText(ctop);
     InBox(244, 184, 313, 194);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start(M_SOVTYP);
     WaitForMouseUp();
 

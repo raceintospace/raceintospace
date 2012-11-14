@@ -236,7 +236,7 @@ void MisCheck(char plr, char mpad)
         }
 
         if (Mev[STEP].Name[0] == 'A') {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (!AI[plr] && BIG == 0) {
                 if (plr == 0) {
@@ -252,11 +252,11 @@ void MisCheck(char plr, char mpad)
 
                 if (plr == 0) {
                     RectFill(188, 107, 294, 113, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
                 } else {
                     RectFill(244, 56, 314, 62, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
                 }
 
@@ -285,16 +285,16 @@ void MisCheck(char plr, char mpad)
                     RectFill(78, 2, 241, 10, 3);
                 }
 
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
                 MisStep(x, y, Mev[STEP].loc);
 
                 if (plr == 0) {
                     RectFill(188, 107, 294, 113, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
                 } else {
                     RectFill(244, 56, 314, 62, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
                 }
             }
@@ -582,7 +582,7 @@ void MisCheck(char plr, char mpad)
         // Mission Death
         if (!AI[plr]) {
             if (BIG == 0) {
-                memset(&display::graphics.pal()[64 * 3], 0x00, 64 * 3); //Specs: 0x08
+                memset(&display::graphics.palette()[64 * 3], 0x00, 64 * 3); //Specs: 0x08
 
                 if (plr == 0) {
                     RectFill(2, 107, 140, 115, 3);
@@ -646,7 +646,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
             lc += 5;
         } else {
             if (lc >= 241) {
-                grSetColor(55);
+                display::graphics.setForegroundColor(55);
                 RectFill(189, 173, 249, 196, 55);
 
                 for (i = 190; i < 250; i += 2) {

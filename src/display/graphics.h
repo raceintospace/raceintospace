@@ -29,8 +29,8 @@ public:
         return _screen;
     }
 
-    inline uint8_t *pal() {
-        return _pal;
+    uint8_t *palette() const {
+        return (uint8_t *)(&_palette);
     };
 
     SDL_Surface *scaledScreenSurface() const {
@@ -61,10 +61,25 @@ public:
         return _newsRect;
     }
 
+	char foregroundColor() const {
+		return _foregroundColor;
+	}
+
+	char backgroundColor() const {
+		return _backgroundColor;
+	}
+
     void clearScreen(int colour);
     void fillRect(int x1, int y1, int x2, int y2, char color);
     void fillRect(const SDL_Rect &area, char color);
     void setPixel(int x, int y, char color);
+	void setForegroundColor( char color );
+	void setBackgroundColor( char color );
+	char getPixel( int x, int y );
+	void outlineRect(int x1, int y1, int x2, int y2, char color );
+	void line( int x1, int y1, int x2, int y2, char color );
+	void setPalette( uint8_t *palette );
+
 
 private:
     SDL_Surface *_screen;
@@ -75,7 +90,9 @@ private:
     SDL_Rect _videoRect;
     SDL_Rect _newsRect;
     bool _fullscreen;
-    uint8_t _pal[3 * 256];
+    uint8_t _palette[3 * 256];
+	char _foregroundColor;
+	char _backgroundColor;
 };
 
 extern Graphics graphics;

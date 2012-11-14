@@ -25,6 +25,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "display/graphics.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);
@@ -315,39 +316,39 @@ int AsnCrew(char plr, char pad, char part)
 
     FutSt(plr, prg, prime, back);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(100, 16, "CANCEL");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     PrintAt(184, 16, "A");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(0, 0, "SSIGN");
 
     PrintAt(86, 111, "MAKE ");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     PrintAt(0, 0, "P");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(0, 0, "RIMARY");
 
     PrintAt(169, 111, "MAKE ");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     PrintAt(0, 0, "B");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(0, 0, "ACKUP");
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (part == 0) {
         PrintAt(105, 31, "SELECT PRIMARY CREW");
@@ -355,7 +356,7 @@ int AsnCrew(char plr, char pad, char part)
         PrintAt(100, 31, "SELECT SECONDARY CREW");
     }
 
-    grSetColor(1); // reset the color
+    display::graphics.setForegroundColor(1); // reset the color
     count = 0;
 
     WaitForMouseUp();
@@ -483,7 +484,7 @@ void FutFltsTxt(char nw, char col)
 {
     int temp = 0;
 
-    grSetColor(col);
+    display::graphics.setForegroundColor(col);
 
     if (nw < 4) {
         PrintAt(83, 129 + nw * 16, "FLT. CREW ");
@@ -576,37 +577,37 @@ void FutSt2(int num, int type)
 
     switch (type) {
     case 0:
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(0, 0, "UNASSIGNED");
         break;
 
     case 1:
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
 
         if (options.feat_no_cTraining > 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         PrintAt(0, 0, "TRAINING");
         break;
 
     case 2:
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         PrintAt(0, 0, "VACANT");
         break;
 
     case 3:
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(0, 0, "PRIMARY");
         break;
 
     case 4:
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(0, 0, "BACKUP");
         break;
 
     case 5:
-        grSetColor(10);
+        display::graphics.setForegroundColor(10);
         PrintAt(0, 0, "ASSIGNED");
         break;
     }
@@ -623,20 +624,20 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
     m[2] = M3;
     m[3] = M4;
     RectFill(82, 38, 236, 97, 7 + plr * 3); // center screen
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     for (i = 0; i < men; i++)
         if (m[i] > 0) {
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
-                grSetColor(5);    // Print name in blue if 'naut is female
+                display::graphics.setForegroundColor(5);    // Print name in blue if 'naut is female
             }
 
             if (Data->P[plr].Pool[m[i] - 1].RDelay > 0) {
-                grSetColor(3);    // Print name in gray if 'naut has announced retirement (black doesn't show well here) -Leon
+                display::graphics.setForegroundColor(3);    // Print name in gray if 'naut has announced retirement (black doesn't show well here) -Leon
             }
 
             PrintAt(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
-            grSetColor(3);
+            display::graphics.setForegroundColor(3);
 
             if (Data->P[plr].Pool[m[i] - 1].Missions > 0) {
                 PrintAt(0, 0, " (");
@@ -644,7 +645,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 PrintAt(0, 0, ")");
             }
 
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
             RectFill(87, 39 + i * 14, 94, 39 + i * 14, 2); // Top
             RectFill(87, 39 + i * 14, 87, 44 + i * 14, 2); // Left
             RectFill(87, 45 + i * 14, 94, 45 + i * 14, 3); // Bottom
@@ -672,36 +673,36 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             //87 - 169
             if (i == 0) {
-                grSetColor(11);   /* Highlight CA for command pilot */
+                display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
             }
 
             PrintAt(87, 51 + i * 14, "CP:");
             DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Cap);
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
 
             if (i == 1 && men > 1) {
-                grSetColor(11);   /* Highlight LM for LM pilot */
+                display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
             }
 
             PrintAt(0, 0, "  LM:");
             DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].LM);
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
 
             if (men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) {
-                grSetColor(11);   /* Highlight EV for EVA specialist */
+                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
             }
 
             PrintAt(0, 0, "  EV:");
             DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].EVA);
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
 
             if ((men == 2 && i == 0) || (men == 3 && i == 2)) {
-                grSetColor(11);   /* Highlight DO for docking specialist */
+                display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
             }
 
             PrintAt(0, 0, "  DO:");
             DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Docking);
-            grSetColor(1);  /* Never highlight EN skill */
+            display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
             PrintAt(0, 0, "  EN:");
             DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
         };
@@ -720,7 +721,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
     IOBox(81, 154, 238, 167); // continue
     InBox(81, 47, 238, 56);
     RectFill(82, 61, 237, 94, 6 + 3 * plr);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (mode == 0) {
         PrintAt(90, 54, "SELECT PRIMARY VEHICLE");
@@ -728,7 +729,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
         PrintAt(90, 54, "SELECT SECONDARY VEHICLE");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     GetMisType(mis);
     PrintAt(85, 70, Mis.Abbr);
 //Missions(plr,85,70,mis,0);

@@ -104,9 +104,9 @@ encodeRolls(uint8_t nRolls, uint8_t value)
 
 void SRPrintAt(int x, int y, char *text, char fgd, char bck)
 {
-    grSetColor(bck);
+    display::graphics.setForegroundColor(bck);
     PrintAt(x + 1, y + 1, text);
-    grSetColor(fgd);
+    display::graphics.setForegroundColor(fgd);
     PrintAt(x, y, text);
     return;
 }
@@ -164,9 +164,9 @@ void DrawRD(char player_index)
     strcpy(helptextIndex, "i009");
     strcpy(keyhelpIndex, "k009");
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
 
     gxClearDisplay(0, 0);
@@ -206,16 +206,16 @@ void DrawRD(char player_index)
     //GradRect(27,95,130,171,player_index*16+128);
     RectFill(27, 95, 130, 171, 0);
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(13, 80, "V");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
         gxVirtualDisplay(&mans, i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174, 0);
     }
 
-    grSetColor(3);
+    display::graphics.setForegroundColor(3);
     grMoveTo(296, 174);
     grLineTo(314, 174);
 
@@ -224,9 +224,9 @@ void DrawRD(char player_index)
     gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
     gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(50, 5, "RESEARCH", 0, -1);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
         PrintAt(157, 8, "SPRING");
@@ -240,7 +240,7 @@ void DrawRD(char player_index)
     PrintAt(200, 8, "CASH:");
     DispMB(201, 15, Data->P[player_index].Cash);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     FlagSm(player_index, 4, 4);
     QueryUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
@@ -304,7 +304,7 @@ void
 RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Screen, Nikakd, 10/8/10
 {
     RectFill(166, 185, 314, 193, 3);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     int diceRoll = decodeRollValue(encodedRolls);
 
@@ -316,16 +316,16 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Scre
 
     if (diceRoll == 0) {
         PrintAt(169, 191, "RE");
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         PrintAt(0, 0, "S");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(0, 0, "EARCH PROGRAM FOR ");
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         DispNum(0, 0, cost);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(0, 0, " MB");
     } else {
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(192, 191, "R&D ");
         DispNum(0, 0, diceRoll);
         PrintAt(0, 0, "% IMPROVEMENT");
@@ -368,7 +368,7 @@ char RD(char player_index)
 
     strcpy(keyhelpIndex, "k009");
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     music_start(M_HARDWARE);
 
@@ -423,7 +423,7 @@ char RD(char player_index)
 
                     strcpy(keyhelpIndex, "k009");
 
-                    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                    FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 }
             } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
                 if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* Unmanned */
@@ -762,7 +762,7 @@ char RD(char player_index)
                     InBox(165, 184, 315, 194);
                 };
 
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
                 music_start(M_HARDWARE);
 
@@ -929,11 +929,11 @@ void ShowUnit(char hw, char un, char player_index)
         assert(false);
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     RectFill(162, 69, 318, 146, 3);
     RectFill(200, 9, 238, 21, 3);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(170, 97, "INITIAL COST:");
     PrintAt(170, 104, "UNIT COST:");
     PrintAt(170, 118, "R&D COST PER TEAM:");
@@ -978,20 +978,20 @@ void ShowUnit(char hw, char un, char player_index)
         RectFill(286, 86, 316, 86, 5);
         RectFill(286, 72, 286, 85, 5);
         RectFill(316, 72, 316, 85, 5);
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(288, 77, "AVOID");
         PrintAt(291, 84, "FAIL");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
     }
 
     if (Data->P[player_index].RDMods != 0) {
         if (Data->P[player_index].RDMods > 0) {
-            grSetColor(5);
+            display::graphics.setForegroundColor(5);
             PrintAt(170, 153, "RESEARCH STRONG:   ");
             RectFill(264, 149, 264, 153, 5);
             RectFill(262, 151, 266, 151, 5); // This fakes a plus sign, which the game apparently can't draw -Leon
         } else {
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
             PrintAt(170, 153, "RESEARCH WEAK: ");
         }
 
@@ -999,7 +999,7 @@ void ShowUnit(char hw, char un, char player_index)
         PrintAt(0, 0, "%/TEAM");
     }
 
-    grSetColor(20);
+    display::graphics.setForegroundColor(20);
     PrintAt(170, 139, "MAXIMUM R&D:");
 
     char EqDmg = 0;
@@ -1027,20 +1027,20 @@ void ShowUnit(char hw, char un, char player_index)
 
     if (EqDmg != 0) {
         IOBox(281, 88, 304, 102);
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(285, 97, "F");
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(0, 0, "IX");
     }
 
     SCol = (PL->Num < 0) ? 20 : ((PL->Safety < 75) ? 8 : 16);
-    grSetColor(SCol);
+    display::graphics.setForegroundColor(SCol);
     PrintAt(170, 111, "SAFETY FACTOR:");
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispMB(201, 15, Data->P[player_index].Cash);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (!(player_index == 1 && hw == ROCKET_HARDWARE && un == MANNED_HW_FOUR_MAN_CAPSULE)) {
         PrintAt(170, 80, &PL->Name[0]);
@@ -1142,7 +1142,7 @@ void ShowUnit(char hw, char un, char player_index)
         PrintAt(240, 125, "N/A");
     }
 
-    grSetColor(20);
+    display::graphics.setForegroundColor(20);
 
     if (PL->MaxRD != 0)   {
         DispNum(242, 139, PL->MaxRD);
@@ -1157,7 +1157,7 @@ void ShowUnit(char hw, char un, char player_index)
         PrintAt(242, 139, "--");
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(254, 146, PL->MaxSafety);
     DispChr('%');
 
@@ -1168,20 +1168,20 @@ void ShowUnit(char hw, char un, char player_index)
     }
 
     if (PL->Num == -1) {
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(170, 90, "NO PROGRAM INITIATED");
-        grSetColor(20);
+        display::graphics.setForegroundColor(20);
         DispNum(256, 111, 0);
         DispChr('%');
     } else {
         OnHand(PL->Num);
-        grSetColor(SCol);
+        display::graphics.setForegroundColor(SCol);
         DispNum(256, 111, PL->Safety);
         DispChr('%');
 
         //Display Damaged Equipment
         if (PL->Damage != 0) {
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
             PrintAt(280, 111, "(");
             DispNum(283, 111, PL->Safety + PL->Damage < 1 ? 1 : PL->Safety + PL->Damage);
             DispChr('%');
@@ -1199,9 +1199,9 @@ void ShowUnit(char hw, char un, char player_index)
 void OnHand(char qty)
 {
     if (qty > 0) {
-        grSetColor(16);
+        display::graphics.setForegroundColor(16);
     } else {
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
     }
 
     PrintAt(170, 90, "UNITS ON HAND:");
@@ -1213,9 +1213,9 @@ void DrawHPurc(char player_index)
 {
     FILE *fin;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
 
     Load_RD_BUT(player_index);
@@ -1241,22 +1241,22 @@ void DrawHPurc(char player_index)
     FlagSm(player_index, 4, 4);
 
     IOBox(264, 162, 316, 176);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(279, 171, "UNDO");
 
     OutBox(21, 90, 136, 176);
     InBox(26, 94, 131, 172);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(35, 5, "PURCHASING", 0, -1);
     //GradRect(27,95,130,171,player_index*16+128);
     RectFill(27, 95, 130, 171, 0);
 
     LTArrow(24, 186);
     RTArrow(101, 186);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(34, 80, "V");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "ISIT R&D FACILITY");
 
     gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
@@ -1264,9 +1264,9 @@ void DrawHPurc(char player_index)
     gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
     gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(191, 190, "P");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(0, 0, "URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
@@ -1281,7 +1281,7 @@ void DrawHPurc(char player_index)
     PrintAt(200, 8, "CASH:");
     DispMB(201, 15, Data->P[player_index].Cash);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
     strcpy(helptextIndex, "i008");
@@ -1312,7 +1312,7 @@ char HPurc(char player_index)
     //memset(vhptr.vptr,0x00,64000);
     //memcpy(vhptr.vptr,Data,sizeof(struct Players));
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start(M_FILLER);
     WaitForMouseUp();
 
@@ -1353,7 +1353,7 @@ char HPurc(char player_index)
                 BButs(PROBE_HARDWARE, hardware);
                 ShowUnit(hardware, unit, player_index);
 
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 music_start(M_FILLER);
                 WaitForMouseUp();
             }
@@ -1565,7 +1565,7 @@ char HPurc(char player_index)
             fwrite(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             music_start(M_FILLER);
             WaitForMouseUp();
         };

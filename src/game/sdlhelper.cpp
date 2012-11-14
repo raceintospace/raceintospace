@@ -627,9 +627,9 @@ transform_palette(void)
     for (j = 0; j < ARRAY_LENGTH(ranges); ++j)
         for (i = ranges[j].start; i < ranges[j].end; ++i) {
             if (!fade_info.force_black) {
-                pal_colors[i].r = display::graphics.pal()[3 * i] * 4;
-                pal_colors[i].g = display::graphics.pal()[3 * i + 1] * 4;
-                pal_colors[i].b = display::graphics.pal()[3 * i + 2] * 4;
+                pal_colors[i].r = display::graphics.palette()[3 * i] * 4;
+                pal_colors[i].g = display::graphics.palette()[3 * i + 1] * 4;
+                pal_colors[i].b = display::graphics.palette()[3 * i + 2] * 4;
             } else {
                 pal_colors[i].r = 0;
                 pal_colors[i].g = 0;
@@ -652,11 +652,11 @@ transform_palette(void)
         pal_colors[i].b = pal[3 * i + 2] * 4 * step / steps;
          */
 
-        pal_colors[i].r = display::graphics.pal()[3 * i] * 4;
+        pal_colors[i].r = display::graphics.palette()[3 * i] * 4;
         pal_colors[i].r = pal_colors[i].r * step / steps;
-        pal_colors[i].g = display::graphics.pal()[3 * i + 1] * 4;
+        pal_colors[i].g = display::graphics.palette()[3 * i + 1] * 4;
         pal_colors[i].g = pal_colors[i].g * step / steps;
-        pal_colors[i].b = display::graphics.pal()[3 * i + 2] * 4;
+        pal_colors[i].b = display::graphics.palette()[3 * i + 2] * 4;
         pal_colors[i].b = pal_colors[i].b * step / steps;
     }
 }

@@ -118,16 +118,16 @@ void MisOrd(char num)
 
     ShBox(63, 19, 257, 173);
     InBox(74, 36, 246, 163);
-    grSetColor(36);
+    display::graphics.setForegroundColor(36);
     PrintAt(77, 30, "       LAUNCH ORDER");
 
     for (i = 0; i < num; i++) {
         InBox(78, 39 + 21 * j, 105, 55 + 21 * j);
         FlagSm(Order[i].plr, 79, 40 + 21 * j);
-        grSetColor(34);
+        display::graphics.setForegroundColor(34);
         PrintAt(110, 45 + 21 * j, "SCHEDULED LAUNCH");
         PrintAt(110, 52 + 21 * j, "DATE: ");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
 
         PrintAt(0, 0,
                 Month[Data->P[Order[i].plr].Mission[Order[i].loc].Month]);
@@ -137,7 +137,7 @@ void MisOrd(char num)
         j++;
     };
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -145,7 +145,7 @@ void MisOrd(char num)
 
     WaitForMouseUp();
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 }
 
 
@@ -157,7 +157,7 @@ void MisAnn(char plr, char pad)
     char pad_str[2] = {'A' + pad, '\0'};
 
     for (i = 0; i < 768; i++) {
-        display::graphics.pal()[i] = 0;
+        display::graphics.palette()[i] = 0;
     }
 
     gxClearDisplay(0, 0);
@@ -168,22 +168,22 @@ void MisAnn(char plr, char pad)
     InBox(46, 25, 117, 65);
     Flag(47, 26, plr);
     InBox(122, 25, 276, 65);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(127, 33, "SCHEDULED LAUNCH"); //was 154,33
-    grSetColor(34);
+    display::graphics.setForegroundColor(34);
     PrintAt(127, 40, "LAUNCH FACILITY: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "PAD ");
     PrintAt(0, 0, pad_str);
-    grSetColor(34);
+    display::graphics.setForegroundColor(34);
     PrintAt(127, 47, "DATE: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(0, 0, Month[Data->P[plr].Mission[pad].Month]);
 
     PrintAt(0, 0, "19");
     DispNum(0, 0, Data->Year);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
     memcpy(&Mis2, &Mis, sizeof Mis);
@@ -248,18 +248,18 @@ void MisAnn(char plr, char pad)
     IOBox(57, 68, 118, 84);
     IOBox(131, 68, 197, 84);
     IOBox(205, 68, 266, 84);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(65, 78, "CONTINUE");
     PrintAt(139, 78, "PLAY FULL");
     PrintAt(221, 78, "SCRUB");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(65, 78, "C");
     PrintAt(139, 78, "P");
     PrintAt(221, 78, "S");
 
     //IOBox(85,68,158,84);IOBox(172,68,245,84);
-    //grSetColor(1);PrintAt(102,78,"CONTINUE");PrintAt(189,78,"SCRUB");
-    //grSetColor(9);
+    //display::graphics.setForegroundColor(1);PrintAt(102,78,"CONTINUE");PrintAt(189,78,"SCRUB");
+    //display::graphics.setForegroundColor(9);
     //PrintAt(102,78,"C");PrintAt(189,78,"S");
 
     if (Data->P[plr].Mission[pad].Joint == 0) {
@@ -320,13 +320,13 @@ void MisAnn(char plr, char pad)
             switch (j) {
             case 0:
                 if (hold > -1) {
-                    grSetColor(7);
+                    display::graphics.setForegroundColor(7);
                     PrintAt(bud, 109 + 14 * k, "CAPSULE: ");
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(0, 0, &Data->P[plr].Manned[hold].Name[0]);
-                    grSetColor(11);
+                    display::graphics.setForegroundColor(11);
                     PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Manned[hold].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                    Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     sprintf(&Digit[0], "%d", Data->P[plr].Manned[hold].Safety + Data->P[plr].Manned[hold].Damage);
                     PrintAt(0, 0, &Digit[0]);
                     PrintAt(0, 0, "%");
@@ -338,13 +338,13 @@ void MisAnn(char plr, char pad)
 
             case 1:
                 if (hold > -1) {
-                    grSetColor(7);
+                    display::graphics.setForegroundColor(7);
                     PrintAt(bud, 109 + 14 * k, "KICKER: ");
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(0, 0, &Data->P[plr].Misc[hold].Name[0]);
-                    grSetColor(11);
+                    display::graphics.setForegroundColor(11);
                     PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Misc[hold].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                    Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     sprintf(&Digit[0], "%d", Data->P[plr].Misc[hold].Safety + Data->P[plr].Misc[hold].Damage);
                     PrintAt(0, 0, &Digit[0]);
                     PrintAt(0, 0, "%");
@@ -357,13 +357,13 @@ void MisAnn(char plr, char pad)
 
             case 2:
                 if (hold > -1) {
-                    grSetColor(7);
+                    display::graphics.setForegroundColor(7);
                     PrintAt(bud, 109 + 14 * k, "LM: ");
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(0, 0, &Data->P[plr].Manned[hold].Name[0]);
-                    grSetColor(11);
+                    display::graphics.setForegroundColor(11);
                     PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Manned[hold].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                    Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     sprintf(&Digit[0], "%d", Data->P[plr].Manned[hold].Safety + Data->P[plr].Manned[hold].Damage);
                     PrintAt(0, 0, &Digit[0]);
                     PrintAt(0, 0, "%");
@@ -377,13 +377,13 @@ void MisAnn(char plr, char pad)
             case 3:
                 if (hold > -1) {
                     if (hold < 3) {
-                        grSetColor(7);
+                        display::graphics.setForegroundColor(7);
                         PrintAt(bud, 109 + 14 * k, "PROBE: ");
-                        grSetColor(1);
+                        display::graphics.setForegroundColor(1);
                         PrintAt(0, 0, &Data->P[plr].Probe[hold].Name[0]);
-                        grSetColor(11);
+                        display::graphics.setForegroundColor(11);
                         PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Probe[hold].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                        Data->P[plr].Probe[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                         sprintf(&Digit[0], "%d", Data->P[plr].Probe[hold].Safety + Data->P[plr].Probe[hold].Damage);
                         PrintAt(0, 0, &Digit[0]);
                         PrintAt(0, 0, "%");
@@ -391,13 +391,13 @@ void MisAnn(char plr, char pad)
                         //PrintAt(144+i*111,116+14*k,"%");
                         ++k;
                     } else if (hold == 4) {
-                        grSetColor(7);
+                        display::graphics.setForegroundColor(7);
                         PrintAt(bud, 109 + 14 * k, "DOCKING: ");
-                        grSetColor(1);
+                        display::graphics.setForegroundColor(1);
                         PrintAt(0, 0, &Data->P[plr].Misc[hold].Name[0]);
-                        grSetColor(11);
+                        display::graphics.setForegroundColor(11);
                         PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Misc[hold].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                        Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                         sprintf(&Digit[0], "%d", Data->P[plr].Misc[hold].Safety + Data->P[plr].Misc[hold].Damage);
                         PrintAt(0, 0, &Digit[0]);
                         PrintAt(0, 0, "%");
@@ -412,13 +412,13 @@ void MisAnn(char plr, char pad)
             case 4:
                 if (hold > -1) {
                     if (hold < 5) {
-                        grSetColor(7);
+                        display::graphics.setForegroundColor(7);
                         PrintAt(bud, 109 + 14 * k, "ROCKET: ");
-                        grSetColor(1);
+                        display::graphics.setForegroundColor(1);
                         PrintAt(0, 0, &Data->P[plr].Rocket[hold - 1].Name[0]);
-                        grSetColor(11);
+                        display::graphics.setForegroundColor(11);
                         PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Rocket[hold - 1].Damage != 0 ? grSetColor(9) : grSetColor(1); //Damaged Equipment, Nikakd, 10/8/10
+                        Data->P[plr].Rocket[hold - 1].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                         sprintf(&Digit[0], "%d", Data->P[plr].Rocket[hold - 1].Safety + Data->P[plr].Rocket[hold - 1].Damage);
                         PrintAt(0, 0, &Digit[0]);
                         PrintAt(0, 0, "%");
@@ -426,14 +426,14 @@ void MisAnn(char plr, char pad)
                         //PrintAt(144+i*111,116+14*k,"%");
                         ++k;
                     } else {
-                        grSetColor(7);
+                        display::graphics.setForegroundColor(7);
                         PrintAt(bud, 109 + 14 * k, "ROCKET: ");
-                        grSetColor(1);
+                        display::graphics.setForegroundColor(1);
                         PrintAt(0, 0, &Data->P[plr].Rocket[hold - 5].Name[0]);
                         PrintAt(0, 0, " W/B");
-                        grSetColor(11);
+                        display::graphics.setForegroundColor(11);
                         PrintAt(bud, 116 + 14 * k, "SAFETY FACTOR: ");
-                        (Data->P[plr].Rocket[hold - 5].Damage != 0 || Data->P[plr].Rocket[4].Damage != 0) ? grSetColor(9) : grSetColor(1); //Damaged Equipment && Booster's Safety Mod, Nikakd, 10/8/10
+                        (Data->P[plr].Rocket[hold - 5].Damage != 0 || Data->P[plr].Rocket[4].Damage != 0) ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment && Booster's Safety Mod, Nikakd, 10/8/10
                         sprintf(&Digit[0], "%d", RocketBoosterSafety(Data->P[plr].Rocket[hold - 5].Safety + Data->P[plr].Rocket[hold - 5].Damage, Data->P[plr].Rocket[4].Safety + Data->P[plr].Rocket[4].Damage));
                         PrintAt(0, 0, &Digit[0]);
                         PrintAt(0, 0, "%");
@@ -451,7 +451,7 @@ void MisAnn(char plr, char pad)
         }
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -468,14 +468,14 @@ void MisAnn(char plr, char pad)
             InBox(59, 70, 116, 82);
             WaitForMouseUp();
             OutBox(59, 70, 116, 82);
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             BIG = 0;
             return;
         } else if ((x >= 133 && y >= 70 && x <= 195 && y <= 82 && mousebuttons > 0) || key == K_ENTER || key == 'P') {
             InBox(133, 70, 195, 82);
             WaitForMouseUp();
             OutBox(133, 70, 195, 82);
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             BIG = 1;
             return;
         }
@@ -489,7 +489,7 @@ void MisAnn(char plr, char pad)
             }
 
             if (Data->P[plr].Mission[pad].MissionCode == 0) {
-                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 return;
             }
         }
@@ -505,11 +505,11 @@ void AI_Begin(char plr)
 
 
     for (i = 0; i < 768; i++) {
-        display::graphics.pal()[i] = 0;
+        display::graphics.palette()[i] = 0;
     }
 
     fin = sOpen("TURN.BUT", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     len[0] = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen(), vhptr.vptr, (unsigned int)len[0],
@@ -517,7 +517,7 @@ void AI_Begin(char plr)
 
     gxClearDisplay(0, 0);
     ShBox(0, 60, 319, 80);
-    grSetColor(6 + plr * 3);
+    display::graphics.setForegroundColor(6 + plr * 3);
 
     if (plr == 0) {
         DispBig(15, 64, "DIRECTOR OF THE UNITED STATES", 0, -1);
@@ -525,7 +525,7 @@ void AI_Begin(char plr)
         DispBig(30, 64, "CHIEF DESIGNER OF THE USSR", 0, -1);
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     grMoveTo(175, 122);
 
     if (Data->Season == 0) {
@@ -536,17 +536,17 @@ void AI_Begin(char plr)
 
     DispNum(0, 0, Data->Year);
     gxVirtualDisplay(&vhptr, 1 + 110 * plr, 1, 30, 85, 30 + 107, 85 + 93, 0);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     colss = 0;
 }
 
 void AI_Done(void)
 {
     music_stop();
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     display::graphics.clearScreen(0);
 }
 

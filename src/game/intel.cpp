@@ -283,17 +283,17 @@ void Intel(char plr)
             beg = 0;
         } else {
 
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             DrawSpaceport(plr);
             PortPal(plr);
             RectFill(166, 191, 318, 198, 3);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
             PrintAt(257, 197, "CASH:");
             DispMB(285, 197, Data->P[plr].Cash);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(256, 196, "CASH:");
             DispMB(284, 196, Data->P[plr].Cash);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
                 PrintAt(166, 197, "SPRING 19");
@@ -302,7 +302,7 @@ void Intel(char plr)
             }
 
             DispNum(0, 0, Data->Year);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
                 PrintAt(165, 196, "SPRING 19");
@@ -311,7 +311,7 @@ void Intel(char plr)
             }
 
             DispNum(0, 0, Data->Year);
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
         }
 
@@ -506,9 +506,9 @@ void MisIntel(char plr, char acc)
 void XSpec(char plr, char mis, char year)
 {
     GetMisType(mis);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 75, "CLASS: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (Mis.Days >= 1) {
         PrintAt(39, 81, "MANNED");
@@ -516,9 +516,9 @@ void XSpec(char plr, char mis, char year)
         PrintAt(39, 81, "UNMANNED");
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 96, "TYPE: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (Mis.Jt == 1) {
         PrintAt(0, 0, "JOINT LAUNCH");
@@ -526,9 +526,9 @@ void XSpec(char plr, char mis, char year)
         PrintAt(0, 0, "SINGLE LAUNCH");
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 112, "DOCKING: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (Mis.Doc == 1) {
         PrintAt(0, 0, "YES");
@@ -536,9 +536,9 @@ void XSpec(char plr, char mis, char year)
         PrintAt(0, 0, "NO");
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 128, "DURATION: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (Mis.Dur >= 1) {
         PrintAt(0, 0, "YES");
@@ -546,7 +546,7 @@ void XSpec(char plr, char mis, char year)
         PrintAt(0, 0, "NO");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(33, 155, "THE ");
 
     if (plr == 0) {
@@ -564,9 +564,9 @@ void XSpec(char plr, char mis, char year)
     }
 
     PrintAt(33, 169, "PLANNING A ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     MissionName(mis, 93, 169, 30);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(33, 183, "SOMETIME IN THE NEXT YEAR.");
     TopSecret(plr, 37 + Data->P[plr].PastIntel[year].sf);
 }
@@ -574,7 +574,7 @@ void XSpec(char plr, char mis, char year)
 void Special(char p, int ind)
 {
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
 
     if (ind >= 5) {
         PrintAt(17, 96, "GROUP: ");
@@ -582,7 +582,7 @@ void Special(char p, int ind)
         PrintAt(17, 96, "FACILITY: ");
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     switch (ind) {
     case 3:
@@ -606,18 +606,18 @@ void Special(char p, int ind)
     }
 
     if (ind >= 5) {
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(17, 112, "STATUS: ");
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         PrintAt(0, 0, "TRAINING");
     } else {
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(17, 112, "STATUS: ");
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         PrintAt(0, 0, "OPERATIONAL");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(33, 155, "THE ");
 
     if (p == 0) {
@@ -636,7 +636,7 @@ void Special(char p, int ind)
 
     PrintAt(33, 169, "PURCHASED ");
     PrintAt(0, 0, "A NEW");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (ind >= 5) {
         PrintAt(0, 0, " GROUP OF ");
@@ -654,7 +654,7 @@ void Special(char p, int ind)
         PrintAt(0, 0, " LAUNCH FACILITY ");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(33, 183, "FOR ITS SPACE PROGRAM");
     TopSecret(p, ind);
 }
@@ -665,12 +665,12 @@ void BackIntel(char p, char year)
     int prg, ind, dur = 0, xc, yc;
     char code, w;
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     prg = Data->P[p].PastIntel[year].prog;
     ind = Data->P[p].PastIntel[year].index;
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 37, "CODE: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     DispNum(0, 0, Data->P[p].PastIntel[year].num);
     DispChr(Data->P[p].PastIntel[year].code);
     PrintAt(0, 0, "-");
@@ -682,9 +682,9 @@ void BackIntel(char p, char year)
     }
 
     DispNum(0, 0, 58 + year);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 51, "CODE NAME: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     xc = 39;
     yc = 59;
 // CODE NAME GOES HERE
@@ -716,9 +716,9 @@ void BackIntel(char p, char year)
         return;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 75, "CLASS: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
@@ -771,9 +771,9 @@ void BackIntel(char p, char year)
         return;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 96, "CREW: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (prg == 2) {
         if (ind >= 0 && ind <= 2) {
@@ -789,9 +789,9 @@ void BackIntel(char p, char year)
         PrintAt(0, 0, "NONE");
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 112, "PROGRAM: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
@@ -814,9 +814,9 @@ void BackIntel(char p, char year)
         break;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(17, 128, "DURATION: ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
@@ -846,7 +846,7 @@ void BackIntel(char p, char year)
         PrintAt(0, 0, " DAYS");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(33, 155, "THE ");
 
     if (p == 0) {
@@ -864,7 +864,7 @@ void BackIntel(char p, char year)
     }
 
     PrintAt(33, 169, "DEVELOPING THE ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
@@ -887,7 +887,7 @@ void BackIntel(char p, char year)
         break;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, " AND RATE THE");
     PrintAt(33, 183, "RELIABILITY AT ABOUT ");
     DispNum(0, 0, Data->P[p].PastIntel[year].sf);
@@ -1194,7 +1194,7 @@ void TopSecret(char plr, char poff)
     in = sOpen("INTEL.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 71 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.pal(), 768, 1, in);
+    fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
     GV(&local, 157, 100);
@@ -1451,7 +1451,7 @@ void IntelPhase(char plr, char pt)
 void DrawBre(char plr)
 {
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -1484,7 +1484,7 @@ void DrawBre(char plr)
     RectFill(12, 140, 307, 189, 7);
     DispBig(33, 5, "INTELLIGENCE BRIEFING", 1, -1);
     FlagSm(plr, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(256, 13, "CONTINUE");
     UPArrow(137, 42);
     DNArrow(137, 95);
@@ -1497,7 +1497,7 @@ void Bre(char plr)
     DrawBre(plr);
     TopSecret(plr, 100); // just the blue background
     BackIntel(plr, year);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -1562,7 +1562,7 @@ void Load_CIA_BUT(void)
     FILE *fin;
 
     fin = sOpen("CIA.BUT", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     PCX_D(display::graphics.screen(), (char *)vhptr.vptr, i);
     fclose(fin);
@@ -1573,7 +1573,7 @@ void DrawIStat(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
     gxClearDisplay(0, 0);
@@ -1597,7 +1597,7 @@ void DrawIStat(char plr)
         display::graphics.setPixel(i, 125, 11);
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     DispNum(5, 55, 75);
     PrintAt(17, 55, "%");
     DispNum(5, 89, 50);
@@ -1608,12 +1608,12 @@ void DrawIStat(char plr)
     gxVirtualDisplay(&but, 68, 0, 84, 165, 155, 194, 0); // Rocket
     gxVirtualDisplay(&but, 141, 0, 165, 165, 236, 194, 0); // Manned
     gxVirtualDisplay(&but, 214, 0, 246, 165, 312, 194, 0); // Misc
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     DispBig(40, 5, "INTELLIGENCE STATS", 1, -1);
     FlagSm(plr, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(256, 13, "CONTINUE");
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
 }
 
@@ -1782,7 +1782,7 @@ void IInfo(char plr, char loc, char w)
             display::graphics.setPixel(i, 125, 11);
         }
 
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         DispNum(5, 55, 75);
         PrintAt(17, 55, "%");
         DispNum(5, 89, 50);
@@ -1792,7 +1792,7 @@ void IInfo(char plr, char loc, char w)
         //gxDisplayVirtual(4,23,315,159,0,&vhptr,4,23);
     } //else gxVirtualDisplay(&vhptr,4,23,4,23,315,159,0);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     switch (loc) {
     case 1: //PrintAt(137,150,"ROCKETS");

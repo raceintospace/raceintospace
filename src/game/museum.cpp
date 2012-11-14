@@ -165,18 +165,18 @@ void Museum(char plr)
         if (beg == 0) {
             beg = (Data->P[plr].AstroCount > 0) ? 7 : 6;    // mods for astros
         } else {
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
             DrawSpaceport(plr);
             PortPal(plr);
             RectFill(166, 191, 318, 198, 3);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
             PrintAt(257, 197, "CASH:");
             DispMB(285, 197, Data->P[plr].Cash);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(256, 196, "CASH:");
             DispMB(284, 196, Data->P[plr].Cash);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
                 PrintAt(166, 197, "SPRING 19");
@@ -185,7 +185,7 @@ void Museum(char plr)
             }
 
             DispNum(0, 0, Data->Year);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
                 PrintAt(165, 196, "SPRING 19");
@@ -195,7 +195,7 @@ void Museum(char plr)
 
             DispNum(0, 0, Data->Year);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
         }
 
         strncpy(helptextIndex, (plr == 0) ? "i700" : "i701", 4);
@@ -264,7 +264,7 @@ void ShowPrest(char plr)
         }
 
 
-    FadeOut(2, display::graphics.pal(), 5, 0, 0);
+    FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -295,29 +295,29 @@ void ShowPrest(char plr)
 
     DispBig(8, 5, "PRESTIGE SUMMARY", 0, -1);
     DispBig(14, 109, "EVENTS", 0, -1);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(140, 120, "1ST:");
     PrintAt(175, 120, "2ND:");
     PrintAt(212, 120, "SUBS:");
     PrintAt(254, 120, "FAIL:");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
     PrintAt(17, 39, "FIRST:");
     PrintAt(19, 81, "DATE:");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(71, 37, "# SPACE FIRSTS:");
     PrintAt(187, 37, "TOTAL POINTS:");
-    grSetColor(1);
-    grSetColor(6);
+    display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(6);
     PrintAt(210, 99, "USA");
     PrintAt(90, 99, "USA");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(261, 99, "USSR");
     PrintAt(135, 99, "USSR");
     UPArrow(299, 131);
     DNArrow(299, 162);
     DPrest(plr, &pos, &pos2);
-    FadeIn(2, display::graphics.pal(), 5, 0, 0);
+    FadeIn(2, display::graphics.palette(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -435,16 +435,16 @@ void DPrest(char plr, char *pos, char *pos2)
     RectFill(183, 31, 300, 40, 3);
 
     if (*pos2 == -1) {
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(71, 37, "SPACE FIRSTS:");
         PrintAt(187, 37, "TOTAL POINTS:");
     } else {
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(71, 37, "ATTEMPTS:");
         PrintAt(187, 37, "POINTS:");
     }
 
-    grSetColor(2);
+    display::graphics.setForegroundColor(2);
     tt = 0;
 
     for (i = *pos; i < *pos + 9 + tt; i++, j++) { // *pos+9+tt
@@ -454,7 +454,7 @@ void DPrest(char plr, char *pos, char *pos2)
         }
 
         if (i == *pos2) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (i == -1) {
@@ -463,9 +463,9 @@ void DPrest(char plr, char *pos, char *pos2)
             PrintAt(15, 133 + 7 * j, &tame[i][0]);
 
             if (i == *pos2) {
-                grSetColor(11);
+                display::graphics.setForegroundColor(11);
             } else {
-                grSetColor(12);
+                display::graphics.setForegroundColor(12);
             }
 
             DispNum(150, 133 + 7 * j, Data->Prestige[i].Add[0]);
@@ -474,13 +474,13 @@ void DPrest(char plr, char *pos, char *pos2)
             DispNum(265, 133 + 7 * j, Data->Prestige[i].Add[3]);
         }
 
-        grSetColor(2);
+        display::graphics.setForegroundColor(2);
     }
 
     RectFill(71, 43, 173, 91, 6 + 3 * plr);
     RectFill(186, 43, 303, 91, 6 + 3 * plr);
     RectFill(10, 86, 55, 92, 3);
-    grSetColor(3);
+    display::graphics.setForegroundColor(3);
 
     for (i = 1; i < 3; i++) {
         pline(71, 91 - 16 * i, 173, 91 - 16 * i);
@@ -501,7 +501,7 @@ void DPrest(char plr, char *pos, char *pos2)
 
             RectFill(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
             RectFill(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (j != 0) {
                 DispNum(94, 88, j);
@@ -519,16 +519,16 @@ void DPrest(char plr, char *pos, char *pos2)
 
         }
 
-        grSetColor(3);
+        display::graphics.setForegroundColor(3);
 
         for (i = 0; i < 3; i++) {
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
         }
 
         i = maxx(abs(Data->Prestige[*pos2].Points[0]), abs(Data->Prestige[*pos2].Points[1]));
-        grSetColor(5);
+        display::graphics.setForegroundColor(5);
         pline(205, 67, 231, 67);
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         pline(258, 67, 284, 67);
 
         if (i != 0) {
@@ -536,7 +536,7 @@ void DPrest(char plr, char *pos, char *pos2)
             tmp = Data->Prestige[*pos2].Points[1];
             RectFill(205, 67, 231, 67 - (float)j * 24 / i, 5);
             RectFill(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (j != 0) {
                 DispNum(212, (j > 0) ? 65 : 73, j);
@@ -568,7 +568,7 @@ void DPrest(char plr, char *pos, char *pos2)
 
             RectFill(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
             RectFill(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (j != 0) {
                 DispNum(94, 88, j);
@@ -589,7 +589,7 @@ void DPrest(char plr, char *pos, char *pos2)
             tmp += Data->Prestige[i].Points[1];
         }
 
-        grSetColor(3);
+        display::graphics.setForegroundColor(3);
 
         for (i = 0; i < 3; i++) {
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
@@ -602,7 +602,7 @@ void DPrest(char plr, char *pos, char *pos2)
         if (i != 0) {
             RectFill(205, 67, 231, 67 - (float)j * 24 / i, 5);
             RectFill(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (j != 0) {
                 DispNum(212, (j > 0) ? 65 : 73, j);
@@ -637,7 +637,7 @@ void ShowSpHist(char plr)
 {
     int pos;
 
-    FadeOut(2, display::graphics.pal(), 5, 0, 0);
+    FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
     display::graphics.clearScreen(0);
 
@@ -651,7 +651,7 @@ void ShowSpHist(char plr)
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 31, 19); // USA inbox
     FlagSm(plr, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
 
     ORBox(0, 24, 319, 199, 3);
@@ -667,7 +667,7 @@ void ShowSpHist(char plr)
     Display_ARROW(2, 239, 178); //right
     Display_ARROW(3, 285, 178); //right arrow
     DrawMisHist(plr, &pos);
-    FadeIn(2, display::graphics.pal(), 5, 0, 0);
+    FadeIn(2, display::graphics.palette(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -824,13 +824,13 @@ void DrawMisHist(char plr, int *where)
     DispBig(103 + (yr - 57) * 4, 178, cYr, 0, -1);
 
     RectFill(5, 29, 314, 169, 0);
-    grSetColor(7 + 3 * plr);
+    display::graphics.setForegroundColor(7 + 3 * plr);
 
     for (i = 0; i < 7; i++) {
         pline(13 + 49 * i, 29, 13 + 49 * i, 169);
     }
 
-    grSetColor(12);
+    display::graphics.setForegroundColor(12);
 
     if (*where % 2 == 0) for (i = 0; i < 6; i++) {
             strncpy(cYr, Month[i], 3);
@@ -879,7 +879,7 @@ void DrawMisHist(char plr, int *where)
         // first check for joint missions
         if (Data->P[plr].History[index].Hard[1][0] > 0) {
             sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[1]);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
 
             if (Data->P[plr].History[index].Man[0][0] != -1 && Data->P[plr].History[index].Hard[1][0] != -1) {
@@ -961,7 +961,7 @@ void DrawMisHist(char plr, int *where)
             }
 
             sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[0]);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
             SmHardMe(plr, 44 + 49 * j, 50 + 40 * temp, prog, planet, 64);
         }
@@ -986,7 +986,7 @@ void ShowAstrosHist(char plr)
     memcpy(abuf, Data->P[plr].Pool, sizeof(Data->P[plr].Pool));
     qsort((void *)abuf, Data->P[plr].AstroCount, sizeof(struct Astros), astcomp);
 
-    FadeOut(2, display::graphics.pal(), 5, 0, 0);
+    FadeOut(2, display::graphics.palette(), 5, 0, 0);
     RectFill(1, 39, 157, 184, 3);
     DispBig(68, 71, "NO", 0, -1);
     DispBig(46, 90, "MISSION", 0, -1);
@@ -1013,7 +1013,7 @@ void ShowAstrosHist(char plr)
         FlagSm(1, 4, 4);
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
@@ -1024,7 +1024,7 @@ void ShowAstrosHist(char plr)
     ORBox(8, 187, 151, 195, 3);
     IRBox(6, 26, 153, 38, 0);
     ORBox(8, 28, 151, 36, 3);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(165, 32, "NAME:");
     PrintAt(165, 60, "TENURE:");
     PrintAt(165, 78, "MISSIONS: ");
@@ -1032,7 +1032,7 @@ void ShowAstrosHist(char plr)
     PrintAt(165, 99, "SKILLS:");
     PrintAt(165, 149, "SPACE DURATION:");
     PrintAt(165, 159, "LOCATION: ");
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(174, 107, "CAPSULE PILOT: ");
     PrintAt(174, 115, "L.M. PILOT: ");
     PrintAt(174, 123, "E.V.A.: ");
@@ -1047,12 +1047,12 @@ void ShowAstrosHist(char plr)
     Display_ARROW(1, 213, 179); //left arrow
     Display_ARROW(2, 250, 179); //right
     Display_ARROW(3, 290, 179); //right arrow
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(37, 34, "PREVIOUS MISSION");
     PrintAt(47, 193, "NEXT MISSION");
     DisplAst(plr, &pos, &pos2);
     DisplAstData(plr, &pos, &pos2);
-    FadeIn(2, display::graphics.pal(), 5, 0, 0);
+    FadeIn(2, display::graphics.palette(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -1126,7 +1126,7 @@ void DisplAst(char plr, char *where, char *where2)
     RectFill(220, 169, 280, 164, 3);
     RectFill(288, 105, 308, 133, 3);
     RectFill(239, 83, 306, 97, 3);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if ((plr == 0 && abuf[*where].Missions >= 4) || abuf[*where].Hero == 1) {
         Display_ARROW(4, 289, 105);
@@ -1157,14 +1157,14 @@ void DisplAst(char plr, char *where, char *where2)
     strncpy(Ast_Name, abuf[*where].Name, 10);
 
     if (abuf[*where].Sex == 1) {
-        grSetColor(5); // Show females in blue
+        display::graphics.setForegroundColor(5); // Show females in blue
     }
 
     PrintAt(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     strcat(temp, Nums[abuf[*where].Group]);
     PrintAt(165, 49, temp);
-    grSetColor(12);
+    display::graphics.setForegroundColor(12);
     DispNum(225, 169, *where + 1);
     PrintAt(0, 0, " OF ");
     DispNum(0, 0, Data->P[plr].AstroCount);
@@ -1223,7 +1223,7 @@ void DispLoc(char plr, char *where)
 {
     int ass;
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     ass = abuf[*where].Assign;
 
     switch (abuf[*where].Status) {
@@ -1305,9 +1305,9 @@ void DisplAstData(char plr, char *where, char *where2)
         return;
     }
 
-    grSetColor(2);
+    display::graphics.setForegroundColor(2);
     pline(20, 111, 138, 111);
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     pline(20, 113, 138, 113);
 
 
@@ -1317,7 +1317,7 @@ void DisplAstData(char plr, char *where, char *where2)
         PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[1][0], Data->P[plr].History[num].Patch[1], 32);
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(43, 53, "PRESTIGE: ");
     DispNum(93, 53, Data->P[plr].History[num].Prestige);
     PrintAt(43, 63, "DURATION: ");
@@ -1353,7 +1353,7 @@ void DisplAstData(char plr, char *where, char *where2)
 
     PrintAt(10, 83, "DESCRIPTION: ");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(43, 45, &Data->P[plr].History[num].MissionName[0][0]);
 
     GetMisType(Data->P[plr].History[num].MissionCode);
@@ -1378,13 +1378,13 @@ void DisplAstData(char plr, char *where, char *where2)
         PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[1][0], Data->P[plr].History[num2].Patch[1], 32);
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(43, 120, &Data->P[plr].History[num2].MissionName[0][0]);
 
     GetMisType(Data->P[plr].History[num2].MissionCode);
     PrintAt(10, 168, Mis.Abbr);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(43, 128, "PRESTIGE: ");
     DispNum(93, 128, Data->P[plr].History[num2].Prestige);
     PrintAt(43, 138, "DURATION: ");

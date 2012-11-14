@@ -48,7 +48,7 @@ void DrawReview(char plr)
     char Fired_Flag = 0, Reset_Flag = 0;
 
     if (Data->P[plr].PresRev[0] != 0x7F) {
-        FadeOut(2, display::graphics.pal(), 10, 0, 0);
+        FadeOut(2, display::graphics.palette(), 10, 0, 0);
     }
 
     PortPal(plr);
@@ -83,17 +83,17 @@ void DrawReview(char plr)
         DispBig(40, 5, "POLITBURO REVIEW", 0, -1);
     }
 
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(59, 36, "JOB PERFORMANCE");
-    grSetColor(6);
+	display::graphics.setForegroundColor(6);
     PrintAt(8, 46, "GOOD");
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(8, 77, "FAIR");
-    grSetColor(9);
+	display::graphics.setForegroundColor(9);
     PrintAt(8, 109, "POOR");
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     DispNum(154, 117, Data->Year - 1);
     DispNum(126, 117, Data->Year - 2);
     DispNum(97, 117, Data->Year - 3);
@@ -102,7 +102,7 @@ void DrawReview(char plr)
     RectFill(32, 39, 172, 111, 0);
     GradRect(33, 39, 171, 74, 0);
     GradRect(33, 75, 171, 110, 0);
-    grSetColor(3);
+	display::graphics.setForegroundColor(3);
     pline(60, 40, 60, 110);
     pline(88, 40, 88, 110);
     pline(116, 40, 116, 110);
@@ -142,7 +142,7 @@ void DrawReview(char plr)
         }
 
         RectFill(166 - i * 28, 75, 151 - i * 28, cte, 5 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
-        grSetColor(6 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
+		display::graphics.setForegroundColor(6 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
         pline(167 - i * 28, 75, 167 - i * 28, cte);
     }
 
@@ -248,7 +248,7 @@ void DrawReview(char plr)
         Data->P[plr].PresRev[0] = 16;
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }
@@ -283,13 +283,13 @@ void MisRev(char plr, int pres)
         music_start((pres > 0) ? M_SUCCESS : M_UNSUCC);
     }
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
     DispBig(40, 5, "MISSION REVIEW", 0, -1);
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     FlagSm(plr, 4, 4);
 
@@ -310,7 +310,7 @@ void PresPict(char poff)
     fseek(in, poff * sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    fread(&display::graphics.pal()[96], 672, 1, in);
+    fread(&display::graphics.palette()[96], 672, 1, in);
     fread(buffer, table.size, 1, in);
     fclose(in);
     GV(&local, 126, 84);
@@ -373,7 +373,7 @@ void DrawRevText(char plr, int val)
     fread(buffer, 204, 1, fin);
     fclose(fin);
 
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
 
     grMoveTo(20, 140);
 
