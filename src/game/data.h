@@ -463,7 +463,7 @@ enum MissionHardwareType {
     Mission_PrimaryBooster,     // 4
     Mission_EVA,                            // 5
     Mission_PhotoRecon,             // 6
-    Mission_SecondaryBooster    // 7
+    Mission_SecondaryBooster    // 7 - unused
 };
 
 struct MisAst {  // This struct will be -1's if empty
