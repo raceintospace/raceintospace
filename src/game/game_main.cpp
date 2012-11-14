@@ -340,8 +340,14 @@ int game_main(int argc, char *argv[])
     // Do all the work in game_main_impl(), but trap exceptions here, since we're called from C
     try {
         return game_main_impl(argc, argv);
-    } catch (std::exception &e) {
+    } catch (const std::exception &e) {
         fprintf(stderr, "unhandled exception: %s\n", e.what());
+        abort();
+    } catch (const std::string &e) {
+        fprintf(stderr, "unhandled exception: %s\n", e.c_str());
+        abort();
+    } catch (...) {
+        fprintf(stderr, "unhandled exception of unknown type, terminating\n");
         abort();
     }
 }
