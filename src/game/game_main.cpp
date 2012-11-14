@@ -33,6 +33,7 @@
 #include "display/graphics.h"
 #include "display/png_image.h"
 
+#include "filesystem.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "options.h"
@@ -165,6 +166,9 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex;
+    
+    // initialize the filesystem
+    Filesystem::init(argv[0]);
 
     if (!display::PNGImage::libpng_versions_match()) {
         std::stringstream message;
