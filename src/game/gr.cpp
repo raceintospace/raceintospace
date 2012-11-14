@@ -5,12 +5,8 @@
 #include <assert.h>
 #include "sdlhelper.h"
 
-void gr_set_color_map(unsigned char *map);
-
 static int gr_cur_x;
 static int gr_cur_y;
-static int gr_fg_color; /**< current foreground color to use */
-static int gr_bg_color; /**< current background color to use */
 
 int
 grGetMouseButtons(void)
@@ -39,12 +35,6 @@ grGetMouseCurPos(int *xp, int *yp)
 }
 
 void
-gr_set_color_map(unsigned char *map)
-{
-    memcpy(display::graphics.pal(), map, 256 * 3);
-}
-
-void
 gr_sync(void)
 {
     av_sync();
@@ -57,30 +47,6 @@ gr_maybe_sync(void)
         av_sync();
     }
 }
-
-/** set foreground color
- *
- * \param color the color code to use
- *
- * \li 6 = red
- * \li 1 = white
- */
-void
-grSetColor(int color)
-{
-    gr_fg_color = color;
-}
-
-/** set background color
- *
- * \param color the color code to use
- */
-void
-grSetBkColor(int color)
-{
-    gr_bg_color = color;
-}
-
 
 void
 grMoveTo(int x, int y)
@@ -134,9 +100,9 @@ grLineTo(int x_arg, int y_arg)
 
     for (x = x0; x <= x1; x++) {
         if (steep) {
-            display::graphics.setPixel(y, x, gr_fg_color);
+            display::graphics.setPixel(y, x, display::graphics.foregroundColor());
         } else {
-            display::graphics.setPixel(x, y, gr_fg_color);
+            display::graphics.setPixel(x, y, display::graphics.foregroundColor());
         }
 
         error = error + deltay;
@@ -163,44 +129,3 @@ grMoveRel(int dx, int dy)
     grMoveTo(gr_cur_x + dx, gr_cur_y + dy);
 }
 
-void
-grDrawRect(int x1, int y1, int x2, int y2, int mode)
-{
-    int t;
-
-    assert(mode == grOUTLINE);
-
-    if (x1 > x2) {
-        t = x1;
-        x1 = x2;
-        x2 = t;
-    }
-
-    if (y1 > y2) {
-        t = y1;
-        y1 = y2;
-        y2 = t;
-    }
-
-    grMoveTo(x1, y1);
-    grLineTo(x2, y1);
-    grLineTo(x2, y2);
-    grLineTo(x1, y2);
-    grLineTo(x1, y1);
-}
-
-void
-grDrawLine(int x1, int y1, int x2, int y2)
-{
-    grMoveTo(x1, y1);
-    grLineTo(x2, y2);
-}
-
-int
-grGetPixel(int x, int y)
-{
-    assert(x >= 0 && x < MAX_X);
-    assert(y >= 0 && y < MAX_Y);
-
-    return display::graphics.screen()[y * MAX_X + x];
-}

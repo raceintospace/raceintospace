@@ -156,7 +156,7 @@ char REvent(char plr)
         fclose(fin);
 
         Data->P[plr].Budget += m;
-        /*grSetColor(15);
+        /*display::graphics.setForegroundColor(15);
         PrintAt(200,30,"BUDGET MOD: ");
         if (m<0) {PrintAt(0,0,"-");m*=-1;};
         DispNum(0,0,m);

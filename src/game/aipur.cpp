@@ -61,7 +61,7 @@ void DrawStatistics(char Win)
     FILE *fin;
     strncpy(helptextIndex, "i145", 4);
     strncpy(keyhelpIndex, "k045", 4);
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     PortPal(0);
 
     gxClearDisplay(0, 0);
@@ -75,9 +75,9 @@ void DrawStatistics(char Win)
     Flag(41, 115, other(Win));
     DispBig(48, 44, "STATISTICS", 1, -1);
     DispBig(215, 45, "EXIT", 1, -1);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(122, 78, "WINNING DIRECTOR: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
 
     if (AI[Win]) {
         PrintAt(0, 0, "COMPUTER");
@@ -89,9 +89,9 @@ void DrawStatistics(char Win)
         PrintAt(0, 0, &Data->P[ Data->Def.Plr2 ].Name[0]);
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(122, 125, "LOSING DIRECTOR: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
 
     if (AI[other(Win)]) {
         PrintAt(0, 0, "COMPUTER");
@@ -136,7 +136,7 @@ void DrawStatistics(char Win)
 
     fclose(fin);
     DV(&local);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }

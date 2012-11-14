@@ -118,10 +118,10 @@ void DrawFuture(char plr, int mis, char pad)
         lck[i] = status[i] = 0;
     }
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     Load_FUT_BUT();
     fin = sOpen("FMIN.IMG", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     sz = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
@@ -244,7 +244,7 @@ void DrawFuture(char plr, int mis, char pad)
 
     GetMinus(plr);
 
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     /* lines of text are 1:8,30  2:8,37   3:8,44    */
     switch (pad) { // These used to say Pad 1, 2, 3  -Leon
@@ -261,13 +261,13 @@ void DrawFuture(char plr, int mis, char pad)
         break;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(9, 80, "RESET");
 
     PrintAt(258, 13, "CONTINUE");
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
         PrintAt(200, 9, "SPRING");
@@ -277,10 +277,10 @@ void DrawFuture(char plr, int mis, char pad)
 
     PrintAt(206, 16, "19");
     DispNum(0, 0, Data->Year);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     FlagSm(plr, 4, 4);
     DispBig(40, 5, "FUTURE MISSIONS", 0, -1);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }
@@ -290,7 +290,7 @@ void ClearDisplay(void)
     gxVirtualDisplay(&vhptr, 202, 48, 202, 48, 241, 82, 0);
     gxVirtualDisplay(&vhptr, 17, 83, 17, 83, 241, 195, 0);
     gxVirtualDisplay(&vhptr, 242, 23, 242, 23, 315, 195, 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     return;
 }
 
@@ -311,7 +311,7 @@ int GetMinus(char plr)
     }
 
     gxVirtualDisplay(&vh, 203, u, 203, 24, 238, 31, 0);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (i > 0) {
         PrintAt(210, 42, "-");
@@ -320,7 +320,7 @@ int GetMinus(char plr)
     }
 
     DispNum(0, 0, i);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     return 0;
 }
 
@@ -428,11 +428,11 @@ void TogBox(int x, int y, int st)
     TRACE4("->TogBox(x %d, y %d, st %d)", x, y, st);
     char sta[2][2] = {{2, 4}, {4, 2}};
 
-    grSetColor(sta[st][0]);
+    display::graphics.setForegroundColor(sta[st][0]);
     grMoveTo(0 + x, y + 32);
     grLineTo(0 + x, y + 0);
     grLineTo(34 + x, y + 0);
-    grSetColor(sta[st][1]);
+    display::graphics.setForegroundColor(sta[st][1]);
     grMoveTo(x + 0, y + 33);
     grLineTo(23 + x, y + 33);
     grLineTo(23 + x, y + 23);
@@ -920,7 +920,7 @@ begfut_noredraw:
 
             if (prev_setting != setting) {
                 ShBox(18, 186, 183, 194);
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 MisStep(21, 192, Mev[setting].loc);
             }
         } else if (setting < 0 && prev_setting >= 0) {
@@ -1027,7 +1027,7 @@ begfut_noredraw:
                     }
                 }
 
-                grSetColor(34);
+                display::graphics.setForegroundColor(34);
                 OutBox(5, 49, 53, 72);
             };
 
@@ -1440,7 +1440,7 @@ void Bd(int x, int y)
     y2 = y - 1;
     RectFill(x1, y1, x1 + 8, y1 + 4, 21);
     RectFill(x2, y2, x2 + 6, y2 + 6, 21);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     grMoveTo(x, y + 4);
     /** \note references Bub_Count to determine the number of the character to draw in the bubble */
     DispChr(65 + Bub_Count);
@@ -1458,7 +1458,7 @@ void Bd(int x, int y)
  */
 void DurPri(int x)
 {
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     switch (x) {
     case -1:
@@ -1545,10 +1545,10 @@ void Missions(char plr, int X, int Y, int val, char bub)
         ClearDisplay();
         RectFill(6, 31, 182, 46, 3);
         RectFill(80, 25, 175, 30, 3);
-        grSetColor(5);
+        display::graphics.setForegroundColor(5);
         PrintAt(55, 30, "TYPE: ");
         DispNum(0, 0, val);
-        grSetColor(5);
+        display::graphics.setForegroundColor(5);
 
         if (V[val].E > 0) {
             if (F5 > V[val].E && Mis.Dur == 1) {
@@ -1560,7 +1560,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
             DurPri(F5);
         }
     } else {
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
     }
 
     MissionName(val, X, Y, 24);

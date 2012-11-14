@@ -220,7 +220,7 @@ void EndGame(char win, char pad)
     char miss, prog, man1, man2, man3, man4, bud;
 
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     strncpy(helptextIndex, "i000", 4);
     strncpy(keyhelpIndex, "k000", 4);
     gxClearDisplay(0, 0);
@@ -231,7 +231,7 @@ void EndGame(char win, char pad)
     RectFill(5, 28, 314, 195, 0);
     RectFill(5, 105, 239, 110, 3);
     ShBox(101, 102, 218, 113);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(112, 110, "ALTERNATE HISTORY");
 
     if (win == 0) {
@@ -241,7 +241,7 @@ void EndGame(char win, char pad)
     }
 
     FlagSm(win, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(256, 13, "CONTINUE");
 
     if (Option == -1 && MAIL == -1) {
@@ -250,9 +250,9 @@ void EndGame(char win, char pad)
         miss = Data->P[win].History[Data->Prestige[22].Index].MissionCode;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(10, 50, "MISSION TYPE: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
 
     if (miss == 55  || miss == 56 || miss == 57) {
         i = 1;
@@ -278,13 +278,13 @@ void EndGame(char win, char pad)
         }
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(10, 40, "MISSION: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
     PrintAt(0, 0, capName);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(0, 0, "  -  ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
     DispNum(0, 0, dayOnMoon);
     PrintAt(0, 0, " ");
     PrintAt(0, 0, Month[month]);
@@ -347,7 +347,7 @@ void EndGame(char win, char pad)
     prog = Data->P[win].History[gork].Hard[i][0] + 1;
 
     for (i = 1; i < 5; i++) {
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
 
         switch (i) {
         case 1:
@@ -359,7 +359,7 @@ void EndGame(char win, char pad)
                 PrintAt(10, 70, "COMMAND PILOT: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man1 != -1) {
                 PrintAt(0, 0, &Data->P[win].Pool[man1].Name[0]);
@@ -374,7 +374,7 @@ void EndGame(char win, char pad)
                 PrintAt(10, 79, "LUNAR PILOT: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man2 != -1) {
                 PrintAt(0, 0, &Data->P[win].Pool[man2].Name[0]);
@@ -389,7 +389,7 @@ void EndGame(char win, char pad)
                 PrintAt(10, 88, "EVA SPECIALIST: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man3 != -1 && prog > 2) {
                 PrintAt(0, 0, &Data->P[win].Pool[man3].Name[0]);
@@ -400,7 +400,7 @@ void EndGame(char win, char pad)
         case 4:
             if (prog == 5) {
                 PrintAt(10, 97, "EVA SPECIALIST: ");
-                grSetColor(8);
+                display::graphics.setForegroundColor(8);
 
                 if (man4 != -1) {
                     PrintAt(0, 0, &Data->P[win].Pool[man4].Name[0]);
@@ -416,14 +416,14 @@ void EndGame(char win, char pad)
 
 //Print the first in the moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(10, 60, "FIRST ON THE MOON: ");
-    grSetColor(14);
+    display::graphics.setForegroundColor(14);
     PrintAt(0, 0, &Data->P[win].Pool[firstOnMoon].Name[0]);
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     AltHistory(win);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -471,7 +471,7 @@ void Load_LenFlag(char win)
 
     poff = 0;
     coff = 128;
-    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
+    fread(&display::graphics.palette()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
@@ -508,10 +508,10 @@ void Draw_NewEnd(char win)
 
     music_start(M_VICTORY);
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     in = sOpen("WINNER.BUT", "rb", 0);
-    fread(display::graphics.pal(), 384, 1, in);
+    fread(display::graphics.palette(), 384, 1, in);
     size = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, in);
     fclose(in);
     PCX_D(vhptr.vptr, display::graphics.screen(), size);
@@ -522,15 +522,15 @@ void Draw_NewEnd(char win)
     IOBox(132, 180, 187, 192);
     IOBox(192, 180, 247, 192);
     IOBox(252, 180, 307, 192);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(21, 188, "HISTORY");
     PrintAt(85, 188, "STATS");
     PrintAt(142, 188, "PARADE");
     PrintAt(198, 188, "MOON EVA");
     PrintAt(269, 188, "EXIT");
-    FadeIn(0, display::graphics.pal(), 10, 128, 0);
+    FadeIn(0, display::graphics.palette(), 10, 128, 0);
     Load_LenFlag(win);
-    FadeIn(1, display::graphics.pal(), 40, 128, 1);
+    FadeIn(1, display::graphics.palette(), 40, 128, 1);
 }
 
 void NewEnd(char win, char loc)
@@ -580,10 +580,10 @@ void NewEnd(char win, char loc)
                 }
 
                 gxPutImage(&local, gxSET, 149, 9, 0);
-                memset(&display::graphics.pal()[384], 0, 384);
+                memset(&display::graphics.palette()[384], 0, 384);
                 gxClearVirtual(&local, 0);
                 Load_LenFlag(win);
-                FadeIn(1, display::graphics.pal(), 40, 128, 1);
+                FadeIn(1, display::graphics.palette(), 40, 128, 1);
 
                 if (R_V == 0 || R_V == -1) {
                     R_V = Burst(win);
@@ -652,7 +652,7 @@ void NewEnd(char win, char loc)
             key = 0;
             Re_Draw = 1;
             OutBox(134, 182, 185, 190);
-            FadeOut(1, display::graphics.pal(), 40, 128, 1);
+            FadeOut(1, display::graphics.palette(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
             gxGetImage(&local, 149, 9, 309, 100, 0);
             ShBox(149, 9, 309, 100);
@@ -682,7 +682,7 @@ void NewEnd(char win, char loc)
             key = 0;
             OutBox(194, 182, 245, 190);
             Re_Draw = 1;
-            FadeOut(1, display::graphics.pal(), 40, 128, 1);
+            FadeOut(1, display::graphics.palette(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
             gxGetImage(&local, 149, 9, 309, 100, 0);
             ShBox(149, 9, 309, 100);
@@ -719,7 +719,7 @@ void FakeWin(char win)
     char miss, prog, man1, man2, man3, man4, bud, yr, monthWin;
     monthWin = brandom(12);
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -728,7 +728,7 @@ void FakeWin(char win)
     RectFill(5, 28, 314, 195, 0);
     RectFill(5, 105, 239, 110, 3);
     ShBox(101, 102, 218, 113);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(112, 110, "ALTERNATE HISTORY");
 
     if (win == 0) {
@@ -738,7 +738,7 @@ void FakeWin(char win)
     }
 
     FlagSm(win, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     r = brandom(100);
 
@@ -752,12 +752,12 @@ void FakeWin(char win)
         miss = 56;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(10, 50, "MISSION TYPE: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
 
     MissionName(miss, 80, 50, 24);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
 
     if (Data->Year <= 65) {
         r = 65 + brandom(5);
@@ -780,15 +780,15 @@ void FakeWin(char win)
         prog = 4;
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(10, 40, "MISSION: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
     PrintAt(0, 0, &Data->P[win].Manned[prog - 1].Name[0]);
     PrintAt(0, 0, " ");
     PrintAt(0, 0, &Nums[brandom(15) + 1][0]);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(0, 0, "  -  ");
-    grSetColor(8);;
+    display::graphics.setForegroundColor(8);;
     DispNum(0, 0, brandom(daysAMonth[monthWin]) + 1);
     PrintAt(0, 0, " ");
     PrintAt(0, 0, Month[monthWin]);
@@ -849,7 +849,7 @@ void FakeWin(char win)
     }
 
     for (i = 1; i < 5; i++) {
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
 
         switch (i) {
         case 1:
@@ -861,7 +861,7 @@ void FakeWin(char win)
                 PrintAt(10, 70, "COMMAND PILOT: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man1 != -1) {
                 PrintAt(0, 0, &Data->P[win].Pool[man1].Name[0]);
@@ -876,7 +876,7 @@ void FakeWin(char win)
                 PrintAt(10, 79, "LUNAR PILOT: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man2 != -1 && (prog > 1 && prog < 5)) {
                 PrintAt(0, 0, &Data->P[win].Pool[man2].Name[0]);
@@ -891,7 +891,7 @@ void FakeWin(char win)
                 PrintAt(10, 88, "EVA SPECIALIST: ");
             }
 
-            grSetColor(8);
+            display::graphics.setForegroundColor(8);
 
             if (man3 != -1 && prog > 2) {
                 PrintAt(0, 0, &Data->P[win].Pool[man3].Name[0]);
@@ -902,7 +902,7 @@ void FakeWin(char win)
         case 4:
             if (prog == 5) {
                 PrintAt(10, 97, "EVA SPECIALIST: ");
-                grSetColor(8);
+                display::graphics.setForegroundColor(8);
 
                 if (man4 != -1 && prog == 5) {
                     PrintAt(0, 0, &Data->P[win].Pool[man4].Name[0]);
@@ -922,14 +922,14 @@ void FakeWin(char win)
         manOnMoon = man1;
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(10, 60, "FIRST ON THE MOON: ");
-    grSetColor(14);
+    display::graphics.setForegroundColor(14);
     PrintAt(0, 0, &Data->P[win].Pool[manOnMoon].Name[0]);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     FakeHistory(win, yr);
     music_start(M_INTERLUD);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -995,7 +995,7 @@ void HistFile(char *buf, unsigned char bud)
 void PrintHist(char *buf)
 {
     int i, k;
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
     k = 121;
     grMoveTo(10, k);
 
@@ -1012,7 +1012,7 @@ void PrintHist(char *buf)
 void PrintOne(char *buf, char tken)
 {
     int i, k;
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
 
     if (tken == 0)  {
         k = 127;
@@ -1069,11 +1069,11 @@ void SpecialEnd(void)
     InBox(5, 31, 314, 194);
     RectFill(6, 32, 313, 193, 3);
     IOBox(242, 3, 315, 19);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     ShBox(6, 109, 313, 119);
     ShBox(6, 151, 313, 161);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(130, 116, "UNITED STATES");
     PrintAt(134, 158, "SOVIET UNION");
     RectFill(6, 32, 313, 108, 0);
@@ -1088,7 +1088,7 @@ void SpecialEnd(void)
     memset(buffer, 0x00, BUFFER_SIZE);
     HistFile(buffer + 1000, 11);
     PrintOne(buffer + 1000, 1);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -1124,7 +1124,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("ENDGAME.BUT", "rb", 0);
-    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
+    fread(&display::graphics.palette()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -1164,7 +1164,7 @@ LoserPict(char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("LOSER.BUT", "rb", 0);
-    fread(&display::graphics.pal()[coff * 3], 384, 1, in);
+    fread(&display::graphics.palette()[coff * 3], 384, 1, in);
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
@@ -1192,7 +1192,7 @@ void PlayFirst(char plr, char first)
     char i, w = 0, index;
     int Check = 0;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
@@ -1201,9 +1201,9 @@ void PlayFirst(char plr, char first)
     InBox(84, 45, 236, 128);
     RectFill(85, 46, 235, 127, 0);
     ShBox(80, 134, 240, 189); //77 first parameter
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(84, 141, "GOAL STEP COMPLETE: ");
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
 
 //Modem Opponent => assure prestige first that mission
     Check = Data->Prestige[first].Index;
@@ -1216,7 +1216,7 @@ void PlayFirst(char plr, char first)
     }
 
     for (i = first; i < 28; i++) {
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
 
         if (Data->Prestige[i].Place == index && Data->PD[index][i] == 0) {
             if (Option == -1 && MAIL == -1) {
@@ -1234,8 +1234,8 @@ void PlayFirst(char plr, char first)
         }
     }
 
-    grSetColor(7);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    display::graphics.setForegroundColor(7);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     if (Option == -1 && MAIL == -1) {
         Replay(plr, Data->P[plr].PastMis - 1, 85, 46, 151, 82, "OOOO");
@@ -1244,7 +1244,7 @@ void PlayFirst(char plr, char first)
     }
 
     PauseMouse();
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     music_stop();
     return;

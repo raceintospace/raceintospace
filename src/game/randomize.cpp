@@ -42,6 +42,7 @@ RD cost is loosly based in the basic model
 #include "gr.h"
 #include "pace.h"
 #include "sdlhelper.h"
+#include "display/graphics.h"
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */
@@ -237,7 +238,7 @@ void SetEquipName(char plr)
     RectFill(95, 50, 227, 96, 0);
     OutBox(96, 51, 226, 95);
     RectFill(97, 52, 225, 94, 3);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(103, 59, "EQUIPMENT NAME CHANGE");
     PrintAt(123, 69, "(ESCAPE TO SKIP)");
     int n;
@@ -266,11 +267,11 @@ char GetNewName(char old_name[20])
     }
 
     RectFill(100, 74, 223, 91, 3);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(162 - 3 * strlen(old_name), 80, &old_name[0]);
     InBox(99, 84, 223, 92);
     RectFill(100, 85, 222, 91, 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(162 - 3 * strlen(old_name), 90, &old_name[0]);
     DispChr(0x14);
     av_sync();
@@ -293,7 +294,7 @@ char GetNewName(char old_name[20])
         }
 
         RectFill(100, 85, 222, 91, 0);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(162 - 3 * strlen(name), 90, &name[0]);
         DispChr(0x14);
         av_sync();

@@ -96,7 +96,7 @@ GoNews(char plr)
 
     memset(Name, 0x00, sizeof Name);
     memset(buffer, 0x00, 20480);   // clear buffer
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     j = ResolveEvent(plr);
 
@@ -465,7 +465,7 @@ DrawNText(char plr, char got)
     char *buf;
 
     buf = buffer;
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     for (i = 0; i < got; i++) {
         while (*buf != 'x') {
@@ -475,31 +475,31 @@ DrawNText(char plr, char got)
         buf++;
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
-            grSetColor((plr == 0) ? 9 : 7);
+            display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
         }
     }
 
@@ -508,39 +508,39 @@ DrawNText(char plr, char got)
         grMoveTo(xx, yy);
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
-            grSetColor(12);
+            display::graphics.setForegroundColor(12);
         }
 
         if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "AND THAT'S THE NEWS", 19) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "THIS CONCLUDES OUR NEWS", 23) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
         }
 
         if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
-            grSetColor((plr == 0) ? 9 : 7);
+            display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
         }
 
         while (buf[0] != 'x' && buf[0] != '\0') {
@@ -645,7 +645,7 @@ News(char plr)
 
                 if (AnimIndex == 5) {
 
-                    RectFill(227, 108, 228, 108, grGetPixel(227, 108));
+                    RectFill(227, 108, 228, 108, display::graphics.getPixel(227, 108));
 
                 }
 
@@ -712,7 +712,7 @@ News(char plr)
                     RectFill(315, 20, 317, 21, 3);
                     RectFill(241, 2, 242, 4, 3);
                     IOBox(243, 3, 316, 19);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAt(258, 13, "CONTINUE");
 
                 };
@@ -876,15 +876,15 @@ static void
 DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
-    grSetColor(3);
-    Box(1, 1, 318, 112);
-    Box(2, 2, 317, 111);
+    display::graphics.setForegroundColor(3);
+	display::graphics.outlineRect( 1, 1, 318, 112, 3 );
+	display::graphics.outlineRect( 2, 2, 317, 111, 3 );
     InBox(3, 3, 316, 110);
     ShBox(240, 3, 316, 22);
     RectFill(315, 20, 317, 21, 3);
     RectFill(241, 2, 242, 4, 3);
     IOBox(243, 3, 316, 19);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     av_need_update_xy(0, 0, 319, 113);
 }
@@ -946,7 +946,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
     // *************** TCS001 my kludge (tom) 3/15/94
     if (Mode == TOMS_BUGFIX) {
-        FadeOut(2, display::graphics.pal(), 1, 0, 0);
+        FadeOut(2, display::graphics.palette(), 1, 0, 0);
 
         gxClearDisplay(0, 0);
         DrawTopNewsBox(plr);
@@ -957,7 +957,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         screen_dirty = 1;
 
         /* This fade was too long given current fades impl. */
-        FadeIn(2, display::graphics.pal(), 10, 0, 0); /* was: 50 */
+        FadeIn(2, display::graphics.palette(), 10, 0, 0); /* was: 50 */
     }
 
     load_news_anim_start = get_time();
@@ -972,7 +972,7 @@ ShowEvt(char plr, char crd)
     uint32_t offset;
     uint32_t length;
 
-    memset(&display::graphics.pal()[96], 0, 672);
+    memset(&display::graphics.palette()[96], 0, 672);
 
     if (plr == 0) {
         switch (crd) {
@@ -1021,7 +1021,7 @@ ShowEvt(char plr, char crd)
      */
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
-        fread(&display::graphics.pal()[384], 384, 1, ffin);
+        fread(&display::graphics.palette()[384], 384, 1, ffin);
         fread(display::graphics.screen(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }

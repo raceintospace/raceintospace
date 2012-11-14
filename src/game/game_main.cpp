@@ -305,7 +305,7 @@ int game_main_impl(int argc, char *argv[])
                     break;
                 }
             } else if (!QUIT) {
-                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                FadeOut(2, display::graphics.palette(), 10, 0, 0);
             }
 
             QUIT = 0;
@@ -321,7 +321,7 @@ int game_main_impl(int argc, char *argv[])
         case 3:
             //KillMusic();
             ex = 1;
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             break;
         }
     }
@@ -486,7 +486,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         FakeWin(plr[i] - 2);
                     }
 
-                    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                    FadeOut(2, display::graphics.palette(), 10, 0, 0);
                     QUIT = 1;
                     return;
                 }
@@ -574,7 +574,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         if (Data->Prestige[22].Place != -1) {
                             UpdateRecords(1);
                             NewEnd(Data->Prestige[22].Place, Order[i].loc);
-                            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                            FadeOut(2, display::graphics.palette(), 10, 0, 0);
                             return;
                         }
 
@@ -600,7 +600,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[22].Place == -1) {
             // nobody wins .....
             SpecialEnd();
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
             return;
         }
 
@@ -655,7 +655,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
     };
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Museum(0);
 
@@ -878,7 +878,7 @@ void PrintAtKey(int x, int y, const char *s, char val)
 {
     PrintAt(x, y, s);
     grMoveTo(x, y);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     DispChr(s[val]);
     return;
 }
@@ -993,55 +993,51 @@ void ShBox(int x1, int y1, int x2, int y2)
 
 void UPArrow(int x1, int y1)
 {
-    grSetColor(4);
-    grDrawLine(x1, y1, x1, 25 + y1);
-    grDrawLine(3 + x1, 11 + y1, 5 + x1, 11 + y1);
-    grSetColor(2);
-    grDrawLine(1 + x1, y1, 6 + x1, 11 + y1);
-    grDrawLine(3 + x1, 12 + y1, 3 + x1, 25 + y1);
+	display::graphics.line(x1, y1, x1, 25 + y1, 4 );
+	display::graphics.line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
+
+	display::graphics.line(1 + x1, y1, 6 + x1, 11 + y1, 2);
+	display::graphics.line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
     return;
 }
 
 void RTArrow(int x1, int y1)
 {
-    grSetColor(4);
-    grDrawLine(x1, y1, x1 + 31, y1);
-    grDrawLine(x1 + 20, y1 + 3, x1 + 20, y1 + 5);
-    grSetColor(2);
-    grDrawLine(x1, y1 + 3, x1 + 19, y1 + 3);
-    grDrawLine(x1 + 31, y1 + 1, x1 + 20, y1 + 6);
+	display::graphics.line(x1, y1, x1 + 31, y1, 4);
+	display::graphics.line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
+
+	display::graphics.line(x1, y1 + 3, y1 + 19, y1 + 3, 2);
+	display::graphics.line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
     return;
 }
 
 void LTArrow(int x1, int y1)
 {
-    grSetColor(4);
-    grDrawLine(x1, y1, x1 + 31, y1);
-    grDrawLine(x1 + 11, y1 + 3, x1 + 11, y1 + 5);
-    grSetColor(2);
-    grDrawLine(x1, y1 + 1, x1 + 11, y1 + 6);
-    grDrawLine(x1 + 12, y1 + 3, x1 + 31, y1 + 3);
+	display::graphics.line(x1, y1, x1 + 31, y1, 4);
+	display::graphics.line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
+
+	display::graphics.line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
+	display::graphics.line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2 );
     return;
 }
 
 void DNArrow(int x1, int y1)
 {
-    grSetColor(4);
-    grDrawLine(x1, y1, x1, 25 + y1);
-    grDrawLine(3 + x1, 14 + y1, 5 + x1, 14 + y1);
-    grSetColor(2);
-    grDrawLine(3 + x1, y1, 3 + x1, 13 + y1);
-    grDrawLine(6 + x1, 14 + y1, 1 + x1, 25 + y1);
+	display::graphics.line(x1, y1, x1, 25 + y1, 4);
+	display::graphics.line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
+
+	display::graphics.line(3 + x1, y1, 3 + x1, 13 + y1, 2);
+	display::graphics.line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
     return;
 }
 
 void InBox(int x1, int y1, int x2, int y2)
 {
-    grSetColor(2);
+    display::graphics.setForegroundColor(2);
     grMoveTo(x1, y2);
     grLineTo(x2, y2);
     grLineTo(x2, y1);
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     grLineTo(x1, y1);
     grLineTo(x1, y2);
     av_need_update_xy(x1, y1, x2, y2);
@@ -1049,11 +1045,11 @@ void InBox(int x1, int y1, int x2, int y2)
 
 void OutBox(int x1, int y1, int x2, int y2)
 {
-    grSetColor(4);
+    display::graphics.setForegroundColor(4);
     grMoveTo(x1, y2);
     grLineTo(x2, y2);
     grLineTo(x2, y1);
-    grSetColor(2);
+    display::graphics.setForegroundColor(2);
     grMoveTo(x2 - 1, y1);
     grLineTo(x1, y1);
     grLineTo(x1, y2 - 1);
@@ -1063,8 +1059,8 @@ void OutBox(int x1, int y1, int x2, int y2)
 void IOBox(int x1, int y1, int x2, int y2)
 {
     InBox(x1, y1, x2, y2);
-    grSetColor(0);
-    Box(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
+    display::graphics.setForegroundColor(0);
+	display::graphics.outlineRect( x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0 );
     OutBox(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 }
 
@@ -1079,14 +1075,8 @@ void IOBox(int x1, int y1, int x2, int y2)
  */
 void RectFill(int x1, int y1, int x2, int y2, char col)
 {
-    grSetBkColor(col);
+    display::graphics.setBackgroundColor(col);
     display::graphics.fillRect(x1, y1, x2, y2, col);
-    return;
-}
-
-void Box(int x1, int y1, int x2, int y2)
-{
-    grDrawRect(x1, y1, x2, y2, grOUTLINE);
     return;
 }
 
@@ -1106,7 +1096,7 @@ void FlagSm(char plr, int xm, int ym)
 {
     if (plr == 0) {
         RectFill(xm, ym, xm + 25, ym + 14, 1);
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
 
         for (int i = 0; i < 15; i++) {
             grMoveTo(xm, ym + i);
@@ -1133,7 +1123,7 @@ void FlagSm(char plr, int xm, int ym)
         };
     } else {
         RectFill(xm, ym, xm + 25, ym + 14, 8);
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         grMoveTo(xm + 2, ym + 6);
         grLineTo(xm + 4, ym + 6);
         grLineTo(xm + 4, ym + 5);

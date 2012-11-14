@@ -92,18 +92,18 @@ void Admin(char plr)
             beg = 0;
         } else {
 
-            FadeOut(2, display::graphics.pal(), 10, 0, 0);
+            FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
             DrawSpaceport(plr);
             PortPal(plr);
             RectFill(166, 191, 318, 198, 3);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
             PrintAt(257, 197, "CASH:");
             DispMB(285, 197, Data->P[plr].Cash);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(256, 196, "CASH:");
             DispMB(284, 196, Data->P[plr].Cash);
-            grSetColor(0);
+            display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
                 PrintAt(166, 197, "SPRING 19");
@@ -112,7 +112,7 @@ void Admin(char plr)
             }
 
             DispNum(0, 0, Data->Year);
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
                 PrintAt(165, 196, "SPRING 19");
@@ -122,7 +122,7 @@ void Admin(char plr)
 
             DispNum(0, 0, Data->Year);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
         }
 
         music_start(M_GOOD);
@@ -306,7 +306,7 @@ void FileAccess(char mode)
 
     strcpy(helptextIndex, "i128");
     strcpy(keyhelpIndex, "k128");
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
 
     saveType = SAVEGAME_Normal;
@@ -364,20 +364,20 @@ void FileAccess(char mode)
     IOBox(207, 104, 280, 116); // Play
     IOBox(207, 118, 280, 130); // Quit
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(59, 42, "TIME CAPSULE REQUEST");
     PrintAt(219, 42, "FUNCTIONS");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(233, 56, "LOAD", 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(233, 70, "SAVE", 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(221, 84, "MAIL SAVE", 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(227, 98, "DELETE", 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(233, 112, "PLAY", 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAtKey(234, 126, "QUIT", 0);
 
     done = BarB = now = 0;
@@ -388,7 +388,7 @@ void FileAccess(char mode)
         FileText(&FList[now].Name[0]);
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
 
     while (!done) {
@@ -919,11 +919,11 @@ void FileAccess(char mode)
                 if (tFiles == 0) {
                     InBox(207, 48, 280, 60);
                     RectFill(208, 49, 279, 59, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAtKey(233, 56, "LOAD", 0);
                     InBox(207, 90, 280, 102);
                     RectFill(208, 91, 279, 101, 3);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     PrintAtKey(226, 98, "DELETE", 0);
                 }
 
@@ -1055,7 +1055,7 @@ void FileAccess(char mode)
     }
 
     if (mode == 1 && QUIT == 1) {
-        FadeOut(2, display::graphics.pal(), 10, 0, 0);
+        FadeOut(2, display::graphics.palette(), 10, 0, 0);
     }
 }
 
@@ -1167,14 +1167,14 @@ char GetBlockName(char *Nam)
     if (i == 1) {
         InBox(43, 67, 197, 77);
         RectFill(44, 68, 196, 76, 13);
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(47, 74, "ENTER FILE DESCRIPTION");
         InBox(51, 95, 190, 105);
         RectFill(52, 96, 189, 104, 0);
     } else {
         InBox(43, 67, 197, 77);
         RectFill(44, 68, 196, 76, 13);
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(47, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         gxPutImage(&local, gxSET, 39, 50, 0);
@@ -1200,7 +1200,7 @@ char GetBlockName(char *Nam)
             if ((i < 21) && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
                              (key >= '0' && key <= '9'))) { // valid key
                 Nam[i++] = key;
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 PrintAt(53, 102, &Nam[0]);
                 av_need_update_xy(52, 96, 189, 104);
                 key = 0;
@@ -1210,7 +1210,7 @@ char GetBlockName(char *Nam)
                 Nam[--i] = 0x00;
 
                 RectFill(52, 96, 189, 104, 0);
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 PrintAt(53, 102, &Nam[0]);
 
                 key = 0;
@@ -1234,7 +1234,7 @@ void DrawFiles(char now, char loc, char tFiles)
 {
     int i, j, start;
     start = now - loc;
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     j = 0;
 
     for (i = start; i < start + 9; i++) {
@@ -1254,7 +1254,7 @@ void BadFileType(void)
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
     RectFill(44, 68, 196, 76, 13);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(47, 74, "CORRUPT SAVE FILE");
     delay(2000);
     gxPutImage(&local, gxSET, 39, 50, 0);
@@ -1269,11 +1269,11 @@ void FileText(char *name)
     FILE *fin;
 
     RectFill(38, 133, 279, 155, 3);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     fin = sOpen(name, "rb", 1);
 
     if (fin == NULL) {
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(70, 147, "NO HISTORY RECORDED");
         return;
     }
@@ -1284,11 +1284,11 @@ void FileText(char *name)
 
     grMoveTo(40, 139);
 
-    //if (((char)SaveHdr->Country[0])&0x02) grSetColor(7+(SaveHdr->Country[1]-2)*3);
+    //if (((char)SaveHdr->Country[0])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
 
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
-    //grSetColor(6+(SaveHdr->Country[0]%2)*3);
+    //display::graphics.setForegroundColor(6+(SaveHdr->Country[0]%2)*3);
     if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
         PrintAt(0, 0, "MODEM DIRECTOR ");
     } else if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
@@ -1303,9 +1303,9 @@ void FileText(char *name)
     PrintAt(0, 0, " OF THE U.S.A.");
 
     grMoveTo(40, 147);
-    //if (((char)SaveHdr->Country[1])&0x02) grSetColor(7+(SaveHdr->Country[1]-2)*3);
+    //if (((char)SaveHdr->Country[1])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
         PrintAt(0, 0, "VS. MODEM DIRECTOR ");
@@ -1321,7 +1321,7 @@ void FileText(char *name)
     PrintAt(0, 0, " OF THE U.S.S.R.");
 
     grMoveTo(40, 154);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (SaveHdr->Season == 0) {
         if (SaveHdr->Country[0] == 8) {
@@ -1366,7 +1366,7 @@ int FutureCheck(char plr, char type)
         }
     };
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
 
     PortPal(plr);
@@ -1393,9 +1393,9 @@ int FutureCheck(char plr, char type)
     RectFill(65, 18, 212, 28, 7);
     ShBox(217, 17, 264, 29);
     IOBox(217, 17, 264, 29);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(231, 25, "EXIT");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (type == 0) {
         PrintAt(74, 25, "FUTURE ");
@@ -1414,7 +1414,7 @@ int FutureCheck(char plr, char type)
         IOBox(108, 67 + 51 * i, 264, 79 + 51 * i);
 
         if (p[i] > 1) {
-            grSetColor(5);
+            display::graphics.setForegroundColor(5);
             PrintAt(111, 50 + i * 51, "THIS FACILITY IS DAMAGED.");
             PrintAt(111, 57 + i * 51, "IT WILL COST ");
             DispNum(0, 0, abs(p[i]));
@@ -1430,7 +1430,7 @@ int FutureCheck(char plr, char type)
         };
 
         if (p[i] == 1) {
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
 
             if (type == 1) {
                 GetMisType(Data->P[plr].Mission[i].MissionCode);
@@ -1478,7 +1478,7 @@ int FutureCheck(char plr, char type)
                     }
             } else {
                 if (!Data->P[plr].Future[i].MissionCode) {
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                 }
 
                 GetMisType(Data->P[plr].Future[i].MissionCode);
@@ -1554,7 +1554,7 @@ int FutureCheck(char plr, char type)
         };
 
         if (p[i] == -1) {
-            grSetColor(9);  // Changed from 5
+            display::graphics.setForegroundColor(9);  // Changed from 5
             PrintAt(111, 41 + i * 51, "NO FACILITY EXISTS");
 
             if (type == 0) {
@@ -1568,7 +1568,7 @@ int FutureCheck(char plr, char type)
             t = 3;
         };
 
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
 
         PrintAt(72, 76 + i * 51, "PAD ");
 
@@ -1577,7 +1577,7 @@ int FutureCheck(char plr, char type)
         gxVirtualDisplay(&vhptr, 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51, 0);
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
     pad = -1;
@@ -1620,7 +1620,7 @@ int FutureCheck(char plr, char type)
                     p[i] = 1;
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     RectFill(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
-                    grSetColor(5);
+                    display::graphics.setForegroundColor(5);
                     Missions(plr, 111, 41 + i * 51, m[i], 0);
                     PrintAt(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
@@ -1639,7 +1639,7 @@ int FutureCheck(char plr, char type)
                     p[i] = 1;
                     RectFill(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
-                    grSetColor(5);
+                    display::graphics.setForegroundColor(5);
                     Missions(plr, 111, 41 + i * 51, m[i], 0);
                     PrintAt(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
@@ -1666,15 +1666,15 @@ char RequestX(char *s, char md)
     }
 
     i = strlen(s) >> 1;
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     ShBox(85, 52, 249, 135);
     IOBox(170, 103, 243, 130);
     IOBox(91, 103, 164, 130);
     InBox(92, 58, 243, 97);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(111, 110, "YES", 0, 0);
     DispBig(193, 110, "NO", 0, 0);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispBig(166 - i * 10, 65, &s[0], 0, -1);
     PrintAt(136, 94, "ARE YOU SURE?");
 
