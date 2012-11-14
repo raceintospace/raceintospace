@@ -8,6 +8,7 @@
 #include "gr.h"
 #include "sdlhelper.h"
 #include "pace.h"
+#include "display/graphics.h"
 
 enum vertical_alignment {
     ALIGN_TOP,
@@ -82,13 +83,13 @@ void pretty_crash(const std::string &title, const std::string &message)
     image.export_to_legacy_palette();
     image.draw();
 
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
     display_text_in_box(190, 20, 120, 20, "MASTER ALARM!");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     display_text_in_box(190, 30, 120, 20, title, ALIGN_BOTTOM);
 
-    grSetColor(3);
+    display::graphics.setForegroundColor(3);
     display_text_in_box(190, 50, 120, 108, message);
 
     av_need_update_xy(0, 0, MAX_X, MAX_Y);

@@ -50,7 +50,7 @@ DrawHardef(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
     gxClearDisplay(0, 0);
@@ -74,7 +74,7 @@ DrawHardef(char plr)
         display::graphics.setPixel(i, 125, 11);
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     DispNum(5, 55, 15);
     DispNum(5, 89, 10);
     DispNum(5, 123, 5);
@@ -82,20 +82,20 @@ DrawHardef(char plr)
     gxVirtualDisplay(&but, 68, 0, 84, 165, 155, 194, 0);    // Rocket
     gxVirtualDisplay(&but, 141, 0, 165, 165, 236, 194, 0);  // Manned
     gxVirtualDisplay(&but, 214, 0, 246, 165, 312, 194, 0);  // Misc
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(40, 5, "EFFICIENCY", 1, -1);
     FlagSm(plr, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
     RectFill(149, 2, 157, 10, 9);
     RectFill(149, 2, 156, 9, 8);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(163, 8, "ATTEMPTS");
     RectFill(149, 12, 157, 20, 6);
     RectFill(149, 12, 156, 19, 5);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(163, 18, "SUCCESS");
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
 }
@@ -134,7 +134,7 @@ ShowHard(char plr)
             } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
                         && mousebuttons > 0) || key == 'T') {
 
-                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 RectFill(33, 1, 239, 21, 3);
                 RectFill(4, 23, 315, 159, 0);
                 GradRect(4, 23, 315, 159, 0);
@@ -146,26 +146,26 @@ ShowHard(char plr)
                 }
 
                 if (Cnt == 0) {
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     DispBig(40, 5, "PRESTIGE POINTS", 1, -1);
                     Cnt = 1;
                     PInfo(plr, place);
                 } else {
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     DispBig(40, 5, "EFFICIENCY", 1, -1);
                     RectFill(149, 2, 157, 10, 9);
                     RectFill(149, 2, 156, 9, 8);
-                    grSetColor(9);
+                    display::graphics.setForegroundColor(9);
                     PrintAt(163, 8, "ATTEMPTS:");
                     RectFill(149, 12, 157, 20, 6);
                     RectFill(149, 12, 156, 19, 5);
-                    grSetColor(6);
+                    display::graphics.setForegroundColor(6);
                     PrintAt(163, 18, "SUCCESS");
                     Cnt = 0;
                     HInfo(plr, place, 0);
                 }
 
-                FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
             } else if (((x >= 83 && y >= 164 && x <= 156 && y <= 195
                          && mousebuttons > 0) || key == 'R') && place != 1) {
@@ -404,7 +404,7 @@ PInfo(char plr, char loc)
         ScaleAmt = 50.0;
     }
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     DispNum(5, 55, ScaleAmt * 3.0);
     DispNum(5, 89, ScaleAmt * 2.0);
     DispNum(5, 123, ScaleAmt);
@@ -880,14 +880,14 @@ HInfo(char plr, char loc, char w)
             ScaleAmt = 30.0;
         }
 
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         DispNum(5, 55, ScaleAmt * 3.0);
         DispNum(5, 89, ScaleAmt * 2.0);
         DispNum(5, 123, ScaleAmt);
     }
 
     ScaleAmt = 25.0 / ScaleAmt;
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     switch (loc) {
     case 1:                //PrintAt(137,150,"ROCKETS");
@@ -1470,7 +1470,7 @@ RankMe(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.pal(), 5, 0, 0);
+    FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(52, 0, 267, 32);
@@ -1483,7 +1483,7 @@ RankMe(char plr)
     RectFill(28, 51, 290, 181, 0);
     RectFill(33, 56, 285, 176, 7);
     RectFill(34, 57, 284, 175, 0);
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     grMoveTo(27, 50);
     grLineTo(33, 56);
     grMoveTo(27, 182);
@@ -1492,7 +1492,7 @@ RankMe(char plr)
     grLineTo(291, 50);
     grMoveTo(285, 176);
     grLineTo(291, 182);
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
 
     for (i = 0; i < 22; i++) {
         if (i < 11) {
@@ -1504,7 +1504,7 @@ RankMe(char plr)
         grLineTo(33 + (i * 12), 176);
     }
 
-    grSetColor(16);
+    display::graphics.setForegroundColor(16);
     grMoveTo(34, 152);
     grLineTo(284, 152);
     DrawRank(plr);
@@ -1512,7 +1512,7 @@ RankMe(char plr)
     if (Option == -1 || Option == 0) {
         RectFill(43, 66, 49, 70, 6);
         RectFill(43, 66, 48, 69, 5);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(56, 70, "U.S.A.");
     }
 
@@ -1522,7 +1522,7 @@ RankMe(char plr)
         PrintAt(56, 82, "U.S.S.R.");
     }
 
-    FadeIn(2, display::graphics.pal(), 5, 0, 0);
+    FadeIn(2, display::graphics.palette(), 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -1613,14 +1613,14 @@ DrawRank(char plr)
         }
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
 
     for (i = 0; i < 11; i++) {
         DispNum(29 + (24 * i), 43, (i * 2) + 57);
         DispNum(41 + (24 * i), 192, (i * 2) + 58);
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
 
     for (i = 0; i < 6; i++) {
         switch (i) {
@@ -1668,7 +1668,7 @@ DrawRank(char plr)
     //Win=Data->Prestige[22].Place;
     i = 0;
     t1 = 152;
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==0 || MAIL==0)
 
@@ -1683,7 +1683,7 @@ DrawRank(char plr)
 
     i = 0;
     t1 = 152;
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==1 || MAIL==1)
 
@@ -1696,17 +1696,17 @@ DrawRank(char plr)
             i++;
         }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(6, 27, "LEVEL:");
     PrintAt(275, 27, "LEVEL:");
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     DispNum(41, 27, Data->Def.Lev1 + 1);
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     DispNum(310, 27, Data->Def.Lev2 + 1);
 
     if (Option == -1 || Option == 0) {
         InBox(55, 21, 116, 29);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(60, 27, "SCORE:");
         score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
         sprintf(&Digit[0], "%d", score);
@@ -1715,7 +1715,7 @@ DrawRank(char plr)
 
     if (Option == -1 || Option == 1) {
         InBox(203, 21, 264, 29);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(208, 27, "SCORE:");
         score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
         sprintf(&Digit[0], "%d", score);

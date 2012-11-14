@@ -47,7 +47,7 @@ void drawBspline(int segments, char color, ...)
 
     yy = yx = 0; /* XXX check uninitialized */
 
-    grSetColor(color);
+    display::graphics.setForegroundColor(color);
     /* initialize the array  */
     memset(xpoint, 0, sizeof(xpoint));
     memset(ypoint, 0, sizeof(ypoint));
@@ -80,7 +80,7 @@ void drawBspline(int segments, char color, ...)
             nc4 = u * u * u / 6;
             x = (nc1 * xpoint[i - 1] + nc2 * xpoint[i] + nc3 * xpoint[i + 1] + nc4 * xpoint[i + 2]);
             y = (nc1 * ypoint[i - 1] + nc2 * ypoint[i] + nc3 * ypoint[i + 1] + nc4 * ypoint[i + 2]);
-            SamCol = grGetPixel(x, y);
+            SamCol = display::graphics.getPixel(x, y);
 
             if (yyy == 1) {
                 display::graphics.setPixel(yx, yy, 5);

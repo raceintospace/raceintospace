@@ -969,7 +969,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     locl = (int32_t) 1612 * which;
 
     if (which < 580) {
-        memset(&display::graphics.pal()[off * 3], 0x00, 48);
+        memset(&display::graphics.palette()[off * 3], 0x00, 48);
     }
 
     if (loc != 0 && which < 580) {
@@ -977,7 +977,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
-    fread(&display::graphics.pal()[off * 3], 48, 1, ffin);
+    fread(&display::graphics.palette()[off * 3], 48, 1, ffin);
     fread(boob.vptr, 1564, 1, ffin);
 
     for (i = 0; i < 782; i++) {
@@ -1011,11 +1011,11 @@ void InRFBox(int a, int b, int c, int d, int col)
 void
 GuyDisp(int xa, int ya, struct Astros *Guy)
 {
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     assert(Guy != NULL);
 
     if (Guy->Sex == 1) {
-        grSetColor(6);    // Display female 'nauts in navy blue, not white
+        display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white
     }
 
     PrintAt(xa, ya, Guy->Name);
@@ -1023,22 +1023,22 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
 
     switch (Guy->Status) {
     case AST_ST_DEAD:
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
         PrintAt(0, 0, "DEAD");
         break;
 
     case AST_ST_RETIRED:
-        grSetColor(12);
+        display::graphics.setForegroundColor(12);
         PrintAt(0, 0, "INJ");   // TODO: Why INJ not RET?
         break;
 
     case AST_ST_INJURED:
-        grSetColor(12);
+        display::graphics.setForegroundColor(12);
         PrintAt(0, 0, "INJ");
         break;
 
     default:
-        grSetColor(13);
+        display::graphics.setForegroundColor(13);
         PrintAt(0, 0, "OK");
         break;
     }
@@ -1053,25 +1053,25 @@ char FailureMode(char plr, int prelim, char *text)
     double last_secs;
     char save_screen[64000], save_pal[768];
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     // this destroys what's in the current page frames
     memcpy(save_screen, display::graphics.screen(), 64000);
-    memcpy(save_pal, display::graphics.pal(), 768);
+    memcpy(save_pal, display::graphics.palette(), 768);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
     FlagSm(plr, 4, 4);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
 
     ShBox(0, 24, 319, 199);
 
     InRFBox(4, 27, 153, 58, 0);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     MisStep(9, 34, Mev[STEP].loc);
     PrintAt(9, 41, "MISSION STEP: ");
     DispNum(0, 0, STEP);
@@ -1102,14 +1102,14 @@ char FailureMode(char plr, int prelim, char *text)
     // Display Result of Mission
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(8, 122, "RECOMMEND MISSION SCRUB");
     } else {
-        grSetColor(9);
+        display::graphics.setForegroundColor(9);
 
         switch (prelim) {
         case 0:
-            grSetColor(15);
+            display::graphics.setForegroundColor(15);
             PrintAt(10, 122, "ALL SYSTEMS ARE GO");
             break;
 
@@ -1130,7 +1130,7 @@ char FailureMode(char plr, int prelim, char *text)
             break;
 
         case 6:
-            grSetColor(15);
+            display::graphics.setForegroundColor(15);
             PrintAt(10, 122, "MISSION SUCCESS");
             break;
 
@@ -1152,7 +1152,7 @@ char FailureMode(char plr, int prelim, char *text)
     // Flight Crew Info
     InRFBox(4, 131, 315, 151, 0); // Astro List/Crew
 
-    grSetColor(12);
+    display::graphics.setForegroundColor(12);
 
     PrintAt(15, 139, "CREW");
 
@@ -1189,29 +1189,29 @@ char FailureMode(char plr, int prelim, char *text)
         } else if (strncmp(Mev[STEP].E->ID, "M3", 2) == 0) { // EVA
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
             PrintAt(49, 138, "UNMANNED");
         }
     };
 
-    grSetColor(11);  // Specialist
+    display::graphics.setForegroundColor(11);  // Specialist
 
     if (MANNED[Mev[STEP].pad] > 0) {
         switch (Mev[STEP].ast) {
         case 0:
-            grDrawLine(49, 140, 172, 140);
+			display::graphics.line(49, 140, 172, 140, 11);
             break;
 
         case 1:
-            grDrawLine(49, 148, 172, 148);
+			display::graphics.line(49, 148, 172, 148, 11);
             break;
 
         case 2:
-            grDrawLine(182, 140, 305, 140);
+			display::graphics.line(182, 140, 305, 140, 11);
             break;
 
         case 3:
-            grDrawLine(182, 148, 305, 148);
+			display::graphics.line(182, 148, 305, 148, 11);
             break;
         }
     }
@@ -1219,7 +1219,7 @@ char FailureMode(char plr, int prelim, char *text)
     // Display Failure Text
     InRFBox(4, 154, 315, 196, 0);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     j = 0;
 
@@ -1247,7 +1247,7 @@ char FailureMode(char plr, int prelim, char *text)
     // Failure Diagram
     InRFBox(162, 28, 312, 42, 10);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     PrintAt(194, 37, "EQUIPMENT DETAIL");
 
@@ -1276,7 +1276,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     last_secs = get_time();
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -1304,10 +1304,10 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
             screen_dirty = 1;
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 0;  /* Continue */
         }
@@ -1322,9 +1322,9 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
             screen_dirty = 1;
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
         }
@@ -1365,7 +1365,7 @@ FILE *OpenAnim(char *fname)
     fread(&AHead, sizeof AHead, 1, fin);
     Swap16bit(AHead.w);
     Swap16bit(AHead.h);
-    fread(&display::graphics.pal()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
+    fread(&display::graphics.palette()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
     aLoc = ftell(fin);
     tFrames = AHead.fNum;
     cFrame = 0;
@@ -1493,9 +1493,9 @@ char DrawMoonSelection(char nauts, char plr)
         return 2;
     }
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     memcpy(save_screen, display::graphics.screen(), 64000);
-    memcpy(save_pal, display::graphics.pal(), 768);
+    memcpy(save_pal, display::graphics.palette(), 768);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -1505,7 +1505,7 @@ char DrawMoonSelection(char nauts, char plr)
     DispBig(40, 5, "FIRST LUNAR EVA", 0, -1);
 
     InRFBox(162, 28, 312, 42, 10);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(194, 37, "EQUIPMENT DETAIL");
 
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
@@ -1534,10 +1534,10 @@ char DrawMoonSelection(char nauts, char plr)
     last_secs = get_time();
 
     InRFBox(25, 31, 135, 45, 10);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(83 - strlen(Data->P[plr].Mission[Mev[STEP].pad].Name) * 3, 40, Data->P[plr].Mission[Mev[STEP].pad].Name);
     InRFBox(162, 161, 313, 175, 10);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(198, 170, dayOnMoon);
     PrintAt(0, 0, " ");
     PrintAt(0, 0, Month[Data->P[plr].Mission[Mev[STEP].pad].Month]);
@@ -1545,7 +1545,7 @@ char DrawMoonSelection(char nauts, char plr)
     DispNum(0, 0, Data->Year);
 
     InRFBox(25, 51, 135, 85, 10);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(30, 60, " Who should be the");
     PrintAt(30, 70, plr == 0 ?
             "first astronaut to" :
@@ -1556,11 +1556,11 @@ char DrawMoonSelection(char nauts, char plr)
 
     for (i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
-        grSetColor(12);
+        display::graphics.setForegroundColor(12);
         GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     WaitForMouseUp();
     key = 0;
 
@@ -1580,9 +1580,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 1;
         }
@@ -1595,9 +1595,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 2;
         }
@@ -1610,9 +1610,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 3;
         }
@@ -1625,9 +1625,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             memcpy(display::graphics.screen(), save_screen, 64000);
-            memcpy(display::graphics.pal(), save_pal, 768);
+            memcpy(display::graphics.palette(), save_pal, 768);
 
-            FadeIn(2, display::graphics.pal(), 10, 0, 0);
+            FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 4;
         }

@@ -57,7 +57,7 @@ void DrawTrain(char plr, char lvl)
         strcpy(keyhelpIndex, "k037");
     }
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 114);
@@ -76,7 +76,7 @@ void DrawTrain(char plr, char lvl)
     InBox(3, 27, 154, 110);
     UPArrow(9, 133);
     DNArrow(9, 166);
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     if (plr == 0) {
         PrintAt(20, 124, "ASTRONAUTS");
@@ -125,15 +125,15 @@ void DrawTrain(char plr, char lvl)
         break;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(258, 13, "CONTINUE");
 
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
 
     PrintAt(169, 88, "NAME:");      /* 196,32 */
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(169, 97, "GROUP ");
 
@@ -143,17 +143,17 @@ void DrawTrain(char plr, char lvl)
 
     /*  Data->P[plr].AstroLevel     201,41 */
 
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
 
     PrintAt(169, 111, "STATUS:");
 
     PrintAt(169, 120, "MOOD:");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     PrintAt(169, 133, "SKILL:");
 
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
 
     PrintAt(192, 142, "CAP:");
 
@@ -165,11 +165,11 @@ void DrawTrain(char plr, char lvl)
 
     PrintAt(192, 174, "END:");
 
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     PrintAt(181, 189, "W");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     PrintAt(0, 0, "ITHDRAW FROM TRAINING");
 
@@ -201,7 +201,7 @@ TrainText(char plr, int astro, int cnt)
         return;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(200, 88, &Data->P[plr].Pool[astro].Name[0]);
     int col;
 
@@ -225,11 +225,11 @@ TrainText(char plr, int astro, int cnt)
         col = 3;
     }
 
-    grSetColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
     PrintAt(200, 120, "   ");
     DispNum(200, 120, Data->P[plr].Pool[astro].Mood);
     grMoveTo(212, 111);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     memset(Fritz, 0x00, sizeof(Fritz));
 
     if (Data->P[plr].Pool[astro].Status >= AST_ST_TRAIN_BASIC_1
@@ -279,7 +279,7 @@ TrainText(char plr, int astro, int cnt)
         break;
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     grMoveTo(203, 97);
 
@@ -303,7 +303,7 @@ TrainText(char plr, int astro, int cnt)
 
     DispNum(282, 97, Data->P[plr].Pool[astro].Active);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     DispNum(215, 142, Data->P[plr].Pool[astro].Cap);
 
@@ -365,7 +365,7 @@ void Train(char plr, int level)
         TrainText(plr, M[0], count);
     }
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     if (level == 0) {
         if (m > 4) {
@@ -692,12 +692,12 @@ void Hospital(char plr, int sel)
     now2 = 0;
     BarA = count = 0;
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
 // pal, len, image
 
     fin = sOpen("CEM.IMG", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     fread(&size, 4, 1, fin);
     Swap32bit(size);
 
@@ -705,7 +705,7 @@ void Hospital(char plr, int sel)
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // place on the Sov cem
-            fread(display::graphics.pal(), 768, 1, fin);
+            fread(display::graphics.palette(), 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }
@@ -713,18 +713,18 @@ void Hospital(char plr, int sel)
 
     if (sel == 0) {
         fseek(fin, size, SEEK_CUR); // Skip past US cem
-        fread(display::graphics.pal(), 768, 1, fin);
+        fread(display::graphics.palette(), 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         fseek(fin, size, SEEK_CUR); // Place on the US hosp
-        fread(display::graphics.pal(), 768, 1, fin);
+        fread(display::graphics.palette(), 768, 1, fin);
         fread(&size, 4, 1, fin);
         Swap32bit(size);
 
         if (plr == 1) {
             fseek(fin, size, SEEK_CUR); // Skip to Sov hosp
-            fread(display::graphics.pal(), 768, 1, fin);
+            fread(display::graphics.palette(), 768, 1, fin);
             fread(&size, 4, 1, fin);
             Swap32bit(size);
         }
@@ -757,7 +757,7 @@ void Hospital(char plr, int sel)
 
     gxVirtualDisplay(&vhptr, 0, 81, 167, 108, 312, 194, 0);
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
         if (sel == 0) {
@@ -779,9 +779,9 @@ void Hospital(char plr, int sel)
         }
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (plr == 0) {
         PrintAt(25, 118, "ASTRONAUT");
@@ -802,7 +802,7 @@ void Hospital(char plr, int sel)
 
     DispLeft(plr, BarA, count, now2, &M[0]);
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
 

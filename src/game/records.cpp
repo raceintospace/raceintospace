@@ -168,7 +168,7 @@ void Records(char plr)
     fread(rec, sizeof rec, 1, file);
     fclose(file);
 
-    FadeOut(2, display::graphics.pal(), 5, 0, 0);
+    FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -186,25 +186,25 @@ void Records(char plr)
     RectFill(11, 128, 308, 190, 0);
     ShBox(297, 129, 307, 158);
     ShBox(297, 160, 307, 189); // Arrows
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     DispBig(42, 5, "MISSION RECORDS", 0, -1);
     UPArrow(299, 131);
     DNArrow(299, 162);
     ShBox(6, 29, 21, 102);
     ShBox(230, 29, 313, 102);
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     DispNum(12, 42, 1);
     DispNum(12, 66, 2);
     DispNum(12, 90, 3);
     RectFill(70, 109, 266, 121, 4);
     RectFill(72, 111, 264, 119, 0);
     IOBox(234, 84, 309, 99);
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(238, 94, "CLEAR RECORD");
     InBox(237, 34, 306, 81);
     Drec(&pos, &pos2, 0);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -279,7 +279,7 @@ void ClearRecord(char *pos2)
     RectFill(24, 30, 227, 51, 3);
     RectFill(24, 55, 227, 76, 3);
     RectFill(24, 80, 227, 101, 3);
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     DispNum(12, 42, 1);
     DispNum(12, 66, 2);
     DispNum(12, 90, 3);
@@ -330,7 +330,7 @@ void Drec(char *pos, char *pos2, char mde)
 
 
     memset(Digit, 0x00, sizeof(Digit));
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     DispNum(12, 42, 1);
     DispNum(12, 66, 2);
     DispNum(12, 90, 3);
@@ -346,7 +346,7 @@ void Drec(char *pos, char *pos2, char mde)
         ShBox(23, 29, 228, 52);
         RectFill(24, 30, 227, 51, 3);
     } else {
-        grSetColor(8);
+		display::graphics.setForegroundColor(8);
         DispNum(12, 42, 1);
         InBox(23, 29, 228, 52);
         RectFill(24, 30, 227, 51, 3);
@@ -356,7 +356,7 @@ void Drec(char *pos, char *pos2, char mde)
         ShBox(23, 54, 228, 77);
         RectFill(24, 55, 227, 76, 3);
     } else {
-        grSetColor(8);
+		display::graphics.setForegroundColor(8);
         DispNum(12, 66, 2);
         InBox(23, 54, 228, 77);
         RectFill(24, 55, 227, 76, 3);
@@ -366,32 +366,32 @@ void Drec(char *pos, char *pos2, char mde)
         ShBox(23, 79, 228, 102);
         RectFill(24, 80, 227, 101, 3);
     } else {
-        grSetColor(8);
+		display::graphics.setForegroundColor(8);
         DispNum(12, 90, 3);
         InBox(23, 79, 228, 102);
         RectFill(24, 80, 227, 101, 3);
     }
 
-    grSetColor(2);
+	display::graphics.setForegroundColor(2);
 
     for (i = *pos; i < *pos + 9; i++, j++) {
         if (i == *pos2) {
-            grSetColor(11);
+			display::graphics.setForegroundColor(11);
         }
 
         PrintAt(15, 133 + 7 * j, Record_Names[i]);
 
         if (i == *pos2) {
-            grSetColor(11);
+			display::graphics.setForegroundColor(11);
         } else {
-            grSetColor(12);
+			display::graphics.setForegroundColor(12);
         }
 
-        grSetColor(2);
+		display::graphics.setForegroundColor(2);
     }
 
     RectFill(72, 111, 264, 119, 0);
-    grSetColor(1);
+	display::graphics.setForegroundColor(1);
     PrintAt(83, 117, Record_Names[*pos2]);
 
     for (i = 0; i < 3; i++) {
@@ -416,26 +416,26 @@ void Drec(char *pos, char *pos2, char mde)
         }
 
         if (*pos2 < 50) {
-            grSetColor(9);
+			display::graphics.setForegroundColor(9);
             PrintAt(61, 48 + (i * 24), "DIR: ");
-            grSetColor(1);
+			display::graphics.setForegroundColor(1);
             PrintAt(0, 0, rec[*pos2][i].name);
         }
 
         switch (rec[*pos2][i].type) {
         case 1:
-            grSetColor(9);
+			display::graphics.setForegroundColor(9);
             PrintAt(61, 38 + (i * 24), "DATE: ");
-            grSetColor(1);
+			display::graphics.setForegroundColor(1);
             PrintAt(0, 0, Months[rec[*pos2][i].month]);
             PrintAt(0, 0, " ");
             sprintf(&Digit[0], "%d", rec[*pos2][i].yr + 1900);
             PrintAt(0, 0, &Digit[0]);
 
             if (*pos2 == 29) {
-                grSetColor(6);
+                display::graphics.setForegroundColor(6);
                 PrintAt(143, 38 + (i * 24), "DURATION: ");
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
 
                 switch (rec[*pos2][i].tag) {
                 case 1:
@@ -470,7 +470,7 @@ void Drec(char *pos, char *pos2, char mde)
             break;
 
         case 2:
-            grSetColor(9);
+			display::graphics.setForegroundColor(9);
 
             if (rec[*pos2][i].country == 1) {
                 PrintAt(61, 38 + (i * 24), "COSMONAUT: ");
@@ -478,7 +478,7 @@ void Drec(char *pos, char *pos2, char mde)
                 PrintAt(61, 38 + (i * 24), "ASTRONAUT: ");
             }
 
-            grSetColor(1);
+			display::graphics.setForegroundColor(1);
             PrintAt(0, 0, rec[*pos2][i].astro);
 
             switch (*pos2) {
@@ -488,9 +488,9 @@ void Drec(char *pos, char *pos2, char mde)
             case 4:
             case 5:
             case 6:
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "DATE: ");
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 PrintAt(0, 0, Months[rec[*pos2][i].month]);
                 PrintAt(0, 0, " ");
                 sprintf(&Digit[0], "%d", rec[*pos2][i].yr + 1900);
@@ -499,35 +499,35 @@ void Drec(char *pos, char *pos2, char mde)
 
             case 35:
             case 36:
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "MISSIONS: ");
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
                 PrintAt(0, 0, &Digit[0]);
                 break;
 
             case 37:
             case 38:
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "PRESTIGE: ");
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
                 PrintAt(0, 0, &Digit[0]);
                 break;
 
             case 39:
             case 40:
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "DAYS: ");
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
                 PrintAt(0, 0, &Digit[0]);
                 break;
 
             case 41:
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "SEASONS: ");
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
                 PrintAt(0, 0, &Digit[0]);
                 break;
@@ -539,16 +539,16 @@ void Drec(char *pos, char *pos2, char mde)
             break;
 
         case 3:
-            grSetColor(9);
+			display::graphics.setForegroundColor(9);
             PrintAt(61, 38 + (i * 24), "RECORD: ");
-            grSetColor(1);
+			display::graphics.setForegroundColor(1);
 
             if (*pos2 == 18) { //special case craft and prestige points
-                grSetColor(1);
+				display::graphics.setForegroundColor(1);
                 PrintAt(0, 0, &Data->P[rec[*pos2][i].country].Manned[rec[*pos2][i].program].Name[0]);
-                grSetColor(6);
+				display::graphics.setForegroundColor(6);
                 PrintAt(143, 48 + (i * 24), "PRESTIGE: ");
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
                 PrintAt(0, 0, &Digit[0]);
             } else {

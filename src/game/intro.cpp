@@ -122,7 +122,7 @@ void Credits(void)
     int k, i;
     strcpy(keyhelpIndex, "i999");
 
-    FadeOut(2, display::graphics.pal(), 30, 0, 0);
+    FadeOut(2, display::graphics.palette(), 30, 0, 0);
 
     FILE *fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
     display::PNGImage image(fp);
@@ -133,7 +133,7 @@ void Credits(void)
     for (k = 0; k < 2; k++) {
 
         if (k != 0) {
-            FadeOut(2, display::graphics.pal(), 30, 0, 0);    // Screen #2
+            FadeOut(2, display::graphics.palette(), 30, 0, 0);    // Screen #2
         }
 
         image.export_to_legacy_palette();
@@ -141,12 +141,12 @@ void Credits(void)
 
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
-                grSetColor(CREDIT[i].col);
+                display::graphics.setForegroundColor(CREDIT[i].col);
                 PrintAt(CREDIT[i].x, CREDIT[i].y, CREDIT[i].Txt);
             }
         }
 
-        FadeIn(2, display::graphics.pal(), 30, 0, 0);
+        FadeIn(2, display::graphics.palette(), 30, 0, 0);
 
         while (1)  {
             GetMouse();
@@ -165,7 +165,7 @@ void Credits(void)
         key = 0;
     }
 
-    FadeOut(2, display::graphics.pal(), 30, 0, 0);
+    FadeOut(2, display::graphics.palette(), 30, 0, 0);
     display::graphics.clearScreen(0);
     strcpy(keyhelpIndex, "k000");
 }
@@ -198,7 +198,7 @@ void Introd(void)
         image.export_to_legacy_palette();
         image.draw();
 
-        FadeIn(2, display::graphics.pal(), 30, 0, 0);
+        FadeIn(2, display::graphics.palette(), 30, 0, 0);
 
         start = get_time();
 
@@ -215,7 +215,7 @@ void Introd(void)
             }
         }
 
-        FadeOut(2, display::graphics.pal(), 30, 0, 0);
+        FadeOut(2, display::graphics.palette(), 30, 0, 0);
     }
 
 done:
@@ -227,12 +227,12 @@ void NextTurn(char plr)
     FILE *fin = NULL;
     int32_t len = 0;
 
-    memset(display::graphics.pal(), 0x00, 3 * 256);
+    memset(display::graphics.palette(), 0x00, 3 * 256);
     strcpy(helptextIndex, "i000");
     strcpy(keyhelpIndex, "k000");
 
     fin = sOpen("TURN.BUT", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     len = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
@@ -242,7 +242,7 @@ void NextTurn(char plr)
     gxClearDisplay(0, 0);
 
     ShBox(0, 60, 319, 80);
-    grSetColor(6 + plr * 3);
+    display::graphics.setForegroundColor(6 + plr * 3);
 
     if (plr == 0) {
         DispBig(15, 64, "DIRECTOR OF THE UNITED STATES", 0, -1);
@@ -250,7 +250,7 @@ void NextTurn(char plr)
         DispBig(30, 64, "CHIEF DESIGNER OF THE USSR", 0, -1);
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     grMoveTo(175, 122);
 
     if (Data->Season == 0) {
@@ -262,7 +262,7 @@ void NextTurn(char plr)
     DispNum(0, 0, Data->Year);
     gxVirtualDisplay(&vhptr, 110 * plr, 0, 30, 85, 31 + 107, 85 + 94, 0);
 
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
 
     WaitForMouseUp();
@@ -270,7 +270,7 @@ void NextTurn(char plr)
     key = 0;
 
     music_stop();
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
     return;
 }

@@ -24,7 +24,6 @@ void UPArrow(int x1, int y1);
 void DNArrow(int x1, int y1);
 void RTArrow(int x1, int y1);
 void LTArrow(int x1, int y1);
-void Box(int x1, int y1, int x2, int y2);
 void WaitForKeyOrMouseDown(void) ;
 void Flag(int x, int y, char plr);
 void VerifySF(char plr)  ;

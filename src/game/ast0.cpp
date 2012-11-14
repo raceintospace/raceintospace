@@ -59,7 +59,7 @@ void Moon(char plr)
     strcpy(helptextIndex, "i029");
     strcpy(keyhelpIndex, "k029");
     val = Data->P[plr].Misc[5].Safety;
-    FadeOut(2, display::graphics.pal(), 0, 0, 0);
+    FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
 
     gxClearDisplay(0, 0);
@@ -81,7 +81,7 @@ void Moon(char plr)
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     GV(&local, 104, 82);
-    fread(&display::graphics.pal()[384], 384, 1, in); // Individual Palette
+    fread(&display::graphics.palette()[384], 384, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
     RLED_img(buffer, local.vptr, table.size, local.w, local.h);
@@ -96,18 +96,18 @@ void Moon(char plr)
     ShBox(113, 42, 143, 60);
     RectFill(113, 42, 142, 59, 3);
     InBox(113, 42, 140, 58);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(117, 35, "PHOTO RECON.");
     PrintAt(118, 137, "CURRENT RECON ");
     PrintAt(118, 143, "LEVEL IS AT ");
     DispNum(0, 0, val);
     PrintAt(0, 0, "%");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(144, 159, "CONTINUE");
     FlagSm(plr, 114, 43);
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.pal(), 0, 0, 0);
+    FadeIn(2, display::graphics.palette(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -143,14 +143,14 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
         num = 8;
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     for (i = start; i < start + num; i++) {
         if (ary[i] >= 0) {
-            grSetColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
+            display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
 
             if (Data->P[plr].Pool[ary[i]].RDelay > 0) {
-                grSetColor(7);
+                display::graphics.setForegroundColor(7);
             }
 
             // Print name in purple if 'naut has announced retirement (black shows poorly here) -Leon
@@ -169,10 +169,10 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
 
 void BarSkill(char plr, int lc, int nw, int *ary)
 {
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].Pool[ary[nw]].Sex == 1) {
-        grSetColor(18);    // Print in blue if 'naut is female
+        display::graphics.setForegroundColor(18);    // Print in blue if 'naut is female
     }
 
     grMoveTo(28, 136 + lc * 8);
@@ -198,7 +198,7 @@ void SatDraw(char plr)
     FILE *fin;
 
     GXHEADER local;
-    FadeOut(2, display::graphics.pal(), 0, 0, 0);
+    FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
     gxClearDisplay(0, 0);
     ShBox(1, 0, 319, 22);
@@ -228,7 +228,7 @@ void SatDraw(char plr)
     loc[3] = (Data->P[plr].Probe[2].Num < 0) ? 0 : 3 + plr * 3;
 
     fin = sOpen("SATBLD.BUT", "rb", 0);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
 
     for (i = 0; i < 4; i++) {
 
@@ -252,7 +252,7 @@ void SatDraw(char plr)
     fclose(fin);
 
     FlagSm(plr, 5, 4);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     grMoveTo(180, 63);
     grLineTo(184, 63);
     grMoveTo(215, 63);
@@ -260,7 +260,7 @@ void SatDraw(char plr)
     grMoveTo(217, 61);
     grLineTo(217, 65);
     DispBig(40, 5, "SATELLITE BUILDING", 0, -1);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
 
     return;
@@ -270,7 +270,7 @@ void SatDraw(char plr)
 void LMDraw(char plr)
 {
     char ind = 0;
-    FadeOut(2, display::graphics.pal(), 0, 0, 0);
+    FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
     gxClearDisplay(0, 0);
     ShBox(1, 0, 319, 22);
@@ -297,11 +297,11 @@ void LMDraw(char plr)
     LMPict(ind);
     ShBox(110, 24, 203, 36);
     InBox(112, 26, 201, 34);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(117, 32, "CENTRAL HANGAR");
     FlagSm(plr, 5, 4);
     DispBig(40, 5, "LUNAR MODULE", 0, -1);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
 
     return;
@@ -311,11 +311,11 @@ void SatText(char plr)
 {
     int i;
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     for (i = 0; i < 4; i++) {
         if (i != 2) {
-            grSetColor(11);
+            display::graphics.setForegroundColor(11);
 
             switch (i) {
             case 0:
@@ -452,7 +452,7 @@ void SatText(char plr)
             PlanText(plr, 0);
         }
 
-        grSetColor(6 + 3 * plr);
+        display::graphics.setForegroundColor(6 + 3 * plr);
         PrintAt(5 + i * 80, 103, "SAFETY:");
         PrintAt(5 + i * 80, 120, "ATTEMPTS:");
         PrintAt(5 + i * 80, 137, "SUCCESSFUL:");
@@ -488,12 +488,12 @@ void PlanText(char plr, char plan)
         RectFill(165, 28, 235, 55, 0);
     }
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     switch (plan) {
     case 0:
         PrintAt(4 + 160, 80, "LUNAR FLYBY");
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
         PrintAt(4 + 160, 87, "RECON: ");
         DispNum(0, 0, Data->P[plr].Misc[5].Safety);
         PrintAt(0, 0, "%");
@@ -584,7 +584,7 @@ void LMPict(char poff)
     in = sOpen("LMER.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 8 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&display::graphics.pal()[32 * 3], 672, 1, in);
+    fread(&display::graphics.palette()[32 * 3], 672, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
     GV(&local, 156, 89);
@@ -631,12 +631,12 @@ void LMBld(char plr)
             m = 12;
         }
 
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
-        grSetColor(9);
-        grSetColor(6);
+        display::graphics.setForegroundColor(9);
+        display::graphics.setForegroundColor(6);
         PrintAt(m + 48, 130, "AVOID FAILURE: ");
-        grSetColor(11);
+        display::graphics.setForegroundColor(11);
 
         if (Data->P[plr].Manned[5 + i].SaveCard > 0) {
             PrintAt(m + 124, 130, "YES");
@@ -644,28 +644,28 @@ void LMBld(char plr)
             PrintAt(m + 126, 130, "NO");
         }
 
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(m, 138, "SAFETY FACTOR: ");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         DispNum(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Safety : 0);
         PrintAt(0, 0, "%");
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(m, 146, "CURRENT QUANTITY: ");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         DispNum(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Num : 0);
 
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(m, 154, "NUMBER OF ATTEMPTS: ");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         DispNum(0, 0, Data->P[plr].Manned[5 + i].Steps);
-        grSetColor(6);
+        display::graphics.setForegroundColor(6);
         PrintAt(m, 162, "SUCCESSFUL ATTEMPTS: ");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         DispNum(0, 0, Data->P[plr].Manned[5 + i].Steps - Data->P[plr].Manned[5 + i].Failures);
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.pal(), 0, 0, 0);
+    FadeIn(2, display::graphics.palette(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -701,7 +701,7 @@ void SatBld(char plr)
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.pal(), 0, 0, 0);
+    FadeIn(2, display::graphics.palette(), 0, 0, 0);
 
     key = 0;
     WaitForMouseUp();

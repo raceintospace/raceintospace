@@ -163,7 +163,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
 
     RectFill(99, 42, 231, 60, 7 + plr * 3);
 
-    grSetColor(12);
+    display::graphics.setForegroundColor(12);
 
     PrintAt(115, 48, "COMPATIBILITY");
 
@@ -190,7 +190,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
                     RectFill(112, 67 + 9 * val, 118, 71 + 9 * val, 16);
                 }
 
-                grSetColor(1);
+                display::graphics.setForegroundColor(1);
                 PrintAt(122, 71 + 9 * val, Data->P[plr].Pool[Guy(plr, prog, crew, i)].Name);
             } else if (temp == 0) {
                 over++;
@@ -230,19 +230,19 @@ void AstLevel(char plr, char prog, char crew, char ast)
     if ((plr == 1 && Data->Def.Ast2 == 1) || (plr == 0 && Data->Def.Ast1 == 1)) {
         InBox(111, 66, 119, 72);
         RectFill(112, 67, 118, 71, i);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(122, 71, "CREW RELATIONSHIP");
     }
 
     if ((plr == 1 && Data->Def.Ast2 == 2) || (plr == 0 && Data->Def.Ast1 == 2)) {
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(111, 71, "NO INFO AT THIS LEVEL");
     }
 
 
 
     //RectFill(113,53,119,57,i);  // shouldn't be mood
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(115, 57, Data->P[plr].Pool[man].Name);
     // don't do this for level three
     PrintAt(0, 0, "  M: ");
@@ -275,7 +275,7 @@ void PlaceEquip(char plr, char prog)
     fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, fin);
     fseek(fin, 14 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
 
     fseek(fin, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, fin);
@@ -299,9 +299,9 @@ void DrawProgs(char plr, char prog)
     int i, j, Name[30];
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     gxClearDisplay(0, 0);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 81);
     ShBox(0, 83, 319, 123);
@@ -342,24 +342,24 @@ void DrawProgs(char plr, char prog)
     }
 
     FlagSm(plr, 4, 4);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(250, 96, "A");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "SSIGN CREW");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(252, 114, "B");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "REAK CREW");
     PrintAt(258, 13, "CONTINUE");
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
     PrintAt(183, 133, "FLIGHT ");
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(0, 0, "C");
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
     PrintAt(0, 0, "REW SELECTION");
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     PrintAt(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
-    grSetColor(9);
+    display::graphics.setForegroundColor(9);
 
     if (prog == 1) {
         PrintAt(152, 43, "ONE");
@@ -378,18 +378,18 @@ void DrawProgs(char plr, char prog)
     }
 
     PrintAt(0, 0, "-PERSON CAPACITY");
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     PrintAt(152, 51, "SAFETY FACTOR: ");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(0, 0, Data->P[plr].Manned[prog - 1].Safety);
     PrintAt(0, 0, " %");
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     PrintAt(152, 59, "UNIT WEIGHT: ");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(0, 0, Data->P[plr].Manned[prog - 1].UnitWeight);
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     PrintAt(152, 67, "MAX DURATION: ");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(0, 0, Data->P[plr].Manned[prog - 1].Duration);
     PrintAt(0, 0, " DAYS (LVL ");
 
@@ -409,9 +409,9 @@ void DrawProgs(char plr, char prog)
         PrintAt(0, 0, "D)");
     }
 
-    grSetColor(7);
+    display::graphics.setForegroundColor(7);
     PrintAt(152, 75, "AVOID FAILURE: ");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].Manned[prog - 1].SaveCard > 0) {
         PrintAt(0, 0, "YES");
@@ -419,7 +419,7 @@ void DrawProgs(char plr, char prog)
         PrintAt(0, 0, "NO");
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(40, 5, (char *)Name, 0, -1);
     return;
 }
@@ -502,7 +502,7 @@ void DamProb(char plr, char prog, int chk)
 
     Saf_Loss = D_Cost = ESafety = 0; /* XXX check uninitialized */
 
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     gxClearDisplay(0, 0);
 
@@ -548,9 +548,9 @@ void DamProb(char plr, char prog, int chk)
     DispBig(135, 136, "YES", 1, 0);
     DispBig(225, 136, "NO", 1, 0);
     DispBig(44, 135, "REPAIR", 1, -1);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(121, 95, "DIRECTOR: ");
-    grSetColor(8);
+    display::graphics.setForegroundColor(8);
 
     if (plr == 0) {
         PrintAt(0, 0, &Data->P[Data->plr[0]].Name[0]);
@@ -558,29 +558,29 @@ void DamProb(char plr, char prog, int chk)
         PrintAt(0, 0, &Data->P[Data->plr[1]].Name[0]);
     }
 
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(121, 104, "DAMAGE: ");
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     strcat(Name, " PROGRAM");
     PrintAt(0, 0, &Name[0]);
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(121, 113, "DAMAGE COST: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     sprintf(&Digit[0], "%d", D_Cost);
     PrintAt(0, 0, &Digit[0]);
     PrintAt(0, 0, " M.B.  (OF ");
     DispMB(0, 0, Data->P[plr].Cash);
     PrintAt(0, 0, ")");
-    grSetColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(121, 122, "SAFETY LOSS: ");
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     sprintf(&Digit[0], "%d", Saf_Loss);
     PrintAt(0, 0, &Digit[0]);
     PrintAt(0, 0, "%  (FROM ");
     sprintf(&Digit[0], "%d", ESafety);
     PrintAt(0, 0, &Digit[0]);
     PrintAt(0, 0, "%)");
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -642,7 +642,7 @@ void DamProb(char plr, char prog, int chk)
 void DrawPosition(char prog, int pos)
 {
 
-    grSetColor(5);
+    display::graphics.setForegroundColor(5);
 
     switch (pos) {
     case 1:
@@ -685,7 +685,7 @@ void DrawPosition(char prog, int pos)
         break;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     return;
 }
@@ -745,7 +745,7 @@ Programs(char plr, char prog)
     NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
                Data->P[plr].Crew[prog][grp][1],
                Data->P[plr].Crew[prog][grp][2], Data->P[plr].Crew[prog][grp][3]);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     chk = CheckProgram(plr, prog);
 
@@ -1132,10 +1132,10 @@ Programs(char plr, char prog)
                     IOBox(81, 152, 238, 167);
                     InBox(81, 70, 238, 113);
                     RectFill(82, 71, 237, 112, 7 + 3 * plr);
-                    grSetColor(1);
+                    display::graphics.setForegroundColor(1);
                     DispBig(118, 50, "PROBLEM", 0, -1);
                     PrintAt(136, 162, "CONTINUE");
-                    grSetColor(11);
+                    display::graphics.setForegroundColor(11);
                     PrintAt(88, 80, "FLIGHT CREW ");
                     DispNum(0, 0, grp + 1);
                     PrintAt(0, 0, " IS ALREADY");
@@ -1267,7 +1267,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     /* This will be used to highlight the skills for each crew member's role -Leon */
 
     RectFill(13, 86, 231, 122, 3); /* Clear Astro Area */
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (M1 > 0) {
         retdel = Data->P[plr].Pool[M1 - 1].RDelay; // Sets whether 'naut has announced retirement
@@ -1318,40 +1318,40 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
 void AstStats(char plr, char man, char num)
 {
     int y;
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     y = 91 + man * 9;
 
     if (man == 0) {
-        grSetColor(11);   /* Highlight CA for command pilot */
+        display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
     }
 
     PrintAt(119, y, "CA:");
     DispNum(0, 0, Data->P[plr].Pool[num].Cap);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (man == 1 && program > 1) {
-        grSetColor(11);   /* Highlight LM for LM pilot */
+        display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
     }
 
     PrintAt(143, y, "LM:");
     DispNum(0, 0, Data->P[plr].Pool[num].LM);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (program == 1 || ((program == 2 || program == 3 || program == 4) && man == 1) || (program == 5 && man > 1)) {
-        grSetColor(11);   /* Highlight EV for EVA specialist */
+        display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
     }
 
     PrintAt(167, y, "EV:");
     DispNum(0, 0, Data->P[plr].Pool[num].EVA);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if ((program == 2 && man == 0) || ((program == 3 || program == 4) && man == 2)) {
-        grSetColor(11);   /* Highlight DO for docking specialist */
+        display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
     }
 
     PrintAt(192, y, "DO:");
     DispNum(0, 0, Data->P[plr].Pool[num].Docking);
-    grSetColor(1);  /* Never highlight EN skill */
+    display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
     PrintAt(217, y, "EN:");
     DispNum(0, 0, Data->P[plr].Pool[num].Endurance);
     return;
@@ -1383,18 +1383,18 @@ void AstNames(int man, char *name, char att)
         break;
     }
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (sex == 1) {
-        grSetColor(18);    // Show name in blue if 'naut is female
+        display::graphics.setForegroundColor(18);    // Show name in blue if 'naut is female
     }
 
     if (retdel > 0) {
-        grSetColor(0);    // Show name in black if 'naut has announced retirement
+        display::graphics.setForegroundColor(0);    // Show name in black if 'naut has announced retirement
     }
 
     if (sex == 1 && retdel > 0) {
-        grSetColor(7);    // Show name in purple if 'naut is female AND has announced retirement
+        display::graphics.setForegroundColor(7);    // Show name in purple if 'naut is female AND has announced retirement
     }
 
     switch (man) {
@@ -1557,7 +1557,7 @@ void Flts(char old, char nw)
 
 void FltsTxt(char nw, char col)
 {
-    grSetColor(col);
+    display::graphics.setForegroundColor(col);
 
     switch (nw) {
     case 0:

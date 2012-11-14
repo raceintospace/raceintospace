@@ -522,7 +522,7 @@ void PortPal(char plr)
     fread(&PHead, sizeof PHead, 1, fin);
     Swap32bit(PHead.oPal);
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
     return;
 }
@@ -570,7 +570,7 @@ void DrawSpaceport(char plr)
     }
 
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(display::graphics.pal(), 768, 1, fin);
+    fread(display::graphics.palette(), 768, 1, fin);
 
     fseek(fin, table[0], SEEK_SET);
     fread(&Img, sizeof Img, 1, fin); // Read in main image Header
@@ -647,14 +647,14 @@ void DrawSpaceport(char plr)
 
     ShBox(0, 190, 319, 199);            // Base Box :: larger
 
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     PrintAt(257, 197, "CASH:");
     DispMB(285, 197, Data->P[plr].Cash);
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(256, 196, "CASH:");
     DispMB(284, 196, Data->P[plr].Cash);
 
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
 
     if (Data->Season == 0) {
         PrintAt(166, 197, "SPRING 19");
@@ -664,7 +664,7 @@ void DrawSpaceport(char plr)
 
     DispNum(0, 0, Data->Year);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
         PrintAt(165, 196, "SPRING 19");
@@ -710,9 +710,9 @@ void DrawSpaceport(char plr)
 void PortText(int x, int y, char *txt, char col)
 {
     RectFill(1, 192, 160, 198, 3);
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     PrintAt(x + 1, y + 1, txt);
-    grSetColor(col);
+    display::graphics.setForegroundColor(col);
     PrintAt(x, y, txt);
 }
 
@@ -820,9 +820,9 @@ void Master(char plr)
     }
 
     // Entering screen for the first time so fade out and in.
-    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+    FadeOut(2, display::graphics.palette(), 10, 0, 0);
     DrawSpaceport(plr);
-    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+    FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
@@ -951,61 +951,61 @@ DoCycle(void)                   // Three ranges of color cycling
     j = 384;
 
     i = 0;
-    tmp1 = display::graphics.pal()[j + 3 * i + 0];
-    tmp2 = display::graphics.pal()[j + 3 * i + 1];
-    tmp3 = display::graphics.pal()[j + 3 * i + 2];
+    tmp1 = display::graphics.palette()[j + 3 * i + 0];
+    tmp2 = display::graphics.palette()[j + 3 * i + 1];
+    tmp3 = display::graphics.palette()[j + 3 * i + 2];
 
     for (; i < 3; i++) {
-        display::graphics.pal()[j + i * 3 + 0] = display::graphics.pal()[j + (i + 1) * 3 + 0];
-        display::graphics.pal()[j + i * 3 + 1] = display::graphics.pal()[j + (i + 1) * 3 + 1];
-        display::graphics.pal()[j + i * 3 + 2] = display::graphics.pal()[j + (i + 1) * 3 + 2];
+        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
+        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
+        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.pal()[j + 3 * i] = tmp1;
+    display::graphics.palette()[j + 3 * i] = tmp1;
 
-    display::graphics.pal()[j + 3 * i + 1] = tmp2;
+    display::graphics.palette()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.pal()[j + 3 * i + 2] = tmp3;
+    display::graphics.palette()[j + 3 * i + 2] = tmp3;
 
     i = 4;
 
-    tmp1 = display::graphics.pal()[j + 3 * i + 0];
+    tmp1 = display::graphics.palette()[j + 3 * i + 0];
 
-    tmp2 = display::graphics.pal()[j + 3 * i + 1];
+    tmp2 = display::graphics.palette()[j + 3 * i + 1];
 
-    tmp3 = display::graphics.pal()[j + 3 * i + 2];
+    tmp3 = display::graphics.palette()[j + 3 * i + 2];
 
     for (; i < 11; i++) {
-        display::graphics.pal()[j + i * 3 + 0] = display::graphics.pal()[j + (i + 1) * 3 + 0];
-        display::graphics.pal()[j + i * 3 + 1] = display::graphics.pal()[j + (i + 1) * 3 + 1];
-        display::graphics.pal()[j + i * 3 + 2] = display::graphics.pal()[j + (i + 1) * 3 + 2];
+        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
+        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
+        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.pal()[j + 3 * i] = tmp1;
+    display::graphics.palette()[j + 3 * i] = tmp1;
 
-    display::graphics.pal()[j + 3 * i + 1] = tmp2;
+    display::graphics.palette()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.pal()[j + 3 * i + 2] = tmp3;
+    display::graphics.palette()[j + 3 * i + 2] = tmp3;
 
     i = 12;
 
-    tmp1 = display::graphics.pal()[j + 3 * i + 0];
+    tmp1 = display::graphics.palette()[j + 3 * i + 0];
 
-    tmp2 = display::graphics.pal()[j + 3 * i + 1];
+    tmp2 = display::graphics.palette()[j + 3 * i + 1];
 
-    tmp3 = display::graphics.pal()[j + 3 * i + 2];
+    tmp3 = display::graphics.palette()[j + 3 * i + 2];
 
     for (; i < 15; i++) {
-        display::graphics.pal()[j + i * 3 + 0] = display::graphics.pal()[j + (i + 1) * 3 + 0];
-        display::graphics.pal()[j + i * 3 + 1] = display::graphics.pal()[j + (i + 1) * 3 + 1];
-        display::graphics.pal()[j + i * 3 + 2] = display::graphics.pal()[j + (i + 1) * 3 + 2];
+        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
+        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
+        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.pal()[j + 3 * i] = tmp1;
+    display::graphics.palette()[j + 3 * i] = tmp1;
 
-    display::graphics.pal()[j + 3 * i + 1] = tmp2;
+    display::graphics.palette()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.pal()[j + 3 * i + 2] = tmp3;
+    display::graphics.palette()[j + 3 * i + 2] = tmp3;
 
     for (i = 0; i < (int) ARRAY_LENGTH(r); ++i) {
         av_need_update_xy(r[i].x1, r[i].y1, r[i].x2, r[i].y2);
@@ -1414,13 +1414,13 @@ void Port(char plr)
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
-                                    FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                                    FadeOut(2, display::graphics.palette(), 10, 0, 0);
                                 }
 
                                 DrawSpaceport(plr);
 
                                 if (res == pREDRAW) {
-                                    FadeIn(2, display::graphics.pal(), 10, 0, 0);
+                                    FadeIn(2, display::graphics.palette(), 10, 0, 0);
                                 }
 
 #if SPOT_ON
@@ -1474,7 +1474,7 @@ void Port(char plr)
                                 break;
 
                             case pEXIT:
-                                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                                FadeOut(2, display::graphics.palette(), 10, 0, 0);
                                 fclose(fin);
 #if BABYSND
 
@@ -1489,7 +1489,7 @@ void Port(char plr)
                                 return;
 
                             case pQUIT:
-                                FadeOut(2, display::graphics.pal(), 10, 0, 0);
+                                FadeOut(2, display::graphics.palette(), 10, 0, 0);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {
@@ -1858,16 +1858,16 @@ char Request(char plr, char *s, char md)
     }
 
     i = strlen(s) >> 1;
-    grSetColor(0);
+    display::graphics.setForegroundColor(0);
     ShBox(85, 52, 249, 135);
     IOBox(170, 103, 243, 130);
     IOBox(91, 103, 164, 130);
     InBox(92, 58, 243, 97);
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
     DispBig(111, 110, "YES", 0, 0);
     DispBig(194, 110, "NO", 0, 0);
 
-    grSetColor(11);
+    display::graphics.setForegroundColor(11);
 
     if (md == 6)  {
         PrintAt(166 - i * 7, 65, s);
@@ -1946,30 +1946,30 @@ char MisReq(char plr)
     if (num == 0) {
         IOBox(60, 141, 141, 155);
         IOBox(148, 141, 229, 155);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(70, 129, "CONFIRM LAUNCH SCHEDULE OR");
         PrintAt(80, 136, "CHOOSE TO REVIEW IT.");
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(85, 150, "C");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(0, 0, "ONFIRM");
-        grSetColor(8);
+        display::graphics.setForegroundColor(8);
         PrintAt(179, 150, "R");
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(0, 0, "EVIEW");
     } else {
         IOBox(60, 141, 229, 155);
-        grSetColor(1);
+        display::graphics.setForegroundColor(1);
         PrintAt(62, 129, "MISSIONS DO NOT ALL HAVE");
         PrintAt(62, 136, "ASSIGNMENTS. NO COMMIT POSSIBLE");
         PrintAt(120, 150, "REVIEW MISSIONS");
     };
 
-    grSetColor(10);
+    display::graphics.setForegroundColor(10);
 
     PrintAt(94, 41, "LAUNCH CONFIRMATION");
 
-    grSetColor(1);
+    display::graphics.setForegroundColor(1);
 
     for (i = 0; i < 3; i++) {
         PrintAt(68, 59 + 20 * i, "PAD ");
@@ -1986,13 +1986,13 @@ char MisReq(char plr)
             };
 
             if (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
-                grSetColor(9);
+                display::graphics.setForegroundColor(9);
                 PrintAt(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
             } else {
                 PrintAt(86, 71 + 20 * i, "HARDWARE ASSIGNED");
             };
 
-            grSetColor(1);
+            display::graphics.setForegroundColor(1);
         }
     };
 

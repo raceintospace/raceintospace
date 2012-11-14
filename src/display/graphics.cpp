@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
-
+#include <assert.h>
 #include <memory.h>
 
 // FIXME: let's try to avoid this
@@ -23,7 +23,7 @@ Graphics::Graphics():
     _news(NULL),
     _fullscreen(false)
 {
-    memset(_pal, 0, sizeof(_pal));
+    memset(_palette, 0, sizeof(_palette));
 }
 
 Graphics::~Graphics()
@@ -137,6 +137,86 @@ void Graphics::setPixel(int x, int y, char color)
     *((char *)(_screen->pixels) + (y * _screen->pitch) + x) = color;
 }
 
+void Graphics::setForegroundColor( char color )
+{
+	_foregroundColor = color;
+}
+
+void Graphics::setBackgroundColor( char color )
+{
+	_backgroundColor = color;
+}
+
+char Graphics::getPixel(int x, int y)
+{
+    assert(x >= 0 && x < WIDTH);
+    assert(y >= 0 && y < HEIGHT);
+
+    return display::graphics.screen()[(y * _screen->pitch) + x];
+}
+
+void Graphics::outlineRect(int x1, int y1, int x2, int y2, char color)
+{
+	line( x1, y1, x2, y1, color );
+	line( x2, y1, x2, y2, color );
+	line( x2, y2, x1, y2, color );
+	line( x1, y2, x1, y1, color );
+}
+
+#define swap(a,b) (t = a, a = b, b = t)
+void Graphics::line(int x1, int y1, int x2, int y2, char color)
+{
+    int deltax, deltay;
+    int error;
+    int ystep;
+    int x, y;
+    int steep;
+    int t;
+
+    steep = abs(y2 - y1) > abs(x2 - x1);
+
+    if (steep) {
+        swap(x1, y1);
+        swap(x2, y2);
+    }
+
+    if (x1 > x2) {
+        swap(x1, x2);
+        swap(y1, y2);
+    }
+
+    deltax = x2 - x1;
+    deltay = abs(y2 - y1);
+    error = 0;
+
+    y = y1;
+
+    if (y1 < y2) {
+        ystep = 1;
+    } else {
+        ystep = -1;
+    }
+
+    for (x = x1; x <= x2; x++) {
+        if (steep) {
+            display::graphics.setPixel(y, x, color);
+        } else {
+            display::graphics.setPixel(x, y, color);
+        }
+
+        error = error + deltay;
+
+        if (2 * error >= deltax) {
+            y = y + ystep;
+            error = error - deltax;
+        }
+    }
+}
+
+void Graphics::setPalette( uint8_t *palette )
+{
+    memcpy(_palette, palette, 256 * 3);
+}
 
 
 /*
