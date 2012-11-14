@@ -34,6 +34,7 @@
 #include "gr.h"
 #include "gx.h"
 #include "pace.h"
+#include "filesystem.h"
 
 struct CREDIT {
     char page;
@@ -124,11 +125,9 @@ void Credits(void)
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
 
-    FILE *fp = sOpen("first.img.3.png", "rb", FT_IMAGE);
-    display::PNGImage image(fp);
-    fclose(fp);
+    boost::shared_ptr<display::PNGImage> image(Filesystem::readImage("images/first.img.3.png"));
 
-    image.export_to_legacy_palette();
+    image->export_to_legacy_palette();
 
     for (k = 0; k < 2; k++) {
 
@@ -136,8 +135,8 @@ void Credits(void)
             FadeOut(2, display::graphics.palette(), 30, 0, 0);    // Screen #2
         }
 
-        image.export_to_legacy_palette();
-        image.draw();
+        image->export_to_legacy_palette();
+        image->draw();
 
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
@@ -184,19 +183,12 @@ void Introd(void)
     /* These are both defunct, so start at frame 2 instead */
     for (k = 2; k < INTRO_IMAGE_COUNT; k++) {
         char filename[64];
-        snprintf(filename, sizeof(filename), "first.img.%i.png", k);
+        snprintf(filename, sizeof(filename), "images/first.img.%i.png", k);
 
-        FILE *fp = sOpen(filename, "rb", FT_IMAGE);
+        boost::shared_ptr<display::PNGImage> image(Filesystem::readImage(filename));
 
-        if (!fp) {
-            break;
-        }
-
-        display::PNGImage image(fp);
-        fclose(fp);
-
-        image.export_to_legacy_palette();
-        image.draw();
+        image->export_to_legacy_palette();
+        image->draw();
 
         FadeIn(2, display::graphics.palette(), 30, 0, 0);
 

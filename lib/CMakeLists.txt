@@ -120,8 +120,11 @@ add_dependencies(libs ext_jsoncpp)
 ###
 # PhysicsFS
 
-set (physfs_Version 2.0.3)
-set (physfs_URL http://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+# I want 2.1 features, even if they're not out yet, so I made my own tarball
+#set (physfs_Version 2.0.3)
+#set (physfs_URL http://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+set (physfs_Version 2.1.0-pre20121013)
+set (physfs_URL https://s3.amazonaws.com/willglynn/physfs-${physfs_Version}.tgz)
 set (physfs_Dir ${CMAKE_CURRENT_BINARY_DIR}/physfs-${physfs_Version})
 
 # physfs 2.0.3 complains about FSPathMakeRef et al being deprecated, and warnings are treated as errors
@@ -134,7 +137,7 @@ ExternalProject_Add(ext_physfs
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
   URL ${physfs_URL}
   PREFIX ${physfs_Dir}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_7Z=false -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DCMAKE_C_FLAGS=${physfs_Flags}
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_7Z=false -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DPHYSFS_BUILD_SHARED=false -DPHYSFS_BUILD_TEST=false -DCMAKE_C_FLAGS=${physfs_Flags}
   )
 
 add_dependencies(libs ext_physfs)

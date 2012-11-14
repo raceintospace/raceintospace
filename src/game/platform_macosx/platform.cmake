@@ -3,6 +3,7 @@ find_library(CoreMIDI_LIBRARY NAMES CoreMIDI REQUIRED)
 find_library(CoreAudio_LIBRARY NAMES CoreAudio REQUIRED)
 find_library(AudioToolbox_LIBRARY NAMES AudioToolbox REQUIRED)
 find_library(AudioUnit_LIBRARY NAMES AudioUnit REQUIRED)
+find_library(IOKit_LIBRARY NAMES IOKit REQUIRED)
 
 # Sparkle!
 #file(DOWNLOAD http://sparkle.andymatuschak.org/files/Sparkle%201.5b6.zip sparkle.zip)
@@ -46,7 +47,7 @@ add_executable("${app}" MACOSX_BUNDLE
 target_link_libraries("${app}"
   ${game_libraries}
   raceintospace_display ${raceintospace_display_libraries}
-  ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY}
+  ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY} ${IOKit_LIBRARY}
   )
 
 add_dependencies("${app}" libs)
