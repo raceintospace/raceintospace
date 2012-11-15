@@ -19,8 +19,6 @@ double get_time(void);
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-struct Prest_Upd MP[3];
-
 void seq_init(void);
 
 

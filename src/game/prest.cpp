@@ -379,15 +379,7 @@ char Set_Goal(char plr, char which, char control)
                 Data->P[plr].Other |= 4; // for astros
 
 
-                if (Option == 1) {
-                    pd = Mev[0].pad;
-                    qt = MP[pd].Qty;
-                    MP[pd].HInd = Data->P[1].PastMis;
-                    MP[pd].Poss[qt] = which;
-                    MP[pd].PossVal[qt] = 0;
-                    MP[pd].Mnth = tMo;
-                    ++MP[pd].Qty;
-                } else if (MAIL == 0) {
+                if (MAIL == 0) {
                     pd = Mev[0].pad;
                     qt = Data->P[0].Udp[pd].Qty;
                     Data->P[0].Udp[pd].HInd = Data->P[0].PastMis;
@@ -413,15 +405,7 @@ char Set_Goal(char plr, char which, char control)
                 case DUR_D:
                 case DUR_E:
                 case DUR_F:
-                    if (Option == 1) {
-                        pd = Mev[0].pad;
-                        qt = MP[pd].Qty;
-                        MP[pd].HInd = Data->P[1].PastMis;
-                        MP[pd].Poss[qt] = which;
-                        MP[pd].PossVal[qt] = 0;
-                        MP[pd].Mnth = tMo;
-                        ++MP[pd].Qty;
-                    } else if (MAIL == 0) {
+                    if (MAIL == 0) {
                         pd = Mev[0].pad;
                         qt = Data->P[0].Udp[pd].Qty;
                         Data->P[0].Udp[pd].HInd = Data->P[0].PastMis;
@@ -481,37 +465,17 @@ char Set_Goal(char plr, char which, char control)
             }
 
             if (control == 0) {
-                if (Option == 1) {
-                    pd = Mev[0].pad;
-                    qt = MP[pd].Qty;
-                    MP[pd].HInd = Data->P[1].PastMis;
-                    MP[pd].Poss[qt] = which;
-                    MP[pd].PossVal[qt] = 1;
-                    MP[pd].Mnth = tMo;
-                    ++MP[pd].Qty;
-                } else {
-                    Data->Prestige[which].Goal[plr]++;  // increment count
-                    sum += Data->Prestige[which].Add[1];
-                    Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[1];
-                }
+                Data->Prestige[which].Goal[plr]++;  // increment count
+                sum += Data->Prestige[which].Add[1];
+                Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[1];
 
                 hero |= HeroCheck(which);
             }
         } else if (sum < 3) { // Other
             if (control == 0) {
-                if (Option == 1) {
-                    pd = Mev[0].pad;
-                    qt = MP[pd].Qty;
-                    MP[pd].HInd = Data->P[1].PastMis;
-                    MP[pd].Poss[qt] = which;
-                    MP[pd].PossVal[qt] = 2;
-                    MP[pd].Mnth = tMo;
-                    ++MP[pd].Qty;
-                } else {
-                    Data->Prestige[which].Goal[plr]++;  // increment count
-                    sum += Data->Prestige[which].Add[2];
-                    Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[2];
-                }
+                Data->Prestige[which].Goal[plr]++;  // increment count
+                sum += Data->Prestige[which].Add[2];
+                Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[2];
             }
         }
     }
@@ -733,18 +697,9 @@ int PrestNeg(char plr, int i)
     int negs = 0;
     char pd, qt;
 
-    if (Option == 1) {
-        pd = Mev[0].pad;
-        qt = MP[pd].Qty;
-        MP[pd].HInd = Data->P[1].PastMis;
-        MP[pd].Poss[qt] = i;
-        MP[pd].PossVal[qt] = 3;
-        ++MP[pd].Qty;
-    } else {
-        negs = Data->Prestige[i].Add[3];
-        Data->Prestige[i].Goal[plr]++;
-        Data->Prestige[i].Points[plr] += Data->Prestige[i].Add[3];
-    }
+    negs = Data->Prestige[i].Add[3];
+    Data->Prestige[i].Goal[plr]++;
+    Data->Prestige[i].Points[plr] += Data->Prestige[i].Add[3];
 
     return negs;
 }
