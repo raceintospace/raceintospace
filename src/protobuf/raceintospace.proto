@@ -1,0 +1,119 @@
+
+package raceintospace;
+
+message Equipment {
+	required string name = 1;	// Name of Hardware
+	required string id = 2;		// Equipment ID
+	required int32 safety_factor = 3;
+	required int32 mission_safety = 4;
+	required int32 docking_safety_factor = 5;
+	required int32 base_safety_factor = 6;
+	required int32 initial_cost = 7;
+	required int32 unit_cost = 8;
+	required int32 unit_weight = 9;
+	required int32 maximum_payload = 10;
+	required int32 r_and_d_cost  = 11;
+	required int32 inventory_scheduled = 12;
+	required int32 inventory_count = 13;
+	required int32 inventory_reserved = 14;
+	required int32 inventory_seasons = 15;
+	required int32 inventory_used = 16;
+//	required string index = 1700 [deprecated=true];
+	required int32 steps = 17;
+	required int32 failures = 18;
+	required int32 maximum_r_and_d = 19;
+	required int32 maximum_safety_factor = 20;
+	required int32 safety_factor_mods = 21;
+	required int32 safety_save_card = 22;
+	required int32 purchase_delay = 23;
+	required int32 duration = 24;
+	required int32 damage_percentage = 25;
+	required int32 damage_repair_cost = 26;
+	required int32 mission_successes = 27;
+	required int32 mission_failures = 28;
+}
+
+struct MissionType {
+	required string Name = 1;      /**< name of mission */
+	required int32 MissionCode = 2;   /**< internal code of mission type */
+	required int32 Patch = 3;         /**< Patch Used on this Mission */
+	required int32 part = 4;          /**< primary/secondary portion */
+	required int32 Hardware_Capsule = 5;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Hardware_Kicker = 6;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Hardware_LM = 7;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Hardware_Probe_DockingModule = 8;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Hardware_Primary_Booster = 9;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Hardware_EVA = 10;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 Joint = 11;         /**< Joint Mission flag */
+	required int32 Rushing = 12;       /**< rushing time 0-3 */
+	required int32 Month = 13;         /**< Month of Launch */
+	required int32 Duration = 14;      /**< Duration time */
+	required int32 Men = 15;           /**< Qty of men used in mission */
+	required int32 Prog = 16;          /**< Hardware program used */
+	required int32 primary_crew = 17;         /**< Primary Crew */
+	required int32 backup_crew = 18;         /**< Backup Crew */
+	required int32 crew = 19;          /**< Actual Mission Crew */
+};
+
+
+
+message BuzzData {
+
+
+	repeated Equipment Probe = 7;
+	repeated Equipment Rocket = 8;
+	repeated Equipment Manned = 9;
+	repeated Equipment Misc = 10;
+
+
+	
+}
+
+message PlayerSettings {
+	required int32 player_type = 1;  // 0=USA,1=USSR
+									 // 2=AI+USA,3=AI+USSR
+									 // 4=Foreign,5=AI+Foreign
+									 // 6=PBEM+USA,7=PBEM+USSR
+	required skill_level = 2;  // 0 = Easy, 1 = Medium, 2 = Hard
+	required astronaut_level= 3;   // 0 = Easy, 1 = Medium, 2 = Hard
+}
+
+
+message GameDefaults {
+	repeated PlayerSettings player_settings = 1;
+	required int32 input = 2;  // 0 = mouse, 1 = keyboard, 2 = joystick
+	required int32 animation = 3; // 0 = full, 1 = partial, 2 = results only
+	required int32 music = 4; // 0 = full, 1 = partial, 2 = none
+	required bool sound_effects_disabled = 5; // false = On, true = Off
+};
+
+message PrestigeType {
+	char Add[4];        /**< 0=first,1=second, 2=additional,3=negative */
+    char Goal[NUM_PLAYERS];       /**< Goal steps used for prest calculations */
+    int16_t Points[NUM_PLAYERS];  /**< Total points earned */
+    required int32  Index;         /**< the index for the first into .History[] */
+    required int32  Place;         /**< Who got the prestige first. */
+    required int32  mPlace;        /**< If you've done it at all */
+    required int32  Month;         /**< Date of the First */
+    required int32 Year;          /**< Date of the First */
+}
+
+message Players {
+	required string BUZZ = 1;                    /**< Save Version Marker */
+	required int32 Checksum = 2;               /**< Checksum of Data */
+	repeated int32 player_turn_order = 3;  // Order of turns - char[NUM_PLAYERS]
+	required GameDefaults defaults = 4;
+	required int32 Year = 5;      /**< Game Turn */
+	required int32 Season = 6;    /**< Season of Year */
+	
+	struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
+	
+	struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
+	
+//	required int32 EMark [deprecated = true];                   /**< unused - Event Marker */
+	required int32 event_cards;    // char[100] - event card ordering
+	required int32 Count;         // picked event cards
+	char PD[NUM_PLAYERS][28];  // Prestige Firsts
+	char Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
+};
+

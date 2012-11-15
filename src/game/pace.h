@@ -38,7 +38,6 @@ char MPrefs(char mode);
 int bioskey(int wait);
 int brandom(int limit);
 
-extern struct Prest_Upd MP[3];
 extern int show_intro_flag;
 extern char *letter_dat;
 
