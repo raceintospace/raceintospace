@@ -294,7 +294,7 @@ void EndGame(char win, char pad)
 // correct mission pictures
 
     if (Option == -1 && MAIL == -1) {
-        gork = Data->P[win].PastMis - 1;
+        gork = Data->P[win].PastMissionCount - 1;
     } else {
         gork = Data->Prestige[22].Index;
     }
@@ -1238,7 +1238,7 @@ void PlayFirst(char plr, char first)
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     if (Option == -1 && MAIL == -1) {
-        Replay(plr, Data->P[plr].PastMis - 1, 85, 46, 151, 82, "OOOO");
+        Replay(plr, Data->P[plr].PastMissionCount - 1, 85, 46, 151, 82, "OOOO");
     } else {
         Replay(index, Data->Prestige[first].Index, 85, 46, 151, 82, "OOOO");
     }

@@ -81,7 +81,7 @@ void _SwapGameDat(void)
                 _Swap16bit(Data->P[j].Pool[i].Prestige);
         }
 
-        Data->P[j].PastMis = _Swap16bit(Data->P[j].PastMis);
+        Data->P[j].PastMissionCount = _Swap16bit(Data->P[j].PastMissionCount);
 
         for (i = 0; i < 30; i++)
             Data->P[j].PastIntel[i].num =

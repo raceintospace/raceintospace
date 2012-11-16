@@ -625,7 +625,7 @@ void ShowPad(char plr, char pad)
                 temp = Help("i115");
 
                 if (temp == 1) {
-                    Data->P[plr].Cash = Data->P[plr].Cash - Data->P[plr].LaunchFacility[pad];
+                    Data->P[plr].Cash -= Data->P[plr].LaunchFacility[pad];
                     Data->P[plr].LaunchFacility[pad] = 1;
                 }
             } else {

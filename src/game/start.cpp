@@ -318,7 +318,7 @@ AstroTurn(void)
                     }
                 }
 
-                if (Data->P[j].Other & 1 && Data->P[j].Pool[i].RDelay == 0 &&
+                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RDelay == 0 &&
                     Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                     /* Catastrophic Failure */
                     num = brandom(100);
@@ -402,7 +402,7 @@ AstroTurn(void)
                 }
 
                 /* END OF SEASON - Positive */
-                if (Data->P[j].Other & 4) {
+                if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
                     /* Program First */
                     Data->P[j].Pool[i].Mood += 5;
 
@@ -492,12 +492,12 @@ AstroTurn(void)
                 }
 
                 /* catastrophic death */
-                if (Data->P[j].Other & 1) {
+                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1) {
                     Data->P[j].Pool[i].Mood -= 5;
                 }
 
                 /* card death */
-                if (Data->P[j].Other & 2) {
+                if (Data->P[j].MissionCatastrophicFailureOnTurn & 2) {
                     Data->P[j].Pool[i].Mood -= brandom(2) + 1;
                 }
 
@@ -639,7 +639,7 @@ AstroTurn(void)
                 Data->P[j].Pool[i].Mis = 0;
             }
 
-        Data->P[j].Other = 0;
+        Data->P[j].MissionCatastrophicFailureOnTurn = 0;
     }
 
     //      break all groups with dead, injured or retired folks.
@@ -710,23 +710,18 @@ void Update(void)
     char p0, p1;
     char tName[20];
 
-    if (Data->P[0].DMod > 0) {
-        Data->P[0].DMod--;
-    }
-
-    if (Data->P[1].DMod > 0) {
-        Data->P[1].DMod--;
-    }
-
-    if (Data->P[0].AstroDelay != 0) {
-        Data->P[0].AstroDelay -= 1;
-    }
-
-    if (Data->P[1].AstroDelay != 0) {
-        Data->P[1].AstroDelay -= 1;
-    }
-
     for (j = 0; j < NUM_PLAYERS; j++) {
+
+			// If the Docking module is in orbit, reduce the usable seasons
+			if (Data->P[j].DockingModuleInOrbit) {
+				Data->P[j].DockingModuleInOrbit--;
+			}
+
+			// Decrement the Astronaut delays counter
+			if (Data->P[j].AstroDelay) {
+				Data->P[j].AstroDelay--;
+			}
+
         for (i = 0; i < MAX_MISSIONS; i++) {
             memcpy(&Data->P[j].Mission[i], &Data->P[j].Future[i], sizeof(struct MissionType));
             memset(&Data->P[j].Future[i], 0x00, sizeof(struct MissionType));
@@ -800,20 +795,20 @@ void Update(void)
     AstroTurn();   /* Process all astronauts */
 
     for (j = 0; j < NUM_PLAYERS; j++) {
-        Data->P[j].RDMods = 0;
+        Data->P[j].RD_Mods_For_Turn = 0;
 
-        if (Data->P[j].RDYear > 0) {
-            Data->P[j].RDMods = Data->P[j].RDYear;
-            Data->P[j].RDYear = 0;
+        if (Data->P[j].RD_Mods_For_Year > 0) {
+            Data->P[j].RD_Mods_For_Turn = Data->P[j].RD_Mods_For_Year;
+            Data->P[j].RD_Mods_For_Year = 0;
         };
 
-        Data->P[j].TurnOnly = Data->P[j].Other = Data->P[j].Block = 0;
+        Data->P[j].TurnOnly = Data->P[j].MissionCatastrophicFailureOnTurn = Data->P[j].Block = 0;
     };
 
     // Update any delayed Missions
     p0 = p1 = 0;
 
-    while (p0 < Data->P[0].PastMis && p1 < Data->P[1].PastMis) {
+    while (p0 < Data->P[0].PastMissionCount && p1 < Data->P[1].PastMissionCount) {
         if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
             TestFMis(0, p0);
             p0++;
@@ -828,13 +823,13 @@ void Update(void)
                 TestFMis(1, p1);
                 p1++;
             } else if (Data->P[0].History[p0].Month == Data->P[1].History[p1].Month) {
-                if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMis)) {
+                if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMissionCount)) {
                     TestFMis(0, p0);
                     p0++;
-                } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMis)) {
+                } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMissionCount)) {
                     TestFMis(1, p1);
                     p1++;
-                } else if ((p0 < Data->P[0].PastMis) && (p1 < Data->P[1].PastMis)) {
+                } else if ((p0 < Data->P[0].PastMissionCount) && (p1 < Data->P[1].PastMissionCount)) {
                     if (brandom(100) < 50) {
                         TestFMis(0, p0);
                         p0++;
@@ -849,12 +844,12 @@ void Update(void)
 
     memset(pNeg, 0x00, sizeof pNeg);
 
-    while (p0 < Data->P[0].PastMis) {
+    while (p0 < Data->P[0].PastMissionCount) {
         TestFMis(0, p0);
         p0++;
     }
 
-    while (p1 < Data->P[1].PastMis) {
+    while (p1 < Data->P[1].PastMissionCount) {
         TestFMis(1, p1);
         p1++;
     }
@@ -867,7 +862,7 @@ void Update(void)
         Data->P[j].Probe[0].Failures = Data->P[j].Probe[2].Failures = 0;
         Data->P[j].Probe[0].Used = Data->P[j].Probe[2].Used = 0;
 
-        for (i = 0; i < Data->P[j].PastMis; i++) {
+        for (i = 0; i < Data->P[j].PastMissionCount; i++) {
             if (Data->P[j].History[i].Event == 0) {
                 switch (Data->P[j].History[i].MissionCode) {
                 case 10:
@@ -917,8 +912,8 @@ void UpdAll(char side)
     char p0 = 0, p1 = 0;
     char tName[20];
 
-    if (Data->P[side].DMod > 0) {
-        Data->P[side].DMod--;
+    if (Data->P[side].DockingModuleInOrbit > 0) {
+        Data->P[side].DockingModuleInOrbit--;
     }
 
     if (Data->P[side].AstroDelay != 0) {
@@ -990,20 +985,20 @@ void UpdAll(char side)
 
     AstroTurn();   /* Process all astronauts */
 
-    Data->P[side].RDMods = 0;
+    Data->P[side].RD_Mods_For_Turn = 0;
 
-    if (Data->P[side].RDYear > 0) {
-        Data->P[side].RDMods = Data->P[side].RDYear;
-        Data->P[side].RDYear = 0;
+    if (Data->P[side].RD_Mods_For_Year > 0) {
+        Data->P[side].RD_Mods_For_Turn = Data->P[side].RD_Mods_For_Year;
+        Data->P[side].RD_Mods_For_Year = 0;
     };
 
-    Data->P[side].TurnOnly = Data->P[side].Other = Data->P[side].Block = 0;
+    Data->P[side].TurnOnly = Data->P[side].MissionCatastrophicFailureOnTurn = Data->P[side].Block = 0;
 
 
     if (side == 1) {
         p0 = p1 = 0;
 
-        while (p0 < Data->P[0].PastMis && p1 < Data->P[1].PastMis) {
+        while (p0 < Data->P[0].PastMissionCount && p1 < Data->P[1].PastMissionCount) {
             if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
                 TestFMis(0, p0);
                 p0++;
@@ -1018,13 +1013,13 @@ void UpdAll(char side)
                     TestFMis(1, p1);
                     p1++;
                 } else if (Data->P[0].History[p0].Month == Data->P[1].History[p1].Month) {
-                    if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMis)) {
+                    if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMissionCount)) {
                         TestFMis(0, p0);
                         p0++;
-                    } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMis)) {
+                    } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMissionCount)) {
                         TestFMis(1, p1);
                         p1++;
-                    } else if ((p0 < Data->P[0].PastMis) && (p1 < Data->P[1].PastMis)) {
+                    } else if ((p0 < Data->P[0].PastMissionCount) && (p1 < Data->P[1].PastMissionCount)) {
                         if (brandom(100) < 50) {
                             TestFMis(0, p0);
                             p0++;
@@ -1041,12 +1036,12 @@ void UpdAll(char side)
     memset(pNeg, 0x00, sizeof pNeg);
 
     if (side == 1) {
-        while (p0 < Data->P[0].PastMis) {
+        while (p0 < Data->P[0].PastMissionCount) {
             TestFMis(0, p0);
             p0++;
         }
 
-        while (p1 < Data->P[1].PastMis) {
+        while (p1 < Data->P[1].PastMissionCount) {
             TestFMis(1, p1);
             p1++;
         }
@@ -1059,7 +1054,7 @@ void UpdAll(char side)
     Data->P[side].Probe[0].Failures = Data->P[side].Probe[2].Failures = 0;
     Data->P[side].Probe[0].Used = Data->P[side].Probe[2].Used = 0;
 
-    for (i = 0; i < Data->P[side].PastMis; i++) {
+    for (i = 0; i < Data->P[side].PastMissionCount; i++) {
         if (Data->P[side].History[i].Event == 0) {
             switch (Data->P[side].History[i].MissionCode) {
             case 10:
