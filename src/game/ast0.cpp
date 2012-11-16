@@ -321,7 +321,7 @@ void SatText(char plr)
             case 0:
                 PrintAt(5 + i * 80, 80, "DUR LVL: "); // Show highest Duration level achieved -Leon
 
-                switch (Data->P[plr].DurLevel) {
+                switch (Data->P[plr].DurationLevel) {
                 case 1:
                     PrintAt(0, 0, "A");
                     break;
@@ -538,7 +538,7 @@ void PlanText(char plr, char plan)
 
     pUsed = pFails = 0;
 
-    for (i = 0; i < Data->P[plr].PastMis; i++)
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++)
         if (Data->P[plr].History[i].MissionCode == Find) {
             pUsed++;
 

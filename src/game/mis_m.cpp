@@ -449,7 +449,7 @@ void MisCheck(char plr, char mpad)
 
             if (strncmp(Mev[STEP].E->Name, "DO", 2) == 0) {
                 if (Mev[STEP].loc == 2) {
-                    Data->P[plr].DMod = 2;
+                    Data->P[plr].DockingModuleInOrbit = 2;
                 }
             }
 
@@ -474,7 +474,7 @@ void MisCheck(char plr, char mpad)
 
             //:::::: STEP SUCCESS :::::::::
             //:::::::::::::::::::::::::::::
-            // Female step klugge
+            // FemaleAstronautsAllowed step klugge
             // third parameter (0 -> MALE) (2 -> FEMALE)
             //:::::::::::::::::::::::::::::
 

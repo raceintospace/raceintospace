@@ -492,10 +492,10 @@ void DrawPreviousMissions(char plr)
     int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     InBox(5, 41, 314, 91);
     RectFill(6, 42, 313, 90, 0);
-    i = Data->P[plr].PastMis - olderMiss;
+    i = Data->P[plr].PastMissionCount - olderMiss;
     display::graphics.setForegroundColor(2);
 
-    while (i > (Data->P[plr].PastMis - olderMiss - 3) && i >= 0) {
+    while (i > (Data->P[plr].PastMissionCount - olderMiss - 3) && i >= 0) {
 
         GetMisType(Data->P[plr].History[i].MissionCode);
 
@@ -597,7 +597,7 @@ void DrawViewing(char plr)
     IOBox(242, 26, 315, 40);
     InBox(244, 28, 313, 38);
 
-    if (Data->P[plr].PastMis < 4) {
+    if (Data->P[plr].PastMissionCount < 4) {
         InBox(6, 28, 75, 38);
     }
 
@@ -838,8 +838,8 @@ void Viewing(char plr)
         } else if (key == 'O' || (mousebuttons > 0 && x >= 6 && y >= 28 && x <= 75 && y <= 38)) {
             olderMiss++;
 
-            if (olderMiss > Data->P[plr].PastMis - 2) {
-                olderMiss = Data->P[plr].PastMis - 2;
+            if (olderMiss > Data->P[plr].PastMissionCount - 2) {
+                olderMiss = Data->P[plr].PastMissionCount - 2;
             }
 
             if (olderMiss < 1) {
@@ -855,7 +855,7 @@ void Viewing(char plr)
             DrawPreviousMissions(plr);
             bzdelay(DELAYCNT);
 
-            if (olderMiss != Data->P[plr].PastMis - 2 && Data->P[plr].PastMis > 3) {
+            if (olderMiss != Data->P[plr].PastMissionCount - 2 && Data->P[plr].PastMissionCount > 3) {
                 OutBox(6, 28, 75, 38);    //Boton Older
             }
         } else if (key == 'N' || (mousebuttons > 0 && x >= 244 && y >= 28 && x <= 313 && y <= 38))  {
@@ -865,7 +865,7 @@ void Viewing(char plr)
                 olderMiss = 1;
             }
 
-            if (olderMiss != Data->P[plr].PastMis - 2 && Data->P[plr].PastMis > 3) {
+            if (olderMiss != Data->P[plr].PastMissionCount - 2 && Data->P[plr].PastMissionCount > 3) {
                 OutBox(6, 28, 75, 38);    //Boton Older
             }
 

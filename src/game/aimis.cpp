@@ -273,7 +273,7 @@ char Panic_Level(char plr, int *m_1, int *m_2)
     if (Data->P[plr].Track[1] == 5 && !PreChe(plr, 1) && !PreChe(plr, 7) && Cur_Status == Ahead && Alt_A[plr] <= 2) {
         *m_1 = 7;
 
-        if (Data->P[plr].DurLevel <= 2) {
+        if (Data->P[plr].DurationLevel <= 2) {
             *m_2 = 25;
         } else {
             *m_2 = 8;
@@ -290,7 +290,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
 {
 //AI version 12/26/92
     switch (Data->P[plr].Track[1]) {
-    case 0:// mission 26 -> if manned docking and eva  -> DurLevel+1
+    case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = 15;
         *m_2 = 15;
         ++Data->P[plr].Track[1];
@@ -341,7 +341,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 4:
-        switch (Data->P[plr].DurLevel) {
+        switch (Data->P[plr].DurationLevel) {
         case 0:
         case 1:
             *m_1 = 25;
@@ -527,7 +527,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 4:
-        switch (Data->P[plr].DurLevel) {
+        switch (Data->P[plr].DurationLevel) {
         case 0:
         case 1:
             *m_1 = 25;
@@ -667,7 +667,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 {
 //new version undated
     switch (Data->P[plr].Track[1]) {
-    case 0:// mission 26 -> if manned docking and eva  -> DurLevel+1
+    case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = 15;
         *m_2 = 15;
         ++Data->P[plr].Track[1];
@@ -718,7 +718,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 4:
-        switch (Data->P[plr].DurLevel) {
+        switch (Data->P[plr].DurationLevel) {
         case 0:
         case 1:
             *m_1 = 25;
@@ -971,7 +971,7 @@ void NewAI(char plr, char frog)
             break;
 
         case 3:
-            switch (Data->P[plr].DurLevel) {
+            switch (Data->P[plr].DurationLevel) {
             case 0:
             case 1:
                 mis1 = 25;
@@ -1005,7 +1005,7 @@ void NewAI(char plr, char frog)
             break;
 
         case 5:
-            switch (Data->P[plr].DurLevel) {
+            switch (Data->P[plr].DurationLevel) {
             case 0:
             case 1:
             case 2:
@@ -1304,9 +1304,9 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         Data->P[plr].Future[pad + i].part = i;
 
         // duration
-        if (Data->P[plr].DurLevel <= 5 && Data->P[plr].Future[pad + i].Duration == 0) {
+        if (Data->P[plr].DurationLevel <= 5 && Data->P[plr].Future[pad + i].Duration == 0) {
             if (Mis.Dur == 1) Data->P[plr].Future[pad + i].Duration =
-                    maxx(Mis.Days, minn(Data->P[plr].DurLevel + 1, 6));
+                    maxx(Mis.Days, minn(Data->P[plr].DurationLevel + 1, 6));
             else {
                 Data->P[plr].Future[pad + i].Duration = Mis.Days;
             }
@@ -1327,7 +1327,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
         // one man capsule duration klugge
         if (Data->P[plr].Future[pad + i].Prog == 1) {
-            if (Data->P[plr].DurLevel == 0) {
+            if (Data->P[plr].DurationLevel == 0) {
                 Data->P[plr].Future[pad + i].Duration = 1;
             } else {
                 Data->P[plr].Future[pad + i].Duration = 2;
@@ -1485,7 +1485,7 @@ void AILaunch(char plr)
     }
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode == 28 && Data->P[plr].DMod == 0) {
+        if (Data->P[plr].Mission[i].MissionCode == 28 && Data->P[plr].DockingModuleInOrbit == 0) {
             Data->P[plr].Mission[i].MissionCode = 0;
             return;
         }

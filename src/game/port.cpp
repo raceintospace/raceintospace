@@ -590,10 +590,10 @@ void DrawSpaceport(char plr)
 
     // Pads
     for (i = 0; i < 3; i++) {
-        Data->P[plr].Port[PORT_LaunchPad_A + i] = 1;
+        Data->P[plr].Port[PORT_LaunchPad_A + i] = 1; // Draw launch pad
 
         if (Data->P[plr].Mission[i].MissionCode > 0) {
-            Data->P[plr].Port[PORT_LaunchPad_A + i] = 2;
+            Data->P[plr].Port[PORT_LaunchPad_A + i] = 2; // Draw damaged launch pad
         } else if (Data->P[plr].LaunchFacility[i] > 1) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 3;
         } else if (Data->P[plr].LaunchFacility[i] < 0) { // No launch facility

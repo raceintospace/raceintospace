@@ -86,11 +86,11 @@ void AIMaster(char plr)
     Cur_Status = Equal;
 
 // *** check status ***
-    for (i = 0; i < Data->P[plr].PastMis; i++) {
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         P_total += Data->P[plr].History[i].Prestige;
     }
 
-    for (i = 0; i < Data->P[other(plr)].PastMis; i++) {
+    for (i = 0; i < Data->P[other(plr)].PastMissionCount; i++) {
         O_total += Data->P[other(plr)].History[i].Prestige;
     }
 
@@ -492,7 +492,7 @@ char NoFail(char plr)
 {
     char RT_value = 0, i;
 
-    for (i = 0; i < Data->P[plr].PastMis; i++)
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++)
         if ((Data->P[plr].History[i].MissionCode == 4 || Data->P[plr].History[i].MissionCode == 2) && Data->P[plr].History[i].spResult >= 3000) {
             ++RT_value;
         }

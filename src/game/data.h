@@ -124,8 +124,8 @@ struct Defl {
 */
 struct PrestType {
     char Add[4];        /**< 4&5 used for qty completed */
-    char Goal[2];       /**< Goal steps used for prest calculations */
-    int16_t Points[2];  /**< Total points earned */
+    char Goal[NUM_PLAYERS];       /**< Goal steps used for prest calculations */
+    int16_t Points[NUM_PLAYERS];  /**< Total points earned */
     char Index;         /**< the index for the first into .History[] */
     char Place;         /**< Who got the prestige first. */
     char mPlace;        /**< If you've done it at all */
@@ -332,24 +332,24 @@ struct PastInfo {
 struct BuzzData {                   // master data list for Buzz Aldrin's
     char Header[4];                  // Sync information
     char Name[20];                   // Player Name
-    char Level; // unused
+    char unused_Level; // unused
     int16_t Cash;                      // Current Cash on Hand
     int16_t Budget;                    // Next Season's Budget
     int16_t Prestige;                    // Prestige Earned
-    int16_t PrestHist[5][2];             // Prestige History array
+    int16_t PrestHist[5][2];             // Prestige History array -- [][historical|random]
     int16_t PresRev[5];                  // Pres. Review History
     int16_t tempPrestige[2];                 // Holds this and prev prestige
     int16_t BudgetHistory[40];         // Record of Last 40 Budgets
     int16_t BudgetHistoryF[40];        // Record of Last 40 Budgets
     int16_t Spend[5][4];                 // Record of last 5 seasons spending
     //  of each equip type
-    char RDMods;                     // R & D Mods for turn only
-    char RDYear;                     // R & D Mods for full year
+    char RD_Mods_For_Turn;                     // R & D Mods for turn only
+    char RD_Mods_For_Year;                     // R & D Mods for full year
     char TurnOnly;                   // Events for this turn only
     char Plans;                      // Code for future plans
     // 1 = Manned Launch, -10 MB
     char FuturePlans;                // Special future mission
-    char DurLevel;                      // Current Duration Level
+    char DurationLevel;                      // Current Duration Level
     char LMpts;                      // Accumulation of any LM Test points
     Equipment Probe[7];       // 0 = Orbital
     // 1 = Inter Planetary
@@ -372,11 +372,10 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     // 3 = EVA Suits
     // 4 = Docking Modules
     // 5 = Photo Recon
-    char ZCost; // unused
-    char ZFlag; // unused
-    char DMod;                       // Docking Module in Orbit
-    /** \todo what is LaunchFacility == 1? */
-    char LaunchFacility[MAX_LAUNCHPADS];    /**< Cost to repair (-1=no facility; 0 = all okay) */
+    char unused_ZCost; // unused
+    char unused_ZFlag; // unused
+    char DockingModuleInOrbit;                       // Docking Module in Orbit, in seasons
+    char LaunchFacility[MAX_LAUNCHPADS];    /**< -1=no facility; 1=purchased, >1 repair cost) */
     char AstroCount;                 // Current # in Program
     char AstroLevel;                 // Level of selection
     char AstroDelay;                 // Wait until next selection
@@ -384,24 +383,23 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     struct {
         char Vle;
         char Asp;
-    } WList[5]; // unused
+    } unused_WList[5]; // unused
     struct Prest_Upd Udp[3];
-    char WTop; // unused
-    char VList[5]; // unused
-    char VTop; // unused
-    char Table[5][7];                // safety factor for intelligence
+    char unused_WTop; // unused
+    char unused_VList[5]; // unused
+    char unused_VTop; // unused
     char Gcnt[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
     char Crew[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
     // [5] - Program #
     // [8] - Eight Crews Max
     // [4] - Four Max per Crew
-    char Female;                     // Females allowed in program
+    char FemaleAstronautsAllowed;                     // FemaleAstronautsAlloweds allowed in program
     struct MissionType Mission[MAX_MISSIONS];   // Current Mission Info
     char Block;                      // Blocked Mission Number
     struct MissionType Future[MAX_MISSIONS];    // Future Mission Info
     struct PastInfo History[100];    // Past Mission History
-    int16_t PastMis;                   // Number of Past Missions
-    char Other;                      // Catastrophic Fail on Turn
+    int16_t PastMissionCount;                   // Number of Past Missions
+    char MissionCatastrophicFailureOnTurn;                      // Catastrophic Fail on Turn
     // 1 = Cat Failure
     // 2 = Program Death
     // 3 = Program First
@@ -416,20 +414,20 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         char sf;
         char cdex;
     } PastIntel[30];
-    char AIpath[23]; // unused
+    char unused_AIpath[23]; // unused
     char Track[10];                  // Misc Values
     char AILunar,                    // Flag to tell way to moon
          AIPrim,                     // Currect Primary Prog
          AISec,                      // Currect Secondary Prog
-         AIEva, // unused
-         AIDur, // unused
-         AIDck, // unused
+         unused_AIEva, // unused
+         unused_AIDur, // unused
+         unused_AIDck, // unused
          AIStat,                     // the status of program
-         AITech, // unused
-         AILem; // unused
-    char X[20]; // unused
-    char M[62];                      // How many missions of type done
-    char BadCard[15];                // Flag for Bad Events
+         unused_AITech, // unused
+         unused_AILem; // unused
+    char unused_X[20]; // unused
+    char unused_AIMissions[62];                      // How many missions of type done
+    char BadCardEventFlag[15];                // Flag for Bad Events
     char Port[40];                   // Levels for SPort display
 };
 
@@ -442,7 +440,7 @@ struct Players {
     char Season;                     /**< Season of Year */
     struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
     struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
-    char EMark[4];                   /**< unused - Event Marker */
+    char unused_EMark[4];                   /**< unused - Event Marker */
     char Events[100];                /**< History of Event Cards */
     char Count;                      /**< Number of Events Picked */
     char PD[NUM_PLAYERS][28];
@@ -545,12 +543,6 @@ struct mStr {
     uint8_t mVab[2];  /**< Hardware Requirements */
     char PCat[5],     /**< Prestige Category List */
          LMAd;             /**< LM Addition Points */
-};
-
-struct MXM {
-    char Code[8];
-    int16_t  Qty;
-    int32_t Offset[6];
 };
 
 // Vehicle assembly working structure

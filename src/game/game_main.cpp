@@ -449,8 +449,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     while (Data->Year < 78) {            // WHILE THE YEAR IS NOT 1977
         EndOfTurnSave((char *) Data, sizeof(struct Players));
 
-        Data->P[0].RDMods = 0;         // CLEAR ALL TURN RD MODS
-        Data->P[1].RDMods = 0;
+        Data->P[0].RD_Mods_For_Turn = 0;         // CLEAR ALL TURN RD MODS
+        Data->P[1].RD_Mods_For_Turn = 0;
 
         Data->P[0].BudgetHistory[Data->Year - 53] = Data->P[0].Budget; // RECORD BUDGET
         Data->P[1].BudgetHistory[Data->Year - 53] = Data->P[1].Budget;
@@ -598,15 +598,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             };                             //for(i=0...
 
         Update();  /* Moves Future launches to Missions + More */
-
-        // Update M array to speed AI code
-        for (j = 0; j < NUM_PLAYERS; j++) {
-            for (i = 0; i < Data->P[j].PastMis; i++) {
-                if (Data->P[j].History[i].result >= 100) {
-                    Data->P[j].M[Data->P[j].History[i].MissionCode] = 1;
-                }
-            }
-        }
 
         if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[22].Place == -1) {
             // nobody wins .....

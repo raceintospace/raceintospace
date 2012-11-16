@@ -818,7 +818,7 @@ void UpdateRecords(char Ty)
 
     for (i = 0; i < NUM_PLAYERS; i++) {
         if (!AI[i])
-            for (j = 0; j < Data->P[i].PastMis; j++) {
+            for (j = 0; j < Data->P[i].PastMissionCount; j++) {
                 if (CheckSucess(i, j) == 1)
                     for (k = 0; k < 56; k++) {
                         Rec_Change = -1;
@@ -1193,7 +1193,7 @@ void UpdateRecords(char Ty)
                                     max = temp = 0;
                                     Rec_Change = -1;
 
-                                    for (loop = 0; loop < Data->P[i].PastMis; loop++) {
+                                    for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                         if (Data->P[i].History[loop].Prestige > 0) {
                                             max = Data->P[i].History[loop].Prestige;
 
@@ -1464,7 +1464,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) {
-                                temp = Data->P[i].PastMis; //Fewest Missions
+                                temp = Data->P[i].PastMissionCount; //Fewest Missions
 
                                 if (rec[k][0].place == 0) {
                                     if (temp > 0) {
@@ -1485,7 +1485,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) {
-                                temp = Data->P[i].PastMis; //Most Missions
+                                temp = Data->P[i].PastMissionCount; //Most Missions
 
                                 if (rec[k][0].place == 0) {
                                     if (temp > 0) {
@@ -1506,7 +1506,7 @@ void UpdateRecords(char Ty)
                             if (Ty == 1) { //Most Space Missions Attempted
                                 temp = 0;
 
-                                for (loop = 0; loop < Data->P[i].PastMis; loop++) {
+                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                     if (Data->P[i].History[loop].Duration > 0) {
                                         ++temp;
                                     }
@@ -1529,7 +1529,7 @@ void UpdateRecords(char Ty)
                             if (Ty == 1) { //Most Successful Space Missions
                                 temp = 0;
 
-                                for (loop = 0; loop < Data->P[i].PastMis; loop++) {
+                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                     if (Data->P[i].History[loop].Duration > 0 && CheckSucess(i, loop) == 1) {
                                         ++temp;
                                     }
@@ -1832,7 +1832,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) { //Highest Prestige Total
-                                for (loop = 0; loop < Data->P[i].PastMis; loop++) {
+                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                     temp += Data->P[i].History[loop].Prestige;
                                 }
 
