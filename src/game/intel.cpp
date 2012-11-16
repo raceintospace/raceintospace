@@ -1815,7 +1815,7 @@ void IInfo(char plr, char loc, char w)
             }
 
             switch (i) {
-            case 0:
+            case ROCKET_HW_ONE_STAGE:
                 if (sfu > 0) {
                     RectFill(19, 159 - sfu * 136 / 100, 27, 159, 6);
                     RectFill(19, 159 - sfu * 136 / 100, 26, 158, 5);
@@ -1830,7 +1830,7 @@ void IInfo(char plr, char loc, char w)
 
                 break;
 
-            case 1:
+            case ROCKET_HW_TWO_STAGE:
                 if (sfu > 0) {
                     RectFill(78, 159 - sfu * 136 / 100, 86, 159, 6);
                     RectFill(78, 159 - sfu * 136 / 100, 85, 158, 5);
@@ -1845,7 +1845,7 @@ void IInfo(char plr, char loc, char w)
 
                 break;
 
-            case 2:
+            case ROCKET_HW_THREE_STAGE:
                 if (sfu > 0) {
                     RectFill(159, 159 - sfu * 136 / 100, 167, 159, 6);
                     RectFill(159, 159 - sfu * 136 / 100, 166, 158, 5);
@@ -1860,7 +1860,7 @@ void IInfo(char plr, char loc, char w)
 
                 break;
 
-            case 3:
+            case ROCKET_HW_MEGA_STAGE:
                 if (sfu > 0) {
                     RectFill(260, 159 - sfu * 136 / 100, 268, 159, 6);
                     RectFill(260, 159 - sfu * 136 / 100, 267, 158, 5);
@@ -2243,13 +2243,11 @@ void IInfo(char plr, char loc, char w)
             if (Data->P[0].Misc[MISC_HW_KICKER_B].Num >= 0) {
                 sfu = Data->P[0].Misc[MISC_HW_KICKER_B].Safety;
             }
-
             sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         } else if (plr == 1) {
             if (Data->P[1].Misc[MISC_HW_KICKER_B].Num >= 0) {
                 sfs = Data->P[1].Misc[MISC_HW_KICKER_B].Safety;
             }
-
             sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         }
 

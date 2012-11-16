@@ -199,12 +199,12 @@ int ICost(char plr, char h, char i)
                 cost += Data->P[plr].Probe[i].UnitCost;
             }
         } else {
-            if (Data->P[plr].Misc[4].Num < 0) {
-                cost += Data->P[plr].Misc[4].InitCost;
+            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num < 0) {
+                cost += Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].InitCost;
             }
 
-            if (Data->P[plr].Misc[4].Num == 0) {
-                cost += Data->P[plr].Misc[4].UnitCost;
+            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num == 0) {
+                cost += Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].UnitCost;
             }
         }
 
@@ -320,7 +320,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             ++Data->P[plr].Track[1];
         }
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         }
 
@@ -333,7 +333,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = 25;
         }
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         }
 
@@ -350,7 +350,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
 
         case 2:
             *m_1 = 27;
-            *m_2 = (Data->P[plr].Probe[1].Safety >= Data->P[plr].Probe[1].MaxRD - 10) ? 7 : 15;
+            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? 7 : 15;
             *m_3 = 7;
             break;
 
@@ -371,7 +371,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             Data->P[plr].Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[2].InitCost + 25;
+        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
         if (GenPur(plr, 1, 2)) {
             RDafford(plr, 1, 2);
@@ -379,7 +379,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             RDafford(plr, 1, 2);
         }
 
-        if (Data->P[plr].Rocket[2].Num >= 0) {
+        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
             Data->P[plr].Track[5] = 1;
         }
 
@@ -399,7 +399,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 6:
-        if (Data->P[plr].Manned[6].Safety > Data->P[plr].Manned[6].MaxRD - 10) {
+        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
             *m_1 = 48;
         } else {
             *m_1 = 46;    //lunar orbit
@@ -438,7 +438,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Misc[4].Safety >= 80) {
+        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -462,7 +462,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = 15;
 
-            if (Data->P[plr].Misc[4].Safety < 60) {
+            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = 14;
             } else {
                 *m_2 = 15;
@@ -507,7 +507,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             ++Data->P[plr].Track[1];
         }
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         }
 
@@ -517,7 +517,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         *m_1 = 25;
         *m_2 = 27;
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         } else {
             *m_3 = 7;
@@ -537,7 +537,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
 
         case 2:
             *m_1 = 27;
-            *m_2 = (Data->P[plr].Probe[1].Safety >= Data->P[plr].Probe[1].MaxRD - 10) ? 7 : 15;
+            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? 7 : 15;
             *m_3 = 7;
             break;
 
@@ -558,7 +558,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             Data->P[plr].Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[2].InitCost + 25;
+        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
         if (GenPur(plr, 1, 2)) {
             RDafford(plr, 1, 2);
@@ -566,7 +566,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             RDafford(plr, 1, 2);
         }
 
-        if (Data->P[plr].Rocket[2].Num >= 0) {
+        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
             Data->P[plr].Track[5] = 1;
         }
 
@@ -586,7 +586,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 6:
-        if (Data->P[plr].Manned[6].Safety > Data->P[plr].Manned[6].MaxRD - 10) {
+        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
             *m_1 = 46;    //lunar orbit
         }
 
@@ -623,7 +623,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Misc[4].Safety >= 80) {
+        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -647,7 +647,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = 15;
 
-            if (Data->P[plr].Misc[4].Safety < 60) {
+            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = 14;
             } else {
                 *m_2 = 15;
@@ -697,7 +697,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             ++Data->P[plr].Track[1];
         }
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         }
 
@@ -710,7 +710,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = 25;
         }
 
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 10) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = 8;
         }
 
@@ -727,7 +727,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 
         case 2:
             *m_1 = 27;
-            *m_2 = (Data->P[plr].Probe[1].Safety >= Data->P[plr].Probe[1].MaxRD - 10) ? 7 : 15;
+            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? 7 : 15;
             *m_3 = 7;
             break;
 
@@ -748,7 +748,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             Data->P[plr].Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[2].InitCost + 25;
+        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
         if (GenPur(plr, 1, 2)) {
             RDafford(plr, 1, 2);
@@ -756,7 +756,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             RDafford(plr, 1, 2);
         }
 
-        if (Data->P[plr].Rocket[2].Num >= 0) {
+        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
             Data->P[plr].Track[5] = 1;
         }
 
@@ -776,7 +776,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 6:
-        if (Data->P[plr].Manned[6].Safety > Data->P[plr].Manned[6].MaxRD - 10) {
+        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
             *m_1 = 46;    //lunar orbit
         }
 
@@ -813,7 +813,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Misc[4].Safety >= 80) {
+        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -837,7 +837,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = 15;
 
-            if (Data->P[plr].Misc[4].Safety < 60) {
+            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = 14;
             } else {
                 *m_2 = 15;
@@ -885,7 +885,7 @@ void NewAI(char plr, char frog)
             }
         }
 
-        Data->P[plr].Misc[4].Num = 2;
+        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num = 2;
         Panic_Check = Panic_Level(plr, &mis1, &mis2);
 
         if (!Panic_Check) {
@@ -952,7 +952,7 @@ void NewAI(char plr, char frog)
                 Data->P[plr].Cash = 0;
             }
 
-            Data->P[plr].Cash += Data->P[plr].Rocket[3].InitCost + 25;
+            Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].InitCost + 25;
 
             if (GenPur(plr, 1, 3)) {
                 RDafford(plr, 1, 3);
@@ -960,7 +960,7 @@ void NewAI(char plr, char frog)
                 RDafford(plr, 1, 3);
             }
 
-            if (Data->P[plr].Rocket[3].Num >= 0) {
+            if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num >= 0) {
                 Data->P[plr].Track[5] = 1;
             }
 
@@ -1083,7 +1083,7 @@ void NewAI(char plr, char frog)
 
 //lunar fly-by/probe landing klugge
     if (mis1 == 7 && mis2 == 7)
-        if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 15) {
+        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15) {
             mis2 = 8;
         }
 
@@ -1190,8 +1190,8 @@ void NewAI(char plr, char frog)
     }
 
     if (Data->P[plr].Future[2].MissionCode == 0 && Data->P[plr].LaunchFacility[2] == 1) {
-        if ((mis1 == 0 && frog == 2 && (Data->P[plr].Manned[2].Safety >= Data->P[plr].Manned[2].MaxRD - 10)) ||
-            (Data->P[plr].Manned[3].Safety >= Data->P[plr].Manned[3].MaxRD - 10)) {
+        if ((mis1 == 0 && frog == 2 && (Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].MaxRD - 10)) ||
+            (Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >= Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD - 10)) {
             if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) {
                 mis3 = 2;
             } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) {
@@ -1215,14 +1215,14 @@ void NewAI(char plr, char frog)
                     mis3 = 7;
                 }
 
-                if (Data->P[plr].Probe[2].Safety > Data->P[plr].Probe[2].MaxRD - 15)
-                    if (PreChe(plr, 7) == 0 || Data->P[plr].Misc[5].Safety < 85) {
+                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15)
+                    if (PreChe(plr, 7) == 0 || Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety < 85) {
                         if (mis3 == 0) {
                             mis3 = 8;
                         }
                     }
 
-                if ((Data->P[plr].Probe[1].Safety > Data->P[plr].Probe[1].MaxRD - 15) && mis3 == 0) {
+                if ((Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety > Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 15) && mis3 == 0) {
                     if (PreChe(plr, 1) == 0 && PreChe(other(plr), 1) == 0 && Data->P[plr].Mission[2].MissionCode != 7) {
                         mis3 = 7;
                     } else if (PreChe(plr, 2) == 0 && PreChe(other(plr), 2) == 0 && Data->P[plr].Mission[2].MissionCode != 11) {
@@ -1268,7 +1268,7 @@ void NewAI(char plr, char frog)
                 RDafford(plr, 1, 0);
             }
 
-            if (Data->P[plr].Probe[0].Num >= 1 && Data->P[plr].Rocket[0].Num >= 1) {
+            if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 1 && Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num >= 1) {
                 mis3 = 1;
             }
         }
@@ -1465,17 +1465,17 @@ void AILaunch(char plr)
     for (i = 0; i < 7; i++) {
         bdex[i] = i;
         boos[i] = (i > 3) ?
-                  RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[4].Safety)
+                  RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety)
                   : Data->P[plr].Rocket[i].Safety;
         bwgt[i] = (i > 3) ?
-                  (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[4].MaxPay)
+                  (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay)
                   : Data->P[plr].Rocket[i].MaxPay;
 
         if (boos[i] < 60) {
             boos[i] = -1;    // Get Rid of any Unsafe rkt systems
         }
 
-        if (Data->P[plr].Rocket[4].Num < 1) for (j = 4; j < 7; j++) {
+        if (Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num < 1) for (j = 4; j < 7; j++) {
                 boos[j] = -1;
             }
 
@@ -1597,7 +1597,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Misc[1].Safety = maxx(Data->P[plr].Misc[1].Safety, Data->P[plr].Misc[1].MaxRD);
+        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = maxx(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1; // kicker second part
     };
 
@@ -1605,7 +1605,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Misc[1].Safety = maxx(Data->P[plr].Misc[1].Safety, Data->P[plr].Misc[1].MaxRD);
+        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = maxx(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[0].Hard[Mission_Kicker] = 1;
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1;
     };
@@ -1613,7 +1613,7 @@ void AILaunch(char plr)
     // lunar module klugge
     for (i = 0; i < 3; i++)
         if (Data->P[plr].Mission[i].Hard[Mission_LM] >= 5) {
-            Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[5].Safety >= Data->P[plr].Manned[6].Safety ? 5 : 6;
+            Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety >= Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety ? 5 : 6;
         }
 
     JR = 0;

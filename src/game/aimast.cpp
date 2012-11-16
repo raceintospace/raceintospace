@@ -141,8 +141,8 @@ void AIMaster(char plr)
         Data->P[plr].Buy[2][0] = 0;
 
         if (Data->Year <= 59) {
-            Data->P[plr].Probe[0].Num++;
-            Data->P[plr].Rocket[0].Num++;
+            Data->P[plr].Probe[PROBE_HW_ORBITAL].Num++;
+            Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num++;
             AIFuture(plr, 1, 0, 0);
         }
 
@@ -163,25 +163,25 @@ void AIMaster(char plr)
             if ((Data->Year == 59 && Data->Season == 1) || Data->Year >= 60) {
                 switch (Data->P[plr].Track[4]) {
                 case 0:
-                    if (Data->P[plr].Misc[3].Safety > Data->P[plr].Misc[3].MaxRD - 20) {
+                    if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety > Data->P[plr].Manned[MISC_HW_EVA_SUITS].MaxRD - 20) {
                         AIFuture(plr, 6, 0, (char *)&prg);
                     } else {
                         AIFuture(plr, 2, 0, (char *)&prg);
                     }
 
-                    Data->P[plr].Manned[0].Safety += 10;
-                    Data->P[plr].Misc[3].Safety += 10;
+                    Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety += 10;
+                    Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety += 10;
                     ++Data->P[plr].Track[4];
                     break;
 
                 case 1:
-                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
                     }
 
@@ -189,13 +189,13 @@ void AIMaster(char plr)
                     break;
 
                 case 2:
-                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[1].Safety>Data->P[plr].Manned[1].MaxRD-25)
+                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 6, 0, (char *)&prg);    //2
                     } else {
                         Data->P[plr].AIStat = 3;
@@ -208,7 +208,7 @@ void AIMaster(char plr)
                     break;
                 }
 
-                if (Data->P[plr].Manned[0].Num >= 2 && Data->P[plr].Rocket[0].Num >= 2) {
+                if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Num >= 2 && Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num >= 2) {
                     if (Data->P[plr].Future[0].MissionCode == 2) {
                         AIFuture(plr, 4, 1, (char *)&prg);
                     } else if (Data->P[plr].Future[0].MissionCode == 4) {
@@ -257,7 +257,7 @@ void AIMaster(char plr)
 
     if (Data->P[plr].AILunar == 4) {
         Data->P[plr].AIPrim = 6;
-        Data->P[plr].AISec = (Data->P[plr].Manned[1].Safety >= Data->P[plr].Manned[4].Safety) ? 6 : 10;
+        Data->P[plr].AISec = (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety) ? 6 : 10;
     }
 
 // boosters
@@ -365,10 +365,10 @@ void AIMaster(char plr)
     }
 
     if (Data->P[plr].AIStat >= 2 && Data->Year >= 61 && Data->P[plr].Track[1] >= 2) {
-        if ((Data->P[plr].Probe[0].Safety >= Data->P[plr].Probe[0].MaxRD - 20) || Data->P[plr].Probe[1].Num >= 0) {
-            Data->P[plr].Cash += Data->P[plr].Probe[1].InitCost + 30;
+        if ((Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety >= Data->P[plr].Probe[PROBE_HW_ORBITAL].MaxRD - 20) || Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) {
+            Data->P[plr].Cash += Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].InitCost + 30;
 
-            if (Data->P[plr].Probe[1].Num <= 0) {
+            if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num <= 0) {
                 if (GenPur(plr, 0, 1)) {
                     RDafford(plr, 0, 1);
                 } else {
@@ -380,10 +380,10 @@ void AIMaster(char plr)
             RDafford(plr, 0, 1);
         }
 
-        if ((Data->P[plr].Probe[1].Safety >= Data->P[plr].Probe[1].MaxRD - 20) || Data->P[plr].Probe[2].Num >= 0) {
-            Data->P[plr].Cash += Data->P[plr].Probe[2].InitCost + 30;
+        if ((Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 20) || Data->P[plr].Probe[PROBE_HW_LUNAR].Num >= 0) {
+            Data->P[plr].Cash += Data->P[plr].Probe[PROBE_HW_LUNAR].InitCost + 30;
 
-            if (Data->P[plr].Probe[2].Num <= 0) {
+            if (Data->P[plr].Probe[PROBE_HW_LUNAR].Num <= 0) {
                 if (GenPur(plr, 0, 2)) {
                     RDafford(plr, 0, 2);
                 } else {
@@ -425,7 +425,7 @@ void AIMaster(char plr)
                 NewAI(plr, val);
             }
         } else if (Data->P[plr].AILunar == 4) {
-            if (Data->P[plr].Manned[4].Safety >= Data->P[plr].Manned[4].MaxRD - 10) {
+            if (Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].MaxRD - 10) {
                 Data->P[plr].AISec = 10;
             } else {
                 Data->P[plr].AISec = 6;
@@ -446,8 +446,8 @@ void AIMaster(char plr)
             if (Data->P[plr].Manned[val - 1].Safety >= Data->P[plr].Manned[val - 1].MaxRD - 15) {
                 NewAI(plr, val);
             } else {
-                Data->P[plr].Probe[0].Num += 2;
-                Data->P[plr].Rocket[0].Num += 2;
+                Data->P[plr].Probe[PROBE_HW_ORBITAL].Num += 2;
+                Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num += 2;
                 AIFuture(plr, 1, 0, 0);
                 AIFuture(plr, 1, 1, 0);
                 AIFuture(plr, 1, 2, 0);
@@ -582,7 +582,7 @@ void KeepRD(char plr, int m)
 
     switch (m) {
     case 5:
-        if (Data->P[plr].Rocket[0].Num <= Data->P[plr].Manned[0].Num) {
+        if (Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Num) {
             if (GenPur(plr, 1, 0)) {
                 RDafford(plr, 1, 0);
             }
@@ -610,7 +610,7 @@ void KeepRD(char plr, int m)
         break;
 
     case 6:
-        if (Data->P[plr].Rocket[1].Num <= Data->P[plr].Manned[1].Num) {
+        if (Data->P[plr].Rocket[ROCKET_HW_TWO_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Num) {
             if (GenPur(plr, 1, 1)) {
                 RDafford(plr, 1, 1);
             } else {
@@ -653,7 +653,7 @@ void KeepRD(char plr, int m)
         break;
 
     case 8:
-        if (Data->P[plr].Rocket[2].Num <= Data->P[plr].Manned[2].Num) {
+        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num) {
             if (GenPur(plr, 1, 2)) {
                 RDafford(plr, 1, 2);
             } else {
@@ -696,7 +696,7 @@ void KeepRD(char plr, int m)
         break;
 
     case 9:
-        if (Data->P[plr].Rocket[3].Num <= Data->P[plr].Manned[3].Num) {
+        if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Num) {
             if (GenPur(plr, 1, 3)) {
                 RDafford(plr, 1, 3);
             } else {
@@ -739,7 +739,7 @@ void KeepRD(char plr, int m)
         break;
 
     case 10:
-        if (Data->P[plr].Rocket[3].Num <= Data->P[plr].Manned[4].Num) {
+        if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Num) {
             if (GenPur(plr, 1, 3)) {
                 RDafford(plr, 1, 3);
             } else {
@@ -848,19 +848,19 @@ int CheckSafety(char plr, char m)
 {
     switch (m) {
     case 5:
-        return(Data->P[plr].Manned[0].Safety);
+        return(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety);
 
     case 6:
-        return(Data->P[plr].Manned[1].Safety);
+        return(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety);
 
     case 8:
-        return(Data->P[plr].Manned[2].Safety);
+        return(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety);
 
     case 9:
-        return(Data->P[plr].Manned[3].Safety);
+        return(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety);
 
     case 10:
-        return(Data->P[plr].Manned[4].Safety);
+        return(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety);
 
     default:
         break;
