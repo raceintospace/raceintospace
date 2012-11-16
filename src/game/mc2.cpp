@@ -662,7 +662,7 @@ void MissionSetup(char plr, char mis)
 
     for (j = 0; j < (1 + Data->P[plr].Mission[mis].Joint); j++) {
 
-        if ((Mis.mVab[j] & 0x10) > 0 && Data->P[plr].DMod > 0) { // DMO
+        if ((Mis.mVab[j] & 0x10) > 0 && Data->P[plr].DockingModuleInOrbit > 0) { // DMO
             Data->P[plr].Mission[mis + j].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
@@ -891,9 +891,9 @@ MisDur(char plr, char dur)
     int i, j, diff;
     int manned = 0;
 
-    diff = dur - Data->P[plr].DurLevel;
+    diff = dur - Data->P[plr].DurationLevel;
 
-    if (Data->P[plr].DurLevel == 0) {
+    if (Data->P[plr].DurationLevel == 0) {
         diff--;
     }
 

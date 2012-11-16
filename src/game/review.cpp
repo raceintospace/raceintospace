@@ -294,7 +294,7 @@ void MisRev(char plr, int pres)
     FlagSm(plr, 4, 4);
 
     key = 0;
-    Draw_Mis_Stats(plr, Data->P[plr].PastMis - 1, 0, 1);
+    Draw_Mis_Stats(plr, Data->P[plr].PastMissionCount - 1, 0, 1);
     key = 0;
     gxClearDisplay(0, 0);
     return;

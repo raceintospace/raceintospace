@@ -189,7 +189,7 @@ void MisAnn(char plr, char pad)
     memcpy(&Mis2, &Mis, sizeof Mis);
 
 
-    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DMod <= 0) {
+    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
         i = 0;
 
         while (dg[Mis2.Index][i] != 0 && Mis.Doc == 1) {

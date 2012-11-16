@@ -819,12 +819,12 @@ ResolveEvent(char plr)
             if (ctr > 30) {
                 // After 30 good faith random attemptes to find an open slot
                 // reset the BadCard array
-                memset(&Data->P[plr].BadCard[0], 0x00, sizeof(Data->P[plr].BadCard));
+                memset(&Data->P[plr].BadCardEventFlag[0], 0x00, sizeof(Data->P[plr].BadCardEventFlag));
                 ctr = 0;
             }
-        } while (Data->P[plr].BadCard[bad] != 0);
+        } while (Data->P[plr].BadCardEventFlag[bad] != 0);
 
-        Data->P[plr].BadCard[bad] = 1;
+        Data->P[plr].BadCardEventFlag[bad] = 1;
         bad++;
     }
 

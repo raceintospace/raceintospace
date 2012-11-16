@@ -46,7 +46,6 @@ Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
 struct MisEval Mev[60];  // was *Mev;
 struct mStr Mis;
-struct MXM *AList;
 REPLAY Rep;
 
 char pCnt, tMen;    // Counter for pAry
@@ -362,7 +361,7 @@ int Launch(char plr, char mis)
             if (MA[i][j].A) {
                 if (FINAL >= 100) {
                     MA[i][j].A->Mis = 1;    // Successful
-                } else if (Data->P[plr].Other & 4) {
+                } else if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
                     MA[i][j].A->Mis = 2;    // Failure
                 }
             }
@@ -382,7 +381,7 @@ void MissionPast(char plr, char pad, int prest)
     int32_t size;
     char dys[7] = {0, 2, 5, 7, 12, 16, 20};
 
-    loc = Data->P[plr].PastMis;
+    loc = Data->P[plr].PastMissionCount;
     mc = Data->P[plr].Mission[pad].MissionCode;
     memset(&Data->P[plr].History[loc], -1, sizeof(struct PastInfo));
     strcpy(&Data->P[plr].History[loc].MissionName[0][0], Data->P[plr].Mission[pad].Name);
@@ -504,12 +503,12 @@ void MissionPast(char plr, char pad, int prest)
     }
 
     fin = sOpen("REPLAY.DAT", "r+b", 1);
-    size = (plr * 100) + Data->P[plr].PastMis;
+    size = (plr * 100) + Data->P[plr].PastMissionCount;
     fseek(fin, size * (sizeof Rep), SEEK_SET);
     fwrite(&Rep, sizeof Rep, 1, fin);
     fclose(fin);
 
-    Data->P[plr].PastMis++;
+    Data->P[plr].PastMissionCount++;
     return;
 }
 
