@@ -517,7 +517,7 @@ void AstSel(char plr)
         MaxSel = ASTRO_POOL_LVL1;
         Index = 0;
 
-        if (Data->P[plr].Female == 1) {
+        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
             fem = 1;
         }
@@ -531,7 +531,7 @@ void AstSel(char plr)
         MaxSel = ASTRO_POOL_LVL2;
         Index = 14;
 
-        if (Data->P[plr].Female == 1) {
+        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
             fem = 1;
         }
@@ -543,7 +543,7 @@ void AstSel(char plr)
         MaxSel = ASTRO_POOL_LVL3;
         Index = 35;
 
-        if (Data->P[plr].Female == 1) {
+        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
             fem = 1;
         }

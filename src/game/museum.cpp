@@ -641,10 +641,10 @@ void ShowSpHist(char plr)
     PatchMe(0, 0, 0, 0, 0, 32);
     display::graphics.clearScreen(0);
 
-    if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMis == 0) {
+    if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMissionCount == 0) {
         pos = (Data->Year - 57) * 2 + Data->Season;
-    } else pos = (Data->P[plr].History[Data->P[plr].PastMis - 1].MissionYear - 57) * 2 +
-                     ((Data->P[plr].History[Data->P[plr].PastMis - 1].Month <= 5) ? 0 : 1);
+    } else pos = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
+                     ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
 
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
     DispBig(48, 5, "MISSION HISTORY", 0, -1);
@@ -705,7 +705,7 @@ void Mission_Data_Buttons(char plr, int *where)
 
     /* Okay, now we have to decide whether there are any missions displayed
     on the screen at this time. If there are any, parse the button. */
-    if (Data->P[plr].PastMis == 0) {
+    if (Data->P[plr].PastMissionCount == 0) {
         return;
     }
 
@@ -751,12 +751,12 @@ void FastOne(char plr, int *where)
 
     int last;
 
-    if (Data->P[plr].PastMis == 0) {
+    if (Data->P[plr].PastMissionCount == 0) {
         return ;
     }
 
-    last = (Data->P[plr].History[Data->P[plr].PastMis - 1].MissionYear - 57) * 2 +
-           ((Data->P[plr].History[Data->P[plr].PastMis - 1].Month <= 5) ? 0 : 1);
+    last = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
+           ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
 
     if (*where >= last) {
         return;
@@ -776,7 +776,7 @@ void FullRewind(char plr, int *where)
 
 void RewindOne(char plr, int *where)
 {
-    if (Data->P[plr].PastMis == 0) {
+    if (Data->P[plr].PastMissionCount == 0) {
         return;
     }
 
@@ -790,12 +790,12 @@ void RewindOne(char plr, int *where)
 
 void FullFast(char plr, int *where)
 {
-    if (Data->P[plr].PastMis == 0) {
+    if (Data->P[plr].PastMissionCount == 0) {
         return;
     }
 
-    *where = (Data->P[plr].History[Data->P[plr].PastMis - 1].MissionYear - 57) * 2 +
-             ((Data->P[plr].History[Data->P[plr].PastMis - 1].Month <= 5) ? 0 : 1);
+    *where = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
+             ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
     DrawMisHist(plr, where);
 }
 
@@ -807,7 +807,7 @@ void DrawMisHist(char plr, int *where)
 
     //ai klugge
 
-    for (i = 0; i < Data->P[plr].PastMis; i++) {
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == 55 || Data->P[plr].History[i].MissionCode == 56) {
             for (j = 0; j < 4; j++)
                 if (Data->P[plr].History[i].Man[0][j] != -1) {

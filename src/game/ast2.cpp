@@ -179,8 +179,8 @@ void DrawLimbo(char plr)
 
 void Limbo(char plr)
 {
-    int i, M[100], BarA, count, now2, tag = 0;
-    memset(M, -1, sizeof M);
+    int i, AstroList[100], BarA, count, now2, tag = 0;
+    memset(AstroList, -1, sizeof AstroList);
     DrawLimbo(plr);
     music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
 
@@ -189,13 +189,13 @@ void Limbo(char plr)
 
     for (i = 0; i < Data->P[plr].AstroCount; i++)
         if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
-            M[count++] = i;
+            AstroList[count++] = i;
         };
 
-    DispLeft(plr, BarA, count, now2, &M[0]);
+    DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
     if (count > 0) {
-        LimboText(plr, M[now2]);
+        LimboText(plr, AstroList[now2]);
     }
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -214,8 +214,8 @@ void Limbo(char plr)
                 BarA = i;
                 RectFill(26, 129, 153, 195, 0);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                DispLeft(plr, BarA, count, now2, &M[0]);
-                LimboText(plr, M[now2]);
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                LimboText(plr, AstroList[now2]);
                 WaitForMouseUp();
 
             }
@@ -236,8 +236,8 @@ void Limbo(char plr)
                         now2--;
                         RectFill(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                        DispLeft(plr, BarA, count, now2, &M[0]);
-                        LimboText(plr, M[now2]);
+                        DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                        LimboText(plr, AstroList[now2]);
                     };
 
                     if (BarA > 0) {
@@ -245,8 +245,8 @@ void Limbo(char plr)
                         BarA--;
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                        DispLeft(plr, BarA, count, now2, &M[0]);
-                        LimboText(plr, M[now2]);
+                        DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                        LimboText(plr, AstroList[now2]);
                     };
 
                     i = 51;
@@ -260,8 +260,8 @@ void Limbo(char plr)
                     now2--;
                     RectFill(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                    DispLeft(plr, BarA, count, now2, &M[0]);
-                    LimboText(plr, M[now2]);
+                    DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                    LimboText(plr, AstroList[now2]);
                 };
 
                 if (BarA > 0) {
@@ -269,8 +269,8 @@ void Limbo(char plr)
                     BarA--;
                     now2--;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                    DispLeft(plr, BarA, count, now2, &M[0]);
-                    LimboText(plr, M[now2]);
+                    DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                    LimboText(plr, AstroList[now2]);
                 };
 
                 key = 0;
@@ -298,8 +298,8 @@ void Limbo(char plr)
                         now2++;
                         RectFill(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                        DispLeft(plr, BarA, count, now2, &M[0]);
-                        LimboText(plr, M[now2]);
+                        DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                        LimboText(plr, AstroList[now2]);
                     };
 
                     if (BarA < 7 && now2 < count - 1) {
@@ -307,8 +307,8 @@ void Limbo(char plr)
                         BarA++;
                         now2++;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                        DispLeft(plr, BarA, count, now2, &M[0]);
-                        LimboText(plr, M[now2]);
+                        DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                        LimboText(plr, AstroList[now2]);
                     };
 
                     i = 51;
@@ -322,8 +322,8 @@ void Limbo(char plr)
                     now2++;
                     RectFill(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                    DispLeft(plr, BarA, count, now2, &M[0]);
-                    LimboText(plr, M[now2]);
+                    DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                    LimboText(plr, AstroList[now2]);
                 };
 
                 if (BarA < 7 && now2 < count - 1) {
@@ -331,8 +331,8 @@ void Limbo(char plr)
                     BarA++;
                     now2++;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                    DispLeft(plr, BarA, count, now2, &M[0]);
-                    LimboText(plr, M[now2]);
+                    DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                    LimboText(plr, AstroList[now2]);
                 };
 
                 key = 0;
@@ -396,15 +396,15 @@ void Limbo(char plr)
                 WaitForMouseUp();
                 key = 0;
                 OutBox(167, 95 + 21 * i, 236, 109 + 21 * i);
-                Data->P[plr].Pool[M[now2]].Assign = i + 1;
-                Data->P[plr].Pool[M[now2]].Una = 0;
-                Data->P[plr].Pool[M[now2]].Moved = 0;
+                Data->P[plr].Pool[AstroList[now2]].Assign = i + 1;
+                Data->P[plr].Pool[AstroList[now2]].Una = 0;
+                Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                 for (i = now2; i < count; i++) {
-                    M[i] = M[i + 1];
+                    AstroList[i] = AstroList[i + 1];
                 }
 
-                M[i] = -1;
+                AstroList[i] = -1;
                 count--;
 
                 if (count == 0) {
@@ -426,10 +426,10 @@ void Limbo(char plr)
 
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
                 if (count > 0) {
-                    LimboText(plr, M[now2]);
+                    LimboText(plr, AstroList[now2]);
                 }
 
             }
@@ -463,18 +463,18 @@ void Limbo(char plr)
 
                 for (i = 0; i < Data->P[plr].AstroCount; i++)
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
-                        M[count++] = i;
+                        AstroList[count++] = i;
                     }
 
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
                 if (count > 0) {
-                    LimboText(plr, M[now2]);
+                    LimboText(plr, AstroList[now2]);
                 }
 
                 //   ShBox(26,130+BarA*8,152,138+BarA*8);
-                //   DispLeft(plr,BarA,count,now2,&M[0]);
-                //   LimboText(plr,M[now2]);
+                //   DispLeft(plr,BarA,count,now2,&AstroList[0]);
+                //   LimboText(plr,AstroList[now2]);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
             }
@@ -495,28 +495,28 @@ void Limbo(char plr)
                 skilLev = 0; // Figure out relevant skill level bfr sending to Adv Training -Leon
 
                 if (i == 0) {
-                    skilLev = Data->P[plr].Pool[M[now2]].Cap;
+                    skilLev = Data->P[plr].Pool[AstroList[now2]].Cap;
                 }
 
                 if (i == 1) {
-                    skilLev = Data->P[plr].Pool[M[now2]].LM;
+                    skilLev = Data->P[plr].Pool[AstroList[now2]].LM;
                 }
 
                 if (i == 2) {
-                    skilLev = Data->P[plr].Pool[M[now2]].EVA;
+                    skilLev = Data->P[plr].Pool[AstroList[now2]].EVA;
                 }
 
                 if (i == 3) {
-                    skilLev = Data->P[plr].Pool[M[now2]].Docking;
+                    skilLev = Data->P[plr].Pool[AstroList[now2]].Docking;
                 }
 
                 if (i == 4) {
-                    skilLev = Data->P[plr].Pool[M[now2]].Endurance;
+                    skilLev = Data->P[plr].Pool[AstroList[now2]].Endurance;
                 }
 
                 display::graphics.setForegroundColor(2);
 
-                if (Data->P[plr].Pool[M[now2]].TrainingLevel > 6) {
+                if (Data->P[plr].Pool[AstroList[now2]].TrainingLevel > 6) {
                     Help("i120");
                 } else if (skilLev > 3) {
                     OutBox(244, 95 + 21 * i, 313, 109 + 21 * i); // If they have a 4 in that skill, don't send to Adv Training for it
@@ -524,23 +524,23 @@ void Limbo(char plr)
                     Help("i121");
                 } else {
                     if (skilLev > 2) { // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB
-                        Data->P[plr].Pool[M[now2]].Status = AST_ST_TRAIN_ADV_3;
+                        Data->P[plr].Pool[AstroList[now2]].Status = AST_ST_TRAIN_ADV_3;
                         Data->P[plr].Cash -= 2;
                     } else {
-                        Data->P[plr].Pool[M[now2]].Status = AST_ST_TRAIN_ADV_1;
+                        Data->P[plr].Pool[AstroList[now2]].Status = AST_ST_TRAIN_ADV_1;
                         Data->P[plr].Cash -= 3;
                     }
 
-                    Data->P[plr].Pool[M[now2]].Focus = i + 1;
-                    Data->P[plr].Pool[M[now2]].Assign = 0;
-                    Data->P[plr].Pool[M[now2]].Una = 0;
-                    Data->P[plr].Pool[M[now2]].Moved = 0;
+                    Data->P[plr].Pool[AstroList[now2]].Focus = i + 1;
+                    Data->P[plr].Pool[AstroList[now2]].Assign = 0;
+                    Data->P[plr].Pool[AstroList[now2]].Una = 0;
+                    Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                     for (i = now2; i < count; i++) {
-                        M[i] = M[i + 1];
+                        AstroList[i] = AstroList[i + 1];
                     }
 
-                    M[i] = -1;
+                    AstroList[i] = -1;
                     count--;
 
                     if (count == 0) {
@@ -562,10 +562,10 @@ void Limbo(char plr)
 
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                    DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
                     if (count > 0) {
-                        LimboText(plr, M[now2]);
+                        LimboText(plr, AstroList[now2]);
                     }
                 } // else
             }  // if adv training
@@ -598,13 +598,13 @@ void Limbo(char plr)
 
                 for (i = 0; i < Data->P[plr].AstroCount; i++)
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
-                        M[count++] = i;
+                        AstroList[count++] = i;
                     }
 
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
                 if (count > 0) {
-                    LimboText(plr, M[now2]);
+                    LimboText(plr, AstroList[now2]);
                 }
 
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);

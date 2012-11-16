@@ -330,7 +330,7 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Scre
         DispNum(0, 0, diceRoll);
         PrintAt(0, 0, "% IMPROVEMENT");
 
-        if (Data->P[playerIndex].RDMods > 0) {
+        if (Data->P[playerIndex].RD_Mods_For_Turn > 0) {
             PrintAt(0, 0, "+");
         }
     }
@@ -882,7 +882,7 @@ RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls, char playerIndex
     diceRoll = 0;
 
     for (i = 0; i < nRolls; i++) {
-        diceRoll += rand() % (6 + p->RDMods) + 1;
+        diceRoll += rand() % (6 + p->RD_Mods_For_Turn) + 1;
     }
 
     eq->Safety += diceRoll;
@@ -984,8 +984,8 @@ void ShowUnit(char hw, char un, char player_index)
         display::graphics.setForegroundColor(1);
     }
 
-    if (Data->P[player_index].RDMods != 0) {
-        if (Data->P[player_index].RDMods > 0) {
+    if (Data->P[player_index].RD_Mods_For_Turn != 0) {
+        if (Data->P[player_index].RD_Mods_For_Turn > 0) {
             display::graphics.setForegroundColor(5);
             PrintAt(170, 153, "RESEARCH STRONG:   ");
             RectFill(264, 149, 264, 153, 5);
@@ -995,7 +995,7 @@ void ShowUnit(char hw, char un, char player_index)
             PrintAt(170, 153, "RESEARCH WEAK: ");
         }
 
-        DispNum(0, 0, Data->P[player_index].RDMods);
+        DispNum(0, 0, Data->P[player_index].RD_Mods_For_Turn);
         PrintAt(0, 0, "%/TEAM");
     }
 

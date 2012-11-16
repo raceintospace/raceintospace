@@ -277,7 +277,7 @@ PInfo(char plr, char loc)
             Pt[i][j] = 0;
         }
 
-    for (i = 0; i < Data->P[plr].PastMis; i++) {
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
             stge = Data->P[plr].History[i].Prestige;
             j = 0;
@@ -1572,7 +1572,7 @@ DrawRank(char plr)
 
         t1 = 0;
 
-        for (i = 0; i < Data->P[Cur].PastMis; i++) {
+        for (i = 0; i < Data->P[Cur].PastMissionCount; i++) {
             if (Data->P[Cur].History[i].Prestige < -15) {
                 Data->P[Cur].History[i].Prestige = 0;
             }
@@ -1673,7 +1673,7 @@ DrawRank(char plr)
     //if ((Option==-1 && MAIL==-1) || Option==0 || MAIL==0)
 
     if (Option == -1 || Option == 0)
-        while (i < Data->P[0].PastMis) {
+        while (i < Data->P[0].PastMissionCount) {
             t2 = Data->P[0].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[0].History[i].MissionYear -
@@ -1688,7 +1688,7 @@ DrawRank(char plr)
     //if ((Option==-1 && MAIL==-1) || Option==1 || MAIL==1)
 
     if (Option == -1 || Option == 1)
-        while (i < Data->P[1].PastMis) {
+        while (i < Data->P[1].PastMissionCount) {
             t2 = Data->P[1].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[1].History[i].MissionYear -
@@ -1733,7 +1733,7 @@ CalcScore(char plr, char lvA, char lvB)
     ++lvA;
     ++lvB;
 
-    for (i = 0; i < Data->P[plr].PastMis; i++) {
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
             switch (lvA) {
             case 1:

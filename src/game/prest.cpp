@@ -199,8 +199,8 @@ PrestMin(char plr)
     if (Mis.Index != 2
         && Mis.Index != 4
         && Mis.Index != 6
-        && (Mis.Days - Data->P[plr].DurLevel) > 1) { // Raised this from "> 0" to disable broken Duration penalty system -Leon
-        Neg += 5 * (Mis.Days - Data->P[plr].DurLevel);
+        && (Mis.Days - Data->P[plr].DurationLevel) > 1) { // Raised this from "> 0" to disable broken Duration penalty system -Leon
+        Neg += 5 * (Mis.Days - Data->P[plr].DurationLevel);
     }
 
 
@@ -247,7 +247,7 @@ int PrestCheck(char plr)
         }
     }
 
-    if (Mis.Days > 1 && Data->P[plr].DurLevel < Mis.Days) {
+    if (Mis.Days > 1 && Data->P[plr].DurationLevel < Mis.Days) {
         if (Mis.Days == 6 && Data->Prestige[14 - Mis.Days].Goal[plr] == 0) {
             total += Data->Prestige[14 - Mis.Days].Add[0];
         } else if (Mis.Days == 5 && Data->Prestige[14 - Mis.Days].Goal[plr] == 0) {
@@ -376,20 +376,20 @@ char Set_Goal(char plr, char which, char control)
             }
 
             if (control == 0) {
-                Data->P[plr].Other |= 4; // for astros
+                Data->P[plr].MissionCatastrophicFailureOnTurn |= 4; // for astros
 
 
                 if (MAIL == 0) {
                     pd = Mev[0].pad;
                     qt = Data->P[0].Udp[pd].Qty;
-                    Data->P[0].Udp[pd].HInd = Data->P[0].PastMis;
+                    Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
                     Data->P[0].Udp[pd].Poss[qt] = which;
                     Data->P[0].Udp[pd].PossVal[qt] = 0;
                     Data->P[0].Udp[pd].Mnth = tMo;
                     ++Data->P[0].Udp[pd].Qty;
                 } else {
                     Data->Prestige[which].Place = plr;
-                    Data->Prestige[which].Index = Data->P[plr].PastMis;
+                    Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
                     Data->Prestige[which].Year = tYr;
                     Data->Prestige[which].Month = tMo;
                     Data->Prestige[which].Goal[plr]++;  // increment count
@@ -408,14 +408,14 @@ char Set_Goal(char plr, char which, char control)
                     if (MAIL == 0) {
                         pd = Mev[0].pad;
                         qt = Data->P[0].Udp[pd].Qty;
-                        Data->P[0].Udp[pd].HInd = Data->P[0].PastMis;
+                        Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
                         Data->P[0].Udp[pd].Poss[qt] = which;
                         Data->P[0].Udp[pd].PossVal[qt] = 0;
                         Data->P[0].Udp[pd].Mnth = tMo;
                         ++Data->P[0].Udp[pd].Qty;
                     } else {
                         Data->Prestige[which].Place = plr;
-                        Data->Prestige[which].Index = Data->P[plr].PastMis;
+                        Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
                         Data->Prestige[which].Year = tYr;
                         Data->Prestige[which].Month = tMo;
                     }
@@ -425,7 +425,7 @@ char Set_Goal(char plr, char which, char control)
                 }
             }
         } else if (Data->Prestige[which].mPlace == -1 && Data->Prestige[which].Place != plr) {
-            Data->P[plr].Other |= 4; // for astros
+            Data->P[plr].MissionCatastrophicFailureOnTurn |= 4; // for astros
 
 
             Data->Prestige[which].mPlace = plr;
@@ -484,7 +484,7 @@ char Set_Goal(char plr, char which, char control)
     //Specs: Lunar Landing klugge (Duration D)
     //----------------------------------------
     if (which == LLAND || Data->Prestige[22].Place == plr) {
-        Data->P[plr].History[Data->P[plr].PastMis].Duration = 4;
+        Data->P[plr].History[Data->P[plr].PastMissionCount].Duration = 4;
     }
 
     switch (which) {
@@ -928,17 +928,17 @@ int AllotPrest(char plr, char mis)
 #define DNE(a,b) (Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a))
 
     if (DNE(plr, DUR_F)) {
-        Data->P[plr].DurLevel = 6;
+        Data->P[plr].DurationLevel = 6;
     } else if (DNE(plr, DUR_E)) {
-        Data->P[plr].DurLevel = 5;
+        Data->P[plr].DurationLevel = 5;
     } else if (DNE(plr, DUR_D)) {
-        Data->P[plr].DurLevel = 4;
+        Data->P[plr].DurationLevel = 4;
     } else if (DNE(plr, DUR_C)) {
-        Data->P[plr].DurLevel = 3;
+        Data->P[plr].DurationLevel = 3;
     } else if (DNE(plr, DUR_B)) {
-        Data->P[plr].DurLevel = 2;
+        Data->P[plr].DurationLevel = 2;
     } else if (DNE(plr, MANSPACE)) {
-        Data->P[plr].DurLevel = 1;
+        Data->P[plr].DurationLevel = 1;
     }
 
     // TOTAL ALL MISSION SUBSEQUENTS

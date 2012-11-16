@@ -297,23 +297,23 @@ char REvent(char plr)
     case 16:
     case 17:
     case 18:
-        Data->P[plr].RDMods += 1;
+        Data->P[plr].RD_Mods_For_Turn += 1;
         break;
 
     case  3:
     case 61:
     case 62:// Minus one on all R&D for ONE year
-        Data->P[plr].RDMods -= 1;
-        Data->P[plr].RDYear = -1;
+        Data->P[plr].RD_Mods_For_Turn -= 1;
+        Data->P[plr].RD_Mods_For_Year = -1;
         break;
 
     case 19: // minus 2 on each die roll for R&D this turn
-        Data->P[plr].RDMods -= 2;
+        Data->P[plr].RD_Mods_For_Turn -= 2;
         break;
 
     case 41: // R&D will decrease for one year
-        Data->P[plr].RDMods -= 2;
-        Data->P[plr].RDYear -= 2;
+        Data->P[plr].RD_Mods_For_Turn -= 2;
+        Data->P[plr].RD_Mods_For_Year -= 2;
         break;
 
     case 42:
@@ -353,7 +353,7 @@ char REvent(char plr)
         // Special Events -------------------------------------------
 
     case  8: // Allow females into space program
-        Data->P[plr].Female = 1;
+        Data->P[plr].FemaleAstronautsAllowed = 1;
         break;
 
         // Launch Affected ------------------------------------------
@@ -779,7 +779,7 @@ char REvent(char plr)
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
-        Data->P[plr].Other = 2;
+        Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
         xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
         //cancel manned missions
         ClrMiss(plr, 0 + 3);
@@ -807,7 +807,7 @@ char REvent(char plr)
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
-        Data->P[plr].Other = 2;
+        Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
         Replace_Snaut(plr);
         break;
 

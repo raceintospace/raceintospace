@@ -451,7 +451,7 @@ void SelectBest(char plr, int pos)
         AIMaxSel = ASTRO_POOL_LVL1;
         Index = 0;
 
-        if (pData->Female == 1) {
+        if (pData->FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
         }
 
@@ -462,7 +462,7 @@ void SelectBest(char plr, int pos)
         AIMaxSel = ASTRO_POOL_LVL2;
         Index = 14;
 
-        if (pData->Female == 1) {
+        if (pData->FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
         }
 
@@ -473,7 +473,7 @@ void SelectBest(char plr, int pos)
         AIMaxSel = ASTRO_POOL_LVL3;
         Index = 35;
 
-        if (pData->Female == 1) {
+        if (pData->FemaleAstronautsAllowed == 1) {
             MaxMen += 3;
         }
 
@@ -511,7 +511,7 @@ void SelectBest(char plr, int pos)
 
                 if (i == tot) {
                     AIsel[count++] = j;
-                } else if (pData->Female == 1 && Men[j].Sex == 1) {
+                } else if (pData->FemaleAstronautsAllowed == 1 && Men[j].Sex == 1) {
                     AIsel[count++] = j;
                 }
             }

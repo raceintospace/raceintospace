@@ -1093,7 +1093,7 @@ begvab:
                 } else if (Mis.Doc == 1 && Data->P[plr].Misc[4].Num == PROGRAM_NOT_STARTED) {
                     Help("i119");
                 } else {
-                    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DMod <= 0) {
+                    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
                         Help("i155");    // No docking module in orbit
                     }
 
