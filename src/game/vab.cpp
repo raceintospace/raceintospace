@@ -863,7 +863,7 @@ begvab:
                 break;
 
             case Mission_Probe_DM:  // DM+Probes
-                if (Data->P[plr].Mission[mis].Hard[i] == 4) {
+                if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
                     Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Spok--;
                 } else {
                     Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
