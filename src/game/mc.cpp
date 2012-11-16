@@ -452,10 +452,10 @@ void MissionPast(char plr, char pad, int prest)
     };
 
     for (i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
-        Data->P[plr].History[loc].Hard[0][i] = Data->P[plr].Mission[pad].Hard[i];
+        Data->P[plr].History[loc].Hard[PAD_A][i] = Data->P[plr].Mission[pad].Hard[i];
 
         if (Data->P[plr].Mission[pad].Joint == 1) {
-            Data->P[plr].History[loc].Hard[1][i] = Data->P[plr].Mission[pad + 1].Hard[i];
+            Data->P[plr].History[loc].Hard[PAD_B][i] = Data->P[plr].Mission[pad + 1].Hard[i];
         }
     }
 

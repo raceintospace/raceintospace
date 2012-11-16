@@ -431,7 +431,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 
         case 2:
             strcat(Name, "C");
-//       if (strncmp(Data->P[plr].Manned[1].Name,"ZOND",4)==0) ch=0x37;
+//       if (strncmp(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name,"ZOND",4)==0) ch=0x37;
             break;
 
         case 3:
@@ -923,13 +923,13 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     // Crew Stuff
     display::graphics.setForegroundColor(11);
 
-    if (Data->P[plr].History[index].Man[0][0] == -1 && Data->P[plr].History[index].Man[1][0] == -1) {
+    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 && Data->P[plr].History[index].Man[PAD_B][0] == -1) {
         PrintAt(13, 137, "UNMANNED MISSION");
     } else {
         // First Part -- Men
-        if (Data->P[plr].History[index].Man[0][0] != -1) {
+        if (Data->P[plr].History[index].Man[PAD_A][0] != -1) {
             for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[0][j];
+                k = Data->P[plr].History[index].Man[PAD_A][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
@@ -948,9 +948,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
         }
 
         // Second Part -- Men
-        if (Data->P[plr].History[index].Man[1][0] != -1) {
+        if (Data->P[plr].History[index].Man[PAD_B][0] != -1) {
             for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[1][j];
+                k = Data->P[plr].History[index].Man[PAD_B][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     display::graphics.setForegroundColor(18);    // Display women in blue, not yellow

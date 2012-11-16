@@ -1005,7 +1005,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
         break;
 
     case MANNED_HARDWARE: // Manned Capsules
-        if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[3].Num == 1) {
+        if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[MANNED_HW_MINISHUTTLE].Num == 1) {
             // Only need one Minishuttle
             return(1);
         } else if (pData->Manned[unit_index].Num < MANNED_HW_THREE_MAN_CAPSULE) {

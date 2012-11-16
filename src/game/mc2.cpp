@@ -576,16 +576,16 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     // Special Cases for the Failure Mode Charts
     if ((Mev[step].loc == 0) && // MS Failure Launch
         MH[pad][Mev[step].Class] &&
-        strncmp(Data->P[plr].Manned[3].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
+        strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
         Mev[step].FName[1] = '1';
     } else if (Mev[step].loc == 4 && // MS Failure Landing
                MH[pad][Mev[step].Class] &&
-               strncmp(Data->P[plr].Manned[3].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
+               strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
         Mev[step].FName[1] = '3';
     } else if (plr == 1 && Mev[step].loc == 4) {
         if ((Mev[step].loc == 4) && // Soviet Capsules : Vostok
             MH[pad][Mev[step].Class] &&
-            strncmp(Data->P[plr].Manned[0].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
+            strncmp(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
             Mev[step].FName[1] = '1';
         } else {
             Mev[step].FName[1] = '2';    // Other Capsules
@@ -728,7 +728,7 @@ void MissionSetup(char plr, char mis)
                             Data->P[plr].Probe[t].Num -= 1;
                         }
                     } else {
-                        MH[j][i] = &Data->P[plr].Misc[4];
+                        MH[j][i] = &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE];
 
                         if (DMFake == 0) {
                             if (MH[j][i]->Num > 0) {
@@ -754,7 +754,7 @@ void MissionSetup(char plr, char mis)
                         MH[j][i]->Used++;
                     } else {
                         MH[j][i] = &Data->P[plr].Rocket[t - 4];
-                        MH[j][7] = &Data->P[plr].Rocket[4];
+                        MH[j][7] = &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
                         MH[j][i]->Used++;
                         MH[j][7]->Used++;
 
@@ -770,11 +770,11 @@ void MissionSetup(char plr, char mis)
                     break;
 
                 case Mission_EVA:  // EVA
-                    MH[j][i] = &Data->P[plr].Misc[3];
+                    MH[j][i] = &Data->P[plr].Manned[MISC_HW_EVA_SUITS];
                     break;
 
                 case Mission_PhotoRecon:  // Photo Recon
-                    MH[j][i] = &Data->P[plr].Misc[5];
+                    MH[j][i] = &Data->P[plr].Manned[MISC_HW_PHOTO_RECON];
                     break;
                 }
 

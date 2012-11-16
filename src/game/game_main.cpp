@@ -671,9 +671,9 @@ void DockingKludge(void)
     int j;
 
     for (j = 0; j < NUM_PLAYERS; j++) {
-        Data->P[j].Misc[4].MSF =
-            maxx(maxx(Data->P[j].Probe[0].Safety, Data->P[j].Probe[1].Safety),
-                 Data->P[j].Probe[2].Safety);
+        Data->P[j].Manned[MISC_HW_DOCKING_MODULE].MSF =
+            maxx(maxx(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
+                 Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
     }
 
     return;

@@ -462,7 +462,7 @@ void FileAccess(char mode)
                     }
 
                     //MSF now holds MaxRDBase (from 1.0.0)
-                    if (Data->P[0].Probe[0].MSF == 0) {
+                    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
                         int j, k;
 
                         for (j = 0; j < NUM_PLAYERS; j++)

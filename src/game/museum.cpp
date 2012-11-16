@@ -810,9 +810,9 @@ void DrawMisHist(char plr, int *where)
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == 55 || Data->P[plr].History[i].MissionCode == 56) {
             for (j = 0; j < 4; j++)
-                if (Data->P[plr].History[i].Man[0][j] != -1) {
-                    Data->P[plr].History[i].Man[1][j] = Data->P[plr].History[i].Man[0][j];
-                    Data->P[plr].History[i].Man[0][j] = -1;
+                if (Data->P[plr].History[i].Man[PAD_A][j] != -1) {
+                    Data->P[plr].History[i].Man[PAD_B][j] = Data->P[plr].History[i].Man[PAD_A][j];
+                    Data->P[plr].History[i].Man[PAD_A][j] = -1;
                 }
         }
     }
@@ -877,26 +877,26 @@ void DrawMisHist(char plr, int *where)
 
 
         // first check for joint missions
-        if (Data->P[plr].History[index].Hard[1][0] > 0) {
+        if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] > 0) {
             sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[1]);
             display::graphics.setForegroundColor(11);
             PrintAt(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
 
-            if (Data->P[plr].History[index].Man[0][0] != -1 && Data->P[plr].History[index].Hard[1][0] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[0][0],
+            if (Data->P[plr].History[index].Man[PAD_A][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
+                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
                         Data->P[plr].History[index].Patch[0], 32);
             }
 
-            if (Data->P[plr].History[index].Man[1][0] != -1 && Data->P[plr].History[index].Hard[1][0] != -1) {
-                PatchMe(plr, 42 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[1][0],
+            if (Data->P[plr].History[index].Man[PAD_B][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
+                PatchMe(plr, 42 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule],
                         Data->P[plr].History[index].Patch[1], 32);
             }
 
             // FIXME: Same test on either side of this.  Need to research what was intended.
-            if (Data->P[plr].History[index].Hard[1][0] != -1 && Data->P[plr].History[index].Hard[1][0] != -1) {
-                if (Data->P[plr].History[index].Hard[0][0] != -1 && Data->P[plr].History[index].Man[0][0] != -1) {
+            if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
+                if (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_A][Mission_Capsule] != -1) {
                     planet = 0;
-                    prog = Data->P[plr].History[index].Hard[0][0];
+                    prog = Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule];
                     SmHardMe(plr, 44 + 38 * j, 50 + 40 * temp, prog, planet, 64);
                 }
 
@@ -909,31 +909,31 @@ void DrawMisHist(char plr, int *where)
                 }
 
                 planet = 0;
-                prog = Data->P[plr].History[index].Hard[1][0];
+                prog = Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule];
                 SmHardMe(plr, 44 + (38 + temp2)*j, 50 + 40 * temp, prog, planet, 64);
             }
 
             //else
             // {
-            //  prog = (Data->P[plr].History[index].Hard[0][0] != -1) ?
-            //  Data->P[plr].History[index].Hard[0][0] :
-            //  Data->P[plr].History[index].Hard[0][3]+5;
+            //  prog = (Data->P[plr].History[index].Hard[PAD_A][0] != -1) ?
+            //  Data->P[plr].History[index].Hard[PAD_A][0] :
+            //  Data->P[plr].History[index].Hard[PAD_A][3]+5;
             //  planet=0;
             //  SmHardMe(plr,44+49*j,50+40*temp,prog,planet,64);
             // }
         } else {
             //fix-Handle Joint Missions
-            if (Data->P[plr].History[index].Hard[0][0] != -1 && Data->P[plr].History[index].Man[0][0] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[0][0],
+            if (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_A][0] != -1) {
+                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
                         Data->P[plr].History[index].Patch[0], 32);
             }
 
-            if (Data->P[plr].History[index].Hard[1][0] != -1 && Data->P[plr].History[index].Man[1][0] != -1) {
-                prog = Data->P[plr].History[index].Hard[1][0];
+            if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_B][0] != -1) {
+                prog = Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule];
             } else {
-                prog = (Data->P[plr].History[index].Hard[0][0] != -1) ?
-                       Data->P[plr].History[index].Hard[0][0] :
-                       Data->P[plr].History[index].Hard[0][3] + 5;
+                prog = (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1) ?
+                       Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] :
+                       Data->P[plr].History[index].Hard[PAD_A][Mission_Probe_DM] + 5;
             }
 
             pmis = Data->P[plr].History[index].MissionCode;
@@ -1311,10 +1311,10 @@ void DisplAstData(char plr, char *where, char *where2)
     pline(20, 113, 138, 113);
 
 
-    if (Data->P[plr].History[num].Hard[0][0] != -1) {
-        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[0][0], Data->P[plr].History[num].Patch[0], 32);
+    if (Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule] != -1) {
+        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule], Data->P[plr].History[num].Patch[0], 32);
     } else {
-        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[1][0], Data->P[plr].History[num].Patch[1], 32);
+        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[PAD_B][Mission_Capsule], Data->P[plr].History[num].Patch[1], 32);
     }
 
     display::graphics.setForegroundColor(1);
@@ -1372,10 +1372,10 @@ void DisplAstData(char plr, char *where, char *where2)
     }
 
     //astro history patch fix
-    if (Data->P[plr].History[num2].Hard[0][0] != -1) {
-        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[0][0], Data->P[plr].History[num2].Patch[0], 32);
+    if (Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule] != -1) {
+        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule], Data->P[plr].History[num2].Patch[0], 32);
     } else {
-        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[1][0], Data->P[plr].History[num2].Patch[1], 32);
+        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[PAD_B][Mission_Capsule], Data->P[plr].History[num2].Patch[1], 32);
     }
 
     display::graphics.setForegroundColor(9);

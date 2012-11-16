@@ -728,15 +728,15 @@ void UpdatePortOverlays(void)
 
 #ifdef DEADCODE
         // Zond thingy -- this was never implemented and available after 6 manned seasons
-        //if (i==1 && Data->P[i].Manned[2].Seas>6) Data->P[i].Port[PORT_Zond]=1;
+        //if (i==1 && Data->P[i].Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) Data->P[i].Port[PORT_Zond]=1;
 #endif
 
-        if (Data->P[i].Probe[0].Num >= 0 || Data->P[i].Probe[1].Num >= 0 ||
-            Data->P[i].Probe[2].Num >= 0) {
+        if (Data->P[i].Probe[PROBE_HW_ORBITAL].Num >= 0 || Data->P[i].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 ||
+            Data->P[i].Probe[PROBE_HW_LUNAR].Num >= 0) {
             Data->P[i].Port[PORT_Satellite] = 1;
         }
 
-        if (Data->P[i].Manned[5].Num >= 0 || Data->P[i].Manned[6].Num >= 0) {
+        if (Data->P[i].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 || Data->P[i].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
             Data->P[i].Port[PORT_LM] = 1;
         }
 
