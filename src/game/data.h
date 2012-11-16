@@ -663,6 +663,16 @@ typedef struct {
 
 #pragma pack(pop)
 
+// Double-check that the structs we write to disk have the proper size
+// Errors in these lines mean that the struct is the wrong shape
+#include <boost/static_assert.hpp>
+BOOST_STATIC_ASSERT(sizeof(PrestType) == 15);
+BOOST_STATIC_ASSERT(sizeof(Equipment) == 58);
+BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
+BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
+BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
+BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
+BOOST_STATIC_ASSERT(sizeof(Players) == 31663);
 
 #endif // __DATA_H__
 
