@@ -431,7 +431,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 
         case 2:
             strcat(Name, "C");
-//       if (strncmp(Data->P[plr].Manned[1].Name,"ZOND",4)==0) ch=0x37;
+//       if (strncmp(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name,"ZOND",4)==0) ch=0x37;
             break;
 
         case 3:

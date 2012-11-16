@@ -58,7 +58,7 @@ void Moon(char plr)
     long size;
     helpText = "i029";
     keyHelpText = "k029";
-    val = Data->P[plr].Misc[5].Safety;
+    val = Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
 
@@ -222,10 +222,10 @@ void SatDraw(char plr)
         }
     }
 
-    loc[0] = (Data->P[plr].Misc[4].Num < 0) ? 0 : 1 + plr * 3;
-    loc[1] = (Data->P[plr].Probe[0].Num < 0) ? 0 : 2 + plr * 3;
-    loc[2] = (Data->P[plr].Probe[1].Num < 0) ? 0 : 0;
-    loc[3] = (Data->P[plr].Probe[2].Num < 0) ? 0 : 3 + plr * 3;
+    loc[0] = (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 : 1 + plr * 3;
+    loc[1] = (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num < 0) ? 0 : 2 + plr * 3;
+    loc[2] = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num < 0) ? 0 : 0;
+    loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 : 3 + plr * 3;
 
     fin = sOpen("SATBLD.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
@@ -280,7 +280,7 @@ void LMDraw(char plr)
     InBox(4, 26, 316, 116);
     RectFill(5, 27, 315, 115, 0); // middle screen
 
-    if (Data->P[plr].Manned[6].Num >= 0) {
+    if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
         ind = 4 + plr;
     } else {
         ind = 0 + plr;
@@ -288,7 +288,7 @@ void LMDraw(char plr)
 
     LMPict(ind);
 
-    if (Data->P[plr].Manned[5].Num >= 0) {
+    if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
         ind = 6 + plr;
     } else {
         ind = 2 + plr;
@@ -353,20 +353,20 @@ void SatText(char plr)
 
                 PrintAt(5 + i * 80, 94, "DOCKING");
 
-                if (Data->P[plr].Misc[4].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Misc[4].Safety);
+                if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num >= 0) {
+                    DispNum(5 + i * 80, 110, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety);
                 } else {
                     DispNum(5 + i * 80, 110, 0);
                 }
 
                 PrintAt(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Misc[4].Steps);
+                DispNum(5 + i * 80, 127, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Misc[4].Steps - Data->P[plr].Misc[4].Failures);
+                DispNum(5 + i * 80, 144, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures);
 
-                if (Data->P[plr].Misc[4].Steps > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Misc[4].Steps - Data->P[plr].Misc[4].Failures) / Data->P[plr].Misc[4].Steps);
+                if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps > 0) {
+                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
                 } else {
                     DispNum(5 + i * 80, 161, 0);
                 }
@@ -385,20 +385,20 @@ void SatText(char plr)
             case 1:
                 PrintAt(5 + i * 80, 80, "ORBITAL SAT.");
 
-                if (Data->P[plr].Probe[0].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[0].Safety);
+                if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 0) {
+                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety);
                 } else {
                     DispNum(5 + i * 80, 110, 0);
                 }
 
                 PrintAt(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Probe[0].Used);
+                DispNum(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Probe[0].Used - Data->P[plr].Probe[0].Failures);
+                DispNum(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures);
 
-                if (Data->P[plr].Probe[0].Used > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[0].Used - Data->P[plr].Probe[0].Failures) / Data->P[plr].Probe[0].Used);
+                if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used > 0) {
+                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures) / Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
                 } else {
                     DispNum(5 + i * 80, 161, 0);
                 }
@@ -418,20 +418,20 @@ void SatText(char plr)
             case 3:
                 PrintAt(5 + i * 80, 80, "LUNAR PROBE");
 
-                if (Data->P[plr].Probe[2].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[2].Safety);
+                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Num >= 0) {
+                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_LUNAR].Safety);
                 } else {
                     DispNum(5 + i * 80, 110, 0);
                 }
 
                 PrintAt(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Probe[2].Used);
+                DispNum(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Probe[2].Used - Data->P[plr].Probe[2].Failures);
+                DispNum(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures);
 
-                if (Data->P[plr].Probe[2].Used > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[2].Used - Data->P[plr].Probe[2].Failures) / Data->P[plr].Probe[2].Used);
+                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Used > 0) {
+                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures) / Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
                 } else {
                     DispNum(5 + i * 80, 161, 0);
                 }
@@ -473,7 +473,7 @@ void PlanText(char plr, char plan)
 
     Find = 0; /* XXX check uninitialized */
 
-    tx = (Data->P[plr].Probe[1].Num >= 0) ? 1 : 0;
+    tx = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) ? 1 : 0;
 
     RectFill(164, 75, 78 + 160, 89, 3);
     RectFill(162, 105, 218, 113, 3);
@@ -495,7 +495,7 @@ void PlanText(char plr, char plan)
         PrintAt(4 + 160, 80, "LUNAR FLYBY");
         display::graphics.setForegroundColor(11);
         PrintAt(4 + 160, 87, "RECON: ");
-        DispNum(0, 0, Data->P[plr].Misc[5].Safety);
+        DispNum(0, 0, Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety);
         PrintAt(0, 0, "%");
         Find = 7;
 
@@ -547,7 +547,7 @@ void PlanText(char plr, char plan)
             }
         }
 
-    DispNum(5 + 160, 110, Data->P[plr].Probe[1].Safety * tx);
+    DispNum(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
     PrintAt(0, 0, "%");
 
 
@@ -696,7 +696,7 @@ void SatBld(char plr)
     helpText = "i019";
     keyHelpText = "k019";
 
-    if (Data->P[plr].Probe[1].Num >= 0) {
+    if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) {
         PlanText(plr, plan);
     }
 
@@ -721,7 +721,7 @@ void SatBld(char plr)
             music_stop();
             key = 0;
             return; // Continue
-        } else if (Data->P[plr].Probe[1].Num >= 0 && ((x >= 166 && y >= 60 && x <= 199 && y <= 66 && mousebuttons > 0) || key == LT_ARROW)) {
+        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 && ((x >= 166 && y >= 60 && x <= 199 && y <= 66 && mousebuttons > 0) || key == LT_ARROW)) {
             InBox(166, 60, 199, 66);
             key = 0;
             WaitForMouseUp();
@@ -736,7 +736,7 @@ void SatBld(char plr)
 
             PlanText(plr, plan);
             OutBox(166, 60, 199, 66);
-        } else if (Data->P[plr].Probe[1].Num >= 0 && ((x >= 201 && y >= 60 && x <= 234 && y <= 66 && mousebuttons > 0) || key == RT_ARROW)) {
+        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 && ((x >= 201 && y >= 60 && x <= 234 && y <= 66 && mousebuttons > 0) || key == RT_ARROW)) {
             InBox(201, 60, 234, 66);
             key = 0;
             WaitForMouseUp();

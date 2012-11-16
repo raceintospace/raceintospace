@@ -389,8 +389,8 @@ void Prefs(int where)
 
                     if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
                         fin = sOpen("HIST.DAT", "rb", 0);
-                        fread(&Data->P[0].Probe[0], 28 * (sizeof(Equipment)), 1, fin);
-                        fread(&Data->P[1].Probe[0], 28 * (sizeof(Equipment)), 1, fin);
+                        fread(&Data->P[0].Probe[PROBE_HW_ORBITAL], 28 * (sizeof(Equipment)), 1, fin);
+                        fread(&Data->P[1].Probe[PROBE_HW_ORBITAL], 28 * (sizeof(Equipment)), 1, fin);
                         fclose(fin);
                     }
 
