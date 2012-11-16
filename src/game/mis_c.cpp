@@ -1442,17 +1442,17 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
 
 
     //Direct Ascend
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[4].Name) == 0) {
+    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
         nautsOnMoon = 4;
     }
 
     //2 men LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[5].Name) == 0) {
+    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 2;
     }
 
     //1 man LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[6].Name) == 0) {
+    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 1;
     }
 

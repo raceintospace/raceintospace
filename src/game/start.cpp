@@ -736,27 +736,27 @@ void Update(void)
         for (i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[j].Mission[i].MissionCode == 1) {
                 Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[0].Name[0]);
+                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_ORBITAL].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[(Data->P[j].Probe[0].Code) % 30][0]);
+                strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]); // copy into struct
-                Data->P[j].Probe[0].Code++;  // Increase Planned Mission Count
+                Data->P[j].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode == 8) {
                 Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[2].Name[0]);
+                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_LUNAR].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[(Data->P[j].Probe[2].Code) % 30][0]);
+                strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]); // copy into struct
-                Data->P[j].Probe[2].Code++;  // Increase Planned Mission Count
+                Data->P[j].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode == 7 ||
                        (Data->P[j].Mission[i].MissionCode >= 9 &&
                         Data->P[j].Mission[i].MissionCode <= 13)) {
                 Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[1].Name[0]);
+                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[Data->P[j].Probe[1].Code][0]);
+                strcat(&tName[0], &Nums[Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code][0]);
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]); // copy into struct
-                Data->P[j].Probe[1].Code++;  // Increase Planned Mission Count
+                Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode > 0) {
                 if (Data->P[j].Mission[i].Joint == 0) {
                     k = Data->P[j].Mission[i].Prog - 1;
@@ -859,8 +859,8 @@ void Update(void)
         Data->Prestige[4].Goal[j] = 0; // Clear Mars
         Data->Prestige[5].Goal[j] = 0; // Clear Jupiter
         Data->Prestige[6].Goal[j] = 0; // Clear Saturn
-        Data->P[j].Probe[0].Failures = Data->P[j].Probe[2].Failures = 0;
-        Data->P[j].Probe[0].Used = Data->P[j].Probe[2].Used = 0;
+        Data->P[j].Probe[PROBE_HW_ORBITAL].Failures = Data->P[j].Probe[PROBE_HW_LUNAR].Failures = 0;
+        Data->P[j].Probe[PROBE_HW_ORBITAL].Used = Data->P[j].Probe[PROBE_HW_LUNAR].Used = 0;
 
         for (i = 0; i < Data->P[j].PastMissionCount; i++) {
             if (Data->P[j].History[i].Event == 0) {
@@ -885,18 +885,18 @@ void Update(void)
             switch (Data->P[j].History[i].MissionCode) {
             case 1:
                 if (Data->P[j].History[i].spResult != 1) {
-                    Data->P[j].Probe[0].Failures++;
+                    Data->P[j].Probe[PROBE_HW_ORBITAL].Failures++;
                 }
 
-                Data->P[j].Probe[0].Used++;
+                Data->P[j].Probe[PROBE_HW_ORBITAL].Used++;
                 break;
 
             case 8:
                 if (Data->P[j].History[i].spResult != 1) {
-                    Data->P[j].Probe[2].Failures++;
+                    Data->P[j].Probe[PROBE_HW_LUNAR].Failures++;
                 }
 
-                Data->P[j].Probe[2].Used++;
+                Data->P[j].Probe[PROBE_HW_LUNAR].Used++;
                 break;
             }
 
@@ -929,27 +929,27 @@ void UpdAll(char side)
     for (i = 0; i < 3; i++) {
         if (Data->P[side].Mission[i].MissionCode == 1) {
             Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[0].Name[0]);
+            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_ORBITAL].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[(Data->P[side].Probe[0].Code) % 30][0]);
+            strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
-            Data->P[side].Probe[0].Code++;  // Increase Planned Mission Count
+            Data->P[side].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode == 8) {
             Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[2].Name[0]);
+            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_LUNAR].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[(Data->P[side].Probe[2].Code) % 30][0]);
+            strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
-            Data->P[side].Probe[2].Code++;  // Increase Planned Mission Count
+            Data->P[side].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode == 7 ||
                    (Data->P[side].Mission[i].MissionCode >= 9 &&
                     Data->P[side].Mission[i].MissionCode <= 13)) {
             Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[1].Name[0]);
+            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[Data->P[side].Probe[1].Code][0]);
+            strcat(&tName[0], &Nums[Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code][0]);
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
-            Data->P[side].Probe[1].Code++;  // Increase Planned Mission Count
+            Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode > 0) {
             if (Data->P[side].Mission[i].Joint == 0) {
                 k = Data->P[side].Mission[i].Prog - 1;
@@ -1051,8 +1051,8 @@ void UpdAll(char side)
     Data->Prestige[4].Goal[side] = 0; // Clear Mars
     Data->Prestige[5].Goal[side] = 0; // Clear Jupiter
     Data->Prestige[6].Goal[side] = 0; // Clear Saturn
-    Data->P[side].Probe[0].Failures = Data->P[side].Probe[2].Failures = 0;
-    Data->P[side].Probe[0].Used = Data->P[side].Probe[2].Used = 0;
+    Data->P[side].Probe[PROBE_HW_ORBITAL].Failures = Data->P[side].Probe[PROBE_HW_LUNAR].Failures = 0;
+    Data->P[side].Probe[PROBE_HW_ORBITAL].Used = Data->P[side].Probe[PROBE_HW_LUNAR].Used = 0;
 
     for (i = 0; i < Data->P[side].PastMissionCount; i++) {
         if (Data->P[side].History[i].Event == 0) {
@@ -1077,18 +1077,18 @@ void UpdAll(char side)
         switch (Data->P[side].History[i].MissionCode) {
         case 1:
             if (Data->P[side].History[i].spResult != 1) {
-                Data->P[side].Probe[0].Failures++;
+                Data->P[side].Probe[PROBE_HW_ORBITAL].Failures++;
             }
 
-            Data->P[side].Probe[0].Used++;
+            Data->P[side].Probe[PROBE_HW_ORBITAL].Used++;
             break;
 
         case 8:
             if (Data->P[side].History[i].spResult != 1) {
-                Data->P[side].Probe[2].Failures++;
+                Data->P[side].Probe[PROBE_HW_LUNAR].Failures++;
             }
 
-            Data->P[side].Probe[2].Used++;
+            Data->P[side].Probe[PROBE_HW_LUNAR].Used++;
             break;
         }
     }

@@ -133,6 +133,11 @@ struct PrestType {
     char Year;          /**< Date of the First */
 };
 
+enum LaunchPads {
+	PAD_A = 0,
+	PAD_B = 1,
+};
+
 enum EquipmentIndex {
     PROBE_HARDWARE  = 0,   /**< unmanned satelite */
     ROCKET_HARDWARE = 1,   /**< propulsion system */

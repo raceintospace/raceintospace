@@ -895,19 +895,19 @@ char REvent(char plr)
         break;
 
     case 65: // Gemini or Voskhod will cost additional 2MB's per spacecraft
-        if (Data->P[plr].Manned[1].Num < 0) {
+        if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Num < 0) {
             return 1;
         }
 
-        Data->P[plr].Manned[1].UnitCost += 2; // Used to say "InitCost", which effectively disabled this newscast -Leon
+        Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].UnitCost += 2; // Used to say "InitCost", which effectively disabled this newscast -Leon
         break;
 
     case 83: // Apollo or Soyuz will cost additional 3MB's per spacecraft
-        if (Data->P[plr].Manned[2].Num < 0) {
+        if (Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0) {
             return 1;
         }
 
-        Data->P[plr].Manned[2].UnitCost += 3;
+        Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].UnitCost += 3;
         break;
 
     case 66:// mission delay

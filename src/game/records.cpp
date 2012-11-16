@@ -851,9 +851,9 @@ void UpdateRecords(char Ty)
 
                             if (Data->P[i].History[j].Duration > 0) {
                                 for (m = 0; m < 4; m++)
-                                    if (Data->P[i].History[j].Man[0][m] != -1)
-                                        if (Data->P[i].Pool[Data->P[i].History[j].Man[0][m]].Sex == 0) {
-                                            temp = Data->P[i].History[j].Man[0][m];
+                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                        if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 0) {
+                                            temp = Data->P[i].History[j].Man[PAD_A][m];
 
                                             if (rec[k][0].place == 0) {
                                                 Rec_Change = 0;
@@ -875,9 +875,9 @@ void UpdateRecords(char Ty)
 
                             if (Data->P[i].History[j].Duration > 0) {
                                 for (m = 0; m < 4; m++)
-                                    if (Data->P[i].History[j].Man[0][m] != -1)
-                                        if (Data->P[i].Pool[Data->P[i].History[j].Man[0][m]].Sex == 1) {
-                                            temp = Data->P[i].History[j].Man[0][m];
+                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                        if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 1) {
+                                            temp = Data->P[i].History[j].Man[PAD_A][m];
 
                                             if (rec[k][0].place == 0) {
                                                 Rec_Change = 0;
@@ -899,8 +899,8 @@ void UpdateRecords(char Ty)
 
                             if (Data->P[i].History[j].Duration > 0) {
                                 for (m = 0; m < 4; m++)
-                                    if (Data->P[i].History[j].Man[0][m] != -1) {
-                                        temp = Data->P[i].History[j].Man[0][m];
+                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1) {
+                                        temp = Data->P[i].History[j].Man[PAD_A][m];
 
                                         if (rec[k][0].place == 0) {
                                             Rec_Change = 0;
@@ -921,18 +921,18 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
 
                             //EVA record (MALE)
-                            switch (Data->P[i].History[j].Hard[0][0]) {
-                            case 0:
+                            switch (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule]) {
+                            case MANNED_HW_ONE_MAN_CAPSULE:
                                 m = 0;
                                 break;
 
-                            case 1:
-                            case 2:
-                            case 3:
+                            case MANNED_HW_TWO_MAN_CAPSULE:
+                            case MANNED_HW_THREE_MAN_CAPSULE:
+                            case MANNED_HW_MINISHUTTLE:
                                 m = 1;
                                 break;
 
-                            case 4:
+                            case MANNED_HW_FOUR_MAN_CAPSULE:
                                 m = 2;
                                 break;
 
@@ -942,9 +942,9 @@ void UpdateRecords(char Ty)
                             }
 
                             if (Miss[Data->P[i].History[j].MissionCode].EVA) {
-                                if (Data->P[i].History[j].Man[0][m] != -1)
-                                    if (Data->P[i].Pool[Data->P[i].History[j].Man[0][m]].Sex == 0) {
-                                        temp = Data->P[i].History[j].Man[0][m];
+                                if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                    if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 0) {
+                                        temp = Data->P[i].History[j].Man[PAD_A][m];
 
                                         if (rec[k][0].place == 0) {
                                             Rec_Change = 0;
@@ -965,18 +965,18 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
 
                             //EVA record (FEMALE)
-                            switch (Data->P[i].History[j].Hard[0][0]) {
-                            case 0:
+                            switch (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule]) {
+                            case MANNED_HW_ONE_MAN_CAPSULE:
                                 m = 0;
                                 break;
 
-                            case 1:
-                            case 2:
-                            case 3:
+                            case MANNED_HW_TWO_MAN_CAPSULE:
+                            case MANNED_HW_THREE_MAN_CAPSULE:
+                            case MANNED_HW_MINISHUTTLE:
                                 m = 1;
                                 break;
 
-                            case 4:
+                            case MANNED_HW_FOUR_MAN_CAPSULE:
                                 m = 2;
                                 break;
 
@@ -986,9 +986,9 @@ void UpdateRecords(char Ty)
                             }
 
                             if (Miss[Data->P[i].History[j].MissionCode].EVA) {
-                                if (Data->P[i].History[j].Man[0][m] != -1)
-                                    if (Data->P[i].Pool[Data->P[i].History[j].Man[0][m]].Sex == 1) {
-                                        temp = Data->P[i].History[j].Man[0][m];
+                                if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                    if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 1) {
+                                        temp = Data->P[i].History[j].Man[PAD_A][m];
 
                                         if (rec[k][0].place == 0) {
                                             Rec_Change = 0;
@@ -1114,10 +1114,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //ONE person craft
-                                if (Data->P[i].History[j].Hard[0][0] == 0 && Data->P[i].History[j].Man[0][0] != -1) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[0][0] == 0 && Data->P[i].History[j].Man[0][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
@@ -1129,10 +1129,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //TWO person craft
-                                if (Data->P[i].History[j].Hard[0][0] == 1 && Data->P[i].History[j].Man[0][0] != -1) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[0][0] == 1 && Data->P[i].History[j].Man[0][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
@@ -1144,10 +1144,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //THREE person craft
-                                if (Data->P[i].History[j].Hard[0][0] == 2 && Data->P[i].History[j].Man[0][0] != -1) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     WriteRecord(i, j, k, 0);
                                 }
-                            } else if (Data->P[i].History[j].Hard[0][0] == 2 && Data->P[i].History[j].Man[0][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
@@ -1159,10 +1159,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //MINISHUTTLE craft
-                                if (Data->P[i].History[j].Hard[0][0] == 3 && Data->P[i].History[j].Man[0][0] != -1) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[0][0] == 3 && Data->P[i].History[j].Man[0][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
@@ -1174,10 +1174,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //FOUR person craft
-                                if (Data->P[i].History[j].Hard[0][0] == 4 && Data->P[i].History[j].Man[0][0] != -1) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[0][0] == 4 && Data->P[i].History[j].Man[0][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
@@ -1197,7 +1197,7 @@ void UpdateRecords(char Ty)
                                         if (Data->P[i].History[loop].Prestige > 0) {
                                             max = Data->P[i].History[loop].Prestige;
 
-                                            if (Data->P[i].History[loop].Hard[0][0] == craft) {
+                                            if (Data->P[i].History[loop].Hard[PAD_A][Mission_Capsule] == craft) {
                                                 temp += max;
                                                 Rec_Change = 1;
                                             }
@@ -2038,9 +2038,9 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
     case 1:
     case 2:
         if (Rec_Change == 2) {
-            temp = Data->P[i].History[j].Man[0][max];
+            temp = Data->P[i].History[j].Man[PAD_A][max];
         } else {
-            temp = Data->P[i].History[j].Man[0][0];
+            temp = Data->P[i].History[j].Man[PAD_A][0];
         }
 
         switch (rec[k][0].place) {

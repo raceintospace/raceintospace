@@ -786,16 +786,16 @@ void DrawHard(char mode, char pad, char mis, char plr)
         break;
     }
 
-    lenprogname = (3 - strlen(Data->P[plr].Manned[0].Name)) * 3;
-    PrintAt(111 + lenprogname, 109, Data->P[plr].Manned[0].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[0].Name))*3);
-    lenprogname = (3 - strlen(Data->P[plr].Manned[1].Name)) * 3;
-    PrintAt(190 + lenprogname, 109, Data->P[plr].Manned[1].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[1].Name))*3);
-    lenprogname = (3 - strlen(Data->P[plr].Manned[2].Name)) * 3;
-    PrintAt(111 + lenprogname, 126, Data->P[plr].Manned[2].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[2].Name))*3);
-    lenprogname = (3 - strlen(Data->P[plr].Manned[3].Name)) * 3;
-    PrintAt(190 + lenprogname, 126, Data->P[plr].Manned[3].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[3].Name))*3);
-    lenprogname = (3 - strlen(Data->P[plr].Manned[4].Name)) * 3;
-    PrintAt(149 + 4 + lenprogname, 143, Data->P[plr].Manned[4].Name);
+    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name)) * 3;
+    PrintAt(111 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
+    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name)) * 3;
+    PrintAt(190 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name))*3);
+    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name)) * 3;
+    PrintAt(111 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name))*3);
+    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name)) * 3;
+    PrintAt(190 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name))*3);
+    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name)) * 3;
+    PrintAt(149 + 4 + lenprogname, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
     PrintAt(143, 163, "CANCEL");
     return;
 }
