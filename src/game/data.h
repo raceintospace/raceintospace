@@ -293,13 +293,13 @@ struct Astros {
     char Service;      /**< Service of Origination */
     char Status;       /**< Current status of Astronaut */
     char Focus;        /**< Focus of Advanced Training 0-4 */
-    char IDelay;       /**< Injury Delay - Ok if 0 */
-    char RDelay;       /**< Retire Delay - Retire if 0 */
-    char RetReas;      /**< Retire Reason flag */
+    char InjuryDelay;       /**< Injury Delay - Ok if 0 */
+    char RetirementDelay;       /**< Retire Delay - Retire if 0 */
+    char RetirementReason;      /**< Retire Reason flag */
     char Special;      /**< Special for announcements */
     char Assign;       /**< Location of Astro 0=limbo */
     char oldAssign;    /**< program of last turn */
-    char Unassigned    /**< Unassigned signed flag */
+    char Unassigned;   /**< Unassigned signed flag */
     char Crew;         /**< Crew Assiciated in prog Assigm */
     char Task;         /**< What his job is in Flt Crew */
     int16_t Prestige;  /**< Prestige Earned */

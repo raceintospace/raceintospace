@@ -287,9 +287,9 @@ AstroTurn(void)
 
                 /* Injury Resolution */
                 if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
-                    Data->P[j].Pool[i].IDelay--;
+                    Data->P[j].Pool[i].InjuryDelay--;
 
-                    if (Data->P[j].Pool[i].IDelay == 0) {
+                    if (Data->P[j].Pool[i].InjuryDelay == 0) {
                         Data->P[j].Pool[i].Status = AST_ST_ACTIVE;
                         Data->P[j].Pool[i].Assign = 0;
                         Data->P[j].Pool[i].Special = 5;
@@ -299,26 +299,26 @@ AstroTurn(void)
                 /* Mustering Out - even seasons after 8 */
                 if ((Data->P[j].Pool[i].Active >= 8)
                     && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
-                    && Data->P[j].Pool[i].RDelay == 0) {
+                    && Data->P[j].Pool[i].RetirementDelay == 0) {
                     num = brandom(100);
 
                     if (num > 89) {
                         /* Guy retires */
                         if (j == 0) {
-                            Data->P[j].Pool[i].RDelay = 3;  /* US Guy Retires in 2 */
+                            Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                             Data->P[j].Pool[i].Special = 1;
                         };
 
                         if (j == 1) {
-                            Data->P[j].Pool[i].RDelay = 2;  /* URS Guy Retires in 1 */
+                            Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires in 1 */
                             Data->P[j].Pool[i].Special = 1;
                         };
 
-                        Data->P[j].Pool[i].RetReas = brandom(6) + 1; /* Reason for Retirement */
+                        Data->P[j].Pool[i].RetirementReason = brandom(6) + 1; /* Reason for Retirement */
                     }
                 }
 
-                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RDelay == 0 &&
+                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RetirementDelay == 0 &&
                     Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                     /* Catastrophic Failure */
                     num = brandom(100);
@@ -332,16 +332,16 @@ AstroTurn(void)
                     if (num > temp && cnt < (ActTotal[j] * .4)) {
                         /* Guy retires due to being scared */
                         if (j == 0) {
-                            Data->P[j].Pool[i].RDelay = 3;  /* US Guy Retires in 2 */
+                            Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                             Data->P[j].Pool[i].Special = 1;
                         };
 
                         if (j == 1) {
-                            Data->P[j].Pool[i].RDelay = 2;  /* URS Guy Retires Now */
+                            Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
                             Data->P[j].Pool[i].Special = 1;
                         };
 
-                        Data->P[j].Pool[i].RetReas = 11;    /* Reason=Scared */
+                        Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
 
                         cnt++;
                     };
@@ -358,12 +358,12 @@ AstroTurn(void)
 
                         if (num > 74) {
                             Data->P[j].Pool[i].Status = AST_ST_INJURED;
-                            Data->P[j].Pool[i].IDelay = 2;
+                            Data->P[j].Pool[i].InjuryDelay = 2;
                             Data->P[j].Pool[i].Special = 9;
                         } else {
                             Data->P[j].Pool[i].Status = AST_ST_RETIRED;
                             Data->P[j].Pool[i].Special = 10;
-                            Data->P[j].Pool[i].RetReas = 12;    /* Washout */
+                            Data->P[j].Pool[i].RetirementReason = 12;    /* Washout */
                         }
 
                         if (Data->P[j].Pool[i].Cap < 0) {
@@ -388,13 +388,13 @@ AstroTurn(void)
                     }
                 }
 
-                if (Data->P[j].Pool[i].RDelay >= 1
+                if (Data->P[j].Pool[i].RetirementDelay >= 1
                     && (Data->P[j].Pool[i].Status > AST_ST_INJURED
                         || Data->P[j].Pool[i].Status == AST_ST_ACTIVE)) {
                     /* Actual retirement */
-                    Data->P[j].Pool[i].RDelay--;
+                    Data->P[j].Pool[i].RetirementDelay--;
 
-                    if (Data->P[j].Pool[i].RDelay == 0) {
+                    if (Data->P[j].Pool[i].RetirementDelay == 0) {
                         Data->P[j].Pool[i].Status = AST_ST_RETIRED;
                         Data->P[j].Pool[i].Assign = 0;
                         Data->P[j].Pool[i].Special = 2;
@@ -482,7 +482,7 @@ AstroTurn(void)
                     }
 
                     /* scrubbed mission */
-                    if (Data->P[j].Pool[i].currentMissionStatus == AST_MISSION_SCRUBBED) {
+                    if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
                         Data->P[j].Pool[i].Mood -= 5;
                     }
 
@@ -621,10 +621,10 @@ AstroTurn(void)
                 /* Retirement stuff */
 
                 if (Data->P[j].Pool[i].Mood < 20
-                    && Data->P[j].Pool[i].RDelay == 0
+                    && Data->P[j].Pool[i].RetirementDelay == 0
                     && Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                     if (j == 0) {
-                        Data->P[j].Pool[i].RDelay = 2;  /* US Guy Retires in 2 */
+                        Data->P[j].Pool[i].RetirementDelay = 2;  /* US Guy Retires in 2 */
                         Data->P[j].Pool[i].Special = 1;
                     };
 
@@ -633,7 +633,7 @@ AstroTurn(void)
                         Data->P[j].Pool[i].Special = 2;
                     };
 
-                    Data->P[j].Pool[i].RetReas = 13;    /* Reason=Unhappy */
+                    Data->P[j].Pool[i].RetirementReason = 13;    /* Reason=Unhappy */
                 }
 
                 Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;

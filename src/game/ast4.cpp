@@ -1270,7 +1270,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     display::graphics.setForegroundColor(1);
 
     if (M1 > 0) {
-        retdel = Data->P[plr].Pool[M1 - 1].RDelay; // Sets whether 'naut has announced retirement
+        retdel = Data->P[plr].Pool[M1 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
         sex = Data->P[plr].Pool[M1 - 1].Sex; // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M1 - 1].Missions;
         AstNames(0, &Data->P[plr].Pool[M1 - 1].Name[0], Data->P[plr].Pool[M1 - 1].Mood);
@@ -1280,7 +1280,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M2 > 0) {
-        retdel = Data->P[plr].Pool[M2 - 1].RDelay; // Sets whether 'naut has announced retirement
+        retdel = Data->P[plr].Pool[M2 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
         sex = Data->P[plr].Pool[M2 - 1].Sex; // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M2 - 1].Missions;
         AstNames(1, &Data->P[plr].Pool[M2 - 1].Name[0], Data->P[plr].Pool[M2 - 1].Mood);
@@ -1290,7 +1290,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M3 > 0) {
-        retdel = Data->P[plr].Pool[M3 - 1].RDelay; // Sets whether 'naut has announced retirement
+        retdel = Data->P[plr].Pool[M3 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
         sex = Data->P[plr].Pool[M3 - 1].Sex; // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M3 - 1].Missions;
         AstNames(2, &Data->P[plr].Pool[M3 - 1].Name[0], Data->P[plr].Pool[M3 - 1].Mood);
@@ -1300,7 +1300,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M4 > 0) {
-        retdel = Data->P[plr].Pool[M4 - 1].RDelay; // Sets whether 'naut has announced retirement
+        retdel = Data->P[plr].Pool[M4 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
         sex = Data->P[plr].Pool[M4 - 1].Sex; // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M4 - 1].Missions;
         AstNames(3, &Data->P[plr].Pool[M4 - 1].Name[0], Data->P[plr].Pool[M4 - 1].Mood);

@@ -676,7 +676,7 @@ void TransAstro(char plr, int inx)
                 pData->Pool[i].Crew = 0;
             }
 
-            pData->Pool[i].RetReas = 0;
+            pData->Pool[i].RetirementReason = 0;
             pData->Pool[i].Hero = 0; //clear hero flag
 
             if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0 && pData->Pool[i].Prime < 1) {

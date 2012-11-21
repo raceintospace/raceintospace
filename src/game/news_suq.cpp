@@ -720,13 +720,13 @@ char REvent(char plr)
             i = brandom(Data->P[plr].AstroCount);
         }
 
-        Data->P[plr].Pool[i].RDelay = 2;
+        Data->P[plr].Pool[i].RetirementDelay = 2;
         Data->P[plr].Pool[i].Mood = 10;
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
 
         if (plr == 1) {
             Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
-            Data->P[plr].Pool[i].RDelay = 0;
+            Data->P[plr].Pool[i].RetirementDelay = 0;
         };
 
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
@@ -832,7 +832,7 @@ char REvent(char plr)
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_INJURED;
-        Data->P[plr].Pool[i].IDelay = 2;
+        Data->P[plr].Pool[i].InjuryDelay = 2;
         Data->P[plr].Pool[i].Special = 4;
         Replace_Snaut(plr);
         break;
@@ -1008,7 +1008,7 @@ char REvent(char plr)
 
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_INJURED;
-        Data->P[plr].Pool[i].IDelay = 2;
+        Data->P[plr].Pool[i].InjuryDelay = 2;
         break;
 
     default:
