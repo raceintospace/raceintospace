@@ -262,6 +262,13 @@ enum AstronautAdvancedFocus {
 		AST_FOCUS_ENDURANCE = 5,
 };
 
+enum AstronautMissionStatus {
+	ASTRO_MISSION_CLEAR = 0,
+	ASTRO_MISSION_SUCCESS = 1,
+	ASTRO_MISSION_FAILURE = 2,
+	ASTRO_MISSION_SCRUBBED = 3,
+};
+
 /**
 \brief This is a structure representing astronauts/cosmonauts.
 */
@@ -273,7 +280,7 @@ struct Astros {
     char CR;           /**< Range of Compatability Right */
     char CL;           /**< Range of Compatability Left */
     char Moved;        /**< if 0 Astro Moved around this turn */
-    char Mis;          /**< Successful Mission this Turn */
+    char currentMissionStatus;          /**< Successful Mission this Turn */
     char Happy;        /**< \brief Happy within group */
     /**< \li 1 = Successful Mission */
     /**< \li 2 = Personal First */
@@ -292,7 +299,7 @@ struct Astros {
     char Special;      /**< Special for announcements */
     char Assign;       /**< Location of Astro 0=limbo */
     char oldAssign;    /**< program of last turn */
-    char Una;          /**< Unassigned flag */
+    char Unassigned    /**< Unassigned signed flag */
     char Crew;         /**< Crew Assiciated in prog Assigm */
     char Task;         /**< What his job is in Flt Crew */
     int16_t Prestige;  /**< Prestige Earned */

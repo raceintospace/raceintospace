@@ -1073,7 +1073,7 @@ Programs(char plr, char prog)
                              Data->P[plr].Pool[M[now2]].Mood);
                     Data->P[plr].Pool[M[now2]].Crew = grp + 1;
                     Data->P[plr].Pool[M[now2]].Task = Gcnt[grp];
-                    Data->P[plr].Pool[M[now2]].Una = 1;
+                    Data->P[plr].Pool[M[now2]].Unassigned= 1;
 
                     for (i = now2; i < count; i++) {
                         M[i] = M[i + 1];
@@ -1179,7 +1179,7 @@ Programs(char plr, char prog)
                         Data->P[plr].Crew[prog][grp][Gcnt[grp] - 1] = 0;
                         Data->P[plr].Pool[M[count]].Crew = 0;
                         Data->P[plr].Pool[M[count]].Moved = 0;
-                        Data->P[plr].Pool[M[now2]].Una = 0;
+                        Data->P[plr].Pool[M[now2]].Unassigned= 0;
                         Gcnt[grp]--;
                         count++;
                     }
