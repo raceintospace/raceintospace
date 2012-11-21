@@ -984,7 +984,7 @@ void AstSel(char plr)
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].CL = brandom(2) + 1;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Task = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Crew = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Una = 0;
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Unassigned= 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Pool = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);

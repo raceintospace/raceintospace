@@ -158,7 +158,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     }
 
     /* Move All unassigned astros to limbo */
-    if ((astro->Una == 0)
+    if ((astro->Unassigned== 0)
         && (astro->Status == AST_ST_ACTIVE)
         && (astro->Assign != 0)) {
         astro->Assign = 0;
@@ -406,12 +406,12 @@ AstroTurn(void)
                     /* Program First */
                     Data->P[j].Pool[i].Mood += 5;
 
-                    if (Data->P[j].Pool[i].Mis == 2) {
+                    if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_FAILURE) {
                         Data->P[j].Pool[i].Mood += 20;    /* Self */
                     }
                 }
 
-                if (Data->P[j].Pool[i].Mis == 1) {
+                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SUCCESS) {
                     if (j == 0 && Data->Def.Ast1 == 0) {
                         Data->P[j].Pool[i].Mood += 20;
                     } else {
@@ -482,7 +482,7 @@ AstroTurn(void)
                     }
 
                     /* scrubbed mission */
-                    if (Data->P[j].Pool[i].Mis == 3) {
+                    if (Data->P[j].Pool[i].currentMissionStatus == AST_MISSION_SCRUBBED) {
                         Data->P[j].Pool[i].Mood -= 5;
                     }
 
@@ -636,7 +636,7 @@ AstroTurn(void)
                     Data->P[j].Pool[i].RetReas = 13;    /* Reason=Unhappy */
                 }
 
-                Data->P[j].Pool[i].Mis = 0;
+                Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;
             }
 
         Data->P[j].MissionCatastrophicFailureOnTurn = 0;
