@@ -360,9 +360,9 @@ int Launch(char plr, char mis)
         for (j = 0; j < MANNED[i]; j++) {
             if (MA[i][j].A) {
                 if (FINAL >= 100) {
-                    MA[i][j].A->Mis = 1;    // Successful
+                    MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Successful
                 } else if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
-                    MA[i][j].A->Mis = 2;    // Failure
+                    MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Failure
                 }
             }
         }

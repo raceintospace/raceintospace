@@ -397,7 +397,7 @@ void Limbo(char plr)
                 key = 0;
                 OutBox(167, 95 + 21 * i, 236, 109 + 21 * i);
                 Data->P[plr].Pool[AstroList[now2]].Assign = i + 1;
-                Data->P[plr].Pool[AstroList[now2]].Una = 0;
+                Data->P[plr].Pool[AstroList[now2]].Unassigned= 0;
                 Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                 for (i = now2; i < count; i++) {
@@ -533,7 +533,7 @@ void Limbo(char plr)
 
                     Data->P[plr].Pool[AstroList[now2]].Focus = i + 1;
                     Data->P[plr].Pool[AstroList[now2]].Assign = 0;
-                    Data->P[plr].Pool[AstroList[now2]].Una = 0;
+                    Data->P[plr].Pool[AstroList[now2]].Unassigned= 0;
                     Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                     for (i = now2; i < count; i++) {
