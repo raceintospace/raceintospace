@@ -284,11 +284,11 @@ void PadDraw(char plr, char pad)
                 display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RDelay > 0) {
+            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(0);    // Show anyone who's announced retirement in black
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RDelay > 0) {
+            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
@@ -380,11 +380,11 @@ void PadDraw(char plr, char pad)
                 display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RDelay > 0) {
+            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(0);    // But show anyone who's announced retirement in black
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RDelay > 0) {
+            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 

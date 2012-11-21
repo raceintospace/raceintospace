@@ -189,9 +189,9 @@ OpenNews(char plr, char *buf, int bud)
         }
 
         if (Data->P[plr].Pool[j].Special == 1
-            || (Data->P[plr].Pool[j].Special > 0 && Data->P[plr].Pool[j].RetReas == 8)) {
+            || (Data->P[plr].Pool[j].Special > 0 && Data->P[plr].Pool[j].RetirementReason == 8)) {
             //13 other things
-            i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetReas - 1);
+            i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
 
             if (plr == 1) {
                 i += len[3];

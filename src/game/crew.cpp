@@ -632,7 +632,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(5);    // Print name in blue if 'naut is female
             }
 
-            if (Data->P[plr].Pool[m[i] - 1].RDelay > 0) {
+            if (Data->P[plr].Pool[m[i] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(3);    // Print name in gray if 'naut has announced retirement (black doesn't show well here) -Leon
             }
 

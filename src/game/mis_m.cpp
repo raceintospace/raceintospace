@@ -735,7 +735,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
             if (Guy != NULL) {
                 Guy->Status = AST_ST_DEAD;
                 Guy->Special = 3;
-                Guy->RetReas = 8;
+                Guy->RetirementReason = 8;
                 Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
                 tMen++;
                 death = 1;
@@ -748,7 +748,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
 
         Victim->Status = AST_ST_DEAD;
         Victim->Special = 3;
-        Victim->RetReas = 8;
+        Victim->RetirementReason = 8;
         Victim->Assign = Victim->Moved = Victim->Crew = Victim->Task = 0;
 
         /* XXX this code was here, but Guy wsa not initialized */
@@ -771,12 +771,12 @@ void F_IRCrew(char mode, struct Astros *Guy)
 
     if (mode == F_RET) { // should work in news
         Guy->Status = AST_ST_RETIRED;
-        Guy->RDelay = 1; // Retire begginning of next season
-        Guy->RetReas = 9;
+        Guy->RetirementDelay = 1; // Retire begginning of next season
+        Guy->RetirementReason = 9;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
     } else if (mode == F_INJ) {
         Guy->Status = AST_ST_INJURED;
-        Guy->IDelay = 3; // Injured for a year
+        Guy->InjuryDelay = 3; // Injured for a year
         Guy->Special = 4;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
     }
