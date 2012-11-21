@@ -656,7 +656,7 @@ void LimboText(char plr, int astro)
 
     display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
 
-    if (Data->P[plr].Pool[astro].RDelay > 0) {
+    if (Data->P[plr].Pool[astro].RetirementDelay > 0) {
         display::graphics.setForegroundColor(0);    // Print name in black if 'naut has announced retirement (override mood) -Leon
     }
 

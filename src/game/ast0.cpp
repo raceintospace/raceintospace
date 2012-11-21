@@ -149,7 +149,7 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
         if (ary[i] >= 0) {
             display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
 
-            if (Data->P[plr].Pool[ary[i]].RDelay > 0) {
+            if (Data->P[plr].Pool[ary[i]].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
