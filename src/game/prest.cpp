@@ -46,7 +46,7 @@ void Set_Dock(char plr, char total)
 
     for (i = 0; i < total; i++) {
         if (Mev[i].loc == 8 && Mev[i].StepInfo == 1) {
-            Data->Prestige[24].Goal[plr]++;
+            Data->Prestige[Prestige_MannedDocking].Goal[plr]++;
             break;
         }
     }
@@ -231,19 +231,19 @@ int PrestCheck(char plr)
         }
     }
 
-    if (Mis.Doc == 1 && Data->Prestige[24].Goal[plr] == 0) {
-        if (Data->Prestige[24].Goal[other(plr)] == 0) {
-            total += Data->Prestige[24].Add[0];    // your first
+    if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
+        if (Data->Prestige[Prestige_MannedDocking].Goal[other(plr)] == 0) {
+            total += Data->Prestige[Prestige_MannedDocking].Add[0];    // your first
         } else {
-            total += Data->Prestige[24].Add[1];    // your second
+            total += Data->Prestige[Prestige_MannedDocking].Add[1];    // your second
         }
     }
 
-    if (Mis.EVA == 1 && Data->Prestige[26].Goal[plr] == 0) {
-        if (Data->Prestige[26].Goal[other(plr)] == 0) {
-            total += Data->Prestige[26].Add[0];    // your first
+    if (Mis.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
+        if (Data->Prestige[Prestige_Spacewalk].Goal[other(plr)] == 0) {
+            total += Data->Prestige[Prestige_Spacewalk].Add[0];    // your first
         } else {
-            total += Data->Prestige[26].Add[1];    // your second
+            total += Data->Prestige[Prestige_Spacewalk].Add[1];    // your second
         }
     }
 
@@ -282,12 +282,12 @@ int PrestCheck(char plr)
             total += Data->Prestige[Mis.PCat[i]].Add[2];
         }
 
-    if (Mis.Doc == 1 && Data->Prestige[24].Goal[plr] == 0) {
-        total += Data->Prestige[24].Add[2];
+    if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
+        total += Data->Prestige[Prestige_MannedDocking].Add[2];
     }
 
-    if (Mis.EVA == 1 && Data->Prestige[26].Goal[plr] == 0) {
-        total += Data->Prestige[26].Add[2];
+    if (Mis.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
+        total += Data->Prestige[Prestige_Spacewalk].Add[2];
     }
 
     return total;
@@ -483,7 +483,7 @@ char Set_Goal(char plr, char which, char control)
     //----------------------------------------
     //Specs: Lunar Landing klugge (Duration D)
     //----------------------------------------
-    if (which == LLAND || Data->Prestige[22].Place == plr) {
+    if (which == LLAND || Data->Prestige[Prestige_MannedLunarLanding].Place == plr) {
         Data->P[plr].History[Data->P[plr].PastMissionCount].Duration = 4;
     }
 
@@ -739,7 +739,7 @@ int AllotPrest(char plr, char mis)
     }
 
     // FEMALE 'NAUTS
-    PVal[25] = (MA[0][0].A != NULL && MA[0][0].A->Sex)
+    PVal[Prestige_WomanInSpace] = (MA[0][0].A != NULL && MA[0][0].A->Sex)
                || (MA[0][1].A != NULL && MA[0][1].A->Sex)
                || (MA[0][2].A != NULL && MA[0][2].A->Sex)
                || (MA[0][3].A != NULL && MA[0][3].A->Sex)
@@ -766,17 +766,17 @@ int AllotPrest(char plr, char mis)
     }
 
     // EVA FIX FOR ALTERNATE STEPS LATER IN MISSION
-    if (Mis.EVA == 1 && (PVal[26] == 0 || PVal[26] == 5)) {
-        PVal[26] = 4;
-    } else if (Mis.EVA == 0 && PVal[26] == 5) {
-        PVal[26] = 0;
+    if (Mis.EVA == 1 && (PVal[Prestige_Spacewalk] == 0 || PVal[Prestige_Spacewalk] == 5)) {
+        PVal[Prestige_Spacewalk] = 4;
+    } else if (Mis.EVA == 0 && PVal[Prestige_Spacewalk] == 5) {
+        PVal[Prestige_Spacewalk] = 0;
     }
 
     // DOCKING FIX FOR ALTERNATE STEPS LATER IN SESSION
-    if (Mis.Doc == 1 && (PVal[24] == 0 || PVal[24] == 5)) {
-        PVal[27] = 4;
-    } else if (Mis.EVA == 0 && PVal[24] == 5) {
-        PVal[24] = 0;
+    if (Mis.Doc == 1 && (PVal[Prestige_MannedDocking] == 0 || PVal[Prestige_MannedDocking] == 5)) {
+        PVal[Prestige_MannedSpaceMission] = 4;
+    } else if (Mis.EVA == 0 && PVal[Prestige_MannedDocking] == 5) {
+        PVal[Prestige_MannedDocking] = 0;
     }
 
     // CLEAR TOTAL VALUE
@@ -784,7 +784,7 @@ int AllotPrest(char plr, char mis)
     negs = 0;
 
     // PHOTO RECON
-    if (PVal[19] > 0 && PVal[19] < 4) {
+    if (PVal[Prestige_MannedLunarPass] > 0 && PVal[Prestige_MannedLunarPass] < 4) {
         Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
     }
 
@@ -802,14 +802,14 @@ int AllotPrest(char plr, char mis)
     S_Goal = SupGoal(PVal);
 
     if (P_Goal == LLAND) { // make sure EVA was done
-        if (!(PVal[26] >= 1 && PVal[26] <= 3)) {
+        if (!(PVal[Prestige_Spacewalk] >= 1 && PVal[Prestige_Spacewalk] <= 3)) {
             P_Goal = LORBIT;
             PVal[LLAND] = 0;
         }
     }
 
-    if ((P_Goal == -1 && S_Goal == -1) && (PVal[25] > 0)) {
-        PVal[25] = 4;
+    if ((P_Goal == -1 && S_Goal == -1) && (PVal[Prestige_WomanInSpace] > 0)) {
+        PVal[Prestige_WomanInSpace] = 4;
     }
 
     if (Check_Dock(500) == 2) {  // Success
@@ -820,24 +820,24 @@ int AllotPrest(char plr, char mis)
         Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = minn(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
     }
 
-    if (STSp(27) || STSn(27)) {
-        PVal[27] = 0;    // Clear All Firsts/Negative Goals
+    if (STSp(Prestige_MannedSpaceMission) || STSn(Prestige_MannedSpaceMission)) {
+        PVal[Prestige_MannedSpaceMission] = 0;    // Clear All Firsts/Negative Goals
     }
 
-    if (STSp(18) || STSn(18)) {
-        PVal[18] = 0;
+    if (STSp(Prestige_MannedOrbital) || STSn(Prestige_MannedOrbital)) {
+        PVal[Prestige_MannedOrbital] = 0;
     }
 
-    if (STSp(19) || STSn(19)) {
-        PVal[19] = 0;
+    if (STSp(Prestige_MannedLunarPass) || STSn(Prestige_MannedLunarPass)) {
+        PVal[Prestige_MannedLunarPass] = 0;
     }
 
-    if (STSp(20) || STSn(20)) {
-        PVal[20] = 0;
+    if (STSp(Prestige_MannedLunarOrbit) || STSn(Prestige_MannedLunarOrbit)) {
+        PVal[Prestige_MannedLunarOrbit] = 0;
     }
 
-    if (STSp(22) || STSn(22)) {
-        PVal[22] = 0;
+    if (STSp(Prestige_MannedLunarLanding) || STSn(Prestige_MannedLunarLanding)) {
+        PVal[Prestige_MannedLunarLanding] = 0;
     }
 
     // DURATION FIRSTS
@@ -890,10 +890,10 @@ int AllotPrest(char plr, char mis)
 
         if (P_Goal != 27) {
             total += Set_Goal(plr, 27, 0);
-            PVal[27] = 0;
+            PVal[Prestige_MannedSpaceMission] = 0;
         }
 
-        //if (!(Data->Prestige[27].Place==plr || Data->Prestige[27].mPlace==plr))
+        //if (!(Data->Prestige[Prestige_MannedSpaceMission].Place==plr || Data->Prestige[Prestige_MannedSpaceMission].mPlace==plr))
         //    total+=Set_Goal(plr,27,0);
     }
 
@@ -904,7 +904,7 @@ int AllotPrest(char plr, char mis)
     }
 
     if (mcode == 32 || mcode == 36) {
-        PVal[23] = Check_Lab();
+        PVal[Prestige_OrbitingLab] = Check_Lab();
     }
 
     // TOTAL ALL MISSION FIRSTS

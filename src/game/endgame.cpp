@@ -247,7 +247,7 @@ void EndGame(char win, char pad)
     if (Option == -1 && MAIL == -1) {
         miss = Data->P[win].Mission[pad].MissionCode;
     } else {
-        miss = Data->P[win].History[Data->Prestige[22].Index].MissionCode;
+        miss = Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].MissionCode;
     }
 
     display::graphics.setForegroundColor(6);
@@ -266,12 +266,12 @@ void EndGame(char win, char pad)
         strcpy(capName , Data->P[win].Mission[pad].Name);
         month   = Data->P[win].Mission[pad].Month;
     } else {
-        month   = Data->Prestige[22].Month;
+        month   = Data->Prestige[Prestige_MannedLunarLanding].Month;
 
         if (MAIL != -1 || Option == win) {
-            strcpy(capName , Data->P[win].History[Data->Prestige[22].Index].MissionName[0]);
+            strcpy(capName , Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].MissionName[0]);
         } else {
-            prog = Data->P[win].History[Data->Prestige[22].Index].Hard[i][0] + 1;
+            prog = Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].Hard[i][0] + 1;
             strcpy(capName , &Data->P[win].Manned[prog - 1].Name[0]);
             strcat(capName , " ");
             strcat(capName , Nums[Data->P[win].Manned[prog - 1].Used]);
@@ -296,7 +296,7 @@ void EndGame(char win, char pad)
     if (Option == -1 && MAIL == -1) {
         gork = Data->P[win].PastMissionCount - 1;
     } else {
-        gork = Data->Prestige[22].Index;
+        gork = Data->Prestige[Prestige_MannedLunarLanding].Index;
     }
 
     if (win == 1 && Data->P[win].History[gork].Hard[i][0] >= 3) {

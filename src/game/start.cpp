@@ -856,9 +856,9 @@ void Update(void)
 
     // Fix Prestige Values for Mars, Jup, Sat.
     for (j = 0; j < NUM_PLAYERS; j++) {
-        Data->Prestige[4].Goal[j] = 0; // Clear Mars
-        Data->Prestige[5].Goal[j] = 0; // Clear Jupiter
-        Data->Prestige[6].Goal[j] = 0; // Clear Saturn
+        Data->Prestige[Prestige_MarsFlyby].Goal[j] = 0; // Clear Mars
+        Data->Prestige[Prestige_JupiterFlyby].Goal[j] = 0; // Clear Jupiter
+        Data->Prestige[Prestige_SaturnFlyby].Goal[j] = 0; // Clear Saturn
         Data->P[j].Probe[PROBE_HW_ORBITAL].Failures = Data->P[j].Probe[PROBE_HW_LUNAR].Failures = 0;
         Data->P[j].Probe[PROBE_HW_ORBITAL].Used = Data->P[j].Probe[PROBE_HW_LUNAR].Used = 0;
 
@@ -866,15 +866,15 @@ void Update(void)
             if (Data->P[j].History[i].Event == 0) {
                 switch (Data->P[j].History[i].MissionCode) {
                 case 10:
-                    Data->Prestige[4].Goal[j]++;
+                    Data->Prestige[Prestige_MarsFlyby].Goal[j]++;
                     break;  // Mars
 
                 case 12:
-                    Data->Prestige[5].Goal[j]++;
+                    Data->Prestige[Prestige_JupiterFlyby].Goal[j]++;
                     break;  // Juptier
 
                 case 13:
-                    Data->Prestige[6].Goal[j]++;
+                    Data->Prestige[Prestige_SaturnFlyby].Goal[j]++;
                     break;  // Saturn
 
                 default:
@@ -1048,9 +1048,9 @@ void UpdAll(char side)
     }
 
     // Fix Prestige Values for Mars, Jup, Sat.
-    Data->Prestige[4].Goal[side] = 0; // Clear Mars
-    Data->Prestige[5].Goal[side] = 0; // Clear Jupiter
-    Data->Prestige[6].Goal[side] = 0; // Clear Saturn
+    Data->Prestige[Prestige_MarsFlyby].Goal[side] = 0; // Clear Mars
+    Data->Prestige[Prestige_JupiterFlyby].Goal[side] = 0; // Clear Jupiter
+    Data->Prestige[Prestige_SaturnFlyby].Goal[side] = 0; // Clear Saturn
     Data->P[side].Probe[PROBE_HW_ORBITAL].Failures = Data->P[side].Probe[PROBE_HW_LUNAR].Failures = 0;
     Data->P[side].Probe[PROBE_HW_ORBITAL].Used = Data->P[side].Probe[PROBE_HW_LUNAR].Used = 0;
 
@@ -1058,15 +1058,15 @@ void UpdAll(char side)
         if (Data->P[side].History[i].Event == 0) {
             switch (Data->P[side].History[i].MissionCode) {
             case 10:
-                Data->Prestige[4].Goal[side]++;
+                Data->Prestige[Prestige_MarsFlyby].Goal[side]++;
                 break;  // Mars
 
             case 12:
-                Data->Prestige[5].Goal[side]++;
+                Data->Prestige[Prestige_JupiterFlyby].Goal[side]++;
                 break;  // Juptier
 
             case 13:
-                Data->Prestige[6].Goal[side]++;
+                Data->Prestige[Prestige_SaturnFlyby].Goal[side]++;
                 break;  // Saturn
 
             default:

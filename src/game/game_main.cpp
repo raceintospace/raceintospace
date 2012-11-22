@@ -573,7 +573,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         prest = Launch(Order[i].plr, Order[i].loc);
 
                         // check for prestige firsts
-                        if (AI[Order[i].plr] == 1 && Data->Prestige[22].Place == -1)    // supposed to be 1
+                        if (AI[Order[i].plr] == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1)    // supposed to be 1
                             for (j = 0; j < 28; j++) {
                                 if (j != 4 && j != 5 && j != 6)
                                     if (Data->Prestige[j].Place == Order[i].plr
@@ -582,9 +582,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                                     }
                             }
 
-                        if (Data->Prestige[22].Place != -1) {
+                        if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
                             UpdateRecords(1);
-                            NewEnd(Data->Prestige[22].Place, Order[i].loc);
+                            NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
                             FadeOut(2, display::graphics.palette(), 10, 0, 0);
                             return;
                         }
@@ -599,7 +599,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
         Update();  /* Moves Future launches to Missions + More */
 
-        if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[22].Place == -1) {
+        if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {
             // nobody wins .....
             SpecialEnd();
             FadeOut(2, display::graphics.palette(), 10, 0, 0);
