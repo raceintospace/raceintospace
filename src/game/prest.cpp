@@ -128,28 +128,28 @@ PrestMap(int val)
 {
     switch (val) {
     case ORBSAT:
-        return MILE_OSAT;
+        return Milestone_OrbitalSatellite;
 
     case MANSPACE:
-        return MILE_MAN;
+        return Milestone_ManInSpace;
 
     case EORBIT:
-        return MILE_EORBIT;
+        return Milestone_EarthOrbit;
 
     case LUNFLY:
-        return MILE_LFLY;
+        return Milestone_LunarFlyby;
 
     case PROBELAND:
-        return MILE_LPL;
+        return Milestone_LunarPlanetary;
 
     case LPASS:
-        return MILE_LPASS;
+        return Milestone_LunarPass;
 
     case LORBIT:
-        return MILE_LORBIT;
+        return Milestone_LunarOrbit;
 
     case LLAND:
-        return MILE_LLAND;
+        return Milestone_LunarLanding;
 
     default:
         return -1;
@@ -343,35 +343,35 @@ char Set_Goal(char plr, char which, char control)
         if (Data->Prestige[which].Place == -1) {
             switch (which) { // flag milestones
             case ORBSAT:
-                isMile(plr, MILE_OSAT) = 1;
+                isMile(plr, Milestone_OrbitalSatellite) = 1;
                 break;
 
             case MANSPACE:
-                isMile(plr, MILE_MAN) = 1;
+                isMile(plr, Milestone_ManInSpace) = 1;
                 break;
 
             case EORBIT:
-                isMile(plr, MILE_EORBIT) = 1;
+                isMile(plr, Milestone_EarthOrbit) = 1;
                 break;
 
             case LUNFLY:
-                isMile(plr, MILE_LFLY) = 1;
+                isMile(plr, Milestone_LunarFlyby) = 1;
                 break;
 
             case PROBELAND:
-                isMile(plr, MILE_LPL) = 1;
+                isMile(plr, Milestone_LunarPlanetary) = 1;
                 break;
 
             case LPASS:
-                isMile(plr, MILE_LPASS) = 1;
+                isMile(plr, Milestone_LunarPass) = 1;
                 break;
 
             case LORBIT:
-                isMile(plr, MILE_LORBIT) = 1;
+                isMile(plr, Milestone_LunarOrbit) = 1;
                 break;
 
             case LLAND:
-                isMile(plr, MILE_LLAND) = 1;
+                isMile(plr, Milestone_LunarLanding) = 1;
                 break;
             }
 
@@ -400,11 +400,11 @@ char Set_Goal(char plr, char which, char control)
                 hero |= HeroCheck(which);
             } else if (control == 1) {
                 switch (which) {
-                case DUR_B:
-                case DUR_C:
-                case DUR_D:
-                case DUR_E:
-                case DUR_F:
+                case Prestige_Duration_B:
+                case Prestige_Duration_C:
+                case Prestige_Duration_D:
+                case Prestige_Duration_E:
+                case Prestige_Duration_F:
                     if (MAIL == 0) {
                         pd = Mev[0].pad;
                         qt = Data->P[0].Udp[pd].Qty;
@@ -432,35 +432,35 @@ char Set_Goal(char plr, char which, char control)
 
             switch (which) { // flag milestones
             case ORBSAT:
-                isMile(plr, MILE_OSAT) = 1;
+                isMile(plr, Milestone_OrbitalSatellite) = 1;
                 break;
 
             case MANSPACE:
-                isMile(plr, MILE_MAN) = 1;
+                isMile(plr, Milestone_ManInSpace) = 1;
                 break;
 
             case EORBIT:
-                isMile(plr, MILE_EORBIT) = 1;
+                isMile(plr, Milestone_EarthOrbit) = 1;
                 break;
 
             case LUNFLY:
-                isMile(plr, MILE_LFLY) = 1;
+                isMile(plr, Milestone_LunarFlyby) = 1;
                 break;
 
             case PROBELAND:
-                isMile(plr, MILE_LPL) = 1;
+                isMile(plr, Milestone_LunarPlanetary) = 1;
                 break;
 
             case LPASS:
-                isMile(plr, MILE_LPASS) = 1;
+                isMile(plr, Milestone_LunarPass) = 1;
                 break;
 
             case LORBIT:
-                isMile(plr, MILE_LORBIT) = 1;
+                isMile(plr, Milestone_LunarOrbit) = 1;
                 break;
 
             case LLAND:
-                isMile(plr, MILE_LLAND) = 1;
+                isMile(plr, Milestone_LunarLanding) = 1;
                 break;
             }
 
@@ -515,20 +515,20 @@ char Set_Goal(char plr, char which, char control)
     case DUR_A:
         return(sum);
 
-    case DUR_B:
+    case Prestige_Duration_B:
         return(sum);
 
-    case DUR_C:
-        return(sum + Set_Goal(plr, DUR_B, 1));
+    case Prestige_Duration_C:
+        return(sum + Set_Goal(plr, Prestige_Duration_B, 1));
 
-    case DUR_D:
-        return(sum + Set_Goal(plr, DUR_C, 1));
+    case Prestige_Duration_D:
+        return(sum + Set_Goal(plr, Prestige_Duration_C, 1));
 
-    case DUR_E:
-        return(sum + Set_Goal(plr, DUR_D, 1));
+    case Prestige_Duration_E:
+        return(sum + Set_Goal(plr, Prestige_Duration_D, 1));
 
-    case DUR_F:
-        return(sum + Set_Goal(plr, DUR_E, 1));
+    case Prestige_Duration_F:
+        return(sum + Set_Goal(plr, Prestige_Duration_E, 1));
 
     case CAP1:
         return(sum);
@@ -927,15 +927,15 @@ int AllotPrest(char plr, char mis)
 
 #define DNE(a,b) (Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a))
 
-    if (DNE(plr, DUR_F)) {
+    if (DNE(plr, Prestige_Duration_F)) {
         Data->P[plr].DurationLevel = 6;
-    } else if (DNE(plr, DUR_E)) {
+    } else if (DNE(plr, Prestige_Duration_E)) {
         Data->P[plr].DurationLevel = 5;
-    } else if (DNE(plr, DUR_D)) {
+    } else if (DNE(plr, Prestige_Duration_D)) {
         Data->P[plr].DurationLevel = 4;
-    } else if (DNE(plr, DUR_C)) {
+    } else if (DNE(plr, Prestige_Duration_C)) {
         Data->P[plr].DurationLevel = 3;
-    } else if (DNE(plr, DUR_B)) {
+    } else if (DNE(plr, Prestige_Duration_B)) {
         Data->P[plr].DurationLevel = 2;
     } else if (DNE(plr, MANSPACE)) {
         Data->P[plr].DurationLevel = 1;
