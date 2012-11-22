@@ -269,6 +269,17 @@ enum AstronautMissionStatus {
 	ASTRO_MISSION_SCRUBBED = 3,
 };
 
+
+enum AI_Tracking {
+	AI_ORBITAL_SATELLITE = 0,
+	AI_END_STAGE_LOCATION = 1,
+	AI_LUNAR_MODULE =2,
+	AI_STRATEGY = 3,  // 0=none, 1=one, 2=two
+	AI_BEGINNING_STRATEGY = 4,
+	AI_LARGER_ROCKET_STRATEGY = 5,
+};
+
+
 /**
 \brief This is a structure representing astronauts/cosmonauts.
 */
@@ -428,7 +439,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         char cdex;
     } PastIntel[30];
     char unused_AIpath[23]; // unused
-    char Track[10];                  // Misc Values
+    char AIStrategy[10];                  // AI Strategy Values
     char AILunar,                    // Flag to tell way to moon
          AIPrim,                     // Currect Primary Prog
          AISec,                      // Currect Secondary Prog
