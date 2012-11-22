@@ -171,7 +171,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
 
     val = 0;
 
-    for (i = 0; i < Data->P[plr].Gcnt[prog][crew]; i++) {
+    for (i = 0; i < Data->P[plr].CrewCount[prog][crew]; i++) {
         if (man != Guy(plr, prog, crew, i)) {
             temp = 0;
 
@@ -696,7 +696,7 @@ Programs(char plr, char prog)
 {
     int i, max, chk, tst;
     int now2 = 0, count = 0, grp = 0, BarA = 0;
-    int M[100], Gcnt[8];
+    int M[100], CrewCount[8];
     char ksel = 0;
 
     helpText = "i036";
@@ -718,18 +718,18 @@ Programs(char plr, char prog)
     DrawProgs(plr, prog);
     Flts(0, 0);
 
-    for (i = 0; i < 8; i++) {
-        Gcnt[i] = Data->P[plr].Gcnt[prog][i];
+    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+        CrewCount[i] = Data->P[plr].CrewCount[prog][i];
 
-        if (Gcnt[i] == 0) {
+        if (CrewCount[i] == 0) {
             FltsTxt(i, 8);
         }
 
-        if (Gcnt[i] < max && Gcnt[i] != 0) {
+        if (CrewCount[i] < max && CrewCount[i] != 0) {
             FltsTxt(i, 9);
         }
 
-        if (Gcnt[i] == max) {
+        if (CrewCount[i] == max) {
             FltsTxt(i, 1);
         }
     }
@@ -927,28 +927,28 @@ Programs(char plr, char prog)
                 BarSkill(plr, BarA, now2, &M[0]);
             } else if (((x >= 4 && y >= 86 && x <= 12 && y <= 92
                          && mousebuttons > 0) || key == '1')
-                       && Gcnt[grp] >= 1) {
+                       && CrewCount[grp] >= 1) {
                 /* Display Man 1 */
                 InBox(4, 86, 12, 92);
                 AstLevel(plr, prog, grp, 0);
                 OutBox(4, 86, 12, 92);
             } else if (((x >= 4 && y >= 95 && x <= 12 && y <= 101
                          && mousebuttons > 0) || key == '2') && prog >= 2
-                       && Gcnt[grp] >= 2) {
+                       && CrewCount[grp] >= 2) {
                 /* Display Man 2 */
                 InBox(4, 95, 12, 101);
                 AstLevel(plr, prog, grp, 1);
                 OutBox(4, 95, 12, 101);
             } else if (((x >= 4 && y >= 104 && x <= 12 && y <= 110
                          && mousebuttons > 0) || key == '3') && prog >= 3
-                       && Gcnt[grp] >= 3) {
+                       && CrewCount[grp] >= 3) {
                 /* Display Man 3 */
                 InBox(4, 104, 12, 110);
                 AstLevel(plr, prog, grp, 2);
                 OutBox(4, 104, 12, 110);
             } else if (((x >= 4 && y >= 113 && x <= 12 && y <= 119
                          && mousebuttons > 0) || key == '4') && prog >= 5
-                       && Gcnt[grp] >= 4) {
+                       && CrewCount[grp] >= 4) {
                 /* Display Man 4 */
                 InBox(4, 113, 12, 119);
                 AstLevel(plr, prog, grp, 3);
@@ -1062,17 +1062,17 @@ Programs(char plr, char prog)
                 WaitForMouseUp();
             } else if (((x >= 245 && y >= 88 && x <= 314 && y <= 100
                          && mousebuttons > 0) || key == 'A')
-                       && Gcnt[grp] < max) {
+                       && CrewCount[grp] < max) {
                 /* Assign 'Naut */
-                if (Data->P[plr].Crew[prog][grp][Gcnt[grp]] == 0
+                if (Data->P[plr].Crew[prog][grp][CrewCount[grp]] == 0
                     && count > 0) {
                     InBox(245, 88, 314, 100);
-                    Data->P[plr].Crew[prog][grp][Gcnt[grp]] = M[now2] + 1;
+                    Data->P[plr].Crew[prog][grp][CrewCount[grp]] = M[now2] + 1;
 
-                    AstNames(Gcnt[grp], &Data->P[plr].Pool[M[now2]].Name[0],
+                    AstNames(CrewCount[grp], &Data->P[plr].Pool[M[now2]].Name[0],
                              Data->P[plr].Pool[M[now2]].Mood);
                     Data->P[plr].Pool[M[now2]].Crew = grp + 1;
-                    Data->P[plr].Pool[M[now2]].Task = Gcnt[grp];
+                    Data->P[plr].Pool[M[now2]].Task = CrewCount[grp];
                     Data->P[plr].Pool[M[now2]].Unassigned= 1;
 
                     for (i = now2; i < count; i++) {
@@ -1098,11 +1098,11 @@ Programs(char plr, char prog)
 
                     DispLeft(plr, BarA, count, now2, &M[0]);
 
-                    Gcnt[grp]++;
+                    CrewCount[grp]++;
 
-                    Data->P[plr].Gcnt[prog][grp] = Gcnt[grp];
+                    Data->P[plr].CrewCount[prog][grp] = CrewCount[grp];
 
-                    if (Gcnt[grp] == max) {
+                    if (CrewCount[grp] == max) {
                         FltsTxt(grp, 1);
                     } else {
                         FltsTxt(grp, 9);
@@ -1173,14 +1173,14 @@ Programs(char plr, char prog)
                 } else if (Data->P[plr].Crew[prog][grp][0] != 0) {
                     InBox(245, 106, 314, 118);
 
-                    while (Gcnt[grp] > 0) {
+                    while (CrewCount[grp] > 0) {
                         M[count] =
-                            Data->P[plr].Crew[prog][grp][Gcnt[grp] - 1] - 1;
-                        Data->P[plr].Crew[prog][grp][Gcnt[grp] - 1] = 0;
+                            Data->P[plr].Crew[prog][grp][CrewCount[grp] - 1] - 1;
+                        Data->P[plr].Crew[prog][grp][CrewCount[grp] - 1] = 0;
                         Data->P[plr].Pool[M[count]].Crew = 0;
                         Data->P[plr].Pool[M[count]].Moved = 0;
                         Data->P[plr].Pool[M[now2]].Unassigned= 0;
-                        Gcnt[grp]--;
+                        CrewCount[grp]--;
                         count++;
                     }
 
@@ -1215,18 +1215,18 @@ Programs(char plr, char prog)
                 delay(10);
 
                 for (i = 0; i < 8; i++) {
-                    if (Gcnt[i] < max)
-                        while (Gcnt[i] > 0) {
+                    if (CrewCount[i] < max)
+                        while (CrewCount[i] > 0) {
                             M[count] =
-                                Data->P[plr].Crew[prog][i][Gcnt[i] - 1] - 1;
-                            Data->P[plr].Crew[prog][i][Gcnt[i] - 1] = 0;
+                                Data->P[plr].Crew[prog][i][CrewCount[i] - 1] - 1;
+                            Data->P[plr].Crew[prog][i][CrewCount[i] - 1] = 0;
                             Data->P[plr].Pool[M[count]].Crew = 0;
-                            Data->P[plr].Gcnt[prog][i] = 0;
-                            Gcnt[i]--;
+                            Data->P[plr].CrewCount[prog][i] = 0;
+                            CrewCount[i]--;
                             count++;
                         };
 
-                    Data->P[plr].Gcnt[prog][i] = Gcnt[i];
+                    Data->P[plr].CrewCount[prog][i] = CrewCount[i];
                 };
 
                 for (i = 0; i < count; i++) {
