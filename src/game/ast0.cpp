@@ -371,15 +371,15 @@ void SatText(char plr)
                     DispNum(5 + i * 80, 161, 0);
                 }
 
-                if (Data->Prestige[24].Place == 0) {
+                if (Data->Prestige[Prestige_MannedDocking].Place == 0) {
                     PrintAt(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[24].Place == 1) {
+                } else if (Data->Prestige[Prestige_MannedDocking].Place == 1) {
                     PrintAt(5 + i * 80, 178, "SOVIET");
                 } else {
                     PrintAt(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[24].Points[plr]);
+                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_MannedDocking].Points[plr]);
                 break;
 
             case 1:
@@ -403,15 +403,15 @@ void SatText(char plr)
                     DispNum(5 + i * 80, 161, 0);
                 }
 
-                if (Data->Prestige[0].Place == 0) {
+                if (Data->Prestige[Prestige_OrbitalSatellite].Place == 0) {
                     PrintAt(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[0].Place == 1) {
+                } else if (Data->Prestige[Prestige_OrbitalSatellite].Place == 1) {
                     PrintAt(5 + i * 80, 178, "SOVIET");
                 } else {
                     PrintAt(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[0].Points[plr]);
+                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_OrbitalSatellite].Points[plr]);
                 break;
 
 
@@ -436,15 +436,15 @@ void SatText(char plr)
                     DispNum(5 + i * 80, 161, 0);
                 }
 
-                if (Data->Prestige[7].Place == 0) {
+                if (Data->Prestige[Prestige_LunarProbeLanding].Place == 0) {
                     PrintAt(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[7].Place == 1) {
+                } else if (Data->Prestige[Prestige_LunarProbeLanding].Place == 1) {
                     PrintAt(5 + i * 80, 178, "SOVIET");
                 } else {
                     PrintAt(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[7].Points[plr]);
+                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_LunarProbeLanding].Points[plr]);
                 break;
 
             }

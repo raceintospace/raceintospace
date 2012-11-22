@@ -67,14 +67,14 @@
 #define JU_FB        5
 #define SA_FB        6
 
-#define MILE_OSAT    0
-#define MILE_MAN     1
-#define MILE_EORBIT  2
-#define MILE_LFLY    3
-#define MILE_LPL     4
-#define MILE_LPASS   5
-#define MILE_LORBIT  6
-#define MILE_LLAND   7
+#define Milestone_OrbitalSatellite    0
+#define Milestone_ManInSpace     1
+#define Milestone_EarthOrbit  2
+#define Milestone_LunarFlyby    3
+#define Milestone_LunarPlanetary     4
+#define Milestone_LunarPass   5
+#define Milestone_LunarOrbit  6
+#define Milestone_LunarLanding   7
 
 #define MANSPACE     27
 #define EORBIT       18
