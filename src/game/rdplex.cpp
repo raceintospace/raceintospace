@@ -1123,7 +1123,7 @@ void ShowUnit(char hw, char un, char player_index)
 
     if (Data->P[player_index].TurnOnly == 3) {
         Init_Cost /= 2;
-        Init_Cost = maxx(1, Init_Cost);
+        Init_Cost = MAX(1, Init_Cost);
 
         if (Unit_Cost > 1) {
             Unit_Cost /= 2;
@@ -1618,11 +1618,11 @@ BuyUnit(char category, char unit, char player_index)
     if (Data->P[player_index].TurnOnly == 3) {
         /* make sure changes do not affect items that are already free */
         if (Init_Cost) {
-            Init_Cost = maxx(1, Init_Cost / 2);
+            Init_Cost = MAX(1, Init_Cost / 2);
         }
 
         if (Unit_Cost) {
-            Unit_Cost = maxx(1, Unit_Cost / 2);
+            Unit_Cost = MAX(1, Unit_Cost / 2);
         }
     }
 

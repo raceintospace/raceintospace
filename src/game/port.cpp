@@ -270,10 +270,10 @@ void SpotCrap(char loc, char mode)
         GV(&SP3, sImg.w, sImg.h); // background buffer
 
         gxVirtualVirtual(&vhptr,
-                         minn(sPath.xPut, 319),
-                         minn(sPath.yPut, 199),
-                         minn(sPath.xPut + sImg.w - 1, 319),
-                         minn(sPath.yPut + sImg.h - 1, 199),
+                         MIN(sPath.xPut, 319),
+                         MIN(sPath.yPut, 199),
+                         MIN(sPath.xPut + sImg.w - 1, 319),
+                         MIN(sPath.yPut + sImg.h - 1, 199),
                          &SP3, 0, 0, 0);
 
         if (sPath.Scale != 1.0) {
@@ -301,13 +301,13 @@ void SpotCrap(char loc, char mode)
 
             if (sPathOld.xPut != -1)
                 gxVirtualDisplay(&vhptr, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut,
-                                 minn(sPathOld.xPut + sImgOld.w - 1, 319),
-                                 minn(sPathOld.yPut + sImgOld.h - 1, 199),
+                                 MIN(sPathOld.xPut + sImgOld.w - 1, 319),
+                                 MIN(sPathOld.yPut + sImgOld.h - 1, 199),
                                  0);
 
             gxPutImage(&SP1, gxSET,
-                       minn(sPath.xPut, 319),
-                       minn(sPath.yPut, 199), 0);
+                       MIN(sPath.xPut, 319),
+                       MIN(sPath.yPut, 199), 0);
         }
 
         sPathOld = sPath;
@@ -742,55 +742,55 @@ void UpdatePortOverlays(void)
 
         // Museum
         if (Data->Prestige[Prestige_MannedOrbital].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = maxx(Data->P[i].Port[PORT_Museum], 1);    // Mus:1
+            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 1);    // Mus:1
         }
 
         if (Data->Prestige[Prestige_LunarFlyby].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = maxx(Data->P[i].Port[PORT_Museum], 2);    // Mus:2
+            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 2);    // Mus:2
         }
 
         if (Data->Prestige[Prestige_MannedLunarOrbit].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = maxx(Data->P[i].Port[PORT_Museum], 3);    // Mus:3
+            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 3);    // Mus:3
         }
 
         // R&D
         if (Data->P[i].Budget >= 85) {
-            Data->P[i].Port[PORT_Research] = maxx(Data->P[i].Port[PORT_Research], 1);    // RD:1
+            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 1);    // RD:1
         }
 
         if (Data->P[i].Budget >= 112) {
-            Data->P[i].Port[PORT_Research] = maxx(Data->P[i].Port[PORT_Research], 2);    // RD:2
+            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 2);    // RD:2
         }
 
         if (Data->P[i].Budget >= 150) {
-            Data->P[i].Port[PORT_Research] = maxx(Data->P[i].Port[PORT_Research], 3);    // RD:3
+            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 3);    // RD:3
         }
 
         // VAB
 
         if (Data->Prestige[Prestige_Duration_B].Goal[i] > 0) {
-            Data->P[i].Port[PORT_VAB] = maxx(Data->P[i].Port[PORT_VAB], 1);    // VAB:1
+            Data->P[i].Port[PORT_VAB] = MAX(Data->P[i].Port[PORT_VAB], 1);    // VAB:1
         }
 
         if (Data->P[i].Budget > 115) {
-            Data->P[i].Port[PORT_VAB] = maxx(Data->P[i].Port[PORT_VAB], 2);    // VAB:2
+            Data->P[i].Port[PORT_VAB] = MAX(Data->P[i].Port[PORT_VAB], 2);    // VAB:2
         }
 
         // Admin
         if (Data->P[i].AstroLevel >= 2) {
-            Data->P[i].Port[PORT_Admin] = maxx(Data->P[i].Port[PORT_Admin], 1);    // Adm:1
+            Data->P[i].Port[PORT_Admin] = MAX(Data->P[i].Port[PORT_Admin], 1);    // Adm:1
         }
 
         if (Data->P[i].AstroLevel >= 4) {
-            Data->P[i].Port[PORT_Admin] = maxx(Data->P[i].Port[PORT_Admin], 2);    // Adm:2
+            Data->P[i].Port[PORT_Admin] = MAX(Data->P[i].Port[PORT_Admin], 2);    // Adm:2
         }
 
         if (Data->Prestige[Prestige_OnePerson].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Tracking] = maxx(Data->P[i].Port[PORT_Tracking], 1);    // Trk:1
+            Data->P[i].Port[PORT_Tracking] = MAX(Data->P[i].Port[PORT_Tracking], 1);    // Trk:1
         }
 
         if (Data->Prestige[Prestige_MannedLunarPass].Goal[i] > 0) {
-            Data->P[i].Port[PORT_MissionControl] = maxx(Data->P[i].Port[PORT_MissionControl], 1);    // MC:1
+            Data->P[i].Port[PORT_MissionControl] = MAX(Data->P[i].Port[PORT_MissionControl], 1);    // MC:1
         }
 
         if (Data->P[i].AstroCount > 0) {
