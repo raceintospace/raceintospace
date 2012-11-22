@@ -568,7 +568,7 @@ void XSpec(char plr, char mis, char year)
     MissionName(mis, 93, 169, 30);
     display::graphics.setForegroundColor(1);
     PrintAt(33, 183, "SOMETIME IN THE NEXT YEAR.");
-    TopSecret(plr, 37 + Data->P[plr].PastIntel[year].sf);
+    TopSecret(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
 void Special(char p, int ind)
@@ -697,7 +697,7 @@ void BackIntel(char p, char year)
     } else if (prg == 2) {
         code = ind + 12;
     } else if (prg == 5) {
-        code = Data->P[p].PastIntel[year].sf - 1;
+        code = Data->P[p].PastIntel[year].SafetyFactor - 1;
     }
 
     if (code == -1) {
@@ -890,7 +890,7 @@ void BackIntel(char p, char year)
     display::graphics.setForegroundColor(1);
     PrintAt(0, 0, " AND RATE THE");
     PrintAt(33, 183, "RELIABILITY AT ABOUT ");
-    DispNum(0, 0, Data->P[p].PastIntel[year].sf);
+    DispNum(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
     PrintAt(0, 0, " PERCENT.");
 
     if (prg != 5) {
@@ -1231,7 +1231,7 @@ void SaveIntel(char p, char prg, char ind)
         21, 28, 28, 28, 30, 30, 30, 30, 30, 30,
         30, 30, 31, 31, 31, 31, 31
     };
-    int mr, sf, j, k;
+    int mr, safetyFactor, j, k;
     char ky;
 
     if (prg == 5 && ind == 0) {
@@ -1261,15 +1261,15 @@ void SaveIntel(char p, char prg, char ind)
     Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].cdex = k;
 
     if (prg == 5) {
-        sf = Op[ind];
+        safetyFactor = Op[ind];
     } else {
-        sf = brandom(22) + 77;
+        safetyFactor = brandom(22) + 77;
     }
 
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].sf = sf;
+    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].SafetyFactor = safetyFactor;
 
     if (prg != 5) {
-        Data->P[p].IntelHardwareTable[prg][ind] = sf;
+        Data->P[p].IntelHardwareTable[prg][ind] = safetyFactor;
     }
 }
 
