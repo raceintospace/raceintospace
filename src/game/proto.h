@@ -61,49 +61,6 @@
 #define K_ESCAPE       0x001B
 #define K_SPACE     0x0020
 
-#define ME_FB        2
-#define VE_FB        3
-#define MA_FB        4
-#define JU_FB        5
-#define SA_FB        6
-
-#define MILE_OSAT    0
-#define MILE_MAN     1
-#define MILE_EORBIT  2
-#define MILE_LFLY    3
-#define MILE_LPL     4
-#define MILE_LPASS   5
-#define MILE_LORBIT  6
-#define MILE_LLAND   7
-
-#define MANSPACE     27
-#define EORBIT       18
-#define LPASS        19
-#define LORBIT       20
-#define LLAND        22
-#define ORBSAT       0
-#define LUNFLY       1
-#define PROBELAND    7
-
-#define DUR_F 8
-#define DUR_E 9
-#define DUR_D 10
-#define DUR_C 11
-#define DUR_B 12
-#define DUR_A -1    // No such experience
-
-#define CAP1 13
-#define CAP2 14
-#define CAP3 15
-#define CAPMS 16
-#define CAP4 17
-
-#define OLAB 23
-#define DOCK 24
-#define WOMAN 25
-#define EWALK 26
-#define LWALK 40
-
 #define MAX_X   320
 #define MAX_Y   200
 

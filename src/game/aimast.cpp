@@ -111,7 +111,7 @@ void AIMaster(char plr)
     }
 
     if (Data->P[plr].AIStat == 1)
-        if (Data->Prestige[0].Place == plr || Data->Prestige[0].mPlace == plr) {
+        if (Data->Prestige[Prestige_OrbitalSatellite].Place == plr || Data->Prestige[Prestige_OrbitalSatellite].mPlace == plr) {
             Data->P[plr].AIStat = 2;
         }
 

@@ -1915,7 +1915,7 @@ void UpdateRecords(char Ty)
 
                         case 50:
                             if (Ty == 1) { //Total US Wins
-                                if (MLL(i, j) == 1 && Data->Prestige[22].Place == 0) {
+                                if (MLL(i, j) == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == 0) {
                                     ++rec[k][0].tag;
                                     rec[k][0].place = 1;
                                     rec[k][0].type = 3;
@@ -1928,7 +1928,7 @@ void UpdateRecords(char Ty)
 
                         case 51:
                             if (Ty == 1) { //Total SOVIET Wins
-                                if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == 57)) && Data->Prestige[22].Place == 1) {
+                                if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == 57)) && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].place = 1;
                                     rec[k][0].type = 3;
