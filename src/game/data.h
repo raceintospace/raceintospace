@@ -435,7 +435,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         char prog;
         char cur;
         char index;
-        char sf;
+        char SafetyFactor;
         char cdex;
     } PastIntel[30];
     char unused_AIpath[23]; // unused

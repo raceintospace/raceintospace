@@ -33,40 +33,207 @@ message Equipment {
 	required int32 mission_failures = 28;
 }
 
-struct MissionType {
-	required string Name = 1;      /**< name of mission */
-	required int32 MissionCode = 2;   /**< internal code of mission type */
-	required int32 Patch = 3;         /**< Patch Used on this Mission */
-	required int32 part = 4;          /**< primary/secondary portion */
-	required int32 Hardware_Capsule = 5;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Hardware_Kicker = 6;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Hardware_LM = 7;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Hardware_Probe_DockingModule = 8;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Hardware_Primary_Booster = 9;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Hardware_EVA = 10;       /**< Prime,Kick,LEM,PayLoad,Rocket */
-	required int32 Joint = 11;         /**< Joint Mission flag */
-	required int32 Rushing = 12;       /**< rushing time 0-3 */
-	required int32 Month = 13;         /**< Month of Launch */
-	required int32 Duration = 14;      /**< Duration time */
-	required int32 Men = 15;           /**< Qty of men used in mission */
-	required int32 Prog = 16;          /**< Hardware program used */
+message MissionType {
+	required string name = 1;      /**< name of mission */
+	required int32 mission_code = 2;   /**< internal code of mission type */
+	required int32 patch = 3;         /**< Patch Used on this Mission */
+	required int32 mission_part = 4;          /**< primary/secondary portion */
+	required int32 Hardware_capsule = 5;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 hardware_kicker = 6;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 hardware_lem = 7;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 hardware_probe_dockingModule = 8;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 hardware_primary_Booster = 9;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 hardware_eva = 10;       /**< Prime,Kick,LEM,PayLoad,Rocket */
+	required int32 joint = 11;         /**< Joint Mission flag */
+	required int32 rushing = 12;       /**< rushing time 0-3 */
+	required int32 month = 13;         /**< Month of Launch */
+	required int32 duration = 14;      /**< Duration time */
+	required int32 men = 15;           /**< Qty of men used in mission */
+	required int32 prog = 16;          /**< Hardware program used */
 	required int32 primary_crew = 17;         /**< Primary Crew */
 	required int32 backup_crew = 18;         /**< Backup Crew */
 	required int32 crew = 19;          /**< Actual Mission Crew */
 };
 
+message Astronauts {
+	required string name = 1;     /**< Astronaut Name */
+	required int32 face_id = 2;         /**< Code for Astronaut Face */
+	required int32 sex = 3;          /**< Male or Female */
+	required int32 compatibility = 4;       /**< Compatability Code */
+	required int32 compatibility_right = 5;           /**< Range of Compatability Right */
+	required int32 compatiibility_left = 6;           /**< Range of Compatability Left */
+	required int32 moved = 7;        /**< if 0 Astro Moved around this turn */
+	required int32 current_mission_status = 8;          /**< Successful Mission this Turn */
+	required int32 happy = 9;        /**< \brief Happy within group */
+	required int32 prime = 10;        /**< \brief indicates the type of crew s/he's in */
+	required int32 active = 11;       /**< Seasons Active */
+	required int32 ai_special = 12;    /**< AI Special Astro Note */
+	required int32 service = 13;      /**< Service of Origination */
+	required int32 status = 14;       /**< Current status of Astronaut */
+	required int32 focus = 15;        /**< Focus of Advanced Training 0-4 */
+	required int32 injury_delay = 16;       /**< Injury Delay - Ok if 0 */
+	required int32 retirement_delay = 17;       /**< Retire Delay - Retire if 0 */
+	required int32 retirement_reason = 18;      /**< Retire Reason flag */
+	required int32 special = 19;      /**< Special for announcements */
+	required int32 assignment = 20;       /**< Location of Astro 0=limbo */
+	required int32 old_assignment = 21;    /**< program of last turn */
+	required int32 unassigned = 22;          /**< Unassigned flag */
+	required int32 crew = 23;         /**< Crew Assiciated in prog Assigm */
+	required int32 task = 24;         /**< What his job is in Flt Crew */
+	required int32 prestige = 25;  /**< Prestige Earned */
+	required int32 days = 26;         /**< Days in Space */
+	required int32 medals = 27;       /**< Medals Earned */
+	required int32 save = 28;         /**< Astro Saving Roll Percent */
+	required int32 missions = 29;     /**< Number of Missions Flown */
+	repeated int32 mission_num = 30;       /**< Mission[10] numbers participated */
+	required int32 capsule_skill = 31;          /**< Capsule Pilot Skills */
+	required int32 lem_skill = 32;           /**< LEM Pilot Skills */
+	required int32 eva_skill = 33;          /**< EVA Skills */
+	required int32 docking_skill = 34;      /**< Docking Skills */
+	required int32 endurance_skill = 35;    /**< Constitution Skills */
+	required int32 training_level = 36;/**< Level of Schooling */
+	required int32 group = 37;        /**< Group Entered with */
+	required int32 mood = 38;         /**< Mood of Astronaut */
+	required int32 pool = 39;         /**< Temp Storage for Astros */
+	required int32 hero = 40;         /**< Hero Status */
+};
 
+message PrestigeUpdate {
+	repeated int32 Poss = 1; // char[10];
+	repeated int32 PossVal = 2;        // char[10];
+	required int32 Hind = 3;  // gets set to history index of past mission
+	required int32 quantity = 4;
+	required int32 month = 5;
+};
+
+message PastInfo {
+	repeated string mission_name = 1; // was char[2][25];       /**< Name of Mission */
+	repeated int32 patch = 2;                 /**< was char[2] - Patch Type */
+	required int32 mission_code = 3;              /**< Type of Mission */
+	required int32 mission_year = 4;              /**< Year Mission Took Place */
+	required int32 month = 5;                    /**< Month of Launch */
+	required int32 time = 6;                     /**< Early / Late Flag */
+	repeated int32 crew_pad_a = 7;                /**< Astros # involved in Mis */
+	repeated int32 crew_pad_b = 8;                /**< Astros # involved in Mis */
+	repeated int32 hardware_pad_a = 9;               /**< Set of hardware */
+	repeated int32 hardware_pad_b = 10;
+	required int32 result = 11;               /**< Success / Failure */
+	required int32 sp_result = 12;             /**< Actual deciding Result */
+	required int32 event = 13;                    /**< Single event code */
+	required int32 safety = 14;                      /**< Safety of the Equipment for delays */
+	required int32 part = 15;                     /**< Participant in event code */
+	required int32 prestige = 16;              /**< Prestige Earned on this Mission */
+	required int32 duration = 17;                 /**< Length of Mission (units:ABCDEF) */
+};
+
+message PastIntel {
+	required int32 code = 1;
+	required int32 num = 2;
+	required int32 prog = 3;
+	required int32 cur = 4;
+	required int32 index = 5;
+	required int32 sf = 6;
+	required int32 cdex = 7;
+};
+
+message AstronautCrew {
+	repeated int32 flight_crew = 1;
+}
+
+message  FlightCrew {
+	repeated FlightCrew crew = 1;
+}
 
 message BuzzData {
-
-
-	repeated Equipment Probe = 7;
-	repeated Equipment Rocket = 8;
-	repeated Equipment Manned = 9;
-	repeated Equipment Misc = 10;
-
-
+	required int32 header = 1;    // was Header[4] - was unused - could indicate which player
+	required string player_name = 2; // Name[20]
 	
+	// moved from GameDefaults
+	required PlayerSettings player_settings = 3; 
+	
+	required int32 cash = 4;    // current cash on hand
+	required int32 budget = 5;  // next seasons budget
+	required int32 prestige = 6; // prestige earned
+	
+	// moved from prestige structure
+	required int32 prestige_goal = 7;       /**< Goal steps used for prestige calculations */
+	required int32 prestige_points = 8;     /**< Total points earned */
+	
+	// this was PrestHist[5][2]
+	repeated int32 prestige_history_actual = 9;  // char[5] of actual prestige history
+	repeated int32 prestige_history_random = 10;  // char[5] of randomized history.  4/5 +/- random(2/5 * actual)
+	repeated int32 presidental_review_history = 11; // char[5]
+	repeated int32 seasonal_prestige = 12;          // was tempPrestige[2]
+	repeated int32 budget_history = 13;  // int16_t[40];
+	repeated int32 budget_history_fake = 14; // int16_t[40] - randomized from actual values
+	
+	repeated int32 historical_probe_spending = 15;  // int16_t[5]
+	repeated int32 historical_rocket_spending = 16; // int16_t[5]
+	repeated int32 historical_manned_spending = 17; // int16_t[5]
+	repeated int32 historical_misc_spending = 18;   // int16_t[5]
+	
+	required int32 r_and_d_turn_mods = 19;  // R&D mods for turn only
+	required int32 r_and_d_year_mods = 20;  // R&D mods for full year
+	required int32 turn_only_events = 21;   // events for this turn only
+	required int32 plans = 22;
+	required int32 future_plans = 23;  // special future mission
+
+	required int32 duration_level = 24;  // current duration level
+	required int32 lem_test_points = 25; // accumulation of LM Test points
+
+	repeated Equipment probe = 26;
+	repeated Equipment rocket = 27;
+	repeated Equipment manned = 28;
+	repeated Equipment misc = 29;    
+
+	required bool docking_module_in_orbit = 30; // initially 2
+	repeated int32 launch_facility = 31; // char[3] for each launchpad
+	
+	required int32 astronaut_count = 32; // number in program
+	required int32 astronaut_level = 33; // which purchase tier
+	required int32 astronaut_delay = 34; // season delay to train new astros
+	
+	repeated Astronauts astronaut_pool = 35; // Astros[65]
+		
+	repeated PrestigeUpdate prestige_update = 36;
+	
+	// This was a matrix of IntelHardwareTable[5][7], only needs [4][7]
+	repeated int32 intel_hardware_table_probe = 37;
+	repeated int32 intel_hardware_table_rockets = 38;
+	repeated int32 intel_hardware_table_manned = 39;
+	repeated int32 intel_hardware_table_misc = 40;
+	
+	repeated AstronautCrew gcnt = 41;  // GCnt[6][8]
+	repeated FlightCrew crew = 42;  // Crew [6][8][4]
+	
+	required bool female_astronauts_allowed = 43;
+	
+	repeated MissionType missions = 44;
+	required int32 blocked_mission_number = 45;
+	repeated MissionType future_missions = 46;
+	repeated PastInfo mission_history = 47;
+	required int32 past_mission_count = 48;
+	required int32 mission_catastrophic_failure_on_turn = 49;
+	
+	// Record of R&D purchase for Turn	 was [4][7]
+	repeated int32 buy_probe = 50;
+	repeated int32 buy_rockets = 51;
+	repeated int32 buy_manned = 52;
+	repeated int32 buy_misc = 53;
+	
+	repeated PastIntel past_intellegence = 54;  // PastIntel[30]
+	required int32 ai_Strategy = 55; // char[10]
+	
+	required int32 ai_Lunar = 56;
+	required int32 ai_Primary = 57;
+	required int32 ai_Secondary = 58;
+	required int32 ai_Status = 59;
+	repeated int32 bad_card_event_flags = 60; // char[15]
+	repeated int32 space_port_levels = 61; // char[40]
+
+	// moved from players structure
+	repeated int32 prestige_firsts = 62;     // Prestige Firsts [28]
+	repeated int32 milestones = 63;   		/**< MileStone Calcs [10] */
 }
 
 message PlayerSettings {
@@ -74,46 +241,37 @@ message PlayerSettings {
 									 // 2=AI+USA,3=AI+USSR
 									 // 4=Foreign,5=AI+Foreign
 									 // 6=PBEM+USA,7=PBEM+USSR
-	required skill_level = 2;  // 0 = Easy, 1 = Medium, 2 = Hard
-	required astronaut_level= 3;   // 0 = Easy, 1 = Medium, 2 = Hard
+	required int32 skill_level = 2;  // 0 = Easy, 1 = Medium, 2 = Hard
+	required int32 astronaut_level= 3;   // 0 = Easy, 1 = Medium, 2 = Hard
 }
 
-
 message GameDefaults {
-	repeated PlayerSettings player_settings = 1;
-	required int32 input = 2;  // 0 = mouse, 1 = keyboard, 2 = joystick
-	required int32 animation = 3; // 0 = full, 1 = partial, 2 = results only
-	required int32 music = 4; // 0 = full, 1 = partial, 2 = none
-	required bool sound_effects_disabled = 5; // false = On, true = Off
+	required int32 input = 1;  // 0 = mouse, 1 = keyboard, 2 = joystick
+	required int32 animation = 2; // 0 = full, 1 = partial, 2 = results only
+	required int32 music = 3; // 0 = full, 1 = partial, 2 = none
+	required bool sound_effects_disabled = 4; // false = On, true = Off
 };
 
 message PrestigeType {
-	char Add[4];        /**< 0=first,1=second, 2=additional,3=negative */
-    char Goal[NUM_PLAYERS];       /**< Goal steps used for prest calculations */
-    int16_t Points[NUM_PLAYERS];  /**< Total points earned */
-    required int32  Index;         /**< the index for the first into .History[] */
-    required int32  Place;         /**< Who got the prestige first. */
-    required int32  mPlace;        /**< If you've done it at all */
-    required int32  Month;         /**< Date of the First */
-    required int32 Year;          /**< Date of the First */
+	repeated int32 bonuses = 1;        /**< 0=first,1=second, 2=additional,3=negative  - was Add[4]*/
+    required int32 index = 2;         /**< the index for the first into .History[] */
+    required int32 place = 3;         /**< Who got the prestige first. */
+    required int32 mPlace = 4;        /**< If you've done it at all */
+    required int32 month = 5;         /**< Date of the First */
+    required int32 year = 6;          /**< Date of the First */
 }
 
+// Primary structure of game data
 message Players {
-	required string BUZZ = 1;                    /**< Save Version Marker */
-	required int32 Checksum = 2;               /**< Checksum of Data */
+	required int32 file_signature = 1;  /**< Save Version Marker */
+	required int32 checksum = 2;        /**< Checksum of Data */
 	repeated int32 player_turn_order = 3;  // Order of turns - char[NUM_PLAYERS]
 	required GameDefaults defaults = 4;
-	required int32 Year = 5;      /**< Game Turn */
-	required int32 Season = 6;    /**< Season of Year */
-	
-	struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
-	
-	struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
-	
-//	required int32 EMark [deprecated = true];                   /**< unused - Event Marker */
-	required int32 event_cards;    // char[100] - event card ordering
-	required int32 Count;         // picked event cards
-	char PD[NUM_PLAYERS][28];  // Prestige Firsts
-	char Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
+	required int32 year = 5;      /**< Game Turn */
+	required int32 season = 6;    /**< Season of Year */
+	required int32 picked_event_cards = 7;         // picked event cards	
+	repeated int32 event_cards = 8;    // char[100] - event card ordering
+	repeated PrestigeType Prestige = 9;   /**< Definitions of Prest Vals - PrestType[28] */
+	repeated BuzzData player_data = 10;  /**< Player Game Data  BuzzData[2]*/
 };
 
