@@ -588,11 +588,11 @@ void DumpAstro(char plr, int inx)
             pData->Pool[i].Unassigned= 0;
         }
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 4; j++)
+    for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+        for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++)
             if (pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
                 pData->Crew[inx][i][j] = 0;
-                pData->Gcnt[inx][i] = 0;
+                pData->CrewCount[inx][i] = 0;
             }
     }
 
@@ -692,8 +692,8 @@ void TransAstro(char plr, int inx)
         flt1 = -1;
         flt2 = -1;
 
-        for (i = 0; i < 8; i++) {
-            if (pData->Gcnt[inx][i] == 0) {
+        for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+            if (pData->CrewCount[inx][i] == 0) {
                 if (flt1 == -1) {
                     flt1 = i;
                 } else if (flt2 == -1) {
@@ -783,8 +783,8 @@ void TransAstro(char plr, int inx)
                 } // end while
             }
 
-            pData->Gcnt[inx][flt1] = max;
-            pData->Gcnt[inx][flt2] = max;
+            pData->CrewCount[inx][flt1] = max;
+            pData->CrewCount[inx][flt2] = max;
         }
     } // end while
 

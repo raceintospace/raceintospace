@@ -649,8 +649,8 @@ AstroTurn(void)
                 for (l = 0; l < ASTRONAUT_CREW_MAX; l++) {
                     temp = 0;
 
-                    if (Data->P[j].Gcnt[k][l] > 0) {
-                        for (i = 0; i < Data->P[j].Gcnt[k][l]; i++) {
+                    if (Data->P[j].CrewCount[k][l] > 0) {
+                        for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
                             if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
                                                 1].Status == AST_ST_DEAD
                                 || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
@@ -662,7 +662,7 @@ AstroTurn(void)
                         }          /* for i */
 
                         if (temp > 0) {
-                            for (i = 0; i < Data->P[j].Gcnt[k][l]; i++) {
+                            for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
                                 Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
                                                 1].oldAssign =
                                                     Data->P[j].Pool[Data->P[j].
@@ -686,7 +686,7 @@ AstroTurn(void)
                                 Data->P[j].Crew[k][l][i] = 0;
                             }      /* for i */
 
-                            Data->P[j].Gcnt[k][l] = 0;
+                            Data->P[j].CrewCount[k][l] = 0;
                         }          /* it temp */
                     }              /* if Gcnt */
                 }                  /* for l */

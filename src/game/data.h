@@ -412,7 +412,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char unused_VList[5]; // unused
     char unused_VTop; // unused
     char IntelHardwareTable[5][7];                // safety factor for intelligence
-    char Gcnt[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
+    char CrewCount[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
     char Crew[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
     // [5] - Program #
     // [8] - Eight Crews Max
