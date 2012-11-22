@@ -315,7 +315,7 @@ PInfo(char plr, char loc)
     };                             // end-if
 
     //EVA suit klugge
-    PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[26].Points[plr];
+    PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
 
     // make sure there are no negative vals in Pt
     for (i = 0; i < 4; i++)
@@ -1556,7 +1556,7 @@ DrawRank(char plr)
     helpText = "i030";
     keyHelpText = "k030";
 
-    //Win=Data->Prestige[22].Place;
+    //Win=Data->Prestige[Prestige_MannedLunarLanding].Place;
     InBox(12, 4, 39, 20);
     InBox(281, 4, 308, 20);
     FlagSm(0, 13, 5);
@@ -1666,7 +1666,7 @@ DrawRank(char plr)
         }
     }
 
-    //Win=Data->Prestige[22].Place;
+    //Win=Data->Prestige[Prestige_MannedLunarLanding].Place;
     i = 0;
     t1 = 152;
     display::graphics.setForegroundColor(5);
@@ -1777,7 +1777,7 @@ CalcScore(char plr, char lvA, char lvB)
         }
     }
 
-    if (plr == Data->Prestige[22].Place) {
+    if (plr == Data->Prestige[Prestige_MannedLunarLanding].Place) {
         if (lvA == 1) {
             if (Data->Year <= 67) {
                 total += 50;
