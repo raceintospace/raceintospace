@@ -320,7 +320,7 @@ PInfo(char plr, char loc)
     // make sure there are no negative vals in Pt
     for (i = 0; i < 4; i++)
         for (j = 0; j < 7; j++) {
-            PrestigeTable[i][j] = maxx(PrestigeTable[i][j], 0);
+            PrestigeTable[i][j] = MAX(PrestigeTable[i][j], 0);
         }
 
     tot = 0;

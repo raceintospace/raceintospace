@@ -236,7 +236,7 @@ int Launch(char plr, char mis)
 
     // Fixup for Mercury Duration C stuff
     if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 0) {
-        Data->P[plr].Mission[mis].Duration = minn(2, Data->P[plr].Mission[mis].Duration);
+        Data->P[plr].Mission[mis].Duration = MIN(2, Data->P[plr].Mission[mis].Duration);
     }
 
     MissionCodes(plr, mcode, mis);
@@ -411,7 +411,7 @@ void MissionPast(char plr, char pad, int prest)
     Data->P[plr].History[loc].MissionCode = Data->P[plr].Mission[pad].MissionCode;
     Data->P[plr].History[loc].MissionYear = Data->Year;
     Data->P[plr].History[loc].Month = Data->P[plr].Mission[pad].Month;
-    Data->P[plr].History[loc].Prestige = maxx(prest, -10);
+    Data->P[plr].History[loc].Prestige = MAX(prest, -10);
     Data->P[plr].History[loc].Duration = Data->P[plr].Mission[pad].Duration;
 
     for (loop = 0; loop < (Data->P[plr].Mission[pad].Joint + 1); loop++) {
@@ -523,7 +523,7 @@ int MaxFailPad(char which)
                 Mev[i].StepInfo = 1003;
             }
 
-            t = maxx(Mev[i].StepInfo, t);
+            t = MAX(Mev[i].StepInfo, t);
         }
 
         i = Mev[i].trace;

@@ -67,7 +67,7 @@ random_number(int x, int y)
 static inline int
 random_min(int n)
 {
-    return (maxx(1, random_number(0, n)));
+    return (MAX(1, random_number(0, n)));
 }
 
 
@@ -157,7 +157,7 @@ void RandomizeEq(void)
         Data->P[i].Manned[MANNED_HW_ONE_MAN_MODULE].RDCost = random_number(2, 6);
 
         //1-Stage Rocket (Max Payload is at least the satellite and the 1-man capsule)
-        Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].MaxPay = maxx(Data->P[i].Manned[MANNED_HW_ONE_MAN_CAPSULE].UnitWeight, Data->P[i].Probe[PROBE_HW_ORBITAL].UnitWeight) + random_min(200);
+        Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].MaxPay = MAX(Data->P[i].Manned[MANNED_HW_ONE_MAN_CAPSULE].UnitWeight, Data->P[i].Probe[PROBE_HW_ORBITAL].UnitWeight) + random_min(200);
         Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].MaxSafety  = random_number(86, 98);
         Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].MaxRD  = Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].MaxSafety - random_number(2, 10);
         Data->P[i].Rocket[ROCKET_HW_ONE_STAGE].InitCost   = random_number(18, 30);
@@ -181,7 +181,7 @@ void RandomizeEq(void)
         Data->P[i].Rocket[ROCKET_HW_THREE_STAGE].RDCost = random_number(4, 8);
 
         //Mega Rocket (Max Payload is at least the 4-man capsule, but maxed at 9999, because otherwise it can show strange symbols)
-        Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].MaxPay = minn(Data->P[i].Manned[MANNED_HW_FOUR_MAN_CAPSULE].UnitWeight + random_min(Data->P[i].Manned[MANNED_HW_FOUR_MAN_CAPSULE].UnitWeight), 9999);
+        Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].MaxPay = MIN(Data->P[i].Manned[MANNED_HW_FOUR_MAN_CAPSULE].UnitWeight + random_min(Data->P[i].Manned[MANNED_HW_FOUR_MAN_CAPSULE].UnitWeight), 9999);
         Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].MaxSafety  = random_number(86, 98);
         Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].MaxRD  = Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].MaxSafety - random_number(2, 10);
         Data->P[i].Rocket[ROCKET_HW_MEGA_STAGE].InitCost   = random_number(120, 170);

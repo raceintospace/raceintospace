@@ -806,8 +806,8 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         SHTS[1]++;
         SHTS[2]++;
         SHTS[3]++;
-        mx1 = maxx(SHTS[0], SHTS[2]);
-        mx2 = maxx(SHTS[1], SHTS[3]);
+        mx1 = MAX(SHTS[0], SHTS[2]);
+        mx2 = MAX(SHTS[1], SHTS[3]);
 
         if (mx1 > mx2) {
             loc = (SHTS[0] > SHTS[2]) ? 0 : 2 ;

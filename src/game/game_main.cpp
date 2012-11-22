@@ -181,7 +181,7 @@ int game_main_impl(int argc, char *argv[])
 
     setup_options(argc, argv);
     /* hacking... */
-    log_setThreshold(&_LOGV(LOG_ROOT_CAT), maxx(0, LP_NOTICE - (int)options.want_debug));
+    log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.want_debug));
 
     fin = open_gamedat("USA_PORT.DAT");
 
@@ -672,7 +672,7 @@ void DockingKludge(void)
 
     for (j = 0; j < NUM_PLAYERS; j++) {
         Data->P[j].Manned[MISC_HW_DOCKING_MODULE].MSF =
-            maxx(maxx(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
+            MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
                  Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
     }
 

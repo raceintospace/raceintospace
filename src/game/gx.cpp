@@ -75,8 +75,8 @@ gxPutImage(GXHEADER *hp, int mode, int x, int y, int op2)
     assert(0 <= x && x < MAX_X);
     assert(0 <= y && y < MAX_Y);
 
-    clip_y = minn(hp->h + y, MAX_Y) - y;
-    clip_x = minn(hp->w + x, MAX_X) - x;
+    clip_y = MIN(hp->h + y, MAX_Y) - y;
+    clip_x = MIN(hp->w + x, MAX_X) - x;
 
     switch (mode) {
     case gxSET:
@@ -146,8 +146,8 @@ gxVirtualDisplay(GXHEADER *hp,
     width  = to_x1 - to_x0 + 1;
     height = to_y1 - to_y0 + 1;
 
-    clip_y = minn(height + to_y0, MAX_Y) - to_y0;
-    clip_x = minn(width  + to_x0, MAX_X) - to_x0;
+    clip_y = MIN(height + to_y0, MAX_Y) - to_y0;
+    clip_x = MIN(width  + to_x0, MAX_X) - to_x0;
 
     for (row = 0; row < clip_y; row++) {
         from_idx = (from_y + row) * hp->w + from_x;
