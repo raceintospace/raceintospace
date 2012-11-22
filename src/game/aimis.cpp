@@ -261,7 +261,7 @@ void CalcSaf(char plr, char vs)
 char Panic_Level(char plr, int *m_1, int *m_2)
 {
 // PANIC level manned docking/EVA/duration
-    if (Alt_B[plr] <= 1 && Data->P[plr].Track[1] == 4 && PreChe(plr, 24) == 0 && PreChe(plr, 26) == 0 &&
+    if (Alt_B[plr] <= 1 && Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] == 4 && PreChe(plr, 24) == 0 && PreChe(plr, 26) == 0 &&
         Data->P[plr].Mission[0].MissionCode != 15 && Data->P[plr].Mission[1].MissionCode != 20) {
         *m_1 = 15;
         *m_2 = 20;
@@ -270,7 +270,7 @@ char Panic_Level(char plr, int *m_1, int *m_2)
     }
 
 // PANIC lunar pass/probe landing/lunar fly-by
-    if (Data->P[plr].Track[1] == 5 && !PreChe(plr, 1) && !PreChe(plr, 7) && Cur_Status == Ahead && Alt_A[plr] <= 2) {
+    if (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] == 5 && !PreChe(plr, 1) && !PreChe(plr, 7) && Cur_Status == Ahead && Alt_A[plr] <= 2) {
         *m_1 = 7;
 
         if (Data->P[plr].DurationLevel <= 2) {
@@ -289,11 +289,11 @@ char Panic_Level(char plr, int *m_1, int *m_2)
 void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
 {
 //AI version 12/26/92
-    switch (Data->P[plr].Track[1]) {
+    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = 15;
         *m_2 = 15;
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = 7;
         break;
 
@@ -304,7 +304,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = 20;
         } else {
             *m_2 = 14;
-        }++Data->P[plr].Track[1];
+        }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
         *m_3 = 7;
         break;
@@ -313,11 +313,11 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         if (PreChe(plr, 24) && PreChe(plr, 26)) {
             *m_1 = 25;
             *m_2 = 27;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = 15;
             *m_2 = 20;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         }
 
         if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
@@ -337,7 +337,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_3 = 8;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
@@ -360,7 +360,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 15;
             *m_2 = 7;
             *m_3 = 8;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
@@ -380,7 +380,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].Track[5] = 1;
+            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
         Data->P[plr].Buy[1][2] = 0;
@@ -395,7 +395,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         //lunar pass
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 6:
@@ -405,20 +405,20 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 46;    //lunar orbit
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PreChe(plr, 19) == 0) {
             *m_1 = 43;
-            Data->P[plr].Track[1] = 6;
+            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
         } else if (PreChe(plr, 20) == 0 && Data->P[plr].Mission[0].MissionCode != 46) {
             *m_1 = 46;
         } else {
             *m_1 = 48;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -434,7 +434,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 53;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
@@ -481,18 +481,18 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
 void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
 {
 // AI version 12/28/92
-    switch (Data->P[plr].Track[1]) {
+    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:
         *m_1 = 15;
         *m_2 = 15;
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = 7;
         break;
 
     case 1:
         *m_1 = 15;
         *m_2 = 14;
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = 7;
         break;
 
@@ -500,11 +500,11 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         if (PreChe(plr, 24) && PreChe(plr, 26)) {
             *m_1 = 25;
             *m_2 = 27;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = 15;
             *m_2 = 20;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         }
 
         if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
@@ -523,7 +523,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             *m_3 = 7;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
@@ -547,7 +547,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 15;
             *m_2 = 7;
             *m_3 = 8;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
@@ -567,7 +567,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].Track[5] = 1;
+            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
         Data->P[plr].Buy[1][2] = 0;
@@ -582,7 +582,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         //lunar pass
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 6:
@@ -590,20 +590,20 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 46;    //lunar orbit
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PreChe(plr, 19) == 0) {
             *m_1 = 43;
-            Data->P[plr].Track[1] = 6;
+            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
         } else if (PreChe(plr, 20) == 0 && Data->P[plr].Mission[0].MissionCode != 46) {
             *m_1 = 46;
         } else {
             *m_1 = 48;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -619,7 +619,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 53;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
@@ -666,11 +666,11 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
 void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 {
 //new version undated
-    switch (Data->P[plr].Track[1]) {
+    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = 15;
         *m_2 = 15;
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = 7;
         break;
 
@@ -681,7 +681,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = 20;
         } else {
             *m_2 = 14;
-        }++Data->P[plr].Track[1];
+        }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
         *m_3 = 7;
         break;
@@ -690,11 +690,11 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         if (PreChe(plr, 24) && PreChe(plr, 26)) {
             *m_1 = 25;
             *m_2 = 27;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = 15;
             *m_2 = 20;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         }
 
         if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
@@ -714,7 +714,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_3 = 8;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
@@ -737,7 +737,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 15;
             *m_2 = 7;
             *m_3 = 8;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
@@ -757,7 +757,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].Track[5] = 1;
+            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
         Data->P[plr].Buy[1][2] = 0;
@@ -772,7 +772,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         }
 
         //lunar pass
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 6:
@@ -780,20 +780,20 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 46;    //lunar orbit
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PreChe(plr, 19) == 0) {
             *m_1 = 43;
-            Data->P[plr].Track[1] = 6;
+            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
         } else if (PreChe(plr, 20) == 0 && Data->P[plr].Mission[0].MissionCode != 46) {
             *m_1 = 46;
         } else {
             *m_1 = 48;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -809,7 +809,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_1 = 53;
         }
 
-        ++Data->P[plr].Track[1];
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
@@ -889,9 +889,9 @@ void NewAI(char plr, char frog)
         Panic_Check = Panic_Level(plr, &mis1, &mis2);
 
         if (!Panic_Check) {
-            if (Data->P[plr].Track[3] == 1) {
+            if (Data->P[plr].AIStrategy[AI_STRATEGY] == 1) {
                 Strategy_One(plr, &mis1, &mis2, &mis3);
-            } else if (Data->P[plr].Track[3] == 2) {
+            } else if (Data->P[plr].AIStrategy[AI_STRATEGY] == 2) {
                 Strategy_Two(plr, &mis1, &mis2, &mis3);
             } else {
                 Strategy_Thr(plr, &mis1, &mis2, &mis3);
@@ -934,17 +934,17 @@ void NewAI(char plr, char frog)
                 }
         }
     } else {
-        switch (Data->P[plr].Track[1]) {
+        switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
         case 0:
             mis1 = 25;
             mis2 = 20;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 1:
             mis1 = 25;
             mis2 = 25;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 2:
@@ -961,13 +961,13 @@ void NewAI(char plr, char frog)
             }
 
             if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num >= 0) {
-                Data->P[plr].Track[5] = 1;
+                Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
             }
 
             Data->P[plr].Buy[1][3] = 0;
             RDafford(plr, 1, 3);
             mis1 = 25;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 3:
@@ -981,7 +981,7 @@ void NewAI(char plr, char frog)
             case 2:
                 mis1 = 25;
                 mis2 = 7;
-                ++Data->P[plr].Track[1];
+                ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
                 break;
 
             case 3:
@@ -989,7 +989,7 @@ void NewAI(char plr, char frog)
             case 5:
                 mis1 = 7;
                 mis2 = 7;
-                ++Data->P[plr].Track[1];
+                ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
                 break;
 
             default:
@@ -1001,7 +1001,7 @@ void NewAI(char plr, char frog)
         case 4:
             mis1 = 25;
             mis2 = 7;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 5:
@@ -1031,12 +1031,12 @@ void NewAI(char plr, char frog)
                 break;
             }
 
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 6:
             mis1 = 43;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 7:
@@ -1046,18 +1046,18 @@ void NewAI(char plr, char frog)
                 mis1 = 46;
             }
 
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 8:
             mis1 = 46;
-            ++Data->P[plr].Track[1];
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 9:
             if (PreChe(plr, 20) == 0) {
                 mis1 = 46;
-            }++Data->P[plr].Track[1];
+            }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
             break;
 
@@ -1091,19 +1091,19 @@ void NewAI(char plr, char frog)
 
 // deal with lunar modules
     if (Mis.LM == 1) {
-        if (Data->P[plr].Track[2] > 0) {
-            if (GenPur(plr, 2, Data->P[plr].Track[2])) {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+        if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
+            if (GenPur(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             } else {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             }
         } else {
-            Data->P[plr].Track[2] = 6;
+            Data->P[plr].AIStrategy[AI_LUNAR_MODULE] = 6;
 
-            if (GenPur(plr, 2, Data->P[plr].Track[2])) {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+            if (GenPur(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             } else {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             }
         }
     }

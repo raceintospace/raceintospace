@@ -73,13 +73,13 @@ void AIMaster(char plr)
 //select strategy
     P_total = brandom(100);
 
-    if (Data->P[plr].Track[3] == 0) {
+    if (Data->P[plr].AIStrategy[AI_STRATEGY] == 0) {
         if (P_total < 33) {
-            Data->P[plr].Track[3] = 1;
+            Data->P[plr].AIStrategy[AI_STRATEGY] = 1;
         } else if (P_total < 66) {
-            Data->P[plr].Track[3] = 2;
+            Data->P[plr].AIStrategy[AI_STRATEGY] = 2;
         } else {
-            Data->P[plr].Track[3] = 3;
+            Data->P[plr].AIStrategy[AI_STRATEGY] = 3;
         }
     }
 
@@ -103,7 +103,7 @@ void AIMaster(char plr)
     }
 
     if (Data->Year == 59 && Data->Season == 1) {
-        Data->P[plr].Track[4] = 0;
+        Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY] = 0;
     }
 
     if (Data->P[plr].AstroDelay <= 0) {
@@ -161,7 +161,7 @@ void AIMaster(char plr)
 
         if (NoFail(plr) == 0) {
             if ((Data->Year == 59 && Data->Season == 1) || Data->Year >= 60) {
-                switch (Data->P[plr].Track[4]) {
+                switch (Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY]) {
                 case 0:
                     if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety > Data->P[plr].Manned[MISC_HW_EVA_SUITS].MaxRD - 20) {
                         AIFuture(plr, 6, 0, (char *)&prg);
@@ -171,7 +171,7 @@ void AIMaster(char plr)
 
                     Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety += 10;
                     Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety += 10;
-                    ++Data->P[plr].Track[4];
+                    ++Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY];
                     break;
 
                 case 1:
@@ -185,7 +185,7 @@ void AIMaster(char plr)
                         AIFuture(plr, 2, 0, (char *)&prg);
                     }
 
-                    ++Data->P[plr].Track[4];
+                    ++Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY];
                     break;
 
                 case 2:
@@ -201,7 +201,7 @@ void AIMaster(char plr)
                         Data->P[plr].AIStat = 3;
                     }
 
-                    ++Data->P[plr].Track[4];
+                    ++Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY];
                     break;
 
                 default:
@@ -276,7 +276,7 @@ void AIMaster(char plr)
     }
 
 // larger rocket klugge
-    if (Data->P[plr].Track[5] == 1) {
+    if (Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] == 1) {
         if (Level_Check != 0) {
             Data->P[plr].Cash += 25;    // temporary
         }
@@ -307,20 +307,20 @@ void AIMaster(char plr)
     }
 
     if (Data->Year >= 62)
-        if (Data->P[plr].Track[2] < 5) {
+        if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] < 5) {
             PickModule(plr);
         }
 
     if (Data->P[plr].AILunar > 0 && Data->P[plr].AILunar < 4) {
-        if (Data->P[plr].Track[2] > 0) {
-            if (GenPur(plr, 2, Data->P[plr].Track[2])) {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+        if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
+            if (GenPur(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             } else {
-                RDafford(plr, 2, Data->P[plr].Track[2]);
+                RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
             }
 
-            Data->P[plr].Buy[2][Data->P[plr].Track[2]] = 0;
-            RDafford(plr, 2, Data->P[plr].Track[2]);
+            Data->P[plr].Buy[2][Data->P[plr].AIStrategy[AI_LUNAR_MODULE]] = 0;
+            RDafford(plr, 2, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
         }
     }
 
@@ -364,7 +364,7 @@ void AIMaster(char plr)
         }
     }
 
-    if (Data->P[plr].AIStat >= 2 && Data->Year >= 61 && Data->P[plr].Track[1] >= 2) {
+    if (Data->P[plr].AIStat >= 2 && Data->Year >= 61 && Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] >= 2) {
         if ((Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety >= Data->P[plr].Probe[PROBE_HW_ORBITAL].MaxRD - 20) || Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) {
             Data->P[plr].Cash += Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].InitCost + 30;
 
@@ -786,7 +786,7 @@ void KeepRD(char plr, int m)
 
 void PickModule(char plr)
 {
-    Data->P[plr].Track[2] = 6;
+    Data->P[plr].AIStrategy[AI_LUNAR_MODULE] = 6;
 
     if (GenPur(plr, 2, 6)) {
         RDafford(plr, 2, 6);
