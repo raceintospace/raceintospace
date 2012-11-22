@@ -196,7 +196,7 @@ typedef struct _Equipment {
     char Spok;          /**< qty being used on missions */
     char Seas;          /**< Seasons Program is Active */
     char Used;          /**< total number used in space */
-    char IDX[2];        /**< unsed - EquipID "C0 C1 C2 C3 : Acts as Index */
+    char unused_IDX[2];        /**< unsed - EquipID "C0 C1 C2 C3 : Acts as Index */
     int16_t Steps;      /**< Program Steps Used */
     int16_t Failures;   /**< number of program failures */
     char MaxRD;         /**< maximum R & D */
