@@ -18,7 +18,6 @@ message Equipment {
 	required int32 inventory_reserved = 14;
 	required int32 inventory_seasons = 15;
 	required int32 inventory_used = 16;
-//	required string index = 1700 [deprecated=true];
 	required int32 steps = 17;
 	required int32 failures = 18;
 	required int32 maximum_r_and_d = 19;
@@ -63,7 +62,7 @@ message Astronauts {
 	required int32 compatibility_right = 5;           /**< Range of Compatability Right */
 	required int32 compatiibility_left = 6;           /**< Range of Compatability Left */
 	required int32 moved = 7;        /**< if 0 Astro Moved around this turn */
-	required int32 current_mission_status = 8;          /**< Successful Mission this Turn */
+	required int32 mission_success = 8;          /**< Successful Mission this Turn */
 	required int32 happy = 9;        /**< \brief Happy within group */
 	required int32 prime = 10;        /**< \brief indicates the type of crew s/he's in */
 	required int32 active = 11;       /**< Seasons Active */
@@ -98,6 +97,13 @@ message Astronauts {
 	required int32 hero = 40;         /**< Hero Status */
 };
 
+
+message PrestigeHistory
+{
+	required int32 actual = 1;
+	required int32 random = 2;
+}
+
 message PrestigeUpdate {
 	repeated int32 Poss = 1; // char[10];
 	repeated int32 PossVal = 2;        // char[10];
@@ -126,6 +132,13 @@ message PastInfo {
 	required int32 duration = 17;                 /**< Length of Mission (units:ABCDEF) */
 };
 
+message HardwareSpending {
+	required int32 probe = 1;
+	required int32 rocket = 2;
+	required int32 manned = 3;
+	required int32 misc = 4;
+};
+
 message PastIntel {
 	required int32 code = 1;
 	required int32 num = 2;
@@ -144,6 +157,7 @@ message  FlightCrew {
 	repeated FlightCrew crew = 1;
 }
 
+
 message BuzzData {
 	required int32 header = 1;    // was Header[4] - was unused - could indicate which player
 	required string player_name = 2; // Name[20]
@@ -160,80 +174,78 @@ message BuzzData {
 	required int32 prestige_points = 8;     /**< Total points earned */
 	
 	// this was PrestHist[5][2]
-	repeated int32 prestige_history_actual = 9;  // char[5] of actual prestige history
-	repeated int32 prestige_history_random = 10;  // char[5] of randomized history.  4/5 +/- random(2/5 * actual)
+	repeated PrestigeHistory prestige_history = 9;  // char[5] of actual prestige history
+	
 	repeated int32 presidental_review_history = 11; // char[5]
 	repeated int32 seasonal_prestige = 12;          // was tempPrestige[2]
 	repeated int32 budget_history = 13;  // int16_t[40];
 	repeated int32 budget_history_fake = 14; // int16_t[40] - randomized from actual values
 	
-	repeated int32 historical_probe_spending = 15;  // int16_t[5]
-	repeated int32 historical_rocket_spending = 16; // int16_t[5]
-	repeated int32 historical_manned_spending = 17; // int16_t[5]
-	repeated int32 historical_misc_spending = 18;   // int16_t[5]
-	
-	required int32 r_and_d_turn_mods = 19;  // R&D mods for turn only
-	required int32 r_and_d_year_mods = 20;  // R&D mods for full year
-	required int32 turn_only_events = 21;   // events for this turn only
-	required int32 plans = 22;
-	required int32 future_plans = 23;  // special future mission
-
-	required int32 duration_level = 24;  // current duration level
-	required int32 lem_test_points = 25; // accumulation of LM Test points
-
-	repeated Equipment probe = 26;
-	repeated Equipment rocket = 27;
-	repeated Equipment manned = 28;
-	repeated Equipment misc = 29;    
-
-	required bool docking_module_in_orbit = 30; // initially 2
-	repeated int32 launch_facility = 31; // char[3] for each launchpad
-	
-	required int32 astronaut_count = 32; // number in program
-	required int32 astronaut_level = 33; // which purchase tier
-	required int32 astronaut_delay = 34; // season delay to train new astros
-	
-	repeated Astronauts astronaut_pool = 35; // Astros[65]
+	repeated HardwareSpending historical_spending = 15;  // int16_t[5]
 		
-	repeated PrestigeUpdate prestige_update = 36;
+	required int32 r_and_d_turn_mods = 16;  // R&D mods for turn only
+	required int32 r_and_d_year_mods = 17;  // R&D mods for full year
+	required int32 turn_only_events = 18;   // events for this turn only
+	required int32 plans = 19;
+	required int32 future_plans = 20;  // special future mission
+
+	required int32 duration_level = 21;  // current duration level
+	required int32 lem_test_points = 22; // accumulation of LM Test points
+
+	repeated Equipment probe = 23;
+	repeated Equipment rocket = 24;
+	repeated Equipment manned = 25;
+	repeated Equipment misc = 26;    
+
+	required bool docking_module_in_orbit = 27; // initially 2
+	repeated int32 launch_facility = 28; // char[3] for each launchpad
+	
+	required int32 astronaut_count = 29; // number in program
+	required int32 astronaut_level = 30; // which purchase tier
+	required int32 astronaut_delay = 31; // season delay to train new astros
+	
+	repeated Astronauts astronaut_pool = 32; // Astros[65]
+		
+	repeated PrestigeUpdate prestige_update = 33;
 	
 	// This was a matrix of IntelHardwareTable[5][7], only needs [4][7]
-	repeated int32 intel_hardware_table_probe = 37;
-	repeated int32 intel_hardware_table_rockets = 38;
-	repeated int32 intel_hardware_table_manned = 39;
-	repeated int32 intel_hardware_table_misc = 40;
+	repeated int32 intel_hardware_table_probe = 34;
+	repeated int32 intel_hardware_table_rockets = 35;
+	repeated int32 intel_hardware_table_manned = 36;
+	repeated int32 intel_hardware_table_misc = 37;
 	
-	repeated AstronautCrew gcnt = 41;  // GCnt[6][8]
-	repeated FlightCrew crew = 42;  // Crew [6][8][4]
+	repeated AstronautCrew gcnt = 38;  // GCnt[6][8]
+	repeated FlightCrew crew = 39;  // Crew [6][8][4]
 	
-	required bool female_astronauts_allowed = 43;
+	required bool female_astronauts_allowed = 40;
 	
-	repeated MissionType missions = 44;
-	required int32 blocked_mission_number = 45;
-	repeated MissionType future_missions = 46;
-	repeated PastInfo mission_history = 47;
-	required int32 past_mission_count = 48;
-	required int32 mission_catastrophic_failure_on_turn = 49;
+	repeated MissionType missions = 41;
+	required int32 blocked_mission_number = 42;
+	repeated MissionType future_missions = 43;
+	repeated PastInfo mission_history = 44;
+	required int32 past_mission_count = 45;
+	required int32 mission_catastrophic_failure_on_turn = 46;
 	
 	// Record of R&D purchase for Turn	 was [4][7]
-	repeated int32 buy_probe = 50;
-	repeated int32 buy_rockets = 51;
-	repeated int32 buy_manned = 52;
-	repeated int32 buy_misc = 53;
+	repeated int32 buy_probe = 47;
+	repeated int32 buy_rockets = 48;
+	repeated int32 buy_manned = 49;
+	repeated int32 buy_misc = 50;
 	
-	repeated PastIntel past_intellegence = 54;  // PastIntel[30]
-	required int32 ai_Strategy = 55; // char[10]
+	required int32 news_event_count = 51;    // eCount
+	repeated PastIntel past_intellegence = 52;  // PastIntel[30]
+	required int32 ai_strategy = 53; // char[10]
 	
-	required int32 ai_Lunar = 56;
-	required int32 ai_Primary = 57;
-	required int32 ai_Secondary = 58;
-	required int32 ai_Status = 59;
-	repeated int32 bad_card_event_flags = 60; // char[15]
-	repeated int32 space_port_levels = 61; // char[40]
+	required int32 ai_Lunar = 54;
+	required int32 ai_Primary = 55;
+	required int32 ai_Secondary = 56;
+	required int32 ai_Status = 57;
+	repeated int32 bad_card_event_flags = 58; // char[15]
+	repeated int32 space_port_levels = 59; // char[40]
 
 	// moved from players structure
-	repeated int32 prestige_firsts = 62;     // Prestige Firsts [28]
-	repeated int32 milestones = 63;   		/**< MileStone Calcs [10] */
+	repeated int32 prestige_firsts = 60;     // Prestige Firsts [28]
+	repeated int32 milestones = 61;   		/**< MileStone Calcs [10] */
 }
 
 message PlayerSettings {
