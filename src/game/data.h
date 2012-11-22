@@ -628,6 +628,37 @@ enum SpacePortOverlays {
     PORT_SVHQ,                // 34 Strategic Visions H.Q.
 };
 
+enum PrestigeValues {
+	Prestige_OrbitalSatellite = 0,
+	Prestige_LunarFlyby = 1,
+	Prestige_MercuryFlyby = 2,
+	Prestige_VenusFlyby = 3,
+	Prestige_MarsFlyby = 4,
+	Prestige_JupiterFlyby = 5,
+	Prestige_SaturnFlyby = 6,
+	Prestige_LunarProbeLanding = 7,
+	Prestige_Duration_F = 8,
+	Prestige_Duration_E = 9,
+	Prestige_Duration_D = 10, 
+	Prestige_Duration_C = 11, 
+	Prestige_Duration_B = 12,
+	Prestige_OnePerson = 13,
+	Prestige_TwoPerson = 14,
+	Prestige_ThreePerson = 15,
+	Prestige_Minishuttle = 16,
+	Prestige_FourPerson = 17,
+	Prestige_MannedOrbital = 18,
+	Prestige_MannedLunarPass = 19,
+	Prestige_MannedLunarOrbit = 20,
+	Prestige_MannedRescueAttempt = 21,
+	Prestige_MannedLunarLanding = 22,
+	Prestige_OrbitingLab = 23,
+	Prestige_MannedDocking = 24,
+	Prestige_WomanInSpace = 25,
+	Prestige_Spacewalk = 26,
+	Prestige_MannedSpaceMission = 27,
+};
+
 // Typical
 typedef struct _patch {
     int16_t w;
