@@ -250,7 +250,7 @@ void PadDraw(char plr, char pad)
             PrintAt(0, 0, "(CREW VIII)");
         }
 
-        for (k = 0; k < Data->P[plr].Gcnt[i][j]; k++) {
+        for (k = 0; k < Data->P[plr].CrewCount[i][j]; k++) {
             // Draw a morale box for each crew member - Leon
             display::graphics.setForegroundColor(1);
             RectFill(13, 110 + 7 * k, 20, 110 + 7 * k, 2); // Top
@@ -346,7 +346,7 @@ void PadDraw(char plr, char pad)
             PrintAt(0, 0, "(CREW VIII)");
         }
 
-        for (k = 0; k < Data->P[plr].Gcnt[i][l]; k++) {
+        for (k = 0; k < Data->P[plr].CrewCount[i][l]; k++) {
             // Draw a morale box for each crew member - Leon
             display::graphics.setForegroundColor(1);
             RectFill(13, 148 + 7 * k, 20, 148 + 7 * k, 2); // Top

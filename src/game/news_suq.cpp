@@ -42,7 +42,7 @@ char CheckCrewOK(char plr, char pad)
     prog = Data->P[plr].Mission[pad].Prog;
     mis = Data->P[plr].Mission[pad].MissionCode;
 
-    if (mis != 0 && Data->P[plr].Gcnt[prog][P_crew] == 0 && Data->P[plr].Gcnt[prog][B_crew] == 0
+    if (mis != 0 && Data->P[plr].CrewCount[prog][P_crew] == 0 && Data->P[plr].CrewCount[prog][B_crew] == 0
         && Data->P[plr].Mission[pad].Men > 0) {
         if (!AI[plr]) {
             switch (pad) {
@@ -71,12 +71,12 @@ void Replace_Snaut(char plr)
 {
     int i, j, k, temp;
 
-    for (k = 0; k < 6; k++) {
-        for (j = 0; j < 8; j++) {
+    for (k = 0; k < ASTRONAUT_POOLS+1; k++) {
+        for (j = 0; j < ASTRONAUT_CREW_MAX; j++) {
             temp = 0;
 
-            if (Data->P[plr].Gcnt[k][j] > 0) {
-                for (i = 0; i < Data->P[plr].Gcnt[k][j] + 1; i++) {
+            if (Data->P[plr].CrewCount[k][j] > 0) {
+                for (i = 0; i < Data->P[plr].CrewCount[k][j] + 1; i++) {
                     if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_DEAD ||
                         Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_RETIRED ||
                         Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_INJURED) {
@@ -85,7 +85,7 @@ void Replace_Snaut(char plr)
                 }
 
                 if (temp > 0) {
-                    for (i = 0; i < Data->P[plr].Gcnt[k][j] + 1; i++) {
+                    for (i = 0; i < Data->P[plr].CrewCount[k][j] + 1; i++) {
                         Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].oldAssign =
                             Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign;
                         Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign = 0;
@@ -101,7 +101,7 @@ void Replace_Snaut(char plr)
                         Data->P[plr].Crew[k][j][i] = 0;
                     }
 
-                    Data->P[plr].Gcnt[k][j] = 0;
+                    Data->P[plr].CrewCount[k][j] = 0;
                 }
             }
         }

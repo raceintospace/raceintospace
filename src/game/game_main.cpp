@@ -686,14 +686,14 @@ void FreePadMen(char plr, struct MissionType *XMis)
     int i, c;
 
     if (XMis->PCrew > 0) {  // Remove Primary Crew
-        for (i = 0; i < Data->P[plr].Gcnt[XMis->Prog][XMis->PCrew - 1]; i++) {
+        for (i = 0; i < Data->P[plr].CrewCount[XMis->Prog][XMis->PCrew - 1]; i++) {
             c = Data->P[plr].Crew[XMis->Prog][XMis->PCrew - 1][i] - 1;
             Data->P[plr].Pool[c].Prime = 0;
         }
     }
 
     if (XMis->BCrew > 0) {  // Remove Backup Crew
-        for (i = 0; i < Data->P[plr].Gcnt[XMis->Prog][XMis->BCrew - 1]; i++) {
+        for (i = 0; i < Data->P[plr].CrewCount[XMis->Prog][XMis->BCrew - 1]; i++) {
             c = Data->P[plr].Crew[XMis->Prog][XMis->BCrew - 1][i] - 1;
             Data->P[plr].Pool[c].Prime = 0;
         }
@@ -1784,14 +1784,14 @@ void VerifyCrews(char plr)
             t = Data->P[plr].Mission[i].Prog;
             k = Data->P[plr].Mission[i].PCrew - 1;
 
-            if (Data->P[plr].Gcnt[t][k] == 0) {
+            if (Data->P[plr].CrewCount[t][k] == 0) {
                 Data->P[plr].Mission[i].PCrew = 0;
             }
 
             t = Data->P[plr].Mission[i].Prog; // backup verify
             k = Data->P[plr].Mission[i].BCrew - 1;
 
-            if (Data->P[plr].Gcnt[t][k] == 0) {
+            if (Data->P[plr].CrewCount[t][k] == 0) {
                 Data->P[plr].Mission[i].BCrew = 0;
             }
 
