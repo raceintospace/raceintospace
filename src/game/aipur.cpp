@@ -81,7 +81,7 @@ void DrawStatistics(char Win)
 
     if (AI[Win]) {
         PrintAt(0, 0, "COMPUTER");
-        sprintf(&Digit[0], "%d", Data->P[Win].Track[3]);
+        sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
         PrintAt(0, 0, &Digit[0]);
     } else if (Win == 0) {
         PrintAt(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
@@ -95,7 +95,7 @@ void DrawStatistics(char Win)
 
     if (AI[other(Win)]) {
         PrintAt(0, 0, "COMPUTER");
-        sprintf(&Digit[0], "%d", Data->P[other(Win)].Track[3]);
+        sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
         PrintAt(0, 0, &Digit[0]);
     } else if (Win == 0) {
         PrintAt(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
@@ -882,8 +882,8 @@ void AIPur(char plr)
         pData->AIStat = 1;
     }
 
-    if (pData->Track[0] == 0) {
-        pData->Track[0] = 1;
+    if (pData->AIStrategy[AI_ORBITAL_SATELLITE] == 0) {
+        pData->AIStrategy[AI_ORBITAL_SATELLITE] = 1;
     }
 
     // If we don't have a probe buy one before the rocket, then attempt to research each
