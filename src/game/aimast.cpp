@@ -70,7 +70,7 @@ void AIMaster(char plr)
         Level_Check = (Data->Def.Lev2 == 0) ? 0 : 1;
     }
 
-//select strategy
+		// Randomly select the AI strategy
     P_total = brandom(100);
 
     if (Data->P[plr].AIStrategy[AI_STRATEGY] == 0) {

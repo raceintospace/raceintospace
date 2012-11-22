@@ -107,17 +107,17 @@ struct Prest_Upd {
     char Mnth;
 };
 
-/** 
+/**
  * Player default settings
  */
 struct Defl {
-    char Plr1, Plr2; 	/**< 0=USA,1=USSR,2=AI+USA,3=AI+USSR,6=Remote+USA,7=Remote+USSR */
-		char Lev1, Lev2;  /**< 0=Easy, 1=Medium, 2=Hard */
-		char Ast1, Ast2;  /**< 0=Easy, 1=Medium, 2=Hard */
-		char Input;       /**< 0=Mouse, 1=Keyboard, 2=Joystick */
-		char Anim;        /**< 0=Full, 1=Partial, 2=Results Only */
-		char Music;       /**< 0=Full, 1=Partial, 2=None */
-		char Sound;       /**< 0=On, 1=Off */
+    char Plr1, Plr2;    /**< 0=USA,1=USSR,2=AI+USA,3=AI+USSR,6=Remote+USA,7=Remote+USSR */
+    char Lev1, Lev2;  /**< 0=Easy, 1=Medium, 2=Hard */
+    char Ast1, Ast2;  /**< 0=Easy, 1=Medium, 2=Hard */
+    char Input;       /**< 0=Mouse, 1=Keyboard, 2=Joystick */
+    char Anim;        /**< 0=Full, 1=Partial, 2=Results Only */
+    char Music;       /**< 0=Full, 1=Partial, 2=None */
+    char Sound;       /**< 0=On, 1=Off */
 };
 
 /** The Prestige for any achievement is stored in this.
@@ -134,8 +134,8 @@ struct PrestType {
 };
 
 enum LaunchPads {
-	PAD_A = 0,
-	PAD_B = 1,
+    PAD_A = 0,
+    PAD_B = 1,
 };
 
 enum EquipmentIndex {
@@ -255,28 +255,28 @@ enum AstronautStatus {
 };
 
 enum AstronautAdvancedFocus {
-		AST_FOCUS_CAPSULE = 1,
-		AST_FOCUS_LEM = 2,
-		AST_FOCUS_EVA = 3,
-		AST_FOCUS_DOCKING = 4,
-		AST_FOCUS_ENDURANCE = 5,
+    AST_FOCUS_CAPSULE = 1,
+    AST_FOCUS_LEM = 2,
+    AST_FOCUS_EVA = 3,
+    AST_FOCUS_DOCKING = 4,
+    AST_FOCUS_ENDURANCE = 5,
 };
 
 enum AstronautMissionStatus {
-	ASTRO_MISSION_CLEAR = 0,
-	ASTRO_MISSION_SUCCESS = 1,
-	ASTRO_MISSION_FAILURE = 2,
-	ASTRO_MISSION_SCRUBBED = 3,
+    ASTRO_MISSION_CLEAR = 0,
+    ASTRO_MISSION_SUCCESS = 1,
+    ASTRO_MISSION_FAILURE = 2,
+    ASTRO_MISSION_SCRUBBED = 3,
 };
 
 
 enum AI_Tracking {
-	AI_ORBITAL_SATELLITE = 0,
-	AI_END_STAGE_LOCATION = 1,
-	AI_LUNAR_MODULE =2,
-	AI_STRATEGY = 3,  // 0=none, 1=one, 2=two
-	AI_BEGINNING_STRATEGY = 4,
-	AI_LARGER_ROCKET_STRATEGY = 5,
+    AI_ORBITAL_SATELLITE = 0,
+    AI_END_STAGE_LOCATION = 1,
+    AI_LUNAR_MODULE = 2,
+    AI_STRATEGY = 3,  // 0=none, 1=one, 2=two
+    AI_BEGINNING_STRATEGY = 4,
+    AI_LARGER_ROCKET_STRATEGY = 5,
 };
 
 
@@ -629,48 +629,127 @@ enum SpacePortOverlays {
 };
 
 enum PrestigeValues {
-	Prestige_OrbitalSatellite = 0,
-	Prestige_LunarFlyby = 1,
-	Prestige_MercuryFlyby = 2,
-	Prestige_VenusFlyby = 3,
-	Prestige_MarsFlyby = 4,
-	Prestige_JupiterFlyby = 5,
-	Prestige_SaturnFlyby = 6,
-	Prestige_LunarProbeLanding = 7,
-	Prestige_Duration_F = 8,
-	Prestige_Duration_E = 9,
-	Prestige_Duration_D = 10, 
-	Prestige_Duration_C = 11, 
-	Prestige_Duration_B = 12,
-	Prestige_Duration_A = -1,  // this is intentionally out of order
-	Prestige_Duration_Calc = 14,
-	Prestige_OnePerson = 13,
-	Prestige_TwoPerson = 14,
-	Prestige_ThreePerson = 15,
-	Prestige_Minishuttle = 16,
-	Prestige_FourPerson = 17,
-	Prestige_MannedOrbital = 18,
-	Prestige_MannedLunarPass = 19,
-	Prestige_MannedLunarOrbit = 20,
-	Prestige_MannedRescueAttempt = 21,
-	Prestige_MannedLunarLanding = 22,
-	Prestige_OrbitingLab = 23,
-	Prestige_MannedDocking = 24,
-	Prestige_WomanInSpace = 25,
-	Prestige_Spacewalk = 26,
-	Prestige_MannedSpaceMission = 27,
-  Prestige_LunarMoonwalk = 40,
+    Prestige_OrbitalSatellite = 0,
+    Prestige_LunarFlyby = 1,
+    Prestige_MercuryFlyby = 2,
+    Prestige_VenusFlyby = 3,
+    Prestige_MarsFlyby = 4,
+    Prestige_JupiterFlyby = 5,
+    Prestige_SaturnFlyby = 6,
+    Prestige_LunarProbeLanding = 7,
+    Prestige_Duration_F = 8,
+    Prestige_Duration_E = 9,
+    Prestige_Duration_D = 10,
+    Prestige_Duration_C = 11,
+    Prestige_Duration_B = 12,
+    Prestige_Duration_A = -1,  // this is intentionally out of order
+    Prestige_Duration_Calc = 14,
+    Prestige_OnePerson = 13,
+    Prestige_TwoPerson = 14,
+    Prestige_ThreePerson = 15,
+    Prestige_Minishuttle = 16,
+    Prestige_FourPerson = 17,
+    Prestige_MannedOrbital = 18,
+    Prestige_MannedLunarPass = 19,
+    Prestige_MannedLunarOrbit = 20,
+    Prestige_MannedRescueAttempt = 21,
+    Prestige_MannedLunarLanding = 22,
+    Prestige_OrbitingLab = 23,
+    Prestige_MannedDocking = 24,
+    Prestige_WomanInSpace = 25,
+    Prestige_Spacewalk = 26,
+    Prestige_MannedSpaceMission = 27,
+    Prestige_LunarMoonwalk = 40,
 };
 
 enum Milestones {
-	Milestone_OrbitalSatellite = 0,
-	Milestone_ManInSpace = 1, 
-	Milestone_EarthOrbit = 2, 
-	Milestone_LunarFlyby = 3, 
-	Milestone_LunarPlanetary = 4, 
-	Milestone_LunarPass = 5, 
-	Milestone_LunarOrbit = 6,
-	Milestone_LunarLanding = 7,
+    Milestone_OrbitalSatellite = 0,
+    Milestone_ManInSpace = 1,
+    Milestone_EarthOrbit = 2,
+    Milestone_LunarFlyby = 3,
+    Milestone_LunarPlanetary = 4,
+    Milestone_LunarPass = 5,
+    Milestone_LunarOrbit = 6,
+    Milestone_LunarLanding = 7,
+};
+
+// These mission enumerations are dependant on the loaded mission data file
+// Only added what the AI player is actually using
+enum MissionValues {
+    Mission_None = 0,
+    Mission_Orbital_Satellite = 1,
+    Mission_SubOrbital = 2,
+    Mission_U_SubOrbital = 3,
+    Mission_Earth_Orbital = 4,
+
+    //"U. EARTH ORBITAL",     //05
+    //"ORBITAL-E",            //06
+    Mission_LunarFlyby = 7,
+    Mission_Lunar_Probe = 8,
+    Mission_VenusFlyby = 9,
+    Mission_MarsFlyby = 10,
+    Mission_MercuryFlyby = 11,
+    Mission_JupiterFlyby = 12,
+    Mission_SaturnFlyby = 13,
+    Mission_Orbital_Docking = 14,
+    Mission_U_Orbital_D = 15,
+    Mission_JT_ORBITAL_D = 16,
+
+    //"ORBITAL-O",            //17
+    //"JT U. ORBITAL-D",      //18
+    //"JT ORBITALS-D",        //19
+
+    Mission_Manned_Orbital_Docking_EVA = 20,
+    //"JT ORBITAL-DE",        //21
+    //"JT ORBITALS-DE",       //22
+    //"JT ORBITALS-D2E",      //23
+    //"ORBITAL-OE",           //24
+
+    Mission_Orbital_Duration = 25,
+    Mission_Orbital_EVA_Duration = 26,
+    Mission_Orbital_Docking_Duration = 27,
+    //"ORBITAL-OX",           //28
+    //"ORBITAL-OEX",          //29
+
+    //"JT ORBITALS-DEX",      //30
+    //"JT ORBITAL-DX",        //31
+    //"JT ORBITING LAB",      //32
+    //"ORBITAL-DEX",          //33
+    //"JT ORBITAL-DEX",       //34
+
+    //"JT ORBITALS-DEX",      //35
+    //"JT ORBITING LAB-E",    //36
+    //"JT ORBITALS-DX",       //37
+    //"EARTH ORBITAL-L",      //38
+    //"JT EARTH ORBITAL-L",   //39
+
+    //"EARTH ORBITAL-LEX",    //40
+    //"JT EARTH ORBITAL-LEX", //41
+    //"U. LUNAR PASS",        //42
+    Mission_LunarPass = 43,
+    //"JT LUNAR PASS:EOR",    //44
+
+    //"U. LUNAR ORBITAL",     //45
+    Mission_LunarOrbital = 46,
+    //"JT LUNAR ORBITAL:EOR", //47
+    Mission_Lunar_Orbital = 48,
+    //"JT LUNAR ORB:LOR-L",   //49
+
+    //"LUNAR ORBITAL-LE",     //50
+    //"JT LUN ORB:LOR EVA-L", //51
+    //"JT LUN ORB:EOR/LOR-L", //52
+    Mission_HistoricalLanding = 53,
+    Mission_DirectAscent_LL = 54,
+
+    Mission_Jt_LunarLanding_EOR = 55,
+    Mission_Jt_LunarLanding_LOR = 56,
+
+    //"SOYUZ LUNAR LANDING",  //57
+    //"RES IN EARTH ORBIT",   //58
+    //"RES IN LUNAR ORBIT",   //59
+
+    //"RES HISTORICAL L.L.",  //60
+    //"RES DRCT ASCENT L.L.", //61
 };
 
 // Typical
