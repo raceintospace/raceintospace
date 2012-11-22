@@ -917,7 +917,7 @@ Programs(char plr, char prog)
                 DispLeft(plr, BarA, count, now2, &M[0]);
             } else if (key == K_END) {
                 RectFill(26, 129, 153, 195, 0);
-                BarA = minn(count - 1, 7);
+                BarA = MIN(count - 1, 7);
                 now2 = count - 1;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);

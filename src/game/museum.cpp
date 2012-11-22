@@ -493,7 +493,7 @@ void DPrest(char plr, char *pos, char *pos2)
             FlagSm(Data->Prestige[*pos2].Place, 18, 47);
         }
 
-        i = maxx(Data->Prestige[*pos2].Goal[0], Data->Prestige[*pos2].Goal[1]);
+        i = MAX(Data->Prestige[*pos2].Goal[0], Data->Prestige[*pos2].Goal[1]);
 
         if (i != 0) {
             j = Data->Prestige[*pos2].Goal[0];
@@ -525,7 +525,7 @@ void DPrest(char plr, char *pos, char *pos2)
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
         }
 
-        i = maxx(abs(Data->Prestige[*pos2].Points[0]), abs(Data->Prestige[*pos2].Points[1]));
+        i = MAX(abs(Data->Prestige[*pos2].Points[0]), abs(Data->Prestige[*pos2].Points[1]));
         display::graphics.setForegroundColor(5);
         pline(205, 67, 231, 67);
         display::graphics.setForegroundColor(8);
@@ -555,7 +555,7 @@ void DPrest(char plr, char *pos, char *pos2)
             tmp += (Data->Prestige[i].Place == 1) ? 1 : 0;
         }
 
-        i = maxx(j, tmp);
+        i = MAX(j, tmp);
 
         if (i != 0) {
             if (j == tmp) {
@@ -595,7 +595,7 @@ void DPrest(char plr, char *pos, char *pos2)
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
         }
 
-        i = maxx(abs(j), abs(tmp));
+        i = MAX(abs(j), abs(tmp));
         pline(205, 67, 231, 67);
         pline(258, 67, 284, 67);
 

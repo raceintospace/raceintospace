@@ -343,8 +343,8 @@ void CalcPresRev(void)
     for (plr = 0; plr < NUM_PLAYERS; plr++) {
         ip = &Data->P[plr].PresRev[0];
 
-        max = maxx(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
-        min = minn(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
+        max = MAX(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
+        min = MIN(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
 
         val = ((max >= 0 && min >= 0) || (max <= 0 && min <= 0)) ? max + min : max / 2 + min;
 

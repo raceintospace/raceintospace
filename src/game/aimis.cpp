@@ -1346,7 +1346,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         // duration
         if (Data->P[plr].DurationLevel <= 5 && Data->P[plr].Future[pad + i].Duration == 0) {
             if (Mis.Dur == 1) Data->P[plr].Future[pad + i].Duration =
-                    maxx(Mis.Days, minn(Data->P[plr].DurationLevel + 1, 6));
+                    MAX(Mis.Days, MIN(Data->P[plr].DurationLevel + 1, 6));
             else {
                 Data->P[plr].Future[pad + i].Duration = Mis.Days;
             }
@@ -1644,7 +1644,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = maxx(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
+        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1; // kicker second part
     };
 
@@ -1652,7 +1652,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = maxx(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
+        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[0].Hard[Mission_Kicker] = 1;
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1;
     };

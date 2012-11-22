@@ -177,7 +177,7 @@ PrestMin(char plr)
     }
 
     for (i = 0; i < 5; i++) {
-        j = maxx(j, PrestMap(Mis.PCat[i]));
+        j = MAX(j, PrestMap(Mis.PCat[i]));
     }
 
     /* walk all milestones lower than maximum required for mission */
@@ -190,7 +190,7 @@ PrestMin(char plr)
 
     Neg = Neg + (plr ? Data->Def.Lev2 : Data->Def.Lev1) - 2;
     // Neg -= (2 - ((plr == 0) ? Data->Def.Lev1 : Data->Def.Lev2));
-    Neg = maxx(Neg, 0);
+    Neg = MAX(Neg, 0);
 
     /* Index 2 = Manned suborbital
      * Index 4 = Manned orbital
@@ -618,7 +618,7 @@ int MaxFail(void)
             Mev[i].StepInfo = 1003;
         }
 
-        t = maxx(Mev[i].StepInfo, t);
+        t = MAX(Mev[i].StepInfo, t);
 
         if (Mev[i].trace != (i + 1)) {
             bra++;
@@ -788,7 +788,7 @@ int AllotPrest(char plr, char mis)
         Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
     }
 
-    Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = minn(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+    Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
 
     if (death == 1) {
         for (i = 0; i < 28; i++) if (PVal[i] > 0 && PVal[i] < 4) {
@@ -814,10 +814,10 @@ int AllotPrest(char plr, char mis)
 
     if (Check_Dock(500) == 2) {  // Success
         Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = minn(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
     } else if (Check_Dock(500) == 1) {
         Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = minn(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
     }
 
     if (STSp(Prestige_MannedSpaceMission) || STSn(Prestige_MannedSpaceMission)) {
@@ -841,7 +841,7 @@ int AllotPrest(char plr, char mis)
     }
 
     // DURATION FIRSTS
-    Data->P[plr].Mission[mis].Duration = maxx(Data->P[plr].Mission[mis].Duration, 1);
+    Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, 1);
 
     if (!Mis.Dur) {
         switch (P_Goal) {
@@ -1086,14 +1086,14 @@ int U_AllotPrest(char plr, char mis)
         if (mcode == 7 || mcode == 8) {
             if (lun == 1) { // UNMANNED PHOTO RECON
                 Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 5;
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = minn(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
         if (mcode == 8 && MaxFail() == 1) { // extra 10 for landing on Moon
             if (lun == 1) { // UNMANNED PHOTO RECON
                 Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 10;
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = minn(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
@@ -1101,10 +1101,10 @@ int U_AllotPrest(char plr, char mis)
 
     if (Check_Dock(2) == 2) {
         Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = minn(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
     } else if (Check_Dock(2) == 1) {
         Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = minn(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
     }
 
     return total + negs;

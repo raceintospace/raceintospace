@@ -178,7 +178,7 @@ void MisCheck(char plr, char mpad)
     }
 
     if (JOINT == 1) {
-        durxx = maxx(durxx, Data->P[plr].Mission[mpad + 1].Duration - 1);
+        durxx = MAX(durxx, Data->P[plr].Mission[mpad + 1].Duration - 1);
         Data->P[plr].Mission[mpad + 1].Duration = 0;
     }
 
@@ -346,7 +346,7 @@ void MisCheck(char plr, char mpad)
 
         if (!AI[plr] && BIG == 0)
             if (!(fEarly && STEP != 0)) {
-                lc = MCGraph(plr, lc, maxx(0, safety), maxx(0, val), PROBLEM);    // Graph Chart
+                lc = MCGraph(plr, lc, MAX(0, safety), MAX(0, val), PROBLEM);    // Graph Chart
             }
 
         if (PROBLEM && save == 1) {  // Failure Saved

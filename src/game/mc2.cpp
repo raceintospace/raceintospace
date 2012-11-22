@@ -442,7 +442,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
 
 //      if (step==0 && Data->P[plr].TurnOnly==5)
-//         *Mev[step].sf=minn(*Mev[step].sf,50);
+//         *Mev[step].sf=MIN(*Mev[step].sf,50);
 
         Mev[step].step = step;
 
@@ -941,7 +941,7 @@ MisSkip(char plr, char ms)
 
     diff = PrestMin(plr);
 
-    diff = maxx(diff, 0);
+    diff = MAX(diff, 0);
 
     if (!AI[plr]) {
         INFO2("applying general penalty %d to mission safety", -diff);
