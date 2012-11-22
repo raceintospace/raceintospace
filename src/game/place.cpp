@@ -724,25 +724,25 @@ void writePrestigeFirst(char index)   ///index==plr
 
             switch (i) {
             case 8:
-                if (Data->Prestige[9].Place == index && Data->PD[index][9] == 0) {
+                if (Data->Prestige[Prestige_Duration_E].Place == index && Data->PD[index][9] == 0) {
                     PrintAt(0, 0, ", E");
                     Data->PD[index][9] = 1;
                 }
 
             case 9:
-                if (Data->Prestige[10].Place == index && Data->PD[index][10] == 0) {
+                if (Data->Prestige[Prestige_Duration_D].Place == index && Data->PD[index][10] == 0) {
                     PrintAt(0, 0, ", D");
                     Data->PD[index][10] = 1;
                 }
 
             case 10:
-                if (Data->Prestige[11].Place == index && Data->PD[index][11] == 0) {
+                if (Data->Prestige[Prestige_Duration_C].Place == index && Data->PD[index][11] == 0) {
                     PrintAt(0, 0, ", C");
                     Data->PD[index][11] = 1;
                 }
 
             case 11:
-                if (Data->Prestige[12].Place == index && Data->PD[index][12] == 0) {
+                if (Data->Prestige[Prestige_Duration_B].Place == index && Data->PD[index][12] == 0) {
                     PrintAt(0, 0, ", B");
                     Data->PD[index][12] = 1;
                 }
@@ -782,25 +782,25 @@ void writePrestigeFirst(char index)   ///index==plr
 
             switch (i) {
             case 8:
-                if (Data->Prestige[9].mPlace == index && Data->PD[index][9] == 0) {
+                if (Data->Prestige[Prestige_Duration_E].mPlace == index && Data->PD[index][9] == 0) {
                     PrintAt(0, 0, ", E");
                     Data->PD[index][9] = 1;
                 }
 
             case 9:
-                if (Data->Prestige[10].mPlace == index && Data->PD[index][10] == 0) {
+                if (Data->Prestige[Prestige_Duration_D].mPlace == index && Data->PD[index][10] == 0) {
                     PrintAt(0, 0, ", D");
                     Data->PD[index][10] = 1;
                 }
 
             case 10:
-                if (Data->Prestige[11].mPlace == index && Data->PD[index][11] == 0) {
+                if (Data->Prestige[Prestige_Duration_C].mPlace == index && Data->PD[index][11] == 0) {
                     PrintAt(0, 0, ", C");
                     Data->PD[index][11] = 1;
                 }
 
             case 11:
-                if (Data->Prestige[12].mPlace == index && Data->PD[index][12] == 0) {
+                if (Data->Prestige[Prestige_Duration_B].mPlace == index && Data->PD[index][12] == 0) {
                     PrintAt(0, 0, ", B");
                     Data->PD[index][12] = 1;
                 }

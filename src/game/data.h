@@ -642,6 +642,8 @@ enum PrestigeValues {
 	Prestige_Duration_D = 10, 
 	Prestige_Duration_C = 11, 
 	Prestige_Duration_B = 12,
+	Prestige_Duration_A = -1,  // this is intentionally out of order
+	Prestige_Duration_Calc = 14,
 	Prestige_OnePerson = 13,
 	Prestige_TwoPerson = 14,
 	Prestige_ThreePerson = 15,
@@ -657,6 +659,18 @@ enum PrestigeValues {
 	Prestige_WomanInSpace = 25,
 	Prestige_Spacewalk = 26,
 	Prestige_MannedSpaceMission = 27,
+  Prestige_LunarMoonwalk = 40,
+};
+
+enum Milestones {
+	Milestone_OrbitalSatellite = 0,
+	Milestone_ManInSpace = 1, 
+	Milestone_EarthOrbit = 2, 
+	Milestone_LunarFlyby = 3, 
+	Milestone_LunarPlanetary = 4, 
+	Milestone_LunarPass = 5, 
+	Milestone_LunarOrbit = 6,
+	Milestone_LunarLanding = 7,
 };
 
 // Typical
