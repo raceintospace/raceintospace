@@ -115,7 +115,7 @@ void AIMaster(char plr)
             Data->P[plr].AIStat = 2;
         }
 
-    if (Data->P[plr].AIStat == 1 && PreChe(plr, 1) == 0 && Cur_Status == Behind) {
+    if (Data->P[plr].AIStat == 1 && PrestigeCheck(plr, Prestige_LunarFlyby) == 0 && Cur_Status == Behind) {
         Data->P[plr].AIStat = 2;
     }
 
@@ -175,13 +175,13 @@ void AIMaster(char plr)
                     break;
 
                 case 1:
-                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
                     }
 
@@ -189,13 +189,13 @@ void AIMaster(char plr)
                     break;
 
                 case 2:
-                    if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 2, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 27) == 0 && PreChe(other(plr), 27) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 4, 0, (char *)&prg);
-                    } else if (PreChe(plr, 18) == 0 && PreChe(other(plr), 18) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
+                    } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
                         AIFuture(plr, 6, 0, (char *)&prg);    //2
                     } else {
                         Data->P[plr].AIStat = 3;
@@ -402,7 +402,7 @@ void AIMaster(char plr)
         }
     }
 
-    if (PreChe(plr, 27) || PreChe(plr, 18)) {
+    if (PrestigeCheck(plr, Prestige_MannedSpaceMission) || PrestigeCheck(plr, Prestige_MannedOrbital)) {
         Data->P[plr].AIStat = 3;
     }
 
