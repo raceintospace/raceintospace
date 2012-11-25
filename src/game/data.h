@@ -134,8 +134,10 @@ struct PrestType {
 };
 
 enum LaunchPads {
+	PAD_NONE = -1,
     PAD_A = 0,
     PAD_B = 1,
+    PAD_C = 2,
 };
 
 enum EquipmentIndex {
@@ -681,9 +683,8 @@ enum MissionValues {
     Mission_SubOrbital = 2,
     Mission_U_SubOrbital = 3,
     Mission_Earth_Orbital = 4,
-
-    //"U. EARTH ORBITAL",     //05
-    //"ORBITAL-E",            //06
+	Mission_Unmanned_Earth_Orbital = 5,
+    Mission_Earth_Orbital_EVA = 6,
     Mission_LunarFlyby = 7,
     Mission_Lunar_Probe = 8,
     Mission_VenusFlyby = 9,
@@ -708,7 +709,7 @@ enum MissionValues {
     Mission_Orbital_Duration = 25,
     Mission_Orbital_EVA_Duration = 26,
     Mission_Orbital_Docking_Duration = 27,
-    //"ORBITAL-OX",           //28
+    Mission_Orbital_DockingInOrbit_Duration = 28,
     //"ORBITAL-OEX",          //29
 
     //"JT ORBITALS-DEX",      //30
