@@ -863,13 +863,14 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 
 void NewAI(char plr, char frog)
 {
-    char i, spc[2], prg[2], P_pad, B_pad, hsf, Panic_Check = 0;
+    char i, spc[2], prg[2], primaryPad, secondaryPad, hsf, Panic_Check = 0;
     int mis1, mis2, mis3, val;
 
     spc[0] = 0; /* XXX check uninitialized */
 
     prg[0] = frog;
-    mis1 = mis2 = mis3 = P_pad = B_pad = 0;
+    mis1 = mis2 = mis3 = Mission_None;
+		primaryPad = secondaryPad = PAD_NONE;
     GenPur(plr, MANNED_HARDWARE, frog - 1);
 
     if (Data->P[plr].AILunar < 4) {
@@ -1118,16 +1119,14 @@ void NewAI(char plr, char frog)
 
     if (Mis.Jt == 1) {
         // JOINT LAUNCH
-        P_pad = -1;
-
-        if (Data->P[plr].Future[0].MissionCode == 0 && Data->P[plr].LaunchFacility[0] == 1 &&
-            Data->P[plr].Future[1].MissionCode == 0 && Data->P[plr].LaunchFacility[1] == 1) {
-            P_pad = 0;
+        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == 1 &&
+            Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == 1) {
+            primaryPad = PAD_A;
         }
 
         if (mis1 > 0)
-            if (P_pad != -1) {
-                AIFuture(plr, mis1, P_pad, (char *)&prg);
+            if (primaryPad != PAD_NONE) {
+                AIFuture(plr, mis1, primaryPad, (char *)&prg);
             }
     } else {
         // SINGLE LAUNCH
@@ -1139,36 +1138,33 @@ void NewAI(char plr, char frog)
             prg[0] = 0;
         }
 
-        B_pad = -1;
-        P_pad = -1;
-
-        if (Data->P[plr].Future[0].MissionCode == 0 && Data->P[plr].LaunchFacility[0] == 1) {
-            P_pad = 0;
+        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == 1) {
+            primaryPad = PAD_A;
         }
 
-        if (Data->P[plr].Future[1].MissionCode == 0 && Data->P[plr].LaunchFacility[1] == 1) {
-            if (P_pad == 0) {
-                B_pad = 1;
+        if (Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == 1) {
+            if (primaryPad == PAD_A) {
+                secondaryPad = PAD_B;
             } else {
-                P_pad = 1;
+                primaryPad = PAD_B;
             }
         }
 
-        if (Data->P[plr].Future[2].MissionCode == 0 && Data->P[plr].LaunchFacility[2] == 1) {
-            if (P_pad != 0 && B_pad != 1) {
-                if (P_pad == 1) {
-                    B_pad = 2;
-                } else if (P_pad == 0 && B_pad == -1) {
-                    B_pad = 2;
+        if (Data->P[plr].Future[2].MissionCode == Mission_None && Data->P[plr].LaunchFacility[2] == 1) {
+            if (primaryPad != PAD_A && secondaryPad != PAD_B) {
+                if (primaryPad == PAD_B) {
+                    secondaryPad = PAD_C;
+                } else if (primaryPad == PAD_A && secondaryPad == PAD_NONE) {
+                    secondaryPad = PAD_C;
                 } else {
-                    P_pad = 2;
+                    primaryPad = PAD_C;
                 }
             }
         };
 
         if (mis1 > 0) {
-            if (P_pad != -1) {
-                AIFuture(plr, mis1, P_pad, (char *)&prg);
+            if (primaryPad != PAD_NONE) {
+                AIFuture(plr, mis1, primaryPad, (char *)&prg);
             }
         }
 
@@ -1183,21 +1179,21 @@ void NewAI(char plr, char frog)
                 prg[0] = spc[0];
             }
 
-            if (B_pad != -1) {
-                AIFuture(plr, mis2, B_pad, (char *)&prg);
+            if (secondaryPad != -1) {
+                AIFuture(plr, mis2, secondaryPad, (char *)&prg);
             }
         }
 
         if (mis3 > 0) {
             prg[0] = frog;
 
-            if (B_pad != -1) {
+            if (secondaryPad != -1) {
                 AIFuture(plr, mis3, 2, (char *)&prg);
             }
         }
     }
 
-    if (Data->P[plr].Future[2].MissionCode == 0 &&
+    if (Data->P[plr].Future[2].MissionCode == Mission_None &&
         Data->P[plr].LaunchFacility[2] == 1) {
         if ((mis1 == 0 && frog == 2 && (
                  Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].MaxRD - 10)) ||
@@ -1532,12 +1528,12 @@ void AILaunch(char plr)
     }
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode == 28 && Data->P[plr].DockingModuleInOrbit == 0) {
+        if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_DockingInOrbit_Duration && Data->P[plr].DockingModuleInOrbit == 0) {
             Data->P[plr].Mission[i].MissionCode = 0;
             return;
         }
 
-        if (Data->P[plr].Mission[i].MissionCode > 0 && Data->P[plr].Mission[i].part == 0) {
+        if (Data->P[plr].Mission[i].MissionCode > Mission_None && Data->P[plr].Mission[i].part == 0) {
             whe[0] = whe[1] = -1;
 
             if (Data->P[plr].Mission[i].Joint == 1) {
@@ -1577,7 +1573,7 @@ void AILaunch(char plr)
                 if (rck[0] == -1) {
                     ClrMiss(plr, i - Data->P[plr].Mission[i].part);
                 } else {
-                    if (Data->P[plr].Mission[i].MissionCode == 1) {
+                    if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_Satellite) {
                         rck[0] = 0;
                     }
 
@@ -1586,7 +1582,7 @@ void AILaunch(char plr)
                         rck[0] = 1;
                     }
 
-                    if (Data->P[plr].Mission[i].MissionCode == 3) {
+                    if (Data->P[plr].Mission[i].MissionCode == Mission_U_SubOrbital) {
                         rck[0] = 1;
                     }
 
@@ -1598,7 +1594,7 @@ void AILaunch(char plr)
                 }
             } else {
                 // Clear Mission
-                Data->P[plr].Mission[i].MissionCode = 0;
+                Data->P[plr].Mission[i].MissionCode = Mission_None;
             }
 
             // joint mission part
@@ -1671,7 +1667,7 @@ void AILaunch(char plr)
             JR = 1;
         }
 
-        if (Data->P[plr].Mission[l].MissionCode > 0 &&
+        if (Data->P[plr].Mission[l].MissionCode > Mission_None &&
             Data->P[plr].Mission[l].part == 0) {
             k++;
         }
@@ -1688,31 +1684,31 @@ void AILaunch(char plr)
     if (k == 2 && JR == 0) { // Two non joint missions
         l = 3;
 
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode > Mission_None) {
             Data->P[plr].Mission[0].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode > Mission_None) {
             Data->P[plr].Mission[1].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode > Mission_None) {
             Data->P[plr].Mission[2].Month = l + Data->Season * 6;
         }
     };
 
     if (k == 1 && JR == 0) { // Single Mission Non joint
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode > Mission_None) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode > Mission_None) {
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode > Mission_None) {
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
         }
     };

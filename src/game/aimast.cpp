@@ -143,7 +143,7 @@ void AIMaster(char plr)
         if (Data->Year <= 59) {
             Data->P[plr].Probe[PROBE_HW_ORBITAL].Num++;
             Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num++;
-            AIFuture(plr, 1, 0, 0);
+            AIFuture(plr, Mission_Orbital_Satellite, 0, 0);
         }
 
         KeepRD(plr, 5);
@@ -164,9 +164,9 @@ void AIMaster(char plr)
                 switch (Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY]) {
                 case 0:
                     if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety > Data->P[plr].Manned[MISC_HW_EVA_SUITS].MaxRD - 20) {
-                        AIFuture(plr, 6, 0, (char *)&prg);
+                        AIFuture(plr, Mission_Earth_Orbital_EVA, 0, (char *)&prg);
                     } else {
-                        AIFuture(plr, 2, 0, (char *)&prg);
+                        AIFuture(plr, Mission_SubOrbital, 0, (char *)&prg);
                     }
 
                     Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety += 10;
@@ -176,13 +176,13 @@ void AIMaster(char plr)
 
                 case 1:
                     if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 2, 0, (char *)&prg);
+                        AIFuture(plr, Mission_SubOrbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 4, 0, (char *)&prg);
+                        AIFuture(plr, Mission_Earth_Orbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 4, 0, (char *)&prg);
+                        AIFuture(plr, Mission_Earth_Orbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 2, 0, (char *)&prg);
+                        AIFuture(plr, Mission_SubOrbital, 0, (char *)&prg);
                     }
 
                     ++Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY];
@@ -190,13 +190,13 @@ void AIMaster(char plr)
 
                 case 2:
                     if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 2, 0, (char *)&prg);
+                        AIFuture(plr, Mission_SubOrbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 0) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 4, 0, (char *)&prg);
+                        AIFuture(plr, Mission_Earth_Orbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 && PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 4, 0, (char *)&prg);
+                        AIFuture(plr, Mission_Earth_Orbital, 0, (char *)&prg);
                     } else if (PrestigeCheck(plr, Prestige_MannedOrbital) == 0 && PrestigeCheck(other(plr), Prestige_MannedOrbital) == 1) { // && Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety>Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD-25)
-                        AIFuture(plr, 6, 0, (char *)&prg);    //2
+                        AIFuture(plr, Mission_Earth_Orbital_EVA, 0, (char *)&prg);    //2
                     } else {
                         Data->P[plr].AIStat = 3;
                     }
@@ -209,12 +209,12 @@ void AIMaster(char plr)
                 }
 
                 if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Num >= 2 && Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num >= 2) {
-                    if (Data->P[plr].Future[0].MissionCode == 2) {
-                        AIFuture(plr, 4, 1, (char *)&prg);
-                    } else if (Data->P[plr].Future[0].MissionCode == 4) {
-                        AIFuture(plr, 2, 1, (char *)&prg);
-                    } else if (Data->P[plr].Future[0].MissionCode == 6) {
-                        AIFuture(plr, 4, 1, (char *)&prg);
+                    if (Data->P[plr].Future[0].MissionCode == Mission_SubOrbital) {
+                        AIFuture(plr, Mission_Earth_Orbital, 1, (char *)&prg);
+                    } else if (Data->P[plr].Future[0].MissionCode == Mission_Earth_Orbital) {
+                        AIFuture(plr, Mission_SubOrbital, 1, (char *)&prg);
+                    } else if (Data->P[plr].Future[0].MissionCode == Mission_Earth_Orbital_EVA) {
+                        AIFuture(plr, Mission_Earth_Orbital, 1, (char *)&prg);
                     }
                 };
             };
@@ -448,9 +448,9 @@ void AIMaster(char plr)
             } else {
                 Data->P[plr].Probe[PROBE_HW_ORBITAL].Num += 2;
                 Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num += 2;
-                AIFuture(plr, 1, 0, 0);
-                AIFuture(plr, 1, 1, 0);
-                AIFuture(plr, 1, 2, 0);
+                AIFuture(plr, Mission_Orbital_Satellite, 0, 0);
+                AIFuture(plr, Mission_Orbital_Satellite, 1, 0);
+                AIFuture(plr, Mission_Orbital_Satellite, 2, 0);
             }
         }
 
@@ -493,7 +493,7 @@ char NoFail(char plr)
     char RT_value = 0, i;
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++)
-        if ((Data->P[plr].History[i].MissionCode == 4 || Data->P[plr].History[i].MissionCode == 2) && Data->P[plr].History[i].spResult >= 3000) {
+        if ((Data->P[plr].History[i].MissionCode == Mission_Earth_Orbital || Data->P[plr].History[i].MissionCode == Mission_Earth_Orbital_EVA) && Data->P[plr].History[i].spResult >= 3000) {
             ++RT_value;
         }
 
