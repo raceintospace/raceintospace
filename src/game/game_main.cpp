@@ -555,14 +555,14 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         kik = OrderMissions();
 
         for (i = 0; i < kik; i++)
-            if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode != 0) {
+            if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
                 if (AI[Order[i].plr] == 1) {
                     if (!CheckIfMissionGo(Order[i].plr, Order[i].loc)) {
                         ClrMiss(Order[i].plr, Order[i].loc);
                     }
                 }
 
-                if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode != 0) {
+                if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
                     if (!AI[Order[i].plr]) {
                         IDLE[0] = IDLE[1] = 0;
                     }
@@ -1773,7 +1773,7 @@ void VerifyCrews(char plr)
     int i, t, k;
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode == 18 && Data->P[plr].Mission[i].part == 0) {
+        if (Data->P[plr].Mission[i].MissionCode == Mission_Jt_Unmanned_Orbital_Docking && Data->P[plr].Mission[i].part == 0) {
             Data->P[plr].Mission[i].Joint = 1;
             Data->P[plr].Mission[i + 1].Joint = 1;
             Data->P[plr].Mission[i].part = 0;

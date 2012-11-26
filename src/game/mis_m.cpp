@@ -468,7 +468,7 @@ void MisCheck(char plr, char mpad)
                 }
             };
 
-            if (Mev[STEP].Name[0] == 'e' && Data->P[plr].Mission[mpad].MissionCode == 7) {
+            if (Mev[STEP].Name[0] == 'e' && Data->P[plr].Mission[mpad].MissionCode == Mission_LunarFlyby) {
                 strcpy(Mev[STEP].Name, (plr == 0) ? "VUP1" : "VSP1");
             }
 

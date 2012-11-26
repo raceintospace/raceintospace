@@ -368,15 +368,15 @@ char REvent(char plr)
 
         evflag = 0;
 
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             choice[evflag++] = 1;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             choice[evflag++] = 2;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             choice[evflag++] = 3;
         }
 
@@ -398,15 +398,15 @@ char REvent(char plr)
             return 1;
         }
 
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             evflag += 1;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             evflag += 2;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             evflag += 4;
         }
 
@@ -452,7 +452,7 @@ char REvent(char plr)
         break;
 
     case 36: /* damage launch facility */
-        if (Data->P[plr].Mission[0].MissionCode == 0) {
+        if (Data->P[plr].Mission[0].MissionCode == Mission_None) {
             Data->P[plr].LaunchFacility[0] = 15;
         } else {
             return 1;
@@ -739,7 +739,7 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < 3; i++)
-            if (Data->P[plr].Mission[i].MissionCode > 0) {
+            if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
 
@@ -749,7 +749,7 @@ char REvent(char plr)
 
         i = 0;
 
-        while (Data->P[plr].Mission[i].MissionCode == 0) {
+        while (Data->P[plr].Mission[i].MissionCode == Mission_None) {
             i++;
         }
 
@@ -881,7 +881,7 @@ char REvent(char plr)
         for (j = 0; j < 20; j++) {
             i = rand() % 3;
 
-            if (Data->P[plr].LaunchFacility[i] == 1 && Data->P[plr].Mission[i].MissionCode == 0) {
+            if (Data->P[plr].LaunchFacility[i] == 1 && Data->P[plr].Mission[i].MissionCode == Mission_None) {
                 break;
             }
         }
@@ -914,7 +914,7 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode > 0) {
+            if (Data->P[plr].Mission[i].MissionCode) {
                 GetMisType(Data->P[plr].Mission[i].MissionCode);
 
                 if (!Mis.Jt) {
@@ -929,7 +929,7 @@ char REvent(char plr)
 
         i = brandom(3);
 
-        while (Data->P[plr].Mission[i].MissionCode == 0 || Data->P[plr].Mission[i].Joint == 1) {
+        while (Data->P[plr].Mission[i].MissionCode == Mission_None || Data->P[plr].Mission[i].Joint == 1) {
             i = brandom(3);
         }
 
@@ -970,7 +970,7 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < 3; i++)
-            if (Data->P[plr].Mission[i].MissionCode > 0) {
+            if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
 
@@ -980,7 +980,7 @@ char REvent(char plr)
 
         i = 0;
 
-        while (Data->P[plr].Mission[i].MissionCode == 0) {
+        while (Data->P[plr].Mission[i].MissionCode == Mission_None) {
             i++;
         }
 

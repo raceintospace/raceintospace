@@ -134,7 +134,7 @@ void DrawRush(char plr)
             JR = 1;
         }
 
-        if (Data->P[plr].Mission[l].MissionCode > 0 &&
+        if (Data->P[plr].Mission[l].MissionCode &&
             Data->P[plr].Mission[l].part == 0) {
             k++;
         }
@@ -157,31 +157,31 @@ void DrawRush(char plr)
     if (k == 2 && JR == 0) { // Two non joint missions
         l = 3;
 
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             Data->P[plr].Mission[1].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = l + Data->Season * 6;
         }
     };
 
     if (k == 1 && JR == 0) { // Single Mission Non joint
-        if (Data->P[plr].Mission[0].MissionCode > 0) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode > 0) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode > 0) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
         }
     };
@@ -218,7 +218,7 @@ void DrawRush(char plr)
     FlagSm(plr, 4, 4);
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode > 0 &&
+        if (Data->P[plr].Mission[i].MissionCode &&
             Data->P[plr].Mission[i].part == 0) {
             ShBox(0, 25 + i * 58, 80, 82 + i * 58 - 1);
             ShBox(83, 25 + i * 58, 319, 82 + i * 58 - 1);
@@ -324,7 +324,7 @@ void Rush(char plr)
 
         if (mousebuttons > 0 || key > 0) {
             if (((y >= 32 && y <= 74 && x >= 280 && x <= 312 && mousebuttons > 0) || (key >= '1' && key <= '3'))
-                && pRush && Data->P[plr].Mission[0].MissionCode > 0 && Data->P[plr].Mission[0].part != 1) { /* L1: Row One */
+                && pRush && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) { /* L1: Row One */
                 // R1=oR1;
                 if (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && oR1 != 1 && fCsh < 3) {
                     Help("i117");
@@ -345,7 +345,7 @@ void Rush(char plr)
                     oR1 = R1;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 90 && y <= 132 && mousebuttons > 0) || (key >= '4' && key <= '6'))
-                       && pRush && Data->P[plr].Mission[1].MissionCode > 0 && Data->P[plr].Mission[1].part != 1) { /* L2: Row One */
+                       && pRush && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) { /* L2: Row One */
                 // R2=oR2;
                 if (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && oR2 != 1 && fCsh < 3) {
                     Help("i117");
@@ -366,7 +366,7 @@ void Rush(char plr)
                     oR2 = R2;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 148 && y <= 190 && mousebuttons > 0) || (key >= '7' && key <= '9'))
-                       && pRush && Data->P[plr].Mission[2].MissionCode > 0 && Data->P[plr].Mission[2].part != 1) { /* L3: Row One */
+                       && pRush && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) { /* L3: Row One */
                 // R3=oR3;
                 if (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && oR3 != 1 && fCsh < 3) {
                     Help("i117");
@@ -400,7 +400,7 @@ void Rush(char plr)
                     i = 0;
                 }
 
-                if (Data->P[plr].Mission[i].MissionCode > 0 && Data->P[plr].Mission[i].part != 1) {
+                if (Data->P[plr].Mission[i].MissionCode && Data->P[plr].Mission[i].part != 1) {
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
                     RectFill(144, 29 + i * 58, 270, 37 + i * 58, 3);
@@ -518,7 +518,7 @@ void Rush(char plr)
 
             for (i = 0; i < 3; i++) {
                 if (x >= 91 && x <= 264 && y >= 41 + i * 59 && y <= 59 + i * 59 && mousebuttons > 0
-                    && Data->P[plr].Mission[i].MissionCode > 0
+                    && Data->P[plr].Mission[i].MissionCode
                     && Data->P[plr].Mission[i].part != 1) { // Downgrade
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
@@ -644,7 +644,7 @@ void Rush(char plr)
                 delay(10);
 
                 for (i = 0; i < 3; i++) {
-                    if (Data->P[plr].Mission[i].MissionCode > 0) {
+                    if (Data->P[plr].Mission[i].MissionCode) {
                         if (dgflag[i] != 0) {
                             Data->P[plr].Mission[i].MissionCode = dg[Data->P[plr].Mission[i].MissionCode][dgflag[i] - 1];
                             pNeg[plr][i] = 1;
@@ -660,19 +660,19 @@ void Rush(char plr)
                     R3 = R2;
                 }
 
-                if (Data->P[plr].Mission[0].MissionCode > 0 && Data->P[plr].Cash >= 3 * R1) {
+                if (Data->P[plr].Mission[0].MissionCode && Data->P[plr].Cash >= 3 * R1) {
                     Data->P[plr].Cash -= 3 * R1;
                     Data->P[plr].Mission[0].Month -= R1;
                     Data->P[plr].Mission[0].Rushing = R1;
                 };
 
-                if (Data->P[plr].Mission[1].MissionCode > 0 && Data->P[plr].Cash >= 3 * R2) {
+                if (Data->P[plr].Mission[1].MissionCode && Data->P[plr].Cash >= 3 * R2) {
                     Data->P[plr].Cash -= 3 * R2;
                     Data->P[plr].Mission[1].Month -= R2;
                     Data->P[plr].Mission[1].Rushing = R2;
                 };
 
-                if (Data->P[plr].Mission[2].MissionCode > 0 && Data->P[plr].Cash >= 3 * R3) {
+                if (Data->P[plr].Mission[2].MissionCode && Data->P[plr].Cash >= 3 * R3) {
                     Data->P[plr].Cash -= 3 * R3;
                     Data->P[plr].Mission[2].Month -= R3;
                     Data->P[plr].Mission[2].Rushing = R3;

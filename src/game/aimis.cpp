@@ -1529,11 +1529,11 @@ void AILaunch(char plr)
 
     for (i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_DockingInOrbit_Duration && Data->P[plr].DockingModuleInOrbit == 0) {
-            Data->P[plr].Mission[i].MissionCode = 0;
+            Data->P[plr].Mission[i].MissionCode = Mission_None;
             return;
         }
 
-        if (Data->P[plr].Mission[i].MissionCode > Mission_None && Data->P[plr].Mission[i].part == 0) {
+        if (Data->P[plr].Mission[i].MissionCode && Data->P[plr].Mission[i].part == 0) {
             whe[0] = whe[1] = -1;
 
             if (Data->P[plr].Mission[i].Joint == 1) {
@@ -1667,7 +1667,7 @@ void AILaunch(char plr)
             JR = 1;
         }
 
-        if (Data->P[plr].Mission[l].MissionCode > Mission_None &&
+        if (Data->P[plr].Mission[l].MissionCode &&
             Data->P[plr].Mission[l].part == 0) {
             k++;
         }
@@ -1684,31 +1684,31 @@ void AILaunch(char plr)
     if (k == 2 && JR == 0) { // Two non joint missions
         l = 3;
 
-        if (Data->P[plr].Mission[0].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[1].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             Data->P[plr].Mission[1].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[2].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = l + Data->Season * 6;
         }
     };
 
     if (k == 1 && JR == 0) { // Single Mission Non joint
-        if (Data->P[plr].Mission[0].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[1].MissionCode) {
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode > Mission_None) {
+        if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
         }
     };

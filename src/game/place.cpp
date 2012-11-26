@@ -1031,9 +1031,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 display::graphics.clearScreen(0);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
-                if (Data->P[plr].History[index].MissionCode == 10 ||
-                    Data->P[plr].History[index].MissionCode == 12 ||
-                    Data->P[plr].History[index].MissionCode == 13) {
+                if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
+                    Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
+                    Data->P[plr].History[index].MissionCode == Mission_SaturnFlyby) {
                     if (Data->P[plr].History[index].Event == 0 &&
                         Data->P[plr].History[index].spResult == 1)
                         switch (Data->P[plr].History[index].MissionCode) {
@@ -1067,9 +1067,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
             } else {
                 //Specs: Planetary Mission Klugge
-                if (Data->P[plr].History[index].MissionCode == 10 ||
-                    Data->P[plr].History[index].MissionCode == 12 ||
-                    Data->P[plr].History[index].MissionCode == 13) {
+                if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
+                    Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
+                    Data->P[plr].History[index].MissionCode == Mission_SaturnFlyby) {
                     if (Data->P[plr].History[index].Event == 0 &&
                         Data->P[plr].History[index].spResult == 1) {
                         switch (Data->P[plr].History[index].MissionCode) {
