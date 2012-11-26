@@ -697,7 +697,7 @@ enum MissionValues {
     Mission_JT_ORBITAL_D = 16,
 
     //"ORBITAL-O",            //17
-    //"JT U. ORBITAL-D",      //18
+    Mission_Jt_Unmanned_Orbital_Docking = 18,
     //"JT ORBITALS-D",        //19
 
     Mission_Manned_Orbital_Docking_EVA = 20,
@@ -714,12 +714,13 @@ enum MissionValues {
 
     //"JT ORBITALS-DEX",      //30
     //"JT ORBITAL-DX",        //31
-    //"JT ORBITING LAB",      //32
+    Mission_Jt_OrbitingLab = 32, 
     //"ORBITAL-DEX",          //33
     //"JT ORBITAL-DEX",       //34
 
     //"JT ORBITALS-DEX",      //35
-    //"JT ORBITING LAB-E",    //36
+
+    Mission_Jt_OrbitingLab_EVA = 36,
     //"JT ORBITALS-DX",       //37
     //"EARTH ORBITAL-L",      //38
     //"JT EARTH ORBITAL-L",   //39
@@ -737,6 +738,7 @@ enum MissionValues {
     //"JT LUNAR ORB:LOR-L",   //49
 
     //"LUNAR ORBITAL-LE",     //50
+    Mission_LunarOrbital_LM_Test = 50,
     //"JT LUN ORB:LOR EVA-L", //51
     //"JT LUN ORB:EOR/LOR-L", //52
     Mission_HistoricalLanding = 53,
@@ -745,7 +747,7 @@ enum MissionValues {
     Mission_Jt_LunarLanding_EOR = 55,
     Mission_Jt_LunarLanding_LOR = 56,
 
-    //"SOYUZ LUNAR LANDING",  //57
+    Mission_Soyuz_LL = 57,
     //"RES IN EARTH ORBIT",   //58
     //"RES IN LUNAR ORBIT",   //59
 

@@ -808,7 +808,7 @@ void DrawMisHist(char plr, int *where)
     //ai klugge
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].MissionCode == 55 || Data->P[plr].History[i].MissionCode == 56) {
+        if (Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_EOR || Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_LOR) {
             for (j = 0; j < 4; j++)
                 if (Data->P[plr].History[i].Man[PAD_A][j] != -1) {
                     Data->P[plr].History[i].Man[PAD_B][j] = Data->P[plr].History[i].Man[PAD_A][j];

@@ -592,7 +592,7 @@ void DrawSpaceport(char plr)
     for (i = 0; i < 3; i++) {
         Data->P[plr].Port[PORT_LaunchPad_A + i] = 1; // Draw launch pad
 
-        if (Data->P[plr].Mission[i].MissionCode > 0) {
+        if (Data->P[plr].Mission[i].MissionCode) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 2; // Draw damaged launch pad
         } else if (Data->P[plr].LaunchFacility[i] > 1) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 3;
@@ -1729,12 +1729,12 @@ char PortSel(char plr, char loc)
         MisOK = 0;
 
         for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode > 0 &&
+            if (Data->P[plr].Mission[i].MissionCode &&
                 Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 MisOK = 10;
             }
 
-            if (Data->P[plr].Mission[i].MissionCode > 0) {
+            if (Data->P[plr].Mission[i].MissionCode) {
                 MisOK++;
             }
         }
@@ -1762,12 +1762,12 @@ char PortSel(char plr, char loc)
 
         // Check to see if missions are good to go
         for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode > 0 &&
+            if (Data->P[plr].Mission[i].MissionCode &&
                 Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 MisOK = 10;
             }
 
-            if (Data->P[plr].Mission[i].MissionCode > 0) {
+            if (Data->P[plr].Mission[i].MissionCode) {
                 MisOK++;
             }
         }
@@ -1932,7 +1932,7 @@ char MisReq(char plr)
     gxGetImage(&local, 53, 29, 236, 160, 0);
 
     for (i = 0; i < 3; i++)
-        if ((Data->P[plr].Mission[i].MissionCode > 0) &&
+        if ((Data->P[plr].Mission[i].MissionCode) &&
             (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0)) {
             num++;
         }
@@ -1976,7 +1976,7 @@ char MisReq(char plr)
         DispChr(0x41 + i);
         PrintAt(0, 0, ": ");
 
-        if (Data->P[plr].Mission[i].MissionCode != 0) {
+        if (Data->P[plr].Mission[i].MissionCode) {
             PrintAt(0, 0, &Data->P[plr].Mission[i].Name[0]);
 
             if (Data->P[plr].Mission[i].Men > 0) {

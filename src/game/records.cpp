@@ -833,11 +833,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Orbital Satellite
-                                if (Data->P[i].History[j].MissionCode == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Orbital_Satellite) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Orbital_Satellite) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1009,10 +1009,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //LUNAR fly-by
-                                if (Data->P[i].History[j].MissionCode == 7) {
+                                if (Data->P[i].History[j].MissionCode == Mission_LunarFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 7) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_LunarFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1024,10 +1024,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //MERCURY fly-by
-                                if (Data->P[i].History[j].MissionCode == 11) {
+                                if (Data->P[i].History[j].MissionCode == Mission_MercuryFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 11) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_MercuryFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1039,10 +1039,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //VENUS fly-by
-                                if (Data->P[i].History[j].MissionCode == 9) {
+                                if (Data->P[i].History[j].MissionCode == Mission_VenusFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 9) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_VenusFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1054,10 +1054,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //MARS fly-by
-                                if (Data->P[i].History[j].MissionCode == 10) {
+                                if (Data->P[i].History[j].MissionCode == Mission_MarsFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 10) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_MarsFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1069,10 +1069,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //JUPITER fly-by
-                                if (Data->P[i].History[j].MissionCode == 12) {
+                                if (Data->P[i].History[j].MissionCode == Mission_JupiterFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 12) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_JupiterFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1084,10 +1084,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //SATURN fly-by
-                                if (Data->P[i].History[j].MissionCode == 13) {
+                                if (Data->P[i].History[j].MissionCode == Mission_SaturnFlyby) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 13) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_SaturnFlyby) {
                                 Rec_Change = 1;
                             }
 
@@ -1099,10 +1099,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //LUNAR PROBE landing
-                                if (Data->P[i].History[j].MissionCode == 8) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Lunar_Probe) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 8) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_Lunar_Probe) {
                                 Rec_Change = 1;
                             }
 
@@ -1276,11 +1276,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Manned Lunar Pass
-                                if (Data->P[i].History[j].MissionCode == 43) {
+                                if (Data->P[i].History[j].MissionCode == Mission_LunarPass) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 43) {
+                                if (Data->P[i].History[j].MissionCode == Mission_LunarPass) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1293,13 +1293,13 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Manned Lunar Orbit
-                                if (Data->P[i].History[j].MissionCode == 46 ||
-                                    Data->P[i].History[j].MissionCode == 48) {
+                                if (Data->P[i].History[j].MissionCode == Mission_LunarOrbital ||
+                                    Data->P[i].History[j].MissionCode == Mission_Lunar_Orbital) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 46 ||
-                                    Data->P[i].History[j].MissionCode == 48) {
+                                if (Data->P[i].History[j].MissionCode == Mission_LunarOrbital ||
+                                    Data->P[i].History[j].MissionCode == Mission_Lunar_Orbital) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1312,11 +1312,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earlies Manned Lunar Landing
-                                if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == 57)) {
+                                if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == 57)) {
+                                if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1396,11 +1396,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Manned Docking
-                                if (Data->P[i].History[j].MissionCode != 15 && Data->P[i].History[j].MissionCode != 18 &&
+                                if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
                                     ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode != 15 && Data->P[i].History[j].MissionCode != 18 &&
+                            } else if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
                                        ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
                                 Rec_Change = 1;
                             }
@@ -1413,10 +1413,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Orbital Laboratory
-                                if (Data->P[i].History[j].MissionCode == 32 || Data->P[i].History[j].MissionCode == 36) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == 32 || Data->P[i].History[j].MissionCode == 36) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
                                 Rec_Change = 1;
                             }
 
@@ -1851,11 +1851,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest EOR Landing
-                                if (Data->P[i].History[j].MissionCode == 56) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 56) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1868,11 +1868,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest LOR Landing
-                                if (Data->P[i].History[j].MissionCode == 55) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 55) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1885,11 +1885,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Direct Ascent Landing
-                                if (Data->P[i].History[j].MissionCode == 54) {
+                                if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 54) {
+                                if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1902,11 +1902,11 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) { //Earliest Historical Lunar Landing
-                                if (Data->P[i].History[j].MissionCode == 53) {
+                                if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding) {
                                     Rec_Change = 0;
                                 }
                             } else {
-                                if (Data->P[i].History[j].MissionCode == 53) {
+                                if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding) {
                                     Rec_Change = 1;
                                 }
                             }
@@ -1928,7 +1928,7 @@ void UpdateRecords(char Ty)
 
                         case 51:
                             if (Ty == 1) { //Total SOVIET Wins
-                                if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == 57)) && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
+                                if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].place = 1;
                                     rec[k][0].type = 3;
@@ -1941,7 +1941,7 @@ void UpdateRecords(char Ty)
 
                         case 52:
                             if (Ty == 1) { //Total LOR Wins
-                                if (Data->P[i].History[j].MissionCode == 55 && CheckSucess(i, j) == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
                                     rec[k][0].type = 3;
@@ -1953,7 +1953,7 @@ void UpdateRecords(char Ty)
 
                         case 53:
                             if (Ty == 1) { //Total EOR Wins
-                                if (Data->P[i].History[j].MissionCode == 56 && CheckSucess(i, j) == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
                                     rec[k][0].type = 3;
@@ -1965,7 +1965,7 @@ void UpdateRecords(char Ty)
 
                         case 54:
                             if (Ty == 1) { //Total Direct Ascent Wins
-                                if (Data->P[i].History[j].MissionCode == 54 && CheckSucess(i, j) == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
                                     rec[k][0].type = 3;
@@ -1977,7 +1977,7 @@ void UpdateRecords(char Ty)
 
                         case 55:
                             if (Ty == 1) { //Total Historical Wins
-                                if (Data->P[i].History[j].MissionCode == 53 && CheckSucess(i, j) == 1) {
+                                if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
                                     rec[k][0].type = 3;

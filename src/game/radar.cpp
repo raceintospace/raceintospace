@@ -117,9 +117,9 @@ void PadDraw(char plr, char pad)
     PrintAt(65, 71, "MISSION");
     FlagSm(plr, 4, 4);
 
-    if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode > 0) {
+    if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode) {
         PadPict(2 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode == 0) {
+    } else if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode == Mission_None) {
         PadPict(4 + plr);
     } else if (Data->P[plr].LaunchFacility[pad] > 1) {
         PadPict(0 + plr);
@@ -149,7 +149,7 @@ void PadDraw(char plr, char pad)
     } else {
         display::graphics.setForegroundColor(9);
 
-        if (Data->P[plr].Mission[pad].MissionCode == 0) {
+        if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
             PrintAt(15, 56, "NO LAUNCH SCHEDULED");
             InBox(169, 181, 314, 193);
         } else {
@@ -529,7 +529,7 @@ void ClrMiss(char plr, char pad)
         Data->P[plr].Mission[padd + 1].BCrew = 0;
         Data->P[plr].Mission[padd + 1].Joint = 0;
         Data->P[plr].Mission[padd + 1].Men = 0;
-        Data->P[plr].Mission[padd + 1].MissionCode = 0;
+        Data->P[plr].Mission[padd + 1].MissionCode = Mission_None;
     }
 
     Data->P[plr].Mission[padd].Prog = 0;
@@ -537,7 +537,7 @@ void ClrMiss(char plr, char pad)
     Data->P[plr].Mission[padd].BCrew = 0;
     Data->P[plr].Mission[padd].Men = 0;
     Data->P[plr].Mission[padd].Joint = 0;
-    Data->P[plr].Mission[padd].MissionCode = 0;
+    Data->P[plr].Mission[padd].MissionCode = Mission_None;
 
     if (Data->P[plr].Mission[padd].Joint == 1 && Data->P[plr].Mission[padd].part == 0) {
         memset(&Data->P[plr].Mission[padd + 1], 0x00, sizeof(struct MissionType));
@@ -601,8 +601,8 @@ void ShowPad(char plr, char pad)
         key = 0;
         GetMouse();
 
-        if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode > 0)
-            || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode > 0 && key == 'S')) {
+        if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
+            || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode && key == 'S')) {
             // Scrub Mission
             InBox(169, 181, 314, 193);
             key = 0;
@@ -611,7 +611,7 @@ void ShowPad(char plr, char pad)
             OutBox(169, 181, 314, 193);
             key = 0;
 
-            if (Data->P[plr].Mission[pad].MissionCode == 0) {
+            if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
                 return;
             }
         } else if ((Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash && Data->P[plr].LaunchFacility[pad] > 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)

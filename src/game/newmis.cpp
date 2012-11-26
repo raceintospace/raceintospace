@@ -92,7 +92,7 @@ OrderMissions(void)
 
     for (i = 0; i < NUM_PLAYERS; i++)
         for (j = 0; j < MAX_MISSIONS; j++)
-            if (Data->P[i].Mission[j].MissionCode > 0
+            if (Data->P[i].Mission[j].MissionCode
                 && Data->P[i].Mission[j].part != 1) {
                 Order[k].plr = i;
                 Order[k].loc = j;
@@ -488,7 +488,7 @@ void MisAnn(char plr, char pad)
                 ClrMiss(plr, pad);
             }
 
-            if (Data->P[plr].Mission[pad].MissionCode == 0) {
+            if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 return;
             }
