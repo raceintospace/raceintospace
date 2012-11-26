@@ -748,9 +748,9 @@ void Update(void)
                 strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]); // copy into struct
                 Data->P[j].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
-            } else if (Data->P[j].Mission[i].MissionCode == 7 ||
-                       (Data->P[j].Mission[i].MissionCode >= 9 &&
-                        Data->P[j].Mission[i].MissionCode <= 13)) {
+            } else if (Data->P[j].Mission[i].MissionCode == Mission_LunarFlyby ||
+                       (Data->P[j].Mission[i].MissionCode >= Mission_VenusFlyby &&
+                        Data->P[j].Mission[i].MissionCode <= Mission_SaturnFlyby)) {
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
                 strcat(&tName[0], " ");
@@ -941,9 +941,9 @@ void UpdAll(char side)
             strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
             Data->P[side].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
-        } else if (Data->P[side].Mission[i].MissionCode == 7 ||
-                   (Data->P[side].Mission[i].MissionCode >= 9 &&
-                    Data->P[side].Mission[i].MissionCode <= 13)) {
+        } else if (Data->P[side].Mission[i].MissionCode == Mission_LunarFlyby ||
+                   (Data->P[side].Mission[i].MissionCode >= Mission_VenusFlyby &&
+                    Data->P[side].Mission[i].MissionCode <= Mission_SaturnFlyby)) {
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
             strcat(&tName[0], " ");

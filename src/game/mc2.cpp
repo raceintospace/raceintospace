@@ -521,7 +521,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
         // Special Cases #54753 and #54754
 
-        if (mcode == 'H' && Data->P[plr].Mission[pad].MissionCode == 50) {
+        if (mcode == 'H' && Data->P[plr].Mission[pad].MissionCode == Mission_LunarOrbital_LM_Test) {
             strcpy(Mev[step].Name, "HMOON\0");
         }
 
@@ -681,7 +681,7 @@ void MissionSetup(char plr, char mis)
             }
         }
 
-        if (Data->P[plr].Mission[mis].MissionCode == 57) { // Soyuz Kicker-C
+        if (Data->P[plr].Mission[mis].MissionCode == Mission_Soyuz_LL) { // Soyuz Kicker-C
             Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }

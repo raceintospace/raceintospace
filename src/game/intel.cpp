@@ -448,14 +448,14 @@ void MisIntel(char plr, char acc)
         }
 
         for (i = 0; i < 3; i++)
-            if (Data->P[abs(plr - 1)].Future[i].MissionCode > 0) {
+            if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
                 save[found] = mis;
                 ++found;
             }
 
         for (i = 0; i < 3; i++)
-            if (Data->P[abs(plr - 1)].Mission[i].MissionCode > 0) {
+            if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
                 save[found] = mis;
                 ++found;

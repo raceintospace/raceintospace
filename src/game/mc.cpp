@@ -131,7 +131,7 @@ int Launch(char plr, char mis)
     memset(MH, 0x00, sizeof MH);
     memset(Mev, 0x00, sizeof Mev);
 
-    if (Data->P[plr].Mission[mis].MissionCode == 2) {
+    if (Data->P[plr].Mission[mis].MissionCode == Mission_SubOrbital) {
         Data->P[plr].Mission[mis].Duration = 1;
     }
 
@@ -146,11 +146,11 @@ int Launch(char plr, char mis)
         ClrMiss(plr, mis - Data->P[plr].Mission[mis].part);
     }
 
-    if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode != 0) {
+    if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode) {
         MisAnn(plr, mis);
     }
 
-    if (Data->P[plr].Mission[mis].MissionCode == 0) {
+    if (Data->P[plr].Mission[mis].MissionCode == Mission_None) {
         return -20;
     }
 

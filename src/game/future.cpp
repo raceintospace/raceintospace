@@ -132,11 +132,11 @@ void DrawFuture(char plr, int mis, char pad)
     if (pad == 2) {
         JointFlag = 0;    // third pad automatic no joint mission
     } else if (Data->P[plr].LaunchFacility[pad + 1] == 1) {
-        if (Data->P[plr].Future[pad + 1].MissionCode == 0) {
+        if (Data->P[plr].Future[pad + 1].MissionCode == Mission_None) {
             JointFlag = 1;    // if no mission then set joint flag
         } else if (Data->P[plr].Future[pad + 1].part == 1) { // check if the part of that second mission is set
             JointFlag = 1;
-            Data->P[plr].Future[pad + 1].MissionCode = 0; // clear mission
+            Data->P[plr].Future[pad + 1].MissionCode = Mission_None; // clear mission
             Data->P[plr].Future[pad + 1].part = 0;
         };
     };

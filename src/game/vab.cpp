@@ -193,7 +193,7 @@ void DispVAB(char plr, char pad)
     IOBox(243, 3, 316, 19);
     IOBox(175, 183, 244, 197);
 
-    if (Data->P[plr].Mission[pad].MissionCode != 0) {
+    if (Data->P[plr].Mission[pad].MissionCode) {
         IOBox(247, 183, 316, 197);
     } else {
         InBox(247, 183, 316, 197);
@@ -909,7 +909,7 @@ begvab:
 
     DispVAB(plr, mis);
 
-    if (Data->P[plr].Mission[mis].MissionCode > 0) {
+    if (Data->P[plr].Mission[mis].MissionCode) {
         ButOn = 1;
     } else {
         ButOn = 0;
@@ -1071,7 +1071,7 @@ begvab:
                 }
 
                 goto begvab; /* CONTINUE/EXIT/DO NOTHING */
-            } else if (((x >= 249 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode != 0) {
+            } else if (((x >= 249 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
                 InBox(249, 185, 314, 195);
                 WaitForMouseUp();
 
@@ -1082,7 +1082,7 @@ begvab:
                 OutBox(249, 185, 314, 195);
                 ClrMiss(plr, mis);
 
-                if (Data->P[plr].Mission[mis].MissionCode == 0) {
+                if (Data->P[plr].Mission[mis].MissionCode == Mission_None) {
                     goto begvab;    // SCRUB The whole mission
                 }
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {

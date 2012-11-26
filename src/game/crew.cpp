@@ -226,7 +226,7 @@ void ClrFut(char plr, char pad)
         Data->P[plr].Future[pad + 1].Duration = 0;
         Data->P[plr].Future[pad + 1].Joint = 0;
         Data->P[plr].Future[pad + 1].Men = 0;
-        Data->P[plr].Future[pad + 1].MissionCode = 0;
+        Data->P[plr].Future[pad + 1].MissionCode = Mission_None;
     }
 
     Data->P[plr].Future[pad].Prog = 0;
@@ -235,7 +235,7 @@ void ClrFut(char plr, char pad)
     Data->P[plr].Future[pad].Men = 0;
     Data->P[plr].Future[pad].Duration = 0;
     Data->P[plr].Future[pad].Joint = 0;
-    Data->P[plr].Future[pad].MissionCode = 0;
+    Data->P[plr].Future[pad].MissionCode = Mission_None;
     return;
 }
 
