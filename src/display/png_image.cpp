@@ -8,6 +8,7 @@
 
 #include "png_image.h"
 #include "graphics.h"
+#include "surface.h"
 
 namespace display
 {
@@ -204,7 +205,7 @@ void PNGImage::draw(int x, int y)
 
     for (int i = 0; i < height_to_copy; i++) {
         // this assumes an 8-bit screen buffer and 8-bit pixel_data, both with no padding
-        memcpy(&graphics.screen()[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
+        memcpy(&graphics.screen()->pixels()[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
     }
 }
 

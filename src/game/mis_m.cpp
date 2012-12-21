@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "mis_m.h"
 #include "Buzz_inc.h"
@@ -144,9 +145,9 @@ void MisCheck(char plr, char mpad)
             RectFill(189, 173, 249, 196, 55);
 
             for (i = 190; i < 250; i += 2) {
-                display::graphics.setPixel(i, 178, 61);
-                display::graphics.setPixel(i, 184, 61);
-                display::graphics.setPixel(i, 190, 61);
+                display::graphics.screen()->setPixel(i, 178, 61);
+                display::graphics.screen()->setPixel(i, 184, 61);
+                display::graphics.screen()->setPixel(i, 190, 61);
             }
 
             lc = 191;
@@ -154,9 +155,9 @@ void MisCheck(char plr, char mpad)
             RectFill(73, 173, 133, 196, 55);
 
             for (i = 73; i < 133; i += 2) {
-                display::graphics.setPixel(i, 178, 61);
-                display::graphics.setPixel(i, 184, 61);
-                display::graphics.setPixel(i, 190, 61);
+                display::graphics.screen()->setPixel(i, 178, 61);
+                display::graphics.screen()->setPixel(i, 184, 61);
+                display::graphics.screen()->setPixel(i, 190, 61);
             }
 
             lc = 76;
@@ -650,9 +651,9 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                 RectFill(189, 173, 249, 196, 55);
 
                 for (i = 190; i < 250; i += 2) {
-                    display::graphics.setPixel(i, 178, 61);
-                    display::graphics.setPixel(i, 184, 61);
-                    display::graphics.setPixel(i, 190, 61);
+                    display::graphics.screen()->setPixel(i, 178, 61);
+                    display::graphics.screen()->setPixel(i, 184, 61);
+                    display::graphics.screen()->setPixel(i, 190, 61);
                 }
 
                 RectFill(189, 195, 191, 195 - safety * 22 / 100, 11);
@@ -681,9 +682,9 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                 RectFill(73, 173, 133, 196, 55);
 
                 for (i = 73; i < 133; i += 2) {
-                    display::graphics.setPixel(i, 178, 61);
-                    display::graphics.setPixel(i, 184, 61);
-                    display::graphics.setPixel(i, 190, 61);
+                    display::graphics.screen()->setPixel(i, 178, 61);
+                    display::graphics.screen()->setPixel(i, 184, 61);
+                    display::graphics.screen()->setPixel(i, 190, 61);
                 }
 
                 RectFill(74, 195, 76, 195 - safety * 22 / 100, 11);

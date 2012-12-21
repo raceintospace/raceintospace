@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "Buzz_inc.h"
 #include "pace.h"
@@ -52,7 +53,7 @@ void OpenEmUp(void)
     letter_dat = slurp_gamedat("letter.dat");
 }
 
-int PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
+int PCX_D(char *src_raw, char *dest_raw, unsigned src_size)
 {
     char *src = (char *)src_raw;
     char *dest = (char *)dest_raw;
@@ -79,7 +80,7 @@ int PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
     return (dest - orig_dest);
 }
 
-int RLED(void *src_raw, void *dest_raw, unsigned int src_size)
+int RLED(char *src_raw, char *dest_raw, unsigned int src_size)
 {
     signed char *src = (signed char *)src_raw;
     signed char *dest = (signed char *)dest_raw;
@@ -111,7 +112,7 @@ int RLED(void *src_raw, void *dest_raw, unsigned int src_size)
     return ((char *)dest - (char *)dest_raw);
 }
 
-int RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
+int RLED_img(char *src_raw, char *dest_raw, unsigned int src_size, int w, int h)
 {
     signed char *src = (signed char *)src_raw;
     signed char *dest;
@@ -382,7 +383,7 @@ void LMove(void *p)
 {
     GXHEADER local;
 
-    display::graphics.clearScreen(0);
+    display::graphics.screen()->clear(0);
 
     GV(&local, 160, 100);
     memcpy(local.vptr, p, 160 * 100);

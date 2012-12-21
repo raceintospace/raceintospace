@@ -144,7 +144,7 @@ void Load_RD_BUT(char player_index)
     Swap32bit(Boo.size);
     fread(buffer, Boo.size, 1, fin);
     fclose(fin);
-    RLED_img(buffer, mans.vptr, Boo.size, mans.w, mans.h);
+    RLED_img(buffer, (char *)mans.vptr, Boo.size, mans.w, mans.h);
     BUTLOAD = 1;
     return;
 }

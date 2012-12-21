@@ -20,6 +20,7 @@
 
 #include "display/png_image.h"
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "place.h"
 #include "gamedata.h"
@@ -396,7 +397,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
         fread(local2.vptr, table.size, 1, in); // Get Image
         fclose(in);
-        RLED_img(local2.vptr, local.vptr, table.size, local.w, local.h);
+        RLED_img((char *)local2.vptr, (char *)local.vptr, table.size, local.w, local.h);
 
         n = gxVirtualSize(gxVGA_13, 104, 77);
 
@@ -462,7 +463,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fread(&BHead, sizeof BHead, 1, fin);
         Swap32bit(BHead.fSize);
         fread(vhptr.vptr, BHead.fSize, 1, fin);
-        RLED_img(vhptr.vptr, local.vptr, BHead.fSize, local.w, local.h);
+        RLED_img((char *)vhptr.vptr, (char *)local.vptr, BHead.fSize, local.w, local.h);
         n = gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
         for (j = 0; j < n; j++) {
@@ -1025,10 +1026,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
                 fwrite(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
-                fwrite(display::graphics.screen(), 64000, 1, tin);
+                fwrite(display::graphics.screen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
-                display::graphics.clearScreen(0);
+                display::graphics.screen()->clear(0);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
@@ -1059,7 +1060,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
                 fread(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
-                fread(display::graphics.screen(), 64000, 1, tin);
+                fread(display::graphics.screen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 key = 0;

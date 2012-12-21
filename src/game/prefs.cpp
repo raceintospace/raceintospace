@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "prefs.h"
 #include "gamedata.h"
@@ -53,10 +54,10 @@ void DrawPrefs(int where, char a1, char a2)
     keyHelpText = "K013";
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);
@@ -182,7 +183,7 @@ void HModel(char mode, char tx)
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     n = gxVirtualSize(gxVGA_13, 127, 80);
 
     for (j = 0; j < n; j++) {

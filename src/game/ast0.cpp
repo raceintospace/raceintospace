@@ -84,7 +84,7 @@ void Moon(char plr)
     fread(&display::graphics.palette()[384], 384, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
 
     for (size = 0; size < (104 * 82); size++) {
         local.vptr[size] += 128;
@@ -238,7 +238,7 @@ void SatDraw(char plr)
         GV(&local, P.w, P.h);
         fseek(fin, P.offset, SEEK_SET);
         fread(buffer, P.size, 1, fin);
-        RLED_img(buffer, local.vptr, P.size, local.w, local.h);
+        RLED_img(buffer, (char *)local.vptr, P.size, local.w, local.h);
 
         if (i != 2) {
             gxPutImage(&local, gxSET, 5 + i * 80, 28, 0);
@@ -589,12 +589,12 @@ void LMPict(char poff)
     fread(buffer, table.size, 1, in);
     GV(&local, 156, 89);
     GV(&local2, 156, 89);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    RLED_img(buffer, local2.vptr, table.size, local2.w, local2.h);
+    RLED_img(buffer, (char *)local2.vptr, table.size, local2.w, local2.h);
 
     if (poff == 0 || poff == 1 || poff == 4 || poff == 5) {
         gxPutImage(&local2, gxSET, 5, 27, 0);

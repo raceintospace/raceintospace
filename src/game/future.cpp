@@ -20,6 +20,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "future.h"
 #include <assert.h>
@@ -97,9 +98,9 @@ void Load_FUT_BUT(void)
     FILE *fin;
     unsigned i;
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
-    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen(), (char *)vh.vptr, i, vh.w, vh.h);
+    RLED_img((char *)display::graphics.screen()->pixels(), (char *)vh.vptr, i, vh.w, vh.h);
     return;
 }
 
@@ -122,9 +123,9 @@ void DrawFuture(char plr, int mis, char pad)
     Load_FUT_BUT();
     fin = sOpen("FMIN.IMG", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    sz = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    sz = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
     gxClearDisplay(0, 0);
 
     gr_sync();

@@ -25,6 +25,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "sdlhelper.h"
 #include <assert.h>
@@ -673,7 +674,7 @@ av_sync(void)
     Uint32 ticks = SDL_GetTicks();
 #endif
 
-    SDL_Scale2x(display::graphics.screenSurface(), display::graphics.scaledScreenSurface());
+    SDL_Scale2x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
     /* copy palette and handle fading! */
     transform_palette();
     SDL_SetColors(display::graphics.scaledScreenSurface(), pal_colors, 0, 256);

@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "budget.h"
 #include "Buzz_inc.h"
@@ -86,15 +87,15 @@ void DrawBudget(char player, char *pStatus)
     GradRect(31, 149, 124, 182, player);
     display::graphics.setForegroundColor(4);
     // Draw Prestige Box
-	display::graphics.outlineRect(30, 148, 125, 183, 4);
-	display::graphics.outlineRect(57, 85, 85, 121, 4);
-	display::graphics.outlineRect(85, 121, 113, 85, 4);
-	display::graphics.outlineRect(29, 94, 141, 103, 4);
-	display::graphics.outlineRect(29, 103, 141, 112, 4);
-	display::graphics.outlineRect(54, 148, 77, 183, 4);
-	display::graphics.outlineRect(77, 148, 101, 183, 4);
-	display::graphics.outlineRect(30, 157, 125, 165, 4);
-	display::graphics.outlineRect(30, 165, 125, 174, 4);
+	display::graphics.screen()->outlineRect(30, 148, 125, 183, 4);
+	display::graphics.screen()->outlineRect(57, 85, 85, 121, 4);
+	display::graphics.screen()->outlineRect(85, 121, 113, 85, 4);
+	display::graphics.screen()->outlineRect(29, 94, 141, 103, 4);
+	display::graphics.screen()->outlineRect(29, 103, 141, 112, 4);
+	display::graphics.screen()->outlineRect(54, 148, 77, 183, 4);
+	display::graphics.screen()->outlineRect(77, 148, 101, 183, 4);
+	display::graphics.screen()->outlineRect(30, 157, 125, 165, 4);
+	display::graphics.screen()->outlineRect(30, 165, 125, 174, 4);
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
     // Draw the Prestige Screen
@@ -250,10 +251,10 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(311, 107);
 
     for (i = 187; i < 312; i += 2) {
-        display::graphics.setPixel(i, 157, 4);
-        display::graphics.setPixel(i, 137, 4);
-        display::graphics.setPixel(i, 117, 4);
-        display::graphics.setPixel(i, 97, 4);
+        display::graphics.screen()->setPixel(i, 157, 4);
+        display::graphics.screen()->setPixel(i, 137, 4);
+        display::graphics.screen()->setPixel(i, 117, 4);
+        display::graphics.screen()->setPixel(i, 97, 4);
     }
 
     display::graphics.setForegroundColor(4);
@@ -346,11 +347,11 @@ void DrawPastExp(char player, char *pStatus)
 
     RectFill(31, 149, 124, 182, 7 + 3 * player);
     display::graphics.setForegroundColor(4);
-	display::graphics.outlineRect(30, 148, 125, 183, 4);
-	display::graphics.outlineRect(54, 148, 77, 183, 4);
-	display::graphics.outlineRect(77, 148, 101, 183, 4);
-	display::graphics.outlineRect(30, 157, 125, 165, 4);
-	display::graphics.outlineRect(30, 165, 125, 174, 4);
+	display::graphics.screen()->outlineRect(30, 148, 125, 183, 4);
+	display::graphics.screen()->outlineRect(54, 148, 77, 183, 4);
+	display::graphics.screen()->outlineRect(77, 148, 101, 183, 4);
+	display::graphics.screen()->outlineRect(30, 157, 125, 165, 4);
+	display::graphics.screen()->outlineRect(30, 165, 125, 174, 4);
 
     for (j = 0; j < 5; j++)
         for (i = 0; i < 4; i++) {

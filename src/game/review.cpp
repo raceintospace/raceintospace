@@ -314,7 +314,7 @@ void PresPict(char poff)
     fread(buffer, table.size, 1, in);
     fclose(in);
     GV(&local, 126, 84);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
 
     gxPutImage(&local, gxSET, 183, 33, 0);
 

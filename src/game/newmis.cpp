@@ -17,6 +17,7 @@
 */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "newmis.h"
 #include "Buzz_inc.h"
@@ -510,9 +511,9 @@ void AI_Begin(char plr)
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    len[0] = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    len[0] = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen(), vhptr.vptr, (unsigned int)len[0],
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)len[0],
              vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
@@ -547,6 +548,6 @@ void AI_Done(void)
 {
     music_stop();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.clearScreen(0);
+    display::graphics.screen()->clear(0);
 }
 

@@ -24,6 +24,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "futbub.h"
 #include "Buzz_inc.h"
@@ -80,10 +81,10 @@ void drawBspline(int segments, char color, ...)
             nc4 = u * u * u / 6;
             x = (nc1 * xpoint[i - 1] + nc2 * xpoint[i] + nc3 * xpoint[i + 1] + nc4 * xpoint[i + 2]);
             y = (nc1 * ypoint[i - 1] + nc2 * ypoint[i] + nc3 * ypoint[i + 1] + nc4 * ypoint[i + 2]);
-            SamCol = display::graphics.getPixel(x, y);
+            SamCol = display::graphics.screen()->getPixel(x, y);
 
             if (yyy == 1) {
-                display::graphics.setPixel(yx, yy, 5);
+                display::graphics.screen()->setPixel(yx, yy, 5);
                 yyy = 0;
             };
 
@@ -92,7 +93,7 @@ void drawBspline(int segments, char color, ...)
                 grLineTo(x, y);
 
                 if (i < (last - 3)) {
-                    display::graphics.setPixel(x, y, 40);
+                    display::graphics.screen()->setPixel(x, y, 40);
                     yx = x;
                     yy = y;
                     yyy = 1;

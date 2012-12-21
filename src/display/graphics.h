@@ -5,8 +5,11 @@
 #include <string>
 #include <vector>
 
+
 namespace display
 {
+
+class Surface;
 
 class Graphics
 {
@@ -24,10 +27,6 @@ public:
 
     void create(const std::string &title, bool fullscreen);
     void destroy();
-
-    SDL_Surface *screenSurface() const {
-        return _screen;
-    }
 
     uint8_t *palette() const {
         return (uint8_t *)(&_palette);
@@ -49,8 +48,8 @@ public:
         return _news;
     }
 
-    char *screen() const {
-        return (char *)(_screen->pixels);
+    Surface * screen() const {
+        return _screen;
     }
 
     SDL_Rect &videoRect() {
@@ -69,20 +68,13 @@ public:
 		return _backgroundColor;
 	}
 
-    void clearScreen(int colour);
-    void fillRect(int x1, int y1, int x2, int y2, char color);
-    void fillRect(const SDL_Rect &area, char color);
-    void setPixel(int x, int y, char color);
 	void setForegroundColor( char color );
 	void setBackgroundColor( char color );
-	char getPixel( int x, int y );
-	void outlineRect(int x1, int y1, int x2, int y2, char color );
-	void line( int x1, int y1, int x2, int y2, char color );
-	void setPalette( uint8_t *palette );
+    void setPalette( uint8_t *palette );
 
 
 private:
-    SDL_Surface *_screen;
+    Surface *_screen;
     SDL_Surface *_scaledScreen;
     SDL_Surface *_display;
     SDL_Overlay *_video;

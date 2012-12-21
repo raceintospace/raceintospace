@@ -30,6 +30,7 @@
 #include <assert.h>
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "admin.h"
 #include "Buzz_inc.h"
@@ -1373,11 +1374,11 @@ int FutureCheck(char plr, char type)
 
     fin = sOpen("LPADS.BUT", "rb", 0);
 
-    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread((void *)display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
 
     fclose(fin);
 
-    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
 
     if (type == 0) {
         helpText = "i010";
