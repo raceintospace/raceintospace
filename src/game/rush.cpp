@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "rush.h"
 #include "Buzz_inc.h"
@@ -123,9 +124,9 @@ void DrawRush(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     fin = sOpen("LPADS.BUT", "rb", 0);
-    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen(), vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
     gxClearDisplay(0, 0);
     JR = 0;
 

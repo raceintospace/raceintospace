@@ -1,4 +1,5 @@
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "gr.h"
 #include "Buzz_inc.h"
@@ -101,9 +102,9 @@ grLineTo(int x_arg, int y_arg)
 
     for (x = x0; x <= x1; x++) {
         if (steep) {
-            display::graphics.setPixel(y, x, display::graphics.foregroundColor());
+            display::graphics.screen()->setPixel(y, x, display::graphics.foregroundColor());
         } else {
-            display::graphics.setPixel(x, y, display::graphics.foregroundColor());
+            display::graphics.screen()->setPixel(x, y, display::graphics.foregroundColor());
         }
 
         error = error + deltay;

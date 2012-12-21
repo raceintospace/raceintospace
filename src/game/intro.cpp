@@ -25,6 +25,7 @@
 
 #include "display/png_image.h"
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "Buzz_inc.h"
 #include "utils.h"
@@ -165,7 +166,7 @@ void Credits(void)
     }
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
-    display::graphics.clearScreen(0);
+    display::graphics.screen()->clear(0);
     keyHelpText = "k000";
 }
 
@@ -225,11 +226,10 @@ void NextTurn(char plr)
 
     fin = sOpen("TURN.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    len = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
+    len = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img(display::graphics.screen(), vhptr.vptr, (unsigned int)len,
-             vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)len, vhptr.w, vhptr.h);
 
     gxClearDisplay(0, 0);
 

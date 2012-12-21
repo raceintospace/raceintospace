@@ -564,12 +564,12 @@ void PadPict(char poff)
     fread(buffer, table.size, 1, in);
     GV(&local, 148, 148);
     GV(&local2, 148, 148);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    RLED_img(buffer, local2.vptr, table.size, local2.w, local2.h);
+    RLED_img(buffer, (char *)local2.vptr, table.size, local2.w, local2.h);
 
     gxPutImage(&local2, gxSET, 168, 28, 0);
 

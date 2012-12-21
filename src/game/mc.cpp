@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "mc.h"
 #include "Buzz_inc.h"
@@ -95,7 +96,7 @@ void DrawControl(char plr)
 
     fread(vhptr.vptr, len, 1, fin);
     fclose(fin);
-    PCX_D((char *)vhptr.vptr, display::graphics.screen(), (unsigned) len);
+    PCX_D((char *)vhptr.vptr, display::graphics.screen()->pixels(), (unsigned) len);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 }

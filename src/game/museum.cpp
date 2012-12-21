@@ -25,6 +25,7 @@
 // Museum Main Files
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "museum.h"
 #include "Buzz_inc.h"
@@ -639,7 +640,7 @@ void ShowSpHist(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
-    display::graphics.clearScreen(0);
+    display::graphics.screen()->clear(0);
 
     if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMissionCount == 0) {
         pos = (Data->Year - 57) * 2 + Data->Season;

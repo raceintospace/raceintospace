@@ -25,6 +25,7 @@
 // NewsCaster Main Files
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "news.h"
 #include "gamedata.h"
@@ -645,7 +646,7 @@ News(char plr)
 
                 if (AnimIndex == 5) {
 
-                    RectFill(227, 108, 228, 108, display::graphics.getPixel(227, 108));
+                    RectFill(227, 108, 228, 108, display::graphics.screen()->getPixel(227, 108));
 
                 }
 
@@ -877,8 +878,8 @@ DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
     display::graphics.setForegroundColor(3);
-	display::graphics.outlineRect( 1, 1, 318, 112, 3 );
-	display::graphics.outlineRect( 2, 2, 317, 111, 3 );
+	display::graphics.screen()->outlineRect( 1, 1, 318, 112, 3 );
+	display::graphics.screen()->outlineRect( 2, 2, 317, 111, 3 );
     InBox(3, 3, 316, 110);
     ShBox(240, 3, 316, 22);
     RectFill(315, 20, 317, 21, 3);
@@ -1022,7 +1023,7 @@ ShowEvt(char plr, char crd)
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
         fread(&display::graphics.palette()[384], 384, 1, ffin);
-        fread(display::graphics.screen(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
+        fread(display::graphics.screen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }
 

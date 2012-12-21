@@ -31,6 +31,7 @@
 #include <assert.h>
 
 #include "display/graphics.h"
+#include "display/surface.h"
 #include "display/png_image.h"
 
 #include "filesystem.h"
@@ -920,9 +921,9 @@ void DispBig(int x, int y, const char *txt, char mode, char te)
             for (l = 0; l < letter.width; l++) {
                 if (letter.img[k][l] != 0x03) {
                     if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
-                        display::graphics.setPixel(x + l, y + k, letter.img[k][l] + 7);
+                        display::graphics.screen()->setPixel(x + l, y + k, letter.img[k][l] + 7);
                     } else {
-                        display::graphics.setPixel(x + l, y + k, letter.img[k][l]);
+                        display::graphics.screen()->setPixel(x + l, y + k, letter.img[k][l]);
                     }
                 }
             }
@@ -995,41 +996,41 @@ void ShBox(int x1, int y1, int x2, int y2)
 
 void UPArrow(int x1, int y1)
 {
-	display::graphics.line(x1, y1, x1, 25 + y1, 4 );
-	display::graphics.line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
+	display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4 );
+	display::graphics.screen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
 
-	display::graphics.line(1 + x1, y1, 6 + x1, 11 + y1, 2);
-	display::graphics.line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
+	display::graphics.screen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
+	display::graphics.screen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
     return;
 }
 
 void RTArrow(int x1, int y1)
 {
-	display::graphics.line(x1, y1, x1 + 31, y1, 4);
-	display::graphics.line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
+	display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
+	display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
 
-	display::graphics.line(x1, y1 + 3, y1 + 19, y1 + 3, 2);
-	display::graphics.line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
+	display::graphics.screen()->line(x1, y1 + 3, y1 + 19, y1 + 3, 2);
+	display::graphics.screen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
     return;
 }
 
 void LTArrow(int x1, int y1)
 {
-	display::graphics.line(x1, y1, x1 + 31, y1, 4);
-	display::graphics.line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
+	display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
+	display::graphics.screen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
 
-	display::graphics.line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
-	display::graphics.line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2 );
+	display::graphics.screen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
+	display::graphics.screen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2 );
     return;
 }
 
 void DNArrow(int x1, int y1)
 {
-	display::graphics.line(x1, y1, x1, 25 + y1, 4);
-	display::graphics.line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
+	display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
+	display::graphics.screen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
 
-	display::graphics.line(3 + x1, y1, 3 + x1, 13 + y1, 2);
-	display::graphics.line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
+	display::graphics.screen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
+	display::graphics.screen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
     return;
 }
 
@@ -1062,7 +1063,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 {
     InBox(x1, y1, x2, y2);
     display::graphics.setForegroundColor(0);
-	display::graphics.outlineRect( x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0 );
+	display::graphics.screen()->outlineRect( x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0 );
     OutBox(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 }
 
@@ -1078,7 +1079,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 void RectFill(int x1, int y1, int x2, int y2, char col)
 {
     display::graphics.setBackgroundColor(col);
-    display::graphics.fillRect(x1, y1, x2, y2, col);
+    display::graphics.screen()->fillRect(x1, y1, x2, y2, col);
     return;
 }
 
@@ -1111,16 +1112,16 @@ void FlagSm(char plr, int xm, int ym)
         xm++;
 
         for (int i = 0; i < 11; i++) {
-            display::graphics.setPixel(xm + i, ym + 1, 2);
-            display::graphics.setPixel(xm + i, ym + 3, 2);
-            display::graphics.setPixel(xm + i, ym + 5, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 1, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 3, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 5, 2);
             i++;
         };
 
         for (int i = 1; i < 10; i++) {
-            display::graphics.setPixel(xm + i, ym + 2, 2);
-            display::graphics.setPixel(xm + i, ym + 4, 2);
-            display::graphics.setPixel(xm + i, ym + 6, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 2, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 4, 2);
+            display::graphics.screen()->setPixel(xm + i, ym + 6, 2);
             i++;
         };
     } else {
@@ -1131,10 +1132,10 @@ void FlagSm(char plr, int xm, int ym)
         grLineTo(xm + 4, ym + 5);
         grLineTo(xm + 5, ym + 5);
         grLineTo(xm + 5, ym + 3);
-        display::graphics.setPixel(xm + 3, ym + 4, 11);
-        display::graphics.setPixel(xm + 4, ym + 2, 11);
-        display::graphics.setPixel(xm + 5, ym + 1, 11);
-        display::graphics.setPixel(xm + 6, ym + 2, 11);
+        display::graphics.screen()->setPixel(xm + 3, ym + 4, 11);
+        display::graphics.screen()->setPixel(xm + 4, ym + 2, 11);
+        display::graphics.screen()->setPixel(xm + 5, ym + 1, 11);
+        display::graphics.screen()->setPixel(xm + 6, ym + 2, 11);
     }
 
     return;
@@ -1165,67 +1166,67 @@ void Flag(int x, int y, char plr)
         RectFill(x, y, x + 32, y + 20, 5);
 
         for (j = 0; j < 5; j++) for (i = 0; i < 8; i++) {
-                display::graphics.setPixel(x + 2 + i * 4, y + 2 + 4 * j, 2);
+                display::graphics.screen()->setPixel(x + 2 + i * 4, y + 2 + 4 * j, 2);
             }
 
         for (j = 0; j < 4; j++) for (i = 0; i < 7; i++) {
-                display::graphics.setPixel(x + 4 + i * 4, y + 4 + 4 * j, 2);
+                display::graphics.screen()->setPixel(x + 4 + i * 4, y + 4 + 4 * j, 2);
             }
     } else {
         RectFill(x, y, x + 69, 38 + y, 8);
-        display::graphics.setPixel(10 + x, 2 + y, 11);
-        display::graphics.setPixel(8 + x, 3 + y, 11);
-        display::graphics.setPixel(9 + x, 3 + y, 11);
-        display::graphics.setPixel(11 + x, 3 + y, 11);
-        display::graphics.setPixel(12 + x, 3 + y, 11);
-        display::graphics.setPixel(9 + x, 5 + y, 11);
-        display::graphics.setPixel(11 + x, 5 + y, 11);
-        display::graphics.setPixel(12 + x, 6 + y, 11);
-        display::graphics.setPixel(10 + x, 7 + y, 11);
-        display::graphics.setPixel(13 + x, 7 + y, 11);
-        display::graphics.setPixel(9 + x, 8 + y, 11);
-        display::graphics.setPixel(10 + x, 8 + y, 11);
-        display::graphics.setPixel(11 + x, 8 + y, 11);
-        display::graphics.setPixel(14 + x, 8 + y, 11);
-        display::graphics.setPixel(8 + x, 9 + y, 11);
-        display::graphics.setPixel(9 + x, 9 + y, 11);
-        display::graphics.setPixel(10 + x, 9 + y, 11);
-        display::graphics.setPixel(14 + x, 9 + y, 11);
-        display::graphics.setPixel(15 + x, 9 + y, 11);
-        display::graphics.setPixel(7 + x, 10 + y, 11);
-        display::graphics.setPixel(8 + x, 10 + y, 11);
-        display::graphics.setPixel(9 + x, 10 + y, 11);
-        display::graphics.setPixel(10 + x, 10 + y, 11);
-        display::graphics.setPixel(14 + x, 10 + y, 11);
-        display::graphics.setPixel(15 + x, 10 + y, 11);
-        display::graphics.setPixel(11 + x, 11 + y, 11);
-        display::graphics.setPixel(14 + x, 11 + y, 11);
-        display::graphics.setPixel(12 + x, 12 + y, 11);
-        display::graphics.setPixel(13 + x, 12 + y, 11);
-        display::graphics.setPixel(14 + x, 12 + y, 11);
-        display::graphics.setPixel(7 + x, 13 + y, 11);
-        display::graphics.setPixel(8 + x, 13 + y, 11);
-        display::graphics.setPixel(12 + x, 13 + y, 11);
-        display::graphics.setPixel(13 + x, 13 + y, 11);
-        display::graphics.setPixel(6 + x, 14 + y, 11);
-        display::graphics.setPixel(9 + x, 14 + y, 11);
-        display::graphics.setPixel(10 + x, 14 + y, 11);
-        display::graphics.setPixel(11 + x, 14 + y, 11);
-        display::graphics.setPixel(12 + x, 14 + y, 11);
-        display::graphics.setPixel(13 + x, 14 + y, 11);
-        display::graphics.setPixel(14 + x, 15 + y, 11);
-        display::graphics.setPixel(9 + x, 4 + y, 12);
-        display::graphics.setPixel(10 + x, 4 + y, 12);
-        display::graphics.setPixel(11 + x, 4 + y, 12);
-        display::graphics.setPixel(14 + x, 7 + y, 12);
-        display::graphics.setPixel(8 + x, 11 + y, 12);
-        display::graphics.setPixel(10 + x, 11 + y, 12);
-        display::graphics.setPixel(15 + x, 11 + y, 12);
-        display::graphics.setPixel(11 + x, 12 + y, 12);
-        display::graphics.setPixel(14 + x, 13 + y, 12);
-        display::graphics.setPixel(7 + x, 14 + y, 12);
-        display::graphics.setPixel(5 + x, 15 + y, 12);
-        display::graphics.setPixel(15 + x, 15 + y, 12);
+        display::graphics.screen()->setPixel(10 + x, 2 + y, 11);
+        display::graphics.screen()->setPixel(8 + x, 3 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 3 + y, 11);
+        display::graphics.screen()->setPixel(11 + x, 3 + y, 11);
+        display::graphics.screen()->setPixel(12 + x, 3 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 5 + y, 11);
+        display::graphics.screen()->setPixel(11 + x, 5 + y, 11);
+        display::graphics.screen()->setPixel(12 + x, 6 + y, 11);
+        display::graphics.screen()->setPixel(10 + x, 7 + y, 11);
+        display::graphics.screen()->setPixel(13 + x, 7 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 8 + y, 11);
+        display::graphics.screen()->setPixel(10 + x, 8 + y, 11);
+        display::graphics.screen()->setPixel(11 + x, 8 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 8 + y, 11);
+        display::graphics.screen()->setPixel(8 + x, 9 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 9 + y, 11);
+        display::graphics.screen()->setPixel(10 + x, 9 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 9 + y, 11);
+        display::graphics.screen()->setPixel(15 + x, 9 + y, 11);
+        display::graphics.screen()->setPixel(7 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(8 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(10 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(15 + x, 10 + y, 11);
+        display::graphics.screen()->setPixel(11 + x, 11 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 11 + y, 11);
+        display::graphics.screen()->setPixel(12 + x, 12 + y, 11);
+        display::graphics.screen()->setPixel(13 + x, 12 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 12 + y, 11);
+        display::graphics.screen()->setPixel(7 + x, 13 + y, 11);
+        display::graphics.screen()->setPixel(8 + x, 13 + y, 11);
+        display::graphics.screen()->setPixel(12 + x, 13 + y, 11);
+        display::graphics.screen()->setPixel(13 + x, 13 + y, 11);
+        display::graphics.screen()->setPixel(6 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(10 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(11 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(12 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(13 + x, 14 + y, 11);
+        display::graphics.screen()->setPixel(14 + x, 15 + y, 11);
+        display::graphics.screen()->setPixel(9 + x, 4 + y, 12);
+        display::graphics.screen()->setPixel(10 + x, 4 + y, 12);
+        display::graphics.screen()->setPixel(11 + x, 4 + y, 12);
+        display::graphics.screen()->setPixel(14 + x, 7 + y, 12);
+        display::graphics.screen()->setPixel(8 + x, 11 + y, 12);
+        display::graphics.screen()->setPixel(10 + x, 11 + y, 12);
+        display::graphics.screen()->setPixel(15 + x, 11 + y, 12);
+        display::graphics.screen()->setPixel(11 + x, 12 + y, 12);
+        display::graphics.screen()->setPixel(14 + x, 13 + y, 12);
+        display::graphics.screen()->setPixel(7 + x, 14 + y, 12);
+        display::graphics.screen()->setPixel(5 + x, 15 + y, 12);
+        display::graphics.screen()->setPixel(15 + x, 15 + y, 12);
     };
 
     return;

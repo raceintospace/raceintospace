@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "port.h"
 #include "Buzz_inc.h"
@@ -227,7 +228,7 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
+        memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -431,7 +432,7 @@ void WaveFlagSetup(void)
     fin = sOpen("FLAG.SEQ", "rb", 0);
     j = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, fin);
     fclose(fin);
-    RLED_img(vhptr.vptr, flaggy.vptr, j, flaggy.w, flaggy.h);
+    RLED_img((char *)vhptr.vptr, (char *)flaggy.vptr, j, flaggy.w, flaggy.h);
 }
 
 void WaveFlagDel(void)
@@ -502,7 +503,7 @@ void PortPlace(FILE *fin, int32_t table)
     GV(&local2, Img.Width, Img.Height);
     gxGetImage(&local, Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1, 0);
     fread(vhptr.vptr, Img.Size, 1, fin);
-    RLED_img(vhptr.vptr, local2.vptr, Img.Size, local2.w, local2.h);
+    RLED_img((char *)vhptr.vptr, (char *)local2.vptr, Img.Size, local2.w, local2.h);
 
     for (ctr = 0; ctr < (Img.Width * Img.Height); ctr++)
         if (local2.vptr[ctr] != 0x00) {
@@ -579,7 +580,7 @@ void DrawSpaceport(char plr)
     Swap16bit(Img.Height);
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
-    fread(display::graphics.screen(), Img.Size, 1, fin); // Read in main image
+    fread(display::graphics.screen()->pixels(), Img.Size, 1, fin); // Read in main image
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
     UpdatePortOverlays();
@@ -824,7 +825,7 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
-    memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
+    memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 #if SPOT_ON
@@ -1029,12 +1030,12 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
         if (mode == 1) {
             // Save value from the screen
             pPortOutlineRestore[i].loc = outline[i];    // Offset of the outline into the buffer
-            pPortOutlineRestore[i].val = display::graphics.screen()[outline[i]];    // Save original pixel value
+            pPortOutlineRestore[i].val = display::graphics.screen()->pixels()[outline[i]];    // Save original pixel value
         } else {                   // dunno
             outline[i] = pPortOutlineRestore[i].loc;
         }
 
-        display::graphics.screen()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
+        display::graphics.screen()->pixels()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
         min_x = MIN(min_x, outline[i] % MAX_X);
         min_y = MIN(min_y, outline[i] / MAX_X);
         max_x = MAX(max_x, outline[i] % MAX_X);
@@ -1055,7 +1056,7 @@ PortRestore(unsigned int Count)
 
     for (i = 0; i < Count; i++) {
         loc = pPortOutlineRestore[i].loc;
-        display::graphics.screen()[loc] = pPortOutlineRestore[i].val;
+        display::graphics.screen()->pixels()[loc] = pPortOutlineRestore[i].val;
         min_x = MIN(min_x, loc % MAX_X);
         min_y = MIN(min_y, loc / MAX_X);
         max_x = MAX(max_x, loc % MAX_X);
@@ -1424,7 +1425,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                memcpy(vhptr.vptr, display::graphics.screen(), MAX_X * MAX_Y);
+                                memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {

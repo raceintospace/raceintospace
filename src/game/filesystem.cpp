@@ -149,14 +149,18 @@ boost::shared_ptr<display::PNGImage> Filesystem::readImage(const std::string& fi
     assert(length < 1024 * 1024);
 
     // allocate a buffer on the stack and read into it
-    uint8_t buffer[length];
+    uint8_t * buffer = new uint8_t[length];
     uint64_t bytes_read = file_ptr->read(buffer, length);
-    if (bytes_read < length)
+    if (bytes_read < length) {
+        delete[] buffer;
         throw_error;
+    }
     
     // construct a PNGImage from this buffer
     boost::shared_ptr<display::PNGImage> png_image(new display::PNGImage(buffer, length));
     
+    delete[] buffer;
+
     // pass it back to the caller
     return png_image;
 }

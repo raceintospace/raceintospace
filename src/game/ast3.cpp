@@ -26,6 +26,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "ast3.h"
 #include "Buzz_inc.h"
@@ -730,9 +731,9 @@ void Hospital(char plr, int sel)
         }
     }
 
-    fread(display::graphics.screen(), size, 1, fin);
+    fread((void *)display::graphics.screen()->pixels(), size, 1, fin);
     fclose(fin);
-    PCX_D(display::graphics.screen(), vhptr.vptr, (unsigned int)size);
+    PCX_D(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)size);
 
     gxClearDisplay(0, 0);
     ShBox(0, 0, 319, 22);

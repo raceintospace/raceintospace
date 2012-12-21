@@ -27,6 +27,7 @@
 #include <assert.h>
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -1199,14 +1200,14 @@ void TopSecret(char plr, char poff)
     fread(buffer, table.size, 1, in);
     GV(&local, 157, 100);
     GV(&local2, 157, 100);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
 
     if (poff != 100) {
         fseek(in, (poff + 1)*sizeof_SimpleHdr, SEEK_SET);
         fread_SimpleHdr(&table, 1, in);
         fseek(in, table.offset, SEEK_SET);
         fread(buffer, table.size, 1, in);
-        RLED_img(buffer, local2.vptr, table.size, local.w, local.h);
+        RLED_img(buffer, (char *)local2.vptr, table.size, local.w, local.h);
 
         for (j = 0; j < 15700; j++)
             if (local2.vptr[j] != 0) {
@@ -1563,8 +1564,8 @@ void Load_CIA_BUT(void)
 
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    i = fread(display::graphics.screen(), 1, MAX_X * MAX_Y, fin);
-    PCX_D(display::graphics.screen(), (char *)vhptr.vptr, i);
+    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
+    PCX_D(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i);
     fclose(fin);
 }
 
@@ -1592,9 +1593,9 @@ void DrawIStat(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        display::graphics.setPixel(i, 57, 11);
-        display::graphics.setPixel(i, 91, 11);
-        display::graphics.setPixel(i, 125, 11);
+        display::graphics.screen()->setPixel(i, 57, 11);
+        display::graphics.screen()->setPixel(i, 91, 11);
+        display::graphics.screen()->setPixel(i, 125, 11);
     }
 
     display::graphics.setForegroundColor(9);
@@ -1777,9 +1778,9 @@ void IInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            display::graphics.setPixel(i, 57, 11);
-            display::graphics.setPixel(i, 91, 11);
-            display::graphics.setPixel(i, 125, 11);
+            display::graphics.screen()->setPixel(i, 57, 11);
+            display::graphics.screen()->setPixel(i, 91, 11);
+            display::graphics.screen()->setPixel(i, 125, 11);
         }
 
         display::graphics.setForegroundColor(9);

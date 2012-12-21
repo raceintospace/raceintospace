@@ -280,7 +280,7 @@ void PlaceEquip(char plr, char prog)
     fseek(fin, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, fin);
     fclose(fin);
-    RLED_img(buffer, local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     gxGetImage(&local2, 61, 28, 140, 77, 0);
 
     for (i = 0; i < 4000; i++) {
