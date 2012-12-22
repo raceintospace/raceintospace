@@ -200,10 +200,8 @@ void Introd(void)
             key = 0;
             PauseMouse();
 
-            if (key) {
+            if (key || grGetMouseButtons()) {
                 goto done;
-            } else if (key || grGetMouseButtons()) {
-                break;
             }
         }
 
