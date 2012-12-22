@@ -911,7 +911,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
     if (AnimIndex != Index) {
         char fname[100];
-        unsigned h, w;
+        unsigned h=0, w=0;
 
         mm_close(fp);
         display::graphics.newsRect().w = 0;
@@ -938,7 +938,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     MaxFrame = 0;
 
     // Specs: Display Single Frame
-    if (Mode == FIRST_FRAME) {
+    if (Mode == FIRST_FRAME && fp->video) {
         /* XXX: error checking */
         mm_decode_video(fp, display::graphics.newsOverlay());
         screen_dirty = 1;
@@ -953,8 +953,10 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         DrawBottomNewsBox(plr);
 
         /* XXX: error checking */
-        mm_decode_video(fp, display::graphics.newsOverlay());
-        screen_dirty = 1;
+	if (fp->video) {
+	  mm_decode_video(fp, display::graphics.newsOverlay());
+	  screen_dirty = 1;
+	}
 
         /* This fade was too long given current fades impl. */
         FadeIn(2, display::graphics.palette(), 10, 0, 0); /* was: 50 */

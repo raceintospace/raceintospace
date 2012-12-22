@@ -398,8 +398,14 @@ mm_open_fp(mm_file *mf, FILE *file)
 
     mf->file = file;
 
+    // This is important.  If there is no file
+    // then we need to reset the audio and video
+    // pointers so that the other functions
+    // ignore the file.
     if (!mf->file) {
-        return retval;
+      mf->audio = NULL;
+      mf->video = NULL;
+      return retval;
     }
 
     ogg_sync_init(&mf->sync);
