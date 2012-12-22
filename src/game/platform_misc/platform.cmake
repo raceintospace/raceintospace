@@ -19,3 +19,13 @@ target_link_libraries(${app}
   )
 
 add_dependencies(${app} libs)
+install(TARGETS raceintospace DESTINATION bin)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/gamedata
+  ${PROJECT_SOURCE_DIR}/audio
+  ${PROJECT_SOURCE_DIR}/video
+  ${PROJECT_SOURCE_DIR}/midi
+  ${PROJECT_SOURCE_DIR}/images
+  DESTINATION share/raceintospace) 
+
+
