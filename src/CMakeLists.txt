@@ -34,11 +34,18 @@ if (APPLE)
   # this is so we can find Homebrew components
   include_directories(SYSTEM /usr/local/include)
   link_directories(/usr/local/lib)
-else (APPLE)
+elseif (WINDOWS)
   set(SET_SDL_ICON TRUE)
   set(DEFAULT_DATADIR ".")
   set(DEFAULT_SAVEDIR ".")
-endif (APPLE)
+else()
+   set(SET_SDL_ICON TRUE)
+   set(DEFAULT_DATADIR "${CMAKE_INSTALL_PREFIX}/share/raceintospace")
+   set(DEFAULT_SAVEDIR ".")
+  # this is so we can find Homebrew components
+  include_directories(SYSTEM /usr/local/include)
+  link_directories(/usr/local/lib)
+endif ()
 
 # generate the raceintospace_config.h
 configure_file(
