@@ -180,6 +180,8 @@ int game_main_impl(int argc, char *argv[])
     }
 
     setup_options(argc, argv);
+    Filesystem::addPath(options.dir_gamedata);
+    Filesystem::addPath(options.dir_savegame);
     /* hacking... */
     log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.want_debug));
 

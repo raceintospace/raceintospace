@@ -65,6 +65,15 @@ void Filesystem::init(const char * argv0)
     }
 }
 
+void Filesystem::addPath(const char *s) {
+  if (!PHYSFS_isInit()) {
+    throw_error;
+  }
+  int success = PHYSFS_mount(s, NULL, 0);
+  if (!success)
+    throw_error;
+}
+
 bool Filesystem::exists(const std::string& filename)
 {
     if (PHYSFS_exists(filename.c_str())) {
