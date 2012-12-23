@@ -1,6 +1,5 @@
 #include "graphics.h"
-
-#include "Surface.h"
+#include "surface.h"
 
 #include <SDL.h>
 #include <string>
