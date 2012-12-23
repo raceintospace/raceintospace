@@ -949,7 +949,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     if (Mode == TOMS_BUGFIX) {
         FadeOut(2, display::graphics.palette(), 1, 0, 0);
 
-        gxClearDisplay(0, 0);
+		display::graphics.screen()->clear(0);
         DrawTopNewsBox(plr);
         DrawBottomNewsBox(plr);
 

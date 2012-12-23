@@ -153,7 +153,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
         break;
     }
 
-    GV(&local, 143, 74);
+    gxCreateVirtual(&local, 143, 74);
 
     gxGetImage(&local, 94, 38, 236, 111, 0);
 
@@ -257,7 +257,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
         }
 
     gxPutImage(&local, gxSET, 94, 38, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
     return;
 }
 
@@ -269,8 +269,8 @@ void PlaceEquip(char plr, char prog)
     GXHEADER local, local2;
     SimpleHdr table;
 
-    GV(&local, 80, 50);
-    GV(&local2, 80, 50);
+    gxCreateVirtual(&local, 80, 50);
+    gxCreateVirtual(&local2, 80, 50);
     fin = sOpen("APROG.BUT", "rb", 0);
     fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, fin);
@@ -290,7 +290,8 @@ void PlaceEquip(char plr, char prog)
     }
 
     gxPutImage(&local, gxSET, 61, 28, 0);
-    DV(&local), DV(&local2);
+    gxDestroyVirtual(&local);
+	gxDestroyVirtual(&local2);
     return;
 }
 
@@ -300,7 +301,7 @@ void DrawProgs(char plr, char prog)
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 81);
@@ -504,7 +505,7 @@ void DamProb(char plr, char prog, int chk)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
 
     switch (prog) {
     case 0:
@@ -1127,7 +1128,7 @@ Programs(char plr, char prog)
 
                 if (Data->P[plr].Pool[tst].Prime > 0) {
                     OutBox(245, 106, 314, 118);
-                    gxDisplayVirtual(75, 43, 244, 173, 0, &vhptr, 75, 43);
+                    vhptr->copyFrom(display::graphics.screen(), 75, 43, 244, 173, 75, 43);
                     ShBox(75, 43, 244, 173);
                     IOBox(81, 152, 238, 167);
                     InBox(81, 70, 238, 113);
@@ -1164,8 +1165,7 @@ Programs(char plr, char prog)
                                 InBox(83, 154, 236, 165);
                                 WaitForMouseUp();
                                 OutBox(83, 154, 236, 165);
-                                gxVirtualDisplay(&vhptr, 75, 43, 75, 43, 244,
-                                                 173, 0);
+                                vhptr->copyTo(display::graphics.screen(), 75, 43, 75, 43, 244, 173);
                                 i = 2;
                             }
                         }

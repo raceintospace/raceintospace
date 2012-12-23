@@ -124,8 +124,8 @@ void Load_RD_BUT(char player_index)
         return;
     }
 
-    GV(&but, 282, 61);
-    GV(&mans, 119, 17);
+    gxCreateVirtual(&but, 282, 61);
+    gxCreateVirtual(&mans, 119, 17);
 
     fin = sOpen("RDBOX.BUT", "rb", 0);
     fread(&Boo, sizeof Boo, 1, fin);
@@ -152,8 +152,8 @@ void Load_RD_BUT(char player_index)
 void Del_RD_BUT(void)
 {
     BUTLOAD = 0;
-    DV(&but);
-    DV(&mans);
+    gxDestroyVirtual(&but);
+    gxDestroyVirtual(&mans);
     return;
 }
 
@@ -169,7 +169,7 @@ void DrawRD(char player_index)
     fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     Load_RD_BUT(player_index);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
@@ -1219,7 +1219,7 @@ void DrawHPurc(char player_index)
     fclose(fin);
 
     Load_RD_BUT(player_index);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
     ShBox(17, 68, 143, 199);
@@ -1309,8 +1309,8 @@ char HPurc(char player_index)
     ShowUnit(hardware, unit, player_index);
 
     //Specs: undo fix
-    //memset(vhptr.vptr,0x00,64000);
-    //memcpy(vhptr.vptr,Data,sizeof(struct Players));
+    //memset(vhptr->pixels(),0x00,64000);
+    //memcpy(vhptr->pixels(),Data,sizeof(struct Players));
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start(M_FILLER);
@@ -1360,7 +1360,7 @@ char HPurc(char player_index)
         } else if ((x > 266 && y > 164 && x < 314 && y < 174 && mousebuttons > 0) || key == 'Z') {
             InBox(266, 164, 314, 174);
             WaitForMouseUp();
-            //    memcpy(Data,vhptr.vptr,sizeof(struct Players));
+            //    memcpy(Data,vhptr->pixels(),sizeof(struct Players));
             undo = sOpen("UNDO.TMP", "rb", 1);
             fread(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
@@ -1556,7 +1556,7 @@ char HPurc(char player_index)
             unit = UNIT1;
             //DM Screen, Nikakd, 10/8/10 (Removed line)
             DrawHPurc(player_index);
-            //    memcpy(vhptr.vptr,Data,sizeof(struct Players));
+            //    memcpy(vhptr->pixels(),Data,sizeof(struct Players));
             ShowUnit(hardware, unit, player_index);
             BButs(PROBE_HARDWARE, hardware);
 

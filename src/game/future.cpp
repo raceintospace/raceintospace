@@ -125,8 +125,8 @@ void DrawFuture(char plr, int mis, char pad)
     fread(display::graphics.palette(), 768, 1, fin);
     sz = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, sz, vhptr.w, vhptr.h);
-    gxClearDisplay(0, 0);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), sz, vhptr->width(), vhptr->height());
+	display::graphics.screen()->clear(0);
 
     gr_sync();
 
@@ -156,21 +156,21 @@ void DrawFuture(char plr, int mis, char pad)
         (i == 66 && j == 0) || (i == 69 && j == 1) || (i == 71 && j == 1) ||
         (i == 73 && j == 1)) {
 
-        gxVirtualVirtual(&vhptr, 1, 2, 12, 11, &vhptr, 198, 153, gxSET); /* Mars */
+        vhptr->copyFrom(vhptr, 1, 2, 12, 11, 198, 153); /* Mars */
         MarFlag = 1;
     } else {
         MarFlag = 0;
     }
 
     if ((i == 60 || i == 64 || i == 68 || i == 72 || i == 73 || i == 77)) {
-        gxVirtualVirtual(&vhptr, 14, 2, 64, 54, &vhptr, 214, 130, gxSET); /* Jup */
+        vhptr->copyFrom(vhptr, 14, 2, 64, 54, 214, 130); /* Jup */
         JupFlag = 1;
     } else {
         JupFlag = 0;
     }
 
     if (i == 61 || i == 66 || i == 72) {
-        gxVirtualVirtual(&vhptr, 66, 2, 114, 53, &vhptr, 266, 135, gxSET); /* Sat */
+        vhptr->copyFrom(vhptr, 66, 2, 114, 53, 266, 135); /* Sat */
         SatFlag = 1;
     } else {
         SatFlag = 0;
@@ -288,9 +288,9 @@ void DrawFuture(char plr, int mis, char pad)
 
 void ClearDisplay(void)
 {
-    gxVirtualDisplay(&vhptr, 202, 48, 202, 48, 241, 82, 0);
-    gxVirtualDisplay(&vhptr, 17, 83, 17, 83, 241, 195, 0);
-    gxVirtualDisplay(&vhptr, 242, 23, 242, 23, 315, 195, 0);
+    vhptr->copyTo(display::graphics.screen(), 202, 48, 202, 48, 241, 82);
+    vhptr->copyTo(display::graphics.screen(), 17, 83, 17, 83, 241, 195);
+    vhptr->copyTo(display::graphics.screen(), 242, 23, 242, 23, 315, 195);
     display::graphics.setForegroundColor(1);
     return;
 }
@@ -852,16 +852,16 @@ Future(char plr)
     int Ok, NewType;
     GXHEADER local, local2;
 
-    GV(&local, 166, 9);
-    GV(&local2, 177, 197);
-    GV(&vh, 240, 90);                /* global variable */
+    gxCreateVirtual(&local, 166, 9);
+    gxCreateVirtual(&local2, 177, 197);
+    gxCreateVirtual(&vh, 240, 90);                /* global variable */
 begfut:
     MisNum = FutureCheck(plr, 0);
 
     if (MisNum == 5) {
-        DV(&local);
-        DV(&local2);
-        DV(&vh);
+        gxDestroyVirtual(&local);
+        gxDestroyVirtual(&local2);
+        gxDestroyVirtual(&vh);
         return;
     }
 
@@ -947,7 +947,7 @@ begfut_noredraw:
 
             gxPutImage(&local2, gxSET, 74, 3, 0);
 
-            // DV(&local2);
+            // gxDestroyVirtual(&local2);
             if (Ok == 1) {
                 Data->P[plr].Future[MisNum].Duration = DuraType;
                 goto begfut;       // return to loop

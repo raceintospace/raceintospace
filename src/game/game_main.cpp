@@ -92,7 +92,8 @@ std::string keyHelpText;
 char df;
 char IDLE[2];
 char *buffer;
-GXHEADER vhptr, vhptr2;
+display::Surface * vhptr;
+display::Surface * vhptr2;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;
@@ -259,7 +260,7 @@ int game_main_impl(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        gxClearDisplay(0, 0);
+		display::graphics.screen()->clear(0);
         PortPal(0);
         key = 0;
         helpText = "i000";
@@ -295,7 +296,7 @@ int game_main_impl(int argc, char *argv[])
 
             InitData();                   // PICK EVENT CARDS N STUFF
             MainLoop();                   // PLAY GAME
-            gxClearDisplay(0, 0);
+			display::graphics.screen()->clear(0);
             break;
 
         case 1: // Play Old Game
@@ -317,7 +318,7 @@ int game_main_impl(int argc, char *argv[])
             }
 
             QUIT = 0;
-            gxClearDisplay(0, 0);
+			display::graphics.screen()->clear(0);
             break;
 
         case 2:
@@ -529,7 +530,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 Master(plr[i]);                // PLAY TURN
                 //restore sound
 //       SetVoiceVolume(115);
-                gxClearDisplay(0, 0);
+				display::graphics.screen()->clear(0);
                 IDLE[plr[i]]++;
 
                 if (LOAD == 1) {
@@ -747,17 +748,6 @@ void DestroyPad(char plr, char pad, int cost, char mode)
         memset(BMis, 0x00, sizeof(struct MissionType));
     }
 
-    return;
-}
-
-void GV(GXHEADER *obj, int w, int h)
-{
-    gxCreateVirtual(gxCMM, obj, gxVGA_13, w, h);
-}
-
-void DV(GXHEADER *obj)
-{
-    gxDestroyVirtual(obj);
     return;
 }
 
@@ -1011,7 +1001,7 @@ void RTArrow(int x1, int y1)
 	display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
 	display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
 
-	display::graphics.screen()->line(x1, y1 + 3, y1 + 19, y1 + 3, 2);
+	display::graphics.screen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
 	display::graphics.screen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
     return;
 }

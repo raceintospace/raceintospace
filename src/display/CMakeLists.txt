@@ -7,6 +7,7 @@ add_library(
   graphics.cpp
   palette.cpp
   png_image.cpp
+  surface.cpp
   )
 
 add_dependencies(raceintospace_display libs)

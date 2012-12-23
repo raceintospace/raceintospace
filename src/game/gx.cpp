@@ -10,14 +10,7 @@
 #define gxSUCCESS 0
 
 int
-gxVirtualSize(int mode, int w, int h)
-{
-    return w * h;
-}
-
-int
-gxCreateVirtual(int mode, GXHEADER *hp,
-                int gxVGA_mode, int w, int h)
+gxCreateVirtual(GXHEADER *hp, int w, int h)
 {
     assert(hp);
     memset(hp, 0, sizeof * hp);
@@ -106,17 +99,6 @@ gxPutImage(GXHEADER *hp, int mode, int x, int y, int op2)
     r.y = y;
     r.w = clip_x;
     r.h = clip_y;
-    av_need_update(&r);
-    screen_dirty = 1;
-}
-
-void
-gxClearDisplay(int a, int b)
-{
-    SDL_Rect r = {0, 0, MAX_X, MAX_Y};
-    assert(a == 0 && b == 0);
-
-    display::graphics.screen()->clear(0);
     av_need_update(&r);
     screen_dirty = 1;
 }

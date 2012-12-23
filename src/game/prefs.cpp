@@ -57,9 +57,9 @@ void DrawPrefs(int where, char a1, char a2)
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);
@@ -154,11 +154,11 @@ void DrawPrefs(int where, char a1, char a2)
     PrintAt(258, 13, "CONTINUE");
     PrintAt(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     PrintAt(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
-    gxVirtualDisplay(&vhptr, 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60, 0);
-    gxVirtualDisplay(&vhptr, 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100, 0);
+    vhptr->copyTo(display::graphics.screen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
+    vhptr->copyTo(display::graphics.screen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
 
-    gxVirtualDisplay(&vhptr, 216, 30, 147, 31, 218, 60, 0);
-    gxVirtualDisplay(&vhptr, 72 * (Data->Def.Anim), 90, 147, 71, 218, 100, 0);
+    vhptr->copyTo(display::graphics.screen(), 216, 30, 147, 31, 218, 60);
+    vhptr->copyTo(display::graphics.screen(), 72 * (Data->Def.Anim), 90, 147, 71, 218, 100);
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
@@ -178,13 +178,13 @@ void HModel(char mode, char tx)
     fseek(in, (mode == 0 || mode == 1 || mode == 4)*sizeof_SimpleHdr, SEEK_CUR);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    GV(&local, 127, 80);
+    gxCreateVirtual(&local, 127, 80);
     fread(&display::graphics.palette()[112 * 3], 96 * 3, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
     RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
-    n = gxVirtualSize(gxVGA_13, 127, 80);
+    n = 127 * 80; //gxVirtualSize(gxVGA_13, 127, 80);
 
     for (j = 0; j < n; j++) {
         local.vptr[j] += 112;
@@ -193,7 +193,7 @@ void HModel(char mode, char tx)
     RectFill(96, 114, 223, 194, 0);
 
     gxPutImage(&local, gxSET, 97, 115, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
     display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {
@@ -220,7 +220,7 @@ void Levels(char plr, char which, char x)
 {
     unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
-    gxVirtualDisplay(&vhptr, 0 + which * 72, 30 + x * 30, v[0][plr], v[1][x], v[0][plr] + 71, v[1][x] + 29, 0);
+    vhptr->copyTo(display::graphics.screen(), 0 + which * 72, 30 + x * 30, v[0][plr], v[1][x], v[0][plr] + 71, v[1][x] + 29);
 
     return;
 }
@@ -249,11 +249,11 @@ void PLevels(char side, char wh)
 {
 
     if (side == 0) {
-        gxVirtualDisplay(&vhptr, 0 + wh * 72,     0,   9,  55,  20,  74,  0);
-        gxVirtualDisplay(&vhptr, 0 + wh * 72 + 11,  0,  21,  55,  80,  84,  0);
+        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72,     0,   9,  55,  20,  74);
+        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72 + 11,  0,  21,  55,  80,  84);
     } else {
-        gxVirtualDisplay(&vhptr, 0 + wh * 72,     0, 239,  55, 250,  74,  0);
-        gxVirtualDisplay(&vhptr, 0 + wh * 72 + 11,  0, 250,  55, 310,  84,  0);
+        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72,     0, 239,  55, 250,  74);
+        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72 + 11,  0, 250,  55, 310,  84);
     }
 
     return;
@@ -263,9 +263,9 @@ void CLevels(char side, char wh)
 {
 
     if (side == 0) {
-        gxVirtualDisplay(&vhptr, 144, wh * 7, 9, 78, 17, 84, 0);
+        vhptr->copyTo(display::graphics.screen(), 144, wh * 7, 9, 78, 17, 84);
     } else {
-        gxVirtualDisplay(&vhptr, 144, wh * 7, 239, 78, 247, 84, 0);
+        vhptr->copyTo(display::graphics.screen(), 144, wh * 7, 239, 78, 247, 84);
     }
 
     return;
@@ -475,7 +475,7 @@ void Prefs(int where)
                 Data->Def.Music = !Data->Def.Music;
                 // SetMusicVolume((Data->Def.Music==1)?100:0);
                 music_set_mute(!Data->Def.Music);
-                gxVirtualDisplay(&vhptr, 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60, 0);
+                vhptr->copyTo(display::graphics.screen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
                 OutBox(100, 30, 135, 61);
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
@@ -483,7 +483,7 @@ void Prefs(int where)
                 WaitForMouseUp();
                 Data->Def.Sound = !Data->Def.Sound;
                 MuteChannel(AV_SOUND_CHANNEL, !Data->Def.Sound);
-                gxVirtualDisplay(&vhptr, 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100, 0);
+                vhptr->copyTo(display::graphics.screen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
                 OutBox(100, 70, 135, 101);
                 /* Sound Level */
             }

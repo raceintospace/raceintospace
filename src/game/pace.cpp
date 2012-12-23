@@ -48,7 +48,7 @@ void OpenEmUp(void)
 
     seq_init();
 
-    GV(&vhptr, 320, 200);   // Allocate only Virtual Buffer
+	vhptr = new display::Surface(320, 200);
 
     letter_dat = slurp_gamedat("letter.dat");
 }
@@ -373,10 +373,10 @@ void SMove(void *p, int x, int y)
 {
     GXHEADER local;
 
-    GV(&local, 160, 100);
+    gxCreateVirtual(&local, 160, 100);
     memcpy(local.vptr, p, 160 * 100);
     gxPutImage(&local, gxSET, x, y, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
 }
 
 void LMove(void *p)
@@ -385,10 +385,10 @@ void LMove(void *p)
 
     display::graphics.screen()->clear(0);
 
-    GV(&local, 160, 100);
+    gxCreateVirtual(&local, 160, 100);
     memcpy(local.vptr, p, 160 * 100);
     gxPutImage(&local, gxSET, 320 / 4, 200 / 4, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
 }
 
 void randomize(void)

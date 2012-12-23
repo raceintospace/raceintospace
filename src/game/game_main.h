@@ -1,8 +1,8 @@
 #ifndef GAME_MAIN_H
 #define GAME_MAIN_H
 
-#include "gxdatatypes.h"
 #include <string>
+#include "display/surface.h"
 
 void InBox(int x1, int y1, int x2, int y2);
 void OutBox(int x1, int y1, int x2, int y2);
@@ -12,9 +12,7 @@ void DispMB(int x, int y, int val);
 void PrintAt(int x, int y, const char *s);
 void RectFill(int x1, int y1, int x2, int y2, char col);
 void GetMisType(char mcode);
-void DV(GXHEADER *obj);
 void GetMouse(void);
-void GV(GXHEADER *obj, int w, int h);
 void FlagSm(char plr, int xm, int ym);
 void DispBig(int x, int y, const char *txt, char mode, char te);
 void IOBox(int x1, int y1, int x2, int y2);
@@ -41,8 +39,8 @@ extern char AI[2];
 extern char manOnMoon;
 extern char dayOnMoon;
 extern int SEG;
-extern GXHEADER vhptr;
-extern GXHEADER vhptr2;
+extern display::Surface * vhptr;
+extern display::Surface * vhptr2;
 extern char BIG;
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern unsigned char AL_CALL;

@@ -308,7 +308,7 @@ void FileAccess(char mode)
     helpText = "i128";
     keyHelpText = "k128";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
 
     saveType = SAVEGAME_Normal;
 
@@ -707,7 +707,7 @@ void FileAccess(char mode)
                 fin = sOpen("ENDTURN.TMP", "rb", 1);
 
                 if (fin) {
-                    SaveHdr->compSize = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, fin);
+                    SaveHdr->compSize = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), fin);
                     fclose(fin);
                 } else {
                     SaveHdr->compSize = 0;
@@ -759,23 +759,23 @@ void FileAccess(char mode)
                 fseek(fout, 0, SEEK_SET);
 
                 while (size == 16000) {
-                    size = fread(vhptr.vptr, 1, size, fout);
-                    fwrite(vhptr.vptr, size, 1, fin); // save Replay File
+                    size = fread(vhptr->pixels(), 1, size, fout);
+                    fwrite(vhptr->pixels(), size, 1, fin); // save Replay File
                 }
 
                 fclose(fout);
 
                 fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(vhptr.vptr, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
+                fread(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
                 fclose(fout);
-                fwrite(vhptr.vptr, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+                fwrite(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
 
                 while (left == 32000) {
-                    left = fread(vhptr.vptr, 1, 32000, fout);
-                    fwrite(vhptr.vptr, left, 1, fin);
+                    left = fread(vhptr->pixels(), 1, 32000, fout);
+                    fwrite(vhptr->pixels(), left, 1, fin);
                 }
 
                 fclose(fout); // close EVENT.TMP
@@ -832,7 +832,7 @@ void FileAccess(char mode)
                 fin = sOpen("ENDTURN.TMP", "rb", 1);
 
                 if (fin) {
-                    SaveHdr->compSize = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, fin);
+                    SaveHdr->compSize = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), fin);
                     fclose(fin);
                 } else {
                     SaveHdr->compSize = 0;
@@ -864,22 +864,22 @@ void FileAccess(char mode)
                 fseek(fout, 0, SEEK_SET);
 
                 while (size == 16000) {
-                    size = fread(vhptr.vptr, 1, size, fout);
-                    fwrite(vhptr.vptr, size, 1, fin); // save Replay File
+                    size = fread(vhptr->pixels(), 1, size, fout);
+                    fwrite(vhptr->pixels(), size, 1, fin); // save Replay File
                 }
 
                 fclose(fout);
                 fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(vhptr.vptr, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
+                fread(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
                 fclose(fout);
-                fwrite(vhptr.vptr, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+                fwrite(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
 
                 while (left == 32000) {
-                    left = fread(vhptr.vptr, 1, 32000, fout);
-                    fwrite(vhptr.vptr, left, 1, fin);
+                    left = fread(vhptr->pixels(), 1, 32000, fout);
+                    fwrite(vhptr->pixels(), left, 1, fin);
                 }
 
                 fclose(fout); // close EVENT.TMP
@@ -1160,7 +1160,7 @@ char GetBlockName(char *Nam)
     int i, key;
     GXHEADER local;
 
-    GV(&local, 164, 77);
+    gxCreateVirtual(&local, 164, 77);
     gxGetImage(&local, 39, 50, 202, 126, 0);
     ShBox(39, 50, 202, 126);
     i = 1;
@@ -1179,7 +1179,7 @@ char GetBlockName(char *Nam)
         PrintAt(47, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         gxPutImage(&local, gxSET, 39, 50, 0);
-        DV(&local);
+        gxDestroyVirtual(&local);
 
         return 0;
     }
@@ -1220,7 +1220,7 @@ char GetBlockName(char *Nam)
     }
 
     gxPutImage(&local, gxSET, 39, 50, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
 
     if (key == K_ENTER && i >= 1) {
         return 1;
@@ -1250,7 +1250,7 @@ void DrawFiles(char now, char loc, char tFiles)
 void BadFileType(void)
 {
     GXHEADER local;
-    GV(&local, 164, 77);
+    gxCreateVirtual(&local, 164, 77);
     gxGetImage(&local, 39, 50, 202, 126, 0);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
@@ -1261,7 +1261,7 @@ void BadFileType(void)
     gxPutImage(&local, gxSET, 39, 50, 0);
     PauseMouse();
     gxPutImage(&local, gxSET, 39, 50, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
 }
 
 
@@ -1378,7 +1378,7 @@ int FutureCheck(char plr, char type)
 
     fclose(fin);
 
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
 
     if (type == 0) {
         helpText = "i010";
@@ -1388,7 +1388,7 @@ int FutureCheck(char plr, char type)
         keyHelpText = "k015";
     }
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(59, 12, 269, 186);
     InBox(64, 17, 213, 29);
     RectFill(65, 18, 212, 28, 7);
@@ -1575,7 +1575,7 @@ int FutureCheck(char plr, char type)
 
         DispChr(0x41 + i);
 
-        gxVirtualDisplay(&vhptr, 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51, 0);
+		vhptr->copyTo(display::graphics.screen(), 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
     }
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1614,7 +1614,7 @@ int FutureCheck(char plr, char type)
 
                 if (p[i] == -1 && Data->P[plr].Cash >= 20 && type == 0) {
 
-                    gxVirtualDisplay(&vhptr, 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51, 0);
+					vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
                     Data->P[plr].Cash -= 20;
                     Data->P[plr].Spend[0][3] += 20;
                     Data->P[plr].LaunchFacility[i] = 1;
@@ -1633,7 +1633,7 @@ int FutureCheck(char plr, char type)
                 if (p[i] > 4 && Data->P[plr].Cash >= abs(Data->P[plr].LaunchFacility[i])
                     && type == 0) {
 
-                    gxVirtualDisplay(&vhptr, 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51, 0);
+                    vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
                     Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
                     Data->P[plr].Spend[0][3] += Data->P[plr].LaunchFacility[i];
                     Data->P[plr].LaunchFacility[i] = 1;
@@ -1662,7 +1662,7 @@ char RequestX(char *s, char md)
 
 
     if (md == 1) { // Save Buffer
-        GV(&local, 196, 84);
+        gxCreateVirtual(&local, 196, 84);
         gxGetImage(&local, 85, 52, 280, 135, 0);
     }
 
@@ -1704,7 +1704,7 @@ char RequestX(char *s, char md)
 
         WaitForMouseUp();
         gxPutImage(&local, gxSET, 85, 52, 0);
-        DV(&local);
+        gxDestroyVirtual(&local);
     }
 
     WaitForMouseUp();

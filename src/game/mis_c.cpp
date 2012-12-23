@@ -224,17 +224,17 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (mode == 0) {
-        bSeq = (struct oGROUP *)&vhptr.vptr[35000];
+        bSeq = (struct oGROUP *)&vhptr->pixels()[35000];
     } else {
-        dSeq = (struct oFGROUP *)&vhptr.vptr[35000];
+        dSeq = (struct oFGROUP *)&vhptr->pixels()[35000];
     }
 
     if (mode == 0) {
         fin = open_gamedat(SEQ_DAT);
-        fread(&vhptr.vptr[35000], 1, vhptr.h * vhptr.w - 35000, fin);
+        fread(&vhptr->pixels()[35000], 1, vhptr->height() * vhptr->width() - 35000, fin);
     } else {
         fin = open_gamedat(FSEQ_DAT);
-        F = (struct Table *)&vhptr.vptr[0];
+        F = (struct Table *)&vhptr->pixels()[0];
         fread_Table(F, 50, fin);
 
         err = 0; //Specs: reset error
@@ -827,7 +827,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     off = 64 + loc * 16;
 
-    GV(&boob, 68, 46);
+    gxCreateVirtual(&boob, 68, 46);
 
     bot = (uint16_t *) boob.vptr;
 
@@ -997,7 +997,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     VBlank();
 
-    DV(&boob);
+    gxDestroyVirtual(&boob);
 }
 
 
@@ -1060,7 +1060,7 @@ char FailureMode(char plr, int prelim, char *text)
     memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
@@ -1371,14 +1371,14 @@ FILE *OpenAnim(char *fname)
     tFrames = AHead.fNum;
     cFrame = 0;
 
-    GV(&dply, AHead.w, AHead.h);
+    gxCreateVirtual(&dply, AHead.w, AHead.h);
     DEBUG1("<-OpenAnim");
     return fin;
 }
 
 int CloseAnim(FILE *fin)
 {
-    DV(&dply);
+    gxDestroyVirtual(&dply);
     tFrames = cFrame = 0;
     aLoc = 0;
     fclose(fin);
@@ -1399,21 +1399,21 @@ int StepAnim(int x, int y, FILE *fin)
     if (cFrame < tFrames) {
         fread(&BHead, sizeof BHead, 1, fin);
         Swap32bit(BHead.fSize);
-        fread(vhptr.vptr, BHead.fSize, 1, fin);
+        fread(vhptr->pixels(), BHead.fSize, 1, fin);
 
         switch (BHead.cType) {
         case 0:
-            memcpy(dply.vptr, vhptr.vptr, BHead.fSize);
+            memcpy(dply.vptr, vhptr->pixels(), BHead.fSize);
             mode = gxSET;
             break;
 
         case 1:
-            RLED_img((char *)vhptr.vptr, (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
+            RLED_img(vhptr->pixels(), (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
             mode = gxSET;
             break;
 
         case 2:
-            RLED_img((char *)vhptr.vptr, (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
+            RLED_img(vhptr->pixels(), (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
             mode = gxXOR;
             break;
 
@@ -1498,7 +1498,7 @@ char DrawMoonSelection(char nauts, char plr)
     memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     FlagSm(plr, 4, 4);

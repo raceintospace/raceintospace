@@ -201,7 +201,9 @@ char Request(char plr, char *s, char md);
 
 void SpotCrap(char loc, char mode)
 {
-    GXHEADER SP1, SP2, SP3;
+	display::Surface * SP1;
+	display::Surface * SP2;
+	display::Surface * SP3;
     static char turnoff = 0;
 
     if (SUSPEND == 1) {
@@ -228,7 +230,7 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+        memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -258,67 +260,61 @@ void SpotCrap(char loc, char mode)
         }
 
         sImg.w = hSPOT.size / sImg.h;
-        GV(&SP1, sImg.w, sImg.h);        // create Virtual buffer
-        fread(SP1.vptr, hSPOT.size, 1, sFin); // read image data
+		SP1 = new display::Surface(sImg.w, sImg.h);
+        fread(SP1->pixels(), hSPOT.size, 1, sFin); // read image data
 
 
         if (sPath.Scale != 1.0) {
             sImg.w = (int)((float) sImg.w * sPath.Scale);
             sImg.h = (int)((float) sImg.h * sPath.Scale);
-            gxVirtualScale(&SP1, &SP2);
+			SP2 = new display::Surface(sImg.w, sImg.h);
+			SP1->scaleTo(SP2);
         }
 
-        GV(&SP3, sImg.w, sImg.h); // background buffer
+		SP3 = new display::Surface(sImg.w, sImg.h);
 
-        gxVirtualVirtual(&vhptr,
-                         MIN(sPath.xPut, 319),
-                         MIN(sPath.yPut, 199),
-                         MIN(sPath.xPut + sImg.w - 1, 319),
-                         MIN(sPath.yPut + sImg.h - 1, 199),
-                         &SP3, 0, 0, 0);
+		SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
 
         if (sPath.Scale != 1.0) {
             xx = hSPOT.size;
 
             for (int i = 0; i < xx; i++) {
-                if (SP2.vptr[i] == 0) {
-                    SP2.vptr[i] = SP3.vptr[i];
+                if (SP2->pixels()[i] == 0) {
+                    *(SP2->pixels() + i) = SP3->pixels()[i];
                 }
             }
 
             if (sPathOld.xPut != -1) {
-                gxVirtualDisplay(&vhptr, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1, 0);
+                vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1);
             }
 
-            gxPutImage(&SP2, gxSET, sPath.xPut, sPath.yPut, 0);
+			SP2->copyTo(display::graphics.screen(), sPath.xPut, sPath.yPut);
         } else {
             xx = hSPOT.size;
 
             for (int i = 0; i < xx; i++) {
-                if (SP1.vptr[i] == 0) {
-                    SP1.vptr[i] = SP3.vptr[i];
+                if (SP1->pixels()[i] == 0) {
+                    *(SP1->pixels() + i) = SP3->pixels()[i];
                 }
             }
 
             if (sPathOld.xPut != -1)
-                gxVirtualDisplay(&vhptr, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut,
-                                 MIN(sPathOld.xPut + sImgOld.w - 1, 319),
-                                 MIN(sPathOld.yPut + sImgOld.h - 1, 199),
-                                 0);
+                vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, MIN(sPathOld.xPut + sImgOld.w - 1, 319), MIN(sPathOld.yPut + sImgOld.h - 1, 199));
 
-            gxPutImage(&SP1, gxSET,
-                       MIN(sPath.xPut, 319),
-                       MIN(sPath.yPut, 199), 0);
+			SP1->copyTo(display::graphics.screen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
         }
 
         sPathOld = sPath;
         sImgOld = sImg;
 
-        DV(&SP3);
-        DV(&SP1);
+		delete SP3;
+		SP3 = NULL;
+		delete SP1;
+		SP1 = NULL;
 
         if (sPath.Scale != 1.0) {
-            DV(&SP2);
+			delete SP2;
+			SP2 = NULL;
         }
 
         sCount--;
@@ -428,16 +424,16 @@ void WaveFlagSetup(void)
 {
     long j;
     FILE *fin;
-    GV(&flaggy, 230, 22);
+    gxCreateVirtual(&flaggy, 230, 22);
     fin = sOpen("FLAG.SEQ", "rb", 0);
-    j = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, fin);
+    j = fread(vhptr->pixels(), 1, vhptr->height() * vhptr->width(), fin);
     fclose(fin);
-    RLED_img((char *)vhptr.vptr, (char *)flaggy.vptr, j, flaggy.w, flaggy.h);
+    RLED_img(vhptr->pixels(), (char *)flaggy.vptr, j, flaggy.w, flaggy.h);
 }
 
 void WaveFlagDel(void)
 {
-    DV(&flaggy);
+    gxDestroyVirtual(&flaggy);
     return;
 }
 
@@ -499,11 +495,11 @@ void PortPlace(FILE *fin, int32_t table)
 //  if (need_to_fix_width (table))
 //    Img.Width++;
 
-    GV(&local, Img.Width, Img.Height);
-    GV(&local2, Img.Width, Img.Height);
+    gxCreateVirtual(&local, Img.Width, Img.Height);
+    gxCreateVirtual(&local2, Img.Width, Img.Height);
     gxGetImage(&local, Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1, 0);
-    fread(vhptr.vptr, Img.Size, 1, fin);
-    RLED_img((char *)vhptr.vptr, (char *)local2.vptr, Img.Size, local2.w, local2.h);
+    fread(vhptr->pixels(), Img.Size, 1, fin);
+    RLED_img(vhptr->pixels(), (char *)local2.vptr, Img.Size, local2.w, local2.h);
 
     for (ctr = 0; ctr < (Img.Width * Img.Height); ctr++)
         if (local2.vptr[ctr] != 0x00) {
@@ -511,8 +507,8 @@ void PortPlace(FILE *fin, int32_t table)
         }
 
     gxPutImage(&local, gxSET, Img.PlaceX, Img.PlaceY, 0); // place image
-    DV(&local2);
-    DV(&local);
+    gxDestroyVirtual(&local2);
+    gxDestroyVirtual(&local);
     return;
 }
 
@@ -678,8 +674,8 @@ void DrawSpaceport(char plr)
 
     // FLAG DRAW
     FCtr = 0;
-    GV(&local, 22, 22);
-    GV(&local2, 22, 22);
+    gxCreateVirtual(&local, 22, 22);
+    gxCreateVirtual(&local2, 22, 22);
 
     if (plr == 0) {
         gxGetImage(&local, 49, 121, 70, 142, 0);
@@ -704,8 +700,8 @@ void DrawSpaceport(char plr)
         gxPutImage(&local2, gxSET, 220, 141, 0);
     }
 
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
 }
 
 void PortText(int x, int y, char *txt, char col)
@@ -825,7 +821,7 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
-    memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+    memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 #if SPOT_ON
@@ -898,8 +894,8 @@ void GetMse(char plr, char fon)
         SpotCrap(0, SPOT_STEP);
 #endif
         FCtr = FCtr % 5;
-        GV(&local, 22, 22);
-        GV(&local2, 22, 22);
+        gxCreateVirtual(&local, 22, 22);
+        gxCreateVirtual(&local2, 22, 22);
 
         if (plr == 0) {
             gxGetImage(&local, 49, 121, 70, 142, 0);
@@ -924,8 +920,8 @@ void GetMse(char plr, char fon)
             gxPutImage(&local2, gxSET, 220, 141, 0);
         }
 
-        DV(&local);
-        DV(&local2);
+        gxDestroyVirtual(&local);
+        gxDestroyVirtual(&local2);
 
 done:
         FCtr++;
@@ -1425,7 +1421,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                memcpy(vhptr.vptr, display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+                                memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
@@ -1854,7 +1850,7 @@ char Request(char plr, char *s, char md)
     GXHEADER local;
 
     if (md > 0) { // Save Buffer
-        GV(&local, 196, 84);
+        gxCreateVirtual(&local, 196, 84);
         gxGetImage(&local, 85, 52, 280, 135, 0);
     }
 
@@ -1918,7 +1914,7 @@ char Request(char plr, char *s, char md)
 
     if (md > 0) {
         gxPutImage(&local, gxSET, 85, 52, 0);
-        DV(&local);
+        gxDestroyVirtual(&local);
     }
 
     return i;
@@ -1929,7 +1925,7 @@ char MisReq(char plr)
     int i, num = 0;
     GXHEADER local;
 
-    GV(&local, 184, 132);
+    gxCreateVirtual(&local, 184, 132);
     gxGetImage(&local, 53, 29, 236, 160, 0);
 
     for (i = 0; i < 3; i++)
@@ -2046,7 +2042,7 @@ char MisReq(char plr)
 
     gxPutImage(&local, gxSET, 53, 29, 0);
 
-    DV(&local);
+    gxDestroyVirtual(&local);
 
     return i;
 }

@@ -156,11 +156,14 @@ void Surface::copyFrom(Surface * surface, int x1, int y1, int x2, int y2)
     for (row = 0; row < h; row++) {
         from_idx = (y1 + row) * surface->width() + x1;
         to_idx = row * _width;
-        memcpy((void *)((char *)_screen->pixels)[to_idx], (void *)(surface->pixels()[from_idx]), w);
+
+		void * dst = (void *)( (char *)_screen->pixels + to_idx);
+		void * src = (void *)(surface->pixels() + from_idx);
+        memcpy(dst, src, w);
     }
 }
 
-void Surface::copyTo(Surface * surface, int mode, int x, int y, Surface::Operation operation)
+void Surface::copyTo(Surface * surface, int x, int y, Surface::Operation operation)
 {
 	surface->_dirty = true;
 
@@ -176,12 +179,15 @@ void Surface::copyTo(Surface * surface, int mode, int x, int y, Surface::Operati
     clip_y = std::min(_height + y, surface->height()) - y;
     clip_x = std::min(_width + x, surface->width()) - x;
 
-    switch (mode) {
+    switch (operation) {
 	case Surface::Set:
         for (row = 0; row < clip_y; row++) {
             from_idx = row * _width;
             to_idx = (y + row) * surface->width() + x;
-            memcpy((void *)(surface->pixels()[to_idx]), (void *)(((char *)_screen->pixels)[from_idx]), clip_x);
+
+			void * dst = (void *)(surface->pixels() + to_idx);
+			void * src = (void *)(((char *)_screen->pixels) + from_idx);
+            memcpy(dst, src, clip_x);
         }
 
         break;
@@ -191,12 +197,47 @@ void Surface::copyTo(Surface * surface, int mode, int x, int y, Surface::Operati
             from_idx = row * _width;
             to_idx = (y + row) * surface->width() + x;
 
-            for (col = 0; col < clip_x; col++) {				
-                surface->pixels()[to_idx + col] ^= ((char *)_screen->pixels)[from_idx + col];
+            for (col = 0; col < clip_x; col++) {
+				char * dst = surface->pixels() + (to_idx + col);
+				char * src = ((char *)_screen->pixels) + (from_idx + col);
+				*dst ^= *src;
             }
         }
 
         break;
+    }
+}
+
+void Surface::copyTo(Surface * surface, int srcX, int srcY, int destX1, int destY1, int destX2, int destY2 )
+{
+    int row, from_idx, to_idx;
+    int width, height;
+    int clip_x, clip_y;
+    SDL_Rect r;
+
+    assert(surface);
+    assert(0 <= srcX && srcX < _width);
+    assert(0 <= srcY && srcY < _height);
+    assert(destX1 <= destX2);
+    assert(destY1 <= destY2);
+    assert(0 <= destX1 && destX1 < surface->width());
+    assert(0 <= destX2 && destX2 < surface->width());
+    assert(0 <= destY1 && destY1 < surface->height());
+    assert(0 <= destY2 && destY2 < surface->height());
+
+    width  = destX2 - destX1 + 1;
+    height = destY2 - destY1 + 1;
+
+    clip_y = std::min(height + destY1, (int)surface->height()) - destY1;
+    clip_x = std::min(width  + destX1, (int)surface->width()) - destX1;
+
+    for (row = 0; row < clip_y; row++) {
+        from_idx = (srcY + row) * _width + srcX;
+        to_idx = (destY1 + row) * surface->width() + destX1;
+
+		void * dst = surface->pixels() + to_idx;
+		void * src = ((char *)_screen->pixels) + from_idx;
+        memcpy(dst, src, clip_x);
     }
 }
 
@@ -214,8 +255,41 @@ void Surface::scaleTo(Surface * surface)
             src_idx  = src_row  * _width  + src_col;
             dest_idx = dest_row * surface->width() + dest_col;
 
-            surface->pixels()[dest_idx] = pixels()[src_idx];
+			char * dst = surface->pixels() + dest_idx;
+			char * src = pixels() + src_idx;
+			*dst = *src;
         }
+    }
+}
+
+void Surface::copyFrom( Surface * surface, int srcX1, int srcY1, int srcX2, int srcY2, int dstX, int dstY )
+{
+    int row, from_idx, to_idx;
+    int width, height;
+
+    assert(surface);
+    assert(0 <= srcX1 && srcX1 < surface->width());
+    assert(0 <= srcX2 && srcX2 < surface->width());
+    assert(0 <= srcY1 && srcY1 < surface->height());
+    assert(0 <= srcY2 && srcY2 < surface->height());
+    assert(srcX1 <= srcX2);
+    assert(srcY1 <= srcY2);
+    assert(0 <= dstX && dstX < _width);
+    assert(0 <= dstY && dstY < _height);
+
+    width  = srcX2 - srcX1 + 1;
+    height = srcY2 - srcY1 + 1;
+
+    assert(width  <= _width);
+    assert(height <= _height);
+
+    for (row = 0; row < height; row++) {
+        from_idx = (srcY1 + row) * surface->width() + srcX1;
+        to_idx = (dstY + row) * _width + dstX;
+
+		void * dst = (void *)(((char *)_screen->pixels) + to_idx);
+		void * src = (void *)(surface->pixels() + from_idx);
+        memcpy(dst, src, width);
     }
 }
 

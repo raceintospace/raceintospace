@@ -47,7 +47,7 @@ void PadDraw(char plr, char pad)
     int missions;     // Variable for how many missions each 'naut has flown
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 198);
     InBox(3, 3, 30, 19);
@@ -562,8 +562,8 @@ void PadPict(char poff)
     fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    GV(&local, 148, 148);
-    GV(&local2, 148, 148);
+    gxCreateVirtual(&local, 148, 148);
+    gxCreateVirtual(&local2, 148, 148);
     RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
@@ -574,8 +574,8 @@ void PadPict(char poff)
     gxPutImage(&local2, gxSET, 168, 28, 0);
 
     fclose(in);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 

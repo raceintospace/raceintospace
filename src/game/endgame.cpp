@@ -90,7 +90,7 @@ Burst(char win)
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-    gxGetImage(&vhptr, 0, 0, 319, 199, 0);
+	vhptr->copyFrom(display::graphics.screen(), 0, 0, 319, 199 );
 
     while (1) {
         Region = brandom(100);
@@ -123,7 +123,7 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.screen()->setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
+                    display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
                 }
 
                 key = 0;
@@ -159,7 +159,7 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-                        gxPutImage(&vhptr, gxSET, 0, 0, 0);
+						vhptr->copyTo(display::graphics.screen(), 0, 0 );
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -208,7 +208,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.screen()->setPixel(xx, yy, vhptr.vptr[xx + 320 * yy]);
+                display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel( xx, yy ));
             }
         }
     }                              // end while
@@ -224,7 +224,7 @@ void EndGame(char win, char pad)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     helpText = "i000";
     keyHelpText = "k000";
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -482,8 +482,8 @@ void Load_LenFlag(char win)
     }
 
     fseek(in, P.offset, SEEK_SET);
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
+    gxCreateVirtual(&local2, P.w, P.h);
     gxClearVirtual(&local2, 0);
     gxGetImage(&local2, Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1, 0);
     fread(local.vptr, P.size, 1, in);
@@ -497,8 +497,8 @@ void Load_LenFlag(char win)
         }
 
     gxPutImage(&local2, gxSET, Off_X, Off_Y, 0);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 
@@ -510,12 +510,12 @@ void Draw_NewEnd(char win)
     music_start(M_VICTORY);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     in = sOpen("WINNER.BUT", "rb", 0);
     fread(display::graphics.palette(), 384, 1, in);
-    size = fread(vhptr.vptr, 1, vhptr.h * vhptr.w, in);
+    size = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), in);
     fclose(in);
-    PCX_D((char *)vhptr.vptr, display::graphics.screen()->pixels(), size);
+    PCX_D(vhptr->pixels(), display::graphics.screen()->pixels(), size);
     ShBox(0, 173, 319, 199);
     InBox(5, 178, 314, 194);
     IOBox(12, 180, 67, 192);
@@ -547,7 +547,7 @@ void NewEnd(char win, char loc)
     WaitForMouseUp();
     i = 0;
     key = 0;
-    GV(&local, 162, 92);
+    gxCreateVirtual(&local, 162, 92);
     gxClearVirtual(&local, 0);
 
     while (i == 0) {
@@ -710,7 +710,7 @@ void NewEnd(char win, char loc)
         };
     }
 
-    DV(&local);
+    gxDestroyVirtual(&local);
     return;
 }
 
@@ -721,7 +721,7 @@ void FakeWin(char win)
     monthWin = brandom(12);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1062,7 +1062,7 @@ void SpecialEnd(void)
     char i;
     music_start(M_BADNEWS);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 24);
     DispBig(5, 5, "FAILED OBJECTIVE", 1, -1);
     ShBox(0, 26, 319, 199);
@@ -1136,8 +1136,8 @@ EndPict(int x, int y, char poff, unsigned char coff)
      */
     P.w++;
     fseek(in, P.offset, SEEK_SET);
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
+    gxCreateVirtual(&local2, P.w, P.h);
     gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
     fread(local.vptr, P.size, 1, in);
     fclose(in);
@@ -1150,8 +1150,8 @@ EndPict(int x, int y, char poff, unsigned char coff)
         }
 
     gxPutImage(&local2, gxSET, x, y, 0);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 
@@ -1170,8 +1170,8 @@ LoserPict(char poff, unsigned char coff)
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
     fseek(in, P.offset, SEEK_SET);
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
+    gxCreateVirtual(&local2, P.w, P.h);
     gxGetImage(&local2, 6, 32, 6 + P.w - 1, 32 + P.h - 1, 0);
     fread(local.vptr, P.size, 1, in);
     fclose(in);
@@ -1182,8 +1182,8 @@ LoserPict(char poff, unsigned char coff)
         }
 
     gxPutImage(&local2, gxSET, 6, 32, 0);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 
@@ -1194,7 +1194,7 @@ void PlayFirst(char plr, char first)
     int Check = 0;
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
     DispBig(92, 22, "PRESTIGE FIRST", 0, -1);
@@ -1246,7 +1246,7 @@ void PlayFirst(char plr, char first)
 
     PauseMouse();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     music_stop();
     return;
 }

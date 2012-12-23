@@ -161,7 +161,7 @@ void MisAnn(char plr, char pad)
         display::graphics.palette()[i] = 0;
     }
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
 
     PortPal(plr);
     ShBox(41, 20, 281, 184);
@@ -513,10 +513,10 @@ void AI_Begin(char plr)
     fread(display::graphics.palette(), 768, 1, fin);
     len[0] = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)len[0],
-             vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len[0],
+             vhptr->width(), vhptr->height());
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
 
@@ -536,7 +536,7 @@ void AI_Begin(char plr)
     }
 
     DispNum(0, 0, Data->Year);
-    gxVirtualDisplay(&vhptr, 1 + 110 * plr, 1, 30, 85, 30 + 107, 85 + 93, 0);
+    vhptr->copyTo(display::graphics.screen(), 1 + 110 * plr, 1, 30, 85, 30 + 107, 85 + 93);
     display::graphics.setForegroundColor(11);
     PrintAt(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
