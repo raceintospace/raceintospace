@@ -68,7 +68,9 @@ static struct {
 /** Indicates that screen redraw is required. */
 int screen_dirty;
 
-static int have_audio;
+/** Initialize to 1.  SDL will set to zero if it cannot
+    open a channel */
+static int have_audio = 1;
 
 static int do_fading;
 
