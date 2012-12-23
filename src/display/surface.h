@@ -25,7 +25,9 @@ public:
 	void outlineRect(int x1, int y1, int x2, int y2, char color);
 	void line(int x1, int y1, int x2, int y2, char color);
 	void copyFrom( Surface * surface, int x1, int y1, int x2, int y2 );
-	void copyTo(Surface * surface, int mode, int x, int y, Surface::Operation operation);
+	void copyFrom( Surface * surface, int srcX1, int srcY1, int srcX2, int srcY2, int dstX, int dstY );  // gxDisplayVirtual, gxVirtualVirtual
+	void copyTo(Surface * surface, int x, int y, Surface::Operation operation = Surface::Set);
+	void copyTo(Surface * surface, int srcX, int srcY, int destX1, int destY1, int destX2, int destY2 );  // gxVirtualDisplay
 	void Surface::scaleTo(Surface * surface);
 
 	unsigned int width() const {

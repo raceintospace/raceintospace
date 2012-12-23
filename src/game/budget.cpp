@@ -59,7 +59,7 @@ void DrawBudget(char player, char *pStatus)
 
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 47);
     ShBox(0, 49, 319, 67);
     ShBox(0, 69, 158, 199);
@@ -315,11 +315,11 @@ void BudPict(char poff)
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
     fseek(in, P.offset, SEEK_SET);
-    GV(&local, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
     fread(local.vptr, P.size, 1, in);
     //RLED(buffer,local.vptr,P.size);
     gxPutImage(&local, gxSET, 245, 4, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
     x = 134;
 
     for (i = 2; i < 6; i++) {
@@ -328,11 +328,11 @@ void BudPict(char poff)
         fread(&P, sizeof P, 1, in);
         SwapPatchHdrSmall(&P);
         fseek(in, P.offset, SEEK_SET);
-        GV(&local, P.w, P.h);
+        gxCreateVirtual(&local, P.w, P.h);
         fread(local.vptr, P.size, 1, in);
         //  RLED(buffer,local.vptr,P.size);
         gxPutImage(&local, gxSET, x, y, 0);
-        DV(&local);
+        gxDestroyVirtual(&local);
     }
 
     fclose(in);
@@ -556,7 +556,7 @@ void DrawViewing(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

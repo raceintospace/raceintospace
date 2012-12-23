@@ -62,7 +62,7 @@ void Moon(char plr)
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(109, 24, 222, 167);
     InBox(113, 27, 218, 39);
     RectFill(114, 28, 217, 38, 7 + 3 * plr);
@@ -80,7 +80,7 @@ void Moon(char plr)
     fseek(in, sizeof_SimpleHdr * size, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    GV(&local, 104, 82);
+    gxCreateVirtual(&local, 104, 82);
     fread(&display::graphics.palette()[384], 384, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
@@ -91,7 +91,7 @@ void Moon(char plr)
     }
 
     gxPutImage(&local, gxSET, 114, 43, 0);
-    DV(&local);
+    gxDestroyVirtual(&local);
     InBox(113, 42, 218, 125);
     ShBox(113, 42, 143, 60);
     RectFill(113, 42, 142, 59, 3);
@@ -200,7 +200,7 @@ void SatDraw(char plr)
     GXHEADER local;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(1, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);
@@ -235,7 +235,7 @@ void SatDraw(char plr)
         fseek(fin, (sizeof P)*loc[i] + 768, SEEK_SET);
         fread(&P, sizeof P, 1, fin);
         SwapPatchHdrSmall(&P);
-        GV(&local, P.w, P.h);
+        gxCreateVirtual(&local, P.w, P.h);
         fseek(fin, P.offset, SEEK_SET);
         fread(buffer, P.size, 1, fin);
         RLED_img(buffer, (char *)local.vptr, P.size, local.w, local.h);
@@ -246,7 +246,7 @@ void SatDraw(char plr)
             gxVirtualDisplay(&local, 0, 0, 5 + i * 80, 28, 75 + i * 80, 55, 0);
         }
 
-        DV(&local);
+        gxDestroyVirtual(&local);
     }
 
     fclose(fin);
@@ -272,7 +272,7 @@ void LMDraw(char plr)
     char ind = 0;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(1, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);
@@ -587,8 +587,8 @@ void LMPict(char poff)
     fread(&display::graphics.palette()[32 * 3], 672, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    GV(&local, 156, 89);
-    GV(&local2, 156, 89);
+    gxCreateVirtual(&local, 156, 89);
+    gxCreateVirtual(&local2, 156, 89);
     RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
@@ -603,8 +603,8 @@ void LMPict(char poff)
     }
 
     fclose(in);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 

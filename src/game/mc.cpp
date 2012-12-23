@@ -94,9 +94,9 @@ void DrawControl(char plr)
         Swap32bit(len);
     }
 
-    fread(vhptr.vptr, len, 1, fin);
+    fread(vhptr->pixels(), len, 1, fin);
     fclose(fin);
-    PCX_D((char *)vhptr.vptr, display::graphics.screen()->pixels(), (unsigned) len);
+    PCX_D(vhptr->pixels(), display::graphics.screen()->pixels(), (unsigned) len);
     av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 }
@@ -295,7 +295,7 @@ int Launch(char plr, char mis)
         DrawControl(plr);
         FadeIn(2, display::graphics.palette(), 10, 0, 0);
     } else if (BIG == 1) {
-        gxClearDisplay(0, 0);
+		display::graphics.screen()->clear(0);
     }
 
     memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct

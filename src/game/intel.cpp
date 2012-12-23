@@ -1198,8 +1198,8 @@ void TopSecret(char plr, char poff)
     fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    GV(&local, 157, 100);
-    GV(&local2, 157, 100);
+    gxCreateVirtual(&local, 157, 100);
+    gxCreateVirtual(&local2, 157, 100);
     RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
 
     if (poff != 100) {
@@ -1218,8 +1218,8 @@ void TopSecret(char plr, char poff)
     gxPutImage(&local, gxSET, 153, 32, 0);
 
     fclose(in);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
 }
 
 void SaveIntel(char p, char prg, char ind)
@@ -1453,7 +1453,7 @@ void DrawBre(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1565,7 +1565,7 @@ void Load_CIA_BUT(void)
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    PCX_D(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i);
+    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), i);
     fclose(fin);
 }
 
@@ -1577,7 +1577,7 @@ void DrawIStat(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -1740,20 +1740,19 @@ void IStat(char plr)
 
 void DispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
-    GXHEADER local, local2;
     int i, w, h;
-    unsigned char *src, *dest;
+    char *src, *dest;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-    GV(&local, w, h);
-    GV(&local2, w, h);
-    gxClearVirtual(&local, 0);
-    gxClearVirtual(&local2, 0);
-    gxGetImage(&local2, s, t, s + w - 1, t + h - 1, 0);
-    gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local, 0, 0, gxSET);
-    src = local.vptr;
-    dest = local2.vptr;
+    display::Surface local(w, h);
+    display::Surface local2(w, h);
+	local.clear(0);
+	local2.clear(0);
+	local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
+    src = local.pixels();
+    dest = local2.pixels();
 
     for (i = 0; i < w * h; i++) {
         if (*src) {
@@ -1764,10 +1763,7 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
         src++;
     }
 
-    gxPutImage(&local2, gxSET, s, t, 0);
-
-    DV(&local);
-    DV(&local2);
+	local2.copyTo(display::graphics.screen(), s, t);
 }
 
 void IInfo(char plr, char loc, char w)

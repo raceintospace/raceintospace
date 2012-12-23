@@ -129,7 +129,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 
     //FadeOut(2,pal,10,0,0);
 
-    GV(&local, 30, 19);
+    gxCreateVirtual(&local, 30, 19);
 
     starty -= (qty * 23 / 2);
 
@@ -143,7 +143,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     }
 
     fclose(fin);
-    DV(&local);
+    gxDestroyVirtual(&local);
 
     av_need_update_xy(23, starty, 60 + 22 * 15, starty + 23 * i);
 
@@ -215,8 +215,8 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
         P.size = P.w * P.h;
     }
 
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
+    gxCreateVirtual(&local2, P.w, P.h);
     gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
 
     fread(local.vptr, P.size, 1, in);
@@ -233,8 +233,8 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
         }
 
     gxPutImage(&local2, gxSET, x, y, 0);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
     return;
 }
 
@@ -257,7 +257,7 @@ AstFaces(char plr, int x, int y, char face)
     fread(&offset, sizeof(int32_t), 1, fin);
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
-    GV(&local, 18, 15);
+    gxCreateVirtual(&local, 18, 15);
     fread(local.vptr, 18 * 15, 1, fin);
 
 
@@ -266,8 +266,8 @@ AstFaces(char plr, int x, int y, char face)
     fread(&offset, sizeof(int32_t), 1, fin);
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
-    GV(&local2, 80, 50);
-    GV(&local3, 80, 50);
+    gxCreateVirtual(&local2, 80, 50);
+    gxCreateVirtual(&local3, 80, 50);
     fread(local2.vptr, 80 * 50, 1, fin);
     fclose(fin);
     memset(local3.vptr, 0x00, 80 * 50);
@@ -301,9 +301,9 @@ AstFaces(char plr, int x, int y, char face)
         }
 
     gxPutImage(&local3, gxSET, x, y, 0);
-    DV(&local3);
-    DV(&local2);
-    DV(&local);                    // deallocate in reverse order
+    gxDestroyVirtual(&local3);
+    gxDestroyVirtual(&local2);
+    gxDestroyVirtual(&local);                    // deallocate in reverse order
     return;
 }
 
@@ -341,8 +341,8 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
         P.size = P.w * P.h;
     }
 
-    GV(&local, P.w, P.h);
-    GV(&local2, P.w, P.h);
+    gxCreateVirtual(&local, P.w, P.h);
+    gxCreateVirtual(&local2, P.w, P.h);
     gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
     fread(local.vptr, P.size, 1, in);
     fclose(in);
@@ -358,8 +358,8 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
         }
 
     gxPutImage(&local2, gxSET, x, y, 0);
-    DV(&local);
-    DV(&local2);
+    gxDestroyVirtual(&local);
+    gxDestroyVirtual(&local2);
 
     if (planet > 0 && prog == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
@@ -392,14 +392,14 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, size * sizeof_SimpleHdr, SEEK_CUR);
         fread_SimpleHdr(&table, 1, in);
         fseek(in, table.offset, SEEK_SET);
-        GV(&local, 104, 77);
-        GV(&local2, 104, 77);
+        gxCreateVirtual(&local, 104, 77);
+        gxCreateVirtual(&local2, 104, 77);
         fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
         fread(local2.vptr, table.size, 1, in); // Get Image
         fclose(in);
         RLED_img((char *)local2.vptr, (char *)local.vptr, table.size, local.w, local.h);
 
-        n = gxVirtualSize(gxVGA_13, 104, 77);
+        n = 104 * 77; // gxVirtualSize(gxVGA_13, 104, 77);
 
         for (j = 0; j < n; j++) {
             local.vptr[j] += coff;
@@ -408,8 +408,8 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         local.vptr[n - 1] = 0;
 
         gxPutImage(&local, gxSET, x, y, 0);
-        DV(&local);
-        DV(&local2);
+        gxDestroyVirtual(&local);
+        gxDestroyVirtual(&local2);
     } else {
         memset(Name, 0x00, sizeof Name);
 
@@ -458,13 +458,13 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         Swap16bit(AHead.h);
         fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, fin);
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
-        GV(&local, AHead.w, AHead.h);
+        gxCreateVirtual(&local, AHead.w, AHead.h);
 
         fread(&BHead, sizeof BHead, 1, fin);
         Swap32bit(BHead.fSize);
-        fread(vhptr.vptr, BHead.fSize, 1, fin);
-        RLED_img((char *)vhptr.vptr, (char *)local.vptr, BHead.fSize, local.w, local.h);
-        n = gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
+        fread(vhptr->pixels(), BHead.fSize, 1, fin);
+        RLED_img(vhptr->pixels(), (char *)local.vptr, BHead.fSize, local.w, local.h);
+        n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
         for (j = 0; j < n; j++) {
             if (local.vptr[j] != 0) {
@@ -478,7 +478,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         //gxPutImage(&dply,mode,x,y,0);
 
 
-        DV(&local);
+        gxDestroyVirtual(&local);
         fclose(fin);
     }
 
@@ -604,7 +604,7 @@ int Help(const char *FName)
     free(Help);
 
     key = 0;
-    GV(&local, 250, 128);
+    gxCreateVirtual(&local, 250, 128);
     gxGetImage(&local, 34, 32, 283, 159, 0);
     av_need_update_xy(34, 32, 283, 159);
 
@@ -689,7 +689,7 @@ int Help(const char *FName)
 
     gxPutImage(&local, gxSET, 34, 32, 0);
     free(NTxt);
-    DV(&local);
+    gxDestroyVirtual(&local);
 
     AL_CALL = 0;
     return i;

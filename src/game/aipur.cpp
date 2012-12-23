@@ -64,7 +64,7 @@ void DrawStatistics(char Win)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     PortPal(0);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(35, 33, 288, 159);
     InBox(40, 69, 111, 109);
     InBox(116, 69, 283, 109);
@@ -105,7 +105,7 @@ void DrawStatistics(char Win)
 
     qty = 6;
     starty = 118;
-    GV(&local, 30, 19);
+    gxCreateVirtual(&local, 30, 19);
     fin = sOpen("PORTBUT.BUT", "rb", 0);
     OutBox(152, 41, 183, 61); //directors ranking
 
@@ -135,7 +135,7 @@ void DrawStatistics(char Win)
     }
 
     fclose(fin);
-    DV(&local);
+    gxDestroyVirtual(&local);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;

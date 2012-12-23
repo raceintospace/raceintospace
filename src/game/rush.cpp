@@ -126,8 +126,8 @@ void DrawRush(char plr)
     fin = sOpen("LPADS.BUT", "rb", 0);
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, i, vhptr.w, vhptr.h);
-    gxClearDisplay(0, 0);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
+	display::graphics.screen()->clear(0);
     JR = 0;
 
     for (l = 0; l < 3; l++) {
@@ -236,7 +236,7 @@ void DrawRush(char plr)
             PrintAt(199, 69 + i * 58, "COST:");
             OutBox(11 , 33 + i * 58, 69, 74 + i * 58);
             InBox(20, 38 + i * 58, 60, 69 + i * 58);
-            gxVirtualDisplay(&vhptr, 156 * plr, i * 30, 21, 39 + i * 58, 59, 68 + i * 58, 0);
+            vhptr->copyTo(display::graphics.screen(), 156 * plr, i * 30, 21, 39 + i * 58, 59, 68 + i * 58);
 
             SetRush(Data->P[plr].Mission[i].Rushing, i);
 			display::graphics.setForegroundColor(1);

@@ -3,15 +3,14 @@
 
 #include "gxdatatypes.h"
 
-void gxClearDisplay(int, int);
+//void gxClearDisplay(int, int);
 void gxVirtualDisplay(GXHEADER *hp, int a, int b, int c, int d, int e, int f, int g);
 void gxVirtualVirtual(GXHEADER *hp, int a, int b, int c, int d, GXHEADER *hp2, int x, int y, int mode);
 void gxGetImage(GXHEADER *hp, int a, int b, int c, int d, int e);
 void gxClearVirtual(GXHEADER *hp, int a);
-int gxVirtualSize(int mode, int w, int h);
 void gxPutImage(GXHEADER *hp, int mode, int a, int b, int c);
 void gxVirtualScale(GXHEADER *a, GXHEADER *b);
-int gxCreateVirtual(int mode, GXHEADER *hp, int gxVGA_mode, int w, int h);
+int gxCreateVirtual(GXHEADER *hp, int w, int h);
 void gxDestroyVirtual(GXHEADER *hp);
 void gxDisplayVirtual(int a, int b, int c, int d, int e, GXHEADER *hp, int f, int g);
 

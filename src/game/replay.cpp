@@ -267,7 +267,7 @@ DispBaby(int x, int y, int loc, char neww)
 
     off = 224;
 
-    GV(&boob, 68, 46);
+    gxCreateVirtual(&boob, 68, 46);
     bot = (uint16_t *) boob.vptr;
 
     fin = sOpen("BABYPICX.CDR", "rb", 0);
@@ -295,7 +295,7 @@ DispBaby(int x, int y, int loc, char neww)
 
     gxPutImage(&boob, gxSET, x, y, 0);
 
-    DV(&boob);
+    gxDestroyVirtual(&boob);
 
     return;
 }

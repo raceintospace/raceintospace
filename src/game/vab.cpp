@@ -183,9 +183,9 @@ void DispVAB(char plr, char pad)
     fread(display::graphics.screen()->pixels(), image_len, 1, fp);
     fclose(fp);
 
-    PCX_D(display::graphics.screen()->pixels(), (char *)vhptr.vptr, image_len);
+    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), image_len);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 170, 99);
     ShBox(0, 101, 170, 199);
@@ -556,8 +556,7 @@ void DispVA(char plr, char f)
 {
     int i, TotY, IncY;
     int w, h, x1, y1, x2, y2, w2, h2, cx, off = 0;
-    unsigned char *spix, *dpix, wh;
-    GXHEADER local, local2;
+    char *spix, *dpix, wh;
 
     cx = 0; /**< number of pictures */
 
@@ -595,24 +594,22 @@ void DispVA(char plr, char f)
         off = 13;
     };
 
-    GV(&local, w, h);
+	display::Surface local(w, h);
+	local.clear(0);
 
-    gxClearVirtual(&local, 0);
+	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
 
-    gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local, 0, 0 + off, gxSET);
-
-    GV(&local2, w, h);
+	display::Surface local2(w, h);
 
     /* TODO: magic numbers */
     RectFill(178, 29, 243, 179, 3);
 
-    gxGetImage(&local2, 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1,
-               103 - h / 2 + h - 1, 0);
+	local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     /* local <- local with background from local2 */
-    for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
-        if (local.vptr[i] == 0x00) {
-            local.vptr[i] = local2.vptr[i];
+    for (i = 0; i < (w * h); i++) {
+        if (local.pixels()[i] == 0x00) {
+            *(local.pixels() + i) = local2.pixels()[i];
         }
     };
 
@@ -621,7 +618,7 @@ void DispVA(char plr, char f)
     //  spix++;
     //};
 
-    gxClearVirtual(&local2, 0);
+	local2.clear(0);
 
     IncY = (h - TotY) / 2;
 
@@ -649,17 +646,16 @@ void DispVA(char plr, char f)
                           VAS[f][i].name);
                 continue;
             } else
-                gxVirtualVirtual(&vhptr, x1, y1, x2, y2,
-                                 &local2, cx, IncY, gxSET);
+				local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
             IncY += h2 + 1;
         }
     }
 
-    spix = local.vptr;
-    dpix = local2.vptr;
+    spix = local.pixels();
+    dpix = local2.pixels();
 
-    for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
+    for (i = 0; i < (w * h); i++) {
         if (*dpix != 0x00) {
             *spix = *dpix;
         }
@@ -690,12 +686,12 @@ void DispVA(char plr, char f)
         y2 = y1 + TotY - IncY - 1;
         w2 = x2 - x1 + 1;
         cx = w / 2 - w2 / 2 - 1;
-        gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, cx, IncY, gxSET);
+		local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
-        spix = local.vptr;
-        dpix = local2.vptr;
+        spix = local.pixels();
+        dpix = local2.pixels();
 
-        for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
+        for (i = 0; i < (w * h); i++) {
             if (*dpix != 0x00) {
                 *spix = *dpix;
             }
@@ -714,13 +710,13 @@ void DispVA(char plr, char f)
 
         h2 = y2 - y1 + 1;
 
-        gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, 0, h - h2, gxSET);
+		local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
 
-        spix = local.vptr;
+        spix = local.pixels();
 
-        dpix = local2.vptr;
+        dpix = local2.pixels();
 
-        for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
+        for (i = 0; i < (w * h); i++) {
             if (*dpix != 0x00) {
                 *spix = *dpix;
             }
@@ -734,11 +730,11 @@ void DispVA(char plr, char f)
         x2 = MI[plr * 28 + 26].x2;
         y2 = MI[plr * 28 + 26].y2;
         h2 = y2 - y1 + 1;
-        gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local2, 0, h - h2, gxSET);
-        spix = local.vptr;
-        dpix = local2.vptr;
+		local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
+        spix = local.pixels();
+        dpix = local2.pixels();
 
-        for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
+        for (i = 0; i < (w * h); i++) {
             if (*dpix != 0x00) {
                 *spix = *dpix;
             }
@@ -748,18 +744,13 @@ void DispVA(char plr, char f)
         };
     }
 
-    DV(&local2);
-    gxPutImage(&local, gxSET, 210 - w / 2, 103 - h / 2, 0);
-
-    DV(&local);
-    return;
+	local.copyTo(display::graphics.screen(), 210 - w / 2, 103 - h / 2);
 }
 
 void DispRck(char plr, char wh)
 {
     int i;
     int w, h, x1, y1, x2, y2;
-    GXHEADER local, local2;
 
     x1 = MI[plr * 28 + wh].x1;
     y1 = MI[plr * 28 + wh].y1;
@@ -767,26 +758,21 @@ void DispRck(char plr, char wh)
     y2 = MI[plr * 28 + wh].y2;
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-    GV(&local, w, h);
-    GV(&local2, w, h);
-    gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local, 0, 0, gxSET);
+	display::Surface local(w, h);
+	display::Surface local2(w, h);
+
+	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
     RectFill(247, 29, 313, 179, 3);
-    gxGetImage(&local2, 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1, 0);
+	local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
-    for (i = 0; i < gxVirtualSize(gxVGA_13, w, h); i++) {
-        if (local.vptr[i] == 0x00) {
-            local.vptr[i] = local2.vptr[i];
+    for (i = 0; i < (w * h); i++) {
+        if (local.pixels()[i] == 0x00) {
+            *(local.pixels() + i) = local2.pixels()[i];
         }
     };
 
-    gxPutImage(&local, gxSET, 282 - w / 2, 103 - h / 2, 0);
-
-    DV(&local2);
-
-    DV(&local);
-
-    return;
+	local.copyTo(display::graphics.screen(), 282 - w / 2, 103 - h / 2);
 }
 
 void DispWts(int two, int one)

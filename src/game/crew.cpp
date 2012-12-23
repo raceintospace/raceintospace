@@ -97,14 +97,14 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 
     case 4:
         M = SecondHard(plr, 0, MisType, Pad);
-        GV(&local3, 171, 188);
+        gxCreateVirtual(&local3, 171, 188);
 
         gxGetImage(&local3, 74, 3, 244, 190, 0);
 
         if (M != 0) {
             M = AsnCrew(plr, Pad, 0);
         } else {
-            DV(&local3);
+            gxDestroyVirtual(&local3);
             return 0;
         }
 
@@ -116,7 +116,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 
         gxPutImage(&local3, gxSET, 74, 3, 0);
 
-        DV(&local3);
+        gxDestroyVirtual(&local3);
 
         if (M != 0) {
             M = SecondHard(plr, 1, MisType, Pad);

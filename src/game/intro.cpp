@@ -212,7 +212,7 @@ void Introd(void)
     }
 
 done:
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
 }
 
 void NextTurn(char plr)
@@ -229,9 +229,9 @@ void NextTurn(char plr)
     len = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
 
-    RLED_img(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)len, vhptr.w, vhptr.h);
+    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len, vhptr->width(), vhptr->height());
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
 
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
@@ -252,7 +252,7 @@ void NextTurn(char plr)
     }
 
     DispNum(0, 0, Data->Year);
-    gxVirtualDisplay(&vhptr, 110 * plr, 0, 30, 85, 31 + 107, 85 + 94, 0);
+    vhptr->copyTo(display::graphics.screen(), 110 * plr, 0, 30, 85, 31 + 107, 85 + 94);
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
@@ -263,7 +263,7 @@ void NextTurn(char plr)
 
     music_stop();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     return;
 }
 

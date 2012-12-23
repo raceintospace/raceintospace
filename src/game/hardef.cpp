@@ -54,7 +54,7 @@ DrawHardef(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -227,20 +227,19 @@ ShowHard(char plr)
 void
 HDispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
-    GXHEADER local, local2;
     int i, w, h;
-    unsigned char *src, *dest;
+    char *src, *dest;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-    GV(&local, w, h);
-    GV(&local2, w, h);
-    gxClearVirtual(&local, 0);
-    gxClearVirtual(&local2, 0);
-    gxGetImage(&local2, s, t, s + w - 1, t + h - 1, 0);
-    gxVirtualVirtual(&vhptr, x1, y1, x2, y2, &local, 0, 0, gxSET);
-    src = local.vptr;
-    dest = local2.vptr;
+    display::Surface local(w, h);
+    display::Surface local2(w, h);
+	local.clear(0);
+	local2.clear(0);
+	local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 );
+    src = local.pixels();
+    dest = local2.pixels();
 
     for (i = 0; i < w * h; i++) {
         if (*src != 0x00) {
@@ -251,11 +250,7 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
         src++;
     }
 
-    gxPutImage(&local2, gxSET, s, t, 0);
-
-    DV(&local);
-    DV(&local2);
-    return;
+	local2.copyTo(display::graphics.screen(), s, t);
 }
 
 void
@@ -1474,7 +1469,7 @@ RankMe(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(52, 0, 267, 32);
     ShBox(0, 0, 50, 32);
     ShBox(269, 0, 319, 32);

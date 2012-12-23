@@ -59,7 +59,7 @@ void DrawTrain(char plr, char lvl)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 114);
     ShBox(161, 24, 319, 199);
@@ -733,9 +733,9 @@ void Hospital(char plr, int sel)
 
     fread((void *)display::graphics.screen()->pixels(), size, 1, fin);
     fclose(fin);
-    PCX_D(display::graphics.screen()->pixels(), (char *)vhptr.vptr, (unsigned int)size);
+    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)size);
 
-    gxClearDisplay(0, 0);
+	display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(161, 103, 319, 199);
     ShBox(0, 103, 158, 199);
@@ -754,9 +754,9 @@ void Hospital(char plr, int sel)
     DNArrow(9, 166);
     FlagSm(plr, 4, 4);
     ShBox(0, 24, 319, 101);
-    gxVirtualDisplay(&vhptr, 0, 0, 1, 25, 318, 100, 0);
+    vhptr->copyTo(display::graphics.screen(), 0, 0, 1, 25, 318, 100);
 
-    gxVirtualDisplay(&vhptr, 0, 81, 167, 108, 312, 194, 0);
+    vhptr->copyTo(display::graphics.screen(), 0, 81, 167, 108, 312, 194);
 
     display::graphics.setForegroundColor(1);
 
