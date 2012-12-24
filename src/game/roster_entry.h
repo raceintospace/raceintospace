@@ -1,7 +1,11 @@
 #ifndef ROSTER_ENTRY_H
 #define ROSTER_ENTRY_H
 
+#ifdef __linux__
+#include <jsoncpp/json.h>
+#else
 #include <json/json.h>
+#endif
 #include <string>
 
 #include "data.h"
