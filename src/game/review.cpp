@@ -52,7 +52,7 @@ void DrawReview(char plr)
     }
 
     PortPal(plr);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     if (Data->P[plr].PresRev[0] == 0x7F) {
         Fired_Flag = 1;
@@ -83,17 +83,17 @@ void DrawReview(char plr)
         DispBig(40, 5, "POLITBURO REVIEW", 0, -1);
     }
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(257, 13, "CONTINUE");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(59, 36, "JOB PERFORMANCE");
-	display::graphics.setForegroundColor(6);
+    display::graphics.setForegroundColor(6);
     PrintAt(8, 46, "GOOD");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(8, 77, "FAIR");
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(8, 109, "POOR");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     DispNum(154, 117, Data->Year - 1);
     DispNum(126, 117, Data->Year - 2);
     DispNum(97, 117, Data->Year - 3);
@@ -102,7 +102,7 @@ void DrawReview(char plr)
     RectFill(32, 39, 172, 111, 0);
     GradRect(33, 39, 171, 74, 0);
     GradRect(33, 75, 171, 110, 0);
-	display::graphics.setForegroundColor(3);
+    display::graphics.setForegroundColor(3);
     pline(60, 40, 60, 110);
     pline(88, 40, 88, 110);
     pline(116, 40, 116, 110);
@@ -142,7 +142,7 @@ void DrawReview(char plr)
         }
 
         RectFill(166 - i * 28, 75, 151 - i * 28, cte, 5 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
-		display::graphics.setForegroundColor(6 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
+        display::graphics.setForegroundColor(6 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
         pline(167 - i * 28, 75, 167 - i * 28, cte);
     }
 
@@ -284,19 +284,19 @@ void MisRev(char plr, int pres)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
     DispBig(40, 5, "MISSION REVIEW", 0, -1);
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(258, 13, "CONTINUE");
     FlagSm(plr, 4, 4);
 
     key = 0;
     Draw_Mis_Stats(plr, Data->P[plr].PastMissionCount - 1, 0, 1);
     key = 0;
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     return;
 }
 
@@ -373,7 +373,7 @@ void DrawRevText(char plr, int val)
     fread(buffer, 204, 1, fin);
     fclose(fin);
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
 
     grMoveTo(20, 140);
 

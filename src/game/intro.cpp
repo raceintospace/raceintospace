@@ -210,7 +210,7 @@ void Introd(void)
     }
 
 done:
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 }
 
 void NextTurn(char plr)
@@ -229,7 +229,7 @@ void NextTurn(char plr)
 
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len, vhptr->width(), vhptr->height());
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
@@ -261,7 +261,7 @@ void NextTurn(char plr)
 
     music_stop();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     return;
 }
 

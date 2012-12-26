@@ -48,7 +48,7 @@ void OpenEmUp(void)
 
     seq_init();
 
-	vhptr = new display::Surface(320, 200);
+    vhptr = new display::Surface(320, 200);
 
     letter_dat = slurp_gamedat("letter.dat");
 }

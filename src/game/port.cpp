@@ -201,9 +201,9 @@ char Request(char plr, char *s, char md);
 
 void SpotCrap(char loc, char mode)
 {
-	display::Surface * SP1;
-	display::Surface * SP2;
-	display::Surface * SP3;
+    display::Surface *SP1;
+    display::Surface *SP2;
+    display::Surface *SP3;
     static char turnoff = 0;
 
     if (SUSPEND == 1) {
@@ -260,20 +260,20 @@ void SpotCrap(char loc, char mode)
         }
 
         sImg.w = hSPOT.size / sImg.h;
-		SP1 = new display::Surface(sImg.w, sImg.h);
+        SP1 = new display::Surface(sImg.w, sImg.h);
         fread(SP1->pixels(), hSPOT.size, 1, sFin); // read image data
 
 
         if (sPath.Scale != 1.0) {
             sImg.w = (int)((float) sImg.w * sPath.Scale);
             sImg.h = (int)((float) sImg.h * sPath.Scale);
-			SP2 = new display::Surface(sImg.w, sImg.h);
-			SP1->scaleTo(SP2);
+            SP2 = new display::Surface(sImg.w, sImg.h);
+            SP1->scaleTo(SP2);
         }
 
-		SP3 = new display::Surface(sImg.w, sImg.h);
+        SP3 = new display::Surface(sImg.w, sImg.h);
 
-		SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
+        SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
 
         if (sPath.Scale != 1.0) {
             xx = hSPOT.size;
@@ -288,7 +288,7 @@ void SpotCrap(char loc, char mode)
                 vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1);
             }
 
-			SP2->copyTo(display::graphics.screen(), sPath.xPut, sPath.yPut);
+            SP2->copyTo(display::graphics.screen(), sPath.xPut, sPath.yPut);
         } else {
             xx = hSPOT.size;
 
@@ -298,23 +298,24 @@ void SpotCrap(char loc, char mode)
                 }
             }
 
-            if (sPathOld.xPut != -1)
+            if (sPathOld.xPut != -1) {
                 vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, MIN(sPathOld.xPut + sImgOld.w - 1, 319), MIN(sPathOld.yPut + sImgOld.h - 1, 199));
+            }
 
-			SP1->copyTo(display::graphics.screen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
+            SP1->copyTo(display::graphics.screen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
         }
 
         sPathOld = sPath;
         sImgOld = sImg;
 
-		delete SP3;
-		SP3 = NULL;
-		delete SP1;
-		SP1 = NULL;
+        delete SP3;
+        SP3 = NULL;
+        delete SP1;
+        SP1 = NULL;
 
         if (sPath.Scale != 1.0) {
-			delete SP2;
-			SP2 = NULL;
+            delete SP2;
+            SP2 = NULL;
         }
 
         sCount--;

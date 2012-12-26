@@ -54,7 +54,7 @@ DrawHardef(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -234,10 +234,10 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
     h = y2 - y1 + 1;
     display::Surface local(w, h);
     display::Surface local2(w, h);
-	local.clear(0);
-	local2.clear(0);
-	local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
-	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 );
+    local.clear(0);
+    local2.clear(0);
+    local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
     src = local.pixels();
     dest = local2.pixels();
 
@@ -250,7 +250,7 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
         src++;
     }
 
-	local2.copyTo(display::graphics.screen(), s, t);
+    local2.copyTo(display::graphics.screen(), s, t);
 }
 
 void
@@ -298,7 +298,7 @@ PInfo(char plr, char loc)
                 }
             }
 
-						// This is for boosters
+            // This is for boosters
             if (Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] > 0) {
                 if (Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] < 5) {
                     PrestigeTable[ROCKET_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] - 1] += prestigeSum;
@@ -1469,7 +1469,7 @@ RankMe(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(52, 0, 267, 32);
     ShBox(0, 0, 50, 32);
     ShBox(269, 0, 319, 32);

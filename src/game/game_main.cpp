@@ -92,8 +92,8 @@ std::string keyHelpText;
 char df;
 char IDLE[2];
 char *buffer;
-display::Surface * vhptr;
-display::Surface * vhptr2;
+display::Surface *vhptr;
+display::Surface *vhptr2;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;
@@ -169,7 +169,7 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex;
-    
+
     // initialize the filesystem
     Filesystem::init(argv[0]);
 
@@ -260,7 +260,7 @@ int game_main_impl(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-		display::graphics.screen()->clear(0);
+        display::graphics.screen()->clear(0);
         PortPal(0);
         key = 0;
         helpText = "i000";
@@ -296,7 +296,7 @@ int game_main_impl(int argc, char *argv[])
 
             InitData();                   // PICK EVENT CARDS N STUFF
             MainLoop();                   // PLAY GAME
-			display::graphics.screen()->clear(0);
+            display::graphics.screen()->clear(0);
             break;
 
         case 1: // Play Old Game
@@ -318,7 +318,7 @@ int game_main_impl(int argc, char *argv[])
             }
 
             QUIT = 0;
-			display::graphics.screen()->clear(0);
+            display::graphics.screen()->clear(0);
             break;
 
         case 2:
@@ -530,7 +530,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 Master(plr[i]);                // PLAY TURN
                 //restore sound
 //       SetVoiceVolume(115);
-				display::graphics.screen()->clear(0);
+                display::graphics.screen()->clear(0);
                 IDLE[plr[i]]++;
 
                 if (LOAD == 1) {
@@ -677,7 +677,7 @@ void DockingKludge(void)
     for (j = 0; j < NUM_PLAYERS; j++) {
         Data->P[j].Manned[MISC_HW_DOCKING_MODULE].MSF =
             MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
-                 Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
+                Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
     }
 
     return;
@@ -988,41 +988,41 @@ void ShBox(int x1, int y1, int x2, int y2)
 
 void UPArrow(int x1, int y1)
 {
-	display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4 );
-	display::graphics.screen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
+    display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
+    display::graphics.screen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
 
-	display::graphics.screen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
-	display::graphics.screen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
+    display::graphics.screen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
+    display::graphics.screen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
     return;
 }
 
 void RTArrow(int x1, int y1)
 {
-	display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
-	display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
+    display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
+    display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
 
-	display::graphics.screen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
-	display::graphics.screen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
+    display::graphics.screen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
+    display::graphics.screen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
     return;
 }
 
 void LTArrow(int x1, int y1)
 {
-	display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
-	display::graphics.screen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
+    display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
+    display::graphics.screen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
 
-	display::graphics.screen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
-	display::graphics.screen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2 );
+    display::graphics.screen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
+    display::graphics.screen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2);
     return;
 }
 
 void DNArrow(int x1, int y1)
 {
-	display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
-	display::graphics.screen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
+    display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
+    display::graphics.screen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
 
-	display::graphics.screen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
-	display::graphics.screen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
+    display::graphics.screen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
+    display::graphics.screen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
     return;
 }
 
@@ -1055,7 +1055,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 {
     InBox(x1, y1, x2, y2);
     display::graphics.setForegroundColor(0);
-	display::graphics.screen()->outlineRect( x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0 );
+    display::graphics.screen()->outlineRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0);
     OutBox(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 }
 

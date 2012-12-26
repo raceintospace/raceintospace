@@ -129,7 +129,7 @@ void Admin(char plr)
         music_start(M_GOOD);
 
         helpText = (plr == 0) ? "i702" : "i703";
-        keyHelpText = (plr == 0) ? "k601" : "k602"; 
+        keyHelpText = (plr == 0) ? "k601" : "k602";
 
         i = BChoice(plr, 7, (char *)AName, AImg);
 
@@ -308,7 +308,7 @@ void FileAccess(char mode)
     helpText = "i128";
     keyHelpText = "k128";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     saveType = SAVEGAME_Normal;
 
@@ -1388,7 +1388,7 @@ int FutureCheck(char plr, char type)
         keyHelpText = "k015";
     }
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(59, 12, 269, 186);
     InBox(64, 17, 213, 29);
     RectFill(65, 18, 212, 28, 7);
@@ -1575,7 +1575,7 @@ int FutureCheck(char plr, char type)
 
         DispChr(0x41 + i);
 
-		vhptr->copyTo(display::graphics.screen(), 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
+        vhptr->copyTo(display::graphics.screen(), 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
     }
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1614,7 +1614,7 @@ int FutureCheck(char plr, char type)
 
                 if (p[i] == -1 && Data->P[plr].Cash >= 20 && type == 0) {
 
-					vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
+                    vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
                     Data->P[plr].Cash -= 20;
                     Data->P[plr].Spend[0][3] += 20;
                     Data->P[plr].LaunchFacility[i] = 1;

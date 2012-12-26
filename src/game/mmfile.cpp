@@ -403,9 +403,9 @@ mm_open_fp(mm_file *mf, FILE *file)
     // pointers so that the other functions
     // ignore the file.
     if (!mf->file) {
-      mf->audio = NULL;
-      mf->video = NULL;
-      return retval;
+        mf->audio = NULL;
+        mf->video = NULL;
+        return retval;
     }
 
     ogg_sync_init(&mf->sync);

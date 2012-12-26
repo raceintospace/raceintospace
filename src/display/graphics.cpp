@@ -61,7 +61,7 @@ void Graphics::create(const std::string &title, bool fullscreen)
         throw std::runtime_error(SDL_GetError());
     }
 
-    _screen = new Surface( WIDTH, HEIGHT );
+    _screen = new Surface(WIDTH, HEIGHT);
 
     _scaledScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH * SCALE, HEIGHT * SCALE, 8, 0, 0, 0, 0);
 
@@ -91,10 +91,12 @@ void Graphics::destroy()
     SDL_FreeYUVOverlay(_news);
 
     SDL_FreeSurface(_scaledScreen);
+
     if (_screen) {
         delete _screen;
         _screen = NULL;
     }
+
     SDL_FreeSurface(_display);
 
     _video = NULL;
@@ -104,17 +106,17 @@ void Graphics::destroy()
     _display = NULL;
 }
 
-void Graphics::setForegroundColor( char color )
+void Graphics::setForegroundColor(char color)
 {
-	_foregroundColor = color;
+    _foregroundColor = color;
 }
 
-void Graphics::setBackgroundColor( char color )
+void Graphics::setBackgroundColor(char color)
 {
-	_backgroundColor = color;
+    _backgroundColor = color;
 }
 
-void Graphics::setPalette( uint8_t *palette )
+void Graphics::setPalette(uint8_t *palette)
 {
     memcpy(_palette, palette, 256 * 3);
 }

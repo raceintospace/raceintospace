@@ -127,7 +127,7 @@ void DrawRush(char plr)
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     JR = 0;
 
     for (l = 0; l < 3; l++) {
@@ -214,7 +214,7 @@ void DrawRush(char plr)
     ShBox(0, 0, 319, 23);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(263, 13, "ASSIGN");
     FlagSm(plr, 4, 4);
 
@@ -229,7 +229,7 @@ void DrawRush(char plr)
             IOBox(278, 64 + i * 58, 314, 76 + i * 58);
 
             IOBox(89, 39 + i * 58, 266, 61 + i * 58);
-			display::graphics.setForegroundColor(1);
+            display::graphics.setForegroundColor(1);
             PrintAt(89, 33 + i * 58, "SCHEDULE:");
             PrintAt(88, 69 + i * 58, "RUSHING PENALTY: ");
             PrintAt(88, 77 + i * 58, "DOWNGRADE PENALTY: ");
@@ -239,10 +239,10 @@ void DrawRush(char plr)
             vhptr->copyTo(display::graphics.screen(), 156 * plr, i * 30, 21, 39 + i * 58, 59, 68 + i * 58);
 
             SetRush(Data->P[plr].Mission[i].Rushing, i);
-			display::graphics.setForegroundColor(1);
+            display::graphics.setForegroundColor(1);
             DispBig(55, 5, "MISSION SCHEDULE", 0, -1);
 
-			display::graphics.setForegroundColor(5);
+            display::graphics.setForegroundColor(5);
 
             GetMisType(Data->P[plr].Mission[i].MissionCode);
 
@@ -285,16 +285,16 @@ void DrawRush(char plr)
             }
 
             if (Data->P[plr].Mission[i].Name[24] == 1) {
-				display::graphics.setForegroundColor(9);
+                display::graphics.setForegroundColor(9);
                 PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
                 PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
             } else {
-				display::graphics.setForegroundColor(7);
+                display::graphics.setForegroundColor(7);
                 PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
                 PrintAt(193, 77 + i * 58, "NO PENALTY");
             }
 
-			display::graphics.setForegroundColor(11);
+            display::graphics.setForegroundColor(11);
             PrintAt(288, 38 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 0][0]);
             PrintAt(288, 55 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 1][0]);
             PrintAt(288, 72 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 2][0]);
@@ -314,7 +314,7 @@ void Rush(char plr)
     DrawRush(plr);
     pRush = (Data->P[plr].Cash >= 3) ? 1 : 0;
     fCsh = Data->P[plr].Cash;
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     music_start((plr == 1) ? M_USMIL : M_USSRMIL);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     WaitForMouseUp();
@@ -409,7 +409,7 @@ void Rush(char plr)
                     if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
                         RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
 
-						display::graphics.setForegroundColor(5);
+                        display::graphics.setForegroundColor(5);
                         GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
 
                         PrintAt(96, 48 + 58 * i, Mis.Abbr);
@@ -450,13 +450,13 @@ void Rush(char plr)
 
                         dgflag[i]++;
                         RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
-						display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(9);
                         PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
                         PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
                     } else {
                         dgflag[i] = 0;
                         RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
-						display::graphics.setForegroundColor(5);
+                        display::graphics.setForegroundColor(5);
                         GetMisType(Data->P[plr].Mission[i].MissionCode);
 
                         PrintAt(96, 48 + 58 * i, Mis.Abbr);
@@ -497,11 +497,11 @@ void Rush(char plr)
                         RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
 
                         if (Data->P[plr].Mission[i].Name[24] == 1) {
-							display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(9);
                             PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
                             PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
                         } else {
-							display::graphics.setForegroundColor(7);
+                            display::graphics.setForegroundColor(7);
                             PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
                             PrintAt(193, 77 + i * 58, "NO PENALTY");
                         }
@@ -527,7 +527,7 @@ void Rush(char plr)
 
                     if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
                         RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
-						display::graphics.setForegroundColor(5);
+                        display::graphics.setForegroundColor(5);
                         GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
                         PrintAt(96, 48 + 58 * i, Mis.Abbr);
 
@@ -566,13 +566,13 @@ void Rush(char plr)
                         //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
                         dgflag[i]++;
                         RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
-						display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(9);
                         PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
                         PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
                     } else {
                         dgflag[i] = 0;
                         RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
-						display::graphics.setForegroundColor(5);
+                        display::graphics.setForegroundColor(5);
                         GetMisType(Data->P[plr].Mission[i].MissionCode);
 
                         PrintAt(96, 48 + 58 * i, Mis.Abbr);
@@ -613,11 +613,11 @@ void Rush(char plr)
                         RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
 
                         if (Data->P[plr].Mission[i].Name[24] == 1) {
-							display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(9);
                             PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
                             PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
                         } else {
-							display::graphics.setForegroundColor(7);
+                            display::graphics.setForegroundColor(7);
                             PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
                             PrintAt(193, 77 + i * 58, "NO PENALTY");
                         }
@@ -701,12 +701,12 @@ void SetRush(int mode, int val)
     InBox(280, 32 + 17 * mode + val * 58, 312, 40 + 17 * mode + val * 58);
     RectFill(177, 63 + 58 * val, 192, 70 + 58 * val, 3);
     RectFill(225, 62 + 58 * val, 270, 70 + 58 * val, 3);
-	display::graphics.setForegroundColor(11);
+    display::graphics.setForegroundColor(11);
     DispNum(179, 69 + 58 * val, mode * 3);
     DispChr('%');
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     DispNum(230, 69 + 58 * val, mode * 3);
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(237, 69 + 58 * val, "MB");
     fCsh -= mode * 3;
 

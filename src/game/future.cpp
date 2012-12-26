@@ -126,7 +126,7 @@ void DrawFuture(char plr, int mis, char pad)
     sz = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), sz, vhptr->width(), vhptr->height());
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     gr_sync();
 

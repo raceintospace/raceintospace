@@ -185,7 +185,7 @@ void DispVAB(char plr, char pad)
 
     PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), image_len);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 170, 99);
     ShBox(0, 101, 170, 199);
@@ -209,35 +209,35 @@ void DispVAB(char plr, char pad)
 
     IOBox(4, 84, 165, 96);
 
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(200, 192, "E");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "XIT");
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(268, 192, "S");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "CRUB");
     PrintAt(263, 13, "ASSIGN");
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(18, 136, "P");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "RIMARY:");
     PrintAt(24, 148, "KICKER:");
     PrintAt(42, 160, "L.M.:");
     PrintAt(16, 172, "PAYLOAD:");
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(22, 188, "R");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "OCKET:     ");
 
     Name[0] = 'A' + pad;
     Name[1] = 0x00;
     InBox(4, 27, 166, 37);
     RectFill(5, 28, 165, 36, 10);
-	display::graphics.setForegroundColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(38, 34, "LAUNCH FACILITY: ");
     PrintAt(0, 0, Name);
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
         DispBig(42, 4, "VEHICLE ASSEMBLY", 0, -1);
@@ -245,11 +245,11 @@ void DispVAB(char plr, char pad)
         DispBig(37, 4, "VEHICLE INTEGRATION", 0, -1);
     }
 
-	display::graphics.setForegroundColor(5);
+    display::graphics.setForegroundColor(5);
     PrintAt(5, 45, "MISSION: ");
     PrintAt(0, 0, Data->P[plr].Mission[pad].Name);
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(5, 61, "CREW: ");
 
     switch (Data->P[plr].Mission[pad].Men) {
@@ -275,11 +275,11 @@ void DispVAB(char plr, char pad)
     }
 
     RectFill(5, 105, 165, 122, 7 + plr * 3);
-	display::graphics.setForegroundColor(11);
+    display::graphics.setForegroundColor(11);
     PrintAt(40, 111, "MISSION HARDWARE:");
     PrintAt(10, 119, "SELECT PAYLOADS AND BOOSTER");
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
 
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
 
@@ -489,13 +489,13 @@ void ShowVA(char f)
     int i;
 
     RectFill(65, 130, 160, 174, 3);
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
 
     for (i = 0; i < 4; i++) {
         if (VAS[f][i].qty < 0) {
-			display::graphics.setForegroundColor(9);
+            display::graphics.setForegroundColor(9);
         } else {
-			display::graphics.setForegroundColor(1);
+            display::graphics.setForegroundColor(1);
         }
 
         PrintAt(67, 136 + 12 * i, &VAS[f][i].name[0]);
@@ -507,7 +507,7 @@ void ShowVA(char f)
             DispNum(152, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
 
             if (VAS[f][i].dmg) {
-				display::graphics.setForegroundColor(9);
+                display::graphics.setForegroundColor(9);
             }
 
             DispNum(128, 136 + 12 * i, VAS[f][i].sf);
@@ -526,9 +526,9 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
     RectFill(65, 182, 160, 190, 3);
 
     if (qty < 0 || mode == 1) {
-		display::graphics.setForegroundColor(9);
+        display::graphics.setForegroundColor(9);
     } else {
-		display::graphics.setForegroundColor(1);
+        display::graphics.setForegroundColor(1);
     }
 
     PrintAt(67, 188, &Name[0]);
@@ -540,7 +540,7 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
         DispNum(152, 188, qty);
 
         if (isDmg) {
-		display::graphics.setForegroundColor(9);
+            display::graphics.setForegroundColor(9);
         }
 
         DispNum(128, 188, sf);
@@ -594,17 +594,18 @@ void DispVA(char plr, char f)
         off = 13;
     };
 
-	display::Surface local(w, h);
-	local.clear(0);
+    display::Surface local(w, h);
 
-	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
+    local.clear(0);
 
-	display::Surface local2(w, h);
+    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
+
+    display::Surface local2(w, h);
 
     /* TODO: magic numbers */
     RectFill(178, 29, 243, 179, 3);
 
-	local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     /* local <- local with background from local2 */
     for (i = 0; i < (w * h); i++) {
@@ -618,7 +619,7 @@ void DispVA(char plr, char f)
     //  spix++;
     //};
 
-	local2.clear(0);
+    local2.clear(0);
 
     IncY = (h - TotY) / 2;
 
@@ -645,8 +646,9 @@ void DispVA(char plr, char f)
                 CWARNING3(graphic, "can't fit %s image into spaceship casing!",
                           VAS[f][i].name);
                 continue;
-            } else
-				local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
+            } else {
+                local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
+            }
 
             IncY += h2 + 1;
         }
@@ -686,7 +688,7 @@ void DispVA(char plr, char f)
         y2 = y1 + TotY - IncY - 1;
         w2 = x2 - x1 + 1;
         cx = w / 2 - w2 / 2 - 1;
-		local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
+        local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
         spix = local.pixels();
         dpix = local2.pixels();
@@ -710,7 +712,7 @@ void DispVA(char plr, char f)
 
         h2 = y2 - y1 + 1;
 
-		local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
+        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
 
         spix = local.pixels();
 
@@ -730,7 +732,7 @@ void DispVA(char plr, char f)
         x2 = MI[plr * 28 + 26].x2;
         y2 = MI[plr * 28 + 26].y2;
         h2 = y2 - y1 + 1;
-		local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
+        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
         spix = local.pixels();
         dpix = local2.pixels();
 
@@ -744,7 +746,7 @@ void DispVA(char plr, char f)
         };
     }
 
-	local.copyTo(display::graphics.screen(), 210 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.screen(), 210 - w / 2, 103 - h / 2);
 }
 
 void DispRck(char plr, char wh)
@@ -758,13 +760,13 @@ void DispRck(char plr, char wh)
     y2 = MI[plr * 28 + wh].y2;
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-	display::Surface local(w, h);
-	display::Surface local2(w, h);
+    display::Surface local(w, h);
+    display::Surface local2(w, h);
 
-	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
+    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
     RectFill(247, 29, 313, 179, 3);
-	local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     for (i = 0; i < (w * h); i++) {
         if (local.pixels()[i] == 0x00) {
@@ -772,7 +774,7 @@ void DispRck(char plr, char wh)
         }
     };
 
-	local.copyTo(display::graphics.screen(), 282 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.screen(), 282 - w / 2, 103 - h / 2);
 }
 
 void DispWts(int two, int one)
@@ -780,15 +782,15 @@ void DispWts(int two, int one)
 
     RectFill(5, 65, 140, 83, 3);
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(5, 77, "MAXIMUM PAYLOAD: ");
     DispNum(0, 0, one);
 
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
     PrintAt(5, 70, "CURRENT PAYLOAD: ");
 
     if (one < two) {
-		display::graphics.setForegroundColor(9);
+        display::graphics.setForegroundColor(9);
     }
 
     DispNum(0, 0, two);
@@ -940,12 +942,12 @@ begvab:
     TotalCost = FillVab(plr, ccc, 0);
     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
     RectFill(7, 87, 162, 93, 3);
-	display::graphics.setForegroundColor(9);
+    display::graphics.setForegroundColor(9);
     PrintAt(13, 92, "A");
-	display::graphics.setForegroundColor(1);
+    display::graphics.setForegroundColor(1);
 
     if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-		display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
+        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
     }
 
     PrintAt(0, 0, "UTOPURCHASE (");
@@ -1018,12 +1020,12 @@ begvab:
                     TotalCost = FillVab(plr, ccc, 0);
                     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                     RectFill(7, 87, 162, 93, 3);
-					display::graphics.setForegroundColor(9);
+                    display::graphics.setForegroundColor(9);
                     PrintAt(13, 92, "A");
-					display::graphics.setForegroundColor(1);
+                    display::graphics.setForegroundColor(1);
 
                     if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-						display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
+                        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                     }
 
                     PrintAt(0, 0, "UTOPURCHASE (");
@@ -1197,12 +1199,12 @@ begvab:
                 TotalCost = FillVab(plr, ccc, 0);
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                 RectFill(7, 87, 162, 93, 3);
-				display::graphics.setForegroundColor(9);
+                display::graphics.setForegroundColor(9);
                 PrintAt(13, 92, "A");
-				display::graphics.setForegroundColor(1);
+                display::graphics.setForegroundColor(1);
 
                 if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-					display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
+                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
 
                 PrintAt(0, 0, "UTOPURCHASE (");
@@ -1251,12 +1253,12 @@ begvab:
                 TotalCost = FillVab(plr, ccc, 0);
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
                 RectFill(7, 87, 162, 93, 3);
-				display::graphics.setForegroundColor(9);
+                display::graphics.setForegroundColor(9);
                 PrintAt(13, 92, "A");
-				display::graphics.setForegroundColor(1);
+                display::graphics.setForegroundColor(1);
 
                 if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-					display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
+                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
 
                 PrintAt(0, 0, "UTOPURCHASE (");

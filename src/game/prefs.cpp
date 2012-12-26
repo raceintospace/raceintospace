@@ -59,7 +59,7 @@ void DrawPrefs(int where, char a1, char a2)
 
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);

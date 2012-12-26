@@ -158,7 +158,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     }
 
     /* Move All unassigned astros to limbo */
-    if ((astro->Unassigned== 0)
+    if ((astro->Unassigned == 0)
         && (astro->Status == AST_ST_ACTIVE)
         && (astro->Assign != 0)) {
         astro->Assign = 0;
@@ -712,15 +712,15 @@ void Update(void)
 
     for (j = 0; j < NUM_PLAYERS; j++) {
 
-			// If the Docking module is in orbit, reduce the usable seasons
-			if (Data->P[j].DockingModuleInOrbit) {
-				Data->P[j].DockingModuleInOrbit--;
-			}
+        // If the Docking module is in orbit, reduce the usable seasons
+        if (Data->P[j].DockingModuleInOrbit) {
+            Data->P[j].DockingModuleInOrbit--;
+        }
 
-			// Decrement the Astronaut delays counter
-			if (Data->P[j].AstroDelay) {
-				Data->P[j].AstroDelay--;
-			}
+        // Decrement the Astronaut delays counter
+        if (Data->P[j].AstroDelay) {
+            Data->P[j].AstroDelay--;
+        }
 
         for (i = 0; i < MAX_MISSIONS; i++) {
             memcpy(&Data->P[j].Mission[i], &Data->P[j].Future[i], sizeof(struct MissionType));

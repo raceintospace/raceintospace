@@ -134,7 +134,7 @@ struct PrestType {
 };
 
 enum LaunchPads {
-	PAD_NONE = -1,
+    PAD_NONE = -1,
     PAD_A = 0,
     PAD_B = 1,
     PAD_C = 2,
@@ -683,7 +683,7 @@ enum MissionValues {
     Mission_SubOrbital = 2,
     Mission_U_SubOrbital = 3,
     Mission_Earth_Orbital = 4,
-	Mission_Unmanned_Earth_Orbital = 5,
+    Mission_Unmanned_Earth_Orbital = 5,
     Mission_Earth_Orbital_EVA = 6,
     Mission_LunarFlyby = 7,
     Mission_Lunar_Probe = 8,
@@ -714,7 +714,7 @@ enum MissionValues {
 
     //"JT ORBITALS-DEX",      //30
     //"JT ORBITAL-DX",        //31
-    Mission_Jt_OrbitingLab = 32, 
+    Mission_Jt_OrbitingLab = 32,
     //"ORBITAL-DEX",          //33
     //"JT ORBITAL-DEX",       //34
 

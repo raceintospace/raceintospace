@@ -90,7 +90,7 @@ Burst(char win)
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-	vhptr->copyFrom(display::graphics.screen(), 0, 0, 319, 199 );
+    vhptr->copyFrom(display::graphics.screen(), 0, 0, 319, 199);
 
     while (1) {
         Region = brandom(100);
@@ -159,7 +159,7 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-						vhptr->copyTo(display::graphics.screen(), 0, 0 );
+                        vhptr->copyTo(display::graphics.screen(), 0, 0);
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -208,7 +208,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel( xx, yy ));
+                display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
             }
         }
     }                              // end while
@@ -224,7 +224,7 @@ void EndGame(char win, char pad)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     helpText = "i000";
     keyHelpText = "k000";
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -510,7 +510,7 @@ void Draw_NewEnd(char win)
     music_start(M_VICTORY);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     in = sOpen("WINNER.BUT", "rb", 0);
     fread(display::graphics.palette(), 384, 1, in);
     size = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), in);
@@ -721,7 +721,7 @@ void FakeWin(char win)
     monthWin = brandom(12);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1062,7 +1062,7 @@ void SpecialEnd(void)
     char i;
     music_start(M_BADNEWS);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 24);
     DispBig(5, 5, "FAILED OBJECTIVE", 1, -1);
     ShBox(0, 26, 319, 199);
@@ -1194,7 +1194,7 @@ void PlayFirst(char plr, char first)
     int Check = 0;
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
     DispBig(92, 22, "PRESTIGE FIRST", 0, -1);
@@ -1246,7 +1246,7 @@ void PlayFirst(char plr, char first)
 
     PauseMouse();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     music_stop();
     return;
 }

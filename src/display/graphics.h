@@ -48,7 +48,7 @@ public:
         return _news;
     }
 
-    Surface * screen() const {
+    Surface *screen() const {
         return _screen;
     }
 
@@ -60,17 +60,17 @@ public:
         return _newsRect;
     }
 
-	char foregroundColor() const {
-		return _foregroundColor;
-	}
+    char foregroundColor() const {
+        return _foregroundColor;
+    }
 
-	char backgroundColor() const {
-		return _backgroundColor;
-	}
+    char backgroundColor() const {
+        return _backgroundColor;
+    }
 
-	void setForegroundColor( char color );
-	void setBackgroundColor( char color );
-    void setPalette( uint8_t *palette );
+    void setForegroundColor(char color);
+    void setBackgroundColor(char color);
+    void setPalette(uint8_t *palette);
 
 
 private:
@@ -83,8 +83,8 @@ private:
     SDL_Rect _newsRect;
     bool _fullscreen;
     uint8_t _palette[3 * 256];
-	char _foregroundColor;
-	char _backgroundColor;
+    char _foregroundColor;
+    char _backgroundColor;
 };
 
 extern Graphics graphics;

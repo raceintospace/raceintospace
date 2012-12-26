@@ -267,7 +267,7 @@ void ShowPrest(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
     InBox(4, 27, 315, 196);
@@ -977,7 +977,7 @@ void DrawMisHist(char plr, int *where)
 void ShowAstrosHist(char plr)
 {
     char pos = 0, pos2 = 0, glorf = 0;
-	vhptr2 = new display::Surface( 112, 55 );
+    vhptr2 = new display::Surface(112, 55);
     abuf = (struct Astros *) buffer;
 
     if (Data->P[plr].AstroCount == 0) {
@@ -992,9 +992,9 @@ void ShowAstrosHist(char plr)
     DispBig(68, 71, "NO", 0, -1);
     DispBig(46, 90, "MISSION", 0, -1);
     DispBig(27, 109, "EXPERIENCE", 0, -1);
-	vhptr2->copyFrom(display::graphics.screen(), 22, 69, 133, 123);
+    vhptr2->copyFrom(display::graphics.screen(), 22, 69, 133, 123);
     PatchMe(0, 0, 0, 0, 0, 32);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
 
@@ -1073,8 +1073,9 @@ void ShowAstrosHist(char plr)
 
             OutBox(245, 5, 314, 17);
 
-			delete vhptr2;
-			vhptr2 = NULL;
+            delete vhptr2;
+
+            vhptr2 = NULL;
 
             key = 0;
 
@@ -1302,7 +1303,7 @@ void DisplAstData(char plr, char *where, char *where2)
     RectFill(1, 40, 157, 182, 3);
 
     if (abuf[*where].Missions == 0) {
-		vhptr2->copyTo(display::graphics.screen(), 22, 69);
+        vhptr2->copyTo(display::graphics.screen(), 22, 69);
         return;
     }
 

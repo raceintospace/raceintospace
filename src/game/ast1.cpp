@@ -137,7 +137,7 @@ void DrawAstCheck(char plr)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
     RectFill(88, 50, 229, 102, 7 + plr * 3);
@@ -289,7 +289,7 @@ void DrawAstSel(char plr)
     helpText = "i012";
     keyHelpText = "k012";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
@@ -984,7 +984,7 @@ void AstSel(char plr)
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].CL = brandom(2) + 1;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Task = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Crew = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Unassigned= 0;
+                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Unassigned = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Pool = 0;
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
                     Data->P[plr].Pool[i + Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);

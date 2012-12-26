@@ -740,13 +740,13 @@ int AllotPrest(char plr, char mis)
 
     // FEMALE 'NAUTS
     PVal[Prestige_WomanInSpace] = (MA[0][0].A != NULL && MA[0][0].A->Sex)
-               || (MA[0][1].A != NULL && MA[0][1].A->Sex)
-               || (MA[0][2].A != NULL && MA[0][2].A->Sex)
-               || (MA[0][3].A != NULL && MA[0][3].A->Sex)
-               || (MA[1][0].A != NULL && MA[1][0].A->Sex)
-               || (MA[1][1].A != NULL && MA[1][1].A->Sex)
-               || (MA[1][2].A != NULL && MA[1][2].A->Sex)
-               || (MA[1][3].A != NULL && MA[1][3].A->Sex);
+                                  || (MA[0][1].A != NULL && MA[0][1].A->Sex)
+                                  || (MA[0][2].A != NULL && MA[0][2].A->Sex)
+                                  || (MA[0][3].A != NULL && MA[0][3].A->Sex)
+                                  || (MA[1][0].A != NULL && MA[1][0].A->Sex)
+                                  || (MA[1][1].A != NULL && MA[1][1].A->Sex)
+                                  || (MA[1][2].A != NULL && MA[1][2].A->Sex)
+                                  || (MA[1][3].A != NULL && MA[1][3].A->Sex);
 
     for (i = 0; i < STEPnum; i++) {
         ival = abs(Mev[i].Prest);

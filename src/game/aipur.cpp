@@ -64,7 +64,7 @@ void DrawStatistics(char Win)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     PortPal(0);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(35, 33, 288, 159);
     InBox(40, 69, 111, 109);
     InBox(116, 69, 283, 109);
@@ -536,7 +536,7 @@ void SelectBest(char plr, int pos)
         pData->Pool[i + pData->AstroCount].CL = brandom(2) + 1;
         pData->Pool[i + pData->AstroCount].Task = 0;
         pData->Pool[i + pData->AstroCount].Crew = 0;
-        pData->Pool[i + pData->AstroCount].Unassigned= 0;
+        pData->Pool[i + pData->AstroCount].Unassigned = 0;
         pData->Pool[i + pData->AstroCount].Pool = 0;
         pData->Pool[i + pData->AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
         pData->Pool[i + pData->AstroCount].Mood = 100;
@@ -585,7 +585,7 @@ void DumpAstro(char plr, int inx)
     for (int i = 0; i < pData->AstroCount; i++)
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
             pData->Pool[i].Assign = 0; // back to limbo
-            pData->Pool[i].Unassigned= 0;
+            pData->Pool[i].Unassigned = 0;
         }
 
     for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
@@ -670,7 +670,7 @@ void TransAstro(char plr, int inx)
             if (pData->Pool[i].Status == AST_ST_RETIRED || pData->Pool[i].Status == AST_ST_DEAD) {
                 pData->Pool[i].Status = AST_ST_ACTIVE;
                 pData->Pool[i].Assign = 0;
-                pData->Pool[i].Unassigned= 0;
+                pData->Pool[i].Unassigned = 0;
                 pData->Pool[i].Prime = 0;
                 pData->Pool[i].oldAssign = -1;
                 pData->Pool[i].Crew = 0;
@@ -768,12 +768,12 @@ void TransAstro(char plr, int inx)
 
                         if (i == 0) {
                             pData->Pool[w].Assign = inx;
-                            pData->Pool[w].Unassigned= 1;
+                            pData->Pool[w].Unassigned = 1;
                             pData->Crew[inx][flt1][j - 1] = w + 1;
                             found = 1;
                         } else {
                             pData->Pool[w].Assign = inx;
-                            pData->Pool[w].Unassigned= 1;
+                            pData->Pool[w].Unassigned = 1;
                             pData->Crew[inx][flt2][j - 1] = w + 1;
                             found = 1;
                         }

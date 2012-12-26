@@ -878,8 +878,8 @@ DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
     display::graphics.setForegroundColor(3);
-	display::graphics.screen()->outlineRect( 1, 1, 318, 112, 3 );
-	display::graphics.screen()->outlineRect( 2, 2, 317, 111, 3 );
+    display::graphics.screen()->outlineRect(1, 1, 318, 112, 3);
+    display::graphics.screen()->outlineRect(2, 2, 317, 111, 3);
     InBox(3, 3, 316, 110);
     ShBox(240, 3, 316, 22);
     RectFill(315, 20, 317, 21, 3);
@@ -912,7 +912,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
     if (AnimIndex != Index) {
         char fname[100];
-        unsigned h=0, w=0;
+        unsigned h = 0, w = 0;
 
         mm_close(fp);
         display::graphics.newsRect().w = 0;
@@ -949,15 +949,15 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     if (Mode == TOMS_BUGFIX) {
         FadeOut(2, display::graphics.palette(), 1, 0, 0);
 
-		display::graphics.screen()->clear(0);
+        display::graphics.screen()->clear(0);
         DrawTopNewsBox(plr);
         DrawBottomNewsBox(plr);
 
         /* XXX: error checking */
-	if (fp->video) {
-	  mm_decode_video(fp, display::graphics.newsOverlay());
-	  screen_dirty = 1;
-	}
+        if (fp->video) {
+            mm_decode_video(fp, display::graphics.newsOverlay());
+            screen_dirty = 1;
+        }
 
         /* This fade was too long given current fades impl. */
         FadeIn(2, display::graphics.palette(), 10, 0, 0); /* was: 50 */

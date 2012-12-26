@@ -59,7 +59,7 @@ void DrawTrain(char plr, char lvl)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 114);
     ShBox(161, 24, 319, 199);
@@ -735,7 +735,7 @@ void Hospital(char plr, int sel)
     fclose(fin);
     PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)size);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(161, 103, 319, 199);
     ShBox(0, 103, 158, 199);

@@ -161,7 +161,7 @@ void MisAnn(char plr, char pad)
         display::graphics.palette()[i] = 0;
     }
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     PortPal(plr);
     ShBox(41, 20, 281, 184);
@@ -516,7 +516,7 @@ void AI_Begin(char plr)
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len[0],
              vhptr->width(), vhptr->height());
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
 

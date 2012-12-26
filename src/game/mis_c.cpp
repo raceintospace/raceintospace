@@ -1060,7 +1060,7 @@ char FailureMode(char plr, int prelim, char *text)
     memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
@@ -1200,19 +1200,19 @@ char FailureMode(char plr, int prelim, char *text)
     if (MANNED[Mev[STEP].pad] > 0) {
         switch (Mev[STEP].ast) {
         case 0:
-			display::graphics.screen()->line(49, 140, 172, 140, 11);
+            display::graphics.screen()->line(49, 140, 172, 140, 11);
             break;
 
         case 1:
-			display::graphics.screen()->line(49, 148, 172, 148, 11);
+            display::graphics.screen()->line(49, 148, 172, 148, 11);
             break;
 
         case 2:
-			display::graphics.screen()->line(182, 140, 305, 140, 11);
+            display::graphics.screen()->line(182, 140, 305, 140, 11);
             break;
 
         case 3:
-			display::graphics.screen()->line(182, 148, 305, 148, 11);
+            display::graphics.screen()->line(182, 148, 305, 148, 11);
             break;
         }
     }
@@ -1498,7 +1498,7 @@ char DrawMoonSelection(char nauts, char plr)
     memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     FlagSm(plr, 4, 4);

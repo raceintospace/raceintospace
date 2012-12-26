@@ -1453,7 +1453,7 @@ void DrawBre(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1577,7 +1577,7 @@ void DrawIStat(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -1747,10 +1747,10 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
     h = y2 - y1 + 1;
     display::Surface local(w, h);
     display::Surface local2(w, h);
-	local.clear(0);
-	local2.clear(0);
-	local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
-	local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
+    local.clear(0);
+    local2.clear(0);
+    local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
     src = local.pixels();
     dest = local2.pixels();
 
@@ -1763,7 +1763,7 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
         src++;
     }
 
-	local2.copyTo(display::graphics.screen(), s, t);
+    local2.copyTo(display::graphics.screen(), s, t);
 }
 
 void IInfo(char plr, char loc, char w)
@@ -2240,11 +2240,13 @@ void IInfo(char plr, char loc, char w)
             if (Data->P[0].Misc[MISC_HW_KICKER_B].Num >= 0) {
                 sfu = Data->P[0].Misc[MISC_HW_KICKER_B].Safety;
             }
+
             sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         } else if (plr == 1) {
             if (Data->P[1].Misc[MISC_HW_KICKER_B].Num >= 0) {
                 sfs = Data->P[1].Misc[MISC_HW_KICKER_B].Safety;
             }
+
             sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         }
 

@@ -737,7 +737,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
                 Guy->Status = AST_ST_DEAD;
                 Guy->Special = 3;
                 Guy->RetirementReason = 8;
-                Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
+                Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
                 tMen++;
                 death = 1;
             }
@@ -774,12 +774,12 @@ void F_IRCrew(char mode, struct Astros *Guy)
         Guy->Status = AST_ST_RETIRED;
         Guy->RetirementDelay = 1; // Retire begginning of next season
         Guy->RetirementReason = 9;
-        Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
+        Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
     } else if (mode == F_INJ) {
         Guy->Status = AST_ST_INJURED;
         Guy->InjuryDelay = 3; // Injured for a year
         Guy->Special = 4;
-        Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned= 0;
+        Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
     }
 }
 

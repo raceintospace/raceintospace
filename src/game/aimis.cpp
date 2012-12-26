@@ -870,7 +870,7 @@ void NewAI(char plr, char frog)
 
     prg[0] = frog;
     mis1 = mis2 = mis3 = Mission_None;
-		primaryPad = secondaryPad = PAD_NONE;
+    primaryPad = secondaryPad = PAD_NONE;
     GenPur(plr, MANNED_HARDWARE, frog - 1);
 
     if (Data->P[plr].AILunar < 4) {

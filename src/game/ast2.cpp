@@ -52,7 +52,7 @@ void DrawLimbo(char plr)
 
     helpText = "i039";
     keyHelpText = "k039";
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
@@ -397,7 +397,7 @@ void Limbo(char plr)
                 key = 0;
                 OutBox(167, 95 + 21 * i, 236, 109 + 21 * i);
                 Data->P[plr].Pool[AstroList[now2]].Assign = i + 1;
-                Data->P[plr].Pool[AstroList[now2]].Unassigned= 0;
+                Data->P[plr].Pool[AstroList[now2]].Unassigned = 0;
                 Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                 for (i = now2; i < count; i++) {
@@ -533,7 +533,7 @@ void Limbo(char plr)
 
                     Data->P[plr].Pool[AstroList[now2]].Focus = i + 1;
                     Data->P[plr].Pool[AstroList[now2]].Assign = 0;
-                    Data->P[plr].Pool[AstroList[now2]].Unassigned= 0;
+                    Data->P[plr].Pool[AstroList[now2]].Unassigned = 0;
                     Data->P[plr].Pool[AstroList[now2]].Moved = 0;
 
                     for (i = now2; i < count; i++) {

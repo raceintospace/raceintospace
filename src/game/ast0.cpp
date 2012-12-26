@@ -62,7 +62,7 @@ void Moon(char plr)
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(109, 24, 222, 167);
     InBox(113, 27, 218, 39);
     RectFill(114, 28, 217, 38, 7 + 3 * plr);
@@ -200,7 +200,7 @@ void SatDraw(char plr)
     GXHEADER local;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(1, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);
@@ -272,7 +272,7 @@ void LMDraw(char plr)
     char ind = 0;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(1, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);

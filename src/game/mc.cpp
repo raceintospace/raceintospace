@@ -295,7 +295,7 @@ int Launch(char plr, char mis)
         DrawControl(plr);
         FadeIn(2, display::graphics.palette(), 10, 0, 0);
     } else if (BIG == 1) {
-		display::graphics.screen()->clear(0);
+        display::graphics.screen()->clear(0);
     }
 
     memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct

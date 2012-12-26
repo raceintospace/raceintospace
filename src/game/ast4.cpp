@@ -291,7 +291,7 @@ void PlaceEquip(char plr, char prog)
 
     gxPutImage(&local, gxSET, 61, 28, 0);
     gxDestroyVirtual(&local);
-	gxDestroyVirtual(&local2);
+    gxDestroyVirtual(&local2);
     return;
 }
 
@@ -301,7 +301,7 @@ void DrawProgs(char plr, char prog)
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 81);
@@ -505,7 +505,7 @@ void DamProb(char plr, char prog, int chk)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
 
     switch (prog) {
     case 0:
@@ -1074,7 +1074,7 @@ Programs(char plr, char prog)
                              Data->P[plr].Pool[M[now2]].Mood);
                     Data->P[plr].Pool[M[now2]].Crew = grp + 1;
                     Data->P[plr].Pool[M[now2]].Task = CrewCount[grp];
-                    Data->P[plr].Pool[M[now2]].Unassigned= 1;
+                    Data->P[plr].Pool[M[now2]].Unassigned = 1;
 
                     for (i = now2; i < count; i++) {
                         M[i] = M[i + 1];
@@ -1179,7 +1179,7 @@ Programs(char plr, char prog)
                         Data->P[plr].Crew[prog][grp][CrewCount[grp] - 1] = 0;
                         Data->P[plr].Pool[M[count]].Crew = 0;
                         Data->P[plr].Pool[M[count]].Moved = 0;
-                        Data->P[plr].Pool[M[now2]].Unassigned= 0;
+                        Data->P[plr].Pool[M[now2]].Unassigned = 0;
                         CrewCount[grp]--;
                         count++;
                     }

@@ -71,7 +71,7 @@ void Replace_Snaut(char plr)
 {
     int i, j, k, temp;
 
-    for (k = 0; k < ASTRONAUT_POOLS+1; k++) {
+    for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
         for (j = 0; j < ASTRONAUT_CREW_MAX; j++) {
             temp = 0;
 

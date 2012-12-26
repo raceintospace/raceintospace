@@ -698,9 +698,9 @@ av_sync(void)
         SDL_DisplayYUVOverlay(display::graphics.newsOverlay(), &r);
     }
 
-	//TODO: Since we're not always tracking the right dirty area (due to the graphics refactoring)
-	// for now we update the entire display every time.
-	SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, 640, 400);
+    //TODO: Since we're not always tracking the right dirty area (due to the graphics refactoring)
+    // for now we update the entire display every time.
+    SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, 640, 400);
 //    num_rect = get_dirty_rect_list();
 //    SDL_UpdateRects(display::graphics.displaySurface(), num_rect, dirty_rect_list);
 #ifdef PROFILE_GRAPHICS

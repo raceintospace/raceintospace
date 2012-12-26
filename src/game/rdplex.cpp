@@ -169,7 +169,7 @@ void DrawRD(char player_index)
     fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
 
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     Load_RD_BUT(player_index);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
@@ -1219,7 +1219,7 @@ void DrawHPurc(char player_index)
     fclose(fin);
 
     Load_RD_BUT(player_index);
-	display::graphics.screen()->clear(0);
+    display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
     ShBox(17, 68, 143, 199);
