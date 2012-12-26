@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 #include <assert.h>
 
 void print_escaped_string(const char * string, int max_length)

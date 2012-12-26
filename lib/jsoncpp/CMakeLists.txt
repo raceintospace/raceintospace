@@ -8,13 +8,11 @@ add_library(jsoncpp
   src/lib_json/json_writer.cpp
   )
 
-file(GLOB headers RELATIVE ${PROJECT_SOURCE_DIR} include/json/*.h)
-
 install(
   TARGETS jsoncpp
   ARCHIVE DESTINATION lib
   )
 install(
-  DIRECTORY "${PROJECT_SOURCE_DIR}/include"
-  DESTINATION .
+  DIRECTORY "${PROJECT_SOURCE_DIR}/include/json"
+  DESTINATION include/jsoncpp
   )

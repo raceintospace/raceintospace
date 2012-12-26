@@ -1,7 +1,7 @@
 #ifndef ROSTER_GROUP_H
 #define ROSTER_GROUP_H
 
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 #include <string>
 #include <list>
