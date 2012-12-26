@@ -1,4 +1,8 @@
+#ifdef __linux__
+#include <jsoncpp/json.h>
+#else
 #include <json/json.h>
+#endif
 #include <assert.h>
 
 #include <boost/foreach.hpp>
