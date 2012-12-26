@@ -10,10 +10,12 @@ link_directories(${LocalPrefix}/lib)
 
 # Set flags indicating what we should build
 if (APPLE)
+  set(BUILD_JSONCPP true)
   set(BUILD_XIPH true)
   set(BUILD_PROTOBUF true)
   set(BUILD_LIBPNG true)
 elseif (WINDOWS)
+  set(BUILD_JSONCPP true)
   set(BUILD_ZLIB true)
   set(BUILD_LIBPNG true)
   set(BUILD_XIPH true)

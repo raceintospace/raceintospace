@@ -98,22 +98,23 @@ endif (BUILD_SDL)
 ###
 # JsonCPP
 
-set (JsonCPP_Version 0.5.0)
-set (JsonCPP_URL http://downloads.sourceforge.net/jsoncpp/jsoncpp/${JsonCPP_Version}/jsoncpp-src-${JsonCPP_Version}.tar.gz)
-set (JsonCPP_Dir ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp-${JsonCPP_Version})
+if (BUILD_JSONCPP)
+  set (JsonCPP_Version 0.5.0)
+  set (JsonCPP_URL http://downloads.sourceforge.net/jsoncpp/jsoncpp/${JsonCPP_Version}/jsoncpp-src-${JsonCPP_Version}.tar.gz)
+  set (JsonCPP_Dir ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp-${JsonCPP_Version})
 
-# JsonCPP uses scons, but it's actually really simple, so instead we ship and
-# build with our own jsoncpp-CMakeLists.txt
-ExternalProject_Add(ext_jsoncpp
-  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
-  URL ${JsonCPP_URL}
-  PREFIX ${JsonCPP_Dir}
-  PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
-  )
+  # JsonCPP uses scons, but it's actually really simple, so instead we ship and
+  # build with our own jsoncpp-CMakeLists.txt
+  ExternalProject_Add(ext_jsoncpp
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${JsonCPP_URL}
+    PREFIX ${JsonCPP_Dir}
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
+    )
 
-add_dependencies(libs ext_jsoncpp)
-
+  add_dependencies(libs ext_jsoncpp)
+endif (BUILD_JSONCPP)
 
 ###
 # PhysicsFS
