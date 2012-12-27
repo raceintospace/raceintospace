@@ -46,7 +46,6 @@
 #include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -1158,10 +1157,9 @@ cleanup:
 char GetBlockName(char *Nam)
 {
     int i, key;
-    GXHEADER local;
 
-    gxCreateVirtual(&local, 164, 77);
-    gxGetImage(&local, 39, 50, 202, 126, 0);
+	display::Surface local(164, 77);
+	local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     i = 1;
 
@@ -1178,9 +1176,7 @@ char GetBlockName(char *Nam)
         display::graphics.setForegroundColor(11);
         PrintAt(47, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
-        gxPutImage(&local, gxSET, 39, 50, 0);
-        gxDestroyVirtual(&local);
-
+		local.copyTo(display::graphics.screen(), 39, 50);
         return 0;
     }
 
@@ -1219,8 +1215,7 @@ char GetBlockName(char *Nam)
         }
     }
 
-    gxPutImage(&local, gxSET, 39, 50, 0);
-    gxDestroyVirtual(&local);
+	local.copyTo(display::graphics.screen(), 39, 50);
 
     if (key == K_ENTER && i >= 1) {
         return 1;
@@ -1249,19 +1244,17 @@ void DrawFiles(char now, char loc, char tFiles)
 
 void BadFileType(void)
 {
-    GXHEADER local;
-    gxCreateVirtual(&local, 164, 77);
-    gxGetImage(&local, 39, 50, 202, 126, 0);
+    display::Surface local(164, 77);
+    local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
     RectFill(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
     PrintAt(47, 74, "CORRUPT SAVE FILE");
     delay(2000);
-    gxPutImage(&local, gxSET, 39, 50, 0);
+	local.copyTo(display::graphics.screen(), 39, 50);
     PauseMouse();
-    gxPutImage(&local, gxSET, 39, 50, 0);
-    gxDestroyVirtual(&local);
+	local.copyTo(display::graphics.screen(), 39, 50);
 }
 
 
@@ -1658,12 +1651,11 @@ int FutureCheck(char plr, char type)
 char RequestX(char *s, char md)
 {
     char i;
-    GXHEADER local;
+	display::Surface local(196, 84);
 
 
     if (md == 1) { // Save Buffer
-        gxCreateVirtual(&local, 196, 84);
-        gxGetImage(&local, 85, 52, 280, 135, 0);
+		local.copyFrom(display::graphics.screen(), 85, 52, 280, 135);
     }
 
     i = strlen(s) >> 1;
@@ -1703,8 +1695,7 @@ char RequestX(char *s, char md)
     if (md == 1) {
 
         WaitForMouseUp();
-        gxPutImage(&local, gxSET, 85, 52, 0);
-        gxDestroyVirtual(&local);
+		local.copyTo(display::graphics.screen(), 85, 52);
     }
 
     WaitForMouseUp();

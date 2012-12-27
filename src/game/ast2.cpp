@@ -34,7 +34,6 @@
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 int skilLev;  // Variable for 'naut's skill level (so 4s don't go to Adv Training, and 3s go to Adv III)

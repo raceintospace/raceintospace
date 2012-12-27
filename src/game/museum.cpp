@@ -40,7 +40,6 @@
 #include "rush.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -108,7 +107,6 @@ void Display_ARROW(char num, int x, int y)
 {
     /* Look for explanations in place.c:PatchMe() */
     PatchHdrSmall P;
-    GXHEADER local, local2;
     FILE *in;
     in = sOpen("ARROWS.BUT", "rb", 0);
     fseek(in, (num) * (sizeof P), SEEK_CUR);
@@ -128,17 +126,14 @@ void Display_ARROW(char num, int x, int y)
         P.size = P.w * P.h;
     }
 
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
+	display::Surface local(P.w, P.h);
+	display::Surface local2(P.w, P.h);
+	local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 // for (j=0;j<P.size;j++)
 //   if(local.vptr[j]!=0) local2.vptr[j]=local.vptr[j];
-    gxPutImage(&local, gxSET, x, y, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+	local.copyTo(display::graphics.screen(), x, y);
 }
 
 void Museum(char plr)

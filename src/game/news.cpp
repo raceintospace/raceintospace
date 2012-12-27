@@ -36,7 +36,6 @@
 #include "sdlhelper.h"
 #include "pace.h"
 #include "gr.h"
-#include "gx.h"
 #include "endianness.h"
 #include "utils.h"
 

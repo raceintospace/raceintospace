@@ -23,7 +23,6 @@
 #include "place.h"
 #include "mc.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "display/graphics.h"
 
@@ -41,7 +40,6 @@ int SecondHard(char plr, char mode, char mis, char pad);
 int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 {
     int M = 0;
-    GXHEADER local3;
 
     if (NewType <= 2) {
         Data->P[plr].Future[MisType].Joint = 0;
@@ -97,27 +95,24 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 
     case 4:
         M = SecondHard(plr, 0, MisType, Pad);
-        gxCreateVirtual(&local3, 171, 188);
+		{ // scope block to avoid initialization skipped by 'case' label error"
+			display::Surface local3(171, 188);
+			local3.copyFrom(display::graphics.screen(), 74, 3, 244, 190);
 
-        gxGetImage(&local3, 74, 3, 244, 190, 0);
+			if (M != 0) {
+				M = AsnCrew(plr, Pad, 0);
+			} else {
+				return 0;
+			}
 
-        if (M != 0) {
-            M = AsnCrew(plr, Pad, 0);
-        } else {
-            gxDestroyVirtual(&local3);
-            return 0;
-        }
+			Data->P[plr].Future[Pad].part = 0;
 
-        Data->P[plr].Future[Pad].part = 0;
+			Data->P[plr].Future[Pad].Joint = 1;
 
-        Data->P[plr].Future[Pad].Joint = 1;
+			Data->P[plr].Future[Pad].MissionCode = MisType;
 
-        Data->P[plr].Future[Pad].MissionCode = MisType;
-
-        gxPutImage(&local3, gxSET, 74, 3, 0);
-
-        gxDestroyVirtual(&local3);
-
+			local3.copyTo(display::graphics.screen(), 74, 3);
+		}
         if (M != 0) {
             M = SecondHard(plr, 1, MisType, Pad);
         } else {

@@ -33,7 +33,6 @@
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "filesystem.h"
 

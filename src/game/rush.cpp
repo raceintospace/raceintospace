@@ -33,7 +33,6 @@
 #include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 // Function Prototype

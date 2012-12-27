@@ -9,7 +9,6 @@
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "mmfile.h"
 
 void randomize(void);
@@ -371,24 +370,18 @@ char *seq_filename(int seq, int mode)
 
 void SMove(void *p, int x, int y)
 {
-    GXHEADER local;
-
-    gxCreateVirtual(&local, 160, 100);
-    memcpy(local.vptr, p, 160 * 100);
-    gxPutImage(&local, gxSET, x, y, 0);
-    gxDestroyVirtual(&local);
+    display::Surface local(160, 100);
+    memcpy(local.pixels(), p, 160 * 100);
+	local.copyTo(display::graphics.screen(), x, y);
 }
 
 void LMove(void *p)
 {
-    GXHEADER local;
-
     display::graphics.screen()->clear(0);
 
-    gxCreateVirtual(&local, 160, 100);
-    memcpy(local.vptr, p, 160 * 100);
-    gxPutImage(&local, gxSET, 320 / 4, 200 / 4, 0);
-    gxDestroyVirtual(&local);
+    display::Surface local(160, 100);
+    memcpy(local.pixels(), p, 160 * 100);
+	local.copyTo(display::graphics.screen(), 320 / 4, 200 / 4);
 }
 
 void randomize(void)
