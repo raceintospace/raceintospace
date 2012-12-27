@@ -60,7 +60,6 @@
 #include "pace.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "crash.h"
 #include "endianness.h"
 

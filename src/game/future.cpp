@@ -34,7 +34,6 @@
 #include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 //Used to read steps from missStep.dat
@@ -56,7 +55,7 @@ LOG_DEFAULT_CATEGORY(future)
 
 char status[5], lck[5], F1, F2, F3, F4, FMen, F5, Pad;
 char JointFlag, MarFlag, JupFlag, SatFlag, MisType;
-GXHEADER vh;
+display::Surface * vh;
 
 struct StepInfo {
     int16_t x_cor;
@@ -100,7 +99,7 @@ void Load_FUT_BUT(void)
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img((char *)display::graphics.screen()->pixels(), (char *)vh.vptr, i, vh.w, vh.h);
+    RLED_img(display::graphics.screen()->pixels(), vh->pixels(), i, vh->width(), vh->height());
     return;
 }
 
@@ -203,7 +202,7 @@ void DrawFuture(char plr, int mis, char pad)
     UPArrow(8, 95);
     DNArrow(8, 157);
 
-    gxVirtualDisplay(&vh, 140, 5, 5, 132, 15, 146, 0);
+	vh->copyTo(display::graphics.screen(), 140, 5, 5, 132, 15, 146);
     Toggle(5, 1);
     draw_Pie(0);
     OutBox(5, 49, 53, 72);
@@ -311,7 +310,7 @@ int GetMinus(char plr)
         u = 19;    //danger
     }
 
-    gxVirtualDisplay(&vh, 203, u, 203, 24, 238, 31, 0);
+    vh->copyTo(display::graphics.screen(), 203, u, 203, 24, 238, 31);
     display::graphics.setForegroundColor(11);
 
     if (i > 0) {
@@ -373,45 +372,45 @@ void Toggle(int wh, int i)
     switch (wh) {
     case 1:
         if (i == 1) {
-            gxVirtualDisplay(&vh, 1, 21, 55, 49, 89, 81, 0);
+            vh->copyTo(display::graphics.screen(), 1, 21, 55, 49, 89, 81);
         } else {
-            gxVirtualDisplay(&vh, 1, 56, 55, 49, 89, 81, 0);
+            vh->copyTo(display::graphics.screen(), 1, 56, 55, 49, 89, 81);
         }
 
         break;
 
     case 2:
         if (i == 1)  {
-            gxVirtualDisplay(&vh, 38, 21, 92, 49, 127, 81, 0);
+            vh->copyTo(display::graphics.screen(), 38, 21, 92, 49, 127, 81);
         } else {
-            gxVirtualDisplay(&vh, 38, 56, 92, 49, 127, 81, 0);
+            vh->copyTo(display::graphics.screen(), 38, 56, 92, 49, 127, 81);
         }
 
         break;
 
     case 3:
         if (i == 1)  {
-            gxVirtualDisplay(&vh, 75, 21, 129, 49, 163, 81, 0);
+            vh->copyTo(display::graphics.screen(), 75, 21, 129, 49, 163, 81);
         } else {
-            gxVirtualDisplay(&vh, 75, 56, 129, 49, 163, 81, 0);
+            vh->copyTo(display::graphics.screen(), 75, 56, 129, 49, 163, 81);
         }
 
         break;
 
     case 4:
         if (i == 1)  {
-            gxVirtualDisplay(&vh, 112, 21, 166, 49, 200, 81, 0);
+            vh->copyTo(display::graphics.screen(), 112, 21, 166, 49, 200, 81);
         } else {
-            gxVirtualDisplay(&vh, 112, 56, 166, 49, 200, 81, 0);
+            vh->copyTo(display::graphics.screen(), 112, 56, 166, 49, 200, 81);
         }
 
         break;
 
     case 5:
         if (i == 1)  {
-            gxVirtualDisplay(&vh, 153, 1, 5, 49, 52, 71, 0);
+            vh->copyTo(display::graphics.screen(), 153, 1, 5, 49, 52, 71);
         } else {
-            gxVirtualDisplay(&vh, 153, 26, 5, 49, 52, 71, 0);
+            vh->copyTo(display::graphics.screen(), 153, 26, 5, 49, 52, 71);
         }
 
         break;
@@ -524,7 +523,7 @@ void draw_Pie(int s)
         off = s * 20;
     }
 
-    gxVirtualDisplay(&vh, off, 1, 7, 51, 25, 69, 0);
+    vh->copyTo(display::graphics.screen(), off, 1, 7, 51, 25, 69);
     return;
 }
 
@@ -850,18 +849,16 @@ Future(char plr)
     int MisNum = 0, DuraType = 0, MaxDur = 6, i, ii;
     int setting = -1, prev_setting = -1;
     int Ok, NewType;
-    GXHEADER local, local2;
 
-    gxCreateVirtual(&local, 166, 9);
-    gxCreateVirtual(&local2, 177, 197);
-    gxCreateVirtual(&vh, 240, 90);                /* global variable */
+	display::Surface local(166, 9);
+	display::Surface local2(177, 197);
+	vh = new display::Surface(240, 90);
 begfut:
     MisNum = FutureCheck(plr, 0);
 
     if (MisNum == 5) {
-        gxDestroyVirtual(&local);
-        gxDestroyVirtual(&local2);
-        gxDestroyVirtual(&vh);
+		delete vh;
+		vh = NULL;
         return;
     }
 
@@ -916,7 +913,7 @@ begfut_noredraw:
 
         if (setting >= 0) {
             if (prev_setting < 0) {
-                gxGetImage(&local, 18, 186, 183, 194, 0);
+				local.copyFrom(display::graphics.screen(), 18, 186, 183, 194);
             }
 
             if (prev_setting != setting) {
@@ -925,7 +922,7 @@ begfut_noredraw:
                 MisStep(21, 192, Mev[setting].loc);
             }
         } else if (setting < 0 && prev_setting >= 0) {
-            gxPutImage(&local, gxSET, 18, 186, 0);
+			local.copyTo(display::graphics.screen(), 18, 186);
         }
 
         if (Mis.Dur <= V[MisType].E && ((x >= 244 && y >= 5 && x <= 313
@@ -939,28 +936,23 @@ begfut_noredraw:
 
             key = 0;
             OutBox(244, 5, 313, 17);
-            gxGetImage(&local2, 74, 3, 250, 199, 0);
+			local2.copyFrom(display::graphics.screen(), 74, 3, 250, 199);
             NewType = V[MisType].X;
             Data->P[plr].Future[MisNum].Duration = DuraType;
 
             Ok = HardCrewAssign(plr, Pad, MisType, NewType);
 
-            gxPutImage(&local2, gxSET, 74, 3, 0);
+			local2.copyTo(display::graphics.screen(), 74, 3);
 
-            // gxDestroyVirtual(&local2);
-            if (Ok == 1) {
+			if (Ok == 1) {
                 Data->P[plr].Future[MisNum].Duration = DuraType;
                 goto begfut;       // return to loop
             } else {
                 ClrFut(plr, MisNum);
-                // DuraType = FMen = MisType = 0;
                 key = 0;
                 goto begfut_noredraw;
-                // DrawFuture(plr, MisType, MisNum);
             }
         }
-
-        // continue
 
         if ((((x >= 5 && y >= 49 && x <= 53 && y <= 72) || (x >= 43
                 && y >= 74 && x <= 53 && y <= 82))

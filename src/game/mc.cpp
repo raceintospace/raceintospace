@@ -39,7 +39,6 @@
 #include "game_main.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 

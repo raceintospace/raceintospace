@@ -36,7 +36,6 @@
 #include "rdplex.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 void DrawHardef(char plr);
@@ -79,10 +78,10 @@ DrawHardef(char plr)
     DispNum(5, 55, 15);
     DispNum(5, 89, 10);
     DispNum(5, 123, 5);
-    gxVirtualDisplay(&but, 0, 0, 8, 165, 74, 194, 0);   // Unmanned
-    gxVirtualDisplay(&but, 68, 0, 84, 165, 155, 194, 0);    // Rocket
-    gxVirtualDisplay(&but, 141, 0, 165, 165, 236, 194, 0);  // Manned
-    gxVirtualDisplay(&but, 214, 0, 246, 165, 312, 194, 0);  // Misc
+    but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194);   // Unmanned
+    but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194);    // Rocket
+    but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194);  // Manned
+    but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194);  // Misc
     display::graphics.setForegroundColor(1);
     DispBig(40, 5, "EFFICIENCY", 1, -1);
     FlagSm(plr, 4, 4);

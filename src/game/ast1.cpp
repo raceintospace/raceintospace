@@ -36,7 +36,6 @@
 #include "aipur.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 void DispEight(char now, char loc);

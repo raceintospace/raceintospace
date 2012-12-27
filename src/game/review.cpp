@@ -34,7 +34,6 @@
 #include "port.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 void DrawReview(char plr);
@@ -303,7 +302,6 @@ void MisRev(char plr, int pres)
 
 void PresPict(char poff)
 {
-    GXHEADER local;
     SimpleHdr table;
     FILE *in;
     in = sOpen("PRESR.BUT", "rb", 0);
@@ -313,13 +311,10 @@ void PresPict(char poff)
     fread(&display::graphics.palette()[96], 672, 1, in);
     fread(buffer, table.size, 1, in);
     fclose(in);
-    gxCreateVirtual(&local, 126, 84);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+    display::Surface local(126, 84);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
-    gxPutImage(&local, gxSET, 183, 33, 0);
-
-    gxDestroyVirtual(&local);
-    return;
+	local.copyTo(display::graphics.screen(), 183, 33);
 }
 
 void CalcPresRev(void)

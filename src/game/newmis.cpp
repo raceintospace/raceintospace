@@ -30,7 +30,6 @@
 #include "rush.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 struct order Order[7] ;

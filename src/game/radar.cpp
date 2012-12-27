@@ -34,7 +34,6 @@
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 void PadDraw(char plr, char pad);
@@ -553,7 +552,6 @@ void ClrMiss(char plr, char pad)
 
 void PadPict(char poff)
 {
-    GXHEADER local, local2;
     SimpleHdr table;
     FILE *in;
     in = sOpen("LFACIL.BUT", "rb", 0);
@@ -562,21 +560,18 @@ void PadPict(char poff)
     fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    gxCreateVirtual(&local, 148, 148);
-    gxCreateVirtual(&local2, 148, 148);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+    display::Surface local(148, 148);
+    display::Surface local2(148, 148);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    RLED_img(buffer, (char *)local2.vptr, table.size, local2.w, local2.h);
+    RLED_img(buffer, local2.pixels(), table.size, local2.width(), local2.height());
 
-    gxPutImage(&local2, gxSET, 168, 28, 0);
+	local2.copyTo(display::graphics.screen(), 168, 28);
 
     fclose(in);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
 }
 
 
