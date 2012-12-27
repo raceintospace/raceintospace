@@ -17,6 +17,8 @@ Surface::Surface(unsigned int width, unsigned int height):
 
 Surface::~Surface()
 {
+	SDL_FreeSurface(_screen);
+	_screen = NULL;
 }
 
 SDL_Surface *Surface::surface() const
