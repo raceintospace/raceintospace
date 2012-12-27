@@ -26,6 +26,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/surface.h"
 
 #include "Buzz_inc.h"
 #include "rdplex.h"
@@ -35,13 +36,14 @@
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 #include <assert.h>
 
-int call, wh;
-GXHEADER but, mans;
+int call;
+int wh;
+display::Surface *but;
+display::Surface *mans;
 int avoidf;
 
 
@@ -124,8 +126,8 @@ void Load_RD_BUT(char player_index)
         return;
     }
 
-    gxCreateVirtual(&but, 282, 61);
-    gxCreateVirtual(&mans, 119, 17);
+    but = new display::Surface(282, 61);
+    mans = new display::Surface(119, 17);
 
     fin = sOpen("RDBOX.BUT", "rb", 0);
     fread(&Boo, sizeof Boo, 1, fin);
@@ -139,12 +141,12 @@ void Load_RD_BUT(char player_index)
         }
 
     fread(buffer, Boo.size, 1, fin);
-    RLED_img(buffer, (char *)but.vptr, Boo.size, but.w, but.h);
+    RLED_img(buffer, but->pixels(), Boo.size, but->width(), but->height());
     fread(&Boo, sizeof Boo, 1, fin);
     Swap32bit(Boo.size);
     fread(buffer, Boo.size, 1, fin);
     fclose(fin);
-    RLED_img(buffer, (char *)mans.vptr, Boo.size, mans.w, mans.h);
+    RLED_img(buffer, mans->pixels(), Boo.size, mans->width(), mans->height());
     BUTLOAD = 1;
     return;
 }
@@ -152,9 +154,10 @@ void Load_RD_BUT(char player_index)
 void Del_RD_BUT(void)
 {
     BUTLOAD = 0;
-    gxDestroyVirtual(&but);
-    gxDestroyVirtual(&mans);
-    return;
+    delete but;
+    but = NULL;
+    delete mans;
+    mans = NULL;
 }
 
 void DrawRD(char player_index)
@@ -212,17 +215,18 @@ void DrawRD(char player_index)
     PrintAt(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
-        gxVirtualDisplay(&mans, i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174, 0);
+        mans->copyTo(display::graphics.screen(), i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174);
     }
 
     display::graphics.setForegroundColor(3);
     grMoveTo(296, 174);
     grLineTo(314, 174);
 
-    gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
-    gxVirtualDisplay(&but, 68, 0, 84, 30, 155, 59, 0); // Rocket
-    gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
-    gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
+
+    but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
+    but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
+    but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
+    but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(1);
     DispBig(50, 5, "RESEARCH", 0, -1);
@@ -255,44 +259,44 @@ void BButs(char old, char nw)
     switch (old) {
     case PROBE_HARDWARE:
         OutBox(7, 29, 75, 60);
-        gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
+        but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
         break;
 
     case ROCKET_HARDWARE:
         OutBox(83, 29, 156, 60);
-        gxVirtualDisplay(&but, 68, 0, 84, 30, 155, 59, 0); // Rocket
+        but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
         break;
 
     case MANNED_HARDWARE:
         OutBox(164, 29, 237, 60);
-        gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
+        but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
         break;
 
     case MISC_HARDWARE:
         OutBox(245, 29, 313, 60);
-        gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
+        but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
         break;
     }
 
     switch (nw) {
     case PROBE_HARDWARE:
         InBox(7, 29, 75, 60);
-        gxVirtualDisplay(&but, 0, 31, 8, 30, 74, 59, 0); // Unmanned
+        but->copyTo(display::graphics.screen(), 0, 31, 8, 30, 74, 59); // Unmanned
         break;
 
     case ROCKET_HARDWARE:
         InBox(83, 29, 156, 60);
-        gxVirtualDisplay(&but, 68, 31, 84, 30, 155, 59, 0); // Rocket
+        but->copyTo(display::graphics.screen(), 68, 31, 84, 30, 155, 59); // Rocket
         break;
 
     case MANNED_HARDWARE:
         InBox(164, 29, 237, 60);
-        gxVirtualDisplay(&but, 141, 31, 165, 30, 236, 59, 0); // Manned
+        but->copyTo(display::graphics.screen(), 141, 31, 165, 30, 236, 59); // Manned
         break;
 
     case MISC_HARDWARE:
         InBox(245, 29, 313, 60);
-        gxVirtualDisplay(&but, 214, 31, 246, 30, 312, 59, 0); // Misc
+        but->copyTo(display::graphics.screen(), 214, 31, 246, 30, 312, 59); // Misc
         break;
     }
 
@@ -1259,10 +1263,10 @@ void DrawHPurc(char player_index)
     display::graphics.setForegroundColor(1);
     PrintAt(0, 0, "ISIT R&D FACILITY");
 
-    gxVirtualDisplay(&but, 0, 0, 8, 30, 74, 59, 0); // Unmanned
-    gxVirtualDisplay(&but, 68, 0, 84, 30, 155, 59, 0); // Rocket
-    gxVirtualDisplay(&but, 141, 0, 165, 30, 236, 59, 0); // Manned
-    gxVirtualDisplay(&but, 214, 0, 246, 30, 312, 59, 0); // Misc
+    but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
+    but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
+    but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
+    but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(9);
     PrintAt(191, 190, "P");

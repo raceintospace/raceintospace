@@ -39,7 +39,6 @@
 #include "sdlhelper.h"
 #include "newmis.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -66,7 +65,7 @@ struct OF *Mob2;
 int tFrames, cFrame;
 char SHTS[4];
 int32_t aLoc;
-GXHEADER dply;
+display::Surface *dply;
 struct AnimType AHead;
 struct BlockHead BHead;
 
@@ -781,7 +780,6 @@ void Clock(char plr, char clck, char mode, char tm)
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 {
     int i, x, y, attempt, which, mx2, mx1;
-    GXHEADER boob;
     uint16_t *bot, off = 0;
     int32_t locl;
     static char kk = 0, bub = 0;
@@ -827,9 +825,9 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     off = 64 + loc * 16;
 
-    gxCreateVirtual(&boob, 68, 46);
+    display::Surface boob(68, 46);
 
-    bot = (uint16_t *) boob.vptr;
+    bot = (uint16_t *) boob.pixels();
 
     //:::::::::::::::::::::::::::::::
     //Specs: which holds baby frame :
@@ -979,7 +977,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
     fread(&display::graphics.palette()[off * 3], 48, 1, ffin);
-    fread(boob.vptr, 1564, 1, ffin);
+    fread(boob.pixels(), 1564, 1, ffin);
 
     for (i = 0; i < 782; i++) {
         bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
@@ -987,17 +985,15 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     };
 
     for (i = 0; i < 1564; i++) {
-        boob.vptr[i] += off;
-        boob.vptr[1564 + i] += off;
+        boob.pixels()[i] += off;
+        boob.pixels()[1564 + i] += off;
     };
 
     VBlank();
 
-    gxPutImage(&boob, gxSET, x, y, 0);
+    boob.copyTo(display::graphics.screen(), x, y);
 
     VBlank();
-
-    gxDestroyVirtual(&boob);
 }
 
 
@@ -1371,14 +1367,15 @@ FILE *OpenAnim(char *fname)
     tFrames = AHead.fNum;
     cFrame = 0;
 
-    gxCreateVirtual(&dply, AHead.w, AHead.h);
+    dply = new display::Surface(AHead.w, AHead.h);
     DEBUG1("<-OpenAnim");
     return fin;
 }
 
 int CloseAnim(FILE *fin)
 {
-    gxDestroyVirtual(&dply);
+    delete dply;
+    dply = NULL;
     tFrames = cFrame = 0;
     aLoc = 0;
     fclose(fin);
@@ -1388,8 +1385,6 @@ int CloseAnim(FILE *fin)
 int StepAnim(int x, int y, FILE *fin)
 {
     int mode;
-
-    mode = 0; /* XXX check uninitialized */
 
     if (cFrame == tFrames) {
         fseek(fin, aLoc, SEEK_SET);
@@ -1403,27 +1398,23 @@ int StepAnim(int x, int y, FILE *fin)
 
         switch (BHead.cType) {
         case 0:
-            memcpy(dply.vptr, vhptr->pixels(), BHead.fSize);
-            mode = gxSET;
+            memcpy(dply->pixels(), vhptr->pixels(), BHead.fSize);
             break;
 
         case 1:
-            RLED_img(vhptr->pixels(), (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
-            mode = gxSET;
+            RLED_img(vhptr->pixels(), dply->pixels(), BHead.fSize, dply->width(), dply->height());
             break;
 
         case 2:
-            RLED_img(vhptr->pixels(), (char *)dply.vptr, BHead.fSize, dply.w, dply.h);
-            mode = gxXOR;
+            RLED_img(vhptr->pixels(), dply->pixels(), BHead.fSize, dply->width(), dply->height());
             break;
 
         default:
             break;
         }
 
-        dply.vptr[AHead.w * AHead.h - 1] = dply.vptr[AHead.w * AHead.h - 2];
-        gxPutImage(&dply, mode, x, y, 0);
-
+        dply->pixels()[AHead.w * AHead.h - 1] = dply->pixels()[AHead.w * AHead.h - 2];
+        dply->copyTo(display::graphics.screen(), x, y);
         cFrame++;
     }
 

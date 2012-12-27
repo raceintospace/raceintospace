@@ -38,7 +38,6 @@
 #include "records.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 struct ManPool *Men;
@@ -54,7 +53,6 @@ void CheckAdv(char plr);
 
 void DrawStatistics(char Win)
 {
-    GXHEADER local;
     char AImg[7] = {8, 9, 10, 11, 13, 14, 0};
     char Digit[2];
     int starty, qty, i;
@@ -105,7 +103,7 @@ void DrawStatistics(char Win)
 
     qty = 6;
     starty = 118;
-    gxCreateVirtual(&local, 30, 19);
+    display::Surface local(30, 19);
     fin = sOpen("PORTBUT.BUT", "rb", 0);
     OutBox(152, 41, 183, 61); //directors ranking
 
@@ -119,23 +117,22 @@ void DrawStatistics(char Win)
         }
 
         fseek(fin, AImg[i] * 570, SEEK_SET);
-        fread((char *)local.vptr, 570, 1, fin);
+        fread(local.pixels(), 570, 1, fin);
 
         if (i == 0) {
-            gxPutImage(&local, gxSET, 153, 42, 0);
+            local.copyTo(display::graphics.screen(), 153, 42);
         } else {
             if (AI[Win] == 0) {
-                gxPutImage(&local, gxSET, starty + ((i - 1) * 33) + 1, 88, 0);
+                local.copyTo(display::graphics.screen(), starty + ((i - 1) * 33) + 1, 88);
             }
 
             if (AI[other(Win)] == 0) {
-                gxPutImage(&local, gxSET, starty + ((i - 1) * 33) + 1, 133, 0);
+                local.copyTo(display::graphics.screen(), starty + ((i - 1) * 33) + 1, 133);
             }
         }
     }
 
     fclose(fin);
-    gxDestroyVirtual(&local);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;

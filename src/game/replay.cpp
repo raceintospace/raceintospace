@@ -34,7 +34,6 @@
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
@@ -261,14 +260,13 @@ DispBaby(int x, int y, int loc, char neww)
 {
     int i;
     FILE *fin;
-    GXHEADER boob;
     uint16_t *bot, off = 0;
     int32_t locl;
 
     off = 224;
 
-    gxCreateVirtual(&boob, 68, 46);
-    bot = (uint16_t *) boob.vptr;
+    display::Surface boob(68, 46);
+    bot = (uint16_t *) boob.pixels();
 
     fin = sOpen("BABYPICX.CDR", "rb", 0);
     locl = (int32_t) 1612 * loc; // First Image
@@ -280,7 +278,7 @@ DispBaby(int x, int y, int loc, char neww)
     }
 
     fread(&display::graphics.palette()[off * 3], 48, 1, fin);
-    fread(boob.vptr, 1564, 1, fin);
+    fread(boob.pixels(), 1564, 1, fin);
     fclose(fin);
 
     for (i = 0; i < 782; i++) {
@@ -289,15 +287,11 @@ DispBaby(int x, int y, int loc, char neww)
     }
 
     for (i = 0; i < 1564; i++) {
-        boob.vptr[i] += off;
-        boob.vptr[1564 + i] += off;
+        boob.pixels()[i] += off;
+        boob.pixels()[1564 + i] += off;
     }
 
-    gxPutImage(&boob, gxSET, x, y, 0);
-
-    gxDestroyVirtual(&boob);
-
-    return;
+    boob.copyTo(display::graphics.screen(), x, y);
 }
 
 void

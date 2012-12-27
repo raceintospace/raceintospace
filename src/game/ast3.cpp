@@ -37,7 +37,6 @@
 #include "replay.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 

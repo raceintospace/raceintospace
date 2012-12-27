@@ -47,7 +47,6 @@
 #include "vab.h"
 #include "mc.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -125,7 +124,7 @@ MOBJ MObj[35];
 char HotKeyList[] = "AIMRPVCQETB\0";
 
 int FCtr;
-GXHEADER flaggy;
+display::Surface *flaggy;
 
 /** SPOT structures and data structure variables */
 struct {        // Main SPOT Header
@@ -425,17 +424,17 @@ void WaveFlagSetup(void)
 {
     long j;
     FILE *fin;
-    gxCreateVirtual(&flaggy, 230, 22);
+    flaggy = new display::Surface(230, 22);
     fin = sOpen("FLAG.SEQ", "rb", 0);
     j = fread(vhptr->pixels(), 1, vhptr->height() * vhptr->width(), fin);
     fclose(fin);
-    RLED_img(vhptr->pixels(), (char *)flaggy.vptr, j, flaggy.w, flaggy.h);
+    RLED_img(vhptr->pixels(), flaggy->pixels(), j, flaggy->width(), flaggy->height());
 }
 
 void WaveFlagDel(void)
 {
-    gxDestroyVirtual(&flaggy);
-    return;
+    delete flaggy;
+    flaggy = NULL;
 }
 
 /* pace */
@@ -482,7 +481,6 @@ need_to_fix_width(int32_t table)
 void PortPlace(FILE *fin, int32_t table)
 {
     IMG Img;
-    GXHEADER local, local2;
     int ctr;
 
     fseek(fin, table, SEEK_SET);
@@ -496,21 +494,18 @@ void PortPlace(FILE *fin, int32_t table)
 //  if (need_to_fix_width (table))
 //    Img.Width++;
 
-    gxCreateVirtual(&local, Img.Width, Img.Height);
-    gxCreateVirtual(&local2, Img.Width, Img.Height);
-    gxGetImage(&local, Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1, 0);
+    display::Surface local(Img.Width, Img.Height);
+    display::Surface local2(Img.Width, Img.Height);
+    local.copyFrom(display::graphics.screen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
     fread(vhptr->pixels(), Img.Size, 1, fin);
-    RLED_img(vhptr->pixels(), (char *)local2.vptr, Img.Size, local2.w, local2.h);
+    RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
 
     for (ctr = 0; ctr < (Img.Width * Img.Height); ctr++)
-        if (local2.vptr[ctr] != 0x00) {
-            local.vptr[ctr] = local2.vptr[ctr];
+        if (local2.pixels()[ctr] != 0x00) {
+            local.pixels()[ctr] = local2.pixels()[ctr];
         }
 
-    gxPutImage(&local, gxSET, Img.PlaceX, Img.PlaceY, 0); // place image
-    gxDestroyVirtual(&local2);
-    gxDestroyVirtual(&local);
-    return;
+    local.copyTo(display::graphics.screen(), Img.PlaceX, Img.PlaceY);
 }
 
 void PortPal(char plr)
@@ -531,7 +526,6 @@ void DrawSpaceport(char plr)
     int32_t table[S_QTY];
     int i, fm, idx;
     FILE *fin;
-    GXHEADER local, local2;
     IMG Img;
     int k, j;
 
@@ -675,34 +669,32 @@ void DrawSpaceport(char plr)
 
     // FLAG DRAW
     FCtr = 0;
-    gxCreateVirtual(&local, 22, 22);
-    gxCreateVirtual(&local2, 22, 22);
+    display::Surface local(22, 22);
+    display::Surface local2(22, 22);
 
     if (plr == 0) {
-        gxGetImage(&local, 49, 121, 70, 142, 0);
+        local.copyFrom(display::graphics.screen(), 49, 121, 70, 142);
     } else {
-        gxGetImage(&local, 220, 141, 241, 162, 0);
+        local.copyFrom(display::graphics.screen(), 220, 141, 241, 162);
     }
 
     if (plr == 0) {
-        gxVirtualVirtual(&flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, &local2, 0, 0, gxSET);
+        local2.copyFrom(flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, 0, 0);
     } else {
-        gxVirtualVirtual(&flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, &local2, 0, 0, gxSET);
+        local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
     }
 
+    //TODO: Bad copy?  Replace with filter copy?
     for (i = 0; i < (22 * 22); i++)
-        if (local2.vptr[i] == 0) {
-            local2.vptr[i] = local.vptr[i];
+        if (local2.pixels()[i] == 0) {
+            local2.pixels()[i] = local.pixels()[i];
         }
 
     if (plr == 0) {
-        gxPutImage(&local2, gxSET, 49, 121, 0);
+        local2.copyTo(display::graphics.screen(), 49, 121);
     } else {
-        gxPutImage(&local2, gxSET, 220, 141, 0);
+        local2.copyTo(display::graphics.screen(), 220, 141);
     }
-
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
 }
 
 void PortText(int x, int y, char *txt, char col)
@@ -874,7 +866,6 @@ void Master(char plr)
 
 void GetMse(char plr, char fon)
 {
-    GXHEADER local, local2;
     static double last_wave_step;
     double now;
 
@@ -895,35 +886,35 @@ void GetMse(char plr, char fon)
         SpotCrap(0, SPOT_STEP);
 #endif
         FCtr = FCtr % 5;
-        gxCreateVirtual(&local, 22, 22);
-        gxCreateVirtual(&local2, 22, 22);
+        {
+            // Scope block to avoid "initialization of local is skipped by 'goto done'"
+            display::Surface local(22, 22);
+            display::Surface local2(22, 22);
 
-        if (plr == 0) {
-            gxGetImage(&local, 49, 121, 70, 142, 0);
-        } else {
-            gxGetImage(&local, 220, 141, 241, 162, 0);
-        }
-
-        if (plr == 0) {
-            gxVirtualVirtual(&flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, &local2, 0, 0, gxSET);
-        } else {
-            gxVirtualVirtual(&flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, &local2, 0, 0, gxSET);
-        }
-
-        for (int i = 0; i < (22 * 22); i++)
-            if (local2.vptr[i] == 0) {
-                local2.vptr[i] = local.vptr[i];
+            if (plr == 0) {
+                local.copyFrom(display::graphics.screen(), 49, 121, 70, 142);
+            } else {
+                local.copyFrom(display::graphics.screen(), 220, 141, 241, 162);
             }
 
-        if (plr == 0) {
-            gxPutImage(&local2, gxSET, 49, 121, 0);
-        } else {
-            gxPutImage(&local2, gxSET, 220, 141, 0);
+            if (plr == 0) {
+                local2.copyFrom(flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, 0, 0);
+            } else {
+                local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
+            }
+
+            //TODO: Bad copy?  Replace with filter copy?
+            for (int i = 0; i < (22 * 22); i++)
+                if (local2.pixels()[i] == 0) {
+                    local2.pixels()[i] = local.pixels()[i];
+                }
+
+            if (plr == 0) {
+                local2.copyTo(display::graphics.screen(), 49, 121);
+            } else {
+                local2.copyTo(display::graphics.screen(), 220, 141);
+            }
         }
-
-        gxDestroyVirtual(&local);
-        gxDestroyVirtual(&local2);
-
 done:
         FCtr++;
     }
@@ -1848,11 +1839,10 @@ char PortSel(char plr, char loc)
 char Request(char plr, char *s, char md)
 {
     char i;
-    GXHEADER local;
+    display::Surface local(196, 84);
 
     if (md > 0) { // Save Buffer
-        gxCreateVirtual(&local, 196, 84);
-        gxGetImage(&local, 85, 52, 280, 135, 0);
+        local.copyFrom(display::graphics.screen(), 85, 52, 280, 135);
     }
 
     i = strlen(s) >> 1;
@@ -1914,8 +1904,7 @@ char Request(char plr, char *s, char md)
     }; /* End while */
 
     if (md > 0) {
-        gxPutImage(&local, gxSET, 85, 52, 0);
-        gxDestroyVirtual(&local);
+        local.copyTo(display::graphics.screen(), 85, 52);
     }
 
     return i;
@@ -1924,10 +1913,9 @@ char Request(char plr, char *s, char md)
 char MisReq(char plr)
 {
     int i, num = 0;
-    GXHEADER local;
+    display::Surface local(184, 132);
 
-    gxCreateVirtual(&local, 184, 132);
-    gxGetImage(&local, 53, 29, 236, 160, 0);
+    local.copyFrom(display::graphics.screen(), 53, 29, 236, 160);
 
     for (i = 0; i < 3; i++)
         if ((Data->P[plr].Mission[i].MissionCode) &&
@@ -2041,9 +2029,7 @@ char MisReq(char plr)
         };
     }; /* End while */
 
-    gxPutImage(&local, gxSET, 53, 29, 0);
-
-    gxDestroyVirtual(&local);
+    local.copyTo(display::graphics.screen(), 53, 29);
 
     return i;
 }

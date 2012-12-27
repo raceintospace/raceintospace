@@ -33,7 +33,6 @@
 #include "records.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -307,7 +306,6 @@ void DrawBudget(char player, char *pStatus)
 void BudPict(char poff)
 {
     PatchHdrSmall P;
-    GXHEADER local;
     unsigned int i, x, y;
     FILE *in;
     in = sOpen("BUDD.BUT", "rb", 0);
@@ -315,11 +313,10 @@ void BudPict(char poff)
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
     fseek(in, P.offset, SEEK_SET);
-    gxCreateVirtual(&local, P.w, P.h);
-    fread(local.vptr, P.size, 1, in);
+    display::Surface local(P.w, P.h);
+    fread(local.pixels(), P.size, 1, in);
     //RLED(buffer,local.vptr,P.size);
-    gxPutImage(&local, gxSET, 245, 4, 0);
-    gxDestroyVirtual(&local);
+    local.copyTo(display::graphics.screen(), 245, 4);
     x = 134;
 
     for (i = 2; i < 6; i++) {
@@ -328,11 +325,10 @@ void BudPict(char poff)
         fread(&P, sizeof P, 1, in);
         SwapPatchHdrSmall(&P);
         fseek(in, P.offset, SEEK_SET);
-        gxCreateVirtual(&local, P.w, P.h);
-        fread(local.vptr, P.size, 1, in);
+        display::Surface local2(P.w, P.h);
+        fread(local2.pixels(), P.size, 1, in);
         //  RLED(buffer,local.vptr,P.size);
-        gxPutImage(&local, gxSET, x, y, 0);
-        gxDestroyVirtual(&local);
+        local2.copyTo(display::graphics.screen(), x, y);
     }
 
     fclose(in);

@@ -40,7 +40,6 @@
 #include "mc.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 // imported from CODENAME.DAT
@@ -1182,7 +1181,6 @@ void HarIntel(char p, char acc)
 
 void TopSecret(char plr, char poff)
 {
-    GXHEADER local, local2;
     unsigned int j;
     SimpleHdr table;
     FILE *in;
@@ -1198,28 +1196,26 @@ void TopSecret(char plr, char poff)
     fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    gxCreateVirtual(&local, 157, 100);
-    gxCreateVirtual(&local2, 157, 100);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+    display::Surface local(157, 100);
+    display::Surface local2(157, 100);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
     if (poff != 100) {
         fseek(in, (poff + 1)*sizeof_SimpleHdr, SEEK_SET);
         fread_SimpleHdr(&table, 1, in);
         fseek(in, table.offset, SEEK_SET);
         fread(buffer, table.size, 1, in);
-        RLED_img(buffer, (char *)local2.vptr, table.size, local.w, local.h);
+        RLED_img(buffer, local2.pixels(), table.size, local.width(), local.height());
 
         for (j = 0; j < 15700; j++)
-            if (local2.vptr[j] != 0) {
-                local.vptr[j] = local2.vptr[j];
+            if (local2.pixels()[j] != 0) {
+                local.pixels()[j] = local2.pixels()[j];
             }
     }
 
-    gxPutImage(&local, gxSET, 153, 32, 0);
+    local.copyTo(display::graphics.screen(), 153, 32);
 
     fclose(in);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
 }
 
 void SaveIntel(char p, char prg, char ind)
@@ -1605,10 +1601,10 @@ void DrawIStat(char plr)
     PrintAt(17, 89, "%");
     DispNum(5, 123, 25);
     PrintAt(17, 123, "%");
-    gxVirtualDisplay(&but, 0, 0, 8, 165, 74, 194, 0); // Unmanned
-    gxVirtualDisplay(&but, 68, 0, 84, 165, 155, 194, 0); // Rocket
-    gxVirtualDisplay(&but, 141, 0, 165, 165, 236, 194, 0); // Manned
-    gxVirtualDisplay(&but, 214, 0, 246, 165, 312, 194, 0); // Misc
+    but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194); // Unmanned
+    but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194); // Rocket
+    but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194); // Manned
+    but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194); // Misc
     display::graphics.setForegroundColor(6);
     DispBig(40, 5, "INTELLIGENCE STATS", 1, -1);
     FlagSm(plr, 4, 4);
@@ -1624,22 +1620,22 @@ void ReButs(char old, char nw)
     switch (old) {
     case 0:
         OutBox(7, 164, 75, 195);
-        gxVirtualDisplay(&but, 0, 0, 8, 165, 74, 194, 0); // Unmanned
+        but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194); // Unmanned
         break;
 
     case 1:
         OutBox(83, 164, 156, 195);
-        gxVirtualDisplay(&but, 68, 0, 84, 165, 155, 194, 0); // Rocket
+        but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194); // Rocket
         break;
 
     case 2:
         OutBox(164, 164, 237, 195);
-        gxVirtualDisplay(&but, 141, 0, 165, 165, 236, 194, 0); // Manned
+        but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194); // Manned
         break;
 
     case 3:
         OutBox(245, 164, 313, 195);
-        gxVirtualDisplay(&but, 214, 0, 246, 165, 312, 194, 0); // Misc
+        but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194); // Misc
         break;
 
     default:
@@ -1649,22 +1645,22 @@ void ReButs(char old, char nw)
     switch (nw) {
     case 0:
         InBox(7, 164, 75, 195);
-        gxVirtualDisplay(&but, 0, 31, 8, 165, 74, 194, 0); // Unmanned
+        but->copyTo(display::graphics.screen(), 0, 31, 8, 165, 74, 194); // Unmanned
         break;
 
     case 1:
         InBox(83, 164, 156, 195);
-        gxVirtualDisplay(&but, 68, 31, 84, 165, 155, 194, 0); // Rocket
+        but->copyTo(display::graphics.screen(), 68, 31, 84, 165, 155, 194); // Rocket
         break;
 
     case 2:
         InBox(164, 164, 237, 195);
-        gxVirtualDisplay(&but, 141, 31, 165, 165, 236, 194, 0); // Manned
+        but->copyTo(display::graphics.screen(), 141, 31, 165, 165, 236, 194); // Manned
         break;
 
     case 3:
         InBox(245, 164, 313, 195);
-        gxVirtualDisplay(&but, 214, 31, 246, 165, 312, 194, 0); // Misc
+        but->copyTo(display::graphics.screen(), 214, 31, 246, 165, 312, 194); // Misc
         break;
     }
 

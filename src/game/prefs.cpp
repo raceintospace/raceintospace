@@ -34,7 +34,6 @@
 #include "randomize.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 void DrawPrefs(int where, char a1, char a2);
@@ -171,29 +170,27 @@ void HModel(char mode, char tx)
     unsigned int j, n;
     SimpleHdr table;
 
-    GXHEADER local;
     FILE *in;
 
     in = sOpen("PRFX.BUT", "rb", 0);
     fseek(in, (mode == 0 || mode == 1 || mode == 4)*sizeof_SimpleHdr, SEEK_CUR);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    gxCreateVirtual(&local, 127, 80);
+    display::Surface local(127, 80);
     fread(&display::graphics.palette()[112 * 3], 96 * 3, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
     n = 127 * 80; //gxVirtualSize(gxVGA_13, 127, 80);
 
     for (j = 0; j < n; j++) {
-        local.vptr[j] += 112;
+        local.pixels()[j] += 112;
     }
 
     RectFill(96, 114, 223, 194, 0);
 
-    gxPutImage(&local, gxSET, 97, 115, 0);
-    gxDestroyVirtual(&local);
+    local.copyTo(display::graphics.screen(), 97, 115);
     display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {

@@ -35,7 +35,6 @@
 #include "endgame.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -124,12 +123,11 @@ int MainMenuChoice()
 int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 {
     int i, j, starty = 100;
-    GXHEADER local;
     FILE *fin = sOpen("PORTBUT.BUT", "rb", 0);
 
     //FadeOut(2,pal,10,0,0);
 
-    gxCreateVirtual(&local, 30, 19);
+    display::Surface local(30, 19);
 
     starty -= (qty * 23 / 2);
 
@@ -138,12 +136,11 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
         BCDraw(starty + 23 * i);
         DispBig(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
         fseek(fin, Imx[i] * 570, SEEK_SET);
-        fread((char *)local.vptr, 570, 1, fin);
-        gxPutImage(&local, gxSET, 24, starty + 1 + 23 * i, 0);
+        fread(local.pixels(), 570, 1, fin);
+        local.copyTo(display::graphics.screen(), 24, starty + 1 + 23 * i);
     }
 
     fclose(fin);
-    gxDestroyVirtual(&local);
 
     av_need_update_xy(23, starty, 60 + 22 * 15, starty + 23 * i);
 
@@ -193,7 +190,6 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
      * changed.
      */
     PatchHdrSmall P;
-    GXHEADER local, local2;
     unsigned int j, do_fix = 0;
     FILE *in;
     in = sOpen("PATCHES.BUT", "rb", 0);
@@ -215,34 +211,30 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
         P.size = P.w * P.h;
     }
 
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
+    display::Surface local(P.w, P.h);
+    display::Surface local2(P.w, P.h);
+    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
 
-    fread(local.vptr, P.size, 1, in);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     //RLED(buffer+20000,local.vptr,P.size);
     for (j = 0; j < P.size; j++)
-        if (local.vptr[j] != 0) {
+        if (local.pixels()[j] != 0) {
             if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
                 continue;
             }
 
-            local2.vptr[j] = local.vptr[j] + coff;
+            local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    gxPutImage(&local2, gxSET, x, y, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+    local2.copyTo(display::graphics.screen(), x, y);
 }
 
 void
 AstFaces(char plr, int x, int y, char face)
 {
     int32_t offset;
-    GXHEADER local, local2, local3;
     int fx, fy;
     unsigned int j;
     int face_offset = 0;
@@ -257,8 +249,9 @@ AstFaces(char plr, int x, int y, char face)
     fread(&offset, sizeof(int32_t), 1, fin);
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
-    gxCreateVirtual(&local, 18, 15);
-    fread(local.vptr, 18 * 15, 1, fin);
+
+    display::Surface local(18, 15);
+    fread(local.pixels(), 18 * 15, 1, fin);
 
 
     face_offset = ((int)(85 + plr)) * sizeof(int32_t);
@@ -266,11 +259,11 @@ AstFaces(char plr, int x, int y, char face)
     fread(&offset, sizeof(int32_t), 1, fin);
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
-    gxCreateVirtual(&local2, 80, 50);
-    gxCreateVirtual(&local3, 80, 50);
-    fread(local2.vptr, 80 * 50, 1, fin);
+    display::Surface local2(80, 50);
+    display::Surface local3(80, 50);
+    fread(local2.pixels(), 80 * 50, 1, fin);
     fclose(fin);
-    memset(local3.vptr, 0x00, 80 * 50);
+    memset(local3.pixels(), 0x00, 80 * 50);
 
     if (plr == 0)   {
         fx = 32;
@@ -280,38 +273,35 @@ AstFaces(char plr, int x, int y, char face)
         fy = 21;
     }
 
-    gxVirtualVirtual(&local, 0, 0, local.w - 1, local.h - 1,
-                     &local3, fx, fy, gxSET);
+    local3.copyFrom(&local, 0, 0, local.width() - 1, local.height() - 1, fx, fy);
 
+    //TODO: Bad copy?  Replace with filter copy?
     for (j = 0; j < 80 * 50; j++)
-        if (local2.vptr[j] == 0) {
-            local2.vptr[j] = local3.vptr[j];
+        if (local2.pixels()[j] == 0) {
+            local2.pixels()[j] = local3.pixels()[j];
         }
 
-    gxGetImage(&local3, x, y, x + 79, y + 49, 0);
+    local3.copyFrom(display::graphics.screen(), x, y, x + 79, y + 49);
 
+    //TODO: Bad copy?  Replace with filter copy?
     for (j = 0; j < 80 * 50; j++)
-        if (local2.vptr[j] != 0) {
-            local3.vptr[j] = local2.vptr[j];
+        if (local2.pixels()[j] != 0) {
+            local3.pixels()[j] = local2.pixels()[j];
         }
 
+    //TODO: Bad copy?  Replace with filter copy?
     for (j = 0; j < 80 * 50; j++)
-        if (local3.vptr[j] != (7 + plr * 3)) {
-            local3.vptr[j] -= 160;
+        if (local3.pixels()[j] != (7 + plr * 3)) {
+            local3.pixels()[j] -= 160;
         }
 
-    gxPutImage(&local3, gxSET, x, y, 0);
-    gxDestroyVirtual(&local3);
-    gxDestroyVirtual(&local2);
-    gxDestroyVirtual(&local);                    // deallocate in reverse order
-    return;
+    local3.copyTo(display::graphics.screen(), x, y);
 }
 
 
 void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff)
 {
     PatchHdrSmall P;
-    GXHEADER local, local2;
     unsigned int j;
     int do_fix = 0;
     FILE *in;
@@ -341,25 +331,24 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
         P.size = P.w * P.h;
     }
 
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
+    display::Surface local(P.w, P.h);
+    display::Surface local2(P.w, P.h);
+
+    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     //RLED(buffer+20000,local.vptr,P.size);
     for (j = 0; j < P.size; j++)
-        if (local.vptr[j] != 0) {
+        if (local.pixels()[j] != 0) {
             if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
                 continue;
             }
 
-            local2.vptr[j] = local.vptr[j] + coff;
+            local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    gxPutImage(&local2, gxSET, x, y, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
+    local2.copyTo(display::graphics.screen(), x, y);
 
     if (planet > 0 && prog == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
@@ -376,7 +365,6 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 {
     SimpleHdr table;
     char ch;
-    GXHEADER local, local2;
     int32_t size;
     unsigned int j, n;
     FILE *in, *fin;
@@ -392,24 +380,22 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, size * sizeof_SimpleHdr, SEEK_CUR);
         fread_SimpleHdr(&table, 1, in);
         fseek(in, table.offset, SEEK_SET);
-        gxCreateVirtual(&local, 104, 77);
-        gxCreateVirtual(&local2, 104, 77);
+        display::Surface local(104, 77);
+        display::Surface local2(104, 77);
         fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
-        fread(local2.vptr, table.size, 1, in); // Get Image
+        fread(local2.pixels(), table.size, 1, in); // Get Image
         fclose(in);
-        RLED_img((char *)local2.vptr, (char *)local.vptr, table.size, local.w, local.h);
+        RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
 
         n = 104 * 77; // gxVirtualSize(gxVGA_13, 104, 77);
 
         for (j = 0; j < n; j++) {
-            local.vptr[j] += coff;
+            local.pixels()[j] += coff;
         }
 
-        local.vptr[n - 1] = 0;
+        local.pixels()[n - 1] = 0;
 
-        gxPutImage(&local, gxSET, x, y, 0);
-        gxDestroyVirtual(&local);
-        gxDestroyVirtual(&local2);
+        local.copyTo(display::graphics.screen(), x, y);
     } else {
         memset(Name, 0x00, sizeof Name);
 
@@ -458,31 +444,26 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         Swap16bit(AHead.h);
         fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, fin);
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
-        gxCreateVirtual(&local, AHead.w, AHead.h);
+        display::Surface local(AHead.w, AHead.h);
 
         fread(&BHead, sizeof BHead, 1, fin);
         Swap32bit(BHead.fSize);
         fread(vhptr->pixels(), BHead.fSize, 1, fin);
-        RLED_img(vhptr->pixels(), (char *)local.vptr, BHead.fSize, local.w, local.h);
+        RLED_img(vhptr->pixels(), local.pixels(), BHead.fSize, local.width(), local.height());
         n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
+        //TODO: Bad copy?  Replace with filter copy?
         for (j = 0; j < n; j++) {
-            if (local.vptr[j] != 0) {
-                local.vptr[j] -= (128 - coff);
+            if (local.pixels()[j] != 0) {
+                local.pixels()[j] -= (128 - coff);
             }
         }
 
-        local.vptr[0] = 0x00;
+        local.pixels()[0] = 0x00;
 
-        gxVirtualDisplay(&local, 0, 0, x + 1, y, x + 102, y + 76, 0);
-        //gxPutImage(&dply,mode,x,y,0);
-
-
-        gxDestroyVirtual(&local);
+        local.copyTo(display::graphics.screen(), 0, 0, x + 1, y, x + 102, y + 76);
         fclose(fin);
     }
-
-    return;
 }
 
 void
@@ -521,7 +502,6 @@ int Help(const char *FName)
     int i, j, line, top = 0, bot = 0, plc = 0;
     char *Help, *NTxt, mode;
     int fsize;
-    GXHEADER local;
     FILE *fin;
     int32_t count;
     struct Help {
@@ -604,8 +584,8 @@ int Help(const char *FName)
     free(Help);
 
     key = 0;
-    gxCreateVirtual(&local, 250, 128);
-    gxGetImage(&local, 34, 32, 283, 159, 0);
+    display::Surface local(250, 128);
+    local.copyFrom(display::graphics.screen(), 34, 32, 283, 159);
     av_need_update_xy(34, 32, 283, 159);
 
     ShBox(34, 32, 283, 159);
@@ -687,9 +667,8 @@ int Help(const char *FName)
 
     }
 
-    gxPutImage(&local, gxSET, 34, 32, 0);
+    local.copyTo(display::graphics.screen(), 34, 32);
     free(NTxt);
-    gxDestroyVirtual(&local);
 
     AL_CALL = 0;
     return i;

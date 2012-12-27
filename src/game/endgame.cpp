@@ -33,7 +33,6 @@
 #include "mis_c.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -454,7 +453,6 @@ void EndGame(char win, char pad)
 void Load_LenFlag(char win)
 {
     PatchHdr P;
-    GXHEADER local, local2;
     unsigned int coff;
     int j, Off_X, Off_Y;
     char poff;
@@ -482,24 +480,21 @@ void Load_LenFlag(char win)
     }
 
     fseek(in, P.offset, SEEK_SET);
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxClearVirtual(&local2, 0);
-    gxGetImage(&local2, Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
+    display::Surface local(P.w, P.h);
+    display::Surface local2(P.w, P.h);
+    local.clear(0);
+    local2.copyFrom(display::graphics.screen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     for (j = 0; j < P.size; j++)
 
         /* now fix the strip */
         if (win == 1 || ((j + 1) % P.w != 0)) {
-            local2.vptr[j] = local.vptr[j] + coff;
+            local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    gxPutImage(&local2, gxSET, Off_X, Off_Y, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+    local2.copyTo(display::graphics.screen(), Off_X, Off_Y);
 }
 
 void Draw_NewEnd(char win)
@@ -536,7 +531,6 @@ void Draw_NewEnd(char win)
 
 void NewEnd(char win, char loc)
 {
-    GXHEADER local;
     int i, Re_Draw = 0;
     char R_V = 0;
 
@@ -547,8 +541,8 @@ void NewEnd(char win, char loc)
     WaitForMouseUp();
     i = 0;
     key = 0;
-    gxCreateVirtual(&local, 162, 92);
-    gxClearVirtual(&local, 0);
+    display::Surface local(162, 92);
+    local.clear(0);
 
     while (i == 0) {
         key = 0;
@@ -580,9 +574,9 @@ void NewEnd(char win, char loc)
                     R_V = 5;
                 }
 
-                gxPutImage(&local, gxSET, 149, 9, 0);
+                local.copyTo(display::graphics.screen(), 149, 9);
                 memset(&display::graphics.palette()[384], 0, 384);
-                gxClearVirtual(&local, 0);
+                local.clear(0);
                 Load_LenFlag(win);
                 FadeIn(1, display::graphics.palette(), 40, 128, 1);
 
@@ -655,7 +649,7 @@ void NewEnd(char win, char loc)
             OutBox(134, 182, 185, 190);
             FadeOut(1, display::graphics.palette(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
-            gxGetImage(&local, 149, 9, 309, 100, 0);
+            local.copyFrom(display::graphics.screen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_PRGMTRG);
@@ -685,7 +679,7 @@ void NewEnd(char win, char loc)
             Re_Draw = 1;
             FadeOut(1, display::graphics.palette(), 40, 128, 1);
             RectFill(195, 0, 319, 172, 0);
-            gxGetImage(&local, 149, 9, 309, 100, 0);
+            local.copyFrom(display::graphics.screen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_MISSPLAN);
@@ -709,9 +703,6 @@ void NewEnd(char win, char loc)
             OutBox(254, 182, 305, 190);
         };
     }
-
-    gxDestroyVirtual(&local);
-    return;
 }
 
 void FakeWin(char win)
@@ -1120,7 +1111,6 @@ void
 EndPict(int x, int y, char poff, unsigned char coff)
 {
     PatchHdrSmall P;
-    GXHEADER local, local2;
     unsigned int j;
     FILE *in;
 
@@ -1136,23 +1126,21 @@ EndPict(int x, int y, char poff, unsigned char coff)
      */
     P.w++;
     fseek(in, P.offset, SEEK_SET);
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxGetImage(&local2, x, y, x + P.w - 1, y + P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
+    display::Surface local(P.w, P.h);
+    display::Surface local2(P.w, P.h);
+    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     for (j = 0; j < P.size; j++)
 
         /* fix the strip */
-        if (local.vptr[j] != 0 && ((j + 1) % P.w != 0)) {
-            local2.vptr[j] = local.vptr[j] + coff;
+        if (local.pixels()[j] != 0 && ((j + 1) % P.w != 0)) {
+            local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    gxPutImage(&local2, gxSET, x, y, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+
+    local2.copyTo(display::graphics.screen(), x, y);
 }
 
 void
@@ -1160,7 +1148,6 @@ LoserPict(char poff, unsigned char coff)
 {
     /* This hasn't got an off-by-one...*/
     PatchHdr P;
-    GXHEADER local, local2;
     unsigned int j;
     FILE *in;
 
@@ -1170,21 +1157,18 @@ LoserPict(char poff, unsigned char coff)
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
     fseek(in, P.offset, SEEK_SET);
-    gxCreateVirtual(&local, P.w, P.h);
-    gxCreateVirtual(&local2, P.w, P.h);
-    gxGetImage(&local2, 6, 32, 6 + P.w - 1, 32 + P.h - 1, 0);
-    fread(local.vptr, P.size, 1, in);
+    display::Surface local(P.w, P.h);
+    display::Surface local2(P.w, P.h);
+    local2.copyFrom(display::graphics.screen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
+    fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     for (j = 0; j < P.size; j++)
-        if (local.vptr[j] != 0) {
-            local2.vptr[j] = local.vptr[j] + coff;
+        if (local.pixels()[j] != 0) {
+            local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    gxPutImage(&local2, gxSET, 6, 32, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+    local2.copyTo(display::graphics.screen(), 6, 32);
 }
 
 

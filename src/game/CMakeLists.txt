@@ -29,7 +29,6 @@ set(game_sources
   gamedata.cpp
   game_main.cpp
   gr.cpp
-  gx.cpp
   hardef.cpp
   intel.cpp
   intro.cpp

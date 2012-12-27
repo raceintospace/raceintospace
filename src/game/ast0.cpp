@@ -31,7 +31,6 @@
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -54,7 +53,6 @@ void Moon(char plr)
     int val;
     SimpleHdr table;
     FILE *in;
-    GXHEADER local;
     long size;
     helpText = "i029";
     keyHelpText = "k029";
@@ -80,18 +78,17 @@ void Moon(char plr)
     fseek(in, sizeof_SimpleHdr * size, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    gxCreateVirtual(&local, 104, 82);
+    display::Surface local(104, 82);
     fread(&display::graphics.palette()[384], 384, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
     for (size = 0; size < (104 * 82); size++) {
-        local.vptr[size] += 128;
+        local.pixels()[size] += 128;
     }
 
-    gxPutImage(&local, gxSET, 114, 43, 0);
-    gxDestroyVirtual(&local);
+    local.copyTo(display::graphics.screen(), 114, 43);
     InBox(113, 42, 218, 125);
     ShBox(113, 42, 143, 60);
     RectFill(113, 42, 142, 59, 3);
@@ -197,7 +194,6 @@ void SatDraw(char plr)
     int i, loc[4];
     FILE *fin;
 
-    GXHEADER local;
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
     display::graphics.screen()->clear(0);
@@ -235,18 +231,16 @@ void SatDraw(char plr)
         fseek(fin, (sizeof P)*loc[i] + 768, SEEK_SET);
         fread(&P, sizeof P, 1, fin);
         SwapPatchHdrSmall(&P);
-        gxCreateVirtual(&local, P.w, P.h);
+        display::Surface local(P.w, P.h);
         fseek(fin, P.offset, SEEK_SET);
         fread(buffer, P.size, 1, fin);
-        RLED_img(buffer, (char *)local.vptr, P.size, local.w, local.h);
+        RLED_img(buffer, local.pixels(), P.size, local.width(), local.height());
 
         if (i != 2) {
-            gxPutImage(&local, gxSET, 5 + i * 80, 28, 0);
+            local.copyTo(display::graphics.screen(), 5 + i * 80, 28);
         } else {
-            gxVirtualDisplay(&local, 0, 0, 5 + i * 80, 28, 75 + i * 80, 55, 0);
+            local.copyTo(display::graphics.screen(), 0, 0, 5 + i * 80, 28, 75 + i * 80, 55);
         }
-
-        gxDestroyVirtual(&local);
     }
 
     fclose(fin);
@@ -578,7 +572,6 @@ void PlanText(char plr, char plan)
 
 void LMPict(char poff)
 {
-    GXHEADER local, local2;
     SimpleHdr table;
     FILE *in;
     in = sOpen("LMER.BUT", "rb", 0);
@@ -587,25 +580,23 @@ void LMPict(char poff)
     fread(&display::graphics.palette()[32 * 3], 672, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    gxCreateVirtual(&local, 156, 89);
-    gxCreateVirtual(&local2, 156, 89);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
+
+    display::Surface local(156, 89);
+    display::Surface local2(156, 89);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    RLED_img(buffer, (char *)local2.vptr, table.size, local2.w, local2.h);
+    RLED_img(buffer, local2.pixels(), table.size, local2.width(), local2.height());
 
     if (poff == 0 || poff == 1 || poff == 4 || poff == 5) {
-        gxPutImage(&local2, gxSET, 5, 27, 0);
+        local2.copyTo(display::graphics.screen(), 5, 27);
     } else {
-        gxPutImage(&local2, gxSET, 160, 27, 0);
+        local2.copyTo(display::graphics.screen(), 160, 27);
     }
 
     fclose(in);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
 }
 
 void LMBld(char plr)

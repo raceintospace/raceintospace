@@ -32,7 +32,6 @@
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
-#include "gx.h"
 #include "pace.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
@@ -60,7 +59,6 @@ void FltsTxt(char nw, char col);
 
 void AstLevel(char plr, char prog, char crew, char ast)
 {
-    GXHEADER local;
     int i, k, man, over = 0, temp, val;
     char Compat[5], cnt;
     i = man = Guy(plr, prog, crew, ast);
@@ -153,22 +151,14 @@ void AstLevel(char plr, char prog, char crew, char ast)
         break;
     }
 
-    gxCreateVirtual(&local, 143, 74);
-
-    gxGetImage(&local, 94, 38, 236, 111, 0);
-
+    display::Surface local(143, 74);
+    local.copyFrom(display::graphics.screen(), 94, 38, 236, 111);
     ShBox(94, 38, 236, 95);
-
     InBox(98, 41, 232, 61);
-
     RectFill(99, 42, 231, 60, 7 + plr * 3);
-
     display::graphics.setForegroundColor(12);
-
     PrintAt(115, 48, "COMPATIBILITY");
-
     over = 0;
-
     val = 0;
 
     for (i = 0; i < Data->P[plr].CrewCount[prog][crew]; i++) {
@@ -256,9 +246,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
             GetMouse();
         }
 
-    gxPutImage(&local, gxSET, 94, 38, 0);
-    gxDestroyVirtual(&local);
-    return;
+    local.copyTo(display::graphics.screen(), 94, 38);
 }
 
 
@@ -266,11 +254,10 @@ void PlaceEquip(char plr, char prog)
 {
     int i;
     FILE *fin;
-    GXHEADER local, local2;
     SimpleHdr table;
 
-    gxCreateVirtual(&local, 80, 50);
-    gxCreateVirtual(&local2, 80, 50);
+    display::Surface local(80, 50);
+    display::Surface local2(80, 50);
     fin = sOpen("APROG.BUT", "rb", 0);
     fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, fin);
@@ -280,19 +267,16 @@ void PlaceEquip(char plr, char prog)
     fseek(fin, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, fin);
     fclose(fin);
-    RLED_img(buffer, (char *)local.vptr, table.size, local.w, local.h);
-    gxGetImage(&local2, 61, 28, 140, 77, 0);
+    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
+    local2.copyFrom(display::graphics.screen(), 61, 28, 140, 77);
 
     for (i = 0; i < 4000; i++) {
-        if (local.vptr[i] != 0) {
-            local2.vptr[i] = local.vptr[i];
+        if (local.pixels()[i] != 0) {
+            local2.pixels()[i] = local.pixels()[i];
         }
     }
 
-    gxPutImage(&local, gxSET, 61, 28, 0);
-    gxDestroyVirtual(&local);
-    gxDestroyVirtual(&local2);
-    return;
+    local.copyTo(display::graphics.screen(), 61, 28);
 }
 
 void DrawProgs(char plr, char prog)
