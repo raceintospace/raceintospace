@@ -3,7 +3,7 @@ before_script:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libsdl-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev
 script:
-  - mkdir build && cd build && cmake .. && make
+  - mkdir build && cd build && cmake .. && make && make test
 compiler:
   - clang
   - gcc

@@ -72,6 +72,15 @@ set(game_libraries
   jsoncpp physfs ${zlib_LIBRARY}
   )
 
+# Define one big test suite
+file(GLOB test_sources ../../test/game/*.cpp)
+add_executable(game_test ../../test/test_main.cpp ${test_sources})
+target_link_libraries(game_test ${game_libraries})
+add_test(
+  NAME game_test
+  COMMAND game_test --catch_system_error=yes
+  )
+
 # Defer to the platform-specific CMakeLists for building the actual game target
 if (APPLE)
   include(platform_macosx/platform.cmake)
