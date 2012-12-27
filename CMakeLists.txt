@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 project(raceintospace)
 
+enable_testing()
+
 set (raceintospace_VERSION_MAJOR 1)
 set (raceintospace_VERSION_MINOR 1)
 set (raceintospace_VERSION_RELEASE 0)
