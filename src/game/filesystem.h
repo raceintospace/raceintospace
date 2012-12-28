@@ -28,7 +28,7 @@ public:
     static boost::shared_ptr<File> openWrite(const std::string &filename);
 
     static void readToBuffer(const std::string &filename, void *buffer, uint32_t length, uint32_t offset = 0);
-    static boost::shared_ptr<display::PNGImage> readImage(const std::string &filename);
+    static boost::shared_ptr<display::Image> readImage(const std::string &filename);
     static void addPath(const char *s);
 };
 

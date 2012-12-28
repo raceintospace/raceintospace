@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#include "display/png_image.h"
+#include "display/image.h"
 
 #include "raceintospace_config.h"
 #include "filesystem.h"
@@ -169,7 +169,7 @@ void Filesystem::readToBuffer(const std::string &filename, void *buffer, uint32_
     }
 }
 
-boost::shared_ptr<display::PNGImage> Filesystem::readImage(const std::string &filename)
+boost::shared_ptr<display::Image> Filesystem::readImage(const std::string &filename)
 {
     // open the file
     boost::shared_ptr<File> file_ptr(open(filename));
@@ -188,7 +188,7 @@ boost::shared_ptr<display::PNGImage> Filesystem::readImage(const std::string &fi
     }
 
     // construct a PNGImage from this buffer
-    boost::shared_ptr<display::PNGImage> png_image(new display::PNGImage(buffer, length));
+    boost::shared_ptr<display::Image> png_image(new display::Image(buffer, length));
 
     delete[] buffer;
 
