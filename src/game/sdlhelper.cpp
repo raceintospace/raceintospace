@@ -69,7 +69,8 @@ static struct {
 /** Indicates that screen redraw is required. */
 int screen_dirty;
 
-static int have_audio;
+/** Assume we have audio until we try to initialize and find that we can't */
+static int have_audio = 1;
 
 static int do_fading;
 
