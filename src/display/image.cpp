@@ -91,7 +91,6 @@ void Image::read_png()
             }
 
             _palette.set(i, c);
-            _palette.set(i, c.r, c.g, c.b);
         }
     }
     break;

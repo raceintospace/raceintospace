@@ -316,8 +316,6 @@ void Surface::draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned 
     dest.w = srcW;
     dest.h = srcH;
 
-    //TODO: Once we get all blits respecting the palette, we can re-enable this
-    //SDL_SetPalette( _screen, SDL_LOGPAL|SDL_PHYSPAL, const_cast<SDL_Color *>(image->palette().sdlPalette()), 0, 256);
     SDL_BlitSurface(image->surface(), &src, _screen, &dest);
 }
 

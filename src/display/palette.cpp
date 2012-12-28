@@ -23,7 +23,6 @@ Palette::Palette()
 Palette::Palette(const Palette &copy)
 {
     memcpy(colors, copy.colors, sizeof(colors));
-	memcpy(sdlColors, copy.sdlColors, sizeof(sdlColors));
 }
 
 Palette::~Palette()
@@ -35,16 +34,36 @@ void Palette::set(uint8_t index, const Color &color)
     colors[index] = color;
 }
 
-void Palette::set(uint8_t index, char r, char g, char b)
-{
-    sdlColors[index].r = r;
-    sdlColors[index].g = g;
-    sdlColors[index].b = b;
-}
-
 const Color Palette::get(uint8_t index) const
 {
     return colors[index];
+}
+
+
+SDLPalette::SDLPalette()
+{
+    memset(sdl_colors, 0, sizeof(sdl_colors));
+}
+
+SDLPalette::~SDLPalette()
+{
+}
+
+void SDLPalette::set(uint8_t index, const Color &color)
+{
+    sdl_colors[index].r = color.r;
+    sdl_colors[index].g = color.g;
+    sdl_colors[index].b = color.b;
+}
+
+const Color SDLPalette::get(uint8_t index) const
+{
+    // copy the top two bits to the lowest two, so 0 = 0 and 63 = 255
+    return Color(
+               sdl_colors[index].r,
+               sdl_colors[index].g,
+               sdl_colors[index].b
+           );
 }
 
 

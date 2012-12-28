@@ -36,16 +36,24 @@ public:
     virtual ~Palette();
 
     virtual void set(uint8_t index, const Color &color);
-    virtual void set(uint8_t index, char r, char g, char b);
     virtual const Color get(uint8_t index) const;
-
-    const SDL_Color *sdlPalette() const {
-        return &(sdlColors[0]);
-    }
 
 protected:
     Color colors[256];
-    SDL_Color sdlColors[256];
+};
+
+// Presents a PaletteInterface for an SDL_Color[256] array
+// SDL_Color does not support alpha, so all Colors are forced to opaque
+class SDLPalette : public PaletteInterface
+{
+public:
+    SDLPalette();
+    virtual ~SDLPalette();
+
+    virtual void set(uint8_t index, const Color &color);
+    virtual const Color get(uint8_t index) const;
+
+    SDL_Color sdl_colors[256];
 };
 
 // Presents a PaletteInterface for the "pal" 768-byte { r, g, b } array, where r/g/b
