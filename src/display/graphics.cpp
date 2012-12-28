@@ -39,13 +39,6 @@ void Graphics::create(const std::string &title, bool fullscreen)
         throw std::runtime_error(SDL_GetError());
     }
 
-
-    //TODO: Move this to a separate audio object
-    if (!SDL_getenv("SDL_AUDIODRIVER")) {
-//        INFO1("fixing WIN32 audio driver setup");
-        SDL_putenv("SDL_AUDIODRIVER=waveout");
-    }
-
     if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
         throw std::runtime_error(SDL_GetError());
     }
