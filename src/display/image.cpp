@@ -1,3 +1,8 @@
+#include "image.h"
+
+#include "graphics.h"
+#include "surface.h"
+
 #include <png.h>
 #include <zlib.h>
 #include <assert.h>
@@ -6,12 +11,11 @@
 #include <string>
 #include <stdexcept>
 
-#include "png_image.h"
-#include "graphics.h"
-#include "surface.h"
-
 namespace display
 {
+
+namespace
+{  // anonymous namespace eliminates the possibility of symbol collision
 
 // libpng helpers for use within this module
 struct read_png_from_memory_t {
@@ -38,24 +42,28 @@ void throw_exception_on_png_error(png_structp png_ptr, png_const_charp error_msg
     throw std::runtime_error(error_msg);
 }
 
+} // namespace anonymous
 
-// PNGImage implementation
 
-void PNGImage::init_png()
+//--------------------------------------------------------------------------------------------------------
+// Image implementation
+
+void Image::init_png()
 {
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
     info_ptr = png_create_info_struct((png_structp)png_ptr);
 }
 
-void PNGImage::read_png()
+void Image::read_png()
 {
     png_read_png((png_structp)png_ptr, (png_infop)info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
 
-    width = png_get_image_width((png_structp)png_ptr, (png_infop)info_ptr);
-    height = png_get_image_height((png_structp)png_ptr, (png_infop)info_ptr);
+    _width = png_get_image_width((png_structp)png_ptr, (png_infop)info_ptr);
+    _height = png_get_image_height((png_structp)png_ptr, (png_infop)info_ptr);
 
     switch (png_get_color_type((png_structp)png_ptr, (png_infop)info_ptr)) {
     case PNG_COLOR_TYPE_PALETTE: {
+		_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
         // read the palette into a local
         png_color *png_palette;
         int num_palette;
@@ -81,7 +89,8 @@ void PNGImage::read_png()
                 c.a = (i < num_trans) ? trans[i] : 255;
             }
 
-            palette.set(i, c);
+            _palette.set(i, c);
+			_palette.set(i, c.r, c.g, c.b);
         }
     }
     break;
@@ -94,27 +103,28 @@ void PNGImage::read_png()
     {
         png_bytep *row_pointers;
         row_pointers = png_get_rows((png_structp)png_ptr, (png_infop)info_ptr);
-        pixel_data = new uint8_t[width * height];
 
         // this assumes 8-bit images
-        for (int i = 0; i < height; i ++) {
-            memcpy(&pixel_data[width * i], row_pointers[i], width);
+        for (unsigned int i = 0; i < _height; i ++) {
+            memcpy(&((char *)_surface->pixels)[_width * i], row_pointers[i], _width);
         }
     }
 
     destroy_png();
 }
 
-void PNGImage::destroy_png()
+void Image::destroy_png()
 {
     png_destroy_read_struct((png_structpp)(&png_ptr), (png_infopp)(&info_ptr), NULL);
 }
 
-PNGImage::PNGImage(const char *filename)
-    : pixel_data(NULL)
+Image::Image(const std::string &filename): 
+	_width(0),
+	_height(0),
+	_surface(NULL)
 {
     FILE *fp;
-    fp = fopen(filename, "rb");
+    fp = fopen(filename.c_str(), "rb");
 
     if (!fp) {
         throw std::runtime_error("unable to open file");
@@ -125,7 +135,7 @@ PNGImage::PNGImage(const char *filename)
         png_init_io((png_structp)png_ptr, fp);
         read_png();
         fclose(fp);
-    } catch (std::runtime_error &e) {
+    } catch (...) {
         destroy_png();
         fclose(fp);
         throw;
@@ -134,8 +144,10 @@ PNGImage::PNGImage(const char *filename)
     fclose(fp);
 }
 
-PNGImage::PNGImage(FILE *fp)
-    : pixel_data(NULL)
+Image::Image(FILE *fp): 
+	_width(0),
+	_height(0),
+	_surface(NULL)
 {
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
 
@@ -143,14 +155,16 @@ PNGImage::PNGImage(FILE *fp)
         init_png();
         png_init_io((png_structp)png_ptr, fp);
         read_png();
-    } catch (std::runtime_error &e) {
+    } catch (...) {
         destroy_png();
         throw;
     }
 }
 
-PNGImage::PNGImage(const void *buffer, size_t length)
-    : pixel_data(NULL)
+Image::Image(const void *buffer, size_t length):
+	_width(0),
+	_height(0),
+	_surface(NULL)
 {
     read_png_from_memory_t descriptor;
     descriptor.buffer = (const char *) buffer;
@@ -161,68 +175,42 @@ PNGImage::PNGImage(const void *buffer, size_t length)
         init_png();
         png_set_read_fn((png_structp)png_ptr, &descriptor, read_png_from_memory);
         read_png();
-    } catch (std::runtime_error &e) {
+    } catch (...) {
         destroy_png();
         throw;
     }
 }
 
-PNGImage::PNGImage(const PNGImage &copy)
-    : width(copy.width), height(copy.height), palette(copy.palette)
+Image::Image(const Image &source): 
+	_width(source._width), 
+	_height(source._height), 
+	_palette(source._palette)
 {
-    pixel_data = new uint8_t[width * height];
-    memcpy(pixel_data, copy.pixel_data, width * height);
+	_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
 }
 
-PNGImage::~PNGImage()
+Image::~Image()
 {
-    if (pixel_data) {
-        delete[] pixel_data;
-    }
-}
-
-void PNGImage::draw(int x, int y)
-{
-    int width_to_copy;
-    int height_to_copy;
-
-    assert(x >= 0);
-    assert(y >= 0);
-    assert(x < 320);
-    assert(y < 200);
-
-    width_to_copy = 320 - x;
-
-    if (width_to_copy > width) {
-        width_to_copy = width;
-    }
-
-    height_to_copy = 200 - y;
-
-    if (height_to_copy > height) {
-        height_to_copy = height;
-    }
-
-    for (int i = 0; i < height_to_copy; i++) {
-        // this assumes an 8-bit screen buffer and 8-bit pixel_data, both with no padding
-        memcpy(&graphics.screen()->pixels()[320 * (y + i) + x], &pixel_data[width * i], width_to_copy);
-    }
+	if (_surface) {
+		SDL_FreeSurface(_surface);
+		_surface = NULL;
+	}
 }
 
 #define formatted_libpng_version(version) ((boost::format("%1%.%2%.%3%") % (version / 10000) % ((version / 100) % 100) % (version % 100)).str())
 
-std::string PNGImage::libpng_runtime_version()
+std::string Image::libpng_runtime_version()
 {
     png_uint_32 version = png_access_version_number();
     return formatted_libpng_version(version);
 }
 
-std::string PNGImage::libpng_headers_version()
+std::string Image::libpng_headers_version()
 {
     return formatted_libpng_version(PNG_LIBPNG_VER);
 }
 
-bool PNGImage::libpng_versions_match()
+bool Image::libpng_versions_match()
 {
 #if PNG_LIBPNG_VER > 10000
     // xx.yy.zz = xxyyzz
@@ -234,4 +222,4 @@ bool PNGImage::libpng_versions_match()
 #endif
 }
 
-};
+} // namespace display

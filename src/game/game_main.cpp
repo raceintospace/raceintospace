@@ -32,7 +32,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/png_image.h"
+#include "display/image.h"
 
 #include "filesystem.h"
 #include "Buzz_inc.h"
@@ -172,11 +172,11 @@ int game_main_impl(int argc, char *argv[])
     // initialize the filesystem
     Filesystem::init(argv[0]);
 
-    if (!display::PNGImage::libpng_versions_match()) {
+    if (!display::Image::libpng_versions_match()) {
         std::stringstream message;
         message
-                << "This build was compiled against libpng " << display::PNGImage::libpng_headers_version()
-                << ", but is running with libpng " << display::PNGImage::libpng_runtime_version() << ".";
+                << "This build was compiled against libpng " << display::Image::libpng_headers_version()
+                << ", but is running with libpng " << display::Image::libpng_runtime_version() << ".";
         crash("libpng mismatch", message.str());
     }
 

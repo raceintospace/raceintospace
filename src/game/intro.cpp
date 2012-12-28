@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-#include "display/png_image.h"
+#include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
 
@@ -125,7 +125,7 @@ void Credits(void)
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
 
-    boost::shared_ptr<display::PNGImage> image(Filesystem::readImage("images/first.img.3.png"));
+    boost::shared_ptr<display::Image> image(Filesystem::readImage("images/first.img.3.png"));
 
     image->export_to_legacy_palette();
 
@@ -136,7 +136,7 @@ void Credits(void)
         }
 
         image->export_to_legacy_palette();
-        image->draw();
+		display::graphics.screen()->draw(image.get(), 0, 0);
 
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
@@ -185,10 +185,10 @@ void Introd(void)
         char filename[64];
         snprintf(filename, sizeof(filename), "images/first.img.%i.png", k);
 
-        boost::shared_ptr<display::PNGImage> image(Filesystem::readImage(filename));
+        boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
 
         image->export_to_legacy_palette();
-        image->draw();
+		display::graphics.screen()->draw(image.get(), 0, 0);
 
         FadeIn(2, display::graphics.palette(), 30, 0, 0);
 

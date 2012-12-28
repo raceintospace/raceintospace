@@ -23,6 +23,7 @@ Palette::Palette()
 Palette::Palette(const Palette &copy)
 {
     memcpy(colors, copy.colors, sizeof(colors));
+	memcpy(sdlColors, copy.sdlColors, sizeof(sdlColors));
 }
 
 Palette::~Palette()
@@ -32,6 +33,13 @@ Palette::~Palette()
 void Palette::set(uint8_t index, const Color &color)
 {
     colors[index] = color;
+}
+
+void Palette::set(uint8_t index, char r, char g, char b)
+{
+	sdlColors[index].r = r;
+	sdlColors[index].g = g;
+	sdlColors[index].b = b;
 }
 
 const Color Palette::get(uint8_t index) const
