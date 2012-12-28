@@ -142,6 +142,23 @@ void Surface::copyFrom(Surface *surface, unsigned int x1, unsigned int y1, unsig
 {
     _dirty = true;
 
+	/*
+	SDL_Rect src;
+	SDL_Rect dst;
+
+	src.x = x1;
+	src.y = y1;
+	src.w = (x2 - x1) + 1;
+	src.h = (y2 - y1) + 1;
+
+	dst.x = 0;
+	dst.y = 0;
+	dst.w = src.w;
+	dst.h = src.h;
+	SDL_BlitSurface( surface->_screen, &src, _screen, &dst );
+	*/
+
+	
     int w, h, from_idx, to_idx, row;
 
     assert(surface);
@@ -163,9 +180,10 @@ void Surface::copyFrom(Surface *surface, unsigned int x1, unsigned int y1, unsig
         to_idx = row * _width;
 
         void *dst = (void *)((char *)_screen->pixels + to_idx);
-        void *src = (void *)(surface->pixels() + from_idx);
+        void *src = (void *)((char *)surface->_screen->pixels + from_idx);
         memcpy(dst, src, w);
     }
+	
 }
 
 void Surface::copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::Operation operation)
@@ -189,7 +207,7 @@ void Surface::copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::
             from_idx = row * _width;
             to_idx = (y + row) * surface->width() + x;
 
-            void *dst = (void *)(surface->pixels() + to_idx);
+            void *dst = (void *)((char *)surface->_screen->pixels + to_idx);
             void *src = (void *)(((char *)_screen->pixels) + from_idx);
             memcpy(dst, src, clip_x);
         }
@@ -202,7 +220,7 @@ void Surface::copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::
             to_idx = (y + row) * surface->width() + x;
 
             for (col = 0; col < clip_x; col++) {
-                char *dst = surface->pixels() + (to_idx + col);
+                char *dst = (char *)surface->_screen->pixels + (to_idx + col);
                 char *src = ((char *)_screen->pixels) + (from_idx + col);
                 *dst ^= *src;
             }
@@ -238,7 +256,7 @@ void Surface::copyTo(Surface *surface, unsigned int srcX, unsigned int srcY, uns
         from_idx = (srcY + row) * _width + srcX;
         to_idx = (destY1 + row) * surface->width() + destX1;
 
-        void *dst = surface->pixels() + to_idx;
+        void *dst = (char *)surface->_screen->pixels + to_idx;
         void *src = ((char *)_screen->pixels) + from_idx;
         memcpy(dst, src, clip_x);
     }
@@ -258,8 +276,8 @@ void Surface::scaleTo(Surface *surface)
             src_idx  = src_row  * _width  + src_col;
             dest_idx = dest_row * surface->width() + dest_col;
 
-            char *dst = surface->pixels() + dest_idx;
-            char *src = pixels() + src_idx;
+            char *dst = (char *)surface->_screen->pixels + dest_idx;
+            char *src = (char *)_screen->pixels + src_idx;
             *dst = *src;
         }
     }
@@ -291,7 +309,7 @@ void Surface::copyFrom(Surface *surface, unsigned int srcX1, unsigned int srcY1,
         to_idx = (dstY + row) * _width + dstX;
 
         void *dst = (void *)(((char *)_screen->pixels) + to_idx);
-        void *src = (void *)(surface->pixels() + from_idx);
+        void *src = (void *)((char *)surface->_screen->pixels + from_idx);
         memcpy(dst, src, width);
     }
 }
@@ -318,5 +336,65 @@ void Surface::draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned 
 
     SDL_BlitSurface(image->surface(), &src, _screen, &dest);
 }
+
+void Surface::maskCopy(Surface *source, char maskValue, Surface::MaskSource maskSource, char offset)
+{
+	assert( source->width() == _width);
+	assert( source->height() == _height);
+
+	unsigned int size = (_width * _height);
+	for (unsigned int i = 0; i < size; i++) {
+		char * src = (char *)source->_screen->pixels + i;
+		char * dst = (char *)_screen->pixels + i;
+		
+		switch (maskSource) {
+		case Surface::SourceEqual:
+			if (*src == maskValue) {
+				*dst = (*src) + offset;
+			}
+			break;
+		case Surface::SourceNotEqual:
+			if (*src != maskValue) {
+				*dst = (*src) + offset;
+			}
+			break;
+		case Surface::DestinationEqual:
+			if (*dst == maskValue) {
+				*dst = (*src) + offset;
+			}
+			break;
+		case Surface::DestinationNotEqual:
+			if (*dst != maskValue) {
+				*dst = (*src) + offset;
+			}
+			break;
+		}
+	}
+}
+
+void Surface::filter(char testValue, char offset, Surface::FilterTest filterTest)
+{
+	unsigned int size = (_width * _height);
+	for (unsigned int i = 0; i < size; i++) {
+		char * src = (char *)_screen->pixels + i;
+
+		switch (filterTest) {
+		case Surface::Equal:
+			if (*src == testValue) {
+				*src += offset;
+			}
+			break;
+		case Surface::NotEqual:
+			if (*src != testValue) {
+				*src += offset;
+			}
+			break;
+		case Surface::Any:
+			*src += offset;
+			break;
+		}
+	}
+}
+
 
 } // namespace display

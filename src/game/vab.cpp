@@ -555,7 +555,7 @@ void DispVA(char plr, char f)
 {
     int i, TotY, IncY;
     int w, h, x1, y1, x2, y2, w2, h2, cx, off = 0;
-    char *spix, *dpix, wh;
+    char wh;
 
     cx = 0; /**< number of pictures */
 
@@ -606,17 +606,7 @@ void DispVA(char plr, char f)
 
     local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
-    /* local <- local with background from local2 */
-    for (i = 0; i < (w * h); i++) {
-        if (local.pixels()[i] == 0x00) {
-            *(local.pixels() + i) = local2.pixels()[i];
-        }
-    };
-
-    //for (i=0;i<gxVirtualSize(gxVGA_13,w,h);i++) {
-    //  if (*spix==0x00) *spix=0x03;
-    //  spix++;
-    //};
+	local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
 
     local2.clear(0);
 
@@ -653,19 +643,7 @@ void DispVA(char plr, char f)
         }
     }
 
-    spix = local.pixels();
-    dpix = local2.pixels();
-
-    for (i = 0; i < (w * h); i++) {
-        if (*dpix != 0x00) {
-            *spix = *dpix;
-        }
-
-        spix++;
-        dpix++;
-    };
-
-    //spotxx
+	local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
     cx = 0;
 
@@ -689,17 +667,7 @@ void DispVA(char plr, char f)
         cx = w / 2 - w2 / 2 - 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
-        spix = local.pixels();
-        dpix = local2.pixels();
-
-        for (i = 0; i < (w * h); i++) {
-            if (*dpix != 0x00) {
-                *spix = *dpix;
-            }
-
-            spix++;
-            dpix++;
-        };
+		local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
         x1 = MI[plr * 28 + 27].x1;
 
@@ -713,18 +681,7 @@ void DispVA(char plr, char f)
 
         local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
 
-        spix = local.pixels();
-
-        dpix = local2.pixels();
-
-        for (i = 0; i < (w * h); i++) {
-            if (*dpix != 0x00) {
-                *spix = *dpix;
-            }
-
-            spix++;
-            dpix++;
-        };
+		local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
     } else {
         x1 = MI[plr * 28 + 26].x1;
         y1 = MI[plr * 28 + 26].y1;
@@ -732,17 +689,8 @@ void DispVA(char plr, char f)
         y2 = MI[plr * 28 + 26].y2;
         h2 = y2 - y1 + 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
-        spix = local.pixels();
-        dpix = local2.pixels();
 
-        for (i = 0; i < (w * h); i++) {
-            if (*dpix != 0x00) {
-                *spix = *dpix;
-            }
-
-            spix++;
-            dpix++;
-        };
+		local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
     }
 
     local.copyTo(display::graphics.screen(), 210 - w / 2, 103 - h / 2);
@@ -750,8 +698,12 @@ void DispVA(char plr, char f)
 
 void DispRck(char plr, char wh)
 {
-    int i;
-    int w, h, x1, y1, x2, y2;
+    int w;
+	int h;
+	int x1;
+	int y1;
+	int x2;
+	int y2;
 
     x1 = MI[plr * 28 + wh].x1;
     y1 = MI[plr * 28 + wh].y1;
@@ -767,11 +719,7 @@ void DispRck(char plr, char wh)
     RectFill(247, 29, 313, 179, 3);
     local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
-    for (i = 0; i < (w * h); i++) {
-        if (local.pixels()[i] == 0x00) {
-            *(local.pixels() + i) = local2.pixels()[i];
-        }
-    };
+	local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
 
     local.copyTo(display::graphics.screen(), 282 - w / 2, 103 - h / 2);
 }

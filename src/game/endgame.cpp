@@ -1148,7 +1148,6 @@ LoserPict(char poff, unsigned char coff)
 {
     /* This hasn't got an off-by-one...*/
     PatchHdr P;
-    unsigned int j;
     FILE *in;
 
     in = sOpen("LOSER.BUT", "rb", 0);
@@ -1163,10 +1162,7 @@ LoserPict(char poff, unsigned char coff)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    for (j = 0; j < P.size; j++)
-        if (local.pixels()[j] != 0) {
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
+	local2.maskCopy(&local, 0, display::Surface::SourceNotEqual, coff);
 
     local2.copyTo(display::graphics.screen(), 6, 32);
 }
