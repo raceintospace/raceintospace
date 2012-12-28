@@ -84,9 +84,7 @@ void Moon(char plr)
     fclose(in);
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
-    for (size = 0; size < (104 * 82); size++) {
-        local.pixels()[size] += 128;
-    }
+    local.filter(0, 128, display::Surface::Any);
 
     local.copyTo(display::graphics.screen(), 114, 43);
     InBox(113, 42, 218, 125);

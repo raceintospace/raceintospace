@@ -252,7 +252,6 @@ void AstLevel(char plr, char prog, char crew, char ast)
 
 void PlaceEquip(char plr, char prog)
 {
-    int i;
     FILE *fin;
     SimpleHdr table;
 
@@ -270,11 +269,7 @@ void PlaceEquip(char plr, char prog)
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
     local2.copyFrom(display::graphics.screen(), 61, 28, 140, 77);
 
-    for (i = 0; i < 4000; i++) {
-        if (local.pixels()[i] != 0) {
-            local2.pixels()[i] = local.pixels()[i];
-        }
-    }
+    local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
 
     local.copyTo(display::graphics.screen(), 61, 28);
 }

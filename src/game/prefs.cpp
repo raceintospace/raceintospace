@@ -167,7 +167,6 @@ void DrawPrefs(int where, char a1, char a2)
 
 void HModel(char mode, char tx)
 {
-    unsigned int j, n;
     SimpleHdr table;
 
     FILE *in;
@@ -182,11 +181,8 @@ void HModel(char mode, char tx)
     fclose(in);
 
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-    n = 127 * 80; //gxVirtualSize(gxVGA_13, 127, 80);
 
-    for (j = 0; j < n; j++) {
-        local.pixels()[j] += 112;
-    }
+    local.filter(0, 112, display::Surface::Any);
 
     RectFill(96, 114, 223, 194, 0);
 

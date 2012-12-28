@@ -236,7 +236,6 @@ AstFaces(char plr, int x, int y, char face)
 {
     int32_t offset;
     int fx, fy;
-    unsigned int j;
     int face_offset = 0;
     FILE *fin;
 
@@ -263,7 +262,7 @@ AstFaces(char plr, int x, int y, char face)
     display::Surface local3(80, 50);
     fread(local2.pixels(), 80 * 50, 1, fin);
     fclose(fin);
-    memset(local3.pixels(), 0x00, 80 * 50);
+    local3.clear(0);
 
     if (plr == 0)   {
         fx = 32;
@@ -275,25 +274,13 @@ AstFaces(char plr, int x, int y, char face)
 
     local3.copyFrom(&local, 0, 0, local.width() - 1, local.height() - 1, fx, fy);
 
-    //TODO: Bad copy?  Replace with filter copy?
-    for (j = 0; j < 80 * 50; j++)
-        if (local2.pixels()[j] == 0) {
-            local2.pixels()[j] = local3.pixels()[j];
-        }
+    local2.maskCopy(&local3, 0, display::Surface::DestinationEqual);
 
     local3.copyFrom(display::graphics.screen(), x, y, x + 79, y + 49);
 
-    //TODO: Bad copy?  Replace with filter copy?
-    for (j = 0; j < 80 * 50; j++)
-        if (local2.pixels()[j] != 0) {
-            local3.pixels()[j] = local2.pixels()[j];
-        }
+    local3.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
-    //TODO: Bad copy?  Replace with filter copy?
-    for (j = 0; j < 80 * 50; j++)
-        if (local3.pixels()[j] != (7 + plr * 3)) {
-            local3.pixels()[j] -= 160;
-        }
+    local3.filter((7 + plr * 3), -160, display::Surface::NotEqual);
 
     local3.copyTo(display::graphics.screen(), x, y);
 }
@@ -366,7 +353,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
     SimpleHdr table;
     char ch;
     int32_t size;
-    unsigned int j, n;
+    unsigned int n;
     FILE *in, *fin;
     struct TM {
         char ID[4];
@@ -387,13 +374,13 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fclose(in);
         RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
 
-        n = 104 * 77; // gxVirtualSize(gxVGA_13, 104, 77);
 
-        for (j = 0; j < n; j++) {
-            local.pixels()[j] += coff;
-        }
-
+        local.filter(0, coff, display::Surface::Any);
+        //TODO: Determine why the last pixel needed to be 0?
+        /*
+        n = 104 * 77;
         local.pixels()[n - 1] = 0;
+        */
 
         local.copyTo(display::graphics.screen(), x, y);
     } else {
@@ -452,14 +439,10 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         RLED_img(vhptr->pixels(), local.pixels(), BHead.fSize, local.width(), local.height());
         n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
-        //TODO: Bad copy?  Replace with filter copy?
-        for (j = 0; j < n; j++) {
-            if (local.pixels()[j] != 0) {
-                local.pixels()[j] -= (128 - coff);
-            }
-        }
+        local.filter(0, -(128 - coff), display::Surface::NotEqual);
 
-        local.pixels()[0] = 0x00;
+        //TODO: Determine why the first pixel needed to be zero?
+        //local.pixels()[0] = 0x00;
 
         local.copyTo(display::graphics.screen(), 0, 0, x + 1, y, x + 102, y + 76);
         fclose(fin);

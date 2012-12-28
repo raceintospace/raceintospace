@@ -1181,7 +1181,6 @@ void HarIntel(char p, char acc)
 
 void TopSecret(char plr, char poff)
 {
-    unsigned int j;
     SimpleHdr table;
     FILE *in;
 
@@ -1207,10 +1206,7 @@ void TopSecret(char plr, char poff)
         fread(buffer, table.size, 1, in);
         RLED_img(buffer, local2.pixels(), table.size, local.width(), local.height());
 
-        for (j = 0; j < 15700; j++)
-            if (local2.pixels()[j] != 0) {
-                local.pixels()[j] = local2.pixels()[j];
-            }
+        local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
     }
 
     local.copyTo(display::graphics.screen(), 153, 32);
@@ -1736,8 +1732,8 @@ void IStat(char plr)
 
 void DispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
-    int i, w, h;
-    char *src, *dest;
+    int w;
+    int h;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
@@ -1747,17 +1743,8 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
     local2.clear(0);
     local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
-    src = local.pixels();
-    dest = local2.pixels();
 
-    for (i = 0; i < w * h; i++) {
-        if (*src) {
-            *dest = *src;
-        }
-
-        dest++;
-        src++;
-    }
+    local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
 
     local2.copyTo(display::graphics.screen(), s, t);
 }

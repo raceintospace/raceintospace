@@ -481,7 +481,6 @@ need_to_fix_width(int32_t table)
 void PortPlace(FILE *fin, int32_t table)
 {
     IMG Img;
-    int ctr;
 
     fseek(fin, table, SEEK_SET);
     fread(&Img, sizeof Img, 1, fin);
@@ -500,10 +499,7 @@ void PortPlace(FILE *fin, int32_t table)
     fread(vhptr->pixels(), Img.Size, 1, fin);
     RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
 
-    for (ctr = 0; ctr < (Img.Width * Img.Height); ctr++)
-        if (local2.pixels()[ctr] != 0x00) {
-            local.pixels()[ctr] = local2.pixels()[ctr];
-        }
+    local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
     local.copyTo(display::graphics.screen(), Img.PlaceX, Img.PlaceY);
 }
@@ -684,11 +680,7 @@ void DrawSpaceport(char plr)
         local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
     }
 
-    //TODO: Bad copy?  Replace with filter copy?
-    for (i = 0; i < (22 * 22); i++)
-        if (local2.pixels()[i] == 0) {
-            local2.pixels()[i] = local.pixels()[i];
-        }
+    local2.maskCopy(&local, 0, display::Surface::DestinationEqual);
 
     if (plr == 0) {
         local2.copyTo(display::graphics.screen(), 49, 121);
@@ -903,11 +895,7 @@ void GetMse(char plr, char fon)
                 local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
             }
 
-            //TODO: Bad copy?  Replace with filter copy?
-            for (int i = 0; i < (22 * 22); i++)
-                if (local2.pixels()[i] == 0) {
-                    local2.pixels()[i] = local.pixels()[i];
-                }
+            local2.maskCopy(&local, 0, display::Surface::DestinationEqual);
 
             if (plr == 0) {
                 local2.copyTo(display::graphics.screen(), 49, 121);
