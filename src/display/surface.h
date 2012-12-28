@@ -6,6 +6,8 @@
 namespace display
 {
 
+class Image;
+
 class Surface
 {
 public:
@@ -19,18 +21,20 @@ public:
 
     SDL_Surface *surface() const;
     char *pixels() const;
-    void clear(int colour);
-    void fillRect(int x1, int y1, int x2, int y2, char color);
+    void clear(char colour);
+    void fillRect(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
     void fillRect(const SDL_Rect &area, char color);
-    void setPixel(int x, int y, char color);
-    char getPixel(int x, int y);
-    void outlineRect(int x1, int y1, int x2, int y2, char color);
-    void line(int x1, int y1, int x2, int y2, char color);
-    void copyFrom(Surface *surface, int x1, int y1, int x2, int y2);
-    void copyFrom(Surface *surface, int srcX1, int srcY1, int srcX2, int srcY2, int dstX, int dstY);     // gxDisplayVirtual, gxVirtualVirtual
-    void copyTo(Surface *surface, int x, int y, Surface::Operation operation = Surface::Set);
-    void copyTo(Surface *surface, int srcX, int srcY, int destX1, int destY1, int destX2, int destY2);    // gxVirtualDisplay
+    void setPixel(unsigned int x, unsigned int y, char color);
+    char getPixel(unsigned int x, unsigned int y);
+    void outlineRect(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
+    void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
+    void copyFrom(Surface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
+    void copyFrom(Surface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY);
+    void copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::Operation operation = Surface::Set);
+    void copyTo(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int destX1, unsigned int destY1, unsigned int destX2, unsigned int destY2);
     void scaleTo(Surface *surface);
+    void draw(Image *image, unsigned int x, unsigned int y);
+    void draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
 
     unsigned int width() const {
         return _width;

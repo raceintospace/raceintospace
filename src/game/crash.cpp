@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include "display/png_image.h"
+#include "display/image.h"
 
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -77,11 +77,11 @@ void display_text_in_box(int x, int y, int width, int height, const std::string 
 void pretty_crash(const std::string &title, const std::string &message)
 {
     FILE *fp = sOpen("error.png", "rb", FT_IMAGE);
-    display::PNGImage image(fp);
+    display::Image image(fp);
     fclose(fp);
 
     image.export_to_legacy_palette();
-    image.draw();
+    display::graphics.screen()->draw(&image, 0, 0);
 
     display::graphics.setForegroundColor(8);
     display_text_in_box(190, 20, 120, 20, "MASTER ALARM!");
@@ -122,7 +122,7 @@ void ugly_crash(const std::string &title, const std::string &message)
 // Display a fatal error message and terminate when it's dismissed
 void crash(const std::string &title, const std::string &message)
 {
-    if (SDL_WasInit(SDL_INIT_VIDEO) && display::PNGImage::libpng_versions_match()) {
+    if (SDL_WasInit(SDL_INIT_VIDEO) && display::Image::libpng_versions_match()) {
         pretty_crash(title, message);
     } else {
         ugly_crash(title.c_str(), message.c_str());

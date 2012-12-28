@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-#include "display/png_image.h"
+#include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
 
@@ -67,11 +67,11 @@ int MainMenuChoice()
 
     {
         FILE *fp = sOpen("main_menu.png", "rb", FT_IMAGE);
-        display::PNGImage image(fp);
+        display::Image image(fp);
         fclose(fp);
 
         image.export_to_legacy_palette();
-        image.draw();
+        display::graphics.screen()->draw(&image, 0, 0);
     }
 
     for (int i = 0; i < menu_option_count; i++) {

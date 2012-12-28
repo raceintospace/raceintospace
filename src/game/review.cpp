@@ -360,7 +360,9 @@ void CalcPresRev(void)
 
 void DrawRevText(char plr, int val)
 {
-    int index = 0, length, line = 0;
+    int index = 0;
+    int length = 0;
+    int line = 0;
     FILE *fin;
     memset(buffer, 0x00, 10000);
     fin = sOpen("P_REV.DAT", "rb", 0);  // Read Mission Structure

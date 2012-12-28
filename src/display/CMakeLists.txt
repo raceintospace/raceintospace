@@ -6,7 +6,7 @@ add_library(
   raceintospace_display STATIC
   graphics.cpp
   palette.cpp
-  png_image.cpp
+  image.cpp
   surface.cpp
   )
 
