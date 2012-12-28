@@ -23,6 +23,7 @@ Palette::Palette()
 Palette::Palette(const Palette &copy)
 {
     memcpy(colors, copy.colors, sizeof(colors));
+	memcpy(sdlColors, copy.sdlColors, sizeof(sdlColors));
 }
 
 Palette::~Palette()

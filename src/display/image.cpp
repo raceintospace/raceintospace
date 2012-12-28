@@ -197,36 +197,6 @@ Image::~Image()
 	}
 }
 
-/*
-void Image::draw(int x, int y)
-{
-    int width_to_copy;
-    int height_to_copy;
-
-    assert(x >= 0);
-    assert(y >= 0);
-    assert(x < 320);
-    assert(y < 200);
-
-    width_to_copy = 320 - x;
-
-    if (width_to_copy > (int)_width) {
-        width_to_copy = (int)_width;
-    }
-
-    height_to_copy = 200 - y;
-
-    if (height_to_copy > (int)_height) {
-        height_to_copy = (int)_height;
-    }
-
-    for (int i = 0; i < height_to_copy; i++) {
-        // this assumes an 8-bit screen buffer and 8-bit pixel_data, both with no padding
-        memcpy(&graphics.screen()->pixels()[320 * (y + i) + x], &((char *)_surface->pixels)[_width * i], width_to_copy);
-    }
-}
-*/
-
 #define formatted_libpng_version(version) ((boost::format("%1%.%2%.%3%") % (version / 10000) % ((version / 100) % 100) % (version % 100)).str())
 
 std::string Image::libpng_runtime_version()
