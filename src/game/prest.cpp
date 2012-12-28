@@ -695,7 +695,6 @@ char SupGoal(char *PVal)
 int PrestNeg(char plr, int i)
 {
     int negs = 0;
-    char pd, qt;
 
     negs = Data->Prestige[i].Add[3];
     Data->Prestige[i].Goal[plr]++;

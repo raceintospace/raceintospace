@@ -19,6 +19,19 @@ public:
         Xor
     };
 
+	enum MaskSource {
+		SourceEqual,
+		DestinationEqual,
+		SourceNotEqual,
+		DestinationNotEqual
+	};
+
+	enum FilterTest {
+		Equal,
+		NotEqual,
+		Any
+	};
+
     SDL_Surface *surface() const;
     char *pixels() const;
     void clear(char colour);
@@ -35,6 +48,8 @@ public:
     void scaleTo(Surface *surface);
     void draw(Image *image, unsigned int x, unsigned int y);
     void draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
+	void maskCopy(Surface *source, char maskValue, Surface::MaskSource maskSource, char offset = 0);
+	void filter(char testValue, char offset, Surface::FilterTest filterTest);
 
     unsigned int width() const {
         return _width;

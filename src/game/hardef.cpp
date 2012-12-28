@@ -226,8 +226,8 @@ ShowHard(char plr)
 void
 HDispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
-    int i, w, h;
-    char *src, *dest;
+    int w;
+	int h;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
@@ -237,17 +237,8 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
     local2.clear(0);
     local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
-    src = local.pixels();
-    dest = local2.pixels();
 
-    for (i = 0; i < w * h; i++) {
-        if (*src != 0x00) {
-            *dest = *src;
-        }
-
-        dest++;
-        src++;
-    }
+	local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
 
     local2.copyTo(display::graphics.screen(), s, t);
 }
