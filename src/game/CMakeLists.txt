@@ -75,6 +75,7 @@ set(game_libraries
 # Define one big test suite
 file(GLOB test_sources ../../test/game/*.cpp)
 add_executable(game_test ../../test/test_main.cpp ${test_sources})
+set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
 target_link_libraries(game_test ${game_libraries})
 add_test(
   NAME game_test
