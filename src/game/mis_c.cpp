@@ -1490,7 +1490,7 @@ char DrawMoonSelection(char nauts, char plr)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-	saveScreen.copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height-1);
+	saveScreen.copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height()-1);
     memcpy(save_pal, display::graphics.palette(), 768);
 
     display::graphics.screen()->clear(0);
