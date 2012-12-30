@@ -118,6 +118,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     FILE *mmfp;
     float fps;
     int hold_count;
+	const int SCRATCH_SIZE = 64000;
+	char scratch[SCRATCH_SIZE];
 
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
@@ -223,17 +225,17 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (mode == 0) {
-        bSeq = (struct oGROUP *)&vhptr->pixels()[35000];
+        bSeq = (struct oGROUP *)&scratch[35000];
     } else {
-        dSeq = (struct oFGROUP *)&vhptr->pixels()[35000];
+        dSeq = (struct oFGROUP *)&scratch[35000];
     }
 
     if (mode == 0) {
         fin = open_gamedat(SEQ_DAT);
-        fread(&vhptr->pixels()[35000], 1, vhptr->height() * vhptr->width() - 35000, fin);
+        fread(&scratch[35000], 1, SCRATCH_SIZE - 35000, fin);
     } else {
         fin = open_gamedat(FSEQ_DAT);
-        F = (struct Table *)&vhptr->pixels()[0];
+        F = (struct Table *)&scratch[0];
         fread_Table(F, 50, fin);
 
         err = 0; //Specs: reset error
@@ -1048,12 +1050,13 @@ char FailureMode(char plr, int prelim, char *text)
     int i, j, k;
     FILE *fin;
     double last_secs;
-    char save_screen[64000], save_pal[768];
+	display::Surface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
+    char save_pal[768];
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     // this destroys what's in the current page frames
-    memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
+	saveScreen.copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height()-1);
     memcpy(save_pal, display::graphics.palette(), 768);
 
     display::graphics.screen()->clear(0);
@@ -1300,7 +1303,7 @@ char FailureMode(char plr, int prelim, char *text)
             //  DrawControl(plr);
             CloseAnim(fin);
 
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
             screen_dirty = 1;
 
@@ -1318,7 +1321,7 @@ char FailureMode(char plr, int prelim, char *text)
             //   DrawControl(plr);
             CloseAnim(fin);
 
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
             screen_dirty = 1;
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1469,10 +1472,11 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
 
 char DrawMoonSelection(char nauts, char plr)
 {
-    char save_screen[64000], save_pal[768];
+    char save_pal[768];
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
+	display::Surface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
     char cPad;
@@ -1486,7 +1490,7 @@ char DrawMoonSelection(char nauts, char plr)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    memcpy(save_screen, display::graphics.screen()->pixels(), 64000);
+	saveScreen.copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height-1);
     memcpy(save_pal, display::graphics.palette(), 768);
 
     display::graphics.screen()->clear(0);
@@ -1571,7 +1575,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 102, 133, 113);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1586,7 +1590,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 127, 133, 138);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1601,7 +1605,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 152, 133, 163);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1616,7 +1620,7 @@ char DrawMoonSelection(char nauts, char plr)
             OutBox(27, 177, 133, 188);
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
-            memcpy(display::graphics.screen()->pixels(), save_screen, 64000);
+			saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);

@@ -292,6 +292,8 @@ void FileAccess(char mode)
     FILE *fin, *fout;
     char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;
+	const int SCRATCH_SIZE = 64000;
+	char scratch[SCRATCH_SIZE]; // scratch buffer, will be tossed automatically at the end of the routine
 
     //sp. case -> no regular save off mail/modem game
     if ((mode == 0 || mode == 1) && (MAIL != -1 || Option != -1)) {
@@ -706,7 +708,7 @@ void FileAccess(char mode)
                 fin = sOpen("ENDTURN.TMP", "rb", 1);
 
                 if (fin) {
-                    SaveHdr->compSize = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), fin);
+                    SaveHdr->compSize = fread(scratch, 1, SCRATCH_SIZE, fin);
                     fclose(fin);
                 } else {
                     SaveHdr->compSize = 0;
@@ -758,23 +760,23 @@ void FileAccess(char mode)
                 fseek(fout, 0, SEEK_SET);
 
                 while (size == 16000) {
-                    size = fread(vhptr->pixels(), 1, size, fout);
-                    fwrite(vhptr->pixels(), size, 1, fin); // save Replay File
+                    size = fread(scratch, 1, size, fout);
+                    fwrite(scratch, size, 1, fin); // save Replay File
                 }
 
                 fclose(fout);
 
                 fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
+                fread(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
                 fclose(fout);
-                fwrite(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+                fwrite(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
 
                 while (left == 32000) {
-                    left = fread(vhptr->pixels(), 1, 32000, fout);
-                    fwrite(vhptr->pixels(), left, 1, fin);
+                    left = fread(scratch, 1, 32000, fout);
+                    fwrite(scratch, left, 1, fin);
                 }
 
                 fclose(fout); // close EVENT.TMP
@@ -831,7 +833,7 @@ void FileAccess(char mode)
                 fin = sOpen("ENDTURN.TMP", "rb", 1);
 
                 if (fin) {
-                    SaveHdr->compSize = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), fin);
+                    SaveHdr->compSize = fread(scratch, 1, SCRATCH_SIZE, fin);
                     fclose(fin);
                 } else {
                     SaveHdr->compSize = 0;
@@ -863,22 +865,22 @@ void FileAccess(char mode)
                 fseek(fout, 0, SEEK_SET);
 
                 while (size == 16000) {
-                    size = fread(vhptr->pixels(), 1, size, fout);
-                    fwrite(vhptr->pixels(), size, 1, fin); // save Replay File
+                    size = fread(scratch, 1, size, fout);
+                    fwrite(scratch, size, 1, fin); // save Replay File
                 }
 
                 fclose(fout);
                 fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
+                fread(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
                 fclose(fout);
-                fwrite(vhptr->pixels(), (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+                fwrite(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
 
                 while (left == 32000) {
-                    left = fread(vhptr->pixels(), 1, 32000, fout);
-                    fwrite(vhptr->pixels(), left, 1, fin);
+                    left = fread(scratch, 1, 32000, fout);
+                    fwrite(scratch, left, 1, fin);
                 }
 
                 fclose(fout); // close EVENT.TMP
