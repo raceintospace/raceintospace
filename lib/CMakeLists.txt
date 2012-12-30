@@ -43,6 +43,7 @@ if (BUILD_ZLIB)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${zlib_URL}
     PREFIX ${zlib_Dir}
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/zlib/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
 
@@ -61,6 +62,7 @@ if (BUILD_LIBPNG)
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
     URL ${libpng_URL}
     PREFIX ${libpng_Dir}
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libpng/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix}
     )
   

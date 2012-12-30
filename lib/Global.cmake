@@ -38,17 +38,8 @@ else (BUILD_ZLIB)
 endif (BUILD_ZLIB)
 
 if (BUILD_LIBPNG)
-  set(png_LIBRARY libpng15)
+  set(png_LIBRARY png15)
   
-  # Debug builds of libpng end up with a "d" suffix
-  if (CMAKE_BUILD_TYPE EQUAL Debug)
-    set(png_LIBRARY ${png_LIBRARY}d)
-  endif ()
-  
-  if (NOT WINDOWS)
-    set(png_LIBRARY ${LocalPrefix}/lib/${png_LIBRARY}.a)
-  endif ()
-
 else (BUILD_LIBPNG)
   find_library(png_LIBRARY NAMES png REQUIRED)
   find_path(png_INCLUDE_DIR png.h)
