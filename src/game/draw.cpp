@@ -2,6 +2,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "sdlhelper.h"
+#include "filesystem.h"
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -252,49 +253,20 @@ void GradRect(int x1, int y1, int x2, int y2, char plr)
 
 void draw_small_flag(char plr, int xm, int ym)
 {
-    if (plr == 0) {
-        fill_rectangle(xm, ym, xm + 25, ym + 14, 1);
-        display::graphics.setForegroundColor(8);
-
-        for (int i = 0; i < 15; i++) {
-            grMoveTo(xm, ym + i);
-            grLineTo(xm + 25, ym + i);
-            i++;
-        };
-
-        fill_rectangle(xm, ym, xm + 12, ym + 7, 5);
-
-        xm++;
-
-        for (int i = 0; i < 11; i++) {
-            display::graphics.screen()->setPixel(xm + i, ym + 1, 2);
-            display::graphics.screen()->setPixel(xm + i, ym + 3, 2);
-            display::graphics.screen()->setPixel(xm + i, ym + 5, 2);
-            i++;
-        };
-
-        for (int i = 1; i < 10; i++) {
-            display::graphics.screen()->setPixel(xm + i, ym + 2, 2);
-            display::graphics.screen()->setPixel(xm + i, ym + 4, 2);
-            display::graphics.screen()->setPixel(xm + i, ym + 6, 2);
-            i++;
-        };
-    } else {
-        fill_rectangle(xm, ym, xm + 25, ym + 14, 8);
-        display::graphics.setForegroundColor(11);
-        grMoveTo(xm + 2, ym + 6);
-        grLineTo(xm + 4, ym + 6);
-        grLineTo(xm + 4, ym + 5);
-        grLineTo(xm + 5, ym + 5);
-        grLineTo(xm + 5, ym + 3);
-        display::graphics.screen()->setPixel(xm + 3, ym + 4, 11);
-        display::graphics.screen()->setPixel(xm + 4, ym + 2, 11);
-        display::graphics.screen()->setPixel(xm + 5, ym + 1, 11);
-        display::graphics.screen()->setPixel(xm + 6, ym + 2, 11);
-    }
-
-    return;
+    char fn[64];
+    snprintf(fn, sizeof(fn), "images/small_flag.%i.png", (int)plr);
+    boost::shared_ptr<display::Image> flag(Filesystem::readImage(fn));
+    display::graphics.screen()->draw(flag.get(), xm, ym);
 }
+
+void draw_flag(int x, int y, char plr)
+{
+    char fn[64];
+    snprintf(fn, sizeof(fn), "images/flag.%i.png", (int)plr);
+    boost::shared_ptr<display::Image> flag(Filesystem::readImage(fn));
+    display::graphics.screen()->draw(flag.get(), x, y);
+}
+
 
 // Convenience defines, it seems the implementor didn't feel like typing much
 #define MR grMoveRel
@@ -302,90 +274,6 @@ void draw_small_flag(char plr, int xm, int ym)
 #define LT grLineTo
 #define MT grMoveTo
 #define SC grSetColor
-
-
-void draw_flag(int x, int y, char plr)
-{
-    if (plr == 0) {
-        int i, j;
-
-        for (i = 0; i < 7; i++) {
-            fill_rectangle(x, y + i * 6, x + 69, y + 2 + i * 6, 8);
-        }
-
-        for (i = 0; i < 6; i++) {
-            fill_rectangle(x, y + 3 + i * 6, x + 69, y + 5 + i * 6, 1);
-        }
-
-        fill_rectangle(x, y, x + 33, y + 20, 6);
-        fill_rectangle(x, y, x + 32, y + 20, 5);
-
-        for (j = 0; j < 5; j++) for (i = 0; i < 8; i++) {
-                display::graphics.screen()->setPixel(x + 2 + i * 4, y + 2 + 4 * j, 2);
-            }
-
-        for (j = 0; j < 4; j++) for (i = 0; i < 7; i++) {
-                display::graphics.screen()->setPixel(x + 4 + i * 4, y + 4 + 4 * j, 2);
-            }
-    } else {
-        fill_rectangle(x, y, x + 69, 38 + y, 8);
-        display::graphics.screen()->setPixel(10 + x, 2 + y, 11);
-        display::graphics.screen()->setPixel(8 + x, 3 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 3 + y, 11);
-        display::graphics.screen()->setPixel(11 + x, 3 + y, 11);
-        display::graphics.screen()->setPixel(12 + x, 3 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 5 + y, 11);
-        display::graphics.screen()->setPixel(11 + x, 5 + y, 11);
-        display::graphics.screen()->setPixel(12 + x, 6 + y, 11);
-        display::graphics.screen()->setPixel(10 + x, 7 + y, 11);
-        display::graphics.screen()->setPixel(13 + x, 7 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 8 + y, 11);
-        display::graphics.screen()->setPixel(10 + x, 8 + y, 11);
-        display::graphics.screen()->setPixel(11 + x, 8 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 8 + y, 11);
-        display::graphics.screen()->setPixel(8 + x, 9 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 9 + y, 11);
-        display::graphics.screen()->setPixel(10 + x, 9 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 9 + y, 11);
-        display::graphics.screen()->setPixel(15 + x, 9 + y, 11);
-        display::graphics.screen()->setPixel(7 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(8 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(10 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(15 + x, 10 + y, 11);
-        display::graphics.screen()->setPixel(11 + x, 11 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 11 + y, 11);
-        display::graphics.screen()->setPixel(12 + x, 12 + y, 11);
-        display::graphics.screen()->setPixel(13 + x, 12 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 12 + y, 11);
-        display::graphics.screen()->setPixel(7 + x, 13 + y, 11);
-        display::graphics.screen()->setPixel(8 + x, 13 + y, 11);
-        display::graphics.screen()->setPixel(12 + x, 13 + y, 11);
-        display::graphics.screen()->setPixel(13 + x, 13 + y, 11);
-        display::graphics.screen()->setPixel(6 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(10 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(11 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(12 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(13 + x, 14 + y, 11);
-        display::graphics.screen()->setPixel(14 + x, 15 + y, 11);
-        display::graphics.screen()->setPixel(9 + x, 4 + y, 12);
-        display::graphics.screen()->setPixel(10 + x, 4 + y, 12);
-        display::graphics.screen()->setPixel(11 + x, 4 + y, 12);
-        display::graphics.screen()->setPixel(14 + x, 7 + y, 12);
-        display::graphics.screen()->setPixel(8 + x, 11 + y, 12);
-        display::graphics.screen()->setPixel(10 + x, 11 + y, 12);
-        display::graphics.screen()->setPixel(15 + x, 11 + y, 12);
-        display::graphics.screen()->setPixel(11 + x, 12 + y, 12);
-        display::graphics.screen()->setPixel(14 + x, 13 + y, 12);
-        display::graphics.screen()->setPixel(7 + x, 14 + y, 12);
-        display::graphics.screen()->setPixel(5 + x, 15 + y, 12);
-        display::graphics.screen()->setPixel(15 + x, 15 + y, 12);
-    };
-
-    return;
-}
 
 /** Prints a character at current position of graphics handler.
  *

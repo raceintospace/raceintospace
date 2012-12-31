@@ -6,7 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "file.h"
-
+#include "display/image.h"
 
 class Filesystem
 {
