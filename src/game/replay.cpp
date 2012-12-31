@@ -226,8 +226,6 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
                 display::graphics.videoRect().w = width;
                 display::graphics.videoRect().h = height;
 
-                screen_dirty = 1;
-
                 /** \todo track decoding time and adjust delays */
                 if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
                     break;

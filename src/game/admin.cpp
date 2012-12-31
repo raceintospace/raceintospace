@@ -1189,7 +1189,7 @@ char GetBlockName(char *Nam)
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
-        gr_maybe_sync();
+        gr_sync();
         key = bioskey(0);
 
         if (key >= 'a' && key <= 'z') {
@@ -1202,7 +1202,6 @@ char GetBlockName(char *Nam)
                 Nam[i++] = key;
                 display::graphics.setForegroundColor(1);
                 draw_string(53, 102, &Nam[0]);
-                av_need_update_xy(52, 96, 189, 104);
                 key = 0;
             }
 

@@ -93,14 +93,12 @@ void pretty_crash(const std::string &title, const std::string &message)
     display::graphics.setForegroundColor(3);
     display_text_in_box(190, 50, 120, 108, message);
 
-    av_need_update_xy(0, 0, MAX_X, MAX_Y);
-
     // wait for a key
     int key = -1;
 
     while (!(key == K_ENTER || key == K_ESCAPE || key == K_SPACE)) {
         av_block();
-        gr_maybe_sync();
+        gr_sync();
         key = bioskey(0);
     }
 

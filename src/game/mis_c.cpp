@@ -505,8 +505,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                     break;
                 }
 
-                screen_dirty = 1;
-
                 /* XXX I don't get the fancy "hold" thing so I left it out */
 
             } else if (hold_count < 8) {
@@ -606,7 +604,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
             if (!BABY && BIG == 0) {
                 Tick(plr);
-                gr_maybe_sync();
+                gr_sync();
             }
         }
     }
@@ -774,10 +772,6 @@ void Clock(char plr, char clck, char mode, char tm)
         display::graphics.screen()->setPixel(sx - 1, sy - 1, mode);
         break;
     }
-
-    av_need_update_xy(sx - 2, sy - 2, sx + 2, sy - 2);
-
-    return;
 }
 
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
@@ -1306,7 +1300,6 @@ char FailureMode(char plr, int prelim, char *text)
 
             saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
-            screen_dirty = 1;
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
@@ -1324,7 +1317,6 @@ char FailureMode(char plr, int prelim, char *text)
 
             saveScreen.copyTo(display::graphics.screen(), 0, 0);
             memcpy(display::graphics.palette(), save_pal, 768);
-            screen_dirty = 1;
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */

@@ -8,7 +8,6 @@ void grLineRel(int x, int y);
 void grMoveRel(int x, int y);
 int grGetMouseCurPos(int *xp, int *yp);
 int grGetMousePressedPos(int *xp, int *yp);
-void gr_maybe_sync(void);
 void gr_sync(void);
 
 #define grOUTLINE 1

@@ -66,41 +66,12 @@ static struct {
     unsigned end;
 } fade_info;
 
-/** Indicates that screen redraw is required. */
-int screen_dirty;
-
 /** Assume we have audio until we try to initialize and find that we can't */
 static int have_audio = 1;
 
 static int do_fading;
 
 static SDL_AudioSpec audio_desired;
-
-static unsigned char *dirty_tree;
-static unsigned dirty_tree_length;
-static SDL_Rect *dirty_rect_list;
-
-static void
-alloc_dirty_tree(void)
-{
-    int depth = AV_DTREE_DEPTH + 1;
-    int ratio = 1;
-    int bytes = 0;
-
-    /* use power series formula, S = (1 - q**(n+1))/(1 - q) */
-    while (depth--) {
-        ratio *= 4;
-    }
-
-    bytes = (1 - ratio) / (1 - 4);
-    dirty_tree = (unsigned char *)xcalloc(bytes, 1);
-    dirty_tree_length = bytes;
-
-    ratio /= 4;
-    dirty_rect_list = (SDL_Rect *)xcalloc(ratio, sizeof(SDL_Rect));
-}
-
-static int get_dirty_rect_list();
 
 static void
 audio_callback(void *userdata, Uint8 *stream, int len)
@@ -281,8 +252,6 @@ av_setup(void)
     fade_info.step = 1;
     fade_info.steps = 1;
     do_fading = 1;
-
-    alloc_dirty_tree();
 
     SDL_EnableUNICODE(1);
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
@@ -682,7 +651,6 @@ av_sync(void)
     SDL_BlitSurface(display::graphics.scaledScreenSurface(), NULL, display::graphics.displaySurface(), NULL);
 
     if (display::graphics.videoRect().h && display::graphics.videoRect().w) {
-        av_need_update(&display::graphics.videoRect());
         r.h = 2 * display::graphics.videoRect().h;
         r.w = 2 * display::graphics.videoRect().w;
         r.x = 2 * display::graphics.videoRect().x;
@@ -691,7 +659,6 @@ av_sync(void)
     }
 
     if (display::graphics.newsRect().h && display::graphics.newsRect().w) {
-        av_need_update(&display::graphics.newsRect());
         r.h = 2 * display::graphics.newsRect().h;
         r.w = 2 * display::graphics.newsRect().w;
         r.x = 2 * display::graphics.newsRect().x;
@@ -702,19 +669,6 @@ av_sync(void)
     //TODO: Since we're not always tracking the right dirty area (due to the graphics refactoring)
     // for now we update the entire display every time.
     SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, 640, 400);
-//    num_rect = get_dirty_rect_list();
-//    SDL_UpdateRects(display::graphics.displaySurface(), num_rect, dirty_rect_list);
-#ifdef PROFILE_GRAPHICS
-
-    for (i = 0; i < num_rect; ++i) {
-        tot_area += dirty_rect_list[i].w * dirty_rect_list[i].h;
-    }
-
-    tot_area = tot_area * 100 / (2 * MAX_X) / (2 * MAX_Y);
-    TRACE4("%3d rects (%6.2f%%) updated in ~%3ums\n",
-           num_rect, tot_area, SDL_GetTicks() - ticks);
-#endif
-    screen_dirty = 0;
 }
 
 void
@@ -777,148 +731,9 @@ av_set_fading(int type, int from, int to, int steps, int preserve)
     fade_info.end = st_end;
 
     for (; fade_info.step != fade_info.end; fade_info.step += fade_info.inc) {
-        av_need_update(&r);
         av_sync();
         SDL_Delay(10);
     }
 
-    av_need_update(&r);
     av_sync();
 }
-
-/** compute area of intersection of rectangles */
-inline static int
-intersect_area(SDL_Rect *first, SDL_Rect *second)
-{
-    int isect_h = 0, isect_w = 0;
-    SDL_Rect *t;
-
-    /*
-     * Treat dimensions separately. Sort accroding to start point,
-     * then compute amount of overlap.
-     */
-    if (first->x > second->x) {
-        t = first;
-        first = second;
-        second = t;
-    }
-
-    if (first->x + first->w < second->x) {
-        return 0;
-    } else {
-        isect_w = MIN(second->w, first->x + first->w - second->x);
-    }
-
-    if (first->y > second->y) {
-        t = first;
-        first = second;
-        second = t;
-    }
-
-    if (first->y + first->h < second->y) {
-        return 0;
-    } else {
-        isect_h = MIN(second->h, first->y + first->h - second->y);
-    }
-
-    return isect_h * isect_w;
-}
-
-static void
-update_rect(SDL_Rect *fill, int x, int y, int w, int h, int idx, int level)
-{
-    SDL_Rect r = {x, y, w, h};
-    int nw = w / 2;
-    int nh = h / 2;
-    int area = 0;
-
-    assert((unsigned)idx < dirty_tree_length);
-
-    /* PRUNING: see if already dirty */
-    if (dirty_tree[idx]) {
-        return;
-    }
-
-    /* PRUNING: check if covered area > AV_DTREE_FILL_RATIO */
-    area = intersect_area(fill, &r);
-
-    if (area == 0) {
-        return;
-    } else if (level == AV_DTREE_DEPTH
-               || area > AV_DTREE_FILL_RATIO * h * w) {
-        dirty_tree[idx] = 1;
-        return;
-    }
-
-    idx *= 4;
-    level += 1;
-
-    update_rect(fill, x,      y,      nw,     nh,     idx + 1, level);
-    update_rect(fill, x + nw, y,      w - nw, nh,     idx + 2, level);
-    update_rect(fill, x,      y + nh, nw,     h - nh, idx + 3, level);
-    update_rect(fill, x + nw, y + nh, w - nw, h - nh, idx + 4, level);
-}
-
-static void
-fill_rect_list(SDL_Rect *arr, int *len, int x, int y, int w, int h,
-               int idx, int level)
-{
-    int nw = w / 2;
-    int nh = h / 2;
-
-    if (level > AV_DTREE_DEPTH) {
-        return;
-    }
-
-    assert((unsigned)idx < dirty_tree_length);
-
-    if (dirty_tree[idx]) {
-        /* XXX multiply by 2 because of scaling */
-        SDL_Rect r = {2 * x, 2 * y, 2 * w, 2 * h};
-        memcpy(&arr[(*len)++], &r, sizeof(r));
-        return;
-    }
-
-    idx *= 4;
-    level += 1;
-
-    fill_rect_list(arr, len, x,      y,      nw,     nh,     idx + 1, level);
-    fill_rect_list(arr, len, x + nw, y,      w - nw, nh,     idx + 2, level);
-    fill_rect_list(arr, len, x,      y + nh, nw,     h - nh, idx + 3, level);
-    fill_rect_list(arr, len, x + nw, y + nh, w - nw, h - nh, idx + 4, level);
-}
-
-static int
-get_dirty_rect_list(void)
-{
-    int len = 0;
-    fill_rect_list(dirty_rect_list, &len, 0, 0, MAX_X, MAX_Y, 0, 0);
-    memset(dirty_tree, 0, dirty_tree_length);
-    return len;
-}
-
-/**
- * Notify graphic subsystem that rectangle has to be redrawn.
- * \param r rectangle coordinates
- */
-void
-av_need_update(SDL_Rect *r)
-{
-    update_rect(r, 0, 0, MAX_X, MAX_Y, 0, 0);
-    screen_dirty = 1;
-}
-
-/**
- * Notify graphic subsystem that rectangle has to be redrawn.
- * \param x1 screen coord. of upper left corner
- * \param y1 screen coord. of upper left corner
- * \param x2 screen coord. of bottom right corner
- * \param y2 screen coord. of bottom right corner
- */
-void
-av_need_update_xy(int x1, int y1, int x2, int y2)
-{
-    SDL_Rect r = { x1, y1, x2 - x1 + 1, y2 - y1 + 1 };
-    av_need_update(&r);
-}
-/* vim: set noet ts=4 sw=4 tw=77: */

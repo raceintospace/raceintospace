@@ -569,7 +569,6 @@ void DrawSpaceport(char plr)
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
     fread(display::graphics.screen()->pixels(), Img.Size, 1, fin); // Read in main image
-    av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
     UpdatePortOverlays();
 
@@ -808,7 +807,6 @@ void Master(char plr)
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
-    av_need_update_xy(0, 0, MAX_X, MAX_Y);
 
 #if SPOT_ON
 
@@ -984,10 +982,6 @@ DoCycle(void)                   // Three ranges of color cycling
     display::graphics.palette()[j + 3 * i + 1] = tmp2;
 
     display::graphics.palette()[j + 3 * i + 2] = tmp3;
-
-    for (i = 0; i < (int) ARRAY_LENGTH(r); ++i) {
-        av_need_update_xy(r[i].x1, r[i].y1, r[i].x2, r[i].y2);
-    }
 }
 
 /** ???
@@ -1018,10 +1012,6 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
         max_x = MAX(max_x, outline[i] % MAX_X);
         max_y = MAX(max_y, outline[i] / MAX_X);
     }
-
-    if (Count) {
-        av_need_update_xy(min_x, min_y, max_x, max_y);
-    }
 }
 
 void
@@ -1038,10 +1028,6 @@ PortRestore(unsigned int Count)
         min_y = MIN(min_y, loc / MAX_X);
         max_x = MAX(max_x, loc % MAX_X);
         max_y = MAX(max_y, loc / MAX_X);
-    }
-
-    if (Count) {
-        av_need_update_xy(min_x, min_y, max_x, max_y);
     }
 
     free(pPortOutlineRestore);

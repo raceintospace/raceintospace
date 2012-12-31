@@ -96,8 +96,6 @@ void DrawControl(char plr)
     fread(vhptr->pixels(), len, 1, fin);
     fclose(fin);
     PCX_D(vhptr->pixels(), display::graphics.screen()->pixels(), (unsigned) len);
-    av_need_update_xy(0, 0, MAX_X, MAX_Y);
-
 }
 
 void SetW(char ch)

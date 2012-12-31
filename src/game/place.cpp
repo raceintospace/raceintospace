@@ -143,8 +143,6 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 
     fclose(fin);
 
-    av_need_update_xy(23, starty, 60 + 22 * 15, starty + 23 * i);
-
     // FadeIn(2,pal,10,0,0);
     WaitForMouseUp();
     j = -1;
@@ -570,7 +568,6 @@ int Help(const char *FName)
     key = 0;
     display::Surface local(250, 128);
     local.copyFrom(display::graphics.screen(), 34, 32, 283, 159);
-    av_need_update_xy(34, 32, 283, 159);
 
     ShBox(34, 32, 283, 159);
     InBox(37, 35, 279, 45);

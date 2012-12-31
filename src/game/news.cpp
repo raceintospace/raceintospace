@@ -855,8 +855,6 @@ PlayNewsAnim(mm_file *fp)
         return 1;
     }
 
-    screen_dirty = 1;
-
     /* TODO skipping frames should not use decode_video */
     if (!skip_frame) {
         static double diff = 0;
@@ -887,7 +885,6 @@ DrawTopNewsBox(int player)
     IOBox(243, 3, 316, 19);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
-    av_need_update_xy(0, 0, 319, 113);
 }
 
 static void
@@ -942,8 +939,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     if (Mode == FIRST_FRAME && fp->video) {
         /* XXX: error checking */
         mm_decode_video(fp, display::graphics.newsOverlay());
-        screen_dirty = 1;
-    };
+    }
 
     // *************** TCS001 my kludge (tom) 3/15/94
     if (Mode == TOMS_BUGFIX) {
@@ -956,7 +952,6 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         /* XXX: error checking */
         if (fp->video) {
             mm_decode_video(fp, display::graphics.newsOverlay());
-            screen_dirty = 1;
         }
 
         /* This fade was too long given current fades impl. */

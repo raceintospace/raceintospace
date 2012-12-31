@@ -46,14 +46,6 @@ gr_sync(void)
 }
 
 void
-gr_maybe_sync(void)
-{
-    if (screen_dirty) {
-        av_sync();
-    }
-}
-
-void
 grMoveTo(int x, int y)
 {
     gr_cur_x = x;

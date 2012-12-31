@@ -34,9 +34,6 @@ void draw_string(int x, int y, const char *s)
     for (i = 0; i < (int)strlen(s); i++) {
         draw_character(s[i]);
     }
-
-    av_need_update_xy(x, y - 7, x + i * 7, y);
-    return;
 }
 
 void draw_string_highlighted(int x, int y, const char *s, char val)
@@ -92,8 +89,6 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
 
         x += letter.width - 1;
     };
-
-    av_need_update_xy(x0, y, x, y + 15);
 }
 
 void draw_number(int xx, int yy, int num)
@@ -205,7 +200,6 @@ void InBox(int x1, int y1, int x2, int y2)
     display::graphics.setForegroundColor(4);
     grLineTo(x1, y1);
     grLineTo(x1, y2);
-    av_need_update_xy(x1, y1, x2, y2);
 }
 
 void OutBox(int x1, int y1, int x2, int y2)
@@ -218,7 +212,6 @@ void OutBox(int x1, int y1, int x2, int y2)
     grMoveTo(x2 - 1, y1);
     grLineTo(x1, y1);
     grLineTo(x1, y2 - 1);
-    av_need_update_xy(x1, y1, x2, y2);
 }
 
 void IOBox(int x1, int y1, int x2, int y2)

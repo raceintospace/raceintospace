@@ -775,7 +775,7 @@ char RD(char player_index)
             };
         };
 
-        gr_maybe_sync();
+        gr_sync();
     };
 }
 
@@ -796,8 +796,6 @@ void ManSel(int activeButtonIndex)
             OutBox(165 + i * dx, 157, 185 + i * dx, 175);
         }
     }
-
-    av_need_update_xy(165, 157, 165 + i * dx, 175);
 }
 
 /**

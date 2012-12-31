@@ -399,7 +399,7 @@ void idle_loop_secs(double secs)
 {
     double start;
 
-    gr_maybe_sync();
+    gr_sync();
 
     start = get_time();
 
