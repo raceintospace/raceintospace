@@ -5,6 +5,11 @@ include_directories(${PROJECT_SOURCE_DIR}/src/game)
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 
+# Silence some warnings on MSVC
+if (MSVC)
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+endif (MSVC)
+
 set(game_sources
   admin.cpp
   aimast.cpp
