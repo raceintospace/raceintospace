@@ -8,6 +8,8 @@
 #include <string>
 #include <SDL.h>
 
+#include <boost/shared_ptr.hpp>
+
 namespace display
 {
 
@@ -44,7 +46,7 @@ public:
         return _palette;
     };
 
-    void export_to_legacy_palette(uint8_t start = 0, uint8_t count = 255) const {
+    void exportPalette(uint8_t start = 0, uint8_t count = 255) const {
         legacy_palette.copy_from(_palette, start, count);
     };
 

@@ -71,7 +71,7 @@ int MainMenuChoice()
         display::Image image(fp);
         fclose(fp);
 
-        image.export_to_legacy_palette();
+        image.exportPalette();
         display::graphics.screen()->draw(&image, 0, 0);
     }
 
@@ -279,7 +279,7 @@ AstFaces(char plr, int x, int y, char face)
 
     local3.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
-    local3.filter((7 + plr * 3), -160, display::Surface::NotEqual);
+    local3.filter((7 + plr * 3), (char) - 160, display::Surface::NotEqual);
 
     local3.copyTo(display::graphics.screen(), x, y);
 }
