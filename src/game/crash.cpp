@@ -1,15 +1,15 @@
 #include <string>
 #include <vector>
 
-#include "display/image.h"
-
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "draw.h"
 #include "gr.h"
 #include "sdlhelper.h"
 #include "pace.h"
+#include "filesystem.h"
 #include "display/graphics.h"
+#include "display/image.h"
 
 enum vertical_alignment {
     ALIGN_TOP,
@@ -77,12 +77,11 @@ void display_text_in_box(int x, int y, int width, int height, const std::string 
 
 void pretty_crash(const std::string &title, const std::string &message)
 {
-    FILE *fp = sOpen("error.png", "rb", FT_IMAGE);
-    display::Image image(fp);
-    fclose(fp);
 
-    image.export_to_legacy_palette();
-    display::graphics.screen()->draw(&image, 0, 0);
+	boost::shared_ptr<display::Image> image(Filesystem::readImage("images/error.png"));
+
+    image->exportPalette();
+    display::graphics.screen()->draw(image, 0, 0);
 
     display::graphics.setForegroundColor(8);
     display_text_in_box(190, 20, 120, 20, "MASTER ALARM!");
