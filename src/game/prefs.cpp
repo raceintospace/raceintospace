@@ -72,7 +72,7 @@ void DrawPrefs(int where, char a1, char a2)
 
     ShBox(91, 109, 228, 199);
     InBox(95, 113, 224, 195);
-    RectFill(96, 114, 223, 194, 0);
+    fill_rectangle(96, 114, 223, 194, 0);
     ShBox(230, 24, 319, 199);
 
     if (where == 2) {
@@ -89,15 +89,15 @@ void DrawPrefs(int where, char a1, char a2)
         IOBox(236, 158, 313, 193);
         InBox(6, 52, 83, 87);
         InBox(236, 52, 313, 87);
-        RectFill(7, 53, 82, 86, 0);
-        RectFill(237, 53, 312, 86, 0);
+        fill_rectangle(7, 53, 82, 86, 0);
+        fill_rectangle(237, 53, 312, 86, 0);
         OutBox(8, 77, 18, 85);
         OutBox(238, 77, 248, 85);
         //BinT(8,54,0);BinT(238,54,0);  // Old way with buttons
         BinT(8, 54, 1);
         BinT(238, 54, 1);  // No select Buttons
-        RectFill(237, 35, 312, 41, 0);
-        RectFill(7, 35, 82, 41, 0);
+        fill_rectangle(237, 35, 312, 41, 0);
+        fill_rectangle(7, 35, 82, 41, 0);
     } else {
         music_start(M_DRUMSM);
         InBox(8, 107, 81, 138);
@@ -108,16 +108,16 @@ void DrawPrefs(int where, char a1, char a2)
         InBox(238, 77, 248, 85);
         BinT(8, 54, 1);
         BinT(238, 54, 1);
-        RectFill(237, 35, 312, 41, 0);
-        RectFill(7, 35, 82, 41, 0);
+        fill_rectangle(237, 35, 312, 41, 0);
+        fill_rectangle(7, 35, 82, 41, 0);
     };
 
     if (mode == 0) {
-        DispBig(6, 5, "PREFERENCES SELECTIONS", 0, -1);
+        draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
     } else if (mode == 2) {
-        DispBig(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
+        draw_heading(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
     } else {
-        DispBig(6, 5, "MODEM GAME SELECTIONS", 0, -1);
+        draw_heading(6, 5, "MODEM GAME SELECTIONS", 0, -1);
     }
 
     IOBox(243, 3, 316, 19);
@@ -138,22 +138,22 @@ void DrawPrefs(int where, char a1, char a2)
         display::graphics.setForegroundColor(34);
     }
 
-    PrintAt(23, 30, "PLAYER 1");
+    draw_string(23, 30, "PLAYER 1");
     display::graphics.setForegroundColor(34);
-    PrintAt(253, 30, "PLAYER 2");
+    draw_string(253, 30, "PLAYER 2");
     display::graphics.setForegroundColor(5);
-    PrintAt(23, 49, "COUNTRY");
-    PrintAt(254, 49, "COUNTRY");
-    PrintAt(17, 101, "GAME LEVEL");
-    PrintAt(247, 101, "GAME LEVEL");
-    PrintAt(249, 148, "COSMONAUT");
-    PrintAt(250, 155, "SELECTION");
-    PrintAt(19, 148, "ASTRONAUT");
-    PrintAt(20, 155, "SELECTION");
+    draw_string(23, 49, "COUNTRY");
+    draw_string(254, 49, "COUNTRY");
+    draw_string(17, 101, "GAME LEVEL");
+    draw_string(247, 101, "GAME LEVEL");
+    draw_string(249, 148, "COSMONAUT");
+    draw_string(250, 155, "SELECTION");
+    draw_string(19, 148, "ASTRONAUT");
+    draw_string(20, 155, "SELECTION");
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    PrintAt(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
-    PrintAt(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
+    draw_string(258, 13, "CONTINUE");
+    draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
+    draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
     vhptr->copyTo(display::graphics.screen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
     vhptr->copyTo(display::graphics.screen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
 
@@ -185,25 +185,25 @@ void HModel(char mode, char tx)
 
     local.filter(0, 112, display::Surface::Any);
 
-    RectFill(96, 114, 223, 194, 0);
+    fill_rectangle(96, 114, 223, 194, 0);
 
     local.copyTo(display::graphics.screen(), 97, 115);
     display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {
-        PrintAt(100, 122, "HISTORICAL MODEL");
+        draw_string(100, 122, "HISTORICAL MODEL");
     } else if (mode == 0 || mode == 1) {
-        PrintAt(100, 122, "BASIC MODEL");
+        draw_string(100, 122, "BASIC MODEL");
     } else if (mode == 4 || mode == 5) {
-        PrintAt(100, 122, "RANDOM MODEL");
+        draw_string(100, 122, "RANDOM MODEL");
     }
 
     display::graphics.setForegroundColor(9);
 
     if (mode == 0 || mode == 2 || mode == 4) {
-        PrintAt(100, 128, "HISTORICAL ROSTER");
+        draw_string(100, 128, "HISTORICAL ROSTER");
     } else {
-        PrintAt(100, 128, "CUSTOM ROSTER");
+        draw_string(100, 128, "CUSTOM ROSTER");
     }
 
     return;
@@ -431,21 +431,21 @@ void Prefs(int where)
                     return;
                 }
             } else if (key == 'P' && (where == 0 || where == 3)) {
-                RectFill(59, 26, 68, 31, 3);
-                RectFill(290, 26, 298, 31, 3);
+                fill_rectangle(59, 26, 68, 31, 3);
+                fill_rectangle(290, 26, 298, 31, 3);
 
                 if (ksel == 0) {
                     ksel = 1;
                     display::graphics.setForegroundColor(9);
-                    PrintAt(253, 30, "PLAYER 2");
+                    draw_string(253, 30, "PLAYER 2");
                     display::graphics.setForegroundColor(34);
-                    PrintAt(23, 30, "PLAYER 1");
+                    draw_string(23, 30, "PLAYER 1");
                 } else {
                     ksel = 0;
                     display::graphics.setForegroundColor(34);
-                    PrintAt(253, 30, "PLAYER 2");
+                    draw_string(253, 30, "PLAYER 2");
                     display::graphics.setForegroundColor(9);
-                    PrintAt(23, 30, "PLAYER 1");
+                    draw_string(23, 30, "PLAYER 1");
                 }
             } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0) || key == 'E') {
                 // Edit astronauts has been ripped out
@@ -582,7 +582,7 @@ void Prefs(int where)
                 /* P2: Astro Level */
             } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
                        ((where == 3 || where == 0) && ksel == 0 && key == 'N')) {
-                RectFill(7, 35, 82, 41, 0);
+                fill_rectangle(7, 35, 82, 41, 0);
 
                 for (int i = 0; i < 20; i++) {
                     Data->P[0].Name[i] = 0x00;
@@ -592,7 +592,7 @@ void Prefs(int where)
                 ch = 0;
                 display::graphics.setForegroundColor(1);
                 grMoveTo(8, 40);
-                DispChr(0x14);
+                draw_character(0x14);
                 av_sync();
 
                 while (ch != K_ENTER) {
@@ -612,22 +612,22 @@ void Prefs(int where)
                         Data->P[0].Name[num++] = ch;
                     }
 
-                    RectFill(7, 35, 82, 41, 0);
+                    fill_rectangle(7, 35, 82, 41, 0);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(8, 40, &Data->P[0].Name[0]);
-                    DispChr(0x14);
+                    draw_string(8, 40, &Data->P[0].Name[0]);
+                    draw_character(0x14);
                     av_sync();
                 }
 
                 Data->P[0].Name[num] = 0x00;
-                RectFill(7, 35, 82, 41, 0);
+                fill_rectangle(7, 35, 82, 41, 0);
                 display::graphics.setForegroundColor(1);
-                PrintAt(8, 40, &Data->P[0].Name[0]);
+                draw_string(8, 40, &Data->P[0].Name[0]);
                 av_sync();
                 /* P1: Director Name */
             } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
                        ((where == 3 || where == 0) && ksel == 1 && key == 'N')) {
-                RectFill(237, 35, 312, 41, 0);
+                fill_rectangle(237, 35, 312, 41, 0);
 
                 for (int i = 0; i < 20; i++) {
                     Data->P[1].Name[i] = 0x00;
@@ -637,7 +637,7 @@ void Prefs(int where)
                 ch = 0;
                 display::graphics.setForegroundColor(1);
                 grMoveTo(238, 40);
-                DispChr(0x14);
+                draw_character(0x14);
                 av_sync();
 
                 while (ch != K_ENTER) {
@@ -657,17 +657,17 @@ void Prefs(int where)
                         Data->P[1].Name[num++] = ch;
                     }
 
-                    RectFill(237, 35, 312, 41, 0);
+                    fill_rectangle(237, 35, 312, 41, 0);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(238, 40, &Data->P[1].Name[0]);
-                    DispChr(0x14);
+                    draw_string(238, 40, &Data->P[1].Name[0]);
+                    draw_character(0x14);
                     av_sync();
                 }
 
                 Data->P[1].Name[num] = 0x00;
-                RectFill(237, 35, 312, 41, 0);
+                fill_rectangle(237, 35, 312, 41, 0);
                 display::graphics.setForegroundColor(1);
-                PrintAt(238, 40, &Data->P[1].Name[0]);
+                draw_string(238, 40, &Data->P[1].Name[0]);
                 av_sync();
                 /* P2: Director Name */
             };

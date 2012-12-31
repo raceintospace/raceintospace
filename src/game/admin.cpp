@@ -97,31 +97,31 @@ void Admin(char plr)
 
             DrawSpaceport(plr);
             PortPal(plr);
-            RectFill(166, 191, 318, 198, 3);
+            fill_rectangle(166, 191, 318, 198, 3);
             display::graphics.setForegroundColor(0);
-            PrintAt(257, 197, "CASH:");
-            DispMB(285, 197, Data->P[plr].Cash);
+            draw_string(257, 197, "CASH:");
+            draw_megabucks(285, 197, Data->P[plr].Cash);
             display::graphics.setForegroundColor(11);
-            PrintAt(256, 196, "CASH:");
-            DispMB(284, 196, Data->P[plr].Cash);
+            draw_string(256, 196, "CASH:");
+            draw_megabucks(284, 196, Data->P[plr].Cash);
             display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
-                PrintAt(166, 197, "SPRING 19");
+                draw_string(166, 197, "SPRING 19");
             } else {
-                PrintAt(166, 197, "FALL 19");
+                draw_string(166, 197, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
             display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
-                PrintAt(165, 196, "SPRING 19");
+                draw_string(165, 196, "SPRING 19");
             } else {
-                PrintAt(165, 196, "FALL 19");
+                draw_string(165, 196, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
         }
@@ -324,16 +324,16 @@ void FileAccess(char mode)
 
     ShBox(34, 32, 283, 159);
     InBox(37, 35, 204, 45);
-    RectFill(38, 36, 203, 44, 7);
+    fill_rectangle(38, 36, 203, 44, 7);
     InBox(207, 35, 280, 45);
-    RectFill(208, 36, 279, 44, 10);
+    fill_rectangle(208, 36, 279, 44, 10);
     InBox(37, 48, 204, 128);
-    RectFill(38, 49, 203, 127, 0);
+    fill_rectangle(38, 49, 203, 127, 0);
     InBox(37, 132, 280, 156);
     ShBox(191, 50, 202, 87);
-    UPArrow(194, 55);
+    draw_up_arrow(194, 55);
     ShBox(191, 89, 202, 126);
-    DNArrow(194, 94);
+    draw_down_arrow(194, 94);
 
     if (tFiles > 0 && (sc == 0 || sc == 2)) {
         IOBox(207, 48, 280, 60);
@@ -368,20 +368,20 @@ void FileAccess(char mode)
     IOBox(207, 118, 280, 130); // Quit
 
     display::graphics.setForegroundColor(11);
-    PrintAt(59, 42, "TIME CAPSULE REQUEST");
-    PrintAt(219, 42, "FUNCTIONS");
+    draw_string(59, 42, "TIME CAPSULE REQUEST");
+    draw_string(219, 42, "FUNCTIONS");
     display::graphics.setForegroundColor(1);
-    PrintAtKey(233, 56, "LOAD", 0);
+    draw_string_highlighted(233, 56, "LOAD", 0);
     display::graphics.setForegroundColor(1);
-    PrintAtKey(233, 70, "SAVE", 0);
+    draw_string_highlighted(233, 70, "SAVE", 0);
     display::graphics.setForegroundColor(1);
-    PrintAtKey(221, 84, "MAIL SAVE", 0);
+    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
     display::graphics.setForegroundColor(1);
-    PrintAtKey(227, 98, "DELETE", 0);
+    draw_string_highlighted(227, 98, "DELETE", 0);
     display::graphics.setForegroundColor(1);
-    PrintAtKey(233, 112, "PLAY", 0);
+    draw_string_highlighted(233, 112, "PLAY", 0);
     display::graphics.setForegroundColor(1);
-    PrintAtKey(234, 126, "QUIT", 0);
+    draw_string_highlighted(234, 126, "QUIT", 0);
 
     done = BarB = now = 0;
     ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
@@ -404,7 +404,7 @@ void FileAccess(char mode)
                 now -= BarB;
                 now += i;
                 BarB = i;
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
@@ -914,20 +914,20 @@ void FileAccess(char mode)
                 tFiles = GenerateTables(saveType);
                 now = 0;
                 BarB = 0;
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
 
                 if (tFiles == 0) {
                     InBox(207, 48, 280, 60);
-                    RectFill(208, 49, 279, 59, 3);
+                    fill_rectangle(208, 49, 279, 59, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAtKey(233, 56, "LOAD", 0);
+                    draw_string_highlighted(233, 56, "LOAD", 0);
                     InBox(207, 90, 280, 102);
-                    RectFill(208, 91, 279, 101, 3);
+                    fill_rectangle(208, 91, 279, 101, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAtKey(226, 98, "DELETE", 0);
+                    draw_string_highlighted(226, 98, "DELETE", 0);
                 }
 
             }
@@ -965,7 +965,7 @@ void FileAccess(char mode)
             if (BarB == 0) {
                 if (now > 0) {
                     now--;
-                    RectFill(38, 49, 190, 127, 0);
+                    fill_rectangle(38, 49, 190, 127, 0);
                     ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                     DrawFiles(now, BarB, tFiles);
                     FileText(&FList[now].Name[0]);
@@ -973,7 +973,7 @@ void FileAccess(char mode)
             }
 
             if (BarB > 0) {
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 BarB--;
                 now--;
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
@@ -989,7 +989,7 @@ void FileAccess(char mode)
         } else if (key == 0x4900) { // Page Up
 
             if (now > 0) {
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 now -= 9;
 
                 if (now < 0) {
@@ -1015,7 +1015,7 @@ void FileAccess(char mode)
                     BarB = 8;
                 }
 
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
@@ -1028,7 +1028,7 @@ void FileAccess(char mode)
             if (BarB == 8) {
                 if (now < (tFiles - 1)) {
                     now++;
-                    RectFill(38, 49, 190, 127, 0);
+                    fill_rectangle(38, 49, 190, 127, 0);
                     ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                     DrawFiles(now, BarB, tFiles);
                     FileText(&FList[now].Name[0]);
@@ -1036,7 +1036,7 @@ void FileAccess(char mode)
             }
 
             if (BarB < 8 && now < (tFiles - 1)) {
-                RectFill(38, 49, 190, 127, 0);
+                fill_rectangle(38, 49, 190, 127, 0);
                 BarB++;
                 now++;
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
@@ -1168,16 +1168,16 @@ char GetBlockName(char *Nam)
 
     if (i == 1) {
         InBox(43, 67, 197, 77);
-        RectFill(44, 68, 196, 76, 13);
+        fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        PrintAt(47, 74, "ENTER FILE DESCRIPTION");
+        draw_string(47, 74, "ENTER FILE DESCRIPTION");
         InBox(51, 95, 190, 105);
-        RectFill(52, 96, 189, 104, 0);
+        fill_rectangle(52, 96, 189, 104, 0);
     } else {
         InBox(43, 67, 197, 77);
-        RectFill(44, 68, 196, 76, 13);
+        fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        PrintAt(47, 74, "NOT ENOUGH DISK SPACE");
+        draw_string(47, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         local.copyTo(display::graphics.screen(), 39, 50);
         return 0;
@@ -1201,7 +1201,7 @@ char GetBlockName(char *Nam)
                              (key >= '0' && key <= '9'))) { // valid key
                 Nam[i++] = key;
                 display::graphics.setForegroundColor(1);
-                PrintAt(53, 102, &Nam[0]);
+                draw_string(53, 102, &Nam[0]);
                 av_need_update_xy(52, 96, 189, 104);
                 key = 0;
             }
@@ -1209,9 +1209,9 @@ char GetBlockName(char *Nam)
             if (i > 0 && key == 0x08) {
                 Nam[--i] = 0x00;
 
-                RectFill(52, 96, 189, 104, 0);
+                fill_rectangle(52, 96, 189, 104, 0);
                 display::graphics.setForegroundColor(1);
-                PrintAt(53, 102, &Nam[0]);
+                draw_string(53, 102, &Nam[0]);
 
                 key = 0;
             }
@@ -1238,7 +1238,7 @@ void DrawFiles(char now, char loc, char tFiles)
 
     for (i = start; i < start + 9; i++) {
         if (i < tFiles) {
-            PrintAt(40, 58 + j * 8, FList[i].Title);
+            draw_string(40, 58 + j * 8, FList[i].Title);
             j++;
         }
     }
@@ -1251,9 +1251,9 @@ void BadFileType(void)
     local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
-    RectFill(44, 68, 196, 76, 13);
+    fill_rectangle(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
-    PrintAt(47, 74, "CORRUPT SAVE FILE");
+    draw_string(47, 74, "CORRUPT SAVE FILE");
     delay(2000);
     local.copyTo(display::graphics.screen(), 39, 50);
     PauseMouse();
@@ -1265,13 +1265,13 @@ void FileText(char *name)
 {
     FILE *fin;
 
-    RectFill(38, 133, 279, 155, 3);
+    fill_rectangle(38, 133, 279, 155, 3);
     display::graphics.setForegroundColor(1);
     fin = sOpen(name, "rb", 1);
 
     if (fin == NULL) {
         display::graphics.setForegroundColor(11);
-        PrintAt(70, 147, "NO HISTORY RECORDED");
+        draw_string(70, 147, "NO HISTORY RECORDED");
         return;
     }
 
@@ -1287,17 +1287,17 @@ void FileText(char *name)
 
     //display::graphics.setForegroundColor(6+(SaveHdr->Country[0]%2)*3);
     if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
-        PrintAt(0, 0, "MODEM DIRECTOR ");
+        draw_string(0, 0, "MODEM DIRECTOR ");
     } else if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
-        PrintAt(0, 0, "MAIL DIRECTOR ");
+        draw_string(0, 0, "MAIL DIRECTOR ");
     } else if (SaveHdr->Country[0] == 2) {
-        PrintAt(0, 0, "COMPUTER DIRECTOR ");
+        draw_string(0, 0, "COMPUTER DIRECTOR ");
     } else {
-        PrintAt(0, 0, "HUMAN DIRECTOR ");
+        draw_string(0, 0, "HUMAN DIRECTOR ");
     }
 
-    PrintAt(0, 0, &SaveHdr->PName[0][0]);
-    PrintAt(0, 0, " OF THE U.S.A.");
+    draw_string(0, 0, &SaveHdr->PName[0][0]);
+    draw_string(0, 0, " OF THE U.S.A.");
 
     grMoveTo(40, 147);
     //if (((char)SaveHdr->Country[1])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
@@ -1305,42 +1305,42 @@ void FileText(char *name)
     display::graphics.setForegroundColor(9);
 
     if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
-        PrintAt(0, 0, "VS. MODEM DIRECTOR ");
+        draw_string(0, 0, "VS. MODEM DIRECTOR ");
     } else if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
-        PrintAt(0, 0, "VS. MAIL DIRECTOR ");
+        draw_string(0, 0, "VS. MAIL DIRECTOR ");
     } else if (SaveHdr->Country[1] == 3) {
-        PrintAt(0, 0, "VS. COMPUTER DIRECTOR ");
+        draw_string(0, 0, "VS. COMPUTER DIRECTOR ");
     } else {
-        PrintAt(0, 0, "VS. HUMAN DIRECTOR ");
+        draw_string(0, 0, "VS. HUMAN DIRECTOR ");
     }
 
-    PrintAt(0, 0, &SaveHdr->PName[1][0]);
-    PrintAt(0, 0, " OF THE U.S.S.R.");
+    draw_string(0, 0, &SaveHdr->PName[1][0]);
+    draw_string(0, 0, " OF THE U.S.S.R.");
 
     grMoveTo(40, 154);
     display::graphics.setForegroundColor(11);
 
     if (SaveHdr->Season == 0) {
         if (SaveHdr->Country[0] == 8) {
-            PrintAt(0, 0, "U.S.A. TURN IN THE SPRING OF ");
+            draw_string(0, 0, "U.S.A. TURN IN THE SPRING OF ");
         } else if (SaveHdr->Country[1] == 9) {
-            PrintAt(0, 0, "SOVIET TURN IN THE SPRING OF ");
+            draw_string(0, 0, "SOVIET TURN IN THE SPRING OF ");
         } else {
-            PrintAt(0, 0, "THE SPRING OF ");
+            draw_string(0, 0, "THE SPRING OF ");
         }
     } else {
         if (SaveHdr->Country[0] == 8) {
-            PrintAt(0, 0, "U.S.A. TURN IN THE FALL OF ");
+            draw_string(0, 0, "U.S.A. TURN IN THE FALL OF ");
         } else if (SaveHdr->Country[1] == 9) {
-            PrintAt(0, 0, "SOVIET TURN IN THE FALL OF ");
+            draw_string(0, 0, "SOVIET TURN IN THE FALL OF ");
         } else {
-            PrintAt(0, 0, "THE FALL OF ");
+            draw_string(0, 0, "THE FALL OF ");
         }
     }
 
-    DispNum(0, 0, 19);
-    DispNum(0, 0, SaveHdr->Year);
-    PrintAt(0, 0, ".");
+    draw_number(0, 0, 19);
+    draw_number(0, 0, SaveHdr->Year);
+    draw_string(0, 0, ".");
 }
 
 
@@ -1387,22 +1387,22 @@ int FutureCheck(char plr, char type)
     display::graphics.screen()->clear(0);
     ShBox(59, 12, 269, 186);
     InBox(64, 17, 213, 29);
-    RectFill(65, 18, 212, 28, 7);
+    fill_rectangle(65, 18, 212, 28, 7);
     ShBox(217, 17, 264, 29);
     IOBox(217, 17, 264, 29);
     display::graphics.setForegroundColor(9);
-    PrintAt(231, 25, "EXIT");
+    draw_string(231, 25, "EXIT");
     display::graphics.setForegroundColor(11);
 
     if (type == 0) {
-        PrintAt(74, 25, "FUTURE ");
+        draw_string(74, 25, "FUTURE ");
     } else if (plr == 0) {
-        PrintAt(83, 25, "VAB ");
+        draw_string(83, 25, "VAB ");
     } else {
-        PrintAt(83, 25, "VIB ");
+        draw_string(83, 25, "VIB ");
     }
 
-    PrintAt(0, 0, "LAUNCH SELECTION");
+    draw_string(0, 0, "LAUNCH SELECTION");
 
     for (i = 0; i < 3; i++) {
         InBox(64, 35 + 51 * i, 104, 66 + 51 * i);
@@ -1412,13 +1412,13 @@ int FutureCheck(char plr, char type)
 
         if (p[i] > 1) {
             display::graphics.setForegroundColor(5);
-            PrintAt(111, 50 + i * 51, "THIS FACILITY IS DAMAGED.");
-            PrintAt(111, 57 + i * 51, "IT WILL COST ");
-            DispNum(0, 0, abs(p[i]));
-            PrintAt(0, 0, "MB TO REPAIR.");
+            draw_string(111, 50 + i * 51, "THIS FACILITY IS DAMAGED.");
+            draw_string(111, 57 + i * 51, "IT WILL COST ");
+            draw_number(0, 0, abs(p[i]));
+            draw_string(0, 0, "MB TO REPAIR.");
 
             if (type == 0) {
-                PrintAt(113, 75 + i * 51, "REPAIR LAUNCH FACILITY");
+                draw_string(113, 75 + i * 51, "REPAIR LAUNCH FACILITY");
             } else {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);
             }
@@ -1431,7 +1431,7 @@ int FutureCheck(char plr, char type)
 
             if (type == 1) {
                 GetMisType(Data->P[plr].Mission[i].MissionCode);
-                PrintAt(111, 41 + i * 51, Mis.Abbr);
+                draw_string(111, 41 + i * 51, Mis.Abbr);
                 MisCod = Data->P[plr].Mission[i].MissionCode;
 
                 if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
@@ -1439,39 +1439,39 @@ int FutureCheck(char plr, char type)
                 {
                     switch (Data->P[plr].Mission[i].Duration) {
                     case 1:
-                        PrintAt(0, 0, "");
+                        draw_string(0, 0, "");
                         break;
 
                     case 2:
-                        PrintAt(0, 0, " (B)");
+                        draw_string(0, 0, " (B)");
                         break;
 
                     case 3:
-                        PrintAt(0, 0, " (C)");
+                        draw_string(0, 0, " (C)");
                         break;
 
                     case 4:
-                        PrintAt(0, 0, " (D)");
+                        draw_string(0, 0, " (D)");
                         break;
 
                     case 5:
-                        PrintAt(0, 0, " (E)");
+                        draw_string(0, 0, " (E)");
                         break;
 
                     case 6:
-                        PrintAt(0, 0, " (F)");
+                        draw_string(0, 0, " (F)");
                         break;
 
                     default:
-                        PrintAt(0, 0, "");
+                        draw_string(0, 0, "");
                         break;
                     }
                 }
 
                 if (i < 2)
                     if (Data->P[plr].Mission[i + 1].part == 1) {
-                        PrintAt(111, 61 + i * 51, "PRIMARY MISSION PART");
-                        PrintAt(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
+                        draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
+                        draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
             } else {
                 if (!Data->P[plr].Future[i].MissionCode) {
@@ -1480,7 +1480,7 @@ int FutureCheck(char plr, char type)
 
                 GetMisType(Data->P[plr].Future[i].MissionCode);
 
-                PrintAt(111, 41 + i * 51, Mis.Abbr);
+                draw_string(111, 41 + i * 51, Mis.Abbr);
                 MisCod = Data->P[plr].Future[i].MissionCode;
 
                 if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
@@ -1488,63 +1488,63 @@ int FutureCheck(char plr, char type)
                 {
                     switch (Data->P[plr].Future[i].Duration) {
                     case 1:
-                        PrintAt(0, 0, "");
+                        draw_string(0, 0, "");
                         break;
 
                     case 2:
-                        PrintAt(0, 0, " (B)");
+                        draw_string(0, 0, " (B)");
                         break;
 
                     case 3:
-                        PrintAt(0, 0, " (C)");
+                        draw_string(0, 0, " (C)");
                         break;
 
                     case 4:
-                        PrintAt(0, 0, " (D)");
+                        draw_string(0, 0, " (D)");
                         break;
 
                     case 5:
-                        PrintAt(0, 0, " (E)");
+                        draw_string(0, 0, " (E)");
                         break;
 
                     case 6:
-                        PrintAt(0, 0, " (F)");
+                        draw_string(0, 0, " (F)");
                         break;
 
                     default:
-                        PrintAt(0, 0, "");
+                        draw_string(0, 0, "");
                         break;
                     }
                 }
 
                 if (i < 2)
                     if (Data->P[plr].Future[i + 1].part == 1) {
-                        PrintAt(111, 61 + i * 51, "PRIMARY MISSION PART");
-                        PrintAt(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
+                        draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
+                        draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
             }
 
             if (type == 0) {
                 if (Data->P[plr].Future[i].part == 0) {
                     if (m[i] == 0) {
-                        PrintAt(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                        draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
                         t = 1;
                     } else {
-                        PrintAt(113, 75 + i * 51, "REASSIGN FUTURE MISSION");
+                        draw_string(113, 75 + i * 51, "REASSIGN FUTURE MISSION");
                         t = 0;
                     };
                 } else {
-                    PrintAt(113, 75 + i * 51, "SECOND PART OF JOINT MISSION");
+                    draw_string(113, 75 + i * 51, "SECOND PART OF JOINT MISSION");
                     t = 0;
                     tx[i] = 1;
                     InBox(110, 69 + i * 51, 262, 77 + i * 51);
                 }
             } else {
                 if (m[i] == 0) {
-                    PrintAt(113, 75 + i * 51, "ASSEMBLE HARDWARE");
+                    draw_string(113, 75 + i * 51, "ASSEMBLE HARDWARE");
                     t = 1;
                 } else {
-                    PrintAt(113, 75 + i * 51, "REASSEMBLE HARDWARE");
+                    draw_string(113, 75 + i * 51, "REASSEMBLE HARDWARE");
                     t = 0;
                 };
             };
@@ -1552,12 +1552,12 @@ int FutureCheck(char plr, char type)
 
         if (p[i] == -1) {
             display::graphics.setForegroundColor(9);  // Changed from 5
-            PrintAt(111, 41 + i * 51, "NO FACILITY EXISTS");
+            draw_string(111, 41 + i * 51, "NO FACILITY EXISTS");
 
             if (type == 0) {
-                PrintAt(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
-                PrintAt(111, 57 + i * 51, "FOR: 20 MB'S");
-                PrintAt(111, 75 + i * 51, "PURCHASE FACILITY");
+                draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
+                draw_string(111, 57 + i * 51, "FOR: 20 MB'S");
+                draw_string(111, 75 + i * 51, "PURCHASE FACILITY");
             } else {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);
             }
@@ -1567,9 +1567,9 @@ int FutureCheck(char plr, char type)
 
         display::graphics.setForegroundColor(11);
 
-        PrintAt(72, 76 + i * 51, "PAD ");
+        draw_string(72, 76 + i * 51, "PAD ");
 
-        DispChr(0x41 + i);
+        draw_character(0x41 + i);
 
         vhptr->copyTo(display::graphics.screen(), 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
     }
@@ -1616,10 +1616,10 @@ int FutureCheck(char plr, char type)
                     Data->P[plr].LaunchFacility[i] = 1;
                     p[i] = 1;
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
-                    RectFill(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
+                    fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     display::graphics.setForegroundColor(5);
                     Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    PrintAt(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                    draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                 } else if (p[i] == -1 && Data->P[plr].Cash < 20 && type == 0) {
                     Help("i129");
@@ -1634,11 +1634,11 @@ int FutureCheck(char plr, char type)
                     Data->P[plr].Spend[0][3] += Data->P[plr].LaunchFacility[i];
                     Data->P[plr].LaunchFacility[i] = 1;
                     p[i] = 1;
-                    RectFill(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
+                    fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     display::graphics.setForegroundColor(5);
                     Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    PrintAt(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                    draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                 } else if (p[i] > 4 && Data->P[plr].Cash < abs(Data->P[plr].LaunchFacility[i])
                            && type == 0) {
@@ -1668,11 +1668,11 @@ char RequestX(char *s, char md)
     IOBox(91, 103, 164, 130);
     InBox(92, 58, 243, 97);
     display::graphics.setForegroundColor(1);
-    DispBig(111, 110, "YES", 0, 0);
-    DispBig(193, 110, "NO", 0, 0);
+    draw_heading(111, 110, "YES", 0, 0);
+    draw_heading(193, 110, "NO", 0, 0);
     display::graphics.setForegroundColor(11);
-    DispBig(166 - i * 10, 65, &s[0], 0, -1);
-    PrintAt(136, 94, "ARE YOU SURE?");
+    draw_heading(166 - i * 10, 65, &s[0], 0, -1);
+    draw_string(136, 94, "ARE YOU SURE?");
 
     WaitForMouseUp();
     i = 2;

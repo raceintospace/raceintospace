@@ -19,7 +19,7 @@
  * \param s pointer to char-array (string) to print
  *
  */
-void PrintAt(int x, int y, const char *s)
+void draw_string(int x, int y, const char *s)
 {
     short i;
 
@@ -32,23 +32,23 @@ void PrintAt(int x, int y, const char *s)
     }
 
     for (i = 0; i < (int)strlen(s); i++) {
-        DispChr(s[i]);
+        draw_character(s[i]);
     }
 
     av_need_update_xy(x, y - 7, x + i * 7, y);
     return;
 }
 
-void PrintAtKey(int x, int y, const char *s, char val)
+void draw_string_highlighted(int x, int y, const char *s, char val)
 {
-    PrintAt(x, y, s);
+    draw_string(x, y, s);
     grMoveTo(x, y);
     display::graphics.setForegroundColor(9);
-    DispChr(s[val]);
+    draw_character(s[val]);
     return;
 }
 
-void DispBig(int x, int y, const char *txt, char mode, char te)
+void draw_heading(int x, int y, const char *txt, char mode, char te)
 {
     int i, k, l, px;
     struct LET {
@@ -96,7 +96,7 @@ void DispBig(int x, int y, const char *txt, char mode, char te)
     av_need_update_xy(x0, y, x, y + 15);
 }
 
-void DispNum(int xx, int yy, int num)
+void draw_number(int xx, int yy, int num)
 {
     short n0, n1, n2, n3, t;
 
@@ -108,7 +108,7 @@ void DispNum(int xx, int yy, int num)
     num = abs(t);
 
     if (t < 0) {
-        PrintAt(0, 0, "-");
+        draw_string(0, 0, "-");
     }
 
     n0 = num / 1000;
@@ -117,46 +117,46 @@ void DispNum(int xx, int yy, int num)
     n3 = num - n0 * 1000 - n1 * 100 - n2 * 10;
 
     if (n0 != 0) {
-        DispChr(n0 + 0x30);
-        DispChr(n1 + 0x30);
-        DispChr(n2 + 0x30);
-        DispChr(n3 + 0x30);
+        draw_character(n0 + 0x30);
+        draw_character(n1 + 0x30);
+        draw_character(n2 + 0x30);
+        draw_character(n3 + 0x30);
     };
 
     if (n0 == 0 && n1 != 0) {
-        DispChr(n1 + 0x30);
-        DispChr(n2 + 0x30);
-        DispChr(n3 + 0x30);
+        draw_character(n1 + 0x30);
+        draw_character(n2 + 0x30);
+        draw_character(n3 + 0x30);
     };
 
     if (n0 == 0 && n1 == 0 && n2 != 0) {
-        DispChr(n2 + 0x30);
-        DispChr(n3 + 0x30);
+        draw_character(n2 + 0x30);
+        draw_character(n3 + 0x30);
     };
 
     if (n0 == 0 && n1 == 0 && n2 == 0) {
-        DispChr(n3 + 0x30);
+        draw_character(n3 + 0x30);
     }
 
     return;
 }
 
 
-void DispMB(int x, int y, int val)
+void draw_megabucks(int x, int y, int val)
 {
-    DispNum(x, y, val);
-    PrintAt(0, 0, " MB");
+    draw_number(x, y, val);
+    draw_string(0, 0, " MB");
     return;
 }
 
 void ShBox(int x1, int y1, int x2, int y2)
 {
-    RectFill(x1, y1, x2, y2, 3);
+    fill_rectangle(x1, y1, x2, y2, 3);
     OutBox(x1, y1, x2, y2);
     return;
 }
 
-void UPArrow(int x1, int y1)
+void draw_up_arrow(int x1, int y1)
 {
     display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
     display::graphics.screen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
@@ -166,7 +166,7 @@ void UPArrow(int x1, int y1)
     return;
 }
 
-void RTArrow(int x1, int y1)
+void draw_right_arrow(int x1, int y1)
 {
     display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
     display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
@@ -176,7 +176,7 @@ void RTArrow(int x1, int y1)
     return;
 }
 
-void LTArrow(int x1, int y1)
+void draw_left_arrow(int x1, int y1)
 {
     display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
     display::graphics.screen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
@@ -186,7 +186,7 @@ void LTArrow(int x1, int y1)
     return;
 }
 
-void DNArrow(int x1, int y1)
+void draw_down_arrow(int x1, int y1)
 {
     display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
     display::graphics.screen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
@@ -238,7 +238,7 @@ void IOBox(int x1, int y1, int x2, int y2)
  * \param col Color code of the rectangle
  *
  */
-void RectFill(int x1, int y1, int x2, int y2, char col)
+void fill_rectangle(int x1, int y1, int x2, int y2, char col)
 {
     display::graphics.setBackgroundColor(col);
     display::graphics.screen()->fillRect(x1, y1, x2, y2, col);
@@ -250,17 +250,17 @@ void GradRect(int x1, int y1, int x2, int y2, char plr)
     //register int i,j,val;
     //val=3*plr+6;
 
-    RectFill(x1, y1, x2, y2, 7 + 3 * plr);
+    fill_rectangle(x1, y1, x2, y2, 7 + 3 * plr);
     //for (j=x1;j<=x2;j+=4)
     //  for (i=y1;i<=y2;i+=4)
     //    screen[j+320*i]=val;
     return;
 }
 
-void FlagSm(char plr, int xm, int ym)
+void draw_small_flag(char plr, int xm, int ym)
 {
     if (plr == 0) {
-        RectFill(xm, ym, xm + 25, ym + 14, 1);
+        fill_rectangle(xm, ym, xm + 25, ym + 14, 1);
         display::graphics.setForegroundColor(8);
 
         for (int i = 0; i < 15; i++) {
@@ -269,7 +269,7 @@ void FlagSm(char plr, int xm, int ym)
             i++;
         };
 
-        RectFill(xm, ym, xm + 12, ym + 7, 5);
+        fill_rectangle(xm, ym, xm + 12, ym + 7, 5);
 
         xm++;
 
@@ -287,7 +287,7 @@ void FlagSm(char plr, int xm, int ym)
             i++;
         };
     } else {
-        RectFill(xm, ym, xm + 25, ym + 14, 8);
+        fill_rectangle(xm, ym, xm + 25, ym + 14, 8);
         display::graphics.setForegroundColor(11);
         grMoveTo(xm + 2, ym + 6);
         grLineTo(xm + 4, ym + 6);
@@ -311,21 +311,21 @@ void FlagSm(char plr, int xm, int ym)
 #define SC grSetColor
 
 
-void Flag(int x, int y, char plr)
+void draw_flag(int x, int y, char plr)
 {
     if (plr == 0) {
         int i, j;
 
         for (i = 0; i < 7; i++) {
-            RectFill(x, y + i * 6, x + 69, y + 2 + i * 6, 8);
+            fill_rectangle(x, y + i * 6, x + 69, y + 2 + i * 6, 8);
         }
 
         for (i = 0; i < 6; i++) {
-            RectFill(x, y + 3 + i * 6, x + 69, y + 5 + i * 6, 1);
+            fill_rectangle(x, y + 3 + i * 6, x + 69, y + 5 + i * 6, 1);
         }
 
-        RectFill(x, y, x + 33, y + 20, 6);
-        RectFill(x, y, x + 32, y + 20, 5);
+        fill_rectangle(x, y, x + 33, y + 20, 6);
+        fill_rectangle(x, y, x + 32, y + 20, 5);
 
         for (j = 0; j < 5; j++) for (i = 0; i < 8; i++) {
                 display::graphics.screen()->setPixel(x + 2 + i * 4, y + 2 + 4 * j, 2);
@@ -335,7 +335,7 @@ void Flag(int x, int y, char plr)
                 display::graphics.screen()->setPixel(x + 4 + i * 4, y + 4 + 4 * j, 2);
             }
     } else {
-        RectFill(x, y, x + 69, 38 + y, 8);
+        fill_rectangle(x, y, x + 69, 38 + y, 8);
         display::graphics.screen()->setPixel(10 + x, 2 + y, 11);
         display::graphics.screen()->setPixel(8 + x, 3 + y, 11);
         display::graphics.screen()->setPixel(9 + x, 3 + y, 11);
@@ -400,7 +400,7 @@ void Flag(int x, int y, char plr)
  *
  * \param chr Character to be printed
  */
-void DispChr(char chr)
+void draw_character(char chr)
 {
     switch (toupper(chr)) {
     case 'A':

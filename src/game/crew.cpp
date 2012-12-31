@@ -299,7 +299,7 @@ int AsnCrew(char plr, char pad, char part)
     IOBox(80, 7, 154, 21);
     IOBox(164, 7, 238, 21); // assign,cancel
     InBox(80, 36, 238, 99); // center screen
-    RectFill(81, 37, 237, 98, 7 + 3 * plr);
+    fill_rectangle(81, 37, 237, 98, 7 + 3 * plr);
     ShBox(80, 24, 238, 33);
 
     for (i = 0; i < 4; i++) {
@@ -316,42 +316,42 @@ int AsnCrew(char plr, char pad, char part)
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(100, 16, "CANCEL");
+    draw_string(100, 16, "CANCEL");
 
     display::graphics.setForegroundColor(9);
 
-    PrintAt(184, 16, "A");
+    draw_string(184, 16, "A");
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(0, 0, "SSIGN");
+    draw_string(0, 0, "SSIGN");
 
-    PrintAt(86, 111, "MAKE ");
+    draw_string(86, 111, "MAKE ");
 
     display::graphics.setForegroundColor(9);
 
-    PrintAt(0, 0, "P");
+    draw_string(0, 0, "P");
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(0, 0, "RIMARY");
+    draw_string(0, 0, "RIMARY");
 
-    PrintAt(169, 111, "MAKE ");
+    draw_string(169, 111, "MAKE ");
 
     display::graphics.setForegroundColor(9);
 
-    PrintAt(0, 0, "B");
+    draw_string(0, 0, "B");
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(0, 0, "ACKUP");
+    draw_string(0, 0, "ACKUP");
 
     display::graphics.setForegroundColor(11);
 
     if (part == 0) {
-        PrintAt(105, 31, "SELECT PRIMARY CREW");
+        draw_string(105, 31, "SELECT PRIMARY CREW");
     } else {
-        PrintAt(100, 31, "SELECT SECONDARY CREW");
+        draw_string(100, 31, "SELECT SECONDARY CREW");
     }
 
     display::graphics.setForegroundColor(1); // reset the color
@@ -485,43 +485,43 @@ void FutFltsTxt(char nw, char col)
     display::graphics.setForegroundColor(col);
 
     if (nw < 4) {
-        PrintAt(83, 129 + nw * 16, "FLT. CREW ");
+        draw_string(83, 129 + nw * 16, "FLT. CREW ");
     } else {
         temp = nw - 4;
-        PrintAt(167, 129 + temp * 16, "FLT. CREW ");
+        draw_string(167, 129 + temp * 16, "FLT. CREW ");
     };
 
     switch (nw) {
     case 0:
-        PrintAt(0, 0, "I");
+        draw_string(0, 0, "I");
         break;
 
     case 1:
-        PrintAt(0, 0, "II");
+        draw_string(0, 0, "II");
         break;
 
     case 2:
-        PrintAt(0, 0, "III");
+        draw_string(0, 0, "III");
         break;
 
     case 3:
-        PrintAt(0, 0, "IV");
+        draw_string(0, 0, "IV");
         break;
 
     case 4:
-        PrintAt(0, 0, "V");
+        draw_string(0, 0, "V");
         break;
 
     case 5:
-        PrintAt(0, 0, "VI");
+        draw_string(0, 0, "VI");
         break;
 
     case 6:
-        PrintAt(0, 0, "VII");
+        draw_string(0, 0, "VII");
         break;
 
     case 7:
-        PrintAt(0, 0, "VIII");
+        draw_string(0, 0, "VIII");
         break;
 
     default:
@@ -565,18 +565,18 @@ void FutSt2(int num, int type)
     int temp = 0;
 
     if (num < 4) {
-        RectFill(84, 130 + num * 16, 151, 136 + num * 16, 3);
+        fill_rectangle(84, 130 + num * 16, 151, 136 + num * 16, 3);
         grMoveTo(84, 135 + num * 16);
     } else {
         temp = num - 4;
-        RectFill(168, 130 + temp * 16, 235, 136 + temp * 16, 3);
+        fill_rectangle(168, 130 + temp * 16, 235, 136 + temp * 16, 3);
         grMoveTo(168, 135 + temp * 16);
     };
 
     switch (type) {
     case 0:
         display::graphics.setForegroundColor(6);
-        PrintAt(0, 0, "UNASSIGNED");
+        draw_string(0, 0, "UNASSIGNED");
         break;
 
     case 1:
@@ -586,27 +586,27 @@ void FutSt2(int num, int type)
             display::graphics.setForegroundColor(12);
         }
 
-        PrintAt(0, 0, "TRAINING");
+        draw_string(0, 0, "TRAINING");
         break;
 
     case 2:
         display::graphics.setForegroundColor(9);
-        PrintAt(0, 0, "VACANT");
+        draw_string(0, 0, "VACANT");
         break;
 
     case 3:
         display::graphics.setForegroundColor(11);
-        PrintAt(0, 0, "PRIMARY");
+        draw_string(0, 0, "PRIMARY");
         break;
 
     case 4:
         display::graphics.setForegroundColor(11);
-        PrintAt(0, 0, "BACKUP");
+        draw_string(0, 0, "BACKUP");
         break;
 
     case 5:
         display::graphics.setForegroundColor(10);
-        PrintAt(0, 0, "ASSIGNED");
+        draw_string(0, 0, "ASSIGNED");
         break;
     }
 
@@ -621,7 +621,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
     m[1] = M2;
     m[2] = M3;
     m[3] = M4;
-    RectFill(82, 38, 236, 97, 7 + plr * 3); // center screen
+    fill_rectangle(82, 38, 236, 97, 7 + plr * 3); // center screen
     display::graphics.setForegroundColor(1);
 
     for (i = 0; i < men; i++)
@@ -634,39 +634,39 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(3);    // Print name in gray if 'naut has announced retirement (black doesn't show well here) -Leon
             }
 
-            PrintAt(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
+            draw_string(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
             display::graphics.setForegroundColor(3);
 
             if (Data->P[plr].Pool[m[i] - 1].Missions > 0) {
-                PrintAt(0, 0, " (");
-                DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Missions);
-                PrintAt(0, 0, ")");
+                draw_string(0, 0, " (");
+                draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Missions);
+                draw_string(0, 0, ")");
             }
 
             display::graphics.setForegroundColor(1);
-            RectFill(87, 39 + i * 14, 94, 39 + i * 14, 2); // Top
-            RectFill(87, 39 + i * 14, 87, 44 + i * 14, 2); // Left
-            RectFill(87, 45 + i * 14, 94, 45 + i * 14, 3); // Bottom
-            RectFill(95, 39 + i * 14, 95, 45 + i * 14, 3); // Right
+            fill_rectangle(87, 39 + i * 14, 94, 39 + i * 14, 2); // Top
+            fill_rectangle(87, 39 + i * 14, 87, 44 + i * 14, 2); // Left
+            fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3); // Bottom
+            fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3); // Right
 
             if (Data->P[plr].Pool[m[i] - 1].Mood >= 65) {
-                RectFill(88, 40 + i * 14, 94, 44 + i * 14, 16);
+                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 16);
             }
 
             if (Data->P[plr].Pool[m[i] - 1].Mood < 65 && Data->P[plr].Pool[m[i] - 1].Mood >= 40) {
-                RectFill(88, 40 + i * 14, 94, 44 + i * 14, 11);
+                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 11);
             }
 
             if (Data->P[plr].Pool[m[i] - 1].Mood < 40 && Data->P[plr].Pool[m[i] - 1].Mood >= 20) {
-                RectFill(88, 40 + i * 14, 94, 44 + i * 14, 8);
+                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 8);
             }
 
             if (Data->P[plr].Pool[m[i] - 1].Mood < 20) {
-                RectFill(88, 40 + i * 14, 94, 44 + i * 14, 0);
+                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 0);
             }
 
             if (Data->P[plr].Pool[m[i] - 1].Mood == 0) {
-                RectFill(88, 40 + i * 14, 94, 44 + i * 14, 3);
+                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 3);
             }
 
             //87 - 169
@@ -674,35 +674,35 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
             }
 
-            PrintAt(87, 51 + i * 14, "CP:");
-            DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Cap);
+            draw_string(87, 51 + i * 14, "CP:");
+            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Cap);
             display::graphics.setForegroundColor(1);
 
             if (i == 1 && men > 1) {
                 display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
             }
 
-            PrintAt(0, 0, "  LM:");
-            DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].LM);
+            draw_string(0, 0, "  LM:");
+            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].LM);
             display::graphics.setForegroundColor(1);
 
             if (men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) {
                 display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
             }
 
-            PrintAt(0, 0, "  EV:");
-            DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].EVA);
+            draw_string(0, 0, "  EV:");
+            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].EVA);
             display::graphics.setForegroundColor(1);
 
             if ((men == 2 && i == 0) || (men == 3 && i == 2)) {
                 display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
             }
 
-            PrintAt(0, 0, "  DO:");
-            DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Docking);
+            draw_string(0, 0, "  DO:");
+            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Docking);
             display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
-            PrintAt(0, 0, "  EN:");
-            DispNum(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
+            draw_string(0, 0, "  EN:");
+            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
         };
 
     return;
@@ -718,18 +718,18 @@ void DrawHard(char mode, char pad, char mis, char plr)
     InBox(81, 60, 238, 95);
     IOBox(81, 154, 238, 167); // continue
     InBox(81, 47, 238, 56);
-    RectFill(82, 61, 237, 94, 6 + 3 * plr);
+    fill_rectangle(82, 61, 237, 94, 6 + 3 * plr);
     display::graphics.setForegroundColor(11);
 
     if (mode == 0) {
-        PrintAt(90, 54, "SELECT PRIMARY VEHICLE");
+        draw_string(90, 54, "SELECT PRIMARY VEHICLE");
     } else {
-        PrintAt(90, 54, "SELECT SECONDARY VEHICLE");
+        draw_string(90, 54, "SELECT SECONDARY VEHICLE");
     }
 
     display::graphics.setForegroundColor(1);
     GetMisType(mis);
-    PrintAt(85, 70, Mis.Abbr);
+    draw_string(85, 70, Mis.Abbr);
 //Missions(plr,85,70,mis,0);
     int MisCod;
     MisCod = Data->P[plr].Future[pad].MissionCode;
@@ -739,62 +739,62 @@ void DrawHard(char mode, char pad, char mis, char plr)
     {
         switch (Data->P[plr].Future[pad].Duration) {
         case 1:
-            PrintAt(0, 0, "");
+            draw_string(0, 0, "");
             break;
 
         case 2:
-            PrintAt(0, 0, " (B)");
+            draw_string(0, 0, " (B)");
             break;
 
         case 3:
-            PrintAt(0, 0, " (C)");
+            draw_string(0, 0, " (C)");
             break;
 
         case 4:
-            PrintAt(0, 0, " (D)");
+            draw_string(0, 0, " (D)");
             break;
 
         case 5:
-            PrintAt(0, 0, " (E)");
+            draw_string(0, 0, " (E)");
             break;
 
         case 6:
-            PrintAt(0, 0, " (F)");
+            draw_string(0, 0, " (F)");
             break;
 
         default:
-            PrintAt(0, 0, "");
+            draw_string(0, 0, "");
             break;
         }
     }
 
-    PrintAt(85, 85, "PAD: "); // Used to be followed by: "DispNum(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon
+    draw_string(85, 85, "PAD: "); // Used to be followed by: "draw_number(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon
 
     switch (pad) {
     case 0:
-        PrintAt(0, 0, "A");
+        draw_string(0, 0, "A");
         break;
 
     case 1:
-        PrintAt(0, 0, "B");
+        draw_string(0, 0, "B");
         break;
 
     case 2:
-        PrintAt(0, 0, "C");
+        draw_string(0, 0, "C");
         break;
     }
 
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name)) * 3;
-    PrintAt(111 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
+    draw_string(111 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name)) * 3;
-    PrintAt(190 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name))*3);
+    draw_string(190 + lenprogname, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name))*3);
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name)) * 3;
-    PrintAt(111 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name); //DispNum(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name))*3);
+    draw_string(111 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name))*3);
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name)) * 3;
-    PrintAt(190 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name); //DispNum(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name))*3);
+    draw_string(190 + lenprogname, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name))*3);
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name)) * 3;
-    PrintAt(149 + 4 + lenprogname, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
-    PrintAt(143, 163, "CANCEL");
+    draw_string(149 + 4 + lenprogname, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+    draw_string(143, 163, "CANCEL");
     return;
 }
 

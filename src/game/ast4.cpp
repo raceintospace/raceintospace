@@ -156,9 +156,9 @@ void AstLevel(char plr, char prog, char crew, char ast)
     local.copyFrom(display::graphics.screen(), 94, 38, 236, 111);
     ShBox(94, 38, 236, 95);
     InBox(98, 41, 232, 61);
-    RectFill(99, 42, 231, 60, 7 + plr * 3);
+    fill_rectangle(99, 42, 231, 60, 7 + plr * 3);
     display::graphics.setForegroundColor(12);
-    PrintAt(115, 48, "COMPATIBILITY");
+    draw_string(115, 48, "COMPATIBILITY");
     over = 0;
     val = 0;
 
@@ -175,14 +175,14 @@ void AstLevel(char plr, char prog, char crew, char ast)
                 InBox(111, 66 + 9 * val, 119, 72 + 9 * val);
 
                 if (temp == 0) {
-                    RectFill(112, 67 + 9 * val, 118, 71 + 9 * val, 9);
+                    fill_rectangle(112, 67 + 9 * val, 118, 71 + 9 * val, 9);
                     over++;
                 } else {
-                    RectFill(112, 67 + 9 * val, 118, 71 + 9 * val, 16);
+                    fill_rectangle(112, 67 + 9 * val, 118, 71 + 9 * val, 16);
                 }
 
                 display::graphics.setForegroundColor(1);
-                PrintAt(122, 71 + 9 * val, Data->P[plr].Pool[Guy(plr, prog, crew, i)].Name);
+                draw_string(122, 71 + 9 * val, Data->P[plr].Pool[Guy(plr, prog, crew, i)].Name);
             } else if (temp == 0) {
                 over++;
             }
@@ -220,24 +220,24 @@ void AstLevel(char plr, char prog, char crew, char ast)
     // Level 2 Only
     if ((plr == 1 && Data->Def.Ast2 == 1) || (plr == 0 && Data->Def.Ast1 == 1)) {
         InBox(111, 66, 119, 72);
-        RectFill(112, 67, 118, 71, i);
+        fill_rectangle(112, 67, 118, 71, i);
         display::graphics.setForegroundColor(1);
-        PrintAt(122, 71, "CREW RELATIONSHIP");
+        draw_string(122, 71, "CREW RELATIONSHIP");
     }
 
     if ((plr == 1 && Data->Def.Ast2 == 2) || (plr == 0 && Data->Def.Ast1 == 2)) {
         display::graphics.setForegroundColor(1);
-        PrintAt(111, 71, "NO INFO AT THIS LEVEL");
+        draw_string(111, 71, "NO INFO AT THIS LEVEL");
     }
 
 
 
-    //RectFill(113,53,119,57,i);  // shouldn't be mood
+    //fill_rectangle(113,53,119,57,i);  // shouldn't be mood
     display::graphics.setForegroundColor(11);
-    PrintAt(115, 57, Data->P[plr].Pool[man].Name);
+    draw_string(115, 57, Data->P[plr].Pool[man].Name);
     // don't do this for level three
-    PrintAt(0, 0, "  M: ");
-    DispNum(0, 0, Data->P[plr].Pool[man].Mood);
+    draw_string(0, 0, "  M: ");
+    draw_number(0, 0, Data->P[plr].Pool[man].Mood);
 
     key = 0;
 
@@ -288,8 +288,8 @@ void DrawProgs(char plr, char prog)
     ShBox(0, 83, 319, 123);
     ShBox(0, 125, 158, 199);
     ShBox(161, 125, 319, 199);
-    RectFill(25, 129, 153, 195, 0);
-    RectFill(5, 129, 19, 195, 0);
+    fill_rectangle(25, 129, 153, 195, 0);
+    fill_rectangle(5, 129, 19, 195, 0);
     ShBox(6, 130, 18, 161);
     ShBox(6, 163, 18, 194);
     IOBox(243, 86, 316, 102);
@@ -299,8 +299,8 @@ void DrawProgs(char plr, char prog)
     InBox(24, 128, 154, 196);
     InBox(60, 27, 141, 78);
     InBox(3, 3, 30, 19);
-    UPArrow(9, 133);
-    DNArrow(9, 166);
+    draw_up_arrow(9, 133);
+    draw_down_arrow(9, 166);
     PlaceEquip(plr, prog - 1);
 
     for (j = 0; j < 2; j++)
@@ -322,86 +322,86 @@ void DrawProgs(char plr, char prog)
         ShBox(4, 113, 12, 119);
     }
 
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(9);
-    PrintAt(250, 96, "A");
+    draw_string(250, 96, "A");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "SSIGN CREW");
+    draw_string(0, 0, "SSIGN CREW");
     display::graphics.setForegroundColor(9);
-    PrintAt(252, 114, "B");
+    draw_string(252, 114, "B");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "REAK CREW");
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(0, 0, "REAK CREW");
+    draw_string(258, 13, "CONTINUE");
     display::graphics.setForegroundColor(5);
-    PrintAt(183, 133, "FLIGHT ");
+    draw_string(183, 133, "FLIGHT ");
     display::graphics.setForegroundColor(9);
-    PrintAt(0, 0, "C");
+    draw_string(0, 0, "C");
     display::graphics.setForegroundColor(5);
-    PrintAt(0, 0, "REW SELECTION");
+    draw_string(0, 0, "REW SELECTION");
     display::graphics.setForegroundColor(7);
-    PrintAt(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
+    draw_string(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
     display::graphics.setForegroundColor(9);
 
     if (prog == 1) {
-        PrintAt(152, 43, "ONE");
+        draw_string(152, 43, "ONE");
     }
 
     if (prog == 2) {
-        PrintAt(152, 43, "TWO");
+        draw_string(152, 43, "TWO");
     }
 
     if (prog == 3 || prog == 4) {
-        PrintAt(152, 43, "THREE");
+        draw_string(152, 43, "THREE");
     }
 
     if (prog == 5) {
-        PrintAt(152, 43, "FOUR");
+        draw_string(152, 43, "FOUR");
     }
 
-    PrintAt(0, 0, "-PERSON CAPACITY");
+    draw_string(0, 0, "-PERSON CAPACITY");
     display::graphics.setForegroundColor(7);
-    PrintAt(152, 51, "SAFETY FACTOR: ");
+    draw_string(152, 51, "SAFETY FACTOR: ");
     display::graphics.setForegroundColor(11);
-    DispNum(0, 0, Data->P[plr].Manned[prog - 1].Safety);
-    PrintAt(0, 0, " %");
+    draw_number(0, 0, Data->P[plr].Manned[prog - 1].Safety);
+    draw_string(0, 0, " %");
     display::graphics.setForegroundColor(7);
-    PrintAt(152, 59, "UNIT WEIGHT: ");
+    draw_string(152, 59, "UNIT WEIGHT: ");
     display::graphics.setForegroundColor(11);
-    DispNum(0, 0, Data->P[plr].Manned[prog - 1].UnitWeight);
+    draw_number(0, 0, Data->P[plr].Manned[prog - 1].UnitWeight);
     display::graphics.setForegroundColor(7);
-    PrintAt(152, 67, "MAX DURATION: ");
+    draw_string(152, 67, "MAX DURATION: ");
     display::graphics.setForegroundColor(11);
-    DispNum(0, 0, Data->P[plr].Manned[prog - 1].Duration);
-    PrintAt(0, 0, " DAYS (LVL ");
+    draw_number(0, 0, Data->P[plr].Manned[prog - 1].Duration);
+    draw_string(0, 0, " DAYS (LVL ");
 
     if (prog == 1) {
-        PrintAt(0, 0, "B)");
+        draw_string(0, 0, "B)");
     }
 
     if (prog == 2) {
-        PrintAt(0, 0, "E)");
+        draw_string(0, 0, "E)");
     }
 
     if (prog == 3 || prog == 5) {
-        PrintAt(0, 0, "F)");
+        draw_string(0, 0, "F)");
     }
 
     if (prog == 4) {
-        PrintAt(0, 0, "D)");
+        draw_string(0, 0, "D)");
     }
 
     display::graphics.setForegroundColor(7);
-    PrintAt(152, 75, "AVOID FAILURE: ");
+    draw_string(152, 75, "AVOID FAILURE: ");
     display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].Manned[prog - 1].SaveCard > 0) {
-        PrintAt(0, 0, "YES");
+        draw_string(0, 0, "YES");
     } else {
-        PrintAt(0, 0, "NO");
+        draw_string(0, 0, "NO");
     }
 
     display::graphics.setForegroundColor(1);
-    DispBig(40, 5, (char *)Name, 0, -1);
+    draw_heading(40, 5, (char *)Name, 0, -1);
     return;
 }
 
@@ -525,42 +525,42 @@ void DamProb(char plr, char prog, int chk)
     InBox(116, 86, 283, 126);
     IOBox(116, 130, 189, 155);
     IOBox(201, 130, 274, 155);
-    Flag(41, 87, plr);
-    DispBig(135, 136, "YES", 1, 0);
-    DispBig(225, 136, "NO", 1, 0);
-    DispBig(44, 135, "REPAIR", 1, -1);
+    draw_flag(41, 87, plr);
+    draw_heading(135, 136, "YES", 1, 0);
+    draw_heading(225, 136, "NO", 1, 0);
+    draw_heading(44, 135, "REPAIR", 1, -1);
     display::graphics.setForegroundColor(6);
-    PrintAt(121, 95, "DIRECTOR: ");
+    draw_string(121, 95, "DIRECTOR: ");
     display::graphics.setForegroundColor(8);
 
     if (plr == 0) {
-        PrintAt(0, 0, &Data->P[Data->plr[0]].Name[0]);
+        draw_string(0, 0, &Data->P[Data->plr[0]].Name[0]);
     } else {
-        PrintAt(0, 0, &Data->P[Data->plr[1]].Name[0]);
+        draw_string(0, 0, &Data->P[Data->plr[1]].Name[0]);
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(121, 104, "DAMAGE: ");
+    draw_string(121, 104, "DAMAGE: ");
     display::graphics.setForegroundColor(11);
     strcat(Name, " PROGRAM");
-    PrintAt(0, 0, &Name[0]);
+    draw_string(0, 0, &Name[0]);
     display::graphics.setForegroundColor(6);
-    PrintAt(121, 113, "DAMAGE COST: ");
+    draw_string(121, 113, "DAMAGE COST: ");
     display::graphics.setForegroundColor(1);
     sprintf(&Digit[0], "%d", D_Cost);
-    PrintAt(0, 0, &Digit[0]);
-    PrintAt(0, 0, " M.B.  (OF ");
-    DispMB(0, 0, Data->P[plr].Cash);
-    PrintAt(0, 0, ")");
+    draw_string(0, 0, &Digit[0]);
+    draw_string(0, 0, " M.B.  (OF ");
+    draw_megabucks(0, 0, Data->P[plr].Cash);
+    draw_string(0, 0, ")");
     display::graphics.setForegroundColor(6);
-    PrintAt(121, 122, "SAFETY LOSS: ");
+    draw_string(121, 122, "SAFETY LOSS: ");
     display::graphics.setForegroundColor(1);
     sprintf(&Digit[0], "%d", Saf_Loss);
-    PrintAt(0, 0, &Digit[0]);
-    PrintAt(0, 0, "%  (FROM ");
+    draw_string(0, 0, &Digit[0]);
+    draw_string(0, 0, "%  (FROM ");
     sprintf(&Digit[0], "%d", ESafety);
-    PrintAt(0, 0, &Digit[0]);
-    PrintAt(0, 0, "%)");
+    draw_string(0, 0, &Digit[0]);
+    draw_string(0, 0, "%)");
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     WaitForMouseUp();
@@ -628,36 +628,36 @@ void DrawPosition(char prog, int pos)
     switch (pos) {
     case 1:
         if (prog == 1) {
-            PrintAt(17, 91, "CAPSULE PILOT - EVA SPECIALIST");
+            draw_string(17, 91, "CAPSULE PILOT - EVA SPECIALIST");
         } else if (prog == 2) {
-            PrintAt(17, 91, "CAPSULE PILOT - DOCKING SPECIALIST");
+            draw_string(17, 91, "CAPSULE PILOT - DOCKING SPECIALIST");
         } else  if (prog >= 3) {
-            PrintAt(17, 91, "COMMAND PILOT");
+            draw_string(17, 91, "COMMAND PILOT");
         }
 
         break;
 
     case 2:
         if (prog > 1 && prog < 5) {
-            PrintAt(17, 100, "LM PILOT - EVA SPECIALIST");
+            draw_string(17, 100, "LM PILOT - EVA SPECIALIST");
         } else if (prog == 5) {
-            PrintAt(17, 100, "LUNAR PILOT");
+            draw_string(17, 100, "LUNAR PILOT");
         }
 
         break;
 
     case 3:
         if (prog > 2 && prog < 5) {
-            PrintAt(17, 109, "DOCKING SPECIALIST");
+            draw_string(17, 109, "DOCKING SPECIALIST");
         } else if (prog == 5) {
-            PrintAt(17, 109, "EVA SPECIALIST");
+            draw_string(17, 109, "EVA SPECIALIST");
         }
 
         break;
 
     case 4:
         if (prog == 5) {
-            PrintAt(17, 118, "EVA SPECIALIST");
+            draw_string(17, 118, "EVA SPECIALIST");
         }
 
         break;
@@ -756,7 +756,7 @@ Programs(char plr, char prog)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 BarSkill(plr, BarA, now2, &M[0]);
@@ -783,14 +783,14 @@ Programs(char plr, char prog)
                         if (BarA == 0)
                             if (now2 > 0) {
                                 now2--;
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 ShBox(26, 130 + BarA * 8, 152,
                                       138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                             };
 
                         if (BarA > 0) {
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA--;
                             now2--;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -807,13 +807,13 @@ Programs(char plr, char prog)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         };
 
                     if (BarA > 0) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -843,7 +843,7 @@ Programs(char plr, char prog)
                         if (BarA == 7)
                             if (now2 < count - 1) {
                                 now2++;
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 ShBox(26, 130 + BarA * 8, 152,
                                       138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
@@ -851,7 +851,7 @@ Programs(char plr, char prog)
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 BarA++;
                                 now2++;
                                 ShBox(26, 130 + BarA * 8, 152,
@@ -869,14 +869,14 @@ Programs(char plr, char prog)
                     if (BarA == 7)
                         if (now2 < count - 1) {
                             now2++;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         };
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -891,13 +891,13 @@ Programs(char plr, char prog)
                 //WaitForMouseUp();
                 OutBox(6, 163, 18, 194);
             } else if (key == K_HOME) {
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 BarA = 0;
                 now2 = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
             } else if (key == K_END) {
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 BarA = MIN(count - 1, 7);
                 now2 = count - 1;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -1073,7 +1073,7 @@ Programs(char plr, char prog)
                         }
                     };
 
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
 
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -1112,25 +1112,25 @@ Programs(char plr, char prog)
                     ShBox(75, 43, 244, 173);
                     IOBox(81, 152, 238, 167);
                     InBox(81, 70, 238, 113);
-                    RectFill(82, 71, 237, 112, 7 + 3 * plr);
+                    fill_rectangle(82, 71, 237, 112, 7 + 3 * plr);
                     display::graphics.setForegroundColor(1);
-                    DispBig(118, 50, "PROBLEM", 0, -1);
-                    PrintAt(136, 162, "CONTINUE");
+                    draw_heading(118, 50, "PROBLEM", 0, -1);
+                    draw_string(136, 162, "CONTINUE");
                     display::graphics.setForegroundColor(11);
-                    PrintAt(88, 80, "FLIGHT CREW ");
-                    DispNum(0, 0, grp + 1);
-                    PrintAt(0, 0, " IS ALREADY");
-                    PrintAt(88, 88, "ASSIGNED TO THE ");
+                    draw_string(88, 80, "FLIGHT CREW ");
+                    draw_number(0, 0, grp + 1);
+                    draw_string(0, 0, " IS ALREADY");
+                    draw_string(88, 88, "ASSIGNED TO THE ");
 
                     if (Data->P[plr].Pool[tst].Prime == 4
                         || Data->P[plr].Pool[tst].Prime == 3) {
-                        PrintAt(0, 0, "PRIMARY");
+                        draw_string(0, 0, "PRIMARY");
                     } else {
-                        PrintAt(0, 0, "BACKUP");
+                        draw_string(0, 0, "BACKUP");
                     }
 
-                    PrintAt(88, 96, "CREW OF A CURRENT MISSION:");
-                    PrintAt(88, 104, "CANNOT BREAK THIS CREW.");
+                    draw_string(88, 96, "CREW OF A CURRENT MISSION:");
+                    draw_string(88, 104, "CANNOT BREAK THIS CREW.");
 
                     WaitForMouseUp();
                     i = 1;
@@ -1166,7 +1166,7 @@ Programs(char plr, char prog)
 
                     ClearIt();
 
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
 
                     FltsTxt(grp, 8);
 
@@ -1226,15 +1226,15 @@ Programs(char plr, char prog)
 void ClearIt(void)
 {
 
-    RectFill(16, 87, 75, 91, 3);
-    RectFill(5, 87, 11, 91, 3);
-    RectFill(16, 96, 75, 100, 3);
-    RectFill(5, 96, 11, 100, 3);
-    RectFill(16, 105, 75, 109, 3);
-    RectFill(5, 105, 11, 109, 3);
-    RectFill(16, 114, 75, 118, 3);
-    RectFill(5, 114, 11, 118, 3);
-    RectFill(16, 87, 238, 121, 3);
+    fill_rectangle(16, 87, 75, 91, 3);
+    fill_rectangle(5, 87, 11, 91, 3);
+    fill_rectangle(16, 96, 75, 100, 3);
+    fill_rectangle(5, 96, 11, 100, 3);
+    fill_rectangle(16, 105, 75, 109, 3);
+    fill_rectangle(5, 105, 11, 109, 3);
+    fill_rectangle(16, 114, 75, 118, 3);
+    fill_rectangle(5, 114, 11, 118, 3);
+    fill_rectangle(16, 87, 238, 121, 3);
 
     return;
 }
@@ -1246,7 +1246,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
     /* This will be used to highlight the skills for each crew member's role -Leon */
 
-    RectFill(13, 86, 231, 122, 3); /* Clear Astro Area */
+    fill_rectangle(13, 86, 231, 122, 3); /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
     if (M1 > 0) {
@@ -1305,35 +1305,35 @@ void AstStats(char plr, char man, char num)
         display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
     }
 
-    PrintAt(119, y, "CA:");
-    DispNum(0, 0, Data->P[plr].Pool[num].Cap);
+    draw_string(119, y, "CA:");
+    draw_number(0, 0, Data->P[plr].Pool[num].Cap);
     display::graphics.setForegroundColor(1);
 
     if (man == 1 && program > 1) {
         display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
     }
 
-    PrintAt(143, y, "LM:");
-    DispNum(0, 0, Data->P[plr].Pool[num].LM);
+    draw_string(143, y, "LM:");
+    draw_number(0, 0, Data->P[plr].Pool[num].LM);
     display::graphics.setForegroundColor(1);
 
     if (program == 1 || ((program == 2 || program == 3 || program == 4) && man == 1) || (program == 5 && man > 1)) {
         display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
     }
 
-    PrintAt(167, y, "EV:");
-    DispNum(0, 0, Data->P[plr].Pool[num].EVA);
+    draw_string(167, y, "EV:");
+    draw_number(0, 0, Data->P[plr].Pool[num].EVA);
     display::graphics.setForegroundColor(1);
 
     if ((program == 2 && man == 0) || ((program == 3 || program == 4) && man == 2)) {
         display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
     }
 
-    PrintAt(192, y, "DO:");
-    DispNum(0, 0, Data->P[plr].Pool[num].Docking);
+    draw_string(192, y, "DO:");
+    draw_number(0, 0, Data->P[plr].Pool[num].Docking);
     display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
-    PrintAt(217, y, "EN:");
-    DispNum(0, 0, Data->P[plr].Pool[num].Endurance);
+    draw_string(217, y, "EN:");
+    draw_number(0, 0, Data->P[plr].Pool[num].Endurance);
     return;
 }
 
@@ -1343,23 +1343,23 @@ void AstNames(int man, char *name, char att)
 
     switch (man) {
     case 0:
-        RectFill(16, 87, 75, 91, 3);
-        RectFill(5, 87, 11, 91, 3);
+        fill_rectangle(16, 87, 75, 91, 3);
+        fill_rectangle(5, 87, 11, 91, 3);
         break;
 
     case 1:
-        RectFill(16, 96, 75, 100, 3);
-        RectFill(5, 96, 11, 100, 3);
+        fill_rectangle(16, 96, 75, 100, 3);
+        fill_rectangle(5, 96, 11, 100, 3);
         break;
 
     case 2:
-        RectFill(16, 105, 75, 109, 3);
-        RectFill(5, 105, 11, 109, 3);
+        fill_rectangle(16, 105, 75, 109, 3);
+        fill_rectangle(5, 105, 11, 109, 3);
         break;
 
     case 3:
-        RectFill(16, 114, 75, 118, 3);
-        RectFill(5, 114, 11, 118, 3);
+        fill_rectangle(16, 114, 75, 118, 3);
+        fill_rectangle(5, 114, 11, 118, 3);
         break;
     }
 
@@ -1379,45 +1379,45 @@ void AstNames(int man, char *name, char att)
 
     switch (man) {
     case 0:
-        PrintAt(17, 91, &name[0]);
+        draw_string(17, 91, &name[0]);
 
         if (missions > 0) {
-            PrintAt(0, 0, " (");
-            DispNum(0, 0, missions);
-            PrintAt(0, 0, ")");
+            draw_string(0, 0, " (");
+            draw_number(0, 0, missions);
+            draw_string(0, 0, ")");
         }
 
         break;
 
     case 1:
-        PrintAt(17, 100, &name[0]);
+        draw_string(17, 100, &name[0]);
 
         if (missions > 0) {
-            PrintAt(0, 0, " (");
-            DispNum(0, 0, missions);
-            PrintAt(0, 0, ")");
+            draw_string(0, 0, " (");
+            draw_number(0, 0, missions);
+            draw_string(0, 0, ")");
         }
 
         break;
 
     case 2:
-        PrintAt(17, 109, &name[0]);
+        draw_string(17, 109, &name[0]);
 
         if (missions > 0) {
-            PrintAt(0, 0, " (");
-            DispNum(0, 0, missions);
-            PrintAt(0, 0, ")");
+            draw_string(0, 0, " (");
+            draw_number(0, 0, missions);
+            draw_string(0, 0, ")");
         }
 
         break;
 
     case 3:
-        PrintAt(17, 118, &name[0]);
+        draw_string(17, 118, &name[0]);
 
         if (missions > 0) {
-            PrintAt(0, 0, " (");
-            DispNum(0, 0, missions);
-            PrintAt(0, 0, ")");
+            draw_string(0, 0, " (");
+            draw_number(0, 0, missions);
+            draw_string(0, 0, ")");
         }
 
         break;
@@ -1446,19 +1446,19 @@ void AstNames(int man, char *name, char att)
 //  if (retdel>0) col=7;
     switch (man) {
     case 0:
-        RectFill(5, 87, 11, 91, col);
+        fill_rectangle(5, 87, 11, 91, col);
         break;
 
     case 1:
-        RectFill(5, 96, 11, 100, col);
+        fill_rectangle(5, 96, 11, 100, col);
         break;
 
     case 2:
-        RectFill(5, 105, 11, 109, col);
+        fill_rectangle(5, 105, 11, 109, col);
         break;
 
     case 3:
-        RectFill(5, 114, 11, 118, col);
+        fill_rectangle(5, 114, 11, 118, col);
         break;
     }
 }
@@ -1541,35 +1541,35 @@ void FltsTxt(char nw, char col)
 
     switch (nw) {
     case 0:
-        PrintAt(169, 147, "FLT. CREW I");
+        draw_string(169, 147, "FLT. CREW I");
         break;
 
     case 1:
-        PrintAt(169, 162, "FLT. CREW II");
+        draw_string(169, 162, "FLT. CREW II");
         break;
 
     case 2:
-        PrintAt(169, 177, "FLT. CREW III");
+        draw_string(169, 177, "FLT. CREW III");
         break;
 
     case 3:
-        PrintAt(169, 192, "FLT. CREW IV");
+        draw_string(169, 192, "FLT. CREW IV");
         break;
 
     case 4:
-        PrintAt(246, 147, "FLT. CREW V");
+        draw_string(246, 147, "FLT. CREW V");
         break;
 
     case 5:
-        PrintAt(246, 162, "FLT. CREW VI");
+        draw_string(246, 162, "FLT. CREW VI");
         break;
 
     case 6:
-        PrintAt(246, 177, "FLT. CREW VII");
+        draw_string(246, 177, "FLT. CREW VII");
         break;
 
     case 7:
-        PrintAt(246, 192, "FLT. CREW VIII");
+        draw_string(246, 192, "FLT. CREW VIII");
         break;
     }
 } /* End of FltsTxt */

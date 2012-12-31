@@ -53,7 +53,7 @@ void PadDraw(char plr, char pad)
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
     InBox(167, 27, 316, 176);
-    RectFill(168, 28, 315, 175, 0);
+    fill_rectangle(168, 28, 315, 175, 0);
     IOBox(167, 179, 316, 195);
     ShBox(4, 28, 162, 43);
     InBox(6, 30, 160, 41);
@@ -67,7 +67,7 @@ void PadDraw(char plr, char pad)
     InBox(6, 182, 160, 193); //sched. duration
     InBox(6, 99, 160, 178);
     display::graphics.setForegroundColor(9);
-    PrintAt(18, 190, "SCHEDULED DURATION: ");
+    draw_string(18, 190, "SCHEDULED DURATION: ");
     display::graphics.setForegroundColor(7);
     int MisCod;
     MisCod = Data->P[plr].Mission[pad].MissionCode;
@@ -78,44 +78,44 @@ void PadDraw(char plr, char pad)
     {
         switch (Data->P[plr].Mission[pad].Duration) {
         case 1:
-            PrintAt(0, 0, "A");
+            draw_string(0, 0, "A");
             break;
 
         case 2:
-            PrintAt(0, 0, "B");
+            draw_string(0, 0, "B");
             break;
 
         case 3:
-            PrintAt(0, 0, "C");
+            draw_string(0, 0, "C");
             break;
 
         case 4:
-            PrintAt(0, 0, "D");
+            draw_string(0, 0, "D");
             break;
 
         case 5:
-            PrintAt(0, 0, "E");
+            draw_string(0, 0, "E");
             break;
 
         case 6:
-            PrintAt(0, 0, "F");
+            draw_string(0, 0, "F");
             break;
 
         default:
-            PrintAt(0, 0, "NONE");
+            draw_string(0, 0, "NONE");
             break;
         }
     } else {
         if (Data->P[plr].Mission[pad].PCrew - 1 >= 0 || Data->P[plr].Mission[pad].BCrew - 1 >= 0) {
-            PrintAt(0, 0, "A");
+            draw_string(0, 0, "A");
         } else {
-            PrintAt(0, 0, "NONE");
+            draw_string(0, 0, "NONE");
         }
     }
 
     display::graphics.setForegroundColor(7);
-    PrintAt(65, 71, "MISSION");
-    FlagSm(plr, 4, 4);
+    draw_string(65, 71, "MISSION");
+    draw_small_flag(plr, 4, 4);
 
     if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode) {
         PadPict(2 + plr);
@@ -126,22 +126,22 @@ void PadDraw(char plr, char pad)
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(15, 37, "STATUS: ");
+    draw_string(15, 37, "STATUS: ");
     display::graphics.setForegroundColor(9);
 
     if (Data->P[plr].LaunchFacility[pad] == 1) {
-        PrintAt(0, 0, "OPERATIONAL");
+        draw_string(0, 0, "OPERATIONAL");
     } else {
-        PrintAt(0, 0, "DESTROYED");
+        draw_string(0, 0, "DESTROYED");
     }
 
     display::graphics.setForegroundColor(1);
 
     if (Data->P[plr].LaunchFacility[pad] > 1) {
-        PrintAt(15, 56, "REPAIR COST: ");
+        draw_string(15, 56, "REPAIR COST: ");
         display::graphics.setForegroundColor(9);
-        DispNum(0, 0, Data->P[plr].LaunchFacility[pad]);
-        PrintAt(0, 0, "MB");
+        draw_number(0, 0, Data->P[plr].LaunchFacility[pad]);
+        draw_string(0, 0, "MB");
 
         if (Data->P[plr].Cash < Data->P[plr].LaunchFacility[pad]) {
             InBox(169, 181, 314, 193);
@@ -150,41 +150,41 @@ void PadDraw(char plr, char pad)
         display::graphics.setForegroundColor(9);
 
         if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
-            PrintAt(15, 56, "NO LAUNCH SCHEDULED");
+            draw_string(15, 56, "NO LAUNCH SCHEDULED");
             InBox(169, 181, 314, 193);
         } else {
-            PrintAt(15, 56, "PRE-MISSION CHECK");
+            draw_string(15, 56, "PRE-MISSION CHECK");
         }
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     if (Data->P[plr].LaunchFacility[pad] == 1) {
         display::graphics.setForegroundColor(9);
-        PrintAt(210, 189, "S");
+        draw_string(210, 189, "S");
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, "CRUB MISSION");
+        draw_string(0, 0, "CRUB MISSION");
     } else {
         display::graphics.setForegroundColor(9);
-        PrintAt(205, 189, "F");
+        draw_string(205, 189, "F");
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, "IX LAUNCH PAD");
+        draw_string(0, 0, "IX LAUNCH PAD");
     }
 
-    DispBig(37, 5, "LAUNCH FACILITY", 0, -1);
+    draw_heading(37, 5, "LAUNCH FACILITY", 0, -1);
 
     switch (pad) {
     case 0:
-        DispBig(201, 5, "A", 0, -1);
+        draw_heading(201, 5, "A", 0, -1);
         break;
 
     case 1:
-        DispBig(201, 5, "B", 0, -1);
+        draw_heading(201, 5, "B", 0, -1);
         break;
 
     case 2:
-        DispBig(201, 5, "C", 0, -1);
+        draw_heading(201, 5, "C", 0, -1);
         break;
     }
 
@@ -199,9 +199,9 @@ void PadDraw(char plr, char pad)
         display::graphics.setForegroundColor(1);
 
         if (Data->P[plr].Mission[pad].part == 0) {
-            PrintAt(53, 98, "PRIMARY PART");
+            draw_string(53, 98, "PRIMARY PART");
         } else {
-            PrintAt(44, 98, "SECONDARY PART");
+            draw_string(44, 98, "SECONDARY PART");
         }
     }
 
@@ -213,69 +213,69 @@ void PadDraw(char plr, char pad)
 
     // Crews
     display::graphics.setForegroundColor(7);
-    PrintAt(13, 107, "PRIMARY CREW  ");
+    draw_string(13, 107, "PRIMARY CREW  ");
 
     if (j >= 0) {
         display::graphics.setForegroundColor(11); // Now display the crew number, for player's easy reference - Leon
 
         if (j == 0) {
-            PrintAt(0, 0, "(CREW I)");
+            draw_string(0, 0, "(CREW I)");
         }
 
         if (j == 1) {
-            PrintAt(0, 0, "(CREW II)");
+            draw_string(0, 0, "(CREW II)");
         }
 
         if (j == 2) {
-            PrintAt(0, 0, "(CREW III)");
+            draw_string(0, 0, "(CREW III)");
         }
 
         if (j == 3) {
-            PrintAt(0, 0, "(CREW IV)");
+            draw_string(0, 0, "(CREW IV)");
         }
 
         if (j == 4) {
-            PrintAt(0, 0, "(CREW V)");
+            draw_string(0, 0, "(CREW V)");
         }
 
         if (j == 5) {
-            PrintAt(0, 0, "(CREW VI)");
+            draw_string(0, 0, "(CREW VI)");
         }
 
         if (j == 6) {
-            PrintAt(0, 0, "(CREW VII)");
+            draw_string(0, 0, "(CREW VII)");
         }
 
         if (j == 7) {
-            PrintAt(0, 0, "(CREW VIII)");
+            draw_string(0, 0, "(CREW VIII)");
         }
 
         for (k = 0; k < Data->P[plr].CrewCount[i][j]; k++) {
             // Draw a morale box for each crew member - Leon
             display::graphics.setForegroundColor(1);
-            RectFill(13, 110 + 7 * k, 20, 110 + 7 * k, 2); // Top
-            RectFill(13, 110 + 7 * k, 13, 116 + 7 * k, 2); // Left
-            RectFill(13, 116 + 7 * k, 20, 116 + 7 * k, 4); // Bottom
-            RectFill(21, 110 + 7 * k, 21, 116 + 7 * k, 4); // Right
+            fill_rectangle(13, 110 + 7 * k, 20, 110 + 7 * k, 2); // Top
+            fill_rectangle(13, 110 + 7 * k, 13, 116 + 7 * k, 2); // Left
+            fill_rectangle(13, 116 + 7 * k, 20, 116 + 7 * k, 4); // Bottom
+            fill_rectangle(21, 110 + 7 * k, 21, 116 + 7 * k, 4); // Right
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 65) {
-                RectFill(14, 111 + 7 * k, 20, 115 + 7 * k, 16);
+                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 16);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 65 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 40) {
-                RectFill(14, 111 + 7 * k, 20, 115 + 7 * k, 11);
+                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 11);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 40 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 20) {
-                RectFill(14, 111 + 7 * k, 20, 115 + 7 * k, 8);
+                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 8);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 20) {
-                RectFill(14, 111 + 7 * k, 20, 115 + 7 * k, 0);
+                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 0);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood == 0) {
-                RectFill(14, 111 + 7 * k, 20, 115 + 7 * k, 3);
+                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 3);
             }
 
             display::graphics.setForegroundColor(1);
@@ -293,85 +293,85 @@ void PadDraw(char plr, char pad)
             }
 
             // Show name in purple if 'naut is female AND has announced retirement
-            PrintAt(25, 115 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Name[0]);
+            draw_string(25, 115 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Name[0]);
             missions = Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Missions;
 
             if (missions > 0) {
-                PrintAt(0, 0, " (");
-                DispNum(0, 0, missions);
-                PrintAt(0, 0, ")");
+                draw_string(0, 0, " (");
+                draw_number(0, 0, missions);
+                draw_string(0, 0, ")");
             }
         }
 
         if (l == -1) {
-            PrintAt(25, 174, "UNAVAILABLE");
+            draw_string(25, 174, "UNAVAILABLE");
         }
     }
 
     display::graphics.setForegroundColor(7);
-    PrintAt(13, 145, "BACKUP CREW  ");
+    draw_string(13, 145, "BACKUP CREW  ");
 
     if (l >= 0) {
         display::graphics.setForegroundColor(11); // Now display the crew number, for player's easy reference - Leon
 
         if (l == 0) {
-            PrintAt(0, 0, "(CREW I)");
+            draw_string(0, 0, "(CREW I)");
         }
 
         if (l == 1) {
-            PrintAt(0, 0, "(CREW II)");
+            draw_string(0, 0, "(CREW II)");
         }
 
         if (l == 2) {
-            PrintAt(0, 0, "(CREW III)");
+            draw_string(0, 0, "(CREW III)");
         }
 
         if (l == 3) {
-            PrintAt(0, 0, "(CREW IV)");
+            draw_string(0, 0, "(CREW IV)");
         }
 
         if (l == 4) {
-            PrintAt(0, 0, "(CREW V)");
+            draw_string(0, 0, "(CREW V)");
         }
 
         if (l == 5) {
-            PrintAt(0, 0, "(CREW VI)");
+            draw_string(0, 0, "(CREW VI)");
         }
 
         if (l == 6) {
-            PrintAt(0, 0, "(CREW VII)");
+            draw_string(0, 0, "(CREW VII)");
         }
 
         if (l == 7) {
-            PrintAt(0, 0, "(CREW VIII)");
+            draw_string(0, 0, "(CREW VIII)");
         }
 
         for (k = 0; k < Data->P[plr].CrewCount[i][l]; k++) {
             // Draw a morale box for each crew member - Leon
             display::graphics.setForegroundColor(1);
-            RectFill(13, 148 + 7 * k, 20, 148 + 7 * k, 2); // Top
-            RectFill(13, 148 + 7 * k, 13, 154 + 7 * k, 2); // Left
-            RectFill(13, 154 + 7 * k, 20, 154 + 7 * k, 4); // Bottom
-            RectFill(21, 148 + 7 * k, 21, 154 + 7 * k, 4); // Right
+            fill_rectangle(13, 148 + 7 * k, 20, 148 + 7 * k, 2); // Top
+            fill_rectangle(13, 148 + 7 * k, 13, 154 + 7 * k, 2); // Left
+            fill_rectangle(13, 154 + 7 * k, 20, 154 + 7 * k, 4); // Bottom
+            fill_rectangle(21, 148 + 7 * k, 21, 154 + 7 * k, 4); // Right
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 65) {
-                RectFill(14, 149 + 7 * k, 20, 153 + 7 * k, 16);
+                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 16);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 65 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 40) {
-                RectFill(14, 149 + 7 * k, 20, 153 + 7 * k, 11);
+                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 11);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 40 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 20) {
-                RectFill(14, 149 + 7 * k, 20, 153 + 7 * k, 8);
+                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 8);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 20) {
-                RectFill(14, 149 + 7 * k, 20, 153 + 7 * k, 0);
+                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 0);
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood == 0) {
-                RectFill(14, 149 + 7 * k, 20, 153 + 7 * k, 3);
+                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 3);
             }
 
             display::graphics.setForegroundColor(1);
@@ -389,11 +389,11 @@ void PadDraw(char plr, char pad)
             }
 
             // Show name in purple if 'naut is female AND has announced retirement
-            PrintAt(25, 153 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Name[0]);
+            draw_string(25, 153 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Name[0]);
         }
 
         if (j == -1) {
-            PrintAt(25, 136, "UNAVAILABLE");
+            draw_string(25, 136, "UNAVAILABLE");
         }
     }
 

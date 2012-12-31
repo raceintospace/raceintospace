@@ -215,8 +215,8 @@ void DrawRush(char plr)
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
     display::graphics.setForegroundColor(1);
-    PrintAt(263, 13, "ASSIGN");
-    FlagSm(plr, 4, 4);
+    draw_string(263, 13, "ASSIGN");
+    draw_small_flag(plr, 4, 4);
 
     for (i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].MissionCode &&
@@ -230,23 +230,23 @@ void DrawRush(char plr)
 
             IOBox(89, 39 + i * 58, 266, 61 + i * 58);
             display::graphics.setForegroundColor(1);
-            PrintAt(89, 33 + i * 58, "SCHEDULE:");
-            PrintAt(88, 69 + i * 58, "RUSHING PENALTY: ");
-            PrintAt(88, 77 + i * 58, "DOWNGRADE PENALTY: ");
-            PrintAt(199, 69 + i * 58, "COST:");
+            draw_string(89, 33 + i * 58, "SCHEDULE:");
+            draw_string(88, 69 + i * 58, "RUSHING PENALTY: ");
+            draw_string(88, 77 + i * 58, "DOWNGRADE PENALTY: ");
+            draw_string(199, 69 + i * 58, "COST:");
             OutBox(11 , 33 + i * 58, 69, 74 + i * 58);
             InBox(20, 38 + i * 58, 60, 69 + i * 58);
             vhptr->copyTo(display::graphics.screen(), 156 * plr, i * 30, 21, 39 + i * 58, 59, 68 + i * 58);
 
             SetRush(Data->P[plr].Mission[i].Rushing, i);
             display::graphics.setForegroundColor(1);
-            DispBig(55, 5, "MISSION SCHEDULE", 0, -1);
+            draw_heading(55, 5, "MISSION SCHEDULE", 0, -1);
 
             display::graphics.setForegroundColor(5);
 
             GetMisType(Data->P[plr].Mission[i].MissionCode);
 
-            PrintAt(96, 48 + 58 * i, Mis.Abbr);
+            draw_string(96, 48 + 58 * i, Mis.Abbr);
             int MisCod;
             MisCod = Data->P[plr].Mission[i].MissionCode;
 
@@ -255,49 +255,49 @@ void DrawRush(char plr)
             {
                 switch (Data->P[plr].Mission[i].Duration) {
                 case 1:
-                    PrintAt(0, 0, "");
+                    draw_string(0, 0, "");
                     break;
 
                 case 2:
-                    PrintAt(0, 0, " (B)");
+                    draw_string(0, 0, " (B)");
                     break;
 
                 case 3:
-                    PrintAt(0, 0, " (C)");
+                    draw_string(0, 0, " (C)");
                     break;
 
                 case 4:
-                    PrintAt(0, 0, " (D)");
+                    draw_string(0, 0, " (D)");
                     break;
 
                 case 5:
-                    PrintAt(0, 0, " (E)");
+                    draw_string(0, 0, " (E)");
                     break;
 
                 case 6:
-                    PrintAt(0, 0, " (F)");
+                    draw_string(0, 0, " (F)");
                     break;
 
                 default:
-                    PrintAt(0, 0, "");
+                    draw_string(0, 0, "");
                     break;
                 }
             }
 
             if (Data->P[plr].Mission[i].Name[24] == 1) {
                 display::graphics.setForegroundColor(9);
-                PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
-                PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
+                draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
+                draw_string(193, 77 + i * 58, "-3 PRESTIGE");
             } else {
                 display::graphics.setForegroundColor(7);
-                PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
-                PrintAt(193, 77 + i * 58, "NO PENALTY");
+                draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
+                draw_string(193, 77 + i * 58, "NO PENALTY");
             }
 
             display::graphics.setForegroundColor(11);
-            PrintAt(288, 38 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 0][0]);
-            PrintAt(288, 55 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 1][0]);
-            PrintAt(288, 72 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 2][0]);
+            draw_string(288, 38 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 0][0]);
+            draw_string(288, 55 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 1][0]);
+            draw_string(288, 72 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 2][0]);
         }; /* End if */
     }; /* End for i */
 
@@ -404,44 +404,44 @@ void Rush(char plr)
                 if (Data->P[plr].Mission[i].MissionCode && Data->P[plr].Mission[i].part != 1) {
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
-                    RectFill(144, 29 + i * 58, 270, 37 + i * 58, 3);
+                    fill_rectangle(144, 29 + i * 58, 270, 37 + i * 58, 3);
 
                     if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
-                        RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
+                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
 
                         display::graphics.setForegroundColor(5);
                         GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
 
-                        PrintAt(96, 48 + 58 * i, Mis.Abbr);
+                        draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
                             switch (Data->P[plr].Mission[i].Duration) {
                             case 1:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
 
                             case 2:
-                                PrintAt(0, 0, " (B)");
+                                draw_string(0, 0, " (B)");
                                 break;
 
                             case 3:
-                                PrintAt(0, 0, " (C)");
+                                draw_string(0, 0, " (C)");
                                 break;
 
                             case 4:
-                                PrintAt(0, 0, " (D)");
+                                draw_string(0, 0, " (D)");
                                 break;
 
                             case 5:
-                                PrintAt(0, 0, " (E)");
+                                draw_string(0, 0, " (E)");
                                 break;
 
                             case 6:
-                                PrintAt(0, 0, " (F)");
+                                draw_string(0, 0, " (F)");
                                 break;
 
                             default:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
                             }
                         }
@@ -449,66 +449,66 @@ void Rush(char plr)
                         //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
 
                         dgflag[i]++;
-                        RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
+                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
                         display::graphics.setForegroundColor(9);
-                        PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
-                        PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
+                        draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
+                        draw_string(193, 77 + i * 58, "-3 PRESTIGE");
                     } else {
                         dgflag[i] = 0;
-                        RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
+                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
                         display::graphics.setForegroundColor(5);
                         GetMisType(Data->P[plr].Mission[i].MissionCode);
 
-                        PrintAt(96, 48 + 58 * i, Mis.Abbr);
+                        draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
                             switch (Data->P[plr].Mission[i].Duration) {
                             case 1:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
 
                             case 2:
-                                PrintAt(0, 0, " (B)");
+                                draw_string(0, 0, " (B)");
                                 break;
 
                             case 3:
-                                PrintAt(0, 0, " (C)");
+                                draw_string(0, 0, " (C)");
                                 break;
 
                             case 4:
-                                PrintAt(0, 0, " (D)");
+                                draw_string(0, 0, " (D)");
                                 break;
 
                             case 5:
-                                PrintAt(0, 0, " (E)");
+                                draw_string(0, 0, " (E)");
                                 break;
 
                             case 6:
-                                PrintAt(0, 0, " (F)");
+                                draw_string(0, 0, " (F)");
                                 break;
 
                             default:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
                             }
                         }
 
                         //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);
-                        RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
+                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
 
                         if (Data->P[plr].Mission[i].Name[24] == 1) {
                             display::graphics.setForegroundColor(9);
-                            PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
-                            PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
+                            draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
+                            draw_string(193, 77 + i * 58, "-3 PRESTIGE");
                         } else {
                             display::graphics.setForegroundColor(7);
-                            PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
-                            PrintAt(193, 77 + i * 58, "NO PENALTY");
+                            draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
+                            draw_string(193, 77 + i * 58, "NO PENALTY");
                         }
 
                         //display::graphics.setForegroundColor(7);
-                        //PrintAt(145,33+i*58,"ORIGINAL MISSION");
-                        //PrintAt(193,77+i*58,"NO PENALTY");
+                        //draw_string(145,33+i*58,"ORIGINAL MISSION");
+                        //draw_string(193,77+i*58,"NO PENALTY");
                     }
 
                     WaitForMouseUp();
@@ -523,108 +523,108 @@ void Rush(char plr)
                     && Data->P[plr].Mission[i].part != 1) { // Downgrade
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
-                    RectFill(144, 29 + i * 58, 270, 37 + i * 58, 3);
+                    fill_rectangle(144, 29 + i * 58, 270, 37 + i * 58, 3);
 
                     if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
-                        RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
+                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
                         display::graphics.setForegroundColor(5);
                         GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
-                        PrintAt(96, 48 + 58 * i, Mis.Abbr);
+                        draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
                             switch (Data->P[plr].Mission[i].Duration) {
                             case 1:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
 
                             case 2:
-                                PrintAt(0, 0, " (B)");
+                                draw_string(0, 0, " (B)");
                                 break;
 
                             case 3:
-                                PrintAt(0, 0, " (C)");
+                                draw_string(0, 0, " (C)");
                                 break;
 
                             case 4:
-                                PrintAt(0, 0, " (D)");
+                                draw_string(0, 0, " (D)");
                                 break;
 
                             case 5:
-                                PrintAt(0, 0, " (E)");
+                                draw_string(0, 0, " (E)");
                                 break;
 
                             case 6:
-                                PrintAt(0, 0, " (F)");
+                                draw_string(0, 0, " (F)");
                                 break;
 
                             default:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
                             }
                         }
 
                         //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
                         dgflag[i]++;
-                        RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
+                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
                         display::graphics.setForegroundColor(9);
-                        PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
-                        PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
+                        draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
+                        draw_string(193, 77 + i * 58, "-3 PRESTIGE");
                     } else {
                         dgflag[i] = 0;
-                        RectFill(93, 43 + i * 58, 262, 57 + i * 58, 3);
+                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
                         display::graphics.setForegroundColor(5);
                         GetMisType(Data->P[plr].Mission[i].MissionCode);
 
-                        PrintAt(96, 48 + 58 * i, Mis.Abbr);
+                        draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
                             switch (Data->P[plr].Mission[i].Duration) {
                             case 1:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
 
                             case 2:
-                                PrintAt(0, 0, " (B)");
+                                draw_string(0, 0, " (B)");
                                 break;
 
                             case 3:
-                                PrintAt(0, 0, " (C)");
+                                draw_string(0, 0, " (C)");
                                 break;
 
                             case 4:
-                                PrintAt(0, 0, " (D)");
+                                draw_string(0, 0, " (D)");
                                 break;
 
                             case 5:
-                                PrintAt(0, 0, " (E)");
+                                draw_string(0, 0, " (E)");
                                 break;
 
                             case 6:
-                                PrintAt(0, 0, " (F)");
+                                draw_string(0, 0, " (F)");
                                 break;
 
                             default:
-                                PrintAt(0, 0, "");
+                                draw_string(0, 0, "");
                                 break;
                             }
                         }
 
                         //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);
-                        RectFill(191, 71 + i * 58, 270, 78 + i * 58, 3);
+                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
 
                         if (Data->P[plr].Mission[i].Name[24] == 1) {
                             display::graphics.setForegroundColor(9);
-                            PrintAt(145, 33 + i * 58, "DOWNGRADED MISSION");
-                            PrintAt(193, 77 + i * 58, "-3 PRESTIGE");
+                            draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
+                            draw_string(193, 77 + i * 58, "-3 PRESTIGE");
                         } else {
                             display::graphics.setForegroundColor(7);
-                            PrintAt(145, 33 + i * 58, "ORIGINAL MISSION");
-                            PrintAt(193, 77 + i * 58, "NO PENALTY");
+                            draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
+                            draw_string(193, 77 + i * 58, "NO PENALTY");
                         }
 
                         //display::graphics.setForegroundColor(7);
-                        //PrintAt(145,33+i*58,"ORIGINAL MISSION");
-                        //PrintAt(193,77+i*58,"NO PENALTY");
+                        //draw_string(145,33+i*58,"ORIGINAL MISSION");
+                        //draw_string(193,77+i*58,"NO PENALTY");
                     }
 
                     WaitForMouseUp();
@@ -699,15 +699,15 @@ void SetRush(int mode, int val)
 {
 
     InBox(280, 32 + 17 * mode + val * 58, 312, 40 + 17 * mode + val * 58);
-    RectFill(177, 63 + 58 * val, 192, 70 + 58 * val, 3);
-    RectFill(225, 62 + 58 * val, 270, 70 + 58 * val, 3);
+    fill_rectangle(177, 63 + 58 * val, 192, 70 + 58 * val, 3);
+    fill_rectangle(225, 62 + 58 * val, 270, 70 + 58 * val, 3);
     display::graphics.setForegroundColor(11);
-    DispNum(179, 69 + 58 * val, mode * 3);
-    DispChr('%');
+    draw_number(179, 69 + 58 * val, mode * 3);
+    draw_character('%');
     display::graphics.setForegroundColor(9);
-    DispNum(230, 69 + 58 * val, mode * 3);
+    draw_number(230, 69 + 58 * val, mode * 3);
     display::graphics.setForegroundColor(1);
-    PrintAt(237, 69 + 58 * val, "MB");
+    draw_string(237, 69 + 58 * val, "MB");
     fCsh -= mode * 3;
 
     return;

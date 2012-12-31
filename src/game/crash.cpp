@@ -65,12 +65,12 @@ void display_text_in_box(int x, int y, int width, int height, const std::string 
     if (valign == ALIGN_TOP) {
         // display all the lines that fit in the box
         for (int i = 0; i * 9 < height && i < lines.size(); i++) {
-            PrintAt(x, y + i * 9, lines[i].c_str());
+            draw_string(x, y + i * 9, lines[i].c_str());
         }
 
     } else if (valign == ALIGN_BOTTOM) {
         for (int i = lines.size() - 1; i * 9 < height && i >= 0; i--) {
-            PrintAt(x, y + height - i * 9 - 9, lines[i].c_str());
+            draw_string(x, y + height - i * 9 - 9, lines[i].c_str());
         }
     }
 }

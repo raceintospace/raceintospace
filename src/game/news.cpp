@@ -505,7 +505,7 @@ DrawNText(char plr, char got)
     }
 
     for (i = 0; i < 8; i++) {
-        RectFill(5, yy - 7, 296, yy + 1, 7 + 3 * plr);
+        fill_rectangle(5, yy - 7, 296, yy + 1, 7 + 3 * plr);
         grMoveTo(xx, yy);
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
@@ -545,7 +545,7 @@ DrawNText(char plr, char got)
         }
 
         while (buf[0] != 'x' && buf[0] != '\0') {
-            DispChr(buf[0]);
+            draw_character(buf[0]);
             buf++;
         };
 
@@ -583,12 +583,12 @@ News(char plr)
         sprintf(cYr, "%d", 1900 + Data->Year);
 
         if (Data->Season == 1) {
-            DispBig(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
+            draw_heading(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
         } else {
-            DispBig(37 + (BW * 200), 40 - (plr * 4), "SPRING", 0, -1);
+            draw_heading(37 + (BW * 200), 40 - (plr * 4), "SPRING", 0, -1);
         }
 
-        DispBig(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
+        draw_heading(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
 
     };
 
@@ -646,7 +646,7 @@ News(char plr)
 
                 if (AnimIndex == 5) {
 
-                    RectFill(227, 108, 228, 108, display::graphics.screen()->getPixel(227, 108));
+                    fill_rectangle(227, 108, 228, 108, display::graphics.screen()->getPixel(227, 108));
 
                 }
 
@@ -710,11 +710,11 @@ News(char plr)
                 if (AnimIndex == 9) {
 
                     ShBox(240, 3, 316, 22);
-                    RectFill(315, 20, 317, 21, 3);
-                    RectFill(241, 2, 242, 4, 3);
+                    fill_rectangle(315, 20, 317, 21, 3);
+                    fill_rectangle(241, 2, 242, 4, 3);
                     IOBox(243, 3, 316, 19);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(258, 13, "CONTINUE");
+                    draw_string(258, 13, "CONTINUE");
 
                 };
 
@@ -882,11 +882,11 @@ DrawTopNewsBox(int player)
     display::graphics.screen()->outlineRect(2, 2, 317, 111, 3);
     InBox(3, 3, 316, 110);
     ShBox(240, 3, 316, 22);
-    RectFill(315, 20, 317, 21, 3);
-    RectFill(241, 2, 242, 4, 3);
+    fill_rectangle(315, 20, 317, 21, 3);
+    fill_rectangle(241, 2, 242, 4, 3);
     IOBox(243, 3, 316, 19);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
     av_need_update_xy(0, 0, 319, 113);
 }
 
@@ -895,13 +895,13 @@ DrawBottomNewsBox(int player)
 {
     ShBox(0, 115, 319, 199);
     InBox(4, 118, 297, 196);
-    RectFill(5, 119, 296, 195, 7 + 3 * player);
+    fill_rectangle(5, 119, 296, 195, 7 + 3 * player);
     InBox(301, 118, 315, 196);
-    RectFill(302, 119, 314, 195, 0);
+    fill_rectangle(302, 119, 314, 195, 0);
     ShBox(303, 120, 313, 156);
     ShBox(303, 158, 313, 194);
-    UPArrow(305, 126);
-    DNArrow(305, 163);
+    draw_up_arrow(305, 126);
+    draw_down_arrow(305, 163);
     DrawNText(player, 0);
 }
 

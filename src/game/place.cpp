@@ -77,7 +77,7 @@ int MainMenuChoice()
 
     for (int i = 0; i < menu_option_count; i++) {
         ShBox(21, menu_options[i].y, 180, menu_options[i].y + 25);
-        DispBig(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
+        draw_heading(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
     }
 
     FadeIn(2, display::graphics.palette(), 30, 0, 0);
@@ -135,7 +135,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     /* hard-coded magic numbers, yuck */
     for (i = 0; i < qty; i++) {
         BCDraw(starty + 23 * i);
-        DispBig(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
+        draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
         fseek(fin, Imx[i] * 570, SEEK_SET);
         fread(local.pixels(), 570, 1, fin);
         local.copyTo(display::graphics.screen(), 24, starty + 1 + 23 * i);
@@ -464,14 +464,14 @@ DispHelp(char top, char bot, char *txt)
     }
 
     i = top;
-    RectFill(38, 49, 260, 127, 3);
+    fill_rectangle(38, 49, 260, 127, 3);
 
     while (i <= bot && pl < 11) {
         if (txt[i * 42] == (char) 0xCC) {
             display::graphics.setForegroundColor(txt[i * 42 + 1]);
-            PrintAt(45, 55 + 7 * pl, &txt[i * 42 + 2]);
+            draw_string(45, 55 + 7 * pl, &txt[i * 42 + 2]);
         } else {
-            PrintAt(45, 55 + 7 * pl, &txt[i * 42]);
+            draw_string(45, 55 + 7 * pl, &txt[i * 42]);
         }
 
         pl++;
@@ -576,27 +576,27 @@ int Help(const char *FName)
     InBox(37, 35, 279, 45);
     InBox(37, 48, 261, 128);
     InBox(264, 48, 279, 128);
-    RectFill(265, 49, 278, 127, 0);
+    fill_rectangle(265, 49, 278, 127, 0);
     ShBox(266, 50, 277, 87);
-    UPArrow(268, 56);
+    draw_up_arrow(268, 56);
     ShBox(266, 89, 277, 126);
-    DNArrow(268, 95);
-    RectFill(38, 36, 278, 44, 7);
+    draw_down_arrow(268, 95);
+    fill_rectangle(38, 36, 278, 44, 7);
 
     if (mode == 0) {
         IOBox(83, 131, 241, 156);
-        DispBig(119, 137, "CONTINUE", 1, 0);
+        draw_heading(119, 137, "CONTINUE", 1, 0);
     } else {
         IOBox(83, 131, 156, 156);
         IOBox(168, 131, 241, 156);
-        DispBig(103, 137, "YES", 1, 0);
-        DispBig(192, 137, "NO", 1, 0);
+        draw_heading(103, 137, "YES", 1, 0);
+        draw_heading(192, 137, "NO", 1, 0);
     }
 
     // Display Title
     display::graphics.setForegroundColor(NTxt[1]);
     fsize = strlen(&NTxt[2]);
-    PrintAt(157 - fsize * 3, 42, &NTxt[2]);
+    draw_string(157 - fsize * 3, 42, &NTxt[2]);
     top = plc = 1;
     DispHelp(plc, bot - 1, &NTxt[0]);
     av_sync();
@@ -667,47 +667,47 @@ void writePrestigeFirst(char index)   ///index==plr
         if (w < 6 && Data->Prestige[i].Place == index && Data->PD[index][i] == 0) {
             if (draw == 0) {
                 ShBox(6, 170, 314, 197);
-                RectFill(10, 173, 310, 194, 7);
+                fill_rectangle(10, 173, 310, 194, 7);
                 InBox(9, 172, 311, 195);
                 ShBox(216, 156, 314, 172);
-                RectFill(220, 160, 310, 168, 9);
+                fill_rectangle(220, 160, 310, 168, 9);
                 InBox(219, 159, 311, 169);
-                RectFill(216, 171, 216, 171, 3);
-                RectFill(312, 172, 313, 172, 3);
+                fill_rectangle(216, 171, 216, 171, 3);
+                fill_rectangle(312, 172, 313, 172, 3);
                 display::graphics.setForegroundColor(11);
-                PrintAt(224, 166, "PRESTIGE FIRSTS");
+                draw_string(224, 166, "PRESTIGE FIRSTS");
                 draw = 1;
             }
 
             display::graphics.setForegroundColor(11);
-            PrintAt(w > 2 ? 170 : 14,
-                    w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
-                    &PF[i][0]);
+            draw_string(w > 2 ? 170 : 14,
+                        w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
+                        &PF[i][0]);
             ++w;
             Data->PD[index][i] = 1;
 
             switch (i) {
             case 8:
                 if (Data->Prestige[Prestige_Duration_E].Place == index && Data->PD[index][9] == 0) {
-                    PrintAt(0, 0, ", E");
+                    draw_string(0, 0, ", E");
                     Data->PD[index][9] = 1;
                 }
 
             case 9:
                 if (Data->Prestige[Prestige_Duration_D].Place == index && Data->PD[index][10] == 0) {
-                    PrintAt(0, 0, ", D");
+                    draw_string(0, 0, ", D");
                     Data->PD[index][10] = 1;
                 }
 
             case 10:
                 if (Data->Prestige[Prestige_Duration_C].Place == index && Data->PD[index][11] == 0) {
-                    PrintAt(0, 0, ", C");
+                    draw_string(0, 0, ", C");
                     Data->PD[index][11] = 1;
                 }
 
             case 11:
                 if (Data->Prestige[Prestige_Duration_B].Place == index && Data->PD[index][12] == 0) {
-                    PrintAt(0, 0, ", B");
+                    draw_string(0, 0, ", B");
                     Data->PD[index][12] = 1;
                 }
 
@@ -725,47 +725,47 @@ void writePrestigeFirst(char index)   ///index==plr
         if (w < 6 && Data->Prestige[i].mPlace == index && Data->PD[index][i] == 0) {
             if (draw == 0) {
                 ShBox(6, 170, 314, 197);
-                RectFill(10, 173, 310, 194, 7);
+                fill_rectangle(10, 173, 310, 194, 7);
                 InBox(9, 172, 311, 195);
                 ShBox(216, 156, 314, 172);
-                RectFill(220, 160, 310, 168, 9);
+                fill_rectangle(220, 160, 310, 168, 9);
                 InBox(219, 159, 311, 169);
-                RectFill(216, 171, 216, 171, 3);
-                RectFill(312, 172, 313, 172, 3);
+                fill_rectangle(216, 171, 216, 171, 3);
+                fill_rectangle(312, 172, 313, 172, 3);
                 display::graphics.setForegroundColor(11);
-                PrintAt(224, 166, "PRESTIGE FIRSTS");
+                draw_string(224, 166, "PRESTIGE FIRSTS");
                 draw = 1;
             }
 
             display::graphics.setForegroundColor(11);
-            PrintAt(w > 2 ? 170 : 14,
-                    w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
-                    &PF[i][0]);
+            draw_string(w > 2 ? 170 : 14,
+                        w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
+                        &PF[i][0]);
             ++w;
             Data->PD[index][i] = 1;
 
             switch (i) {
             case 8:
                 if (Data->Prestige[Prestige_Duration_E].mPlace == index && Data->PD[index][9] == 0) {
-                    PrintAt(0, 0, ", E");
+                    draw_string(0, 0, ", E");
                     Data->PD[index][9] = 1;
                 }
 
             case 9:
                 if (Data->Prestige[Prestige_Duration_D].mPlace == index && Data->PD[index][10] == 0) {
-                    PrintAt(0, 0, ", D");
+                    draw_string(0, 0, ", D");
                     Data->PD[index][10] = 1;
                 }
 
             case 10:
                 if (Data->Prestige[Prestige_Duration_C].mPlace == index && Data->PD[index][11] == 0) {
-                    PrintAt(0, 0, ", C");
+                    draw_string(0, 0, ", C");
                     Data->PD[index][11] = 1;
                 }
 
             case 11:
                 if (Data->Prestige[Prestige_Duration_B].mPlace == index && Data->PD[index][12] == 0) {
-                    PrintAt(0, 0, ", B");
+                    draw_string(0, 0, ", B");
                     Data->PD[index][12] = 1;
                 }
 
@@ -776,7 +776,7 @@ void writePrestigeFirst(char index)   ///index==plr
                 break;
             }
 
-            PrintAt(0, 0, " (2ND)");
+            draw_string(0, 0, " (2ND)");
         }
     }
 }
@@ -793,33 +793,33 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     }
 
     ShBox(6, 30, 209, 168); // Left Side
-    RectFill(10, 34, 205, 44, 9);
+    fill_rectangle(10, 34, 205, 44, 9);
     InBox(9, 33, 206, 45);
-    RectFill(10, 49, 205, 119, 7);
+    fill_rectangle(10, 49, 205, 119, 7);
     InBox(9, 48, 206, 120);
-    RectFill(10, 124, 205, 164, 7);
+    fill_rectangle(10, 124, 205, 164, 7);
     InBox(9, 123, 206, 165);
     ShBox(62, 117, 154, 127);
     display::graphics.setForegroundColor(1);
-    PrintAt(79, 124, "FLIGHT CREW");
+    draw_string(79, 124, "FLIGHT CREW");
     display::graphics.setForegroundColor(11);
-    PrintAt(58, 41, "MISSION INFORMATION");
-    PrintAt(12, 104, "MISSION DURATION: ");
+    draw_string(58, 41, "MISSION INFORMATION");
+    draw_string(12, 104, "MISSION DURATION: ");
     Name[0] = Data->P[plr].History[index].Duration + 'A' - 1;
     Name[1] = 0;
 
     if (Name[0] >= 'A') {
-        PrintAt(0, 0, Name);
+        draw_string(0, 0, Name);
     } else {
-        PrintAt(0, 0, "NONE");
+        draw_string(0, 0, "NONE");
     }
 
-    PrintAt(12, 112, "PRESTIGE EARNED: ");
+    draw_string(12, 112, "PRESTIGE EARNED: ");
 
     if ((MAIL == -1 && Option == -1) || mode == 0) {
-        DispNum(0, 0, Data->P[plr].History[index].Prestige);
+        draw_number(0, 0, Data->P[plr].History[index].Prestige);
     } else {
-        PrintAt(0, 0, "PENDING");
+        draw_string(0, 0, "PENDING");
     }
 
     mcode = Data->P[plr].History[index].MissionCode;
@@ -827,68 +827,68 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     GetMisType(mcode);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(12, 56, "MISSION NAME: ");
-    PrintAt(0, 0, (char *)Data->P[plr].History[index].MissionName);
-    PrintAt(12, 64, "MISSION TYPE:");
+    draw_string(12, 56, "MISSION NAME: ");
+    draw_string(0, 0, (char *)Data->P[plr].History[index].MissionName);
+    draw_string(12, 64, "MISSION TYPE:");
     display::graphics.setForegroundColor(11);
-    PrintAt(15, 72, Mis.Abbr);
+    draw_string(15, 72, Mis.Abbr);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(12, 80, "RESULT: ");
+    draw_string(12, 80, "RESULT: ");
 
     if (Data->P[plr].History[index].Duration != 0) {
 
         if (Data->P[plr].History[index].spResult == 4197) {
-            PrintAt(0, 0, "PRIMARY CREW DEAD");
+            draw_string(0, 0, "PRIMARY CREW DEAD");
         } else if (Data->P[plr].History[index].spResult == 4198) {
-            PrintAt(0, 0, "SECONDARY CREW DEAD");
+            draw_string(0, 0, "SECONDARY CREW DEAD");
         } else if (Data->P[plr].History[index].spResult == 4199) {
-            PrintAt(0, 0, "BOTH CREWS DEAD");
-        } else PrintAt(0, 0, ((Data->P[plr].History[index].spResult < 500) || (Data->P[plr].History[index].spResult >= 5000)) ? "SUCCESS" :
-                           (Data->P[plr].History[index].spResult < 1999) ? "PARTIAL FAILURE" :
-                           (Data->P[plr].History[index].spResult == 1999) ? "FAILURE" :
-                           (Data->P[plr].History[index].spResult < 3000) ? "MISSION INJURY" :
-                           (Data->P[plr].History[index].spResult < 4000) ? "MISSION DEATH" :
-                           "ALL DEAD");
+            draw_string(0, 0, "BOTH CREWS DEAD");
+        } else draw_string(0, 0, ((Data->P[plr].History[index].spResult < 500) || (Data->P[plr].History[index].spResult >= 5000)) ? "SUCCESS" :
+                               (Data->P[plr].History[index].spResult < 1999) ? "PARTIAL FAILURE" :
+                               (Data->P[plr].History[index].spResult == 1999) ? "FAILURE" :
+                               (Data->P[plr].History[index].spResult < 3000) ? "MISSION INJURY" :
+                               (Data->P[plr].History[index].spResult < 4000) ? "MISSION DEATH" :
+                               "ALL DEAD");
     } else if (Data->P[plr].History[index].Event == 0) {
-        PrintAt(0, 0, (Data->P[plr].History[index].spResult == 1) ? "SUCCESS" : "FAILURE");
+        draw_string(0, 0, (Data->P[plr].History[index].spResult == 1) ? "SUCCESS" : "FAILURE");
     } else if (Data->P[plr].History[index].Event > 0) {
-        PrintAt(0, 0, "ARRIVE IN ");
-        DispNum(0, 0, Data->P[plr].History[index].Event);
-        PrintAt(0, 0, " SEASON");
+        draw_string(0, 0, "ARRIVE IN ");
+        draw_number(0, 0, Data->P[plr].History[index].Event);
+        draw_string(0, 0, " SEASON");
 
         if (Data->P[plr].History[index].Event >= 2) {
-            PrintAt(0, 0, "S");
+            draw_string(0, 0, "S");
         }
     }
 
-    RectFill(210, 30, 211, 168, 0); // Clear any leftover stuff
+    fill_rectangle(210, 30, 211, 168, 0); // Clear any leftover stuff
     ShBox(211, 30, 313, 168); // Right Side
-    RectFill(215, 34, 309, 44, 9);
+    fill_rectangle(215, 34, 309, 44, 9);
     InBox(214, 33, 310, 45);
     display::graphics.setForegroundColor(11);
-    PrintAt(225, 41, "MISSION REPLAY");
+    draw_string(225, 41, "MISSION REPLAY");
     InBox(214, 55, 310, 116);
 
     AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
 
     IOBox(214, 134, 310, 148);
     display::graphics.setForegroundColor(9);
-    PrintAt(224, 143, "R");
+    draw_string(224, 143, "R");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "EPLAY MISSION");
+    draw_string(0, 0, "EPLAY MISSION");
 
     if (mode == 0) {
         IOBox(214, 151, 310, 165);
         display::graphics.setForegroundColor(1);
-        PrintAt(250, 160, "EXIT");
+        draw_string(250, 160, "EXIT");
     }
 
     // Crew Stuff
     display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].History[index].Man[PAD_A][0] == -1 && Data->P[plr].History[index].Man[PAD_B][0] == -1) {
-        PrintAt(13, 137, "UNMANNED MISSION");
+        draw_string(13, 137, "UNMANNED MISSION");
     } else {
         // First Part -- Men
         if (Data->P[plr].History[index].Man[PAD_A][0] != -1) {
@@ -900,7 +900,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 }
 
                 if (k != -1) {
-                    PrintAt(13, 137 + j * 7, Data->P[plr].Pool[k].Name);
+                    draw_string(13, 137 + j * 7, Data->P[plr].Pool[k].Name);
                 }
 
                 display::graphics.setForegroundColor(11);
@@ -921,7 +921,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 }
 
                 if (k != -1) {
-                    PrintAt(13 + let * 100, 137 + j * 7, Data->P[plr].Pool[k].Name);
+                    draw_string(13 + let * 100, 137 + j * 7, Data->P[plr].Pool[k].Name);
                 }
 
                 display::graphics.setForegroundColor(11);
@@ -979,7 +979,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             }
 
             display::graphics.setForegroundColor(11);
-            PrintAt(225, 125, "PLAYING...");
+            draw_string(225, 125, "PLAYING...");
 
             WaitForMouseUp();
             display::graphics.setForegroundColor(1);
@@ -1065,7 +1065,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 OutBox(216, 153, 309, 163);
             }
 
-            RectFill(212, 119, 312, 127, 3);
+            fill_rectangle(212, 119, 312, 127, 3);
             key = 0;
 
         }; // if

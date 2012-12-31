@@ -149,7 +149,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     val = 3 * plr + 6;
 
-    RectFill(x1, y1, x2, y2, 7 + 3 * plr);
+    fill_rectangle(x1, y1, x2, y2, 7 + 3 * plr);
 
     for (j = x1; j <= x2; j += 3)
         for (i = y1; i <= y2; i += 3) {
@@ -205,85 +205,85 @@ void DispVAB(char plr, char pad)
     IOBox(62, 179, 163, 193);
 
     InBox(177, 28, 314, 180);
-    RectFill(178, 29, 313, 179, 3);
+    fill_rectangle(178, 29, 313, 179, 3);
 
     IOBox(4, 84, 165, 96);
 
     display::graphics.setForegroundColor(9);
-    PrintAt(200, 192, "E");
+    draw_string(200, 192, "E");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "XIT");
+    draw_string(0, 0, "XIT");
     display::graphics.setForegroundColor(9);
-    PrintAt(268, 192, "S");
+    draw_string(268, 192, "S");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "CRUB");
-    PrintAt(263, 13, "ASSIGN");
+    draw_string(0, 0, "CRUB");
+    draw_string(263, 13, "ASSIGN");
     display::graphics.setForegroundColor(9);
-    PrintAt(18, 136, "P");
+    draw_string(18, 136, "P");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "RIMARY:");
-    PrintAt(24, 148, "KICKER:");
-    PrintAt(42, 160, "L.M.:");
-    PrintAt(16, 172, "PAYLOAD:");
+    draw_string(0, 0, "RIMARY:");
+    draw_string(24, 148, "KICKER:");
+    draw_string(42, 160, "L.M.:");
+    draw_string(16, 172, "PAYLOAD:");
     display::graphics.setForegroundColor(9);
-    PrintAt(22, 188, "R");
+    draw_string(22, 188, "R");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "OCKET:     ");
+    draw_string(0, 0, "OCKET:     ");
 
     Name[0] = 'A' + pad;
     Name[1] = 0x00;
     InBox(4, 27, 166, 37);
-    RectFill(5, 28, 165, 36, 10);
+    fill_rectangle(5, 28, 165, 36, 10);
     display::graphics.setForegroundColor(11);
-    PrintAt(38, 34, "LAUNCH FACILITY: ");
-    PrintAt(0, 0, Name);
+    draw_string(38, 34, "LAUNCH FACILITY: ");
+    draw_string(0, 0, Name);
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
-        DispBig(42, 4, "VEHICLE ASSEMBLY", 0, -1);
+        draw_heading(42, 4, "VEHICLE ASSEMBLY", 0, -1);
     } else {
-        DispBig(37, 4, "VEHICLE INTEGRATION", 0, -1);
+        draw_heading(37, 4, "VEHICLE INTEGRATION", 0, -1);
     }
 
     display::graphics.setForegroundColor(5);
-    PrintAt(5, 45, "MISSION: ");
-    PrintAt(0, 0, Data->P[plr].Mission[pad].Name);
+    draw_string(5, 45, "MISSION: ");
+    draw_string(0, 0, Data->P[plr].Mission[pad].Name);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(5, 61, "CREW: ");
+    draw_string(5, 61, "CREW: ");
 
     switch (Data->P[plr].Mission[pad].Men) {
     case 0:
-        PrintAt(0, 0, "UNMANNED");
+        draw_string(0, 0, "UNMANNED");
         break;
 
     case 1:
-        PrintAt(0, 0, "ONE PERSON");
+        draw_string(0, 0, "ONE PERSON");
         break;
 
     case 2:
-        PrintAt(0, 0, "TWO PEOPLE");
+        draw_string(0, 0, "TWO PEOPLE");
         break;
 
     case 3:
-        PrintAt(0, 0, "THREE PEOPLE");
+        draw_string(0, 0, "THREE PEOPLE");
         break;
 
     case 4:
-        PrintAt(0, 0, "FOUR PEOPLE");
+        draw_string(0, 0, "FOUR PEOPLE");
         break;
     }
 
-    RectFill(5, 105, 165, 122, 7 + plr * 3);
+    fill_rectangle(5, 105, 165, 122, 7 + plr * 3);
     display::graphics.setForegroundColor(11);
-    PrintAt(40, 111, "MISSION HARDWARE:");
-    PrintAt(10, 119, "SELECT PAYLOADS AND BOOSTER");
+    draw_string(40, 111, "MISSION HARDWARE:");
+    draw_string(10, 119, "SELECT PAYLOADS AND BOOSTER");
 
     display::graphics.setForegroundColor(1);
 
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
 
-    PrintAt(5, 52, Mis.Abbr);
+    draw_string(5, 52, Mis.Abbr);
     int MisCod;
     MisCod = Data->P[plr].Mission[pad].MissionCode;
 
@@ -292,36 +292,36 @@ void DispVAB(char plr, char pad)
     {
         switch (Data->P[plr].Mission[pad].Duration) {
         case 1:
-            PrintAt(0, 0, "");
+            draw_string(0, 0, "");
             break;
 
         case 2:
-            PrintAt(0, 0, " (B)");
+            draw_string(0, 0, " (B)");
             break;
 
         case 3:
-            PrintAt(0, 0, " (C)");
+            draw_string(0, 0, " (C)");
             break;
 
         case 4:
-            PrintAt(0, 0, " (D)");
+            draw_string(0, 0, " (D)");
             break;
 
         case 5:
-            PrintAt(0, 0, " (E)");
+            draw_string(0, 0, " (E)");
             break;
 
         case 6:
-            PrintAt(0, 0, " (F)");
+            draw_string(0, 0, " (F)");
             break;
 
         default:
-            PrintAt(0, 0, "");
+            draw_string(0, 0, "");
             break;
         }
     }
 
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
 
     return;
 }
@@ -488,7 +488,7 @@ void ShowVA(char f)
 {
     int i;
 
-    RectFill(65, 130, 160, 174, 3);
+    fill_rectangle(65, 130, 160, 174, 3);
     display::graphics.setForegroundColor(1);
 
     for (i = 0; i < 4; i++) {
@@ -498,22 +498,22 @@ void ShowVA(char f)
             display::graphics.setForegroundColor(1);
         }
 
-        PrintAt(67, 136 + 12 * i, &VAS[f][i].name[0]);
+        draw_string(67, 136 + 12 * i, &VAS[f][i].name[0]);
 
         if ((VAS[f][i].qty - VAS[f][i].ac) < 0) {
-            DispNum(152, 136 + 12 * i, 0);
-            DispNum(128, 136 + 12 * i, 0);
+            draw_number(152, 136 + 12 * i, 0);
+            draw_number(128, 136 + 12 * i, 0);
         } else {
-            DispNum(152, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
+            draw_number(152, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
 
             if (VAS[f][i].dmg) {
                 display::graphics.setForegroundColor(9);
             }
 
-            DispNum(128, 136 + 12 * i, VAS[f][i].sf);
+            draw_number(128, 136 + 12 * i, VAS[f][i].sf);
         };
 
-        PrintAt(0, 0, "%");
+        draw_string(0, 0, "%");
     };
 
     return;
@@ -523,7 +523,7 @@ void ShowVA(char f)
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 {
 
-    RectFill(65, 182, 160, 190, 3);
+    fill_rectangle(65, 182, 160, 190, 3);
 
     if (qty < 0 || mode == 1) {
         display::graphics.setForegroundColor(9);
@@ -531,22 +531,22 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
         display::graphics.setForegroundColor(1);
     }
 
-    PrintAt(67, 188, &Name[0]);
+    draw_string(67, 188, &Name[0]);
 
     if (qty < 0) {
-        DispNum(152, 188, 0);
-        DispNum(128, 188, 0);
+        draw_number(152, 188, 0);
+        draw_number(128, 188, 0);
     } else {
-        DispNum(152, 188, qty);
+        draw_number(152, 188, qty);
 
         if (isDmg) {
             display::graphics.setForegroundColor(9);
         }
 
-        DispNum(128, 188, sf);
+        draw_number(128, 188, sf);
     };
 
-    PrintAt(0, 0, "%");
+    draw_string(0, 0, "%");
 
     return;
 }
@@ -603,7 +603,7 @@ void DispVA(char plr, char f)
     display::Surface local2(w, h);
 
     /* TODO: magic numbers */
-    RectFill(178, 29, 243, 179, 3);
+    fill_rectangle(178, 29, 243, 179, 3);
 
     local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
@@ -717,7 +717,7 @@ void DispRck(char plr, char wh)
 
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
-    RectFill(247, 29, 313, 179, 3);
+    fill_rectangle(247, 29, 313, 179, 3);
     local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
@@ -728,20 +728,20 @@ void DispRck(char plr, char wh)
 void DispWts(int two, int one)
 {
 
-    RectFill(5, 65, 140, 83, 3);
+    fill_rectangle(5, 65, 140, 83, 3);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(5, 77, "MAXIMUM PAYLOAD: ");
-    DispNum(0, 0, one);
+    draw_string(5, 77, "MAXIMUM PAYLOAD: ");
+    draw_number(0, 0, one);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(5, 70, "CURRENT PAYLOAD: ");
+    draw_string(5, 70, "CURRENT PAYLOAD: ");
 
     if (one < two) {
         display::graphics.setForegroundColor(9);
     }
 
-    DispNum(0, 0, two);
+    draw_number(0, 0, two);
 
     return;
 }
@@ -889,20 +889,20 @@ begvab:
 
     TotalCost = FillVab(plr, ccc, 0);
     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-    RectFill(7, 87, 162, 93, 3);
+    fill_rectangle(7, 87, 162, 93, 3);
     display::graphics.setForegroundColor(9);
-    PrintAt(13, 92, "A");
+    draw_string(13, 92, "A");
     display::graphics.setForegroundColor(1);
 
     if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
         display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
     }
 
-    PrintAt(0, 0, "UTOPURCHASE (");
-    DispNum(0, 0, TotalCost);
-    PrintAt(0, 0, " OF ");
-    DispMB(0, 0, Data->P[plr].Cash);
-    PrintAt(0, 0, ")");
+    draw_string(0, 0, "UTOPURCHASE (");
+    draw_number(0, 0, TotalCost);
+    draw_string(0, 0, " OF ");
+    draw_megabucks(0, 0, Data->P[plr].Cash);
+    draw_string(0, 0, ")");
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     WaitForMouseUp();
@@ -967,20 +967,20 @@ begvab:
 
                     TotalCost = FillVab(plr, ccc, 0);
                     TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                    RectFill(7, 87, 162, 93, 3);
+                    fill_rectangle(7, 87, 162, 93, 3);
                     display::graphics.setForegroundColor(9);
-                    PrintAt(13, 92, "A");
+                    draw_string(13, 92, "A");
                     display::graphics.setForegroundColor(1);
 
                     if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                         display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                     }
 
-                    PrintAt(0, 0, "UTOPURCHASE (");
-                    DispNum(0, 0, TotalCost);
-                    PrintAt(0, 0, " OF ");
-                    DispMB(0, 0, Data->P[plr].Cash);
-                    PrintAt(0, 0, ")");
+                    draw_string(0, 0, "UTOPURCHASE (");
+                    draw_number(0, 0, TotalCost);
+                    draw_string(0, 0, " OF ");
+                    draw_megabucks(0, 0, Data->P[plr].Cash);
+                    draw_string(0, 0, ")");
                 } else if (ac == 0) {
                     Help("i135");    // delay on purchase
                 } else {
@@ -1146,20 +1146,20 @@ begvab:
 
                 TotalCost = FillVab(plr, ccc, 0);
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                RectFill(7, 87, 162, 93, 3);
+                fill_rectangle(7, 87, 162, 93, 3);
                 display::graphics.setForegroundColor(9);
-                PrintAt(13, 92, "A");
+                draw_string(13, 92, "A");
                 display::graphics.setForegroundColor(1);
 
                 if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                     display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
 
-                PrintAt(0, 0, "UTOPURCHASE (");
-                DispNum(0, 0, TotalCost);
-                PrintAt(0, 0, " OF ");
-                DispMB(0, 0, Data->P[plr].Cash);
-                PrintAt(0, 0, ")");
+                draw_string(0, 0, "UTOPURCHASE (");
+                draw_number(0, 0, TotalCost);
+                draw_string(0, 0, " OF ");
+                draw_megabucks(0, 0, Data->P[plr].Cash);
+                draw_string(0, 0, ")");
 
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 DispWts(cwt, pay[rk]);
@@ -1200,20 +1200,20 @@ begvab:
 
                 TotalCost = FillVab(plr, ccc, 0);
                 TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                RectFill(7, 87, 162, 93, 3);
+                fill_rectangle(7, 87, 162, 93, 3);
                 display::graphics.setForegroundColor(9);
-                PrintAt(13, 92, "A");
+                draw_string(13, 92, "A");
                 display::graphics.setForegroundColor(1);
 
                 if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
                     display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
                 }
 
-                PrintAt(0, 0, "UTOPURCHASE (");
-                DispNum(0, 0, TotalCost);
-                PrintAt(0, 0, " OF ");
-                DispMB(0, 0, Data->P[plr].Cash);
-                PrintAt(0, 0, ")");
+                draw_string(0, 0, "UTOPURCHASE (");
+                draw_number(0, 0, TotalCost);
+                draw_string(0, 0, " OF ");
+                draw_megabucks(0, 0, Data->P[plr].Cash);
+                draw_string(0, 0, ")");
                 WaitForMouseUp();
 
                 if (key > 0) {

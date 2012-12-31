@@ -75,12 +75,12 @@ void DrawBudget(char player, char *pStatus)
     InBox(133, 154, 152, 166);
     InBox(133, 168, 152, 180);
     InBox(133, 182, 152, 194);
-    Flag(4, 4, player);
+    draw_flag(4, 4, player);
     display::graphics.setForegroundColor(1);
-    PrintAt(180, 37, "CONTINUE");
-    PrintAt(60, 81, "PRESTIGE");
-    PrintAt(43, 145, "EXPENDITURES");
-    PrintAt(212, 79, "BUDGET TRACK");
+    draw_string(180, 37, "CONTINUE");
+    draw_string(60, 81, "PRESTIGE");
+    draw_string(43, 145, "EXPENDITURES");
+    draw_string(212, 79, "BUDGET TRACK");
     InBox(184, 87, 313, 167);
     GradRect(185, 88, 312, 166, player);
     GradRect(30, 86, 140, 120, player);
@@ -121,15 +121,15 @@ void DrawBudget(char player, char *pStatus)
 
     if (max < 20) {
         max = 20;
-        DispNum(6, 114, -10);
-        DispNum(6, 122, -20);
-        DispNum(11, 96, 10);
-        DispNum(11, 87, 20);
+        draw_number(6, 114, -10);
+        draw_number(6, 122, -20);
+        draw_number(11, 96, 10);
+        draw_number(11, 87, 20);
     } else {
-        DispNum(6, 122, -max);
-        DispNum(6, 114, -max / 2);
-        DispNum(11, 96, max / 2);
-        DispNum(11, 87, max);
+        draw_number(6, 122, -max);
+        draw_number(6, 114, -max / 2);
+        draw_number(11, 96, max / 2);
+        draw_number(11, 87, max);
     }
 
     pscale = max >> 1;    // Half the estimated prestige
@@ -165,11 +165,11 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(140, 103 - Data->P[j].PrestHist[0][1] * 8 / pscale);
 
     display::graphics.setForegroundColor(5);
-    PrintAt(165, 89, "200");
-    PrintAt(167, 109, "150");
-    PrintAt(167, 129, "100");
-    PrintAt(171, 149, "50");
-    PrintAt(164, 169, "0 MB");
+    draw_string(165, 89, "200");
+    draw_string(167, 109, "150");
+    draw_string(167, 129, "100");
+    draw_string(171, 149, "50");
+    draw_string(164, 169, "0 MB");
     display::graphics.setForegroundColor(1);
 
     if (Data->Season == 0) {
@@ -181,65 +181,65 @@ void DrawBudget(char player, char *pStatus)
     sprintf(&str[0], "%d", Data->Year);
 
     strcat(&name[0], &str[0]);
-    DispBig(122, 5, &name[0], 0, -1);
-    //DispNum(0,0,Data->Year);
+    draw_heading(122, 5, &name[0], 0, -1);
+    //draw_number(0,0,Data->Year);
 
     display::graphics.setForegroundColor(11);
-    PrintAt(177, 59, "PROJECTED BUDGET: ");
-    DispMB(0, 0, Data->P[player].Budget);
-    PrintAt(42, 59, "CASH: ");
-    DispMB(0, 0, Data->P[player].Cash);
+    draw_string(177, 59, "PROJECTED BUDGET: ");
+    draw_megabucks(0, 0, Data->P[player].Budget);
+    draw_string(42, 59, "CASH: ");
+    draw_megabucks(0, 0, Data->P[player].Cash);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(13, 105, "0");
+    draw_string(13, 105, "0");
     display::graphics.setForegroundColor(5);
 
     if (Data->Season == 1) {
-        DispNum(21, 130, Data->Year - 2);
-        DispChr('F');
-        DispNum(49, 130, Data->Year - 1);
-        DispChr('S');
-        DispNum(77, 130, Data->Year - 1);
-        DispChr('F');
-        DispNum(105, 130, Data->Year);
-        DispChr('S');
-        DispNum(133, 130, Data->Year);
-        DispChr('F');
+        draw_number(21, 130, Data->Year - 2);
+        draw_character('F');
+        draw_number(49, 130, Data->Year - 1);
+        draw_character('S');
+        draw_number(77, 130, Data->Year - 1);
+        draw_character('F');
+        draw_number(105, 130, Data->Year);
+        draw_character('S');
+        draw_number(133, 130, Data->Year);
+        draw_character('F');
     } else {
-        DispNum(21, 130, Data->Year - 2);
-        DispChr('S');
-        DispNum(49, 130, Data->Year - 2);
-        DispChr('F');
-        DispNum(77, 130, Data->Year - 1);
-        DispChr('S');
-        DispNum(105, 130, Data->Year - 1);
-        DispChr('F');
-        DispNum(133, 130, Data->Year);
-        DispChr('S');
+        draw_number(21, 130, Data->Year - 2);
+        draw_character('S');
+        draw_number(49, 130, Data->Year - 2);
+        draw_character('F');
+        draw_number(77, 130, Data->Year - 1);
+        draw_character('S');
+        draw_number(105, 130, Data->Year - 1);
+        draw_character('F');
+        draw_number(133, 130, Data->Year);
+        draw_character('S');
     }
 
     if (Data->Season == 1) {
-        DispNum(23, 193, Data->Year - 2);
-        DispChr('F');
-        DispNum(46, 193, Data->Year - 1);
-        DispChr('S');
-        DispNum(68, 193, Data->Year - 1);
-        DispChr('F');
-        DispNum(92, 193, Data->Year);
-        DispChr('S');
-        DispNum(114, 193, Data->Year);
-        DispChr('F');
+        draw_number(23, 193, Data->Year - 2);
+        draw_character('F');
+        draw_number(46, 193, Data->Year - 1);
+        draw_character('S');
+        draw_number(68, 193, Data->Year - 1);
+        draw_character('F');
+        draw_number(92, 193, Data->Year);
+        draw_character('S');
+        draw_number(114, 193, Data->Year);
+        draw_character('F');
     } else {
-        DispNum(23, 193, Data->Year - 2);
-        DispChr('S');
-        DispNum(46, 193, Data->Year - 2);
-        DispChr('F');
-        DispNum(68, 193, Data->Year - 1);
-        DispChr('S');
-        DispNum(92, 193, Data->Year - 1);
-        DispChr('F');
-        DispNum(114, 193, Data->Year);
-        DispChr('S');
+        draw_number(23, 193, Data->Year - 2);
+        draw_character('S');
+        draw_number(46, 193, Data->Year - 2);
+        draw_character('F');
+        draw_number(68, 193, Data->Year - 1);
+        draw_character('S');
+        draw_number(92, 193, Data->Year - 1);
+        draw_character('F');
+        draw_number(114, 193, Data->Year);
+        draw_character('S');
     }
 
     display::graphics.setForegroundColor(4);
@@ -258,44 +258,44 @@ void DrawBudget(char player, char *pStatus)
     }
 
     display::graphics.setForegroundColor(4);
-    DispNum(298, 174, Data->Year);
-    DispNum(271, 174, Data->Year - 1);
-    DispNum(248, 174, Data->Year - 2);
-    DispNum(222, 174, Data->Year - 3);
-    DispNum(194, 174, Data->Year - 4);
+    draw_number(298, 174, Data->Year);
+    draw_number(271, 174, Data->Year - 1);
+    draw_number(248, 174, Data->Year - 2);
+    draw_number(222, 174, Data->Year - 3);
+    draw_number(194, 174, Data->Year - 4);
 
     if (player == 0) {
         for (i = 0; i < 5; i++) {
-            RectFill(197 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 6);
-            RectFill(206 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 9);
-            RectFill(196 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 5);
-            RectFill(205 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 8);
+            fill_rectangle(197 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 6);
+            fill_rectangle(206 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 9);
+            fill_rectangle(196 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 5);
+            fill_rectangle(205 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 8);
         }
 
-        RectFill(170, 185, 176, 189, 6);
-        RectFill(170, 185, 175, 188, 5);
-        RectFill(297, 185, 303, 189, 9);
-        RectFill(297, 185, 302, 188, 8);
+        fill_rectangle(170, 185, 176, 189, 6);
+        fill_rectangle(170, 185, 175, 188, 5);
+        fill_rectangle(297, 185, 303, 189, 9);
+        fill_rectangle(297, 185, 302, 188, 8);
         display::graphics.setForegroundColor(1);
-        PrintAt(181, 189, "U.S.A.");
-        PrintAt(262, 189, "U.S.S.R.");
+        draw_string(181, 189, "U.S.A.");
+        draw_string(262, 189, "U.S.S.R.");
     }
 
     if (player == 1) {
         for (i = 0; i < 5; i++) {
-            RectFill(197 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 9);
-            RectFill(206 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 6);
-            RectFill(196 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 8);
-            RectFill(205 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 5);
+            fill_rectangle(197 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 9);
+            fill_rectangle(206 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 6);
+            fill_rectangle(196 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 8);
+            fill_rectangle(205 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 5);
         }
 
-        RectFill(170, 185, 176, 189, 9);
-        RectFill(170, 185, 175, 188, 8);
-        RectFill(297, 185, 303, 189, 6);
-        RectFill(297, 185, 302, 188, 5);
+        fill_rectangle(170, 185, 176, 189, 9);
+        fill_rectangle(170, 185, 175, 188, 8);
+        fill_rectangle(297, 185, 303, 189, 6);
+        fill_rectangle(297, 185, 302, 188, 5);
         display::graphics.setForegroundColor(1);
-        PrintAt(181, 189, "U.S.S.R.");
-        PrintAt(262, 189, "U.S.A.");
+        draw_string(181, 189, "U.S.S.R.");
+        draw_string(262, 189, "U.S.A.");
     }
 
     DrawPastExp(player, pStatus);
@@ -342,7 +342,7 @@ void DrawPastExp(char player, char *pStatus)
     int max = 0;
     int pScale = 25;
 
-    RectFill(31, 149, 124, 182, 7 + 3 * player);
+    fill_rectangle(31, 149, 124, 182, 7 + 3 * player);
     display::graphics.setForegroundColor(4);
     display::graphics.screen()->outlineRect(30, 148, 125, 183, 4);
     display::graphics.screen()->outlineRect(54, 148, 77, 183, 4);
@@ -356,21 +356,21 @@ void DrawPastExp(char player, char *pStatus)
         }
 
     if (max <= 100) {
-        PrintAt(12, 150, "100");
-        PrintAt(12, 159, "75");
-        PrintAt(12, 167, "50");
-        PrintAt(12, 176, "25");
-        PrintAt(8, 185, "0 MB");
+        draw_string(12, 150, "100");
+        draw_string(12, 159, "75");
+        draw_string(12, 167, "50");
+        draw_string(12, 176, "25");
+        draw_string(8, 185, "0 MB");
     } else {
         pScale = max >> 2;
-        DispNum(12, 150, max);
+        draw_number(12, 150, max);
         i = (max * 3) >> 2;
-        DispNum(12, 159, i);
+        draw_number(12, 159, i);
         i = max >> 1;
-        DispNum(12, 167, i);
+        draw_number(12, 167, i);
         i = max >> 2;
-        DispNum(12, 176, i);
-        PrintAt(8, 185, "0 MB");
+        draw_number(12, 176, i);
+        draw_string(8, 185, "0 MB");
     };
 
     for (i = 0; i < 4; i++) {
@@ -489,7 +489,7 @@ void DrawPreviousMissions(char plr)
     int i, misnum = 0;
     int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     InBox(5, 41, 314, 91);
-    RectFill(6, 42, 313, 90, 0);
+    fill_rectangle(6, 42, 313, 90, 0);
     i = Data->P[plr].PastMissionCount - olderMiss;
     display::graphics.setForegroundColor(2);
 
@@ -497,55 +497,55 @@ void DrawPreviousMissions(char plr)
 
         GetMisType(Data->P[plr].History[i].MissionCode);
 
-        PrintAt(9, 49 + 16 * misnum, Data->P[plr].History[i].MissionName[0]);
-        PrintAt(9, 55 + 16 * misnum, Mis.Abbr);
+        draw_string(9, 49 + 16 * misnum, Data->P[plr].History[i].MissionName[0]);
+        draw_string(9, 55 + 16 * misnum, Mis.Abbr);
         MisCod = Data->P[plr].History[i].MissionCode;
 
         if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41) {
             switch (Data->P[plr].History[i].Duration) {
             case 1:
-                PrintAt(0, 0, "");
+                draw_string(0, 0, "");
                 break;
 
             case 2:
-                PrintAt(0, 0, " (B)");
+                draw_string(0, 0, " (B)");
                 break;
 
             case 3:
-                PrintAt(0, 0, " (C)");
+                draw_string(0, 0, " (C)");
                 break;
 
             case 4:
-                PrintAt(0, 0, " (D)");
+                draw_string(0, 0, " (D)");
                 break;
 
             case 5:
-                PrintAt(0, 0, " (E)");
+                draw_string(0, 0, " (E)");
                 break;
 
             case 6:
-                PrintAt(0, 0, " (F)");
+                draw_string(0, 0, " (F)");
                 break;
 
             default:
-                PrintAt(0, 0, "");
+                draw_string(0, 0, "");
                 break;
             }
         }
 
-        PrintAt(140, 49 + 16 * misnum, "PRESTIGE: ");
-        DispNum(0, 0, Data->P[plr].History[i].Prestige);
+        draw_string(140, 49 + 16 * misnum, "PRESTIGE: ");
+        draw_number(0, 0, Data->P[plr].History[i].Prestige);
 
-        PrintAt(230, 49 + 16 * misnum, Months[Data->P[plr].History[i].Month]);
-        PrintAt(0, 0, " 19");
-        DispNum(0, 0, Data->P[plr].History[i].MissionYear);
+        draw_string(230, 49 + 16 * misnum, Months[Data->P[plr].History[i].Month]);
+        draw_string(0, 0, " 19");
+        draw_number(0, 0, Data->P[plr].History[i].MissionYear);
         i--;
         misnum++;
     };
 
     if (misnum < 3) {
         display::graphics.setForegroundColor(1);
-        PrintAt(9, 49 + 16 * misnum, "NO PAST MISSIONS REMAINING");
+        draw_string(9, 49 + 16 * misnum, "NO PAST MISSIONS REMAINING");
     }
 }
 
@@ -557,38 +557,38 @@ void DrawViewing(char plr)
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
     IOBox(243, 3, 316, 19);
 
     ShBox(0, 24, 319, 95);
     InBox(81, 28, 238, 38);
-    RectFill(82, 29, 237, 37, 7);
+    fill_rectangle(82, 29, 237, 37, 7);
     InBox(5, 41, 314, 91);
-    RectFill(6, 42, 313, 90, 0);
+    fill_rectangle(6, 42, 313, 90, 0);
 
     ShBox(0, 97, 319, 199);
     InBox(5, 101, 314, 112);
-    RectFill(6, 102, 313, 111, 10);
+    fill_rectangle(6, 102, 313, 111, 10);
     InBox(5, 114, 314, 178);
-    RectFill(6, 115, 313, 177, 0);
+    fill_rectangle(6, 115, 313, 177, 0);
     IOBox(4, 182, 77, 196);
     IOBox(242, 182, 315, 196);
-    LTArrow(24, 186);
-    RTArrow(262, 186);
+    draw_left_arrow(24, 186);
+    draw_right_arrow(262, 186);
     InBox(81, 182, 238, 196);
-    RectFill(82, 183, 237, 195, 7);
+    fill_rectangle(82, 183, 237, 195, 7);
     ShBox(302, 116, 312, 145);
-    UPArrow(304, 118);
+    draw_up_arrow(304, 118);
     ShBox(302, 147, 312, 176);
-    DNArrow(304, 149);
+    draw_down_arrow(304, 149);
 
     display::graphics.setForegroundColor(11);
-    PrintAt(113, 35, "PREVIOUS MISSIONS");
-    PrintAt(106, 108, "PAST CURRENT EVENTS");
+    draw_string(113, 35, "PREVIOUS MISSIONS");
+    draw_string(106, 108, "PAST CURRENT EVENTS");
 
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    DispBig(45, 5, "VIEWING STAND", 0, -1);
+    draw_string(258, 13, "CONTINUE");
+    draw_heading(45, 5, "VIEWING STAND", 0, -1);
 
     DrawPreviousMissions(plr);
     IOBox(4, 26, 77, 40);
@@ -599,8 +599,8 @@ void DrawViewing(char plr)
         InBox(6, 28, 75, 38);
     }
 
-    LTArrow(24, 30);
-    RTArrow(262, 30);
+    draw_left_arrow(24, 30);
+    draw_right_arrow(262, 30);
 
     return;
 }
@@ -653,7 +653,7 @@ void DrawVText(char got)
     }
 
     for (i = 0; i < 8; i++) {
-        RectFill(6, yy - 4, 300, yy + 1, 0);
+        fill_rectangle(6, yy - 4, 300, yy + 1, 0);
         grMoveTo(xx, yy);
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
@@ -689,7 +689,7 @@ void DrawVText(char got)
         }
 
         while (buf[0] != 'x' && buf[0] != '\0') {
-            DispChr(buf[0]);
+            draw_character(buf[0]);
             buf++;
         };
 
@@ -725,16 +725,16 @@ int RetFile(char plr, int card)
 
     bline -= 8;
 
-    RectFill(82, 183, 237, 195, 7);
+    fill_rectangle(82, 183, 237, 195, 7);
     display::graphics.setForegroundColor(11);
 
     if ((card % 2) == 1) {
-        PrintAt(131, 191, "FALL 19");
+        draw_string(131, 191, "FALL 19");
     } else {
-        PrintAt(128, 191, "SPRING 19");
+        draw_string(128, 191, "SPRING 19");
     }
 
-    DispNum(0, 0, (card >> 1) + 57);
+    draw_number(0, 0, (card >> 1) + 57);
 
     return bline;
 }

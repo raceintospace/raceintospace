@@ -57,31 +57,31 @@ void DrawLimbo(char plr)
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     if (plr == 0) {
-        DispBig(36, 5, "ASTRONAUT COMPLEX", 0, -1);
+        draw_heading(36, 5, "ASTRONAUT COMPLEX", 0, -1);
     } else {
-        DispBig(40, 5, "COSMONAUT CENTER", 0, -1);
+        draw_heading(40, 5, "COSMONAUT CENTER", 0, -1);
     }
 
     ShBox(0, 24, 158, 199);
     InBox(9, 51, 90, 102);
-    RectFill(25, 129, 153, 195, 0);
-    RectFill(5, 129, 19, 195, 0);
+    fill_rectangle(25, 129, 153, 195, 0);
+    fill_rectangle(5, 129, 19, 195, 0);
     ShBox(6, 130, 18, 161);
     ShBox(6, 163, 18, 194);
-    UPArrow(8, 133);
-    DNArrow(8, 166);
+    draw_up_arrow(8, 133);
+    draw_down_arrow(8, 166);
     ShBox(161, 24, 319, 72);
     InBox(165, 28, 315, 42);
-    RectFill(166, 29, 314, 41, 7);
+    fill_rectangle(166, 29, 314, 41, 7);
     ShBox(161, 74, 319, 199);
     InBox(165, 77, 315, 89);
-    RectFill(166, 78, 314, 88, 10);
-    RectFill(10, 52, 89, 101, 7 + plr * 3);
+    fill_rectangle(166, 78, 314, 88, 10);
+    fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
     InBox(165, 46, 315, 67);
-    RectFill(166, 47, 314, 66, 0);
+    fill_rectangle(166, 47, 314, 66, 0);
     ShBox(167, 48, 239, 65);
     ShBox(241, 48, 313, 65);
     InBox(167, 48, 239, 65);
@@ -94,20 +94,20 @@ void DrawLimbo(char plr)
     InBox(9, 108, 148, 123);
 
     display::graphics.setForegroundColor(20);
-    PrintAt(180, 55, "TRANSFER");
+    draw_string(180, 55, "TRANSFER");
 
     if (plr == 0) {
-        PrintAt(178, 62, "ASTRONAUT");
+        draw_string(178, 62, "ASTRONAUT");
     } else {
-        PrintAt(178, 62, "COSMONAUT");
+        draw_string(178, 62, "COSMONAUT");
     }
 
-    PrintAt(256, 55, "FACILITY");
-    PrintAt(254, 62, "TRANSFER");
+    draw_string(256, 55, "FACILITY");
+    draw_string(254, 62, "TRANSFER");
 
-    RectFill(166, 78, 314, 88, 10);
+    fill_rectangle(166, 78, 314, 88, 10);
     display::graphics.setForegroundColor(11);
-    PrintAt(185, 85, "TRANSFER TO LOCATION");
+    draw_string(185, 85, "TRANSFER TO LOCATION");
 
     for (i = 0; i < 5; i++) {
         IOBox(165, 93 + 21 * i, 238, 111 + 21 * i);
@@ -122,32 +122,32 @@ void DrawLimbo(char plr)
 
         lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3;
         //lenprogname=(7-lenprogname)*2
-        PrintAt(181 + lenprogname, 101 + 21 * i, Data->P[plr].Manned[i].Name);
-        PrintAt(181, 107 + 21 * i, "PROGRAM");
+        draw_string(181 + lenprogname, 101 + 21 * i, Data->P[plr].Manned[i].Name);
+        draw_string(181, 107 + 21 * i, "PROGRAM");
 
         display::graphics.setForegroundColor(11);
-        PrintAt(257, 107 + 21 * i, "TRAINING");
+        draw_string(257, 107 + 21 * i, "TRAINING");
         //grMoveTo(254,101+21*i);  This remmed out to manually place the Adv. Training names so they could be centered -Leon
 
         switch (i) {
         case 0:
-            PrintAt(258, 101 + 21 * i, "CAPSULE");
+            draw_string(258, 101 + 21 * i, "CAPSULE");
             break;
 
         case 1:
-            PrintAt(271, 101 + 21 * i, "L.M.");
+            draw_string(271, 101 + 21 * i, "L.M.");
             break;
 
         case 2:
-            PrintAt(268, 101 + 21 * i, "E.V.A.");
+            draw_string(268, 101 + 21 * i, "E.V.A.");
             break;
 
         case 3:
-            PrintAt(259, 101 + 21 * i, "DOCKING");
+            draw_string(259, 101 + 21 * i, "DOCKING");
             break;
 
         case 4:
-            PrintAt(252, 101 + 21 * i, "ENDURANCE");
+            draw_string(252, 101 + 21 * i, "ENDURANCE");
             break;
 
         default:
@@ -158,21 +158,21 @@ void DrawLimbo(char plr)
     }
 
     display::graphics.setForegroundColor(11);
-    PrintAt(187, 37, "OPERATION SELECTION");
+    draw_string(187, 37, "OPERATION SELECTION");
 
     display::graphics.setForegroundColor(20);
-    //PrintAt(256,13,"CONTINUE");
-    PrintAt(15, 37, "NAME:");
-    PrintAt(17, 118, "GROUP:");
-    PrintAt(88, 118, "TENURE:");
+    //draw_string(256,13,"CONTINUE");
+    draw_string(15, 37, "NAME:");
+    draw_string(17, 118, "GROUP:");
+    draw_string(88, 118, "TENURE:");
     display::graphics.setForegroundColor(11);
-    PrintAt(102, 60, "MOOD:");
-    PrintAt(102, 68, "CAP:");
-    PrintAt(102, 76, "L.M.:");
-    PrintAt(102, 84, "EVA:");
-    PrintAt(102, 92, "DOCK:");
-    PrintAt(102, 100, "END:");
-    FlagSm(plr, 4, 4);
+    draw_string(102, 60, "MOOD:");
+    draw_string(102, 68, "CAP:");
+    draw_string(102, 76, "L.M.:");
+    draw_string(102, 84, "EVA:");
+    draw_string(102, 92, "DOCK:");
+    draw_string(102, 100, "END:");
+    draw_small_flag(plr, 4, 4);
 
     return;
 }
@@ -212,7 +212,7 @@ void Limbo(char plr)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &AstroList[0]);
                 LimboText(plr, AstroList[now2]);
@@ -234,14 +234,14 @@ void Limbo(char plr)
 
                     if (BarA == 0 && now2 > 0) {
                         now2--;
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
                     };
 
                     if (BarA > 0) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -258,14 +258,14 @@ void Limbo(char plr)
 
                 if (BarA == 0 && now2 > 0) {
                     now2--;
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
                 };
 
                 if (BarA > 0) {
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA--;
                     now2--;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -296,14 +296,14 @@ void Limbo(char plr)
 
                     if (BarA == 7 && (now2 < count - 1)) {
                         now2++;
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
                     };
 
                     if (BarA < 7 && now2 < count - 1) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA++;
                         now2++;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -320,14 +320,14 @@ void Limbo(char plr)
 
                 if (BarA == 7 && (now2 < count - 1)) {
                     now2++;
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
                 };
 
                 if (BarA < 7 && now2 < count - 1) {
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA++;
                     now2++;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -364,9 +364,9 @@ void Limbo(char plr)
             tag = 0;
             InBox(167, 48, 239, 65);
             OutBox(241, 48, 313, 65);
-            RectFill(166, 78, 314, 88, 10);
+            fill_rectangle(166, 78, 314, 88, 10);
             display::graphics.setForegroundColor(11);
-            PrintAt(185, 85, "TRANSFER TO LOCATION");
+            draw_string(185, 85, "TRANSFER TO LOCATION");
 
         }
 
@@ -375,9 +375,9 @@ void Limbo(char plr)
             tag = 1;
             InBox(241, 48, 313, 65);
             OutBox(167, 48, 239, 65);
-            RectFill(166, 78, 314, 88, 10);
+            fill_rectangle(166, 78, 314, 88, 10);
             display::graphics.setForegroundColor(11);
-            PrintAt(203, 85, "VISIT LOCATION");
+            draw_string(203, 85, "VISIT LOCATION");
 
         }
 
@@ -408,7 +408,7 @@ void Limbo(char plr)
                 count--;
 
                 if (count == 0) {
-                    RectFill(10, 52, 89, 101, 7 + plr * 3);
+                    fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
                     Clear();
                 }
 
@@ -422,7 +422,7 @@ void Limbo(char plr)
                     }
                 };
 
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
 
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -454,10 +454,10 @@ void Limbo(char plr)
 
                 InBox(241, 48, 313, 65);
                 OutBox(167, 48, 239, 65);
-                RectFill(166, 78, 314, 88, 10);
+                fill_rectangle(166, 78, 314, 88, 10);
                 display::graphics.setForegroundColor(11);
-                PrintAt(203, 85, "VISIT LOCATION");
-                RectFill(26, 129, 153, 195, 0);
+                draw_string(203, 85, "VISIT LOCATION");
+                fill_rectangle(26, 129, 153, 195, 0);
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -544,7 +544,7 @@ void Limbo(char plr)
                     count--;
 
                     if (count == 0) {
-                        RectFill(10, 52, 89, 101, 7 + plr * 3);
+                        fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
                         Clear();
                     }
 
@@ -558,7 +558,7 @@ void Limbo(char plr)
                         }
                     };
 
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
 
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -587,12 +587,12 @@ void Limbo(char plr)
                 DrawLimbo(plr);
                 music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
 
-                RectFill(166, 78, 314, 88, 10);
+                fill_rectangle(166, 78, 314, 88, 10);
                 display::graphics.setForegroundColor(11);
-                PrintAt(203, 85, "VISIT LOCATION");
+                draw_string(203, 85, "VISIT LOCATION");
                 InBox(241, 48, 313, 65);
                 OutBox(167, 48, 239, 65);
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -617,20 +617,20 @@ void Limbo(char plr)
 
 void Clear(void)
 {
-    RectFill(44, 31, 145, 40, 3);
-    RectFill(49, 112, 60, 119, 3);
-    RectFill(123, 62, 145, 77, 3);
-    RectFill(125, 79, 145, 85, 3);
-    RectFill(128, 86, 145, 93, 3);
-    RectFill(123, 95, 145, 101, 3);
-    RectFill(127, 113, 141, 120, 3);
-    RectFill(130, 54, 155, 61, 3);
+    fill_rectangle(44, 31, 145, 40, 3);
+    fill_rectangle(49, 112, 60, 119, 3);
+    fill_rectangle(123, 62, 145, 77, 3);
+    fill_rectangle(125, 79, 145, 85, 3);
+    fill_rectangle(128, 86, 145, 93, 3);
+    fill_rectangle(123, 95, 145, 101, 3);
+    fill_rectangle(127, 113, 141, 120, 3);
+    fill_rectangle(130, 54, 155, 61, 3);
     return;
 }
 
 void LimboText(char plr, int astro)
 {
-    RectFill(44, 31, 145, 40, 3);
+    fill_rectangle(44, 31, 145, 40, 3);
     display::graphics.setForegroundColor(11);
     int col;
 
@@ -660,49 +660,49 @@ void LimboText(char plr, int astro)
         display::graphics.setForegroundColor(0);    // Print name in black if 'naut has announced retirement (override mood) -Leon
     }
 
-    PrintAt(46, 37, Data->P[plr].Pool[astro].Name);
+    draw_string(46, 37, Data->P[plr].Pool[astro].Name);
     display::graphics.setForegroundColor(11);
-    RectFill(49, 112, 80, 119, 3);
+    fill_rectangle(49, 112, 80, 119, 3);
     display::graphics.setForegroundColor(11);
 
     switch (Data->P[plr].Pool[astro].Group) {
     case 0:
-        PrintAt(53, 118, "I");
+        draw_string(53, 118, "I");
         break;
 
     case 1:
-        PrintAt(53, 118, "II");
+        draw_string(53, 118, "II");
         break;
 
     case 2:
-        PrintAt(53, 118, "III");
+        draw_string(53, 118, "III");
         break;
 
     case 3:
-        PrintAt(53, 118, "IV");
+        draw_string(53, 118, "IV");
         break;
 
     case 4:
-        PrintAt(53, 118, "V");
+        draw_string(53, 118, "V");
         break;
     }
 
-    RectFill(123, 62, 145, 77, 3);
-    RectFill(125, 79, 145, 85, 3);
-    RectFill(131, 86, 145, 92, 3);
-    RectFill(123, 95, 145, 101, 3);
-    RectFill(130, 54, 155, 61, 3);
+    fill_rectangle(123, 62, 145, 77, 3);
+    fill_rectangle(125, 79, 145, 85, 3);
+    fill_rectangle(131, 86, 145, 92, 3);
+    fill_rectangle(123, 95, 145, 101, 3);
+    fill_rectangle(130, 54, 155, 61, 3);
     display::graphics.setForegroundColor(col); // Print 'naut mood in green/yellow/red/black depending on mood -Leon
-    DispNum(132, 60, Data->P[plr].Pool[astro].Mood);
+    draw_number(132, 60, Data->P[plr].Pool[astro].Mood);
     display::graphics.setForegroundColor(11);
-    DispNum(125, 68, Data->P[plr].Pool[astro].Cap);
-    DispNum(123, 76, Data->P[plr].Pool[astro].LM);
-    DispNum(125, 84, Data->P[plr].Pool[astro].EVA);
-    DispNum(131, 92, Data->P[plr].Pool[astro].Docking);
-    DispNum(125, 100, Data->P[plr].Pool[astro].Endurance);
-    RectFill(127, 113, 141, 120, 3);
+    draw_number(125, 68, Data->P[plr].Pool[astro].Cap);
+    draw_number(123, 76, Data->P[plr].Pool[astro].LM);
+    draw_number(125, 84, Data->P[plr].Pool[astro].EVA);
+    draw_number(131, 92, Data->P[plr].Pool[astro].Docking);
+    draw_number(125, 100, Data->P[plr].Pool[astro].Endurance);
+    fill_rectangle(127, 113, 141, 120, 3);
     display::graphics.setForegroundColor(11);
-    DispNum(130, 118, Data->P[plr].Pool[astro].Active);
+    draw_number(130, 118, Data->P[plr].Pool[astro].Active);
     AstFaces(plr, 10, 52, Data->P[plr].Pool[astro].Face);
     return;
 }

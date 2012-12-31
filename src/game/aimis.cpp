@@ -87,13 +87,13 @@ void AIVabCheck(char plr, char mis, char prog)
                 whe[1] = 0;    // Weed out low safety's
             }
         } else {
-            // RectFill(100,100,200,190,5);
-            // PrintAt(110,110,"MIS ");DispNum(0,0,mis);
-            // PrintAt(110,120,"PRG ");DispNum(0,0,prog);
+            // fill_rectangle(100,100,200,190,5);
+            // draw_string(110,110,"MIS ");draw_number(0,0,mis);
+            // draw_string(110,120,"PRG ");draw_number(0,0,prog);
             // PauseMouse();
 
             BuildVAB(plr, mis, 1, 0, prog - 1);
-//        PrintAt(110,130,"VAS ");DispNum(0,0,VASQTY);
+//        draw_string(110,130,"VAS ");draw_number(0,0,VASQTY);
             CalcSaf(plr, VASqty);
             whe[0] = Best();
 

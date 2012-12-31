@@ -236,12 +236,12 @@ void RandomizeEq(void)
 void SetEquipName(char plr)
 {
     char skip = 0;
-    RectFill(95, 50, 227, 96, 0);
+    fill_rectangle(95, 50, 227, 96, 0);
     OutBox(96, 51, 226, 95);
-    RectFill(97, 52, 225, 94, 3);
+    fill_rectangle(97, 52, 225, 94, 3);
     display::graphics.setForegroundColor(9);
-    PrintAt(103, 59, "EQUIPMENT NAME CHANGE");
-    PrintAt(123, 69, "(ESCAPE TO SKIP)");
+    draw_string(103, 59, "EQUIPMENT NAME CHANGE");
+    draw_string(123, 69, "(ESCAPE TO SKIP)");
     int n;
 
     for (n = 0; skip == 0 && n < 3; n++) {
@@ -267,14 +267,14 @@ char GetNewName(char old_name[20])
         name[i] = 0x00;
     }
 
-    RectFill(100, 74, 223, 91, 3);
+    fill_rectangle(100, 74, 223, 91, 3);
     display::graphics.setForegroundColor(6);
-    PrintAt(162 - 3 * strlen(old_name), 80, &old_name[0]);
+    draw_string(162 - 3 * strlen(old_name), 80, &old_name[0]);
     InBox(99, 84, 223, 92);
-    RectFill(100, 85, 222, 91, 0);
+    fill_rectangle(100, 85, 222, 91, 0);
     display::graphics.setForegroundColor(1);
-    PrintAt(162 - 3 * strlen(old_name), 90, &old_name[0]);
-    DispChr(0x14);
+    draw_string(162 - 3 * strlen(old_name), 90, &old_name[0]);
+    draw_character(0x14);
     av_sync();
 
     while (ch != K_ENTER && ch != K_ESCAPE) {
@@ -294,10 +294,10 @@ char GetNewName(char old_name[20])
             name[num++] = ch;
         }
 
-        RectFill(100, 85, 222, 91, 0);
+        fill_rectangle(100, 85, 222, 91, 0);
         display::graphics.setForegroundColor(1);
-        PrintAt(162 - 3 * strlen(name), 90, &name[0]);
-        DispChr(0x14);
+        draw_string(162 - 3 * strlen(name), 90, &name[0]);
+        draw_character(0x14);
         av_sync();
     }
 

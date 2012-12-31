@@ -64,8 +64,8 @@ void DrawTrain(char plr, char lvl)
     ShBox(0, 24, 158, 114);
     ShBox(161, 24, 319, 199);
     ShBox(0, 116, 158, 199);
-    RectFill(5, 129, 19, 195, 0);
-    RectFill(25, 129, 153, 195, 0);
+    fill_rectangle(5, 129, 19, 195, 0);
+    fill_rectangle(25, 129, 153, 195, 0);
     ShBox(6, 130, 18, 161);
     ShBox(6, 163, 18, 194);
     IOBox(243, 3, 316, 19);
@@ -75,70 +75,70 @@ void DrawTrain(char plr, char lvl)
     InBox(4, 128, 20, 196);
     InBox(24, 128, 154, 196);
     InBox(3, 27, 154, 110);
-    UPArrow(9, 133);
-    DNArrow(9, 166);
+    draw_up_arrow(9, 133);
+    draw_down_arrow(9, 166);
     display::graphics.setForegroundColor(5);
 
     if (plr == 0) {
-        PrintAt(20, 124, "ASTRONAUTS");
+        draw_string(20, 124, "ASTRONAUTS");
     } else {
-        PrintAt(20, 124, "COSMONAUTS");
+        draw_string(20, 124, "COSMONAUTS");
     }
 
-    PrintAt(0, 0, " IN TRAINING");
+    draw_string(0, 0, " IN TRAINING");
     memset(TrnName, 0x00, sizeof(TrnName));
 
     switch (lvl) {
     case 0:
         strcpy(TrnName, "BASIC ");
         strcat(TrnName, Trner);
-        DispBig(40, 5, TrnName, 0, -1);
+        draw_heading(40, 5, TrnName, 0, -1);
         break;
 
     case 1:
         strcpy(TrnName, "CAPSULE ");
         strcat(TrnName, Trner);
-        DispBig(37, 5, TrnName, 0, -1);
+        draw_heading(37, 5, TrnName, 0, -1);
         break;
 
     case 2:
         strcpy(TrnName, "LM ");
         strcat(TrnName, Trner);
-        DispBig(40, 5, TrnName, 0, -1);
+        draw_heading(40, 5, TrnName, 0, -1);
         break;
 
     case 3:
         strcpy(TrnName, "EVA ");
         strcat(TrnName, Trner);
-        DispBig(40, 5, TrnName, 0, -1);
+        draw_heading(40, 5, TrnName, 0, -1);
         break;
 
     case 4:
         strcpy(TrnName, "DOCKING ");
         strcat(TrnName, Trner);
-        DispBig(37, 5, TrnName, 0, -1);
+        draw_heading(37, 5, TrnName, 0, -1);
         break;
 
     case 5:
         strcpy(TrnName, "ENDURANCE ");
         strcat(TrnName, Trner);
-        DispBig(37, 5, TrnName, 0, -1);
+        draw_heading(37, 5, TrnName, 0, -1);
         break;
     }
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     display::graphics.setForegroundColor(7);
 
-    PrintAt(169, 88, "NAME:");      /* 196,32 */
+    draw_string(169, 88, "NAME:");      /* 196,32 */
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(169, 97, "GROUP ");
+    draw_string(169, 97, "GROUP ");
 
-    PrintAt(240, 97, "TENURE: ");
+    draw_string(240, 97, "TENURE: ");
 
     grMoveTo(201, 97);
 
@@ -146,37 +146,37 @@ void DrawTrain(char plr, char lvl)
 
     display::graphics.setForegroundColor(7);
 
-    PrintAt(169, 111, "STATUS:");
+    draw_string(169, 111, "STATUS:");
 
-    PrintAt(169, 120, "MOOD:");
+    draw_string(169, 120, "MOOD:");
 
     display::graphics.setForegroundColor(9);
 
-    PrintAt(169, 133, "SKILL:");
+    draw_string(169, 133, "SKILL:");
 
     display::graphics.setForegroundColor(7);
 
-    PrintAt(192, 142, "CAP:");
+    draw_string(192, 142, "CAP:");
 
-    PrintAt(192, 150, "L.M.:");
+    draw_string(192, 150, "L.M.:");
 
-    PrintAt(192, 158, "E.V.A.:");
+    draw_string(192, 158, "E.V.A.:");
 
-    PrintAt(192, 166, "DOCK:");
+    draw_string(192, 166, "DOCK:");
 
-    PrintAt(192, 174, "END:");
+    draw_string(192, 174, "END:");
 
     display::graphics.setForegroundColor(9);
 
-    PrintAt(181, 189, "W");
+    draw_string(181, 189, "W");
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(0, 0, "ITHDRAW FROM TRAINING");
+    draw_string(0, 0, "ITHDRAW FROM TRAINING");
 
-    RectFill(203, 29, 282, 78, 7 + (plr * 3));
+    fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
 
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
 
     return;
 }
@@ -186,24 +186,24 @@ TrainText(char plr, int astro, int cnt)
 {
     char Fritz[20];
 
-    RectFill(200, 83, 291, 88, 3);
-    RectFill(200, 116, 220, 120, 3);
-    RectFill(202, 93, 220, 97, 3);
-    RectFill(216, 102, 294, 106, 3);
-    RectFill(212, 107, 317, 124, 3);
-    RectFill(215, 138, 235, 142, 3);
-    RectFill(213, 145, 243, 150, 3);
-    RectFill(221, 153, 241, 158, 3);
-    RectFill(220, 161, 240, 166, 3);
-    RectFill(215, 170, 235, 174, 3);
-    RectFill(282, 91, 318, 97, 3);
+    fill_rectangle(200, 83, 291, 88, 3);
+    fill_rectangle(200, 116, 220, 120, 3);
+    fill_rectangle(202, 93, 220, 97, 3);
+    fill_rectangle(216, 102, 294, 106, 3);
+    fill_rectangle(212, 107, 317, 124, 3);
+    fill_rectangle(215, 138, 235, 142, 3);
+    fill_rectangle(213, 145, 243, 150, 3);
+    fill_rectangle(221, 153, 241, 158, 3);
+    fill_rectangle(220, 161, 240, 166, 3);
+    fill_rectangle(215, 170, 235, 174, 3);
+    fill_rectangle(282, 91, 318, 97, 3);
 
     if (cnt == 0) {
         return;
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(200, 88, &Data->P[plr].Pool[astro].Name[0]);
+    draw_string(200, 88, &Data->P[plr].Pool[astro].Name[0]);
     int col;
 
     if (Data->P[plr].Pool[astro].Mood >= 65) {
@@ -227,8 +227,8 @@ TrainText(char plr, int astro, int cnt)
     }
 
     display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
-    PrintAt(200, 120, "   ");
-    DispNum(200, 120, Data->P[plr].Pool[astro].Mood);
+    draw_string(200, 120, "   ");
+    draw_number(200, 120, Data->P[plr].Pool[astro].Mood);
     grMoveTo(212, 111);
     display::graphics.setForegroundColor(11);
     memset(Fritz, 0x00, sizeof(Fritz));
@@ -240,41 +240,41 @@ TrainText(char plr, int astro, int cnt)
 
     switch (Data->P[plr].Pool[astro].Status) {
     case AST_ST_ACTIVE:
-        PrintAt(0, 0, "ACTIVE");
+        draw_string(0, 0, "ACTIVE");
         break;
 
     case AST_ST_TRAIN_BASIC_1:
         strcat(Fritz, " I");
-        PrintAt(0, 0, &Fritz[0]);
+        draw_string(0, 0, &Fritz[0]);
         break;
 
     case AST_ST_TRAIN_BASIC_2:
         strcat(Fritz, " II");
-        PrintAt(0, 0, &Fritz[0]);
+        draw_string(0, 0, &Fritz[0]);
         break;
 
     case AST_ST_TRAIN_BASIC_3:
         strcat(Fritz, " III");
-        PrintAt(0, 0, &Fritz[0]);
+        draw_string(0, 0, &Fritz[0]);
         break;
 
     case AST_ST_TRAIN_ADV_1:
-        PrintAt(0, 0, "ADV TRAINING I");
+        draw_string(0, 0, "ADV TRAINING I");
         break;
 
     case AST_ST_TRAIN_ADV_2:
-        PrintAt(0, 0, "ADV TRAINING II");
+        draw_string(0, 0, "ADV TRAINING II");
         break;
 
     case AST_ST_TRAIN_ADV_3:
-        PrintAt(0, 0, "ADV TRAINING III");
+        draw_string(0, 0, "ADV TRAINING III");
         break;
 
     case AST_ST_TRAIN_ADV_4:
         if (options.feat_shorter_advanced_training) {
-            PrintAt(0, 0, "ADV TRAINING III");
+            draw_string(0, 0, "ADV TRAINING III");
         } else    {
-            PrintAt(0, 0, "ADV TRAINING IV");
+            draw_string(0, 0, "ADV TRAINING IV");
         }
 
         break;
@@ -286,35 +286,35 @@ TrainText(char plr, int astro, int cnt)
 
     switch (Data->P[plr].Pool[astro].Group) {
     case 0:
-        PrintAt(0, 0, "I");
+        draw_string(0, 0, "I");
         break;
 
     case 1:
-        PrintAt(0, 0, "II");
+        draw_string(0, 0, "II");
         break;
 
     case 2:
-        PrintAt(0, 0, "III");
+        draw_string(0, 0, "III");
         break;
 
     case 3:
-        PrintAt(0, 0, "IV");
+        draw_string(0, 0, "IV");
         break;
     }
 
-    DispNum(282, 97, Data->P[plr].Pool[astro].Active);
+    draw_number(282, 97, Data->P[plr].Pool[astro].Active);
 
     display::graphics.setForegroundColor(1);
 
-    DispNum(215, 142, Data->P[plr].Pool[astro].Cap);
+    draw_number(215, 142, Data->P[plr].Pool[astro].Cap);
 
-    DispNum(213, 150, Data->P[plr].Pool[astro].LM);
+    draw_number(213, 150, Data->P[plr].Pool[astro].LM);
 
-    DispNum(221, 158, Data->P[plr].Pool[astro].EVA);
+    draw_number(221, 158, Data->P[plr].Pool[astro].EVA);
 
-    DispNum(220, 166, Data->P[plr].Pool[astro].Docking);
+    draw_number(220, 166, Data->P[plr].Pool[astro].Docking);
 
-    DispNum(215, 174, Data->P[plr].Pool[astro].Endurance);
+    draw_number(215, 174, Data->P[plr].Pool[astro].Endurance);
 
     AstFaces(plr, 203, 29, Data->P[plr].Pool[astro].Face);
 
@@ -428,7 +428,7 @@ void Train(char plr, int level)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 TrainText(plr, M[now2], count);
@@ -452,14 +452,14 @@ void Train(char plr, int level)
                         if (BarA == 0)
                             if (now2 > 0) {
                                 now2--;
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
                             };
 
                         if (BarA > 0) {
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA--;
                             now2--;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -477,14 +477,14 @@ void Train(char plr, int level)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
                         };
 
                     if (BarA > 0) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -514,7 +514,7 @@ void Train(char plr, int level)
                         if (BarA == 7)
                             if (now2 < count - 1) {
                                 now2++;
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
@@ -522,7 +522,7 @@ void Train(char plr, int level)
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
-                                RectFill(26, 129, 153, 195, 0);
+                                fill_rectangle(26, 129, 153, 195, 0);
                                 BarA++;
                                 now2++;
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -540,7 +540,7 @@ void Train(char plr, int level)
                     if (BarA == 7)
                         if (now2 < count - 1) {
                             now2++;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
@@ -548,7 +548,7 @@ void Train(char plr, int level)
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -631,7 +631,7 @@ void Train(char plr, int level)
                     count--;
 
                     if (count == 0) {
-                        RectFill(203, 29, 282, 78, 7 + (plr * 3));
+                        fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
                     }
 
                     if (now2 == count) {
@@ -644,7 +644,7 @@ void Train(char plr, int level)
                         }
                     };
 
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
 
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -740,8 +740,8 @@ void Hospital(char plr, int sel)
     ShBox(161, 103, 319, 199);
     ShBox(0, 103, 158, 199);
     IOBox(243, 3, 316, 19);
-    RectFill(5, 129, 19, 195, 0);
-    RectFill(25, 129, 153, 195, 0);
+    fill_rectangle(5, 129, 19, 195, 0);
+    fill_rectangle(25, 129, 153, 195, 0);
     ShBox(6, 163, 18, 194);
     ShBox(6, 130, 18, 161);
     InBox(3, 3, 30, 19);
@@ -750,9 +750,9 @@ void Hospital(char plr, int sel)
     InBox(9, 109, 148, 123);
     InBox(4, 128, 20, 196);
     InBox(24, 128, 154, 196);
-    UPArrow(9, 133);
-    DNArrow(9, 166);
-    FlagSm(plr, 4, 4);
+    draw_up_arrow(9, 133);
+    draw_down_arrow(9, 166);
+    draw_small_flag(plr, 4, 4);
     ShBox(0, 24, 319, 101);
     vhptr->copyTo(display::graphics.screen(), 0, 0, 1, 25, 318, 100);
 
@@ -762,35 +762,35 @@ void Hospital(char plr, int sel)
 
     if (plr == 0) {
         if (sel == 0) {
-            DispBig(40, 5, "US HOSPITAL", 0, -1);
+            draw_heading(40, 5, "US HOSPITAL", 0, -1);
             music_start(M_BADNEWS);
         } else {
-            DispBig(37, 5, "ARLINGTON CEMETERY", 0, -1);
+            draw_heading(37, 5, "ARLINGTON CEMETERY", 0, -1);
             music_start(M_USFUN);
         }
     };
 
     if (plr == 1) {
         if (sel == 0) {
-            DispBig(40, 5, "SOVIET INFIRMARY", 0, -1);
+            draw_heading(40, 5, "SOVIET INFIRMARY", 0, -1);
             music_start(M_INTERLUD);
         } else {
-            DispBig(40, 5, "KREMLIN WALL", 0, -1);
+            draw_heading(40, 5, "KREMLIN WALL", 0, -1);
             music_start(M_SVFUN);
         }
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(257, 13, "CONTINUE");
+    draw_string(257, 13, "CONTINUE");
     display::graphics.setForegroundColor(11);
 
     if (plr == 0) {
-        PrintAt(25, 118, "ASTRONAUT");
+        draw_string(25, 118, "ASTRONAUT");
     } else {
-        PrintAt(25, 118, "COSMONAUT");
+        draw_string(25, 118, "COSMONAUT");
     }
 
-    PrintAt(0, 0, " SELECTION");
+    draw_string(0, 0, " SELECTION");
     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
 
@@ -817,7 +817,7 @@ void Hospital(char plr, int sel)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 WaitForMouseUp();
@@ -832,13 +832,13 @@ void Hospital(char plr, int sel)
             if (BarA == 0)
                 if (now2 > 0) {
                     now2--;
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
                 };
 
             if (BarA > 0) {
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 BarA--;
                 now2--;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -856,14 +856,14 @@ void Hospital(char plr, int sel)
             if (BarA == 7)
                 if (now2 < count - 1) {
                     now2++;
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
                 };
 
             if (BarA < 7)
                 if (now2 < count - 1) {
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA++;
                     now2++;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);

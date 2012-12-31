@@ -176,10 +176,10 @@ void DrawFuture(char plr, int mis, char pad)
         SatFlag = 0;
     }
 
-    RectFill(1, 1, 318, 21, 3);
-    RectFill(317, 22, 318, 198, 3);
-    RectFill(1, 197, 316, 198, 3);
-    RectFill(1, 22, 2, 196, 3);
+    fill_rectangle(1, 1, 318, 21, 3);
+    fill_rectangle(317, 22, 318, 198, 3);
+    fill_rectangle(1, 197, 316, 198, 3);
+    fill_rectangle(1, 22, 2, 196, 3);
     OutBox(0, 0, 319, 199);
     InBox(3, 3, 30, 19);
     InBox(3, 22, 316, 196);
@@ -197,11 +197,11 @@ void DrawFuture(char plr, int mis, char pad)
     ShBox(5, 132, 16, 146); //middle box
     ShBox(5, 148, 16, 194); //    down
     ShBox(203, 24, 238, 31); // new right boxes
-    RectFill(206, 36, 235, 44, 7);
+    fill_rectangle(206, 36, 235, 44, 7);
     ShBox(203, 33, 238, 47);
     InBox(205, 35, 236, 45);
-    UPArrow(8, 95);
-    DNArrow(8, 157);
+    draw_up_arrow(8, 95);
+    draw_down_arrow(8, 157);
 
     vh->copyTo(display::graphics.screen(), 140, 5, 5, 132, 15, 146);
     Toggle(5, 1);
@@ -250,37 +250,37 @@ void DrawFuture(char plr, int mis, char pad)
     /* lines of text are 1:8,30  2:8,37   3:8,44    */
     switch (pad) { // These used to say Pad 1, 2, 3  -Leon
     case 0:
-        PrintAt(8, 30, "PAD A:");
+        draw_string(8, 30, "PAD A:");
         break;
 
     case 1:
-        PrintAt(8, 30, "PAD B:");
+        draw_string(8, 30, "PAD B:");
         break;
 
     case 2:
-        PrintAt(8, 30, "PAD C:");
+        draw_string(8, 30, "PAD C:");
         break;
     }
 
     display::graphics.setForegroundColor(1);
 
-    PrintAt(9, 80, "RESET");
+    draw_string(9, 80, "RESET");
 
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
-        PrintAt(200, 9, "SPRING");
+        draw_string(200, 9, "SPRING");
     } else {
-        PrintAt(205, 9, "FALL");
+        draw_string(205, 9, "FALL");
     }
 
-    PrintAt(206, 16, "19");
-    DispNum(0, 0, Data->Year);
+    draw_string(206, 16, "19");
+    draw_number(0, 0, Data->Year);
     display::graphics.setForegroundColor(1);
-    FlagSm(plr, 4, 4);
-    DispBig(40, 5, "FUTURE MISSIONS", 0, -1);
+    draw_small_flag(plr, 4, 4);
+    draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
     return;
@@ -301,7 +301,7 @@ int GetMinus(char plr)
     int u;
 
     i = PrestMin(plr);
-    RectFill(206, 36, 235, 44, 7);
+    fill_rectangle(206, 36, 235, 44, 7);
 
     if (i < 3) {
         u = 1;    //ok
@@ -315,12 +315,12 @@ int GetMinus(char plr)
     display::graphics.setForegroundColor(11);
 
     if (i > 0) {
-        PrintAt(210, 42, "-");
+        draw_string(210, 42, "-");
     } else {
         grMoveTo(210, 42);
     }
 
-    DispNum(0, 0, i);
+    draw_number(0, 0, i);
     display::graphics.setForegroundColor(1);
     return 0;
 }
@@ -532,23 +532,23 @@ void PlaceRX(int s)
 {
     switch (s) {
     case 1:
-        RectFill(44, 75, 52, 81, 8);
+        fill_rectangle(44, 75, 52, 81, 8);
         break;
 
     case 2:
-        RectFill(81, 75, 89, 81, 8);
+        fill_rectangle(81, 75, 89, 81, 8);
         break;
 
     case 3:
-        RectFill(118, 75, 126, 81, 8);
+        fill_rectangle(118, 75, 126, 81, 8);
         break;
 
     case 4:
-        RectFill(155, 75, 163, 81, 8);
+        fill_rectangle(155, 75, 163, 81, 8);
         break;
 
     case 5:
-        RectFill(192, 75, 200, 81, 8);
+        fill_rectangle(192, 75, 200, 81, 8);
         break;
 
     default:
@@ -562,23 +562,23 @@ void ClearRX(int s)
 {
     switch (s) {
     case 1:
-        RectFill(44, 75, 52, 81, 3);
+        fill_rectangle(44, 75, 52, 81, 3);
         break;
 
     case 2:
-        RectFill(81, 75, 89, 81, 3);
+        fill_rectangle(81, 75, 89, 81, 3);
         break;
 
     case 3:
-        RectFill(118, 75, 126, 81, 3);
+        fill_rectangle(118, 75, 126, 81, 3);
         break;
 
     case 4:
-        RectFill(155, 75, 163, 81, 3);
+        fill_rectangle(155, 75, 163, 81, 3);
         break;
 
     case 5:
-        RectFill(192, 75, 200, 81, 3);
+        fill_rectangle(192, 75, 200, 81, 3);
         break;
 
     default:
@@ -1432,12 +1432,12 @@ void Bd(int x, int y)
     y1 = y;
     x2 = x - 1;
     y2 = y - 1;
-    RectFill(x1, y1, x1 + 8, y1 + 4, 21);
-    RectFill(x2, y2, x2 + 6, y2 + 6, 21);
+    fill_rectangle(x1, y1, x1 + 8, y1 + 4, 21);
+    fill_rectangle(x2, y2, x2 + 6, y2 + 6, 21);
     display::graphics.setForegroundColor(1);
     grMoveTo(x, y + 4);
     /** \note references Bub_Count to determine the number of the character to draw in the bubble */
-    DispChr(65 + Bub_Count);
+    draw_character(65 + Bub_Count);
     StepBub[Bub_Count].x_cor = x1;
     StepBub[Bub_Count].y_cor = y1;
     ++Bub_Count;
@@ -1456,35 +1456,35 @@ void DurPri(int x)
 
     switch (x) {
     case -1:
-        PrintAt(112, 30, "NO DURATION");
+        draw_string(112, 30, "NO DURATION");
         break;
 
     case 0:
-        PrintAt(112, 30, "NO DURATION");
+        draw_string(112, 30, "NO DURATION");
         break;
 
     case 1:
-        PrintAt(112, 30, "1 - 2 DAYS");
+        draw_string(112, 30, "1 - 2 DAYS");
         break;
 
     case 2:
-        PrintAt(112, 30, "3 - 5 DAYS");
+        draw_string(112, 30, "3 - 5 DAYS");
         break;
 
     case 3:
-        PrintAt(112, 30, "6 - 7 DAYS");
+        draw_string(112, 30, "6 - 7 DAYS");
         break;
 
     case 4:
-        PrintAt(112, 30, "8 - 12 DAYS");
+        draw_string(112, 30, "8 - 12 DAYS");
         break;
 
     case 5:
-        PrintAt(112, 30, "13 - 16 DAYS");
+        draw_string(112, 30, "13 - 16 DAYS");
         break;
 
     case 6:
-        PrintAt(112, 30, "17 - 20 DAYS");
+        draw_string(112, 30, "17 - 20 DAYS");
         break;
     }
 
@@ -1506,7 +1506,7 @@ void MissionName(int val, int xx, int yy, int len)
             j = 0;
             grMoveTo(xx, yy);
         } else {
-            DispChr(Mis.Name[i]);
+            draw_character(Mis.Name[i]);
         }
 
         j++;
@@ -1537,11 +1537,11 @@ void Missions(char plr, int X, int Y, int val, char bub)
         PianoKey(val);
         Bub_Count = 0; // set the initial bub_count
         ClearDisplay();
-        RectFill(6, 31, 182, 46, 3);
-        RectFill(80, 25, 175, 30, 3);
+        fill_rectangle(6, 31, 182, 46, 3);
+        fill_rectangle(80, 25, 175, 30, 3);
         display::graphics.setForegroundColor(5);
-        PrintAt(55, 30, "TYPE: ");
-        DispNum(0, 0, val);
+        draw_string(55, 30, "TYPE: ");
+        draw_number(0, 0, val);
         display::graphics.setForegroundColor(5);
 
         if (V[val].E > 0) {

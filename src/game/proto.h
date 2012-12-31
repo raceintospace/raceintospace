@@ -25,7 +25,7 @@
 #define pline(a,b,c,d)        {grMoveTo(a,b) ; grLineTo(c,d);}
 #define other(a)          abs( (a)-1 )
 #define minn(a,b)         (((a) < (b)) ? (a) : (b))
-#define MisStep(a,b,c) PrintAt((a),(b),S_Name[(c)])
+#define MisStep(a,b,c) draw_string((a),(b),S_Name[(c)])
 #define VBlank() do{}while(0)
 #define PROGRAM_NOT_STARTED -1  /* Hardware program not started when Num is set to this */
 

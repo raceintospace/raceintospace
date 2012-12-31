@@ -287,31 +287,31 @@ void Intel(char plr)
             FadeOut(2, display::graphics.palette(), 10, 0, 0);
             DrawSpaceport(plr);
             PortPal(plr);
-            RectFill(166, 191, 318, 198, 3);
+            fill_rectangle(166, 191, 318, 198, 3);
             display::graphics.setForegroundColor(0);
-            PrintAt(257, 197, "CASH:");
-            DispMB(285, 197, Data->P[plr].Cash);
+            draw_string(257, 197, "CASH:");
+            draw_megabucks(285, 197, Data->P[plr].Cash);
             display::graphics.setForegroundColor(11);
-            PrintAt(256, 196, "CASH:");
-            DispMB(284, 196, Data->P[plr].Cash);
+            draw_string(256, 196, "CASH:");
+            draw_megabucks(284, 196, Data->P[plr].Cash);
             display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
-                PrintAt(166, 197, "SPRING 19");
+                draw_string(166, 197, "SPRING 19");
             } else {
-                PrintAt(166, 197, "FALL 19");
+                draw_string(166, 197, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
             display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
-                PrintAt(165, 196, "SPRING 19");
+                draw_string(165, 196, "SPRING 19");
             } else {
-                PrintAt(165, 196, "FALL 19");
+                draw_string(165, 196, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
         }
@@ -508,67 +508,67 @@ void XSpec(char plr, char mis, char year)
 {
     GetMisType(mis);
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 75, "CLASS: ");
+    draw_string(17, 75, "CLASS: ");
     display::graphics.setForegroundColor(9);
 
     if (Mis.Days >= 1) {
-        PrintAt(39, 81, "MANNED");
+        draw_string(39, 81, "MANNED");
     } else {
-        PrintAt(39, 81, "UNMANNED");
+        draw_string(39, 81, "UNMANNED");
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 96, "TYPE: ");
+    draw_string(17, 96, "TYPE: ");
     display::graphics.setForegroundColor(9);
 
     if (Mis.Jt == 1) {
-        PrintAt(0, 0, "JOINT LAUNCH");
+        draw_string(0, 0, "JOINT LAUNCH");
     } else {
-        PrintAt(0, 0, "SINGLE LAUNCH");
+        draw_string(0, 0, "SINGLE LAUNCH");
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 112, "DOCKING: ");
+    draw_string(17, 112, "DOCKING: ");
     display::graphics.setForegroundColor(9);
 
     if (Mis.Doc == 1) {
-        PrintAt(0, 0, "YES");
+        draw_string(0, 0, "YES");
     } else {
-        PrintAt(0, 0, "NO");
+        draw_string(0, 0, "NO");
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 128, "DURATION: ");
+    draw_string(17, 128, "DURATION: ");
     display::graphics.setForegroundColor(9);
 
     if (Mis.Dur >= 1) {
-        PrintAt(0, 0, "YES");
+        draw_string(0, 0, "YES");
     } else {
-        PrintAt(0, 0, "NO");
+        draw_string(0, 0, "NO");
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(33, 155, "THE ");
+    draw_string(33, 155, "THE ");
 
     if (plr == 0) {
-        PrintAt(0, 0, "CIA ");
+        draw_string(0, 0, "CIA ");
     } else {
-        PrintAt(0, 0, "KGB ");
+        draw_string(0, 0, "KGB ");
     }
 
-    PrintAt(0, 0, "REPORTS THAT THE ");
+    draw_string(0, 0, "REPORTS THAT THE ");
 
     if (plr == 0) {
-        PrintAt(0, 0, "SOVIET UNION IS");
+        draw_string(0, 0, "SOVIET UNION IS");
     } else {
-        PrintAt(0, 0, "UNITED STATES IS");
+        draw_string(0, 0, "UNITED STATES IS");
     }
 
-    PrintAt(33, 169, "PLANNING A ");
+    draw_string(33, 169, "PLANNING A ");
     display::graphics.setForegroundColor(9);
     MissionName(mis, 93, 169, 30);
     display::graphics.setForegroundColor(1);
-    PrintAt(33, 183, "SOMETIME IN THE NEXT YEAR.");
+    draw_string(33, 183, "SOMETIME IN THE NEXT YEAR.");
     TopSecret(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
@@ -578,28 +578,28 @@ void Special(char p, int ind)
     display::graphics.setForegroundColor(6);
 
     if (ind >= 5) {
-        PrintAt(17, 96, "GROUP: ");
+        draw_string(17, 96, "GROUP: ");
     } else {
-        PrintAt(17, 96, "FACILITY: ");
+        draw_string(17, 96, "FACILITY: ");
     }
 
     display::graphics.setForegroundColor(9);
 
     switch (ind) {
     case 3:
-        PrintAt(0, 0, "TWO");
+        draw_string(0, 0, "TWO");
         break;
 
     case 4:
-        PrintAt(0, 0, "THREE");
+        draw_string(0, 0, "THREE");
         break;
 
     case 5:
-        PrintAt(0, 0, "ONE");
+        draw_string(0, 0, "ONE");
         break;
 
     case 6:
-        PrintAt(0, 0, "TWO");
+        draw_string(0, 0, "TWO");
         break;
 
     default:
@@ -608,55 +608,55 @@ void Special(char p, int ind)
 
     if (ind >= 5) {
         display::graphics.setForegroundColor(6);
-        PrintAt(17, 112, "STATUS: ");
+        draw_string(17, 112, "STATUS: ");
         display::graphics.setForegroundColor(9);
-        PrintAt(0, 0, "TRAINING");
+        draw_string(0, 0, "TRAINING");
     } else {
         display::graphics.setForegroundColor(6);
-        PrintAt(17, 112, "STATUS: ");
+        draw_string(17, 112, "STATUS: ");
         display::graphics.setForegroundColor(9);
-        PrintAt(0, 0, "OPERATIONAL");
+        draw_string(0, 0, "OPERATIONAL");
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(33, 155, "THE ");
+    draw_string(33, 155, "THE ");
 
     if (p == 0) {
-        PrintAt(0, 0, "CIA ");
+        draw_string(0, 0, "CIA ");
     } else {
-        PrintAt(0, 0, "KGB ");
+        draw_string(0, 0, "KGB ");
     }
 
-    PrintAt(0, 0, "REPORTS THAT THE ");
+    draw_string(0, 0, "REPORTS THAT THE ");
 
     if (p == 0) {
-        PrintAt(0, 0, "SOVIET UNION HAS ");
+        draw_string(0, 0, "SOVIET UNION HAS ");
     } else {
-        PrintAt(0, 0, "UNITED STATES HAS ");
+        draw_string(0, 0, "UNITED STATES HAS ");
     }
 
-    PrintAt(33, 169, "PURCHASED ");
-    PrintAt(0, 0, "A NEW");
+    draw_string(33, 169, "PURCHASED ");
+    draw_string(0, 0, "A NEW");
     display::graphics.setForegroundColor(9);
 
     if (ind >= 5) {
-        PrintAt(0, 0, " GROUP OF ");
+        draw_string(0, 0, " GROUP OF ");
 
         if (p == 0) {
-            PrintAt(0, 0, "COSMO");
+            draw_string(0, 0, "COSMO");
         } else {
-            PrintAt(0, 0, "ASTRO");
+            draw_string(0, 0, "ASTRO");
         }
 
-        PrintAt(0, 0, "NAUTS ");
+        draw_string(0, 0, "NAUTS ");
     }
 
     else {
-        PrintAt(0, 0, " LAUNCH FACILITY ");
+        draw_string(0, 0, " LAUNCH FACILITY ");
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(33, 183, "FOR ITS SPACE PROGRAM");
+    draw_string(33, 183, "FOR ITS SPACE PROGRAM");
     TopSecret(p, ind);
 }
 
@@ -670,21 +670,21 @@ void BackIntel(char p, char year)
     prg = Data->P[p].PastIntel[year].prog;
     ind = Data->P[p].PastIntel[year].index;
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 37, "CODE: ");
+    draw_string(17, 37, "CODE: ");
     display::graphics.setForegroundColor(9);
-    DispNum(0, 0, Data->P[p].PastIntel[year].num);
-    DispChr(Data->P[p].PastIntel[year].code);
-    PrintAt(0, 0, "-");
+    draw_number(0, 0, Data->P[p].PastIntel[year].num);
+    draw_character(Data->P[p].PastIntel[year].code);
+    draw_string(0, 0, "-");
 
     if (Data->Season == 0) {
-        PrintAt(0, 0, "S");
+        draw_string(0, 0, "S");
     } else {
-        PrintAt(0, 0, "F");
+        draw_string(0, 0, "F");
     }
 
-    DispNum(0, 0, 58 + year);
+    draw_number(0, 0, 58 + year);
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 51, "CODE NAME: ");
+    draw_string(17, 51, "CODE NAME: ");
     display::graphics.setForegroundColor(1);
     xc = 39;
     yc = 59;
@@ -702,14 +702,14 @@ void BackIntel(char p, char year)
     }
 
     if (code == -1) {
-        PrintAt(xc, yc, "TOP SECRET");
+        draw_string(xc, yc, "TOP SECRET");
     } else {
         w = Data->P[p].PastIntel[year].cdex;
 
         int code_name_index = code * 6 + w;
         assert(code_name_index >= 0);
         assert(code_name_index < (sizeof(code_names) / sizeof(code_names[0])));
-        PrintAt(xc, yc, code_names[code_name_index]);
+        draw_string(xc, yc, code_names[code_name_index]);
     }
 
     if (prg == 5) {
@@ -718,47 +718,47 @@ void BackIntel(char p, char year)
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 75, "CLASS: ");
+    draw_string(17, 75, "CLASS: ");
     display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
         if (ind >= 5 && ind <= 6) {
             if (p == 0) {
-                PrintAt(39, 82, "COSMO");
+                draw_string(39, 82, "COSMO");
             } else {
-                PrintAt(39, 81, "ASTRO");
+                draw_string(39, 81, "ASTRO");
             }
 
-            PrintAt(0, 0, "NAUTS");
+            draw_string(0, 0, "NAUTS");
         } else if (ind >= 3 && ind <= 4) {
-            PrintAt(39, 81, "LAUNCH FACILITY");
+            draw_string(39, 81, "LAUNCH FACILITY");
         } else {
-            PrintAt(39, 81, "PROBE");
+            draw_string(39, 81, "PROBE");
         }
 
         break;
 
     case 1:
-        PrintAt(39, 82, "ROCKET");
+        draw_string(39, 82, "ROCKET");
         break;
 
     case 2:
         if (ind < 5) {
-            PrintAt(39, 81, "CAPSULE");
+            draw_string(39, 81, "CAPSULE");
         } else {
-            PrintAt(39, 81, "LUNAR MODULE");
+            draw_string(39, 81, "LUNAR MODULE");
         }
 
         break;
 
     case 3:
         if (ind < 3) {
-            PrintAt(39, 81, "KICKER");
+            draw_string(39, 81, "KICKER");
         } else if (ind == 3) {
-            PrintAt(39, 81, "EVA SUITS");
+            draw_string(39, 81, "EVA SUITS");
         } else if (ind == 4) {
-            PrintAt(39, 81, "DOCKING MODULES");
+            draw_string(39, 81, "DOCKING MODULES");
         }
 
         break;
@@ -773,42 +773,42 @@ void BackIntel(char p, char year)
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 96, "CREW: ");
+    draw_string(17, 96, "CREW: ");
     display::graphics.setForegroundColor(9);
 
     if (prg == 2) {
         if (ind >= 0 && ind <= 2) {
-            DispNum(0, 0, ind + 1);
+            draw_number(0, 0, ind + 1);
         } else if (ind == 3 || ind == 4) {
-            DispNum(0, 0, ind);
+            draw_number(0, 0, ind);
         } else {
-            DispNum(0, 0, ind - 4);
+            draw_number(0, 0, ind - 4);
         }
 
-        PrintAt(0, 0, " PERSON");
+        draw_string(0, 0, " PERSON");
     } else {
-        PrintAt(0, 0, "NONE");
+        draw_string(0, 0, "NONE");
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 112, "PROGRAM: ");
+    draw_string(17, 112, "PROGRAM: ");
     display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
         break;
 
     case 1:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
         break;
 
     case 2:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
         break;
 
     case 3:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
         break;
 
     default:
@@ -816,7 +816,7 @@ void BackIntel(char p, char year)
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(17, 128, "DURATION: ");
+    draw_string(17, 128, "DURATION: ");
     display::graphics.setForegroundColor(9);
 
     switch (prg) {
@@ -841,47 +841,47 @@ void BackIntel(char p, char year)
     }
 
     if (dur == 0) {
-        PrintAt(0, 0, "NONE");
+        draw_string(0, 0, "NONE");
     } else {
-        DispNum(0, 0, dur);
-        PrintAt(0, 0, " DAYS");
+        draw_number(0, 0, dur);
+        draw_string(0, 0, " DAYS");
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(33, 155, "THE ");
+    draw_string(33, 155, "THE ");
 
     if (p == 0) {
-        PrintAt(0, 0, "CIA ");
+        draw_string(0, 0, "CIA ");
     } else {
-        PrintAt(0, 0, "KGB ");
+        draw_string(0, 0, "KGB ");
     }
 
-    PrintAt(0, 0, "REPORTS THAT THE ");
+    draw_string(0, 0, "REPORTS THAT THE ");
 
     if (p == 0) {
-        PrintAt(0, 0, "SOVIET UNION IS");
+        draw_string(0, 0, "SOVIET UNION IS");
     } else {
-        PrintAt(0, 0, "UNITED STATES IS");
+        draw_string(0, 0, "UNITED STATES IS");
     }
 
-    PrintAt(33, 169, "DEVELOPING THE ");
+    draw_string(33, 169, "DEVELOPING THE ");
     display::graphics.setForegroundColor(9);
 
     switch (prg) {
     case 0:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
         break;
 
     case 1:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
         break;
 
     case 2:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
         break;
 
     case 3:
-        PrintAt(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
+        draw_string(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
         break;
 
     default:
@@ -889,10 +889,10 @@ void BackIntel(char p, char year)
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, " AND RATE THE");
-    PrintAt(33, 183, "RELIABILITY AT ABOUT ");
-    DispNum(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
-    PrintAt(0, 0, " PERCENT.");
+    draw_string(0, 0, " AND RATE THE");
+    draw_string(33, 183, "RELIABILITY AT ABOUT ");
+    draw_number(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
+    draw_string(0, 0, " PERCENT.");
 
     if (prg != 5) {
         TopSecret(p, prg * 7 + ind);
@@ -1137,7 +1137,7 @@ void HarIntel(char p, char acc)
         k = 0;
 
         while ((k < (hi - lo)) && (save[j] != 1)) { // finds candidate
-// DispNum(100,5+k*6,j);
+// draw_number(100,5+k*6,j);
             j = brandom(hi - lo);
             k++;
         };
@@ -1451,11 +1451,11 @@ void DrawBre(char plr)
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
     ShBox(0, 24, 319, 199);
-    RectFill(5, 28, 314, 195, 0);
+    fill_rectangle(5, 28, 314, 195, 0);
     InBox(4, 27, 315, 196);
     ShBox(150, 29, 313, 133);
     InBox(152, 31, 310, 131);
-    RectFill(153, 32, 310, 131, 0);
+    fill_rectangle(153, 32, 310, 131, 0);
     ShBox(132, 29, 148, 80);
     ShBox(132, 82, 148, 133);
     ShBox(6, 29, 130, 41);
@@ -1473,15 +1473,15 @@ void DrawBre(char plr)
     IOBox(133, 30, 147, 79);
     IOBox(133, 83, 147, 132);
     ShBox(6, 135, 313, 194);
-    RectFill(7, 136, 312, 193, 9);
+    fill_rectangle(7, 136, 312, 193, 9);
     InBox(11, 139, 308, 190);
-    RectFill(12, 140, 307, 189, 7);
-    DispBig(33, 5, "INTELLIGENCE BRIEFING", 1, -1);
-    FlagSm(plr, 4, 4);
+    fill_rectangle(12, 140, 307, 189, 7);
+    draw_heading(33, 5, "INTELLIGENCE BRIEFING", 1, -1);
+    draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
-    PrintAt(256, 13, "CONTINUE");
-    UPArrow(137, 42);
-    DNArrow(137, 95);
+    draw_string(256, 13, "CONTINUE");
+    draw_up_arrow(137, 42);
+    draw_down_arrow(137, 95);
 
 }
 
@@ -1505,13 +1505,13 @@ void Bre(char plr)
 
                 if (year >= 0 && year + 1 <= Data->P[plr].PastIntel[0].cur - 1) {
 
-                    RectFill(45, 32, 98, 38, 3);
-                    RectFill(38, 54, 127, 60, 3);
-                    RectFill(38, 76, 127, 82, 3);
-                    RectFill(16, 91, 127, 98, 3);
-                    RectFill(16, 107, 127, 113, 3);
-                    RectFill(16, 123, 127, 129, 3);
-                    RectFill(30, 148, 300, 186, 7);
+                    fill_rectangle(45, 32, 98, 38, 3);
+                    fill_rectangle(38, 54, 127, 60, 3);
+                    fill_rectangle(38, 76, 127, 82, 3);
+                    fill_rectangle(16, 91, 127, 98, 3);
+                    fill_rectangle(16, 107, 127, 113, 3);
+                    fill_rectangle(16, 123, 127, 129, 3);
+                    fill_rectangle(30, 148, 300, 186, 7);
                     year++;
                     BackIntel(plr, year);
                 }
@@ -1523,13 +1523,13 @@ void Bre(char plr)
 
                 if (year - 1 >= 0) {
 
-                    RectFill(45, 32, 98, 38, 3);
-                    RectFill(38, 54, 127, 60, 3);
-                    RectFill(38, 76, 127, 82, 3);
-                    RectFill(9, 90, 127, 98, 3);
-                    RectFill(9, 106, 127, 115, 3);
-                    RectFill(9, 123, 127, 130, 3);
-                    RectFill(30, 148, 300, 186, 7);
+                    fill_rectangle(45, 32, 98, 38, 3);
+                    fill_rectangle(38, 54, 127, 60, 3);
+                    fill_rectangle(38, 76, 127, 82, 3);
+                    fill_rectangle(9, 90, 127, 98, 3);
+                    fill_rectangle(9, 106, 127, 115, 3);
+                    fill_rectangle(9, 123, 127, 130, 3);
+                    fill_rectangle(30, 148, 300, 186, 7);
                     year--;
                     BackIntel(plr, year);
                 }
@@ -1592,21 +1592,21 @@ void DrawIStat(char plr)
     }
 
     display::graphics.setForegroundColor(9);
-    DispNum(5, 55, 75);
-    PrintAt(17, 55, "%");
-    DispNum(5, 89, 50);
-    PrintAt(17, 89, "%");
-    DispNum(5, 123, 25);
-    PrintAt(17, 123, "%");
+    draw_number(5, 55, 75);
+    draw_string(17, 55, "%");
+    draw_number(5, 89, 50);
+    draw_string(17, 89, "%");
+    draw_number(5, 123, 25);
+    draw_string(17, 123, "%");
     but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194); // Unmanned
     but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194); // Rocket
     but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194); // Manned
     but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194); // Misc
     display::graphics.setForegroundColor(6);
-    DispBig(40, 5, "INTELLIGENCE STATS", 1, -1);
-    FlagSm(plr, 4, 4);
+    draw_heading(40, 5, "INTELLIGENCE STATS", 1, -1);
+    draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
-    PrintAt(256, 13, "CONTINUE");
+    draw_string(256, 13, "CONTINUE");
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
 }
@@ -1764,19 +1764,19 @@ void IInfo(char plr, char loc, char w)
         }
 
         display::graphics.setForegroundColor(9);
-        DispNum(5, 55, 75);
-        PrintAt(17, 55, "%");
-        DispNum(5, 89, 50);
-        PrintAt(17, 89, "%");
-        DispNum(5, 123, 25);
-        PrintAt(17, 123, "%");
+        draw_number(5, 55, 75);
+        draw_string(17, 55, "%");
+        draw_number(5, 89, 50);
+        draw_string(17, 89, "%");
+        draw_number(5, 123, 25);
+        draw_string(17, 123, "%");
         //gxDisplayVirtual(4,23,315,159,0,&vhptr,4,23);
     } //else gxVirtualDisplay(&vhptr,4,23,4,23,315,159,0);
 
     display::graphics.setForegroundColor(1);
 
     switch (loc) {
-    case ROCKET_HARDWARE: //PrintAt(137,150,"ROCKETS");
+    case ROCKET_HARDWARE: //draw_string(137,150,"ROCKETS");
         for (i = 0; i < 4; i++) {
             sfu = -1;
             sfs = -1;
@@ -1798,14 +1798,14 @@ void IInfo(char plr, char loc, char w)
             switch (i) {
             case ROCKET_HW_ONE_STAGE:
                 if (sfu > 0) {
-                    RectFill(19, 159 - sfu * 136 / 100, 27, 159, 6);
-                    RectFill(19, 159 - sfu * 136 / 100, 26, 158, 5);
+                    fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
+                    fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
                     DispIt(101, 1, 115, 57, 11, 104);
                 };
 
                 if (sfs > 0) {
-                    RectFill(50, 159 - sfs * 136 / 100, 58, 159, 9);
-                    RectFill(50, 159 - sfs * 136 / 100, 57, 158, 8);
+                    fill_rectangle(50, 159 - sfs * 136 / 100, 58, 159, 9);
+                    fill_rectangle(50, 159 - sfs * 136 / 100, 57, 158, 8);
                     DispIt(125, 1, 149, 85, 33, 75);
                 };
 
@@ -1813,14 +1813,14 @@ void IInfo(char plr, char loc, char w)
 
             case ROCKET_HW_TWO_STAGE:
                 if (sfu > 0) {
-                    RectFill(78, 159 - sfu * 136 / 100, 86, 159, 6);
-                    RectFill(78, 159 - sfu * 136 / 100, 85, 158, 5);
+                    fill_rectangle(78, 159 - sfu * 136 / 100, 86, 159, 6);
+                    fill_rectangle(78, 159 - sfu * 136 / 100, 85, 158, 5);
                     DispIt(115, 0, 124, 68, 73, 92);
                 };
 
                 if (sfs > 0) {
-                    RectFill(103, 159 - sfs * 136 / 100, 111, 159, 9);
-                    RectFill(103, 159 - sfs * 136 / 100, 110, 158, 8);
+                    fill_rectangle(103, 159 - sfs * 136 / 100, 111, 159, 9);
+                    fill_rectangle(103, 159 - sfs * 136 / 100, 110, 158, 8);
                     DispIt(151, 1, 170, 95, 88, 65);
                 };
 
@@ -1828,14 +1828,14 @@ void IInfo(char plr, char loc, char w)
 
             case ROCKET_HW_THREE_STAGE:
                 if (sfu > 0) {
-                    RectFill(159, 159 - sfu * 136 / 100, 167, 159, 6);
-                    RectFill(159, 159 - sfu * 136 / 100, 166, 158, 5);
+                    fill_rectangle(159, 159 - sfu * 136 / 100, 167, 159, 6);
+                    fill_rectangle(159, 159 - sfu * 136 / 100, 166, 158, 5);
                     DispIt(172, 1, 209, 133, 130, 27);
                 };
 
                 if (sfs > 0) {
-                    RectFill(200, 159 - sfs * 136 / 100, 208, 159, 9);
-                    RectFill(200, 159 - sfs * 136 / 100, 207, 158, 8);
+                    fill_rectangle(200, 159 - sfs * 136 / 100, 208, 159, 9);
+                    fill_rectangle(200, 159 - sfs * 136 / 100, 207, 158, 8);
                     DispIt(211, 1, 243, 133, 172, 27);
                 };
 
@@ -1843,14 +1843,14 @@ void IInfo(char plr, char loc, char w)
 
             case ROCKET_HW_MEGA_STAGE:
                 if (sfu > 0) {
-                    RectFill(260, 159 - sfu * 136 / 100, 268, 159, 6);
-                    RectFill(260, 159 - sfu * 136 / 100, 267, 158, 5);
+                    fill_rectangle(260, 159 - sfu * 136 / 100, 268, 159, 6);
+                    fill_rectangle(260, 159 - sfu * 136 / 100, 267, 158, 5);
                     DispIt(245, 1, 285, 137, 231, 23);
                 };
 
                 if (sfs > 0) {
-                    RectFill(302, 159 - sfs * 136 / 100, 310, 159, 9);
-                    RectFill(302, 159 - sfs * 136 / 100, 309, 158, 8);
+                    fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
+                    fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
                     DispIt(287, 1, 318, 132, 274, 28);
                 };
 
@@ -1863,7 +1863,7 @@ void IInfo(char plr, char loc, char w)
 
         break;
 
-    case MANNED_HARDWARE: //PrintAt(137,150,"CAPSULES");
+    case MANNED_HARDWARE: //draw_string(137,150,"CAPSULES");
         for (i = 0; i < 5; i++) {
             sfu = -1;
             sfs = -1;
@@ -1885,14 +1885,14 @@ void IInfo(char plr, char loc, char w)
             switch (i) {
             case MANNED_HW_ONE_MAN_CAPSULE:
                 if (sfu > 0) {
-                    RectFill(13, 159 - sfu * 136 / 100, 21, 159, 6);
-                    RectFill(13, 159 - sfu * 136 / 100, 20, 158, 5);
+                    fill_rectangle(13, 159 - sfu * 136 / 100, 21, 159, 6);
+                    fill_rectangle(13, 159 - sfu * 136 / 100, 20, 158, 5);
                     DispIt(12, 91, 25, 116, 11, 137);
                 };
 
                 if (sfs > 0) {
-                    RectFill(41, 159 - sfs * 136 / 100, 49, 159, 9);
-                    RectFill(41, 159 - sfs * 136 / 100, 48, 158, 8);
+                    fill_rectangle(41, 159 - sfs * 136 / 100, 49, 159, 9);
+                    fill_rectangle(41, 159 - sfs * 136 / 100, 48, 158, 8);
                     DispIt(0, 56, 26, 89, 27, 123);
                 };
 
@@ -1900,14 +1900,14 @@ void IInfo(char plr, char loc, char w)
 
             case MANNED_HW_TWO_MAN_CAPSULE:
                 if (sfu > 0) {
-                    RectFill(70, 159 - sfu * 136 / 100, 78, 159, 6);
-                    RectFill(70, 159 - sfu * 136 / 100, 77, 158, 5);
+                    fill_rectangle(70, 159 - sfu * 136 / 100, 78, 159, 6);
+                    fill_rectangle(70, 159 - sfu * 136 / 100, 77, 158, 5);
                     DispIt(27, 98, 49, 127, 59, 127);
                 };
 
                 if (sfs > 0) {
-                    RectFill(97, 159 - sfs * 136 / 100, 105, 159, 9);
-                    RectFill(97, 159 - sfs * 136 / 100, 104, 158, 8);
+                    fill_rectangle(97, 159 - sfs * 136 / 100, 105, 159, 9);
+                    fill_rectangle(97, 159 - sfs * 136 / 100, 104, 158, 8);
                     DispIt(28, 62, 49, 96, 84, 122);
                 };
 
@@ -1915,14 +1915,14 @@ void IInfo(char plr, char loc, char w)
 
             case MANNED_HW_THREE_MAN_CAPSULE:
                 if (sfu > 0) {
-                    RectFill(132, 159 - sfu * 136 / 100, 140, 159, 6);
-                    RectFill(132, 159 - sfu * 136 / 100, 139, 158, 5);
+                    fill_rectangle(132, 159 - sfu * 136 / 100, 140, 159, 6);
+                    fill_rectangle(132, 159 - sfu * 136 / 100, 139, 158, 5);
                     DispIt(95, 77, 117, 127, 117, 106);
                 };
 
                 if (sfs > 0) {
-                    RectFill(174, 159 - sfs * 136 / 100, 182, 159, 9);
-                    RectFill(174, 159 - sfs * 136 / 100, 181, 158, 8);
+                    fill_rectangle(174, 159 - sfs * 136 / 100, 182, 159, 9);
+                    fill_rectangle(174, 159 - sfs * 136 / 100, 181, 158, 8);
                     DispIt(119, 97, 170, 140, 144, 113);
                 };
 
@@ -1930,14 +1930,14 @@ void IInfo(char plr, char loc, char w)
 
             case MANNED_HW_MINISHUTTLE:
                 if (sfu > 0) {
-                    RectFill(210, 159 - sfu * 136 / 100, 218, 159, 6);
-                    RectFill(210, 159 - sfu * 136 / 100, 217, 158, 5);
+                    fill_rectangle(210, 159 - sfu * 136 / 100, 218, 159, 6);
+                    fill_rectangle(210, 159 - sfu * 136 / 100, 217, 158, 5);
                     DispIt(3, 1, 16, 54, 203, 103);
                 };
 
                 if (sfs > 0) {
-                    RectFill(232, 159 - sfs * 136 / 100, 240, 159, 9);
-                    RectFill(232, 159 - sfs * 136 / 100, 239, 158, 8);
+                    fill_rectangle(232, 159 - sfs * 136 / 100, 240, 159, 9);
+                    fill_rectangle(232, 159 - sfs * 136 / 100, 239, 158, 8);
                     DispIt(18, 1, 32, 48, 223, 109);
                 };
 
@@ -1945,14 +1945,14 @@ void IInfo(char plr, char loc, char w)
 
             case MANNED_HW_FOUR_MAN_CAPSULE:
                 if (sfu > 0) {
-                    RectFill(269, 159 - sfu * 136 / 100, 277, 159, 6);
-                    RectFill(269, 159 - sfu * 136 / 100, 276, 158, 5);
+                    fill_rectangle(269, 159 - sfu * 136 / 100, 277, 159, 6);
+                    fill_rectangle(269, 159 - sfu * 136 / 100, 276, 158, 5);
                     DispIt(34, 1, 65, 60, 248, 97);
                 };
 
                 if (sfs > 0) {
-                    RectFill(305, 159 - sfs * 136 / 100, 313, 159, 9);
-                    RectFill(305, 159 - sfs * 136 / 100, 312, 158, 8);
+                    fill_rectangle(305, 159 - sfs * 136 / 100, 313, 159, 9);
+                    fill_rectangle(305, 159 - sfs * 136 / 100, 312, 158, 8);
                     DispIt(67, 1, 100, 60, 281, 97);
                 };
 
@@ -1965,7 +1965,7 @@ void IInfo(char plr, char loc, char w)
 
         break;
 
-    case PROBE_HARDWARE: //PrintAt(100,150,"SATELLITES & LM'S");
+    case PROBE_HARDWARE: //draw_string(100,150,"SATELLITES & LM'S");
         sfu = -1;
         sfs = -1;
 
@@ -1984,14 +1984,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(25, 159 - sfu * 136 / 100, 33, 159, 6);
-            RectFill(25, 159 - sfu * 136 / 100, 32, 158, 5);
+            fill_rectangle(25, 159 - sfu * 136 / 100, 33, 159, 6);
+            fill_rectangle(25, 159 - sfu * 136 / 100, 32, 158, 5);
             DispIt(60, 153, 88, 176, 9, 132);
         };
 
         if (sfs > 0) {
-            RectFill(61, 159 - sfs * 136 / 100, 69, 159, 9);
-            RectFill(61, 159 - sfs * 136 / 100, 68, 158, 8);
+            fill_rectangle(61, 159 - sfs * 136 / 100, 69, 159, 9);
+            fill_rectangle(61, 159 - sfs * 136 / 100, 68, 158, 8);
             DispIt(31, 153, 56, 182, 41, 126);
         };
 
@@ -2014,14 +2014,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(101, 159 - sfu * 136 / 100, 109, 159, 6);
-            RectFill(101, 159 - sfu * 136 / 100, 108, 158, 5);
+            fill_rectangle(101, 159 - sfu * 136 / 100, 109, 159, 6);
+            fill_rectangle(101, 159 - sfu * 136 / 100, 108, 158, 5);
             DispIt(1, 153, 29, 182, 83, 128);
         };
 
         if (sfs > 0) {
-            RectFill(132, 159 - sfs * 136 / 100, 140, 159, 9);
-            RectFill(132, 159 - sfs * 136 / 100, 139, 158, 8);
+            fill_rectangle(132, 159 - sfs * 136 / 100, 140, 159, 9);
+            fill_rectangle(132, 159 - sfs * 136 / 100, 139, 158, 8);
             DispIt(90, 151, 119, 176, 112, 131);
         };
 
@@ -2046,14 +2046,14 @@ void IInfo(char plr, char loc, char w)
             switch (i) {
             case PROBE_HW_ORBITAL:
                 if (sfu > 0) {
-                    RectFill(152, 159 - sfu * 136 / 100, 160, 159, 6);
-                    RectFill(152, 159 - sfu * 136 / 100, 159, 158, 5);
+                    fill_rectangle(152, 159 - sfu * 136 / 100, 160, 159, 6);
+                    fill_rectangle(152, 159 - sfu * 136 / 100, 159, 158, 5);
                     DispIt(58, 180, 71, 196, 147, 138);
                 };
 
                 if (sfs > 0) {
-                    RectFill(173, 159 - sfs * 136 / 100, 181, 159, 9);
-                    RectFill(173, 159 - sfs * 136 / 100, 180, 158, 8);
+                    fill_rectangle(173, 159 - sfs * 136 / 100, 181, 159, 9);
+                    fill_rectangle(173, 159 - sfs * 136 / 100, 180, 158, 8);
                     DispIt(73, 180, 89, 195, 165, 139);
                 };
 
@@ -2061,14 +2061,14 @@ void IInfo(char plr, char loc, char w)
 
             case PROBE_HW_INTERPLANETARY:
                 if (sfu > 0) {
-                    RectFill(212, 159 - sfu * 136 / 100, 220, 159, 6);
-                    RectFill(212, 159 - sfu * 136 / 100, 219, 158, 5);
+                    fill_rectangle(212, 159 - sfu * 136 / 100, 220, 159, 6);
+                    fill_rectangle(212, 159 - sfu * 136 / 100, 219, 158, 5);
                     DispIt(91, 178, 115, 195, 198, 139);
                 };
 
                 if (sfs > 0) {
-                    RectFill(237, 159 - sfs * 136 / 100, 245, 159, 9);
-                    RectFill(237, 159 - sfs * 136 / 100, 244, 158, 8);
+                    fill_rectangle(237, 159 - sfs * 136 / 100, 245, 159, 9);
+                    fill_rectangle(237, 159 - sfs * 136 / 100, 244, 158, 8);
                     DispIt(153, 142, 176, 166, 227, 132);
                 };
 
@@ -2076,14 +2076,14 @@ void IInfo(char plr, char loc, char w)
 
             case PROBE_HW_LUNAR:
                 if (sfu > 0) {
-                    RectFill(272, 159 - sfu * 136 / 100, 280, 159, 6);
-                    RectFill(272, 159 - sfu * 136 / 100, 279, 158, 5);
+                    fill_rectangle(272, 159 - sfu * 136 / 100, 280, 159, 6);
+                    fill_rectangle(272, 159 - sfu * 136 / 100, 279, 158, 5);
                     DispIt(121, 142, 151, 166, 253, 132);
                 };
 
                 if (sfs > 0) {
-                    RectFill(302, 159 - sfs * 136 / 100, 310, 159, 9);
-                    RectFill(302, 159 - sfs * 136 / 100, 309, 158, 8);
+                    fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
+                    fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
                     DispIt(178, 142, 201, 160, 284, 138);
                 };
 
@@ -2096,7 +2096,7 @@ void IInfo(char plr, char loc, char w)
 
         break;
 
-    case MISC_HARDWARE: //PrintAt(100,150,"ADDITIONAL PROGRAMS");
+    case MISC_HARDWARE: //draw_string(100,150,"ADDITIONAL PROGRAMS");
         sfu = -1;
         sfs = -1;
 
@@ -2115,14 +2115,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(19, 159 - sfu * 136 / 100, 27, 159, 6);
-            RectFill(19, 159 - sfu * 136 / 100, 26, 158, 5);
+            fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
+            fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
             DispIt(68, 65, 76, 75, 17, 145);
         };
 
         if (sfs > 0) {
-            RectFill(30, 159 - sfs * 136 / 100, 38, 159, 9);
-            RectFill(30, 159 - sfs * 136 / 100, 37, 158, 8);
+            fill_rectangle(30, 159 - sfs * 136 / 100, 38, 159, 9);
+            fill_rectangle(30, 159 - sfs * 136 / 100, 37, 158, 8);
             DispIt(78, 65, 86, 75, 31, 145);
         };
 
@@ -2145,14 +2145,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(72, 159 - sfu * 136 / 100, 80, 159, 6);
-            RectFill(72, 159 - sfu * 136 / 100, 79, 158, 5);
+            fill_rectangle(72, 159 - sfu * 136 / 100, 80, 159, 6);
+            fill_rectangle(72, 159 - sfu * 136 / 100, 79, 158, 5);
             DispIt(88, 62, 100, 75, 64, 143);
         };
 
         if (sfs > 0) {
-            RectFill(91, 159 - sfs * 136 / 100, 99, 159, 9);
-            RectFill(91, 159 - sfs * 136 / 100, 98, 158, 8);
+            fill_rectangle(91, 159 - sfs * 136 / 100, 99, 159, 9);
+            fill_rectangle(91, 159 - sfs * 136 / 100, 98, 158, 8);
             DispIt(102, 66, 114, 75, 84, 147);
         };
 
@@ -2175,14 +2175,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(118, 159 - sfu * 136 / 100, 126, 159, 6);
-            RectFill(118, 159 - sfu * 136 / 100, 125, 158, 5);
+            fill_rectangle(118, 159 - sfu * 136 / 100, 126, 159, 6);
+            fill_rectangle(118, 159 - sfu * 136 / 100, 125, 158, 5);
             DispIt(1, 120, 14, 151, 113, 125);
         };
 
         if (sfs > 0) {
-            RectFill(143, 159 - sfs * 136 / 100, 151, 159, 9);
-            RectFill(143, 159 - sfs * 136 / 100, 150, 158, 8);
+            fill_rectangle(143, 159 - sfs * 136 / 100, 151, 159, 9);
+            fill_rectangle(143, 159 - sfs * 136 / 100, 150, 158, 8);
             DispIt(16, 130, 31, 151, 134, 135);
         };
 
@@ -2205,14 +2205,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(173, 159 - sfu * 136 / 100, 181, 159, 6);
-            RectFill(173, 159 - sfu * 136 / 100, 180, 158, 5);
+            fill_rectangle(173, 159 - sfu * 136 / 100, 181, 159, 6);
+            fill_rectangle(173, 159 - sfu * 136 / 100, 180, 158, 5);
             DispIt(33, 140, 47, 151, 165, 145);
         };
 
         if (sfs > 0) {
-            RectFill(195, 159 - sfs * 136 / 100, 203, 159, 9);
-            RectFill(195, 159 - sfs * 136 / 100, 202, 158, 8);
+            fill_rectangle(195, 159 - sfs * 136 / 100, 203, 159, 9);
+            fill_rectangle(195, 159 - sfs * 136 / 100, 202, 158, 8);
             DispIt(49, 138, 61, 151, 188, 143);
         };
 
@@ -2235,14 +2235,14 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0) {
-            RectFill(226, 159 - sfu * 136 / 100, 234, 159, 6);
-            RectFill(226, 159 - sfu * 136 / 100, 233, 158, 5);
+            fill_rectangle(226, 159 - sfu * 136 / 100, 234, 159, 6);
+            fill_rectangle(226, 159 - sfu * 136 / 100, 233, 158, 5);
             DispIt(63, 131, 75, 151, 219, 136);
         };
 
         if (sfs > 0) {
-            RectFill(246, 159 - sfs * 136 / 100, 254, 159, 9);
-            RectFill(246, 159 - sfs * 136 / 100, 253, 158, 8);
+            fill_rectangle(246, 159 - sfs * 136 / 100, 254, 159, 9);
+            fill_rectangle(246, 159 - sfs * 136 / 100, 253, 158, 8);
             DispIt(77, 129, 88, 151, 240, 134);
         };
 
@@ -2257,8 +2257,8 @@ void IInfo(char plr, char loc, char w)
         }
 
         if (sfs > 0) {
-            RectFill(296, 159 - sfs * 136 / 100, 304, 159, 9);
-            RectFill(296, 159 - sfs * 136 / 100, 303, 158, 8);
+            fill_rectangle(296, 159 - sfs * 136 / 100, 304, 159, 9);
+            fill_rectangle(296, 159 - sfs * 136 / 100, 303, 158, 8);
             DispIt(51, 77, 93, 127, 266, 106);
         };
 

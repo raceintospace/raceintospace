@@ -70,36 +70,36 @@ void DrawStatistics(char Win)
     InBox(40, 114, 111, 154);
     InBox(116, 114, 283, 154);
     IOBox(191, 40, 280, 62);
-    Flag(41, 70, Win);
-    Flag(41, 115, other(Win));
-    DispBig(48, 44, "STATISTICS", 1, -1);
-    DispBig(215, 45, "EXIT", 1, -1);
+    draw_flag(41, 70, Win);
+    draw_flag(41, 115, other(Win));
+    draw_heading(48, 44, "STATISTICS", 1, -1);
+    draw_heading(215, 45, "EXIT", 1, -1);
     display::graphics.setForegroundColor(6);
-    PrintAt(122, 78, "WINNING DIRECTOR: ");
+    draw_string(122, 78, "WINNING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
 
     if (AI[Win]) {
-        PrintAt(0, 0, "COMPUTER");
+        draw_string(0, 0, "COMPUTER");
         sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
-        PrintAt(0, 0, &Digit[0]);
+        draw_string(0, 0, &Digit[0]);
     } else if (Win == 0) {
-        PrintAt(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
+        draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
     } else {
-        PrintAt(0, 0, &Data->P[ Data->Def.Plr2 ].Name[0]);
+        draw_string(0, 0, &Data->P[ Data->Def.Plr2 ].Name[0]);
     }
 
     display::graphics.setForegroundColor(6);
-    PrintAt(122, 125, "LOSING DIRECTOR: ");
+    draw_string(122, 125, "LOSING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
 
     if (AI[other(Win)]) {
-        PrintAt(0, 0, "COMPUTER");
+        draw_string(0, 0, "COMPUTER");
         sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
-        PrintAt(0, 0, &Digit[0]);
+        draw_string(0, 0, &Digit[0]);
     } else if (Win == 0) {
-        PrintAt(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
+        draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
     } else {
-        PrintAt(0, 0, &Data->P[ Data->Def.Plr1 ].Name[0]);
+        draw_string(0, 0, &Data->P[ Data->Def.Plr1 ].Name[0]);
     }
 
     qty = 6;

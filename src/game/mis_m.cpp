@@ -143,7 +143,7 @@ void MisCheck(char plr, char mpad)
     if (!AI[plr] && BIG == 0) {
         //FadeOut(1,pal,100,128,1);
         if (plr == 1) {
-            RectFill(189, 173, 249, 196, 55);
+            fill_rectangle(189, 173, 249, 196, 55);
 
             for (i = 190; i < 250; i += 2) {
                 display::graphics.screen()->setPixel(i, 178, 61);
@@ -153,7 +153,7 @@ void MisCheck(char plr, char mpad)
 
             lc = 191;
         } else if (plr == 0) {
-            RectFill(73, 173, 133, 196, 55);
+            fill_rectangle(73, 173, 133, 196, 55);
 
             for (i = 73; i < 133; i += 2) {
                 display::graphics.screen()->setPixel(i, 178, 61);
@@ -244,22 +244,22 @@ void MisCheck(char plr, char mpad)
                 if (plr == 0) {
                     x = 5;
                     y = 112;
-                    RectFill(2, 107, 140, 115, 3);
+                    fill_rectangle(2, 107, 140, 115, 3);
                 } else {
                     x = 82, y = 8;
-                    RectFill(78, 2, 241, 10, 3);
+                    fill_rectangle(78, 2, 241, 10, 3);
                 }
 
-                PrintAt(x, y, "COUNTDOWN");
+                draw_string(x, y, "COUNTDOWN");
 
                 if (plr == 0) {
-                    RectFill(188, 107, 294, 113, 3);
+                    fill_rectangle(188, 107, 294, 113, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
+                    draw_string(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
                 } else {
-                    RectFill(244, 56, 314, 62, 3);
+                    fill_rectangle(244, 56, 314, 62, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
+                    draw_string(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
                 }
 
             }
@@ -281,23 +281,23 @@ void MisCheck(char plr, char mpad)
                 if (plr == 0) {
                     x = 5;
                     y = 112;
-                    RectFill(2, 107, 140, 115, 3);
+                    fill_rectangle(2, 107, 140, 115, 3);
                 } else {
                     x = 82, y = 8;
-                    RectFill(78, 2, 241, 10, 3);
+                    fill_rectangle(78, 2, 241, 10, 3);
                 }
 
                 display::graphics.setForegroundColor(11);
                 MisStep(x, y, Mev[STEP].loc);
 
                 if (plr == 0) {
-                    RectFill(188, 107, 294, 113, 3);
+                    fill_rectangle(188, 107, 294, 113, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
+                    draw_string(190, 112, (Mev[STEP].pad == 0) ? "PRIMARY LAUNCH" : "SECOND LAUNCH");
                 } else {
-                    RectFill(244, 56, 314, 62, 3);
+                    fill_rectangle(244, 56, 314, 62, 3);
                     display::graphics.setForegroundColor(1);
-                    PrintAt(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
+                    draw_string(246, 61, (Mev[STEP].pad == 0) ? "PRIMARY PAD" : "SECOND PAD");
                 }
             }
         }
@@ -587,15 +587,15 @@ void MisCheck(char plr, char mpad)
                 memset(&display::graphics.palette()[64 * 3], 0x00, 64 * 3); //Specs: 0x08
 
                 if (plr == 0) {
-                    RectFill(2, 107, 140, 115, 3);
+                    fill_rectangle(2, 107, 140, 115, 3);
                 } else {
-                    RectFill(78, 2, 241, 10, 3);
+                    fill_rectangle(78, 2, 241, 10, 3);
                 }
 
                 if (plr == 0) {
-                    RectFill(188, 107, 294, 113, 3);
+                    fill_rectangle(188, 107, 294, 113, 3);
                 } else {
-                    RectFill(244, 56, 314, 62, 3);
+                    fill_rectangle(244, 56, 314, 62, 3);
                 }
             }
 
@@ -630,26 +630,26 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
 {
     int i;
     TRACE5("->MCGraph(plr, lc %d, safety %d, val %d, prob %c)", lc, safety, val, prob);
-    RectFill(lc - 2, 195, lc, 195 - safety * 22 / 100, 11);
-    RectFill(lc - 2, 195, lc, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+    fill_rectangle(lc - 2, 195, lc, 195 - safety * 22 / 100, 11);
+    fill_rectangle(lc - 2, 195, lc, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
 
     for (i = 195; i > 195 - val * 22 / 100; i--) {
-        RectFill(lc - 2, 195, lc, i, 21);
+        fill_rectangle(lc - 2, 195, lc, i, 21);
         delay(15);
     }
 
 
     if (plr == 1 && !AI[plr]) {
         if (val > safety && prob == 0) {
-            RectFill(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
+            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
             lc = 191;
         } else if (val > safety) {
-            RectFill(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
+            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
             lc += 5;
         } else {
             if (lc >= 241) {
                 display::graphics.setForegroundColor(55);
-                RectFill(189, 173, 249, 196, 55);
+                fill_rectangle(189, 173, 249, 196, 55);
 
                 for (i = 190; i < 250; i += 2) {
                     display::graphics.screen()->setPixel(i, 178, 61);
@@ -657,12 +657,12 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                     display::graphics.screen()->setPixel(i, 190, 61);
                 }
 
-                RectFill(189, 195, 191, 195 - safety * 22 / 100, 11);
-                RectFill(189, 195, 191, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
-                RectFill(189, 195, 191, 195 - val * 22 / 100, 21);
+                fill_rectangle(189, 195, 191, 195 - safety * 22 / 100, 11);
+                fill_rectangle(189, 195, 191, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+                fill_rectangle(189, 195, 191, 195 - val * 22 / 100, 21);
 
                 if (Mev[STEP].asf > 0) {
-                    RectFill(189, 195 - safety * 22 / 100, 191, 195 - safety * 22 / 100, 11);
+                    fill_rectangle(189, 195 - safety * 22 / 100, 191, 195 - safety * 22 / 100, 11);
                 }
 
                 lc = 196;
@@ -673,14 +673,14 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
         } /* check safety and problem */
     } else if (plr == 0 && !AI[plr]) {
         if (val > safety && prob == 0) {
-            RectFill(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
+            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
             lc = 76;
         } else if (val > safety) {
-            RectFill(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
+            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
             lc += 5;
         } else {
             if (lc >= 126) {
-                RectFill(73, 173, 133, 196, 55);
+                fill_rectangle(73, 173, 133, 196, 55);
 
                 for (i = 73; i < 133; i += 2) {
                     display::graphics.screen()->setPixel(i, 178, 61);
@@ -688,12 +688,12 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                     display::graphics.screen()->setPixel(i, 190, 61);
                 }
 
-                RectFill(74, 195, 76, 195 - safety * 22 / 100, 11);
-                RectFill(74, 195, 76, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
-                RectFill(74, 195, 76, 195 - val * 22 / 100, 21);
+                fill_rectangle(74, 195, 76, 195 - safety * 22 / 100, 11);
+                fill_rectangle(74, 195, 76, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+                fill_rectangle(74, 195, 76, 195 - val * 22 / 100, 21);
 
                 if (Mev[STEP].asf > 0) {
-                    RectFill(74, 195 - safety * 22 / 100, 76, 195 - safety * 22 / 100, 11);
+                    fill_rectangle(74, 195 - safety * 22 / 100, 76, 195 - safety * 22 / 100, 11);
                 }
 
                 lc = 81;

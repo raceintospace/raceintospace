@@ -166,31 +166,31 @@ void Museum(char plr)
 
             DrawSpaceport(plr);
             PortPal(plr);
-            RectFill(166, 191, 318, 198, 3);
+            fill_rectangle(166, 191, 318, 198, 3);
             display::graphics.setForegroundColor(0);
-            PrintAt(257, 197, "CASH:");
-            DispMB(285, 197, Data->P[plr].Cash);
+            draw_string(257, 197, "CASH:");
+            draw_megabucks(285, 197, Data->P[plr].Cash);
             display::graphics.setForegroundColor(11);
-            PrintAt(256, 196, "CASH:");
-            DispMB(284, 196, Data->P[plr].Cash);
+            draw_string(256, 196, "CASH:");
+            draw_megabucks(284, 196, Data->P[plr].Cash);
             display::graphics.setForegroundColor(0);
 
             if (Data->Season == 0) {
-                PrintAt(166, 197, "SPRING 19");
+                draw_string(166, 197, "SPRING 19");
             } else {
-                PrintAt(166, 197, "FALL 19");
+                draw_string(166, 197, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
             display::graphics.setForegroundColor(11);
 
             if (Data->Season == 0) {
-                PrintAt(165, 196, "SPRING 19");
+                draw_string(165, 196, "SPRING 19");
             } else {
-                PrintAt(165, 196, "FALL 19");
+                draw_string(165, 196, "FALL 19");
             }
 
-            DispNum(0, 0, Data->Year);
+            draw_number(0, 0, Data->Year);
 
             FadeIn(2, display::graphics.palette(), 10, 0, 0);
         }
@@ -267,7 +267,7 @@ void ShowPrest(char plr)
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
     InBox(4, 27, 315, 196);
-    RectFill(5, 28, 314, 195, 0);
+    fill_rectangle(5, 28, 314, 195, 0);
 
     //ShBox(6,29,125,101);
     ShBox(6, 29, 56, 101);
@@ -285,34 +285,34 @@ void ShowPrest(char plr)
     IOBox(243, 3, 316, 19);
     ShBox(6, 104, 313, 194);
     InBox(10, 127, 309, 191);
-    RectFill(11, 128, 308, 190, 0);
+    fill_rectangle(11, 128, 308, 190, 0);
 
     ShBox(297, 129, 307, 158);
     ShBox(297, 160, 307, 189); // Arrows
 
-    DispBig(8, 5, "PRESTIGE SUMMARY", 0, -1);
-    DispBig(14, 109, "EVENTS", 0, -1);
+    draw_heading(8, 5, "PRESTIGE SUMMARY", 0, -1);
+    draw_heading(14, 109, "EVENTS", 0, -1);
     display::graphics.setForegroundColor(11);
-    PrintAt(140, 120, "1ST:");
-    PrintAt(175, 120, "2ND:");
-    PrintAt(212, 120, "SUBS:");
-    PrintAt(254, 120, "FAIL:");
+    draw_string(140, 120, "1ST:");
+    draw_string(175, 120, "2ND:");
+    draw_string(212, 120, "SUBS:");
+    draw_string(254, 120, "FAIL:");
     display::graphics.setForegroundColor(1);
-    PrintAt(257, 13, "CONTINUE");
-    PrintAt(17, 39, "FIRST:");
-    PrintAt(19, 81, "DATE:");
+    draw_string(257, 13, "CONTINUE");
+    draw_string(17, 39, "FIRST:");
+    draw_string(19, 81, "DATE:");
     display::graphics.setForegroundColor(11);
-    PrintAt(71, 37, "# SPACE FIRSTS:");
-    PrintAt(187, 37, "TOTAL POINTS:");
+    draw_string(71, 37, "# SPACE FIRSTS:");
+    draw_string(187, 37, "TOTAL POINTS:");
     display::graphics.setForegroundColor(1);
     display::graphics.setForegroundColor(6);
-    PrintAt(210, 99, "USA");
-    PrintAt(90, 99, "USA");
+    draw_string(210, 99, "USA");
+    draw_string(90, 99, "USA");
     display::graphics.setForegroundColor(9);
-    PrintAt(261, 99, "USSR");
-    PrintAt(135, 99, "USSR");
-    UPArrow(299, 131);
-    DNArrow(299, 162);
+    draw_string(261, 99, "USSR");
+    draw_string(135, 99, "USSR");
+    draw_up_arrow(299, 131);
+    draw_down_arrow(299, 162);
     DPrest(plr, &pos, &pos2);
     FadeIn(2, display::graphics.palette(), 5, 0, 0);
 
@@ -427,18 +427,18 @@ void DPrest(char plr, char *pos, char *pos2)
     int i, j = 0, tmp, tt;
 
 
-    RectFill(12, 129, 295, 190, 0);
-    RectFill(70, 31, 175, 40, 3);
-    RectFill(183, 31, 300, 40, 3);
+    fill_rectangle(12, 129, 295, 190, 0);
+    fill_rectangle(70, 31, 175, 40, 3);
+    fill_rectangle(183, 31, 300, 40, 3);
 
     if (*pos2 == -1) {
         display::graphics.setForegroundColor(11);
-        PrintAt(71, 37, "SPACE FIRSTS:");
-        PrintAt(187, 37, "TOTAL POINTS:");
+        draw_string(71, 37, "SPACE FIRSTS:");
+        draw_string(187, 37, "TOTAL POINTS:");
     } else {
         display::graphics.setForegroundColor(1);
-        PrintAt(71, 37, "ATTEMPTS:");
-        PrintAt(187, 37, "POINTS:");
+        draw_string(71, 37, "ATTEMPTS:");
+        draw_string(187, 37, "POINTS:");
     }
 
     display::graphics.setForegroundColor(2);
@@ -455,9 +455,9 @@ void DPrest(char plr, char *pos, char *pos2)
         }
 
         if (i == -1) {
-            PrintAt(15, 133 + 7 * j, "SUMMARY");
+            draw_string(15, 133 + 7 * j, "SUMMARY");
         } else {
-            PrintAt(15, 133 + 7 * j, &tame[i][0]);
+            draw_string(15, 133 + 7 * j, &tame[i][0]);
 
             if (i == *pos2) {
                 display::graphics.setForegroundColor(11);
@@ -465,18 +465,18 @@ void DPrest(char plr, char *pos, char *pos2)
                 display::graphics.setForegroundColor(12);
             }
 
-            DispNum(150, 133 + 7 * j, Data->Prestige[i].Add[0]);
-            DispNum(185, 133 + 7 * j, Data->Prestige[i].Add[1]);
-            DispNum(228, 133 + 7 * j, Data->Prestige[i].Add[2]);
-            DispNum(265, 133 + 7 * j, Data->Prestige[i].Add[3]);
+            draw_number(150, 133 + 7 * j, Data->Prestige[i].Add[0]);
+            draw_number(185, 133 + 7 * j, Data->Prestige[i].Add[1]);
+            draw_number(228, 133 + 7 * j, Data->Prestige[i].Add[2]);
+            draw_number(265, 133 + 7 * j, Data->Prestige[i].Add[3]);
         }
 
         display::graphics.setForegroundColor(2);
     }
 
-    RectFill(71, 43, 173, 91, 6 + 3 * plr);
-    RectFill(186, 43, 303, 91, 6 + 3 * plr);
-    RectFill(10, 86, 55, 92, 3);
+    fill_rectangle(71, 43, 173, 91, 6 + 3 * plr);
+    fill_rectangle(186, 43, 303, 91, 6 + 3 * plr);
+    fill_rectangle(10, 86, 55, 92, 3);
     display::graphics.setForegroundColor(3);
 
     for (i = 1; i < 3; i++) {
@@ -485,9 +485,9 @@ void DPrest(char plr, char *pos, char *pos2)
 
     if (*pos2 != -1) {
         if (Data->Prestige[*pos2].Place == -1 && Data->Prestige[*pos2].Year == 0) {
-            RectFill(18, 47, 43, 61, 3);
+            fill_rectangle(18, 47, 43, 61, 3);
         } else {
-            FlagSm(Data->Prestige[*pos2].Place, 18, 47);
+            draw_small_flag(Data->Prestige[*pos2].Place, 18, 47);
         }
 
         i = MAX(Data->Prestige[*pos2].Goal[0], Data->Prestige[*pos2].Goal[1]);
@@ -496,22 +496,22 @@ void DPrest(char plr, char *pos, char *pos2)
             j = Data->Prestige[*pos2].Goal[0];
             tmp = Data->Prestige[*pos2].Goal[1];
 
-            RectFill(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
-            RectFill(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
+            fill_rectangle(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
+            fill_rectangle(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
             display::graphics.setForegroundColor(11);
 
             if (j != 0) {
-                DispNum(94, 88, j);
+                draw_number(94, 88, j);
             }
 
             if (tmp != 0) {
-                DispNum(142, 88, tmp);
+                draw_number(142, 88, tmp);
             }
 
             if (Data->Prestige[*pos2].Year != 0) {
-                PrintAt(10, 91, Mon[Data->Prestige[*pos2].Month]);
-                PrintAt(0, 0, " 19");
-                DispNum(0, 0, Data->Prestige[*pos2].Year);
+                draw_string(10, 91, Mon[Data->Prestige[*pos2].Month]);
+                draw_string(0, 0, " 19");
+                draw_number(0, 0, Data->Prestige[*pos2].Year);
             }
 
         }
@@ -531,16 +531,16 @@ void DPrest(char plr, char *pos, char *pos2)
         if (i != 0) {
             j = Data->Prestige[*pos2].Points[0];
             tmp = Data->Prestige[*pos2].Points[1];
-            RectFill(205, 67, 231, 67 - (float)j * 24 / i, 5);
-            RectFill(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
+            fill_rectangle(205, 67, 231, 67 - (float)j * 24 / i, 5);
+            fill_rectangle(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
             display::graphics.setForegroundColor(11);
 
             if (j != 0) {
-                DispNum(212, (j > 0) ? 65 : 73, j);
+                draw_number(212, (j > 0) ? 65 : 73, j);
             }
 
             if (tmp != 0) {
-                DispNum(267, (tmp > 0) ? 65 : 73, tmp);
+                draw_number(267, (tmp > 0) ? 65 : 73, tmp);
             }
         }
     } else {
@@ -556,26 +556,26 @@ void DPrest(char plr, char *pos, char *pos2)
 
         if (i != 0) {
             if (j == tmp) {
-                RectFill(18, 47, 43, 61, 3);
+                fill_rectangle(18, 47, 43, 61, 3);
             } else if (j > tmp) {
-                FlagSm(0, 18, 47);
+                draw_small_flag(0, 18, 47);
             } else {
-                FlagSm(1, 18, 47);
+                draw_small_flag(1, 18, 47);
             }
 
-            RectFill(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
-            RectFill(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
+            fill_rectangle(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
+            fill_rectangle(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
             display::graphics.setForegroundColor(11);
 
             if (j != 0) {
-                DispNum(94, 88, j);
+                draw_number(94, 88, j);
             }
 
             if (tmp != 0) {
-                DispNum(142, 88, tmp);
+                draw_number(142, 88, tmp);
             }
         }  else {
-            RectFill(18, 47, 43, 61, 3);
+            fill_rectangle(18, 47, 43, 61, 3);
         }
 
         j = 0;
@@ -597,16 +597,16 @@ void DPrest(char plr, char *pos, char *pos2)
         pline(258, 67, 284, 67);
 
         if (i != 0) {
-            RectFill(205, 67, 231, 67 - (float)j * 24 / i, 5);
-            RectFill(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
+            fill_rectangle(205, 67, 231, 67 - (float)j * 24 / i, 5);
+            fill_rectangle(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
             display::graphics.setForegroundColor(11);
 
             if (j != 0) {
-                DispNum(212, (j > 0) ? 65 : 73, j);
+                draw_number(212, (j > 0) ? 65 : 73, j);
             }
 
             if (tmp != 0) {
-                DispNum(267, (tmp > 0) ? 65 : 73, tmp);
+                draw_number(267, (tmp > 0) ? 65 : 73, tmp);
             }
         }
     }
@@ -644,12 +644,12 @@ void ShowSpHist(char plr)
                      ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
 
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
-    DispBig(48, 5, "MISSION HISTORY", 0, -1);
+    draw_heading(48, 5, "MISSION HISTORY", 0, -1);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 31, 19); // USA inbox
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
-    PrintAt(257, 13, "CONTINUE");
+    draw_string(257, 13, "CONTINUE");
 
     ORBox(0, 24, 319, 199, 3);
     IRBox(4, 28, 315, 170, 0);
@@ -818,9 +818,9 @@ void DrawMisHist(char plr, int *where)
     season = *where % 2;
     ORBox(95, 176, 224, 193, 3); //draw the boxes under date
     sprintf(cYr, "%d", 1900 + yr);
-    DispBig(103 + (yr - 57) * 4, 178, cYr, 0, -1);
+    draw_heading(103 + (yr - 57) * 4, 178, cYr, 0, -1);
 
-    RectFill(5, 29, 314, 169, 0);
+    fill_rectangle(5, 29, 314, 169, 0);
     display::graphics.setForegroundColor(7 + 3 * plr);
 
     for (i = 0; i < 7; i++) {
@@ -832,12 +832,12 @@ void DrawMisHist(char plr, int *where)
     if (*where % 2 == 0) for (i = 0; i < 6; i++) {
             strncpy(cYr, Month[i], 3);
             cYr[3] = 0;
-            PrintAt(29 + 49 * i, 36, cYr);
+            draw_string(29 + 49 * i, 36, cYr);
         }
     else for (i = 0; i < 6; i++) {
             strncpy(cYr, Month[i + 6], 3);
             cYr[3] = 0;
-            PrintAt(29 + 49 * i, 36, cYr);
+            draw_string(29 + 49 * i, 36, cYr);
         }
 
 
@@ -877,7 +877,7 @@ void DrawMisHist(char plr, int *where)
         if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] > 0) {
             sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[1]);
             display::graphics.setForegroundColor(11);
-            PrintAt(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
+            draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
 
             if (Data->P[plr].History[index].Man[PAD_A][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
                 PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
@@ -959,7 +959,7 @@ void DrawMisHist(char plr, int *where)
 
             sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[0]);
             display::graphics.setForegroundColor(11);
-            PrintAt(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
+            draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
             SmHardMe(plr, 44 + 49 * j, 50 + 40 * temp, prog, planet, 64);
         }
 
@@ -984,10 +984,10 @@ void ShowAstrosHist(char plr)
     qsort((void *)abuf, Data->P[plr].AstroCount, sizeof(struct Astros), astcomp);
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
-    RectFill(1, 39, 157, 184, 3);
-    DispBig(68, 71, "NO", 0, -1);
-    DispBig(46, 90, "MISSION", 0, -1);
-    DispBig(27, 109, "EXPERIENCE", 0, -1);
+    fill_rectangle(1, 39, 157, 184, 3);
+    draw_heading(68, 71, "NO", 0, -1);
+    draw_heading(46, 90, "MISSION", 0, -1);
+    draw_heading(27, 109, "EXPERIENCE", 0, -1);
     vhptr2->copyFrom(display::graphics.screen(), 22, 69, 133, 123);
     PatchMe(0, 0, 0, 0, 0, 32);
     display::graphics.screen()->clear(0);
@@ -995,9 +995,9 @@ void ShowAstrosHist(char plr)
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
 
     if (plr == 0) {
-        DispBig(45, 4, "ASTRONAUT HISTORY", 0, -1);
+        draw_heading(45, 4, "ASTRONAUT HISTORY", 0, -1);
     } else {
-        DispBig(45, 4, "COSMONAUT HISTORY", 0, -1);
+        draw_heading(45, 4, "COSMONAUT HISTORY", 0, -1);
     }
 
     IRBox(243, 3, 316, 19, 0); // Inbox around cont box
@@ -1005,13 +1005,13 @@ void ShowAstrosHist(char plr)
     InBox(3, 3, 31, 19); // USA inbox
 
     if (plr == 0) {
-        FlagSm(0, 4, 4);
+        draw_small_flag(0, 4, 4);
     } else {
-        FlagSm(1, 4, 4);
+        draw_small_flag(1, 4, 4);
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(257, 13, "CONTINUE");
+    draw_string(257, 13, "CONTINUE");
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
     InBox(233, 29, 314, 80);
@@ -1022,19 +1022,19 @@ void ShowAstrosHist(char plr)
     IRBox(6, 26, 153, 38, 0);
     ORBox(8, 28, 151, 36, 3);
     display::graphics.setForegroundColor(11);
-    PrintAt(165, 32, "NAME:");
-    PrintAt(165, 60, "TENURE:");
-    PrintAt(165, 78, "MISSIONS: ");
-    PrintAt(165, 89, "PRESTIGE: ");
-    PrintAt(165, 99, "SKILLS:");
-    PrintAt(165, 149, "SPACE DURATION:");
-    PrintAt(165, 159, "LOCATION: ");
+    draw_string(165, 32, "NAME:");
+    draw_string(165, 60, "TENURE:");
+    draw_string(165, 78, "MISSIONS: ");
+    draw_string(165, 89, "PRESTIGE: ");
+    draw_string(165, 99, "SKILLS:");
+    draw_string(165, 149, "SPACE DURATION:");
+    draw_string(165, 159, "LOCATION: ");
     display::graphics.setForegroundColor(6);
-    PrintAt(174, 107, "CAPSULE PILOT: ");
-    PrintAt(174, 115, "L.M. PILOT: ");
-    PrintAt(174, 123, "E.V.A.: ");
-    PrintAt(174, 131, "DOCKING: ");
-    PrintAt(174, 139, "ENDURANCE: ");
+    draw_string(174, 107, "CAPSULE PILOT: ");
+    draw_string(174, 115, "L.M. PILOT: ");
+    draw_string(174, 123, "E.V.A.: ");
+    draw_string(174, 131, "DOCKING: ");
+    draw_string(174, 139, "ENDURANCE: ");
     ORBox(167, 177, 202, 194, 3);
     ORBox(204, 177, 239, 194, 3);
     ORBox(241, 177, 276, 194, 3);
@@ -1045,8 +1045,8 @@ void ShowAstrosHist(char plr)
     Display_ARROW(2, 250, 179); //right
     Display_ARROW(3, 290, 179); //right arrow
     display::graphics.setForegroundColor(11);
-    PrintAt(37, 34, "PREVIOUS MISSION");
-    PrintAt(47, 193, "NEXT MISSION");
+    draw_string(37, 34, "PREVIOUS MISSION");
+    draw_string(47, 193, "NEXT MISSION");
     DisplAst(plr, &pos, &pos2);
     DisplAstData(plr, &pos, &pos2);
     FadeIn(2, display::graphics.palette(), 5, 0, 0);
@@ -1110,21 +1110,21 @@ void DisplAst(char plr, char *where, char *where2)
         return;
     }
 
-    RectFill(165, 39, 230, 35, 3);
-    RectFill(165, 49, 230, 45, 3);
-    RectFill(172, 68, 230, 63, 3);
-    RectFill(211, 78, 229, 73, 3);
-    RectFill(214, 89, 231, 84, 3);
-    RectFill(250, 107, 263, 102, 3);
-    RectFill(223, 115, 241, 110, 3);
-    RectFill(202, 123, 218, 118, 3);
-    RectFill(216, 131, 240, 126, 3);
-    RectFill(230, 139, 254, 134, 3);
-    RectFill(248, 149, 272, 144, 3);
-    RectFill(216, 159, 318, 154, 3);
-    RectFill(220, 169, 280, 164, 3);
-    RectFill(288, 105, 308, 133, 3);
-    RectFill(239, 83, 306, 97, 3);
+    fill_rectangle(165, 39, 230, 35, 3);
+    fill_rectangle(165, 49, 230, 45, 3);
+    fill_rectangle(172, 68, 230, 63, 3);
+    fill_rectangle(211, 78, 229, 73, 3);
+    fill_rectangle(214, 89, 231, 84, 3);
+    fill_rectangle(250, 107, 263, 102, 3);
+    fill_rectangle(223, 115, 241, 110, 3);
+    fill_rectangle(202, 123, 218, 118, 3);
+    fill_rectangle(216, 131, 240, 126, 3);
+    fill_rectangle(230, 139, 254, 134, 3);
+    fill_rectangle(248, 149, 272, 144, 3);
+    fill_rectangle(216, 159, 318, 154, 3);
+    fill_rectangle(220, 169, 280, 164, 3);
+    fill_rectangle(288, 105, 308, 133, 3);
+    fill_rectangle(239, 83, 306, 97, 3);
     display::graphics.setForegroundColor(1);
 
     if ((plr == 0 && abuf[*where].Missions >= 4) || abuf[*where].Hero == 1) {
@@ -1137,19 +1137,19 @@ void DisplAst(char plr, char *where, char *where2)
         Display_ARROW(6, 245, 83);
     }
 
-    DispNum(214, 78, abuf[*where].Missions);
-    DispNum(217, 89, abuf[*where].Prestige);
-    DispNum(258, 149, abuf[*where].Days);
-    DispNum(253, 107, abuf[*where].Cap);
-    DispNum(227, 115, abuf[*where].LM);
-    DispNum(204, 123, abuf[*where].EVA);
-    DispNum(220, 131, abuf[*where].Docking);
-    DispNum(234, 139, abuf[*where].Endurance);
-    DispNum(173, 68, abuf[*where].Active / 2);
-    PrintAt(0, 0, " YEAR");
+    draw_number(214, 78, abuf[*where].Missions);
+    draw_number(217, 89, abuf[*where].Prestige);
+    draw_number(258, 149, abuf[*where].Days);
+    draw_number(253, 107, abuf[*where].Cap);
+    draw_number(227, 115, abuf[*where].LM);
+    draw_number(204, 123, abuf[*where].EVA);
+    draw_number(220, 131, abuf[*where].Docking);
+    draw_number(234, 139, abuf[*where].Endurance);
+    draw_number(173, 68, abuf[*where].Active / 2);
+    draw_string(0, 0, " YEAR");
 
     if (abuf[*where].Active / 2 != 1) {
-        PrintAt(0, 0, "S");
+        draw_string(0, 0, "S");
     }
 
     memset(Ast_Name, 0x00, sizeof Ast_Name);
@@ -1159,14 +1159,14 @@ void DisplAst(char plr, char *where, char *where2)
         display::graphics.setForegroundColor(5); // Show females in blue
     }
 
-    PrintAt(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
+    draw_string(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
     display::graphics.setForegroundColor(11);
     strcat(temp, Nums[abuf[*where].Group]);
-    PrintAt(165, 49, temp);
+    draw_string(165, 49, temp);
     display::graphics.setForegroundColor(12);
-    DispNum(225, 169, *where + 1);
-    PrintAt(0, 0, " OF ");
-    DispNum(0, 0, Data->P[plr].AstroCount);
+    draw_number(225, 169, *where + 1);
+    draw_string(0, 0, " OF ");
+    draw_number(0, 0, Data->P[plr].AstroCount);
     DispLoc(plr, where);
     DisplAstData(plr, where, where2);
     GradRect(234, 30, 313, 79, plr);
@@ -1229,39 +1229,39 @@ void DispLoc(char plr, char *where)
     case AST_ST_ACTIVE:
         if (ass == 0) {
             if (plr == 0) {
-                PrintAt(216, 159, "ASTRONAUT COMPLEX");
+                draw_string(216, 159, "ASTRONAUT COMPLEX");
             } else {
-                PrintAt(216, 159, "COSMONAUT CENTER");
+                draw_string(216, 159, "COSMONAUT CENTER");
             }
 
             return;
         }
 
-        PrintAt(216, 159, Data->P[plr].Manned[ass - 1].Name);
-        PrintAt(0, 0, " PROGRAM");
+        draw_string(216, 159, Data->P[plr].Manned[ass - 1].Name);
+        draw_string(0, 0, " PROGRAM");
         return;
 
     case AST_ST_DEAD:
         if (plr == 0) {
-            PrintAt(216, 159, "ARLINGTON CEMETERY");
+            draw_string(216, 159, "ARLINGTON CEMETERY");
         } else {
-            PrintAt(216, 159, "KREMLIN WALL");
+            draw_string(216, 159, "KREMLIN WALL");
         }
 
         return;
 
     case AST_ST_RETIRED:
-        PrintAt(216, 159, "RETIRED");
+        draw_string(216, 159, "RETIRED");
         return;
 
     case AST_ST_INJURED:
-        PrintAt(216, 159, "INJURED");
+        draw_string(216, 159, "INJURED");
         return;
 
     case AST_ST_TRAIN_BASIC_1:
     case AST_ST_TRAIN_BASIC_2:
     case AST_ST_TRAIN_BASIC_3:
-        PrintAt(216, 159, "BASIC TRAINING");
+        draw_string(216, 159, "BASIC TRAINING");
         return;
 
     case AST_ST_TRAIN_ADV_1:
@@ -1270,23 +1270,23 @@ void DispLoc(char plr, char *where)
     case AST_ST_TRAIN_ADV_4:
         switch (abuf[*where].Focus) {
         case AST_FOCUS_CAPSULE:
-            PrintAt(216, 159, "ADV. CAPSULE");
+            draw_string(216, 159, "ADV. CAPSULE");
             return;
 
         case AST_FOCUS_LEM:
-            PrintAt(216, 159, "ADV. L.E.M.");
+            draw_string(216, 159, "ADV. L.E.M.");
             return;
 
         case AST_FOCUS_EVA:
-            PrintAt(216, 159, "ADV. E.V.A.");
+            draw_string(216, 159, "ADV. E.V.A.");
             return;
 
         case AST_FOCUS_DOCKING:
-            PrintAt(216, 159, "ADV. DOCKING");
+            draw_string(216, 159, "ADV. DOCKING");
             return;
 
         case AST_FOCUS_ENDURANCE:
-            PrintAt(216, 159, "ADV. ENDURANCE");
+            draw_string(216, 159, "ADV. ENDURANCE");
             return;
         }
     }
@@ -1296,7 +1296,7 @@ void DisplAstData(char plr, char *where, char *where2)
 {
     int num = abuf[*where].MissionNum[*where2], num2;
 
-    RectFill(1, 40, 157, 182, 3);
+    fill_rectangle(1, 40, 157, 182, 3);
 
     if (abuf[*where].Missions == 0) {
         vhptr2->copyTo(display::graphics.screen(), 22, 69);
@@ -1316,49 +1316,49 @@ void DisplAstData(char plr, char *where, char *where2)
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(43, 53, "PRESTIGE: ");
-    DispNum(93, 53, Data->P[plr].History[num].Prestige);
-    PrintAt(43, 63, "DURATION: ");
+    draw_string(43, 53, "PRESTIGE: ");
+    draw_number(93, 53, Data->P[plr].History[num].Prestige);
+    draw_string(43, 63, "DURATION: ");
 
     switch (Data->P[plr].History[num].Duration) {
     case 1:
-        PrintAt(93, 63, "A");
+        draw_string(93, 63, "A");
         break;
 
     case 2:
-        PrintAt(93, 63, "B");
+        draw_string(93, 63, "B");
         break;
 
     case 3:
-        PrintAt(93, 63, "C");
+        draw_string(93, 63, "C");
         break;
 
     case 4:
-        PrintAt(93, 63, "D");
+        draw_string(93, 63, "D");
         break;
 
     case 5:
-        PrintAt(93, 63, "E");
+        draw_string(93, 63, "E");
         break;
 
     case 6:
-        PrintAt(93, 63, "F");
+        draw_string(93, 63, "F");
         break;
 
     default:
         break;
     }
 
-    PrintAt(10, 83, "DESCRIPTION: ");
+    draw_string(10, 83, "DESCRIPTION: ");
 
     display::graphics.setForegroundColor(9);
-    PrintAt(43, 45, &Data->P[plr].History[num].MissionName[0][0]);
+    draw_string(43, 45, &Data->P[plr].History[num].MissionName[0][0]);
 
     GetMisType(Data->P[plr].History[num].MissionCode);
-    PrintAt(10, 93, Mis.Abbr);
+    draw_string(10, 93, Mis.Abbr);
 
     if (*where2 == abuf[*where].Missions - 1) {
-        RectFill(1, 114, 157, 184, 3);
+        fill_rectangle(1, 114, 157, 184, 3);
 
         return;
     }
@@ -1377,46 +1377,46 @@ void DisplAstData(char plr, char *where, char *where2)
     }
 
     display::graphics.setForegroundColor(9);
-    PrintAt(43, 120, &Data->P[plr].History[num2].MissionName[0][0]);
+    draw_string(43, 120, &Data->P[plr].History[num2].MissionName[0][0]);
 
     GetMisType(Data->P[plr].History[num2].MissionCode);
-    PrintAt(10, 168, Mis.Abbr);
+    draw_string(10, 168, Mis.Abbr);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(43, 128, "PRESTIGE: ");
-    DispNum(93, 128, Data->P[plr].History[num2].Prestige);
-    PrintAt(43, 138, "DURATION: ");
+    draw_string(43, 128, "PRESTIGE: ");
+    draw_number(93, 128, Data->P[plr].History[num2].Prestige);
+    draw_string(43, 138, "DURATION: ");
 
     switch (Data->P[plr].History[num2].Duration) {
     case 1:
-        PrintAt(93, 138, "A");
+        draw_string(93, 138, "A");
         break;
 
     case 2:
-        PrintAt(93, 138, "B");
+        draw_string(93, 138, "B");
         break;
 
     case 3:
-        PrintAt(93, 138, "C");
+        draw_string(93, 138, "C");
         break;
 
     case 4:
-        PrintAt(93, 138, "D");
+        draw_string(93, 138, "D");
         break;
 
     case 5:
-        PrintAt(93, 138, "E");
+        draw_string(93, 138, "E");
         break;
 
     case 6:
-        PrintAt(93, 138, "F");
+        draw_string(93, 138, "F");
         break;
 
     default:
         break;
     }
 
-    PrintAt(10, 158, "DESCRIPTION: ");
+    draw_string(10, 158, "DESCRIPTION: ");
 
     return;
 }

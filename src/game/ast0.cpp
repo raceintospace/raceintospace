@@ -64,9 +64,9 @@ void Moon(char plr)
     display::graphics.screen()->clear(0);
     ShBox(109, 24, 222, 167);
     InBox(113, 27, 218, 39);
-    RectFill(114, 28, 217, 38, 7 + 3 * plr);
+    fill_rectangle(114, 28, 217, 38, 7 + 3 * plr);
     InBox(113, 130, 218, 146);
-    RectFill(114, 131, 217, 145, 7 + 3 * other(plr));
+    fill_rectangle(114, 131, 217, 145, 7 + 3 * other(plr));
     IOBox(113, 150, 218, 164);
 
     size = ((val - 55) / 3);
@@ -90,17 +90,17 @@ void Moon(char plr)
     local.copyTo(display::graphics.screen(), 114, 43);
     InBox(113, 42, 218, 125);
     ShBox(113, 42, 143, 60);
-    RectFill(113, 42, 142, 59, 3);
+    fill_rectangle(113, 42, 142, 59, 3);
     InBox(113, 42, 140, 58);
     display::graphics.setForegroundColor(11);
-    PrintAt(117, 35, "PHOTO RECON.");
-    PrintAt(118, 137, "CURRENT RECON ");
-    PrintAt(118, 143, "LEVEL IS AT ");
-    DispNum(0, 0, val);
-    PrintAt(0, 0, "%");
+    draw_string(117, 35, "PHOTO RECON.");
+    draw_string(118, 137, "CURRENT RECON ");
+    draw_string(118, 143, "LEVEL IS AT ");
+    draw_number(0, 0, val);
+    draw_string(0, 0, "%");
     display::graphics.setForegroundColor(1);
-    PrintAt(144, 159, "CONTINUE");
-    FlagSm(plr, 114, 43);
+    draw_string(144, 159, "CONTINUE");
+    draw_small_flag(plr, 114, 43);
 
     music_start(M_HISTORY);
     FadeIn(2, display::graphics.palette(), 0, 0, 0);
@@ -150,12 +150,12 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
             }
 
             // Print name in purple if 'naut has announced retirement (black shows poorly here) -Leon
-            PrintAt(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
+            draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
 
             if (Data->P[plr].Pool[ary[i]].Missions > 0) {
-                PrintAt(0, 0, " (");
-                DispNum(0, 0, Data->P[plr].Pool[ary[i]].Missions);
-                PrintAt(0, 0, ")");
+                draw_string(0, 0, " (");
+                draw_number(0, 0, Data->P[plr].Pool[ary[i]].Missions);
+                draw_string(0, 0, ")");
             }
         }
     }
@@ -173,16 +173,16 @@ void BarSkill(char plr, int lc, int nw, int *ary)
 
     grMoveTo(28, 136 + lc * 8);
     // CA LM EV DO EN
-    PrintAt(0, 0, "CA:");
-    DispNum(0, 0, Data->P[plr].Pool[ary[nw]].Cap);
-    PrintAt(0, 0, " LM:");
-    DispNum(0, 0, Data->P[plr].Pool[ary[nw]].LM);
-    PrintAt(0, 0, " EV:");
-    DispNum(0, 0, Data->P[plr].Pool[ary[nw]].EVA);
-    PrintAt(0, 0, " DO:");
-    DispNum(0, 0, Data->P[plr].Pool[ary[nw]].Docking);
-    PrintAt(0, 0, " EN:");
-    DispNum(0, 0, Data->P[plr].Pool[ary[nw]].Endurance);
+    draw_string(0, 0, "CA:");
+    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Cap);
+    draw_string(0, 0, " LM:");
+    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].LM);
+    draw_string(0, 0, " EV:");
+    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].EVA);
+    draw_string(0, 0, " DO:");
+    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Docking);
+    draw_string(0, 0, " EN:");
+    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Endurance);
     return;
 }
 
@@ -206,14 +206,14 @@ void SatDraw(char plr)
 
         if (i == 2) {
             InBox(4 + i * 80, 27, 76 + i * 80, 56);
-            RectFill(5 + i * 80, 28, 75 + i * 80, 55, 0);
+            fill_rectangle(5 + i * 80, 28, 75 + i * 80, 55, 0);
             InBox(164, 58, 236, 68);
-            RectFill(165, 59, 235, 67, 0);
+            fill_rectangle(165, 59, 235, 67, 0);
             ShBox(166, 60, 199, 66);
             ShBox(201, 60, 234, 66);
         } else {
             InBox(4 + i * 80, 27, 76 + i * 80, 68);
-            RectFill(5 + i * 80, 28, 75 + i * 80, 67, 7);
+            fill_rectangle(5 + i * 80, 28, 75 + i * 80, 67, 7);
         }
     }
 
@@ -244,7 +244,7 @@ void SatDraw(char plr)
 
     fclose(fin);
 
-    FlagSm(plr, 5, 4);
+    draw_small_flag(plr, 5, 4);
     display::graphics.setForegroundColor(11);
     grMoveTo(180, 63);
     grLineTo(184, 63);
@@ -252,9 +252,9 @@ void SatDraw(char plr)
     grLineTo(219, 63);
     grMoveTo(217, 61);
     grLineTo(217, 65);
-    DispBig(40, 5, "SATELLITE BUILDING", 0, -1);
+    draw_heading(40, 5, "SATELLITE BUILDING", 0, -1);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     return;
 }
@@ -271,7 +271,7 @@ void LMDraw(char plr)
     InBox(4, 3, 31, 19);
     ShBox(1, 24, 319, 118);
     InBox(4, 26, 316, 116);
-    RectFill(5, 27, 315, 115, 0); // middle screen
+    fill_rectangle(5, 27, 315, 115, 0); // middle screen
 
     if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
         ind = 4 + plr;
@@ -291,11 +291,11 @@ void LMDraw(char plr)
     ShBox(110, 24, 203, 36);
     InBox(112, 26, 201, 34);
     display::graphics.setForegroundColor(1);
-    PrintAt(117, 32, "CENTRAL HANGAR");
-    FlagSm(plr, 5, 4);
-    DispBig(40, 5, "LUNAR MODULE", 0, -1);
+    draw_string(117, 32, "CENTRAL HANGAR");
+    draw_small_flag(plr, 5, 4);
+    draw_heading(40, 5, "LUNAR MODULE", 0, -1);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     return;
 }
@@ -312,132 +312,132 @@ void SatText(char plr)
 
             switch (i) {
             case 0:
-                PrintAt(5 + i * 80, 80, "DUR LVL: "); // Show highest Duration level achieved -Leon
+                draw_string(5 + i * 80, 80, "DUR LVL: "); // Show highest Duration level achieved -Leon
 
                 switch (Data->P[plr].DurationLevel) {
                 case 1:
-                    PrintAt(0, 0, "A");
+                    draw_string(0, 0, "A");
                     break;
 
                 case 2:
-                    PrintAt(0, 0, "B");
+                    draw_string(0, 0, "B");
                     break;
 
                 case 3:
-                    PrintAt(0, 0, "C");
+                    draw_string(0, 0, "C");
                     break;
 
                 case 4:
-                    PrintAt(0, 0, "D");
+                    draw_string(0, 0, "D");
                     break;
 
                 case 5:
-                    PrintAt(0, 0, "E");
+                    draw_string(0, 0, "E");
                     break;
 
                 case 6:
-                    PrintAt(0, 0, "F");
+                    draw_string(0, 0, "F");
                     break;
 
                 default:
-                    PrintAt(0, 0, "NONE");
+                    draw_string(0, 0, "NONE");
                     break;
                 }
 
-                PrintAt(5 + i * 80, 94, "DOCKING");
+                draw_string(5 + i * 80, 94, "DOCKING");
 
                 if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety);
+                    draw_number(5 + i * 80, 110, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety);
                 } else {
-                    DispNum(5 + i * 80, 110, 0);
+                    draw_number(5 + i * 80, 110, 0);
                 }
 
-                PrintAt(0, 0, "%");
+                draw_string(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
+                draw_number(5 + i * 80, 127, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures);
+                draw_number(5 + i * 80, 144, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures);
 
                 if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
+                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
                 } else {
-                    DispNum(5 + i * 80, 161, 0);
+                    draw_number(5 + i * 80, 161, 0);
                 }
 
                 if (Data->Prestige[Prestige_MannedDocking].Place == 0) {
-                    PrintAt(5 + i * 80, 178, "U.S.");
+                    draw_string(5 + i * 80, 178, "U.S.");
                 } else if (Data->Prestige[Prestige_MannedDocking].Place == 1) {
-                    PrintAt(5 + i * 80, 178, "SOVIET");
+                    draw_string(5 + i * 80, 178, "SOVIET");
                 } else {
-                    PrintAt(5 + i * 80, 178, "NONE");
+                    draw_string(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_MannedDocking].Points[plr]);
+                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_MannedDocking].Points[plr]);
                 break;
 
             case 1:
-                PrintAt(5 + i * 80, 80, "ORBITAL SAT.");
+                draw_string(5 + i * 80, 80, "ORBITAL SAT.");
 
                 if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety);
+                    draw_number(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety);
                 } else {
-                    DispNum(5 + i * 80, 110, 0);
+                    draw_number(5 + i * 80, 110, 0);
                 }
 
-                PrintAt(0, 0, "%");
+                draw_string(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
+                draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures);
+                draw_number(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures);
 
                 if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures) / Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
+                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures) / Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
                 } else {
-                    DispNum(5 + i * 80, 161, 0);
+                    draw_number(5 + i * 80, 161, 0);
                 }
 
                 if (Data->Prestige[Prestige_OrbitalSatellite].Place == 0) {
-                    PrintAt(5 + i * 80, 178, "U.S.");
+                    draw_string(5 + i * 80, 178, "U.S.");
                 } else if (Data->Prestige[Prestige_OrbitalSatellite].Place == 1) {
-                    PrintAt(5 + i * 80, 178, "SOVIET");
+                    draw_string(5 + i * 80, 178, "SOVIET");
                 } else {
-                    PrintAt(5 + i * 80, 178, "NONE");
+                    draw_string(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_OrbitalSatellite].Points[plr]);
+                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_OrbitalSatellite].Points[plr]);
                 break;
 
 
             case 3:
-                PrintAt(5 + i * 80, 80, "LUNAR PROBE");
+                draw_string(5 + i * 80, 80, "LUNAR PROBE");
 
                 if (Data->P[plr].Probe[PROBE_HW_LUNAR].Num >= 0) {
-                    DispNum(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_LUNAR].Safety);
+                    draw_number(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_LUNAR].Safety);
                 } else {
-                    DispNum(5 + i * 80, 110, 0);
+                    draw_number(5 + i * 80, 110, 0);
                 }
 
-                PrintAt(0, 0, "%");
+                draw_string(0, 0, "%");
 
-                DispNum(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
+                draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
 
-                DispNum(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures);
+                draw_number(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures);
 
                 if (Data->P[plr].Probe[PROBE_HW_LUNAR].Used > 0) {
-                    DispNum(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures) / Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
+                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures) / Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
                 } else {
-                    DispNum(5 + i * 80, 161, 0);
+                    draw_number(5 + i * 80, 161, 0);
                 }
 
                 if (Data->Prestige[Prestige_LunarProbeLanding].Place == 0) {
-                    PrintAt(5 + i * 80, 178, "U.S.");
+                    draw_string(5 + i * 80, 178, "U.S.");
                 } else if (Data->Prestige[Prestige_LunarProbeLanding].Place == 1) {
-                    PrintAt(5 + i * 80, 178, "SOVIET");
+                    draw_string(5 + i * 80, 178, "SOVIET");
                 } else {
-                    PrintAt(5 + i * 80, 178, "NONE");
+                    draw_string(5 + i * 80, 178, "NONE");
                 }
 
-                DispNum(5 + i * 80, 195, Data->Prestige[Prestige_LunarProbeLanding].Points[plr]);
+                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_LunarProbeLanding].Points[plr]);
                 break;
 
             }
@@ -446,12 +446,12 @@ void SatText(char plr)
         }
 
         display::graphics.setForegroundColor(6 + 3 * plr);
-        PrintAt(5 + i * 80, 103, "SAFETY:");
-        PrintAt(5 + i * 80, 120, "ATTEMPTS:");
-        PrintAt(5 + i * 80, 137, "SUCCESSFUL:");
-        PrintAt(5 + i * 80, 154, "% SUCCESS:");
-        PrintAt(5 + i * 80, 171, "FIRST:");
-        PrintAt(5 + i * 80, 188, "PRESTIGE:");
+        draw_string(5 + i * 80, 103, "SAFETY:");
+        draw_string(5 + i * 80, 120, "ATTEMPTS:");
+        draw_string(5 + i * 80, 137, "SUCCESSFUL:");
+        draw_string(5 + i * 80, 154, "% SUCCESS:");
+        draw_string(5 + i * 80, 171, "FIRST:");
+        draw_string(5 + i * 80, 188, "PRESTIGE:");
 
     }
 
@@ -468,28 +468,28 @@ void PlanText(char plr, char plan)
 
     tx = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) ? 1 : 0;
 
-    RectFill(164, 75, 78 + 160, 89, 3);
-    RectFill(162, 105, 218, 113, 3);
-    RectFill(162, 123, 218, 131, 3);
-    RectFill(162, 157, 218, 165, 3);
-    RectFill(162, 173, 218, 181, 3);
-    RectFill(162, 190, 218, 198, 3);
+    fill_rectangle(164, 75, 78 + 160, 89, 3);
+    fill_rectangle(162, 105, 218, 113, 3);
+    fill_rectangle(162, 123, 218, 131, 3);
+    fill_rectangle(162, 157, 218, 165, 3);
+    fill_rectangle(162, 173, 218, 181, 3);
+    fill_rectangle(162, 190, 218, 198, 3);
 
-    RectFill(162, 139, 218, 145, 3);
+    fill_rectangle(162, 139, 218, 145, 3);
 
     if (tx == 1) {
-        RectFill(165, 28, 235, 55, 0);
+        fill_rectangle(165, 28, 235, 55, 0);
     }
 
     display::graphics.setForegroundColor(11);
 
     switch (plan) {
     case 0:
-        PrintAt(4 + 160, 80, "LUNAR FLYBY");
+        draw_string(4 + 160, 80, "LUNAR FLYBY");
         display::graphics.setForegroundColor(11);
-        PrintAt(4 + 160, 87, "RECON: ");
-        DispNum(0, 0, Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety);
-        PrintAt(0, 0, "%");
+        draw_string(4 + 160, 87, "RECON: ");
+        draw_number(0, 0, Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety);
+        draw_string(0, 0, "%");
         Find = 7;
 
         if (tx == 1) {
@@ -499,31 +499,31 @@ void PlanText(char plr, char plan)
         break;
 
     case 1:
-        PrintAt(4 + 160, 80, "MERCURY FLYBY");
+        draw_string(4 + 160, 80, "MERCURY FLYBY");
         SmHardMe(plr, 190, 34, 6, 1, 32);
         Find = 11;
         break;
 
     case 2:
-        PrintAt(4 + 160, 80, "VENUS FLYBY");
+        draw_string(4 + 160, 80, "VENUS FLYBY");
         SmHardMe(plr, 190, 34, 6, 2, 32);
         Find = 9;
         break;
 
     case 3:
-        PrintAt(4 + 160, 80, "MARS FLYBY");
+        draw_string(4 + 160, 80, "MARS FLYBY");
         SmHardMe(plr, 190, 34, 6, 3, 32);
         Find = 10;
         break;
 
     case 4:
-        PrintAt(4 + 160, 80, "JUPITER FLYBY");
+        draw_string(4 + 160, 80, "JUPITER FLYBY");
         SmHardMe(plr, 190, 34, 6, 4, 32);
         Find = 12;
         break;
 
     case 5:
-        PrintAt(4 + 160, 80, "SATURN FLYBY");
+        draw_string(4 + 160, 80, "SATURN FLYBY");
         SmHardMe(plr, 190, 34, 6, 5, 32);
         Find = 13;
         break;
@@ -540,28 +540,28 @@ void PlanText(char plr, char plan)
             }
         }
 
-    DispNum(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
-    PrintAt(0, 0, "%");
+    draw_number(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
+    draw_string(0, 0, "%");
 
 
-    DispNum(5 + 160, 127, pUsed);
-    DispNum(5 + 160, 144, pUsed - pFails);
+    draw_number(5 + 160, 127, pUsed);
+    draw_number(5 + 160, 144, pUsed - pFails);
 
     if (pUsed) {
-        DispNum(5 + 160, 161, 100 * (pUsed - pFails) / pUsed);
+        draw_number(5 + 160, 161, 100 * (pUsed - pFails) / pUsed);
     } else {
-        DispNum(5 + 160, 161, 0);
+        draw_number(5 + 160, 161, 0);
     }
 
     if (Data->Prestige[1 + plan].Place == 0) {
-        PrintAt(5 + 160, 178, "U.S.");
+        draw_string(5 + 160, 178, "U.S.");
     } else if (Data->Prestige[1 + plan].Place == 1) {
-        PrintAt(5 + 160, 178, "SOVIET");
+        draw_string(5 + 160, 178, "SOVIET");
     } else {
-        PrintAt(5 + 160, 178, "NONE");
+        draw_string(5 + 160, 178, "NONE");
     }
 
-    DispNum(5 + 160, 195, Data->Prestige[1 + plan].Points[plr]);
+    draw_number(5 + 160, 195, Data->Prestige[1 + plan].Points[plr]);
 
 
     return;
@@ -609,10 +609,10 @@ void LMBld(char plr)
     InBox(163, 122, 316, 166);
     ShBox(1, 170, 319, 194);
     InBox(41, 172, 279, 192);
-    DispBig(71, 176, "TOTAL LM POINTS", 0, -1);
+    draw_heading(71, 176, "TOTAL LM POINTS", 0, -1);
     memset(Name, 0, sizeof Name);
     sprintf(&Name[0], "%d", Data->P[plr].LMpts);
-    DispBig(240, 176, &Name[0], 0, -1);
+    draw_heading(240, 176, &Name[0], 0, -1);
 
     for (i = 0; i < 2; i++) {
         if (i == 0) {
@@ -622,36 +622,36 @@ void LMBld(char plr)
         }
 
         display::graphics.setForegroundColor(8);
-        PrintAt(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
+        draw_string(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
         display::graphics.setForegroundColor(9);
         display::graphics.setForegroundColor(6);
-        PrintAt(m + 48, 130, "AVOID FAILURE: ");
+        draw_string(m + 48, 130, "AVOID FAILURE: ");
         display::graphics.setForegroundColor(11);
 
         if (Data->P[plr].Manned[5 + i].SaveCard > 0) {
-            PrintAt(m + 124, 130, "YES");
+            draw_string(m + 124, 130, "YES");
         } else {
-            PrintAt(m + 126, 130, "NO");
+            draw_string(m + 126, 130, "NO");
         }
 
         display::graphics.setForegroundColor(6);
-        PrintAt(m, 138, "SAFETY FACTOR: ");
+        draw_string(m, 138, "SAFETY FACTOR: ");
         display::graphics.setForegroundColor(1);
-        DispNum(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Safety : 0);
-        PrintAt(0, 0, "%");
+        draw_number(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Safety : 0);
+        draw_string(0, 0, "%");
         display::graphics.setForegroundColor(6);
-        PrintAt(m, 146, "CURRENT QUANTITY: ");
+        draw_string(m, 146, "CURRENT QUANTITY: ");
         display::graphics.setForegroundColor(1);
-        DispNum(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Num : 0);
+        draw_number(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Num : 0);
 
         display::graphics.setForegroundColor(6);
-        PrintAt(m, 154, "NUMBER OF ATTEMPTS: ");
+        draw_string(m, 154, "NUMBER OF ATTEMPTS: ");
         display::graphics.setForegroundColor(1);
-        DispNum(0, 0, Data->P[plr].Manned[5 + i].Steps);
+        draw_number(0, 0, Data->P[plr].Manned[5 + i].Steps);
         display::graphics.setForegroundColor(6);
-        PrintAt(m, 162, "SUCCESSFUL ATTEMPTS: ");
+        draw_string(m, 162, "SUCCESSFUL ATTEMPTS: ");
         display::graphics.setForegroundColor(1);
-        DispNum(0, 0, Data->P[plr].Manned[5 + i].Steps - Data->P[plr].Manned[5 + i].Failures);
+        draw_number(0, 0, Data->P[plr].Manned[5 + i].Steps - Data->P[plr].Manned[5 + i].Failures);
     }
 
     music_start(M_HISTORY);

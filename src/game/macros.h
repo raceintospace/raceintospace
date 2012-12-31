@@ -15,8 +15,8 @@
 #define STRINGIFY(x) _STRINGIFY(x)
 #define _STRINGIFY(x) #x
 
-#define IRBox(a,b,c,d,e)           {InBox((a),(b),(c),(d));RectFill((a)+1,(b)+1,(c)-1,(d)-1,(e));}
-#define ORBox(a,b,c,d,e)           {OutBox((a),(b),(c),(d));RectFill((a)+1,(b)+1,(c)-1,(d)-1,(e));}
+#define IRBox(a,b,c,d,e)           {InBox((a),(b),(c),(d));fill_rectangle((a)+1,(b)+1,(c)-1,(d)-1,(e));}
+#define ORBox(a,b,c,d,e)           {OutBox((a),(b),(c),(d));fill_rectangle((a)+1,(b)+1,(c)-1,(d)-1,(e));}
 
 
 // f==g

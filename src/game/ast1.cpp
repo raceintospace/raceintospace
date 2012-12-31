@@ -60,28 +60,28 @@ void DispEight(char now, char loc)
             display::graphics.setForegroundColor(6 + (Men[i].Sex + 1) * 6);
         }
 
-        PrintAt(189, 136 + (i - start) * 8, &Men[i].Name[0]);
+        draw_string(189, 136 + (i - start) * 8, &Men[i].Name[0]);
     };
 
-    RectFill(206, 48, 306, 52, 3);
+    fill_rectangle(206, 48, 306, 52, 3);
 
-    RectFill(221, 57, 306, 61, 3);
+    fill_rectangle(221, 57, 306, 61, 3);
 
-    RectFill(293, 66, 301, 70, 3);
+    fill_rectangle(293, 66, 301, 70, 3);
 
-    RectFill(274, 98, 281, 102, 3);
+    fill_rectangle(274, 98, 281, 102, 3);
 
     display::graphics.setForegroundColor(1);
 
     if (Men[now].Sex == 0) {
-        PrintAt(206, 52, "MR. ");
+        draw_string(206, 52, "MR. ");
     } else {
-        PrintAt(206, 52, "MS. ");
+        draw_string(206, 52, "MS. ");
     }
 
-    PrintAt(0, 0, &Men[now].Name[0]);
-    DispNum(294, 70, Men[now].Cap);
-    DispNum(275, 102, Men[now].Endurance);
+    draw_string(0, 0, &Men[now].Name[0]);
+    draw_number(294, 70, Men[now].Cap);
+    draw_number(275, 102, Men[now].Endurance);
     return;
 } /* End of Disp8 */
 
@@ -96,30 +96,30 @@ void DispEight2(int nw, int lc, int cnt)
     for (i = start; i < start + num; i++) {
         if (sel[i] != -1) {
             display::graphics.setForegroundColor(6 + (Men[sel[i]].Sex + 1) * 6);
-            PrintAt(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
+            draw_string(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
         }
     }
 
-    RectFill(45, 48, 145, 52, 3);
-    RectFill(60, 57, 145, 61, 3);
-    RectFill(132, 66, 140, 70, 3);
-    RectFill(113, 98, 120, 102, 3);
-    RectFill(292, 36, 310, 41, 7);
+    fill_rectangle(45, 48, 145, 52, 3);
+    fill_rectangle(60, 57, 145, 61, 3);
+    fill_rectangle(132, 66, 140, 70, 3);
+    fill_rectangle(113, 98, 120, 102, 3);
+    fill_rectangle(292, 36, 310, 41, 7);
     display::graphics.setForegroundColor(11);
-    DispNum(292, 41, MaxSel - cnt);
+    draw_number(292, 41, MaxSel - cnt);
 
     if (cnt > 0) {
         display::graphics.setForegroundColor(1);
 
         if (Men[sel[nw]].Sex == 0) {
-            PrintAt(45, 52, "MR. ");
+            draw_string(45, 52, "MR. ");
         } else {
-            PrintAt(45, 52, "MS. ");
+            draw_string(45, 52, "MS. ");
         }
 
-        PrintAt(0, 0, &Men[sel[nw]].Name[0]);
-        DispNum(133, 70, Men[sel[nw]].Cap);
-        DispNum(114, 102, Men[sel[nw]].Endurance);
+        draw_string(0, 0, &Men[sel[nw]].Name[0]);
+        draw_number(133, 70, Men[sel[nw]].Cap);
+        draw_number(114, 102, Men[sel[nw]].Endurance);
     };
 
     return;
@@ -140,55 +140,55 @@ void DrawAstCheck(char plr)
     display::graphics.screen()->clear(0);
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
-    RectFill(88, 50, 229, 102, 7 + plr * 3);
+    fill_rectangle(88, 50, 229, 102, 7 + plr * 3);
     IOBox(98, 133, 150, 149);
     IOBox(166, 133, 218, 149);
     display::graphics.setForegroundColor(5);
 
     if (plr == 0) {
-        PrintAt(99, 60, "ASTRONAUT");
+        draw_string(99, 60, "ASTRONAUT");
     } else {
-        PrintAt(99, 60, "COSMONAUT");
+        draw_string(99, 60, "COSMONAUT");
     }
 
-    PrintAt(0, 0, " RECRUITMENT");
+    draw_string(0, 0, " RECRUITMENT");
     display::graphics.setForegroundColor(11);
-    PrintAt(100, 73, "GROUP ");
+    draw_string(100, 73, "GROUP ");
 
     switch (Data->P[plr].AstroLevel) {
     case 0:
-        PrintAt(0, 0, "I");
+        draw_string(0, 0, "I");
         pos = ASTRO_POOL_LVL1;
         break;
 
     case 1:
-        PrintAt(0, 0, "II");
+        draw_string(0, 0, "II");
         pos = ASTRO_POOL_LVL2;
         break;
 
     case 2:
-        PrintAt(0, 0, "III");
+        draw_string(0, 0, "III");
         pos = ASTRO_POOL_LVL3;
         break;
 
     case 3:
-        PrintAt(0, 0, "IV");
+        draw_string(0, 0, "IV");
         pos = ASTRO_POOL_LVL4;
         break;
 
     case 4:
-        PrintAt(0, 0, "V");
+        draw_string(0, 0, "V");
         pos = ASTRO_POOL_LVL5;
         break;
     }
 
     if (Data->Season == 0) {
-        PrintAt(160, 73, "SPRING 19");
+        draw_string(160, 73, "SPRING 19");
     } else {
-        PrintAt(170, 73, "FALL 19");
+        draw_string(170, 73, "FALL 19");
     }
 
-    DispNum(0, 0, Data->Year);
+    draw_number(0, 0, Data->Year);
 
     if (Data->P[plr].AstroLevel == 0) {
         i = 20;
@@ -198,82 +198,82 @@ void DrawAstCheck(char plr)
 
     if (ad == 0) {
         if (pos < 10) {
-            DispNum(110, 86, pos);
+            draw_number(110, 86, pos);
         } else {
-            DispNum(108, 86, pos);
+            draw_number(108, 86, pos);
         }
 
-        PrintAt(0, 0, " POSITIONS TO FILL");
-        PrintAt(133, 97, "COST: ");
-        DispNum(0, 0, i);
-        PrintAt(0, 0, " MB");
+        draw_string(0, 0, " POSITIONS TO FILL");
+        draw_string(133, 97, "COST: ");
+        draw_number(0, 0, i);
+        draw_string(0, 0, " MB");
     } else {
         if (Data->P[plr].AstroDelay != 1) {
-            DispNum(114, 86, Data->P[plr].AstroDelay);
+            draw_number(114, 86, Data->P[plr].AstroDelay);
         } else {
-            DispNum(118, 86, Data->P[plr].AstroDelay);
+            draw_number(118, 86, Data->P[plr].AstroDelay);
         }
 
-        PrintAt(0, 0, " SEASON");
+        draw_string(0, 0, " SEASON");
 
         if (Data->P[plr].AstroDelay != 1) {
-            PrintAt(0, 0, "S");
+            draw_string(0, 0, "S");
         }
 
-        PrintAt(0, 0, " TO WAIT");
-        PrintAt(104, 97, "FOR THE NEW RECRUITS");
+        draw_string(0, 0, " TO WAIT");
+        draw_string(104, 97, "FOR THE NEW RECRUITS");
     }
 
     display::graphics.setForegroundColor(1);
 
     if (ad == 1) {
-        PrintAt(102, 113, "  YOU CANNOT RECRUIT");
+        draw_string(102, 113, "  YOU CANNOT RECRUIT");
 
         if (plr == 0) {
-            PrintAt(102, 122, "ASTRONAUTS THIS TURN");
+            draw_string(102, 122, "ASTRONAUTS THIS TURN");
         } else {
-            PrintAt(102, 122, "COSMONAUTS THIS TURN");
+            draw_string(102, 122, "COSMONAUTS THIS TURN");
         }
 
         display::graphics.setForegroundColor(8);
-        PrintAt(114, 143, "EXIT");
-        PrintAt(182, 143, "EXIT");
+        draw_string(114, 143, "EXIT");
+        draw_string(182, 143, "EXIT");
     };
 
     if (ad == 0) {
         if (Data->P[plr].Cash < i) {
-            PrintAt(110, 113, "YOU CANNOT AFFORD");
+            draw_string(110, 113, "YOU CANNOT AFFORD");
 
             if (plr == 0) {
-                PrintAt(103, 122, "ASTRONAUTS THIS TURN");
+                draw_string(103, 122, "ASTRONAUTS THIS TURN");
             } else {
-                PrintAt(103, 122, "COSMONAUTS THIS TURN");
+                draw_string(103, 122, "COSMONAUTS THIS TURN");
             }
 
             display::graphics.setForegroundColor(8);
-            PrintAt(113, 143, "EXIT");
-            PrintAt(181, 143, "EXIT");
+            draw_string(113, 143, "EXIT");
+            draw_string(181, 143, "EXIT");
         } else {
-            PrintAt(101, 113, "DO YOU WISH TO RECRUIT");
+            draw_string(101, 113, "DO YOU WISH TO RECRUIT");
 
             if (plr == 0) {
-                PrintAt(100, 122, "ASTRONAUTS THIS TURN?");
+                draw_string(100, 122, "ASTRONAUTS THIS TURN?");
             } else {
-                PrintAt(100, 122, "COSMONAUTS THIS TURN?");
+                draw_string(100, 122, "COSMONAUTS THIS TURN?");
             }
 
             display::graphics.setForegroundColor(6);
-            PrintAt(116, 143, "Y");
+            draw_string(116, 143, "Y");
             display::graphics.setForegroundColor(1);
-            PrintAt(0, 0, "ES");
+            draw_string(0, 0, "ES");
             display::graphics.setForegroundColor(6);
-            PrintAt(187, 143, "N");
+            draw_string(187, 143, "N");
             display::graphics.setForegroundColor(1);
-            PrintAt(0, 0, "O");
+            draw_string(0, 0, "O");
         };
     };
 
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
@@ -293,10 +293,10 @@ void DrawAstSel(char plr)
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
-    RectFill(5, 129, 19, 195, 0);
-    RectFill(166, 129, 180, 195, 0);
-    RectFill(25, 129, 153, 195, 0);
-    RectFill(186, 129, 314, 195, 0);
+    fill_rectangle(5, 129, 19, 195, 0);
+    fill_rectangle(166, 129, 180, 195, 0);
+    fill_rectangle(25, 129, 153, 195, 0);
+    fill_rectangle(186, 129, 314, 195, 0);
     ShBox(6, 130, 18, 161);
     ShBox(6, 163, 18, 194);
     ShBox(167, 130, 179, 161);
@@ -309,109 +309,109 @@ void DrawAstSel(char plr)
     InBox(185, 128, 315, 196);
     InBox(165, 128, 181, 196);
     InBox(3, 3, 30, 19);
-    UPArrow(9, 133);
-    DNArrow(9, 166); //Left
-    UPArrow(170, 133);
-    DNArrow(170, 166); //Right
+    draw_up_arrow(9, 133);
+    draw_down_arrow(9, 166); //Left
+    draw_up_arrow(170, 133);
+    draw_down_arrow(170, 166); //Right
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    DispBig(35, 5, "RECRUITMENT", 0, -1);
-    FlagSm(plr, 4, 4);
+    draw_string(258, 13, "CONTINUE");
+    draw_heading(35, 5, "RECRUITMENT", 0, -1);
+    draw_small_flag(plr, 4, 4);
 
     InBox(3, 27, 155, 44);
-    RectFill(4, 28, 154, 43, 7);
+    fill_rectangle(4, 28, 154, 43, 7);
     InBox(164, 27, 316, 44);
-    RectFill(165, 28, 315, 43, 7);
+    fill_rectangle(165, 28, 315, 43, 7);
 
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
-        PrintAt(22, 34, "ASTRONAUT SELECTION");
+        draw_string(22, 34, "ASTRONAUT SELECTION");
     } else {
-        PrintAt(22, 34, "COSMONAUT SELECTION");
+        draw_string(22, 34, "COSMONAUT SELECTION");
     }
 
-    PrintAt(192, 34, "POOL OF APPLICANTS");
+    draw_string(192, 34, "POOL OF APPLICANTS");
 
     display::graphics.setForegroundColor(11);
-    PrintAt(12, 41, "GROUP ");
+    draw_string(12, 41, "GROUP ");
 
     switch (Data->P[plr].AstroLevel) {
     case 0:
-        PrintAt(0, 0, "I");
+        draw_string(0, 0, "I");
         break;
 
     case 1:
-        PrintAt(0, 0, "II");
+        draw_string(0, 0, "II");
         break;
 
     case 2:
-        PrintAt(0, 0, "III");
+        draw_string(0, 0, "III");
         break;
 
     case 3:
-        PrintAt(0, 0, "IV");
+        draw_string(0, 0, "IV");
         break;
 
     case 4:
-        PrintAt(0, 0, "V");
+        draw_string(0, 0, "V");
         break;
     }
 
-    PrintAt(185, 41, "REMAINING POSITIONS:");
+    draw_string(185, 41, "REMAINING POSITIONS:");
 
     if (Data->Season == 0) {
-        PrintAt(88, 41, "SPRING 19");
+        draw_string(88, 41, "SPRING 19");
     } else {
-        PrintAt(98, 41, "FALL 19");
+        draw_string(98, 41, "FALL 19");
     }
 
-    DispNum(0, 0, Data->Year);
+    draw_number(0, 0, Data->Year);
     display::graphics.setForegroundColor(9);
-    PrintAt(12, 52, "NAME:");
-    PrintAt(173, 52, "NAME:");
-    PrintAt(12, 61, "SERVICE:");
-    PrintAt(173, 61, "SERVICE:");
-    PrintAt(12, 70, "SKILLS:");
-    PrintAt(173, 70, "SKILLS:");
+    draw_string(12, 52, "NAME:");
+    draw_string(173, 52, "NAME:");
+    draw_string(12, 61, "SERVICE:");
+    draw_string(173, 61, "SERVICE:");
+    draw_string(12, 70, "SKILLS:");
+    draw_string(173, 70, "SKILLS:");
     display::graphics.setForegroundColor(11);
-    PrintAt(54, 70, "CAPSULE PILOT:");
-    PrintAt(215, 70, "CAPSULE PILOT:");
+    draw_string(54, 70, "CAPSULE PILOT:");
+    draw_string(215, 70, "CAPSULE PILOT:");
     display::graphics.setForegroundColor(11);
-    PrintAt(54, 78, "L.M. PILOT: ");
+    draw_string(54, 78, "L.M. PILOT: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(215, 78, "L.M. PILOT: ");
+    draw_string(215, 78, "L.M. PILOT: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(54, 86, "E.V.A.: ");
+    draw_string(54, 86, "E.V.A.: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(215, 86, "E.V.A.: ");
+    draw_string(215, 86, "E.V.A.: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(54, 94, "DOCKING: ");
+    draw_string(54, 94, "DOCKING: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(215, 94, "DOCKING: ");
+    draw_string(215, 94, "DOCKING: ");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "--");
+    draw_string(0, 0, "--");
     display::graphics.setForegroundColor(11);
-    PrintAt(54, 102, "ENDURANCE:");
-    PrintAt(215, 102, "ENDURANCE:");
+    draw_string(54, 102, "ENDURANCE:");
+    draw_string(215, 102, "ENDURANCE:");
     display::graphics.setForegroundColor(6);
-    PrintAt(33, 119, "D");
+    draw_string(33, 119, "D");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "ISMISS APPLICANT");
+    draw_string(0, 0, "ISMISS APPLICANT");
     display::graphics.setForegroundColor(6);
-    PrintAt(194, 119, "R");
+    draw_string(194, 119, "R");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "ECRUIT APPLICANT");
+    draw_string(0, 0, "ECRUIT APPLICANT");
 
     return;
 }
@@ -598,7 +598,7 @@ void AstSel(char plr)
                     ksel = 0;
                 }
 
-                RectFill(186, 129, 314, 195, 0);
+                fill_rectangle(186, 129, 314, 195, 0);
                 now -= BarB;
                 now += i;
                 BarB = i;
@@ -616,7 +616,7 @@ void AstSel(char plr)
                     ksel = 1;
                 }
 
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
@@ -642,13 +642,13 @@ void AstSel(char plr)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         };
 
                     if (BarA > 0) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -665,13 +665,13 @@ void AstSel(char plr)
                 if (BarA == 0)
                     if (now2 > 0) {
                         now2--;
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     };
 
                 if (BarA > 0) {
-                    RectFill(26, 129, 153, 195, 0);
+                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA--;
                     now2--;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -700,14 +700,14 @@ void AstSel(char plr)
                     if (BarA == 7)
                         if (now2 < count - 1) {
                             now2++;
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         };
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
-                            RectFill(26, 129, 153, 195, 0);
+                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -724,14 +724,14 @@ void AstSel(char plr)
                 if (BarA == 7)
                     if (now2 < count - 1) {
                         now2++;
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     };
 
                 if (BarA < 7)
                     if (now2 < count - 1) {
-                        RectFill(26, 129, 153, 195, 0);
+                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA++;
                         now2++;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
@@ -760,13 +760,13 @@ void AstSel(char plr)
                     if (BarB == 0)
                         if (now > min) {
                             now--;
-                            RectFill(186, 129, 314, 195, 0);
+                            fill_rectangle(186, 129, 314, 195, 0);
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         };
 
                     if (BarB > 0) {
-                        RectFill(186, 129, 314, 195, 0);
+                        fill_rectangle(186, 129, 314, 195, 0);
                         BarB--;
                         now--;
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
@@ -783,13 +783,13 @@ void AstSel(char plr)
                 if (BarB == 0)
                     if (now > min) {
                         now--;
-                        RectFill(186, 129, 314, 195, 0);
+                        fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     };
 
                 if (BarB > 0) {
-                    RectFill(186, 129, 314, 195, 0);
+                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB--;
                     now--;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
@@ -821,13 +821,13 @@ void AstSel(char plr)
                                 now++;
                             }
 
-                            RectFill(186, 129, 314, 195, 0);
+                            fill_rectangle(186, 129, 314, 195, 0);
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         };
 
                     if (BarB < 7) {
-                        RectFill(186, 129, 314, 195, 0);
+                        fill_rectangle(186, 129, 314, 195, 0);
                         BarB++;
                         now++;
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
@@ -847,13 +847,13 @@ void AstSel(char plr)
                             now++;
                         }
 
-                        RectFill(186, 129, 314, 195, 0);
+                        fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     };
 
                 if (BarB < 7) {
-                    RectFill(186, 129, 314, 195, 0);
+                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB++;
                     now++;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
@@ -890,7 +890,7 @@ void AstSel(char plr)
                 }
             };
 
-            RectFill(26, 129, 153, 195, 0);
+            fill_rectangle(26, 129, 153, 195, 0);
 
             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
@@ -917,20 +917,20 @@ void AstSel(char plr)
                 if (BarB == 7)
                     if (now < max) {
                         now++;
-                        RectFill(186, 129, 314, 195, 0);
+                        fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     };
 
                 if (BarB < 7) {
-                    RectFill(186, 129, 314, 195, 0);
+                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB++;
                     now++;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
                 };
 
-                RectFill(26, 129, 153, 195, 0);
+                fill_rectangle(26, 129, 153, 195, 0);
 
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 

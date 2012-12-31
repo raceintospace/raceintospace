@@ -1004,7 +1004,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 void InRFBox(int a, int b, int c, int d, int col)
 {
     InBox(a, b, c, d);
-    RectFill(a + 1, b + 1, c - 1, d - 1, col);
+    fill_rectangle(a + 1, b + 1, c - 1, d - 1, col);
     return;
 }
 
@@ -1018,28 +1018,28 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
         display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white
     }
 
-    PrintAt(xa, ya, Guy->Name);
-    PrintAt(0, 0, ": ");
+    draw_string(xa, ya, Guy->Name);
+    draw_string(0, 0, ": ");
 
     switch (Guy->Status) {
     case AST_ST_DEAD:
         display::graphics.setForegroundColor(9);
-        PrintAt(0, 0, "DEAD");
+        draw_string(0, 0, "DEAD");
         break;
 
     case AST_ST_RETIRED:
         display::graphics.setForegroundColor(12);
-        PrintAt(0, 0, "INJ");   // TODO: Why INJ not RET?
+        draw_string(0, 0, "INJ");   // TODO: Why INJ not RET?
         break;
 
     case AST_ST_INJURED:
         display::graphics.setForegroundColor(12);
-        PrintAt(0, 0, "INJ");
+        draw_string(0, 0, "INJ");
         break;
 
     default:
         display::graphics.setForegroundColor(13);
-        PrintAt(0, 0, "OK");
+        draw_string(0, 0, "OK");
         break;
     }
 
@@ -1064,9 +1064,9 @@ char FailureMode(char plr, int prelim, char *text)
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
 
     ShBox(0, 24, 319, 199);
 
@@ -1074,26 +1074,26 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(1);
     MisStep(9, 34, Mev[STEP].loc);
-    PrintAt(9, 41, "MISSION STEP: ");
-    DispNum(0, 0, STEP);
-    PrintAt(9, 48, Mev[STEP].E->Name);
-    PrintAt(0, 0, " CHECK");
+    draw_string(9, 41, "MISSION STEP: ");
+    draw_number(0, 0, STEP);
+    draw_string(9, 48, Mev[STEP].E->Name);
+    draw_string(0, 0, " CHECK");
 
     if (strncmp(Mev[STEP].E->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            DispNum(9, 55, Mev[STEP].E->MSF);
+            draw_number(9, 55, Mev[STEP].E->MSF);
         } else {
-            DispNum(9, 55, Mev[STEP].E->MisSaf);
+            draw_number(9, 55, Mev[STEP].E->MisSaf);
         }
     } else {
-        DispNum(9, 55, Mev[STEP].E->MisSaf);
+        draw_number(9, 55, Mev[STEP].E->MisSaf);
     }
 
 
-    PrintAt(0, 0, " VS ");
-    DispNum(0, 0, Mev[STEP].dice);
+    draw_string(0, 0, " VS ");
+    draw_number(0, 0, Mev[STEP].dice);
 
-    DispBig(40, 5, "STEP FAILURE", 0, -1);
+    draw_heading(40, 5, "STEP FAILURE", 0, -1);
 
 //  InRFBox(4,61,153,109,0); // Image, Small Left Side
 
@@ -1104,47 +1104,47 @@ char FailureMode(char plr, int prelim, char *text)
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
         display::graphics.setForegroundColor(1);
-        PrintAt(8, 122, "RECOMMEND MISSION SCRUB");
+        draw_string(8, 122, "RECOMMEND MISSION SCRUB");
     } else {
         display::graphics.setForegroundColor(9);
 
         switch (prelim) {
         case 0:
             display::graphics.setForegroundColor(15);
-            PrintAt(10, 122, "ALL SYSTEMS ARE GO");
+            draw_string(10, 122, "ALL SYSTEMS ARE GO");
             break;
 
         case 1:
-            PrintAt(10, 122, "FAILURE: USE ALTERNATE");
+            draw_string(10, 122, "FAILURE: USE ALTERNATE");
             break;
 
         case 2:
-            PrintAt(10, 122, "FURTHER PROBLEMS: RECHECK");
+            draw_string(10, 122, "FURTHER PROBLEMS: RECHECK");
             break;
 
         case 4:
-            PrintAt(10, 122, "CREW STRANDED IN SPACE");
+            draw_string(10, 122, "CREW STRANDED IN SPACE");
             break;
 
         case 5:
-            PrintAt(10, 122, "MISSION FAILURE");
+            draw_string(10, 122, "MISSION FAILURE");
             break;
 
         case 6:
             display::graphics.setForegroundColor(15);
-            PrintAt(10, 122, "MISSION SUCCESS");
+            draw_string(10, 122, "MISSION SUCCESS");
             break;
 
         case 7:
-            PrintAt(10, 122, "STEP FAILURE");
+            draw_string(10, 122, "STEP FAILURE");
             break;
 
         case 8:
-            PrintAt(10, 122, "CATASTROPHIC FAILURE");
+            draw_string(10, 122, "CATASTROPHIC FAILURE");
             break;
 
         case 9:
-            PrintAt(10, 122, "CREW INJURIES");
+            draw_string(10, 122, "CREW INJURIES");
             break;
         }
     }
@@ -1155,9 +1155,9 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(12);
 
-    PrintAt(15, 139, "CREW");
+    draw_string(15, 139, "CREW");
 
-    PrintAt(9, 146, "STATUS");
+    draw_string(9, 146, "STATUS");
 
 
     if (MANNED[Mev[STEP].pad] > 0) {
@@ -1191,7 +1191,7 @@ char FailureMode(char plr, int prelim, char *text)
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
             display::graphics.setForegroundColor(1);
-            PrintAt(49, 138, "UNMANNED");
+            draw_string(49, 138, "UNMANNED");
         }
     };
 
@@ -1234,7 +1234,7 @@ char FailureMode(char plr, int prelim, char *text)
             j = 0;
             grMoveTo(12, k);
         } else {
-            DispChr(text[i]);
+            draw_character(text[i]);
         }
 
         j++;
@@ -1250,7 +1250,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(11);
 
-    PrintAt(194, 37, "EQUIPMENT DETAIL");
+    draw_string(194, 37, "EQUIPMENT DETAIL");
 
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
@@ -1497,13 +1497,13 @@ char DrawMoonSelection(char nauts, char plr)
     display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
-    FlagSm(plr, 4, 4);
+    draw_small_flag(plr, 4, 4);
     ShBox(0, 24, 319, 199);
-    DispBig(40, 5, "FIRST LUNAR EVA", 0, -1);
+    draw_heading(40, 5, "FIRST LUNAR EVA", 0, -1);
 
     InRFBox(162, 28, 312, 42, 10);
     display::graphics.setForegroundColor(11);
-    PrintAt(194, 37, "EQUIPMENT DETAIL");
+    draw_string(194, 37, "EQUIPMENT DETAIL");
 
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
@@ -1532,22 +1532,22 @@ char DrawMoonSelection(char nauts, char plr)
 
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
-    PrintAt(83 - strlen(Data->P[plr].Mission[Mev[STEP].pad].Name) * 3, 40, Data->P[plr].Mission[Mev[STEP].pad].Name);
+    draw_string(83 - strlen(Data->P[plr].Mission[Mev[STEP].pad].Name) * 3, 40, Data->P[plr].Mission[Mev[STEP].pad].Name);
     InRFBox(162, 161, 313, 175, 10);
     display::graphics.setForegroundColor(11);
-    DispNum(198, 170, dayOnMoon);
-    PrintAt(0, 0, " ");
-    PrintAt(0, 0, Month[Data->P[plr].Mission[Mev[STEP].pad].Month]);
-    PrintAt(0, 0, "19");
-    DispNum(0, 0, Data->Year);
+    draw_number(198, 170, dayOnMoon);
+    draw_string(0, 0, " ");
+    draw_string(0, 0, Month[Data->P[plr].Mission[Mev[STEP].pad].Month]);
+    draw_string(0, 0, "19");
+    draw_number(0, 0, Data->Year);
 
     InRFBox(25, 51, 135, 85, 10);
     display::graphics.setForegroundColor(11);
-    PrintAt(30, 60, " Who should be the");
-    PrintAt(30, 70, plr == 0 ?
-            "first astronaut to" :
-            "first cosmonaut to");
-    PrintAt(30, 80, " walk on the moon?");
+    draw_string(30, 60, " Who should be the");
+    draw_string(30, 70, plr == 0 ?
+                "first astronaut to" :
+                "first cosmonaut to");
+    draw_string(30, 80, " walk on the moon?");
 
     int i;
 

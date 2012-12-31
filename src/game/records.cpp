@@ -174,7 +174,7 @@ void Records(char plr)
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
     InBox(4, 27, 315, 196);
-    RectFill(5, 28, 314, 195, 0);
+    fill_rectangle(5, 28, 314, 195, 0);
 
     ShBox(23, 29, 228, 52);
     ShBox(23, 54, 228, 77);
@@ -183,25 +183,25 @@ void Records(char plr)
     IOBox(243, 3, 316, 19); // Bottom half of the screen stuff
     ShBox(6, 104, 313, 194);
     InBox(10, 127, 309, 191);
-    RectFill(11, 128, 308, 190, 0);
+    fill_rectangle(11, 128, 308, 190, 0);
     ShBox(297, 129, 307, 158);
     ShBox(297, 160, 307, 189); // Arrows
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    DispBig(42, 5, "MISSION RECORDS", 0, -1);
-    UPArrow(299, 131);
-    DNArrow(299, 162);
+    draw_string(258, 13, "CONTINUE");
+    draw_heading(42, 5, "MISSION RECORDS", 0, -1);
+    draw_up_arrow(299, 131);
+    draw_down_arrow(299, 162);
     ShBox(6, 29, 21, 102);
     ShBox(230, 29, 313, 102);
     display::graphics.setForegroundColor(1);
-    DispNum(12, 42, 1);
-    DispNum(12, 66, 2);
-    DispNum(12, 90, 3);
-    RectFill(70, 109, 266, 121, 4);
-    RectFill(72, 111, 264, 119, 0);
+    draw_number(12, 42, 1);
+    draw_number(12, 66, 2);
+    draw_number(12, 90, 3);
+    fill_rectangle(70, 109, 266, 121, 4);
+    fill_rectangle(72, 111, 264, 119, 0);
     IOBox(234, 84, 309, 99);
     display::graphics.setForegroundColor(1);
-    PrintAt(238, 94, "CLEAR RECORD");
+    draw_string(238, 94, "CLEAR RECORD");
     InBox(237, 34, 306, 81);
     Drec(&pos, &pos2, 0);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -276,13 +276,13 @@ void ClearRecord(char *pos2)
     ShBox(23, 29, 228, 52);
     ShBox(23, 54, 228, 77);
     ShBox(23, 79, 228, 102);
-    RectFill(24, 30, 227, 51, 3);
-    RectFill(24, 55, 227, 76, 3);
-    RectFill(24, 80, 227, 101, 3);
+    fill_rectangle(24, 30, 227, 51, 3);
+    fill_rectangle(24, 55, 227, 76, 3);
+    fill_rectangle(24, 80, 227, 101, 3);
     display::graphics.setForegroundColor(1);
-    DispNum(12, 42, 1);
-    DispNum(12, 66, 2);
-    DispNum(12, 90, 3);
+    draw_number(12, 42, 1);
+    draw_number(12, 66, 2);
+    draw_number(12, 90, 3);
 
     file = sOpen("RECORDS.DAT", "wb", 1);
     fwrite(rec, sizeof rec, 1, file);
@@ -331,45 +331,45 @@ void Drec(char *pos, char *pos2, char mde)
 
     memset(Digit, 0x00, sizeof(Digit));
     display::graphics.setForegroundColor(1);
-    DispNum(12, 42, 1);
-    DispNum(12, 66, 2);
-    DispNum(12, 90, 3);
-    RectFill(238, 35, 305, 80, 0);
+    draw_number(12, 42, 1);
+    draw_number(12, 66, 2);
+    draw_number(12, 90, 3);
+    fill_rectangle(238, 35, 305, 80, 0);
 
     if (Pict[*pos2] != 0) {
         DispBaby(238, 35, Pict[*pos2], mde);
     }
 
-    RectFill(12, 129, 295, 190, 0); // Clear bottom text
+    fill_rectangle(12, 129, 295, 190, 0); // Clear bottom text
 
     if (NREC[*pos2][0] == 0) {
         ShBox(23, 29, 228, 52);
-        RectFill(24, 30, 227, 51, 3);
+        fill_rectangle(24, 30, 227, 51, 3);
     } else {
         display::graphics.setForegroundColor(8);
-        DispNum(12, 42, 1);
+        draw_number(12, 42, 1);
         InBox(23, 29, 228, 52);
-        RectFill(24, 30, 227, 51, 3);
+        fill_rectangle(24, 30, 227, 51, 3);
     }
 
     if (NREC[*pos2][1] == 0) {
         ShBox(23, 54, 228, 77);
-        RectFill(24, 55, 227, 76, 3);
+        fill_rectangle(24, 55, 227, 76, 3);
     } else {
         display::graphics.setForegroundColor(8);
-        DispNum(12, 66, 2);
+        draw_number(12, 66, 2);
         InBox(23, 54, 228, 77);
-        RectFill(24, 55, 227, 76, 3);
+        fill_rectangle(24, 55, 227, 76, 3);
     }
 
     if (NREC[*pos2][2] == 0) {
         ShBox(23, 79, 228, 102);
-        RectFill(24, 80, 227, 101, 3);
+        fill_rectangle(24, 80, 227, 101, 3);
     } else {
         display::graphics.setForegroundColor(8);
-        DispNum(12, 90, 3);
+        draw_number(12, 90, 3);
         InBox(23, 79, 228, 102);
-        RectFill(24, 80, 227, 101, 3);
+        fill_rectangle(24, 80, 227, 101, 3);
     }
 
     display::graphics.setForegroundColor(2);
@@ -379,7 +379,7 @@ void Drec(char *pos, char *pos2, char mde)
             display::graphics.setForegroundColor(11);
         }
 
-        PrintAt(15, 133 + 7 * j, Record_Names[i]);
+        draw_string(15, 133 + 7 * j, Record_Names[i]);
 
         if (i == *pos2) {
             display::graphics.setForegroundColor(11);
@@ -390,9 +390,9 @@ void Drec(char *pos, char *pos2, char mde)
         display::graphics.setForegroundColor(2);
     }
 
-    RectFill(72, 111, 264, 119, 0);
+    fill_rectangle(72, 111, 264, 119, 0);
     display::graphics.setForegroundColor(1);
-    PrintAt(83, 117, Record_Names[*pos2]);
+    draw_string(83, 117, Record_Names[*pos2]);
 
     for (i = 0; i < 3; i++) {
         if (rec[*pos2][i].country == NOT_SET) {
@@ -401,65 +401,65 @@ void Drec(char *pos, char *pos2, char mde)
         }
 
         if (*pos2 < 52) {
-            RectFill(27, 33 + (i * 24), 54, 49 + (i * 24), 4);
-            FlagSm(rec[*pos2][i].country, 28, 34 + (i * 24));
+            fill_rectangle(27, 33 + (i * 24), 54, 49 + (i * 24), 4);
+            draw_small_flag(rec[*pos2][i].country, 28, 34 + (i * 24));
 
             if (*pos2 == 50 || *pos2 == 51) {
-                RectFill(196, 33 + (i * 24), 223, 49 + (i * 24), 4);
-                FlagSm(rec[*pos2][i].country, 197, 34 + (i * 24));
+                fill_rectangle(196, 33 + (i * 24), 223, 49 + (i * 24), 4);
+                draw_small_flag(rec[*pos2][i].country, 197, 34 + (i * 24));
             }
         } else {
-            RectFill(27, 33 + (i * 24), 54, 49 + (i * 24), 4);
-            FlagSm(0, 28, 34 + (i * 24));
-            RectFill(196, 33 + (i * 24), 223, 49 + (i * 24), 4);
-            FlagSm(1, 197, 34 + (i * 24));
+            fill_rectangle(27, 33 + (i * 24), 54, 49 + (i * 24), 4);
+            draw_small_flag(0, 28, 34 + (i * 24));
+            fill_rectangle(196, 33 + (i * 24), 223, 49 + (i * 24), 4);
+            draw_small_flag(1, 197, 34 + (i * 24));
         }
 
         if (*pos2 < 50) {
             display::graphics.setForegroundColor(9);
-            PrintAt(61, 48 + (i * 24), "DIR: ");
+            draw_string(61, 48 + (i * 24), "DIR: ");
             display::graphics.setForegroundColor(1);
-            PrintAt(0, 0, rec[*pos2][i].name);
+            draw_string(0, 0, rec[*pos2][i].name);
         }
 
         switch (rec[*pos2][i].type) {
         case 1:
             display::graphics.setForegroundColor(9);
-            PrintAt(61, 38 + (i * 24), "DATE: ");
+            draw_string(61, 38 + (i * 24), "DATE: ");
             display::graphics.setForegroundColor(1);
-            PrintAt(0, 0, Months[rec[*pos2][i].month]);
-            PrintAt(0, 0, " ");
+            draw_string(0, 0, Months[rec[*pos2][i].month]);
+            draw_string(0, 0, " ");
             sprintf(&Digit[0], "%d", rec[*pos2][i].yr + 1900);
-            PrintAt(0, 0, &Digit[0]);
+            draw_string(0, 0, &Digit[0]);
 
             if (*pos2 == 29) {
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 38 + (i * 24), "DURATION: ");
+                draw_string(143, 38 + (i * 24), "DURATION: ");
                 display::graphics.setForegroundColor(1);
 
                 switch (rec[*pos2][i].tag) {
                 case 1:
-                    PrintAt(0, 0, "A");
+                    draw_string(0, 0, "A");
                     break;
 
                 case 2:
-                    PrintAt(0, 0, "B");
+                    draw_string(0, 0, "B");
                     break;
 
                 case 3:
-                    PrintAt(0, 0, "C");
+                    draw_string(0, 0, "C");
                     break;
 
                 case 4:
-                    PrintAt(0, 0, "D");
+                    draw_string(0, 0, "D");
                     break;
 
                 case 5:
-                    PrintAt(0, 0, "E");
+                    draw_string(0, 0, "E");
                     break;
 
                 case 6:
-                    PrintAt(0, 0, "F");
+                    draw_string(0, 0, "F");
                     break;
 
                 default:
@@ -473,13 +473,13 @@ void Drec(char *pos, char *pos2, char mde)
             display::graphics.setForegroundColor(9);
 
             if (rec[*pos2][i].country == 1) {
-                PrintAt(61, 38 + (i * 24), "COSMONAUT: ");
+                draw_string(61, 38 + (i * 24), "COSMONAUT: ");
             } else {
-                PrintAt(61, 38 + (i * 24), "ASTRONAUT: ");
+                draw_string(61, 38 + (i * 24), "ASTRONAUT: ");
             }
 
             display::graphics.setForegroundColor(1);
-            PrintAt(0, 0, rec[*pos2][i].astro);
+            draw_string(0, 0, rec[*pos2][i].astro);
 
             switch (*pos2) {
             case 1:
@@ -489,47 +489,47 @@ void Drec(char *pos, char *pos2, char mde)
             case 5:
             case 6:
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "DATE: ");
+                draw_string(143, 48 + (i * 24), "DATE: ");
                 display::graphics.setForegroundColor(1);
-                PrintAt(0, 0, Months[rec[*pos2][i].month]);
-                PrintAt(0, 0, " ");
+                draw_string(0, 0, Months[rec[*pos2][i].month]);
+                draw_string(0, 0, " ");
                 sprintf(&Digit[0], "%d", rec[*pos2][i].yr + 1900);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
                 break;
 
             case 35:
             case 36:
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "MISSIONS: ");
+                draw_string(143, 48 + (i * 24), "MISSIONS: ");
                 display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
                 break;
 
             case 37:
             case 38:
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "PRESTIGE: ");
+                draw_string(143, 48 + (i * 24), "PRESTIGE: ");
                 display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
                 break;
 
             case 39:
             case 40:
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "DAYS: ");
+                draw_string(143, 48 + (i * 24), "DAYS: ");
                 display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
                 break;
 
             case 41:
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "SEASONS: ");
+                draw_string(143, 48 + (i * 24), "SEASONS: ");
                 display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
                 break;
 
             default:
@@ -540,49 +540,49 @@ void Drec(char *pos, char *pos2, char mde)
 
         case 3:
             display::graphics.setForegroundColor(9);
-            PrintAt(61, 38 + (i * 24), "RECORD: ");
+            draw_string(61, 38 + (i * 24), "RECORD: ");
             display::graphics.setForegroundColor(1);
 
             if (*pos2 == 18) { //special case craft and prestige points
                 display::graphics.setForegroundColor(1);
-                PrintAt(0, 0, &Data->P[rec[*pos2][i].country].Manned[rec[*pos2][i].program].Name[0]);
+                draw_string(0, 0, &Data->P[rec[*pos2][i].country].Manned[rec[*pos2][i].program].Name[0]);
                 display::graphics.setForegroundColor(6);
-                PrintAt(143, 48 + (i * 24), "PRESTIGE: ");
+                draw_string(143, 48 + (i * 24), "PRESTIGE: ");
                 display::graphics.setForegroundColor(1);
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(0, 0, &Digit[0]);
+                draw_string(0, 0, &Digit[0]);
             } else {
                 sprintf(&Digit[0], "%d", rec[*pos2][i].tag);
-                PrintAt(101, 38 + (i * 24), &Digit[0]);
+                draw_string(101, 38 + (i * 24), &Digit[0]);
 
                 switch (*pos2) {
                 case 22:
                 case 23:
-                    PrintAt(0, 0, " CASUALTIES");
+                    draw_string(0, 0, " CASUALTIES");
                     break;
 
                 case 24:
                 case 25:
-                    PrintAt(0, 0, " PERCENT");
+                    draw_string(0, 0, " PERCENT");
                     break;
 
                 case 31:
                 case 32:
-                    PrintAt(0, 0, " MISSIONS");
+                    draw_string(0, 0, " MISSIONS");
                     break;
 
                 case 33:
                 case 34:
-                    PrintAt(0, 0, " MISSIONS");
+                    draw_string(0, 0, " MISSIONS");
                     break;
 
                 case 42:
-                    PrintAt(0, 0, " POINTS");
+                    draw_string(0, 0, " POINTS");
                     break;
 
                 case 43:
                 case 44:
-                    PrintAt(0, 0, " M.B.");
+                    draw_string(0, 0, " M.B.");
                     break;
 
                 case 50:
@@ -591,7 +591,7 @@ void Drec(char *pos, char *pos2, char mde)
                 case 53:
                 case 54:
                 case 55:
-                    PrintAt(0, 0, " TIMES");
+                    draw_string(0, 0, " TIMES");
                     break;
 
                 default:

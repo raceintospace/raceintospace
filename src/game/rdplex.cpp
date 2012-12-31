@@ -48,7 +48,7 @@ display::Surface *mans;
 int avoidf;
 
 
-void SRPrintAt(int x, int y, char *text, char fgd, char bck);
+void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
 void BButs(char old, char nw);
 void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
@@ -105,12 +105,12 @@ encodeRolls(uint8_t nRolls, uint8_t value)
     return nRolls * NUM_ROLLS_MULT + value;
 }
 
-void SRPrintAt(int x, int y, char *text, char fgd, char bck)
+void SRdraw_string(int x, int y, char *text, char fgd, char bck)
 {
     display::graphics.setForegroundColor(bck);
-    PrintAt(x + 1, y + 1, text);
+    draw_string(x + 1, y + 1, text);
     display::graphics.setForegroundColor(fgd);
-    PrintAt(x, y, text);
+    draw_string(x, y, text);
     return;
 }
 
@@ -204,16 +204,16 @@ void DrawRD(char player_index)
     OutBox(21, 90, 136, 176);
     InBox(26, 94, 131, 172);
 
-    LTArrow(24, 186);
-    RTArrow(101, 186);
+    draw_left_arrow(24, 186);
+    draw_right_arrow(101, 186);
 
     //GradRect(27,95,130,171,player_index*16+128);
-    RectFill(27, 95, 130, 171, 0);
+    fill_rectangle(27, 95, 130, 171, 0);
 
     display::graphics.setForegroundColor(9);
-    PrintAt(13, 80, "V");
+    draw_string(13, 80, "V");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "ISIT PURCHASING FACILITY");
+    draw_string(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
         mans->copyTo(display::graphics.screen(), i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174);
@@ -230,24 +230,24 @@ void DrawRD(char player_index)
     but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(1);
-    DispBig(50, 5, "RESEARCH", 0, -1);
+    draw_heading(50, 5, "RESEARCH", 0, -1);
     display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
-        PrintAt(157, 8, "SPRING");
+        draw_string(157, 8, "SPRING");
     } else {
-        PrintAt(162, 8, "FALL");
+        draw_string(162, 8, "FALL");
     }
 
-    PrintAt(163, 15, "19");
-    DispNum(0, 0, Data->Year);
+    draw_string(163, 15, "19");
+    draw_number(0, 0, Data->Year);
 
-    PrintAt(200, 8, "CASH:");
-    DispMB(201, 15, Data->P[player_index].Cash);
+    draw_string(200, 8, "CASH:");
+    draw_megabucks(201, 15, Data->P[player_index].Cash);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    FlagSm(player_index, 4, 4);
+    draw_string(258, 13, "CONTINUE");
+    draw_small_flag(player_index, 4, 4);
     QueryUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
     ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
 
@@ -308,35 +308,35 @@ void BButs(char old, char nw)
 void
 RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Screen, Nikakd, 10/8/10
 {
-    RectFill(166, 185, 314, 193, 3);
+    fill_rectangle(166, 185, 314, 193, 3);
     display::graphics.setForegroundColor(1);
 
     int diceRoll = decodeRollValue(encodedRolls);
 
     //DM Screen, Nikakd, 10/8/10
     if (SpDModule == 1) {
-        PrintAt(184, 191, "CANNOT BE RESEARCHED");
+        draw_string(184, 191, "CANNOT BE RESEARCHED");
         return;
     }
 
     if (diceRoll == 0) {
-        PrintAt(169, 191, "RE");
+        draw_string(169, 191, "RE");
         display::graphics.setForegroundColor(9);
-        PrintAt(0, 0, "S");
+        draw_string(0, 0, "S");
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, "EARCH PROGRAM FOR ");
+        draw_string(0, 0, "EARCH PROGRAM FOR ");
         display::graphics.setForegroundColor(9);
-        DispNum(0, 0, cost);
+        draw_number(0, 0, cost);
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, " MB");
+        draw_string(0, 0, " MB");
     } else {
         display::graphics.setForegroundColor(11);
-        PrintAt(192, 191, "R&D ");
-        DispNum(0, 0, diceRoll);
-        PrintAt(0, 0, "% IMPROVEMENT");
+        draw_string(192, 191, "R&D ");
+        draw_number(0, 0, diceRoll);
+        draw_string(0, 0, "% IMPROVEMENT");
 
         if (Data->P[playerIndex].RD_Mods_For_Turn > 0) {
-            PrintAt(0, 0, "+");
+            draw_string(0, 0, "+");
         }
     }
 }
@@ -936,15 +936,15 @@ void ShowUnit(char hw, char un, char player_index)
 
     display::graphics.setForegroundColor(1);
 
-    RectFill(162, 69, 318, 146, 3);
-    RectFill(200, 9, 238, 21, 3);
+    fill_rectangle(162, 69, 318, 146, 3);
+    fill_rectangle(200, 9, 238, 21, 3);
     display::graphics.setForegroundColor(1);
-    PrintAt(170, 97, "INITIAL COST:");
-    PrintAt(170, 104, "UNIT COST:");
-    PrintAt(170, 118, "R&D COST PER TEAM:");
-    PrintAt(170, 125, "UNIT WEIGHT:");
-    PrintAt(170, 132, "MAXIMUM PAYLOAD:");
-    PrintAt(170, 146, "MAXIMUM SAFETY:");
+    draw_string(170, 97, "INITIAL COST:");
+    draw_string(170, 104, "UNIT COST:");
+    draw_string(170, 118, "R&D COST PER TEAM:");
+    draw_string(170, 125, "UNIT WEIGHT:");
+    draw_string(170, 132, "MAXIMUM PAYLOAD:");
+    draw_string(170, 146, "MAXIMUM SAFETY:");
 
     avoidf = 0;
 
@@ -979,33 +979,33 @@ void ShowUnit(char hw, char un, char player_index)
     }
 
     if (avoidf > 0) {
-        RectFill(286, 71, 316, 71, 5);
-        RectFill(286, 86, 316, 86, 5);
-        RectFill(286, 72, 286, 85, 5);
-        RectFill(316, 72, 316, 85, 5);
+        fill_rectangle(286, 71, 316, 71, 5);
+        fill_rectangle(286, 86, 316, 86, 5);
+        fill_rectangle(286, 72, 286, 85, 5);
+        fill_rectangle(316, 72, 316, 85, 5);
         display::graphics.setForegroundColor(11);
-        PrintAt(288, 77, "AVOID");
-        PrintAt(291, 84, "FAIL");
+        draw_string(288, 77, "AVOID");
+        draw_string(291, 84, "FAIL");
         display::graphics.setForegroundColor(1);
     }
 
     if (Data->P[player_index].RD_Mods_For_Turn != 0) {
         if (Data->P[player_index].RD_Mods_For_Turn > 0) {
             display::graphics.setForegroundColor(5);
-            PrintAt(170, 153, "RESEARCH STRONG:   ");
-            RectFill(264, 149, 264, 153, 5);
-            RectFill(262, 151, 266, 151, 5); // This fakes a plus sign, which the game apparently can't draw -Leon
+            draw_string(170, 153, "RESEARCH STRONG:   ");
+            fill_rectangle(264, 149, 264, 153, 5);
+            fill_rectangle(262, 151, 266, 151, 5); // This fakes a plus sign, which the game apparently can't draw -Leon
         } else {
             display::graphics.setForegroundColor(8);
-            PrintAt(170, 153, "RESEARCH WEAK: ");
+            draw_string(170, 153, "RESEARCH WEAK: ");
         }
 
-        DispNum(0, 0, Data->P[player_index].RD_Mods_For_Turn);
-        PrintAt(0, 0, "%/TEAM");
+        draw_number(0, 0, Data->P[player_index].RD_Mods_For_Turn);
+        draw_string(0, 0, "%/TEAM");
     }
 
     display::graphics.setForegroundColor(20);
-    PrintAt(170, 139, "MAXIMUM R&D:");
+    draw_string(170, 139, "MAXIMUM R&D:");
 
     char EqDmg = 0;
 
@@ -1033,22 +1033,22 @@ void ShowUnit(char hw, char un, char player_index)
     if (EqDmg != 0) {
         IOBox(281, 88, 304, 102);
         display::graphics.setForegroundColor(8);
-        PrintAt(285, 97, "F");
+        draw_string(285, 97, "F");
         display::graphics.setForegroundColor(11);
-        PrintAt(0, 0, "IX");
+        draw_string(0, 0, "IX");
     }
 
     SCol = (PL->Num < 0) ? 20 : ((PL->Safety < 75) ? 8 : 16);
     display::graphics.setForegroundColor(SCol);
-    PrintAt(170, 111, "SAFETY FACTOR:");
+    draw_string(170, 111, "SAFETY FACTOR:");
 
     display::graphics.setForegroundColor(11);
-    DispMB(201, 15, Data->P[player_index].Cash);
+    draw_megabucks(201, 15, Data->P[player_index].Cash);
 
     display::graphics.setForegroundColor(11);
 
     if (!(player_index == 1 && hw == ROCKET_HARDWARE && un == MANNED_HW_FOUR_MAN_CAPSULE)) {
-        PrintAt(170, 80, &PL->Name[0]);
+        draw_string(170, 80, &PL->Name[0]);
     }
 
     switch (hw) {
@@ -1056,11 +1056,11 @@ void ShowUnit(char hw, char un, char player_index)
         switch (un) {
         case PROBE_HW_ORBITAL:
         case PROBE_HW_INTERPLANETARY:
-            PrintAt(0, 0, " SATELLITE");
+            draw_string(0, 0, " SATELLITE");
             break;
 
         case PROBE_HW_LUNAR:
-            PrintAt(0, 0, " PROBE");
+            draw_string(0, 0, " PROBE");
             break;
         }
 
@@ -1072,14 +1072,14 @@ void ShowUnit(char hw, char un, char player_index)
         case ROCKET_HW_TWO_STAGE:
         case ROCKET_HW_THREE_STAGE:
         case ROCKET_HW_MEGA_STAGE:
-            PrintAt(0, 0, " ROCKET");
+            draw_string(0, 0, " ROCKET");
             break;
 
         case ROCKET_HW_BOOSTERS:
             if (player_index == 0) {
-                PrintAt(0, 0, " STRAP-ON");
+                draw_string(0, 0, " STRAP-ON");
             } else {
-                PrintAt(170, 80, "BOOSTER STAGE");
+                draw_string(170, 80, "BOOSTER STAGE");
             }
 
             break;
@@ -1092,20 +1092,20 @@ void ShowUnit(char hw, char un, char player_index)
         case MANNED_HW_ONE_MAN_CAPSULE:
         case MANNED_HW_TWO_MAN_CAPSULE:
         case MANNED_HW_THREE_MAN_CAPSULE:
-            PrintAt(0, 0, " CAPSULE");
+            draw_string(0, 0, " CAPSULE");
             break;
 
         case MANNED_HW_MINISHUTTLE:
-            PrintAt(0, 0, " MINISHUTTLE");
+            draw_string(0, 0, " MINISHUTTLE");
             break;
 
         case MANNED_HW_FOUR_MAN_CAPSULE:
-            PrintAt(0, 0, " SPACECRAFT");
+            draw_string(0, 0, " SPACECRAFT");
             break;
 
         case MANNED_HW_TWO_MAN_MODULE:
         case MANNED_HW_ONE_MAN_MODULE:
-            PrintAt(0, 0, " MODULE");
+            draw_string(0, 0, " MODULE");
             break;
         }
 
@@ -1113,11 +1113,11 @@ void ShowUnit(char hw, char un, char player_index)
 
     case MISC_HARDWARE:
         if (un <= MISC_HW_KICKER_C) {
-            PrintAt(0, 0, " BOOSTER");
+            draw_string(0, 0, " BOOSTER");
         }
 
         if (un == MISC_HW_DOCKING_MODULE) {
-            PrintAt(0, 0, " MODULE");
+            draw_string(0, 0, " MODULE");
         }
 
         break;
@@ -1135,68 +1135,68 @@ void ShowUnit(char hw, char un, char player_index)
         }
     };
 
-    DispNum(241, 97, Init_Cost);
+    draw_number(241, 97, Init_Cost);
 
-    DispNum(230, 104, Unit_Cost);
+    draw_number(230, 104, Unit_Cost);
 
-    DispNum(275, 118, PL->RDCost);
+    draw_number(275, 118, PL->RDCost);
 
     if (hw != ROCKET_HARDWARE) {
-        DispNum(240, 125, PL->UnitWeight);
+        draw_number(240, 125, PL->UnitWeight);
     } else {
-        PrintAt(240, 125, "N/A");
+        draw_string(240, 125, "N/A");
     }
 
     display::graphics.setForegroundColor(20);
 
     if (PL->MaxRD != 0)   {
-        DispNum(242, 139, PL->MaxRD);
-        DispChr('%');
+        draw_number(242, 139, PL->MaxRD);
+        draw_character('%');
 
         if (options.want_debug) {
-            PrintAt(0, 0, " / ");
-            DispNum(0, 0, PL->MSF);
-            DispChr('%'); //Used to test if MSF was holding the right value
+            draw_string(0, 0, " / ");
+            draw_number(0, 0, PL->MSF);
+            draw_character('%'); //Used to test if MSF was holding the right value
         }
     } else {
-        PrintAt(242, 139, "--");
+        draw_string(242, 139, "--");
     }
 
     display::graphics.setForegroundColor(11);
-    DispNum(254, 146, PL->MaxSafety);
-    DispChr('%');
+    draw_number(254, 146, PL->MaxSafety);
+    draw_character('%');
 
     if (hw != ROCKET_HARDWARE) {
-        PrintAt(268, 132, "N/A");    /* Payload */
+        draw_string(268, 132, "N/A");    /* Payload */
     } else {
-        DispNum(268, 132, PL->MaxPay);
+        draw_number(268, 132, PL->MaxPay);
     }
 
     if (PL->Num == -1) {
         display::graphics.setForegroundColor(8);
-        PrintAt(170, 90, "NO PROGRAM INITIATED");
+        draw_string(170, 90, "NO PROGRAM INITIATED");
         display::graphics.setForegroundColor(20);
-        DispNum(256, 111, 0);
-        DispChr('%');
+        draw_number(256, 111, 0);
+        draw_character('%');
     } else {
         OnHand(PL->Num);
         display::graphics.setForegroundColor(SCol);
-        DispNum(256, 111, PL->Safety);
-        DispChr('%');
+        draw_number(256, 111, PL->Safety);
+        draw_character('%');
 
         //Display Damaged Equipment
         if (PL->Damage != 0) {
             display::graphics.setForegroundColor(8);
-            PrintAt(280, 111, "(");
-            DispNum(283, 111, PL->Safety + PL->Damage < 1 ? 1 : PL->Safety + PL->Damage);
-            DispChr('%');
-            DispChr(')');
+            draw_string(280, 111, "(");
+            draw_number(283, 111, PL->Safety + PL->Damage < 1 ? 1 : PL->Safety + PL->Damage);
+            draw_character('%');
+            draw_character(')');
         }
 
         qty = 0;
     };
 
-    RectFill(27, 95, 130, 171, 0);
+    fill_rectangle(27, 95, 130, 171, 0);
 
     BigHardMe(player_index, 27, 95, hw, un, qty, 32);
 }
@@ -1209,8 +1209,8 @@ void OnHand(char qty)
         display::graphics.setForegroundColor(9);
     }
 
-    PrintAt(170, 90, "UNITS ON HAND:");
-    DispNum(251, 90, qty);
+    draw_string(170, 90, "UNITS ON HAND:");
+    draw_number(251, 90, qty);
     return;
 }
 
@@ -1243,26 +1243,26 @@ void DrawHPurc(char player_index)
     IOBox(163, 180, 317, 197);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
-    FlagSm(player_index, 4, 4);
+    draw_small_flag(player_index, 4, 4);
 
     IOBox(264, 162, 316, 176);
     display::graphics.setForegroundColor(11);
-    PrintAt(279, 171, "UNDO");
+    draw_string(279, 171, "UNDO");
 
     OutBox(21, 90, 136, 176);
     InBox(26, 94, 131, 172);
 
     display::graphics.setForegroundColor(1);
-    DispBig(35, 5, "PURCHASING", 0, -1);
+    draw_heading(35, 5, "PURCHASING", 0, -1);
     //GradRect(27,95,130,171,player_index*16+128);
-    RectFill(27, 95, 130, 171, 0);
+    fill_rectangle(27, 95, 130, 171, 0);
 
-    LTArrow(24, 186);
-    RTArrow(101, 186);
+    draw_left_arrow(24, 186);
+    draw_right_arrow(101, 186);
     display::graphics.setForegroundColor(9);
-    PrintAt(34, 80, "V");
+    draw_string(34, 80, "V");
     display::graphics.setForegroundColor(1);
-    PrintAt(0, 0, "ISIT R&D FACILITY");
+    draw_string(0, 0, "ISIT R&D FACILITY");
 
     but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
     but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
@@ -1270,24 +1270,24 @@ void DrawHPurc(char player_index)
     but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(9);
-    PrintAt(191, 190, "P");
+    draw_string(191, 190, "P");
     display::graphics.setForegroundColor(11);
-    PrintAt(0, 0, "URCHASE EQUIPMENT");
+    draw_string(0, 0, "URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
-        PrintAt(158, 8, "SPRING");
+        draw_string(158, 8, "SPRING");
     } else {
-        PrintAt(162, 8, "FALL");
+        draw_string(162, 8, "FALL");
     }
 
-    PrintAt(163, 15, "19");
-    DispNum(0, 0, Data->Year);
+    draw_string(163, 15, "19");
+    draw_number(0, 0, Data->Year);
 
-    PrintAt(200, 8, "CASH:");
-    DispMB(201, 15, Data->P[player_index].Cash);
+    draw_string(200, 8, "CASH:");
+    draw_megabucks(201, 15, Data->P[player_index].Cash);
 
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
+    draw_string(258, 13, "CONTINUE");
     ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
     helpText = "i008";
     keyHelpText = "k008";

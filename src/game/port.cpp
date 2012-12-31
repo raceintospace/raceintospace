@@ -637,31 +637,31 @@ void DrawSpaceport(char plr)
     ShBox(0, 190, 319, 199);            // Base Box :: larger
 
     display::graphics.setForegroundColor(0);
-    PrintAt(257, 197, "CASH:");
-    DispMB(285, 197, Data->P[plr].Cash);
+    draw_string(257, 197, "CASH:");
+    draw_megabucks(285, 197, Data->P[plr].Cash);
     display::graphics.setForegroundColor(11);
-    PrintAt(256, 196, "CASH:");
-    DispMB(284, 196, Data->P[plr].Cash);
+    draw_string(256, 196, "CASH:");
+    draw_megabucks(284, 196, Data->P[plr].Cash);
 
     display::graphics.setForegroundColor(0);
 
     if (Data->Season == 0) {
-        PrintAt(166, 197, "SPRING 19");
+        draw_string(166, 197, "SPRING 19");
     } else {
-        PrintAt(166, 197, "FALL 19");
+        draw_string(166, 197, "FALL 19");
     }
 
-    DispNum(0, 0, Data->Year);
+    draw_number(0, 0, Data->Year);
 
     display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
-        PrintAt(165, 196, "SPRING 19");
+        draw_string(165, 196, "SPRING 19");
     } else {
-        PrintAt(165, 196, "FALL 19");
+        draw_string(165, 196, "FALL 19");
     }
 
-    DispNum(0, 0, Data->Year);
+    draw_number(0, 0, Data->Year);
 
 
     // FLAG DRAW
@@ -692,11 +692,11 @@ void DrawSpaceport(char plr)
 
 void PortText(int x, int y, char *txt, char col)
 {
-    RectFill(1, 192, 160, 198, 3);
+    fill_rectangle(1, 192, 160, 198, 3);
     display::graphics.setForegroundColor(0);
-    PrintAt(x + 1, y + 1, txt);
+    draw_string(x + 1, y + 1, txt);
     display::graphics.setForegroundColor(col);
-    PrintAt(x, y, txt);
+    draw_string(x, y, txt);
 }
 
 
@@ -1841,18 +1841,18 @@ char Request(char plr, char *s, char md)
     IOBox(91, 103, 164, 130);
     InBox(92, 58, 243, 97);
     display::graphics.setForegroundColor(1);
-    DispBig(111, 110, "YES", 0, 0);
-    DispBig(194, 110, "NO", 0, 0);
+    draw_heading(111, 110, "YES", 0, 0);
+    draw_heading(194, 110, "NO", 0, 0);
 
     display::graphics.setForegroundColor(11);
 
     if (md == 6)  {
-        PrintAt(166 - i * 7, 65, s);
+        draw_string(166 - i * 7, 65, s);
     } else {
-        DispBig(166 - i * 10, 65, &s[0], 0, -1);
+        draw_heading(166 - i * 10, 65, &s[0], 0, -1);
     }
 
-    PrintAt(135, 94, "ARE YOU SURE?");
+    draw_string(135, 94, "ARE YOU SURE?");
 
     while (1) {
         if (md != 6) {
@@ -1915,56 +1915,56 @@ char MisReq(char plr)
     ShBox(53, 29, 236, 160);
     ShBox(60, 34, 229, 44);
     InBox(60, 47, 229, 120);
-    // RectFill(61,48,228,119,0);
+    // fill_rectangle(61,48,228,119,0);
     ShBox(63, 50, 226, 117);
 
     if (num == 0) {
         IOBox(60, 141, 141, 155);
         IOBox(148, 141, 229, 155);
         display::graphics.setForegroundColor(1);
-        PrintAt(70, 129, "CONFIRM LAUNCH SCHEDULE OR");
-        PrintAt(80, 136, "CHOOSE TO REVIEW IT.");
+        draw_string(70, 129, "CONFIRM LAUNCH SCHEDULE OR");
+        draw_string(80, 136, "CHOOSE TO REVIEW IT.");
         display::graphics.setForegroundColor(8);
-        PrintAt(85, 150, "C");
+        draw_string(85, 150, "C");
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, "ONFIRM");
+        draw_string(0, 0, "ONFIRM");
         display::graphics.setForegroundColor(8);
-        PrintAt(179, 150, "R");
+        draw_string(179, 150, "R");
         display::graphics.setForegroundColor(1);
-        PrintAt(0, 0, "EVIEW");
+        draw_string(0, 0, "EVIEW");
     } else {
         IOBox(60, 141, 229, 155);
         display::graphics.setForegroundColor(1);
-        PrintAt(62, 129, "MISSIONS DO NOT ALL HAVE");
-        PrintAt(62, 136, "ASSIGNMENTS. NO COMMIT POSSIBLE");
-        PrintAt(120, 150, "REVIEW MISSIONS");
+        draw_string(62, 129, "MISSIONS DO NOT ALL HAVE");
+        draw_string(62, 136, "ASSIGNMENTS. NO COMMIT POSSIBLE");
+        draw_string(120, 150, "REVIEW MISSIONS");
     };
 
     display::graphics.setForegroundColor(10);
 
-    PrintAt(94, 41, "LAUNCH CONFIRMATION");
+    draw_string(94, 41, "LAUNCH CONFIRMATION");
 
     display::graphics.setForegroundColor(1);
 
     for (i = 0; i < 3; i++) {
-        PrintAt(68, 59 + 20 * i, "PAD ");
-        DispChr(0x41 + i);
-        PrintAt(0, 0, ": ");
+        draw_string(68, 59 + 20 * i, "PAD ");
+        draw_character(0x41 + i);
+        draw_string(0, 0, ": ");
 
         if (Data->P[plr].Mission[i].MissionCode) {
-            PrintAt(0, 0, &Data->P[plr].Mission[i].Name[0]);
+            draw_string(0, 0, &Data->P[plr].Mission[i].Name[0]);
 
             if (Data->P[plr].Mission[i].Men > 0) {
-                PrintAt(86, 65 + 20 * i, "MANNED MISSION");
+                draw_string(86, 65 + 20 * i, "MANNED MISSION");
             } else {
-                PrintAt(86, 65 + 20 * i, "UNMANNED MISSION");
+                draw_string(86, 65 + 20 * i, "UNMANNED MISSION");
             };
 
             if (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 display::graphics.setForegroundColor(9);
-                PrintAt(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
+                draw_string(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
             } else {
-                PrintAt(86, 71 + 20 * i, "HARDWARE ASSIGNED");
+                draw_string(86, 71 + 20 * i, "HARDWARE ASSIGNED");
             };
 
             display::graphics.setForegroundColor(1);

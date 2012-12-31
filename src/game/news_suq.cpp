@@ -157,12 +157,12 @@ char REvent(char plr)
 
         Data->P[plr].Budget += m;
         /*display::graphics.setForegroundColor(15);
-        PrintAt(200,30,"BUDGET MOD: ");
-        if (m<0) {PrintAt(0,0,"-");m*=-1;};
-        DispNum(0,0,m);
-        PrintAt(200,40,"BUDGET: ");
-        DispNum(0,0,Data->P[plr].Budget);
-        DispNum(100,10,Data->Events[Data->Count]);*/
+        draw_string(200,30,"BUDGET MOD: ");
+        if (m<0) {draw_string(0,0,"-");m*=-1;};
+        draw_number(0,0,m);
+        draw_string(200,40,"BUDGET: ");
+        draw_number(0,0,Data->P[plr].Budget);
+        draw_number(100,10,Data->Events[Data->Count]);*/
     } /* end if */
 
     if (Data->Year <= 60 && Data->Events[Data->Count] > 44) {

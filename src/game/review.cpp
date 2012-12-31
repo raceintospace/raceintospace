@@ -64,13 +64,13 @@ void DrawReview(char plr)
 
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
-    FlagSm(plr, 4, 4);
-    RectFill(5, 28, 314, 195, 0);
-    RectFill(5, 122, 314, 195, 0);
+    draw_small_flag(plr, 4, 4);
+    fill_rectangle(5, 28, 314, 195, 0);
+    fill_rectangle(5, 122, 314, 195, 0);
     ShBox(6, 123, 313, 194);
-    RectFill(7, 124, 312, 193, 9);
+    fill_rectangle(7, 124, 312, 193, 9);
     InBox(11, 128, 307, 189);
-    RectFill(12, 129, 306, 188, 7);
+    fill_rectangle(12, 129, 306, 188, 7);
     ShBox(6, 29, 177, 121);
     ShBox(179, 29, 313, 121);
     InBox(182, 32, 309, 117);
@@ -78,28 +78,28 @@ void DrawReview(char plr)
     IOBox(243, 3, 316, 19);
 
     if (plr == 0) {
-        DispBig(40, 5, "PRESIDENTIAL REVIEW", 0, -1);
+        draw_heading(40, 5, "PRESIDENTIAL REVIEW", 0, -1);
     } else {
-        DispBig(40, 5, "POLITBURO REVIEW", 0, -1);
+        draw_heading(40, 5, "POLITBURO REVIEW", 0, -1);
     }
 
     display::graphics.setForegroundColor(1);
-    PrintAt(257, 13, "CONTINUE");
+    draw_string(257, 13, "CONTINUE");
     display::graphics.setForegroundColor(1);
-    PrintAt(59, 36, "JOB PERFORMANCE");
+    draw_string(59, 36, "JOB PERFORMANCE");
     display::graphics.setForegroundColor(6);
-    PrintAt(8, 46, "GOOD");
+    draw_string(8, 46, "GOOD");
     display::graphics.setForegroundColor(1);
-    PrintAt(8, 77, "FAIR");
+    draw_string(8, 77, "FAIR");
     display::graphics.setForegroundColor(9);
-    PrintAt(8, 109, "POOR");
+    draw_string(8, 109, "POOR");
     display::graphics.setForegroundColor(1);
-    DispNum(154, 117, Data->Year - 1);
-    DispNum(126, 117, Data->Year - 2);
-    DispNum(97, 117, Data->Year - 3);
-    DispNum(70, 117, Data->Year - 4);
-    DispNum(42, 117, Data->Year - 5);
-    RectFill(32, 39, 172, 111, 0);
+    draw_number(154, 117, Data->Year - 1);
+    draw_number(126, 117, Data->Year - 2);
+    draw_number(97, 117, Data->Year - 3);
+    draw_number(70, 117, Data->Year - 4);
+    draw_number(42, 117, Data->Year - 5);
+    fill_rectangle(32, 39, 172, 111, 0);
     GradRect(33, 39, 171, 74, 0);
     GradRect(33, 75, 171, 110, 0);
     display::graphics.setForegroundColor(3);
@@ -141,7 +141,7 @@ void DrawReview(char plr)
             cte = 73;
         }
 
-        RectFill(166 - i * 28, 75, 151 - i * 28, cte, 5 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
+        fill_rectangle(166 - i * 28, 75, 151 - i * 28, cte, 5 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
         display::graphics.setForegroundColor(6 + ((Data->P[plr].PresRev[i] <= 8) ? 0 : 3));
         pline(167 - i * 28, 75, 167 - i * 28, cte);
     }
@@ -288,10 +288,10 @@ void MisRev(char plr, int pres)
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
-    DispBig(40, 5, "MISSION REVIEW", 0, -1);
+    draw_heading(40, 5, "MISSION REVIEW", 0, -1);
     display::graphics.setForegroundColor(1);
-    PrintAt(258, 13, "CONTINUE");
-    FlagSm(plr, 4, 4);
+    draw_string(258, 13, "CONTINUE");
+    draw_small_flag(plr, 4, 4);
 
     key = 0;
     Draw_Mis_Stats(plr, Data->P[plr].PastMissionCount - 1, 0, 1);
@@ -383,7 +383,7 @@ void DrawRevText(char plr, int val)
             grMoveTo(20, 140 + 12 * line);
         }
 
-        DispChr(buffer[index]);
+        draw_character(buffer[index]);
         length++;
         index++;
     } while (buffer[index] != 0);

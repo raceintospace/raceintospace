@@ -142,7 +142,7 @@ void Credits(void)
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
                 display::graphics.setForegroundColor(CREDIT[i].col);
-                PrintAt(CREDIT[i].x, CREDIT[i].y, CREDIT[i].Txt);
+                draw_string(CREDIT[i].x, CREDIT[i].y, CREDIT[i].Txt);
             }
         }
 
@@ -235,21 +235,21 @@ void NextTurn(char plr)
     display::graphics.setForegroundColor(6 + plr * 3);
 
     if (plr == 0) {
-        DispBig(15, 64, "DIRECTOR OF THE UNITED STATES", 0, -1);
+        draw_heading(15, 64, "DIRECTOR OF THE UNITED STATES", 0, -1);
     } else {
-        DispBig(30, 64, "CHIEF DESIGNER OF THE USSR", 0, -1);
+        draw_heading(30, 64, "CHIEF DESIGNER OF THE USSR", 0, -1);
     }
 
     display::graphics.setForegroundColor(11);
     grMoveTo(175, 122);
 
     if (Data->Season == 0) {
-        PrintAt(0, 0, "SPRING 19");
+        draw_string(0, 0, "SPRING 19");
     } else {
-        PrintAt(0, 0, "FALL 19");
+        draw_string(0, 0, "FALL 19");
     }
 
-    DispNum(0, 0, Data->Year);
+    draw_number(0, 0, Data->Year);
     vhptr->copyTo(display::graphics.screen(), 110 * plr, 0, 30, 85, 31 + 107, 85 + 94);
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
