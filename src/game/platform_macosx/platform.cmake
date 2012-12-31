@@ -19,18 +19,14 @@ set_source_files_properties(${BundleResources} PROPERTIES MACOSX_PACKAGE_LOCATIO
 
 # Copy all these files into the bundle
 file(GLOB_RECURSE game_datafiles
-  RELATIVE ${PROJECT_SOURCE_DIR}
-  ${PROJECT_SOURCE_DIR}/gamedata/*.*
-  ${PROJECT_SOURCE_DIR}/audio/*.*
-  ${PROJECT_SOURCE_DIR}/images/*.*
-  ${PROJECT_SOURCE_DIR}/video/*.*
-  ${PROJECT_SOURCE_DIR}/midi/*.*
+  RELATIVE ${PROJECT_SOURCE_DIR}/data/
+  ${PROJECT_SOURCE_DIR}/data/*
   )
 foreach(datafile ${game_datafiles})
   get_filename_component(parent_dir "${datafile}" PATH)
-  set(abspath "${PROJECT_SOURCE_DIR}/${datafile}")
+  set(abspath "${PROJECT_SOURCE_DIR}/data/${datafile}")
   set_source_files_properties("${abspath}" PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/${parent_dir}")
-  list(APPEND BundleResources "${PROJECT_SOURCE_DIR}/${datafile}")
+  list(APPEND BundleResources "${PROJECT_SOURCE_DIR}/data/${datafile}")
 endforeach(datafile)
 
 # Build the .app in the CMake build root
