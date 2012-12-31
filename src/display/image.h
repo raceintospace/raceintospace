@@ -2,6 +2,7 @@
 #define DISPLAY_IMAGE_H
 
 #include "palette.h"
+#include "graphics.h"
 
 #include <stdio.h>
 #include <string>
@@ -26,6 +27,9 @@ public:
     // copy an existing PNGImage
     Image(const Image &source);
 
+    // create a screenshot
+    Image(const Graphics &source);
+
     virtual ~Image();
 
     unsigned int width() const {
@@ -47,6 +51,8 @@ public:
     SDL_Surface *surface() const {
         return _surface;
     }
+
+    void write_png(const std::string &filename);
 
     static std::string libpng_headers_version();
     static std::string libpng_runtime_version();

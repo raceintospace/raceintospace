@@ -114,7 +114,6 @@ void Graphics::setPalette(uint8_t *palette)
     memcpy(_palette, palette, 256 * 3);
 }
 
-
 /*
 void Display::present() {
     doScale();

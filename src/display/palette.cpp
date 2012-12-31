@@ -25,6 +25,13 @@ Palette::Palette(const Palette &copy)
     memcpy(colors, copy.colors, sizeof(colors));
 }
 
+Palette::Palette(const PaletteInterface &copy)
+{
+    for (int i = 0; i < 256; i++) {
+        set(i, copy.get(i));
+    }
+}
+
 Palette::~Palette()
 {
 }

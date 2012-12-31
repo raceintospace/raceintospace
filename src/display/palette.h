@@ -33,6 +33,7 @@ class Palette : public PaletteInterface
 public:
     Palette();
     Palette(const Palette &copy);
+    Palette(const PaletteInterface &copy);
     virtual ~Palette();
 
     virtual void set(uint8_t index, const Color &color);

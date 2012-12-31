@@ -6,6 +6,7 @@
 #include <png.h>
 #include <zlib.h>
 #include <assert.h>
+#include <errno.h>
 
 #include <boost/format.hpp>
 #include <string>
@@ -187,6 +188,7 @@ Image::Image(const Image &source):
     _palette(source._palette)
 {
     _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
+    // XXX: is this supposed to copy the bits?
 }
 
 Image::~Image()
@@ -195,6 +197,89 @@ Image::~Image()
         SDL_FreeSurface(_surface);
         _surface = NULL;
     }
+}
+
+// Create a screenshot
+Image::Image(const Graphics &source) :
+    _width(Graphics::WIDTH),
+    _height(Graphics::HEIGHT),
+    _palette(legacy_palette)
+{
+    _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
+
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = _width;
+    rect.h = _height;
+
+    SDL_BlitSurface(source.screen()->surface(), &rect, _surface, &rect);
+}
+
+void Image::write_png(const std::string &filename)
+{
+    FILE *fp;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    uint8_t **rows = (uint8_t **)alloca(sizeof(void *) * _height);
+
+    fp = fopen(filename.c_str(), "wb");
+
+    if (!fp) {
+        fprintf(stderr, "unable to open output file: %s\n", strerror(errno));
+        throw std::runtime_error("unable to open output file");
+    }
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+    if (!png_ptr) {
+        throw std::runtime_error("unable to create write struct");
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+
+    if (!info_ptr) {
+        throw std::runtime_error("unable to create info struct");
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        fclose(fp);
+        throw std::runtime_error("PNG write error");
+    }
+
+    png_init_io(png_ptr, fp);
+
+    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
+
+    png_set_IHDR(png_ptr, info_ptr,
+                 _width, _height,
+                 8, PNG_COLOR_TYPE_PALETTE,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT
+                );
+
+    png_color png_pal[256];
+
+    for (int i = 0; i < 256; i ++) {
+        const Color &color = _palette.get(i);
+        png_pal[i].red = color.r;
+        png_pal[i].green = color.g;
+        png_pal[i].blue = color.b;
+    }
+
+    png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
+
+    for (int i = 0; i < _height; i++) {
+        rows[i] = ((uint8_t *)_surface->pixels) + (_width * i);
+    }
+
+    png_set_rows(png_ptr, info_ptr, rows);
+
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+
+    fclose(fp);
 }
 
 #define formatted_libpng_version(version) ((boost::format("%1%.%2%.%3%") % (version / 10000) % ((version / 100) % 100) % (version % 100)).str())
