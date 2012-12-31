@@ -2,6 +2,7 @@
 #define DISPLAY_SURFACE_H
 
 #include <SDL.h>
+#include <boost/shared_ptr.hpp>
 
 namespace display
 {
@@ -58,6 +59,15 @@ public:
     unsigned int height() const {
         return _height;
     }
+
+    void draw(boost::shared_ptr<Image> image, unsigned int x, unsigned int y) {
+		draw(image.get(), x, y);
+	}
+
+    void draw(boost::shared_ptr<Image> image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
+		draw(image.get(), srcX, srcY, srcW, srcH, x, y);
+	}
+
 
 private:
     unsigned int _width;

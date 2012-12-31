@@ -128,7 +128,7 @@ void Credits(void)
 
     boost::shared_ptr<display::Image> image(Filesystem::readImage("images/first.img.3.png"));
 
-    image->export_to_legacy_palette();
+    image->exportPalette();
 
     for (k = 0; k < 2; k++) {
 
@@ -136,8 +136,8 @@ void Credits(void)
             FadeOut(2, display::graphics.palette(), 30, 0, 0);    // Screen #2
         }
 
-        image->export_to_legacy_palette();
-        display::graphics.screen()->draw(image.get(), 0, 0);
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 0, 0);
 
         for (i = 0; i < nCREDIT; i++) {
             if (CREDIT[i].page == k) {
@@ -188,8 +188,8 @@ void Introd(void)
 
         boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
 
-        image->export_to_legacy_palette();
-        display::graphics.screen()->draw(image.get(), 0, 0);
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 0, 0);
 
         FadeIn(2, display::graphics.palette(), 30, 0, 0);
 
@@ -215,19 +215,11 @@ done:
 
 void NextTurn(char plr)
 {
-    FILE *fin = NULL;
-    int32_t len = 0;
-
-    memset(display::graphics.palette(), 0x00, 3 * 256);
     helpText = "i000";
     keyHelpText = "k000";
 
-    fin = sOpen("TURN.BUT", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fin);
-    len = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    fclose(fin);
-
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len, vhptr->width(), vhptr->height());
+	boost::shared_ptr<display::Image> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
+	countrySeals->exportPalette();
 
     display::graphics.screen()->clear(0);
 
@@ -250,7 +242,7 @@ void NextTurn(char plr)
     }
 
     draw_number(0, 0, Data->Year);
-    vhptr->copyTo(display::graphics.screen(), 110 * plr, 0, 30, 85, 31 + 107, 85 + 94);
+	display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 94, 30, 85);
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
