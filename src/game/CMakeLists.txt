@@ -23,6 +23,7 @@ set(game_sources
   budget.cpp
   crash.cpp
   crew.cpp
+  draw.cpp
   endgame.cpp
   endianness.cpp
   file.cpp

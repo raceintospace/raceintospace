@@ -27,6 +27,7 @@
 
 #include "radar.h"
 #include "gamedata.h"
+#include "draw.h"
 #include "Buzz_inc.h"
 #include "future.h"
 #include "game_main.h"

@@ -4,32 +4,14 @@
 #include <string>
 #include "display/surface.h"
 
-void InBox(int x1, int y1, int x2, int y2);
-void OutBox(int x1, int y1, int x2, int y2);
 void WaitForMouseUp(void);
-void DispNum(int xx, int yy, int num);
-void DispMB(int x, int y, int val);
-void PrintAt(int x, int y, const char *s);
-void RectFill(int x1, int y1, int x2, int y2, char col);
 void GetMisType(char mcode);
 void GetMouse(void);
-void FlagSm(char plr, int xm, int ym);
-void DispBig(int x, int y, const char *txt, char mode, char te);
-void IOBox(int x1, int y1, int x2, int y2);
-void ShBox(int x1, int y1, int x2, int y2);
-void DispChr(char chr);
-void GradRect(int x1, int y1, int x2, int y2, char plr);
-void UPArrow(int x1, int y1);
-void DNArrow(int x1, int y1);
-void RTArrow(int x1, int y1);
-void LTArrow(int x1, int y1);
 void WaitForKeyOrMouseDown(void) ;
-void Flag(int x, int y, char plr);
 void VerifySF(char plr)  ;
 int MisRandom(void);
 void DestroyPad(char plr, char pad, int cost, char mode);
 void PauseMouse(void);
-void PrintAtKey(int x, int y, const char *s, char val);
 void GetMouse_fast(void);
 
 extern char Option;

@@ -31,6 +31,7 @@
 #include "ast3.h"
 #include "ast4.h"
 #include "game_main.h"
+#include "draw.h"
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"

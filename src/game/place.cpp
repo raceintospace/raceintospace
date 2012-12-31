@@ -25,6 +25,7 @@
 #include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "utils.h"
 #include "game_main.h"
 #include "museum.h"

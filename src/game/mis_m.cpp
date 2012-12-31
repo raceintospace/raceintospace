@@ -28,6 +28,7 @@
 
 #include "mis_m.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "utils.h"
 #include "options.h"
 #include "game_main.h"

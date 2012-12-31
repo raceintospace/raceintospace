@@ -29,6 +29,7 @@
 
 #include "news.h"
 #include "gamedata.h"
+#include "draw.h"
 #include "Buzz_inc.h"
 #include "mmfile.h"
 #include "game_main.h"

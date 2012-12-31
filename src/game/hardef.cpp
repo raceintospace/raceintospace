@@ -30,6 +30,7 @@
 
 #include "Buzz_inc.h"
 #include "hardef.h"
+#include "draw.h"
 #include "intel.h"
 #include "game_main.h"
 #include "port.h"

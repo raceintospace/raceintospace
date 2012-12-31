@@ -29,6 +29,7 @@
 #include "review.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "game_main.h"
 #include "place.h"
 #include "port.h"

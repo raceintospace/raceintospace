@@ -36,6 +36,7 @@
 #include "Buzz_inc.h"
 #include "utils.h"
 #include "ast1.h"
+#include "draw.h"
 #include "budget.h"
 #include "future.h"
 #include "game_main.h"

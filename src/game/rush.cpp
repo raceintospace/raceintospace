@@ -29,6 +29,7 @@
 #include "rush.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "draw.h"
 #include "place.h"
 #include "mc.h"
 #include "sdlhelper.h"

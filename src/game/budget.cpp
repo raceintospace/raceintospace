@@ -29,6 +29,7 @@
 #include "budget.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "draw.h"
 #include "mc.h"
 #include "records.h"
 #include "sdlhelper.h"

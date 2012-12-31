@@ -20,6 +20,7 @@
 #include "Buzz_inc.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "game_main.h"
+#include "draw.h"
 #include "place.h"
 #include "mc.h"
 #include "gr.h"

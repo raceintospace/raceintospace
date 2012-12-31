@@ -29,6 +29,7 @@
 #include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "options.h"
 #include "game_main.h"
 #include "randomize.h"

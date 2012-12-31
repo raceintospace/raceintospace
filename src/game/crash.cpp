@@ -5,6 +5,7 @@
 
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "draw.h"
 #include "gr.h"
 #include "sdlhelper.h"
 #include "pace.h"

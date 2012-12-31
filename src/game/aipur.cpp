@@ -30,6 +30,7 @@
 #include "aipur.h"
 #include "Buzz_inc.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
+#include "draw.h"
 #include "hardef.h"
 #include "game_main.h"
 #include "museum.h"

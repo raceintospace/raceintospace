@@ -28,6 +28,7 @@
 #include "Buzz_inc.h"
 #include "ast0.h"
 #include "ast4.h"
+#include "draw.h"
 #include "game_main.h"
 #include "place.h"
 #include "sdlhelper.h"

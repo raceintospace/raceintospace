@@ -21,6 +21,7 @@
 #include "Buzz_inc.h"
 #include "records.h"
 #include "hardef.h"
+#include "draw.h"
 #include "game_main.h"
 #include "place.h"
 #include "port.h"

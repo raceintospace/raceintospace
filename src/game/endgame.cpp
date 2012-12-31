@@ -24,6 +24,7 @@
 #include "endgame.h"
 #include "Buzz_inc.h"
 #include "aipur.h"
+#include "draw.h"
 #include "future.h"
 #include "game_main.h"
 #include "place.h"

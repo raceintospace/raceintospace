@@ -30,6 +30,7 @@
 #include "Buzz_inc.h"
 #include "utils.h"
 #include "intro.h"
+#include "draw.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"

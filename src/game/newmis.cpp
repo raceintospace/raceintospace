@@ -22,6 +22,7 @@
 #include "newmis.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "draw.h"
 #include "mis_c.h"
 #include "place.h"
 #include "port.h"

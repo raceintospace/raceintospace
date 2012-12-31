@@ -31,6 +31,7 @@
 #include "Buzz_inc.h"
 #include "rdplex.h"
 #include "options.h"
+#include "draw.h"
 #include "ast4.h"
 #include "game_main.h"
 #include "place.h"

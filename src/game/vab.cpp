@@ -33,6 +33,7 @@
 #include "vab.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "options.h"
 #include "admin.h"
 #include "game_main.h"

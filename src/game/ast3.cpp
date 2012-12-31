@@ -32,6 +32,7 @@
 #include "Buzz_inc.h"
 #include "options.h"
 #include "ast0.h"
+#include "draw.h"
 #include "game_main.h"
 #include "place.h"
 #include "replay.h"

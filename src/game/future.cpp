@@ -25,6 +25,7 @@
 #include "future.h"
 #include <assert.h>
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "admin.h"
 #include "crew.h"
 #include "futbub.h"

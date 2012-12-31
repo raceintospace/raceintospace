@@ -29,6 +29,7 @@
 
 #include "museum.h"
 #include "Buzz_inc.h"
+#include "draw.h"
 #include "hardef.h"
 #include "game_main.h"
 #include "place.h"

@@ -32,6 +32,7 @@
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "future.h"
+#include "draw.h"
 #include "intel.h"
 #include "game_main.h"
 #include "place.h"

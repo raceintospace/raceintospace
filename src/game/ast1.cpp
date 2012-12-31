@@ -30,6 +30,7 @@
 #include "ast1.h"
 #include "Buzz_inc.h"
 #include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
+#include "draw.h"
 #include "game_main.h"
 #include "place.h"
 #include "ast0.h"
