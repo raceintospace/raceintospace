@@ -107,7 +107,7 @@ void Image::read_png()
 
         // this assumes 8-bit images
         for (unsigned int i = 0; i < _height; i ++) {
-            memcpy(&((char *)_surface->pixels)[_width * i], row_pointers[i], _width);
+            memcpy(&((char *)_surface->pixels)[_surface->pitch * i], row_pointers[i], _width);
         }
     }
 
@@ -272,7 +272,7 @@ void Image::write_png(const std::string &filename)
     png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
 
     for (int i = 0; i < _height; i++) {
-        rows[i] = ((uint8_t *)_surface->pixels) + (_width * i);
+        rows[i] = ((uint8_t *)_surface->pixels) + (_surface->pitch * i);
     }
 
     png_set_rows(png_ptr, info_ptr, rows);
