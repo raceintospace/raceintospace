@@ -200,20 +200,26 @@ Image::~Image()
 }
 
 // Create a screenshot
-Image::Image(const Graphics &source) :
-    _width(Graphics::WIDTH),
-    _height(Graphics::HEIGHT),
+Image::Image(const Graphics &source, int x, int y, int width, int height):
+    _width(width),
+    _height(height),
     _palette(legacy_palette)
 {
     _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
 
-    SDL_Rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.w = _width;
-    rect.h = _height;
+    SDL_Rect src;
+    src.x = x;
+    src.y = y;
+    src.w = _width;
+    src.h = _height;
 
-    SDL_BlitSurface(source.screen()->surface(), &rect, _surface, &rect);
+    SDL_Rect dst;
+    dst.x = 0;
+    dst.y = 0;
+    dst.w = _width;
+    dst.h = _height;
+
+    SDL_BlitSurface(source.screen()->surface(), &src, _surface, &dst);
 }
 
 void Image::write_png(const std::string &filename)

@@ -28,7 +28,7 @@ public:
     Image(const Image &source);
 
     // create a screenshot
-    Image(const Graphics &source);
+    Image(const Graphics &source, int x = 0, int y = 0, int width = Graphics::WIDTH, int height = Graphics::HEIGHT);
 
     virtual ~Image();
 
