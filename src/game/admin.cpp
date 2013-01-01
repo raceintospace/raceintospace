@@ -49,6 +49,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -1346,8 +1347,12 @@ void FileText(char *name)
 int FutureCheck(char plr, char type)
 {
     int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
-    int i, pad, p[3], m[3], t = 0, tx[3] = {0, 0, 0};
-    FILE *fin;
+    int i;
+    int pad;
+    int p[3];
+    int m[3];
+    int t = 0;
+    int tx[3] = {0, 0, 0};
 
     for (i = 0; i < 3; i++) {
         p[i] = Data->P[plr].LaunchFacility[i];
@@ -1367,13 +1372,7 @@ int FutureCheck(char plr, char type)
 
     PortPal(plr);
 
-    fin = sOpen("LPADS.BUT", "rb", 0);
-
-    i = fread((void *)display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-
-    fclose(fin);
-
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
+    boost::shared_ptr<display::Image> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
 
     if (type == 0) {
         helpText = "i010";
@@ -1570,7 +1569,7 @@ int FutureCheck(char plr, char type)
 
         draw_character(0x41 + i);
 
-        vhptr->copyTo(display::graphics.screen(), 156 * plr + t * 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
+        display::graphics.screen()->draw(launchPads, 156 * plr + t * 39, i * 30, 39, 30, 65, 36 + i * 51);
     }
 
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
@@ -1609,7 +1608,7 @@ int FutureCheck(char plr, char type)
 
                 if (p[i] == -1 && Data->P[plr].Cash >= 20 && type == 0) {
 
-                    vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
+                    display::graphics.screen()->draw(launchPads, 156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
                     Data->P[plr].Cash -= 20;
                     Data->P[plr].Spend[0][3] += 20;
                     Data->P[plr].LaunchFacility[i] = 1;
@@ -1628,7 +1627,7 @@ int FutureCheck(char plr, char type)
                 if (p[i] > 4 && Data->P[plr].Cash >= abs(Data->P[plr].LaunchFacility[i])
                     && type == 0) {
 
-                    vhptr->copyTo(display::graphics.screen(), 156 * plr + 39, i * 30, 65, 36 + i * 51, 103, 65 + i * 51);
+                    display::graphics.screen()->draw(launchPads, 156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
                     Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
                     Data->P[plr].Spend[0][3] += Data->P[plr].LaunchFacility[i];
                     Data->P[plr].LaunchFacility[i] = 1;

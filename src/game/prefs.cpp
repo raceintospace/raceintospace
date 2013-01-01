@@ -25,6 +25,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "prefs.h"
 #include "gamedata.h"
@@ -36,6 +37,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 void DrawPrefs(int where, char a1, char a2);
 void HModel(char mode, char tx);
@@ -52,11 +54,11 @@ void DrawPrefs(int where, char a1, char a2)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     helpText = "i013";
     keyHelpText = "K013";
+
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
     i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-
     RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
 
     display::graphics.screen()->clear(0);

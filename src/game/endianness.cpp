@@ -36,7 +36,6 @@ float _SwapFloat(float value)
 void _SwapGameDat(void)
 {
     int16_t i, j;
-    uint32_t val_ui32;
 
     Data->Checksum = _Swap32bit(Data->Checksum);
 

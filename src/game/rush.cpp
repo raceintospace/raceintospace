@@ -25,6 +25,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "rush.h"
 #include "Buzz_inc.h"
@@ -35,6 +36,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 // Function Prototype
 
@@ -118,15 +120,16 @@ void SetRush(int mode, int val);
 
 void DrawRush(char plr)
 {
-    int i, k = 0, l = 0, JR = 0;
-    FILE *fin;
+    int i = 0;
+    int k = 0;
+    int l = 0;
+    int JR = 0;
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-    fin = sOpen("LPADS.BUT", "rb", 0);
-    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
+    boost::shared_ptr<display::Image> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
+    launchPads->exportPalette();
+
     display::graphics.screen()->clear(0);
     JR = 0;
 
@@ -236,7 +239,7 @@ void DrawRush(char plr)
             draw_string(199, 69 + i * 58, "COST:");
             OutBox(11 , 33 + i * 58, 69, 74 + i * 58);
             InBox(20, 38 + i * 58, 60, 69 + i * 58);
-            vhptr->copyTo(display::graphics.screen(), 156 * plr, i * 30, 21, 39 + i * 58, 59, 68 + i * 58);
+            display::graphics.screen()->draw(launchPads, 156 * plr, i * 30, 39, 30, 21, 39 + i * 58);
 
             SetRush(Data->P[plr].Mission[i].Rushing, i);
             display::graphics.setForegroundColor(1);
