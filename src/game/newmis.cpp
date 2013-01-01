@@ -32,6 +32,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 struct order Order[7] ;
 unsigned int colss;
@@ -500,21 +501,8 @@ void MisAnn(char plr, char pad)
 
 void AI_Begin(char plr)
 {
-    int i;
-    FILE *fin;
-    int32_t len[2];
-
-
-    for (i = 0; i < 768; i++) {
-        display::graphics.palette()[i] = 0;
-    }
-
-    fin = sOpen("TURN.BUT", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fin);
-    len[0] = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)len[0],
-             vhptr->width(), vhptr->height());
+	boost::shared_ptr<display::Image> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
+	countrySeals->exportPalette();
 
     display::graphics.screen()->clear(0);
     ShBox(0, 60, 319, 80);
@@ -536,7 +524,7 @@ void AI_Begin(char plr)
     }
 
     draw_number(0, 0, Data->Year);
-    vhptr->copyTo(display::graphics.screen(), 1 + 110 * plr, 1, 30, 85, 30 + 107, 85 + 93);
+	display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 93, 30, 85);
     display::graphics.setForegroundColor(11);
     draw_string(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
