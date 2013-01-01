@@ -7,7 +7,7 @@ include_directories(SYSTEM ${png_INCLUDE_DIR})
 add_executable(but2png EXCLUDE_FROM_ALL but2png.c)
 set_target_properties(but2png PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 add_dependencies(but2png libs)
-target_link_libraries(but2png ${png_LIBRARY})
+target_link_libraries(but2png ${png_LIBRARY} ${zlib_LIBRARY})
 
 add_executable(data_decoder EXCLUDE_FROM_ALL data_decoder.cpp)
 set_target_properties(data_decoder PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
