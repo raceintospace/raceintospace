@@ -81,9 +81,9 @@ void Moon(char plr)
     }
 
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/moon.but.%d.png", size);
+    snprintf(filename, sizeof(filename), "images/moon.but.%d.png", (int)size);
     boost::shared_ptr<display::Image> moonRecon(Filesystem::readImage(filename));
-    moonRecon->exportPalette(128, 128, 128);
+    moonRecon->exportPalette(128, 255);
 
     display::graphics.screen()->draw(moonRecon, 114, 43);
     InBox(113, 42, 218, 125);

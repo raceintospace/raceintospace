@@ -17,9 +17,9 @@ public:
     virtual void set(uint8_t index, const Color &color) = 0;
     virtual const Color get(uint8_t index) const = 0;
 
-    inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t count = 255, uint8_t offset = 0) {
-        for (uint8_t i = 0; i < count; i++) {
-            set(i + offset, other.get(i + start));
+    inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t end = 255) {
+        for (int i = start; i <= end; i++) {
+            set(i, other.get(i));
         }
     };
 

@@ -46,8 +46,8 @@ public:
         return _palette;
     };
 
-    void exportPalette(uint8_t start = 0, uint8_t count = 255, uint8_t offset = 0) const {
-        legacy_palette.copy_from(_palette, start, count, offset);
+    void exportPalette(uint8_t start = 0, uint8_t end = 255) const {
+        legacy_palette.copy_from(_palette, start, end);
     };
 
     SDL_Surface *surface() const {
