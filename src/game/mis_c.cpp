@@ -1380,8 +1380,6 @@ int CloseAnim(FILE *fin)
 
 int StepAnim(int x, int y, FILE *fin)
 {
-    int mode;
-
     if (cFrame == tFrames) {
         fseek(fin, aLoc, SEEK_SET);
         cFrame = 0;

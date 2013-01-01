@@ -20,6 +20,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "endgame.h"
 #include "Buzz_inc.h"
@@ -36,6 +37,9 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
+
+#include <boost/shared_ptr.hpp>
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -500,18 +504,15 @@ void Load_LenFlag(char win)
 
 void Draw_NewEnd(char win)
 {
-    long size;
-    FILE *in;
-
     music_start(M_VICTORY);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     display::graphics.screen()->clear(0);
-    in = sOpen("WINNER.BUT", "rb", 0);
-    fread(display::graphics.palette(), 384, 1, in);
-    size = fread(vhptr->pixels(), 1, vhptr->width() * vhptr->height(), in);
-    fclose(in);
-    PCX_D(vhptr->pixels(), display::graphics.screen()->pixels(), size);
+
+	boost::shared_ptr<display::Image> winner(Filesystem::readImage("images/winner.but.0.png"));
+	winner->exportPalette(0, 128);
+	display::graphics.screen()->draw(winner, 0, 0);
+
     ShBox(0, 173, 319, 199);
     InBox(5, 178, 314, 194);
     IOBox(12, 180, 67, 192);

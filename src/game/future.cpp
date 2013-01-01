@@ -36,6 +36,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 //Used to read steps from missStep.dat
 FILE *MSteps;
@@ -106,9 +107,8 @@ void Load_FUT_BUT(void)
 
 void DrawFuture(char plr, int mis, char pad)
 {
-    int i, j;
-    FILE *fin;
-    unsigned sz;
+    int i;
+	int j;
     keyHelpText = "k011";
     helpText = "i011";
 
@@ -121,12 +121,11 @@ void DrawFuture(char plr, int mis, char pad)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     Load_FUT_BUT();
-    fin = sOpen("FMIN.IMG", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fin);
-    sz = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), sz, vhptr->width(), vhptr->height());
-    display::graphics.screen()->clear(0);
+
+	boost::shared_ptr<display::Image> planets(Filesystem::readImage("images/fmin.img.0.png"));
+	planets->exportPalette();
+
+	display::graphics.screen()->clear(0);
 
     gr_sync();
 
@@ -156,21 +155,21 @@ void DrawFuture(char plr, int mis, char pad)
         (i == 66 && j == 0) || (i == 69 && j == 1) || (i == 71 && j == 1) ||
         (i == 73 && j == 1)) {
 
-        vhptr->copyFrom(vhptr, 1, 2, 12, 11, 198, 153); /* Mars */
+		display::graphics.screen()->draw(planets, 1, 1, 12, 11, 198, 153); /* Mars */
         MarFlag = 1;
     } else {
         MarFlag = 0;
     }
 
     if ((i == 60 || i == 64 || i == 68 || i == 72 || i == 73 || i == 77)) {
-        vhptr->copyFrom(vhptr, 14, 2, 64, 54, 214, 130); /* Jup */
+		display::graphics.screen()->draw(planets, 14, 1, 51, 54, 214, 130); /* Jup */
         JupFlag = 1;
     } else {
         JupFlag = 0;
     }
 
     if (i == 61 || i == 66 || i == 72) {
-        vhptr->copyFrom(vhptr, 66, 2, 114, 53, 266, 135); /* Sat */
+		display::graphics.screen()->draw(planets, 66, 1, 49, 53, 266, 135); /* Sat */
         SatFlag = 1;
     } else {
         SatFlag = 0;
@@ -288,9 +287,11 @@ void DrawFuture(char plr, int mis, char pad)
 
 void ClearDisplay(void)
 {
-    vhptr->copyTo(display::graphics.screen(), 202, 48, 202, 48, 241, 82);
-    vhptr->copyTo(display::graphics.screen(), 17, 83, 17, 83, 241, 195);
-    vhptr->copyTo(display::graphics.screen(), 242, 23, 242, 23, 315, 195);
+	boost::shared_ptr<display::Image> background(Filesystem::readImage("images/fmin.img.0.png"));
+
+	display::graphics.screen()->draw(background, 202, 48, 40, 35, 202, 48);
+	display::graphics.screen()->draw(background, 17, 83, 225, 103, 17, 83);
+	display::graphics.screen()->draw(background, 242, 23, 74, 173, 242, 23);
     display::graphics.setForegroundColor(1);
     return;
 }

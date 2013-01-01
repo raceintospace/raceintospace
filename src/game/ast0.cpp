@@ -34,6 +34,11 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
+
+#include <boost/format.hpp>
+#include <iostream>
+#include <sstream>
 
 char MCol[110];
 char sel[30];
@@ -52,8 +57,6 @@ void LMPict(char poff);
 void Moon(char plr)
 {
     int val;
-    SimpleHdr table;
-    FILE *in;
     long size;
     helpText = "i029";
     keyHelpText = "k029";
@@ -73,21 +76,16 @@ void Moon(char plr)
 
     if (size > 13) {
         size = 13;
-    }
+    } else if (size < 0) {
+		size = 0;
+	}
 
-    in = sOpen("MOON.BUT", "rb", 0);
-    fseek(in, sizeof_SimpleHdr * size, SEEK_SET);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    display::Surface local(104, 82);
-    fread(&display::graphics.palette()[384], 384, 1, in); // Individual Palette
-    fread(buffer, table.size, 1, in); // Get Image
-    fclose(in);
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
+	char filename[128];
+	snprintf(filename, sizeof(filename), "images/moon.but.%d.png", size);
+	boost::shared_ptr<display::Image> moonRecon(Filesystem::readImage(filename));
+	moonRecon->exportPalette(128, 128, 128);
 
-    local.filter(0, 128, display::Surface::Any);
-
-    local.copyTo(display::graphics.screen(), 114, 43);
+	display::graphics.screen()->draw(moonRecon, 114, 43);
     InBox(113, 42, 218, 125);
     ShBox(113, 42, 143, 60);
     fill_rectangle(113, 42, 142, 59, 3);
