@@ -45,6 +45,8 @@ RD cost is loosly based in the basic model
 #include "sdlhelper.h"
 #include "display/graphics.h"
 
+#include <ctype.h>
+
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */
 /*random_min is used to give more chances of getting a 1 */

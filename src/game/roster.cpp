@@ -4,9 +4,8 @@
 #include <boost/foreach.hpp>
 
 #include <fstream>
-
+#include <stdlib.h>
 #include "roster.h"
-
 #include "fs.h"
 
 Roster::Roster(std::istream &input_stream)

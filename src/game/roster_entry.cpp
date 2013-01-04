@@ -2,6 +2,7 @@
 #include "roster_group.h"
 
 #include <assert.h>
+#include <string.h>
 
 #include "options.h"
 #include "pace.h"

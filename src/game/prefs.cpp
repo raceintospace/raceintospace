@@ -39,6 +39,8 @@
 #include "pace.h"
 #include "filesystem.h"
 
+#include <ctype.h>
+
 void DrawPrefs(int where, char a1, char a2);
 void HModel(char mode, char tx);
 void Levels(char plr, char which, char x);
