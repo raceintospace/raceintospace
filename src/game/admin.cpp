@@ -51,6 +51,8 @@
 #include "endianness.h"
 #include "filesystem.h"
 
+#include <ctype.h>
+
 #define MODEM_ERROR 4
 #define NOTSAME 2
 #define SAME_ABORT 0

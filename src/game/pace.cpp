@@ -11,6 +11,8 @@
 #include "gr.h"
 #include "mmfile.h"
 
+#include <ctype.h>
+
 void randomize(void);
 void SMove(void *p, int x, int y);
 void LMove(void *p);

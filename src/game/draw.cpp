@@ -8,6 +8,10 @@
 #include "display/surface.h"
 #include "display/image.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 /** Print string at specific position
  *
  * The function will print a string at a certain position.

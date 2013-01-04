@@ -30,6 +30,7 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <ctype.h>
 
 /** path separator setup */
 #ifndef PATHSEP
