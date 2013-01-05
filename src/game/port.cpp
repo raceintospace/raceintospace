@@ -25,6 +25,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "port.h"
 #include "Buzz_inc.h"
@@ -50,6 +51,10 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
+
+#include <stdio.h>
+#include <boost/shared_ptr.hpp>
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -125,7 +130,7 @@ MOBJ MObj[35];
 char HotKeyList[] = "AIMRPVCQETB\0";
 
 int FCtr;
-display::Surface *flaggy;
+boost::shared_ptr<display::Image> flaggy;
 
 /** SPOT structures and data structure variables */
 struct {        // Main SPOT Header
@@ -421,21 +426,16 @@ void SpotCrap(char loc, char mode)
     return;
 }
 
-void WaveFlagSetup(void)
+void WaveFlagSetup(char plr)
 {
-    long j;
-    FILE *fin;
-    flaggy = new display::Surface(230, 22);
-    fin = sOpen("FLAG.SEQ", "rb", 0);
-    j = fread(vhptr->pixels(), 1, vhptr->height() * vhptr->width(), fin);
-    fclose(fin);
-    RLED_img(vhptr->pixels(), flaggy->pixels(), j, flaggy->width(), flaggy->height());
+	char filename[256];
+	snprintf( filename, sizeof(filename), "images/flag.seq.%d.png", plr );
+	flaggy = boost::shared_ptr<display::Image>( Filesystem::readImage(filename) );
 }
 
 void WaveFlagDel(void)
 {
-    delete flaggy;
-    flaggy = NULL;
+	flaggy.reset();
 }
 
 /* pace */
@@ -463,21 +463,6 @@ int32_t fix_width[] = {
     0
 };
 
-/* This function is no longer used, commented out below
-int
-need_to_fix_width(int32_t table)
-{
-    int i;
-
-    for (i = 0; fix_width[i]; i++) {
-        if (fix_width[i] == table) {
-            return (1);
-        }
-    }
-
-    return (0);
-}
-*/
 
 void PortPlace(FILE *fin, int32_t table)
 {
@@ -490,9 +475,6 @@ void PortPlace(FILE *fin, int32_t table)
     Swap16bit(Img.Height);
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
-
-//  if (need_to_fix_width (table))
-//    Img.Width++;
 
     display::Surface local(Img.Width, Img.Height);
     display::Surface local2(Img.Width, Img.Height);
@@ -662,7 +644,13 @@ void DrawSpaceport(char plr)
 
     draw_number(0, 0, Data->Year);
 
+	if (plr == 0) {
+		display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 49, 121 );
+	} else {
+		display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 220, 141 );
+	}
 
+	/*
     // FLAG DRAW
     FCtr = 0;
     display::Surface local(22, 22);
@@ -687,6 +675,7 @@ void DrawSpaceport(char plr)
     } else {
         local2.copyTo(display::graphics.screen(), 220, 141);
     }
+	*/
 }
 
 void PortText(int x, int y, char *txt, char col)
@@ -792,9 +781,10 @@ void Master(char plr)
     sFin = NULL;
     helpText = "i000";
     keyHelpText = "i000";
-    WaveFlagSetup();
+    WaveFlagSetup(plr);
     sCount = -1;
-    SUSPEND = Vab_Spot = 0;
+    SUSPEND = 0;
+	Vab_Spot = 0;
 
     for (i = 0; i < 3; i++) {
         GetMisType(Data->P[plr].Mission[i].MissionCode);
@@ -877,8 +867,17 @@ void GetMse(char plr, char fon)
         SpotCrap(0, SPOT_STEP);
 #endif
         FCtr = FCtr % 5;
+
+		if (plr == 0) {
+			display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 49, 121);
+		} else {
+			display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 220, 141);
+		}
+
+		/*
         {
             // Scope block to avoid "initialization of local is skipped by 'goto done'"
+			
             display::Surface local(22, 22);
             display::Surface local2(22, 22);
 
@@ -902,6 +901,7 @@ void GetMse(char plr, char fon)
                 local2.copyTo(display::graphics.screen(), 220, 141);
             }
         }
+		*/
 done:
         FCtr++;
     }

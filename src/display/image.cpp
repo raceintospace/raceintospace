@@ -65,7 +65,6 @@ void Image::read_png()
 
     switch (png_get_color_type((png_structp)png_ptr, (png_infop)info_ptr)) {
     case PNG_COLOR_TYPE_PALETTE: {
-        _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
         // read the palette into a local
         png_color *png_palette;
         int num_palette;
@@ -75,10 +74,18 @@ void Image::read_png()
         uint8_t *trans;
         int num_trans;
 
-        if (png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, NULL) == 0) {
+		png_color_16p trans_values = NULL;
+        if (png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, &trans_values) == 0) {
             // no transparency
             num_trans = 0;
-        }
+			_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
+        } else {
+			_surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCCOLORKEY, _width, _height, 8, 0, 0, 0, 0);
+
+			// Yes, this assumes there is only a single transparent value in the PNG, which for now is a reasonable assumption.
+			SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, SDL_MapRGB(_surface->format, (Uint8)trans_values[0].red, (Uint8)trans_values[0].green, (Uint8)trans_values[0].blue));
+
+		}
 
         // copy both into the instance-wide palette
         for (int i = 0; i < 256; i++) {
