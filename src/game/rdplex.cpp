@@ -1311,10 +1311,6 @@ char HPurc(char player_index)
     BButs(PROBE_HARDWARE, hardware);
     ShowUnit(hardware, unit, player_index);
 
-    //Specs: undo fix
-    //memset(vhptr->pixels(),0x00,64000);
-    //memcpy(vhptr->pixels(),Data,sizeof(struct Players));
-
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     music_start(M_FILLER);
     WaitForMouseUp();
