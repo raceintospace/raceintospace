@@ -1332,7 +1332,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->width()-1);
+                                vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height()-1);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
