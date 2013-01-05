@@ -235,7 +235,7 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+        vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height()-1);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -649,33 +649,6 @@ void DrawSpaceport(char plr)
     } else {
         display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 220, 141);
     }
-
-    /*
-    // FLAG DRAW
-    FCtr = 0;
-    display::Surface local(22, 22);
-    display::Surface local2(22, 22);
-
-    if (plr == 0) {
-        local.copyFrom(display::graphics.screen(), 49, 121, 70, 142);
-    } else {
-        local.copyFrom(display::graphics.screen(), 220, 141, 241, 162);
-    }
-
-    if (plr == 0) {
-        local2.copyFrom(flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, 0, 0);
-    } else {
-        local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
-    }
-
-    local2.maskCopy(&local, 0, display::Surface::DestinationEqual);
-
-    if (plr == 0) {
-        local2.copyTo(display::graphics.screen(), 49, 121);
-    } else {
-        local2.copyTo(display::graphics.screen(), 220, 141);
-    }
-    */
 }
 
 void PortText(int x, int y, char *txt, char col)
@@ -796,7 +769,7 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
-    memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+    vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->height()-1);
 
 #if SPOT_ON
 
@@ -873,35 +846,6 @@ void GetMse(char plr, char fon)
         } else {
             display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 220, 141);
         }
-
-        /*
-        {
-            // Scope block to avoid "initialization of local is skipped by 'goto done'"
-
-            display::Surface local(22, 22);
-            display::Surface local2(22, 22);
-
-            if (plr == 0) {
-                local.copyFrom(display::graphics.screen(), 49, 121, 70, 142);
-            } else {
-                local.copyFrom(display::graphics.screen(), 220, 141, 241, 162);
-            }
-
-            if (plr == 0) {
-                local2.copyFrom(flaggy, FCtr * 23, 0, FCtr * 23 + 21, 21, 0, 0);
-            } else {
-                local2.copyFrom(flaggy, 115 + FCtr * 23, 0, 115 + FCtr * 23 + 21, 21, 0, 0);
-            }
-
-            local2.maskCopy(&local, 0, display::Surface::DestinationEqual);
-
-            if (plr == 0) {
-                local2.copyTo(display::graphics.screen(), 49, 121);
-            } else {
-                local2.copyTo(display::graphics.screen(), 220, 141);
-            }
-        }
-        */
 done:
         FCtr++;
     }
@@ -1388,7 +1332,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                memcpy(vhptr->pixels(), display::graphics.screen()->pixels(), MAX_X * MAX_Y);
+                                vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width()-1, display::graphics.screen()->width()-1);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
