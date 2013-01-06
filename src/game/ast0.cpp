@@ -220,27 +220,20 @@ void SatDraw(char plr)
     loc[2] = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num < 0) ? 0 : 0;
     loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 : 3 + plr * 3;
 
-    fin = sOpen("SATBLD.BUT", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fin);
-
     for (i = 0; i < 4; i++) {
 
-        fseek(fin, (sizeof P)*loc[i] + 768, SEEK_SET);
-        fread(&P, sizeof P, 1, fin);
-        SwapPatchHdrSmall(&P);
-        display::Surface local(P.w, P.h);
-        fseek(fin, P.offset, SEEK_SET);
-        fread(buffer, P.size, 1, fin);
-        RLED_img(buffer, local.pixels(), P.size, local.width(), local.height());
+		char filename[128];
+		snprintf(filename, sizeof(filename), "images/satbld.but.%d.png", loc[i]);
+		boost::shared_ptr<display::Image> satellite(Filesystem::readImage(filename));
+		satellite->exportPalette();
 
-        if (i != 2) {
-            local.copyTo(display::graphics.screen(), 5 + i * 80, 28);
-        } else {
-            local.copyTo(display::graphics.screen(), 0, 0, 5 + i * 80, 28, 75 + i * 80, 55);
-        }
+		if (i != 2) {
+			display::graphics.screen()->draw(satellite, 5 + i * 80, 28);
+		} else {
+			display::graphics.screen()->draw(satellite, 0, 0, 71, 28, 5 + i * 80, 28);
+		}
+
     }
-
-    fclose(fin);
 
     draw_small_flag(plr, 5, 4);
     display::graphics.setForegroundColor(11);
@@ -569,31 +562,16 @@ void PlanText(char plr, char plan)
 
 void LMPict(char poff)
 {
-    SimpleHdr table;
-    FILE *in;
-    in = sOpen("LMER.BUT", "rb", 0);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, 8 * sizeof_SimpleHdr, SEEK_SET);
-    fread(&display::graphics.palette()[32 * 3], 672, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, in);
-
-    display::Surface local(156, 89);
-    display::Surface local2(156, 89);
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-    fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, in);
-    RLED_img(buffer, local2.pixels(), table.size, local2.width(), local2.height());
+	char filename[128];
+	snprintf(filename, sizeof(filename), "images/lmer.but.%d.png", poff);
+	boost::shared_ptr<display::Image> lunarModule(Filesystem::readImage(filename));
+	lunarModule->exportPalette(32, 255);
 
     if (poff == 0 || poff == 1 || poff == 4 || poff == 5) {
-        local2.copyTo(display::graphics.screen(), 5, 27);
+		display::graphics.screen()->draw(lunarModule, 5, 27);
     } else {
-        local2.copyTo(display::graphics.screen(), 160, 27);
+		display::graphics.screen()->draw(lunarModule, 160, 27);
     }
-
-    fclose(in);
 }
 
 void LMBld(char plr)
