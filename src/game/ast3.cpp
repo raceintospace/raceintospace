@@ -705,53 +705,13 @@ void Hospital(char plr, int sel)
     char filename[128];
 
     if (sel == 0) {
-        snprintf(filename, sizeof(filename), "images/cem.img.%d.png", plr + 2);
+        snprintf(filename, sizeof(filename), "images/cemetery.%d.png", plr);
     } else if (sel == 1) {
-        snprintf(filename, sizeof(filename), "images/cem.img.%d.png", plr);
+        snprintf(filename, sizeof(filename), "images/hospital.%d.png", plr);
     }
+
     boost::shared_ptr<display::Image> location(Filesystem::readImage(filename));
     location->exportPalette();
-
-    /*
-    fin = sOpen("CEM.IMG", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fin);
-    fread(&size, 4, 1, fin);
-    Swap32bit(size);
-
-    if (sel == 1) {
-
-        if (plr == 1) {
-            fseek(fin, size, SEEK_CUR); // place on the Sov cem
-            fread(display::graphics.palette(), 768, 1, fin);
-            fread(&size, 4, 1, fin);
-            Swap32bit(size);
-        }
-    }
-
-    if (sel == 0) {
-        fseek(fin, size, SEEK_CUR); // Skip past US cem
-        fread(display::graphics.palette(), 768, 1, fin);
-        fread(&size, 4, 1, fin);
-        Swap32bit(size);
-
-        fseek(fin, size, SEEK_CUR); // Place on the US hosp
-        fread(display::graphics.palette(), 768, 1, fin);
-        fread(&size, 4, 1, fin);
-        Swap32bit(size);
-
-        if (plr == 1) {
-            fseek(fin, size, SEEK_CUR); // Skip to Sov hosp
-            fread(display::graphics.palette(), 768, 1, fin);
-            fread(&size, 4, 1, fin);
-            Swap32bit(size);
-        }
-    }
-
-    fread((void *)display::graphics.screen()->pixels(), size, 1, fin);
-    fclose(fin);
-    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)size);
-    */
-    
 
     display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
@@ -774,10 +734,8 @@ void Hospital(char plr, int sel)
     ShBox(0, 24, 319, 101);
 
     display::graphics.screen()->draw(location, 0, 0, 318, 75, 1, 25);
-    //vhptr->copyTo(display::graphics.screen(), 0, 0, 1, 25, 318, 100);
 
     display::graphics.screen()->draw(location, 0, 81, 146, 86, 167, 108);
-    //vhptr->copyTo(display::graphics.screen(), 0, 81, 167, 108, 312, 194);
 
     display::graphics.setForegroundColor(1);
 
