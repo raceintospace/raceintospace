@@ -27,6 +27,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "ast3.h"
 #include "Buzz_inc.h"
@@ -40,6 +41,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);
@@ -674,7 +676,12 @@ void Train(char plr, int level)
 
 void Hospital(char plr, int sel)
 {
-    int now2, BarA, count, i, j, M[100];
+    int now2;
+    int BarA;
+    int count;
+    int i;
+    int j;
+    int M[100];
     FILE *fin;
     uint32_t size = 0;
 
@@ -695,8 +702,17 @@ void Hospital(char plr, int sel)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-// pal, len, image
+    char filename[128];
 
+    if (sel == 0) {
+        snprintf(filename, sizeof(filename), "images/cem.img.%d.png", plr + 2);
+    } else if (sel == 1) {
+        snprintf(filename, sizeof(filename), "images/cem.img.%d.png", plr);
+    }
+    boost::shared_ptr<display::Image> location(Filesystem::readImage(filename));
+    location->exportPalette();
+
+    /*
     fin = sOpen("CEM.IMG", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
     fread(&size, 4, 1, fin);
@@ -734,6 +750,8 @@ void Hospital(char plr, int sel)
     fread((void *)display::graphics.screen()->pixels(), size, 1, fin);
     fclose(fin);
     PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), (unsigned int)size);
+    */
+    
 
     display::graphics.screen()->clear(0);
     ShBox(0, 0, 319, 22);
@@ -754,9 +772,12 @@ void Hospital(char plr, int sel)
     draw_down_arrow(9, 166);
     draw_small_flag(plr, 4, 4);
     ShBox(0, 24, 319, 101);
-    vhptr->copyTo(display::graphics.screen(), 0, 0, 1, 25, 318, 100);
 
-    vhptr->copyTo(display::graphics.screen(), 0, 81, 167, 108, 312, 194);
+    display::graphics.screen()->draw(location, 0, 0, 318, 75, 1, 25);
+    //vhptr->copyTo(display::graphics.screen(), 0, 0, 1, 25, 318, 100);
+
+    display::graphics.screen()->draw(location, 0, 81, 146, 86, 167, 108);
+    //vhptr->copyTo(display::graphics.screen(), 0, 81, 167, 108, 312, 194);
 
     display::graphics.setForegroundColor(1);
 

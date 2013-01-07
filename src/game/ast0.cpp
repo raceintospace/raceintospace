@@ -187,9 +187,8 @@ void BarSkill(char plr, int lc, int nw, int *ary)
 
 void SatDraw(char plr)
 {
-    PatchHdrSmall P;
-    int i, loc[4];
-    FILE *fin;
+    int i;
+    int loc[4];
 
     FadeOut(2, display::graphics.palette(), 0, 0, 0);
 
