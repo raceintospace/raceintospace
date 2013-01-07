@@ -501,6 +501,8 @@ void AstSel(char plr)
 
     memset(sel, -1, sizeof(sel));
     memset(MCol, 0x00, sizeof(MCol));
+
+    //TODO: Candidate for protobuf replacement?
     Men = (struct ManPool *) buffer;
     fin = sOpen("MEN.DAT", "rb", 1); /* Open Astronaut Data File  */
     fseek(fin, ((sizeof(struct ManPool)) * 106)*plr, SEEK_SET);
