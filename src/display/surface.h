@@ -72,6 +72,8 @@ public:
     }
 
 protected:
+    Surface(SDL_Surface *surface);
+
     uint8_t *_screenBuffer;         // XXX: do not access for any reason unless you're the constructor
     SDL_Surface *_screen;
     bool _dirty;

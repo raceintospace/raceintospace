@@ -19,6 +19,12 @@ Surface::Surface(unsigned int width, unsigned int height):
     // We should switch back once we stop fread()ing into pixel buffers
 }
 
+Surface::Surface(SDL_Surface *surface) :
+    _screen(surface),
+    _dirty(false)
+{
+}
+
 Surface::~Surface()
 {
     SDL_FreeSurface(_screen);
