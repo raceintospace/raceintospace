@@ -41,6 +41,7 @@ extern "C" {
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <SDL/SDL_config.h> // declares some of the same symbols as our config
 #include "raceintospace_config.h"
 #include "logging.h"
 #include "gamedata.h"
