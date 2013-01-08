@@ -146,9 +146,9 @@ void MisCheck(char plr, char mpad)
             fill_rectangle(189, 173, 249, 196, 55);
 
             for (i = 190; i < 250; i += 2) {
-                display::graphics.screen()->setPixel(i, 178, 61);
-                display::graphics.screen()->setPixel(i, 184, 61);
-                display::graphics.screen()->setPixel(i, 190, 61);
+                display::graphics.legacyScreen()->setPixel(i, 178, 61);
+                display::graphics.legacyScreen()->setPixel(i, 184, 61);
+                display::graphics.legacyScreen()->setPixel(i, 190, 61);
             }
 
             lc = 191;
@@ -156,9 +156,9 @@ void MisCheck(char plr, char mpad)
             fill_rectangle(73, 173, 133, 196, 55);
 
             for (i = 73; i < 133; i += 2) {
-                display::graphics.screen()->setPixel(i, 178, 61);
-                display::graphics.screen()->setPixel(i, 184, 61);
-                display::graphics.screen()->setPixel(i, 190, 61);
+                display::graphics.legacyScreen()->setPixel(i, 178, 61);
+                display::graphics.legacyScreen()->setPixel(i, 184, 61);
+                display::graphics.legacyScreen()->setPixel(i, 190, 61);
             }
 
             lc = 76;
@@ -652,9 +652,9 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                 fill_rectangle(189, 173, 249, 196, 55);
 
                 for (i = 190; i < 250; i += 2) {
-                    display::graphics.screen()->setPixel(i, 178, 61);
-                    display::graphics.screen()->setPixel(i, 184, 61);
-                    display::graphics.screen()->setPixel(i, 190, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 178, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 184, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 190, 61);
                 }
 
                 fill_rectangle(189, 195, 191, 195 - safety * 22 / 100, 11);
@@ -683,9 +683,9 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                 fill_rectangle(73, 173, 133, 196, 55);
 
                 for (i = 73; i < 133; i += 2) {
-                    display::graphics.screen()->setPixel(i, 178, 61);
-                    display::graphics.screen()->setPixel(i, 184, 61);
-                    display::graphics.screen()->setPixel(i, 190, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 178, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 184, 61);
+                    display::graphics.legacyScreen()->setPixel(i, 190, 61);
                 }
 
                 fill_rectangle(74, 195, 76, 195 - safety * 22 / 100, 11);

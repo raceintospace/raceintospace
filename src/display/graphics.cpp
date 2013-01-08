@@ -32,6 +32,11 @@ Graphics::~Graphics()
     destroy();
 }
 
+LegacySurface *Graphics::legacyScreen()
+{
+    return _screen;
+}
+
 void Graphics::create(const std::string &title, bool fullscreen)
 {
 

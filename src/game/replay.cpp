@@ -289,7 +289,7 @@ DispBaby(int x, int y, int loc, char neww)
         boob.pixels()[1564 + i] += off;
     }
 
-    boob.copyTo(display::graphics.screen(), x, y);
+    boob.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
 void

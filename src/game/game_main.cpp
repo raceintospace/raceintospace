@@ -259,7 +259,7 @@ int game_main_impl(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        display::graphics.screen()->clear(0);
+        display::graphics.legacyScreen()->clear(0);
         PortPal(0);
         key = 0;
         helpText = "i000";
@@ -295,7 +295,7 @@ int game_main_impl(int argc, char *argv[])
 
             InitData();                   // PICK EVENT CARDS N STUFF
             MainLoop();                   // PLAY GAME
-            display::graphics.screen()->clear(0);
+            display::graphics.legacyScreen()->clear(0);
             break;
 
         case 1: // Play Old Game
@@ -317,7 +317,7 @@ int game_main_impl(int argc, char *argv[])
             }
 
             QUIT = 0;
-            display::graphics.screen()->clear(0);
+            display::graphics.legacyScreen()->clear(0);
             break;
 
         case 2:
@@ -529,7 +529,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 Master(plr[i]);                // PLAY TURN
                 //restore sound
 //       SetVoiceVolume(115);
-                display::graphics.screen()->clear(0);
+                display::graphics.legacyScreen()->clear(0);
                 IDLE[plr[i]]++;
 
                 if (LOAD == 1) {

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "deprecated.h"
 #include "palette.h"
 #include "legacy_surface.h"
 
@@ -53,9 +54,11 @@ public:
         return _news;
     }
 
-    LegacySurface *screen() const {
+    Surface *screen() const {
         return _screen;
     }
+
+    DEPRECATED(LegacySurface *legacyScreen());
 
     SDL_Rect &videoRect() {
         return _videoRect;

@@ -59,11 +59,11 @@ void DrawPrefs(int where, char a1, char a2)
 
     fin = sOpen("PREFS.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
+    RLED_img(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);
@@ -158,11 +158,11 @@ void DrawPrefs(int where, char a1, char a2)
     draw_string(258, 13, "CONTINUE");
     draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
-    vhptr->copyTo(display::graphics.screen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
-    vhptr->copyTo(display::graphics.screen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
+    vhptr->copyTo(display::graphics.legacyScreen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
+    vhptr->copyTo(display::graphics.legacyScreen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
 
-    vhptr->copyTo(display::graphics.screen(), 216, 30, 147, 31, 218, 60);
-    vhptr->copyTo(display::graphics.screen(), 72 * (Data->Def.Anim), 90, 147, 71, 218, 100);
+    vhptr->copyTo(display::graphics.legacyScreen(), 216, 30, 147, 31, 218, 60);
+    vhptr->copyTo(display::graphics.legacyScreen(), 72 * (Data->Def.Anim), 90, 147, 71, 218, 100);
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
@@ -191,7 +191,7 @@ void HModel(char mode, char tx)
 
     fill_rectangle(96, 114, 223, 194, 0);
 
-    local.copyTo(display::graphics.screen(), 97, 115);
+    local.copyTo(display::graphics.legacyScreen(), 97, 115);
     display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {
@@ -218,7 +218,7 @@ void Levels(char plr, char which, char x)
 {
     unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
-    vhptr->copyTo(display::graphics.screen(), 0 + which * 72, 30 + x * 30, v[0][plr], v[1][x], v[0][plr] + 71, v[1][x] + 29);
+    vhptr->copyTo(display::graphics.legacyScreen(), 0 + which * 72, 30 + x * 30, v[0][plr], v[1][x], v[0][plr] + 71, v[1][x] + 29);
 
     return;
 }
@@ -247,11 +247,11 @@ void PLevels(char side, char wh)
 {
 
     if (side == 0) {
-        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72,     0,   9,  55,  20,  74);
-        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72 + 11,  0,  21,  55,  80,  84);
+        vhptr->copyTo(display::graphics.legacyScreen(), 0 + wh * 72,     0,   9,  55,  20,  74);
+        vhptr->copyTo(display::graphics.legacyScreen(), 0 + wh * 72 + 11,  0,  21,  55,  80,  84);
     } else {
-        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72,     0, 239,  55, 250,  74);
-        vhptr->copyTo(display::graphics.screen(), 0 + wh * 72 + 11,  0, 250,  55, 310,  84);
+        vhptr->copyTo(display::graphics.legacyScreen(), 0 + wh * 72,     0, 239,  55, 250,  74);
+        vhptr->copyTo(display::graphics.legacyScreen(), 0 + wh * 72 + 11,  0, 250,  55, 310,  84);
     }
 
     return;
@@ -261,9 +261,9 @@ void CLevels(char side, char wh)
 {
 
     if (side == 0) {
-        vhptr->copyTo(display::graphics.screen(), 144, wh * 7, 9, 78, 17, 84);
+        vhptr->copyTo(display::graphics.legacyScreen(), 144, wh * 7, 9, 78, 17, 84);
     } else {
-        vhptr->copyTo(display::graphics.screen(), 144, wh * 7, 239, 78, 247, 84);
+        vhptr->copyTo(display::graphics.legacyScreen(), 144, wh * 7, 239, 78, 247, 84);
     }
 
     return;
@@ -473,7 +473,7 @@ void Prefs(int where)
                 Data->Def.Music = !Data->Def.Music;
                 // SetMusicVolume((Data->Def.Music==1)?100:0);
                 music_set_mute(!Data->Def.Music);
-                vhptr->copyTo(display::graphics.screen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
+                vhptr->copyTo(display::graphics.legacyScreen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
                 OutBox(100, 30, 135, 61);
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
@@ -481,7 +481,7 @@ void Prefs(int where)
                 WaitForMouseUp();
                 Data->Def.Sound = !Data->Def.Sound;
                 MuteChannel(AV_SOUND_CHANNEL, !Data->Def.Sound);
-                vhptr->copyTo(display::graphics.screen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
+                vhptr->copyTo(display::graphics.legacyScreen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
                 OutBox(100, 70, 135, 101);
                 /* Sound Level */
             }

@@ -153,7 +153,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     for (j = x1; j <= x2; j += 3)
         for (i = y1; i <= y2; i += 3) {
-            display::graphics.screen()->pixels()[j + 320 * i] = val;
+            display::graphics.legacyScreen()->pixels()[j + 320 * i] = val;
         }
 
     return;
@@ -180,12 +180,12 @@ void DispVAB(char plr, char pad)
         fread_uint16_t(&image_len, 1, fp);
     }
 
-    fread(display::graphics.screen()->pixels(), image_len, 1, fp);
+    fread(display::graphics.legacyScreen()->pixels(), image_len, 1, fp);
     fclose(fp);
 
-    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), image_len);
+    PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), image_len);
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 170, 99);
     ShBox(0, 101, 170, 199);
@@ -605,7 +605,7 @@ void DispVA(char plr, char f)
     /* TODO: magic numbers */
     fill_rectangle(178, 29, 243, 179, 3);
 
-    local2.copyFrom(display::graphics.screen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
 
@@ -694,7 +694,7 @@ void DispVA(char plr, char f)
         local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
     }
 
-    local.copyTo(display::graphics.screen(), 210 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2);
 }
 
 void DispRck(char plr, char wh)
@@ -718,11 +718,11 @@ void DispRck(char plr, char wh)
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
     fill_rectangle(247, 29, 313, 179, 3);
-    local2.copyFrom(display::graphics.screen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
     local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
 
-    local.copyTo(display::graphics.screen(), 282 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2);
 }
 
 void DispWts(int two, int one)

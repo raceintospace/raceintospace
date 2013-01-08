@@ -137,7 +137,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
         fseek(fin, Imx[i] * 570, SEEK_SET);
         fread(local.pixels(), 570, 1, fin);
-        local.copyTo(display::graphics.screen(), 24, starty + 1 + 23 * i);
+        local.copyTo(display::graphics.legacyScreen(), 24, starty + 1 + 23 * i);
     }
 
     fclose(fin);
@@ -211,7 +211,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
 
     display::LegacySurface local(P.w, P.h);
     display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
 
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
@@ -226,7 +226,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    local2.copyTo(display::graphics.screen(), x, y);
+    local2.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
 void
@@ -274,13 +274,13 @@ AstFaces(char plr, int x, int y, char face)
 
     local2.maskCopy(&local3, 0, display::Surface::DestinationEqual);
 
-    local3.copyFrom(display::graphics.screen(), x, y, x + 79, y + 49);
+    local3.copyFrom(display::graphics.legacyScreen(), x, y, x + 79, y + 49);
 
     local3.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
     local3.filter((7 + plr * 3), (char) - 160, display::Surface::NotEqual);
 
-    local3.copyTo(display::graphics.screen(), x, y);
+    local3.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
 
@@ -319,7 +319,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     display::LegacySurface local(P.w, P.h);
     display::LegacySurface local2(P.w, P.h);
 
-    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
@@ -333,7 +333,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    local2.copyTo(display::graphics.screen(), x, y);
+    local2.copyTo(display::graphics.legacyScreen(), x, y);
 
     if (planet > 0 && prog == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
@@ -380,7 +380,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         local.pixels()[n - 1] = 0;
         */
 
-        local.copyTo(display::graphics.screen(), x, y);
+        local.copyTo(display::graphics.legacyScreen(), x, y);
     } else {
         memset(Name, 0x00, sizeof Name);
 
@@ -442,7 +442,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         //TODO: Determine why the first pixel needed to be zero?
         //local.pixels()[0] = 0x00;
 
-        local.copyTo(display::graphics.screen(), 0, 0, x + 1, y, x + 102, y + 76);
+        local.copyTo(display::graphics.legacyScreen(), 0, 0, x + 1, y, x + 102, y + 76);
         fclose(fin);
     }
 }
@@ -566,7 +566,7 @@ int Help(const char *FName)
 
     key = 0;
     display::LegacySurface local(250, 128);
-    local.copyFrom(display::graphics.screen(), 34, 32, 283, 159);
+    local.copyFrom(display::graphics.legacyScreen(), 34, 32, 283, 159);
 
     ShBox(34, 32, 283, 159);
     InBox(37, 35, 279, 45);
@@ -647,7 +647,7 @@ int Help(const char *FName)
 
     }
 
-    local.copyTo(display::graphics.screen(), 34, 32);
+    local.copyTo(display::graphics.legacyScreen(), 34, 32);
     free(NTxt);
 
     AL_CALL = 0;
@@ -985,10 +985,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
                 fwrite(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
-                fwrite(display::graphics.screen()->pixels(), 64000, 1, tin);
+                fwrite(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
-                display::graphics.screen()->clear(0);
+                display::graphics.legacyScreen()->clear(0);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
@@ -1019,7 +1019,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
                 fread(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
-                fread(display::graphics.screen()->pixels(), 64000, 1, tin);
+                fread(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
                 key = 0;

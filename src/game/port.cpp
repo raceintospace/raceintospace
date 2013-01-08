@@ -235,7 +235,7 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+        vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -290,10 +290,10 @@ void SpotCrap(char loc, char mode)
             }
 
             if (sPathOld.xPut != -1) {
-                vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1);
+                vhptr->copyTo(display::graphics.legacyScreen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1);
             }
 
-            SP2->copyTo(display::graphics.screen(), sPath.xPut, sPath.yPut);
+            SP2->copyTo(display::graphics.legacyScreen(), sPath.xPut, sPath.yPut);
         } else {
             xx = hSPOT.size;
 
@@ -304,10 +304,10 @@ void SpotCrap(char loc, char mode)
             }
 
             if (sPathOld.xPut != -1) {
-                vhptr->copyTo(display::graphics.screen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, MIN(sPathOld.xPut + sImgOld.w - 1, 319), MIN(sPathOld.yPut + sImgOld.h - 1, 199));
+                vhptr->copyTo(display::graphics.legacyScreen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, MIN(sPathOld.xPut + sImgOld.w - 1, 319), MIN(sPathOld.yPut + sImgOld.h - 1, 199));
             }
 
-            SP1->copyTo(display::graphics.screen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
+            SP1->copyTo(display::graphics.legacyScreen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
         }
 
         sPathOld = sPath;
@@ -478,13 +478,13 @@ void PortPlace(FILE *fin, int32_t table)
 
     display::LegacySurface local(Img.Width, Img.Height);
     display::LegacySurface local2(Img.Width, Img.Height);
-    local.copyFrom(display::graphics.screen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
+    local.copyFrom(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
     fread(vhptr->pixels(), Img.Size, 1, fin);
     RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
 
     local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
 
-    local.copyTo(display::graphics.screen(), Img.PlaceX, Img.PlaceY);
+    local.copyTo(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY);
 }
 
 void PortPal(char plr)
@@ -550,7 +550,7 @@ void DrawSpaceport(char plr)
     Swap16bit(Img.Height);
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
-    fread(display::graphics.screen()->pixels(), Img.Size, 1, fin); // Read in main image
+    fread(display::graphics.legacyScreen()->pixels(), Img.Size, 1, fin); // Read in main image
 
     UpdatePortOverlays();
 
@@ -769,7 +769,7 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
-    vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
 
 #if SPOT_ON
 
@@ -936,12 +936,12 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
         if (mode == 1) {
             // Save value from the screen
             pPortOutlineRestore[i].loc = outline[i];    // Offset of the outline into the buffer
-            pPortOutlineRestore[i].val = display::graphics.screen()->pixels()[outline[i]];    // Save original pixel value
+            pPortOutlineRestore[i].val = display::graphics.legacyScreen()->pixels()[outline[i]];    // Save original pixel value
         } else {                   // dunno
             outline[i] = pPortOutlineRestore[i].loc;
         }
 
-        display::graphics.screen()->pixels()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
+        display::graphics.legacyScreen()->pixels()[outline[i]] = 11;   // Color the outline index 11, which should be Yellow
         min_x = MIN(min_x, outline[i] % MAX_X);
         min_y = MIN(min_y, outline[i] / MAX_X);
         max_x = MAX(max_x, outline[i] % MAX_X);
@@ -958,7 +958,7 @@ PortRestore(unsigned int Count)
 
     for (i = 0; i < Count; i++) {
         loc = pPortOutlineRestore[i].loc;
-        display::graphics.screen()->pixels()[loc] = pPortOutlineRestore[i].val;
+        display::graphics.legacyScreen()->pixels()[loc] = pPortOutlineRestore[i].val;
         min_x = MIN(min_x, loc % MAX_X);
         min_y = MIN(min_y, loc / MAX_X);
         max_x = MAX(max_x, loc % MAX_X);
@@ -1323,7 +1323,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                vhptr->copyFrom(display::graphics.screen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+                                vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
@@ -1752,7 +1752,7 @@ char Request(char plr, char *s, char md)
     display::LegacySurface local(196, 84);
 
     if (md > 0) { // Save Buffer
-        local.copyFrom(display::graphics.screen(), 85, 52, 280, 135);
+        local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
     i = strlen(s) >> 1;
@@ -1814,7 +1814,7 @@ char Request(char plr, char *s, char md)
     }; /* End while */
 
     if (md > 0) {
-        local.copyTo(display::graphics.screen(), 85, 52);
+        local.copyTo(display::graphics.legacyScreen(), 85, 52);
     }
 
     return i;
@@ -1825,7 +1825,7 @@ char MisReq(char plr)
     int i, num = 0;
     display::LegacySurface local(184, 132);
 
-    local.copyFrom(display::graphics.screen(), 53, 29, 236, 160);
+    local.copyFrom(display::graphics.legacyScreen(), 53, 29, 236, 160);
 
     for (i = 0; i < 3; i++)
         if ((Data->P[plr].Mission[i].MissionCode) &&
@@ -1939,7 +1939,7 @@ char MisReq(char plr)
         };
     }; /* End while */
 
-    local.copyTo(display::graphics.screen(), 53, 29);
+    local.copyTo(display::graphics.legacyScreen(), 53, 29);
 
     return i;
 }

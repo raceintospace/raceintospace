@@ -173,7 +173,7 @@ void DrawRD(char player_index)
     fread(display::graphics.palette(), 768, 1, fin);
     fclose(fin);
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     Load_RD_BUT(player_index);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
@@ -216,7 +216,7 @@ void DrawRD(char player_index)
     draw_string(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
-        mans->copyTo(display::graphics.screen(), i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174);
+        mans->copyTo(display::graphics.legacyScreen(), i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174);
     }
 
     display::graphics.setForegroundColor(3);
@@ -224,10 +224,10 @@ void DrawRD(char player_index)
     grLineTo(314, 174);
 
 
-    but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
-    but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
-    but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
-    but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
+    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
+    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
+    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
+    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(1);
     draw_heading(50, 5, "RESEARCH", 0, -1);
@@ -260,44 +260,44 @@ void BButs(char old, char nw)
     switch (old) {
     case PROBE_HARDWARE:
         OutBox(7, 29, 75, 60);
-        but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
+        but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
         break;
 
     case ROCKET_HARDWARE:
         OutBox(83, 29, 156, 60);
-        but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
+        but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
         break;
 
     case MANNED_HARDWARE:
         OutBox(164, 29, 237, 60);
-        but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
+        but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
         break;
 
     case MISC_HARDWARE:
         OutBox(245, 29, 313, 60);
-        but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
+        but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
         break;
     }
 
     switch (nw) {
     case PROBE_HARDWARE:
         InBox(7, 29, 75, 60);
-        but->copyTo(display::graphics.screen(), 0, 31, 8, 30, 74, 59); // Unmanned
+        but->copyTo(display::graphics.legacyScreen(), 0, 31, 8, 30, 74, 59); // Unmanned
         break;
 
     case ROCKET_HARDWARE:
         InBox(83, 29, 156, 60);
-        but->copyTo(display::graphics.screen(), 68, 31, 84, 30, 155, 59); // Rocket
+        but->copyTo(display::graphics.legacyScreen(), 68, 31, 84, 30, 155, 59); // Rocket
         break;
 
     case MANNED_HARDWARE:
         InBox(164, 29, 237, 60);
-        but->copyTo(display::graphics.screen(), 141, 31, 165, 30, 236, 59); // Manned
+        but->copyTo(display::graphics.legacyScreen(), 141, 31, 165, 30, 236, 59); // Manned
         break;
 
     case MISC_HARDWARE:
         InBox(245, 29, 313, 60);
-        but->copyTo(display::graphics.screen(), 214, 31, 246, 30, 312, 59); // Misc
+        but->copyTo(display::graphics.legacyScreen(), 214, 31, 246, 30, 312, 59); // Misc
         break;
     }
 
@@ -1222,7 +1222,7 @@ void DrawHPurc(char player_index)
     fclose(fin);
 
     Load_RD_BUT(player_index);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
     ShBox(17, 68, 143, 199);
@@ -1262,10 +1262,10 @@ void DrawHPurc(char player_index)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISIT R&D FACILITY");
 
-    but->copyTo(display::graphics.screen(), 0, 0, 8, 30, 74, 59); // Unmanned
-    but->copyTo(display::graphics.screen(), 68, 0, 84, 30, 155, 59); // Rocket
-    but->copyTo(display::graphics.screen(), 141, 0, 165, 30, 236, 59); // Manned
-    but->copyTo(display::graphics.screen(), 214, 0, 246, 30, 312, 59); // Misc
+    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
+    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
+    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
+    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(9);
     draw_string(191, 190, "P");

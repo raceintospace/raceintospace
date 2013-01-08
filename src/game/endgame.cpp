@@ -92,7 +92,7 @@ Burst(char win)
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-    vhptr->copyFrom(display::graphics.screen(), 0, 0, 319, 199);
+    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
 
     while (1) {
         Region = brandom(100);
@@ -125,7 +125,7 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                    display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
                 }
 
                 key = 0;
@@ -161,7 +161,7 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-                        vhptr->copyTo(display::graphics.screen(), 0, 0);
+                        vhptr->copyTo(display::graphics.legacyScreen(), 0, 0);
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -200,7 +200,7 @@ Burst(char win)
 
                 if (lp1 < Bomb[lp2].per && (xx >= 0 && xx < 320 && yy >= 0
                                             && yy <= 172)) {
-                    display::graphics.screen()->setPixel(xx, yy, clr);
+                    display::graphics.legacyScreen()->setPixel(xx, yy, clr);
                 }
             }
         }
@@ -210,7 +210,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.screen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
             }
         }
     }                              // end while
@@ -226,7 +226,7 @@ void EndGame(char win, char pad)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     helpText = "i000";
     keyHelpText = "k000";
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -486,7 +486,7 @@ void Load_LenFlag(char win)
     display::LegacySurface local(P.w, P.h);
     display::LegacySurface local2(P.w, P.h);
     local.clear(0);
-    local2.copyFrom(display::graphics.screen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
@@ -497,7 +497,7 @@ void Load_LenFlag(char win)
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
 
-    local2.copyTo(display::graphics.screen(), Off_X, Off_Y);
+    local2.copyTo(display::graphics.legacyScreen(), Off_X, Off_Y);
 }
 
 void Draw_NewEnd(char win)
@@ -505,7 +505,7 @@ void Draw_NewEnd(char win)
     music_start(M_VICTORY);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
 
     boost::shared_ptr<display::PalettizedSurface> winner(Filesystem::readImage("images/winner.but.0.png"));
     winner->exportPalette(0, 128);
@@ -574,7 +574,7 @@ void NewEnd(char win, char loc)
                     R_V = 5;
                 }
 
-                local.copyTo(display::graphics.screen(), 149, 9);
+                local.copyTo(display::graphics.legacyScreen(), 149, 9);
                 memset(&display::graphics.palette()[384], 0, 384);
                 local.clear(0);
                 Load_LenFlag(win);
@@ -649,7 +649,7 @@ void NewEnd(char win, char loc)
             OutBox(134, 182, 185, 190);
             FadeOut(1, display::graphics.palette(), 40, 128, 1);
             fill_rectangle(195, 0, 319, 172, 0);
-            local.copyFrom(display::graphics.screen(), 149, 9, 309, 100);
+            local.copyFrom(display::graphics.legacyScreen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_PRGMTRG);
@@ -679,7 +679,7 @@ void NewEnd(char win, char loc)
             Re_Draw = 1;
             FadeOut(1, display::graphics.palette(), 40, 128, 1);
             fill_rectangle(195, 0, 319, 172, 0);
-            local.copyFrom(display::graphics.screen(), 149, 9, 309, 100);
+            local.copyFrom(display::graphics.legacyScreen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_MISSPLAN);
@@ -712,7 +712,7 @@ void FakeWin(char win)
     monthWin = brandom(12);
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1053,7 +1053,7 @@ void SpecialEnd(void)
     char i;
     music_start(M_BADNEWS);
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 24);
     draw_heading(5, 5, "FAILED OBJECTIVE", 1, -1);
     ShBox(0, 26, 319, 199);
@@ -1128,7 +1128,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
     fseek(in, P.offset, SEEK_SET);
     display::LegacySurface local(P.w, P.h);
     display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
@@ -1140,7 +1140,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
         }
 
 
-    local2.copyTo(display::graphics.screen(), x, y);
+    local2.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
 void
@@ -1158,13 +1158,13 @@ LoserPict(char poff, unsigned char coff)
     fseek(in, P.offset, SEEK_SET);
     display::LegacySurface local(P.w, P.h);
     display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.screen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
     local2.maskCopy(&local, 0, display::Surface::SourceNotEqual, coff);
 
-    local2.copyTo(display::graphics.screen(), 6, 32);
+    local2.copyTo(display::graphics.legacyScreen(), 6, 32);
 }
 
 
@@ -1174,7 +1174,7 @@ void PlayFirst(char plr, char first)
     int Check = 0;
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
     draw_heading(92, 22, "PRESTIGE FIRST", 0, -1);
@@ -1226,7 +1226,7 @@ void PlayFirst(char plr, char first)
 
     PauseMouse();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     music_stop();
     return;
 }

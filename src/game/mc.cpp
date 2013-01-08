@@ -95,7 +95,7 @@ void DrawControl(char plr)
 
     fread(vhptr->pixels(), len, 1, fin);
     fclose(fin);
-    PCX_D(vhptr->pixels(), display::graphics.screen()->pixels(), (unsigned) len);
+    PCX_D(vhptr->pixels(), display::graphics.legacyScreen()->pixels(), (unsigned) len);
 }
 
 void SetW(char ch)
@@ -292,7 +292,7 @@ int Launch(char plr, char mis)
         DrawControl(plr);
         FadeIn(2, display::graphics.palette(), 10, 0, 0);
     } else if (BIG == 1) {
-        display::graphics.screen()->clear(0);
+        display::graphics.legacyScreen()->clear(0);
     }
 
     memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct

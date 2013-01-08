@@ -1443,7 +1443,7 @@ void DrawBre(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1554,8 +1554,8 @@ void Load_CIA_BUT(void)
 
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(display::graphics.palette(), 768, 1, fin);
-    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    PCX_D(display::graphics.screen()->pixels(), vhptr->pixels(), i);
+    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
+    PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i);
     fclose(fin);
 }
 
@@ -1567,7 +1567,7 @@ void DrawIStat(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -1583,9 +1583,9 @@ void DrawIStat(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        display::graphics.screen()->setPixel(i, 57, 11);
-        display::graphics.screen()->setPixel(i, 91, 11);
-        display::graphics.screen()->setPixel(i, 125, 11);
+        display::graphics.legacyScreen()->setPixel(i, 57, 11);
+        display::graphics.legacyScreen()->setPixel(i, 91, 11);
+        display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
     display::graphics.setForegroundColor(9);
@@ -1595,10 +1595,10 @@ void DrawIStat(char plr)
     draw_string(17, 89, "%");
     draw_number(5, 123, 25);
     draw_string(17, 123, "%");
-    but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194); // Unmanned
-    but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194); // Rocket
-    but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194); // Manned
-    but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194); // Misc
+    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194); // Unmanned
+    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194); // Rocket
+    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194); // Manned
+    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194); // Misc
     display::graphics.setForegroundColor(6);
     draw_heading(40, 5, "INTELLIGENCE STATS", 1, -1);
     draw_small_flag(plr, 4, 4);
@@ -1614,22 +1614,22 @@ void ReButs(char old, char nw)
     switch (old) {
     case 0:
         OutBox(7, 164, 75, 195);
-        but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194); // Unmanned
+        but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194); // Unmanned
         break;
 
     case 1:
         OutBox(83, 164, 156, 195);
-        but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194); // Rocket
+        but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194); // Rocket
         break;
 
     case 2:
         OutBox(164, 164, 237, 195);
-        but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194); // Manned
+        but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194); // Manned
         break;
 
     case 3:
         OutBox(245, 164, 313, 195);
-        but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194); // Misc
+        but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194); // Misc
         break;
 
     default:
@@ -1639,22 +1639,22 @@ void ReButs(char old, char nw)
     switch (nw) {
     case 0:
         InBox(7, 164, 75, 195);
-        but->copyTo(display::graphics.screen(), 0, 31, 8, 165, 74, 194); // Unmanned
+        but->copyTo(display::graphics.legacyScreen(), 0, 31, 8, 165, 74, 194); // Unmanned
         break;
 
     case 1:
         InBox(83, 164, 156, 195);
-        but->copyTo(display::graphics.screen(), 68, 31, 84, 165, 155, 194); // Rocket
+        but->copyTo(display::graphics.legacyScreen(), 68, 31, 84, 165, 155, 194); // Rocket
         break;
 
     case 2:
         InBox(164, 164, 237, 195);
-        but->copyTo(display::graphics.screen(), 141, 31, 165, 165, 236, 194); // Manned
+        but->copyTo(display::graphics.legacyScreen(), 141, 31, 165, 165, 236, 194); // Manned
         break;
 
     case 3:
         InBox(245, 164, 313, 195);
-        but->copyTo(display::graphics.screen(), 214, 31, 246, 165, 312, 194); // Misc
+        but->copyTo(display::graphics.legacyScreen(), 214, 31, 246, 165, 312, 194); // Misc
         break;
     }
 
@@ -1739,12 +1739,12 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
     display::LegacySurface local2(w, h);
     local.clear(0);
     local2.clear(0);
-    local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
     local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
 
-    local2.copyTo(display::graphics.screen(), s, t);
+    local2.copyTo(display::graphics.legacyScreen(), s, t);
 }
 
 void IInfo(char plr, char loc, char w)
@@ -1755,9 +1755,9 @@ void IInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            display::graphics.screen()->setPixel(i, 57, 11);
-            display::graphics.screen()->setPixel(i, 91, 11);
-            display::graphics.screen()->setPixel(i, 125, 11);
+            display::graphics.legacyScreen()->setPixel(i, 57, 11);
+            display::graphics.legacyScreen()->setPixel(i, 91, 11);
+            display::graphics.legacyScreen()->setPixel(i, 125, 11);
         }
 
         display::graphics.setForegroundColor(9);

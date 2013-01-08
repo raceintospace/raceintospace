@@ -101,9 +101,9 @@ void Load_FUT_BUT(void)
     FILE *fin;
     unsigned i;
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
-    i = fread(display::graphics.screen()->pixels(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.screen()->pixels(), vh->pixels(), i, vh->width(), vh->height());
+    RLED_img(display::graphics.legacyScreen()->pixels(), vh->pixels(), i, vh->width(), vh->height());
     return;
 }
 
@@ -127,7 +127,7 @@ void DrawFuture(char plr, int mis, char pad)
     boost::shared_ptr<display::PalettizedSurface> planets(Filesystem::readImage("images/fmin.img.0.png"));
     planets->exportPalette();
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
 
     gr_sync();
 
@@ -204,7 +204,7 @@ void DrawFuture(char plr, int mis, char pad)
     draw_up_arrow(8, 95);
     draw_down_arrow(8, 157);
 
-    vh->copyTo(display::graphics.screen(), 140, 5, 5, 132, 15, 146);
+    vh->copyTo(display::graphics.legacyScreen(), 140, 5, 5, 132, 15, 146);
     Toggle(5, 1);
     draw_Pie(0);
     OutBox(5, 49, 53, 72);
@@ -314,7 +314,7 @@ int GetMinus(char plr)
         u = 19;    //danger
     }
 
-    vh->copyTo(display::graphics.screen(), 203, u, 203, 24, 238, 31);
+    vh->copyTo(display::graphics.legacyScreen(), 203, u, 203, 24, 238, 31);
     display::graphics.setForegroundColor(11);
 
     if (i > 0) {
@@ -376,45 +376,45 @@ void Toggle(int wh, int i)
     switch (wh) {
     case 1:
         if (i == 1) {
-            vh->copyTo(display::graphics.screen(), 1, 21, 55, 49, 89, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 1, 21, 55, 49, 89, 81);
         } else {
-            vh->copyTo(display::graphics.screen(), 1, 56, 55, 49, 89, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 1, 56, 55, 49, 89, 81);
         }
 
         break;
 
     case 2:
         if (i == 1)  {
-            vh->copyTo(display::graphics.screen(), 38, 21, 92, 49, 127, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 38, 21, 92, 49, 127, 81);
         } else {
-            vh->copyTo(display::graphics.screen(), 38, 56, 92, 49, 127, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 38, 56, 92, 49, 127, 81);
         }
 
         break;
 
     case 3:
         if (i == 1)  {
-            vh->copyTo(display::graphics.screen(), 75, 21, 129, 49, 163, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 75, 21, 129, 49, 163, 81);
         } else {
-            vh->copyTo(display::graphics.screen(), 75, 56, 129, 49, 163, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 75, 56, 129, 49, 163, 81);
         }
 
         break;
 
     case 4:
         if (i == 1)  {
-            vh->copyTo(display::graphics.screen(), 112, 21, 166, 49, 200, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 112, 21, 166, 49, 200, 81);
         } else {
-            vh->copyTo(display::graphics.screen(), 112, 56, 166, 49, 200, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 112, 56, 166, 49, 200, 81);
         }
 
         break;
 
     case 5:
         if (i == 1)  {
-            vh->copyTo(display::graphics.screen(), 153, 1, 5, 49, 52, 71);
+            vh->copyTo(display::graphics.legacyScreen(), 153, 1, 5, 49, 52, 71);
         } else {
-            vh->copyTo(display::graphics.screen(), 153, 26, 5, 49, 52, 71);
+            vh->copyTo(display::graphics.legacyScreen(), 153, 26, 5, 49, 52, 71);
         }
 
         break;
@@ -527,7 +527,7 @@ void draw_Pie(int s)
         off = s * 20;
     }
 
-    vh->copyTo(display::graphics.screen(), off, 1, 7, 51, 25, 69);
+    vh->copyTo(display::graphics.legacyScreen(), off, 1, 7, 51, 25, 69);
     return;
 }
 
@@ -917,7 +917,7 @@ begfut_noredraw:
 
         if (setting >= 0) {
             if (prev_setting < 0) {
-                local.copyFrom(display::graphics.screen(), 18, 186, 183, 194);
+                local.copyFrom(display::graphics.legacyScreen(), 18, 186, 183, 194);
             }
 
             if (prev_setting != setting) {
@@ -926,7 +926,7 @@ begfut_noredraw:
                 MisStep(21, 192, Mev[setting].loc);
             }
         } else if (setting < 0 && prev_setting >= 0) {
-            local.copyTo(display::graphics.screen(), 18, 186);
+            local.copyTo(display::graphics.legacyScreen(), 18, 186);
         }
 
         if (Mis.Dur <= V[MisType].E && ((x >= 244 && y >= 5 && x <= 313
@@ -940,13 +940,13 @@ begfut_noredraw:
 
             key = 0;
             OutBox(244, 5, 313, 17);
-            local2.copyFrom(display::graphics.screen(), 74, 3, 250, 199);
+            local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
             NewType = V[MisType].X;
             Data->P[plr].Future[MisNum].Duration = DuraType;
 
             Ok = HardCrewAssign(plr, Pad, MisType, NewType);
 
-            local2.copyTo(display::graphics.screen(), 74, 3);
+            local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
             if (Ok == 1) {
                 Data->P[plr].Future[MisNum].Duration = DuraType;

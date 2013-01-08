@@ -154,7 +154,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
     }
 
     display::LegacySurface local(143, 74);
-    local.copyFrom(display::graphics.screen(), 94, 38, 236, 111);
+    local.copyFrom(display::graphics.legacyScreen(), 94, 38, 236, 111);
     ShBox(94, 38, 236, 95);
     InBox(98, 41, 232, 61);
     fill_rectangle(99, 42, 231, 60, 7 + plr * 3);
@@ -248,7 +248,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
             GetMouse();
         }
 
-    local.copyTo(display::graphics.screen(), 94, 38);
+    local.copyTo(display::graphics.legacyScreen(), 94, 38);
 }
 
 void DrawProgs(char plr, char prog)
@@ -257,7 +257,7 @@ void DrawProgs(char plr, char prog)
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 81);
@@ -470,7 +470,7 @@ void DamProb(char plr, char prog, int chk)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
 
     switch (prog) {
     case 0:
@@ -1093,7 +1093,7 @@ Programs(char plr, char prog)
 
                 if (Data->P[plr].Pool[tst].Prime > 0) {
                     OutBox(245, 106, 314, 118);
-                    vhptr->copyFrom(display::graphics.screen(), 75, 43, 244, 173, 75, 43);
+                    vhptr->copyFrom(display::graphics.legacyScreen(), 75, 43, 244, 173, 75, 43);
                     ShBox(75, 43, 244, 173);
                     IOBox(81, 152, 238, 167);
                     InBox(81, 70, 238, 113);
@@ -1130,7 +1130,7 @@ Programs(char plr, char prog)
                                 InBox(83, 154, 236, 165);
                                 WaitForMouseUp();
                                 OutBox(83, 154, 236, 165);
-                                vhptr->copyTo(display::graphics.screen(), 75, 43, 75, 43, 244, 173);
+                                vhptr->copyTo(display::graphics.legacyScreen(), 75, 43, 75, 43, 244, 173);
                                 i = 2;
                             }
                         }

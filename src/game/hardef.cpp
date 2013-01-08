@@ -54,7 +54,7 @@ DrawHardef(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -70,19 +70,19 @@ DrawHardef(char plr)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        display::graphics.screen()->setPixel(i, 57, 11);
-        display::graphics.screen()->setPixel(i, 91, 11);
-        display::graphics.screen()->setPixel(i, 125, 11);
+        display::graphics.legacyScreen()->setPixel(i, 57, 11);
+        display::graphics.legacyScreen()->setPixel(i, 91, 11);
+        display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
     display::graphics.setForegroundColor(9);
     draw_number(5, 55, 15);
     draw_number(5, 89, 10);
     draw_number(5, 123, 5);
-    but->copyTo(display::graphics.screen(), 0, 0, 8, 165, 74, 194);   // Unmanned
-    but->copyTo(display::graphics.screen(), 68, 0, 84, 165, 155, 194);    // Rocket
-    but->copyTo(display::graphics.screen(), 141, 0, 165, 165, 236, 194);  // Manned
-    but->copyTo(display::graphics.screen(), 214, 0, 246, 165, 312, 194);  // Misc
+    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194);   // Unmanned
+    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194);    // Rocket
+    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194);  // Manned
+    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194);  // Misc
     display::graphics.setForegroundColor(1);
     draw_heading(40, 5, "EFFICIENCY", 1, -1);
     draw_small_flag(plr, 4, 4);
@@ -141,9 +141,9 @@ ShowHard(char plr)
                 GradRect(4, 23, 315, 159, 0);
 
                 for (i = 4; i < 316; i += 2) {
-                    display::graphics.screen()->setPixel(i, 57, 11);
-                    display::graphics.screen()->setPixel(i, 91, 11);
-                    display::graphics.screen()->setPixel(i, 125, 11);
+                    display::graphics.legacyScreen()->setPixel(i, 57, 11);
+                    display::graphics.legacyScreen()->setPixel(i, 91, 11);
+                    display::graphics.legacyScreen()->setPixel(i, 125, 11);
                 }
 
                 if (Cnt == 0) {
@@ -236,12 +236,12 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
     display::LegacySurface local2(w, h);
     local.clear(0);
     local2.clear(0);
-    local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
     local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
 
-    local2.copyTo(display::graphics.screen(), s, t);
+    local2.copyTo(display::graphics.legacyScreen(), s, t);
 }
 
 void
@@ -254,9 +254,9 @@ PInfo(char plr, char loc)
     GradRect(4, 23, 315, 159, 0);
 
     for (i = 4; i < 316; i += 2) {
-        display::graphics.screen()->setPixel(i, 57, 11);
-        display::graphics.screen()->setPixel(i, 91, 11);
-        display::graphics.screen()->setPixel(i, 125, 11);
+        display::graphics.legacyScreen()->setPixel(i, 57, 11);
+        display::graphics.legacyScreen()->setPixel(i, 91, 11);
+        display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
     for (i = 0; i < 4; i++)
@@ -785,9 +785,9 @@ HInfo(char plr, char loc, char w)
         GradRect(4, 23, 315, 159, 0);
 
         for (i = 4; i < 316; i += 2) {
-            display::graphics.screen()->setPixel(i, 57, 11);
-            display::graphics.screen()->setPixel(i, 91, 11);
-            display::graphics.screen()->setPixel(i, 125, 11);
+            display::graphics.legacyScreen()->setPixel(i, 57, 11);
+            display::graphics.legacyScreen()->setPixel(i, 91, 11);
+            display::graphics.legacyScreen()->setPixel(i, 125, 11);
         }
 
         // determine scale x5
@@ -1460,7 +1460,7 @@ RankMe(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(52, 0, 267, 32);
     ShBox(0, 0, 50, 32);
     ShBox(269, 0, 319, 32);

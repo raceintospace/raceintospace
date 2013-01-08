@@ -314,7 +314,7 @@ void FileAccess(char mode)
     helpText = "i128";
     keyHelpText = "k128";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
 
     saveType = SAVEGAME_Normal;
 
@@ -1166,7 +1166,7 @@ char GetBlockName(char *Nam)
     int i, key;
 
     display::LegacySurface local(164, 77);
-    local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
+    local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     i = 1;
 
@@ -1183,7 +1183,7 @@ char GetBlockName(char *Nam)
         display::graphics.setForegroundColor(11);
         draw_string(47, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
-        local.copyTo(display::graphics.screen(), 39, 50);
+        local.copyTo(display::graphics.legacyScreen(), 39, 50);
         return 0;
     }
 
@@ -1221,7 +1221,7 @@ char GetBlockName(char *Nam)
         }
     }
 
-    local.copyTo(display::graphics.screen(), 39, 50);
+    local.copyTo(display::graphics.legacyScreen(), 39, 50);
 
     if (key == K_ENTER && i >= 1) {
         return 1;
@@ -1251,16 +1251,16 @@ void DrawFiles(char now, char loc, char tFiles)
 void BadFileType(void)
 {
     display::LegacySurface local(164, 77);
-    local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
+    local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
     fill_rectangle(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
     draw_string(47, 74, "CORRUPT SAVE FILE");
     delay(2000);
-    local.copyTo(display::graphics.screen(), 39, 50);
+    local.copyTo(display::graphics.legacyScreen(), 39, 50);
     PauseMouse();
-    local.copyTo(display::graphics.screen(), 39, 50);
+    local.copyTo(display::graphics.legacyScreen(), 39, 50);
 }
 
 
@@ -1385,7 +1385,7 @@ int FutureCheck(char plr, char type)
         keyHelpText = "k015";
     }
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(59, 12, 269, 186);
     InBox(64, 17, 213, 29);
     fill_rectangle(65, 18, 212, 28, 7);
@@ -1659,7 +1659,7 @@ char RequestX(char *s, char md)
 
 
     if (md == 1) { // Save Buffer
-        local.copyFrom(display::graphics.screen(), 85, 52, 280, 135);
+        local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
     i = strlen(s) >> 1;
@@ -1699,7 +1699,7 @@ char RequestX(char *s, char md)
     if (md == 1) {
 
         WaitForMouseUp();
-        local.copyTo(display::graphics.screen(), 85, 52);
+        local.copyTo(display::graphics.legacyScreen(), 85, 52);
     }
 
     WaitForMouseUp();

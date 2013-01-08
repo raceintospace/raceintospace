@@ -374,16 +374,16 @@ void SMove(void *p, int x, int y)
 {
     display::LegacySurface local(160, 100);
     memcpy(local.pixels(), p, 160 * 100);
-    local.copyTo(display::graphics.screen(), x, y);
+    local.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
 void LMove(void *p)
 {
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
 
     display::LegacySurface local(160, 100);
     memcpy(local.pixels(), p, 160 * 100);
-    local.copyTo(display::graphics.screen(), 320 / 4, 200 / 4);
+    local.copyTo(display::graphics.legacyScreen(), 320 / 4, 200 / 4);
 }
 
 void randomize(void)

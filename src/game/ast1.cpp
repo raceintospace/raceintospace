@@ -137,7 +137,7 @@ void DrawAstCheck(char plr)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
     fill_rectangle(88, 50, 229, 102, 7 + plr * 3);
@@ -289,7 +289,7 @@ void DrawAstSel(char plr)
     helpText = "i012";
     keyHelpText = "k012";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);

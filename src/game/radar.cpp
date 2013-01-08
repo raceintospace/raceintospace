@@ -47,7 +47,7 @@ void PadDraw(char plr, char pad)
     int missions;     // Variable for how many missions each 'naut has flown
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 198);
     InBox(3, 3, 30, 19);
@@ -572,7 +572,7 @@ void PadPict(char poff)
     fread(buffer, table.size, 1, in);
     RLED_img(buffer, local2.pixels(), table.size, local2.width(), local2.height());
 
-    local2.copyTo(display::graphics.screen(), 168, 28);
+    local2.copyTo(display::graphics.legacyScreen(), 168, 28);
 
     fclose(in);
 }

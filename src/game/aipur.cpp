@@ -63,7 +63,7 @@ void DrawStatistics(char Win)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     PortPal(0);
 
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(35, 33, 288, 159);
     InBox(40, 69, 111, 109);
     InBox(116, 69, 283, 109);
@@ -121,14 +121,14 @@ void DrawStatistics(char Win)
         fread(local.pixels(), 570, 1, fin);
 
         if (i == 0) {
-            local.copyTo(display::graphics.screen(), 153, 42);
+            local.copyTo(display::graphics.legacyScreen(), 153, 42);
         } else {
             if (AI[Win] == 0) {
-                local.copyTo(display::graphics.screen(), starty + ((i - 1) * 33) + 1, 88);
+                local.copyTo(display::graphics.legacyScreen(), starty + ((i - 1) * 33) + 1, 88);
             }
 
             if (AI[other(Win)] == 0) {
-                local.copyTo(display::graphics.screen(), starty + ((i - 1) * 33) + 1, 133);
+                local.copyTo(display::graphics.legacyScreen(), starty + ((i - 1) * 33) + 1, 133);
             }
         }
     }

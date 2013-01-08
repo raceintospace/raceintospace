@@ -60,7 +60,7 @@ void DrawBudget(char player, char *pStatus)
 
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 47);
     ShBox(0, 49, 319, 67);
     ShBox(0, 69, 158, 199);
@@ -88,15 +88,15 @@ void DrawBudget(char player, char *pStatus)
     GradRect(31, 149, 124, 182, player);
     display::graphics.setForegroundColor(4);
     // Draw Prestige Box
-    display::graphics.screen()->outlineRect(30, 148, 125, 183, 4);
-    display::graphics.screen()->outlineRect(57, 85, 85, 121, 4);
-    display::graphics.screen()->outlineRect(85, 121, 113, 85, 4);
-    display::graphics.screen()->outlineRect(29, 94, 141, 103, 4);
-    display::graphics.screen()->outlineRect(29, 103, 141, 112, 4);
-    display::graphics.screen()->outlineRect(54, 148, 77, 183, 4);
-    display::graphics.screen()->outlineRect(77, 148, 101, 183, 4);
-    display::graphics.screen()->outlineRect(30, 157, 125, 165, 4);
-    display::graphics.screen()->outlineRect(30, 165, 125, 174, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 148, 125, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(57, 85, 85, 121, 4);
+    display::graphics.legacyScreen()->outlineRect(85, 121, 113, 85, 4);
+    display::graphics.legacyScreen()->outlineRect(29, 94, 141, 103, 4);
+    display::graphics.legacyScreen()->outlineRect(29, 103, 141, 112, 4);
+    display::graphics.legacyScreen()->outlineRect(54, 148, 77, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(77, 148, 101, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 157, 125, 165, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
     // Draw the Prestige Screen
@@ -270,10 +270,10 @@ void DrawBudget(char player, char *pStatus)
     grLineTo(311, 107);
 
     for (i = 187; i < 312; i += 2) {
-        display::graphics.screen()->setPixel(i, 157, 4);
-        display::graphics.screen()->setPixel(i, 137, 4);
-        display::graphics.screen()->setPixel(i, 117, 4);
-        display::graphics.screen()->setPixel(i, 97, 4);
+        display::graphics.legacyScreen()->setPixel(i, 157, 4);
+        display::graphics.legacyScreen()->setPixel(i, 137, 4);
+        display::graphics.legacyScreen()->setPixel(i, 117, 4);
+        display::graphics.legacyScreen()->setPixel(i, 97, 4);
     }
 
     display::graphics.setForegroundColor(4);
@@ -331,11 +331,11 @@ void DrawPastExp(char player, char *pStatus)
 
     fill_rectangle(31, 149, 124, 182, 7 + 3 * player);
     display::graphics.setForegroundColor(4);
-    display::graphics.screen()->outlineRect(30, 148, 125, 183, 4);
-    display::graphics.screen()->outlineRect(54, 148, 77, 183, 4);
-    display::graphics.screen()->outlineRect(77, 148, 101, 183, 4);
-    display::graphics.screen()->outlineRect(30, 157, 125, 165, 4);
-    display::graphics.screen()->outlineRect(30, 165, 125, 174, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 148, 125, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(54, 148, 77, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(77, 148, 101, 183, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 157, 125, 165, 4);
+    display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
 
     for (j = 0; j < 5; j++)
         for (i = 0; i < 4; i++) {
@@ -540,7 +540,7 @@ void DrawViewing(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

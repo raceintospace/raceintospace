@@ -85,9 +85,9 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
             for (l = 0; l < letter.width; l++) {
                 if (letter.img[k][l] != 0x03) {
                     if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
-                        display::graphics.screen()->setPixel(x + l, y + k, letter.img[k][l] + 7);
+                        display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l] + 7);
                     } else {
-                        display::graphics.screen()->setPixel(x + l, y + k, letter.img[k][l]);
+                        display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l]);
                     }
                 }
             }
@@ -158,41 +158,41 @@ void ShBox(int x1, int y1, int x2, int y2)
 
 void draw_up_arrow(int x1, int y1)
 {
-    display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
-    display::graphics.screen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
+    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 4);
+    display::graphics.legacyScreen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 4);
 
-    display::graphics.screen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
-    display::graphics.screen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
+    display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
+    display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
     return;
 }
 
 void draw_right_arrow(int x1, int y1)
 {
-    display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
-    display::graphics.screen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
+    display::graphics.legacyScreen()->line(x1, y1, x1 + 31, y1, 4);
+    display::graphics.legacyScreen()->line(x1 + 20, y1 + 3, x1 + 20, y1 + 5, 4);
 
-    display::graphics.screen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
-    display::graphics.screen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
+    display::graphics.legacyScreen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
+    display::graphics.legacyScreen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
     return;
 }
 
 void draw_left_arrow(int x1, int y1)
 {
-    display::graphics.screen()->line(x1, y1, x1 + 31, y1, 4);
-    display::graphics.screen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
+    display::graphics.legacyScreen()->line(x1, y1, x1 + 31, y1, 4);
+    display::graphics.legacyScreen()->line(x1 + 11, y1 + 3, x1 + 11, y1 + 5, 4);
 
-    display::graphics.screen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
-    display::graphics.screen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2);
+    display::graphics.legacyScreen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
+    display::graphics.legacyScreen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2);
     return;
 }
 
 void draw_down_arrow(int x1, int y1)
 {
-    display::graphics.screen()->line(x1, y1, x1, 25 + y1, 4);
-    display::graphics.screen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
+    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 4);
+    display::graphics.legacyScreen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 4);
 
-    display::graphics.screen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
-    display::graphics.screen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
+    display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
+    display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
     return;
 }
 
@@ -223,7 +223,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 {
     InBox(x1, y1, x2, y2);
     display::graphics.setForegroundColor(0);
-    display::graphics.screen()->outlineRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0);
+    display::graphics.legacyScreen()->outlineRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1, 0);
     OutBox(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 }
 
@@ -239,7 +239,7 @@ void IOBox(int x1, int y1, int x2, int y2)
 void fill_rectangle(int x1, int y1, int x2, int y2, char col)
 {
     display::graphics.setBackgroundColor(col);
-    display::graphics.screen()->fillRect(x1, y1, x2, y2, col);
+    display::graphics.legacyScreen()->fillRect(x1, y1, x2, y2, col);
     return;
 }
 

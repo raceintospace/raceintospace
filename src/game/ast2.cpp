@@ -52,7 +52,7 @@ void DrawLimbo(char plr)
 
     helpText = "i039";
     keyHelpText = "k039";
-    display::graphics.screen()->clear(0);
+    display::graphics.legacyScreen()->clear(0);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);

@@ -100,7 +100,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         {
             // scope block to avoid initialization skipped by 'case' label error"
             display::LegacySurface local3(171, 188);
-            local3.copyFrom(display::graphics.screen(), 74, 3, 244, 190);
+            local3.copyFrom(display::graphics.legacyScreen(), 74, 3, 244, 190);
 
             if (M != 0) {
                 M = AsnCrew(plr, Pad, 0);
@@ -114,7 +114,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
 
             Data->P[plr].Future[Pad].MissionCode = MisType;
 
-            local3.copyTo(display::graphics.screen(), 74, 3);
+            local3.copyTo(display::graphics.legacyScreen(), 74, 3);
         }
 
         if (M != 0) {

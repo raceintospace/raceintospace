@@ -646,7 +646,7 @@ News(char plr)
 
                 if (AnimIndex == 5) {
 
-                    fill_rectangle(227, 108, 228, 108, display::graphics.screen()->getPixel(227, 108));
+                    fill_rectangle(227, 108, 228, 108, display::graphics.legacyScreen()->getPixel(227, 108));
 
                 }
 
@@ -876,8 +876,8 @@ DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
     display::graphics.setForegroundColor(3);
-    display::graphics.screen()->outlineRect(1, 1, 318, 112, 3);
-    display::graphics.screen()->outlineRect(2, 2, 317, 111, 3);
+    display::graphics.legacyScreen()->outlineRect(1, 1, 318, 112, 3);
+    display::graphics.legacyScreen()->outlineRect(2, 2, 317, 111, 3);
     InBox(3, 3, 316, 110);
     ShBox(240, 3, 316, 22);
     fill_rectangle(315, 20, 317, 21, 3);
@@ -945,7 +945,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     if (Mode == TOMS_BUGFIX) {
         FadeOut(2, display::graphics.palette(), 1, 0, 0);
 
-        display::graphics.screen()->clear(0);
+        display::graphics.legacyScreen()->clear(0);
         DrawTopNewsBox(plr);
         DrawBottomNewsBox(plr);
 
@@ -1020,7 +1020,7 @@ ShowEvt(char plr, char crd)
     if (offset && length) {
         fseek(ffin, offset, SEEK_SET);
         fread(&display::graphics.palette()[384], 384, 1, ffin);
-        fread(display::graphics.screen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
+        fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
         DrawTopNewsBox(plr);
     }
 
