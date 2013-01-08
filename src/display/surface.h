@@ -52,12 +52,12 @@ public:
     void maskCopy(Surface *source, char maskValue, Surface::MaskSource maskSource, char offset = 0);
     void filter(char testValue, char offset, Surface::FilterTest filterTest);
 
-    unsigned int width() const {
-        return _width;
+    inline unsigned int width() const {
+        return _screen->w;
     }
 
-    unsigned int height() const {
-        return _height;
+    inline unsigned int height() const {
+        return _screen->h;
     }
 
     void draw(boost::shared_ptr<Image> image, unsigned int x, unsigned int y) {
@@ -70,8 +70,6 @@ public:
 
 
 private:
-    unsigned int _width;
-    unsigned int _height;
     SDL_Surface *_screen;
     bool _dirty;
 };
