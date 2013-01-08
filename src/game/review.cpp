@@ -48,7 +48,7 @@ void DrawReview(char plr)
     char Fired_Flag = 0, Reset_Flag = 0;
 
     if (Data->P[plr].PresRev[0] != 0x7F) {
-        FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+        FadeOut(2, 10, 0, 0);
     }
 
     PortPal(plr);
@@ -248,7 +248,7 @@ void DrawReview(char plr)
         Data->P[plr].PresRev[0] = 16;
     }
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     return;
 }
@@ -283,7 +283,7 @@ void MisRev(char plr, int pres)
         music_start((pres > 0) ? M_SUCCESS : M_UNSUCC);
     }
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

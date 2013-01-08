@@ -170,7 +170,7 @@ int RLED_img(char *src_raw, char *dest_raw, unsigned int src_size, int w, int h)
  * @param val pivot index in palette array
  * @param mode if mode == 1 then preserve non-faded colors, else make black
  */
-void FadeIn(char wh, void *palx, int steps, int val, char mode)
+void FadeIn(char wh, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;
@@ -186,7 +186,7 @@ void FadeIn(char wh, void *palx, int steps, int val, char mode)
     av_set_fading(AV_FADE_IN, from, to, steps, !!mode);
 }
 
-void FadeOut(char wh, void *palx, int steps, int val, char mode)
+void FadeOut(char wh, int steps, int val, char mode)
 {
     int from = 0;
     int to = 256;

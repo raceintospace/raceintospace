@@ -290,7 +290,7 @@ int Launch(char plr, char mis)
 
     if (!AI[plr] && BIG == 0) {
         DrawControl(plr);
-        FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+        FadeIn(2, 10, 0, 0);
     } else if (BIG == 1) {
         display::graphics.screen()->clear();
     }

@@ -223,7 +223,7 @@ void EndGame(char win, char pad)
     char miss, prog, man1, man2, man3, man4, bud;
 
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     helpText = "i000";
     keyHelpText = "k000";
     display::graphics.screen()->clear();
@@ -426,7 +426,7 @@ void EndGame(char win, char pad)
 
     display::graphics.setForegroundColor(6);
     AltHistory(win);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -504,7 +504,7 @@ void Draw_NewEnd(char win)
 {
     music_start(M_VICTORY);
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
 
     boost::shared_ptr<display::PalettizedSurface> winner(Filesystem::readImage("images/winner.but.0.png"));
@@ -524,9 +524,9 @@ void Draw_NewEnd(char win)
     draw_string(142, 188, "PARADE");
     draw_string(198, 188, "MOON EVA");
     draw_string(269, 188, "EXIT");
-    FadeIn(0, display::graphics.legacyScreen()->pal(), 10, 128, 0);
+    FadeIn(0, 10, 128, 0);
     Load_LenFlag(win);
-    FadeIn(1, display::graphics.legacyScreen()->pal(), 40, 128, 1);
+    FadeIn(1, 40, 128, 1);
 }
 
 void NewEnd(char win, char loc)
@@ -578,7 +578,7 @@ void NewEnd(char win, char loc)
                 memset(&display::graphics.legacyScreen()->pal()[384], 0, 384);
                 local.clear(0);
                 Load_LenFlag(win);
-                FadeIn(1, display::graphics.legacyScreen()->pal(), 40, 128, 1);
+                FadeIn(1, 40, 128, 1);
 
                 if (R_V == 0 || R_V == -1) {
                     R_V = Burst(win);
@@ -647,7 +647,7 @@ void NewEnd(char win, char loc)
             key = 0;
             Re_Draw = 1;
             OutBox(134, 182, 185, 190);
-            FadeOut(1, display::graphics.legacyScreen()->pal(), 40, 128, 1);
+            FadeOut(1, 40, 128, 1);
             fill_rectangle(195, 0, 319, 172, 0);
             local.copyFrom(display::graphics.legacyScreen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
@@ -677,7 +677,7 @@ void NewEnd(char win, char loc)
             key = 0;
             OutBox(194, 182, 245, 190);
             Re_Draw = 1;
-            FadeOut(1, display::graphics.legacyScreen()->pal(), 40, 128, 1);
+            FadeOut(1, 40, 128, 1);
             fill_rectangle(195, 0, 319, 172, 0);
             local.copyFrom(display::graphics.legacyScreen(), 149, 9, 309, 100);
             ShBox(149, 9, 309, 100);
@@ -711,7 +711,7 @@ void FakeWin(char win)
     char miss, prog, man1, man2, man3, man4, bud, yr, monthWin;
     monthWin = brandom(12);
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -921,7 +921,7 @@ void FakeWin(char win)
     display::graphics.setForegroundColor(6);
     FakeHistory(win, yr);
     music_start(M_INTERLUD);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -1080,7 +1080,7 @@ void SpecialEnd(void)
     memset(buffer, 0x00, BUFFER_SIZE);
     HistFile(buffer + 1000, 11);
     PrintOne(buffer + 1000, 1);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
     i = 0;
@@ -1173,7 +1173,7 @@ void PlayFirst(char plr, char first)
     char i, w = 0, index;
     int Check = 0;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     music_start(M_LIFTOFF);
     ShBox(80, 18, 240, 39);
@@ -1216,7 +1216,7 @@ void PlayFirst(char plr, char first)
     }
 
     display::graphics.setForegroundColor(7);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     if (Option == -1 && MAIL == -1) {
         Replay(plr, Data->P[plr].PastMissionCount - 1, 85, 46, 151, 82, "OOOO");
@@ -1225,7 +1225,7 @@ void PlayFirst(char plr, char first)
     }
 
     PauseMouse();
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     music_stop();
     return;

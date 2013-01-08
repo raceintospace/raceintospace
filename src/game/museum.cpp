@@ -162,7 +162,7 @@ void Museum(char plr)
         if (beg == 0) {
             beg = (Data->P[plr].AstroCount > 0) ? 7 : 6;    // mods for astros
         } else {
-            FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
 
             DrawSpaceport(plr);
             PortPal(plr);
@@ -192,7 +192,7 @@ void Museum(char plr)
 
             draw_number(0, 0, Data->Year);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
         }
 
         helpText = (plr == 0) ? "i700" : "i701";
@@ -261,7 +261,7 @@ void ShowPrest(char plr)
         }
 
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeOut(2, 5, 0, 0);
     PortPal(plr);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -314,7 +314,7 @@ void ShowPrest(char plr)
     draw_up_arrow(299, 131);
     draw_down_arrow(299, 162);
     DPrest(plr, &pos, &pos2);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -634,7 +634,7 @@ void ShowSpHist(char plr)
 {
     int pos;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeOut(2, 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
     display::graphics.screen()->clear();
 
@@ -664,7 +664,7 @@ void ShowSpHist(char plr)
     Display_ARROW(2, 239, 178); //right
     Display_ARROW(3, 285, 178); //right arrow
     DrawMisHist(plr, &pos);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
 
@@ -983,7 +983,7 @@ void ShowAstrosHist(char plr)
     memcpy(abuf, Data->P[plr].Pool, sizeof(Data->P[plr].Pool));
     qsort((void *)abuf, Data->P[plr].AstroCount, sizeof(struct Astros), astcomp);
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeOut(2, 5, 0, 0);
     fill_rectangle(1, 39, 157, 184, 3);
     draw_heading(68, 71, "NO", 0, -1);
     draw_heading(46, 90, "MISSION", 0, -1);
@@ -1049,7 +1049,7 @@ void ShowAstrosHist(char plr)
     draw_string(47, 193, "NEXT MISSION");
     DisplAst(plr, &pos, &pos2);
     DisplAstData(plr, &pos, &pos2);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
 

@@ -121,7 +121,7 @@ void DrawFuture(char plr, int mis, char pad)
         lck[i] = status[i] = 0;
     }
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     Load_FUT_BUT();
 
     boost::shared_ptr<display::PalettizedSurface> planets(Filesystem::readImage("images/fmin.img.0.png"));
@@ -282,7 +282,7 @@ void DrawFuture(char plr, int mis, char pad)
     display::graphics.setForegroundColor(1);
     draw_small_flag(plr, 4, 4);
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     return;
 }

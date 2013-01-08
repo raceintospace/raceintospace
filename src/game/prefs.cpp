@@ -53,7 +53,7 @@ void DrawPrefs(int where, char a1, char a2)
     int i, mode = 0;
     FILE *fin;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     helpText = "i013";
     keyHelpText = "K013";
 
@@ -166,7 +166,7 @@ void DrawPrefs(int where, char a1, char a2)
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     return;
 }
 
@@ -381,7 +381,7 @@ void Prefs(int where)
                     Data->Def.Plr2 += hum2 * 2;
 
                     if (where == 0 || where == 3) {
-                        FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                        FadeOut(2, 10, 0, 0);
                     }
 
                     key = 0;

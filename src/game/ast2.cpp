@@ -48,7 +48,7 @@ void DrawLimbo(char plr)
 {
     int i;
     int lenprogname;  // Variable to hold and manipulate length of program name
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     helpText = "i039";
     keyHelpText = "k039";
@@ -198,7 +198,7 @@ void Limbo(char plr)
         LimboText(plr, AstroList[now2]);
     }
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     while (1) {
         key = 0;
@@ -475,7 +475,7 @@ void Limbo(char plr)
                 //   ShBox(26,130+BarA*8,152,138+BarA*8);
                 //   DispLeft(plr,BarA,count,now2,&AstroList[0]);
                 //   LimboText(plr,AstroList[now2]);
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
 
             }
 
@@ -607,7 +607,7 @@ void Limbo(char plr)
                     LimboText(plr, AstroList[now2]);
                 }
 
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
 
             }
         }

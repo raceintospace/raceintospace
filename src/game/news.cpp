@@ -875,7 +875,6 @@ static void
 DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
-    display::graphics.setForegroundColor(3);
     display::graphics.legacyScreen()->outlineRect(1, 1, 318, 112, 3);
     display::graphics.legacyScreen()->outlineRect(2, 2, 317, 111, 3);
     InBox(3, 3, 316, 110);
@@ -943,7 +942,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
 
     // *************** TCS001 my kludge (tom) 3/15/94
     if (Mode == TOMS_BUGFIX) {
-        FadeOut(2, display::graphics.legacyScreen()->pal(), 1, 0, 0);
+        FadeOut(2, 1, 0, 0);
 
         display::graphics.screen()->clear();
         DrawTopNewsBox(plr);
@@ -955,7 +954,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         }
 
         /* This fade was too long given current fades impl. */
-        FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0); /* was: 50 */
+        FadeIn(2, 10, 0, 0); /* was: 50 */
     }
 
     load_news_anim_start = get_time();

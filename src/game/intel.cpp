@@ -287,7 +287,7 @@ void Intel(char plr)
             beg = 0;
         } else {
 
-            FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             DrawSpaceport(plr);
             PortPal(plr);
             fill_rectangle(166, 191, 318, 198, 3);
@@ -315,7 +315,7 @@ void Intel(char plr)
             }
 
             draw_number(0, 0, Data->Year);
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
 
         }
 
@@ -1442,7 +1442,7 @@ void IntelPhase(char plr, char pt)
 void DrawBre(char plr)
 {
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
@@ -1488,7 +1488,7 @@ void Bre(char plr)
     DrawBre(plr);
     DrawIntelBackground(); // just the blue background
     BackIntel(plr, year);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -1564,7 +1564,7 @@ void DrawIStat(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     Load_CIA_BUT();
     display::graphics.screen()->clear();
@@ -1604,7 +1604,7 @@ void DrawIStat(char plr)
     draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
     draw_string(256, 13, "CONTINUE");
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
 }
 

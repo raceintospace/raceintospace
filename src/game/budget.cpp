@@ -59,7 +59,7 @@ void DrawBudget(char player, char *pStatus)
     char name[20], str[10];
 
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 47);
     ShBox(0, 49, 319, 67);
@@ -318,7 +318,7 @@ void DrawBudget(char player, char *pStatus)
     }
 
     DrawPastExp(player, pStatus);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     return;
 }
@@ -539,7 +539,7 @@ void DrawPreviousMissions(char plr)
 void DrawViewing(char plr)
 {
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
@@ -736,7 +736,7 @@ void Viewing(char plr)
     ctop = 0;
     DrawVText(ctop);
     InBox(244, 184, 313, 194);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     music_start(M_SOVTYP);
     WaitForMouseUp();
 

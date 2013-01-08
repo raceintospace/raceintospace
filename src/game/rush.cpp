@@ -125,7 +125,7 @@ void DrawRush(char plr)
     int l = 0;
     int JR = 0;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     boost::shared_ptr<display::PalettizedSurface> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
     launchPads->exportPalette();
@@ -319,7 +319,7 @@ void Rush(char plr)
     fCsh = Data->P[plr].Cash;
     display::graphics.setForegroundColor(1);
     music_start((plr == 1) ? M_USMIL : M_USSRMIL);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {

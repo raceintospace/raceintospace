@@ -79,7 +79,7 @@ int MainMenuChoice()
         draw_heading(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
     }
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
+    FadeIn(2, 30, 0, 0);
     WaitForMouseUp();
 
     while (selected_option == -1) {
@@ -929,7 +929,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     writePrestigeFirst(plr);
 
     if (mode == 1) {
-        FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+        FadeIn(2, 10, 0, 0);
     };
 
     WaitForMouseUp();
@@ -964,7 +964,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 music_stop();
             }
 
-            FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             key = 0;
             break;
         } else if ((x >= 216 && y >= 136 && x <= 308 && y <= 146 && mousebuttons == 1) || (key == 'R')) {
@@ -987,9 +987,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 fwrite(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
                 fwrite(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
-                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeOut(2, 10, 0, 0);
                 display::graphics.screen()->clear();
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
                     Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
@@ -1016,12 +1016,12 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                     Replay(plr, index, 0, 0, 320, 200, "OOOO");
                 }
 
-                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeOut(2, 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
                 fread(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
                 fread(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
                 key = 0;
                 remove_savedat("REPL.TMP");
 

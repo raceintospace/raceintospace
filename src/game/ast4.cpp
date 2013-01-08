@@ -256,7 +256,7 @@ void DrawProgs(char plr, char prog)
     int i, j, Name[30];
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
@@ -468,7 +468,7 @@ void DamProb(char plr, char prog, int chk)
 
     Saf_Loss = D_Cost = ESafety = 0; /* XXX check uninitialized */
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
 
@@ -546,7 +546,7 @@ void DamProb(char plr, char prog, int chk)
     sprintf(&Digit[0], "%d", ESafety);
     draw_string(0, 0, &Digit[0]);
     draw_string(0, 0, "%)");
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
 
@@ -711,7 +711,7 @@ Programs(char plr, char prog)
     NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
                Data->P[plr].Crew[prog][grp][1],
                Data->P[plr].Crew[prog][grp][2], Data->P[plr].Crew[prog][grp][3]);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     chk = CheckProgram(plr, prog);
 

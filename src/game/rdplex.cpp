@@ -168,7 +168,7 @@ void DrawRD(char player_index)
     helpText = "i009";
     keyHelpText = "k009";
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
     fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
     fclose(fin);
@@ -373,7 +373,7 @@ char RD(char player_index)
 
     keyHelpText = "k009";
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     music_start(M_HARDWARE);
 
@@ -428,7 +428,7 @@ char RD(char player_index)
 
                     keyHelpText = "k009";
 
-                    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                    FadeIn(2, 10, 0, 0);
                 }
             } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
                 if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* Unmanned */
@@ -767,7 +767,7 @@ char RD(char player_index)
                     InBox(165, 184, 315, 194);
                 };
 
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
 
                 music_start(M_HARDWARE);
 
@@ -1216,7 +1216,7 @@ void DrawHPurc(char player_index)
 {
     FILE *fin;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
     fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
     fclose(fin);
@@ -1311,7 +1311,7 @@ char HPurc(char player_index)
     BButs(PROBE_HARDWARE, hardware);
     ShowUnit(hardware, unit, player_index);
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     music_start(M_FILLER);
     WaitForMouseUp();
 
@@ -1352,7 +1352,7 @@ char HPurc(char player_index)
                 BButs(PROBE_HARDWARE, hardware);
                 ShowUnit(hardware, unit, player_index);
 
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
                 music_start(M_FILLER);
                 WaitForMouseUp();
             }
@@ -1564,7 +1564,7 @@ char HPurc(char player_index)
             fwrite(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             music_start(M_FILLER);
             WaitForMouseUp();
         };

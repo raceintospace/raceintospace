@@ -765,9 +765,9 @@ void Master(char plr)
     }
 
     // Entering screen for the first time so fade out and in.
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     DrawSpaceport(plr);
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
 
@@ -1313,13 +1313,13 @@ void Port(char plr)
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
-                                    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                                    FadeOut(2, 10, 0, 0);
                                 }
 
                                 DrawSpaceport(plr);
 
                                 if (res == pREDRAW) {
-                                    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                                    FadeIn(2, 10, 0, 0);
                                 }
 
 #if SPOT_ON
@@ -1373,7 +1373,7 @@ void Port(char plr)
                                 break;
 
                             case pEXIT:
-                                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                                FadeOut(2, 10, 0, 0);
                                 fclose(fin);
 #if BABYSND
 
@@ -1388,7 +1388,7 @@ void Port(char plr)
                                 return;
 
                             case pQUIT:
-                                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                                FadeOut(2, 10, 0, 0);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {

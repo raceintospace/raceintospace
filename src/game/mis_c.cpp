@@ -1048,7 +1048,7 @@ char FailureMode(char plr, int prelim, char *text)
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
     char save_pal[768];
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     // this destroys what's in the current page frames
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
@@ -1271,7 +1271,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     last_secs = get_time();
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -1294,14 +1294,14 @@ char FailureMode(char plr, int prelim, char *text)
             WaitForMouseUp();
             OutBox(245, 5, 314, 17);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             //  DrawControl(plr);
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 0;  /* Continue */
         }
@@ -1311,13 +1311,13 @@ char FailureMode(char plr, int prelim, char *text)
             WaitForMouseUp();
             OutBox(6, 114, 151, 126);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             //   DrawControl(plr);
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
         }
@@ -1480,7 +1480,7 @@ char DrawMoonSelection(char nauts, char plr)
         return 2;
     }
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
     memcpy(save_pal, display::graphics.legacyScreen()->pal(), 768);
 
@@ -1547,7 +1547,7 @@ char DrawMoonSelection(char nauts, char plr)
         GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
     }
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
     key = 0;
 
@@ -1565,11 +1565,11 @@ char DrawMoonSelection(char nauts, char plr)
             WaitForMouseUp();
             OutBox(27, 102, 133, 113);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 1;
         }
@@ -1580,11 +1580,11 @@ char DrawMoonSelection(char nauts, char plr)
             WaitForMouseUp();
             OutBox(27, 127, 133, 138);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 2;
         }
@@ -1595,11 +1595,11 @@ char DrawMoonSelection(char nauts, char plr)
             WaitForMouseUp();
             OutBox(27, 152, 133, 163);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 3;
         }
@@ -1610,11 +1610,11 @@ char DrawMoonSelection(char nauts, char plr)
             WaitForMouseUp();
             OutBox(27, 177, 133, 188);
             delay(10);
-            FadeOut(2, pal2, 10, 0, 0);
+            FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
             memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+            FadeIn(2, 10, 0, 0);
             key = 0;
             return 4;
         }

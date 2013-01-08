@@ -51,7 +51,7 @@ DrawHardef(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeOut(2, 10, 0, 0);
 
     Load_CIA_BUT();
     display::graphics.screen()->clear();
@@ -96,7 +96,7 @@ DrawHardef(char plr)
     fill_rectangle(149, 12, 156, 19, 5);
     display::graphics.setForegroundColor(6);
     draw_string(163, 18, "SUCCESS");
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+    FadeIn(2, 10, 0, 0);
 
     return;
 }
@@ -135,7 +135,7 @@ ShowHard(char plr)
             } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
                         && mousebuttons > 0) || key == 'T') {
 
-                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeOut(2, 10, 0, 0);
                 fill_rectangle(33, 1, 239, 21, 3);
                 fill_rectangle(4, 23, 315, 159, 0);
                 GradRect(4, 23, 315, 159, 0);
@@ -166,7 +166,7 @@ ShowHard(char plr)
                     HInfo(plr, place, 0);
                 }
 
-                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
+                FadeIn(2, 10, 0, 0);
 
             } else if (((x >= 83 && y >= 164 && x <= 156 && y <= 195
                          && mousebuttons > 0) || key == 'R') && place != 1) {
@@ -1458,7 +1458,7 @@ RankMe(char plr)
 {
     int i;
 
-    FadeOut(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeOut(2, 5, 0, 0);
     PortPal(plr);
     display::graphics.screen()->clear();
     ShBox(52, 0, 267, 32);
@@ -1510,7 +1510,7 @@ RankMe(char plr)
         draw_string(56, 82, "U.S.S.R.");
     }
 
-    FadeIn(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
+    FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
 

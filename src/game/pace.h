@@ -12,8 +12,8 @@
 #endif
 
 void delay(int millisecs);
-void FadeIn(char wh, void *palx, int steps, int val, char mode);
-void FadeOut(char wh, void *palx, int steps, int val, char mode);
+void FadeIn(char wh, int steps, int val, char mode);
+void FadeOut(char wh, int steps, int val, char mode);
 int PCX_D(char *src, char *dest, unsigned src_size);
 int brandom(int limit);
 int RLED_img(char *src, char *dest, unsigned int src_size, int w, int h);
