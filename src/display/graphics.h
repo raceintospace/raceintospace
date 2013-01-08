@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "palette.h"
 
 namespace display
 {
@@ -28,8 +29,11 @@ public:
     void create(const std::string &title, bool fullscreen);
     void destroy();
 
-    uint8_t *palette() const {
-        return (uint8_t *)(&_palette);
+    inline PaletteInterface &paletteInterface() {
+        return _palette;
+    };
+    uint8_t *palette() {
+        return _palette.pal;
     };
 
     SDL_Surface *scaledScreenSurface() const {
@@ -70,8 +74,6 @@ public:
 
     void setForegroundColor(char color);
     void setBackgroundColor(char color);
-    void setPalette(uint8_t *palette);
-
 
 private:
     Surface *_screen;
@@ -82,7 +84,7 @@ private:
     SDL_Rect _videoRect;
     SDL_Rect _newsRect;
     bool _fullscreen;
-    uint8_t _palette[3 * 256];
+    LegacyPalette _palette;
     char _foregroundColor;
     char _backgroundColor;
 };

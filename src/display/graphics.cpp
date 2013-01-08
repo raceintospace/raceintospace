@@ -24,7 +24,6 @@ Graphics::Graphics():
     _news(NULL),
     _fullscreen(false)
 {
-    memset(_palette, 0, sizeof(_palette));
 }
 
 Graphics::~Graphics()
@@ -107,11 +106,6 @@ void Graphics::setForegroundColor(char color)
 void Graphics::setBackgroundColor(char color)
 {
     _backgroundColor = color;
-}
-
-void Graphics::setPalette(uint8_t *palette)
-{
-    memcpy(_palette, palette, 256 * 3);
 }
 
 /*

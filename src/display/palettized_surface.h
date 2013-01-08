@@ -3,6 +3,7 @@
 
 #include "surface.h"
 #include "palette.h"
+#include "graphics.h"
 
 namespace display
 {
@@ -16,7 +17,7 @@ public:
 
     // Exports this palette -- or a subset of it -- to the legacy palette
     void exportPalette(uint8_t start = 0, uint8_t end = 255) const {
-        legacy_palette.copy_from(_palette, start, end);
+        display::graphics.paletteInterface().copy_from(_palette, start, end);
     };
 
     // Directly copies a row of image data into this surface

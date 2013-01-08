@@ -62,7 +62,7 @@ public:
     SDL_Color sdl_colors[256];
 };
 
-// Presents a PaletteInterface for the "pal" 768-byte { r, g, b } array, where r/g/b
+// Presents a PaletteInterface for a 768-byte { r, g, b } array, where r/g/b
 // have 6 significant bits but use 8 in RAM
 class LegacyPalette : public PaletteInterface
 {
@@ -72,9 +72,9 @@ public:
 
     virtual void set(uint8_t index, const Color &color);
     virtual const Color get(uint8_t index) const;
-};
 
-extern LegacyPalette legacy_palette;
+    uint8_t pal[3 * 256];
+};
 
 };
 

@@ -7,9 +7,6 @@
 namespace display
 {
 
-// the global palette, defined in the display library
-LegacyPalette legacy_palette;
-
 // virtual destructor for the pure-virtual class
 PaletteInterface::~PaletteInterface()
 {
@@ -93,8 +90,6 @@ LegacyPalette::~LegacyPalette()
 
 void LegacyPalette::set(uint8_t index, const Color &color)
 {
-    uint8_t *pal = graphics.palette();
-
     // this unfortunately discards the alpha channel
     // chop the lowest two bits while copying
     pal[index * 3 + 0] = color.r >> 2;
@@ -104,7 +99,6 @@ void LegacyPalette::set(uint8_t index, const Color &color)
 
 const Color LegacyPalette::get(uint8_t index) const
 {
-    uint8_t *pal = graphics.palette();
     uint8_t
     r = pal[index * 3 + 0],
     g = pal[index * 3 + 1],
