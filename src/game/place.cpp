@@ -38,6 +38,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, char *txt);
@@ -67,12 +68,10 @@ int MainMenuChoice()
     int selected_option = -1;
 
     {
-        FILE *fp = sOpen("main_menu.png", "rb", FT_IMAGE);
-        display::Image image(fp);
-        fclose(fp);
+        boost::shared_ptr<display::Image> image(Filesystem::readImage("images/main_menu.png"));
 
-        image.exportPalette();
-        display::graphics.screen()->draw(&image, 0, 0);
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 0, 0);
     }
 
     for (int i = 0; i < menu_option_count; i++) {
