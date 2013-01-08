@@ -26,10 +26,10 @@
  */
 
 #include "aimast.h"
+#include "game_main.h"
 #include "Buzz_inc.h"
 #include "aimis.h"
 #include "aipur.h"
-#include "game_main.h"
 #include "pace.h"
 
 char Level_Check;

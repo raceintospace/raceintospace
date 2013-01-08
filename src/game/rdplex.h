@@ -11,6 +11,6 @@ char MaxChk(char hardware_index, char unit_index, char plr);
 uint8_t RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls, char playerIndex);
 char HPurc(char plr);
 
-extern display::Surface *but;
+extern display::LegacySurface *but;
 
 #endif // RDPLEX_H

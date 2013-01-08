@@ -263,7 +263,7 @@ DispBaby(int x, int y, int loc, char neww)
 
     off = 224;
 
-    display::Surface boob(68, 46);
+    display::LegacySurface boob(68, 46);
     bot = (uint16_t *) boob.pixels();
 
     fin = sOpen("BABYPICX.CDR", "rb", 0);

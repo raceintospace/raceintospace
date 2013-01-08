@@ -22,6 +22,7 @@
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
+#include "display/legacy_surface.h"
 
 #include "future.h"
 #include <assert.h>
@@ -58,7 +59,7 @@ LOG_DEFAULT_CATEGORY(future)
 
 char status[5], lck[5], F1, F2, F3, F4, FMen, F5, Pad;
 char JointFlag, MarFlag, JupFlag, SatFlag, MisType;
-display::Surface *vh;
+display::LegacySurface *vh;
 
 struct StepInfo {
     int16_t x_cor;
@@ -853,9 +854,9 @@ Future(char plr)
     int setting = -1, prev_setting = -1;
     int Ok, NewType;
 
-    display::Surface local(166, 9);
-    display::Surface local2(177, 197);
-    vh = new display::Surface(240, 90);
+    display::LegacySurface local(166, 9);
+    display::LegacySurface local2(177, 197);
+    vh = new display::LegacySurface(240, 90);
 begfut:
     MisNum = FutureCheck(plr, 0);
 

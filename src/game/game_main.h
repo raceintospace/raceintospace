@@ -2,7 +2,11 @@
 #define GAME_MAIN_H
 
 #include <string>
-#include "display/surface.h"
+
+namespace display
+{
+class LegacySurface;
+};
 
 void WaitForMouseUp(void);
 void GetMisType(char mcode);
@@ -21,8 +25,8 @@ extern char AI[2];
 extern char manOnMoon;
 extern char dayOnMoon;
 extern int SEG;
-extern display::Surface *vhptr;
-extern display::Surface *vhptr2;
+extern display::LegacySurface *vhptr;
+extern display::LegacySurface *vhptr2;
 extern char BIG;
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern unsigned char AL_CALL;

@@ -26,7 +26,7 @@
  */
 
 #include "display/graphics.h"
-#include "display/surface.h"
+#include "display/legacy_surface.h"
 
 #include "Buzz_inc.h"
 #include "rdplex.h"
@@ -43,8 +43,8 @@
 
 int call;
 int wh;
-display::Surface *but;
-display::Surface *mans;
+display::LegacySurface *but;
+display::LegacySurface *mans;
 int avoidf;
 
 
@@ -127,8 +127,8 @@ void Load_RD_BUT(char player_index)
         return;
     }
 
-    but = new display::Surface(282, 61);
-    mans = new display::Surface(119, 17);
+    but = new display::LegacySurface(282, 61);
+    mans = new display::LegacySurface(119, 17);
 
     fin = sOpen("RDBOX.BUT", "rb", 0);
     fread(&Boo, sizeof Boo, 1, fin);

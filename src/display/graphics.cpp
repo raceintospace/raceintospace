@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "surface.h"
+#include "legacy_surface.h"
 
 #include <SDL.h>
 #include <string>
@@ -53,7 +54,7 @@ void Graphics::create(const std::string &title, bool fullscreen)
         throw std::runtime_error(SDL_GetError());
     }
 
-    _screen = new Surface(WIDTH, HEIGHT);
+    _screen = new LegacySurface(WIDTH, HEIGHT);
 
     _scaledScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH * SCALE, HEIGHT * SCALE, 8, 0, 0, 0, 0);
 

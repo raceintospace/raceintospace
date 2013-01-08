@@ -6,11 +6,12 @@
 #include <vector>
 
 #include "palette.h"
+#include "legacy_surface.h"
 
 namespace display
 {
 
-class Surface;
+class LegacySurface;
 
 class Graphics
 {
@@ -52,7 +53,7 @@ public:
         return _news;
     }
 
-    Surface *screen() const {
+    LegacySurface *screen() const {
         return _screen;
     }
 
@@ -76,7 +77,7 @@ public:
     void setBackgroundColor(char color);
 
 private:
-    Surface *_screen;
+    LegacySurface *_screen;
     SDL_Surface *_scaledScreen;
     SDL_Surface *_display;
     SDL_Overlay *_video;

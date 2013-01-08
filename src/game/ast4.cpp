@@ -153,7 +153,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
         break;
     }
 
-    display::Surface local(143, 74);
+    display::LegacySurface local(143, 74);
     local.copyFrom(display::graphics.screen(), 94, 38, 236, 111);
     ShBox(94, 38, 236, 95);
     InBox(98, 41, 232, 61);

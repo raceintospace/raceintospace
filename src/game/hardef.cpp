@@ -232,8 +232,8 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-    display::Surface local(w, h);
-    display::Surface local2(w, h);
+    display::LegacySurface local(w, h);
+    display::LegacySurface local2(w, h);
     local.clear(0);
     local2.clear(0);
     local2.copyFrom(display::graphics.screen(), s, t, s + w - 1, t + h - 1);

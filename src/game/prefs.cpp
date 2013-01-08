@@ -180,7 +180,7 @@ void HModel(char mode, char tx)
     fseek(in, (mode == 0 || mode == 1 || mode == 4)*sizeof_SimpleHdr, SEEK_CUR);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    display::Surface local(127, 80);
+    display::LegacySurface local(127, 80);
     fread(&display::graphics.palette()[112 * 3], 96 * 3, 1, in); // Individual Palette
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);

@@ -104,7 +104,7 @@ void DrawStatistics(char Win)
 
     qty = 6;
     starty = 118;
-    display::Surface local(30, 19);
+    display::LegacySurface local(30, 19);
     fin = sOpen("PORTBUT.BUT", "rb", 0);
     OutBox(152, 41, 183, 61); //directors ranking
 

@@ -127,7 +127,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 
     //FadeOut(2,pal,10,0,0);
 
-    display::Surface local(30, 19);
+    display::LegacySurface local(30, 19);
 
     starty -= (qty * 23 / 2);
 
@@ -209,8 +209,8 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
         P.size = P.w * P.h;
     }
 
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
     local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
 
     fread(local.pixels(), P.size, 1, in);
@@ -247,7 +247,7 @@ AstFaces(char plr, int x, int y, char face)
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
 
-    display::Surface local(18, 15);
+    display::LegacySurface local(18, 15);
     fread(local.pixels(), 18 * 15, 1, fin);
 
 
@@ -256,8 +256,8 @@ AstFaces(char plr, int x, int y, char face)
     fread(&offset, sizeof(int32_t), 1, fin);
     Swap32bit(offset);
     fseek(fin, offset, SEEK_SET);
-    display::Surface local2(80, 50);
-    display::Surface local3(80, 50);
+    display::LegacySurface local2(80, 50);
+    display::LegacySurface local3(80, 50);
     fread(local2.pixels(), 80 * 50, 1, fin);
     fclose(fin);
     local3.clear(0);
@@ -316,8 +316,8 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
         P.size = P.w * P.h;
     }
 
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
 
     local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
@@ -365,8 +365,8 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, size * sizeof_SimpleHdr, SEEK_CUR);
         fread_SimpleHdr(&table, 1, in);
         fseek(in, table.offset, SEEK_SET);
-        display::Surface local(104, 77);
-        display::Surface local2(104, 77);
+        display::LegacySurface local(104, 77);
+        display::LegacySurface local2(104, 77);
         fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
         fread(local2.pixels(), table.size, 1, in); // Get Image
         fclose(in);
@@ -429,7 +429,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         Swap16bit(AHead.h);
         fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, fin);
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
-        display::Surface local(AHead.w, AHead.h);
+        display::LegacySurface local(AHead.w, AHead.h);
 
         fread(&BHead, sizeof BHead, 1, fin);
         Swap32bit(BHead.fSize);
@@ -565,7 +565,7 @@ int Help(const char *FName)
     free(Help);
 
     key = 0;
-    display::Surface local(250, 128);
+    display::LegacySurface local(250, 128);
     local.copyFrom(display::graphics.screen(), 34, 32, 283, 159);
 
     ShBox(34, 32, 283, 159);

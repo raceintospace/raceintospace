@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include "display/graphics.h"
+
 #include "crew.h"
 #include "Buzz_inc.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
@@ -25,7 +27,6 @@
 #include "mc.h"
 #include "gr.h"
 #include "pace.h"
-#include "display/graphics.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);
@@ -98,7 +99,7 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         M = SecondHard(plr, 0, MisType, Pad);
         {
             // scope block to avoid initialization skipped by 'case' label error"
-            display::Surface local3(171, 188);
+            display::LegacySurface local3(171, 188);
             local3.copyFrom(display::graphics.screen(), 74, 3, 244, 190);
 
             if (M != 0) {

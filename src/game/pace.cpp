@@ -49,7 +49,7 @@ void OpenEmUp(void)
 
     seq_init();
 
-    vhptr = new display::Surface(320, 200);
+    vhptr = new display::LegacySurface(320, 200);
 
     letter_dat = slurp_gamedat("letter.dat");
 }
@@ -372,7 +372,7 @@ char *seq_filename(int seq, int mode)
 
 void SMove(void *p, int x, int y)
 {
-    display::Surface local(160, 100);
+    display::LegacySurface local(160, 100);
     memcpy(local.pixels(), p, 160 * 100);
     local.copyTo(display::graphics.screen(), x, y);
 }
@@ -381,7 +381,7 @@ void LMove(void *p)
 {
     display::graphics.screen()->clear(0);
 
-    display::Surface local(160, 100);
+    display::LegacySurface local(160, 100);
     memcpy(local.pixels(), p, 160 * 100);
     local.copyTo(display::graphics.screen(), 320 / 4, 200 / 4);
 }

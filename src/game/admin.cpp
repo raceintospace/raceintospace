@@ -1165,7 +1165,7 @@ char GetBlockName(char *Nam)
 {
     int i, key;
 
-    display::Surface local(164, 77);
+    display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     i = 1;
@@ -1250,7 +1250,7 @@ void DrawFiles(char now, char loc, char tFiles)
 
 void BadFileType(void)
 {
-    display::Surface local(164, 77);
+    display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.screen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
@@ -1655,7 +1655,7 @@ int FutureCheck(char plr, char type)
 char RequestX(char *s, char md)
 {
     char i;
-    display::Surface local(196, 84);
+    display::LegacySurface local(196, 84);
 
 
     if (md == 1) { // Save Buffer

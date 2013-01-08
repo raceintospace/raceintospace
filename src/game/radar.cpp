@@ -561,8 +561,10 @@ void PadPict(char poff)
     fread(display::graphics.palette(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
-    display::Surface local(148, 148);
-    display::Surface local2(148, 148);
+
+    display::LegacySurface local(148, 148);
+    display::LegacySurface local2(148, 148);
+
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
     fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);

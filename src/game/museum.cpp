@@ -127,8 +127,8 @@ void Display_ARROW(char num, int x, int y)
         P.size = P.w * P.h;
     }
 
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
     local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
@@ -973,7 +973,7 @@ void DrawMisHist(char plr, int *where)
 void ShowAstrosHist(char plr)
 {
     char pos = 0, pos2 = 0, glorf = 0;
-    vhptr2 = new display::Surface(112, 55);
+    vhptr2 = new display::LegacySurface(112, 55);
     abuf = (struct Astros *) buffer;
 
     if (Data->P[plr].AstroCount == 0) {

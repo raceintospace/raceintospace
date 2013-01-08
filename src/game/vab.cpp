@@ -594,13 +594,13 @@ void DispVA(char plr, char f)
         off = 13;
     };
 
-    display::Surface local(w, h);
+    display::LegacySurface local(w, h);
 
     local.clear(0);
 
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
 
-    display::Surface local2(w, h);
+    display::LegacySurface local2(w, h);
 
     /* TODO: magic numbers */
     fill_rectangle(178, 29, 243, 179, 3);
@@ -712,8 +712,8 @@ void DispRck(char plr, char wh)
     y2 = MI[plr * 28 + wh].y2;
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-    display::Surface local(w, h);
-    display::Surface local2(w, h);
+    display::LegacySurface local(w, h);
+    display::LegacySurface local2(w, h);
 
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 

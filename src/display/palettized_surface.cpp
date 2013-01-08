@@ -6,7 +6,7 @@ namespace display
 {
 
 PalettizedSurface::PalettizedSurface(unsigned int width, unsigned int height, const PaletteInterface &palette)
-    : Surface(width, height), _palette(palette)
+    : Surface(SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0)), _palette(palette)
 {
     // scan the palette for transparency
     int transparent_color = -1;

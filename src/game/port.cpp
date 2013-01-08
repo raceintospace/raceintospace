@@ -206,9 +206,9 @@ char Request(char plr, char *s, char md);
 
 void SpotCrap(char loc, char mode)
 {
-    display::Surface *SP1;
-    display::Surface *SP2;
-    display::Surface *SP3;
+    display::LegacySurface *SP1;
+    display::LegacySurface *SP2;
+    display::LegacySurface *SP3;
     static char turnoff = 0;
 
     if (SUSPEND == 1) {
@@ -265,18 +265,18 @@ void SpotCrap(char loc, char mode)
         }
 
         sImg.w = hSPOT.size / sImg.h;
-        SP1 = new display::Surface(sImg.w, sImg.h);
+        SP1 = new display::LegacySurface(sImg.w, sImg.h);
         fread(SP1->pixels(), hSPOT.size, 1, sFin); // read image data
 
 
         if (sPath.Scale != 1.0) {
             sImg.w = (int)((float) sImg.w * sPath.Scale);
             sImg.h = (int)((float) sImg.h * sPath.Scale);
-            SP2 = new display::Surface(sImg.w, sImg.h);
+            SP2 = new display::LegacySurface(sImg.w, sImg.h);
             SP1->scaleTo(SP2);
         }
 
-        SP3 = new display::Surface(sImg.w, sImg.h);
+        SP3 = new display::LegacySurface(sImg.w, sImg.h);
 
         SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
 
@@ -476,8 +476,8 @@ void PortPlace(FILE *fin, int32_t table)
     Swap16bit(Img.PlaceX);
     Swap16bit(Img.PlaceY);
 
-    display::Surface local(Img.Width, Img.Height);
-    display::Surface local2(Img.Width, Img.Height);
+    display::LegacySurface local(Img.Width, Img.Height);
+    display::LegacySurface local2(Img.Width, Img.Height);
     local.copyFrom(display::graphics.screen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
     fread(vhptr->pixels(), Img.Size, 1, fin);
     RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
@@ -1749,7 +1749,7 @@ char PortSel(char plr, char loc)
 char Request(char plr, char *s, char md)
 {
     char i;
-    display::Surface local(196, 84);
+    display::LegacySurface local(196, 84);
 
     if (md > 0) { // Save Buffer
         local.copyFrom(display::graphics.screen(), 85, 52, 280, 135);
@@ -1823,7 +1823,7 @@ char Request(char plr, char *s, char md)
 char MisReq(char plr)
 {
     int i, num = 0;
-    display::Surface local(184, 132);
+    display::LegacySurface local(184, 132);
 
     local.copyFrom(display::graphics.screen(), 53, 29, 236, 160);
 

@@ -66,7 +66,7 @@ struct OF *Mob2;
 int tFrames, cFrame;
 char SHTS[4];
 int32_t aLoc;
-display::Surface *dply;
+display::LegacySurface *dply;
 struct AnimType AHead;
 struct BlockHead BHead;
 
@@ -822,7 +822,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 
     off = 64 + loc * 16;
 
-    display::Surface boob(68, 46);
+    display::LegacySurface boob(68, 46);
 
     bot = (uint16_t *) boob.pixels();
 
@@ -1045,7 +1045,7 @@ char FailureMode(char plr, int prelim, char *text)
     int i, j, k;
     FILE *fin;
     double last_secs;
-    display::Surface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
+    display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
     char save_pal[768];
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
@@ -1363,7 +1363,7 @@ FILE *OpenAnim(char *fname)
     tFrames = AHead.fNum;
     cFrame = 0;
 
-    dply = new display::Surface(AHead.w, AHead.h);
+    dply = new display::LegacySurface(AHead.w, AHead.h);
     DEBUG1("<-OpenAnim");
     return fin;
 }
@@ -1467,7 +1467,7 @@ char DrawMoonSelection(char nauts, char plr)
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
-    display::Surface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
+    display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
     char cPad;

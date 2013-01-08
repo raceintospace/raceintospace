@@ -34,6 +34,8 @@ Unit Cost is loosly based in the basic model, but depends on initial cost
 RD cost is loosly based in the basic model
 */
 
+#include "display/graphics.h"
+
 #include "randomize.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -43,7 +45,6 @@ RD cost is loosly based in the basic model
 #include "draw.h"
 #include "pace.h"
 #include "sdlhelper.h"
-#include "display/graphics.h"
 
 #include <ctype.h>
 

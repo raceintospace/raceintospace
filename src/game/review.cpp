@@ -312,7 +312,7 @@ void PresPict(char poff)
     fread(&display::graphics.palette()[96], 672, 1, in);
     fread(buffer, table.size, 1, in);
     fclose(in);
-    display::Surface local(126, 84);
+    display::LegacySurface local(126, 84);
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
     local.copyTo(display::graphics.screen(), 183, 33);

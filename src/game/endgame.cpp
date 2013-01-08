@@ -74,8 +74,6 @@ void AltHistory(char plr);
 void EndPict(int x, int y, char poff, unsigned char coff);
 void LoserPict(char poff, unsigned char coff);
 
-
-
 char
 Burst(char win)
 {
@@ -485,8 +483,8 @@ void Load_LenFlag(char win)
     }
 
     fseek(in, P.offset, SEEK_SET);
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
     local.clear(0);
     local2.copyFrom(display::graphics.screen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
@@ -543,7 +541,7 @@ void NewEnd(char win, char loc)
     WaitForMouseUp();
     i = 0;
     key = 0;
-    display::Surface local(162, 92);
+    display::LegacySurface local(162, 92);
     local.clear(0);
 
     while (i == 0) {
@@ -1128,8 +1126,8 @@ EndPict(int x, int y, char poff, unsigned char coff)
      */
     P.w++;
     fseek(in, P.offset, SEEK_SET);
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
     local2.copyFrom(display::graphics.screen(), x, y, x + P.w - 1, y + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
@@ -1158,8 +1156,8 @@ LoserPict(char poff, unsigned char coff)
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
     fseek(in, P.offset, SEEK_SET);
-    display::Surface local(P.w, P.h);
-    display::Surface local2(P.w, P.h);
+    display::LegacySurface local(P.w, P.h);
+    display::LegacySurface local2(P.w, P.h);
     local2.copyFrom(display::graphics.screen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
