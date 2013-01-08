@@ -858,16 +858,6 @@ void
 DoCycle(void)                   // Three ranges of color cycling
 {
     int i, tmp1, tmp2, tmp3, j;
-    /* hardcoded rectangles with water */
-    struct rectangle {
-        int x1, y1, x2, y2;
-    } r[] = {
-        {141, 163, 156, 175},
-        {0, 50, 71, 72},
-        {168, 16, 294, 32},
-        {109, 11, 170, 39},
-        {116, 114, 157, 145}
-    };
 
     j = 384;
 

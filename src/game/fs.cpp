@@ -21,9 +21,8 @@
  *
  */
 
-#include "raceintospace_config.h"
-
 #include "Buzz_inc.h"
+#include "raceintospace_config.h"
 #include "options.h"
 #include "pace.h"
 #include "utils.h"

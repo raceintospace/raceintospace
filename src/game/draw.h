@@ -2,7 +2,7 @@
 #define DRAW_H
 
 void draw_string(int x, int y, const char *s);
-void draw_string_highlighted(int x, int y, const char *s, char val);
+void draw_string_highlighted(int x, int y, const char *s, unsigned int position);
 void draw_heading(int x, int y, const char *txt, char mode, char te);
 void draw_number(int xx, int yy, int num);
 void draw_megabucks(int x, int y, int val);

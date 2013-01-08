@@ -42,12 +42,12 @@ void draw_string(int x, int y, const char *s)
     }
 }
 
-void draw_string_highlighted(int x, int y, const char *s, char val)
+void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
 {
     draw_string(x, y, s);
     grMoveTo(x, y);
     display::graphics.setForegroundColor(9);
-    draw_character(s[val]);
+    draw_character(s[position]);
     return;
 }
 
@@ -58,7 +58,6 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
         char width, img[15][21];
     } letter;
     int c;
-    int x0 = x;
 
     y--;
 

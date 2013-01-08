@@ -635,7 +635,6 @@ transform_palette(void)
 void
 av_sync(void)
 {
-    int num_rect = 0;
     SDL_Rect r;
 
 #ifdef PROFILE_GRAPHICS
@@ -709,7 +708,6 @@ av_set_fading(int type, int from, int to, int steps, int preserve)
     int dir = (type == AV_FADE_IN) ? 1 : -1;
     unsigned st;
     unsigned st_end;
-    SDL_Rect r = {0, 0, MAX_X, MAX_Y};
 
     if (!do_fading) {
         return;

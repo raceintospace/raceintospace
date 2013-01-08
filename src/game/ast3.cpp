@@ -682,8 +682,6 @@ void Hospital(char plr, int sel)
     int i;
     int j;
     int M[100];
-    FILE *fin;
-    uint32_t size = 0;
 
     if (sel == 0) {
         helpText = "i041";
