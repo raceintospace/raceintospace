@@ -257,7 +257,7 @@ void DrawProgs(char plr, char prog)
     strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
     strcat((char *)Name, " PROGRAM");
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     display::graphics.setForegroundColor(1);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 81);
@@ -470,7 +470,7 @@ void DamProb(char plr, char prog, int chk)
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     switch (prog) {
     case 0:

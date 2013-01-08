@@ -263,7 +263,7 @@ void ShowPrest(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
     InBox(4, 27, 315, 196);
@@ -636,7 +636,7 @@ void ShowSpHist(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0, 32);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMissionCount == 0) {
         pos = (Data->Year - 57) * 2 + Data->Season;
@@ -990,7 +990,7 @@ void ShowAstrosHist(char plr)
     draw_heading(27, 109, "EXPERIENCE", 0, -1);
     vhptr2->copyFrom(display::graphics.legacyScreen(), 22, 69, 133, 123);
     PatchMe(0, 0, 0, 0, 0, 32);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
 

@@ -540,7 +540,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 display::graphics.videoRect().x = 80;
                 display::graphics.videoRect().y = 3 + plr * 10;
             } else {
-                display::graphics.legacyScreen()->clear(0);
+                display::graphics.screen()->clear();
                 display::graphics.videoRect().x = MAX_X / 4;
                 display::graphics.videoRect().y = MAX_Y / 4;
                 display::graphics.videoRect().h = MAX_Y / 2;
@@ -1054,7 +1054,7 @@ char FailureMode(char plr, int prelim, char *text)
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(3, 3, 30, 19);
@@ -1484,7 +1484,7 @@ char DrawMoonSelection(char nauts, char plr)
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
     memcpy(save_pal, display::graphics.palette(), 768);
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     draw_small_flag(plr, 4, 4);

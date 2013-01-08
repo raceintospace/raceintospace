@@ -988,7 +988,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 fwrite(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeOut(2, display::graphics.palette(), 10, 0, 0);
-                display::graphics.legacyScreen()->clear(0);
+                display::graphics.screen()->clear();
                 FadeIn(2, display::graphics.palette(), 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||

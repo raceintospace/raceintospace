@@ -127,7 +127,7 @@ void DrawFuture(char plr, int mis, char pad)
     boost::shared_ptr<display::PalettizedSurface> planets(Filesystem::readImage("images/fmin.img.0.png"));
     planets->exportPalette();
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     gr_sync();
 

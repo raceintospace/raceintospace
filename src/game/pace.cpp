@@ -379,7 +379,7 @@ void SMove(void *p, int x, int y)
 
 void LMove(void *p)
 {
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     display::LegacySurface local(160, 100);
     memcpy(local.pixels(), p, 160 * 100);

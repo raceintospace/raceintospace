@@ -314,7 +314,7 @@ void FileAccess(char mode)
     helpText = "i128";
     keyHelpText = "k128";
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     saveType = SAVEGAME_Normal;
 
@@ -1385,7 +1385,7 @@ int FutureCheck(char plr, char type)
         keyHelpText = "k015";
     }
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(59, 12, 269, 186);
     InBox(64, 17, 213, 29);
     fill_rectangle(65, 18, 212, 28, 7);

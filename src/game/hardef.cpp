@@ -54,7 +54,7 @@ DrawHardef(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
@@ -1460,7 +1460,7 @@ RankMe(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(52, 0, 267, 32);
     ShBox(0, 0, 50, 32);
     ShBox(269, 0, 319, 32);

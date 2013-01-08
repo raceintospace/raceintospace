@@ -63,7 +63,7 @@ void DrawStatistics(char Win)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     PortPal(0);
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(35, 33, 288, 159);
     InBox(40, 69, 111, 109);
     InBox(116, 69, 283, 109);

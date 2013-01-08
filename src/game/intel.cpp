@@ -1443,7 +1443,7 @@ void DrawBre(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(242, 3, 315, 19);
@@ -1567,7 +1567,7 @@ void DrawIStat(char plr)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
 
     Load_CIA_BUT();
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);

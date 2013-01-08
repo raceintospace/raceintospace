@@ -47,7 +47,7 @@ void PadDraw(char plr, char pad)
     int missions;     // Variable for how many missions each 'naut has flown
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 198);
     InBox(3, 3, 30, 19);

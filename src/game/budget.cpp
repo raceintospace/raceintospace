@@ -60,7 +60,7 @@ void DrawBudget(char player, char *pStatus)
 
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 47);
     ShBox(0, 49, 319, 67);
     ShBox(0, 69, 158, 199);
@@ -540,7 +540,7 @@ void DrawViewing(char plr)
 {
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);

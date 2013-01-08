@@ -170,7 +170,7 @@ void Records(char plr)
 
     FadeOut(2, display::graphics.palette(), 5, 0, 0);
     PortPal(plr);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 199);
     InBox(4, 27, 315, 196);

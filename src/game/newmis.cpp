@@ -163,7 +163,7 @@ void MisAnn(char plr, char pad)
         display::graphics.palette()[i] = 0;
     }
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     PortPal(plr);
     ShBox(41, 20, 281, 184);
@@ -505,7 +505,7 @@ void AI_Begin(char plr)
     boost::shared_ptr<display::PalettizedSurface> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
     countrySeals->exportPalette();
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
 
@@ -537,6 +537,6 @@ void AI_Done(void)
 {
     music_stop();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 }
 

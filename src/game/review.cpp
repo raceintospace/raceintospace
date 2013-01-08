@@ -52,7 +52,7 @@ void DrawReview(char plr)
     }
 
     PortPal(plr);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     if (Data->P[plr].PresRev[0] == 0x7F) {
         Fired_Flag = 1;
@@ -284,7 +284,7 @@ void MisRev(char plr, int pres)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
@@ -296,7 +296,7 @@ void MisRev(char plr, int pres)
     key = 0;
     Draw_Mis_Stats(plr, Data->P[plr].PastMissionCount - 1, 0, 1);
     key = 0;
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     return;
 }
 

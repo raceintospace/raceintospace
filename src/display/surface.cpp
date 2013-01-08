@@ -25,6 +25,22 @@ SDL_Surface *Surface::surface() const
     return _screen;
 }
 
+uint32_t Surface::mapColor(const Color &color)
+{
+    return SDL_MapRGB(_screen->format, color.r, color.g, color.b);
+}
+
+void Surface::clear(const Color &color)
+{
+    SDL_Rect dst;
+    dst.x = 0;
+    dst.y = 0;
+    dst.w = width();
+    dst.h = height();
+
+    SDL_FillRect(_screen, &dst, mapColor(color));
+}
+
 void Surface::draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
 {
     _dirty = true;

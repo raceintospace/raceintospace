@@ -130,7 +130,7 @@ void DrawRush(char plr)
     boost::shared_ptr<display::PalettizedSurface> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
     launchPads->exportPalette();
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     JR = 0;
 
     for (l = 0; l < 3; l++) {

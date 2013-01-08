@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include <boost/shared_ptr.hpp>
 
+#include "palette.h"
+
 namespace display
 {
 
@@ -41,6 +43,14 @@ public:
         return _screen->h;
     }
 
+    // Set the surface to a solid color
+    void clear(const Color &color);
+
+    // Set the surface to black
+    inline void clear() {
+        clear(Color(0, 0, 0));
+    };
+
     void draw(Surface *surface, unsigned int x, unsigned int y) {
         draw(surface, 0, 0, surface->width(), surface->height(), x, y);
     }
@@ -56,8 +66,12 @@ public:
         draw(surface.get(), srcX, srcY, srcW, srcH, x, y);
     }
 
+
 protected:
     Surface(SDL_Surface *surface);
+
+    // Return a representation of this Color appropriate for this surface
+    uint32_t mapColor(const Color &color);
 
     SDL_Surface *_screen;
     bool _dirty;

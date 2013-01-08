@@ -166,7 +166,7 @@ void Credits(void)
     }
 
     FadeOut(2, display::graphics.palette(), 30, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     keyHelpText = "k000";
 }
 
@@ -210,7 +210,7 @@ void Introd(void)
     }
 
 done:
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 }
 
 void NextTurn(char plr)
@@ -221,7 +221,7 @@ void NextTurn(char plr)
     boost::shared_ptr<display::PalettizedSurface> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
     countrySeals->exportPalette();
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
 
     ShBox(0, 60, 319, 80);
     display::graphics.setForegroundColor(6 + plr * 3);
@@ -253,7 +253,7 @@ void NextTurn(char plr)
 
     music_stop();
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     return;
 }
 

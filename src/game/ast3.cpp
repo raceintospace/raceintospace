@@ -61,7 +61,7 @@ void DrawTrain(char plr, char lvl)
     }
 
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 114);
     ShBox(161, 24, 319, 199);
@@ -711,7 +711,7 @@ void Hospital(char plr, int sel)
     boost::shared_ptr<display::PalettizedSurface> location(Filesystem::readImage(filename));
     location->exportPalette();
 
-    display::graphics.legacyScreen()->clear(0);
+    display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(161, 103, 319, 199);
     ShBox(0, 103, 158, 199);
