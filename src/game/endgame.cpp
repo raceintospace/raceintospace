@@ -509,7 +509,7 @@ void Draw_NewEnd(char win)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     display::graphics.screen()->clear(0);
 
-    boost::shared_ptr<display::Image> winner(Filesystem::readImage("images/winner.but.0.png"));
+    boost::shared_ptr<display::PalettizedSurface> winner(Filesystem::readImage("images/winner.but.0.png"));
     winner->exportPalette(0, 128);
     display::graphics.screen()->draw(winner, 0, 0);
 

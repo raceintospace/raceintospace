@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/palettized_surface.h"
 
 #include "ast0.h"
 #include "Buzz_inc.h"
@@ -82,7 +83,7 @@ void Moon(char plr)
 
     char filename[128];
     snprintf(filename, sizeof(filename), "images/moon.but.%d.png", (int)size);
-    boost::shared_ptr<display::Image> moonRecon(Filesystem::readImage(filename));
+    boost::shared_ptr<display::PalettizedSurface> moonRecon(Filesystem::readImage(filename));
     moonRecon->exportPalette(128, 255);
 
     display::graphics.screen()->draw(moonRecon, 114, 43);
@@ -223,7 +224,7 @@ void SatDraw(char plr)
 
         char filename[128];
         snprintf(filename, sizeof(filename), "images/satbld.but.%d.png", loc[i]);
-        boost::shared_ptr<display::Image> satellite(Filesystem::readImage(filename));
+        boost::shared_ptr<display::PalettizedSurface> satellite(Filesystem::readImage(filename));
         satellite->exportPalette();
 
         if (i != 2) {
@@ -563,7 +564,7 @@ void LMPict(char poff)
 {
     char filename[128];
     snprintf(filename, sizeof(filename), "images/lmer.but.%d.png", poff);
-    boost::shared_ptr<display::Image> lunarModule(Filesystem::readImage(filename));
+    boost::shared_ptr<display::PalettizedSurface> lunarModule(Filesystem::readImage(filename));
     lunarModule->exportPalette(32, 255);
 
     if (poff == 0 || poff == 1 || poff == 4 || poff == 5) {

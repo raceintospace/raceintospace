@@ -7,6 +7,7 @@ add_library(
   graphics.cpp
   palette.cpp
   image.cpp
+  palettized_surface.cpp
   surface.cpp
   )
 

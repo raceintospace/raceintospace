@@ -31,6 +31,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "admin.h"
 #include "Buzz_inc.h"
@@ -1374,7 +1375,7 @@ int FutureCheck(char plr, char type)
 
     PortPal(plr);
 
-    boost::shared_ptr<display::Image> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
+    boost::shared_ptr<display::PalettizedSurface> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
 
     if (type == 0) {
         helpText = "i010";

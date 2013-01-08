@@ -169,7 +169,7 @@ void Filesystem::readToBuffer(const std::string &filename, void *buffer, uint32_
     }
 }
 
-boost::shared_ptr<display::Image> Filesystem::readImage(const std::string &filename)
+boost::shared_ptr<display::PalettizedSurface> Filesystem::readImage(const std::string &filename)
 {
     // open the file
     boost::shared_ptr<File> file_ptr(open(filename));
@@ -188,10 +188,10 @@ boost::shared_ptr<display::Image> Filesystem::readImage(const std::string &filen
     }
 
     // construct a PNGImage from this buffer
-    boost::shared_ptr<display::Image> png_image(new display::Image(buffer, length));
+    boost::shared_ptr<display::PalettizedSurface> image(display::image::readPalettizedPNG(buffer, length));
 
     delete[] buffer;
 
     // pass it back to the caller
-    return png_image;
+    return image;
 }

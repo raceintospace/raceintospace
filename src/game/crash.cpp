@@ -1,6 +1,10 @@
 #include <string>
 #include <vector>
 
+#include "display/graphics.h"
+#include "display/image.h"
+#include "display/palettized_surface.h"
+
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "draw.h"
@@ -8,8 +12,6 @@
 #include "sdlhelper.h"
 #include "pace.h"
 #include "filesystem.h"
-#include "display/graphics.h"
-#include "display/image.h"
 
 enum vertical_alignment {
     ALIGN_TOP,
@@ -78,7 +80,7 @@ void display_text_in_box(int x, int y, int width, int height, const std::string 
 void pretty_crash(const std::string &title, const std::string &message)
 {
 
-    boost::shared_ptr<display::Image> image(Filesystem::readImage("images/error.png"));
+    boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/error.png"));
 
     image->exportPalette();
     display::graphics.screen()->draw(image, 0, 0);
@@ -120,7 +122,7 @@ void ugly_crash(const std::string &title, const std::string &message)
 // Display a fatal error message and terminate when it's dismissed
 void crash(const std::string &title, const std::string &message)
 {
-    if (SDL_WasInit(SDL_INIT_VIDEO) && display::Image::libpng_versions_match()) {
+    if (SDL_WasInit(SDL_INIT_VIDEO) && display::image::libpng_versions_match()) {
         pretty_crash(title, message);
     } else {
         ugly_crash(title.c_str(), message.c_str());

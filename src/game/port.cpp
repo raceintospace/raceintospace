@@ -130,7 +130,7 @@ MOBJ MObj[35];
 char HotKeyList[] = "AIMRPVCQETB\0";
 
 int FCtr;
-boost::shared_ptr<display::Image> flaggy;
+boost::shared_ptr<display::PalettizedSurface> flaggy;
 
 /** SPOT structures and data structure variables */
 struct {        // Main SPOT Header
@@ -430,7 +430,7 @@ void WaveFlagSetup(char plr)
 {
     char filename[256];
     snprintf(filename, sizeof(filename), "images/flag.seq.%d.png", plr);
-    flaggy = boost::shared_ptr<display::Image>(Filesystem::readImage(filename));
+    flaggy = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 }
 
 void WaveFlagDel(void)

@@ -21,6 +21,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "future.h"
 #include <assert.h>
@@ -122,7 +123,7 @@ void DrawFuture(char plr, int mis, char pad)
     FadeOut(2, display::graphics.palette(), 10, 0, 0);
     Load_FUT_BUT();
 
-    boost::shared_ptr<display::Image> planets(Filesystem::readImage("images/fmin.img.0.png"));
+    boost::shared_ptr<display::PalettizedSurface> planets(Filesystem::readImage("images/fmin.img.0.png"));
     planets->exportPalette();
 
     display::graphics.screen()->clear(0);
@@ -287,7 +288,7 @@ void DrawFuture(char plr, int mis, char pad)
 
 void ClearDisplay(void)
 {
-    boost::shared_ptr<display::Image> background(Filesystem::readImage("images/fmin.img.0.png"));
+    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/fmin.img.0.png"));
 
     display::graphics.screen()->draw(background, 202, 48, 40, 35, 202, 48);
     display::graphics.screen()->draw(background, 17, 83, 225, 103, 17, 83);

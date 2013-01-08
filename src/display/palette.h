@@ -4,6 +4,7 @@
 #include "color.h"
 #include <stdio.h>
 #include <SDL.h>
+#include <assert.h>
 
 namespace display
 {
@@ -18,8 +19,11 @@ public:
     virtual const Color get(uint8_t index) const = 0;
 
     inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t end = 255) {
+        assert(start <= end);
+
         for (int i = start; i <= end; i++) {
-            set(i, other.get(i));
+            const Color &color = other.get(i);
+            set(i, color);
         }
     };
 
@@ -49,6 +53,7 @@ class SDLPalette : public PaletteInterface
 {
 public:
     SDLPalette();
+    SDLPalette(const PaletteInterface &copy);
     virtual ~SDLPalette();
 
     virtual void set(uint8_t index, const Color &color);

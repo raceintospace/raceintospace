@@ -3,6 +3,8 @@
 
 #include "palette.h"
 #include "graphics.h"
+#include "surface.h"
+#include "palettized_surface.h"
 
 #include <stdio.h>
 #include <string>
@@ -13,59 +15,17 @@
 namespace display
 {
 
-class Image
+namespace image
 {
-public:
-    // create a new PNGImage by reading from a buffer
-    // note that the buffer can be freed or re-used immediately after construction
-    Image(const void *buffer, size_t length);
 
-    // create a screenshot
-    Image(const Graphics &source, int x = 0, int y = 0, int width = Graphics::WIDTH, int height = Graphics::HEIGHT);
+Surface *readPNG(const void *buffer, size_t length);
+PalettizedSurface *readPalettizedPNG(const void *buffer, size_t length);
 
-    virtual ~Image();
+std::string libpng_headers_version();
+std::string libpng_runtime_version();
+bool libpng_versions_match();
 
-    unsigned int width() const {
-        return _width;
-    };
-
-    unsigned int height() const {
-        return _height;
-    };
-
-    const Palette &palette() const {
-        return _palette;
-    };
-
-    void exportPalette(uint8_t start = 0, uint8_t end = 255) const {
-        legacy_palette.copy_from(_palette, start, end);
-    };
-
-    SDL_Surface *surface() const {
-        return _surface;
-    }
-
-    void write_png(const std::string &filename);
-
-    static std::string libpng_headers_version();
-    static std::string libpng_runtime_version();
-    static bool libpng_versions_match();
-
-private:
-    void init_png();
-    void read_png();
-    void destroy_png();
-
-    // these exist just long enough to read everything in the constructor
-    void *png_ptr;
-    void *info_ptr;
-
-    unsigned int _width;
-    unsigned int _height;
-    SDL_Surface *_surface;
-    Palette _palette;
-
-};
+}
 
 } // namespace display
 

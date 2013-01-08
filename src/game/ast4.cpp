@@ -24,6 +24,7 @@
 //
 
 #include "display/graphics.h"
+#include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
 #include "ast0.h"
@@ -280,7 +281,7 @@ void DrawProgs(char plr, char prog)
     {
         char filename[128];
         snprintf(filename, sizeof(filename), "images/aprog.%d.%d.png", plr, prog);
-        boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
         image->exportPalette();
         display::graphics.screen()->draw(image, 61, 28);

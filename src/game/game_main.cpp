@@ -172,11 +172,11 @@ int game_main_impl(int argc, char *argv[])
     // initialize the filesystem
     Filesystem::init(argv[0]);
 
-    if (!display::Image::libpng_versions_match()) {
+    if (!display::image::libpng_versions_match()) {
         std::stringstream message;
         message
-                << "This build was compiled against libpng " << display::Image::libpng_headers_version()
-                << ", but is running with libpng " << display::Image::libpng_runtime_version() << ".";
+                << "This build was compiled against libpng " << display::image::libpng_headers_version()
+                << ", but is running with libpng " << display::image::libpng_runtime_version() << ".";
         crash("libpng mismatch", message.str());
     }
 

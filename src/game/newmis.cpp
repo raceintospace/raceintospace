@@ -18,6 +18,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "newmis.h"
 #include "Buzz_inc.h"
@@ -501,7 +502,7 @@ void MisAnn(char plr, char pad)
 
 void AI_Begin(char plr)
 {
-    boost::shared_ptr<display::Image> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
+    boost::shared_ptr<display::PalettizedSurface> countrySeals(Filesystem::readImage("images/turn.but.0.png"));
     countrySeals->exportPalette();
 
     display::graphics.screen()->clear(0);

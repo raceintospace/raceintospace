@@ -710,7 +710,7 @@ void Hospital(char plr, int sel)
         snprintf(filename, sizeof(filename), "images/hospital.%d.png", plr);
     }
 
-    boost::shared_ptr<display::Image> location(Filesystem::readImage(filename));
+    boost::shared_ptr<display::PalettizedSurface> location(Filesystem::readImage(filename));
     location->exportPalette();
 
     display::graphics.screen()->clear(0);

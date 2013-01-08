@@ -18,6 +18,7 @@ PaletteInterface::~PaletteInterface()
 
 Palette::Palette()
 {
+    memset(colors, 0, sizeof(colors));
 }
 
 Palette::Palette(const Palette &copy)
@@ -50,6 +51,13 @@ const Color Palette::get(uint8_t index) const
 SDLPalette::SDLPalette()
 {
     memset(sdl_colors, 0, sizeof(sdl_colors));
+}
+
+SDLPalette::SDLPalette(const PaletteInterface &copy)
+{
+    for (int i = 0; i < 256; i++) {
+        set(i, copy.get(i));
+    }
 }
 
 SDLPalette::~SDLPalette()

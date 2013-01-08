@@ -2,6 +2,7 @@
 
 #include "graphics.h"
 #include "surface.h"
+#include "palettized_surface.h"
 
 #include <png.h>
 #include <zlib.h>
@@ -15,12 +16,28 @@
 namespace display
 {
 
-namespace
+namespace image
 {
-// anonymous namespace eliminates the possibility of symbol collision
 
-// libpng helpers for use within this module
-struct read_png_from_memory_t {
+//----------------------------------------------------------------------------
+// PNG implementation details
+class PNGReader
+{
+public:
+    PNGReader(const void *b, size_t l);
+    ~PNGReader();
+    PalettizedSurface *readIntoPalettizedSurface();
+
+    png_structp png_ptr;
+    png_infop info_ptr;
+
+    inline uint32_t width() {
+        return png_get_image_width(png_ptr, info_ptr);
+    };
+    inline uint32_t height() {
+        return png_get_image_height(png_ptr, info_ptr);
+    };
+
     const char *buffer;
     size_t length;
     size_t cursor;
@@ -28,10 +45,10 @@ struct read_png_from_memory_t {
 
 void read_png_from_memory(png_structp png_ptr, png_bytep output, png_size_t length)
 {
-    read_png_from_memory_t *data = (read_png_from_memory_t *)png_get_io_ptr(png_ptr);
+    PNGReader *data = (PNGReader *)png_get_io_ptr(png_ptr);
 
     if (data->length - data->cursor < length) {
-        png_error((png_structp)png_ptr, "libpng requested more data than is available");
+        png_error(png_ptr, "libpng requested more data than is available");
     }
 
     memcpy(output, data->buffer + data->cursor, length);
@@ -44,220 +61,114 @@ void throw_exception_on_png_error(png_structp png_ptr, png_const_charp error_msg
     throw std::runtime_error(error_msg);
 }
 
-} // namespace anonymous
-
-
-//--------------------------------------------------------------------------------------------------------
-// Image implementation
-
-void Image::init_png()
+PNGReader::PNGReader(const void *b, size_t l) : buffer((const char *)b), length(l), cursor(0)
 {
     png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
-    info_ptr = png_create_info_struct((png_structp)png_ptr);
+    info_ptr = png_create_info_struct(png_ptr);
+    png_set_read_fn(png_ptr, this, read_png_from_memory);
 }
 
-void Image::read_png()
+PNGReader::~PNGReader()
 {
-    png_read_png((png_structp)png_ptr, (png_infop)info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+}
 
-    _width = png_get_image_width((png_structp)png_ptr, (png_infop)info_ptr);
-    _height = png_get_image_height((png_structp)png_ptr, (png_infop)info_ptr);
+PalettizedSurface *PNGReader::readIntoPalettizedSurface()
+{
+    // read the palette
+    Palette palette;
+    png_color *png_palette;
+    int num_palette;
+    png_get_PLTE(png_ptr, info_ptr, &png_palette, &num_palette);
 
-    switch (png_get_color_type((png_structp)png_ptr, (png_infop)info_ptr)) {
+    // read the alpha values into a local
+    uint8_t *trans;
+    int num_trans;
+    png_color_16p trans_values = NULL;
+
+    if (png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, &trans_values) == 0) {
+        // no transparency
+        num_trans = 0;
+    }
+
+    // copy colors into our local palette
+    for (int i = 0; i < 256; i++) {
+
+        if (i < num_palette) {
+            Color color(
+                png_palette[i].red,
+                png_palette[i].green,
+                png_palette[i].blue,
+                (i < num_trans) ? trans[i] : 255
+            );
+            palette.set(i, color);
+        }
+
+    }
+
+    // create the target surface
+    PalettizedSurface *surface;
+    surface = new PalettizedSurface(width(), height(), palette);
+
+    // copy the image data itself
+    // this will only work for 8-bit images, but that's what we are (right?)
+    png_bytep *row_pointers;
+    row_pointers = png_get_rows(png_ptr, info_ptr);
+
+    SDL_Surface *sdl_surface = surface->surface();
+    char *pixels = (char *)sdl_surface->pixels;
+    SDL_LockSurface(sdl_surface);
+
+    for (unsigned int i = 0; i < sdl_surface->h; i ++) {
+        memcpy(pixels + (sdl_surface->pitch * i), row_pointers[i], sdl_surface->w);
+    }
+
+    SDL_UnlockSurface(sdl_surface);
+
+    return surface;
+}
+
+//----------------------------------------------------------------------------
+// display::image implementation
+
+Surface *readPNG(const void *buffer, size_t length)
+{
+    // we can't handle true-color PNGs, so pass through to readPalettizedPNG()
+    return readPalettizedPNG(buffer, length);
+}
+
+PalettizedSurface *readPalettizedPNG(const void *buffer, size_t length)
+{
+    PNGReader r(buffer, length);
+
+    png_read_png(r.png_ptr, r.info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
+
+    switch (png_get_color_type(r.png_ptr, r.info_ptr)) {
     case PNG_COLOR_TYPE_PALETTE: {
-        // read the palette into a local
-        png_color *png_palette;
-        int num_palette;
-        png_get_PLTE((png_structp)png_ptr, (png_infop)info_ptr, &png_palette, &num_palette);
-
-        // read the alpha values into a local
-        uint8_t *trans;
-        int num_trans;
-
-        png_color_16p trans_values = NULL;
-
-        if (png_get_tRNS((png_structp)png_ptr, (png_infop)info_ptr, &trans, &num_trans, &trans_values) == 0) {
-            // no transparency
-            num_trans = 0;
-            _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
-        } else {
-            _surface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCCOLORKEY, _width, _height, 8, 0, 0, 0, 0);
-
-            // Yes, this assumes there is only a single transparent value in the PNG, which for now is a reasonable assumption.
-            SDL_SetColorKey(_surface, SDL_SRCCOLORKEY, SDL_MapRGB(_surface->format, (Uint8)trans_values[0].red, (Uint8)trans_values[0].green, (Uint8)trans_values[0].blue));
-
-        }
-
-        // copy both into the instance-wide palette
-        for (int i = 0; i < 256; i++) {
-            Color c;
-
-            if (i < num_palette) {
-                c.r = png_palette[i].red;
-                c.g = png_palette[i].green;
-                c.b = png_palette[i].blue;
-                c.a = (i < num_trans) ? trans[i] : 255;
-            }
-
-            _palette.set(i, c);
-        }
+        return r.readIntoPalettizedSurface();
     }
     break;
 
     default:
         throw std::runtime_error("unhandled PNG color_type; is this an 8-bit palettized image?");
     }
-
-    // copy the image data
-    {
-        png_bytep *row_pointers;
-        row_pointers = png_get_rows((png_structp)png_ptr, (png_infop)info_ptr);
-
-        // this assumes 8-bit images
-        for (unsigned int i = 0; i < _height; i ++) {
-            memcpy(&((char *)_surface->pixels)[_surface->pitch * i], row_pointers[i], _width);
-        }
-    }
-
-    destroy_png();
 }
 
-void Image::destroy_png()
-{
-    png_destroy_read_struct((png_structpp)(&png_ptr), (png_infopp)(&info_ptr), NULL);
-}
-
-Image::Image(const void *buffer, size_t length):
-    _width(0),
-    _height(0),
-    _surface(NULL)
-{
-    read_png_from_memory_t descriptor;
-    descriptor.buffer = (const char *) buffer;
-    descriptor.length = length;
-    descriptor.cursor = 0;
-
-    try {
-        init_png();
-        png_set_read_fn((png_structp)png_ptr, &descriptor, read_png_from_memory);
-        read_png();
-    } catch (...) {
-        destroy_png();
-        throw;
-    }
-}
-
-Image::~Image()
-{
-    if (_surface) {
-        SDL_FreeSurface(_surface);
-        _surface = NULL;
-    }
-}
-
-// Create a screenshot
-Image::Image(const Graphics &source, int x, int y, int width, int height):
-    _width(width),
-    _height(height),
-    _palette(legacy_palette)
-{
-    _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
-
-    SDL_Rect src;
-    src.x = x;
-    src.y = y;
-    src.w = _width;
-    src.h = _height;
-
-    SDL_Rect dst;
-    dst.x = 0;
-    dst.y = 0;
-    dst.w = _width;
-    dst.h = _height;
-
-    SDL_BlitSurface(source.screen()->surface(), &src, _surface, &dst);
-}
-
-void Image::write_png(const std::string &filename)
-{
-    FILE *fp;
-    png_structp png_ptr;
-    png_infop info_ptr;
-    uint8_t **rows = (uint8_t **)alloca(sizeof(void *) * _height);
-
-    fp = fopen(filename.c_str(), "wb");
-
-    if (!fp) {
-        fprintf(stderr, "unable to open output file: %s\n", strerror(errno));
-        throw std::runtime_error("unable to open output file");
-    }
-
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-    if (!png_ptr) {
-        throw std::runtime_error("unable to create write struct");
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-
-    if (!info_ptr) {
-        throw std::runtime_error("unable to create info struct");
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr))) {
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        fclose(fp);
-        throw std::runtime_error("PNG write error");
-    }
-
-    png_init_io(png_ptr, fp);
-
-    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-
-    png_set_IHDR(png_ptr, info_ptr,
-                 _width, _height,
-                 8, PNG_COLOR_TYPE_PALETTE,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT
-                );
-
-    png_color png_pal[256];
-
-    for (int i = 0; i < 256; i ++) {
-        const Color &color = _palette.get(i);
-        png_pal[i].red = color.r;
-        png_pal[i].green = color.g;
-        png_pal[i].blue = color.b;
-    }
-
-    png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
-
-    for (int i = 0; i < _height; i++) {
-        rows[i] = ((uint8_t *)_surface->pixels) + (_surface->pitch * i);
-    }
-
-    png_set_rows(png_ptr, info_ptr, rows);
-
-    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-    fclose(fp);
-}
 
 #define formatted_libpng_version(version) ((boost::format("%1%.%2%.%3%") % (version / 10000) % ((version / 100) % 100) % (version % 100)).str())
 
-std::string Image::libpng_runtime_version()
+std::string libpng_runtime_version()
 {
     png_uint_32 version = png_access_version_number();
     return formatted_libpng_version(version);
 }
 
-std::string Image::libpng_headers_version()
+std::string libpng_headers_version()
 {
     return formatted_libpng_version(PNG_LIBPNG_VER);
 }
 
-bool Image::libpng_versions_match()
+bool libpng_versions_match()
 {
 #if PNG_LIBPNG_VER > 10000
     // xx.yy.zz = xxyyzz
@@ -268,5 +179,7 @@ bool Image::libpng_versions_match()
     return png_access_version_number() == PNG_LIBPNG_VER;
 #endif
 }
+
+} // namespace image
 
 } // namespace display

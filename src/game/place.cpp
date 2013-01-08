@@ -68,7 +68,7 @@ int MainMenuChoice()
     int selected_option = -1;
 
     {
-        boost::shared_ptr<display::Image> image(Filesystem::readImage("images/main_menu.png"));
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/main_menu.png"));
 
         image->exportPalette();
         display::graphics.screen()->draw(image, 0, 0);
