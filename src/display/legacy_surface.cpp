@@ -24,8 +24,7 @@ LegacySurface::~LegacySurface()
 
 void LegacySurface::updatePalette()
 {
-    LegacyPalette legacy_colors;
-    SDLPalette sdl_palette(legacy_colors);
+    SDLPalette sdl_palette(_pal);
     SDL_SetColors(_screen, sdl_palette.sdl_colors, 0, 256);
 }
 
