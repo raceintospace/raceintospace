@@ -136,7 +136,7 @@ void DrawAstCheck(char plr)
         ad = 1;
     }
 
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
@@ -275,7 +275,7 @@ void DrawAstCheck(char plr)
 
     draw_small_flag(plr, 4, 4);
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     return;
 }
@@ -288,7 +288,7 @@ void DrawAstSel(char plr)
 
     helpText = "i012";
     keyHelpText = "k012";
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
@@ -583,7 +583,7 @@ void AstSel(char plr)
 
     DispEight2(now2, BarA, count);
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     WaitForMouseUp();
 

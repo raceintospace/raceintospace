@@ -124,7 +124,7 @@ void Credits(void)
     int k, i;
     keyHelpText = "i999";
 
-    FadeOut(2, display::graphics.palette(), 30, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
 
     boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/first.img.3.png"));
 
@@ -133,7 +133,7 @@ void Credits(void)
     for (k = 0; k < 2; k++) {
 
         if (k != 0) {
-            FadeOut(2, display::graphics.palette(), 30, 0, 0);    // Screen #2
+            FadeOut(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);    // Screen #2
         }
 
         image->exportPalette();
@@ -146,7 +146,7 @@ void Credits(void)
             }
         }
 
-        FadeIn(2, display::graphics.palette(), 30, 0, 0);
+        FadeIn(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
 
         while (1)  {
             GetMouse();
@@ -165,7 +165,7 @@ void Credits(void)
         key = 0;
     }
 
-    FadeOut(2, display::graphics.palette(), 30, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
     display::graphics.screen()->clear();
     keyHelpText = "k000";
 }
@@ -191,7 +191,7 @@ void Introd(void)
         image->exportPalette();
         display::graphics.screen()->draw(image, 0, 0);
 
-        FadeIn(2, display::graphics.palette(), 30, 0, 0);
+        FadeIn(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
 
         start = get_time();
 
@@ -206,7 +206,7 @@ void Introd(void)
             }
         }
 
-        FadeOut(2, display::graphics.palette(), 30, 0, 0);
+        FadeOut(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
     }
 
 done:
@@ -244,7 +244,7 @@ void NextTurn(char plr)
     draw_number(0, 0, Data->Year);
     display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 94, 30, 85);
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
 
     WaitForMouseUp();
@@ -252,7 +252,7 @@ void NextTurn(char plr)
     key = 0;
 
     music_stop();
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     display::graphics.screen()->clear();
     return;
 }

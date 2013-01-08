@@ -60,7 +60,7 @@ void DrawStatistics(char Win)
     FILE *fin;
     helpText = "i145";
     keyHelpText = "k045";
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     PortPal(0);
 
     display::graphics.screen()->clear();
@@ -134,7 +134,7 @@ void DrawStatistics(char Win)
     }
 
     fclose(fin);
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     return;
 }

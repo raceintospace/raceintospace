@@ -79,7 +79,7 @@ int MainMenuChoice()
         draw_heading(34, menu_options[i].y + 6, menu_options[i].label, 1, 0);
     }
 
-    FadeIn(2, display::graphics.palette(), 30, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 30, 0, 0);
     WaitForMouseUp();
 
     while (selected_option == -1) {
@@ -191,7 +191,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     unsigned int j, do_fix = 0;
     FILE *in;
     in = sOpen("PATCHES.BUT", "rb", 0);
-    fread(&display::graphics.palette()[coff * 3], 96, 1, in);
+    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 96, 1, in);
     fseek(in, (50 * plr + prog * 10 + poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -237,10 +237,10 @@ AstFaces(char plr, int x, int y, char face)
     int face_offset = 0;
     FILE *fin;
 
-    memset(&display::graphics.palette()[192], 0x00, 192);
+    memset(&display::graphics.legacyScreen()->pal()[192], 0x00, 192);
     fin = sOpen("FACES.BUT", "rb", 0);
     fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
-    fread(&display::graphics.palette()[192], 96, 1, fin);
+    fread(&display::graphics.legacyScreen()->pal()[192], 96, 1, fin);
     face_offset = ((int)face) * sizeof(int32_t);
     fseek(fin, face_offset, SEEK_SET);  // Get Face
     fread(&offset, sizeof(int32_t), 1, fin);
@@ -292,7 +292,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     FILE *in;
 
     in = sOpen("MHIST.BUT", "rb", 0);
-    fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, in);
+    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 64 * 3, 1, in);
 
     if (planet > 0) {
         fseek(in, (planet - 1) * (sizeof P), SEEK_CUR);
@@ -367,7 +367,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, table.offset, SEEK_SET);
         display::LegacySurface local(104, 77);
         display::LegacySurface local2(104, 77);
-        fread(&display::graphics.palette()[coff * 3], 96 * 3, 1, in); // Individual Palette
+        fread(&display::graphics.legacyScreen()->pal()[coff * 3], 96 * 3, 1, in); // Individual Palette
         fread(local2.pixels(), table.size, 1, in); // Get Image
         fclose(in);
         RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
@@ -427,7 +427,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fread(&AHead, sizeof AHead, 1, fin);
         Swap16bit(AHead.w);
         Swap16bit(AHead.h);
-        fread(&display::graphics.palette()[coff * 3], 64 * 3, 1, fin);
+        fread(&display::graphics.legacyScreen()->pal()[coff * 3], 64 * 3, 1, fin);
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
         display::LegacySurface local(AHead.w, AHead.h);
 
@@ -929,7 +929,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     writePrestigeFirst(plr);
 
     if (mode == 1) {
-        FadeIn(2, display::graphics.palette(), 10, 0, 0);
+        FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     };
 
     WaitForMouseUp();
@@ -964,7 +964,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 music_stop();
             }
 
-            FadeOut(2, display::graphics.palette(), 10, 0, 0);
+            FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             break;
         } else if ((x >= 216 && y >= 136 && x <= 308 && y <= 146 && mousebuttons == 1) || (key == 'R')) {
@@ -984,12 +984,12 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 FILE *tin;
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
-                fwrite(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
+                fwrite(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
                 fwrite(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
-                FadeOut(2, display::graphics.palette(), 10, 0, 0);
+                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                 display::graphics.screen()->clear();
-                FadeIn(2, display::graphics.palette(), 10, 0, 0);
+                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
                     Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
@@ -1016,12 +1016,12 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                     Replay(plr, index, 0, 0, 320, 200, "OOOO");
                 }
 
-                FadeOut(2, display::graphics.palette(), 10, 0, 0);
+                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
-                fread(display::graphics.palette(), sizeof display::graphics.palette(), 1, tin);
+                fread(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
                 fread(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
-                FadeIn(2, display::graphics.palette(), 10, 0, 0);
+                FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                 key = 0;
                 remove_savedat("REPL.TMP");
 

@@ -62,7 +62,7 @@ void Moon(char plr)
     helpText = "i029";
     keyHelpText = "k029";
     val = Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety;
-    FadeOut(2, display::graphics.palette(), 0, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
 
 
     display::graphics.screen()->clear();
@@ -102,7 +102,7 @@ void Moon(char plr)
     draw_small_flag(plr, 114, 43);
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.palette(), 0, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -191,7 +191,7 @@ void SatDraw(char plr)
     int i;
     int loc[4];
 
-    FadeOut(2, display::graphics.palette(), 0, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
 
     display::graphics.screen()->clear();
     ShBox(1, 0, 319, 22);
@@ -254,7 +254,7 @@ void SatDraw(char plr)
 void LMDraw(char plr)
 {
     char ind = 0;
-    FadeOut(2, display::graphics.palette(), 0, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
 
     display::graphics.screen()->clear();
     ShBox(1, 0, 319, 22);
@@ -631,7 +631,7 @@ void LMBld(char plr)
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.palette(), 0, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
     WaitForMouseUp();
 
     while (1) {
@@ -667,7 +667,7 @@ void SatBld(char plr)
     }
 
     music_start(M_HISTORY);
-    FadeIn(2, display::graphics.palette(), 0, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 0, 0, 0);
 
     key = 0;
     WaitForMouseUp();

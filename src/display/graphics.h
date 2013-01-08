@@ -31,13 +31,6 @@ public:
     void create(const std::string &title, bool fullscreen);
     void destroy();
 
-    inline PaletteInterface &paletteInterface() {
-        return _palette;
-    };
-    uint8_t *palette() {
-        return _palette.pal;
-    };
-
     SDL_Surface *scaledScreenSurface() const {
         return _scaledScreen;
     }
@@ -88,7 +81,6 @@ private:
     SDL_Rect _videoRect;
     SDL_Rect _newsRect;
     bool _fullscreen;
-    LegacyPalette _palette;
     char _foregroundColor;
     char _backgroundColor;
 };

@@ -965,7 +965,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     locl = (int32_t) 1612 * which;
 
     if (which < 580) {
-        memset(&display::graphics.palette()[off * 3], 0x00, 48);
+        memset(&display::graphics.legacyScreen()->pal()[off * 3], 0x00, 48);
     }
 
     if (loc != 0 && which < 580) {
@@ -973,7 +973,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
-    fread(&display::graphics.palette()[off * 3], 48, 1, ffin);
+    fread(&display::graphics.legacyScreen()->pal()[off * 3], 48, 1, ffin);
     fread(boob.pixels(), 1564, 1, ffin);
 
     for (i = 0; i < 782; i++) {
@@ -1048,11 +1048,11 @@ char FailureMode(char plr, int prelim, char *text)
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
     char save_pal[768];
 
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     // this destroys what's in the current page frames
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
-    memcpy(save_pal, display::graphics.palette(), 768);
+    memcpy(save_pal, display::graphics.legacyScreen()->pal(), 768);
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1271,7 +1271,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     last_secs = get_time();
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
 
     WaitForMouseUp();
@@ -1299,9 +1299,9 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 0;  /* Continue */
         }
@@ -1316,8 +1316,8 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
         }
@@ -1358,7 +1358,7 @@ FILE *OpenAnim(char *fname)
     fread(&AHead, sizeof AHead, 1, fin);
     Swap16bit(AHead.w);
     Swap16bit(AHead.h);
-    fread(&display::graphics.palette()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
+    fread(&display::graphics.legacyScreen()->pal()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
     aLoc = ftell(fin);
     tFrames = AHead.fNum;
     cFrame = 0;
@@ -1480,9 +1480,9 @@ char DrawMoonSelection(char nauts, char plr)
         return 2;
     }
 
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
-    memcpy(save_pal, display::graphics.palette(), 768);
+    memcpy(save_pal, display::graphics.legacyScreen()->pal(), 768);
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1547,7 +1547,7 @@ char DrawMoonSelection(char nauts, char plr)
         GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
     }
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     WaitForMouseUp();
     key = 0;
 
@@ -1567,9 +1567,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 1;
         }
@@ -1582,9 +1582,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 2;
         }
@@ -1597,9 +1597,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 3;
         }
@@ -1612,9 +1612,9 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, pal2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.palette(), save_pal, 768);
+            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
 
-            FadeIn(2, display::graphics.palette(), 10, 0, 0);
+            FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
             key = 0;
             return 4;
         }

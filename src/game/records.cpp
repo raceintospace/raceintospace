@@ -168,7 +168,7 @@ void Records(char plr)
     fread(rec, sizeof rec, 1, file);
     fclose(file);
 
-    FadeOut(2, display::graphics.palette(), 5, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 5, 0, 0);
     PortPal(plr);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -204,7 +204,7 @@ void Records(char plr)
     draw_string(238, 94, "CLEAR RECORD");
     InBox(237, 34, 306, 81);
     Drec(&pos, &pos2, 0);
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     WaitForMouseUp();
 

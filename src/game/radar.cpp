@@ -46,7 +46,7 @@ void PadDraw(char plr, char pad)
     int i, j, k, l;
     int missions;     // Variable for how many missions each 'naut has flown
 
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 198);
@@ -401,7 +401,7 @@ void PadDraw(char plr, char pad)
         PatchMe(plr, 126, 40, Data->P[plr].Mission[pad].Prog - 1,
                 Data->P[plr].Mission[pad].Patch, 32);
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     return;
 }
@@ -558,7 +558,7 @@ void PadPict(char poff)
     in = sOpen("LFACIL.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 6 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.palette(), 768, 1, in);
+    fread(display::graphics.legacyScreen()->pal(), 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
 

@@ -168,15 +168,15 @@ void DispVAB(char plr, char pad)
     helpText = "i016";
     keyHelpText = "k016";
 
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     fp = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.palette(), 768, 1, fp);
+    fread(display::graphics.legacyScreen()->pal(), 768, 1, fp);
     fread_uint16_t(&image_len, 1, fp);
 
     if (plr == 1) {
         fseek(fp, image_len, SEEK_CUR);
-        fread(display::graphics.palette(), 768, 1, fp);
+        fread(display::graphics.legacyScreen()->pal(), 768, 1, fp);
         fread_uint16_t(&image_len, 1, fp);
     }
 
@@ -904,7 +904,7 @@ begvab:
     draw_megabucks(0, 0, Data->P[plr].Cash);
     draw_string(0, 0, ")");
 
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     WaitForMouseUp();
 
     while (1) {

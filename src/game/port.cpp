@@ -494,7 +494,7 @@ void PortPal(char plr)
     fread(&PHead, sizeof PHead, 1, fin);
     Swap32bit(PHead.oPal);
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(display::graphics.palette(), 768, 1, fin);
+    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
     fclose(fin);
     return;
 }
@@ -541,7 +541,7 @@ void DrawSpaceport(char plr)
     }
 
     fseek(fin, PHead.oPal, SEEK_SET);
-    fread(display::graphics.palette(), 768, 1, fin);
+    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
 
     fseek(fin, table[0], SEEK_SET);
     fread(&Img, sizeof Img, 1, fin); // Read in main image Header
@@ -765,9 +765,9 @@ void Master(char plr)
     }
 
     // Entering screen for the first time so fade out and in.
-    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
     DrawSpaceport(plr);
-    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 
     vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
 
@@ -862,61 +862,61 @@ DoCycle(void)                   // Three ranges of color cycling
     j = 384;
 
     i = 0;
-    tmp1 = display::graphics.palette()[j + 3 * i + 0];
-    tmp2 = display::graphics.palette()[j + 3 * i + 1];
-    tmp3 = display::graphics.palette()[j + 3 * i + 2];
+    tmp1 = display::graphics.legacyScreen()->pal()[j + 3 * i + 0];
+    tmp2 = display::graphics.legacyScreen()->pal()[j + 3 * i + 1];
+    tmp3 = display::graphics.legacyScreen()->pal()[j + 3 * i + 2];
 
     for (; i < 3; i++) {
-        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
-        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
-        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 0] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 0];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 1] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 1];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 2] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.palette()[j + 3 * i] = tmp1;
+    display::graphics.legacyScreen()->pal()[j + 3 * i] = tmp1;
 
-    display::graphics.palette()[j + 3 * i + 1] = tmp2;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.palette()[j + 3 * i + 2] = tmp3;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 2] = tmp3;
 
     i = 4;
 
-    tmp1 = display::graphics.palette()[j + 3 * i + 0];
+    tmp1 = display::graphics.legacyScreen()->pal()[j + 3 * i + 0];
 
-    tmp2 = display::graphics.palette()[j + 3 * i + 1];
+    tmp2 = display::graphics.legacyScreen()->pal()[j + 3 * i + 1];
 
-    tmp3 = display::graphics.palette()[j + 3 * i + 2];
+    tmp3 = display::graphics.legacyScreen()->pal()[j + 3 * i + 2];
 
     for (; i < 11; i++) {
-        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
-        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
-        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 0] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 0];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 1] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 1];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 2] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.palette()[j + 3 * i] = tmp1;
+    display::graphics.legacyScreen()->pal()[j + 3 * i] = tmp1;
 
-    display::graphics.palette()[j + 3 * i + 1] = tmp2;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.palette()[j + 3 * i + 2] = tmp3;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 2] = tmp3;
 
     i = 12;
 
-    tmp1 = display::graphics.palette()[j + 3 * i + 0];
+    tmp1 = display::graphics.legacyScreen()->pal()[j + 3 * i + 0];
 
-    tmp2 = display::graphics.palette()[j + 3 * i + 1];
+    tmp2 = display::graphics.legacyScreen()->pal()[j + 3 * i + 1];
 
-    tmp3 = display::graphics.palette()[j + 3 * i + 2];
+    tmp3 = display::graphics.legacyScreen()->pal()[j + 3 * i + 2];
 
     for (; i < 15; i++) {
-        display::graphics.palette()[j + i * 3 + 0] = display::graphics.palette()[j + (i + 1) * 3 + 0];
-        display::graphics.palette()[j + i * 3 + 1] = display::graphics.palette()[j + (i + 1) * 3 + 1];
-        display::graphics.palette()[j + i * 3 + 2] = display::graphics.palette()[j + (i + 1) * 3 + 2];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 0] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 0];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 1] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 1];
+        display::graphics.legacyScreen()->pal()[j + i * 3 + 2] = display::graphics.legacyScreen()->pal()[j + (i + 1) * 3 + 2];
     };
 
-    display::graphics.palette()[j + 3 * i] = tmp1;
+    display::graphics.legacyScreen()->pal()[j + 3 * i] = tmp1;
 
-    display::graphics.palette()[j + 3 * i + 1] = tmp2;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 1] = tmp2;
 
-    display::graphics.palette()[j + 3 * i + 2] = tmp3;
+    display::graphics.legacyScreen()->pal()[j + 3 * i + 2] = tmp3;
 }
 
 /** ???
@@ -1313,13 +1313,13 @@ void Port(char plr)
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
-                                    FadeOut(2, display::graphics.palette(), 10, 0, 0);
+                                    FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                                 }
 
                                 DrawSpaceport(plr);
 
                                 if (res == pREDRAW) {
-                                    FadeIn(2, display::graphics.palette(), 10, 0, 0);
+                                    FadeIn(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                                 }
 
 #if SPOT_ON
@@ -1373,7 +1373,7 @@ void Port(char plr)
                                 break;
 
                             case pEXIT:
-                                FadeOut(2, display::graphics.palette(), 10, 0, 0);
+                                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
                                 fclose(fin);
 #if BABYSND
 
@@ -1388,7 +1388,7 @@ void Port(char plr)
                                 return;
 
                             case pQUIT:
-                                FadeOut(2, display::graphics.palette(), 10, 0, 0);
+                                FadeOut(2, display::graphics.legacyScreen()->pal(), 10, 0, 0);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {

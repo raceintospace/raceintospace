@@ -27,6 +27,11 @@ public:
     // Copy the legacy palette to the SDL palette for this surface
     void updatePalette();
 
+    // Get a PaletteInterface
+    PaletteInterface &palette() {
+        return _pal;
+    };
+
     inline char *pixels() {
         return _pixels;
     };
