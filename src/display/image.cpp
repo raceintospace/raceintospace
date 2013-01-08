@@ -127,49 +127,6 @@ void Image::destroy_png()
     png_destroy_read_struct((png_structpp)(&png_ptr), (png_infopp)(&info_ptr), NULL);
 }
 
-Image::Image(const std::string &filename):
-    _width(0),
-    _height(0),
-    _surface(NULL)
-{
-    FILE *fp;
-    fp = fopen(filename.c_str(), "rb");
-
-    if (!fp) {
-        throw std::runtime_error("unable to open file");
-    }
-
-    try {
-        init_png();
-        png_init_io((png_structp)png_ptr, fp);
-        read_png();
-        fclose(fp);
-    } catch (...) {
-        destroy_png();
-        fclose(fp);
-        throw;
-    }
-
-    fclose(fp);
-}
-
-Image::Image(FILE *fp):
-    _width(0),
-    _height(0),
-    _surface(NULL)
-{
-    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
-
-    try {
-        init_png();
-        png_init_io((png_structp)png_ptr, fp);
-        read_png();
-    } catch (...) {
-        destroy_png();
-        throw;
-    }
-}
-
 Image::Image(const void *buffer, size_t length):
     _width(0),
     _height(0),

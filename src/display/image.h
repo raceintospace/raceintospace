@@ -16,12 +16,6 @@ namespace display
 class Image
 {
 public:
-    // create a new PNGImage by reading from a file
-    Image(const std::string &filename);
-
-    // create a new PNGImage by reading from a <stdio.h> file pointer
-    Image(FILE *fp);
-
     // create a new PNGImage by reading from a buffer
     // note that the buffer can be freed or re-used immediately after construction
     Image(const void *buffer, size_t length);
