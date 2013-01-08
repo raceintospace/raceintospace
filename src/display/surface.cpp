@@ -1,6 +1,5 @@
 
 #include "surface.h"
-#include "image.h"
 
 #include <SDL.h>
 #include <algorithm>
@@ -10,15 +9,21 @@ namespace display
 {
 
 Surface::Surface(unsigned int width, unsigned int height):
-    _screen(SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0)),
+    _screenBuffer(new uint8_t[width *height]),
+    _screen(SDL_CreateRGBSurfaceFrom(_screenBuffer, width, height, 8, width, 0, 0, 0, 0)),
     _dirty(false)
 {
+    // Ideally we'd use SDL_CreateRGBSurface here
+    // However, we instead allocate our own buffer and CreateRGBSurfaceFrom() on it
+    // This ensures that width == pitch
+    // We should switch back once we stop fread()ing into pixel buffers
 }
 
 Surface::~Surface()
 {
     SDL_FreeSurface(_screen);
     _screen = NULL;
+    delete[] _screenBuffer;
 }
 
 SDL_Surface *Surface::surface() const
@@ -140,7 +145,6 @@ void Surface::copyFrom(Surface *surface, unsigned int x1, unsigned int y1, unsig
 {
     _dirty = true;
 
-    /*
     SDL_Rect src;
     SDL_Rect dst;
 
@@ -153,35 +157,7 @@ void Surface::copyFrom(Surface *surface, unsigned int x1, unsigned int y1, unsig
     dst.y = 0;
     dst.w = src.w;
     dst.h = src.h;
-    SDL_BlitSurface( surface->_screen, &src, _screen, &dst );
-    */
-
-
-    int w, h, from_idx, to_idx, row;
-
-    assert(surface);
-    assert(0 <= x1 && x1 < (int)surface->width());
-    assert(0 <= x2 && x2 < (int)surface->width());
-    assert(0 <= y1 && y1 < (int)surface->height());
-    assert(0 <= y2 && y2 < (int)surface->height());
-    assert(x1 <= x2);
-    assert(y1 <= y2);
-
-    w = x2 - x1 + 1;
-    h = y2 - y1 + 1;
-
-    assert(w <= (int)width());
-    assert(h <= (int)height());
-
-    for (row = 0; row < h; row++) {
-        from_idx = (y1 + row) * surface->width() + x1;
-        to_idx = row * width();
-
-        void *dst = (void *)((char *)_screen->pixels + to_idx);
-        void *src = (void *)((char *)surface->_screen->pixels + from_idx);
-        memcpy(dst, src, w);
-    }
-
+    SDL_BlitSurface(surface->_screen, &src, _screen, &dst);
 }
 
 void Surface::copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::Operation operation)
@@ -312,29 +288,6 @@ void Surface::copyFrom(Surface *surface, unsigned int srcX1, unsigned int srcY1,
     }
 }
 
-void Surface::draw(Image *image, unsigned int x, unsigned int y)
-{
-    draw(image, 0, 0, image->width(), image->height(), x, y);
-}
-
-void Surface::draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
-{
-    SDL_Rect src;
-    SDL_Rect dest;
-
-    src.x = srcX;
-    src.y = srcY;
-    src.w = srcW;
-    src.h = srcH;
-
-    dest.x = x;
-    dest.y = y;
-    dest.w = srcW;
-    dest.h = srcH;
-
-    SDL_BlitSurface(image->surface(), &src, _screen, &dest);
-}
-
 void Surface::maskCopy(Surface *source, char maskValue, Surface::MaskSource maskSource, char offset)
 {
     assert(source->width() == width());
@@ -405,6 +358,25 @@ void Surface::filter(char testValue, char offset, Surface::FilterTest filterTest
             break;
         }
     }
+}
+
+void Surface::draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
+{
+    _dirty = true;
+
+    SDL_Rect src;
+    SDL_Rect dst;
+
+    src.x = srcX;
+    src.y = srcY;
+    src.w = srcW;
+    src.h = srcH;
+
+    dst.x = x;
+    dst.y = y;
+    dst.w = src.w;
+    dst.h = src.h;
+    SDL_BlitSurface(surface->_screen, &src, _screen, &dst);
 }
 
 

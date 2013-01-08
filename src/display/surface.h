@@ -7,13 +7,11 @@
 namespace display
 {
 
-class Image;
-
 class Surface
 {
 public:
     Surface(unsigned int width, unsigned int height);
-    ~Surface();
+    virtual ~Surface();
 
     enum Operation {
         Set,
@@ -47,8 +45,6 @@ public:
     void copyTo(Surface *surface, unsigned int x, unsigned int y, Surface::Operation operation = Surface::Set);
     void copyTo(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int destX1, unsigned int destY1, unsigned int destX2, unsigned int destY2);
     void scaleTo(Surface *surface);
-    void draw(Image *image, unsigned int x, unsigned int y);
-    void draw(Image *image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
     void maskCopy(Surface *source, char maskValue, Surface::MaskSource maskSource, char offset = 0);
     void filter(char testValue, char offset, Surface::FilterTest filterTest);
 
@@ -60,16 +56,23 @@ public:
         return _screen->h;
     }
 
-    void draw(boost::shared_ptr<Image> image, unsigned int x, unsigned int y) {
-        draw(image.get(), x, y);
+    void draw(Surface *surface, unsigned int x, unsigned int y) {
+        draw(surface, 0, 0, surface->width(), surface->height(), x, y);
     }
 
-    void draw(boost::shared_ptr<Image> image, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
-        draw(image.get(), srcX, srcY, srcW, srcH, x, y);
+    void draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
+
+
+    void draw(boost::shared_ptr<Surface> surface, unsigned int x, unsigned int y) {
+        draw(surface.get(), x, y);
     }
 
+    void draw(boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
+        draw(surface.get(), srcX, srcY, srcW, srcH, x, y);
+    }
 
-private:
+protected:
+    uint8_t *_screenBuffer;         // XXX: do not access for any reason unless you're the constructor
     SDL_Surface *_screen;
     bool _dirty;
 };
