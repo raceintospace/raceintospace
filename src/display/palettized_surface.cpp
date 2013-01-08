@@ -37,4 +37,12 @@ PalettizedSurface::~PalettizedSurface()
 {
 }
 
+void PalettizedSurface::copyRow(uint32_t row, const void *pixelData)
+{
+    assert(!SDL_MUSTLOCK(_screen)); // make sure not locking is okay
+
+    char *pixels = (char *)_screen->pixels;
+    memcpy(pixels + (_screen->pitch * row), pixelData, _screen->w);
+}
+
 } // namespace display

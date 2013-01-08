@@ -19,6 +19,9 @@ public:
         legacy_palette.copy_from(_palette, start, end);
     };
 
+    // Directly copies a row of image data into this surface
+    void copyRow(uint32_t row, const void *pixelData);
+
 private:
     display::SDLPalette _palette;
 };

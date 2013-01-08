@@ -115,15 +115,9 @@ PalettizedSurface *PNGReader::readIntoPalettizedSurface()
     png_bytep *row_pointers;
     row_pointers = png_get_rows(png_ptr, info_ptr);
 
-    SDL_Surface *sdl_surface = surface->surface();
-    char *pixels = (char *)sdl_surface->pixels;
-    SDL_LockSurface(sdl_surface);
-
-    for (unsigned int i = 0; i < sdl_surface->h; i ++) {
-        memcpy(pixels + (sdl_surface->pitch * i), row_pointers[i], sdl_surface->w);
+    for (unsigned int i = 0; i < surface->height(); i ++) {
+        surface->copyRow(i, row_pointers[i]);
     }
-
-    SDL_UnlockSurface(sdl_surface);
 
     return surface;
 }
