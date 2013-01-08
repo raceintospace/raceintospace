@@ -36,6 +36,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 #define DELAYCNT 10
 
@@ -43,7 +44,6 @@ char olderMiss;
 
 
 void DrawBudget(char player, char *pStatus);
-void BudPict(char poff);
 void DrawPastExp(char player, char *pStatus);
 void DrawViewing(char plr);
 void DrawVText(char got);
@@ -134,7 +134,25 @@ void DrawBudget(char player, char *pStatus)
 
     pscale = max >> 1;    // Half the estimated prestige
 
-    BudPict(player);
+    // draw the splash image
+    {
+        char filename[128];
+        snprintf(filename, sizeof(filename), "images/budget_splash.%d.png", player);
+        boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
+
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 245, 4);
+    }
+
+    // draw the buttons
+    for (i = 0; i < 4; i++) {
+        char filename[128];
+        snprintf(filename, sizeof(filename), "images/budget_button.%d.png", i);
+        boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
+
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 134, 141 + i * 14);
+    }
 
     if (player == 0) {
         i = 0;
@@ -303,38 +321,6 @@ void DrawBudget(char player, char *pStatus)
 
     return;
 }
-
-void BudPict(char poff)
-{
-    PatchHdrSmall P;
-    unsigned int i, x, y;
-    FILE *in;
-    in = sOpen("BUDD.BUT", "rb", 0);
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
-    display::Surface local(P.w, P.h);
-    fread(local.pixels(), P.size, 1, in);
-    //RLED(buffer,local.vptr,P.size);
-    local.copyTo(display::graphics.screen(), 245, 4);
-    x = 134;
-
-    for (i = 2; i < 6; i++) {
-        y = 141 + ((i - 2) * 14);
-        fseek(in, (i) * (sizeof P), SEEK_SET);
-        fread(&P, sizeof P, 1, in);
-        SwapPatchHdrSmall(&P);
-        fseek(in, P.offset, SEEK_SET);
-        display::Surface local2(P.w, P.h);
-        fread(local2.pixels(), P.size, 1, in);
-        //  RLED(buffer,local.vptr,P.size);
-        local2.copyTo(display::graphics.screen(), x, y);
-    }
-
-    fclose(in);
-}
-
 
 void DrawPastExp(char player, char *pStatus)
 {
