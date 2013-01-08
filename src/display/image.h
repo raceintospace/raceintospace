@@ -20,9 +20,6 @@ public:
     // note that the buffer can be freed or re-used immediately after construction
     Image(const void *buffer, size_t length);
 
-    // copy an existing PNGImage
-    Image(const Image &source);
-
     // create a screenshot
     Image(const Graphics &source, int x = 0, int y = 0, int width = Graphics::WIDTH, int height = Graphics::HEIGHT);
 

@@ -147,15 +147,6 @@ Image::Image(const void *buffer, size_t length):
     }
 }
 
-Image::Image(const Image &source):
-    _width(source._width),
-    _height(source._height),
-    _palette(source._palette)
-{
-    _surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _width, _height, 8, 0, 0, 0, 0);
-    // XXX: is this supposed to copy the bits?
-}
-
 Image::~Image()
 {
     if (_surface) {
