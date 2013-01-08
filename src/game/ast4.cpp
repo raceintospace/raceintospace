@@ -34,6 +34,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
@@ -45,7 +46,6 @@ int sex;  /* Variable to store a given 'naut sex */
 
 
 void AstLevel(char plr, char prog, char crew, char ast);
-void PlaceEquip(char plr, char prog);
 void DrawProgs(char plr, char prog);
 int CheckProgram(char plr, char prog);
 void DrawPosition(char prog, int pos);
@@ -250,31 +250,6 @@ void AstLevel(char plr, char prog, char crew, char ast)
     local.copyTo(display::graphics.screen(), 94, 38);
 }
 
-
-void PlaceEquip(char plr, char prog)
-{
-    FILE *fin;
-    SimpleHdr table;
-
-    display::Surface local(80, 50);
-    display::Surface local2(80, 50);
-    fin = sOpen("APROG.BUT", "rb", 0);
-    fseek(fin, (plr * 7 + prog)*sizeof_SimpleHdr, SEEK_SET);
-    fread_SimpleHdr(&table, 1, fin);
-    fseek(fin, 14 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.palette(), 768, 1, fin);
-
-    fseek(fin, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, fin);
-    fclose(fin);
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-    local2.copyFrom(display::graphics.screen(), 61, 28, 140, 77);
-
-    local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
-
-    local.copyTo(display::graphics.screen(), 61, 28);
-}
-
 void DrawProgs(char plr, char prog)
 {
     int i, j, Name[30];
@@ -301,7 +276,16 @@ void DrawProgs(char plr, char prog)
     InBox(3, 3, 30, 19);
     draw_up_arrow(9, 133);
     draw_down_arrow(9, 166);
-    PlaceEquip(plr, prog - 1);
+
+    {
+        char filename[128];
+        snprintf(filename, sizeof(filename), "images/aprog.%d.%d.png", plr, prog);
+        boost::shared_ptr<display::Image> image(Filesystem::readImage(filename));
+
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 61, 28);
+
+    }
 
     for (j = 0; j < 2; j++)
         for (i = 0; i < 4; i++) {
