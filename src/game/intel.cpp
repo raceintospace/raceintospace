@@ -1551,9 +1551,10 @@ void Load_CIA_BUT(void)
 {
     int i;
     FILE *fin;
+    display::AutoPal p(display::graphics.legacyScreen());
 
     fin = sOpen("CIA.BUT", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+    fread(p.pal, 768, 1, fin);
     i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
     PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i);
     fclose(fin);

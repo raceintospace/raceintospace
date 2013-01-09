@@ -170,7 +170,10 @@ void DrawRD(char player_index)
 
     FadeOut(2, 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(p.pal, 768, 1, fin);
+    }
     fclose(fin);
 
     display::graphics.screen()->clear();
@@ -1218,7 +1221,10 @@ void DrawHPurc(char player_index)
 
     FadeOut(2, 10, 0, 0);
     fin = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(p.pal, 768, 1, fin);
+    }
     fclose(fin);
 
     Load_RD_BUT(player_index);

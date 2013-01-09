@@ -584,7 +584,8 @@ void MisCheck(char plr, char mpad)
         // Mission Death
         if (!AI[plr]) {
             if (BIG == 0) {
-                memset(&display::graphics.legacyScreen()->pal()[64 * 3], 0x00, 64 * 3); //Specs: 0x08
+                display::AutoPal p(display::graphics.legacyScreen());
+                memset(&p.pal[64 * 3], 0x00, 64 * 3); //Specs: 0x08
 
                 if (plr == 0) {
                     fill_rectangle(2, 107, 140, 115, 3);

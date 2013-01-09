@@ -6,8 +6,12 @@ namespace display
 {
 
 PalettizedSurface::PalettizedSurface(unsigned int width, unsigned int height, const PaletteInterface &palette)
-    : Surface(SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0)), _palette(palette)
+    : Surface(SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0)),
+      _palette(_screen->format->palette)
 {
+    // copy the provided palette to the SDL surface's palette
+    _palette.copy_from(palette);
+
     // scan the palette for transparency
     int transparent_color = -1;
 
@@ -26,11 +30,6 @@ PalettizedSurface::PalettizedSurface(unsigned int width, unsigned int height, co
         // enable color keying on this color
         SDL_SetColorKey(_screen, SDL_SRCCOLORKEY, transparent_color);
     }
-
-    // TODO: expose our palette to SDL
-    // This will be great once we have a truecolor surface onto which to blit
-    // Until then, the blitting routines are perceptual, which does the Wrong Thing™
-    //SDL_SetPalette(_screen, SDL_LOGPAL, _palette.sdl_colors, 0, 256);
 }
 
 PalettizedSurface::~PalettizedSurface()

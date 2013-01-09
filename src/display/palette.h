@@ -47,33 +47,51 @@ protected:
     Color colors[256];
 };
 
-// Presents a PaletteInterface for an SDL_Color[256] array
+// Presents a PaletteInterface for an SDL_Palette pointer. This allows
+// us to get(), set(), and copy_from() palettes belonging to SDL surfaces.
+//
 // SDL_Color does not support alpha, so all Colors are forced to opaque
-class SDLPalette : public PaletteInterface
+class SDLPaletteWrapper : public PaletteInterface
 {
 public:
-    SDLPalette();
-    SDLPalette(const PaletteInterface &copy);
-    virtual ~SDLPalette();
+    SDLPaletteWrapper(SDL_Palette *sdl_palette);
+    virtual ~SDLPaletteWrapper();
 
     virtual void set(uint8_t index, const Color &color);
     virtual const Color get(uint8_t index) const;
 
-    SDL_Color sdl_colors[256];
+protected:
+    SDL_Palette *_sdl_palette;
 };
 
-// Presents a PaletteInterface for a 768-byte { r, g, b } array, where r/g/b
-// have 6 significant bits but use 8 in RAM
-class LegacyPalette : public PaletteInterface
+class LegacySurface;
+
+// AutoPal is helper class to bridge a PaletteInterface to a pal[768] array.
+// The pal[768] array is created from the target palette in the constructor,
+// and is copied back in the destructor.
+//
+// This facilitates the following idiom:
+//
+// {
+//    AutoPal p(surface.palette());
+//    /* do something with p.pal */
+// } /* palette changes are automatically pushed back when the scope closes */
+//
+// This is similar in flavor to AutoLock schemes.
+class AutoPal
 {
 public:
-    LegacyPalette();
-    virtual ~LegacyPalette();
+    AutoPal(PaletteInterface &pal);
+    AutoPal(LegacySurface *legacySurface);
+    ~AutoPal();
 
-    virtual void set(uint8_t index, const Color &color);
-    virtual const Color get(uint8_t index) const;
+    inline char *operator()() {
+        return pal;
+    };
+    char pal[768];
 
-    uint8_t pal[3 * 256];
+private:
+    PaletteInterface &_pal;
 };
 
 };

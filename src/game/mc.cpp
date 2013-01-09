@@ -81,14 +81,16 @@ void DrawControl(char plr)
 {
     FILE *fin;
     int32_t len;
+    display::AutoPal p(display::graphics.legacyScreen());
+
     fin = sOpen("CONTROL.IMG", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+    fread(p.pal, 768, 1, fin);
     fread(&len, 4, 1, fin);
     Swap32bit(len);
 
     if (plr == 1) {
         fseek(fin, len, SEEK_CUR);
-        fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+        fread(p.pal, 768, 1, fin);
         fread(&len, 4, 1, fin);
         Swap32bit(len);
     }

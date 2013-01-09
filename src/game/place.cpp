@@ -191,7 +191,10 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     unsigned int j, do_fix = 0;
     FILE *in;
     in = sOpen("PATCHES.BUT", "rb", 0);
-    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 96, 1, in);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[coff * 3], 96, 1, in);
+    }
     fseek(in, (50 * plr + prog * 10 + poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -237,10 +240,12 @@ AstFaces(char plr, int x, int y, char face)
     int face_offset = 0;
     FILE *fin;
 
-    memset(&display::graphics.legacyScreen()->pal()[192], 0x00, 192);
+    display::AutoPal p(display::graphics.legacyScreen());
+
+    memset(&p.pal[192], 0x00, 192);
     fin = sOpen("FACES.BUT", "rb", 0);
     fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
-    fread(&display::graphics.legacyScreen()->pal()[192], 96, 1, fin);
+    fread(&p.pal[192], 96, 1, fin);
     face_offset = ((int)face) * sizeof(int32_t);
     fseek(fin, face_offset, SEEK_SET);  // Get Face
     fread(&offset, sizeof(int32_t), 1, fin);
@@ -292,7 +297,10 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     FILE *in;
 
     in = sOpen("MHIST.BUT", "rb", 0);
-    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 64 * 3, 1, in);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[coff * 3], 64 * 3, 1, in);
+    }
 
     if (planet > 0) {
         fseek(in, (planet - 1) * (sizeof P), SEEK_CUR);
@@ -367,7 +375,10 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fseek(in, table.offset, SEEK_SET);
         display::LegacySurface local(104, 77);
         display::LegacySurface local2(104, 77);
-        fread(&display::graphics.legacyScreen()->pal()[coff * 3], 96 * 3, 1, in); // Individual Palette
+        {
+            display::AutoPal p(display::graphics.legacyScreen());
+            fread(&p.pal[coff * 3], 96 * 3, 1, in); // Individual Palette
+        }
         fread(local2.pixels(), table.size, 1, in); // Get Image
         fclose(in);
         RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
@@ -427,7 +438,10 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         fread(&AHead, sizeof AHead, 1, fin);
         Swap16bit(AHead.w);
         Swap16bit(AHead.h);
-        fread(&display::graphics.legacyScreen()->pal()[coff * 3], 64 * 3, 1, fin);
+        {
+            display::AutoPal p(display::graphics.legacyScreen());
+            fread(&p.pal[coff * 3], 64 * 3, 1, fin);
+        }
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
         display::LegacySurface local(AHead.w, AHead.h);
 
@@ -984,7 +998,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 FILE *tin;
 
                 tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
-                fwrite(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
+                {
+                    display::AutoPal p(display::graphics.legacyScreen());
+                    fwrite(p.pal, 768, 1, tin);
+                }
                 fwrite(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeOut(2, 10, 0, 0);
@@ -1018,7 +1035,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
                 FadeOut(2, 10, 0, 0);
                 tin = sOpen("REPL.TMP", "rb", 1); // replad temp image file
-                fread(display::graphics.legacyScreen()->pal(), sizeof display::graphics.legacyScreen()->pal(), 1, tin);
+                {
+                    display::AutoPal p(display::graphics.legacyScreen());
+                    fread(p.pal, 768, 1, tin);
+                }
                 fread(display::graphics.legacyScreen()->pixels(), 64000, 1, tin);
                 fclose(tin);
                 FadeIn(2, 10, 0, 0);

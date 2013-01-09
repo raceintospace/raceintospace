@@ -24,20 +24,13 @@ public:
     LegacySurface(unsigned int width, unsigned int height);
     virtual ~LegacySurface();
 
-    // Copy the legacy palette to the SDL palette for this surface
-    void updatePalette();
-
-    // Get a PaletteInterface
-    PaletteInterface &palette() {
-        return _pal;
-    };
-
     inline char *pixels() {
         return _pixels;
     };
-    inline char *pal() {
-        return (char *)_pal.pal;
-    }
+
+    inline PaletteInterface &palette() {
+        return *_palette;
+    };
 
     char *pixels() const;
     void clear(char colour);
@@ -57,7 +50,7 @@ public:
 
 private:
     char *_pixels;
-    LegacyPalette _pal;
+    display::SDLPaletteWrapper *_palette;
 };
 
 } // namespace display

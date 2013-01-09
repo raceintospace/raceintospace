@@ -24,7 +24,7 @@ public:
     void copyRow(uint32_t row, const void *pixelData);
 
 private:
-    display::SDLPalette _palette;
+    display::SDLPaletteWrapper _palette;
 };
 
 } // namespace display

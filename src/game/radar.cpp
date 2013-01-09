@@ -555,10 +555,12 @@ void PadPict(char poff)
 {
     SimpleHdr table;
     FILE *in;
+    display::AutoPal p(display::graphics.legacyScreen());
+
     in = sOpen("LFACIL.BUT", "rb", 0);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, 6 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, in);
+    fread(p.pal, 768, 1, in);
     fseek(in, table.offset, SEEK_SET);
     fread(buffer, table.size, 1, in);
 

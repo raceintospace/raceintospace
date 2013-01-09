@@ -305,11 +305,13 @@ void PresPict(char poff)
 {
     SimpleHdr table;
     FILE *in;
+    display::AutoPal p(display::graphics.legacyScreen());
+
     in = sOpen("PRESR.BUT", "rb", 0);
     fseek(in, poff * sizeof_SimpleHdr, SEEK_SET);
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
-    fread(&display::graphics.legacyScreen()->pal()[96], 672, 1, in);
+    fread(&p.pal[96], 672, 1, in);
     fread(buffer, table.size, 1, in);
     fclose(in);
     display::LegacySurface local(126, 84);

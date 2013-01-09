@@ -159,10 +159,6 @@ void MisAnn(char plr, char pad)
     char k, hold, Digit[4], HelpFlag = 0;
     char pad_str[2] = {'A' + pad, '\0'};
 
-    for (i = 0; i < 768; i++) {
-        display::graphics.legacyScreen()->pal()[i] = 0;
-    }
-
     display::graphics.screen()->clear();
 
     PortPal(plr);

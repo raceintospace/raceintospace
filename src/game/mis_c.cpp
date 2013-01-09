@@ -965,7 +965,8 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     locl = (int32_t) 1612 * which;
 
     if (which < 580) {
-        memset(&display::graphics.legacyScreen()->pal()[off * 3], 0x00, 48);
+        display::AutoPal p(display::graphics.legacyScreen());
+        memset(&p.pal[off * 3], 0x00, 48);
     }
 
     if (loc != 0 && which < 580) {
@@ -973,7 +974,10 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
 
     fseek(ffin, (int32_t)locl, SEEK_SET);
-    fread(&display::graphics.legacyScreen()->pal()[off * 3], 48, 1, ffin);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[off * 3], 48, 1, ffin);
+    }
     fread(boob.pixels(), 1564, 1, ffin);
 
     for (i = 0; i < 782; i++) {
@@ -1046,13 +1050,13 @@ char FailureMode(char plr, int prelim, char *text)
     FILE *fin;
     double last_secs;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
-    char save_pal[768];
+
+    display::Palette save_pal(display::graphics.legacyScreen()->palette());
 
     FadeOut(2, 10, 0, 0);
 
     // this destroys what's in the current page frames
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
-    memcpy(save_pal, display::graphics.legacyScreen()->pal(), 768);
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1299,7 +1303,7 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(save_pal);
 
             FadeIn(2, 10, 0, 0);
             key = 0;
@@ -1316,7 +1320,7 @@ char FailureMode(char plr, int prelim, char *text)
             CloseAnim(fin);
 
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(save_pal);
             FadeIn(2, 10, 0, 0);
             key = 0;
             return 1;  /* Scrub */
@@ -1358,7 +1362,10 @@ FILE *OpenAnim(char *fname)
     fread(&AHead, sizeof AHead, 1, fin);
     Swap16bit(AHead.w);
     Swap16bit(AHead.h);
-    fread(&display::graphics.legacyScreen()->pal()[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
+    }
     aLoc = ftell(fin);
     tFrames = AHead.fNum;
     cFrame = 0;
@@ -1468,6 +1475,7 @@ char DrawMoonSelection(char nauts, char plr)
     FILE *fin;
     double last_secs;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
+    display::Palette savePalette(display::graphics.legacyScreen()->palette());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
     char cPad;
@@ -1482,7 +1490,6 @@ char DrawMoonSelection(char nauts, char plr)
 
     FadeOut(2, 10, 0, 0);
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
-    memcpy(save_pal, display::graphics.legacyScreen()->pal(), 768);
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1567,7 +1574,7 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(savePalette);
 
             FadeIn(2, 10, 0, 0);
             key = 0;
@@ -1582,7 +1589,7 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(savePalette);
 
             FadeIn(2, 10, 0, 0);
             key = 0;
@@ -1597,7 +1604,7 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(savePalette);
 
             FadeIn(2, 10, 0, 0);
             key = 0;
@@ -1612,7 +1619,7 @@ char DrawMoonSelection(char nauts, char plr)
             delay(10);
             FadeOut(2, 10, 0, 0);
             saveScreen.copyTo(display::graphics.legacyScreen(), 0, 0);
-            memcpy(display::graphics.legacyScreen()->pal(), save_pal, 768);
+            display::graphics.legacyScreen()->palette().copy_from(savePalette);
 
             FadeIn(2, 10, 0, 0);
             key = 0;

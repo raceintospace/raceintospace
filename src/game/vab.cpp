@@ -162,7 +162,6 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
 void DispVAB(char plr, char pad)
 {
-    FILE *fp = NULL;
     uint16_t image_len = 0;
 
     helpText = "i016";
@@ -170,18 +169,21 @@ void DispVAB(char plr, char pad)
 
     FadeOut(2, 10, 0, 0);
 
-    fp = sOpen("VAB.IMG", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fp);
-    fread_uint16_t(&image_len, 1, fp);
-
-    if (plr == 1) {
-        fseek(fp, image_len, SEEK_CUR);
-        fread(display::graphics.legacyScreen()->pal(), 768, 1, fp);
+    {
+        FILE *fp = sOpen("VAB.IMG", "rb", 0);
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(p.pal, 768, 1, fp);
         fread_uint16_t(&image_len, 1, fp);
-    }
 
-    fread(display::graphics.legacyScreen()->pixels(), image_len, 1, fp);
-    fclose(fp);
+        if (plr == 1) {
+            fseek(fp, image_len, SEEK_CUR);
+            fread(p.pal, 768, 1, fp);
+            fread_uint16_t(&image_len, 1, fp);
+        }
+
+        fread(display::graphics.legacyScreen()->pixels(), image_len, 1, fp);
+        fclose(fp);
+    }
 
     PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), image_len);
 

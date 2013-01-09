@@ -58,7 +58,10 @@ void DrawPrefs(int where, char a1, char a2)
     keyHelpText = "K013";
 
     fin = sOpen("PREFS.BUT", "rb", 0);
-    fread(display::graphics.legacyScreen()->pal(), 768, 1, fin);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(p.pal, 768, 1, fin);
+    }
     i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
     fclose(fin);
     RLED_img(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
@@ -181,7 +184,10 @@ void HModel(char mode, char tx)
     fread_SimpleHdr(&table, 1, in);
     fseek(in, table.offset, SEEK_SET);
     display::LegacySurface local(127, 80);
-    fread(&display::graphics.legacyScreen()->pal()[112 * 3], 96 * 3, 1, in); // Individual Palette
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[112 * 3], 96 * 3, 1, in); // Individual Palette
+    }
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 

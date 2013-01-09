@@ -260,6 +260,7 @@ DispBaby(int x, int y, int loc, char neww)
     FILE *fin;
     uint16_t *bot, off = 0;
     int32_t locl;
+    display::AutoPal p(display::graphics.legacyScreen());
 
     off = 224;
 
@@ -272,10 +273,10 @@ DispBaby(int x, int y, int loc, char neww)
     fseek(fin, locl, SEEK_SET);
 
     for (i = 0; i < 48; i++) {
-        display::graphics.legacyScreen()->pal()[off * 3 + i] = 0;
+        p.pal[off * 3 + i] = 0;
     }
 
-    fread(&display::graphics.legacyScreen()->pal()[off * 3], 48, 1, fin);
+    fread(&p.pal[off * 3], 48, 1, fin);
     fread(boob.pixels(), 1564, 1, fin);
     fclose(fin);
 

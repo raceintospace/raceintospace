@@ -473,7 +473,10 @@ void Load_LenFlag(char win)
 
     poff = 0;
     coff = 128;
-    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 384, 1, in);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[coff * 3], 384, 1, in);
+    }
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
@@ -575,7 +578,10 @@ void NewEnd(char win, char loc)
                 }
 
                 local.copyTo(display::graphics.legacyScreen(), 149, 9);
-                memset(&display::graphics.legacyScreen()->pal()[384], 0, 384);
+                {
+                    display::AutoPal p(display::graphics.legacyScreen());
+                    memset(&p.pal[384], 0, 384);
+                }
                 local.clear(0);
                 Load_LenFlag(win);
                 FadeIn(1, 40, 128, 1);
@@ -1115,7 +1121,10 @@ EndPict(int x, int y, char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("ENDGAME.BUT", "rb", 0);
-    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 384, 1, in);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[coff * 3], 384, 1, in);
+    }
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdrSmall(&P);
@@ -1151,7 +1160,10 @@ LoserPict(char poff, unsigned char coff)
     FILE *in;
 
     in = sOpen("LOSER.BUT", "rb", 0);
-    fread(&display::graphics.legacyScreen()->pal()[coff * 3], 384, 1, in);
+    {
+        display::AutoPal p(display::graphics.legacyScreen());
+        fread(&p.pal[coff * 3], 384, 1, in);
+    }
     fseek(in, (poff) * (sizeof P), SEEK_CUR);
     fread(&P, sizeof P, 1, in);
     SwapPatchHdr(&P);
