@@ -1174,7 +1174,7 @@ LoserPict(char poff, unsigned char coff)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    local2.maskCopy(&local, 0, display::Surface::SourceNotEqual, coff);
+    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual, coff);
 
     local2.copyTo(display::graphics.legacyScreen(), 6, 32);
 }

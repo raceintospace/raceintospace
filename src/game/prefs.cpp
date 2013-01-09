@@ -193,7 +193,7 @@ void HModel(char mode, char tx)
 
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
-    local.filter(0, 112, display::Surface::Any);
+    local.filter(0, 112, display::LegacySurface::Any);
 
     fill_rectangle(96, 114, 223, 194, 0);
 

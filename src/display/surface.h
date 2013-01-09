@@ -15,24 +15,6 @@ public:
     Surface(unsigned int width, unsigned int height);
     virtual ~Surface();
 
-    enum Operation {
-        Set,
-        Xor
-    };
-
-    enum MaskSource {
-        SourceEqual,
-        DestinationEqual,
-        SourceNotEqual,
-        DestinationNotEqual
-    };
-
-    enum FilterTest {
-        Equal,
-        NotEqual,
-        Any
-    };
-
     SDL_Surface *surface() const;
 
     inline unsigned int width() const {

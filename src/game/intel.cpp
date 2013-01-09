@@ -1743,7 +1743,7 @@ void DispIt(int x1, int y1, int x2, int y2, int s, int t)
     local2.copyFrom(display::graphics.legacyScreen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
 
-    local2.maskCopy(&local, 0, display::Surface::SourceNotEqual);
+    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual);
 
     local2.copyTo(display::graphics.legacyScreen(), s, t);
 }

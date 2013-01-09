@@ -24,6 +24,24 @@ public:
     LegacySurface(unsigned int width, unsigned int height);
     virtual ~LegacySurface();
 
+    enum Operation {
+        Set,
+        Xor
+    };
+
+    enum MaskSource {
+        SourceEqual,
+        DestinationEqual,
+        SourceNotEqual,
+        DestinationNotEqual
+    };
+
+    enum FilterTest {
+        Equal,
+        NotEqual,
+        Any
+    };
+
     inline char *pixels() {
         return _pixels;
     };
@@ -42,11 +60,11 @@ public:
     void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
     void copyFrom(LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
     void copyFrom(LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY);
-    void copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Surface::Operation operation = Surface::Set);
+    void copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Operation operation = Set);
     void copyTo(LegacySurface *surface, unsigned int srcX, unsigned int srcY, unsigned int destX1, unsigned int destY1, unsigned int destX2, unsigned int destY2);
     void scaleTo(LegacySurface *surface);
-    void maskCopy(LegacySurface *source, char maskValue, Surface::MaskSource maskSource, char offset = 0);
-    void filter(char testValue, char offset, Surface::FilterTest filterTest);
+    void maskCopy(LegacySurface *source, char maskValue, MaskSource maskSource, char offset = 0);
+    void filter(char testValue, char offset, FilterTest filterTest);
 
 private:
     char *_pixels;

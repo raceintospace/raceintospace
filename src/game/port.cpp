@@ -451,15 +451,22 @@ void PortPlace(FILE *fin, int32_t table)
     Swap16bit(Img.PlaceY);
 
     display::LegacySurface local(Img.Width, Img.Height);
-    local.palette().copy_from(display::graphics.legacyScreen()->palette());
     display::LegacySurface local2(Img.Width, Img.Height);
+
+    // read the port in this section
+    local.palette().copy_from(display::graphics.legacyScreen()->palette());
     local.copyFrom(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
+
+    // read the image into local2
     fread(vhptr->pixels(), Img.Size, 1, fin);
     RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
+    local2.palette().copy_from(local.palette());
 
-    local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+    // copy the non-transparent bits
+    local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
-    local.copyTo(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY);
+    // draw it back
+    display::graphics.screen()->draw(local, Img.PlaceX, Img.PlaceY);
 }
 
 void PortPal(char plr)
@@ -743,7 +750,8 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, 10, 0, 0);
 
-    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+    vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
+    vhptr->draw(*display::graphics.screen(), 0, 0);
 
 #if SPOT_ON
 

@@ -609,7 +609,7 @@ void DispVA(char plr, char f)
 
     local2.copyFrom(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
-    local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
+    local.maskCopy(&local2, 0, display::LegacySurface::DestinationEqual);
 
     local2.clear(0);
 
@@ -646,7 +646,7 @@ void DispVA(char plr, char f)
         }
     }
 
-    local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+    local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
     cx = 0;
 
@@ -670,7 +670,7 @@ void DispVA(char plr, char f)
         cx = w / 2 - w2 / 2 - 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
-        local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+        local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
         x1 = MI[plr * 28 + 27].x1;
 
@@ -684,7 +684,7 @@ void DispVA(char plr, char f)
 
         local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
 
-        local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+        local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     } else {
         x1 = MI[plr * 28 + 26].x1;
         y1 = MI[plr * 28 + 26].y1;
@@ -693,7 +693,7 @@ void DispVA(char plr, char f)
         h2 = y2 - y1 + 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
 
-        local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+        local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     }
 
     local.copyTo(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2);
@@ -722,7 +722,7 @@ void DispRck(char plr, char wh)
     fill_rectangle(247, 29, 313, 179, 3);
     local2.copyFrom(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
 
-    local.maskCopy(&local2, 0, display::Surface::DestinationEqual);
+    local.maskCopy(&local2, 0, display::LegacySurface::DestinationEqual);
 
     local.copyTo(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2);
 }

@@ -163,7 +163,7 @@ void LegacySurface::copyFrom(LegacySurface *surface, unsigned int x1, unsigned i
     SDL_BlitSurface(surface->_screen, &src, _screen, &dst);
 }
 
-void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Surface::Operation operation)
+void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Operation operation)
 {
     checkPaletteCompatibility(surface);
 
@@ -173,7 +173,7 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int 
     int clip_x, clip_y;
 
     assert(surface);
-    assert(operation == Surface::Set || operation == Surface::Xor);
+    assert(operation == Set || operation == Xor);
     assert(0 <= x && x < surface->width());
     assert(0 <= y && y < surface->height());
 
@@ -181,7 +181,7 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int 
     clip_x = std::min(width() + x, surface->width()) - x;
 
     switch (operation) {
-    case Surface::Set:
+    case Set:
         for (row = 0; row < clip_y; row++) {
             from_idx = row * width();
             to_idx = (y + row) * surface->width() + x;
@@ -193,7 +193,7 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int 
 
         break;
 
-    case Surface::Xor:
+    case Xor:
         for (row = 0; row < clip_y; row++) {
             from_idx = row * width();
             to_idx = (y + row) * surface->width() + x;
@@ -299,7 +299,7 @@ void LegacySurface::copyFrom(LegacySurface *surface, unsigned int srcX1, unsigne
     }
 }
 
-void LegacySurface::maskCopy(LegacySurface *source, char maskValue, Surface::MaskSource maskSource, char offset)
+void LegacySurface::maskCopy(LegacySurface *source, char maskValue, MaskSource maskSource, char offset)
 {
     checkPaletteCompatibility(source);
 
@@ -313,28 +313,28 @@ void LegacySurface::maskCopy(LegacySurface *source, char maskValue, Surface::Mas
         char *dst = (char *)_screen->pixels + i;
 
         switch (maskSource) {
-        case Surface::SourceEqual:
+        case SourceEqual:
             if (*src == maskValue) {
                 *dst = (*src) + offset;
             }
 
             break;
 
-        case Surface::SourceNotEqual:
+        case SourceNotEqual:
             if (*src != maskValue) {
                 *dst = (*src) + offset;
             }
 
             break;
 
-        case Surface::DestinationEqual:
+        case DestinationEqual:
             if (*dst == maskValue) {
                 *dst = (*src) + offset;
             }
 
             break;
 
-        case Surface::DestinationNotEqual:
+        case DestinationNotEqual:
             if (*dst != maskValue) {
                 *dst = (*src) + offset;
             }
@@ -344,7 +344,7 @@ void LegacySurface::maskCopy(LegacySurface *source, char maskValue, Surface::Mas
     }
 }
 
-void LegacySurface::filter(char testValue, char offset, Surface::FilterTest filterTest)
+void LegacySurface::filter(char testValue, char offset, FilterTest filterTest)
 {
     unsigned int size = (width() * height());
 
@@ -352,21 +352,21 @@ void LegacySurface::filter(char testValue, char offset, Surface::FilterTest filt
         char *src = (char *)_screen->pixels + i;
 
         switch (filterTest) {
-        case Surface::Equal:
+        case Equal:
             if (*src == testValue) {
                 *src += offset;
             }
 
             break;
 
-        case Surface::NotEqual:
+        case NotEqual:
             if (*src != testValue) {
                 *src += offset;
             }
 
             break;
 
-        case Surface::Any:
+        case Any:
             *src += offset;
             break;
         }

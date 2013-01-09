@@ -277,13 +277,13 @@ AstFaces(char plr, int x, int y, char face)
 
     local3.copyFrom(&local, 0, 0, local.width() - 1, local.height() - 1, fx, fy);
 
-    local2.maskCopy(&local3, 0, display::Surface::DestinationEqual);
+    local2.maskCopy(&local3, 0, display::LegacySurface::DestinationEqual);
 
     local3.copyFrom(display::graphics.legacyScreen(), x, y, x + 79, y + 49);
 
-    local3.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
+    local3.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
-    local3.filter((7 + plr * 3), (char) - 160, display::Surface::NotEqual);
+    local3.filter((7 + plr * 3), (char) - 160, display::LegacySurface::NotEqual);
 
     local3.copyTo(display::graphics.legacyScreen(), x, y);
 }
@@ -384,7 +384,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
 
 
-        local.filter(0, coff, display::Surface::Any);
+        local.filter(0, coff, display::LegacySurface::Any);
         //TODO: Determine why the last pixel needed to be 0?
         /*
         n = 104 * 77;
@@ -451,7 +451,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         RLED_img(vhptr->pixels(), local.pixels(), BHead.fSize, local.width(), local.height());
         n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
-        local.filter(0, -(128 - coff), display::Surface::NotEqual);
+        local.filter(0, -(128 - coff), display::LegacySurface::NotEqual);
 
         //TODO: Determine why the first pixel needed to be zero?
         //local.pixels()[0] = 0x00;
@@ -580,7 +580,8 @@ int Help(const char *FName)
 
     key = 0;
     display::LegacySurface local(250, 128);
-    local.copyFrom(display::graphics.legacyScreen(), 34, 32, 283, 159);
+    local.palette().copy_from(display::graphics.legacyScreen()->palette());
+    local.draw(*display::graphics.screen(), 34, 32, 250, 128);
 
     ShBox(34, 32, 283, 159);
     InBox(37, 35, 279, 45);
