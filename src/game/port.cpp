@@ -278,6 +278,7 @@ void SpotCrap(char loc, char mode)
 
         SP3 = new display::LegacySurface(sImg.w, sImg.h);
 
+        vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
         SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
 
         if (sPath.Scale != 1.0) {
@@ -1300,6 +1301,7 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
+                                vhptr->resetPalette();
                                 vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
                                 gork = brandom(100);
 

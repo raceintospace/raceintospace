@@ -186,6 +186,7 @@ void DispVAB(char plr, char pad)
     }
 
     PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), image_len);
+    vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);

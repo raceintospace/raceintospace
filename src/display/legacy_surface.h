@@ -46,8 +46,22 @@ public:
         return _pixels;
     };
 
+    // Return a PaletteInterface for this surface
+    //
+    // You'd better use this pointer, since retrieving it sets hasValidPalette().
     inline PaletteInterface &palette() {
+        _hasValidPalette = true;
         return *_palette;
+    };
+
+    inline bool hasValidPalette() {
+        return _hasValidPalette;
+    };
+
+    // Clear the hasValidPalette() flag
+    // The next copyFrom() or copyTo() operation will thus inherit the target's palette
+    inline void resetPalette() {
+        _hasValidPalette = false;
     };
 
     char *pixels() const;
@@ -72,7 +86,12 @@ public:
 private:
     char *_pixels;
     display::SDLPaletteWrapper *_palette;
+    bool _hasValidPalette;
 
+    // Whenever we're copying between two surfaces, we call this function to check their palettes.
+    // If both surfaces have valid palettes, it compares them for equality and raises an assertion
+    // failure if they're different. If only one of the surfaces has a valid palette, it copies the
+    // palette prior to performing a draw operation.
     void checkPaletteCompatibility(LegacySurface *other);
 };
 

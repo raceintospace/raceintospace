@@ -6,7 +6,8 @@ namespace display
 {
 
 LegacySurface::LegacySurface(unsigned int width, unsigned int height) :
-    Surface(NULL)   // see note below
+    Surface(NULL),   // see note below
+    _hasValidPalette(false)
 {
     // Ideally, this constructor would be:
     //   _pixels(new char[width * height]), Screen(SDL_CreateRGBSurfaceFrom(_pixels))
@@ -129,15 +130,27 @@ void LegacySurface::line(unsigned int x1, unsigned int y1, unsigned int x2, unsi
 
 void LegacySurface::checkPaletteCompatibility(LegacySurface *other)
 {
-    const PaletteInterface &otherPalette = other->palette();
+    if (hasValidPalette() && other->hasValidPalette()) {
+        const PaletteInterface &otherPalette = other->palette();
 
-    for (int i = 0; i < 256; i++) {
-        const Color myColor(_palette->get(i));
-        const Color otherColor(otherPalette.get(i));
+        for (int i = 0; i < 256; i++) {
+            const Color myColor(_palette->get(i));
+            const Color otherColor(otherPalette.get(i));
 
-        // if this assertion blows up, you're probably doing a drawing operation
-        // without having copied around a palette first
-        assert(myColor.rgba() == otherColor.rgba());
+            // if this assertion blows up, you're probably doing a drawing operation
+            // without having copied around a palette first
+            assert(myColor.rgba() == otherColor.rgba());
+        }
+
+    } else if (hasValidPalette() && !other->hasValidPalette()) {
+        other->palette().copy_from(palette());
+
+    } else if (!hasValidPalette() && other->hasValidPalette()) {
+        palette().copy_from(other->palette());
+
+    } else {
+        // neither surface has a valid palette
+        // TODO: does SDL blit properly in this case?
     }
 }
 
