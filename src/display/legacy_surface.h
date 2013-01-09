@@ -51,6 +51,8 @@ public:
 private:
     char *_pixels;
     display::SDLPaletteWrapper *_palette;
+
+    void checkPaletteCompatibility(LegacySurface *other);
 };
 
 } // namespace display

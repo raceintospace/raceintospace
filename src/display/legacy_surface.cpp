@@ -127,8 +127,24 @@ void LegacySurface::line(unsigned int x1, unsigned int y1, unsigned int x2, unsi
     }
 }
 
+void LegacySurface::checkPaletteCompatibility(LegacySurface *other)
+{
+    const PaletteInterface &otherPalette = other->palette();
+
+    for (int i = 0; i < 256; i++) {
+        const Color myColor(_palette->get(i));
+        const Color otherColor(otherPalette.get(i));
+
+        // if this assertion blows up, you're probably doing a drawing operation
+        // without having copied around a palette first
+        assert(myColor.rgba() == otherColor.rgba());
+    }
+}
+
 void LegacySurface::copyFrom(LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
+    checkPaletteCompatibility(surface);
+
     _dirty = true;
 
     SDL_Rect src;
@@ -143,11 +159,14 @@ void LegacySurface::copyFrom(LegacySurface *surface, unsigned int x1, unsigned i
     dst.y = 0;
     dst.w = src.w;
     dst.h = src.h;
+
     SDL_BlitSurface(surface->_screen, &src, _screen, &dst);
 }
 
 void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Surface::Operation operation)
 {
+    checkPaletteCompatibility(surface);
+
     surface->_dirty = true;
 
     int row, col, from_idx, to_idx;
@@ -192,6 +211,8 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int x, unsigned int 
 
 void LegacySurface::copyTo(LegacySurface *surface, unsigned int srcX, unsigned int srcY, unsigned int destX1, unsigned int destY1, unsigned int destX2, unsigned int destY2)
 {
+    checkPaletteCompatibility(surface);
+
     int row, from_idx, to_idx;
     int copy_width, copy_height;
     int clip_x, clip_y;
@@ -224,6 +245,8 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int srcX, unsigned i
 
 void LegacySurface::scaleTo(LegacySurface *surface)
 {
+    checkPaletteCompatibility(surface);
+
     int dest_row, dest_col, dest_idx;
     int src_row, src_col, src_idx;
 
@@ -245,6 +268,8 @@ void LegacySurface::scaleTo(LegacySurface *surface)
 
 void LegacySurface::copyFrom(LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY)
 {
+    checkPaletteCompatibility(surface);
+
     int row, from_idx, to_idx;
     int copy_width, copy_height;
 
@@ -276,6 +301,8 @@ void LegacySurface::copyFrom(LegacySurface *surface, unsigned int srcX1, unsigne
 
 void LegacySurface::maskCopy(LegacySurface *source, char maskValue, Surface::MaskSource maskSource, char offset)
 {
+    checkPaletteCompatibility(source);
+
     assert(source->width() == width());
     assert(source->height() == height());
 
