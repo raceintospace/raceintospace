@@ -41,7 +41,7 @@ void Surface::clear(const Color &color)
     SDL_FillRect(_screen, &dst, mapColor(color));
 }
 
-void Surface::draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
+void Surface::draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
 {
     _dirty = true;
 
@@ -57,7 +57,7 @@ void Surface::draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsig
     dst.y = y;
     dst.w = src.w;
     dst.h = src.h;
-    SDL_BlitSurface(surface->_screen, &src, _screen, &dst);
+    SDL_BlitSurface(surface._screen, &src, _screen, &dst);
 }
 
 

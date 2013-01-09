@@ -51,19 +51,28 @@ public:
         clear(Color(0, 0, 0));
     };
 
-    void draw(Surface *surface, unsigned int x, unsigned int y) {
-        draw(surface, 0, 0, surface->width(), surface->height(), x, y);
+    void draw(const Surface &surface, unsigned int x, unsigned int y) {
+        draw(surface, 0, 0, surface.width(), surface.height(), x, y);
     }
 
-    void draw(Surface *surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
-
-
-    void draw(boost::shared_ptr<Surface> surface, unsigned int x, unsigned int y) {
-        draw(surface.get(), x, y);
+    void draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH) {
+        draw(surface, srcX, srcY, srcW, srcH, 0, 0);
     }
 
-    void draw(boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
-        draw(surface.get(), srcX, srcY, srcW, srcH, x, y);
+    void draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
+
+
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int x, unsigned int y) {
+        draw(*surface, x, y);
+    }
+
+
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH) {
+        draw(*surface, srcX, srcY, srcW, srcH, 0, 0);
+    }
+
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
+        draw(*surface, srcX, srcY, srcW, srcH, x, y);
     }
 
 
