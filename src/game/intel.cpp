@@ -28,6 +28,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -42,6 +43,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -251,7 +253,6 @@ void XSpec(char plr, char mis, char year);
 void Special(char p, int ind);
 void BackIntel(char p, char year);
 void HarIntel(char p, char acc);
-void TopSecret(char plr, char poff);
 void SaveIntel(char p, char prg, char ind);
 void ImpHard(char plr, char hd, char dx);
 void UpDateTable(char plr);
@@ -261,6 +262,8 @@ void DrawIStat(char plr);
 void IStat(char plr);
 void IInfo(char plr, char loc, char w);
 
+void DrawIntelImage(char plr, char poff);
+void DrawIntelBackground();
 
 
 void Intel(char plr)
@@ -569,7 +572,7 @@ void XSpec(char plr, char mis, char year)
     MissionName(mis, 93, 169, 30);
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "SOMETIME IN THE NEXT YEAR.");
-    TopSecret(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
+    DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
 void Special(char p, int ind)
@@ -657,7 +660,7 @@ void Special(char p, int ind)
 
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "FOR ITS SPACE PROGRAM");
-    TopSecret(p, ind);
+    DrawIntelImage(p, ind);
 }
 
 
@@ -895,7 +898,7 @@ void BackIntel(char p, char year)
     draw_string(0, 0, " PERCENT.");
 
     if (prg != 5) {
-        TopSecret(p, prg * 7 + ind);
+        DrawIntelImage(p, prg * 7 + ind);
     }
 }
 
@@ -1179,40 +1182,34 @@ void HarIntel(char p, char acc)
     SaveIntel(p, prg, ind);
 }
 
-
-void TopSecret(char plr, char poff)
+void DrawIntelBackground()
 {
-    SimpleHdr table;
-    FILE *in;
+    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel_background.png"));
+    background->exportPalette();
+    display::graphics.screen()->draw(background, 153, 32);
+}
 
-    if (poff < 56)
+void DrawIntelImage(char plr, char poff)
+{
+    DrawIntelBackground();
+
+    if (poff == 0) {
+        return;
+    }
+
+    if (poff < 56) {
         if (plr == 1) {
             poff = poff + 28;
         }
-
-    in = sOpen("INTEL.BUT", "rb", 0);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, 71 * sizeof_SimpleHdr, SEEK_SET);
-    fread(display::graphics.palette(), 768, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, in);
-    display::Surface local(157, 100);
-    display::Surface local2(157, 100);
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-
-    if (poff != 100) {
-        fseek(in, (poff + 1)*sizeof_SimpleHdr, SEEK_SET);
-        fread_SimpleHdr(&table, 1, in);
-        fseek(in, table.offset, SEEK_SET);
-        fread(buffer, table.size, 1, in);
-        RLED_img(buffer, local2.pixels(), table.size, local.width(), local.height());
-
-        local.maskCopy(&local2, 0, display::Surface::SourceNotEqual);
     }
 
-    local.copyTo(display::graphics.screen(), 153, 32);
+    assert(poff > 0 && poff <= 69);
 
-    fclose(in);
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/intel.but.%d.png", (int)poff);
+    boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
+
+    display::graphics.screen()->draw(image, 153, 32);
 }
 
 void SaveIntel(char p, char prg, char ind)
@@ -1489,7 +1486,7 @@ void Bre(char plr)
 {
     int year = Data->P[plr].PastIntel[0].cur - 1;
     DrawBre(plr);
-    TopSecret(plr, 100); // just the blue background
+    DrawIntelBackground(); // just the blue background
     BackIntel(plr, year);
     FadeIn(2, display::graphics.palette(), 10, 0, 0);
     WaitForMouseUp();
