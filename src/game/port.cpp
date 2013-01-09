@@ -438,32 +438,6 @@ void WaveFlagDel(void)
     flaggy.reset();
 }
 
-/* pace */
-/**
- * \note this isn't needed now that RLED automatically chops the right column
- * when the data is bigger than needed.  there's still a bug somewhere,
- * so this table is a useful list of funny images to check later
- */
-int32_t fix_width[] = {
-    // normal
-    80615, // 4/0 VAB in mode 0
-    101712, // 8/1 Medical center
-    115262, // 16/1 L.M. Program
-    113283, // 18/1 XMS-2 program
-    112708, // 19/1 Apollo program
-    112154, // 20/1 Gemini program
-    86035, // 22/1 Research and development
-    118301, // 33/1 Tracking station
-    82541, // 4/2 vab
-    88992, // 22/2 research and development
-    92114, // 22/3 research and development
-
-    // predraw
-    79703, // 15-1-1 "SATELLITE PROGRAMS"
-    0
-};
-
-
 void PortPlace(FILE *fin, int32_t table)
 {
     IMG Img;
@@ -477,6 +451,7 @@ void PortPlace(FILE *fin, int32_t table)
     Swap16bit(Img.PlaceY);
 
     display::LegacySurface local(Img.Width, Img.Height);
+    local.palette().copy_from(display::graphics.legacyScreen()->palette());
     display::LegacySurface local2(Img.Width, Img.Height);
     local.copyFrom(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
     fread(vhptr->pixels(), Img.Size, 1, fin);
@@ -543,19 +518,13 @@ void DrawSpaceport(char plr)
         Swap32bit(table[i]);
     }
 
-    fseek(fin, PHead.oPal, SEEK_SET);
+    // Draw the main port image
     {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
+        const char *filename = (plr == 0 ? "images/usa_port.dat.0.png" : "images/sov_port.dat.0.png");
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
+        image->exportPalette();
+        display::graphics.screen()->draw(image, 0, 0);
     }
-    fseek(fin, table[0], SEEK_SET);
-    fread(&Img, sizeof Img, 1, fin); // Read in main image Header
-    Swap32bit(Img.Size);
-    Swap16bit(Img.Width);
-    Swap16bit(Img.Height);
-    Swap16bit(Img.PlaceX);
-    Swap16bit(Img.PlaceY);
-    fread(display::graphics.legacyScreen()->pixels(), Img.Size, 1, fin); // Read in main image
 
     UpdatePortOverlays();
 
