@@ -451,21 +451,15 @@ void PortPlace(FILE *fin, int32_t table)
     Swap16bit(Img.PlaceY);
 
     display::LegacySurface local(Img.Width, Img.Height);
-    display::LegacySurface local2(Img.Width, Img.Height);
 
-    // read the port in this section
+    // read the image into local, using vhptr as a temporary store
+    char *buf = (char *)alloca(Img.Size);
+    fread(buf, Img.Size, 1, fin);
+    RLED_img(buf, local.pixels(), Img.Size, local.width(), local.height());
     local.palette().copy_from(display::graphics.legacyScreen()->palette());
-    local.copyFrom(display::graphics.legacyScreen(), Img.PlaceX, Img.PlaceY, Img.PlaceX + Img.Width - 1, Img.PlaceY + Img.Height - 1);
+    local.setTransparentColor(0);
 
-    // read the image into local2
-    fread(vhptr->pixels(), Img.Size, 1, fin);
-    RLED_img(vhptr->pixels(), local2.pixels(), Img.Size, local2.width(), local2.height());
-    local2.palette().copy_from(local.palette());
-
-    // copy the non-transparent bits
-    local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
-
-    // draw it back
+    // draw it
     display::graphics.screen()->draw(local, Img.PlaceX, Img.PlaceY);
 }
 

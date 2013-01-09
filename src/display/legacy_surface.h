@@ -66,6 +66,9 @@ public:
     void maskCopy(LegacySurface *source, char maskValue, MaskSource maskSource, char offset = 0);
     void filter(char testValue, char offset, FilterTest filterTest);
 
+    // Set a color as transparent, or -1 to disable transaprency
+    void setTransparentColor(int color = -1);
+
 private:
     char *_pixels;
     display::SDLPaletteWrapper *_palette;

@@ -373,4 +373,9 @@ void LegacySurface::filter(char testValue, char offset, FilterTest filterTest)
     }
 }
 
+void LegacySurface::setTransparentColor(int color)
+{
+    SDL_SetColorKey(_screen, color >= 0 ? SDL_SRCCOLORKEY : 0, color & 0xff);
+}
+
 };
