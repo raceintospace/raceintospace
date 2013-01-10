@@ -2,11 +2,14 @@
 #include <physfs.h>
 
 #include <stdexcept>
+#include <boost/format.hpp>
 
 #include "display/image.h"
 
 #include "raceintospace_config.h"
 #include "filesystem.h"
+
+using boost::format;
 
 #define throw_error do { \
     const char * error = PHYSFS_getLastError(); \
@@ -15,6 +18,14 @@
     throw std::runtime_error(error); \
     } while (0)
 
+
+#define throw_error_with_detail(detail) do { \
+    const char * error = PHYSFS_getLastError(); \
+    if (error == NULL) \
+        error = "unknown filesystem error"; \
+    std::string msg = (format("%1%: %2%") % error % detail).str(); \
+    throw std::runtime_error(msg); \
+    } while (0)
 
 Filesystem Filesystem::singleton;
 
@@ -54,21 +65,21 @@ void Filesystem::init(const char *argv0)
         const char *prefdir = PHYSFS_getPrefDir("raceintospace.org", "Race Into Space");
 
         if (prefdir == NULL) {
-            throw_error;
+            throw_error_with_detail(prefdir);
         }
 
         // use this for reading, *before* the expected game data directory, thereby allowing overlays
         success = PHYSFS_mount(prefdir, NULL, 0);
 
         if (!success) {
-            throw_error;
+            throw_error_with_detail(prefdir);
         }
 
         // use this for writing too
         PHYSFS_setWriteDir(prefdir);
 
         if (!success) {
-            throw_error;
+            throw_error_with_detail(prefdir);
         }
     }
 }
@@ -82,7 +93,7 @@ void Filesystem::addPath(const char *s)
     int success = PHYSFS_mount(s, NULL, 0);
 
     if (!success) {
-        throw_error;
+        throw_error_with_detail(s);
     }
 }
 
@@ -135,7 +146,7 @@ boost::shared_ptr<File> Filesystem::open(const std::string &filename)
     PHYSFS_File *file_handle = PHYSFS_openRead(filename.c_str());
 
     if (!file_handle) {
-        throw_error;
+        throw_error_with_detail(filename);
     }
 
     boost::shared_ptr<File> file_ptr(new File(file_handle));
@@ -147,7 +158,7 @@ boost::shared_ptr<File> Filesystem::openWrite(const std::string &filename)
     PHYSFS_File *file_handle = PHYSFS_openWrite(filename.c_str());
 
     if (!file_handle) {
-        throw_error;
+        throw_error_with_detail(filename);
     }
 
     boost::shared_ptr<File> file_ptr(new File(file_handle));
@@ -165,7 +176,7 @@ void Filesystem::readToBuffer(const std::string &filename, void *buffer, uint32_
     uint32_t bytes_read = file_ptr->read(buffer, length);
 
     if (bytes_read < length) {
-        throw_error;
+        throw_error_with_detail(filename);
     }
 }
 
@@ -184,7 +195,7 @@ boost::shared_ptr<display::PalettizedSurface> Filesystem::readImage(const std::s
 
     if (bytes_read < length) {
         delete[] buffer;
-        throw_error;
+        throw_error_with_detail(filename);
     }
 
     // construct a PNGImage from this buffer
