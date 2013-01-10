@@ -26,6 +26,7 @@
  */
 
 #include "display/graphics.h"
+#include "display/palettized_surface.h"
 
 #include "aipur.h"
 #include "Buzz_inc.h"
