@@ -287,3 +287,15 @@ message Players {
 	repeated BuzzData player_data = 10;  /**< Player Game Data  BuzzData[2]*/
 };
 
+message SavePlayerInfo {
+	required string player_name = 1;
+	required int32 country = 2;
+};
+
+message SaveGameFile {
+	required string savegame_name = 1;
+	repeated SavePlayerInfo players = 2;
+	required int32 game_season = 3;
+	required int32 game_year = 4;
+	required Players game_data = 5;
+}
