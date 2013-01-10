@@ -27,6 +27,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
 #include "hardef.h"
@@ -38,6 +39,7 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "hardware_buttons.h"
 
 void DrawHardef(char plr);
 void HDispIt(int x1, int y1, int x2, int y2, int s, int t);
@@ -55,7 +57,6 @@ DrawHardef(char plr)
 
     Load_CIA_BUT();
     display::graphics.screen()->clear();
-    Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
     IOBox(242, 3, 315, 19);
@@ -79,10 +80,7 @@ DrawHardef(char plr)
     draw_number(5, 55, 15);
     draw_number(5, 89, 10);
     draw_number(5, 123, 5);
-    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194);   // Unmanned
-    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194);    // Rocket
-    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194);  // Manned
-    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194);  // Misc
+
     display::graphics.setForegroundColor(1);
     draw_heading(40, 5, "EFFICIENCY", 1, -1);
     draw_small_flag(plr, 4, 4);
@@ -107,7 +105,11 @@ ShowHard(char plr)
     int i, place = -1;
     char Cnt = 0;               // switch between screens
 
+    HardwareButtons hardware_buttons(165, plr);
+
     DrawHardef(plr);
+    hardware_buttons.drawButtons();
+
     helpText = "i034";
     keyHelpText = "k034";
     WaitForMouseUp();
@@ -122,7 +124,7 @@ ShowHard(char plr)
                 InBox(7, 164, 75, 195);
                 WaitForMouseUp();
                 OutBox(7, 164, 75, 195);
-                ReButs(place, 0);
+                hardware_buttons.drawButtons(0);
                 place = 0;
 
                 if (Cnt == 0) {
@@ -173,7 +175,7 @@ ShowHard(char plr)
                 InBox(83, 164, 156, 195);
                 WaitForMouseUp();
                 OutBox(83, 164, 156, 195);
-                ReButs(place, 1);
+                hardware_buttons.drawButtons(1);
                 place = 1;
 
                 if (Cnt == 0) {
@@ -189,7 +191,7 @@ ShowHard(char plr)
                 WaitForMouseUp();
                 OutBox(164, 164, 237, 195);
                 /* MANNED */
-                ReButs(place, 2);
+                hardware_buttons.drawButtons(2);
                 place = 2;
 
                 if (Cnt == 0) {
@@ -202,7 +204,7 @@ ShowHard(char plr)
                 InBox(245, 164, 313, 195);
                 WaitForMouseUp();
                 OutBox(245, 164, 313, 195);
-                ReButs(place, 3);
+                hardware_buttons.drawButtons(3);
                 place = 3;
 
                 if (Cnt == 0) {
@@ -217,7 +219,6 @@ ShowHard(char plr)
                 InBox(244, 5, 314, 17);
                 WaitForMouseUp();
                 OutBox(244, 5, 314, 17);
-                Del_RD_BUT();
                 return;            /* Done */
             };
         }
@@ -227,21 +228,17 @@ ShowHard(char plr)
 void
 HDispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
+    // assumes cia.but is loaded in vhptr
+    // seems identical to DispIt()
     int w;
     int h;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
     display::LegacySurface local(w, h);
-    display::LegacySurface local2(w, h);
-    local.clear(0);
-    local2.clear(0);
-    local2.copyFrom(display::graphics.legacyScreen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
-
-    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual);
-
-    local2.copyTo(display::graphics.legacyScreen(), s, t);
+    local.setTransparentColor(0);
+    display::graphics.screen()->draw(local, s, t);
 }
 
 void

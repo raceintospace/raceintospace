@@ -26,7 +26,7 @@
  */
 
 #include "display/graphics.h"
-#include "display/legacy_surface.h"
+#include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
 #include "rdplex.h"
@@ -40,17 +40,17 @@
 #include "pace.h"
 #include "endianness.h"
 #include <assert.h>
+#include "filesystem.h"
+#include "hardware_buttons.h"
 
 int call;
 int wh;
-display::LegacySurface *but;
-display::LegacySurface *mans;
+boost::shared_ptr<display::PalettizedSurface> rd_men;
 int avoidf;
 
 
 void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
-void BButs(char old, char nw);
 void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
 void ManSel(int activeButtonIndex);
 void ShowUnit(char hw, char un, char plr);
@@ -117,48 +117,18 @@ void SRdraw_string(int x, int y, char *text, char fgd, char bck)
 
 void Load_RD_BUT(char player_index)
 {
-    FILE *fin;
-    struct {
-        char na[4];
-        uint32_t size;
-    } Boo;
+    char filename[128];
 
-    if (BUTLOAD == 1) {
-        return;
-    }
+    snprintf(filename, sizeof(filename), "images/rd_men.%d.png", player_index);
+    rd_men = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 
-    but = new display::LegacySurface(282, 61);
-    mans = new display::LegacySurface(119, 17);
-
-    fin = sOpen("RDBOX.BUT", "rb", 0);
-    fread(&Boo, sizeof Boo, 1, fin);
-    Swap32bit(Boo.size);
-
-    if (player_index == 1)
-        while (strncmp("SBUT", &Boo.na[0], 4) != 0) {
-            fseek(fin, Boo.size, SEEK_CUR);
-            fread(&Boo, sizeof Boo, 1, fin);
-            Swap32bit(Boo.size);
-        }
-
-    fread(buffer, Boo.size, 1, fin);
-    RLED_img(buffer, but->pixels(), Boo.size, but->width(), but->height());
-    fread(&Boo, sizeof Boo, 1, fin);
-    Swap32bit(Boo.size);
-    fread(buffer, Boo.size, 1, fin);
-    fclose(fin);
-    RLED_img(buffer, mans->pixels(), Boo.size, mans->width(), mans->height());
     BUTLOAD = 1;
-    return;
 }
 
-void Del_RD_BUT(void)
+void Del_RD_BUT()
 {
+    rd_men.reset();
     BUTLOAD = 0;
-    delete but;
-    but = NULL;
-    delete mans;
-    mans = NULL;
 }
 
 void DrawRD(char player_index)
@@ -219,18 +189,12 @@ void DrawRD(char player_index)
     draw_string(0, 0, "ISIT PURCHASING FACILITY");
 
     for (i = 0; i < 6; i++) {
-        mans->copyTo(display::graphics.legacyScreen(), i * 20, 0, 166 + i * 26, 158, 184 + i * 26, 174);
+        display::graphics.screen()->draw(rd_men, i * 20, 0, 19, 16, 166 + i * 26, 158);
     }
 
     display::graphics.setForegroundColor(3);
     grMoveTo(296, 174);
     grLineTo(314, 174);
-
-
-    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
-    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
-    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
-    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
 
     display::graphics.setForegroundColor(1);
     draw_heading(50, 5, "RESEARCH", 0, -1);
@@ -256,57 +220,6 @@ void DrawRD(char player_index)
 
     return;
 } // End of DrawRD
-
-
-void BButs(char old, char nw)
-{
-    switch (old) {
-    case PROBE_HARDWARE:
-        OutBox(7, 29, 75, 60);
-        but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
-        break;
-
-    case ROCKET_HARDWARE:
-        OutBox(83, 29, 156, 60);
-        but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
-        break;
-
-    case MANNED_HARDWARE:
-        OutBox(164, 29, 237, 60);
-        but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
-        break;
-
-    case MISC_HARDWARE:
-        OutBox(245, 29, 313, 60);
-        but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
-        break;
-    }
-
-    switch (nw) {
-    case PROBE_HARDWARE:
-        InBox(7, 29, 75, 60);
-        but->copyTo(display::graphics.legacyScreen(), 0, 31, 8, 30, 74, 59); // Unmanned
-        break;
-
-    case ROCKET_HARDWARE:
-        InBox(83, 29, 156, 60);
-        but->copyTo(display::graphics.legacyScreen(), 68, 31, 84, 30, 155, 59); // Rocket
-        break;
-
-    case MANNED_HARDWARE:
-        InBox(164, 29, 237, 60);
-        but->copyTo(display::graphics.legacyScreen(), 141, 31, 165, 30, 236, 59); // Manned
-        break;
-
-    case MISC_HARDWARE:
-        InBox(245, 29, 313, 60);
-        but->copyTo(display::graphics.legacyScreen(), 214, 31, 246, 30, 312, 59); // Misc
-        break;
-    }
-
-
-    return;
-}
 
 void
 RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule) //DM Screen, Nikakd, 10/8/10
@@ -359,8 +272,11 @@ char RD(char player_index)
     helpText = "i009";
     keyHelpText = "k009";
 
+    HardwareButtons hardware_buttons(30, player_index);
+
     DrawRD(player_index);
-    BButs(PROBE_HARDWARE, hardware);
+    hardware_buttons.drawButtons(HARD1);
+
     ShowUnit(hardware, unit, player_index);
     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
 
@@ -415,7 +331,7 @@ char RD(char player_index)
                     InBox(283, 90, 302, 100);
                     DamProb(player_index, hardware, unit);
                     DrawRD(player_index);
-                    BButs(PROBE_HARDWARE, hardware);
+                    hardware_buttons.drawButtons(hardware);
                     ShowUnit(hardware, unit, player_index);
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
 
@@ -436,8 +352,8 @@ char RD(char player_index)
             } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
                 if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* Unmanned */
                     roll = 0;
-                    BButs(hardware, PROBE_HARDWARE);
                     hardware = PROBE_HARDWARE;
+                    hardware_buttons.drawButtons(hardware);
                     unit = PROBE_HW_ORBITAL;
 
                     if (buy[hardware][unit] == 0) {
@@ -455,8 +371,8 @@ char RD(char player_index)
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
                 } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) { /* Rockets */
                     roll = 0;
-                    BButs(hardware, ROCKET_HARDWARE);
                     hardware = ROCKET_HARDWARE;
+                    hardware_buttons.drawButtons(hardware);
                     unit = ROCKET_HW_ONE_STAGE;
 
                     if (buy[hardware][unit] == 0) {
@@ -474,8 +390,8 @@ char RD(char player_index)
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
                 } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) { /* Manned */
                     roll = 0;
-                    BButs(hardware, MANNED_HARDWARE);
                     hardware = MANNED_HARDWARE;
+                    hardware_buttons.drawButtons(hardware);
                     unit = MANNED_HW_ONE_MAN_CAPSULE;
 
                     if (buy[hardware][unit] == 0) {
@@ -493,8 +409,8 @@ char RD(char player_index)
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
                 } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) { /* Misc */
                     roll = 0;
-                    BButs(hardware, MISC_HARDWARE);
                     hardware = MISC_HARDWARE;
+                    hardware_buttons.drawButtons(hardware);
                     unit = MISC_HW_KICKER_A;
 
                     if (buy[hardware][unit] == 0) {
@@ -759,8 +675,7 @@ char RD(char player_index)
                     }
 
                 DrawRD(player_index);
-                //DM Screen, Nikakd, 10/8/10 (Removed line)
-                BButs(PROBE_HARDWARE, hardware);
+                hardware_buttons.drawButtons(hardware);
                 ShowUnit(hardware, unit, player_index);
                 RDButTxt(0, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
 
@@ -1268,11 +1183,6 @@ void DrawHPurc(char player_index)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISIT R&D FACILITY");
 
-    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 30, 74, 59); // Unmanned
-    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 30, 155, 59); // Rocket
-    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 30, 236, 59); // Manned
-    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 30, 312, 59); // Misc
-
     display::graphics.setForegroundColor(9);
     draw_string(191, 190, "P");
     display::graphics.setForegroundColor(11);
@@ -1304,6 +1214,8 @@ char HPurc(char player_index)
     short hardware, unit;
     FILE *undo;
 
+    HardwareButtons hardware_buttons(30, player_index);
+
     remove_savedat("UNDO.TMP");
     undo = sOpen("UNDO.TMP", "wb", 1);
     fwrite(Data, sizeof(struct Players), 1, undo);
@@ -1314,7 +1226,7 @@ char HPurc(char player_index)
     helpText = "i008";
     keyHelpText = "k008";
     DrawHPurc(player_index);
-    BButs(PROBE_HARDWARE, hardware);
+    hardware_buttons.drawButtons(hardware);
     ShowUnit(hardware, unit, player_index);
 
     FadeIn(2, 10, 0, 0);
@@ -1355,7 +1267,7 @@ char HPurc(char player_index)
                 helpText = "i008";
                 keyHelpText = "k008";
                 DrawHPurc(player_index);
-                BButs(PROBE_HARDWARE, hardware);
+                hardware_buttons.drawButtons(hardware);
                 ShowUnit(hardware, unit, player_index);
 
                 FadeIn(2, 10, 0, 0);
@@ -1376,23 +1288,23 @@ char HPurc(char player_index)
 
         if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
             if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* PROBES */
-                BButs(hardware, PROBE_HARDWARE);
                 hardware = PROBE_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
                 unit = PROBE_HW_ORBITAL;
                 ShowUnit(hardware, unit, player_index);
             } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) { /* ROCKETS  */
-                BButs(hardware, ROCKET_HARDWARE);
                 hardware = ROCKET_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
                 unit = ROCKET_HW_ONE_STAGE;
                 ShowUnit(hardware, unit, player_index);
             } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) { /* CAPSULES */
-                BButs(hardware, MANNED_HARDWARE);
                 hardware = MANNED_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
                 unit = MANNED_HW_ONE_MAN_CAPSULE;
                 ShowUnit(hardware, unit, player_index);
             } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) { /* MISC */
-                BButs(hardware, MISC_HARDWARE);
                 hardware = MISC_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
                 unit = MISC_HW_KICKER_A;
                 ShowUnit(hardware, unit, player_index);
             }
@@ -1559,11 +1471,9 @@ char HPurc(char player_index)
             call = 0;
             hardware = HARD1;
             unit = UNIT1;
-            //DM Screen, Nikakd, 10/8/10 (Removed line)
             DrawHPurc(player_index);
-            //    memcpy(vhptr->pixels(),Data,sizeof(struct Players));
             ShowUnit(hardware, unit, player_index);
-            BButs(PROBE_HARDWARE, hardware);
+            hardware_buttons.drawButtons(hardware);
 
             // Just Added stuff by mike
             undo = sOpen("UNDO.TMP", "wb", 1);

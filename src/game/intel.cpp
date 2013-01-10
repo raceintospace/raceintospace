@@ -44,6 +44,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
+#include "hardware_buttons.h"
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -1551,12 +1552,14 @@ void Load_CIA_BUT(void)
 {
     int i;
     FILE *fin;
-    display::AutoPal p(display::graphics.legacyScreen());
+    display::AutoPal p(vhptr);
 
     fin = sOpen("CIA.BUT", "rb", 0);
     fread(p.pal, 768, 1, fin);
-    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i);
+
+    char buf[32768];
+    i = fread(buf, 1, sizeof(buf), fin);
+    PCX_D(buf, vhptr->pixels(), i);
     fclose(fin);
 }
 
@@ -1569,7 +1572,6 @@ void DrawIStat(char plr)
 
     Load_CIA_BUT();
     display::graphics.screen()->clear();
-    Load_RD_BUT(plr);
 
     ShBox(0, 0, 319, 199);
     IOBox(242, 3, 315, 19);
@@ -1596,10 +1598,7 @@ void DrawIStat(char plr)
     draw_string(17, 89, "%");
     draw_number(5, 123, 25);
     draw_string(17, 123, "%");
-    but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194); // Unmanned
-    but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194); // Rocket
-    but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194); // Manned
-    but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194); // Misc
+
     display::graphics.setForegroundColor(6);
     draw_heading(40, 5, "INTELLIGENCE STATS", 1, -1);
     draw_small_flag(plr, 4, 4);
@@ -1609,63 +1608,15 @@ void DrawIStat(char plr)
 
 }
 
-void ReButs(char old, char nw)
-{
-
-    switch (old) {
-    case 0:
-        OutBox(7, 164, 75, 195);
-        but->copyTo(display::graphics.legacyScreen(), 0, 0, 8, 165, 74, 194); // Unmanned
-        break;
-
-    case 1:
-        OutBox(83, 164, 156, 195);
-        but->copyTo(display::graphics.legacyScreen(), 68, 0, 84, 165, 155, 194); // Rocket
-        break;
-
-    case 2:
-        OutBox(164, 164, 237, 195);
-        but->copyTo(display::graphics.legacyScreen(), 141, 0, 165, 165, 236, 194); // Manned
-        break;
-
-    case 3:
-        OutBox(245, 164, 313, 195);
-        but->copyTo(display::graphics.legacyScreen(), 214, 0, 246, 165, 312, 194); // Misc
-        break;
-
-    default:
-        break;
-    }
-
-    switch (nw) {
-    case 0:
-        InBox(7, 164, 75, 195);
-        but->copyTo(display::graphics.legacyScreen(), 0, 31, 8, 165, 74, 194); // Unmanned
-        break;
-
-    case 1:
-        InBox(83, 164, 156, 195);
-        but->copyTo(display::graphics.legacyScreen(), 68, 31, 84, 165, 155, 194); // Rocket
-        break;
-
-    case 2:
-        InBox(164, 164, 237, 195);
-        but->copyTo(display::graphics.legacyScreen(), 141, 31, 165, 165, 236, 194); // Manned
-        break;
-
-    case 3:
-        InBox(245, 164, 313, 195);
-        but->copyTo(display::graphics.legacyScreen(), 214, 31, 246, 165, 312, 194); // Misc
-        break;
-    }
-
-}
-
 void IStat(char plr)
 {
     int place = -1;
 
+    HardwareButtons hardware_buttons(165, plr);
+
     DrawIStat(plr);
+    hardware_buttons.drawButtons();
+
     WaitForMouseUp();
 
     while (1) {
@@ -1677,8 +1628,8 @@ void IStat(char plr)
                 InBox(7, 164, 75, 195);
                 WaitForMouseUp();
                 OutBox(7, 164, 75, 195);
-                ReButs(place, 0);
                 place = 0;
+                hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* Unmanned */
             };
@@ -1687,8 +1638,8 @@ void IStat(char plr)
                 InBox(83, 164, 156, 195);
                 WaitForMouseUp();
                 OutBox(83, 164, 156, 195);
-                ReButs(place, 1);
                 place = 1;
+                hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* Rocket */
             };
@@ -1698,8 +1649,8 @@ void IStat(char plr)
                 WaitForMouseUp();
                 OutBox(164, 164, 237, 195);
                 /* MANNED */
-                ReButs(place, 2);
                 place = 2;
+                hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
             };
 
@@ -1707,8 +1658,8 @@ void IStat(char plr)
                 InBox(245, 164, 313, 195);
                 WaitForMouseUp();
                 OutBox(245, 164, 313, 195);
-                ReButs(place, 3);
                 place = 3;
+                hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* MISC */
             };
@@ -1722,7 +1673,6 @@ void IStat(char plr)
                 }
 
                 OutBox(244, 5, 314, 17);
-                Del_RD_BUT();
                 break;  /* Done */
             }
         }
@@ -1731,21 +1681,17 @@ void IStat(char plr)
 
 void DispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
+    // assumes cia.but is loaded in vhptr
+    // seems identical to HDispIt()
     int w;
     int h;
 
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
     display::LegacySurface local(w, h);
-    display::LegacySurface local2(w, h);
-    local.clear(0);
-    local2.clear(0);
-    local2.copyFrom(display::graphics.legacyScreen(), s, t, s + w - 1, t + h - 1);
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
-
-    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual);
-
-    local2.copyTo(display::graphics.legacyScreen(), s, t);
+    local.setTransparentColor(0);
+    display::graphics.screen()->draw(local, s, t);
 }
 
 void IInfo(char plr, char loc, char w)
