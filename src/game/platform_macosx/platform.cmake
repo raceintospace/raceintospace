@@ -42,7 +42,6 @@ add_executable("${app}" MACOSX_BUNDLE
 
 target_link_libraries("${app}"
   ${game_libraries}
-  raceintospace_display ${raceintospace_display_libraries}
   ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY} ${IOKit_LIBRARY}
   )
 

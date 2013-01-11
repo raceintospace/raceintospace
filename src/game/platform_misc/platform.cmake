@@ -13,10 +13,7 @@ add_executable(${app}
   platform_misc/main.c
   )
 
-target_link_libraries(${app}
-  ${game_libraries}
-  raceintospace_display ${raceintospace_display_libraries}
-  )
+target_link_libraries(${app} ${game_libraries})
 
 add_dependencies(${app} libs)
 install(TARGETS raceintospace DESTINATION bin)

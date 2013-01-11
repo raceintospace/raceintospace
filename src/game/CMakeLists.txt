@@ -1,6 +1,7 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(${PROJECT_SOURCE_DIR}/src/game)
+include_directories(${raceintospace_protobuf_include_dir})
 
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
@@ -74,8 +75,10 @@ set(game_sources
   )
 
 set(game_libraries
-  ${SDL_LIBRARY} ogg vorbis theora
+  ${SDL_LIBRARY} ogg vorbis theora protobuf
   jsoncpp physfs ${zlib_LIBRARY}
+  raceintospace_display ${raceintospace_display_libraries}
+  raceintospace_protobuf
   )
 
 # Define one big test suite

@@ -60,6 +60,9 @@ include_directories(${PROJECT_BINARY_DIR}/config)
 include("display/Global.cmake")
 add_subdirectory("display")
 
+# build src/protobuf
+add_subdirectory("protobuf")
+
 # build src/game
 add_subdirectory("game")
 
