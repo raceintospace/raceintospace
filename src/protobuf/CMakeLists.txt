@@ -7,6 +7,14 @@ FUNCTION(WRAP_PROTO VAR)
     RETURN()
   ENDIF(NOT ARGN)
 
+  if(TARGET ext_protobuf)
+    set(protoc ${LocalPrefix}/bin/protoc)
+    set(deps ext_protobuf)
+  else()
+    set(protoc protoc)
+    set(deps)
+  endif()
+
   SET(INCL)
   SET(${VAR})
   FOREACH(FIL ${ARGN})
@@ -17,9 +25,9 @@ FUNCTION(WRAP_PROTO VAR)
 
     ADD_CUSTOM_COMMAND(
       OUTPUT ${${VAR}} ${INCL}
-      COMMAND ${LocalPrefix}/bin/protoc
+      COMMAND ${protoc}
       ARGS --cpp_out  ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${CMAKE_CURRENT_SOURCE_DIR} ${ABS_FIL}
-      DEPENDS ${ABS_FIL}
+      DEPENDS ${ABS_FIL} ${deps}
       COMMENT "Running protocol buffer compiler on ${FIL}"
       VERBATIM )
   ENDFOREACH(FIL)
