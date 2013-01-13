@@ -23,6 +23,11 @@ public:
     // Directly copies a row of image data into this surface
     void copyRow(uint32_t row, const void *pixelData);
 
+    // Get a const reference to this palette
+    inline const PaletteInterface &palette() {
+        return _palette;
+    };
+
 private:
     display::SDLPaletteWrapper _palette;
 };
