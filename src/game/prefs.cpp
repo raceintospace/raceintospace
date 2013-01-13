@@ -50,7 +50,7 @@ void CLevels(char side, char wh);
 
 void DrawPrefs(int where, char a1, char a2)
 {
-    int i, mode = 0;
+    int mode = 0;
     FILE *fin;
 
     FadeOut(2, 10, 0, 0);
@@ -58,15 +58,13 @@ void DrawPrefs(int where, char a1, char a2)
     keyHelpText = "K013";
 
     fin = sOpen("PREFS.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
-    }
-    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
-    fclose(fin);
-    RLED_img(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), i, vhptr->width(), vhptr->height());
+    boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
+    // fixme: don't use vhptr to draw this screen
+    vhptr->palette().copy_from(prefs_image->palette());
+    vhptr->draw(prefs_image, 0, 0);
 
     display::graphics.screen()->clear();
+    prefs_image->exportPalette();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);
@@ -161,6 +159,8 @@ void DrawPrefs(int where, char a1, char a2)
     draw_string(258, 13, "CONTINUE");
     draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
+
+    // todo: convert to draw commands
     vhptr->copyTo(display::graphics.legacyScreen(), 153 + 34 * (Data->Def.Music), 0, 101, 31, 134, 60);
     vhptr->copyTo(display::graphics.legacyScreen(), 221 + 34 * (Data->Def.Sound), 0, 101, 71, 134, 100);
 
