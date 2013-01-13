@@ -1793,7 +1793,8 @@ char Request(char plr, char *s, char md)
     }; /* End while */
 
     if (md > 0) {
-        local.copyTo(display::graphics.legacyScreen(), 85, 52);
+        display::graphics.legacyScreen()->palette().copy_from(local.palette());
+        display::graphics.screen()->draw(local, 0, 0);
     }
 
     return i;
