@@ -7,9 +7,11 @@ source release  for the computer version  of the Liftoff! board  game by
 Fritz Bronner.  This was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
-The Race Into Space project officially lives on
-[SourceForge](http://sourceforge.net/projects/raceintospace). This repository
-contains a work-in-progress modernization of the game.
+The Race Into Space project home page is
+[raceintospace.org](http://www.raceintospace.org), and the most recent
+stable releases are available from
+[SourceForge](http://sourceforge.net/projects/raceintospace/). This
+repository contains a work-in-progress modernization of the game.
 
 License
 =======
@@ -40,9 +42,8 @@ The specifics of which things come from where depend on your platform.
 On UNIXy systems (including Mac OS X), you can build everything with:
 
     $ git clone git://github.com/raceintospace/raceintospace.git
-    $ cd raceintospace/
-    $ mkdir build; cd build
-    $ cmake ..
+    $ mkdir raceintospace-build; cd raceintospace-build
+    $ cmake ../raceintospace
     $ make
 
 Linux
@@ -72,9 +73,9 @@ own. We do, however, rely on the platform-provided zlib.
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:
 
-    $ rm -r build
-    $ mkdir build; cd build
-    $ cmake -G Xcode ..
+    $ git clone git://github.com/raceintospace/raceintospace.git
+    $ rm -r raceintospace-build; cd raceintospace-build
+    $ cmake -G Xcode ../raceintospace
     $ open raceintospace.xcodeproj
 
 Windows
