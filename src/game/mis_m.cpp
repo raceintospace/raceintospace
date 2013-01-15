@@ -52,7 +52,8 @@ char InSpace;
 char Dock_Skip; /**< used for mission branching */
 
 extern uint16_t MisStat;
-extern char pCnt, tMen, BIG;          // Counter for pAry
+extern char pCnt, tMen;          // Counter for pAry
+extern bool fullscreenMissionPlayback;
 extern int pAry[15];         /**< Array for Presige Firsts compelted */
 
 void Tick(char);
@@ -140,7 +141,7 @@ void MisCheck(char plr, char mpad)
 
 
 
-    if (!AI[plr] && BIG == 0) {
+    if (!AI[plr] && !fullscreenMissionPlayback) {
         //FadeOut(1,pal,100,128,1);
         if (plr == 1) {
             fill_rectangle(189, 173, 249, 196, 55);
@@ -165,7 +166,7 @@ void MisCheck(char plr, char mpad)
         }
     } // END if (!AI[plr])
 
-    if (!AI[plr] && BIG == 0) {
+    if (!AI[plr] && !fullscreenMissionPlayback) {
         Tick(2);
     }
 
@@ -240,7 +241,7 @@ void MisCheck(char plr, char mpad)
         if (Mev[STEP].Name[0] == 'A') {
             display::graphics.setForegroundColor(11);
 
-            if (!AI[plr] && BIG == 0) {
+            if (!AI[plr] && !fullscreenMissionPlayback) {
                 if (plr == 0) {
                     x = 5;
                     y = 112;
@@ -276,7 +277,7 @@ void MisCheck(char plr, char mpad)
         }
 
         // Draw Mission Step Name
-        if (!AI[plr] && BIG == 0) {
+        if (!AI[plr] && !fullscreenMissionPlayback) {
             if (!(fEarly && STEP != 0)) {
                 if (plr == 0) {
                     x = 5;
@@ -346,7 +347,7 @@ void MisCheck(char plr, char mpad)
                safety, val,
                PROBLEM ? " problem" : (options.want_cheats ? " cheating" : ""));
 
-        if (!AI[plr] && BIG == 0)
+        if (!AI[plr] && !fullscreenMissionPlayback)
             if (!(fEarly && STEP != 0)) {
                 lc = MCGraph(plr, lc, MAX(0, safety), MAX(0, val), PROBLEM);    // Graph Chart
             }
@@ -583,7 +584,7 @@ void MisCheck(char plr, char mpad)
         || (MA[1][3].A != NULL && MA[1][3].A->Status == AST_ST_DEAD)) {
         // Mission Death
         if (!AI[plr]) {
-            if (BIG == 0) {
+            if (!fullscreenMissionPlayback) {
                 display::AutoPal p(display::graphics.legacyScreen());
                 memset(&p.pal[64 * 3], 0x00, 64 * 3); //Specs: 0x08
 

@@ -468,14 +468,14 @@ void MisAnn(char plr, char pad)
             WaitForMouseUp();
             OutBox(59, 70, 116, 82);
             FadeOut(2, 10, 0, 0);
-            BIG = 0;
+            fullscreenMissionPlayback = false;
             return;
         } else if ((x >= 133 && y >= 70 && x <= 195 && y <= 82 && mousebuttons > 0) || key == K_ENTER || key == 'P') {
             InBox(133, 70, 195, 82);
             WaitForMouseUp();
             OutBox(133, 70, 195, 82);
             FadeOut(2, 10, 0, 0);
-            BIG = 1;
+            fullscreenMissionPlayback = true;
             return;
         }
 
