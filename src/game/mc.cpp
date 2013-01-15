@@ -290,10 +290,10 @@ int Launch(char plr, char mis)
     MisRush(plr, Data->P[plr].Mission[mis].Rushing);
     STEPnum = 0;
 
-    if (!AI[plr] && BIG == 0) {
+    if (!AI[plr] && !fullscreenMissionPlayback) {
         DrawControl(plr);
         FadeIn(2, 10, 0, 0);
-    } else if (BIG == 1) {
+    } else if (fullscreenMissionPlayback) {
         display::graphics.screen()->clear();
     }
 
@@ -368,7 +368,7 @@ int Launch(char plr, char mis)
         }
     }
 
-    BIG = 0;
+    fullscreenMissionPlayback = false;
     return total;
 }
 

@@ -100,7 +100,7 @@ char Option = -1;
 int SEG = 15;
 int fOFF = -1;
 struct cdtable *cdt;
-char BIG;                /**< 1 for fullscreen mission playback, 0 otherwise */
+bool fullscreenMissionPlayback;    /**< true for fullscreen mission playback, false otherwise */
 char manOnMoon = 0;
 char dayOnMoon = 20;
 char AI[2] = {0, 0};

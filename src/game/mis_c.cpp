@@ -494,7 +494,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         while (keep_going) {
             av_step();
 
-            if (BABY == 0 && BIG == 0) {
+            if (BABY == 0 && !fullscreenMissionPlayback) {
                 Tick(plr);
             }
 
@@ -511,19 +511,19 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 //Specs: single frame hold
                 idle_loop(FRM_Delay);
 
-                if (!BABY && BIG == 0) {
+                if (!BABY && !fullscreenMissionPlayback) {
                     Tick(plr);
                 }
 
                 idle_loop(FRM_Delay);
 
-                if (!BABY && BIG == 0) {
+                if (!BABY && !fullscreenMissionPlayback) {
                     Tick(plr);
                 }
 
                 idle_loop(FRM_Delay);
 
-                if (!BABY && BIG == 0) {
+                if (!BABY && !fullscreenMissionPlayback) {
                     Tick(plr);
                 }
 
@@ -536,7 +536,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             display::graphics.videoRect().w = 160;
             display::graphics.videoRect().h = 100;
 
-            if (BIG == 0) {
+            if (!fullscreenMissionPlayback) {
                 display::graphics.videoRect().x = 80;
                 display::graphics.videoRect().y = 3 + plr * 10;
             } else {
@@ -551,7 +551,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             idle_loop_secs(1.0 / fps);
 
             if (sts < 23) {
-                if (BABY == 0 && BIG == 0) {
+                if (BABY == 0 && !fullscreenMissionPlayback) {
                     DoPack(plr, ffin, (AEPT && !mode) ? 1 : 0, Seq, seq_name);
                 }
 
@@ -602,7 +602,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 UpdateAudio();
             }
 
-            if (!BABY && BIG == 0) {
+            if (!BABY && !fullscreenMissionPlayback) {
                 Tick(plr);
                 gr_sync();
             }
