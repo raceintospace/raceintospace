@@ -1719,20 +1719,6 @@ void EndOfTurnSave(char *inData, int dataLen)
     // Create new save data
     fout = sOpen("ENDTURN.TMP", "wb", 1);
     compressedLen = RLEC(inData, buffer, dataLen);
-#ifdef OLD_DOS_ENCRYPT_SAVEDATA
-    {
-        int moo = 0;
-        srand(compressedLen);       // Seed the random number generator with file length
-
-        for (moo = 0; moo < j; moo++) {
-            buffer[moo] ^= brandom(256); //
-        }
-
-        // Reseed the random number generator
-        // -- this may have been the source of created complaints about randomness
-        randomize();
-    }
-#endif
 
     fwrite(buffer, compressedLen, 1, fout);
     fclose(fout);
