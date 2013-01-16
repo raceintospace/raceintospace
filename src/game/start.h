@@ -2,7 +2,7 @@
 #define START_H
 
 void Update(void);
-void SetEvents(void);
+void InitializeEvents(void);
 
 extern char Nums[30][7];
 
