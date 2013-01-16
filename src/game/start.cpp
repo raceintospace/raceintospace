@@ -54,6 +54,7 @@ FILE *fout;
 void InitializeEvents(void)
 {
     int cardCount = 2;  // Starting event card index
+    int j, selectedCard;
     bool eventSelected[MAXIMUM_NEWS_EVENTS]; // used to track which event cards have been selected
     char quantityInSet[EVENT_PERIODS] = {2, 8, 8, 12, 16, 52}; // Number of events in each period
     char poolPercentages[EVENT_PERIODS][EVENT_PERIOD_POOL] = {
@@ -87,7 +88,7 @@ void InitializeEvents(void)
 random_card:
             // Pick a random number
             int randomCard = brandom(100) + 1;
-            int j = selectedCard = 0;
+            j = selectedCard = 0;
 
             // This is just wrong...
             while (randomCard > selectedCard) {
