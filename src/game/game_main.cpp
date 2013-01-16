@@ -425,7 +425,7 @@ void InitData(void)
 {
     int i, j;
 
-    SetEvents();                  // RESET EVENT CARDS
+    InitializeEvents();                  // RESET EVENT CARDS
     Data->Count = 0;               // SET EVENT COUNTER TO ZERO
 
     for (j = 0; j < NUM_PLAYERS; j++)

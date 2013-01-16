@@ -46,54 +46,79 @@ void TestFMis(int j, int i);
 void UpdateHardTurn(char plr);
 
 
+#define EVENT_PERIODS 6
+#define EVENT_PERIOD_POOL 5
 
-void SetEvents(void)
+/* Initialize the event cards */
+FILE *fout;
+void InitializeEvents(void)
 {
-    int i, j, k, rans, tag, mx = 2;
-    FILE *fout;
-    char s[100], qant[6] = {2, 8, 8, 12, 16, 52};
-    char Per[6][5] = {{100, 0, 0, 0, 0}, {0, 100, 0, 0, 0}, {0, 62, 38, 0, 0}, {0, 50, 20, 30, 0},
-        {0, 35, 20, 20, 25}, {0, 25, 25, 25, 25}
+    int cardCount = 2;  // Starting event card index
+    bool eventSelected[MAXIMUM_NEWS_EVENTS]; // used to track which event cards have been selected
+    char quantityInSet[EVENT_PERIODS] = {2, 8, 8, 12, 16, 52}; // Number of events in each period
+    char poolPercentages[EVENT_PERIODS][EVENT_PERIOD_POOL] = {
+        {100, 0, 0, 0, 0},
+        {0, 100, 0, 0, 0},
+        {0, 62, 38, 0, 0},
+        {0, 50, 20, 30, 0},
+        {0, 35, 20, 20, 25},
+        {0, 25, 25, 25, 25}
     };
-    struct Q {
-        char fir, qty, pic;
-    } D[5] = {{1, 3, 0}, {4, 40, 0}, {44, 19, 0}, {63, 17, 0}, {80, 20, 0}};
-    REPLAY Rep;
-    ONEWS oNews;
-    memset(&Rep, 0x00, sizeof Rep);
+    struct EventCardQueue {
+        char firstCard;
+        char numberInSet;
+        char pic;
+    } eventCardSet[EVENT_PERIOD_POOL] = {
+        {1, 3, 0},
+        {4, 40, 0},
+        {44, 19, 0},
+        {63, 17, 0},
+        {80, 20, 0}
+    };
 
-    for (i = 0; i < 100; i++) {
-        s[i] = Data->Events[i] = 0;
+    // Initialize base event data to 0's
+    for (int i = 0; i < MAXIMUM_NEWS_EVENTS; i++) {
+        eventSelected[i] =  false;
+        Data->Events[i] = 0;
     }
 
-    for (i = 0; i < 6; i++)
-        for (k = 0; k < qant[i]; k++) {
-rcard:
-            rans = brandom(100) + 1;
-            j = tag = 0;
+    for (int period = 0; period < EVENT_PERIODS; period++) {
+        for (int set = 0; set < quantityInSet[period]; set++) {
+random_card:
+            // Pick a random number
+            int randomCard = brandom(100) + 1;
+            int j = selectedCard = 0;
 
-            while (rans > tag) {
-                tag += Per[i][j++];
+            // This is just wrong...
+            while (randomCard > selectedCard) {
+                selectedCard += poolPercentages[period][j++];
             }
 
             j--;
 
-            if (D[j].qty == D[j].pic) {
-                goto rcard;
+            // If we've reached the end of the card sub-set then pick another card
+            if (eventCardSet[j].numberInSet == eventCardSet[j].pic) {
+                goto random_card;
             }
 
-            tag = brandom(D[j].qty) + D[j].fir;
+            selectedCard = brandom(eventCardSet[j].numberInSet) + eventCardSet[j].firstCard;
 
-            while (s[tag] == 1) {
-                tag = (tag == (D[j].qty + D[j].fir - 1)) ? D[j].fir : tag + 1;
+            while (eventSelected[selectedCard]) {
+                if (selectedCard == (eventCardSet[j].numberInSet + eventCardSet[j].firstCard - 1)) {
+                    selectedCard = eventCardSet[j].firstCard;
+                } else {
+                    selectedCard = selectedCard + 1;
+                }
             }
 
-            s[tag] = 1;
-            Data->Events[mx++] = tag;
-            D[j].pic++;
+            eventSelected[selectedCard] = true;
+            Data->Events[cardCount++] = selectedCard;
+            eventCardSet[j].pic++;
         }
+    }
 
-    for (i = 0; i < 28; i++) {
+    // Set defaults for Prestige
+    for (int i = 0; i < MAXIMUM_PRESTIGE_NUM; i++) {
         Data->Prestige[i].Place = Data->Prestige[i].mPlace = -1;
     }
 
