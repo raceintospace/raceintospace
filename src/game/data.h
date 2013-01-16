@@ -89,6 +89,7 @@
 #define MAX_LAUNCHPADS          3 /**< number of launchpads available */
 #define MAX_MISSIONS            3 /**< number of concurrent missions available */
 
+#define MAXIMUM_NEWS_EVENTS         100
 /** \name Astronaut related
  *@{
  */
@@ -467,7 +468,7 @@ struct Players {
     struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
     struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
     char unused_EMark[4];                   /**< unused - Event Marker */
-    char Events[100];                /**< History of Event Cards */
+    char Events[MAXIMUM_NEWS_EVENTS]; /**< History of Event Cards */
     char Count;                      /**< Number of Events Picked */
     char PD[NUM_PLAYERS][28];
     char Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
