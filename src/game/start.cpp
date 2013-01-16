@@ -126,6 +126,7 @@ random_card:
 
     // EVENT.AI is nowhere to be found so this doesn't make any sense MKM 9/3/93
 
+    REPLAY Rep;
     fout = sOpen("REPLAY.DAT", "wb", 1);
 
     for (j = 0; j < 200; j++) {
@@ -134,6 +135,7 @@ random_card:
 
     fclose(fout);
 
+    ONEWS oNews;
     fout = sOpen("EVENT.TMP", "wb", 1);
     memset(&oNews, 0x00, sizeof oNews);
 
