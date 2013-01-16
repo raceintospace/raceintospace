@@ -1130,29 +1130,36 @@ TestFMis(int j, int i)
     };
 }
 
-/** Update equipment
- * \todo limit of hardcoded 28 hardware types
- *
- * \todo Should this not handle all four types of hardware?
+/** End of turn equipment accounting update
  */
 void
 UpdateHardTurn(char plr)
 {
-    int i;
-    Equipment *px;
+    BuzzData *p = &Data->P[plr];
+    Equipment *e;
 
-    for (i = 0; i < 28; i++) {
-        px = &Data->P[plr].Probe[i];    // FIXME: this looks broken -- Probe[27]?
-
-        if (px->Delay > 0) {
-            px->Delay--;
+    for (int i = 0; i < 4; i++) {
+        if (i == 0) {
+            e = &p->Probe[0];
+        } else if (i == 1) {
+            e = &p->Rocket[0];
+        } else if (i == 2) {
+            e = &p->Manned[0];
+        } else if (i == 3) {
+            e = &p->Misc[0];
         }
 
-        if (px->Num >= 0) {
-            px->Seas++;
-        }
+        for (int j = 0; j < 7; j++) {
+            if (e[j].Delay) {
+                e[j].Delay--;
+            }
 
-        px->Spok = 0;
+            if (e[j].Num) {
+                e[j].Seas++;
+            }
+
+            e[j].Spok = 0;
+        }
     }
 }
 
