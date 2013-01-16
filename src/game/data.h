@@ -90,6 +90,8 @@
 #define MAX_MISSIONS            3 /**< number of concurrent missions available */
 
 #define MAXIMUM_NEWS_EVENTS         100
+#define MAXIMUM_PRESTIGE_NUM                28
+
 /** \name Astronaut related
  *@{
  */
@@ -465,12 +467,12 @@ struct Players {
     struct Defl Def;                 /**< Defaults */
     char Year;                       /**< Game Turn */
     char Season;                     /**< Season of Year */
-    struct PrestType Prestige[28];   /**< Definitions of Prest Vals */
+    struct PrestType Prestige[MAXIMUM_PRESTIGE_NUM];   /**< Definitions of Prest Vals */
     struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
     char unused_EMark[4];                   /**< unused - Event Marker */
     char Events[MAXIMUM_NEWS_EVENTS]; /**< History of Event Cards */
     char Count;                      /**< Number of Events Picked */
-    char PD[NUM_PLAYERS][28];
+    char PD[NUM_PLAYERS][MAXIMUM_PRESTIGE_NUM];
     char Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
 };
 
