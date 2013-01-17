@@ -16,7 +16,7 @@ LegacySurface::LegacySurface(unsigned int width, unsigned int height) :
     // Instead, we construct the base class with a bogus SDL surface, then fix it.
     _pixels = new char[width * height];
     _screen = SDL_CreateRGBSurfaceFrom(_pixels, width, height, 8, width, 0, 0, 0, 0);
-    _palette = new SDLPaletteWrapper(_screen->format->palette);
+    _palette = new SDLPaletteWrapper(_screen);
 }
 
 LegacySurface::~LegacySurface()

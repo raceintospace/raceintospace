@@ -45,10 +45,12 @@ const Color Palette::get(uint8_t index) const
 }
 
 
-SDLPaletteWrapper::SDLPaletteWrapper(SDL_Palette *sdl_palette)
-    : _sdl_palette(sdl_palette)
+SDLPaletteWrapper::SDLPaletteWrapper(SDL_Surface *sdl_surface)
+    : _sdl_surface(sdl_surface)
 {
-    assert(sdl_palette != NULL);
+    assert(sdl_surface != NULL);
+    assert(sdl_surface->format != NULL);
+    assert(sdl_surface->format->palette != NULL);
 }
 
 SDLPaletteWrapper::~SDLPaletteWrapper()
@@ -57,21 +59,24 @@ SDLPaletteWrapper::~SDLPaletteWrapper()
 
 void SDLPaletteWrapper::set(uint8_t index, const Color &color)
 {
-    assert(index < _sdl_palette->ncolors);
+    assert(index < _sdl_surface->format->palette->ncolors);
 
-    _sdl_palette->colors[index].r = color.r;
-    _sdl_palette->colors[index].g = color.g;
-    _sdl_palette->colors[index].b = color.b;
+    SDL_Color sdl_color;
+    sdl_color.r = color.r;
+    sdl_color.g = color.g;
+    sdl_color.b = color.b;
+
+    SDL_SetPalette(_sdl_surface, SDL_LOGPAL, &sdl_color, index, 1);
 }
 
 const Color SDLPaletteWrapper::get(uint8_t index) const
 {
-    assert(index < _sdl_palette->ncolors);
+    assert(index < _sdl_surface->format->palette->ncolors);
 
     return Color(
-               _sdl_palette->colors[index].r,
-               _sdl_palette->colors[index].g,
-               _sdl_palette->colors[index].b
+               _sdl_surface->format->palette->colors[index].r,
+               _sdl_surface->format->palette->colors[index].g,
+               _sdl_surface->format->palette->colors[index].b
            );
 }
 
