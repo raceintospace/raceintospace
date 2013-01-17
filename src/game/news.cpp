@@ -566,7 +566,7 @@ News(char plr)
 {
     int bline = 0, ctop = 0, i;
     char cYr[5];
-    ONEWS oNews;
+    OLDNEWS oldNews;
     char loc = 0;
     uint8_t Status = 0, BW = 0;
     mm_file video_file, *fp = &video_file;
@@ -603,11 +603,11 @@ News(char plr)
 
     fout = sOpen("EVENT.TMP", "r+b", 1);
     fseek(fout, 0, SEEK_END);
-    oNews.offset = ftell(fout);
-    oNews.size = (strlen(buffer));
+    oldNews.offset = ftell(fout);
+    oldNews.size = (strlen(buffer));
     fwrite(buffer, strlen(buffer), 1, fout);
-    fseek(fout, (plr * 42 + Data->P[plr].eCount - 1) * (sizeof(struct oldNews)), SEEK_SET);
-    fwrite(&oNews, sizeof(struct oldNews), 1, fout);
+    fseek(fout, (plr * 42 + Data->P[plr].eCount - 1) * sizeof(OLDNEWS), SEEK_SET);
+    fwrite(&oldNews, sizeof(OLDNEWS), 1, fout);
     fclose(fout);
 
     /** \todo there is also M_NEW1950, why it is unused? */
