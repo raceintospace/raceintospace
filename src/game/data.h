@@ -814,6 +814,26 @@ typedef struct {
     uint16_t time, date;
 } SFInfo;
 
+
+
+/**
+ * Data structure to hold transient save game data
+ */
+typedef struct {
+    // REPLAY.DAT related variables
+    uint32_t replaySize;
+    REPLAY tempReplay[MAX_REPLAY_ITEMS];
+    // EVENT.TMP related variables
+    //   Format: array of 84 OLDNEWS structures followed by all the text of the displayed
+    //   event strings.  This text is listed in card order and offset via the OLDNEWS structure
+    uint32_t eventSize;
+    OLDNEWS *tempEvents;   // helper pointer, always set to eventBuffer.  EVENT.TMP
+    char *eventBuffer;   // raw buffer for event data
+    // ENDTURN.TMP related variables
+    uint32_t endTurnSaveSize;
+    char *endTurnBuffer;
+} INTERIMDATA;
+
 #pragma pack(pop)
 
 // Double-check that the structs we write to disk have the proper size
