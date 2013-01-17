@@ -359,92 +359,52 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
 
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
 {
-    SimpleHdr table;
-    char ch;
-    int32_t size;
-    unsigned int n;
-    FILE *in, *fin;
-    struct TM {
-        char ID[4];
-        int32_t offset;
-        int32_t size;
-    } AIndex;
-
     if (sh == 0) {
-        size = (plr * 32) + (hw * 8) + unit;
+        int index = (plr * 32) + (hw * 8) + unit;
 
-        std::string filename((boost::format("images/rdfull.but.%1%.png") % size).str());
+        std::string filename((boost::format("images/rdfull.but.%1%.png") % index).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
         display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
         display::graphics.screen()->draw(image, x, y);
 
     } else {
-        memset(Name, 0x00, sizeof Name);
+        char name[5];
 
         if (plr == 0) {
-            strcat(Name, "US");
+            name[0] = 'U';
+            name[1] = 'S';
         } else {
-            strcat(Name, "SV");
+            name[0] = 'S';
+            name[1] = 'V';
         }
-
-        ch = 0x30 + unit;
 
         switch (hw) {
         case 0:
-            strcat(Name, "P");
+            name[2] = 'P';
             break;
 
         case 1:
-            strcat(Name, "R");
+            name[2] = 'R';
             break;
 
         case 2:
-            strcat(Name, "C");
-//       if (strncmp(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name,"ZOND",4)==0) ch=0x37;
+            name[2] = 'C';
             break;
 
         case 3:
-            strcat(Name, "M");
+            name[2] = 'M';
             break;
         }
 
-        Name[3] = ch;
+        name[3] = 0x30 + unit;      // poor man's itoa()
+        name[4] = '\x00';           // terminator
 
-        fin = sOpen("LIFTOFF.ABZ", "rb", 0);
-        fread(&AIndex, sizeof AIndex, 1, fin);
+        std::string filename((boost::format("images/liftoff.abz.%1%.png") % name).str());
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        while (strncmp(AIndex.ID, Name, 4) != 0) {
-            fread(&AIndex, sizeof AIndex, 1, fin);
-        }
-
-        Swap32bit(AIndex.offset);
-        Swap32bit(AIndex.size);
-        fseek(fin, AIndex.offset, SEEK_SET);
-
-        fread(&AHead, sizeof AHead, 1, fin);
-        Swap16bit(AHead.w);
-        Swap16bit(AHead.h);
-        {
-            display::AutoPal p(display::graphics.legacyScreen());
-            fread(&p.pal[32 * 3], 64 * 3, 1, fin);
-        }
-        fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
-        display::LegacySurface local(AHead.w, AHead.h);
-
-        fread(&BHead, sizeof BHead, 1, fin);
-        Swap32bit(BHead.fSize);
-        fread(vhptr->pixels(), BHead.fSize, 1, fin);
-        RLED_img(vhptr->pixels(), local.pixels(), BHead.fSize, local.width(), local.height());
-        n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
-
-        local.filter(0, -(128 - 32), display::LegacySurface::NotEqual);
-
-        //TODO: Determine why the first pixel needed to be zero?
-        //local.pixels()[0] = 0x00;
-
-        local.copyTo(display::graphics.legacyScreen(), 0, 0, x + 1, y, x + 102, y + 76);
-        fclose(fin);
+        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        display::graphics.screen()->draw(image, x, y);
     }
 }
 
