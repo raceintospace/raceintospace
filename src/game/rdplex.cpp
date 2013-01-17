@@ -1114,7 +1114,7 @@ void ShowUnit(char hw, char un, char player_index)
 
     fill_rectangle(27, 95, 130, 171, 0);
 
-    BigHardMe(player_index, 27, 95, hw, un, qty, 32);
+    BigHardMe(player_index, 27, 95, hw, un, qty);
 }
 
 void OnHand(char qty)
