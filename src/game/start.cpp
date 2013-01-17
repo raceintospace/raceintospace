@@ -135,12 +135,12 @@ random_card:
 
     fclose(fout);
 
-    ONEWS oNews;
+    OLDNEWS oldNews;
     fout = sOpen("EVENT.TMP", "wb", 1);
-    memset(&oNews, 0x00, sizeof oNews);
+    memset(&oldNews, 0x00, sizeof oldNews);
 
     for (j = 0; j < 84; j++) {
-        fwrite(&oNews, sizeof(struct oldNews), 1, fout);
+        fwrite(&oldNews, sizeof(OLDNEWS), 1, fout);
     }
 
     fclose(fout);

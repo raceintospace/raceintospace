@@ -785,10 +785,10 @@ typedef struct ReplayItem {
 
 enum Opponent_Status {Ahead, Equal, Behind};
 
-typedef struct oldNews {
-    uint32_t offset;
-    uint16_t size;
-} ONEWS;
+typedef struct {
+    uint32_t offset;  // Offset to the memory location of the displayed news string
+    uint16_t size;      // Size of the old news string
+} OLDNEWS;
 
 // Save Game related typedefs
 //#define RaceIntoSpace_Signature   'RiSP'

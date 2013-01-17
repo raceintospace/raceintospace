@@ -694,15 +694,15 @@ void DrawVText(char got)
 
 int RetFile(char plr, int card)
 {
-    ONEWS oNews;
+    OLDNEWS oldNews;
     int bline, i;
     FILE *fin;
     memset(buffer, 0x00, BUFFER_SIZE);
     fin = sOpen("EVENT.TMP", "rb", 1);
-    fseek(fin, (card + plr * 42) * (sizeof(struct oldNews)), SEEK_SET);
-    fread(&oNews, sizeof(struct oldNews), 1, fin);
-    fseek(fin, oNews.offset, SEEK_SET);
-    fread(buffer, oNews.size, 1, fin);
+    fseek(fin, (card + plr * 42) * sizeof(OLDNEWS), SEEK_SET);
+    fread(&oldNews, sizeof(OLDNEWS), 1, fin);
+    fseek(fin, oldNews.offset, SEEK_SET);
+    fread(buffer, oldNews.size, 1, fin);
     fclose(fin);
     bline = 0;
 
