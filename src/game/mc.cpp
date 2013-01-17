@@ -502,12 +502,8 @@ void MissionPast(char plr, char pad, int prest)
         Data->P[plr].History[loc].spResult = 1999;
     }
 
-    fin = sOpen("REPLAY.DAT", "r+b", 1);
-    size = (plr * 100) + Data->P[plr].PastMissionCount;
-    fseek(fin, size * (sizeof Rep), SEEK_SET);
-    fwrite(&Rep, sizeof Rep, 1, fin);
-    fclose(fin);
-
+    // Save this replay
+    memcpy(&interimData.tempReplay[(plr * 100) + Data->P[plr].PastMissionCount ], &Rep, sizeof(REPLAY));
     Data->P[plr].PastMissionCount++;
     return;
 }
