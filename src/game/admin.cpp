@@ -496,9 +496,8 @@ void FileAccess(char mode)
                         }
                     }
 
-                    fout = sOpen("REPLAY.DAT", "wb", 1);
-                    fwrite(load_buffer, 1, sizeof(REPLAY)*MAX_REPLAY_ITEMS, fout);
-                    fclose(fout);
+                    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+                    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
                     free(load_buffer);
 
                     eventSize = fileLength - ftell(fin);
@@ -766,15 +765,12 @@ void FileAccess(char mode)
 
                 while (size == 16000) {
                     size = fread(scratch, 1, size, fout);
-                    fwrite(scratch, size, 1, fin); // save Replay File
+                    fwrite(scratch, size, 1, fin); // save ENDTURN File
                 }
 
                 fclose(fout);
 
-                fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
-                fclose(fout);
-                fwrite(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin); // save Replay File
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
@@ -875,10 +871,10 @@ void FileAccess(char mode)
                 }
 
                 fclose(fout);
-                fout = sOpen("REPLAY.DAT", "rb", 1);
-                fread(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fout);
-                fclose(fout);
-                fwrite(scratch, (sizeof(REPLAY))*MAX_REPLAY_ITEMS, 1, fin); // save Replay File
+
+                // Save Replay Data
+                interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
@@ -1116,19 +1112,9 @@ save_game(char *name)
     fwrite(&hdr, sizeof hdr, 1, outf);
     fwrite(buf, size, 1, outf);
 
-    if ((inf = sOpen("REPLAY.DAT", "rb", 1)) != NULL) {
-        size = fread_dyn(&buf, &buflen, inf);
-
-        if (size >= 0) {
-            fwrite(buf, size, 1, outf);
-        } else {
-            WARNING1("read error in REPLAY.DAT");
-            goto cleanup;
-        }
-
-        fclose(inf);
-        inf = NULL;
-    }
+    // Copy Replay data into Save file
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+    fwrite(interimData.tempReplay, interimData.replaySize, 1, outf);
 
     if ((inf = sOpen("EVENT.TMP", "rb", 1)) != NULL) {
         size = fread_dyn(&buf, &buflen, inf);

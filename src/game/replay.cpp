@@ -63,13 +63,8 @@ find_replay(REPLAY *rep, struct oGROUP *grp, char player, int num,
     }
 
     if (strncmp("OOOO", type, 4) == 0) {
-        FILE *f = sOpen("REPLAY.DAT", "rb", 1);
-
         offset = (player * 100) + num;
-        fseek(f, offset * (sizeof * rep), SEEK_SET);
-        /** \todo Uses fread() here - should be fread_REPLAY(&Rep, 1, f); */
-        fread(rep, (sizeof * rep), 1, f);
-        fclose(f);
+        memcpy(rep, &interimData.tempReplay[offset], sizeof(REPLAY));
 
         if (grp && fseek(fseq, sizeof_oGROUP * rep->Off[0], SEEK_SET) == 0) {
             fread_oGROUP(grp, 1, fseq);
