@@ -17,10 +17,13 @@
 */
 
 #include <assert.h>
+#include <boost/format.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "place.h"
 #include "gamedata.h"
@@ -354,7 +357,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     return;
 }
 
-void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned char coff)
+void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
 {
     SimpleHdr table;
     char ch;
@@ -369,29 +372,13 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
 
     if (sh == 0) {
         size = (plr * 32) + (hw * 8) + unit;
-        in = sOpen("RDFULL.BUT", "rb", 0);
-        fseek(in, size * sizeof_SimpleHdr, SEEK_CUR);
-        fread_SimpleHdr(&table, 1, in);
-        fseek(in, table.offset, SEEK_SET);
-        display::LegacySurface local(104, 77);
-        display::LegacySurface local2(104, 77);
-        {
-            display::AutoPal p(display::graphics.legacyScreen());
-            fread(&p.pal[coff * 3], 96 * 3, 1, in); // Individual Palette
-        }
-        fread(local2.pixels(), table.size, 1, in); // Get Image
-        fclose(in);
-        RLED_img(local2.pixels(), local.pixels(), table.size, local.width(), local.height());
 
+        std::string filename((boost::format("images/rdfull.but.%1%.png") % size).str());
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        local.filter(0, coff, display::LegacySurface::Any);
-        //TODO: Determine why the last pixel needed to be 0?
-        /*
-        n = 104 * 77;
-        local.pixels()[n - 1] = 0;
-        */
+        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        display::graphics.screen()->draw(image, x, y);
 
-        local.copyTo(display::graphics.legacyScreen(), x, y);
     } else {
         memset(Name, 0x00, sizeof Name);
 
@@ -440,7 +427,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         Swap16bit(AHead.h);
         {
             display::AutoPal p(display::graphics.legacyScreen());
-            fread(&p.pal[coff * 3], 64 * 3, 1, fin);
+            fread(&p.pal[32 * 3], 64 * 3, 1, fin);
         }
         fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
         display::LegacySurface local(AHead.w, AHead.h);
@@ -451,7 +438,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh, unsigned cha
         RLED_img(vhptr->pixels(), local.pixels(), BHead.fSize, local.width(), local.height());
         n = (AHead.w * AHead.h); //gxVirtualSize(gxVGA_13, AHead.w, AHead.h);
 
-        local.filter(0, -(128 - coff), display::LegacySurface::NotEqual);
+        local.filter(0, -(128 - 32), display::LegacySurface::NotEqual);
 
         //TODO: Determine why the first pixel needed to be zero?
         //local.pixels()[0] = 0x00;
