@@ -47,21 +47,21 @@ protected:
     Color colors[256];
 };
 
-// Presents a PaletteInterface for an SDL_Palette pointer. This allows
+// Presents a PaletteInterface for a SDL_Surface pointer. This allows
 // us to get(), set(), and copy_from() palettes belonging to SDL surfaces.
 //
 // SDL_Color does not support alpha, so all Colors are forced to opaque
 class SDLPaletteWrapper : public PaletteInterface
 {
 public:
-    SDLPaletteWrapper(SDL_Palette *sdl_palette);
+    SDLPaletteWrapper(SDL_Surface *sdl_surface);
     virtual ~SDLPaletteWrapper();
 
     virtual void set(uint8_t index, const Color &color);
     virtual const Color get(uint8_t index) const;
 
 protected:
-    SDL_Palette *_sdl_palette;
+    SDL_Surface *_sdl_surface;
 };
 
 class LegacySurface;
