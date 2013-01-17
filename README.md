@@ -20,6 +20,26 @@ Race  Into Space  is distributed  under GNU  General Public  License
 (GPL)  version 2.  You can find  the  terms and  conditions in  file
 `COPYING`.
 
+Contributing
+============
+
+We coordinate development through the [GitHub issue
+tracker](https://github.com/raceintospace/raceintospace/issues). Feel free to
+report bugs, discuss tasks, or pick up work there. If you want to make
+changes, please fork, edit, and [send us a pull
+request](https://github.com/raceintospace/raceintospace/pull/new/master).
+
+There's a `.git-hooks` directory in the root. This contains a `pre-commit`
+hook that verifies code styling before accepting changes. You can add this to
+your local repository's `.git/hooks/` directory like:
+
+    $ cd raceintospace
+    $ ln -s ../../.git-hooks/pre-commit .git/hooks/pre-commit
+
+Pull requests that don't match the project code style are still likely to be
+accepted after manually formatting and amending your changeset. The formatting
+tool (`astyle`) is completely automated; please try to use it.
+
 Building
 ========
 
@@ -47,7 +67,7 @@ On UNIXy systems (including Mac OS X), you can build everything with:
     $ make
 
 Linux
-=====
+-----
 
 We rely on the operating system to provide most of the dependencies. If you're
 on a Debian-based system, you can get everything with:
@@ -57,7 +77,7 @@ on a Debian-based system, you can get everything with:
         libprotobuf-dev protobuf-compiler
 
 Mac OS X
-========
+--------
 
 You need CMake, which is readily obtained from
 [Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway.
@@ -79,7 +99,7 @@ project file:
     $ open raceintospace.xcodeproj
 
 Windows
-=======
+-------
 
 Ingredients:
 
