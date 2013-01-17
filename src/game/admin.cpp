@@ -709,13 +709,13 @@ void FileAccess(char mode)
                 SaveHdr->Year = Data->Year;
                 SaveHdr->dataSize = sizeof(struct Players);
 
-                fin = sOpen("ENDTURN.TMP", "rb", 1);
-
-                if (fin) {
-                    SaveHdr->compSize = fread(scratch, 1, SCRATCH_SIZE, fin);
-                    fclose(fin);
+                // Copy in the end of turn save data
+                if (interimData.endTurnSaveSize) {
+                    SaveHdr->compSize = interimData.endTurnSaveSize;
+                    memcpy(scratch, interimData.endTurnBuffer, interimData.endTurnSaveSize);
                 } else {
                     SaveHdr->compSize = 0;
+                    memset(scratch, 0, SCRATCH_SIZE);
                 }
 
                 if (temp == NOTSAME) {
@@ -759,18 +759,11 @@ void FileAccess(char mode)
                     AI[1] = 0;
                 }
 
-                fout = sOpen("ENDTURN.TMP", "rb", 1);
-                size = 16000L;
-                fseek(fout, 0, SEEK_SET);
+                // Save End Of Turn State
+                fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
 
-                while (size == 16000) {
-                    size = fread(scratch, 1, size, fout);
-                    fwrite(scratch, size, 1, fin); // save ENDTURN File
-                }
-
-                fclose(fout);
-
-                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin); // save Replay File
+                // Save Replay information
+                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
                 fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
                 left = 32000; // copy EVENT.TMP FILE
@@ -830,15 +823,7 @@ void FileAccess(char mode)
                 SaveHdr->dataSize = sizeof(struct Players);
 
                 EndOfTurnSave((char *) Data, sizeof(struct Players));
-
-                fin = sOpen("ENDTURN.TMP", "rb", 1);
-
-                if (fin) {
-                    SaveHdr->compSize = fread(scratch, 1, SCRATCH_SIZE, fin);
-                    fclose(fin);
-                } else {
-                    SaveHdr->compSize = 0;
-                }
+                SaveHdr->compSize = interimData.endTurnSaveSize;
 
                 if (temp == NOTSAME) {
                     i = 0;
@@ -860,17 +845,11 @@ void FileAccess(char mode)
                     fin = sOpen(FList[i].Name, "wb", 1);
                 }
 
+                // Write the Save Game Header
                 fwrite(SaveHdr, sizeof(SaveFileHdr), 1, fin);
-                fout = sOpen("ENDTURN.TMP", "rb", 1);
-                size = 16000L;
-                fseek(fout, 0, SEEK_SET);
 
-                while (size == 16000) {
-                    size = fread(scratch, 1, size, fout);
-                    fwrite(scratch, size, 1, fin); // save Replay File
-                }
-
-                fclose(fout);
+                // Save End of Turn Data
+                fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
 
                 // Save Replay Data
                 interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
@@ -1073,8 +1052,8 @@ save_game(char *name)
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
 
-    if ((inf = sOpen("ENDTURN.TMP", "rb", 1)) == NULL) {
-        WARNING1("can't read ENDTURN.TMP");
+    if (interimData.endTurnBuffer == NULL) {
+        WARNING1("Don't have End of Turn Save Data!");
         return;
     }
 
@@ -1091,26 +1070,19 @@ save_game(char *name)
     hdr.Season = Data->Season;
     hdr.Year = Data->Year;
     hdr.dataSize = sizeof(struct Players);
-    hdr.compSize = 0; //filelength (fileno (inf));
+    hdr.compSize = interimData.endTurnSaveSize;
+
 
     if ((outf = sOpen(name, "wb", 1)) == NULL) {
         WARNING2("can't save to file `%s'", name);
         goto cleanup;
     }
 
-    size = fread_dyn(&buf, &buflen, inf);
-    fclose(inf);
-    inf = NULL;
-
-    if (size < 0) {
-        WARNING1("read error in ENDTURN.TMP");
-        goto cleanup;
-    }
-
-    hdr.compSize = size;
-
+    // Write Save Game Header
     fwrite(&hdr, sizeof hdr, 1, outf);
-    fwrite(buf, size, 1, outf);
+
+    // Write End of Turn Save Data
+    fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, outf);
 
     // Copy Replay data into Save file
     interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
@@ -1693,22 +1665,25 @@ char RequestX(char *s, char md)
 }
 
 // Save Game related functions
-void EndOfTurnSave(char *inData, int dataLen)
+int32_t EndOfTurnSave(char *inData, int dataLen)
 {
-    FILE *fout = NULL;
-    int compressedLen = 0;
+    if (!inData || dataLen == 0) {
+        return 0;
+    }
+
     char *buffer = (char *)xmalloc(dataLen * 2);
+    int compressedLen = RLEC(inData, buffer, dataLen);
 
-    // Remove old save data
-    remove_savedat("ENDTURN.TMP");
+    if (interimData.endTurnBuffer) {
+        free(interimData.endTurnBuffer);
+    }
 
-    // Create new save data
-    fout = sOpen("ENDTURN.TMP", "wb", 1);
-    compressedLen = RLEC(inData, buffer, dataLen);
-
-    fwrite(buffer, compressedLen, 1, fout);
-    fclose(fout);
+    interimData.endTurnSaveSize = compressedLen;
+    interimData.endTurnBuffer = (char *)malloc(interimData.endTurnSaveSize);
+    memcpy(interimData.endTurnBuffer, buffer, interimData.endTurnSaveSize);
     free(buffer);
+
+    return interimData.endTurnSaveSize;
 }
 
 // EOF
