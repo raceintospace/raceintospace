@@ -104,6 +104,7 @@ bool fullscreenMissionPlayback;    /**< true for fullscreen mission playback, fa
 char manOnMoon = 0;
 char dayOnMoon = 20;
 char AI[2] = {0, 0};
+INTERIMDATA interimData; // Used to hold mid-turn save game related information
 
 char *S_Name[] = {
     "LAUNCH",
