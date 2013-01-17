@@ -510,7 +510,7 @@ void FileAccess(char mode)
 
                     if (endianSwap) {
                         for (int j = 0; j < 84; j++) {
-                            ONEWS *on = (ONEWS *) load_buffer + (j * sizeof(ONEWS));
+                            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
 
                             if (on->offset) {
                                 on->offset = _Swap32bit(on->offset);
