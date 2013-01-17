@@ -38,6 +38,7 @@
     utils/but2png ../gamedata/cem.img first
     utils/but2png ../gamedata/rdbox.but rdbox
     utils/but2png ../gamedata/letter.dat letter
+    utils/but2png ../gamedat/liftoff.abz liftoff_abz    # mission animation
 
     mv ../gamedata/*.png ../images/
 */
@@ -50,7 +51,6 @@
     utils/but2png ../gamedata/lenin.but
     utils/but2png ../gamedata/news.img
 
-    utils/liftoff.abz ../gamedat/liftoff.abz    # mission animation
     babypicx.cdr  # small mission control images
     babyclif.cdr
     babynorm.cdr
@@ -810,6 +810,96 @@ int translate_letter(FILE *fp)
     return 0;
 }
 
+int translate_liftoff_abz(FILE *fin)
+{
+    struct TM {
+        char ID[4];
+        int32_t offset;
+        int32_t size;
+    }  __attribute__((packed)) AIndex[1024];
+
+    struct AnimType {
+        char ID[8];
+        char OVL[4];
+        char SD[2][4];         // Sound ID : Max 2
+        int16_t w, h;
+        uint8_t sPlay[2];// Frame to play the Sound
+        uint8_t fNum;    // Number of frames
+        uint8_t fLoop;   // Times to loop
+        uint8_t cOff;    // Color offsets
+        uint8_t cNum;    // Number of Colors
+    } __attribute__((packed)) AHead;
+
+    struct BlockHead {
+        uint8_t cType;   // Type of Compression
+        int32_t fSize;            // Size of data frame
+    } __attribute__((packed)) BHead;
+
+    int rv;
+
+    fread(&AIndex, sizeof(AIndex), 1, fin);
+
+    for (int i = 0; i < sizeof(AIndex) / sizeof(AIndex[0]); i++) {
+        const struct TM *tm = &AIndex[i];
+
+        if (tm->ID[0] & 0x80 || tm->ID[1] & 0x80 || tm->ID[2] & 0x80 || tm->ID[3] & 0x80) {
+            // a high bit is set; this is bogus
+            break;
+        }
+
+        if (tm->offset > 368486 || tm->size > (320 * 200)) {
+            // can't possibly be right
+            break;
+        }
+
+        // probably have a valid image
+        fseek(fin, tm->offset, SEEK_SET);
+        fread(&AHead, sizeof AHead, 1, fin);
+
+        // double check
+        if (AHead.w < 0 || AHead.w > 320 || AHead.h < 0 || AHead.h > 200) {
+            continue;    // nope
+        }
+
+        memset(pal, 0, sizeof(pal));
+        fread(&pal[96], 64 * 3, 1, fin);
+
+        fseek(fin, 3 * (AHead.cNum - 64), SEEK_CUR);
+        fread(&BHead, sizeof BHead, 1, fin);
+
+        char buf[BHead.fSize];
+        fread(buf, BHead.fSize, 1, fin);
+        RLED_img(buf, screen, BHead.fSize, AHead.w, AHead.h);
+
+        {
+            const int palette_offset = 32;
+            int pixels = width * height;
+
+            // shift the palette
+            for (int j = 0; j < pixels; j++) {
+                screen[j] -= palette_offset;
+            }
+
+            color_is_transparent[256 - palette_offset] = 1;
+
+            // set the last pixel to be transparent for some reason
+            screen[pixels - 1] = 256 - palette_offset;
+        }
+
+        // include the ID in the output filename
+        snprintf(output_pattern, sizeof(output_pattern), "liftoff.abz.%.4s.png", tm->ID);
+
+        width = AHead.w;
+        height = AHead.h;
+
+        if ((rv = write_image())) {
+            return rv;
+        }
+    }
+
+    return 0;
+}
+
 #define SIMPLEHDRS_FILE(name, w, h, colors, pal, offset, single, transparent) \
     int translate_ ## name (FILE * fp) { \
         width = w; height = h; \
@@ -972,6 +1062,7 @@ struct {
     FILE_STRATEGY(first),
     FILE_STRATEGY(rdbox),
     FILE_STRATEGY(letter),
+    FILE_STRATEGY(liftoff_abz),
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
