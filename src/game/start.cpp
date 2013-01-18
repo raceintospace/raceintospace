@@ -50,7 +50,6 @@ void UpdateHardTurn(char plr);
 #define EVENT_PERIOD_POOL 5
 
 /* Initialize the event cards */
-FILE *fout;
 void InitializeEvents(void)
 {
     int cardCount = 2;  // Starting event card index
@@ -127,17 +126,11 @@ random_card:
     interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
     memset(interimData.tempReplay, 0, interimData.replaySize);
 
-    OLDNEWS oldNews;
-    fout = sOpen("EVENT.TMP", "wb", 1);
-    memset(&oldNews, 0x00, sizeof oldNews);
-
-    for (j = 0; j < 84; j++) {
-        fwrite(&oldNews, sizeof(OLDNEWS), 1, fout);
-    }
-
-    fclose(fout);
-
-    return;
+    // Initialize in memory for Event Saves
+    interimData.eventSize = 84 * sizeof(OLDNEWS);
+    interimData.eventBuffer = (char *) malloc(interimData.eventSize);
+    memset(interimData.eventBuffer, 0, interimData.eventSize);
+    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
 }
 
 /**

@@ -520,9 +520,16 @@ void FileAccess(char mode)
                         // File Structure is 84 longs 42 per side
                     }
 
-                    fout = sOpen("EVENT.TMP", "wb", 1);
-                    fwrite(load_buffer, eventSize, 1, fout);
-                    fclose(fout);
+                    // Save Event information
+                    if (interimData.eventBuffer) {
+                        free(interimData.eventBuffer);
+                    }
+
+                    interimData.eventBuffer = (char *) malloc(eventSize);
+                    interimData.eventSize = eventSize;
+                    memcpy(interimData.eventBuffer, load_buffer, eventSize);
+                    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+
                     free(load_buffer);
 
                     if (!(SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7 || SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9)) {
@@ -765,15 +772,13 @@ void FileAccess(char mode)
                 // Save Replay information
                 fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
-                fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
-                left = 32000; // copy EVENT.TMP FILE
+                // Save Event information
+                // todo: how many bytes do we read?
+                interimData.eventBuffer = (char *) malloc(128000L);
+                interimData.eventSize = fread(interimData.eventBuffer, 1, 128000L, fout);
+                interimData.eventBuffer = (char *) realloc(interimData.eventBuffer, interimData.eventSize);
+                interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
 
-                while (left == 32000) {
-                    left = fread(scratch, 1, 32000, fout);
-                    fwrite(scratch, left, 1, fin);
-                }
-
-                fclose(fout); // close EVENT.TMP
                 fclose(fin);
             }  // end done if
 
@@ -855,15 +860,9 @@ void FileAccess(char mode)
                 interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
                 fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
-                fout = sOpen("EVENT.TMP", "rb", 1); // Save Event File
-                left = 32000; // copy EVENT.TMP FILE
+                // Save Event Data
+                fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
 
-                while (left == 32000) {
-                    left = fread(scratch, 1, 32000, fout);
-                    fwrite(scratch, left, 1, fin);
-                }
-
-                fclose(fout); // close EVENT.TMP
                 fclose(fin);
             }
 
@@ -1044,10 +1043,8 @@ void FileAccess(char mode)
 void
 save_game(char *name)
 {
-    FILE *inf, *outf;
+    FILE *outf;
     SaveFileHdr hdr;
-    size_t buflen = 0;
-    ssize_t size = 0;
     char *buf = NULL;
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
@@ -1088,30 +1085,13 @@ save_game(char *name)
     interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
     fwrite(interimData.tempReplay, interimData.replaySize, 1, outf);
 
-    if ((inf = sOpen("EVENT.TMP", "rb", 1)) != NULL) {
-        size = fread_dyn(&buf, &buflen, inf);
-
-        if (size >= 0) {
-            fwrite(buf, size, 1, outf);
-        } else {
-            WARNING1("read error in EVENT.TMP");
-            goto cleanup;
-        }
-
-        fclose(inf);
-        inf = NULL;
-    } else {
-        WARNING1("can't read EVENT.TMP");
-    }
+    // Copy Event data into Save file
+    fwrite(interimData.eventBuffer, interimData.eventSize, 1, outf);
 
 cleanup:
 
     if (outf) {
         fclose(outf);
-    }
-
-    if (inf) {
-        fclose(inf);
     }
 
     if (buf) {

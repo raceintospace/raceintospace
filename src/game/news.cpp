@@ -566,11 +566,9 @@ News(char plr)
 {
     int bline = 0, ctop = 0, i;
     char cYr[5];
-    OLDNEWS oldNews;
     char loc = 0;
     uint8_t Status = 0, BW = 0;
     mm_file video_file, *fp = &video_file;
-    FILE *fout = NULL;
 
     BW = (Data->Year <= 63);
 
@@ -601,14 +599,12 @@ News(char plr)
 
     // File Structure is 84 longs 42 per side
 
-    fout = sOpen("EVENT.TMP", "r+b", 1);
-    fseek(fout, 0, SEEK_END);
-    oldNews.offset = ftell(fout);
-    oldNews.size = (strlen(buffer));
-    fwrite(buffer, strlen(buffer), 1, fout);
-    fseek(fout, (plr * 42 + Data->P[plr].eCount - 1) * sizeof(OLDNEWS), SEEK_SET);
-    fwrite(&oldNews, sizeof(OLDNEWS), 1, fout);
-    fclose(fout);
+    interimData.tempEvents[plr * 42 + Data->P[plr].eCount - 1].offset = interimData.eventSize;
+    interimData.tempEvents[plr * 42 + Data->P[plr].eCount - 1].size = strlen(buffer);
+    interimData.eventBuffer = (char *) realloc(interimData.eventBuffer, interimData.eventSize + strlen(buffer));
+    memcpy(interimData.eventBuffer + interimData.eventSize, buffer, strlen(buffer));
+    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+    interimData.eventSize += strlen(buffer);
 
     /** \todo there is also M_NEW1950, why it is unused? */
     music_start(M_NEW1970);
