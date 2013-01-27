@@ -1536,6 +1536,8 @@ void Missions(char plr, int X, int Y, int val, char bub)
 {
     TRACE5("->Missions(plr, X %d, Y %d, val %d, bub %c)", X, Y, val, bub);
 
+    memset(Mev, 0x00, sizeof Mev);
+
     if (bub == 1 || bub == 3) {
         PianoKey(val);
         Bub_Count = 0; // set the initial bub_count
