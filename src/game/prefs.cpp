@@ -51,13 +51,11 @@ void CLevels(char side, char wh);
 void DrawPrefs(int where, char a1, char a2)
 {
     int mode = 0;
-    FILE *fin;
 
     FadeOut(2, 10, 0, 0);
     helpText = "i013";
     keyHelpText = "K013";
 
-    fin = sOpen("PREFS.BUT", "rb", 0);
     boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
     // fixme: don't use vhptr to draw this screen
     vhptr->palette().copy_from(prefs_image->palette());
