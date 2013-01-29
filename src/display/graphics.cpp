@@ -22,8 +22,7 @@ Graphics::Graphics():
     _scaledScreen(NULL),
     _display(NULL),
     _video(NULL),
-    _news(NULL),
-    _fullscreen(false)
+    _news(NULL)
 {
 }
 

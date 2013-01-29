@@ -80,7 +80,6 @@ private:
     SDL_Overlay *_news;
     SDL_Rect _videoRect;
     SDL_Rect _newsRect;
-    bool _fullscreen;
     char _foregroundColor;
     char _backgroundColor;
 };

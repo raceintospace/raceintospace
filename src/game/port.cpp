@@ -485,7 +485,6 @@ void DrawSpaceport(char plr)
     int32_t table[S_QTY];
     int i, fm, idx;
     FILE *fin;
-    IMG Img;
     int k, j;
 
     fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);

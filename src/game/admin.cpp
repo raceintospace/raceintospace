@@ -293,7 +293,7 @@ void FileAccess(char mode)
 {
     char sc = 0;
     int32_t size;
-    int tFiles, i, now, done, BarB, temp, left;
+    int tFiles, i, now, done, BarB, temp;
     FILE *fin, *fout;
     char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;

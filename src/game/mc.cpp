@@ -376,9 +376,8 @@ int Launch(char plr, char mis)
 void MissionPast(char plr, char pad, int prest)
 {
     int loc, i, j, loop, mc;
-    FILE *fout, *fin;
+    FILE *fout;
     unsigned int num;
-    int32_t size;
     char dys[7] = {0, 2, 5, 7, 12, 16, 20};
 
     loc = Data->P[plr].PastMissionCount;

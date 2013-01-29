@@ -1477,7 +1477,6 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
 
 char DrawMoonSelection(char nauts, char plr)
 {
-    char save_pal[768];
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
