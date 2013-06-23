@@ -17,6 +17,33 @@
 
 #ifdef __linux__
 #include <cstring> 
+#include <libgen.h>
+#include <dirent.h>
+#include <errno.h>
+#include <sys/stat.h>
+
+/* Function with behaviour like `mkdir -p'  */
+static int mkpath(const char *s, mode_t mode){
+  if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
+    return (0);  
+  std::string path = s;
+  char *q = strdup(s);
+  char *r = dirname(q);
+  if (r == NULL) {
+     free(q); return -1;
+  }
+  std::string up = r;
+  free(q);
+  
+  if ((mkpath(up.c_str(), mode) == -1) && (errno != EEXIST))
+    return -1;
+  
+  if ((mkdir(path.c_str(), mode) == -1) && (errno != EEXIST))
+    return -1;
+  else
+    return 0;
+}
+
 // Reimplement so that we can use phys 2.0 on linux
 static char *my_pref_dir(const char *org, const char *app)
 {
@@ -42,6 +69,7 @@ static char *my_pref_dir(const char *org, const char *app)
     len = strlen(envr) + strlen(append) + strlen(app) + 2;
     retval = (char *) malloc(len);
     snprintf(retval, len, "%s%s%s/", envr, append, app);
+    mkpath(retval, 0777);
     return retval;
 } 
 #endif
