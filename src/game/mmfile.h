@@ -5,7 +5,7 @@
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <theora/theora.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
 enum stream_type {
     MEDIA_AUDIO = 1,
 

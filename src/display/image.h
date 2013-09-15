@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <string>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include <boost/shared_ptr.hpp>
 

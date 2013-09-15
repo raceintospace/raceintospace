@@ -25,7 +25,7 @@
 #include <vorbis/codec.h>
 #include <theora/theora.h>
 #include <stdint.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "raceintospace_config.h"
 

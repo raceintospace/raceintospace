@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")
