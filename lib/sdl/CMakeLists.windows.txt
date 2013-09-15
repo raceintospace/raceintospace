@@ -3,13 +3,20 @@ cmake_minimum_required(VERSION 2.6)
 file(GLOB hdrs "${PROJECT_SOURCE_DIR}/include/*.h")
 if (WIN32)
   file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x86/*.lib")
+  file(GLOB dlls "${PROJECT_SOURCE_DIR}/lib/x86/*.dll")
 else (WIN32)
   file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x64/*.lib")
+  file(GLOB dlls "${PROJECT_SOURCE_DIR}/lib/x64/*.dll")
 endif (WIN32)
 
 install(
    FILES ${hdrs}
    DESTINATION include/SDL
+   )
+
+install(
+   FILES ${dlls}
+   DESTINATION bin
    )
 
 install(
