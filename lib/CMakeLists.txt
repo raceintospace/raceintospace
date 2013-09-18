@@ -33,7 +33,7 @@ endif (BUILD_BOOST)
 # zlib
 
 if (BUILD_ZLIB)
-  set (zlib_Version 1.2.7)
+  set (zlib_Version 1.2.8)
   set (zlib_URL http://zlib.net/zlib-${zlib_Version}.tar.gz)
   set (zlib_Dir ${CMAKE_CURRENT_BINARY_DIR}/zlib-${zlib_Version})
 

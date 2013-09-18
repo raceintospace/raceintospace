@@ -1,7 +1,7 @@
 #ifndef __PACE_H__
 #define __PACE_H__
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "raceintospace_config.h"
 

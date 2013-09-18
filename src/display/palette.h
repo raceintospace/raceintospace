@@ -3,7 +3,7 @@
 
 #include "color.h"
 #include <stdio.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <assert.h>
 
 namespace display

@@ -2,7 +2,7 @@
 #include "surface.h"
 #include "legacy_surface.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <string>
 #include <vector>
 #include <stdexcept>
