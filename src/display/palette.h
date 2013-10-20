@@ -85,10 +85,22 @@ public:
     AutoPal(LegacySurface *legacySurface);
     ~AutoPal();
 
+	struct triple {
+		char r;
+		char g;
+		char b;
+	};
+
     inline char *operator()() {
         return pal;
     };
     char pal[768];
+
+	inline triple *operator[](int index) {
+		int i = (index * 3);
+		triple* t = (triple *)(pal + i);
+		return t;
+	}
 
 private:
     PaletteInterface &_pal;
