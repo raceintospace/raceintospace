@@ -958,6 +958,11 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     return fp;
 }
 
+/*
+int write_image( const char * filename, int width, int height );
+#include <sstream>
+*/
+
 void
 ShowEvt(char plr, char crd)
 {
@@ -1028,8 +1033,113 @@ ShowEvt(char plr, char crd)
     display::graphics.newsRect().w = 0;
     display::graphics.newsRect().h = 0;
 
+/*
+	//BEGIN: DUMPING CODE
+	for (int i = 0; i < 115; i++) {
+		crd = i;
+
+		fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
+		fread_uint32_t(&offset, 1, ffin);
+		fread_uint32_t(&length, 1, ffin);
+
+        fseek(ffin, offset, SEEK_SET);
+        {
+			display::AutoPal p(display::graphics.legacyScreen());
+            fread(&p.pal[384], 384, 1, ffin);
+        }
+        fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
+
+		std::stringstream ss;
+		ss << "news.cdr.ussr." << i << ".png";
+		write_image( ss.str().c_str(), 320, 110 );
+	}
+	//END: DUMPING CODE
+*/
+
     fclose(ffin);
 }
+
+/*
+
+#include <png.h>
+#include <zlib.h>
+
+int write_image( const char * filename, int width, int height )
+{
+    FILE *fp;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    uint8_t *rows[240];
+    uint8_t alpha_values[256];
+    int maximum_transparent_color;
+    int i;
+
+    fp = fopen(filename, "wb");
+
+    if (!fp) {
+        fprintf(stderr, "unable to open output file: %s\n", strerror(errno));
+        return 4;
+    }
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+    if (!png_ptr) {
+        return 5;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+
+    if (!info_ptr) {
+        return 6;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        fclose(fp);
+        fprintf(stderr, "PNG write error!\n");
+        return 7;
+    }
+
+    png_init_io(png_ptr, fp);
+
+    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
+
+    png_set_IHDR(png_ptr, info_ptr,
+                 width, height,
+                 8, PNG_COLOR_TYPE_PALETTE,
+                 PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_DEFAULT,
+                 PNG_FILTER_TYPE_DEFAULT
+                );
+
+    png_color png_pal[256];
+
+    for (i = 0; i < 256; i ++) {
+		Color c = display::graphics.legacyScreen()->palette().get(i);
+        png_pal[i].red = c.r;
+        png_pal[i].green = c.g;
+        png_pal[i].blue = c.b;
+
+    }
+	
+
+    png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
+
+    // set up a buffer of alpha values as needed
+    memset(alpha_values, 255, sizeof(alpha_values));
+    maximum_transparent_color = -1;
+
+    for (i = 0; i < height; i++) {
+        rows[i] = (uint8_t *)(display::graphics.legacyScreen()->pixels() + (i * width));
+    }
+
+    png_set_rows(png_ptr, info_ptr, rows);
+
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+
+    return 0;
+}
+*/
 
 // EOF
 
