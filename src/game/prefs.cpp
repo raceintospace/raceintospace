@@ -189,6 +189,8 @@ void HModel(char mode, char tx)
     fread(buffer, table.size, 1, in); // Get Image
     fclose(in);
 
+    vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
+
     RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
 
     local.filter(0, 112, display::LegacySurface::Any);
