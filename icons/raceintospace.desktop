@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Raceintospace
+Name[pl]=Raceintospace
+GenericName=Raceintospace
+GenericName[pl]=Raceintospace
+Comment=Software version of LiftOff board game
+Comment[pl]=Komputerowa wersja gry planszowej LiftOff
+Exec=raceintospace
+Icon=raceintospace
+Terminal=false
+Type=Application
+Categories=Game;StrategyGame;
+Keywords=Game;StrategyGame;
