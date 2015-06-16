@@ -111,7 +111,7 @@ Advanced Preferences is a mixed bag.  Inside you’ll find a whole list of setti
     # Set to non-zero to enable randomization of nauts.
     # random_nauts
 
-If you should wish to randomize the skills of your astronauts/cosmonauts in the game, change the second line from `# random_nauts` to `random_nauts=1` (or higher).  Be sure to remove the hash tag (`#`) before `random_nauts`; the hash tag makes that line a remark, so your setting will be ignored if you don’t take out the `#`.
+If you should wish to randomize the skills of your astronauts/cosmonauts in the game, change the second line from `# random_nauts` to `random_nauts 1` (or higher).  Be sure to remove the hash tag (`#`) before `random_nauts`; the hash tag makes that line a remark, so your setting will be ignored if you don’t take out the `#`.
 
 The Advanced Preferences that will be of most interest to the average user (and which shouldn’t break the game) are as follows.
 
