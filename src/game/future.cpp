@@ -1550,7 +1550,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
         display::graphics.setForegroundColor(5);
 
         if (V[val].E > 0) {
-            if (F5 > V[val].E && Mis.Dur == 1) {
+            if (F5 > V[val].E && V[val].Z == 1) {
                 DurPri(F5);
             } else {
                 DurPri(V[val].E);
