@@ -1793,7 +1793,7 @@ char Request(char plr, char *s, char md)
 
     if (md > 0) {
         display::graphics.legacyScreen()->palette().copy_from(local.palette());
-        display::graphics.screen()->draw(local, 0, 0);
+        display::graphics.screen()->draw(local, 85, 52);
     }
 
     return i;
