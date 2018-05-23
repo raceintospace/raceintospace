@@ -111,17 +111,19 @@ From here, use CMake-GUI or the command-line CMake to generate Visual Studio
 project files. Literally every dependency will be downloaded and compiled
 automatically.
 
-For example (assuming code cloned in to c:\raceintospace)
-Change to "c:\"
-md raceintospace-build
-cd raceintospace-build
-cmake ..\raceintospace
-Start Visual Studio by opening "raceintospace.sln"
-Right-click "ALL_BUILD" and choose "Build"  (Everything will download and install)
-Right-click on "Race Into Space" and choose "Set as startup project"
-Right-click on "Race Into Space" and choose "Properties"
-Open "Configuration Properties" and choose "Output Directory" and set it to the path for "raceintospace-build\local\bin"
-Click on "Debugging" and edit "Environment".
+For example (assuming code cloned in to c:\raceintospace):
+
+    # Change to "c:\"
+    md raceintospace-build
+    cd raceintospace-build
+    cmake ..\raceintospace
+
+- Start Visual Studio by opening "raceintospace.sln".
+- Right-click "ALL_BUILD" and choose "Build"  (Everything will download and install)
+- Right-click on "Race Into Space" and choose "Set as startup project"
+- Right-click on "Race Into Space" and choose "Properties"
+- Open "Configuration Properties" and choose "Output Directory" and set it to the path for "raceintospace-build\local\bin"
+- Click on "Debugging" and edit "Environment".
 Add:
    BARIS_DATA=[path to raceintospace\data]
    BARIS_SAVE=.\save
