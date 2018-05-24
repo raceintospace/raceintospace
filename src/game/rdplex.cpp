@@ -983,7 +983,7 @@ void ShowUnit(char hw, char un, char player_index)
         break;
 
     case ROCKET_HARDWARE:
-        switch (un - 1) {
+        switch (un) {  // This used to say (un - 1) but that made the 1-stage rocket say R-7 instead of R7 ROCKET, and boosters had no name at the top
         case ROCKET_HW_ONE_STAGE:
         case ROCKET_HW_TWO_STAGE:
         case ROCKET_HW_THREE_STAGE:
