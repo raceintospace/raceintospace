@@ -281,11 +281,11 @@ In the recruitment screen, you will see the number of available positions, with 
 
 <table>
   <tr>
-    <td>Capsule Pilot – This is added to all Capsule steps of a mission—generally, anything involving piloting, navigation, or shipboard operations.  Easily the most important skill, as it is rolled against multiple times during most missions.
-L.M. Pilot – This is added to LM steps of a mission—the actual testing of a lander, or flying it on lunar landings.
-E.V.A. – This is added to spacewalks and lunar EVA.
-Docking – This is added to attempts at docking.
-Endurance – Officially, this is added to safety during duration and lunar missions, and/or reduces milestone penalties.  However, there is some question whether any of this was implemented in the game’s coding.</td>
+    <td>Capsule Pilot</td><td>This is added to all Capsule steps of a mission—generally, anything involving piloting, navigation, or shipboard operations.  Easily the most important skill, as it is rolled against multiple times during most missions.</td></tr>
+<tr><td>L.M. Pilot</td><td>This is added to LM steps of a mission—the actual testing of a lander, or flying it on lunar landings.</td></tr>
+<tr><td>E.V.A.</td><td>This is added to spacewalks and lunar EVA.</td></tr>
+<tr><td>Docking</td><td>This is added to attempts at docking.</td></tr>
+<tr><td>Endurance</td><td>Officially, this is added to safety during duration and lunar missions, and/or reduces milestone penalties.  However, there is some question whether any of this was implemented in the game’s coding.</td>
   </tr>
 </table>
 
@@ -461,16 +461,11 @@ Your spacepeople prefer being assigned to a crew (so long as it’s a compatible
 
 <table>
   <tr>
-    <td>Color
-Green
-Yellow
-Red
-Black</td>
-    <td>Mood
-Happy
-Ok, could be better
-Frustrated
-Burned out, planning retirement</td>
+    <td>Color</td><td>Mood</td></tr>
+<tr><td>Green</td><td>Happy</td></tr>
+<tr><td>Yellow</td><td>Ok, could be better</td></tr>
+<tr><td>Red</td><td>Frustrated</td></tr>
+<tr><td>Black</td><td>Burned out, planning retirement</td>
   </tr>
 </table>
 
@@ -1282,17 +1277,17 @@ Now watch your first manned mission take flight, and hope all goes well.  This s
 
 <table>
   <tr>
-    <td>Unmanned (Satellites & Probes)
+    <td>Unmanned (Satellites & Probes)<br/>
 
-Cricket
-LK
-Eagle
-LKM
-Explorer
-Sputnik
-Ranger
-Cosmos
-Surveyor
+Cricket<br/>
+LK<br/>
+Eagle<br/>
+LKM<br/>
+Explorer<br/>
+Sputnik<br/>
+Ranger<br/>
+Cosmos<br/>
+Surveyor<br/>
 Luna</td>
     <td></td>
   </tr>
@@ -1301,15 +1296,15 @@ Luna</td>
 
 <table>
   <tr>
-    <td>Rockets
+    <td>Rockets<br/>
 
-Atlas
-R-7
-Titan
-Proton
-Saturn V
-N1
-Nova
+Atlas<br/>
+R-7<br/>
+Titan<br/>
+Proton<br/>
+Saturn V<br/>
+N1<br/>
+Nova<br/>
 UR-700</td>
     <td></td>
   </tr>
@@ -1318,17 +1313,17 @@ UR-700</td>
 
 <table>
   <tr>
-    <td>Capsule (and Minishuttle)
+    <td>Capsule (and Minishuttle)<br/>
 
-Mercury
-Vostok
-Gemini
-Voskhod
-Apollo
-Soyuz
-XMS-2
-Lapot
-Jupiter
+Mercury<br/>
+Vostok<br/>
+Gemini<br/>
+Voskhod<br/>
+Apollo<br/>
+Soyuz<br/>
+XMS-2<br/>
+Lapot<br/>
+Jupiter<br/>
 LK-700</td>
     <td></td>
   </tr>
@@ -1337,18 +1332,18 @@ LK-700</td>
 
 <table>
   <tr>
-    <td>Miscellaneous
+    <td>Miscellaneous<br/>
 
-US EVA suit
-Soviet EVA suit
-US Docking Module
-Soviet Docking Module
-US Strap-on Booster
-Soviet Booster Stage
-US Kicker-A
-Soviet Kicker-A
-US Kicker-B
-Soviet Kicker-B
+US EVA suit<br/>
+Soviet EVA suit<br/>
+US Docking Module<br/>
+Soviet Docking Module<br/>
+US Strap-on Booster<br/>
+Soviet Booster Stage<br/>
+US Kicker-A<br/>
+Soviet Kicker-A<br/>
+US Kicker-B<br/>
+Soviet Kicker-B<br/>
 Soviet Kicker-C</td>
     <td></td>
   </tr>
@@ -1715,310 +1710,174 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>Max Safety</td>
   </tr>
   <tr>
-    <td>Explorer
-Sputnik</td>
-    <td>6
-6</td>
-    <td>1
-1</td>
-    <td>1
-1</td>
-    <td>300
-300</td>
-    <td>n/a
-n/a</td>
-    <td>95%
-95%</td>
-    <td>98%
-98%</td>
+    <td>Explorer/Sputnik</td>
+    <td>6/6</td>
+    <td>1/1</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Ranger
-Cosmos</td>
-    <td>24
-24</td>
-    <td>4
-4</td>
-    <td>3
-3</td>
-    <td>700
-700</td>
-    <td>n/a
-n/a</td>
-    <td>90%
-90%</td>
-    <td>93%
-93%</td>
+    <td>Ranger/Cosmos</td>
+    <td>24/24</td>
+    <td>4/4</td>
+    <td>3/3</td>
+    <td>700/700</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>93%/93%</td>
   </tr>
   <tr>
-    <td>Surveyor
-Luna</td>
-    <td>30
-30</td>
-    <td>6
-6</td>
-    <td>4
-4</td>
-    <td>1200
-1200</td>
-    <td>n/a
-n/a</td>
-    <td>85%
-85%</td>
-    <td>88%
-88%</td>
+    <td>Surveyor/Luna</td>
+    <td>30/30</td>
+    <td>6/6</td>
+    <td>4/4</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>85%/85%</td>
+    <td>88%/88%</td>
   </tr>
   <tr>
-    <td>Atlas
-R-7</td>
-    <td>24
-24</td>
-    <td>3
-3</td>
-    <td>2
-2</td>
-    <td>n/a
-n/a</td>
-    <td>600
-600</td>
-    <td>84%
-84%</td>
-    <td>98%
-98%</td>
+    <td>Atlas/R-7</td>
+    <td>24/24</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>600/600</td>
+    <td>84%/84%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Titan
-Proton</td>
-    <td>60
-60</td>
-    <td>12
-12</td>
-    <td>4
-4</td>
-    <td>n/a
-n/a</td>
-    <td>1500
-1500</td>
-    <td>90%
-90%</td>
-    <td>98%
-98%</td>
+    <td>Titan/Proton</td>
+    <td>60/60</td>
+    <td>12/12</td>
+    <td>4/4</td>
+    <td>--/--</td>
+    <td>1500/1500</td>
+    <td>90%/90%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Saturn V
-N1</td>
-    <td>84
-84</td>
-    <td>18
-18</td>
-    <td>6
-6</td>
-    <td>n/a
-n/a</td>
-    <td>3200
-3200</td>
-    <td>95%
-95%</td>
-    <td>98%
-98%</td>
+    <td>Saturn V / N1</td>
+    <td>84/84</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>--/--</td>
+    <td>3200/3200</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Nova
-UR-700</td>
-    <td>150
-150</td>
-    <td>30
-30</td>
-    <td>8
-8</td>
-    <td>n/a
-n/a</td>
-    <td>4800
-4800</td>
-    <td>95%
-95%</td>
-    <td>98%
-98%</td>
+    <td>Nova/UR-700</td>
+    <td>150/150</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>--/--</td>
+    <td>4800/4800</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>B. Strap-On
-B. Stage</td>
-    <td>12
-12</td>
-    <td>3
-3</td>
-    <td>2
-2</td>
-    <td>n/a
-n/a</td>
-    <td>1000
-1000</td>
-    <td>85%
-85%</td>
-    <td>98%
-98%</td>
+    <td>B. Strap-On / B. Stage</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>1000/1000</td>
+    <td>85%/85%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Mercury
-Vostok</td>
-    <td>18
-18</td>
-    <td>2
-2</td>
-    <td>1
-1</td>
-    <td>500
-500</td>
-    <td>n/a
-n/a</td>
-    <td>80%
-80%</td>
-    <td>90%
-90%</td>
+    <td>Mercury/Vostok</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>1/1</td>
+    <td>500/500</td>
+    <td>--/--</td>
+    <td>80%/80%</td>
+    <td>90%/90%</td>
   </tr>
   <tr>
-    <td>Gemini
-Voskhod</td>
-    <td>24
-24</td>
-    <td>6
-6</td>
-    <td>2
-2</td>
-    <td>1200
-1200</td>
-    <td>n/a
-n/a</td>
-    <td>84%
-84%</td>
-    <td>94%
-94%</td>
+    <td>Gemini/Voskhod</td>
+    <td>24/24</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>84%/84%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Apollo
-Soyuz</td>
-    <td>36
-36</td>
-    <td>12
-12</td>
-    <td>5
-5</td>
-    <td>1600
-1600</td>
-    <td>n/a
-n/a</td>
-    <td>87%
-87%</td>
-    <td>94%
-94%</td>
+    <td>Apollo/Soyuz</td>
+    <td>36/36</td>
+    <td>12/12</td>
+    <td>5/5</td>
+    <td>1600/1600</td>
+    <td>--/--</td>
+    <td>87%/87%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>XMS-2
-Lapot</td>
-    <td>60
-60</td>
-    <td>30
-30</td>
-    <td>7
-7</td>
-    <td>1500
-1500</td>
-    <td>n/a
-n/a</td>
-    <td>91%
-91%</td>
-    <td>94%
-94%</td>
+    <td>XMS-2/Lapot</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>7/7</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Jupiter
-LK-700</td>
-    <td>60
-60</td>
-    <td>30
-30</td>
-    <td>8
-8</td>
-    <td>4300
-4300</td>
-    <td>n/a
-n/a</td>
-    <td>89%
-89%</td>
-    <td>94%
-94%</td>
+    <td>Jupiter/LK-700</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>4300/4300</td>
+    <td>--/--</td>
+    <td>89%/89%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Eagle
-LKM</td>
-    <td>30
-30</td>
-    <td>8
-8</td>
-    <td>2
-2</td>
-    <td>1500
-1500</td>
-    <td>n/a
-n/a</td>
-    <td>90%
-90%</td>
-    <td>94%
-94%</td>
+    <td>Eagle/LKM</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>2/2</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Cricket
-LK</td>
-    <td>42
-42</td>
-    <td>8
-8</td>
-    <td>4
-4</td>
-    <td>1000
-1000</td>
-    <td>n/a
-n/a</td>
-    <td>90%
-90%</td>
-    <td>94%
-94%</td>
+    <td>Cricket/LK</td>
+    <td>42/42</td>
+    <td>8/8</td>
+    <td>4/4</td>
+    <td>1000/1000</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>US Kicker-A
-Sov Kicker-A</td>
-    <td>12
-12</td>
-    <td>3
-3</td>
-    <td>1
-1</td>
-    <td>300
-300</td>
-    <td>n/a
-n/a</td>
-    <td>94%
-94%</td>
-    <td>97%
-97%</td>
+    <td>US Kicker-A / Sov Kicker-A</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>97%/97%</td>
   </tr>
   <tr>
-    <td>US Kicker-B
-Sov Kicker-B</td>
-    <td>18
-18</td>
-    <td>6
-6</td>
-    <td>2
-2</td>
-    <td>600
-600</td>
-    <td>n/a
-n/a</td>
-    <td>94%
-94%</td>
-    <td>96%
-96%</td>
+    <td>US Kicker-B / Sov Kicker-B</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>600/600</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>96%/96%</td>
   </tr>
   <tr>
     <td>Sov Kicker-C</td>
@@ -2031,40 +1890,24 @@ n/a</td>
     <td>95%</td>
   </tr>
   <tr>
-    <td>US EVA Suit
-Sov EVA Suit</td>
-    <td>18
-18</td>
-    <td>--
---</td>
-    <td>1
-1</td>
-    <td>n/a
-n/a</td>
-    <td>n/a
-n/a</td>
-    <td>91%
-91%</td>
-    <td>94%
-94%</td>
+    <td>US EVA Suit / Sov EVA Suit</td>
+    <td>18/18</td>
+    <td>--/--</td>
+    <td>1/1</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>US DM
-Sov DM</td>
-    <td>18
-18</td>
-    <td>2
-2</td>
-    <td>n/a
-n/a</td>
-    <td>300
-300</td>
-    <td>n/a
-n/a</td>
-    <td>n/a
-n/a</td>
-    <td>93%
-93%</td>
+    <td>US DM / Sov DM</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>93%/93%</td>
   </tr>
 </table>
 
@@ -2083,310 +1926,174 @@ n/a</td>
     <td>Max Safety</td>
   </tr>
   <tr>
-    <td>Explorer
-Sputnik</td>
-    <td>6
-6</td>
-    <td>1
-1</td>
-    <td>1
-1</td>
-    <td>200
-400</td>
-    <td>n/a
-n/a</td>
-    <td>95%
-95%</td>
-    <td>98%
-98%</td>
+    <td>Explorer/Sputnik</td>
+    <td>6/6</td>
+    <td>1/1</td>
+    <td>1/1</td>
+    <td>200/400</td>
+    <td>--/--</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Ranger
-Cosmos</td>
-    <td>24
-20</td>
-    <td>5
-3</td>
-    <td>3
-3</td>
-    <td>700
-1000</td>
-    <td>n/a
-n/a</td>
-    <td>90%
-88%</td>
-    <td>93%
-93%</td>
+    <td>Ranger/Cosmos</td>
+    <td>24/20</td>
+    <td>5/3</td>
+    <td>3/3</td>
+    <td>700/1000</td>
+    <td>--/--</td>
+    <td>90%/88%</td>
+    <td>93%/93%</td>
   </tr>
   <tr>
-    <td>Surveyor
-Luna</td>
-    <td>30
-26</td>
-    <td>7
-6</td>
-    <td>4
-4</td>
-    <td>1200
-1500</td>
-    <td>n/a
-n/a</td>
-    <td>85%
-85%</td>
-    <td>88%
-88%</td>
+    <td>Surveyor/Luna</td>
+    <td>30/26</td>
+    <td>7/6</td>
+    <td>4/4</td>
+    <td>1200/1500</td>
+    <td>--/--</td>
+    <td>85%/85%</td>
+    <td>88%/88%</td>
   </tr>
   <tr>
-    <td>Atlas
-R-7</td>
-    <td>26
-20</td>
-    <td>3
-3</td>
-    <td>2
-2</td>
-    <td>n/a
-n/a</td>
-    <td>500
-800</td>
-    <td>87%
-85%</td>
-    <td>98%
-98%</td>
+    <td>Atlas/R-7</td>
+    <td>26/20</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>500/800</td>
+    <td>87%/85%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Titan
-Proton</td>
-    <td>60
-60</td>
-    <td>12
-12</td>
-    <td>4
-4</td>
-    <td>n/a
-n/a</td>
-    <td>1200
-1900</td>
-    <td>91%
-90%</td>
-    <td>98%
-98%</td>
+    <td>Titan/Proton</td>
+    <td>60/60</td>
+    <td>12/12</td>
+    <td>4/4</td>
+    <td>--/--</td>
+    <td>1200/1900</td>
+    <td>91%/90%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Saturn V
-N1</td>
-    <td>90
-84</td>
-    <td>18
-18</td>
-    <td>6
-7</td>
-    <td>n/a
-n/a</td>
-    <td>3500
-3900</td>
-    <td>95%
-93%</td>
-    <td>98%
-98%</td>
+    <td>Saturn V / N1</td>
+    <td>90/84</td>
+    <td>18/18</td>
+    <td>6/7</td>
+    <td>--/--</td>
+    <td>3500/3900</td>
+    <td>95%/93%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Nova
-UR-700</td>
-    <td>150
-150</td>
-    <td>30
-30</td>
-    <td>8
-8</td>
-    <td>n/a
-n/a</td>
-    <td>4800
-5500</td>
-    <td>94%
-94%</td>
-    <td>98%
-98%</td>
+    <td>Nova/UR-700</td>
+    <td>150/150</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>--/--</td>
+    <td>4800/5500</td>
+    <td>94%/94%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>B. Strap-On
-B. Stage</td>
-    <td>18
-15</td>
-    <td>4
-4</td>
-    <td>2
-2</td>
-    <td>n/a
-n/a</td>
-    <td>800
-1200</td>
-    <td>85%
-87%</td>
-    <td>98%
-98%</td>
+    <td>B. Strap-On / B. Stage</td>
+    <td>18/15</td>
+    <td>4/4</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>800/1200</td>
+    <td>85%/87%</td>
+    <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Mercury
-Vostok</td>
-    <td>20
-18</td>
-    <td>3
-3</td>
-    <td>1
-1</td>
-    <td>500
-700</td>
-    <td>n/a
-n/a</td>
-    <td>82%
-76%</td>
-    <td>92%
-92%</td>
+    <td>Mercury/Vostok</td>
+    <td>20/18</td>
+    <td>3/3</td>
+    <td>1/1</td>
+    <td>500/700</td>
+    <td>--/--</td>
+    <td>82%/76%</td>
+    <td>92%/92%</td>
   </tr>
   <tr>
-    <td>Gemini
-Voskhod</td>
-    <td>30
-24</td>
-    <td>7
-6</td>
-    <td>2
-2</td>
-    <td>1200
-1400</td>
-    <td>n/a
-n/a</td>
-    <td>86%
-80%</td>
-    <td>94%
-92%</td>
+    <td>Gemini/Voskhod</td>
+    <td>30/24</td>
+    <td>7/6</td>
+    <td>2/2</td>
+    <td>1200/1400</td>
+    <td>--/--</td>
+    <td>86%/80%</td>
+    <td>94%/92%</td>
   </tr>
   <tr>
-    <td>Apollo
-Soyuz</td>
-    <td>40
-36</td>
-    <td>14
-12</td>
-    <td>5
-5</td>
-    <td>1700
-1900</td>
-    <td>n/a
-n/a</td>
-    <td>89%
-85%</td>
-    <td>94%
-94%</td>
+    <td>Apollo/Soyuz</td>
+    <td>40/36</td>
+    <td>14/12</td>
+    <td>5/5</td>
+    <td>1700/1900</td>
+    <td>--/--</td>
+    <td>89%/85%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>XMS-2
-Lapot</td>
-    <td>55
-65</td>
-    <td>30
-30</td>
-    <td>7
-7</td>
-    <td>1400
-1800</td>
-    <td>n/a
-n/a</td>
-    <td>91%
-87%</td>
-    <td>94%
-94%</td>
+    <td>XMS-2/Lapot</td>
+    <td>55/65</td>
+    <td>30/30</td>
+    <td>7/7</td>
+    <td>1400/1800</td>
+    <td>--/--</td>
+    <td>91%/87%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Jupiter
-LK-700</td>
-    <td>65
-60</td>
-    <td>30
-30</td>
-    <td>8
-9</td>
-    <td>4600
-5300</td>
-    <td>n/a
-n/a</td>
-    <td>89%
-89%</td>
-    <td>94%
-94%</td>
+    <td>Jupiter/LK-700</td>
+    <td>65/60</td>
+    <td>30/30</td>
+    <td>8/9</td>
+    <td>4600/5300</td>
+    <td>--/--</td>
+    <td>89%/89%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Eagle
-LKM</td>
-    <td>30
-35</td>
-    <td>8
-8</td>
-    <td>2
-2</td>
-    <td>1500
-1700</td>
-    <td>n/a
-n/a</td>
-    <td>90%
-91%</td>
-    <td>94%
-94%</td>
+    <td>Eagle/LKM</td>
+    <td>30/35</td>
+    <td>8/8</td>
+    <td>2/2</td>
+    <td>1500/1700</td>
+    <td>--/--</td>
+    <td>90%/91%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>Cricket
-LK</td>
-    <td>42
-48</td>
-    <td>9
-9</td>
-    <td>4
-4</td>
-    <td>1100
-1500</td>
-    <td>n/a
-n/a</td>
-    <td>89%
-90%</td>
-    <td>94%
-93%</td>
+    <td>Cricket/LK</td>
+    <td>42/48</td>
+    <td>9/9</td>
+    <td>4/4</td>
+    <td>1100/1500</td>
+    <td>--/--</td>
+    <td>89%/90%</td>
+    <td>94%/93%</td>
   </tr>
   <tr>
-    <td>US Kicker-A
-Sov Kicker-A</td>
-    <td>12
-12</td>
-    <td>3
-3</td>
-    <td>1
-1</td>
-    <td>300
-500</td>
-    <td>n/a
-n/a</td>
-    <td>92%
-91%</td>
-    <td>97%
-95%</td>
+    <td>US Kicker-A / Sov Kicker-A</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>1/1</td>
+    <td>300/500</td>
+    <td>--/--</td>
+    <td>92%/91%</td>
+    <td>97%/95%</td>
   </tr>
   <tr>
-    <td>US Kicker-B
-Sov Kicker-B</td>
-    <td>18
-18</td>
-    <td>6
-6</td>
-    <td>2
-2</td>
-    <td>700
-700</td>
-    <td>n/a
-n/a</td>
-    <td>94%
-91%</td>
-    <td>97%
-95%</td>
+    <td>US Kicker-B / Sov Kicker-B</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>700/700</td>
+    <td>--/--</td>
+    <td>94%/91%</td>
+    <td>97%/95%</td>
   </tr>
   <tr>
     <td>Sov Kicker-C</td>
@@ -2399,40 +2106,24 @@ n/a</td>
     <td>94%</td>
   </tr>
   <tr>
-    <td>US EVA Suit
-Sov EVA Suit</td>
-    <td>18
-18</td>
-    <td>--
---</td>
-    <td>1
-1</td>
-    <td>n/a
-n/a</td>
-    <td>n/a
-n/a</td>
-    <td>91%
-91%</td>
-    <td>94%
-94%</td>
+    <td>US EVA Suit / Sov EVA Suit</td>
+    <td>18/18</td>
+    <td>--/--</td>
+    <td>1/1</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
   </tr>
   <tr>
-    <td>US DM
-Sov DM</td>
-    <td>18
-15</td>
-    <td>3
-2</td>
-    <td>n/a
-n/a</td>
-    <td>300
-300</td>
-    <td>n/a
-n/a</td>
-    <td>n/a
-n/a</td>
-    <td>93%
-94%</td>
+    <td>US DM / Sov DM</td>
+    <td>18/15</td>
+    <td>3/2</td>
+    <td>--/--</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>93%/94%</td>
   </tr>
 </table>
 
