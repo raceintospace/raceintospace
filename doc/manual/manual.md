@@ -435,7 +435,7 @@ Your spacepeople prefer being assigned to a crew (so long as it’s a compatible
 
 <table>
   <tr>
-    <td>**Color**</td><td>**Mood**</td></tr>
+    <td>Color</td><td>Mood</td></tr>
 <tr><td>Green</td><td>Happy</td></tr>
 <tr><td>Yellow</td><td>Ok, could be better</td></tr>
 <tr><td>Red</td><td>Frustrated</td></tr>
@@ -478,11 +478,11 @@ The Satellite building shows information on several programs, mainly unmanned.  
 
 <table>
   <tr>
-    <td>**Name**</td>
-    <td>**First**</td>
-    <td>**Second**</td>
-    <td>**Other**</td>
-    <td>**Failure**</td>
+    <td>Name</td>
+    <td>First</td>
+    <td>Second</td>
+    <td>Other</td>
+    <td>Failure</td>
   </tr>
   <tr>
     <td>Orbital Satellite</td>
@@ -801,7 +801,7 @@ More involved than a pass, a lunar orbital gives ample opportunity to test out s
 
 Here it is, the end goal—to land a person on the Moon and return them safely to the Earth.  This is arguably humanity’s greatest technological triumph!  New challenges await, but mankind’s first footsteps on an alien world are an achievement to remember.
 
-**Milestone Steps and Necessary Tasks for the Moon Landing**
+###Milestone Steps and Necessary Tasks for the Moon Landing
 
 **PHOTO RECONNAISSANCE**
 
@@ -821,10 +821,10 @@ Once your space program has performed a simple Earth orbital, it’s time to con
 
 <table>
   <tr>
-    <td>**Days**</td>
-    <td>**Duration**</td>
-    <td>**Prestige**</td>
-    <td>**Comments**</td>
+    <td>Days</td>
+    <td>Duration</td>
+    <td>Prestige</td>
+    <td>Comments</td>
   </tr>
   <tr>
     <td>1-2</td>
@@ -921,9 +921,9 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America’s proud
 
 <table>
   <tr>
-    <td>**#**</td>
-    <td>**Mission Name**</td>
-    <td>**Comments**</td>
+    <td>#</td>
+    <td>Mission Name</td>
+    <td>Comments</td>
   </tr>
   <tr>
     <td>0</td>
@@ -1250,7 +1250,7 @@ Now watch your first manned mission take flight, and hope all goes well.  This s
 
 <table>
   <tr>
-    <td>**Unmanned (Satellites & Probes)**<br/>
+    <td>Unmanned (Satellites & Probes)<br/>
 
 Cricket<br/>
 LK<br/>
@@ -1268,7 +1268,7 @@ Luna</td>
 
 <table>
   <tr>
-    <td>**Rockets**<br/>
+    <td>Rockets<br/>
 
 Atlas<br/>
 R-7<br/>
@@ -1284,7 +1284,7 @@ UR-700</td>
 
 <table>
   <tr>
-    <td>**Capsule (and Minishuttle)**<br/>
+    <td>Capsule (and Minishuttle)<br/>
 
 Mercury<br/>
 Vostok<br/>
@@ -1302,7 +1302,7 @@ LK-700</td>
 
 <table>
   <tr>
-    <td>**Miscellaneous**<br/>
+    <td>Miscellaneous<br/>
 
 US EVA suit<br/>
 Soviet EVA suit<br/>
@@ -1333,10 +1333,10 @@ Soviet Kicker-C</td>
 
 <table>
   <tr>
-    <td>**Spacecraft**</td>
-    <td>**Orbital**</td>
-    <td>**Docking Test**</td>
-    <td>**LM Test**</td>
+    <td>Spacecraft</td>
+    <td>Orbital</td>
+    <td>Docking Test</td>
+    <td>LM Test</td>
   </tr>
   <tr>
     <td>Gemini</td>
@@ -1613,12 +1613,12 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
 
 <table>
   <tr>
-    <td>**Spacecraft**</td>
-    <td>**Boosters**</td>
-    <td>**Kicker-A/B**</td>
-    <td>**Kicker-C**</td>
-    <td>**LM**</td>
-    <td>**DM**</td>
+    <td>Spacecraft</td>
+    <td>Boosters</td>
+    <td>Kicker-A/B</td>
+    <td>Kicker-C</td>
+    <td>LM</td>
+    <td>DM</td>
   </tr>
   <tr>
     <td>Gemini/Voskhod</td>
@@ -1669,14 +1669,14 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
 
 <table>
   <tr>
-    <td>**Program**</td>
-    <td>**Cost**</td>
-    <td>**Unit**</td>
-    <td>**R&D**</td>
-    <td>**Weight**</td>
-    <td>**Payload Lift**</td>
-    <td>**Max R&D**</td>
-    <td>**Max Safety**</td>
+    <td>Program</td>
+    <td>Cost</td>
+    <td>Unit</td>
+    <td>R&D</td>
+    <td>Weight</td>
+    <td>Payload Lift</td>
+    <td>Max R&D</td>
+    <td>Max Safety</td>
   </tr>
   <tr>
     <td>Explorer/Sputnik</td>
@@ -1885,14 +1885,14 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
 
 <table>
   <tr>
-    <td>**Program**</td>
-    <td>**Cost**</td>
-    <td>**Unit**</td>
-    <td>**R&D**</td>
-    <td>**Weight**</td>
-    <td>**Payload Lift**</td>
-    <td>**Max R&D**</td>
-    <td>**Max Safety**</td>
+    <td>Program</td>
+    <td>Cost</td>
+    <td>Unit</td>
+    <td>R&D</td>
+    <td>Weight</td>
+    <td>Payload Lift</td>
+    <td>Max R&D</td>
+    <td>Max Safety</td>
   </tr>
   <tr>
     <td>Explorer/Sputnik</td>
