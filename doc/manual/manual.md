@@ -801,7 +801,7 @@ More involved than a pass, a lunar orbital gives ample opportunity to test out s
 
 Here it is, the end goal—to land a person on the Moon and return them safely to the Earth.  This is arguably humanity’s greatest technological triumph!  New challenges await, but mankind’s first footsteps on an alien world are an achievement to remember.
 
-###Milestone Steps and Necessary Tasks for the Moon Landing
+**Milestone Steps and Necessary Tasks for the Moon Landing**
 
 **PHOTO RECONNAISSANCE**
 
@@ -1325,9 +1325,28 @@ Soviet Kicker-C</td>
 
 **Mission Abbreviations**
 
-**D** = Docking			**E** = EVA		**L** = LM Test		**JT** = Joint
-
-**O** = Docking (Orbit)		**X** = Duration	**U** = Unmanned	**2E** = 2 EVAs
+<table>
+  <tr>
+    <td>D</td>
+    <td>Docking</td>
+    <td>E</td>
+    <td>EVA</td>
+    <td>L</td>
+    <td>LM Test</td>
+    <td>JT</td>
+    <td>Joint</td>
+  </tr>
+  <tr>
+    <td>O</td>
+    <td>Docking (Orbit)</td>
+    <td>X</td>
+    <td>Duration</td>
+    <td>U</td>
+    <td>Unmanned</td>
+    <td>2E</td>
+    <td>2 EVAs</td>
+  </tr>
+</table>
 
 **Minimum rocketry for common missions, Historical Model**
 
