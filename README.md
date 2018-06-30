@@ -66,6 +66,11 @@ On UNIXy systems (including Mac OS X), you can build everything with:
     $ cmake ../raceintospace
     $ make
 
+To download a copy of the game, go to the folder where you want the raceintospace 
+subfolder to go, and run:
+
+    git clone https://github.com/raceintospace/raceintospace
+
 Linux
 -----
 
@@ -75,6 +80,29 @@ on a Debian-based system, you can get everything with:
     $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
         libprotobuf-dev protobuf-compiler
+
+If you don't already have git installed, you'll also have to run:
+
+    $ sudo apt install git
+
+To compile the game quickly you can run a series of commands in-line. This 
+creates a folder where the compiled game will be installed. If you want it named 
+something other than raceintospace-go, simply change the name. The last two 
+commands also run the game automatically.
+
+    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+You can run these commands separately, or just run the ones you need (for instance, 
+if you already have the folder you want the game installed to, there's of course 
+no need to create it.
+
+    mkdir raceintospace-go
+    cd raceintospace-go
+    cmake ../raceintospace
+    make
+    sudo make install
+    cd src/game
+    ./raceintospace
 
 Mac OS X
 --------
