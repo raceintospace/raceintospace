@@ -1028,7 +1028,7 @@ begvab:
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {
                 j = 0;
 
-                if (Mis.EVA == 1 && Data->P[plr].Manned[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
+                if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i118");
                 } else if (Mis.Doc == 1 && Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
                     Help("i119");
