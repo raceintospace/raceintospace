@@ -43,8 +43,15 @@
 #include "endianness.h"
 #include "filesystem.h"
 
+enum {
+    HOSPITAL_BLD = 0,
+    CEMETERY_BLD = 1,
+};
+
+
 void DrawTrain(char plr, char lvl);
 void TrainText(char plr, int astro, int cnt);
+void InjuredNautCenter(char plr, int sel);
 
 
 void DrawTrain(char plr, char lvl)
@@ -674,7 +681,10 @@ void Train(char plr, int level)
 } /* end Limbo */
 
 
-void Hospital(char plr, int sel)
+/* Interface for the Hospital/Cemetery.
+ * sel is 0 for hospital, 1 for cemetery.
+ */
+void InjuredNautCenter(char plr, int sel)
 {
     int now2;
     int BarA;
@@ -683,7 +693,7 @@ void Hospital(char plr, int sel)
     int j;
     int M[100];
 
-    if (sel == 0) {
+    if (sel == HOSPITAL_BLD) {
         helpText = "i041";
         keyHelpText = "k041";
     } else {
@@ -702,10 +712,10 @@ void Hospital(char plr, int sel)
 
     char filename[128];
 
-    if (sel == 0) {
-        snprintf(filename, sizeof(filename), "images/cemetery.%d.png", plr);
-    } else if (sel == 1) {
+    if (sel == HOSPITAL_BLD) {
         snprintf(filename, sizeof(filename), "images/hospital.%d.png", plr);
+    } else if (sel == CEMETERY_BLD) {
+        snprintf(filename, sizeof(filename), "images/cemetery.%d.png", plr);
     }
 
     boost::shared_ptr<display::PalettizedSurface> location(Filesystem::readImage(filename));
@@ -738,7 +748,7 @@ void Hospital(char plr, int sel)
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
-        if (sel == 0) {
+        if (sel == HOSPITAL_BLD) {
             draw_heading(40, 5, "US HOSPITAL", 0, -1);
             music_start(M_BADNEWS);
         } else {
@@ -748,7 +758,7 @@ void Hospital(char plr, int sel)
     };
 
     if (plr == 1) {
-        if (sel == 0) {
+        if (sel == HOSPITAL_BLD) {
             draw_heading(40, 5, "SOVIET INFIRMARY", 0, -1);
             music_start(M_INTERLUD);
         } else {
@@ -771,7 +781,7 @@ void Hospital(char plr, int sel)
     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
 
-    j = (sel == 0) ? AST_ST_INJURED : AST_ST_DEAD;
+    j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
 
     for (i = 0; i < Data->P[plr].AstroCount; i++)
         if (Data->P[plr].Pool[i].Status == j) {
@@ -864,18 +874,18 @@ void Hospital(char plr, int sel)
 
 
 
+/* Interface for the Cemetery.
+ */
+void Cemetery(char plr)
+{
+    InjuredNautCenter(plr, CEMETERY_BLD);
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+/* Interface for the Hospital.
+ */
+void Hospital(char plr)
+{
+    InjuredNautCenter(plr, HOSPITAL_BLD);
+}
 
