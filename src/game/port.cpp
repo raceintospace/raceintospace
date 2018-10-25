@@ -1454,7 +1454,7 @@ char PortSel(char plr, char loc)
 
     case PORT_Cemetery:
         helpText = "i020";
-        Hospital(plr, 1);
+        Cemetery(plr);
         return pREDRAW;
 
     case PORT_VAB:
@@ -1508,7 +1508,7 @@ char PortSel(char plr, char loc)
 
     case PORT_MedicalCtr:
         helpText = "i041";
-        Hospital(plr, 0);
+        Hospital(plr);
         return pREDRAW;
 
     case PORT_BasicTraining:
