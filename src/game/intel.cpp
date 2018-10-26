@@ -1190,6 +1190,16 @@ void DrawIntelBackground()
     display::graphics.screen()->draw(background, 153, 32);
 }
 
+/* Draws the image for an Intelligence Briefing.
+ *
+ * Because program indices begin at 0, and png image files are indexed
+ * starting at 1 (intel.but.0.png was the intel background) the values
+ * do not correspond. This is handled by the function internally.
+ * The program/mission offset should be used.
+ *
+ * \param plr Player side (0 for US, 1 for USSR)
+ * \param poff Program/Mission index
+ */
 void DrawIntelImage(char plr, char poff)
 {
     DrawIntelBackground();
@@ -1207,7 +1217,10 @@ void DrawIntelImage(char plr, char poff)
     assert(poff > 0 && poff <= 69);
 
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/intel.but.%d.png", (int)poff);
+    snprintf(filename,
+             sizeof(filename),
+             "images/intel.but.%d.png",
+             (int)poff + 1);
     boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
     display::graphics.screen()->draw(image, 153, 32);
