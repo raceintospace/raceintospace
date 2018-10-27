@@ -26,6 +26,8 @@
 
 #include <assert.h>
 
+#include <stdexcept>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -45,6 +47,7 @@
 #include "pace.h"
 #include "filesystem.h"
 #include "hardware_buttons.h"
+#include "logging.h"
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -1221,7 +1224,19 @@ void DrawIntelImage(char plr, char poff)
              sizeof(filename),
              "images/intel.but.%d.png",
              (int)poff + 1);
-    boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
+
+    // If the image cannot be written, report the error and continue.
+    // These images use transparent backgrounds, overlaid on the
+    // Intel background. It won't have the right appearance, but
+    // it's preferable to crashing.
+    boost::shared_ptr<display::PalettizedSurface> image;
+
+    try {
+        image = Filesystem::readImage(filename);
+    } catch (const std::runtime_error &err) {
+        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        return;
+    }
 
     display::graphics.screen()->draw(image, 153, 32);
 }
