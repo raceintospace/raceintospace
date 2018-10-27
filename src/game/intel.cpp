@@ -26,6 +26,8 @@
 
 #include <assert.h>
 
+#include <stdexcept>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -45,6 +47,7 @@
 #include "pace.h"
 #include "filesystem.h"
 #include "hardware_buttons.h"
+#include "logging.h"
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -1183,20 +1186,29 @@ void HarIntel(char p, char acc)
     SaveIntel(p, prg, ind);
 }
 
+/* Clears the Intel image area and draws the intel background layer.
+ */
 void DrawIntelBackground()
 {
+    fill_rectangle(153, 32, 310, 131, 0);
     boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel_background.png"));
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
 }
 
+/* Draws the image for an Intelligence Briefing.
+ *
+ * Because program indices begin at 0, and png image files are indexed
+ * starting at 1 (intel.but.0.png was the intel background) the values
+ * do not correspond. This is handled by the function internally.
+ * The program/mission offset should be used.
+ *
+ * \param plr Player side (0 for US, 1 for USSR)
+ * \param poff Program/Mission index
+ */
 void DrawIntelImage(char plr, char poff)
 {
     DrawIntelBackground();
-
-    if (poff == 0) {
-        return;
-    }
 
     if (poff < 56) {
         if (plr == 1) {
@@ -1204,11 +1216,26 @@ void DrawIntelImage(char plr, char poff)
         }
     }
 
-    assert(poff > 0 && poff <= 69);
+    assert(poff >= 0 && poff <= 68);
 
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/intel.but.%d.png", (int)poff);
-    boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
+    snprintf(filename,
+             sizeof(filename),
+             "images/intel.but.%d.png",
+             (int)poff + 1);
+
+    // If the image cannot be written, report the error and continue.
+    // These images use transparent backgrounds, overlaid on the
+    // Intel background. It won't have the right appearance, but
+    // it's preferable to crashing.
+    boost::shared_ptr<display::PalettizedSurface> image;
+
+    try {
+        image = Filesystem::readImage(filename);
+    } catch (const std::runtime_error &err) {
+        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        return;
+    }
 
     display::graphics.screen()->draw(image, 153, 32);
 }
