@@ -1207,17 +1207,13 @@ void DrawIntelImage(char plr, char poff)
 {
     DrawIntelBackground();
 
-    if (poff == 0) {
-        return;
-    }
-
     if (poff < 56) {
         if (plr == 1) {
             poff = poff + 28;
         }
     }
 
-    assert(poff > 0 && poff <= 69);
+    assert(poff >= 0 && poff <= 68);
 
     char filename[128];
     snprintf(filename,
