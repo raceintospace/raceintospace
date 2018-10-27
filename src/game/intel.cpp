@@ -1186,8 +1186,11 @@ void HarIntel(char p, char acc)
     SaveIntel(p, prg, ind);
 }
 
+/* Clears the Intel image area and draws the intel background layer.
+ */
 void DrawIntelBackground()
 {
+    fill_rectangle(153, 32, 310, 131, 0);
     boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel_background.png"));
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
