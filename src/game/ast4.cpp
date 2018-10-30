@@ -407,7 +407,7 @@ int CheckProgram(char plr, char prog)
         }
 
     if (check > 0) {
-        return(1);
+        return 1;
     }
 
     check = 0;
@@ -418,16 +418,16 @@ int CheckProgram(char plr, char prog)
         }
 
     if (prog >= 1 && prog <= 3 && check >= prog) {
-        return(2);
+        return 2;
     } else if ((prog == 4 || prog == 5) && check >= prog - 1) {
-        return(2);
+        return 2;
     } else // return to limbo
         for (i = 0; i < Data->P[plr].AstroCount; i++)
             if (Data->P[plr].Pool[i].Assign == prog) {
                 Data->P[plr].Pool[i].Assign = 0;
             }
 
-    return(0);
+    return 0;
 }
 
 void FixPrograms(char plr)
@@ -657,8 +657,17 @@ void DrawPosition(char prog, int pos)
 }
 
 
-void
-Programs(char plr, char prog)
+/**
+ * The main capsule building interface.
+ *
+ * Programs refers to the Manned capsule programs, specifically the
+ * ones where astronauts may be assigned. This has the main control
+ * loop for the capsule building user interface.
+ *
+ * \param plr  the country running the program
+ * \param prog  the capsule style
+ */
+void Programs(char plr, char prog)
 {
     int i, max, chk, tst;
     int now2 = 0, count = 0, grp = 0, BarA = 0;
@@ -1091,9 +1100,16 @@ Programs(char plr, char prog)
                 /* Break Group */
                 tst = Data->P[plr].Crew[prog][grp][0] - 1;
 
+                /* If the crew is assigned to a mission, create an alert
+                 * that it cannot be broken while the mission is planned. */
                 if (Data->P[plr].Pool[tst].Prime > 0) {
                     OutBox(245, 106, 314, 118);
-                    vhptr->copyFrom(display::graphics.legacyScreen(), 75, 43, 244, 173, 75, 43);
+                    /* Copy the screen area into a buffer before drawing
+                     * the dialog so it can be repainted after the dialog
+                     * is dismissed */
+                    display::LegacySurface buffer(170, 131);
+                    buffer.copyFrom(display::graphics.legacyScreen(), 75, 43, 244, 173);
+                    /* Draw the alert message */
                     ShBox(75, 43, 244, 173);
                     IOBox(81, 152, 238, 167);
                     InBox(81, 70, 238, 113);
@@ -1130,7 +1146,10 @@ Programs(char plr, char prog)
                                 InBox(83, 154, 236, 165);
                                 WaitForMouseUp();
                                 OutBox(83, 154, 236, 165);
-                                vhptr->copyTo(display::graphics.legacyScreen(), 75, 43, 75, 43, 244, 173);
+                                /* Closing the alert message.
+                                 * Redraw the screen behind it from buffer */
+                                buffer.copyTo(display::graphics.legacyScreen(),
+                                              75, 43);
                                 i = 2;
                             }
                         }
