@@ -784,10 +784,10 @@ int AllotPrest(char plr, char mis)
 
     // PHOTO RECON
     if (PVal[Prestige_MannedLunarPass] > 0 && PVal[Prestige_MannedLunarPass] < 4) {
-        Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
+        Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
     }
 
-    Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+    Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
 
     if (death == 1) {
         for (i = 0; i < 28; i++) if (PVal[i] > 0 && PVal[i] < 4) {
@@ -812,11 +812,11 @@ int AllotPrest(char plr, char mis)
     }
 
     if (Check_Dock(500) == 2) {  // Success
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
     } else if (Check_Dock(500) == 1) {
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
     }
 
     if (STSp(Prestige_MannedSpaceMission) || STSn(Prestige_MannedSpaceMission)) {
@@ -1084,26 +1084,26 @@ int U_AllotPrest(char plr, char mis)
 
         if (mcode == 7 || mcode == 8) {
             if (lun == 1) { // UNMANNED PHOTO RECON
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 5;
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;
+                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
         if (mcode == 8 && MaxFail() == 1) { // extra 10 for landing on Moon
             if (lun == 1) { // UNMANNED PHOTO RECON
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety += 10;
-                Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety, 99);
+                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 10;
+                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
     } // if
 
     if (Check_Dock(2) == 2) {
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
     } else if (Check_Dock(2) == 1) {
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].MaxSafety);
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
     }
 
     return total + negs;

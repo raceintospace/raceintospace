@@ -2088,7 +2088,7 @@ BuyUnit(char category, char unit, char player_index)
 
             Data->P[player_index].Misc[MISC_HW_KICKER_A].Safety = 10 + tt;
             //old code: if (n2 >= 75)
-            //old code: Data->P[player_index].Manned[MISC_HW_KICKER_A].Safety = 40;
+            //old code: Data->P[player_index].Misc[MISC_HW_KICKER_A].Safety = 40;
 
             break;
 
@@ -2103,7 +2103,7 @@ BuyUnit(char category, char unit, char player_index)
 
             Data->P[player_index].Misc[MISC_HW_KICKER_B].Safety = 10 + tt;
             //old code: if (n1 >= 75)
-            //old code: Data->P[player_index].Manned[MISC_HW_KICKER_B].Safety = 35;
+            //old code: Data->P[player_index].Misc[MISC_HW_KICKER_B].Safety = 35;
 
             break;
 
@@ -2124,7 +2124,7 @@ BuyUnit(char category, char unit, char player_index)
 
             Data->P[player_index].Misc[MISC_HW_KICKER_C].Safety = 5 + tt;
             //old code: if (n1 >= 75 || n2 >= 75)
-            //old code: Data->P[player_index].Manned[MISC_HW_KICKER_C].Safety = 25;
+            //old code: Data->P[player_index].Misc[MISC_HW_KICKER_C].Safety = 25;
 
             break;
 

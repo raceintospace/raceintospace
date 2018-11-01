@@ -804,7 +804,7 @@ begvab:
 
             case Mission_Probe_DM:  // DM+Probes
                 if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
-                    Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Spok--;
+                    Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
                 } else {
                     Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
                 }
@@ -1030,7 +1030,7 @@ begvab:
 
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i118");
-                } else if (Mis.Doc == 1 && Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
+                } else if (Mis.Doc == 1 && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
                     Help("i119");
                 } else {
                     if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
@@ -1289,7 +1289,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     if (VX == 0x20 && part == 0 && mcode != 1) { // P:xDM XX
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
     } else if (VX == 0x04 && part == 0) { // P:INTER XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY], 1, 10);
@@ -1305,7 +1305,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         LMAdd(plr, ext, 1, 1);
     } else if (VX == 0x21 && part == 0) { // P:SDM+KIC-C XX
         VASqty++;
-        VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_C], 2, 22);
+        VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_C], 2, 22);
     }
 
     else if (VX == 0x80) {
@@ -1319,7 +1319,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa0 && part == 0) { // P:CAP+SDM XX
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
     }
 
     else if (VX == 0x90 && part == 0) { // P:CAP+DMO XX
@@ -1328,7 +1328,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa8 && part == 0) { // P:CAP+SDM+EVA XX
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         // EVA Check
     }
 
@@ -1346,12 +1346,12 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         if (prog == 1 || prog == 3) {
             if (mcode != 52) {  ///Special Case EOR LM Test
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_A], 0, 20);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_A], 0, 20);
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_B], 1, 21);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_B], 1, 21);
             } else {
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_B], 1, 20);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_B], 1, 20);
             }
         } else {
             VASqty = 1;
@@ -1371,12 +1371,12 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         if (prog != 2) {
             if (mcode != 55) { ///Special Case EOR Lunar Landing
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_A], 0, 20);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_A], 0, 20);
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_B], 1, 21);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_B], 1, 21);
             } else {
                 VASqty++;
-                VVals(plr, 1, &Data->P[plr].Manned[MISC_HW_KICKER_B], 1, 20);
+                VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_B], 1, 20);
             }
         } else {
             VASqty = 1;
@@ -1393,7 +1393,7 @@ void LMAdd(char plr, char prog, char kic, char part)
 {
     if (prog == 1) {
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         VVals(plr, 2, &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE], 6, 19);
 
         if (kic >= 0) {
@@ -1420,7 +1420,7 @@ void LMAdd(char plr, char prog, char kic, char part)
 
     else if (prog == 3) { // Minishuttle
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         VVals(plr, 2, &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE], 5, 18);
 
         if (kic >= 0) {
@@ -1428,7 +1428,7 @@ void LMAdd(char plr, char prog, char kic, char part)
         }
 
         VASqty++;
-        VVals(plr, 3, &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE], 4, 12);
+        VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         VVals(plr, 2, &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE], 6, 19);
 
         if (kic >= 0) {

@@ -199,12 +199,12 @@ int ICost(char plr, char h, char i)
                 cost += Data->P[plr].Probe[i].UnitCost;
             }
         } else {
-            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num < 0) {
-                cost += Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].InitCost;
+            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
+                cost += Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].InitCost;
             }
 
-            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num == 0) {
-                cost += Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].UnitCost;
+            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == 0) {
+                cost += Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].UnitCost;
             }
         }
 
@@ -446,7 +446,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -470,7 +470,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = Mission_U_Orbital_D;
 
-            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
@@ -631,7 +631,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -655,7 +655,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = Mission_U_Orbital_D;
 
-            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
@@ -821,7 +821,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         break;
 
     case 9:
-        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
             switch (Data->P[plr].LMpts) {
             case 0:
             case 1:
@@ -845,7 +845,7 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
         } else {
             *m_1 = Mission_U_Orbital_D;
 
-            if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
@@ -894,7 +894,7 @@ void NewAI(char plr, char frog)
             }
         }
 
-        Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num = 2;
+        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num = 2;
         Panic_Check = Panic_Level(plr, &mis1, &mis2);
 
         if (!Panic_Check) {
@@ -1227,7 +1227,7 @@ void NewAI(char plr, char frog)
 
                 if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15)
                     if (PrestigeCheck(plr, Prestige_LunarProbeLanding) == 0 ||
-                        Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety < 85) {
+                        Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety < 85) {
                         if (mis3 == Mission_None) {
                             mis3 = Mission_Lunar_Probe;
                         }
@@ -1640,7 +1640,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
+        Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1; // kicker second part
     };
 
@@ -1648,7 +1648,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
         Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Manned[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Manned[MISC_HW_KICKER_B].Safety, Data->P[plr].Manned[MISC_HW_KICKER_B].MaxRD);
+        Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
         Data->P[plr].Mission[0].Hard[Mission_Kicker] = 1;
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1;
     };
