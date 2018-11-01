@@ -1941,14 +1941,14 @@ void IInfo(char plr, char loc, char w)
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfu = Data->P[0].Misc[MANNED_HW_ONE_MAN_MODULE].Safety;
+            if (Data->P[0].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
+                sfu = Data->P[0].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
             }
 
             sfs = Data->P[0].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfs = Data->P[1].Misc[MANNED_HW_ONE_MAN_MODULE].Safety;
+            if (Data->P[1].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
+                sfs = Data->P[1].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
             }
 
             sfu = Data->P[1].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
@@ -1971,14 +1971,14 @@ void IInfo(char plr, char loc, char w)
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfu = Data->P[0].Misc[MANNED_HW_TWO_MAN_MODULE].Safety;
+            if (Data->P[0].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
+                sfu = Data->P[0].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
             }
 
             sfs = Data->P[0].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfs = Data->P[1].Misc[MANNED_HW_TWO_MAN_MODULE].Safety;
+            if (Data->P[1].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
+                sfs = Data->P[1].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
             }
 
             sfu = Data->P[1].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
