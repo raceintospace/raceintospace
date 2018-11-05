@@ -163,14 +163,14 @@ void AIMaster(char plr)
             if ((Data->Year == 59 && Data->Season == 1) || Data->Year >= 60) {
                 switch (Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY]) {
                 case 0:
-                    if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety > Data->P[plr].Manned[MISC_HW_EVA_SUITS].MaxRD - 20) {
+                    if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD - 20) {
                         AIFuture(plr, Mission_Earth_Orbital_EVA, 0, (char *)&prg);
                     } else {
                         AIFuture(plr, Mission_SubOrbital, 0, (char *)&prg);
                     }
 
                     Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety += 10;
-                    Data->P[plr].Manned[MISC_HW_EVA_SUITS].Safety += 10;
+                    Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety += 10;
                     ++Data->P[plr].AIStrategy[AI_BEGINNING_STRATEGY];
                     break;
 

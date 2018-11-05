@@ -665,7 +665,7 @@ PInfo(char plr, char loc)
     case MISC_HARDWARE:
         sfu = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Num >= 0) {
+        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
         }
 
@@ -682,7 +682,7 @@ PInfo(char plr, char loc)
 
         sfu = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num >= 0) {
+        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
         }
 
@@ -716,7 +716,7 @@ PInfo(char plr, char loc)
 
         sfu = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_KICKER_A].Num >= 0) {
+        if (Data->P[plr].Misc[MISC_HW_KICKER_A].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_A];
         }
 
@@ -733,7 +733,7 @@ PInfo(char plr, char loc)
 
         sfu = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_KICKER_B].Num >= 0) {
+        if (Data->P[plr].Misc[MISC_HW_KICKER_B].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         }
 
@@ -750,7 +750,7 @@ PInfo(char plr, char loc)
 
         sfu = -1;
 
-        if (Data->P[1].Manned[MISC_HW_KICKER_C].Num >= 0) {
+        if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C];
         }
 
@@ -823,26 +823,26 @@ HInfo(char plr, char loc, char w)
             break;
 
         case 3:
-            if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Steps >= Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps) {
-                tot = Data->P[plr].Manned[MISC_HW_EVA_SUITS].Steps;
+            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps >= Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps) {
+                tot = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
             } else {
-                tot = Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps;
+                tot = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
             }
 
             if (tot <= Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps) {
                 tot = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps;
             }
 
-            if (tot <= Data->P[plr].Manned[MISC_HW_KICKER_A].Steps) {
-                tot = Data->P[plr].Manned[MISC_HW_KICKER_A].Steps;
+            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_A].Steps) {
+                tot = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
             }
 
-            if (tot <= Data->P[plr].Manned[MISC_HW_KICKER_B].Steps) {
-                tot = Data->P[plr].Manned[MISC_HW_KICKER_B].Steps;
+            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_B].Steps) {
+                tot = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
             }
 
-            if (tot <= Data->P[plr].Manned[MISC_HW_KICKER_C].Steps && plr == 1) {
-                tot = Data->P[plr].Manned[MISC_HW_KICKER_C].Steps;
+            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_C].Steps && plr == 1) {
+                tot = Data->P[plr].Misc[MISC_HW_KICKER_C].Steps;
             }
 
             break;
@@ -1271,13 +1271,13 @@ HInfo(char plr, char loc, char w)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_EVA_SUITS].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MISC_HW_EVA_SUITS].Steps;
+        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
+            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MISC_HW_EVA_SUITS].Steps -
-                     Data->P[plr].Manned[MISC_HW_EVA_SUITS].Failures;
-                un = Data->P[plr].Manned[MISC_HW_EVA_SUITS].Steps;
+                ov = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps -
+                     Data->P[plr].Misc[MISC_HW_EVA_SUITS].Failures;
+                un = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1301,13 +1301,13 @@ HInfo(char plr, char loc, char w)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps;
+        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
+            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps -
-                     Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures;
-                un = Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps;
+                ov = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps -
+                     Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures;
+                un = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1361,13 +1361,13 @@ HInfo(char plr, char loc, char w)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_KICKER_A].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MISC_HW_KICKER_A].Steps;
+        if (Data->P[plr].Misc[MISC_HW_KICKER_A].Num >= 0) {
+            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MISC_HW_KICKER_A].Steps -
-                     Data->P[plr].Manned[MISC_HW_KICKER_A].Failures;
-                un = Data->P[plr].Manned[MISC_HW_KICKER_A].Steps;
+                ov = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps -
+                     Data->P[plr].Misc[MISC_HW_KICKER_A].Failures;
+                un = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1391,13 +1391,13 @@ HInfo(char plr, char loc, char w)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Manned[MISC_HW_KICKER_B].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MISC_HW_KICKER_B].Steps;
+        if (Data->P[plr].Misc[MISC_HW_KICKER_B].Num >= 0) {
+            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MISC_HW_KICKER_B].Steps -
-                     Data->P[plr].Manned[MISC_HW_KICKER_B].Failures;
-                un = Data->P[plr].Manned[MISC_HW_KICKER_B].Steps;
+                ov = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps -
+                     Data->P[plr].Misc[MISC_HW_KICKER_B].Failures;
+                un = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1421,13 +1421,13 @@ HInfo(char plr, char loc, char w)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[1].Manned[MISC_HW_KICKER_C].Num >= 0) {
-            sfu = ScaleAmt * Data->P[1].Manned[MISC_HW_KICKER_C].Steps;
+        if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
+            sfu = ScaleAmt * Data->P[1].Misc[MISC_HW_KICKER_C].Steps;
 
             if (sfu > 0) {
-                ov = Data->P[1].Manned[MISC_HW_KICKER_C].Steps -
-                     Data->P[1].Manned[MISC_HW_KICKER_C].Failures;
-                un = Data->P[1].Manned[MISC_HW_KICKER_C].Steps;
+                ov = Data->P[1].Misc[MISC_HW_KICKER_C].Steps -
+                     Data->P[1].Misc[MISC_HW_KICKER_C].Failures;
+                un = Data->P[1].Misc[MISC_HW_KICKER_C].Steps;
                 sfs = sfu * (ov / un);
             }
         }

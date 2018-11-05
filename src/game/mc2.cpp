@@ -728,7 +728,7 @@ void MissionSetup(char plr, char mis)
                             Data->P[plr].Probe[t].Num -= 1;
                         }
                     } else {
-                        MH[j][i] = &Data->P[plr].Manned[MISC_HW_DOCKING_MODULE];
+                        MH[j][i] = &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
 
                         if (DMFake == 0) {
                             if (MH[j][i]->Num > 0) {
@@ -770,11 +770,11 @@ void MissionSetup(char plr, char mis)
                     break;
 
                 case Mission_EVA:  // EVA
-                    MH[j][i] = &Data->P[plr].Manned[MISC_HW_EVA_SUITS];
+                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
                     break;
 
                 case Mission_PhotoRecon:  // Photo Recon
-                    MH[j][i] = &Data->P[plr].Manned[MISC_HW_PHOTO_RECON];
+                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
                     break;
                 }
 

@@ -61,7 +61,7 @@ void Moon(char plr)
     long size;
     helpText = "i029";
     keyHelpText = "k029";
-    val = Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety;
+    val = Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety;
     FadeOut(2, 0, 0, 0);
 
 
@@ -215,7 +215,7 @@ void SatDraw(char plr)
         }
     }
 
-    loc[0] = (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 : 1 + plr * 3;
+    loc[0] = (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 : 1 + plr * 3;
     loc[1] = (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num < 0) ? 0 : 2 + plr * 3;
     loc[2] = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num < 0) ? 0 : 0;
     loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 : 3 + plr * 3;
@@ -337,20 +337,20 @@ void SatText(char plr)
 
                 draw_string(5 + i * 80, 94, "DOCKING");
 
-                if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                    draw_number(5 + i * 80, 110, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Safety);
+                if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
+                    draw_number(5 + i * 80, 110, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety);
                 } else {
                     draw_number(5 + i * 80, 110, 0);
                 }
 
                 draw_string(0, 0, "%");
 
-                draw_number(5 + i * 80, 127, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
+                draw_number(5 + i * 80, 127, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps);
 
-                draw_number(5 + i * 80, 144, Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures);
+                draw_number(5 + i * 80, 144, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures);
 
-                if (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps > 0) {
-                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Manned[MISC_HW_DOCKING_MODULE].Steps);
+                if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps > 0) {
+                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps);
                 } else {
                     draw_number(5 + i * 80, 161, 0);
                 }
@@ -479,7 +479,7 @@ void PlanText(char plr, char plan)
         draw_string(4 + 160, 80, "LUNAR FLYBY");
         display::graphics.setForegroundColor(11);
         draw_string(4 + 160, 87, "RECON: ");
-        draw_number(0, 0, Data->P[plr].Manned[MISC_HW_PHOTO_RECON].Safety);
+        draw_number(0, 0, Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety);
         draw_string(0, 0, "%");
         Find = 7;
 

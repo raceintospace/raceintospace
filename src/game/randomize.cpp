@@ -201,36 +201,36 @@ void RandomizeEq(void)
         Data->P[i].Rocket[ROCKET_HW_BOOSTERS].RDCost = random_min(4);
 
         //A-Kicker
-        Data->P[i].Manned[MISC_HW_KICKER_A].UnitWeight   = random_number(200, 400);
-        Data->P[i].Manned[MISC_HW_KICKER_A].MaxSafety    = random_number(86, 98);
-        Data->P[i].Manned[MISC_HW_KICKER_A].MaxRD    = Data->P[i].Manned[MISC_HW_KICKER_A].MaxSafety - random_number(2, 10);
-        Data->P[i].Manned[MISC_HW_KICKER_A].InitCost     = random_number(9, 15);
-        Data->P[i].Manned[MISC_HW_KICKER_A].UnitCost = random_min(Data->P[i].Manned[MISC_HW_KICKER_A].InitCost / 2);
-        Data->P[i].Manned[MISC_HW_KICKER_A].RDCost   = random_min(2);
+        Data->P[i].Misc[MISC_HW_KICKER_A].UnitWeight   = random_number(200, 400);
+        Data->P[i].Misc[MISC_HW_KICKER_A].MaxSafety    = random_number(86, 98);
+        Data->P[i].Misc[MISC_HW_KICKER_A].MaxRD    = Data->P[i].Misc[MISC_HW_KICKER_A].MaxSafety - random_number(2, 10);
+        Data->P[i].Misc[MISC_HW_KICKER_A].InitCost     = random_number(9, 15);
+        Data->P[i].Misc[MISC_HW_KICKER_A].UnitCost = random_min(Data->P[i].Misc[MISC_HW_KICKER_A].InitCost / 2);
+        Data->P[i].Misc[MISC_HW_KICKER_A].RDCost   = random_min(2);
 
         //B-Kicker (Unit Weight is 2 times A-Kicker weight)
-        Data->P[i].Manned[MISC_HW_KICKER_B].UnitWeight   = Data->P[i].Manned[MISC_HW_KICKER_A].UnitWeight * 2;
-        Data->P[i].Manned[MISC_HW_KICKER_B].MaxSafety    = random_number(86, 98);
-        Data->P[i].Manned[MISC_HW_KICKER_B].MaxRD    = Data->P[i].Manned[MISC_HW_KICKER_B].MaxSafety - random_number(2, 10);
-        Data->P[i].Manned[MISC_HW_KICKER_B].InitCost     = random_number(15, 21);
-        Data->P[i].Manned[MISC_HW_KICKER_B].UnitCost = random_number(3, Data->P[i].Manned[MISC_HW_KICKER_B].InitCost / 2);
-        Data->P[i].Manned[MISC_HW_KICKER_B].RDCost   = 1 + random_min(2);
+        Data->P[i].Misc[MISC_HW_KICKER_B].UnitWeight   = Data->P[i].Misc[MISC_HW_KICKER_A].UnitWeight * 2;
+        Data->P[i].Misc[MISC_HW_KICKER_B].MaxSafety    = random_number(86, 98);
+        Data->P[i].Misc[MISC_HW_KICKER_B].MaxRD    = Data->P[i].Misc[MISC_HW_KICKER_B].MaxSafety - random_number(2, 10);
+        Data->P[i].Misc[MISC_HW_KICKER_B].InitCost     = random_number(15, 21);
+        Data->P[i].Misc[MISC_HW_KICKER_B].UnitCost = random_number(3, Data->P[i].Misc[MISC_HW_KICKER_B].InitCost / 2);
+        Data->P[i].Misc[MISC_HW_KICKER_B].RDCost   = 1 + random_min(2);
 
         //C-Kicker
-        Data->P[i].Manned[MISC_HW_KICKER_C].UnitWeight   = random_number(2000, 3000);
-        Data->P[i].Manned[MISC_HW_KICKER_C].MaxSafety    = random_number(86, 98);
-        Data->P[i].Manned[MISC_HW_KICKER_C].MaxRD    = Data->P[i].Manned[MISC_HW_KICKER_C].MaxSafety - random_number(2, 10);
-        Data->P[i].Manned[MISC_HW_KICKER_C].InitCost     = random_number(35, 45);
-        Data->P[i].Manned[MISC_HW_KICKER_C].UnitCost = random_number(16, Data->P[i].Manned[MISC_HW_KICKER_C].InitCost / 2 + 4);
-        Data->P[i].Manned[MISC_HW_KICKER_C].RDCost   = random_number(3, 5);
+        Data->P[i].Misc[MISC_HW_KICKER_C].UnitWeight   = random_number(2000, 3000);
+        Data->P[i].Misc[MISC_HW_KICKER_C].MaxSafety    = random_number(86, 98);
+        Data->P[i].Misc[MISC_HW_KICKER_C].MaxRD    = Data->P[i].Misc[MISC_HW_KICKER_C].MaxSafety - random_number(2, 10);
+        Data->P[i].Misc[MISC_HW_KICKER_C].InitCost     = random_number(35, 45);
+        Data->P[i].Misc[MISC_HW_KICKER_C].UnitCost = random_number(16, Data->P[i].Misc[MISC_HW_KICKER_C].InitCost / 2 + 4);
+        Data->P[i].Misc[MISC_HW_KICKER_C].RDCost   = random_number(3, 5);
 
         //EVA suits (Unit weight, unit cost and RD cost are not randomized)
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].UnitWeight   = 0;
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].MaxSafety    = random_number(86, 98);
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].MaxRD    = Data->P[i].Manned[MISC_HW_EVA_SUITS].MaxSafety - random_number(2, 10);
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].InitCost     = random_number(15, 21);
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].UnitCost = 0;
-        Data->P[i].Manned[MISC_HW_EVA_SUITS].RDCost   = 1;
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].UnitWeight   = 0;
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].MaxSafety    = random_number(86, 98);
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].MaxRD    = Data->P[i].Misc[MISC_HW_EVA_SUITS].MaxSafety - random_number(2, 10);
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].InitCost     = random_number(15, 21);
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].UnitCost = 0;
+        Data->P[i].Misc[MISC_HW_EVA_SUITS].RDCost   = 1;
 
     }
 }
