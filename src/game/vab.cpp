@@ -48,6 +48,16 @@
 #include "pace.h"
 #include "endianness.h"
 
+/* VAS holds all possible payload configurations for the given mission.
+ * Each payload consists of four components:
+ *   0: Primary (a capsule)
+ *   1: LM
+ *   2: Kicker
+ *   3: Payload (Probe / DM)
+ * Any of which may be empty. There are only ever a maximum of seven
+ * potential payload combinations available at assembly time, each of
+ * which is stored in VAS.
+ */
 struct VInfo VAS[7][4];
 int VASqty;
 int TotalCost;
@@ -56,6 +66,21 @@ char hasDelay;//Used  to display the cost of autopurchase
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+/* MI contains the location of a vehicle equipment image and it's
+ * positioning when drawn inside a vehicle casing.
+ *
+ * The images of each component used in vehicle assembly are stored as
+ * part of a single VAB superimage containing all the component images.
+ * The two coordinates (x1, y1) and (x2, y2) represent the top-left
+ * corner and bottom-right corner, respectively, of the component's
+ * space in that image. The yOffset values describes how much space a
+ * capsule image should be given from the top of the casing image in
+ * order to properly align it within the launch vehicle casing.
+ * The Mercury capsule is a special case, in that the Mercury capsule
+ * has a tower meant to extend above the vehicle casing, and thus the
+ * offset should be used to move the casing (rather than capsule)
+ * down that much.
+ */
 struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
 } MI[2 * 28];
@@ -555,89 +580,122 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 }
 
 
-void DispVA(char plr, char f)
+/* Draw the launch vehicle illustration in the Vehicle Assemble mock-up
+ * screen. Depending on the payload cargo, an appropriate casing is
+ * chosen and the payload components are rendered along the length of
+ * the casing, as per a cut-out illustration, in order of
+ * Primary (capsule), LM, Kicker, and Payload.
+ * For larger casings, the remaining space is occupied by a filler image
+ * depicting the rocket's fuel supply.
+ *
+ * This function makes extensive use of two global variables, VAS and
+ * MI.
+ *
+ * \param plr      The assembling player (0 for USA, 1 for USSR).
+ * \param payload  The VAS index of the given payload hardware set.
+ */
+void DispVA(char plr, char payload)
 {
     int i, TotY, IncY;
-    int w, h, x1, y1, x2, y2, w2, h2, cx, off = 0;
-    char wh;
+    int casingWidth, casingHeight, x1, y1, x2, y2, w2, h2, cx, off = 0;
+    uint8_t casing, images, img;
 
-    cx = 0; /**< number of pictures */
+    images = 0; /**< number of pictures */
 
-    for (i = 0; i < 4; i++)
-        if (VAS[f][i].img > 0) {
-            cx++;
+    for (i = 0; i < 4; i++) {
+        if (VAS[payload][i].img > 0) {
+            images++;
         }
-
-    /* wh: 7 - casing small, 8 - casing large */
-    wh = ((cx == 1 && VAS[f][3].img > 0) || cx == 0) ? 7 : 8;
-
-    if (VAS[f][0].img == 13 && plr == 0) {
-        wh = 7;
     }
 
-    /* TotY: sum of height of all images (?) */
+    /* casing: 7 - casing small, 8 - casing large */
+    casing = ((images == 1 && VAS[payload][3].img > 0) || images == 0) ?
+             7 : 8;
+
+    // The Mercury capsule has a tower that sticks through the top of
+    // the casing. On the large casing image, there isn't space to
+    // display this, so the smaller casing image is forced.
+    if (VAS[payload][0].img == 13 && plr == 0) { // Mercury capsule
+        casing = 7;
+    }
+
+    /* TotY: sum of height of all payload images */
     TotY = 0;
 
-    for (i = 0; i < 4; i++)
-        if (VAS[f][i].img > 1)
-            TotY +=
-                MI[plr * 28 + VAS[f][i].img].y2 - MI[plr * 28 +
-                        VAS[f][i].img].y1 + 1;
+    for (i = 0; i < 4; i++) {
+        if (VAS[payload][i].img > 1) {
+            TotY += MI[plr * 28 + VAS[payload][i].img].y2 -
+                    MI[plr * 28 + VAS[payload][i].img].y1 + 1;
+        }
+    }
 
     /* Load proper (casing) background into buffer */
-    x1 = MI[plr * 28 + wh].x1;
-    y1 = MI[plr * 28 + wh].y1;
-    x2 = MI[plr * 28 + wh].x2;
-    y2 = MI[plr * 28 + wh].y2;
-    w = x2 - x1 + 1;
-    h = y2 - y1 + 1;
+    x1 = MI[plr * 28 + casing].x1;
+    y1 = MI[plr * 28 + casing].y1;
+    x2 = MI[plr * 28 + casing].x2;
+    y2 = MI[plr * 28 + casing].y2;
+    casingWidth = x2 - x1 + 1;
+    casingHeight = y2 - y1 + 1;
 
-    if (plr == 0 && VAS[f][0].img == 13) {
-        h += 13;
+    if (plr == 0 && VAS[payload][0].img == 13) {
+        casingHeight += 13;
         off = 13;
-    };
+    }
 
-    display::LegacySurface local(w, h);
+    display::LegacySurface local(casingWidth, casingHeight);
 
     local.clear(0);
 
     local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
 
-    display::LegacySurface local2(w, h);
+    /* Copy area background into buffer underneath casing */
+    display::LegacySurface local2(casingWidth, casingHeight);
 
-    /* TODO: magic numbers */
-    fill_rectangle(178, 29, 243, 179, 3);
+    fill_rectangle(178, 29, 243, 179, 3); /* TODO: magic numbers */
 
-    local2.copyFrom(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2, 210 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(),
+                    210 - casingWidth / 2,
+                    103 - casingHeight / 2,
+                    210 - casingWidth / 2 + casingWidth - 1,
+                    103 - casingHeight / 2 + casingHeight - 1);
 
     local.maskCopy(&local2, 0, display::LegacySurface::DestinationEqual);
 
     local2.clear(0);
 
-    IncY = (h - TotY) / 2;
+    /* IncY is the y-axis increment for drawing each of the payload
+     * component images. If there is no Primary (capsule) image, the
+     * payload components are centered. If there is a capsule, they
+     * start at the top, plus the component's offset.
+     *
+     * Mercury capsules, as usual, start at the very top with extra
+     * space alloted for that big tower.
+     */
+    IncY = (casingHeight - TotY) / 2;
 
-    if (VAS[f][0].img > 0) {
-        if (VAS[f][0].img == 13 && plr == 0) {
+    if (VAS[payload][0].img > 0) {
+        if (VAS[payload][0].img == 13 && plr == 0) {
             IncY = 0;
         } else {
-            IncY = MI[plr * 28 + VAS[f][0].img].yOffset;
+            IncY = MI[plr * 28 + VAS[payload][0].img].yOffset;
         }
     }
 
+    /* Draw each of the component images into the local2 buffer */
     for (i = 0; i < 4; i++) {
-        if (VAS[f][i].img > 0) {
-            wh = VAS[f][i].img;
-            x1 = MI[plr * 28 + wh].x1;
-            y1 = MI[plr * 28 + wh].y1;
-            x2 = MI[plr * 28 + wh].x2;
-            y2 = MI[plr * 28 + wh].y2;
+        if (VAS[payload][i].img > 0) {
+            img = VAS[payload][i].img;
+            x1 = MI[plr * 28 + img].x1;
+            y1 = MI[plr * 28 + img].y1;
+            x2 = MI[plr * 28 + img].x2;
+            y2 = MI[plr * 28 + img].y2;
             w2 = x2 - x1 + 1;
             h2 = y2 - y1 + 1;
-            cx = w / 2 - w2 / 2 - 1;
+            cx = casingWidth / 2 - w2 / 2 - 1; // Center on x-axis
 
-            if (cx + w2 > w || IncY + h2 > h) {
+            if (cx + w2 > casingWidth || IncY + h2 > casingHeight) {
                 CWARNING3(graphic, "can't fit %s image into spaceship casing!",
-                          VAS[f][i].name);
+                          VAS[payload][i].name);
                 continue;
             } else {
                 local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
@@ -649,55 +707,44 @@ void DispVA(char plr, char f)
 
     local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
-    cx = 0;
-
-    for (i = 0; i < 4; i++)
-        if (VAS[f][i].img > 0) {
-            cx++;
-        }
-
-    wh = ((cx == 1 && VAS[f][3].img > 0) || cx == 0) ? 7 : 8;
-
-    if (VAS[f][0].img == 13 && plr == 0) {
-        wh = 7;
-    }
-
-    if (wh == 8) {
+    // Overlay the shroud to give the appearance of a cutaway.
+    // The shroud image is overlaid on the bottom of the casing image.
+    // If using a large casing, fill the unused space at the bottom
+    // with fiery rocket power!
+    if (casing == 8) {
         x1 = MI[plr * 28 + 25].x1;
         y1 = MI[plr * 28 + 25].y1;
         x2 = MI[plr * 28 + 25].x2;
-        y2 = y1 + TotY - IncY - 1;
+        y2 = MIN(y1 + (casingHeight - IncY), MI[plr * 28 + 25].y2);
         w2 = x2 - x1 + 1;
-        cx = w / 2 - w2 / 2 - 1;
+        cx = casingWidth / 2 - w2 / 2 - 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
         x1 = MI[plr * 28 + 27].x1;
-
         y1 = MI[plr * 28 + 27].y1;
-
         x2 = MI[plr * 28 + 27].x2;
-
         y2 = MI[plr * 28 + 27].y2;
-
         h2 = y2 - y1 + 1;
 
-        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
+        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     } else {
+        // There is no small filler defined, so skip to the shroud.
         x1 = MI[plr * 28 + 26].x1;
         y1 = MI[plr * 28 + 26].y1;
         x2 = MI[plr * 28 + 26].x2;
         y2 = MI[plr * 28 + 26].y2;
         h2 = y2 - y1 + 1;
-        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, h - h2);
+        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     }
 
-    local.copyTo(display::graphics.legacyScreen(), 210 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.legacyScreen(),
+                 210 - casingWidth / 2, 103 - casingHeight / 2);
 }
 
 void DispRck(char plr, char wh)
