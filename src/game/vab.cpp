@@ -715,7 +715,7 @@ void DispVA(char plr, char payload)
         x1 = MI[plr * 28 + 25].x1;
         y1 = MI[plr * 28 + 25].y1;
         x2 = MI[plr * 28 + 25].x2;
-        y2 = MIN(y1 + (casingHeight - IncY), MI[plr * 28 + 25].y2);
+        y2 = MIN(y1 + (casingHeight - IncY - 1), MI[plr * 28 + 25].y2);
         w2 = x2 - x1 + 1;
         cx = casingWidth / 2 - w2 / 2 - 1;
         local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
