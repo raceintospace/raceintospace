@@ -57,8 +57,30 @@ Any other char is ignored, but it's easier to read for a human that way */
 
 LOG_DEFAULT_CATEGORY(future)
 
-char status[5], lck[5], F1, F2, F3, F4, FMen, F5, Pad;
-char JointFlag, MarFlag, JupFlag, SatFlag, MisType;
+/* The lock, status, and F1-F5 variables are all linked, representing
+ * the condition of mission parameter settings. They represent:
+ *   0: Mission Duration
+ *   1: Docking status
+ *   2: EVA status
+ *   3: Lunar Module status
+ *   4: Joint Mission status
+ * F5 is an exception to the normal ordering, being tied to the mission
+ * duration.
+ * status[] tells the state of the mission parameter button.
+ * lock[] tells the state of the lockout buttons.
+ * F1-F4 are
+ *   0: if the lockout button is not set
+ *   1: if locked and the mission parameter is required
+ *   2: if locked and the mission parameter is required to be absent.
+ * F5 is
+ *  -1: if locked and unmanned
+ *   0: if the lockout button is not set
+ * 1-6: if locked and the duration is set at 1-6.
+ */
+char MisType;
+char status[5], F1, F2, F3, F4, F5, Pad;
+bool lock[5]; // Record if the mission parameter settings are locked.
+bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
 
 struct StepInfo {
@@ -80,6 +102,10 @@ extern int SEG;
 
 
 void Load_FUT_BUT(void);
+bool MarsInRange(unsigned int year, unsigned int season);
+bool JupiterInRange(unsigned int year, unsigned int season);
+bool SaturnInRange(unsigned int year, unsigned int season);
+bool JointMissionOK(char plr, char pad);
 void DrawFuture(char plr, int mis, char pad);
 void ClearDisplay(void);
 int GetMinus(char plr);
@@ -107,20 +133,63 @@ void Load_FUT_BUT(void)
     return;
 }
 
+/* Is Mars at the right point in its orbit where a rocket launched at
+ * the given time will be able to intercept it?
+ */
+bool MarsInRange(unsigned int year, unsigned int season)
+{
+    return ((year == 60 && season == 0) || (year == 62 && season == 0) ||
+            (year == 64 && season == 0) || (year == 66 && season == 0) ||
+            (year == 69 && season == 1) || (year == 71 && season == 1) ||
+            (year == 73 && season == 1));
+}
+
+/* Is Jupiter at the right point in its orbit where a rocket launched
+ * at the given time will be able to intercept it?
+ */
+bool JupiterInRange(unsigned int year, unsigned int season)
+{
+    return (year == 60 || year == 64 || year == 68 || year == 72 ||
+            year == 73 || year == 77);
+}
+
+/* Is Saturn at the right point in its orbit where a rocket launched
+ * at the given time will be able to intercept it?
+ */
+bool SaturnInRange(unsigned int year, unsigned int season)
+{
+    return (year == 61 || year == 66 || year == 72);
+}
+
+/* Is there room among the launch pads to schedule a joint mission,
+ * with the given pad being the first part?
+ *
+ * \param plr  The player scheduling the launch
+ * \param pad  0, 1, or 2 for the primary, secondary, or tertiary pad.
+ * \return     True if a joint mission may be scheduled on the pad.
+ */
+bool JointMissionOK(char plr, char pad)
+{
+    return (pad >= 0 && pad < MAX_LAUNCHPADS - 2) &&
+           (Data->P[plr].LaunchFacility[pad + 1] == 1) &&
+           ((Data->P[plr].Future[pad + 1].MissionCode == Mission_None) ||
+            (Data->P[plr].Future[pad + 1].part == 1));
+}
+
+/* Draws the entire Future Missions display, including the mission-
+ * specific information. Used to initialize the mission selector
+ * interface.
+ *
+ * This relies on the global buffer vh, which must have been created
+ * prior. The future missions button art is loaded into vh by this
+ * function.
+ *
+ * \param plr  The player scheduling the mission's design scheme.
+ * \param mis  The mission type.
+ * \param pad  0, 1, or 2 depending on which pad is being used.
+ */
 void DrawFuture(char plr, int mis, char pad)
 {
-    int i;
-    int j;
-    keyHelpText = "k011";
-    helpText = "i011";
-
-    JointFlag = 0; // initialize joint flag
-    F1 = F2 = F3 = F4 = FMen = F5 = 0;
-
-    for (i = 0; i < 5; i++) {
-        lck[i] = status[i] = 0;
-    }
-
     FadeOut(2, 10, 0, 0);
     Load_FUT_BUT();
 
@@ -131,50 +200,16 @@ void DrawFuture(char plr, int mis, char pad)
 
     gr_sync();
 
-    if (pad == 2) {
-        JointFlag = 0;    // third pad automatic no joint mission
-    } else if (Data->P[plr].LaunchFacility[pad + 1] == 1) {
-        if (Data->P[plr].Future[pad + 1].MissionCode == Mission_None) {
-            JointFlag = 1;    // if no mission then set joint flag
-        } else if (Data->P[plr].Future[pad + 1].part == 1) { // check if the part of that second mission is set
-            JointFlag = 1;
-            Data->P[plr].Future[pad + 1].MissionCode = Mission_None; // clear mission
-            Data->P[plr].Future[pad + 1].part = 0;
-        };
-    };
-
-    if (pad == 1 || pad == 0) {
-        if (Data->P[plr].LaunchFacility[pad + 1] == 1) {
-            JointFlag = 1;
-        }
+    if (MarsFlag == true) {
+        display::graphics.screen()->draw(planets, 1, 1, 12, 11, 198, 153);
     }
 
-    i = Data->Year;
-    j = Data->Season;
-    TRACE3("--- Setting i=Year (%d), j=Season (%d)", i, j);
-
-    if ((i == 60 && j == 0) || (i == 62 && j == 0) || (i == 64 && j == 0) ||
-        (i == 66 && j == 0) || (i == 69 && j == 1) || (i == 71 && j == 1) ||
-        (i == 73 && j == 1)) {
-
-        display::graphics.screen()->draw(planets, 1, 1, 12, 11, 198, 153); /* Mars */
-        MarFlag = 1;
-    } else {
-        MarFlag = 0;
+    if (JupiterFlag == true) {
+        display::graphics.screen()->draw(planets, 14, 1, 51, 54, 214, 130);
     }
 
-    if ((i == 60 || i == 64 || i == 68 || i == 72 || i == 73 || i == 77)) {
-        display::graphics.screen()->draw(planets, 14, 1, 51, 54, 214, 130); /* Jup */
-        JupFlag = 1;
-    } else {
-        JupFlag = 0;
-    }
-
-    if (i == 61 || i == 66 || i == 72) {
-        display::graphics.screen()->draw(planets, 66, 1, 49, 53, 266, 135); /* Sat */
-        SatFlag = 1;
-    } else {
-        SatFlag = 0;
+    if (SaturnFlag == true) {
+        display::graphics.screen()->draw(planets, 66, 1, 49, 53, 266, 135);
     }
 
     fill_rectangle(1, 1, 318, 21, 3);
@@ -189,22 +224,29 @@ void DrawFuture(char plr, int mis, char pad)
     ShBox(5, 24, 201, 47); //name box
     ShBox(5, 74, 41, 82); // RESET
     ShBox(5, 49, 53, 72); //dur/man
-    ShBox(43, 74, 53, 82); // lock
-    ShBox(80, 74, 90, 82);
-    ShBox(117, 74, 127, 82);
-    ShBox(154, 74, 164, 82);
-    ShBox(191, 74, 201, 82);
+    ShBox(43, 74, 53, 82);   // Duration lock
+    ShBox(80, 74, 90, 82);   // Docking lock
+    ShBox(117, 74, 127, 82); // EVA lock
+    ShBox(154, 74, 164, 82); // LM lock
+    ShBox(191, 74, 201, 82); // Joint mission lock
     ShBox(5, 84, 16, 130); //arrows up
     ShBox(5, 132, 16, 146); //middle box
     ShBox(5, 148, 16, 194); //    down
     ShBox(203, 24, 238, 31); // new right boxes
+
+    // Mission penalty numerical display
     fill_rectangle(206, 36, 235, 44, 7);
     ShBox(203, 33, 238, 47);
     InBox(205, 35, 236, 45);
+
+    // Mission scroll arrows
     draw_up_arrow(8, 95);
     draw_down_arrow(8, 157);
 
+    // Display mission steps toggle
     vh->copyTo(display::graphics.legacyScreen(), 140, 5, 5, 132, 15, 146);
+
+    // Draw the mission specification toggle buttons
     Toggle(5, 1);
     draw_Pie(0);
     OutBox(5, 49, 53, 72);
@@ -215,24 +257,22 @@ void DrawFuture(char plr, int mis, char pad)
     Toggle(3, 1);
     TogBox(129, 49, 0);
 
-    FMen = F1 = F2 = F3 = F4 = F5 = 0;
-
-    for (i = 1; i < 4; i++) {
+    for (int i = 1; i < 4; i++) {
         if (status[i] != 0) {
             Toggle(i, 1);
         }
     };
 
-    if (JointFlag == 0) {
+    if (JointFlag == false) {
         F4 = 2;
-        lck[4] = 1;
+        lock[4] = true;
         Toggle(4, 1);
         InBox(191, 74, 201, 82);
         PlaceRX(5);
         TogBox(166, 49, 1);
     } else {
         F4 = 0;
-        lck[4] = 0;
+        lock[4] = false;
         status[4] = 0;
         Toggle(4, 1);
         OutBox(191, 74, 201, 82);
@@ -266,7 +306,6 @@ void DrawFuture(char plr, int mis, char pad)
     display::graphics.setForegroundColor(1);
 
     draw_string(9, 80, "RESET");
-
     draw_string(258, 13, "CONTINUE");
 
     display::graphics.setForegroundColor(11);
@@ -354,7 +393,7 @@ void DrawLocks(void)
     int i;
 
     for (i = 0; i < 5; i++)
-        if (lck[i] == 1) {
+        if (lock[i] == true) {
             PlaceRX(i + 1);
         } else {
             ClearRX(i + 1);
@@ -364,7 +403,12 @@ void DrawLocks(void)
 }
 
 
-/** set the toggles???
+/* Draws the illustration on a mission parameter button. Each button
+ * has two illustrations, one for the selected state and another for
+ * the unselected state.
+ *
+ * The illustrations are stored in a buffer via the global pointer vh,
+ * which reads the information in Load_FUT_BUT().
  *
  * \param wh the button
  * \param i in or out
@@ -427,6 +471,15 @@ void Toggle(int wh, int i)
     return;
 }
 
+/* Draws a notched box outline for a mission parameter button.
+ *
+ * This is a custom form of the standard InBox/OutBox functions, using
+ * the same color choices.
+ *
+ * \param x   The x coordinate of the upper-left corner.
+ * \param y   The y coordinate of the upper-left corner.
+ * \param st  1 if the button is depressed, 0 otherwise
+ */
 void TogBox(int x, int y, int st)
 {
     TRACE4("->TogBox(x %d, y %d, st %d)", x, y, st);
@@ -447,6 +500,10 @@ void TogBox(int x, int y, int st)
     return;
 }
 
+/*
+ * TODO: This seems to pass wrong PlaceRX values. However, it appears
+ * the mistake is being covered up by the subsequent call to DrawLocks.
+ */
 void PianoKey(int X)
 {
     TRACE2("->PianoKey(X %d)", X);
@@ -511,11 +568,10 @@ void PianoKey(int X)
     return;
 }
 
-/** draw a piechart
+/* Draw a piechart with 0-6 pieces, filled in clockwise starting at the
+ * top.
  *
- * The piechart is indicating the number of astronauts on this mission.
- *
- * \param s something of an offset...
+ * \param s  How many slices are filled in on the piechart.
  */
 void draw_Pie(int s)
 {
@@ -531,6 +587,19 @@ void draw_Pie(int s)
     return;
 }
 
+/* Draws a restriction (lock) button in its active (restricted) state.
+ * The restriction button indicates whether the linked mission parameter
+ * setting may be modified.
+ *
+ * The button index is related to the global lock variable, but offset.
+ *   1: Mission Duration
+ *   2: Docking status
+ *   3: EVA status
+ *   4: Lunar Module status
+ *   5: Joint Mission status
+ *
+ * \param s  The button index.
+ */
 void PlaceRX(int s)
 {
     switch (s) {
@@ -561,6 +630,20 @@ void PlaceRX(int s)
     return;
 }
 
+/* Draws a restriction (lock) button in its inactive (unrestricted)
+ * state. The restriction button indicates whether the linked mission
+ * parameter setting may be modified.
+ *
+ * The buttons are related to the global lock variable, but
+ * offset.
+ *   1: Mission Duration
+ *   2: Docking status
+ *   3: EVA status
+ *   4: Lunar Module status
+ *   5: Joint Mission status
+ *
+ * \param s  The button index.
+ */
 void ClearRX(int s)
 {
     switch (s) {
@@ -685,15 +768,15 @@ int UpSearchRout(int num, char plr)
         }
 
         // planet check
-        if (num == 10 && MarFlag == 0) {
+        if (num == 10 && MarsFlag == false) {
             c6 = 0;
         }
 
-        if (num == 12 && JupFlag == 0) {
+        if (num == 12 && JupiterFlag == false) {
             c7 = 0;
         }
 
-        if (num == 13 && SatFlag == 0) {
+        if (num == 13 && SaturnFlag == false) {
             c8 = 0;
         }
 
@@ -702,7 +785,7 @@ int UpSearchRout(int num, char plr)
         }
 
         if (num == orig) {
-            return(0);
+            return 0;
         }
 
         if (found == 0) {
@@ -715,7 +798,7 @@ int UpSearchRout(int num, char plr)
 
     }; /* end while */
 
-    return(num);
+    return num;
 }
 
 int DownSearchRout(int num, char plr)
@@ -812,15 +895,15 @@ int DownSearchRout(int num, char plr)
         }
 
         // planet check
-        if (num == 10 && MarFlag == 0) {
+        if (num == 10 && MarsFlag == false) {
             c6 = 0;
         }
 
-        if (num == 12 && JupFlag == 0) {
+        if (num == 12 && JupiterFlag == false) {
             c7 = 0;
         }
 
-        if (num == 13 && SatFlag == 0) {
+        if (num == 13 && SaturnFlag == false) {
             c8 = 0;
         }
 
@@ -829,7 +912,7 @@ int DownSearchRout(int num, char plr)
         }
 
         if (num == orig) {
-            return(0);
+            return 0;
         }
 
         if (found == 0) {
@@ -842,583 +925,468 @@ int DownSearchRout(int num, char plr)
 
     }; /* end while */
 
-    return(num);
+    return num;
 }
 
-void
-Future(char plr)
+/* The main control loop for the Future Missions feature.
+ */
+void Future(char plr)
 {
     /** \todo the whole Future()-function is 500 >lines and unreadable */
     TRACE1("->Future(plr)");
-    int MisNum = 0, DuraType = 0, MaxDur = 6, i, ii;
+    int MisNum = 0, DuraType = 0, MaxDur = 6;
     int setting = -1, prev_setting = -1;
-    int Ok, NewType;
 
     display::LegacySurface local(166, 9);
     display::LegacySurface local2(177, 197);
     vh = new display::LegacySurface(240, 90);
-begfut:
-    MisNum = FutureCheck(plr, 0);
 
-    if (MisNum == 5) {
-        delete vh;
-        vh = NULL;
-        return;
-    }
-
-    F1 = F2 = F3 = F4 = FMen = F5 = 0;
-
-    // memset(buffer, 0x00, 20000);
-    for (i = 0; i < 5; i++) {
-        lck[i] = status[i] = 0;
-    }
+    unsigned int year = Data->Year;
+    unsigned int season = Data->Season;
+    TRACE3("--- Setting year=Year (%d), season=Season (%d)", year, season);
 
     SetParameters();
-    helpText = "i011";
-    Pad = MisNum;
-    DuraType = FMen = MisType = 0;
-    ClrFut(plr, MisNum);
-    DrawFuture(plr, MisType, MisNum);
-begfut_noredraw:
+    MarsFlag = MarsInRange(year, season);
+    JupiterFlag = JupiterInRange(year, season);
+    SaturnFlag = SaturnInRange(year, season);
 
-//  for (i=0;i<5;i++) ClearRX(i+1);
-    while (1) {
-        GetMouse();
+    while ((MisNum = FutureCheck(plr, 0)) != 5) {
+        F1 = F2 = F3 = F4 = F5 = 0;
 
-        if (mousebuttons == 0) {
-            break;
-        }
-    }
-
-    while (1) {
-        GetMouse();
-
-        prev_setting = setting;
-        setting = -1;
-
-        if (key == '-' && SEG > 1) {
-            SEG--;
+        for (int i = 0; i < 5; i++) {
+            lock[i] = false;
+            status[i] = 0;
         }
 
-        if (key == '+' && SEG < 500) {
-            SEG++;
-        }
+        keyHelpText = "k011";
+        helpText = "i011";
+        Pad = MisNum;
+        DuraType = 0;
+        MisType = 0;
+        ClrFut(plr, MisNum);
 
-        if (key >= 65 && key < Bub_Count + 65) {
-            setting = key - 65;
-        }
+        JointFlag = JointMissionOK(plr, MisNum); // initialize joint flag
 
-        for (ii = 0; ii < Bub_Count; ii++) {
-            if (x >= StepBub[ii].x_cor && x <= StepBub[ii].x_cor + 7
-                && y >= StepBub[ii].y_cor && y <= StepBub[ii].y_cor + 7) {
-                setting = ii;
-            }
-        }
+        DrawFuture(plr, MisType, MisNum);
 
-        if (setting >= 0) {
-            if (prev_setting < 0) {
-                local.copyFrom(display::graphics.legacyScreen(), 18, 186, 183, 194);
-            }
-
-            if (prev_setting != setting) {
-                ShBox(18, 186, 183, 194);
-                display::graphics.setForegroundColor(1);
-                MisStep(21, 192, Mev[setting].loc);
-            }
-        } else if (setting < 0 && prev_setting >= 0) {
-            local.copyTo(display::graphics.legacyScreen(), 18, 186);
-        }
-
-        if (Mis.Dur <= V[MisType].E && ((x >= 244 && y >= 5 && x <= 313
-                                         && y <= 17 && mousebuttons > 0) || key == K_ENTER)) {
-            InBox(244, 5, 313, 17);
-            WaitForMouseUp();
-
-            if (key > 0) {
-                delay(300);
-            }
-
+        while (1) {
             key = 0;
-            OutBox(244, 5, 313, 17);
-            local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
-            NewType = V[MisType].X;
-            Data->P[plr].Future[MisNum].Duration = DuraType;
+            GetMouse();
 
-            Ok = HardCrewAssign(plr, Pad, MisType, NewType);
+            prev_setting = setting;
+            setting = -1;
 
-            local2.copyTo(display::graphics.legacyScreen(), 74, 3);
-
-            if (Ok == 1) {
-                Data->P[plr].Future[MisNum].Duration = DuraType;
-                goto begfut;       // return to loop
-            } else {
-                ClrFut(plr, MisNum);
-                key = 0;
-                goto begfut_noredraw;
+            // SEG determines the number of control points used in creating
+            // the B-splines for drawing the mission flight path.
+            // The more control points, the smoother the path should
+            // appear.
+            if (key == '-' && SEG > 1) {
+                SEG--;
+            } else if (key == '+' && SEG < 500) {
+                SEG++;
+            } else if (key >= 65 && key < Bub_Count + 65) {
+                setting = key - 65;
             }
-        }
 
-        if ((((x >= 5 && y >= 49 && x <= 53 && y <= 72) || (x >= 43
-                && y >= 74 && x <= 53 && y <= 82))
-             && mousebuttons > 0) || (key == '!' || key == '1')) {
-            if ((x >= 43 && y >= 74 && x <= 53 && y <= 82) || key == '!') {
-
-                lck[0] = abs(lck[0] - 1);
-
-                if (lck[0] == 1) {
-                    InBox(43, 74, 53, 82);
-                } else {
-                    OutBox(43, 74, 53, 82);
-                }
-
-                if (lck[0] == 1) {
-                    F5 = (status[0] == 0) ? -1 : status[0];
-                }
-
-                if (lck[0] == 1) {
-                    PlaceRX(1);
-                } else {
-                    ClearRX(1);
-                }
-
-                if (lck[0] == 0) {
-                    F5 = 0;
-                    status[0] = 0;
-                }
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
-                    }
-                }
-            } else if (lck[0] != 1) {
-                InBox(5, 49, 53, 72);
-
-                if (DuraType == MaxDur) {
-                    DuraType = 0;
-                } else {
-                    DuraType++;
-                }
-
-                Data->P[plr].Future[MisNum].Duration = DuraType;
-
-                if (DuraType == 0) {
-                    Toggle(5, 0);
-                } else if (DuraType == 1) {
-                    Toggle(5, 1);
-                }
-
-                if (DuraType != 0) {
-                    draw_Pie(DuraType);
-                }
-
-                status[0] = DuraType;
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
-                    }
-                }
-
-                display::graphics.setForegroundColor(34);
-                OutBox(5, 49, 53, 72);
-            };
-
-            key = 0;
-
-            /* Duration */
-        };
-
-        if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0)
-            || (key == K_ESCAPE)) {
-            InBox(5, 74, 41, 82);
-
-            while (1) {
-                GetMouse();
-
-                if (mousebuttons == 0) {
+            // If the mouse is over one of the Mission Step bubbles,
+            // display the step information.
+            for (int i = 0; i < Bub_Count; i++) {
+                if (x >= StepBub[i].x_cor && x <= StepBub[i].x_cor + 7 &&
+                    y >= StepBub[i].y_cor && y <= StepBub[i].y_cor + 7) {
+                    setting = i;
                     break;
                 }
             }
 
-            MisType = 0;
+            if (setting >= 0) {
+                if (prev_setting < 0) {
+                    local.copyFrom(display::graphics.legacyScreen(), 18, 186, 183, 194);
+                }
 
-            if (DuraType != 0) {
-                Toggle(5, 0);
+                if (prev_setting != setting) {
+                    ShBox(18, 186, 183, 194);
+                    display::graphics.setForegroundColor(1);
+                    MisStep(21, 192, Mev[setting].loc);
+                }
+            } else if (setting < 0 && prev_setting >= 0) {
+                local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            FMen = DuraType = F1 = F2 = F3 = F4 = F5 = 0;
+            if (Mis.Dur <= V[MisType].E &&
+                ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
+                 key == K_ENTER)) {
+                InBox(244, 5, 313, 17);
+                WaitForMouseUp();
 
-            for (i = 1; i < 4; i++)
-                if (status[i] != 0) {
-                    Toggle(i, 1);
+                if (key > 0) {
+                    delay(300);
                 }
 
-            if (JointFlag == 0) {
-                F4 = 2;
-                lck[4] = 1;
-                Toggle(4, 1);
-                InBox(191, 74, 201, 82);
-                PlaceRX(5);
-                TogBox(166, 49, 1);
-            } else {
-                F4 = 0;
-                lck[4] = 0;
-                status[4] = 0;
-                Toggle(4, 1);
-                OutBox(191, 74, 201, 82);
-                ClearRX(5);
-                TogBox(166, 49, 0);
-            };
+                key = 0;
+                OutBox(244, 5, 313, 17);
 
-            for (i = 0; i < 4; i++) {
-                lck[i] = status[i] = 0;
-            }
+                // Copy the screen contents to a buffer. If the mission
+                // requires a capsule to be assigned, a pop-up will be
+                // created listing the options. Once the pop-up is
+                // dismissed the screen may be redrawn from the buffer.
+                local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
+                int NewType = V[MisType].X;
+                Data->P[plr].Future[MisNum].Duration = DuraType;
 
-            OutBox(5, 49, 53, 72);
-            OutBox(43, 74, 53, 82);
-            TogBox(55, 49, 0);
-            OutBox(80, 74, 90, 82);
-            TogBox(92, 49, 0);
-            OutBox(117, 74, 127, 82);
-            TogBox(129, 49, 0);
-            OutBox(154, 74, 164, 82);
+                int Ok = HardCrewAssign(plr, MisNum, MisType, NewType);
 
-            ClrFut(plr, MisNum);
-            Data->P[plr].Future[MisNum].Duration = 0;
-            Missions(plr, 8, 37, MisType, 1);
-            GetMinus(plr);
-            OutBox(5, 74, 41, 82);
-            key = 0;
-            /* Reset */
-        };
+                local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
-        if ((x >= 55 && y >= 49 && x <= 90 && y <= 82 && mousebuttons > 0)
-            || (key == '2' || key == '@')) {
-            if ((x >= 80 && y >= 74 && x <= 90 && y <= 82) || (key == '@')) {
-
-                if (lck[1] == 0) {
-                    InBox(80, 74, 90, 82);
+                if (Ok == 1) {
+                    Data->P[plr].Future[MisNum].Duration = DuraType;
+                    break;        // return to launchpad loop
                 } else {
-                    OutBox(80, 74, 90, 82);
+                    ClrFut(plr, MisNum);
+                    continue;
                 }
+            } else if ((((x >= 5 && y >= 49 && x <= 53 && y <= 72) ||
+                         (x >= 43 && y >= 74 && x <= 53 && y <= 82)) && mousebuttons > 0) ||
+                       (key == '!' || key == '1')) {
+                if ((x >= 43 && y >= 74 && x <= 53 && y <= 82) || key == '!') {
 
-                lck[1] = abs(lck[1] - 1);
+                    lock[0] = (! lock[0]);
 
-                if (lck[1] == 1) {
-                    PlaceRX(2);
-                } else {
-                    ClearRX(2);
-                }
-
-                if ((status[1] == 0) && (lck[1] == 1)) {
-                    F1 = 2;
-                } else if ((status[1] == 1) && (lck[1] == 1)) {
-                    F1 = 1;
-                } else {
-                    F1 = 0;
-                }
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
+                    if (lock[0] == true) {
+                        InBox(43, 74, 53, 82);
+                        PlaceRX(1);
+                        F5 = (status[0] == 0) ? -1 : status[0];
+                    } else {
+                        OutBox(43, 74, 53, 82);
+                        ClearRX(1);
+                        F5 = status[0] = 0;
                     }
-                }
-            } else if (lck[1] != 1) {
 
-                TogBox(55, 49, 1);
+                    WaitForMouseUp();
+                } else if (lock[0] != true) {
+                    InBox(5, 49, 53, 72);
 
-                if (status[1] == 0) {
-                    Toggle(1, 1);
-                } else {
-                    Toggle(1, 0);
-                }
-
-                status[1] = abs(status[1] - 1);
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
+                    if (DuraType == MaxDur) {
+                        DuraType = 0;
+                    } else {
+                        DuraType++;
                     }
-                }
 
-                TogBox(55, 49, 0);
-            };                     /* Docking */
+                    Data->P[plr].Future[MisNum].Duration = DuraType;
 
-            key = 0;
-        };
-
-        if ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0)
-            || (key == '3' || key == '#')) {
-            if ((x >= 117 && y >= 74 && x <= 127 && y <= 82) || (key == '#')) {
-
-                if (lck[2] == 0) {
-                    InBox(117, 74, 127, 82);
-                } else {
-                    OutBox(117, 74, 127, 82);
-                }
-
-                lck[2] = abs(lck[2] - 1);
-
-                if (lck[2] == 1) {
-                    PlaceRX(3);
-                } else {
-                    ClearRX(3);
-                }
-
-                if ((status[2] == 0) && (lck[2] == 1)) {
-                    F2 = 2;
-                } else if ((status[2] == 1) && (lck[2] == 1)) {
-                    F2 = 1;
-                } else {
-                    F2 = 0;
-                }
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
+                    if (DuraType == 0) {
+                        Toggle(5, 0);
+                    } else if (DuraType == 1) {
+                        Toggle(5, 1);
                     }
+
+                    if (DuraType != 0) {
+                        draw_Pie(DuraType);
+                    }
+
+                    status[0] = DuraType;
+
+                    WaitForMouseUp();
+
+                    display::graphics.setForegroundColor(34);
+                    OutBox(5, 49, 53, 72);
                 }
-            } else if (lck[2] != 1) {
 
-                TogBox(92, 49, 1);
+                /* Duration */
+            } else if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0) ||
+                       (key == K_ESCAPE)) {
+                InBox(5, 74, 41, 82);
 
-                if (status[2] == 0) {
-                    Toggle(2, 1);
-                } else {
-                    Toggle(2, 0);
-                };
+                WaitForMouseUp();
 
-                status[2] = abs(status[2] - 1);
+                MisType = 0;
 
-                while (1) {
-                    GetMouse();
+                if (DuraType != 0) {
+                    Toggle(5, 0);
+                }
 
-                    if (mousebuttons == 0) {
-                        break;
+                DuraType = F1 = F2 = F3 = F4 = F5 = 0;
+
+                for (int i = 1; i < 4; i++) {
+                    if (status[i] != 0) {
+                        Toggle(i, 1);
                     }
                 }
 
-                TogBox(92, 49, 0);
-            };                     /* EVA */
-
-            key = 0;
-        };
-
-        if ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0)
-            || (key == '4' || key == '$')) {
-            if ((x >= 154 && y >= 74 && x <= 164 && y <= 82) || (key == '$')) {
-
-                if (lck[3] == 0) {
-                    InBox(154, 74, 164, 82);
-                } else {
-                    OutBox(154, 74, 164, 82);
-                }
-
-                lck[3] = abs(lck[3] - 1);   // F3=lck[3];
-
-                if (lck[3] == 1) {
-                    PlaceRX(4);
-                } else {
-                    ClearRX(4);
-                }
-
-                if ((status[3] == 0) && (lck[3] == 1)) {
-                    F3 = 2;
-                } else if ((status[3] == 1) && (lck[3] == 1)) {
-                    F3 = 1;
-                } else {
-                    F3 = 0;
-                }
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
-                    }
-                }
-            } else if (lck[3] != 1) {
-
-                TogBox(129, 49, 1);
-
-                if (status[3] == 0) {
-                    Toggle(3, 1);
-                } else {
-                    Toggle(3, 0);
-                };
-
-                status[3] = abs(status[3] - 1);
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
-                    }
-                }
-
-                TogBox(129, 49, 0);
-            };                     /* LEM */
-
-            key = 0;
-        };
-
-        if (((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0)
-             || (key == '5' || key == '%')) && (JointFlag == 1)) {
-            if ((x > 191 && y >= 74 && x <= 201 && y <= 82) || (key == '%')) {
-
-                if (lck[4] == 0) {
-                    InBox(191, 74, 201, 82);
-                } else {
-                    OutBox(191, 74, 201, 82);
-                }
-
-                lck[4] = abs(lck[4] - 1);
-
-                if (lck[4] == 1) {
-                    PlaceRX(5);
-                } else {
-                    ClearRX(5);
-                }
-
-                if ((status[4] == 0) && (lck[4] == 1)) {
+                if (JointFlag == false) {
                     F4 = 2;
-                } else if ((status[4] == 1) && (lck[4] == 1)) {
-                    F4 = 1;
+                    lock[4] = true;
+                    Toggle(4, 1);
+                    InBox(191, 74, 201, 82);
+                    PlaceRX(5);
+                    TogBox(166, 49, 1);
                 } else {
                     F4 = 0;
-                }
-
-                while (1) {
-                    GetMouse();
-
-                    if (mousebuttons == 0) {
-                        break;
-                    }
-                }
-            } else if (lck[4] != 1) {
-
-                TogBox(166, 49, 1);
-
-                status[4] = abs(status[4] - 1);
-
-                if (status[4] == 0) {
+                    lock[4] = false;
+                    status[4] = 0;
                     Toggle(4, 1);
-                } else {
-                    Toggle(4, 0);
+                    OutBox(191, 74, 201, 82);
+                    ClearRX(5);
+                    TogBox(166, 49, 0);
                 }
 
-                while (1) {
+                for (int i = 0; i < 4; i++) {
+                    lock[i] = false;
+                    status[i] = 0;
+                }
+
+                OutBox(5, 49, 53, 72);
+                OutBox(43, 74, 53, 82);
+                TogBox(55, 49, 0);
+                OutBox(80, 74, 90, 82);
+                TogBox(92, 49, 0);
+                OutBox(117, 74, 127, 82);
+                TogBox(129, 49, 0);
+                OutBox(154, 74, 164, 82);
+
+                ClrFut(plr, MisNum);
+                Missions(plr, 8, 37, MisType, 1);
+                GetMinus(plr);
+                OutBox(5, 74, 41, 82);
+                /* Reset */
+            } else if ((x >= 55 && y >= 49 && x <= 90 && y <= 82 && mousebuttons > 0) ||
+                       (key == '2' || key == '@')) {
+                if ((x >= 80 && y >= 74 && x <= 90 && y <= 82) || (key == '@')) {
+                    lock[1] = (! lock[1]);
+
+                    if (lock[1] == true) {
+                        InBox(80, 74, 90, 82);
+                        PlaceRX(2);
+                    } else {
+                        OutBox(80, 74, 90, 82);
+                        ClearRX(2);
+                    }
+
+                    if ((status[1] == 0) && (lock[1] == true)) {
+                        F1 = 2;
+                    } else if ((status[1] == 1) && (lock[1] == true)) {
+                        F1 = 1;
+                    } else {
+                        F1 = 0;
+                    }
+
+                    WaitForMouseUp();
+                } else if (lock[1] == false) {
+
+                    TogBox(55, 49, 1);
+
+                    if (status[1] == 0) {
+                        Toggle(1, 1);
+                    } else {
+                        Toggle(1, 0);
+                    }
+
+                    status[1] = abs(status[1] - 1);
+
+                    WaitForMouseUp();
+
+                    TogBox(55, 49, 0);
+                }                     /* Docking */
+
+            } else if ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0) ||
+                       (key == '3' || key == '#')) {
+                if ((x >= 117 && y >= 74 && x <= 127 && y <= 82) || (key == '#')) {
+                    lock[2] = (! lock[2]);
+
+                    if (lock[2] == true) {
+                        InBox(117, 74, 127, 82);
+                        PlaceRX(3);
+                    } else {
+                        OutBox(117, 74, 127, 82);
+                        ClearRX(3);
+                    }
+
+                    if ((status[2] == 0) && (lock[2] == true)) {
+                        F2 = 2;
+                    } else if ((status[2] == 1) && (lock[2] == true)) {
+                        F2 = 1;
+                    } else {
+                        F2 = 0;
+                    }
+
+                    WaitForMouseUp();
+                } else if (lock[2] == false) {
+
+                    TogBox(92, 49, 1);
+
+                    if (status[2] == 0) {
+                        Toggle(2, 1);
+                    } else {
+                        Toggle(2, 0);
+                    }
+
+                    status[2] = abs(status[2] - 1);
+
+                    WaitForMouseUp();
+
+                    TogBox(92, 49, 0);
+                }                     /* EVA */
+
+            } else if ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0) ||
+                       (key == '4' || key == '$')) {
+                if ((x >= 154 && y >= 74 && x <= 164 && y <= 82) || (key == '$')) {
+                    lock[3] = (! lock[3]);   // F3=lock[3];
+
+                    if (lock[3] == true) {
+                        InBox(154, 74, 164, 82);
+                        PlaceRX(4);
+                    } else {
+                        OutBox(154, 74, 164, 82);
+                        ClearRX(4);
+                    }
+
+                    if ((status[3] == 0) && (lock[3] == true)) {
+                        F3 = 2;
+                    } else if ((status[3] == 1) && (lock[3] == true)) {
+                        F3 = 1;
+                    } else {
+                        F3 = 0;
+                    }
+
+                    WaitForMouseUp();
+                } else if (lock[3] == false) {
+
+                    TogBox(129, 49, 1);
+
+                    if (status[3] == 0) {
+                        Toggle(3, 1);
+                    } else {
+                        Toggle(3, 0);
+                    }
+
+                    status[3] = abs(status[3] - 1);
+
+                    WaitForMouseUp();
+
+                    TogBox(129, 49, 0);
+                }                     /* LEM */
+
+            } else if (((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0) ||
+                        (key == '5' || key == '%')) && (JointFlag == true)) {
+                if ((x > 191 && y >= 74 && x <= 201 && y <= 82) || (key == '%')) {
+                    lock[4] = (! lock[4]);
+
+                    if (lock[4] == true) {
+                        InBox(191, 74, 201, 82);
+                        PlaceRX(5);
+                    } else {
+                        OutBox(191, 74, 201, 82);
+                        ClearRX(5);
+                    }
+
+                    if ((status[4] == 0) && (lock[4] == true)) {
+                        F4 = 2;
+                    } else if ((status[4] == 1) && (lock[4] == true)) {
+                        F4 = 1;
+                    } else {
+                        F4 = 0;
+                    }
+
+                    WaitForMouseUp();
+                } else if (lock[4] == false) {
+
+                    TogBox(166, 49, 1);
+
+                    status[4] = abs(status[4] - 1);
+
+                    if (status[4] == 0) {
+                        Toggle(4, 1);
+                    } else {
+                        Toggle(4, 0);
+                    }
+
+                    WaitForMouseUp();
+
+                    TogBox(166, 49, 0);
+                }  /* Joint Launch */
+
+            } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
+                       (key == UP_ARROW)) {
+                // Scroll up among Mission Types
+                InBox(5, 84, 16, 130);
+
+                for (int i = 0; i < 50; i++) {
+                    key = 0;
                     GetMouse();
+                    delay(10);
 
                     if (mousebuttons == 0) {
-                        break;
+                        MisType = UpSearchRout(MisType, plr);
+                        Data->P[plr].Future[MisNum].MissionCode = MisType;
+                        i = 51;
                     }
                 }
 
-                TogBox(166, 49, 0);
-            };                     /* Joint Launch */
-
-            key = 0;
-        };
-
-        if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0)
-            || (key == UP_ARROW)) {
-            InBox(5, 84, 16, 130);
-
-            for (i = 0; i < 50; i++) {
-                key = 0;
-                GetMouse();
-                delay(10);
-
-                if (mousebuttons == 0) {
+                // Keep scrolling while mouse/key is held down.
+                while (mousebuttons == 1 || key == UP_ARROW) {
                     MisType = UpSearchRout(MisType, plr);
                     Data->P[plr].Future[MisNum].MissionCode = MisType;
-                    i = 51;
+                    Missions(plr, 8, 37, MisType, 3);
+                    delay(100);
+                    key = 0;
+                    GetMouse();
                 }
-            }
 
-            while (mousebuttons == 1 || key == UP_ARROW) {
-                MisType = UpSearchRout(MisType, plr);
-                Data->P[plr].Future[MisNum].MissionCode = MisType;
                 Missions(plr, 8, 37, MisType, 3);
-                delay(100);
-                key = 0;
-                GetMouse();
-            }
+                DuraType = status[0];
+                OutBox(5, 84, 16, 130);
+            } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
+                       (key == K_SPACE)) {
+                // Turn on Mission Steps display
+                InBox(5, 132, 16, 146);
+                WaitForMouseUp();
+                delay(50);
+                MisType = Data->P[plr].Future[MisNum].MissionCode;
+                assert(0 <= MisType);
 
-            Missions(plr, 8, 37, MisType, 3);
-            DuraType = status[0];
-            OutBox(5, 84, 16, 130);
-            key = 0;
-            /* Mission Type plus */
-        };
+                if (MisType != 0) {
+                    Missions(plr, 8, 37, MisType, 1);
+                } else {
+                    Missions(plr, 8, 37, MisType, 3);
+                }
 
-        if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0)
-            || (key == K_SPACE)) {
-            InBox(5, 132, 16, 146);
-            WaitForMouseUp();
-            delay(50);
-            MisType = Data->P[plr].Future[MisNum].MissionCode;
-            assert(0 <= MisType);
+                OutBox(5, 132, 16, 146);
+            } else if ((x >= 5 && y >= 148 && x <= 16 && y <= 194 && mousebuttons > 0) ||
+                       (key == DN_ARROW)) {
+                // Scroll down among Mission Types
+                InBox(5, 148, 16, 194);
 
-            if (MisType != 0) {
-                Missions(plr, 8, 37, MisType, 1);
-            } else {
-                Missions(plr, 8, 37, MisType, 3);
-            }
+                for (int i = 0; i < 50; i++) {
+                    key = 0;
+                    GetMouse();
+                    delay(10);
 
-            OutBox(5, 132, 16, 146);
-            key = 0;
-        }
+                    if (mousebuttons == 0) {
+                        MisType = DownSearchRout(MisType, plr);
+                        Data->P[plr].Future[MisNum].MissionCode = MisType;
+                        i = 51;
+                    }
 
-        if ((x >= 5 && y >= 148 && x <= 16 && y <= 194 && mousebuttons > 0)
-            || (key == DN_ARROW)) {
-            InBox(5, 148, 16, 194);
+                }
 
-            for (i = 0; i < 50; i++) {
-                key = 0;
-                GetMouse();
-                delay(10);
-
-                if (mousebuttons == 0) {
+                // Keep scrolling while mouse/key is held down.
+                while (mousebuttons == 1 || key == DN_ARROW) {
                     MisType = DownSearchRout(MisType, plr);
                     Data->P[plr].Future[MisNum].MissionCode = MisType;
-                    i = 51;
+                    Missions(plr, 8, 37, MisType, 3);
+                    delay(100);
+                    key = 0;
+                    GetMouse();
                 }
 
-                key = 0;
-            }
-
-            while (mousebuttons == 1 || key == DN_ARROW) {
-                MisType = DownSearchRout(MisType, plr);
-                Data->P[plr].Future[MisNum].MissionCode = MisType;
                 Missions(plr, 8, 37, MisType, 3);
-                delay(100);
-                key = 0;
-                GetMouse();
+                DuraType = status[0];
+                OutBox(5, 148, 16, 194);
             }
+        }                              // Input while loop
+    }                              // Launch pad selection loop
 
-            Missions(plr, 8, 37, MisType, 3);
-            DuraType = status[0];
-            OutBox(5, 148, 16, 194);
-            key = 0;
-            /* Mission Type minus */
-
-        };
-    }                              // while
-
+    delete vh;
+    vh = NULL;
     TRACE1("<-Future()");
 }
 
