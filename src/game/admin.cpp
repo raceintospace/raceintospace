@@ -1557,7 +1557,8 @@ int FutureCheck(char plr, char type)
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     display::graphics.setForegroundColor(5);
-                    Missions(plr, 111, 41 + i * 51, m[i], 0);
+                    // Missions(plr, 111, 41 + i * 51, m[i], 0);
+                    MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                 } else if (p[i] == -1 && Data->P[plr].Cash < 20 && type == 0) {
@@ -1576,7 +1577,8 @@ int FutureCheck(char plr, char type)
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     display::graphics.setForegroundColor(5);
-                    Missions(plr, 111, 41 + i * 51, m[i], 0);
+                    // Missions(plr, 111, 41 + i * 51, m[i], 0);
+                    MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                 } else if (p[i] > 4 && Data->P[plr].Cash < abs(Data->P[plr].LaunchFacility[i])

@@ -119,7 +119,8 @@ void PlaceRX(int s);
 void ClearRX(int s);
 int UpSearchRout(int num, char plr);
 int DownSearchRout(int num, char plr);
-void DurPri(int x) ;
+void DurPri(int x);
+void Missions(char plr, int X, int Y, int val, char bub);
 
 
 void Load_FUT_BUT(void)
@@ -199,18 +200,6 @@ void DrawFuture(char plr, int mis, char pad)
     display::graphics.screen()->clear();
 
     gr_sync();
-
-    if (MarsFlag == true) {
-        display::graphics.screen()->draw(planets, 1, 1, 12, 11, 198, 153);
-    }
-
-    if (JupiterFlag == true) {
-        display::graphics.screen()->draw(planets, 14, 1, 51, 54, 214, 130);
-    }
-
-    if (SaturnFlag == true) {
-        display::graphics.screen()->draw(planets, 66, 1, 49, 53, 266, 135);
-    }
 
     fill_rectangle(1, 1, 318, 21, 3);
     fill_rectangle(317, 22, 318, 198, 3);
@@ -326,14 +315,31 @@ void DrawFuture(char plr, int mis, char pad)
     return;
 }
 
+/* Draws the mission starfield. The background depicts any heavenly
+ * bodies reachable by an interplanetary mission. Earth, the Moon,
+ * Venus, and Mercury are always shown. Depending on the current year
+ * and season, some combination of Mars, Jupiter, and Saturn may be
+ * depicted.
+ */
 void ClearDisplay(void)
 {
     boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/fmin.img.0.png"));
 
     display::graphics.screen()->draw(background, 202, 48, 40, 35, 202, 48);
-    display::graphics.screen()->draw(background, 17, 83, 225, 103, 17, 83);
+    display::graphics.screen()->draw(background, 17, 83, 225, 113, 17, 83);
     display::graphics.screen()->draw(background, 242, 23, 74, 173, 242, 23);
-    display::graphics.setForegroundColor(1);
+    if (MarsFlag == true) {
+        display::graphics.screen()->draw(background, 1, 1, 12, 11, 198, 153);
+    }
+
+    if (JupiterFlag == true) {
+        display::graphics.screen()->draw(background, 14, 1, 51, 54, 214, 130);
+    }
+
+    if (SaturnFlag == true) {
+        display::graphics.screen()->draw(background, 66, 1, 49, 53, 266, 135);
+    }
+
     return;
 }
 
