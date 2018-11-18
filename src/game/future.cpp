@@ -1044,56 +1044,53 @@ void Future(char plr)
                     ClrFut(plr, MisNum);
                     continue;
                 }
-            } else if ((((x >= 5 && y >= 49 && x <= 53 && y <= 72) ||
-                         (x >= 43 && y >= 74 && x <= 53 && y <= 82)) && mousebuttons > 0) ||
-                       (key == '!' || key == '1')) {
-                if ((x >= 43 && y >= 74 && x <= 53 && y <= 82) || key == '!') {
+            } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
+                       key == '!') { // Duration restriction lock
+                lock[0] = (! lock[0]);
 
-                    lock[0] = (! lock[0]);
-
-                    if (lock[0] == true) {
-                        InBox(43, 74, 53, 82);
-                        PlaceRX(1);
-                        F5 = (status[0] == 0) ? -1 : status[0];
-                    } else {
-                        OutBox(43, 74, 53, 82);
-                        ClearRX(1);
-                        F5 = status[0] = 0;
-                    }
-
-                    WaitForMouseUp();
-                } else if (lock[0] != true) {
-                    InBox(5, 49, 53, 72);
-
-                    if (DuraType == MaxDur) {
-                        DuraType = 0;
-                    } else {
-                        DuraType++;
-                    }
-
-                    Data->P[plr].Future[MisNum].Duration = DuraType;
-
-                    if (DuraType == 0) {
-                        Toggle(5, 0);
-                    } else if (DuraType == 1) {
-                        Toggle(5, 1);
-                    }
-
-                    if (DuraType != 0) {
-                        draw_Pie(DuraType);
-                    }
-
-                    status[0] = DuraType;
-
-                    WaitForMouseUp();
-
-                    display::graphics.setForegroundColor(34);
-                    OutBox(5, 49, 53, 72);
+                if (lock[0] == true) {
+                    InBox(43, 74, 53, 82);
+                    PlaceRX(1);
+                    F5 = (status[0] == 0) ? -1 : status[0];
+                } else {
+                    OutBox(43, 74, 53, 82);
+                    ClearRX(1);
+                    F5 = status[0] = 0;
                 }
 
-                /* Duration */
+                WaitForMouseUp();
+
+            } else if (lock[0] != true &&
+                       ((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
+                        key == '1')) { // Duration toggle
+                InBox(5, 49, 53, 72);
+
+                if (DuraType == MaxDur) {
+                    DuraType = 0;
+                } else {
+                    DuraType++;
+                }
+
+                Data->P[plr].Future[MisNum].Duration = DuraType;
+
+                if (DuraType == 0) {
+                    Toggle(5, 0);
+                } else if (DuraType == 1) {
+                    Toggle(5, 1);
+                }
+
+                if (DuraType != 0) {
+                    draw_Pie(DuraType);
+                }
+
+                status[0] = DuraType;
+
+                WaitForMouseUp();
+
+                display::graphics.setForegroundColor(34);
+                OutBox(5, 49, 53, 72);
             } else if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0) ||
-                       (key == K_ESCAPE)) {
+                       (key == K_ESCAPE)) { // Reset mission selection
                 InBox(5, 74, 41, 82);
 
                 WaitForMouseUp();
@@ -1147,162 +1144,155 @@ void Future(char plr)
                 Missions(plr, 8, 37, MisType, 1);
                 GetMinus(plr);
                 OutBox(5, 74, 41, 82);
-                /* Reset */
-            } else if ((x >= 55 && y >= 49 && x <= 90 && y <= 82 && mousebuttons > 0) ||
-                       (key == '2' || key == '@')) {
-                if ((x >= 80 && y >= 74 && x <= 90 && y <= 82) || (key == '@')) {
-                    lock[1] = (! lock[1]);
 
-                    if (lock[1] == true) {
-                        InBox(80, 74, 90, 82);
-                        PlaceRX(2);
-                    } else {
-                        OutBox(80, 74, 90, 82);
-                        ClearRX(2);
-                    }
+            } else if ((x >= 80 && y >= 74 && x <= 90 && y <= 82 && mousebuttons > 0) ||
+                       key == '@') { // Docking restriction lock
+                lock[1] = (! lock[1]);
 
-                    if ((status[1] == 0) && (lock[1] == true)) {
-                        F1 = 2;
-                    } else if ((status[1] == 1) && (lock[1] == true)) {
-                        F1 = 1;
-                    } else {
-                        F1 = 0;
-                    }
+                if (lock[1] == true) {
+                    InBox(80, 74, 90, 82);
+                    PlaceRX(2);
+                } else {
+                    OutBox(80, 74, 90, 82);
+                    ClearRX(2);
+                }
 
-                    WaitForMouseUp();
-                } else if (lock[1] == false) {
+                if ((status[1] == 0) && (lock[1] == true)) {
+                    F1 = 2;
+                } else if ((status[1] == 1) && (lock[1] == true)) {
+                    F1 = 1;
+                } else {
+                    F1 = 0;
+                }
 
-                    TogBox(55, 49, 1);
+                WaitForMouseUp();
 
-                    if (status[1] == 0) {
-                        Toggle(1, 1);
-                    } else {
-                        Toggle(1, 0);
-                    }
+            } else if (lock[1] == false &&
+                       (((x >= 55 && y >= 49 && x <= 90 && y <= 82) && mousebuttons > 0) ||
+                        key == '2')) { // Docking toggle
+                TogBox(55, 49, 1);
 
-                    status[1] = abs(status[1] - 1);
+                if (status[1] == 0) {
+                    Toggle(1, 1);
+                } else {
+                    Toggle(1, 0);
+                }
 
-                    WaitForMouseUp();
+                status[1] = abs(status[1] - 1);
+                WaitForMouseUp();
+                TogBox(55, 49, 0);
 
-                    TogBox(55, 49, 0);
-                }                     /* Docking */
+            } else if ((x >= 117 && y >= 74 && x <= 127 && y <= 82 && mousebuttons > 0) ||
+                       key == '#') { // EVA Restriction button
+                lock[2] = (! lock[2]);
 
-            } else if ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0) ||
-                       (key == '3' || key == '#')) {
-                if ((x >= 117 && y >= 74 && x <= 127 && y <= 82) || (key == '#')) {
-                    lock[2] = (! lock[2]);
+                if (lock[2] == true) {
+                    InBox(117, 74, 127, 82);
+                    PlaceRX(3);
+                } else {
+                    OutBox(117, 74, 127, 82);
+                    ClearRX(3);
+                }
 
-                    if (lock[2] == true) {
-                        InBox(117, 74, 127, 82);
-                        PlaceRX(3);
-                    } else {
-                        OutBox(117, 74, 127, 82);
-                        ClearRX(3);
-                    }
+                if ((status[2] == 0) && (lock[2] == true)) {
+                    F2 = 2;
+                } else if ((status[2] == 1) && (lock[2] == true)) {
+                    F2 = 1;
+                } else {
+                    F2 = 0;
+                }
 
-                    if ((status[2] == 0) && (lock[2] == true)) {
-                        F2 = 2;
-                    } else if ((status[2] == 1) && (lock[2] == true)) {
-                        F2 = 1;
-                    } else {
-                        F2 = 0;
-                    }
+                WaitForMouseUp();
 
-                    WaitForMouseUp();
-                } else if (lock[2] == false) {
+            } else if (lock[2] == false &&
+                       ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0) ||
+                        key == '3')) { // EVA toggle
+                TogBox(92, 49, 1);
 
-                    TogBox(92, 49, 1);
+                if (status[2] == 0) {
+                    Toggle(2, 1);
+                } else {
+                    Toggle(2, 0);
+                }
 
-                    if (status[2] == 0) {
-                        Toggle(2, 1);
-                    } else {
-                        Toggle(2, 0);
-                    }
+                status[2] = abs(status[2] - 1);
+                WaitForMouseUp();
+                TogBox(92, 49, 0);
 
-                    status[2] = abs(status[2] - 1);
+            } else if ((x >= 154 && y >= 74 && x <= 164 && y <= 82 && mousebuttons > 0) ||
+                       key == '$') { // Lunar Module Restriction button
+                lock[3] = (! lock[3]);
 
-                    WaitForMouseUp();
+                if (lock[3] == true) {
+                    InBox(154, 74, 164, 82);
+                    PlaceRX(4);
+                } else {
+                    OutBox(154, 74, 164, 82);
+                    ClearRX(4);
+                }
 
-                    TogBox(92, 49, 0);
-                }                     /* EVA */
+                if ((status[3] == 0) && (lock[3] == true)) {
+                    F3 = 2;
+                } else if ((status[3] == 1) && (lock[3] == true)) {
+                    F3 = 1;
+                } else {
+                    F3 = 0;
+                }
 
-            } else if ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0) ||
-                       (key == '4' || key == '$')) {
-                if ((x >= 154 && y >= 74 && x <= 164 && y <= 82) || (key == '$')) {
-                    lock[3] = (! lock[3]);   // F3=lock[3];
+                WaitForMouseUp();
 
-                    if (lock[3] == true) {
-                        InBox(154, 74, 164, 82);
-                        PlaceRX(4);
-                    } else {
-                        OutBox(154, 74, 164, 82);
-                        ClearRX(4);
-                    }
+            } else if (lock[3] == false &&
+                       ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0) ||
+                        key == '4')) { // LEM toggle
+                TogBox(129, 49, 1);
 
-                    if ((status[3] == 0) && (lock[3] == true)) {
-                        F3 = 2;
-                    } else if ((status[3] == 1) && (lock[3] == true)) {
-                        F3 = 1;
-                    } else {
-                        F3 = 0;
-                    }
+                if (status[3] == 0) {
+                    Toggle(3, 1);
+                } else {
+                    Toggle(3, 0);
+                }
 
-                    WaitForMouseUp();
-                } else if (lock[3] == false) {
+                status[3] = abs(status[3] - 1);
+                WaitForMouseUp();
+                TogBox(129, 49, 0);
 
-                    TogBox(129, 49, 1);
+            } else if (JointFlag == true &&
+                       ((x > 191 && y >= 74 && x <= 201 && y <= 82 && mousebuttons > 0) ||
+                        key == '%')) { // Joint Mission Restriction button
+                lock[4] = (! lock[4]);
 
-                    if (status[3] == 0) {
-                        Toggle(3, 1);
-                    } else {
-                        Toggle(3, 0);
-                    }
+                if (lock[4] == true) {
+                    InBox(191, 74, 201, 82);
+                    PlaceRX(5);
+                } else {
+                    OutBox(191, 74, 201, 82);
+                    ClearRX(5);
+                }
 
-                    status[3] = abs(status[3] - 1);
+                if ((status[4] == 0) && (lock[4] == true)) {
+                    F4 = 2;
+                } else if ((status[4] == 1) && (lock[4] == true)) {
+                    F4 = 1;
+                } else {
+                    F4 = 0;
+                }
 
-                    WaitForMouseUp();
+                WaitForMouseUp();
 
-                    TogBox(129, 49, 0);
-                }                     /* LEM */
+            } else if (lock[4] == false && JointFlag == true &&
+                       ((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0) ||
+                        key == '5')) { // Joint Mission
+                TogBox(166, 49, 1);
+                status[4] = abs(status[4] - 1);
 
-            } else if (((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0) ||
-                        (key == '5' || key == '%')) && (JointFlag == true)) {
-                if ((x > 191 && y >= 74 && x <= 201 && y <= 82) || (key == '%')) {
-                    lock[4] = (! lock[4]);
+                if (status[4] == 0) {
+                    Toggle(4, 1);
+                } else {
+                    Toggle(4, 0);
+                }
 
-                    if (lock[4] == true) {
-                        InBox(191, 74, 201, 82);
-                        PlaceRX(5);
-                    } else {
-                        OutBox(191, 74, 201, 82);
-                        ClearRX(5);
-                    }
-
-                    if ((status[4] == 0) && (lock[4] == true)) {
-                        F4 = 2;
-                    } else if ((status[4] == 1) && (lock[4] == true)) {
-                        F4 = 1;
-                    } else {
-                        F4 = 0;
-                    }
-
-                    WaitForMouseUp();
-                } else if (lock[4] == false) {
-
-                    TogBox(166, 49, 1);
-
-                    status[4] = abs(status[4] - 1);
-
-                    if (status[4] == 0) {
-                        Toggle(4, 1);
-                    } else {
-                        Toggle(4, 0);
-                    }
-
-                    WaitForMouseUp();
-
-                    TogBox(166, 49, 0);
-                }  /* Joint Launch */
+                WaitForMouseUp();
+                TogBox(166, 49, 0);
 
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
