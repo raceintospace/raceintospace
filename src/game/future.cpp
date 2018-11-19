@@ -314,6 +314,7 @@ void ClearDisplay(void)
     display::graphics.screen()->draw(background, 202, 48, 40, 35, 202, 48);
     display::graphics.screen()->draw(background, 17, 83, 225, 113, 17, 83);
     display::graphics.screen()->draw(background, 242, 23, 74, 173, 242, 23);
+
     if (MarsFlag == true) {
         display::graphics.screen()->draw(background, 1, 1, 12, 11, 198, 153);
     }

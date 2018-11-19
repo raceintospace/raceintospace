@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <string>
+
 #include "display/graphics.h"
 
 #include "crew.h"
@@ -242,6 +244,7 @@ int AsnCrew(char plr, char pad, char part)
 {
     int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
 
+    std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k200";
     men = Data->P[plr].Future[pad].Men;
     prg = Data->P[plr].Future[pad].Prog;
@@ -288,7 +291,8 @@ int AsnCrew(char plr, char pad, char part)
     }
 
     if ((count >= 7 && options.feat_no_backup == 0) || (count >= 8 && options.feat_no_backup > 0)) {
-
+        keyHelpText = oldKeyHelpText;
+        Help("i107");
         return 0;
     } else {
         bug = 0;
@@ -442,6 +446,7 @@ int AsnCrew(char plr, char pad, char part)
                 delay(150);
             }
 
+            keyHelpText = oldKeyHelpText;
             return 1;
         } else if ((x >= 82 && y >= 9 && x <= 152 && y <= 19 && mousebuttons != 0) || key == K_ESCAPE) {
             InBox(82, 9, 152, 19);
@@ -452,6 +457,7 @@ int AsnCrew(char plr, char pad, char part)
             }
 
             ClrFut(plr, pad);
+            keyHelpText = oldKeyHelpText;
             return 0;  // Abort - Redo Mission
         } else if (((x >= 82 && y >= 104 && x <= 155 && y <= 114 && mousebuttons > 0) || key == 'P') && prime != grp && back != grp && grp != -1 && bug == 0) {
             InBox(82, 104, 155, 114);
@@ -714,7 +720,6 @@ void DrawHard(char mode, char pad, char mis, char plr)
 {
     int lenprogname;  // Variable to hold and manipulate length of program name
 
-    keyHelpText = "k201";
     ShBox(75, 43, 244, 173);
     InBox(81, 60, 238, 95);
     IOBox(81, 154, 238, 167); // continue
@@ -802,6 +807,9 @@ void DrawHard(char mode, char pad, char mis, char plr)
 int HardRequest(char plr, char mode, char mis, char pad)
 {
     int i = 0, pr[5], t = 0;
+
+    std::string oldKeyHelpText = keyHelpText;
+    keyHelpText = "k201";
 
     for (i = 0; i < 5; i++)
         if (Data->P[plr].Manned[i].Num >= 0) {
@@ -916,12 +924,15 @@ int HardRequest(char plr, char mode, char mis, char pad)
                     delay(150);
                 }
 
+                keyHelpText = oldKeyHelpText;
                 return 0;  // Abort - Redo Mission
             };
         };
     }; /* End while */
 
     Data->P[plr].Future[pad].Prog = i;
+
+    keyHelpText = oldKeyHelpText;
 
     return i;
 }
@@ -931,12 +942,16 @@ int SecondHard(char plr, char mode, char mis, char pad)
 
     int i = 0, men = 0, prg = 0, prog[5], t = 0;
 
+    std::string oldKeyHelpText = keyHelpText;
+    keyHelpText = "k201";
+
     for (i = 0; i < 5; i++) if (Data->P[plr].Manned[i].Num >= 0) {
             men++;
         }
 
     if (men == 0) {
         Help("i126");
+        keyHelpText = oldKeyHelpText;
         return 0;
     }
 
@@ -1058,6 +1073,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
                     delay(150);
                 }
 
+                keyHelpText = oldKeyHelpText;
                 return 0;  // Abort - Redo Mission
             };
         }
@@ -1065,6 +1081,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
 
     Data->P[plr].Future[pad].Prog = i;
     Data->P[plr].Future[pad].Men = men;
+    keyHelpText = oldKeyHelpText;
     return i;
 }
 
