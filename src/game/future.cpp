@@ -245,29 +245,15 @@ void DrawFuture(char plr, int mis, char pad)
     TogBox(92, 49, 0);
     Toggle(3, 1);
     TogBox(129, 49, 0);
-
-    for (int i = 1; i < 4; i++) {
-        if (status[i] != 0) {
-            Toggle(i, 1);
-        }
-    };
+    Toggle(4, 1);
 
     if (JointFlag == false) {
-        F4 = 2;
-        lock[4] = true;
-        Toggle(4, 1);
         InBox(191, 74, 201, 82);
-        PlaceRX(5);
         TogBox(166, 49, 1);
     } else {
-        F4 = 0;
-        lock[4] = false;
-        status[4] = 0;
-        Toggle(4, 1);
         OutBox(191, 74, 201, 82);
-        ClearRX(5);
         TogBox(166, 49, 0);
-    };
+    }
 
     gr_sync();
 
@@ -396,9 +382,7 @@ void SetParameters(void)
 
 void DrawLocks(void)
 {
-    int i;
-
-    for (i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
         if (lock[i] == true) {
             PlaceRX(i + 1);
         } else {
@@ -507,8 +491,6 @@ void TogBox(int x, int y, int st)
 }
 
 /*
- * TODO: This seems to pass wrong PlaceRX values. However, it appears
- * the mistake is being covered up by the subsequent call to DrawLocks.
  */
 void PianoKey(int X)
 {
@@ -521,7 +503,6 @@ void PianoKey(int X)
             status[1] = 1;
         } else {
             Toggle(1, 0);
-            PlaceRX(1);
             status[1] = 0;
         }
     }
@@ -532,7 +513,6 @@ void PianoKey(int X)
             status[2] = 1;
         } else {
             Toggle(2, 0);
-            PlaceRX(2);
             status[2] = 0;
         }
     }
@@ -543,7 +523,6 @@ void PianoKey(int X)
             status[3] = 1;
         } else {
             Toggle(3, 0);
-            PlaceRX(3);
             status[3] = 0;
         }
     }
@@ -973,6 +952,12 @@ void Future(char plr)
 
         JointFlag = JointMissionOK(plr, MisNum); // initialize joint flag
 
+        if (JointFlag == false) {
+            F4 = 2;
+            lock[4] = true;
+            status[4] = 0;
+        }
+
         DrawFuture(plr, MisType, MisNum);
 
         while (1) {
@@ -1103,47 +1088,26 @@ void Future(char plr)
 
                 MisType = 0;
 
-                if (DuraType != 0) {
-                    Toggle(5, 0);
-                }
-
                 DuraType = F1 = F2 = F3 = F4 = F5 = 0;
 
-                for (int i = 1; i < 4; i++) {
-                    if (status[i] != 0) {
-                        Toggle(i, 1);
-                    }
+                for (int i = 0; i < 5; i++) {
+                    lock[i] = false;
+                    status[i] = 0;
                 }
 
                 if (JointFlag == false) {
                     F4 = 2;
                     lock[4] = true;
-                    Toggle(4, 1);
                     InBox(191, 74, 201, 82);
-                    PlaceRX(5);
                     TogBox(166, 49, 1);
                 } else {
-                    F4 = 0;
-                    lock[4] = false;
-                    status[4] = 0;
-                    Toggle(4, 1);
                     OutBox(191, 74, 201, 82);
-                    ClearRX(5);
-                    TogBox(166, 49, 0);
-                }
-
-                for (int i = 0; i < 4; i++) {
-                    lock[i] = false;
-                    status[i] = 0;
                 }
 
                 OutBox(5, 49, 53, 72);
                 OutBox(43, 74, 53, 82);
-                TogBox(55, 49, 0);
                 OutBox(80, 74, 90, 82);
-                TogBox(92, 49, 0);
                 OutBox(117, 74, 127, 82);
-                TogBox(129, 49, 0);
                 OutBox(154, 74, 164, 82);
 
                 ClrFut(plr, MisNum);
