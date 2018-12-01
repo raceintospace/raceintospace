@@ -144,8 +144,8 @@ add_dependencies(libs ext_physfs)
 # Protocol Buffers
 
 if (BUILD_PROTOBUF)
-  set (protobuf_Version 2.4.1)
-  set (protobuf_URL http://protobuf.googlecode.com/files/protobuf-${protobuf_Version}.tar.gz)
+  set (protobuf_Version 2.6.1)
+  set (protobuf_URL https://github.com/protocolbuffers/protobuf/releases/download/v${protobuf_Version}/protobuf-${protobuf_Version}.tar.gz)
   set (protobuf_Dir ${CMAKE_CURRENT_BINARY_DIR}/protobuf-${protobuf_Version})
 
   ExternalProject_Add(ext_protobuf
