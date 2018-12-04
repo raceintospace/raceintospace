@@ -110,9 +110,9 @@ Mac OS X
 You need CMake, which is readily obtained from
 [Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway.
 Homebrew also has a nice Boost package that doesn't cause any runtime linkage
-issues, so install that too:
+issues, so install that along with SDL:
 
-    $ brew install cmake boost
+    $ brew install cmake boost sdl
 
 CMake automatically handles the other dependencies using the stuff in `lib/`.
 Mac OS X sometimes includes libpng, and sometimes it doesn't, so we build our
