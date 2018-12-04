@@ -24,6 +24,10 @@ extern "C" {
 #include <CoreMIDI/CoreMIDI.h>
 }
 
+#ifndef require_noerr
+#define require_noerr __Require_noErr
+#endif
+
 #include "raceintospace_config.h"
 
 #include "utils.h"

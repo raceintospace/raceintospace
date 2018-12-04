@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(PACKAGE_VERSION 2.4.1)
+set(PACKAGE_VERSION 2.6.1)
 
 include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
 
@@ -39,8 +39,11 @@ include_directories(.)
 include_directories(SYSTEM src)
 
 add_library(protobuf_lite
+  src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+  src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc
   src/google/protobuf/stubs/common.cc
   src/google/protobuf/stubs/once.cc
+  src/google/protobuf/stubs/stringprintf.cc
   src/google/protobuf/extension_set.cc
   src/google/protobuf/generated_message_util.cc
   src/google/protobuf/message_lite.cc
@@ -52,16 +55,6 @@ add_library(protobuf_lite
   )
 
 add_library(protobuf
-  src/google/protobuf/stubs/common.cc
-  src/google/protobuf/stubs/once.cc
-  src/google/protobuf/extension_set.cc
-  src/google/protobuf/generated_message_util.cc
-  src/google/protobuf/message_lite.cc
-  src/google/protobuf/repeated_field.cc
-  src/google/protobuf/wire_format_lite.cc
-  src/google/protobuf/io/coded_stream.cc
-  src/google/protobuf/io/zero_copy_stream.cc
-  src/google/protobuf/io/zero_copy_stream_impl_lite.cc
   src/google/protobuf/stubs/strutil.cc
   src/google/protobuf/stubs/substitute.cc
   src/google/protobuf/stubs/structurally_valid.cc
@@ -79,11 +72,14 @@ add_library(protobuf
   src/google/protobuf/wire_format.cc
   src/google/protobuf/io/gzip_stream.cc
   src/google/protobuf/io/printer.cc
+  src/google/protobuf/io/strtod.cc
   src/google/protobuf/io/tokenizer.cc
   src/google/protobuf/io/zero_copy_stream_impl.cc
   src/google/protobuf/compiler/importer.cc
   src/google/protobuf/compiler/parser.cc
   )
+
+target_link_libraries(protobuf protobuf_lite)
 
 add_executable(protoc
   # libprotoc
@@ -105,18 +101,24 @@ add_executable(protoc
   src/google/protobuf/compiler/cpp/cpp_primitive_field.cc
   src/google/protobuf/compiler/cpp/cpp_service.cc
   src/google/protobuf/compiler/cpp/cpp_string_field.cc
+  src/google/protobuf/compiler/java/java_context.cc
   src/google/protobuf/compiler/java/java_enum.cc
   src/google/protobuf/compiler/java/java_enum_field.cc
   src/google/protobuf/compiler/java/java_extension.cc
   src/google/protobuf/compiler/java/java_field.cc
   src/google/protobuf/compiler/java/java_file.cc
   src/google/protobuf/compiler/java/java_generator.cc
+  src/google/protobuf/compiler/java/java_generator_factory.cc
   src/google/protobuf/compiler/java/java_helpers.cc
+  src/google/protobuf/compiler/java/java_lazy_message_field.cc
   src/google/protobuf/compiler/java/java_message.cc
   src/google/protobuf/compiler/java/java_message_field.cc
+  src/google/protobuf/compiler/java/java_name_resolver.cc
   src/google/protobuf/compiler/java/java_primitive_field.cc
+  src/google/protobuf/compiler/java/java_shared_code_generator.cc
   src/google/protobuf/compiler/java/java_service.cc
   src/google/protobuf/compiler/java/java_string_field.cc
+  src/google/protobuf/compiler/java/java_doc_comment.cc
   src/google/protobuf/compiler/python/python_generator.cc
   
   # protoc
