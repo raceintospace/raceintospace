@@ -1329,8 +1329,10 @@ int FutureCheck(char plr, char type)
     fill_rectangle(65, 18, 212, 28, 7);
     ShBox(217, 17, 264, 29);
     IOBox(217, 17, 264, 29);
+    display::graphics.setForegroundColor(11);
+    draw_string(231, 25, "E");
     display::graphics.setForegroundColor(9);
-    draw_string(231, 25, "EXIT");
+    draw_string(235, 25, "XIT");
     display::graphics.setForegroundColor(11);
 
     if (type == 0) {
