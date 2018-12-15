@@ -812,11 +812,7 @@ void FileAccess(char mode)
                 fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
                 // Save Event information
-                // todo: how many bytes do we read?
-                interimData.eventBuffer = (char *) malloc(128000L);
-                interimData.eventSize = fread(interimData.eventBuffer, 1, 128000L, fout);
-                interimData.eventBuffer = (char *) realloc(interimData.eventBuffer, interimData.eventSize);
-                interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+                fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
 
                 fclose(fin);
             }  // end done if
