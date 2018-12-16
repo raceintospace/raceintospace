@@ -81,6 +81,15 @@ int PCX_D(char *src_raw, char *dest_raw, unsigned src_size)
     return (dest - orig_dest);
 }
 
+/* Run-length Encoding Decompression algorithm.
+ *
+ * Expands a data sequence compressed using the RLEC() function.
+ *
+ * \param src_raw   Compressed input buffer.
+ * \param dest_raw  Buffer for decompressed ouput.
+ * \param src_size  Length of the compressed file, in bytes.
+ * \return  Size of the decompressed data in bytes.
+ */
 int RLED(char *src_raw, char *dest_raw, unsigned int src_size)
 {
     signed char *src = (signed char *)src_raw;
@@ -221,6 +230,19 @@ int brandom(int limit)
     return (int)(limit * (rand() / (RAND_MAX + 1.0)));
 }
 
+/* Run-length Encoding (RLE) Compression algorithm.
+ *
+ * Uncompressed segments are prefaced by their length. Compressed
+ * segments - where a character repeats - are stored via the number of
+ * repetitions followed by the repeated character. Compression is
+ * distinguished from uncompressed segments by using negative values
+ * (1 - reps).
+ *
+ * \param src       Source buffer.
+ * \param dest      Buffer for compressed output.
+ * \param src_size  Length of the source contents in bytes.
+ * \return  Size, in bytes, of the compressed output.
+ */
 int32_t RLEC(char *src, char *dest, unsigned int src_size)
 {
     unsigned int src_i;

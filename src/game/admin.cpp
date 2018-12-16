@@ -67,13 +67,20 @@ SFInfo *FList;
 int GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
 void DrawFiles(char now, char loc, char tFiles);
-void BadFileType(void);
+void BadFileType();
 void FileText(char *name);
 int FutureCheck(char plr, char type);
 char RequestX(char *s, char md);
 
 
 
+/* Control loop for the Administration Office menu.
+ *
+ * This provides acccess to the Budget Office, Hardware Purchase,
+ * Future Missions, Astronaut Recruiting, Preferences, and Time Capsule.
+ *
+ * \param plr  The current player.
+ */
 void Admin(char plr)
 {
     int i, beg;
@@ -208,6 +215,21 @@ void Admin(char plr)
     WaitForMouseUp();
 }
 
+
+/* Creates a list of all the save files of the selected type, up to 100.
+ *
+ * The results are stored in the global "buffer" variable. They are
+ * stored as a list of SFInfo structs, accessible via the global FList
+ * ptr, and a list of SaveFileHdr structs, accessible via the global
+ * SaveHdr ptr. FList entries are ordered by save title.
+ *
+ * TODO: Storing the results of the search as a byte dump in a globally
+ * accessible buffer is incredibly legacy and needs to be changed to
+ * something safer.
+ *
+ * \param saveType  Include Normal, Modem, or Play by Email.
+ * \return  The number of savegame files found (up to 100).
+ */
 int GenerateTables(SaveGameType saveType)
 {
     struct ffblk ffblk;
@@ -288,6 +310,23 @@ next:
     return tFiles;
 }
 
+
+/* Draws the File save/load interface and manages the gui.
+ *
+ * To determine which menu options are accessible, this uses the
+ * global MAIL and Option variables. For normal games, MAIL & Option
+ * are set to -1. These are used to identify the current player in a
+ * Play-by-mail or Modem game, being set to the side of the player:
+ * 0 for Player 1 (USA), 1 for Player 2 (USSR). Practically, both
+ * Play-by-mail and Modem play are currently disabled.
+ *
+ * This relies on a number of global and local file global variables.
+ * SaveHdr & FList are local file global pointers to save file data,
+ * loaded into the global byte array "buffer". They are assigned, and
+ * buffer populated, via GenerateTables().
+ *
+ * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
+ */
 void FileAccess(char mode)
 // mode==0 if save allowed
 {
@@ -773,11 +812,7 @@ void FileAccess(char mode)
                 fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
 
                 // Save Event information
-                // todo: how many bytes do we read?
-                interimData.eventBuffer = (char *) malloc(128000L);
-                interimData.eventSize = fread(interimData.eventBuffer, 1, 128000L, fout);
-                interimData.eventBuffer = (char *) realloc(interimData.eventBuffer, interimData.eventSize);
-                interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+                fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
 
                 fclose(fin);
             }  // end done if
@@ -1040,8 +1075,20 @@ void FileAccess(char mode)
     }
 }
 
-void
-save_game(char *name)
+
+/* Creates an Autosave with the supplied save name.
+ *
+ * The save is composed of:
+ *
+ *   - the save file header (a SaveFileHdr struct)
+ *   - the (compressed) struct Players variable Data holding most of
+ *     the state data
+ *   - the Replay information detailing the events of launches
+ *   - the event data, consisting of each turn's news text
+ *
+ * \param name  The filename to write the save under.
+ */
+void save_game(char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
@@ -1099,6 +1146,13 @@ cleanup:
     }
 }
 
+
+/* Creates and displays an entry form for submitting a savegame name
+ * and accepts the game description as input.
+ *
+ * \param name  The string location where the name is stored.
+ * \return  1 if the name is submitted, 0 if aborted.
+ */
 char GetBlockName(char *Nam)
 {
     int i, key;
@@ -1169,7 +1223,14 @@ char GetBlockName(char *Nam)
 }
 
 
-
+/* Displays (a section of) the savegame files.
+ *
+ * Up to 9 files are shown at a given time.
+ *
+ * \param now     The savegame index of the current save file.
+ * \param loc     The display index of the current save file.
+ * \param tFiles  The total count of savegame files.
+ */
 void DrawFiles(char now, char loc, char tFiles)
 {
     int i, j, start;
@@ -1186,7 +1247,9 @@ void DrawFiles(char now, char loc, char tFiles)
 }
 
 
-void BadFileType(void)
+/* Displays an alert popup warning that a save file is corrupted.
+ */
+void BadFileType()
 {
     display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
@@ -1202,6 +1265,13 @@ void BadFileType(void)
 }
 
 
+/* Displays a brief text summary of the savegame contents.
+ *
+ * The summary includes the names of the two space program directors,
+ * the type of savegame, and the turn (as year & season).
+ *
+ * \param name  A savegame filename.
+ */
 void FileText(char *name)
 {
     FILE *fin;
@@ -1285,6 +1355,18 @@ void FileText(char *name)
 }
 
 
+/* Displays the Launch Pad menu.
+ *
+ * The menu is used for accessing planned missions, either future
+ * missions set for next season or missions scheduled for the current
+ * season. The former are referenced as "Future" missions, while the
+ * latter is used as an entrance point for the Vehicle Assembly
+ * building.
+ *
+ * \param plr   The index of the active player (Player 0 or Player 1).
+ * \param type  0 for Future Missions, 1 for Vehicle Assembly.
+ * \return      0, 1, or 2 for launch pads A, B, and C; 5 to exit.
+ */
 int FutureCheck(char plr, char type)
 {
     int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
@@ -1594,6 +1676,13 @@ int FutureCheck(char plr, char type)
     return pad;
 }
 
+
+/* Creates a popup confirmation box, blocking input until resolved.
+ *
+ * \param s   The heading text.
+ * \param md  1 if the background underneath should be redrawn on close.
+ * \return  1 for yes, 0 for no.
+ */
 char RequestX(char *s, char md)
 {
     char i;
@@ -1648,7 +1737,37 @@ char RequestX(char *s, char md)
     return i;
 }
 
-// Save Game related functions
+
+/* Updates the game state stored in the save buffer.
+ *
+ * The game tracks all the data that will be written to a save file
+ * in a buffer, interimData, modifying it when the save should update
+ * to reflect changes. Saving the game writes this buffer to a new
+ * savegame file. This compresses byte-formatted data and stores it
+ * in the interimData end-of-turn buffer which contains the game
+ * state information (planned missions, research levels, etc.).
+ *
+ * When a save file is created, it starts with a SaveFileHdr header
+ * and is populated with the data stored in the interimData structure.
+ * The interimData variable holds:
+ *   - the (compressed) struct Players variable Data holding most of
+ *     the state data
+ *   - the Replay information detailing the events of launches
+ *   - the event data, consisting of each turn's event cards and the
+ *     news text generated
+ *
+ * In normal usage, the variable Data (which contains the game state)
+ * is copied into the interimData end-of-turn buffer at the beginning of
+ * each player's turn. In this manner, loading the save returns the
+ * the player to the beginning of their turn (on which the save
+ * was created). The interimData buffer is also updated when the player
+ * quits the game, updating the Autosave to their current state so the
+ * player may resume their game where they left off.
+ *
+ * \param inData   Data formatted as a raw byte block.
+ * \param dataLen  the size of the data block in bytes.
+ * \return  the size of the compressed data.
+ */
 int32_t EndOfTurnSave(char *inData, int dataLen)
 {
     if (!inData || dataLen == 0) {
