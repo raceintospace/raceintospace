@@ -52,9 +52,8 @@ char InSpace;
 char Dock_Skip; /**< used for mission branching */
 
 extern uint16_t MisStat;
-extern char pCnt, tMen;          // Counter for pAry
+extern char tMen;
 extern bool fullscreenMissionPlayback;
-extern int pAry[15];         /**< Array for Presige Firsts compelted */
 
 void Tick(char);
 
@@ -520,10 +519,6 @@ void MisCheck(char plr, char mpad)
 
         if (STEP > 30 || STEP < 0) {
             delay(20);
-        }
-
-        if (Mev[STEP].Prest != 0) {
-            pAry[pCnt++] = STEP;
         }
 
         if (Mev[STEP].sgoto == Mev[STEP].fgoto && Mev[STEP].trace != 0x7f) {
