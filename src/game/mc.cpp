@@ -48,8 +48,7 @@ struct MisEval Mev[60];  // was *Mev;
 struct mStr Mis;
 REPLAY Rep;
 
-char pCnt, tMen;    // Counter for pAry
-int pAry[15]; // Array for Presige Firsts compelted
+char tMen;
 
 char MANNED[2];
 char CAP[2];
@@ -117,8 +116,6 @@ int Launch(char plr, char mis)
     int i, j, t, k, mcode, avg, temp = 0;
     char total;
     STEP = FINAL = JOINT = PastBANG = 0;
-    memset(pAry, 0x00, sizeof pAry);
-    pCnt = 0; // reset values
     MisStat = tMen = 0x00; // clear mission status flags
 
     remove_savedat("REPLAY.TMP");  // make sure replay buffer isn't there
