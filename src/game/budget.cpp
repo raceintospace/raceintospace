@@ -698,7 +698,9 @@ int RetFile(char plr, int card)
     int bline, i;
 
     oldNews = &interimData.tempEvents[card + plr * 42];
-    sprintf(buffer, "%s", interimData.eventBuffer + oldNews->offset);
+    // sprintf(buffer, "%s", interimData.eventBuffer + oldNews->offset);
+    memcpy(buffer, interimData.eventBuffer + oldNews->offset, oldNews->size);
+    buffer[oldNews->size] = '\0';
 
     bline = 0;
 
