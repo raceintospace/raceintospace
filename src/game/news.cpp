@@ -574,7 +574,42 @@ News(char plr)
 
     memset(fp, 0, sizeof(*fp));
 
-    GoNews(plr);
+    // Autosave Fix
+    // An autosave stores the state of the game at the time it was
+    // created, after the news has been generated for the turn. However,
+    // the news broadcast is still repeated. Rather than skip the
+    // introduction, the current turn is calculated, compared with the
+    // number of news events (1/turn) and a flag is set to replay the
+    // news if the save has already accounted for the events.
+    int turn = 2 * (Data->Year - 57) + Data->Season + 1; // start at turn 1
+    bool freshNews = (turn > Data->P[plr].eCount);
+
+    if (freshNews) {
+        GoNews(plr);
+
+        // GoNews increments player eCount, so it should equal the turn
+        // File Structure is 84 longs 42 per side
+        size_t eventIndex = plr * 42 + Data->P[plr].eCount - 1;
+        interimData.tempEvents[eventIndex].offset = interimData.eventSize;
+        interimData.tempEvents[eventIndex].size = strlen(buffer);
+        interimData.eventBuffer =
+            (char *) realloc(interimData.eventBuffer,
+                             interimData.eventSize + strlen(buffer));
+        memcpy(interimData.eventBuffer + interimData.eventSize,
+               buffer,
+               strlen(buffer));
+        interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+        interimData.eventSize += strlen(buffer);
+
+    } else {
+        // Copy the recorded news event for the turn into the buffer
+        // so it will be available for display.
+        OLDNEWS *oldNews = &interimData.tempEvents[plr * 42 + turn - 1];
+        strncpy(buffer,
+                interimData.eventBuffer + oldNews->offset,
+                oldNews->size);
+        buffer[oldNews->size] = '\0';
+    }
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {
 
@@ -596,15 +631,6 @@ News(char plr)
         }
 
     bline -= 8;
-
-    // File Structure is 84 longs 42 per side
-
-    interimData.tempEvents[plr * 42 + Data->P[plr].eCount - 1].offset = interimData.eventSize;
-    interimData.tempEvents[plr * 42 + Data->P[plr].eCount - 1].size = strlen(buffer);
-    interimData.eventBuffer = (char *) realloc(interimData.eventBuffer, interimData.eventSize + strlen(buffer));
-    memcpy(interimData.eventBuffer + interimData.eventSize, buffer, strlen(buffer));
-    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-    interimData.eventSize += strlen(buffer);
 
     /** \todo there is also M_NEW1950, why it is unused? */
     music_start(M_NEW1970);
