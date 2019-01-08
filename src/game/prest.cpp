@@ -277,10 +277,11 @@ int PrestCheck(char plr)
     // Other mission bonus
 
     // Sum all additional Mission Bonuses
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < 5; i++) {
         if (Mis.PCat[i] != -1) {
             total += Data->Prestige[Mis.PCat[i]].Add[2];
         }
+    }
 
     if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
         total += Data->Prestige[Prestige_MannedDocking].Add[2];
@@ -489,61 +490,61 @@ char Set_Goal(char plr, char which, char control)
 
     switch (which) {
     case Prestige_OrbitalSatellite:
-        return(sum);
+        return (sum);
 
     case Prestige_MannedSpaceMission:
-        return(sum);
+        return (sum);
 
     case Prestige_MannedOrbital:
-        return(sum + Set_Goal(plr, Prestige_OrbitalSatellite, 1));
+        return (sum + Set_Goal(plr, Prestige_OrbitalSatellite, 1));
 
     case Prestige_LunarFlyby:
-        return(sum + Set_Goal(plr, Prestige_MannedOrbital, 1));
+        return (sum + Set_Goal(plr, Prestige_MannedOrbital, 1));
 
     case Prestige_LunarProbeLanding:
-        return(sum + Set_Goal(plr, Prestige_LunarFlyby, 1));
+        return (sum + Set_Goal(plr, Prestige_LunarFlyby, 1));
 
     case Prestige_MannedLunarPass:
-        return(sum + Set_Goal(plr, Prestige_LunarProbeLanding, 1));
+        return (sum + Set_Goal(plr, Prestige_LunarProbeLanding, 1));
 
     case Prestige_MannedLunarOrbit:
-        return(sum + Set_Goal(plr, Prestige_MannedLunarPass, 1));
+        return (sum + Set_Goal(plr, Prestige_MannedLunarPass, 1));
 
     case Prestige_MannedLunarLanding:
-        return(sum + Set_Goal(plr, Prestige_MannedLunarOrbit, 1));
+        return (sum + Set_Goal(plr, Prestige_MannedLunarOrbit, 1));
 
     case Prestige_Duration_A:
-        return(sum);
+        return (sum);
 
     case Prestige_Duration_B:
-        return(sum);
+        return (sum);
 
     case Prestige_Duration_C:
-        return(sum + Set_Goal(plr, Prestige_Duration_B, 1));
+        return (sum + Set_Goal(plr, Prestige_Duration_B, 1));
 
     case Prestige_Duration_D:
-        return(sum + Set_Goal(plr, Prestige_Duration_C, 1));
+        return (sum + Set_Goal(plr, Prestige_Duration_C, 1));
 
     case Prestige_Duration_E:
-        return(sum + Set_Goal(plr, Prestige_Duration_D, 1));
+        return (sum + Set_Goal(plr, Prestige_Duration_D, 1));
 
     case Prestige_Duration_F:
-        return(sum + Set_Goal(plr, Prestige_Duration_E, 1));
+        return (sum + Set_Goal(plr, Prestige_Duration_E, 1));
 
     case Prestige_OnePerson:
-        return(sum);
+        return (sum);
 
     case Prestige_TwoPerson:
-        return(sum + Set_Goal(plr, Prestige_OnePerson, 1));
+        return (sum + Set_Goal(plr, Prestige_OnePerson, 1));
 
     case Prestige_ThreePerson:
-        return(sum + Set_Goal(plr, Prestige_TwoPerson, 1));
+        return (sum + Set_Goal(plr, Prestige_TwoPerson, 1));
 
     case Prestige_Minishuttle:
-        return(sum + Set_Goal(plr, Prestige_ThreePerson, 1));
+        return (sum + Set_Goal(plr, Prestige_ThreePerson, 1));
 
     case Prestige_FourPerson:
-        return(sum + Set_Goal(plr, Prestige_Minishuttle, 1));
+        return (sum + Set_Goal(plr, Prestige_Minishuttle, 1));
 
     case Prestige_MercuryFlyby:
     case Prestige_VenusFlyby:
@@ -907,10 +908,11 @@ int AllotPrest(char plr, char mis)
     }
 
     // TOTAL ALL MISSION FIRSTS
-    for (i = 0; i < 28; i++)
+    for (i = 0; i < 28; i++) {
         if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
             total += Set_Goal(plr, i, 0);
         }
+    }
 
     //else if (PVal[i]==4) negs+=Set_Goal(plr,i,0);
 
@@ -947,12 +949,13 @@ int AllotPrest(char plr, char mis)
             total = Set_Goal(plr, S_Goal, 0);
         }
 
-        for (i = 0; i < 28; i++)
+        for (i = 0; i < 28; i++) {
             if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
                 total += Set_Goal(plr, i, 0);
             } else if (PVal[i] == 3) {
                 Set_Goal(plr, i, 0);
             }
+        }
     }
 
     // LM POINTS

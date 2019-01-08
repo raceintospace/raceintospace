@@ -429,10 +429,11 @@ void InitData(void)
     InitializeEvents();                  // RESET EVENT CARDS
     Data->Count = 0;               // SET EVENT COUNTER TO ZERO
 
-    for (j = 0; j < NUM_PLAYERS; j++)
+    for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 0; i < 5; i++) {
             Data->P[j].PresRev[i] = 8;
         }
+    }
 
     return;
 }
@@ -465,15 +466,16 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             (Data->P[1].Budget * (brandom(40) + 80)) / 100;
 
         for (t1 = 0; t1 < NUM_PLAYERS; t1++) {          // Move Expenditures down one
-            for (t2 = 4; t2 >= 0; t2--)
+            for (t2 = 4; t2 >= 0; t2--) {
                 for (t3 = 0; t3 < 4; t3++) {
                     Data->P[t1].Spend[t2][t3] = Data->P[t1].Spend[t2 - 1][t3];
                 }
+            }
 
             for (t3 = 0; t3 < 4; t3++) {
                 Data->P[t1].Spend[0][t3] = 0;
             }
-        };
+        }
 
         if (Data->Season == 0) {
             CalcPresRev();
@@ -505,7 +507,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     QUIT = 1;
                     return;
                 }
-            };
+            }
 
             if (!AI[i]) {
                 NextTurn(plr[i]);
@@ -544,21 +546,21 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 VerifySF(plr[i] - 2);
                 AIMaster(plr[i] - 2);
                 AI_Done(); // Fade Out AI Thinking Screen and Restores Mouse
-            };
+            }
 
             Data->Count++;
 
             if (QUIT) {
                 return;
             }
-        };
+        }
 
         DockingKludge();  // fixup for both sides
 
         // Do Missions Here
         kik = OrderMissions();
 
-        for (i = 0; i < kik; i++)
+        for (i = 0; i < kik; i++) {
             if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
                 if (AI[Order[i].plr] == 1) {
                     if (!CheckIfMissionGo(Order[i].plr, Order[i].loc)) {
@@ -599,7 +601,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     }
                 }
 
-            };                             //for(i=0...
+            }                             //for(i=0...
+        }
 
         Update();  /* Moves Future launches to Missions + More */
 
@@ -637,7 +640,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     Data->P[t1].tempPrestige[Data->Season] += Data->P[t1].Prestige;
                 }
             }
-        };
+        }
 
         Data->P[0].Prestige = Data->P[1].Prestige = 0;
 
@@ -659,7 +662,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         } else {
             Data->Season++;
         }
-    };
+    }
 
     FadeOut(2, 10, 0, 0);
 

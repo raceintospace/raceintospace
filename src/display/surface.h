@@ -17,11 +17,13 @@ public:
 
     SDL_Surface *surface() const;
 
-    inline unsigned int width() const {
+    inline unsigned int width() const
+    {
         return _screen->w;
     }
 
-    inline unsigned int height() const {
+    inline unsigned int height() const
+    {
         return _screen->h;
     }
 
@@ -29,31 +31,37 @@ public:
     void clear(const Color &color);
 
     // Set the surface to black
-    inline void clear() {
+    inline void clear()
+    {
         clear(Color(0, 0, 0));
     };
 
-    void draw(const Surface &surface, unsigned int x, unsigned int y) {
+    void draw(const Surface &surface, unsigned int x, unsigned int y)
+    {
         draw(surface, 0, 0, surface.width(), surface.height(), x, y);
     }
 
-    void draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH) {
+    void draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH)
+    {
         draw(surface, srcX, srcY, srcW, srcH, 0, 0);
     }
 
     void draw(const Surface &surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y);
 
 
-    void draw(const boost::shared_ptr<Surface> surface, unsigned int x, unsigned int y) {
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int x, unsigned int y)
+    {
         draw(*surface, x, y);
     }
 
 
-    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH) {
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH)
+    {
         draw(*surface, srcX, srcY, srcW, srcH, 0, 0);
     }
 
-    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y) {
+    void draw(const boost::shared_ptr<Surface> surface, unsigned int srcX, unsigned int srcY, unsigned int srcW, unsigned int srcH, unsigned int x, unsigned int y)
+    {
         draw(*surface, srcX, srcY, srcW, srcH, x, y);
     }
 

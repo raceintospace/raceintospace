@@ -421,7 +421,7 @@ void MisIntel(char plr, char acc)
             } else {
                 k++;
             }
-        };
+        }
 
         nf = 0;
 
@@ -441,7 +441,7 @@ void MisIntel(char plr, char acc)
             if (nf == 0) {
                 j++;
             }
-        };
+        }
 
         if (j > 0) {
             j = j - 1;
@@ -455,24 +455,28 @@ void MisIntel(char plr, char acc)
             save[i] = 0;
         }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
                 save[found] = mis;
                 ++found;
             }
+        }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
                 save[found] = mis;
                 ++found;
             }
+        }
 
         //}
-        for (i = lo; i < hi; i++) if (save[i] > 0) {
+        for (i = lo; i < hi; i++) {
+            if (save[i] > 0) {
                 j++;    // Check if event is good.
             }
+        }
 
         if (j <= 1) {
             MisIntel(plr, 0);
@@ -486,7 +490,7 @@ void MisIntel(char plr, char acc)
             // finds candidate
             j = brandom(hi - lo);
             k++;
-        };
+        }
 
         if (k >= 20) {
             MisIntel(plr, 0);
@@ -498,10 +502,11 @@ void MisIntel(char plr, char acc)
     mr = Data->P[plr].PastIntel[0].cur;
     nf = 0;
 
-    for (i = 0; i < mr; i++)
+    for (i = 0; i < mr; i++) {
         if (Data->P[plr].PastIntel[i].prog == 5 && Data->P[plr].PastIntel[i].index == mis) {
             nf = 1;
         }
+    }
 
     if (nf == 1 || mis > 56 + plr || mis < 0) {
         HarIntel(plr, 0);
@@ -1067,7 +1072,7 @@ void HarIntel(char p, char acc)
             } else {
                 k++;
             }
-        };
+        }
 
         nf = 0;
 
@@ -1087,7 +1092,7 @@ void HarIntel(char p, char acc)
             if (nf == 0) {
                 j++;
             }
-        };
+        }
 
         if (j > 0) {
             j = j - 1;    // adjust
@@ -1111,7 +1116,7 @@ void HarIntel(char p, char acc)
             if (Data->P[abs(p - 1)].Misc[i].Num >= 0) {
                 save[i + 21] = 1;
             }
-        };
+        }
 
         save[3] = save[4] = save[5] = save[6] = save[12] = save[13] = save[26] = save[27] = 0;
 
@@ -1147,7 +1152,7 @@ void HarIntel(char p, char acc)
 // draw_number(100,5+k*6,j);
             j = brandom(hi - lo);
             k++;
-        };
+        }
 
         if (k >= 28) {
             HarIntel(p, 0);
@@ -1172,10 +1177,11 @@ void HarIntel(char p, char acc)
     mr = Data->P[p].PastIntel[0].cur;
     nf = 0;
 
-    for (i = 0; i < mr; i++)
+    for (i = 0; i < mr; i++) {
         if (Data->P[p].PastIntel[i].prog == prg && Data->P[p].PastIntel[i].index == ind) {
             nf = 1;
         }
+    }
 
     if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
         (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {
@@ -1570,9 +1576,9 @@ void Bre(char plr)
 
                 OutBox(244, 5, 313, 17);
                 break;  /* Done */
-            };
+            }
         }
-    };
+    }
 }
 
 void Load_CIA_BUT(void)
@@ -1659,7 +1665,7 @@ void IStat(char plr)
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* Unmanned */
-            };
+            }
 
             if (((x >= 83 && y >= 164 && x <= 156 && y <= 195 && mousebuttons > 0) || key == 'R') && place != 1) {
                 InBox(83, 164, 156, 195);
@@ -1669,7 +1675,7 @@ void IStat(char plr)
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* Rocket */
-            };
+            }
 
             if (((x >= 164 && y >= 164 && x <= 237 && y <= 195 && mousebuttons > 0) || key == 'C') && place != 2) {
                 InBox(164, 164, 237, 195);
@@ -1679,7 +1685,7 @@ void IStat(char plr)
                 place = 2;
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
-            };
+            }
 
             if (((x >= 245 && y >= 164 && x <= 313 && y <= 195 && mousebuttons > 0) || key == 'M') && place != 3) {
                 InBox(245, 164, 313, 195);
@@ -1689,7 +1695,7 @@ void IStat(char plr)
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0);
                 /* MISC */
-            };
+            }
 
             if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
                 InBox(244, 5, 314, 17);
@@ -1772,13 +1778,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
                     fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
                     DispIt(101, 1, 115, 57, 11, 104);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(50, 159 - sfs * 136 / 100, 58, 159, 9);
                     fill_rectangle(50, 159 - sfs * 136 / 100, 57, 158, 8);
                     DispIt(125, 1, 149, 85, 33, 75);
-                };
+                }
 
                 break;
 
@@ -1787,13 +1793,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(78, 159 - sfu * 136 / 100, 86, 159, 6);
                     fill_rectangle(78, 159 - sfu * 136 / 100, 85, 158, 5);
                     DispIt(115, 0, 124, 68, 73, 92);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(103, 159 - sfs * 136 / 100, 111, 159, 9);
                     fill_rectangle(103, 159 - sfs * 136 / 100, 110, 158, 8);
                     DispIt(151, 1, 170, 95, 88, 65);
-                };
+                }
 
                 break;
 
@@ -1802,13 +1808,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(159, 159 - sfu * 136 / 100, 167, 159, 6);
                     fill_rectangle(159, 159 - sfu * 136 / 100, 166, 158, 5);
                     DispIt(172, 1, 209, 133, 130, 27);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(200, 159 - sfs * 136 / 100, 208, 159, 9);
                     fill_rectangle(200, 159 - sfs * 136 / 100, 207, 158, 8);
                     DispIt(211, 1, 243, 133, 172, 27);
-                };
+                }
 
                 break;
 
@@ -1817,20 +1823,20 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(260, 159 - sfu * 136 / 100, 268, 159, 6);
                     fill_rectangle(260, 159 - sfu * 136 / 100, 267, 158, 5);
                     DispIt(245, 1, 285, 137, 231, 23);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
                     fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
                     DispIt(287, 1, 318, 132, 274, 28);
-                };
+                }
 
                 break;
 
             default:
                 break;
             }
-        };
+        }
 
         break;
 
@@ -1859,13 +1865,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(13, 159 - sfu * 136 / 100, 21, 159, 6);
                     fill_rectangle(13, 159 - sfu * 136 / 100, 20, 158, 5);
                     DispIt(12, 91, 25, 116, 11, 137);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(41, 159 - sfs * 136 / 100, 49, 159, 9);
                     fill_rectangle(41, 159 - sfs * 136 / 100, 48, 158, 8);
                     DispIt(0, 56, 26, 89, 27, 123);
-                };
+                }
 
                 break;
 
@@ -1874,13 +1880,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(70, 159 - sfu * 136 / 100, 78, 159, 6);
                     fill_rectangle(70, 159 - sfu * 136 / 100, 77, 158, 5);
                     DispIt(27, 98, 49, 127, 59, 127);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(97, 159 - sfs * 136 / 100, 105, 159, 9);
                     fill_rectangle(97, 159 - sfs * 136 / 100, 104, 158, 8);
                     DispIt(28, 62, 49, 96, 84, 122);
-                };
+                }
 
                 break;
 
@@ -1889,13 +1895,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(132, 159 - sfu * 136 / 100, 140, 159, 6);
                     fill_rectangle(132, 159 - sfu * 136 / 100, 139, 158, 5);
                     DispIt(95, 77, 117, 127, 117, 106);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(174, 159 - sfs * 136 / 100, 182, 159, 9);
                     fill_rectangle(174, 159 - sfs * 136 / 100, 181, 158, 8);
                     DispIt(119, 97, 170, 140, 144, 113);
-                };
+                }
 
                 break;
 
@@ -1904,13 +1910,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(210, 159 - sfu * 136 / 100, 218, 159, 6);
                     fill_rectangle(210, 159 - sfu * 136 / 100, 217, 158, 5);
                     DispIt(3, 1, 16, 54, 203, 103);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(232, 159 - sfs * 136 / 100, 240, 159, 9);
                     fill_rectangle(232, 159 - sfs * 136 / 100, 239, 158, 8);
                     DispIt(18, 1, 32, 48, 223, 109);
-                };
+                }
 
                 break;
 
@@ -1919,13 +1925,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(269, 159 - sfu * 136 / 100, 277, 159, 6);
                     fill_rectangle(269, 159 - sfu * 136 / 100, 276, 158, 5);
                     DispIt(34, 1, 65, 60, 248, 97);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(305, 159 - sfs * 136 / 100, 313, 159, 9);
                     fill_rectangle(305, 159 - sfs * 136 / 100, 312, 158, 8);
                     DispIt(67, 1, 100, 60, 281, 97);
-                };
+                }
 
                 break;
 
@@ -1958,13 +1964,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(25, 159 - sfu * 136 / 100, 33, 159, 6);
             fill_rectangle(25, 159 - sfu * 136 / 100, 32, 158, 5);
             DispIt(60, 153, 88, 176, 9, 132);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(61, 159 - sfs * 136 / 100, 69, 159, 9);
             fill_rectangle(61, 159 - sfs * 136 / 100, 68, 158, 8);
             DispIt(31, 153, 56, 182, 41, 126);
-        };
+        }
 
         sfu = -1;
 
@@ -1988,13 +1994,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(101, 159 - sfu * 136 / 100, 109, 159, 6);
             fill_rectangle(101, 159 - sfu * 136 / 100, 108, 158, 5);
             DispIt(1, 153, 29, 182, 83, 128);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(132, 159 - sfs * 136 / 100, 140, 159, 9);
             fill_rectangle(132, 159 - sfs * 136 / 100, 139, 158, 8);
             DispIt(90, 151, 119, 176, 112, 131);
-        };
+        }
 
         for (i = 0; i < 3; i++) {
             sfu = -1;
@@ -2020,13 +2026,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(152, 159 - sfu * 136 / 100, 160, 159, 6);
                     fill_rectangle(152, 159 - sfu * 136 / 100, 159, 158, 5);
                     DispIt(58, 180, 71, 196, 147, 138);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(173, 159 - sfs * 136 / 100, 181, 159, 9);
                     fill_rectangle(173, 159 - sfs * 136 / 100, 180, 158, 8);
                     DispIt(73, 180, 89, 195, 165, 139);
-                };
+                }
 
                 break;
 
@@ -2035,13 +2041,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(212, 159 - sfu * 136 / 100, 220, 159, 6);
                     fill_rectangle(212, 159 - sfu * 136 / 100, 219, 158, 5);
                     DispIt(91, 178, 115, 195, 198, 139);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(237, 159 - sfs * 136 / 100, 245, 159, 9);
                     fill_rectangle(237, 159 - sfs * 136 / 100, 244, 158, 8);
                     DispIt(153, 142, 176, 166, 227, 132);
-                };
+                }
 
                 break;
 
@@ -2050,13 +2056,13 @@ void IInfo(char plr, char loc, char w)
                     fill_rectangle(272, 159 - sfu * 136 / 100, 280, 159, 6);
                     fill_rectangle(272, 159 - sfu * 136 / 100, 279, 158, 5);
                     DispIt(121, 142, 151, 166, 253, 132);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
                     fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
                     DispIt(178, 142, 201, 160, 284, 138);
-                };
+                }
 
                 break;
 
@@ -2089,13 +2095,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
             fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
             DispIt(68, 65, 76, 75, 17, 145);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(30, 159 - sfs * 136 / 100, 38, 159, 9);
             fill_rectangle(30, 159 - sfs * 136 / 100, 37, 158, 8);
             DispIt(78, 65, 86, 75, 31, 145);
-        };
+        }
 
         sfu = -1;
 
@@ -2119,13 +2125,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(72, 159 - sfu * 136 / 100, 80, 159, 6);
             fill_rectangle(72, 159 - sfu * 136 / 100, 79, 158, 5);
             DispIt(88, 62, 100, 75, 64, 143);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(91, 159 - sfs * 136 / 100, 99, 159, 9);
             fill_rectangle(91, 159 - sfs * 136 / 100, 98, 158, 8);
             DispIt(102, 66, 114, 75, 84, 147);
-        };
+        }
 
         sfu = -1;
 
@@ -2149,13 +2155,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(118, 159 - sfu * 136 / 100, 126, 159, 6);
             fill_rectangle(118, 159 - sfu * 136 / 100, 125, 158, 5);
             DispIt(1, 120, 14, 151, 113, 125);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(143, 159 - sfs * 136 / 100, 151, 159, 9);
             fill_rectangle(143, 159 - sfs * 136 / 100, 150, 158, 8);
             DispIt(16, 130, 31, 151, 134, 135);
-        };
+        }
 
         sfu = -1;
 
@@ -2179,13 +2185,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(173, 159 - sfu * 136 / 100, 181, 159, 6);
             fill_rectangle(173, 159 - sfu * 136 / 100, 180, 158, 5);
             DispIt(33, 140, 47, 151, 165, 145);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(195, 159 - sfs * 136 / 100, 203, 159, 9);
             fill_rectangle(195, 159 - sfs * 136 / 100, 202, 158, 8);
             DispIt(49, 138, 61, 151, 188, 143);
-        };
+        }
 
         sfu = -1;
 
@@ -2209,13 +2215,13 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(226, 159 - sfu * 136 / 100, 234, 159, 6);
             fill_rectangle(226, 159 - sfu * 136 / 100, 233, 158, 5);
             DispIt(63, 131, 75, 151, 219, 136);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(246, 159 - sfs * 136 / 100, 254, 159, 9);
             fill_rectangle(246, 159 - sfs * 136 / 100, 253, 158, 8);
             DispIt(77, 129, 88, 151, 240, 134);
-        };
+        }
 
         sfs = -1;
 
@@ -2231,7 +2237,7 @@ void IInfo(char plr, char loc, char w)
             fill_rectangle(296, 159 - sfs * 136 / 100, 304, 159, 9);
             fill_rectangle(296, 159 - sfs * 136 / 100, 303, 158, 8);
             DispIt(51, 77, 93, 127, 266, 106);
-        };
+        }
 
         break;
     }

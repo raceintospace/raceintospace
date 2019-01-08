@@ -75,7 +75,7 @@ int PCX_D(char *src_raw, char *dest_raw, unsigned src_size)
         } else {
             (*dest++) = *(src++);
             src_size--;
-        };
+        }
     }  while (src_size);
 
     return (dest - orig_dest);

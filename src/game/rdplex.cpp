@@ -284,7 +284,7 @@ char RD(char player_index)
         QueryUnit(hardware, unit, player_index);
     } else {
         InBox(165, 184, 315, 194);
-    };
+    }
 
     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -339,7 +339,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -360,7 +360,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -379,7 +379,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -398,7 +398,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -417,7 +417,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
@@ -523,7 +523,7 @@ char RD(char player_index)
                     QueryUnit(hardware, unit, player_index);
                 } else {
                     InBox(165, 184, 315, 194);
-                };
+                }
 
                 ShowUnit(hardware, unit, player_index);
 
@@ -576,7 +576,7 @@ char RD(char player_index)
                     QueryUnit(hardware, unit, player_index);
                 } else {
                     InBox(165, 184, 315, 194);
-                };
+                }
 
                 ShowUnit(hardware, unit, player_index);
 
@@ -615,7 +615,7 @@ char RD(char player_index)
                         QueryUnit(hardware, unit, player_index);
                     } else {
                         InBox(165, 184, 315, 194);
-                    };
+                    }
 
                     Data->P[player_index].Cash -= b * roll;
 
@@ -683,18 +683,18 @@ char RD(char player_index)
                     QueryUnit(hardware, unit, player_index);
                 } else {
                     InBox(165, 184, 315, 194);
-                };
+                }
 
                 FadeIn(2, 10, 0, 0);
 
                 music_start(M_HARDWARE);
 
                 WaitForMouseUp();
-            };
-        };
+            }
+        }
 
         gr_sync();
-    };
+    }
 }
 
 /**
@@ -741,7 +741,7 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
         }
     }
 
-    return(enableButton);
+    return enableButton;
 }
 
 
@@ -755,22 +755,22 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
 char MaxChk(char hardware_index, char unit_index, char player_index)
 {
     if (hardware_index == PROBE_HARDWARE) {
-        return(Data->P[player_index].Probe[unit_index].Safety < Data->P[player_index].Probe[unit_index].MaxRD);
+        return Data->P[player_index].Probe[unit_index].Safety < Data->P[player_index].Probe[unit_index].MaxRD;
     }
 
     if (hardware_index == ROCKET_HARDWARE) {
-        return(Data->P[player_index].Rocket[unit_index].Safety < Data->P[player_index].Rocket[unit_index].MaxRD);
+        return Data->P[player_index].Rocket[unit_index].Safety < Data->P[player_index].Rocket[unit_index].MaxRD;
     }
 
     if (hardware_index == MANNED_HARDWARE) {
-        return(Data->P[player_index].Manned[unit_index].Safety < Data->P[player_index].Manned[unit_index].MaxRD);
+        return Data->P[player_index].Manned[unit_index].Safety < Data->P[player_index].Manned[unit_index].MaxRD;
     }
 
     if (hardware_index == MISC_HARDWARE) {
-        return(Data->P[player_index].Misc[unit_index].Safety < Data->P[player_index].Misc[unit_index].MaxRD);
+        return Data->P[player_index].Misc[unit_index].Safety < Data->P[player_index].Misc[unit_index].MaxRD;
     }
 
-    return(0);
+    return 0;
 }
 
 /**
@@ -1049,7 +1049,7 @@ void ShowUnit(char hw, char un, char player_index)
         if (Unit_Cost > 1) {
             Unit_Cost /= 2;
         }
-    };
+    }
 
     draw_number(241, 97, Init_Cost);
 
@@ -1110,7 +1110,7 @@ void ShowUnit(char hw, char un, char player_index)
         }
 
         qty = 0;
-    };
+    }
 
     fill_rectangle(27, 95, 130, 171, 0);
 
@@ -1483,8 +1483,8 @@ char HPurc(char player_index)
             FadeIn(2, 10, 0, 0);
             music_start(M_FILLER);
             WaitForMouseUp();
-        };
-    };
+        }
+    }
 }
 
 /**

@@ -135,7 +135,7 @@ void DrawReview(char plr)
             } else {
                 cte = 80 + (Data->P[plr].PresRev[i] - 10) * 5;
             }
-        };
+        }
 
         if (Data->P[plr].PresRev[i] == 8) {
             cte = 73;
@@ -149,10 +149,11 @@ void DrawReview(char plr)
     if (Fired_Flag == 1) {
         clr = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Status == AST_ST_DEAD) {
                 clr++;
             }
+        }
 
         Data->P[plr].PresRev[0] = (clr >= 2) ? 17 : 16;
     }
@@ -172,7 +173,7 @@ void DrawReview(char plr)
         } else {
             P_value = 1;
         }
-    };
+    }
 
     if (plr == 1) {
         if (Data->P[plr].PresRev[0] <= 4 || Data->P[plr].PresRev[0] >= 12) {
@@ -331,10 +332,11 @@ void CalcPresRev(void)
     }
 
     // Move PresRev down One
-    for (j = 0; j < NUM_PLAYERS; j++)
+    for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 4; i > 0; i--) {
             Data->P[j].PresRev[i] = Data->P[j].PresRev[i - 1];
         }
+    }
 
     Data->P[0].Prestige = Data->P[1].Prestige = 0; // Clear Prest when finished
 
@@ -348,9 +350,9 @@ void CalcPresRev(void)
 
         *ip = (val < 0 && (*ip < 4)) ? *ip + 1 : ((val > 1 && val <= 10) ? *ip - 1
                 : ((val >= 11 && val <= 20) ? ((*ip < 4) ? *ip - 1 : *ip - 2)
-                       : ((val >= 21) ? ((*ip < 4) ? *ip - 1 : *ip - 3)
-                          : ((val >= -9 && val <= 0) ? *ip + 1 : ((val <= -10) ?
-                                  ((plr == 0) ? *ip + Data->Def.Lev1 + 1 : *ip + Data->Def.Lev2 + 1) : *ip)))));
+                   : ((val >= 21) ? ((*ip < 4) ? *ip - 1 : *ip - 3)
+                      : ((val >= -9 && val <= 0) ? *ip + 1 : ((val <= -10) ?
+                              ((plr == 0) ? *ip + Data->Def.Lev1 + 1 : *ip + Data->Def.Lev2 + 1) : *ip)))));
 
         *ip = (*ip > 16) ? 16 : ((*ip < 1) ? 1 : *ip);
 

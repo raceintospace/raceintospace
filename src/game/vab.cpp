@@ -176,10 +176,11 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     fill_rectangle(x1, y1, x2, y2, 7 + 3 * plr);
 
-    for (j = x1; j <= x2; j += 3)
+    for (j = x1; j <= x2; j += 3) {
         for (i = y1; i <= y2; i += 3) {
             display::graphics.legacyScreen()->pixels()[j + 320 * i] = val;
         }
+    }
 
     return;
 }
@@ -539,10 +540,10 @@ void ShowVA(char f)
             }
 
             draw_number(128, 136 + 12 * i, VAS[f][i].sf);
-        };
+        }
 
         draw_string(0, 0, "%");
-    };
+    }
 
     return;
 }
@@ -572,7 +573,7 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
         }
 
         draw_number(128, 188, sf);
-    };
+    }
 
     draw_string(0, 0, "%");
 
@@ -866,7 +867,7 @@ begvab:
             Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
         }
 
-    };
+    }
 
     BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
@@ -901,7 +902,7 @@ begvab:
     } else {
         ButOn = 0;
         InBox(245, 5, 314, 17);
-    };
+    }
 
     wgt = 0;
 
@@ -1272,7 +1273,7 @@ begvab:
 
                 OutBox(64, 129, 161, 175);
                 /* RIGHT Choose */
-            };
+            }
         }
     }
 }
@@ -1309,12 +1310,13 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     VX = Mis.mVab[part];
 
-    for (i = 0; i < 7; i++)
+    for (i = 0; i < 7; i++) {
         for (j = 0; j < 4; j++) {
             strcpy(&VAS[i][j].name[0], "NONE");
             VAS[i][j].qty = VAS[i][j].sf = VAS[i][j].wt = VAS[i][j].dmg = 0;
             VAS[i][j].dex = VAS[i][j].img = -1;
-        };
+        }
+    }
 
     VASqty = 0;
 
@@ -1324,7 +1326,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         for (i = 1; i < 6; i++) { // Fill all parts with CAP
             VASqty++;
             VVals(plr, 0, &Data->P[plr].Manned[j], j, 13 + j);
-        };
+        }
     }
 
     VASqty = 0;

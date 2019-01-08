@@ -174,7 +174,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
             fread_oFGROUP(&fgroup, 1, fseqf);
             mode = 1;
             max = fgroup.ID[1] - '0';
-        };
+        }
 
         i = 0;
 

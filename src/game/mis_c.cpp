@@ -157,7 +157,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             Seq[0] = 'i';
             strncpy(Mev[step].FName, "F034", 4);
         }
-    };
+    }
 
     if (Seq[0] == 'Q') {
         if (Mev[STEP - 1].Name[0] != 'S') {
@@ -176,7 +176,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 Seq[3] = '5';
             }
         }
-    };
+    }
 
     //Specs: LM act lunar liftoff failure klugge and failed landing LPL
     if (mode == 1) {
@@ -184,19 +184,19 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             if (Seq[3] == '6' || Seq[3] == '5') {
                 strncpy(Mev[STEP].FName, "F019", 4);
             }
-        };
+        }
 
         if (Seq[0] == 'Q') {
             if (Seq[3] == '6' || Seq[3] == '5') {
                 strncpy(Mev[STEP].FName, "F216", 4);
             }
-        };
+        }
 
         if (Seq[0] == 'S') {
             if (Seq[2] == 'P') {
                 strncpy(Mev[STEP].FName, "F118", 4);
             }
-        };
+        }
 
         if (Seq[0] == 'P') {
             //TC changero klugge
@@ -256,7 +256,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             fseek(fin, F[i].foffset, SEEK_SET);
             fread_oFGROUP(dSeq, F[i].size / sizeof_oFGROUP, fin);
         }
-    };
+    }
 
     fclose(fin);
 
@@ -289,7 +289,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 break;
             }
         }
-    };
+    }
 
     if ((strncmp((mode == 0) ? bSeq[j].ID : dSeq[j].ID, "XXXX", 4) == 0) || (mode == 1 && err == 1)) {
         //Specs: Search Error Play Static
@@ -329,10 +329,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 fres = 0;
                 break;
             }
-        };
+        }
 
         j += fres;
-    };
+    }
 
     //::::::::::::::::::::::::::::::::::::
     // Specs: Failure Sequence Variation :
@@ -356,10 +356,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 fres = 0;
                 break;
             }
-        };
+        }
 
         j += fres;
-    };
+    }
 
     BABY = 0;
 
@@ -814,7 +814,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         SHTS[loc] = brandom(3);
         kk = loc;
         return;
-    };
+    }
 
     x = (loc == 0 || loc == 1) ? 6 : 246;
 
@@ -843,7 +843,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
             } else {
                 attempt++;
             }
-        };
+        }
 
         if (attempt >= SCND_TABLE) {
             which = 415 + brandom(25);
@@ -914,7 +914,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                     } else {
                         attempt++;
                     }
-                };
+                }
 
                 if (attempt >= CLIF_TABLE) {
                     which = 415 + brandom(25);
@@ -944,7 +944,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
             } else {
                 attempt++;
             }
-        };
+        }
 
         if (attempt >= NORM_TABLE) {
             which = 415 + brandom(25);
@@ -959,7 +959,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                 which = Mob[attempt].List[which];
             }
         }
-    };
+    }
 
     //Specs: which holds baby num
     locl = (int32_t) 1612 * which;
@@ -983,12 +983,12 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     for (i = 0; i < 782; i++) {
         bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
         bot[i] = (bot[i] & 0x0F0F);
-    };
+    }
 
     for (i = 0; i < 1564; i++) {
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
-    };
+    }
 
     VBlank();
 
@@ -1189,7 +1189,7 @@ char FailureMode(char plr, int prelim, char *text)
             display::graphics.setForegroundColor(1);
             draw_string(49, 138, "UNMANNED");
         }
-    };
+    }
 
     display::graphics.setForegroundColor(11);  // Specialist
 
@@ -1238,7 +1238,7 @@ char FailureMode(char plr, int prelim, char *text)
         if (text[i] == '\0') {
             break;
         }
-    };
+    }
 
 
     // Failure Diagram

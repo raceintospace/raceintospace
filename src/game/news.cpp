@@ -163,10 +163,11 @@ OpenNews(char plr, char *buf, int bud)
 
     i = 0;
 
-    for (j = 0; j < Data->P[plr].AstroCount; j++)
+    for (j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
             i++;
         }
+    }
 
     bufsize = strlen(buf);
 
@@ -233,7 +234,7 @@ OpenNews(char plr, char *buf, int bud)
 
             fclose(gork);
         }
-    };
+    }
 
     bufsize = strlen(buf);
 
@@ -404,7 +405,7 @@ DispNews(char plr, char *src, char *dest)
                 if (Data->Year >= 76 && Data->Year <= 79) {
                     strcpy(&Name[0], "CARTER");
                 }
-            };
+            }
 
             if (plr == 1) {
                 if (Data->Year < 64) {
@@ -422,7 +423,7 @@ DispNews(char plr, char *src, char *dest)
                 if (Data->Year > 65) {
                     strcpy(&Name[0], "BREZHNEV");
                 }
-            };
+            }
 
             strncpy(&dest[j], &Name[0], strlen(Name));
 
@@ -447,7 +448,7 @@ DispNews(char plr, char *src, char *dest)
                 if (src[i + 1] == ' ') {
                     i++;
                 }
-            };
+            }
 
         default:
             break;
@@ -456,7 +457,7 @@ DispNews(char plr, char *src, char *dest)
         j++;
 
         k++;
-    };
+    }
 }
 
 void
@@ -547,7 +548,7 @@ DrawNText(char plr, char got)
         while (buf[0] != 'x' && buf[0] != '\0') {
             draw_character(buf[0]);
             buf++;
-        };
+        }
 
         yy += 9;
 
@@ -623,12 +624,13 @@ News(char plr)
 
         draw_heading(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
 
-    };
+    }
 
-    for (i = 0; i < (int) strlen(buffer); i++)
+    for (i = 0; i < (int) strlen(buffer); i++) {
         if (buffer[i] == 'x') {
             bline++;
         }
+    }
 
     bline -= 8;
 
@@ -738,7 +740,7 @@ News(char plr)
                     display::graphics.setForegroundColor(1);
                     draw_string(258, 13, "CONTINUE");
 
-                };
+                }
 
                 i = bline;
 
@@ -809,7 +811,7 @@ News(char plr)
         }
 
 //   gr_sync ();
-    };
+    }
 
     mm_close(fp);
 
@@ -1059,28 +1061,28 @@ ShowEvt(char plr, char crd)
     display::graphics.newsRect().w = 0;
     display::graphics.newsRect().h = 0;
 
-/*
-	//BEGIN: DUMPING CODE
-	for (int i = 0; i < 115; i++) {
-		crd = i;
+    /*
+    //BEGIN: DUMPING CODE
+    for (int i = 0; i < 115; i++) {
+        crd = i;
 
-		fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
-		fread_uint32_t(&offset, 1, ffin);
-		fread_uint32_t(&length, 1, ffin);
+        fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
+        fread_uint32_t(&offset, 1, ffin);
+        fread_uint32_t(&length, 1, ffin);
 
         fseek(ffin, offset, SEEK_SET);
         {
-			display::AutoPal p(display::graphics.legacyScreen());
+            display::AutoPal p(display::graphics.legacyScreen());
             fread(&p.pal[384], 384, 1, ffin);
         }
         fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
 
-		std::stringstream ss;
-		ss << "news.cdr.ussr." << i << ".png";
-		write_image( ss.str().c_str(), 320, 110 );
-	}
-	//END: DUMPING CODE
-*/
+        std::stringstream ss;
+        ss << "news.cdr.ussr." << i << ".png";
+        write_image( ss.str().c_str(), 320, 110 );
+    }
+    //END: DUMPING CODE
+    */
 
     fclose(ffin);
 }
@@ -1141,13 +1143,13 @@ int write_image( const char * filename, int width, int height )
     png_color png_pal[256];
 
     for (i = 0; i < 256; i ++) {
-		Color c = display::graphics.legacyScreen()->palette().get(i);
+        Color c = display::graphics.legacyScreen()->palette().get(i);
         png_pal[i].red = c.r;
         png_pal[i].green = c.g;
         png_pal[i].blue = c.b;
 
     }
-	
+
 
     png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
 
@@ -1168,5 +1170,3 @@ int write_image( const char * filename, int width, int height )
 */
 
 // EOF
-
-

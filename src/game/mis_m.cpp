@@ -115,7 +115,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
             Swap16bit(Now->xtra);
             Swap16bit(Now->fail);
         } while (Now->per <= rnum);
-    };
+    }
 
     fclose(fin);
 
@@ -268,7 +268,7 @@ void MisCheck(char plr, char mpad)
             strcpy(Name, Mev[STEP].Name);
             Name[0] = '#'; // Launch Code
             PlaySequence(plr, STEP, Name, 0); // Special Case #47236
-        };
+        }
 
         // Necessary to keep code from crashing on bogus mission step
         while (Mev[STEP].E == NULL) {
@@ -394,7 +394,7 @@ void MisCheck(char plr, char mpad)
                 }
 
                 tomflag = 1;
-            };
+            }
 
 
 
@@ -410,7 +410,7 @@ void MisCheck(char plr, char mpad)
                 } else {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C3" : "ISM4C3");
                 }
-            };
+            }
 
 // *********** TOM's FAIL HMOON KLUDGE
 
@@ -468,7 +468,7 @@ void MisCheck(char plr, char mpad)
                 } else {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C3" : "ISM4C3");
                 }
-            };
+            }
 
             if (Mev[STEP].Name[0] == 'e' && Data->P[plr].Mission[mpad].MissionCode == Mission_LunarFlyby) {
                 strcpy(Mev[STEP].Name, (plr == 0) ? "VUP1" : "VSP1");
@@ -606,7 +606,7 @@ void MisCheck(char plr, char mpad)
         death = 1;
     } else {
         death = 0;
-    };
+    }
 
     return;
 }
@@ -961,7 +961,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 Mev[STEP].StepInfo = 2100 + Mev[STEP].loc;
                 FNote = 9;
             }
-        }; // for
+        } // for
 
         ctr = 0;
 
@@ -1002,7 +1002,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 Mev[STEP].StepInfo = 2300 + Mev[STEP].loc;
                 FNote = 9;
             }
-        };
+        }
 
         ctr = 0;
 
@@ -1013,7 +1013,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 FNote = 8;
                 ctr++;
             }
-        }; // for
+        } // for
 
         if (ctr == MANNED[Mev[STEP].pad]) {
             Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
@@ -1049,7 +1049,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             } else {
                 Mev[STEP].trace = STEP + 1;
             }
-        };
+        }
 
         break;
 
@@ -1061,7 +1061,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             FNote = 2;
             Mev[STEP].StepInfo = 19;
             MFlag = MFlag | val;
-        };
+        }
 
         Mev[STEP].trace = STEP;          // recheck step
 
@@ -1084,7 +1084,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
             Mev[STEP].StepInfo = 3200 + Mev[STEP].loc;
             Mev[STEP].trace = STEP + 1;
-        };
+        }
 
         break;
 
@@ -1099,7 +1099,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 Mev[STEP].StepInfo = 2400 + Mev[STEP].loc;
                 ctr++;
             }
-        };
+        }
 
         //Used to reduce safety
 

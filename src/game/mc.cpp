@@ -212,7 +212,7 @@ int Launch(char plr, char mis)
                 CAP[i] = 0;
                 LM[i] = EVA[i] = 1;
                 DOC[i] = 2;
-            };
+            }
 
             break;
 
@@ -309,7 +309,7 @@ int Launch(char plr, char mis)
 
             avg += Mev[i].E->MisSaf + Mev[i].asf;
             temp += 1;
-        };
+        }
 
         if (temp) {
             avg /= temp;
@@ -422,7 +422,7 @@ void MissionPast(char plr, char pad, int prest)
         } else {
             Data->P[plr].History[loc].Man[loop][0] = Data->P[plr].History[loc].Man[loop][1] =
                         Data->P[plr].History[loc].Man[loop][2] = Data->P[plr].History[loc].Man[loop][3] = -1;
-        };
+        }
 
         if (Data->P[plr].Mission[pad + loop].Men > 0) {
             for (i = 0; i < 4; i++) {
@@ -445,7 +445,7 @@ void MissionPast(char plr, char pad, int prest)
                 }
             }
         }
-    };
+    }
 
     for (i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
         Data->P[plr].History[loc].Hard[PAD_A][i] = Data->P[plr].Mission[pad].Hard[i];
@@ -488,7 +488,7 @@ void MissionPast(char plr, char pad, int prest)
         }
 
         Rep.Off[Rep.Qty++] = num;
-    };
+    }
 
     fclose(fout);
 

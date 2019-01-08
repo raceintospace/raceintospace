@@ -20,17 +20,20 @@ struct Color {
     uint8_t b;
     uint8_t a;
 
-    inline uint32_t rgba() const {
+    inline uint32_t rgba() const
+    {
         return (r << 24) | (g << 16) | (b << 8) | a;
     };
 
     // is this color totally transparent?
-    inline bool transparent() const {
+    inline bool transparent() const
+    {
         return a == 0;
     };
 
     // is this color totally opaque?
-    inline bool opaque() const {
+    inline bool opaque() const
+    {
         return a == 255;
     };
 };// __attribute__((packed));

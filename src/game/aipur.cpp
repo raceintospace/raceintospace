@@ -569,10 +569,11 @@ void SelectBest(char plr, int pos)
     }
 
     // remove from the bottom up out of training
-    for (i = 0; i < pData->AstroCount; i++)
+    for (i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_TRAIN_BASIC_1) {
             pData->Pool[i].Status = AST_ST_ACTIVE;
         }
+    }
 
     return;
 }
@@ -581,18 +582,20 @@ void DumpAstro(char plr, int inx)
 {
     struct BuzzData *pData = &Data->P[plr];
 
-    for (int i = 0; i < pData->AstroCount; i++)
+    for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
             pData->Pool[i].Assign = 0; // back to limbo
             pData->Pool[i].Unassigned = 0;
         }
+    }
 
     for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
-        for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++)
+        for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
             if (pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
                 pData->Crew[inx][i][j] = 0;
                 pData->CrewCount[inx][i] = 0;
             }
+        }
     }
 
     return;
@@ -639,7 +642,7 @@ char Skill(char plr, char type)
         }
     }
 
-    return(ind);
+    return ind;
 }
 
 void TransAstro(char plr, int inx)
@@ -795,13 +798,14 @@ void CheckAdv(char plr)
     int count = 0;
     struct BuzzData *pData = &Data->P[plr];
 
-    for (int i = 0; i < pData->AstroCount; i++)
+    for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
             ++count;
         }
+    }
 
     if (count <= 3) {
-        for (int i = 0; i < pData->AstroCount; i++)
+        for (int i = 0; i < pData->AstroCount; i++) {
             if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
                 pData->Pool[i].Focus = brandom(4) + 1;
 
@@ -811,6 +815,7 @@ void CheckAdv(char plr)
                     pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
                 }
             }
+        }
     }
 
     return;
@@ -1006,7 +1011,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
     case MANNED_HARDWARE: // Manned Capsules
         if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[MANNED_HW_MINISHUTTLE].Num == 1) {
             // Only need one Minishuttle
-            return(1);
+            return 1;
         } else if (pData->Manned[unit_index].Num < MANNED_HW_THREE_MAN_CAPSULE) {
             // Manned Programs
             if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
@@ -1055,7 +1060,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
         if (pData->Misc[unit_index].Num < 2) { // Misc Programs
             if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
                 // Simply return when starting the EVA program, no cost for this
-                return(1);
+                return 1;
             }
 
             if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {

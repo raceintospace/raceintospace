@@ -337,10 +337,11 @@ void DrawPastExp(char player, char *pStatus)
     display::graphics.legacyScreen()->outlineRect(30, 157, 125, 165, 4);
     display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
 
-    for (j = 0; j < 5; j++)
+    for (j = 0; j < 5; j++) {
         for (i = 0; i < 4; i++) {
             max = (max > Data->P[player].Spend[j][i]) ? max : Data->P[player].Spend[j][i];
         }
+    }
 
     if (max <= 100) {
         draw_string(12, 150, "100");
@@ -358,7 +359,7 @@ void DrawPastExp(char player, char *pStatus)
         i = max >> 2;
         draw_number(12, 176, i);
         draw_string(8, 185, "0 MB");
-    };
+    }
 
     for (i = 0; i < 4; i++) {
         if (pStatus[i] == 1) {
@@ -386,7 +387,7 @@ void DrawPastExp(char player, char *pStatus)
             grLineTo(101, 182 - (Data->P[player].Spend[1][i] * 8) / pScale);
             grLineTo(124, 182 - (Data->P[player].Spend[0][i] * 8) / pScale);
         }
-    };
+    }
 
     InBox(30, 148, 125, 183);
 }
@@ -468,7 +469,7 @@ void Budget(char player)
                 DrawPastExp(player, pStatus);
             }
         }
-    };
+    }
 }
 
 void DrawPreviousMissions(char plr)
@@ -528,7 +529,7 @@ void DrawPreviousMissions(char plr)
         draw_number(0, 0, Data->P[plr].History[i].MissionYear);
         i--;
         misnum++;
-    };
+    }
 
     if (misnum < 3) {
         display::graphics.setForegroundColor(1);
@@ -678,7 +679,7 @@ void DrawVText(char got)
         while (buf[0] != 'x' && buf[0] != '\0') {
             draw_character(buf[0]);
             buf++;
-        };
+        }
 
         yy += 7;
 

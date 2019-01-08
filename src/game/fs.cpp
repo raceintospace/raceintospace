@@ -143,11 +143,12 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
         }
 
         /* try lowercase version */
-        for (s = cooked + len_base + len_p + 2; *s; ++s)
+        for (s = cooked + len_base + len_p + 2; *s; ++s) {
             if (isupper(*s)) {
                 was_upper |= 1;
                 *s = tolower(*s);
             }
+        }
 
         if (was_upper) {
             fh = try_fopen(cooked, mode);

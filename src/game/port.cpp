@@ -753,10 +753,11 @@ void Master(char plr)
         g_value = 1;
     }
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
             t_value = 1;
         }
+    }
 
     r_value = brandom(1000);
 
@@ -847,7 +848,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -867,7 +868,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -887,7 +888,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -1064,13 +1065,14 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j < high + 1; j++)
+        for (j = old; j < high + 1; j++) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
                 }
             }
+        }
 
         break;
 
@@ -1083,13 +1085,14 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j > low - 1; j--)
+        for (j = old; j > low - 1; j--) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
                 }
             }
+        }
 
         break;
 
@@ -1198,7 +1201,7 @@ void Port(char plr)
                 y = -1;
             }
 
-            for (j = 0; j < MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].qty; j++)
+            for (j = 0; j < MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].qty; j++) {
                 if (x >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x1 &&
                     y >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].y1 &&
                     x <= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x2 &&
@@ -1216,10 +1219,11 @@ void Port(char plr)
                     good = 0;
 
                     // Search hotkey string for valid selection
-                    for (k = 0; k < (int)strlen(HotKeyList); k++)
+                    for (k = 0; k < (int)strlen(HotKeyList); k++) {
                         if (HotKeyList[k] == ((char)(0x00ff & key))) {
                             good = 1;
                         }
+                    }
 
                     while (x >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].x1 &&
                            y >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].y1 &&
@@ -1236,7 +1240,7 @@ void Port(char plr)
                         if (kMode == 0 && key > 0) {
                             x = y = 0;
                             pKey = key;
-                        };
+                        }
 
                         if (kMode == 1 && !(x == 319 && y == 199)) {
                             kMode = 0;
@@ -1408,6 +1412,7 @@ void Port(char plr)
                     helpText = "i043";
                     keyHelpText = "k043";
                 } // if
+            }
 
             if (kMode == 0) {
                 i++;
@@ -1779,17 +1784,17 @@ char Request(char plr, char *s, char md)
             i = 0;
             delay(50);
             key = 0;
-        };
+        }
 
         if ((x > 93 && y >= 105 && x <= 162 && y <= 128 && mousebuttons != 0) || (key == 'Y')) {
             InBox(93, 105, 162, 128);
             i = 1;
             delay(50);
             key = 0;
-        };
+        }
 
         delay(50);
-    }; /* End while */
+    } /* End while */
 
     if (md > 0) {
         display::graphics.legacyScreen()->palette().copy_from(local.palette());
@@ -1806,11 +1811,12 @@ char MisReq(char plr)
 
     local.copyFrom(display::graphics.legacyScreen(), 53, 29, 236, 160);
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         if ((Data->P[plr].Mission[i].MissionCode) &&
             (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0)) {
             num++;
         }
+    }
 
     ShBox(53, 29, 236, 160);
     ShBox(60, 34, 229, 44);
@@ -1838,7 +1844,7 @@ char MisReq(char plr)
         draw_string(62, 129, "MISSIONS DO NOT ALL HAVE");
         draw_string(62, 136, "ASSIGNMENTS. NO COMMIT POSSIBLE");
         draw_string(120, 150, "REVIEW MISSIONS");
-    };
+    }
 
     display::graphics.setForegroundColor(10);
 
@@ -1858,18 +1864,18 @@ char MisReq(char plr)
                 draw_string(86, 65 + 20 * i, "MANNED MISSION");
             } else {
                 draw_string(86, 65 + 20 * i, "UNMANNED MISSION");
-            };
+            }
 
             if (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 display::graphics.setForegroundColor(9);
                 draw_string(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
             } else {
                 draw_string(86, 71 + 20 * i, "HARDWARE ASSIGNED");
-            };
+            }
 
             display::graphics.setForegroundColor(1);
         }
-    };
+    }
 
     while (1) {
         if (plr == 0) {
@@ -1899,7 +1905,7 @@ char MisReq(char plr)
             delay(50);
             key = 0;
             Rush(plr);
-        };
+        }
 
         if ((x > 150 && y >= 143 && x <= 227 && y <= 153 && mousebuttons != 0 && num == 0)
             || (key == 'R' && num == 0)) {
@@ -1907,7 +1913,7 @@ char MisReq(char plr)
             i = 0;
             delay(50);
             key = 0;
-        };
+        }
 
         if ((x > 62 && y >= 143 && x <= 227 && y <= 153 && mousebuttons != 0 && num > 0)
             || (key == 'R' && num > 0)) {
@@ -1915,8 +1921,8 @@ char MisReq(char plr)
             i = 0;
             delay(50);
             key = 0;
-        };
-    }; /* End while */
+        }
+    } /* End while */
 
     local.copyTo(display::graphics.legacyScreen(), 53, 29);
 

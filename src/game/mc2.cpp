@@ -66,9 +66,10 @@ MissionParse(char plr, char *MCode, char *LCode, char pad)
             break;
 
         case '~':              //printf("      :Delay of %d seasons\n",MCode[i+1]-0x30);
-            for (j = 0; j < (MCode[i + 1] - 0x30); j++)
+            for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
                 MissionSteps(plr, MCode[i + 2], LCode[STEP], STEP,
                              loc - pad);
+            }
 
             i += 2;
             break;
@@ -156,12 +157,12 @@ char WhichPart(char plr, int which)
 void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 {
     switch (mcode) {
-        // Booster Programs    :: VAB order for the class
+    // Booster Programs    :: VAB order for the class
     case 'A':
         Mev[step].Class = 4;
         break;
 
-        // Manned Programs : Capsule
+    // Manned Programs : Capsule
     case 'D':
     case 'E':
     case 'F':
@@ -187,12 +188,12 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         Mev[step].Class = 10;
         break;
 
-        // Manned Programs : LM
+    // Manned Programs : LM
     case 'a':
         Mev[step].Class = 2;                               // LM
         break;
 
-        // Unmanned Programs
+    // Unmanned Programs
     case 'C':
         if (MH[pad][1] && MH[pad][1]->ID[1] == 0x32) {
             Mev[step].Class = 1;    // Kicker-C
@@ -208,21 +209,21 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'W':
     case 'Z':
     case 'e':
-        Mev[step].Class = 3;                               // Satellite
+        Mev[step].Class = 3;        // Satellite
         break;
 
-        // Misc Programs
+    // Misc Programs
     case 'H':
     case 'P':
-        Mev[step].Class = 5;                               // EVA Suits
+        Mev[step].Class = 5;        // EVA Suits
         break;
 
-        // Photo Recon
+    // Photo Recon
     case 'U':
-        Mev[step].Class = 6;                          // Photo Recon
+        Mev[step].Class = 6;        // Photo Recon
         break;
 
-        // Special Cases (when is there not one?)
+    // Special Cases (when is there not one?)
     case 'B':
     case 'J':
     case 'L':
@@ -737,7 +738,7 @@ void MissionSetup(char plr, char mis)
 
                             MH[j][i]->Used++;
                         }
-                    };
+                    }
 
                     break;
 
@@ -765,7 +766,7 @@ void MissionSetup(char plr, char mis)
                         if (MH[j][7]->Num > 0) {
                             MH[j][7]->Num--;
                         }
-                    };
+                    }
 
                     break;
 
@@ -797,9 +798,9 @@ void MissionSetup(char plr, char mis)
                             break;
                         }
                 }
-            }; // if t>=0
-        }; // for (0<7)
-    }; // for (0<2)
+            } // if t>=0
+        } // for (0<7)
+    } // for (0<2)
 
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;
@@ -919,11 +920,13 @@ MisDur(char plr, char dur)
         INFO2("applying duration penalty %d to mission safety", -diff);
     }
 
-    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
             if (MH[i][j] != NULL) {
                 MH[i][j]->MisSaf -= diff;
             }
+        }
+    }
 }
 
 // #define Coml(a,b) (!(Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a)))
@@ -947,12 +950,15 @@ MisSkip(char plr, char ms)
         INFO2("applying general penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0)
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    if (diff != 0) {
+        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
                     MH[i][j]->MisSaf -= diff;
                 }
+            }
+        }
+    }
 }
 
 /**
@@ -972,12 +978,15 @@ MisRush(char plr, char rush_level)
         INFO2("applying rushing penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0)
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    if (diff != 0) {
+        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
                     MH[i][j]->MisSaf -= diff;
                 }
+            }
+        }
+    }
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */

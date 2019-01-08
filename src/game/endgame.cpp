@@ -447,7 +447,7 @@ void EndGame(char win, char pad)
             i = 1;
             key = 0;
             OutBox(244, 5, 313, 17);
-        };
+        }
     }
 
     return;
@@ -493,12 +493,12 @@ void Load_LenFlag(char win)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    for (j = 0; j < P.size; j++)
-
+    for (j = 0; j < P.size; j++) {
         /* now fix the strip */
         if (win == 1 || ((j + 1) % P.w != 0)) {
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
     local2.copyTo(display::graphics.legacyScreen(), Off_X, Off_Y);
 }
@@ -707,7 +707,7 @@ void NewEnd(char win, char loc)
             i = 1;
             key = 0;
             OutBox(254, 182, 305, 190);
-        };
+        }
     }
 }
 
@@ -948,7 +948,7 @@ void FakeWin(char win)
             i = 1;
             key = 0;
             OutBox(244, 5, 313, 17);
-        };
+        }
     }
 
     music_stop();
@@ -1106,7 +1106,7 @@ void SpecialEnd(void)
 
             i = 1;
             key = 0;
-        };
+        }
     }
 
     music_stop();
@@ -1141,12 +1141,12 @@ EndPict(int x, int y, char poff, unsigned char coff)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    for (j = 0; j < P.size; j++)
-
+    for (j = 0; j < P.size; j++) {
         /* fix the strip */
         if (local.pixels()[j] != 0 && ((j + 1) % P.w != 0)) {
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
 
     local2.copyTo(display::graphics.legacyScreen(), x, y);

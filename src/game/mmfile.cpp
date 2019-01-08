@@ -201,7 +201,7 @@ init_theora(mm_file *mf, ogg_page *pg)
         case OC_NEWPACKET:
             INFO1("incompatible theora file");
 
-            /* fall through */
+        /* fall through */
         case OC_BADHEADER:
         default:
             goto end;

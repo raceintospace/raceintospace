@@ -650,7 +650,7 @@ void ShowPad(char plr, char pad)
 
             key = 0;
             return;  /* Done */
-        };
+        }
     }
 }
 

@@ -187,10 +187,11 @@ void Limbo(char plr)
     now2 = BarA = count = 0;
     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
             AstroList[count++] = i;
-        };
+        }
+    }
 
     DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
@@ -238,7 +239,7 @@ void Limbo(char plr)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
-                    };
+                    }
 
                     if (BarA > 0) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -247,7 +248,7 @@ void Limbo(char plr)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
-                    };
+                    }
 
                     i = 51;
                 }
@@ -262,7 +263,7 @@ void Limbo(char plr)
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
-                };
+                }
 
                 if (BarA > 0) {
                     fill_rectangle(26, 129, 153, 195, 0);
@@ -271,7 +272,7 @@ void Limbo(char plr)
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
-                };
+                }
 
                 key = 0;
 
@@ -281,7 +282,7 @@ void Limbo(char plr)
             //WaitForMouseUp();key=0;
             OutBox(6, 130, 18, 161);
             delay(10);
-        };
+        }
 
         // Left Arrow Down
         if ((mousebuttons > 0 && x >= 6 && y >= 163 && x <= 18 && y <= 194 && count > 0) || key == DN_ARROW) {
@@ -300,7 +301,7 @@ void Limbo(char plr)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
-                    };
+                    }
 
                     if (BarA < 7 && now2 < count - 1) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -309,7 +310,7 @@ void Limbo(char plr)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &AstroList[0]);
                         LimboText(plr, AstroList[now2]);
-                    };
+                    }
 
                     i = 51;
                 }
@@ -324,7 +325,7 @@ void Limbo(char plr)
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
-                };
+                }
 
                 if (BarA < 7 && now2 < count - 1) {
                     fill_rectangle(26, 129, 153, 195, 0);
@@ -333,7 +334,7 @@ void Limbo(char plr)
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &AstroList[0]);
                     LimboText(plr, AstroList[now2]);
-                };
+                }
 
                 key = 0;
 
@@ -343,7 +344,7 @@ void Limbo(char plr)
             //key=0;WaitForMouseUp();key=0;
             OutBox(6, 163, 18, 194);
             delay(10);
-        };
+        }
 
         // Continue
         if ((mousebuttons > 0 && x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
@@ -420,7 +421,7 @@ void Limbo(char plr)
                     if (BarA > 0) {
                         BarA--;
                     }
-                };
+                }
 
                 fill_rectangle(26, 129, 153, 195, 0);
 
@@ -461,10 +462,11 @@ void Limbo(char plr)
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                for (i = 0; i < Data->P[plr].AstroCount; i++)
+                for (i = 0; i < Data->P[plr].AstroCount; i++) {
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
                         AstroList[count++] = i;
                     }
+                }
 
                 DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
@@ -556,7 +558,7 @@ void Limbo(char plr)
                         if (BarA > 0) {
                             BarA--;
                         }
-                    };
+                    }
 
                     fill_rectangle(26, 129, 153, 195, 0);
 
@@ -596,10 +598,11 @@ void Limbo(char plr)
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                for (i = 0; i < Data->P[plr].AstroCount; i++)
+                for (i = 0; i < Data->P[plr].AstroCount; i++) {
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
                         AstroList[count++] = i;
                     }
+                }
 
                 DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
@@ -612,7 +615,7 @@ void Limbo(char plr)
             }
         }
 
-    };  /* end while */
+    }  /* end while */
 } /* end Limbo */
 
 void Clear(void)

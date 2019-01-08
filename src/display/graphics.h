@@ -31,41 +31,50 @@ public:
     void create(const std::string &title, bool fullscreen);
     void destroy();
 
-    SDL_Surface *scaledScreenSurface() const {
+    SDL_Surface *scaledScreenSurface() const
+    {
         return _scaledScreen;
     }
 
-    SDL_Surface *displaySurface() const {
+    SDL_Surface *displaySurface() const
+    {
         return _display;
     }
 
-    SDL_Overlay *videoOverlay() const {
+    SDL_Overlay *videoOverlay() const
+    {
         return _video;
     }
 
-    SDL_Overlay *newsOverlay() const {
+    SDL_Overlay *newsOverlay() const
+    {
         return _news;
     }
 
-    Surface *screen() const {
+    Surface *screen() const
+    {
         return _screen;
     }
 
     DEPRECATED(LegacySurface *legacyScreen());
 
-    SDL_Rect &videoRect() {
+    SDL_Rect &videoRect()
+    {
         return _videoRect;
     }
 
-    SDL_Rect &newsRect() {
+    SDL_Rect &newsRect()
+    {
         return _newsRect;
     }
 
-    char foregroundColor() const {
+    char foregroundColor() const
+    {
         return _foregroundColor;
     }
 
-    char backgroundColor() const {
+    char backgroundColor() const
+    {
         return _backgroundColor;
     }
 

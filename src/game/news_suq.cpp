@@ -63,7 +63,7 @@ char CheckCrewOK(char plr, char pad)
         }
     }
 
-    return(RT_value);
+    return RT_value;
 }
 
 
@@ -201,7 +201,7 @@ char REvent(char plr)
     case 98:
         break;
 
-        // Cash Modifier Events --------------------------
+    // Cash Modifier Events --------------------------
 
     case 30:
     case 32:
@@ -223,7 +223,7 @@ char REvent(char plr)
         Data->P[plr].Cash -= evflag;
         break;
 
-        // Budget Modifier Events ------------------------
+    // Budget Modifier Events ------------------------
 
     case  9:
     case 76: // Budget increase of 15 MB
@@ -287,7 +287,7 @@ char REvent(char plr)
         Data->P[plr].Budget -= 5;
         break;
 
-        // RD Modifier Events ----------------------------
+    // RD Modifier Events ----------------------------
 
     case  2:
     case 12:
@@ -327,7 +327,7 @@ char REvent(char plr)
         break;
 
 
-        // Improve/Subtract Tech to Other players -------------------
+    // Improve/Subtract Tech to Other players -------------------
 
     case 5:
     case 47: // Improve tech of plr prog to other's prog
@@ -340,7 +340,7 @@ char REvent(char plr)
         break;
 
     case 6:
-    case  7:
+    case 7:
         // Lower tech of plr prog to other's prog
         evflag = Steal(plr, 0, -1);
 
@@ -350,13 +350,13 @@ char REvent(char plr)
 
         break;
 
-        // Special Events -------------------------------------------
+    // Special Events -------------------------------------------
 
     case  8: // Allow females into space program
         Data->P[plr].FemaleAstronautsAllowed = 1;
         break;
 
-        // Launch Affected ------------------------------------------
+    // Launch Affected ------------------------------------------
 
     case 4: // Next Launch must be a manned launch.  If the launch
         // is not so then -10 on Budget
@@ -460,7 +460,7 @@ char REvent(char plr)
 
         break;
 
-        // Program Saving cards ------------------------------------
+    // Program Saving cards ------------------------------------
 
     case 11: /* Select program and set safety save to 1 */
         evflag = SaveMods(plr, 0);
@@ -493,22 +493,24 @@ char REvent(char plr)
            drop the safety factor in half. */
         evflag = 0;
 
-        for (i = 3; i >= 0; i--)
+        for (i = 3; i >= 0; i--) {
             if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
         }
 
-        for (i = 3; i >= 0; i--)
+        for (i = 3; i >= 0; i--) {
             if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
                 evflag = Data->P[plr].Rocket[i].Safety / 2;
                 Data->P[plr].Rocket[i].Safety -= evflag;
                 strcpy(&Name[0], &Data->P[plr].Rocket[i].Name[0]);
                 break;
-            };
+            }
+        }
 
         break;
 
@@ -516,7 +518,7 @@ char REvent(char plr)
         for (i = 1; i < 3; i++) {
             Data->P[plr].Probe[i].MaxRD += 5;
             Data->P[plr].Probe[i].MaxSafety += 5;
-        };
+        }
 
         for (i = 1; i < 3; i++) {
             if (Data->P[plr].Probe[i].MaxSafety >= 99) {
@@ -526,7 +528,7 @@ char REvent(char plr)
             if (Data->P[plr].Probe[i].MaxRD > Data->P[plr].Probe[i].MaxSafety) {
                 Data->P[plr].Probe[i].MaxRD = Data->P[plr].Probe[i].MaxSafety;
             }
-        };
+        }
 
         break;
 
@@ -698,7 +700,7 @@ char REvent(char plr)
 
         break;
 
-// Astronaut Portion ------------------------------------
+    // Astronaut Portion ------------------------------------
 
     case 49: /* pick random astronaut retire, budget minus 5 MB's */
         evflag = 0;
@@ -727,7 +729,7 @@ char REvent(char plr)
         if (plr == 1) {
             Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
             Data->P[plr].Pool[i].RetirementDelay = 0;
-        };
+        }
 
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             Replace_Snaut(plr);
@@ -738,10 +740,11 @@ char REvent(char plr)
     case 50: // backup crew will fly mission
         evflag = 0;
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -761,10 +764,11 @@ char REvent(char plr)
     case 51: /* astronaut killed delay all manned missons = 1 */
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -790,10 +794,11 @@ char REvent(char plr)
     case 52:
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -815,10 +820,11 @@ char REvent(char plr)
     case 53:
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -869,7 +875,7 @@ char REvent(char plr)
             Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
             Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
             Data->P[plr].AstroCount++;
-        };
+        }
 
         break;
 
@@ -910,7 +916,7 @@ char REvent(char plr)
         Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].UnitCost += 3;
         break;
 
-    case 66:// mission delay
+    case 66: // mission delay
         evflag = 0;
 
         for (i = 0; i < 3; i++) {
@@ -969,10 +975,11 @@ char REvent(char plr)
     case 85: // Primary Crew Scrubbed - Backup Will Fly
         evflag = 0;
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -991,10 +998,11 @@ char REvent(char plr)
     case 89: /* random astronaut not active */
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;

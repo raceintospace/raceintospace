@@ -113,7 +113,7 @@ void DrawPrefs(int where, char a1, char a2)
         BinT(238, 54, 1);
         fill_rectangle(237, 35, 312, 41, 0);
         fill_rectangle(7, 35, 82, 41, 0);
-    };
+    }
 
     if (mode == 0) {
         draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
@@ -406,13 +406,14 @@ void Prefs(int where)
 
                     int i, k;
 
-                    for (i = 0; i < NUM_PLAYERS; i++)
+                    for (i = 0; i < NUM_PLAYERS; i++) {
                         for (k = 0; k < 7; k++) {
                             Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
                             Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
                             Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
                             Data->P[i].Misc[k].MSF = Data->P[i].Misc[k].MaxRD;
                         }
+                    }
 
                     if (Data->Def.Input == 0 || Data->Def.Input == 2 || Data->Def.Input == 4) {
                         // Hist Crews
@@ -680,7 +681,7 @@ void Prefs(int where)
                 draw_string(238, 40, &Data->P[1].Name[0]);
                 av_sync();
                 /* P2: Director Name */
-            };
+            }
         }
-    };
+    }
 }

@@ -220,9 +220,9 @@ ShowHard(char plr)
                 WaitForMouseUp();
                 OutBox(244, 5, 314, 17);
                 return;            /* Done */
-            };
+            }
         }
-    };
+    }
 }
 
 void
@@ -256,10 +256,11 @@ PInfo(char plr, char loc)
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         for (j = 0; j < 7; j++) {
             PrestigeTable[i][j] = 0;
         }
+    }
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
@@ -296,16 +297,17 @@ PInfo(char plr, char loc)
                 }
             }                      // end-if
         }                          //end-if
-    };                             // end-if
+    }                             // end-if
 
     //EVA suit klugge
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
 
     // make sure there are no negative vals in Pt
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         for (j = 0; j < 7; j++) {
             PrestigeTable[i][j] = MAX(PrestigeTable[i][j], 0);
         }
+    }
 
     tot = 0;
 
@@ -317,26 +319,29 @@ PInfo(char plr, char loc)
             tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (tot <= PrestigeTable[PROBE_HARDWARE][i]) {
                 tot = PrestigeTable[PROBE_HARDWARE][i];
             }
+        }
 
         break;
 
     case ROCKET_HARDWARE:
-        for (i = 0; i < 4; i++)
+        for (i = 0; i < 4; i++) {
             if (tot <= PrestigeTable[ROCKET_HARDWARE][i]) {
                 tot = PrestigeTable[ROCKET_HARDWARE][i];
             }
+        }
 
         break;
 
     case MANNED_HARDWARE:
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 5; i++) {
             if (tot <= PrestigeTable[MANNED_HARDWARE][i]) {
                 tot = PrestigeTable[MANNED_HARDWARE][i];
             }
+        }
 
         break;
 
@@ -409,7 +414,7 @@ PInfo(char plr, char loc)
                 if (sfu > 0) {
                     fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 6);
                     fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(101, 1, 115, 57, 15, 104);
@@ -439,7 +444,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(172, 1, 209, 133, 146, 27);
@@ -455,7 +460,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(245, 1, 285, 137, 231, 23);
@@ -468,7 +473,7 @@ PInfo(char plr, char loc)
             default:
                 break;
             }                  // end switch
-        };                     // end case 1 'rockets'
+        }                  // end case 1 'rockets'
 
         break;
 
@@ -482,7 +487,7 @@ PInfo(char plr, char loc)
         if (sfu > 0) {
             fill_rectangle(25, 159 - sfu * 136 / 100, 63, 159, 6);
             fill_rectangle(25, 159 - sfu * 136 / 100, 62, 158, 5);
-        };
+        }
 
         if (plr == 0 && sfu > 0) {
             HDispIt(60, 153, 88, 176, 7, 133);
@@ -521,7 +526,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(58, 180, 71, 196, 147, 138);
@@ -583,7 +588,7 @@ PInfo(char plr, char loc)
                 if (sfu > 0) {
                     fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 6);
                     fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(12, 91, 25, 116, 12, 137);
@@ -597,7 +602,7 @@ PInfo(char plr, char loc)
                 if (sfu > 0) {
                     fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 6);
                     fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(27, 98, 49, 127, 66, 127);
@@ -613,7 +618,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     DispIt(95, 77, 117, 127, 130, 106);
@@ -629,7 +634,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(3, 1, 16, 54, 191, 103);
@@ -645,7 +650,7 @@ PInfo(char plr, char loc)
                                    6);
                     fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(34, 1, 65, 60, 248, 97);
@@ -799,26 +804,29 @@ HInfo(char plr, char loc, char w)
                 tot = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
             }
 
-            for (i = 0; i < 3; i++)
+            for (i = 0; i < 3; i++) {
                 if (tot <= Data->P[plr].Probe[i].Steps) {
                     tot = Data->P[plr].Probe[i].Steps;
                 }
+            }
 
             break;
 
         case 1:
-            for (i = 0; i < 4; i++)
+            for (i = 0; i < 4; i++) {
                 if (tot <= Data->P[plr].Rocket[i].Steps) {
                     tot = Data->P[plr].Rocket[i].Steps;
                 }
+            }
 
             break;
 
         case 2:
-            for (i = 0; i < 5; i++)
+            for (i = 0; i < 5; i++) {
                 if (tot <= Data->P[plr].Manned[i].Steps) {
                     tot = Data->P[plr].Manned[i].Steps;
                 }
+            }
 
             break;
 
@@ -896,12 +904,12 @@ HInfo(char plr, char loc, char w)
                 if (sfu > 0) {
                     fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 9);
                     fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(22, 159 - sfs * 136 / 100, 55, 159, 6);
                     fill_rectangle(22, 159 - sfs * 136 / 100, 54, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(101, 1, 115, 57, 15, 104);
@@ -936,14 +944,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(175, 159 - sfs * 136 / 100, 208, 159,
                                    6);
                     fill_rectangle(175, 159 - sfs * 136 / 100, 207, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(172, 1, 209, 133, 146, 27);
@@ -959,14 +967,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(260, 159 - sfs * 136 / 100, 293, 159,
                                    6);
                     fill_rectangle(260, 159 - sfs * 136 / 100, 292, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(245, 1, 285, 137, 231, 23);
@@ -979,7 +987,7 @@ HInfo(char plr, char loc, char w)
             default:
                 break;
             }                  // end switch
-        };                     // end case 1 'rockets'
+        }                  // end case 1 'rockets'
 
         break;
 
@@ -1004,12 +1012,12 @@ HInfo(char plr, char loc, char w)
                 if (sfu > 0) {
                     fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 9);
                     fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(16, 159 - sfs * 136 / 100, 49, 159, 6);
                     fill_rectangle(16, 159 - sfs * 136 / 100, 48, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(12, 91, 25, 116, 12, 137);
@@ -1023,12 +1031,12 @@ HInfo(char plr, char loc, char w)
                 if (sfu > 0) {
                     fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 9);
                     fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(77, 159 - sfs * 136 / 100, 110, 159, 6);
                     fill_rectangle(77, 159 - sfs * 136 / 100, 109, 158, 5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(27, 98, 49, 127, 66, 127);
@@ -1044,14 +1052,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(142, 159 - sfs * 136 / 100, 175, 159,
                                    6);
                     fill_rectangle(142, 159 - sfs * 136 / 100, 174, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     DispIt(95, 77, 117, 127, 130, 106);
@@ -1067,14 +1075,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(198, 159 - sfs * 136 / 100, 231, 159,
                                    6);
                     fill_rectangle(198, 159 - sfs * 136 / 100, 230, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(3, 1, 16, 54, 191, 103);
@@ -1090,14 +1098,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(266, 159 - sfs * 136 / 100, 299, 159,
                                    6);
                     fill_rectangle(266, 159 - sfs * 136 / 100, 298, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(34, 1, 65, 60, 248, 97);
@@ -1132,12 +1140,12 @@ HInfo(char plr, char loc, char w)
         if (sfu > 0) {
             fill_rectangle(25, 159 - sfu * 136 / 100, 63, 159, 9);
             fill_rectangle(25, 159 - sfu * 136 / 100, 62, 158, 8);
-        };
+        }
 
         if (sfs > 0) {
             fill_rectangle(25, 159 - sfs * 136 / 100, 58, 159, 6);
             fill_rectangle(25, 159 - sfs * 136 / 100, 57, 158, 5);
-        };
+        }
 
         if (plr == 0 && sfu > 0) {
             HDispIt(60, 153, 88, 176, 9, 132);
@@ -1197,14 +1205,14 @@ HInfo(char plr, char loc, char w)
                                    9);
                     fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158,
                                    8);
-                };
+                }
 
                 if (sfs > 0) {
                     fill_rectangle(152, 159 - sfs * 136 / 100, 185, 159,
                                    6);
                     fill_rectangle(152, 159 - sfs * 136 / 100, 184, 158,
                                    5);
-                };
+                }
 
                 if (plr == 0 && sfu > 0) {
                     HDispIt(58, 180, 71, 196, 147, 138);
@@ -1519,7 +1527,7 @@ RankMe(char plr)
             if (key > 0) {
                 delay(300);
                 key = 0;
-            };
+            }
 
             WaitForMouseUp();
 
@@ -1527,7 +1535,7 @@ RankMe(char plr)
 
             return;
         }
-    };
+    }
 }
 
 void

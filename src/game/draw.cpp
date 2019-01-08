@@ -65,7 +65,7 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
         if (txt[i] == 0x20) {
             x += 6;
             i++;
-        };
+        }
 
         c = toupper(txt[i] & 0xff);
 
@@ -81,7 +81,7 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
 
         memcpy(&letter, letter_dat + (sizeof letter * px), sizeof letter); // copy letter over
 
-        for (k = 0; k < 15; k++)
+        for (k = 0; k < 15; k++) {
             for (l = 0; l < letter.width; l++) {
                 if (letter.img[k][l] != 0x03) {
                     if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
@@ -91,9 +91,10 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
                     }
                 }
             }
+        }
 
         x += letter.width - 1;
-    };
+    }
 }
 
 void draw_number(int xx, int yy, int num)
@@ -121,18 +122,18 @@ void draw_number(int xx, int yy, int num)
         draw_character(n1 + 0x30);
         draw_character(n2 + 0x30);
         draw_character(n3 + 0x30);
-    };
+    }
 
     if (n0 == 0 && n1 != 0) {
         draw_character(n1 + 0x30);
         draw_character(n2 + 0x30);
         draw_character(n3 + 0x30);
-    };
+    }
 
     if (n0 == 0 && n1 == 0 && n2 != 0) {
         draw_character(n2 + 0x30);
         draw_character(n3 + 0x30);
-    };
+    }
 
     if (n0 == 0 && n1 == 0 && n2 == 0) {
         draw_character(n3 + 0x30);

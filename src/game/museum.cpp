@@ -255,10 +255,11 @@ void ShowPrest(char plr)
     char pos = -1, pos2 = -1;
     int i, j;
 
-    for (j = 0; j < 2; j++)
+    for (j = 0; j < 2; j++) {
         for (i = 0; i < 28; i++) {
             TPoints[j] += (int) Data->Prestige[i].Points[j];
         }
+    }
 
 
     FadeOut(2, 5, 0, 0);
@@ -328,7 +329,7 @@ void ShowPrest(char plr)
             if (key > 0) {
                 delay(300);
                 key = 0;
-            };
+            }
 
             WaitForMouseUp();
 
@@ -355,7 +356,7 @@ void ShowPrest(char plr)
         Button2(15, 178, 160, 182, Move2(plr, &pos, &pos2, 7), key, 56);
         Button2(15, 185, 160, 189, Move2(plr, &pos, &pos2, 8), key, 57);
         key = 0;
-    };
+    }
 }
 
 void Move2(char plr, char *pos, char *pos2, char val)
@@ -679,7 +680,7 @@ void ShowSpHist(char plr)
             if (key > 0) {
                 delay(300);
                 key = 0;
-            };
+            }
 
             WaitForMouseUp();
 
@@ -693,7 +694,7 @@ void ShowSpHist(char plr)
         pButton(226, 176, 268, 193, FastOne(plr, &pos), key >> 8, 77);
         pButton(270, 176, 312, 193, FullFast(plr, &pos), key >> 8, 79);
         key = 0;
-    };
+    }
 }
 
 void Mission_Data_Buttons(char plr, int *where)
@@ -806,11 +807,12 @@ void DrawMisHist(char plr, int *where)
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_EOR || Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_LOR) {
-            for (j = 0; j < 4; j++)
+            for (j = 0; j < 4; j++) {
                 if (Data->P[plr].History[i].Man[PAD_A][j] != -1) {
                     Data->P[plr].History[i].Man[PAD_B][j] = Data->P[plr].History[i].Man[PAD_A][j];
                     Data->P[plr].History[i].Man[PAD_A][j] = -1;
                 }
+            }
         }
     }
 
@@ -1063,7 +1065,7 @@ void ShowAstrosHist(char plr)
             if (key > 0) {
                 delay(300);
                 key = 0;
-            };
+            }
 
             WaitForMouseUp();
 
@@ -1098,7 +1100,7 @@ void ShowAstrosHist(char plr)
         }
 
         key = 0;
-    };
+    }
 }
 
 void DisplAst(char plr, char *where, char *where2)

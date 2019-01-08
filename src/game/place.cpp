@@ -164,7 +164,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
             }
 
         if (mousebuttons != 0) {
-            for (i = 0; i < qty; i++)
+            for (i = 0; i < qty; i++) {
                 if ((x >= 23 && x <= 54 && y >= starty + 23 * i && y <= starty + 20 + 23 * i) ||
                     (x > 56 && y > starty + 23 * i && x < 296 && y < starty + 20 + 23 * i)) {
 
@@ -173,6 +173,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
                     delay(50);
                     j = i + 1;
                 }
+            }
         }
 
     }
@@ -223,7 +224,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     fclose(in);
 
     //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++)
+    for (j = 0; j < P.size; j++) {
         if (local.pixels()[j] != 0) {
             if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
                 continue;
@@ -231,6 +232,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
 
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
     local2.copyTo(display::graphics.legacyScreen(), x, y);
 }
@@ -335,7 +337,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
     fclose(in);
 
     //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++)
+    for (j = 0; j < P.size; j++) {
         if (local.pixels()[j] != 0) {
             if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
                 continue;
@@ -343,6 +345,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff
 
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
     local2.copyTo(display::graphics.legacyScreen(), x, y);
 
@@ -892,7 +895,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     if (mode == 1) {
         FadeIn(2, 10, 0, 0);
-    };
+    }
 
     WaitForMouseUp();
 
@@ -1032,9 +1035,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             fill_rectangle(212, 119, 312, 127, 3);
             key = 0;
 
-        }; // if
+        } // if
 
-    }; // while
+    } // while
 
     display::graphics.videoRect().w = 0;
 
