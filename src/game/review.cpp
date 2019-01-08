@@ -348,9 +348,9 @@ void CalcPresRev(void)
 
         *ip = (val < 0 && (*ip < 4)) ? *ip + 1 : ((val > 1 && val <= 10) ? *ip - 1
                 : ((val >= 11 && val <= 20) ? ((*ip < 4) ? *ip - 1 : *ip - 2)
-                       : ((val >= 21) ? ((*ip < 4) ? *ip - 1 : *ip - 3)
-                          : ((val >= -9 && val <= 0) ? *ip + 1 : ((val <= -10) ?
-                                  ((plr == 0) ? *ip + Data->Def.Lev1 + 1 : *ip + Data->Def.Lev2 + 1) : *ip)))));
+                   : ((val >= 21) ? ((*ip < 4) ? *ip - 1 : *ip - 3)
+                      : ((val >= -9 && val <= 0) ? *ip + 1 : ((val <= -10) ?
+                              ((plr == 0) ? *ip + Data->Def.Lev1 + 1 : *ip + Data->Def.Lev2 + 1) : *ip)))));
 
         *ip = (*ip > 16) ? 16 : ((*ip < 1) ? 1 : *ip);
 

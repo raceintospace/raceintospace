@@ -697,14 +697,14 @@ char CheckSucess(int i, int j)
 {
     if (Data->P[i].History[j].Duration != 0) {
         if (Data->P[i].History[j].spResult < 500 || Data->P[i].History[j].spResult >= 5000) {
-            return(1);
+            return 1;
         } else {
-            return(0);
+            return 0;
         }
     } else if (Data->P[i].History[j].spResult == 1 && Data->P[i].History[j].Event == 0) {
-        return(1);
+        return 1;
     } else {
-        return(0);
+        return 0;
     }
 }
 

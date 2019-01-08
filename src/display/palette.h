@@ -18,7 +18,8 @@ public:
     virtual void set(uint8_t index, const Color &color) = 0;
     virtual const Color get(uint8_t index) const = 0;
 
-    inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t end = 255) {
+    inline void copy_from(const PaletteInterface &other, uint8_t start = 0, uint8_t end = 255)
+    {
         assert(start <= end);
 
         for (int i = start; i <= end; i++) {
@@ -27,7 +28,8 @@ public:
         }
     };
 
-    inline const Color operator[](uint8_t index) const {
+    inline const Color operator[](uint8_t index) const
+    {
         return get(index);
     };
 };
@@ -85,22 +87,24 @@ public:
     AutoPal(LegacySurface *legacySurface);
     ~AutoPal();
 
-	struct triple {
-		char r;
-		char g;
-		char b;
-	};
+    struct triple {
+        char r;
+        char g;
+        char b;
+    };
 
-    inline char *operator()() {
+    inline char *operator()()
+    {
         return pal;
     };
     char pal[768];
 
-	inline triple *operator[](int index) {
-		int i = (index * 3);
-		triple* t = (triple *)(pal + i);
-		return t;
-	}
+    inline triple *operator[](int index)
+    {
+        int i = (index * 3);
+        triple *t = (triple *)(pal + i);
+        return t;
+    }
 
 private:
     PaletteInterface &_pal;

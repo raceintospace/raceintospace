@@ -270,7 +270,7 @@ char Panic_Level(char plr, int *m_1, int *m_2)
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_Manned_Orbital_Docking_EVA;
         ++Alt_B[plr];
-        return(1);
+        return 1;
     }
 
 // PANIC lunar pass/probe landing/lunar fly-by
@@ -287,11 +287,11 @@ char Panic_Level(char plr, int *m_1, int *m_2)
             *m_2 = Mission_Lunar_Probe;
         }++Alt_A[plr];
 
-        return(1);
+        return 1;
     }
 
     // PANIC level duration/pass/lunar orbital/LM_pts
-    return(0);
+    return 0;
 }
 
 void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)

@@ -31,10 +31,12 @@ public:
     png_structp png_ptr;
     png_infop info_ptr;
 
-    inline uint32_t width() {
+    inline uint32_t width()
+    {
         return png_get_image_width(png_ptr, info_ptr);
     };
-    inline uint32_t height() {
+    inline uint32_t height()
+    {
         return png_get_image_height(png_ptr, info_ptr);
     };
 

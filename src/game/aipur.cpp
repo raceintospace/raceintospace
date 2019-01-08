@@ -639,7 +639,7 @@ char Skill(char plr, char type)
         }
     }
 
-    return(ind);
+    return ind;
 }
 
 void TransAstro(char plr, int inx)
@@ -1006,7 +1006,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
     case MANNED_HARDWARE: // Manned Capsules
         if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[MANNED_HW_MINISHUTTLE].Num == 1) {
             // Only need one Minishuttle
-            return(1);
+            return 1;
         } else if (pData->Manned[unit_index].Num < MANNED_HW_THREE_MAN_CAPSULE) {
             // Manned Programs
             if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
@@ -1055,7 +1055,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
         if (pData->Misc[unit_index].Num < 2) { // Misc Programs
             if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
                 // Simply return when starting the EVA program, no cost for this
-                return(1);
+                return 1;
             }
 
             if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {

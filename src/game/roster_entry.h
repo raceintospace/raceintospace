@@ -23,7 +23,8 @@ public:
     int getEndurance() const;
 
     // the AI uses this to determine who's best
-    inline int getRecruitingPriority() const {
+    inline int getRecruitingPriority() const
+    {
         return getCapsule() + getLunar() + getEVA() + getDocking();
     };
 

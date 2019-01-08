@@ -402,7 +402,7 @@ av_process_event(SDL_Event *evp)
         av_mouse_cur_y = evp->motion.y;
         break;
 
-        /* ignore these events */
+    /* ignore these events */
     case SDL_KEYUP:
     case SDL_ACTIVEEVENT:
         break;

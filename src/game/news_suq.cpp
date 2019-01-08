@@ -63,7 +63,7 @@ char CheckCrewOK(char plr, char pad)
         }
     }
 
-    return(RT_value);
+    return RT_value;
 }
 
 
@@ -201,7 +201,7 @@ char REvent(char plr)
     case 98:
         break;
 
-        // Cash Modifier Events --------------------------
+    // Cash Modifier Events --------------------------
 
     case 30:
     case 32:
@@ -223,7 +223,7 @@ char REvent(char plr)
         Data->P[plr].Cash -= evflag;
         break;
 
-        // Budget Modifier Events ------------------------
+    // Budget Modifier Events ------------------------
 
     case  9:
     case 76: // Budget increase of 15 MB
@@ -287,7 +287,7 @@ char REvent(char plr)
         Data->P[plr].Budget -= 5;
         break;
 
-        // RD Modifier Events ----------------------------
+    // RD Modifier Events ----------------------------
 
     case  2:
     case 12:
@@ -327,7 +327,7 @@ char REvent(char plr)
         break;
 
 
-        // Improve/Subtract Tech to Other players -------------------
+    // Improve/Subtract Tech to Other players -------------------
 
     case 5:
     case 47: // Improve tech of plr prog to other's prog
@@ -340,7 +340,7 @@ char REvent(char plr)
         break;
 
     case 6:
-    case  7:
+    case 7:
         // Lower tech of plr prog to other's prog
         evflag = Steal(plr, 0, -1);
 
@@ -350,13 +350,13 @@ char REvent(char plr)
 
         break;
 
-        // Special Events -------------------------------------------
+    // Special Events -------------------------------------------
 
     case  8: // Allow females into space program
         Data->P[plr].FemaleAstronautsAllowed = 1;
         break;
 
-        // Launch Affected ------------------------------------------
+    // Launch Affected ------------------------------------------
 
     case 4: // Next Launch must be a manned launch.  If the launch
         // is not so then -10 on Budget
@@ -460,7 +460,7 @@ char REvent(char plr)
 
         break;
 
-        // Program Saving cards ------------------------------------
+    // Program Saving cards ------------------------------------
 
     case 11: /* Select program and set safety save to 1 */
         evflag = SaveMods(plr, 0);
@@ -698,7 +698,7 @@ char REvent(char plr)
 
         break;
 
-// Astronaut Portion ------------------------------------
+    // Astronaut Portion ------------------------------------
 
     case 49: /* pick random astronaut retire, budget minus 5 MB's */
         evflag = 0;
@@ -910,7 +910,7 @@ char REvent(char plr)
         Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].UnitCost += 3;
         break;
 
-    case 66:// mission delay
+    case 66: // mission delay
         evflag = 0;
 
         for (i = 0; i < 3; i++) {

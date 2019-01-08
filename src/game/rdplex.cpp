@@ -741,7 +741,7 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
         }
     }
 
-    return(enableButton);
+    return enableButton;
 }
 
 
@@ -755,22 +755,22 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
 char MaxChk(char hardware_index, char unit_index, char player_index)
 {
     if (hardware_index == PROBE_HARDWARE) {
-        return(Data->P[player_index].Probe[unit_index].Safety < Data->P[player_index].Probe[unit_index].MaxRD);
+        return Data->P[player_index].Probe[unit_index].Safety < Data->P[player_index].Probe[unit_index].MaxRD;
     }
 
     if (hardware_index == ROCKET_HARDWARE) {
-        return(Data->P[player_index].Rocket[unit_index].Safety < Data->P[player_index].Rocket[unit_index].MaxRD);
+        return Data->P[player_index].Rocket[unit_index].Safety < Data->P[player_index].Rocket[unit_index].MaxRD;
     }
 
     if (hardware_index == MANNED_HARDWARE) {
-        return(Data->P[player_index].Manned[unit_index].Safety < Data->P[player_index].Manned[unit_index].MaxRD);
+        return Data->P[player_index].Manned[unit_index].Safety < Data->P[player_index].Manned[unit_index].MaxRD;
     }
 
     if (hardware_index == MISC_HARDWARE) {
-        return(Data->P[player_index].Misc[unit_index].Safety < Data->P[player_index].Misc[unit_index].MaxRD);
+        return Data->P[player_index].Misc[unit_index].Safety < Data->P[player_index].Misc[unit_index].MaxRD;
     }
 
-    return(0);
+    return 0;
 }
 
 /**

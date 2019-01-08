@@ -42,25 +42,29 @@ public:
         Any
     };
 
-    inline char *pixels() {
+    inline char *pixels()
+    {
         return _pixels;
     };
 
     // Return a PaletteInterface for this surface
     //
     // You'd better use this pointer, since retrieving it sets hasValidPalette().
-    inline PaletteInterface &palette() {
+    inline PaletteInterface &palette()
+    {
         _hasValidPalette = true;
         return *_palette;
     };
 
-    inline bool hasValidPalette() {
+    inline bool hasValidPalette()
+    {
         return _hasValidPalette;
     };
 
     // Clear the hasValidPalette() flag
     // The next copyFrom() or copyTo() operation will thus inherit the target's palette
-    inline void resetPalette() {
+    inline void resetPalette()
+    {
         _hasValidPalette = false;
     };
 

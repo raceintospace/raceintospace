@@ -14,14 +14,14 @@ get_uint8_t(const void *buf)
         return get_uint ## from ##_t (buf) \
         | (get_uint ## from##_t ((const char*)buf + (from)/8) << (from)); \
     } \
- 
+
 #define DECL_SIGNED_GET(bits) \
     static inline int ## bits ## _t \
     get_int ## bits ##_t (const void *buf) \
     { \
         return (int ## bits ## _t) get_uint ## bits ##_t (buf);  \
     } \
- 
+
 DECL_UNSIGNED_GET(16, 8)
 DECL_UNSIGNED_GET(32, 16)
 DECL_SIGNED_GET(8)
@@ -43,14 +43,14 @@ put_uint8_t(void *buf, uint8_t v)
         put_uint ## from ##_t ((char*)buf + (from)/8, \
                 (v >> (from)) & ((1L << (from))-1)); \
     } \
- 
+
 #define DECL_SIGNED_PUT(bits) \
     static inline void \
     put_int ## bits ##_t (void *buf, int##bits##_t v) \
     { \
         put_uint ## bits ## _t (buf, (uint##bits##_t)v); \
     } \
- 
+
 DECL_UNSIGNED_PUT(16, 8)
 DECL_UNSIGNED_PUT(32, 16)
 DECL_SIGNED_PUT(8)
@@ -67,7 +67,7 @@ DECL_SIGNED_PUT(32)
         } \
         return elems; \
     } \
- 
+
 #define DECL_xINT_FWRITE(bits, sign) \
     size_t fwrite_##sign##int##bits##_t \
         (const sign##int##bits##_t *p, size_t n, FILE *f) { \
@@ -84,7 +84,7 @@ DECL_SIGNED_PUT(32)
         } \
         return total; \
     } \
- 
+
 DECL_xINT_FREAD(8,)
 DECL_xINT_FREAD(16,)
 DECL_xINT_FREAD(32,)
@@ -119,27 +119,27 @@ fread_##type(struct type *dst, size_t num, FILE *f) \
     } \
     return total; \
 } \
- 
+
 #define DECL_GET_START(struct, type) \
 static inline void \
 get_##type (struct type *dst, const uint8_t *src) \
 { \
     int i = 0; \
- 
+
 #define DECL_GET_FIELD_SCALAR(type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         *(((type *)&dst->name)+i) = get_##type(src); \
         src += sizeof(type); \
     } \
- 
+
 #define DECL_GET_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         get_##type((((str type *)&dst->name)+i), src); \
         src += sizeof(type); \
     } \
- 
+
 #define DECL_GET_END }
 
 #define DECL_PUT_START(struct, type) \
@@ -147,21 +147,21 @@ static inline void \
 put_##type (uint8_t *dst, const struct type *src) \
 { \
     int i = 0; \
- 
+
 #define DECL_PUT_FIELD_SCALAR(type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, *(((type *)&src->name)+i)); \
         dst += sizeof(type); \
     } \
- 
+
 #define DECL_PUT_FIELD_STRUCT(str, type, name, num) \
     for (i = 0; i < (num); ++i) \
     { \
         put_##type(dst, ((str type *)(&src->name))+i); \
         dst += sizeof(type); \
     } \
- 
+
 #define DECL_PUT_END }
 
 /* START STRUCTURES */

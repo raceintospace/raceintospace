@@ -156,12 +156,12 @@ char WhichPart(char plr, int which)
 void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 {
     switch (mcode) {
-        // Booster Programs    :: VAB order for the class
+    // Booster Programs    :: VAB order for the class
     case 'A':
         Mev[step].Class = 4;
         break;
 
-        // Manned Programs : Capsule
+    // Manned Programs : Capsule
     case 'D':
     case 'E':
     case 'F':
@@ -187,12 +187,12 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         Mev[step].Class = 10;
         break;
 
-        // Manned Programs : LM
+    // Manned Programs : LM
     case 'a':
         Mev[step].Class = 2;                               // LM
         break;
 
-        // Unmanned Programs
+    // Unmanned Programs
     case 'C':
         if (MH[pad][1] && MH[pad][1]->ID[1] == 0x32) {
             Mev[step].Class = 1;    // Kicker-C
@@ -208,21 +208,21 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'W':
     case 'Z':
     case 'e':
-        Mev[step].Class = 3;                               // Satellite
+        Mev[step].Class = 3;        // Satellite
         break;
 
-        // Misc Programs
+    // Misc Programs
     case 'H':
     case 'P':
-        Mev[step].Class = 5;                               // EVA Suits
+        Mev[step].Class = 5;        // EVA Suits
         break;
 
-        // Photo Recon
+    // Photo Recon
     case 'U':
-        Mev[step].Class = 6;                          // Photo Recon
+        Mev[step].Class = 6;        // Photo Recon
         break;
 
-        // Special Cases (when is there not one?)
+    // Special Cases (when is there not one?)
     case 'B':
     case 'J':
     case 'L':

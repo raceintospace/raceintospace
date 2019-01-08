@@ -16,7 +16,8 @@ public:
     virtual ~PalettizedSurface();
 
     // Exports this palette -- or a subset of it -- to the legacy palette
-    void exportPalette(uint8_t start = 0, uint8_t end = 255) const {
+    void exportPalette(uint8_t start = 0, uint8_t end = 255) const
+    {
         display::graphics.legacyScreen()->palette().copy_from(_palette, start, end);
     };
 
@@ -24,7 +25,8 @@ public:
     void copyRow(uint32_t row, const void *pixelData);
 
     // Get a const reference to this palette
-    inline const PaletteInterface &palette() {
+    inline const PaletteInterface &palette()
+    {
         return _palette;
     };
 

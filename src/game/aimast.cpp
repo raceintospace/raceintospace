@@ -502,7 +502,7 @@ char NoFail(char plr)
         Data->P[plr].AIStat = 3;
     }
 
-    return(RT_value);
+    return RT_value;
 }
 
 
@@ -848,19 +848,19 @@ int CheckSafety(char plr, char m)
 {
     switch (m) {
     case 5:
-        return(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety);
+        return Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety;
 
     case 6:
-        return(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety);
+        return Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety;
 
     case 8:
-        return(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety);
+        return Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety;
 
     case 9:
-        return(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety);
+        return Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety;
 
     case 10:
-        return(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety);
+        return Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety;
 
     default:
         break;

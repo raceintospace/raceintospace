@@ -1059,28 +1059,28 @@ ShowEvt(char plr, char crd)
     display::graphics.newsRect().w = 0;
     display::graphics.newsRect().h = 0;
 
-/*
-	//BEGIN: DUMPING CODE
-	for (int i = 0; i < 115; i++) {
-		crd = i;
+    /*
+    //BEGIN: DUMPING CODE
+    for (int i = 0; i < 115; i++) {
+        crd = i;
 
-		fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
-		fread_uint32_t(&offset, 1, ffin);
-		fread_uint32_t(&length, 1, ffin);
+        fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
+        fread_uint32_t(&offset, 1, ffin);
+        fread_uint32_t(&length, 1, ffin);
 
         fseek(ffin, offset, SEEK_SET);
         {
-			display::AutoPal p(display::graphics.legacyScreen());
+            display::AutoPal p(display::graphics.legacyScreen());
             fread(&p.pal[384], 384, 1, ffin);
         }
         fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
 
-		std::stringstream ss;
-		ss << "news.cdr.ussr." << i << ".png";
-		write_image( ss.str().c_str(), 320, 110 );
-	}
-	//END: DUMPING CODE
-*/
+        std::stringstream ss;
+        ss << "news.cdr.ussr." << i << ".png";
+        write_image( ss.str().c_str(), 320, 110 );
+    }
+    //END: DUMPING CODE
+    */
 
     fclose(ffin);
 }
@@ -1141,13 +1141,13 @@ int write_image( const char * filename, int width, int height )
     png_color png_pal[256];
 
     for (i = 0; i < 256; i ++) {
-		Color c = display::graphics.legacyScreen()->palette().get(i);
+        Color c = display::graphics.legacyScreen()->palette().get(i);
         png_pal[i].red = c.r;
         png_pal[i].green = c.g;
         png_pal[i].blue = c.b;
 
     }
-	
+
 
     png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
 
@@ -1168,5 +1168,3 @@ int write_image( const char * filename, int width, int height )
 */
 
 // EOF
-
-
