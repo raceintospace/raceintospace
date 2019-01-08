@@ -636,8 +636,9 @@ News(char plr)
 
     bline -= 8;
 
-    /** \todo there is also M_NEW1950, why it is unused? */
-    music_start(M_NEW1970);
+    // Leaving this here for now, rather than moving it to the
+    // loop -- rnyoakum
+    music_start_loop((plr % 2) ? M_NEW1950 : M_NEW1970, false);
 
     /* Tom's News kludge, also open and load first anim */
     fp = LoadNewsAnim(plr, BW, NEWS_ANGLE, TOMS_BUGFIX, fp);
@@ -724,6 +725,8 @@ News(char plr)
                 break;
 
             case 4:        //: Angle Out
+                music_stop(); // Should have ended, but force stop.
+                music_start_loop((plr % 2) ? M_NEW1950 : M_NEW1970, false);
                 LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
                 Status = 0;
                 loc++;
