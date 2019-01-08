@@ -847,7 +847,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -867,7 +867,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -887,7 +887,7 @@ DoCycle(void)                   // Three ranges of color cycling
         p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
         p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
         p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    };
+    }
 
     p.pal[j + 3 * i] = tmp1;
 
@@ -1236,7 +1236,7 @@ void Port(char plr)
                         if (kMode == 0 && key > 0) {
                             x = y = 0;
                             pKey = key;
-                        };
+                        }
 
                         if (kMode == 1 && !(x == 319 && y == 199)) {
                             kMode = 0;
@@ -1779,17 +1779,17 @@ char Request(char plr, char *s, char md)
             i = 0;
             delay(50);
             key = 0;
-        };
+        }
 
         if ((x > 93 && y >= 105 && x <= 162 && y <= 128 && mousebuttons != 0) || (key == 'Y')) {
             InBox(93, 105, 162, 128);
             i = 1;
             delay(50);
             key = 0;
-        };
+        }
 
         delay(50);
-    }; /* End while */
+    } /* End while */
 
     if (md > 0) {
         display::graphics.legacyScreen()->palette().copy_from(local.palette());
@@ -1838,7 +1838,7 @@ char MisReq(char plr)
         draw_string(62, 129, "MISSIONS DO NOT ALL HAVE");
         draw_string(62, 136, "ASSIGNMENTS. NO COMMIT POSSIBLE");
         draw_string(120, 150, "REVIEW MISSIONS");
-    };
+    }
 
     display::graphics.setForegroundColor(10);
 
@@ -1858,18 +1858,18 @@ char MisReq(char plr)
                 draw_string(86, 65 + 20 * i, "MANNED MISSION");
             } else {
                 draw_string(86, 65 + 20 * i, "UNMANNED MISSION");
-            };
+            }
 
             if (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 display::graphics.setForegroundColor(9);
                 draw_string(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
             } else {
                 draw_string(86, 71 + 20 * i, "HARDWARE ASSIGNED");
-            };
+            }
 
             display::graphics.setForegroundColor(1);
         }
-    };
+    }
 
     while (1) {
         if (plr == 0) {
@@ -1899,7 +1899,7 @@ char MisReq(char plr)
             delay(50);
             key = 0;
             Rush(plr);
-        };
+        }
 
         if ((x > 150 && y >= 143 && x <= 227 && y <= 153 && mousebuttons != 0 && num == 0)
             || (key == 'R' && num == 0)) {
@@ -1907,7 +1907,7 @@ char MisReq(char plr)
             i = 0;
             delay(50);
             key = 0;
-        };
+        }
 
         if ((x > 62 && y >= 143 && x <= 227 && y <= 153 && mousebuttons != 0 && num > 0)
             || (key == 'R' && num > 0)) {
@@ -1915,8 +1915,8 @@ char MisReq(char plr)
             i = 0;
             delay(50);
             key = 0;
-        };
-    }; /* End while */
+        }
+    } /* End while */
 
     local.copyTo(display::graphics.legacyScreen(), 53, 29);
 

@@ -697,7 +697,7 @@ void FileAccess(char mode)
                 } else {
                     fclose(fin);
                     BadFileType();
-                };
+                }
             } // temp
 
             OutBox(209, 50, 278, 58); // Button Out
@@ -982,7 +982,7 @@ void FileAccess(char mode)
                     ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                     DrawFiles(now, BarB, tFiles);
                     FileText(&FList[now].Name[0]);
-                };
+                }
             }
 
             if (BarB > 0) {
@@ -992,7 +992,7 @@ void FileAccess(char mode)
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
-            };
+            }
 
             //  WaitForMouseUp();
             OutBox(191, 50, 202, 87);
@@ -1013,7 +1013,7 @@ void FileAccess(char mode)
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
-            };
+            }
 
             // perform Up Button
             key = 0;
@@ -1055,7 +1055,7 @@ void FileAccess(char mode)
                 ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
-            };
+            }
 
 
             // WaitForMouseUp();
@@ -1063,7 +1063,7 @@ void FileAccess(char mode)
 
             // perform Down Button
             key = 0;
-        }; //
+        }
     } //while
 
     if (LOAD == 1) {
@@ -1388,7 +1388,7 @@ int FutureCheck(char plr, char type)
             // only types 0 and 1 are valid
             assert(false);
         }
-    };
+    }
 
     FadeOut(2, 10, 0, 0);
 
@@ -1447,7 +1447,7 @@ int FutureCheck(char plr, char type)
             }
 
             t = 2;
-        };
+        }
 
         if (p[i] == 1) {
             display::graphics.setForegroundColor(1);
@@ -1555,7 +1555,7 @@ int FutureCheck(char plr, char type)
                     } else {
                         draw_string(113, 75 + i * 51, "REASSIGN FUTURE MISSION");
                         t = 0;
-                    };
+                    }
                 } else {
                     draw_string(113, 75 + i * 51, "SECOND PART OF JOINT MISSION");
                     t = 0;
@@ -1569,9 +1569,9 @@ int FutureCheck(char plr, char type)
                 } else {
                     draw_string(113, 75 + i * 51, "REASSEMBLE HARDWARE");
                     t = 0;
-                };
-            };
-        };
+                }
+            }
+        }
 
         if (p[i] == -1) {
             display::graphics.setForegroundColor(9);  // Changed from 5
@@ -1586,7 +1586,7 @@ int FutureCheck(char plr, char type)
             }
 
             t = 3;
-        };
+        }
 
         display::graphics.setForegroundColor(11);
 
@@ -1618,7 +1618,7 @@ int FutureCheck(char plr, char type)
             InBox(219, 19, 262, 27);
             pad = 5;
             key = 0;
-        };
+        }
 
         for (i = 0; i < 3; i++) {
             if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) || (tx[i] != 1 && key == 'A' + i)) {
@@ -1669,9 +1669,9 @@ int FutureCheck(char plr, char type)
                            && type == 0) {
                     Help("i129");
                 }
-            };
-        };
-    };
+            }
+        }
+    }
 
     return pad;
 }
@@ -1717,15 +1717,15 @@ char RequestX(char *s, char md)
             i = 0;
             delay(50);
             key = 0;
-        };
+        }
 
         if ((x > 93 && y >= 105 && x <= 162 && y <= 128 && mousebuttons != 0) || (key == 'Y')) {
             InBox(93, 105, 162, 128);
             i = 1;
             delay(50);
             key = 0;
-        };
-    };
+        }
+    }
 
     if (md == 1) {
 

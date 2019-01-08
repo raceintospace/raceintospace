@@ -177,7 +177,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         astro->Assign = 0;
         astro->Moved = 0;
         astro->Special = 11 + plr;  /* WTF? */
-    };
+    }
 
     /* Update skills after training */
     switch (astro->Status) {
@@ -320,12 +320,12 @@ AstroTurn(void)
                         if (j == 0) {
                             Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                             Data->P[j].Pool[i].Special = 1;
-                        };
+                        }
 
                         if (j == 1) {
                             Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires in 1 */
                             Data->P[j].Pool[i].Special = 1;
-                        };
+                        }
 
                         Data->P[j].Pool[i].RetirementReason = brandom(6) + 1; /* Reason for Retirement */
                     }
@@ -347,18 +347,18 @@ AstroTurn(void)
                         if (j == 0) {
                             Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                             Data->P[j].Pool[i].Special = 1;
-                        };
+                        }
 
                         if (j == 1) {
                             Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
                             Data->P[j].Pool[i].Special = 1;
-                        };
+                        }
 
                         Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
 
                         cnt++;
-                    };
-                };
+                    }
+                }
 
                 /* Training Washout */
                 if (Data->P[j].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
@@ -639,12 +639,12 @@ AstroTurn(void)
                     if (j == 0) {
                         Data->P[j].Pool[i].RetirementDelay = 2;  /* US Guy Retires in 2 */
                         Data->P[j].Pool[i].Special = 1;
-                    };
+                    }
 
                     if (j == 1) {
                         Data->P[j].Pool[i].Status = AST_ST_RETIRED; /* URS Guy Retires Now */
                         Data->P[j].Pool[i].Special = 2;
-                    };
+                    }
 
                     Data->P[j].Pool[i].RetirementReason = 13;    /* Reason=Unhappy */
                 }
@@ -740,8 +740,8 @@ void Update(void)
             memset(&Data->P[j].Future[i], 0x00, sizeof(struct MissionType));
             strcpy(Data->P[j].Future[i].Name, "UNDETERMINED");
 
-        }; /* End j for loop */
-    }; /* End i for loop */
+        } /* End j for loop */
+    } /* End i for loop */
 
     // Name the Missions
 
@@ -813,10 +813,10 @@ void Update(void)
         if (Data->P[j].RD_Mods_For_Year > 0) {
             Data->P[j].RD_Mods_For_Turn = Data->P[j].RD_Mods_For_Year;
             Data->P[j].RD_Mods_For_Year = 0;
-        };
+        }
 
         Data->P[j].TurnOnly = Data->P[j].MissionCatastrophicFailureOnTurn = Data->P[j].Block = 0;
-    };
+    }
 
     // Update any delayed Missions
     p0 = p1 = 0;
@@ -853,7 +853,7 @@ void Update(void)
                 }
             }
         }
-    };  // end while
+    }  // end while
 
     memset(pNeg, 0x00, sizeof pNeg);
 
@@ -937,7 +937,7 @@ void UpdAll(char side)
         memcpy(&Data->P[side].Mission[i], &Data->P[side].Future[i], sizeof(struct MissionType));
         memset(&Data->P[side].Future[i], 0x00, sizeof(struct MissionType));
         strcpy(Data->P[side].Future[i].Name, "UNDETERMINED");
-    };
+    }
 
     for (i = 0; i < 3; i++) {
         if (Data->P[side].Mission[i].MissionCode == 1) {
@@ -1003,7 +1003,7 @@ void UpdAll(char side)
     if (Data->P[side].RD_Mods_For_Year > 0) {
         Data->P[side].RD_Mods_For_Turn = Data->P[side].RD_Mods_For_Year;
         Data->P[side].RD_Mods_For_Year = 0;
-    };
+    }
 
     Data->P[side].TurnOnly = Data->P[side].MissionCatastrophicFailureOnTurn = Data->P[side].Block = 0;
 
@@ -1043,7 +1043,7 @@ void UpdAll(char side)
                     }
                 }
             }
-        };  // end while
+        }  // end while
     }
 
     memset(pNeg, 0x00, sizeof pNeg);
@@ -1140,7 +1140,7 @@ TestFMis(int j, int i)
             Data->P[j].History[i].spResult = 1;
             Data->P[j].History[i].Saf = 0;
         }
-    };
+    }
 }
 
 /** End of turn equipment accounting update

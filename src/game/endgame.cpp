@@ -447,7 +447,7 @@ void EndGame(char win, char pad)
             i = 1;
             key = 0;
             OutBox(244, 5, 313, 17);
-        };
+        }
     }
 
     return;
@@ -707,7 +707,7 @@ void NewEnd(char win, char loc)
             i = 1;
             key = 0;
             OutBox(254, 182, 305, 190);
-        };
+        }
     }
 }
 
@@ -948,7 +948,7 @@ void FakeWin(char win)
             i = 1;
             key = 0;
             OutBox(244, 5, 313, 17);
-        };
+        }
     }
 
     music_stop();
@@ -1106,7 +1106,7 @@ void SpecialEnd(void)
 
             i = 1;
             key = 0;
-        };
+        }
     }
 
     music_stop();

@@ -156,7 +156,7 @@ void DrawRush(char plr)
         Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
         Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
         Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
-    };
+    }
 
     if (k == 2 && JR == 0) { // Two non joint missions
         l = 3;
@@ -164,17 +164,17 @@ void DrawRush(char plr)
         if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = l + Data->Season * 6;
             l += 2;
-        };
+        }
 
         if (Data->P[plr].Mission[1].MissionCode) {
             Data->P[plr].Mission[1].Month = l + Data->Season * 6;
             l += 2;
-        };
+        }
 
         if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = l + Data->Season * 6;
         }
-    };
+    }
 
     if (k == 1 && JR == 0) { // Single Mission Non joint
         if (Data->P[plr].Mission[0].MissionCode) {
@@ -188,21 +188,21 @@ void DrawRush(char plr)
         if (Data->P[plr].Mission[2].MissionCode) {
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
         }
-    };
+    }
 
     if (k == 2 && JR == 1) { // Two launches, one Joint;
         if (Data->P[plr].Mission[1].part == 1) { // Joint first
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
-        };
+        }
 
         if (Data->P[plr].Mission[2].part == 1) { // Joint second
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 5 + Data->Season * 6;
             Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
-        };
-    };
+        }
+    }
 
     if (k == 1 && JR == 1) { //  Single Joint Launch
         if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
@@ -211,7 +211,7 @@ void DrawRush(char plr)
         } else {   // found on pad 2+3
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
-        };
+        }
     }
 
     ShBox(0, 0, 319, 23);
@@ -301,8 +301,8 @@ void DrawRush(char plr)
             draw_string(288, 38 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 0][0]);
             draw_string(288, 55 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 1][0]);
             draw_string(288, 72 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 2][0]);
-        }; /* End if */
-    }; /* End for i */
+        } /* End if */
+    } /* End for i */
 
     return;
 }
@@ -390,7 +390,7 @@ void Rush(char plr)
                     SetRush(R3, 2);
                     oR3 = R3;
                 }
-            };
+            }
 
             // DOWNGRADE MISSION KEYBOARD
             if (key == 'Q' || key == 'R' || key == 'U') {
@@ -518,7 +518,7 @@ void Rush(char plr)
                     OutBox(91, 41 + i * 58, 264, 59 + i * 58);
 
                 }
-            };
+            }
 
             for (i = 0; i < 3; i++) {
                 if (x >= 91 && x <= 264 && y >= 41 + i * 59 && y <= 59 + i * 59 && mousebuttons > 0
@@ -634,7 +634,7 @@ void Rush(char plr)
                     OutBox(91, 41 + i * 58, 264, 59 + i * 58);
 
                 }
-            };
+            }
 
             if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) { //  CONTINUE
                 InBox(245, 5, 314, 17);
@@ -668,13 +668,13 @@ void Rush(char plr)
                     Data->P[plr].Cash -= 3 * R1;
                     Data->P[plr].Mission[0].Month -= R1;
                     Data->P[plr].Mission[0].Rushing = R1;
-                };
+                }
 
                 if (Data->P[plr].Mission[1].MissionCode && Data->P[plr].Cash >= 3 * R2) {
                     Data->P[plr].Cash -= 3 * R2;
                     Data->P[plr].Mission[1].Month -= R2;
                     Data->P[plr].Mission[1].Rushing = R2;
-                };
+                }
 
                 if (Data->P[plr].Mission[2].MissionCode && Data->P[plr].Cash >= 3 * R3) {
                     Data->P[plr].Cash -= 3 * R3;

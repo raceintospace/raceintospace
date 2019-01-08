@@ -310,12 +310,12 @@ int AsnCrew(char plr, char pad, char part)
     for (i = 0; i < 4; i++) {
         IOBox(78, 121 + 16 * i, 156, 139 + 16 * i);
         FutFltsTxt(i, 1);
-    };
+    }
 
     for (i = 0; i < 4; i++) {
         IOBox(162, 121 + 16 * i, 240, 139 + 16 * i);
         FutFltsTxt(i + 4, 1);
-    };
+    }
 
     FutSt(plr, prg, prime, back);
 
@@ -405,7 +405,7 @@ int AsnCrew(char plr, char pad, char part)
                     } else {
                         s = grp - 4;
                         OutBox(164, 123 + s * 16, 238, 137 + s * 16);
-                    };
+                    }
                 }
 
                 if (i < 4) {
@@ -481,8 +481,8 @@ int AsnCrew(char plr, char pad, char part)
             if (key > 0) {
                 delay(110);
             }
-        }; // End Backup Set
-    }; // end-while
+        } // End Backup Set
+    } // end-while
 }
 
 void FutFltsTxt(char nw, char col)
@@ -496,7 +496,7 @@ void FutFltsTxt(char nw, char col)
     } else {
         temp = nw - 4;
         draw_string(167, 129 + temp * 16, "FLT. CREW ");
-    };
+    }
 
     switch (nw) {
     case 0:
@@ -562,7 +562,7 @@ void FutSt(char plr, int pr, int p, int b)
                 FutSt2(i, 0);
             }
         }
-    };
+    }
 
     return;
 }
@@ -578,7 +578,7 @@ void FutSt2(int num, int type)
         temp = num - 4;
         fill_rectangle(168, 130 + temp * 16, 235, 136 + temp * 16, 3);
         grMoveTo(168, 135 + temp * 16);
-    };
+    }
 
     switch (type) {
     case 0:
@@ -710,7 +710,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
             draw_string(0, 0, "  EN:");
             draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
-        };
+        }
 
     return;
 }
@@ -926,9 +926,9 @@ int HardRequest(char plr, char mode, char mis, char pad)
 
                 keyHelpText = oldKeyHelpText;
                 return 0;  // Abort - Redo Mission
-            };
-        };
-    }; /* End while */
+            }
+        }
+    } /* End while */
 
     Data->P[plr].Future[pad].Prog = i;
 
@@ -1075,7 +1075,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
 
                 keyHelpText = oldKeyHelpText;
                 return 0;  // Abort - Redo Mission
-            };
+            }
         }
     }
 

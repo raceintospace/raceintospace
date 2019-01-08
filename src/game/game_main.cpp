@@ -473,7 +473,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             for (t3 = 0; t3 < 4; t3++) {
                 Data->P[t1].Spend[0][t3] = 0;
             }
-        };
+        }
 
         if (Data->Season == 0) {
             CalcPresRev();
@@ -505,7 +505,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     QUIT = 1;
                     return;
                 }
-            };
+            }
 
             if (!AI[i]) {
                 NextTurn(plr[i]);
@@ -544,14 +544,14 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 VerifySF(plr[i] - 2);
                 AIMaster(plr[i] - 2);
                 AI_Done(); // Fade Out AI Thinking Screen and Restores Mouse
-            };
+            }
 
             Data->Count++;
 
             if (QUIT) {
                 return;
             }
-        };
+        }
 
         DockingKludge();  // fixup for both sides
 
@@ -599,7 +599,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     }
                 }
 
-            };                             //for(i=0...
+            }                             //for(i=0...
 
         Update();  /* Moves Future launches to Missions + More */
 
@@ -637,7 +637,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     Data->P[t1].tempPrestige[Data->Season] += Data->P[t1].Prestige;
                 }
             }
-        };
+        }
 
         Data->P[0].Prestige = Data->P[1].Prestige = 0;
 
@@ -659,7 +659,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         } else {
             Data->Season++;
         }
-    };
+    }
 
     FadeOut(2, 10, 0, 0);
 

@@ -89,7 +89,7 @@ int Steal(int p, int prog, int type)
                 save[i + 21] = 0;
             }
         }
-    };
+    }
 
     save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
@@ -120,7 +120,7 @@ int Steal(int p, int prog, int type)
     while ((k < 100) && (save[j + lo] <= 0)) { // finds candidate
         j = brandom(hi - lo) + lo;
         k++;
-    };
+    }
 
     if (k == 100) {
         return 0;
@@ -129,25 +129,25 @@ int Steal(int p, int prog, int type)
     if (j >= 0 && j < 7) {
         Data->P[p].Probe[j].Safety += (save[j] * type);
         strcpy(&Name[0], &Data->P[p].Probe[j].Name[0]);
-    };
+    }
 
     if (j >= 7 && j < 14) {
         lo = 7;
         Data->P[p].Rocket[j - lo].Safety += (save[j] * type);
         strcpy(&Name[0], &Data->P[p].Rocket[j - lo].Name[0]);
-    };
+    }
 
     if (j >= 14 && j < 21) {
         lo = 14;
         Data->P[p].Manned[j - lo].Safety += (save[j] * type);
         strcpy(&Name[0], &Data->P[p].Manned[j - lo].Name[0]);
-    };
+    }
 
     if (j >= 21 && j < 28) {
         lo = 21;
         Data->P[p].Misc[j - lo].Safety += (save[j] * type);
         strcpy(&Name[0], &Data->P[p].Misc[j - lo].Name[0]);
-    };
+    }
 
     return save[j];
 }
@@ -178,7 +178,7 @@ int NMod(int p, int prog, int type, int per)
         if (Eptr[i]->Num < 0) {
             save[i] = 0;
         }
-    };
+    }
 
     for (i = 0; i < (int)ARRAY_LENGTH(save); i++) if (save[i] < 0) {
             save[i] = 0;
@@ -225,7 +225,7 @@ int DamMod(int p, int prog, int dam, int cost)
     for (i = 0; i < 25; i++) {
         Eptr[i] = &Data->P[p].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
-    };
+    }
 
     for (i = 0; i < 25; i++) if (save[i] < dam) {
             save[i] = 0;
@@ -274,7 +274,7 @@ int RDMods(int p, int prog, int type, int val)
     for (i = 0; i < 25; i++) {
         Eptr[i] = &Data->P[p].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
-    };
+    }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
@@ -353,7 +353,7 @@ int SaveMods(char p, char prog)
         if (Data->P[p].Misc[i].Num >= 0) {
             save[i + 21] = 1;
         }
-    };
+    }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
@@ -375,17 +375,17 @@ int SaveMods(char p, char prog)
     if (j >= 0 && j < 7) {
         Data->P[p].Probe[j].SaveCard = 1;
         strcpy(&Name[0], &Data->P[p].Probe[j].Name[0]);
-    };
+    }
 
     if (j >= 7 && j < 14) {
         Data->P[p].Rocket[j - 7].SaveCard = 1;
         strcpy(&Name[0], &Data->P[p].Rocket[j - 7].Name[0]);
-    };
+    }
 
     if (j >= 14 && j < 21) {
         Data->P[p].Manned[j - 14].SaveCard = 1;
         strcpy(&Name[0], &Data->P[p].Manned[j - 14].Name[0]);
-    };
+    }
 
     return save[j];
 }

@@ -747,7 +747,7 @@ int UpSearchRout(int num, char plr)
             if (F5 == V[num].E) {
                 c5 = 1;
             }
-        };
+        }
 
         if ((num == 32 || num == 36) && F5 == 2) {
             c5 = 0;
@@ -782,7 +782,7 @@ int UpSearchRout(int num, char plr)
             }
         }
 
-    }; /* end while */
+    } /* end while */
 
     return num;
 }
@@ -874,7 +874,7 @@ int DownSearchRout(int num, char plr)
             if (F5 == V[num].E) {
                 c5 = 1;    // the duration is equal to what is preset
             }
-        };
+        }
 
         if ((num == 32 || num == 36) && F5 == 2) {
             c5 = 0;
@@ -909,7 +909,7 @@ int DownSearchRout(int num, char plr)
             }
         }
 
-    }; /* end while */
+    } /* end while */
 
     return num;
 }
@@ -1446,7 +1446,7 @@ void MissionName(int val, int xx, int yy, int len)
         if (Mis.Name[i] == '\0') {
             break;
         }
-    };
+    }
 
     TRACE1("<-MissionName");
 

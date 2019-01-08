@@ -135,7 +135,7 @@ void DrawReview(char plr)
             } else {
                 cte = 80 + (Data->P[plr].PresRev[i] - 10) * 5;
             }
-        };
+        }
 
         if (Data->P[plr].PresRev[i] == 8) {
             cte = 73;
@@ -172,7 +172,7 @@ void DrawReview(char plr)
         } else {
             P_value = 1;
         }
-    };
+    }
 
     if (plr == 1) {
         if (Data->P[plr].PresRev[0] <= 4 || Data->P[plr].PresRev[0] >= 12) {

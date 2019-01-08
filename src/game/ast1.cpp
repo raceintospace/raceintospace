@@ -61,7 +61,7 @@ void DispEight(char now, char loc)
         }
 
         draw_string(189, 136 + (i - start) * 8, &Men[i].Name[0]);
-    };
+    }
 
     fill_rectangle(206, 48, 306, 52, 3);
 
@@ -120,7 +120,7 @@ void DispEight2(int nw, int lc, int cnt)
         draw_string(0, 0, &Men[sel[nw]].Name[0]);
         draw_number(133, 70, Men[sel[nw]].Cap);
         draw_number(114, 102, Men[sel[nw]].Endurance);
-    };
+    }
 
     return;
 }
@@ -238,7 +238,7 @@ void DrawAstCheck(char plr)
         display::graphics.setForegroundColor(8);
         draw_string(114, 143, "EXIT");
         draw_string(182, 143, "EXIT");
-    };
+    }
 
     if (ad == 0) {
         if (Data->P[plr].Cash < i) {
@@ -270,8 +270,8 @@ void DrawAstCheck(char plr)
             draw_string(187, 143, "N");
             display::graphics.setForegroundColor(1);
             draw_string(0, 0, "O");
-        };
-    };
+        }
+    }
 
     draw_small_flag(plr, 4, 4);
 
@@ -485,7 +485,7 @@ void AstSel(char plr)
             i = 2;
             OutBox(168, 135, 216, 147);
         }
-    };
+    }
 
     if (i == 2) {
         music_stop();    /* too poor for astronauts or NO */
@@ -647,7 +647,7 @@ void AstSel(char plr)
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
-                        };
+                        }
 
                     if (BarA > 0) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -655,7 +655,7 @@ void AstSel(char plr)
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
-                    };
+                    }
 
                     i = 51;
                 }
@@ -670,7 +670,7 @@ void AstSel(char plr)
                         fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
-                    };
+                    }
 
                 if (BarA > 0) {
                     fill_rectangle(26, 129, 153, 195, 0);
@@ -678,7 +678,7 @@ void AstSel(char plr)
                     now2--;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispEight2(now2, BarA, count);
-                };
+                }
 
                 key = 0;
 
@@ -705,7 +705,7 @@ void AstSel(char plr)
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
-                        };
+                        }
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
@@ -714,7 +714,7 @@ void AstSel(char plr)
                             now2++;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
-                        };
+                        }
 
                     i = 51;
                 }
@@ -729,7 +729,7 @@ void AstSel(char plr)
                         fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
-                    };
+                    }
 
                 if (BarA < 7)
                     if (now2 < count - 1) {
@@ -738,7 +738,7 @@ void AstSel(char plr)
                         now2++;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
-                    };
+                    }
 
                 key = 0;
 
@@ -765,7 +765,7 @@ void AstSel(char plr)
                             fill_rectangle(186, 129, 314, 195, 0);
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
-                        };
+                        }
 
                     if (BarB > 0) {
                         fill_rectangle(186, 129, 314, 195, 0);
@@ -773,7 +773,7 @@ void AstSel(char plr)
                         now--;
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
-                    };
+                    }
 
                     i = 51;
                 }
@@ -788,7 +788,7 @@ void AstSel(char plr)
                         fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
-                    };
+                    }
 
                 if (BarB > 0) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -796,7 +796,7 @@ void AstSel(char plr)
                     now--;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
-                };
+                }
 
                 key = 0;
 
@@ -826,7 +826,7 @@ void AstSel(char plr)
                             fill_rectangle(186, 129, 314, 195, 0);
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
-                        };
+                        }
 
                     if (BarB < 7) {
                         fill_rectangle(186, 129, 314, 195, 0);
@@ -834,7 +834,7 @@ void AstSel(char plr)
                         now++;
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
-                    };
+                    }
 
                     i = 51;
                 }
@@ -852,7 +852,7 @@ void AstSel(char plr)
                         fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
-                    };
+                    }
 
                 if (BarB < 7) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -860,7 +860,7 @@ void AstSel(char plr)
                     now++;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
-                };
+                }
 
                 key = 0;
 
@@ -890,7 +890,7 @@ void AstSel(char plr)
                 if (BarA > 0) {
                     BarA--;
                 }
-            };
+            }
 
             fill_rectangle(26, 129, 153, 195, 0);
 
@@ -922,7 +922,7 @@ void AstSel(char plr)
                         fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
-                    };
+                    }
 
                 if (BarB < 7) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -930,14 +930,14 @@ void AstSel(char plr)
                     now++;
                     ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
-                };
+                }
 
                 fill_rectangle(26, 129, 153, 195, 0);
 
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
                 DispEight2(now2, BarA, count);
-            };
+            }
 
             WaitForMouseUp();
 
@@ -946,7 +946,7 @@ void AstSel(char plr)
             }
 
             OutBox(168, 111, 313, 123);
-        };
+        }
 
         if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) { /* Exit - not 'til done */
             if (fem == 1) {
@@ -1006,7 +1006,7 @@ void AstSel(char plr)
                         } else {
                             Data->P[plr].Pool[i + Data->P[plr].AstroCount].Cap--;
                         }
-                    };
+                    }
 
                     for (j = 0; j < 3; j++) {
                         k = brandom(3);
@@ -1027,8 +1027,8 @@ void AstSel(char plr)
                         default:
                             break;
                         }
-                    };
-                };
+                    }
+                }
 
                 Data->P[plr].AstroLevel++;
 

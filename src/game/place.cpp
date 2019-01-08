@@ -892,7 +892,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     if (mode == 1) {
         FadeIn(2, 10, 0, 0);
-    };
+    }
 
     WaitForMouseUp();
 
@@ -1032,9 +1032,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             fill_rectangle(212, 119, 312, 127, 3);
             key = 0;
 
-        }; // if
+        } // if
 
-    }; // while
+    } // while
 
     display::graphics.videoRect().w = 0;
 

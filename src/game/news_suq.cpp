@@ -508,7 +508,7 @@ char REvent(char plr)
                 Data->P[plr].Rocket[i].Safety -= evflag;
                 strcpy(&Name[0], &Data->P[plr].Rocket[i].Name[0]);
                 break;
-            };
+            }
 
         break;
 
@@ -516,7 +516,7 @@ char REvent(char plr)
         for (i = 1; i < 3; i++) {
             Data->P[plr].Probe[i].MaxRD += 5;
             Data->P[plr].Probe[i].MaxSafety += 5;
-        };
+        }
 
         for (i = 1; i < 3; i++) {
             if (Data->P[plr].Probe[i].MaxSafety >= 99) {
@@ -526,7 +526,7 @@ char REvent(char plr)
             if (Data->P[plr].Probe[i].MaxRD > Data->P[plr].Probe[i].MaxSafety) {
                 Data->P[plr].Probe[i].MaxRD = Data->P[plr].Probe[i].MaxSafety;
             }
-        };
+        }
 
         break;
 
@@ -727,7 +727,7 @@ char REvent(char plr)
         if (plr == 1) {
             Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
             Data->P[plr].Pool[i].RetirementDelay = 0;
-        };
+        }
 
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             Replace_Snaut(plr);
@@ -869,7 +869,7 @@ char REvent(char plr)
             Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
             Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
             Data->P[plr].AstroCount++;
-        };
+        }
 
         break;
 

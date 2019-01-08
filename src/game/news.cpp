@@ -233,7 +233,7 @@ OpenNews(char plr, char *buf, int bud)
 
             fclose(gork);
         }
-    };
+    }
 
     bufsize = strlen(buf);
 
@@ -404,7 +404,7 @@ DispNews(char plr, char *src, char *dest)
                 if (Data->Year >= 76 && Data->Year <= 79) {
                     strcpy(&Name[0], "CARTER");
                 }
-            };
+            }
 
             if (plr == 1) {
                 if (Data->Year < 64) {
@@ -422,7 +422,7 @@ DispNews(char plr, char *src, char *dest)
                 if (Data->Year > 65) {
                     strcpy(&Name[0], "BREZHNEV");
                 }
-            };
+            }
 
             strncpy(&dest[j], &Name[0], strlen(Name));
 
@@ -447,7 +447,7 @@ DispNews(char plr, char *src, char *dest)
                 if (src[i + 1] == ' ') {
                     i++;
                 }
-            };
+            }
 
         default:
             break;
@@ -456,7 +456,7 @@ DispNews(char plr, char *src, char *dest)
         j++;
 
         k++;
-    };
+    }
 }
 
 void
@@ -547,7 +547,7 @@ DrawNText(char plr, char got)
         while (buf[0] != 'x' && buf[0] != '\0') {
             draw_character(buf[0]);
             buf++;
-        };
+        }
 
         yy += 9;
 
@@ -623,7 +623,7 @@ News(char plr)
 
         draw_heading(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
 
-    };
+    }
 
     for (i = 0; i < (int) strlen(buffer); i++)
         if (buffer[i] == 'x') {
@@ -738,7 +738,7 @@ News(char plr)
                     display::graphics.setForegroundColor(1);
                     draw_string(258, 13, "CONTINUE");
 
-                };
+                }
 
                 i = bline;
 
@@ -809,7 +809,7 @@ News(char plr)
         }
 
 //   gr_sync ();
-    };
+    }
 
     mm_close(fp);
 

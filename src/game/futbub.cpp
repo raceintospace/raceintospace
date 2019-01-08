@@ -69,7 +69,7 @@ void drawBspline(int segments, char color, ...)
     for (j = i; j <= i + 1; j++) {
         xpoint[j] = xpoint[j - 1];
         ypoint[j] = ypoint[j - 1];
-    };
+    }
 
     last = j;
 
@@ -86,7 +86,7 @@ void drawBspline(int segments, char color, ...)
             if (yyy == 1) {
                 display::graphics.legacyScreen()->setPixel(yx, yy, 5);
                 yyy = 0;
-            };
+            }
 
             if ((SamCol != 1) && (SamCol != 21)) {
                 grMoveTo(oldx, oldy);
@@ -97,7 +97,7 @@ void drawBspline(int segments, char color, ...)
                     yx = x;
                     yy = y;
                     yyy = 1;
-                };
+                }
             }
 
             oldx = x;
@@ -322,7 +322,7 @@ void VenMarMerc(char x)
         Bub_Num = 4;
         drawBspline(SEG, 5, 125, 170, 146, 174, 172, 174, 195, 163);
         Bd(189, 159); // bubble 'N'
-    };
+    }
 
     if (x == 2) {
         Bub_Num = 2;
@@ -331,13 +331,13 @@ void VenMarMerc(char x)
         Bub_Num = 3;
         drawBspline(SEG, 5, 162, 174, 190, 176, 207, 162);
         Bd(204, 160); // bubble 'O'
-    };
+    }
 
     if (x == 3) {
         Bub_Num = 4;
         drawBspline(SEG, 5, 125, 170, 138, 171, 153, 170, 166, 165);
         Bd(160, 161); // bubble 'M'
-    };
+    }
 
     return;
 }
@@ -644,7 +644,7 @@ void S_Patch(char x)
         Bd(306, 50);
         Bd(291, 54);
         Bd(279, 51);
-    };
+    }
 
     return;
 }

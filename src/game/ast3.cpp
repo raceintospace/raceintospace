@@ -367,7 +367,7 @@ void Train(char plr, int level)
             && Data->P[plr].Pool[i].Focus == level) {
             M[count++] = i;
         }
-    };
+    }
 
     DispLeft(plr, BarA, count, now2, &M[0]);
 
@@ -465,7 +465,7 @@ void Train(char plr, int level)
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
-                            };
+                            }
 
                         if (BarA > 0) {
                             fill_rectangle(26, 129, 153, 195, 0);
@@ -474,7 +474,7 @@ void Train(char plr, int level)
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
-                        };
+                        }
 
                         i = 51;
                     }
@@ -490,7 +490,7 @@ void Train(char plr, int level)
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
-                        };
+                        }
 
                     if (BarA > 0) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -499,7 +499,7 @@ void Train(char plr, int level)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &M[0]);
                         TrainText(plr, M[now2], count);
-                    };
+                    }
 
                     key = 0;
 
@@ -527,7 +527,7 @@ void Train(char plr, int level)
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
-                            };
+                            }
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
@@ -537,7 +537,7 @@ void Train(char plr, int level)
                                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
-                            };
+                            }
 
                         i = 51;
                     }
@@ -553,7 +553,7 @@ void Train(char plr, int level)
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
-                        };
+                        }
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
@@ -563,7 +563,7 @@ void Train(char plr, int level)
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
-                        };
+                        }
 
                     key = 0;
 
@@ -651,7 +651,7 @@ void Train(char plr, int level)
                         if (BarA > 0) {
                             BarA--;
                         }
-                    };
+                    }
 
                     fill_rectangle(26, 129, 153, 195, 0);
 
@@ -675,9 +675,9 @@ void Train(char plr, int level)
                 OutBox(245, 5, 314, 17);
                 music_stop();
                 return;  /* Done */
-            }; /* end x-y if */
+            } /* end x-y if */
         } /* end mouse if */
-    };  /* end while */
+    }  /* end while */
 } /* end Limbo */
 
 
@@ -755,7 +755,7 @@ void InjuredNautCenter(char plr, int sel)
             draw_heading(37, 5, "ARLINGTON CEMETERY", 0, -1);
             music_start(M_USFUN);
         }
-    };
+    }
 
     if (plr == 1) {
         if (sel == HOSPITAL_BLD) {
@@ -786,7 +786,7 @@ void InjuredNautCenter(char plr, int sel)
     for (i = 0; i < Data->P[plr].AstroCount; i++)
         if (Data->P[plr].Pool[i].Status == j) {
             M[count++] = i;
-        };
+        }
 
     DispLeft(plr, BarA, count, now2, &M[0]);
 
@@ -822,7 +822,7 @@ void InjuredNautCenter(char plr, int sel)
                     fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
-                };
+                }
 
             if (BarA > 0) {
                 fill_rectangle(26, 129, 153, 195, 0);
@@ -830,7 +830,7 @@ void InjuredNautCenter(char plr, int sel)
                 now2--;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
-            };
+            }
 
             // WaitForMouseUp();
             OutBox(6, 130, 18, 161);
@@ -846,7 +846,7 @@ void InjuredNautCenter(char plr, int sel)
                     fill_rectangle(26, 129, 153, 195, 0);
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
-                };
+                }
 
             if (BarA < 7)
                 if (now2 < count - 1) {
@@ -855,13 +855,13 @@ void InjuredNautCenter(char plr, int sel)
                     now2++;
                     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
-                };
+                }
 
             // WaitForMouseUp();
             OutBox(6, 163, 18, 194);
 
             delay(10);
-        };
+        }
 
         if ((mousebuttons > 0 && x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
             InBox(245, 5, 314, 17);

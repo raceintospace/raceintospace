@@ -102,7 +102,7 @@ OrderMissions(void)
                 Order[k].budget = Data->P[i].Budget;
                 Order[k].date = Data->P[i].Mission[j].Month;
                 k++;
-            };
+            }
 
     if (k) {
         qsort(Order, k, sizeof(struct order), cmp_order);
@@ -138,7 +138,7 @@ void MisOrd(char num)
         draw_string(0, 0, " 19");
         draw_number(0, 0, Data->Year);
         j++;
-    };
+    }
 
     FadeIn(2, 10, 0, 0);
 
@@ -331,7 +331,7 @@ void MisAnn(char plr, char pad)
                     draw_string(0, 0, "%");
                     // draw_string(144+i*111,116+14*k,"%");
                     ++k;
-                };
+                }
 
                 break;
 
@@ -350,7 +350,7 @@ void MisAnn(char plr, char pad)
                     // draw_number(0,0,Data->P[plr].Misc[hold].Safety);
                     //    draw_string(144+i*111,116+14*k,"%");
                     ++k;
-                };
+                }
 
                 break;
 
@@ -369,7 +369,7 @@ void MisAnn(char plr, char pad)
                     //draw_number(0,0,Data->P[plr].Manned[hold].Safety);
                     //draw_string(144+i*111,116+14*k,"%");
                     ++k;
-                };
+                }
 
                 break;
 
@@ -404,7 +404,7 @@ void MisAnn(char plr, char pad)
                         //draw_string(144+i*111,116+14*k,"%");
                         ++k;
                     }
-                };
+                }
 
                 break;
 
@@ -492,7 +492,7 @@ void MisAnn(char plr, char pad)
                 return;
             }
         }
-    };
+    }
 }
 
 

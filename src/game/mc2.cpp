@@ -737,7 +737,7 @@ void MissionSetup(char plr, char mis)
 
                             MH[j][i]->Used++;
                         }
-                    };
+                    }
 
                     break;
 
@@ -765,7 +765,7 @@ void MissionSetup(char plr, char mis)
                         if (MH[j][7]->Num > 0) {
                             MH[j][7]->Num--;
                         }
-                    };
+                    }
 
                     break;
 
@@ -797,9 +797,9 @@ void MissionSetup(char plr, char mis)
                             break;
                         }
                 }
-            }; // if t>=0
-        }; // for (0<7)
-    }; // for (0<2)
+            } // if t>=0
+        } // for (0<7)
+    } // for (0<2)
 
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;

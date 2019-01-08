@@ -438,25 +438,25 @@ void FixPrograms(char plr)
         if (Data->P[plr].Manned[i].DCost > 0 && Data->P[plr].Manned[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 2, i);
         }
-    };
+    }
 
     for (i = 0; i < 5; i++) {
         if (Data->P[plr].Rocket[i].DCost > 0 && Data->P[plr].Rocket[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 1, i);
         }
-    };
+    }
 
     for (i = 0; i < 4; i++) {
         if (Data->P[plr].Misc[i].DCost > 0 && Data->P[plr].Misc[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 3, i);
         }
-    };
+    }
 
     for (i = 0; i < 3; i++) {
         if (Data->P[plr].Probe[i].DCost > 0 && Data->P[plr].Probe[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 0, i);
         }
-    };
+    }
 
     return;
 }
@@ -781,7 +781,7 @@ void Programs(char plr, char prog)
                                 ShBox(26, 130 + BarA * 8, 152,
                                       138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
-                            };
+                            }
 
                         if (BarA > 0) {
                             fill_rectangle(26, 129, 153, 195, 0);
@@ -789,7 +789,7 @@ void Programs(char plr, char prog)
                             now2--;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
-                        };
+                        }
 
                         i = 51;
                     }
@@ -804,7 +804,7 @@ void Programs(char plr, char prog)
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
-                        };
+                        }
 
                     if (BarA > 0) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -812,7 +812,7 @@ void Programs(char plr, char prog)
                         now2--;
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &M[0]);
-                    };
+                    }
 
                     key = 0;
 
@@ -841,7 +841,7 @@ void Programs(char plr, char prog)
                                 ShBox(26, 130 + BarA * 8, 152,
                                       138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
-                            };
+                            }
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
@@ -851,7 +851,7 @@ void Programs(char plr, char prog)
                                 ShBox(26, 130 + BarA * 8, 152,
                                       138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
-                            };
+                            }
 
                         i = 51;
                     }
@@ -866,7 +866,7 @@ void Programs(char plr, char prog)
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
-                        };
+                        }
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
@@ -875,7 +875,7 @@ void Programs(char plr, char prog)
                             now2++;
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
-                        };
+                        }
 
                     key = 0;
 
@@ -1065,7 +1065,7 @@ void Programs(char plr, char prog)
                         if (BarA > 0) {
                             BarA--;
                         }
-                    };
+                    }
 
                     fill_rectangle(26, 129, 153, 195, 0);
 
@@ -1094,7 +1094,7 @@ void Programs(char plr, char prog)
                     }
 
                     OutBox(245, 88, 314, 100);
-                };                 /* End outer if */
+                }                 /* End outer if */
             } else if ((x >= 245 && y >= 106 && x <= 314 && y <= 118
                         && mousebuttons > 0) || key == 'B') {
                 /* Break Group */
@@ -1184,7 +1184,7 @@ void Programs(char plr, char prog)
 
                     WaitForMouseUp();
                     OutBox(245, 106, 314, 118);
-                };
+                }
             } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17
                         && mousebuttons > 0) || key == K_ENTER) {
                 /* Exit */
@@ -1208,21 +1208,21 @@ void Programs(char plr, char prog)
                             Data->P[plr].CrewCount[prog][i] = 0;
                             CrewCount[i]--;
                             count++;
-                        };
+                        }
 
                     Data->P[plr].CrewCount[prog][i] = CrewCount[i];
-                };
+                }
 
                 for (i = 0; i < count; i++) {
                     Data->P[plr].Pool[M[i]].Assign = 0;
-                };
+                }
 
                 music_stop();
 
                 return;            /* Done */
-            };
+            }
         }
-    };
+    }
 }
 
 /** clears the screen

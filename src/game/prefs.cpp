@@ -113,7 +113,7 @@ void DrawPrefs(int where, char a1, char a2)
         BinT(238, 54, 1);
         fill_rectangle(237, 35, 312, 41, 0);
         fill_rectangle(7, 35, 82, 41, 0);
-    };
+    }
 
     if (mode == 0) {
         draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
@@ -680,7 +680,7 @@ void Prefs(int where)
                 draw_string(238, 40, &Data->P[1].Name[0]);
                 av_sync();
                 /* P2: Director Name */
-            };
+            }
         }
-    };
+    }
 }

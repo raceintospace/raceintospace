@@ -218,7 +218,7 @@ void Records(char plr)
             if (key > 0) {
                 delay(300);
                 key = 0;
-            };
+            }
 
             WaitForMouseUp();
 
@@ -242,7 +242,7 @@ void Records(char plr)
         Button2(15, 178, 160, 182, Move2rec(&pos, &pos2, 7), key, 56);
         Button2(15, 185, 160, 189, Move2rec(&pos, &pos2, 8), key, 57);
         key = 0;
-    };
+    }
 }
 
 void Move2rec(char *pos, char *pos2, char val)
@@ -780,7 +780,7 @@ void SafetyRecords(char plr, int temp)
         } else if (k == 25) {
             k = -1;
         }
-    }; //end while
+    } //end while
 
     bo = sOpen("RECORDS.DAT", "wb", 1);
 
@@ -1365,7 +1365,7 @@ void UpdateRecords(char Ty)
                                         Rec_Change = 3;
                                     }
                                 }
-                            };
+                            }
 
                             break;
 
@@ -1475,7 +1475,7 @@ void UpdateRecords(char Ty)
                                 } else {
                                     Rec_Change = -1;
                                 }
-                            };
+                            }
 
                             break;
 
@@ -1494,7 +1494,7 @@ void UpdateRecords(char Ty)
                                 } else if (temp > 0) {
                                     Rec_Change = 3;
                                 }
-                            };
+                            }
 
                             break;
 
@@ -1510,7 +1510,7 @@ void UpdateRecords(char Ty)
                                     if (Data->P[i].History[loop].Duration > 0) {
                                         ++temp;
                                     }
-                                };
+                                }
 
                                 if (rec[k][0].place == 0) {
                                     Rec_Change = 0;
@@ -1627,7 +1627,7 @@ void UpdateRecords(char Ty)
                                         RecChange(i, j, k, loop, max, Rec_Change, hold);
                                     }
                                 }
-                            };
+                            }
 
                             Rec_Change = -1;
 
@@ -1657,7 +1657,7 @@ void UpdateRecords(char Ty)
                                         RecChange(i, j, k, loop, max, Rec_Change, hold);
                                     }
                                 }
-                            };
+                            }
 
                             Rec_Change = -1;
 
@@ -1687,7 +1687,7 @@ void UpdateRecords(char Ty)
                                         RecChange(i, j, k, loop, max, Rec_Change, hold);
                                     }
                                 }
-                            };
+                            }
 
                             Rec_Change = -1;
 
@@ -1717,7 +1717,7 @@ void UpdateRecords(char Ty)
                                         RecChange(i, j, k, loop, max, Rec_Change, hold);
                                     }
                                 }
-                            };
+                            }
 
                             Rec_Change = -1;
 
@@ -1747,7 +1747,7 @@ void UpdateRecords(char Ty)
                                         RecChange(i, j, k, loop, max, Rec_Change, hold);
                                     }
                                 }
-                            };
+                            }
 
                             Rec_Change = -1;
 
