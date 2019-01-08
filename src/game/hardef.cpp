@@ -256,10 +256,11 @@ PInfo(char plr, char loc)
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         for (j = 0; j < 7; j++) {
             PrestigeTable[i][j] = 0;
         }
+    }
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
@@ -302,10 +303,11 @@ PInfo(char plr, char loc)
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
 
     // make sure there are no negative vals in Pt
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         for (j = 0; j < 7; j++) {
             PrestigeTable[i][j] = MAX(PrestigeTable[i][j], 0);
         }
+    }
 
     tot = 0;
 
@@ -317,26 +319,29 @@ PInfo(char plr, char loc)
             tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (tot <= PrestigeTable[PROBE_HARDWARE][i]) {
                 tot = PrestigeTable[PROBE_HARDWARE][i];
             }
+        }
 
         break;
 
     case ROCKET_HARDWARE:
-        for (i = 0; i < 4; i++)
+        for (i = 0; i < 4; i++) {
             if (tot <= PrestigeTable[ROCKET_HARDWARE][i]) {
                 tot = PrestigeTable[ROCKET_HARDWARE][i];
             }
+        }
 
         break;
 
     case MANNED_HARDWARE:
-        for (i = 0; i < 5; i++)
+        for (i = 0; i < 5; i++) {
             if (tot <= PrestigeTable[MANNED_HARDWARE][i]) {
                 tot = PrestigeTable[MANNED_HARDWARE][i];
             }
+        }
 
         break;
 
@@ -799,26 +804,29 @@ HInfo(char plr, char loc, char w)
                 tot = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
             }
 
-            for (i = 0; i < 3; i++)
+            for (i = 0; i < 3; i++) {
                 if (tot <= Data->P[plr].Probe[i].Steps) {
                     tot = Data->P[plr].Probe[i].Steps;
                 }
+            }
 
             break;
 
         case 1:
-            for (i = 0; i < 4; i++)
+            for (i = 0; i < 4; i++) {
                 if (tot <= Data->P[plr].Rocket[i].Steps) {
                     tot = Data->P[plr].Rocket[i].Steps;
                 }
+            }
 
             break;
 
         case 2:
-            for (i = 0; i < 5; i++)
+            for (i = 0; i < 5; i++) {
                 if (tot <= Data->P[plr].Manned[i].Steps) {
                     tot = Data->P[plr].Manned[i].Steps;
                 }
+            }
 
             break;
 

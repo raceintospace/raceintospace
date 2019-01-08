@@ -337,9 +337,10 @@ write_default_config(void)
     fprintf(f, "# variable_name variable_value\n\n");
     fprintf(f, "# (be sure to remove the #)\n\n");
 
-    for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i)
+    for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
         fprintf(f, "# %s\n# %s\n\n",
                 config_strings[i].comment, config_strings[i].name);
+    }
 
     err = ferror(f);
 

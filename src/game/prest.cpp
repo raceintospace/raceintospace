@@ -277,10 +277,11 @@ int PrestCheck(char plr)
     // Other mission bonus
 
     // Sum all additional Mission Bonuses
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < 5; i++) {
         if (Mis.PCat[i] != -1) {
             total += Data->Prestige[Mis.PCat[i]].Add[2];
         }
+    }
 
     if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
         total += Data->Prestige[Prestige_MannedDocking].Add[2];
@@ -907,10 +908,11 @@ int AllotPrest(char plr, char mis)
     }
 
     // TOTAL ALL MISSION FIRSTS
-    for (i = 0; i < 28; i++)
+    for (i = 0; i < 28; i++) {
         if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
             total += Set_Goal(plr, i, 0);
         }
+    }
 
     //else if (PVal[i]==4) negs+=Set_Goal(plr,i,0);
 
@@ -947,12 +949,13 @@ int AllotPrest(char plr, char mis)
             total = Set_Goal(plr, S_Goal, 0);
         }
 
-        for (i = 0; i < 28; i++)
+        for (i = 0; i < 28; i++) {
             if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
                 total += Set_Goal(plr, i, 0);
             } else if (PVal[i] == 3) {
                 Set_Goal(plr, i, 0);
             }
+        }
     }
 
     // LM POINTS

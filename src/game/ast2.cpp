@@ -187,10 +187,11 @@ void Limbo(char plr)
     now2 = BarA = count = 0;
     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
             AstroList[count++] = i;
         }
+    }
 
     DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
@@ -461,10 +462,11 @@ void Limbo(char plr)
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                for (i = 0; i < Data->P[plr].AstroCount; i++)
+                for (i = 0; i < Data->P[plr].AstroCount; i++) {
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
                         AstroList[count++] = i;
                     }
+                }
 
                 DispLeft(plr, BarA, count, now2, &AstroList[0]);
 
@@ -596,10 +598,11 @@ void Limbo(char plr)
                 now2 = BarA = count = 0;
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
-                for (i = 0; i < Data->P[plr].AstroCount; i++)
+                for (i = 0; i < Data->P[plr].AstroCount; i++) {
                     if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
                         AstroList[count++] = i;
                     }
+                }
 
                 DispLeft(plr, BarA, count, now2, &AstroList[0]);
 

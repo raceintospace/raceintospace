@@ -93,8 +93,8 @@ OrderMissions(void)
     // Sort Missions for Proper Order
     k = 0;
 
-    for (i = 0; i < NUM_PLAYERS; i++)
-        for (j = 0; j < MAX_MISSIONS; j++)
+    for (i = 0; i < NUM_PLAYERS; i++) {
+        for (j = 0; j < MAX_MISSIONS; j++) {
             if (Data->P[i].Mission[j].MissionCode
                 && Data->P[i].Mission[j].part != 1) {
                 Order[k].plr = i;
@@ -103,6 +103,8 @@ OrderMissions(void)
                 Order[k].date = Data->P[i].Mission[j].Month;
                 k++;
             }
+        }
+    }
 
     if (k) {
         qsort(Order, k, sizeof(struct order), cmp_order);

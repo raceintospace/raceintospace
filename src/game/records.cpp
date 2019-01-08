@@ -803,10 +803,11 @@ void UpdateRecords(char Ty)
 
     Miss = (struct mStr *)buffer;
 
-    for (j = 0; j < 56; j++)
+    for (j = 0; j < 56; j++) {
         for (i = 0; i < 3; i++) {
             NREC[j][i] = 0x00;
         }
+    }
 
     file = sOpen("MISSION.DAT", "rb", 0); //Get Whole File
     fread(Miss, 60 * (sizeof(struct mStr)), 1, file);
@@ -850,8 +851,8 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
 
                             if (Data->P[i].History[j].Duration > 0) {
-                                for (m = 0; m < 4; m++)
-                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                for (m = 0; m < 4; m++) {
+                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1) {
                                         if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 0) {
                                             temp = Data->P[i].History[j].Man[PAD_A][m];
 
@@ -863,6 +864,8 @@ void UpdateRecords(char Ty)
 
                                             RecChange(i, j, k, temp, m, Rec_Change, hold);
                                         }
+                                    }
+                                }
                             }
 
                             Rec_Change = -1;
@@ -874,8 +877,8 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
 
                             if (Data->P[i].History[j].Duration > 0) {
-                                for (m = 0; m < 4; m++)
-                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1)
+                                for (m = 0; m < 4; m++) {
+                                    if (Data->P[i].History[j].Man[PAD_A][m] != -1) {
                                         if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 1) {
                                             temp = Data->P[i].History[j].Man[PAD_A][m];
 
@@ -887,6 +890,8 @@ void UpdateRecords(char Ty)
 
                                             RecChange(i, j, k, temp, m, Rec_Change, hold);
                                         }
+                                    }
+                                }
                             }
 
                             Rec_Change = -1;
@@ -898,7 +903,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
 
                             if (Data->P[i].History[j].Duration > 0) {
-                                for (m = 0; m < 4; m++)
+                                for (m = 0; m < 4; m++) {
                                     if (Data->P[i].History[j].Man[PAD_A][m] != -1) {
                                         temp = Data->P[i].History[j].Man[PAD_A][m];
 
@@ -910,6 +915,7 @@ void UpdateRecords(char Ty)
 
                                         RecChange(i, j, k, temp, m, Rec_Change, hold);
                                     }
+                                }
                             }
 
                             Rec_Change = -1;
@@ -1782,12 +1788,13 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) { //Highest Average Budget
-                                for (loop = 0; loop < 40; ++loop)
+                                for (loop = 0; loop < 40; ++loop) {
                                     if (Data->P[i].BudgetHistory[loop] != 0) {
                                         temp += Data->P[i].BudgetHistory[loop];
                                     } else if (loop >= 6 && max == 0) {
                                         max = loop - 1;
                                     }
+                                }
 
                                 temp = temp / max;
 
@@ -1807,12 +1814,13 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) { //Lowest Average Budget
-                                for (loop = 0; loop < 40; ++loop)
+                                for (loop = 0; loop < 40; ++loop) {
                                     if (Data->P[i].BudgetHistory[loop] != 0) {
                                         temp += Data->P[i].BudgetHistory[loop];
                                     } else if (loop >= 6 && max == 0) {
                                         max = loop - 1;
                                     }
+                                }
 
                                 temp = temp / max;
 

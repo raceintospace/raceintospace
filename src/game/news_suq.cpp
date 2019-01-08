@@ -493,22 +493,24 @@ char REvent(char plr)
            drop the safety factor in half. */
         evflag = 0;
 
-        for (i = 3; i >= 0; i--)
+        for (i = 3; i >= 0; i--) {
             if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
         }
 
-        for (i = 3; i >= 0; i--)
+        for (i = 3; i >= 0; i--) {
             if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
                 evflag = Data->P[plr].Rocket[i].Safety / 2;
                 Data->P[plr].Rocket[i].Safety -= evflag;
                 strcpy(&Name[0], &Data->P[plr].Rocket[i].Name[0]);
                 break;
             }
+        }
 
         break;
 
@@ -738,10 +740,11 @@ char REvent(char plr)
     case 50: // backup crew will fly mission
         evflag = 0;
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -761,10 +764,11 @@ char REvent(char plr)
     case 51: /* astronaut killed delay all manned missons = 1 */
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -790,10 +794,11 @@ char REvent(char plr)
     case 52:
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -815,10 +820,11 @@ char REvent(char plr)
     case 53:
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -969,10 +975,11 @@ char REvent(char plr)
     case 85: // Primary Crew Scrubbed - Backup Will Fly
         evflag = 0;
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Mission[i].MissionCode) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;
@@ -991,10 +998,11 @@ char REvent(char plr)
     case 89: /* random astronaut not active */
         evflag = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE) {
                 evflag++;
             }
+        }
 
         if (evflag == 0) {
             return 1;

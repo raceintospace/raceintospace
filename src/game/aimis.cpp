@@ -879,10 +879,11 @@ void NewAI(char plr, char frog)
         mis3 = Mission_None;
         hsf = 0;
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Probe[hsf].Safety <= Data->P[plr].Probe[i].Safety) {
                 hsf = i;
             }
+        }
 
         RDafford(plr, PROBE_HARDWARE, hsf);
 
@@ -1435,12 +1436,13 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             pc[i] = -1;
             bc[i] = -1;
 
-            for (j = 0; j < 8; j++)
+            for (j = 0; j < 8; j++) {
                 if (pc[i] == -1 &&
                     Data->P[plr].Crew[prog[i]][j][0] != 0 &&
                     Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][j][0] - 1].Prime == 0) {
                     pc[i] = j;
                 }
+            }
 
             if (pc[i] == -1) {
                 // astronaut/duration klugge
@@ -1458,13 +1460,14 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             Data->P[plr].Future[pad + i].PCrew = pc[i] + 1;
             bc[i] = -1;
 
-            for (j = 0; j < 8; j++)
+            for (j = 0; j < 8; j++) {
                 if (bc[i] == -1 &&
                     j != pc[i] &&
                     Data->P[plr].Crew[prog[i]][j][0] != 0 &&
                     Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][j][0] - 1].Prime == 0) {
                     bc[i] = j;
                 }
+            }
 
             Data->P[plr].Future[pad + i].BCrew = bc[i] + 1;
 
@@ -1561,7 +1564,7 @@ void AILaunch(char plr)
 
                 rck[0] = -1;
 
-                for (k = 0; k < 7; k++)
+                for (k = 0; k < 7; k++) {
                     if (boos[k] != -1 && bwgt[k] >= wgt) {
                         if (rck[0] == -1) {
                             rck[0] = bdex[k];
@@ -1569,6 +1572,7 @@ void AILaunch(char plr)
                             rck[0] = bdex[k];
                         }
                     }
+                }
 
                 if (rck[0] == -1) {
                     ClrMiss(plr, i - Data->P[plr].Mission[i].part);
@@ -1617,7 +1621,7 @@ void AILaunch(char plr)
 
                 rck[1] = -1;
 
-                for (k = 0; k < 7; k++)
+                for (k = 0; k < 7; k++) {
                     if (boos[k] != -1 && bwgt[k] >= wgt) {
                         if (rck[1] == -1) {
                             rck[1] = bdex[k];
@@ -1625,6 +1629,7 @@ void AILaunch(char plr)
                             rck[1] = bdex[k];
                         }
                     }
+                }
 
                 if (rck[1] == -1) {
                     rck[1] = Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] - 1;
@@ -1654,10 +1659,11 @@ void AILaunch(char plr)
     };
 
     // lunar module klugge
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].Hard[Mission_LM] >= 5) {
             Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety >= Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety ? 5 : 6;
         }
+    }
 
     JR = 0;
     k = 0;

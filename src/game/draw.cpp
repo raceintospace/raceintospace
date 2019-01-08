@@ -81,7 +81,7 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
 
         memcpy(&letter, letter_dat + (sizeof letter * px), sizeof letter); // copy letter over
 
-        for (k = 0; k < 15; k++)
+        for (k = 0; k < 15; k++) {
             for (l = 0; l < letter.width; l++) {
                 if (letter.img[k][l] != 0x03) {
                     if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
@@ -91,6 +91,7 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
                     }
                 }
             }
+        }
 
         x += letter.width - 1;
     }

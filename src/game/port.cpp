@@ -753,10 +753,11 @@ void Master(char plr)
         g_value = 1;
     }
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
             t_value = 1;
         }
+    }
 
     r_value = brandom(1000);
 
@@ -1064,13 +1065,14 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j < high + 1; j++)
+        for (j = old; j < high + 1; j++) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
                 }
             }
+        }
 
         break;
 
@@ -1083,13 +1085,14 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j > low - 1; j--)
+        for (j = old; j > low - 1; j--) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
                 }
             }
+        }
 
         break;
 
@@ -1198,7 +1201,7 @@ void Port(char plr)
                 y = -1;
             }
 
-            for (j = 0; j < MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].qty; j++)
+            for (j = 0; j < MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].qty; j++) {
                 if (x >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x1 &&
                     y >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].y1 &&
                     x <= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x2 &&
@@ -1216,10 +1219,11 @@ void Port(char plr)
                     good = 0;
 
                     // Search hotkey string for valid selection
-                    for (k = 0; k < (int)strlen(HotKeyList); k++)
+                    for (k = 0; k < (int)strlen(HotKeyList); k++) {
                         if (HotKeyList[k] == ((char)(0x00ff & key))) {
                             good = 1;
                         }
+                    }
 
                     while (x >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].x1 &&
                            y >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].y1 &&
@@ -1408,6 +1412,7 @@ void Port(char plr)
                     helpText = "i043";
                     keyHelpText = "k043";
                 } // if
+            }
 
             if (kMode == 0) {
                 i++;
@@ -1806,11 +1811,12 @@ char MisReq(char plr)
 
     local.copyFrom(display::graphics.legacyScreen(), 53, 29, 236, 160);
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         if ((Data->P[plr].Mission[i].MissionCode) &&
             (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0)) {
             num++;
         }
+    }
 
     ShBox(53, 29, 236, 160);
     ShBox(60, 34, 229, 44);

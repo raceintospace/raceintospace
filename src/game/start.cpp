@@ -203,10 +203,11 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         unsigned i = 0;
         unsigned j = 0;
 
-        for (i = 0; i < NUM_SKILLS; ++i)
+        for (i = 0; i < NUM_SKILLS; ++i) {
             if (*skills[i] < skillMax) {
                 choices[j++] = i;
             }
+        }
 
         if (j > 0) {
             /* If found, pick one skill at random */
@@ -215,10 +216,11 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         }
 
         /* Not sure why do it here, but let's keep it */
-        for (i = 0; i < NUM_SKILLS; ++i)
+        for (i = 0; i < NUM_SKILLS; ++i) {
             if (*skills[i] < skillMin) {
                 *skills[i] = skillMin;
             }
+        }
 
         break;
     }
@@ -281,21 +283,25 @@ AstroTurn(void)
     int cnt = 0;
 
     /* Count total number of active astronauts */
-    for (j = 0; j < NUM_PLAYERS; j++)
-        for (i = 0; i < Data->P[j].AstroCount; i++)
+    for (j = 0; j < NUM_PLAYERS; j++) {
+        for (i = 0; i < Data->P[j].AstroCount; i++) {
             if (Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                 ActTotal[j]++;
             }
+        }
+    }
 
     /* Update All Astronauts */
-    for (j = 0; j < NUM_PLAYERS; j++)
-        if (MAIL == -1 || (MAIL == j))
+    for (j = 0; j < NUM_PLAYERS; j++) {
+        if (MAIL == -1 || (MAIL == j)) {
             for (i = 0; i < Data->P[j].AstroCount; i++) {
                 updateAstronautSkills(j, &Data->P[j].Pool[i]);
             }
+        }
+    }
 
     for (j = 0; j < NUM_PLAYERS; j++) { /* Player Analysis */
-        if (MAIL == -1 || (MAIL == j))
+        if (MAIL == -1 || (MAIL == j)) {
             for (i = 0; i < Data->P[j].AstroCount; i++) {
 
                 /* Injury Resolution */
@@ -451,11 +457,12 @@ AstroTurn(void)
                 cnt = Data->P[j].Pool[i].Crew;  /* Crew in */
                 l = Data->P[j].Pool[i].Assign;  /* Prog in */
 
-                for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++)
+                for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
                     if (Data->P[j].Pool[Data->P[j].Crew[l][cnt][k] -
                                         1].Hero == 1) {
                         temp++;
                     }
+                }
 
                 if (temp > 1) {
                     Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
@@ -651,13 +658,14 @@ AstroTurn(void)
 
                 Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;
             }
+        }
 
         Data->P[j].MissionCatastrophicFailureOnTurn = 0;
     }
 
     //      break all groups with dead, injured or retired folks.
     for (j = 0; j < NUM_PLAYERS; j++) { // for each player
-        if (MAIL == -1 || (MAIL == j))
+        if (MAIL == -1 || (MAIL == j)) {
             for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
                 for (l = 0; l < ASTRONAUT_CREW_MAX; l++) {
                     temp = 0;
@@ -704,6 +712,7 @@ AstroTurn(void)
                     }              /* if Gcnt */
                 }                  /* for l */
             }                      /* for k */
+        }
     }                              /* for j */
 
     if (MAIL == -1 || MAIL == 0) {

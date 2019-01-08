@@ -569,10 +569,11 @@ void SelectBest(char plr, int pos)
     }
 
     // remove from the bottom up out of training
-    for (i = 0; i < pData->AstroCount; i++)
+    for (i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_TRAIN_BASIC_1) {
             pData->Pool[i].Status = AST_ST_ACTIVE;
         }
+    }
 
     return;
 }
@@ -581,18 +582,20 @@ void DumpAstro(char plr, int inx)
 {
     struct BuzzData *pData = &Data->P[plr];
 
-    for (int i = 0; i < pData->AstroCount; i++)
+    for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
             pData->Pool[i].Assign = 0; // back to limbo
             pData->Pool[i].Unassigned = 0;
         }
+    }
 
     for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
-        for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++)
+        for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
             if (pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
                 pData->Crew[inx][i][j] = 0;
                 pData->CrewCount[inx][i] = 0;
             }
+        }
     }
 
     return;
@@ -795,13 +798,14 @@ void CheckAdv(char plr)
     int count = 0;
     struct BuzzData *pData = &Data->P[plr];
 
-    for (int i = 0; i < pData->AstroCount; i++)
+    for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
             ++count;
         }
+    }
 
     if (count <= 3) {
-        for (int i = 0; i < pData->AstroCount; i++)
+        for (int i = 0; i < pData->AstroCount; i++) {
             if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
                 pData->Pool[i].Focus = brandom(4) + 1;
 
@@ -811,6 +815,7 @@ void CheckAdv(char plr)
                     pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
                 }
             }
+        }
     }
 
     return;

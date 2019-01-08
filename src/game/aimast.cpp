@@ -324,12 +324,14 @@ void AIMaster(char plr)
         }
     }
 
-    for (i = 0; i < 3; i++)
-        if (Data->P[plr].LaunchFacility[i] > 1)
+    for (i = 0; i < 3; i++) {
+        if (Data->P[plr].LaunchFacility[i] > 1) {
             if (Data->P[plr].LaunchFacility[i] <= Data->P[plr].Cash) {
                 Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
                 Data->P[plr].LaunchFacility[i] = 1;
             }
+        }
+    }
 
     Data->P[plr].LaunchFacility[0] = 1;
     Data->P[plr].LaunchFacility[1] = 1;
@@ -492,10 +494,11 @@ char NoFail(char plr)
 {
     char RT_value = 0, i;
 
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++)
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if ((Data->P[plr].History[i].MissionCode == Mission_Earth_Orbital || Data->P[plr].History[i].MissionCode == Mission_Earth_Orbital_EVA) && Data->P[plr].History[i].spResult >= 3000) {
             ++RT_value;
         }
+    }
 
     if (RT_value >= 2) {
         RT_value = 1;

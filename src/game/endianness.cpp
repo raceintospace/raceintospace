@@ -82,9 +82,10 @@ void _SwapGameDat(void)
 
         Data->P[j].PastMissionCount = _Swap16bit(Data->P[j].PastMissionCount);
 
-        for (i = 0; i < 30; i++)
+        for (i = 0; i < 30; i++) {
             Data->P[j].PastIntel[i].num =
                 _Swap16bit(Data->P[j].PastIntel[i].num);
+        }
 
     }
 

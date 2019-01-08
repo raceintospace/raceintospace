@@ -597,7 +597,7 @@ transform_palette(void)
 
     display::AutoPal p(display::graphics.legacyScreen());
 
-    for (j = 0; j < ARRAY_LENGTH(ranges); ++j)
+    for (j = 0; j < ARRAY_LENGTH(ranges); ++j) {
         for (i = ranges[j].start; i < ranges[j].end; ++i) {
             if (!fade_info.force_black) {
                 pal_colors[i].r = p.pal[3 * i] * 4;
@@ -609,6 +609,7 @@ transform_palette(void)
                 pal_colors[i].b = 0;
             }
         }
+    }
 
     step = fade_info.step;
     steps = fade_info.steps;

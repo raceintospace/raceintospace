@@ -66,9 +66,10 @@ MissionParse(char plr, char *MCode, char *LCode, char pad)
             break;
 
         case '~':              //printf("      :Delay of %d seasons\n",MCode[i+1]-0x30);
-            for (j = 0; j < (MCode[i + 1] - 0x30); j++)
+            for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
                 MissionSteps(plr, MCode[i + 2], LCode[STEP], STEP,
                              loc - pad);
+            }
 
             i += 2;
             break;
@@ -919,11 +920,13 @@ MisDur(char plr, char dur)
         INFO2("applying duration penalty %d to mission safety", -diff);
     }
 
-    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
             if (MH[i][j] != NULL) {
                 MH[i][j]->MisSaf -= diff;
             }
+        }
+    }
 }
 
 // #define Coml(a,b) (!(Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a)))
@@ -947,12 +950,15 @@ MisSkip(char plr, char ms)
         INFO2("applying general penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0)
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    if (diff != 0) {
+        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
                     MH[i][j]->MisSaf -= diff;
                 }
+            }
+        }
+    }
 }
 
 /**
@@ -972,12 +978,15 @@ MisRush(char plr, char rush_level)
         INFO2("applying rushing penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0)
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++)
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++)
+    if (diff != 0) {
+        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
                     MH[i][j]->MisSaf -= diff;
                 }
+            }
+        }
+    }
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */

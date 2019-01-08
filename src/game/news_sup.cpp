@@ -94,17 +94,19 @@ int Steal(int p, int prog, int type)
     save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
     if (type == 1) {
-        for (i = lo; i < hi; i++)
+        for (i = lo; i < hi; i++) {
             if (save[i] <= 0) {
                 save[i] = 0;    // Positive Only
             }
+        }
     } else {
-        for (i = lo; i < hi; i++)
+        for (i = lo; i < hi; i++) {
             if (save[i] >= 0) {
                 save[i] = 0;    // Negatives Only
             } else {
                 save[i] *= -1;
             }
+        }
     }
 
     for (i = lo; i < hi; i++) if (save[i] > 0) {

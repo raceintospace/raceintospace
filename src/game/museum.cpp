@@ -255,10 +255,11 @@ void ShowPrest(char plr)
     char pos = -1, pos2 = -1;
     int i, j;
 
-    for (j = 0; j < 2; j++)
+    for (j = 0; j < 2; j++) {
         for (i = 0; i < 28; i++) {
             TPoints[j] += (int) Data->Prestige[i].Points[j];
         }
+    }
 
 
     FadeOut(2, 5, 0, 0);
@@ -806,11 +807,12 @@ void DrawMisHist(char plr, int *where)
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_EOR || Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_LOR) {
-            for (j = 0; j < 4; j++)
+            for (j = 0; j < 4; j++) {
                 if (Data->P[plr].History[i].Man[PAD_A][j] != -1) {
                     Data->P[plr].History[i].Man[PAD_B][j] = Data->P[plr].History[i].Man[PAD_A][j];
                     Data->P[plr].History[i].Man[PAD_A][j] = -1;
                 }
+            }
         }
     }
 

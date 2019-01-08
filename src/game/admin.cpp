@@ -511,13 +511,14 @@ void FileAccess(char mode)
                     if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
                         int j, k;
 
-                        for (j = 0; j < NUM_PLAYERS; j++)
+                        for (j = 0; j < NUM_PLAYERS; j++) {
                             for (k = 0; k < 7; k++) {
                                 Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
                                 Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
                                 Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
                                 Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
                             }
+                        }
                     }
 
                     // Read the Replay Data
@@ -717,7 +718,7 @@ void FileAccess(char mode)
             SaveHdr->Name[22] = 0x1A;
             temp = NOTSAME;
 
-            for (i = 0; (i < tFiles && temp == 2); i++)
+            for (i = 0; (i < tFiles && temp == 2); i++) {
                 if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
                     temp = RequestX("REPLACE FILE", 1);
 
@@ -725,6 +726,7 @@ void FileAccess(char mode)
                         done = 0;
                     }
                 }
+            }
 
             if (done == YES) {
                 i--;  // decrement to correct for the FOR loop
@@ -830,7 +832,7 @@ void FileAccess(char mode)
             SaveHdr->Name[22] = 0x1A;
             temp = NOTSAME;
 
-            for (i = 0; (i < tFiles && temp == 2); i++)
+            for (i = 0; (i < tFiles && temp == 2); i++) {
                 if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
                     temp = RequestX("REPLACE FILE", 1);
 
@@ -838,6 +840,7 @@ void FileAccess(char mode)
                         done = 0;
                     }
                 }
+            }
 
             if (done == YES) {
                 i--;  // decrement to correct for the FOR loop

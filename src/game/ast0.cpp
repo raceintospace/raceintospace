@@ -522,7 +522,7 @@ void PlanText(char plr, char plan)
 
     pUsed = pFails = 0;
 
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++)
+    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == Find) {
             pUsed++;
 
@@ -530,6 +530,7 @@ void PlanText(char plr, char plan)
                 pFails++;
             }
         }
+    }
 
     draw_number(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
     draw_string(0, 0, "%");

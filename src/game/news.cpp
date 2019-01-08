@@ -163,10 +163,11 @@ OpenNews(char plr, char *buf, int bud)
 
     i = 0;
 
-    for (j = 0; j < Data->P[plr].AstroCount; j++)
+    for (j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
             i++;
         }
+    }
 
     bufsize = strlen(buf);
 
@@ -625,10 +626,11 @@ News(char plr)
 
     }
 
-    for (i = 0; i < (int) strlen(buffer); i++)
+    for (i = 0; i < (int) strlen(buffer); i++) {
         if (buffer[i] == 'x') {
             bline++;
         }
+    }
 
     bline -= 8;
 

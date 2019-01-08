@@ -493,12 +493,12 @@ void Load_LenFlag(char win)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    for (j = 0; j < P.size; j++)
-
+    for (j = 0; j < P.size; j++) {
         /* now fix the strip */
         if (win == 1 || ((j + 1) % P.w != 0)) {
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
     local2.copyTo(display::graphics.legacyScreen(), Off_X, Off_Y);
 }
@@ -1141,12 +1141,12 @@ EndPict(int x, int y, char poff, unsigned char coff)
     fread(local.pixels(), P.size, 1, in);
     fclose(in);
 
-    for (j = 0; j < P.size; j++)
-
+    for (j = 0; j < P.size; j++) {
         /* fix the strip */
         if (local.pixels()[j] != 0 && ((j + 1) % P.w != 0)) {
             local2.pixels()[j] = local.pixels()[j] + coff;
         }
+    }
 
 
     local2.copyTo(display::graphics.legacyScreen(), x, y);

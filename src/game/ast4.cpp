@@ -167,10 +167,11 @@ void AstLevel(char plr, char prog, char crew, char ast)
         if (man != Guy(plr, prog, crew, i)) {
             temp = 0;
 
-            for (k = 0; k < cnt; k++)
+            for (k = 0; k < cnt; k++) {
                 if (Compat[k] == Data->P[plr].Pool[Guy(plr, prog, crew, i)].Compat) {
                     temp++;
                 }
+            }
 
             if ((plr == 1 && Data->Def.Ast2 == 0) || (plr == 0 && Data->Def.Ast1 == 0)) {
                 InBox(111, 66 + 9 * val, 119, 72 + 9 * val);
@@ -288,10 +289,11 @@ void DrawProgs(char plr, char prog)
 
     }
 
-    for (j = 0; j < 2; j++)
+    for (j = 0; j < 2; j++) {
         for (i = 0; i < 4; i++) {
             ShBox(164 + 77 * j, 139 + i * 15, 238 + 77 * j, 151 + i * 15);
         }
+    }
 
     ShBox(4, 86, 12, 92);
 
@@ -401,10 +403,11 @@ int CheckProgram(char plr, char prog)
     int check, i;
     check = 0;
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Crew != 0) {
             ++check;
         }
+    }
 
     if (check > 0) {
         return 1;
@@ -412,20 +415,23 @@ int CheckProgram(char plr, char prog)
 
     check = 0;
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Assign == prog) {
             ++check;
         }
+    }
 
     if (prog >= 1 && prog <= 3 && check >= prog) {
         return 2;
     } else if ((prog == 4 || prog == 5) && check >= prog - 1) {
         return 2;
-    } else // return to limbo
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+    } else { // return to limbo
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Assign == prog) {
                 Data->P[plr].Pool[i].Assign = 0;
             }
+        }
+    }
 
     return 0;
 }
@@ -709,11 +715,12 @@ void Programs(char plr, char prog)
         }
     }
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++)
+    for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Assign == prog
             && Data->P[plr].Pool[i].Crew == 0) {
             M[count++] = i;
         }
+    }
 
     ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
     DispLeft(plr, BarA, count, now2, &M[0]);

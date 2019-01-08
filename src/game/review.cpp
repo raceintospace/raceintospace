@@ -149,10 +149,11 @@ void DrawReview(char plr)
     if (Fired_Flag == 1) {
         clr = 0;
 
-        for (i = 0; i < Data->P[plr].AstroCount; i++)
+        for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Status == AST_ST_DEAD) {
                 clr++;
             }
+        }
 
         Data->P[plr].PresRev[0] = (clr >= 2) ? 17 : 16;
     }
@@ -331,10 +332,11 @@ void CalcPresRev(void)
     }
 
     // Move PresRev down One
-    for (j = 0; j < NUM_PLAYERS; j++)
+    for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 4; i > 0; i--) {
             Data->P[j].PresRev[i] = Data->P[j].PresRev[i - 1];
         }
+    }
 
     Data->P[0].Prestige = Data->P[1].Prestige = 0; // Clear Prest when finished
 

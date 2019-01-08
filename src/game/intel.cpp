@@ -455,24 +455,28 @@ void MisIntel(char plr, char acc)
             save[i] = 0;
         }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
                 save[found] = mis;
                 ++found;
             }
+        }
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3; i++) {
             if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
                 save[found] = mis;
                 ++found;
             }
+        }
 
         //}
-        for (i = lo; i < hi; i++) if (save[i] > 0) {
+        for (i = lo; i < hi; i++) {
+            if (save[i] > 0) {
                 j++;    // Check if event is good.
             }
+        }
 
         if (j <= 1) {
             MisIntel(plr, 0);
@@ -498,10 +502,11 @@ void MisIntel(char plr, char acc)
     mr = Data->P[plr].PastIntel[0].cur;
     nf = 0;
 
-    for (i = 0; i < mr; i++)
+    for (i = 0; i < mr; i++) {
         if (Data->P[plr].PastIntel[i].prog == 5 && Data->P[plr].PastIntel[i].index == mis) {
             nf = 1;
         }
+    }
 
     if (nf == 1 || mis > 56 + plr || mis < 0) {
         HarIntel(plr, 0);
@@ -1172,10 +1177,11 @@ void HarIntel(char p, char acc)
     mr = Data->P[p].PastIntel[0].cur;
     nf = 0;
 
-    for (i = 0; i < mr; i++)
+    for (i = 0; i < mr; i++) {
         if (Data->P[p].PastIntel[i].prog == prg && Data->P[p].PastIntel[i].index == ind) {
             nf = 1;
         }
+    }
 
     if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
         (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {

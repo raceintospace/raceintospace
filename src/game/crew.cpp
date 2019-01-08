@@ -631,7 +631,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
     fill_rectangle(82, 38, 236, 97, 7 + plr * 3); // center screen
     display::graphics.setForegroundColor(1);
 
-    for (i = 0; i < men; i++)
+    for (i = 0; i < men; i++) {
         if (m[i] > 0) {
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
                 display::graphics.setForegroundColor(5);    // Print name in blue if 'naut is female
@@ -711,6 +711,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_string(0, 0, "  EN:");
             draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
         }
+    }
 
     return;
 }
@@ -811,13 +812,14 @@ int HardRequest(char plr, char mode, char mis, char pad)
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k201";
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < 5; i++) {
         if (Data->P[plr].Manned[i].Num >= 0) {
             pr[i] = 1;
             t++;
         } else {
             pr[i] = 0;
         }
+    }
 
     // special case: 1-man capsule can't go to the Moon
     GetMisType(mis);
@@ -959,13 +961,14 @@ int SecondHard(char plr, char mode, char mis, char pad)
         pad++;    // if second part of Joint mission
     }
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < 5; i++) {
         if (Data->P[plr].Manned[i].Num >= 0) {
             prog[i] = 1;
             t++;
         } else {
             prog[i] = 0;
         }
+    }
 
     GetMisType(mis);
 

@@ -383,12 +383,13 @@ void SetParameters(void)
 
 void DrawLocks(void)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++) {
         if (lock[i] == true) {
             PlaceRX(i + 1);
         } else {
             ClearRX(i + 1);
         }
+    }
 
     return;
 }
@@ -1518,7 +1519,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
 
     int n;
 
-    for (n = 2; missStep[n] != 'Z'; n++)
+    for (n = 2; missStep[n] != 'Z'; n++) {
         switch (missStep[n]) {
         case 'A':
             Draw_IJ(B_Mis(++n));
@@ -1628,6 +1629,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
         default :
             break;
         }
+    }
 
     gr_sync();
     MissionCodes(plr, MisType, Pad);

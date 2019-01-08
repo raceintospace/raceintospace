@@ -337,10 +337,11 @@ void DrawPastExp(char player, char *pStatus)
     display::graphics.legacyScreen()->outlineRect(30, 157, 125, 165, 4);
     display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
 
-    for (j = 0; j < 5; j++)
+    for (j = 0; j < 5; j++) {
         for (i = 0; i < 4; i++) {
             max = (max > Data->P[player].Spend[j][i]) ? max : Data->P[player].Spend[j][i];
         }
+    }
 
     if (max <= 100) {
         draw_string(12, 150, "100");
