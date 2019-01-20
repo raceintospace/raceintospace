@@ -784,9 +784,10 @@ void draw_character(char chr)
         LR(2, 0);
         LR(1, 1);
         LR(-1, 1);
+        LR(-1, 0);
         MR(0, 2);
         LR(0, 0);
-        MR(3, 0);
+        MR(4, 0);
         break;
 
     case 0x14:
