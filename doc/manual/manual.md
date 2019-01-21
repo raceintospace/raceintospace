@@ -338,7 +338,7 @@ Here you can get secret intelligence on your opponent, starting in Fall 1958.  O
 
 **Library**
 
-This is where to go for intelligence briefings.  Each turn you’ll receive a report that your opponent is developing a given component or is preparing a given mission.  Again, this may not be accurate.
+This is where to go for intelligence briefings.  Each fall you’ll receive a report that your opponent is developing a given component or is preparing a given mission.  Again, this may not be accurate.
 
 **CIA/KGB Statistics**
 
