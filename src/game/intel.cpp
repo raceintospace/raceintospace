@@ -252,6 +252,8 @@ const char *code_names[] = {
 };
 
 
+inline unsigned int BriefingIndex();
+inline unsigned int BriefingIndex(char year, char season);
 void MisIntel(char plr, char acc);
 void XSpec(char plr, char mis, char year);
 void Special(char p, int ind);
@@ -268,6 +270,30 @@ void IInfo(char plr, char loc, char w);
 
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
+
+
+/* Returns the index into the record of Intel Briefings for the
+ * intel gathered the current turn.
+ *
+ * \return  the index into PastIntel.
+ */
+unsigned int BriefingIndex()
+{
+    return Data->Year - 58;
+}
+
+
+/* Returns the index into the record of Intel Briefings for the
+ * intel gathered on a given turn.
+ *
+ * \param year    years since 1900.
+ * \param season  0 for Spring, 1 for Fall.
+ * \return  the index into PastIntel.
+ */
+unsigned int BriefingIndex(const char year, const char season)
+{
+    return year - 58;
+}
 
 
 void Intel(char plr)
@@ -1323,6 +1349,10 @@ void ImpHard(char plr, char hd, char dx)
     }
 }
 
+/* Updates the hardware statistics table in the Intelligence section.
+ *
+ * \param plr  Player side (0 for USA, 1 for USSR)
+ */
 void UpDateTable(char plr)
 {
     // based on prestige
@@ -1430,11 +1460,44 @@ void UpDateTable(char plr)
     } // for
 }
 
+/* Updates the current intelligence information for a player about
+ * opponent plans and capabilities.
+ *
+ * Intelligence gathering consists of 1) generating a new Intel briefing
+ * about the opponent's mission plans, hardware status, or space
+ * program development (such as hiring astronauts or building launch
+ * facilities), and 2) updating the CIA/KGB statistics table.
+ *
+ * Intelligence gathered about opponent plans and/or capabilities is
+ * notoriously unreliable, being slightly more accurate on lower
+ * difficulty levels and less accurate on higher.
+ *
+ * Due to limited space for saving intelligence briefings, they can
+ * only be generated at a rate of one each year, so updating is
+ * disabled in the spring.
+ *
+ * \param plr  Player side (0 for USA, 1 for USSR)
+ * \param pt   vaguely named & never used, with no clues to purpose.
+ */
 void IntelPhase(char plr, char pt)
 {
     int i, splt, acc, Plr_Level, Acc_Coef;
 
     if (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)) {
+        return;
+    }
+
+    // Protect against Spring intel phases, because the intel system
+    // assumes all intelligence briefings are created in the fall.
+    if (Data->Season == 0) {
+        return;
+    }
+
+    // Protect against repeating Intel phase (only 30 briefing slots!).
+    // Each intelligence briefing is generated in the fall post-1957,
+    // which gives an index it should occupy. The Intel system uses
+    // Data->P[plr].PastIntel[0].cur to track the index of the
+    if (BriefingIndex() < Data->P[plr].PastIntel[0].cur) {
         return;
     }
 
@@ -1447,7 +1510,7 @@ void IntelPhase(char plr, char pt)
         Plr_Level = Data->Def.Lev2;
     }
 
-// stagger accuracy for player levels
+    // stagger accuracy for player levels
     if (Plr_Level == 0) {
         Acc_Coef = 600;
     } else if (Plr_Level == 1) {

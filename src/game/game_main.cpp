@@ -440,7 +440,8 @@ void InitData(void)
 
 void MainLoop(void)
 {
-    int i, j, t1, t2, t3, prest, sign, kik;
+    int i, j, t1, t2, t3, prest, sign, turn, kik;
+    bool newTurn;
 
     if (LOAD != 1) {
         Data->P[0].Cash = Data->P[0].Budget; // INCREMENT BY BUDGET
@@ -449,42 +450,74 @@ void MainLoop(void)
 
 restart:                              // ON A LOAD PROG JUMPS TO HERE
 
+    // Standard saves are created using a stored game state from before
+    // the start of the turn. When loaded, they proceed into a new turn.
+    // Autosaves are created using the game state when the end-of-turn
+    // flag is selected, and restore into that same turn.
+    // Start-of-turn activities, such as generating Intel briefings,
+    // applying news events, and the like should not be performed.
+    // This duplicates information, and that can lead to array overflow
+    // errors.
+    //
+    // There's more than one way to determine this, but the easiest way
+    // is to check how many news events have been recorded, since they
+    // happen every turn. If a news event has been recorded, assume all
+    // other start-of-turn upkeep occured.
+    //
+    // Turn 1 is Spring 1957. The event count begins at 0, and is
+    // incremented as the news event text is being generated.
+    turn = 2 * (Data->Year - 57) + Data->Season + 1; // Start on turn 1
+    newTurn = (turn > Data->P[0].eCount);    // eCount starts at 0.
+
     LOAD = 0;                           // CLEAR LOAD FLAG
 
     while (Data->Year < 78) {            // WHILE THE YEAR IS NOT 1977
         EndOfTurnSave((char *) Data, sizeof(struct Players));
 
-        Data->P[0].RD_Mods_For_Turn = 0;         // CLEAR ALL TURN RD MODS
-        Data->P[1].RD_Mods_For_Turn = 0;
+        if (newTurn) {
+            // CLEAR ALL TURN RD MODS
+            Data->P[0].RD_Mods_For_Turn = 0;
+            Data->P[1].RD_Mods_For_Turn = 0;
 
-        Data->P[0].BudgetHistory[Data->Year - 53] = Data->P[0].Budget; // RECORD BUDGET
-        Data->P[1].BudgetHistory[Data->Year - 53] = Data->P[1].Budget;
+            // RECORD BUDGET
+            Data->P[0].BudgetHistory[Data->Year - 53] = Data->P[0].Budget;
+            Data->P[1].BudgetHistory[Data->Year - 53] = Data->P[1].Budget;
 
-        Data->P[0].BudgetHistoryF[Data->Year - 53] =  // MAKE ESTIMATE OF BUDGETS
-            (Data->P[0].Budget * (brandom(40) + 80)) / 100;
-        Data->P[1].BudgetHistoryF[Data->Year - 53] =
-            (Data->P[1].Budget * (brandom(40) + 80)) / 100;
+            // MAKE ESTIMATE OF BUDGETS
+            Data->P[0].BudgetHistoryF[Data->Year - 53] =
+                (Data->P[0].Budget * (brandom(40) + 80)) / 100;
+            Data->P[1].BudgetHistoryF[Data->Year - 53] =
+                (Data->P[1].Budget * (brandom(40) + 80)) / 100;
 
-        for (t1 = 0; t1 < NUM_PLAYERS; t1++) {          // Move Expenditures down one
-            for (t2 = 4; t2 >= 0; t2--) {
+            // Move Expenditures down one
+            for (t1 = 0; t1 < NUM_PLAYERS; t1++) {
+                for (t2 = 4; t2 >= 0; t2--) {
+                    for (t3 = 0; t3 < 4; t3++) {
+                        Data->P[t1].Spend[t2][t3] =
+                            Data->P[t1].Spend[t2 - 1][t3];
+                    }
+                }
+
                 for (t3 = 0; t3 < 4; t3++) {
-                    Data->P[t1].Spend[t2][t3] = Data->P[t1].Spend[t2 - 1][t3];
+                    Data->P[t1].Spend[0][t3] = 0;
                 }
             }
 
-            for (t3 = 0; t3 < 4; t3++) {
-                Data->P[t1].Spend[0][t3] = 0;
+            // Presidential Review of Space Program
+            if (Data->Season == 0) {
+                CalcPresRev();
             }
-        }
-
-        if (Data->Season == 0) {
-            CalcPresRev();
         }
 
         for (i = 0; i < NUM_PLAYERS; i++) {
             xMODE &= ~xMODE_CLOUDS; // reset clouds for spaceport
 
-            if (Data->Season == 1) {
+            // Intel only gets updated in the fall, because there are
+            // only 30 Intel Briefing slots in the save record per
+            // player.
+            // Also, check to make sure this isn't an autosave repeating
+            // the start-of-turn actions.
+            if (Data->Season == 1 && newTurn) {
                 IntelPhase(plr[i] - 2 * AI[i], 0);
             }
 
@@ -662,6 +695,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         } else {
             Data->Season++;
         }
+
+        newTurn = true;
     }
 
     FadeOut(2, 10, 0, 0);
