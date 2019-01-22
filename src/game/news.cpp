@@ -378,6 +378,8 @@ DispNews(char plr, char *src, char *dest)
                 break;
             }
 
+            strncpy(&dest[j], &Name[0], strlen(Name));
+            j += strlen(Name) - 1;
             break;
 
         case 'g':

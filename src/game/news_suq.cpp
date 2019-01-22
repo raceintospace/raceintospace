@@ -785,10 +785,14 @@ char REvent(char plr)
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
         Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
         xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
+
         //cancel manned missions
-        ClrMiss(plr, 0 + 3);
-        ClrMiss(plr, 1 + 3);
-        ClrMiss(plr, 2 + 3);
+        for (size_t pad = 0; pad < MAX_LAUNCHPADS; pad++) {
+            if (Data->P[plr].Mission[pad].Men > 0) {
+                ClrMiss(plr, pad + 3);
+            }
+        }
+
         break;
 
     case 52:
