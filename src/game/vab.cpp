@@ -51,15 +51,15 @@
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
  *   0: Primary (a capsule)
- *   1: LM
- *   2: Kicker
+ *   1: Kicker
+ *   2: LM
  *   3: Payload (Probe / DM)
  * Any of which may be empty. There are only ever a maximum of seven
  * potential payload combinations available at assembly time, each of
  * which is stored in VAS.
  */
 struct VInfo VAS[7][4];
-int VASqty;
+int VASqty; // How many payload configurations there are
 int TotalCost;
 char hasDelay;//Used  to display the cost of autopurchase
 
@@ -186,6 +186,15 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 }
 
 
+/* Draw the Vehicle Assembly / Integration interface layout and print
+ * mission-specific information.
+ *
+ * This loads either the USA or USSR data from VAB.IMG into the global
+ * buffer vhptr.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param pad  The launch pad to which the mission is assigned.
+ */
 void DispVAB(char plr, char pad)
 {
     uint16_t image_len = 0;
@@ -223,6 +232,7 @@ void DispVAB(char plr, char pad)
     IOBox(243, 3, 316, 19);
     IOBox(175, 183, 244, 197);
 
+    // Disable the Scrub button if there is no mission.
     if (Data->P[plr].Mission[pad].MissionCode) {
         IOBox(247, 183, 316, 197);
     } else {
@@ -316,9 +326,8 @@ void DispVAB(char plr, char pad)
     int MisCod;
     MisCod = Data->P[plr].Mission[pad].MissionCode;
 
-    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-        // Show duration level only on missions with a Duration step - Leon
-    {
+    // Show duration level only on missions with a Duration step - Leon
+    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41) {
         switch (Data->P[plr].Mission[pad].Duration) {
         case 1:
             draw_string(0, 0, "");
@@ -356,6 +365,23 @@ void DispVAB(char plr, char pad)
 }
 
 
+/* Calculate the cost of autopurchasing all of the missing hardware
+ * components to create the given payload.
+ *
+ * If the mode argument is set to true, it will proceed to acquire
+ * the missing hardware, spending the player's cash accordingly
+ * (even if they do not have enough). This will not initiate any
+ * hardware programs which haven't been started.
+ *
+ * This function does not ensure the player has sufficient cash on
+ * hand to make the purchases.
+ *
+ * \param  plr  The player assembling the hardware.
+ * \param  f    The VAS index of the given payload hardware set.
+ * \param  mode 1 to auto-purchase missing components, 0 otherwise.
+ * \return      The total cost of all components that will have to be
+ *              purchased (0 if auto-purchasing).
+ */
 int FillVab(char plr, char f, char mode)
 {
     int i, cost;
@@ -427,6 +453,14 @@ int FillVab(char plr, char f, char mode)
 }
 
 
+/* Checks to see if any of the payload hardware is already fully
+ * assigned to other missions (or not on hand) and subject to a delay
+ * preventing it frum being autopurchased.
+ *
+ * \param  plr  The player assembling the hardware.
+ * \param  f    The VAS index of the given payload hardware set.
+ * \return      0 if stopped by delay, 1 otherwise.
+ */
 int ChkDelVab(char plr, char f)
 {
     int i;
@@ -468,6 +502,22 @@ int ChkDelVab(char plr, char f)
     return 1;
 }
 
+
+/* Calculate the cost of autopurchasing the specified missing rocket.
+ *
+ * If the mode argument is set, it will proceed to acquire the
+ * missing rocket, subtracting the cost from the player's available
+ * cash. This will not initiate any new rocket program which hasn't
+ * been started.
+ *
+ * This function does not ensure the player has sufficient cash on
+ * hand to make the purchase, or that the program has been initiated.
+ *
+ * \param plr    The player assembling the hardware.
+ * \param rk     The index of the rocket hardware chosen.
+ * \param q      Tracks how many of each rocket is already purchased.
+ * \return       The cost of the rocket, 0 if it was purchased.
+ */
 int BuyVabRkt(char plr, int rk, int *q, char mode)
 {
     int cost = 0;
@@ -500,6 +550,15 @@ int BuyVabRkt(char plr, int rk, int *q, char mode)
     return cost;
 }
 
+
+/* Checks to see if a rocket is unavailable due to a delay in receiving
+ * purchases.
+ *
+ * \param plr  The player assembling the mission hardware.
+ * \param rk   The rocket index per EquipRocketIndex, +4 if boosters added.
+ * \param q    An array of the quantity of rockets already purchased.
+ * \return     0 if the rocket cannot be purchased, 1 otherwise.
+ */
 int ChkVabRkt(char plr, int rk, int *q)
 {
     if (Data->P[plr].Rocket[rk % 4].Delay != 0 && q[rk] == 0) {
@@ -513,6 +572,14 @@ int ChkVabRkt(char plr, int rk, int *q)
     return 1;
 }
 
+
+/* Prints the payload components for the selected payload configuration.
+ *
+ * The text is printed on the Mission Hardware button found in the
+ * lower left corner of the main Vehicle Assembly screen.
+ *
+ * \param  f   The VAS index of the given payload hardware set.
+ */
 void ShowVA(char f)
 {
     int i;
@@ -549,6 +616,17 @@ void ShowVA(char f)
 }
 
 
+/* Prints the selected rocket's name, safety factor, and quantity.
+ *
+ * This adds the text to the small rocket selection button in the
+ * Mission Hardware area in the lower-left quadrant of the VAB screen.
+ *
+ * \param Name   The name of the rocket program.
+ * \param sf     The safety factor of the rocket program.
+ * \param qty    The number of unassigned rockets of the program.
+ * \param mode   1 if the rocket cannot lift the current payload
+ * \param isDmg  1 if the safety factor of the rocket is reduced
+ */
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 {
 
@@ -748,6 +826,29 @@ void DispVA(char plr, char payload)
                  210 - casingWidth / 2, 103 - casingHeight / 2);
 }
 
+
+/* Draw the rocket illustration in the Vehicle Assembly mock-up screen.
+ *
+ * The Rocket graphics, as with other VAB images, are stored in a
+ * texture atlas, with the global variable MI storing the texture
+ * coordinates.
+ *
+ * This function makes extensive use of two global variables, MI and
+ * vhptr. It relies upon the VAB sprite having been loaded into the
+ * global vhptr buffer.
+ *
+ * The rockets are indexed in the MI[] array as:
+ *   0 / 28:   Atlas  / A-Series
+ *   1 / 29:   TItan  / Proton
+ *   2 / 30:   Saturn / N-1
+ *   3 / 31:   Nova   / Energia
+ *   4 / 32:   Atlas + Boosters  / A-Series + Boosters
+ *   5 / 33:   Titan + Boosters  / Proton + Boosters
+ *   6 / 34:   Saturn + Boosters / N-1 + Boosters
+ *
+ * \param plr  The assembling player (0 for USA, 1 for USSR).
+ * \param wh   The rocket's index in the MI[] array.
+ */
 void DispRck(char plr, char wh)
 {
     int w;
@@ -776,6 +877,15 @@ void DispRck(char plr, char wh)
     local.copyTo(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2);
 }
 
+
+/* Print the readout of the vehicle payload weight.
+ *
+ * This displays the current weight of the payload as well as the
+ * maximum payload supported by the rocket currently assigned.
+ *
+ * \param two  The total weight of the current payload hardware.
+ * \param one  The maximum payload weight for the current rocket.
+ */
 void DispWts(int two, int one)
 {
 
@@ -796,6 +906,7 @@ void DispWts(int two, int one)
 
     return;
 }
+
 
 void VAB(char plr)
 {
@@ -838,6 +949,9 @@ begvab:
 
     helpText = "i016";
 
+    // When reassembling Hardware, any hardware previously assigned to
+    // the mission should be unassigned so it may be used (or not) in
+    // reassembly.
     if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 0) {
         for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
             switch (i) {
@@ -1279,8 +1393,24 @@ begvab:
 }
 
 
+//----------------------------------------------------------------------
 // VAB Autobuild Functions
+//----------------------------------------------------------------------
 
+
+/* Generates the set of possible distinct vehicle payloads for the
+ * mision and stores the payload information in the global variable
+ * VAS.
+ *
+ * This function is used by the AI, so beware of making changes without
+ * understanding what the AI is doing!
+ *
+ * \param plr  The player assembling the launch vehichle.
+ * \param mis  The pad the mission is on.
+ * \param ty   >0 if called by the AI.
+ * \param pa   0 if the primary half of a joint mission.
+ * \param pr   The hardware program to use on mission (used by AI).
+ */
 void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 {
     char i, j, part, mcode, prog, ext = 0;
@@ -1487,6 +1617,7 @@ void LMAdd(char plr, char prog, char kic, char part)
 
     return;
 }
+
 
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5)
 {
