@@ -153,12 +153,15 @@ struct MDA {
 */
 
 
+void LoadMIVals();
 int ChkDelVab(char plr, char f);
 int ChkVabRkt(char plr, int rk, int *q);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
+void FreeMissionHW(char plr, char mis);
 int FillVab(char plr, char f, char mode);
 int  BuyVabRkt(char plr, int rk, int *q, char mode);
+void ShowAutopurchase(char plr, int payload, int rk, int *qty);
 void ShowVA(char f);
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg);
 void DispVA(char plr, char f);
@@ -166,6 +169,36 @@ void DispRck(char plr, char wh);
 void DispWts(int two, int one);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
+
+
+/* Load the coordinates of vehicle hardware components' images into the
+ * MI global variable.
+ *
+ * Hardware components (capsules, rockets, etc.) have images used to
+ * create a mock-up of the hardware assigned to the mission. This
+ * includes a display of the rocket and a cut-away illustration of the
+ * payload contained within the rocket casing. These component images
+ * are stored together in a pair of larger VAB sprites. The global
+ * variable MI stores the coordinates specifying where to find each
+ * component in the VAB sprite.
+ */
+void LoadMIVals()
+{
+    size_t MI_size = sizeof(struct MDA) * 28 * 2;
+
+    FILE *file = sOpen("VTABLE.DAT", "rb", 0);
+    fread(MI, MI_size, 1, file);
+    fclose(file);
+
+    // Endianness swap
+    for (int i = 0; i < 2 * 28; i++) {
+        Swap16bit(MI[i].x1);
+        Swap16bit(MI[i].y1);
+        Swap16bit(MI[i].x2);
+        Swap16bit(MI[i].y2);
+        Swap16bit(MI[i].yOffset);
+    }
+}
 
 
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
@@ -362,6 +395,47 @@ void DispVAB(char plr, char pad)
     draw_small_flag(plr, 4, 4);
 
     return;
+}
+
+
+/* Frees hardware for other use that was assigned to a planned mission.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param mis  The index of the mission (pad 0, 1, or 2).
+ */
+void FreeMissionHW(const char plr, const char mis)
+{
+    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] <= 0) {
+        return;
+    }
+
+    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+        switch (i) {
+        case Mission_Capsule:
+        case Mission_LM:  // Manned+LM
+            Data->P[plr].Manned[Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            break;
+
+        case Mission_Kicker:  // Kicker
+            Data->P[plr].Misc[Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            break;
+
+        case Mission_Probe_DM:  // DM+Probes
+            if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
+                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
+            } else {
+                Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            }
+
+            break;
+        }
+    }
+
+    Data->P[plr].Rocket[(Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] - 1) % 4].Spok--;
+
+    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 3) {
+        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
+    }
 }
 
 
@@ -570,6 +644,41 @@ int ChkVabRkt(char plr, int rk, int *q)
     }
 
     return 1;
+}
+
+
+/* Prints the cost of autopurchasing the missing components of the
+ * given payload. It prints the cost compared to the player's available
+ * funds (XX of YY) on the autopurchase button.
+ *
+ * \param plr      The player assembling the hardware.
+ * \param payload  The VAS index of the given payload hardware set.
+ * \param rk       The index of the rocket hardware chosen.
+ * \param qty      An array of the quantity of rockets available.
+ */
+void ShowAutopurchase(const char plr, const int payload, const int rk,
+                      int *qty)
+{
+    int hasDelay, cost;
+
+    hasDelay = ChkDelVab(plr, payload) || ChkVabRkt(plr, rk, &qty[0]);
+    cost = FillVab(plr, payload, 0) + BuyVabRkt(plr, rk, &qty[0], 0);
+
+    fill_rectangle(7, 87, 162, 93, 3);
+    display::graphics.setForegroundColor(9);
+    draw_string(13, 92, "A");
+    display::graphics.setForegroundColor(1);
+
+    //if can't buy (delay, cost>cash) ->red letters
+    if (hasDelay == 0 || cost > Data->P[plr].Cash) {
+        display::graphics.setForegroundColor(9);
+    }
+
+    draw_string(0, 0, "UTOPURCHASE (");
+    draw_number(0, 0, cost);
+    draw_string(0, 0, " OF ");
+    draw_megabucks(0, 0, Data->P[plr].Cash);
+    draw_string(0, 0, ")");
 }
 
 
@@ -912,23 +1021,8 @@ void VAB(char plr)
 {
     int i, j, j2, mis, sf[8], qty[8], wgt, pay[8], tmp, ccc, rk, cwt, ab, ac;
     char Name[8][12], ButOn, temp;
-    FILE *file;
-    int MI_size = sizeof(struct MDA) * 28 * 2;
 
-
-    file = sOpen("VTABLE.DAT", "rb", 0);
-    fread(MI, MI_size, 1, file);
-    fclose(file);
-
-    // Endianness swap
-    for (i = 0; i < 2 * 28; i++) {
-        Swap16bit(MI[i].x1);
-        Swap16bit(MI[i].y1);
-        Swap16bit(MI[i].x2);
-        Swap16bit(MI[i].y2);
-        Swap16bit(MI[i].yOffset);
-    }
-
+    LoadMIVals();
     music_start(M_HARDWARE);
 
 begvab:
@@ -952,36 +1046,7 @@ begvab:
     // When reassembling Hardware, any hardware previously assigned to
     // the mission should be unassigned so it may be used (or not) in
     // reassembly.
-    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 0) {
-        for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
-            switch (i) {
-            case Mission_Capsule:
-            case Mission_LM:  // Manned+LM
-                Data->P[plr].Manned[Data->P[plr].Mission[mis].Hard[i] ].Spok--;
-                break;
-
-            case Mission_Kicker:  // Kicker
-                Data->P[plr].Misc[Data->P[plr].Mission[mis].Hard[i]].Spok--;
-                break;
-
-            case Mission_Probe_DM:  // DM+Probes
-                if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
-                    Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
-                } else {
-                    Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
-                }
-
-                break;
-            }
-        }
-
-        Data->P[plr].Rocket[(Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] - 1) % 4].Spok--;
-
-        if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 3) {
-            Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
-        }
-
-    }
+    FreeMissionHW(plr, mis);
 
     BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
@@ -1042,32 +1107,8 @@ begvab:
     }
 
     DispWts(cwt, pay[rk]);
-
     //display cost (XX of XX)
-    hasDelay = 0;
-    TotalCost = 0;
-    hasDelay = ChkDelVab(plr, ccc);
-
-    if (hasDelay != 0) {
-        hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-    }
-
-    TotalCost = FillVab(plr, ccc, 0);
-    TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-    fill_rectangle(7, 87, 162, 93, 3);
-    display::graphics.setForegroundColor(9);
-    draw_string(13, 92, "A");
-    display::graphics.setForegroundColor(1);
-
-    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-    }
-
-    draw_string(0, 0, "UTOPURCHASE (");
-    draw_number(0, 0, TotalCost);
-    draw_string(0, 0, " OF ");
-    draw_megabucks(0, 0, Data->P[plr].Cash);
-    draw_string(0, 0, ")");
+    ShowAutopurchase(plr, ccc, rk, &qty[0]);
 
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -1122,30 +1163,7 @@ begvab:
                     }
 
                     //display cost (XX of XX)
-                    hasDelay = 0;
-                    TotalCost = 0;
-                    hasDelay = ChkDelVab(plr, ccc);
-
-                    if (hasDelay != 0) {
-                        hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                    }
-
-                    TotalCost = FillVab(plr, ccc, 0);
-                    TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                    fill_rectangle(7, 87, 162, 93, 3);
-                    display::graphics.setForegroundColor(9);
-                    draw_string(13, 92, "A");
-                    display::graphics.setForegroundColor(1);
-
-                    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                    }
-
-                    draw_string(0, 0, "UTOPURCHASE (");
-                    draw_number(0, 0, TotalCost);
-                    draw_string(0, 0, " OF ");
-                    draw_megabucks(0, 0, Data->P[plr].Cash);
-                    draw_string(0, 0, ")");
+                    ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 } else if (ac == 0) {
                     Help("i135");    // delay on purchase
                 } else {
@@ -1301,30 +1319,7 @@ begvab:
                     }
 
                 //display cost (XX of XX)
-                hasDelay = 0;
-                TotalCost = 0;
-                hasDelay = ChkDelVab(plr, ccc);
-
-                if (hasDelay != 0) {
-                    hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                }
-
-                TotalCost = FillVab(plr, ccc, 0);
-                TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                fill_rectangle(7, 87, 162, 93, 3);
-                display::graphics.setForegroundColor(9);
-                draw_string(13, 92, "A");
-                display::graphics.setForegroundColor(1);
-
-                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                }
-
-                draw_string(0, 0, "UTOPURCHASE (");
-                draw_number(0, 0, TotalCost);
-                draw_string(0, 0, " OF ");
-                draw_megabucks(0, 0, Data->P[plr].Cash);
-                draw_string(0, 0, ")");
+                ShowAutopurchase(plr, ccc, rk, &qty[0]);
 
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 DispWts(cwt, pay[rk]);
@@ -1355,30 +1350,7 @@ begvab:
                 DispWts(cwt, pay[rk]);
                 DispVA(plr, ccc);
                 //display cost (XX of XX)
-                hasDelay = 0;
-                TotalCost = 0;
-                hasDelay = ChkDelVab(plr, ccc);
-
-                if (hasDelay != 0) {
-                    hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                }
-
-                TotalCost = FillVab(plr, ccc, 0);
-                TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                fill_rectangle(7, 87, 162, 93, 3);
-                display::graphics.setForegroundColor(9);
-                draw_string(13, 92, "A");
-                display::graphics.setForegroundColor(1);
-
-                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                }
-
-                draw_string(0, 0, "UTOPURCHASE (");
-                draw_number(0, 0, TotalCost);
-                draw_string(0, 0, " OF ");
-                draw_megabucks(0, 0, Data->P[plr].Cash);
-                draw_string(0, 0, ")");
+                ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 WaitForMouseUp();
 
                 if (key > 0) {
