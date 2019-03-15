@@ -1025,102 +1025,104 @@ void VAB(char plr)
     LoadMIVals();
     music_start(M_HARDWARE);
 
-begvab:
-    mis = FutureCheck(plr, 1);
+    // FutureCheck brings up the Launch Pad menu, displaying the
+    // missions assigned to each of the pads, and allows the player
+    // to select a launch pad (or exit). It returns the chosen pad
+    // index (or exit code).
+    while ((mis = FutureCheck(plr, 1)) < MAX_MISSIONS) {
 
-    if (mis == 5) {
-        Vab_Spot = (Data->P[plr].Mission[0].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
-        music_stop();
-        return;
-    }
+        temp = CheckCrewOK(plr, mis);
 
-    temp = CheckCrewOK(plr, mis);
+        // If a manned mission's Primary & Backup flight crews are
+        // unavailable, scrub the mission.
+        if (temp == 1) { // found mission no crews
+            ClrMiss(plr, mis + 3);
+            continue;
+        }
 
-    if (temp == 1) { // found mission no crews
-        ClrMiss(plr, mis + 3);
-        goto begvab;
-    }
+        helpText = "i016";
 
-    helpText = "i016";
+        // When reassembling Hardware, any hardware previously assigned to
+        // the mission should be unassigned so it may be used (or not) in
+        // reassembly.
+        FreeMissionHW(plr, mis);
 
-    // When reassembling Hardware, any hardware previously assigned to
-    // the mission should be unassigned so it may be used (or not) in
-    // reassembly.
-    FreeMissionHW(plr, mis);
+        BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
-    BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
+        // Rocket Display Data --------------------------
+        for (i = 0; i < 7; i++) {
+            if (i > 3) {
+                isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
+                sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
+                strcpy(&Name[i][0], "B/");
+                strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
+                qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
+                tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
 
-    // Rocket Display Data --------------------------
-    for (i = 0; i < 7; i++) {
-        if (i > 3) {
-            isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
-            sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
-            strcpy(&Name[i][0], "B/");
-            strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
-            qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
-            tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
+                if (tmp < qty[i]) {
+                    qty[i] = tmp;
+                }
 
-            if (tmp < qty[i]) {
-                qty[i] = tmp;
+                pay[i] = (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay);
+            } else {
+                isDamaged[i] = Data->P[plr].Rocket[i].Damage != 0 ? 1 : 0;
+                sf[i] = Data->P[plr].Rocket[i].Safety;
+                strcpy(&Name[i][0], &Data->P[plr].Rocket[i].Name[0]);
+                qty[i] = Data->P[plr].Rocket[i].Num - Data->P[plr].Rocket[i].Spok;
+                pay[i] = Data->P[plr].Rocket[i].MaxPay;
+            }
+        }
+
+        DispVAB(plr, mis);
+
+        if (Data->P[plr].Mission[mis].MissionCode) {
+            ButOn = 1;
+        } else {
+            ButOn = 0;
+            InBox(245, 5, 314, 17);
+        }
+
+        wgt = 0;
+
+        for (i = 0; i < 4; i++) {
+            wgt += VAS[1][i].wt;
+        }
+
+        rk = 0;
+
+        while (pay[rk] < wgt) {
+            rk++;
+        }
+
+        ccc = 1;
+        ShowVA(ccc);
+        ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
+        DispRck(plr, rk);
+        DispVA(plr, ccc);
+        cwt = 0;
+
+        for (i = 0; i < 4; i++) {
+            cwt += VAS[ccc][i].wt;
+        }
+
+        DispWts(cwt, pay[rk]);
+        //display cost (XX of XX)
+        ShowAutopurchase(plr, ccc, rk, &qty[0]);
+
+        FadeIn(2, 10, 0, 0);
+        WaitForMouseUp();
+
+        while (1) {
+            key = 0;
+            GetMouse();
+
+            if (mousebuttons > 0 || key > 0) {
+                continue;
             }
 
-            pay[i] = (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay);
-        } else {
-            isDamaged[i] = Data->P[plr].Rocket[i].Damage != 0 ? 1 : 0;
-            sf[i] = Data->P[plr].Rocket[i].Safety;
-            strcpy(&Name[i][0], &Data->P[plr].Rocket[i].Name[0]);
-            qty[i] = Data->P[plr].Rocket[i].Num - Data->P[plr].Rocket[i].Spok;
-            pay[i] = Data->P[plr].Rocket[i].MaxPay;
-        }
-    }
-
-    DispVAB(plr, mis);
-
-    if (Data->P[plr].Mission[mis].MissionCode) {
-        ButOn = 1;
-    } else {
-        ButOn = 0;
-        InBox(245, 5, 314, 17);
-    }
-
-    wgt = 0;
-
-    for (i = 0; i < 4; i++) {
-        wgt += VAS[1][i].wt;
-    }
-
-    rk = 0;
-
-    while (pay[rk] < wgt) {
-        rk++;
-    }
-
-    ccc = 1;
-    ShowVA(ccc);
-    ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
-    DispRck(plr, rk);
-    DispVA(plr, ccc);
-    cwt = 0;
-
-    for (i = 0; i < 4; i++) {
-        cwt += VAS[ccc][i].wt;
-    }
-
-    DispWts(cwt, pay[rk]);
-    //display cost (XX of XX)
-    ShowAutopurchase(plr, ccc, rk, &qty[0]);
-
-    FadeIn(2, 10, 0, 0);
-    WaitForMouseUp();
-
-    while (1) {
-        key = 0;
-        GetMouse();
-
-        if (mousebuttons > 0 || key > 0) { /* Game Play */
-
-            // AUTOPURCHASE
+            // Game Play
             if ((x >= 6 && y >= 86 && x <= 163 && y <= 94 && mousebuttons > 0) || key == 'A') {
+                // AUTOPURCHASE
                 InBox(6, 86, 163, 94);
                 key = 0;
                 // NEED A DELAY CHECK
@@ -1173,9 +1175,8 @@ begvab:
                 ShowVA(ccc);
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 OutBox(6, 86, 163, 94);
-            }
-
-            if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
+            } else if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
+                // CONTINUE/EXIT/DO NOTHING
                 InBox(177, 185, 242, 195);
                 WaitForMouseUp();
 
@@ -1190,8 +1191,9 @@ begvab:
                     Data->P[plr].Mission[mis].Hard[i] = 0;
                 }
 
-                goto begvab; /* CONTINUE/EXIT/DO NOTHING */
+                break;
             } else if (((x >= 249 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
+                // SCRUB The whole mission
                 InBox(249, 185, 314, 195);
                 WaitForMouseUp();
 
@@ -1201,10 +1203,7 @@ begvab:
 
                 OutBox(249, 185, 314, 195);
                 ClrMiss(plr, mis);
-
-                if (Data->P[plr].Mission[mis].MissionCode == Mission_None) {
-                    goto begvab;    // SCRUB The whole mission
-                }
+                break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {
                 j = 0;
 
@@ -1301,10 +1300,11 @@ begvab:
                             Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok++;
                         }
 
-                        goto begvab;
+                        break;
                     }
                 }
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
+                // Choose Rocket
                 InBox(64, 181, 161, 191);
 #define Misdef(a)     Data->P[plr].Mission[(a)].MissionCode
                 rk++;
@@ -1313,14 +1313,16 @@ begvab:
                     rk = 0;
                 }
 
-                if (((Misdef(mis) >= 42 && Misdef(mis) <= 57) || (Misdef(mis) >= 7 && Misdef(mis) <= 13)) && (rk == 4 || rk == 0))
+                if (((Misdef(mis) >= 42 && Misdef(mis) <= 57) ||
+                     (Misdef(mis) >= 7 && Misdef(mis) <= 13)) &&
+                    (rk == 4 || rk == 0)) {
                     if (options.cheat_altasOnMoon == 0) {
                         rk++;
                     }
+                }
 
                 //display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rk, &qty[0]);
-
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 DispWts(cwt, pay[rk]);
                 DispRck(plr, rk);
@@ -1331,8 +1333,8 @@ begvab:
                 }
 
                 OutBox(64, 181, 161, 191);
-                /* Rocket Choose */
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
+                // Cycle through payload selections
                 InBox(64, 129, 161, 175);
                 ccc++;
 
@@ -1358,10 +1360,12 @@ begvab:
                 }
 
                 OutBox(64, 129, 161, 175);
-                /* RIGHT Choose */
             }
         }
     }
+
+    Vab_Spot = (Data->P[plr].Mission[0].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
+    music_stop();
 }
 
 
