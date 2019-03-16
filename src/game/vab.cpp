@@ -60,8 +60,6 @@
  */
 struct VInfo VAS[7][4];
 int VASqty; // How many payload configurations there are
-int TotalCost;
-char hasDelay;//Used  to display the cost of autopurchase
 
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -356,6 +354,7 @@ void DispVAB(char plr, char pad)
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
 
     draw_string(5, 52, Mis.Abbr);
+
     int MisCod;
     MisCod = Data->P[plr].Mission[pad].MissionCode;
 
@@ -738,7 +737,6 @@ void ShowVA(char f)
  */
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 {
-
     fill_rectangle(65, 182, 160, 190, 3);
 
     if (qty < 0 || mode == 1) {
@@ -997,7 +995,6 @@ void DispRck(char plr, char wh)
  */
 void DispWts(int two, int one)
 {
-
     fill_rectangle(5, 65, 140, 83, 3);
 
     display::graphics.setForegroundColor(1);
@@ -1019,8 +1016,11 @@ void DispWts(int two, int one)
 
 void VAB(char plr)
 {
-    int i, j, j2, mis, sf[8], qty[8], wgt, pay[8], tmp, ccc, rk, cwt, ab, ac;
-    char Name[8][12], ButOn, temp;
+    int ccc, rk;               // Payload index & rocket index
+    int mis, wgt, cwt, ab, ac;
+    int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
+    char Name[8][12];          // Cached rocket names
+    char ButOn;
 
     LoadMIVals();
     music_start(M_HARDWARE);
@@ -1031,11 +1031,9 @@ void VAB(char plr)
     // index (or exit code).
     while ((mis = FutureCheck(plr, 1)) < MAX_MISSIONS) {
 
-        temp = CheckCrewOK(plr, mis);
-
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
-        if (temp == 1) { // found mission no crews
+        if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
             ClrMiss(plr, mis + 3);
             continue;
         }
@@ -1050,14 +1048,14 @@ void VAB(char plr)
         BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
         // Rocket Display Data --------------------------
-        for (i = 0; i < 7; i++) {
+        for (int i = 0; i < 7; i++) {
             if (i > 3) {
                 isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
                 sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
                 strcpy(&Name[i][0], "B/");
                 strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
                 qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
-                tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
+                int tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
 
                 if (tmp < qty[i]) {
                     qty[i] = tmp;
@@ -1084,7 +1082,7 @@ void VAB(char plr)
 
         wgt = 0;
 
-        for (i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             wgt += VAS[1][i].wt;
         }
 
@@ -1101,7 +1099,7 @@ void VAB(char plr)
         DispVA(plr, ccc);
         cwt = 0;
 
-        for (i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             cwt += VAS[ccc][i].wt;
         }
 
@@ -1141,14 +1139,14 @@ void VAB(char plr)
                     BuildVAB(plr, mis, 0, 0, 1);
 
                     // Rocket Display Data --------------------------
-                    for (i = 0; i < 7; i++) {
+                    for (int i = 0; i < 7; i++) {
                         if (i > 3) {
                             isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
                             sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
                             strcpy(&Name[i][0], "B/");
                             strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
                             qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
-                            tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
+                            int tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
 
                             if (tmp < qty[i]) {
                                 qty[i] = tmp;
@@ -1187,7 +1185,7 @@ void VAB(char plr)
                 OutBox(177, 185, 242, 195);
 
                 // Clear mission hardware
-                for (i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
+                for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
                     Data->P[plr].Mission[mis].Hard[i] = 0;
                 }
 
@@ -1205,7 +1203,7 @@ void VAB(char plr)
                 ClrMiss(plr, mis);
                 break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {
-                j = 0;
+                int j = 0;
 
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i118");
@@ -1216,7 +1214,7 @@ void VAB(char plr)
                         Help("i155");    // No docking module in orbit
                     }
 
-                    j2 = 0;
+                    int j2 = 0;
 
                     if (strncmp(VAS[ccc][0].name, "NONE", 4) != 0) {
                         j++;
@@ -1267,7 +1265,7 @@ void VAB(char plr)
 
                         OutBox(245, 5, 314, 17);
 
-                        for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+                        for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
                             Data->P[plr].Mission[mis].Hard[i] = VAS[ccc][i].dex;
 
                             if (VAS[ccc][i].dex >= 0) {
@@ -1344,7 +1342,7 @@ void VAB(char plr)
 
                 cwt = 0;
 
-                for (i = 0; i < 4; i++) {
+                for (int i = 0; i < 4; i++) {
                     cwt += VAS[ccc][i].wt;
                 }
 
