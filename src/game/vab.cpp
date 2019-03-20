@@ -51,17 +51,15 @@
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
  *   0: Primary (a capsule)
- *   1: LM
- *   2: Kicker
+ *   1: Kicker
+ *   2: LM
  *   3: Payload (Probe / DM)
  * Any of which may be empty. There are only ever a maximum of seven
  * potential payload combinations available at assembly time, each of
  * which is stored in VAS.
  */
 struct VInfo VAS[7][4];
-int VASqty;
-int TotalCost;
-char hasDelay;//Used  to display the cost of autopurchase
+int VASqty; // How many payload configurations there are
 
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -153,12 +151,15 @@ struct MDA {
 */
 
 
+void LoadMIVals();
 int ChkDelVab(char plr, char f);
 int ChkVabRkt(char plr, int rk, int *q);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
+void FreeMissionHW(char plr, char mis);
 int FillVab(char plr, char f, char mode);
 int  BuyVabRkt(char plr, int rk, int *q, char mode);
+void ShowAutopurchase(char plr, int payload, int rk, int *qty);
 void ShowVA(char f);
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg);
 void DispVA(char plr, char f);
@@ -166,6 +167,36 @@ void DispRck(char plr, char wh);
 void DispWts(int two, int one);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
+
+
+/* Load the coordinates of vehicle hardware components' images into the
+ * MI global variable.
+ *
+ * Hardware components (capsules, rockets, etc.) have images used to
+ * create a mock-up of the hardware assigned to the mission. This
+ * includes a display of the rocket and a cut-away illustration of the
+ * payload contained within the rocket casing. These component images
+ * are stored together in a pair of larger VAB sprites. The global
+ * variable MI stores the coordinates specifying where to find each
+ * component in the VAB sprite.
+ */
+void LoadMIVals()
+{
+    size_t MI_size = sizeof(struct MDA) * 28 * 2;
+
+    FILE *file = sOpen("VTABLE.DAT", "rb", 0);
+    fread(MI, MI_size, 1, file);
+    fclose(file);
+
+    // Endianness swap
+    for (int i = 0; i < 2 * 28; i++) {
+        Swap16bit(MI[i].x1);
+        Swap16bit(MI[i].y1);
+        Swap16bit(MI[i].x2);
+        Swap16bit(MI[i].y2);
+        Swap16bit(MI[i].yOffset);
+    }
+}
 
 
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
@@ -186,6 +217,15 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 }
 
 
+/* Draw the Vehicle Assembly / Integration interface layout and print
+ * mission-specific information.
+ *
+ * This loads either the USA or USSR data from VAB.IMG into the global
+ * buffer vhptr.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param pad  The launch pad to which the mission is assigned.
+ */
 void DispVAB(char plr, char pad)
 {
     uint16_t image_len = 0;
@@ -223,6 +263,7 @@ void DispVAB(char plr, char pad)
     IOBox(243, 3, 316, 19);
     IOBox(175, 183, 244, 197);
 
+    // Disable the Scrub button if there is no mission.
     if (Data->P[plr].Mission[pad].MissionCode) {
         IOBox(247, 183, 316, 197);
     } else {
@@ -313,12 +354,12 @@ void DispVAB(char plr, char pad)
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
 
     draw_string(5, 52, Mis.Abbr);
+
     int MisCod;
     MisCod = Data->P[plr].Mission[pad].MissionCode;
 
-    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-        // Show duration level only on missions with a Duration step - Leon
-    {
+    // Show duration level only on missions with a Duration step - Leon
+    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41) {
         switch (Data->P[plr].Mission[pad].Duration) {
         case 1:
             draw_string(0, 0, "");
@@ -356,6 +397,64 @@ void DispVAB(char plr, char pad)
 }
 
 
+/* Frees hardware for other use that was assigned to a planned mission.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param mis  The index of the mission (pad 0, 1, or 2).
+ */
+void FreeMissionHW(const char plr, const char mis)
+{
+    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] <= 0) {
+        return;
+    }
+
+    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+        switch (i) {
+        case Mission_Capsule:
+        case Mission_LM:  // Manned+LM
+            Data->P[plr].Manned[Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            break;
+
+        case Mission_Kicker:  // Kicker
+            Data->P[plr].Misc[Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            break;
+
+        case Mission_Probe_DM:  // DM+Probes
+            if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
+                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
+            } else {
+                Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
+            }
+
+            break;
+        }
+    }
+
+    Data->P[plr].Rocket[(Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] - 1) % 4].Spok--;
+
+    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 3) {
+        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
+    }
+}
+
+
+/* Calculate the cost of autopurchasing all of the missing hardware
+ * components to create the given payload.
+ *
+ * If the mode argument is set to true, it will proceed to acquire
+ * the missing hardware, spending the player's cash accordingly
+ * (even if they do not have enough). This will not initiate any
+ * hardware programs which haven't been started.
+ *
+ * This function does not ensure the player has sufficient cash on
+ * hand to make the purchases.
+ *
+ * \param  plr  The player assembling the hardware.
+ * \param  f    The VAS index of the given payload hardware set.
+ * \param  mode 1 to auto-purchase missing components, 0 otherwise.
+ * \return      The total cost of all components that will have to be
+ *              purchased (0 if auto-purchasing).
+ */
 int FillVab(char plr, char f, char mode)
 {
     int i, cost;
@@ -427,6 +526,14 @@ int FillVab(char plr, char f, char mode)
 }
 
 
+/* Checks to see if any of the payload hardware is already fully
+ * assigned to other missions (or not on hand) and subject to a delay
+ * preventing it frum being autopurchased.
+ *
+ * \param  plr  The player assembling the hardware.
+ * \param  f    The VAS index of the given payload hardware set.
+ * \return      0 if stopped by delay, 1 otherwise.
+ */
 int ChkDelVab(char plr, char f)
 {
     int i;
@@ -468,6 +575,22 @@ int ChkDelVab(char plr, char f)
     return 1;
 }
 
+
+/* Calculate the cost of autopurchasing the specified missing rocket.
+ *
+ * If the mode argument is set, it will proceed to acquire the
+ * missing rocket, subtracting the cost from the player's available
+ * cash. This will not initiate any new rocket program which hasn't
+ * been started.
+ *
+ * This function does not ensure the player has sufficient cash on
+ * hand to make the purchase, or that the program has been initiated.
+ *
+ * \param plr    The player assembling the hardware.
+ * \param rk     The index of the rocket hardware chosen.
+ * \param q      Tracks how many of each rocket is already purchased.
+ * \return       The cost of the rocket, 0 if it was purchased.
+ */
 int BuyVabRkt(char plr, int rk, int *q, char mode)
 {
     int cost = 0;
@@ -500,6 +623,15 @@ int BuyVabRkt(char plr, int rk, int *q, char mode)
     return cost;
 }
 
+
+/* Checks to see if a rocket is unavailable due to a delay in receiving
+ * purchases.
+ *
+ * \param plr  The player assembling the mission hardware.
+ * \param rk   The rocket index per EquipRocketIndex, +4 if boosters added.
+ * \param q    An array of the quantity of rockets already purchased.
+ * \return     0 if the rocket cannot be purchased, 1 otherwise.
+ */
 int ChkVabRkt(char plr, int rk, int *q)
 {
     if (Data->P[plr].Rocket[rk % 4].Delay != 0 && q[rk] == 0) {
@@ -513,6 +645,49 @@ int ChkVabRkt(char plr, int rk, int *q)
     return 1;
 }
 
+
+/* Prints the cost of autopurchasing the missing components of the
+ * given payload. It prints the cost compared to the player's available
+ * funds (XX of YY) on the autopurchase button.
+ *
+ * \param plr      The player assembling the hardware.
+ * \param payload  The VAS index of the given payload hardware set.
+ * \param rk       The index of the rocket hardware chosen.
+ * \param qty      An array of the quantity of rockets available.
+ */
+void ShowAutopurchase(const char plr, const int payload, const int rk,
+                      int *qty)
+{
+    int hasDelay, cost;
+
+    hasDelay = ChkDelVab(plr, payload) || ChkVabRkt(plr, rk, &qty[0]);
+    cost = FillVab(plr, payload, 0) + BuyVabRkt(plr, rk, &qty[0], 0);
+
+    fill_rectangle(7, 87, 162, 93, 3);
+    display::graphics.setForegroundColor(9);
+    draw_string(13, 92, "A");
+    display::graphics.setForegroundColor(1);
+
+    //if can't buy (delay, cost>cash) ->red letters
+    if (hasDelay == 0 || cost > Data->P[plr].Cash) {
+        display::graphics.setForegroundColor(9);
+    }
+
+    draw_string(0, 0, "UTOPURCHASE (");
+    draw_number(0, 0, cost);
+    draw_string(0, 0, " OF ");
+    draw_megabucks(0, 0, Data->P[plr].Cash);
+    draw_string(0, 0, ")");
+}
+
+
+/* Prints the payload components for the selected payload configuration.
+ *
+ * The text is printed on the Mission Hardware button found in the
+ * lower left corner of the main Vehicle Assembly screen.
+ *
+ * \param  f   The VAS index of the given payload hardware set.
+ */
 void ShowVA(char f)
 {
     int i;
@@ -549,9 +724,19 @@ void ShowVA(char f)
 }
 
 
+/* Prints the selected rocket's name, safety factor, and quantity.
+ *
+ * This adds the text to the small rocket selection button in the
+ * Mission Hardware area in the lower-left quadrant of the VAB screen.
+ *
+ * \param Name   The name of the rocket program.
+ * \param sf     The safety factor of the rocket program.
+ * \param qty    The number of unassigned rockets of the program.
+ * \param mode   1 if the rocket cannot lift the current payload
+ * \param isDmg  1 if the safety factor of the rocket is reduced
+ */
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 {
-
     fill_rectangle(65, 182, 160, 190, 3);
 
     if (qty < 0 || mode == 1) {
@@ -748,6 +933,29 @@ void DispVA(char plr, char payload)
                  210 - casingWidth / 2, 103 - casingHeight / 2);
 }
 
+
+/* Draw the rocket illustration in the Vehicle Assembly mock-up screen.
+ *
+ * The Rocket graphics, as with other VAB images, are stored in a
+ * texture atlas, with the global variable MI storing the texture
+ * coordinates.
+ *
+ * This function makes extensive use of two global variables, MI and
+ * vhptr. It relies upon the VAB sprite having been loaded into the
+ * global vhptr buffer.
+ *
+ * The rockets are indexed in the MI[] array as:
+ *   0 / 28:   Atlas  / A-Series
+ *   1 / 29:   TItan  / Proton
+ *   2 / 30:   Saturn / N-1
+ *   3 / 31:   Nova   / Energia
+ *   4 / 32:   Atlas + Boosters  / A-Series + Boosters
+ *   5 / 33:   Titan + Boosters  / Proton + Boosters
+ *   6 / 34:   Saturn + Boosters / N-1 + Boosters
+ *
+ * \param plr  The assembling player (0 for USA, 1 for USSR).
+ * \param wh   The rocket's index in the MI[] array.
+ */
 void DispRck(char plr, char wh)
 {
     int w;
@@ -776,9 +984,17 @@ void DispRck(char plr, char wh)
     local.copyTo(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2);
 }
 
+
+/* Print the readout of the vehicle payload weight.
+ *
+ * This displays the current weight of the payload as well as the
+ * maximum payload supported by the rocket currently assigned.
+ *
+ * \param two  The total weight of the current payload hardware.
+ * \param one  The maximum payload weight for the current rocket.
+ */
 void DispWts(int two, int one)
 {
-
     fill_rectangle(5, 65, 140, 83, 3);
 
     display::graphics.setForegroundColor(1);
@@ -797,175 +1013,114 @@ void DispWts(int two, int one)
     return;
 }
 
+
 void VAB(char plr)
 {
-    int i, j, j2, mis, sf[8], qty[8], wgt, pay[8], tmp, ccc, rk, cwt, ab, ac;
-    char Name[8][12], ButOn, temp;
-    FILE *file;
-    int MI_size = sizeof(struct MDA) * 28 * 2;
+    int ccc, rk;               // Payload index & rocket index
+    int mis, wgt, cwt, ab, ac;
+    int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
+    char Name[8][12];          // Cached rocket names
+    char ButOn;
 
-
-    file = sOpen("VTABLE.DAT", "rb", 0);
-    fread(MI, MI_size, 1, file);
-    fclose(file);
-
-    // Endianness swap
-    for (i = 0; i < 2 * 28; i++) {
-        Swap16bit(MI[i].x1);
-        Swap16bit(MI[i].y1);
-        Swap16bit(MI[i].x2);
-        Swap16bit(MI[i].y2);
-        Swap16bit(MI[i].yOffset);
-    }
-
+    LoadMIVals();
     music_start(M_HARDWARE);
 
-begvab:
-    mis = FutureCheck(plr, 1);
+    // FutureCheck brings up the Launch Pad menu, displaying the
+    // missions assigned to each of the pads, and allows the player
+    // to select a launch pad (or exit). It returns the chosen pad
+    // index (or exit code).
+    while ((mis = FutureCheck(plr, 1)) < MAX_MISSIONS) {
 
-    if (mis == 5) {
-        Vab_Spot = (Data->P[plr].Mission[0].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
-        music_stop();
-        return;
-    }
+        // If a manned mission's Primary & Backup flight crews are
+        // unavailable, scrub the mission.
+        if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
+            ClrMiss(plr, mis + 3);
+            continue;
+        }
 
-    temp = CheckCrewOK(plr, mis);
+        helpText = "i016";
 
-    if (temp == 1) { // found mission no crews
-        ClrMiss(plr, mis + 3);
-        goto begvab;
-    }
+        // When reassembling Hardware, any hardware previously assigned to
+        // the mission should be unassigned so it may be used (or not) in
+        // reassembly.
+        FreeMissionHW(plr, mis);
 
-    helpText = "i016";
+        BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
-    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 0) {
-        for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
-            switch (i) {
-            case Mission_Capsule:
-            case Mission_LM:  // Manned+LM
-                Data->P[plr].Manned[Data->P[plr].Mission[mis].Hard[i] ].Spok--;
-                break;
+        // Rocket Display Data --------------------------
+        for (int i = 0; i < 7; i++) {
+            if (i > 3) {
+                isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
+                sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
+                strcpy(&Name[i][0], "B/");
+                strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
+                qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
+                int tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
 
-            case Mission_Kicker:  // Kicker
-                Data->P[plr].Misc[Data->P[plr].Mission[mis].Hard[i]].Spok--;
-                break;
-
-            case Mission_Probe_DM:  // DM+Probes
-                if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
-                    Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
-                } else {
-                    Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
+                if (tmp < qty[i]) {
+                    qty[i] = tmp;
                 }
 
-                break;
+                pay[i] = (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay);
+            } else {
+                isDamaged[i] = Data->P[plr].Rocket[i].Damage != 0 ? 1 : 0;
+                sf[i] = Data->P[plr].Rocket[i].Safety;
+                strcpy(&Name[i][0], &Data->P[plr].Rocket[i].Name[0]);
+                qty[i] = Data->P[plr].Rocket[i].Num - Data->P[plr].Rocket[i].Spok;
+                pay[i] = Data->P[plr].Rocket[i].MaxPay;
             }
         }
 
-        Data->P[plr].Rocket[(Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] - 1) % 4].Spok--;
+        DispVAB(plr, mis);
 
-        if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 3) {
-            Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
-        }
-
-    }
-
-    BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
-
-    // Rocket Display Data --------------------------
-    for (i = 0; i < 7; i++) {
-        if (i > 3) {
-            isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
-            sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
-            strcpy(&Name[i][0], "B/");
-            strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
-            qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
-            tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
-
-            if (tmp < qty[i]) {
-                qty[i] = tmp;
-            }
-
-            pay[i] = (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay);
+        if (Data->P[plr].Mission[mis].MissionCode) {
+            ButOn = 1;
         } else {
-            isDamaged[i] = Data->P[plr].Rocket[i].Damage != 0 ? 1 : 0;
-            sf[i] = Data->P[plr].Rocket[i].Safety;
-            strcpy(&Name[i][0], &Data->P[plr].Rocket[i].Name[0]);
-            qty[i] = Data->P[plr].Rocket[i].Num - Data->P[plr].Rocket[i].Spok;
-            pay[i] = Data->P[plr].Rocket[i].MaxPay;
+            ButOn = 0;
+            InBox(245, 5, 314, 17);
         }
-    }
 
-    DispVAB(plr, mis);
+        wgt = 0;
 
-    if (Data->P[plr].Mission[mis].MissionCode) {
-        ButOn = 1;
-    } else {
-        ButOn = 0;
-        InBox(245, 5, 314, 17);
-    }
+        for (int i = 0; i < 4; i++) {
+            wgt += VAS[1][i].wt;
+        }
 
-    wgt = 0;
+        rk = 0;
 
-    for (i = 0; i < 4; i++) {
-        wgt += VAS[1][i].wt;
-    }
+        while (pay[rk] < wgt) {
+            rk++;
+        }
 
-    rk = 0;
+        ccc = 1;
+        ShowVA(ccc);
+        ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
+        DispRck(plr, rk);
+        DispVA(plr, ccc);
+        cwt = 0;
 
-    while (pay[rk] < wgt) {
-        rk++;
-    }
+        for (int i = 0; i < 4; i++) {
+            cwt += VAS[ccc][i].wt;
+        }
 
-    ccc = 1;
-    ShowVA(ccc);
-    ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
-    DispRck(plr, rk);
-    DispVA(plr, ccc);
-    cwt = 0;
+        DispWts(cwt, pay[rk]);
+        //display cost (XX of XX)
+        ShowAutopurchase(plr, ccc, rk, &qty[0]);
 
-    for (i = 0; i < 4; i++) {
-        cwt += VAS[ccc][i].wt;
-    }
+        FadeIn(2, 10, 0, 0);
+        WaitForMouseUp();
 
-    DispWts(cwt, pay[rk]);
+        while (1) {
+            key = 0;
+            GetMouse();
 
-    //display cost (XX of XX)
-    hasDelay = 0;
-    TotalCost = 0;
-    hasDelay = ChkDelVab(plr, ccc);
+            if (mousebuttons > 0 || key > 0) {
+                continue;
+            }
 
-    if (hasDelay != 0) {
-        hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-    }
-
-    TotalCost = FillVab(plr, ccc, 0);
-    TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-    fill_rectangle(7, 87, 162, 93, 3);
-    display::graphics.setForegroundColor(9);
-    draw_string(13, 92, "A");
-    display::graphics.setForegroundColor(1);
-
-    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-    }
-
-    draw_string(0, 0, "UTOPURCHASE (");
-    draw_number(0, 0, TotalCost);
-    draw_string(0, 0, " OF ");
-    draw_megabucks(0, 0, Data->P[plr].Cash);
-    draw_string(0, 0, ")");
-
-    FadeIn(2, 10, 0, 0);
-    WaitForMouseUp();
-
-    while (1) {
-        key = 0;
-        GetMouse();
-
-        if (mousebuttons > 0 || key > 0) { /* Game Play */
-
-            // AUTOPURCHASE
+            // Game Play
             if ((x >= 6 && y >= 86 && x <= 163 && y <= 94 && mousebuttons > 0) || key == 'A') {
+                // AUTOPURCHASE
                 InBox(6, 86, 163, 94);
                 key = 0;
                 // NEED A DELAY CHECK
@@ -984,14 +1139,14 @@ begvab:
                     BuildVAB(plr, mis, 0, 0, 1);
 
                     // Rocket Display Data --------------------------
-                    for (i = 0; i < 7; i++) {
+                    for (int i = 0; i < 7; i++) {
                         if (i > 3) {
                             isDamaged[i] = Data->P[plr].Rocket[i - 4].Damage != 0 ? 1 : 0;
                             sf[i] = RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety);
                             strcpy(&Name[i][0], "B/");
                             strcat(&Name[i][0], &Data->P[plr].Rocket[i - 4].Name[0]);
                             qty[i] = Data->P[plr].Rocket[i - 4].Num - Data->P[plr].Rocket[i - 4].Spok;
-                            tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
+                            int tmp = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num - Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok;
 
                             if (tmp < qty[i]) {
                                 qty[i] = tmp;
@@ -1008,30 +1163,7 @@ begvab:
                     }
 
                     //display cost (XX of XX)
-                    hasDelay = 0;
-                    TotalCost = 0;
-                    hasDelay = ChkDelVab(plr, ccc);
-
-                    if (hasDelay != 0) {
-                        hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                    }
-
-                    TotalCost = FillVab(plr, ccc, 0);
-                    TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                    fill_rectangle(7, 87, 162, 93, 3);
-                    display::graphics.setForegroundColor(9);
-                    draw_string(13, 92, "A");
-                    display::graphics.setForegroundColor(1);
-
-                    if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                        display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                    }
-
-                    draw_string(0, 0, "UTOPURCHASE (");
-                    draw_number(0, 0, TotalCost);
-                    draw_string(0, 0, " OF ");
-                    draw_megabucks(0, 0, Data->P[plr].Cash);
-                    draw_string(0, 0, ")");
+                    ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 } else if (ac == 0) {
                     Help("i135");    // delay on purchase
                 } else {
@@ -1041,9 +1173,8 @@ begvab:
                 ShowVA(ccc);
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 OutBox(6, 86, 163, 94);
-            }
-
-            if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
+            } else if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
+                // CONTINUE/EXIT/DO NOTHING
                 InBox(177, 185, 242, 195);
                 WaitForMouseUp();
 
@@ -1054,12 +1185,13 @@ begvab:
                 OutBox(177, 185, 242, 195);
 
                 // Clear mission hardware
-                for (i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
+                for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
                     Data->P[plr].Mission[mis].Hard[i] = 0;
                 }
 
-                goto begvab; /* CONTINUE/EXIT/DO NOTHING */
+                break;
             } else if (((x >= 249 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
+                // SCRUB The whole mission
                 InBox(249, 185, 314, 195);
                 WaitForMouseUp();
 
@@ -1069,12 +1201,9 @@ begvab:
 
                 OutBox(249, 185, 314, 195);
                 ClrMiss(plr, mis);
-
-                if (Data->P[plr].Mission[mis].MissionCode == Mission_None) {
-                    goto begvab;    // SCRUB The whole mission
-                }
+                break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {
-                j = 0;
+                int j = 0;
 
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i118");
@@ -1085,7 +1214,7 @@ begvab:
                         Help("i155");    // No docking module in orbit
                     }
 
-                    j2 = 0;
+                    int j2 = 0;
 
                     if (strncmp(VAS[ccc][0].name, "NONE", 4) != 0) {
                         j++;
@@ -1136,7 +1265,7 @@ begvab:
 
                         OutBox(245, 5, 314, 17);
 
-                        for (i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+                        for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
                             Data->P[plr].Mission[mis].Hard[i] = VAS[ccc][i].dex;
 
                             if (VAS[ccc][i].dex >= 0) {
@@ -1169,10 +1298,11 @@ begvab:
                             Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok++;
                         }
 
-                        goto begvab;
+                        break;
                     }
                 }
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
+                // Choose Rocket
                 InBox(64, 181, 161, 191);
 #define Misdef(a)     Data->P[plr].Mission[(a)].MissionCode
                 rk++;
@@ -1181,37 +1311,16 @@ begvab:
                     rk = 0;
                 }
 
-                if (((Misdef(mis) >= 42 && Misdef(mis) <= 57) || (Misdef(mis) >= 7 && Misdef(mis) <= 13)) && (rk == 4 || rk == 0))
+                if (((Misdef(mis) >= 42 && Misdef(mis) <= 57) ||
+                     (Misdef(mis) >= 7 && Misdef(mis) <= 13)) &&
+                    (rk == 4 || rk == 0)) {
                     if (options.cheat_altasOnMoon == 0) {
                         rk++;
                     }
+                }
 
                 //display cost (XX of XX)
-                hasDelay = 0;
-                TotalCost = 0;
-                hasDelay = ChkDelVab(plr, ccc);
-
-                if (hasDelay != 0) {
-                    hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                }
-
-                TotalCost = FillVab(plr, ccc, 0);
-                TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                fill_rectangle(7, 87, 162, 93, 3);
-                display::graphics.setForegroundColor(9);
-                draw_string(13, 92, "A");
-                display::graphics.setForegroundColor(1);
-
-                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                }
-
-                draw_string(0, 0, "UTOPURCHASE (");
-                draw_number(0, 0, TotalCost);
-                draw_string(0, 0, " OF ");
-                draw_megabucks(0, 0, Data->P[plr].Cash);
-                draw_string(0, 0, ")");
-
+                ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
                 DispWts(cwt, pay[rk]);
                 DispRck(plr, rk);
@@ -1222,8 +1331,8 @@ begvab:
                 }
 
                 OutBox(64, 181, 161, 191);
-                /* Rocket Choose */
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
+                // Cycle through payload selections
                 InBox(64, 129, 161, 175);
                 ccc++;
 
@@ -1233,7 +1342,7 @@ begvab:
 
                 cwt = 0;
 
-                for (i = 0; i < 4; i++) {
+                for (int i = 0; i < 4; i++) {
                     cwt += VAS[ccc][i].wt;
                 }
 
@@ -1241,30 +1350,7 @@ begvab:
                 DispWts(cwt, pay[rk]);
                 DispVA(plr, ccc);
                 //display cost (XX of XX)
-                hasDelay = 0;
-                TotalCost = 0;
-                hasDelay = ChkDelVab(plr, ccc);
-
-                if (hasDelay != 0) {
-                    hasDelay = ChkVabRkt(plr, rk, &qty[0]);
-                }
-
-                TotalCost = FillVab(plr, ccc, 0);
-                TotalCost += BuyVabRkt(plr, rk, &qty[0], 0);
-                fill_rectangle(7, 87, 162, 93, 3);
-                display::graphics.setForegroundColor(9);
-                draw_string(13, 92, "A");
-                display::graphics.setForegroundColor(1);
-
-                if (hasDelay == 0 || TotalCost > Data->P[plr].Cash) {
-                    display::graphics.setForegroundColor(9); //if can't buy (delay, cost>cash) ->red letters
-                }
-
-                draw_string(0, 0, "UTOPURCHASE (");
-                draw_number(0, 0, TotalCost);
-                draw_string(0, 0, " OF ");
-                draw_megabucks(0, 0, Data->P[plr].Cash);
-                draw_string(0, 0, ")");
+                ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 WaitForMouseUp();
 
                 if (key > 0) {
@@ -1272,15 +1358,33 @@ begvab:
                 }
 
                 OutBox(64, 129, 161, 175);
-                /* RIGHT Choose */
             }
         }
     }
+
+    Vab_Spot = (Data->P[plr].Mission[0].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
+    music_stop();
 }
 
 
+//----------------------------------------------------------------------
 // VAB Autobuild Functions
+//----------------------------------------------------------------------
 
+
+/* Generates the set of possible distinct vehicle payloads for the
+ * mision and stores the payload information in the global variable
+ * VAS.
+ *
+ * This function is used by the AI, so beware of making changes without
+ * understanding what the AI is doing!
+ *
+ * \param plr  The player assembling the launch vehichle.
+ * \param mis  The pad the mission is on.
+ * \param ty   >0 if called by the AI.
+ * \param pa   0 if the primary half of a joint mission.
+ * \param pr   The hardware program to use on mission (used by AI).
+ */
 void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 {
     char i, j, part, mcode, prog, ext = 0;
@@ -1487,6 +1591,7 @@ void LMAdd(char plr, char prog, char kic, char part)
 
     return;
 }
+
 
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5)
 {
