@@ -1114,7 +1114,7 @@ void VAB(char plr)
             key = 0;
             GetMouse();
 
-            if (mousebuttons > 0 || key > 0) {
+            if (mousebuttons <= 0 && key <= 0) {
                 continue;
             }
 
