@@ -74,6 +74,8 @@ subfolder to go, and run:
 Linux
 -----
 
+### Debian/Ubuntu
+
 We rely on the operating system to provide most of the dependencies. If you're
 on a Debian-based system, you can get everything with:
 
@@ -84,6 +86,16 @@ on a Debian-based system, you can get everything with:
 If you don't already have git installed, you'll also have to run:
 
     $ sudo apt install git
+
+### Fedora
+
+If you are on a Fedora-based system, you can get everything with:
+
+    $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel \
+        libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
+        physfs-devel libpng-devel
+
+### Build
 
 To compile the game quickly you can run a series of commands in-line. This 
 creates a folder where the compiled game will be installed. If you want it named 
