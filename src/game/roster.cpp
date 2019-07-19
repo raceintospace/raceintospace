@@ -1,4 +1,4 @@
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include <assert.h>
 
 #include <boost/foreach.hpp>

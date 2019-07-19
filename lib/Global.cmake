@@ -73,6 +73,13 @@ else (BUILD_XIPH)
   find_path(Theora_INCLUDE_DIR theora/theora.h)
 endif (BUILD_XIPH)
 
+if (BUILD_JSONCPP)
+  set(JsonCPP_LIBRARY jsoncpp)
+else (BUILD_JSONCPP)
+  find_library(JsonCPP_LIBRARY NAMES jsoncpp)
+  find_path(JsonCPP_INCLUDE_DIR json/json.h PATH_SUFFIXES jsoncpp)
+endif (BUILD_JSONCPP)
+
 if (BUILD_PHYSFS)
   set(Physfs_LIBRARY physfs)
 else (BUILD_PHYSFS)
