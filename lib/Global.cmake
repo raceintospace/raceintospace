@@ -75,6 +75,7 @@ endif (BUILD_XIPH)
 
 if (BUILD_JSONCPP)
   set(JsonCPP_LIBRARY jsoncpp)
+  include_directories(SYSTEM ${LocalPrefix}/include/jsoncpp)
 else (BUILD_JSONCPP)
   find_library(JsonCPP_LIBRARY NAMES jsoncpp)
   find_path(JsonCPP_INCLUDE_DIR json/json.h PATH_SUFFIXES jsoncpp)
