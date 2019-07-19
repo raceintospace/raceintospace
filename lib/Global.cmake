@@ -24,6 +24,11 @@ elseif (WINDOWS)
   set(BUILD_SDL true)
 endif ()
 
+if (NOT DEFINED BUILD_PHYSFS)
+  # Keep it enabled by default
+  set(BUILD_PHYSFS ON)
+endif ()
+
 if (BUILD_BOOST)
   # Boost_INCLUDE_DIR can remain unset, since it's already in the path
 else (BUILD_BOOST)
@@ -67,3 +72,10 @@ else (BUILD_XIPH)
   find_library(Theora_LIBRARY NAMES theora)
   find_path(Theora_INCLUDE_DIR theora/theora.h)
 endif (BUILD_XIPH)
+
+if (BUILD_PHYSFS)
+  set(Physfs_LIBRARY physfs)
+else (BUILD_PHYSFS)
+  find_library(Physfs_LIBRARY NAMES physfs)
+  find_path(Physfs_INCLUDE_DIR json/json.h physfs)
+endif (BUILD_PHYSFS)
