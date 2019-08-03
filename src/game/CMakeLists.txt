@@ -2,6 +2,9 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_BINARY_DIR}/config)
 include_directories(${PROJECT_SOURCE_DIR}/src/game)
 include_directories(${raceintospace_protobuf_include_dir})
+if (JsonCPP_INCLUDE_DIR)
+  include_directories(${JsonCPP_INCLUDE_DIR})
+endif (JsonCPP_INCLUDE_DIR)
 
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
@@ -77,7 +80,7 @@ set(game_sources
 
 set(game_libraries
   ${SDL_LIBRARY} ogg vorbis theora protobuf
-  jsoncpp physfs ${zlib_LIBRARY}
+  ${JsonCPP_LIBRARY} physfs ${zlib_LIBRARY}
   raceintospace_display ${raceintospace_display_libraries}
   raceintospace_protobuf
   )

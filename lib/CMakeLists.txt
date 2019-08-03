@@ -118,26 +118,33 @@ if (BUILD_JSONCPP)
   add_dependencies(libs ext_jsoncpp)
 endif (BUILD_JSONCPP)
 
-###
-# PhysicsFS
-set (physfs_Version 3.0.1)
-set (physfs_URL https://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
-set (physfs_Dir ${CMAKE_CURRENT_BINARY_DIR}/physfs-${physfs_Version})
+if (BUILD_PHYSFS)
+  ###
+  # PhysicsFS
+  set (physfs_Version 3.0.1)
+  set (physfs_URL https://icculus.org/physfs/downloads/physfs-${physfs_Version}.tar.bz2)
+  set (physfs_Dir ${CMAKE_CURRENT_BINARY_DIR}/physfs-${physfs_Version})
 
-# physfs complains about FSPathMakeRef et al being deprecated, and warnings are treated as errors
-# Turn it back into a warning instead
-if (APPLE)
-  set (physfs_Flags -Wno-error=deprecated-declarations)
-endif (APPLE)
+  # physfs complains about FSPathMakeRef et al being deprecated, and warnings are treated as errors
+  # Turn it back into a warning instead
+  if (APPLE)
+    set (physfs_Flags -Wno-error=deprecated-declarations)
+  endif (APPLE)
 
-ExternalProject_Add(ext_physfs
-  DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
-  URL ${physfs_URL}
-  PREFIX ${physfs_Dir}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_7Z=false -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_ARCHIVE_ISO9660=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DPHYSFS_BUILD_SHARED=false -DPHYSFS_BUILD_TEST=false -DCMAKE_C_FLAGS=${physfs_Flags}
-  )
+  ExternalProject_Add(ext_physfs
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${physfs_URL}
+    PREFIX ${physfs_Dir}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DPHYSFS_ARCHIVE_7Z=false -DPHYSFS_ARCHIVE_GRP=false -DPHYSFS_ARCHIVE_WAD=false -DPHYSFS_ARCHIVE_HOG=false -DPHYSFS_ARCHIVE_MVL=false -DPHYSFS_ARCHIVE_QPAK=false -DPHYSFS_ARCHIVE_ISO9660=false -DPHYSFS_HAVE_CDROM_SUPPORT=false -DPHYSFS_BUILD_SHARED=false -DPHYSFS_BUILD_TEST=false -DCMAKE_C_FLAGS=${physfs_Flags}
+    )
 
-add_dependencies(libs ext_physfs)
+  add_dependencies(libs ext_physfs)
+
+else (BUILD_PHYSFS)
+  add_library(physfs STATIC IMPORTED)
+  set_property(TARGET physfs APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+  set_target_properties(physfs PROPERTIES IMPORTED_LOCATION_NOCONFIG ${Physfs_LIBRARY})
+endif (BUILD_PHYSFS)
 
 
 ###
