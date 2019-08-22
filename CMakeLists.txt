@@ -23,6 +23,7 @@ install(FILES icons/raceintospace.xpm DESTINATION /usr/share/pixmaps)
 
 set(PROJECT_VERSION "${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_RELEASE}")
 execute_process(COMMAND git rev-list -1 --abbrev-commit HEAD
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                 OUTPUT_VARIABLE COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(ARCHIVE_NAME "${CMAKE_PROJECT_NAME}-${PROJECT_VERSION}-git${COMMIT}")
 add_custom_target(dist
