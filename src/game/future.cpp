@@ -171,7 +171,7 @@ bool SaturnInRange(unsigned int year, unsigned int season)
  */
 bool JointMissionOK(char plr, char pad)
 {
-    return (pad >= 0 && pad < MAX_LAUNCHPADS - 2) &&
+    return (pad >= 0 && pad < MAX_LAUNCHPADS - 1) &&
            (Data->P[plr].LaunchFacility[pad + 1] == 1) &&
            ((Data->P[plr].Future[pad + 1].MissionCode == Mission_None) ||
             (Data->P[plr].Future[pad + 1].part == 1));
