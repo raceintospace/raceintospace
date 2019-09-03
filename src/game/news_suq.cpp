@@ -785,6 +785,7 @@ char REvent(char plr)
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
         Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
         xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
+        Replace_Snaut(plr);
 
         //cancel manned missions
         for (size_t pad = 0; pad < MAX_LAUNCHPADS; pad++) {
