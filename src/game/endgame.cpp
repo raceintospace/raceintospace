@@ -92,6 +92,7 @@ Burst(char win)
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
+    vhptr->resetPalette();
     vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
 
     while (1) {
