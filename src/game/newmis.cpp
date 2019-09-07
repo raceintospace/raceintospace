@@ -159,7 +159,7 @@ void MisAnn(char plr, char pad)
     int i, j, bud;
     struct mStr Mis2;
     char k, hold, Digit[4], HelpFlag = 0;
-    char pad_str[2] = {'A' + pad, '\0'};
+    char pad_str[2] = {static_cast<char>('A' + pad), '\0'};
 
     display::graphics.screen()->clear();
 
