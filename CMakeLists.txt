@@ -25,6 +25,9 @@ add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION /usr/share/applications)
 install(FILES icons/raceintospace.xpm DESTINATION /usr/share/pixmaps)
 
+set(CPACK_GENERATOR TGZ)
+set(CPACK_SOURCE_GENERATOR TGZ)
+include(CPack)
 
 add_custom_target(dist
 	COMMAND ${CMAKE_COMMAND} -D ARCHIVE_PREFIX="${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}" -D SOURCE_DIR="${CMAKE_SOURCE_DIR}" -D OUTPUT_DIR="${CMAKE_BINARY_DIR}" -P ${CMAKE_CURRENT_SOURCE_DIR}/make_archive.cmake
