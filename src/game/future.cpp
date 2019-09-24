@@ -1397,27 +1397,27 @@ void DurPri(int x)
         break;
 
     case 1:
-        draw_string(112, 30, "1 - 2 DAYS");
+        draw_string(112, 30, "1 - 2 DAYS (A)");
         break;
 
     case 2:
-        draw_string(112, 30, "3 - 5 DAYS");
+        draw_string(112, 30, "3 - 5 DAYS (B)");
         break;
 
     case 3:
-        draw_string(112, 30, "6 - 7 DAYS");
+        draw_string(112, 30, "6 - 7 DAYS (C)");
         break;
 
     case 4:
-        draw_string(112, 30, "8 - 12 DAYS");
+        draw_string(112, 30, "8 - 12 DAYS (D)");
         break;
 
     case 5:
-        draw_string(112, 30, "13 - 16 DAYS");
+        draw_string(112, 30, "13 - 16 DAYS (E)");
         break;
 
     case 6:
-        draw_string(112, 30, "17 - 20 DAYS");
+        draw_string(112, 30, "17 - 20 DAYS (F)");
         break;
     }
 
@@ -1472,8 +1472,8 @@ void Missions(char plr, int X, int Y, int val, char bub)
         PianoKey(val);
         Bub_Count = 0; // set the initial bub_count
         ClearDisplay();
-        fill_rectangle(6, 31, 182, 46, 3);
-        fill_rectangle(80, 25, 175, 30, 3);
+        fill_rectangle(6, 31, 199, 46, 3);
+        fill_rectangle(80, 25, 199, 30, 3);
         display::graphics.setForegroundColor(5);
         draw_string(55, 30, "TYPE: ");
         draw_number(0, 0, val);
