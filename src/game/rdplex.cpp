@@ -908,9 +908,7 @@ void ShowUnit(char hw, char un, char player_index)
     if (Data->P[player_index].RD_Mods_For_Turn != 0) {
         if (Data->P[player_index].RD_Mods_For_Turn > 0) {
             display::graphics.setForegroundColor(5);
-            draw_string(170, 153, "RESEARCH STRONG:   ");
-            fill_rectangle(264, 149, 264, 153, 5);
-            fill_rectangle(262, 151, 266, 151, 5); // This fakes a plus sign, which the game apparently can't draw -Leon
+            draw_string(170, 153, "RESEARCH STRONG: +");
         } else {
             display::graphics.setForegroundColor(8);
             draw_string(170, 153, "RESEARCH WEAK: ");
