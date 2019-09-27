@@ -923,7 +923,11 @@ void VerifyCrews(char plr)
     }
 }
 
-/** Opens "MISSION.DAT" to find mission data
+/* Reads mission data for the specified mission into the global
+ * variable Mis.
+ *
+ * Opens "MISSION.DAT" to find mission data. Global variable Mis
+ * defined in mc.cpp.
  *
  * \param mcode Code of the mission - works as index for the file
  *
