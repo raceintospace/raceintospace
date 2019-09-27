@@ -1035,6 +1035,8 @@ void Future(char plr)
                     break;        // return to launchpad loop
                 } else {
                     ClrFut(plr, MisNum);
+                    // Set the Mission code after being cleared.
+                    Data->P[plr].Future[MisNum].MissionCode = MisType;
                     continue;
                 }
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
