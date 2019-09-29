@@ -318,7 +318,7 @@ void Rush(char plr)
     pRush = (Data->P[plr].Cash >= 3) ? 1 : 0;
     fCsh = Data->P[plr].Cash;
     display::graphics.setForegroundColor(1);
-    music_start((plr == 1) ? M_USMIL : M_USSRMIL);
+    music_start((plr == 0) ? M_USMIL : M_USSRMIL);
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
 
