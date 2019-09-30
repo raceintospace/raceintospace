@@ -38,7 +38,11 @@ Filesystem::~Filesystem()
 {
     // shut. down. everything.
     // this can fail, but whatever
-    PHYSFS_deinit();
+    // Wrap this in a safety check because it causes errors if called
+    // before initialization.
+    if (PHYSFS_isInit()) {
+        PHYSFS_deinit();
+    }
 }
 
 void Filesystem::init(const char *argv0)
