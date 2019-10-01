@@ -319,7 +319,7 @@ void CLevels(char side, char wh)
  *     2 = Hard
  * Astro Level:
  *     0 = Easy
- *     1 = Meduim
+ *     1 = Medium
  *     2 = Hard
  * Input:
  *     0 = Mouse
@@ -359,7 +359,7 @@ void Prefs(int where)
             hum1 = 0, hum2 = 1;
             Data->Def.Lev1 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
             Data->Def.Lev2 = 2; //start computer level 3
-            Data->Def.Input = 0; // Basic Model / Historical Roster
+            Data->Def.Input = 2; // Historical Model / Historical Roster
             Data->Def.Sound = Data->Def.Music = 1;
             MuteChannel(AV_ALL_CHANNELS, 0);
         }
