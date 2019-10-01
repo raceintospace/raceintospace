@@ -171,6 +171,28 @@ void DrawPrefs(int where, char a1, char a2)
     return;
 }
 
+/* Draw the Hardware Model / Roster settings button
+ *
+ * Hardware Model & Roster settings rotate through
+ *     0: Basic Model / Historical Roster
+ *     1: Basic Model / Custom Roster
+ *     2: Historical Model / Historical Roster
+ *     3: Historical Model / Custom Roster
+ *     4: Random Model / Historical Roster       (Optional)
+ *     5: Random Model / Custom Roster           (Optional)
+ *
+ * The Basic Model uses identical values for comparable US/USSR
+ * hardware (i.e. Mercury/Vostok), ensuring a balanced game environment.
+ * The Historical Model uses different values for comparable US/USSR
+ * programs, representing the historical variations between the two
+ * countries' programs.
+ * The Random Model... TODO: does what?
+ * Random Model is only available if options.feat_random_eq is enabled.
+ * See the manual for more information.
+ *
+ * \param mode  The current model/roster setup (0-5).
+ * \param tx    This option is unused, so who knows?
+ */
 void HModel(char mode, char tx)
 {
     SimpleHdr table;
@@ -276,37 +298,50 @@ void CLevels(char side, char wh)
 }
 
 
-/* Pref Levels:
-  Player Select : 0 = USA
-          1 = USSR
-          2 = USA AI
-          3 = USSR AI
-          4 = FOREIGN (maybe)
-          5 = FOREIGN AI (maybe)
-
-       6 = USA (modem play)
-       7 = USSR (modem play)
-
-
-  Game Level:  0 = Easy
-           1 = Medium
-           2 = Hard
-  Astro Level: 0 = Easy
-           1 = Meduim
-           2 = Hard
-  Input:       0 = Mouse
-           1 = Keyboard
-           2 = Joystick (maybe)
-  Anim Level:  0 = Full
-           1 = Partial
-           2 = Results Only
-  Music Level: 0 = Full
-           1 = Partial
-           2 = None
-  Sound FX:    0 = On
-           1 = Off
-  */
-
+/**
+ * Opens the settings menu for changing game settings.
+ *
+ * During gameplay, the ability to change certain settings is disabled.
+ *
+ * Pref Levels:
+ * Player Select:  0 = USA
+ *     1 = USSR
+ *     2 = USA AI
+ *     3 = USSR AI
+ *     4 = FOREIGN (maybe)
+ *     5 = FOREIGN AI (maybe)
+ *     6 = USA (modem play)
+ *     7 = USSR (modem play)
+ *
+ * Game Level:
+ *     0 = Easy
+ *     1 = Medium
+ *     2 = Hard
+ * Astro Level:
+ *     0 = Easy
+ *     1 = Meduim
+ *     2 = Hard
+ * Input:
+ *     0 = Mouse
+ *     1 = Keyboard
+ *     2 = Joystick (maybe)
+ * Anim Level:
+ *     0 = Full
+ *     1 = Partial
+ *     2 = Results Only
+ * Music Level:
+ *     0 = Full
+ *     1 = Partial
+ *     2 = None
+ * Sound FX:
+ *     0 = On
+ *     1 = Off
+ *
+ * See documentation for HModel() for more about the Hardware Model /
+ * Roster settings.
+ *
+ * \param where  0 for pregame setup, 1 for in-game settings, 3 for ???
+ */
 void Prefs(int where)
 {
     int num, hum1 = 0, hum2 = 0;
@@ -315,6 +350,7 @@ void Prefs(int where)
     int32_t size;
 
     if (where != 3) {
+        // If starting a new game, set default configuration
         if (where == 0) {
             plr[0] = 0;
             plr[1] = 1;
@@ -323,7 +359,7 @@ void Prefs(int where)
             hum1 = 0, hum2 = 1;
             Data->Def.Lev1 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
             Data->Def.Lev2 = 2; //start computer level 3
-            Data->Def.Input = 0;
+            Data->Def.Input = 0; // Basic Model / Historical Roster
             Data->Def.Sound = Data->Def.Music = 1;
             MuteChannel(AV_ALL_CHANNELS, 0);
         }
