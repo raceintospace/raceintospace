@@ -159,50 +159,76 @@ PrestMap(int val)
 /**
  * Calculate mission penalty due to missed milestones and duration.
  *
- * \param plr current player
+ * Penalties are determined by:
+ *  * -3 for each previous milestone **skipped**. This includes
+ *    milestones on the milestone track the mission does not satisfy.
+ *  * -5 for each duration milestone **skipped**.
+ *  * Lunar Pass requires Duration (C).
+ *  * Lunar Orbit / Lunar Landing requires Duration (D).
+ *  * -1 to -3 for a new mission. This is any mission which includes
+ *    a milestone not previously met.
+ *
+ * NOTE: There is a proposal to convert the New Mission penalty to
+ *       cover any mission with an unmet Prestige value, excluding
+ *  - Duration A-F, because there's already a category for that, and
+ *  - Woman In Space, because it's not a technological challenge.
+ *
+ * This function relies upon the global variable Mis.
+ *
+ * \param plr current player (0 for USA, 1 for USSR)
  * \return penalty
  *
  * \note Call only when Mis is valid
  */
-char
-PrestMin(char plr)
+char PrestMin(char plr)
 {
-    int i, j, Neg = 0;
-
-    Neg = 0;
-    j = 0;
+    int maxMilestone = 0, Neg = 0;
+    bool newMilestone = false;
 
     if (Mis.Index == 0) {
         return 0;
     }
 
-    for (i = 0; i < 5; i++) {
-        j = MAX(j, PrestMap(Mis.PCat[i]));
+    // Find the maximum milestone & determine if mission offers a new
+    // milestone
+    for (int i = 0; i < 5; i++) {
+        int milestone = PrestMap(Mis.PCat[i]);
+        maxMilestone = MAX(maxMilestone, milestone);
+        newMilestone = newMilestone ||
+                       (milestone >= 0 && Data->Mile[plr][milestone] == 0);
     }
 
     /* walk all milestones lower than maximum required for mission */
-    for (i = 0; i <= j; ++i) {
+    for (int i = 0; i < maxMilestone; ++i) {
         /* if milestone not met, then add penalty */
         if (Data->Mile[plr][i] == 0) {
             Neg += 3;
         }
     }
 
-    Neg = Neg + (plr ? Data->Def.Lev2 : Data->Def.Lev1) - 2;
-    // Neg -= (2 - ((plr == 0) ? Data->Def.Lev1 : Data->Def.Lev2));
-    Neg = MAX(Neg, 0);
+    int reqDuration = MAX(Mis.Days  - 1, 0);
+    int playerDuration = MAX(Data->P[plr].DurationLevel, 0);
 
-    /* Index 2 = Manned suborbital
-     * Index 4 = Manned orbital
-     * Index 6 = Manned orbital EVA
-     */
-    if (Mis.Index != 2
-        && Mis.Index != 4
-        && Mis.Index != 6
-        && (Mis.Days - Data->P[plr].DurationLevel) > 1) { // Raised this from "> 0" to disable broken Duration penalty system -Leon
-        Neg += 5 * (Mis.Days - Data->P[plr].DurationLevel);
+    // If mission.hasMilestone(Milestone_LunarPass)...
+    if (maxMilestone == Milestone_LunarPass) {
+        reqDuration = MAX(reqDuration, 3);
     }
 
+    // If mission.hasMilestone()...
+    if (maxMilestone == Milestone_LunarOrbit ||
+        maxMilestone == Milestone_LunarLanding) {
+        reqDuration = MAX(reqDuration, 4);
+    }
+
+    // Calculate duration steps skipped
+    if (reqDuration > playerDuration) {
+        Neg += 5 * (reqDuration - playerDuration);
+    }
+
+    // If this is a new milestone mission add a new mission penalty
+    if (newMilestone) {
+        Neg += plr ? (1 + Data->Def.Lev2) : (1 + Data->Def.Lev1);
+    }
 
     return Neg;
 }
