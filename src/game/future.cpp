@@ -1017,10 +1017,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            // TODO: This should block attempts to Continue when the set
-            // duration is below the minimum value for a duration mission.
-            // DuraType >= V[MisType].E
-            if (Mis.Dur <= V[MisType].E &&
+            if (DuraType >= V[MisType].E &&
                 ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
