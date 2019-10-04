@@ -1399,7 +1399,7 @@ void Bd(int x, int y)
  */
 void PrintDuration(int duration)
 {
-    fill_rectangle(80, 25, 199, 30, 3); // Draw over old duration
+    fill_rectangle(112, 25, 199, 30, 3); // Draw over old duration
     display::graphics.setForegroundColor(5);
 
     switch (duration) {
@@ -1503,6 +1503,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
         Bub_Count = 0; // set the initial bub_count
         ClearDisplay();
         fill_rectangle(6, 31, 199, 46, 3);
+        fill_rectangle(80, 25, 112, 30, 3);
         display::graphics.setForegroundColor(5);
         draw_string(55, 30, "TYPE: ");
         draw_number(0, 0, val);
