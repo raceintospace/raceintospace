@@ -40,23 +40,42 @@ int HardRequest(char plr, char mode, char mis, char pad);
 int SecondHard(char plr, char mode, char mis, char pad);
 
 
-
-int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
+/* Assign the hardware for a planned mission in the Future Missions screen.
+ *
+ * This selects and relevant capsule/minishuttle and assigns the crew(s)
+ * for any manned launches.
+ *
+ * Mission types are
+ * 0: An unmanned mission
+ * 1: A single pad unmanned mission with capsule/minishuttle
+ * 2: A single pad manned mission
+ * 3: A joint mission with a single manned launch
+ * 4: A joint mission with two manned launches
+ * 5: A joint mission with an unmanned capsule/minishuttle
+ *
+ * \param plr  The player country (0 for the USA, 1 for the USSR).
+ * \param pad  The launch pad (0, 1, or 2) the first part of the mission
+ *     is assigned.
+ * \param misType The mission id per the MissionValues enum.
+ * \param newType The type of mission as described in the notes.
+ * \return  0 if hardware was not assigned, 1 if successful.
+ */
+int HardCrewAssign(char plr, char pad, int misType, char newType)
 {
     int M = 0;
 
-    if (NewType <= 2) {
-        Data->P[plr].Future[MisType].Joint = 0;
+    if (newType <= 2) {
+        Data->P[plr].Future[misType].Joint = 0;
     } else {
-        Data->P[plr].Future[MisType].Joint = 1;
+        Data->P[plr].Future[misType].Joint = 1;
     }
 
-    switch (NewType) {
+    switch (newType) {
     case 0:
         return 1;
 
     case 1:
-        M = HardRequest(plr, 0, MisType, Pad);
+        M = HardRequest(plr, 0, misType, pad);
 
         if (M == 0) {
             return 0;
@@ -65,10 +84,10 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         }
 
     case 2:
-        M = SecondHard(plr, 0, MisType, Pad);
+        M = SecondHard(plr, 0, misType, pad);
 
         if (M != 0) {
-            M = AsnCrew(plr, Pad, 0);
+            M = AsnCrew(plr, pad, 0);
         } else {
             return 0;
         }
@@ -76,20 +95,20 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         return (M != 0);
 
     case 3:
-        M = SecondHard(plr, 1, MisType, Pad);
-        Data->P[plr].Future[Pad].part = 0;
-        Data->P[plr].Future[Pad].Joint = 1;
-        Data->P[plr].Future[Pad].MissionCode = MisType;
+        M = SecondHard(plr, 1, misType, pad);
+        Data->P[plr].Future[pad].part = 0;
+        Data->P[plr].Future[pad].Joint = 1;
+        Data->P[plr].Future[pad].MissionCode = misType;
 
         if (M != 0) {
-            M = AsnCrew(plr, Pad + 1, 1);
+            M = AsnCrew(plr, pad + 1, 1);
         } else {
             return 0;
         }
 
-        Data->P[plr].Future[Pad + 1].Joint = 1;
-        Data->P[plr].Future[Pad + 1].part = 1;
-        Data->P[plr].Future[Pad + 1].MissionCode = MisType;
+        Data->P[plr].Future[pad + 1].Joint = 1;
+        Data->P[plr].Future[pad + 1].part = 1;
+        Data->P[plr].Future[pad + 1].MissionCode = misType;
 
         if (M == 0) {
             return 0;
@@ -98,42 +117,40 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         }
 
     case 4:
-        M = SecondHard(plr, 0, MisType, Pad);
+        M = SecondHard(plr, 0, misType, pad);
         {
             // scope block to avoid initialization skipped by 'case' label error"
             display::LegacySurface local3(171, 188);
             local3.copyFrom(display::graphics.legacyScreen(), 74, 3, 244, 190);
 
             if (M != 0) {
-                M = AsnCrew(plr, Pad, 0);
+                M = AsnCrew(plr, pad, 0);
             } else {
                 return 0;
             }
 
-            Data->P[plr].Future[Pad].part = 0;
-
-            Data->P[plr].Future[Pad].Joint = 1;
-
-            Data->P[plr].Future[Pad].MissionCode = MisType;
+            Data->P[plr].Future[pad].part = 0;
+            Data->P[plr].Future[pad].Joint = 1;
+            Data->P[plr].Future[pad].MissionCode = misType;
 
             local3.copyTo(display::graphics.legacyScreen(), 74, 3);
         }
 
         if (M != 0) {
-            M = SecondHard(plr, 1, MisType, Pad);
+            M = SecondHard(plr, 1, misType, pad);
         } else {
             return 0;
         }
 
         if (M != 0) {
-            M = AsnCrew(plr, Pad + 1, 1);
+            M = AsnCrew(plr, pad + 1, 1);
         } else {
             return 0;
         }
 
-        Data->P[plr].Future[Pad + 1].Joint = 1;
-        Data->P[plr].Future[Pad + 1].part = 1;
-        Data->P[plr].Future[Pad + 1].MissionCode = MisType;
+        Data->P[plr].Future[pad + 1].Joint = 1;
+        Data->P[plr].Future[pad + 1].part = 1;
+        Data->P[plr].Future[pad + 1].MissionCode = misType;
 
         if (M == 0) {
             return 0;
@@ -142,14 +159,14 @@ int HardCrewAssign(char plr, char Pad, int MisType, char NewType)
         }
 
     case 5:
-        M = SecondHard(plr, 0, MisType, Pad + 1);
-        Data->P[plr].Future[Pad].part = 0;
-        Data->P[plr].Future[Pad].MissionCode = MisType;
-        Data->P[plr].Future[Pad].Joint = 1;
-        Data->P[plr].Future[Pad + 1].Joint = 1;
-        Data->P[plr].Future[Pad + 1].part = 1;
-        Data->P[plr].Future[Pad + 1].MissionCode = MisType;
-        Data->P[plr].Future[Pad + 1].Men = 0;
+        M = SecondHard(plr, 0, misType, pad + 1);
+        Data->P[plr].Future[pad].part = 0;
+        Data->P[plr].Future[pad].MissionCode = misType;
+        Data->P[plr].Future[pad].Joint = 1;
+        Data->P[plr].Future[pad + 1].Joint = 1;
+        Data->P[plr].Future[pad + 1].part = 1;
+        Data->P[plr].Future[pad + 1].MissionCode = misType;
+        Data->P[plr].Future[pad + 1].Men = 0;
 
         if (M == 0) {
             return 0;
@@ -240,6 +257,14 @@ void ClrFut(char plr, char pad)
     return;
 }
 
+/* Create an interface and select a Primary and/or Secondary flight crew
+ * for a future mission.
+ *
+ * \param plr   The player scheduling the mission (0 for USA, 1 for USSR).
+ * \param pad   The mission launch pad (0, 1, or 2).
+ * \param part  0 if the Primary crew, 1 if the Secondary.
+ * \return  0 if no crew assigned, 1 if successfully chosen.
+ */
 int AsnCrew(char plr, char pad, char part)
 {
     int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
@@ -717,6 +742,16 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 }
 
 
+/* Draw the interface for selecting the manned vehicle for a planned
+ * launch.
+ *
+ * TODO: Parameter order differs from normal practice.
+ *
+ * \param mode 0 if the primary launch vehicle, 1 if the secondary.
+ * \param pad  The launch pad for the flight, 0 for A, 1 for B, or 2 for C.
+ * \param mis  The mission code, per the MissionValues enum.
+ * \param plr  Player index, 0 for the USA, 1 for the USSR.
+ */
 void DrawHard(char mode, char pad, char mis, char plr)
 {
     int lenprogname;  // Variable to hold and manipulate length of program name
@@ -805,6 +840,24 @@ void DrawHard(char mode, char pad, char mis, char plr)
     return;
 }
 
+
+/* Select the capsule/minishuttle for use on a future unmanned mission.
+ *
+ * This creates an interface for selecting one of the manned capsule/
+ * minishuttle programs, and returns the chosen program.
+ *
+ * This sets the Prog value for the player's Future mission at
+ * the appropriate pad.
+ *
+ * TODO: Look into changing return values to use the EquipMannedIndex
+ * enum?
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param mode 0 if the primary launch vehicle, 1 if the secondary.
+ * \param mis  The mission code per the MissionValues enum.
+ * \param pad  The pad the manned craft will launch from (0, 1, or 2).
+ * \return  0 if no craft selected, 1+ for the craft index.
+ */
 int HardRequest(char plr, char mode, char mis, char pad)
 {
     int i = 0, pr[5], t = 0;
@@ -813,7 +866,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
     keyHelpText = "k201";
 
     for (i = 0; i < 5; i++) {
-        if (Data->P[plr].Manned[i].Num >= 0) {
+        if (Data->P[plr].Manned[i].Num >= 0) { // Is program purchased
             pr[i] = 1;
             t++;
         } else {
@@ -824,37 +877,51 @@ int HardRequest(char plr, char mode, char mis, char pad)
     // special case: 1-man capsule can't go to the Moon
     GetMisType(mis);
 
-    // exceptions
+    // Exceptions
+    // One-man capsules cannot perform Lunar missions, docking missions.
+    // TODO: Mis.Days value differs from logic in SecondHard
     if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 1 ||
         Data->P[plr].Future[pad].Duration > 2) {
         pr[0] = 0;
     }
 
+    // TODO: Just compare hardware duration with mission duration?
+    // TODO: Check if Mis.Days is indexed the same as
+    //   struct MissionType.Duration?
+
+    // Gemini/Voskhod cannot attempt Duration F
     if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {
         pr[1] = 0;
     }
 
+    // XMS-2 / Lapot cannot attempt Duration E+
+    // TODO: This differs from logic in SecondHard
     if (Data->P[plr].Future[pad].Duration > 3) {
         pr[3] = 0;
     }
 
+    // Only Jupiter/Kvartet can attempt a Direct Ascent Lunar Landing
+    // TODO: Replace mission code with Mission_DirectAscent_LL
     if (mis == 54) {
         pr[0] = pr[1] = pr[2] = pr[3] = 0;
     }
 
+    // Only a USSR Soyuz capsule may attempt a Soyuz Lunar Landing
+    // TODO: Replace mission code with Mission_Soyuz_LL
     if (mis == 57 && plr == 1) {
         pr[0] = pr[1] = pr[3] = pr[4] = 0;
     }
 
+    // Jupiter/Kvartet may not attempt docking missions.
     if (Mis.Doc == 1) {
         pr[4] = 0;
     }
 
 //  if (t==0) {Help("i126"); return 0;};
 
-
     DrawHard(mode, pad, mis, plr);
 
+    // TODO: Move to DrawHard
     if (pr[0] == 0) {
         InBox(81, 100, 158, 114);
     } else {
@@ -897,27 +964,27 @@ int HardRequest(char plr, char mode, char mis, char pad)
                 InBox(83, 102, 156, 112);
                 i = 1;
                 WaitForMouseUp();
-            } // ONE
+            } // Mercury/Vostok
             else if (((x >= 163 && y >= 102 && x <= 236 && y <= 112) || key == '2') && pr[1]) {
                 InBox(163, 102, 236, 112);
                 i = 2;
                 WaitForMouseUp();
-            } // TWO
+            } // Gemini/Voskhod
             else if (((x >= 83 && y >= 119 && x <= 156 && y <= 129) || key == '3') && pr[2]) {
                 InBox(83, 119, 156, 129);
                 i = 3;
                 WaitForMouseUp();
-            } // THREE
+            } // Apollo/Soyuz
             else if (((x >= 163 && y >= 119 && x <= 236 && y <= 129) || key == '4') && pr[3]) {
                 InBox(163, 119, 236, 129);
                 i = 4;
                 WaitForMouseUp();
-            } // FOUR
+            } // XMS-2 / Lapot
             else if (((x >= 123 && y >= 136 && x <= 196 && y <= 146) || key == '5') && pr[4]) {
                 InBox(123, 136, 196, 146);
                 i = 5;
                 WaitForMouseUp();
-            } // FIVE
+            } // Jupiter/Kvartet
             else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(83, 156, 236, 165);
                 WaitForMouseUp();
@@ -939,6 +1006,24 @@ int HardRequest(char plr, char mode, char mis, char pad)
     return i;
 }
 
+
+/* Select the capsule/minishuttle for use on a future manned mission.
+ *
+ * This creates an interface for selecting one of the manned capsule/
+ * minishuttle programs, and returns the chosen program.
+ *
+ * This sets the Prog & Men values for the player's Future mission at
+ * the appropriate pad.
+ *
+ * TODO: Look into changing return values to use the EquipMannedIndex
+ * enum?
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param mode 0 if the primary launch vehicle, 1 if the secondary.
+ * \param mis  The mission code per the MissionValues enum.
+ * \param pad  The pad the manned craft will launch from (0, 1, or 2).
+ * \return  0 if no craft selected, 1+ for the craft index.
+ */
 int SecondHard(char plr, char mode, char mis, char pad)
 {
 
@@ -947,9 +1032,11 @@ int SecondHard(char plr, char mode, char mis, char pad)
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k201";
 
-    for (i = 0; i < 5; i++) if (Data->P[plr].Manned[i].Num >= 0) {
+    for (i = 0; i < 5; i++) {
+        if (Data->P[plr].Manned[i].Num >= 0) {
             men++;
         }
+    }
 
     if (men == 0) {
         Help("i126");
@@ -972,34 +1059,50 @@ int SecondHard(char plr, char mode, char mis, char pad)
 
     GetMisType(mis);
 
-    // exceptions
+    // Exceptions
+    // One-man capsules cannot perform Lunar missions, docking missions.
+    // TODO: Mis.Days value differs from logic in HardRequest
     if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 2 ||
         Data->P[plr].Future[pad].Duration > 2) {
         prog[0] = 0;
     }
 
+    // TODO: Just compare hardware duration with mission duration?
+    // TODO: Check if Mis.Days is indexed the same as
+    //   struct MissionType.Duration?
+
+    // Gemini/Voskhod cannot attempt Duration F
     if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {
         prog[1] = 0;
     }
 
+    // XMS-2 / Lapot cannot attempt Duration E+
+    // TODO: This differs from logic in HardRequest, check Duration
+    // indexing
     if (Data->P[plr].Future[pad].Duration > 4) {
         prog[3] = 0;
     }
 
+    // Only Jupiter/Kvartet can attempt a Direct Ascent Lunar Landing
+    // TODO: Replace mission code with Mission_DirectAscent_LL
     if (mis == 54) {
         prog[0] = prog[1] = prog[2] = prog[3] = 0;
     }
 
+    // Jupiter/Kvartet may not attempt docking missions.
     if (Mis.Doc == 1) {
         prog[4] = 0;
     }
 
+    // Only a USSR Soyuz capsule may attempt a Soyuz Lunar Landing
+    // TODO: Replace mission code with Mission_Soyuz_LL
     if (mis == 57 && plr == 1) {
         prog[0] = prog[1] = prog[3] = prog[4] = 0;
     }
 
     DrawHard(mode, pad, mis, plr);
 
+    // TODO: Move to DrawHard
     if (prog[0] == 0) {
         InBox(81, 100, 158, 114);
     } else {

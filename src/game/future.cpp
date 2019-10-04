@@ -119,7 +119,7 @@ void PlaceRX(int s);
 void ClearRX(int s);
 int UpSearchRout(int num, char plr);
 int DownSearchRout(int num, char plr);
-void DurPri(int x);
+void PrintDuration(int duration);
 void Missions(char plr, int X, int Y, int val, char bub);
 
 
@@ -184,6 +184,8 @@ bool JointMissionOK(char plr, char pad)
  * This relies on the global buffer vh, which must have been created
  * prior. The future missions button art is loaded into vh by this
  * function.
+ *
+ * This modifies the global variable Mis, via Missions().
  *
  * \param plr  The player scheduling the mission's design scheme.
  * \param mis  The mission type.
@@ -360,6 +362,12 @@ int GetMinus(char plr)
     return 0;
 }
 
+/**
+ * Cache a subset of mission data in a local array.
+ *
+ * Populates the global array V with stored mission data.
+ * Writes over the global variable Mis.
+ */
 void SetParameters(void)
 {
     int i;
@@ -557,6 +565,10 @@ void PianoKey(int X)
 
 /* Draw a piechart with 0-6 pieces, filled in clockwise starting at the
  * top.
+ *
+ * This relies on the global buffer vh, which must have been created
+ * prior. The future missions button art is loaded into vh by this
+ * function.
  *
  * \param s  How many slices are filled in on the piechart.
  */
@@ -1005,7 +1017,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (Mis.Dur <= V[MisType].E &&
+            if (DuraType >= V[MisType].E &&
                 ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
@@ -1035,6 +1047,8 @@ void Future(char plr)
                     break;        // return to launchpad loop
                 } else {
                     ClrFut(plr, MisNum);
+                    // Set the Mission code after being cleared.
+                    Data->P[plr].Future[MisNum].MissionCode = MisType;
                     continue;
                 }
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
@@ -1377,17 +1391,18 @@ void Bd(int x, int y)
     return;
 }
 
-/** Print the duration of a mission
+/** Update the selected mission view with the given duration.
  *
- * \param x duration code
+ * \param duration  0 for unmanned, 1-6 for duration A through F
  *
  * \todo Link this at whatever place the duration is actually defined
  */
-void DurPri(int x)
+void PrintDuration(int duration)
 {
+    fill_rectangle(80, 25, 199, 30, 3); // Draw over old duration
     display::graphics.setForegroundColor(5);
 
-    switch (x) {
+    switch (duration) {
     case -1:
         draw_string(112, 30, "NO DURATION");
         break;
@@ -1424,6 +1439,18 @@ void DurPri(int x)
     return;
 }
 
+/* Prints the name of the selected mission.
+ *
+ * This writes the name of the mission associated with the given mission
+ * code
+ *
+ * \note This sets the global variable Mis, via GetMisType().
+ *
+ * \param val  The mission code.
+ * \param xx   The x-coordinates for the name block's upper-left corner.
+ * \param yy   The y-coordinates for the name block's upper-left corner.
+ * \param len  The number of characters at which to start a new line.
+ */
 void MissionName(int val, int xx, int yy, int len)
 {
     TRACE5("->MissionName(val %d, xx %d, yy %d, len %d)", val, xx, yy, len);
@@ -1456,6 +1483,9 @@ void MissionName(int val, int xx, int yy, int len)
 
 /** Missions() will draw the future missions among other things
  *
+ * This modifies the global value Mis. Specifically, it calls
+ * MissionName(), which modifies Mis.
+ *
  * \param plr Player
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
@@ -1473,7 +1503,6 @@ void Missions(char plr, int X, int Y, int val, char bub)
         Bub_Count = 0; // set the initial bub_count
         ClearDisplay();
         fill_rectangle(6, 31, 199, 46, 3);
-        fill_rectangle(80, 25, 199, 30, 3);
         display::graphics.setForegroundColor(5);
         draw_string(55, 30, "TYPE: ");
         draw_number(0, 0, val);
@@ -1481,12 +1510,12 @@ void Missions(char plr, int X, int Y, int val, char bub)
 
         if (V[val].E > 0) {
             if (F5 > V[val].E && V[val].Z == 1) {
-                DurPri(F5);
+                PrintDuration(F5);
             } else {
-                DurPri(V[val].E);
+                PrintDuration(V[val].E);
             }
         } else {
-            DurPri(F5);
+            PrintDuration(F5);
         }
     } else {
         display::graphics.setForegroundColor(1);
