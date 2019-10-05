@@ -19,29 +19,33 @@
  *
  */
 
+#include "future.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 #include "display/legacy_surface.h"
 
-#include "future.h"
 #include <assert.h>
+
 #include "Buzz_inc.h"
-#include "draw.h"
 #include "admin.h"
 #include "crew.h"
+#include "draw.h"
+#include "filesystem.h"
 #include "futbub.h"
 #include "game_main.h"
-#include "mc2.h"
-#include "prest.h"
-#include "mc.h"
-#include "sdlhelper.h"
 #include "gr.h"
+#include "mc.h"
+#include "mc2.h"
 #include "pace.h"
-#include "filesystem.h"
+#include "prest.h"
+#include "sdlhelper.h"
 
-//Used to read steps from missStep.dat
-FILE *MSteps;
+
+LOG_DEFAULT_CATEGORY(future)
+
+
 char missStep[1024];
 static inline char B_Mis(char x)
 {
@@ -53,9 +57,6 @@ A Coded letter, each drawing a different line (1105-1127 for all possible letter
 Numbers following each letter, which are the parameters of the function
 Each line must finish with a Z, so the game stops reading
 Any other char is ignored, but it's easier to read for a human that way */
-
-
-LOG_DEFAULT_CATEGORY(future)
 
 /* The lock, status, and F1-F5 variables are all linked, representing
  * the condition of mission parameter settings. They represent:
@@ -77,8 +78,7 @@ LOG_DEFAULT_CATEGORY(future)
  *   0: if the lockout button is not set
  * 1-6: if locked and the duration is set at 1-6.
  */
-char MisType;
-char status[5], F1, F2, F3, F4, F5, Pad;
+char status[5], F1, F2, F3, F4, F5;
 bool lock[5]; // Record if the mission parameter settings are locked.
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
@@ -88,6 +88,9 @@ struct StepInfo {
     int16_t y_cor;
 } StepBub[MAXBUB];
 
+// TODO: Localize?
+// Used in SetParameter, PianoKeys, UpSearchRout, DownSearchRout, Future,
+// and Missions
 struct {
     char A;   /**< DOCKING */
     char B;   /**< EVA */
@@ -114,13 +117,13 @@ void DrawLocks(void);
 void Toggle(int wh, int i);
 void TogBox(int x, int y, int st);
 void PianoKey(int X);
-void draw_Pie(int s);
+void DrawPie(int s);
 void PlaceRX(int s);
 void ClearRX(int s);
 int UpSearchRout(int num, char plr);
 int DownSearchRout(int num, char plr);
 void PrintDuration(int duration);
-void Missions(char plr, int X, int Y, int val, char bub);
+void Missions(char plr, int X, int Y, int val, int pad, char bub);
 
 
 void Load_FUT_BUT(void)
@@ -239,7 +242,7 @@ void DrawFuture(char plr, int mis, char pad)
 
     // Draw the mission specification toggle buttons
     Toggle(5, 1);
-    draw_Pie(0);
+    DrawPie(0);
     OutBox(5, 49, 53, 72);
     Toggle(1, 1);
     TogBox(55, 49, 0);
@@ -259,7 +262,7 @@ void DrawFuture(char plr, int mis, char pad)
 
     gr_sync();
 
-    Missions(plr, 8, 37, mis, 1);
+    Missions(plr, 8, 37, mis, pad, 1);
 
     GetMinus(plr);
 
@@ -554,7 +557,7 @@ void PianoKey(int X)
         Toggle(5, 1);
         t = (F5 == 0) ? V[X].E : F5;
         assert(0 <= t);
-        draw_Pie(t);
+        DrawPie(t);
         status[0] = t;
     }
 
@@ -572,7 +575,7 @@ void PianoKey(int X)
  *
  * \param s  How many slices are filled in on the piechart.
  */
-void draw_Pie(int s)
+void DrawPie(int s)
 {
     int off;
 
@@ -933,7 +936,7 @@ void Future(char plr)
 {
     /** \todo the whole Future()-function is 500 >lines and unreadable */
     TRACE1("->Future(plr)");
-    int MisNum = 0, DuraType = 0, MaxDur = 6;
+    int pad = 0, DuraType = 0, MaxDur = 6;
     int setting = -1, prev_setting = -1;
 
     display::LegacySurface local(166, 9);
@@ -949,7 +952,7 @@ void Future(char plr)
     JupiterFlag = JupiterInRange(year, season);
     SaturnFlag = SaturnInRange(year, season);
 
-    while ((MisNum = FutureCheck(plr, 0)) != 5) {
+    while ((pad = FutureCheck(plr, 0)) != 5) {
         F1 = F2 = F3 = F4 = F5 = 0;
 
         for (int i = 0; i < 5; i++) {
@@ -959,12 +962,11 @@ void Future(char plr)
 
         keyHelpText = "k011";
         helpText = "i011";
-        Pad = MisNum;
         DuraType = 0;
-        MisType = 0;
-        ClrFut(plr, MisNum);
+        char misType = 0;
+        ClrFut(plr, pad);
 
-        JointFlag = JointMissionOK(plr, MisNum); // initialize joint flag
+        JointFlag = JointMissionOK(plr, pad); // initialize joint flag
 
         if (JointFlag == false) {
             F4 = 2;
@@ -972,7 +974,7 @@ void Future(char plr)
             status[4] = 0;
         }
 
-        DrawFuture(plr, MisType, MisNum);
+        DrawFuture(plr, misType, pad);
 
         while (1) {
             key = 0;
@@ -1017,7 +1019,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (DuraType >= V[MisType].E &&
+            if (DuraType >= V[misType].E &&
                 ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
@@ -1035,20 +1037,20 @@ void Future(char plr)
                 // created listing the options. Once the pop-up is
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
-                int NewType = V[MisType].X;
-                Data->P[plr].Future[MisNum].Duration = DuraType;
+                int NewType = V[misType].X;
+                Data->P[plr].Future[pad].Duration = DuraType;
 
-                int Ok = HardCrewAssign(plr, MisNum, MisType, NewType);
+                int Ok = HardCrewAssign(plr, pad, misType, NewType);
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
                 if (Ok == 1) {
-                    Data->P[plr].Future[MisNum].Duration = DuraType;
+                    Data->P[plr].Future[pad].Duration = DuraType;
                     break;        // return to launchpad loop
                 } else {
-                    ClrFut(plr, MisNum);
+                    ClrFut(plr, pad);
                     // Set the Mission code after being cleared.
-                    Data->P[plr].Future[MisNum].MissionCode = MisType;
+                    Data->P[plr].Future[pad].MissionCode = misType;
                     continue;
                 }
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
@@ -1078,7 +1080,7 @@ void Future(char plr)
                     DuraType++;
                 }
 
-                Data->P[plr].Future[MisNum].Duration = DuraType;
+                Data->P[plr].Future[pad].Duration = DuraType;
 
                 if (DuraType == 0) {
                     Toggle(5, 0);
@@ -1087,7 +1089,7 @@ void Future(char plr)
                 }
 
                 if (DuraType != 0) {
-                    draw_Pie(DuraType);
+                    DrawPie(DuraType);
                 }
 
                 status[0] = DuraType;
@@ -1102,7 +1104,7 @@ void Future(char plr)
 
                 WaitForMouseUp();
 
-                MisType = 0;
+                misType = 0;
 
                 DuraType = F1 = F2 = F3 = F4 = F5 = 0;
 
@@ -1126,8 +1128,8 @@ void Future(char plr)
                 OutBox(117, 74, 127, 82);
                 OutBox(154, 74, 164, 82);
 
-                ClrFut(plr, MisNum);
-                Missions(plr, 8, 37, MisType, 1);
+                ClrFut(plr, pad);
+                Missions(plr, 8, 37, misType, pad, 1);
                 GetMinus(plr);
                 OutBox(5, 74, 41, 82);
 
@@ -1291,23 +1293,23 @@ void Future(char plr)
                     delay(10);
 
                     if (mousebuttons == 0) {
-                        MisType = UpSearchRout(MisType, plr);
-                        Data->P[plr].Future[MisNum].MissionCode = MisType;
+                        misType = UpSearchRout(misType, plr);
+                        Data->P[plr].Future[pad].MissionCode = misType;
                         i = 51;
                     }
                 }
 
                 // Keep scrolling while mouse/key is held down.
                 while (mousebuttons == 1 || key == UP_ARROW) {
-                    MisType = UpSearchRout(MisType, plr);
-                    Data->P[plr].Future[MisNum].MissionCode = MisType;
-                    Missions(plr, 8, 37, MisType, 3);
+                    misType = UpSearchRout(misType, plr);
+                    Data->P[plr].Future[pad].MissionCode = misType;
+                    Missions(plr, 8, 37, misType, pad, 3);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                Missions(plr, 8, 37, MisType, 3);
+                Missions(plr, 8, 37, misType, pad, 3);
                 DuraType = status[0];
                 OutBox(5, 84, 16, 130);
             } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
@@ -1316,13 +1318,13 @@ void Future(char plr)
                 InBox(5, 132, 16, 146);
                 WaitForMouseUp();
                 delay(50);
-                MisType = Data->P[plr].Future[MisNum].MissionCode;
-                assert(0 <= MisType);
+                misType = Data->P[plr].Future[pad].MissionCode;
+                assert(0 <= misType);
 
-                if (MisType != 0) {
-                    Missions(plr, 8, 37, MisType, 1);
+                if (misType != 0) {
+                    Missions(plr, 8, 37, misType, pad, 1);
                 } else {
-                    Missions(plr, 8, 37, MisType, 3);
+                    Missions(plr, 8, 37, misType, pad, 3);
                 }
 
                 OutBox(5, 132, 16, 146);
@@ -1337,8 +1339,8 @@ void Future(char plr)
                     delay(10);
 
                     if (mousebuttons == 0) {
-                        MisType = DownSearchRout(MisType, plr);
-                        Data->P[plr].Future[MisNum].MissionCode = MisType;
+                        misType = DownSearchRout(misType, plr);
+                        Data->P[plr].Future[pad].MissionCode = misType;
                         i = 51;
                     }
 
@@ -1346,15 +1348,15 @@ void Future(char plr)
 
                 // Keep scrolling while mouse/key is held down.
                 while (mousebuttons == 1 || key == DN_ARROW) {
-                    MisType = DownSearchRout(MisType, plr);
-                    Data->P[plr].Future[MisNum].MissionCode = MisType;
-                    Missions(plr, 8, 37, MisType, 3);
+                    misType = DownSearchRout(misType, plr);
+                    Data->P[plr].Future[pad].MissionCode = misType;
+                    Missions(plr, 8, 37, misType, pad, 3);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                Missions(plr, 8, 37, MisType, 3);
+                Missions(plr, 8, 37, misType, pad, 3);
                 DuraType = status[0];
                 OutBox(5, 148, 16, 194);
             }
@@ -1489,12 +1491,13 @@ void MissionName(int val, int xx, int yy, int len)
  * \param plr Player
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
- * \param val mission number
+ * \param val the mission type (MissionType.MissionCode / mStr.Index)
  * \param bub if set to 0 or 3 the function will not draw stuff
  */
-void Missions(char plr, int X, int Y, int val, char bub)
+void Missions(char plr, int X, int Y, int val, int pad, char bub)
 {
-    TRACE5("->Missions(plr, X %d, Y %d, val %d, bub %c)", X, Y, val, bub);
+    TRACE6("->Missions(plr, X %d, Y %d, val %d, int %d, bub %c)",
+           X, Y, val, pad, bub);
 
     memset(Mev, 0x00, sizeof Mev);
 
@@ -1532,10 +1535,10 @@ void Missions(char plr, int X, int Y, int val, char bub)
         return;
     }
 
+    // Read steps from missStep.dat
+    FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
 
-    MSteps = sOpen("missSteps.dat", "r", FT_DATA);
-
-    if (fgets(missStep, 1024, MSteps) == NULL) {
+    if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
         memset(missStep, 0, sizeof missStep);
     }
 
@@ -1547,9 +1550,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
 
     fclose(MSteps);
 
-    int n;
-
-    for (n = 2; missStep[n] != 'Z'; n++) {
+    for (int n = 2; missStep[n] != 'Z'; n++) {
         switch (missStep[n]) {
         case 'A':
             Draw_IJ(B_Mis(++n));
@@ -1662,7 +1663,7 @@ void Missions(char plr, int X, int Y, int val, char bub)
     }
 
     gr_sync();
-    MissionCodes(plr, MisType, Pad);
+    MissionCodes(plr, val, pad);
     TRACE1("<-Missions()");
 }  // end function missions
 
