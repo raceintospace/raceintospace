@@ -883,8 +883,12 @@ void MissionSetDown(char plr, char mis)
 /**
  * Apply duration penalty to mission steps in manned missions.
  *
+ * TODO: This functionality appears to have been appropriated by
+ * MisSkip, via PrestMin(). This needs to be verified, and if so, it
+ * should be removed completely.
+ *
  * \param plr current player
- * \param dur mission duration in days
+ * \param dur mission duration in duration level (A-F).
  */
 void
 MisDur(char plr, char dur)
@@ -934,6 +938,10 @@ MisDur(char plr, char dur)
 
 /**
  * Compute and apply safety penalties to mission steps.
+ *
+ * TODO: This takes a parameter ms, used originally to determine the
+ * maximum prestige requirement of the mission. However, it's no
+ * longer used, and should be removed.
  *
  * \param plr current player
  */

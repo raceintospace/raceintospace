@@ -278,11 +278,21 @@ int Launch(char plr, char mis)
         MisPrt();
     }
 
-    MisDur(plr, Data->P[plr].Mission[mis].Duration);
+    // MisSkip is based on PrestMin, which calculates penalties for both
+    // prestige goals _and_ duration penalties. Consequently, having a
+    // distinct MisDur function to add duration penalties results in
+    // a double penalty problem. I believe this to be the result of
+    // old code, where skipped prestige steps (MisSkip) were applied
+    // separately of duration penalties (MisDur). However, at some
+    // point the method of computing prestige penalties, PrestMin(),
+    // got used for both. However, the history of this lies back beyond
+    // the First Commit -- rnyoakum
+    MisSkip(plr, Find_MaxGoal());
+    // MisDur(plr, Data->P[plr].Mission[mis].Duration);
 
-    if (MANNED[0] > 0 || MANNED[1] > 0 || mcode == 1 || mcode == 7 || mcode == 8) {
-        MisSkip(plr, Find_MaxGoal());
-    }
+    // if (MANNED[0] > 0 || MANNED[1] > 0 || mcode == 1 || mcode == 7 || mcode == 8) {
+    //     MisSkip(plr, Find_MaxGoal());
+    // }
 
     MisRush(plr, Data->P[plr].Mission[mis].Rushing);
     STEPnum = 0;
