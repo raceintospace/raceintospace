@@ -85,16 +85,6 @@ set(game_libraries
   raceintospace_protobuf
   )
 
-# Define one big test suite
-file(GLOB test_sources ../../test/game/*.cpp)
-add_executable(game_test ../../test/test_main.cpp ${test_sources})
-set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
-target_link_libraries(game_test ${game_libraries})
-add_test(
-  NAME game_test
-  COMMAND game_test --catch_system_error=yes
-  )
-
 # Defer to the platform-specific CMakeLists for building the actual game target
 if (APPLE)
   include(platform_macosx/platform.cmake)
@@ -103,3 +93,21 @@ elseif (WINDOWS)
 else()
   include(platform_misc/platform.cmake)
 endif()
+
+# Run this after the platform includes so ${game_sources} will be
+# populated with platform-specific files.
+# Not using (file GLOB ...) because CMake documentation recommends
+# against it (https://cmake.org/cmake/help/v3.14/command/file.html)
+set(test_dir ${PROJECT_SOURCE_DIR}/test)
+set(test_sources
+  ${test_dir}/game/dummy_test.cpp
+  ${test_dir}/game/roster_test.cpp
+  )
+
+add_executable(game_test ../../test/test_main.cpp ${test_sources} ${game_sources})
+set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
+target_link_libraries(game_test ${game_libraries})
+add_test(
+  NAME game_test
+  COMMAND game_test --catch_system_errors=yes
+  )

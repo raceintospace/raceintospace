@@ -6,14 +6,16 @@ add_definitions(-DCONFIG_WIN32)
 # until after we started the build process.
 add_definitions(-DHAVE_SDL_GETENV)
 
-# Make sure we can fine fake_unistd.h
+# Make sure we can find fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
+
+# Add the platform-specific source files needed for testing
+list(APPEND game_sources music_vorbis.cpp)
 
 set(app "Race Into Space")
 
 add_executable(${app}
   ${game_sources}
-  music_vorbis.cpp
   platform_windows/dirent.c
   platform_windows/main.c
   )

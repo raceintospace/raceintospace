@@ -2,14 +2,16 @@
 # until after we started the build process.
 add_definitions(-DHAVE_SDL_GETENV)
 
-# Make sure we can fine fake_unistd.h
+# Make sure we can find fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_misc)
+
+# Add the platform-specific source files needed for testing
+list(APPEND game_sources music_vorbis.cpp)
 
 set(app "raceintospace")
 
 add_executable(${app}
   ${game_sources}
-  music_vorbis.cpp
   platform_misc/main.c
   )
 
@@ -20,5 +22,3 @@ install(TARGETS raceintospace DESTINATION bin)
 
 file(GLOB data_dirs "${PROJECT_SOURCE_DIR}/data/*")
 install(DIRECTORY ${data_dirs} DESTINATION share/raceintospace) 
-
-
