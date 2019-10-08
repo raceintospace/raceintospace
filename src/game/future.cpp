@@ -36,6 +36,7 @@
 #include "futbub.h"
 #include "game_main.h"
 #include "gr.h"
+#include "ioexception.h"
 #include "mc.h"
 #include "mc2.h"
 #include "pace.h"
@@ -88,18 +89,10 @@ struct StepInfo {
     int16_t y_cor;
 } StepBub[MAXBUB];
 
-// TODO: Localize?
-// Used in SetParameter, PianoKeys, UpSearchRout, DownSearchRout, Future,
-// and Missions
-struct {
-    char A;   /**< DOCKING */
-    char B;   /**< EVA */
-    char C;   /**< LEM */
-    char D;   /**< JOINT */
-    char E;     /**< MANNED/UNMANNED/Duration 0==unmanned 1-6==duration */
-    char X;     /**< the type of mission for assign crew and hardware */
-    char Z;   /**< A duration mission only */
-} V[62];
+// TODO: Localize this. Too many global/file global variables.
+// Used in SetParameters, PianoKeys, UpSearchRout, DownSearchRout, Future,
+// and DrawMission
+std::vector<struct mStr> missionData;
 
 extern int SEG;
 
@@ -123,7 +116,7 @@ void ClearRX(int s);
 int UpSearchRout(int num, char plr);
 int DownSearchRout(int num, char plr);
 void PrintDuration(int duration);
-void Missions(char plr, int X, int Y, int val, int pad, char bub);
+void DrawMission(char plr, int X, int Y, int val, int pad, char bub);
 
 
 void Load_FUT_BUT(void)
@@ -185,10 +178,10 @@ bool JointMissionOK(char plr, char pad)
  * interface.
  *
  * This relies on the global buffer vh, which must have been created
- * prior. The future missions button art is loaded into vh by this
+ * prior. The Future Missions button art is loaded into vh by this
  * function.
  *
- * This modifies the global variable Mis, via Missions().
+ * This modifies the global variable Mis, via DrawMission().
  *
  * \param plr  The player scheduling the mission's design scheme.
  * \param mis  The mission type.
@@ -262,7 +255,7 @@ void DrawFuture(char plr, int mis, char pad)
 
     gr_sync();
 
-    Missions(plr, 8, 37, mis, pad, 1);
+    DrawMission(plr, 8, 37, mis, pad, 1);
 
     GetMinus(plr);
 
@@ -368,24 +361,29 @@ int GetMinus(char plr)
 /**
  * Cache a subset of mission data in a local array.
  *
- * Populates the global array V with stored mission data.
- * Writes over the global variable Mis.
+ * Populates the global array missionData with stored mission data.
  */
 void SetParameters(void)
 {
-    int i;
-    FILE *fin;
-    fin = sOpen("MISSION.DAT", "rb", 0);
+    if (! missionData.empty()) {
+        return;
+    }
 
-    for (i = 0; i < 62; i++) {
-        fread(&Mis, sizeof Mis, 1, fin);
-        V[i].A = Mis.Doc;
-        V[i].B = Mis.EVA;
-        V[i].C = Mis.LM;
-        V[i].D = Mis.Jt;
-        V[i].E = Mis.Days;
-        V[i].X = Mis.mCrew;
-        V[i].Z = Mis.Dur;
+    FILE *fin = sOpen("MISSION.DAT", "rb", 0);
+
+    if (fin == NULL) {
+        throw IOException("Could not open MISSION.DAT");
+    }
+
+    for (int i = 0; i < 62; i++) {
+        struct mStr entry;
+
+        if (fread(&entry, sizeof entry, 1, fin) != 1) {
+            missionData.clear();
+            throw IOException("Error reading entry in MISSION.DAT");
+        }
+
+        missionData.push_back(entry);
     }
 
     fclose(fin);
@@ -511,7 +509,7 @@ void PianoKey(int X)
     int t;
 
     if (F1 == 0) {
-        if (V[X].A == 1) {
+        if (missionData[X].Doc == 1) {
             Toggle(1, 1);
             status[1] = 1;
         } else {
@@ -521,7 +519,7 @@ void PianoKey(int X)
     }
 
     if (F2 == 0) {
-        if (V[X].B == 1) {
+        if (missionData[X].EVA == 1) {
             Toggle(2, 1);
             status[2] = 1;
         } else {
@@ -531,7 +529,7 @@ void PianoKey(int X)
     }
 
     if (F3 == 0) {
-        if (V[X].C == 1) {
+        if (missionData[X].LM == 1) {
             Toggle(3, 1);
             status[3] = 1;
         } else {
@@ -541,7 +539,7 @@ void PianoKey(int X)
     }
 
     if (F4 == 0) {
-        if (V[X].D == 1) {
+        if (missionData[X].Jt == 1) {
             Toggle(4, 0);
             status[4] = 1;
         } else {
@@ -550,12 +548,12 @@ void PianoKey(int X)
         }
     }
 
-    if (F5 == -1 || (F5 == 0 && V[X].E == 0)) {
+    if (F5 == -1 || (F5 == 0 && missionData[X].Days == 0)) {
         Toggle(5, 0);
         status[0] = 0;
     } else {
         Toggle(5, 1);
-        t = (F5 == 0) ? V[X].E : F5;
+        t = (F5 == 0) ? missionData[X].Days : F5;
         assert(0 <= t);
         DrawPie(t);
         status[0] = t;
@@ -570,7 +568,7 @@ void PianoKey(int X)
  * top.
  *
  * This relies on the global buffer vh, which must have been created
- * prior. The future missions button art is loaded into vh by this
+ * prior. The Future Missions button art is loaded into vh by this
  * function.
  *
  * \param s  How many slices are filled in on the piechart.
@@ -678,7 +676,8 @@ void ClearRX(int s)
 
 int UpSearchRout(int num, char plr)
 {
-    int found = 0, orig, c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
+    int found = 0, orig;
+    int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
     orig = num;
 
     if (num >= 56 + plr) {
@@ -697,58 +696,59 @@ int UpSearchRout(int num, char plr)
         c7 = 1;
         c8 = 1;
 
-        if (F1 == V[num].A) {
+        if (F1 == missionData[num].Doc) {
             c1 = 1;    /* condition one is true */
         }
 
-        if (F1 == 0 && V[num].A == 1) {
+        if (F1 == 0 && missionData[num].Doc == 1) {
             c1 = 1;
         }
 
-        if (F1 == 2 && V[num].A == 0) {
+        if (F1 == 2 && missionData[num].Doc == 0) {
             c1 = 1;
         }
 
-        if (F2 == V[num].B) {
+        if (F2 == missionData[num].EVA) {
             c2 = 1;    /* condition two is true */
         }
 
-        if (F2 == 0 && V[num].B == 1) {
+        if (F2 == 0 && missionData[num].EVA == 1) {
             c2 = 1;
         }
 
-        if (F2 == 2 && V[num].B == 0) {
+        if (F2 == 2 && missionData[num].EVA == 0) {
             c2 = 1;
         }
 
-        if (F3 == V[num].C) {
+        if (F3 == missionData[num].LM) {
             c3 = 1;    /* condition three is true */
         }
 
-        if (F3 == 0 && V[num].C == 1) {
+        if (F3 == 0 && missionData[num].LM == 1) {
             c3 = 1;
         }
 
-        if (F3 == 2 && V[num].C == 0) {
+        if (F3 == 2 && missionData[num].LM == 0) {
             c3 = 1;
         }
 
-        if (F4 == V[num].D) {
+        if (F4 == missionData[num].Jt) {
             c4 = 1;    /* condition four is true */
         }
 
-        if (F4 == 0 && V[num].D == 1) {
+        if (F4 == 0 && missionData[num].Jt == 1) {
             c4 = 1;
         }
 
-        if (F4 == 2 && V[num].D == 0) {
+        if (F4 == 2 && missionData[num].Jt == 0) {
             c4 = 1;
         }
 
         if (num == 0) {
             c5 = 1;
         } else {
-            if (F5 == -1 && V[num].Z == 0 && V[num].E == 0) {
+            if (F5 == -1 && missionData[num].Dur == 0 &&
+                missionData[num].Days == 0) {
                 c5 = 1;
             }
 
@@ -756,11 +756,11 @@ int UpSearchRout(int num, char plr)
                 c5 = 1;
             }
 
-            if (F5 > 1 && V[num].Z == 1) {
+            if (F5 > 1 && missionData[num].Dur == 1) {
                 c5 = 1;
             }
 
-            if (F5 == V[num].E) {
+            if (F5 == missionData[num].Days) {
                 c5 = 1;
             }
         }
@@ -805,7 +805,8 @@ int UpSearchRout(int num, char plr)
 
 int DownSearchRout(int num, char plr)
 {
-    int found = 0, orig, c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
+    int found = 0, orig;
+    int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
     orig = num;
 
     if (num <= 0) {
@@ -824,58 +825,59 @@ int DownSearchRout(int num, char plr)
         c7 = 1;
         c8 = 1;
 
-        if (F1 == V[num].A) {
+        if (F1 == missionData[num].Doc) {
             c1 = 1;
         }
 
-        if (F1 == 0 && V[num].A == 1) {
+        if (F1 == 0 && missionData[num].Doc == 1) {
             c1 = 1;    /* condition one is true */
         }
 
-        if (F1 == 2 && V[num].A == 0) {
+        if (F1 == 2 && missionData[num].Doc == 0) {
             c1 = 1;
         }
 
-        if (F2 == V[num].B) {
+        if (F2 == missionData[num].EVA) {
             c2 = 1;    /* condition two is true */
         }
 
-        if (F2 == 0 && V[num].B == 1) {
+        if (F2 == 0 && missionData[num].EVA == 1) {
             c2 = 1;    /* condition one is true */
         }
 
-        if (F2 == 2 && V[num].B == 0) {
+        if (F2 == 2 && missionData[num].EVA == 0) {
             c2 = 1;
         }
 
-        if (F3 == V[num].C) {
+        if (F3 == missionData[num].LM) {
             c3 = 1;    /* condition three is true */
         }
 
-        if (F3 == 0 && V[num].C == 1) {
+        if (F3 == 0 && missionData[num].LM == 1) {
             c3 = 1;    /* condition one is true */
         }
 
-        if (F3 == 2 && V[num].C == 0) {
+        if (F3 == 2 && missionData[num].LM == 0) {
             c3 = 1;
         }
 
-        if (F4 == V[num].D) {
+        if (F4 == missionData[num].Jt) {
             c4 = 1;    /* condition four is true */
         }
 
-        if (F4 == 0 && V[num].D == 1) {
+        if (F4 == 0 && missionData[num].Jt == 1) {
             c4 = 1;    /* condition one is true */
         }
 
-        if (F4 == 2 && V[num].D == 0) {
+        if (F4 == 2 && missionData[num].Jt == 0) {
             c4 = 1;
         }
 
         if (num == 0) {
             c5 = 1;
         } else {
-            if (F5 == -1 && V[num].Z == 0 && V[num].E == 0) {
+            if (F5 == -1 && missionData[num].Dur == 0 &&
+                missionData[num].Days == 0) {
                 c5 = 1;    // locked on zero duration
             }
 
@@ -883,11 +885,11 @@ int DownSearchRout(int num, char plr)
                 c5 = 1;    // nothing set
             }
 
-            if (F5 > 1 && V[num].Z == 1) {
+            if (F5 > 1 && missionData[num].Dur == 1) {
                 c5 = 1;    // set duration with duration mission
             }
 
-            if (F5 == V[num].E) {
+            if (F5 == missionData[num].Days) {
                 c5 = 1;    // the duration is equal to what is preset
             }
         }
@@ -947,7 +949,13 @@ void Future(char plr)
     unsigned int season = Data->Season;
     TRACE3("--- Setting year=Year (%d), season=Season (%d)", year, season);
 
-    SetParameters();
+    try {
+        SetParameters();
+    } catch (IOException &err) {
+        CRITICAL1(err.what());
+        return;
+    }
+
     MarsFlag = MarsInRange(year, season);
     JupiterFlag = JupiterInRange(year, season);
     SaturnFlag = SaturnInRange(year, season);
@@ -1019,7 +1027,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (DuraType >= V[misType].E &&
+            if (DuraType >= missionData[misType].Days &&
                 ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
@@ -1037,7 +1045,7 @@ void Future(char plr)
                 // created listing the options. Once the pop-up is
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
-                int NewType = V[misType].X;
+                int NewType = missionData[misType].mCrew;
                 Data->P[plr].Future[pad].Duration = DuraType;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
@@ -1129,7 +1137,7 @@ void Future(char plr)
                 OutBox(154, 74, 164, 82);
 
                 ClrFut(plr, pad);
-                Missions(plr, 8, 37, misType, pad, 1);
+                DrawMission(plr, 8, 37, misType, pad, 1);
                 GetMinus(plr);
                 OutBox(5, 74, 41, 82);
 
@@ -1303,13 +1311,13 @@ void Future(char plr)
                 while (mousebuttons == 1 || key == UP_ARROW) {
                     misType = UpSearchRout(misType, plr);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    Missions(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                Missions(plr, 8, 37, misType, pad, 3);
+                DrawMission(plr, 8, 37, misType, pad, 3);
                 DuraType = status[0];
                 OutBox(5, 84, 16, 130);
             } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
@@ -1322,9 +1330,9 @@ void Future(char plr)
                 assert(0 <= misType);
 
                 if (misType != 0) {
-                    Missions(plr, 8, 37, misType, pad, 1);
+                    DrawMission(plr, 8, 37, misType, pad, 1);
                 } else {
-                    Missions(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3);
                 }
 
                 OutBox(5, 132, 16, 146);
@@ -1350,13 +1358,13 @@ void Future(char plr)
                 while (mousebuttons == 1 || key == DN_ARROW) {
                     misType = DownSearchRout(misType, plr);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    Missions(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                Missions(plr, 8, 37, misType, pad, 3);
+                DrawMission(plr, 8, 37, misType, pad, 3);
                 DuraType = status[0];
                 OutBox(5, 148, 16, 194);
             }
@@ -1455,7 +1463,8 @@ void PrintDuration(int duration)
  */
 void MissionName(int val, int xx, int yy, int len)
 {
-    TRACE5("->MissionName(val %d, xx %d, yy %d, len %d)", val, xx, yy, len);
+    TRACE5("->MissionName(val %d, xx %d, yy %d, len %d)",
+           val, xx, yy, len);
     int i, j = 0;
 
     GetMisType(val);
@@ -1483,7 +1492,10 @@ void MissionName(int val, int xx, int yy, int len)
     return;
 }
 
-/** Missions() will draw the future missions among other things
+/**
+ * Update the mission display to reflect the given mission, including
+ * the Type, name, duration, navigation buttons, and, if selected,
+ * flight path.
  *
  * This modifies the global value Mis. Specifically, it calls
  * MissionName(), which modifies Mis.
@@ -1492,11 +1504,12 @@ void MissionName(int val, int xx, int yy, int len)
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
  * \param val the mission type (MissionType.MissionCode / mStr.Index)
+ * \param pad the pad (0, 1, or 2) where the mission is being launched.
  * \param bub if set to 0 or 3 the function will not draw stuff
  */
-void Missions(char plr, int X, int Y, int val, int pad, char bub)
+void DrawMission(char plr, int X, int Y, int val, int pad, char bub)
 {
-    TRACE6("->Missions(plr, X %d, Y %d, val %d, int %d, bub %c)",
+    TRACE6("->DrawMission(plr, X %d, Y %d, val %d, int %d, bub %c)",
            X, Y, val, pad, bub);
 
     memset(Mev, 0x00, sizeof Mev);
@@ -1512,11 +1525,11 @@ void Missions(char plr, int X, int Y, int val, int pad, char bub)
         draw_number(0, 0, val);
         display::graphics.setForegroundColor(5);
 
-        if (V[val].E > 0) {
-            if (F5 > V[val].E && V[val].Z == 1) {
+        if (missionData[val].Days > 0) {
+            if (F5 > missionData[val].Days && missionData[val].Dur == 1) {
                 PrintDuration(F5);
             } else {
-                PrintDuration(V[val].E);
+                PrintDuration(missionData[val].Days);
             }
         } else {
             PrintDuration(F5);
@@ -1664,7 +1677,7 @@ void Missions(char plr, int X, int Y, int val, int pad, char bub)
 
     gr_sync();
     MissionCodes(plr, val, pad);
-    TRACE1("<-Missions()");
-}  // end function missions
+    TRACE1("<-DrawMission()");
+}  // end function DrawMission
 
 /* vim: set noet ts=4 sw=4 tw=77: */
