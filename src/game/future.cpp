@@ -37,6 +37,7 @@
 #include "game_main.h"
 #include "gr.h"
 #include "ioexception.h"
+#include "logging.h"
 #include "mc.h"
 #include "mc2.h"
 #include "pace.h"
@@ -47,40 +48,18 @@
 LOG_DEFAULT_CATEGORY(future)
 
 
-char missStep[1024];
-static inline char B_Mis(char x)
-{
-    return missStep[x] - 0x30;
-}
 /*missStep.dat is plain text, with:
 Mission Number (2 first bytes of each line)
 A Coded letter, each drawing a different line (1105-1127 for all possible letters)
 Numbers following each letter, which are the parameters of the function
 Each line must finish with a Z, so the game stops reading
 Any other char is ignored, but it's easier to read for a human that way */
+char missStep[1024];
+static inline char B_Mis(char x)
+{
+    return missStep[x] - 0x30;
+}
 
-/* The lock, status, and F1-F5 variables are all linked, representing
- * the condition of mission parameter settings. They represent:
- *   0: Mission Duration
- *   1: Docking status
- *   2: EVA status
- *   3: Lunar Module status
- *   4: Joint Mission status
- * F5 is an exception to the normal ordering, being tied to the mission
- * duration.
- * status[] tells the state of the mission parameter button.
- * lock[] tells the state of the lockout buttons.
- * F1-F4 are
- *   0: if the lockout button is not set
- *   1: if locked and the mission parameter is required
- *   2: if locked and the mission parameter is required to be absent.
- * F5 is
- *  -1: if locked and unmanned
- *   0: if the lockout button is not set
- * 1-6: if locked and the duration is set at 1-6.
- */
-char status[5], F1, F2, F3, F4, F5;
-bool lock[5]; // Record if the mission parameter settings are locked.
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
 
@@ -89,12 +68,27 @@ struct StepInfo {
     int16_t y_cor;
 } StepBub[MAXBUB];
 
-// TODO: Localize this. Too many global/file global variables.
-// Used in SetParameters, PianoKeys, UpSearchRout, DownSearchRout, Future,
-// and DrawMission
+// TODO: Localize these. Too many global/file global variables.
+/* Used in SetParameters, PianoKey, UpSearchRout, DownSearchRout, Future,
+ * and DrawMission
+ */
 std::vector<struct mStr> missionData;
 
 extern int SEG;
+
+
+/**
+ * Hold the mission parameters used for searching mission by their
+ * characteristics.
+ */
+struct MissionNavigator {
+    struct NavButton {
+        int value;
+        bool lock;
+    };
+
+    NavButton duration, docking, EVA, LM, joint;
+};
 
 
 void Load_FUT_BUT(void);
@@ -102,23 +96,29 @@ bool MarsInRange(unsigned int year, unsigned int season);
 bool JupiterInRange(unsigned int year, unsigned int season);
 bool SaturnInRange(unsigned int year, unsigned int season);
 bool JointMissionOK(char plr, char pad);
-void DrawFuture(char plr, int mis, char pad);
+void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
 void ClearDisplay(void);
 int GetMinus(char plr);
 void SetParameters(void);
-void DrawLocks(void);
+void DrawLocks(const MissionNavigator &nav);
 void Toggle(int wh, int i);
 void TogBox(int x, int y, int st);
-void PianoKey(int X);
+void PianoKey(int X, MissionNavigator &nav);
 void DrawPie(int s);
 void PlaceRX(int s);
 void ClearRX(int s);
-int UpSearchRout(int num, char plr);
-int DownSearchRout(int num, char plr);
+bool NavMatch(const MissionNavigator &nav, const struct mStr &mission);
+void NavReset(MissionNavigator &nav);
+int UpSearchRout(int num, char plr, const MissionNavigator &navigator);
+int DownSearchRout(int num, char plr, const MissionNavigator &navigator);
 void PrintDuration(int duration);
-void DrawMission(char plr, int X, int Y, int val, int pad, char bub);
+void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
+                 MissionNavigator &navigator);
 
 
+/* TODO: Documentation...
+ *
+ */
 void Load_FUT_BUT(void)
 {
     FILE *fin;
@@ -129,6 +129,7 @@ void Load_FUT_BUT(void)
     RLED_img(display::graphics.legacyScreen()->pixels(), vh->pixels(), i, vh->width(), vh->height());
     return;
 }
+
 
 /* Is Mars at the right point in its orbit where a rocket launched at
  * the given time will be able to intercept it?
@@ -141,6 +142,7 @@ bool MarsInRange(unsigned int year, unsigned int season)
             (year == 73 && season == 1));
 }
 
+
 /* Is Jupiter at the right point in its orbit where a rocket launched
  * at the given time will be able to intercept it?
  */
@@ -150,6 +152,7 @@ bool JupiterInRange(unsigned int year, unsigned int season)
             year == 73 || year == 77);
 }
 
+
 /* Is Saturn at the right point in its orbit where a rocket launched
  * at the given time will be able to intercept it?
  */
@@ -157,6 +160,7 @@ bool SaturnInRange(unsigned int year, unsigned int season)
 {
     return (year == 61 || year == 66 || year == 72);
 }
+
 
 /* Is there room among the launch pads to schedule a joint mission,
  * with the given pad being the first part?
@@ -173,6 +177,7 @@ bool JointMissionOK(char plr, char pad)
             (Data->P[plr].Future[pad + 1].part == 1));
 }
 
+
 /* Draws the entire Future Missions display, including the mission-
  * specific information. Used to initialize the mission selector
  * interface.
@@ -187,7 +192,7 @@ bool JointMissionOK(char plr, char pad)
  * \param mis  The mission type.
  * \param pad  0, 1, or 2 depending on which pad is being used.
  */
-void DrawFuture(char plr, int mis, char pad)
+void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
 {
     FadeOut(2, 10, 0, 0);
     Load_FUT_BUT();
@@ -255,7 +260,7 @@ void DrawFuture(char plr, int mis, char pad)
 
     gr_sync();
 
-    DrawMission(plr, 8, 37, mis, pad, 1);
+    DrawMission(plr, 8, 37, mis, pad, 1, nav);
 
     GetMinus(plr);
 
@@ -299,6 +304,7 @@ void DrawFuture(char plr, int mis, char pad)
     return;
 }
 
+
 /* Draws the mission starfield. The background depicts any heavenly
  * bodies reachable by an interplanetary mission. Earth, the Moon,
  * Venus, and Mercury are always shown. Depending on the current year
@@ -328,6 +334,10 @@ void ClearDisplay(void)
     return;
 }
 
+
+/* TODO: Documentation...
+ *
+ */
 int GetMinus(char plr)
 {
     char i;
@@ -390,8 +400,16 @@ void SetParameters(void)
     return;
 }
 
-void DrawLocks(void)
+/* TODO: Documentation...
+ *
+ * \param nav TODO.
+ */
+void DrawLocks(const MissionNavigator &nav)
 {
+    bool lock[5] = { nav.duration.lock, nav.docking.lock, nav.EVA.lock,
+                     nav.LM.lock, nav.joint.lock
+                   };
+
     for (int i = 0; i < 5; i++) {
         if (lock[i] == true) {
             PlaceRX(i + 1);
@@ -472,6 +490,7 @@ void Toggle(int wh, int i)
     return;
 }
 
+
 /* Draws a notched box outline for a mission parameter button.
  *
  * This is a custom form of the standard InBox/OutBox functions, using
@@ -501,68 +520,52 @@ void TogBox(int x, int y, int st)
     return;
 }
 
-/*
+
+/* Set the mission navigation buttons to match the parameters of the
+ * chosen mission.
+ *
+ * \param X  the mission code (mStr.Index or MissionType.MissionCode).
+ * \param nav TODO.
  */
-void PianoKey(int X)
+void PianoKey(int X, MissionNavigator &nav)
 {
     TRACE2("->PianoKey(X %d)", X);
-    int t;
 
-    if (F1 == 0) {
-        if (missionData[X].Doc == 1) {
-            Toggle(1, 1);
-            status[1] = 1;
-        } else {
-            Toggle(1, 0);
-            status[1] = 0;
+    if (! nav.docking.lock) {
+        nav.docking.value = missionData[X].Doc;
+        Toggle(1, nav.docking.value);
+    }
+
+    if (! nav.EVA.lock) {
+        nav.EVA.value = missionData[X].EVA;
+        Toggle(2, nav.EVA.value);
+    }
+
+    if (! nav.LM.lock) {
+        nav.LM.value = missionData[X].LM;
+        Toggle(3, nav.LM.value);
+    }
+
+    if (! nav.joint.lock) {
+        nav.joint.value = missionData[X].Jt;
+        Toggle(4, nav.joint.value ? 0 : 1);
+    }
+
+    if (! nav.duration.lock) {
+        nav.duration.value = missionData[X].Days;
+        assert(nav.duration.value >= 0);
+        Toggle(5, nav.duration.value ? 1 : 0);
+
+        if (nav.duration.value) {
+            DrawPie(nav.duration.value);
         }
     }
 
-    if (F2 == 0) {
-        if (missionData[X].EVA == 1) {
-            Toggle(2, 1);
-            status[2] = 1;
-        } else {
-            Toggle(2, 0);
-            status[2] = 0;
-        }
-    }
-
-    if (F3 == 0) {
-        if (missionData[X].LM == 1) {
-            Toggle(3, 1);
-            status[3] = 1;
-        } else {
-            Toggle(3, 0);
-            status[3] = 0;
-        }
-    }
-
-    if (F4 == 0) {
-        if (missionData[X].Jt == 1) {
-            Toggle(4, 0);
-            status[4] = 1;
-        } else {
-            Toggle(4, 1);
-            status[4] = 0;
-        }
-    }
-
-    if (F5 == -1 || (F5 == 0 && missionData[X].Days == 0)) {
-        Toggle(5, 0);
-        status[0] = 0;
-    } else {
-        Toggle(5, 1);
-        t = (F5 == 0) ? missionData[X].Days : F5;
-        assert(0 <= t);
-        DrawPie(t);
-        status[0] = t;
-    }
-
-    DrawLocks();
+    DrawLocks(nav);
     TRACE1("<-PianoKey()");
     return;
 }
+
 
 /* Draw a piechart with 0-6 pieces, filled in clockwise starting at the
  * top.
@@ -570,6 +573,8 @@ void PianoKey(int X)
  * This relies on the global buffer vh, which must have been created
  * prior. The Future Missions button art is loaded into vh by this
  * function.
+ *
+ * TODO: Check to ensure 0 <= s <= 6.
  *
  * \param s  How many slices are filled in on the piechart.
  */
@@ -587,16 +592,19 @@ void DrawPie(int s)
     return;
 }
 
+
 /* Draws a restriction (lock) button in its active (restricted) state.
  * The restriction button indicates whether the linked mission parameter
  * setting may be modified.
  *
- * The button index is related to the global lock variable, but offset.
+ * The button index is:
  *   1: Mission Duration
  *   2: Docking status
  *   3: EVA status
  *   4: Lunar Module status
  *   5: Joint Mission status
+ *
+ * TODO: Edit parameters to use the same values as Toggle, etc.
  *
  * \param s  The button index.
  */
@@ -634,13 +642,14 @@ void PlaceRX(int s)
  * state. The restriction button indicates whether the linked mission
  * parameter setting may be modified.
  *
- * The buttons are related to the global lock variable, but
- * offset.
+ * The button index is:
  *   1: Mission Duration
  *   2: Docking status
  *   3: EVA status
  *   4: Lunar Module status
  *   5: Joint Mission status
+ *
+ * TODO: Use the same parameter input as Toggle, etc.
  *
  * \param s  The button index.
  */
@@ -674,263 +683,124 @@ void ClearRX(int s)
     return;
 }
 
-int UpSearchRout(int num, char plr)
-{
-    int found = 0, orig;
-    int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
-    orig = num;
 
-    if (num >= 56 + plr) {
+/**
+ * Determine if the mission is compatible with the requirements locked
+ * in the navigator.
+ *
+ * \param nav a navigator object with locked values for required fields.
+ * \param mission a mission template.
+ * \return false if any of the locked navigator values contradict a
+ *         mission parameter, true otherwise.
+ */
+bool NavMatch(const MissionNavigator &nav, const struct mStr &mission)
+{
+    return (! nav.docking.lock || nav.docking.value == mission.Doc) &&
+           (! nav.EVA.lock || nav.EVA.value == mission.EVA) &&
+           (! nav.LM.lock || nav.LM.value == mission.LM) &&
+           (! nav.joint.lock || nav.joint.value == mission.Jt) &&
+           (! nav.duration.lock || nav.duration.value == mission.Days ||
+            (mission.Dur && nav.duration.value >= mission.Days));
+}
+
+
+/**
+ * Reset all values in the mission navigator to 0 and release all locks.
+ *
+ * \param nav A set of mission parameters to be cleared.
+ */
+void NavReset(MissionNavigator &nav)
+{
+    nav.duration.value = 0;
+    nav.docking.value = 0;
+    nav.EVA.value = 0;
+    nav.LM.value = 0;
+    nav.joint.value = 0;
+    nav.duration.lock = false;
+    nav.docking.lock = false;
+    nav.EVA.lock = false;
+    nav.LM.lock = false;
+    nav.joint.lock = false;
+}
+
+
+
+/* TODO: Documentation...
+ *
+ * TODO: This can be tightened up...
+ */
+int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
+{
+    bool found = false;
+    int orig = num;
+
+    if (++num >= 56 + plr) {
         num = 0;
-    } else {
-        num++;
     }
 
-    while (found == 0) {
-        c1 = 0;
-        c2 = 0;
-        c3 = 0;
-        c4 = 0;
-        c5 = 0;
-        c6 = 1;
-        c7 = 1;
-        c8 = 1;
+    while (! found) {
 
-        if (F1 == missionData[num].Doc) {
-            c1 = 1;    /* condition one is true */
-        }
-
-        if (F1 == 0 && missionData[num].Doc == 1) {
-            c1 = 1;
-        }
-
-        if (F1 == 2 && missionData[num].Doc == 0) {
-            c1 = 1;
-        }
-
-        if (F2 == missionData[num].EVA) {
-            c2 = 1;    /* condition two is true */
-        }
-
-        if (F2 == 0 && missionData[num].EVA == 1) {
-            c2 = 1;
-        }
-
-        if (F2 == 2 && missionData[num].EVA == 0) {
-            c2 = 1;
-        }
-
-        if (F3 == missionData[num].LM) {
-            c3 = 1;    /* condition three is true */
-        }
-
-        if (F3 == 0 && missionData[num].LM == 1) {
-            c3 = 1;
-        }
-
-        if (F3 == 2 && missionData[num].LM == 0) {
-            c3 = 1;
-        }
-
-        if (F4 == missionData[num].Jt) {
-            c4 = 1;    /* condition four is true */
-        }
-
-        if (F4 == 0 && missionData[num].Jt == 1) {
-            c4 = 1;
-        }
-
-        if (F4 == 2 && missionData[num].Jt == 0) {
-            c4 = 1;
-        }
-
-        if (num == 0) {
-            c5 = 1;
+        if (num == Mission_MarsFlyby && MarsFlag == false ||
+            num == Mission_JupiterFlyby && JupiterFlag == false ||
+            num == Mission_SaturnFlyby && SaturnFlag == false) {
+            found = false;
         } else {
-            if (F5 == -1 && missionData[num].Dur == 0 &&
-                missionData[num].Days == 0) {
-                c5 = 1;
-            }
-
-            if (F5 == 0) {
-                c5 = 1;
-            }
-
-            if (F5 > 1 && missionData[num].Dur == 1) {
-                c5 = 1;
-            }
-
-            if (F5 == missionData[num].Days) {
-                c5 = 1;
-            }
-        }
-
-        if ((num == 32 || num == 36) && F5 == 2) {
-            c5 = 0;
-        }
-
-        // planet check
-        if (num == 10 && MarsFlag == false) {
-            c6 = 0;
-        }
-
-        if (num == 12 && JupiterFlag == false) {
-            c7 = 0;
-        }
-
-        if (num == 13 && SaturnFlag == false) {
-            c8 = 0;
-        }
-
-        if (c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8)  {
-            found = 1;
+            found = NavMatch(navigator, missionData[num]);
         }
 
         if (num == orig) {
             return 0;
         }
 
-        if (found == 0) {
-            if (num == 56 + plr) {
+        if (found == false) {
+            if (++num > 56 + plr) {
                 num = 0;
-            } else {
-                ++num;
             }
         }
-
     } /* end while */
 
     return num;
 }
 
-int DownSearchRout(int num, char plr)
-{
-    int found = 0, orig;
-    int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 1, c7 = 1, c8 = 1;
-    orig = num;
 
-    if (num <= 0) {
+/* TODO: Documentation...
+ *
+ * TODO: This can be tightened up...
+ */
+int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
+{
+    bool found = false;
+    int orig = num;
+
+    if (--num < 0) {
         num = 56 + plr;
-    } else {
-        --num;
     }
 
-    while (found == 0) {
-        c1 = 0;
-        c2 = 0;
-        c3 = 0;
-        c4 = 0;
-        c5 = 0;
-        c6 = 1;
-        c7 = 1;
-        c8 = 1;
+    // TODO: Redo while loop so finding match immediately returns num?
+    while (! found) {
 
-        if (F1 == missionData[num].Doc) {
-            c1 = 1;
-        }
-
-        if (F1 == 0 && missionData[num].Doc == 1) {
-            c1 = 1;    /* condition one is true */
-        }
-
-        if (F1 == 2 && missionData[num].Doc == 0) {
-            c1 = 1;
-        }
-
-        if (F2 == missionData[num].EVA) {
-            c2 = 1;    /* condition two is true */
-        }
-
-        if (F2 == 0 && missionData[num].EVA == 1) {
-            c2 = 1;    /* condition one is true */
-        }
-
-        if (F2 == 2 && missionData[num].EVA == 0) {
-            c2 = 1;
-        }
-
-        if (F3 == missionData[num].LM) {
-            c3 = 1;    /* condition three is true */
-        }
-
-        if (F3 == 0 && missionData[num].LM == 1) {
-            c3 = 1;    /* condition one is true */
-        }
-
-        if (F3 == 2 && missionData[num].LM == 0) {
-            c3 = 1;
-        }
-
-        if (F4 == missionData[num].Jt) {
-            c4 = 1;    /* condition four is true */
-        }
-
-        if (F4 == 0 && missionData[num].Jt == 1) {
-            c4 = 1;    /* condition one is true */
-        }
-
-        if (F4 == 2 && missionData[num].Jt == 0) {
-            c4 = 1;
-        }
-
-        if (num == 0) {
-            c5 = 1;
+        if (num == Mission_MarsFlyby && MarsFlag == false ||
+            num == Mission_JupiterFlyby && JupiterFlag == false ||
+            num == Mission_SaturnFlyby && SaturnFlag == false) {
+            found = false;
         } else {
-            if (F5 == -1 && missionData[num].Dur == 0 &&
-                missionData[num].Days == 0) {
-                c5 = 1;    // locked on zero duration
-            }
-
-            if (F5 == 0) {
-                c5 = 1;    // nothing set
-            }
-
-            if (F5 > 1 && missionData[num].Dur == 1) {
-                c5 = 1;    // set duration with duration mission
-            }
-
-            if (F5 == missionData[num].Days) {
-                c5 = 1;    // the duration is equal to what is preset
-            }
-        }
-
-        if ((num == 32 || num == 36) && F5 == 2) {
-            c5 = 0;
-        }
-
-        // planet check
-        if (num == 10 && MarsFlag == false) {
-            c6 = 0;
-        }
-
-        if (num == 12 && JupiterFlag == false) {
-            c7 = 0;
-        }
-
-        if (num == 13 && SaturnFlag == false) {
-            c8 = 0;
-        }
-
-        if (c1 && c2 && c3 && c4 && c5 && c6 && c7 && c8)  {
-            found = 1;
+            found = NavMatch(navigator, missionData[num]);
         }
 
         if (num == orig) {
             return 0;
         }
 
-        if (found == 0) {
-            if (num == 0) {
+        if (! found) {
+            if (--num < 0) {
                 num = 56 + plr;
-            } else {
-                --num;
             }
         }
-
     } /* end while */
 
     return num;
 }
+
 
 /* The main control loop for the Future Missions feature.
  */
@@ -938,7 +808,8 @@ void Future(char plr)
 {
     /** \todo the whole Future()-function is 500 >lines and unreadable */
     TRACE1("->Future(plr)");
-    int pad = 0, DuraType = 0, MaxDur = 6;
+    const int MaxDur = 6;
+    int pad = 0;
     int setting = -1, prev_setting = -1;
 
     display::LegacySurface local(166, 9);
@@ -961,28 +832,21 @@ void Future(char plr)
     SaturnFlag = SaturnInRange(year, season);
 
     while ((pad = FutureCheck(plr, 0)) != 5) {
-        F1 = F2 = F3 = F4 = F5 = 0;
-
-        for (int i = 0; i < 5; i++) {
-            lock[i] = false;
-            status[i] = 0;
-        }
-
         keyHelpText = "k011";
         helpText = "i011";
-        DuraType = 0;
         char misType = 0;
         ClrFut(plr, pad);
 
         JointFlag = JointMissionOK(plr, pad); // initialize joint flag
+        MissionNavigator nav;
+        NavReset(nav);
 
-        if (JointFlag == false) {
-            F4 = 2;
-            lock[4] = true;
-            status[4] = 0;
+        if (! JointFlag) {
+            nav.joint.value = 0;
+            nav.joint.lock = true;
         }
 
-        DrawFuture(plr, misType, pad);
+        DrawFuture(plr, misType, pad, nav);
 
         while (1) {
             key = 0;
@@ -1027,7 +891,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (DuraType >= missionData[misType].Days &&
+            if (nav.duration.value >= missionData[misType].Days &&
                 ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
@@ -1046,14 +910,14 @@ void Future(char plr)
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
                 int NewType = missionData[misType].mCrew;
-                Data->P[plr].Future[pad].Duration = DuraType;
+                Data->P[plr].Future[pad].Duration = nav.duration.value;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
                 if (Ok == 1) {
-                    Data->P[plr].Future[pad].Duration = DuraType;
+                    Data->P[plr].Future[pad].Duration = nav.duration.value;
                     break;        // return to launchpad loop
                 } else {
                     ClrFut(plr, pad);
@@ -1063,47 +927,39 @@ void Future(char plr)
                 }
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
                        key == '!') { // Duration restriction lock
-                lock[0] = (! lock[0]);
+                nav.duration.lock = (! nav.duration.lock);
 
-                if (lock[0] == true) {
+                if (nav.duration.lock) {
                     InBox(43, 74, 53, 82);
                     PlaceRX(1);
-                    F5 = (status[0] == 0) ? -1 : status[0];
                 } else {
                     OutBox(43, 74, 53, 82);
                     ClearRX(1);
-                    F5 = status[0] = 0;
                 }
 
                 WaitForMouseUp();
 
-            } else if (lock[0] != true &&
+            } else if (nav.duration.lock != true &&
                        ((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
                         key == '1')) { // Duration toggle
                 InBox(5, 49, 53, 72);
 
-                if (DuraType == MaxDur) {
-                    DuraType = 0;
-                } else {
-                    DuraType++;
-                }
-
-                Data->P[plr].Future[pad].Duration = DuraType;
-
-                if (DuraType == 0) {
+                if (nav.duration.value == MaxDur) {
+                    nav.duration.value = 0;
                     Toggle(5, 0);
-                } else if (DuraType == 1) {
-                    Toggle(5, 1);
-                }
+                } else {
+                    nav.duration.value++;
 
-                if (DuraType != 0) {
-                    DrawPie(DuraType);
-                }
+                    if (nav.duration.value == 1) {
+                        Toggle(5, 1);
+                    }
 
-                status[0] = DuraType;
+                    DrawPie(nav.duration.value);
+                }
 
                 WaitForMouseUp();
 
+                // Why was this line here? Foreground gets set in OutBox
                 display::graphics.setForegroundColor(34);
                 OutBox(5, 49, 53, 72);
             } else if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0) ||
@@ -1113,17 +969,11 @@ void Future(char plr)
                 WaitForMouseUp();
 
                 misType = 0;
-
-                DuraType = F1 = F2 = F3 = F4 = F5 = 0;
-
-                for (int i = 0; i < 5; i++) {
-                    lock[i] = false;
-                    status[i] = 0;
-                }
+                NavReset(nav);
 
                 if (JointFlag == false) {
-                    F4 = 2;
-                    lock[4] = true;
+                    nav.joint.value = 0;
+                    nav.joint.lock = true;
                     InBox(191, 74, 201, 82);
                     TogBox(166, 49, 1);
                 } else {
@@ -1137,15 +987,15 @@ void Future(char plr)
                 OutBox(154, 74, 164, 82);
 
                 ClrFut(plr, pad);
-                DrawMission(plr, 8, 37, misType, pad, 1);
+                DrawMission(plr, 8, 37, misType, pad, 1, nav);
                 GetMinus(plr);
                 OutBox(5, 74, 41, 82);
 
             } else if ((x >= 80 && y >= 74 && x <= 90 && y <= 82 && mousebuttons > 0) ||
                        key == '@') { // Docking restriction lock
-                lock[1] = (! lock[1]);
+                nav.docking.lock = (! nav.docking.lock);
 
-                if (lock[1] == true) {
+                if (nav.docking.lock) {
                     InBox(80, 74, 90, 82);
                     PlaceRX(2);
                 } else {
@@ -1153,36 +1003,24 @@ void Future(char plr)
                     ClearRX(2);
                 }
 
-                if ((status[1] == 0) && (lock[1] == true)) {
-                    F1 = 2;
-                } else if ((status[1] == 1) && (lock[1] == true)) {
-                    F1 = 1;
-                } else {
-                    F1 = 0;
-                }
-
                 WaitForMouseUp();
 
-            } else if (lock[1] == false &&
+            } else if (nav.docking.lock == false &&
                        (((x >= 55 && y >= 49 && x <= 90 && y <= 82) && mousebuttons > 0) ||
                         key == '2')) { // Docking toggle
                 TogBox(55, 49, 1);
 
-                if (status[1] == 0) {
-                    Toggle(1, 1);
-                } else {
-                    Toggle(1, 0);
-                }
+                nav.docking.value = nav.docking.value ? 0 : 1;
+                Toggle(1, nav.docking.value);
 
-                status[1] = abs(status[1] - 1);
                 WaitForMouseUp();
                 TogBox(55, 49, 0);
 
             } else if ((x >= 117 && y >= 74 && x <= 127 && y <= 82 && mousebuttons > 0) ||
                        key == '#') { // EVA Restriction button
-                lock[2] = (! lock[2]);
+                nav.EVA.lock = (! nav.EVA.lock);
 
-                if (lock[2] == true) {
+                if (nav.EVA.lock) {
                     InBox(117, 74, 127, 82);
                     PlaceRX(3);
                 } else {
@@ -1190,36 +1028,24 @@ void Future(char plr)
                     ClearRX(3);
                 }
 
-                if ((status[2] == 0) && (lock[2] == true)) {
-                    F2 = 2;
-                } else if ((status[2] == 1) && (lock[2] == true)) {
-                    F2 = 1;
-                } else {
-                    F2 = 0;
-                }
-
                 WaitForMouseUp();
 
-            } else if (lock[2] == false &&
+            } else if (nav.EVA.lock == false &&
                        ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0) ||
                         key == '3')) { // EVA toggle
                 TogBox(92, 49, 1);
 
-                if (status[2] == 0) {
-                    Toggle(2, 1);
-                } else {
-                    Toggle(2, 0);
-                }
+                nav.EVA.value = nav.EVA.value ? 0 : 1;
+                Toggle(2, nav.EVA.value);
 
-                status[2] = abs(status[2] - 1);
                 WaitForMouseUp();
                 TogBox(92, 49, 0);
 
             } else if ((x >= 154 && y >= 74 && x <= 164 && y <= 82 && mousebuttons > 0) ||
                        key == '$') { // Lunar Module Restriction button
-                lock[3] = (! lock[3]);
+                nav.LM.lock = (! nav.LM.lock);
 
-                if (lock[3] == true) {
+                if (nav.LM.lock) {
                     InBox(154, 74, 164, 82);
                     PlaceRX(4);
                 } else {
@@ -1227,37 +1053,25 @@ void Future(char plr)
                     ClearRX(4);
                 }
 
-                if ((status[3] == 0) && (lock[3] == true)) {
-                    F3 = 2;
-                } else if ((status[3] == 1) && (lock[3] == true)) {
-                    F3 = 1;
-                } else {
-                    F3 = 0;
-                }
-
                 WaitForMouseUp();
 
-            } else if (lock[3] == false &&
+            } else if (nav.LM.lock == false &&
                        ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0) ||
                         key == '4')) { // LEM toggle
                 TogBox(129, 49, 1);
 
-                if (status[3] == 0) {
-                    Toggle(3, 1);
-                } else {
-                    Toggle(3, 0);
-                }
+                nav.LM.value = nav.LM.value ? 0 : 1;
+                Toggle(3, nav.LM.value);
 
-                status[3] = abs(status[3] - 1);
                 WaitForMouseUp();
                 TogBox(129, 49, 0);
 
             } else if (JointFlag == true &&
                        ((x > 191 && y >= 74 && x <= 201 && y <= 82 && mousebuttons > 0) ||
                         key == '%')) { // Joint Mission Restriction button
-                lock[4] = (! lock[4]);
+                nav.joint.lock = (! nav.joint.lock);
 
-                if (lock[4] == true) {
+                if (nav.joint.lock) {
                     InBox(191, 74, 201, 82);
                     PlaceRX(5);
                 } else {
@@ -1265,27 +1079,15 @@ void Future(char plr)
                     ClearRX(5);
                 }
 
-                if ((status[4] == 0) && (lock[4] == true)) {
-                    F4 = 2;
-                } else if ((status[4] == 1) && (lock[4] == true)) {
-                    F4 = 1;
-                } else {
-                    F4 = 0;
-                }
-
                 WaitForMouseUp();
 
-            } else if (lock[4] == false && JointFlag == true &&
+            } else if (nav.joint.lock == false && JointFlag == true &&
                        ((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0) ||
                         key == '5')) { // Joint Mission
                 TogBox(166, 49, 1);
-                status[4] = abs(status[4] - 1);
 
-                if (status[4] == 0) {
-                    Toggle(4, 1);
-                } else {
-                    Toggle(4, 0);
-                }
+                nav.joint.value = nav.joint.value ? 0 : 1;
+                Toggle(4, nav.joint.value ? 0 : 1);
 
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
@@ -1301,7 +1103,7 @@ void Future(char plr)
                     delay(10);
 
                     if (mousebuttons == 0) {
-                        misType = UpSearchRout(misType, plr);
+                        misType = UpSearchRout(misType, plr, nav);
                         Data->P[plr].Future[pad].MissionCode = misType;
                         i = 51;
                     }
@@ -1309,16 +1111,15 @@ void Future(char plr)
 
                 // Keep scrolling while mouse/key is held down.
                 while (mousebuttons == 1 || key == UP_ARROW) {
-                    misType = UpSearchRout(misType, plr);
+                    misType = UpSearchRout(misType, plr, nav);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    DrawMission(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                DrawMission(plr, 8, 37, misType, pad, 3);
-                DuraType = status[0];
+                DrawMission(plr, 8, 37, misType, pad, 3, nav);
                 OutBox(5, 84, 16, 130);
             } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
                        (key == K_SPACE)) {
@@ -1330,9 +1131,9 @@ void Future(char plr)
                 assert(0 <= misType);
 
                 if (misType != 0) {
-                    DrawMission(plr, 8, 37, misType, pad, 1);
+                    DrawMission(plr, 8, 37, misType, pad, 1, nav);
                 } else {
-                    DrawMission(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
                 }
 
                 OutBox(5, 132, 16, 146);
@@ -1347,7 +1148,7 @@ void Future(char plr)
                     delay(10);
 
                     if (mousebuttons == 0) {
-                        misType = DownSearchRout(misType, plr);
+                        misType = DownSearchRout(misType, plr, nav);
                         Data->P[plr].Future[pad].MissionCode = misType;
                         i = 51;
                     }
@@ -1356,16 +1157,15 @@ void Future(char plr)
 
                 // Keep scrolling while mouse/key is held down.
                 while (mousebuttons == 1 || key == DN_ARROW) {
-                    misType = DownSearchRout(misType, plr);
+                    misType = DownSearchRout(misType, plr, nav);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    DrawMission(plr, 8, 37, misType, pad, 3);
+                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                DrawMission(plr, 8, 37, misType, pad, 3);
-                DuraType = status[0];
+                DrawMission(plr, 8, 37, misType, pad, 3, nav);
                 OutBox(5, 148, 16, 194);
             }
         }                              // Input while loop
@@ -1402,6 +1202,8 @@ void Bd(int x, int y)
 }
 
 /** Update the selected mission view with the given duration.
+ *
+ * TODO: Ensure -1 <= duration <= 6.
  *
  * \param duration  0 for unmanned, 1-6 for duration A through F
  *
@@ -1448,6 +1250,7 @@ void PrintDuration(int duration)
 
     return;
 }
+
 
 /* Prints the name of the selected mission.
  *
@@ -1500,14 +1303,18 @@ void MissionName(int val, int xx, int yy, int len)
  * This modifies the global value Mis. Specifically, it calls
  * MissionName(), which modifies Mis.
  *
+ * TODO: Move Flight Path illustration to its own function...
+ *
  * \param plr Player
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
  * \param val the mission type (MissionType.MissionCode / mStr.Index)
  * \param pad the pad (0, 1, or 2) where the mission is being launched.
  * \param bub if set to 0 or 3 the function will not draw stuff
+ * \param nav TODO
  */
-void DrawMission(char plr, int X, int Y, int val, int pad, char bub)
+void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
+                 MissionNavigator &nav)
 {
     TRACE6("->DrawMission(plr, X %d, Y %d, val %d, int %d, bub %c)",
            X, Y, val, pad, bub);
@@ -1515,7 +1322,7 @@ void DrawMission(char plr, int X, int Y, int val, int pad, char bub)
     memset(Mev, 0x00, sizeof Mev);
 
     if (bub == 1 || bub == 3) {
-        PianoKey(val);
+        PianoKey(val, nav);
         Bub_Count = 0; // set the initial bub_count
         ClearDisplay();
         fill_rectangle(6, 31, 199, 46, 3);
@@ -1525,14 +1332,17 @@ void DrawMission(char plr, int X, int Y, int val, int pad, char bub)
         draw_number(0, 0, val);
         display::graphics.setForegroundColor(5);
 
+        // TODO: Clean this up...
         if (missionData[val].Days > 0) {
-            if (F5 > missionData[val].Days && missionData[val].Dur == 1) {
-                PrintDuration(F5);
+            if (nav.duration.lock &&
+                nav.duration.value > missionData[val].Days &&
+                missionData[val].Dur == 1) {
+                PrintDuration(nav.duration.value);
             } else {
                 PrintDuration(missionData[val].Days);
             }
         } else {
-            PrintDuration(F5);
+            PrintDuration(nav.duration.value);
         }
     } else {
         display::graphics.setForegroundColor(1);
