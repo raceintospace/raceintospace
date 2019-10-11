@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>raceintospace.desktop</id>
+  <name>Race into Space</name>
+  <summary>A game to relive the 1960s Space Race</summary>
+  <url type="homepage">http://raceintospace.org</url>
+  <url type="bugtracker">https://github.com/raceintospace/raceintospace/issues</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <description>
+    <p>
+    Race Into Space is a simulation of the US-Soviet Space Race. 
+    In it, you take charge of your country’s space program as 
+    Director (US) or Designer (USSR). You will purchase and develop 
+    space hardware, recruit and manage astronauts/cosmonauts, and 
+    plan and send missions into space. The ultimate goal is to be 
+    the first to complete a Moon landing and return your people 
+    safely to Earth.
+    </p>
+
+    <p>
+    Race Into Space (RIS) is a port to modern operating systems of
+    Buzz Aldrin’s Race Into Space (BARIS), a DOS game originally released
+    in 1993 on floppy disk, and a year later in an expanded CD version.
+    BARIS was developed by Fritz Bronner based on his 1989 board game Liftoff!.
+    Dr. Aldrin’s name and imagery have been dropped because permission to
+    use them was limited to the old DOS game. RIS is available for Windows,
+    Linux, and Mac, and includes some improvements over the original
+    game—which we feel have justified a rewrite of the game manual. Those
+    involved in RIS are volunteer enthusiasts, and we hope you enjoy this
+    simulation. You might even find it educational.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>http://www.raceintospace.org/images/screenshots/splash_screen.png</image>
+    </screenshot>
+
+    <screenshot>
+      <image>https://raw.githubusercontent.com/raceintospace/raceintospace/master/doc/manual/image_1.png</image>
+    </screenshot>
+
+    <screenshot>
+      <image>https://raw.githubusercontent.com/raceintospace/raceintospace/master/doc/manual/image_13.png</image>
+    </screenshot>
+  </screenshots>
+</component>
