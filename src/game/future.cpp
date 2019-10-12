@@ -48,6 +48,15 @@
 LOG_DEFAULT_CATEGORY(future)
 
 
+enum FMFields {
+    FM_Duration = 1,
+    FM_Docking,
+    FM_EVA,
+    FM_LM,
+    FM_Joint
+};
+
+
 /*missStep.dat is plain text, with:
 Mission Number (2 first bytes of each line)
 A Coded letter, each drawing a different line (1105-1127 for all possible letters)
@@ -101,12 +110,12 @@ void ClearDisplay(void);
 int GetMinus(char plr);
 void SetParameters(void);
 void DrawLocks(const MissionNavigator &nav);
-void Toggle(int wh, int i);
+void Toggle(FMFields button, int state);
 void TogBox(int x, int y, int st);
 void PianoKey(int X, MissionNavigator &nav);
 void DrawPie(int s);
-void PlaceRX(int s);
-void ClearRX(int s);
+void PlaceRX(FMFields button);
+void ClearRX(FMFields button);
 bool NavMatch(const MissionNavigator &nav, const struct mStr &mission);
 void NavReset(MissionNavigator &nav);
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator);
@@ -124,9 +133,11 @@ void Load_FUT_BUT(void)
     FILE *fin;
     unsigned i;
     fin = sOpen("NFUTBUT.BUT", "rb", 0);
-    i = fread(display::graphics.legacyScreen()->pixels(), 1, MAX_X * MAX_Y, fin);
+    i = fread(display::graphics.legacyScreen()->pixels(), 1,
+              MAX_X * MAX_Y, fin);
     fclose(fin);
-    RLED_img(display::graphics.legacyScreen()->pixels(), vh->pixels(), i, vh->width(), vh->height());
+    RLED_img(display::graphics.legacyScreen()->pixels(), vh->pixels(),
+             i, vh->width(), vh->height());
     return;
 }
 
@@ -239,16 +250,16 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     vh->copyTo(display::graphics.legacyScreen(), 140, 5, 5, 132, 15, 146);
 
     // Draw the mission specification toggle buttons
-    Toggle(5, 1);
+    Toggle(FM_Duration, 1);
     DrawPie(0);
     OutBox(5, 49, 53, 72);
-    Toggle(1, 1);
+    Toggle(FM_Docking, 1);
     TogBox(55, 49, 0);
-    Toggle(2, 1);
+    Toggle(FM_EVA, 1);
     TogBox(92, 49, 0);
-    Toggle(3, 1);
+    Toggle(FM_LM, 1);
     TogBox(129, 49, 0);
-    Toggle(4, 1);
+    Toggle(FM_Joint, 1);
 
     if (JointFlag == false) {
         InBox(191, 74, 201, 82);
@@ -406,16 +417,34 @@ void SetParameters(void)
  */
 void DrawLocks(const MissionNavigator &nav)
 {
-    bool lock[5] = { nav.duration.lock, nav.docking.lock, nav.EVA.lock,
-                     nav.LM.lock, nav.joint.lock
-                   };
+    if (nav.duration.lock) {
+        PlaceRX(FM_Duration);
+    } else {
+        ClearRX(FM_Duration);
+    }
 
-    for (int i = 0; i < 5; i++) {
-        if (lock[i] == true) {
-            PlaceRX(i + 1);
-        } else {
-            ClearRX(i + 1);
-        }
+    if (nav.docking.lock) {
+        PlaceRX(FM_Docking);
+    } else {
+        ClearRX(FM_Docking);
+    }
+
+    if (nav.EVA.lock) {
+        PlaceRX(FM_EVA);
+    } else {
+        ClearRX(FM_EVA);
+    }
+
+    if (nav.LM.lock) {
+        PlaceRX(FM_LM);
+    } else {
+        ClearRX(FM_LM);
+    }
+
+    if (nav.joint.lock) {
+        PlaceRX(FM_Joint);
+    } else {
+        ClearRX(FM_Joint);
     }
 
     return;
@@ -429,16 +458,16 @@ void DrawLocks(const MissionNavigator &nav)
  * The illustrations are stored in a buffer via the global pointer vh,
  * which reads the information in Load_FUT_BUT().
  *
- * \param wh the button
- * \param i in or out
+ * \param button  the button index.
+ * \param state  1 if selected, 0 if unselected.
  */
-void Toggle(int wh, int i)
+void Toggle(FMFields button, int state)
 {
-    TRACE3("->Toggle(wh %d, i %d)", wh, i);
+    TRACE3("->Toggle(button %d, state %d)", button, state);
 
-    switch (wh) {
-    case 1:
-        if (i == 1) {
+    switch (button) {
+    case FM_Docking:
+        if (state == 1) {
             vh->copyTo(display::graphics.legacyScreen(), 1, 21, 55, 49, 89, 81);
         } else {
             vh->copyTo(display::graphics.legacyScreen(), 1, 56, 55, 49, 89, 81);
@@ -446,8 +475,9 @@ void Toggle(int wh, int i)
 
         break;
 
-    case 2:
-        if (i == 1)  {
+    case FM_EVA:
+        // TODO: Parameter 127 should be 126.
+        if (state == 1)  {
             vh->copyTo(display::graphics.legacyScreen(), 38, 21, 92, 49, 127, 81);
         } else {
             vh->copyTo(display::graphics.legacyScreen(), 38, 56, 92, 49, 127, 81);
@@ -455,8 +485,8 @@ void Toggle(int wh, int i)
 
         break;
 
-    case 3:
-        if (i == 1)  {
+    case FM_LM:
+        if (state == 1)  {
             vh->copyTo(display::graphics.legacyScreen(), 75, 21, 129, 49, 163, 81);
         } else {
             vh->copyTo(display::graphics.legacyScreen(), 75, 56, 129, 49, 163, 81);
@@ -464,17 +494,20 @@ void Toggle(int wh, int i)
 
         break;
 
-    case 4:
-        if (i == 1)  {
-            vh->copyTo(display::graphics.legacyScreen(), 112, 21, 166, 49, 200, 81);
-        } else {
+    case FM_Joint:
+        // FM_Joint is an exception to the normal image coordinates.
+        // In the button image file, the inactive joint image is on
+        // the row with the active button images, and vice versa.
+        if (state == 1)  {
             vh->copyTo(display::graphics.legacyScreen(), 112, 56, 166, 49, 200, 81);
+        } else {
+            vh->copyTo(display::graphics.legacyScreen(), 112, 21, 166, 49, 200, 81);
         }
 
         break;
 
-    case 5:
-        if (i == 1)  {
+    case FM_Duration:
+        if (state == 1)  {
             vh->copyTo(display::graphics.legacyScreen(), 153, 1, 5, 49, 52, 71);
         } else {
             vh->copyTo(display::graphics.legacyScreen(), 153, 26, 5, 49, 52, 71);
@@ -483,6 +516,8 @@ void Toggle(int wh, int i)
         break;
 
     default:
+        ERROR3("Invalid argument to Toggle(button = %d, state = %d)",
+               button, state);
         break;
     }
 
@@ -533,28 +568,28 @@ void PianoKey(int X, MissionNavigator &nav)
 
     if (! nav.docking.lock) {
         nav.docking.value = missionData[X].Doc;
-        Toggle(1, nav.docking.value);
+        Toggle(FM_Docking, nav.docking.value);
     }
 
     if (! nav.EVA.lock) {
         nav.EVA.value = missionData[X].EVA;
-        Toggle(2, nav.EVA.value);
+        Toggle(FM_EVA, nav.EVA.value);
     }
 
     if (! nav.LM.lock) {
         nav.LM.value = missionData[X].LM;
-        Toggle(3, nav.LM.value);
+        Toggle(FM_LM, nav.LM.value);
     }
 
     if (! nav.joint.lock) {
         nav.joint.value = missionData[X].Jt;
-        Toggle(4, nav.joint.value ? 0 : 1);
+        Toggle(FM_Joint, nav.joint.value);
     }
 
     if (! nav.duration.lock) {
         nav.duration.value = missionData[X].Days;
         assert(nav.duration.value >= 0);
-        Toggle(5, nav.duration.value ? 1 : 0);
+        Toggle(FM_Duration, nav.duration.value ? 1 : 0);
 
         if (nav.duration.value) {
             DrawPie(nav.duration.value);
@@ -604,34 +639,33 @@ void DrawPie(int s)
  *   4: Lunar Module status
  *   5: Joint Mission status
  *
- * TODO: Edit parameters to use the same values as Toggle, etc.
- *
- * \param s  The button index.
+ * \param button  The button index.
  */
-void PlaceRX(int s)
+void PlaceRX(FMFields button)
 {
-    switch (s) {
-    case 1:
+    switch (button) {
+    case FM_Duration:
         fill_rectangle(44, 75, 52, 81, 8);
         break;
 
-    case 2:
+    case FM_Docking:
         fill_rectangle(81, 75, 89, 81, 8);
         break;
 
-    case 3:
+    case FM_EVA:
         fill_rectangle(118, 75, 126, 81, 8);
         break;
 
-    case 4:
+    case FM_LM:
         fill_rectangle(155, 75, 163, 81, 8);
         break;
 
-    case 5:
+    case FM_Joint:
         fill_rectangle(192, 75, 200, 81, 8);
         break;
 
     default:
+        ERROR2("Invalid argument passed to PlaceRX(button = %d)", button);
         break;
     }
 
@@ -649,34 +683,33 @@ void PlaceRX(int s)
  *   4: Lunar Module status
  *   5: Joint Mission status
  *
- * TODO: Use the same parameter input as Toggle, etc.
- *
- * \param s  The button index.
+ * \param button  The button index.
  */
-void ClearRX(int s)
+void ClearRX(FMFields button)
 {
-    switch (s) {
-    case 1:
+    switch (button) {
+    case FM_Duration:
         fill_rectangle(44, 75, 52, 81, 3);
         break;
 
-    case 2:
+    case FM_Docking:
         fill_rectangle(81, 75, 89, 81, 3);
         break;
 
-    case 3:
+    case FM_EVA:
         fill_rectangle(118, 75, 126, 81, 3);
         break;
 
-    case 4:
+    case FM_LM:
         fill_rectangle(155, 75, 163, 81, 3);
         break;
 
-    case 5:
+    case FM_Joint:
         fill_rectangle(192, 75, 200, 81, 3);
         break;
 
     default:
+        ERROR2("Invalid argument passed to ClearRX(button = %d)", button);
         break;
     }
 
@@ -931,10 +964,10 @@ void Future(char plr)
 
                 if (nav.duration.lock) {
                     InBox(43, 74, 53, 82);
-                    PlaceRX(1);
+                    PlaceRX(FM_Duration);
                 } else {
                     OutBox(43, 74, 53, 82);
-                    ClearRX(1);
+                    ClearRX(FM_Duration);
                 }
 
                 WaitForMouseUp();
@@ -946,12 +979,12 @@ void Future(char plr)
 
                 if (nav.duration.value == MaxDur) {
                     nav.duration.value = 0;
-                    Toggle(5, 0);
+                    Toggle(FM_Duration, 0);
                 } else {
                     nav.duration.value++;
 
                     if (nav.duration.value == 1) {
-                        Toggle(5, 1);
+                        Toggle(FM_Duration, 1);
                     }
 
                     DrawPie(nav.duration.value);
@@ -997,10 +1030,10 @@ void Future(char plr)
 
                 if (nav.docking.lock) {
                     InBox(80, 74, 90, 82);
-                    PlaceRX(2);
+                    PlaceRX(FM_Docking);
                 } else {
                     OutBox(80, 74, 90, 82);
-                    ClearRX(2);
+                    ClearRX(FM_Docking);
                 }
 
                 WaitForMouseUp();
@@ -1011,7 +1044,7 @@ void Future(char plr)
                 TogBox(55, 49, 1);
 
                 nav.docking.value = nav.docking.value ? 0 : 1;
-                Toggle(1, nav.docking.value);
+                Toggle(FM_Docking, nav.docking.value);
 
                 WaitForMouseUp();
                 TogBox(55, 49, 0);
@@ -1022,10 +1055,10 @@ void Future(char plr)
 
                 if (nav.EVA.lock) {
                     InBox(117, 74, 127, 82);
-                    PlaceRX(3);
+                    PlaceRX(FM_EVA);
                 } else {
                     OutBox(117, 74, 127, 82);
-                    ClearRX(3);
+                    ClearRX(FM_EVA);
                 }
 
                 WaitForMouseUp();
@@ -1036,7 +1069,7 @@ void Future(char plr)
                 TogBox(92, 49, 1);
 
                 nav.EVA.value = nav.EVA.value ? 0 : 1;
-                Toggle(2, nav.EVA.value);
+                Toggle(FM_EVA, nav.EVA.value);
 
                 WaitForMouseUp();
                 TogBox(92, 49, 0);
@@ -1047,10 +1080,10 @@ void Future(char plr)
 
                 if (nav.LM.lock) {
                     InBox(154, 74, 164, 82);
-                    PlaceRX(4);
+                    PlaceRX(FM_LM);
                 } else {
                     OutBox(154, 74, 164, 82);
-                    ClearRX(4);
+                    ClearRX(FM_LM);
                 }
 
                 WaitForMouseUp();
@@ -1061,7 +1094,7 @@ void Future(char plr)
                 TogBox(129, 49, 1);
 
                 nav.LM.value = nav.LM.value ? 0 : 1;
-                Toggle(3, nav.LM.value);
+                Toggle(FM_LM, nav.LM.value);
 
                 WaitForMouseUp();
                 TogBox(129, 49, 0);
@@ -1073,10 +1106,10 @@ void Future(char plr)
 
                 if (nav.joint.lock) {
                     InBox(191, 74, 201, 82);
-                    PlaceRX(5);
+                    PlaceRX(FM_Joint);
                 } else {
                     OutBox(191, 74, 201, 82);
-                    ClearRX(5);
+                    ClearRX(FM_Joint);
                 }
 
                 WaitForMouseUp();
@@ -1087,7 +1120,7 @@ void Future(char plr)
                 TogBox(166, 49, 1);
 
                 nav.joint.value = nav.joint.value ? 0 : 1;
-                Toggle(4, nav.joint.value ? 0 : 1);
+                Toggle(FM_Joint, nav.joint.value);
 
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
@@ -1203,8 +1236,6 @@ void Bd(int x, int y)
 
 /** Update the selected mission view with the given duration.
  *
- * TODO: Ensure -1 <= duration <= 6.
- *
  * \param duration  0 for unmanned, 1-6 for duration A through F
  *
  * \todo Link this at whatever place the duration is actually defined
@@ -1216,9 +1247,6 @@ void PrintDuration(int duration)
 
     switch (duration) {
     case -1:
-        draw_string(112, 30, "NO DURATION");
-        break;
-
     case 0:
         draw_string(112, 30, "NO DURATION");
         break;
@@ -1245,6 +1273,11 @@ void PrintDuration(int duration)
 
     case 6:
         draw_string(112, 30, "17 - 20 DAYS (F)");
+        break;
+
+    default:
+        ERROR2("Invalid argument to PrintDuration(duration = %d)",
+               duration);
         break;
     }
 
