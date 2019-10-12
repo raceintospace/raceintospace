@@ -472,12 +472,10 @@ void Toggle(FMFields button, int state)
         break;
 
     case FM_EVA:
-
-        // TODO: Parameter 127 should be 126.
         if (state == 1)  {
-            vh->copyTo(display::graphics.legacyScreen(), 38, 21, 92, 49, 127, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 38, 21, 92, 49, 126, 81);
         } else {
-            vh->copyTo(display::graphics.legacyScreen(), 38, 56, 92, 49, 127, 81);
+            vh->copyTo(display::graphics.legacyScreen(), 38, 56, 92, 49, 126, 81);
         }
 
         break;
