@@ -91,7 +91,7 @@ static inline char B_Mis(char x)
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
 // missionData is used in SetParameters, PianoKey, UpSearchRout,
-// DownSearchRout, Future, and DrawMission.
+// DownSearchRout, and Future.
 std::vector<struct mStr> missionData;
 } // End unnamed namespace
 
@@ -117,8 +117,8 @@ void NavReset(MissionNavigator &nav);
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator);
 int DownSearchRout(int num, char plr, const MissionNavigator &navigator);
 void PrintDuration(int duration);
-void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
-                 MissionNavigator &navigator);
+void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
+void MissionPath(char plr, int val, int pad);
 
 
 /* TODO: Documentation...
@@ -267,9 +267,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
 
     gr_sync();
 
-    DrawMission(plr, 8, 37, mis, pad, 1, nav);
-
-    GetMinus(plr);
+    DrawMission(plr, 8, 37, mis, nav);
 
     display::graphics.setForegroundColor(5);
 
@@ -342,8 +340,14 @@ void ClearDisplay(void)
 }
 
 
-/* TODO: Documentation...
+/* Displays the total mission penalty for the current selected mission.
  *
+ * This calculates the sum of the prestige, duration, and new mission
+ * penalties and reports it as the current mission penalty. The penalty
+ * is calculated by the PrestMin() function (in prest.h). PrestMin uses
+ * the mission data stored in the global var Mis.
+ *
+ * This relies on graphics loaded into the file variable vh.
  */
 int GetMinus(char plr)
 {
@@ -407,7 +411,8 @@ void SetParameters(void)
     return;
 }
 
-/* TODO: Documentation...
+/* Illustrate all of the mission parameter "locks" in their respective
+ * settings.
  *
  * \param nav TODO.
  */
@@ -754,9 +759,16 @@ void NavReset(MissionNavigator &nav)
 
 
 
-/* TODO: Documentation...
+/* Find the next mission that matches the given parameters, searching
+ * by ascending mission code
  *
  * TODO: This can be tightened up...
+ *
+ * \param num  The mission code of the currently selected mission.
+ * \param plr  The current player (0 for USA, 1 for USSR).
+ * \param navigator  The required mission parameters.
+ * \return  The code of the next matching mission, or 0 if no other
+ *          mission is found.
  */
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
 {
@@ -792,9 +804,16 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
 }
 
 
-/* TODO: Documentation...
+/* Find the next mission that matches the given parameters, searching
+ * by descending mission code
  *
  * TODO: This can be tightened up...
+ *
+ * \param num  The mission code of the currently selected mission.
+ * \param plr  The current player (0 for USA, 1 for USSR).
+ * \param navigator  The required mission parameters.
+ * \return  The code of the next matching mission, or 0 if no other
+ *          mission is found.
  */
 int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
 {
@@ -832,6 +851,11 @@ int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
 
 
 /* The main control loop for the Future Missions feature.
+ *
+ * This function calls functions which modify the global vars Mis
+ * and Mev, among others.
+ *
+ * \param plr  The player (0 for USA, 1 for USSR) planning the mission.
  */
 void Future(char plr)
 {
@@ -1016,8 +1040,7 @@ void Future(char plr)
                 OutBox(154, 74, 164, 82);
 
                 ClrFut(plr, pad);
-                DrawMission(plr, 8, 37, misType, pad, 1, nav);
-                GetMinus(plr);
+                DrawMission(plr, 8, 37, misType, nav);
                 OutBox(5, 74, 41, 82);
 
             } else if ((x >= 80 && y >= 74 && x <= 90 && y <= 82 && mousebuttons > 0) ||
@@ -1142,13 +1165,13 @@ void Future(char plr)
                 while (mousebuttons == 1 || key == UP_ARROW) {
                     misType = UpSearchRout(misType, plr, nav);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
+                    DrawMission(plr, 8, 37, misType, nav);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                DrawMission(plr, 8, 37, misType, pad, 3, nav);
+                DrawMission(plr, 8, 37, misType, nav);
                 OutBox(5, 84, 16, 130);
             } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
                        (key == K_SPACE)) {
@@ -1160,9 +1183,7 @@ void Future(char plr)
                 assert(0 <= misType);
 
                 if (misType != 0) {
-                    DrawMission(plr, 8, 37, misType, pad, 1, nav);
-                } else {
-                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
+                    MissionPath(plr, misType, pad);
                 }
 
                 OutBox(5, 132, 16, 146);
@@ -1188,13 +1209,13 @@ void Future(char plr)
                 while (mousebuttons == 1 || key == DN_ARROW) {
                     misType = DownSearchRout(misType, plr, nav);
                     Data->P[plr].Future[pad].MissionCode = misType;
-                    DrawMission(plr, 8, 37, misType, pad, 3, nav);
+                    DrawMission(plr, 8, 37, misType, nav);
                     delay(100);
                     key = 0;
                     GetMouse();
                 }
 
-                DrawMission(plr, 8, 37, misType, pad, 3, nav);
+                DrawMission(plr, 8, 37, misType, nav);
                 OutBox(5, 148, 16, 194);
             }
         }                              // Input while loop
@@ -1205,8 +1226,10 @@ void Future(char plr)
     TRACE1("<-Future()");
 }
 
-/** draws the bubble on the screen,
- * starts with upper left coor
+/** Draws a flight path bubble on the screen.
+ *
+ * This stores the bubble coordinates in StepBub and increments the
+ * Bub_count.
  *
  * \param x x-coord of the upper left corner of the bubble
  * \param y y-coord of the upper left corner of the bubble
@@ -1324,78 +1347,105 @@ void MissionName(int val, int xx, int yy, int len)
     return;
 }
 
+
 /**
  * Update the mission display to reflect the given mission, including
- * the Type, name, duration, navigation buttons, and, if selected,
- * flight path.
+ * the type, name, duration, and navigation toggle buttons.
+ *
+ * DrawMission handles important cleanup related to changing the
+ * mission selection, including
+ *  - Display mission name, type, and duration.
+ *  - Set unlocked navigation toggles to match the mission parameters.
+ *  - Reset the flight path (clear starfield, Mev, and Bub_Count).
+ * It should be called whenever the mission selection changes.
  *
  * This modifies the global value Mis. Specifically, it calls
- * MissionName(), which modifies Mis.
- *
- * TODO: Move Flight Path illustration to its own function...
+ * MissionName() and MissionCodes(), which modify Mis.
+ * This modifies the global value Mev, via MissionPath().
  *
  * \param plr Player
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
  * \param val the mission type (MissionType.MissionCode / mStr.Index)
- * \param pad the pad (0, 1, or 2) where the mission is being launched.
  * \param bub if set to 0 or 3 the function will not draw stuff
- * \param nav TODO
+ * \param nav the set of mission parameters for mission selection.
  */
-void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
-                 MissionNavigator &nav)
+void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
 {
-    TRACE6("->DrawMission(plr, X %d, Y %d, val %d, int %d, bub %c)",
-           X, Y, val, pad, bub);
+    TRACE4("->DrawMission(plr, X %d, Y %d, val %d, nav)", X, Y, val);
 
+    // PianoKey is used whenever the mission selection changes, to
+    // update the mission navigator with parameters matching the
+    // newly displayed mission. This ensures the navigation display
+    // handles the dual task
+    PianoKey(val, nav);   // Should this be moved outside DrawMission?
+    Bub_Count = 0; // set the initial bub_count
     memset(Mev, 0x00, sizeof Mev);
 
-    if (bub == 1 || bub == 3) {
-        PianoKey(val, nav);
-        Bub_Count = 0; // set the initial bub_count
-        ClearDisplay();
-        fill_rectangle(6, 31, 199, 46, 3);
-        fill_rectangle(80, 25, 112, 30, 3);
-        display::graphics.setForegroundColor(5);
-        draw_string(55, 30, "TYPE: ");
-        draw_number(0, 0, val);
-        display::graphics.setForegroundColor(5);
+    ClearDisplay();                     // Redraw solar system display
+    fill_rectangle(6, 31, 199, 46, 3);  // Clear mission name
+    fill_rectangle(80, 25, 112, 30, 3); // Clear mission type
+    display::graphics.setForegroundColor(5);
+    draw_string(55, 30, "TYPE: ");
+    draw_number(0, 0, val);
+    display::graphics.setForegroundColor(5);
 
-        // TODO: Clean this up...
-        if (missionData[val].Days > 0) {
-            if (nav.duration.lock &&
-                nav.duration.value > missionData[val].Days &&
-                missionData[val].Dur == 1) {
-                PrintDuration(nav.duration.value);
-            } else {
-                PrintDuration(missionData[val].Days);
-            }
-        } else {
+    // TODO: Clean this up...
+    if (missionData[val].Days > 0) {
+        if (nav.duration.lock &&
+            nav.duration.value > missionData[val].Days &&
+            missionData[val].Dur == 1) {
             PrintDuration(nav.duration.value);
+        } else {
+            PrintDuration(missionData[val].Days);
         }
     } else {
-        display::graphics.setForegroundColor(1);
+        PrintDuration(nav.duration.value);
     }
 
+    // MissionName calls GetMisType, which sets the global var Mis.
+    // GetMinus uses the mission data stored in Mis to calculate the
+    // mission penalty (via a call to PrestMin() in prest.cpp).
     MissionName(val, X, Y, 24);
+    GetMinus(plr);
 
-    if (bub == 3) {
-        GetMinus(plr);
-    }
+    gr_sync();
+    TRACE1("<-DrawMission()");
+}  // end function DrawMission
 
-    if (bub == 0 || bub == 3) {
-        return;
-    }
 
-    /* missStep.dat is plain text, with:
-     * Mission Number (2 first bytes of each line)
-     * A Coded letter, each drawing a different line
-     * Numbers following each letter, which are the parameters
-     *   of the function
-     * Each line must finish with a Z, so the game stops reading
-     * Any other char is ignored, but it's easier to read for a
-     *   human that way
-     */
+/* Illustrates the mission path on the starfield and loads mission
+ * step information.
+ *
+ * This populates the global variable Mev and the file variable
+ * missStep with
+ *
+ * Flight path information is stored in the file missStep.dat.
+ * missStep.dat is plain text, with:
+ *  -  Mission Number (2 first bytes of each line)
+ *  -  A Coded letter, each drawing a different line
+ *  -  Numbers following each letter, which are the parameters
+ *     of the function
+ *  -  Each line must finish with a Z, so the game stops reading
+ * Any other char is ignored, but it's easier to read for a human that
+ * way.
+ *
+ * This modifies the global variables Mis and Mev via MissionCodes().
+ *
+ * \param plr
+ * \param val  The mission code.
+ * \param pad  the pad (0, 1, or 2) where the mission is being launched.
+ */
+void MissionPath(char plr, int val, int pad)
+{
+    TRACE3("->MissionPath(plr, val %d, pad %d)", val, pad);
+
+    // Clear existing global / file global mission step information.
+    // These are cleared by DrawMission, but no point taking chances.
+    Bub_Count = 0; // set the initial bub_count
+    memset(Mev, 0x00, sizeof Mev);
+
+    // Read mission step data
     FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
 
     if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
@@ -1523,8 +1573,10 @@ void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
     }
 
     gr_sync();
+
     MissionCodes(plr, val, pad);
-    TRACE1("<-DrawMission()");
-}  // end function DrawMission
+
+    TRACE1("<-MissionPath()");
+}
 
 /* vim: set noet ts=4 sw=4 tw=77: */
