@@ -48,44 +48,10 @@
 LOG_DEFAULT_CATEGORY(future)
 
 
-enum FMFields {
-    FM_Duration = 1,
-    FM_Docking,
-    FM_EVA,
-    FM_LM,
-    FM_Joint
-};
-
-
-/*missStep.dat is plain text, with:
-Mission Number (2 first bytes of each line)
-A Coded letter, each drawing a different line (1105-1127 for all possible letters)
-Numbers following each letter, which are the parameters of the function
-Each line must finish with a Z, so the game stops reading
-Any other char is ignored, but it's easier to read for a human that way */
-char missStep[1024];
-static inline char B_Mis(char x)
-{
-    return missStep[x] - 0x30;
-}
-
-bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
-display::LegacySurface *vh;
-
-struct StepInfo {
-    int16_t x_cor;
-    int16_t y_cor;
-} StepBub[MAXBUB];
-
-// TODO: Localize these. Too many global/file global variables.
-/* Used in SetParameters, PianoKey, UpSearchRout, DownSearchRout, Future,
- * and DrawMission
- */
-std::vector<struct mStr> missionData;
-
 extern int SEG;
 
-
+namespace
+{
 /**
  * Hold the mission parameters used for searching mission by their
  * characteristics.
@@ -98,6 +64,36 @@ struct MissionNavigator {
 
     NavButton duration, docking, EVA, LM, joint;
 };
+
+enum FMFields {
+    FM_Duration = 1,
+    FM_Docking,
+    FM_EVA,
+    FM_LM,
+    FM_Joint
+};
+
+// TODO: Localize these. Too many global/file global variables.
+
+// Stepbub, missStep, and B_Mis are used in drawing mission flight
+// paths.
+struct StepInfo {
+    int16_t x_cor;
+    int16_t y_cor;
+} StepBub[MAXBUB];
+
+char missStep[1024];
+static inline char B_Mis(char x)
+{
+    return missStep[x] - 0x30;
+}
+
+bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
+display::LegacySurface *vh;
+// missionData is used in SetParameters, PianoKey, UpSearchRout,
+// DownSearchRout, Future, and DrawMission.
+std::vector<struct mStr> missionData;
+} // End unnamed namespace
 
 
 void Load_FUT_BUT(void);
@@ -476,6 +472,7 @@ void Toggle(FMFields button, int state)
         break;
 
     case FM_EVA:
+
         // TODO: Parameter 127 should be 126.
         if (state == 1)  {
             vh->copyTo(display::graphics.legacyScreen(), 38, 21, 92, 49, 127, 81);
@@ -495,6 +492,7 @@ void Toggle(FMFields button, int state)
         break;
 
     case FM_Joint:
+
         // FM_Joint is an exception to the normal image coordinates.
         // In the button image file, the inactive joint image is on
         // the row with the active button images, and vice versa.
@@ -1391,7 +1389,15 @@ void DrawMission(char plr, int X, int Y, int val, int pad, char bub,
         return;
     }
 
-    // Read steps from missStep.dat
+    /* missStep.dat is plain text, with:
+     * Mission Number (2 first bytes of each line)
+     * A Coded letter, each drawing a different line
+     * Numbers following each letter, which are the parameters
+     *   of the function
+     * Each line must finish with a Z, so the game stops reading
+     * Any other char is ignored, but it's easier to read for a
+     *   human that way
+     */
     FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
 
     if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
