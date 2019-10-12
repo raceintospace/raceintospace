@@ -5,6 +5,7 @@
   <summary>A game to relive the 1960s Space Race</summary>
   <url type="homepage">http://raceintospace.org</url>
   <url type="bugtracker">https://github.com/raceintospace/raceintospace/issues</url>
+  <url type="help">https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md</url>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <description>
