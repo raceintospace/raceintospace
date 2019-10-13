@@ -401,6 +401,7 @@ void SetParameters(void)
 
         if (fread(&entry, sizeof entry, 1, fin) != 1) {
             missionData.clear();
+            fclose(fin);
             throw IOException("Error reading entry in MISSION.DAT");
         }
 
