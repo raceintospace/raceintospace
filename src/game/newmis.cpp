@@ -29,6 +29,7 @@
 #include "port.h"
 #include "radar.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "rush.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -209,41 +210,11 @@ void MisAnn(char plr, char pad)
     }
 
     draw_string(127, 54, Mis.Abbr);
-    int MisCod;
-    MisCod = Data->P[plr].Mission[pad].MissionCode;
 
-    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-        // Show duration level only on missions with a Duration step - Leon
-    {
-        switch (Data->P[plr].Mission[pad].Duration) {
-        case 1:
-            draw_string(0, 0, "");
-            break;
-
-        case 2:
-            draw_string(0, 0, " (B)");
-            break;
-
-        case 3:
-            draw_string(0, 0, " (C)");
-            break;
-
-        case 4:
-            draw_string(0, 0, " (D)");
-            break;
-
-        case 5:
-            draw_string(0, 0, " (E)");
-            break;
-
-        case 6:
-            draw_string(0, 0, " (F)");
-            break;
-
-        default:
-            draw_string(0, 0, "");
-            break;
-        }
+    // Show duration level only on missions with a Duration step - Leon
+    if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {
+        int duration = Data->P[plr].Mission[pad].Duration;
+        draw_string(0, 0, GetDurationParens(duration));
     }
 
     IOBox(57, 68, 118, 84);

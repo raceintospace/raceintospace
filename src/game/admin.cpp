@@ -46,6 +46,7 @@
 #include "prefs.h"
 #include "rdplex.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
@@ -1372,7 +1373,6 @@ void FileText(char *name)
  */
 int FutureCheck(char plr, char type)
 {
-    int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     int i;
     int pad;
     int p[3];
@@ -1458,47 +1458,21 @@ int FutureCheck(char plr, char type)
             if (type == 1) {
                 GetMisType(Data->P[plr].Mission[i].MissionCode);
                 draw_string(111, 41 + i * 51, Mis.Abbr);
-                MisCod = Data->P[plr].Mission[i].MissionCode;
+                int MisCod = Data->P[plr].Mission[i].MissionCode;
 
-                if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-                    // Show duration level only on missions with a Duration step - Leon
-                {
-                    switch (Data->P[plr].Mission[i].Duration) {
-                    case 1:
-                        draw_string(0, 0, "");
-                        break;
-
-                    case 2:
-                        draw_string(0, 0, " (B)");
-                        break;
-
-                    case 3:
-                        draw_string(0, 0, " (C)");
-                        break;
-
-                    case 4:
-                        draw_string(0, 0, " (D)");
-                        break;
-
-                    case 5:
-                        draw_string(0, 0, " (E)");
-                        break;
-
-                    case 6:
-                        draw_string(0, 0, " (F)");
-                        break;
-
-                    default:
-                        draw_string(0, 0, "");
-                        break;
-                    }
+                // Show duration level only on missions with a
+                // Duration step - Leon
+                if (IsDuration(MisCod)) {
+                    int duration = Data->P[plr].Mission[i].Duration;
+                    draw_string(0, 0, GetDurationParens(duration));
                 }
 
-                if (i < 2)
+                if (i < 2) {
                     if (Data->P[plr].Mission[i + 1].part == 1) {
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
+                }
             } else {
                 if (!Data->P[plr].Future[i].MissionCode) {
                     display::graphics.setForegroundColor(1);
@@ -1507,47 +1481,21 @@ int FutureCheck(char plr, char type)
                 GetMisType(Data->P[plr].Future[i].MissionCode);
 
                 draw_string(111, 41 + i * 51, Mis.Abbr);
-                MisCod = Data->P[plr].Future[i].MissionCode;
+                int MisCod = Data->P[plr].Future[i].MissionCode;
 
-                if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-                    // Show duration level only on missions with a Duration step - Leon
-                {
-                    switch (Data->P[plr].Future[i].Duration) {
-                    case 1:
-                        draw_string(0, 0, "");
-                        break;
-
-                    case 2:
-                        draw_string(0, 0, " (B)");
-                        break;
-
-                    case 3:
-                        draw_string(0, 0, " (C)");
-                        break;
-
-                    case 4:
-                        draw_string(0, 0, " (D)");
-                        break;
-
-                    case 5:
-                        draw_string(0, 0, " (E)");
-                        break;
-
-                    case 6:
-                        draw_string(0, 0, " (F)");
-                        break;
-
-                    default:
-                        draw_string(0, 0, "");
-                        break;
-                    }
+                // Show duration level only on missions with a
+                // Duration step - Leon
+                if (IsDuration(MisCod)) {
+                    int duration = Data->P[plr].Future[i].Duration;
+                    draw_string(0, 0, GetDurationParens(duration));
                 }
 
-                if (i < 2)
+                if (i < 2) {
                     if (Data->P[plr].Future[i + 1].part == 1) {
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
+                }
             }
 
             if (type == 0) {

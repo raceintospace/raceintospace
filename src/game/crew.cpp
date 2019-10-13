@@ -27,6 +27,7 @@
 #include "draw.h"
 #include "place.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "gr.h"
 #include "pace.h"
 
@@ -773,41 +774,11 @@ void DrawHard(char mode, char pad, char mis, char plr)
     GetMisType(mis);
     draw_string(85, 70, Mis.Abbr);
 //Missions(plr,85,70,mis,0);
-    int MisCod;
-    MisCod = Data->P[plr].Future[pad].MissionCode;
 
-    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-        // Show duration level only on missions with a Duration step - Leon
-    {
-        switch (Data->P[plr].Future[pad].Duration) {
-        case 1:
-            draw_string(0, 0, "");
-            break;
-
-        case 2:
-            draw_string(0, 0, " (B)");
-            break;
-
-        case 3:
-            draw_string(0, 0, " (C)");
-            break;
-
-        case 4:
-            draw_string(0, 0, " (D)");
-            break;
-
-        case 5:
-            draw_string(0, 0, " (E)");
-            break;
-
-        case 6:
-            draw_string(0, 0, " (F)");
-            break;
-
-        default:
-            draw_string(0, 0, "");
-            break;
-        }
+    // Show duration level only on missions with a Duration step - Leon
+    if (IsDuration(Data->P[plr].Future[pad].MissionCode)) {
+        int duration = Data->P[plr].Future[pad].Duration;
+        draw_string(0, 0, GetDurationParens(duration));
     }
 
     draw_string(85, 85, "PAD: "); // Used to be followed by: "draw_number(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon

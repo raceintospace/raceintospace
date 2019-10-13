@@ -50,6 +50,7 @@ set(game_sources
   mc2.cpp
   mis_c.cpp
   mis_m.cpp
+  mission_util.cpp
   mmfile.cpp
   museum.cpp
   newmis.cpp
