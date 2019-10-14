@@ -173,26 +173,25 @@ PrestMap(int val)
  *  - Duration A-F, because there's already a category for that, and
  *  - Woman In Space, because it's not a technological challenge.
  *
- * This function relies upon the global variable Mis.
  *
- * \param plr current player (0 for USA, 1 for USSR)
- * \return penalty
- *
- * \note Call only when Mis is valid
+ * \note  Call only if mission has correct Index, PCat, and Days fields.
+ * \param plr  current player (0 for USA, 1 for USSR)
+ * \param mission  the mission to evaluate
+ * \return  sum of prestige, duration, and new mission penalties.
  */
-char PrestMin(char plr)
+char PrestMin(char plr, const struct mStr &mission)
 {
     int maxMilestone = 0, Neg = 0;
     bool newMilestone = false;
 
-    if (Mis.Index == 0) {
+    if (mission.Index == 0) {
         return 0;
     }
 
     // Find the maximum milestone & determine if mission offers a new
     // milestone
     for (int i = 0; i < 5; i++) {
-        int milestone = PrestMap(Mis.PCat[i]);
+        int milestone = PrestMap(mission.PCat[i]);
         maxMilestone = MAX(maxMilestone, milestone);
         newMilestone = newMilestone ||
                        (milestone >= 0 && Data->Mile[plr][milestone] == 0);
@@ -206,7 +205,7 @@ char PrestMin(char plr)
         }
     }
 
-    int reqDuration = MAX(Mis.Days  - 1, 0);
+    int reqDuration = MAX(mission.Days  - 1, 0);
     int playerDuration = MAX(Data->P[plr].DurationLevel, 0);
 
     // If mission.hasMilestone(Milestone_LunarPass)...
