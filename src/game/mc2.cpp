@@ -939,10 +939,12 @@ MisDur(char plr, char dur)
 /**
  * Compute and apply safety penalties to mission steps.
  *
+ *
  * TODO: This takes a parameter ms, used originally to determine the
  * maximum prestige requirement of the mission. However, it's no
  * longer used, and should be removed.
  *
+ * \note  This assumes the global variable Mis is correctly filled.
  * \param plr current player
  */
 void
@@ -950,7 +952,7 @@ MisSkip(char plr, char ms)
 {
     int i, j, diff;
 
-    diff = PrestMin(plr);
+    diff = PrestMin(plr, Mis);
 
     diff = MAX(diff, 0);
 

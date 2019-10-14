@@ -103,7 +103,7 @@ bool SaturnInRange(unsigned int year, unsigned int season);
 bool JointMissionOK(char plr, char pad);
 void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
 void ClearDisplay(void);
-int GetMinus(char plr);
+void DrawPenalty(char plr, const struct mStr &mission);
 void SetParameters(void);
 void DrawLocks(const MissionNavigator &nav);
 void Toggle(FMFields button, int state);
@@ -116,7 +116,7 @@ bool NavMatch(const MissionNavigator &nav, const struct mStr &mission);
 void NavReset(MissionNavigator &nav);
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator);
 int DownSearchRout(int num, char plr, const MissionNavigator &navigator);
-void PrintDuration(int duration);
+void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 
@@ -344,22 +344,24 @@ void ClearDisplay(void)
  *
  * This calculates the sum of the prestige, duration, and new mission
  * penalties and reports it as the current mission penalty. The penalty
- * is calculated by the PrestMin() function (in prest.h). PrestMin uses
- * the mission data stored in the global var Mis.
+ * is calculated by the PrestMin() function (in prest.h). Duration is
+ * passed to PrestMin via mission.Days.
  *
  * This relies on graphics loaded into the file variable vh.
+ *
+ * \param plr
+ * \param mission
  */
-int GetMinus(char plr)
+void DrawPenalty(char plr, const struct mStr &mission)
 {
-    char i;
     int u;
 
-    i = PrestMin(plr);
+    char penalty = PrestMin(plr, mission);
     fill_rectangle(206, 36, 235, 44, 7);
 
-    if (i < 3) {
+    if (penalty < 3) {
         u = 1;    //ok
-    } else if (i < 9) {
+    } else if (penalty < 9) {
         u = 10;    //caution
     } else {
         u = 19;    //danger
@@ -368,16 +370,18 @@ int GetMinus(char plr)
     vh->copyTo(display::graphics.legacyScreen(), 203, u, 203, 24, 238, 31);
     display::graphics.setForegroundColor(11);
 
-    if (i > 0) {
+    if (penalty > 0) {
         draw_string(210, 42, "-");
     } else {
         grMoveTo(210, 42);
     }
 
-    draw_number(0, 0, i);
+    draw_number(0, 0, penalty);
     display::graphics.setForegroundColor(1);
-    return 0;
+
+    return;
 }
+
 
 /**
  * Cache a subset of mission data in a local array.
@@ -411,6 +415,7 @@ void SetParameters(void)
     fclose(fin);
     return;
 }
+
 
 /* Illustrate all of the mission parameter "locks" in their respective
  * settings.
@@ -673,6 +678,7 @@ void PlaceRX(FMFields button)
 
     return;
 }
+
 
 /* Draws a restriction (lock) button in its inactive (unrestricted)
  * state. The restriction button indicates whether the linked mission
@@ -1011,6 +1017,20 @@ void Future(char plr)
                     DrawPie(nav.duration.value);
                 }
 
+                // If a duration mission, update the duration & mission
+                // penalty displays
+                if (missionData[misType].Dur) {
+                    struct mStr mission = missionData[misType];
+                    int duration = MAX(nav.duration.value,
+                                       missionData[misType].Days);
+                    bool valid =
+                        (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
+
+                    mission.Days = duration;
+                    DrawPenalty(plr, mission);
+                }
+
                 WaitForMouseUp();
 
                 // Why was this line here? Foreground gets set in OutBox
@@ -1227,6 +1247,7 @@ void Future(char plr)
     TRACE1("<-Future()");
 }
 
+
 /** Draws a flight path bubble on the screen.
  *
  * This stores the bubble coordinates in StepBub and increments the
@@ -1254,16 +1275,19 @@ void Bd(int x, int y)
     return;
 }
 
+
 /** Update the selected mission view with the given duration.
  *
  * \param duration  0 for unmanned, 1-6 for duration A through F
+ * \param color  The palette color for printing the duration
+ *     (usually 5, 9 for red).
  *
  * \todo Link this at whatever place the duration is actually defined
  */
-void PrintDuration(int duration)
+void PrintDuration(int duration, int color)
 {
     fill_rectangle(112, 25, 199, 30, 3); // Draw over old duration
-    display::graphics.setForegroundColor(5);
+    display::graphics.setForegroundColor(color);
 
     switch (duration) {
     case -1:
@@ -1296,8 +1320,8 @@ void PrintDuration(int duration)
         break;
 
     default:
-        ERROR2("Invalid argument to PrintDuration(duration = %d)",
-               duration);
+        ERROR3("Invalid argument to PrintDuration(duration = %d, color = %d)",
+               duration, color);
         break;
     }
 
@@ -1391,24 +1415,27 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     draw_number(0, 0, val);
     display::graphics.setForegroundColor(5);
 
-    // TODO: Clean this up...
-    if (missionData[val].Days > 0) {
-        if (nav.duration.lock &&
-            nav.duration.value > missionData[val].Days &&
-            missionData[val].Dur == 1) {
-            PrintDuration(nav.duration.value);
-        } else {
-            PrintDuration(missionData[val].Days);
-        }
+    // Creating a copy of the mission to send to DrawPenalty, rather
+    // than using Mis, to decrease the reliance on global vars.
+    struct mStr mission = missionData[val];
+
+    // If a duration mission, print the selected duration so long as
+    // it is greater than the minimum mission duration.
+    if (mission.Dur == 1) {
+        int duration = MAX(nav.duration.value, mission.Days);
+        PrintDuration(duration, duration >= mission.Days ? 5 : 9);
     } else {
-        PrintDuration(nav.duration.value);
+        PrintDuration(mission.Days, 5);
     }
 
     // MissionName calls GetMisType, which sets the global var Mis.
-    // GetMinus uses the mission data stored in Mis to calculate the
-    // mission penalty (via a call to PrestMin() in prest.cpp).
     MissionName(val, X, Y, 24);
-    GetMinus(plr);
+
+    if (mission.Dur == 1 && mission.Days < nav.duration.value) {
+        mission.Days = nav.duration.value;
+    }
+
+    DrawPenalty(plr, mission);
 
     gr_sync();
     TRACE1("<-DrawMission()");
