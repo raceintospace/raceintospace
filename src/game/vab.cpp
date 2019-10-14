@@ -38,6 +38,7 @@
 #include "admin.h"
 #include "game_main.h"
 #include "mis_c.h"
+#include "mission_util.h"
 #include "news_suq.h"
 #include "place.h"
 #include "radar.h"
@@ -349,46 +350,15 @@ void DispVAB(char plr, char pad)
     draw_string(40, 111, "MISSION HARDWARE:");
     draw_string(10, 119, "SELECT PAYLOADS AND BOOSTER");
 
-    display::graphics.setForegroundColor(1);
-
     GetMisType(Data->P[plr].Mission[pad].MissionCode);
 
+    display::graphics.setForegroundColor(1);
     draw_string(5, 52, Mis.Abbr);
 
-    int MisCod;
-    MisCod = Data->P[plr].Mission[pad].MissionCode;
-
     // Show duration level only on missions with a Duration step - Leon
-    if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41) {
-        switch (Data->P[plr].Mission[pad].Duration) {
-        case 1:
-            draw_string(0, 0, "");
-            break;
-
-        case 2:
-            draw_string(0, 0, " (B)");
-            break;
-
-        case 3:
-            draw_string(0, 0, " (C)");
-            break;
-
-        case 4:
-            draw_string(0, 0, " (D)");
-            break;
-
-        case 5:
-            draw_string(0, 0, " (E)");
-            break;
-
-        case 6:
-            draw_string(0, 0, " (F)");
-            break;
-
-        default:
-            draw_string(0, 0, "");
-            break;
-        }
+    if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {
+        int duration = Data->P[plr].Mission[pad].Duration;
+        draw_string(0, 0, GetDurationParens(duration));
     }
 
     draw_small_flag(plr, 4, 4);

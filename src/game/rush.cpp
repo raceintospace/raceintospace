@@ -33,6 +33,7 @@
 #include "draw.h"
 #include "place.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
@@ -250,41 +251,12 @@ void DrawRush(char plr)
             GetMisType(Data->P[plr].Mission[i].MissionCode);
 
             draw_string(96, 48 + 58 * i, Mis.Abbr);
-            int MisCod;
-            MisCod = Data->P[plr].Mission[i].MissionCode;
 
-            if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41)
-                // Show duration level only on missions with a Duration step - Leon
-            {
-                switch (Data->P[plr].Mission[i].Duration) {
-                case 1:
-                    draw_string(0, 0, "");
-                    break;
-
-                case 2:
-                    draw_string(0, 0, " (B)");
-                    break;
-
-                case 3:
-                    draw_string(0, 0, " (C)");
-                    break;
-
-                case 4:
-                    draw_string(0, 0, " (D)");
-                    break;
-
-                case 5:
-                    draw_string(0, 0, " (E)");
-                    break;
-
-                case 6:
-                    draw_string(0, 0, " (F)");
-                    break;
-
-                default:
-                    draw_string(0, 0, "");
-                    break;
-                }
+            // Show duration level only on missions with a
+            // Duration step - Leon
+            if (IsDuration(Data->P[plr].Mission[i].MissionCode)) {
+                int duration = Data->P[plr].Mission[i].Duration;
+                draw_string(0, 0, GetDurationParens(duration));
             }
 
             if (Data->P[plr].Mission[i].Name[24] == 1) {
@@ -418,35 +390,8 @@ void Rush(char plr)
                         draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
-                            switch (Data->P[plr].Mission[i].Duration) {
-                            case 1:
-                                draw_string(0, 0, "");
-                                break;
-
-                            case 2:
-                                draw_string(0, 0, " (B)");
-                                break;
-
-                            case 3:
-                                draw_string(0, 0, " (C)");
-                                break;
-
-                            case 4:
-                                draw_string(0, 0, " (D)");
-                                break;
-
-                            case 5:
-                                draw_string(0, 0, " (E)");
-                                break;
-
-                            case 6:
-                                draw_string(0, 0, " (F)");
-                                break;
-
-                            default:
-                                draw_string(0, 0, "");
-                                break;
-                            }
+                            int duration = Data->P[plr].Mission[i].Duration;
+                            draw_string(0, 0, GetDurationParens(duration));
                         }
 
                         //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
@@ -465,35 +410,8 @@ void Rush(char plr)
                         draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
-                            switch (Data->P[plr].Mission[i].Duration) {
-                            case 1:
-                                draw_string(0, 0, "");
-                                break;
-
-                            case 2:
-                                draw_string(0, 0, " (B)");
-                                break;
-
-                            case 3:
-                                draw_string(0, 0, " (C)");
-                                break;
-
-                            case 4:
-                                draw_string(0, 0, " (D)");
-                                break;
-
-                            case 5:
-                                draw_string(0, 0, " (E)");
-                                break;
-
-                            case 6:
-                                draw_string(0, 0, " (F)");
-                                break;
-
-                            default:
-                                draw_string(0, 0, "");
-                                break;
-                            }
+                            int duration = Data->P[plr].Mission[i].Duration;
+                            draw_string(0, 0, GetDurationParens(duration));
                         }
 
                         //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);
@@ -535,35 +453,8 @@ void Rush(char plr)
                         draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
-                            switch (Data->P[plr].Mission[i].Duration) {
-                            case 1:
-                                draw_string(0, 0, "");
-                                break;
-
-                            case 2:
-                                draw_string(0, 0, " (B)");
-                                break;
-
-                            case 3:
-                                draw_string(0, 0, " (C)");
-                                break;
-
-                            case 4:
-                                draw_string(0, 0, " (D)");
-                                break;
-
-                            case 5:
-                                draw_string(0, 0, " (E)");
-                                break;
-
-                            case 6:
-                                draw_string(0, 0, " (F)");
-                                break;
-
-                            default:
-                                draw_string(0, 0, "");
-                                break;
-                            }
+                            int duration = Data->P[plr].Mission[i].Duration;
+                            draw_string(0, 0, GetDurationParens(duration));
                         }
 
                         //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
@@ -581,35 +472,8 @@ void Rush(char plr)
                         draw_string(96, 48 + 58 * i, Mis.Abbr);
 
                         if (Mis.Dur >= 1) {
-                            switch (Data->P[plr].Mission[i].Duration) {
-                            case 1:
-                                draw_string(0, 0, "");
-                                break;
-
-                            case 2:
-                                draw_string(0, 0, " (B)");
-                                break;
-
-                            case 3:
-                                draw_string(0, 0, " (C)");
-                                break;
-
-                            case 4:
-                                draw_string(0, 0, " (D)");
-                                break;
-
-                            case 5:
-                                draw_string(0, 0, " (E)");
-                                break;
-
-                            case 6:
-                                draw_string(0, 0, " (F)");
-                                break;
-
-                            default:
-                                draw_string(0, 0, "");
-                                break;
-                            }
+                            int duration = Data->P[plr].Mission[i].Duration;
+                            draw_string(0, 0, GetDurationParens(duration));
                         }
 
                         //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);

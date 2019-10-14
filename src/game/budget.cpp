@@ -32,6 +32,7 @@
 #include "game_main.h"
 #include "draw.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "records.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -475,7 +476,6 @@ void Budget(char player)
 void DrawPreviousMissions(char plr)
 {
     int i, misnum = 0;
-    int MisCod;  // Variable to store Mission Code (for knowing when to display Duration level)
     InBox(5, 41, 314, 91);
     fill_rectangle(6, 42, 313, 90, 0);
     i = Data->P[plr].PastMissionCount - olderMiss;
@@ -487,38 +487,12 @@ void DrawPreviousMissions(char plr)
 
         draw_string(9, 49 + 16 * misnum, Data->P[plr].History[i].MissionName[0]);
         draw_string(9, 55 + 16 * misnum, Mis.Abbr);
-        MisCod = Data->P[plr].History[i].MissionCode;
 
-        if ((MisCod > 24 && MisCod < 32) || MisCod == 33 || MisCod == 34 || MisCod == 35 || MisCod == 37 || MisCod == 40 || MisCod == 41) {
-            switch (Data->P[plr].History[i].Duration) {
-            case 1:
-                draw_string(0, 0, "");
-                break;
-
-            case 2:
-                draw_string(0, 0, " (B)");
-                break;
-
-            case 3:
-                draw_string(0, 0, " (C)");
-                break;
-
-            case 4:
-                draw_string(0, 0, " (D)");
-                break;
-
-            case 5:
-                draw_string(0, 0, " (E)");
-                break;
-
-            case 6:
-                draw_string(0, 0, " (F)");
-                break;
-
-            default:
-                draw_string(0, 0, "");
-                break;
-            }
+        // Check the mission code to see if it's a duration mission.
+        // If so, include the duration length.
+        if (IsDuration(Data->P[plr].History[i].MissionCode)) {
+            int duration = Data->P[plr].History[i].Duration;
+            draw_string(0, 0, GetDurationParens(duration));
         }
 
         draw_string(140, 49 + 16 * misnum, "PRESTIGE: ");
