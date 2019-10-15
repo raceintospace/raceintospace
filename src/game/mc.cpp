@@ -400,7 +400,7 @@ void MissionPast(char plr, char pad, int prest)
 
     // Flag for if mission is done
     Data->P[plr].History[loc].Event = Data->P[plr].History[loc].Saf = 0;
-    Data->P[plr].History[loc].Event = (mc == 10) ? 2 : ((mc == 12) ? 7 : ((mc == 13) ? 7 : 0));
+    Data->P[plr].History[loc].Event = (mc == 10) ? 2 : ((mc == 12) ? 4 : ((mc == 13) ? 7 : 0));
 
     if ((mc == 10 || mc == 12 || mc == 13) && prest != 0) {
         Data->P[plr].History[loc].Event = 0;
