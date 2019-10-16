@@ -978,7 +978,7 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America’s proud
   <tr>
     <td>10</td>
     <td>Mars Flyby</td>
-    <td>Takes 3 turns to arrive</td>
+    <td>Takes 2 turns to arrive</td>
   </tr>
   <tr>
     <td>11</td>
@@ -988,7 +988,7 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America’s proud
   <tr>
     <td>12</td>
     <td>Jupiter Flyby</td>
-    <td>Takes 7 turns to arrive</td>
+    <td>Takes 4 turns to arrive</td>
   </tr>
   <tr>
     <td>13</td>
