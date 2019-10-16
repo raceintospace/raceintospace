@@ -965,15 +965,15 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                     if (Data->P[plr].History[index].Event == 0 &&
                         Data->P[plr].History[index].spResult == 1)
                         switch (Data->P[plr].History[index].MissionCode) {
-                        case 10:
+                        case Mission_MarsFlyby:
                             Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUM1" : "WSM1");
                             break;
 
-                        case 12:
+                        case Mission_JupiterFlyby:
                             Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUJ1" : "WSJ1");
                             break;
 
-                        case 13:
+                        case Mission_SaturnFlyby:
                             Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUS1" : "WSS1");
                             break;
 
@@ -1004,15 +1004,15 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                     if (Data->P[plr].History[index].Event == 0 &&
                         Data->P[plr].History[index].spResult == 1) {
                         switch (Data->P[plr].History[index].MissionCode) {
-                        case 10:
+                        case Mission_MarsFlyby:
                             Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUM1" : "WSM1");
                             break;
 
-                        case 12:
+                        case Mission_JupiterFlyby:
                             Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUJ1" : "WSJ1");
                             break;
 
-                        case 13:
+                        case Mission_SaturnFlyby:
                             Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUS1" : "WSS1");
                             break;
                         }

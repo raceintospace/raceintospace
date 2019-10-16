@@ -42,7 +42,7 @@ char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
 
 void AstroTurn(void);
 void UpdAll(char side);
-void TestFMis(int j, int i);
+void TestFMis(int plr, int i);
 void UpdateHardTurn(char plr);
 
 
@@ -887,15 +887,15 @@ void Update(void)
         for (i = 0; i < Data->P[j].PastMissionCount; i++) {
             if (Data->P[j].History[i].Event == 0) {
                 switch (Data->P[j].History[i].MissionCode) {
-                case 10:
+                case Mission_MarsFlyby:
                     Data->Prestige[Prestige_MarsFlyby].Goal[j]++;
                     break;  // Mars
 
-                case 12:
+                case Mission_JupiterFlyby:
                     Data->Prestige[Prestige_JupiterFlyby].Goal[j]++;
-                    break;  // Juptier
+                    break;  // Jupiter
 
-                case 13:
+                case Mission_SaturnFlyby:
                     Data->Prestige[Prestige_SaturnFlyby].Goal[j]++;
                     break;  // Saturn
 
@@ -905,7 +905,7 @@ void Update(void)
             }
 
             switch (Data->P[j].History[i].MissionCode) {
-            case 1:
+            case Mission_Orbital_Satellite:
                 if (Data->P[j].History[i].spResult != 1) {
                     Data->P[j].Probe[PROBE_HW_ORBITAL].Failures++;
                 }
@@ -913,7 +913,7 @@ void Update(void)
                 Data->P[j].Probe[PROBE_HW_ORBITAL].Used++;
                 break;
 
-            case 8:
+            case Mission_Lunar_Probe:
                 if (Data->P[j].History[i].spResult != 1) {
                     Data->P[j].Probe[PROBE_HW_LUNAR].Failures++;
                 }
@@ -1079,15 +1079,15 @@ void UpdAll(char side)
     for (i = 0; i < Data->P[side].PastMissionCount; i++) {
         if (Data->P[side].History[i].Event == 0) {
             switch (Data->P[side].History[i].MissionCode) {
-            case 10:
+            case Mission_MarsFlyby:
                 Data->Prestige[Prestige_MarsFlyby].Goal[side]++;
                 break;  // Mars
 
-            case 12:
+            case Mission_JupiterFlyby:
                 Data->Prestige[Prestige_JupiterFlyby].Goal[side]++;
                 break;  // Juptier
 
-            case 13:
+            case Mission_SaturnFlyby:
                 Data->Prestige[Prestige_SaturnFlyby].Goal[side]++;
                 break;  // Saturn
 
@@ -1118,36 +1118,42 @@ void UpdAll(char side)
     return;
 }
 
-void
-TestFMis(int j, int i)
-{
-    int k;
 
-    if (Data->P[j].History[i].Saf == 0) {
+/**
+ * Tests a Flyby mission to decide if it was successful.
+ *
+ * \param plr
+ * \param i
+ */
+void TestFMis(int plr, int i)
+{
+    int misCode;
+
+    if (Data->P[plr].History[i].Saf == 0) {
         return;
     }
 
-    if (Data->P[j].History[i].Event > 0) {
-        Data->P[j].History[i].Event--;
+    if (Data->P[plr].History[i].Event > 0) {
+        Data->P[plr].History[i].Event--;
 
-        if (brandom(100) > Data->P[j].History[i].Saf) {
+        if (brandom(100) > Data->P[plr].History[i].Saf) {
             /* Failed Mission */
-            k = Data->P[j].History[i].MissionCode;
-            Data->P[j].History[i].Event = Data->P[j].History[i].Saf = 0;
-            Data->P[j].History[i].Prestige =
-                PrestNeg(j, (k == 10) ? 4 : (k == 12) ? 5 : 6);
-            Data->P[j].Plans |= (k == 10) ? 0x01 : (k == 12) ? 0x02 : 0x04;
-            Data->P[j].History[i].spResult = 5000;
+            misCode = Data->P[plr].History[i].MissionCode;
+            Data->P[plr].History[i].Event = Data->P[plr].History[i].Saf = 0;
+            Data->P[plr].History[i].Prestige =
+                PrestNeg(plr, (misCode == Mission_MarsFlyby) ? 4 : (misCode == Mission_JupiterFlyby) ? 5 : 6);
+            Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x01 : (misCode == Mission_JupiterFlyby) ? 0x02 : 0x04;
+            Data->P[plr].History[i].spResult = 5000;
         }
 
-        if (Data->P[j].History[i].Event == 0
-            && Data->P[j].History[i].Prestige == 0) {
-            k = Data->P[j].History[i].MissionCode;
-            Data->P[j].History[i].Prestige =
-                Set_Goal(j, (k == 10) ? 4 : (k == 12) ? 5 : 6, 3);
-            Data->P[j].Plans |= (k == 10) ? 0x10 : (k == 12) ? 0x20 : 0x40;
-            Data->P[j].History[i].spResult = 1;
-            Data->P[j].History[i].Saf = 0;
+        if (Data->P[plr].History[i].Event == 0
+            && Data->P[plr].History[i].Prestige == 0) {
+            misCode = Data->P[plr].History[i].MissionCode;
+            Data->P[plr].History[i].Prestige =
+                Set_Goal(plr, (misCode == Mission_MarsFlyby) ? 4 : (misCode == Mission_JupiterFlyby) ? 5 : 6, 3);
+            Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x10 : (misCode == Mission_JupiterFlyby) ? 0x20 : 0x40;
+            Data->P[plr].History[i].spResult = 1;
+            Data->P[plr].History[i].Saf = 0;
         }
     }
 }
