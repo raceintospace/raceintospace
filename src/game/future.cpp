@@ -119,6 +119,7 @@ int DownSearchRout(int num, char plr, const MissionNavigator &navigator);
 void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
+bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
 
 
 /* TODO: Documentation...
@@ -951,8 +952,7 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (nav.duration.value >= missionData[misType].Days &&
-                ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
+            if (((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
@@ -962,6 +962,12 @@ void Future(char plr)
                 }
 
                 key = 0;
+
+                if (! FutureMissionOk(plr, nav, misType)) {
+                    OutBox(244, 5, 313, 17);
+                    continue;
+                }
+
                 OutBox(244, 5, 313, 17);
 
                 // Copy the screen contents to a buffer. If the mission
@@ -969,15 +975,17 @@ void Future(char plr)
                 // created listing the options. Once the pop-up is
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
+                int duration = missionData[misType].Dur ?
+                    nav.duration.value : missionData[misType].Days;
                 int NewType = missionData[misType].mCrew;
-                Data->P[plr].Future[pad].Duration = nav.duration.value;
+                Data->P[plr].Future[pad].Duration = duration;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
                 if (Ok == 1) {
-                    Data->P[plr].Future[pad].Duration = nav.duration.value;
+                    Data->P[plr].Future[pad].Duration = duration;
                     break;        // return to launchpad loop
                 } else {
                     ClrFut(plr, pad);
@@ -1606,5 +1614,50 @@ void MissionPath(char plr, int val, int pad)
 
     TRACE1("<-MissionPath()");
 }
+
+
+/**
+ * Checks that the mission is legitimately configured before allowing
+ * it to be scheduled.
+ *
+ * This handles any checks to ensure the mission can be scheduled
+ * for launch the next turn, namely:
+ *  - On duration missions, the scheduled duration must meet the
+ *    minimum duration for that mission type.
+ *
+ * EVA / Docking program requirements could be placed here, but are
+ * currently handled in the VAB. Manned equipment requirements,
+ * such as at least one capsule program and at least one available
+ * crew, are handled by HardCrewAssign and its subordinate functions.
+ *
+ * \param plr  The player index.
+ * \param nav  The current FM navigation settings.
+ * \param mis  The mission's index code.
+ * \return true if the mission is OK, false otherwise.
+ */
+bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis) {
+    const struct mStr &mission = missionData[mis];
+
+    if (mission.Dur && nav.duration.value < mission.Days) {
+        // TODO: Display some kind of popup information.
+        return false;
+    }
+
+    /* These checks are performed in the VAB, so they aren't needed
+     * here, but I'm including them as references -- rnyoakum
+     */
+    // if (mission.EVA && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
+    //     Help("i118");
+    //     return false;
+    // }
+
+    // if (mission.Doc && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
+    //     Help("i119");
+    //     return false;
+    // }
+
+    return true;
+}
+
 
 /* vim: set noet ts=4 sw=4 tw=77: */
