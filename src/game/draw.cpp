@@ -649,13 +649,13 @@ void draw_character(char chr)
         MR(0, -2), LR(3, 0);
         MR(2, 2);
         break;
-        
+
     case '+':
-        MR(0,-2);
-        LR(4,0);
-        MR(-2,-2);
-        LR(0,4);
-        MR(4,0);
+        MR(0, -2);
+        LR(4, 0);
+        MR(-2, -2);
+        LR(0, 4);
+        MR(4, 0);
         break;
 
     case '.':
