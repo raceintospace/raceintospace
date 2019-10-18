@@ -46,8 +46,6 @@ char Mon[12][4] = {
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 };
 
-int fCsh; //rush cash
-
 char dg[62][6] = {
     {00, 00, 00, 00, 00, 00}, // 0
     {00, 00, 00, 00, 00, 00}, // 1
@@ -114,106 +112,24 @@ char dg[62][6] = {
 };
 
 void DrawRush(char plr);
-void ResetRush(int mode, int val);
-void SetRush(int mode, int val);
+void ResetRush(int mode, int pad);
+void SetLaunchDates(char plr);
+void SetRush(int mode, int pad);
 
 
-
+/* Draw the Mission Control facility display and the missions planned
+ * for launch this turn.
+ *
+ * \param plr  The player's country (0 for USA, 1 for the USSR).
+ */
 void DrawRush(char plr)
 {
-    int i = 0;
-    int k = 0;
-    int l = 0;
-    int JR = 0;
-
     FadeOut(2, 10, 0, 0);
 
     boost::shared_ptr<display::PalettizedSurface> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
     launchPads->exportPalette();
 
     display::graphics.screen()->clear();
-    JR = 0;
-
-    for (l = 0; l < 3; l++) {
-        if (Data->P[plr].Mission[l].Joint == 1) {
-            JR = 1;
-        }
-
-        if (Data->P[plr].Mission[l].MissionCode &&
-            Data->P[plr].Mission[l].part == 0) {
-            k++;
-        }
-
-        if (Data->P[plr].Mission[l].Rushing == 1) {
-            Data->P[plr].Cash += 3;
-        } else if (Data->P[plr].Mission[l].Rushing == 2) {
-            Data->P[plr].Cash += 6;
-        }
-
-        Data->P[plr].Mission[l].Rushing = 0; // Clear Data
-    }
-
-    if (k == 3) { // Three non joint missions
-        Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
-        Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
-        Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
-    }
-
-    if (k == 2 && JR == 0) { // Two non joint missions
-        l = 3;
-
-        if (Data->P[plr].Mission[0].MissionCode) {
-            Data->P[plr].Mission[0].Month = l + Data->Season * 6;
-            l += 2;
-        }
-
-        if (Data->P[plr].Mission[1].MissionCode) {
-            Data->P[plr].Mission[1].Month = l + Data->Season * 6;
-            l += 2;
-        }
-
-        if (Data->P[plr].Mission[2].MissionCode) {
-            Data->P[plr].Mission[2].Month = l + Data->Season * 6;
-        }
-    }
-
-    if (k == 1 && JR == 0) { // Single Mission Non joint
-        if (Data->P[plr].Mission[0].MissionCode) {
-            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
-        }
-
-        if (Data->P[plr].Mission[1].MissionCode) {
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
-        }
-
-        if (Data->P[plr].Mission[2].MissionCode) {
-            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
-        }
-    }
-
-    if (k == 2 && JR == 1) { // Two launches, one Joint;
-        if (Data->P[plr].Mission[1].part == 1) { // Joint first
-            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
-        }
-
-        if (Data->P[plr].Mission[2].part == 1) { // Joint second
-            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 5 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
-        }
-    }
-
-    if (k == 1 && JR == 1) { //  Single Joint Launch
-        if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
-            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
-        } else {   // found on pad 2+3
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
-        }
-    }
 
     ShBox(0, 0, 319, 23);
     IOBox(243, 3, 316, 19);
@@ -222,7 +138,7 @@ void DrawRush(char plr)
     draw_string(263, 13, "ASSIGN");
     draw_small_flag(plr, 4, 4);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].MissionCode &&
             Data->P[plr].Mission[i].part == 0) {
             ShBox(0, 25 + i * 58, 80, 82 + i * 58 - 1);
@@ -240,7 +156,8 @@ void DrawRush(char plr)
             draw_string(199, 69 + i * 58, "COST:");
             OutBox(11 , 33 + i * 58, 69, 74 + i * 58);
             InBox(20, 38 + i * 58, 60, 69 + i * 58);
-            display::graphics.screen()->draw(launchPads, 156 * plr, i * 30, 39, 30, 21, 39 + i * 58);
+            display::graphics.screen()->draw(
+                launchPads, 156 * plr, i * 30, 39, 30, 21, 39 + i * 58);
 
             SetRush(Data->P[plr].Mission[i].Rushing, i);
             display::graphics.setForegroundColor(1);
@@ -270,26 +187,44 @@ void DrawRush(char plr)
             }
 
             display::graphics.setForegroundColor(11);
-            draw_string(288, 38 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 0][0]);
-            draw_string(288, 55 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 1][0]);
-            draw_string(288, 72 + 58 * i, &Mon[Data->P[plr].Mission[i].Month - 2][0]);
+            draw_string(288, 38 + 58 * i,
+                        &Mon[Data->P[plr].Mission[i].Month - 0][0]);
+            draw_string(288, 55 + 58 * i,
+                        &Mon[Data->P[plr].Mission[i].Month - 1][0]);
+            draw_string(288, 72 + 58 * i,
+                        &Mon[Data->P[plr].Mission[i].Month - 2][0]);
         } /* End if */
-    } /* End for i */
+    }
 
     return;
 }
 
+
 void Rush(char plr)
 {
-    int i, R1, R2, R3, oR1, oR2, oR3, dgflag[3] = {0, 0, 0};
+    int R1, R2, R3, oR1, oR2, oR3, dgflag[3] = {0, 0, 0};
     char pRush = 0;
 
     R1 = R2 = R3 = oR1 = oR2 = oR3 = 0;
-    fCsh = 0;
+
+    // Reset Rushing status for missions.
+    for (int pad = 0; pad < 3; pad++) {
+        if (Data->P[plr].Mission[pad].Rushing == 1) {
+            Data->P[plr].Cash += 3;
+        } else if (Data->P[plr].Mission[pad].Rushing == 2) {
+            Data->P[plr].Cash += 6;
+        }
+
+        Data->P[plr].Mission[pad].Rushing = 0; // Clear Data
+    }
+
+    SetLaunchDates(plr);
+
     DrawRush(plr);
     pRush = (Data->P[plr].Cash >= 3) ? 1 : 0;
-    fCsh = Data->P[plr].Cash;
+    int fCsh = Data->P[plr].Cash;
     display::graphics.setForegroundColor(1);
+
     music_start((plr == 0) ? M_USMIL : M_USSRMIL);
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -316,8 +251,9 @@ void Rush(char plr)
                 R1 = ((y >= 32 && y <= 40 && mousebuttons > 0) || key == '1') ? 0 : R1;
 
                 if (oR1 != R1) {
-                    ResetRush(oR1, 0);
-                    SetRush(R1, 0);
+                    ResetRush(oR1, PAD_A);
+                    SetRush(R1, PAD_A);
+                    fCsh -= (R1 - oR1) * 3;
                     oR1 = R1;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 90 && y <= 132 && mousebuttons > 0) || (key >= '4' && key <= '6'))
@@ -337,8 +273,9 @@ void Rush(char plr)
                 R2 = ((y >= 90 && y <= 98 && mousebuttons > 0) || key == '4') ? 0 : R2;
 
                 if (oR2 != R2) {
-                    ResetRush(oR2, 1);
-                    SetRush(R2, 1);
+                    ResetRush(oR2, PAD_B);
+                    SetRush(R2, PAD_B);
+                    fCsh -= (R2 - oR2) * 3;
                     oR2 = R2;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 148 && y <= 190 && mousebuttons > 0) || (key >= '7' && key <= '9'))
@@ -358,20 +295,23 @@ void Rush(char plr)
                 R3 = ((y >= 148 && y <= 156 && mousebuttons > 0) || key == '7') ? 0 : R3;
 
                 if (oR3 != R3) {
-                    ResetRush(oR3, 2);
-                    SetRush(R3, 2);
+                    ResetRush(oR3, PAD_C);
+                    SetRush(R3, PAD_C);
+                    fCsh -= (R3 - oR3) * 3;
                     oR3 = R3;
                 }
             }
 
             // DOWNGRADE MISSION KEYBOARD
             if (key == 'Q' || key == 'R' || key == 'U') {
+                int i = 0;
+
                 if (key == 'Q') {
-                    i = 0;
+                    i = PAD_A;
                 } else if (key == 'R') {
-                    i = 1;
+                    i = PAD_B;
                 } else if (key == 'U') {
-                    i = 2;
+                    i = PAD_C;
                 } else {
                     i = 0;
                 }
@@ -438,7 +378,7 @@ void Rush(char plr)
                 }
             }
 
-            for (i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (x >= 91 && x <= 264 && y >= 41 + i * 59 && y <= 59 + i * 59 && mousebuttons > 0
                     && Data->P[plr].Mission[i].MissionCode
                     && Data->P[plr].Mission[i].part != 1) { // Downgrade
@@ -511,7 +451,7 @@ void Rush(char plr)
                 OutBox(245, 5, 314, 17);
                 delay(10);
 
-                for (i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++) {
                     if (Data->P[plr].Mission[i].MissionCode) {
                         if (dgflag[i] != 0) {
                             Data->P[plr].Mission[i].MissionCode = dg[Data->P[plr].Mission[i].MissionCode][dgflag[i] - 1];
@@ -553,29 +493,129 @@ void Rush(char plr)
     }
 }
 
-void ResetRush(int mode, int val)
-{
 
-    OutBox(280, 32 + 17 * mode + val * 58, 312, 40 + 17 * mode + val * 58);
-    fCsh += mode * 3;
+/* Unsets the old launch date on the Mission Control display.
+ *
+ * Because mission settings are not modified until leaving the Mission
+ * Control center, this only updates the display.
+ * Updating the display to reflect the new setting is handled by SetRush.
+ *
+ * \param mode  How many months the mission was being rushed (0, 1, or 2).
+ * \param pad   The index of the launch pad for the mission (0, 1, or 2).
+ */
+void ResetRush(const int mode, const int pad)
+{
+    OutBox(280, 32 + 17 * mode + pad * 58, 312, 40 + 17 * mode + pad * 58);
 
     return;
 }
 
-void SetRush(int mode, int val)
-{
 
-    InBox(280, 32 + 17 * mode + val * 58, 312, 40 + 17 * mode + val * 58);
-    fill_rectangle(177, 63 + 58 * val, 192, 70 + 58 * val, 3);
-    fill_rectangle(225, 62 + 58 * val, 270, 70 + 58 * val, 3);
+/* Schedule the default, unrushed launch dates for the planned missions.
+ *
+ * \param plr  The index of the player launching the missions.
+ */
+void SetLaunchDates(const char plr)
+{
+    int missionCount = 0;
+    bool joint = false;
+
+    // Currently, can only handles 3 missions.
+    assert(MAX_MISSIONS == 3);
+
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[plr].Mission[i].Joint == 1) {
+            joint = true;
+        }
+
+        if (Data->P[plr].Mission[i].MissionCode &&
+            Data->P[plr].Mission[i].part == 0) {
+            missionCount++;
+        }
+    }
+
+    if (missionCount == 3) { // Three non joint missions
+        Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
+        Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
+        Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+    }
+
+    if (missionCount == 2 && joint == false) { // Two non joint missions
+        int start = 3;
+
+        if (Data->P[plr].Mission[0].MissionCode) {
+            Data->P[plr].Mission[0].Month = start + Data->Season * 6;
+            start += 2;
+        }
+
+        if (Data->P[plr].Mission[1].MissionCode) {
+            Data->P[plr].Mission[1].Month = start + Data->Season * 6;
+            start += 2;
+        }
+
+        if (Data->P[plr].Mission[2].MissionCode) {
+            Data->P[plr].Mission[2].Month = start + Data->Season * 6;
+        }
+    }
+
+    if (missionCount == 1 && joint == false) { // Single Mission Non joint
+        if (Data->P[plr].Mission[0].MissionCode) {
+            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
+        }
+
+        if (Data->P[plr].Mission[1].MissionCode) {
+            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
+        }
+
+        if (Data->P[plr].Mission[2].MissionCode) {
+            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+        }
+    }
+
+    if (missionCount == 2 && joint == true) { // Two launches, one Joint;
+        if (Data->P[plr].Mission[1].part == 1) { // Joint first
+            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
+            Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
+            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
+        }
+
+        if (Data->P[plr].Mission[2].part == 1) { // Joint second
+            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
+            Data->P[plr].Mission[1].Month = 5 + Data->Season * 6;
+            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
+        }
+    }
+
+    if (missionCount == 1 && joint == true) { //  Single Joint Launch
+        if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
+            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
+            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
+        } else {   // found on pad 2+3
+            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
+            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+        }
+    }
+}
+
+
+/* Update the Mission Control display to show the new Rush status
+ * of the mission.
+ *
+ * \param pad  The index of the launch pad for the mission (0, 1, or 2).
+ * \param mode How many months the mission will be rushed (0, 1, or 2).
+ */
+void SetRush(int mode, int pad)
+{
+    InBox(280, 32 + 17 * mode + pad * 58, 312, 40 + 17 * mode + pad * 58);
+    fill_rectangle(177, 63 + 58 * pad, 192, 70 + 58 * pad, 3);
+    fill_rectangle(225, 62 + 58 * pad, 270, 70 + 58 * pad, 3);
     display::graphics.setForegroundColor(11);
-    draw_number(179, 69 + 58 * val, mode * 3);
+    draw_number(179, 69 + 58 * pad, mode * 3);
     draw_character('%');
     display::graphics.setForegroundColor(9);
-    draw_number(230, 69 + 58 * val, mode * 3);
+    draw_number(230, 69 + 58 * pad, mode * 3);
     display::graphics.setForegroundColor(1);
-    draw_string(237, 69 + 58 * val, "MB");
-    fCsh -= mode * 3;
+    draw_string(237, 69 + 58 * pad, "MB");
 
     return;
 }
