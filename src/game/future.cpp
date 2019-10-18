@@ -976,7 +976,7 @@ void Future(char plr)
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
                 int duration = missionData[misType].Dur ?
-                    nav.duration.value : missionData[misType].Days;
+                               nav.duration.value : missionData[misType].Days;
                 int NewType = missionData[misType].mCrew;
                 Data->P[plr].Future[pad].Duration = duration;
 
@@ -1635,7 +1635,8 @@ void MissionPath(char plr, int val, int pad)
  * \param mis  The mission's index code.
  * \return true if the mission is OK, false otherwise.
  */
-bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis) {
+bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
+{
     const struct mStr &mission = missionData[mis];
 
     if (mission.Dur && nav.duration.value < mission.Days) {

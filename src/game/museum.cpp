@@ -1301,7 +1301,7 @@ void DisplAstData(char plr, char *where, char *where2)
     fill_rectangle(1, 40, 157, 182, 3);
 
     if (abuf[*where].Missions == 0) {
-	vhptr2->resetPalette();
+        vhptr2->resetPalette();
         vhptr2->copyTo(display::graphics.legacyScreen(), 22, 69);
         return;
     }
