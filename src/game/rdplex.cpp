@@ -184,7 +184,7 @@ void DrawRD(char player_index)
     fill_rectangle(27, 95, 130, 171, 0);
 
     display::graphics.setForegroundColor(9);
-    draw_string(13, 80, "V");
+    draw_string(12, 80, "V");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISIT PURCHASING FACILITY");
 
@@ -1177,7 +1177,7 @@ void DrawHPurc(char player_index)
     draw_left_arrow(24, 186);
     draw_right_arrow(101, 186);
     display::graphics.setForegroundColor(9);
-    draw_string(34, 80, "V");
+    draw_string(32, 80, "V");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISIT R&D FACILITY");
 
