@@ -1187,7 +1187,7 @@ char FailureMode(char plr, int prelim, char *text)
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
             display::graphics.setForegroundColor(1);
-            draw_string(49, 138, "UNMANNED");
+            draw_string(49, 139, "UNMANNED");
         }
     }
 
