@@ -30,14 +30,17 @@
 #include "rush.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "downgrader.h"
 #include "draw.h"
 #include "place.h"
+#include "logging.h"
 #include "mc.h"
 #include "mission_util.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
+#include "radar.h"
 
 // Function Prototype
 
@@ -111,10 +114,95 @@ char dg[62][6] = {
     {00, 00, 00, 00, 00, 00} // 61
 };
 
+void Downgrade(char plr, int pad, const struct MissionType &mission);
+void DrawMissionEntry(char plr, int pad, const struct MissionType &mission);
 void DrawRush(char plr);
 void ResetRush(int mode, int pad);
 void SetLaunchDates(char plr);
 void SetRush(int mode, int pad);
+
+
+/* Replaces the launch scheduled for the end of the turn with a
+ * different mission at the same time.
+ *
+ * Attempts to replace a Joint mission with a single launch mission,
+ * or vice versa, are not allowed and will be ignored.
+ *
+ * TODO: This function does not support downgrading a manned mission
+ * to an unmanned mission.
+ *
+ * TODO: Duration penalty system is currently disabled.
+ *
+ * \param plr
+ * \param pad
+ * \param mission
+ */
+void Downgrade(const char plr, const int pad,
+               const struct MissionType &mission)
+{
+    if (Data->P[plr].Mission[pad].Joint != mission.Joint) {
+        CERROR3(baris,
+                "Downgrade attempt to change a mission's Joint status"
+                " on pad %d", pad);
+        return;
+    } else if (mission.MissionCode == Mission_None) {
+        ClrMiss(plr, pad);
+    }
+
+    Data->P[plr].Mission[pad] = mission;
+    // Need to mark mission to show it is downgraded, but this is
+    // a bad system that will need to be replaced.
+    // Setting a global var will not survive an autosave load.
+    // pNeg[plr][pad] = 1;
+    // Data->P[plr].Mission[pad].Name[24] = 1;
+}
+
+
+/* Summarize the given mission and its relation to the original mission
+ * in the specified pad slot.
+ *
+ * \param plr  The player index
+ * \param pad  The index of the launch pad for the mission (0, 1, or 2).
+ * \param mission
+ */
+void DrawMissionEntry(const char plr, const int pad,
+                      const struct MissionType &mission)
+{
+    fill_rectangle(144, 29 + pad * 58, 270, 37 + pad * 58, 3);
+    fill_rectangle(93, 43 + pad * 58, 262, 57 + pad * 58, 3);
+    display::graphics.setForegroundColor(5);
+    GetMisType(mission.MissionCode);
+    draw_string(96, 48 + 58 * pad, Mis.Abbr);
+
+    if (Mis.Dur >= 1) {
+        int duration = mission.Duration;
+        draw_string(0, 0, GetDurationParens(duration));
+    }
+
+    fill_rectangle(191, 71 + pad * 58, 270, 78 + pad * 58, 3);
+    display::graphics.setForegroundColor(9);
+
+    // The prestige penalty to downgrading is currently disabled.
+    // Marking the last character in MissionType.Name is a bad
+    // system.
+    if (Data->P[plr].Mission[pad].MissionCode != Mission_None &&
+        mission.MissionCode == Mission_None) {
+        display::graphics.setForegroundColor(9);
+        draw_string(145, 33 + pad * 58, "SCRUBBED MISSION");
+        // draw_string(193, 77 + pad * 58, "NO PENALTY");
+    } else if (! Equals(Data->P[plr].Mission[pad], mission)) {
+        // } else if (Data->P[plr].Mission[pad].Name[24] == 1 ||
+        //            ! Equals(Data->P[plr].Mission[pad], mission)) {
+        display::graphics.setForegroundColor(9);
+        draw_string(145, 33 + pad * 58, "DOWNGRADED MISSION");
+        // draw_string(193, 77 + pad * 58, "-3 PRESTIGE");
+    } else {
+        display::graphics.setForegroundColor(7);
+        draw_string(145, 33 + pad * 58, "ORIGINAL MISSION");
+        // draw_string(193, 77 + pad * 58, "NO PENALTY");
+    }
+}
+
 
 
 /* Draw the Mission Control facility display and the missions planned
@@ -152,7 +240,7 @@ void DrawRush(char plr)
             display::graphics.setForegroundColor(1);
             draw_string(89, 33 + i * 58, "SCHEDULE:");
             draw_string(88, 69 + i * 58, "RUSHING PENALTY: ");
-            draw_string(88, 77 + i * 58, "DOWNGRADE PENALTY: ");
+            // draw_string(88, 77 + i * 58, "DOWNGRADE PENALTY: ");
             draw_string(199, 69 + i * 58, "COST:");
             OutBox(11 , 33 + i * 58, 69, 74 + i * 58);
             InBox(20, 38 + i * 58, 60, 69 + i * 58);
@@ -179,11 +267,11 @@ void DrawRush(char plr)
             if (Data->P[plr].Mission[i].Name[24] == 1) {
                 display::graphics.setForegroundColor(9);
                 draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
-                draw_string(193, 77 + i * 58, "-3 PRESTIGE");
+                // draw_string(193, 77 + i * 58, "-3 PRESTIGE");
             } else {
                 display::graphics.setForegroundColor(7);
                 draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
-                draw_string(193, 77 + i * 58, "NO PENALTY");
+                // draw_string(193, 77 + i * 58, "NO PENALTY");
             }
 
             display::graphics.setForegroundColor(11);
@@ -200,6 +288,15 @@ void DrawRush(char plr)
 }
 
 
+/**
+ * Initialize and run the Mission Control state which handles mission
+ * rushing and downgrading.
+ *
+ * TODO: Support downgrading from Manned missions to Unmanned missions.
+ * TODO: Move downgrade information to an external data file.
+ *
+ * \param plr
+ */
 void Rush(char plr)
 {
     int R1, R2, R3, oR1, oR2, oR3, dgflag[3] = {0, 0, 0};
@@ -219,6 +316,12 @@ void Rush(char plr)
     }
 
     SetLaunchDates(plr);
+
+    Downgrader downgradeList[3] = {
+        Downgrader(Data->P[plr].Mission[0], dg),
+        Downgrader(Data->P[plr].Mission[1], dg),
+        Downgrader(Data->P[plr].Mission[2], dg)
+    };
 
     DrawRush(plr);
     pRush = (Data->P[plr].Cash >= 3) ? 1 : 0;
@@ -317,60 +420,9 @@ void Rush(char plr)
                 }
 
                 if (Data->P[plr].Mission[i].MissionCode && Data->P[plr].Mission[i].part != 1) {
-
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
-                    fill_rectangle(144, 29 + i * 58, 270, 37 + i * 58, 3);
 
-                    if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
-                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
-
-                        display::graphics.setForegroundColor(5);
-                        GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
-
-                        draw_string(96, 48 + 58 * i, Mis.Abbr);
-
-                        if (Mis.Dur >= 1) {
-                            int duration = Data->P[plr].Mission[i].Duration;
-                            draw_string(0, 0, GetDurationParens(duration));
-                        }
-
-                        //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
-
-                        dgflag[i]++;
-                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
-                        display::graphics.setForegroundColor(9);
-                        draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
-                        draw_string(193, 77 + i * 58, "-3 PRESTIGE");
-                    } else {
-                        dgflag[i] = 0;
-                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
-                        display::graphics.setForegroundColor(5);
-                        GetMisType(Data->P[plr].Mission[i].MissionCode);
-
-                        draw_string(96, 48 + 58 * i, Mis.Abbr);
-
-                        if (Mis.Dur >= 1) {
-                            int duration = Data->P[plr].Mission[i].Duration;
-                            draw_string(0, 0, GetDurationParens(duration));
-                        }
-
-                        //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);
-                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
-
-                        if (Data->P[plr].Mission[i].Name[24] == 1) {
-                            display::graphics.setForegroundColor(9);
-                            draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
-                            draw_string(193, 77 + i * 58, "-3 PRESTIGE");
-                        } else {
-                            display::graphics.setForegroundColor(7);
-                            draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
-                            draw_string(193, 77 + i * 58, "NO PENALTY");
-                        }
-
-                        //display::graphics.setForegroundColor(7);
-                        //draw_string(145,33+i*58,"ORIGINAL MISSION");
-                        //draw_string(193,77+i*58,"NO PENALTY");
-                    }
+                    DrawMissionEntry(plr, i, downgradeList[i].next());
 
                     WaitForMouseUp();
                     OutBox(91, 41 + i * 58, 264, 59 + i * 58);
@@ -384,59 +436,11 @@ void Rush(char plr)
                     && Data->P[plr].Mission[i].part != 1) { // Downgrade
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
-                    fill_rectangle(144, 29 + i * 58, 270, 37 + i * 58, 3);
 
-                    if (dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]] != 0) {
-                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
-                        display::graphics.setForegroundColor(5);
-                        GetMisType(dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]]);
-                        draw_string(96, 48 + 58 * i, Mis.Abbr);
-
-                        if (Mis.Dur >= 1) {
-                            int duration = Data->P[plr].Mission[i].Duration;
-                            draw_string(0, 0, GetDurationParens(duration));
-                        }
-
-                        //Missions(plr,96,48+58*i,dg[Data->P[plr].Mission[i].MissionCode][dgflag[i]],0);
-                        dgflag[i]++;
-                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
-                        display::graphics.setForegroundColor(9);
-                        draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
-                        draw_string(193, 77 + i * 58, "-3 PRESTIGE");
-                    } else {
-                        dgflag[i] = 0;
-                        fill_rectangle(93, 43 + i * 58, 262, 57 + i * 58, 3);
-                        display::graphics.setForegroundColor(5);
-                        GetMisType(Data->P[plr].Mission[i].MissionCode);
-
-                        draw_string(96, 48 + 58 * i, Mis.Abbr);
-
-                        if (Mis.Dur >= 1) {
-                            int duration = Data->P[plr].Mission[i].Duration;
-                            draw_string(0, 0, GetDurationParens(duration));
-                        }
-
-                        //Missions(plr,96,48+58*i,Data->P[plr].Mission[i].MissionCode,0);
-                        fill_rectangle(191, 71 + i * 58, 270, 78 + i * 58, 3);
-
-                        if (Data->P[plr].Mission[i].Name[24] == 1) {
-                            display::graphics.setForegroundColor(9);
-                            draw_string(145, 33 + i * 58, "DOWNGRADED MISSION");
-                            draw_string(193, 77 + i * 58, "-3 PRESTIGE");
-                        } else {
-                            display::graphics.setForegroundColor(7);
-                            draw_string(145, 33 + i * 58, "ORIGINAL MISSION");
-                            draw_string(193, 77 + i * 58, "NO PENALTY");
-                        }
-
-                        //display::graphics.setForegroundColor(7);
-                        //draw_string(145,33+i*58,"ORIGINAL MISSION");
-                        //draw_string(193,77+i*58,"NO PENALTY");
-                    }
+                    DrawMissionEntry(plr, i, downgradeList[i].next());
 
                     WaitForMouseUp();
                     OutBox(91, 41 + i * 58, 264, 59 + i * 58);
-
                 }
             }
 
@@ -452,11 +456,10 @@ void Rush(char plr)
                 delay(10);
 
                 for (int i = 0; i < 3; i++) {
-                    if (Data->P[plr].Mission[i].MissionCode) {
-                        if (dgflag[i] != 0) {
-                            Data->P[plr].Mission[i].MissionCode = dg[Data->P[plr].Mission[i].MissionCode][dgflag[i] - 1];
-                            pNeg[plr][i] = 1;
-                        }
+                    if (Data->P[plr].Mission[i].MissionCode &&
+                        ! Equals(Data->P[plr].Mission[i],
+                                 downgradeList[i].current())) {
+                        Downgrade(plr, i, downgradeList[i].current());
                     }
                 }
 
@@ -468,19 +471,22 @@ void Rush(char plr)
                     R3 = R2;
                 }
 
-                if (Data->P[plr].Mission[0].MissionCode && Data->P[plr].Cash >= 3 * R1) {
+                if (Data->P[plr].Mission[0].MissionCode &&
+                    Data->P[plr].Cash >= 3 * R1) {
                     Data->P[plr].Cash -= 3 * R1;
                     Data->P[plr].Mission[0].Month -= R1;
                     Data->P[plr].Mission[0].Rushing = R1;
                 }
 
-                if (Data->P[plr].Mission[1].MissionCode && Data->P[plr].Cash >= 3 * R2) {
+                if (Data->P[plr].Mission[1].MissionCode &&
+                    Data->P[plr].Cash >= 3 * R2) {
                     Data->P[plr].Cash -= 3 * R2;
                     Data->P[plr].Mission[1].Month -= R2;
                     Data->P[plr].Mission[1].Rushing = R2;
                 }
 
-                if (Data->P[plr].Mission[2].MissionCode && Data->P[plr].Cash >= 3 * R3) {
+                if (Data->P[plr].Mission[2].MissionCode &&
+                    Data->P[plr].Cash >= 3 * R3) {
                     Data->P[plr].Cash -= 3 * R3;
                     Data->P[plr].Mission[2].Month -= R3;
                     Data->P[plr].Mission[2].Rushing = R3;
@@ -521,7 +527,7 @@ void SetLaunchDates(const char plr)
     bool joint = false;
 
     // Currently, can only handles 3 missions.
-    assert(MAX_MISSIONS == 3);
+    // assert(MAX_MISSIONS == 3);
 
     for (int i = 0; i < MAX_MISSIONS; i++) {
         if (Data->P[plr].Mission[i].Joint == 1) {

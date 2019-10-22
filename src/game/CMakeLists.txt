@@ -27,6 +27,7 @@ set(game_sources
   budget.cpp
   crash.cpp
   crew.cpp
+  downgrader.cpp
   draw.cpp
   endgame.cpp
   endianness.cpp
@@ -102,6 +103,8 @@ endif()
 set(test_dir ${PROJECT_SOURCE_DIR}/test)
 set(test_sources
   ${test_dir}/game/dummy_test.cpp
+  ${test_dir}/game/mission_test.cpp
+  ${test_dir}/game/downgrade_test.cpp
   ${test_dir}/game/roster_test.cpp
   )
 
