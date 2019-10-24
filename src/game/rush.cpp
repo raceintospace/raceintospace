@@ -23,6 +23,12 @@
 // Programmed by Michael K McCarty
 //
 
+#include <fstream>
+#include <string>
+#include <cassert>
+
+#include <json/json.h>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
@@ -32,6 +38,7 @@
 #include "game_main.h"
 #include "downgrader.h"
 #include "draw.h"
+#include "ioexception.h"
 #include "place.h"
 #include "logging.h"
 #include "mc.h"
@@ -49,6 +56,11 @@ char Mon[12][4] = {
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 };
 
+// TODO: Remove this.
+// It is preferable to supply downgrade options to the constructor
+// via a JSON-formatted stream, as this allows for an elastic mission
+// count with any number of downgrade choices per mission.
+// However, dg is used in newmis.cpp/MisAnn(char plr, char pad).
 char dg[62][6] = {
     {00, 00, 00, 00, 00, 00}, // 0
     {00, 00, 00, 00, 00, 00}, // 1
@@ -117,6 +129,7 @@ char dg[62][6] = {
 void Downgrade(char plr, int pad, const struct MissionType &mission);
 void DrawMissionEntry(char plr, int pad, const struct MissionType &mission);
 void DrawRush(char plr);
+Downgrader::Options LoadJsonDowngrades(std::string filename);
 void ResetRush(int mode, int pad);
 void SetLaunchDates(char plr);
 void SetRush(int mode, int pad);
@@ -204,7 +217,6 @@ void DrawMissionEntry(const char plr, const int pad,
 }
 
 
-
 /* Draw the Mission Control facility display and the missions planned
  * for launch this turn.
  *
@@ -288,18 +300,83 @@ void DrawRush(char plr)
 }
 
 
+/* Read the mission downgrade options from a file.
+ *
+ * The Json format is:
+ * {
+ *   "missions": [
+ *     { "mission": <Code>, "downgrades": [<Codes>] },
+ *     ...
+ *   ]
+ * }
+ *
+ * NOTE: I would prefer to put this in downgrader.h/cpp, but the
+ *   pragma packing makes that a pain... -- rnyoakum
+ *
+ * \param filename  A Json-formatted data file.
+ * \return  A collection of MissionType.MissionCode-indexed downgrade
+ *          options.
+ * \throws IOException  If filename is not a readable Json file.
+ */
+Downgrader::Options LoadJsonDowngrades(std::string filename)
+{
+    char *path = locate_file(filename.c_str(), FT_DATA);
+
+    if (path == NULL) {
+        free(path);
+        throw IOException(std::string("Unable to open path to ") +
+                          filename);
+    }
+
+    std::ifstream input(path);
+    Json::Value doc;
+    Json::Reader reader;
+    bool success = reader.parse(input, doc);
+
+    if (! success) {
+        free(path);
+        throw IOException("Unable to parse JSON input stream");
+    }
+
+    assert(doc.isObject());
+    Json::Value &missionList = doc["missions"];
+    assert(missionList.isArray());
+
+    Downgrader::Options options;
+
+    for (int i = 0; i < missionList.size(); i++) {
+        Json::Value &missionEntry = missionList[i];
+        assert(missionEntry.isObject());
+
+        int missionCode = missionEntry.get("mission", -1).asInt();
+        assert(missionCode >= 0);
+        // assert(missionCode >= 0 && missionCode <= 61);
+
+        Json::Value &codeGroup = missionEntry["downgrades"];
+        assert(codeGroup.isArray());
+
+        for (int j = 0; j < codeGroup.size(); j++) {
+            options.add(missionCode, codeGroup[j].asInt());
+        }
+    }
+
+    input.close();
+    free(path);
+    return options;
+}
+
+
 /**
  * Initialize and run the Mission Control state which handles mission
  * rushing and downgrading.
  *
  * TODO: Support downgrading from Manned missions to Unmanned missions.
- * TODO: Move downgrade information to an external data file.
  *
  * \param plr
  */
 void Rush(char plr)
 {
-    int R1, R2, R3, oR1, oR2, oR3, dgflag[3] = {0, 0, 0};
+    int R1, R2, R3, oR1, oR2, oR3;
     char pRush = 0;
 
     R1 = R2 = R3 = oR1 = oR2 = oR3 = 0;
@@ -317,10 +394,18 @@ void Rush(char plr)
 
     SetLaunchDates(plr);
 
+    Downgrader::Options downgrades;
+   
+    try {
+        downgrades = LoadJsonDowngrades("DOWNGRADES.JSON");
+    } catch (IOException & err) {
+        CCRITICAL2(baris, err.what());
+    }
+
     Downgrader downgradeList[3] = {
-        Downgrader(Data->P[plr].Mission[0], dg),
-        Downgrader(Data->P[plr].Mission[1], dg),
-        Downgrader(Data->P[plr].Mission[2], dg)
+        Downgrader(Data->P[plr].Mission[0], downgrades),
+        Downgrader(Data->P[plr].Mission[1], downgrades),
+        Downgrader(Data->P[plr].Mission[2], downgrades)
     };
 
     DrawRush(plr);

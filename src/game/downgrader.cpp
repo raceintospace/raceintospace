@@ -3,8 +3,6 @@
 
 #include <cassert>
 
-#include <json/json.h>
-
 #include "downgrader.h" // Moved down because it includes Buzz_inc.h
 
 #include "Buzz_inc.h"
@@ -15,92 +13,88 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
-/**
- * Creates a Downgrader instance from a given base mission and
- * a MissionCode-indexed list of alternate mission codes.
- *
- * \param mission  The original mission to be downgraded.
- * \param downgrades  A char array of size[62][6].
- */
-Downgrader::Downgrader(const struct MissionType &mission,
-                       char downgrades[62][6])
-    : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
-{
-    mCodes.push_back(mission.MissionCode);
 
-    for (int mis = 0; mis < 6; mis++) {
-        if (downgrades[mission.MissionCode][mis] != Mission_None) {
-            mCodes.push_back(downgrades[mission.MissionCode][mis]);
-        } else {
-            break;
-        }
+Downgrader::Options::Options()
+{
+}
+
+
+Downgrader::Options::~Options()
+{
+}
+
+
+int Downgrader::Options::add(const int mission, const int code)
+{
+    if (mission >= mDowngrades.size()) {
+        mDowngrades.resize(mission + 1);
     }
 
-    mCodes.push_back(0);
+    mDowngrades[mission].insert(code);
+}
+
+
+/**
+ */
+const std::set<int> Downgrader::Options::downgrades(int mission) const
+{
+    return (mDowngrades.size() > mission) ?  mDowngrades[mission]
+        : std::set<int>();
+}
+
+
+/**
+ * Creates a downgrader instance from a given base mission and
+ * a set of alternate missions for that base mission.
+ *
+ * \param mission  The original mission to be downgraded.
+ * \param downgrades  A set of MissionType.MissionCode(s).
+ */
+Downgrader::Downgrader(const struct MissionType &mission,
+                       const std::set<int> &downgrades)
+    : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
+{
+    if (downgrades.find(mission.MissionCode) != downgrades.end()) {
+        mCodes.push_back(mission.MissionCode);
+    }
+
+    mCodes.insert(mCodes.end(), downgrades.begin(), downgrades.end());
+
+    // Ensure Mission_None is always available.
+    if (mCodes.back() != Mission_None) {
+        mCodes.push_back(Mission_None);
+    }
+
     mIndex = mCodes.begin();
 }
 
 
 /**
  * Creates a Downgrader instance from a given base mission and
- * downgrade options.
+ * a collection of alternate mission codes.
  *
- * TODO: If unable to parse, should an exception be thrown instead?
- *
- * \param mission  The seed mission.
- * \param input  A JSON-formatted input stream.
+ * \param mission  The original mission to be downgraded.
+ * \param downgrades  A collection of mission downgrade choices.
  */
-// Downgrader::Downgrader(const struct MissionType &mission,
-//                        std::istream &input)
-//     : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
-// {
-//     mCodes.push_back(mission.MissionCode);
-//
-//     Json::Value doc;
-//     Json::Reader reader;
-//     bool success = reader.parse(input, doc);
-//
-//     if (! success) {
-//         CRITICAL1("Unable to parse JSON input stream");
-//         mCodes.push_back(0);
-//         mIndex = mCodes.begin();
-//         return;
-//     }
-//
-//     bool found = false;
-//
-//     for (int i = 0; i < doc.size(); i++) {
-//         Json::Value &missionObject = doc[i];
-//         assert(missionObject.isObject());
-//
-//         int missionCode = missionObject.get("mission", -1).asInt();
-//         assert(missionCode >= 0 && missionCode <= 61);
-//
-//         if (missionCode == mission.MissionCode) {
-//             found = true;
-//             Json::Value &codeGroup = missionObject["downgrades"];
-//             assert(codeGroup.isArray());
-//
-//             for (int j = 0; j < codeGroup.size(); j++) {
-//                 mCodes.push_back(codeGroup[j].asInt());
-//             }
-//
-//             break;
-//         }
-//     }
-//
-//     if (! found) {
-//         ERROR2("Could not find downgrade options for mission %d",
-//                mission.MissionCode);
-//     }
-//
-//     // Ensure Mission_None is always available.
-//     if (mCodes.back() != Mission_None) {
-//         mCodes.push_back(Mission_None);
-//     }
-//
-//     mIndex = mCodes.begin();
-// }
+Downgrader::Downgrader(const struct MissionType &mission,
+                       const Options downgrades)
+    : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
+{
+    const std::set<int> dgs = downgrades.downgrades(mission.MissionCode);
+
+    if (dgs.find(mission.MissionCode) == dgs.end()) {
+        mCodes.push_back(mission.MissionCode);
+    }
+
+    mCodes.insert(mCodes.end(), dgs.rbegin(), dgs.rend());
+
+    // Ensure Mission_None is always available.
+    if (mCodes.back() != Mission_None) {
+        mCodes.push_back(Mission_None);
+    }
+
+    mIndex = mCodes.begin();
+}
 
 
 Downgrader::~Downgrader()
@@ -108,7 +102,7 @@ Downgrader::~Downgrader()
 }
 
 
-/* Generates an instance of the current mission.
+/* Generates an instance of the currently selected alternate mission.
  *
  * \return  The last value returned by next(), or the original mission
  *          if next() has not been called.

@@ -5,16 +5,13 @@
 #include "game/downgrader.h"
 #include "game/mission_util.h"
 
-struct DowngradeCharFixture {
-    DowngradeCharFixture() 
+struct DowngradeFixture {
+    DowngradeFixture() 
     {
-        memset(&dgs[0], 0, 62 * 6);
-        dgs[Mission_HistoricalLanding][0] = Mission_LunarOrbital_LM_Test;
-        dgs[Mission_HistoricalLanding][1] = Mission_Lunar_Orbital;
-        dgs[Mission_HistoricalLanding][2] = Mission_LunarOrbital;
-        dgs[Mission_HistoricalLanding][3] = Mission_LunarPass;
-        dgs[Mission_HistoricalLanding][4] = 0;
-        dgs[Mission_HistoricalLanding][5] = 0;
+        dgs.add(Mission_HistoricalLanding, Mission_LunarOrbital_LM_Test);
+        dgs.add(Mission_HistoricalLanding, Mission_Lunar_Orbital);
+        dgs.add(Mission_HistoricalLanding, Mission_LunarOrbital);
+        dgs.add(Mission_HistoricalLanding, Mission_LunarPass);
 
         memset(&mission, 0, sizeof(mission));
         strcpy(mission.Name, "APOLLO XI");
@@ -32,18 +29,18 @@ struct DowngradeCharFixture {
         mission.BCrew = 2;
         mission.Crew = 1;
     }
-    ~DowngradeCharFixture()
+    ~DowngradeFixture()
     {
     }
 
-    char dgs[62][6];
+    Downgrader::Options dgs;
     MissionType mission;
 };
 
 
-BOOST_FIXTURE_TEST_SUITE(downgrade_suite, DowngradeCharFixture)
+BOOST_FIXTURE_TEST_SUITE(downgrade_suite, DowngradeFixture)
 
-BOOST_AUTO_TEST_CASE(DowngradeCharInitTest)
+BOOST_AUTO_TEST_CASE(DowngradeInitTest)
 {
     BOOST_REQUIRE_NO_THROW( Downgrader(mission, dgs) );
 }
