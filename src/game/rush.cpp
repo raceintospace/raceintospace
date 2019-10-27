@@ -23,9 +23,9 @@
 // Programmed by Michael K McCarty
 //
 
+#include <cassert>
 #include <fstream>
 #include <string>
-#include <cassert>
 
 #include <json/json.h>
 
@@ -56,83 +56,18 @@ char Mon[12][4] = {
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 };
 
-// TODO: Remove this.
-// It is preferable to supply downgrade options to the constructor
-// via a JSON-formatted stream, as this allows for an elastic mission
-// count with any number of downgrade choices per mission.
-// However, dg is used in newmis.cpp/MisAnn(char plr, char pad).
-char dg[62][6] = {
-    {00, 00, 00, 00, 00, 00}, // 0
-    {00, 00, 00, 00, 00, 00}, // 1
-    {00, 00, 00, 00, 00, 00}, // 2
-    {00, 00, 00, 00, 00, 00}, // 3
-    {02, 00, 00, 00, 00, 00}, // 4
-    {03, 00, 00, 00, 00, 00}, // 5
-    {04, 02, 00, 00, 00, 00}, // 6
-    {00, 00, 00, 00, 00, 00}, // 7
-    {07, 00, 00, 00, 00, 00}, // 8
-    {00, 00, 00, 00, 00, 00}, // 9
-    {00, 00, 00, 00, 00, 00}, // 10
-    {00, 00, 00, 00, 00, 00}, // 11
-    {00, 00, 00, 00, 00, 00}, // 12
-    {00, 00, 00, 00, 00, 00}, // 13
-    {04, 02, 00, 00, 00, 00}, // 14
-    {00, 00, 00, 00, 00, 00}, // 15
-    {00, 00, 00, 00, 00, 00}, // 16
-    {06, 04, 02, 00, 00, 00}, // 17
-    {00, 00, 00, 00, 00, 00}, // 18
-    {00, 00, 00, 00, 00, 00}, // 19
-    {14, 04, 00, 00, 00, 00}, // 20
-    {16, 00, 00, 00, 00, 00}, // 21
-    {19, 00, 00, 00, 00, 00}, // 22
-    {23, 19, 00, 00, 00, 00}, // 23
-    {17, 06, 04, 02, 00, 00}, // 24
-    {04, 02, 00, 00, 00, 00}, // 25
-    {25, 06, 04, 02, 00, 00}, // 26
-    {25, 14, 04, 02, 00, 00}, // 27
-    {25, 24, 17, 04, 02, 00}, // 28
-    {28, 26, 25, 24, 17, 06}, // 29
-    {22, 19, 37, 00, 00, 00}, // 30
-    {16, 00, 00, 00, 00, 00}, // 31
-    {37, 19, 00, 00, 00, 00}, // 32
-    {26, 27, 25, 14, 06, 00}, // 33
-    {31, 21, 16, 00, 00, 00}, // 34
-    {22, 37, 19, 00, 00, 00}, // 35
-    {32, 37, 22, 19, 00, 00}, // 36
-    {19, 00, 00, 00, 00, 00}, // 37
-    {04, 00, 00, 00, 00, 00}, // 38
-    {16, 00, 00, 00, 00, 00}, // 39
-    {38, 27, 25, 14, 06, 04}, // 40
-    {39, 21, 16, 00, 00, 00}, // 41
-    {00, 00, 00, 00, 00, 00}, // 42
-    {04, 00, 00, 00, 00, 00}, // 43
-    {31, 16, 00, 00, 00, 00}, // 44
-    {42, 00, 00, 00, 00, 00}, // 45
-    {43, 04, 00, 00, 00, 00}, // 46
-    {44, 31, 16, 00, 00, 00}, // 47
-    {46, 43, 38, 04, 00, 00}, // 48
-    {47, 38, 16, 00, 00, 00}, // 49
-    {48, 46, 43, 38, 04, 00}, // 50
-    {49, 39, 16, 00, 00, 00}, // 51
-    {47, 44, 38, 16, 00, 00}, // 52
-    {50, 48, 46, 43, 00, 00}, // 53
-    {46, 43, 00, 00, 00, 00}, // 54
-    {52, 47, 44, 00, 00, 00}, // 55
-    {51, 49, 00, 00, 00, 00}, // 56
-    {51, 49, 00, 00, 00, 00}, // 57
-    {00, 00, 00, 00, 00, 00}, // 58
-    {00, 00, 00, 00, 00, 00}, // 59
-    {00, 00, 00, 00, 00, 00}, // 60
-    {00, 00, 00, 00, 00, 00} // 61
-};
 
-void Downgrade(char plr, int pad, const struct MissionType &mission);
+namespace   // Unnamed namespace part 1
+{
+
 void DrawMissionEntry(char plr, int pad, const struct MissionType &mission);
 void DrawRush(char plr);
 Downgrader::Options LoadJsonDowngrades(std::string filename);
 void ResetRush(int mode, int pad);
 void SetLaunchDates(char plr);
 void SetRush(int mode, int pad);
+
+}; // End of Unnamed namespace part 1
 
 
 /* Replaces the launch scheduled for the end of the turn with a
@@ -141,10 +76,21 @@ void SetRush(int mode, int pad);
  * Attempts to replace a Joint mission with a single launch mission,
  * or vice versa, are not allowed and will be ignored.
  *
+ * TODO: ClrMiss() can launch a Help menu to ask if the user wishes
+ * to proceed with cancelling the mission. This is preferable, in
+ * keeping with usual practice. However, handling the process is
+ * messy:
+ *  - If the user doesn't cancel, is the original mission approved
+ *    or are they returned to the Mission Control loop?
+ *  - If returned to the mission control loop, would other missions
+ *    that were set to be downgraded changed or left in their original
+ *    state? If the later, how would that be done?
+ *  - Etc.
+ *
  * TODO: This function does not support downgrading a manned mission
  * to an unmanned mission.
  *
- * TODO: Duration penalty system is currently disabled.
+ * TODO: Downgrade penalty system is currently disabled.
  *
  * \param plr
  * \param pad
@@ -159,7 +105,9 @@ void Downgrade(const char plr, const int pad,
                 " on pad %d", pad);
         return;
     } else if (mission.MissionCode == Mission_None) {
-        ClrMiss(plr, pad);
+        // Disable ClrMiss's Help menu
+        ClrMiss(plr, pad + MAX_LAUNCHPADS);
+        return;
     }
 
     Data->P[plr].Mission[pad] = mission;
@@ -170,6 +118,9 @@ void Downgrade(const char plr, const int pad,
     // Data->P[plr].Mission[pad].Name[24] = 1;
 }
 
+
+namespace   // Unnamed namespace part 2
+{
 
 /* Summarize the given mission and its relation to the original mission
  * in the specified pad slot.
@@ -365,6 +316,7 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     return options;
 }
 
+}; // End of Unnamed namespace part 2
 
 /**
  * Initialize and run the Mission Control state which handles mission
@@ -395,10 +347,10 @@ void Rush(char plr)
     SetLaunchDates(plr);
 
     Downgrader::Options downgrades;
-   
+
     try {
         downgrades = LoadJsonDowngrades("DOWNGRADES.JSON");
-    } catch (IOException & err) {
+    } catch (IOException &err) {
         CCRITICAL2(baris, err.what());
     }
 
@@ -585,6 +537,9 @@ void Rush(char plr)
 }
 
 
+namespace   // Unnamed namespace part 3
+{
+
 /* Unsets the old launch date on the Mission Control display.
  *
  * Because mission settings are not modified until leaving the Mission
@@ -710,3 +665,5 @@ void SetRush(int mode, int pad)
 
     return;
 }
+
+}; // End of unnamed namespace part 3

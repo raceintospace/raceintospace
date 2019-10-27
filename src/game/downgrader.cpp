@@ -39,7 +39,7 @@ int Downgrader::Options::add(const int mission, const int code)
 const std::set<int> Downgrader::Options::downgrades(int mission) const
 {
     return (mDowngrades.size() > mission) ?  mDowngrades[mission]
-        : std::set<int>();
+           : std::set<int>();
 }
 
 

@@ -37,6 +37,18 @@ bool Equals(const struct MissionType &m1, const struct MissionType &m2)
 }
 
 
+/* Checks if the mission type corresponds to a docking mission.
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if the mission has a docking step, false otherwise.
+ * \throws IOException  if unable to load the mission template.
+ */
+bool IsDocking(const int mission)
+{
+    return ((GetMissionPlan(mission).Doc >= 1) ? true : false);
+}
+
+
 /* Checks via mission code if the mission type corresponds to a
  * duration mission.
  *
