@@ -655,7 +655,7 @@ char REvent(char plr)
         break;
 
     case 38:
-    case  39: /* most adv. rocket program 10 MB's or 5% safety loss */
+    case 39: /* most adv. rocket program 10 MB's or 5% safety loss */
         evflag = DamMod(plr, 2, -5, 10);
 
         if (evflag == 0) {
@@ -691,7 +691,7 @@ char REvent(char plr)
 
         break;
 
-    case 48: // safety increased for rockets up 5%
+    case 48: // Set Save for Rocket program
         evflag = SaveMods(plr, 2);
 
         if (evflag == 0) {
@@ -737,7 +737,8 @@ char REvent(char plr)
 
         break;
 
-    case 50: // backup crew will fly mission
+    case 50:
+    case 85: // backup crew will fly mission
         evflag = 0;
 
         for (i = 0; i < 3; i++) {
@@ -977,30 +978,7 @@ char REvent(char plr)
         Data->P[plr].FuturePlans = 5;
         break;
 
-    case 85: // Primary Crew Scrubbed - Backup Will Fly
-        evflag = 0;
-
-        for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode) {
-                evflag++;
-            }
-        }
-
-        if (evflag == 0) {
-            return 1;
-        }
-
-        i = 0;
-
-        while (Data->P[plr].Mission[i].MissionCode == Mission_None) {
-            i++;
-        }
-
-        Data->P[plr].Mission[i].Crew = Data->P[plr].Mission[i].BCrew;
-        evflag = i;
-        break;
-
-    case 89: /* random astronaut not active */
+    case 89: // random active astronaut leaves program
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
@@ -1019,9 +997,18 @@ char REvent(char plr)
             i = brandom(Data->P[plr].AstroCount);
         }
 
+        Data->P[plr].Pool[i].RetirementDelay = 2;
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
-        Data->P[plr].Pool[i].Status = AST_ST_INJURED;
-        Data->P[plr].Pool[i].InjuryDelay = 2;
+
+        if (plr == 1) {
+            Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
+            Data->P[plr].Pool[i].RetirementDelay = 0;
+        }
+
+        if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            Replace_Snaut(plr);
+        }
+
         break;
 
     default:
