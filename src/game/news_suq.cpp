@@ -978,7 +978,7 @@ char REvent(char plr)
         Data->P[plr].FuturePlans = 5;
         break;
 
-    case 89: /* random astronaut not active */
+    case 89: // random active astronaut leaves program
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
@@ -997,9 +997,18 @@ char REvent(char plr)
             i = brandom(Data->P[plr].AstroCount);
         }
 
+        Data->P[plr].Pool[i].RetirementDelay = 2;
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
-        Data->P[plr].Pool[i].Status = AST_ST_INJURED;
-        Data->P[plr].Pool[i].InjuryDelay = 2;
+
+        if (plr == 1) {
+            Data->P[plr].Pool[i].Status = AST_ST_RETIRED;
+            Data->P[plr].Pool[i].RetirementDelay = 0;
+        }
+
+        if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+            Replace_Snaut(plr);
+        }
+
         break;
 
     default:
