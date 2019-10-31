@@ -26,6 +26,7 @@
 #include <cassert>
 #include <fstream>
 #include <string>
+#include <stdexcept>
 
 #include <json/json.h>
 
@@ -70,11 +71,28 @@ void SetRush(int mode, int pad);
 }; // End of Unnamed namespace part 1
 
 
+/* Rules for mission downgrades
+ * 1. Joint Mission *cannot* be downgraded to single launch missions,
+ *    and vice versa.
+ * 2. Unmanned missions *cannot* be downgraded to manned missions.
+ * 3. There *must not* be downgrading to, or from, a Probe Mission.
+ * 4. Mission hardware requirements *must not* be added.
+ * 5. Mission hardware requirements *should not* be removed.
+ * 6. Manned mission downgrades *should* be listed ahead of unmanned
+ *    alternatives.
+ *
+ * NOTE: Rule 5 will probably be broken at times, but it results in
+ * the extra hardware being inaccessible until the end of the turn
+ * (possibly consumed by the mission, no guarantee).
+ */
+
+
 /* Replaces the launch scheduled for the end of the turn with a
  * different mission at the same time.
  *
  * Attempts to replace a Joint mission with a single launch mission,
  * or vice versa, are not allowed and will be ignored.
+ * Replacing an Unmanned launch with a Manned launch is also blocked.
  *
  * TODO: ClrMiss() can launch a Help menu to ask if the user wishes
  * to proceed with cancelling the mission. This is preferable, in
@@ -87,22 +105,43 @@ void SetRush(int mode, int pad);
  *    state? If the later, how would that be done?
  *  - Etc.
  *
- * TODO: This function does not support downgrading a manned mission
- * to an unmanned mission.
- *
  * TODO: Downgrade penalty system is currently disabled.
+ * Add it with a configuration toggle.
  *
- * \param plr
- * \param pad
- * \param mission
+ * TODO: Compare hardware requirements and release any hardware
+ * not in the downgraded version of the mission.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param pad  0 <= pad < MAX_LAUNCHPADS.
+ * \param mission  The replacement mission.
+ * \throws invalid_argument  if pad < 0 or >= MAX_LAUNCHPADS.
+ * \throws logic_error  if a joint mission part 0 is on the last pad.
  */
 void Downgrade(const char plr, const int pad,
                const struct MissionType &mission)
 {
+    // Make sure there's no memory access problems.
+    if (pad < 0 || pad >= MAX_LAUNCHPADS) {
+        throw std::invalid_argument(
+            "Launch pad value must be between 0 and MAX_LAUNCHPADS");
+    } else if (Data->P[plr].Mission[pad].Joint == 1 &&
+               Data->P[plr].Mission[pad].part == 0 &&
+               pad + 1 >= MAX_LAUNCHPADS) {
+        throw std::logic_error(
+            "Cannot have the first part of a Joint mission on the last"
+            "launchpad.");
+    }
+
+    // Block downgrades for Joint <--> Single, Unmanned --> Manned
     if (Data->P[plr].Mission[pad].Joint != mission.Joint) {
         CERROR3(baris,
                 "Downgrade attempt to change a mission's Joint status"
                 " on pad %d", pad);
+        return;
+    } else if (Data->P[plr].Mission[pad].Men == 0 && mission.Men > 0) {
+        CERROR3(baris,
+                "Downgrade attempt to change a mission from Unmanned"
+                " to Manned on pad %d", pad);
         return;
     } else if (mission.MissionCode == Mission_None) {
         // Disable ClrMiss's Help menu
@@ -110,7 +149,81 @@ void Downgrade(const char plr, const int pad,
         return;
     }
 
+    // On a Joint mission, there is always crew on the second part.
+    // Remove them, if relevant, first.
+    if (Data->P[plr].Mission[pad].Joint == 1 &&
+        Data->P[plr].Mission[pad].part == 0 &&
+        Data->P[plr].Mission[pad + 1].Men > 0) {
+        bool manned = true;
+
+        try {
+            struct mStr type = GetMissionPlan(mission.MissionCode);
+            // mCrew == 5 means Unmanned Joint mission
+            manned = (type.mCrew == 5) ? false : true;
+        } catch (IOException &err) {
+            CCRITICAL3(baris,
+                       "Unable to read mission information from file,"
+                       " cancelling downgrade on pad %d",
+                       pad);
+            return;
+        }
+
+        if (! manned) {
+            int men = Data->P[plr].Mission[pad + 1].Men;
+            int prog = Data->P[plr].Mission[pad + 1].Prog;
+
+            if (Data->P[plr].Mission[pad + 1].PCrew) {
+                int prime = Data->P[plr].Mission[pad + 1].PCrew - 1;
+
+                for (int i = 0; i < men; i++) {
+                    Data->P[plr].Pool[Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
+                }
+            }
+
+            if (Data->P[plr].Mission[pad + 1].BCrew) {
+                int backup = Data->P[plr].Mission[pad + 1].BCrew - 1;
+
+                for (int i = 0; i < men; i++) {
+                    Data->P[plr].Pool[Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
+                }
+            }
+
+            Data->P[plr].Mission[pad + 1].Men = 0;
+            Data->P[plr].Mission[pad + 1].PCrew = 0;
+            Data->P[plr].Mission[pad + 1].BCrew = 0;
+            Data->P[plr].Mission[pad + 1].Crew = 0;
+        }
+    }
+
+    // If the new mission is unmanned, free up the crew...
+    if (Data->P[plr].Mission[pad].Men > 0 && mission.Men == 0) {
+        int men = Data->P[plr].Mission[pad].Men;
+        int prog = Data->P[plr].Mission[pad].Prog;
+
+        if (Data->P[plr].Mission[pad].PCrew) {
+            int prime = Data->P[plr].Mission[pad].PCrew - 1;
+
+            for (int i = 0; i < men; i++) {
+                Data->P[plr].Pool[Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
+            }
+        }
+
+        if (Data->P[plr].Mission[pad].BCrew) {
+            int backup = Data->P[plr].Mission[pad].BCrew - 1;
+
+            for (int i = 0; i < men; i++) {
+                Data->P[plr].Pool[Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
+            }
+        }
+    }
+
     Data->P[plr].Mission[pad] = mission;
+
+    if (Data->P[plr].Mission[pad].Joint == 1 &&
+        Data->P[plr].Mission[pad].part == 0) {
+        Data->P[plr].Mission[pad + 1].MissionCode = mission.MissionCode;
+    }
+
     // Need to mark mission to show it is downgraded, but this is
     // a bad system that will need to be replaced.
     // Setting a global var will not survive an autosave load.
@@ -494,6 +607,7 @@ void Rush(char plr)
 
                 for (int i = 0; i < 3; i++) {
                     if (Data->P[plr].Mission[i].MissionCode &&
+                        Data->P[plr].Mission[i].part != 1 &&
                         ! Equals(Data->P[plr].Mission[i],
                                  downgradeList[i].current())) {
                         Downgrade(plr, i, downgradeList[i].current());

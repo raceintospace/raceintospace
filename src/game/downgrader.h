@@ -1,7 +1,6 @@
 #ifndef DOWNGRADER_H
 #define DOWNGRADER_H
 
-#include <set>
 #include <vector>
 
 // Hate including this in the header file, but without it the
@@ -28,13 +27,13 @@ public:
         ~Options();
 
         int add(int mission, int code);
-        const std::set<int> downgrades(int mission) const;
+        const std::vector<int> downgrades(int mission) const;
     private:
-        std::vector< std::set<int> > mDowngrades;
+        std::vector< std::vector<int> > mDowngrades;
     };
 
     Downgrader(const struct MissionType &mission,
-               const std::set<int> &downgrades);
+               const std::vector<int> &downgrades);
     Downgrader(const struct MissionType &mission, const Options downgrades);
     ~Downgrader();
 

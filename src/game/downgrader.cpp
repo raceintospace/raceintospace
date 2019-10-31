@@ -30,16 +30,16 @@ int Downgrader::Options::add(const int mission, const int code)
         mDowngrades.resize(mission + 1);
     }
 
-    mDowngrades[mission].insert(code);
+    mDowngrades[mission].push_back(code);
 }
 
 
 /**
  */
-const std::set<int> Downgrader::Options::downgrades(int mission) const
+const std::vector<int> Downgrader::Options::downgrades(int mission) const
 {
     return (mDowngrades.size() > mission) ?  mDowngrades[mission]
-           : std::set<int>();
+           : std::vector<int>();
 }
 
 
@@ -51,12 +51,13 @@ const std::set<int> Downgrader::Options::downgrades(int mission) const
  * \param downgrades  A set of MissionType.MissionCode(s).
  */
 Downgrader::Downgrader(const struct MissionType &mission,
-                       const std::set<int> &downgrades)
+                       const std::vector<int> &downgrades)
     : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
 {
-    if (downgrades.find(mission.MissionCode) != downgrades.end()) {
-        mCodes.push_back(mission.MissionCode);
-    }
+    // if (downgrades.find(mission.MissionCode) != downgrades.end()) {
+    //     mCodes.push_back(mission.MissionCode);
+    // }
+    mCodes.push_back(mission.MissionCode);
 
     mCodes.insert(mCodes.end(), downgrades.begin(), downgrades.end());
 
@@ -80,13 +81,14 @@ Downgrader::Downgrader(const struct MissionType &mission,
                        const Options downgrades)
     : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
 {
-    const std::set<int> dgs = downgrades.downgrades(mission.MissionCode);
+    const std::vector<int> dgs = downgrades.downgrades(mission.MissionCode);
 
-    if (dgs.find(mission.MissionCode) == dgs.end()) {
-        mCodes.push_back(mission.MissionCode);
-    }
+    // if (dgs.find(mission.MissionCode) == dgs.end()) {
+    //     mCodes.push_back(mission.MissionCode);
+    // }
+    mCodes.push_back(mission.MissionCode);
 
-    mCodes.insert(mCodes.end(), dgs.rbegin(), dgs.rend());
+    mCodes.insert(mCodes.end(), dgs.begin(), dgs.end());
 
     // Ensure Mission_None is always available.
     if (mCodes.back() != Mission_None) {
@@ -127,6 +129,7 @@ struct MissionType Downgrader::current() const {
  *  - A Joint mission cannot downgrade to a single launch, and vice versa.
  *  - A non-duration mission cannot downgrade to a duration mission.
  *  - An unmanned mission cannot become a manned mission.
+ *  - Probes cannot downgrade, or be the result of downgrading.
  *
  * \return  a new instance of the next downgrade option in the cycle.
  */
