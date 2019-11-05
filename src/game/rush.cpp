@@ -45,6 +45,7 @@
 #include "mc.h"
 #include "mission_util.h"
 #include "sdlhelper.h"
+#include "state_utils.h"
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
@@ -149,8 +150,8 @@ void Downgrade(const char plr, const int pad,
         return;
     }
 
-    // On a Joint mission, there is always crew on the second part.
-    // Remove them, if relevant, first.
+    // On a manned Joint mission, there is always crew on the second
+    // part. Remove them, if relevant, first.
     if (Data->P[plr].Mission[pad].Joint == 1 &&
         Data->P[plr].Mission[pad].part == 0 &&
         Data->P[plr].Mission[pad + 1].Men > 0) {
@@ -161,60 +162,24 @@ void Downgrade(const char plr, const int pad,
             // mCrew == 5 means Unmanned Joint mission
             manned = (type.mCrew == 5) ? false : true;
         } catch (IOException &err) {
-            CCRITICAL3(baris,
+            CCRITICAL4(baris,
                        "Unable to read mission information from file,"
-                       " cancelling downgrade on pad %d",
-                       pad);
+                       " cancelling downgrade on pad %d: %s",
+                       pad, err.what());
             return;
         }
 
         if (! manned) {
-            int men = Data->P[plr].Mission[pad + 1].Men;
-            int prog = Data->P[plr].Mission[pad + 1].Prog;
-
-            if (Data->P[plr].Mission[pad + 1].PCrew) {
-                int prime = Data->P[plr].Mission[pad + 1].PCrew - 1;
-
-                for (int i = 0; i < men; i++) {
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
-                }
-            }
-
-            if (Data->P[plr].Mission[pad + 1].BCrew) {
-                int backup = Data->P[plr].Mission[pad + 1].BCrew - 1;
-
-                for (int i = 0; i < men; i++) {
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
-                }
-            }
-
             Data->P[plr].Mission[pad + 1].Men = 0;
-            Data->P[plr].Mission[pad + 1].PCrew = 0;
-            Data->P[plr].Mission[pad + 1].BCrew = 0;
             Data->P[plr].Mission[pad + 1].Crew = 0;
+            ClearMissionCrew(plr, pad + 1, CREW_ALL);
         }
     }
 
     // If the new mission is unmanned, free up the crew...
     if (Data->P[plr].Mission[pad].Men > 0 && mission.Men == 0) {
-        int men = Data->P[plr].Mission[pad].Men;
-        int prog = Data->P[plr].Mission[pad].Prog;
-
-        if (Data->P[plr].Mission[pad].PCrew) {
-            int prime = Data->P[plr].Mission[pad].PCrew - 1;
-
-            for (int i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
-            }
-        }
-
-        if (Data->P[plr].Mission[pad].BCrew) {
-            int backup = Data->P[plr].Mission[pad].BCrew - 1;
-
-            for (int i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
-            }
-        }
+        Data->P[plr].Mission[pad].Crew = 0;
+        ClearMissionCrew(plr, pad, CREW_ALL);
     }
 
     Data->P[plr].Mission[pad] = mission;

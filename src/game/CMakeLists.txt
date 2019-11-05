@@ -76,6 +76,7 @@ set(game_sources
   rush.cpp
   sdlhelper.cpp
   start.cpp
+  state_utils.cpp
   utils.cpp
   vab.cpp
   )

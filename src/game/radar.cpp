@@ -34,6 +34,7 @@
 #include "news_suq.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "state_utils.h"
 #include "gr.h"
 #include "pace.h"
 
@@ -413,15 +414,15 @@ void PadDraw(char plr, char pad)
  */
 void ClrMiss(char plr, char pad)
 {
-    char prime, back, men, i, prg, temp = 0, padd;
-    padd = pad % 3;
+    char temp = 0;
+    char padd = pad % 3;
 
 //pad joint first part/second part/single
     if (Data->P[plr].Mission[padd].Joint == 0) {
         if (!AI[plr] && pad < 3) {
             temp = Help("i111");
         }
-    } else
+    } else {
         switch (padd) {
         case 0:
             if (!AI[plr] && pad < 3) {
@@ -460,92 +461,50 @@ void ClrMiss(char plr, char pad)
             temp = 0;
             break;
         }
-
-    if (AI[plr]) {
-        temp = 1;
     }
 
-    if (temp == -1) {
+    if (! AI[plr] && temp == -1) {
         return;
     }
 
-    prg = Data->P[plr].Mission[padd].Prog;
+    // TODO: This should unassign hardware that has been reserved
+    // for this launch.
     Data->P[plr].Mission[padd].Hard[Mission_PrimaryBooster] = 0;
 
-    if (Data->P[plr].Mission[padd].PCrew != 0) {
-        prime = Data->P[plr].Mission[padd].PCrew - 1;
-    } else {
-        prime = -1;
-    }
+    ClearMissionCrew(plr, padd, CREW_ALL);
 
-    if (Data->P[plr].Mission[padd].BCrew != 0) {
-        back = Data->P[plr].Mission[padd].BCrew - 1;
-    } else {
-        back = -1;
-    }
+    if (Data->P[plr].Mission[padd].Joint == 1 &&
+        Data->P[plr].Mission[padd].part == 0) {
 
-    men = Data->P[plr].Mission[padd].Men;
-
-    if (prime != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-        }
-
-    if (back != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-        }
-
-    if (Data->P[plr].Mission[padd].Joint == 1) {
-        prg = Data->P[plr].Mission[padd + 1].Prog;
-
-        if (Data->P[plr].Mission[padd + 1].PCrew != 0) {
-            prime = Data->P[plr].Mission[padd + 1].PCrew - 1;
-        } else {
-            prime = -1;
-        }
-
-        if (Data->P[plr].Mission[padd + 1].BCrew != 0) {
-            back = Data->P[plr].Mission[padd + 1].BCrew - 1;
-        } else {
-            back = -1;
-        }
-
-        men = Data->P[plr].Mission[padd + 1].Men;
-
-        if (prime != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-            }
-
-        if (back != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-            }
+        ClearMissionCrew(plr, padd + 1, CREW_ALL);
 
         Data->P[plr].Mission[padd + 1].part = 0;
         Data->P[plr].Mission[padd + 1].Prog = 0;
-        Data->P[plr].Mission[padd + 1].PCrew = 0;
-        Data->P[plr].Mission[padd + 1].BCrew = 0;
+        Data->P[plr].Mission[padd + 1].Duration = 0;
         Data->P[plr].Mission[padd + 1].Joint = 0;
         Data->P[plr].Mission[padd + 1].Men = 0;
         Data->P[plr].Mission[padd + 1].MissionCode = Mission_None;
     }
 
     Data->P[plr].Mission[padd].Prog = 0;
-    Data->P[plr].Mission[padd].PCrew = 0;
-    Data->P[plr].Mission[padd].BCrew = 0;
+    Data->P[plr].Mission[padd].Duration = 0;
     Data->P[plr].Mission[padd].Men = 0;
     Data->P[plr].Mission[padd].Joint = 0;
     Data->P[plr].Mission[padd].MissionCode = Mission_None;
 
-    if (Data->P[plr].Mission[padd].Joint == 1 && Data->P[plr].Mission[padd].part == 0) {
-        memset(&Data->P[plr].Mission[padd + 1], 0x00, sizeof(struct MissionType));
-    }
+    // Huh? These shouldn't ever trigger, because the Joint status
+    // for each was just set... -- rnyoakum
+    // if (Data->P[plr].Mission[padd].Joint == 1 &&
+    //     Data->P[plr].Mission[padd].part == 0) {
+    //     memset(&Data->P[plr].Mission[padd + 1], 0x00,
+    //            sizeof(struct MissionType));
+    // }
 
-    if (Data->P[plr].Mission[padd + 1].Joint == 1 && Data->P[plr].Mission[padd + 1].part == 1) {
-        memset(&Data->P[plr].Mission[padd + 1], 0x00, sizeof(struct MissionType));
-    }
+    // if (Data->P[plr].Mission[padd + 1].Joint == 1 &&
+    //     Data->P[plr].Mission[padd + 1].part == 1) {
+    //     memset(&Data->P[plr].Mission[padd + 1], 0x00,
+    //            sizeof(struct MissionType));
+    // }
 
     return;
 }

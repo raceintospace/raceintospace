@@ -30,6 +30,7 @@
 #include "mission_util.h"
 #include "gr.h"
 #include "pace.h"
+#include "state_utils.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);
@@ -182,66 +183,17 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
     return M; // all the proper hardware and crews have been assigned
 }
 
+
 void ClrFut(char plr, char pad)
 {
-    char prime, back, men, i, prg;
-    prg = Data->P[plr].Future[pad].Prog;
+    ClearFutureCrew(plr, pad, CREW_ALL);
 
-    if (Data->P[plr].Future[pad].PCrew != 0) {
-        prime = Data->P[plr].Future[pad].PCrew - 1;
-    } else {
-        prime = -1;
-    }
-
-    if (Data->P[plr].Future[pad].BCrew != 0) {
-        back = Data->P[plr].Future[pad].BCrew - 1;
-    } else {
-        back = -1;
-    }
-
-    men = Data->P[plr].Future[pad].Men;
-
-    if (prime != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-        }
-
-    if (back != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-        }
-
-    if (Data->P[plr].Future[pad].Joint == 1 && Data->P[plr].Future[pad + 1].part == 1) {
-        prg = Data->P[plr].Future[pad + 1].Prog;
-
-        if (Data->P[plr].Future[pad + 1].PCrew != 0) {
-            prime = Data->P[plr].Future[pad + 1].PCrew - 1;
-        } else {
-            prime = -1;
-        }
-
-        if (Data->P[plr].Future[pad + 1].BCrew != 0) {
-            back = Data->P[plr].Future[pad + 1].BCrew - 1;
-        } else {
-            back = -1;
-        }
-
-        men = Data->P[plr].Future[pad + 1].Men;
-
-        if (prime != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-            }
-
-        if (back != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-            }
+    if (Data->P[plr].Future[pad].Joint == 1 &&
+        Data->P[plr].Future[pad + 1].part == 1) {
+        ClearFutureCrew(plr, pad + 1, CREW_ALL);
 
         Data->P[plr].Future[pad + 1].part = 0;
         Data->P[plr].Future[pad + 1].Prog = 0;
-        Data->P[plr].Future[pad + 1].PCrew = 0;
-        Data->P[plr].Future[pad + 1].BCrew = 0;
         Data->P[plr].Future[pad + 1].Duration = 0;
         Data->P[plr].Future[pad + 1].Joint = 0;
         Data->P[plr].Future[pad + 1].Men = 0;
@@ -249,8 +201,6 @@ void ClrFut(char plr, char pad)
     }
 
     Data->P[plr].Future[pad].Prog = 0;
-    Data->P[plr].Future[pad].PCrew = 0;
-    Data->P[plr].Future[pad].BCrew = 0;
     Data->P[plr].Future[pad].Men = 0;
     Data->P[plr].Future[pad].Duration = 0;
     Data->P[plr].Future[pad].Joint = 0;
