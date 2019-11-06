@@ -1,0 +1,33 @@
+#!/bin/sh
+
+COMMIT=HEAD
+DATE=$(date +"%04Y%02m%02d")
+GITVER=$(git rev-list --no-walk --abbrev-commit $COMMIT)
+
+print()
+{
+cat << EOF
+%global commit ${GITVER}
+%global date ${DATE}
+EOF
+}
+
+update()
+{
+sed -e "s/^%global commit [[:xdigit:]]\+/%global commit ${GITVER}/" \
+	-e "s/^%global date [[:digit:]]\+/%global date ${DATE}/" -i $@
+}
+
+
+if [ "$1" = '-u' ]
+then
+	shift
+	if [ -d "$1" ]
+	then
+		update ${1}/*.spec
+	else
+		update ${1:-*.spec}
+	fi
+else
+	print
+fi
