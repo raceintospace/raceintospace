@@ -408,16 +408,23 @@ void PadDraw(char plr, char pad)
 }
 
 
-/** pad is +3 for compatibility with News so that
- * it will go ahead and scrub the mission automatically
+/**
+ * Scrubs a mission assigned for the current turn.
  *
+ * Clears all mission data and unassigns the crew.
+ *
+ * \param plr  The player index (0 for USA, 1 for USSR).
+ * \param pad  The launch pad index, or the pad + 3 for compatibility
+ *             with News to bypass the popup alert.
  */
 void ClrMiss(char plr, char pad)
 {
     char temp = 0;
     char padd = pad % 3;
 
-//pad joint first part/second part/single
+    // If a Joint mission, sets padd to the launch pad of the first
+    // part. Displays an appropriate popup alert asking for confirmation
+    // before cancelling the mission.
     if (Data->P[plr].Mission[padd].Joint == 0) {
         if (!AI[plr] && pad < 3) {
             temp = Help("i111");
@@ -473,9 +480,7 @@ void ClrMiss(char plr, char pad)
 
     ClearMissionCrew(plr, padd, CREW_ALL);
 
-    if (Data->P[plr].Mission[padd].Joint == 1 &&
-        Data->P[plr].Mission[padd].part == 0) {
-
+    if (Data->P[plr].Mission[padd].Joint == 1) {
         ClearMissionCrew(plr, padd + 1, CREW_ALL);
 
         Data->P[plr].Mission[padd + 1].part = 0;

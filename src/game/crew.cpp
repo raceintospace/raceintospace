@@ -185,22 +185,37 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
 }
 
 
+/* Clear all mission data and unassign crew for the Future mission
+ * on the given pad.
+ *
+ * Both sections of a Joint mission are cleared, given either pad.
+ *
+ * \param plr  The player index in Data.
+ * \param pad  The pad index for the Future mission.
+ */
 void ClrFut(char plr, char pad)
 {
     ClearFutureCrew(plr, pad, CREW_ALL);
 
-    if (Data->P[plr].Future[pad].Joint == 1 &&
-        Data->P[plr].Future[pad + 1].part == 1) {
-        ClearFutureCrew(plr, pad + 1, CREW_ALL);
+    if (Data->P[plr].Future[pad].Joint == 1) {
+        char part = Data->P[plr].Future[pad].part;
+        char jointPad = (part == 0) ? pad + 1 : pad - 1;
 
-        Data->P[plr].Future[pad + 1].part = 0;
-        Data->P[plr].Future[pad + 1].Prog = 0;
-        Data->P[plr].Future[pad + 1].Duration = 0;
-        Data->P[plr].Future[pad + 1].Joint = 0;
-        Data->P[plr].Future[pad + 1].Men = 0;
-        Data->P[plr].Future[pad + 1].MissionCode = Mission_None;
+        // if (! Data->P[plr].Future[jointPad].Joint ||
+        //     Data->P[plr].Future[jointPad].Joint == part) {
+        // }
+
+        ClearFutureCrew(plr, jointPad, CREW_ALL);
+
+        Data->P[plr].Future[jointPad].part = 0;
+        Data->P[plr].Future[jointPad].Prog = 0;
+        Data->P[plr].Future[jointPad].Duration = 0;
+        Data->P[plr].Future[jointPad].Joint = 0;
+        Data->P[plr].Future[jointPad].Men = 0;
+        Data->P[plr].Future[jointPad].MissionCode = Mission_None;
     }
 
+    Data->P[plr].Future[pad].part = 0;
     Data->P[plr].Future[pad].Prog = 0;
     Data->P[plr].Future[pad].Men = 0;
     Data->P[plr].Future[pad].Duration = 0;
