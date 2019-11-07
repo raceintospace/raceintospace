@@ -62,6 +62,7 @@
 #include "gr.h"
 #include "crash.h"
 #include "endianness.h"
+#include "crew.h"
 
 #ifdef CONFIG_MACOSX
 // SDL.h needs to be included here to replace the original main() with
@@ -159,7 +160,6 @@ void MainLoop(void);
 void DockingKludge(void);
 void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
-void FreePadMen(char plr, struct MissionType *XMis);
 void VerifyCrews(char plr);
 
 
@@ -721,29 +721,6 @@ void DockingKludge(void)
     return;
 }
 
-/** Reset Crews on a particular Mission
- */
-void FreePadMen(char plr, struct MissionType *XMis)
-{
-    int i, c;
-
-    if (XMis->PCrew > 0) {  // Remove Primary Crew
-        for (i = 0; i < Data->P[plr].CrewCount[XMis->Prog][XMis->PCrew - 1]; i++) {
-            c = Data->P[plr].Crew[XMis->Prog][XMis->PCrew - 1][i] - 1;
-            Data->P[plr].Pool[c].Prime = 0;
-        }
-    }
-
-    if (XMis->BCrew > 0) {  // Remove Backup Crew
-        for (i = 0; i < Data->P[plr].CrewCount[XMis->Prog][XMis->BCrew - 1]; i++) {
-            c = Data->P[plr].Crew[XMis->Prog][XMis->BCrew - 1][i] - 1;
-            Data->P[plr].Pool[c].Prime = 0;
-        }
-    }
-
-    return;
-}
-
 
 /** Destroy Pad and Reset any Crews affected
  *
@@ -758,32 +735,10 @@ void DestroyPad(char plr, char pad, int cost, char mode)
 
     Data->P[plr].LaunchFacility[pad] = cost; // Destroys pad
 
-    AMis = (mode == 0) ? &Data->P[plr].Future[pad] : &Data->P[plr].Mission[pad];
-
-    if (AMis != NULL) {
-        if (AMis->Joint == 1) {
-            if (AMis->part == 0) {
-                BMis = &AMis[1];
-            }
-
-            if (AMis->part == 1) {
-                BMis = &AMis[-1];
-            }
-        }
-
-        if (AMis->Men != 0) {
-            FreePadMen(plr, AMis);
-        }
-
-        memset(AMis, 0x00, sizeof(struct MissionType));
-    }
-
-    if (BMis != NULL) {
-        if (BMis->Men != 0) {
-            FreePadMen(plr, BMis);
-        }
-
-        memset(BMis, 0x00, sizeof(struct MissionType));
+    if (mode == 0) {
+        ClrFut(plr, pad);
+    } else {
+        ClrMiss(plr, pad);
     }
 
     return;

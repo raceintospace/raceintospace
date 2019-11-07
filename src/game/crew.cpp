@@ -30,6 +30,8 @@
 #include "mission_util.h"
 #include "gr.h"
 #include "pace.h"
+#include "state_utils.h"
+#include "logging.h"
 
 int AsnCrew(char plr, char pad, char part);
 void FutFltsTxt(char nw, char col);
@@ -182,75 +184,39 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
     return M; // all the proper hardware and crews have been assigned
 }
 
+
+/* Clear all mission data and unassign crew for the Future mission
+ * on the given pad.
+ *
+ * Both sections of a Joint mission are cleared, given either pad.
+ *
+ * \param plr  The player index in Data.
+ * \param pad  The pad index for the Future mission.
+ */
 void ClrFut(char plr, char pad)
 {
-    char prime, back, men, i, prg;
-    prg = Data->P[plr].Future[pad].Prog;
+    ClearFutureCrew(plr, pad, CREW_ALL);
 
-    if (Data->P[plr].Future[pad].PCrew != 0) {
-        prime = Data->P[plr].Future[pad].PCrew - 1;
-    } else {
-        prime = -1;
+    if (Data->P[plr].Future[pad].Joint == 1) {
+        char part = Data->P[plr].Future[pad].part;
+        char jointPad = (part == 0) ? pad + 1 : pad - 1;
+
+        // if (! Data->P[plr].Future[jointPad].Joint ||
+        //     Data->P[plr].Future[jointPad].Joint == part) {
+        // }
+
+        ClearFutureCrew(plr, jointPad, CREW_ALL);
+
+        Data->P[plr].Future[jointPad].part = 0;
+        Data->P[plr].Future[jointPad].Prog = 0;
+        Data->P[plr].Future[jointPad].Duration = 0;
+        Data->P[plr].Future[jointPad].Joint = 0;
+        Data->P[plr].Future[jointPad].Men = 0;
+        Data->P[plr].Future[jointPad].MissionCode = Mission_None;
     }
 
-    if (Data->P[plr].Future[pad].BCrew != 0) {
-        back = Data->P[plr].Future[pad].BCrew - 1;
-    } else {
-        back = -1;
-    }
-
-    men = Data->P[plr].Future[pad].Men;
-
-    if (prime != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-        }
-
-    if (back != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-        }
-
-    if (Data->P[plr].Future[pad].Joint == 1 && Data->P[plr].Future[pad + 1].part == 1) {
-        prg = Data->P[plr].Future[pad + 1].Prog;
-
-        if (Data->P[plr].Future[pad + 1].PCrew != 0) {
-            prime = Data->P[plr].Future[pad + 1].PCrew - 1;
-        } else {
-            prime = -1;
-        }
-
-        if (Data->P[plr].Future[pad + 1].BCrew != 0) {
-            back = Data->P[plr].Future[pad + 1].BCrew - 1;
-        } else {
-            back = -1;
-        }
-
-        men = Data->P[plr].Future[pad + 1].Men;
-
-        if (prime != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-            }
-
-        if (back != -1)
-            for (i = 0; i < men; i++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-            }
-
-        Data->P[plr].Future[pad + 1].part = 0;
-        Data->P[plr].Future[pad + 1].Prog = 0;
-        Data->P[plr].Future[pad + 1].PCrew = 0;
-        Data->P[plr].Future[pad + 1].BCrew = 0;
-        Data->P[plr].Future[pad + 1].Duration = 0;
-        Data->P[plr].Future[pad + 1].Joint = 0;
-        Data->P[plr].Future[pad + 1].Men = 0;
-        Data->P[plr].Future[pad + 1].MissionCode = Mission_None;
-    }
-
+    Data->P[plr].Future[pad].part = 0;
     Data->P[plr].Future[pad].Prog = 0;
-    Data->P[plr].Future[pad].PCrew = 0;
-    Data->P[plr].Future[pad].BCrew = 0;
     Data->P[plr].Future[pad].Men = 0;
     Data->P[plr].Future[pad].Duration = 0;
     Data->P[plr].Future[pad].Joint = 0;
@@ -275,30 +241,19 @@ int AsnCrew(char plr, char pad, char part)
     men = Data->P[plr].Future[pad].Men;
     prg = Data->P[plr].Future[pad].Prog;
 
-    if (Data->P[plr].Future[pad].PCrew == 0) {
-        prime = -1;
-    } else {
-        prime = Data->P[plr].Future[pad].PCrew - 1;
+    // Any existing astronaut *were* unassigned here. However...
+    // since preceding call to SecondHard sets Men, Prog fields,
+    // any previous astronaut crews can't be unassigned - the
+    // Men & Prog fields may be different from when they were assigned.
+    if (Data->P[plr].Future[pad].PCrew > 0 ||
+        Data->P[plr].Future[pad].BCrew > 0) {
+        CERROR7(future, "AsnCrew(plr = %d, pad = %d, part = %d) "
+                "is setting new crew before old crew PCrew = %d, "
+                "BCrew = %d has been unassigned",
+                plr, pad, part, Data->P[plr].Future[pad].PCrew,
+                Data->P[plr].Future[pad].BCrew);
     }
 
-    if (Data->P[plr].Future[pad].BCrew == 0) {
-        back = -1;
-    } else {
-        back = Data->P[plr].Future[pad].BCrew - 1;
-    }
-
-    if (prime != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 0;
-        }
-
-    if (back != -1)
-        for (i = 0; i < men; i++) {
-            Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 0;
-        }
-
-    Data->P[plr].Future[pad].PCrew = 0;
-    Data->P[plr].Future[pad].BCrew = 0;
     prime = -1;
     back = -1;
     count = 0;
