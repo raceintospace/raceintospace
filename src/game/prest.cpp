@@ -184,7 +184,7 @@ char PrestMin(char plr, const struct mStr &mission)
     int maxMilestone = 0, Neg = 0;
     bool newMilestone = false;
 
-    if (mission.Index == 0) {
+    if (mission.Index == Mission_None) {
         return 0;
     }
 
@@ -876,7 +876,7 @@ int AllotPrest(char plr, char mis)
             break;
 
         case Prestige_MannedOrbital:
-            mike = (Mis.Index <= 6) ? (Data->P[plr].Mission[mis].Duration = 1, 7) : (Data->P[plr].Mission[mis].Duration = 2, 12);
+            mike = (Mis.Index <= Mission_Earth_Orbital_EVA) ? (Data->P[plr].Mission[mis].Duration = 1, 7) : (Data->P[plr].Mission[mis].Duration = 2, 12);
             break;
 
         case Prestige_MannedLunarPass:
@@ -928,7 +928,8 @@ int AllotPrest(char plr, char mis)
         PVal[N_Goal] = 0;
     }
 
-    if (mcode == 32 || mcode == 36) {
+    if (mcode == Mission_Jt_OrbitingLab ||
+        mcode == Mission_Jt_OrbitingLab_EVA) {
         PVal[Prestige_OrbitingLab] = Check_Lab();
     }
 
@@ -1064,44 +1065,47 @@ int U_AllotPrest(char plr, char mis)
 
     other = MaxFail();
 
-    if ((mcode >= 7 && mcode <= 13) || mcode == 1) { // Unmanned Probes
+    if ((mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
+        mcode == Mission_Orbital_Satellite) { // Unmanned Probes
         switch (mcode) {
-        case 1:
-            i = 0;
+        case Mission_Orbital_Satellite:
+            i = Prestige_OrbitalSatellite;
             break; // O.S.
 
-        case 7:
-            i = 1;
+        case Mission_LunarFlyby:
+            i = Prestige_LunarFlyby;
             break; // L.F.B.
 
-        case 8:
-            i = 7;
+        case Mission_Lunar_Probe:
+            i = Prestige_LunarProbeLanding;
             break; // L.P.L.
 
-        case 9:
-            i = 3;
+        case Mission_VenusFlyby:
+            i = Prestige_VenusFlyby;
             break;
 
-        case 10:
-            i = 4;
+        case Mission_MarsFlyby:
+            i = Prestige_MarsFlyby;
             break;
 
-        case 11:
-            i = 2;
+        case Mission_MercuryFlyby:
+            i = Prestige_MercuryFlyby;
             break;
 
-        case 12:
-            i = 5;
+        case Mission_JupiterFlyby:
+            i = Prestige_JupiterFlyby;
             break;
 
-        case 13:
-            i = 6;
+        case Mission_SaturnFlyby:
+            i = Prestige_SaturnFlyby;
             break;
         }
 
 
         if (other == 1) {
-            if (mcode == 10 || mcode == 12 || mcode == 13) {
+            if (mcode == Mission_MarsFlyby ||
+                mcode == Mission_JupiterFlyby ||
+                mcode == Mission_SaturnFlyby) {
                 return 0;
             }
 
@@ -1110,14 +1114,14 @@ int U_AllotPrest(char plr, char mis)
             negs = PrestNeg(plr, i);
         }
 
-        if (mcode == 7 || mcode == 8) {
+        if (mcode == Mission_LunarFlyby || mcode == Mission_Lunar_Probe) {
             if (lun == 1) { // UNMANNED PHOTO RECON
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
-        if (mcode == 8 && MaxFail() == 1) { // extra 10 for landing on Moon
+        if (mcode == Mission_Lunar_Probe && MaxFail() == 1) { // extra 10 for landing on Moon
             if (lun == 1) { // UNMANNED PHOTO RECON
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 10;
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);

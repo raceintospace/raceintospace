@@ -513,7 +513,8 @@ void MisCheck(char plr, char mpad)
             Mev[STEP].trace = 0x7f;
         }
 
-        if ((mcc == 10 || mcc == 12 || mcc == 13) && STEP == 2) {
+        if ((mcc == Mission_MarsFlyby || mcc == Mission_JupiterFlyby ||
+             mcc == Mission_SaturnFlyby) && STEP == 2) {
             Mev[STEP].trace = 0x7f;
         }
 
@@ -808,7 +809,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         //Special Case for PhotoRecon with Lunar Probe
-        if (Mev[STEP].loc == 20 && mcc == 8) {
+        if (Mev[STEP].loc == 20 && mcc == Mission_Lunar_Probe) {
             Mev[STEP - 1].E->MisFail++;
         }
 

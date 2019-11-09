@@ -481,7 +481,7 @@ void PlanText(char plr, char plan)
         draw_string(4 + 160, 87, "RECON: ");
         draw_number(0, 0, Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety);
         draw_string(0, 0, "%");
-        Find = 7;
+        Find = Mission_LunarFlyby;
 
         if (tx == 1) {
             SmHardMe(plr, 190, 34, 6, 6, 32);
@@ -492,31 +492,31 @@ void PlanText(char plr, char plan)
     case 1:
         draw_string(4 + 160, 80, "MERCURY FLYBY");
         SmHardMe(plr, 190, 34, 6, 1, 32);
-        Find = 11;
+        Find = Mission_MercuryFlyby;
         break;
 
     case 2:
         draw_string(4 + 160, 80, "VENUS FLYBY");
         SmHardMe(plr, 190, 34, 6, 2, 32);
-        Find = 9;
+        Find = Mission_VenusFlyby;
         break;
 
     case 3:
         draw_string(4 + 160, 80, "MARS FLYBY");
         SmHardMe(plr, 190, 34, 6, 3, 32);
-        Find = 10;
+        Find = Mission_MarsFlyby;
         break;
 
     case 4:
         draw_string(4 + 160, 80, "JUPITER FLYBY");
         SmHardMe(plr, 190, 34, 6, 4, 32);
-        Find = 12;
+        Find = Mission_JupiterFlyby;
         break;
 
     case 5:
         draw_string(4 + 160, 80, "SATURN FLYBY");
         SmHardMe(plr, 190, 34, 6, 5, 32);
-        Find = 13;
+        Find = Mission_SaturnFlyby;
         break;
     }
 

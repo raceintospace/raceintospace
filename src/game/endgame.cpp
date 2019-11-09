@@ -15,7 +15,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-/** \file endgame.c End Game Routines
+/** \file endgame.cpp End Game Routines
  */
 
 #include "display/graphics.h"
@@ -258,7 +258,9 @@ void EndGame(char win, char pad)
     draw_string(10, 50, "MISSION TYPE: ");
     display::graphics.setForegroundColor(8);
 
-    if (miss == 55  || miss == 56 || miss == 57) {
+    if (miss == Mission_Jt_LunarLanding_EOR ||
+        miss == Mission_Jt_LunarLanding_LOR ||
+        miss == Mission_Soyuz_LL) {
         i = 1;
     } else {
         i = 0;
@@ -742,13 +744,13 @@ void FakeWin(char win)
     r = brandom(100);
 
     if (r < 45) {
-        miss = 53;
+        miss = Mission_HistoricalLanding;
     } else if (r < 50) {
-        miss = 54;
+        miss = Mission_DirectAscent_LL;
     } else if (r < 85) {
-        miss = 55;
+        miss = Mission_Jt_LunarLanding_EOR;
     } else {
-        miss = 56;
+        miss = Mission_Jt_LunarLanding_LOR;
     }
 
     display::graphics.setForegroundColor(6);
@@ -769,7 +771,7 @@ void FakeWin(char win)
     yr = r;
     r = brandom(100);
 
-    if (miss == 54) {
+    if (miss == Mission_DirectAscent_LL) {
         prog = 5;
     } else if (r < 20) {
         prog = 2;
