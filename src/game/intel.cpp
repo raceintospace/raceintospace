@@ -266,6 +266,7 @@ void DrawBre(char plr);
 void Bre(char plr);
 void DrawIStat(char plr);
 void IStat(char plr);
+void LoadCIASprite();
 void IInfo(char plr, char loc, char w);
 
 void DrawIntelImage(char plr, char poff);
@@ -1644,19 +1645,36 @@ void Bre(char plr)
     }
 }
 
-void Load_CIA_BUT(void)
+/**
+ * Load the CIA hardware icons into the global vhptr buffer.
+ *
+ * Exports the file palette to the global display.
+ *
+ * \throws runtime_error  if Filesystem is unable to load the sprite.
+ */
+void LoadCIASprite()
 {
-    int i;
-    FILE *fin;
-    display::AutoPal p(vhptr);
+    if (vhptr == NULL) {
+        vhptr = new display::LegacySurface(320, 200);
+    } else if (vhptr->width() < 320 || vhptr->height() < 200) {
+        delete vhptr;
+        vhptr = new display::LegacySurface(320, 200);
+    }
 
-    fin = sOpen("CIA.BUT", "rb", 0);
-    fread(p.pal, 768, 1, fin);
+    std::string filename("images/cia.but.0.png");
+    boost::shared_ptr<display::PalettizedSurface> sprite =
+        Filesystem::readImage(filename);
 
-    char buf[32768];
-    i = fread(buf, 1, sizeof(buf), fin);
-    PCX_D(buf, vhptr->pixels(), i);
-    fclose(fin);
+    // try {
+    //     sprite = Filesystem::readImage(filename);
+    // } catch (const std::runtime_error &err) {
+    //     CERROR4(filesys, "Error loading %s: %s", filename.c_str(),
+    //             err.what());
+    //     return;
+    // }
+
+    vhptr->palette().copy_from(sprite->palette());
+    vhptr->draw(sprite, 0, 0);
 }
 
 
@@ -1666,7 +1684,7 @@ void DrawIStat(char plr)
 
     FadeOut(2, 10, 0, 0);
 
-    Load_CIA_BUT();
+    LoadCIASprite();
     display::graphics.screen()->clear();
 
     ShBox(0, 0, 319, 199);
@@ -1775,10 +1793,22 @@ void IStat(char plr)
     }
 }
 
+
+/**
+ * Copies an image segment from the CIA sprite to the display buffer.
+ *
+ * Assumes cia.but / cia.but.0.png is loaded in the global vhptr.
+ * Identical to HDispIt() in hardef.cpp.
+ *
+ * \param x1  top-left x coordinate of the image in the sprite
+ * \param y1  top-left y coordinate of the image in the sprite
+ * \param x2  bottom-right x coordinate of the image in the sprite
+ * \param y2  bottom-right y coordinate of the image in the sprite
+ * \param s   top-left x coordinate of the destination in the display
+ * \param t   top-left y coordinate of the destination in the display
+ */
 void DispIt(int x1, int y1, int x2, int y2, int s, int t)
 {
-    // assumes cia.but is loaded in vhptr
-    // seems identical to HDispIt()
     int w;
     int h;
 

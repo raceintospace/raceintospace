@@ -55,7 +55,7 @@ DrawHardef(char plr)
 
     FadeOut(2, 10, 0, 0);
 
-    Load_CIA_BUT();
+    LoadCIASprite();
     display::graphics.screen()->clear();
 
     ShBox(0, 0, 319, 199);
@@ -621,7 +621,7 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    DispIt(95, 77, 117, 127, 130, 106);
+                    HDispIt(95, 77, 117, 127, 130, 106);
                 } else if (sfu > 0) {
                     HDispIt(119, 97, 170, 140, 122, 113);
                 }
@@ -1062,7 +1062,7 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    DispIt(95, 77, 117, 127, 130, 106);
+                    HDispIt(95, 77, 117, 127, 130, 106);
                 } else if (sfu > 0) {
                     HDispIt(119, 97, 170, 140, 122, 113);
                 }
