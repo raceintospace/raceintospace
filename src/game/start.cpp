@@ -756,14 +756,14 @@ void Update(void)
 
     for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 0; i < MAX_MISSIONS; i++) {
-            if (Data->P[j].Mission[i].MissionCode == 1) {
+            if (Data->P[j].Mission[i].MissionCode == Mission_Orbital_Satellite) {
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_ORBITAL].Name[0]);
                 strcat(&tName[0], " ");
                 strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]); // copy into struct
                 Data->P[j].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
-            } else if (Data->P[j].Mission[i].MissionCode == 8) {
+            } else if (Data->P[j].Mission[i].MissionCode == Mission_Lunar_Probe) {
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_LUNAR].Name[0]);
                 strcat(&tName[0], " ");
@@ -949,14 +949,14 @@ void UpdAll(char side)
     }
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[side].Mission[i].MissionCode == 1) {
+        if (Data->P[side].Mission[i].MissionCode == Mission_Orbital_Satellite) {
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_ORBITAL].Name[0]);
             strcat(&tName[0], " ");
             strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
             Data->P[side].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
-        } else if (Data->P[side].Mission[i].MissionCode == 8) {
+        } else if (Data->P[side].Mission[i].MissionCode == Mission_Lunar_Probe) {
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_LUNAR].Name[0]);
             strcat(&tName[0], " ");
@@ -1097,7 +1097,7 @@ void UpdAll(char side)
         }
 
         switch (Data->P[side].History[i].MissionCode) {
-        case 1:
+        case Mission_Orbital_Satellite:
             if (Data->P[side].History[i].spResult != 1) {
                 Data->P[side].Probe[PROBE_HW_ORBITAL].Failures++;
             }
@@ -1105,7 +1105,7 @@ void UpdAll(char side)
             Data->P[side].Probe[PROBE_HW_ORBITAL].Used++;
             break;
 
-        case 8:
+        case Mission_Lunar_Probe:
             if (Data->P[side].History[i].spResult != 1) {
                 Data->P[side].Probe[PROBE_HW_LUNAR].Failures++;
             }

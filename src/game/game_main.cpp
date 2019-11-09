@@ -378,7 +378,11 @@ int CheckIfMissionGo(char plr, char launchIdx)
 
     // Always a go for Unmanned missions
     /** \todo introduce mission attribute "manned vs. unmanned" */
-    if (mcode == 1 || mcode == 3 || mcode == 5 || (mcode >= 7 && mcode <= 13) || mcode == 15) {
+    if (mcode == Mission_Orbital_Satellite ||
+        mcode == Mission_U_SubOrbital ||
+        mcode == Mission_Unmanned_Earth_Orbital ||
+        (mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
+        mcode == Mission_U_Orbital_D) {
         return 1;
     }
 

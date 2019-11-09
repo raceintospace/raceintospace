@@ -1405,12 +1405,12 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     VASqty = 0;
 
-    if (VX == 0x20 && part == 0 && mcode == 1) { // P:Sxx XX
+    if (VX == 0x20 && part == 0 && mcode == Mission_Orbital_Satellite) { // P:Sxx XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Probe[PROBE_HW_ORBITAL], 0, 9);
     }
 
-    if (VX == 0x20 && part == 0 && mcode != 1) { // P:xDM XX
+    if (VX == 0x20 && part == 0 && mcode != Mission_Orbital_Satellite) { // P:xDM XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
     } else if (VX == 0x04 && part == 0) { // P:INTER XX
@@ -1492,7 +1492,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0x89 && part == 1) { // S:CAP+EVA+KIC
         if (prog != 2) {
-            if (mcode != 55) { ///Special Case EOR Lunar Landing
+            if (mcode != Mission_Jt_LunarLanding_EOR) { ///Special Case EOR Lunar Landing
                 VASqty++;
                 VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_A], 0, 20);
                 VASqty++;

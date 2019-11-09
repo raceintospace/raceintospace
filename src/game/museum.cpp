@@ -336,9 +336,7 @@ void ShowPrest(char plr)
             OutBox(245, 5, 314, 17);
 
             key = 0;
-
             helpText = "i000";
-
             keyHelpText = "k000";
 
             return;
@@ -901,7 +899,8 @@ void DrawMisHist(char plr, int *where)
 
                 pmis = Data->P[plr].History[index].MissionCode;
 
-                if (pmis == 55 || pmis == 56) {
+                if (pmis == Mission_Jt_LunarLanding_EOR ||
+                    pmis == Mission_Jt_LunarLanding_LOR) {
                     temp2 = 0;
                 } else {
                     temp2 = 11;
@@ -937,23 +936,23 @@ void DrawMisHist(char plr, int *where)
 
             pmis = Data->P[plr].History[index].MissionCode;
 
-            if (prog == 6 && pmis == 9) {
+            if (prog == 6 && pmis == Mission_VenusFlyby) {
                 planet = 2;
-            } else if (prog == 6 && pmis == 10) {
+            } else if (prog == 6 && pmis == Mission_MarsFlyby) {
                 planet = 3;
-            } else if (prog == 6 && pmis == 11) {
+            } else if (prog == 6 && pmis == Mission_MercuryFlyby) {
                 planet = 1;
-            } else if (prog == 6 && pmis == 12) {
+            } else if (prog == 6 && pmis == Mission_JupiterFlyby) {
                 planet = 4;
-            } else if (prog == 6 && pmis == 13) {
+            } else if (prog == 6 && pmis == Mission_SaturnFlyby) {
                 planet = 5;
-            } else if (pmis == 0) {
+            } else if (pmis == Mission_None) {
                 planet = 7;
-            } else if (pmis == 1) {
+            } else if (pmis == Mission_Orbital_Satellite) {
                 planet = 7;
-            } else if (pmis == 7) {
+            } else if (pmis == Mission_LunarFlyby) {
                 planet = 6;
-            } else if (pmis == 8) {
+            } else if (pmis == Mission_Lunar_Probe) {
                 planet = 6;
             } else {
                 planet = 0;
