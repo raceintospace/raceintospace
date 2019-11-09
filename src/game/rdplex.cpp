@@ -49,6 +49,7 @@ boost::shared_ptr<display::PalettizedSurface> rd_men;
 int avoidf;
 
 
+void LoadVABPalette(char plr);
 void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
 void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
@@ -105,6 +106,24 @@ encodeRolls(uint8_t nRolls, uint8_t value)
     return nRolls * NUM_ROLLS_MULT + value;
 }
 
+/**
+ * Load the color palette used in the VAB into the display.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \throws runtime_error  if vab image cannot be loaded by Filesystem.
+ */
+void LoadVABPalette(const char plr)
+{
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/vab.img.%d.png", plr);
+
+    boost::shared_ptr<display::PalettizedSurface> sprite(
+        Filesystem::readImage(filename));
+
+    sprite->exportPalette();
+}
+
+
 void SRdraw_string(int x, int y, char *text, char fgd, char bck)
 {
     display::graphics.setForegroundColor(bck);
@@ -134,19 +153,14 @@ void Del_RD_BUT()
 void DrawRD(char player_index)
 {
     int i;
-    FILE *fin;
     helpText = "i009";
     keyHelpText = "k009";
 
     FadeOut(2, 10, 0, 0);
-    fin = sOpen("VAB.IMG", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
-    }
-    fclose(fin);
 
+    LoadVABPalette(player_index);
     display::graphics.screen()->clear();
+
     Load_RD_BUT(player_index);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
@@ -1130,16 +1144,9 @@ void OnHand(char qty)
 
 void DrawHPurc(char player_index)
 {
-    FILE *fin;
-
     FadeOut(2, 10, 0, 0);
-    fin = sOpen("VAB.IMG", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
-    }
-    fclose(fin);
 
+    LoadVABPalette(player_index);
     Load_RD_BUT(player_index);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
