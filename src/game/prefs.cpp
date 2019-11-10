@@ -190,36 +190,30 @@ void DrawPrefs(int where, char a1, char a2)
  * Random Model is only available if options.feat_random_eq is enabled.
  * See the manual for more information.
  *
+ * Modifies the main screen palette & vhptr palette.
+ *
  * \param mode  The current model/roster setup (0-5).
  * \param tx    This option is unused, so who knows?
  */
 void HModel(char mode, char tx)
 {
-    SimpleHdr table;
+    char filename[128];
+    int image = (mode == 0 || mode == 1 || mode == 4) ? 1 : 0;
+    snprintf(filename, sizeof(filename), "images/prfx.but.%d.png", image);
 
-    FILE *in;
+    boost::shared_ptr<display::PalettizedSurface> prefsImage(
+        Filesystem::readImage(filename));
 
-    in = sOpen("PRFX.BUT", "rb", 0);
-    fseek(in, (mode == 0 || mode == 1 || mode == 4)*sizeof_SimpleHdr, SEEK_CUR);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    display::LegacySurface local(127, 80);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[112 * 3], 96 * 3, 1, in); // Individual Palette
-    }
-    fread(buffer, table.size, 1, in); // Get Image
-    fclose(in);
-
+    // The loaded image versions have their own palettes, which are
+    // not included in the Preferences screen palette. They occupy
+    // an unused 96-color space - [112, 112 + 96) - to not interfere
+    // with the Preferences palette, but their palette must be added.
+    prefsImage->exportPalette(112, 112 + 95);
     vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
 
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-
-    local.filter(0, 112, display::LegacySurface::Any);
-
     fill_rectangle(96, 114, 223, 194, 0);
+    display::graphics.screen()->draw(prefsImage, 97, 115);
 
-    local.copyTo(display::graphics.legacyScreen(), 97, 115);
     display::graphics.setForegroundColor(11);
 
     if (mode == 2 || mode == 3) {
