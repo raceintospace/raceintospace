@@ -237,60 +237,51 @@ void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
     local2.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
-void
-AstFaces(char plr, int x, int y, char face)
+/**
+ * Draws an image of the astronaut/cosmonaut face in the appropriate
+ * helmet at the given screen coordinates.
+ *
+ * Exports the face/helmet palette to the screen palette space [64, 96).
+ *
+ * Astronaut/Cosmonaut portraits are 18x15 pixels.
+ * The helmet is 80x50 pixels.
+ *
+ * \param plr   0 for the USA suit, 1 for the USSR suit.
+ * \param x     the upper-left x-coordinate of the image destination.
+ * \param y     the upper-left y-coordinate of the image destination.
+ * \param face  the face image, 0-84.
+ * \throws runtime_error  if Filesystem is unable to read face image.
+ */
+void AstFaces(char plr, int x, int y, char face)
 {
-    int32_t offset;
-    int fx, fy;
-    int face_offset = 0;
-    FILE *fin;
+    char filename[128];
+    sprintf(filename,
+            "images/faces.but.%d.png",
+            (int)face);
 
-    display::AutoPal p(display::graphics.legacyScreen());
+    boost::shared_ptr<display::PalettizedSurface> icon(
+        Filesystem::readImage(filename));
+    icon->exportPalette(64, 64 + 31); // Palette space [64, 96)
 
-    memset(&p.pal[192], 0x00, 192);
-    fin = sOpen("FACES.BUT", "rb", 0);
-    fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
-    fread(&p.pal[192], 96, 1, fin);
-    face_offset = ((int)face) * sizeof(int32_t);
-    fseek(fin, face_offset, SEEK_SET);  // Get Face
-    fread(&offset, sizeof(int32_t), 1, fin);
-    Swap32bit(offset);
-    fseek(fin, offset, SEEK_SET);
+    sprintf(filename,
+            "images/faces.but.%d.png",
+            (int) plr + 85);
+    boost::shared_ptr<display::PalettizedSurface> helmet(
+        Filesystem::readImage(filename));
 
-    display::LegacySurface local(18, 15);
-    fread(local.pixels(), 18 * 15, 1, fin);
+    int fx, fy;  // Position of face within the helmet
 
-
-    face_offset = ((int)(85 + plr)) * sizeof(int32_t);
-    fseek(fin, face_offset, SEEK_SET);  // Get Helmet
-    fread(&offset, sizeof(int32_t), 1, fin);
-    Swap32bit(offset);
-    fseek(fin, offset, SEEK_SET);
-    display::LegacySurface local2(80, 50);
-    display::LegacySurface local3(80, 50);
-    fread(local2.pixels(), 80 * 50, 1, fin);
-    fclose(fin);
-    local3.clear(0);
-
-    if (plr == 0)   {
+    // The USA & USSR helmet viewports are at different spots.
+    if (plr == 0) {
         fx = 32;
         fy = 17;
-    } else            {
+    } else {
         fx = 33;
         fy = 21;
     }
 
-    local3.copyFrom(&local, 0, 0, local.width() - 1, local.height() - 1, fx, fy);
-
-    local2.maskCopy(&local3, 0, display::LegacySurface::DestinationEqual);
-
-    local3.copyFrom(display::graphics.legacyScreen(), x, y, x + 79, y + 49);
-
-    local3.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
-
-    local3.filter((7 + plr * 3), (char) - 160, display::LegacySurface::NotEqual);
-
-    local3.copyTo(display::graphics.legacyScreen(), x, y);
+    display::graphics.screen()->draw(icon, x + fx, y + fy);
+    display::graphics.screen()->draw(helmet, x, y);
 }
 
 

@@ -615,23 +615,25 @@ int translate_cia(FILE *fp)
     return write_image();
 }
 
+// Faces occupy a 32-color palette space over [224, 255].
 int translate_faces(FILE *fp)
 {
     uint32_t offsets[87];
     int i, j, rv;
 
-    // file starts with 86 32-bit offsets
+    // file starts with 87 32-bit offsets
     fread(offsets, 1, sizeof(offsets), fp);
 
     // followed by 32 colors
     memset(pal, 0, sizeof(pal));
     fread(&pal[64], 32, sizeof(pal[0]), fp);
 
-    // followed by 84 astronaut faces at the indicated offsets
+    // followed by 85 astronaut faces at the indicated offsets
     width = 18;
     height = 15;
+    const int faceCount = 85;
 
-    for (i = 0; i < 85; i++) {
+    for (i = 0; i < faceCount; i++) {
         fseek(fp, offsets[i], SEEK_SET);
         fread(screen, width * height, 1, fp);
 
@@ -644,22 +646,26 @@ int translate_faces(FILE *fp)
         }
     }
 
-    // the 86th image is, in fact, a helmet with different dimensions and transparency
-    // the game composites them over each other, so might as well store them separately
+    // The 86th and 87th images are, in fact, helmets with different
+    // dimensions and transparency. The game generates a composite image
+    // from the helmet and face, so might as well store them separately
     width = 80;
     height = 50;
     color_is_transparent[0] = 1;
-    fseek(fp, offsets[86], SEEK_SET);
-    fread(screen, width * height, 1, fp);
 
-    for (j = 0; j < width * height; j++) {
-        if (screen[j]) {
-            screen[j] -= 160;
+    for (int plr = 0; plr <= 1; plr++) {
+        fseek(fp, offsets[faceCount + plr], SEEK_SET);
+        fread(screen, width * height, 1, fp);
+
+        for (j = 0; j < width * height; j++) {
+            if (screen[j]) {
+                screen[j] -= 160;
+            }
         }
-    }
 
-    if ((rv = write_image())) {
-        return rv;
+        if ((rv = write_image())) {
+            return rv;
+        }
     }
 
     return 0;
