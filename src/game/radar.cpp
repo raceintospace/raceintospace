@@ -400,7 +400,7 @@ void PadDraw(char plr, char pad)
 
     if (Data->P[plr].Mission[pad].Prog > 0)
         PatchMe(plr, 126, 40, Data->P[plr].Mission[pad].Prog - 1,
-                Data->P[plr].Mission[pad].Patch, 32);
+                Data->P[plr].Mission[pad].Patch);
 
     FadeIn(2, 10, 0, 0);
 

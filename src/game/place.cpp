@@ -181,60 +181,39 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     return j;
 }
 
-void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
+/**
+ * Draw a mission patch to the screen.
+ *
+ * There are only ten patches per side for each hardware program.
+ * Going over 10 will overflow into the opposing side's patches.
+ * There are 110 patches, indexed from 0, with 100-109 apparently
+ * representing the Zond capsule.
+ *
+ * Reserves the [32, 63] screen palette space for the patch colors.
+ * Patches are 32-color palettes with one transparent.
+ *
+ * \param plr  different patches for each program (0 for USA, 1 for USSR).
+ * \param x    the upper-left x-coordinate of the image destination.
+ * \param y    the upper-left y-coordinate of the image destination.
+ * \param prog  The hardware program per EquipMannedIndex.
+ * \param poff  The poff-th patch associated with the program.
+ * \throw runtime_error  if Filesystem cannot load the image.
+ */
+void PatchMe(char plr, int x, int y, char prog, char poff)
 {
-    /*
-     * XXX: HACK WARNING.  In my datafiles some Patch entries have
-     * errors in widths. That causes malformed images, though the data
-     * is there.  I corrected the problem here (look for do_fix).
-     * Someone else might also run into this problem, but maybe only
-     * my data files are corrupted. For correct data behavior is not
-     * changed.
-     */
-    PatchHdrSmall P;
-    unsigned int j, do_fix = 0;
-    FILE *in;
-    in = sOpen("PATCHES.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 96, 1, in);
-    }
-    fseek(in, (50 * plr + prog * 10 + poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
+    int patchNum = (50 * plr) + 10 * prog + poff;
 
-    if (P.w * P.h != P.size) {
-        /* fprintf(stderr, "PatchMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
-                P.w, P.h, P.w*P.h, P.size); */
-        if ((P.w + 1) * P.h == P.size) {
-            /* fprintf(stderr, "PatchMe(): P.w++ saves the day!\n"); */
-            P.w++;
-            do_fix = 1;
-        }
+    assert(patchNum >= 0 && patchNum < 110);
 
-        P.size = P.w * P.h;
-    }
+    char filename[128];
+    sprintf(filename,
+            "images/patches.but.%d.png",
+            (int) patchNum);
 
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++) {
-        if (local.pixels()[j] != 0) {
-            if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
-                continue;
-            }
-
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
+    boost::shared_ptr<display::PalettizedSurface> patch(
+        Filesystem::readImage(filename));
+    patch->exportPalette(32, 32 + (32 - 1)); // [32, 64) color palette
+    display::graphics.screen()->draw(patch, x, y);
 }
 
 /**

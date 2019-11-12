@@ -634,7 +634,7 @@ void ShowSpHist(char plr)
     int pos;
 
     FadeOut(2, 5, 0, 0);
-    PatchMe(0, 0, 0, 0, 0, 32);
+    PatchMe(0, 0, 0, 0, 0); // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
     if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMissionCount == 0) {
@@ -880,13 +880,15 @@ void DrawMisHist(char plr, int *where)
             draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
 
             if (Data->P[plr].History[index].Man[PAD_A][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[0], 32);
+                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp,
+                        Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
+                        Data->P[plr].History[index].Patch[0]);
             }
 
             if (Data->P[plr].History[index].Man[PAD_B][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
-                PatchMe(plr, 42 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[1], 32);
+                PatchMe(plr, 42 + 49 * j, 50 + 40 * temp,
+                        Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule],
+                        Data->P[plr].History[index].Patch[1]);
             }
 
             // FIXME: Same test on either side of this.  Need to research what was intended.
@@ -922,8 +924,9 @@ void DrawMisHist(char plr, int *where)
         } else {
             //fix-Handle Joint Missions
             if (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_A][0] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp, Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[0], 32);
+                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp,
+                        Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
+                        Data->P[plr].History[index].Patch[0]);
             }
 
             if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_B][0] != -1) {
@@ -990,7 +993,7 @@ void ShowAstrosHist(char plr)
     draw_heading(46, 90, "MISSION", 0, -1);
     draw_heading(27, 109, "EXPERIENCE", 0, -1);
     vhptr2->copyFrom(display::graphics.legacyScreen(), 22, 69, 133, 123);
-    PatchMe(0, 0, 0, 0, 0, 32);
+    PatchMe(0, 0, 0, 0, 0); // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
     ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
@@ -1312,9 +1315,13 @@ void DisplAstData(char plr, char *where, char *where2)
 
 
     if (Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule] != -1) {
-        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule], Data->P[plr].History[num].Patch[0], 32);
+        PatchMe(plr, 7, 41,
+                Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule],
+                Data->P[plr].History[num].Patch[0]);
     } else {
-        PatchMe(plr, 7, 41, Data->P[plr].History[num].Hard[PAD_B][Mission_Capsule], Data->P[plr].History[num].Patch[1], 32);
+        PatchMe(plr, 7, 41,
+                Data->P[plr].History[num].Hard[PAD_B][Mission_Capsule],
+                Data->P[plr].History[num].Patch[1]);
     }
 
     display::graphics.setForegroundColor(1);
@@ -1373,9 +1380,13 @@ void DisplAstData(char plr, char *where, char *where2)
 
     //astro history patch fix
     if (Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule] != -1) {
-        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule], Data->P[plr].History[num2].Patch[0], 32);
+        PatchMe(plr, 7, 116,
+                Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule],
+                Data->P[plr].History[num2].Patch[0]);
     } else {
-        PatchMe(plr, 7, 116, Data->P[plr].History[num2].Hard[PAD_B][Mission_Capsule], Data->P[plr].History[num2].Patch[1], 32);
+        PatchMe(plr, 7, 116,
+                Data->P[plr].History[num2].Hard[PAD_B][Mission_Capsule],
+                Data->P[plr].History[num2].Patch[1]);
     }
 
     display::graphics.setForegroundColor(9);

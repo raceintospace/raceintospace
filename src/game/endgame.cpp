@@ -319,7 +319,8 @@ void EndGame(char win, char pad)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, Data->P[win].History[gork].Hard[i][0], Data->P[win].History[gork].Patch[win], 32);
+    PatchMe(win, 270, 34, Data->P[win].History[gork].Hard[i][0],
+            Data->P[win].History[gork].Patch[win]);
     man1 = Data->P[win].History[gork].Man[i][0];
     man2 = Data->P[win].History[gork].Man[i][1];
     man3 = Data->P[win].History[gork].Man[i][2];
@@ -811,7 +812,7 @@ void FakeWin(char win)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, prog - 1, brandom(9), 32);
+    PatchMe(win, 270, 34, prog - 1, brandom(9));
     r = Data->P[win].AstroCount;
     man1 = brandom(r);
     man2 = brandom(r);
