@@ -264,65 +264,58 @@ void AstFaces(char plr, int x, int y, char face)
 }
 
 
-void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff)
+/**
+ * Display small icon of a planet and/or a capsule/probe.
+ *
+ * TODO: Change this function's name.
+ *
+ * An icon of a planet/moon is displayed if the planet argument is
+ * set. Planets are:
+ *   1: Mercury     2: Venus       3: Mars
+ *   4: Jupiter     5: Saturn      6: The Moon
+ *   7: ? Earth
+ *
+ * An icon of a hardware program may be displayed. For a non-Earth
+ * planet, an interstellar probe will display if specified. Otherwise,
+ * the specified program is always displayed.
+ *   1: Mercury/Vostok   2: Gemini/Voskhod   3: Apollo/Soyuz
+ *   4: XMS-2/Lapot      5: Jupiter/LK-700   6: Explorer/Sputnik
+ *   7: Ranger/Cosmos    8: Surveyor/Luna
+ *
+ * Loads a 64-color MHIST palette into the screen's color space at
+ * [64, 128). This used to be configurable via the argument coff,
+ * but not at the moment.
+ *
+ * \param plr   0 for USA, 1 for USSR.
+ * \param x     the x-coordinate of the destination.
+ * \param y     the y-coordinate of the destination.
+ * \param prog  0-4 correspond to the capsules, 5-7 are the probes.
+ * \param planet  0 to show hardware, 1-7 for a planet.
+ * \param coff  [DEPRECATED] Where to place the color palette.
+ * \throws runtime_error  if Filesystem is unable to load the image.
+ */
+void SmHardMe(char plr, int x, int y, char prog, char planet,
+              unsigned char coff)
 {
-    PatchHdrSmall P;
-    unsigned int j;
-    int do_fix = 0;
-    FILE *in;
+    coff = 64; //
+    int patch = (planet > 0) ? planet - 1 : (7 + plr * 8 + prog);
 
-    in = sOpen("MHIST.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 64 * 3, 1, in);
-    }
+    assert(patch >= 0 && patch <= 22);
 
-    if (planet > 0) {
-        fseek(in, (planet - 1) * (sizeof P), SEEK_CUR);
-    } else {
-        fseek(in, (7 + plr * 8 + prog) * (sizeof P), SEEK_CUR);
-    }
+    char filename[128];
+    sprintf(filename, "images/mhist.but.%d.png", patch);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
+    image->exportPalette(coff, coff + 63);
+    display::graphics.screen()->draw(image, x, y);
 
-    if (P.w * P.h != P.size) {
-        /* fprintf(stderr, "SmHardMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
-                P.w, P.h, P.w*P.h, P.size); */
-        if ((P.w + 1) * P.h == P.size) {
-            /* fprintf(stderr, "SmHardMe(): P.w++ saves the day!\n"); */
-            P.w++;
-            do_fix = 1;
-        }
-
-        P.size = P.w * P.h;
-    }
-
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++) {
-        if (local.pixels()[j] != 0) {
-            if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
-                continue;
-            }
-
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
-
+    // Planets may show an interplanetary probe as well.
     if (planet > 0 && prog == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }
 
+    // Earth & the Moon can have a wider variety of spacecraft.
     if (planet == 7 || planet == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }

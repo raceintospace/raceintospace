@@ -396,9 +396,15 @@ int patchhdrs(FILE *fp, int use_small_headers, int palette_style, int encoding)
         color_is_transparent[32] = 1;
 
     } else if (palette_style == 4) {
-        // 64 colors, starting at 32
-        fread(&pal[32], 64, sizeof(pal[0]), fp);
-        palette_offset = 32;
+        // This is only used for mhist file - originally was set to an
+        // offset of 32, and no transparency, but offset of 32 created
+        // conflicts with patches (palette style 3) and the game code
+        // treated color=0 as transparent.
+
+        // 64 colors, starting at 64, and one of them is transparent
+        fread(&pal[64], 64, sizeof(pal[0]), fp);
+        palette_offset = 64;
+        color_is_transparent[64] = 1;
 
     } else if (palette_style == 5) {
         // use default port palette
@@ -447,7 +453,8 @@ int patchhdrs(FILE *fp, int use_small_headers, int palette_style, int encoding)
             continue;
         }
 
-        if (size < 50) {     // this seems unreasonably small
+        // Dropped from 50; one of the mhist images is size 42 -- rnyoakum
+        if (size < 40) {     // this seems unreasonably small
             continue;
         }
 
