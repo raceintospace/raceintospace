@@ -123,13 +123,25 @@ int MainMenuChoice()
     return selected_option;
 }
 
+/**
+ * Creates a menu screen with a selection of options.
+ *
+ * The portbut.but.%d.png images use the Port palette, specifically
+ * the USA palette. It's unlikely the icons use any of the differing
+ * colors, and so the palette is not exported.
+ *
+ * \param plr   the player index.
+ * \param qty   how many menu options are available.
+ * \param Name  an array of (qty) 22-character menu option labels.
+ * \param Imx   an array of (qty) numeric indices specifying menu icons.
+ * \return  the index of the selected menu option, [0, qty).
+ * \throws runtime_error  if Filesystem cannot read the icon images.
+ */
 int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 {
     int i, j, starty = 100;
-    FILE *fin = sOpen("PORTBUT.BUT", "rb", 0);
-
+    char filename[128];
     //FadeOut(2,pal,10,0,0);
-
     display::LegacySurface local(30, 19);
 
     starty -= (qty * 23 / 2);
@@ -138,12 +150,12 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     for (i = 0; i < qty; i++) {
         BCDraw(starty + 23 * i);
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
-        fseek(fin, Imx[i] * 570, SEEK_SET);
-        fread(local.pixels(), 570, 1, fin);
-        local.copyTo(display::graphics.legacyScreen(), 24, starty + 1 + 23 * i);
-    }
 
-    fclose(fin);
+        sprintf(filename, "images/portbut.but.%d.png", (int) Imx[i]);
+        boost::shared_ptr<display::PalettizedSurface> icon(
+            Filesystem::readImage(filename));
+        display::graphics.screen()->draw(icon, 24, starty + 1 + 23 * i);
+    }
 
     // FadeIn(2,pal,10,0,0);
     WaitForMouseUp();
