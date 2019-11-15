@@ -1117,43 +1117,34 @@ void SpecialEnd(void)
     return;
 }
 
+
+/**
+ * Display endgame images.
+ *
+ * The endgame.but.%d.png images use a 128-color palette beginning at
+ * index 128 through 255. Consequently, the coff parameter is overriden
+ * by 128.
+ *
+ * \param x     the upper-left x-coordinate of the image destination.
+ * \param y     the upper-left y-coordinate of the image destination.
+ * \param poff  the endgame image index, 0-5.
+ * \param coff  the color palette index to export the endgame palette.
+ * \throws runtime_error  if Filesystem is unable to load the image.
+ */
 void
 EndPict(int x, int y, char poff, unsigned char coff)
 {
-    PatchHdrSmall P;
-    unsigned int j;
-    FILE *in;
+    assert(poff >= 0 && poff <= 5);
 
-    in = sOpen("ENDGAME.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    /*
-     * off by one error in data file - again
-     * P.w += 1 solves the problem, but then
-     * we get a strip of garbage on the right hand side
-     */
-    P.w++;
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
+    coff = 128;  // PNG images have their palette at [128, 255]
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/endgame.but.%d.png", (int) poff);
+    boost::shared_ptr<display::PalettizedSurface> endgame(
+        Filesystem::readImage(filename));
 
-    for (j = 0; j < P.size; j++) {
-        /* fix the strip */
-        if (local.pixels()[j] != 0 && ((j + 1) % P.w != 0)) {
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
+    endgame->exportPalette(coff, coff + 127); // 128-color palette
+    display::graphics.screen()->draw(endgame, x, y);
 }
 
 void
