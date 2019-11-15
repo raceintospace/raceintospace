@@ -1147,31 +1147,39 @@ EndPict(int x, int y, char poff, unsigned char coff)
     display::graphics.screen()->draw(endgame, x, y);
 }
 
+/**
+ * Draw a 308x77 pixel Moonrise image.
+ *
+ * This uses a 128-color palette, which is stored to the global
+ * display at [128, 255]. Currently, the coff parameter is fixed
+ * at 128.
+ *
+ * NOTE: Originally, this drew the image masking for color = 0
+ * transparency. However, the png image isn't transparent, and
+ * it isn't meant to be transparent, so that's being skipped.
+ *   -- rnyoakum
+ *
+ * \param poff  which of the "loser" images to draw (only 0 is valid).
+ * \param coff  the color index to start storing the image's palette.
+ *
+ */
 void
 LoserPict(char poff, unsigned char coff)
 {
-    /* This hasn't got an off-by-one...*/
-    PatchHdr P;
-    FILE *in;
+    assert(poff == 0);
+    coff = 128;
 
-    in = sOpen("LOSER.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdr(&P);
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
+    const int x = 6;
+    const int y = 32;
 
-    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual, coff);
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/loser.but.%d.png", (int) poff);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    local2.copyTo(display::graphics.legacyScreen(), 6, 32);
+    image->exportPalette(coff, coff + 127); // 128-color palette
+    display::graphics.screen()->draw(image, x, y);
 }
 
 
