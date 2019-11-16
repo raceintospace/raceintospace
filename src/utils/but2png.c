@@ -410,6 +410,16 @@ int patchhdrs(FILE *fp, int use_small_headers, int palette_style, int encoding)
         // use default port palette
         PortPal(0);
         palette_offset = 0;
+
+    } else if (palette_style == 6) {
+        // use default port palette, 32-color, and one of them is transparent
+
+        PortPal(0);
+        memset(&pal[32], 0, 224 * sizeof(pal[0]));
+        palette_offset = 0;
+        color_is_transparent[3] = 1;
+        // Not sure if this is correct, or if 03 colors should be
+	// shifted to 0 and it made transparent.
     }
 
 
@@ -941,6 +951,7 @@ PATCHHDRS_FILE(loser, 0, 2, 0);
 PATCHHDRS_FILE(beggam, 0, 2, 0);
 PATCHHDRS_FILE(patches, 1, 3, 2);
 PATCHHDRS_FILE(mhist, 1, 4, 2);
+PATCHHDRS_FILE(arrows, 1, 6, 2);
 
 int translate_port(FILE *fin)
 {
@@ -1076,6 +1087,7 @@ struct {
     FILE_STRATEGY(rdbox),
     FILE_STRATEGY(letter),
     FILE_STRATEGY(liftoff_abz),
+    FILE_STRATEGY(arrows)
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))

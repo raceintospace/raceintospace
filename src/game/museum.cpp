@@ -26,6 +26,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "museum.h"
 #include "Buzz_inc.h"
@@ -43,6 +44,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 struct Astros *abuf;
 
@@ -104,37 +106,30 @@ void UpAstroData(char plr, char *where, char *where2);
 int astcomp(const void *no1, const void *no2);
 
 
+/**
+ * Draws an image from the arrows.but.%d.png series.
+ *
+ * The arrows images use the Port palette, specifically the [0, 32)
+ * range. This is the same palette used by the museum, so no palette
+ * data is written to the display.
+ *
+ * \param num  the image index (0 to 6).
+ * \param x  the upper-left x coordinate of the image destination.
+ * \param y  the upper-left y coordinate of the image destination.
+ * \throws runtime_error  If Filesystem is unable to load the sprite.
+ */
 void Display_ARROW(char num, int x, int y)
 {
-    /* Look for explanations in place.c:PatchMe() */
-    PatchHdrSmall P;
-    FILE *in;
-    in = sOpen("ARROWS.BUT", "rb", 0);
-    fseek(in, (num) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
+    assert(num >= 0 && num <= 6);
 
-    if (P.w * P.h != P.size) {
-        /* fprintf(stderr,
-                "Display_ARROW(): w*h != size (%hhd*%hhd == %d != %hd)\n",
-                P.w, P.h, P.w*P.h, P.size); */
-        if ((P.w + 1) * P.h == P.size) {
-            /* fprintf(stderr, "Display_ARROW(): P.w++ saves the day!\n"); */
-            P.w++;
-        }
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/arrows.but.%d.png", (int) num);
 
-        P.size = P.w * P.h;
-    }
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-// for (j=0;j<P.size;j++)
-//   if(local.vptr[j]!=0) local2.vptr[j]=local.vptr[j];
-    local.copyTo(display::graphics.legacyScreen(), x, y);
+    display::graphics.screen()->draw(image, x, y);
 }
 
 void Museum(char plr)
