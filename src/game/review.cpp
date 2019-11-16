@@ -25,6 +25,7 @@
 // Review Main Files
 
 #include "display/graphics.h"
+#include "display/palettized_surface.h"
 
 #include "review.h"
 #include "gamedata.h"
@@ -36,9 +37,10 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
 
 void DrawReview(char plr);
-void PresPict(char poff);
+void PresPict(char image);
 void DrawRevText(char plr, int val);
 
 
@@ -302,24 +304,23 @@ void MisRev(char plr, int pres)
 }
 
 
-void PresPict(char poff)
+/**
+ * Draw the Presidential portrait in the Review screen.
+ *
+ * \param image  the portrait index.
+ * \throws runtime_error  if Filesystem is unable to load the image.
+ */
+void PresPict(char image)
 {
-    SimpleHdr table;
-    FILE *in;
-    display::AutoPal p(display::graphics.legacyScreen());
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/presr.but.%d.png", image);
 
-    in = sOpen("PRESR.BUT", "rb", 0);
-    fseek(in, poff * sizeof_SimpleHdr, SEEK_SET);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(&p.pal[96], 672, 1, in);
-    fread(buffer, table.size, 1, in);
-    fclose(in);
-    display::LegacySurface local(126, 84);
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-
-    local.copyTo(display::graphics.legacyScreen(), 183, 33);
+    boost::shared_ptr<display::PalettizedSurface> portrait(
+        Filesystem::readImage(filename));
+    portrait->exportPalette(32, 255);
+    display::graphics.screen()->draw(portrait, 183, 33);
 }
+
 
 void CalcPresRev(void)
 {

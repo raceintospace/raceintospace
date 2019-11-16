@@ -123,13 +123,25 @@ int MainMenuChoice()
     return selected_option;
 }
 
+/**
+ * Creates a menu screen with a selection of options.
+ *
+ * The portbut.but.%d.png images use the Port palette, specifically
+ * the USA palette. It's unlikely the icons use any of the differing
+ * colors, and so the palette is not exported.
+ *
+ * \param plr   the player index.
+ * \param qty   how many menu options are available.
+ * \param Name  an array of (qty) 22-character menu option labels.
+ * \param Imx   an array of (qty) numeric indices specifying menu icons.
+ * \return  the index of the selected menu option, [0, qty).
+ * \throws runtime_error  if Filesystem cannot read the icon images.
+ */
 int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
 {
     int i, j, starty = 100;
-    FILE *fin = sOpen("PORTBUT.BUT", "rb", 0);
-
+    char filename[128];
     //FadeOut(2,pal,10,0,0);
-
     display::LegacySurface local(30, 19);
 
     starty -= (qty * 23 / 2);
@@ -138,12 +150,12 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     for (i = 0; i < qty; i++) {
         BCDraw(starty + 23 * i);
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
-        fseek(fin, Imx[i] * 570, SEEK_SET);
-        fread(local.pixels(), 570, 1, fin);
-        local.copyTo(display::graphics.legacyScreen(), 24, starty + 1 + 23 * i);
-    }
 
-    fclose(fin);
+        sprintf(filename, "images/portbut.but.%d.png", (int) Imx[i]);
+        boost::shared_ptr<display::PalettizedSurface> icon(
+            Filesystem::readImage(filename));
+        display::graphics.screen()->draw(icon, 24, starty + 1 + 23 * i);
+    }
 
     // FadeIn(2,pal,10,0,0);
     WaitForMouseUp();
@@ -181,178 +193,141 @@ int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
     return j;
 }
 
-void PatchMe(char plr, int x, int y, char prog, char poff, unsigned char coff)
+/**
+ * Draw a mission patch to the screen.
+ *
+ * There are only ten patches per side for each hardware program.
+ * Going over 10 will overflow into the opposing side's patches.
+ * There are 110 patches, indexed from 0, with 100-109 apparently
+ * representing the Zond capsule.
+ *
+ * Reserves the [32, 63] screen palette space for the patch colors.
+ * Patches are 32-color palettes with one transparent.
+ *
+ * \param plr  different patches for each program (0 for USA, 1 for USSR).
+ * \param x    the upper-left x-coordinate of the image destination.
+ * \param y    the upper-left y-coordinate of the image destination.
+ * \param prog  The hardware program per EquipMannedIndex.
+ * \param poff  The poff-th patch associated with the program.
+ * \throw runtime_error  if Filesystem cannot load the image.
+ */
+void PatchMe(char plr, int x, int y, char prog, char poff)
 {
-    /*
-     * XXX: HACK WARNING.  In my datafiles some Patch entries have
-     * errors in widths. That causes malformed images, though the data
-     * is there.  I corrected the problem here (look for do_fix).
-     * Someone else might also run into this problem, but maybe only
-     * my data files are corrupted. For correct data behavior is not
-     * changed.
-     */
-    PatchHdrSmall P;
-    unsigned int j, do_fix = 0;
-    FILE *in;
-    in = sOpen("PATCHES.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 96, 1, in);
-    }
-    fseek(in, (50 * plr + prog * 10 + poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
+    int patchNum = (50 * plr) + 10 * prog + poff;
 
-    if (P.w * P.h != P.size) {
-        /* fprintf(stderr, "PatchMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
-                P.w, P.h, P.w*P.h, P.size); */
-        if ((P.w + 1) * P.h == P.size) {
-            /* fprintf(stderr, "PatchMe(): P.w++ saves the day!\n"); */
-            P.w++;
-            do_fix = 1;
-        }
+    assert(patchNum >= 0 && patchNum < 110);
 
-        P.size = P.w * P.h;
-    }
+    char filename[128];
+    sprintf(filename,
+            "images/patches.but.%d.png",
+            (int) patchNum);
 
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++) {
-        if (local.pixels()[j] != 0) {
-            if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
-                continue;
-            }
-
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
+    boost::shared_ptr<display::PalettizedSurface> patch(
+        Filesystem::readImage(filename));
+    patch->exportPalette(32, 32 + (32 - 1)); // [32, 64) color palette
+    display::graphics.screen()->draw(patch, x, y);
 }
 
-void
-AstFaces(char plr, int x, int y, char face)
+/**
+ * Draws an image of the astronaut/cosmonaut face in the appropriate
+ * helmet at the given screen coordinates.
+ *
+ * Exports the face/helmet palette to the screen palette space [64, 96).
+ *
+ * Astronaut/Cosmonaut portraits are 18x15 pixels.
+ * The helmet is 80x50 pixels.
+ *
+ * \param plr   0 for the USA suit, 1 for the USSR suit.
+ * \param x     the upper-left x-coordinate of the image destination.
+ * \param y     the upper-left y-coordinate of the image destination.
+ * \param face  the face image, 0-84.
+ * \throws runtime_error  if Filesystem is unable to read face image.
+ */
+void AstFaces(char plr, int x, int y, char face)
 {
-    int32_t offset;
-    int fx, fy;
-    int face_offset = 0;
-    FILE *fin;
+    char filename[128];
+    sprintf(filename,
+            "images/faces.but.%d.png",
+            (int)face);
 
-    display::AutoPal p(display::graphics.legacyScreen());
+    boost::shared_ptr<display::PalettizedSurface> icon(
+        Filesystem::readImage(filename));
+    icon->exportPalette(64, 64 + 31); // Palette space [64, 96)
 
-    memset(&p.pal[192], 0x00, 192);
-    fin = sOpen("FACES.BUT", "rb", 0);
-    fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
-    fread(&p.pal[192], 96, 1, fin);
-    face_offset = ((int)face) * sizeof(int32_t);
-    fseek(fin, face_offset, SEEK_SET);  // Get Face
-    fread(&offset, sizeof(int32_t), 1, fin);
-    Swap32bit(offset);
-    fseek(fin, offset, SEEK_SET);
+    sprintf(filename,
+            "images/faces.but.%d.png",
+            (int) plr + 85);
+    boost::shared_ptr<display::PalettizedSurface> helmet(
+        Filesystem::readImage(filename));
 
-    display::LegacySurface local(18, 15);
-    fread(local.pixels(), 18 * 15, 1, fin);
+    int fx, fy;  // Position of face within the helmet
 
-
-    face_offset = ((int)(85 + plr)) * sizeof(int32_t);
-    fseek(fin, face_offset, SEEK_SET);  // Get Helmet
-    fread(&offset, sizeof(int32_t), 1, fin);
-    Swap32bit(offset);
-    fseek(fin, offset, SEEK_SET);
-    display::LegacySurface local2(80, 50);
-    display::LegacySurface local3(80, 50);
-    fread(local2.pixels(), 80 * 50, 1, fin);
-    fclose(fin);
-    local3.clear(0);
-
-    if (plr == 0)   {
+    // The USA & USSR helmet viewports are at different spots.
+    if (plr == 0) {
         fx = 32;
         fy = 17;
-    } else            {
+    } else {
         fx = 33;
         fy = 21;
     }
 
-    local3.copyFrom(&local, 0, 0, local.width() - 1, local.height() - 1, fx, fy);
-
-    local2.maskCopy(&local3, 0, display::LegacySurface::DestinationEqual);
-
-    local3.copyFrom(display::graphics.legacyScreen(), x, y, x + 79, y + 49);
-
-    local3.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
-
-    local3.filter((7 + plr * 3), (char) - 160, display::LegacySurface::NotEqual);
-
-    local3.copyTo(display::graphics.legacyScreen(), x, y);
+    display::graphics.screen()->draw(icon, x + fx, y + fy);
+    display::graphics.screen()->draw(helmet, x, y);
 }
 
 
-void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff)
+/**
+ * Display small icon of a planet and/or a capsule/probe.
+ *
+ * TODO: Change this function's name.
+ *
+ * An icon of a planet/moon is displayed if the planet argument is
+ * set. Planets are:
+ *   1: Mercury     2: Venus       3: Mars
+ *   4: Jupiter     5: Saturn      6: The Moon
+ *   7: ? Earth
+ *
+ * An icon of a hardware program may be displayed. For a non-Earth
+ * planet, an interstellar probe will display if specified. Otherwise,
+ * the specified program is always displayed.
+ *   1: Mercury/Vostok   2: Gemini/Voskhod   3: Apollo/Soyuz
+ *   4: XMS-2/Lapot      5: Jupiter/LK-700   6: Explorer/Sputnik
+ *   7: Ranger/Cosmos    8: Surveyor/Luna
+ *
+ * Loads a 64-color MHIST palette into the screen's color space at
+ * [64, 128). This used to be configurable via the argument coff,
+ * but not at the moment.
+ *
+ * \param plr   0 for USA, 1 for USSR.
+ * \param x     the x-coordinate of the destination.
+ * \param y     the y-coordinate of the destination.
+ * \param prog  0-4 correspond to the capsules, 5-7 are the probes.
+ * \param planet  0 to show hardware, 1-7 for a planet.
+ * \param coff  [DEPRECATED] Where to place the color palette.
+ * \throws runtime_error  if Filesystem is unable to load the image.
+ */
+void SmHardMe(char plr, int x, int y, char prog, char planet,
+              unsigned char coff)
 {
-    PatchHdrSmall P;
-    unsigned int j;
-    int do_fix = 0;
-    FILE *in;
+    coff = 64; //
+    int patch = (planet > 0) ? planet - 1 : (7 + plr * 8 + prog);
 
-    in = sOpen("MHIST.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 64 * 3, 1, in);
-    }
+    assert(patch >= 0 && patch <= 22);
 
-    if (planet > 0) {
-        fseek(in, (planet - 1) * (sizeof P), SEEK_CUR);
-    } else {
-        fseek(in, (7 + plr * 8 + prog) * (sizeof P), SEEK_CUR);
-    }
+    char filename[128];
+    sprintf(filename, "images/mhist.but.%d.png", patch);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    fseek(in, P.offset, SEEK_SET);
+    image->exportPalette(coff, coff + 63);
+    display::graphics.screen()->draw(image, x, y);
 
-    if (P.w * P.h != P.size) {
-        /* fprintf(stderr, "SmHardMe(): w*h != size (%hhd*%hhd == %d != %hd)\n",
-                P.w, P.h, P.w*P.h, P.size); */
-        if ((P.w + 1) * P.h == P.size) {
-            /* fprintf(stderr, "SmHardMe(): P.w++ saves the day!\n"); */
-            P.w++;
-            do_fix = 1;
-        }
-
-        P.size = P.w * P.h;
-    }
-
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    //RLED(buffer+20000,local.vptr,P.size);
-    for (j = 0; j < P.size; j++) {
-        if (local.pixels()[j] != 0) {
-            if (do_fix && ((j % P.w) + 1 == (unsigned char)P.w)) {
-                continue;
-            }
-
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
-
+    // Planets may show an interplanetary probe as well.
     if (planet > 0 && prog == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }
 
+    // Earth & the Moon can have a wider variety of spacecraft.
     if (planet == 7 || planet == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }

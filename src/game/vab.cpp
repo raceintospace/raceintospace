@@ -29,6 +29,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "vab.h"
 #include "gamedata.h"
@@ -48,6 +49,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
@@ -153,6 +155,7 @@ struct MDA {
 
 
 void LoadMIVals();
+void LoadVABSprite(char plr);
 int ChkDelVab(char plr, char f);
 int ChkVabRkt(char plr, int rk, int *q);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
@@ -200,6 +203,38 @@ void LoadMIVals()
 }
 
 
+/**
+ * Load the VAB hardware icons into the global vhptr buffer.
+ *
+ * Exports the file palette to the global display.
+ *
+ * \param plr  0 for the USA sprite, 1 for the USSR sprite.
+ * \throws runtime_error  if Filesystem unable to load the sprite.
+ */
+void LoadVABSprite(const char plr)
+{
+    if (vhptr == NULL) {
+        vhptr = new display::LegacySurface(320, 200);
+    } else if (vhptr->width() < 320 || vhptr->height() < 200) {
+        delete vhptr;
+        vhptr = new display::LegacySurface(320, 200);
+    }
+
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/vab.img.%d.png", plr);
+
+    boost::shared_ptr<display::PalettizedSurface> sprite(
+        Filesystem::readImage(filename));
+
+    vhptr->palette().copy_from(sprite->palette());
+    vhptr->draw(sprite, 0, 0);
+
+    // Export the sprite palette to the display here to prevent any
+    // palette mismatch errors.
+    sprite->exportPalette();
+}
+
+
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
     register int i, j, val;
@@ -221,8 +256,8 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 /* Draw the Vehicle Assembly / Integration interface layout and print
  * mission-specific information.
  *
- * This loads either the USA or USSR data from VAB.IMG into the global
- * buffer vhptr.
+ * This loads either the USA or USSR VAB sprite into the global
+ * buffer vhptr via LoadVABSprite().
  *
  * \param plr  0 for the USA, 1 for the USSR.
  * \param pad  The launch pad to which the mission is assigned.
@@ -236,26 +271,9 @@ void DispVAB(char plr, char pad)
 
     FadeOut(2, 10, 0, 0);
 
-    {
-        FILE *fp = sOpen("VAB.IMG", "rb", 0);
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fp);
-        fread_uint16_t(&image_len, 1, fp);
-
-        if (plr == 1) {
-            fseek(fp, image_len, SEEK_CUR);
-            fread(p.pal, 768, 1, fp);
-            fread_uint16_t(&image_len, 1, fp);
-        }
-
-        fread(display::graphics.legacyScreen()->pixels(), image_len, 1, fp);
-        fclose(fp);
-    }
-
-    PCX_D(display::graphics.legacyScreen()->pixels(), vhptr->pixels(), image_len);
-    vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
-
     display::graphics.screen()->clear();
+    LoadVABSprite(plr);
+
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 170, 99);
     ShBox(0, 101, 170, 199);

@@ -25,6 +25,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "mc.h"
 #include "Buzz_inc.h"
@@ -41,6 +42,7 @@
 #include "sdlhelper.h"
 #include "pace.h"
 #include "endianness.h"
+#include "filesystem.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -76,28 +78,25 @@ void MissionPast(char plr, char pad, int prest);
 int MaxFailPad(char which);
 
 
+/**
+ * Draws the Mission Control background image during missions.
+ *
+ * The background control.img.X.png images are 320x240 pixels.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \throws runtime_error  if Filesystem unable to read the image.
+ */
 void DrawControl(char plr)
 {
-    FILE *fin;
-    int32_t len;
-    display::AutoPal p(display::graphics.legacyScreen());
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/control.img.%d.png", plr);
 
-    fin = sOpen("CONTROL.IMG", "rb", 0);
-    fread(p.pal, 768, 1, fin);
-    fread(&len, 4, 1, fin);
-    Swap32bit(len);
-
-    if (plr == 1) {
-        fseek(fin, len, SEEK_CUR);
-        fread(p.pal, 768, 1, fin);
-        fread(&len, 4, 1, fin);
-        Swap32bit(len);
-    }
-
-    fread(vhptr->pixels(), len, 1, fin);
-    fclose(fin);
-    PCX_D(vhptr->pixels(), display::graphics.legacyScreen()->pixels(), (unsigned) len);
+    boost::shared_ptr<display::PalettizedSurface> background(
+        Filesystem::readImage(filename));
+    background->exportPalette();
+    display::graphics.screen()->draw(background, 0, 0);
 }
+
 
 void SetW(char ch)
 {

@@ -319,7 +319,8 @@ void EndGame(char win, char pad)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, Data->P[win].History[gork].Hard[i][0], Data->P[win].History[gork].Patch[win], 32);
+    PatchMe(win, 270, 34, Data->P[win].History[gork].Hard[i][0],
+            Data->P[win].History[gork].Patch[win]);
     man1 = Data->P[win].History[gork].Man[i][0];
     man2 = Data->P[win].History[gork].Man[i][1];
     man3 = Data->P[win].History[gork].Man[i][2];
@@ -456,54 +457,38 @@ void EndGame(char win, char pad)
     return;
 }
 
+/**
+ * Display an patriotic image indicating the winner's side.
+ *
+ * The image displayed for the winning side is:
+ *   0: American flag
+ *   1: Statue of Lenin
+ *
+ * This image uses a 128-color palette located at [128, 255], which
+ * is exported to the main display.
+ *
+ * \param win  the winning player (0 for USA, 1 for USSR)
+ * \throws runtime_error  if Filesystem cannot load the image
+ */
 void Load_LenFlag(char win)
 {
-    PatchHdr P;
-    unsigned int coff;
-    int j, Off_X, Off_Y;
-    char poff;
-    FILE *in;
+    int x, y;
+    std::string filename;
 
     if (win == 1) {
-        in = sOpen("LENIN.BUT", "rb", 0);
-        Off_X = 224;
-        Off_Y = 26;
+        filename = "images/lenin.png";
+        x = 224;
+        y = 26;
     } else {
-        in = sOpen("FLAGGER.BUT", "rb", 0);
-        Off_X = 195;
-        Off_Y = 0;
+        filename = "images/flagger.png";
+        x = 195;
+        y = 0;
     }
 
-    poff = 0;
-    coff = 128;
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdr(&P);
-
-    if (win != 1) {
-        P.w++;    /* BUGFIX as everywhere */
-    }
-
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local.clear(0);
-    local2.copyFrom(display::graphics.legacyScreen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    for (j = 0; j < P.size; j++) {
-        /* now fix the strip */
-        if (win == 1 || ((j + 1) % P.w != 0)) {
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), Off_X, Off_Y);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
+    image->exportPalette(128, 255);
+    display::graphics.screen()->draw(image, x, y);
 }
 
 void Draw_NewEnd(char win)
@@ -811,7 +796,7 @@ void FakeWin(char win)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, prog - 1, brandom(9), 32);
+    PatchMe(win, 270, 34, prog - 1, brandom(9));
     r = Data->P[win].AstroCount;
     man1 = brandom(r);
     man2 = brandom(r);
@@ -1116,70 +1101,69 @@ void SpecialEnd(void)
     return;
 }
 
+
+/**
+ * Display endgame images.
+ *
+ * The endgame.but.%d.png images use a 128-color palette beginning at
+ * index 128 through 255. Consequently, the coff parameter is overriden
+ * by 128.
+ *
+ * \param x     the upper-left x-coordinate of the image destination.
+ * \param y     the upper-left y-coordinate of the image destination.
+ * \param poff  the endgame image index, 0-5.
+ * \param coff  the color palette index to export the endgame palette.
+ * \throws runtime_error  if Filesystem is unable to load the image.
+ */
 void
 EndPict(int x, int y, char poff, unsigned char coff)
 {
-    PatchHdrSmall P;
-    unsigned int j;
-    FILE *in;
+    assert(poff >= 0 && poff <= 5);
 
-    in = sOpen("ENDGAME.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdrSmall(&P);
-    /*
-     * off by one error in data file - again
-     * P.w += 1 solves the problem, but then
-     * we get a strip of garbage on the right hand side
-     */
-    P.w++;
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), x, y, x + P.w - 1, y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
+    coff = 128;  // PNG images have their palette at [128, 255]
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/endgame.but.%d.png", (int) poff);
+    boost::shared_ptr<display::PalettizedSurface> endgame(
+        Filesystem::readImage(filename));
 
-    for (j = 0; j < P.size; j++) {
-        /* fix the strip */
-        if (local.pixels()[j] != 0 && ((j + 1) % P.w != 0)) {
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-
-    local2.copyTo(display::graphics.legacyScreen(), x, y);
+    endgame->exportPalette(coff, coff + 127); // 128-color palette
+    display::graphics.screen()->draw(endgame, x, y);
 }
 
+/**
+ * Draw a 308x77 pixel Moonrise image.
+ *
+ * This uses a 128-color palette, which is stored to the global
+ * display at [128, 255]. Currently, the coff parameter is fixed
+ * at 128.
+ *
+ * NOTE: Originally, this drew the image masking for color = 0
+ * transparency. However, the png image isn't transparent, and
+ * it isn't meant to be transparent, so that's being skipped.
+ *   -- rnyoakum
+ *
+ * \param poff  which of the "loser" images to draw (only 0 is valid).
+ * \param coff  the color index to start storing the image's palette.
+ *
+ */
 void
 LoserPict(char poff, unsigned char coff)
 {
-    /* This hasn't got an off-by-one...*/
-    PatchHdr P;
-    FILE *in;
+    assert(poff == 0);
+    coff = 128;
 
-    in = sOpen("LOSER.BUT", "rb", 0);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdr(&P);
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local2.copyFrom(display::graphics.legacyScreen(), 6, 32, 6 + P.w - 1, 32 + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
+    const int x = 6;
+    const int y = 32;
 
-    local2.maskCopy(&local, 0, display::LegacySurface::SourceNotEqual, coff);
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/loser.but.%d.png", (int) poff);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    local2.copyTo(display::graphics.legacyScreen(), 6, 32);
+    image->exportPalette(coff, coff + 127); // 128-color palette
+    display::graphics.screen()->draw(image, x, y);
 }
 
 

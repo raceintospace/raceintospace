@@ -39,6 +39,9 @@
     utils/but2png ../gamedata/rdbox.but rdbox
     utils/but2png ../gamedata/letter.dat letter
     utils/but2png ../gamedat/liftoff.abz liftoff_abz    # mission animation
+    utils/but2png ../gamedata/arrows.but arrows
+    utils/but2png ../gamedata/flagger.but flagger
+    utils/but2png ../gamedata/lenin.but lenin
 
     mv ../gamedata/*.png ../images/
 */
@@ -46,9 +49,6 @@
 /* unknown strategies:
     utils/but2png ../gamedata/inte_1.but        # used only by the CD -> disk installer
     utils/but2png ../gamedata/tracker.but
-    utils/but2png ../gamedata/arrows.but
-    utils/but2png ../gamedata/flagger.but
-    utils/but2png ../gamedata/lenin.but
     utils/but2png ../gamedata/news.img
 
     babypicx.cdr  # small mission control images
@@ -396,14 +396,30 @@ int patchhdrs(FILE *fp, int use_small_headers, int palette_style, int encoding)
         color_is_transparent[32] = 1;
 
     } else if (palette_style == 4) {
-        // 64 colors, starting at 32
-        fread(&pal[32], 64, sizeof(pal[0]), fp);
-        palette_offset = 32;
+        // This is only used for mhist file - originally was set to an
+        // offset of 32, and no transparency, but offset of 32 created
+        // conflicts with patches (palette style 3) and the game code
+        // treated color=0 as transparent.
+
+        // 64 colors, starting at 64, and one of them is transparent
+        fread(&pal[64], 64, sizeof(pal[0]), fp);
+        palette_offset = 64;
+        color_is_transparent[64] = 1;
 
     } else if (palette_style == 5) {
         // use default port palette
         PortPal(0);
         palette_offset = 0;
+
+    } else if (palette_style == 6) {
+        // use default port palette, 32-color, and one of them is transparent
+
+        PortPal(0);
+        memset(&pal[32], 0, 224 * sizeof(pal[0]));
+        palette_offset = 0;
+        color_is_transparent[3] = 1;
+        // Not sure if this is correct, or if 03 colors should be
+	// shifted to 0 and it made transparent.
     }
 
 
@@ -447,7 +463,8 @@ int patchhdrs(FILE *fp, int use_small_headers, int palette_style, int encoding)
             continue;
         }
 
-        if (size < 50) {     // this seems unreasonably small
+        // Dropped from 50; one of the mhist images is size 42 -- rnyoakum
+        if (size < 40) {     // this seems unreasonably small
             continue;
         }
 
@@ -615,23 +632,25 @@ int translate_cia(FILE *fp)
     return write_image();
 }
 
+// Faces occupy a 32-color palette space over [224, 255].
 int translate_faces(FILE *fp)
 {
     uint32_t offsets[87];
     int i, j, rv;
 
-    // file starts with 86 32-bit offsets
+    // file starts with 87 32-bit offsets
     fread(offsets, 1, sizeof(offsets), fp);
 
     // followed by 32 colors
     memset(pal, 0, sizeof(pal));
     fread(&pal[64], 32, sizeof(pal[0]), fp);
 
-    // followed by 84 astronaut faces at the indicated offsets
+    // followed by 85 astronaut faces at the indicated offsets
     width = 18;
     height = 15;
+    const int faceCount = 85;
 
-    for (i = 0; i < 85; i++) {
+    for (i = 0; i < faceCount; i++) {
         fseek(fp, offsets[i], SEEK_SET);
         fread(screen, width * height, 1, fp);
 
@@ -644,22 +663,26 @@ int translate_faces(FILE *fp)
         }
     }
 
-    // the 86th image is, in fact, a helmet with different dimensions and transparency
-    // the game composites them over each other, so might as well store them separately
+    // The 86th and 87th images are, in fact, helmets with different
+    // dimensions and transparency. The game generates a composite image
+    // from the helmet and face, so might as well store them separately
     width = 80;
     height = 50;
     color_is_transparent[0] = 1;
-    fseek(fp, offsets[86], SEEK_SET);
-    fread(screen, width * height, 1, fp);
 
-    for (j = 0; j < width * height; j++) {
-        if (screen[j]) {
-            screen[j] -= 160;
+    for (int plr = 0; plr <= 1; plr++) {
+        fseek(fp, offsets[faceCount + plr], SEEK_SET);
+        fread(screen, width * height, 1, fp);
+
+        for (j = 0; j < width * height; j++) {
+            if (screen[j]) {
+                screen[j] -= 160;
+            }
         }
-    }
 
-    if ((rv = write_image())) {
-        return rv;
+        if ((rv = write_image())) {
+            return rv;
+        }
     }
 
     return 0;
@@ -928,6 +951,9 @@ PATCHHDRS_FILE(loser, 0, 2, 0);
 PATCHHDRS_FILE(beggam, 0, 2, 0);
 PATCHHDRS_FILE(patches, 1, 3, 2);
 PATCHHDRS_FILE(mhist, 1, 4, 2);
+PATCHHDRS_FILE(arrows, 1, 6, 2);
+PATCHHDRS_FILE(lenin, 0, 2, 0);
+PATCHHDRS_FILE(flagger, 0, 2, 2);
 
 int translate_port(FILE *fin)
 {
@@ -1063,6 +1089,9 @@ struct {
     FILE_STRATEGY(rdbox),
     FILE_STRATEGY(letter),
     FILE_STRATEGY(liftoff_abz),
+    FILE_STRATEGY(arrows),
+    FILE_STRATEGY(lenin),
+    FILE_STRATEGY(flagger)
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))

@@ -23,7 +23,10 @@
 // Programmed by Michael K McCarty
 //
 
+#include <cassert>
+
 #include "display/graphics.h"
+#include "display/palettized_surface.h"
 
 #include "radar.h"
 #include "gamedata.h"
@@ -37,6 +40,8 @@
 #include "state_utils.h"
 #include "gr.h"
 #include "pace.h"
+#include "filesystem.h"
+
 
 void PadDraw(char plr, char pad);
 void PadPict(char poff);
@@ -400,7 +405,7 @@ void PadDraw(char plr, char pad)
 
     if (Data->P[plr].Mission[pad].Prog > 0)
         PatchMe(plr, 126, 40, Data->P[plr].Mission[pad].Prog - 1,
-                Data->P[plr].Mission[pad].Patch, 32);
+                Data->P[plr].Mission[pad].Patch);
 
     FadeIn(2, 10, 0, 0);
 
@@ -515,32 +520,36 @@ void ClrMiss(char plr, char pad)
 }
 
 
+/**
+ * Draw an image of the Launch Pad facility in the Launch Pad menu.
+ *
+ * Launch Pad images have their own 256-color palette that is exported
+ * to the main display. The first 32 colors are shared with the Port
+ * palettes.
+ *
+ * The pad images (poff) are:
+ *   0: USA Launch Pad, damaged
+ *   1: USSR Launch Pad, damaged
+ *   2: USA Launch Pad, scheduled launch
+ *   3: USSR Launch Pad, scheduled launch
+ *   4: USA Launch Pad, no mission
+ *   5: USSR Launch Pad, no mission
+ *
+ * \param poff  which of the pad images to display (0-6).
+ * \throws runtime_error  if Filesystem cannot load the image.
+ */
 void PadPict(char poff)
 {
-    SimpleHdr table;
-    FILE *in;
-    display::AutoPal p(display::graphics.legacyScreen());
+    assert(poff >= 0 && poff <= 5);
 
-    in = sOpen("LFACIL.BUT", "rb", 0);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, 6 * sizeof_SimpleHdr, SEEK_SET);
-    fread(p.pal, 768, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, in);
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/lfacil.but.%d.png", (int) poff);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
 
-    display::LegacySurface local(148, 148);
-    display::LegacySurface local2(148, 148);
-
-    RLED_img(buffer, local.pixels(), table.size, local.width(), local.height());
-    fseek(in, (poff)*sizeof_SimpleHdr, SEEK_SET);
-    fread_SimpleHdr(&table, 1, in);
-    fseek(in, table.offset, SEEK_SET);
-    fread(buffer, table.size, 1, in);
-    RLED_img(buffer, local2.pixels(), table.size, local2.width(), local2.height());
-
-    local2.copyTo(display::graphics.legacyScreen(), 168, 28);
-
-    fclose(in);
+    image->exportPalette();
+    display::graphics.screen()->draw(image, 168, 28);
 }
 
 

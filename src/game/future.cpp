@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-/** \file future.c This is responsible for Future Mission planning screen.
- *
+/**
+ * \file future.cpp This is responsible for Future Mission planning screen.
  */
 
 #include "future.h"
@@ -96,7 +96,8 @@ std::vector<struct mStr> missionData;
 } // End unnamed namespace
 
 
-void Load_FUT_BUT(void);
+void LoadFutureButtons(void);
+void LoadFuturePalette(void);
 bool MarsInRange(unsigned int year, unsigned int season);
 bool JupiterInRange(unsigned int year, unsigned int season);
 bool SaturnInRange(unsigned int year, unsigned int season);
@@ -122,20 +123,43 @@ void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
 
 
-/* TODO: Documentation...
+/**
+ * Loads the Future console graphics into the vh global display buffer.
  *
+ * nfutbut.but.0.png is 240x90 pixels.
+ *
+ * Palette information:
+ * - The image nfutbut.but.0.png has a 255-color palette.
+ * - The palette is identical to the color palette used by as fmin.but.
+ * - There is an empty 32-color space from [208,240).
  */
-void Load_FUT_BUT(void)
+void LoadFutureButtons(void)
 {
-    FILE *fin;
-    unsigned i;
-    fin = sOpen("NFUTBUT.BUT", "rb", 0);
-    i = fread(display::graphics.legacyScreen()->pixels(), 1,
-              MAX_X * MAX_Y, fin);
-    fclose(fin);
-    RLED_img(display::graphics.legacyScreen()->pixels(), vh->pixels(),
-             i, vh->width(), vh->height());
+    boost::shared_ptr<display::PalettizedSurface> console(
+        Filesystem::readImage("images/nfutbut.but.0.png"));
+    vh->palette().copy_from(console->palette());
+    vh->draw(console, 0, 0);
+
     return;
+}
+
+
+/**
+ * Load the 255-color Future missions palette to the main display.
+ *
+ * \throws runtime_error  if Filesystem is unable to read images.
+ */
+void LoadFuturePalette(void)
+{
+    // May be done via fmin.img.0.png or nfutbut.but.0.png.
+    {
+        boost::shared_ptr<display::PalettizedSurface> planets(
+            Filesystem::readImage("images/fmin.img.0.png"));
+        planets->exportPalette();
+    }
+    // Also possible to use the nfutbut.but data file to get the
+    // palette information quickly, but remember we're trying to
+    // use the Filesystem class and **absolutely no packing**!
 }
 
 
@@ -203,11 +227,8 @@ bool JointMissionOK(char plr, char pad)
 void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
 {
     FadeOut(2, 10, 0, 0);
-    Load_FUT_BUT();
 
-    boost::shared_ptr<display::PalettizedSurface> planets(Filesystem::readImage("images/fmin.img.0.png"));
-    planets->exportPalette();
-
+    LoadFuturePalette();
     display::graphics.screen()->clear();
 
     gr_sync();
@@ -464,7 +485,7 @@ void DrawLocks(const MissionNavigator &nav)
  * the unselected state.
  *
  * The illustrations are stored in a buffer via the global pointer vh,
- * which reads the information in Load_FUT_BUT().
+ * which reads the information in LoadFutureButtons().
  *
  * \param button  the button index.
  * \param state  1 if selected, 0 if unselected.
@@ -876,6 +897,7 @@ void Future(char plr)
     display::LegacySurface local(166, 9);
     display::LegacySurface local2(177, 197);
     vh = new display::LegacySurface(240, 90);
+    LoadFutureButtons();
 
     unsigned int year = Data->Year;
     unsigned int season = Data->Season;
