@@ -457,54 +457,38 @@ void EndGame(char win, char pad)
     return;
 }
 
+/**
+ * Display an patriotic image indicating the winner's side.
+ *
+ * The image displayed for the winning side is:
+ *   0: American flag
+ *   1: Statue of Lenin
+ *
+ * This image uses a 128-color palette located at [128, 255], which
+ * is exported to the main display.
+ *
+ * \param win  the winning player (0 for USA, 1 for USSR)
+ * \throws runtime_error  if Filesystem cannot load the image
+ */
 void Load_LenFlag(char win)
 {
-    PatchHdr P;
-    unsigned int coff;
-    int j, Off_X, Off_Y;
-    char poff;
-    FILE *in;
+    int x, y;
+    std::string filename;
 
     if (win == 1) {
-        in = sOpen("LENIN.BUT", "rb", 0);
-        Off_X = 224;
-        Off_Y = 26;
+        filename = "images/lenin.png";
+        x = 224;
+        y = 26;
     } else {
-        in = sOpen("FLAGGER.BUT", "rb", 0);
-        Off_X = 195;
-        Off_Y = 0;
+        filename = "images/flagger.png";
+        x = 195;
+        y = 0;
     }
 
-    poff = 0;
-    coff = 128;
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(&p.pal[coff * 3], 384, 1, in);
-    }
-    fseek(in, (poff) * (sizeof P), SEEK_CUR);
-    fread(&P, sizeof P, 1, in);
-    SwapPatchHdr(&P);
-
-    if (win != 1) {
-        P.w++;    /* BUGFIX as everywhere */
-    }
-
-    fseek(in, P.offset, SEEK_SET);
-    display::LegacySurface local(P.w, P.h);
-    display::LegacySurface local2(P.w, P.h);
-    local.clear(0);
-    local2.copyFrom(display::graphics.legacyScreen(), Off_X, Off_Y, Off_X + P.w - 1, Off_Y + P.h - 1);
-    fread(local.pixels(), P.size, 1, in);
-    fclose(in);
-
-    for (j = 0; j < P.size; j++) {
-        /* now fix the strip */
-        if (win == 1 || ((j + 1) % P.w != 0)) {
-            local2.pixels()[j] = local.pixels()[j] + coff;
-        }
-    }
-
-    local2.copyTo(display::graphics.legacyScreen(), Off_X, Off_Y);
+    boost::shared_ptr<display::PalettizedSurface> image(
+        Filesystem::readImage(filename));
+    image->exportPalette(128, 255);
+    display::graphics.screen()->draw(image, x, y);
 }
 
 void Draw_NewEnd(char win)

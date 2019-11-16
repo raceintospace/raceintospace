@@ -39,6 +39,9 @@
     utils/but2png ../gamedata/rdbox.but rdbox
     utils/but2png ../gamedata/letter.dat letter
     utils/but2png ../gamedat/liftoff.abz liftoff_abz    # mission animation
+    utils/but2png ../gamedata/arrows.but arrows
+    utils/but2png ../gamedata/flagger.but flagger
+    utils/but2png ../gamedata/lenin.but lenin
 
     mv ../gamedata/*.png ../images/
 */
@@ -46,9 +49,6 @@
 /* unknown strategies:
     utils/but2png ../gamedata/inte_1.but        # used only by the CD -> disk installer
     utils/but2png ../gamedata/tracker.but
-    utils/but2png ../gamedata/arrows.but
-    utils/but2png ../gamedata/flagger.but
-    utils/but2png ../gamedata/lenin.but
     utils/but2png ../gamedata/news.img
 
     babypicx.cdr  # small mission control images
@@ -952,6 +952,8 @@ PATCHHDRS_FILE(beggam, 0, 2, 0);
 PATCHHDRS_FILE(patches, 1, 3, 2);
 PATCHHDRS_FILE(mhist, 1, 4, 2);
 PATCHHDRS_FILE(arrows, 1, 6, 2);
+PATCHHDRS_FILE(lenin, 0, 2, 0);
+PATCHHDRS_FILE(flagger, 0, 2, 2);
 
 int translate_port(FILE *fin)
 {
@@ -1087,7 +1089,9 @@ struct {
     FILE_STRATEGY(rdbox),
     FILE_STRATEGY(letter),
     FILE_STRATEGY(liftoff_abz),
-    FILE_STRATEGY(arrows)
+    FILE_STRATEGY(arrows),
+    FILE_STRATEGY(lenin),
+    FILE_STRATEGY(flagger)
 };
 
 #define STRATEGY_COUNT (sizeof(strategies) / sizeof(strategies[0]))
