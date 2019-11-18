@@ -13,3 +13,8 @@ add_executable(data_decoder EXCLUDE_FROM_ALL data_decoder.cpp)
 set_target_properties(data_decoder PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 add_dependencies(data_decoder libs)
 target_link_libraries(data_decoder jsoncpp)
+
+add_executable(news2png EXCLUDE_FROM_ALL news2png.cpp)
+set_target_properties(news2png PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
+add_dependencies(news2png libs)
+target_link_libraries(news2png ${png_LIBRARY} ${zlib_LIBRARY})
