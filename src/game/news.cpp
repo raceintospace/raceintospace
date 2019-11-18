@@ -1065,7 +1065,7 @@ ShowEvt(char plr, char crd)
     boost::shared_ptr<display::PalettizedSurface> image;
 
     try {
-        Filesystem::readImage(filename);
+        image = Filesystem::readImage(filename);
     } catch (const std::runtime_error &err) {
         CERROR4(filesys, "error loading %s: %s", filename, err.what());
         return;
