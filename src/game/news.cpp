@@ -24,8 +24,11 @@
 //
 // NewsCaster Main Files
 
+#include <stdexcept>
+
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/palettized_surface.h"
 
 #include "news.h"
 #include "gamedata.h"
@@ -39,6 +42,8 @@
 #include "gr.h"
 #include "endianness.h"
 #include "utils.h"
+#include "filesystem.h"
+#include "logging.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
@@ -124,6 +129,7 @@ GoNews(char plr)
         }
     }
 }
+
 
 // Open News Constructs a complete event array.
 void
@@ -310,6 +316,7 @@ OpenNews(char plr, char *buf, int bud)
     }
 }
 
+
 void
 DispNews(char plr, char *src, char *dest)
 {
@@ -461,6 +468,7 @@ DispNews(char plr, char *src, char *dest)
         k++;
     }
 }
+
 
 void
 DrawNText(char plr, char got)
@@ -825,6 +833,7 @@ News(char plr)
     display::graphics.newsRect().h = 0;
 }
 
+
 void
 AIEvent(char plr)
 {
@@ -860,6 +869,7 @@ ResolveEvent(char plr)
 
     return bad;                    // zero if card is good
 }
+
 
 /* modified to return true if end of anim */
 int
@@ -900,6 +910,7 @@ PlayNewsAnim(mm_file *fp)
     return 0;
 }
 
+
 static void
 DrawTopNewsBox(int player)
 {
@@ -915,6 +926,7 @@ DrawTopNewsBox(int player)
     draw_string(258, 13, "CONTINUE");
 }
 
+
 static void
 DrawBottomNewsBox(int player)
 {
@@ -929,6 +941,7 @@ DrawBottomNewsBox(int player)
     draw_down_arrow(305, 163);
     DrawNText(player, 0);
 }
+
 
 mm_file *
 LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
@@ -991,23 +1004,28 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     return fp;
 }
 
-/*
-int write_image( const char * filename, int width, int height );
-#include <sstream>
-*/
 
+/**
+ * Draws the News image associated with a given news event.
+ *
+ * News event images use a 128-color palette from [128, 255].
+ * Overwrites the display color palette from [32, 128) with black
+ * and loads the image's 128-color palette into [128, 255].
+ *
+ * \param plr  0 for USA event images, 1 for USSR event images.
+ * \param crd  the index of the news event (0-114).
+ */
 void
 ShowEvt(char plr, char crd)
 {
-    FILE *ffin;
-    uint32_t offset;
-    uint32_t length;
-
+    // Clear out the palette from color index 32 onward.
     {
         display::AutoPal p(display::graphics.legacyScreen());
         memset(&p.pal[96], 0, 672);
     }
 
+    // Apparently not all of the news events are associated with the
+    // right images? This would suggest some images get used twice.
     if (plr == 0) {
         switch (crd) {
         case 41:
@@ -1039,139 +1057,27 @@ ShowEvt(char plr, char crd)
         }
     }
 
-    ffin = sOpen("NEWS.CDR", "rb", 0);
+    char filename[128];
+    snprintf(filename, sizeof(filename),
+             "images/news/news.cdr.%s.%d.png",
+             plr == 0 ? "usa" : "ussr", (int) crd);
 
-    if (!ffin) {
+    boost::shared_ptr<display::PalettizedSurface> image;
+
+    try {
+        Filesystem::readImage(filename);
+    } catch (const std::runtime_error &err) {
+        CERROR4(filesys, "error loading %s: %s", filename, err.what());
         return;
     }
 
-    fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
-    fread_uint32_t(&offset, 1, ffin);
-    fread_uint32_t(&length, 1, ffin);
+    image->exportPalette(128, 255);
 
-    /*
-     * This loop overwrites newscaster video frame, so we use hardcoded values for
-     * update rectangle offsets.
-     */
-    if (offset && length) {
-        fseek(ffin, offset, SEEK_SET);
-        {
-            display::AutoPal p(display::graphics.legacyScreen());
-            fread(&p.pal[384], 384, 1, ffin);
-        }
-        fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
-        DrawTopNewsBox(plr);
-    }
+    display::graphics.screen()->draw(image, 0, 0);
+    DrawTopNewsBox(plr);
 
     display::graphics.newsRect().w = 0;
     display::graphics.newsRect().h = 0;
-
-    /*
-    //BEGIN: DUMPING CODE
-    for (int i = 0; i < 115; i++) {
-        crd = i;
-
-        fseek(ffin, (plr * 115 + crd) * 2 * sizeof(uint32_t), SEEK_SET);
-        fread_uint32_t(&offset, 1, ffin);
-        fread_uint32_t(&length, 1, ffin);
-
-        fseek(ffin, offset, SEEK_SET);
-        {
-            display::AutoPal p(display::graphics.legacyScreen());
-            fread(&p.pal[384], 384, 1, ffin);
-        }
-        fread(display::graphics.legacyScreen()->pixels(), (size_t) MIN(length, MAX_X * 110), 1, ffin);
-
-        std::stringstream ss;
-        ss << "news.cdr.ussr." << i << ".png";
-        write_image( ss.str().c_str(), 320, 110 );
-    }
-    //END: DUMPING CODE
-    */
-
-    fclose(ffin);
 }
-
-/*
-
-#include <png.h>
-#include <zlib.h>
-
-int write_image( const char * filename, int width, int height )
-{
-    FILE *fp;
-    png_structp png_ptr;
-    png_infop info_ptr;
-    uint8_t *rows[240];
-    uint8_t alpha_values[256];
-    int maximum_transparent_color;
-    int i;
-
-    fp = fopen(filename, "wb");
-
-    if (!fp) {
-        fprintf(stderr, "unable to open output file: %s\n", strerror(errno));
-        return 4;
-    }
-
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-
-    if (!png_ptr) {
-        return 5;
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-
-    if (!info_ptr) {
-        return 6;
-    }
-
-    if (setjmp(png_jmpbuf(png_ptr))) {
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-        fclose(fp);
-        fprintf(stderr, "PNG write error!\n");
-        return 7;
-    }
-
-    png_init_io(png_ptr, fp);
-
-    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
-
-    png_set_IHDR(png_ptr, info_ptr,
-                 width, height,
-                 8, PNG_COLOR_TYPE_PALETTE,
-                 PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT
-                );
-
-    png_color png_pal[256];
-
-    for (i = 0; i < 256; i ++) {
-        Color c = display::graphics.legacyScreen()->palette().get(i);
-        png_pal[i].red = c.r;
-        png_pal[i].green = c.g;
-        png_pal[i].blue = c.b;
-
-    }
-
-
-    png_set_PLTE(png_ptr, info_ptr, png_pal, 256);
-
-    // set up a buffer of alpha values as needed
-    memset(alpha_values, 255, sizeof(alpha_values));
-    maximum_transparent_color = -1;
-
-    for (i = 0; i < height; i++) {
-        rows[i] = (uint8_t *)(display::graphics.legacyScreen()->pixels() + (i * width));
-    }
-
-    png_set_rows(png_ptr, info_ptr, rows);
-
-    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-    return 0;
-}
-*/
 
 // EOF
