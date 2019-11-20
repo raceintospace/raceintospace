@@ -87,6 +87,8 @@ FILE *OpenAnim(char *fname);
 int CloseAnim(FILE *fin);
 int StepAnim(int x, int y, FILE *fin);
 char DrawMoonSelection(char nauts, char plr);
+int ImportInfin(FILE *fin, struct Infin &target);
+int ImportOF(FILE *fin, struct OF &target);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -393,48 +395,46 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     ffin = open_gamedat("BABYPICX.CDR");
 
+    // TODO: Replace use of buffer.
     Mob = (struct Infin *) buffer;
 
     if (AEPT && !mode) {
+        // BABYCLIF.CDR consists of two tables:
+        //  * 240 Infin entries, each 40 bytes (7200 bytes)
+        //  * 486 OF entries, each 10 bytes (4860 bytes)
+        // totalling 12060 bytes.
         if ((nfin = open_gamedat("BABYCLIF.CDR")) == NULL) {
             return;
         }
 
-        fread(Mob, CLIF_TABLE * (sizeof(struct Infin)), 1, nfin); //Specs: First Table
-
-        // Endianness swap
-        for (i = 0; i < CLIF_TABLE; i++)  {
-            int ii;
-
-            for (ii = 0; ii < 10; ii++) {
-                Swap16bit(Mob[i].List[ii]);
-            }
+        // Specs: First Table
+        for (i = 0; i < CLIF_TABLE; i++) {
+            ImportInfin(nfin, Mob[i]);
         }
+
+        // Since information is being written blindly into buffer,
+        // check to make sure it won't be overwritten by the other
+        // pointer accessing buffer...
+        assert(CLIF_TABLE * sizeof(struct Infin) < 15000);
 
         Mob2 = (struct OF *)&buffer[15000];
         fseek(nfin, 7200, SEEK_SET);
-        fread(Mob2, SCND_TABLE * (sizeof(struct OF)), 1, nfin); //Specs: Second Table
+
+        // Specs: Second Table
+        for (i = 0; i < SCND_TABLE; i++) {
+            ImportOF(nfin, Mob2[i]);
+            Mob2[i].Name[strlen(Mob2[i].Name) - 3] = '-'; // patch
+        }
+
         fclose(nfin);
-
-        // Endianness swap
-        for (i = 0; i < SCND_TABLE; i++) {
-            Swap16bit(Mob2[i].idx);
-        }
-
-        for (i = 0; i < SCND_TABLE; i++) {
-            Mob2[i].Name[strlen(Mob2[i].Name) - 3] = '_';    // patch
-        }
     } else {
         nfin = open_gamedat("BABYNORM.CDR");
-        fread(Mob, NORM_TABLE * (sizeof(struct Infin)), 1, nfin);
-        fclose(nfin);
 
-        // Endianness swap
         for (i = 0; i < NORM_TABLE; i++) {
-            for (int k = 0; k < 10; k++) {
-                Swap16bit(Mob[i].List[k]);
-            }
+            ImportInfin(nfin, Mob[i]);
         }
+
+        fclose(nfin);
     }
 
     // Plop(plr,1); //Specs: random single frame for sound buffering
@@ -776,7 +776,7 @@ void Clock(char plr, char clck, char mode, char tm)
 
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 {
-    int i, x, y, attempt, which, mx2, mx1;
+    int x, y, attempt, which, mx2, mx1;
     uint16_t *bot, off = 0;
     int32_t locl;
     static char kk = 0, bub = 0;
@@ -980,12 +980,12 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
     fread(boob.pixels(), 1564, 1, ffin);
 
-    for (i = 0; i < 782; i++) {
+    for (int i = 0; i < 782; i++) {
         bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
         bot[i] = (bot[i] & 0x0F0F);
     }
 
-    for (i = 0; i < 1564; i++) {
+    for (int i = 0; i < 1564; i++) {
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
     }
@@ -1644,4 +1644,48 @@ int RocketBoosterSafety(int safetyRocket, int safetyBooster)
     } else {
         return ((safetyRocket + safetyBooster) / 2);
     }
+}
+
+
+/**
+ * Read an Infin struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data.
+ */
+int ImportInfin(FILE *fin, struct Infin &target)
+{
+    // struct Infin {
+    //     char Code[9], Qty;
+    //     int16_t List[10];
+    // };
+    fread(&target.Code[0], sizeof(target.Code), 1, fin);
+    fread(&target.Qty, sizeof(target.Qty), 1, fin);
+    fread(&target.List[0], sizeof(target.List), 1, fin);
+
+    for (int i = 0; i < 10; i++) {
+        Swap16bit(target.List[i]);
+    }
+
+    return 0;
+}
+
+
+/**
+ * Read in an OF struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data
+ * \return
+ */
+int ImportOF(FILE *fin, struct OF &target)
+{
+    // struct OF {
+    //     char Name[8];
+    //     int16_t idx;
+    // };
+    fread(&target.Name[0], sizeof(target.Name), 1, fin);
+    fread(&target.idx, sizeof(target.idx), 1, fin);
+    Swap16bit(target.idx);
+    return 0;
 }
