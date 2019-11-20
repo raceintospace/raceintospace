@@ -41,6 +41,7 @@ set(game_sources
   game_main.cpp
   gr.cpp
   hardef.cpp
+  hardware.cpp
   hardware_buttons.cpp
   intel.cpp
   intro.cpp

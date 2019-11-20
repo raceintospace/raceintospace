@@ -42,11 +42,11 @@
 #include <assert.h>
 #include "filesystem.h"
 #include "hardware_buttons.h"
+#include "hardware.h"
 
 int call;
 int wh;
 boost::shared_ptr<display::PalettizedSurface> rd_men;
-int avoidf;
 
 
 void LoadVABPalette(char plr);
@@ -318,30 +318,7 @@ char RD(char player_index)
 
         if (mousebuttons > 0 || key > 0) {
             if ((x >= 283 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
-                char EqDmg = 0;
-
-                switch (hardware) {
-                case PROBE_HARDWARE:
-                    EqDmg = Data->P[player_index].Probe[unit].Damage != 0 ? 1 : 0;
-                    break;
-
-                case ROCKET_HARDWARE:
-                    EqDmg = Data->P[player_index].Rocket[unit].Damage != 0 ? 1 : 0;
-                    break;
-
-                case MANNED_HARDWARE:
-                    EqDmg = Data->P[player_index].Manned[unit].Damage != 0 ? 1 : 0;
-                    break;
-
-                case MISC_HARDWARE:
-                    EqDmg = Data->P[player_index].Misc[unit].Damage != 0 ? 1 : 0;
-                    break;
-
-                default:
-                    break;
-                }
-
-                if (EqDmg) {
+                if (HardwareProgram(player_index, hardware, unit).Damage) {
                     InBox(283, 90, 302, 100);
                     DamProb(player_index, hardware, unit);
                     DrawRD(player_index);
@@ -467,23 +444,7 @@ char RD(char player_index)
                     roll = 5;
                 }
 
-                switch (hardware) {
-                case PROBE_HARDWARE:
-                    b = Data->P[player_index].Probe[unit].RDCost;
-                    break;
-
-                case ROCKET_HARDWARE:
-                    b = Data->P[player_index].Rocket[unit].RDCost;
-                    break;
-
-                case MANNED_HARDWARE:
-                    b = Data->P[player_index].Manned[unit].RDCost;
-                    break;
-
-                case MISC_HARDWARE:
-                    b = Data->P[player_index].Misc[unit].RDCost;
-                    break;
-                }
+                b = HardwareProgram(player_index, hardware, unit).RDCost;
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
                 ManSel(roll);
@@ -601,26 +562,9 @@ char RD(char player_index)
                        && roll != 0) {
                 // b is the cost per roll
 
-                switch (hardware) {
-                case PROBE_HARDWARE:
-                    b = Data->P[player_index].Probe[unit].RDCost;
-                    break;
-
-                case ROCKET_HARDWARE:
-                    b = Data->P[player_index].Rocket[unit].RDCost;
-                    break;
-
-                case MANNED_HARDWARE:
-                    b = Data->P[player_index].Manned[unit].RDCost;
-                    break;
-
-                case MISC_HARDWARE:
-                    b = Data->P[player_index].Misc[unit].RDCost;
-                    break;
-                }
+                b = HardwareProgram(player_index, hardware, unit).RDCost;
 
                 // Add to the expenditure data
-
                 if ((b * roll <= Data->P[player_index].Cash) && QueryUnit(hardware, unit, player_index)
                     && MaxChk(hardware, unit, player_index)) {
                     buy[hardware][unit] = RDUnit(hardware, unit, roll, player_index);
@@ -636,7 +580,6 @@ char RD(char player_index)
                     // add the amount to the expenditure budget
                     Data->P[player_index].Spend[0][hardware] += b * roll;
 
-
                     ShowUnit(hardware, unit, player_index);
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
@@ -647,9 +590,11 @@ char RD(char player_index)
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
-                for (i = 0; i < 4; i++) for (j = 0; j < 7; j++) {
+                for (i = 0; i < 4; i++) {
+                    for (j = 0; j < 7; j++) {
                         Data->P[player_index].Buy[i][j] = buy[i][j];
                     }
+                }
 
                 music_stop();
                 Del_RD_BUT();
@@ -731,7 +676,7 @@ void ManSel(int activeButtonIndex)
 }
 
 /**
- Determine if the hardware/unit exists and draws the appropriate the button
+ Determine if the hardware/unit exists and draw the appropriate the button
 
  @param hardware_index Zero based index
  @param unit_index Zero based index
@@ -741,11 +686,13 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
 {
     char enableButton = 0;
 
-    enableButton =
-        ((hardware_index == PROBE_HARDWARE && (Data->P[player_index].Probe[unit_index].Num != PROGRAM_NOT_STARTED)) ||
-         (hardware_index == ROCKET_HARDWARE && (Data->P[player_index].Rocket[unit_index].Num != PROGRAM_NOT_STARTED)) ||
-         (hardware_index == MANNED_HARDWARE && (Data->P[player_index].Manned[unit_index].Num != PROGRAM_NOT_STARTED)) ||
-         (hardware_index == MISC_HARDWARE && (unit_index != MISC_HW_DOCKING_MODULE && Data->P[player_index].Misc[unit_index].Num != PROGRAM_NOT_STARTED))); //DM Screen, Nikakd, 10/8/10
+    //DM Screen, Nikakd, 10/8/10
+    if (hardware_index != MISC_HARDWARE ||
+        unit_index != MISC_HW_DOCKING_MODULE) {
+        enableButton =
+            HardwareProgram(player_index, hardware_index, unit_index).Num
+            != PROGRAM_NOT_STARTED;
+    }
 
     if (IsHumanPlayer(player_index)) {
         if (enableButton) {
@@ -760,7 +707,7 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
 
 
 /**
- Check the maximum safety level
+ Determine if the program's current safety is below the maximum R&D.
 
  @param hardware_index
  @param unit_index
@@ -768,23 +715,9 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
  */
 char MaxChk(char hardware_index, char unit_index, char player_index)
 {
-    if (hardware_index == PROBE_HARDWARE) {
-        return Data->P[player_index].Probe[unit_index].Safety < Data->P[player_index].Probe[unit_index].MaxRD;
-    }
-
-    if (hardware_index == ROCKET_HARDWARE) {
-        return Data->P[player_index].Rocket[unit_index].Safety < Data->P[player_index].Rocket[unit_index].MaxRD;
-    }
-
-    if (hardware_index == MANNED_HARDWARE) {
-        return Data->P[player_index].Manned[unit_index].Safety < Data->P[player_index].Manned[unit_index].MaxRD;
-    }
-
-    if (hardware_index == MISC_HARDWARE) {
-        return Data->P[player_index].Misc[unit_index].Safety < Data->P[player_index].Misc[unit_index].MaxRD;
-    }
-
-    return 0;
+    const Equipment &program =
+        HardwareProgram(player_index, hardware_index, unit_index);
+    return program.Safety < program.MaxRD;
 }
 
 /**
@@ -799,70 +732,46 @@ char MaxChk(char hardware_index, char unit_index, char player_index)
  * @return encoded number of dice and sum of rolls
  */
 uint8_t
-RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls, char playerIndex)
+RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls,
+       char playerIndex)
 {
-    int diceRoll = 0;
-    int i;
-    struct BuzzData *p = &Data->P[playerIndex];
-    Equipment *eqArr[4] = {p->Probe, p->Rocket, p->Manned, p->Misc};
-    Equipment *eq;
-
     assert(hardwareTypeIndex >= PROBE_HARDWARE);
     assert(hardwareTypeIndex <= MISC_HARDWARE);
     assert(hardwareIndex >= MANNED_HW_ONE_MAN_CAPSULE);
     assert(hardwareIndex <= MANNED_HW_ONE_MAN_MODULE);
 
-    eq = &eqArr[hardwareTypeIndex][hardwareIndex];
+    Equipment &eq = HardwareProgram(playerIndex,
+                                    hardwareTypeIndex,
+                                    hardwareIndex);
+    int diceRoll = 0;
+    int diceType = 6 + Data->P[playerIndex].RD_Mods_For_Turn;
 
-    diceRoll = 0;
-
-    for (i = 0; i < nRolls; i++) {
-        diceRoll += rand() % (6 + p->RD_Mods_For_Turn) + 1;
+    for (int i = 0; i < nRolls; i++) {
+        diceRoll += rand() % diceType + 1;
     }
 
-    eq->Safety += diceRoll;
+    eq.Safety += diceRoll;
 
-    if (eq->Safety > eq->MaxRD) {
-        eq->Safety = eq->MaxRD;
+    if (eq.Safety > eq.MaxRD) {
+        eq.Safety = eq.MaxRD;
     }
 
     return encodeRolls(nRolls, diceRoll);
 }
 
 /**
- @param hw Zero based hardware index
- @param un Zero based unit index
- @param player_index Which player
+ * Draws the hardware program's statistics display.
+ *
+ * @param hw Zero based hardware index
+ * @param un Zero based unit index
+ * @param player_index Which player
  */
 void ShowUnit(char hw, char un, char player_index)
 {
-    Equipment *PL;
     char qty = 1, SCol = 0;
     int Unit_Cost, Init_Cost;
 
-    PL = NULL; /* XXX check uninitialized */
-
-    switch (hw) {
-    case PROBE_HARDWARE:
-        PL = (Equipment *)&Data->P[player_index].Probe[un].Name[0];
-        break;
-
-    case ROCKET_HARDWARE:
-        PL = (Equipment *)&Data->P[player_index].Rocket[un].Name[0];
-        break;
-
-    case MANNED_HARDWARE:
-        PL = (Equipment *)&Data->P[player_index].Manned[un].Name[0];
-        break;
-
-    case MISC_HARDWARE:
-        PL = (Equipment *)&Data->P[player_index].Misc[un].Name[0];
-        break;
-
-    default:
-        // invalid hw value
-        assert(false);
-    }
+    Equipment &program = HardwareProgram(player_index, hw, un);
 
     display::graphics.setForegroundColor(1);
 
@@ -876,39 +785,8 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 132, "MAXIMUM PAYLOAD:");
     draw_string(170, 146, "MAXIMUM SAFETY:");
 
-    avoidf = 0;
-
-    switch (hw) {
-    case PROBE_HARDWARE:
-        if (Data->P[player_index].Probe[un].SaveCard > 0) {
-            avoidf = 1;
-        }
-
-        break;
-
-    case ROCKET_HARDWARE:
-        if (Data->P[player_index].Rocket[un].SaveCard > 0) {
-            avoidf = 1;
-        }
-
-        break;
-
-    case MANNED_HARDWARE:
-        if (Data->P[player_index].Manned[un].SaveCard > 0) {
-            avoidf = 1;
-        }
-
-        break;
-
-    case MISC_HARDWARE:
-        if (Data->P[player_index].Misc[un].SaveCard > 0) {
-            avoidf = 1;
-        }
-
-        break;
-    }
-
-    if (avoidf > 0) {
+    // Set Avoid Failure notification
+    if (program.SaveCard > 0) {
         fill_rectangle(286, 71, 316, 71, 5);
         fill_rectangle(286, 86, 316, 86, 5);
         fill_rectangle(286, 72, 286, 85, 5);
@@ -935,30 +813,7 @@ void ShowUnit(char hw, char un, char player_index)
     display::graphics.setForegroundColor(20);
     draw_string(170, 139, "MAXIMUM R&D:");
 
-    char EqDmg = 0;
-
-    switch (hw) {
-    case PROBE_HARDWARE:
-        EqDmg = Data->P[player_index].Probe[un].Damage != 0 ? 1 : 0;
-        break;
-
-    case ROCKET_HARDWARE:
-        EqDmg = Data->P[player_index].Rocket[un].Damage != 0 ? 1 : 0;
-        break;
-
-    case MANNED_HARDWARE:
-        EqDmg = Data->P[player_index].Manned[un].Damage != 0 ? 1 : 0;
-        break;
-
-    case MISC_HARDWARE:
-        EqDmg = Data->P[player_index].Misc[un].Damage != 0 ? 1 : 0;
-        break;
-
-    default:
-        break;
-    }
-
-    if (EqDmg != 0) {
+    if (program.Damage) {
         IOBox(281, 88, 304, 102);
         display::graphics.setForegroundColor(8);
         draw_string(285, 97, "F");
@@ -966,7 +821,7 @@ void ShowUnit(char hw, char un, char player_index)
         draw_string(0, 0, "IX");
     }
 
-    SCol = (PL->Num < 0) ? 20 : ((PL->Safety < 75) ? 8 : 16);
+    SCol = (program.Num < 0) ? 20 : ((program.Safety < 75) ? 8 : 16);
     display::graphics.setForegroundColor(SCol);
     draw_string(170, 111, "SAFETY FACTOR:");
 
@@ -975,8 +830,9 @@ void ShowUnit(char hw, char un, char player_index)
 
     display::graphics.setForegroundColor(11);
 
-    if (!(player_index == 1 && hw == ROCKET_HARDWARE && un == MANNED_HW_FOUR_MAN_CAPSULE)) {
-        draw_string(170, 80, &PL->Name[0]);
+    if (!(player_index == 1 && hw == ROCKET_HARDWARE &&
+          un == MANNED_HW_FOUR_MAN_CAPSULE)) {
+        draw_string(170, 80, &program.Name[0]);
     }
 
     switch (hw) {
@@ -1051,8 +907,8 @@ void ShowUnit(char hw, char un, char player_index)
         break;
     }
 
-    Init_Cost = PL->InitCost;
-    Unit_Cost = PL->UnitCost;
+    Init_Cost = program.InitCost;
+    Unit_Cost = program.UnitCost;
 
     if (Data->P[player_index].TurnOnly == 3) {
         Init_Cost /= 2;
@@ -1064,26 +920,24 @@ void ShowUnit(char hw, char un, char player_index)
     }
 
     draw_number(241, 97, Init_Cost);
-
     draw_number(230, 104, Unit_Cost);
-
-    draw_number(275, 118, PL->RDCost);
+    draw_number(275, 118, program.RDCost);
 
     if (hw != ROCKET_HARDWARE) {
-        draw_number(240, 125, PL->UnitWeight);
+        draw_number(240, 125, program.UnitWeight);
     } else {
         draw_string(240, 125, "N/A");
     }
 
     display::graphics.setForegroundColor(20);
 
-    if (PL->MaxRD != 0)   {
-        draw_number(242, 139, PL->MaxRD);
+    if (program.MaxRD != 0)   {
+        draw_number(242, 139, program.MaxRD);
         draw_character('%');
 
         if (options.want_debug) {
             draw_string(0, 0, " / ");
-            draw_number(0, 0, PL->MSF);
+            draw_number(0, 0, program.MSF);
             draw_character('%'); //Used to test if MSF was holding the right value
         }
     } else {
@@ -1091,32 +945,32 @@ void ShowUnit(char hw, char un, char player_index)
     }
 
     display::graphics.setForegroundColor(11);
-    draw_number(254, 146, PL->MaxSafety);
+    draw_number(254, 146, program.MaxSafety);
     draw_character('%');
 
     if (hw != ROCKET_HARDWARE) {
         draw_string(268, 132, "N/A");    /* Payload */
     } else {
-        draw_number(268, 132, PL->MaxPay);
+        draw_number(268, 132, program.MaxPay);
     }
 
-    if (PL->Num == -1) {
+    if (program.Num == -1) {
         display::graphics.setForegroundColor(8);
         draw_string(170, 90, "NO PROGRAM INITIATED");
         display::graphics.setForegroundColor(20);
         draw_number(256, 111, 0);
         draw_character('%');
     } else {
-        OnHand(PL->Num);
+        OnHand(program.Num);
         display::graphics.setForegroundColor(SCol);
-        draw_number(256, 111, PL->Safety);
+        draw_number(256, 111, program.Safety);
         draw_character('%');
 
         //Display Damaged Equipment
-        if (PL->Damage != 0) {
+        if (program.Damage != 0) {
             display::graphics.setForegroundColor(8);
             draw_string(280, 111, "(");
-            draw_number(283, 111, PL->Safety + PL->Damage < 1 ? 1 : PL->Safety + PL->Damage);
+            draw_number(283, 111, program.Safety + program.Damage < 1 ? 1 : program.Safety + program.Damage);
             draw_character('%');
             draw_character(')');
         }
@@ -1243,30 +1097,7 @@ char HPurc(char player_index)
         GetMouse();
 
         if ((x >= 283 && y >= 90 && x <= 302 && y <= 100 && mousebuttons > 0) || key == 'F') {
-            char EqDmg = 0;
-
-            switch (hardware) {
-            case PROBE_HARDWARE:
-                EqDmg = Data->P[player_index].Probe[unit].Damage != 0 ? 1 : 0;
-                break;
-
-            case ROCKET_HARDWARE:
-                EqDmg = Data->P[player_index].Rocket[unit].Damage != 0 ? 1 : 0;
-                break;
-
-            case MANNED_HARDWARE:
-                EqDmg = Data->P[player_index].Manned[unit].Damage != 0 ? 1 : 0;
-                break;
-
-            case MISC_HARDWARE:
-                EqDmg = Data->P[player_index].Misc[unit].Damage != 0 ? 1 : 0;
-                break;
-
-            default:
-                break;
-            }
-
-            if (EqDmg) {
+            if (HardwareProgram(player_index, hardware, unit).Damage) {
                 InBox(283, 90, 302, 100);
                 DamProb(player_index, hardware, unit);
                 helpText = "i008";
@@ -1403,45 +1234,10 @@ char HPurc(char player_index)
             OutBox(165, 182, 315, 195);
 
             // NEED DELAY CHECK
-            switch (hardware) {
-            case PROBE_HARDWARE:
-                if (Data->P[player_index].Probe[unit].Delay == 0) {
-                    BuyUnit(hardware, unit, player_index);
-                } else {
-                    Help("i135");
-                }
-
-                break;
-
-            case ROCKET_HARDWARE:
-                if (Data->P[player_index].Rocket[unit].Delay == 0) {
-                    BuyUnit(hardware, unit, player_index);
-                } else {
-                    Help("i135");
-                }
-
-                break;
-
-            case MANNED_HARDWARE:
-                if (Data->P[player_index].Manned[unit].Delay == 0) {
-                    BuyUnit(hardware, unit, player_index);
-                } else {
-                    Help("i135");
-                }
-
-                break;
-
-            case MISC_HARDWARE:
-                if (Data->P[player_index].Misc[unit].Delay == 0) {
-                    BuyUnit(hardware, unit, player_index);
-                } else {
-                    Help("i135");
-                }
-
-                break;
-
-            default:
-                break;
+            if (! HardwareProgram(player_index, hardware, unit).Delay) {
+                BuyUnit(hardware, unit, player_index);
+            } else {
+                Help("i135");
             }
         } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER) {
             InBox(245, 5, 314, 17);
@@ -2148,7 +1944,3 @@ BuyUnit(char category, char unit, char player_index)
 }
 
 /* vim: set noet ts=4 sw=4 tw=77 */
-
-
-
-
