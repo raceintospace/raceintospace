@@ -33,7 +33,7 @@ endforeach(datafile)
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 
 # Add the platform-specific source files needed for testing
-list(APPEND game_sources platform_macosc/music_osx.cpp)
+list(APPEND game_sources platform_macosx/music_osx.cpp)
 
 set(app "Race Into Space")
 
