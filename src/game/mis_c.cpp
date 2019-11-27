@@ -110,7 +110,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     unsigned int fres, max;
     char lnch = 0, AEPT, BABY, Tst2, Tst3;
     unsigned char sts = 0, fem = 0;
-    FILE *fin, *fout, *ffin, *nfin;
+    FILE *fout, *ffin, *nfin;
     struct oGROUP *bSeq, aSeq;
     struct oFGROUP *dSeq, cSeq;
     struct Table *F;
@@ -129,8 +129,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     strncpy(Seq, InSeq, sizeof(Seq));
 
     F = NULL; /* XXX check uninitialized */
-    dSeq = NULL; /* XXX check uninitialized */
-    bSeq = NULL; /* XXX check uninitialized */
     i = j = 0; /* XXX check uninitialized */
 
     memset(buffer, 0x00, BUFFER_SIZE);
@@ -229,15 +227,20 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     if (mode == 0) {
         bSeq = (struct oGROUP *)&scratch[35000];
+        // TODO: Move this to a function and return a vector...
+        // Make sure there's enough memory to read in the entire file.
+        assert(818 * sizeof(struct oGROUP) < (SCRATCH_SIZE - 35000));
+
+        FILE *fin = open_gamedat(SEQ_DAT);
+        fread_oGROUP(bSeq, 818, fin);
+        fclose(fin);
     } else {
         dSeq = (struct oFGROUP *)&scratch[35000];
-    }
 
-    if (mode == 0) {
-        fin = open_gamedat(SEQ_DAT);
-        fread(&scratch[35000], 1, SCRATCH_SIZE - 35000, fin);
-    } else {
-        fin = open_gamedat(FSEQ_DAT);
+        // Make sure the Table entries won't overflow into dSeq
+        assert(50 * sizeof(struct Table) < 35000);
+
+        FILE *fin = open_gamedat(FSEQ_DAT);
         F = (struct Table *)&scratch[0];
         fread_Table(F, 50, fin);
 
@@ -258,9 +261,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             fseek(fin, F[i].foffset, SEEK_SET);
             fread_oFGROUP(dSeq, F[i].size / sizeof_oFGROUP, fin);
         }
+
+        fclose(fin);
     }
 
-    fclose(fin);
 
     if (mode == 0) {
         j = 0;
@@ -269,10 +273,11 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             j++;
         }
 
-        if (bSeq[j].ID[2] - 0x30 == 1)
+        if (bSeq[j].ID[2] - 0x30 == 1) {
             if (fem == 0) {
                 j++;
             }
+        }
     } else if (err == 0) {
         j = 0;
         memset(sName, 0x00, sizeof sName);
@@ -298,7 +303,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         if (mode == 0) {
             j = 0;
         } else {
-            fin = open_gamedat(FSEQ_DAT);
+            FILE *fin = open_gamedat(FSEQ_DAT);
             fseek(fin, F[0].foffset, SEEK_SET);
             fread_oFGROUP(dSeq, F[0].size / sizeof_oFGROUP, fin);
             fclose(fin);
@@ -462,8 +467,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             sidx = cSeq.oLIST[i].sIdx;
         }
 
-        Swap16bit(aidx);
-        Swap16bit(sidx);
+        // These should be read correctly by fread_oFGROUP / fread_oGROUP
+        // Swap16bit(aidx);
+        // Swap16bit(sidx);
 
         if (sidx) {
             play_audio(sidx, mode);
