@@ -80,6 +80,15 @@ extern size_t fwrite_int32_t(const int32_t *src, size_t nelem, FILE *file);
  *       sequence of ReplayItem structures,
  *       each containing offsets to animations.
  * \endverbatim
+ *
+ * \verbatim
+ * File: FAILS.CDR
+ * Desc: Contains mission step failure reports.
+ * Structure:
+ *       uint16_t   -- XXXX count
+ *       sequence of (44) Fdt header structure
+ *       sequence of (925) XFails structures
+ * \endverbatim
  */
 
 struct oLIST {
