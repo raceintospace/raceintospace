@@ -82,7 +82,7 @@ typedef struct portoutlinerestore {
 
 PORTOUTLINE *pPortOutlineRestore;
 
-struct {
+struct PortHeader {
     char Text[28];  /**< File Copyright Notice */
     int32_t oMObj;     /**< Offset to MObj data table */
     int32_t oTab;      /**< Offset to Table of data */
@@ -202,6 +202,8 @@ int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
 char Request(char plr, char *s, char md);
+size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
+size_t ImportMOBJ(FILE *fin, MOBJ &target);
 
 
 void SpotCrap(char loc, char mode)
@@ -439,12 +441,34 @@ void WaveFlagDel(void)
     flaggy.reset();
 }
 
+
+/**
+ * Display a port building/location image.
+ *
+ * Image composition is:
+ *     int32_t Size      -- Size of Image (bytes)
+ *     char Comp         -- Type of Compression Used
+ *     int16_t Width     -- Width of Image
+ *     int16_t Height    -- Height of Image
+ *     int16_t PlaceX    -- Where to Place Img:X
+ *     int16_t PlaceY    -- Where to Place Img:Y
+ *
+ * \param fin    an open (usa/sov)_port.dat file.
+ * \param table  offset to the image data in the Port file.
+ */
 void PortPlace(FILE *fin, int32_t table)
 {
     IMG Img;
+    // const size_t sizeof_IMG = 4 + 1 + 2 + 2 + 2 + 2;
 
     fseek(fin, table, SEEK_SET);
-    fread(&Img, sizeof Img, 1, fin);
+    //fread(&Img, sizeof Img, 1, fin);
+    fread(&Img.Size, sizeof(Img.Size), 1, fin);
+    fread(&Img.Comp, sizeof(Img.Comp), 1, fin);
+    fread(&Img.Width, sizeof(Img.Width), 1, fin);
+    fread(&Img.Height, sizeof(Img.Height), 1, fin);
+    fread(&Img.PlaceX, sizeof(Img.PlaceX), 1, fin);
+    fread(&Img.PlaceY, sizeof(Img.PlaceY), 1, fin);
     Swap32bit(Img.Size);
     Swap16bit(Img.Width);
     Swap16bit(Img.Height);
@@ -464,12 +488,24 @@ void PortPlace(FILE *fin, int32_t table)
     display::graphics.screen()->draw(local, Img.PlaceX, Img.PlaceY);
 }
 
+
+/**
+ * Loads the port palette into the global display palette, overwriting
+ * the current palette.
+ *
+ * The Port palette is a 256-color palette, differing slightly per side.
+ * The first 27 colors, however, are the same.
+ *
+ * \param plr  The player palette to use (0 for USA, 1 for USSR)
+ */
 void PortPal(char plr)
 {
     FILE *fin;
     fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
-    fread(&PHead, sizeof PHead, 1, fin);
-    Swap32bit(PHead.oPal);
+    // fread(&PHead, sizeof PHead, 1, fin);
+    // TODO: Add in some error checking...
+    ImportPortHeader(fin, PHead);
+
     fseek(fin, PHead.oPal, SEEK_SET);
     {
         display::AutoPal p(display::graphics.legacyScreen());
@@ -483,46 +519,31 @@ void PortPal(char plr)
 void DrawSpaceport(char plr)
 {
     int32_t table[S_QTY];
-    int i, fm, idx;
     FILE *fin;
-    int k, j;
 
     fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
 
-    fread(&PHead, sizeof PHead, 1, fin);
-    Swap32bit(PHead.oMObj);
-    Swap32bit(PHead.oTab);
-    Swap32bit(PHead.oPal);
-    Swap32bit(PHead.oPort);
-    Swap32bit(PHead.oMse);
-    Swap32bit(PHead.oOut);
-    Swap32bit(PHead.oAnim);
+    // TODO: Add in some error checking...
+    ImportPortHeader(fin, PHead);
 
-    fread(&MObj[0], sizeof MObj, 1, fin);
-
-    // Endianness swap
-    for (i = 0; i < (int)(sizeof(MObj) / sizeof(MOBJ)); i++) {
-        for (j = 0; j < 4; j++) {
-            for (k = 0; k < 4; k++) {
-                Swap16bit(MObj[i].Reg[j].CD[k].x1);
-                Swap16bit(MObj[i].Reg[j].CD[k].x2);
-                Swap16bit(MObj[i].Reg[j].CD[k].y1);
-                Swap16bit(MObj[i].Reg[j].CD[k].y2);
-            }
-        }
+    for (int i = 0; i < (int)(sizeof(MObj) / sizeof(MOBJ)); i++) {
+        ImportMOBJ(fin, MObj[i]);
     }
 
     fread(&table[0], sizeof table, 1, fin);
 
     // Endianness swap
-    for (i = 0; i < S_QTY; i++) {
+    for (int i = 0; i < S_QTY; i++) {
         Swap32bit(table[i]);
     }
 
     // Draw the main port image
     {
-        const char *filename = (plr == 0 ? "images/usa_port.dat.0.png" : "images/sov_port.dat.0.png");
-        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
+        const char *filename =
+            (plr == 0 ? "images/usa_port.dat.0.png" :
+                        "images/sov_port.dat.0.png");
+        boost::shared_ptr<display::PalettizedSurface> image(
+            Filesystem::readImage(filename));
         image->exportPalette();
         display::graphics.screen()->draw(image, 0, 0);
     }
@@ -534,7 +555,7 @@ void DrawSpaceport(char plr)
     }
 
     // Pads
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         Data->P[plr].Port[PORT_LaunchPad_A + i] = 1; // Draw launch pad
 
         if (Data->P[plr].Mission[i].MissionCode) {
@@ -576,8 +597,8 @@ void DrawSpaceport(char plr)
         PortPlace(fin, table[15 + 15 * plr]);
     }
 
-    for (fm = 0; fm < 35; fm++) {
-        idx = Data->P[plr].Port[fm]; // Current Port Level for MObj
+    for (int fm = 0; fm < 35; fm++) {
+        int idx = Data->P[plr].Port[fm]; // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) { // PreDrawn Shape
             PortPlace(fin, table[MObj[fm].Reg[idx].PreDraw]);
@@ -1118,14 +1139,9 @@ void Port(char plr)
     bone = (uint16_t *) buffer;
 
     fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
-    fread(&PHead, sizeof PHead, 1, fin);
-    Swap32bit(PHead.oMObj);
-    Swap32bit(PHead.oTab);
-    Swap32bit(PHead.oPal);
-    Swap32bit(PHead.oPort);
-    Swap32bit(PHead.oMse);
-    Swap32bit(PHead.oOut);
-    Swap32bit(PHead.oAnim);
+    // TODO: Add some error checking...
+    ImportPortHeader(fin, PHead);
+
     fseek(fin, PHead.oOut, SEEK_SET);
     fread(&stable[0], sizeof stable, 1, fin);
 
@@ -1929,11 +1945,102 @@ char MisReq(char plr)
     return i;
 }
 
-// Editor settings {{{
+
+/**
+ * Read a PortHeader struct stored as raw data in a file, correcting
+ * for endianess.
+ *
+ * If import is not successful, the contents of the target PortHeader
+ * are not guaranteed.
+ *
+ * \param fin  An open port data file at the start of the header data.
+ * \param target  The destination for the read data.
+ * \return  1 if successfully read, 0 otherwise.
+ */
+size_t ImportPortHeader(FILE *fin, struct PortHeader &target)
+{
+    // Chain freads so they stop if one fails...
+    bool read =
+        fread(&target.Text[0], sizeof(target.Text), 1, fin) &&
+        fread(&target.oMObj, sizeof(target.oMObj), 1, fin) &&
+        fread(&target.oTab, sizeof(target.oTab), 1, fin) &&
+        fread(&target.oPal, sizeof(target.oPal), 1, fin) &&
+        fread(&target.oPort, sizeof(target.oPort), 1, fin) &&
+        fread(&target.oMse, sizeof(target.oMse), 1, fin) &&
+        fread(&target.oOut, sizeof(target.oOut), 1, fin) &&
+        fread(&target.oAnim, sizeof(target.oAnim), 1, fin);
+
+    if (read) {
+        Swap32bit(target.oMObj);
+        Swap32bit(target.oTab);
+        Swap32bit(target.oPal);
+        Swap32bit(target.oPort);
+        Swap32bit(target.oMse);
+        Swap32bit(target.oOut);
+        Swap32bit(target.oAnim);
+    }
+
+    return (read ? 1 : 0);
+}
+
+
+/**
+ * Read a PortHeader struct stored as raw data in a file, correcting
+ * for endianess.
+ *
+ * If import is not successful, the contents of the target MOBJ
+ * are not guaranteed.
+ *
+ * \param fin  An open port data file at the start of the MOBJ data.
+ * \param target  The destination for the read data.
+ * \return  1 if successfully read, 0 otherwise.
+ */
+size_t ImportMOBJ(FILE *fin, MOBJ &target)
+{
+    // Chain freads so they stop if one fails...
+    bool read =
+        fread(&target.Name[0], sizeof(target.Name), 1, fin) &&
+        fread(&target.qty, sizeof(target.qty), 1, fin) &&
+        fread(&target.Help[0], sizeof(target.Help), 1, fin);
+
+    for (int i = 0; i < 4 && read; i++) {
+        read = read &&
+            fread(&target.Reg[i].qty,
+                  sizeof(target.Reg[i].qty), 1, fin);
+
+        for (int j = 0; j < 4 && read; j++) {
+            read = read &&
+                fread(&target.Reg[i].CD[j].x1,
+                      sizeof(target.Reg[i].CD[j].x1), 1, fin) &&
+                fread(&target.Reg[i].CD[j].y1,
+                      sizeof(target.Reg[i].CD[j].y1), 1, fin) &&
+                fread(&target.Reg[i].CD[j].x2,
+                      sizeof(target.Reg[i].CD[j].x2), 1, fin) &&
+                fread(&target.Reg[i].CD[j].y2,
+                      sizeof(target.Reg[i].CD[j].y2), 1, fin);
+
+            if (read) {
+                Swap16bit(target.Reg[i].CD[j].x1);
+                Swap16bit(target.Reg[i].CD[j].x2);
+                Swap16bit(target.Reg[i].CD[j].y1);
+                Swap16bit(target.Reg[i].CD[j].y2);
+            }
+        }
+
+        read = read &&
+            fread(&target.Reg[i].iNum,
+                  sizeof(target.Reg[i].iNum), 1, fin) &&
+            fread(&target.Reg[i].sNum,
+                  sizeof(target.Reg[i].sNum), 1, fin) &&
+            fread(&target.Reg[i].PreDraw,
+                  sizeof(target.Reg[i].PreDraw), 1, fin);
+    }
+
+    return (read ? 1 : 0);
+}
+
+
+// Edit r settings {{{
 // ex: ts=4 noet sw=2
 // ex: foldmethod=marker
 // }}}
-
-
-
-
