@@ -162,14 +162,27 @@ struct sIMG sImg, sImgOld;
 uint32_t pTable, pLoc;
 
 
-void
-Seek_sOff(int where)
+/**
+ * Seeks the point in the spot file where
+ *
+ * Seeks in the global FILE sFin and modifies the global var hSPOT.
+ *
+ * \param where  the entry index in the SimpleHdr table.
+ */
+void Seek_sOff(int where)
 {
     fseek(sFin, where * sizeof_SimpleHdr + MSPOT.sOff, SEEK_SET);
     fread_SimpleHdr(&hSPOT, 1, sFin);
     fseek(sFin, hSPOT.offset, SEEK_SET);
 }
 
+/**
+ * Seeks the point in the spot file
+ *
+ * Seeks in the global FILE sFin and modifies the global var pTable.
+ *
+ * \param where  the entry index in the animation table.
+ */
 void Seek_pOff(int where)
 {
     fseek(sFin, where * (sizeof pTable) + (MSPOT.pOff), SEEK_SET);
@@ -204,8 +217,63 @@ char PortSel(char plr, char loc);
 char Request(char plr, char *s, char md);
 size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
 size_t ImportMOBJ(FILE *fin, MOBJ &target);
+size_t ImportSPath(FILE *fin, struct sPATH &target);
 
 
+/**
+ * Animates a Port background activity.
+ *
+ * The main spaceport has a variety of animated activities, some
+ * triggered by player activities, that run in the background.
+ * Examples include planes flying past & rockets being transported
+ * to the main launch pad.
+ *
+ * This function handles animation activity based on the mode:
+ *   - SPOT_LOAD begins an animation sequence, selecting it as the
+ *     active sequence and starting any sound effects.
+ *   - SPOT_STEP plays the next frame in the current animation
+ *     sequence.
+ *   - SPOT_DONE is used when the animation sequence has completed,
+ *     stopping any active sound effects and cleaning up globals.
+ *   - SPOT_KILL terminates any active sound effects and stops
+ *     animation, closing access to the animation file, performing
+ *     less clean up than SPOT_DONE.
+ *
+ * The spots.cdr file is composed of:
+ * SpotHeader
+ * Image Headers
+ * Images
+ * Sequence Directory
+ * <Unknown>
+ * Animation[]
+ *
+ * The SpotHeader (MSPOT) contains offsets to an image headers list and
+ * an animaton sequence directory, and the quantity of animation
+ * sequences.
+ *
+ * The Image Headers list is a SimpleHdr array, accessed via MSPOT.sOff
+ * and read into hSpot. These contain image size and an offset to the
+ * image data.
+ *  - Implementation: spots.cdr has space for 300 SimpleHdr structs
+ *    reserved (1800 bytes); 0-282 have a SimpleHdr defined.
+ *
+ * Images consist of a two-byte sIMG header {width, height} followed by
+ * raw palettized pixel data (coded to the Port palette). The SimpleHdr
+ * size is the length of the pixel data, and does not include the sIMG
+ * header.
+ *
+ * The animation sequence directory is a uint32_t array, accessed via
+ * MSPOT.pOff and read into pTable. It contains offsets to the
+ * animation sequences.
+ *
+ * Each animation sequence consists of a header:
+ *   - char[20] containing the sequence name
+ *   - uint16_t containing the count of sequence parts
+ * followed by a series of sPath objects defining each sequence part.
+ *
+ * \param loc   which spot animation to load when mode=SPOT_LOAD
+ * \param mode  SPOT_LOAD, SPOT_STEP, SPOT_DONE, or SPOT_KILL
+ */
 void SpotCrap(char loc, char mode)
 {
     display::LegacySurface *SP1;
@@ -225,9 +293,16 @@ void SpotCrap(char loc, char mode)
         return;
     }
 
-    if (mode == SPOT_LOAD) { // Open File
+    if (mode == SPOT_LOAD) {
+        // Open File
         sFin = sOpen("SPOTS.CDR", "rb", 0);
-        fread(&MSPOT, sizeof MSPOT, 1, sFin); // Read Header
+
+        // Read in Spot Header
+        // fread(&MSPOT, sizeof MSPOT, 1, sFin);
+        fread(&MSPOT.ID[0], sizeof(MSPOT.ID), 1, sFin);
+        fread(&MSPOT.Qty, sizeof(MSPOT.Qty), 1, sFin);
+        fread(&MSPOT.sOff, sizeof(MSPOT.sOff), 1, sFin);
+        fread(&MSPOT.pOff, sizeof(MSPOT.pOff), 1, sFin);
         Swap32bit(MSPOT.sOff);
         Swap32bit(MSPOT.pOff);
 
@@ -241,21 +316,20 @@ void SpotCrap(char loc, char mode)
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
-    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount > 0) { // Play Next Seq
+    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount > 0) {
+        // Play Next Seq
         int xx = 0;
         fseek(sFin, pLoc, SEEK_SET);     // position at next path
-        fread(&sPath, sizeof(sPath), 1, sFin); // get the next sPath struct
-
-        Swap16bit(sPath.Image);
-        Swap16bit(sPath.xPut);
-        Swap16bit(sPath.yPut);
-        Swap16bit(sPath.iHold);
-        SwapFloat(sPath.Scale);
+        // get the next sPATH struct
+        ImportSPath(sFin, sPath);
 
         pLoc = ftell(sFin);               // Path Update Locations
 
         Seek_sOff(sPath.Image);          // point to next image
-        fread(&sImg, sizeof sImg, 1, sFin); // get image header
+        // get image header
+        // fread(&sImg, sizeof sImg, 1, sFin);
+        fread(&sImg.w, sizeof(sImg.w), 1, sFin);
+        fread(&sImg.h, sizeof(sImg.h), 1, sFin);
 
         {
             int expected_w = hSPOT.size / sImg.h;
@@ -266,10 +340,10 @@ void SpotCrap(char loc, char mode)
             }
         }
 
+        // TODO: This makes the previous block obsolete
         sImg.w = hSPOT.size / sImg.h;
         SP1 = new display::LegacySurface(sImg.w, sImg.h);
         fread(SP1->pixels(), hSPOT.size, 1, sFin); // read image data
-
 
         if (sPath.Scale != 1.0) {
             sImg.w = (int)((float) sImg.w * sPath.Scale);
@@ -332,7 +406,8 @@ void SpotCrap(char loc, char mode)
         sPath.iHold--;
     } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount == 0) {
         SpotCrap(0, SPOT_DONE);
-    } else if ((mode == SPOT_DONE || sCount >= 0) && sFin != NULL) { // Close damn thing down
+    } else if ((mode == SPOT_DONE || sCount >= 0) && sFin != NULL) {
+        // Close the file and stop the audio.
         fclose(sFin);
         sFin = NULL;
         sPathOld.xPut = -1;
@@ -361,7 +436,7 @@ void SpotCrap(char loc, char mode)
 
 #if BABYSND
 
-    if ((loc >= 0 && loc <= 8) || (loc >= 15 && loc <= 19) || loc == 12 || loc == 14 || loc == 11 || loc == 10)
+    if ((loc >= 0 && loc <= 8) || (loc >= 15 && loc <= 19) || loc == 12 || loc == 14 || loc == 11 || loc == 10) {
         if (mode == SPOT_LOAD && !IsChannelMute(AV_SOUND_CHANNEL)) {
             switch (loc) {
             case 1:
@@ -423,7 +498,8 @@ void SpotCrap(char loc, char mode)
             }
 
             turnoff = 1;
-        };
+        }
+    }
 
 #endif
     return;
@@ -541,7 +617,7 @@ void DrawSpaceport(char plr)
     {
         const char *filename =
             (plr == 0 ? "images/usa_port.dat.0.png" :
-                        "images/sov_port.dat.0.png");
+             "images/sov_port.dat.0.png");
         boost::shared_ptr<display::PalettizedSurface> image(
             Filesystem::readImage(filename));
         image->exportPalette();
@@ -1985,7 +2061,7 @@ size_t ImportPortHeader(FILE *fin, struct PortHeader &target)
 
 
 /**
- * Read a PortHeader struct stored as raw data in a file, correcting
+ * Read a MOBJ struct stored as raw data in a file, correcting
  * for endianess.
  *
  * If import is not successful, the contents of the target MOBJ
@@ -2005,19 +2081,19 @@ size_t ImportMOBJ(FILE *fin, MOBJ &target)
 
     for (int i = 0; i < 4 && read; i++) {
         read = read &&
-            fread(&target.Reg[i].qty,
-                  sizeof(target.Reg[i].qty), 1, fin);
+               fread(&target.Reg[i].qty,
+                     sizeof(target.Reg[i].qty), 1, fin);
 
         for (int j = 0; j < 4 && read; j++) {
             read = read &&
-                fread(&target.Reg[i].CD[j].x1,
-                      sizeof(target.Reg[i].CD[j].x1), 1, fin) &&
-                fread(&target.Reg[i].CD[j].y1,
-                      sizeof(target.Reg[i].CD[j].y1), 1, fin) &&
-                fread(&target.Reg[i].CD[j].x2,
-                      sizeof(target.Reg[i].CD[j].x2), 1, fin) &&
-                fread(&target.Reg[i].CD[j].y2,
-                      sizeof(target.Reg[i].CD[j].y2), 1, fin);
+                   fread(&target.Reg[i].CD[j].x1,
+                         sizeof(target.Reg[i].CD[j].x1), 1, fin) &&
+                   fread(&target.Reg[i].CD[j].y1,
+                         sizeof(target.Reg[i].CD[j].y1), 1, fin) &&
+                   fread(&target.Reg[i].CD[j].x2,
+                         sizeof(target.Reg[i].CD[j].x2), 1, fin) &&
+                   fread(&target.Reg[i].CD[j].y2,
+                         sizeof(target.Reg[i].CD[j].y2), 1, fin);
 
             if (read) {
                 Swap16bit(target.Reg[i].CD[j].x1);
@@ -2028,17 +2104,54 @@ size_t ImportMOBJ(FILE *fin, MOBJ &target)
         }
 
         read = read &&
-            fread(&target.Reg[i].iNum,
-                  sizeof(target.Reg[i].iNum), 1, fin) &&
-            fread(&target.Reg[i].sNum,
-                  sizeof(target.Reg[i].sNum), 1, fin) &&
-            fread(&target.Reg[i].PreDraw,
-                  sizeof(target.Reg[i].PreDraw), 1, fin);
+               fread(&target.Reg[i].iNum,
+                     sizeof(target.Reg[i].iNum), 1, fin) &&
+               fread(&target.Reg[i].sNum,
+                     sizeof(target.Reg[i].sNum), 1, fin) &&
+               fread(&target.Reg[i].PreDraw,
+                     sizeof(target.Reg[i].PreDraw), 1, fin);
     }
 
     return (read ? 1 : 0);
 }
 
+/**
+ * Read a sPATH struct stored as raw data in a file, correcting
+ * for endianess.
+ *
+ * If import is not successful, the contents of the target sPATH
+ * are not guaranteed.
+ *
+ * The format of the sPATH is:
+ *   uint16_t Image;        // Which image to Use
+ *   int16_t  xPut, yPut;   // Where to place this image
+ *   int16_t iHold;         // Repeat this # times
+ *   float Scale;       // Scale object
+ *
+ * \param fin  An open port data file at the start of the sPATH data.
+ * \param target  The destination for the read data.
+ * \return  1 if successfully read, 0 otherwise.
+ */
+size_t ImportSPath(FILE *fin, struct sPATH &target)
+{
+    // Chain freads so they stop if one fails...
+    bool read =
+        fread(&target.Image, sizeof(target.Image), 1, fin) &&
+        fread(&target.xPut, sizeof(target.xPut), 1, fin) &&
+        fread(&target.yPut, sizeof(target.yPut), 1, fin) &&
+        fread(&target.iHold, sizeof(target.iHold), 1, fin) &&
+        fread(&target.Scale, sizeof(target.Scale), 1, fin);
+
+    if (read) {
+        Swap16bit(target.Image);
+        Swap16bit(target.xPut);
+        Swap16bit(target.yPut);
+        Swap16bit(target.iHold);
+        Swap32bit(target.Scale);
+    }
+
+    return (read ? 1 : 0);
+}
 
 // Edit r settings {{{
 // ex: ts=4 noet sw=2
