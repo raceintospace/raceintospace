@@ -80,6 +80,15 @@ void _SwapGameDat(void)
                 _Swap16bit(Data->P[j].Pool[i].Prestige);
         }
 
+        for (i = 0; i < 100; i++) {
+            Data->P[j].History[i].result =
+                _Swap16bit(Data->P[j].History[i].result);
+            Data->P[j].History[i].spResult =
+                _Swap16bit(Data->P[j].History[i].spResult);
+            Data->P[j].History[i].Prestige =
+                _Swap16bit(Data->P[j].History[i].Prestige);
+        }
+
         Data->P[j].PastMissionCount = _Swap16bit(Data->P[j].PastMissionCount);
 
         for (i = 0; i < 30; i++) {
@@ -108,6 +117,14 @@ void _SwapEquipment(void)
                 _Swap16bit(Data->P[plr].Probe[i].MaxPay);
             Data->P[plr].Probe[i].Safety =
                 _Swap16bit(Data->P[plr].Probe[i].Safety);
+            Data->P[plr].Probe[i].MisSaf =
+                _Swap16bit(Data->P[plr].Probe[i].MisSaf);
+            Data->P[plr].Probe[i].MSF =
+                _Swap16bit(Data->P[plr].Probe[i].MSF);
+            Data->P[plr].Probe[i].Steps =
+                _Swap16bit(Data->P[plr].Probe[i].Steps);
+            Data->P[plr].Probe[i].Failures =
+                _Swap16bit(Data->P[plr].Probe[i].Failures);
         }
 
         for (i = 0; i < 5; i++) {
@@ -119,6 +136,14 @@ void _SwapEquipment(void)
                 _Swap16bit(Data->P[plr].Rocket[i].MaxPay);
             Data->P[plr].Rocket[i].Safety =
                 _Swap16bit(Data->P[plr].Rocket[i].Safety);
+            Data->P[plr].Rocket[i].MisSaf =
+                _Swap16bit(Data->P[plr].Rocket[i].MisSaf);
+            Data->P[plr].Rocket[i].MSF =
+                _Swap16bit(Data->P[plr].Rocket[i].MSF);
+            Data->P[plr].Rocket[i].Steps =
+                _Swap16bit(Data->P[plr].Rocket[i].Steps);
+            Data->P[plr].Rocket[i].Failures =
+                _Swap16bit(Data->P[plr].Rocket[i].Failures);
         }
 
         for (i = 0; i < 7; i++) {
@@ -130,6 +155,14 @@ void _SwapEquipment(void)
                 _Swap16bit(Data->P[plr].Manned[i].MaxPay);
             Data->P[plr].Manned[i].Safety =
                 _Swap16bit(Data->P[plr].Manned[i].Safety);
+            Data->P[plr].Manned[i].MisSaf =
+                _Swap16bit(Data->P[plr].Manned[i].MisSaf);
+            Data->P[plr].Manned[i].MSF =
+                _Swap16bit(Data->P[plr].Manned[i].MSF);
+            Data->P[plr].Manned[i].Steps =
+                _Swap16bit(Data->P[plr].Manned[i].Steps);
+            Data->P[plr].Manned[i].Failures =
+                _Swap16bit(Data->P[plr].Manned[i].Failures);
         }
 
         for (i = 0; i < 7; i++) {
@@ -141,6 +174,14 @@ void _SwapEquipment(void)
                 _Swap16bit(Data->P[plr].Misc[i].MaxPay);
             Data->P[plr].Misc[i].Safety =
                 _Swap16bit(Data->P[plr].Misc[i].Safety);
+            Data->P[plr].Misc[i].MisSaf =
+                _Swap16bit(Data->P[plr].Misc[i].MisSaf);
+            Data->P[plr].Misc[i].MSF =
+                _Swap16bit(Data->P[plr].Misc[i].MSF);
+            Data->P[plr].Misc[i].Steps =
+                _Swap16bit(Data->P[plr].Misc[i].Steps);
+            Data->P[plr].Misc[i].Failures =
+                _Swap16bit(Data->P[plr].Misc[i].Failures);
         }
     }
 }
