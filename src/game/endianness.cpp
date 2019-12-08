@@ -54,7 +54,7 @@ void _SwapGameDat(void)
         for (i = 0; i < 5; i++) {
             Data->P[j].PrestHist[i][0] =
                 _Swap16bit(Data->P[j].PrestHist[i][0]);
-            Data->P[j].PrestHist[1][1] =
+            Data->P[j].PrestHist[i][1] =
                 _Swap16bit(Data->P[j].PrestHist[i][1]);
 
             Data->P[j].PresRev[i] = _Swap16bit(Data->P[j].PresRev[i]);
