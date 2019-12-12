@@ -89,6 +89,8 @@ int StepAnim(int x, int y, FILE *fin);
 char DrawMoonSelection(char nauts, char plr);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
+size_t ImportAnimType(FILE *fin, struct AnimType &target);
+size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -1354,19 +1356,19 @@ FILE *OpenAnim(char *fname)
         return fin;
     }
 
-    fread(&AIndex, sizeof AIndex, 1, fin);
-
-    while (strncmp(AIndex.ID, fname, 4) != 0) {
-        fread(&AIndex, sizeof AIndex, 1, fin);
-    }
+    // TODO: Add a check to make sure fname is found in file, else
+    // this becomes an infinite loop.
+    do {
+        // fread(&AIndex, sizeof AIndex, 1, fin);
+        fread(&AIndex.ID[0], sizeof(AIndex.ID), 1, fin);
+        fread(&AIndex.offset, sizeof(AIndex.offset), 1, fin);
+        fread(&AIndex.size, sizeof(AIndex.size), 1, fin);
+    } while (strncmp(AIndex.ID, fname, 4) != 0);
 
     Swap32bit(AIndex.offset);
     Swap32bit(AIndex.size);
     fseek(fin, AIndex.offset, SEEK_SET);
-
-    fread(&AHead, sizeof AHead, 1, fin);
-    Swap16bit(AHead.w);
-    Swap16bit(AHead.h);
+    ImportAnimType(fin, AHead);
 
     dply = new display::LegacySurface(AHead.w, AHead.h);
     dply->palette().copy_from(display::graphics.legacyScreen()->palette());
@@ -1402,8 +1404,7 @@ int StepAnim(int x, int y, FILE *fin)
     }
 
     if (cFrame < tFrames) {
-        fread(&BHead, sizeof BHead, 1, fin);
-        Swap32bit(BHead.fSize);
+        ImportBlockHead(fin, BHead);
 
         assert(BHead.fSize < 128 * 1024);
         char *buf = (char *)alloca(BHead.fSize);
@@ -1694,4 +1695,54 @@ int ImportOF(FILE *fin, struct OF &target)
     fread(&target.idx, sizeof(target.idx), 1, fin);
     Swap16bit(target.idx);
     return 0;
+}
+
+
+/**
+ * Read an AnimType struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data.
+ * \return  1 if successful, 0 otherwise.
+ */
+size_t ImportAnimType(FILE *fin, struct AnimType &target)
+{
+    bool success =
+        fread(&target.ID[0], sizeof(target.ID), 1, fin) &&
+        fread(&target.OVL[0], sizeof(target.OVL), 1, fin) &&
+        fread(&target.SD[0][0], sizeof(target.SD), 1, fin) &&
+        fread(&target.w, sizeof(target.w), 1, fin) &&
+        fread(&target.h, sizeof(target.h), 1, fin) &&
+        fread(&target.sPlay[0], sizeof(target.sPlay), 1, fin) &&
+        fread(&target.fNum, sizeof(target.fNum), 1, fin) &&
+        fread(&target.fLoop, sizeof(target.fLoop), 1, fin) &&
+        fread(&target.cOff, sizeof(target.cOff), 1, fin) &&
+        fread(&target.cNum, sizeof(target.cNum), 1, fin);
+
+    Swap16bit(target.w);
+    Swap16bit(target.h);
+    return (success ? 1 : 0);
+}
+
+
+/**
+ * Read a BlockHead struct stored in a file as raw data.
+ *
+ * A BlockHead is a header in an animation file, at the beginning of
+ * an animation frame. It contains a value for identifying the
+ * compression, and the size (in bytes) of the animation pixel data
+ * that follows.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data
+ * \return  1 if successful, 0 otherwise
+ */
+size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
+{
+    bool success =
+        fread(&target.cType, sizeof(target.cType), 1, fin) &&
+        fread(&target.fSize, sizeof(target.fSize), 1, fin);
+
+    Swap32bit(target.fSize);
+    return (success ? 1 : 0);
 }
