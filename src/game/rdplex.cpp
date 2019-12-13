@@ -1525,12 +1525,12 @@ BuyUnit(char category, char unit, char player_index)
             //old code: Data->P[player_index].Rocket[ROCKET_HW_TWO_STAGE].Safety = 40;
             Data->P[player_index].Rocket[ROCKET_HW_TWO_STAGE].Safety = 10 + tt;
 
-            if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75))  // Tech from multiple programs
-                //old code: Data->P[player_index].Rocket[ROCKET_HW_TWO_STAGE].Safety = 65;
-
-            {
-                break;
+            // Tech from multiple programs
+            if ((n1 >= 75 || n5 >= 75) && (n3 >= 75 || n4 >= 75)) {
+                Data->P[player_index].Rocket[ROCKET_HW_TWO_STAGE].Safety = 65;
             }
+
+            break;
 
         case ROCKET_HW_THREE_STAGE:    // Saturn/N1
             if (n1 > 10) {
