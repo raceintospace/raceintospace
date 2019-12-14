@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 
@@ -57,18 +59,45 @@ extern bool fullscreenMissionPlayback;
 
 void Tick(char);
 
-
-
 void GetFailStat(struct XFails *Now, char *FName, int rnum);
 int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
 
+/**
+ * Load the failure state information explaining a mission step
+ * failure.
+ *
+ * Step Failure reports are represented by an XFails structure,
+ * comprising:
+ *    per  -
+ *    code -
+ *    val  -
+ *    xtra -
+ *    fail -
+ *    text - The written description of the failure, displayed in
+ *           the step failure report.
+ *
+ * For unmanned steps, per lies in [-5, -1]. The negative value marks
+ * it as unmanned and means it is always less than a manned value. It
+ * also produces an even probability distribution. For Manned steps,
+ * per is designed so each entry's per sits within [0, 10000) and
+ * the relative values create an uneven probability distribution.
+ *
+ * TODO: Add error handling in case FName does not match a code.
+ * At minimum, log an error. Preferably, throw an exception.
+ *
+ * \param Now    destination for the fail state read from the file
+ *               (Not NULL).
+ * \param FName  the code giving the step failure type.
+ * \param rnum   between -1 and -5 for unmanned steps, 0 and 10000 for
+ *               manned.
+ */
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
-    DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)", rnum);
-    int i;
+    DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)",
+           rnum);
     FILE *fin;
     int32_t count;
     struct Fdt {
@@ -77,21 +106,27 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
         int16_t size;
     } Pul;
 
+    // const size_t sizeof_Pul = 6 + 4 + 2;
+    // const size_t sizeof_XFails = 4 + 2 + 2 + 2 + 2 + 200;
+
+    assert(Now != NULL);
+
     fin = sOpen("FAILS.CDR", "rb", 0);
     count = 44;
     fread(&count, sizeof count, 1, fin); // never written to file
     Swap32bit(count);
-    fread(&Pul, sizeof Pul, 1, fin);
-    Swap32bit(Pul.offset);
-    Swap16bit(Pul.size);
-    i = 0;
 
-    while (xstrncasecmp(Pul.Code, FName, 4) != 0 && i < count) {
-        fread(&Pul, sizeof Pul, 1, fin);
+    int i = 0;
+
+    do {
+        fread(&Pul.Code[0], sizeof Pul.Code, 1, fin);
+        fread(&Pul.offset, sizeof Pul.offset, 1, fin);
         Swap32bit(Pul.offset);
+        fread(&Pul.size, sizeof Pul.size, 1, fin);
         Swap16bit(Pul.size);
-        i++;
-    }
+    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && ++i < count);
+    // This uses short-circuit evaluation to distinguish between
+    // string match and iterator comparison.
 
     if (i == count) {
         fclose(fin);
@@ -102,13 +137,27 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 
     if (rnum < 0) { // Unmanned portion
         do {
-            fread(Now, sizeof(struct XFails), 1, fin);
-            Swap32bit(Now->per);    // Only need to swap this one since we're checking only that
-
+            // Only need to swap Now->per since we're checking only that
+            fread(&Now->per, sizeof(Now->per), 1, fin);
+            fread(&Now->code, sizeof(Now->code), 1, fin);
+            fread(&Now->val, sizeof(Now->val), 1, fin);
+            fread(&Now->xtra, sizeof(Now->xtra), 1, fin);
+            fread(&Now->fail, sizeof(Now->fail), 1, fin);
+            fread(&Now->text[0], sizeof(Now->text), 1, fin);
+            Swap32bit(Now->per);
+            Swap16bit(Now->code);
+            Swap16bit(Now->val);
+            Swap16bit(Now->xtra);
+            Swap16bit(Now->fail);
         } while (Now->per != rnum);
     } else {
         do {
-            fread(Now, sizeof(struct XFails), 1, fin);
+            fread(&Now->per, sizeof(Now->per), 1, fin);
+            fread(&Now->code, sizeof(Now->code), 1, fin);
+            fread(&Now->val, sizeof(Now->val), 1, fin);
+            fread(&Now->xtra, sizeof(Now->xtra), 1, fin);
+            fread(&Now->fail, sizeof(Now->fail), 1, fin);
+            fread(&Now->text[0], sizeof(Now->text), 1, fin);
             Swap32bit(Now->per);
             Swap16bit(Now->code);
             Swap16bit(Now->val);
@@ -1303,4 +1352,3 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     death = 0;
     return FNote;
 }
-

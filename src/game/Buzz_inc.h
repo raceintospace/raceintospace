@@ -48,19 +48,29 @@ extern "C" {
 #include "proto.h"    // prototypes and general defines
 #include "music.h"    // defines for music names
 
-/* FIXME: non-portable. Used to get struct layout like in DOS days */
-#pragma pack( 1 )
+/* Originally, the code relied upon tight struct packing, because
+ * file data was read directly into the memory space of data structures.
+ * An open-ended pragma was used to enforce tight packing. However,
+ * this created several problems:
+ *   - It caused problems in gamedata.h
+ *   - Header files with structs/classes defined could be interpreted
+ *   differently by code in multiple files, with one section of code
+ *   treating the struct as packed and another as unpacked
+ *   - It locks the structs/classes so they cannot be modified, which
+ *   is inconvenient for major data types.
+ *   - It dictated include ordering.
+ *
+ * If restoring tight packing, define ALTERED_STRUCTURE_PACKING as
+ * some files - gamedata.h - do not like the tight packing and check
+ * for ALTERED_STRUCTURE_PACKING to see if it is enabled.
+ */
+// #pragma pack( 1 )
 
 #include "data.h"     // main data structures
 
 /* get the alignment back to defaults */
 /* #pragma pack() */
-
-/* BIG FIXME: Unfortunately structures defined in some functions rely on tight
- * packing. This setting mainly breaks things in gamedata.h, so we make sure
- * we notice bad order of #includes. That's another good reason to make all
- * code use the gamedata.c interfaces. */
-#define ALTERED_STRUCTURE_PACKING
+// #define ALTERED_STRUCTURE_PACKING
 
 
 #include "macros.h"     // Collected Macros

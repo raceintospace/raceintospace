@@ -87,6 +87,10 @@ FILE *OpenAnim(char *fname);
 int CloseAnim(FILE *fin);
 int StepAnim(int x, int y, FILE *fin);
 char DrawMoonSelection(char nauts, char plr);
+int ImportInfin(FILE *fin, struct Infin &target);
+int ImportOF(FILE *fin, struct OF &target);
+size_t ImportAnimType(FILE *fin, struct AnimType &target);
+size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -108,7 +112,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     unsigned int fres, max;
     char lnch = 0, AEPT, BABY, Tst2, Tst3;
     unsigned char sts = 0, fem = 0;
-    FILE *fin, *fout, *ffin, *nfin;
+    FILE *fout, *ffin, *nfin;
     struct oGROUP *bSeq, aSeq;
     struct oFGROUP *dSeq, cSeq;
     struct Table *F;
@@ -127,8 +131,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     strncpy(Seq, InSeq, sizeof(Seq));
 
     F = NULL; /* XXX check uninitialized */
-    dSeq = NULL; /* XXX check uninitialized */
-    bSeq = NULL; /* XXX check uninitialized */
     i = j = 0; /* XXX check uninitialized */
 
     memset(buffer, 0x00, BUFFER_SIZE);
@@ -227,15 +229,20 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     if (mode == 0) {
         bSeq = (struct oGROUP *)&scratch[35000];
+        // TODO: Move this to a function and return a vector...
+        // Make sure there's enough memory to read in the entire file.
+        assert(818 * sizeof(struct oGROUP) < (SCRATCH_SIZE - 35000));
+
+        FILE *fin = open_gamedat(SEQ_DAT);
+        fread_oGROUP(bSeq, 818, fin);
+        fclose(fin);
     } else {
         dSeq = (struct oFGROUP *)&scratch[35000];
-    }
 
-    if (mode == 0) {
-        fin = open_gamedat(SEQ_DAT);
-        fread(&scratch[35000], 1, SCRATCH_SIZE - 35000, fin);
-    } else {
-        fin = open_gamedat(FSEQ_DAT);
+        // Make sure the Table entries won't overflow into dSeq
+        assert(50 * sizeof(struct Table) < 35000);
+
+        FILE *fin = open_gamedat(FSEQ_DAT);
         F = (struct Table *)&scratch[0];
         fread_Table(F, 50, fin);
 
@@ -256,9 +263,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             fseek(fin, F[i].foffset, SEEK_SET);
             fread_oFGROUP(dSeq, F[i].size / sizeof_oFGROUP, fin);
         }
+
+        fclose(fin);
     }
 
-    fclose(fin);
 
     if (mode == 0) {
         j = 0;
@@ -267,10 +275,11 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             j++;
         }
 
-        if (bSeq[j].ID[2] - 0x30 == 1)
+        if (bSeq[j].ID[2] - 0x30 == 1) {
             if (fem == 0) {
                 j++;
             }
+        }
     } else if (err == 0) {
         j = 0;
         memset(sName, 0x00, sizeof sName);
@@ -296,7 +305,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         if (mode == 0) {
             j = 0;
         } else {
-            fin = open_gamedat(FSEQ_DAT);
+            FILE *fin = open_gamedat(FSEQ_DAT);
             fseek(fin, F[0].foffset, SEEK_SET);
             fread_oFGROUP(dSeq, F[0].size / sizeof_oFGROUP, fin);
             fclose(fin);
@@ -393,48 +402,46 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     ffin = open_gamedat("BABYPICX.CDR");
 
+    // TODO: Replace use of buffer.
     Mob = (struct Infin *) buffer;
 
     if (AEPT && !mode) {
+        // BABYCLIF.CDR consists of two tables:
+        //  * 240 Infin entries, each 40 bytes (7200 bytes)
+        //  * 486 OF entries, each 10 bytes (4860 bytes)
+        // totalling 12060 bytes.
         if ((nfin = open_gamedat("BABYCLIF.CDR")) == NULL) {
             return;
         }
 
-        fread(Mob, CLIF_TABLE * (sizeof(struct Infin)), 1, nfin); //Specs: First Table
-
-        // Endianness swap
-        for (i = 0; i < CLIF_TABLE; i++)  {
-            int ii;
-
-            for (ii = 0; ii < 10; ii++) {
-                Swap16bit(Mob[i].List[ii]);
-            }
+        // Specs: First Table
+        for (i = 0; i < CLIF_TABLE; i++) {
+            ImportInfin(nfin, Mob[i]);
         }
+
+        // Since information is being written blindly into buffer,
+        // check to make sure it won't be overwritten by the other
+        // pointer accessing buffer...
+        assert(CLIF_TABLE * sizeof(struct Infin) < 15000);
 
         Mob2 = (struct OF *)&buffer[15000];
         fseek(nfin, 7200, SEEK_SET);
-        fread(Mob2, SCND_TABLE * (sizeof(struct OF)), 1, nfin); //Specs: Second Table
+
+        // Specs: Second Table
+        for (i = 0; i < SCND_TABLE; i++) {
+            ImportOF(nfin, Mob2[i]);
+            Mob2[i].Name[strlen(Mob2[i].Name) - 3] = '-'; // patch
+        }
+
         fclose(nfin);
-
-        // Endianness swap
-        for (i = 0; i < SCND_TABLE; i++) {
-            Swap16bit(Mob2[i].idx);
-        }
-
-        for (i = 0; i < SCND_TABLE; i++) {
-            Mob2[i].Name[strlen(Mob2[i].Name) - 3] = '_';    // patch
-        }
     } else {
         nfin = open_gamedat("BABYNORM.CDR");
-        fread(Mob, NORM_TABLE * (sizeof(struct Infin)), 1, nfin);
-        fclose(nfin);
 
-        // Endianness swap
         for (i = 0; i < NORM_TABLE; i++) {
-            for (int k = 0; k < 10; k++) {
-                Swap16bit(Mob[i].List[k]);
-            }
+            ImportInfin(nfin, Mob[i]);
         }
+
+        fclose(nfin);
     }
 
     // Plop(plr,1); //Specs: random single frame for sound buffering
@@ -462,8 +469,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             sidx = cSeq.oLIST[i].sIdx;
         }
 
-        Swap16bit(aidx);
-        Swap16bit(sidx);
+        // These should be read correctly by fread_oFGROUP / fread_oGROUP
+        // Swap16bit(aidx);
+        // Swap16bit(sidx);
 
         if (sidx) {
             play_audio(sidx, mode);
@@ -776,7 +784,7 @@ void Clock(char plr, char clck, char mode, char tm)
 
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
 {
-    int i, x, y, attempt, which, mx2, mx1;
+    int x, y, attempt, which, mx2, mx1;
     uint16_t *bot, off = 0;
     int32_t locl;
     static char kk = 0, bub = 0;
@@ -980,12 +988,12 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
     }
     fread(boob.pixels(), 1564, 1, ffin);
 
-    for (i = 0; i < 782; i++) {
+    for (int i = 0; i < 782; i++) {
         bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
         bot[i] = (bot[i] & 0x0F0F);
     }
 
-    for (i = 0; i < 1564; i++) {
+    for (int i = 0; i < 1564; i++) {
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
     }
@@ -1348,19 +1356,19 @@ FILE *OpenAnim(char *fname)
         return fin;
     }
 
-    fread(&AIndex, sizeof AIndex, 1, fin);
-
-    while (strncmp(AIndex.ID, fname, 4) != 0) {
-        fread(&AIndex, sizeof AIndex, 1, fin);
-    }
+    // TODO: Add a check to make sure fname is found in file, else
+    // this becomes an infinite loop.
+    do {
+        // fread(&AIndex, sizeof AIndex, 1, fin);
+        fread(&AIndex.ID[0], sizeof(AIndex.ID), 1, fin);
+        fread(&AIndex.offset, sizeof(AIndex.offset), 1, fin);
+        fread(&AIndex.size, sizeof(AIndex.size), 1, fin);
+    } while (strncmp(AIndex.ID, fname, 4) != 0);
 
     Swap32bit(AIndex.offset);
     Swap32bit(AIndex.size);
     fseek(fin, AIndex.offset, SEEK_SET);
-
-    fread(&AHead, sizeof AHead, 1, fin);
-    Swap16bit(AHead.w);
-    Swap16bit(AHead.h);
+    ImportAnimType(fin, AHead);
 
     dply = new display::LegacySurface(AHead.w, AHead.h);
     dply->palette().copy_from(display::graphics.legacyScreen()->palette());
@@ -1396,8 +1404,7 @@ int StepAnim(int x, int y, FILE *fin)
     }
 
     if (cFrame < tFrames) {
-        fread(&BHead, sizeof BHead, 1, fin);
-        Swap32bit(BHead.fSize);
+        ImportBlockHead(fin, BHead);
 
         assert(BHead.fSize < 128 * 1024);
         char *buf = (char *)alloca(BHead.fSize);
@@ -1644,4 +1651,98 @@ int RocketBoosterSafety(int safetyRocket, int safetyBooster)
     } else {
         return ((safetyRocket + safetyBooster) / 2);
     }
+}
+
+
+/**
+ * Read an Infin struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data.
+ */
+int ImportInfin(FILE *fin, struct Infin &target)
+{
+    // struct Infin {
+    //     char Code[9], Qty;
+    //     int16_t List[10];
+    // };
+    fread(&target.Code[0], sizeof(target.Code), 1, fin);
+    fread(&target.Qty, sizeof(target.Qty), 1, fin);
+    fread(&target.List[0], sizeof(target.List), 1, fin);
+
+    for (int i = 0; i < 10; i++) {
+        Swap16bit(target.List[i]);
+    }
+
+    return 0;
+}
+
+
+/**
+ * Read in an OF struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data
+ * \return
+ */
+int ImportOF(FILE *fin, struct OF &target)
+{
+    // struct OF {
+    //     char Name[8];
+    //     int16_t idx;
+    // };
+    fread(&target.Name[0], sizeof(target.Name), 1, fin);
+    fread(&target.idx, sizeof(target.idx), 1, fin);
+    Swap16bit(target.idx);
+    return 0;
+}
+
+
+/**
+ * Read an AnimType struct stored in a file as raw data.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data.
+ * \return  1 if successful, 0 otherwise.
+ */
+size_t ImportAnimType(FILE *fin, struct AnimType &target)
+{
+    bool success =
+        fread(&target.ID[0], sizeof(target.ID), 1, fin) &&
+        fread(&target.OVL[0], sizeof(target.OVL), 1, fin) &&
+        fread(&target.SD[0][0], sizeof(target.SD), 1, fin) &&
+        fread(&target.w, sizeof(target.w), 1, fin) &&
+        fread(&target.h, sizeof(target.h), 1, fin) &&
+        fread(&target.sPlay[0], sizeof(target.sPlay), 1, fin) &&
+        fread(&target.fNum, sizeof(target.fNum), 1, fin) &&
+        fread(&target.fLoop, sizeof(target.fLoop), 1, fin) &&
+        fread(&target.cOff, sizeof(target.cOff), 1, fin) &&
+        fread(&target.cNum, sizeof(target.cNum), 1, fin);
+
+    Swap16bit(target.w);
+    Swap16bit(target.h);
+    return (success ? 1 : 0);
+}
+
+
+/**
+ * Read a BlockHead struct stored in a file as raw data.
+ *
+ * A BlockHead is a header in an animation file, at the beginning of
+ * an animation frame. It contains a value for identifying the
+ * compression, and the size (in bytes) of the animation pixel data
+ * that follows.
+ *
+ * \param fin  Pointer to a FILE object that specifies an input stream.
+ * \param target  The destination for the read data
+ * \return  1 if successful, 0 otherwise
+ */
+size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
+{
+    bool success =
+        fread(&target.cType, sizeof(target.cType), 1, fin) &&
+        fread(&target.fSize, sizeof(target.fSize), 1, fin);
+
+    Swap32bit(target.fSize);
+    return (success ? 1 : 0);
 }

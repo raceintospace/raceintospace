@@ -51,13 +51,28 @@ void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
     return;
 }
 
+/**
+ * Draw text using the Header character set.
+ *
+ * \param x   x-coordinate for displaying the header text.
+ * \param y   y-coordinate for displaying the header text.
+ * \param txt  The text string to display.
+ * \param mode  0 or 1 (Unused).
+ * \param te  Highlight the letter at index te (0-based) in red.
+ */
 void draw_heading(int x, int y, const char *txt, char mode, char te)
 {
     int i, k, l, px;
     struct LET {
         char width, img[15][21];
     } letter;
+    const int letterSize = sizeof(letter.width) + sizeof(letter.img);
     int c;
+
+    if (txt == NULL) {
+        // TODO: This should log an error or throw an exception.
+        return;
+    }
 
     y--;
 
@@ -79,7 +94,11 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
             px++;
         }
 
-        memcpy(&letter, letter_dat + (sizeof letter * px), sizeof letter); // copy letter over
+        // Read into letter piecewise to avoid packing issues.
+        const char *offset = letter_dat + (letterSize * px);
+        memcpy(&letter.width, offset, sizeof(letter.width));
+        memcpy(&letter.img, offset + sizeof(letter.width),
+               sizeof(letter.img));
 
         for (k = 0; k < 15; k++) {
             for (l = 0; l < letter.width; l++) {

@@ -186,20 +186,26 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
  */
 void LoadMIVals()
 {
-    size_t MI_size = sizeof(struct MDA) * 28 * 2;
-
     FILE *file = sOpen("VTABLE.DAT", "rb", 0);
-    fread(MI, MI_size, 1, file);
-    fclose(file);
 
-    // Endianness swap
+    // Read in the data & perform Endianness swap
     for (int i = 0; i < 2 * 28; i++) {
+        // struct MDA {
+        //     int16_t x1, y1, x2, y2, yOffset;
+        // } MI[2 * 28];
+        fread(&MI[i].x1, sizeof(MI[i].x1), 1, file);
+        fread(&MI[i].y1, sizeof(MI[i].y1), 1, file);
+        fread(&MI[i].x2, sizeof(MI[i].x2), 1, file);
+        fread(&MI[i].y2, sizeof(MI[i].y2), 1, file);
+        fread(&MI[i].yOffset, sizeof(MI[i].yOffset), 1, file);
         Swap16bit(MI[i].x1);
         Swap16bit(MI[i].y1);
         Swap16bit(MI[i].x2);
         Swap16bit(MI[i].y2);
         Swap16bit(MI[i].yOffset);
     }
+
+    fclose(file);
 }
 
 

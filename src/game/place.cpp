@@ -439,16 +439,23 @@ int Help(const char *FName)
 
     fin = sOpen("HELP.CDR", "rb", 0);
     fread(&count, sizeof count, 1, fin);
-    fread(&Pul, sizeof Pul, 1, fin);
     Swap32bit(count);
+
+    if (count <= 0) {
+        // TODO: Add logging statement.
+        return 0;
+    }
 
     i = 0;
 
-    while (xstrncasecmp(Pul.Code, FName, 4) != 0 && i < count) {
-        fread(&Pul, sizeof Pul, 1, fin);
-        i++;
-    }
+    do {
+        fread(&Pul.Code[0], sizeof(Pul.Code), 1, fin);
+        fread(&Pul.offset, sizeof(Pul.offset), 1, fin);
+        fread(&Pul.size, sizeof(Pul.size), 1, fin);
+    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && i++ < count);
 
+    // This uses short-circuit evaluation to distinguish between
+    // string match and iterator comparison.
     if (i == count) {
         fclose(fin);
         return 0;
