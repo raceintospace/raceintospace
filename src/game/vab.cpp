@@ -1011,7 +1011,7 @@ void DispWts(int two, int one)
 void VAB(char plr)
 {
     int ccc, rk;               // Payload index & rocket index
-    int mis, wgt, cwt, ab, ac;
+    int mis, weight, ab, ac;
     int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
     char Name[8][12];          // Cached rocket names
     char ButOn;
@@ -1074,30 +1074,24 @@ void VAB(char plr)
             InBox(245, 5, 314, 17);
         }
 
-        wgt = 0;
-
-        for (int i = 0; i < 4; i++) {
-            wgt += VAS[1][i].wt;
-        }
-
+        ccc = 1;
+        weight = 0;
         rk = 0;
 
-        while (pay[rk] < wgt) {
+        for (int i = 0; i < 4; i++) {
+            weight += VAS[ccc][i].wt;
+        }
+
+        while (pay[rk] < weight) {
             rk++;
         }
 
-        ccc = 1;
         ShowVA(ccc);
-        ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
+        ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
+                isDamaged[rk]);
         DispRck(plr, rk);
         DispVA(plr, ccc);
-        cwt = 0;
-
-        for (int i = 0; i < 4; i++) {
-            cwt += VAS[ccc][i].wt;
-        }
-
-        DispWts(cwt, pay[rk]);
+        DispWts(weight, pay[rk]);
         //display cost (XX of XX)
         ShowAutopurchase(plr, ccc, rk, &qty[0]);
 
@@ -1165,7 +1159,8 @@ void VAB(char plr)
                 }
 
                 ShowVA(ccc);
-                ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
+                ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
+                        isDamaged[rk]);
                 OutBox(6, 86, 163, 94);
             } else if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
                 // CONTINUE/EXIT/DO NOTHING
@@ -1196,7 +1191,7 @@ void VAB(char plr)
                 OutBox(249, 185, 314, 195);
                 ClrMiss(plr, mis);
                 break;
-            } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && cwt <= pay[rk]) {
+            } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && weight <= pay[rk]) {
                 int j = 0;
 
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
@@ -1315,8 +1310,9 @@ void VAB(char plr)
 
                 //display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rk, &qty[0]);
-                ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < wgt, isDamaged[rk]);
-                DispWts(cwt, pay[rk]);
+                ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
+                        isDamaged[rk]);
+                DispWts(weight, pay[rk]);
                 DispRck(plr, rk);
                 WaitForMouseUp();
 
@@ -1334,14 +1330,16 @@ void VAB(char plr)
                     ccc = 0;
                 }
 
-                cwt = 0;
+                weight = 0;
 
                 for (int i = 0; i < 4; i++) {
-                    cwt += VAS[ccc][i].wt;
+                    weight += VAS[ccc][i].wt;
                 }
 
                 ShowVA(ccc);
-                DispWts(cwt, pay[rk]);
+                DispWts(weight, pay[rk]);
+                ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
+                        isDamaged[rk]);
                 DispVA(plr, ccc);
                 //display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rk, &qty[0]);
