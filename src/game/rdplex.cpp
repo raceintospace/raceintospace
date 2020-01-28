@@ -807,7 +807,7 @@ void ShowUnit(char hw, char un, char player_index)
         }
 
         draw_number(0, 0, Data->P[player_index].RD_Mods_For_Turn);
-        draw_string(0, 0, "%/TEAM");
+        draw_string(0, 0, "/TEAM");
     }
 
     display::graphics.setForegroundColor(20);
