@@ -1,0 +1,32 @@
+
+Race Into Space Code of Conduct
+
+
+The RIS team is a group of volunteers working together to improve this old edutainment game.  We haven't had conduct issues in the past, and this is simply meant to encourage that to continue.
+
+Diversity is a strength, but it can also lead to communication issues and unhappiness.  This document lays out some ground rules we ask people to follow, to keep the group from becoming unwelcoming to anyone who wants to contribute.
+
+This isn't an exhaustive list of things you can't do.  Think of it as a guideline to give you an idea of what's considered acceptable vs. what's more out of bounds.
+
+    Be friendly and patient.
+    Be welcoming.  We try to be a community that welcomes and supports people of all backgrounds and identities.  This includes women and members of racial minorities, different cultures and ethnicities, religions, politics, immigration status, sexual orientation, cis vs. trans status, and so on.
+    Be considerate.  Your work will be used by other people, and you may depend on the work of others.  Any decision you take will affect users and other developers, and you should take that into account when making decisions.  Remember that we're an international group, so you might be communicating in someone else's second language (or third language, etc.).
+    Be respectful.  We won't all agree all the time, but disagreement is no excuse for poor behavior or manners.  We all experience frustration now and then, but we can't let that lead to personal attacks.  A community where people are made to feel uncomfortable or threatened is not a productive one, and behavior that leads to it is unwelcome here.  Members of this group should be respectful when dealing with others.
+    Be understanding in the above.  It's important to remember that some groups feel much more vulnerable to certain things than the rest of us.  Women, for instance, can feel viscerally threatened by offhand comments that men hardly notice, and even long-established immigrants often harbor a deep-seated fear of being sent back to their home countries.
+    Be careful in the words you choose.  Be kind to others.  Don't insult or put down other participants. Harassment and other exclusionary behavior aren't acceptable.  This includes, but is not limited to:
+        Violent threats or language directed against someone.
+        Discriminatory jokes and language.
+        Posting sexually explicit or violent material.
+        Posting (or threatening to post) other people's personally identifying information ("doxing").
+        Personal insults, especially terms targeting groups mentioned above (e.g. racist or sexist comments).
+        Unwelcome sexual attention.
+        Advocating for, or encouraging, any of the above behavior.
+        Repeated harassment of others.  In general, if someone asks you to stop, please stop.
+    When we disagree, try to understand why.  Disagreements, both social and technical, happen all the time and in any project.  It's important that we resolve disagreements and differing views constructively.
+
+If you believe someone is violating the code of conduct, you can report it by emailing Leon at lordpeyre@yahoo.com.
+
+Remember that we're all different.  We're all here for the same purpose, to improve the game; we can have honest disagreements about what's best for it, and those won't always be resolved in one's own favor.  We're a small community and behavior that discourages others from contributing is liable to weaken us and hinder development.
+
+Try to bear in mind that we're strengthened by including people from a wide range of backgrounds: they have different perspectives on issues and can sometimes find innovative solutions that others wouldn't think of.  Being unable to understand someone's viewpoint doesn't mean they're necessarily wrong.  It's human to err, and blaming each other won't get us anywhere.  Instead, focus on helping to resolve issues and trying to learn from mistakes, both individually and as a group.  In short, we benefit by including others.
+
