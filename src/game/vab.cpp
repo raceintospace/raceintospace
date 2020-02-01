@@ -67,14 +67,14 @@ int VASqty; // How many payload configurations there are
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-/* MI contains the location of a vehicle equipment image and it's
+/* MI contains the location of a vehicle equipment image and its
  * positioning when drawn inside a vehicle casing.
  *
  * The images of each component used in vehicle assembly are stored as
  * part of a single VAB superimage containing all the component images.
  * The two coordinates (x1, y1) and (x2, y2) represent the top-left
  * corner and bottom-right corner, respectively, of the component's
- * space in that image. The yOffset values describes how much space a
+ * space in that image. The yOffset value describes how much space a
  * capsule image should be given from the top of the casing image in
  * order to properly align it within the launch vehicle casing.
  * The Mercury capsule is a special case, in that the Mercury capsule
@@ -87,7 +87,7 @@ struct MDA {
 } MI[2 * 28];
 
 /*
- // The VAB images are found in two different image files, these are the cutout locations
+ // The VAB images are found in two different image files; these are the cutout locations
 
 //
  struct MDA {
@@ -111,8 +111,8 @@ struct MDA {
      {20, 1, 57, 59, 12}, // Apollo 15
      {59, 1, 81, 46, 7}, // MiniSh 16
      {137, 69, 175, 139, 7}, // Four Cap 17
-     {223, 141, 262, 178, 0}, // Two Lem 18
-     {188, 141, 221, 177, 0}, // One Lem 19
+     {223, 141, 262, 178, 0}, // Two LEM 18
+     {188, 141, 221, 177, 0}, // One LEM 19
      {138, 141, 160, 166, 0}, // KickA 20
      {162, 141, 186, 172, 0}, // KickB 21
      {0, 0, 0, 0, 0},    // KickC 22
@@ -136,15 +136,15 @@ struct MDA {
      {3, 1, 20, 30, 0},   // Lunar Probe 11
      {5, 53, 19, 58, 0},  // Docking 12
      {91, 132, 118, 166, 15}, // Vostok 13
-     {120, 132, 148, 167, 15}, // Voshod 14
+     {120, 132, 148, 167, 15}, // Voskhod 14
      {176, 132, 211, 194, 15}, // Soyuz 15
      {249, 132, 275, 193, 11}, // MiniSh 16
      {213, 132, 247, 196, 11}, // Four Cap 17
-     {25, 1, 55, 36, 0},  // Two Lem 18
-     {57, 1, 84, 37, 0},  // One Lem 19
-     {24, 39, 36, 72, 0}, // KicA 20
-     {38, 39, 58, 75, 0}, // KicB 21
-     {60, 39, 84, 94, 0}, // KicC 22
+     {25, 1, 55, 36, 0},  // Two LEM 18
+     {57, 1, 84, 37, 0},  // One LEM 19
+     {24, 39, 36, 72, 0}, // KickA 20
+     {38, 39, 58, 75, 0}, // KickB 21
+     {60, 39, 84, 94, 0}, // KickC 22
      {150, 132, 174, 177, 22}, // Zond 23
      {0, 0, 0, 0, 0},     // Filler Sm
      {24, 77, 48, 183, 0}, // Filler Lg
@@ -178,7 +178,7 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
  *
  * Hardware components (capsules, rockets, etc.) have images used to
  * create a mock-up of the hardware assigned to the mission. This
- * includes a display of the rocket and a cut-away illustration of the
+ * includes a display of the rocket and a cutaway illustration of the
  * payload contained within the rocket casing. These component images
  * are stored together in a pair of larger VAB sprites. The global
  * variable MI stores the coordinates specifying where to find each
@@ -445,9 +445,9 @@ void FreeMissionHW(const char plr, const char mis)
  *
  * \param  plr  The player assembling the hardware.
  * \param  f    The VAS index of the given payload hardware set.
- * \param  mode 1 to auto-purchase missing components, 0 otherwise.
+ * \param  mode 1 to autopurchase missing components, 0 otherwise.
  * \return      The total cost of all components that will have to be
- *              purchased (0 if auto-purchasing).
+ *              purchased (0 if autopurchasing).
  */
 int FillVab(char plr, char f, char mode)
 {
@@ -522,7 +522,7 @@ int FillVab(char plr, char f, char mode)
 
 /* Checks to see if any of the payload hardware is already fully
  * assigned to other missions (or not on hand) and subject to a delay
- * preventing it frum being autopurchased.
+ * preventing it from being autopurchased.
  *
  * \param  plr  The player assembling the hardware.
  * \param  f    The VAS index of the given payload hardware set.
@@ -760,7 +760,7 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
 }
 
 
-/* Draw the launch vehicle illustration in the Vehicle Assemble mock-up
+/* Draw the launch vehicle illustration in the Vehicle Assembly mock-up
  * screen. Depending on the payload cargo, an appropriate casing is
  * chosen and the payload components are rendered along the length of
  * the casing, as per a cut-out illustration, in order of
@@ -849,7 +849,7 @@ void DispVA(char plr, char payload)
      * start at the top, plus the component's offset.
      *
      * Mercury capsules, as usual, start at the very top with extra
-     * space alloted for that big tower.
+     * space allotted for that big tower.
      */
     IncY = (casingHeight - TotY) / 2;
 
@@ -940,7 +940,7 @@ void DispVA(char plr, char payload)
  *
  * The rockets are indexed in the MI[] array as:
  *   0 / 28:   Atlas  / A-Series
- *   1 / 29:   TItan  / Proton
+ *   1 / 29:   Titan  / Proton
  *   2 / 30:   Saturn / N-1
  *   3 / 31:   Nova   / Energia
  *   4 / 32:   Atlas + Boosters  / A-Series + Boosters
