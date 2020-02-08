@@ -117,7 +117,7 @@ GoNews(char plr)
     DispNews(plr, buffer + 6000, buffer);
 
     j = 0;
-    memset(buffer + 6000, 0x00, 8000);  //clear memory
+    memset(buffer + 6000, 0x00, 8000);  // clear memory
     list = (struct rNews *)(buffer + 6000);
 
     for (i = 0; i < (int) strlen(buffer); i++) {
@@ -266,15 +266,15 @@ OpenNews(char plr, char *buf, int bud)
 
     if (Data->P[plr].Plans & 0xf0) {
         if (Data->P[plr].Plans & 0x10) {
-            strcpy(&buf[strlen(buf)], "MARS FLYBY SUCCESS!x");
+            strcpy(&buf[strlen(buf)], "MARS FLYBY SUCCEEDS!x");
         }
 
         if (Data->P[plr].Plans & 0x20) {
-            strcpy(&buf[strlen(buf)], "JUPITER FLYBY SUCCESS!x");
+            strcpy(&buf[strlen(buf)], "JUPITER FLYBY SUCCEEDS!x");
         }
 
         if (Data->P[plr].Plans & 0x40) {
-            strcpy(&buf[strlen(buf)], "SATURN FLYBY SUCCESS!x");
+            strcpy(&buf[strlen(buf)], "SATURN FLYBY SUCCEEDS!x");
         }
     }
 
@@ -310,7 +310,7 @@ OpenNews(char plr, char *buf, int bud)
     bufsize = strlen(buf);
 
     if (plr == 0) {
-        strcpy(&buf[bufsize], "xAND THAT'S THE NEWS, I'M CARTER WALCRITE.x");
+        strcpy(&buf[bufsize], "xAND THAT'S THE NEWS. I'M CARTER WALCRITE.x");
     } else {
         strcpy(&buf[bufsize], "xTHIS CONCLUDES OUR NEWS BROADCAST. I'M SVETLANA IZVESTIA. GOOD NIGHT.x");
     }
@@ -856,7 +856,7 @@ ResolveEvent(char plr)
             bad = brandom(14);
 
             if (ctr > 30) {
-                // After 30 good faith random attemptes to find an open slot
+                // After 30 good faith random attempts to find an open slot
                 // reset the BadCard array
                 memset(&Data->P[plr].BadCardEventFlag[0], 0x00, sizeof(Data->P[plr].BadCardEventFlag));
                 ctr = 0;
