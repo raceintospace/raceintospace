@@ -146,9 +146,9 @@ OpenNews(char plr, char *buf, int bud)
     //if (plr==1 && bud==22) i=11250L;
     // Event Card Info
     if (plr == 0) {
-        strcpy(&buf[0], "IN THE NEWS TODAY...x");
+        strcpy(&buf[0], "DEVELOPMENTS IN THE NEWS TODAY...x");
     } else {
-        strcpy(&buf[0], "DEVELOPMENTS IN THE WORLD...x");
+        strcpy(&buf[0], "GOOD EVENING. AND NOW, THE NEWS...x");
     }
 
     fp = sOpen("EVENT.DAT", "rb", 0);
