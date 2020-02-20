@@ -83,9 +83,8 @@ on a Debian-based system, you can get everything with:
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
         libprotobuf-dev protobuf-compiler
 
-Or enter this all one one line:
-
-    $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
+Or enter this all on one line:
+    sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
 If you don't already have git installed, you'll also have to run:
 
