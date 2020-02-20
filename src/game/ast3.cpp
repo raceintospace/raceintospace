@@ -147,7 +147,7 @@ void DrawTrain(char plr, char lvl)
 
     draw_string(169, 97, "GROUP ");
 
-    draw_string(240, 97, "TENURE: ");
+    draw_string(222, 97, "TENURE: ");
 
     grMoveTo(201, 97);
 
@@ -311,7 +311,11 @@ TrainText(char plr, int astro, int cnt)
         break;
     }
 
-    draw_number(282, 97, Data->P[plr].Pool[astro].Active);
+    draw_number(264, 97, Data->P[plr].Pool[astro].Active);
+    draw_string(0, 0, " SEASON");
+    if (Data->P[plr].Pool[astro].Active != 1) {
+        draw_string(0, 0, "S");
+    }
 
     display::graphics.setForegroundColor(1);
 
