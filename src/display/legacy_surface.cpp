@@ -128,25 +128,22 @@ void LegacySurface::line(unsigned int x1, unsigned int y1, unsigned int x2, unsi
     }
 }
 
-void LegacySurface::checkPaletteCompatibility(LegacySurface *other)
+void LegacySurface::checkPaletteCompatibility(const LegacySurface *other)
 {
     if (hasValidPalette() && other->hasValidPalette()) {
-        const PaletteInterface &otherPalette = other->palette();
+        const PaletteInterface *otherPalette = other->_palette;
 
         for (int i = 0; i < 256; i++) {
             const Color myColor(_palette->get(i));
-            const Color otherColor(otherPalette.get(i));
+            const Color otherColor(otherPalette->get(i));
 
             // if this assertion blows up, you're probably doing a drawing operation
             // without having copied around a palette first
             assert(myColor.rgba() == otherColor.rgba());
         }
 
-    } else if (hasValidPalette() && !other->hasValidPalette()) {
-        other->palette().copy_from(palette());
-
     } else if (!hasValidPalette() && other->hasValidPalette()) {
-        palette().copy_from(other->palette());
+        palette().copy_from(*other->_palette);
 
     } else {
         // neither surface has a valid palette
@@ -154,7 +151,22 @@ void LegacySurface::checkPaletteCompatibility(LegacySurface *other)
     }
 }
 
-void LegacySurface::copyFrom(LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
+void LegacySurface::checkPaletteCompatibility(LegacySurface *other)
+{
+    // Reuse above code without duplication
+    checkPaletteCompatibility(const_cast<const LegacySurface *>(other));
+
+    if (hasValidPalette() && !other->hasValidPalette()) {
+        other->palette().copy_from(*other->_palette);
+        other->_hasValidPalette = true;
+
+    } else {
+        // neither surface has a valid palette
+        // TODO: does SDL blit properly in this case?
+    }
+}
+
+void LegacySurface::copyFrom(const LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
 {
     checkPaletteCompatibility(surface);
 
@@ -256,7 +268,7 @@ void LegacySurface::copyTo(LegacySurface *surface, unsigned int srcX, unsigned i
     }
 }
 
-void LegacySurface::scaleTo(LegacySurface *surface)
+void LegacySurface::scaleTo(const LegacySurface *surface)
 {
     checkPaletteCompatibility(surface);
 
@@ -273,13 +285,13 @@ void LegacySurface::scaleTo(LegacySurface *surface)
             dest_idx = dest_row * surface->width() + dest_col;
 
             char *dst = (char *)surface->_screen->pixels + dest_idx;
-            char *src = (char *)_screen->pixels + src_idx;
+            const char *src = (const char *)_screen->pixels + src_idx;
             *dst = *src;
         }
     }
 }
 
-void LegacySurface::copyFrom(LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY)
+void LegacySurface::copyFrom(const LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY)
 {
     checkPaletteCompatibility(surface);
 
@@ -312,7 +324,7 @@ void LegacySurface::copyFrom(LegacySurface *surface, unsigned int srcX1, unsigne
     }
 }
 
-void LegacySurface::maskCopy(LegacySurface *source, char maskValue, MaskSource maskSource, char offset)
+void LegacySurface::maskCopy(const LegacySurface *source, char maskValue, MaskSource maskSource, char offset)
 {
     checkPaletteCompatibility(source);
 
@@ -322,7 +334,7 @@ void LegacySurface::maskCopy(LegacySurface *source, char maskValue, MaskSource m
     unsigned int size = (width() * height());
 
     for (unsigned int i = 0; i < size; i++) {
-        char *src = (char *)source->_screen->pixels + i;
+        const char *src = (const char *)source->_screen->pixels + i;
         char *dst = (char *)_screen->pixels + i;
 
         switch (maskSource) {
