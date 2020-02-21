@@ -215,16 +215,26 @@ void DrawRD(char player_index)
     display::graphics.setForegroundColor(11);
 
     if (Data->Season == 0) {
-        draw_string(157, 8, "SPRING");
+        draw_string(157, 9, "SPRING");
     } else {
-        draw_string(162, 8, "FALL");
+        draw_string(162, 9, "FALL");
     }
 
-    draw_string(163, 15, "19");
+    draw_string(163, 16, "19");
     draw_number(0, 0, Data->Year);
 
-    draw_string(200, 8, "CASH:");
-    draw_megabucks(201, 15, Data->P[player_index].Cash);
+    draw_string(200, 9, "CASH:");
+
+    if (Data->P[player_index].Cash < 10)
+    {
+        draw_megabucks(202, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99)
+    {
+    draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else
+    {
+    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    }
 
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
@@ -776,7 +786,7 @@ void ShowUnit(char hw, char un, char player_index)
     display::graphics.setForegroundColor(1);
 
     fill_rectangle(162, 69, 318, 146, 3);
-    fill_rectangle(200, 9, 238, 21, 3);
+    fill_rectangle(198, 10, 238, 21, 3);
     display::graphics.setForegroundColor(1);
     draw_string(170, 97, "INITIAL COST:");
     draw_string(170, 104, "UNIT COST:");
@@ -826,7 +836,16 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 111, "SAFETY FACTOR:");
 
     display::graphics.setForegroundColor(11);
-    draw_megabucks(201, 15, Data->P[player_index].Cash);
+    if (Data->P[player_index].Cash < 10)
+    {
+        draw_megabucks(202, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99)
+    {
+    draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else
+    {
+    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    }
 
     display::graphics.setForegroundColor(11);
 
@@ -1048,16 +1067,25 @@ void DrawHPurc(char player_index)
     draw_string(0, 0, "URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
-        draw_string(158, 8, "SPRING");
+        draw_string(158, 9, "SPRING");
     } else {
-        draw_string(162, 8, "FALL");
+        draw_string(162, 9, "FALL");
     }
 
-    draw_string(163, 15, "19");
+    draw_string(163, 16, "19");
     draw_number(0, 0, Data->Year);
 
-    draw_string(200, 8, "CASH:");
-    draw_megabucks(201, 15, Data->P[player_index].Cash);
+    draw_string(200, 9, "CASH:");
+    if (Data->P[player_index].Cash < 10)
+    {
+        draw_megabucks(202, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99)
+    {
+    draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else
+    {
+    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    }
 
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
@@ -1468,7 +1496,7 @@ BuyUnit(char category, char unit, char player_index)
                 tt = 25.0f;
             }
 
-            if (n5 > 10) { // Tech from Boosters
+            if (n5 > 10) {   // Tech from Boosters
                 tt = (float)(n5 - 10) / 2.6f;
             }
 
@@ -1627,11 +1655,11 @@ BuyUnit(char category, char unit, char player_index)
             break;
 
         case ROCKET_HW_BOOSTERS:    // Boosters
-            if (n1 > 10) {  // Tech from Atlas/R-7
+            if (n1 > 10) {   // Tech from Atlas/R-7
                 tt = (float)(n1 - 10) / 3.25f;
             }
 
-            if (n2 > 10) {  // Tech from Titan/Proton
+            if (n2 > 10) {   // Tech from Titan/Proton
                 if ((float)(n2 - 10) / 3.25f > tt) {
                     tt = (float)(n2 - 10) / 3.25f;
                 }
@@ -1666,13 +1694,13 @@ BuyUnit(char category, char unit, char player_index)
         n2 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety; /* Two-person - b        */
         n3 = Data->P[player_index].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety; /* Three-person - c      */
         n4 = Data->P[player_index].Manned[MANNED_HW_MINISHUTTLE].Safety; /* Minishuttle - f */
-        n5 = Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety; /* Dir Ascent - h    */
+        n5 = Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety; /* Direct Ascent - h    */
         n6 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_MODULE].Safety; /* 2-seat LM - d     */
         n7 = Data->P[player_index].Manned[MANNED_HW_ONE_MAN_MODULE].Safety; /*1-seat LM - e      */
 
         switch (unit) {
         case MANNED_HW_ONE_MAN_CAPSULE:  // Mercury/Vostok
-            if (n2 > 5) { // tech from Gemini/Voskhod
+            if (n2 > 5) {  // tech from Gemini/Voskhod
                 tt = (float)(n2 - 5) / 2.0f;
             }
 
@@ -1708,7 +1736,7 @@ BuyUnit(char category, char unit, char player_index)
 
             //old code: if (n1 >= 75)
             //old code: Data->P[player_index].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety = 20;
-            if (n3 > 5) { // tech from Apollo/Soyuz
+            if (n3 > 5) {  // tech from Apollo/Soyuz
                 if ((float)(n3 - 5) / 2.0f > tt) {
                     tt = (float)(n3 - 5) / 2.0f;
                 }
@@ -1784,7 +1812,7 @@ BuyUnit(char category, char unit, char player_index)
 
             //old code: if (n1 >= 75)
             //old code: Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety = 10;
-            if (n2 > 5) { // tech from Gemini/Voskhod
+            if (n2 > 5) {  // tech from Gemini/Voskhod
                 if ((float)(n2 - 5) / 7.0f > tt) {
                     tt = (float)(n2 - 5) / 7.0f;
                 }
@@ -1796,7 +1824,7 @@ BuyUnit(char category, char unit, char player_index)
 
             //old code: if (n2 >= 75)
             //old code: Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety = 15;
-            if (n3 > 5) { // tech from Apollo/Soyuz
+            if (n3 > 5) {  // tech from Apollo/Soyuz
                 if ((float)(n3 - 5) / 3.5f > tt) {
                     tt = (float)(n3 - 5) / 3.5f;
                 }
@@ -1817,7 +1845,7 @@ BuyUnit(char category, char unit, char player_index)
             break;
 
         case MANNED_HW_TWO_MAN_MODULE:  // Eagle/LKM
-            if (n7 > 10) { // tech from Cricket/LK
+            if (n7 > 10) {  // tech from Cricket/LK
                 tt = (float)(n7 - 10) / 3.25f;
             }
 
@@ -1854,7 +1882,7 @@ BuyUnit(char category, char unit, char player_index)
 
             //old code: if (n6 >= 75)
             //old code: Data->P[player_index].Manned[MANNED_HW_ONE_MAN_MODULE].Safety = 30;
-            if (n5 > 5) { // tech from Jupiter/LK-700
+            if (n5 > 5) {  // tech from Jupiter/LK-700
                 if ((float)(n5 - 5) / 2.3f > tt) {
                     tt = (float)(n5 - 5) / 2.3f;
                 }
@@ -1879,7 +1907,7 @@ BuyUnit(char category, char unit, char player_index)
 
         switch (unit) {
         case MISC_HW_KICKER_A:  // Kicker-A
-            if (n2 > 10) { // tech from Titan/Proton
+            if (n2 > 10) {  // tech from Titan/Proton
                 tt = (float)(n2 - 10) / 2.16f;
             }
 
@@ -1894,7 +1922,7 @@ BuyUnit(char category, char unit, char player_index)
             break;
 
         case MISC_HW_KICKER_B:  // Kicker-B
-            if (n1 > 10)  { // tech from Atlas/R-7
+            if (n1 > 10)  {  // tech from Atlas/R-7
                 tt = (float)(n1 - 10) / 2.6f;
             }
 
@@ -1909,7 +1937,7 @@ BuyUnit(char category, char unit, char player_index)
             break;
 
         case MISC_HW_KICKER_C:  // Kicker-C
-            if (n1 > 10) { // tech from R-7
+            if (n1 > 10) {  // tech from R-7
                 tt = (float)(n1 - 10) / 3.25f;
             }
 
