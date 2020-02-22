@@ -88,12 +88,12 @@ Burst(char win)
     int lp1, lp2, Region, xx, yy;
     float Ang, Spd, InitSpd;
     char clr = 1;
+    display::LegacySurface scopy(320, 200);
 
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-    vhptr->resetPalette();
-    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
+    scopy.copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
 
     while (1) {
         Region = brandom(100);
@@ -126,7 +126,7 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                    display::graphics.legacyScreen()->setPixel(xx, yy, scopy.getPixel(xx, yy));
                 }
 
                 key = 0;
@@ -162,7 +162,7 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-                        vhptr->copyTo(display::graphics.legacyScreen(), 0, 0);
+                        scopy.copyTo(display::graphics.legacyScreen(), 0, 0);
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -211,7 +211,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                display::graphics.legacyScreen()->setPixel(xx, yy, scopy.getPixel(xx, yy));
             }
         }
     }                              // end while
