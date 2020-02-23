@@ -236,7 +236,7 @@ void EndGame(char win, char pad)
     fill_rectangle(5, 105, 239, 110, 3);
     ShBox(101, 102, 218, 113);
     display::graphics.setForegroundColor(6);
-    draw_string(112, 110, "ALTERNATE HISTORY");
+    draw_string(112, 109, "ALTERNATE HISTORY");
 
     if (win == 0) {
         draw_heading(34, 5, "US WINS", 1, -1);
@@ -421,7 +421,7 @@ void EndGame(char win, char pad)
         }
     }
 
-//Print the first in the moon
+//Print the first on the moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
@@ -458,7 +458,7 @@ void EndGame(char win, char pad)
 }
 
 /**
- * Display an patriotic image indicating the winner's side.
+ * Display a patriotic image indicating the winner's side.
  *
  * The image displayed for the winning side is:
  *   0: American flag
@@ -1106,11 +1106,11 @@ void SpecialEnd(void)
  * Display endgame images.
  *
  * The endgame.but.%d.png images use a 128-color palette beginning at
- * index 128 through 255. Consequently, the coff parameter is overriden
+ * index 128 through 255. Consequently, the coff parameter is overridden
  * by 128.
  *
- * \param x     the upper-left x-coordinate of the image destination.
- * \param y     the upper-left y-coordinate of the image destination.
+ * \param x     the upper-left x coordinate of the image destination.
+ * \param y     the upper-left y coordinate of the image destination.
  * \param poff  the endgame image index, 0-5.
  * \param coff  the color palette index to export the endgame palette.
  * \throws runtime_error  if Filesystem is unable to load the image.
