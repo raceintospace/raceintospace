@@ -216,7 +216,7 @@ sdl_timer_callback(Uint32 interval, void *param)
 }
 
 /**
- * Setup SDL audio, video and window subsystems.
+ * Set up SDL audio, video and window subsystems.
  */
 void
 av_setup(void)
@@ -326,8 +326,16 @@ av_process_event(SDL_Event *evp)
             c = K_HOME;
             break;
 
-        case SDLK_END :
+        case SDLK_END:
             c = K_END;
+            break;
+
+        case SDLK_PAGEUP:
+            c = K_PGUP;
+            break;
+
+        case SDLK_PAGEDOWN:
+            c = K_PGDN;
             break;
 
         case SDLK_F1:
@@ -697,7 +705,7 @@ MuteChannel(int channel, int mute)
  * \param from index of first affected color
  * \param to index of last affected color
  * \param steps how many color change steps to perform
- * \param preserve whether preserve rest of palette colors or not
+ * \param preserve whether to preserve rest of palette colors or not
  */
 /*
  * \note A hack, but hey, it works :)
