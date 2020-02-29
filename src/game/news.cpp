@@ -782,7 +782,7 @@ News(char plr)
 
         if (ctop > 0 && key == 0x4900) {
             // Page Up Key
-            ctop -= 9;
+            ctop -= 7;
 
             if (ctop < 0) {
                 ctop = 0;
@@ -791,7 +791,7 @@ News(char plr)
             DrawNText(plr, ctop);
         } else if (ctop < bline && key == 0x5100) {
             // Page Down Key
-            ctop += 9;
+            ctop += 7;
 
             if (ctop > bline) {
                 ctop = bline;
