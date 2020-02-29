@@ -101,7 +101,7 @@ void DrawBudget(char player, char *pStatus)
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
     // Draw the Prestige Screen
-    k = (player == 0) ? 0 : 1; //max only checks your prestige and guessed
+    k = (player == 0) ? 0 : 1; // max only checks your prestige and guessed
 
     for (i = 0; i < 5; i++) {  // value for other player
         max = (max > abs(Data->P[player].PrestHist[i][k])) ? max
@@ -405,7 +405,7 @@ void Budget(char player)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Game Play */
+        if (mousebuttons > 0 || key > 0) { /* Gameplay */
             if ((x >= 166 && y >= 29 && x <= 236 && y <= 41 && mousebuttons > 0) || key == K_ENTER) {
                 InBox(167, 29, 236, 41);
                 WaitForMouseUp();
@@ -720,7 +720,7 @@ void Viewing(char plr)
         GetMouse();
 
         if (ctop > 0 && key == 0x4900) { // Page Up Key
-            ctop -= 9;
+            ctop -= 7;
 
             if (ctop < 0) {
                 ctop = 0;
@@ -731,7 +731,7 @@ void Viewing(char plr)
         }
 
         if (ctop < bline && key == 0x5100) { // Page Down Key
-            ctop += 9;
+            ctop += 7;
 
             if (ctop > bline) {
                 ctop = bline;
