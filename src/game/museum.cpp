@@ -796,7 +796,7 @@ void DrawMisHist(char plr, int *where)
     char yr, season, i, j, index = 0, prog, planet, pmis, temp = 0, temp2 = 11;
 
 
-    //ai klugge
+    //ai kludge
 
     for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_EOR || Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_LOR) {
@@ -811,7 +811,7 @@ void DrawMisHist(char plr, int *where)
 
     yr = (*where - (*where % 2)) / 2 + 57;
     season = *where % 2;
-    ORBox(95, 176, 224, 193, 3); //draw the boxes under date
+    ORBox(95, 176, 224, 193, 3); // draw the boxes under date
     sprintf(cYr, "%d", 1900 + yr);
     draw_heading(103 + (yr - 57) * 4, 178, cYr, 0, -1);
 
@@ -836,7 +836,7 @@ void DrawMisHist(char plr, int *where)
         }
 
 
-    // What the hell does this do
+    // What the hell does this do?
 
     while (yr > Data->P[plr].History[index].MissionYear) {
         index++;
@@ -1079,7 +1079,7 @@ void ShowAstrosHist(char plr)
 
         pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2), key >> 8, 80);
         pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2), key >> 8, 72);
-        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2), key >> 8, 71); //Down to prev Astro
+        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2), key >> 8, 71); // Down to prev Astro
         pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2), key >> 8, 75);
         pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2), key >> 8, 77);
         pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2), key >> 8, 79);
@@ -1119,7 +1119,7 @@ void DisplAst(char plr, char *where, char *where2)
     fill_rectangle(202, 123, 218, 118, 3);
     fill_rectangle(216, 131, 240, 126, 3);
     fill_rectangle(230, 139, 254, 134, 3);
-    fill_rectangle(248, 149, 272, 144, 3);
+    fill_rectangle(248, 149, 302, 144, 3); // was: fill_rectangle(248, 149, 272, 144, 3); - changed so "DAYS" doesn't get messed up
     fill_rectangle(216, 159, 318, 154, 3);
     fill_rectangle(220, 169, 280, 164, 3);
     fill_rectangle(288, 105, 308, 133, 3);
@@ -1374,7 +1374,7 @@ void DisplAstData(char plr, char *where, char *where2)
         return;
     }
 
-    //astro history patch fix
+    // astro history patch fix
     if (Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule] != -1) {
         PatchMe(plr, 7, 116,
                 Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule],
