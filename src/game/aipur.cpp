@@ -73,41 +73,103 @@ void DrawStatistics(char Win)
     IOBox(191, 40, 280, 62);
     draw_flag(41, 70, Win);
     draw_flag(41, 115, other(Win));
-    draw_heading(48, 44, "STATISTICS", 1, -1);
+    draw_heading(47, 44, "STATISTICS", 1, -1);
     draw_heading(215, 45, "EXIT", 1, -1);
     display::graphics.setForegroundColor(6);
     draw_string(122, 78, "WINNING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
-
-    if (AI[Win]) {
-        draw_string(0, 0, "COMPUTER");
-        sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
-        draw_string(0, 0, &Digit[0]);
-    } else if (Win == 0) {
+    if (Win == 0) {
         draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
     } else {
-        draw_string(0, 0, &Data->P[ Data->Def.Plr2 ].Name[0]);
+        draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
     }
+
+    if (AI[Win]) {
+	draw_string(0, 0, "COMPUTER");
+	display::graphics.setForegroundColor(6);
+        draw_string(122, 86, "STRATEGY USED: ");
+	display::graphics.setForegroundColor(8);
+        sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
+        //draw_string(0, 0, &Digit[0]);
+	int strat = std::stoi (&Digit[0]);
+	if (strat == 1) {
+		if (Win == 0) {
+		draw_string(0, 0, "JUPITER");	
+		} else {
+		draw_string(0, 0, "LK-700");	
+		}
+	}
+	else if (strat == 2) {
+		if (Win == 0) {
+		draw_string(0, 0, "APOLLO");	
+		} else {
+		draw_string(0, 0, "SOYUZ");	
+		}
+	}
+	else if (strat == 3) {
+		if (Win == 0) {
+		draw_string(0, 0, "GEMINI");	
+		} else {
+		draw_string(0, 0, "VOSKHOD");	
+		}
+	}
+	else {
+	draw_string(0, 0, "OTHER (");
+	draw_string(0, 0, &Digit[0]);
+	draw_string(0, 0, ")");
+	}
+    } 
 
     display::graphics.setForegroundColor(6);
     draw_string(122, 125, "LOSING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
-
-    if (AI[other(Win)]) {
-        draw_string(0, 0, "COMPUTER");
-        sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
-        draw_string(0, 0, &Digit[0]);
-    } else if (Win == 0) {
+    if (Win == 0) {
         draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
     } else {
-        draw_string(0, 0, &Data->P[ Data->Def.Plr1 ].Name[0]);
+        draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
     }
+
+    if (AI[other(Win)]) {
+	draw_string(0, 0, "COMPUTER");
+	display::graphics.setForegroundColor(6);
+        draw_string(122, 86, "STRATEGY USED: ");
+	display::graphics.setForegroundColor(8);
+        sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
+        //draw_string(0, 0, &Digit[0]);
+	int strat = std::stoi (&Digit[0]);
+	if (strat == 1) {
+		if (Win == 0) {
+		draw_string(0, 0, "JUPITER");	
+		} else {
+		draw_string(0, 0, "LK-700");	
+		}
+	}
+	else if (strat == 2) {
+		if (Win == 0) {
+		draw_string(0, 0, "APOLLO");	
+		} else {
+		draw_string(0, 0, "SOYUZ");	
+		}
+	}
+	else if (strat == 3) {
+		if (Win == 0) {
+		draw_string(0, 0, "GEMINI");	
+		} else {
+		draw_string(0, 0, "VOSKHOD");	
+		}
+	}
+	else {
+	draw_string(0, 0, "OTHER (");
+	draw_string(0, 0, &Digit[0]);
+	draw_string(0, 0, ")");
+	}
+    } 
 
     qty = 6;
     starty = 118;
     display::LegacySurface local(30, 19);
     fin = sOpen("PORTBUT.BUT", "rb", 0);
-    OutBox(152, 41, 183, 61); //directors ranking
+    OutBox(152, 41, 183, 61); // directors ranking
 
     for (i = 0; i < qty; i++) {
         if (i <= 4 && AI[Win] == 0) {
@@ -646,7 +708,7 @@ char Skill(char plr, char type)
 }
 
 void TransAstro(char plr, int inx)
-// indexed 1 thru 5
+// indexed 1 through 5
 {
     int i, j, w, count = 0, max, found, flt1, flt2, bug = 1;
     struct BuzzData *pData = &Data->P[plr];
@@ -874,7 +936,7 @@ void RDafford(char plr, int equipment_class, int index)
 }
 
 /**
- Purchase Orbital Probe & One Stage Rocket
+ Purchase Orbital Probe & One-Stage Rocket
 
  @param plr The player this equipment purchase is for.
  */
@@ -890,7 +952,7 @@ void AIPur(char plr)
         pData->AIStrategy[AI_ORBITAL_SATELLITE] = 1;
     }
 
-    // If we don't have a probe buy one before the rocket, then attempt to research each
+    // If we don't have a probe, buy one before the rocket, then attempt to research each
     if (pData->Probe[PROBE_HW_ORBITAL].Num <= pData->Rocket[ROCKET_HW_ONE_STAGE].Num) {
         GenPur(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
         RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
@@ -952,7 +1014,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
 #ifndef DISABLE_AI_CHEAT
                 else {
-                    // Just give it to the them anyway
+                    // Just give it to them anyway
                     itemPurchased = true;
                     ++pData->Probe[unit_index].Num;
                 }
@@ -1147,7 +1209,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
     if (hardware_index == ROCKET_HARDWARE && newProgramStarted) {
         Equipment *e = &pData->Rocket[unit_index];  // Hardware we're modifying
 
-        // Saftey levels of existing programs
+        // Safety levels of existing programs
         n1 = pData->Rocket[ROCKET_HW_ONE_STAGE].Safety;
         n2 = pData->Rocket[ROCKET_HW_TWO_STAGE].Safety;
         n3 = pData->Rocket[ROCKET_HW_THREE_STAGE].Safety;
@@ -1221,7 +1283,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
     if (hardware_index == MANNED_HARDWARE && newProgramStarted) {
         Equipment *e = &pData->Manned[unit_index];  // Hardware we're modifying
 
-        // Saftey levels of existing programs copied to working vars
+        // Safety levels of existing programs copied to working vars
         n1 = pData->Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety;
         n2 = pData->Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety;
         n3 = pData->Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety;
