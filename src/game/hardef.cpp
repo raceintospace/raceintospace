@@ -41,10 +41,14 @@
 #include "pace.h"
 #include "hardware_buttons.h"
 
+struct DisplayContext {
+	boost::shared_ptr<display::LegacySurface> intel;
+};
+
 void DrawHardef(char plr);
-void HDispIt(int x1, int y1, int x2, int y2, int s, int t);
-void PInfo(char plr, char loc);
-void HInfo(char plr, char loc, char w);
+void HDispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t);
+void PInfo(char plr, char loc, DisplayContext &dctx);
+void HInfo(char plr, char loc, char w, DisplayContext &dctx);
 void DrawRank(char plr);
 
 
@@ -55,7 +59,6 @@ DrawHardef(char plr)
 
     FadeOut(2, 10, 0, 0);
 
-    LoadCIASprite();
     display::graphics.screen()->clear();
 
     ShBox(0, 0, 319, 199);
@@ -104,9 +107,11 @@ ShowHard(char plr)
 {
     int i, place = -1;
     char Cnt = 0;               // switch between screens
+    DisplayContext dctx;
 
     HardwareButtons hardware_buttons(165, plr);
 
+    dctx.intel = LoadCIASprite();
     DrawHardef(plr);
     hardware_buttons.drawButtons();
 
@@ -128,9 +133,9 @@ ShowHard(char plr)
                 place = 0;
 
                 if (Cnt == 0) {
-                    HInfo(plr, place, 0);
+                    HInfo(plr, place, 0, dctx);
                 } else {
-                    PInfo(plr, place);
+                    PInfo(plr, place, dctx);
                 }
 
                 /* UnManned */
@@ -152,7 +157,7 @@ ShowHard(char plr)
                     display::graphics.setForegroundColor(1);
                     draw_heading(40, 5, "PRESTIGE POINTS", 1, -1);
                     Cnt = 1;
-                    PInfo(plr, place);
+                    PInfo(plr, place, dctx);
                 } else {
                     display::graphics.setForegroundColor(1);
                     draw_heading(40, 5, "EFFICIENCY", 1, -1);
@@ -165,7 +170,7 @@ ShowHard(char plr)
                     display::graphics.setForegroundColor(6);
                     draw_string(163, 18, "SUCCESS");
                     Cnt = 0;
-                    HInfo(plr, place, 0);
+                    HInfo(plr, place, 0, dctx);
                 }
 
                 FadeIn(2, 10, 0, 0);
@@ -179,9 +184,9 @@ ShowHard(char plr)
                 place = 1;
 
                 if (Cnt == 0) {
-                    HInfo(plr, place, 0);
+                    HInfo(plr, place, 0, dctx);
                 } else {
-                    PInfo(plr, place);
+                    PInfo(plr, place, dctx);
                 }
 
                 /* Rocket */
@@ -195,9 +200,9 @@ ShowHard(char plr)
                 place = 2;
 
                 if (Cnt == 0) {
-                    HInfo(plr, place, 0);
+                    HInfo(plr, place, 0, dctx);
                 } else {
-                    PInfo(plr, place);
+                    PInfo(plr, place, dctx);
                 }
             } else if (((x >= 245 && y >= 164 && x <= 313 && y <= 195
                          && mousebuttons > 0) || key == 'M') && place != 3) {
@@ -208,9 +213,9 @@ ShowHard(char plr)
                 place = 3;
 
                 if (Cnt == 0) {
-                    HInfo(plr, place, 0);
+                    HInfo(plr, place, 0, dctx);
                 } else {
-                    PInfo(plr, place);
+                    PInfo(plr, place, dctx);
                 }
 
                 /* MISC */
@@ -226,7 +231,7 @@ ShowHard(char plr)
 }
 
 void
-HDispIt(int x1, int y1, int x2, int y2, int s, int t)
+HDispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t)
 {
     // assumes cia.but is loaded in vhptr
     // seems identical to DispIt()
@@ -236,13 +241,13 @@ HDispIt(int x1, int y1, int x2, int y2, int s, int t)
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
     display::LegacySurface local(w, h);
-    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
+    local.copyFrom(dctx.intel.get(), x1, y1, x2, y2, 0, 0);
     local.setTransparentColor(0);
     display::graphics.screen()->draw(local, s, t);
 }
 
 void
-PInfo(char plr, char loc)
+PInfo(char plr, char loc, DisplayContext &dctx)
 {
     char j, PrestigeTable[4][7], prestigeSum;
     int i, tot, sfu;
@@ -417,9 +422,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(101, 1, 115, 57, 15, 104);
+                    HDispIt(dctx, 101, 1, 115, 57, 15, 104);
                 } else if (sfu > 0) {
-                    HDispIt(129, 1, 149, 85, 15, 75);
+                    HDispIt(dctx, 129, 1, 149, 85, 15, 75);
                 }
 
                 break;
@@ -431,9 +436,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(115, 0, 124, 68, 82, 92);
+                    HDispIt(dctx, 115, 0, 124, 68, 82, 92);
                 } else if (sfu > 0) {
-                    HDispIt(151, 1, 170, 95, 82, 65);
+                    HDispIt(dctx, 151, 1, 170, 95, 82, 65);
                 }
 
                 break;
@@ -447,9 +452,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(172, 1, 209, 133, 146, 27);
+                    HDispIt(dctx, 172, 1, 209, 133, 146, 27);
                 } else if (sfu > 0) {
-                    HDispIt(211, 1, 243, 133, 148, 27);
+                    HDispIt(dctx, 211, 1, 243, 133, 148, 27);
                 }
 
                 break;
@@ -463,9 +468,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(245, 1, 285, 137, 231, 23);
+                    HDispIt(dctx, 245, 1, 285, 137, 231, 23);
                 } else if (sfu > 0) {
-                    HDispIt(287, 1, 318, 132, 231, 28);
+                    HDispIt(dctx, 287, 1, 318, 132, 231, 28);
                 }
 
                 break;
@@ -490,9 +495,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(60, 153, 88, 176, 7, 133);
+            HDispIt(dctx, 60, 153, 88, 176, 7, 133);
         } else if (sfu > 0) {
-            HDispIt(90, 151, 119, 176, 7, 131);
+            HDispIt(dctx, 90, 151, 119, 176, 7, 131);
         }
 
         sfu = -1;
@@ -507,9 +512,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(1, 153, 29, 182, 83, 126);
+            HDispIt(dctx, 1, 153, 29, 182, 83, 126);
         } else if (sfu > 0) {
-            HDispIt(31, 153, 56, 182, 83, 126);
+            HDispIt(dctx, 31, 153, 56, 182, 83, 126);
         }
 
         for (i = 0; i < 3; i++) {
@@ -529,9 +534,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(58, 180, 71, 196, 147, 138);
+                    HDispIt(dctx, 58, 180, 71, 196, 147, 138);
                 } else if (sfu > 0) {
-                    HDispIt(73, 180, 89, 195, 147, 139);
+                    HDispIt(dctx, 73, 180, 89, 195, 147, 139);
                 }
 
                 break;
@@ -545,9 +550,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(91, 178, 115, 195, 198, 139);
+                    HDispIt(dctx, 91, 178, 115, 195, 198, 139);
                 } else if (sfu > 0) {
-                    HDispIt(153, 142, 176, 166, 198, 132);
+                    HDispIt(dctx, 153, 142, 176, 166, 198, 132);
                 }
 
                 break;
@@ -561,9 +566,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(121, 142, 151, 166, 253, 132);
+                    HDispIt(dctx, 121, 142, 151, 166, 253, 132);
                 } else if (sfu > 0) {
-                    HDispIt(178, 142, 201, 160, 253, 138);
+                    HDispIt(dctx, 178, 142, 201, 160, 253, 138);
                 }
 
                 break;
@@ -591,9 +596,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(12, 91, 25, 116, 12, 137);
+                    HDispIt(dctx, 12, 91, 25, 116, 12, 137);
                 } else if (sfu > 0) {
-                    HDispIt(0, 56, 26, 89, 14, 123);
+                    HDispIt(dctx, 0, 56, 26, 89, 14, 123);
                 }
 
                 break;
@@ -605,9 +610,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(27, 98, 49, 127, 66, 127);
+                    HDispIt(dctx, 27, 98, 49, 127, 66, 127);
                 } else if (sfu > 0) {
-                    HDispIt(28, 62, 49, 96, 66, 122);
+                    HDispIt(dctx, 28, 62, 49, 96, 66, 122);
                 }
 
                 break;
@@ -621,9 +626,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(95, 77, 117, 127, 130, 106);
+                    HDispIt(dctx, 95, 77, 117, 127, 130, 106);
                 } else if (sfu > 0) {
-                    HDispIt(119, 97, 170, 140, 122, 113);
+                    HDispIt(dctx, 119, 97, 170, 140, 122, 113);
                 }
 
                 break;
@@ -637,9 +642,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(3, 1, 16, 54, 191, 103);
+                    HDispIt(dctx, 3, 1, 16, 54, 191, 103);
                 } else if (sfu > 0) {
-                    HDispIt(18, 1, 32, 48, 191, 109);
+                    HDispIt(dctx, 18, 1, 32, 48, 191, 109);
                 }
 
                 break;
@@ -653,9 +658,9 @@ PInfo(char plr, char loc)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(34, 1, 65, 60, 248, 97);
+                    HDispIt(dctx, 34, 1, 65, 60, 248, 97);
                 } else if (sfu > 0) {
-                    HDispIt(67, 1, 100, 60, 248, 97);
+                    HDispIt(dctx, 67, 1, 100, 60, 248, 97);
                 }
 
                 break;
@@ -680,9 +685,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(68, 65, 76, 75, 17, 145);
+            HDispIt(dctx, 68, 65, 76, 75, 17, 145);
         } else if (sfu > 0) {
-            HDispIt(78, 65, 86, 75, 17, 145);
+            HDispIt(dctx, 78, 65, 86, 75, 17, 145);
         }
 
         sfu = -1;
@@ -697,9 +702,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(88, 62, 100, 75, 64, 143);
+            HDispIt(dctx, 88, 62, 100, 75, 64, 143);
         } else if (sfu > 0) {
-            HDispIt(102, 66, 114, 75, 64, 147);
+            HDispIt(dctx, 102, 66, 114, 75, 64, 147);
         }
 
         sfu = -1;
@@ -714,9 +719,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(1, 120, 14, 151, 113, 125);
+            HDispIt(dctx, 1, 120, 14, 151, 113, 125);
         } else if (sfu > 0) {
-            HDispIt(16, 130, 31, 151, 113, 135);
+            HDispIt(dctx, 16, 130, 31, 151, 113, 135);
         }
 
         sfu = -1;
@@ -731,9 +736,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(33, 140, 47, 151, 165, 145);
+            HDispIt(dctx, 33, 140, 47, 151, 165, 145);
         } else if (sfu > 0) {
-            HDispIt(49, 138, 61, 151, 165, 143);
+            HDispIt(dctx, 49, 138, 61, 151, 165, 143);
         }
 
         sfu = -1;
@@ -748,9 +753,9 @@ PInfo(char plr, char loc)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(63, 131, 75, 151, 219, 136);
+            HDispIt(dctx, 63, 131, 75, 151, 219, 136);
         } else if (sfu > 0) {
-            HDispIt(77, 129, 88, 151, 219, 134);
+            HDispIt(dctx, 77, 129, 88, 151, 219, 134);
         }
 
         sfu = -1;
@@ -765,7 +770,7 @@ PInfo(char plr, char loc)
         }
 
         if (sfu > 0 && plr == 1) {
-            HDispIt(51, 77, 93, 127, 270, 106);
+            HDispIt(dctx, 51, 77, 93, 127, 270, 106);
         }
 
         break;
@@ -778,7 +783,7 @@ PInfo(char plr, char loc)
 }
 
 void
-HInfo(char plr, char loc, char w)
+HInfo(char plr, char loc, char w, DisplayContext &dctx)
 {
     int i, sfu, sfs, tot;
     float ov, un, ScaleAmt = 0.0;
@@ -912,9 +917,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(101, 1, 115, 57, 15, 104);
+                    HDispIt(dctx, 101, 1, 115, 57, 15, 104);
                 } else if (sfu > 0) {
-                    HDispIt(129, 1, 149, 85, 15, 75);
+                    HDispIt(dctx, 129, 1, 149, 85, 15, 75);
                 }
 
                 break;
@@ -931,9 +936,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(115, 0, 124, 68, 82, 92);
+                    HDispIt(dctx, 115, 0, 124, 68, 82, 92);
                 } else if (sfu > 0) {
-                    HDispIt(151, 1, 170, 95, 82, 65);
+                    HDispIt(dctx, 151, 1, 170, 95, 82, 65);
                 }
 
                 break;
@@ -954,9 +959,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(172, 1, 209, 133, 146, 27);
+                    HDispIt(dctx, 172, 1, 209, 133, 146, 27);
                 } else if (sfu > 0) {
-                    HDispIt(211, 1, 243, 133, 148, 27);
+                    HDispIt(dctx, 211, 1, 243, 133, 148, 27);
                 }
 
                 break;
@@ -977,9 +982,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(245, 1, 285, 137, 231, 23);
+                    HDispIt(dctx, 245, 1, 285, 137, 231, 23);
                 } else if (sfu > 0) {
-                    HDispIt(287, 1, 318, 132, 231, 28);
+                    HDispIt(dctx, 287, 1, 318, 132, 231, 28);
                 }
 
                 break;
@@ -1020,9 +1025,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(12, 91, 25, 116, 12, 137);
+                    HDispIt(dctx, 12, 91, 25, 116, 12, 137);
                 } else if (sfu > 0) {
-                    HDispIt(0, 56, 26, 89, 14, 123);
+                    HDispIt(dctx, 0, 56, 26, 89, 14, 123);
                 }
 
                 break;
@@ -1039,9 +1044,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(27, 98, 49, 127, 66, 127);
+                    HDispIt(dctx, 27, 98, 49, 127, 66, 127);
                 } else if (sfu > 0) {
-                    HDispIt(28, 62, 49, 96, 66, 122);
+                    HDispIt(dctx, 28, 62, 49, 96, 66, 122);
                 }
 
                 break;
@@ -1062,9 +1067,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(95, 77, 117, 127, 130, 106);
+                    HDispIt(dctx, 95, 77, 117, 127, 130, 106);
                 } else if (sfu > 0) {
-                    HDispIt(119, 97, 170, 140, 122, 113);
+                    HDispIt(dctx, 119, 97, 170, 140, 122, 113);
                 }
 
                 break;
@@ -1085,9 +1090,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(3, 1, 16, 54, 191, 103);
+                    HDispIt(dctx, 3, 1, 16, 54, 191, 103);
                 } else if (sfu > 0) {
-                    HDispIt(18, 1, 32, 48, 191, 109);
+                    HDispIt(dctx, 18, 1, 32, 48, 191, 109);
                 }
 
                 break;
@@ -1108,9 +1113,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(34, 1, 65, 60, 248, 97);
+                    HDispIt(dctx, 34, 1, 65, 60, 248, 97);
                 } else if (sfu > 0) {
-                    HDispIt(67, 1, 100, 60, 248, 97);
+                    HDispIt(dctx, 67, 1, 100, 60, 248, 97);
                 }
 
                 break;
@@ -1148,9 +1153,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(60, 153, 88, 176, 9, 132);
+            HDispIt(dctx, 60, 153, 88, 176, 9, 132);
         } else if (sfu > 0) {
-            HDispIt(90, 151, 119, 176, 9, 132);
+            HDispIt(dctx, 90, 151, 119, 176, 9, 132);
         }
 
         sfu = -1;
@@ -1178,9 +1183,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(1, 153, 29, 182, 83, 128);
+            HDispIt(dctx, 1, 153, 29, 182, 83, 128);
         } else if (sfu > 0) {
-            HDispIt(31, 153, 56, 182, 83, 128);
+            HDispIt(dctx, 31, 153, 56, 182, 83, 128);
         }
 
         for (i = 0; i < 3; i++) {
@@ -1215,9 +1220,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(58, 180, 71, 196, 147, 138);
+                    HDispIt(dctx, 58, 180, 71, 196, 147, 138);
                 } else if (sfu > 0) {
-                    HDispIt(73, 180, 89, 195, 147, 139);
+                    HDispIt(dctx, 73, 180, 89, 195, 147, 139);
                 }
 
                 break;
@@ -1238,9 +1243,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(91, 178, 115, 195, 198, 139);
+                    HDispIt(dctx, 91, 178, 115, 195, 198, 139);
                 } else if (sfu > 0) {
-                    HDispIt(153, 142, 176, 166, 198, 132);
+                    HDispIt(dctx, 153, 142, 176, 166, 198, 132);
                 }
 
                 break;
@@ -1261,9 +1266,9 @@ HInfo(char plr, char loc, char w)
                 }
 
                 if (plr == 0 && sfu > 0) {
-                    HDispIt(121, 142, 151, 166, 253, 132);
+                    HDispIt(dctx, 121, 142, 151, 166, 253, 132);
                 } else if (sfu > 0) {
-                    HDispIt(178, 142, 201, 160, 253, 138);
+                    HDispIt(dctx, 178, 142, 201, 160, 253, 138);
                 }
 
                 break;
@@ -1301,9 +1306,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(68, 65, 76, 75, 17, 145);
+            HDispIt(dctx, 68, 65, 76, 75, 17, 145);
         } else if (sfu > 0) {
-            HDispIt(78, 65, 86, 75, 17, 145);
+            HDispIt(dctx, 78, 65, 86, 75, 17, 145);
         }
 
         sfu = -1;
@@ -1331,9 +1336,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(88, 62, 100, 75, 64, 143);
+            HDispIt(dctx, 88, 62, 100, 75, 64, 143);
         } else if (sfu > 0) {
-            HDispIt(102, 66, 114, 75, 64, 147);
+            HDispIt(dctx, 102, 66, 114, 75, 64, 147);
         }
 
         sfu = -1;
@@ -1361,9 +1366,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(1, 120, 14, 151, 113, 125);
+            HDispIt(dctx, 1, 120, 14, 151, 113, 125);
         } else if (sfu > 0) {
-            HDispIt(16, 130, 31, 151, 113, 135);
+            HDispIt(dctx, 16, 130, 31, 151, 113, 135);
         }
 
         sfu = -1;
@@ -1391,9 +1396,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(33, 140, 47, 151, 165, 145);
+            HDispIt(dctx, 33, 140, 47, 151, 165, 145);
         } else if (sfu > 0) {
-            HDispIt(49, 138, 61, 151, 165, 143);
+            HDispIt(dctx, 49, 138, 61, 151, 165, 143);
         }
 
         sfu = -1;
@@ -1421,9 +1426,9 @@ HInfo(char plr, char loc, char w)
         }
 
         if (plr == 0 && sfu > 0) {
-            HDispIt(63, 131, 75, 151, 219, 136);
+            HDispIt(dctx, 63, 131, 75, 151, 219, 136);
         } else if (sfu > 0) {
-            HDispIt(77, 129, 88, 151, 219, 134);
+            HDispIt(dctx, 77, 129, 88, 151, 219, 134);
         }
 
         sfu = -1;
@@ -1451,7 +1456,7 @@ HInfo(char plr, char loc, char w)
         }
 
         if (sfu > 0 && plr == 1) {
-            HDispIt(51, 77, 93, 127, 270, 106);
+            HDispIt(dctx, 51, 77, 93, 127, 270, 106);
         }
 
         break;

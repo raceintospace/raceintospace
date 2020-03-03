@@ -51,6 +51,8 @@
 #include "endianness.h"
 #include "filesystem.h"
 
+#include <boost/shared_ptr.hpp>
+
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
  *   0: Primary (a capsule)
@@ -155,7 +157,7 @@ struct MDA {
 
 
 void LoadMIVals();
-void LoadVABSprite(char plr);
+boost::shared_ptr<display::LegacySurface> LoadVABSprite(char plr);
 int ChkDelVab(char plr, char f);
 int ChkVabRkt(char plr, int rk, int *q);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
@@ -166,8 +168,8 @@ int  BuyVabRkt(char plr, int rk, int *q, char mode);
 void ShowAutopurchase(char plr, int payload, int rk, int *qty);
 void ShowVA(char f);
 void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg);
-void DispVA(char plr, char f);
-void DispRck(char plr, char wh);
+void DispVA(char plr, char f, const display::LegacySurface *hw);
+void DispRck(char plr, char wh, const display::LegacySurface *hw);
 void DispWts(int two, int one);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
@@ -210,21 +212,18 @@ void LoadMIVals()
 
 
 /**
- * Load the VAB hardware icons into the global vhptr buffer.
+ * Load the VAB hardware icons into a local buffer.
  *
  * Exports the file palette to the global display.
  *
  * \param plr  0 for the USA sprite, 1 for the USSR sprite.
  * \throws runtime_error  if Filesystem unable to load the sprite.
  */
-void LoadVABSprite(const char plr)
+boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
 {
-    if (vhptr == NULL) {
-        vhptr = new display::LegacySurface(320, 200);
-    } else if (vhptr->width() < 320 || vhptr->height() < 200) {
-        delete vhptr;
-        vhptr = new display::LegacySurface(320, 200);
-    }
+	boost::shared_ptr<display::LegacySurface> surface;
+
+    surface = boost::shared_ptr<display::LegacySurface>(new display::LegacySurface(320, 200));
 
     char filename[128];
     snprintf(filename, sizeof(filename), "images/vab.img.%d.png", plr);
@@ -232,12 +231,15 @@ void LoadVABSprite(const char plr)
     boost::shared_ptr<display::PalettizedSurface> sprite(
         Filesystem::readImage(filename));
 
-    vhptr->palette().copy_from(sprite->palette());
-    vhptr->draw(sprite, 0, 0);
+    surface->palette().copy_from(sprite->palette());
+    surface->draw(sprite, 0, 0);
 
     // Export the sprite palette to the display here to prevent any
     // palette mismatch errors.
+	// FIXME: Modifies palette of LegacyScreen, should be moved to drawing
+	// place
     sprite->exportPalette();
+	return surface;
 }
 
 
@@ -278,7 +280,6 @@ void DispVAB(char plr, char pad)
     FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
-    LoadVABSprite(plr);
 
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 170, 99);
@@ -773,8 +774,9 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
  *
  * \param plr      The assembling player (0 for USA, 1 for USSR).
  * \param payload  The VAS index of the given payload hardware set.
+ * \param hw       The VAB loaded hardware bitmap
  */
-void DispVA(char plr, char payload)
+void DispVA(char plr, char payload, const display::LegacySurface *hw)
 {
     int i, TotY, IncY;
     int casingWidth, casingHeight, x1, y1, x2, y2, w2, h2, cx, off = 0;
@@ -826,7 +828,7 @@ void DispVA(char plr, char payload)
 
     local.clear(0);
 
-    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0 + off);
+    local.copyFrom(hw, x1, y1, x2, y2, 0, 0 + off);
 
     /* Copy area background into buffer underneath casing */
     display::LegacySurface local2(casingWidth, casingHeight);
@@ -878,7 +880,7 @@ void DispVA(char plr, char payload)
                           VAS[payload][i].name);
                 continue;
             } else {
-                local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
+                local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
             }
 
             IncY += h2 + 1;
@@ -898,7 +900,7 @@ void DispVA(char plr, char payload)
         y2 = MIN(y1 + (casingHeight - IncY - 1), MI[plr * 28 + 25].y2);
         w2 = x2 - x1 + 1;
         cx = casingWidth / 2 - w2 / 2 - 1;
-        local2.copyFrom(vhptr, x1, y1, x2, y2, cx, IncY);
+        local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
@@ -908,7 +910,7 @@ void DispVA(char plr, char payload)
         y2 = MI[plr * 28 + 27].y2;
         h2 = y2 - y1 + 1;
 
-        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, casingHeight - h2);
+        local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     } else {
@@ -918,7 +920,7 @@ void DispVA(char plr, char payload)
         x2 = MI[plr * 28 + 26].x2;
         y2 = MI[plr * 28 + 26].y2;
         h2 = y2 - y1 + 1;
-        local2.copyFrom(vhptr, x1, y1, x2, y2, 0, casingHeight - h2);
+        local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     }
@@ -935,8 +937,8 @@ void DispVA(char plr, char payload)
  * coordinates.
  *
  * This function makes extensive use of two global variables, MI and
- * vhptr. It relies upon the VAB sprite having been loaded into the
- * global vhptr buffer.
+ * hw. It relies upon the VAB sprite having been loaded into a local
+ * buffer.
  *
  * The rockets are indexed in the MI[] array as:
  *   0 / 28:   Atlas  / A-Series
@@ -949,8 +951,9 @@ void DispVA(char plr, char payload)
  *
  * \param plr  The assembling player (0 for USA, 1 for USSR).
  * \param wh   The rocket's index in the MI[] array.
+ * \param hw   The hardware bitmat
  */
-void DispRck(char plr, char wh)
+void DispRck(char plr, char wh, const display::LegacySurface *hw)
 {
     int w;
     int h;
@@ -958,6 +961,8 @@ void DispRck(char plr, char wh)
     int y1;
     int x2;
     int y2;
+	int middle_w;
+	int middle_h;
 
     x1 = MI[plr * 28 + wh].x1;
     y1 = MI[plr * 28 + wh].y1;
@@ -965,17 +970,19 @@ void DispRck(char plr, char wh)
     y2 = MI[plr * 28 + wh].y2;
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
+	middle_w = 282 - w / 2;
+	middle_h = 103 - h / 2;
     display::LegacySurface local(w, h);
     display::LegacySurface local2(w, h);
 
-    local.copyFrom(vhptr, x1, y1, x2, y2, 0, 0);
+    local.copyFrom(hw, x1, y1, x2, y2, 0, 0);
 
     fill_rectangle(247, 29, 313, 179, 3);
-    local2.copyFrom(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2, 282 - w / 2 + w - 1, 103 - h / 2 + h - 1);
+    local2.copyFrom(display::graphics.legacyScreen(), middle_w, middle_h, middle_w + w - 1, middle_h + h - 1);
 
     local.maskCopy(&local2, 0, display::LegacySurface::DestinationEqual);
 
-    local.copyTo(display::graphics.legacyScreen(), 282 - w / 2, 103 - h / 2);
+    local.copyTo(display::graphics.legacyScreen(), middle_w, middle_h);
 }
 
 
@@ -1015,6 +1022,7 @@ void VAB(char plr)
     int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
     char Name[8][12];          // Cached rocket names
     char ButOn;
+	boost::shared_ptr<display::LegacySurface> hw;
 
     LoadMIVals();
     music_start(M_HARDWARE);
@@ -1066,6 +1074,7 @@ void VAB(char plr)
         }
 
         DispVAB(plr, mis);
+        hw = LoadVABSprite(plr);
 
         if (Data->P[plr].Mission[mis].MissionCode) {
             ButOn = 1;
@@ -1089,8 +1098,8 @@ void VAB(char plr)
         ShowVA(ccc);
         ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
                 isDamaged[rk]);
-        DispRck(plr, rk);
-        DispVA(plr, ccc);
+        DispRck(plr, rk, hw.get());
+        DispVA(plr, ccc, hw.get());
         DispWts(weight, pay[rk]);
         //display cost (XX of XX)
         ShowAutopurchase(plr, ccc, rk, &qty[0]);
@@ -1313,7 +1322,7 @@ void VAB(char plr)
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
                         isDamaged[rk]);
                 DispWts(weight, pay[rk]);
-                DispRck(plr, rk);
+                DispRck(plr, rk, hw.get());
                 WaitForMouseUp();
 
                 if (key > 0) {
@@ -1340,7 +1349,7 @@ void VAB(char plr)
                 DispWts(weight, pay[rk]);
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
                         isDamaged[rk]);
-                DispVA(plr, ccc);
+                DispVA(plr, ccc, hw.get());
                 //display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rk, &qty[0]);
                 WaitForMouseUp();

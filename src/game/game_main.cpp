@@ -93,7 +93,6 @@ char df;
 char IDLE[2];
 char *buffer;
 display::LegacySurface *vhptr;
-display::LegacySurface *vhptr2;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;

@@ -94,15 +94,15 @@ void FastOne(char plr, int *where);
 void FullRewind(char plr, int *where);
 void RewindOne(char plr, int *where);
 void FullFast(char plr, int *where);
-void DisplAst(char plr, char *where, char *where2);
-void ShowAstroUp(char plr, char *where, char *where2);
-void ShowAstroDown(char plr, char *where, char *where2);
-void ShowAstroBack(char plr, char *where, char *where2);
-void ShowAstroFor(char plr, char *where, char *where2);
+void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void ShowAstroDown(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void ShowAstroBack(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void ShowAstroFor(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
 void DispLoc(char plr, char *where);
-void DisplAstData(char plr, char *where, char *where2);
-void DownAstroData(char plr, char *where, char *where2);
-void UpAstroData(char plr, char *where, char *where2);
+void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void DownAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void UpAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
 int astcomp(const void *no1, const void *no2);
 
 
@@ -971,6 +971,8 @@ void DrawMisHist(char plr, int *where)
 
 void ShowAstrosHist(char plr)
 {
+    display::LegacySurface *vhptr2;
+
     char pos = 0, pos2 = 0, glorf = 0;
     vhptr2 = new display::LegacySurface(112, 55);
     abuf = (struct Astros *) buffer;
@@ -1046,8 +1048,8 @@ void ShowAstrosHist(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(37, 34, "PREVIOUS MISSION");
     draw_string(47, 193, "NEXT MISSION");
-    DisplAst(plr, &pos, &pos2);
-    DisplAstData(plr, &pos, &pos2);
+    DisplAst(plr, &pos, &pos2, vhptr2);
+    DisplAstData(plr, &pos, &pos2, vhptr2);
     FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
@@ -1077,12 +1079,12 @@ void ShowAstrosHist(char plr)
             return;
         }
 
-        pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2), key >> 8, 80);
-        pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2), key >> 8, 72);
-        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2), key >> 8, 71); // Down to prev Astro
-        pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2), key >> 8, 75);
-        pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2), key >> 8, 77);
-        pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2), key >> 8, 79);
+        pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 80);
+        pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 72);
+        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2, vhptr2), key >> 8, 71); // Down to prev Astro
+        pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2, vhptr2), key >> 8, 75);
+        pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2, vhptr2), key >> 8, 77);
+        pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2, vhptr2), key >> 8, 79);
 
         if (key >= 'A' && key <= 'Z') {
             glorf = 0;
@@ -1092,7 +1094,7 @@ void ShowAstrosHist(char plr)
             }
 
             pos = glorf;
-            DisplAst(plr, &pos, &pos2);
+            DisplAst(plr, &pos, &pos2, vhptr2);
             key = 0;
         }
 
@@ -1100,7 +1102,7 @@ void ShowAstrosHist(char plr)
     }
 }
 
-void DisplAst(char plr, char *where, char *where2)
+void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     char temp[11] = "GROUP \0";
     char Ast_Name[11];
@@ -1168,13 +1170,13 @@ void DisplAst(char plr, char *where, char *where2)
     draw_string(0, 0, " OF ");
     draw_number(0, 0, Data->P[plr].AstroCount);
     DispLoc(plr, where);
-    DisplAstData(plr, where, where2);
+    DisplAstData(plr, where, where2, vhptr2);
     GradRect(234, 30, 313, 79, plr);
     AstFaces(plr, 234, 30, abuf[*where].Face); //30
 
 }
 
-void ShowAstroUp(char plr, char *where, char *where2)
+void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if (*where == Data->P[plr].AstroCount - 1) {
         return;
@@ -1182,10 +1184,10 @@ void ShowAstroUp(char plr, char *where, char *where2)
 
     *where2 = 0;
     (*where)++;
-    DisplAst(plr, where, where2);
+    DisplAst(plr, where, where2, vhptr2);
 }
 
-void ShowAstroDown(char plr, char *where, char *where2)
+void ShowAstroDown(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if (*where == 0) {
         return;
@@ -1193,10 +1195,10 @@ void ShowAstroDown(char plr, char *where, char *where2)
 
     *where2 = 0;
     (*where)--;
-    DisplAst(plr, where, where2);
+    DisplAst(plr, where, where2, vhptr2);
 }
 
-void ShowAstroBack(char plr, char *where, char *where2)
+void ShowAstroBack(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if (*where == 0) {
         return;
@@ -1204,10 +1206,10 @@ void ShowAstroBack(char plr, char *where, char *where2)
 
     *where = 0;
     *where2 = 0;
-    DisplAst(plr, where, where2);
+    DisplAst(plr, where, where2, vhptr2);
 }
 
-void ShowAstroFor(char plr, char *where, char *where2)
+void ShowAstroFor(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if (*where == Data->P[plr].AstroCount - 1) {
         return;
@@ -1215,7 +1217,7 @@ void ShowAstroFor(char plr, char *where, char *where2)
 
     *where = Data->P[plr].AstroCount - 1;
     *where2 = 0;
-    DisplAst(plr, where, where2);
+    DisplAst(plr, where, where2, vhptr2);
 }
 
 void DispLoc(char plr, char *where)
@@ -1292,7 +1294,7 @@ void DispLoc(char plr, char *where)
     }
 }
 
-void DisplAstData(char plr, char *where, char *where2)
+void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     int num = abuf[*where].MissionNum[*where2], num2;
 
@@ -1430,7 +1432,7 @@ void DisplAstData(char plr, char *where, char *where2)
     return;
 }
 
-void DownAstroData(char plr, char *where, char *where2)
+void DownAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if (*where2 == 0) {
         return;
@@ -1438,11 +1440,11 @@ void DownAstroData(char plr, char *where, char *where2)
         *where2 -= 2;
     }
 
-    DisplAstData(plr, where, where2);
+    DisplAstData(plr, where, where2, vhptr2);
     return;
 }
 
-void UpAstroData(char plr, char *where, char *where2)
+void UpAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
     if ((*where2 + 2) <= abuf[*where].Missions - 1) {
         *where2 += 2;
@@ -1452,7 +1454,7 @@ void UpAstroData(char plr, char *where, char *where2)
 
 // if(*where2 == abuf[*where].Missions-1) return;
 //  else *where2+=2;
-    DisplAstData(plr, where, where2);
+    DisplAstData(plr, where, where2, vhptr2);
     return;
 }
 

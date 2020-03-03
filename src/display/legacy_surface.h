@@ -56,7 +56,7 @@ public:
         return *_palette;
     };
 
-    inline bool hasValidPalette()
+    inline bool hasValidPalette() const
     {
         return _hasValidPalette;
     };
@@ -76,12 +76,12 @@ public:
     char getPixel(unsigned int x, unsigned int y);
     void outlineRect(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
     void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color);
-    void copyFrom(LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
-    void copyFrom(LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY);
+    void copyFrom(const LegacySurface *surface, unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2);
+    void copyFrom(const LegacySurface *surface, unsigned int srcX1, unsigned int srcY1, unsigned int srcX2, unsigned int srcY2, unsigned int dstX, unsigned int dstY);
     void copyTo(LegacySurface *surface, unsigned int x, unsigned int y, Operation operation = Set);
     void copyTo(LegacySurface *surface, unsigned int srcX, unsigned int srcY, unsigned int destX1, unsigned int destY1, unsigned int destX2, unsigned int destY2);
-    void scaleTo(LegacySurface *surface);
-    void maskCopy(LegacySurface *source, char maskValue, MaskSource maskSource, char offset = 0);
+    void scaleTo(const LegacySurface *surface);
+    void maskCopy(const LegacySurface *source, char maskValue, MaskSource maskSource, char offset = 0);
     void filter(char testValue, char offset, FilterTest filterTest);
 
     // Set a color as transparent, or -1 to disable transaprency
@@ -96,6 +96,7 @@ private:
     // If both surfaces have valid palettes, it compares them for equality and raises an assertion
     // failure if they're different. If only one of the surfaces has a valid palette, it copies the
     // palette prior to performing a draw operation.
+    void checkPaletteCompatibility(const LegacySurface *other);
     void checkPaletteCompatibility(LegacySurface *other);
 };
 

@@ -1,8 +1,14 @@
 #ifndef INTEL_H
 #define INTEL_H
 
+#include <boost/shared_ptr.hpp>
+
+namespace display {
+	class LegacySurface;
+}
+
 void Intel(char plr);
 void IntelPhase(char plr, char pt);
-void LoadCIASprite();
+boost::shared_ptr<display::LegacySurface> LoadCIASprite();
 
 #endif // INTEL_H
