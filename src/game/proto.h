@@ -56,6 +56,8 @@
 #define LT_ARROW       0x4B00
 #define K_HOME         0x4700
 #define K_END          0x4F00
+#define K_PGUP         0x4900
+#define K_PGDN         0x5100
 #define K_ENTER     0x000D
 #define K_ESCAPE       0x001B
 #define K_SPACE     0x0020
