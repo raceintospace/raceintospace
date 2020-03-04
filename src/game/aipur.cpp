@@ -78,6 +78,7 @@ void DrawStatistics(char Win)
     display::graphics.setForegroundColor(6);
     draw_string(122, 78, "WINNING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
+
     if (Win == 0) {
         draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
     } else {
@@ -85,44 +86,43 @@ void DrawStatistics(char Win)
     }
 
     if (AI[Win]) {
-	draw_string(0, 0, "COMPUTER");
-	display::graphics.setForegroundColor(6);
+        draw_string(0, 0, "COMPUTER");
+        display::graphics.setForegroundColor(6);
         draw_string(122, 86, "STRATEGY USED: ");
-	display::graphics.setForegroundColor(8);
+        display::graphics.setForegroundColor(8);
         sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
         //draw_string(0, 0, &Digit[0]);
-	int strat = std::stoi (&Digit[0]);
-	if (strat == 1) {
-		if (Win == 0) {
-		draw_string(0, 0, "JUPITER");	
-		} else {
-		draw_string(0, 0, "LK-700");	
-		}
-	}
-	else if (strat == 2) {
-		if (Win == 0) {
-		draw_string(0, 0, "APOLLO");	
-		} else {
-		draw_string(0, 0, "SOYUZ");	
-		}
-	}
-	else if (strat == 3) {
-		if (Win == 0) {
-		draw_string(0, 0, "GEMINI");	
-		} else {
-		draw_string(0, 0, "VOSKHOD");	
-		}
-	}
-	else {
-	draw_string(0, 0, "OTHER (");
-	draw_string(0, 0, &Digit[0]);
-	draw_string(0, 0, ")");
-	}
-    } 
+        int strat = std::stoi(&Digit[0]);
+
+        if (strat == 1) {
+            if (Win == 0) {
+                draw_string(0, 0, "JUPITER");
+            } else {
+                draw_string(0, 0, "LK-700");
+            }
+        } else if (strat == 2) {
+            if (Win == 0) {
+                draw_string(0, 0, "APOLLO");
+            } else {
+                draw_string(0, 0, "SOYUZ");
+            }
+        } else if (strat == 3) {
+            if (Win == 0) {
+                draw_string(0, 0, "GEMINI");
+            } else {
+                draw_string(0, 0, "VOSKHOD");
+            }
+        } else {
+            draw_string(0, 0, "OTHER (");
+            draw_string(0, 0, &Digit[0]);
+            draw_string(0, 0, ")");
+        }
+    }
 
     display::graphics.setForegroundColor(6);
     draw_string(122, 125, "LOSING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
+
     if (Win == 0) {
         draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
     } else {
@@ -130,40 +130,38 @@ void DrawStatistics(char Win)
     }
 
     if (AI[other(Win)]) {
-	draw_string(0, 0, "COMPUTER");
-	display::graphics.setForegroundColor(6);
+        draw_string(0, 0, "COMPUTER");
+        display::graphics.setForegroundColor(6);
         draw_string(122, 86, "STRATEGY USED: ");
-	display::graphics.setForegroundColor(8);
+        display::graphics.setForegroundColor(8);
         sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
         //draw_string(0, 0, &Digit[0]);
-	int strat = std::stoi (&Digit[0]);
-	if (strat == 1) {
-		if (Win == 0) {
-		draw_string(0, 0, "JUPITER");	
-		} else {
-		draw_string(0, 0, "LK-700");	
-		}
-	}
-	else if (strat == 2) {
-		if (Win == 0) {
-		draw_string(0, 0, "APOLLO");	
-		} else {
-		draw_string(0, 0, "SOYUZ");	
-		}
-	}
-	else if (strat == 3) {
-		if (Win == 0) {
-		draw_string(0, 0, "GEMINI");	
-		} else {
-		draw_string(0, 0, "VOSKHOD");	
-		}
-	}
-	else {
-	draw_string(0, 0, "OTHER (");
-	draw_string(0, 0, &Digit[0]);
-	draw_string(0, 0, ")");
-	}
-    } 
+        int strat = std::stoi(&Digit[0]);
+
+        if (strat == 1) {
+            if (Win == 0) {
+                draw_string(0, 0, "JUPITER");
+            } else {
+                draw_string(0, 0, "LK-700");
+            }
+        } else if (strat == 2) {
+            if (Win == 0) {
+                draw_string(0, 0, "APOLLO");
+            } else {
+                draw_string(0, 0, "SOYUZ");
+            }
+        } else if (strat == 3) {
+            if (Win == 0) {
+                draw_string(0, 0, "GEMINI");
+            } else {
+                draw_string(0, 0, "VOSKHOD");
+            }
+        } else {
+            draw_string(0, 0, "OTHER (");
+            draw_string(0, 0, &Digit[0]);
+            draw_string(0, 0, ")");
+        }
+    }
 
     qty = 6;
     starty = 118;

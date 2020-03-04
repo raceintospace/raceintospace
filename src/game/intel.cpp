@@ -252,7 +252,7 @@ const char *code_names[] = {
 };
 
 struct DisplayContext {
-	boost::shared_ptr<display::LegacySurface> intel;
+    boost::shared_ptr<display::LegacySurface> intel;
 };
 
 
