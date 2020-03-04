@@ -1649,9 +1649,7 @@ void Bre(char plr)
 }
 
 /**
- * Load the CIA hardware icons into the global vhptr buffer.
- *
- * Exports the file palette to the global display.
+ * Load the CIA hardware icons into a buffer image.
  *
  * \throws runtime_error  if Filesystem is unable to load the sprite.
  */
@@ -1797,15 +1795,15 @@ void IStat(char plr)
 /**
  * Copies an image segment from the CIA sprite to the display buffer.
  *
- * Assumes cia.but / cia.but.0.png is loaded in the global vhptr.
  * Identical to HDispIt() in hardef.cpp.
  *
- * \param x1  top-left x coordinate of the image in the sprite
- * \param y1  top-left y coordinate of the image in the sprite
- * \param x2  bottom-right x coordinate of the image in the sprite
- * \param y2  bottom-right y coordinate of the image in the sprite
- * \param s   top-left x coordinate of the destination in the display
- * \param t   top-left y coordinate of the destination in the display
+ * \param dctx  buffer with the CIA hardware sprite
+ * \param x1    top-left x coordinate of the image in the sprite
+ * \param y1    top-left y coordinate of the image in the sprite
+ * \param x2    bottom-right x coordinate of the image in the sprite
+ * \param y2    bottom-right y coordinate of the image in the sprite
+ * \param s     top-left x coordinate of the destination in the display
+ * \param t     top-left y coordinate of the destination in the display
  */
 void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t)
 {

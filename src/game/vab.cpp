@@ -264,9 +264,6 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 /* Draw the Vehicle Assembly / Integration interface layout and print
  * mission-specific information.
  *
- * This loads either the USA or USSR VAB sprite into the global
- * buffer vhptr via LoadVABSprite().
- *
  * \param plr  0 for the USA, 1 for the USSR.
  * \param pad  The launch pad to which the mission is assigned.
  */
@@ -774,7 +771,7 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
  *
  * \param plr      The assembling player (0 for USA, 1 for USSR).
  * \param payload  The VAS index of the given payload hardware set.
- * \param hw       The VAB loaded hardware bitmap
+ * \param hw       The VAB loaded hardware bitmap.
  */
 void DispVA(char plr, char payload, const display::LegacySurface *hw)
 {
