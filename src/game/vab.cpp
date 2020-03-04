@@ -221,7 +221,7 @@ void LoadMIVals()
  */
 boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
 {
-	boost::shared_ptr<display::LegacySurface> surface;
+    boost::shared_ptr<display::LegacySurface> surface;
 
     surface = boost::shared_ptr<display::LegacySurface>(new display::LegacySurface(320, 200));
 
@@ -236,10 +236,10 @@ boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
 
     // Export the sprite palette to the display here to prevent any
     // palette mismatch errors.
-	// FIXME: Modifies palette of LegacyScreen, should be moved to drawing
-	// place
+    // FIXME: Modifies palette of LegacyScreen, should be moved to drawing
+    // place
     sprite->exportPalette();
-	return surface;
+    return surface;
 }
 
 
@@ -263,9 +263,6 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
 /* Draw the Vehicle Assembly / Integration interface layout and print
  * mission-specific information.
- *
- * This loads either the USA or USSR VAB sprite into the global
- * buffer vhptr via LoadVABSprite().
  *
  * \param plr  0 for the USA, 1 for the USSR.
  * \param pad  The launch pad to which the mission is assigned.
@@ -774,7 +771,7 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg)
  *
  * \param plr      The assembling player (0 for USA, 1 for USSR).
  * \param payload  The VAS index of the given payload hardware set.
- * \param hw       The VAB loaded hardware bitmap
+ * \param hw       The VAB loaded hardware bitmap.
  */
 void DispVA(char plr, char payload, const display::LegacySurface *hw)
 {
@@ -936,9 +933,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
  * texture atlas, with the global variable MI storing the texture
  * coordinates.
  *
- * This function makes extensive use of two global variables, MI and
- * hw. It relies upon the VAB sprite having been loaded into a local
- * buffer.
+ * This function makes extensive use of the global variable MI.
  *
  * The rockets are indexed in the MI[] array as:
  *   0 / 28:   Atlas  / A-Series
@@ -951,7 +946,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
  *
  * \param plr  The assembling player (0 for USA, 1 for USSR).
  * \param wh   The rocket's index in the MI[] array.
- * \param hw   The hardware bitmat
+ * \param hw   The VAB hardware sprite
  */
 void DispRck(char plr, char wh, const display::LegacySurface *hw)
 {
@@ -961,8 +956,8 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
     int y1;
     int x2;
     int y2;
-	int middle_w;
-	int middle_h;
+    int middle_w;
+    int middle_h;
 
     x1 = MI[plr * 28 + wh].x1;
     y1 = MI[plr * 28 + wh].y1;
@@ -970,8 +965,8 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
     y2 = MI[plr * 28 + wh].y2;
     w = x2 - x1 + 1;
     h = y2 - y1 + 1;
-	middle_w = 282 - w / 2;
-	middle_h = 103 - h / 2;
+    middle_w = 282 - w / 2;
+    middle_h = 103 - h / 2;
     display::LegacySurface local(w, h);
     display::LegacySurface local2(w, h);
 
@@ -1022,7 +1017,7 @@ void VAB(char plr)
     int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
     char Name[8][12];          // Cached rocket names
     char ButOn;
-	boost::shared_ptr<display::LegacySurface> hw;
+    boost::shared_ptr<display::LegacySurface> hw;
 
     LoadMIVals();
     music_start(M_HARDWARE);

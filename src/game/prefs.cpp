@@ -42,7 +42,7 @@
 #include <ctype.h>
 
 struct DisplayContext {
-	boost::shared_ptr<display::PalettizedSurface> prefs_image;
+    boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
 
 void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx);
@@ -241,7 +241,7 @@ void Levels(char plr, char which, char x, DisplayContext &dctx)
     unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + which * 72, 30 + x * 30,
-		    71, 29, v[0][plr], v[1][x]);
+                                           71, 29, v[0][plr], v[1][x]);
 
     return;
 }
@@ -516,7 +516,7 @@ void Prefs(int where)
                 // SetMusicVolume((Data->Def.Music==1)?100:0);
                 music_set_mute(!Data->Def.Music);
                 display::graphics.legacyScreen()->draw(dctx.prefs_image,
-				153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
+                                                       153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
                 OutBox(100, 30, 135, 61);
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
@@ -525,7 +525,7 @@ void Prefs(int where)
                 Data->Def.Sound = !Data->Def.Sound;
                 MuteChannel(AV_SOUND_CHANNEL, !Data->Def.Sound);
                 display::graphics.legacyScreen()->draw(dctx.prefs_image,
-				221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
+                                                       221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
                 OutBox(100, 70, 135, 101);
                 /* Sound Level */
             }

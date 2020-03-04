@@ -125,6 +125,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
         fread(&Pul.size, sizeof Pul.size, 1, fin);
         Swap16bit(Pul.size);
     } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && ++i < count);
+
     // This uses short-circuit evaluation to distinguish between
     // string match and iterator comparison.
 

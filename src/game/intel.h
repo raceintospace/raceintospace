@@ -3,8 +3,9 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace display {
-	class LegacySurface;
+namespace display
+{
+class LegacySurface;
 }
 
 void Intel(char plr);

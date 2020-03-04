@@ -225,15 +225,12 @@ void DrawRD(char player_index)
 
     draw_string(200, 9, "CASH:");
 
-    if (Data->P[player_index].Cash < 10)
-    {
+    if (Data->P[player_index].Cash < 10) {
         draw_megabucks(202, 16, Data->P[player_index].Cash);
-    } else if (Data->P[player_index].Cash > 99)
-    {
-    draw_megabucks(198, 16, Data->P[player_index].Cash);
-    } else
-    {
-    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99) {
+        draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else {
+        draw_megabucks(200, 16, Data->P[player_index].Cash);
     }
 
     display::graphics.setForegroundColor(1);
@@ -836,15 +833,13 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 111, "SAFETY FACTOR:");
 
     display::graphics.setForegroundColor(11);
-    if (Data->P[player_index].Cash < 10)
-    {
+
+    if (Data->P[player_index].Cash < 10) {
         draw_megabucks(202, 16, Data->P[player_index].Cash);
-    } else if (Data->P[player_index].Cash > 99)
-    {
-    draw_megabucks(198, 16, Data->P[player_index].Cash);
-    } else
-    {
-    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99) {
+        draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else {
+        draw_megabucks(200, 16, Data->P[player_index].Cash);
     }
 
     display::graphics.setForegroundColor(11);
@@ -1076,15 +1071,13 @@ void DrawHPurc(char player_index)
     draw_number(0, 0, Data->Year);
 
     draw_string(200, 9, "CASH:");
-    if (Data->P[player_index].Cash < 10)
-    {
+
+    if (Data->P[player_index].Cash < 10) {
         draw_megabucks(202, 16, Data->P[player_index].Cash);
-    } else if (Data->P[player_index].Cash > 99)
-    {
-    draw_megabucks(198, 16, Data->P[player_index].Cash);
-    } else
-    {
-    draw_megabucks(200, 16, Data->P[player_index].Cash);
+    } else if (Data->P[player_index].Cash > 99) {
+        draw_megabucks(198, 16, Data->P[player_index].Cash);
+    } else {
+        draw_megabucks(200, 16, Data->P[player_index].Cash);
     }
 
     display::graphics.setForegroundColor(1);

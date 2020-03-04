@@ -313,6 +313,7 @@ TrainText(char plr, int astro, int cnt)
 
     draw_number(264, 97, Data->P[plr].Pool[astro].Active);
     draw_string(0, 0, " SEASON");
+
     if (Data->P[plr].Pool[astro].Active != 1) {
         draw_string(0, 0, "S");
     }
