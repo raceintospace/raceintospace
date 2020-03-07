@@ -88,12 +88,12 @@ Burst(char win)
     int lp1, lp2, Region, xx, yy;
     float Ang, Spd, InitSpd;
     char clr = 1;
-    display::LegacySurface scopy(320, 200);
 
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-    scopy.copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
+    vhptr->resetPalette();
+    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
 
     while (1) {
         Region = brandom(100);
@@ -126,7 +126,7 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.legacyScreen()->setPixel(xx, yy, scopy.getPixel(xx, yy));
+                    display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
                 }
 
                 key = 0;
@@ -162,7 +162,7 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-                        scopy.copyTo(display::graphics.legacyScreen(), 0, 0);
+                        vhptr->copyTo(display::graphics.legacyScreen(), 0, 0);
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -211,7 +211,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.legacyScreen()->setPixel(xx, yy, scopy.getPixel(xx, yy));
+                display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
             }
         }
     }                              // end while
@@ -239,9 +239,9 @@ void EndGame(char win, char pad)
     draw_string(112, 109, "ALTERNATE HISTORY");
 
     if (win == 0) {
-        draw_heading(34, 5, "US WINS", 1, -1);
+        draw_heading(36, 5, "US WINS", 1, -1);
     } else {
-        draw_heading(34, 5, "USSR WINS", 1, -1);
+        draw_heading(36, 5, "USSR WINS", 1, -1);
     }
 
     draw_small_flag(win, 4, 4);
@@ -325,7 +325,7 @@ void EndGame(char win, char pad)
     man2 = Data->P[win].History[gork].Man[i][1];
     man3 = Data->P[win].History[gork].Man[i][2];
     man4 = Data->P[win].History[gork].Man[i][3];
-// no astronaut klugge
+// no astronaut kludge
     r = Data->P[win].AstroCount;
 
     if (man1 <= -1) {
@@ -368,8 +368,13 @@ void EndGame(char win, char pad)
 
             display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man1].Sex == 1) {
+                display::graphics.setForegroundColor(14);  // Show females in orange
+            }
+
             if (man1 != -1) {
                 draw_string(0, 0, &Data->P[win].Pool[man1].Name[0]);
+		display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -383,8 +388,13 @@ void EndGame(char win, char pad)
 
             display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man2].Sex == 1) {
+                display::graphics.setForegroundColor(14);  // Show females in orange
+            }
+
             if (man2 != -1) {
                 draw_string(0, 0, &Data->P[win].Pool[man2].Name[0]);
+		display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -398,8 +408,13 @@ void EndGame(char win, char pad)
 
             display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man3].Sex == 1) {
+                display::graphics.setForegroundColor(14);  // Show females in orange
+            }
+
             if (man3 != -1 && prog > 2) {
                 draw_string(0, 0, &Data->P[win].Pool[man3].Name[0]);
+		display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -409,8 +424,13 @@ void EndGame(char win, char pad)
                 draw_string(10, 97, "EVA SPECIALIST: ");
                 display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man4].Sex == 1) {
+                display::graphics.setForegroundColor(14);  // Show females in orange
+            }
+
                 if (man4 != -1) {
                     draw_string(0, 0, &Data->P[win].Pool[man4].Name[0]);
+		    display::graphics.setForegroundColor(8);
                 }
             }
 
@@ -421,11 +441,14 @@ void EndGame(char win, char pad)
         }
     }
 
-//Print the first on the moon
+//Print the first on the Moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
     display::graphics.setForegroundColor(14);
+       if (Data->P[win].Pool[firstOnMoon].Sex == 1) {
+           display::graphics.setForegroundColor(5);  // Show females in blue
+       }
     draw_string(0, 0, &Data->P[win].Pool[firstOnMoon].Name[0]);
 
     display::graphics.setForegroundColor(6);
@@ -849,6 +872,10 @@ void FakeWin(char win)
 
             display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man1].Sex == 1) {
+                display::graphics.setForegroundColor(12);  // Show females in orange
+            }
+
             if (man1 != -1) {
                 draw_string(0, 0, &Data->P[win].Pool[man1].Name[0]);
             }
@@ -863,6 +890,10 @@ void FakeWin(char win)
             }
 
             display::graphics.setForegroundColor(8);
+
+            if (Data->P[win].Pool[man2].Sex == 1) {
+                display::graphics.setForegroundColor(12);  // Show females in orange
+            }
 
             if (man2 != -1 && (prog > 1 && prog < 5)) {
                 draw_string(0, 0, &Data->P[win].Pool[man2].Name[0]);
@@ -879,6 +910,10 @@ void FakeWin(char win)
 
             display::graphics.setForegroundColor(8);
 
+            if (Data->P[win].Pool[man3].Sex == 1) {
+                display::graphics.setForegroundColor(12);  // Show females in orange
+            }
+
             if (man3 != -1 && prog > 2) {
                 draw_string(0, 0, &Data->P[win].Pool[man3].Name[0]);
             }
@@ -889,6 +924,10 @@ void FakeWin(char win)
             if (prog == 5) {
                 draw_string(10, 97, "EVA SPECIALIST: ");
                 display::graphics.setForegroundColor(8);
+
+            if (Data->P[win].Pool[man4].Sex == 1) {
+                display::graphics.setForegroundColor(12);  // Show females in orange
+            }
 
                 if (man4 != -1 && prog == 5) {
                     draw_string(0, 0, &Data->P[win].Pool[man4].Name[0]);
