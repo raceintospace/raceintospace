@@ -1024,7 +1024,7 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
         display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white
     }
 
-    draw_string(xa, ya, Guy->Name);
+    draw_string(xa, ya-1, Guy->Name);
     draw_string(0, 0, ": ");
 
     switch (Guy->Status) {
