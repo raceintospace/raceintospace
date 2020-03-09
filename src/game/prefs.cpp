@@ -46,7 +46,7 @@ struct DisplayContext {
 };
 
 void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx);
-void HModel(char mode, char tx, DisplayContext &dctx);
+void HModel(char mode, char tx);
 void Levels(char plr, char which, char x, DisplayContext &dctx);
 void BinT(int x, int y, char st);
 void PLevels(char side, char wh, DisplayContext &dctx);
@@ -59,9 +59,6 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     FadeOut(2, 10, 0, 0);
     helpText = "i013";
     keyHelpText = "K013";
-
-    boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
-    dctx.prefs_image = prefs_image;
 
     display::graphics.screen()->clear();
     prefs_image->exportPalette();
@@ -165,7 +162,7 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
 
     display::graphics.legacyScreen()->draw(prefs_image, 216, 30, 71, 29, 147, 31);
     display::graphics.legacyScreen()->draw(prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
-    HModel(Data->Def.Input, 1, dctx);
+    HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
     FadeIn(2, 10, 0, 0);
@@ -196,7 +193,7 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
  * \param mode  The current model/roster setup (0-5).
  * \param tx    This option is unused, so who knows?
  */
-void HModel(char mode, char tx, DisplayContext &dctx)
+void HModel(char mode, char tx)
 {
     char filename[128];
     int image = (mode == 0 || mode == 1 || mode == 4) ? 1 : 0;
@@ -506,7 +503,7 @@ void Prefs(int where)
                     Data->Def.Input = 0;
                 }
 
-                HModel(Data->Def.Input, 0, dctx);
+                HModel(Data->Def.Input, 0);
             } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
                 /* disable this option right now */
             } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
