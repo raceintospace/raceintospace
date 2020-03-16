@@ -553,7 +553,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 if ((Data->P[plr[i] % NUM_PLAYERS].Mission[0].MissionCode > 6 ||
                      Data->P[plr[i] % NUM_PLAYERS].Mission[1].MissionCode > 6 ||
                      Data->P[plr[i] % NUM_PLAYERS].Mission[2].MissionCode > 6) &&
-                    (NOCOPRO && !PUSSY)) {
+                    (NOCOPRO && !EASYMODE)) {
                     xMODE &= ~xMODE_NOCOPRO;
                 }
 

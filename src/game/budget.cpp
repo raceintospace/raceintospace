@@ -719,7 +719,7 @@ void Viewing(char plr)
         key = 0;
         GetMouse();
 
-        if (ctop > 0 && key == 0x4900) { // Page Up Key
+        if (ctop > 0 && key == K_PGUP) { // Page Up Key
             ctop -= 7;
 
             if (ctop < 0) {
@@ -730,7 +730,7 @@ void Viewing(char plr)
             bzdelay(DELAYCNT);
         }
 
-        if (ctop < bline && key == 0x5100) { // Page Down Key
+        if (ctop < bline && key == K_PGDN) { // Page Down Key
             ctop += 7;
 
             if (ctop > bline) {
