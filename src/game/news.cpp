@@ -780,7 +780,7 @@ News(char plr)
             Status = 1;
         }
 
-        if (ctop > 0 && key == 0x4900) {
+        if (ctop > 0 && key == K_PGUP) {
             // Page Up Key
             ctop -= 7;
 
@@ -789,7 +789,7 @@ News(char plr)
             }
 
             DrawNText(plr, ctop);
-        } else if (ctop < bline && key == 0x5100) {
+        } else if (ctop < bline && key == K_PGDN) {
             // Page Down Key
             ctop += 7;
 

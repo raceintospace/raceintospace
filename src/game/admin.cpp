@@ -1003,7 +1003,7 @@ void FileAccess(char mode)
 
             // perform Up Button
             key = 0;
-        } else if (key == 0x4900) { // Page Up
+        } else if (key == K_PGUP) { // Page Up
 
             if (now > 0) {
                 fill_rectangle(38, 49, 190, 127, 0);
@@ -1022,7 +1022,7 @@ void FileAccess(char mode)
             // perform Up Button
             key = 0;
 
-        } else if (key == 0x5100) { // Page Down
+        } else if (key == K_PGDN) { // Page Down
 
             if (now < (tFiles - 9)) {
                 now += 9;
