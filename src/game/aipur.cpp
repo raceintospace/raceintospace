@@ -52,11 +52,15 @@ char Skill(char plr, char type);
 void CheckAdv(char plr);
 
 
-
+/**
+ * Draws the menu for pulling up assorted summary statistics about the
+ * finished match.
+ *
+ * \param Win  the country of the winner (0 for USA, 1 for USSR).
+ */
 void DrawStatistics(char Win)
 {
     char AImg[7] = {8, 9, 10, 11, 13, 14, 0};
-    char Digit[2];
     int starty, qty, i;
     FILE *fin;
     helpText = "i145";
@@ -86,37 +90,7 @@ void DrawStatistics(char Win)
     }
 
     if (AI[Win]) {
-        draw_string(0, 0, "COMPUTER");
-        display::graphics.setForegroundColor(6);
-        draw_string(122, 86, "STRATEGY USED: ");
-        display::graphics.setForegroundColor(8);
-        sprintf(&Digit[0], "%d", Data->P[Win].AIStrategy[AI_STRATEGY]);
-        //draw_string(0, 0, &Digit[0]);
-        int strat = std::stoi(&Digit[0]);
-
-        if (strat == 1) {
-            if (Win == 0) {
-                draw_string(0, 0, "JUPITER");
-            } else {
-                draw_string(0, 0, "LK-700");
-            }
-        } else if (strat == 2) {
-            if (Win == 0) {
-                draw_string(0, 0, "APOLLO");
-            } else {
-                draw_string(0, 0, "SOYUZ");
-            }
-        } else if (strat == 3) {
-            if (Win == 0) {
-                draw_string(0, 0, "GEMINI");
-            } else {
-                draw_string(0, 0, "VOSKHOD");
-            }
-        } else {
-            draw_string(0, 0, "OTHER (");
-            draw_string(0, 0, &Digit[0]);
-            draw_string(0, 0, ")");
-        }
+        draw_string(0, 0, " (AI)");
     }
 
     display::graphics.setForegroundColor(6);
@@ -130,13 +104,18 @@ void DrawStatistics(char Win)
     }
 
     if (AI[other(Win)]) {
-        draw_string(0, 0, "COMPUTER");
+        draw_string(0, 0, " (AI)");
+    }
+
+    // There's only one AI player, so there's only one place where the
+    // AI strategy is listed.
+    if (AI[Win] || AI[other(Win)]) {
         display::graphics.setForegroundColor(6);
-        draw_string(122, 86, "STRATEGY USED: ");
+        draw_string(122, 86, "AI STRATEGY: ");
         display::graphics.setForegroundColor(8);
-        sprintf(&Digit[0], "%d", Data->P[other(Win)].AIStrategy[AI_STRATEGY]);
-        //draw_string(0, 0, &Digit[0]);
-        int strat = std::stoi(&Digit[0]);
+
+        int ai_player = AI[Win] ? Win : other(Win);
+        int strat = Data->P[ai_player].AIStrategy[AI_STRATEGY];
 
         if (strat == 1) {
             if (Win == 0) {
@@ -158,7 +137,7 @@ void DrawStatistics(char Win)
             }
         } else {
             draw_string(0, 0, "OTHER (");
-            draw_string(0, 0, &Digit[0]);
+            draw_number(0, 0, strat);
             draw_string(0, 0, ")");
         }
     }
