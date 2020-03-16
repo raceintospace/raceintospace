@@ -61,7 +61,7 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     keyHelpText = "K013";
 
     display::graphics.screen()->clear();
-    prefs_image->exportPalette();
+    dctx.prefs_image->exportPalette();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);
@@ -157,11 +157,11 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
 
-    display::graphics.legacyScreen()->draw(prefs_image, 153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
-    display::graphics.legacyScreen()->draw(prefs_image, 221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
 
-    display::graphics.legacyScreen()->draw(prefs_image, 216, 30, 71, 29, 147, 31);
-    display::graphics.legacyScreen()->draw(prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 216, 30, 71, 29, 147, 31);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
     HModel(Data->Def.Input, 1);
 
     // if (where==0 || where==2)
