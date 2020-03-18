@@ -82,12 +82,7 @@ void DrawStatistics(char Win)
     display::graphics.setForegroundColor(6);
     draw_string(122, 78, "WINNING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
-
-    if (Win == 0) {
-        draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
-    } else {
-        draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
-    }
+    draw_string(0, 0, &Data->P[Win].Name[0]);
 
     if (AI[Win]) {
         draw_string(0, 0, " (AI)");
@@ -96,12 +91,7 @@ void DrawStatistics(char Win)
     display::graphics.setForegroundColor(6);
     draw_string(122, 125, "LOSING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
-
-    if (Win == 0) {
-        draw_string(0, 0, &Data->P[Data->Def.Plr2].Name[0]);
-    } else {
-        draw_string(0, 0, &Data->P[Data->Def.Plr1].Name[0]);
-    }
+    draw_string(0, 0, &Data->P[other(Win)].Name[0]);
 
     if (AI[other(Win)]) {
         draw_string(0, 0, " (AI)");
