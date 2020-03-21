@@ -416,7 +416,7 @@ void PadDraw(char plr, char pad)
 /**
  * Scrubs a mission assigned for the current turn.
  *
- * Clears all mission data and unassigns the crew.
+ * Clears all mission data, frees hardware, and unassigns the crew.
  *
  * \param plr  The player index (0 for USA, 1 for USSR).
  * \param pad  The launch pad index, or the pad + 3 for compatibility
@@ -479,13 +479,11 @@ void ClrMiss(char plr, char pad)
         return;
     }
 
-    // TODO: This should unassign hardware that has been reserved
-    // for this launch.
-    Data->P[plr].Mission[padd].Hard[Mission_PrimaryBooster] = 0;
-
+    FreeLaunchHardware(plr, padd);
     ClearMissionCrew(plr, padd, CREW_ALL);
 
     if (Data->P[plr].Mission[padd].Joint == 1) {
+        FreeLaunchHardware(plr, padd + 1);
         ClearMissionCrew(plr, padd + 1, CREW_ALL);
 
         Data->P[plr].Mission[padd + 1].part = 0;

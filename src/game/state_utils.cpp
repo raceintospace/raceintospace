@@ -80,6 +80,60 @@ void ClearMissionCrew(const char plr, const int pad, const CrewType crew)
 }
 
 
+/* Frees up hardware that was assigned to a specific mission launch.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param pad  The index of the launch (pad 0, 1, or 2).
+ * \throws invalid_argument  if pad < 0 or pad >= MAX_LAUNCHPADS
+ */
+void FreeLaunchHardware(const char plr, const int pad)
+{
+    if (pad < 0 || pad >= MAX_LAUNCHPADS) {
+        char buffer[70];
+        sprintf(buffer, "FreeLaunchHardware argument pad=%d"
+                "must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
+        throw std::invalid_argument(buffer);
+    }
+
+    struct MissionType &launch = Data->P[plr].Mission[pad];
+
+    if (launch.Hard[Mission_PrimaryBooster] <= 0) {
+        return;
+    }
+
+    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+        const uint8_t hardwareID = launch.Hard[i];
+
+        switch (i) {
+        case Mission_Capsule:
+        case Mission_LM:  // Manned+LM
+            Data->P[plr].Manned[hardwareID].Spok--;
+            break;
+
+        case Mission_Kicker:  // Kicker
+            Data->P[plr].Misc[hardwareID].Spok--;
+            break;
+
+        case Mission_Probe_DM:  // DM+Probes
+            if (hardwareID == MISC_HW_DOCKING_MODULE) {
+                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
+            } else {
+                Data->P[plr].Probe[hardwareID].Spok--;
+            }
+
+            break;
+        }
+    }
+
+    const uint8_t rocket = (launch.Hard[Mission_PrimaryBooster] - 1) % 4;
+    Data->P[plr].Rocket[rocket].Spok--;
+
+    if (launch.Hard[Mission_PrimaryBooster] > 3) {
+        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
+    }
+}
+
+
 //----------------------------------------------------------------------
 // Local definitions
 //----------------------------------------------------------------------
