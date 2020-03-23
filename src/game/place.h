@@ -9,5 +9,6 @@ void AstFaces(char plr, int x, int y, char face);
 void SmHardMe(char plr, int x, int y, char prog, char planet, unsigned char coff);
 int BChoice(char plr, char qty, char *Name, char *Imx);
 int MainMenuChoice();
+bool ScrubMissionQuery(char plr, int pad);
 
 #endif // PLACE_H

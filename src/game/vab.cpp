@@ -42,7 +42,6 @@
 #include "mission_util.h"
 #include "news_suq.h"
 #include "place.h"
-#include "radar.h"
 #include "mc.h"
 #include "sdlhelper.h"
 #include "state_utils.h"
@@ -990,7 +989,7 @@ void VAB(char plr)
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
         if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
-            ClrMiss(plr, mis + 3);
+            ScrubMission(plr, mis);
             continue;
         }
 
@@ -1152,7 +1151,11 @@ void VAB(char plr)
                 }
 
                 OutBox(249, 185, 314, 195);
-                ClrMiss(plr, mis);
+
+                if (ScrubMissionQuery(plr, mis)) {
+                    ScrubMission(plr, mis);
+                }
+
                 break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && weight <= pay[rk]) {
                 int j = 0;

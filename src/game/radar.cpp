@@ -414,111 +414,6 @@ void PadDraw(char plr, char pad)
 
 
 /**
- * Scrubs a mission assigned for the current turn.
- *
- * Clears all mission data, frees hardware, and unassigns the crew.
- *
- * \param plr  The player index (0 for USA, 1 for USSR).
- * \param pad  The launch pad index, or the pad + 3 for compatibility
- *             with News to bypass the popup alert.
- */
-void ClrMiss(char plr, char pad)
-{
-    char temp = 0;
-    char padd = pad % 3;
-
-    // If a Joint mission, sets padd to the launch pad of the first
-    // part. Displays an appropriate popup alert asking for confirmation
-    // before cancelling the mission.
-    if (Data->P[plr].Mission[padd].Joint == 0) {
-        if (!AI[plr] && pad < 3) {
-            temp = Help("i111");
-        }
-    } else {
-        switch (padd) {
-        case 0:
-            if (!AI[plr] && pad < 3) {
-                temp = Help("i110");
-            }
-
-            break;
-
-        case 1:
-            if (Data->P[plr].Mission[1].Joint == 1) {
-                if (Data->P[plr].Mission[0].Joint == 1) {
-                    if (!AI[plr] && pad < 3) {
-                        temp = Help("i112");
-                    }
-
-                    padd = 0;
-                } else {
-                    if (!AI[plr] && pad < 3) {
-                        temp = Help("i110");
-                    }
-                }
-            }
-
-            break;
-
-        case 2:
-            padd = 1;
-
-            if (!AI[plr] && pad < 3) {
-                temp = Help("i112");
-            }
-
-            break;
-
-        default:
-            temp = 0;
-            break;
-        }
-    }
-
-    if (! AI[plr] && temp == -1) {
-        return;
-    }
-
-    FreeLaunchHardware(plr, padd);
-    ClearMissionCrew(plr, padd, CREW_ALL);
-
-    if (Data->P[plr].Mission[padd].Joint == 1) {
-        FreeLaunchHardware(plr, padd + 1);
-        ClearMissionCrew(plr, padd + 1, CREW_ALL);
-
-        Data->P[plr].Mission[padd + 1].part = 0;
-        Data->P[plr].Mission[padd + 1].Prog = 0;
-        Data->P[plr].Mission[padd + 1].Duration = 0;
-        Data->P[plr].Mission[padd + 1].Joint = 0;
-        Data->P[plr].Mission[padd + 1].Men = 0;
-        Data->P[plr].Mission[padd + 1].MissionCode = Mission_None;
-    }
-
-    Data->P[plr].Mission[padd].Prog = 0;
-    Data->P[plr].Mission[padd].Duration = 0;
-    Data->P[plr].Mission[padd].Men = 0;
-    Data->P[plr].Mission[padd].Joint = 0;
-    Data->P[plr].Mission[padd].MissionCode = Mission_None;
-
-    // Huh? These shouldn't ever trigger, because the Joint status
-    // for each was just set... -- rnyoakum
-    // if (Data->P[plr].Mission[padd].Joint == 1 &&
-    //     Data->P[plr].Mission[padd].part == 0) {
-    //     memset(&Data->P[plr].Mission[padd + 1], 0x00,
-    //            sizeof(struct MissionType));
-    // }
-
-    // if (Data->P[plr].Mission[padd + 1].Joint == 1 &&
-    //     Data->P[plr].Mission[padd + 1].part == 1) {
-    //     memset(&Data->P[plr].Mission[padd + 1], 0x00,
-    //            sizeof(struct MissionType));
-    // }
-
-    return;
-}
-
-
-/**
  * Draw an image of the Launch Pad facility in the Launch Pad menu.
  *
  * Launch Pad images have their own 256-color palette that is exported
@@ -559,8 +454,7 @@ void ShowPad(char plr, char pad)
     temp = CheckCrewOK(plr, pad);
 
     if (temp == 1) { //found mission no crews
-
-        ClrMiss(plr, pad + 3);
+        ScrubMission(plr, pad);
         return;
     }
 
@@ -578,7 +472,11 @@ void ShowPad(char plr, char pad)
             InBox(169, 181, 314, 193);
             key = 0;
             WaitForMouseUp();
-            ClrMiss(plr, pad);
+
+            if (ScrubMissionQuery(plr, pad)) {
+                ScrubMission(plr, pad);
+            }
+
             OutBox(169, 181, 314, 193);
             key = 0;
 

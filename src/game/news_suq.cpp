@@ -20,7 +20,7 @@
 #include "game_main.h"
 #include "news_sup.h"
 #include "place.h"
-#include "radar.h"
+#include "state_utils.h"
 #include "mc.h"
 #include "news.h"
 #include "pace.h"
@@ -386,7 +386,7 @@ char REvent(char plr)
 
         evflag = choice[brandom(evflag)] - 1;
         xMODE |= xMODE_CLOUDS;
-        ClrMiss(plr, evflag + 3);
+        ScrubMission(plr, evflag);
     }
     break;
 
@@ -424,7 +424,7 @@ char REvent(char plr)
             break;
 
         case 3:
-            ClrMiss(plr, 1 + 3);
+            ScrubMission(plr, 1);
             break;
 
         case 4:
@@ -432,16 +432,16 @@ char REvent(char plr)
             break;
 
         case 5:
-            ClrMiss(plr, 2 + 3);
+            ScrubMission(plr, 2);
             break;
 
         case 6:
-            ClrMiss(plr, 2 + 3);
+            ScrubMission(plr, 2);
             break;
 
         case 7:
-            ClrMiss(plr, 1 + 3);
-            ClrMiss(plr, 2 + 3);
+            ScrubMission(plr, 1);
+            ScrubMission(plr, 2);
             break;
         }
 
@@ -791,7 +791,7 @@ char REvent(char plr)
         //cancel manned missions
         for (size_t pad = 0; pad < MAX_LAUNCHPADS; pad++) {
             if (Data->P[plr].Mission[pad].Men > 0) {
-                ClrMiss(plr, pad + 3);
+                ScrubMission(plr, pad);
             }
         }
 
