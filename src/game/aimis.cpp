@@ -29,7 +29,7 @@
 #include "aipur.h"
 #include "game_main.h"
 #include "mis_c.h"
-#include "radar.h"
+#include "state_utils.h"
 #include "vab.h"
 #include "mc.h"
 #include "aimast.h"
@@ -1575,7 +1575,7 @@ void AILaunch(char plr)
                 }
 
                 if (rck[0] == -1) {
-                    ClrMiss(plr, i - Data->P[plr].Mission[i].part);
+                    ScrubMission(plr, i - Data->P[plr].Mission[i].part);
                 } else {
                     if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_Satellite) {
                         rck[0] = 0;

@@ -35,8 +35,8 @@
 #include "newmis.h"
 #include "news_suq.h"
 #include "prest.h"
-#include "radar.h"
 #include "records.h"
+#include "state_utils.h"
 #include "game_main.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
@@ -139,7 +139,7 @@ int Launch(char plr, char mis)
     temp = CheckCrewOK(plr, mis);
 
     if (temp == 1) { //found mission no crews
-        ClrMiss(plr, mis - Data->P[plr].Mission[mis].part);
+        ScrubMission(plr, mis - Data->P[plr].Mission[mis].part);
     }
 
     if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode) {

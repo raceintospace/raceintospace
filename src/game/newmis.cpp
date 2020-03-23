@@ -34,7 +34,7 @@
 #include "mis_c.h"
 #include "place.h"
 #include "port.h"
-#include "radar.h"
+#include "state_utils.h"
 #include "mc.h"
 #include "mission_util.h"
 #include "rush.h"
@@ -484,8 +484,9 @@ void MisAnn(char plr, char pad)
             InBox(207, 70, 264, 82);
             WaitForMouseUp();
             OutBox(207, 70, 264, 82);
-            {
-                ClrMiss(plr, pad);
+
+            if (ScrubMissionQuery(plr, pad)) {
+                ScrubMission(plr, pad);
             }
 
             if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {

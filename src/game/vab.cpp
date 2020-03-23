@@ -42,9 +42,9 @@
 #include "mission_util.h"
 #include "news_suq.h"
 #include "place.h"
-#include "radar.h"
 #include "mc.h"
 #include "sdlhelper.h"
+#include "state_utils.h"
 #include "port.h"
 #include "gr.h"
 #include "pace.h"
@@ -162,7 +162,6 @@ int ChkDelVab(char plr, char f);
 int ChkVabRkt(char plr, int rk, int *q);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
-void FreeMissionHW(char plr, char mis);
 int FillVab(char plr, char f, char mode);
 int  BuyVabRkt(char plr, int rk, int *q, char mode);
 void ShowAutopurchase(char plr, int payload, int rk, int *qty);
@@ -386,47 +385,6 @@ void DispVAB(char plr, char pad)
     draw_small_flag(plr, 4, 4);
 
     return;
-}
-
-
-/* Frees hardware for other use that was assigned to a planned mission.
- *
- * \param plr  0 for the USA, 1 for the USSR.
- * \param mis  The index of the mission (pad 0, 1, or 2).
- */
-void FreeMissionHW(const char plr, const char mis)
-{
-    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] <= 0) {
-        return;
-    }
-
-    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
-        switch (i) {
-        case Mission_Capsule:
-        case Mission_LM:  // Manned+LM
-            Data->P[plr].Manned[Data->P[plr].Mission[mis].Hard[i]].Spok--;
-            break;
-
-        case Mission_Kicker:  // Kicker
-            Data->P[plr].Misc[Data->P[plr].Mission[mis].Hard[i]].Spok--;
-            break;
-
-        case Mission_Probe_DM:  // DM+Probes
-            if (Data->P[plr].Mission[mis].Hard[i] == MISC_HW_DOCKING_MODULE) {
-                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
-            } else {
-                Data->P[plr].Probe[ Data->P[plr].Mission[mis].Hard[i]].Spok--;
-            }
-
-            break;
-        }
-    }
-
-    Data->P[plr].Rocket[(Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] - 1) % 4].Spok--;
-
-    if (Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] > 3) {
-        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
-    }
 }
 
 
@@ -1031,7 +989,7 @@ void VAB(char plr)
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
         if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
-            ClrMiss(plr, mis + 3);
+            ScrubMission(plr, mis);
             continue;
         }
 
@@ -1040,7 +998,7 @@ void VAB(char plr)
         // When reassembling Hardware, any hardware previously assigned to
         // the mission should be unassigned so it may be used (or not) in
         // reassembly.
-        FreeMissionHW(plr, mis);
+        FreeLaunchHardware(plr, mis);
 
         BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
 
@@ -1193,7 +1151,11 @@ void VAB(char plr)
                 }
 
                 OutBox(249, 185, 314, 195);
-                ClrMiss(plr, mis);
+
+                if (ScrubMissionQuery(plr, mis)) {
+                    ScrubMission(plr, mis);
+                }
+
                 break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && weight <= pay[rk]) {
                 int j = 0;

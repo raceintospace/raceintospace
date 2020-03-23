@@ -1028,4 +1028,33 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 }
 
 
+/**
+ * Prompts if the specified mission should be scrubbed.
+ *
+ * Chooses the correct Scrub Mission prompt from the help files
+ * and launches it for human players.
+ *
+ * \param plr  The player index (0 for USA, 1 for USSR)
+ * \param pad  The mission to scrub (pad 0, 1, or 2)
+ * \return  false to cancel, true to continue
+ */
+bool ScrubMissionQuery(const char plr, const int pad)
+{
+    if (AI[plr]) {
+        return true;
+    }
+
+    // Different Help prompts are used under different circumstances
+    // "i110" - first pad of joint mission
+    // "i111" - non-joint mission
+    // "i112" - second pad of joint mission
+    if (Data->P[plr].Mission[pad].Joint == 0) {
+        return Help("i111") >= 0;
+    } else if (Data->P[plr].Mission[pad].part == 0) {
+        return Help("i110") >= 0;
+    } else {
+        return Help("i112") >= 0;
+    }
+}
+
 // EOF

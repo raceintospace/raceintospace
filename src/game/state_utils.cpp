@@ -27,6 +27,7 @@
 namespace
 {
 void RemoveCrew(char plr, struct MissionType &mission, CrewType crew);
+void ResetMission(struct MissionType &mission);
 };
 
 
@@ -80,6 +81,94 @@ void ClearMissionCrew(const char plr, const int pad, const CrewType crew)
 }
 
 
+/* Frees up hardware that was assigned to a specific mission launch.
+ *
+ * \param plr  0 for the USA, 1 for the USSR.
+ * \param pad  The index of the launch (pad 0, 1, or 2).
+ * \throws invalid_argument  if pad < 0 or pad >= MAX_LAUNCHPADS
+ */
+void FreeLaunchHardware(const char plr, const int pad)
+{
+    if (pad < 0 || pad >= MAX_LAUNCHPADS) {
+        char buffer[70];
+        sprintf(buffer, "FreeLaunchHardware argument pad=%d"
+                "must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
+        throw std::invalid_argument(buffer);
+    }
+
+    struct MissionType &launch = Data->P[plr].Mission[pad];
+
+    if (launch.Hard[Mission_PrimaryBooster] <= 0) {
+        return;
+    }
+
+    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+        const uint8_t hardwareID = launch.Hard[i];
+
+        switch (i) {
+        case Mission_Capsule:
+        case Mission_LM:  // Manned+LM
+            Data->P[plr].Manned[hardwareID].Spok--;
+            break;
+
+        case Mission_Kicker:  // Kicker
+            Data->P[plr].Misc[hardwareID].Spok--;
+            break;
+
+        case Mission_Probe_DM:  // DM+Probes
+            if (hardwareID == MISC_HW_DOCKING_MODULE) {
+                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
+            } else {
+                Data->P[plr].Probe[hardwareID].Spok--;
+            }
+
+            break;
+        }
+    }
+
+    const uint8_t rocket = (launch.Hard[Mission_PrimaryBooster] - 1) % 4;
+    Data->P[plr].Rocket[rocket].Spok--;
+
+    if (launch.Hard[Mission_PrimaryBooster] > 3) {
+        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok--;
+    }
+}
+
+
+/**
+ * Scrubs a mission assigned for the current turn.
+ *
+ * Clears all mission data, frees hardware, and unassigns the crew.
+ *
+ * \param plr  The player index (0 for USA, 1 for USSR).
+ * \param pad  The launch pad index (pad 0, 1, or 2)
+ */
+void ScrubMission(const char plr, int pad)
+{
+    if (pad < 0 || pad >= MAX_LAUNCHPADS) {
+        char buffer[70];
+        sprintf(buffer, "ScrubMission argument pad=%d"
+                "must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
+        throw std::invalid_argument(buffer);
+    }
+
+    if (Data->P[plr].Mission[pad].Joint &&
+        Data->P[plr].Mission[pad].part == 1) {
+        pad--;
+    }
+
+    if (Data->P[plr].Mission[pad].Joint == 1) {
+        FreeLaunchHardware(plr, pad + 1);
+        ClearMissionCrew(plr, pad + 1, CREW_ALL);
+        ResetMission(Data->P[plr].Mission[pad + 1]);
+    }
+
+    FreeLaunchHardware(plr, pad);
+    ClearMissionCrew(plr, pad, CREW_ALL);
+    ResetMission(Data->P[plr].Mission[pad]);
+}
+
+
 //----------------------------------------------------------------------
 // Local definitions
 //----------------------------------------------------------------------
@@ -127,6 +216,34 @@ void RemoveCrew(const char plr, struct MissionType &mission,
     //     mission.Crew = 0;
     //     mission.Men = 0;
     // }
+}
+
+
+/* Clears a mission entry to a blank state.
+ *
+ * Resets a mission entry without side effects. This does not
+ * actively release any resources assigned to the mission, such
+ * as hardware or crew, or address the other half of a joint
+ * mission.
+ *
+ * \param misssion  The entry to zero out.
+ */
+void ResetMission(struct MissionType &mission)
+{
+    memset(&mission.Name[0], 0x00, sizeof(mission.Name));
+    mission.MissionCode = Mission_None;
+    mission.Patch = 0;
+    mission.part = 0;
+    memset(&mission.Hard[0], 0x00, sizeof(mission.Hard));
+    mission.Joint = 0;
+    mission.Rushing = 0;
+    mission.Month = 0;
+    mission.Duration = 0;
+    mission.Men = 0;
+    mission.Prog = 0;
+    mission.PCrew = 0;
+    mission.BCrew = 0;
+    mission.Crew = 0;
 }
 
 }; // End of local namespace

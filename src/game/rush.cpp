@@ -49,7 +49,6 @@
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
-#include "radar.h"
 
 // Function Prototype
 
@@ -95,17 +94,6 @@ void SetRush(int mode, int pad);
  * or vice versa, are not allowed and will be ignored.
  * Replacing an Unmanned launch with a Manned launch is also blocked.
  *
- * TODO: ClrMiss() can launch a Help menu to ask if the user wishes
- * to proceed with cancelling the mission. This is preferable, in
- * keeping with usual practice. However, handling the process is
- * messy:
- *  - If the user doesn't cancel, is the original mission approved
- *    or are they returned to the Mission Control loop?
- *  - If returned to the mission control loop, would other missions
- *    that were set to be downgraded changed or left in their original
- *    state? If the later, how would that be done?
- *  - Etc.
- *
  * TODO: Downgrade penalty system is currently disabled.
  * Add it with a configuration toggle.
  *
@@ -145,8 +133,11 @@ void Downgrade(const char plr, const int pad,
                 " to Manned on pad %d", pad);
         return;
     } else if (mission.MissionCode == Mission_None) {
-        // Disable ClrMiss's Help menu
-        ClrMiss(plr, pad + MAX_LAUNCHPADS);
+        // TODO: Should launch a prompt before scrubbing a mission,
+        // but cancelling means this function cannot fulfill its
+        // mandate, and the decision of how to handle that must be
+        // dealt with at a higher level.
+        ScrubMission(plr, pad);
         return;
     }
 
