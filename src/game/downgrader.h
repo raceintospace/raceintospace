@@ -1,12 +1,10 @@
 #ifndef DOWNGRADER_H
 #define DOWNGRADER_H
 
+#include <string>
 #include <vector>
 
-// Hate including this in the header file, but without it the
-// MissionType structs may be the wrong size.
-// Replace with using pointers? -- rnyoakum
-#include "Buzz_inc.h"
+#include "data.h"
 
 
 /**
@@ -46,6 +44,9 @@ private:
     std::vector<int>::iterator mIndex;
     int mDuration;
 };
+
+
+Downgrader::Options LoadJsonDowngrades(std::string filename);
 
 
 #endif // DOWNGRADER_H

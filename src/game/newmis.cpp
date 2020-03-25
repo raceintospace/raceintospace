@@ -16,11 +16,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <cassert>
-#include <fstream>
-
-#include <json/json.h>
-
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -55,7 +50,6 @@ namespace   // Unnamed namespace part 1
 {
 
 void MisOrd(char num);
-Downgrader::Options LoadJsonDowngrades(std::string filename);
 
 }; // End of unnamed namespace part 1
 
@@ -537,78 +531,3 @@ void AI_Done(void)
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
 }
-
-
-namespace   // Unnamed namespace part 3
-{
-
-/* Read the mission downgrade options from a file.
- *
- * The Json format is:
- * {
- *   "missions": [
- *     { "mission": <Code>, "downgrades": [<Codes>] },
- *     ...
- *   ]
- * }
- *
- * TODO: This method is actually copied from rush.cpp. It returns a
- * Downgrader::Options instance, so listing it in rush.h would require
- * including downgrader.h, which includes Buzz_inc.h.
- * This is a temporary measure taken because duplicate code is easy to
- * track and risks fewer side effects than spreading the packing issues
- * caused by Buzz_inc.h
- *
- * \param filename  A Json-formatted data file.
- * \return  A collection of MissionType.MissionCode-indexed downgrade
- *          options.
- * \throws IOException  If filename is not a readable Json file.
- */
-Downgrader::Options LoadJsonDowngrades(std::string filename)
-{
-    char *path = locate_file(filename.c_str(), FT_DATA);
-
-    if (path == NULL) {
-        free(path);
-        throw IOException(std::string("Unable to open path to ") +
-                          filename);
-    }
-
-    std::ifstream input(path);
-    Json::Value doc;
-    Json::Reader reader;
-    bool success = reader.parse(input, doc);
-
-    if (! success) {
-        free(path);
-        throw IOException("Unable to parse JSON input stream");
-    }
-
-    assert(doc.isObject());
-    Json::Value &missionList = doc["missions"];
-    assert(missionList.isArray());
-
-    Downgrader::Options options;
-
-    for (int i = 0; i < missionList.size(); i++) {
-        Json::Value &missionEntry = missionList[i];
-        assert(missionEntry.isObject());
-
-        int missionCode = missionEntry.get("mission", -1).asInt();
-        assert(missionCode >= 0);
-        // assert(missionCode >= 0 && missionCode <= 61);
-
-        Json::Value &codeGroup = missionEntry["downgrades"];
-        assert(codeGroup.isArray());
-
-        for (int j = 0; j < codeGroup.size(); j++) {
-            options.add(missionCode, codeGroup[j].asInt());
-        }
-    }
-
-    input.close();
-    free(path);
-    return options;
-}
-
-}; // End of unnamed namespace part 3
