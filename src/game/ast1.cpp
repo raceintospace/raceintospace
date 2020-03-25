@@ -64,11 +64,8 @@ void DispEight(char now, char loc)
     }
 
     fill_rectangle(206, 48, 306, 52, 3);
-
     fill_rectangle(221, 57, 306, 61, 3);
-
     fill_rectangle(293, 66, 301, 70, 3);
-
     fill_rectangle(274, 98, 281, 102, 3);
 
     display::graphics.setForegroundColor(1);
@@ -84,6 +81,7 @@ void DispEight(char now, char loc)
     draw_number(275, 102, Men[now].Endurance);
     return;
 } /* End of Disp8 */
+
 
 void DispEight2(int nw, int lc, int cnt)
 {
@@ -280,6 +278,7 @@ void DrawAstCheck(char plr)
     return;
 }
 
+
 /** Draw selection screen for Astronaut recruitment
  *
  */
@@ -416,6 +415,7 @@ void DrawAstSel(char plr)
     return;
 }
 
+
 //Naut Randomize, Nikakd, 10/8/10
 void RandomizeNauts()
 {
@@ -429,6 +429,7 @@ void RandomizeNauts()
         Men[i].Endurance = brandom(5);
     }
 }
+
 
 void AstSel(char plr)
 {
@@ -566,25 +567,18 @@ void AstSel(char plr)
     }
 
     Data->P[plr].Cash -= 15;
-
     Data->P[plr].Spend[0][2] += 15;
 
     now = Index;
-
     max = Index + MaxMen;
-
     min = Index;
-
     now2 = 0;
-
     count = 0; /* counter for # selected */
 
     DispEight(now, BarB);
-
     DispEight2(now2, BarA, count);
 
     FadeIn(2, 10, 0, 0);
-
     WaitForMouseUp();
 
     while (1) {
@@ -607,7 +601,6 @@ void AstSel(char plr)
                 ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                 DispEight(now, BarB);
                 WaitForMouseUp();
-
             }
 
             if (((x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0)
@@ -625,7 +618,6 @@ void AstSel(char plr)
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispEight2(now2, BarA, count);
                 WaitForMouseUp();
-
             }
         }
 
@@ -641,13 +633,14 @@ void AstSel(char plr)
 
                 if (mousebuttons == 0) {
 
-                    if (BarA == 0)
+                    if (BarA == 0) {
                         if (now2 > 0) {
                             now2--;
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
+                    }
 
                     if (BarA > 0) {
                         fill_rectangle(26, 129, 153, 195, 0);
@@ -664,13 +657,14 @@ void AstSel(char plr)
             while (mousebuttons == 1 || key == UP_ARROW) {
                 delay(100);
 
-                if (BarA == 0)
+                if (BarA == 0) {
                     if (now2 > 0) {
                         now2--;
                         fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
+                }
 
                 if (BarA > 0) {
                     fill_rectangle(26, 129, 153, 195, 0);
@@ -699,15 +693,16 @@ void AstSel(char plr)
 
                 if (mousebuttons == 0) {
 
-                    if (BarA == 7)
+                    if (BarA == 7) {
                         if (now2 < count - 1) {
                             now2++;
                             fill_rectangle(26, 129, 153, 195, 0);
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
+                    }
 
-                    if (BarA < 7)
+                    if (BarA < 7) {
                         if (now2 < count - 1) {
                             fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
@@ -715,6 +710,7 @@ void AstSel(char plr)
                             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
+                    }
 
                     i = 51;
                 }
@@ -723,15 +719,16 @@ void AstSel(char plr)
             while (mousebuttons == 1 || key == DN_ARROW) {
                 delay(100);
 
-                if (BarA == 7)
+                if (BarA == 7) {
                     if (now2 < count - 1) {
                         now2++;
                         fill_rectangle(26, 129, 153, 195, 0);
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
+                }
 
-                if (BarA < 7)
+                if (BarA < 7) {
                     if (now2 < count - 1) {
                         fill_rectangle(26, 129, 153, 195, 0);
                         BarA++;
@@ -739,6 +736,7 @@ void AstSel(char plr)
                         ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
+                }
 
                 key = 0;
 
@@ -759,13 +757,14 @@ void AstSel(char plr)
 
                 if (mousebuttons == 0) {
 
-                    if (BarB == 0)
+                    if (BarB == 0) {
                         if (now > min) {
                             now--;
                             fill_rectangle(186, 129, 314, 195, 0);
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         }
+                    }
 
                     if (BarB > 0) {
                         fill_rectangle(186, 129, 314, 195, 0);
@@ -782,13 +781,14 @@ void AstSel(char plr)
             while (mousebuttons == 1 || key == UP_ARROW) {
                 delay(100);
 
-                if (BarB == 0)
+                if (BarB == 0) {
                     if (now > min) {
                         now--;
                         fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
+                }
 
                 if (BarB > 0) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -799,7 +799,6 @@ void AstSel(char plr)
                 }
 
                 key = 0;
-
                 GetMouse();
             }
 
@@ -817,7 +816,7 @@ void AstSel(char plr)
 
                 if (mousebuttons == 0) {
 
-                    if (BarB == 7)
+                    if (BarB == 7) {
                         if (now <= max) {
                             if (now < max) {
                                 now++;
@@ -827,6 +826,7 @@ void AstSel(char plr)
                             ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         }
+                    }
 
                     if (BarB < 7) {
                         fill_rectangle(186, 129, 314, 195, 0);
@@ -843,7 +843,7 @@ void AstSel(char plr)
             while (mousebuttons == 1 || key == DN_ARROW) {
                 delay(100);
 
-                if (BarB == 7)
+                if (BarB == 7) {
                     if (now <= max) {
                         if (now < max) {
                             now++;
@@ -853,6 +853,7 @@ void AstSel(char plr)
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
+                }
 
                 if (BarB < 7) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -893,11 +894,8 @@ void AstSel(char plr)
             }
 
             fill_rectangle(26, 129, 153, 195, 0);
-
             ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-
             DispEight2(now2, BarA, count);
-
             DispEight(now, BarB);
 
             WaitForMouseUp();
@@ -916,13 +914,14 @@ void AstSel(char plr)
                 MCol[now] = 1;
                 count++;
 
-                if (BarB == 7)
+                if (BarB == 7) {
                     if (now < max) {
                         now++;
                         fill_rectangle(186, 129, 314, 195, 0);
                         ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
+                }
 
                 if (BarB < 7) {
                     fill_rectangle(186, 129, 314, 195, 0);
@@ -933,9 +932,7 @@ void AstSel(char plr)
                 }
 
                 fill_rectangle(26, 129, 153, 195, 0);
-
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-
                 DispEight2(now2, BarA, count);
             }
 
@@ -952,9 +949,11 @@ void AstSel(char plr)
             if (fem == 1) {
                 j = 0;
 
-                for (i = 0; i < count; i++) if (Men[sel[i]].Sex == 1) {
+                for (i = 0; i < count; i++) {
+                    if (Men[sel[i]].Sex == 1) {
                         j++;
                     }
+                }
 
                 if (j > 0) {
                     fem = 0;
@@ -1031,7 +1030,6 @@ void AstSel(char plr)
                 }
 
                 Data->P[plr].AstroLevel++;
-
                 Data->P[plr].AstroCount += count;
 
                 switch (Data->P[plr].AstroLevel) {
