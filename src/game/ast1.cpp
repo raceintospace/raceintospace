@@ -43,6 +43,7 @@ void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
+void Recruit(char plr, uint8_t pool, uint8_t candidate);
 
 
 /** display list of 'naut names
@@ -416,7 +417,75 @@ void DrawAstSel(char plr)
 }
 
 
+/**
+ * Copy astronaut data from the roster pool into the player data.
+ *
+ * When an astronaut is recruited from the pool of candidates, there
+ * is a chance of losing a point of Capsule or Endurance, and they will
+ * lose 3 points randomly split among LM, EVA, and Docking (which can
+ * take the astronaut below 0).
+ *
+ * \param plr   0 for the USA, 1 for the USSR.
+ * \param pool  The index of the astronaut in the recruited 'nauts pool.
+ * \param candidate  The index of the candidate among all available 'nauts.
+ */
+void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
+{
+    struct Astros &recruit = Data->P[plr].Pool[pool];
+
+    strcpy(&recruit.Name[0], &Men[candidate].Name[0]);
+    recruit.Sex = Men[candidate].Sex;
+    recruit.Cap = Men[candidate].Cap;
+    recruit.LM = Men[candidate].LM;
+    recruit.EVA = Men[candidate].EVA;
+    recruit.Docking = Men[candidate].Docking;
+    recruit.Endurance = Men[candidate].Endurance;
+    recruit.Status = AST_ST_TRAIN_BASIC_1;
+    recruit.TrainingLevel = 1;
+    recruit.Group = Data->P[plr].AstroLevel;
+    recruit.CR = brandom(2) + 1;
+    recruit.CL = brandom(2) + 1;
+    recruit.Task = 0;
+    recruit.Crew = 0;
+    recruit.Unassigned = 0;
+    recruit.Pool = 0;
+    recruit.Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
+    recruit.Mood = 85 + 5 * brandom(4);
+    recruit.Face = recruit.Sex ? brandom(77) : (77 + brandom(8));
+
+    if (brandom(10) > 5) {
+        if (brandom(2) == 0) {
+            recruit.Endurance--;
+        } else {
+            recruit.Cap--;
+        }
+    }
+
+    for (uint8_t j = 0; j < 3; j++) {
+        uint8_t skill = brandom(3);
+
+        switch (skill) {
+        case 0:
+            recruit.LM--;
+            break;
+
+        case 1:
+            recruit.EVA--;
+            break;
+
+        case 2:
+            recruit.Docking--;
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+
 //Naut Randomize, Nikakd, 10/8/10
+// Note: These stats are far more generous than the historical stats.
 void RandomizeNauts()
 {
     int i;
@@ -971,62 +1040,7 @@ void AstSel(char plr)
                 }
 
                 for (i = 0; i < count; i++) {
-                    strcpy(&Data->P[plr].Pool[i + Data->P[plr].AstroCount].Name[0], &Men[sel[i]].Name[0]);
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Sex = Men[sel[i]].Sex;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Cap = Men[sel[i]].Cap;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].LM = Men[sel[i]].LM;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].EVA = Men[sel[i]].EVA;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Docking = Men[sel[i]].Docking;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Endurance = Men[sel[i]].Endurance;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].TrainingLevel = 1;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Group = Data->P[plr].AstroLevel;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CR = brandom(2) + 1;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].CL = brandom(2) + 1;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Task = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Crew = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Unassigned = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Pool = 0;
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
-                    Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = brandom(77);
-
-                    if (Data->P[plr].Pool[i + Data->P[plr].AstroCount].Sex == 1) {
-                        Data->P[plr].Pool[i + Data->P[plr].AstroCount].Face = 77 + brandom(8);
-                    }
-
-                    k = brandom(10) + 1;
-
-                    if (k > 6) {
-                        k = brandom(2);
-
-                        if (k == 0) {
-                            Data->P[plr].Pool[i + Data->P[plr].AstroCount].Endurance--;
-                        } else {
-                            Data->P[plr].Pool[i + Data->P[plr].AstroCount].Cap--;
-                        }
-                    }
-
-                    for (j = 0; j < 3; j++) {
-                        k = brandom(3);
-
-                        switch (k) {
-                        case 0:
-                            Data->P[plr].Pool[i + Data->P[plr].AstroCount].LM--;
-                            break;
-
-                        case 1:
-                            Data->P[plr].Pool[i + Data->P[plr].AstroCount].EVA--;
-                            break;
-
-                        case 2:
-                            Data->P[plr].Pool[i + Data->P[plr].AstroCount].Docking--;
-                            break;
-
-                        default:
-                            break;
-                        }
-                    }
+                    Recruit(plr, i + Data->P[plr].AstroCount, sel[i]);
                 }
 
                 Data->P[plr].AstroLevel++;
