@@ -115,6 +115,12 @@ static struct {
         "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons."
     },
     {
+        "female_nauts", &options.feat_female_nauts, "%u", 0,
+        "Set to determine if female astronauts may be recruited:"
+        "\n#   0  Classic (only after a news event)"
+        "\n#   1  Always allow recruitment"
+    },
+    {
         "random_nauts", &options.feat_random_nauts, "%u", 0,
         "Set to non-zero to enable randomization of nauts."
     },  //Naut Randomize, Nikakd, 10/8/10
@@ -422,6 +428,7 @@ setup_options(int argc, char *argv[])
     options.want_fullscreen = 0;
     options.want_debug = 0;
     options.feat_shorter_advanced_training = 0;
+    options.feat_female_nauts = 0;
     options.feat_random_nauts = 0;   //Naut Randomize, Nikakd, 10/8/10
     options.feat_compat_nauts = 10;  //Naut Compatibility, Nikakd, 10/8/10
     options.feat_no_cTraining = 1;   //No Capsule Training, Nikakd, 10/8/10

@@ -502,9 +502,17 @@ void RandomizeNauts()
 
 void AstSel(char plr)
 {
-    char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, min, count, fem = 0, ksel = 0;
+    char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, min, count,
+         ksel = 0;
     FILE *fin;
+
+    bool femaleAstronautsAllowed =
+        (options.feat_female_nauts ||
+         Data->P[plr].FemaleAstronautsAllowed == 1);
+    bool femaleAstronautsRequired = Data->P[plr].FemaleAstronautsAllowed;
+
     MaxMen = Index = now = now2 = max = min = count = 0;
+
     music_start(M_DRUMSM);
     DrawAstCheck(plr);
     WaitForMouseUp();
@@ -585,41 +593,24 @@ void AstSel(char plr)
 
     switch (Data->P[plr].AstroLevel) {
     case 0:
-        MaxMen = 10;
+        MaxMen = femaleAstronautsAllowed ? 13 : 10;
         MaxSel = ASTRO_POOL_LVL1;
         Index = 0;
-
-        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-            fem = 1;
-        }
-
+        // TODO: This is an ugly hack...
         Data->P[plr].Cash -= 5;
         Data->P[plr].Spend[0][2] += 5;
         break;
 
     case 1:
-        MaxMen = 17;
+        MaxMen = femaleAstronautsAllowed ? 20 : 17;
         MaxSel = ASTRO_POOL_LVL2;
         Index = 14;
-
-        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-            fem = 1;
-        }
-
         break;
 
     case 2:
-        MaxMen = 19;
+        MaxMen = femaleAstronautsAllowed ? 22 : 19;
         MaxSel = ASTRO_POOL_LVL3;
         Index = 35;
-
-        if (Data->P[plr].FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-            fem = 1;
-        }
-
         break;
 
     case 3:
@@ -1015,23 +1006,25 @@ void AstSel(char plr)
         }
 
         if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) { /* Exit - not 'til done */
-            if (fem == 1) {
-                j = 0;
+            bool femaleAstronautsSelected = false;
 
+            if (femaleAstronautsRequired) {
                 for (i = 0; i < count; i++) {
                     if (Men[sel[i]].Sex == 1) {
-                        j++;
+                        femaleAstronautsSelected = true;
+                        break;
                     }
                 }
 
-                if (j > 0) {
-                    fem = 0;
-                } else {
+                if (! femaleAstronautsSelected) {
+                    InBox(245, 5, 314, 17);
                     Help("i100");
+                    OutBox(245, 5, 314, 17);
                 }
             }
 
-            if (fem == 0 && count == MaxSel) {
+            if ((! femaleAstronautsRequired || femaleAstronautsSelected) &&
+                count == MaxSel) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 

@@ -10,6 +10,7 @@ typedef struct {
     unsigned want_cheats;
     unsigned want_debug;
     unsigned feat_shorter_advanced_training;
+    unsigned feat_female_nauts;
     unsigned feat_random_nauts;
     unsigned feat_compat_nauts;
     unsigned feat_no_cTraining;

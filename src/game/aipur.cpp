@@ -449,7 +449,25 @@ void AIRandomizeNauts()
 }
 
 
-/** Select the best crew for the mission
+/**
+ * Select the best astronauts from the next class for recruitment.
+ *
+ * How the AI handles female astronauts/cosmonauts is a configurable
+ * feature, depending on options.feat_female_nauts. Options are
+ *   0: Classic mode (event-driven)
+ *   1: Always for players, Game decides AI behavior
+ * Greater specificity may be available, but is not guaranteed. Under
+ * the current setup
+ *   2: AI requires news event
+ *   3: AI acts as if under news event
+ *   4: AI is gender-blind [default]
+ * Leon has suggested default behavior be based on AI astronaut
+ * difficulty.
+ *
+ * Also noteworthy is that AI nauts don't suffer skill loss upon
+ * selection. This is to skip the difficulty of managing them in
+ * Basic training - from which they are automatically withdrawn -
+ * and therefore cannot benefit from.
  */
 void SelectBest(char plr, int pos)
 {
@@ -457,6 +475,16 @@ void SelectBest(char plr, int pos)
     FILE *fin;
     char tot, done;
     struct BuzzData *pData = &Data->P[plr];
+
+    // pData->FemaleAstronautsAllowed is the news event flag that
+    // allows & requires female astronauts.
+    // The configurable option should not affect its value.
+    bool femaleAstronautsAllowed =
+        pData->FemaleAstronautsAllowed == 1 ||
+        (options.feat_female_nauts > 0 && options.feat_female_nauts != 2);
+    bool femaleAstronautsRequired =
+        pData->FemaleAstronautsAllowed == 1 ||
+        options.feat_female_nauts == 3;
 
     for (i = 0; i < 25; i++) {
         AIsel[i] = 0;
@@ -475,36 +503,21 @@ void SelectBest(char plr, int pos)
 
     switch (pData->AstroLevel) {
     case 0:
-        MaxMen = 10;
+        MaxMen = femaleAstronautsAllowed ? 13 : 10;
         AIMaxSel = ASTRO_POOL_LVL1;
         Index = 0;
-
-        if (pData->FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-        }
-
         break;
 
     case 1:
-        MaxMen = 17;
+        MaxMen = femaleAstronautsAllowed ? 20 : 17;
         AIMaxSel = ASTRO_POOL_LVL2;
         Index = 14;
-
-        if (pData->FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-        }
-
         break;
 
     case 2:
-        MaxMen = 19;
+        MaxMen = femaleAstronautsAllowed ? 22 : 19;
         AIMaxSel = ASTRO_POOL_LVL3;
         Index = 35;
-
-        if (pData->FemaleAstronautsAllowed == 1) {
-            MaxMen += 3;
-        }
-
         break;
 
     case 3:
@@ -520,6 +533,7 @@ void SelectBest(char plr, int pos)
         break;
 
     default:
+        // TODO: Log an error...
         MaxMen = 0;
         AIMaxSel = 0;
         Index = 0;
@@ -527,9 +541,10 @@ void SelectBest(char plr, int pos)
     }
 
     now = Index;
-
     count = 0;
 
+    // TODO: This is a crude way of ordering all the candidates.
+    // It could be replaced with a superior method.
     for (i = 16; i > 0; i--) {
         done = 0;
 
@@ -539,7 +554,7 @@ void SelectBest(char plr, int pos)
 
                 if (i == tot) {
                     AIsel[count++] = j;
-                } else if (pData->FemaleAstronautsAllowed == 1 && Men[j].Sex == 1) {
+                } else if (femaleAstronautsRequired && Men[j].Sex == 1) {
                     AIsel[count++] = j;
                 }
             }
