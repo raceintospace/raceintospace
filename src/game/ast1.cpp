@@ -29,7 +29,7 @@
 
 #include "ast1.h"
 #include "Buzz_inc.h"
-#include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
+#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "draw.h"
 #include "game_main.h"
 #include "place.h"
@@ -326,9 +326,9 @@ void DrawAstSel(char plr)
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
-        draw_string(22, 34, "ASTRONAUT SELECTION");
+        draw_string(25, 34, "ASTRONAUT SELECTION");
     } else {
-        draw_string(22, 34, "COSMONAUT SELECTION");
+        draw_string(25, 34, "COSMONAUT SELECTION");
     }
 
     draw_string(192, 34, "POOL OF APPLICANTS");
@@ -743,7 +743,7 @@ void AstSel(char plr)
             OutBox(6, 130, 18, 161);
             delay(10);
         } else if (((x >= 6 && y >= 163 && x <= 18 && y <= 194 && mousebuttons > 0) || (key == DN_ARROW && ksel == 1)) && count > 0) {
-            /* Lft Dwn */
+            /* Left Down */
             InBox(6, 163, 18, 194);
 
             for (i = 0; i < 50; i++) {
@@ -807,7 +807,7 @@ void AstSel(char plr)
             OutBox(6, 163, 18, 194);
             delay(10);
         } else if ((x >= 167 && y >= 130 && x <= 179 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 0)) {
-            /* Rt Up */
+            /* Right Up */
             InBox(167, 130, 179, 161);
 
             for (i = 0; i < 50; i++) {
@@ -866,7 +866,7 @@ void AstSel(char plr)
             OutBox(167, 130, 179, 161);
             delay(10);
         } else if ((x >= 167 && y >= 163 && x <= 179 && y <= 194 && mousebuttons > 0) || (key == DN_ARROW && ksel == 0)) {
-            /* Rt Dwn */
+            /* Right Down */
             InBox(167, 163, 179, 194);
 
             for (i = 0; i < 50; i++) {
