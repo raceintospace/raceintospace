@@ -122,6 +122,9 @@ The Advanced Preferences that will be of most interest to the average user (and 
 * `compt_nauts` – Makes your ’nauts more compatible; the lower the number, the less often they dislike one another (makes crew assignment less challenging)
     
     This option was created because of complaints about the difficulty of assigning compatible crews.
+* `female_nauts` - Allows, but does not require, players to choose female astronauts regardless of receiving the news event which normally enables recruitment.
+
+    Political directives (via the news event) still mandate recruiting at least one female candidate.
 * `no_c_training` – Requires that a crew be assembled for one full turn before being assigned to a mission (the way BARIS worked)
     
     The requirement was dropped because it seemed unnecessary and made ’naut administration cumbersome.
