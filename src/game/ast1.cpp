@@ -617,12 +617,14 @@ void AstSel(char plr)
         MaxMen = 27;
         MaxSel = ASTRO_POOL_LVL4;
         Index = 58;
+        femaleAstronautsRequired = false;
         break;
 
     case 4:
         MaxMen = 19;
         MaxSel = ASTRO_POOL_LVL5;
         Index = 86;
+        femaleAstronautsRequired = false;
         break;
     }
 
