@@ -37,7 +37,7 @@
 #include "gr.h"
 #include "pace.h"
 
-int skilLev;  // Variable for 'naut's skill level (so 4s don't go to Adv Training, and 3s go to Adv III)
+int skilLev;  // Variable for 'naut's skill level (so 4s don't go to Adv Training, and 3s go to Adv III) -Leon
 
 void DrawLimbo(char plr);
 void Clear(void);
@@ -120,7 +120,9 @@ void DrawLimbo(char plr)
             display::graphics.setForegroundColor(11);
         }
 
-        lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3;
+        std::string s = Data->P[plr].Manned[i].Name;       // These two lines are for centering spacecraft names containing "I", 
+        size_t inum = std::count(s.begin(), s.end(), 'I'); // such as Gemini, because the I is narrower than other letters.    -Leon
+        lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3 + inum;
         //lenprogname=(7-lenprogname)*2
         draw_string(181 + lenprogname, 101 + 21 * i, Data->P[plr].Manned[i].Name);
         draw_string(181, 107 + 21 * i, "PROGRAM");
@@ -521,11 +523,11 @@ void Limbo(char plr)
                 if (Data->P[plr].Pool[AstroList[now2]].TrainingLevel > 6) {
                     Help("i120");
                 } else if (skilLev > 3) {
-                    OutBox(244, 95 + 21 * i, 313, 109 + 21 * i); // If they have a 4 in that skill, don't send to Adv Training for it
+                    OutBox(244, 95 + 21 * i, 313, 109 + 21 * i); // If they have a 4 in that skill, don't send to Adv Training for it  -Leon
                 } else if (Data->P[plr].Cash < 3) {
                     Help("i121");
                 } else {
-                    if (skilLev > 2) { // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB
+                    if (skilLev > 2) { // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB  -Leon
                         Data->P[plr].Pool[AstroList[now2]].Status = AST_ST_TRAIN_ADV_3;
                         Data->P[plr].Cash -= 2;
                     } else {
