@@ -68,11 +68,11 @@ enum news_type {
 
 /* country, color, type */
 static int news_index[2][2][3] = {
-    { /* usa */
+    { /* USA */
         { 9, 1, 3 }, /* color */
         { 8, 0, 2 }, /* b&w */
     },
-    { /* soviet */
+    { /* Soviet */
         { 10, 4, 6 }, /* color */
         { 11, 5, 7 }, /* b&w */
     },
@@ -726,7 +726,7 @@ News(char plr)
                 }
 
                 PlayVoice();
-                /* the "mysterious" delay of soviet newscaster.
+                /* the "mysterious" delay of Soviet newscaster.
                  * she is out of sync anyway... */
                 loc++;
 
@@ -780,7 +780,12 @@ News(char plr)
             Status = 1;
         }
 
-        if (ctop > 0 && key == K_PGUP) {
+        if (ctop > 0 && key == K_HOME) {
+            // Home Key
+            ctop = 1;
+            DrawNText(plr, ctop);
+
+        } else if (ctop > 0 && key == K_PGUP) {
             // Page Up Key
             ctop -= 7;
 
@@ -798,6 +803,11 @@ News(char plr)
             }
 
             DrawNText(plr, ctop);
+        } else if (ctop < bline && key == K_END) {
+            // End Key
+            ctop = bline;
+            DrawNText(plr, ctop);
+            
         } else if (ctop > 0 && ((x >= 303 && y > 120 && x <= 313 && y <= 156
                                  && mousebuttons > 0) || (key >> 8) == 72)) {
             // Up Arrow
