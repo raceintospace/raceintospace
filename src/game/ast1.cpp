@@ -25,6 +25,18 @@
 /** \file ast1.c Astronaut Recruitment
  */
 
+/* Variables in this file
+   BarA   The line where the bar is showing on the Left (0-7)
+   BarB   The line where the bar is showing on the Right (0-7)
+   MaxMen The total number of candidates available for this recruitment
+   MaxSel The maximum number of candidates you can select in this recruitment
+   min    The first person being read from the 'naut roster
+   max    The last person being read from the 'naut roster
+   count  The number of candidates selected so far
+   now    The selected candidate (?) on the Right
+   now2   The selected candidate (?) on the Left
+   ksel   Which side is currently selected (0=Right, 1=Left) */
+
 #include "display/graphics.h"
 
 #include "ast1.h"
@@ -502,7 +514,7 @@ void RandomizeNauts()
 
 void AstSel(char plr)
 {
-    char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, min, count,
+    char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, maxLeft, change, min, count,
          ksel = 0;
     FILE *fin;
 
@@ -684,8 +696,37 @@ void AstSel(char plr)
         }
 
         // else
-        if (((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 1)) && count > 0) {
-            /* Lft Up */
+        if ((key == K_HOME && ksel == 1) && count > 0) {
+            /* Left Home */
+            InBox(6, 130, 18, 161);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                //GetMouse();
+                delay(10);
+
+                    BarA = 0;
+
+                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                    DispEight2(now2, BarA, count);
+
+                    i = 51;
+            }
+
+                BarA = 0;
+                now2 = 0;
+                fill_rectangle(26, 129, 153, 195, 0);
+                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                DispEight2(now2, BarA, count);
+
+                key = 0;
+
+                //GetMouse();
+
+            OutBox(6, 130, 18, 161);
+            delay(10);
+        } else if (((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 1)) && count > 0) {
+            /* Left Up */
             InBox(6, 130, 18, 161);
 
             for (i = 0; i < 50; i++) {
@@ -805,9 +846,118 @@ void AstSel(char plr)
                 GetMouse();
             }
 
-            // WaitForMouseUp();
+            WaitForMouseUp();
             OutBox(6, 163, 18, 194);
             delay(10);
+
+      //  } else if (key == K_PGDN && ksel == 1) {  - I couldn't get PgDn to work properly on either side, so remming them out for now. -Leon
+            /* Left PgDn */
+            /*InBox(6, 163, 18, 194);
+            delay(10);
+
+                if (now2 > count - 8) {
+                    now2 += 8;
+                } else {
+                    //BarA = 7;
+                    now2 = count - 8;
+                }
+                if ((now2 > count - 8) && (BarA < 7)) {
+                    BarA = 7 - (count - now2);
+                }
+                if (now2 > count) {
+                    now2 = count;
+                }
+
+                fill_rectangle(26, 129, 153, 195, 0);
+                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                DispEight2(now2, BarA, count);
+
+                key = 0;
+		OutBox(6, 163, 18, 194); */
+
+        } else if ((key == K_END && ksel == 1) && count > 0) {
+            /* Left End */
+            InBox(6, 163, 18, 194);
+
+                maxLeft = max;
+                if (count < 7) {
+                    BarA = count - 1;
+                } else {
+                    BarA = 7;
+                }
+                now2 = count - 1;
+                fill_rectangle(26, 129, 153, 195, 0);
+                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                DispEight2(now2, BarA, count);
+
+                key = 0;
+
+            delay(10);
+            OutBox(6, 163, 18, 194);
+        
+        } else if (key == K_HOME && ksel == 0) {
+            /* Right Home */
+            InBox(167, 130, 179, 161);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
+
+                    BarB = 0;
+                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                    DispEight(now, BarB);
+
+                    i = 51;
+            }
+
+                BarB = 0;
+                now = min;
+                fill_rectangle(186, 129, 314, 195, 0);
+                ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                DispEight(now, BarB);
+
+                if (BarB == 0) {
+                    if (now > min) {
+                        now = min;
+                        fill_rectangle(186, 129, 314, 195, 0);
+                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                        DispEight(now, BarB);
+                    }
+                }
+
+                if (BarB > 0) {
+                    fill_rectangle(186, 129, 314, 195, 0);
+                    BarB = 0;
+                    now = min;
+                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                    DispEight(now, BarB);
+                }
+
+                key = 0;
+
+            OutBox(167, 130, 179, 161);
+            delay(10);
+
+        //} else if (key == K_PGDN && ksel == 0) {  - I couldn't get PgUp to work properly either, so remming it out for now. -Leon
+            /* Right PgUp */
+            /*InBox(167, 163, 179, 194);
+            delay(10);
+
+                    if (now > 8) {
+                        now -= 8;
+                    } else {
+                        BarB = 0;
+                        now = max;
+                    }
+
+                    fill_rectangle(186, 129, 314, 195, 0);
+                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                    DispEight(now, BarB);
+
+                key = 0;
+		OutBox(167, 163, 179, 194);*/
+
         } else if ((x >= 167 && y >= 130 && x <= 179 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 0)) {
             /* Right Up */
             InBox(167, 130, 179, 161);
@@ -867,6 +1017,7 @@ void AstSel(char plr)
             // WaitForMouseUp();
             OutBox(167, 130, 179, 161);
             delay(10);
+
         } else if ((x >= 167 && y >= 163 && x <= 179 && y <= 194 && mousebuttons > 0) || (key == DN_ARROW && ksel == 0)) {
             /* Right Down */
             InBox(167, 163, 179, 194);
@@ -929,10 +1080,72 @@ void AstSel(char plr)
 
                 GetMouse();
             }
+            OutBox(167, 163, 179, 194);
+            delay(10);
+
+       // } else if (key == K_PGDN && ksel == 0) {  - I couldn't get PgDn to work properly on either side, so remming them out for now. -Leon
+            /* Right PgDn */
+            /*InBox(167, 163, 179, 194);
+            delay(10);
+
+                    if (now < max - 8) {
+                        now += 8;
+                    } else {
+                        BarB = 7;
+                        now = max;
+                    }
+                    if ((now > max - 8) && (BarB < 7)) {
+                        BarB = 7 - (max - now);
+                    }
+
+                    fill_rectangle(186, 129, 314, 195, 0);
+                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                    DispEight(now, BarB);
+
+                key = 0;
+		OutBox(167, 163, 179, 194);*/
+
+        } else if (key == K_END && ksel == 0) {
+            /* Right End */
+            InBox(167, 163, 179, 194);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
+
+                if (mousebuttons == 0) {
+
+                    if (BarB == 7) {
+                            now = max;
+                            fill_rectangle(186, 129, 314, 195, 0);
+                            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                            DispEight(now, BarB);
+                    }
+
+                    if (BarB < 7) {
+                        fill_rectangle(186, 129, 314, 195, 0);
+                        BarB = 7;
+                        now = max;
+                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                        DispEight(now, BarB);
+                    }
+
+                    i = 51;
+                }
+
+                    now = max;
+                    fill_rectangle(186, 129, 314, 195, 0);
+                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
+                    DispEight(now, BarB);
+
+                key = 0;
+            }
 
             // WaitForMouseUp();
             OutBox(167, 163, 179, 194);
             delay(10);
+            
         } else if ((x >= 7 && y >= 111 && x <= 151 && y <= 123 && count > 0 && mousebuttons > 0) || (key == 'D' && count > 0)) {
             /* Dismiss */
             InBox(7, 111, 151, 123);
@@ -967,6 +1180,7 @@ void AstSel(char plr)
             }
 
             OutBox(7, 111, 151, 123);
+            
         } else if ((x >= 164 && y >= 111 && x <= 313 && y <= 123 && MCol[now] == 0 && mousebuttons > 0) || (key == 'R' && MCol[now] == 0)) {
             /* Recruit */
             InBox(168, 111, 313, 123);
