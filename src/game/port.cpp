@@ -1732,7 +1732,7 @@ char PortSel(char plr, char loc)
         return pREDRAW;
 
     case PORT_FlagPole: // Flag Pole : End turn
-        MisOK = LPad = 0;
+        MisOK = 0;
 
         // Check to see if missions are good to go
         for (i = 0; i < 3; i++) {
@@ -1758,7 +1758,11 @@ char PortSel(char plr, char loc)
         } else if (LPad == 0) {                  // Warn player that they have no missions scheduled for next turn,
             i = Request(plr, "NO MISSIONS", 1);  // except on the first turn of the game. -Leon
             if (i) {
-                return pEXIT;
+                LPad = 10;  // Set LPad above zero so you won't be warned again this turn  -Leon
+                i = Request(plr, "END TURN", 1);
+                if (i) {
+                    return pEXIT;
+                }
             }
         } else if (MisOK == 0) {
             i = Request(plr, "END TURN", 1);
