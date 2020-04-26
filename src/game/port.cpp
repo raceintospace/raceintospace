@@ -237,7 +237,7 @@ size_t ImportSPath(FILE *fin, struct sPATH &target);
  *     stopping any active sound effects and cleaning up globals.
  *   - SPOT_KILL terminates any active sound effects and stops
  *     animation, closing access to the animation file, performing
- *     less clean up than SPOT_DONE.
+ *     less cleanup than SPOT_DONE.
  *
  * The spots.cdr file is composed of:
  * SpotHeader
@@ -813,7 +813,7 @@ void UpdatePortOverlays(void)
             Data->P[i].Port[PORT_AstroComplex] = Data->P[i].Port[PORT_BasicTraining] = 1;
         }
 
-        if (Data->P[i].Pool[0].Active > 0) { // Astros
+        if (Data->P[i].Pool[0].Active > 0) {     // Astros
             Data->P[i].Port[PORT_Helipad] = Data->P[i].Port[PORT_Pool] = Data->P[i].Port[PORT_Planetarium] = 1;
             Data->P[i].Port[PORT_Centrifuge] = Data->P[i].Port[PORT_MedicalCtr] = Data->P[i].Port[PORT_Airfield] = 1;
         }
@@ -1437,8 +1437,8 @@ void Port(char plr)
 #endif
                                 Vab_Spot = 0;
 #ifdef DEADCODE
-                                // I'm not sure why we're redrawing the outlines here,
-                                //commenting it out for now.  if no problems are seen
+                                // I'm not sure why we're redrawing the outlines here;
+                                // commenting it out for now.  If no problems are seen
                                 // with the port outlines then restore this
                                 //   if (pPortOutlineRestore)
                                 //      PortOutLine(Count,bone,0);
@@ -1524,7 +1524,7 @@ void Port(char plr)
  */
 char PortSel(char plr, char loc)
 {
-    int i, MisOK = 0;
+    int i, MisOK, LPad = 0;
     Vab_Spot = 0; // clear the damn thing.
 
     switch (loc) {
@@ -1732,7 +1732,7 @@ char PortSel(char plr, char loc)
         return pREDRAW;
 
     case PORT_FlagPole: // Flag Pole : End turn
-        MisOK = 0;
+        MisOK = LPad = 0;
 
         // Check to see if missions are good to go
         for (i = 0; i < 3; i++) {
@@ -1744,11 +1744,22 @@ char PortSel(char plr, char loc)
             if (Data->P[plr].Mission[i].MissionCode) {
                 MisOK++;
             }
+            if (Data->P[plr].Future[i].MissionCode ) {
+                LPad++;
+            }
+        }
+        if (Data->Year == 57 && Data->Season == 0) {
+            LPad = 1;
         }
 
         if (MisOK >= 10) {
             Help("i005");
             return pNOREDRAW;
+        } else if (LPad == 0) {                  // Warn player that they have no missions scheduled for next turn,
+            i = Request(plr, "NO MISSIONS", 1);  // except on the first turn of the game. -Leon
+            if (i) {
+                return pEXIT;
+            }
         } else if (MisOK == 0) {
             i = Request(plr, "END TURN", 1);
 
@@ -1774,7 +1785,7 @@ char PortSel(char plr, char loc)
 
         return pNOREDRAW;
 
-    case PORT_Gate: // Security Gate : Quit
+    case PORT_Gate: // Security Gate: Quit
         QUIT = Request(plr, "QUIT", 1);
 
         if (QUIT) {
@@ -2024,7 +2035,7 @@ char MisReq(char plr)
 
 /**
  * Read a PortHeader struct stored as raw data in a file, correcting
- * for endianess.
+ * for endianness.
  *
  * If import is not successful, the contents of the target PortHeader
  * are not guaranteed.
@@ -2062,7 +2073,7 @@ size_t ImportPortHeader(FILE *fin, struct PortHeader &target)
 
 /**
  * Read a MOBJ struct stored as raw data in a file, correcting
- * for endianess.
+ * for endianness.
  *
  * If import is not successful, the contents of the target MOBJ
  * are not guaranteed.
