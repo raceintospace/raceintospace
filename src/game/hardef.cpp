@@ -166,7 +166,7 @@ ShowHard(char plr)
                     fill_rectangle(149, 2, 157, 10, 9);
                     fill_rectangle(149, 2, 156, 9, 8);
                     display::graphics.setForegroundColor(9);
-                    draw_string(163, 8, "ATTEMPTS:");
+                    draw_string(163, 8, "ATTEMPTS");
                     fill_rectangle(149, 12, 157, 20, 6);
                     fill_rectangle(149, 12, 156, 19, 5);
                     display::graphics.setForegroundColor(6);

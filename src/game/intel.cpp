@@ -933,7 +933,7 @@ void BackIntel(char p, char year)
     }
 
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, " AND RATE THE");
+    draw_string(0, 0, " AND RATES THE");
     draw_string(33, 183, "RELIABILITY AT ABOUT ");
     draw_number(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
     draw_string(0, 0, " PERCENT.");
