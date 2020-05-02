@@ -24,6 +24,8 @@
 //
 // NewsCaster Main Files
 
+// This file controls the newscast.
+
 #include <stdexcept>
 
 #include "display/graphics.h"
@@ -592,7 +594,7 @@ News(char plr)
     // introduction, the current turn is calculated, compared with the
     // number of news events (1/turn) and a flag is set to replay the
     // news if the save has already accounted for the events.
-    int turn = 2 * (Data->Year - 57) + Data->Season + 1; // start at turn 1
+    int turn = 2 * (Data->Year - 57) + Data->Season + 1;  // start at turn 1
     bool freshNews = (turn > Data->P[plr].eCount);
 
     if (freshNews) {
@@ -733,7 +735,7 @@ News(char plr)
                 break;
 
             case 4:        //: Angle Out
-                music_stop(); // Should have ended, but force stop.
+                music_stop();  // Should have ended, but force stop.
                 music_start_loop((plr % 2) ? M_NEW1950 : M_NEW1970, false);
                 LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
                 Status = 0;

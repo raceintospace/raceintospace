@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles Downgrading and Rushing missions.
+
 #include <stdexcept>
 
 #include "display/graphics.h"
@@ -70,6 +72,8 @@ void SetRush(int mode, int pad);
  *    and vice versa.
  * 2. Unmanned missions *cannot* be downgraded to manned missions.
  * 3. There *must not* be downgrading to, or from, a Probe Mission.
+ *    (Exception: a Lunar Probe Landing should be downgradable to a 
+ *     Lunar Flyby.)
  * 4. Mission hardware requirements *must not* be added.
  * 5. Mission hardware requirements *should not* be removed.
  * 6. Manned mission downgrades *should* be listed ahead of unmanned
@@ -283,8 +287,7 @@ void DrawRush(char plr)
 
             draw_string(96, 48 + 58 * i, Mis.Abbr);
 
-            // Show duration level only on missions with a
-            // Duration step - Leon
+            // Show duration level only on missions with a Duration step -Leon
             if (IsDuration(Data->P[plr].Mission[i].MissionCode)) {
                 int duration = Data->P[plr].Mission[i].Duration;
                 draw_string(0, 0, GetDurationParens(duration));
@@ -339,7 +342,7 @@ void Rush(char plr)
             Data->P[plr].Cash += 6;
         }
 
-        Data->P[plr].Mission[pad].Rushing = 0; // Clear Data
+        Data->P[plr].Mission[pad].Rushing = 0;  // Clear Data
     }
 
     SetLaunchDates(plr);
@@ -373,7 +376,7 @@ void Rush(char plr)
 
         if (mousebuttons > 0 || key > 0) {
             if (((y >= 32 && y <= 74 && x >= 280 && x <= 312 && mousebuttons > 0) || (key >= '1' && key <= '3'))
-                && pRush && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) { /* L1: Row One */
+                && pRush && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) {  /* L1: Row One */
                 // R1=oR1;
                 if (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && oR1 != 1 && fCsh < 3) {
                     Help("i117");
@@ -395,7 +398,7 @@ void Rush(char plr)
                     oR1 = R1;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 90 && y <= 132 && mousebuttons > 0) || (key >= '4' && key <= '6'))
-                       && pRush && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) { /* L2: Row One */
+                       && pRush && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) {  /* L2: Row One */
                 // R2=oR2;
                 if (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && oR2 != 1 && fCsh < 3) {
                     Help("i117");
@@ -417,7 +420,7 @@ void Rush(char plr)
                     oR2 = R2;
                 }
             } else if (((x >= 280 && x <= 312 && y >= 148 && y <= 190 && mousebuttons > 0) || (key >= '7' && key <= '9'))
-                       && pRush && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) { /* L3: Row One */
+                       && pRush && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) {  /* L3: Row One */
                 // R3=oR3;
                 if (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && oR3 != 1 && fCsh < 3) {
                     Help("i117");
@@ -468,7 +471,7 @@ void Rush(char plr)
             for (int i = 0; i < 3; i++) {
                 if (x >= 91 && x <= 264 && y >= 41 + i * 59 && y <= 59 + i * 59 && mousebuttons > 0
                     && Data->P[plr].Mission[i].MissionCode
-                    && Data->P[plr].Mission[i].part != 1) { // Downgrade
+                    && Data->P[plr].Mission[i].part != 1) {  // Downgrade
 
                     InBox(91, 41 + i * 58, 264, 59 + i * 58);
 
@@ -479,7 +482,7 @@ void Rush(char plr)
                 }
             }
 
-            if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) { //  CONTINUE
+            if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  // CONTINUE
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
@@ -565,7 +568,7 @@ void SetLaunchDates(const char plr)
     int missionCount = 0;
     bool joint = false;
 
-    // Currently, can only handles 3 missions.
+    // Currently, can only handle 3 missions.
     // assert(MAX_MISSIONS == 3);
 
     for (int i = 0; i < MAX_MISSIONS; i++) {
@@ -579,13 +582,13 @@ void SetLaunchDates(const char plr)
         }
     }
 
-    if (missionCount == 3) { // Three non joint missions
+    if (missionCount == 3) {  // Three non-joint missions
         Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
         Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
         Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
     }
 
-    if (missionCount == 2 && joint == false) { // Two non joint missions
+    if (missionCount == 2 && joint == false) {  // Two non-joint missions
         int start = 3;
 
         if (Data->P[plr].Mission[0].MissionCode) {
@@ -603,7 +606,7 @@ void SetLaunchDates(const char plr)
         }
     }
 
-    if (missionCount == 1 && joint == false) { // Single Mission Non joint
+    if (missionCount == 1 && joint == false) {  // Single Mission Non-joint
         if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }
@@ -617,22 +620,22 @@ void SetLaunchDates(const char plr)
         }
     }
 
-    if (missionCount == 2 && joint == true) { // Two launches, one Joint;
-        if (Data->P[plr].Mission[1].part == 1) { // Joint first
+    if (missionCount == 2 && joint == true) {  // Two launches, one Joint;
+        if (Data->P[plr].Mission[1].part == 1) {  // Joint first
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[2].part == 1) { // Joint second
+        if (Data->P[plr].Mission[2].part == 1) {  // Joint second
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 5 + Data->Season * 6;
             Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
         }
     }
 
-    if (missionCount == 1 && joint == true) { //  Single Joint Launch
-        if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
+    if (missionCount == 1 && joint == true) {  // Single Joint Launch
+        if (Data->P[plr].Mission[1].part == 1) {  // found on pad 1+2
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
         } else {   // found on pad 2+3

@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles the Capsule/Shuttle Screen.
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -41,7 +43,7 @@
 
 static char program;  /* Variable to store prog data for "Draws Astronaut attributes" section: 1=Mercury/Vostok...5=Jupiter/Kvartet */
 
-int missions;     // Variable for how many missions each 'naut has flown
+int missions;   // Variable for how many missions each 'naut has flown
 int retdel;  /* Variable to store whether a given 'naut has announced retirement */
 int sex;  /* Variable to store a given 'naut sex */
 
@@ -1257,12 +1259,12 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
     /* This will be used to highlight the skills for each crew member's role -Leon */
 
-    fill_rectangle(13, 86, 231, 122, 3); /* Clear Astro Area */
+    fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
     if (M1 > 0) {
-        retdel = Data->P[plr].Pool[M1 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M1 - 1].Sex; // Sets whether 'naut is male or female
+        retdel = Data->P[plr].Pool[M1 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
+        sex = Data->P[plr].Pool[M1 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M1 - 1].Missions;
         AstNames(0, &Data->P[plr].Pool[M1 - 1].Name[0], Data->P[plr].Pool[M1 - 1].Mood);
         AstStats(plr, 0, M1 - 1);
@@ -1271,8 +1273,8 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M2 > 0) {
-        retdel = Data->P[plr].Pool[M2 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M2 - 1].Sex; // Sets whether 'naut is male or female
+        retdel = Data->P[plr].Pool[M2 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
+        sex = Data->P[plr].Pool[M2 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M2 - 1].Missions;
         AstNames(1, &Data->P[plr].Pool[M2 - 1].Name[0], Data->P[plr].Pool[M2 - 1].Mood);
         AstStats(plr, 1, M2 - 1);
@@ -1281,8 +1283,8 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M3 > 0) {
-        retdel = Data->P[plr].Pool[M3 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M3 - 1].Sex; // Sets whether 'naut is male or female
+        retdel = Data->P[plr].Pool[M3 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
+        sex = Data->P[plr].Pool[M3 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M3 - 1].Missions;
         AstNames(2, &Data->P[plr].Pool[M3 - 1].Name[0], Data->P[plr].Pool[M3 - 1].Mood);
         AstStats(plr, 2, M3 - 1);
@@ -1291,8 +1293,8 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     }
 
     if (M4 > 0) {
-        retdel = Data->P[plr].Pool[M4 - 1].RetirementDelay; // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M4 - 1].Sex; // Sets whether 'naut is male or female
+        retdel = Data->P[plr].Pool[M4 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
+        sex = Data->P[plr].Pool[M4 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M4 - 1].Missions;
         AstNames(3, &Data->P[plr].Pool[M4 - 1].Name[0], Data->P[plr].Pool[M4 - 1].Mood);
         AstStats(plr, 3, M4 - 1);
@@ -1381,11 +1383,11 @@ void AstNames(int man, char *name, char att)
     }
 
     if (retdel > 0) {
-        display::graphics.setForegroundColor(0);    // Show name in black if 'naut has announced retirement
+        display::graphics.setForegroundColor(0);    // Show name in black if 'naut is male and has announced retirement
     }
 
     if (sex == 1 && retdel > 0) {
-        display::graphics.setForegroundColor(7);    // Show name in purple if 'naut is female AND has announced retirement
+        display::graphics.setForegroundColor(7);    // Show name in purple if 'naut is female and has announced retirement
     }
 
     switch (man) {

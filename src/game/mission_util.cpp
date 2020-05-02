@@ -1,3 +1,5 @@
+// This file seems to handle identifying the type of a given mission
+
 #include "mission_util.h"
 
 #include <cstring>

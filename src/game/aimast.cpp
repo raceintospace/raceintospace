@@ -25,6 +25,8 @@
 /** \file aimast.c AI Master Routines
  */
 
+// This seems to be the master control for the AI, including selecting its strategy (0-2) and primary & secondary lunar approach
+
 #include "aimast.h"
 #include "game_main.h"
 #include "Buzz_inc.h"
@@ -275,7 +277,7 @@ void AIMaster(char plr)
         KeepRD(plr, Data->P[plr].AISec);
     }
 
-// larger rocket klugge
+// larger rocket kludge
     if (Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] == 1) {
         if (Level_Check != 0) {
             Data->P[plr].Cash += 25;    // temporary
@@ -572,7 +574,7 @@ void CheckVoting(char plr)
 
 void KeepRD(char plr, int m)
 {
-//reassing player level
+//reassessing player level
     if (plr == 0) {
         Level_Check = (Data->Def.Lev1 == 0) ? 0 : 1;
     } else  if (plr == 1) {

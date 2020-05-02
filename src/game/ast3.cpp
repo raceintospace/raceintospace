@@ -25,6 +25,8 @@
 /** \file ast3.c Training and Hospital code
  */
 
+// This file handles Basic and Advanced Training, Astronaut History, Hospital, and Cemetery.
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"

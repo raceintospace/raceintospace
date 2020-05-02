@@ -1,3 +1,5 @@
+// This file handles game crashes, presumably.
+
 #include <string>
 #include <vector>
 

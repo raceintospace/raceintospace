@@ -15,6 +15,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+// This file executes the results of the newscast (event cards, etc.)
+
 #include "news_suq.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -226,20 +229,20 @@ char REvent(char plr)
     // Budget Modifier Events ------------------------
 
     case  9:
-    case 76: // Budget increase of 15 MB
+    case 76:  // Budget increase of 15 MB
         Data->P[plr].Budget += 15;
         break;
 
-    case 45: // increase budget by total two 10 side dice this year
+    case 45:  // increase budget by total two 10-sided dice this year
         evflag = brandom(10) + brandom(10) + 2;
         Data->P[plr].Budget += evflag;
         break;
 
-    case 46: // increase budget by 5 MB's
+    case 46:  // increase budget by 5 MB's
         Data->P[plr].Budget += 5;
         break;
 
-    case 91: // increase budget by 20MB's in the budget
+    case 91:  // increase budget by 20MB's in the budget
         if (Data->Year > 65) {
             return 1;
         }
@@ -247,7 +250,7 @@ char REvent(char plr)
         Data->P[plr].Budget += 20;
         break;
 
-    case 92: // 20% or 20MB's whichever is less
+    case 92:  // 20% or 20MB's whichever is less
         if ((Data->P[plr].Budget / 5) < 20) {
             evflag = Data->P[plr].Budget * 4 / 5;
         } else {
@@ -257,7 +260,7 @@ char REvent(char plr)
         Data->P[plr].Budget -= evflag;
         break;
 
-    case 95: // 30% or 30MB's whichever is less
+    case 95:  // 30% or 30MB's whichever is less
         if ((Data->P[plr].Budget / 3) < 30) {
             evflag = Data->P[plr].Budget * 7 / 10;
         } else {
@@ -268,7 +271,7 @@ char REvent(char plr)
         evflag = Data->P[plr].Budget;
         break;
 
-    case 96: // 25% or 25Mb's whichever is less
+    case 96:  // 25% or 25MB's whichever is less
         if (Data->Year > 72) {
             return 1;
         }
@@ -283,7 +286,7 @@ char REvent(char plr)
         evflag = Data->P[plr].Budget;
         break;
 
-    case 99:// deduct 5 M.B.s from budget
+    case 99:  // deduct 5 MB's from budget
         Data->P[plr].Budget -= 5;
         break;
 
@@ -292,7 +295,7 @@ char REvent(char plr)
     case  2:
     case 12:
     case 13:
-    case 14:  // RD improve by 1 : season
+    case 14:  // RD improve by 1: season
     case 15:
     case 16:
     case 17:
@@ -302,22 +305,22 @@ char REvent(char plr)
 
     case  3:
     case 61:
-    case 62:// Minus one on all R&D for ONE year
+    case 62:  // Minus one on all R&D for ONE year
         Data->P[plr].RD_Mods_For_Turn -= 1;
         Data->P[plr].RD_Mods_For_Year = -1;
         break;
 
-    case 19: // minus 2 on each die roll for R&D this turn
+    case 19:  // minus 2 on each die roll for R&D this turn
         Data->P[plr].RD_Mods_For_Turn -= 2;
         break;
 
-    case 41: // R&D will decrease for one year
+    case 41:  // R&D will decrease for one year
         Data->P[plr].RD_Mods_For_Turn -= 2;
         Data->P[plr].RD_Mods_For_Year -= 2;
         break;
 
     case 42:
-    case 43: /* increment R&D cost by 1 on particular program */
+    case 43:  /* increment R&D cost by 1 on particular program */
         evflag = RDMods(plr, 0, 1, 1);
 
         if (evflag == 0) {
@@ -352,18 +355,18 @@ char REvent(char plr)
 
     // Special Events -------------------------------------------
 
-    case  8: // Allow females into space program
+    case  8:  // Allow females into space program
         Data->P[plr].FemaleAstronautsAllowed = 1;
         break;
 
     // Launch Affected ------------------------------------------
 
-    case 4: // Next Launch must be a manned launch.  If the launch
-        // is not so then -10 on Budget
+    case 4:  // Next Launch must be a manned launch.  If the launch
+        // is not then -10 on Budget
         //Data->P[plr].Plans=1;
         break;
 
-    case 10: { /* Launch window for Launch #x is blocked */
+    case 10: {  /* Launch window for Launch #x is blocked */
         int choice[3] = {0, 0, 0};
 
         evflag = 0;
@@ -390,7 +393,7 @@ char REvent(char plr)
     }
     break;
 
-    case 35: // may launch only one mission this year ??? Season?!?
+    case 35:  // may launch only one mission this year ??? Season?!?
         evflag = 0;
 
         if (Data->P[plr].Mission[0].Joint == 1 ||
@@ -451,7 +454,7 @@ char REvent(char plr)
 
         break;
 
-    case 36: /* damage launch facility */
+    case 36:  /* damage launch facility */
         if (Data->P[plr].Mission[0].MissionCode == Mission_None) {
             Data->P[plr].LaunchFacility[0] = 15;
         } else {
@@ -462,7 +465,7 @@ char REvent(char plr)
 
     // Program Saving cards ------------------------------------
 
-    case 11: /* Select program and set safety save to 1 */
+    case 11:  /* Select program and set safety save to 1 */
         evflag = SaveMods(plr, 0);
 
         if (evflag == 0) {
@@ -471,7 +474,7 @@ char REvent(char plr)
 
         break;
 
-    case 77: // set Save for Capsule Program
+    case 77:  // set Save for Capsule Program
         evflag = SaveMods(plr, 3);
 
         if (evflag == 0) {
@@ -480,7 +483,7 @@ char REvent(char plr)
 
         break;
 
-    case 93: // set Save for LEM Program
+    case 93:  // set Save for LEM Program
         evflag = SaveMods(plr, 4);
 
         if (evflag == 0) {
@@ -489,8 +492,8 @@ char REvent(char plr)
 
         break;
 
-    case 20: /* the most advanced rocket program is affected.
-           drop the safety factor in half. */
+    case 20:  /* the most advanced rocket program is affected.
+                 drop the safety factor in half. */
         evflag = 0;
 
         for (i = 3; i >= 0; i--) {
@@ -514,7 +517,7 @@ char REvent(char plr)
 
         break;
 
-    case 21: // Probes' and Sats' Max SF and RD up 5% */
+    case 21:  // Probes' and Sats' Max SF and RD up 5% */
         for (i = 1; i < 3; i++) {
             Data->P[plr].Probe[i].MaxRD += 5;
             Data->P[plr].Probe[i].MaxSafety += 5;
@@ -533,7 +536,7 @@ char REvent(char plr)
         break;
 
     case 22:
-    case 84: /* roll six 6-sided dice and add to the current safety
+    case 84:  /* roll six 6-sided dice and add to the current safety
            factor of the program */
         x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
         evflag = NMod(plr, 3, 1, x);
@@ -545,9 +548,9 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 23: /* this applies to the most advanced rocket program.
-          roll six 6-sided dice and add to the current
-          safety factor. */
+    case 23:  /* this applies to the most advanced rocket program.
+                 roll six 6-sided dice and add to the current
+                 safety factor. */
         x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
         evflag = NMod(plr, 2, 1, x);
 
@@ -559,7 +562,7 @@ char REvent(char plr)
         break;
 
     case 24:  /* this for most adv. satellites, roll four 6-sided
-           dice and add to safety factor. */
+                 dice and add to safety factor. */
         x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
         evflag = NMod(plr, 1, 1, x);
 
@@ -570,8 +573,8 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 94:  /* this for most adv capsule, roll four 6-sided
-           dice and add to safety factor. */
+    case 94:  /* this for most adv capsule; roll four 6-sided
+                 dice and add to safety factor. */
         x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
         evflag = NMod(plr, 3, 1, x);
 
@@ -584,8 +587,8 @@ char REvent(char plr)
 
 
     case 25:  /* the blank is all rockets. R&D can't cure it.
-          the options are to launch one rocket at this setback,
-          or cancel launch. - 20% if no visit to repairs.*/
+                 the options are to launch one rocket at this setback,
+                 or cancel launch. - 20% if no visit to repairs.*/
         evflag = DamMod(plr, 2, -20, 15);
 
         if (evflag == 0) {
@@ -624,18 +627,18 @@ char REvent(char plr)
         evflag = 20;
         break;
 
-    case 28: // hardware cost 50% less this season
+    case 28:  // hardware cost 50% less this season
         Data->P[plr].TurnOnly = 3;
         break;
 
-    case 29: // set the delay of the rockets to 2 == one year
+    case 29:  // set the delay of the rockets to 2 == one year
         for (i = 0; i < 5; i++) {
             Data->P[plr].Rocket[i].Delay = 2;
         }
 
         break;
 
-    case 34: /* 20% loss most advanced capsule */
+    case 34:  /* 20% loss most advanced capsule */
         evflag = NMod(plr, 3, -1, 20);
 
         if (evflag == 0) {
@@ -645,7 +648,7 @@ char REvent(char plr)
         evflag = 20;
         break;
 
-    case 37:  /* cost 10MB repear or 10% safety loss on the most advanced probe */
+    case 37:  /* cost 10MB repair or 10% safety loss on the most advanced probe */
         evflag = DamMod(plr, 1, -10, 10);
 
         if (evflag == 0) {
@@ -655,7 +658,7 @@ char REvent(char plr)
         break;
 
     case 38:
-    case 39: /* most adv. rocket program 10 MB's or 5% safety loss */
+    case 39:  /* most adv. rocket program 10 MB's or 5% safety loss */
         evflag = DamMod(plr, 2, -5, 10);
 
         if (evflag == 0) {
@@ -664,7 +667,7 @@ char REvent(char plr)
 
         break;
 
-    case 40: /* blank a program 10 MB's or 10% safety loss */
+    case 40:  /* blank a program 10 MB's or 10% safety loss */
         evflag = DamMod(plr, 0, -10, 10);
 
         if (evflag == 0) {
@@ -673,7 +676,7 @@ char REvent(char plr)
 
         break;
 
-    case 54: /* most advanced rocket program 15 MB's or 20% safety loss */
+    case 54:  /* most advanced rocket program 15 MB's or 20% safety loss */
         evflag = DamMod(plr, 2, -20, 15);
 
         if (evflag == 0) {
@@ -682,7 +685,7 @@ char REvent(char plr)
 
         break;
 
-    case 55: /* most advanced rocket program 20 MB's or 10% safety loss */
+    case 55:  /* most advanced rocket program 20 MB's or 10% safety loss */
         evflag = DamMod(plr, 3, -10, 20);
 
         if (evflag == 0) {
@@ -691,7 +694,7 @@ char REvent(char plr)
 
         break;
 
-    case 48: // Set Save for Rocket program
+    case 48:  // Set Save for Rocket program
         evflag = SaveMods(plr, 2);
 
         if (evflag == 0) {
@@ -702,7 +705,7 @@ char REvent(char plr)
 
     // Astronaut Portion ------------------------------------
 
-    case 49: /* pick random astronaut retire, budget minus 5 MB's */
+    case 49:  /* pick random astronaut retire, budget minus 5 MB's */
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
@@ -738,7 +741,7 @@ char REvent(char plr)
         break;
 
     case 50:
-    case 85: // backup crew will fly mission
+    case 85:  // backup crew will fly mission
         evflag = 0;
 
         for (i = 0; i < 3; i++) {
@@ -762,7 +765,7 @@ char REvent(char plr)
         evflag = i;
         break;
 
-    case 51: /* astronaut killed delay all manned missons = 1 */
+    case 51:  /* astronaut killed delay all manned missons = 1 */
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
@@ -785,7 +788,7 @@ char REvent(char plr)
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
         Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
-        xMODE |= xMODE_SPOT_ANIM; //trigger spot anim
+        xMODE |= xMODE_SPOT_ANIM;  //trigger spot anim
         Replace_Snaut(plr);
 
         //cancel manned missions
@@ -849,7 +852,7 @@ char REvent(char plr)
         Replace_Snaut(plr);
         break;
 
-    case 56: /* hardware 50% less this season */
+    case 56:  /* hardware 50% less this season */
         Data->P[plr].TurnOnly = 3;
         break;
 
@@ -870,7 +873,7 @@ char REvent(char plr)
             }
 
             /* The original bonus astronauts & cosmonauts were:
-               REEVES, CHAMBERLAIN, YEAGER & STIPPOV, SCHLICKBERND, FARGOV -Leon */
+               REEVES, CHAMBERLAIN, YEAGER and STIPPOV, SCHLICKBERND, FARGOV -Leon */
 
             Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
             Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
@@ -885,11 +888,11 @@ char REvent(char plr)
 
         break;
 
-    case 58: // 50% chance explosion on pad
+    case 58:  // 50% chance explosion on pad
         Data->P[plr].TurnOnly = 5;
         break;
 
-    case 64: /* launch facility repair 10MB's */
+    case 64:  /* launch facility repair 10MB's */
         for (j = 0; j < 20; j++) {
             i = rand() % 3;
 
@@ -906,15 +909,15 @@ char REvent(char plr)
         Data->P[plr].LaunchFacility[i] = 10;
         break;
 
-    case 65: // Gemini or Voskhod will cost additional 2MB's per spacecraft
+    case 65:  // Gemini or Voskhod will cost additional 2MB's per spacecraft
         if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Num < 0) {
             return 1;
         }
 
-        Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].UnitCost += 2; // Used to say "InitCost", which effectively disabled this newscast -Leon
+        Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].UnitCost += 2;  // Used to say "InitCost", which effectively disabled this newscast -Leon
         break;
 
-    case 83: // Apollo or Soyuz will cost additional 3MB's per spacecraft
+    case 83:  // Apollo or Soyuz will cost additional 3MB's per spacecraft
         if (Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0) {
             return 1;
         }
@@ -922,7 +925,7 @@ char REvent(char plr)
         Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].UnitCost += 3;
         break;
 
-    case 66: // mission delay
+    case 66:  // mission delay
         evflag = 0;
 
         for (i = 0; i < 3; i++) {
@@ -958,7 +961,7 @@ char REvent(char plr)
 
         break;
 
-    case 78: /* most advanced capsule 10MB's or 10% safety */
+    case 78:  /* most advanced capsule 10MB's or 10% safety */
         evflag = DamMod(plr, 3, -10, 10);
 
         if (evflag == 0) {
@@ -967,18 +970,18 @@ char REvent(char plr)
 
         break;
 
-    case 80: // Can't Deliver any Cap/Mods this year
+    case 80:  // Can't Deliver any Cap/Mods this year
         for (i = 0; i < 5; i++) {
             Data->P[plr].Manned[i].Delay = 2;
         }
 
         break;
 
-    case 82: // Duration E Mission Required
+    case 82:  // Duration E Mission Required
         Data->P[plr].FuturePlans = 5;
         break;
 
-    case 89: // random active astronaut leaves program
+    case 89:  // random active astronaut leaves program
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
@@ -1013,7 +1016,7 @@ char REvent(char plr)
 
     default:
         break;
-    } // End of Switch
+    }  // End of Switch
 
     return 0;
 }

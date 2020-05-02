@@ -22,16 +22,16 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
-//Equipmet Randomization
+//Equipment Randomization
 //Enabling this option will change game balance, and can possibly break the AI
 
-/* Unit Weight is based in the previous equipment (i.e. Gemini's weight is Mercury's + random number)
-    some units have a fixed ranges, loosly based in the basic model
+/* Unit Weight is based in the previous equipment (e.g. Gemini's weight is Mercury's + random number)
+    some units have fixed ranges, loosely based on the Basic Model
 Max Safety is a random number between 80 and 98
 Max RD is 2 to 10 lower than Max Safety
-Initial Cost is a random number, loosly based in the basic model initial cost
-Unit Cost is loosly based in the basic model, but depends on initial cost
-RD cost is loosly based in the basic model
+Initial Cost is a random number, loosely based on the Basic Model initial cost
+Unit Cost is loosely based on the Basic Model, but depends on initial cost
+RD cost is loosely based on the Basic Model
 */
 
 #include "display/graphics.h"
@@ -79,7 +79,7 @@ void RandomizeEq(void)
 {
     int i;
 
-    for (i = 0; i < 2; i++) { //for each player
+    for (i = 0; i < 2; i++) {  // for each player
         //Satellite
         Data->P[i].Probe[PROBE_HW_ORBITAL].UnitWeight  = random_number(100, 500);
         Data->P[i].Probe[PROBE_HW_ORBITAL].MaxSafety   = random_number(86, 98);

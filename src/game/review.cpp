@@ -24,6 +24,8 @@
 //
 // Review Main Files
 
+// This file handles your Performance Review
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -267,7 +269,7 @@ void Review(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Game Play */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if ((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
@@ -339,7 +341,7 @@ void CalcPresRev(void)
         }
     }
 
-    Data->P[0].Prestige = Data->P[1].Prestige = 0; // Clear Prest when finished
+    Data->P[0].Prestige = Data->P[1].Prestige = 0;  // Clear Prest when finished
 
     for (plr = 0; plr < NUM_PLAYERS; plr++) {
         ip = &Data->P[plr].PresRev[0];

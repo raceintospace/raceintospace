@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// This file show the Mission Review (the summary you see at the end of a mission).
+
 #include <assert.h>
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
@@ -137,7 +139,7 @@ int MainMenuChoice()
  * \return  the index of the selected menu option, [0, qty).
  * \throws runtime_error  if Filesystem cannot read the icon images.
  */
-int BChoice(char plr, char qty, char *Name, char *Imx) // Name[][22]
+int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
 {
     int i, j, starty = 100;
     char filename[128];
@@ -252,7 +254,7 @@ void AstFaces(char plr, int x, int y, char face)
 
     boost::shared_ptr<display::PalettizedSurface> icon(
         Filesystem::readImage(filename));
-    icon->exportPalette(64, 64 + 31); // Palette space [64, 96)
+    icon->exportPalette(64, 64 + 31);  // Palette space [64, 96)
 
     sprintf(filename,
             "images/faces.but.%d.png",
@@ -288,7 +290,7 @@ void AstFaces(char plr, int x, int y, char face)
  *   7: ? Earth
  *
  * An icon of a hardware program may be displayed. For a non-Earth
- * planet, an interstellar probe will display if specified. Otherwise,
+ * planet, an interplanetary probe will display if specified. Otherwise,
  * the specified program is always displayed.
  *   1: Mercury/Vostok   2: Gemini/Voskhod   3: Apollo/Soyuz
  *   4: XMS-2/Lapot      5: Jupiter/LK-700   6: Explorer/Sputnik
@@ -494,7 +496,7 @@ int Help(const char *FName)
             NTxt[j++] = (char) 0xcc;
             NTxt[j++] = (Help[i] - 0x30) * 100 + (Help[i + 1] - 0x30) * 10 + (Help[i + 2] - 0x30);
             i += 5;
-        } else { // Text of Line
+        } else {  // Text of Line
             assert(NTxt != NULL);
 
             while (Help[i] != 0x0d) {
@@ -930,7 +932,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             if (x == 0 && y == 0) {
                 FILE *tin;
 
-                tin = sOpen("REPL.TMP", "wb", 1); // Create temp image file
+                tin = sOpen("REPL.TMP", "wb", 1);  // Create temp image file
                 {
                     display::AutoPal p(display::graphics.legacyScreen());
                     fwrite(p.pal, 768, 1, tin);
@@ -979,7 +981,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 remove_savedat("REPL.TMP");
 
             } else {
-                //Specs: Planetary Mission Klugge
+                //Specs: Planetary Mission Kludge
                 if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
                     Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
                     Data->P[plr].History[index].MissionCode == Mission_SaturnFlyby) {

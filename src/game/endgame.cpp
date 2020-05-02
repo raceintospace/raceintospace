@@ -18,6 +18,8 @@
 /** \file endgame.cpp End Game Routines
  */
 
+// This file shows the End Game screen, intuitively enough.
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"

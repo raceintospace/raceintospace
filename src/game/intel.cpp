@@ -24,6 +24,8 @@
 //
 // Museum Main Files
 
+// This page handles the Intelligence Briefing
+
 #include <assert.h>
 
 #include <stdexcept>

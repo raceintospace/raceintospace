@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles part of Mission Control during missions
+
 #include "mc2.h"
 #include "Buzz_inc.h"
 #include "options.h"
@@ -39,7 +41,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad);
 
 
 //********************************************************************
-// Set up for the Mission
+// Setup for the Mission
 // Routines used by MControl and Future Missions
 
 void MissionCodes(char plr, char val, char pad)
@@ -268,7 +270,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
         break;
 
-    case 'd':  //Special
+    case 'd':  // Special
     default:
         break;
     }
@@ -429,7 +431,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
                 break;
 
-            case 7:  // covers power on for docking module
+            case 7:  // covers power-on for docking module
                 Mev[step].ast = -1;
                 Mev[step].asf = 0;
                 break;
@@ -461,8 +463,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         Mev[step].rnum = brandom(10000) + 1;
         Mev[step].sgoto = 0;
 
-        Mev[step].fgoto = (Mgoto == -2) ? step + 1 : Mgoto; // prevents mission looping
-        Mev[step].dgoto = Mis.AltD[STEP]; // death branching (tm)
+        Mev[step].fgoto = (Mgoto == -2) ? step + 1 : Mgoto;  // prevents mission looping
+        Mev[step].dgoto = Mis.AltD[STEP];  // death branching (tm)
         Mev[step].E = MH[pad][Mev[step].Class];
 
         Mev[step].pad = pad;
@@ -491,7 +493,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
         /////////////////////////////////////////////////
         // Fix for BARIS CD-ROM Planetary Steps (Step W)
-        // E= Moon; M= Mars; S= Saturn; V= Venus; J= Jupiter  R= Mercury
+        // E= Moon; M= Mars; S= Saturn; V= Venus; J= Jupiter; R= Mercury
         // Must be at .Name[2]
         //
 
@@ -501,7 +503,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
         if (Mev[step].Class == 5) {
             if (MH[0][1] && MH[0][1]->ID[1] == 0x32) {
-                strncat(Mev[step].Name, "M2", 2);    //Kicker-C
+                strncat(Mev[step].Name, "M2", 2);    // Kicker-C
             } else if (MH[pad][0] && MH[pad][0]->ID[1] == 0x34) {
                 strncat(Mev[step].Name, "C4", 2);    // FourMan
             } else { // standard LMs
@@ -589,7 +591,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
                strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
         Mev[step].FName[1] = '3';
     } else if (plr == 1 && Mev[step].loc == 4) {
-        if ((Mev[step].loc == 4) && // Soviet Capsules : Vostok
+        if ((Mev[step].loc == 4) && // Soviet Capsules: Vostok
             MH[pad][Mev[step].Class] &&
             strncmp(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
             Mev[step].FName[1] = '1';

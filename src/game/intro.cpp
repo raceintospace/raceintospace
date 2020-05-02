@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This page diplays the official game credits
+
 #include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"

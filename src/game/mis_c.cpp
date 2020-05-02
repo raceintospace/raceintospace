@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles missions in progress, particularly mission failures and their results
+
 #include <assert.h>
 
 #include "display/graphics.h"
@@ -143,15 +145,15 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         return;    //Specs: unmanned mission cut short
     }
 
-    //Specs: female'snaut klugge
+    //Specs: female 'naut kludge
     if (mode == 2) {
-        fem = 1; //Spec: additional search param.
+        fem = 1;  //Spec: additional search param.
         mode = 0;
     } else {
         fem = 0;
     }
 
-    //Specs: LEM Activities Klugge
+    //Specs: LEM Activities Kludge
     if (Seq[0] == 'h') {
         if (Mev[STEP - 1].Name[0] == 'S') {
             Seq[0] = 'Q';
@@ -180,7 +182,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         }
     }
 
-    //Specs: LM act lunar liftoff failure klugge and failed landing LPL
+    //Specs: LM act lunar liftoff failure kludge and failed landing LPL
     if (mode == 1) {
         if (Seq[0] == 'T') {
             if (Seq[3] == '6' || Seq[3] == '5') {
@@ -201,7 +203,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         }
 
         if (Seq[0] == 'P') {
-            //TC changero klugge
+            //TC changero kludge
             if (Seq[5] == '6') {
                 Tst2 = Seq[4];
                 Tst3 = Seq[5];
@@ -409,7 +411,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         // BABYCLIF.CDR consists of two tables:
         //  * 240 Infin entries, each 40 bytes (7200 bytes)
         //  * 486 OF entries, each 10 bytes (4860 bytes)
-        // totalling 12060 bytes.
+        // totaling 12060 bytes.
         if ((nfin = open_gamedat("BABYCLIF.CDR")) == NULL) {
             return;
         }
@@ -1448,7 +1450,7 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
     }
 
 
-    //Direct Ascend
+    //Direct Ascent
     if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
         nautsOnMoon = 4;
     }

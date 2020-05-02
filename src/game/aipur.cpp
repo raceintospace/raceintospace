@@ -25,6 +25,8 @@
 /** \file aipur.c AI Purchasing Routines
  */
 
+// This file handles AI purchase and research of hardware, and 'naut recruitment
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -466,7 +468,7 @@ void AIRandomizeNauts()
  *
  * Also noteworthy is that AI nauts don't suffer skill loss upon
  * selection. This is to skip the difficulty of managing them in
- * Basic training - from which they are automatically withdrawn -
+ * Basic Training - from which they are automatically withdrawn -
  * and therefore cannot benefit from.
  */
 void SelectBest(char plr, int pos)
@@ -964,7 +966,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 {
     bool newProgramStarted = false;
     bool itemPurchased = false;
-    int n1, n2, n3, n4, n5, n6, n7; // scratch variables for base saftey value init
+    int n1, n2, n3, n4, n5, n6, n7; // scratch variables for base safety value init
 
     struct BuzzData *pData = &Data->P[plr];
 

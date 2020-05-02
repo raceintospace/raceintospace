@@ -18,6 +18,8 @@
 /** \file prest.c Handles all the prestige related code.
  */
 
+// This file handles Prestige.
+
 #include "prest.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -163,8 +165,8 @@ PrestMap(int val)
  *  * -3 for each previous milestone **skipped**. This includes
  *    milestones on the milestone track the mission does not satisfy.
  *  * -5 for each duration milestone **skipped**.
- *  * Lunar Pass requires Duration (C).
- *  * Lunar Orbit / Lunar Landing requires Duration (D).
+ *  * Lunar Pass requires Duration C.
+ *  * Lunar Orbit / Lunar Landing requires Duration D.
  *  * -1 to -3 for a new mission. This is any mission which includes
  *    a milestone not previously met.
  *
@@ -244,10 +246,10 @@ int PrestCheck(char plr)
 
     prg = Mis.mEq;
 
-    for (i = 0; i < 5; i++) { // Sum all first/second Nation Bonuses
+    for (i = 0; i < 5; i++) {  // Sum all first/second Nation Bonuses
         tm = Mis.PCat[i];
 
-        if (tm != -1 && Data->Prestige[tm].Goal[plr] == 0) { // First Mission Bonus
+        if (tm != -1 && Data->Prestige[tm].Goal[plr] == 0) {  // First Mission Bonus
             if (Data->Prestige[tm].Goal[other(plr)] == 0 && tm < 27) {
                 total += Data->Prestige[tm].Add[0];    // you're first
             } else {
@@ -323,7 +325,7 @@ char HeroCheck(int which)
 {
     switch (which) {
     case Prestige_MannedSpaceMission:
-        return 0x01;// RECOVERY
+        return 0x01;  // RECOVERY
 
     case Prestige_MannedOrbital:
         return 0x01;  // OIB
@@ -364,10 +366,10 @@ char Set_Goal(char plr, char which, char control)
         control = 0;
     }
 
-    if (control == 1 || which >= 0) { // Means successful to this part
+    if (control == 1 || which >= 0) {  // Means successful to this part
 
         if (Data->Prestige[which].Place == -1) {
-            switch (which) { // flag milestones
+            switch (which) {  // flag milestones
             case Prestige_OrbitalSatellite:
                 isMile(plr, Milestone_OrbitalSatellite) = 1;
                 break;
@@ -402,7 +404,7 @@ char Set_Goal(char plr, char which, char control)
             }
 
             if (control == 0) {
-                Data->P[plr].MissionCatastrophicFailureOnTurn |= 4; // for astros
+                Data->P[plr].MissionCatastrophicFailureOnTurn |= 4;  // for astros
 
 
                 if (MAIL == 0) {
@@ -451,12 +453,12 @@ char Set_Goal(char plr, char which, char control)
                 }
             }
         } else if (Data->Prestige[which].mPlace == -1 && Data->Prestige[which].Place != plr) {
-            Data->P[plr].MissionCatastrophicFailureOnTurn |= 4; // for astros
+            Data->P[plr].MissionCatastrophicFailureOnTurn |= 4;  // for astros
 
 
             Data->Prestige[which].mPlace = plr;
 
-            switch (which) { // flag milestones
+            switch (which) {  // flag milestones
             case Prestige_OrbitalSatellite:
                 isMile(plr, Milestone_OrbitalSatellite) = 1;
                 break;
@@ -497,7 +499,7 @@ char Set_Goal(char plr, char which, char control)
 
                 hero |= HeroCheck(which);
             }
-        } else if (sum < 3) { // Other
+        } else if (sum < 3) {  // Other
             if (control == 0) {
                 Data->Prestige[which].Goal[plr]++;  // increment count
                 sum += Data->Prestige[which].Add[2];
@@ -507,7 +509,7 @@ char Set_Goal(char plr, char which, char control)
     }
 
     //----------------------------------------
-    //Specs: Lunar Landing klugge (Duration D)
+    //Specs: Lunar Landing kludge (Duration D)
     //----------------------------------------
     if (which == Prestige_MannedLunarLanding || Data->Prestige[Prestige_MannedLunarLanding].Place == plr) {
         Data->P[plr].History[Data->P[plr].PastMissionCount].Duration = 4;
@@ -826,7 +828,7 @@ int AllotPrest(char plr, char mis)
     N_Goal = NegGoal(PVal);
     S_Goal = SupGoal(PVal);
 
-    if (P_Goal == Prestige_MannedLunarLanding) { // make sure EVA was done
+    if (P_Goal == Prestige_MannedLunarLanding) {  // make sure EVA was done
         if (!(PVal[Prestige_Spacewalk] >= 1 && PVal[Prestige_Spacewalk] <= 3)) {
             P_Goal = Prestige_MannedLunarOrbit;
             PVal[Prestige_MannedLunarLanding] = 0;
@@ -943,7 +945,7 @@ int AllotPrest(char plr, char mis)
     //else if (PVal[i]==4) negs+=Set_Goal(plr,i,0);
 
     // CAPSULE FIRSTS   need to check for failure on capsule
-    if ((P_Goal != -1 || S_Goal != -1) && other < 3000 && MANNED[0] > 0 && Data->P[plr].Mission[mis].Hard[Mission_Capsule] != -1) { // Hardware on first part
+    if ((P_Goal != -1 || S_Goal != -1) && other < 3000 && MANNED[0] > 0 && Data->P[plr].Mission[mis].Hard[Mission_Capsule] != -1) {  // Hardware on first part
         total += Set_Goal(plr, 12 + Data->P[plr].Mission[mis].Prog, 0);
     }
 
@@ -1066,19 +1068,19 @@ int U_AllotPrest(char plr, char mis)
     other = MaxFail();
 
     if ((mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
-        mcode == Mission_Orbital_Satellite) { // Unmanned Probes
+        mcode == Mission_Orbital_Satellite) {  // Unmanned Probes
         switch (mcode) {
         case Mission_Orbital_Satellite:
             i = Prestige_OrbitalSatellite;
-            break; // O.S.
+            break;  // O.S.
 
         case Mission_LunarFlyby:
             i = Prestige_LunarFlyby;
-            break; // L.F.B.
+            break;  // L.F.B.
 
         case Mission_Lunar_Probe:
             i = Prestige_LunarProbeLanding;
-            break; // L.P.L.
+            break;  // L.P.L.
 
         case Mission_VenusFlyby:
             i = Prestige_VenusFlyby;
@@ -1115,14 +1117,14 @@ int U_AllotPrest(char plr, char mis)
         }
 
         if (mcode == Mission_LunarFlyby || mcode == Mission_Lunar_Probe) {
-            if (lun == 1) { // UNMANNED PHOTO RECON
+            if (lun == 1) {  // UNMANNED PHOTO RECON
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if
         } // if
 
-        if (mcode == Mission_Lunar_Probe && MaxFail() == 1) { // extra 10 for landing on Moon
-            if (lun == 1) { // UNMANNED PHOTO RECON
+        if (mcode == Mission_Lunar_Probe && MaxFail() == 1) {  // extra 10 for landing on Moon
+            if (lun == 1) {  // UNMANNED PHOTO RECON
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 10;
                 Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
             } // if

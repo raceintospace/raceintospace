@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This page handles the Launch Pad screen.
+
 #include <cassert>
 
 #include "display/graphics.h"
@@ -70,7 +72,7 @@ void PadDraw(char plr, char pad)
     ShBox(56, 64, 110, 74);
     InBox(57, 65, 109, 73);
     ShBox(4, 180, 162, 195);
-    InBox(6, 182, 160, 193); //sched. duration
+    InBox(6, 182, 160, 193);  //sched. duration
     InBox(6, 99, 160, 178);
     display::graphics.setForegroundColor(9);
     draw_string(18, 190, "SCHEDULED DURATION: ");
@@ -222,7 +224,7 @@ void PadDraw(char plr, char pad)
     draw_string(13, 107, "PRIMARY CREW  ");
 
     if (j >= 0) {
-        display::graphics.setForegroundColor(11); // Now display the crew number, for player's easy reference - Leon
+        display::graphics.setForegroundColor(11);  // Now display the crew number, for player's easy reference -Leon
 
         if (j == 0) {
             draw_string(0, 0, "(CREW I)");
@@ -257,12 +259,12 @@ void PadDraw(char plr, char pad)
         }
 
         for (k = 0; k < Data->P[plr].CrewCount[i][j]; k++) {
-            // Draw a morale box for each crew member - Leon
+            // Draw a morale box for each crew member -Leon
             display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 110 + 7 * k, 20, 110 + 7 * k, 2); // Top
-            fill_rectangle(13, 110 + 7 * k, 13, 116 + 7 * k, 2); // Left
-            fill_rectangle(13, 116 + 7 * k, 20, 116 + 7 * k, 4); // Bottom
-            fill_rectangle(21, 110 + 7 * k, 21, 116 + 7 * k, 4); // Right
+            fill_rectangle(13, 110 + 7 * k, 20, 110 + 7 * k, 2);  // Top
+            fill_rectangle(13, 110 + 7 * k, 13, 116 + 7 * k, 2);  // Left
+            fill_rectangle(13, 116 + 7 * k, 20, 116 + 7 * k, 4);  // Bottom
+            fill_rectangle(21, 110 + 7 * k, 21, 116 + 7 * k, 4);  // Right
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 65) {
                 fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 16);
@@ -291,15 +293,14 @@ void PadDraw(char plr, char pad)
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
-                display::graphics.setForegroundColor(0);    // Show anyone who's announced retirement in black
+                display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
-            // Show name in purple if 'naut is female AND has announced retirement
-            draw_string(25, 115 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Name[0]);
+            draw_string(25, 115 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Name[0]);   // Show women who've announced retirement in purple
             missions = Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Missions;
 
             if (missions > 0) {
@@ -318,7 +319,7 @@ void PadDraw(char plr, char pad)
     draw_string(13, 145, "BACKUP CREW  ");
 
     if (l >= 0) {
-        display::graphics.setForegroundColor(11); // Now display the crew number, for player's easy reference - Leon
+        display::graphics.setForegroundColor(11);  // Now display the crew number, for player's easy reference -Leon
 
         if (l == 0) {
             draw_string(0, 0, "(CREW I)");
@@ -353,12 +354,12 @@ void PadDraw(char plr, char pad)
         }
 
         for (k = 0; k < Data->P[plr].CrewCount[i][l]; k++) {
-            // Draw a morale box for each crew member - Leon
+            // Draw a morale box for each crew member -Leon
             display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 148 + 7 * k, 20, 148 + 7 * k, 2); // Top
-            fill_rectangle(13, 148 + 7 * k, 13, 154 + 7 * k, 2); // Left
-            fill_rectangle(13, 154 + 7 * k, 20, 154 + 7 * k, 4); // Bottom
-            fill_rectangle(21, 148 + 7 * k, 21, 154 + 7 * k, 4); // Right
+            fill_rectangle(13, 148 + 7 * k, 20, 148 + 7 * k, 2);  // Top
+            fill_rectangle(13, 148 + 7 * k, 13, 154 + 7 * k, 2);  // Left
+            fill_rectangle(13, 154 + 7 * k, 20, 154 + 7 * k, 4);  // Bottom
+            fill_rectangle(21, 148 + 7 * k, 21, 154 + 7 * k, 4);  // Right
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 65) {
                 fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 16);
@@ -387,15 +388,14 @@ void PadDraw(char plr, char pad)
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
-                display::graphics.setForegroundColor(0);    // But show anyone who's announced retirement in black
+                display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
             }
 
             if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
-            // Show name in purple if 'naut is female AND has announced retirement
-            draw_string(25, 153 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Name[0]);
+            draw_string(25, 153 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Name[0]);   // Show women who've announced retirement in purple
         }
 
         if (j == -1) {
@@ -453,7 +453,7 @@ void ShowPad(char plr, char pad)
     PadDraw(plr, pad);
     temp = CheckCrewOK(plr, pad);
 
-    if (temp == 1) { //found mission no crews
+    if (temp == 1) {  //found mission no crews
         ScrubMission(plr, pad);
         return;
     }

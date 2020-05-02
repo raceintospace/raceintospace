@@ -1,3 +1,5 @@
+// This file defines how characters are printed on the screen
+
 #include "draw.h"
 #include "gr.h"
 #include "pace.h"

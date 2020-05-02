@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// This page controls the last-minute confirmation screen just before each launch
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -182,7 +184,7 @@ void MisAnn(char plr, char pad)
     draw_flag(47, 26, plr);
     InBox(122, 25, 276, 65);
     display::graphics.setForegroundColor(9);
-    draw_string(127, 33, "SCHEDULED LAUNCH"); //was 154,33
+    draw_string(127, 33, "SCHEDULED LAUNCH");  //was 154,33
     display::graphics.setForegroundColor(34);
     draw_string(127, 40, "LAUNCH FACILITY: ");
     display::graphics.setForegroundColor(1);
@@ -452,6 +454,7 @@ void MisAnn(char plr, char pad)
     // TODO: There is no matching text for "I156" in the help.cdr file.
     if (HelpFlag) {
         Help("i156");    // Notification of being an Help
+                         // (Wait, what's that supposed to mean?)
     }
 
     while (1) {

@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// This file handles the Mission Records screen
+
 #include "display/graphics.h"
 
 #include "Buzz_inc.h"
@@ -189,12 +191,12 @@ void Records(char plr)
     ShBox(23, 54, 228, 77);
     ShBox(23, 79, 228, 102);
 
-    IOBox(243, 3, 316, 19); // Bottom half of the screen stuff
+    IOBox(243, 3, 316, 19);  // Bottom half of the screen stuff
     ShBox(6, 104, 313, 194);
     InBox(10, 127, 309, 191);
     fill_rectangle(11, 128, 308, 190, 0);
     ShBox(297, 129, 307, 158);
-    ShBox(297, 160, 307, 189); // Arrows
+    ShBox(297, 160, 307, 189);  // Arrows
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
     draw_heading(42, 5, "MISSION RECORDS", 0, -1);
@@ -360,7 +362,7 @@ void Drec(char *pos, char *pos2, char mde)
         DispBaby(238, 35, Pict[*pos2], mde);
     }
 
-    fill_rectangle(12, 129, 295, 190, 0); // Clear bottom text
+    fill_rectangle(12, 129, 295, 190, 0);  // Clear bottom text
 
     if (NREC[*pos2][0] == 0) {
         ShBox(23, 29, 228, 52);
@@ -563,7 +565,7 @@ void Drec(char *pos, char *pos2, char mde)
             draw_string(61, 38 + (i * 24), "RECORD: ");
             display::graphics.setForegroundColor(1);
 
-            if (*pos2 == 18) { //special case craft and prestige points
+            if (*pos2 == 18) {  //special case craft and prestige points
                 display::graphics.setForegroundColor(1);
                 draw_string(0, 0, &Data->P[rec[*pos2][i].country].Manned[rec[*pos2][i].program].Name[0]);
                 display::graphics.setForegroundColor(6);
@@ -749,7 +751,7 @@ void SafetyRecords(char plr, int temp)
     rec[25][1].type = 3;
     rec[25][2].type = 3;
     k = 24;
-    j = 0; //starting value
+    j = 0;  //starting value
 
     while (k != -1) {
         switch (rec[k][0].place) {
@@ -806,7 +808,7 @@ void SafetyRecords(char plr, int temp)
         } else if (k == 25) {
             k = -1;
         }
-    } //end while
+    }  //end while
 
     bo = sOpen("RECORDS.DAT", "wb", 1);
 
@@ -839,7 +841,7 @@ void UpdateRecords(char Ty)
         }
     }
 
-    file = sOpen("MISSION.DAT", "rb", 0); //Get Whole File
+    file = sOpen("MISSION.DAT", "rb", 0);  //Get Whole File
     fread(Miss, 60 * (sizeof(struct mStr)), 1, file);
     fclose(file);
 
@@ -869,7 +871,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Orbital Satellite
+                            if (rec[k][0].place == 0) {  //Orbital Satellite
                                 if (Data->P[i].History[j].MissionCode == Mission_Orbital_Satellite) {
                                     Rec_Change = 0;
                                 }
@@ -1050,7 +1052,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //LUNAR fly-by
+                            if (rec[k][0].place == 0) {  //LUNAR flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1065,7 +1067,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //MERCURY fly-by
+                            if (rec[k][0].place == 0) {  //MERCURY flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_MercuryFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1080,7 +1082,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //VENUS fly-by
+                            if (rec[k][0].place == 0) {  //VENUS flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_VenusFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1095,7 +1097,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //MARS fly-by
+                            if (rec[k][0].place == 0) {  //MARS flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_MarsFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1110,7 +1112,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //JUPITER fly-by
+                            if (rec[k][0].place == 0) {  //JUPITER flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_JupiterFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1125,7 +1127,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //SATURN fly-by
+                            if (rec[k][0].place == 0) {  //SATURN flyby
                                 if (Data->P[i].History[j].MissionCode == Mission_SaturnFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1140,7 +1142,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //LUNAR PROBE landing
+                            if (rec[k][0].place == 0) {  //LUNAR PROBE landing
                                 if (Data->P[i].History[j].MissionCode == Mission_Lunar_Probe) {
                                     Rec_Change = 0;
                                 }
@@ -1155,7 +1157,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //ONE person craft
+                            if (rec[k][0].place == 0) {  //ONE-person craft
                                 if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
@@ -1170,7 +1172,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //TWO person craft
+                            if (rec[k][0].place == 0) {  //TWO-person craft
                                 if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
@@ -1185,7 +1187,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //THREE person craft
+                            if (rec[k][0].place == 0) {  //THREE-person craft
                                 if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     WriteRecord(i, j, k, 0);
                                 }
@@ -1200,7 +1202,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //MINISHUTTLE craft
+                            if (rec[k][0].place == 0) {  //MINISHUTTLE craft
                                 if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
@@ -1215,7 +1217,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //FOUR person craft
+                            if (rec[k][0].place == 0) {  //FOUR-person craft
                                 if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
@@ -1310,14 +1312,14 @@ void UpdateRecords(char Ty)
                             } // if (Ty
 
                             Rec_Change = -1;
-                            break; //Spacecraft Prestige Points
+                            break;  //Spacecraft Prestige Points
 
                         case 19:
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Manned Lunar Pass
+                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Pass
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarPass) {
                                     Rec_Change = 0;
                                 }
@@ -1334,7 +1336,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Manned Lunar Orbit
+                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Orbit
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarOrbital ||
                                     Data->P[i].History[j].MissionCode == Mission_Lunar_Orbital) {
                                     Rec_Change = 0;
@@ -1353,7 +1355,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earlies Manned Lunar Landing
+                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Landing
                                 if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) {
                                     Rec_Change = 0;
                                 }
@@ -1370,7 +1372,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Fewest Casualties In A Game
+                            if (Ty == 1) {  //Fewest Casualties In A Game
                                 temp = 0;
 
                                 for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
@@ -1393,7 +1395,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Most Casualties In A Game
+                            if (Ty == 1) {  //Most Casualties In A Game
                                 temp = 0;
 
                                 for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
@@ -1412,17 +1414,17 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 24:
-                            break; //Highest Safety Average (Lunar Mission)
+                            break;  //Highest Safety Average (Lunar Mission)
 
                         case 25:
-                            break; //Lowest Safety Average (Lunar Mission)
+                            break;  //Lowest Safety Average (Lunar Mission)
 
                         case 26:
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Docking Mission
+                            if (rec[k][0].place == 0) {  //Earliest Docking Mission
                                 if (ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
                                     Rec_Change = 0;
                                 }
@@ -1437,7 +1439,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Manned Docking
+                            if (rec[k][0].place == 0) {  //Earliest Manned Docking
                                 if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
                                     ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
                                     Rec_Change = 0;
@@ -1454,7 +1456,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Orbital Laboratory
+                            if (rec[k][0].place == 0) {  //Earliest Orbital Laboratory
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
                                     Rec_Change = 0;
                                 }
@@ -1468,7 +1470,7 @@ void UpdateRecords(char Ty)
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
-                            temp = Data->P[i].History[j].Duration; //Longest Mission Duration
+                            temp = Data->P[i].History[j].Duration;  //Longest Mission Duration
 
                             if (rec[k][0].place == 0) {
                                 if (temp > 0) {
@@ -1486,7 +1488,7 @@ void UpdateRecords(char Ty)
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
-                            temp = Data->P[i].History[j].Prestige; //Single Mission Prestige
+                            temp = Data->P[i].History[j].Prestige;  //Single Mission Prestige
 
                             if (rec[k][0].place == 0) {
                                 if (temp > 0) {
@@ -1506,7 +1508,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) {
-                                temp = Data->P[i].PastMissionCount; //Fewest Missions
+                                temp = Data->P[i].PastMissionCount;  //Fewest Missions
 
                                 if (rec[k][0].place == 0) {
                                     if (temp > 0) {
@@ -1527,7 +1529,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 3;
 
                             if (Ty == 1) {
-                                temp = Data->P[i].PastMissionCount; //Most Missions
+                                temp = Data->P[i].PastMissionCount;  //Most Missions
 
                                 if (rec[k][0].place == 0) {
                                     if (temp > 0) {
@@ -1545,7 +1547,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Most Space Missions Attempted
+                            if (Ty == 1) {  //Most Space Missions Attempted
                                 temp = 0;
 
                                 for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
@@ -1568,7 +1570,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Most Successful Space Missions
+                            if (Ty == 1) {  //Most Successful Space Missions
                                 temp = 0;
 
                                 for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
@@ -1592,7 +1594,7 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 2;
                             max = 0;
 
-                            if (Ty == 1) { //Most Missions (MALE)
+                            if (Ty == 1) {  //Most Missions (MALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1621,7 +1623,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Most Missions (FEMALE)
+                            if (Ty == 1) {  //Most Missions (FEMALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1650,7 +1652,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Most Prestige (MALE)
+                            if (Ty == 1) {  //Most Prestige (MALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1680,7 +1682,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Most Prestige (FEMALE)
+                            if (Ty == 1) {  //Most Prestige (FEMALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1710,7 +1712,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Most Days (MALE)
+                            if (Ty == 1) {  //Most Days (MALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1740,7 +1742,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Most Days (FEMALE)
+                            if (Ty == 1) {  //Most Days (FEMALE)
                                 temp = 0;
                                 max = 1;
 
@@ -1770,7 +1772,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) { //Longest Term Of Duty
+                            if (Ty == 1) {  //Longest Term Of Duty
                                 temp = 0;
                                 max = 1;
 
@@ -1799,7 +1801,7 @@ void UpdateRecords(char Ty)
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
-                            temp = max = 0; //Highest Rating
+                            temp = max = 0;  //Highest Rating
 
                             if (Ty == 1) {
                                 if (i == 0) {
@@ -1823,7 +1825,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Highest Average Budget
+                            if (Ty == 1) {  //Highest Average Budget
                                 for (loop = 0; loop < 40; ++loop) {
                                     if (Data->P[i].BudgetHistory[loop] != 0) {
                                         temp += Data->P[i].BudgetHistory[loop];
@@ -1849,7 +1851,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Lowest Average Budget
+                            if (Ty == 1) {  //Lowest Average Budget
                                 for (loop = 0; loop < 40; ++loop) {
                                     if (Data->P[i].BudgetHistory[loop] != 0) {
                                         temp += Data->P[i].BudgetHistory[loop];
@@ -1875,7 +1877,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) { //Highest Prestige Total
+                            if (Ty == 1) {  //Highest Prestige Total
                                 for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                     temp += Data->P[i].History[loop].Prestige;
                                 }
@@ -1894,7 +1896,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest EOR Landing
+                            if (rec[k][0].place == 0) {  //Earliest EOR Landing
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR) {
                                     Rec_Change = 0;
                                 }
@@ -1911,7 +1913,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest LOR Landing
+                            if (rec[k][0].place == 0) {  //Earliest LOR Landing
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR) {
                                     Rec_Change = 0;
                                 }
@@ -1928,7 +1930,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Direct Ascent Landing
+                            if (rec[k][0].place == 0) {  //Earliest Direct Ascent Landing
                                 if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL) {
                                     Rec_Change = 0;
                                 }
@@ -1945,7 +1947,7 @@ void UpdateRecords(char Ty)
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) { //Earliest Historical Lunar Landing
+                            if (rec[k][0].place == 0) {  //Earliest Historical Lunar Landing
                                 if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding) {
                                     Rec_Change = 0;
                                 }
@@ -1958,7 +1960,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 50:
-                            if (Ty == 1) { //Total US Wins
+                            if (Ty == 1) {  //Total US Wins
                                 if (MLL(i, j) == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == 0) {
                                     ++rec[k][0].tag;
                                     rec[k][0].place = 1;
@@ -1971,7 +1973,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 51:
-                            if (Ty == 1) { //Total SOVIET Wins
+                            if (Ty == 1) {  //Total SOVIET Wins
                                 if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].place = 1;
@@ -1984,7 +1986,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 52:
-                            if (Ty == 1) { //Total LOR Wins
+                            if (Ty == 1) {  //Total LOR Wins
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
@@ -1996,7 +1998,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 53:
-                            if (Ty == 1) { //Total EOR Wins
+                            if (Ty == 1) {  //Total EOR Wins
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
@@ -2008,7 +2010,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 54:
-                            if (Ty == 1) { //Total Direct Ascent Wins
+                            if (Ty == 1) {  //Total Direct Ascent Wins
                                 if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
@@ -2020,7 +2022,7 @@ void UpdateRecords(char Ty)
                             break;
 
                         case 55:
-                            if (Ty == 1) { //Total Historical Wins
+                            if (Ty == 1) {  //Total Historical Wins
                                 if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding && CheckSucess(i, j) == 1) {
                                     ++rec[k][0].tag;
                                     rec[k][0].country = 2;
@@ -2033,7 +2035,7 @@ void UpdateRecords(char Ty)
 
                         default:
                             break;
-                        } // end switch
+                        }  // end switch
 
                         if ((k < 35 || k > 41) && k != 18) {
                             RecChange(i, j, k, temp, max, Rec_Change, hold);
@@ -2078,8 +2080,8 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
     switch (Rec_Change) {
     case 0:
         if (k >= 35 && k <= 41) {
-            j = temp; // holds astronaut
-            temp = max; // holds record
+            j = temp;  // holds astronaut
+            temp = max;  // holds record
         }
 
         WriteRecord(i, j, k, temp);
@@ -2154,8 +2156,8 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
     case 3:
         if (k >= 35 && k <= 41) {
-            j = temp; // holds astronaut
-            temp = max; // holds record
+            j = temp;  // holds astronaut
+            temp = max;  // holds record
         }
 
         switch (rec[k][0].place) {
@@ -2217,7 +2219,7 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
             break;
 
-        case 2:// klugge cases 35-40 max holds tag temp holds astro
+        case 2:  // kludge cases 35-40 max holds tag temp holds astro
             if (rec[k][1].tag > temp) {
                 WriteRecord(i, j, k, temp);
                 SwapRec(k, 2, 1);
@@ -2368,13 +2370,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
         default:
             break;
-        } //end case #5 switch
+        }  //end case #5 switch
 
         break;
 
     default:
         break;
-    } // end switch (Rec_Change)
+    }  // end switch (Rec_Change)
 
     return;
 }
@@ -2412,7 +2414,7 @@ size_t ImportRecordEntry(FILE *fin, Record_Entry &dst)
 /**
  * Write a Record_Entry instance as a packed byte stream to a file.
  *
- * Outputs using little endian ordering.
+ * Outputs using little-endian ordering.
  *
  * \param fout  an open file handle.
  * \param src

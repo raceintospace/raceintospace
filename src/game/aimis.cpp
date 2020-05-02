@@ -24,6 +24,8 @@
 //
 // AI Master Routines
 
+// This file seems to control the planning and execution of AI missions
+
 #include "aimis.h"
 #include "Buzz_inc.h"
 #include "aipur.h"
@@ -66,7 +68,7 @@ void AIVabCheck(char plr, char mis, char prog)
             whe[0] = Best();
 
             if (Mew[whe[0]].i < 60) {
-                whe[0] = 0;    // Weed out low safety's
+                whe[0] = 0;    // Weed out low safeties
             }
         }
     } else if (prog >= Mis.mEq && (prog != 0)) { // && (Mis.mVab[0]&0x80 || Mis.mVab[1]&0x80)) )
@@ -84,7 +86,7 @@ void AIVabCheck(char plr, char mis, char prog)
             whe[1] = Best();
 
             if (Mew[whe[1]].i < 60) {
-                whe[1] = 0;    // Weed out low safety's
+                whe[1] = 0;    // Weed out low safeties
             }
         } else {
             // fill_rectangle(100,100,200,190,5);
@@ -273,7 +275,7 @@ char Panic_Level(char plr, int *m_1, int *m_2)
         return 1;
     }
 
-// PANIC lunar pass/probe landing/lunar fly-by
+// PANIC lunar pass/probe landing/lunar flyby
     if (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] == 5 &&
         !PrestigeCheck(plr, Prestige_LunarFlyby) &&
         !PrestigeCheck(plr, Prestige_LunarProbeLanding) &&
@@ -1085,13 +1087,13 @@ void NewAI(char plr, char frog)
         }
     };
 
-// unmanned/manned klugge
+// unmanned/manned kludge
     if (mis1 == Mission_Orbital_Docking && mis2 == Mission_U_Orbital_D) {
         mis2 = Mission_U_Orbital_D;
         mis1 = Mission_Orbital_Docking;
     };
 
-//lunar fly-by/probe landing klugge
+//lunar flyby/probe landing kludge
     if (mis1 == Mission_LunarFlyby && mis2 == Mission_LunarFlyby)
         if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15) {
             mis2 = Mission_Lunar_Probe;
@@ -1362,16 +1364,16 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             Data->P[plr].Future[pad + i].Duration = 6;
         }
 
-        // one man capsule duration klugge
+        // one-man capsule duration kludge
         if (Data->P[plr].Future[pad + i].Prog == 1) {
             if (Data->P[plr].DurationLevel == 0) {
                 Data->P[plr].Future[pad + i].Duration = 1;
             } else {
                 Data->P[plr].Future[pad + i].Duration = 2;
             }
-        }; // limit duration 'C' one man capsule
+        }; // limit duration 'C' one-man capsule
 
-        // lunar mission klugge
+        // lunar mission kludge
         if (Mis.Lun == 1 ||
             Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_EOR ||
             Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_LOR ||
@@ -1379,7 +1381,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             Data->P[plr].Future[pad + i].Duration = 4;
         }
 
-        // unmanned duration klugge
+        // unmanned duration kludge
         if (Mis.Days == 0) {
             Data->P[plr].Future[pad + i].Duration = 0;
         }
@@ -1445,7 +1447,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             }
 
             if (pc[i] == -1) {
-                // astronaut/duration klugge
+                // astronaut/duration kludge
                 if (Mis.Days > 0) {
                     Data->P[plr].Future[pad + i].Men = max;
                 }
@@ -1485,7 +1487,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         }
     }
 
-// joint mission Mission_Jt_LunarLanding_EOR and Mission_Jt_LunarLanding_LOR men klugge
+// joint mission Mission_Jt_LunarLanding_EOR and Mission_Jt_LunarLanding_LOR men kludge
     if (mis == Mission_Jt_LunarLanding_EOR || mis == Mission_Jt_LunarLanding_LOR) {
         Data->P[plr].Future[pad + 1].Men = Data->P[plr].Future[pad].Men;
         Data->P[plr].Future[pad + 1].PCrew = Data->P[plr].Future[pad].PCrew;
@@ -1518,7 +1520,7 @@ void AILaunch(char plr)
                   : Data->P[plr].Rocket[i].MaxPay;
 
         if (boos[i] < 60) {
-            boos[i] = -1;    // Get Rid of any Unsafe rkt systems
+            boos[i] = -1;    // Get Rid of any Unsafe rocket systems
         }
 
         if (Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num < 1) for (j = 4; j < 7; j++) {
@@ -1640,7 +1642,7 @@ void AILaunch(char plr)
         }
     }
 
-// JOINT MISSION KLUGGE MISSION Mission_Jt_LunarLanding_EOR & Mission_Jt_LunarLanding_LOR
+// JOINT MISSION KLUDGE MISSION Mission_Jt_LunarLanding_EOR & Mission_Jt_LunarLanding_LOR
     if (Data->P[plr].Mission[0].MissionCode == Mission_Jt_LunarLanding_EOR) {
         Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
         Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
@@ -1658,7 +1660,7 @@ void AILaunch(char plr)
         Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1;
     };
 
-    // lunar module klugge
+    // lunar module kludge
     for (i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].Hard[Mission_LM] >= 5) {
             Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety >= Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety ? 5 : 6;
@@ -1681,13 +1683,13 @@ void AILaunch(char plr)
         Data->P[plr].Mission[l].Rushing = 0; // Clear Data
     }
 
-    if (k == 3) { // Three non joint missions
+    if (k == 3) { // Three non-joint missions
         Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
         Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
         Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
     };
 
-    if (k == 2 && JR == 0) { // Two non joint missions
+    if (k == 2 && JR == 0) { // Two non-joint missions
         l = 3;
 
         if (Data->P[plr].Mission[0].MissionCode) {
@@ -1705,7 +1707,7 @@ void AILaunch(char plr)
         }
     };
 
-    if (k == 1 && JR == 0) { // Single Mission Non joint
+    if (k == 1 && JR == 0) { // Single Mission Non-joint
         if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }

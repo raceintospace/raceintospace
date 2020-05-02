@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file is part of mission branching and failure handling
+
 #include <cassert>
 
 #include "display/graphics.h"
@@ -113,7 +115,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 
     fin = sOpen("FAILS.CDR", "rb", 0);
     count = 44;
-    fread(&count, sizeof count, 1, fin); // never written to file
+    fread(&count, sizeof count, 1, fin);  // never written to file
     Swap32bit(count);
 
     int i = 0;
@@ -174,7 +176,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 
 void MisCheck(char plr, char mpad)
 {
-    int tomflag = 0; // toms checking flag
+    int tomflag = 0;  // Tom's checking flag
     int val, safety, save, PROBLEM, i, lc, durxx;
     struct XFails Now;
     unsigned char gork = 0;
@@ -182,9 +184,9 @@ void MisCheck(char plr, char mpad)
     lc = 0; /* XXX check uninitialized */
 
     STEPnum = STEP;
-    FINAL = STEP = MFlag = 0; // Clear Everything
+    FINAL = STEP = MFlag = 0;  // Clear Everything
     Unm = MANNED[0] + MANNED[1];
-    Dock_Skip = 0; // used for mission branching
+    Dock_Skip = 0;  // used for mission branching
     MPad = mpad;
     SCRUBS = noDock = InSpace = 0;
 
@@ -253,8 +255,8 @@ void MisCheck(char plr, char mpad)
         if ((Mev[STEP].loc == 27 || Mev[STEP].loc == 28) && durx > 0) {
 
             if (Mev[STEP].StepInfo != 1) {
-                Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 1; //Original code would also return 1
-                durx = -1; // end durations
+                Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 1;  // Original code would also return 1
+                durx = -1;  // end durations
             } else {
                 Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration++;
                 durx--;
@@ -265,7 +267,7 @@ void MisCheck(char plr, char mpad)
                     Mev[STEP].dice = brandom(100) + 1;
                 }
 
-                Mev[STEP].rnum = brandom(10000); // reroll failure type
+                Mev[STEP].rnum = brandom(10000);  // reroll failure type
                 Mev[STEP].trace = STEP;
             }
         }
@@ -316,8 +318,8 @@ void MisCheck(char plr, char mpad)
 
             memset(Name, 0x00, sizeof Name);
             strcpy(Name, Mev[STEP].Name);
-            Name[0] = '#'; // Launch Code
-            PlaySequence(plr, STEP, Name, 0); // Special Case #47236
+            Name[0] = '#';  // Launch Code
+            PlaySequence(plr, STEP, Name, 0);  // Special Case #47236
         }
 
         // Necessary to keep code from crashing on bogus mission step
@@ -364,10 +366,10 @@ void MisCheck(char plr, char mpad)
 
         // Duration Hack Part 3 of 3
         if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
-            safety = Mev[STEP].E->MisSaf; // needs to be for both
+            safety = Mev[STEP].E->MisSaf;  // needs to be for both
 
             if (InSpace == 2) {
-                safety = (MH[0][0]->MisSaf + MH[1][0]->MisSaf) / 2;    //joints
+                safety = (MH[0][0]->MisSaf + MH[1][0]->MisSaf) / 2;    // Joints
             }
         }
 
@@ -403,7 +405,7 @@ void MisCheck(char plr, char mpad)
 
         if (PROBLEM && save == 1) {  // Failure Saved
             Mev[STEP].E->SaveCard--;    // Deduct SCard
-            PROBLEM = 0; // Fix problem
+            PROBLEM = 0;  // Fix problem
         }
 
 
@@ -413,7 +415,7 @@ void MisCheck(char plr, char mpad)
             Mev[STEP].Name[5] = Mev[STEP].E->ID[1];
         }
 
-        if (PROBLEM == 1) {  //Step Problem
+        if (PROBLEM == 1) {  // Step Problem
             // for the unmanned mission
             if (MANNED[Mev[STEP].pad] == 0 && MANNED[other(Mev[STEP].pad)] == 0) {
                 Mev[STEP].rnum = (-1) * (brandom(5) + 1);
@@ -448,7 +450,7 @@ void MisCheck(char plr, char mpad)
 
 
 
-            //:::::: Failure docking klugge
+            //:::::: Failure docking kludge
 
             if (Mev[STEP].Name[0] == 'I') {
                 gork = Data->P[plr].Mission[mpad].Prog;
@@ -488,7 +490,7 @@ void MisCheck(char plr, char mpad)
             PlaySequence(plr, STEP, Name, 1);
 
             if (!AI[plr]) {
-                Tick(2);    //reset dials
+                Tick(2);    // reset dials
             }
 
             FailEval(plr, Now.code, Now.text, Now.val, Now.xtra);
@@ -506,7 +508,7 @@ void MisCheck(char plr, char mpad)
             }
 
             //::::::::::::::::::::::::::::::::::
-            //::: SUCCESS: Docking klugge ::::::
+            //::: SUCCESS: Docking kludge ::::::
             //::::::::::::::::::::::::::::::::::
             if (Mev[STEP].Name[0] == 'I') {
                 gork = Data->P[plr].Mission[mpad].Prog;
@@ -526,7 +528,7 @@ void MisCheck(char plr, char mpad)
 
             //:::::: STEP SUCCESS :::::::::
             //:::::::::::::::::::::::::::::
-            // FemaleAstronautsAllowed step klugge
+            // FemaleAstronautsAllowed step kludge
             // third parameter (0 -> MALE) (2 -> FEMALE)
             //:::::::::::::::::::::::::::::
 
@@ -540,7 +542,7 @@ void MisCheck(char plr, char mpad)
                     || (MA[1][3].A != NULL && MA[1][3].A->Sex && EVA[1] == 3));
 
             //if (!((mcc==9 || mcc==11) && (Mev[STEP].Name[0]=='W')))
-            PlaySequence(plr, STEP, Mev[STEP].Name, (gork == 1) ? 2 : 0); // Play Animations
+            PlaySequence(plr, STEP, Mev[STEP].Name, (gork == 1) ? 2 : 0);  // Play Animations
 
             if (Mev[STEP].sgoto == 100) {
                 Mev[STEP].trace = 0x7F;
@@ -551,7 +553,7 @@ void MisCheck(char plr, char mpad)
             }
 
             if (!(strncmp(Mev[STEP].E->Name, "DO", 2) == 0 && Mev[STEP].loc == 0x02)) {
-                Mev[STEP].E->MisSucc++; // set for all but docking power on
+                Mev[STEP].E->MisSucc++;  // set for all but docking power on
             }
 
             Mev[STEP].StepInfo = 1;
@@ -559,7 +561,7 @@ void MisCheck(char plr, char mpad)
             // Bottom of success statement
         }
 
-        if (Mev[STEP].loc == 0x7f || Mev[STEP].sgoto == 100) { // force mission end
+        if (Mev[STEP].loc == 0x7f || Mev[STEP].sgoto == 100) {  // force mission end
             Mev[STEP].trace = 0x7f;
         }
 
@@ -632,7 +634,7 @@ void MisCheck(char plr, char mpad)
         if (!AI[plr]) {
             if (!fullscreenMissionPlayback) {
                 display::AutoPal p(display::graphics.legacyScreen());
-                memset(&p.pal[64 * 3], 0x00, 64 * 3); //Specs: 0x08
+                memset(&p.pal[64 * 3], 0x00, 64 * 3);  //Specs: 0x08
 
                 if (plr == 0) {
                     fill_rectangle(2, 107, 140, 115, 3);
@@ -779,7 +781,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
     Mev[STEP].E->MaxRD = Mev[STEP].E->MSF - 1;
 
     if (mode == F_ALL) {
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) { // should work in news
+        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
             Guy = MA[Mev[STEP].pad][k].A;
 
             if (Guy != NULL) {
@@ -791,7 +793,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
                 death = 1;
             }
         }
-    } else if (mode == F_ONE) { // should work in news
+    } else if (mode == F_ONE) {  // should work in news
         if (Victim == NULL) {
             return;
         }
@@ -819,14 +821,14 @@ void F_IRCrew(char mode, struct Astros *Guy)
         return;
     }
 
-    if (mode == F_RET) { // should work in news
+    if (mode == F_RET) {  // should work in news
         Guy->Status = AST_ST_RETIRED;
-        Guy->RetirementDelay = 1; // Retire begginning of next season
+        Guy->RetirementDelay = 1;  // Retire beginning of next season
         Guy->RetirementReason = 9;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
     } else if (mode == F_INJ) {
         Guy->Status = AST_ST_INJURED;
-        Guy->InjuryDelay = 3; // Injured for a year
+        Guy->InjuryDelay = 3;  // Injured for a year
         Guy->Special = 4;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
     }
@@ -845,7 +847,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     }
 
     Mev[STEP].StepInfo = 1003;
-    FNote = 5; // Mission Failure
+    FNote = 5;  // Mission Failure
 
     if (Unm == 0) {
         Mev[STEP].trace = 0x7f;
@@ -858,7 +860,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             FailureMode(plr, FNote, text);
         }
 
-        //Special Case for PhotoRecon with Lunar Probe
+        // Special Case for PhotoRecon with Lunar Probe
         if (Mev[STEP].loc == 20 && mcc == Mission_Lunar_Probe) {
             Mev[STEP - 1].E->MisFail++;
         }
@@ -870,7 +872,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     switch (type) {
 
-    case 0: // Failure has no effect on Mission
+    case 0:   // Failure has no effect on Mission
     case 20:   // don't want to test for crew experience
         FNote = 0;
         Mev[STEP].StepInfo = 50;
@@ -896,7 +898,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 8;
 
         if (InSpace > 0 && MANNED[Mev[STEP].pad] == 0 && strncmp(Mev[STEP].E->ID, "M2", 2) == 0) {
-            Mev[STEP].pad = other(Mev[STEP].pad); // for Kicker-C problems
+            Mev[STEP].pad = other(Mev[STEP].pad);  // for Kicker-C problems
             F_KillCrew(F_ALL, 0);
             Mev[STEP].pad = other(Mev[STEP].pad);
         } else {
@@ -911,14 +913,14 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 1;
         Mev[STEP].StepInfo = 1900 + Mev[STEP].loc;
 
-        if (Mev[STEP].fgoto == -1) { // End of Mission Flag
+        if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
             if (Mev[STEP].PComp > 0) {
                 Mev[STEP].PComp = 4;
             }
 
-            Mev[STEP].trace = 0x7F; // End of Mission Signal
+            Mev[STEP].trace = 0x7F;  // End of Mission Signal
             FNote = 5;
-        } else if (Mev[STEP].fgoto != -2) { // Alternate Step is other num
+        } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
             if (Mev[STEP].PComp > 0) {
                 Mev[STEP].PComp = 4;
             }
@@ -978,15 +980,15 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         Mev[STEP].StepInfo = 1600 + Mev[STEP].loc;
 
-        DestroyPad(plr, MPad + Mev[STEP].pad, abs(xtra), 0); // Destroy Pad
+        DestroyPad(plr, MPad + Mev[STEP].pad, abs(xtra), 0);  // Destroy Pad
 
-        Mev[STEP].trace = 0x7F; // signal end of mission
+        Mev[STEP].trace = 0x7F;  // signal end of mission
         break;
 
-    case 13: // Kill Crew, repair Pad for VAL
+    case 13:  // Kill Crew, repair Pad for VAL
         FNote = 8;
         F_KillCrew(F_ALL, 0);
-        DestroyPad(plr, Mev[STEP].pad + MPad, (val == 0) ? abs(xtra) : abs(val), 0); // Destroy Pad
+        DestroyPad(plr, Mev[STEP].pad + MPad, (val == 0) ? abs(xtra) : abs(val), 0);  // Destroy Pad
         Mev[STEP].StepInfo = 4500 + Mev[STEP].loc;
         Mev[STEP].trace = 0x7F;
         break;
@@ -1002,7 +1004,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 15;
         break;
 
-    case 16: // VAL% injury,   XTRA% death
+    case 16:  // VAL% injury,   XTRA% death
         FNote = 0;
         Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
 
@@ -1012,7 +1014,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 Mev[STEP].StepInfo = 2100 + Mev[STEP].loc;
                 FNote = 9;
             }
-        } // for
+        }  // for
 
         ctr = 0;
 
@@ -1044,7 +1046,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
 
 
-    case 17: // VAL% survial and XTRA% if injury and retirement
+    case 17:  // VAL% survival and XTRA% if injury and retirement
         Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
@@ -1064,7 +1066,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 FNote = 8;
                 ctr++;
             }
-        } // for
+        }  // for
 
         if (ctr == MANNED[Mev[STEP].pad]) {
             Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
@@ -1121,7 +1123,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
 
-    case 22: // one man % survival :: EVA
+    case 22:  // one man % survival :: EVA
         Mev[STEP].StepInfo = 19;
 
         if (brandom(100) > val) {
@@ -1130,7 +1132,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             F_KillCrew(F_ONE, crw);
 
             if (Mev[STEP].Name[6] == 0x36) {
-                death = 1;    // one man lem
+                death = 1;    // one-man lem
             }
 
             Mev[STEP].StepInfo = 3200 + Mev[STEP].loc;
@@ -1139,7 +1141,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         break;
 
-    case 23: // VAL% retirement, hardware cut %XTRA perm
+    case 23:  // VAL% retirement, hardware cut %XTRA perm
         FNote = 0;
         Mev[STEP].StepInfo = 23 + Mev[STEP].loc;
 
@@ -1152,7 +1154,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             }
         }
 
-        //Used to reduce safety
+        // Used to reduce safety
 
         if (Mev[STEP].fgoto == -1) {
             Mev[STEP].trace = 0x7F;
@@ -1180,10 +1182,10 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     case 25:    // Mission Failure recover Minishuttle
         FNote = 5;
         Mev[STEP].StepInfo = 700;
-        Mev[STEP].trace = 0x7F; // End of Mission
+        Mev[STEP].trace = 0x7F;  // End of Mission
         break;
 
-    case 26: // Subtract VAL% from Equip perm and branch to alternate
+    case 26:  // Subtract VAL% from Equip perm and branch to alternate
         FNote = 1;
         Mev[STEP].StepInfo = 1926;
         Mev[STEP].E->Safety -= brandom(10);
@@ -1206,7 +1208,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     case 30:  // Duration Failure
         Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 1; //Original code would also return 1
-        durx = -1; // end durations
+        durx = -1;  // end durations
         FNote = 7;
         Mev[STEP].StepInfo = 1950;
         Mev[STEP].trace = STEP + 1;
@@ -1248,9 +1250,9 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         if (MANNED[other(Mev[STEP].pad)] > 0)  {
-            Mev[STEP].pad = other(Mev[STEP].pad); // switch pad for a sec
+            Mev[STEP].pad = other(Mev[STEP].pad);  // switch pad for a sec
             F_KillCrew(F_ALL, 0);
-            Mev[STEP].pad = other(Mev[STEP].pad); // restore current pad
+            Mev[STEP].pad = other(Mev[STEP].pad);  // restore current pad
         }
 
         Mev[STEP].StepInfo = 4600 + Mev[STEP].loc;
@@ -1276,7 +1278,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             Mev[STEP].trace = STEP + 1;
         }
 
-        break; // nothing : continue steps
+        break;  // nothing : continue steps
     }
 
     if ((Mev[STEP].Name[0] == 'A') && MH[Mev[STEP].pad][7] != NULL) {
@@ -1286,9 +1288,9 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
     }
 
-    VerifySF(plr);  // Keep all safety's within the proper ranges
+    VerifySF(plr);  // Keep all safeties within the proper ranges
 
-    // check for all astro's that are dead.  End mission if this is the case.
+    // check for all astros that are dead.  End mission if this is the case.
     while (bioskey(1)) {
         bioskey(0);
     }
@@ -1312,14 +1314,14 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         if (PROBLEM == 0) {
-            if (Mev[STEP].fgoto == -1) { // End of Mission Flag
+            if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
                 if (Mev[STEP].PComp > 0) {
                     Mev[STEP].PComp = 4;
                 }
 
-                Mev[STEP].trace = 0x7F; // End of Mission Signal
+                Mev[STEP].trace = 0x7F;  // End of Mission Signal
                 FNote = 5;
-            } else if (Mev[STEP].fgoto != -2) { // Alternate Step is other num
+            } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
                 if (Mev[STEP].PComp > 0) {
                     Mev[STEP].PComp = 4;
                 }
@@ -1346,8 +1348,8 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     if (type == 9 || type == 19) {
         Mev[STEP].trace = STEP;
-        Mev[STEP].rnum = brandom(10000) + 1; // new failure roll
-        Mev[STEP].dice = brandom(100) + 1; // new die roll
+        Mev[STEP].rnum = brandom(10000) + 1;  // new failure roll
+        Mev[STEP].dice = brandom(100) + 1;  // new die roll
     }
 
     death = 0;

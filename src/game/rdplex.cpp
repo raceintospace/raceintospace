@@ -25,6 +25,8 @@
 /** \file rdplex.c Research and Development Complex
  */
 
+// This file handles the R&D and Purchasing Facilities, and Technology Transfer
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -348,7 +350,7 @@ char RD(char player_index)
                     FadeIn(2, 10, 0, 0);
                 }
             } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
-                if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* Unmanned */
+                if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) {  /* Unmanned */
                     roll = 0;
                     hardware = PROBE_HARDWARE;
                     hardware_buttons.drawButtons(hardware);
@@ -367,7 +369,7 @@ char RD(char player_index)
                     b = Data->P[player_index].Probe[unit].RDCost;
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) { /* Rockets */
+                } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) {  /* Rockets */
                     roll = 0;
                     hardware = ROCKET_HARDWARE;
                     hardware_buttons.drawButtons(hardware);
@@ -386,7 +388,7 @@ char RD(char player_index)
                     b = Data->P[player_index].Rocket[unit].RDCost;
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) { /* Manned */
+                } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) {  /* Manned */
                     roll = 0;
                     hardware = MANNED_HARDWARE;
                     hardware_buttons.drawButtons(hardware);
@@ -405,7 +407,7 @@ char RD(char player_index)
                     b = Data->P[player_index].Manned[unit].RDCost;
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) { /* Misc */
+                } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) {  /* Misc */
                     roll = 0;
                     hardware = MISC_HARDWARE;
                     hardware_buttons.drawButtons(hardware);
@@ -456,7 +458,7 @@ char RD(char player_index)
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0)); //DM Screen, Nikakd, 10/8/10
                 ManSel(roll);
                 WaitForMouseUp();
-            } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) { /* LEFT ARROW */
+            } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) {  /* LEFT ARROW */
                 roll = 0;
                 InBox(5, 184, 74, 194);
                 WaitForMouseUp();
@@ -510,7 +512,7 @@ char RD(char player_index)
                 ShowUnit(hardware, unit, player_index);
 
                 OutBox(5, 184, 74, 194);
-            } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) { /* RIGHT ARROW */
+            } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) {  /* RIGHT ARROW */
                 roll = 0;
                 InBox(83, 184, 152, 194);
                 WaitForMouseUp();
@@ -730,7 +732,7 @@ char MaxChk(char hardware_index, char unit_index, char player_index)
 /**
  * Roll dice and improve R&D value of a given hardware.
  *
- * HACK: need to store number of dices rolled in return value
+ * HACK: need to store number of dice rolled in return value
  *
  * @param[in] hardwareTypeIndex
  * @param[in] hardwareIndex
@@ -952,7 +954,7 @@ void ShowUnit(char hw, char un, char player_index)
         if (options.want_debug) {
             draw_string(0, 0, " / ");
             draw_number(0, 0, program.MSF);
-            draw_character('%'); //Used to test if MSF was holding the right value
+            draw_character('%');  //Used to test if MSF was holding the right value
         }
     } else {
         draw_string(242, 139, "--");
@@ -1144,28 +1146,28 @@ char HPurc(char player_index)
         }
 
         if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
-            if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) { /* PROBES */
+            if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) {  /* PROBES */
                 hardware = PROBE_HARDWARE;
                 hardware_buttons.drawButtons(hardware);
                 unit = PROBE_HW_ORBITAL;
                 ShowUnit(hardware, unit, player_index);
-            } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) { /* ROCKETS  */
+            } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) {  /* ROCKETS */
                 hardware = ROCKET_HARDWARE;
                 hardware_buttons.drawButtons(hardware);
                 unit = ROCKET_HW_ONE_STAGE;
                 ShowUnit(hardware, unit, player_index);
-            } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) { /* CAPSULES */
+            } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) {  /* CAPSULES */
                 hardware = MANNED_HARDWARE;
                 hardware_buttons.drawButtons(hardware);
                 unit = MANNED_HW_ONE_MAN_CAPSULE;
                 ShowUnit(hardware, unit, player_index);
-            } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) { /* MISC */
+            } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) {  /* MISC */
                 hardware = MISC_HARDWARE;
                 hardware_buttons.drawButtons(hardware);
                 unit = MISC_HW_KICKER_A;
                 ShowUnit(hardware, unit, player_index);
             }
-        } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) { /* LEFT ARROW */
+        } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) {  /* LEFT ARROW */
             InBox(5, 184, 74, 194);
             delay(5);
             WaitForMouseUp();
@@ -1207,7 +1209,7 @@ char HPurc(char player_index)
             }
 
             ShowUnit(hardware, unit, player_index);
-        } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) { /* RIGHT ARROW */
+        } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) {  /* RIGHT ARROW */
             InBox(83, 184, 152, 194);
             WaitForMouseUp();
             OutBox(83, 184, 152, 194);
@@ -1249,7 +1251,7 @@ char HPurc(char player_index)
             }
 
             ShowUnit(hardware, unit, player_index);
-        } else if ((y >= 182 && y <= 195 && x >= 166 && x <= 314 && mousebuttons > 0) || key == 'P') { /* PURCHASE */
+        } else if ((y >= 182 && y <= 195 && x >= 166 && x <= 314 && mousebuttons > 0) || key == 'P') {  /* PURCHASE */
             InBox(165, 182, 315, 195);
             WaitForMouseUp();
             OutBox(165, 182, 315, 195);
@@ -1270,7 +1272,7 @@ char HPurc(char player_index)
             UNIT1 = PROBE_HW_ORBITAL;
             remove_savedat("UNDO.TMP");
             return 0;   // Continue
-        } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') { // Gateway to RD
+        } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {  // Gateway to RD
             InBox(5, 73, 152, 83);
             WaitForMouseUp();
             HARD1 = hardware;
@@ -1594,7 +1596,7 @@ BuyUnit(char category, char unit, char player_index)
             //old code: Data->P[player_index].Rocket[ROCKET_HW_THREE_STAGE].Safety = 35;
             Data->P[player_index].Rocket[ROCKET_HW_THREE_STAGE].Safety = 5 + tt;
 
-            if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) { // Tech from multiple programs
+            if ((n1 >= 75 || n5 >= 75) && (n2 >= 75 || n4 >= 75)) {  // Tech from multiple programs
                 Data->P[player_index].Rocket[ROCKET_HW_THREE_STAGE].Safety = 60;
             }
 
@@ -1683,13 +1685,13 @@ BuyUnit(char category, char unit, char player_index)
 
     /* compute technology transfer for Manned category */
     if (new_program && category == MANNED_HARDWARE) {
-        n1 = Data->P[player_index].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety; /* One-person - a        */
-        n2 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety; /* Two-person - b        */
-        n3 = Data->P[player_index].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety; /* Three-person - c      */
-        n4 = Data->P[player_index].Manned[MANNED_HW_MINISHUTTLE].Safety; /* Minishuttle - f */
-        n5 = Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety; /* Direct Ascent - h    */
-        n6 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_MODULE].Safety; /* 2-seat LM - d     */
-        n7 = Data->P[player_index].Manned[MANNED_HW_ONE_MAN_MODULE].Safety; /*1-seat LM - e      */
+        n1 = Data->P[player_index].Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety;  /* One-person - a        */
+        n2 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety;  /* Two-person - b        */
+        n3 = Data->P[player_index].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety;  /* Three-person - c      */
+        n4 = Data->P[player_index].Manned[MANNED_HW_MINISHUTTLE].Safety;  /* Minishuttle - f */
+        n5 = Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety;  /* Direct Ascent - h    */
+        n6 = Data->P[player_index].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;  /* 2-seat LM - d     */
+        n7 = Data->P[player_index].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;  /*1-seat LM - e      */
 
         switch (unit) {
         case MANNED_HW_ONE_MAN_CAPSULE:  // Mercury/Vostok
@@ -1791,7 +1793,7 @@ BuyUnit(char category, char unit, char player_index)
 
             break;
 
-        case MANNED_HW_MINISHUTTLE: // Minishuttles
+        case MANNED_HW_MINISHUTTLE: // Minishuttles (don't get tech transfer)
             break;
 
         case MANNED_HW_FOUR_MAN_CAPSULE:  // Jupiter/LK-700
@@ -1831,7 +1833,7 @@ BuyUnit(char category, char unit, char player_index)
 
             //old code: if (n3 >= 75)
             //old code: Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety = 25;
-            if ((n1 >= 75 || n2 >= 75 || n3 >= 75) && (n6 >= 75  || n7 >= 75)) { // Tech from multiple programs
+            if ((n1 >= 75 || n2 >= 75 || n3 >= 75) && (n6 >= 75  || n7 >= 75)) {  // Tech from multiple programs
                 Data->P[player_index].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Safety = 35;
             }
 

@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles Luna, the Satellite Building, the LM Program screen, and has a function for someplace where 'nauts are displayed
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 

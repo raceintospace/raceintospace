@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file controls the Budget Office and the Viewing Stand
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"

@@ -24,6 +24,8 @@
 //
 // Support files for NEWS.C
 
+// This file seems to perform support tasks for news.cpp: wrapup from last turn's missions etc.
+
 #include "news_sup.h"
 #include "Buzz_inc.h"
 #include "options.h"

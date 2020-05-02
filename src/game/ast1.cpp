@@ -25,6 +25,8 @@
 /** \file ast1.c Astronaut Recruitment
  */
 
+// This file handles 'naut recruitment.
+
 /* Variables in this file
    BarA   The line where the bar is showing on the Left (0-7)
    BarB   The line where the bar is showing on the Right (0-7)

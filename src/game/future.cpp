@@ -16,7 +16,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /**
- * \file future.cpp This is responsible for Future Mission planning screen.
+ * \file future.cpp This is responsible for the Future Missions screen.
  */
 
 #include "future.h"
@@ -145,7 +145,7 @@ void LoadFutureButtons(void)
 
 
 /**
- * Load the 255-color Future missions palette to the main display.
+ * Load the 255-color Future Missions palette to the main display.
  *
  * \throws runtime_error  if Filesystem is unable to read images.
  */
@@ -920,7 +920,7 @@ void Future(char plr)
         char misType = 0;
         ClrFut(plr, pad);
 
-        JointFlag = JointMissionOK(plr, pad); // initialize joint flag
+        JointFlag = JointMissionOK(plr, pad); // initialize Joint flag
         MissionNavigator nav;
         NavReset(nav);
 

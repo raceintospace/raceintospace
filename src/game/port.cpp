@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles the main Spaceport screen, including animations
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
@@ -308,7 +310,7 @@ void SpotCrap(char loc, char mode)
 
         Seek_pOff(loc);  // go to correct path
         fread(&PName, sizeof PName, 1, sFin);
-        fread(&sCount, sizeof sCount, 1, sFin); // get number of paths parts
+        fread(&sCount, sizeof sCount, 1, sFin);  // get number of paths parts
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
@@ -343,7 +345,7 @@ void SpotCrap(char loc, char mode)
         // TODO: This makes the previous block obsolete
         sImg.w = hSPOT.size / sImg.h;
         SP1 = new display::LegacySurface(sImg.w, sImg.h);
-        fread(SP1->pixels(), hSPOT.size, 1, sFin); // read image data
+        fread(SP1->pixels(), hSPOT.size, 1, sFin);  // read image data
 
         if (sPath.Scale != 1.0) {
             sImg.w = (int)((float) sImg.w * sPath.Scale);
@@ -632,13 +634,13 @@ void DrawSpaceport(char plr)
 
     // Pads
     for (int i = 0; i < 3; i++) {
-        Data->P[plr].Port[PORT_LaunchPad_A + i] = 1; // Draw launch pad
+        Data->P[plr].Port[PORT_LaunchPad_A + i] = 1;  // Draw launch pad
 
         if (Data->P[plr].Mission[i].MissionCode) {
-            Data->P[plr].Port[PORT_LaunchPad_A + i] = 2; // Draw damaged launch pad
+            Data->P[plr].Port[PORT_LaunchPad_A + i] = 2;  // Draw damaged launch pad
         } else if (Data->P[plr].LaunchFacility[i] > 1) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 3;
-        } else if (Data->P[plr].LaunchFacility[i] < 0) { // No launch facility
+        } else if (Data->P[plr].LaunchFacility[i] < 0) {  // No launch facility
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 0;
         }
     }
@@ -649,7 +651,7 @@ void DrawSpaceport(char plr)
 
 
     if (Data->P[plr].AstroCount > 0) {
-        PortPlace(fin, table[16 - plr * 4]); // Draw CPX
+        PortPlace(fin, table[16 - plr * 4]);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
     } else {    // No manned program hotkeys
@@ -674,13 +676,13 @@ void DrawSpaceport(char plr)
     }
 
     for (int fm = 0; fm < 35; fm++) {
-        int idx = Data->P[plr].Port[fm]; // Current Port Level for MObj
+        int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
 
-        if (MObj[fm].Reg[idx].PreDraw > 0) { // PreDrawn Shape
+        if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
             PortPlace(fin, table[MObj[fm].Reg[idx].PreDraw]);
         }
 
-        if (MObj[fm].Reg[idx].iNum > 0) { // Actual Shape
+        if (MObj[fm].Reg[idx].iNum > 0) {  // Actual Shape
             PortPlace(fin, table[MObj[fm].Reg[idx].iNum]);
         }
     }
@@ -737,13 +739,13 @@ void UpdatePortOverlays(void)
 {
     char i, j;
 
-    for (i = 0; i < NUM_PLAYERS; i++) { // Programs
+    for (i = 0; i < NUM_PLAYERS; i++) {  // Programs
         for (j = 0; j < 5; j++) {
             Data->P[i].Port[PORT_Mercury - j] = (Data->P[i].Manned[j].Num >= 0) ? 1 : 0;
         }
 
 #ifdef DEADCODE
-        // Zond thingy -- this was never implemented and available after 6 manned seasons
+        // Zond thingy -- this was never implemented and was available after 6 manned seasons
         //if (i==1 && Data->P[i].Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) Data->P[i].Port[PORT_Zond]=1;
 #endif
 
@@ -1237,7 +1239,7 @@ void Port(char plr)
 
     music_start((plr == 0) ? M_USPORT : M_SVPORT);
     kMode = kPad = kEnt = 0;
-    i = 0; // this is used to loop through all the selection regions on the port
+    i = 0;  // this is used to loop through all the selection regions on the port
 
     while (1) {
         av_block();
@@ -1268,8 +1270,8 @@ void Port(char plr)
                 kMode = 0;
             }
 
-            if (key > 0) { // this was only looking for the low byte
-                i = MapKey(plr, key, i); // Get Port offset for keyboard input
+            if (key > 0) {  // this was only looking for the low byte
+                i = MapKey(plr, key, i);  // Get Port offset for keyboard input
 
                 if (key == K_ESCAPE) {
                     kMode = 0;
@@ -1343,8 +1345,8 @@ void Port(char plr)
                             y = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].y1;
                         }
 
-                        if (key > 0 && kMode == 1) // got a keypress
-                            if (key != K_ENTER) { // not return
+                        if (key > 0 && kMode == 1)  // got a keypress
+                            if (key != K_ENTER) {  // not return
                                 x = -1;
                                 y = -1;
                                 kPad = key;
@@ -1360,7 +1362,7 @@ void Port(char plr)
                             if (!(i == 28 || i == 29 || i == 0 || i == 31
                                   || (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
 #if SPOT_ON
-                                SpotCrap(0, SPOT_KILL); // remove spots
+                                SpotCrap(0, SPOT_KILL);  // remove spots
 #endif
                                 music_stop();
                             } else {
@@ -1382,7 +1384,7 @@ void Port(char plr)
                                     music_start((plr == 0) ? M_USPORT : M_SVPORT);
                                 }
 
-                                SpotCrap(0, SPOT_KILL); // remove spots
+                                SpotCrap(0, SPOT_KILL);  // remove spots
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
@@ -1456,7 +1458,7 @@ void Port(char plr)
                                 }
 
 #endif
-                                SpotCrap(0, SPOT_KILL); // remove spots
+                                SpotCrap(0, SPOT_KILL);  // remove spots
                                 music_stop();
                                 save_game("AUTOSAVE.SAV");
                                 return;
@@ -1470,7 +1472,7 @@ void Port(char plr)
                                 }
 
 #endif
-                                SpotCrap(0, SPOT_KILL); // remove spots
+                                SpotCrap(0, SPOT_KILL);  // remove spots
                                 music_stop();
                                 return;
                             } // switch
@@ -1525,13 +1527,13 @@ void Port(char plr)
 char PortSel(char plr, char loc)
 {
     int i, MisOK, LPad = 0;
-    Vab_Spot = 0; // clear the damn thing.
+    Vab_Spot = 0;  // clear the damn thing.
 
     switch (loc) {
     case PORT_Monument:
         Help((plr == 0) ? "i023" : "i022");
         keyHelpText = "k022";
-        return pNOREDRAW; // Monuments
+        return pNOREDRAW;  // Monuments
 
     case PORT_Pentagon:
         if (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)) {
@@ -1601,7 +1603,7 @@ char PortSel(char plr, char loc)
     case PORT_AstroComplex:
         helpText = "i039";
         Limbo(plr);
-        return pREDRAW; // Astro Complex
+        return pREDRAW;  // Astro Complex
 
     case PORT_MedicalCtr:
         helpText = "i041";
@@ -1647,7 +1649,7 @@ char PortSel(char plr, char loc)
         helpText = "i044";
         keyHelpText = "k209";
         LMBld(plr);
-        return pREDRAW; // LM Program
+        return pREDRAW;  // LM Program
 
     case PORT_Jupiter:
         helpText = "i036";
@@ -1731,7 +1733,7 @@ char PortSel(char plr, char loc)
         Viewing(plr);
         return pREDRAW;
 
-    case PORT_FlagPole: // Flag Pole : End turn
+    case PORT_FlagPole:  // Flagpole : End turn
         MisOK = 0;
 
         // Check to see if missions are good to go
@@ -1805,16 +1807,16 @@ char PortSel(char plr, char loc)
     case PORT_Moon:
         helpText = "i029";
         Moon(plr);
-        return pREDRAW; // Moon
+        return pREDRAW;  // Moon
 
     case PORT_SovMonumentAlt:
         Help("i025");
-        return pNOREDRAW; // Sov Mon #2
+        return pNOREDRAW;  // Sov Mon #2
 
     case PORT_Zond:
         helpText = "i036";
         Programs(plr, 3);
-        return pREDRAW; // Zond
+        return pREDRAW;  // Zond
 
     case PORT_Tracking:
         if (Option != -1) {
@@ -1828,7 +1830,7 @@ char PortSel(char plr, char loc)
         }
 
     case PORT_SVHQ:
-        return pNOREDRAW; // SV
+        return pNOREDRAW;  // SV
 
     default:
         return pNOREDRAW;
@@ -1841,7 +1843,7 @@ char Request(char plr, char *s, char md)
     char i;
     display::LegacySurface local(196, 84);
 
-    if (md > 0) { // Save Buffer
+    if (md > 0) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 

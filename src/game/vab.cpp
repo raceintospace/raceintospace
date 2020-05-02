@@ -27,6 +27,8 @@
  *
  */
 
+// This file handles the VAB / VIB
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -64,7 +66,7 @@
  * which is stored in VAS.
  */
 struct VInfo VAS[7][4];
-int VASqty; // How many payload configurations there are
+int VASqty;  // How many payload configurations there are
 
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -376,7 +378,7 @@ void DispVAB(char plr, char pad)
     display::graphics.setForegroundColor(1);
     draw_string(5, 52, Mis.Abbr);
 
-    // Show duration level only on missions with a Duration step - Leon
+    // Show duration level only on missions with a Duration step  -Leon
     if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {
         int duration = Data->P[plr].Mission[pad].Duration;
         draw_string(0, 0, GetDurationParens(duration));
@@ -752,7 +754,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     // The Mercury capsule has a tower that sticks through the top of
     // the casing. On the large casing image, there isn't space to
     // display this, so the smaller casing image is forced.
-    if (VAS[payload][0].img == 13 && plr == 0) { // Mercury capsule
+    if (VAS[payload][0].img == 13 && plr == 0) {  // Mercury capsule
         casing = 7;
     }
 
@@ -788,7 +790,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     /* Copy area background into buffer underneath casing */
     display::LegacySurface local2(casingWidth, casingHeight);
 
-    fill_rectangle(178, 29, 243, 179, 3); /* TODO: magic numbers */
+    fill_rectangle(178, 29, 243, 179, 3);  /* TODO: magic numbers */
 
     local2.copyFrom(display::graphics.legacyScreen(),
                     210 - casingWidth / 2,
@@ -828,7 +830,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
             y2 = MI[plr * 28 + img].y2;
             w2 = x2 - x1 + 1;
             h2 = y2 - y1 + 1;
-            cx = casingWidth / 2 - w2 / 2 - 1; // Center on x-axis
+            cx = casingWidth / 2 - w2 / 2 - 1;  // Center on x-axis
 
             if (cx + w2 > casingWidth || IncY + h2 > casingHeight) {
                 CWARNING3(graphic, "can't fit %s image into spaceship casing!",
@@ -970,10 +972,10 @@ void DispWts(int two, int one)
 
 void VAB(char plr)
 {
-    int ccc, rk;               // Payload index & rocket index
+    int ccc, rk;                // Payload index & rocket index
     int mis, weight, ab, ac;
-    int sf[8], qty[8], pay[8]; // Cached rocket safety, quantity, & thrust
-    char Name[8][12];          // Cached rocket names
+    int sf[8], qty[8], pay[8];  // Cached rocket safety, quantity, & thrust
+    char Name[8][12];           // Cached rocket names
     char ButOn;
     boost::shared_ptr<display::LegacySurface> hw;
 
@@ -988,7 +990,7 @@ void VAB(char plr)
 
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
-        if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
+        if (CheckCrewOK(plr, mis) == 1) {  // found mission no crews
             ScrubMission(plr, mis);
             continue;
         }
@@ -1000,7 +1002,7 @@ void VAB(char plr)
         // reassembly.
         FreeLaunchHardware(plr, mis);
 
-        BuildVAB(plr, mis, 0, 0, 0); // now holds the mission info
+        BuildVAB(plr, mis, 0, 0, 0);  // now holds the mission info
 
         // Rocket Display Data --------------------------
         for (int i = 0; i < 7; i++) {
@@ -1068,7 +1070,7 @@ void VAB(char plr)
                 continue;
             }
 
-            // Game Play
+            // Gameplay
             if ((x >= 6 && y >= 86 && x <= 163 && y <= 94 && mousebuttons > 0) || key == 'A') {
                 // AUTOPURCHASE
                 InBox(6, 86, 163, 94);
@@ -1382,10 +1384,10 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     VASqty = 0;
 
-    if (VX & 0x80) { // Capsule
+    if (VX & 0x80) {  // Capsule
         j = (part == 0) ? prog : ext;
 
-        for (i = 1; i < 6; i++) { // Fill all parts with CAP
+        for (i = 1; i < 6; i++) {  // Fill all parts with CAP
             VASqty++;
             VVals(plr, 0, &Data->P[plr].Manned[j], j, 13 + j);
         }
@@ -1393,28 +1395,28 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     VASqty = 0;
 
-    if (VX == 0x20 && part == 0 && mcode == Mission_Orbital_Satellite) { // P:Sxx XX
+    if (VX == 0x20 && part == 0 && mcode == Mission_Orbital_Satellite) {  // P:Sxx XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Probe[PROBE_HW_ORBITAL], 0, 9);
     }
 
-    if (VX == 0x20 && part == 0 && mcode != Mission_Orbital_Satellite) { // P:xDM XX
+    if (VX == 0x20 && part == 0 && mcode != Mission_Orbital_Satellite) {  // P:xDM XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
-    } else if (VX == 0x04 && part == 0) { // P:INTER XX
+    } else if (VX == 0x04 && part == 0) {  // P:INTER XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY], 1, 10);
-    } else if (VX == 0x02 && part == 0) { // P:PRO XX
+    } else if (VX == 0x02 && part == 0) {  // P:PRO XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Probe[PROBE_HW_LUNAR], 2, 11);
-    } else if (VX == 0x60 && part == 0) { // P:LM+SDM XX
+    } else if (VX == 0x60 && part == 0) {  // P:LM+SDM XX
         LMAdd(plr, ext, -1, 1);
-    } else if (VX == 0xe8 && part == 0) { // P:LM+SDM+EVA XX
+    } else if (VX == 0xe8 && part == 0) {  // P:LM+SDM+EVA XX
         LMAdd(plr, prog, -1, 1);
-    } else if (VX == 0x61 && part == 0) { // P:LM+SDM+KIC XX
+    } else if (VX == 0x61 && part == 0) {  // P:LM+SDM+KIC XX
         LMAdd(plr, ext, 0, 1);
         LMAdd(plr, ext, 1, 1);
-    } else if (VX == 0x21 && part == 0) { // P:SDM+KIC-C XX
+    } else if (VX == 0x21 && part == 0) {  // P:SDM+KIC-C XX
         VASqty++;
         VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_C], 2, 22);
     }
@@ -1423,37 +1425,37 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         VASqty = 1;    // P/S:CAP XX
     }
 
-    else if (VX == 0x88) { // P/S:CAP+EVA XX
+    else if (VX == 0x88) {  // P/S:CAP+EVA XX
         VASqty = 1;
         // EVA Check
     }
 
-    else if (VX == 0xa0 && part == 0) { // P:CAP+SDM XX
+    else if (VX == 0xa0 && part == 0) {  // P:CAP+SDM XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
     }
 
-    else if (VX == 0x90 && part == 0) { // P:CAP+DMO XX
+    else if (VX == 0x90 && part == 0) {  // P:CAP+DMO XX
         VASqty = 1; // DMO Check
     }
 
-    else if (VX == 0xa8 && part == 0) { // P:CAP+SDM+EVA XX
+    else if (VX == 0xa8 && part == 0) {  // P:CAP+SDM+EVA XX
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         // EVA Check
     }
 
-    else if (VX == 0x98 && part == 0) { // P:CAP+DMO+EVA XX
+    else if (VX == 0x98 && part == 0) {  // P:CAP+DMO+EVA XX
         VASqty = 1;
         // EVA Check
         // DMO Check
     }
 
-    else if (VX == 0xe0 && part == 0) { // P:CAP+LM+SDM XX
+    else if (VX == 0xe0 && part == 0) {  // P:CAP+LM+SDM XX
         LMAdd(plr, prog, -1, 0);
     }
 
-    else if (VX == 0x81) { // P/S:CAP+KIC XX
+    else if (VX == 0x81) {  // P/S:CAP+KIC XX
         if (prog == 1 || prog == 3) {
             if (mcode != 52) {  ///Special Case EOR LM Test
                 VASqty++;
@@ -1469,7 +1471,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         }
     }
 
-    else if (VX == 0xe1 && part == 0) { // P:CAP+LM+SDM+KIC XX
+    else if (VX == 0xe1 && part == 0) {  // P:CAP+LM+SDM+KIC XX
         LMAdd(plr, prog, 1, 0);
     }
 
@@ -1478,9 +1480,9 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         // EVA Check
     }
 
-    else if (VX == 0x89 && part == 1) { // S:CAP+EVA+KIC
+    else if (VX == 0x89 && part == 1) {  // S:CAP+EVA+KIC
         if (prog != 2) {
-            if (mcode != Mission_Jt_LunarLanding_EOR) { ///Special Case EOR Lunar Landing
+            if (mcode != Mission_Jt_LunarLanding_EOR) {  ///Special Case EOR Lunar Landing
                 VASqty++;
                 VVals(plr, 1, &Data->P[plr].Misc[MISC_HW_KICKER_A], 0, 20);
                 VASqty++;
@@ -1529,7 +1531,7 @@ void LMAdd(char plr, char prog, char kic, char part)
         }
     }
 
-    else if (prog == 3) { // Minishuttle
+    else if (prog == 3) {  // Minishuttle
         VASqty++;
         VVals(plr, 3, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], 4, 12);
         VVals(plr, 2, &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE], 5, 18);

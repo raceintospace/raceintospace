@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// This file handles choosing type of spacecraft (if applicable) and crew(s) to man it (if applicable)
+
 #include <string>
 
 #include "display/graphics.h"
@@ -258,7 +260,7 @@ int AsnCrew(char plr, char pad, char part)
     back = -1;
     count = 0;
 
-    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) { // Flight Crew Settings
+    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {  // Flight Crew Settings
         if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
             || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
             stflag = 0;
@@ -349,7 +351,7 @@ int AsnCrew(char plr, char pad, char part)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < ASTRONAUT_CREW_MAX; i++) { // Flight Crew Settings
+        for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {  // Flight Crew Settings
             if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
                 || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
                 stflag = 0;
@@ -463,7 +465,7 @@ int AsnCrew(char plr, char pad, char part)
                 delay(110);
             }
         } // End Backup Set
-    } // end-while
+    } // end while
 }
 
 void FutFltsTxt(char nw, char col)
@@ -753,7 +755,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
     }
 
     std::string s1 = Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name;  // These two lines on each program in this section are to better center the name of the
-    size_t i1 = std::count(s1.begin(), s1.end(), 'I');                     // spacecraft when it contains an "I", since that's shorter than other letters.  -Leon
+    size_t i1 = std::count(s1.begin(), s1.end(), 'I');                     // spacecraft when it contains an "I", since that's narrower than other letters.  -Leon
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name)) * 3;
     draw_string(111 + lenprogname + i1, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
     std::string s2 = Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name;  
@@ -823,7 +825,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
 
     // TODO: Just compare hardware duration with mission duration?
     // TODO: Check if Mis.Days is indexed the same as
-    //   struct MissionType.Duration?
+    //       struct MissionType.Duration?
 
     // Gemini/Voskhod cannot attempt Duration F
     if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {
@@ -1005,7 +1007,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
 
     // TODO: Just compare hardware duration with mission duration?
     // TODO: Check if Mis.Days is indexed the same as
-    //   struct MissionType.Duration?
+    //       struct MissionType.Duration?
 
     // Gemini/Voskhod cannot attempt Duration F
     if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {

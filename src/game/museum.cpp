@@ -24,6 +24,8 @@
 //
 // Museum Main Files
 
+// This file handles the Museum and some of its subsections: Space History, Prestige Summary, and Astronaut History
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -141,7 +143,7 @@ void Museum(char plr)
     char AImg[7] = {8, 9, 10, 11, 13, 14, 0};
 
     if (Data->P[plr].AstroCount == 0) {
-        memcpy(&AName[5][0], &AName[6][0], 22); // move up Exit
+        memcpy(&AName[5][0], &AName[6][0], 22);  // move up Exit
         AImg[5] = AImg[6];
         tots = 6;
     } else if (plr == 1) {
@@ -284,7 +286,7 @@ void ShowPrest(char plr)
     fill_rectangle(11, 128, 308, 190, 0);
 
     ShBox(297, 129, 307, 158);
-    ShBox(297, 160, 307, 189); // Arrows
+    ShBox(297, 160, 307, 189);  // Arrows
 
     draw_heading(8, 5, "PRESTIGE SUMMARY", 0, -1);
     draw_heading(14, 109, "EVENTS", 0, -1);
@@ -438,7 +440,7 @@ void DPrest(char plr, char *pos, char *pos2)
     display::graphics.setForegroundColor(2);
     tt = 0;
 
-    for (i = *pos; i < *pos + 9 + tt; i++, j++) { // *pos+9+tt
+    for (i = *pos; i < *pos + 9 + tt; i++, j++) {  // *pos+9+tt
         if (i == 21) {
             i++;
             tt = 1;
@@ -629,7 +631,7 @@ void ShowSpHist(char plr)
     int pos;
 
     FadeOut(2, 5, 0, 0);
-    PatchMe(0, 0, 0, 0, 0); // For loading the Patches color palette?
+    PatchMe(0, 0, 0, 0, 0);  // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
     if ((Data->Year == 57 && Data->Season == 0) || Data->P[plr].PastMissionCount == 0) {
@@ -637,10 +639,10 @@ void ShowSpHist(char plr)
     } else pos = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
                      ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
 
-    ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
+    ORBox(0, 0, 319, 22, 3);  // Draw Inbox around top
     draw_heading(48, 5, "MISSION HISTORY", 0, -1);
     IOBox(243, 3, 316, 19);
-    InBox(3, 3, 31, 19); // USA inbox
+    InBox(3, 3, 31, 19);  // USA inbox
     draw_small_flag(plr, 4, 4);
     display::graphics.setForegroundColor(1);
     draw_string(257, 13, "CONTINUE");
@@ -650,13 +652,13 @@ void ShowSpHist(char plr)
     IRBox(4, 174, 315, 195, 0);
     ORBox(7, 176, 49, 193, 3);
     ORBox(51, 176, 93, 193, 3);
-    ORBox(95, 176, 224, 193, 3); //draw the boxes under date
+    ORBox(95, 176, 224, 193, 3);  //draw the boxes under date
     ORBox(226, 176, 268, 193, 3);
     ORBox(270, 176, 312, 193, 3);
-    Display_ARROW(0, 23, 178); //left
-    Display_ARROW(1, 63, 178); //left arrow
-    Display_ARROW(2, 239, 178); //right
-    Display_ARROW(3, 285, 178); //right arrow
+    Display_ARROW(0, 23, 178);  //left
+    Display_ARROW(1, 63, 178);  //left arrow
+    Display_ARROW(2, 239, 178);  //right
+    Display_ARROW(3, 285, 178);  //right arrow
     DrawMisHist(plr, &pos);
     FadeIn(2, 5, 0, 0);
 
@@ -682,7 +684,7 @@ void ShowSpHist(char plr)
             return;
         }
 
-        pButton(7, 176, 49, 193, FullRewind(plr, &pos), key >> 8, 71); //FullRewind Button etc..
+        pButton(7, 176, 49, 193, FullRewind(plr, &pos), key >> 8, 71);  //FullRewind Button etc.
         pButton(51, 176, 93, 193, RewindOne(plr, &pos), key >> 8, 75);
         pButton(226, 176, 268, 193, FastOne(plr, &pos), key >> 8, 77);
         pButton(270, 176, 312, 193, FullFast(plr, &pos), key >> 8, 79);
@@ -811,7 +813,7 @@ void DrawMisHist(char plr, int *where)
 
     yr = (*where - (*where % 2)) / 2 + 57;
     season = *where % 2;
-    ORBox(95, 176, 224, 193, 3); // draw the boxes under date
+    ORBox(95, 176, 224, 193, 3);  // draw the boxes under date
     sprintf(cYr, "%d", 1900 + yr);
     draw_heading(103 + (yr - 57) * 4, 178, cYr, 0, -1);
 
@@ -990,10 +992,10 @@ void ShowAstrosHist(char plr)
     draw_heading(46, 90, "MISSION", 0, -1);
     draw_heading(27, 109, "EXPERIENCE", 0, -1);
     vhptr2->copyFrom(display::graphics.legacyScreen(), 22, 69, 133, 123);
-    PatchMe(0, 0, 0, 0, 0); // For loading the Patches color palette?
+    PatchMe(0, 0, 0, 0, 0);  // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
-    ORBox(0, 0, 319, 22, 3); // Draw Inbox around top
+    ORBox(0, 0, 319, 22, 3);  // Draw Inbox around top
 
     if (plr == 0) {
         draw_heading(43, 4, "ASTRONAUT HISTORY", 0, -1);
@@ -1001,9 +1003,9 @@ void ShowAstrosHist(char plr)
         draw_heading(41, 4, "COSMONAUT HISTORY", 0, -1);
     }
 
-    IRBox(243, 3, 316, 19, 0); // Inbox around cont box
-    ORBox(245, 5, 314, 17, 3); // box for cont box
-    InBox(3, 3, 31, 19); // USA inbox
+    IRBox(243, 3, 316, 19, 0);  // Inbox around cont box
+    ORBox(245, 5, 314, 17, 3);  // box for cont box
+    InBox(3, 3, 31, 19);  // USA inbox
 
     if (plr == 0) {
         draw_small_flag(0, 4, 4);
@@ -1041,10 +1043,10 @@ void ShowAstrosHist(char plr)
     ORBox(241, 177, 276, 194, 3);
     ORBox(278, 177, 313, 194, 3);
 
-    Display_ARROW(0, 179, 179); //left
-    Display_ARROW(1, 213, 179); //left arrow
-    Display_ARROW(2, 250, 179); //right
-    Display_ARROW(3, 290, 179); //right arrow
+    Display_ARROW(0, 179, 179);  //left
+    Display_ARROW(1, 213, 179);  //left arrow
+    Display_ARROW(2, 250, 179);  //right
+    Display_ARROW(3, 290, 179);  //right arrow
     display::graphics.setForegroundColor(11);
     draw_string(37, 34, "PREVIOUS MISSION");
     draw_string(47, 193, "NEXT MISSION");
@@ -1081,7 +1083,7 @@ void ShowAstrosHist(char plr)
 
         pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 80);
         pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 72);
-        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2, vhptr2), key >> 8, 71); // Down to prev Astro
+        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2, vhptr2), key >> 8, 71);  // Down to prev Astro
         pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2, vhptr2), key >> 8, 75);
         pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2, vhptr2), key >> 8, 77);
         pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2, vhptr2), key >> 8, 79);
@@ -1158,10 +1160,10 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     strncpy(Ast_Name, abuf[*where].Name, 10);
 
     if (abuf[*where].Sex == 1) {
-        display::graphics.setForegroundColor(5); // Show females in blue
+        display::graphics.setForegroundColor(5);  // Show females in blue
     }
 
-    draw_string(165, 39, Ast_Name); // Displays name of astronaut/cosmonaut
+    draw_string(165, 39, Ast_Name);  // Displays name of astronaut/cosmonaut
     display::graphics.setForegroundColor(11);
     strcat(temp, Nums[abuf[*where].Group]);
     draw_string(165, 49, temp);

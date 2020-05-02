@@ -25,6 +25,8 @@
 //
 // Museum Main Files
 
+// This file handles the Hardware Efficiency screen off the Museum
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -123,7 +125,7 @@ ShowHard(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) {  /* Game Play */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if (((x >= 7 && y >= 164 && x <= 75 && y <= 195
                   && mousebuttons > 0) || key == 'U') && place != 0) {
                 InBox(7, 164, 75, 195);
@@ -300,11 +302,11 @@ PInfo(char plr, char loc, DisplayContext &dctx)
                     PrestigeTable[ROCKET_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] - 5] += prestigeSum;
                     PrestigeTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS] += prestigeSum;
                 }
-            }                      // end-if
-        }                          //end-if
-    }                             // end-if
+            }                      // end if
+        }                          //end if
+    }                             // end if
 
-    //EVA suit klugge
+    //EVA suit kludge
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
 
     // make sure there are no negative vals in Pt

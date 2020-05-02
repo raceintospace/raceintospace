@@ -23,6 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
+// This file handles replay of missions (I think).
+
 #include <assert.h>
 
 #include "display/graphics.h"
@@ -166,7 +168,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height, const char *Typ
                 goto done;
             }
 
-            i--;                   //Specs: offset index klugge
+            i--;                   //Specs: offset index kludge
             fseek(fseqf, i * sizeof_Table, SEEK_SET);
             fread_Table(&table, 1, fseqf);
             offset = table.foffset;
@@ -263,7 +265,7 @@ DispBaby(int x, int y, int loc, char neww)
     bot = (uint16_t *) boob.pixels();
 
     fin = sOpen("BABYPICX.CDR", "rb", 0);
-    locl = (int32_t) 1612 * loc; // First Image
+    locl = (int32_t) 1612 * loc;  // First Image
 
     fseek(fin, locl, SEEK_SET);
 

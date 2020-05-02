@@ -24,6 +24,8 @@
  * For API and general overview visit http://www.libsdl.org/.
  */
 
+// This file helps with processing A/V.
+
 #include "display/graphics.h"
 #include "display/surface.h"
 

@@ -16,6 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// This file handles Advanced Preferences.
+
 #include "Buzz_inc.h"
 #include "options.h"
 #include "macros.h"
@@ -487,7 +489,7 @@ setup_options(int argc, char *argv[])
 
         shift_argv(argv + pos, argc - pos, 1);
         argc--;
-        pos--; /* for loop will advance it again */
+        pos--;  /* for loop will advance it again */
     }
 
     /* second pass: variable assignments */

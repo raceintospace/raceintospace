@@ -19,6 +19,8 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+// This file handles music (as you might guess by the name)
+
 #include "Buzz_inc.h"
 #include "pace.h"
 #include "utils.h"
