@@ -100,6 +100,7 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
         //BinT(8,54,0);BinT(238,54,0);  // Old way with buttons
         BinT(8, 54, 1);
         BinT(238, 54, 1);  // No select Buttons
+        fill_rectangle(250, 75, 250, 84, 4);
         fill_rectangle(237, 35, 312, 41, 0);
         fill_rectangle(7, 35, 82, 41, 0);
     } else {
@@ -272,8 +273,8 @@ void PLevels(char side, char wh, DisplayContext &dctx)
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
     } else {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 11, 19, 239,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 250,  55);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 11, 19, 240,  55);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
     }
 
     return;
@@ -303,7 +304,7 @@ void CLevels(char side, char wh, DisplayContext &dctx)
  *     1 = USSR
  *     2 = USA AI
  *     3 = USSR AI
- *     4 = FOREIGN (maybe)     - Or maybe 4 & 5 were for PBEM? -Leon
+ *     4 = FOREIGN (maybe)
  *     5 = FOREIGN AI (maybe)
  *     6 = USA (modem play)
  *     7 = USSR (modem play)
@@ -582,7 +583,7 @@ void Prefs(int where)
 
             else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) ||
                      (where == 0 && ksel == 1 && key == 'H')) {
-                InBox(238, 77, 249, 85);
+                InBox(238, 77, 248, 85);
                 WaitForMouseUp();
                 hum2++;
 
@@ -591,7 +592,7 @@ void Prefs(int where)
                 }
 
                 CLevels(1, hum2, dctx);
-                OutBox(238, 77, 249, 85);
+                OutBox(238, 77, 248, 85);
 
                 /* P2:Human/Computer */
                 //change human to dif 1 and comp to 3
