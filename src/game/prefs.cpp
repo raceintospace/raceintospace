@@ -283,9 +283,9 @@ void CLevels(char side, char wh, DisplayContext &dctx)
 {
 
     if (side == 0) {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 8, 6, 9, 78);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 9, 78);
     } else {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 8, 6, 239, 78);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 239, 78);
     }
 
     return;
