@@ -269,8 +269,8 @@ void PLevels(char side, char wh, DisplayContext &dctx)
 {
 
     if (side == 0) {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 11, 19,  9,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 59, 29, 21,  55);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
     } else {
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 11, 19, 239,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 250,  55);
@@ -582,7 +582,7 @@ void Prefs(int where)
 
             else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) ||
                      (where == 0 && ksel == 1 && key == 'H')) {
-                InBox(238, 77, 248, 85);
+                InBox(238, 77, 249, 85);
                 WaitForMouseUp();
                 hum2++;
 
@@ -591,7 +591,7 @@ void Prefs(int where)
                 }
 
                 CLevels(1, hum2, dctx);
-                OutBox(238, 77, 248, 85);
+                OutBox(238, 77, 249, 85);
 
                 /* P2:Human/Computer */
                 //change human to dif 1 and comp to 3
