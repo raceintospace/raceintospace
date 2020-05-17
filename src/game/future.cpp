@@ -311,7 +311,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     display::graphics.setForegroundColor(1);
 
     draw_string(9, 80, "RESET");
-    draw_string(258, 13, "CONTINUE");
+    draw_string(256, 13, "CONTINUE");
 
     display::graphics.setForegroundColor(11);
 
@@ -382,7 +382,7 @@ void DrawPenalty(char plr, const struct mStr &mission)
     fill_rectangle(206, 36, 235, 44, 7);
 
     if (penalty < 3) {
-        u = 1;    //ok
+        u = 1;     //ok
     } else if (penalty < 9) {
         u = 10;    //caution
     } else {
@@ -1016,7 +1016,7 @@ void Future(char plr)
                     continue;
                 }
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
-                       key == '!') { // Duration restriction lock
+                       key == '!') {  // Duration restriction lock
                 nav.duration.lock = (! nav.duration.lock);
 
                 if (nav.duration.lock) {
@@ -1031,7 +1031,7 @@ void Future(char plr)
 
             } else if (nav.duration.lock != true &&
                        ((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
-                        key == '1')) { // Duration toggle
+                        key == '1')) {  // Duration toggle
                 InBox(5, 49, 53, 72);
 
                 if (nav.duration.value == MaxDur) {
@@ -1067,7 +1067,7 @@ void Future(char plr)
                 display::graphics.setForegroundColor(34);
                 OutBox(5, 49, 53, 72);
             } else if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0) ||
-                       (key == K_ESCAPE)) { // Reset mission selection
+                       (key == K_ESCAPE)) {  // Reset mission selection
                 InBox(5, 74, 41, 82);
 
                 WaitForMouseUp();
@@ -1095,7 +1095,7 @@ void Future(char plr)
                 OutBox(5, 74, 41, 82);
 
             } else if ((x >= 80 && y >= 74 && x <= 90 && y <= 82 && mousebuttons > 0) ||
-                       key == '@') { // Docking restriction lock
+                       key == '@') {  // Docking restriction lock
                 nav.docking.lock = (! nav.docking.lock);
 
                 if (nav.docking.lock) {
@@ -1110,7 +1110,7 @@ void Future(char plr)
 
             } else if (nav.docking.lock == false &&
                        (((x >= 55 && y >= 49 && x <= 90 && y <= 82) && mousebuttons > 0) ||
-                        key == '2')) { // Docking toggle
+                        key == '2')) {  // Docking toggle
                 TogBox(55, 49, 1);
 
                 nav.docking.value = nav.docking.value ? 0 : 1;
@@ -1120,7 +1120,7 @@ void Future(char plr)
                 TogBox(55, 49, 0);
 
             } else if ((x >= 117 && y >= 74 && x <= 127 && y <= 82 && mousebuttons > 0) ||
-                       key == '#') { // EVA Restriction button
+                       key == '#') {  // EVA Restriction button
                 nav.EVA.lock = (! nav.EVA.lock);
 
                 if (nav.EVA.lock) {
@@ -1135,7 +1135,7 @@ void Future(char plr)
 
             } else if (nav.EVA.lock == false &&
                        ((x >= 92 && y >= 49 && x <= 127 && y <= 82 && mousebuttons > 0) ||
-                        key == '3')) { // EVA toggle
+                        key == '3')) {  // EVA toggle
                 TogBox(92, 49, 1);
 
                 nav.EVA.value = nav.EVA.value ? 0 : 1;
@@ -1145,7 +1145,7 @@ void Future(char plr)
                 TogBox(92, 49, 0);
 
             } else if ((x >= 154 && y >= 74 && x <= 164 && y <= 82 && mousebuttons > 0) ||
-                       key == '$') { // Lunar Module Restriction button
+                       key == '$') {  // Lunar Module Restriction button
                 nav.LM.lock = (! nav.LM.lock);
 
                 if (nav.LM.lock) {
@@ -1160,7 +1160,7 @@ void Future(char plr)
 
             } else if (nav.LM.lock == false &&
                        ((x >= 129 && y >= 49 && x <= 164 && y <= 82 && mousebuttons > 0) ||
-                        key == '4')) { // LEM toggle
+                        key == '4')) {  // LEM toggle
                 TogBox(129, 49, 1);
 
                 nav.LM.value = nav.LM.value ? 0 : 1;
@@ -1171,7 +1171,7 @@ void Future(char plr)
 
             } else if (JointFlag == true &&
                        ((x > 191 && y >= 74 && x <= 201 && y <= 82 && mousebuttons > 0) ||
-                        key == '%')) { // Joint Mission Restriction button
+                        key == '%')) {  // Joint Mission Restriction button
                 nav.joint.lock = (! nav.joint.lock);
 
                 if (nav.joint.lock) {
@@ -1186,7 +1186,7 @@ void Future(char plr)
 
             } else if (nav.joint.lock == false && JointFlag == true &&
                        ((x >= 166 && y >= 49 && x <= 201 && y <= 82 && mousebuttons > 0) ||
-                        key == '5')) { // Joint Mission
+                        key == '5')) {  // Joint Mission
                 TogBox(166, 49, 1);
 
                 nav.joint.value = nav.joint.value ? 0 : 1;
@@ -1316,7 +1316,7 @@ void Bd(int x, int y)
  */
 void PrintDuration(int duration, int color)
 {
-    fill_rectangle(112, 25, 199, 30, 3); // Draw over old duration
+    fill_rectangle(112, 25, 199, 30, 3);  // Draw over old duration
     display::graphics.setForegroundColor(color);
 
     switch (duration) {
@@ -1367,8 +1367,8 @@ void PrintDuration(int duration, int color)
  * \note This sets the global variable Mis, via GetMisType().
  *
  * \param val  The mission code.
- * \param xx   The x-coordinates for the name block's upper-left corner.
- * \param yy   The y-coordinates for the name block's upper-left corner.
+ * \param xx   The x coordinates for the name block's upper-left corner.
+ * \param yy   The y coordinates for the name block's upper-left corner.
  * \param len  The number of characters at which to start a new line.
  */
 void MissionName(int val, int xx, int yy, int len)
@@ -1434,7 +1434,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     // newly displayed mission. This ensures the navigation display
     // handles the dual task
     PianoKey(val, nav);   // Should this be moved outside DrawMission?
-    Bub_Count = 0; // set the initial bub_count
+    Bub_Count = 0;   // set the initial bub_count
     memset(Mev, 0x00, sizeof Mev);
 
     ClearDisplay();                     // Redraw solar system display
@@ -1485,7 +1485,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
  *  -  Numbers following each letter, which are the parameters
  *     of the function
  *  -  Each line must finish with a Z, so the game stops reading
- * Any other char is ignored, but it's easier to read for a human that
+ * Any other char is ignored, but it's easier for a human to read that
  * way.
  *
  * This modifies the global variables Mis and Mev via MissionCodes().
@@ -1500,7 +1500,7 @@ void MissionPath(char plr, int val, int pad)
 
     // Clear existing global / file global mission step information.
     // These are cleared by DrawMission, but no point taking chances.
-    Bub_Count = 0; // set the initial bub_count
+    Bub_Count = 0;  // set the initial bub_count
     memset(Mev, 0x00, sizeof Mev);
 
     // Read mission step data
