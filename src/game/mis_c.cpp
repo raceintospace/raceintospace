@@ -1167,19 +1167,19 @@ char FailureMode(char plr, int prelim, char *text)
 
 
     if (MANNED[Mev[STEP].pad] > 0) {
-        GuyDisp(49, 138, MA[Mev[STEP].pad][0].A);
+        GuyDisp(49, 139, MA[Mev[STEP].pad][0].A);
     }
 
     if (MANNED[Mev[STEP].pad] > 1) {
-        GuyDisp(49, 146, MA[Mev[STEP].pad][1].A);
+        GuyDisp(49, 147, MA[Mev[STEP].pad][1].A);
     }
 
     if (MANNED[Mev[STEP].pad] > 2) {
-        GuyDisp(182, 138, MA[Mev[STEP].pad][2].A);
+        GuyDisp(182, 139, MA[Mev[STEP].pad][2].A);
     }
 
     if (MANNED[Mev[STEP].pad] > 3) {
-        GuyDisp(182, 146, MA[Mev[STEP].pad][3].A);
+        GuyDisp(182, 147, MA[Mev[STEP].pad][3].A);
     }
 
     if (MANNED[Mev[STEP].pad] == 0) {
