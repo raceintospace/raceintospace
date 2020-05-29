@@ -45,6 +45,7 @@
 #include "state_utils.h"
 #include "gr.h"
 #include "pace.h"
+#include "prest.h"
 #include "filesystem.h"
 
 // Function Prototype
@@ -210,7 +211,6 @@ void DrawMissionEntry(const char plr, const int pad,
         draw_string(0, 0, GetDurationParens(duration));
     }
 
-    fill_rectangle(191, 71 + pad * 58, 270, 78 + pad * 58, 3);
     display::graphics.setForegroundColor(9);
 
     // The prestige penalty to downgrading is currently disabled.
@@ -232,6 +232,13 @@ void DrawMissionEntry(const char plr, const int pad,
         draw_string(145, 33 + pad * 58, "ORIGINAL MISSION");
         // draw_string(193, 77 + pad * 58, "NO PENALTY");
     }
+
+    // draw_string(88, 77 + pad * 58, "REQUIREMENT PENALTIES: ");
+    fill_rectangle(215, 71 + pad * 58, 270, 78 + pad * 58, 3);
+    const int penalty = PrestMin(plr, Mis);
+    display::graphics.setForegroundColor(11);
+    draw_number(215, 77 + pad * 58, penalty);
+    draw_string(0, 0, "%");
 }
 
 
@@ -259,6 +266,9 @@ void DrawRush(char plr)
     for (int i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].MissionCode &&
             Data->P[plr].Mission[i].part == 0) {
+
+            GetMisType(Data->P[plr].Mission[i].MissionCode);
+
             ShBox(0, 25 + i * 58, 80, 82 + i * 58 - 1);
             ShBox(83, 25 + i * 58, 319, 82 + i * 58 - 1);
 
@@ -282,9 +292,6 @@ void DrawRush(char plr)
             draw_heading(55, 5, "MISSION SCHEDULE", 0, -1);
 
             display::graphics.setForegroundColor(5);
-
-            GetMisType(Data->P[plr].Mission[i].MissionCode);
-
             draw_string(96, 48 + 58 * i, Mis.Abbr);
 
             // Show duration level only on missions with a Duration step -Leon
@@ -310,6 +317,16 @@ void DrawRush(char plr)
                         &Mon[Data->P[plr].Mission[i].Month - 1][0]);
             draw_string(288, 72 + 58 * i,
                         &Mon[Data->P[plr].Mission[i].Month - 2][0]);
+
+            // Since the Downgrade penalty isn't being used, its
+            // screen space is commandeered to display the mission
+            // penalty.
+            const int penalty = PrestMin(plr, Mis);
+            display::graphics.setForegroundColor(1);
+            draw_string(88, 77 + i * 58, "REQUIREMENT PENALTIES:");
+            display::graphics.setForegroundColor(11);
+            draw_number(215, 77 + i * 58, penalty);
+            draw_string(0, 0, "%");
         } /* End if */
     }
 
