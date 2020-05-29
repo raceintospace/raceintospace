@@ -828,3 +828,107 @@ void draw_character(char chr)
         break;
     }
 }
+
+
+/**
+ * Calculate the width a string will occupy on the screen.
+ *
+ * Determines how much screen width a character string would occupy if
+ * sent to the draw_string method.
+ *
+ * \param   a text string
+ * \return  count in pixels.
+ */
+int TextDisplayLength(const char *str)
+{
+    unsigned int pixels = 0;
+    int count = (int) strlen(str);
+
+    for (int i = 0; i < count; i++) {
+
+        switch (toupper(str[i])) {
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+        case 'E':
+        case 'F':
+        case 'G':
+        case 'H':
+        case 'J':
+        case 'K':
+        case 'L':
+        case 'M':
+        case 'N':
+        case 'O':
+        case 'P':
+        case 'Q':
+        case 'R':
+        case 'S':
+        case 'T':
+        case 'U':
+        case 'V':
+        case 'W':
+        case 'X':
+        case 'Y':
+        case 'Z':
+        case '0':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '+':
+        case '&':
+        case '@':
+        case '#':
+        case '%':
+        case '/':
+        case '<':
+        case '*':
+        case '?':
+            pixels += 6;
+            break;
+
+        case '-':
+            pixels += 5;
+            break;
+
+        case 'I':
+        case '1':
+        case '>':
+            pixels += 4;
+            break;
+
+        case ',':
+        case ' ':
+        case '(':
+        case ')':
+        case '^':  // 3-pixels, no trailing space
+            pixels += 3;
+            break;
+
+        case '.':
+        case ':':
+        case '!':
+        case 0x27:
+        case 0x14:
+            pixels += 2;
+            break;
+
+        default:
+            // Should a message be logged here?
+            break;
+        }
+    }
+
+    // Account for the pixel space after the last character.
+    if (count > 0 && str[count - 1] != '^') {
+        pixels -= 1;
+    }
+
+    return pixels;
+}

@@ -54,6 +54,7 @@ boost::shared_ptr<display::PalettizedSurface> rd_men;
 void LoadVABPalette(char plr);
 void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
+void DrawCashOnHand(char plr);
 void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
 void ManSel(int activeButtonIndex);
 void ShowUnit(char hw, char un, char plr);
@@ -226,19 +227,7 @@ void DrawRD(char player_index)
     draw_number(0, 0, Data->Year);
 
     draw_string(200, 9, "CASH:");
-
-    int cshamt = Data->P[player_index].Cash;   // Prepare to center the cash figure under "CASH:"
-    std::string csh = std::to_string(cshamt);
-    size_t ii = std::count(csh.begin(), csh.end(), '1');  // Count number of 1s in cash figure
-    int lencash;
-    if (Data->P[player_index].Cash < 10) {
-        lencash = 1;
-    } else if (Data->P[player_index].Cash > 99) {
-        lencash = 2;
-    } else {
-        lencash = 3;
-    }
-    draw_megabucks(lencash + 198 + ii, 16, Data->P[player_index].Cash);
+    DrawCashOnHand(player_index);
 
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
@@ -248,6 +237,22 @@ void DrawRD(char player_index)
 
     return;
 }  // End of DrawRD
+
+
+/**
+ * Update the player cash on hand in the R&D display.
+ *
+ * \param plr  the player index.
+ */
+void DrawCashOnHand(char plr)
+{
+    char str[10];
+    snprintf(&str[0], 9, "%d MB", Data->P[plr].Cash);
+    fill_rectangle(195, 10, 240, 21, 3);
+    display::graphics.setForegroundColor(11);
+    draw_string(212 - TextDisplayLength(&str[0]) / 2, 16, &str[0]);
+}
+
 
 void
 RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Screen, Nikakd, 10/8/10
@@ -790,7 +795,6 @@ void ShowUnit(char hw, char un, char player_index)
     display::graphics.setForegroundColor(1);
 
     fill_rectangle(162, 69, 318, 146, 3);
-    fill_rectangle(198, 10, 238, 21, 3);
     display::graphics.setForegroundColor(1);
     draw_string(170, 97, "INITIAL COST:");
     draw_string(170, 104, "UNIT COST:");
@@ -839,16 +843,7 @@ void ShowUnit(char hw, char un, char player_index)
     display::graphics.setForegroundColor(SCol);
     draw_string(170, 111, "SAFETY FACTOR:");
 
-    display::graphics.setForegroundColor(11);
-
-    if (Data->P[player_index].Cash < 10) {
-        draw_megabucks(202, 16, Data->P[player_index].Cash);
-    } else if (Data->P[player_index].Cash > 99) {
-        draw_megabucks(198, 16, Data->P[player_index].Cash);
-    } else {
-        draw_megabucks(200, 16, Data->P[player_index].Cash);
-    }
-
+    DrawCashOnHand(player_index);
     display::graphics.setForegroundColor(11);
 
     if (!(player_index == 1 && hw == ROCKET_HARDWARE &&
@@ -1078,14 +1073,7 @@ void DrawHPurc(char player_index)
     draw_number(0, 0, Data->Year);
 
     draw_string(200, 9, "CASH:");
-
-    if (Data->P[player_index].Cash < 10) {
-        draw_megabucks(202, 16, Data->P[player_index].Cash);
-    } else if (Data->P[player_index].Cash > 99) {
-        draw_megabucks(198, 16, Data->P[player_index].Cash);
-    } else {
-        draw_megabucks(200, 16, Data->P[player_index].Cash);
-    }
+    DrawCashOnHand(player_index);
 
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
