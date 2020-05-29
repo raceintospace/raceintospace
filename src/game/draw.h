@@ -19,5 +19,6 @@ void GradRect(int x1, int y1, int x2, int y2, char plr);
 void draw_small_flag(char plr, int xm, int ym);
 void draw_flag(int x, int y, char plr);
 void draw_character(char chr);
+int TextDisplayLength(const char *str);
 
 #endif // DRAW_H
