@@ -106,7 +106,7 @@ creates a folder where the compiled game will be installed. If you want it named
 something other than raceintospace-go, simply change the name. The last two 
 commands also run the game automatically.
 
-    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make run
 
 You can run these commands separately, or just run the ones you need (for instance, 
 if you already have the folder you want the game installed to, there's of course 
@@ -115,10 +115,7 @@ no need to create it.
     mkdir raceintospace-go
     cd raceintospace-go
     cmake ../raceintospace
-    make
-    sudo make install
-    cd src/game
-    ./raceintospace
+    make run
 
 Mac OS X
 --------
