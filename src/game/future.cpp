@@ -41,6 +41,7 @@
 #include "mc.h"
 #include "mc2.h"
 #include "pace.h"
+#include "place.h"
 #include "prest.h"
 #include "sdlhelper.h"
 
@@ -1662,12 +1663,14 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
     const struct mStr &mission = missionData[mis];
 
     if (mission.Dur && nav.duration.value < mission.Days) {
-        // TODO: Display some kind of popup information.
+        Help("i160");
         return false;
     }
 
-    /* These checks are performed in the VAB, so they aren't needed
-     * here, but I'm including them as references -- rnyoakum
+    /* Different versions of these checks are performed in the VIB/VAB.
+     * In 'classic' RIS, EVA/Docking requirements were checked in
+     * Future Missions, so these lines are left as a reference so
+     * the checks can be easily restored. -- rnyoakum
      */
     // if (mission.EVA && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
     //     Help("i118");
