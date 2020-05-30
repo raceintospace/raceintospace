@@ -451,10 +451,18 @@ void MisAnn(char plr, char pad)
 
     WaitForMouseUp();
 
-    // TODO: There is no matching text for "I156" in the help.cdr file.
+    // If the mission had a Docking requirement which could not be
+    // fulfilled (due to an absent DM), it is automatically downgraded.
+    // If there is no viable downgrade, it will have to be scrubbed.
     if (HelpFlag) {
-        Help("i156");    // Notification of being an Help
-                         // (Wait, what's that supposed to mean?)
+        if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
+            Help("i156");
+            ScrubMission(plr, pad);
+            FadeOut(2, 10, 0, 0);
+            return;
+        } else {
+            Help("i157");
+        }
     }
 
     while (1) {

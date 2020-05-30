@@ -1520,9 +1520,10 @@ void Port(char plr)
 }
 
 
-/** This is the code that controls the jumpoff point from the Spaceports to the
- * various areas.  It basically assigns a help message, then makes a call into
- * the module which would have its own event loop
+/**
+ * This is the code that controls the jumpoff point from the Spaceports
+ * to the various areas.  It basically assigns a help message, then
+ * makes a call into the module - which would have its own event loop.
  */
 char PortSel(char plr, char loc)
 {
@@ -1757,9 +1758,10 @@ char PortSel(char plr, char loc)
         if (MisOK >= 10) {
             Help("i005");
             return pNOREDRAW;
-        } else if (LPad == 0) {                  // Warn player that they have no missions scheduled for next turn,
-            i = Request(plr, "NO MISSIONS", 1);  // except on the first turn of the game. -Leon
-            if (i) {
+        } else if (LPad == 0) {
+            // Warn player that they have no missions scheduled for
+            // next turn, except on the first turn of the game. -Leon
+            if (Help("i161") >= 0) {
                 LPad = 10;  // Set LPad above zero so you won't be warned again this turn  -Leon
                 i = Request(plr, "END TURN", 1);
                 if (i) {

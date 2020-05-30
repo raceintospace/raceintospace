@@ -1163,9 +1163,9 @@ void VAB(char plr)
                 int j = 0;
 
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
-                    Help("i118");
+                    Help("i158");
                 } else if (Mis.Doc == 1 && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
-                    Help("i119");
+                    Help("i159");
                 } else {
                     if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
                         Help("i155");    // No docking module in orbit
