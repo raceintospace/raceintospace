@@ -269,11 +269,11 @@ void BinT(int x, int y, char st)
 void PLevels(char side, char wh, DisplayContext &dctx)
 {
 
-    if (side == 0) {
+    if (side == 0) {  // Draw map on US side
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
-    } else {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 11, 19, 240,  55);
+    } else {          // Draw map on Soviet side
+        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19, 239,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
     }
 
@@ -355,7 +355,7 @@ void Prefs(int where)
             Data->Def.Plr1 = 0;
             hum1 = 0, hum2 = 1;
             Data->Def.Lev1 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
-            Data->Def.Lev2 = 2;  //start computer level 3
+            Data->Def.Lev2 = 2;   // start computer level 3
             Data->Def.Input = 2;  // Historical Model / Historical Roster
             Data->Def.Sound = Data->Def.Music = 1;
             MuteChannel(AV_ALL_CHANNELS, 0);
@@ -402,7 +402,7 @@ void Prefs(int where)
                     if (options.feat_eq_new_name && hum2 != 1) {
                         SetEquipName(1);
                     }
-                } // Change Name, if basic mode and for human players
+                }  // Change Name, if basic mode and for human players
 
                 if (Data->Def.Plr1 != Data->Def.Plr2) {
                     if (Data->Def.Plr1 == 1) {
@@ -435,7 +435,7 @@ void Prefs(int where)
                         fclose(fin);
                     }
 
-                    ///Random Equipment
+                    // Random Equipment
                     if ((where == 0 || where == 3) && (Data->Def.Input == 4 || Data->Def.Input == 5)) {
                         RandomizeEq();
                     }
