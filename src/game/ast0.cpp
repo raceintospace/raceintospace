@@ -55,6 +55,25 @@ void PlanText(char plr, char plan);
 void LMPict(char poff);
 
 
+/**
+ * Get the color corresponding to the Astronaut/Cosmonaut's mood.
+ *
+ * /return  a color index for the standard part of the Port palette (0-31).
+ */
+int MoodColor(const uint8_t mood)
+{
+    if (mood >= 65) {
+        return 16;
+    } else if (mood >= 40) {
+        return 11;
+    } else if (mood >= 20) {
+        return 8;
+    } else if (mood > 0) {
+        return 0;
+    } else {
+        return 3;
+    }
+}
 
 
 void Moon(char plr)

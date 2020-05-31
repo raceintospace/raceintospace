@@ -30,6 +30,7 @@
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
+#include "ast0.h"
 #include "radar.h"
 #include "gamedata.h"
 #include "draw.h"
@@ -266,25 +267,8 @@ void PadDraw(char plr, char pad)
             fill_rectangle(13, 116 + 7 * k, 20, 116 + 7 * k, 4);  // Bottom
             fill_rectangle(21, 110 + 7 * k, 21, 116 + 7 * k, 4);  // Right
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 65) {
-                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 16);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 65 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 40) {
-                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 11);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 40 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood >= 20) {
-                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 8);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood < 20) {
-                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 0);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood == 0) {
-                fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, 3);
-            }
+            int color = MoodColor(Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood);
+            fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, color);
 
             display::graphics.setForegroundColor(1);
 
@@ -361,25 +345,8 @@ void PadDraw(char plr, char pad)
             fill_rectangle(13, 154 + 7 * k, 20, 154 + 7 * k, 4);  // Bottom
             fill_rectangle(21, 148 + 7 * k, 21, 154 + 7 * k, 4);  // Right
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 65) {
-                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 16);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 65 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 40) {
-                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 11);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 40 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood >= 20) {
-                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 8);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood < 20) {
-                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 0);
-            }
-
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood == 0) {
-                fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, 3);
-            }
+            int color = MoodColor(Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood);
+            fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, color);
 
             display::graphics.setForegroundColor(1);
 

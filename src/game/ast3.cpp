@@ -215,29 +215,10 @@ TrainText(char plr, int astro, int cnt)
 
     display::graphics.setForegroundColor(1);
     draw_string(200, 88, &Data->P[plr].Pool[astro].Name[0]);
-    int col;
 
-    if (Data->P[plr].Pool[astro].Mood >= 65) {
-        col = 16;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood < 65 && Data->P[plr].Pool[astro].Mood >= 40) {
-        col = 11;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood < 40 && Data->P[plr].Pool[astro].Mood >= 20) {
-        col = 8;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood < 20) {
-        col = 0;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood == 0) {
-        col = 3;
-    }
-
-    display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    int color = MoodColor(Data->P[plr].Pool[astro].Mood);
+    display::graphics.setForegroundColor(color);
     draw_string(200, 120, "   ");
     draw_number(200, 120, Data->P[plr].Pool[astro].Mood);
     grMoveTo(212, 111);

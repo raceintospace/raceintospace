@@ -639,32 +639,16 @@ void LimboText(char plr, int astro)
 {
     fill_rectangle(44, 31, 145, 40, 3);
     display::graphics.setForegroundColor(11);
-    int col;
 
-    if (Data->P[plr].Pool[astro].Mood >= 65) {
-        col = 16;
-    }
+    int color = MoodColor(Data->P[plr].Pool[astro].Mood);
 
-    if (Data->P[plr].Pool[astro].Mood < 65 && Data->P[plr].Pool[astro].Mood >= 40) {
-        col = 11;
-    }
+    // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    display::graphics.setForegroundColor(color);
 
-    if (Data->P[plr].Pool[astro].Mood < 40 && Data->P[plr].Pool[astro].Mood >= 20) {
-        col = 8;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood < 20) {
-        col = 0;
-    }
-
-    if (Data->P[plr].Pool[astro].Mood == 0) {
-        col = 3;
-    }
-
-    display::graphics.setForegroundColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
-
+    // Print name in black if 'naut has announced retirement
+    // (override mood) -Leon
     if (Data->P[plr].Pool[astro].RetirementDelay > 0) {
-        display::graphics.setForegroundColor(0);    // Print name in black if 'naut has announced retirement (override mood) -Leon
+        display::graphics.setForegroundColor(0);
     }
 
     draw_string(46, 37, Data->P[plr].Pool[astro].Name);
@@ -699,7 +683,9 @@ void LimboText(char plr, int astro)
     fill_rectangle(131, 86, 145, 92, 3);
     fill_rectangle(123, 95, 145, 101, 3);
     fill_rectangle(130, 54, 155, 61, 3);
-    display::graphics.setForegroundColor(col);  // Print 'naut mood in green/yellow/red/black depending on mood -Leon
+
+    // Print 'naut mood in green/yellow/red/black depending on mood -Leon
+    display::graphics.setForegroundColor(color);
     draw_number(132, 60, Data->P[plr].Pool[astro].Mood);
     display::graphics.setForegroundColor(11);
     draw_number(125, 68, Data->P[plr].Pool[astro].Cap);
