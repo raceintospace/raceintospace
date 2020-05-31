@@ -604,7 +604,7 @@ void LMBld(char plr)
         draw_string(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
         display::graphics.setForegroundColor(9);
         display::graphics.setForegroundColor(6);
-        draw_string(m + 48, 130, "AVOID FAILURE: ");
+        draw_string(m + 66, 130, "AVOID FAIL: ");
         display::graphics.setForegroundColor(11);
 
         if (Data->P[plr].Manned[5 + i].SaveCard > 0) {
