@@ -169,7 +169,7 @@ void music_load(enum music_track track)
 #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */        
 		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0);
 #else  /* not deprecated, but requires 10.5 or later */
-        rv = MusicSequenceFileLoadData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0, 0);
+        rv = MusicSequenceFileLoadData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), AnyType, 0);
 #endif
 	}
 		
