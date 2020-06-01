@@ -33,13 +33,14 @@ endforeach(datafile)
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 
 # Add the platform-specific source files needed for testing
-list(APPEND game_sources platform_macosx/music_osx.cpp)
+list(APPEND ui_sources platform_macosx/music_osx.cpp)
 
 set(app "Race Into Space")
 
 add_executable("${app}" MACOSX_BUNDLE
   platform_macosx/SDLMain.m
   ${game_sources}
+  ${ui_sources}
   ${BundleResources}
   )
 
