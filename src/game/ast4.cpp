@@ -44,8 +44,8 @@
 static char program;  /* Variable to store prog data for "Draws Astronaut attributes" section: 1=Mercury/Vostok...5=Jupiter/Kvartet */
 
 int missions;   // Variable for how many missions each 'naut has flown
-int retdel;  /* Variable to store whether a given 'naut has announced retirement */
-int sex;  /* Variable to store a given 'naut sex */
+int retdel;  // Variable to store whether a given 'naut has announced retirement
+int sex;  // Variable to store a given 'naut sex
 
 
 void AstLevel(char plr, char prog, char crew, char ast);
@@ -280,6 +280,7 @@ void DrawProgs(char plr, char prog)
     InBox(3, 3, 30, 19);
     draw_up_arrow(9, 133);
     draw_down_arrow(9, 166);
+    fill_rectangle(61, 28, 140, 77, 0);  // Kludge to change background from gray to black  -Leon
 
     {
         char filename[128];
@@ -427,7 +428,7 @@ int CheckProgram(char plr, char prog)
         return 2;
     } else if ((prog == 4 || prog == 5) && check >= prog - 1) {
         return 2;
-    } else { // return to limbo
+    } else {  // return to limbo
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Assign == prog) {
                 Data->P[plr].Pool[i].Assign = 0;
@@ -474,7 +475,7 @@ void DamProb(char plr, char prog, int chk)
     int D_Cost, Saf_Loss, ESafety;
     char Digit[4], Name[30];
 
-    Saf_Loss = D_Cost = ESafety = 0; /* XXX check uninitialized */
+    Saf_Loss = D_Cost = ESafety = 0;  /* XXX check uninitialized */
 
     FadeOut(2, 10, 0, 0);
 
@@ -1257,7 +1258,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
 
     program = prog; /* Sets capsule/shuttle program for "Draws Astronaut attributes" section */
     /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
-    /* This will be used to highlight the skills for each crew member's role -Leon */
+    /* This will be used to highlight the skills for each crew member's role  -Leon */
 
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
