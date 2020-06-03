@@ -714,7 +714,24 @@ void Programs(char plr, char prog)
         }
 
         if (CrewCount[i] == max) {
-            FltsTxt(i, 1);
+            int stt = 1;
+        
+        tst = Data->P[plr].Crew[prog][i][0] - 1;
+            fill_rectangle(4, 40, 53, 66, 3);
+
+        if (Data->P[plr].Pool[tst].Prime == 3) {  // Primary crew this turn
+            stt = 6;
+        }
+        if (Data->P[plr].Pool[tst].Prime == 4) {  // Primary crew next turn
+            stt = 17;
+        }
+        if (Data->P[plr].Pool[tst].Prime == 1) {  // Backup crew this turn
+            stt = 5;
+        }
+        if (Data->P[plr].Pool[tst].Prime == 2) {  // Backup crew next turn
+            stt = 16;
+        }
+        FltsTxt(i, stt);
         }
     }
 
@@ -1126,21 +1143,25 @@ void Programs(char plr, char prog)
                     fill_rectangle(82, 71, 237, 112, 7 + 3 * plr);
                     display::graphics.setForegroundColor(1);
                     draw_heading(118, 50, "PROBLEM", 0, -1);
-                    draw_string(136, 162, "CONTINUE");
+                    draw_string(136, 161, "CONTINUE");
                     display::graphics.setForegroundColor(11);
                     draw_string(88, 80, "FLIGHT CREW ");
                     draw_number(0, 0, grp + 1);
-                    draw_string(0, 0, " IS ALREADY");
-                    draw_string(88, 88, "ASSIGNED TO THE ");
-
-                    if (Data->P[plr].Pool[tst].Prime == 4
-                        || Data->P[plr].Pool[tst].Prime == 3) {
-                        draw_string(0, 0, "PRIMARY");
+                    if (CrewCount[grp] == 0) {
+                        draw_string(0, 0, " IS EMPTY.");
                     } else {
-                        draw_string(0, 0, "BACKUP");
-                    }
+                        draw_string(0, 0, " IS ALREADY");
+                        draw_string(88, 88, "ASSIGNED TO THE ");
+
+                        if (Data->P[plr].Pool[tst].Prime == 4
+                            || Data->P[plr].Pool[tst].Prime == 3) {
+                            draw_string(0, 0, "PRIMARY");
+                        } else {
+                            draw_string(0, 0, "BACKUP");
+                        }
 
                     draw_string(88, 96, "CREW OF A CURRENT MISSION:");
+                    }
                     draw_string(88, 104, "CANNOT BREAK THIS CREW.");
 
                     WaitForMouseUp();
@@ -1260,6 +1281,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
     /* This will be used to highlight the skills for each crew member's role  -Leon */
 
+    fill_rectangle(4, 40, 53, 66, 3);  /* Clear area that says Primary Crew Next Turn etc. */
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
@@ -1348,6 +1370,33 @@ void AstStats(char plr, char man, char num)
     display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
     draw_string(217, y, "EN:");
     draw_number(0, 0, Data->P[plr].Pool[num].Endurance);
+    // Now tell if this 'naut is assigned to a crew
+    fill_rectangle(4, 40, 53, 66, 3);
+    if (Data->P[plr].Pool[num].Prime == 3) {
+        display::graphics.setForegroundColor(6);
+        draw_string(10, 45, "PRIMARY");
+        draw_string(18, 53, "CREW");
+        draw_string(5, 61, "THIS TURN");
+    }
+    if (Data->P[plr].Pool[num].Prime == 4) {
+        display::graphics.setForegroundColor(17);
+        draw_string(10, 45, "PRIMARY");
+        draw_string(18, 53, "CREW");
+        draw_string(4, 61, "NEXT TURN");
+    }
+    if (Data->P[plr].Pool[num].Prime == 1) {
+        display::graphics.setForegroundColor(5);
+        draw_string(12, 45, "BACKUP");
+        draw_string(18, 53, "CREW");
+        draw_string(5, 61, "THIS TURN");
+    }
+    if (Data->P[plr].Pool[num].Prime == 2) {
+        display::graphics.setForegroundColor(16);
+        draw_string(12, 45, "BACKUP");
+        draw_string(18, 53, "CREW");
+        draw_string(4, 61, "NEXT TURN");
+    }
+
     return;
 }
 
