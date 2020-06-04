@@ -1,5 +1,7 @@
-#include <stdio.h>
 #include "gamedata.h"
+
+#include <cstdio>
+
 
 static inline uint8_t
 get_uint8_t(const void *buf)

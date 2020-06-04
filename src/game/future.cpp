@@ -21,12 +21,12 @@
 
 #include "future.h"
 
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 #include "display/legacy_surface.h"
-
-#include <assert.h>
 
 #include "Buzz_inc.h"
 #include "admin.h"

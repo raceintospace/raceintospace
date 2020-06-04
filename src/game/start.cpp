@@ -25,9 +25,10 @@
 
 // This file handles start-of-turn events: adjusting 'naut morale, etc.
 
-#include <assert.h>
-
 #include "start.h"
+
+#include <cassert>
+
 #include "pace.h"
 #include "Buzz_inc.h"
 #include "options.h"

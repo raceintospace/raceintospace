@@ -26,8 +26,9 @@
 
 // This page handles the Intelligence Briefing
 
-#include <assert.h>
+#include "intel.h"
 
+#include <cassert>
 #include <stdexcept>
 
 #include "display/graphics.h"
@@ -38,7 +39,6 @@
 #include "Buzz_inc.h"
 #include "future.h"
 #include "draw.h"
-#include "intel.h"
 #include "game_main.h"
 #include "place.h"
 #include "port.h"

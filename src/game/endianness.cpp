@@ -1,6 +1,8 @@
-#include "Buzz_inc.h"
-#include <assert.h>
 #include "endianness.h"
+
+#include <cassert>
+
+#include "Buzz_inc.h"
 #include "game_main.h"
 
 // Need these functions to always exist

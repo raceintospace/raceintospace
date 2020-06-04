@@ -1,6 +1,7 @@
 #include "legacy_surface.h"
 
-#include <assert.h>
+#include <cassert>
+
 
 namespace display
 {

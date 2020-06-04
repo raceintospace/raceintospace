@@ -30,13 +30,15 @@
 // This file handles the Administration building and some of its subsections: Future Missions, Time Capsule (save/load game).
 // It also includes some code for Modem and PBEM.
 
-#include <assert.h>
+#include "admin.h"
+
+#include <cassert>
+#include <cctype>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "admin.h"
 #include "Buzz_inc.h"
 #include "utils.h"
 #include "ast1.h"
@@ -56,7 +58,6 @@
 #include "endianness.h"
 #include "filesystem.h"
 
-#include <ctype.h>
 
 #define MODEM_ERROR 4
 #define NOTSAME 2

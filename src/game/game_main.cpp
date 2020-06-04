@@ -26,9 +26,9 @@
 //*                                                              *
 //****************************************************************
 
-#include <errno.h>
-#include <ctype.h>
-#include <assert.h>
+#include <cassert>
+#include <cctype>
+#include <cerrno>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -36,7 +36,7 @@
 
 #include "filesystem.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
+#include "game_main.h" // Below Buzz_inc.h b/c game_main.h needs data.h
 #include "options.h"
 #include "utils.h"
 #include "admin.h"

@@ -18,7 +18,9 @@
 
 // This file shows the Mission Review (the summary you see at the end of a mission).
 
-#include <assert.h>
+#include "place.h"
+
+#include <cassert>
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -27,7 +29,6 @@
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "draw.h"

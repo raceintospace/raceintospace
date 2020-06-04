@@ -203,7 +203,7 @@
 #ifndef _LOG4C_H_
 #define _LOG4C_H_
 
-#include <stdarg.h>
+#include <cstdarg>
 
 #ifdef ALTERED_STRUCTURE_PACKING
 #error "log4c breaks when you include it late"

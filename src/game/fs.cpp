@@ -16,20 +16,22 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-/** \file fs.c
+/** \file fs.cpp
  * Implementation of filesystem access functions.
  *
  */
+
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+
+#include <sys/stat.h>
 
 #include "Buzz_inc.h"
 #include "raceintospace_config.h"
 #include "options.h"
 #include "pace.h"
 #include "utils.h"
-#include <assert.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <ctype.h>
 
 /** path separator setup */
 #ifndef PATHSEP

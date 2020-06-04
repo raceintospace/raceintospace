@@ -27,11 +27,14 @@
 
 // This file handles the R&D and Purchasing Facilities, and Technology Transfer
 
+#include "rdplex.h"
+
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
-#include "rdplex.h"
 #include "options.h"
 #include "draw.h"
 #include "ast4.h"
@@ -41,7 +44,6 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
-#include <assert.h>
 #include "filesystem.h"
 #include "hardware_buttons.h"
 #include "hardware.h"

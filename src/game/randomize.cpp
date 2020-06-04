@@ -34,19 +34,21 @@ Unit Cost is loosely based on the Basic Model, but depends on initial cost
 RD cost is loosely based on the Basic Model
 */
 
+#include "randomize.h"
+
+#include <cassert>
+#include <cctype>
+
 #include "display/graphics.h"
 
-#include "randomize.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include <assert.h>
 #include "game_main.h"
 #include "gr.h"
 #include "draw.h"
 #include "pace.h"
 #include "sdlhelper.h"
 
-#include <ctype.h>
 
 /*random_number divides the randomization in 2,
  so there is a lower chance of getting an extreme */

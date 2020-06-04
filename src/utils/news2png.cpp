@@ -1,6 +1,7 @@
-#include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
+
+#include <cerrno>
+#include <cstdio>
 #include <sstream>
 
 #include <png.h>

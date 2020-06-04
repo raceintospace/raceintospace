@@ -1,10 +1,12 @@
 #include "utils.h"
+
+#include <cassert>
+#include <cerrno>
+#include <cctype>
+#include <cstring>
+#include <memory>
+
 #include "logging.h"
-#include <assert.h>
-#include <errno.h>
-#include <ctype.h>
-#include <string.h>
-#include <memory.h>
 #include "raceintospace_config.h"
 
 #ifdef HAVE_SYS_TYPES_H

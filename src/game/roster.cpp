@@ -1,11 +1,12 @@
-#include <json/json.h>
-#include <assert.h>
+#include "roster.h"
+
+#include <cassert>
+#include <cstdlib>
+#include <fstream>
 
 #include <boost/foreach.hpp>
+#include <json/json.h>
 
-#include <fstream>
-#include <stdlib.h>
-#include "roster.h"
 #include "fs.h"
 
 Roster::Roster(std::istream &input_stream)

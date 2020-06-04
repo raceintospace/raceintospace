@@ -1,14 +1,14 @@
 #ifndef DISPLAY_IMAGE_H
 #define DISPLAY_IMAGE_H
 
+#include <cstdio>
+#include <string>
+#include <SDL/SDL.h>
+
 #include "palette.h"
 #include "graphics.h"
 #include "surface.h"
 #include "palettized_surface.h"
-
-#include <stdio.h>
-#include <string>
-#include <SDL/SDL.h>
 
 #include <boost/shared_ptr.hpp>
 

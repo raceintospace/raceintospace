@@ -1,13 +1,15 @@
 #include "graphics.h"
-#include "surface.h"
-#include "legacy_surface.h"
 
-#include <SDL/SDL.h>
+#include <cassert>
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <assert.h>
-#include <memory.h>
+#include <memory>
+
+#include <SDL/SDL.h>
+
+#include "surface.h"
+#include "legacy_surface.h"
 
 // FIXME: let's try to avoid this
 #include "../game/sdlhelper.h"

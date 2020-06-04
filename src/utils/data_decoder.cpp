@@ -1,11 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
-#include <errno.h>
-#include <string.h>
+
+#include <cassert>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <jsoncpp/json/json.h>
-#include <assert.h>
 
 void print_escaped_string(const char *string, int max_length)
 {

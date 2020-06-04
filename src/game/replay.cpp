@@ -25,11 +25,12 @@
 
 // This file handles replay of missions (I think).
 
-#include <assert.h>
+#include "replay.h"
+
+#include <cassert>
 
 #include "display/graphics.h"
 
-#include "replay.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "mmfile.h"

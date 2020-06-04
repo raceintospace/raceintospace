@@ -1,19 +1,20 @@
 // This file is something to do with processing audio files
 
-#include <assert.h>
+#include "pace.h"
+
+#include <cassert>
+#include <cctype>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 
 #include "Buzz_inc.h"
-#include "pace.h"
 #include "utils.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "mmfile.h"
 
-#include <ctype.h>
 
 void randomize(void);
 void SMove(void *p, int x, int y);
