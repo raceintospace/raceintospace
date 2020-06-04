@@ -10,12 +10,13 @@ add_definitions(-DHAVE_SDL_GETENV)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
 
 # Add the platform-specific source files needed for testing
-list(APPEND game_sources music_vorbis.cpp)
+list(APPEND ui_sources music_vorbis.cpp)
 
 set(app "Race Into Space")
 
 add_executable(${app}
   ${game_sources}
+  ${ui_sources}
   platform_windows/dirent.c
   platform_windows/main.c
   )
