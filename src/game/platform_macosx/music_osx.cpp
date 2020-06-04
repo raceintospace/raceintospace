@@ -35,6 +35,11 @@ extern "C" {
 #include "music.h"
 #include "logging.h"
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#define kMusicSequenceFile_AnyType 0
+#define kMusicSequenceLoadSMF_PreserveTracks 0
+#endif
+
 LOG_DEFAULT_CATEGORY(music);
 
 // A map of music_tracks to filenames
@@ -167,9 +172,9 @@ void music_load(enum music_track track)
 	if (rv == 0) {
 		// Try to load the sequence out of this buffer
 #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */        
-		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0);
+		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), kMusicSequenceLoadSMF_PreserveTracks);
 #else  /* not deprecated, but requires 10.5 or later */
-        rv = MusicSequenceFileLoadData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), 0, 0);
+		rv = MusicSequenceFileLoadData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, fileLength), kMusicSequenceFile_AnyType, kMusicSequenceLoadSMF_PreserveTracks);
 #endif
 	}
 		
