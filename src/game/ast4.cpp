@@ -1402,8 +1402,6 @@ void AstStats(char plr, char man, char num)
 
 void AstNames(int man, char *name, char att)
 {
-    char col = 0;
-
     switch (man) {
     case 0:
         fill_rectangle(16, 87, 75, 91, 3);
@@ -1486,42 +1484,24 @@ void AstNames(int man, char *name, char att)
         break;
     }
 
-    if (att >= 65) {
-        col = 16;
-    }
+    uint8_t color = MoodColor(att);
 
-    if (att < 65 && att >= 40) {
-        col = 11;
-    }
-
-    if (att < 40 && att >= 20) {
-        col = 8;
-    }
-
-    if (att < 20) {
-        col = 0;
-    }
-
-    if (att == 0) {
-        col = 3;
-    }
-
-//  if (retdel>0) col=7;
+//  if (retdel>0) color=7;
     switch (man) {
     case 0:
-        fill_rectangle(5, 87, 11, 91, col);
+        fill_rectangle(5, 87, 11, 91, color);
         break;
 
     case 1:
-        fill_rectangle(5, 96, 11, 100, col);
+        fill_rectangle(5, 96, 11, 100, color);
         break;
 
     case 2:
-        fill_rectangle(5, 105, 11, 109, col);
+        fill_rectangle(5, 105, 11, 109, color);
         break;
 
     case 3:
-        fill_rectangle(5, 114, 11, 118, col);
+        fill_rectangle(5, 114, 11, 118, color);
         break;
     }
 }

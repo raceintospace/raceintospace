@@ -23,6 +23,7 @@
 #include "display/graphics.h"
 
 #include "crew.h"
+#include "ast0.h"
 #include "Buzz_inc.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "game_main.h"
@@ -617,11 +618,14 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
     for (i = 0; i < men; i++) {
         if (m[i] > 0) {
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
-                display::graphics.setForegroundColor(5);    // Print name in blue if 'naut is female
+                // Print name in blue if 'naut is female
+                display::graphics.setForegroundColor(5);
             }
 
             if (Data->P[plr].Pool[m[i] - 1].RetirementDelay > 0) {
-                display::graphics.setForegroundColor(3);    // Print name in gray if 'naut has announced retirement (black doesn't show well here) -Leon
+                // Print name in gray if 'naut has announced retirement
+                // (black doesn't show well here) -Leon
+                display::graphics.setForegroundColor(3);
             }
 
             draw_string(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
@@ -639,25 +643,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3); // Bottom
             fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3); // Right
 
-            if (Data->P[plr].Pool[m[i] - 1].Mood >= 65) {
-                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 16);
-            }
-
-            if (Data->P[plr].Pool[m[i] - 1].Mood < 65 && Data->P[plr].Pool[m[i] - 1].Mood >= 40) {
-                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 11);
-            }
-
-            if (Data->P[plr].Pool[m[i] - 1].Mood < 40 && Data->P[plr].Pool[m[i] - 1].Mood >= 20) {
-                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 8);
-            }
-
-            if (Data->P[plr].Pool[m[i] - 1].Mood < 20) {
-                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 0);
-            }
-
-            if (Data->P[plr].Pool[m[i] - 1].Mood == 0) {
-                fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, 3);
-            }
+            int color = MoodColor(Data->P[plr].Pool[m[i] - 1].Mood);
+            fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, color);
 
             //87 - 169
             if (i == 0) {
