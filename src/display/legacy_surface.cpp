@@ -2,6 +2,9 @@
 
 #include <assert.h>
 
+#include <cstdlib>
+#include <algorithm>
+
 namespace display
 {
 
