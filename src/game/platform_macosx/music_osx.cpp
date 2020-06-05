@@ -35,7 +35,7 @@ extern "C" {
 #include "music.h"
 #include "logging.h"
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 101100
 #define kMusicSequenceFile_AnyType 0
 #define kMusicSequenceLoadSMF_PreserveTracks 0
 #endif
