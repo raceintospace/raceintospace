@@ -27,7 +27,7 @@
  *
  */
 
-// This file handles the VAB / VIB
+// This file handles the VAB / VIB  (Vehicle Assembly Building / Vehicle Integration Building)
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -285,13 +285,15 @@ void DispVAB(char plr, char pad)
     ShBox(172, 24, 319, 199);
     InBox(3, 3, 30, 19);
     IOBox(243, 3, 316, 19);
-    IOBox(175, 183, 244, 197);
+    IOBox(175, 183, 220, 197);
 
-    // Disable the Scrub button if there is no mission.
+    // Disable the Delay and Scrub buttons if there is no mission.
     if (Data->P[plr].Mission[pad].MissionCode) {
-        IOBox(247, 183, 316, 197);
+        IOBox(223, 183, 268, 197);
+        IOBox(271, 183, 316, 197);
     } else {
-        InBox(247, 183, 316, 197);
+        InBox(223, 183, 268, 197);
+        InBox(271, 183, 316, 197);
     }
 
     InBox(4, 104, 166, 123);
@@ -304,11 +306,15 @@ void DispVAB(char plr, char pad)
     IOBox(4, 84, 165, 96);
 
     display::graphics.setForegroundColor(9);
-    draw_string(200, 192, "E");
+    draw_string(188, 192, "E");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "XIT");
     display::graphics.setForegroundColor(9);
-    draw_string(268, 192, "S");
+    draw_string(231, 192, "D");
+    display::graphics.setForegroundColor(1);  
+    draw_string(0, 0, "ELAY");
+    display::graphics.setForegroundColor(9);
+    draw_string(279, 192, "S");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "CRUB");
     draw_string(263, 13, "ASSIGN");
@@ -1126,16 +1132,16 @@ void VAB(char plr)
                 ShowRkt(&Name[rk][0], sf[rk], qty[rk], pay[rk] < weight,
                         isDamaged[rk]);
                 OutBox(6, 86, 163, 94);
-            } else if ((x >= 177 && y >= 185 && x <= 242 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
+            } else if ((x >= 177 && y >= 185 && x <= 218 && y <= 195 && mousebuttons > 0) || (key == K_ESCAPE || key == 'E')) {
                 // CONTINUE/EXIT/DO NOTHING
-                InBox(177, 185, 242, 195);
+                InBox(177, 185, 218, 195);
                 WaitForMouseUp();
 
                 if (key > 0) {
                     delay(150);
                 }
 
-                OutBox(177, 185, 242, 195);
+                OutBox(177, 185, 218, 195);
 
                 // Clear mission hardware
                 for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
@@ -1143,16 +1149,58 @@ void VAB(char plr)
                 }
 
                 break;
-            } else if (((x >= 249 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
+            } else if (((x >= 225 && y >= 185 && x <= 268 && y <= 195 && mousebuttons > 0) || key == 'D') && Data->P[plr].Mission[mis].MissionCode) {
+                // DELAY the mission for a turn
+                InBox(225, 185, 266, 195);
+                WaitForMouseUp();
+
+                if (key > 0) {
+                    delay(100);
+                }
+                OutBox(225, 185, 266, 195);
+                int i;
+                int evflag = -1;
+
+                if (Data->P[plr].Mission[mis].Joint == 1) {
+                for (i = 0; i < 3; i++) {
+                    if (Data->P[plr].Mission[i].MissionCode) {
+                        if ((Data->P[plr].Mission[i].Joint == 1) && (i != mis)) {
+                            evflag = i;
+                        }
+                    }
+                }
+                }
+
+                memcpy(&Data->P[plr].Future[mis], &Data->P[plr].Mission[mis], sizeof(struct MissionType));
+                memset(&Data->P[plr].Mission[mis], 0x00, sizeof(struct MissionType));
+
+                for (i = 0; i < Data->P[plr].Future[mis].Men + 1; i++) {
+                    int j = Data->P[plr].Crew[Data->P[plr].Future[mis].Prog][Data->P[plr].Future[mis].PCrew - 1][i] - 1;
+                    Data->P[plr].Pool[j].Prime++;
+                    j = Data->P[plr].Crew[Data->P[plr].Future[mis].Prog][Data->P[plr].Future[mis].BCrew - 1][i] - 1;
+                    Data->P[plr].Pool[j].Prime++;
+                }
+                if (evflag > -1) {
+                    memcpy(&Data->P[plr].Future[evflag], &Data->P[plr].Mission[evflag], sizeof(struct MissionType));
+                    memset(&Data->P[plr].Mission[evflag], 0x00, sizeof(struct MissionType));
+                    for (i = 0; i < Data->P[plr].Future[evflag].Men + 1; i++) {
+                        int j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].PCrew - 1][i] - 1;
+                        Data->P[plr].Pool[j].Prime++;
+                        j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].BCrew - 1][i] - 1;
+                        Data->P[plr].Pool[j].Prime++;
+                    }
+                }
+                break;
+            } else if (((x >= 273 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
                 // SCRUB The whole mission
-                InBox(249, 185, 314, 195);
+                InBox(273, 185, 314, 195);
                 WaitForMouseUp();
 
                 if (key > 0) {
                     delay(100);
                 }
 
-                OutBox(249, 185, 314, 195);
+                OutBox(273, 185, 314, 195);
 
                 if (ScrubMissionQuery(plr, mis)) {
                     ScrubMission(plr, mis);
@@ -1333,7 +1381,7 @@ void VAB(char plr)
 
 
 /* Generates the set of possible distinct vehicle payloads for the
- * mision and stores the payload information in the global variable
+ * mission and stores the payload information in the global variable
  * VAS.
  *
  * This function is used by the AI, so beware of making changes without
@@ -1436,7 +1484,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
     }
 
     else if (VX == 0x90 && part == 0) {  // P:CAP+DMO XX
-        VASqty = 1; // DMO Check
+        VASqty = 1;  // DMO Check
     }
 
     else if (VX == 0xa8 && part == 0) {  // P:CAP+SDM+EVA XX
