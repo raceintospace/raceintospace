@@ -809,7 +809,7 @@ News(char plr)
             // End Key
             ctop = bline;
             DrawNText(plr, ctop);
-            
+
         } else if (ctop > 0 && ((x >= 303 && y > 120 && x <= 313 && y <= 156
                                  && mousebuttons > 0) || (key >> 8) == 72)) {
             // Up Arrow

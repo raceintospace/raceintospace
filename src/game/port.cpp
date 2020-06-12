@@ -1747,10 +1747,12 @@ char PortSel(char plr, char loc)
             if (Data->P[plr].Mission[i].MissionCode) {
                 MisOK++;
             }
-            if (Data->P[plr].Future[i].MissionCode ) {
+
+            if (Data->P[plr].Future[i].MissionCode) {
                 LPad++;
             }
         }
+
         if (Data->Year == 57 && Data->Season == 0) {
             LPad = 1;
         }
@@ -1764,6 +1766,7 @@ char PortSel(char plr, char loc)
             if (Help("i161") >= 0) {
                 LPad = 10;  // Set LPad above zero so you won't be warned again this turn  -Leon
                 i = Request(plr, "END TURN", 1);
+
                 if (i) {
                     return pEXIT;
                 }

@@ -73,7 +73,7 @@ void SetRush(int mode, int pad);
  *    and vice versa.
  * 2. Unmanned missions *cannot* be downgraded to manned missions.
  * 3. There *must not* be downgrading to, or from, a Probe Mission.
- *    (Exception: a Lunar Probe Landing should be downgradable to a 
+ *    (Exception: a Lunar Probe Landing should be downgradable to a
  *     Lunar Flyby.)
  * 4. Mission hardware requirements *must not* be added.
  * 5. Mission hardware requirements *should not* be removed.

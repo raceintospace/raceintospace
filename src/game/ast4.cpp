@@ -715,23 +715,31 @@ void Programs(char plr, char prog)
 
         if (CrewCount[i] == max) {
             int stt = 1;
-        
-        tst = Data->P[plr].Crew[prog][i][0] - 1;
+
+            tst = Data->P[plr].Crew[prog][i][0] - 1;
             fill_rectangle(4, 40, 53, 66, 3);
 
-        if (Data->P[plr].Pool[tst].Prime == 3) {  // Primary crew this turn
-            stt = 6;
-        }
-        if (Data->P[plr].Pool[tst].Prime == 4) {  // Primary crew next turn
-            stt = 17;
-        }
-        if (Data->P[plr].Pool[tst].Prime == 1) {  // Backup crew this turn
-            stt = 5;
-        }
-        if (Data->P[plr].Pool[tst].Prime == 2) {  // Backup crew next turn
-            stt = 16;
-        }
-        FltsTxt(i, stt);
+            if (Data->P[plr].Pool[tst].Prime == 3) {
+                // Primary crew this turn
+                stt = 6;
+            }
+
+            if (Data->P[plr].Pool[tst].Prime == 4) {
+                // Primary crew next turn
+                stt = 17;
+            }
+
+            if (Data->P[plr].Pool[tst].Prime == 1) {
+                // Backup crew this turn
+                stt = 5;
+            }
+
+            if (Data->P[plr].Pool[tst].Prime == 2) {
+                // Backup crew next turn
+                stt = 16;
+            }
+
+            FltsTxt(i, stt);
         }
     }
 
@@ -1147,6 +1155,7 @@ void Programs(char plr, char prog)
                     display::graphics.setForegroundColor(11);
                     draw_string(88, 80, "FLIGHT CREW ");
                     draw_number(0, 0, grp + 1);
+
                     if (CrewCount[grp] == 0) {
                         draw_string(0, 0, " IS EMPTY.");
                     } else {
@@ -1160,8 +1169,9 @@ void Programs(char plr, char prog)
                             draw_string(0, 0, "BACKUP");
                         }
 
-                    draw_string(88, 96, "CREW OF A CURRENT MISSION:");
+                        draw_string(88, 96, "CREW OF A CURRENT MISSION:");
                     }
+
                     draw_string(88, 104, "CANNOT BREAK THIS CREW.");
 
                     WaitForMouseUp();
@@ -1372,24 +1382,28 @@ void AstStats(char plr, char man, char num)
     draw_number(0, 0, Data->P[plr].Pool[num].Endurance);
     // Now tell if this 'naut is assigned to a crew
     fill_rectangle(4, 40, 53, 66, 3);
+
     if (Data->P[plr].Pool[num].Prime == 3) {
         display::graphics.setForegroundColor(6);
         draw_string(10, 45, "PRIMARY");
         draw_string(18, 53, "CREW");
         draw_string(5, 61, "THIS TURN");
     }
+
     if (Data->P[plr].Pool[num].Prime == 4) {
         display::graphics.setForegroundColor(17);
         draw_string(10, 45, "PRIMARY");
         draw_string(18, 53, "CREW");
         draw_string(4, 61, "NEXT TURN");
     }
+
     if (Data->P[plr].Pool[num].Prime == 1) {
         display::graphics.setForegroundColor(5);
         draw_string(12, 45, "BACKUP");
         draw_string(18, 53, "CREW");
         draw_string(5, 61, "THIS TURN");
     }
+
     if (Data->P[plr].Pool[num].Prime == 2) {
         display::graphics.setForegroundColor(16);
         draw_string(12, 45, "BACKUP");

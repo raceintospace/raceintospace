@@ -122,7 +122,7 @@ void DrawLimbo(char plr)
             display::graphics.setForegroundColor(11);
         }
 
-        std::string s = Data->P[plr].Manned[i].Name;       // These two lines are for centering spacecraft names containing "I", 
+        std::string s = Data->P[plr].Manned[i].Name;       // These two lines are for centering spacecraft names containing "I",
         size_t inum = std::count(s.begin(), s.end(), 'I'); // such as Gemini, because the I is narrower than other letters.    -Leon
         lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3 + inum;
         //lenprogname=(7-lenprogname)*2

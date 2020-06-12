@@ -371,12 +371,13 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man1].Sex == 1) {
-                display::graphics.setForegroundColor(14);  // Show females in orange
+                // Show females in orange
+                display::graphics.setForegroundColor(14);
             }
 
             if (man1 != -1) {
                 draw_string(0, 0, &Data->P[win].Pool[man1].Name[0]);
-		display::graphics.setForegroundColor(8);
+                display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -391,12 +392,13 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man2].Sex == 1) {
-                display::graphics.setForegroundColor(14);  // Show females in orange
+                // Show females in orange
+                display::graphics.setForegroundColor(14);
             }
 
             if (man2 != -1) {
                 draw_string(0, 0, &Data->P[win].Pool[man2].Name[0]);
-		display::graphics.setForegroundColor(8);
+                display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -411,12 +413,13 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man3].Sex == 1) {
-                display::graphics.setForegroundColor(14);  // Show females in orange
+                // Show females in orange
+                display::graphics.setForegroundColor(14);
             }
 
             if (man3 != -1 && prog > 2) {
                 draw_string(0, 0, &Data->P[win].Pool[man3].Name[0]);
-		display::graphics.setForegroundColor(8);
+                display::graphics.setForegroundColor(8);
             }
 
             break;
@@ -426,13 +429,14 @@ void EndGame(char win, char pad)
                 draw_string(10, 97, "EVA SPECIALIST: ");
                 display::graphics.setForegroundColor(8);
 
-            if (Data->P[win].Pool[man4].Sex == 1) {
-                display::graphics.setForegroundColor(14);  // Show females in orange
-            }
+                if (Data->P[win].Pool[man4].Sex == 1) {
+                    // Show females in orange
+                    display::graphics.setForegroundColor(14);
+                }
 
                 if (man4 != -1) {
                     draw_string(0, 0, &Data->P[win].Pool[man4].Name[0]);
-		    display::graphics.setForegroundColor(8);
+                    display::graphics.setForegroundColor(8);
                 }
             }
 
@@ -443,14 +447,16 @@ void EndGame(char win, char pad)
         }
     }
 
-//Print the first on the Moon
+    //Print the first on the Moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
     display::graphics.setForegroundColor(14);
-       if (Data->P[win].Pool[firstOnMoon].Sex == 1) {
-           display::graphics.setForegroundColor(5);  // Show females in blue
-       }
+
+    if (Data->P[win].Pool[firstOnMoon].Sex == 1) {
+        display::graphics.setForegroundColor(5);  // Show females in blue
+    }
+
     draw_string(0, 0, &Data->P[win].Pool[firstOnMoon].Name[0]);
 
     display::graphics.setForegroundColor(6);
@@ -927,9 +933,9 @@ void FakeWin(char win)
                 draw_string(10, 97, "EVA SPECIALIST: ");
                 display::graphics.setForegroundColor(8);
 
-            if (Data->P[win].Pool[man4].Sex == 1) {
-                display::graphics.setForegroundColor(12);  // Show females in orange
-            }
+                if (Data->P[win].Pool[man4].Sex == 1) {
+                    display::graphics.setForegroundColor(12);  // Show females in orange
+                }
 
                 if (man4 != -1 && prog == 5) {
                     draw_string(0, 0, &Data->P[win].Pool[man4].Name[0]);

@@ -745,20 +745,20 @@ void DrawHard(char mode, char pad, char mis, char plr)
     size_t i1 = std::count(s1.begin(), s1.end(), 'I');                     // spacecraft when it contains an "I", since that's narrower than other letters.  -Leon
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name)) * 3;
     draw_string(111 + lenprogname + i1, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
-    std::string s2 = Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name;  
+    std::string s2 = Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name;
     size_t i2 = std::count(s2.begin(), s2.end(), 'I');
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name)) * 3;
     draw_string(190 + lenprogname + i2, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name))*3);
-    std::string s3 = Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name; 
-    size_t i3 = std::count(s3.begin(), s3.end(), 'I'); 
+    std::string s3 = Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name;
+    size_t i3 = std::count(s3.begin(), s3.end(), 'I');
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name)) * 3;
     draw_string(111 + lenprogname + i3, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name))*3);
     std::string sM = Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name;
     size_t iM = std::count(sM.begin(), sM.end(), 'I');
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name)) * 3;
     draw_string(190 + lenprogname + iM, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name))*3);
-    std::string s4 = Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name; 
-    size_t i4 = std::count(s4.begin(), s4.end(), 'I'); 
+    std::string s4 = Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name;
+    size_t i4 = std::count(s4.begin(), s4.end(), 'I');
     lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name)) * 3;
     draw_string(148 + 4 + lenprogname + i4, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
     draw_string(143, 162, "CANCEL");
