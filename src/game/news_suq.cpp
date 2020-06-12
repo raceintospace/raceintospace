@@ -21,6 +21,7 @@
 #include "news_suq.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "mission_util.h"
 #include "news_sup.h"
 #include "place.h"
 #include "state_utils.h"
@@ -932,7 +933,9 @@ char REvent(char plr)
             if (Data->P[plr].Mission[i].MissionCode) {
                 GetMisType(Data->P[plr].Mission[i].MissionCode);
 
-                if (!Mis.Jt) {
+                if (!Mis.Jt &&
+                    MissionTimingOk(Data->P[plr].Mission[i].MissionCode,
+                                    Data->Year, Data->Season)) {
                     evflag++;
                 }
             }
@@ -944,21 +947,15 @@ char REvent(char plr)
 
         i = brandom(3);
 
-        while (Data->P[plr].Mission[i].MissionCode == Mission_None || Data->P[plr].Mission[i].Joint == 1) {
+        while (Data->P[plr].Mission[i].MissionCode == Mission_None ||
+               Data->P[plr].Mission[i].Joint == 1 ||
+               ! MissionTimingOk(Data->P[plr].Mission[i].MissionCode,
+                                 Data->Year, Data->Season)) {
             i = brandom(3);
         }
 
         evflag = i;
-        memcpy(&Data->P[plr].Future[i], &Data->P[plr].Mission[i], sizeof(struct MissionType));
-        memset(&Data->P[plr].Mission[i], 0x00, sizeof(struct MissionType));
-
-        for (i = 0; i < Data->P[plr].Future[evflag].Men + 1; i++) {
-            j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].PCrew - 1][i] - 1;
-            Data->P[plr].Pool[j].Prime++;
-            j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].BCrew - 1][i] - 1;
-            Data->P[plr].Pool[j].Prime++;
-        }
-
+        DelayMission(plr, i);
         break;
 
     case 78:  /* most advanced capsule 10MB's or 10% safety */

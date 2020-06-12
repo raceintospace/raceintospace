@@ -287,13 +287,21 @@ void DispVAB(char plr, char pad)
     IOBox(243, 3, 316, 19);
     IOBox(175, 183, 220, 197);
 
-    // Disable the Delay and Scrub buttons if there is no mission.
+    // Disable the Scrub buttons if there is no mission.
     if (Data->P[plr].Mission[pad].MissionCode) {
-        IOBox(223, 183, 268, 197);
         IOBox(271, 183, 316, 197);
     } else {
-        InBox(223, 183, 268, 197);
         InBox(271, 183, 316, 197);
+    }
+
+    // Disable the Delay button if there is no mission OR if it
+    // cannot be delayed.
+    if (Data->P[plr].Mission[pad].MissionCode &&
+        MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
+                        Data->Year, Data->Season)) {
+        IOBox(223, 183, 268, 197);
+    } else {
+        InBox(223, 183, 268, 197);
     }
 
     InBox(4, 104, 166, 123);
@@ -311,7 +319,7 @@ void DispVAB(char plr, char pad)
     draw_string(0, 0, "XIT");
     display::graphics.setForegroundColor(9);
     draw_string(231, 192, "D");
-    display::graphics.setForegroundColor(1);  
+    display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ELAY");
     display::graphics.setForegroundColor(9);
     draw_string(279, 192, "S");
@@ -1151,46 +1159,46 @@ void VAB(char plr)
                 break;
             } else if (((x >= 225 && y >= 185 && x <= 268 && y <= 195 && mousebuttons > 0) || key == 'D') && Data->P[plr].Mission[mis].MissionCode) {
                 // DELAY the mission for a turn
-                InBox(225, 185, 266, 195);
-                WaitForMouseUp();
 
-                if (key > 0) {
-                    delay(100);
-                }
-                OutBox(225, 185, 266, 195);
-                int i;
-                int evflag = -1;
+                // There are restrictions on Mars/Jupiter/Saturn Flybys,
+                // so check that this mission _could_ be launched at
+                // this time.
+                bool validLaunch =
+                    MissionTimingOk(Data->P[plr].Mission[mis].MissionCode,
+                                    Data->Year, Data->Season);
 
-                if (Data->P[plr].Mission[mis].Joint == 1) {
-                for (i = 0; i < 3; i++) {
-                    if (Data->P[plr].Mission[i].MissionCode) {
-                        if ((Data->P[plr].Mission[i].Joint == 1) && (i != mis)) {
-                            evflag = i;
+                if (validLaunch) {
+                    InBox(225, 185, 266, 195);
+                    WaitForMouseUp();
+
+                    if (key > 0) {
+                        delay(100);
+                    }
+
+                    bool conflict = false;
+
+                    // Check if there's a Future Mission which would be
+                    // displaced by delaying the mission.
+                    if (Data->P[plr].Future[mis].MissionCode) {
+                        conflict = true;
+                    } else if (Data->P[plr].Mission[mis].Joint) {
+                        int other = (Data->P[plr].Mission[mis].part) ?
+                                    mis - 1 : mis + 1;
+
+                        if (Data->P[plr].Future[other].MissionCode) {
+                            conflict = true;
                         }
                     }
-                }
-                }
 
-                memcpy(&Data->P[plr].Future[mis], &Data->P[plr].Mission[mis], sizeof(struct MissionType));
-                memset(&Data->P[plr].Mission[mis], 0x00, sizeof(struct MissionType));
-
-                for (i = 0; i < Data->P[plr].Future[mis].Men + 1; i++) {
-                    int j = Data->P[plr].Crew[Data->P[plr].Future[mis].Prog][Data->P[plr].Future[mis].PCrew - 1][i] - 1;
-                    Data->P[plr].Pool[j].Prime++;
-                    j = Data->P[plr].Crew[Data->P[plr].Future[mis].Prog][Data->P[plr].Future[mis].BCrew - 1][i] - 1;
-                    Data->P[plr].Pool[j].Prime++;
-                }
-                if (evflag > -1) {
-                    memcpy(&Data->P[plr].Future[evflag], &Data->P[plr].Mission[evflag], sizeof(struct MissionType));
-                    memset(&Data->P[plr].Mission[evflag], 0x00, sizeof(struct MissionType));
-                    for (i = 0; i < Data->P[plr].Future[evflag].Men + 1; i++) {
-                        int j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].PCrew - 1][i] - 1;
-                        Data->P[plr].Pool[j].Prime++;
-                        j = Data->P[plr].Crew[Data->P[plr].Future[evflag].Prog][Data->P[plr].Future[evflag].BCrew - 1][i] - 1;
-                        Data->P[plr].Pool[j].Prime++;
+                    // Confirm that the mission should be delayed.
+                    if (Help(conflict ? "i163" : "i162") > 0) {
+                        DelayMission(plr, mis);
+                        OutBox(225, 185, 266, 195);
+                        break;
+                    } else {
+                        OutBox(225, 185, 266, 195);
                     }
                 }
-                break;
             } else if (((x >= 273 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
                 // SCRUB The whole mission
                 InBox(273, 185, 314, 195);

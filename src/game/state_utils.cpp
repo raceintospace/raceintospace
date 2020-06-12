@@ -23,7 +23,9 @@
 #include <cstdio>
 
 #include "Buzz_inc.h"
+#include "crew.h"
 #include "game_main.h"
+#include "mission_util.h"
 
 
 namespace
@@ -80,6 +82,94 @@ void ClearMissionCrew(const char plr, const int pad, const CrewType crew)
     }
 
     RemoveCrew(plr, Data->P[plr].Mission[pad], crew);
+}
+
+
+/**
+ * Reschedules a mission planned for launch this turn for next season.
+ *
+ * Moves a scheduled mission from the Mission pads to the corresponding
+ * Future pads. Any scheduled FMs using those pads are cancelled.
+ * This does not provide prompts to check if the delay should proceed;
+ * before delaying, you may wish to query:
+ *
+ *   - if there is a future mission already on this pad.
+ *   - if the mission can be scheduled this turn. Certain missions
+ *     (interplanetary probes) have limited launch windows and
+ *     cannot be scheduled during every season or year.
+ *   - if a member of the crew is slated to retire. They may be
+ *     available this turn, but might not be the next!
+ *
+ * \param plr  player index
+ * \param pad  the index of the launch pad for the mission (0, 1, or 2).
+ * \throws invalid_argument  if pad < 0 or pad >= MAX_LAUNCHPADS.
+ */
+void DelayMission(const char plr, int pad)
+{
+    /**
+     * 1) Check to see if the mission can be rescheduled for the upcoming
+     *    launch time.
+     *   - TODO Are there 1/2 (consecutive) pads open in Future Missions?
+     *   - TODO Can the mission be delayed to another pad?
+     *   - Can the mission be scheduled in that time slot (Ex: Jup. Flyby)?
+     * 2) Assign mission to Future missions
+     * 3) Update Astronauts to reflect delay
+     * 4) Free up any associated hardware
+     * 5) Unassign mission from current missions.
+     */
+    if (pad < 0 || pad >= MAX_LAUNCHPADS) {
+        char buffer[70];
+        snprintf(buffer, 69, "DelayMission argument pad=%d must be "
+                 "0 <= pad < %d", pad, MAX_LAUNCHPADS);
+        throw std::invalid_argument(buffer);
+    }
+
+    // You can't just delay interplanetary probes! There are strict
+    // launch windows!
+    if (! MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
+                          Data->Year, Data->Season)) {
+        char buffer[150];
+        snprintf(buffer, 149,
+                 "DelayMission cannot be called for mission code=%d"
+                 " on pad %d: That mission cannot be scheduled for "
+                 " next turn.",
+                 Data->P[plr].Mission[pad].MissionCode, pad);
+        throw std::logic_error(buffer);
+    }
+
+    if (Data->P[plr].Mission[pad].Joint &&
+        Data->P[plr].Mission[pad].part == 1) {
+        pad--;
+    }
+
+    // Must cache Joint value b/c Mission[pad] gets reset in loop.
+    int padsUsed = Data->P[plr].Mission[pad].Joint + 1;
+
+    for (int i = pad; i < pad + padsUsed; i++) {
+        ClrFut(plr, i);
+        Data->P[plr].Future[i] = Data->P[plr].Mission[i];
+
+        const int program = Data->P[plr].Future[i].Prog;
+        const int pCrew = Data->P[plr].Future[i].PCrew;
+        const int bCrew = Data->P[plr].Future[i].BCrew;
+
+        for (int j = 0; j < Data->P[plr].Future[i].Men; j++) {
+            int poolIndex;
+
+            if (pCrew > 0) {
+                poolIndex = Data->P[plr].Crew[program][pCrew - 1][j] - 1;
+                Data->P[plr].Pool[poolIndex].Prime++;
+            }
+
+            if (bCrew > 0) {
+                poolIndex = Data->P[plr].Crew[program][bCrew - 1][j] - 1;
+                Data->P[plr].Pool[poolIndex].Prime++;
+            }
+        }
+
+        FreeLaunchHardware(plr, i);
+        ResetMission(Data->P[plr].Mission[i]);
+    }
 }
 
 
