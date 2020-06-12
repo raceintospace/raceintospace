@@ -11,6 +11,7 @@ enum CrewType {
 
 void ClearFutureCrew(char plr, int pad, CrewType crew);
 void ClearMissionCrew(char plr, int pad, CrewType crew);
+void DelayMission(char plr, int pad);
 void FreeLaunchHardware(char plr, int pad);
 void ScrubMission(char plr, int pad);
 

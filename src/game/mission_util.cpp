@@ -12,6 +12,18 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
+namespace
+{
+bool MarsInRange(unsigned int year, unsigned int season);
+bool JupiterInRange(unsigned int year, unsigned int season);
+bool SaturnInRange(unsigned int year, unsigned int season);
+};
+
+
+//----------------------------------------------------------------------
+// Header function definitions
+//----------------------------------------------------------------------
+
 
 /* Compares two MissionType instances to see if their fields are
  * identical.
@@ -154,3 +166,70 @@ struct mStr GetMissionPlan(const int code)
 
     return mission;
 }
+
+
+/**
+ * Check if the mission is viable given the launch period.
+ *
+ * Not all missions can be performed during every year and season.
+ * While the Moon is always nearby, the orbits of other planets can
+ * take them far enough away from the Earth that an intercept course
+ * isn't possible, at least not on a reasonable schedule.
+ *
+ * \param mission  the mission code.
+ * \param year  the year the mission would be scheduled as a Future mission.
+ * \param season  the season during which the mission is planned as a FM.
+ * \return  true if the mission may be scheduled.
+ */
+bool MissionTimingOk(int mission, unsigned int year, unsigned int season)
+{
+    if (mission == Mission_MarsFlyby) {
+        return MarsInRange(year, season);
+    } else if (mission == Mission_JupiterFlyby) {
+        return JupiterInRange(year, season);
+    } else if (mission == Mission_SaturnFlyby) {
+        return SaturnInRange(year, season);
+    }
+
+    return true;
+}
+
+
+//----------------------------------------------------------------------
+// Local definitions
+//----------------------------------------------------------------------
+
+namespace  // Start of local namespace
+{
+
+/* Is Mars at the right point in its orbit where a rocket launched at
+ * the given time will be able to intercept it?
+ */
+bool MarsInRange(unsigned int year, unsigned int season)
+{
+    return ((year == 60 && season == 0) || (year == 62 && season == 0) ||
+            (year == 64 && season == 0) || (year == 66 && season == 0) ||
+            (year == 69 && season == 1) || (year == 71 && season == 1) ||
+            (year == 73 && season == 1));
+}
+
+
+/* Is Jupiter at the right point in its orbit where a rocket launched
+ * at the given time will be able to intercept it?
+ */
+bool JupiterInRange(unsigned int year, unsigned int season)
+{
+    return (year == 60 || year == 64 || year == 68 || year == 72 ||
+            year == 73 || year == 77);
+}
+
+
+/* Is Saturn at the right point in its orbit where a rocket launched
+ * at the given time will be able to intercept it?
+ */
+bool SaturnInRange(unsigned int year, unsigned int season)
+{
+    return (year == 61 || year == 66 || year == 72);
+}
+
+};  // End of local namespace

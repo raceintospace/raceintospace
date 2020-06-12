@@ -40,6 +40,7 @@
 #include "logging.h"
 #include "mc.h"
 #include "mc2.h"
+#include "mission_util.h"
 #include "pace.h"
 #include "place.h"
 #include "prest.h"
@@ -99,9 +100,6 @@ std::vector<struct mStr> missionData;
 
 void LoadFutureButtons(void);
 void LoadFuturePalette(void);
-bool MarsInRange(unsigned int year, unsigned int season);
-bool JupiterInRange(unsigned int year, unsigned int season);
-bool SaturnInRange(unsigned int year, unsigned int season);
 bool JointMissionOK(char plr, char pad);
 void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
 void ClearDisplay(void);
@@ -161,37 +159,6 @@ void LoadFuturePalette(void)
     // Also possible to use the nfutbut.but data file to get the
     // palette information quickly, but remember we're trying to
     // use the Filesystem class and **absolutely no packing**!
-}
-
-
-/* Is Mars at the right point in its orbit where a rocket launched at
- * the given time will be able to intercept it?
- */
-bool MarsInRange(unsigned int year, unsigned int season)
-{
-    return ((year == 60 && season == 0) || (year == 62 && season == 0) ||
-            (year == 64 && season == 0) || (year == 66 && season == 0) ||
-            (year == 69 && season == 1) || (year == 71 && season == 1) ||
-            (year == 73 && season == 1));
-}
-
-
-/* Is Jupiter at the right point in its orbit where a rocket launched
- * at the given time will be able to intercept it?
- */
-bool JupiterInRange(unsigned int year, unsigned int season)
-{
-    return (year == 60 || year == 64 || year == 68 || year == 72 ||
-            year == 73 || year == 77);
-}
-
-
-/* Is Saturn at the right point in its orbit where a rocket launched
- * at the given time will be able to intercept it?
- */
-bool SaturnInRange(unsigned int year, unsigned int season)
-{
-    return (year == 61 || year == 66 || year == 72);
 }
 
 
@@ -911,9 +878,9 @@ void Future(char plr)
         return;
     }
 
-    MarsFlag = MarsInRange(year, season);
-    JupiterFlag = JupiterInRange(year, season);
-    SaturnFlag = SaturnInRange(year, season);
+    MarsFlag = MissionTimingOk(Mission_MarsFlyby, year, season);
+    JupiterFlag = MissionTimingOk(Mission_JupiterFlyby, year, season);
+    SaturnFlag = MissionTimingOk(Mission_SaturnFlyby, year, season);
 
     while ((pad = FutureCheck(plr, 0)) != 5) {
         keyHelpText = "k011";
