@@ -826,14 +826,12 @@ int HardRequest(char plr, char mode, char mis, char pad)
     }
 
     // Only Jupiter/Kvartet can attempt a Direct Ascent Lunar Landing
-    // TODO: Replace mission code with Mission_DirectAscent_LL
-    if (mis == 54) {
+    if (mis == Mission_DirectAscent_LL) {
         pr[0] = pr[1] = pr[2] = pr[3] = 0;
     }
 
     // Only a USSR Soyuz capsule may attempt a Soyuz Lunar Landing
-    // TODO: Replace mission code with Mission_Soyuz_LL
-    if (mis == 57 && plr == 1) {
+    if (mis == Mission_Soyuz_LL && plr == 1) {
         pr[0] = pr[1] = pr[3] = pr[4] = 0;
     }
 
@@ -1009,8 +1007,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     }
 
     // Only Jupiter/Kvartet can attempt a Direct Ascent Lunar Landing
-    // TODO: Replace mission code with Mission_DirectAscent_LL
-    if (mis == 54) {
+    if (mis == Mission_DirectAscent_LL) {
         prog[0] = prog[1] = prog[2] = prog[3] = 0;
     }
 
@@ -1020,8 +1017,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     }
 
     // Only a USSR Soyuz capsule may attempt a Soyuz Lunar Landing
-    // TODO: Replace mission code with Mission_Soyuz_LL
-    if (mis == 57 && plr == 1) {
+    if (mis == Mission_Soyuz_LL && plr == 1) {
         prog[0] = prog[1] = prog[3] = prog[4] = 0;
     }
 

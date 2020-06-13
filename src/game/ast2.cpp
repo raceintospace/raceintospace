@@ -133,24 +133,24 @@ void DrawLimbo(char plr)
         draw_string(257, 107 + 21 * i, "TRAINING");
         //grMoveTo(254,101+21*i);  This remmed out to manually place the Adv. Training names so they could be centered -Leon
 
-        switch (i) {
-        case 0:
+        switch (i + AST_FOCUS_CAPSULE) {
+        case AST_FOCUS_CAPSULE:
             draw_string(258, 101 + 21 * i, "CAPSULE");
             break;
 
-        case 1:
+        case AST_FOCUS_LEM:
             draw_string(271, 101 + 21 * i, "L.M.");
             break;
 
-        case 2:
+        case AST_FOCUS_EVA:
             draw_string(268, 101 + 21 * i, "E.V.A.");
             break;
 
-        case 3:
+        case AST_FOCUS_DOCKING:
             draw_string(259, 101 + 21 * i, "DOCKING");
             break;
 
-        case 4:
+        case AST_FOCUS_ENDURANCE:
             draw_string(252, 101 + 21 * i, "ENDURANCE");
             break;
 

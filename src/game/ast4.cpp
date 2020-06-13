@@ -247,9 +247,11 @@ void AstLevel(char plr, char prog, char crew, char ast)
 
     if (mousebuttons) {
         WaitForMouseUp();
-    } else while (key == 0) {
+    } else {
+        while (key == 0) {
             GetMouse();
         }
+    }
 
     local.copyTo(display::graphics.legacyScreen(), 94, 38);
 }
@@ -482,28 +484,28 @@ void DamProb(char plr, char prog, int chk)
     display::graphics.screen()->clear();
 
     switch (prog) {
-    case 0:
+    case PROBE_HARDWARE:
         D_Cost = Data->P[plr].Probe[chk].DCost;
         Saf_Loss = Data->P[plr].Probe[chk].Damage;
         ESafety = Data->P[plr].Probe[chk].Safety;
         strcpy(Name, Data->P[plr].Probe[chk].Name);
         break;
 
-    case 1:
+    case ROCKET_HARDWARE:
         D_Cost = Data->P[plr].Rocket[chk].DCost;
         Saf_Loss = Data->P[plr].Rocket[chk].Damage;
         ESafety = Data->P[plr].Rocket[chk].Safety;
         strcpy(Name, Data->P[plr].Rocket[chk].Name);
         break;
 
-    case 2:
+    case MANNED_HARDWARE:
         D_Cost = Data->P[plr].Manned[chk].DCost;
         Saf_Loss = Data->P[plr].Manned[chk].Damage;
         ESafety = Data->P[plr].Manned[chk].Safety;
         strcpy(Name, Data->P[plr].Manned[chk].Name);
         break;
 
-    case 3:
+    case MISC_HARDWARE:
         D_Cost = Data->P[plr].Misc[chk].DCost;
         Saf_Loss = Data->P[plr].Misc[chk].Damage;
         ESafety = Data->P[plr].Misc[chk].Safety;
@@ -575,22 +577,22 @@ void DamProb(char plr, char prog, int chk)
                 Data->P[plr].Cash -= D_Cost;
 
                 switch (prog) {
-                case 0:
+                case PROBE_HARDWARE:
                     Data->P[plr].Probe[chk].DCost = 0;
                     Data->P[plr].Probe[chk].Damage = 0;
                     break;
 
-                case 1:
+                case ROCKET_HARDWARE:
                     Data->P[plr].Rocket[chk].DCost = 0;
                     Data->P[plr].Rocket[chk].Damage = 0;
                     break;
 
-                case 2:
+                case MANNED_HARDWARE:
                     Data->P[plr].Manned[chk].DCost = 0;
                     Data->P[plr].Manned[chk].Damage = 0;
                     break;
 
-                case 3:
+                case MISC_HARDWARE:
                     Data->P[plr].Misc[chk].DCost = 0;
                     Data->P[plr].Misc[chk].Damage = 0;
                     break;

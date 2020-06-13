@@ -99,6 +99,10 @@ void DrawTrain(char plr, char lvl)
     draw_string(0, 0, " IN TRAINING");
     memset(TrnName, 0x00, sizeof(TrnName));
 
+    // TODO: Should use AstronautAdvancedFocus enum, but since it
+    // doesn't include an option for Basic Training, lvl cannot be
+    // defined by the enum, and so cannot be held to the same
+    // restrictions. -- rnyoakum
     switch (lvl) {
     case 0:
         strcpy(TrnName, "BASIC ");
@@ -383,6 +387,10 @@ void Train(char plr, int level)
         music_start(M_DRUMSM);
     }
 
+    // TODO: This should use the AstronautAdvancedFocus enum, but
+    // level is designed to incorporate Basic training, which is
+    // not part of the enum, so consistency between level and the
+    // enum cannot be guaranteed.  -- rnyoakum
     switch (level) {
     case 1:
         strcpy(Train, (plr == 0) ? "UTCP" : "STCP");

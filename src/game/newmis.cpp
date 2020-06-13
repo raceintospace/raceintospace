@@ -313,7 +313,7 @@ void MisAnn(char plr, char pad)
             hold = Data->P[plr].Mission[pad + i].Hard[j];
 
             switch (j) {
-            case 0:
+            case Mission_Capsule:
                 if (hold > -1) {
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 109 + 14 * k, "CAPSULE: ");
@@ -331,7 +331,7 @@ void MisAnn(char plr, char pad)
 
                 break;
 
-            case 1:
+            case Mission_Kicker:
                 if (hold > -1) {
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 109 + 14 * k, "KICKER: ");
@@ -350,7 +350,7 @@ void MisAnn(char plr, char pad)
 
                 break;
 
-            case 2:
+            case Mission_LM:
                 if (hold > -1) {
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 109 + 14 * k, "LM: ");
@@ -369,7 +369,7 @@ void MisAnn(char plr, char pad)
 
                 break;
 
-            case 3:
+            case Mission_Probe_DM:
                 if (hold > -1) {
                     if (hold < 3) {
                         display::graphics.setForegroundColor(7);
@@ -404,7 +404,7 @@ void MisAnn(char plr, char pad)
 
                 break;
 
-            case 4:
+            case Mission_PrimaryBooster:
                 if (hold > -1) {
                     if (hold < 5) {
                         display::graphics.setForegroundColor(7);
