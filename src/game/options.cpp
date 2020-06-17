@@ -106,7 +106,7 @@ static struct {
     },
     {
         "fullscreen", &options.want_fullscreen, "%u", 0,
-        "Set to 1 if you want (ugly) full screen game."
+        "Set to 1 if you want (ugly) full-screen game."
     },
     {
         "debuglevel", &options.want_debug, "%u", 0,
@@ -114,17 +114,17 @@ static struct {
     },
     {
         "short_training", &options.feat_shorter_advanced_training, "%u", 0,
-        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons."
+        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (may cause trouble)."
     },
     {
         "female_nauts", &options.feat_female_nauts, "%u", 0,
-        "Set to determine if female astronauts may be recruited:"
+        "Set to determine when female astronauts may be recruited:"
         "\n#   0  Classic (only after a news event)"
         "\n#   1  Always allow recruitment"
     },
     {
         "random_nauts", &options.feat_random_nauts, "%u", 0,
-        "Set to non-zero to enable randomization of nauts."
+        "Set to non-zero to enable randomization of 'nauts."
     },  //Naut Randomize, Nikakd, 10/8/10
     {
         "compt_nauts", &options.feat_compat_nauts, "%u", 0,
@@ -132,11 +132,11 @@ static struct {
     }, //Naut Compatibility, Nikakd, 10/8/10
     {
         "no_c_training", &options.feat_no_cTraining, "%u", 0,
-        "Set to zero to disable skipping capsule training."
+        "Set to zero to disable assigning crews in Training to a mission (Classic setting)."
     },   //No Capsule Training, Nikakd, 10/8/10
     {
         "no_backup", &options.feat_no_backup, "%u", 0,
-        "Set to zero to require assigning a Backup crew."
+        "Set to zero to require assigning a Backup crew (Classic setting)."
     },   // No Backup crew required -Leon
     {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
@@ -156,11 +156,11 @@ static struct {
     },
     {
         "succesRDMax", &options.cheat_addMaxS, "%u", 0,
-        "Set to zero to make MaxRD not change with successful missions."
+        "Set to zero to make MaxRD not change with successful missions (Classic setting)."
     },
     {
         "boosterSafety", &options.boosterSafety, "%u", 0,
-        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety"
+        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety (Classic setting)"
     },
 };
 
@@ -338,12 +338,14 @@ write_default_config(void)
         NOTICE3("written defaults to file `%s/%s'",
                 options.dir_savegame, "config");
 
-    fprintf(f, "# This is template configuration file for %s\n",
+    fprintf(f, "# This is the Advanced Configuration file for %s\n",
             PACKAGE_STRING);
-    fprintf(f, "# Comments start with '#' sign and span whole line.\n");
-    fprintf(f, "# Non comment lines should look like:\n");
-    fprintf(f, "# variable_name variable_value\n\n");
-    fprintf(f, "# (be sure to remove the #)\n\n");
+    fprintf(f, "# Comments start with '#' and span the whole line.\n");
+    fprintf(f, "# Active (non-comment) lines should look like:\n\n");
+    fprintf(f, "# variable_name variable_value\n");
+    fprintf(f, "# (be sure to remove the #), e.g.:\n");
+    fprintf(f, "# female_nauts 1 (but without the # and space at the beginning)\n\n");
+    fprintf(f, "# 'Classic' settings return to how the game worked in BARIS\n\n\n");
 
     for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
         fprintf(f, "# %s\n# %s\n\n",
@@ -360,7 +362,7 @@ write_default_config(void)
     return err;
 }
 
-/* return a location of user's home directory, or NULL if unknown.
+/* return the location of user's home directory, or NULL if unknown.
  * returned string is malloc-ed */
 static char *get_homedir(void)
 {
