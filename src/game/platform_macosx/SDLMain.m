@@ -6,9 +6,9 @@
 */
 
 #include "SDLMain.h"
-#import <SDL.h>
-#import <sys/param.h> /* for MAXPATHLEN */
-#import <unistd.h>
+#include <SDL.h>
+#include <sys/param.h> /* for MAXPATHLEN */
+#include <unistd.h>
 
 //#import "SmartCrashReportsInstall.h"
 
