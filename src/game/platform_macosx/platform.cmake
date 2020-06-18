@@ -53,4 +53,7 @@ add_dependencies("${app}" libs)
 
 set_target_properties("${app}" PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/src/game/platform_macosx/Info.plist.in
+  MACOSX_BUNDLE_BUNDLE_NAME ${app}
+  MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
+  MACOSX_BUNDLE_SHORT_VERSION_STRING ${CMAKE_PROJECT_VERSION}
   )
