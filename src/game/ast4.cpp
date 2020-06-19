@@ -33,6 +33,7 @@
 #include "ast4.h"
 #include "draw.h"
 #include "game_main.h"
+#include "hardware.h"
 #include "place.h"
 #include "sdlhelper.h"
 #include "gr.h"
@@ -446,25 +447,29 @@ void FixPrograms(char plr)
     int i;
 
     for (i = 0; i < 7; i++) {
-        if (Data->P[plr].Manned[i].DCost > 0 && Data->P[plr].Manned[i].DCost <= Data->P[plr].Cash) {
+        if (Data->P[plr].Manned[i].DCost > 0 &&
+            Data->P[plr].Manned[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 2, i);
         }
     }
 
     for (i = 0; i < 5; i++) {
-        if (Data->P[plr].Rocket[i].DCost > 0 && Data->P[plr].Rocket[i].DCost <= Data->P[plr].Cash) {
+        if (Data->P[plr].Rocket[i].DCost > 0 &&
+            Data->P[plr].Rocket[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 1, i);
         }
     }
 
     for (i = 0; i < 4; i++) {
-        if (Data->P[plr].Misc[i].DCost > 0 && Data->P[plr].Misc[i].DCost <= Data->P[plr].Cash) {
+        if (Data->P[plr].Misc[i].DCost > 0 &&
+            Data->P[plr].Misc[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 3, i);
         }
     }
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Probe[i].DCost > 0 && Data->P[plr].Probe[i].DCost <= Data->P[plr].Cash) {
+        if (Data->P[plr].Probe[i].DCost > 0 &&
+            Data->P[plr].Probe[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 0, i);
         }
     }
@@ -472,49 +477,32 @@ void FixPrograms(char plr)
     return;
 }
 
+
+/**
+ * Launch a dialogue box allowing the player to repair a damaged program.
+ *
+ * TODO: Enforce parameter prog value range.
+ *
+ * \param plr   the player index (0 or 1).
+ * \param prog  the type of hardware (Rocket, Probe, etc.).
+ * \param chk   the index of the damaged program (within its category).
+ */
 void DamProb(char plr, char prog, int chk)
 {
     int D_Cost, Saf_Loss, ESafety;
     char Digit[4], Name[30];
 
-    Saf_Loss = D_Cost = ESafety = 0;  /* XXX check uninitialized */
+    Saf_Loss = D_Cost = ESafety = 0;
 
     FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
 
-    switch (prog) {
-    case PROBE_HARDWARE:
-        D_Cost = Data->P[plr].Probe[chk].DCost;
-        Saf_Loss = Data->P[plr].Probe[chk].Damage;
-        ESafety = Data->P[plr].Probe[chk].Safety;
-        strcpy(Name, Data->P[plr].Probe[chk].Name);
-        break;
-
-    case ROCKET_HARDWARE:
-        D_Cost = Data->P[plr].Rocket[chk].DCost;
-        Saf_Loss = Data->P[plr].Rocket[chk].Damage;
-        ESafety = Data->P[plr].Rocket[chk].Safety;
-        strcpy(Name, Data->P[plr].Rocket[chk].Name);
-        break;
-
-    case MANNED_HARDWARE:
-        D_Cost = Data->P[plr].Manned[chk].DCost;
-        Saf_Loss = Data->P[plr].Manned[chk].Damage;
-        ESafety = Data->P[plr].Manned[chk].Safety;
-        strcpy(Name, Data->P[plr].Manned[chk].Name);
-        break;
-
-    case MISC_HARDWARE:
-        D_Cost = Data->P[plr].Misc[chk].DCost;
-        Saf_Loss = Data->P[plr].Misc[chk].Damage;
-        ESafety = Data->P[plr].Misc[chk].Safety;
-        strcpy(Name, Data->P[plr].Misc[chk].Name);
-        break;
-
-    default:
-        break;
-    }
+    Equipment &hardware = HardwareProgram(plr, prog, chk);
+    D_Cost = hardware.DCost;
+    Saf_Loss = hardware.Damage;
+    ESafety = hardware.Safety;
+    strcpy(Name, hardware.Name);
 
     ShBox(35, 81, 288, 159);
     InBox(40, 86, 111, 126);
@@ -575,31 +563,8 @@ void DamProb(char plr, char prog, int chk)
                 }
 
                 Data->P[plr].Cash -= D_Cost;
-
-                switch (prog) {
-                case PROBE_HARDWARE:
-                    Data->P[plr].Probe[chk].DCost = 0;
-                    Data->P[plr].Probe[chk].Damage = 0;
-                    break;
-
-                case ROCKET_HARDWARE:
-                    Data->P[plr].Rocket[chk].DCost = 0;
-                    Data->P[plr].Rocket[chk].Damage = 0;
-                    break;
-
-                case MANNED_HARDWARE:
-                    Data->P[plr].Manned[chk].DCost = 0;
-                    Data->P[plr].Manned[chk].Damage = 0;
-                    break;
-
-                case MISC_HARDWARE:
-                    Data->P[plr].Misc[chk].DCost = 0;
-                    Data->P[plr].Misc[chk].Damage = 0;
-                    break;
-
-                default:
-                    break;
-                }
+                hardware.DCost = 0;
+                hardware.Damage = 0;
 
                 return;
             } else if ((x >= 203 && y >= 132 && x <= 272 && y <= 153 && mousebuttons > 0) || key == 'N') {

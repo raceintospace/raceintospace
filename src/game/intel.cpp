@@ -48,6 +48,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
+#include "hardware.h"
 #include "hardware_buttons.h"
 #include "logging.h"
 
@@ -705,9 +706,15 @@ void Special(char p, int ind)
 }
 
 
+/**
+ * View Intelligence report.
+ *
+ * \param p     player index.
+ * \param year  the year the intel was collected.
+ */
 void BackIntel(char p, char year)
 {
-    int prg, ind, dur = 0, xc, yc;
+    int prg, ind, xc, yc;
     char code, w;
 
     display::graphics.setForegroundColor(6);
@@ -838,56 +845,17 @@ void BackIntel(char p, char year)
     draw_string(17, 112, "PROGRAM: ");
     display::graphics.setForegroundColor(9);
 
-    switch (prg) {
-    case 0:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
-        break;
-
-    case 1:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
-        break;
-
-    case 2:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
-        break;
-
-    case 3:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
-        break;
-
-    default:
-        break;
-    }
+    Equipment &hardware = HardwareProgram(abs(p - 1), prg, ind);
+    draw_string(0, 0, &hardware.Name[0]);
 
     display::graphics.setForegroundColor(6);
     draw_string(17, 128, "DURATION: ");
     display::graphics.setForegroundColor(9);
 
-    switch (prg) {
-    case 0:
-        dur = Data->P[abs(p - 1)].Probe[ind].Duration;
-        break;
-
-    case 1:
-        dur = Data->P[abs(p - 1)].Rocket[ind].Duration;
-        break;
-
-    case 2:
-        dur = Data->P[abs(p - 1)].Manned[ind].Duration;
-        break;
-
-    case 3:
-        dur = Data->P[abs(p - 1)].Misc[ind].Duration;
-        break;
-
-    default:
-        break;
-    }
-
-    if (dur == 0) {
+    if (! hardware.Duration) {
         draw_string(0, 0, "NONE");
     } else {
-        draw_number(0, 0, dur);
+        draw_number(0, 0, hardware.Duration);
         draw_string(0, 0, " DAYS");
     }
 
@@ -910,28 +878,7 @@ void BackIntel(char p, char year)
 
     draw_string(33, 169, "DEVELOPING THE ");
     display::graphics.setForegroundColor(9);
-
-    switch (prg) {
-    case 0:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Probe[ind].Name[0]);
-        break;
-
-    case 1:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Rocket[ind].Name[0]);
-        break;
-
-    case 2:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Manned[ind].Name[0]);
-        break;
-
-    case 3:
-        draw_string(0, 0, &Data->P[abs(p - 1)].Misc[ind].Name[0]);
-        break;
-
-    default:
-        break;
-    }
-
+    draw_string(0, 0, &hardware.Name[0]);
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, " AND RATES THE");
     draw_string(33, 183, "RELIABILITY AT ABOUT ");
@@ -1168,9 +1115,11 @@ void HarIntel(char p, char acc)
             save[6] = 1;
         }
 
-        for (i = lo; i < hi; i++) if (save[i] > 0) {
+        for (i = lo; i < hi; i++) {
+            if (save[i] > 0) {
                 j++;    // Check if event is good.
             }
+        }
 
         if (j <= 2) {
             HarIntel(p, 0);
