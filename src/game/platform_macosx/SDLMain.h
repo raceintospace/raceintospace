@@ -5,6 +5,9 @@
     Feel free to customize this file to suit your needs
 */
 
+#ifndef _SDLMain_h_
+#define _SDLMain_h_
+
 #import <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
@@ -12,3 +15,5 @@
 - (IBAction)help:(id)sender;
 - (IBAction)enableCrashReporting:(id)sender;
 @end
+
+#endif /* _SDLMain_h_ */
