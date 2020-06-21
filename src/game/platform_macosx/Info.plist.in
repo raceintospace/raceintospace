@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
 	<key>CFBundleDocumentTypes</key>
 	<array/>
 	<key>CFBundleExecutable</key>
@@ -14,8 +16,6 @@
 	<string>org.raceintospace.RaceIntoSpace</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleLongVersionString</key>
-	<string>${MACOSX_BUNDLE_LONG_VERSION_STRING}</string>
 	<key>CFBundleShortVersionString</key>
 	<string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
 	<key>CFBundleVersion</key>
