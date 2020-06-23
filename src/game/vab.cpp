@@ -429,8 +429,8 @@ int FillVab(char plr, char f, char mode)
     for (i = 0; i < 4; i++) {
         if ((VAS[f][i].qty - VAS[f][i].ac) <= 0 && strncmp(VAS[f][i].name, "NONE", 4) != 0) {
             switch (i) {
-            case 0:
-            case 2:
+            case Mission_Capsule:
+            case Mission_LM:
                 if ((Data->P[plr].Manned[VAS[f][i].dex].Num - Data->P[plr].Manned[VAS[f][i].dex].Spok) == 0) {
                     int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Manned[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Manned[VAS[f][i].dex].UnitCost;
 
@@ -444,7 +444,7 @@ int FillVab(char plr, char f, char mode)
 
                 break;
 
-            case 1:
+            case Mission_Kicker:
                 if ((Data->P[plr].Misc[VAS[f][i].dex].Num - Data->P[plr].Misc[VAS[f][i].dex].Spok) == 0) {
                     int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Misc[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Misc[VAS[f][i].dex].UnitCost;
 
@@ -458,7 +458,7 @@ int FillVab(char plr, char f, char mode)
 
                 break;
 
-            case 3:
+            case Mission_Probe_DM:
                 if (VAS[f][i].dex != 4) {
                     if ((Data->P[plr].Probe[VAS[f][i].dex].Num - Data->P[plr].Probe[VAS[f][i].dex].Spok) == 0) {
                         int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Probe[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Probe[VAS[f][i].dex].UnitCost;
@@ -507,22 +507,22 @@ int ChkDelVab(char plr, char f)
     for (i = 0; i < 4; i++) {
         if ((VAS[f][i].qty - VAS[f][i].ac) <= 0 && strcmp(VAS[f][i].name, "NONE") != 0) {
             switch (i) {
-            case 0:
-            case 2:
+            case Mission_Capsule:
+            case Mission_LM:
                 if (Data->P[plr].Manned[VAS[f][i].dex].Delay != 0) {
                     return 0;
                 }
 
                 break;
 
-            case 1:
+            case Mission_Kicker:
                 if (Data->P[plr].Misc[VAS[f][i].dex].Delay != 0) {
                     return 0;
                 }
 
                 break;
 
-            case 3:
+            case Mission_Probe_DM:
                 if (VAS[f][i].dex != 4) {
                     if (Data->P[plr].Probe[VAS[f][i].dex].Delay != 0) {
                         return 0;

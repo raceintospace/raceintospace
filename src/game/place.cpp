@@ -360,19 +360,19 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         }
 
         switch (hw) {
-        case 0:
+        case PROBE_HARDWARE:
             name[2] = 'P';
             break;
 
-        case 1:
+        case ROCKET_HARDWARE:
             name[2] = 'R';
             break;
 
-        case 2:
+        case MANNED_HARDWARE:
             name[2] = 'C';
             break;
 
-        case 3:
+        case MISC_HARDWARE:
             name[2] = 'M';
             break;
         }

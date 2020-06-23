@@ -818,9 +818,11 @@ int AllotPrest(char plr, char mis)
     Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
 
     if (death == 1) {
-        for (i = 0; i < 28; i++) if (PVal[i] > 0 && PVal[i] < 4) {
+        for (i = 0; i < 28; i++) {
+            if (PVal[i] > 0 && PVal[i] < 4) {
                 PVal[i] = 4;
             }
+        }
     }
 
     // GOAL FILTER: MANNED
@@ -1007,24 +1009,22 @@ int AllotPrest(char plr, char mis)
 char PosGoal_Check(char *PVal)
 {
     if (PSTS(Prestige_MannedLunarLanding)) {
-        return 22;
+        return Prestige_MannedLunarLanding;
     } else if (PSTS(Prestige_MannedLunarOrbit)) {
-        return 20;
+        return Prestige_MannedLunarOrbit;
     } else if (PSTS(Prestige_MannedLunarPass)) {
-        return 19;
+        return Prestige_MannedLunarPass;
     } else if (PSTS(Prestige_LunarProbeLanding)) {
-        return 7;
+        return Prestige_LunarProbeLanding;
     } else if (PSTS(Prestige_LunarFlyby)) {
-        return 1;
+        return Prestige_LunarFlyby;
     } else if (PSTS(Prestige_MannedOrbital)) {
-        return 18;
+        return Prestige_MannedOrbital;
     } else if (PSTS(Prestige_MannedSpaceMission)) {
-        return 27;
+        return Prestige_MannedSpaceMission;
     } else if (PSTS(Prestige_OrbitalSatellite)) {
-        return 0;
-    }
-
-    else {
+        return Prestige_OrbitalSatellite;
+    } else {
         return -1;
     }
 }

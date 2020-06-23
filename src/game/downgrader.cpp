@@ -148,12 +148,12 @@ struct MissionType Downgrader::current() const {
  *  - A non-duration mission cannot downgrade to a duration mission.
  *  - An unmanned mission cannot become a manned mission.
  *  - Probes cannot downgrade, or be the result of downgrading.
-      (Exception: I've allowed the Lunar Probe Landing to be downgraded to 
-       a Lunar Flyby, on the logic that any probe capable of landing should 
-       be able to do a flyby.  The idea is that if a player has flybys 
-       stubbornly failing and finds themselves with the Lunar Probe Landing 
-       in the VAB, it should be an option to fly the landing probe as a 
-       flyby to avoid a milestone penalty - rather than having to scrub it 
+      (Exception: I've allowed the Lunar Probe Landing to be downgraded to
+       a Lunar Flyby, on the logic that any probe capable of landing should
+       be able to do a flyby.  The idea is that if a player has flybys
+       stubbornly failing and finds themselves with the Lunar Probe Landing
+       in the VAB, it should be an option to fly the landing probe as a
+       flyby to avoid a milestone penalty - rather than having to scrub it
        and delay your flyby by a turn. -Leon)
  *
  * \return  a new instance of the next downgrade option in the cycle.

@@ -727,6 +727,7 @@ void Viewing(char plr)
             DrawVText(ctop);
             bzdelay(DELAYCNT);
         }
+
         if (ctop > 0 && key == K_PGUP) { // Page Up Key
             ctop -= 7;
 
@@ -748,7 +749,7 @@ void Viewing(char plr)
             DrawVText(ctop);
             bzdelay(DELAYCNT);
         }
-        
+
         if (ctop < bline && key == K_END) { // End Key
             ctop = bline;
 

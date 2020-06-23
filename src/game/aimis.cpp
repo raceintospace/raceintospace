@@ -156,8 +156,8 @@ int ICost(char plr, char h, char i)
     int cost = 0;
 
     switch (h) {
-    case 0:
-    case 2:     // Capsules & LM's
+    case Mission_Capsule:
+    case Mission_LM:
         cost = cost + Data->P[plr].Manned[i].MaxRD - Data->P[plr].Manned[i].Safety;
         cost = cost / 3.5;
         cost = cost * Data->P[plr].Manned[i].RDCost;
@@ -172,7 +172,7 @@ int ICost(char plr, char h, char i)
 
         break;
 
-    case 1:   // Kickers
+    case Mission_Kicker:
         cost = cost + Data->P[plr].Misc[i].MaxRD - Data->P[plr].Misc[i].Safety;
         cost = cost / 3.5;
         cost = cost * Data->P[plr].Misc[i].RDCost;
@@ -187,7 +187,7 @@ int ICost(char plr, char h, char i)
 
         break;
 
-    case 3:
+    case Mission_Probe_DM:
         if (i < 4) {
             cost = cost + Data->P[plr].Probe[i].MaxRD - Data->P[plr].Probe[i].Safety;
             cost = cost / 3.5;

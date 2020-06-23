@@ -837,8 +837,12 @@ void VerifySF(char plr)
     int i;
     Equipment *px;
 
+    // TODO: This is _very_ implementation-specific, relying on the
+    // Probe, Rocket, Manned, and Misc arrays all being defined as
+    // Equipment arrays of length 7 being defined consecutively in
+    // struct BuzzData. This should be rewritten.
     for (i = 0; i < 28; i++) {
-        px = &Data->P[plr].Probe[i];        // XXX FIXME: this looks broken -- Probe[27]?
+        px = &Data->P[plr].Probe[i];
 
         if (px->Safety > px->MaxSafety) {
             px->Safety = px->MaxSafety;

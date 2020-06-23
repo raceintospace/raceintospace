@@ -22,14 +22,17 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
-// Support files for NEWS.C
+// Support files for news.cpp
 
-// This file seems to perform support tasks for news.cpp: wrapup from last turn's missions etc.
+// This file seems to perform support tasks for news.cpp:
+// wrapup from last turn's missions, etc.
 
 #include "news_sup.h"
+
 #include "Buzz_inc.h"
-#include "options.h"
 #include "game_main.h"
+#include "hardware.h"
+#include "options.h"
 #include "pace.h"
 
 /** ???
@@ -40,60 +43,37 @@ int Steal(int p, int prog, int type)
 {
     int i = 0, j = 0, k = 0, save[28], lo = 0, hi = 28;
 
+    // Iterate among enum without requiring elements to have specific
+    // values.
+    int hwMap[4] = { PROBE_HARDWARE, ROCKET_HARDWARE, MANNED_HARDWARE,
+                     MISC_HARDWARE
+                   };
 
     memset(save, 0x00, sizeof save);
 
-    for (i = 0; i < 7; i++) {
-        if (Data->P[p].Probe[i].Num >= 0 && Data->P[other(p)].Probe[i].Num >= 0) {
-            if (type == 1) {
-                save[i] = Data->P[other(p)].Probe[i].Safety - Data->P[p].Probe[i].Safety;
-            } else {
-                save[i] = Data->P[p].Probe[i].Safety - Data->P[other(p)].Probe[i].Safety;
-            }
+    for (int hwType = 0; hwType < 4; hwType++) {
+        for (int i = 0; i < 7; i++) {
+            Equipment &equip = HardwareProgram(p, hwMap[hwType], i);
+            Equipment &rival = HardwareProgram(other(p), hwMap[hwType], i);
 
-            if (type == -1 && save[i] < 0 && ((Data->P[p].Probe[i].Safety + save[i]) < Data->P[p].Probe[i].Base)) {
-                save[i] = 0;
-            }
-        }
+            if (equip.Num >= 0 && rival.Num >= 0) {
+                if (type == 1) {
+                    save[i + 7 * hwType] = rival.Safety - equip.Safety;
+                } else {
+                    save[i + 7 * hwType] = equip.Safety - rival.Safety;
+                }
 
-        if (Data->P[p].Rocket[i].Num >= 0 && Data->P[other(p)].Rocket[i].Num >= 0) {
-            if (type == 1) {
-                save[i + 7] = Data->P[other(p)].Rocket[i].Safety - Data->P[p].Rocket[i].Safety;
-            } else {
-                save[i + 7] = Data->P[p].Rocket[i].Safety - Data->P[other(p)].Rocket[i].Safety;
-            }
-
-            if (type == -1 && save[i + 7] < 0 && ((Data->P[p].Rocket[i].Safety + save[i + 7]) < Data->P[p].Rocket[i].Base)) {
-                save[i + 7] = 0;
-            }
-        }
-
-        if (Data->P[p].Manned[i].Num >= 0 && Data->P[other(p)].Manned[i].Num >= 0) {
-            if (type == 1) {
-                save[i + 14] = Data->P[other(p)].Manned[i].Safety - Data->P[p].Manned[i].Safety;
-            } else {
-                save[i + 14] = Data->P[p].Manned[i].Safety - Data->P[other(p)].Manned[i].Safety;
-            }
-
-            if (type == -1 && save[i + 14] < 0 && ((Data->P[p].Manned[i].Safety + save[i + 14]) < Data->P[p].Manned[i].Base)) {
-                save[i + 7] = 0;
-            }
-        }
-
-        if (Data->P[p].Misc[i].Num >= 0 && Data->P[other(p)].Misc[i].Num >= 0) {
-            if (type == 1) {
-                save[i + 21] = Data->P[other(p)].Misc[i].Safety - Data->P[p].Misc[i].Safety;
-            } else {
-                save[i + 21] = Data->P[p].Misc[i].Safety - Data->P[other(p)].Misc[i].Safety;
-            }
-
-            if (type == -1 && save[i + 21] < 0 && ((Data->P[p].Misc[i].Safety + save[i + 21]) < Data->P[p].Misc[i].Base)) {
-                save[i + 21] = 0;
+                if (type == -1 && save[i] < 0 &&
+                    (equip.Safety + save[i]) < equip.Base) {
+                    save[i + 7 * hwType] = 0;
+                }
             }
         }
     }
 
-    save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
+    save[25] = save[26] = save[27] = 0;
+    save[12] = save[13] = 0;
+    save[3] = save[4] = save[5] = save[6] = 0;
 
     if (type == 1) {
         for (i = lo; i < hi; i++) {
@@ -111,9 +91,11 @@ int Steal(int p, int prog, int type)
         }
     }
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -130,28 +112,9 @@ int Steal(int p, int prog, int type)
         return 0;
     }
 
-    if (j >= 0 && j < 7) {
-        Data->P[p].Probe[j].Safety += (save[j] * type);
-        strcpy(&Name[0], &Data->P[p].Probe[j].Name[0]);
-    }
-
-    if (j >= 7 && j < 14) {
-        lo = 7;
-        Data->P[p].Rocket[j - lo].Safety += (save[j] * type);
-        strcpy(&Name[0], &Data->P[p].Rocket[j - lo].Name[0]);
-    }
-
-    if (j >= 14 && j < 21) {
-        lo = 14;
-        Data->P[p].Manned[j - lo].Safety += (save[j] * type);
-        strcpy(&Name[0], &Data->P[p].Manned[j - lo].Name[0]);
-    }
-
-    if (j >= 21 && j < 28) {
-        lo = 21;
-        Data->P[p].Misc[j - lo].Safety += (save[j] * type);
-        strcpy(&Name[0], &Data->P[p].Misc[j - lo].Name[0]);
-    }
+    Equipment &chosen = HardwareProgram(p, hwMap[j / 7], j % 7);
+    chosen.Safety += (save[j] * type);
+    strcpy(&Name[0], &chosen.Name[0]);
 
     return save[j];
 }
