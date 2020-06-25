@@ -356,9 +356,11 @@ Once a year, your country’s leader reviews your performance.  If you’re doin
 
 ![image alt text](image_18.png)
 
-If you scheduled a mission last turn, you’ll now need to assemble it for launch.  In the top left you’ll see the mission name and type, and an Autopurchase button to make it easy to buy the equipment for it.  On the right you see the hardware as currently assembled—when you change the configuration, this display will update to match it.  To change rockets or add/remove boosters, click on the Rocket button near the bottom left.  This button defaults to the smallest rocket that can lift the payload without boosters; if you want to use a boosted smaller rocket instead (e.g., B/Atlas), click the button a few times.  Whatever the mission, you will need rocketry with a high enough Maximum Payload to launch the current total (above the Autopurchase button).  To change the payload (generally, to switch kickers or lunar landers), click on the larger button above the Rocket button.  Once you’re ready, click the Assign button or press Enter—or, the Scrub button to cancel this flight.
+If you scheduled a mission last turn, you now need to assemble it for launch.  In the top left you’ll see the mission name and type, and an Autopurchase button to make it easy to buy the equipment for it.  On the right you see the hardware as currently assembled—when you change the configuration, this display will update to match it.  To change rockets or add/remove boosters, click on the Rocket button near the bottom left.  This button defaults to the smallest rocket that can lift the payload without boosters; if you want to use a smaller rocket with boosters (e.g., B/Titan), click the button a few times.  Whatever the mission, you will need rocketry with a high enough Maximum Payload to launch the current total (above the Autopurchase button).  To change the payload (generally, to switch kickers or lunar landers), click on the larger button above the Rocket button.
 
-It is often a good idea to make this your first stop when you begin your turn, so you don’t accidentally spend all your money on research when you also need to buy components for a scheduled launch.
+Once you’re ready, click the Assign button or press Enter.  If you want to cancel out of this screen without assigning anything, press Exit.  If you want to cancel the flight entirely, press Scrub.  If your hardware isn't quite ready yet (as in the above example) and you want to fly it next turn instead, press the Delay button.
+
+It is often a good idea to make this building your first stop when you begin your turn, so you don’t accidentally spend all your money on research when you also need to buy components for a scheduled launch.
 
 ### Launch Pads A, B, and C
 
@@ -427,6 +429,8 @@ This is the distribution point for your spacepeople.  From here you can send the
 ![image alt text](image_24.png)
 
 You can reach this screen from the Astronaut Complex / Cosmonaut Center, or by clicking on the Mercury/Vostok, Gemini/Voskhod, Apollo/Soyuz, XMS-2/Lapot, or Jupiter/LK-700 building in the spaceport.  Here you can assign people to crews, once you’ve sent them here.  You can also break and reassign crews as needed.
+
+Flight crews shown in blue lettering in the bottom right are assigned to a mission you have scheduled for this turn, and cannot be broken.  Crews showing in green have been assigned to a flight next turn and also cannot be broken.
 
 When assembling crews, pay special attention to how they get along.  Click on each member of a newly assigned crew to see how he/she gets along with the other members; as you might expect, green is good; red is bad.  People who don’t get along with their crewmates will suffer morale degradation and retire sooner than their colleagues.  Check all crew members, since compatibility isn’t always mutual.
 
