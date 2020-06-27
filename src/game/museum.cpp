@@ -697,7 +697,7 @@ void Mission_Data_Buttons(char plr, int *where)
     char index, yr, season, j, temp = 0;
 
     /* Okay, now we have to decide whether there are any missions displayed
-    on the screen at this time. If there are any, parse the button. */
+       on the screen at this time. If there are any, parse the button. */
     if (Data->P[plr].PastMissionCount == 0) {
         return;
     }
@@ -1131,13 +1131,13 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     display::graphics.setForegroundColor(1);
 
     if ((plr == 0 && abuf[*where].Missions >= 4) || abuf[*where].Hero == 1) {
-        Display_ARROW(4, 289, 105);
+        Display_ARROW(4, 289, 105);  // Show US medal
     } else if ((plr == 1 && abuf[*where].Missions >= 4) || abuf[*where].Hero == 1) {
-        Display_ARROW(5, 290, 105);
+        Display_ARROW(5, 290, 105);  // Show Soviet medal
     }
 
     if (abuf[*where].Missions > 0) {
-        Display_ARROW(6, 245, 83);
+        Display_ARROW(6, 248, 83);  // Show astronaut wings
     }
 
     draw_number(214, 78, abuf[*where].Missions);
