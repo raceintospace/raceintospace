@@ -48,7 +48,7 @@ int SecondHard(char plr, char mode, char mis, char pad);
 
 /* Assign the hardware for a planned mission in the Future Missions screen.
  *
- * This selects and relevant capsule/minishuttle and assigns the crew(s)
+ * This selects any relevant capsule/minishuttle and assigns the crew(s)
  * for any manned launches.
  *
  * Mission types are
@@ -60,10 +60,10 @@ int SecondHard(char plr, char mode, char mis, char pad);
  * 5: A joint mission with an unmanned capsule/minishuttle
  *
  * \param plr  The player country (0 for the USA, 1 for the USSR).
- * \param pad  The launch pad (0, 1, or 2) the first part of the mission
- *     is assigned.
- * \param misType The mission id per the MissionValues enum.
- * \param newType The type of mission as described in the notes.
+ * \param pad  The launch pad (0, 1, or 2) that the first part of
+ *     the mission is assigned to.
+ * \param misType  The mission ID per the MissionValues enum.
+ * \param newType  The type of mission as described in the notes.
  * \return  0 if hardware was not assigned, 1 if successful.
  */
 int HardCrewAssign(char plr, char pad, int misType, char newType)
@@ -184,7 +184,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
         break;
     }
 
-    return M; // all the proper hardware and crews have been assigned
+    return M;  // all the proper hardware and crews have been assigned
 }
 
 
@@ -284,10 +284,10 @@ int AsnCrew(char plr, char pad, char part)
 
     ShBox(74, 3, 244, 190);
     IOBox(80, 102, 157, 116);
-    IOBox(161, 102, 238, 116); // primary,secondary
+    IOBox(161, 102, 238, 116);  // primary,secondary
     IOBox(80, 7, 154, 21);
-    IOBox(164, 7, 238, 21); // assign,cancel
-    InBox(80, 36, 238, 99); // center screen
+    IOBox(164, 7, 238, 21);  // assign,cancel
+    InBox(80, 36, 238, 99);  // center screen
     fill_rectangle(81, 37, 237, 98, 7 + 3 * plr);
     ShBox(80, 24, 238, 33);
 
@@ -343,7 +343,7 @@ int AsnCrew(char plr, char pad, char part)
         draw_string(100, 31, "SELECT SECONDARY CREW");
     }
 
-    display::graphics.setForegroundColor(1); // reset the color
+    display::graphics.setForegroundColor(1);  // reset the color
     count = 0;
 
     WaitForMouseUp();
@@ -465,8 +465,8 @@ int AsnCrew(char plr, char pad, char part)
             if (key > 0) {
                 delay(110);
             }
-        } // End Backup Set
-    } // end while
+        }  // End Backup Set
+    }  // end while
 }
 
 void FutFltsTxt(char nw, char col)
@@ -638,17 +638,17 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             display::graphics.setForegroundColor(1);
-            fill_rectangle(87, 39 + i * 14, 94, 39 + i * 14, 2); // Top
-            fill_rectangle(87, 39 + i * 14, 87, 44 + i * 14, 2); // Left
-            fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3); // Bottom
-            fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3); // Right
+            fill_rectangle(87, 39 + i * 14, 94, 39 + i * 14, 2);  // Top
+            fill_rectangle(87, 39 + i * 14, 87, 44 + i * 14, 2);  // Left
+            fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3);  // Bottom
+            fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3);  // Right
 
             int color = MoodColor(Data->P[plr].Pool[m[i] - 1].Mood);
             fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, color);
 
             //87 - 169
             if (i == 0) {
-                display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
+                display::graphics.setForegroundColor(11);   /* Highlight CA for Command Pilot */
             }
 
             draw_string(87, 51 + i * 14, "CP:");
@@ -656,7 +656,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             display::graphics.setForegroundColor(1);
 
             if (i == 1 && men > 1) {
-                display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
+                display::graphics.setForegroundColor(11);   /* Highlight LM for LM Pilot */
             }
 
             draw_string(0, 0, "  LM:");
@@ -664,7 +664,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             display::graphics.setForegroundColor(1);
 
             if (men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) {
-                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
+                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist */
             }
 
             draw_string(0, 0, "  EV:");
@@ -672,7 +672,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             display::graphics.setForegroundColor(1);
 
             if ((men == 2 && i == 0) || (men == 3 && i == 2)) {
-                display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
+                display::graphics.setForegroundColor(11);   /* Highlight DO for Docking Specialist */
             }
 
             draw_string(0, 0, "  DO:");
@@ -699,11 +699,9 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
  */
 void DrawHard(char mode, char pad, char mis, char plr)
 {
-    int lenprogname;  // Variable to hold and manipulate length of program name
-
     ShBox(75, 43, 244, 173);
     InBox(81, 60, 238, 95);
-    IOBox(81, 154, 238, 167); // continue
+    IOBox(81, 154, 238, 167);  // continue
     InBox(81, 47, 238, 56);
     fill_rectangle(82, 61, 237, 94, 6 + 3 * plr);
     display::graphics.setForegroundColor(11);
@@ -725,7 +723,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
         draw_string(0, 0, GetDurationParens(duration));
     }
 
-    draw_string(85, 85, "PAD: "); // Used to be followed by: "draw_number(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon
+    draw_string(85, 85, "PAD: ");  // Used to be followed by: "draw_number(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon
 
     switch (pad) {
     case 0:
@@ -741,27 +739,18 @@ void DrawHard(char mode, char pad, char mis, char plr)
         break;
     }
 
-    std::string s1 = Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name;  // These two lines on each program in this section are to better center the name of the
-    size_t i1 = std::count(s1.begin(), s1.end(), 'I');                     // spacecraft when it contains an "I", since that's narrower than other letters.  -Leon
-    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name)) * 3;
-    draw_string(111 + lenprogname + i1, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name))*3);
-    std::string s2 = Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name;
-    size_t i2 = std::count(s2.begin(), s2.end(), 'I');
-    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name)) * 3;
-    draw_string(190 + lenprogname + i2, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name))*3);
-    std::string s3 = Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name;
-    size_t i3 = std::count(s3.begin(), s3.end(), 'I');
-    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name)) * 3;
-    draw_string(111 + lenprogname + i3, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name); //draw_number(0,0,94+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name))*3);
-    std::string sM = Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name;
-    size_t iM = std::count(sM.begin(), sM.end(), 'I');
-    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name)) * 3;
-    draw_string(190 + lenprogname + iM, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name); //draw_number(0,0,174+18+(3-strlen(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name))*3);
-    std::string s4 = Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name;
-    size_t i4 = std::count(s4.begin(), s4.end(), 'I');
-    lenprogname = (3 - strlen(Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name)) * 3;
-    draw_string(148 + 4 + lenprogname + i4, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
-    draw_string(143, 162, "CANCEL");
+    char str[10];  // Make sure the capsule/shuttle name is centered
+    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
+    draw_string(119 - TextDisplayLength(&str[0]) / 2, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
+    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
+    draw_string(198 - TextDisplayLength(&str[0]) / 2, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
+    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
+    draw_string(119 - TextDisplayLength(&str[0]) / 2, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
+    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
+    draw_string(198 - TextDisplayLength(&str[0]) / 2, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
+    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+    draw_string(159 - TextDisplayLength(&str[0]) / 2, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+    draw_string(142, 162, "CANCEL");
     return;
 }
 
@@ -771,8 +760,8 @@ void DrawHard(char mode, char pad, char mis, char plr)
  * This creates an interface for selecting one of the manned capsule/
  * minishuttle programs, and returns the chosen program.
  *
- * This sets the Prog value for the player's Future mission at
- * the appropriate pad.
+ * This sets the Prog value for the player's Future mission at the
+ * appropriate pad.
  *
  * TODO: Look into changing return values to use the EquipMannedIndex
  * enum?
@@ -803,7 +792,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
     GetMisType(mis);
 
     // Exceptions
-    // One-man capsules cannot perform Lunar missions, docking missions.
+    // One-man capsules cannot perform Lunar missions, Docking missions.
     // TODO: Mis.Days value differs from logic in SecondHard
     if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 1 ||
         Data->P[plr].Future[pad].Duration > 2) {
@@ -983,7 +972,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     GetMisType(mis);
 
     // Exceptions
-    // One-man capsules cannot perform Lunar missions, docking missions.
+    // One-man capsules cannot perform Lunar missions, Docking missions.
     // TODO: Mis.Days value differs from logic in HardRequest
     if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 2 ||
         Data->P[plr].Future[pad].Duration > 2) {

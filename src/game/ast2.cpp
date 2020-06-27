@@ -49,7 +49,6 @@ void LimboText(char plr, int astro);
 void DrawLimbo(char plr)
 {
     int i;
-    int lenprogname;  // Variable to hold and manipulate length of program name
     FadeOut(2, 10, 0, 0);
 
     helpText = "i039";
@@ -122,11 +121,9 @@ void DrawLimbo(char plr)
             display::graphics.setForegroundColor(11);
         }
 
-        std::string s = Data->P[plr].Manned[i].Name;       // These two lines are for centering spacecraft names containing "I",
-        size_t inum = std::count(s.begin(), s.end(), 'I'); // such as Gemini, because the I is narrower than other letters.    -Leon
-        lenprogname = (7 - strlen(Data->P[plr].Manned[i].Name)) * 3 + inum;
-        //lenprogname=(7-lenprogname)*2
-        draw_string(181 + lenprogname, 101 + 21 * i, Data->P[plr].Manned[i].Name);
+        char str[10];
+        sprintf(&str[0], Data->P[plr].Manned[i].Name);
+        draw_string(201 - TextDisplayLength(&str[0]) / 2, 101 + 21 * i, &str[0]);  // Program name is centered
         draw_string(181, 107 + 21 * i, "PROGRAM");
 
         display::graphics.setForegroundColor(11);
@@ -525,7 +522,7 @@ void Limbo(char plr)
                 if (Data->P[plr].Pool[AstroList[now2]].TrainingLevel > 6) {
                     Help("i120");
                 } else if (skilLev > 3) {
-                    OutBox(244, 95 + 21 * i, 313, 109 + 21 * i);  // If they have a 4 in that skill, don't send to Adv Training for it  -Leon
+                    OutBox(244, 95 + 21 * i, 313, 109 + 21 * i);  // If they have a 4 in that skill, don't send to Adv Training  -Leon
                 } else if (Data->P[plr].Cash < 3) {
                     Help("i121");
                 } else {
@@ -573,7 +570,7 @@ void Limbo(char plr)
                     if (count > 0) {
                         LimboText(plr, AstroList[now2]);
                     }
-                } // else
+                }  // else
             }  // if adv training
 
             // Training Visit
@@ -620,7 +617,7 @@ void Limbo(char plr)
         }
 
     }  /* end while */
-} /* end Limbo */
+}  /* end Limbo */
 
 void Clear(void)
 {
@@ -645,8 +642,7 @@ void LimboText(char plr, int astro)
     // Print 'naut name in green/yellow/red/black depending on mood -Leon
     display::graphics.setForegroundColor(color);
 
-    // Print name in black if 'naut has announced retirement
-    // (override mood) -Leon
+    // Print name in black if 'naut has announced retirement (override mood) -Leon
     if (Data->P[plr].Pool[astro].RetirementDelay > 0) {
         display::graphics.setForegroundColor(0);
     }
