@@ -20,11 +20,14 @@
 
 // This file shows the End Game screen, intuitively enough.
 
+#include "endgame.h"
+
+#include <boost/shared_ptr.hpp>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "endgame.h"
 #include "Buzz_inc.h"
 #include "aipur.h"
 #include "draw.h"
@@ -41,15 +44,12 @@
 #include "endianness.h"
 #include "filesystem.h"
 
-#include <boost/shared_ptr.hpp>
-
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
 #define GRAVITY 0.6
 #define FRICTION 0.3
 #define PI 3.1415926
 #define MAXINITSPEED 270
-#define PutPixel(x,y,col) grPutPixel(x,y,col)
 
 char month, firstOnMoon, capName[30];
 char PF[29][40] = {
@@ -76,8 +76,7 @@ void AltHistory(char plr);
 void EndPict(int x, int y, char poff, unsigned char coff);
 void LoserPict(char poff, unsigned char coff);
 
-char
-Burst(char win)
+char Burst(char win)
 {
     float Spsn[2];
     char R_value = 0;
@@ -94,8 +93,12 @@ Burst(char win)
     key = 0;
     helpText = "i144";
     keyHelpText = "k044";
-    vhptr->resetPalette();
-    vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, 319, 199);
+
+    unsigned int bgWidth = display::graphics.legacyScreen()->width();
+    unsigned int bgHeight = display::graphics.legacyScreen()->height();
+    display::LegacySurface background(bgWidth, bgHeight);
+    background.copyFrom(display::graphics.legacyScreen(),
+                        0, 0, bgWidth - 1, bgHeight - 1);
 
     while (1) {
         Region = brandom(100);
@@ -128,7 +131,8 @@ Burst(char win)
 
                 /* This is overkill for pixels, but let's see... */
                 if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                    display::graphics.legacyScreen()->setPixel(
+                        xx, yy, background.getPixel(xx, yy));
                 }
 
                 key = 0;
@@ -164,7 +168,8 @@ Burst(char win)
 
                     if (R_value > 0) {
 
-                        vhptr->copyTo(display::graphics.legacyScreen(), 0, 0);
+                        background.copyTo(display::graphics.legacyScreen(),
+                                          0, 0);
                         helpText = "i144";
                         keyHelpText = "k044";
 
@@ -213,7 +218,7 @@ Burst(char win)
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.legacyScreen()->setPixel(xx, yy, vhptr->getPixel(xx, yy));
+                display::graphics.legacyScreen()->setPixel(xx, yy, background.getPixel(xx, yy));
             }
         }
     }                              // end while
