@@ -82,8 +82,8 @@ void PadDraw(char plr, char pad)
     MisCod = Data->P[plr].Mission[pad].MissionCode;
 
     if ((MisCod > 24 && MisCod < 37) || MisCod == 40 || MisCod == 41 || MisCod == 43 || MisCod == 44 || MisCod > 45)
-        // Show Duration level for manned missions with Duration steps (this keeps the Mission[pad].Duration
-        // variable from continuing to show Duration level if mission is scrubbed or downgraded) - Leon
+        // Show Duration level for manned missions with Duration steps: this keeps the Mission[pad].Duration
+        // variable from continuing to show Duration level if mission is scrubbed or downgraded - Leon
     {
         switch (Data->P[plr].Mission[pad].Duration) {
         case 1:
@@ -185,15 +185,15 @@ void PadDraw(char plr, char pad)
 
     switch (pad) {
     case 0:
-        draw_heading(201, 5, "A", 0, -1);
+        draw_heading(203, 5, "A", 0, -1);
         break;
 
     case 1:
-        draw_heading(201, 5, "B", 0, -1);
+        draw_heading(203, 5, "B", 0, -1);
         break;
 
     case 2:
-        draw_heading(201, 5, "C", 0, -1);
+        draw_heading(203, 5, "C", 0, -1);
         break;
     }
 
