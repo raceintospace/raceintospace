@@ -76,9 +76,29 @@ void AltHistory(char plr);
 void EndPict(int x, int y, char poff, unsigned char coff);
 void LoserPict(char poff, unsigned char coff);
 
+/**
+ * Control loop for post-game celebration.
+ *
+ * Illustrates the endgame fireworks during the victory celebration.
+ *
+ * TODO: Should fireworks ever stop?
+ * TODO: Should fireworks linger longer?
+ * TODO: Allow for multiple fireworks at a time.
+ * TODO: Due to limitations of the angle calculations, all firework
+ *   particles are forced along one of six paths. This does not seem
+ *   like the original intent, and it makes fireworks approximate
+ *   rays.
+ * TODO: Putting the control loop _inside_ the animation code is
+ *   backwards. There should be animation code called by the control
+ *   loop to advance each frame.
+ * TODO: See note on helpText, keyHelpText below.
+ *
+ * \param win  Country index of the winning side (0 for USA, 1 for USSR).
+ * \return  Menu code for the player's choice in the control loop.
+ */
 char Burst(char win)
 {
-    float Spsn[2];
+    float Spsn[2];  // Starting position for the firework.
     char R_value = 0;
     struct PROJECTILE {
         char clr;
@@ -101,6 +121,7 @@ char Burst(char win)
                         0, 0, bgWidth - 1, bgHeight - 1);
 
     while (1) {
+        // Initialize a firework...
         Region = brandom(100);
 
         if (Region < 60) {
@@ -111,9 +132,12 @@ char Burst(char win)
             Spsn[1] = 11 + brandom(33);
         }
 
+        // TODO: Add a MININITSPEED.
         InitSpd = brandom(MAXINITSPEED);
 
         for (lp1 = 0; lp1 < NUM_LIGHTS; lp1++) {
+            // Because brandom returns an int, all firework particles
+            // follow one of 6 rays.
             Ang = brandom(2 * PI);
             Spd = brandom(InitSpd);
             Bomb[lp1].psn[0] = Spsn[0];
@@ -124,6 +148,7 @@ char Burst(char win)
             Bomb[lp1].per = brandom(FLY_TIME);
         }
 
+        // Now, explode the firework...
         for (lp1 = 0; lp1 < FLY_TIME; lp1++) {
             for (lp2 = 0; lp2 < NUM_LIGHTS; lp2++) {
                 xx = Bomb[lp2].psn[0];
@@ -135,56 +160,13 @@ char Burst(char win)
                         xx, yy, background.getPixel(xx, yy));
                 }
 
-                key = 0;
-
-                /* We can't wait 30 ms on default timer */
-                GetMouse();
-
-                if (key > 0 || mousebuttons > 0) {
-                    if ((x >= 14 && y >= 182 && x <= 65 && y <= 190
-                         && mousebuttons > 0) || key == 'H') {
-                        R_value = 1;
-                    }
-
-                    if ((x >= 74 && y >= 182 && x <= 125 && y <= 190
-                         && mousebuttons > 0) || key == 'S') {
-                        R_value = 2;
-                    }
-
-                    if ((x >= 134 && y >= 182 && x <= 185 && y <= 190
-                         && mousebuttons > 0) || key == 'P') {
-                        R_value = 3;
-                    }
-
-                    if ((x >= 194 && y >= 182 && x <= 245 && y <= 190
-                         && mousebuttons > 0) || key == 'M') {
-                        R_value = 4;
-                    }
-
-                    if ((x >= 254 && y >= 182 && x <= 305 && y <= 190
-                         && mousebuttons > 0) || key == K_ENTER) {
-                        R_value = 5;
-                    }
-
-                    if (R_value > 0) {
-
-                        background.copyTo(display::graphics.legacyScreen(),
-                                          0, 0);
-                        helpText = "i144";
-                        keyHelpText = "k044";
-
-                        return (R_value);
-                    }
-                }
-
+                // TODO: If lp1 >= Bomb.per, don't bother updating...
                 Bomb[lp2].vel[1] = Bomb[lp2].vel[1] + GRAVITY;
                 Bomb[lp2].vel[0] = Bomb[lp2].vel[0] * FRICTION;
                 Bomb[lp2].vel[1] = Bomb[lp2].vel[1] * FRICTION;
 
-                Bomb[lp2].psn[0] =
-                    Bomb[lp2].psn[0] + Bomb[lp2].vel[0];
-                Bomb[lp2].psn[1] =
-                    Bomb[lp2].psn[1] + Bomb[lp2].vel[1];
+                Bomb[lp2].psn[0] += Bomb[lp2].vel[0];
+                Bomb[lp2].psn[1] += Bomb[lp2].vel[1];
                 xx = Bomb[lp2].psn[0];
                 yy = Bomb[lp2].psn[1];
 
@@ -206,23 +188,71 @@ char Burst(char win)
                     }
                 }
 
-                if (lp1 < Bomb[lp2].per && (xx >= 0 && xx < 320 && yy >= 0
-                                            && yy <= 172)) {
-                    display::graphics.legacyScreen()->setPixel(xx, yy, clr);
+                if (lp1 < Bomb[lp2].per &&
+                    (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172)) {
+                    display::graphics.legacyScreen()->setPixel(
+                        xx, yy, clr);
+                }
+            }
+
+            /* We can't wait 30 ms on default timer */
+            key = 0;
+            GetMouse();
+
+            if (key > 0 || mousebuttons > 0) {
+                if ((x >= 14 && y >= 182 && x <= 65 && y <= 190
+                     && mousebuttons > 0) || key == 'H') {
+                    R_value = 1;
+                }
+
+                if ((x >= 74 && y >= 182 && x <= 125 && y <= 190
+                     && mousebuttons > 0) || key == 'S') {
+                    R_value = 2;
+                }
+
+                if ((x >= 134 && y >= 182 && x <= 185 && y <= 190
+                     && mousebuttons > 0) || key == 'P') {
+                    R_value = 3;
+                }
+
+                if ((x >= 194 && y >= 182 && x <= 245 && y <= 190
+                     && mousebuttons > 0) || key == 'M') {
+                    R_value = 4;
+                }
+
+                if ((x >= 254 && y >= 182 && x <= 305 && y <= 190
+                     && mousebuttons > 0) || key == K_ENTER) {
+                    R_value = 5;
+                }
+
+                if (R_value > 0) {
+
+                    background.copyTo(display::graphics.legacyScreen(),
+                                      0, 0);
+                    // TODO: helpText, keyHelpText are reset here as
+                    // though regaining control after a state change.
+                    // However, this function returns a value based on
+                    // menu selection without ever yielding control, so
+                    // helpText and keyHelpText will not have changed.
+                    helpText = "i144";
+                    keyHelpText = "k044";
+
+                    return (R_value);
                 }
             }
         }
 
+        // After Firework is done exploding, erase it...
         for (lp2 = 0; lp2 < NUM_LIGHTS; lp2++) {
             xx = Bomb[lp2].psn[0];
             yy = Bomb[lp2].psn[1];
 
             if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.legacyScreen()->setPixel(xx, yy, background.getPixel(xx, yy));
+                display::graphics.legacyScreen()->setPixel(
+                    xx, yy, background.getPixel(xx, yy));
             }
         }
-    }                              // end while
-
+    }  // end while
 }
 
 void EndGame(char win, char pad)
