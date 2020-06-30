@@ -32,6 +32,7 @@
 #include "aipur.h"
 #include "draw.h"
 #include "future.h"
+#include "fireworks.h"
 #include "game_main.h"
 #include "place.h"
 #include "replay.h"
@@ -44,12 +45,6 @@
 #include "endianness.h"
 #include "filesystem.h"
 
-#define NUM_LIGHTS 100
-#define FLY_TIME 20
-#define GRAVITY 0.6
-#define FRICTION 0.3
-#define PI 3.1415926
-#define MAXINITSPEED 270
 
 char month, firstOnMoon, capName[30];
 char PF[29][40] = {
@@ -81,175 +76,46 @@ void LoserPict(char poff, unsigned char coff);
  *
  * Illustrates the endgame fireworks during the victory celebration.
  *
- * TODO: Should fireworks ever stop?
- * TODO: Should fireworks linger longer?
- * TODO: Allow for multiple fireworks at a time.
- * TODO: Due to limitations of the angle calculations, all firework
- *   particles are forced along one of six paths. This does not seem
- *   like the original intent, and it makes fireworks approximate
- *   rays.
- * TODO: Putting the control loop _inside_ the animation code is
- *   backwards. There should be animation code called by the control
- *   loop to advance each frame.
- * TODO: See note on helpText, keyHelpText below.
- *
  * \param win  Country index of the winning side (0 for USA, 1 for USSR).
  * \return  Menu code for the player's choice in the control loop.
  */
 char Burst(char win)
 {
-    float Spsn[2];  // Starting position for the firework.
     char R_value = 0;
-    struct PROJECTILE {
-        char clr;
-        float vel[2];
-        float psn[2];
-        int16_t per;
-    } Bomb[NUM_LIGHTS];
-    int lp1, lp2, Region, xx, yy;
-    float Ang, Spd, InitSpd;
-    char clr = 1;
 
-    key = 0;
     helpText = "i144";
     keyHelpText = "k044";
 
-    unsigned int bgWidth = display::graphics.legacyScreen()->width();
-    unsigned int bgHeight = display::graphics.legacyScreen()->height();
-    display::LegacySurface background(bgWidth, bgHeight);
-    background.copyFrom(display::graphics.legacyScreen(),
-                        0, 0, bgWidth - 1, bgHeight - 1);
+    Fireworks animation((int)win);
 
     while (1) {
-        // Initialize a firework...
-        Region = brandom(100);
+        animation.step();
 
-        if (Region < 60) {
-            Spsn[0] = 132 + brandom(187);
-            Spsn[1] = 5 + brandom(39);
-        } else {
-            Spsn[0] = 178 + brandom(66);
-            Spsn[1] = 11 + brandom(33);
-        }
+        /* We can't wait 30 ms on default timer */
+        key = 0;
+        GetMouse();
 
-        // TODO: Add a MININITSPEED.
-        InitSpd = brandom(MAXINITSPEED);
-
-        for (lp1 = 0; lp1 < NUM_LIGHTS; lp1++) {
-            // Because brandom returns an int, all firework particles
-            // follow one of 6 rays.
-            Ang = brandom(2 * PI);
-            Spd = brandom(InitSpd);
-            Bomb[lp1].psn[0] = Spsn[0];
-            Bomb[lp1].psn[1] = Spsn[1];
-            Bomb[lp1].vel[0] = Spd * cos(Ang);
-            Bomb[lp1].vel[1] = Spd * sin(Ang);
-            Bomb[lp1].clr = clr;
-            Bomb[lp1].per = brandom(FLY_TIME);
-        }
-
-        // Now, explode the firework...
-        for (lp1 = 0; lp1 < FLY_TIME; lp1++) {
-            for (lp2 = 0; lp2 < NUM_LIGHTS; lp2++) {
-                xx = Bomb[lp2].psn[0];
-                yy = Bomb[lp2].psn[1];
-
-                /* This is overkill for pixels, but let's see... */
-                if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                    display::graphics.legacyScreen()->setPixel(
-                        xx, yy, background.getPixel(xx, yy));
-                }
-
-                // TODO: If lp1 >= Bomb.per, don't bother updating...
-                Bomb[lp2].vel[1] = Bomb[lp2].vel[1] + GRAVITY;
-                Bomb[lp2].vel[0] = Bomb[lp2].vel[0] * FRICTION;
-                Bomb[lp2].vel[1] = Bomb[lp2].vel[1] * FRICTION;
-
-                Bomb[lp2].psn[0] += Bomb[lp2].vel[0];
-                Bomb[lp2].psn[1] += Bomb[lp2].vel[1];
-                xx = Bomb[lp2].psn[0];
-                yy = Bomb[lp2].psn[1];
-
-                if (win == 0) {
-                    if (clr == 1) {
-                        clr = 6;
-                    } else if (clr == 6) {
-                        clr = 9;
-                    } else if (clr == 9) {
-                        clr = 1;
-                    }
-                } else {
-                    if (clr == 1) {
-                        clr = 9;
-                    } else if (clr == 9) {
-                        clr = 11;
-                    } else if (clr == 11) {
-                        clr = 9;
-                    }
-                }
-
-                if (lp1 < Bomb[lp2].per &&
-                    (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172)) {
-                    display::graphics.legacyScreen()->setPixel(
-                        xx, yy, clr);
-                }
+        if (key > 0 || mousebuttons > 0) {
+            if ((x >= 14 && y >= 182 && x <= 65 && y <= 190
+                 && mousebuttons > 0) || key == 'H') {
+                R_value = 1;
+            } else if ((x >= 74 && y >= 182 && x <= 125 && y <= 190
+                        && mousebuttons > 0) || key == 'S') {
+                R_value = 2;
+            } else if ((x >= 134 && y >= 182 && x <= 185 && y <= 190
+                        && mousebuttons > 0) || key == 'P') {
+                R_value = 3;
+            } else if ((x >= 194 && y >= 182 && x <= 245 && y <= 190
+                        && mousebuttons > 0) || key == 'M') {
+                R_value = 4;
+            } else if ((x >= 254 && y >= 182 && x <= 305 && y <= 190
+                        && mousebuttons > 0) || key == K_ENTER) {
+                R_value = 5;
             }
 
-            /* We can't wait 30 ms on default timer */
-            key = 0;
-            GetMouse();
-
-            if (key > 0 || mousebuttons > 0) {
-                if ((x >= 14 && y >= 182 && x <= 65 && y <= 190
-                     && mousebuttons > 0) || key == 'H') {
-                    R_value = 1;
-                }
-
-                if ((x >= 74 && y >= 182 && x <= 125 && y <= 190
-                     && mousebuttons > 0) || key == 'S') {
-                    R_value = 2;
-                }
-
-                if ((x >= 134 && y >= 182 && x <= 185 && y <= 190
-                     && mousebuttons > 0) || key == 'P') {
-                    R_value = 3;
-                }
-
-                if ((x >= 194 && y >= 182 && x <= 245 && y <= 190
-                     && mousebuttons > 0) || key == 'M') {
-                    R_value = 4;
-                }
-
-                if ((x >= 254 && y >= 182 && x <= 305 && y <= 190
-                     && mousebuttons > 0) || key == K_ENTER) {
-                    R_value = 5;
-                }
-
-                if (R_value > 0) {
-
-                    background.copyTo(display::graphics.legacyScreen(),
-                                      0, 0);
-                    // TODO: helpText, keyHelpText are reset here as
-                    // though regaining control after a state change.
-                    // However, this function returns a value based on
-                    // menu selection without ever yielding control, so
-                    // helpText and keyHelpText will not have changed.
-                    helpText = "i144";
-                    keyHelpText = "k044";
-
-                    return (R_value);
-                }
-            }
-        }
-
-        // After Firework is done exploding, erase it...
-        for (lp2 = 0; lp2 < NUM_LIGHTS; lp2++) {
-            xx = Bomb[lp2].psn[0];
-            yy = Bomb[lp2].psn[1];
-
-            if (xx >= 0 && xx < 320 && yy >= 0 && yy <= 172) {
-                display::graphics.legacyScreen()->setPixel(
-                    xx, yy, background.getPixel(xx, yy));
+            if (R_value > 0) {
+                animation.clear();
+                return (R_value);
             }
         }
     }  // end while
