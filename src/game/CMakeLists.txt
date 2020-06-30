@@ -33,6 +33,7 @@ set(game_sources
   endianness.cpp
   file.cpp
   filesystem.cpp
+  fireworks.cpp
   fortify_workaround.cpp
   fs.cpp
   futbub.cpp
