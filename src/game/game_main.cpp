@@ -97,7 +97,6 @@ char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;
 char Option = -1;
-int SEG = 15;
 int fOFF = -1;
 struct cdtable *cdt;
 bool fullscreenMissionPlayback;    /**< true for fullscreen mission playback, false otherwise */

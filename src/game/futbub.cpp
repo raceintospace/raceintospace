@@ -23,20 +23,334 @@
  * It also draws the splines.
  */
 
+#include "futbub.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 
-#include "futbub.h"
 #include "Buzz_inc.h"
-#include "future.h"
+#include "draw.h"
 #include "game_main.h"
 #include "gr.h"
+#include "logging.h"
+#include "mc.h"
+#include "mc2.h"
+
+
+LOG_DEFAULT_CATEGORY(future)
+
+
+static const int MAXBUB = 30;
+
+namespace
+{
+// Stepbub, missStep, and B_Mis are used in drawing mission flight
+// paths.
+struct StepInfo {
+    int16_t x_cor;
+    int16_t y_cor;
+} StepBub[MAXBUB];
+
 
 int Bub_Num;
-int Bub_Count;
+int bubCount;
+// SEG determines the number of control points used in creating
+// the B-splines for drawing the mission flight path.
+// The more control points, the smoother the path should
+// appear.
+int SEG = 15;
+char missStep[1024];
 
 
+static inline char B_Mis(char x)
+{
+    return missStep[x] - 0x30;
+};
+void Bd(int x, int y);
 void drawBspline(int segments, char color, ...);
+void Draw_IJ(char w);
+void Draw_IJV(char w);
+void Draw_LowS(char a, char b, char c, char x, char y, char z);
+void DrawLunPas(char x, char y, char z, char w);
+void DrawLefMoon(char x, char y);
+void DrawSTUV(char x, char y, char z, char w);
+void Draw_HighS(char x, char y, char z);
+void DrawMoon(char x, char y, char z, char w, char j, char k, char l);
+void Draw_PQR(void);
+void Draw_PST(void);
+void Draw_GH(char a, char b);
+void DrawZ(void);
+void Fly_By(void);
+void LefEarth(char a, char b);
+void LefGap(char x);
+void LefOrb(char a, char b, char c, char d);
+void OrbIn(char a, char b, char c);
+void OrbMid(char a, char b, char c, char d);
+void OrbOut(char a, char b, char c);
+void Q_Patch(void);
+void RghtMoon(char x, char y);
+void S_Patch(char x);
+void VenMarMerc(char x);
+};  // End of local namespace
+
+
+
+/**
+ * TODO: Documentation.
+ *
+ * TODO: This name is surprisingly uninformative for being so long.
+ */
+void DecreasePathResolution()
+{
+    if (SEG > 1) {
+        SEG--;
+    }
+}
+
+
+/**
+ * TODO: Documentation
+ *
+ * \return  the index of the bubble, or -1 if none selected.
+ */
+char GetBubbleAt(int x, int y)
+{
+    for (int8_t i = 0; i < bubCount; i++) {
+        if (x >= StepBub[i].x_cor && x <= StepBub[i].x_cor + 7 &&
+            y >= StepBub[i].y_cor && y <= StepBub[i].y_cor + 7) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+/**
+ * TODO: Documentation.
+ *
+ * TODO: This name is surprisingly uninformative for being so long.
+ */
+void IncreasePathResolution()
+{
+    if (SEG < 500) {
+        SEG++;
+    }
+}
+
+
+/* Illustrates the mission path on the starfield and loads mission
+ * step information.
+ *
+ * This populates the global variable Mev and the file variable
+ * missStep with data about the specified mission.
+ *
+ * Flight path information is stored in the file missStep.dat.
+ * missStep.dat is plain text, with:
+ *  -  Mission Number (2 first bytes of each line)
+ *  -  A Coded letter, each drawing a different line
+ *  -  Numbers following each letter, which are the parameters
+ *     of the function
+ *  -  Each line must finish with a Z, so the game stops reading
+ * Any other char is ignored, but it's easier for a human to read that
+ * way.
+ *
+ * This modifies the global variables Mis and Mev via MissionCodes().
+ *
+ * TODO: This should try to redraw the starfield.
+ *
+ * \param plr  See MissionCodes().
+ * \param val  The mission code.
+ * \param pad  the pad (0, 1, or 2) where the mission is being launched.
+ */
+void MissionPath(char plr, int val, int pad)
+{
+    TRACE3("->MissionPath(plr, val %d, pad %d)", val, pad);
+
+    // Clear existing global / file global mission step information.
+    // These are cleared by DrawMission, but no point taking chances.
+    bubCount = 0;  // set the initial bub_count
+    memset(Mev, 0x00, sizeof Mev);
+
+    // Read mission step data
+    FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
+
+    if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
+        memset(missStep, 0, sizeof missStep);
+    }
+
+    while (!feof(MSteps) && ((missStep[0] - 0x30) * 10 + (missStep[1] - 0x30)) != val) {
+        if (fgets(missStep, 1024, MSteps) == NULL) {
+            break;
+        }
+    }
+
+    fclose(MSteps);
+
+    for (int n = 2; missStep[n] != 'Z'; n++) {
+        switch (missStep[n]) {
+        case 'A':
+            Draw_IJ(B_Mis(++n));
+            break;
+
+        case 'B':
+            Draw_IJV(B_Mis(++n));
+            break;
+
+        case 'C':
+            OrbOut(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
+            n += 3;
+            break;
+
+        case 'D':
+            LefEarth(B_Mis(n + 1), B_Mis(n + 2));
+            n += 2;
+            break;
+
+        case 'E':
+            OrbIn(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
+            n += 3;
+            break;
+
+        case 'F':
+            OrbMid(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
+            n += 4;
+            break;
+
+        case 'G':
+            LefOrb(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
+            n += 4;
+            break;
+
+        case 'H':
+            Draw_LowS(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4), B_Mis(n + 5), B_Mis(n + 6));
+            n += 6;
+            break;
+
+        case 'I':
+            Fly_By();
+            break;
+
+        case 'J':
+            VenMarMerc(B_Mis(++n));
+            break;
+
+        case 'K':
+            Draw_PQR();
+            break;
+
+        case 'L':
+            Draw_PST();
+            break;
+
+        case 'M':
+            Draw_GH(B_Mis(n + 1), B_Mis(n + 2));
+            n += 2;
+            break;
+
+        case 'N':
+            Q_Patch();
+            break;
+
+        case 'O':
+            RghtMoon(B_Mis(n + 1), B_Mis(n + 2));
+            n += 2;
+            break;
+
+        case 'P':
+            DrawLunPas(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
+            n += 4;
+            break;
+
+        case 'Q':
+            DrawLefMoon(B_Mis(n + 1), B_Mis(n + 2));
+            n += 2;
+            break;
+
+        case 'R':
+            DrawSTUV(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
+            n += 4;
+            break;
+
+        case 'S':
+            Draw_HighS(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
+            n += 3;
+            break;
+
+        case 'T':
+            DrawMoon(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4), B_Mis(n + 5), B_Mis(n + 6), B_Mis(n + 7));
+            n += 7;
+            break;
+
+        case 'U':
+            LefGap(B_Mis(++n));
+            break;
+
+        case 'V':
+            S_Patch(B_Mis(++n));
+            break;
+
+        case 'W':
+            DrawZ();
+            break;
+
+        default :
+            break;
+        }
+    }
+
+    gr_sync();
+
+    MissionCodes(plr, val, pad);
+
+    TRACE1("<-MissionPath()");
+}
+
+
+/**
+ * Check how many steps of the mission flight path have been drawn.
+ */
+int MissionStepsDrawn()
+{
+    return bubCount;
+}
+
+
+//----------------------------------------------------------------------
+// Local code
+//----------------------------------------------------------------------
+
+// Anonymous namespace
+namespace
+{
+
+/**
+ * Draws a flight path bubble on the screen.
+ *
+ * This stores the bubble coordinates in StepBub and increments the
+ * Bub_count.
+ *
+ * \param x x-coord of the upper left corner of the bubble
+ * \param y y-coord of the upper left corner of the bubble
+ */
+void Bd(int x, int y)
+{
+    int x1, y1, x2, y2;
+    x1 = x - 2;
+    y1 = y;
+    x2 = x - 1;
+    y2 = y - 1;
+    fill_rectangle(x1, y1, x1 + 8, y1 + 4, 21);
+    fill_rectangle(x2, y2, x2 + 6, y2 + 6, 21);
+    display::graphics.setForegroundColor(1);
+    grMoveTo(x, y + 4);
+    /** \note references bubCount to determine the number of the character to draw in the bubble */
+    draw_character(65 + bubCount);
+    StepBub[bubCount].x_cor = x1;
+    StepBub[bubCount].y_cor = y1;
+    ++bubCount;
+    return;
+}
 
 
 void drawBspline(int segments, char color, ...)
@@ -649,4 +963,4 @@ void S_Patch(char x)
     return;
 }
 
-
+};  // End of Anonymous namespace

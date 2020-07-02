@@ -50,8 +50,6 @@
 LOG_DEFAULT_CATEGORY(future)
 
 
-extern int SEG;
-
 namespace
 {
 /**
@@ -76,19 +74,6 @@ enum FMFields {
 };
 
 // TODO: Localize these. Too many global/file global variables.
-
-// Stepbub, missStep, and B_Mis are used in drawing mission flight
-// paths.
-struct StepInfo {
-    int16_t x_cor;
-    int16_t y_cor;
-} StepBub[MAXBUB];
-
-char missStep[1024];
-static inline char B_Mis(char x)
-{
-    return missStep[x] - 0x30;
-}
 
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
@@ -906,31 +891,26 @@ void Future(char plr)
             prev_setting = setting;
             setting = -1;
 
-            // SEG determines the number of control points used in creating
-            // the B-splines for drawing the mission flight path.
-            // The more control points, the smoother the path should
-            // appear.
-            if (key == '-' && SEG > 1) {
-                SEG--;
-            } else if (key == '+' && SEG < 500) {
-                SEG++;
-            } else if (key >= 65 && key < Bub_Count + 65) {
+            if (key == '-') {
+                DecreasePathResolution();
+            } else if (key == '+') {
+                IncreasePathResolution();
+            } else if (key >= 65 && key < MissionStepsDrawn() + 65) {
                 setting = key - 65;
             }
 
             // If the mouse is over one of the Mission Step bubbles,
             // display the step information.
-            for (int i = 0; i < Bub_Count; i++) {
-                if (x >= StepBub[i].x_cor && x <= StepBub[i].x_cor + 7 &&
-                    y >= StepBub[i].y_cor && y <= StepBub[i].y_cor + 7) {
-                    setting = i;
-                    break;
-                }
+            char selectedBubble = GetBubbleAt(x, y);
+
+            if (selectedBubble >= 0) {
+                setting = selectedBubble;
             }
 
             if (setting >= 0) {
                 if (prev_setting < 0) {
-                    local.copyFrom(display::graphics.legacyScreen(), 18, 186, 183, 194);
+                    local.copyFrom(display::graphics.legacyScreen(),
+                                   18, 186, 183, 194);
                 }
 
                 if (prev_setting != setting) {
@@ -1246,34 +1226,6 @@ void Future(char plr)
 }
 
 
-/** Draws a flight path bubble on the screen.
- *
- * This stores the bubble coordinates in StepBub and increments the
- * Bub_count.
- *
- * \param x x-coord of the upper left corner of the bubble
- * \param y y-coord of the upper left corner of the bubble
- */
-void Bd(int x, int y)
-{
-    int x1, y1, x2, y2;
-    x1 = x - 2;
-    y1 = y;
-    x2 = x - 1;
-    y2 = y - 1;
-    fill_rectangle(x1, y1, x1 + 8, y1 + 4, 21);
-    fill_rectangle(x2, y2, x2 + 6, y2 + 6, 21);
-    display::graphics.setForegroundColor(1);
-    grMoveTo(x, y + 4);
-    /** \note references Bub_Count to determine the number of the character to draw in the bubble */
-    draw_character(65 + Bub_Count);
-    StepBub[Bub_Count].x_cor = x1;
-    StepBub[Bub_Count].y_cor = y1;
-    ++Bub_Count;
-    return;
-}
-
-
 /** Update the selected mission view with the given duration.
  *
  * \param duration  0 for unmanned, 1-6 for duration A through F
@@ -1379,12 +1331,11 @@ void MissionName(int val, int xx, int yy, int len)
  * mission selection, including
  *  - Display mission name, type, and duration.
  *  - Set unlocked navigation toggles to match the mission parameters.
- *  - Reset the flight path (clear starfield, Mev, and Bub_Count).
+ *  - Reset the flight path (clear starfield).
  * It should be called whenever the mission selection changes.
  *
  * This modifies the global value Mis. Specifically, it calls
- * MissionName() and MissionCodes(), which modify Mis.
- * This modifies the global value Mev, via MissionPath().
+ * MissionName(), which modifies Mis.
  *
  * \param plr Player
  * \param X screen coord for mission name string
@@ -1402,8 +1353,6 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     // newly displayed mission. This ensures the navigation display
     // handles the dual task
     PianoKey(val, nav);   // Should this be moved outside DrawMission?
-    Bub_Count = 0;   // set the initial bub_count
-    memset(Mev, 0x00, sizeof Mev);
 
     ClearDisplay();                     // Redraw solar system display
     fill_rectangle(6, 31, 199, 46, 3);  // Clear mission name
@@ -1438,172 +1387,6 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     gr_sync();
     TRACE1("<-DrawMission()");
 }  // end function DrawMission
-
-
-/* Illustrates the mission path on the starfield and loads mission
- * step information.
- *
- * This populates the global variable Mev and the file variable
- * missStep with
- *
- * Flight path information is stored in the file missStep.dat.
- * missStep.dat is plain text, with:
- *  -  Mission Number (2 first bytes of each line)
- *  -  A Coded letter, each drawing a different line
- *  -  Numbers following each letter, which are the parameters
- *     of the function
- *  -  Each line must finish with a Z, so the game stops reading
- * Any other char is ignored, but it's easier for a human to read that
- * way.
- *
- * This modifies the global variables Mis and Mev via MissionCodes().
- *
- * \param plr
- * \param val  The mission code.
- * \param pad  the pad (0, 1, or 2) where the mission is being launched.
- */
-void MissionPath(char plr, int val, int pad)
-{
-    TRACE3("->MissionPath(plr, val %d, pad %d)", val, pad);
-
-    // Clear existing global / file global mission step information.
-    // These are cleared by DrawMission, but no point taking chances.
-    Bub_Count = 0;  // set the initial bub_count
-    memset(Mev, 0x00, sizeof Mev);
-
-    // Read mission step data
-    FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
-
-    if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
-        memset(missStep, 0, sizeof missStep);
-    }
-
-    while (!feof(MSteps) && ((missStep[0] - 0x30) * 10 + (missStep[1] - 0x30)) != val) {
-        if (fgets(missStep, 1024, MSteps) == NULL) {
-            break;
-        }
-    }
-
-    fclose(MSteps);
-
-    for (int n = 2; missStep[n] != 'Z'; n++) {
-        switch (missStep[n]) {
-        case 'A':
-            Draw_IJ(B_Mis(++n));
-            break;
-
-        case 'B':
-            Draw_IJV(B_Mis(++n));
-            break;
-
-        case 'C':
-            OrbOut(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
-            n += 3;
-            break;
-
-        case 'D':
-            LefEarth(B_Mis(n + 1), B_Mis(n + 2));
-            n += 2;
-            break;
-
-        case 'E':
-            OrbIn(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
-            n += 3;
-            break;
-
-        case 'F':
-            OrbMid(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
-            n += 4;
-            break;
-
-        case 'G':
-            LefOrb(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
-            n += 4;
-            break;
-
-        case 'H':
-            Draw_LowS(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4), B_Mis(n + 5), B_Mis(n + 6));
-            n += 6;
-            break;
-
-        case 'I':
-            Fly_By();
-            break;
-
-        case 'J':
-            VenMarMerc(B_Mis(++n));
-            break;
-
-        case 'K':
-            Draw_PQR();
-            break;
-
-        case 'L':
-            Draw_PST();
-            break;
-
-        case 'M':
-            Draw_GH(B_Mis(n + 1), B_Mis(n + 2));
-            n += 2;
-            break;
-
-        case 'N':
-            Q_Patch();
-            break;
-
-        case 'O':
-            RghtMoon(B_Mis(n + 1), B_Mis(n + 2));
-            n += 2;
-            break;
-
-        case 'P':
-            DrawLunPas(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
-            n += 4;
-            break;
-
-        case 'Q':
-            DrawLefMoon(B_Mis(n + 1), B_Mis(n + 2));
-            n += 2;
-            break;
-
-        case 'R':
-            DrawSTUV(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4));
-            n += 4;
-            break;
-
-        case 'S':
-            Draw_HighS(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3));
-            n += 3;
-            break;
-
-        case 'T':
-            DrawMoon(B_Mis(n + 1), B_Mis(n + 2), B_Mis(n + 3), B_Mis(n + 4), B_Mis(n + 5), B_Mis(n + 6), B_Mis(n + 7));
-            n += 7;
-            break;
-
-        case 'U':
-            LefGap(B_Mis(++n));
-            break;
-
-        case 'V':
-            S_Patch(B_Mis(++n));
-            break;
-
-        case 'W':
-            DrawZ();
-            break;
-
-        default :
-            break;
-        }
-    }
-
-    gr_sync();
-
-    MissionCodes(plr, val, pad);
-
-    TRACE1("<-MissionPath()");
-}
 
 
 /**
