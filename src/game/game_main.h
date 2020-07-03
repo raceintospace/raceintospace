@@ -24,7 +24,6 @@ extern int fOFF;
 extern char AI[2];
 extern char manOnMoon;
 extern char dayOnMoon;
-extern int SEG;
 extern display::LegacySurface *vhptr;
 extern bool fullscreenMissionPlayback;
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];

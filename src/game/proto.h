@@ -21,7 +21,6 @@
 // ***************************
 
 #define BUFFER_SIZE 20*1024   /**< Allocated Buffer in Beginning */
-#define MAXBUB 30             /**< Maximum Bubbles */
 #define pline(a,b,c,d)        {grMoveTo(a,b) ; grLineTo(c,d);}
 #define other(a)          abs( (a)-1 )
 #define minn(a,b)         (((a) < (b)) ? (a) : (b))
