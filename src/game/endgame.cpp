@@ -46,7 +46,6 @@
 #include "filesystem.h"
 
 
-char month, firstOnMoon, capName[30];
 char PF[29][40] = {
     "ORBITAL SATELLITE", "LUNAR FLYBY", "MERCURY FLYBY", "VENUS FLYBY",
     "MARS FLYBY", "JUPITER FLYBY", "SATURN FLYBY", "LUNAR PROBE LANDING",
@@ -125,7 +124,7 @@ void EndGame(char win, char pad)
 {
     int i = 0, r, gork;
     char miss, prog, man1, man2, man3, man4, bud;
-
+    char month, firstOnMoon, capName[30];
 
     FadeOut(2, 10, 0, 0);
     helpText = "i000";
@@ -173,9 +172,9 @@ void EndGame(char win, char pad)
 
     if (Option == -1 && MAIL == -1) {
         strcpy(capName , Data->P[win].Mission[pad].Name);
-        month   = Data->P[win].Mission[pad].Month;
+        month = Data->P[win].Mission[pad].Month;
     } else {
-        month   = Data->Prestige[Prestige_MannedLunarLanding].Month;
+        month = Data->Prestige[Prestige_MannedLunarLanding].Month;
 
         if (MAIL != -1 || Option == win) {
             strcpy(capName , Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].MissionName[0]);
