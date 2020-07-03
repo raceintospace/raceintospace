@@ -19,7 +19,6 @@ extern char EVA[2];
 extern char STEP;
 extern char FINAL;
 extern char JOINT;
-extern char pal2[768];
 extern char PastBANG;
 extern char DMFake;
 extern char fEarly;

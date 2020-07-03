@@ -235,8 +235,6 @@ ShowHard(char plr)
 void
 HDispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t)
 {
-    // assumes cia.but is loaded in vhptr
-    // seems identical to DispIt()
     int w;
     int h;
 

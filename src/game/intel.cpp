@@ -1746,8 +1746,6 @@ void IStat(char plr)
 /**
  * Copies an image segment from the CIA sprite to the display buffer.
  *
- * Identical to HDispIt() in hardef.cpp.
- *
  * \param dctx  buffer with the CIA hardware sprite
  * \param x1    top-left x coordinate of the image in the sprite
  * \param y1    top-left y coordinate of the image in the sprite
@@ -1789,8 +1787,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
         draw_string(17, 89, "%");
         draw_number(5, 123, 25);
         draw_string(17, 123, "%");
-        //gxDisplayVirtual(4,23,315,159,0,&vhptr,4,23);
-    } //else gxVirtualDisplay(&vhptr,4,23,4,23,315,159,0);
+    }
 
     display::graphics.setForegroundColor(1);
 

@@ -1383,7 +1383,6 @@ FILE *OpenAnim(char *fname)
     cFrame = 0;
 
     display::graphics.legacyScreen()->palette().copy_from(dply->palette());
-    vhptr->palette().copy_from(dply->palette());
     DEBUG1("<-OpenAnim");
     return fin;
 }

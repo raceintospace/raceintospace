@@ -28,7 +28,7 @@
 #include "mis_c.h"
 #include "mis_m.h"
 
-char tYr, tMo, tIDX, bIDX;
+char tYr, tMo;
 
 void Set_Dock(char plr, char total);
 void Set_LM(char plr, char total);
@@ -740,7 +740,6 @@ int AllotPrest(char plr, char mis)
     hero = 0;
     tMo = Data->P[plr].Mission[mis].Month;
     tYr = Data->Year;
-    tIDX = bIDX = 0;
     memset(PVal, 0x00, sizeof PVal);
 
     // SETUP INFO
@@ -1057,7 +1056,6 @@ int U_AllotPrest(char plr, char mis)
     total = 0, negs = 0, lun = 0;
     tMo = Data->P[plr].Mission[mis].Month;
     tYr = Data->Year;
-    tIDX = bIDX = 0;
 
     // SETUP INFO
     mcode = Data->P[plr].Mission[mis].MissionCode;

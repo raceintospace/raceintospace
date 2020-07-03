@@ -48,11 +48,7 @@ char *letter_dat;
 void OpenEmUp(void)
 {
     randomize();
-
     seq_init();
-
-    vhptr = new display::LegacySurface(320, 200);
-
     letter_dat = slurp_gamedat("letter.dat");
 }
 
