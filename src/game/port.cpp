@@ -163,6 +163,13 @@ struct sPATH sPath, sPathOld;
 struct sIMG sImg, sImgOld;
 uint32_t pTable, pLoc;
 
+// Unnamed namespace for local globals & function prototypes.
+// TODO: Move other file variables here.
+namespace
+{
+boost::shared_ptr<display::LegacySurface> portViewBuffer;
+};
+
 
 /**
  * Seeks the point in the spot file where
@@ -314,7 +321,9 @@ void SpotCrap(char loc, char mode)
         Swap16bit(sCount);
         pLoc = ftell(sFin);
         sPath.iHold = 1;
-        vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+        portViewBuffer->copyFrom(display::graphics.legacyScreen(), 0, 0,
+                                 display::graphics.screen()->width() - 1,
+                                 display::graphics.screen()->height() - 1);
         sPathOld.xPut = -1;
         SpotCrap(0, SPOT_STEP);
         // All opened up
@@ -356,8 +365,13 @@ void SpotCrap(char loc, char mode)
 
         SP3 = new display::LegacySurface(sImg.w, sImg.h);
 
-        vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
-        SP3->copyFrom(vhptr, MIN(sPath.xPut, 319), MIN(sPath.yPut, 199), MIN(sPath.xPut + sImg.w - 1, 319), MIN(sPath.yPut + sImg.h - 1, 199), 0, 0);
+        portViewBuffer->palette().copy_from(
+            display::graphics.legacyScreen()->palette());
+        SP3->copyFrom(portViewBuffer.get(),
+                      MIN(sPath.xPut, 319), MIN(sPath.yPut, 199),
+                      MIN(sPath.xPut + sImg.w - 1, 319),
+                      MIN(sPath.yPut + sImg.h - 1, 199),
+                      0, 0);
 
         if (sPath.Scale != 1.0) {
             xx = hSPOT.size;
@@ -369,10 +383,15 @@ void SpotCrap(char loc, char mode)
             }
 
             if (sPathOld.xPut != -1) {
-                vhptr->copyTo(display::graphics.legacyScreen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, sPathOld.xPut + sImgOld.w - 1, sPathOld.yPut + sImgOld.h - 1);
+                portViewBuffer->copyTo(display::graphics.legacyScreen(),
+                                       sPathOld.xPut, sPathOld.yPut,
+                                       sPathOld.xPut, sPathOld.yPut,
+                                       sPathOld.xPut + sImgOld.w - 1,
+                                       sPathOld.yPut + sImgOld.h - 1);
             }
 
-            SP2->copyTo(display::graphics.legacyScreen(), sPath.xPut, sPath.yPut);
+            SP2->copyTo(display::graphics.legacyScreen(),
+                        sPath.xPut, sPath.yPut);
         } else {
             xx = hSPOT.size;
 
@@ -383,10 +402,16 @@ void SpotCrap(char loc, char mode)
             }
 
             if (sPathOld.xPut != -1) {
-                vhptr->copyTo(display::graphics.legacyScreen(), sPathOld.xPut, sPathOld.yPut, sPathOld.xPut, sPathOld.yPut, MIN(sPathOld.xPut + sImgOld.w - 1, 319), MIN(sPathOld.yPut + sImgOld.h - 1, 199));
+                portViewBuffer->copyTo(
+                    display::graphics.legacyScreen(),
+                    sPathOld.xPut, sPathOld.yPut,
+                    sPathOld.xPut, sPathOld.yPut,
+                    MIN(sPathOld.xPut + sImgOld.w - 1, 319),
+                    MIN(sPathOld.yPut + sImgOld.h - 1, 199));
             }
 
-            SP1->copyTo(display::graphics.legacyScreen(), MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
+            SP1->copyTo(display::graphics.legacyScreen(),
+                        MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
         }
 
         sPathOld = sPath;
@@ -555,7 +580,8 @@ void PortPlace(FILE *fin, int32_t table)
 
     display::LegacySurface local(Img.Width, Img.Height);
 
-    // read the image into local, using vhptr as a temporary store
+    // read the compressed image data into a buffer, decompress, and
+    // write the pixel data into an appropriately sized image.
     char *buf = (char *)alloca(Img.Size);
     fread(buf, Img.Size, 1, fin);
     RLED_img(buf, local.pixels(), Img.Size, local.width(), local.height());
@@ -843,8 +869,14 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, 10, 0, 0);
 
-    vhptr->palette().copy_from(display::graphics.legacyScreen()->palette());
-    vhptr->draw(*display::graphics.screen(), 0, 0);
+    int height = display::graphics.legacyScreen()->height();
+    int width = display::graphics.legacyScreen()->width();
+
+    portViewBuffer = boost::shared_ptr<display::LegacySurface>(
+                         new display::LegacySurface(width, height));
+    portViewBuffer->palette().copy_from(
+        display::graphics.legacyScreen()->palette());
+    portViewBuffer->draw(*display::graphics.screen(), 0, 0);
 
 #if SPOT_ON
 
@@ -892,8 +924,18 @@ void Master(char plr)
         fclose(sFin);
         sFin = NULL;
     }
+
+    portViewBuffer.reset();
 }
 
+
+/**
+ * Get the mouse or keyboard input.
+ *
+ * A non-blocking check of mouse/keyboard input based on GetMouse_fast
+ * which updates flagpole, USA water, and spot animations for the Port
+ * screen.
+ */
 void GetMse(char plr, char fon)
 {
     static double last_wave_step;
@@ -1398,8 +1440,12 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                vhptr->resetPalette();
-                                vhptr->copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
+                                portViewBuffer->resetPalette();
+                                portViewBuffer->copyFrom(
+                                    display::graphics.legacyScreen(),
+                                    0, 0,
+                                    display::graphics.screen()->width() - 1,
+                                    display::graphics.screen()->height() - 1);
                                 gork = brandom(100);
 
                                 if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
@@ -1918,6 +1964,19 @@ char Request(char plr, char *s, char md)
     return i;
 }
 
+
+/**
+ * Confirm all scheduled missions are a go.
+ *
+ * Launches a pop-up to review the missions scheduled for launch this
+ * turn. A more advaned version of the existing setup, providing a
+ * summary of the missions and access to Mission Control.
+ *
+ * TODO: This is an unfinished function that is never called.
+ *
+ * \param plr
+ * \return  0 or 1 (Unsure which is proceed and which not, b/c unfinished).
+ */
 char MisReq(char plr)
 {
     int i, num = 0;

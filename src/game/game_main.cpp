@@ -89,7 +89,6 @@ std::string helpText;
 std::string keyHelpText;
 char IDLE[2];
 char *buffer;
-display::LegacySurface *vhptr;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char MAIL = -1;

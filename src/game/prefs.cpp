@@ -191,7 +191,7 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
  * Random Model is only available if options.feat_random_eq is enabled.
  * See the manual for more information.
  *
- * Modifies the main screen palette & vhptr palette.
+ * Modifies the main screen palette.
  *
  * \param mode  The current model/roster setup (0-5).
  * \param tx    This option is unused, so who knows?

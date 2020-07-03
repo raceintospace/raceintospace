@@ -1126,7 +1126,6 @@ char HPurc(char player_index)
         } else if ((x > 266 && y > 164 && x < 314 && y < 174 && mousebuttons > 0) || key == 'Z') {
             InBox(266, 164, 314, 174);
             WaitForMouseUp();
-            //    memcpy(Data,vhptr->pixels(),sizeof(struct Players));
             undo = sOpen("UNDO.TMP", "rb", 1);
             fread(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
