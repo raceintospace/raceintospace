@@ -143,14 +143,11 @@ void Load_RD_BUT(char player_index)
 
     snprintf(filename, sizeof(filename), "images/rd_men.%d.png", player_index);
     rd_men = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
-
-    BUTLOAD = 1;
 }
 
 void Del_RD_BUT()
 {
     rd_men.reset();
-    BUTLOAD = 0;
 }
 
 void DrawRD(char player_index)

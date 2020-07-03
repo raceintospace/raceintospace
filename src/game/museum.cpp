@@ -83,8 +83,6 @@ char tame[29][40] = {
 };
 #endif
 
-int16_t TPoints[2];
-
 
 void Move2(char plr, char *pos, char *pos2, char val);
 void BackOne(char plr, char *pos, char *pos2);
@@ -250,14 +248,6 @@ void Museum(char plr)
 void ShowPrest(char plr)
 {
     char pos = -1, pos2 = -1;
-    int i, j;
-
-    for (j = 0; j < 2; j++) {
-        for (i = 0; i < 28; i++) {
-            TPoints[j] += (int) Data->Prestige[i].Points[j];
-        }
-    }
-
 
     FadeOut(2, 5, 0, 0);
     PortPal(plr);

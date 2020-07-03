@@ -82,14 +82,11 @@ unsigned char LOAD;
 unsigned char QUIT;
 unsigned char HARD1;
 unsigned char UNIT1;
-unsigned char BUTLOAD;
 unsigned char FADE;
 unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
 std::string keyHelpText;
-//char keyHelpText[5];
-char df;
 char IDLE[2];
 char *buffer;
 display::LegacySurface *vhptr;
@@ -98,12 +95,13 @@ int32_t xMODE;
 char MAIL = -1;
 char Option = -1;
 int fOFF = -1;
-struct cdtable *cdt;
-bool fullscreenMissionPlayback;    /**< true for fullscreen mission playback, false otherwise */
+// true for fullscreen mission playback, false otherwise
+bool fullscreenMissionPlayback;
 char manOnMoon = 0;
 char dayOnMoon = 20;
 char AI[2] = {0, 0};
-INTERIMDATA interimData; // Used to hold mid-turn save game related information
+// Used to hold mid-turn save game related information
+INTERIMDATA interimData;
 
 char *S_Name[] = {
     "LAUNCH",
@@ -263,13 +261,12 @@ int game_main_impl(int argc, char *argv[])
         key = 0;
         helpText = "i000";
         keyHelpText = "i000";
-        df = 1;
 
         music_start(M_LIFTOFF);
 
         switch (MainMenuChoice()) {
         case 0:  // New Game
-            LOAD = QUIT = 0, BUTLOAD = 0;
+            LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
@@ -298,7 +295,7 @@ int game_main_impl(int argc, char *argv[])
             break;
 
         case 1: // Play Old Game
-            LOAD = QUIT = BUTLOAD = 0;
+            LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
@@ -320,9 +317,7 @@ int game_main_impl(int argc, char *argv[])
             break;
 
         case 2:
-            df = 0;
             Credits();
-            df = 1;
             break;
 
         case 3:

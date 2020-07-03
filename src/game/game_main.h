@@ -34,7 +34,6 @@ extern int oldx;
 extern int oldy;
 extern unsigned char HARD1;
 extern unsigned char UNIT1;
-extern unsigned char BUTLOAD;
 extern unsigned char LOAD;
 extern unsigned char QUIT;
 extern unsigned char FADE;

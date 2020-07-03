@@ -62,7 +62,6 @@ char EVA[2];
 char STEP;
 char FINAL;
 char JOINT;
-char pal2[768];
 char PastBANG;
 char mcc;
 char fEarly; /**< kind of a boolean indicating early missions */

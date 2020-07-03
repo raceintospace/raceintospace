@@ -41,7 +41,6 @@
 #include "filesystem.h"
 
 struct order Order[7] ;
-unsigned int colss;
 
 char Month[12][11] = {
     "JANUARY ", "FEBRUARY ", "MARCH ", "APRIL ", "MAY ", "JUNE ",
@@ -533,7 +532,6 @@ void AI_Begin(char plr)
     draw_string(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
     FadeIn(2, 10, 0, 0);
-    colss = 0;
 }
 
 void AI_Done(void)
