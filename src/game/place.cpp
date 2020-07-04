@@ -826,7 +826,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     if (mode == 0) {
         IOBox(214, 151, 310, 165);
         display::graphics.setForegroundColor(1);
-        draw_string(250, 160, "EXIT");
+        draw_string(252, 160, "EXIT");
     }
 
     // Crew Stuff
