@@ -1132,8 +1132,12 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
 
     draw_number(214, 78, abuf[*where].Missions);
     draw_number(217, 89, abuf[*where].Prestige);
-    draw_number(258, 149, abuf[*where].Days);
-    draw_string(0, 0, " DAYS");
+    draw_number(253, 149, abuf[*where].Days);
+    if (abuf[*where].Days == 1) {
+        draw_string(0, 0, " DAY");
+    } else {
+        draw_string(0, 0, " DAYS");
+    }
     draw_number(253, 107, abuf[*where].Cap);
     draw_number(227, 115, abuf[*where].LM);
     draw_number(204, 123, abuf[*where].EVA);

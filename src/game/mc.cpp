@@ -45,6 +45,7 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
+#include "randomize.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -62,6 +63,7 @@ char EVA[2];
 char STEP;
 char FINAL;
 char JOINT;
+char pal2[768];
 char PastBANG;
 char mcc;
 char fEarly; /**< kind of a boolean indicating early missions */
@@ -437,6 +439,7 @@ void MissionPast(char plr, char pad, int prest)
     Data->P[plr].History[loc].Prestige = MAX(prest, -10);
     Data->P[plr].History[loc].Duration = Data->P[plr].Mission[pad].Duration;
 
+    int nd = 0;
     for (loop = 0; loop < (Data->P[plr].Mission[pad].Joint + 1); loop++) {
         i = Data->P[plr].Mission[pad + loop].Prog;
         j = Data->P[plr].Mission[pad + loop].Crew - 1;
@@ -462,7 +465,49 @@ void MissionPast(char plr, char pad, int prest)
                 if (j >= 0) {
                     Data->P[plr].Pool[j].Missions++;
                     Data->P[plr].Pool[j].Prestige += prest;
-                    Data->P[plr].Pool[j].Days += dys[Data->P[plr].Mission[pad + loop].Duration];
+                    int tnd = dys[Data->P[plr].Mission[pad + loop].Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
+                    if (nd == 0 || nd > 20) {  // Don't do the following if nd is already set, or each crew member will get a different # of days
+                        nd = tnd;
+                        int miscode = Data->P[plr].Mission[pad].MissionCode;   // Get mission number
+                        switch (tnd) {
+                        case 0:   // Unmanned mission
+                            break;
+                        case 2:   // Duration A
+                            if (miscode < 14) {
+                                nd = 1;  // Suborbital, Orbital, Orbital EVA = 1; docking, LM test = 2 days
+                            }
+                            break;
+                        case 5:   // Duration B
+                            if (miscode < 27) {
+                                nd = 3;  // Duration, DurEVA = 3 days
+                            } else if (miscode < 40) {
+                                nd = 4;  // Jt docking = 4 days; Jt LM test = 5 days
+                            }
+                            break;
+                        case 7:   // Duration C
+                            if (miscode < 32) {
+                                nd = 6;  // Duration = 6 days; MOL, Lunar Pass 7 days
+                            }
+                            break;
+                        case 12:  // Duration D
+                            if (miscode < 44) {
+                                nd = 8;  // Duration = 8 days
+                            } else if (miscode < 44 || miscode == 46 || miscode == 48 || miscode == 50)  {
+                                nd = 8 + brandom(4);  // Random 8-11 days for single lunar orbitals
+                            } else {
+                                nd = 9 + brandom(4);  // Random 9-12 days for Jt lunar orbitals or any lunar landing
+                            }
+                           break;
+                        case 16:  // Duration E
+                            nd = 13 + brandom(4);  // Random 13-16 days for any Dur E
+                            break;
+                        case 20:  // Duration F
+                            nd = 17 + brandom(4);  // Random 17-20 days for any Dur F
+                            break;
+                        }
+                    }
+
+                    Data->P[plr].Pool[j].Days += nd;
 
                     if (hero & 0x01) {
                         Data->P[plr].Pool[j].Hero = 1;
