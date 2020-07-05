@@ -274,10 +274,13 @@ int AsnCrew(char plr, char pad, char part)
         }
     }
 
-    if ((count >= 7 && options.feat_no_backup == 0) || (count >= 8 && options.feat_no_backup > 0)) {
+    if (count >= 7 && options.feat_no_backup == 0) {
         keyHelpText = oldKeyHelpText;
         Help("i107");
         return 0;
+    } else if (count >= 8 && options.feat_no_backup > 0) {
+        keyHelpText = oldKeyHelpText;
+        Help("i099");
     } else {
         bug = 0;
     }
