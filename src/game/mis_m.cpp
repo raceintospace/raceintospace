@@ -359,17 +359,20 @@ void MisCheck(char plr, char mpad)
 
         safety = Mev[STEP].E->MisSaf;
 
-        if ((Mev[STEP].Name[0] == 'A') && MH[Mev[STEP].pad][7] != NULL) {
+        if ((Mev[STEP].Name[0] == 'A') &&
+            MH[Mev[STEP].pad][Mission_SecondaryBooster] != NULL) {
             // boosters involved
-            safety = RocketBoosterSafety(safety, MH[Mev[STEP].pad][7]->Safety);
+            safety = RocketBoosterSafety(safety, MH[Mev[STEP].pad][Mission_SecondaryBooster]->Safety);
         }
 
         // Duration Hack Part 3 of 3
         if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
             safety = Mev[STEP].E->MisSaf;  // needs to be for both
 
+            // Use average of capsule ratings for Joint duration
             if (InSpace == 2) {
-                safety = (MH[0][0]->MisSaf + MH[1][0]->MisSaf) / 2;    // Joints
+                safety = (MH[0][Mission_Capsule]->MisSaf +
+                          MH[1][Mission_Capsule]->MisSaf) / 2;
             }
         }
 
@@ -1281,10 +1284,13 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;  // nothing : continue steps
     }
 
-    if ((Mev[STEP].Name[0] == 'A') && MH[Mev[STEP].pad][7] != NULL) {
+    if ((Mev[STEP].Name[0] == 'A') &&
+        MH[Mev[STEP].pad][Mission_SecondaryBooster] != NULL) {
         // boosters involved
-        if (MH[Mev[STEP].pad][4]->Safety == MH[Mev[STEP].pad][4]->Base) {
-            MH[Mev[STEP].pad][7]->Safety = MH[Mev[STEP].pad][7]->Base;
+        if (MH[Mev[STEP].pad][Mission_PrimaryBooster]->Safety ==
+            MH[Mev[STEP].pad][Mission_PrimaryBooster]->Base) {
+            MH[Mev[STEP].pad][Mission_SecondaryBooster]->Safety =
+                MH[Mev[STEP].pad][Mission_SecondaryBooster]->Base;
         }
     }
 

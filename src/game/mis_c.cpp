@@ -1272,7 +1272,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     strncat(Name, Mev[STEP].E->ID, 2);
 
-    if (Mev[STEP].Class == 6) {
+    if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
     }
 
@@ -1444,7 +1444,7 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
     int nautsOnMoon = 0;
     dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
 
-    if (misNum == 57 && plr == 1) {
+    if (misNum == Mission_Soyuz_LL && plr == 1) {
         nautsOnMoon = 3;
     }
 
@@ -1529,7 +1529,7 @@ char DrawMoonSelection(char nauts, char plr)
 
     strncat(Name, Mev[STEP].E->ID, 2);
 
-    if (Mev[STEP].Class == 6) {
+    if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
     }
 
