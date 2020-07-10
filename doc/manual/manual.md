@@ -189,8 +189,8 @@ There are four categories of space hardware:
 * Launch Vehicles:
     * Atlas/R-7
     * Titan/Proton
-    * Saturn V / N1
-    * Nova / UR-700
+    * Saturn/N1
+    * Nova/UR-700
     * Boosters</td>
 * Manned Spacecraft:
     * Mercury/Vostok
@@ -221,7 +221,7 @@ There are four categories of space hardware:
 
 * Atlas/R-7: Light-duty rocket; can’t send anything beyond Earth orbit, even with boosters (unless you have `atlasLunar` turned on in Advanced Preferences).  The R-7 was known as the A-Series in BARIS.
 * Titan/Proton: Medium-duty rocket; the minimum for sending anything to the Moon or beyond.  Can be used to launch Joint lunar landings.
-* Saturn V / N1: Heavy-duty rocket, known historically as "Moon rockets".  The minimum for launching Single lunar landings.  The N1 was called the N-1 in BARIS.
+* Saturn/N1: Heavy-duty rocket, known historically as "Moon rockets".  The minimum for launching Single lunar landings.  The N1 was called the N-1 in BARIS.
 * Nova/UR-700: "Mega"-duty rocket, required for direct ascent capsules.  The UR-700 was called the Vulkon in BARIS (historically, it would have been an expanded version of the Proton, whose designation is UR-500).
 * Boosters: Added to rockets (except Nova/UR-700) to let them lift heavier payloads.  They make missions a bit riskier, but less expensive. 
 
@@ -708,7 +708,7 @@ These have the smallest lift capability of all your rockets.  They can put thing
 
 These rockets can lift more than the Atlas/R-7, and can send spacecraft beyond Earth orbit.  While it is possible to use them for the lunar landing, that will require the mission to be a Joint one, either LOR or EOR (or the Soyuz Lunar Landing, for the Soviet player).
 
-### Saturn V / N1 Rocket
+### Saturn / N1 Rocket
 
 These are the US and Soviet Moon rockets.  They have the same capabilities as Titan/Proton, but can lift much more.  The N1 was known as the N-1 in BARIS and early versions of RIS.
 
@@ -1283,7 +1283,7 @@ Atlas<br/>
 R-7<br/>
 Titan<br/>
 Proton<br/>
-Saturn V<br/>
+Saturn<br/>
 N1<br/>
 Nova<br/>
 UR-700</td>
@@ -1370,19 +1370,19 @@ Soviet Kicker-C</td>
     <td>Gemini</td>
     <td>B/Atlas</td>
     <td>B/Titan</td>
-    <td>Saturn V</td>
+    <td>Saturn</td>
   </tr>
   <tr>
     <td>Apollo</td>
     <td>B/Titan</td>
     <td>B/Titan</td>
-    <td>Saturn V</td>
+    <td>Saturn</td>
   </tr>
   <tr>
     <td>XMS-2</td>
     <td>B/Titan</td>
     <td>B/Titan</td>
-    <td>Saturn V</td>
+    <td>Saturn</td>
   </tr>
   <tr>
     <td>Voskhod</td>
@@ -1453,7 +1453,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>300</td>
   </tr>
   <tr>
-    <td>Saturn V</td>
+    <td>Saturn</td>
     <td>3500</td>
     <td></td>
     <td>XMS-2</td>
@@ -1605,11 +1605,11 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>300</td>
   </tr>
   <tr>
-    <td>Saturn V / N1</td>
+    <td>Saturn/N1</td>
     <td>3200</td>
     <td></td>
     <td>XMS-2/Lapot</td>
-    <td>4300</td>
+    <td>1500</td>
     <td></td>
     <td>Kicker-B</td>
     <td>600</td>
@@ -1757,7 +1757,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Saturn V / N1</td>
+    <td>Saturn/N1</td>
     <td>84/84</td>
     <td>18/18</td>
     <td>6/6</td>
@@ -1973,7 +1973,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>98%/98%</td>
   </tr>
   <tr>
-    <td>Saturn V / N1</td>
+    <td>Saturn/N1</td>
     <td>90/84</td>
     <td>18/18</td>
     <td>6/7</td>
