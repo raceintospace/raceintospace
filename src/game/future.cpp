@@ -1154,9 +1154,8 @@ void Future(char plr)
 
                     display::graphics.setForegroundColor(0);
                     ShBox(85, 92, 249, 175);
-                    //IOBox(170, 153, 243, 170);
-                    IOBox(91, 153, 243, 172);
-                    InBox(92, 98, 243, 137);
+                    IOBox(91, 151, 243, 172);
+                    InBox(92, 98, 243, 144);
                     display::graphics.setForegroundColor(11);
                     draw_string(97, 105, "REQUIREMENT PENALTIES:");
                     display::graphics.setForegroundColor(1);
@@ -1209,17 +1208,30 @@ void Future(char plr)
                             newMisPen += plr ? (1 + Data->Def.Lev2) : (1 + Data->Def.Lev1);
                         }
 
-                    draw_string(99, 116, "-");
+                    draw_string(99, 116, "MILESTONE PENALTY");
+                    draw_string(220, 116, "-");
                     if (milestonePen > 0) { draw_number(0, 0, milestonePen); } else { draw_string(0, 0, "-"); }
-                    draw_string(0, 0, " MILESTONE PENALTY");
-                    draw_string(99, 124, "-");
+                    draw_string(99, 124, "DURATION PENALTY");
+                    draw_string(220, 124, "-");
                     if (durationPen > 0) { draw_number(0, 0, durationPen); } else { draw_string(0, 0, "-"); }
-                    draw_string(0, 0, " DURATION PENALTY");
-                    draw_string(99, 132, "-");
+                    draw_string(99, 132, "NEW MISSION PENALTY");
+                    draw_string(220, 132, "-");
                     if (newMisPen > 0) { draw_number(0, 0, newMisPen); } else { draw_string(0, 0, "-"); }
-                    draw_string(0, 0, " NEW MISSION PENALTY");
+                    if (misType == 53 || misType == 55 || misType == 56) {
+                        display::graphics.setForegroundColor(24);
+                        draw_string(99, 140, "PENALTY ON LM STEPS");
+                        int LMP = Data->P[plr].LMpts;
+                        if (LMP > 2) {
+                            draw_string(220, 140, "--");
+                        } else {
+                            LMP = 3*(3-LMP);
+                            draw_string(220, 140, "-");
+                            draw_number(0, 0, LMP);
+                        }
+                    }
                     display::graphics.setForegroundColor(5);
-                    draw_string(110, 164, "PRESS ESC TO CONTINUE");
+                    draw_string(115, 159, "ARROW UP OR DOWN, OR");
+                    draw_string(110, 167, "PRESS ESC TO CONTINUE");
 
                     //display::graphics.setForegroundColor(11);
 
