@@ -1143,6 +1143,101 @@ void Future(char plr)
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
 
+            } else if (x >= 203 && y >= 24 && x <= 241 && y <= 44 && mousebuttons > 0) {  // Penalties popup
+                //char Request(char plr, char *s, char md)
+                    //char i;
+                    display::LegacySurface local(196, 84);
+                    int md;
+                    if (md > 0) {  // Save Buffer
+                        local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
+                    }
+
+                    display::graphics.setForegroundColor(0);
+                    ShBox(85, 92, 249, 175);
+                    //IOBox(170, 153, 243, 170);
+                    IOBox(91, 153, 243, 172);
+                    InBox(92, 98, 243, 137);
+                    display::graphics.setForegroundColor(11);
+                    draw_string(97, 105, "REQUIREMENT PENALTIES:");
+                    display::graphics.setForegroundColor(1);
+
+                        struct mStr mission = missionData[misType];
+                        int
+                        PrestMap(int mission);
+                        int maxMilestone = 0;
+                        bool newMilestone = false;
+                        int milestonePen = 0;
+                        int durationPen = 0;
+                        int newMisPen = 0;
+
+                        // Find the maximum milestone & determine if mission offers a new
+                        // milestone
+                        for (int i = 0; i < 5; i++) {
+                            int milestone = PrestMap(mission.PCat[i]);
+                            maxMilestone = MAX(maxMilestone, milestone);
+                            newMilestone = newMilestone ||
+                                           (milestone >= 0 && Data->Mile[plr][milestone] == 0);
+                        }
+                        for (int i = 0; i < maxMilestone; ++i) {
+                            /* if milestone not met, then add penalty */
+                            if (Data->Mile[plr][i] == 0) {
+                                milestonePen += 3;
+                            }
+                        }
+
+                        int reqDuration = MAX(mission.Days  - 1, 0);
+                        int playerDuration = MAX(Data->P[plr].DurationLevel, 0);
+
+                        // If mission.hasMilestone(Milestone_LunarPass)...
+                        if (maxMilestone == Milestone_LunarPass) {
+                            reqDuration = MAX(reqDuration, 3);
+                        }
+
+                        // If mission.hasMilestone()...
+                        if (maxMilestone == Milestone_LunarOrbit ||
+                            maxMilestone == Milestone_LunarLanding) {
+                            reqDuration = MAX(reqDuration, 4);
+                        }
+
+                        // Calculate duration steps skipped
+                        if (reqDuration > playerDuration) {
+                            durationPen += 5 * (reqDuration - playerDuration);
+                        }
+
+                        // If this is a new milestone mission add a new mission penalty
+                        if (newMilestone) {
+                            newMisPen += plr ? (1 + Data->Def.Lev2) : (1 + Data->Def.Lev1);
+                        }
+
+                    draw_string(99, 116, "-");
+                    if (milestonePen > 0) { draw_number(0, 0, milestonePen); } else { draw_string(0, 0, "-"); }
+                    draw_string(0, 0, " MILESTONE PENALTY");
+                    draw_string(99, 124, "-");
+                    if (durationPen > 0) { draw_number(0, 0, durationPen); } else { draw_string(0, 0, "-"); }
+                    draw_string(0, 0, " DURATION PENALTY");
+                    draw_string(99, 132, "-");
+                    if (newMisPen > 0) { draw_number(0, 0, newMisPen); } else { draw_string(0, 0, "-"); }
+                    draw_string(0, 0, " NEW MISSION PENALTY");
+                    display::graphics.setForegroundColor(5);
+                    draw_string(110, 164, "PRESS ESC TO CONTINUE");
+
+                    //display::graphics.setForegroundColor(11);
+
+                    //if (md == 6)  {
+                    //    draw_string(166 - i * 7, 65, s);
+                    //} else {
+                    //    draw_heading(166 - i * 10, 65, &s[0], 0, -1);
+                    //}
+/*
+                    draw_string(135, 94, "ARE YOU SURE?");
+
+                    if (md > 0) {
+                        display::graphics.legacyScreen()->palette().copy_from(local.palette());
+                        display::graphics.screen()->draw(local, 85, 52);
+                    }
+*/
+                    //return i;
+
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
                 // Scroll up among Mission Types
