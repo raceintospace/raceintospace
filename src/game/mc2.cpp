@@ -707,12 +707,6 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-        if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 2) { // Apollo #1
-            Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
-            DMFake = 1;
-        }
-
-
         for (i = Mission_Capsule; i <= Mission_PhotoRecon; i++) {
             t = Data->P[plr].Mission[mis + j].Hard[i];
             MH[j][i] = NULL; // Clear Pointers
