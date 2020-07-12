@@ -7,6 +7,7 @@ const char *GetDurationParens(int duration);
 struct mStr GetMissionPlan(int code);
 bool IsDocking(int mission);
 bool IsDuration(int mission);
+bool IsLunarLanding(int mission);
 bool MissionTimingOk(int mission, unsigned int year, unsigned int season);
 
 

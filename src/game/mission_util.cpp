@@ -83,6 +83,25 @@ bool IsDuration(int mission)
 }
 
 
+/**
+ * Checks if the mission is a lunar landing.
+ *
+ * This implementation depends upon strict mission numbering, so any
+ * changes to the mission data file could result in errors.
+ * A more durable implementation would load the corresponding mission
+ * from the data file and check the Prestige Categories field (mStr.PCcat)
+ * for the presence of Prestige_MannedLunarLanding.
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if a lunar landing, false otherwise.
+ */
+bool IsLunarLanding(int mission)
+{
+    return (mission >= Mission_HistoricalLanding &&
+            mission <= Mission_Soyuz_LL);
+}
+
+
 /* Return a letter representation of the mission duration, surrounded
  * by parenthesis, for appending to a mission name.
  *
