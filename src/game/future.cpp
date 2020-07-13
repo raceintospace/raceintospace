@@ -89,6 +89,7 @@ bool JointMissionOK(char plr, char pad);
 void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
 void ClearDisplay(void);
 void DrawPenalty(char plr, const struct mStr &mission);
+void DrawPenaltyPopup(char plr, const struct mStr &mission);
 void SetParameters(void);
 void DrawLocks(const MissionNavigator &nav);
 void Toggle(FMFields button, int state);
@@ -353,6 +354,110 @@ void DrawPenalty(char plr, const struct mStr &mission)
     display::graphics.setForegroundColor(1);
 
     return;
+}
+
+
+/**
+ * Create a popup detailing the sources of the mission penalties.
+ *
+ * Launches a popup explaining how the projected mission penalty
+ * is calculated, and if there is any LM penalty. The popup starts
+ * it own control loop to handle input.
+ *
+ * TODO: Modify the color for each penalty line depending on how
+ *   large the penalty is.
+ * TODO: Create a keyHelp setting for the popup box explaining how
+ *   to close it via the keyboard.
+ *
+ * \param plr  the player index
+ * \param mission  the selected mission
+ */
+void DrawPenaltyPopup(char plr, const struct mStr &mission)
+{
+    int milestonePenalty = MilestonePenalty(plr, mission);
+    int durationPenalty = DurationPenalty(plr, mission);
+    int newMissionPenalty = NewMissionPenalty(plr, mission);
+
+    // Buffer the screen contents behing the popup for quick restoration.
+    display::LegacySurface local(165, 124);
+    local.copyFrom(display::graphics.legacyScreen(), 85, 52, 249, 175);
+
+    ShBox(85, 92, 249, 175);
+    InBox(92, 98, 243, 144);
+    display::graphics.setForegroundColor(11);
+    draw_string(97, 105, "REQUIREMENT PENALTIES:");
+
+    display::graphics.setForegroundColor(1);
+    draw_string(99, 116, "MILESTONE PENALTY");
+    draw_string(220, 116, "-");
+
+    if (milestonePenalty > 0) {
+        draw_number(0, 0, milestonePenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    draw_string(99, 124, "DURATION PENALTY");
+    draw_string(220, 124, "-");
+
+    if (durationPenalty > 0) {
+        draw_number(0, 0, durationPenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    draw_string(99, 132, "NEW MISSION PENALTY");
+    draw_string(220, 132, "-");
+
+    if (newMissionPenalty > 0) {
+        draw_number(0, 0, newMissionPenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    if (mission.LM && IsLunarLanding(mission.Index)) {
+        int lunarTestPenalty = 3 * MIN(Data->P[plr].LMpts - 3, 0);
+
+        display::graphics.setForegroundColor(24);
+        draw_string(99, 140, "PENALTY ON LM STEPS");
+
+        if (lunarTestPenalty >= 0) {
+            draw_string(220, 140, "--");
+        } else {
+            draw_number(220, 140, lunarTestPenalty);
+        }
+    }
+
+    IOBox(91, 151, 243, 172);
+    display::graphics.setForegroundColor(5);
+    draw_string(167 - TextDisplayLength("CONTINUE") / 2, 163,
+                "CONTINUE");
+
+    // Primitive control loop. Don't like using localized control loops,
+    // but it's the way RIS is written. -- rnyoakum
+    bool close = false;
+
+    while (! close) {
+        key = 0;
+        GetMouse();
+
+        if ((x >= 93 && y >= 153 && x <= 241 && y <= 170 && mousebuttons > 0) ||
+            (key == K_ENTER || key == K_ESCAPE)) {
+            InBox(93, 153, 241, 170);
+            WaitForMouseUp();
+
+            if (key > 0) {
+                delay(300);
+                key = 0;
+            }
+
+            close = true;
+            OutBox(93, 153, 241, 170);
+            delay(50);
+        }
+    }
+
+    display::graphics.screen()->draw(local, 85, 52);
 }
 
 
@@ -1141,113 +1246,9 @@ void Future(char plr)
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
 
-            } else if (x >= 203 && y >= 24 && x <= 241 && y <= 44 && mousebuttons > 0) {  // Penalties popup
-                //char Request(char plr, char *s, char md)
-                    //char i;
-                    display::LegacySurface local(196, 84);
-                    int md;
-                    if (md > 0) {  // Save Buffer
-                        local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
-                    }
-
-                    display::graphics.setForegroundColor(0);
-                    ShBox(85, 92, 249, 175);
-                    IOBox(91, 151, 243, 172);
-                    InBox(92, 98, 243, 144);
-                    display::graphics.setForegroundColor(11);
-                    draw_string(97, 105, "REQUIREMENT PENALTIES:");
-                    display::graphics.setForegroundColor(1);
-
-                        struct mStr mission = missionData[misType];
-                        int
-                        PrestMap(int mission);
-                        int maxMilestone = 0;
-                        bool newMilestone = false;
-                        int milestonePen = 0;
-                        int durationPen = 0;
-                        int newMisPen = 0;
-
-                        // Find the maximum milestone & determine if mission offers a new
-                        // milestone
-                        for (int i = 0; i < 5; i++) {
-                            int milestone = PrestMap(mission.PCat[i]);
-                            maxMilestone = MAX(maxMilestone, milestone);
-                            newMilestone = newMilestone ||
-                                           (milestone >= 0 && Data->Mile[plr][milestone] == 0);
-                        }
-                        for (int i = 0; i < maxMilestone; ++i) {
-                            /* if milestone not met, then add penalty */
-                            if (Data->Mile[plr][i] == 0) {
-                                milestonePen += 3;
-                            }
-                        }
-
-                        int reqDuration = MAX(mission.Days  - 1, 0);
-                        int playerDuration = MAX(Data->P[plr].DurationLevel, 0);
-
-                        // If mission.hasMilestone(Milestone_LunarPass)...
-                        if (maxMilestone == Milestone_LunarPass) {
-                            reqDuration = MAX(reqDuration, 3);
-                        }
-
-                        // If mission.hasMilestone()...
-                        if (maxMilestone == Milestone_LunarOrbit ||
-                            maxMilestone == Milestone_LunarLanding) {
-                            reqDuration = MAX(reqDuration, 4);
-                        }
-
-                        // Calculate duration steps skipped
-                        if (reqDuration > playerDuration) {
-                            durationPen += 5 * (reqDuration - playerDuration);
-                        }
-
-                        // If this is a new milestone mission add a new mission penalty
-                        if (newMilestone) {
-                            newMisPen += plr ? (1 + Data->Def.Lev2) : (1 + Data->Def.Lev1);
-                        }
-
-                    draw_string(99, 116, "MILESTONE PENALTY");
-                    draw_string(220, 116, "-");
-                    if (milestonePen > 0) { draw_number(0, 0, milestonePen); } else { draw_string(0, 0, "-"); }
-                    draw_string(99, 124, "DURATION PENALTY");
-                    draw_string(220, 124, "-");
-                    if (durationPen > 0) { draw_number(0, 0, durationPen); } else { draw_string(0, 0, "-"); }
-                    draw_string(99, 132, "NEW MISSION PENALTY");
-                    draw_string(220, 132, "-");
-                    if (newMisPen > 0) { draw_number(0, 0, newMisPen); } else { draw_string(0, 0, "-"); }
-                    if (misType == 53 || misType == 55 || misType == 56) {
-                        display::graphics.setForegroundColor(24);
-                        draw_string(99, 140, "PENALTY ON LM STEPS");
-                        int LMP = Data->P[plr].LMpts;
-                        if (LMP > 2) {
-                            draw_string(220, 140, "--");
-                        } else {
-                            LMP = 3*(3-LMP);
-                            draw_string(220, 140, "-");
-                            draw_number(0, 0, LMP);
-                        }
-                    }
-                    display::graphics.setForegroundColor(5);
-                    draw_string(115, 159, "ARROW UP OR DOWN, OR");
-                    draw_string(110, 167, "PRESS ESC TO CONTINUE");
-
-                    //display::graphics.setForegroundColor(11);
-
-                    //if (md == 6)  {
-                    //    draw_string(166 - i * 7, 65, s);
-                    //} else {
-                    //    draw_heading(166 - i * 10, 65, &s[0], 0, -1);
-                    //}
-/*
-                    draw_string(135, 94, "ARE YOU SURE?");
-
-                    if (md > 0) {
-                        display::graphics.legacyScreen()->palette().copy_from(local.palette());
-                        display::graphics.screen()->draw(local, 85, 52);
-                    }
-*/
-                    //return i;
-
+            } else if (x >= 203 && y >= 24 && x <= 241 && y <= 44 && mousebuttons > 0) {
+                // Penalties popup
+                DrawPenaltyPopup(plr, missionData[misType]);
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
                 // Scroll up among Mission Types
