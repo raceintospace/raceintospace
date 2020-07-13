@@ -235,7 +235,7 @@ void DrawMissionEntry(const char plr, const int pad,
 
     // draw_string(88, 77 + pad * 58, "REQUIREMENT PENALTIES: ");
     fill_rectangle(215, 71 + pad * 58, 270, 78 + pad * 58, 3);
-    const int penalty = PrestMin(plr, Mis);
+    const int penalty = AchievementPenalty(plr, Mis);
     display::graphics.setForegroundColor(11);
     draw_number(215, 77 + pad * 58, penalty);
     draw_string(0, 0, "%");
@@ -321,7 +321,7 @@ void DrawRush(char plr)
             // Since the Downgrade penalty isn't being used, its
             // screen space is commandeered to display the mission
             // penalty.
-            const int penalty = PrestMin(plr, Mis);
+            const int penalty = AchievementPenalty(plr, Mis);
             display::graphics.setForegroundColor(1);
             draw_string(88, 77 + i * 58, "REQUIREMENT PENALTIES:");
             display::graphics.setForegroundColor(11);

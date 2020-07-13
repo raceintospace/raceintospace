@@ -318,9 +318,7 @@ void ClearDisplay(void)
 /* Displays the total mission penalty for the current selected mission.
  *
  * This calculates the sum of the prestige, duration, and new mission
- * penalties and reports it as the current mission penalty. The penalty
- * is calculated by the PrestMin() function (in prest.h). Duration is
- * passed to PrestMin via mission.Days.
+ * penalties and reports it as the current mission penalty.
  *
  * This relies on graphics loaded into the file variable vh.
  *
@@ -331,7 +329,7 @@ void DrawPenalty(char plr, const struct mStr &mission)
 {
     int u;
 
-    char penalty = PrestMin(plr, mission);
+    char penalty = AchievementPenalty(plr, mission);
     fill_rectangle(206, 36, 235, 44, 7);
 
     if (penalty < 3) {
