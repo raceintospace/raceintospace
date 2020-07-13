@@ -893,6 +893,9 @@ void MissionSetDown(char plr, char mis)
  * TODO: This functionality appears to have been appropriated by
  * MisSkip, via PrestMin(). This needs to be verified, and if so, it
  * should be removed completely.
+ * TODO: Addendum - PrestMin() has since been replaced with
+ * AchievementPenalty(). This function is now out-of-date, and should
+ * be removed or updated to use the latest Penalty functions.
  *
  * \param plr current player
  * \param dur mission duration in duration level (A-F).
@@ -959,7 +962,7 @@ MisSkip(char plr, char ms)
 {
     int i, j, diff;
 
-    diff = PrestMin(plr, Mis);
+    diff = AchievementPenalty(plr, Mis);
 
     diff = MAX(diff, 0);
 
