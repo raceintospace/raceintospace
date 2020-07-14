@@ -206,7 +206,7 @@ int Launch(char plr, char mis)
         case 3:
 
             // LM is always on first mission part!!! :: makes things easier
-            if (MH[0][2] && MH[0][2]->ID[1] == 0x35) {
+            if (MH[0][Mission_LM] && MH[0][Mission_LM]->ID[1] == 0x35) {
                 CAP[i] = 0;
                 LM[i] = 1;
                 DOC[i] = EVA[i] = 2;
@@ -340,7 +340,10 @@ int Launch(char plr, char mis)
 
 //   if (!AI[plr]) {PreLoadMusic(M_ELEPHANT); PlayMusic(0);}
 
-    if ((Data->Def.Lev1 == 0 && Data->Def.Lev2 == 2) || (Data->Def.Lev2 == 0 && Data->Def.Lev1 == 2)) {
+    // TODO: Shouldn't apply easymode if player is on difficulty III
+    // and opponent difficulty I.
+    if ((Data->Def.Lev1 == 0 && Data->Def.Lev2 == 2) ||
+        (Data->Def.Lev2 == 0 && Data->Def.Lev1 == 2)) {
         xMODE |= EASYMODE;    // set easy flag
     }
 
@@ -424,8 +427,8 @@ void MissionPast(char plr, char pad, int prest)
         Data->P[plr].History[loc].Event = 0;
     }
 
-    if (MH[0][3]) {
-        Data->P[plr].History[loc].Saf = MH[0][3]->MisSaf;
+    if (MH[0][Mission_Probe_DM]) {
+        Data->P[plr].History[loc].Saf = MH[0][Mission_Probe_DM]->MisSaf;
     }
 
     if (!(mc == Mission_MarsFlyby || mc == Mission_JupiterFlyby ||
@@ -440,6 +443,7 @@ void MissionPast(char plr, char pad, int prest)
     Data->P[plr].History[loc].Duration = Data->P[plr].Mission[pad].Duration;
 
     int nd = 0;
+
     for (loop = 0; loop < (Data->P[plr].Mission[pad].Joint + 1); loop++) {
         i = Data->P[plr].Mission[pad + loop].Prog;
         j = Data->P[plr].Mission[pad + loop].Crew - 1;
@@ -466,29 +470,38 @@ void MissionPast(char plr, char pad, int prest)
                     Data->P[plr].Pool[j].Missions++;
                     Data->P[plr].Pool[j].Prestige += prest;
                     int tnd = dys[Data->P[plr].Mission[pad + loop].Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
+
                     if (nd == 0 || nd > 20) {  // Don't do the following if nd is already set, or each crew member will get a different # of days
                         nd = tnd;
                         int miscode = Data->P[plr].Mission[pad].MissionCode;   // Get mission number
+
                         switch (tnd) {
                         case 0:   // Unmanned mission
                             break;
+
                         case 2:   // Duration A
                             if (miscode < 14) {
                                 nd = 1;  // Suborbital, Orbital, Orbital EVA = 1; docking, LM test = 2 days
                             }
+
                             break;
+
                         case 5:   // Duration B
                             if (miscode < 27) {
                                 nd = 3;  // Duration, DurEVA = 3 days
                             } else if (miscode < 40) {
                                 nd = 4;  // Jt docking = 4 days; Jt LM test = 5 days
                             }
+
                             break;
+
                         case 7:   // Duration C
                             if (miscode < 32) {
                                 nd = 6;  // Duration = 6 days; MOL, Lunar Pass 7 days
                             }
+
                             break;
+
                         case 12:  // Duration D
                             if (miscode < 44) {
                                 nd = 8;  // Duration = 8 days
@@ -497,10 +510,13 @@ void MissionPast(char plr, char pad, int prest)
                             } else {
                                 nd = 9 + brandom(4);  // Random 9-12 days for Jt lunar orbitals or any lunar landing
                             }
-                           break;
+
+                            break;
+
                         case 16:  // Duration E
                             nd = 13 + brandom(4);  // Random 13-16 days for any Dur E
                             break;
+
                         case 20:  // Duration F
                             nd = 17 + brandom(4);  // Random 17-20 days for any Dur F
                             break;

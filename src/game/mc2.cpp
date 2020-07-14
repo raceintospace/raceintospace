@@ -161,7 +161,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     switch (mcode) {
     // Booster Programs    :: VAB order for the class
     case 'A':
-        Mev[step].Class = 4;
+        Mev[step].Class = Mission_PrimaryBooster;
         break;
 
     // Manned Programs : Capsule
@@ -177,10 +177,11 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'Y':
     case 'f':
     case 'g':
-        if (MH[pad][1] && MH[pad][1]->ID[1] == 0x32) {
-            Mev[step].Class = 1;    // Kicker-C
+        if (MH[pad][Mission_Kicker] &&
+            MH[pad][Mission_Kicker]->ID[1] == 0x32) {
+            Mev[step].Class = Mission_Kicker;  // Kicker-C
         } else {
-            Mev[step].Class = 0;
+            Mev[step].Class = Mission_Capsule;
         }
 
         break;
@@ -192,17 +193,18 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
     // Manned Programs : LM
     case 'a':
-        Mev[step].Class = 2;                               // LM
+        Mev[step].Class = Mission_LM;  // LM
         break;
 
     // Unmanned Programs
     case 'C':
-        if (MH[pad][1] && MH[pad][1]->ID[1] == 0x32) {
-            Mev[step].Class = 1;    // Kicker-C
-        } else if (MH[pad][2] && MH[pad][2] != NULL) {
-            Mev[step].Class = 2;
+        if (MH[pad][Mission_Kicker] &&
+            MH[pad][Mission_Kicker]->ID[1] == 0x32) {
+            Mev[step].Class = Mission_Kicker;  // Kicker-C
+        } else if (MH[pad][Mission_LM] && MH[pad][Mission_LM] != NULL) {
+            Mev[step].Class = Mission_LM;
         } else {
-            Mev[step].Class = 3;
+            Mev[step].Class = Mission_Probe_DM;
         }
 
         break;
@@ -211,36 +213,36 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'W':
     case 'Z':
     case 'e':
-        Mev[step].Class = 3;        // Satellite
+        Mev[step].Class = Mission_Probe_DM;  // Satellite
         break;
 
     // Misc Programs
     case 'H':
     case 'P':
-        Mev[step].Class = 5;        // EVA Suits
+        Mev[step].Class = Mission_EVA;  // EVA Suits
         break;
 
     // Photo Recon
     case 'U':
-        Mev[step].Class = 6;        // Photo Recon
+        Mev[step].Class = Mission_PhotoRecon;  // Photo Recon
         break;
 
     // Special Cases (when is there not one?)
     case 'B':
     case 'J':
     case 'L':
-        if (MH[pad][1] != NULL) {
-            Mev[step].Class = 1;    // Kicker
-        } else if (MH[pad][0] != NULL) {
-            Mev[step].Class = 0;    // Cap
-        } else if (MH[pad][2] != NULL) {
-            Mev[step].Class = 2;    // LM
+        if (MH[pad][Mission_Kicker] != NULL) {
+            Mev[step].Class = Mission_Kicker;  // Kicker
+        } else if (MH[pad][Mission_Capsule] != NULL) {
+            Mev[step].Class = Mission_Capsule;  // Cap
+        } else if (MH[pad][Mission_LM] != NULL) {
+            Mev[step].Class = Mission_LM;    // LM
         } else {
-            Mev[step].Class = 3;    // Satellite
+            Mev[step].Class = Mission_Probe_DM;  // Satellite
         }
 
-        if (step > 11 && MH[pad][0] != NULL) {
-            Mev[step].Class = 0;    // Cap L->E
+        if (step > 11 && MH[pad][Mission_Capsule] != NULL) {
+            Mev[step].Class = Mission_Capsule;  // Cap L->E
         }
 
         break;
@@ -249,22 +251,25 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
     case 'R':
     case 'S':
     case 'T':
-        if (MH[pad][1] && MH[pad][1]->ID[1] == 0x32) {
-            Mev[step].Class = 1;    // Kicker-C
-        } else if (MH[pad][2] != NULL) {
-            Mev[step].Class = 2;    // LM
-        } else if (MH[pad][0] != NULL) {
-            Mev[step].Class = 0;    // Capsule
+        if (MH[pad][Mission_Kicker] &&
+            MH[pad][Mission_Kicker]->ID[1] == 0x32) {
+            Mev[step].Class = Mission_Kicker;  // Kicker-C
+        } else if (MH[pad][Mission_LM] != NULL) {
+            Mev[step].Class = Mission_LM;  // LM
+        } else if (MH[pad][Mission_Capsule] != NULL) {
+            Mev[step].Class = Mission_Capsule;  // Capsule
         } else {
-            Mev[step].Class = 3;    // Satellite
+            Mev[step].Class = Mission_Probe_DM;  // Satellite
         }
 
         break;
 
     case 'I':
-        if (MH[pad][3] != NULL) {
-            Mev[step].Class = 3;    // DM
+        if (MH[pad][Mission_Probe_DM] != NULL) {
+            Mev[step].Class = Mission_Probe_DM;  // DM
         } else {
+            // TODO: Huh? Satellite should be Probe/DM i.e. 3, so
+            // comment doesn't make sense. Make sure this is correct.
             Mev[step].Class = 2;    // Satellite
         }
 
@@ -279,7 +284,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
     switch (mcode) {
     case 'B':
-        if (MH[pad][0] != NULL) {
+        if (MH[pad][Mission_Capsule] != NULL) {
             Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -18);    // CAP
         } else {
             Mev[step].Prest = -100;
@@ -289,7 +294,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         break;
 
     case 'C':
-        if (MH[pad][3] && MH[pad][3]->ID[1] == 0x30) {
+        if (MH[pad][Mission_Probe_DM] &&
+            MH[pad][Mission_Probe_DM]->ID[1] == 0x30) {
             Mev[step].Prest = 0;
         } else {
             Mev[step].Prest = -100;
@@ -325,7 +331,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         break;
 
     case 'S':
-        if (MH[pad][3] && MH[pad][3]->ID[1] == 0x32) {
+        if (MH[pad][Mission_Probe_DM] &&
+            MH[pad][Mission_Probe_DM]->ID[1] == 0x32) {
             Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -7);
         }
 
@@ -395,7 +402,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
         if (MANNED[pad] > 0)
             switch (Mev[step].Class) {
-            case 0:  // capsule
+            case Mission_Capsule:
                 Mev[step].ast = CAP[pad]; // index into MA
 
                 if (Mev[step].ast >= 0) {
@@ -404,7 +411,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
                 break;
 
-            case 2:  // lm
+            case Mission_LM:
                 Mev[step].ast = LM[pad]; // index into MA
 
                 if (Mev[step].ast >= 0) {
@@ -413,7 +420,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
                 break;
 
-            case 3:  // docking
+            case Mission_Probe_DM:  // docking
                 Mev[step].ast = DOC[pad]; // index into MA
 
                 if (Mev[step].ast >= 0) {
@@ -422,7 +429,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
                 break;
 
-            case 5:  // eva
+            case Mission_EVA:  // eva
                 Mev[step].ast = EVA[pad]; // index into MA
 
                 if (Mev[step].ast >= 0) {
@@ -437,7 +444,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
                 break;
 
             case 10: // durations
-                Mev[step].Class = 0;
+                Mev[step].Class = Mission_Capsule;
                 Mev[step].ast = -1;
                 Mev[step].asf = 0;
                 break;
@@ -501,29 +508,33 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
             Mev[step].Name[2] = '*';    // Placeholder
         }
 
-        if (Mev[step].Class == 5) {
-            if (MH[0][1] && MH[0][1]->ID[1] == 0x32) {
+        if (Mev[step].Class == Mission_EVA) {
+            if (MH[0][Mission_Kicker] &&
+                MH[0][Mission_Kicker]->ID[1] == 0x32) {
                 strncat(Mev[step].Name, "M2", 2);    // Kicker-C
-            } else if (MH[pad][0] && MH[pad][0]->ID[1] == 0x34) {
+            } else if (MH[pad][Mission_Capsule] &&
+                       MH[pad][Mission_Capsule]->ID[1] == 0x34) {
                 strncat(Mev[step].Name, "C4", 2);    // FourMan
             } else { // standard LMs
                 if (mcode == 'P') {
-                    if (MH[pad][2] != NULL) {
-                        strncat(Mev[step].Name, MH[pad][2]->ID, 2);
-                    } else if (MH[1][2]) {
-                        strncat(Mev[step].Name, MH[1][2]->ID, 2);
+                    if (MH[pad][Mission_LM] != NULL) {
+                        strncat(Mev[step].Name, MH[pad][Mission_LM]->ID, 2);
+                    } else if (MH[1][Mission_LM]) {
+                        strncat(Mev[step].Name, MH[1][Mission_LM]->ID, 2);
                     }
                 } else {
-                    if (MH[pad][0] != NULL) {
-                        strncat(Mev[step].Name, MH[pad][0]->ID, 2);
-                    } else if (MH[1][0]) {
-                        strncat(Mev[step].Name, MH[1][0]->ID, 2);
+                    if (MH[pad][Mission_Capsule] != NULL) {
+                        strncat(Mev[step].Name, MH[pad][Mission_Capsule]->ID, 2);
+                    } else if (MH[1][Mission_Capsule]) {
+                        strncat(Mev[step].Name, MH[1][Mission_Capsule]->ID, 2);
                     }
                 }
             }
         }
 
-        if (Mev[step].Name[0] == 'A' && MH[pad][7] != NULL) {
+        // Select animation w/ boosters if appropriate
+        if (Mev[step].Name[0] == 'A' &&
+            MH[pad][Mission_SecondaryBooster] != NULL) {
             Mev[step].Name[3] += 4;
         }
 
@@ -675,6 +686,8 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
+        // TODO: Or, rather than checking j == 0 and j == 1, just
+        // use mis + j and use the loop.
         if (j == 0) { // Apollo (1)  + LM (1)
             if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
                 Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
@@ -694,12 +707,6 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-        if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 2) { // Apollo #1
-            Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
-            DMFake = 1;
-        }
-
-
         for (i = Mission_Capsule; i <= Mission_PhotoRecon; i++) {
             t = Data->P[plr].Mission[mis + j].Hard[i];
             MH[j][i] = NULL; // Clear Pointers
@@ -710,7 +717,7 @@ void MissionSetup(char plr, char mis)
                 case Mission_LM:   // Cap - LM
                     MH[j][i] = &Data->P[plr].Manned[t];
 
-                    if (MH[j][i]->Num && t != 3) {
+                    if (MH[j][i]->Num && t != MANNED_HW_MINISHUTTLE) {
                         MH[j][i]->Num--;
                     }
 
@@ -762,16 +769,17 @@ void MissionSetup(char plr, char mis)
                         MH[j][i]->Used++;
                     } else {
                         MH[j][i] = &Data->P[plr].Rocket[t - 4];
-                        MH[j][7] = &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
+                        MH[j][Mission_SecondaryBooster] =
+                            &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
                         MH[j][i]->Used++;
-                        MH[j][7]->Used++;
+                        MH[j][Mission_SecondaryBooster]->Used++;
 
                         if (MH[j][i]->Num > 0) {
                             MH[j][i]->Num--;
                         }
 
-                        if (MH[j][7]->Num > 0) {
-                            MH[j][7]->Num--;
+                        if (MH[j][Mission_SecondaryBooster]->Num > 0) {
+                            MH[j][Mission_SecondaryBooster]->Num--;
                         }
                     }
 
@@ -790,7 +798,8 @@ void MissionSetup(char plr, char mis)
                     MH[j][i]->SMods += MH[j][i]->Damage;    //Damaged Equipment, Nikakd, 10/8/10
                     MH[j][i]->MisSaf = MH[j][i]->Safety + MH[j][i]->SMods;
 
-                    if (MH[j][i]->ID[1] >= 0x35 && i == 2 && Data->P[plr].Mission[mis].MissionCode >= 53)
+                    if (MH[j][i]->ID[1] >= 0x35 && i == Mission_LM &&
+                        Data->P[plr].Mission[mis].MissionCode >= 53) {
                         switch (Data->P[plr].LMpts) {
                         case 0:
                             MH[j][i]->MisSaf -= 9;
@@ -804,6 +813,7 @@ void MissionSetup(char plr, char mis)
                             MH[j][i]->MisSaf -= 3;
                             break;
                         }
+                    }
                 }
             } // if t>=0
         } // for (0<7)
@@ -828,7 +838,7 @@ void MissionSetDown(char plr, char mis)
 
                 MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
 
-                if (strncmp(MH[j][i]->Name, (i == 3) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc > 0) {
+                if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc > 0) {
                     MH[j][i]->Safety++;
 
                     if (options.cheat_addMaxS) {
@@ -857,24 +867,31 @@ void MissionSetDown(char plr, char mis)
 
                 MH[j][i]->Steps += (MH[j][i]->MisFail + MH[j][i]->MisSucc);
 
-                if (i == 4 && MH[j][7] != NULL) { // Boosters
-                    if (MH[j][4]->MisSucc > 0)  {
-                        MH[j][7]->Safety++;
+                if (i == Mission_PrimaryBooster &&
+                    MH[j][Mission_SecondaryBooster] != NULL) { // Boosters
+                    if (MH[j][Mission_PrimaryBooster]->MisSucc > 0)  {
+                        MH[j][Mission_SecondaryBooster]->Safety++;
 
                         if (options.cheat_addMaxS) {
-                            MH[j][7]->MaxRD++;
+                            MH[j][Mission_SecondaryBooster]->MaxRD++;
                         }
 
-                        if (MH[j][7]->MaxRD > MH[j][7]->MaxSafety - 2) {
-                            MH[j][7]->MaxRD = MH[j][7]->MaxSafety - 2;
+                        if (MH[j][Mission_SecondaryBooster]->MaxRD > MH[j][Mission_SecondaryBooster]->MaxSafety - 2) {
+                            MH[j][Mission_SecondaryBooster]->MaxRD = MH[j][Mission_SecondaryBooster]->MaxSafety - 2;
                         }
                     }
 
-                    MH[j][7]->SMods = MH[j][7]->Damage = MH[j][7]->DCost = 0;
+                    MH[j][Mission_SecondaryBooster]->SMods = 0;
+                    MH[j][Mission_SecondaryBooster]->Damage = 0;
+                    MH[j][Mission_SecondaryBooster]->DCost = 0;
 
-                    MH[j][7]->Failures += MH[j][4]->MisFail;
-                    MH[j][7]->Steps += (MH[j][4]->MisFail + MH[j][4]->MisSucc);
-                    MH[j][7]->MisSucc = MH[j][7]->MisFail = 0;
+                    MH[j][Mission_SecondaryBooster]->Failures +=
+                        MH[j][Mission_PrimaryBooster]->MisFail;
+                    MH[j][Mission_SecondaryBooster]->Steps +=
+                        (MH[j][Mission_PrimaryBooster]->MisFail +
+                         MH[j][Mission_PrimaryBooster]->MisSucc);
+                    MH[j][Mission_SecondaryBooster]->MisSucc = 0;
+                    MH[j][Mission_SecondaryBooster]->MisFail = 0;
                 }
 
                 MH[j][i]->MisSucc = MH[j][i]->MisFail = 0;
@@ -918,8 +935,8 @@ MisDur(char plr, char dur)
 
     diff = 5 * diff;
 
-    if ((MH[0][0] && MH[0][0]->ID[0] == 'C')
-        || (MH[1][0] && MH[1][0]->ID[0] == 'C')) {
+    if ((MH[0][Mission_Capsule] && MH[0][Mission_Capsule]->ID[0] == 'C') ||
+        (MH[1][Mission_Capsule] && MH[1][Mission_Capsule]->ID[0] == 'C')) {
         manned = 1;
     }
 
