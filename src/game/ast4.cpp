@@ -25,6 +25,8 @@
 
 // This file handles the Capsule/Shuttle Screen.
 
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -499,6 +501,9 @@ void DamProb(char plr, char prog, int chk)
     display::graphics.screen()->clear();
 
     Equipment &hardware = HardwareProgram(plr, prog, chk);
+
+    assert(hardware.DCost <= Data->P[plr].Cash);
+
     D_Cost = hardware.DCost;
     Saf_Loss = hardware.Damage;
     ESafety = hardware.Safety;
