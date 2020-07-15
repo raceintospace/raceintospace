@@ -334,7 +334,11 @@ char RD(char player_index)
 
         if (mousebuttons > 0 || key > 0) {
             if ((x >= 283 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
-                if (HardwareProgram(player_index, hardware, unit).Damage) {
+                Equipment &Program =
+                    HardwareProgram(player_index, hardware, unit);
+
+                if (Program.Damage &&
+                    Program.DCost <= Data->P[player_index].Cash) {
                     InBox(283, 90, 302, 100);
                     DamProb(player_index, hardware, unit);
                     DrawRD(player_index);
@@ -351,7 +355,6 @@ char RD(char player_index)
                     ManSel(decodeNumRolls(buy[hardware][unit]));
 
                     helpText = "i009";
-
                     keyHelpText = "k009";
 
                     FadeIn(2, 10, 0, 0);
@@ -830,6 +833,11 @@ void ShowUnit(char hw, char un, char player_index)
 
     if (program.Damage) {
         IOBox(281, 88, 304, 102);
+
+        if (program.DCost > Data->P[player_index].Cash) {
+            InBox(283, 90, 302, 100);
+        }
+
         display::graphics.setForegroundColor(8);
         draw_string(285, 97, "F");
         display::graphics.setForegroundColor(11);
@@ -1110,7 +1118,11 @@ char HPurc(char player_index)
         GetMouse();
 
         if ((x >= 283 && y >= 90 && x <= 302 && y <= 100 && mousebuttons > 0) || key == 'F') {
-            if (HardwareProgram(player_index, hardware, unit).Damage) {
+            Equipment &program =
+                HardwareProgram(player_index, hardware, unit);
+
+            if (program.Damage &&
+                program.DCost <= Data->P[player_index].Cash) {
                 InBox(283, 90, 302, 100);
                 DamProb(player_index, hardware, unit);
                 helpText = "i008";
@@ -1120,7 +1132,6 @@ char HPurc(char player_index)
                 ShowUnit(hardware, unit, player_index);
 
                 FadeIn(2, 10, 0, 0);
-                music_start(M_FILLER);
                 WaitForMouseUp();
             }
         } else if ((x > 266 && y > 164 && x < 314 && y < 174 && mousebuttons > 0) || key == 'Z') {
