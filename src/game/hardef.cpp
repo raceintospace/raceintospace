@@ -25,7 +25,7 @@
 //
 // Museum Main Files
 
-// This file handles the Hardware Efficiency screen off the Museum
+// This file handles the Hardware Efficiency / Prestige Points screen from the Museum
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -89,6 +89,7 @@ DrawHardef(char plr)
     display::graphics.setForegroundColor(1);
     draw_heading(40, 5, "EFFICIENCY", 1, -1);
     draw_small_flag(plr, 4, 4);
+    InBox(2, 2, 31, 20);
     display::graphics.setForegroundColor(1);
     draw_string(257, 13, "CONTINUE");
     fill_rectangle(149, 2, 157, 10, 9);
@@ -143,11 +144,13 @@ ShowHard(char plr)
                 /* UnManned */
             } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
                         && mousebuttons > 0) || key == 'T') {
-
+                OutBox(2, 2, 31, 20);
+                WaitForMouseUp();
                 FadeOut(2, 10, 0, 0);
                 fill_rectangle(33, 1, 239, 21, 3);
                 fill_rectangle(4, 23, 315, 159, 0);
                 GradRect(4, 23, 315, 159, 0);
+                InBox(2, 2, 31, 20);
 
                 for (i = 4; i < 316; i += 2) {
                     display::graphics.legacyScreen()->setPixel(i, 57, 11);
@@ -301,8 +304,8 @@ PInfo(char plr, char loc, DisplayContext &dctx)
                     PrestigeTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS] += prestigeSum;
                 }
             }                      // end if
-        }                          //end if
-    }                             // end if
+        }                         // end if
+    }                            // end if
 
     //EVA suit kludge
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
@@ -478,7 +481,7 @@ PInfo(char plr, char loc, DisplayContext &dctx)
             default:
                 break;
             }                  // end switch
-        }                  // end case 1 'rockets'
+        }                      // end case 1 'rockets'
 
         break;
 
@@ -992,7 +995,7 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
             default:
                 break;
             }                  // end switch
-        }                  // end case 1 'rockets'
+        }                      // end case 1 'rockets'
 
         break;
 
