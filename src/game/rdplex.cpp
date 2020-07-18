@@ -726,7 +726,7 @@ char QueryUnit(char hardware_index, char unit_index, char player_index)
 
 
 /**
- Determine if the program's current safety is below the maximum R&D.
+ Determine if the program's current Safety is below the Maximum R&D.
 
  @param hardware_index
  @param unit_index
@@ -984,7 +984,7 @@ void ShowUnit(char hw, char un, char player_index)
     } else {
         OnHand(program.Num);
         display::graphics.setForegroundColor(SCol);
-        draw_number(256, 111, program.Safety);
+        draw_number(254, 111, program.Safety);
         draw_character('%');
 
         // Display Damaged Equipment
@@ -997,6 +997,18 @@ void ShowUnit(char hw, char un, char player_index)
         }
 
         qty = 0;
+    }
+    
+    int researchLeft = program.MaxRD-program.Safety;
+    if (researchLeft > 0 && researchLeft < 6) {  // Tell you if you're 5 pts or fewer from Max R&D
+        fill_rectangle(288, 104, 314, 104, 5);
+        fill_rectangle(288, 121, 314, 121, 5);
+        fill_rectangle(288, 104, 288, 121, 5);
+        fill_rectangle(314, 104, 314, 121, 5);
+        display::graphics.setForegroundColor(16);
+        draw_number(292, 111, researchLeft);
+        draw_string(300, 111, "TO");
+        draw_string(293, 118, "MAX");
     }
 
     fill_rectangle(27, 95, 130, 171, 0);
