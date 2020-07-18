@@ -113,6 +113,12 @@ static struct {
         "Set to positive values to increase debugging verbosity."
     },
     {
+        "game_style", &options.classic, "%u", 0,
+        "Set to 1 to play the game in the classic style."
+        "\n# This will override other configuration options in-game,"
+        " forcing them\n# to their 'classic' setting."
+    },
+    {
         "short_training", &options.feat_shorter_advanced_training, "%u", 0,
         "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (may cause trouble)."
     },
@@ -431,6 +437,7 @@ setup_options(int argc, char *argv[])
     options.want_cheats = 0;
     options.want_fullscreen = 0;
     options.want_debug = 0;
+    options.classic = 0;
     options.feat_shorter_advanced_training = 0;
     options.feat_female_nauts = 0;
     options.feat_random_nauts = 0;   //Naut Randomize, Nikakd, 10/8/10
