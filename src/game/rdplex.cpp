@@ -27,11 +27,15 @@
 
 // This file handles the R&D and Purchasing Facilities, and Technology Transfer
 
+#include "rdplex.h"
+
+#include <algorithm>
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
-#include "rdplex.h"
 #include "options.h"
 #include "draw.h"
 #include "ast4.h"
@@ -41,22 +45,27 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
-#include <assert.h>
 #include "filesystem.h"
 #include "hardware_buttons.h"
 #include "hardware.h"
 
 int call;
 int wh;
-boost::shared_ptr<display::PalettizedSurface> rd_men;
+
+enum {
+    MAX_RD_TEAMS = 5
+};
 
 
 void LoadVABPalette(char plr);
 void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
 void DrawCashOnHand(char plr);
+void DrawRDButtons(char plr, int maxButton = MAX_RD_TEAMS);
 void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
-void ManSel(int activeButtonIndex);
+void ManSel(int activeButtonIndex, int maxAvailable = MAX_RD_TEAMS);
+int MaxTeamsNeeded(char plr, Equipment &equip);
+int MaxTeamsNeeded(char plr, int hardware, int unit);
 void ShowUnit(char hw, char un, char plr);
 void OnHand(char qty);
 void DrawHPurc(char plr);
@@ -137,22 +146,9 @@ void SRdraw_string(int x, int y, char *text, char fgd, char bck)
 }
 
 
-void Load_RD_BUT(char player_index)
-{
-    char filename[128];
-
-    snprintf(filename, sizeof(filename), "images/rd_men.%d.png", player_index);
-    rd_men = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
-}
-
-void Del_RD_BUT()
-{
-    rd_men.reset();
-}
 
 void DrawRD(char player_index)
 {
-    int i;
     helpText = "i009";
     keyHelpText = "k009";
 
@@ -161,7 +157,6 @@ void DrawRD(char player_index)
     LoadVABPalette(player_index);
     display::graphics.screen()->clear();
 
-    Load_RD_BUT(player_index);
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
 
@@ -202,10 +197,6 @@ void DrawRD(char player_index)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISIT PURCHASING FACILITY");
 
-    for (i = 0; i < 6; i++) {
-        display::graphics.screen()->draw(rd_men, i * 20, 0, 19, 16, 166 + i * 26, 158);
-    }
-
     display::graphics.setForegroundColor(3);
     grMoveTo(296, 174);
     grLineTo(314, 174);
@@ -229,8 +220,13 @@ void DrawRD(char player_index)
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
     draw_small_flag(player_index, 4, 4);
-    QueryUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
-    ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
+
+    int hardware = PROBE_HARDWARE;
+    int unit = PROBE_HW_ORBITAL;
+    QueryUnit(hardware, unit, player_index);
+    ShowUnit(hardware, unit, player_index);
+    DrawRDButtons(player_index,
+                  MaxTeamsNeeded(player_index, hardware, unit));
 
     return;
 }  // End of DrawRD
@@ -249,6 +245,39 @@ void DrawCashOnHand(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(213 - TextDisplayLength(&str[0]) / 2, 16, &str[0]);
 }
+
+
+/**
+ *
+ * \param plr  the player index.
+ * \param maxButton  the maximum team which may be selected.
+ */
+void DrawRDButtons(char plr, int maxButton)
+{
+    assert(0 <= maxButton && maxButton <= MAX_RD_TEAMS);
+
+    char filename[128];
+    snprintf(filename, sizeof(filename), "images/rd_men.%d.png", plr);
+
+    boost::shared_ptr<display::PalettizedSurface> rd_men;
+    rd_men = boost::shared_ptr<display::PalettizedSurface>(
+        Filesystem::readImage(filename));
+
+    boost::shared_ptr<display::PalettizedSurface> shadow_men;
+    shadow_men = boost::shared_ptr<display::PalettizedSurface>(
+        Filesystem::readImage("images/rd_men.none.png"));
+
+    for (int i = 0; i <= maxButton; i++) {
+        display::graphics.screen()->draw(
+            rd_men, i * 20, 0, 19, 16, 166 + i * 26, 158);
+    }
+
+    for (int i = maxButton + 1; i <= MAX_RD_TEAMS; i++) {
+        display::graphics.screen()->draw(
+            shadow_men, i * 20, 0, 19, 16, 166 + i * 26, 158);
+    }
+}
+
 
 
 void
@@ -295,9 +324,11 @@ char RD(char player_index)
 
     b = 0; /* XXX check uninitialized */
 
-    for (i = 0; i < 4; i++) for (j = 0; j < 7; j++) {
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 7; j++) {
             buy[i][j] = Data->P[player_index].Buy[i][j];
         }
+    }
 
     helpText = "i009";
     keyHelpText = "k009";
@@ -308,6 +339,9 @@ char RD(char player_index)
     hardware_buttons.drawButtons(HARD1);
 
     ShowUnit(hardware, unit, player_index);
+    DrawRDButtons(player_index,
+                  MaxTeamsNeeded(player_index, hardware, unit));
+
     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
     if (buy[hardware][unit] == 0) {
@@ -316,10 +350,10 @@ char RD(char player_index)
         InBox(165, 184, 315, 194);
     }
 
-    ManSel(decodeNumRolls(buy[hardware][unit]));
+    ManSel(decodeNumRolls(buy[hardware][unit]),
+           MaxTeamsNeeded(player_index, hardware, unit));
 
     helpText = "i009";
-
     keyHelpText = "k009";
 
     FadeIn(2, 10, 0, 0);
@@ -344,6 +378,8 @@ char RD(char player_index)
                     DrawRD(player_index);
                     hardware_buttons.drawButtons(hardware);
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index, Program));
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
                     if (buy[hardware][unit] == 0) {
@@ -352,7 +388,8 @@ char RD(char player_index)
                         InBox(165, 184, 315, 194);
                     }
 
-                    ManSel(decodeNumRolls(buy[hardware][unit]));
+                    ManSel(decodeNumRolls(buy[hardware][unit]),
+                           MaxTeamsNeeded(player_index, Program));
 
                     helpText = "i009";
                     keyHelpText = "k009";
@@ -372,9 +409,12 @@ char RD(char player_index)
                         InBox(165, 184, 315, 194);
                     }
 
-                    ManSel(decodeNumRolls(buy[hardware][unit]));
-
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index,
+                                                 hardware, unit));
+                    ManSel(decodeNumRolls(buy[hardware][unit]),
+                           MaxTeamsNeeded(player_index, hardware, unit));
 
                     b = Data->P[player_index].Probe[unit].RDCost;
 
@@ -391,9 +431,12 @@ char RD(char player_index)
                         InBox(165, 184, 315, 194);
                     }
 
-                    ManSel(decodeNumRolls(buy[hardware][unit]));
-
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index,
+                                                 hardware, unit));
+                    ManSel(decodeNumRolls(buy[hardware][unit]),
+                           MaxTeamsNeeded(player_index, hardware, unit));
 
                     b = Data->P[player_index].Rocket[unit].RDCost;
 
@@ -410,9 +453,12 @@ char RD(char player_index)
                         InBox(165, 184, 315, 194);
                     }
 
-                    ManSel(decodeNumRolls(buy[hardware][unit]));
-
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index,
+                                                 hardware, unit));
+                    ManSel(decodeNumRolls(buy[hardware][unit]),
+                           MaxTeamsNeeded(player_index, hardware, unit));
 
                     b = Data->P[player_index].Manned[unit].RDCost;
 
@@ -429,9 +475,12 @@ char RD(char player_index)
                         InBox(165, 184, 315, 194);
                     }
 
-                    ManSel(decodeNumRolls(buy[hardware][unit]));
-
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index,
+                                                 hardware, unit));
+                    ManSel(decodeNumRolls(buy[hardware][unit]),
+                           MaxTeamsNeeded(player_index, hardware, unit));
 
                     b = Data->P[player_index].Misc[unit].RDCost;
 
@@ -439,34 +488,34 @@ char RD(char player_index)
                 }
             } else if (((y >= 157 && y <= 175 && mousebuttons > 0) || (key >= '0' && key <= '5')) && buy[hardware][unit] == 0) {
                 /*  R&D Amount */
-                if (((x >= 165 && x <= 185 && mousebuttons > 0) || key == '0') && roll != 0) {
+                if (((x >= 165 && x <= 185 && mousebuttons > 0) || key == '0') && roll != 0 && MaxTeamsNeeded(player_index, hardware, unit) >= 0) {
                     roll = 0;
                 }
 
-                if (((x >= 191 && x <= 211 && mousebuttons > 0) || key == '1') && roll != 1) {
+                if (((x >= 191 && x <= 211 && mousebuttons > 0) || key == '1') && roll != 1 && MaxTeamsNeeded(player_index, hardware, unit) >= 1) {
                     roll = 1;
                 }
 
-                if (((x >= 217 && x <= 238 && mousebuttons > 0) || key == '2') && roll != 2) {
+                if (((x >= 217 && x <= 238 && mousebuttons > 0) || key == '2') && roll != 2 && MaxTeamsNeeded(player_index, hardware, unit) >= 2) {
                     roll = 2;
                 }
 
-                if (((x >= 243 && x <= 263 && mousebuttons > 0) || key == '3') && roll != 3) {
+                if (((x >= 243 && x <= 263 && mousebuttons > 0) || key == '3') && roll != 3 && MaxTeamsNeeded(player_index, hardware, unit) >= 3) {
                     roll = 3;
                 }
 
-                if (((x >= 269 && x <= 289 && mousebuttons > 0) || key == '4') && roll != 4) {
+                if (((x >= 269 && x <= 289 && mousebuttons > 0) || key == '4') && roll != 4 && MaxTeamsNeeded(player_index, hardware, unit) >= 4) {
                     roll = 4;
                 }
 
-                if (((x >= 295 && x <= 315 && mousebuttons > 0) || key == '5') && roll != 5) {
+                if (((x >= 295 && x <= 315 && mousebuttons > 0) || key == '5') && roll != 5 && MaxTeamsNeeded(player_index, hardware, unit) >= 5) {
                     roll = 5;
                 }
 
                 b = HardwareProgram(player_index, hardware, unit).RDCost;
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
-                ManSel(roll);
+                ManSel(roll, MaxTeamsNeeded(player_index, hardware, unit));
                 WaitForMouseUp();
             } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) {  /* LEFT ARROW */
                 roll = 0;
@@ -511,8 +560,6 @@ char RD(char player_index)
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
-                ManSel(decodeNumRolls(buy[hardware][unit]));
-
                 if (buy[hardware][unit] == 0) {
                     QueryUnit(hardware, unit, player_index);
                 } else {
@@ -520,6 +567,11 @@ char RD(char player_index)
                 }
 
                 ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
 
                 OutBox(5, 184, 74, 194);
             } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) {  /* RIGHT ARROW */
@@ -564,8 +616,6 @@ char RD(char player_index)
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
-                ManSel(decodeNumRolls(buy[hardware][unit]));
-
                 if (buy[hardware][unit] == 0) {
                     QueryUnit(hardware, unit, player_index);
                 } else {
@@ -573,6 +623,11 @@ char RD(char player_index)
                 }
 
                 ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
@@ -600,6 +655,9 @@ char RD(char player_index)
                     Data->P[player_index].Spend[0][hardware] += b * roll;
 
                     ShowUnit(hardware, unit, player_index);
+                    DrawRDButtons(player_index,
+                                  MaxTeamsNeeded(player_index,
+                                                 hardware, unit));
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
                 } else {
@@ -616,7 +674,6 @@ char RD(char player_index)
                 }
 
                 music_stop();
-                Del_RD_BUT();
                 call = 0;
                 HARD1 = PROBE_HARDWARE;
                 UNIT1 = PROBE_HW_ORBITAL;
@@ -648,13 +705,18 @@ char RD(char player_index)
                 unit = UNIT1;
                 call = 0;
 
-                for (i = 0; i < 4; i++) for (j = 0; j < 7; j++) {
+                for (i = 0; i < 4; i++) {
+                    for (j = 0; j < 7; j++) {
                         buy[i][j] = Data->P[player_index].Buy[i][j];
                     }
+                }
 
                 DrawRD(player_index);
                 hardware_buttons.drawButtons(hardware);
                 ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
                 RDButTxt(0, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
 
                 if (buy[hardware][unit] == 0) {
@@ -678,14 +740,16 @@ char RD(char player_index)
 /**
  * Draw proper outlines on active/inactive research team buttons.
  *
- * @param activeButtonIndex
+ * \param activeButtonIndex  which button is currently depressed.
+ * \param maxAvailable  all buttons after this are depressed & locked.
  */
-void ManSel(int activeButtonIndex)
+void ManSel(int activeButtonIndex, int maxAvailable)
 {
     int dx = 26;
-    int i;
 
-    for (i = 0; i < 6; ++i) {
+    assert(0 <= maxAvailable && maxAvailable <= MAX_RD_TEAMS);
+
+    for (int i = 0; i <= MAX_RD_TEAMS; ++i) {
         if (i == activeButtonIndex) {
             InBox(165 + i * dx, 157, 185 + i * dx, 175);
         } else {
@@ -693,6 +757,42 @@ void ManSel(int activeButtonIndex)
         }
     }
 }
+
+
+/**
+ * Get the maximum number of R&D teams allowed for a program.
+ *
+ * If playing RIS in "classic" mode, this should always return
+ * the maximum value.
+ *
+ * \param plr  the player index.
+ * \param equip  the hardware program being researched.
+ */
+int MaxTeamsNeeded(char plr, Equipment &equip)
+{
+    if ((plr == 0 && Data->Def.Lev1 == 2) ||
+        (plr == 1 && Data->Def.Lev2 == 2)) {
+        return MAX_RD_TEAMS;
+    }
+
+    int rdGap = std::max(equip.MaxRD - equip.Safety, 0);
+    return std::min(rdGap, int(MAX_RD_TEAMS));
+}
+
+
+/**
+ * Get the maximum number of R&D teams allowed for a program.
+ *
+ * \param plr  the player index.
+ * \param hardware  the EquipmentIndex (PROBE_HARDWARE, etc.)
+ * \param unit  the program index within the hardware type.
+ */
+int MaxTeamsNeeded(char plr, int hardware, int unit)
+{
+    Equipment &equip = HardwareProgram(plr, hardware, unit);
+    return MaxTeamsNeeded(plr, equip);
+}
+
 
 /**
  Determine if the hardware/unit exists and draw the appropriate button
@@ -999,18 +1099,6 @@ void ShowUnit(char hw, char un, char player_index)
         qty = 0;
     }
     
-    int researchLeft = program.MaxRD-program.Safety;
-    if (researchLeft > 0 && researchLeft < 6) {  // Tell you if you're 5 pts or fewer from Max R&D
-        fill_rectangle(288, 104, 314, 104, 5);
-        fill_rectangle(288, 121, 314, 121, 5);
-        fill_rectangle(288, 104, 288, 121, 5);
-        fill_rectangle(314, 104, 314, 121, 5);
-        display::graphics.setForegroundColor(16);
-        draw_number(292, 111, researchLeft);
-        draw_string(300, 111, "TO");
-        draw_string(293, 118, "MAX");
-    }
-
     fill_rectangle(27, 95, 130, 171, 0);
 
     BigHardMe(player_index, 27, 95, hw, un, qty);
@@ -1034,7 +1122,6 @@ void DrawHPurc(char player_index)
     FadeOut(2, 10, 0, 0);
 
     LoadVABPalette(player_index);
-    Load_RD_BUT(player_index);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 319, 65);
@@ -1278,7 +1365,6 @@ char HPurc(char player_index)
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
             music_stop();
-            Del_RD_BUT();
             call = 0;
             HARD1 = PROBE_HARDWARE;
             UNIT1 = PROBE_HW_ORBITAL;
