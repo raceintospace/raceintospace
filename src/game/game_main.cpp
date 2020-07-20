@@ -370,13 +370,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
     pMission = &Data->P[plr].Mission[launchIdx];
 
     // Always a go for Unmanned missions
-    // TODO: This doesn't cover all unmanned missions.
-    /** \todo introduce mission attribute "manned vs. unmanned" */
-    if (mcode == Mission_Orbital_Satellite ||
-        mcode == Mission_U_SubOrbital ||
-        mcode == Mission_Unmanned_Earth_Orbital ||
-        (mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
-        mcode == Mission_U_Orbital_D) {
+    if (! IsManned(mcode)) {
         return 1;
     }
 
