@@ -129,7 +129,7 @@ bool IsLunarLanding(int mission)
  */
 bool IsManned(int mission)
 {
-    char mCrew = GetMissionType(mission).mCrew;
+    char mCrew = GetMissionPlan(mission).mCrew;
     return (mCrew == 2 || mCrew == 3 || mCrew == 4);
 }
 

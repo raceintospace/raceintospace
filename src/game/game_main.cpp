@@ -47,6 +47,7 @@
 #include "intro.h"
 #include "mc.h"
 #include "mis_c.h"
+#include "mission_util.h"
 #include "museum.h"
 #include "newmis.h"
 #include "news.h"
@@ -420,6 +421,10 @@ int CheckIfMissionGo(char plr, char launchIdx)
         }
 
         break;
+
+        case Mission_Probe_DM:
+            E = NULL;  // TODO: Might want to consider checking DM.
+            break;
 
         default:  // Catch anything weird
             assert(false);
