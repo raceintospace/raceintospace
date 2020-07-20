@@ -102,6 +102,38 @@ bool IsLunarLanding(int mission)
 }
 
 
+/**
+ * Checks if the mission is manned.
+ *
+ * This method uses Morgan's code to check the mission type to see
+ * if it is manned. In Morgan's code, mission types are
+ *   0: An unmanned mission
+ *   1: A single pad unmanned mission with capsule/minishuttle
+ *   2: A single pad manned mission
+ *   3: A joint mission with a single manned launch
+ *   4: A joint mission with two manned launches
+ *   5: A joint mission with an unmanned capsule/minishuttle
+ *
+ * Morgan's code is a little esoteric, so other methods of checking
+ * include:
+ *  - Strict mission numbering check (no file IO, but vulnerable
+ *    to change), or
+ *  - checking the Prestige Categories field (mStr.PCcat) for the
+ *    presence of Prestige_MannedSpaceMission, or
+ *  - the duration listing (mStr.Days) for a non-zero value
+ *    (Prevents use of mStr.Days for storing Flyby duration).
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if manned, false otherwise.
+ * \throws IOException  if unable to load the mission template.
+ */
+bool IsManned(int mission)
+{
+    char mCrew = GetMissionType(mission).mCrew;
+    return (mCrew == 2 || mCrew == 3 || mCrew == 4);
+}
+
+
 /* Return a letter representation of the mission duration, surrounded
  * by parenthesis, for appending to a mission name.
  *

@@ -357,6 +357,7 @@ int game_main(int argc, char *argv[])
  *
  * \param plr Playerdata
  * \param launchIdx ID of the launch
+ * \return  1 if mission is safe, 0 if not.
  */
 int CheckIfMissionGo(char plr, char launchIdx)
 {
@@ -369,19 +370,26 @@ int CheckIfMissionGo(char plr, char launchIdx)
     pMission = &Data->P[plr].Mission[launchIdx];
 
     // Always a go for Unmanned missions
-    /** \todo introduce mission attribute "manned vs. unmanned" */
-    if (mcode == Mission_Orbital_Satellite ||
-        mcode == Mission_U_SubOrbital ||
-        mcode == Mission_Unmanned_Earth_Orbital ||
-        (mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
-        mcode == Mission_U_Orbital_D) {
+    if (! IsManned(mcode)) {
         return 1;
     }
 
     // Spin through mission hardware checking safety
+    // TODO: The EVA suit safety should be checked, but since EVA
+    // suits are _always_ included in missions that will require
+    // reworking the EVA suit inclusion.
     for (idx = Mission_Capsule; idx <= Mission_PrimaryBooster; idx++) {
+        // Mission components in struct MissionType.Hard are indexed
+        // starting at 0 per EquipProbeIndex, EquipMannedIndex, etc.
+        // EXCEPT for rockets (more below) so a missing component is
+        // flagged with a negative value.
+        if (pMission->Hard[idx] < 0) {
+            continue;
+        }
+
         switch (idx) {
         case Mission_Capsule:
+        case Mission_LM:
             E = &Data->P[plr].Manned[pMission->Hard[idx]];
             E->MisSaf = E->Safety;
             break;
@@ -391,24 +399,39 @@ int CheckIfMissionGo(char plr, char launchIdx)
             E->MisSaf = E->Safety;
             break;
 
-        case Mission_LM:
-            E = &Data->P[plr].Manned[pMission->Hard[idx]];
-            E->MisSaf = E->Safety;
-            break;
-
         case Mission_PrimaryBooster:
-            E = &Data->P[plr].Manned[pMission->Hard[idx % 4]]; // YYY No idea why this is using this value
+            // Vab sets Hard[Mission_PrimaryBooster] to the rocket's
+            // index + 1 so the game can check if mission hardware
+            // has been assigned by testing
+            //     Hard[Mission_PrimaryBooster] > 0
+            // MissionSetup() will correct for that in mc2.cpp.
+        {
+            int rocketIndex = pMission->Hard[idx] - 1;
+            E = &Data->P[plr].Rocket[rocketIndex % ROCKET_HW_BOOSTERS];
 
-            // YYY  Safety check for this is never reached
-            if (idx > Mission_PrimaryBooster) { // implies
-                E->MisSaf = RocketBoosterSafety(E->Safety, Data->P[plr].Manned[pMission->Hard[Mission_PrimaryBooster]].Safety);
+            if (rocketIndex >= ROCKET_HW_BOOSTERS) {
+                const Equipment *boosters =
+                    &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
+                E->MisSaf =
+                    RocketBoosterSafety(E->Safety, boosters->Safety);
+            } else {
+                E->MisSaf = E->Safety;
             }
+        }
 
+        break;
+
+        default:  // Catch anything weird
+            assert(false);
+            WARNING2("Unexpected MissionHardwareType=%d found in "
+                     "CheckIfMissionGo()", idx);
+            E = NULL;
             break;
         }
 
         if (E && idx != Mission_Probe_DM && pMission->Hard[idx] >= 0) {
-            // If mission Safety is not within 15 points of the MaxRD then NO Go
+            // If mission Safety is not within 15 points of the MaxRD
+            // then NO Go
             if (E->MisSaf < (E->MaxRD - 15)) {
                 return 0;
             }
