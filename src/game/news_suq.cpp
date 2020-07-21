@@ -247,10 +247,6 @@ char REvent(char plr)
         break;
 
     case 91:  // increase budget by 20MB's in the budget
-        if (Data->Year > 65) {
-            return 1;
-        }
-
         Data->P[plr].Budget += 20;
         break;
 
