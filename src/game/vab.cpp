@@ -90,72 +90,40 @@ struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
 } MI[2 * 28];
 
-/*
- // The VAB images are found in two different image files; these are the cutout locations
-
-//
- struct MDA {
-    int16_t x1, y1, x2, y2, o;
- } MI[2][28] = {
-     {104, 1, 119, 55, 0}, // Atlas  0
-     {143, 1, 153, 67, 0}, // Titan  1
-     {177, 1, 217, 133, 0}, // Saturn 2
-     {219, 1, 262, 139, 0}, // Nova   3
-     {121, 1, 141, 53, 0}, // Atlas+B 4
-     {155, 1, 175, 67, 0}, // Titan+B 5
-     {177, 1, 217, 133, 0}, // Saturn+B 6
-     {83, 1, 102, 57, 0}, // Casing Small 7
-     {264, 1, 318, 145, 0}, // Casing Large 8
-     {59, 48, 75, 67, 0}, // Orbital 9
-     {59, 69, 73, 84, 0}, // InterPlan 10
-     {59, 86, 72, 100, 0}, // Lunar Probe 11
-     {130, 55, 141, 59, 0}, // Docking 12
-     {2, 1, 18, 39, 13}, // Merc 13
-     {79, 69, 111, 117, 2}, // Gemini 14
-     {20, 1, 57, 59, 12}, // Apollo 15
-     {59, 1, 81, 46, 7}, // MiniSh 16
-     {137, 69, 175, 139, 7}, // Four Cap 17
-     {223, 141, 262, 178, 0}, // Two LEM 18
-     {188, 141, 221, 177, 0}, // One LEM 19
-     {138, 141, 160, 166, 0}, // KickA 20
-     {162, 141, 186, 172, 0}, // KickB 21
-     {0, 0, 0, 0, 0},    // KickC 22
-     {0, 0, 0, 0, 0},    // None : Zond 23
-     {0, 0, 0, 0, 0},    // Filler Sm
-     {20, 61, 57, 141, 0}, // Filler Lg
-     {113, 69, 132, 98, 0}, // smShroud
-     {81, 119, 135, 153, 0}, // LgShroud
-
-     {86, 1, 113, 74, 0}, // A-Series 0
-     {115, 1, 137, 82, 0}, // Proton 1
-     {192, 1, 227, 130, 0}, // N-1      2
-     {229, 0, 263, 131, 0}, // Energia  3
-     {139, 1, 166, 85, 0}, // A-Series 4
-     {168, 1, 190, 95, 0}, // Proton+B   5
-     {192, 1, 227, 130, 0}, // N-1+B      6
-     {3, 60, 22, 116, 0}, // Casing Small 7
-     {277, 1, 318, 145, 0}, // Casing Large 8
-     {5, 32, 22, 51, 0},  // Orbital  9
-     {79, 132, 89, 157, 0}, // InterPlan 10
-     {3, 1, 20, 30, 0},   // Lunar Probe 11
-     {5, 53, 19, 58, 0},  // Docking 12
-     {91, 132, 118, 166, 15}, // Vostok 13
-     {120, 132, 148, 167, 15}, // Voskhod 14
-     {176, 132, 211, 194, 15}, // Soyuz 15
-     {249, 132, 275, 193, 11}, // MiniSh 16
-     {213, 132, 247, 196, 11}, // Four Cap 17
-     {25, 1, 55, 36, 0},  // Two LEM 18
-     {57, 1, 84, 37, 0},  // One LEM 19
-     {24, 39, 36, 72, 0}, // KickA 20
-     {38, 39, 58, 75, 0}, // KickB 21
-     {60, 39, 84, 94, 0}, // KickC 22
-     {150, 132, 174, 177, 22}, // Zond 23
-     {0, 0, 0, 0, 0},     // Filler Sm
-     {24, 77, 48, 183, 0}, // Filler Lg
-     {3, 118, 22, 147, 0}, // smShroud
-     {149, 97, 190, 124, 0} // LgShroud
+/* ID for the Vab sprite images. Serves as an index into each player's
+ * section of vtable.dat, which contains the struct MDA data for
+ * finding each sprite in the vab.img.(0/1).png image.
+ */
+enum VabSprite {
+    VabImg_OneStage = 0,
+    VabImg_TwoStage,
+    VabImg_ThreeStage,
+    VabImg_MegaStage,
+    VabImg_OneStageBoosters,
+    VabImg_TwoStageBoosters,
+    VabImg_ThreeStageBoosters,
+    VabImg_CasingSmall,
+    VabImg_CasingLarge,
+    VabImg_OrbitalSat,
+    VabImg_InterplanetaryProbe,
+    VabImg_LunarProbe,
+    VabImg_DockingModule,
+    VabImg_OneManCapsule,
+    VabImg_TwoManCapsule,
+    VabImg_ThreeManCapsule,
+    VabImg_Minishuttle,
+    VabImg_FourManCapsule,
+    VabImg_TwoManLM,
+    VabImg_OneManLM,
+    VabImg_KickerA,
+    VabImg_KickerB,
+    VabImg_KickerC,
+    VabImg_Zond,
+    VabImg_FillerSmall,  // 24
+    VabImg_FillerLarge,  // 25
+    VabImg_ShroudSmall,  // 26
+    VabImg_ShroudLarge,  // 27
 };
-*/
 
 
 void LoadMIVals();
@@ -173,7 +141,7 @@ void DispVA(char plr, char f, const display::LegacySurface *hw);
 void DispRck(char plr, char wh, const display::LegacySurface *hw);
 void DispWts(int two, int one);
 void LMAdd(char plr, char prog, char kic, char part);
-void VVals(char plr, char tx, Equipment *EQ, char v4, char v5);
+void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
 
 
 /* Load the coordinates of vehicle hardware components' images into the
@@ -761,15 +729,15 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
         }
     }
 
-    /* casing: 7 - casing small, 8 - casing large */
     casing = ((images == 1 && VAS[payload][Mission_Probe_DM].img > 0) ||
-              images == 0) ? 7 : 8;
+              images == 0) ? VabImg_CasingSmall : VabImg_CasingLarge;
 
     // The Mercury capsule has a tower that sticks through the top of
     // the casing. On the large casing image, there isn't space to
     // display this, so the smaller casing image is forced.
-    if (VAS[payload][Mission_Capsule].img == 13 && plr == 0) {
-        casing = 7;
+    if (plr == 0 &&
+        VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
+        casing = VabImg_CasingSmall;
     }
 
     /* TotY: sum of height of all payload images */
@@ -791,7 +759,8 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     casingHeight = y2 - y1 + 1;
 
     // Mercury capsule has a tower extending outside of the casing
-    if (plr == 0 && VAS[payload][Mission_Capsule].img == 13) {
+    if (plr == 0 &&
+        VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
         casingHeight += 13;
         off = 13;
     }
@@ -828,7 +797,8 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     IncY = (casingHeight - TotY) / 2;
 
     if (VAS[payload][Mission_Capsule].img > 0) {
-        if (VAS[payload][Mission_Capsule].img == 13 && plr == 0) {
+        if (plr == 0 &&
+            VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
             IncY = 0;
         } else {
             IncY = MI[plr * 28 + VAS[payload][Mission_Capsule].img].yOffset;
@@ -865,21 +835,22 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     // The shroud image is overlaid on the bottom of the casing image.
     // If using a large casing, fill the unused space at the bottom
     // with fiery rocket power!
-    if (casing == 8) {
-        x1 = MI[plr * 28 + 25].x1;
-        y1 = MI[plr * 28 + 25].y1;
-        x2 = MI[plr * 28 + 25].x2;
-        y2 = MIN(y1 + (casingHeight - IncY - 1), MI[plr * 28 + 25].y2);
+    if (casing == VabImg_CasingLarge) {
+        x1 = MI[plr * 28 + VabImg_FillerLarge].x1;
+        y1 = MI[plr * 28 + VabImg_FillerLarge].y1;
+        x2 = MI[plr * 28 + VabImg_FillerLarge].x2;
+        y2 = MIN(y1 + (casingHeight - IncY - 1),
+                 MI[plr * 28 + VabImg_FillerLarge].y2);
         w2 = x2 - x1 + 1;
         cx = casingWidth / 2 - w2 / 2 - 1;
         local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
-        x1 = MI[plr * 28 + 27].x1;
-        y1 = MI[plr * 28 + 27].y1;
-        x2 = MI[plr * 28 + 27].x2;
-        y2 = MI[plr * 28 + 27].y2;
+        x1 = MI[plr * 28 + VabImg_ShroudLarge].x1;
+        y1 = MI[plr * 28 + VabImg_ShroudLarge].y1;
+        x2 = MI[plr * 28 + VabImg_ShroudLarge].x2;
+        y2 = MI[plr * 28 + VabImg_ShroudLarge].y2;
         h2 = y2 - y1 + 1;
 
         local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
@@ -887,10 +858,10 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     } else {
         // There is no small filler defined, so skip to the shroud.
-        x1 = MI[plr * 28 + 26].x1;
-        y1 = MI[plr * 28 + 26].y1;
-        x2 = MI[plr * 28 + 26].x2;
-        y2 = MI[plr * 28 + 26].y2;
+        x1 = MI[plr * 28 + VabImg_ShroudSmall].x1;
+        y1 = MI[plr * 28 + VabImg_ShroudSmall].y1;
+        x2 = MI[plr * 28 + VabImg_ShroudSmall].x2;
+        y2 = MI[plr * 28 + VabImg_ShroudSmall].y2;
         h2 = y2 - y1 + 1;
         local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
 
@@ -1448,7 +1419,8 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
         for (i = 1; i < 6; i++) {  // Fill all parts with CAP
             VASqty++;
-            VVals(plr, Mission_Capsule, &Data->P[plr].Manned[j], j, 13 + j);
+            VVals(plr, Mission_Capsule, &Data->P[plr].Manned[j], j,
+                  VabImg_OneManCapsule + j);
         }
     }
 
@@ -1456,18 +1428,18 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     if (VX == 0x20 && part == 0 && mcode == Mission_Orbital_Satellite) {  // P:Sxx XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_ORBITAL], PROBE_HW_ORBITAL, 9);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_ORBITAL], PROBE_HW_ORBITAL, VabImg_OrbitalSat);
     }
 
     if (VX == 0x20 && part == 0 && mcode != Mission_Orbital_Satellite) {  // P:xDM XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
     } else if (VX == 0x04 && part == 0) {  // P:INTER XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY], PROBE_HW_INTERPLANETARY, 10);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY], PROBE_HW_INTERPLANETARY, VabImg_InterplanetaryProbe);
     } else if (VX == 0x02 && part == 0) {  // P:PRO XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_LUNAR], PROBE_HW_LUNAR, 11);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_LUNAR], PROBE_HW_LUNAR, VabImg_LunarProbe);
     } else if (VX == 0x60 && part == 0) {  // P:LM+SDM XX
         LMAdd(plr, ext, -1, 1);
     } else if (VX == 0xe8 && part == 0) {  // P:LM+SDM+EVA XX
@@ -1477,7 +1449,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         LMAdd(plr, ext, MISC_HW_KICKER_B, 1);
     } else if (VX == 0x21 && part == 0) {  // P:SDM+KIC-C XX
         VASqty++;
-        VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_C], MISC_HW_KICKER_C, 22);
+        VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_C], MISC_HW_KICKER_C, VabImg_KickerC);
     }
 
     else if (VX == 0x80) {
@@ -1491,7 +1463,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa0 && part == 0) {  // P:CAP+SDM XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
     }
 
     else if (VX == 0x90 && part == 0) {  // P:CAP+DMO XX
@@ -1500,7 +1472,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa8 && part == 0) {  // P:CAP+SDM+EVA XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
+        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
         // EVA Check
     }
 
@@ -1519,12 +1491,14 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
             prog == MANNED_HW_MINISHUTTLE) {
             if (mcode != 52) {  ///Special Case EOR LM Test
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, 20);
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, 21);
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
             } else {
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, 20);
+                // TODO: Check this out - seems like the sprite image
+                // should be VabImg_KickerB.
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
             }
         } else {
             VASqty = 1;
@@ -1544,14 +1518,14 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         if (prog != MANNED_HW_THREE_MAN_CAPSULE) {
             if (mcode != Mission_Jt_LunarLanding_EOR) {  ///Special Case EOR Lunar Landing
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, 20);
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, 21);
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
             } else {
                 VASqty++;
                 // TODO: Check this out - seems like sprite image should
-                // be 21.
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, 20);
+                // be VabImg_KickerB.
+                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
             }
         } else {
             VASqty = 1;
@@ -1574,46 +1548,69 @@ void LMAdd(char plr, char prog, char kic, char part)
 {
     if (prog == MANNED_HW_TWO_MAN_CAPSULE) {
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
-        VVals(plr, Mission_LM, &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE], MANNED_HW_ONE_MAN_MODULE, 19);
+        VVals(plr, Mission_Probe_DM,
+              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              MISC_HW_DOCKING_MODULE,
+              VabImg_DockingModule);
+        VVals(plr, Mission_LM,
+              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              MANNED_HW_ONE_MAN_MODULE,
+              VabImg_OneManLM);
 
         if (kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic, 20 + kic);
+            VVals(plr, Mission_Kicker,
+                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
         }
 
     }
 
     else if (prog == MANNED_HW_THREE_MAN_CAPSULE) {
         VASqty++;
-        VVals(plr, Mission_LM, &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE], MANNED_HW_TWO_MAN_MODULE, 18);
+        VVals(plr, Mission_LM,
+              &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE],
+              MANNED_HW_TWO_MAN_MODULE, VabImg_TwoManLM);
 
         if (part == 1 && kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic, 20 + kic);
+            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic,
+                  VabImg_KickerA + kic);
         }
 
         VASqty++;
-        VVals(plr, Mission_LM, &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE], MANNED_HW_ONE_MAN_MODULE, 19);
+        VVals(plr, Mission_LM,
+              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              MANNED_HW_ONE_MAN_MODULE, VabImg_OneManLM);
 
         if (part == 1 && kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic, 20 + kic);
+            VVals(plr, Mission_Kicker,
+                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
         }
     }
 
     else if (prog == MANNED_HW_MINISHUTTLE) {
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
-        VVals(plr, Mission_LM, &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE], MANNED_HW_TWO_MAN_MODULE, 18);
+        VVals(plr, Mission_Probe_DM,
+              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
+        VVals(plr, Mission_LM,
+              &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE],
+              MANNED_HW_TWO_MAN_MODULE, VabImg_TwoManLM);
 
         if (kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic, 20 + kic);
+            VVals(plr, Mission_Kicker,
+                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
         }
 
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, 12);
-        VVals(plr, Mission_LM, &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE], MANNED_HW_ONE_MAN_MODULE, 19);
+        VVals(plr, Mission_Probe_DM,
+              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
+        VVals(plr, Mission_LM,
+              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              MANNED_HW_ONE_MAN_MODULE, VabImg_OneManLM);
 
         if (kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic, 20 + kic);
+            VVals(plr, Mission_Kicker,
+                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
         }
     }
 
@@ -1628,9 +1625,9 @@ void LMAdd(char plr, char prog, char kic, char part)
  * \param tx   the mission hardware slot (enum MissionHardwareType)
  * \param EQ   the hardware component
  * \param v4   the equipment index (EquipProbeIndex, etc.)
- * \param v5   the hardware's sprite index
+ * \param sprite  the hardware's sprite index
  */
-void VVals(char plr, char tx, Equipment *EQ, char v4, char v5)
+void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite)
 {
     strcpy(&VAS[VASqty][tx].name[0], &EQ->Name[0]);
     VAS[VASqty][tx].qty = EQ->Num;
@@ -1645,7 +1642,7 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char v5)
     }
 
     VAS[VASqty][tx].dex = v4;
-    VAS[VASqty][tx].img = v5;
+    VAS[VASqty][tx].img = sprite;
     VAS[VASqty][tx].dmg = EQ->Damage != 0 ? 1 : 0;
     return;
 }
