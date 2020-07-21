@@ -19,6 +19,9 @@
 // This file executes the results of the newscast (event cards, etc.)
 
 #include "news_suq.h"
+
+#include <algorithm>
+
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "mission_util.h"
@@ -244,31 +247,16 @@ char REvent(char plr)
         break;
 
     case 91:  // increase budget by 20MB's in the budget
-        if (Data->Year > 65) {
-            return 1;
-        }
-
         Data->P[plr].Budget += 20;
         break;
 
     case 92:  // 20% or 20MB's whichever is less
-        if ((Data->P[plr].Budget / 5) < 20) {
-            evflag = Data->P[plr].Budget * 4 / 5;
-        } else {
-            evflag = 20;
-        }
-
+        evflag = std::min(Data->P[plr].Budget / 5, 20);
         Data->P[plr].Budget -= evflag;
         break;
 
     case 95:  // 30% or 30MB's whichever is less
-        if ((Data->P[plr].Budget / 3) < 30) {
-            evflag = Data->P[plr].Budget * 7 / 10;
-        } else {
-            evflag = 30;
-        }
-
-        Data->P[plr].Budget -= evflag;
+        Data->P[plr].Budget -= std::min(Data->P[plr].Budget * 3 / 10, 30);
         evflag = Data->P[plr].Budget;
         break;
 
@@ -277,13 +265,7 @@ char REvent(char plr)
             return 1;
         }
 
-        if ((Data->P[plr].Budget / 4) < 25) {
-            evflag = Data->P[plr].Budget * 3 / 4;
-        } else {
-            evflag = 25;
-        }
-
-        Data->P[plr].Budget -= evflag;
+        Data->P[plr].Budget -= std::min(Data->P[plr].Budget / 4, 25);
         evflag = Data->P[plr].Budget;
         break;
 
