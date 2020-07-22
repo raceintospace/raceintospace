@@ -29,11 +29,18 @@
 
 // This file handles the VAB / VIB  (Vehicle Assembly Building / Vehicle Integration Building)
 
+#include "vab.h"
+
+#include <cassert>
+
+#include <stdexcept>
+
+#include <boost/shared_ptr.hpp>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "vab.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "draw.h"
@@ -52,8 +59,6 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
-
-#include <boost/shared_ptr.hpp>
 
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
@@ -140,6 +145,8 @@ void ShowRkt(char *Name, int sf, int qty, char mode, char isDmg);
 void DispVA(char plr, char f, const display::LegacySurface *hw);
 void DispRck(char plr, char wh, const display::LegacySurface *hw);
 void DispWts(int two, int one);
+Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
+                           int program);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
 
@@ -391,67 +398,29 @@ void DispVAB(char plr, char pad)
  */
 int FillVab(char plr, char f, char mode)
 {
-    int i, cost;
-    cost = 0;
+    int cost = 0;
+    bool sale = (Data->P[plr].TurnOnly == 3);
 
-    for (i = 0; i < 4; i++) {
-        if ((VAS[f][i].qty - VAS[f][i].ac) <= 0 && strncmp(VAS[f][i].name, "NONE", 4) != 0) {
-            switch (i) {
-            case Mission_Capsule:
-            case Mission_LM:
-                if ((Data->P[plr].Manned[VAS[f][i].dex].Num - Data->P[plr].Manned[VAS[f][i].dex].Spok) == 0) {
-                    int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Manned[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Manned[VAS[f][i].dex].UnitCost;
+    for (int i = 0; i < 4; i++) {
+        Equipment *equip =
+            MissionHardware(plr, static_cast<MissionHardwareType>(i),
+                            VAS[f][i].dex);
 
-                    if (mode == 1) {
-                        Data->P[plr].Cash -= temp_cost;
-                        Data->P[plr].Manned[VAS[f][i].dex].Num++;
-                    } else {
-                        cost += temp_cost;
-                    }
-                }
+        if (equip == NULL || equip->Num == PROGRAM_NOT_STARTED) {
+            continue;
+        }
 
-                break;
+        assert(equip->Num >= equip->Spok);
 
-            case Mission_Kicker:
-                if ((Data->P[plr].Misc[VAS[f][i].dex].Num - Data->P[plr].Misc[VAS[f][i].dex].Spok) == 0) {
-                    int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Misc[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Misc[VAS[f][i].dex].UnitCost;
+        if ((equip->Num - equip->Spok) <= 0) {
+            int unitCost = sale ? (equip->UnitCost / 2) : equip->UnitCost;
+            unitCost = (equip->UnitCost > 0) ? MAX(unitCost, 1) : 0;
 
-                    if (mode == 1) {
-                        Data->P[plr].Cash -= temp_cost;
-                        Data->P[plr].Misc[VAS[f][i].dex].Num++;
-                    } else {
-                        cost += temp_cost;
-                    }
-                }
-
-                break;
-
-            case Mission_Probe_DM:
-                if (VAS[f][i].dex != 4) {
-                    if ((Data->P[plr].Probe[VAS[f][i].dex].Num - Data->P[plr].Probe[VAS[f][i].dex].Spok) == 0) {
-                        int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Probe[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Probe[VAS[f][i].dex].UnitCost;
-
-                        if (mode == 1) {
-                            Data->P[plr].Cash -= temp_cost;
-                            Data->P[plr].Probe[VAS[f][i].dex].Num++;
-                        } else {
-                            cost += temp_cost;
-                        }
-                    }
-                } else {
-                    if ((Data->P[plr].Misc[VAS[f][i].dex].Num - Data->P[plr].Misc[VAS[f][i].dex].Spok) == 0) {
-                        int temp_cost = Data->P[plr].TurnOnly == 3 ? MAX(1, Data->P[plr].Misc[VAS[f][i].dex].UnitCost / 2) : Data->P[plr].Misc[VAS[f][i].dex].UnitCost;
-
-                        if (mode == 1) {
-                            Data->P[plr].Cash -= temp_cost;
-                            Data->P[plr].Misc[VAS[f][i].dex].Num++;
-                        } else {
-                            cost += temp_cost;
-                        }
-                    }
-                }
-
-                break;
+            if (mode == 1) {
+                Data->P[plr].Cash -= unitCost;
+                equip->Num++;
+            } else {
+                cost += unitCost;
             }
         }
     }
@@ -465,44 +434,19 @@ int FillVab(char plr, char f, char mode)
  * preventing it from being autopurchased.
  *
  * \param  plr  The player assembling the hardware.
- * \param  f    The VAS index of the given payload hardware set.
+ * \param  f    The payload loadout index in VAS.
  * \return      0 if stopped by delay, 1 otherwise.
  */
 int ChkDelVab(char plr, char f)
 {
-    int i;
+    for (int i = 0; i < 4; i++) {
+        Equipment *equip =
+            MissionHardware(plr, static_cast<MissionHardwareType>(i),
+                            VAS[f][i].dex);
 
-    for (i = 0; i < 4; i++) {
-        if ((VAS[f][i].qty - VAS[f][i].ac) <= 0 && strcmp(VAS[f][i].name, "NONE") != 0) {
-            switch (i) {
-            case Mission_Capsule:
-            case Mission_LM:
-                if (Data->P[plr].Manned[VAS[f][i].dex].Delay != 0) {
-                    return 0;
-                }
-
-                break;
-
-            case Mission_Kicker:
-                if (Data->P[plr].Misc[VAS[f][i].dex].Delay != 0) {
-                    return 0;
-                }
-
-                break;
-
-            case Mission_Probe_DM:
-                if (VAS[f][i].dex != 4) {
-                    if (Data->P[plr].Probe[VAS[f][i].dex].Delay != 0) {
-                        return 0;
-                    }
-                } else {
-                    if (Data->P[plr].Misc[VAS[f][i].dex].Delay != 0) {
-                        return 0;
-                    }
-                }
-
-                break;
-            }
+        if (equip != NULL && (equip->Num - equip->Spok) <= 0 &&
+            equip->Delay > 0) {
+            return 0;
         }
     }
 
@@ -927,6 +871,67 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
 }
 
 
+/**
+ * Return the hardware program given the payload slot and program index.
+ *
+ * \param plr      the player index
+ * \param slot     the mission payload slot
+ * \param program  the equipment index (EquipProbeIndex, etc.)
+ * \return   the equipment entry, or NULL if no match (program < 0).
+ */
+Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
+                           int program)
+{
+    assert(0 <= plr && plr < NUM_PLAYERS);
+
+    if (program < 0) {
+        return NULL;
+    }
+
+    switch (slot) {
+    case Mission_Capsule:
+    case Mission_LM:
+        return &Data->P[plr].Manned[program];
+        break;
+
+    case Mission_Kicker:
+        return &Data->P[plr].Misc[program];
+        break;
+
+    case Mission_Probe_DM:
+        if (program == MISC_HW_DOCKING_MODULE) {
+            return &Data->P[plr].Misc[program];
+        } else {
+            return &Data->P[plr].Probe[program];
+        }
+
+        break;
+
+    case Mission_PrimaryBooster:
+        return &Data->P[plr].Rocket[program];
+        break;
+
+    case Mission_EVA:
+        // Should program == MISC_HW_EVA_SUITS be enforced?
+        return &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
+        break;
+
+    case Mission_PhotoRecon:
+        // Should program == MISC_HW_PHOTO_RECON be enforced?
+        return &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+        break;
+
+    // Mission_SecondaryBooster isn't used, per data.h
+    // case Mission_SecondaryBooster:
+
+    default:
+        throw std::logic_error(
+            "Illegal hardware type passed to MissionHardware");
+        break;
+    }
+}
+
+
 /* Print the readout of the vehicle payload weight.
  *
  * This displays the current weight of the payload as well as the
@@ -1074,6 +1079,8 @@ void VAB(char plr)
                 if (Data->P[plr].Cash >= ab && ac != 0) {
                     FillVab(plr, ccc, 1);
                     BuyVabRkt(plr, rk, &qty[0], 1);
+                    // Repopulate VAB data to update components with
+                    // autopurchased quantities.
                     BuildVAB(plr, mis, 0, 0, 1);
 
                     // Rocket Display Data --------------------------
@@ -1251,28 +1258,13 @@ void VAB(char plr)
                         OutBox(245, 5, 314, 17);
 
                         for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
-                            Data->P[plr].Mission[mis].Hard[i] = VAS[ccc][i].dex;
+                            int index = VAS[ccc][i].dex;
+                            Data->P[plr].Mission[mis].Hard[i] = index;
+                            Equipment *equip =
+                                MissionHardware(plr, static_cast<MissionHardwareType>(i), index);
 
-                            if (VAS[ccc][i].dex >= 0) {
-                                switch (i) {
-                                case Mission_Capsule:
-                                case Mission_LM:  // Manned+LM
-                                    Data->P[plr].Manned[VAS[ccc][i].dex].Spok++;
-                                    break;
-
-                                case Mission_Kicker:  // Kicker
-                                    Data->P[plr].Misc[VAS[ccc][i].dex].Spok++;
-                                    break;
-
-                                case Mission_Probe_DM:  // DM+Probes
-                                    if (VAS[ccc][i].dex == MISC_HW_DOCKING_MODULE) {
-                                        Data->P[plr].Misc[Mission_PrimaryBooster].Spok++;
-                                    } else {
-                                        Data->P[plr].Probe[VAS[ccc][i].dex].Spok++;
-                                    }
-
-                                    break;
-                                }
+                            if (index >= 0 && equip) {
+                                equip->Spok++;
                             }
                         }
 
@@ -1619,7 +1611,7 @@ void LMAdd(char plr, char prog, char kic, char part)
 
 
 /**
- *
+ * TODO: Documentation.
  *
  * \param plr
  * \param tx   the mission hardware slot (enum MissionHardwareType)
