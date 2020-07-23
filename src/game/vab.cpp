@@ -147,6 +147,8 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw);
 void DispWts(int two, int one);
 Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
                            int program);
+bool PayloadReady(int plr, int payload);
+void ReserveHardware(int plr, int pad, int payload, int rocket);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
 
@@ -874,6 +876,12 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
 /**
  * Return the hardware program given the payload slot and program index.
  *
+ * MissionHardware doesn't handle VIB/VAB rocket indexing by accounting
+ * for Rocket+Booster. It's strictly one or the other.
+ *
+ * TODO: MissionHardware doesn't have protections against array
+ * overflow issues. Consider running through HardwareProgram()?
+ *
  * \param plr      the player index
  * \param slot     the mission payload slot
  * \param program  the equipment index (EquipProbeIndex, etc.)
@@ -928,6 +936,71 @@ Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
         throw std::logic_error(
             "Illegal hardware type passed to MissionHardware");
         break;
+    }
+}
+
+
+/**
+ * Check if the payload can be assigned to a mission.
+ *
+ * \param plr      the player index.
+ * \param payload  the payload index in VAS.
+ * \return  true if there is a free piece of each payload component.
+ */
+bool PayloadReady(int plr, int payload)
+{
+    for (int i = 0; i < 4; i++) {
+        Equipment *equip =
+            MissionHardware(plr, static_cast<MissionHardwareType>(i),
+                            VAS[payload][i].dex);
+
+        if (equip && (equip->Num - equip->Spok) <= 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+/**
+ * Assigns a launch vehicle and payload to a current mission.
+ *
+ * This reserves both rocket hardware and payload together, because
+ * hardware assignment is normally tracked by
+ *   Mission.Hard[Mission_PrimaryBooster] > 0
+ * so allowing rocket or payload to be assigned without the other
+ * could break game assumptions.
+ *
+ * \param plr      the player index.
+ * \param pad      the pad index for the mission.
+ * \param payload  the payload index in VAS.
+ * \param rocket   the rocket index (+ ROCKET_HW_BOOSTERS if B/Rocket).
+ */
+void ReserveHardware(int plr, int pad, int payload, int rocket)
+{
+    assert(0 <= plr && plr < NUM_PLAYERS);
+    assert(0 <= pad && pad < MAX_MISSIONS);
+    assert(0 <= payload && payload < 7);
+    assert(0 <= rocket && rocket < 7);
+
+    for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
+        int index = VAS[payload][i].dex;
+        Data->P[plr].Mission[pad].Hard[i] = index;
+        Equipment *equip =
+            MissionHardware(plr, static_cast<MissionHardwareType>(i),
+                            index);
+
+        if (index >= 0 && equip) {
+            equip->Spok++;
+        }
+    }
+
+    Data->P[plr].Mission[pad].Hard[Mission_PrimaryBooster] = rocket + 1;
+    Data->P[plr].Rocket[rocket % ROCKET_HW_BOOSTERS].Spok++;
+
+    if (rocket / ROCKET_HW_BOOSTERS > 0) {
+        Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok++;
     }
 }
 
@@ -1195,8 +1268,6 @@ void VAB(char plr)
 
                 break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && weight <= pay[rk]) {
-                int j = 0;
-
                 if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i158");
                 } else if (Mis.Doc == 1 && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
@@ -1206,48 +1277,7 @@ void VAB(char plr)
                         Help("i155");    // No docking module in orbit
                     }
 
-                    int j2 = 0;
-
-                    if (strncmp(VAS[ccc][0].name, "NONE", 4) != 0) {
-                        j++;
-
-                        if ((Data->P[plr].Manned[VAS[ccc][Mission_Capsule].dex].Num - Data->P[plr].Manned[VAS[ccc][Mission_Capsule].dex].Spok) > 0) {
-                            j2++;
-                        }
-                    }
-
-                    if (strncmp(VAS[ccc][1].name, "NONE", 4) != 0) {
-                        j++;
-
-                        if ((Data->P[plr].Misc[VAS[ccc][Mission_Kicker].dex].Num - Data->P[plr].Misc[VAS[ccc][Mission_Kicker].dex].Spok) > 0) {
-                            j2++;
-                        }
-                    }
-
-                    if (strncmp(VAS[ccc][2].name, "NONE", 4) != 0) {
-                        j++;
-
-                        if ((Data->P[plr].Manned[VAS[ccc][Mission_LM].dex].Num - Data->P[plr].Manned[VAS[ccc][Mission_LM].dex].Spok) > 0) {
-                            j2++;
-                        }
-                    }
-
-                    if (strncmp(VAS[ccc][3].name, "NONE", 4) != 0) {
-                        j++;
-
-                        if (((Data->P[plr].Probe[VAS[ccc][Mission_Probe_DM].dex].Num - Data->P[plr].Probe[VAS[ccc][Mission_Probe_DM].dex].Spok) > 0)
-                            || ((Data->P[plr].Misc[VAS[ccc][Mission_Probe_DM].dex].Num - Data->P[plr].Misc[VAS[ccc][Mission_Probe_DM].dex].Spok) > 0)) {
-                            j2++;
-                        }
-                    }
-
-                    j++;
-
-                    if (qty[rk] > 0) {
-                        j2++;
-                    }
-
-                    if (j == j2) {
+                    if (PayloadReady(plr, ccc) && qty[rk] > 0) {
                         InBox(245, 5, 314, 17);
                         WaitForMouseUp();
 
@@ -1257,24 +1287,7 @@ void VAB(char plr)
 
                         OutBox(245, 5, 314, 17);
 
-                        for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
-                            int index = VAS[ccc][i].dex;
-                            Data->P[plr].Mission[mis].Hard[i] = index;
-                            Equipment *equip =
-                                MissionHardware(plr, static_cast<MissionHardwareType>(i), index);
-
-                            if (index >= 0 && equip) {
-                                equip->Spok++;
-                            }
-                        }
-
-                        Data->P[plr].Mission[mis].Hard[Mission_PrimaryBooster] = rk + 1;
-                        Data->P[plr].Rocket[rk % 4].Spok++;
-
-                        if (rk > 3) {
-                            Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Spok++;
-                        }
-
+                        ReserveHardware(plr, mis, ccc, rk);
                         break;
                     }
                 }
