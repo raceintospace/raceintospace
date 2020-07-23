@@ -1294,18 +1294,15 @@ void VAB(char plr)
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
                 // Choose Rocket
                 InBox(64, 181, 161, 191);
-#define Misdef(a)     Data->P[plr].Mission[(a)].MissionCode
                 rk++;
 
                 if (rk > 6) {
                     rk = 0;
                 }
 
-                // TODO: Replace check with a mission utility function
-                // for beyond Earth Orbit.
-                if (((Misdef(mis) >= 42 && Misdef(mis) <= 57) ||
-                     (Misdef(mis) >= Mission_LunarFlyby && Misdef(mis) <= Mission_SaturnFlyby)) &&
-                    (rk == 4 || rk == 0)) {
+                if (! IsLEORegion(Data->P[plr].Mission[mis].MissionCode) &&
+                    (rk == ROCKET_HW_ONE_STAGE ||
+                     rk == ROCKET_HW_ONE_STAGE + ROCKET_HW_BOOSTERS)) {
                     if (options.cheat_altasOnMoon == 0) {
                         rk++;
                     }

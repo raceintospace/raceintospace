@@ -84,6 +84,28 @@ bool IsDuration(int mission)
 
 
 /**
+ * Checks if the mission takes place within the Low Earth Orbit (LEO)
+ * region of space.
+ *
+ * The Low Earth Orbit region includes "space" through Low Earth Orbit
+ * and thus covers suborbital flights.
+ *
+ * The Atlas/R-7 rocket is incapable of reaching lunar orbit or beyond.
+ * This implementation depends upon strict mission numbering, so any
+ * changes to the mission data file could result in errors.
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if within the LEO region, false if beyond.
+ */
+bool IsLEORegion(int mission)
+{
+    return ! ((mission >= Mission_LunarFlyby &&
+               mission <= Mission_SaturnFlyby) ||
+              (mission >= 42 && mission <= 57));
+}
+
+
+/**
  * Checks if the mission is a lunar landing.
  *
  * This implementation depends upon strict mission numbering, so any
