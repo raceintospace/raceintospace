@@ -73,9 +73,6 @@
 struct VInfo VAS[7][4];
 int VASqty;  // How many payload configurations there are
 
-// CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
-char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
 /* MI contains the location of a vehicle equipment image and its
  * positioning when drawn inside a vehicle casing.
  *
@@ -247,10 +244,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
  */
 void DispVAB(char plr, char pad)
 {
-    uint16_t image_len = 0;
-
-    helpText = "i016";
-    keyHelpText = "k016";
+    struct MissionType &mission = Data->P[plr].Mission[pad];
 
     FadeOut(2, 10, 0, 0);
 
@@ -265,7 +259,7 @@ void DispVAB(char plr, char pad)
     IOBox(175, 183, 220, 197);
 
     // Disable the Scrub buttons if there is no mission.
-    if (Data->P[plr].Mission[pad].MissionCode) {
+    if (mission.MissionCode) {
         IOBox(271, 183, 316, 197);
     } else {
         InBox(271, 183, 316, 197);
@@ -273,9 +267,8 @@ void DispVAB(char plr, char pad)
 
     // Disable the Delay button if there is no mission OR if it
     // cannot be delayed.
-    if (Data->P[plr].Mission[pad].MissionCode &&
-        MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
-                        Data->Year, Data->Season)) {
+    if (mission.MissionCode &&
+        MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
         IOBox(223, 183, 268, 197);
     } else {
         InBox(223, 183, 268, 197);
@@ -315,13 +308,11 @@ void DispVAB(char plr, char pad)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "OCKET:     ");
 
-    Name[0] = 'A' + pad;
-    Name[1] = 0x00;
     InBox(4, 27, 166, 37);
     fill_rectangle(5, 28, 165, 36, 10);
     display::graphics.setForegroundColor(11);
     draw_string(38, 34, "LAUNCH FACILITY: ");
-    draw_string(0, 0, Name);
+    draw_character('A' + pad);
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
@@ -332,12 +323,12 @@ void DispVAB(char plr, char pad)
 
     display::graphics.setForegroundColor(5);
     draw_string(5, 45, "MISSION: ");
-    draw_string(0, 0, Data->P[plr].Mission[pad].Name);
+    draw_string(0, 0, mission.Name);
 
     display::graphics.setForegroundColor(1);
     draw_string(5, 61, "CREW: ");
 
-    switch (Data->P[plr].Mission[pad].Men) {
+    switch (mission.Men) {
     case 0:
         draw_string(0, 0, "UNMANNED");
         break;
@@ -364,15 +355,14 @@ void DispVAB(char plr, char pad)
     draw_string(40, 111, "MISSION HARDWARE:");
     draw_string(10, 119, "SELECT PAYLOADS AND BOOSTER");
 
-    GetMisType(Data->P[plr].Mission[pad].MissionCode);
+    struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 52, Mis.Abbr);
+    draw_string(5, 52, missionPlan.Abbr);
 
     // Show duration level only on missions with a Duration step  -Leon
-    if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {
-        int duration = Data->P[plr].Mission[pad].Duration;
-        draw_string(0, 0, GetDurationParens(duration));
+    if (IsDuration(mission.MissionCode)) {
+        draw_string(0, 0, GetDurationParens(mission.Duration));
     }
 
     draw_small_flag(plr, 4, 4);
@@ -570,12 +560,10 @@ void ShowAutopurchase(const char plr, const int payload, const int rk,
  */
 void ShowVA(char f)
 {
-    int i;
-
     fill_rectangle(65, 130, 160, 174, 3);
     display::graphics.setForegroundColor(1);
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (VAS[f][i].qty < 0) {
             display::graphics.setForegroundColor(9);
         } else {
@@ -1037,9 +1025,11 @@ void DispWts(int two, int one)
 void VAB(char plr)
 {
     int ccc, rk;                // Payload index & rocket index
-    int mis, weight, ab, ac;
+    int mis, weight;
     int sf[8], qty[8], pay[8];  // Cached rocket safety, quantity, & thrust
     char Name[8][12];           // Cached rocket names
+    char isDamaged[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // Cached rocket damage
+
     char ButOn;
     boost::shared_ptr<display::LegacySurface> hw;
 
@@ -1060,6 +1050,10 @@ void VAB(char plr)
         }
 
         helpText = "i016";
+        keyHelpText = "k016";
+
+        struct mStr missionPlan =
+            GetMissionPlan(Data->P[plr].Mission[mis].MissionCode);
 
         // When reassembling Hardware, any hardware previously assigned to
         // the mission should be unassigned so it may be used (or not) in
@@ -1140,16 +1134,13 @@ void VAB(char plr)
                 InBox(6, 86, 163, 94);
                 key = 0;
                 // NEED A DELAY CHECK
-                ac = ChkDelVab(plr, ccc);
+                bool ac = ChkDelVab(plr, ccc) &&
+                          ChkVabRkt(plr, rk, &qty[0]);
 
-                if (ac != 0) {
-                    ac = ChkVabRkt(plr, rk, &qty[0]);
-                }
+                int cost = FillVab(plr, ccc, 0) +
+                           BuyVabRkt(plr, rk, &qty[0], 0);
 
-                ab = FillVab(plr, ccc, 0);
-                ab += BuyVabRkt(plr, rk, &qty[0], 0);
-
-                if (Data->P[plr].Cash >= ab && ac != 0) {
+                if (Data->P[plr].Cash >= cost && ac == true) {
                     FillVab(plr, ccc, 1);
                     BuyVabRkt(plr, rk, &qty[0], 1);
                     // Repopulate VAB data to update components with
@@ -1182,7 +1173,7 @@ void VAB(char plr)
 
                     //display cost (XX of XX)
                     ShowAutopurchase(plr, ccc, rk, &qty[0]);
-                } else if (ac == 0) {
+                } else if (ac == false) {
                     Help("i135");    // delay on purchase
                 } else {
                     Help("i137");    // not enough money
@@ -1268,12 +1259,15 @@ void VAB(char plr)
 
                 break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) && ccc != 0 && ButOn == 1 && weight <= pay[rk]) {
-                if (Mis.EVA == 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
+                if (missionPlan.EVA == 1 &&
+                    Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i158");
-                } else if (Mis.Doc == 1 && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
+                } else if (missionPlan.Doc == 1 &&
+                           Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
                     Help("i159");
                 } else {
-                    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
+                    if ((missionPlan.mVab[0] & 0x10) == 0x10 &&
+                        Data->P[plr].DockingModuleInOrbit <= 0) {
                         Help("i155");    // No docking module in orbit
                     }
 
@@ -1294,9 +1288,8 @@ void VAB(char plr)
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
                 // Choose Rocket
                 InBox(64, 181, 161, 191);
-                rk++;
 
-                if (rk > 6) {
+                if (++rk > 6) {
                     rk = 0;
                 }
 
@@ -1368,6 +1361,17 @@ void VAB(char plr)
  * mission and stores the payload information in the global variable
  * VAS.
  *
+ * Mission payloads are built based on the mission requirements found
+ * in struct mStr.mVab, a single byte encoded with bit flags:
+ *   0x80  Capsule (CAP)
+ *   0x40  Lunar Module (LM)
+ *   0x20  Orbital Satellite / Docking Module (DMO)
+ *   0x10  Spoofed Docking Module (SDM)
+ *   0x08  EVA Suit (EVA)
+ *   0x04  Interplanetary Probe (INTER)
+ *   0x02  Lunar Surveyor (PRO)
+ *   0x01  Kicker (KIC)
+ *
  * This function is used by the AI, so beware of making changes without
  * understanding what the AI is doing!
  *
@@ -1402,9 +1406,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         prog = ext = pr;                    // Manned Program to Check
     }
 
-    GetMisType(mcode);
-
-    VX = Mis.mVab[part];
+    VX = GetMissionPlan(mcode).mVab[part];
 
     for (i = 0; i < 7; i++) {
         for (j = 0; j < 4; j++) {
