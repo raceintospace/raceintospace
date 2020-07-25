@@ -430,8 +430,8 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
 
     IOBox(91, 151, 243, 172);
     display::graphics.setForegroundColor(5);
-    draw_string(167 - TextDisplayLength("CONTINUE") / 2, 163,
-                "CONTINUE");
+    draw_heading(123, 155, "CONTINUE", 0, -2);
+    //draw_string(167 - TextDisplayLength("CONTINUE") / 2, 163, "CONTINUE");
 
     // Primitive control loop. Don't like using localized control loops,
     // but it's the way RIS is written. -- rnyoakum
@@ -1246,8 +1246,13 @@ void Future(char plr)
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
 
-            } else if (x >= 203 && y >= 24 && x <= 241 && y <= 44 && mousebuttons > 0) {
+            } else if (x >= 203 && y >= 34 && x <= 241 && y <= 44 && mousebuttons > 0) {
                 // Penalties popup
+                InBox(203, 33, 238, 46);
+                GetMouse();
+                delay(150);
+                OutBox(203, 33, 238, 47);
+                OutBox(203, 34, 238, 47);
                 DrawPenaltyPopup(plr, missionData[misType]);
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
