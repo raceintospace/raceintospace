@@ -594,6 +594,17 @@ int Help(const char *FName)
             key = 0;
         }   // Down
 
+    if (plc <= top) {
+        draw_up_arrow(268, 56);
+    } else {
+        draw_up_arrow_highlight(268, 56);
+    }
+    if ((plc + 12) > bot) {
+        draw_down_arrow(268, 95);
+    } else {
+        draw_down_arrow_highlight(268, 95);
+    }
+
     }
 
     local.copyTo(display::graphics.legacyScreen(), 34, 32);
