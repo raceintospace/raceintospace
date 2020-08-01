@@ -80,6 +80,7 @@ set(game_sources
   state_utils.cpp
   utils.cpp
   vab.cpp
+  vehicle.cpp
   sdlhelper.cpp
   )
 
