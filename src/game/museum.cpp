@@ -85,8 +85,10 @@ char tame[29][40] = {
 
 
 void Move2(char plr, char *pos, char *pos2, char val);
+void BackTop(char plr, char *pos, char *pos2);
 void BackOne(char plr, char *pos, char *pos2);
 void ForOne(char plr, char *pos, char *pos2);
+void ForEnd(char plr, char *pos, char *pos2);
 void DPrest(char plr, char *pos, char *pos2);
 void Mission_Data_Buttons(char plr, int *where);
 void Draw_Mis_Stats(char plr, char index, int *where, char mode);
@@ -281,10 +283,10 @@ void ShowPrest(char plr)
     draw_heading(8, 5, "PRESTIGE SUMMARY", 0, -1);
     draw_heading(14, 109, "EVENTS", 0, -1);
     display::graphics.setForegroundColor(11);
-    draw_string(140, 120, "1ST:");
-    draw_string(175, 120, "2ND:");
-    draw_string(212, 120, "SUBS:");
-    draw_string(254, 120, "FAIL:");
+    draw_string(144, 120, "1ST:");
+    draw_string(177, 120, "2ND:");
+    draw_string(214, 120, "SUBS:");
+    draw_string(256, 120, "FAIL:");
     display::graphics.setForegroundColor(1);
     draw_string(257, 13, "CONTINUE");
     draw_string(17, 39, "FIRST:");
@@ -329,6 +331,36 @@ void ShowPrest(char plr)
             return;
         }
 
+        if (key == K_HOME) {
+            BackTop(plr, &pos, &pos2);
+        }
+
+        if (key == K_PGDN) {
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+            ForOne(plr, &pos, &pos2);
+        }
+        if (key == K_PGUP) {
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+            BackOne(plr, &pos, &pos2);
+        }
+        if (key == K_END) {
+            ForEnd(plr, &pos, &pos2);
+        }
+
         pButton(297, 129, 307, 158, BackOne(plr, &pos, &pos2), key >> 8, 72);
         pButton(297, 160, 307, 189, ForOne(plr, &pos, &pos2), key >> 8, 80);
         Button2(15, 129, 160, 133, Move2(plr, &pos, &pos2, 0), key, 49);
@@ -353,6 +385,14 @@ void Move2(char plr, char *pos, char *pos2, char val)
     }
 
     DPrest(plr, pos, pos2);
+}
+
+void BackTop(char plr, char *pos, char *pos2)
+{
+    *pos = -1;
+    *pos2 = -1;
+    DPrest(plr, pos, pos2);
+    return;
 }
 
 void BackOne(char plr, char *pos, char *pos2)
@@ -404,6 +444,14 @@ void ForOne(char plr, char *pos, char *pos2)
         *pos = 18;
     }
 
+    DPrest(plr, pos, pos2);
+    return;
+}
+
+void ForEnd(char plr, char *pos, char *pos2)
+{
+    *pos = 18;
+    *pos2 = 27;
     DPrest(plr, pos, pos2);
     return;
 }

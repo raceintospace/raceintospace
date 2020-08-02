@@ -45,8 +45,10 @@ Record_Entry rec[56][3];
 
 void Move2rec(char *pos, char *pos2, char val);
 void ClearRecord(char *pos2);
+void BackTop(char *pos, char *pos2);
 void Back1rec(char *pos, char *pos2);
 void For1rec(char *pos, char *pos2);
+void ForEnd(char *pos, char *pos2);
 void Drec(char *pos, char *pos2, char mde);
 void WriteRecord(int i, int j, int k, int temp);
 void SwapRec(int Rc, int pl1, int pl2);
@@ -240,6 +242,36 @@ void Records(char plr)
             return;
         }
 
+        if (key == K_HOME) {
+            BackTop(&pos, &pos2);
+        }
+
+        if (key == K_PGUP) {
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+            Back1rec(&pos, &pos2);
+        }
+
+        if (key == K_PGDN) {
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+            For1rec(&pos, &pos2);
+        }
+
+        if (key == K_END) {
+            ForEnd(&pos, &pos2);
+        }
+
         pButton(297, 129, 307, 158, Back1rec(&pos, &pos2), key >> 8, 72);
         pButton(297, 160, 307, 189, For1rec(&pos, &pos2), key >> 8, 80);
         pButton(236, 86, 307, 97, ClearRecord(&pos2), key, 'C');
@@ -312,6 +344,14 @@ void ClearRecord(char *pos2)
     return;
 }
 
+void BackTop(char *pos, char *pos2)
+{
+    *pos = 0;
+    *pos2 = 0;
+    Drec(pos, pos2, 1);
+    return;
+}
+
 void Back1rec(char *pos, char *pos2)
 {
     if (*pos2 == 0) {
@@ -341,6 +381,14 @@ void For1rec(char *pos, char *pos2)
         *pos += 1;
     }
 
+    Drec(pos, pos2, 1);
+    return;
+}
+
+void ForEnd(char *pos, char *pos2)
+{
+    *pos = 47;
+    *pos2 = 55;
     Drec(pos, pos2, 1);
     return;
 }
