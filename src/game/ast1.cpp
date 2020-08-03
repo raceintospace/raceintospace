@@ -53,11 +53,75 @@
 #include "gr.h"
 #include "pace.h"
 
+
+enum DialogueResponse {
+    DLG_RESPONSE_YES = 1,
+    DLG_RESPONSE_NO = -1,
+    DLG_RESPONSE_NONE = 0
+};
+
+int AstSelectPrompt(char plr);
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
+void RandomizeNauts();
 void Recruit(char plr, uint8_t pool, uint8_t candidate);
+
+
+/**
+ * Ask the player if they wish to pay the cost to recruit new
+ * astronauts/cosmonauts.
+ */
+int AstSelectPrompt(char plr, int cost)
+{
+    DrawAstCheck(plr);
+    WaitForMouseUp();
+    int choice = DLG_RESPONSE_NONE;
+
+    while (choice == DLG_RESPONSE_NONE) {
+        key = 0;
+        GetMouse();
+
+        if ((x >= 100 && y >= 135 && x <= 148 && y <= 147 && mousebuttons > 0) || key == 'Y') {
+
+            InBox(100, 135, 148, 147);
+            WaitForMouseUp();
+
+            if (Data->P[plr].Cash >= cost) {
+                choice = DLG_RESPONSE_YES;
+            } else {
+                choice = DLG_RESPONSE_NO;
+            }
+
+            if (Data->P[plr].AstroDelay > 0) {
+                choice = DLG_RESPONSE_NO;
+            }
+
+            if (key > 0) {
+                delay(150);
+            }
+
+            OutBox(100, 135, 148, 147);
+        }
+
+        if ((x >= 168 && y >= 135 && x <= 216 && y <= 147 && mousebuttons > 0)
+            || key == 'N' || key == K_ESCAPE || key == K_ENTER) {
+
+            InBox(168, 135, 216, 147);
+            WaitForMouseUp();
+
+            if (key > 0) {
+                delay(150);
+            }
+
+            choice = DLG_RESPONSE_NO;
+            OutBox(168, 135, 216, 147);
+        }
+    }
+
+    return choice;
+}
 
 
 /** display list of 'naut names
@@ -431,6 +495,22 @@ void DrawAstSel(char plr)
 }
 
 
+//Naut Randomize, Nikakd, 10/8/10
+// Note: These stats are far more generous than the historical stats.
+void RandomizeNauts()
+{
+    int i;
+
+    for (i = 0; i < 106; i++) {
+        Men[i].Cap = brandom(5);
+        Men[i].LM  = brandom(5);
+        Men[i].EVA = brandom(5);
+        Men[i].Docking = brandom(5);
+        Men[i].Endurance = brandom(5);
+    }
+}
+
+
 /**
  * Copy astronaut data from the roster pool into the player data.
  *
@@ -498,22 +578,6 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 }
 
 
-//Naut Randomize, Nikakd, 10/8/10
-// Note: These stats are far more generous than the historical stats.
-void RandomizeNauts()
-{
-    int i;
-
-    for (i = 0; i < 106; i++) {
-        Men[i].Cap = brandom(5);
-        Men[i].LM  = brandom(5);
-        Men[i].EVA = brandom(5);
-        Men[i].Docking = brandom(5);
-        Men[i].Endurance = brandom(5);
-    }
-}
-
-
 void AstSel(char plr)
 {
     char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, maxLeft, change, min, count,
@@ -528,58 +592,10 @@ void AstSel(char plr)
     MaxMen = Index = now = now2 = max = min = count = 0;
 
     music_start(M_DRUMSM);
-    DrawAstCheck(plr);
-    WaitForMouseUp();
-    i = 0;
 
-    while (i == 0) {
-        key = 0;
-        GetMouse();
+    int cost = (Data->P[plr].AstroLevel == 0) ? 20 : 15;
 
-        if ((x >= 100 && y >= 135 && x <= 148 && y <= 147 && mousebuttons > 0) || key == 'Y') {
-
-            InBox(100, 135, 148, 147);
-            WaitForMouseUp();
-
-            if (Data->P[plr].AstroLevel == 0) {
-                Index = 20;
-            } else {
-                Index = 15;
-            }
-
-            if (Data->P[plr].Cash >= Index) {
-                i = 1;
-            } else {
-                i = 2;
-            }
-
-            if (Data->P[plr].AstroDelay > 0) {
-                i = 2;
-            }
-
-            if (key > 0) {
-                delay(150);
-            }
-
-            OutBox(100, 135, 148, 147);
-        }
-
-        if ((x >= 168 && y >= 135 && x <= 216 && y <= 147 && mousebuttons > 0)
-            || key == 'N' || key == K_ESCAPE || key == K_ENTER) {
-
-            InBox(168, 135, 216, 147);
-            WaitForMouseUp();
-
-            if (key > 0) {
-                delay(150);
-            }
-
-            i = 2;
-            OutBox(168, 135, 216, 147);
-        }
-    }
-
-    if (i == 2) {
+    if (AstSelectPrompt(plr, cost) != DLG_RESPONSE_YES) {
         music_stop();    /* too poor for astronauts or NO */
         return;
     }
@@ -610,9 +626,6 @@ void AstSel(char plr)
         MaxMen = femaleAstronautsAllowed ? 13 : 10;
         MaxSel = ASTRO_POOL_LVL1;
         Index = 0;
-        // TODO: This is an ugly hack...
-        Data->P[plr].Cash -= 5;
-        Data->P[plr].Spend[0][2] += 5;
         break;
 
     case 1:
@@ -642,8 +655,8 @@ void AstSel(char plr)
         break;
     }
 
-    Data->P[plr].Cash -= 15;
-    Data->P[plr].Spend[0][2] += 15;
+    Data->P[plr].Cash -= cost;
+    Data->P[plr].Spend[0][2] += cost;
 
     now = Index;
     max = Index + MaxMen;
