@@ -722,7 +722,6 @@ void Programs(char plr, char prog)
         }
     }
 
-    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
     DispLeft(plr, BarA, count, now2, &M[0]);
     NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
                Data->P[plr].Crew[prog][grp][1],
@@ -757,12 +756,10 @@ void Programs(char plr, char prog)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                fill_rectangle(26, 129, 153, 195, 0);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 BarSkill(plr, BarA, now2, &M[0]);
                 WaitForMouseUp();
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
             }
         }
@@ -784,17 +781,12 @@ void Programs(char plr, char prog)
                         if (BarA == 0)
                             if (now2 > 0) {
                                 now2--;
-                                fill_rectangle(26, 129, 153, 195, 0);
-                                ShBox(26, 130 + BarA * 8, 152,
-                                      138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                             }
 
                         if (BarA > 0) {
-                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA--;
                             now2--;
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         }
 
@@ -808,16 +800,12 @@ void Programs(char plr, char prog)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         }
 
                     if (BarA > 0) {
-                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &M[0]);
                     }
 
@@ -844,19 +832,13 @@ void Programs(char plr, char prog)
                         if (BarA == 7)
                             if (now2 < count - 1) {
                                 now2++;
-                                fill_rectangle(26, 129, 153, 195, 0);
-                                ShBox(26, 130 + BarA * 8, 152,
-                                      138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                             }
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
-                                fill_rectangle(26, 129, 153, 195, 0);
                                 BarA++;
                                 now2++;
-                                ShBox(26, 130 + BarA * 8, 152,
-                                      138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                             }
 
@@ -870,17 +852,13 @@ void Programs(char plr, char prog)
                     if (BarA == 7)
                         if (now2 < count - 1) {
                             now2++;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         }
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
-                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         }
 
@@ -892,16 +870,12 @@ void Programs(char plr, char prog)
                 //WaitForMouseUp();
                 OutBox(6, 163, 18, 194);
             } else if (key == K_HOME) {
-                fill_rectangle(26, 129, 153, 195, 0);
                 BarA = 0;
                 now2 = 0;
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
             } else if (key == K_END) {
-                fill_rectangle(26, 129, 153, 195, 0);
                 BarA = MIN(count - 1, 7);
                 now2 = count - 1;
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
             } else if (key == 'S') {
                 // Show Skill
@@ -1074,10 +1048,6 @@ void Programs(char plr, char prog)
                         }
                     }
 
-                    fill_rectangle(26, 129, 153, 195, 0);
-
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-
                     DispLeft(plr, BarA, count, now2, &M[0]);
 
                     CrewCount[grp]++;
@@ -1183,11 +1153,7 @@ void Programs(char plr, char prog)
 
                     ClearIt();
 
-                    fill_rectangle(26, 129, 153, 195, 0);
-
                     FltsTxt(grp, 8);
-
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
                     DispLeft(plr, BarA, count, now2, &M[0]);
 

@@ -134,6 +134,9 @@ void DispEight(char now, char loc)
     int i, start;
     start = now - loc;
 
+    fill_rectangle(186, 129, 314, 195, 0);  // Blank display area
+    ShBox(187, 130 + loc * 8, 313, 138 + loc * 8);  // Selection bar
+
     for (i = start; i < start + 8; i++) {
         if (MCol[i] == 1) {
             display::graphics.setForegroundColor(8);
@@ -170,6 +173,9 @@ void DispEight2(int nw, int lc, int cnt)
     start = nw - lc;
     num = (cnt < 8) ? cnt : 8;
 
+    fill_rectangle(26, 129, 153, 195, 0);
+    ShBox(26, 130 + lc * 8, 152, 138 + lc * 8);
+
     display::graphics.setForegroundColor(11);
 
     for (i = start; i < start + num; i++) {
@@ -183,9 +189,6 @@ void DispEight2(int nw, int lc, int cnt)
     fill_rectangle(60, 57, 145, 61, 3);
     fill_rectangle(132, 66, 140, 70, 3);
     fill_rectangle(113, 98, 120, 102, 3);
-    fill_rectangle(292, 36, 310, 41, 7);
-    display::graphics.setForegroundColor(11);
-    draw_number(292, 41, MaxSel - cnt);
 
     if (cnt > 0) {
         display::graphics.setForegroundColor(1);
@@ -606,9 +609,6 @@ void AstSel(char plr)
     BarB = 0;
     DrawAstSel(plr);
 
-    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
-
     memset(sel, -1, sizeof(sel));
     memset(MCol, 0x00, sizeof(MCol));
 
@@ -689,11 +689,9 @@ void AstSel(char plr)
                     ksel = 0;
                 }
 
-                fill_rectangle(186, 129, 314, 195, 0);
                 now -= BarB;
                 now += i;
                 BarB = i;
-                ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                 DispEight(now, BarB);
                 WaitForMouseUp();
             }
@@ -706,11 +704,9 @@ void AstSel(char plr)
                     ksel = 1;
                 }
 
-                fill_rectangle(26, 129, 153, 195, 0);
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispEight2(now2, BarA, count);
                 WaitForMouseUp();
             }
@@ -723,8 +719,6 @@ void AstSel(char plr)
 
             BarA = 0;
             now2 = 0;
-            fill_rectangle(26, 129, 153, 195, 0);
-            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
             DispEight2(now2, BarA, count);
 
             delay(10);
@@ -744,17 +738,13 @@ void AstSel(char plr)
                     if (BarA == 0) {
                         if (now2 > 0) {
                             now2--;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
                     }
 
                     if (BarA > 0) {
-                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
 
@@ -768,17 +758,13 @@ void AstSel(char plr)
                 if (BarA == 0) {
                     if (now2 > 0) {
                         now2--;
-                        fill_rectangle(26, 129, 153, 195, 0);
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
                 }
 
                 if (BarA > 0) {
-                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA--;
                     now2--;
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispEight2(now2, BarA, count);
                 }
 
@@ -804,18 +790,14 @@ void AstSel(char plr)
                     if (BarA == 7) {
                         if (now2 < count - 1) {
                             now2++;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
                     }
 
                     if (BarA < 7) {
                         if (now2 < count - 1) {
-                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispEight2(now2, BarA, count);
                         }
                     }
@@ -830,18 +812,14 @@ void AstSel(char plr)
                 if (BarA == 7) {
                     if (now2 < count - 1) {
                         now2++;
-                        fill_rectangle(26, 129, 153, 195, 0);
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
                 }
 
                 if (BarA < 7) {
                     if (now2 < count - 1) {
-                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA++;
                         now2++;
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispEight2(now2, BarA, count);
                     }
                 }
@@ -876,8 +854,6 @@ void AstSel(char plr)
                 now2 = count;
             }
 
-            fill_rectangle(26, 129, 153, 195, 0);
-            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
             DispEight2(now2, BarA, count);
 
             key = 0;
@@ -889,8 +865,6 @@ void AstSel(char plr)
 
             BarA = MIN(count - 1, 7);
             now2 = count - 1;
-            fill_rectangle(26, 129, 153, 195, 0);
-            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
             DispEight2(now2, BarA, count);
 
             delay(10);
@@ -902,8 +876,6 @@ void AstSel(char plr)
 
             BarB = 0;
             now = min;
-            fill_rectangle(186, 129, 314, 195, 0);
-            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
             DispEight(now, BarB);
 
             delay(10);
@@ -924,8 +896,6 @@ void AstSel(char plr)
                 now = max;
             }
 
-            fill_rectangle(186, 129, 314, 195, 0);
-            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
             DispEight(now, BarB);
 
             key = 0;
@@ -945,17 +915,13 @@ void AstSel(char plr)
                     if (BarB == 0) {
                         if (now > min) {
                             now--;
-                            fill_rectangle(186, 129, 314, 195, 0);
-                            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         }
                     }
 
                     if (BarB > 0) {
-                        fill_rectangle(186, 129, 314, 195, 0);
                         BarB--;
                         now--;
-                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
 
@@ -969,17 +935,13 @@ void AstSel(char plr)
                 if (BarB == 0) {
                     if (now > min) {
                         now--;
-                        fill_rectangle(186, 129, 314, 195, 0);
-                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
                 }
 
                 if (BarB > 0) {
-                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB--;
                     now--;
-                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
                 }
 
@@ -1008,17 +970,13 @@ void AstSel(char plr)
                                 now++;
                             }
 
-                            fill_rectangle(186, 129, 314, 195, 0);
-                            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                             DispEight(now, BarB);
                         }
                     }
 
                     if (BarB < 7) {
-                        fill_rectangle(186, 129, 314, 195, 0);
                         BarB++;
                         now++;
-                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
 
@@ -1035,17 +993,13 @@ void AstSel(char plr)
                             now++;
                         }
 
-                        fill_rectangle(186, 129, 314, 195, 0);
-                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
                 }
 
                 if (BarB < 7) {
-                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB++;
                     now++;
-                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
                 }
 
@@ -1075,8 +1029,6 @@ void AstSel(char plr)
                 BarB = 7 - (max - now);
             }
 
-            fill_rectangle(186, 129, 314, 195, 0);
-            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
             DispEight(now, BarB);
 
             key = 0;
@@ -1088,8 +1040,6 @@ void AstSel(char plr)
 
             BarB = 7;
             now = max;
-            fill_rectangle(186, 129, 314, 195, 0);
-            ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
             DispEight(now, BarB);
 
             delay(10);
@@ -1117,8 +1067,6 @@ void AstSel(char plr)
                 }
             }
 
-            fill_rectangle(26, 129, 153, 195, 0);
-            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
             DispEight2(now2, BarA, count);
             DispEight(now, BarB);
 
@@ -1142,23 +1090,21 @@ void AstSel(char plr)
                 if (BarB == 7) {
                     if (now < max) {
                         now++;
-                        fill_rectangle(186, 129, 314, 195, 0);
-                        ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                         DispEight(now, BarB);
                     }
                 }
 
                 if (BarB < 7) {
-                    fill_rectangle(186, 129, 314, 195, 0);
                     BarB++;
                     now++;
-                    ShBox(187, 130 + BarB * 8, 313, 138 + BarB * 8);
                     DispEight(now, BarB);
                 }
 
-                fill_rectangle(26, 129, 153, 195, 0);
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispEight2(now2, BarA, count);
+
+                fill_rectangle(292, 36, 310, 41, 7);
+                display::graphics.setForegroundColor(11);
+                draw_number(292, 41, MaxSel - count);
             }
 
             WaitForMouseUp();
