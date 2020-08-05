@@ -39,11 +39,12 @@
    now2   The selected candidate (?) on the Left
    ksel   Which side is currently selected (0=Right, 1=Left) */
 
+#include "ast1.h"
+
 #include <cassert>
 
 #include "display/graphics.h"
 
-#include "ast1.h"
 #include "Buzz_inc.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "draw.h"
@@ -724,6 +725,23 @@ void AstSel(char plr)
             delay(10);
             OutBox(6, 130, 18, 161);
 
+        } else if ((key == K_PGUP && ksel == 1) && count > 0) {
+            /* Left Page Up */
+            InBox(6, 130, 18, 161);
+
+            if (now2 > 0) {
+                now2 = (now2 >= 8) ? now2 - 8 : 0;
+
+                if (now2 < 8) {
+                    BarA = now2;
+                }
+
+                DispEight2(now2, BarA, count);
+            }
+
+            delay(10);
+            OutBox(6, 130, 18, 161);
+
         } else if (((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 1)) && count > 0) {
             /* Left Up */
             InBox(6, 130, 18, 161);
@@ -834,31 +852,22 @@ void AstSel(char plr)
             delay(10);
 
         } else if (key == K_PGDN && ksel == 1) {
-            // I couldn't get PgDn to work properly on either side,
-            // so remming them out for now. -Leon
-            /* Left PgDn */
-            /*
+            /* Left Page Down */
             InBox(6, 163, 18, 194);
+
+            if (now2 < count - 1) {
+                now2 = MIN(now2 + 8, count - 1);
+
+                if (now2 > (count - 1) - 8) {
+                    BarA = MIN(count - 1, 7 - ((count - 1) - now2));
+                }
+
+                DispEight2(now2, BarA, count);
+            }
+
             delay(10);
-
-            if (now2 > count - 8) {
-                now2 += 8;
-            } else {
-                //BarA = 7;
-                now2 = count - 8;
-            }
-            if ((now2 > count - 8) && (BarA < 7)) {
-                BarA = 7 - (count - now2);
-            }
-            if (now2 > count) {
-                now2 = count;
-            }
-
-            DispEight2(now2, BarA, count);
-
-            key = 0;
             OutBox(6, 163, 18, 194);
-            */
+
         } else if ((key == K_END && ksel == 1) && count > 0) {
             /* Left End */
             InBox(6, 163, 18, 194);
@@ -881,26 +890,24 @@ void AstSel(char plr)
             delay(10);
             OutBox(167, 130, 179, 161);
 
-        } else if (key == K_PGDN && ksel == 0) {
-            // I couldn't get PgUp to work properly either,
-            // so remming it out for now. -Leon
-            /* Right PgUp */
-            /*
-            InBox(167, 163, 179, 194);
-            delay(10);
+        } else if (key == K_PGUP && ksel == 0) {
+            /* Right Page Up */
 
-            if (now > 8) {
-                now -= 8;
-            } else {
-                BarB = 0;
-                now = max;
+            InBox(167, 163, 179, 194);
+
+            if (now > min) {
+                now = (now >= min + 8) ? now - 8 : min;
+
+                if (now < min + 8) {
+                    BarB = now - min;
+                }
+
+                DispEight(now, BarB);
             }
 
-            DispEight(now, BarB);
-
-            key = 0;
+            delay(10);
             OutBox(167, 163, 179, 194);
-            */
+
         } else if ((x >= 167 && y >= 130 && x <= 179 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 0)) {
             /* Right Up */
             InBox(167, 130, 179, 161);
@@ -1012,28 +1019,22 @@ void AstSel(char plr)
             delay(10);
 
         } else if (key == K_PGDN && ksel == 0) {
-            // I couldn't get PgDn to work properly on either side,
-            // so remming them out for now. -Leon
-            /* Right PgDn */
-            /*
+            /* Right Page Down */
             InBox(167, 163, 179, 194);
+
+            if (now < max) {
+                now = (now < max - 8) ? now + 8 : max;
+
+                if (now > max - 8) {
+                    BarB = 7 - (max - now);
+                }
+
+                DispEight(now, BarB);
+            }
+
             delay(10);
-
-            if (now < max - 8) {
-                now += 8;
-            } else {
-                BarB = 7;
-                now = max;
-            }
-            if ((now > max - 8) && (BarB < 7)) {
-                BarB = 7 - (max - now);
-            }
-
-            DispEight(now, BarB);
-
-            key = 0;
             OutBox(167, 163, 179, 194);
-            */
+
         } else if (key == K_END && ksel == 0) {
             /* Right End */
             InBox(167, 163, 179, 194);
