@@ -907,28 +907,28 @@ void Programs(char plr, char prog)
                 // Show Skill
                 ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 BarSkill(plr, BarA, now2, &M[0]);
-            } else if (((x >= 4 && y >= 86 && x <= 12 && y <= 92
+            } else if (((x >= 4 && y >= 86 && x <= 117 && y <= 92  // used to be x <= 12
                          && mousebuttons > 0) || key == '1')
                        && CrewCount[grp] >= 1) {
                 /* Display Man 1 */
                 InBox(4, 86, 12, 92);
                 AstLevel(plr, prog, grp, 0);
                 OutBox(4, 86, 12, 92);
-            } else if (((x >= 4 && y >= 95 && x <= 12 && y <= 101
+            } else if (((x >= 4 && y >= 95 && x <= 117 && y <= 101  // used to be x <= 12
                          && mousebuttons > 0) || key == '2') && prog >= 2
                        && CrewCount[grp] >= 2) {
                 /* Display Man 2 */
                 InBox(4, 95, 12, 101);
                 AstLevel(plr, prog, grp, 1);
                 OutBox(4, 95, 12, 101);
-            } else if (((x >= 4 && y >= 104 && x <= 12 && y <= 110
+            } else if (((x >= 4 && y >= 104 && x <= 117 && y <= 110  // used to be x <= 12
                          && mousebuttons > 0) || key == '3') && prog >= 3
                        && CrewCount[grp] >= 3) {
                 /* Display Man 3 */
                 InBox(4, 104, 12, 110);
                 AstLevel(plr, prog, grp, 2);
                 OutBox(4, 104, 12, 110);
-            } else if (((x >= 4 && y >= 113 && x <= 12 && y <= 119
+            } else if (((x >= 4 && y >= 113 && x <= 117 && y <= 119  // used to be x <= 12
                          && mousebuttons > 0) || key == '4') && prog >= 5
                        && CrewCount[grp] >= 4) {
                 /* Display Man 4 */
