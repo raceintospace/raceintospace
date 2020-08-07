@@ -345,8 +345,6 @@ void Train(char plr, int level)
     now2 = BarA = count = 0;
     DrawTrain(plr, level);
 
-    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-
     for (i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
             && Data->P[plr].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
@@ -433,8 +431,6 @@ void Train(char plr, int level)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                fill_rectangle(26, 129, 153, 195, 0);
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 TrainText(plr, M[now2], count);
                 WaitForMouseUp();
@@ -457,17 +453,13 @@ void Train(char plr, int level)
                         if (BarA == 0)
                             if (now2 > 0) {
                                 now2--;
-                                fill_rectangle(26, 129, 153, 195, 0);
-                                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
                             }
 
                         if (BarA > 0) {
-                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA--;
                             now2--;
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
                         }
@@ -482,17 +474,13 @@ void Train(char plr, int level)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
                         }
 
                     if (BarA > 0) {
-                        fill_rectangle(26, 129, 153, 195, 0);
                         BarA--;
                         now2--;
-                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                         DispLeft(plr, BarA, count, now2, &M[0]);
                         TrainText(plr, M[now2], count);
                     }
@@ -519,18 +507,14 @@ void Train(char plr, int level)
                         if (BarA == 7)
                             if (now2 < count - 1) {
                                 now2++;
-                                fill_rectangle(26, 129, 153, 195, 0);
-                                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
                             }
 
                         if (BarA < 7)
                             if (now2 < count - 1) {
-                                fill_rectangle(26, 129, 153, 195, 0);
                                 BarA++;
                                 now2++;
-                                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                                 TrainText(plr, M[now2], count);
                             }
@@ -545,18 +529,14 @@ void Train(char plr, int level)
                     if (BarA == 7)
                         if (now2 < count - 1) {
                             now2++;
-                            fill_rectangle(26, 129, 153, 195, 0);
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
                         }
 
                     if (BarA < 7)
                         if (now2 < count - 1) {
-                            fill_rectangle(26, 129, 153, 195, 0);
                             BarA++;
                             now2++;
-                            ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                             DispLeft(plr, BarA, count, now2, &M[0]);
                             TrainText(plr, M[now2], count);
                         }
@@ -648,10 +628,6 @@ void Train(char plr, int level)
                             BarA--;
                         }
                     }
-
-                    fill_rectangle(26, 129, 153, 195, 0);
-
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
 
                     DispLeft(plr, BarA, count, now2, &M[0]);
 
@@ -774,8 +750,6 @@ void InjuredNautCenter(char plr, int sel)
     }
 
     draw_string(0, 0, " SELECTION");
-    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-
 
     j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
 
@@ -801,8 +775,6 @@ void InjuredNautCenter(char plr, int sel)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                fill_rectangle(26, 129, 153, 195, 0);
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 WaitForMouseUp();
 
@@ -816,16 +788,12 @@ void InjuredNautCenter(char plr, int sel)
             if (BarA == 0)
                 if (now2 > 0) {
                     now2--;
-                    fill_rectangle(26, 129, 153, 195, 0);
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
                 }
 
             if (BarA > 0) {
-                fill_rectangle(26, 129, 153, 195, 0);
                 BarA--;
                 now2--;
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                 DispLeft(plr, BarA, count, now2, &M[0]);
             }
 
@@ -840,17 +808,13 @@ void InjuredNautCenter(char plr, int sel)
             if (BarA == 7)
                 if (now2 < count - 1) {
                     now2++;
-                    fill_rectangle(26, 129, 153, 195, 0);
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
                 }
 
             if (BarA < 7)
                 if (now2 < count - 1) {
-                    fill_rectangle(26, 129, 153, 195, 0);
                     BarA++;
                     now2++;
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
                     DispLeft(plr, BarA, count, now2, &M[0]);
                 }
 

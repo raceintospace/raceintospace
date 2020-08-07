@@ -150,14 +150,11 @@ void Moon(char plr)
 void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
 {
     int i, start, num;
-
     start = nw - lc;
+    num = (cnt < 8) ? cnt : 8;
 
-    if (cnt < 8) {
-        num = cnt;
-    } else {
-        num = 8;
-    }
+    fill_rectangle(26, 129, 153, 195, 0);
+    ShBox(26, 130 + lc * 8, 152, 138 + lc * 8);
 
     display::graphics.setForegroundColor(11);
 
