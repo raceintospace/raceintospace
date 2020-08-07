@@ -21,6 +21,7 @@
 #include "Buzz_inc.h"
 #include "data.h"
 #include "game_main.h"
+#include "options.h"
 
 
 /**
@@ -60,4 +61,25 @@ Equipment &HardwareProgram(int player, int type, int program)
             "the EquipmentIndex enum");
         break;
     };
+}
+
+
+/**
+ * Calculates the safety rating for a rocket with boosters attachment.
+ *
+ * \param safetyRocket  The rocket program's Safety factor.
+ * \param safetyBooster  The booster program's Safety factor.
+ * \return  the Safety test value for the rocket/booster combination.
+ */
+int RocketBoosterSafety(int safetyRocket, int safetyBooster)
+{
+    if (options.boosterSafety == 0) {
+        return ((safetyRocket * safetyBooster) / 100);
+    }
+
+    if (options.boosterSafety == 1) {
+        return (MIN(safetyRocket, safetyBooster));
+    } else {
+        return ((safetyRocket + safetyBooster) / 2);
+    }
 }

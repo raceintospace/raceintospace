@@ -36,6 +36,7 @@
 #include "utils.h"
 #include "options.h"
 #include "game_main.h"
+#include "hardware.h"
 #include "mc.h"
 #include "mis_c.h"
 #include "sdlhelper.h"
