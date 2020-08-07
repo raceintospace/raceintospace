@@ -937,7 +937,7 @@ int MisRandom(void)
 {
     const double mu = 57;
     const double sigma = sqrt(1000);
-    const int brandom_threshold = 65;
+    const int brandom_threshold = 66;
     int r_uniform;
     double u1, u2, r_gaussian;
 
@@ -953,11 +953,12 @@ int MisRandom(void)
         u2 = rand() / (double) RAND_MAX;
 
         // Box-Muller transform to obtain a Gaussian random variable
-        // with mean mu and standard deviation sigma.
+        // with mean mu and standard deviation sigma. A value of 0.5
+        // is added to ensure correct rounding.
 
-        r_gaussian = sigma * sqrt(-2 * log(u1)) * cos(2 * M_PI * u2) + mu;
+        r_gaussian = sigma * sqrt(-2 * log(u1)) * cos(2 * M_PI * u2) + mu + 0.5;
 
-    } while ((r_gaussian > 100) || (r_gaussian < brandom_threshold));
+    } while ((r_gaussian >= 101) || (r_gaussian < brandom_threshold));
 
-    return (int)(r_gaussian + 0.5); // Return nearest integer value.
+    return (int) r_gaussian;
 }
