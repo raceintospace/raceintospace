@@ -727,9 +727,13 @@ char REvent(char plr)
     case 85:  // backup crew will fly mission
         evflag = 0;
 
-        for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode) {
-                evflag++;
+        // Event text specifies the "Primary Crew", so check for a
+        // Primary crew rather than manned.
+        for (i = 0; i < MAX_MISSIONS; i++) {
+            if (Data->P[plr].Mission[i].MissionCode != Mission_None &&
+                Data->P[plr].Mission[i].PCrew > 0) {
+                evflag = i + 1;
+                break;
             }
         }
 
@@ -737,15 +741,7 @@ char REvent(char plr)
             return 1;
         }
 
-        i = 0;
-
-        while (Data->P[plr].Mission[i].MissionCode == Mission_None) {
-            i++;
-        }
-
-        Data->P[plr].Mission[i].PCrew = 0;
-        Data->P[plr].Mission[i].Crew = Data->P[plr].Mission[i].BCrew;
-        evflag = i;
+        ClearMissionCrew(plr, --evflag, CREW_PRIMARY);
         break;
 
     case 51:  /* astronaut killed delay all manned missons = 1 */
