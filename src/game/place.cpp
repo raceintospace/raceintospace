@@ -37,7 +37,6 @@
 #include "port.h"
 #include "replay.h"
 #include "mc.h"
-#include "mis_c.h"
 #include "endgame.h"
 #include "sdlhelper.h"
 #include "gr.h"

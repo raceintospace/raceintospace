@@ -30,7 +30,7 @@
 #include "Buzz_inc.h"
 #include "aipur.h"
 #include "game_main.h"
-#include "mis_c.h"
+#include "hardware.h"
 #include "state_utils.h"
 #include "vab.h"
 #include "mc.h"

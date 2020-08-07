@@ -36,7 +36,6 @@
 #include "draw.h"
 #include "mmfile.h"
 #include "utils.h"
-#include "options.h"
 #include "game_main.h"
 #include "mc.h"
 #include "sdlhelper.h"
@@ -1638,19 +1637,6 @@ char DrawMoonSelection(char nauts, char plr)
             key = 0;
             return 4;
         }
-    }
-}
-
-int RocketBoosterSafety(int safetyRocket, int safetyBooster)
-{
-    if (options.boosterSafety == 0) {
-        return ((safetyRocket * safetyBooster) / 100);
-    }
-
-    if (options.boosterSafety == 1) {
-        return (MIN(safetyRocket, safetyBooster));
-    } else {
-        return ((safetyRocket + safetyBooster) / 2);
     }
 }
 

@@ -3,6 +3,7 @@
 
 
 Equipment &HardwareProgram(int player, int type, int program);
+int RocketBoosterSafety(int safetyRocket, int safetyBooster);
 
 
 #endif // HARDWARE_H
