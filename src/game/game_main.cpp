@@ -928,17 +928,37 @@ void GetMisType(char mcode)
 }
 
 
+/* Mission random number generator used on level 1. For random numbers
+ * above brandom_threshold, there is a second roll of a Gaussian
+ * random number generator that is slightly biased against high
+ * numbers.
+ */
 int MisRandom(void)
 {
-    int i, nval;
+    const double mu = 57;
+    const double sigma = sqrt(1000);
+    const int brandom_threshold = 66;
+    int r_uniform;
+    double u1, u2, r_gaussian;
+
+    r_uniform = brandom(100) + 1;
+
+    if (r_uniform < brandom_threshold) {
+        return r_uniform;
+    }
 
     do {
-        nval = 107;
+        // Generate two uniformly distributed random numbers.
+        u1 = rand() / (double) RAND_MAX;
+        u2 = rand() / (double) RAND_MAX;
 
-        for (i = 0; i < 250; i++) {
-            nval += (brandom(7) - 3);
-        }
-    } while (nval < 50 || nval > 150);
+        // Box-Muller transform to obtain a Gaussian random variable
+        // with mean mu and standard deviation sigma. A value of 0.5
+        // is added to ensure correct rounding.
 
-    return nval - 50;
+        r_gaussian = sigma * sqrt(-2 * log(u1)) * cos(2 * M_PI * u2) + mu + 0.5;
+
+    } while ((r_gaussian >= 101) || (r_gaussian < brandom_threshold));
+
+    return (int) r_gaussian;
 }
