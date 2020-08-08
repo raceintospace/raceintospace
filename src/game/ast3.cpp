@@ -691,7 +691,7 @@ void InjuredNautCenter(char plr, int sel)
     }
 
     boost::shared_ptr<display::PalettizedSurface> location(Filesystem::readImage(filename));
-    location->exportPalette();
+    location->exportPalette(32, 255);
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
