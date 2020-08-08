@@ -141,9 +141,9 @@ void EndGame(char win, char pad)
     draw_string(112, 109, "ALTERNATE HISTORY");
 
     if (win == 0) {
-        draw_heading(36, 5, "US WINS", 1, -1);
+        draw_heading(45, 5, "US WINS", 1, -1);
     } else {
-        draw_heading(36, 5, "USSR WINS", 1, -1);
+        draw_heading(45, 5, "USSR WINS", 1, -1);
     }
 
     draw_small_flag(win, 4, 4);
