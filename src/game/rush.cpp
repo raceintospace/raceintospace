@@ -64,6 +64,7 @@ void DrawRush(char plr);
 void ResetRush(int mode, int pad);
 void SetLaunchDates(char plr);
 void SetRush(int mode, int pad);
+void DrawPenaltyPopup(char plr, const struct mStr &mission);
 
 }; // End of Unnamed namespace part 1
 
@@ -458,6 +459,21 @@ void Rush(char plr)
                     fCsh -= (R3 - oR3) * 3;
                     oR3 = R3;
                 }
+            } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) {                
+                OutBox(20, 38, 60, 69);
+                delay(250);
+                InBox(20, 38, 60, 69);
+                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[0].MissionCode));
+            } else if (x >= 20 && x <= 60 && y >= 96 && y <= 127 && mousebuttons > 0 && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) {
+                OutBox(20, 96, 60, 127);
+                delay(250);
+                InBox(20, 96, 60, 127);
+                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[1].MissionCode));
+            } else if (x >= 20 && x <= 60 && y >= 154 && y <= 185 && mousebuttons > 0 && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) {
+                OutBox(20, 154, 60, 185);
+                delay(250);
+                InBox(20, 154, 60, 185);
+                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[2].MissionCode));
             }
 
             // DOWNGRADE MISSION KEYBOARD
@@ -683,6 +699,91 @@ void SetRush(int mode, int pad)
     draw_string(237, 69 + 58 * pad, "MB");
 
     return;
+}
+void DrawPenaltyPopup(char plr, const struct mStr &mission)
+{
+    int milestonePenalty = MilestonePenalty(plr, mission);
+    int durationPenalty = DurationPenalty(plr, mission);
+    int newMissionPenalty = NewMissionPenalty(plr, mission);
+    
+    display::LegacySurface local(165, 124);
+    local.copyFrom(display::graphics.legacyScreen(), 85, 52, 249, 175);
+
+    ShBox(85, 68, 249, 151);
+    InBox(92, 74, 243, 120);
+    display::graphics.setForegroundColor(11);
+    draw_string(97, 81, "REQUIREMENT PENALTIES:");
+
+    display::graphics.setForegroundColor(1);
+    draw_string(99, 92, "MILESTONE PENALT");
+    if (milestonePenalty == 3) { draw_string(0, 0, "Y");
+         } else { draw_string(0, 0, "IES"); }
+        draw_string(220, 92, "-");
+
+    if (milestonePenalty > 0) {
+        draw_number(0, 0, milestonePenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    draw_string(99, 100, "DURATION PENALT");
+    if (durationPenalty == 5) { draw_string(0, 0, "Y");
+        } else { draw_string(0, 0, "IES"); }
+    draw_string(220, 100, "-");
+            
+    if (durationPenalty > 0) {
+        draw_number(0, 0, durationPenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    draw_string(99, 108, "NEW MISSION PENALTY");
+    draw_string(220, 108, "-");
+
+    if (newMissionPenalty > 0) {
+        draw_number(0, 0, newMissionPenalty);
+    } else {
+        draw_string(0, 0, "-");
+    }
+
+    if (mission.LM && IsLunarLanding(mission.Index)) {
+        int lunarTestPenalty = 3 * MIN(Data->P[plr].LMpts - 3, 0);
+
+        display::graphics.setForegroundColor(24);
+        draw_string(99, 116, "PENALTY ON LM STEPS");
+
+        if (lunarTestPenalty >= 0) {
+            draw_string(220, 116, "--");
+        } else {
+            draw_number(220, 116, lunarTestPenalty);
+        }
+    }
+
+    IOBox(91, 127, 243, 148);
+    display::graphics.setForegroundColor(5);
+    draw_heading(123, 131, "CONTINUE", 0, -2);
+    bool close = false;
+    while (! close) {
+        key = 0;
+        GetMouse();
+
+        if ((x >= 92 && y >= 126 && x <= 242 && y <= 148 && mousebuttons > 0) ||
+            (key == K_ENTER || key == K_ESCAPE)) {
+            InBox(91, 127, 243, 148);
+            WaitForMouseUp();
+
+            if (key > 0) {
+                delay(150);
+                key = 0;
+            }
+
+            close = true;
+            OutBox(91, 127, 243, 148);
+            delay(50);
+        }
+    }
+
+    display::graphics.screen()->draw(local, 85, 52);
 }
 
 }; // End of unnamed namespace part 3
