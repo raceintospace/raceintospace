@@ -63,9 +63,10 @@ int MainMenuChoice()
         const char *hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9, "N" },
-        { "OLD GAME", 36, "O" },
-        { "CREDITS", 63, "C" },
-        { "EXIT", 90, "EXQ" }
+        { "MAIL GAME", 36, "M"},
+        { "OLD GAME", 63, "O" },
+        { "CREDITS", 90, "C" },
+        { "EXIT", 117, "EXQ" }
     };
     const int menu_option_count = sizeof(menu_options) / sizeof(menu_options[0]);
 
@@ -593,16 +594,17 @@ int Help(const char *FName)
             key = 0;
         }   // Down
 
-    if (plc <= top) {
-        draw_up_arrow(268, 56);
-    } else {
-        draw_up_arrow_highlight(268, 56);
-    }
-    if ((plc + 12) > bot) {
-        draw_down_arrow(268, 95);
-    } else {
-        draw_down_arrow_highlight(268, 95);
-    }
+        if (plc <= top) {
+            draw_up_arrow(268, 56);
+        } else {
+            draw_up_arrow_highlight(268, 56);
+        }
+
+        if ((plc + 12) > bot) {
+            draw_down_arrow(268, 95);
+        } else {
+            draw_down_arrow_highlight(268, 95);
+        }
 
     }
 
@@ -618,8 +620,8 @@ void writePrestigeFirst(char index)   ///index==plr
     char w = 0, i, draw = 0;
 
     for (i = 0; i < 28; i++) {
-        //Preestige First
-        if (w < 6 && Data->Prestige[i].Place == index && Data->PD[index][i] == 0) {
+        //Prestige First
+        if (w < 6 && Data->Prestige[i].Place == index && !(Data->PD[index][i] & 1)) {
             if (draw == 0) {
                 ShBox(6, 170, 314, 197);
                 fill_rectangle(10, 173, 310, 194, 7);
@@ -639,31 +641,31 @@ void writePrestigeFirst(char index)   ///index==plr
                         w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
                         &PF[i][0]);
             ++w;
-            Data->PD[index][i] = 1;
+            Data->PD[index][i] |= 1;
 
             switch (i) {
             case 8:
                 if (Data->Prestige[Prestige_Duration_E].Place == index && Data->PD[index][9] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] = 1;
+                    Data->PD[index][9] |= 1;
                 }
 
             case 9:
                 if (Data->Prestige[Prestige_Duration_D].Place == index && Data->PD[index][10] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] = 1;
+                    Data->PD[index][10] |= 1;
                 }
 
             case 10:
                 if (Data->Prestige[Prestige_Duration_C].Place == index && Data->PD[index][11] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] = 1;
+                    Data->PD[index][11] |= 1;
                 }
 
             case 11:
                 if (Data->Prestige[Prestige_Duration_B].Place == index && Data->PD[index][12] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] = 1;
+                    Data->PD[index][12] |= 1;
                 }
 
             case 12:
@@ -697,31 +699,31 @@ void writePrestigeFirst(char index)   ///index==plr
                         w > 2 ? 179 + (w - 3) * 7 : 179 + w * 7,
                         &PF[i][0]);
             ++w;
-            Data->PD[index][i] = 1;
+            Data->PD[index][i] |= 1;
 
             switch (i) {
             case 8:
                 if (Data->Prestige[Prestige_Duration_E].mPlace == index && Data->PD[index][9] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] = 1;
+                    Data->PD[index][9] |= 1;
                 }
 
             case 9:
                 if (Data->Prestige[Prestige_Duration_D].mPlace == index && Data->PD[index][10] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] = 1;
+                    Data->PD[index][10] |= 1;
                 }
 
             case 10:
                 if (Data->Prestige[Prestige_Duration_C].mPlace == index && Data->PD[index][11] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] = 1;
+                    Data->PD[index][11] |= 1;
                 }
 
             case 11:
                 if (Data->Prestige[Prestige_Duration_B].mPlace == index && Data->PD[index][12] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] = 1;
+                    Data->PD[index][12] |= 1;
                 }
 
             case 12:
@@ -771,7 +773,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     draw_string(12, 112, "PRESTIGE EARNED: ");
 
-    if ((MAIL == -1 && Option == -1) || mode == 0) {
+    if ((MAIL != 0 && Option == -1) || mode == 0) {
         draw_number(0, 0, Data->P[plr].History[index].Prestige);
     } else {
         draw_string(0, 0, "PENDING");

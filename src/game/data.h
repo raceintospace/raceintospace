@@ -460,6 +460,28 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char Port[40];                   // Levels for SPort display
 };
 
+struct MisEval {
+    char step;              /**< actual step id number */
+    char loc;               /**< Mission Step Name Index */
+    uint16_t StepInfo;      /**< ID of step success  1=succ   !1=fail */
+    Equipment *E;           /**< Pointer into equipment */
+    char Prest;             /**< Prestige Step #  (-1 for none) */
+    char PComp;             /**< PComp will be set to amt of prest to be awarded. */
+    char pad;               /**< pad location  (Index into First Part of MH[x][] */
+    char Class;             /**< VAB Order index into Class types MH[][x] */
+    char fgoto;             /**< goto on failure */
+    char sgoto;             /**< goto on success */
+    char dgoto;             /**< where to branch on deaths */
+    char trace;             /**< allow tracing of mission (for prest) */
+    char dice;              /**< Die roll to check safety against */
+    int16_t rnum;           /**< Random number holder for failure type */
+    char ast;               /**< Astro specialist num */
+    char asf;               /**< Astro specialist safety addition */
+    char FName[5];          /**< Name of Failure File (without .DAT) */
+    char Name[10];          /**< Name of Anim Code */
+};
+
+
 struct Players {
     char BUZZ[4];                    /**< Save Version Marker */
     uint32_t Checksum;               /**< Checksum of Data */
@@ -472,8 +494,10 @@ struct Players {
     char unused_EMark[4];                   /**< unused - Event Marker */
     char Events[MAXIMUM_NEWS_EVENTS]; /**< History of Event Cards */
     char Count;                      /**< Number of Events Picked */
-    char PD[NUM_PLAYERS][MAXIMUM_PRESTIGE_NUM];
+    char PD[NUM_PLAYERS][MAXIMUM_PRESTIGE_NUM]; /**< Prestige First Displayed: First Bit: Seen in MisRev, Second Bit: Seen by Opponent */
     char Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
+    struct MisEval Mev[MAX_LAUNCHPADS][60]; /** < Mission eval for mail games */
+    char Step[MAX_LAUNCHPADS]; /** Number of mission steps for mail games */
 };
 
 
@@ -504,27 +528,6 @@ enum MissionHardwareType {
 struct MisAst {  // This struct will be -1's if empty
     struct Astros *A;
     char loc;
-};
-
-struct MisEval {
-    char step;              /**< actual step id number */
-    char loc;               /**< Mission Step Name Index */
-    uint16_t StepInfo;      /**< ID of step success  1=succ   !1=fail */
-    Equipment *E;           /**< Pointer into equipment */
-    char Prest;             /**< Prestige Step #  (-1 for none) */
-    char PComp;             /**< PComp will be set to amt of prest to be awarded. */
-    char pad;               /**< pad location  (Index into First Part of MH[x][] */
-    char Class;             /**< VAB Order index into Class types MH[][x] */
-    char fgoto;             /**< goto on failure */
-    char sgoto;             /**< goto on success */
-    char dgoto;             /**< where to branch on deaths */
-    char trace;             /**< allow tracing of mission (for prest) */
-    char dice;              /**< Die roll to check safety against */
-    int16_t rnum;           /**< Random number holder for failure type */
-    char ast;               /**< Astro specialist num */
-    char asf;               /**< Astro specialist safety addition */
-    char FName[5];          /**< Name of Failure File (without .DAT) */
-    char Name[10];          /**< Name of Anim Code */
 };
 
 struct XFails {
@@ -845,7 +848,7 @@ BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
 BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
 BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
-BOOST_STATIC_ASSERT(sizeof(Players) == 31663);
+BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
 
 #endif // __DATA_H__
 

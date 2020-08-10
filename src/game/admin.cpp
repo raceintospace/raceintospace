@@ -607,10 +607,10 @@ void FileAccess(char mode)
                         Data->Year = SaveHdr->Year;
 
                         if (SaveHdr->Country[0] == 8) {
-                            MAIL = plr[0] = 0;
+                            MAIL = plr[0] = 0; // U.S. turn coming up
                             plr[1] = 1;
                         } else {
-                            MAIL = plr[1] = 1;
+                            MAIL = plr[1] = 1; // Soviet turn coming up
                             plr[0] = 0;
                         }
 
@@ -827,89 +827,12 @@ void FileAccess(char mode)
             key = 0;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
                                             || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
-            InBox(209, 78, 278, 86);
-            delay(250);
-            WaitForMouseUp();
-            memset(SaveHdr->Name, 0x00, 23);
-            done = GetBlockName(SaveHdr->Name); // Checks Free Space
-            SaveHdr->ID = RaceIntoSpace_Signature;
-            SaveHdr->Name[22] = 0x1A;
-            temp = NOTSAME;
-
-            for (i = 0; (i < tFiles && temp == 2); i++) {
-                if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
-                    temp = RequestX("REPLACE FILE", 1);
-
-                    if (temp == SAME_ABORT) {
-                        done = 0;
-                    }
-                }
-            }
-
-            if (done == YES) {
-                i--;  // decrement to correct for the FOR loop
-                strcpy(SaveHdr->PName[0], Data->P[plr[0] % 2].Name);
-                strcpy(SaveHdr->PName[1], Data->P[plr[1] % 2].Name);
-
-                // Play-By-Mail save game hack
-                // starts US side
-                plr[0] = 0;
-                plr[1] = 9;
-                MAIL = -1;
-                Data->Def.Plr1 = plr[0];
-                Data->Def.Plr2 = plr[1];
-                Data->plr[0] = Data->Def.Plr1;
-                Data->plr[1] = Data->Def.Plr2;
-                AI[0] = 0;
-                AI[1] = 0;
-
-                SaveHdr->Country[0] = Data->plr[0];
-                SaveHdr->Country[1] = Data->plr[1];
-                SaveHdr->Season = Data->Season;
-                SaveHdr->Year = Data->Year;
-                SaveHdr->dataSize = sizeof(struct Players);
-
-                EndOfTurnSave((char *) Data, sizeof(struct Players));
-                SaveHdr->compSize = interimData.endTurnSaveSize;
-
-                if (temp == NOTSAME) {
-                    i = 0;
-                    fin = NULL;
-
-                    do {
-                        i++;
-
-                        if (fin) {
-                            fclose(fin);
-                        }
-
-                        sprintf(Name, "BUZZ%d.SAV", i);
-                        fin = sOpen(Name, "rb", 1);
-                    } while (fin != NULL); // Find unique name
-
-                    fin = sOpen(Name, "wb", 1);
-                } else {
-                    fin = sOpen(FList[i].Name, "wb", 1);
-                }
-
-                // Write the Save Game Header
-                fwrite(SaveHdr, sizeof(SaveFileHdr), 1, fin);
-
-                // Save End of Turn Data
-                fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
-
-                // Save Replay Data
-                interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
-
-                // Save Event Data
-                fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
-
-                fclose(fin);
-            }
+            MailSave();
 
             OutBox(209, 78, 278, 86);
             key = 0;
+            QUIT = 1;
+            return;
         } else if (tFiles > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
                                   || (key == 'D'))) {
             InBox(209, 92, 278, 100);
@@ -1742,5 +1665,109 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
 
     return interimData.endTurnSaveSize;
 }
+
+void MailSave()
+{
+    int done, temp, i, tFiles;
+    FILE *fin;
+
+    tFiles = GenerateTables(SAVEGAME_PlayByMail);
+
+    display::graphics.screen()->clear();
+
+    FadeIn(2, 10, 0, 0);
+
+    WaitForMouseUp();
+    memset(SaveHdr->Name, 0x00, 23);
+
+    do {
+        done = GetBlockName(SaveHdr->Name); // Checks Free Space
+        SaveHdr->ID = RaceIntoSpace_Signature;
+        SaveHdr->Name[22] = 0x1A;
+        temp = NOTSAME;
+
+        for (i = 0; (i < tFiles && temp == 2); i++) {
+            if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
+                temp = RequestX("REPLACE FILE", 1);
+
+                if (temp == SAME_ABORT) {
+                    done = 0;
+                }
+            }
+        }
+    } while (done == 0);
+
+    if (done == YES) {
+        i--;  // decrement to correct for the FOR loop
+        strcpy(SaveHdr->PName[0], Data->P[plr[0] % 2].Name);
+        strcpy(SaveHdr->PName[1], Data->P[plr[1] % 2].Name);
+
+        // Play-By-Mail save game hack
+        //
+        // If MAIL == 0, we are playing as the U.S. We need to
+        // save the game such that the U.S. starts again
+        if (MAIL == 0) {
+            plr[0] = 8;
+            plr[1] = 0;
+        }
+        // Playing as the Soviets
+        else if ((MAIL == 1)) {
+            plr[0] = 0;
+            plr[1] = 9;
+        }
+
+        Data->Def.Plr1 = plr[0];
+        Data->Def.Plr2 = plr[1];
+        Data->plr[0] = Data->Def.Plr1;
+        Data->plr[1] = Data->Def.Plr2;
+        AI[0] = 0;
+        AI[1] = 0;
+
+        SaveHdr->Country[0] = Data->plr[0];
+        SaveHdr->Country[1] = Data->plr[1];
+        SaveHdr->Season = Data->Season;
+        SaveHdr->Year = Data->Year;
+        SaveHdr->dataSize = sizeof(struct Players);
+
+        EndOfTurnSave((char *) Data, sizeof(struct Players));
+        SaveHdr->compSize = interimData.endTurnSaveSize;
+
+        if (temp == NOTSAME) {
+            i = 0;
+            fin = NULL;
+
+            do {
+                i++;
+
+                if (fin) {
+                    fclose(fin);
+                }
+
+                sprintf(Name, "BUZZ%d.SAV", i);
+                fin = sOpen(Name, "rb", 1);
+            } while (fin != NULL); // Find unique name
+
+            fin = sOpen(Name, "wb", 1);
+        } else {
+            fin = sOpen(FList[i].Name, "wb", 1);
+        }
+
+        // Write the Save Game Header
+        fwrite(SaveHdr, sizeof(SaveFileHdr), 1, fin);
+
+        // Save End of Turn Data
+        fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
+
+        // Save Replay Data
+        interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+        fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
+
+        // Save Event Data
+        fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
+
+        fclose(fin);
+    }
+}
+
 
 // EOF

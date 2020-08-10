@@ -46,6 +46,7 @@
 #include "endianness.h"
 #include "filesystem.h"
 #include "randomize.h"
+#include "data.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -119,6 +120,14 @@ int Launch(char plr, char mis)
     char total;
     STEP = FINAL = JOINT = PastBANG = 0;
     MisStat = tMen = 0x00; // clear mission status flags
+
+    // Don't do U.S. missions twice, just update prestige data
+    if (MAIL == 1 && plr == 0) {
+        STEPnum = Data->Step[mis];
+        memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
+        GetMisType(Data->P[plr].Mission[mis].MissionCode);
+        return Update_Prestige_Data(plr, mis);
+    }
 
     remove_savedat("REPLAY.TMP");  // make sure replay buffer isn't there
 
@@ -358,15 +367,12 @@ int Launch(char plr, char mis)
 
 //   if (!AI[plr]) KillMusic();
 
-    if (Mis.Days == 0) {
-        total = U_AllotPrest(plr, mis);    // Unmanned Prestige
-    } else {
-        total = AllotPrest(plr, mis);    // Manned Prestige
+    if (MAIL == 0) {
+        Data->Step[mis] = STEPnum;
     }
 
-    total = total - (pNeg[plr][mis] * 3);
+    total = Update_Prestige_Data(plr, mis);
 
-    Data->P[plr].Prestige += total;
     MissionSetDown(plr, mis);
     MissionPast(plr, mis, total);
     // Update the Astros
@@ -382,6 +388,10 @@ int Launch(char plr, char mis)
                 }
             }
         }
+    }
+
+    if (MAIL == 0) {
+        memcpy(Data->Mev[mis], Mev, 60 * sizeof(struct MisEval));
     }
 
     fullscreenMissionPlayback = false;

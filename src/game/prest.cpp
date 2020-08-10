@@ -20,6 +20,8 @@
 
 // This file handles Prestige.
 
+#include <cassert>
+
 #include "prest.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
@@ -27,6 +29,7 @@
 #include "pace.h"
 #include "mis_c.h"
 #include "mis_m.h"
+#include "pbm.h"
 
 char tYr, tMo;
 
@@ -860,9 +863,11 @@ int AllotPrest(char plr, char mis)
     total = 0;
     negs = 0;
 
-    // PHOTO RECON
-    if (PVal[Prestige_MannedLunarPass] > 0 && PVal[Prestige_MannedLunarPass] < 4) {
-        Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
+    // PHOTO RECON; don't increase twice in mail games
+    if (!(MAIL == 1 && plr == 0)) {
+        if (PVal[Prestige_MannedLunarPass] > 0 && PVal[Prestige_MannedLunarPass] < 4) {
+            Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
+        }
     }
 
     Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
@@ -891,12 +896,15 @@ int AllotPrest(char plr, char mis)
         PVal[Prestige_WomanInSpace] = 4;
     }
 
-    if (Check_Dock(500) == 2) {  // Success
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
-    } else if (Check_Dock(500) == 1) {
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+    // Don't increase docking safety twice in mail games
+    if (!(MAIL == 1 && plr == 0)) {
+        if (Check_Dock(500) == 2) {  // Success
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+        } else if (Check_Dock(500) == 1) {
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+        }
     }
 
     if (STSp(Prestige_MannedSpaceMission) || STSn(Prestige_MannedSpaceMission)) {
@@ -1038,11 +1046,13 @@ int AllotPrest(char plr, char mis)
         }
     }
 
-    // LM POINTS
-    Set_LM(plr, STEPnum);
-
-    if (mcode >= 48 && mcode <= 52 && other < 3000) {
+    // LM POINTS; don't add them twice in mail games
+    if (!(MAIL == 1 && plr == 0)) {
         Set_LM(plr, STEPnum);
+
+        if (mcode >= 48 && mcode <= 52 && other < 3000) {
+            Set_LM(plr, STEPnum);
+        }
     }
 
     // ADD IN NEGATIVES AND RETURN MIN of -10
@@ -1113,6 +1123,11 @@ int U_AllotPrest(char plr, char mis)
     GetMisType(mcode);
 
     lun = Check_Photo();
+
+    // Don't improve photo recon twice in mail games
+    if (!(MAIL == 1 && plr == 0)) {
+        lun = 0;
+    }
 
     other = MaxFail();
 
@@ -1190,6 +1205,40 @@ int U_AllotPrest(char plr, char mis)
     }
 
     return total + negs;
+}
+
+/* Call the necessary functions to calcuate the prestige of a mission
+ * and update the player prestige data. Returns the total prestige
+ * awarded for the mission.
+ */
+int Update_Prestige_Data(char plr, char mis)
+{
+    int total;
+
+    assert(0 <= plr && plr < NUM_PLAYERS);
+
+    if (Mis.Days == 0) {
+        total = U_AllotPrest(plr, mis);    // Unmanned Prestige
+    } else {
+        total = AllotPrest(plr, mis);    // Manned Prestige
+    }
+
+    total = total - (pNeg[plr][mis] * 3);
+
+    Data->P[plr].Prestige += total;
+
+    Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
+
+    if (MAIL == 1 && plr == MAIL_OPPONENT) {
+        Data->P[plr].PastMissionCount++; // Normally done in MissionPast()
+    }
+
+    // Player prestige gets updated after the Soviet turn
+    if (MAIL != 0) {
+        Data->P[plr].Prestige += total;
+    }
+
+    return total;
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */

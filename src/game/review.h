@@ -2,7 +2,7 @@
 #define REVIEW_H
 
 void Review(char plr);
-void MisRev(char plr, int pres);
+void MisRev(char plr, int pres, int mis);
 void CalcPresRev(void);
 
 #endif // REVIEW_H
