@@ -41,6 +41,7 @@
 #include "mc.h"
 #include "mc2.h"
 #include "mission_util.h"
+#include "options.h"
 #include "pace.h"
 #include "place.h"
 #include "prest.h"
@@ -1513,10 +1514,10 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
  *  - On duration missions, the scheduled duration must meet the
  *    minimum duration for that mission type.
  *
- * EVA / Docking program requirements could be placed here, but are
- * currently handled in the VAB. Manned equipment requirements,
- * such as at least one capsule program and at least one available
- * crew, are handled by HardCrewAssign and its subordinate functions.
+ * EVA / Docking program requirements are checked here in 'classic'
+ * RIS instead of the VAB. Manned equipment requirements, such as
+ * an active capsule program and least one available crew, are
+ * handled by HardCrewAssign and its subordinate functions.
  *
  * \param plr  The player index.
  * \param nav  The current FM navigation settings.
@@ -1532,20 +1533,18 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
         return false;
     }
 
-    /* Different versions of these checks are performed in the VIB/VAB.
-     * In 'classic' RIS, EVA/Docking requirements were checked in
-     * Future Missions, so these lines are left as a reference so
-     * the checks can be easily restored. -- rnyoakum
-     */
-    // if (mission.EVA && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
-    //     Help("i118");
-    //     return false;
-    // }
+    if (options.classic) {
+        if (mission.EVA && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
+            Help("i118");
+            return false;
+        }
 
-    // if (mission.Doc && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
-    //     Help("i119");
-    //     return false;
-    // }
+        if (mission.Doc &&
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
+            Help("i119");
+            return false;
+        }
+    }
 
     return true;
 }
