@@ -282,7 +282,7 @@ void Review(char plr)
 
 // Mission Review
 
-void MisRev(char plr, int pres)
+void MisRev(char plr, int pres, int mis)
 {
     if (!AI[plr]) {
         music_start((pres > 0) ? M_SUCCESS : M_UNSUCC);
@@ -299,7 +299,7 @@ void MisRev(char plr, int pres)
     draw_small_flag(plr, 4, 4);
 
     key = 0;
-    Draw_Mis_Stats(plr, Data->P[plr].PastMissionCount - 1, 0, 1);
+    Draw_Mis_Stats(plr, mis, 0, 1);
     key = 0;
     display::graphics.screen()->clear();
     return;

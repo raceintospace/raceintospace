@@ -64,6 +64,7 @@
 #include "crash.h"
 #include "endianness.h"
 #include "crew.h"
+#include "pbm.h"
 
 #ifdef CONFIG_MACOSX
 // SDL.h needs to be included here to replace the original main() with
@@ -164,7 +165,7 @@ int game_main_impl(int argc, char *argv[])
     FILE *fin;
     const char *see_readme = "look for further instructions in the README file";
 
-    char ex;
+    char ex, choice;
 
     // initialize the filesystem
     Filesystem::init(argv[0]);
@@ -264,29 +265,40 @@ int game_main_impl(int argc, char *argv[])
 
         music_start(M_LIFTOFF);
 
-        switch (MainMenuChoice()) {
+        choice = MainMenuChoice();
+
+        switch (choice) {
         case 0:  // New Game
+        case 1:  // New Mail Game
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
-            MAIL = -1;
+            MAIL = choice ? 0 : -1;
             Option = -1;
             helpText = "i013";
-            Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
+
+            if (MAIL == -1) {
+                Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
+            } else { // MAIL GAME
+                Prefs(3);
+            }
+
             plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
             plr[1] = Data->Def.Plr2;
             Data->plr[0] = Data->Def.Plr1;  // SET STRUCTURE PLAYER VALUES
             Data->plr[1] = Data->Def.Plr2;
 
-            if (plr[0] == 2 || plr[0] == 3) {
-                AI[0] = 1;
-            } else {
-                AI[0] = 0;
-            }
+            if (MAIL == -1) {
+                if (plr[0] == 2 || plr[0] == 3) {
+                    AI[0] = 1;
+                } else {
+                    AI[0] = 0;
+                }
 
-            if (plr[1] == 2 || plr[1] == 3) {
-                AI[1] = 1;
-            } else {
-                AI[1] = 0;
+                if (plr[1] == 2 || plr[1] == 3) {
+                    AI[1] = 1;
+                } else {
+                    AI[1] = 0;
+                }
             }
 
             InitData();                   // PICK EVENT CARDS N STUFF
@@ -294,7 +306,7 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 1: // Play Old Game
+        case 2: // Play Old Game
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
             MAIL = -1;
@@ -302,7 +314,7 @@ int game_main_impl(int argc, char *argv[])
             FileAccess(1);
 
             if (LOAD == 1) {
-                if (Option == -1 && MAIL == -1) {
+                if (Option == -1) {
                     MainLoop();    //Regular game
                 } else { //Modem game
                     WARNING1("can't do modem games");
@@ -316,11 +328,11 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 2:
+        case 3:
             Credits();
             break;
 
-        case 3:
+        case 4:
             //KillMusic();
             ex = 1;
             FadeOut(2, 10, 0, 0);
@@ -464,8 +476,9 @@ void InitData(void)
 
 void MainLoop(void)
 {
-    int i, j, t1, t2, t3, prest, sign, turn, kik;
+    int i, j, t1, t2, t3, prest, sign, turn, kik, old_mission_count;
     bool newTurn;
+    struct PrestType oldPrestige[MAXIMUM_PRESTIGE_NUM];
 
     if (LOAD != 1) {
         Data->P[0].Cash = Data->P[0].Budget; // INCREMENT BY BUDGET
@@ -534,6 +547,15 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         for (i = 0; i < NUM_PLAYERS; i++) {
+
+            if (!i && (MAIL == 1)) { // Soviet turn coming up
+                continue;
+            }
+
+            if (i && (MAIL == 0)) { // U.S. turn coming up
+                continue;
+            }
+
             xMODE &= ~xMODE_CLOUDS; // reset clouds for spaceport
 
             // Intel only gets updated in the fall, because there are
@@ -569,6 +591,22 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             if (!AI[i]) {
                 NextTurn(plr[i]);
                 VerifySF(plr[i]);
+
+                // Show prestige resulution from the previous turn
+                if (MAIL == 0) {
+
+                    if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
+                        UpdateRecords(1);
+                        NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, 0);
+
+                        FadeOut(2, 10, 0, 0);
+                        return;
+                    }
+
+                    PlayAllFirsts(MAIL_OPPONENT);
+                    ShowPrestigeResults(MAIL);
+                }
+
                 News(plr[i]);                  // EVENT FOR PLAYER
 
                 if ((Data->P[plr[i] % NUM_PLAYERS].Mission[0].MissionCode > 6 ||
@@ -612,6 +650,16 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             }
         }
 
+        // Generate copy of the prestige data to be sent later to the
+        // Soviet side. We need to keep filling the prestige data to
+        // prevent unwarranted milestone/duration penalties, but the
+        // actual prestige resolution is done after the Soviet turn.
+        if (MAIL == 0) {
+            memcpy(oldPrestige, Data->Prestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
+            // Save the current mission counter
+            old_mission_count = Data->P[0].PastMissionCount;
+        }
+
         DockingKludge();  // fixup for both sides
 
         // Do Missions Here
@@ -636,29 +684,40 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         prest = Launch(Order[i].plr, Order[i].loc);
 
                         // check for prestige firsts
-                        if (AI[Order[i].plr] == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1)    // supposed to be 1
-                            for (j = 0; j < 28; j++) {
-                                if (j != 4 && j != 5 && j != 6)
-                                    if (Data->Prestige[j].Place == Order[i].plr
-                                        && Data->PD[Order[i].plr][j] != 1) {
-                                        PlayFirst(Order[i].plr, j);
-                                    }
-                            }
+                        if (AI[Order[i].plr] == 1 || (MAIL == 1 && Order[i].plr == 0) && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {   // supposed to be 1
+                            PlayAllFirsts(Order[i].plr);
+                        }
 
-                        if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
+                        if (MAIL != 0 && Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
                             UpdateRecords(1);
                             NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
+
+                            if (MAIL == 1) { // Hand back to the U.S. side
+                                MAIL = 0;
+                                MailSave();
+                            }
+
                             FadeOut(2, 10, 0, 0);
                             return;
                         }
 
-                        if (!AI[Order[i].plr] && prest != -20) { // -20 means scrubbed
-                            MisRev(Order[i].plr, prest);
+                        if (!(AI[Order[i].plr] || (MAIL == 1 && Order[i].plr == 0)) && prest != -20) { // -20 means scrubbed
+                            MisRev(Order[i].plr, prest, Data->P[Order[i].plr].PastMissionCount - 1);
                         }
                     }
                 }
 
             }                             //for(i=0...
+        }
+
+        if (MAIL == 0) { // Hand over to the Soviet side
+            MAIL = 1;
+            // Restore mission counter
+            Data->P[0].PastMissionCount = old_mission_count;
+            // Restore prestige data to the status before the U.S. missions
+            memcpy(Data->Prestige, oldPrestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
+            MailSave();
+            return;
         }
 
         Update();  /* Moves Future launches to Missions + More */
@@ -721,6 +780,13 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         newTurn = true;
+
+        if (MAIL == 1) { // Hand back to the U.S. side
+            MAIL = 0;
+            MailSave();
+            return;
+        }
+
     }
 
     FadeOut(2, 10, 0, 0);

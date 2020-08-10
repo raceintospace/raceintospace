@@ -12,5 +12,6 @@ int Find_MaxGoal(void);
 int U_AllotPrest(char plr, char mis);
 int AllotPrest(char plr, char mis);
 int MaxFail(void);
+int Update_Prestige_Data(char plr, char mis);
 
 #endif // PREST_H

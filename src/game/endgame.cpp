@@ -171,18 +171,18 @@ void EndGame(char win, char pad)
     MissionName(miss, 80, 50, 24);
 
     if (Option == -1 && MAIL == -1) {
-        strcpy(capName , Data->P[win].Mission[pad].Name);
+        strcpy(capName, Data->P[win].Mission[pad].Name);
         month = Data->P[win].Mission[pad].Month;
     } else {
         month = Data->Prestige[Prestige_MannedLunarLanding].Month;
 
         if (MAIL != -1 || Option == win) {
-            strcpy(capName , Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].MissionName[0]);
+            strcpy(capName, Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].MissionName[0]);
         } else {
             prog = Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].Hard[i][0] + 1;
-            strcpy(capName , &Data->P[win].Manned[prog - 1].Name[0]);
-            strcat(capName , " ");
-            strcat(capName , Nums[Data->P[win].Manned[prog - 1].Used]);
+            strcpy(capName, &Data->P[win].Manned[prog - 1].Name[0]);
+            strcat(capName, " ");
+            strcat(capName, Nums[Data->P[win].Manned[prog - 1].Used]);
         }
     }
 
@@ -1145,17 +1145,17 @@ void PlayFirst(char plr, char first)
     for (i = first; i < 28; i++) {
         display::graphics.setForegroundColor(9);
 
-        if (Data->Prestige[i].Place == index && Data->PD[index][i] == 0) {
+        if (Data->Prestige[i].Place == index && !(Data->PD[plr][i] & 2)) {
             if (Option == -1 && MAIL == -1) {
                 draw_string(84, 148 + w * 8, &PF[i][0]);
                 ++w;
-                Data->PD[index][i] = 1;
+                Data->PD[index][i] |= 2;
             } else {
                 //Found prestige first same mission
                 if (Data->Prestige[i].Index == Check) {
                     draw_string(84, 148 + w * 8, &PF[i][0]);
                     ++w;
-                    Data->PD[index][i] = 1;
+                    Data->PD[index][i] |= 2;
                 }
             }
         }
@@ -1175,6 +1175,20 @@ void PlayFirst(char plr, char first)
     display::graphics.screen()->clear();
     music_stop();
     return;
+}
+
+/* Play all pending Prestige First videos. */
+void PlayAllFirsts(char plr)
+{
+    int i;
+
+    for (i = 0; i < 28; i++) {
+        if (i != 4 && i != 5 && i != 6) {
+            if (Data->Prestige[i].Place == plr && !(Data->PD[plr][i] & 2)) {
+                PlayFirst(plr, i);
+            }
+        }
+    }
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */

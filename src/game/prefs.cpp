@@ -336,7 +336,7 @@ void CLevels(char side, char wh, DisplayContext &dctx)
  * See documentation for HModel() for more about the Hardware Model /
  * Roster settings.
  *
- * \param where  0 for pregame setup, 1 for in-game settings, 3 for ???
+ * \param where  0 for pregame setup, 1 for in-game settings, 3 for mail game
  */
 void Prefs(int where)
 {
