@@ -9,6 +9,7 @@ typedef struct {
     unsigned want_intro;
     unsigned want_cheats;
     unsigned want_debug;
+    unsigned classic;
     unsigned feat_shorter_advanced_training;
     unsigned feat_female_nauts;
     unsigned feat_random_nauts;

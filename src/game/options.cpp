@@ -113,6 +113,12 @@ static struct {
         "Set to positive values to increase debugging verbosity."
     },
     {
+        "game_style", &options.classic, "%u", 0,
+        "Set to 1 to play the game in the classic style."
+        "\n# This will override other configuration options in-game,"
+        " forcing them\n# to their 'classic' setting."
+    },
+    {
         "short_training", &options.feat_shorter_advanced_training, "%u", 0,
         "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (may cause trouble)."
     },
@@ -163,6 +169,14 @@ static struct {
         "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety (Classic setting)"
     },
 };
+
+
+namespace
+{
+void ResetToDefaultOptions();
+void ResetToClassicOptions();
+};
+
 
 /** prints the minimal usage information to stderr
  *
@@ -397,6 +411,74 @@ fixpath_options(void)
     fix_pathsep(options.dir_gamedata);
 }
 
+
+namespace
+{
+
+/**
+ * Set the game options to the RIS default values.
+ *
+ * These are the default options used if no configuration option
+ * is set or no configuration file is found.
+ */
+void ResetToDefaultOptions()
+{
+    // Technical aspects
+    options.want_audio = 1;
+    options.want_intro = 1;
+    options.want_cheats = 0;
+    options.want_fullscreen = 0;
+    options.want_debug = 0;
+
+    // Gameplay aspects
+    options.classic = 0;
+    options.feat_shorter_advanced_training = 0;
+    options.feat_female_nauts = 0;
+    //Naut Randomize, Nikakd, 10/8/10
+    options.feat_random_nauts = 0;
+    //Naut Compatibility, Nikakd, 10/8/10
+    options.feat_compat_nauts = 10;
+    //No Capsule Training, Nikakd, 10/8/10
+    options.feat_no_cTraining = 1;
+    //No Backup crew required -Leon
+    options.feat_no_backup = 1;
+    options.feat_random_eq = 0;
+    options.feat_eq_new_name = 0;
+    options.boosterSafety = 0;
+
+    // Cheats
+    //Damaged Equipment Cheat, Nikakd, 10/8/10
+    options.cheat_no_damage = 0;
+    options.cheat_altasOnMoon = 0;
+    options.cheat_addMaxS = 1;
+}
+
+
+/**
+ * Tell RIS to mimic the original game behavior.
+ *
+ * Disables many of the added features and adjustments made over time
+ * by the Race Into Space team in favor of the original product.
+ * This does not disable cheats.
+ */
+void ResetToClassicOptions()
+{
+    options.feat_shorter_advanced_training = 0;
+    options.feat_female_nauts = 0;
+    options.feat_compat_nauts = 10;
+    options.feat_no_cTraining = 0;
+    options.feat_no_backup = 0;
+    options.boosterSafety = 2;
+
+    // These may not be implemented, but disable anyways...
+    options.feat_random_nauts = 0;
+    options.feat_random_eq = 0;
+    options.feat_eq_new_name = 0;
+}
+
+};  // End of anonymous namespace
+
+
 /** read the commandline options
  *
  * \return length of modified argv
@@ -425,31 +507,13 @@ setup_options(int argc, char *argv[])
         }
     }
 
-    /* setup default values */
-    options.want_audio = 1;
-    options.want_intro = 1;
-    options.want_cheats = 0;
-    options.want_fullscreen = 0;
-    options.want_debug = 0;
-    options.feat_shorter_advanced_training = 0;
-    options.feat_female_nauts = 0;
-    options.feat_random_nauts = 0;   //Naut Randomize, Nikakd, 10/8/10
-    options.feat_compat_nauts = 10;  //Naut Compatibility, Nikakd, 10/8/10
-    options.feat_no_cTraining = 1;   //No Capsule Training, Nikakd, 10/8/10
-    options.feat_no_backup = 1;      //No Backup crew required -Leon
-    options.cheat_no_damage = 0;     //Damaged Equipment Cheat, Nikakd, 10/8/10
-    options.feat_random_eq = 0;
-    options.feat_eq_new_name = 0;
-    options.cheat_altasOnMoon = 0;
-    options.cheat_addMaxS = 1;
-    options.boosterSafety = 0;
+    ResetToDefaultOptions();
 
     fixpath_options();
 
     /* now try to read config file, if it exists */
-    if (read_config_file() < 0)
+    if (read_config_file() < 0) {
         /* if not, then write default config template */
-    {
         write_default_config();
     }
 
@@ -534,6 +598,10 @@ setup_options(int argc, char *argv[])
     }
 
     fixpath_options();
+
+    if (options.classic) {
+        ResetToClassicOptions();
+    }
 
     return argc;
 }
