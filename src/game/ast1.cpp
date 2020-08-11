@@ -63,11 +63,25 @@ enum DialogueResponse {
     DLG_RESPONSE_NONE = 0
 };
 
+namespace
+{
+enum ProfileDisplay {
+    SHOW_CAPSULE = 0x01,
+    SHOW_LM = 0x02,
+    SHOW_EVA = 0x04,
+    SHOW_DOCKING = 0x08,
+    SHOW_ENDURANCE = 0x10
+};
+}
+
 int AstSelectPrompt(char plr);
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
+void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
+                        int display);
+int ProfileMask(int player);
 void RandomizeNauts();
 void Recruit(char plr, uint8_t pool, uint8_t candidate);
 
@@ -127,8 +141,11 @@ int AstSelectPrompt(char plr, int cost)
 }
 
 
-/** display list of 'naut names
+/**
+ * Display the list of potential astronaut/cosmonaut recruits.
  *
+ * \param now  index of the selected 'naut among all 'nauts in the pool.
+ * \param loc  index of the selection bar relative to top entry (0-7).
  */
 void DispEight(char now, char loc)
 {
@@ -148,26 +165,17 @@ void DispEight(char now, char loc)
         draw_string(189, 136 + (i - start) * 8, &Men[i].Name[0]);
     }
 
-    fill_rectangle(206, 48, 306, 52, 3);
-    fill_rectangle(221, 57, 306, 61, 3);
-    fill_rectangle(293, 66, 301, 70, 3);
-    fill_rectangle(274, 98, 281, 102, 3);
-
-    display::graphics.setForegroundColor(1);
-
-    if (Men[now].Sex == 0) {
-        draw_string(206, 52, "MR. ");
-    } else {
-        draw_string(206, 52, "MS. ");
-    }
-
-    draw_string(0, 0, &Men[now].Name[0]);
-    draw_number(294, 70, Men[now].Cap);
-    draw_number(275, 102, Men[now].Endurance);
     return;
 } /* End of Disp8 */
 
 
+/**
+ * Display the list of picked recruits.
+ *
+ * \param now  index of the selected 'naut among all picked nauts.
+ * \param loc  index of the selection bar relative to top entry (0-7).
+ * \param cnt  how many nauts have been picked.
+ */
 void DispEight2(int nw, int lc, int cnt)
 {
     int i, start, num;
@@ -184,25 +192,6 @@ void DispEight2(int nw, int lc, int cnt)
             display::graphics.setForegroundColor(6 + (Men[sel[i]].Sex + 1) * 6);
             draw_string(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
         }
-    }
-
-    fill_rectangle(45, 48, 145, 52, 3);
-    fill_rectangle(60, 57, 145, 61, 3);
-    fill_rectangle(132, 66, 140, 70, 3);
-    fill_rectangle(113, 98, 120, 102, 3);
-
-    if (cnt > 0) {
-        display::graphics.setForegroundColor(1);
-
-        if (Men[sel[nw]].Sex == 0) {
-            draw_string(45, 52, "MR. ");
-        } else {
-            draw_string(45, 52, "MS. ");
-        }
-
-        draw_string(0, 0, &Men[sel[nw]].Name[0]);
-        draw_number(133, 70, Men[sel[nw]].Cap);
-        draw_number(114, 102, Men[sel[nw]].Endurance);
     }
 
     return;
@@ -501,6 +490,97 @@ void DrawAstSel(char plr)
 }
 
 
+/**
+ * Display the personal information, including stats, of a candidate.
+ *
+ * Parts of candidate's information may not be available, notably
+ * their stats. The display argument takes a set of ProfileDisplay
+ * flags that determine which stats should be revealed, and which
+ * should be hidden.
+ *
+ * \param x       the x coord of the top-left corner of the profile space.
+ * \param y       the y coord of the top-left corner of the profile space.
+ * \param recruit  the astronaut/cosmonaut or NULL for an empty profile.
+ * \param display  flags indicating which recruit skills to reveal.
+ */
+void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
+                        int display)
+{
+    // Regular text has a height of 5 pixels.
+    fill_rectangle(x + 33, y + 1, x + 133, y + 5, 3);  // Draws over Name
+    fill_rectangle(x + 48, y + 10, x + 133, y + 14, 3);  // Service
+    fill_rectangle(x + 120, y + 19, x + 133, y + 23, 3);  // Capsule
+    fill_rectangle(x + 94, y + 27, x + 107, y + 31, 3);  // LM
+    fill_rectangle(x + 71, y + 35, x + 84, y + 39, 3);  // EVA
+    fill_rectangle(x + 87, y + 43, x + 100, y + 47, 3);  // Docking
+    fill_rectangle(x + 101, y + 51, x + 114, y + 55, 3);  // Endurance
+
+    display::graphics.setForegroundColor(1);
+
+    if (recruit) {
+        draw_string(x + 33, y + 5, recruit->Sex ? "MS. " : "MR. ");
+        draw_string(0, 0, &(recruit->Name[0]));
+        // Service placeholder
+        // draw_string(x + 90, y + 14,
+        //             AstService(player, recruit->Service).c_str());
+    }
+
+    if (recruit && display & SHOW_CAPSULE) {
+        draw_number(x + 121, y + 23, recruit->Cap);
+    } else {
+        draw_string(x + 121, y + 23, "--");  // Capsule rating
+    }
+
+    if (recruit && display & SHOW_LM) {
+        draw_number(x + 95, y + 31, recruit->LM);
+    } else {
+        draw_string(x + 94, y + 31, "--");  // LM rating
+    }
+
+    if (recruit && display & SHOW_EVA) {
+        draw_number(x + 72, y + 39, recruit->EVA);
+    } else {
+        draw_string(x + 71, y + 39, "--");  // EVA rating
+    }
+
+    if (recruit && display & SHOW_DOCKING) {
+        draw_number(x + 88, y + 47, recruit->Docking);
+    } else {
+        draw_string(x + 87, y + 47, "--");  // Docking rating
+    }
+
+    if (recruit && display & SHOW_ENDURANCE) {
+        draw_number(x + 102, y + 55, recruit->Endurance);
+    } else {
+        draw_string(x + 102, y + 55, "--");  // Endurance rating
+    }
+}
+
+
+/**
+ * Determine which astronaut/cosmonauts stats should be revealed.
+ *
+ * \param player  the player index.
+ */
+int ProfileMask(int player)
+{
+    assert(player == 0 || player == 1);
+    uint8_t level = (player == 0) ? Data->Def.Ast1 : Data->Def.Ast2;
+
+    int stats = SHOW_CAPSULE | SHOW_ENDURANCE;
+
+    if (options.feat_show_recruit_stats && level < 2) {
+        stats |= SHOW_DOCKING;
+    }
+
+    if (options.feat_show_recruit_stats && level < 1) {
+        stats |= SHOW_LM | SHOW_EVA;
+    }
+
+    return stats;
+}
+
+
 //Naut Randomize, Nikakd, 10/8/10
 // Note: These stats are far more generous than the historical stats.
 void RandomizeNauts()
@@ -665,6 +745,8 @@ void AstSel(char plr)
     // having 8+ constant selections at all times.
     assert(MaxMen >= 8);
 
+    int showStats = ProfileMask(plr);
+
     now = Index;
     max = Index + MaxMen;
     min = Index;
@@ -672,7 +754,9 @@ void AstSel(char plr)
     count = 0; /* counter for # selected */
 
     DispEight(now, BarB);
+    DrawRecruitProfile(173, 47, &Men[now], showStats);
     DispEight2(now2, BarA, count);
+    DrawRecruitProfile(12, 47, NULL, showStats);
 
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -694,6 +778,7 @@ void AstSel(char plr)
                 now += i;
                 BarB = i;
                 DispEight(now, BarB);
+                DrawRecruitProfile(173, 47, &Men[now], showStats);
                 WaitForMouseUp();
             }
 
@@ -709,6 +794,7 @@ void AstSel(char plr)
                 now2 += i;
                 BarA = i;
                 DispEight2(now2, BarA, count);
+                DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
                 WaitForMouseUp();
             }
         }
@@ -721,6 +807,7 @@ void AstSel(char plr)
             BarA = 0;
             now2 = 0;
             DispEight2(now2, BarA, count);
+            DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
 
             delay(10);
             OutBox(6, 130, 18, 161);
@@ -737,6 +824,7 @@ void AstSel(char plr)
                 }
 
                 DispEight2(now2, BarA, count);
+                DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
             }
 
             delay(10);
@@ -757,6 +845,8 @@ void AstSel(char plr)
                         if (now2 > 0) {
                             now2--;
                             DispEight2(now2, BarA, count);
+                            DrawRecruitProfile(
+                                12, 47, &Men[sel[now2]], showStats);
                         }
                     }
 
@@ -764,6 +854,8 @@ void AstSel(char plr)
                         BarA--;
                         now2--;
                         DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
                     }
 
                     i = 51;
@@ -777,6 +869,8 @@ void AstSel(char plr)
                     if (now2 > 0) {
                         now2--;
                         DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
                     }
                 }
 
@@ -784,6 +878,7 @@ void AstSel(char plr)
                     BarA--;
                     now2--;
                     DispEight2(now2, BarA, count);
+                    DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
                 }
 
                 key = 0;
@@ -809,6 +904,8 @@ void AstSel(char plr)
                         if (now2 < count - 1) {
                             now2++;
                             DispEight2(now2, BarA, count);
+                            DrawRecruitProfile(
+                                12, 47, &Men[sel[now2]], showStats);
                         }
                     }
 
@@ -817,6 +914,8 @@ void AstSel(char plr)
                             BarA++;
                             now2++;
                             DispEight2(now2, BarA, count);
+                            DrawRecruitProfile(
+                                12, 47, &Men[sel[now2]], showStats);
                         }
                     }
 
@@ -831,6 +930,8 @@ void AstSel(char plr)
                     if (now2 < count - 1) {
                         now2++;
                         DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
                     }
                 }
 
@@ -839,6 +940,8 @@ void AstSel(char plr)
                         BarA++;
                         now2++;
                         DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
                     }
                 }
 
@@ -851,7 +954,7 @@ void AstSel(char plr)
             OutBox(6, 163, 18, 194);
             delay(10);
 
-        } else if (key == K_PGDN && ksel == 1) {
+        } else if (key == K_PGDN && ksel == 1 && count > 0) {
             /* Left Page Down */
             InBox(6, 163, 18, 194);
 
@@ -863,6 +966,7 @@ void AstSel(char plr)
                 }
 
                 DispEight2(now2, BarA, count);
+                DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
             }
 
             delay(10);
@@ -875,6 +979,7 @@ void AstSel(char plr)
             BarA = MIN(count - 1, 7);
             now2 = count - 1;
             DispEight2(now2, BarA, count);
+            DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
 
             delay(10);
             OutBox(6, 163, 18, 194);
@@ -886,6 +991,7 @@ void AstSel(char plr)
             BarB = 0;
             now = min;
             DispEight(now, BarB);
+            DrawRecruitProfile(173, 47, &Men[now], showStats);
 
             delay(10);
             OutBox(167, 130, 179, 161);
@@ -903,6 +1009,7 @@ void AstSel(char plr)
                 }
 
                 DispEight(now, BarB);
+                DrawRecruitProfile(173, 47, &Men[now], showStats);
             }
 
             delay(10);
@@ -923,6 +1030,8 @@ void AstSel(char plr)
                         if (now > min) {
                             now--;
                             DispEight(now, BarB);
+                            DrawRecruitProfile(
+                                173, 47, &Men[now], showStats);
                         }
                     }
 
@@ -930,6 +1039,7 @@ void AstSel(char plr)
                         BarB--;
                         now--;
                         DispEight(now, BarB);
+                        DrawRecruitProfile(173, 47, &Men[now], showStats);
                     }
 
                     i = 51;
@@ -943,6 +1053,7 @@ void AstSel(char plr)
                     if (now > min) {
                         now--;
                         DispEight(now, BarB);
+                        DrawRecruitProfile(173, 47, &Men[now], showStats);
                     }
                 }
 
@@ -950,6 +1061,7 @@ void AstSel(char plr)
                     BarB--;
                     now--;
                     DispEight(now, BarB);
+                    DrawRecruitProfile(173, 47, &Men[now], showStats);
                 }
 
                 key = 0;
@@ -978,6 +1090,8 @@ void AstSel(char plr)
                             }
 
                             DispEight(now, BarB);
+                            DrawRecruitProfile(
+                                173, 47, &Men[now], showStats);
                         }
                     }
 
@@ -985,6 +1099,7 @@ void AstSel(char plr)
                         BarB++;
                         now++;
                         DispEight(now, BarB);
+                        DrawRecruitProfile(173, 47, &Men[now], showStats);
                     }
 
                     i = 51;
@@ -1001,6 +1116,7 @@ void AstSel(char plr)
                         }
 
                         DispEight(now, BarB);
+                        DrawRecruitProfile(173, 47, &Men[now], showStats);
                     }
                 }
 
@@ -1008,6 +1124,7 @@ void AstSel(char plr)
                     BarB++;
                     now++;
                     DispEight(now, BarB);
+                    DrawRecruitProfile(173, 47, &Men[now], showStats);
                 }
 
                 key = 0;
@@ -1030,6 +1147,7 @@ void AstSel(char plr)
                 }
 
                 DispEight(now, BarB);
+                DrawRecruitProfile(173, 47, &Men[now], showStats);
             }
 
             delay(10);
@@ -1042,6 +1160,7 @@ void AstSel(char plr)
             BarB = 7;
             now = max;
             DispEight(now, BarB);
+            DrawRecruitProfile(173, 47, &Men[now], showStats);
 
             delay(10);
             OutBox(167, 163, 179, 194);
@@ -1069,7 +1188,10 @@ void AstSel(char plr)
             }
 
             DispEight2(now2, BarA, count);
+            DrawRecruitProfile(
+                12, 47, (count > 0) ? &Men[sel[now2]] : NULL, showStats);
             DispEight(now, BarB);
+            DrawRecruitProfile(173, 47, &Men[now], showStats);
 
             WaitForMouseUp();
 
@@ -1092,6 +1214,7 @@ void AstSel(char plr)
                     if (now < max) {
                         now++;
                         DispEight(now, BarB);
+                        DrawRecruitProfile(173, 47, &Men[now], showStats);
                     }
                 }
 
@@ -1099,9 +1222,11 @@ void AstSel(char plr)
                     BarB++;
                     now++;
                     DispEight(now, BarB);
+                    DrawRecruitProfile(173, 47, &Men[now], showStats);
                 }
 
                 DispEight2(now2, BarA, count);
+                DrawRecruitProfile(12, 47, &Men[sel[now2]], showStats);
 
                 fill_rectangle(292, 36, 310, 41, 7);
                 display::graphics.setForegroundColor(11);

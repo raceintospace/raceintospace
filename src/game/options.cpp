@@ -145,6 +145,12 @@ static struct {
         "Set to zero to require assigning a Backup crew (Classic setting)."
     },   // No Backup crew required -Leon
     {
+        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 1,
+        "By default astronaut/cosmonaut candidate stats are revealed based"
+        "\n# on Astronaut difficulty. Set to 0 to restore the classic"
+        "setting\n# where only Capsule and Endurance are shown."
+    },   // Depending on difficulty, show recruit's Docking, EVA, LM
+    {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
         "Set to non-zero to disable damaged equipment (will prevent future damage)."
     },
@@ -442,6 +448,7 @@ void ResetToDefaultOptions()
     options.feat_no_cTraining = 1;
     //No Backup crew required -Leon
     options.feat_no_backup = 1;
+    options.feat_show_recruit_stats = 1;
     options.feat_random_eq = 0;
     options.feat_eq_new_name = 0;
     options.boosterSafety = 0;
@@ -468,6 +475,7 @@ void ResetToClassicOptions()
     options.feat_compat_nauts = 10;
     options.feat_no_cTraining = 0;
     options.feat_no_backup = 0;
+    options.feat_show_recruit_stats = 0;
     options.boosterSafety = 2;
 
     // These may not be implemented, but disable anyways...
