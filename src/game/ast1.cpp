@@ -81,6 +81,7 @@ void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
 void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
                         int display);
+int ProfileMask(int player);
 void RandomizeNauts();
 void Recruit(char plr, uint8_t pool, uint8_t candidate);
 
@@ -556,6 +557,30 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
 }
 
 
+/**
+ * Determine which astronaut/cosmonauts stats should be revealed.
+ *
+ * \param player  the player index.
+ */
+int ProfileMask(int player)
+{
+    assert(player == 0 || player == 1);
+    uint8_t level = (player == 0) ? Data->Def.Ast1 : Data->Def.Ast2;
+
+    int stats = SHOW_CAPSULE | SHOW_ENDURANCE;
+
+    if (options.feat_show_recruit_stats && level < 2) {
+        stats |= SHOW_DOCKING;
+    }
+
+    if (options.feat_show_recruit_stats && level < 1) {
+        stats |= SHOW_LM | SHOW_EVA;
+    }
+
+    return stats;
+}
+
+
 //Naut Randomize, Nikakd, 10/8/10
 // Note: These stats are far more generous than the historical stats.
 void RandomizeNauts()
@@ -720,7 +745,7 @@ void AstSel(char plr)
     // having 8+ constant selections at all times.
     assert(MaxMen >= 8);
 
-    int showStats = SHOW_CAPSULE | SHOW_ENDURANCE;
+    int showStats = ProfileMask(plr);
 
     now = Index;
     max = Index + MaxMen;
