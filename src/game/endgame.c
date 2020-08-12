@@ -46,7 +46,7 @@ char PF[29][40]={
     "TWO-PERSON CRAFT","THREE-PERSON CRAFT","MINISHUTTLE","FOUR-PERSON CRAFT",
     "MANNED ORBITAL","MANNED LUNAR PASS","MANNED LUNAR ORBIT",
     "MANNED RESCUE ATTEMPT","MANNED LUNAR LANDING","ORBITING LAB",
-    "MANNED DOCKING","WOMAN IN SPACE","SPACE WALK","MANNED SPACE MISSION"};
+    "MANNED DOCKING","WOMAN IN SPACE","SPACEWALK","MANNED SPACE MISSION"};
 
 
 char
@@ -212,7 +212,7 @@ void EndGame(char win,char pad)
  if (win==0) DispBig(34,5,"US WINS",1,-1);
    else DispBig(34,5,"USSR WINS",1,-1);
  FlagSm(win,4,4);
- grSetColor(1);PrintAt(258,13,"CONTINUE");
+ grSetColor(1);PrintAt(256,13,"CONTINUE");
 
  if (Option==-1 && MAIL==-1) miss=Data->P[win].Mission[pad].MissionCode;
   else {
@@ -312,7 +312,7 @@ void EndGame(char win,char pad)
 	   default:break;
 	  }
 	 }
- //Print the first in the moon
+ //Print the first on the Moon
  firstOnMoon = (manOnMoon==1? man1 : manOnMoon==2? man2 : manOnMoon==3? man3 :manOnMoon==4? man4: man2);
  grSetColor(11);PrintAt(10,60,"FIRST ON THE MOON: ");grSetColor(14);PrintAt(0,0,&Data->P[win].Pool[firstOnMoon].Name[0]);
  
@@ -764,7 +764,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
 	/*
 	 * off by one error in data file - again
 	 * P.w += 1 solves the problem, but then
-	 * we get a strip of garbage on the right hand side
+	 * we get a strip of garbage on the right-hand side
 	 */
 	P.w++;
 	fseek(in, P.offset, SEEK_SET);

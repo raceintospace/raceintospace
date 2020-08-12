@@ -137,7 +137,7 @@ updateAstronautSkills(unsigned plr, struct Astros* astro)
 			astro->Active++;
 	}
 
-	/* Move All unassign astros to limbo */
+	/* Move All unassigned astros to limbo */
 	if ((astro->Una == 0)
 		&& (astro->Status == AST_ST_ACTIVE)
 		&& (astro->Assign != 0))
@@ -205,6 +205,13 @@ updateAstronautSkills(unsigned plr, struct Astros* astro)
 				astro->Status = AST_ST_TRAIN_ADV_4;
 			else
 				astro->Status = AST_ST_TRAIN_ADV_3;
+
+			assert((unsigned) astro->Focus <= NUM_SKILLS);
+
+			/* Increase trained skill by 1 ('naut is halfway through adv training) */
+			char* skill = skills[astro->Focus - 1];
+			*skill = min(*skill + 1, skillMax);
+
 			break;
 
 		case AST_ST_TRAIN_ADV_3:
@@ -221,9 +228,9 @@ updateAstronautSkills(unsigned plr, struct Astros* astro)
 
 			assert((unsigned) astro->Focus <= NUM_SKILLS);
 
-			/* Increase trained skill by 2 */
+			/* Increase trained skill by 1 */
 			char* skill = skills[astro->Focus - 1];
-			*skill = min(*skill + 2, skillMax);
+			*skill = min(*skill + 1, skillMax);
 
 			break;
 		}
@@ -444,7 +451,7 @@ AstroTurn(void)
 				if (Data->P[j].Other & 2)
 					Data->P[j].Pool[i].Mood -= random(2) + 1;
 
-				/* Compatability */
+				/* Compatibility */
 				for (k = 0; k < 5; k++)
 					Compat[k] = 0;
 				cnt = 0;

@@ -57,7 +57,7 @@
 #  if HAVE_SDL_GETENV
 #    define getenv SDL_getenv
 #  else
-#    warn I dont know a way to read environment on this system
+#    warn I do not know a way to read environment on this system
 #    define getenv(a) (NULL)
 #  endif
 #endif
@@ -66,7 +66,7 @@ game_options options;
 
 LOG_DEFAULT_CATEGORY(config)
 
-/*set-up array for environment vars */
+/*set up array for environment vars */
 static struct {
     char *name;
     char **dest;
@@ -106,17 +106,17 @@ static struct {
 	{"no_backup", &options.feat_no_backup, "%u", 0,
 		"Set to zero to require assigning a Backup crew." },   // No Backup crew required -Leon
 	{"cheat_no_damage", &options.cheat_no_damage, "%u", 0,
-		"Set to non-zero to disable damaged equipment (Will prevent future damage)." },
+		"Set to non-zero to disable damaged equipment (will prevent future damage)." },
 	{"random_eq", &options.feat_random_eq, "%u", 0,
-		"Set to non-zero to enable random equipment Model (Will break game balance and possibly break the AI)." },
+		"Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)." },
 	{"eq_name_change", &options.feat_eq_new_name, "%u", 0,
 		"Set to non-zero to be able to change equipment name when starting a new game." },
 	{"altasLunar", &options.cheat_altasOnMoon, "%u", 0,
-		"Set to non-zero to enable Altas rockets in lunar missions." },
+		"Set to non-zero to enable Atlas rockets in lunar missions." },
 	{"succesRDMax", &options.cheat_addMaxS, "%u", 0,
-		"Set to zero to make MaxRD not change with succesful missions." },
+		"Set to zero to make MaxRD not change with successful missions." },
 	{"boosterSafety", &options.boosterSafety, "%u", 0,
-		"0: Stadistical Safety (default) - 1: Min Safety - 2: Average Safety" },
+		"0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety." },
 };
 
 /** prints the minimal usage information to stderr
@@ -349,7 +349,7 @@ fixpath_options(void)
 	fix_pathsep(options.dir_gamedata);
 }
 
-/** read the commandline options
+/** read the command-line options
  *
  * \return length of modified argv
  *
@@ -379,7 +379,7 @@ setup_options(int argc, char *argv[])
 			*env_vars[i].dest = xstrdup(env_vars[i].def_val);
 	}
 
-	/* setup default values */
+	/* set up default values */
 	options.want_audio = 1;
 	options.want_intro = 1;
 	options.want_cheats = 0;
@@ -479,7 +479,7 @@ setup_options(int argc, char *argv[])
 		shift_argv(argv + pos, argc - pos, 1);
 
 		/*
-		 * now we have one less arg, pos points to the next arg,
+		 * now we have one fewer arg, pos points to the next arg,
 		 * keep it this way after incrementing it on top of the loop
 		 */
 		pos--;

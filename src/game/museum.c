@@ -433,7 +433,7 @@ void ShowSpHist(char plr)
   InBox(3,3,31,19); // USA inbox
   FlagSm(plr,4,4);
   grSetColor(1);
-  PrintAt(259,13,"CONTINUE");
+  PrintAt(257,13,"CONTINUE");
 
   ORBox(0,24,319,199,3);
   IRBox(4,28,315,170,0);
@@ -477,7 +477,7 @@ void Mission_Data_Buttons(char plr, int *where)
     char index,yr,season,j,temp=0;
 
     /* Okay, now we have to decide whether there are any missions displayed
-    on the screen at this time. If there are any, parse the button. */ 
+       on the screen at this time. If there are any, parse the button. */ 
     if(Data->P[plr].PastMis==0) return;
     index=0;
     season =*where % 2;
@@ -745,8 +745,8 @@ void ShowAstrosHist(char plr)
   
   FadeOut(2,pal,5,0,0);
   RectFill(1,39,157,184,3);
-  DispBig(65,71,"NO",0,-1);
-  DispBig(42,90,"MISSION",0,-1);
+  DispBig(68,71,"NO",0,-1);
+  DispBig(46,90,"MISSION",0,-1);
   DispBig(27,109,"EXPERIENCE",0,-1);
   gxGetImage(&vhptr2,22,69,133,123,0);
   PatchMe(0,0,0,0,0,32);
@@ -761,7 +761,7 @@ void ShowAstrosHist(char plr)
   if(plr==0) FlagSm(0,4,4);
   else FlagSm(1,4,4); 
   grSetColor(1);
-  PrintAt(259,13,"CONTINUE");
+  PrintAt(257,13,"CONTINUE");
   ShBox(0,24,158,199);
   ShBox(161,24,319,199);
   InBox(233,29,314,80);
@@ -861,20 +861,21 @@ void DisplAst(char plr, char *where, char *where2)
   if ((plr==0 && abuf[*where].Missions>=4) || abuf[*where].Hero==1) Display_ARROW(4,289,105);
    else if ((plr==1 && abuf[*where].Missions>=4) || abuf[*where].Hero==1) Display_ARROW(5,290,105);
   if (abuf[*where].Missions>0) Display_ARROW(6,245,83);
-  DispNum(213,78,abuf[*where].Missions);
-  DispNum(216,89,abuf[*where].Prestige);
+  DispNum(214,78,abuf[*where].Missions);
+  DispNum(217,89,abuf[*where].Prestige);
   DispNum(250,149,abuf[*where].Days);
-  DispNum(252,107,abuf[*where].Cap);
-  DispNum(225,115,abuf[*where].LM);
-  DispNum(202,123,abuf[*where].EVA);
-  DispNum(218,131,abuf[*where].Docking);
-  DispNum(232,139,abuf[*where].Endurance);
+    PrintAt(258,149," DAYS");
+  DispNum(253,107,abuf[*where].Cap);
+  DispNum(227,115,abuf[*where].LM);
+  DispNum(204,123,abuf[*where].EVA);
+  DispNum(220,131,abuf[*where].Docking);
+  DispNum(234,139,abuf[*where].Endurance);
   DispNum(173,68,abuf[*where].Active/2);
-  PrintAt(0,0,"  YEAR");
+  PrintAt(0,0," YEAR");
   if (abuf[*where].Active/2!=1) PrintAt(0,0,"S");
   memset(Ast_Name,0x00,sizeof Ast_Name);
   strncpy(Ast_Name,abuf[*where].Name,10);
-  if (abuf[*where].Sex==1) grSetColor(5);
+  if (abuf[*where].Sex==1) grSetColor(5);  // Show females in blue
   PrintAt(165,39,Ast_Name);  // Displays name of astronaut/cosmonaut
   grSetColor(11);
   strcat(temp,(char *)Nums[abuf[*where].Group]);

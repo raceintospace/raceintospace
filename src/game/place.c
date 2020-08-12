@@ -613,7 +613,7 @@ void writePrestigeFirst(char index) { ///index==plr
 	char w=0,i,draw=0;
 	extern char PF[29][40];
 	 for (i=0;i<28;i++)
-	  { //Preestige First
+	  { //Prestige Firsts
 	   if (w<6 && Data->Prestige[i].Place==index && Data->PD[index][i]==0)
 		{
 			if (draw==0) {
@@ -700,7 +700,7 @@ void Draw_Mis_Stats(char plr, char index, int *where,char mode)
   RectFill(10,34,205,44,9);InBox(9,33,206,45);
   RectFill(10,49,205,119,7);InBox(9,48,206,120);
   RectFill(10,124,205,164,7);InBox(9,123,206,165);
-  ShBox(62,117,154,127);grSetColor(1);PrintAt(80,124,"FLIGHT CREW");
+  ShBox(62,117,154,127);grSetColor(1);PrintAt(79,124,"FLIGHT CREW");
   grSetColor(11);PrintAt(58,41,"MISSION INFORMATION");
   PrintAt(12,104,"MISSION DURATION: ");
   Name[0]=(char)Data->P[plr].History[index].Duration+'A'-1;
@@ -755,7 +755,8 @@ void Draw_Mis_Stats(char plr, char index, int *where,char mode)
 
   AbzFrame(plr,index,215,56,94,60,"OOOO",mode);
 
-  IOBox(214,134,310,148);grSetColor(1);PrintAt(224,143,"REPLAY MISSION");
+  IOBox(214,134,310,148); grSetColor(9);PrintAt(224,143,"R");
+    grSetColor(1);PrintAt(0,0,"EPLAY MISSION");
   if (mode==0) {
      IOBox(214,151,310,165);
      grSetColor(1);PrintAt(250,160,"EXIT");

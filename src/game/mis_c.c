@@ -1155,7 +1155,8 @@ InRFBox(162,28,312,42,10);
 		      "first cosmonaut to");
 	PrintAt(30,80," walk on the moon?");
 
-	for(int i=0;i<nauts;i++) {
+  int i;
+	for(i=0;i<nauts;i++) {
 		IOBox(25,100 +i*25,135,115+i*25);
 		grSetColor(12);
 		GuyDisp(45,110+i*25, MX[cPad][i].A);

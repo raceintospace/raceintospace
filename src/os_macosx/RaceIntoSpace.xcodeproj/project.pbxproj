@@ -89,6 +89,7 @@
 		7C94F48D0C68C4CA00D047AD /* gamedata in Resources */ = {isa = PBXBuildFile; fileRef = 7C94F1E40C68C4CA00D047AD /* gamedata */; };
 		7C94F48E0C68C4CA00D047AD /* images in Resources */ = {isa = PBXBuildFile; fileRef = 7C94F22D0C68C4CA00D047AD /* images */; };
 		7C94F4900C68C4CA00D047AD /* video in Resources */ = {isa = PBXBuildFile; fileRef = 7C94F2550C68C4CA00D047AD /* video */; };
+		7CB3C07E13E3924B000D47F8 /* fortify_workaround.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CB3C07C13E3924B000D47F8 /* fortify_workaround.c */; };
 		7CC7BC3C0C7134F4004B3053 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CC7BC3B0C7134F4004B3053 /* libz.dylib */; };
 		7CCAA97C0C6922FE0043DD17 /* RaceIntoSpace.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7C5E89350C68B7A20074F164 /* RaceIntoSpace.icns */; };
 		7CCAA9D40C6946E10043DD17 /* moon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7CCAA9D30C6946E10043DD17 /* moon.icns */; };
@@ -98,10 +99,8 @@
 		7CD2243B0C7133BF000C0DC5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CD2243A0C7133BF000C0DC5 /* Security.framework */; };
 		7CD2243F0C7133CF000C0DC5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CD2243E0C7133CF000C0DC5 /* Carbon.framework */; };
 		7CD224440C7133D9000C0DC5 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CD224430C7133D9000C0DC5 /* CoreFoundation.framework */; };
+		7CD7D9D31395EA5900B8C11B /* randomize.c in Sources */ = {isa = PBXBuildFile; fileRef = 7CD7D9D21395EA5900B8C11B /* randomize.c */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		987973FC0E630ABD00C74DF4 /* libogg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 987973FB0E630ABD00C74DF4 /* libogg.dylib */; };
-		987973FF0E630ADB00C74DF4 /* libtheora.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 987973FE0E630ADB00C74DF4 /* libtheora.dylib */; };
-		987974010E630AE500C74DF4 /* libvorbis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 987974000E630AE500C74DF4 /* libvorbis.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -224,6 +223,8 @@
 		7C94F1E40C68C4CA00D047AD /* gamedata */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = gamedata; path = "../../race-data/gamedata"; sourceTree = SOURCE_ROOT; };
 		7C94F22D0C68C4CA00D047AD /* images */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = images; path = "../../race-data/images"; sourceTree = SOURCE_ROOT; };
 		7C94F2550C68C4CA00D047AD /* video */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = video; path = "../../race-data/video"; sourceTree = SOURCE_ROOT; };
+		7CB3C07C13E3924B000D47F8 /* fortify_workaround.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fortify_workaround.c; path = ../fortify_workaround.c; sourceTree = "<group>"; };
+		7CB3C07D13E3924B000D47F8 /* fortify_workaround.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fortify_workaround.h; path = ../fortify_workaround.h; sourceTree = "<group>"; };
 		7CC7BC3B0C7134F4004B3053 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		7CCAA9D30C6946E10043DD17 /* moon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = moon.icns; sourceTree = "<group>"; };
 		7CD223BB0C712DC3000C0DC5 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = vendor/Sparkle.framework; sourceTree = "<group>"; };
@@ -232,6 +233,7 @@
 		7CD2243A0C7133BF000C0DC5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		7CD2243E0C7133CF000C0DC5 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		7CD224430C7133D9000C0DC5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		7CD7D9D21395EA5900B8C11B /* randomize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = randomize.c; path = ../randomize.c; sourceTree = "<group>"; };
 		7CE9C5F90C6BF01F0020F23F /* version.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = version.c; path = ../version.c; sourceTree = SOURCE_ROOT; };
 		7CF391080C6A998C0086E543 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = SOURCE_ROOT; };
 		7CF391090C6A998C0086E543 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = SOURCE_ROOT; };
@@ -266,9 +268,6 @@
 				7C56E8FB0C74A0DA00B3B6C1 /* CoreAudio.framework in Frameworks */,
 				7C56E9030C74A0EE00B3B6C1 /* AudioToolbox.framework in Frameworks */,
 				7C56E9040C74A0EE00B3B6C1 /* AudioUnit.framework in Frameworks */,
-				987973FC0E630ABD00C74DF4 /* libogg.dylib in Frameworks */,
-				987973FF0E630ADB00C74DF4 /* libtheora.dylib in Frameworks */,
-				987974010E630AE500C74DF4 /* libvorbis.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,6 +365,9 @@
 		7C94E0B40C68BE6300D047AD /* Common Sources */ = {
 			isa = PBXGroup;
 			children = (
+				7CB3C07C13E3924B000D47F8 /* fortify_workaround.c */,
+				7CB3C07D13E3924B000D47F8 /* fortify_workaround.h */,
+				7CD7D9D21395EA5900B8C11B /* randomize.c */,
 				7C56E77B0C74966A00B3B6C1 /* music_osx.c */,
 				7C9403B60C68C7C000D047AD /* sdl.c */,
 				7C94E12F0C68C00600D047AD /* admin.c */,
@@ -505,7 +507,11 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "RaceIntoSpace" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Race Into Space */;
 			projectDirPath = "";
 			projectRoot = ..;
@@ -563,7 +569,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Generates a version.h based on configure.in, creating autoconf-like defines\negrep '^AC_INIT' ../configure.in | awk -F '[,()]' '{\nprint \"#define PACKAGE_BUGREPORT \\\"\" $4 \"\\\"\"\nprint \"#define PACKAGE_NAME \\\"\" $2 \"\\\"\"\nprint \"#define PACKAGE_STRING \\\"\" $2 \" \" $3 \"\\\"\"\nprint \"#define PACKAGE_TARNAME \\\"\" $5 \"\\\"\"\nprint \"#define PACKAGE_VERSION \\\"\" $3 \"\\\"\"\n}' > \"$DERIVED_FILE_DIR/version.h\"\n\n# Add an additional define for version.c\negrep '^[0-9]+$' ../version.c | sed -e 's/^/#define PACKAGE_BUILD \"/' -e 's/$/\"/' >> \"$DERIVED_FILE_DIR/version.h\"\n\n# Update Info.plist to match using a little Ruby\nexport PACKAGE_VERSION=`grep PACKAGE_VERSION \"$DERIVED_FILE_DIR/version.h\" | sed -e 's/.* \"//' -e 's/\".*//'`\nexport PACKAGE_BUILD=`grep PACKAGE_BUILD \"$DERIVED_FILE_DIR/version.h\" | sed -e 's/.* \"//' -e 's/\".*//'`\nruby << EORUBY\n\nversion = \"#{ENV['PACKAGE_VERSION']}.#{ENV['PACKAGE_BUILD']}\"\nplist = File.read('Info.plist')\nreplace_next = false\nnew_plist = plist.split(/\\n/).map { |line|\n\tif line =~ /<key>CFBundleVersion<\\/key>/\n\t\treplace_next = true\n\t\tline\n\telsif replace_next\n\t\treplace_next = false\n\t\t\"\\t<string>#{version}</string>\"\n\telse\n\t\tline\n\tend\n}.join(\"\\n\")\nFile.open('Info.plist.new', 'w') { |f| f.print new_plist }\nFile.rename('Info.plist.new', 'Info.plist')\n\nEORUBY";
+			shellScript = "# Generates a version.h based on configure.in, creating autoconf-like defines\negrep '^AC_INIT' ../configure.in | awk -F '[,()]' '{\nprint \"#define PACKAGE_BUGREPORT \\\"\" $4 \"\\\"\"\nprint \"#define PACKAGE_NAME \\\"\" $2 \"\\\"\"\nprint \"#define PACKAGE_STRING \\\"\" $2 \" \" $3 \"\\\"\"\nprint \"#define PACKAGE_TARNAME \\\"\" $5 \"\\\"\"\nprint \"#define PACKAGE_VERSION \\\"\" $3 \"\\\"\"\n}' > \"$DERIVED_FILE_DIR/version.h\"\n\n# Add an additional define for version.c\negrep -o '^[0-9]+' ../version.c | sed -e 's/^/#define PACKAGE_BUILD \"/' -e 's/$/\"/' >> \"$DERIVED_FILE_DIR/version.h\"\n\n# Update Info.plist to match using a little Ruby\nexport PACKAGE_VERSION=`grep PACKAGE_VERSION \"$DERIVED_FILE_DIR/version.h\" | sed -e 's/.* \"//' -e 's/\".*//'`\nexport PACKAGE_BUILD=`grep PACKAGE_BUILD \"$DERIVED_FILE_DIR/version.h\" | sed -e 's/.* \"//' -e 's/\".*//'`\nruby << EORUBY\n\nversion = \"#{ENV['PACKAGE_VERSION']}.#{ENV['PACKAGE_BUILD']}\"\nplist = File.read('Info.plist')\nreplace_next = false\nnew_plist = plist.split(/\\n/).map { |line|\n\tif line =~ /<key>CFBundleVersion<\\/key>/\n\t\treplace_next = true\n\t\tline\n\telsif replace_next\n\t\treplace_next = false\n\t\t\"\\t<string>#{version}</string>\"\n\telse\n\t\tline\n\tend\n}.join(\"\\n\")\nFile.open('Info.plist.new', 'w') { |f| f.print new_plist }\nFile.rename('Info.plist.new', 'Info.plist')\n\nEORUBY";
 		};
 		7CCAA9910C6927530043DD17 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -577,7 +583,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Derived from http://qwan.org/2007/05/22/using-xcode-to-build-a-disk-image-and-upload-a-web-site/\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n[ \"$BUILD_STYLE\" = \"Release\" ] || { echo \"Unwilling to produce $BUILD_STYLE disk image. Switch to Release.\"; exit 1; }\n\ndir=\"$TEMP_FILES_DIR/disk\"\n\nversion=`grep -A1 CFBundleVersion \"$BUILT_PRODUCTS_DIR/Race Into Space.app/Contents/Info.plist\" | tail -n 1 | egrep -o '[0-9\\.]+'`\nvolume=\"Race_Into_Space_$version\"\n\ntmpdmg=\"$TEMP_FILES_DIR/$volume.dmg\"\ndmg=\"$BUILT_PRODUCTS_DIR/$volume.dmg\"\n\n# Prepare the staging area\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/Race Into Space.app\" \"$dir\"\ncp -R ../AUTHORS ../COPYING ../DEVELOPER ../QUESTIONS ../README \"$dir\" \n\n# Make the initial DMG\nrm -f \"$tmpdmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$volume\" \"$tmpdmg\"\nrm -rf \"$dir\"\n\n# Compress it\nrm -f \"$dmg\"\nhdiutil convert \"$tmpdmg\" -format UDZO -imagekey zlib-level=9 -o \"$dmg\"\nrm -f \"$tmpdmg\"\n\n# Internet-enable the DMG (see `man hdiutil`)\nhdiutil internet-enable -yes \"$dmg\"\n";
+			shellScript = "# Derived from http://qwan.org/2007/05/22/using-xcode-to-build-a-disk-image-and-upload-a-web-site/\n\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n[ \"$BUILD_STYLE\" = \"Release\" ] || { echo \"Unwilling to produce $BUILD_STYLE disk image. Switch to Release.\"; exit 0; }\n\ndir=\"$TEMP_FILES_DIR/disk\"\n\nversion=`grep -A1 CFBundleVersion \"$BUILT_PRODUCTS_DIR/Race Into Space.app/Contents/Info.plist\" | tail -n 1 | egrep -o '[0-9\\.]+'`\nvolume=\"Race_Into_Space_$version\"\n\ntmpdmg=\"$TEMP_FILES_DIR/$volume.dmg\"\ndmg=\"$PROJECT_DIR/../$volume.dmg\"\n\n# Prepare the staging area\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/Race Into Space.app\" \"$dir\"\ncp -R ../AUTHORS ../COPYING ../DEVELOPER ../QUESTIONS ../README \"$dir\" \n\n# Make the initial DMG\nrm -f \"$tmpdmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$volume\" \"$tmpdmg\"\nrm -rf \"$dir\"\n\n# Compress it\nrm -f \"$dmg\"\nhdiutil convert \"$tmpdmg\" -format UDZO -imagekey zlib-level=9 -o \"$dmg\"\nrm -f \"$tmpdmg\"\n\n# Internet-enable the DMG (see `man hdiutil`)\nhdiutil internet-enable -yes \"$dmg\"\n";
 		};
 		7CF390DA0C6A95440086E543 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -590,7 +596,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Check that our build-time requirements are set\n\ncontainer=`dirname \\`dirname \\\\\\`pwd\\\\\\`\\``\n\n[ -d ../../xiph ] || { echo \"Please check out the 'xiph' module from CVS to $container\"; exit 1; }\n[ -d ../../xiph/build ] || { echo \"Please build the 'xiph' module in both Debug and Release before proceeding\"; exit 1; }\n[ -d ../../xiph/build/Debug ] || { echo \"Please build the 'xiph' module in Debug mode\"; exit 1; }\n[ -d ../../xiph/build/Release ] || { echo \"Please build the 'xiph' module in Release mode\"; exit 1; }\n\n[ -d ../../race-data ] || { echo \"Please download the data tarball and unpack to $container/race-data\"; exit 1; }\n[ -d ../../race-data/audio ] || { echo \"Your race-data/ is missing the audio/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/gamedata ] || { echo \"Your race-data/ is missing the gamedata/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/images ] || { echo \"Your race-data/ is missing the images/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/midi ] || { echo \"Your race-data/ is missing the midi/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/video ] || { echo \"Your race-data/ is missing the video/ directory. Correct this before proceeding.\"; exit 1; }\n\n# Make sure os_macosx/vendor/ exists\n[ -d vendor ] || { mkdir vendor || exit 1; }\n\n# Download and unpack Sparkle if necessary, making sure to use the Apple-supplied unzip, even if the user has their own\n[ -d vendor/Sparkle.framework ] || {\n\tcd vendor && \\\n\tcurl -O http://sparkle.andymatuschak.org/files/Sparkle-1.1.zip && \\\n\tmkdir Sparkle-1.1 && \\\n\t/usr/bin/unzip Sparkle-1.1.zip -d Sparkle-1.1 && \\\n\tmv Sparkle-1.1/Extras/English-Only\\ Framework/Sparkle.framework . && \\\n\trm -r Sparkle-1.1.zip Sparkle-1.1 && \\\n\tcd ..\n}\n\n# Download and unpack SmartCrashReports if necessary\n[ -d vendor/Smart\\ Crash\\ Reports\\ SDK ] || {\n\tcd vendor && \\\n\tcurl -O http://unsanity.net/smartcrashreports-121.dmg && \\\n\thdiutil attach -quiet -private smartcrashreports-121.dmg && \\\n\trsync -a /Volumes/Smart\\ Crash\\ Reports\\ 1.2.1/Smart\\ Crash\\ Reports\\ 1.2.1\\ Installer.app/Contents/Resources/ui/Smart\\ Crash\\ Reports\\ SDK . && \\\n\thdiutil detach /Volumes/Smart\\ Crash\\ Reports\\ 1.2.1/ &&\n\trm smartcrashreports-121.dmg && \\\n\tcd ..\n}\n";
+			shellScript = "# Check that our build-time requirements are set\n\ncontainer=`dirname \\`dirname \\\\\\`pwd\\\\\\`\\``\n\n[ -d ../../xiph ] || { echo \"Please check out the 'xiph' module from CVS to $container\"; exit 1; }\n[ -d ../../xiph/build ] || { echo \"Please build the 'xiph' module in both Debug and Release before proceeding\"; exit 1; }\n[ -d ../../xiph/build/Debug ] || { echo \"Please build the 'xiph' module in Debug mode\"; exit 1; }\n[ -d ../../xiph/build/Release ] || { echo \"Please build the 'xiph' module in Release mode\"; exit 1; }\n\n[ -d ../../race-data ] || { echo \"Please download the data tarball and unpack to $container/race-data\"; exit 1; }\n[ -d ../../race-data/audio ] || { echo \"Your race-data/ is missing the audio/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/gamedata ] || { echo \"Your race-data/ is missing the gamedata/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/images ] || { echo \"Your race-data/ is missing the images/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/midi ] || { echo \"Your race-data/ is missing the midi/ directory. Correct this before proceeding.\"; exit 1; }\n[ -d ../../race-data/video ] || { echo \"Your race-data/ is missing the video/ directory. Correct this before proceeding.\"; exit 1; }\n\n# Do everything relative to the os_macosx/\ncd ${PROJECT_DIR}\n\n# Make sure os_macosx/vendor/ exists\n[ -d vendor ] || { mkdir vendor || exit 1; }\n\n# Download and unpack Sparkle if necessary, making sure to use the Apple-supplied unzip, even if the user has their own\n[ -d vendor/Sparkle.framework ] || {\n\tcd vendor && \\\n\tcurl -o Sparkle-1.5b6.zip http://sparkle.andymatuschak.org/files/Sparkle%201.5b6.zip && \\\n\tmkdir -p Sparkle-1.5b6 && \\\n\t/usr/bin/unzip Sparkle-1.5b6.zip -d Sparkle-1.5b6 && \\\n\tmv Sparkle-1.5b6/Sparkle.framework . && \\\n\trm -r Sparkle-1.5b6.zip Sparkle-1.5b6 && \\\n\tcd ..\n}\n\n# Download and unpack SmartCrashReports if necessary\n[ -d vendor/Smart\\ Crash\\ Reports\\ SDK ] || {\n\tcd vendor && \\\n\tcurl -O http://unsanity.net/smartcrashreports-15.dmg && \\\n\thdiutil attach -quiet -private smartcrashreports-15.dmg && \\\n\trsync -a /Volumes/Smart\\ Crash\\ Reports\\ 1.5/Smart\\ Crash\\ Reports\\ 1.5\\ Installer.app/Contents/Resources/ui/Smart\\ Crash\\ Reports\\ SDK/*10.5/* Smart\\ Crash\\ Reports\\ SDK && \\\n\thdiutil detach /Volumes/Smart\\ Crash\\ Reports\\ 1.5/ &&\n\trm smartcrashreports-15.dmg && \\\n\tcd ..\n}\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -653,6 +659,8 @@
 				7C94E1CA0C68C00600D047AD /* vab.c in Sources */,
 				7C9403B70C68C7C000D047AD /* sdl.c in Sources */,
 				7C272F1D0C7521E70053CAC0 /* music_osx.c in Sources */,
+				7CD7D9D31395EA5900B8C11B /* randomize.c in Sources */,
+				7CB3C07E13E3924B000D47F8 /* fortify_workaround.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +711,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS)",
@@ -712,8 +721,17 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HEADER_SEARCH_PATHS)",
+					../../xiph/libogg/include,
+					../../xiph/libvorbis/include,
+					../../xiph/libtheora/include,
+					../../xiph/extra,
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
+				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/lib/,
 					"../../xiph/build/$(BUILD_STYLE)/",
@@ -726,14 +744,24 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS)",
 					"$(SRCROOT)/vendor",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
+					/Library/Frameworks/SDL.framework/Headers,
+					"$(HEADER_SEARCH_PATHS)",
+					../../xiph/libogg/include,
+					../../xiph/libvorbis/include,
+					../../xiph/libtheora/include,
+					../../xiph/extra,
+					"$(HEADER_SEARCH_PATHS_QUOTED_1)",
+				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					/opt/local/lib/,
 					"../../xiph/build/$(BUILD_STYLE)/",
@@ -773,7 +801,7 @@
 				OTHER_LDFLAGS = "-lxiph";
 				PREBINDING = NO;
 				PRODUCT_NAME = "Race Into Space";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				USER_HEADER_SEARCH_PATHS = ". $(DERIVED_FILE_DIR)";
 				WARNING_CFLAGS = "";
 				ZERO_LINK = NO;
@@ -784,10 +812,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
@@ -814,7 +840,7 @@
 				OTHER_LDFLAGS = "-lxiph";
 				PREBINDING = NO;
 				PRODUCT_NAME = "Race Into Space";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				USER_HEADER_SEARCH_PATHS = ". $(DERIVED_FILE_DIR)";
 				ZERO_LINK = NO;
 			};

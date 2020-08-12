@@ -71,7 +71,7 @@ DrawHardef(char plr)
 	DispBig(40, 5, "EFFICIENCY", 1, -1);
 	FlagSm(plr, 4, 4);
 	grSetColor(1);
-	PrintAt(258, 13, "CONTINUE");
+	PrintAt(257, 13, "CONTINUE");
 	RectFill(149, 2, 157, 10, 9);
 	RectFill(149, 2, 156, 9, 8);
 	grSetColor(9);
@@ -99,7 +99,7 @@ ShowHard(char plr)
 	{
 		key = 0;
 		GetMouse();
-		if (mousebuttons > 0 || key > 0)	/* Game Play */
+		if (mousebuttons > 0 || key > 0)	/* Gameplay */
 		{
 			if (((x >= 7 && y >= 164 && x <= 75 && y <= 195
 						&& mousebuttons > 0) || key == 'U') && place != 0)
@@ -288,7 +288,7 @@ PInfo(char plr, char loc)
 					Pt[1][4] += stge;
 				}
 			}					   // end-if
-		}						   //end-if
+		}						   // end-if
 	};							   // end-if
 
 	//EVA suit klugge
@@ -1492,20 +1492,20 @@ DrawRank(char plr)
 	{
 		InBox(55, 21, 116, 29);
 		grSetColor(1);
-		PrintAt(57, 27, "SCORE:");
+		PrintAt(60, 27, "SCORE:");
 		score = 0;
 		score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
 		sprintf(&Digit[0], "%d", score);
-		PrintAt(92, 27, &Digit[0]);
+		PrintAt(95, 27, &Digit[0]);
 	}
 	if (Option == -1 || Option == 1)
 	{
 		InBox(203, 21, 264, 29);
 		grSetColor(1);
-		PrintAt(205, 27, "SCORE:");
+		PrintAt(208, 27, "SCORE:");
 		score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
 		sprintf(&Digit[0], "%d", score);
-		PrintAt(240, 27, &Digit[0]);
+		PrintAt(243, 27, &Digit[0]);
 	}
 
 }

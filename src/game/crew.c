@@ -370,14 +370,22 @@ void FutAstList(char plr,char men,int M1,int M2,int M3,int M4)
 	if (Data->P[plr].Pool[m[i]-1].Mood<20) RectFill(88,40+i*14,94,44+i*14,0);
 	if (Data->P[plr].Pool[m[i]-1].Mood==0) RectFill(88,40+i*14,94,44+i*14,3);
       //87 - 169
+    if (i==0) {grSetColor(11);}  /* Highlight CA for command pilot */
     PrintAt(87,51+i*14,"CP:");
     DispNum(0,0,Data->P[plr].Pool[m[i]-1].Cap);
+     grSetColor(1);
+    if (i==1 && men>1) {grSetColor(11);}  /* Highlight LM for LM pilot */
     PrintAt(0,0,"  LM:");
     DispNum(0,0,Data->P[plr].Pool[m[i]-1].LM);
+     grSetColor(1);
+    if (men==1 || ((men==2 || men==3) && i==1) || (men==4 && i>1)) {grSetColor(11);}  /* Highlight EV for EVA specialist */
     PrintAt(0,0,"  EV:");
     DispNum(0,0,Data->P[plr].Pool[m[i]-1].EVA);
+     grSetColor(1);
+    if ((men==2 && i==0) || (men==3 && i==2)) {grSetColor(11);}  /* Highlight DO for docking specialist */
     PrintAt(0,0,"  DO:");
     DispNum(0,0,Data->P[plr].Pool[m[i]-1].Docking);
+     grSetColor(1);  /* Never highlight EN skill */
     PrintAt(0,0,"  EN:");
     DispNum(0,0,Data->P[plr].Pool[m[i]-1].Endurance);
    };

@@ -21,23 +21,15 @@
 	<key>CFBundleSignature</key>
 	<string>RiSP</string>
 	<key>CFBundleVersion</key>
-	<string>0.4.6.218</string>
+	<string>1.0.0.270</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.strategy-games</string>
 	<key>NSMainNibFile</key>
 	<string>SDLMain</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>SmartCrashReports_CompanyName</key>
-	<string>RaceIntoSpace.org</string>
-	<key>SmartCrashReports_URL</key>
-	<string>http://crash.raceintospace.org/crash/osx/</string>
-	<key>SmartCrashReports_CommentsTemplate</key>
-	<string>Please include your e-mail address if you wish to be contacted in regard to this crash.</string>
 	<key>SUFeedURL</key>
 	<string>http://update.raceintospace.org/appcast/osx/</string>
-	<key>SUScheduledCheckInterval</key>
-	<integer>604800</integer>
-	<key>SUShowReleaseNotes</key>
-	<false/>
 	<key>SUPublicDSAKey</key>
 	<string>
 -----BEGIN PUBLIC KEY-----
@@ -61,5 +53,15 @@ ormrj3pNR7lKQVVKrjy19zFuiIxN1slWaJu6CUAPFrnNmHWbg1GzVE2xJMlTzUmZ
 hIO1NT2CJJt0nh2tebU=
 -----END PUBLIC KEY-----
 	</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>604800</integer>
+	<key>SUShowReleaseNotes</key>
+	<false/>
+	<key>SmartCrashReports_CommentsTemplate</key>
+	<string>Please include your e-mail address if you wish to be contacted in regard to this crash.</string>
+	<key>SmartCrashReports_CompanyName</key>
+	<string>RaceIntoSpace.org</string>
+	<key>SmartCrashReports_URL</key>
+	<string>http://crash.raceintospace.org/crash/osx/</string>
 </dict>
 </plist>

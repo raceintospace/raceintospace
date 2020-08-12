@@ -40,7 +40,7 @@ extern char AI[2];
   char VASqty,CV;
   extern struct mStr Mis;
   extern char Vab_Spot;
-  int TotalCost; char hasDelay;//Used  to display the cost of autopurchase
+  int TotalCost; char hasDelay; //Used  to display the cost of autopurchase
 
 // CAP,LM,SDM,DMO,EVA,PRO,INT,KIC
 char isDamaged[8] = {0,0,0,0,0,0,0,0};
@@ -162,15 +162,22 @@ void DispVAB(char plr,char pad)
 
   IOBox(4,84,165,96);
 
+  grSetColor(9);
+  PrintAt(200,192,"E");
   grSetColor(1);
-  PrintAt(200,192,"EXIT");
-  PrintAt(268,192,"SCRUB");
+  PrintAt(0,0,"XIT");
+  grSetColor(9);
+  PrintAt(268,192,"S");
+  grSetColor(1);
+  PrintAt(0,0,"CRUB");
   PrintAt(263,13,"ASSIGN");
-  PrintAt(18,136,"PRIMARY:");
+  grSetColor(9); PrintAt(18,136,"P");
+  grSetColor(1); PrintAt(0,0,"RIMARY:");
   PrintAt(24,148,"KICKER:");
   PrintAt(42,160,"L.M.:");
   PrintAt(16,172,"PAYLOAD:");
-  PrintAt(22,188,"ROCKET:     ");
+  grSetColor(9); PrintAt(22,188,"R");
+  grSetColor(1); PrintAt(0,0,"OCKET:     ");
 
   Name[0]='A'+pad; Name[1]=0x00;
   InBox(4,27,166,37);RectFill(5,28,165,36,10);
@@ -719,8 +726,10 @@ begvab:
         TotalCost=FillVab(plr,ccc,0);
         TotalCost+=BuyVabRkt(plr,rk,&qty[0],0);
 		RectFill(7,87,162,93,3);
-  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if cant buy (delay, cost>cash) ->red letters
-  		PrintAt(13,92,"AUTOPURCHASE (");
+		grSetColor(9);
+		PrintAt(13,92,"A");
+  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
+  		PrintAt(0,0,"UTOPURCHASE (");
   		DispNum(0,0,TotalCost);
   		PrintAt(0,0," OF ");
  	 	DispMB(0,0,Data->P[plr].Cash);
@@ -731,7 +740,7 @@ begvab:
   while (1)
   {
     key=0;GetMouse();
-    if (mousebuttons > 0 || key>0)  /* Game Play */
+    if (mousebuttons > 0 || key>0)  /* Gameplay */
     {
 
       // AUTOPURCHASE
@@ -778,8 +787,9 @@ begvab:
         TotalCost=FillVab(plr,ccc,0);
         TotalCost+=BuyVabRkt(plr,rk,&qty[0],0);
 		RectFill(7,87,162,93,3);
-  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if cant buy (delay, cost>cash) ->red letters
-  		PrintAt(13,92,"AUTOPURCHASE (");
+		grSetColor(9); PrintAt(13,92,"A");
+  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
+  		PrintAt(0,0,"UTOPURCHASE (");
   		DispNum(0,0,TotalCost);
   		PrintAt(0,0," OF ");
  	 	DispMB(0,0,Data->P[plr].Cash);
@@ -893,8 +903,10 @@ begvab:
         TotalCost=FillVab(plr,ccc,0);
         TotalCost+=BuyVabRkt(plr,rk,&qty[0],0);
 		RectFill(7,87,162,93,3);
-  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if cant buy (delay, cost>cash) ->red letters
-  		PrintAt(13,92,"AUTOPURCHASE (");
+		grSetColor(9);
+		PrintAt(13,92,"A");
+  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
+  		PrintAt(0,0,"UTOPURCHASE (");
   		DispNum(0,0,TotalCost);
   		PrintAt(0,0," OF ");
  	 	DispMB(0,0,Data->P[plr].Cash);
@@ -924,8 +936,10 @@ begvab:
         TotalCost=FillVab(plr,ccc,0);
         TotalCost+=BuyVabRkt(plr,rk,&qty[0],0);
 		RectFill(7,87,162,93,3);
-  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if cant buy (delay, cost>cash) ->red letters
-  		PrintAt(13,92,"AUTOPURCHASE (");
+		grSetColor(9);
+		PrintAt(13,92,"A");
+  		grSetColor(1); if (hasDelay==0 || TotalCost>Data->P[plr].Cash) grSetColor(9); //if can't buy (delay, cost>cash) ->red letters
+  		PrintAt(0,0,"UTOPURCHASE (");
   		DispNum(0,0,TotalCost);
   		PrintAt(0,0," OF ");
  	 	DispMB(0,0,Data->P[plr].Cash);

@@ -1,3 +1,122 @@
+2013-04-18  Pace Willisson  <pace@alum.mit.edu>
+
+	* V285
+
+	* update version number in debian build
+
+	* V284
+
+	* fix compiler warning in commented out code
+
+2013-03-16  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V283
+
+	* Minor update to 'naut roster
+
+2012-08-30  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V282
+
+	* vab.c: Corrected VAB/VIB showing "RROCKET" which was introduced in V281
+
+	* endgame.c: Small wording change: SPACEWALK
+
+	* ast4.c, place.c: More/improved visual cues
+
+2012-08-19  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V281
+
+	* endgame.c: Centered "CONTINUE" in end-game screen
+
+	* hardef.c, rdplex.c, vab.c: More/improved visual cues in R&D/Purchasing and VAB/VIB screens
+
+2012-04-25  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V280
+
+	* ast2.c, ast3.c: If you withdraw someone from Advanced I or II, you can send them to Advanced 
+			  training again later
+
+2012-04-19  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V279
+
+	* ast3.c: Refunds for early withdrawal from Adv Training: 3MB for Adv I, 2MB for II, 1MB for III
+
+2012-04-19  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V278
+
+	* ast2.c: If 'naut has a skill of 4, don't send to Adv Training for that skill
+		  If 'naut has a skill of 3 and is sent to Adv Training, send directly to Adv 
+		    Training III and charge 2MB insted of 3MB
+
+	* ast3.c: Properly erase Roman numerals after "ADV TRAINING"
+
+	* museum.c, hardef.c: Better centering of "CONTINUE" in Space History, Prestige Summary, 
+				& Hardware Efficiency
+
+2012-04-17  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V277
+
+	* rdplex.c: Moved AVOID FAIL notification to stay out of the way of the FIX button
+
+2012-04-16  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V276
+
+	* rdplex.c: R&D and Purchasing screens now indicate when research is stronger or weaker, 
+	            and when a component has an Avoid Failure card
+
+2012-04-10  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V275
+
+	* rdplex.c: Technology Transfer will now give partial credit if relevant hardware is below 75% Safety
+
+2012-03-30  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V274
+
+	* ast3.c: Basic and Advanced Training now show 'naut morale
+
+2012-03-11  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V273
+
+	* museum.c: Touchup of Astronaut History screen
+
+2012-03-04  Leon Baradat <peyre@users.sourceforge.net>
+
+	* V272
+
+	* start.c: Advanced Training now gives +1 skill halfway through
+
+	* crew.c: Crew members' relevant skills now highlighted when assigning crews to missions
+
+	* options.c: Touched up grammar in config file
+
+	* museum.c: adjusted centering in 'Naut History screen
+
+	* future.c: adjusted centering of letters in CONTINUE button 
+
+2011-09-29	Leon Baradat <peyre@users.sourceforge.net>
+
+	* V271
+
+	* place.c: Better centering of "FLIGHT CREW" in the Mission Review screen
+
+2011-07-29  Will Glynn <will@raceintospace.org>
+
+    * V270
+
+    * checked in a bunch of changes to make the build process work in XCode 4
+
+    * rewrote C99 in-loop variable declarations ("for (int i = 0; i < n; i++)") in ANSI syntax
+
 2011-06-28  Pace Willisson  <Pace Willisson <pace@alum.mit.edu>>
 
 	* V269

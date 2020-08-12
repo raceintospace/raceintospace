@@ -1,8 +1,12 @@
-raceintospace (1.0release-1) lucid; urgency=low
+raceintospace (1.1-1) lucid; urgency=low
 
-  * same as 1.0rc5, just update version number (unfortunately
-  can't use plain 1.0 because I didn't understand the version sorting
-  rules for the pre-releases.  next time use 1.1~rc1-1
+  * upstream V284
+
+ -- Pace Willisson <pace@alum.mit.edu>  Thu, 18 Apr 2013 08:55:29 -0400
+
+raceintospace (1.0-1) lucid; urgency=low
+
+  * same as 1.0rc5, just update version number
 
  -- Pace Willisson <pace@alum.mit.edu>  Wed, 27 Jul 2011 21:12:56 -0400
 

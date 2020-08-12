@@ -27,6 +27,7 @@
 #include <externs.h>
 
 int lenprogname;  // Variable to hold and manipulate length of program name
+int skilLev;  // Variable for 'naut's skill level (so 4s don't go to Adv Training, and 3s go to Adv III)
 
 void DrawLimbo(char plr)
 {
@@ -351,12 +352,28 @@ void Limbo(char plr)
     if (key>0) delay(140);
 	 WaitForMouseUp();key=0;
 	 OutBox(244,95+21*i,313,109+21*i);
+   skilLev=0;  // Figure out relevant skill level bfr sending to Adv Training -Leon
+   if (i==0) skilLev=Data->P[plr].Pool[M[now2]].Cap;
+   if (i==1) skilLev=Data->P[plr].Pool[M[now2]].LM;
+   if (i==2) skilLev=Data->P[plr].Pool[M[now2]].EVA;
+   if (i==3) skilLev=Data->P[plr].Pool[M[now2]].Docking;
+   if (i==4) skilLev=Data->P[plr].Pool[M[now2]].Endurance;
+   grSetColor(2);
    if (Data->P[plr].Pool[M[now2]].TrainingLevel>6) Help("i120");
+   else if (skilLev > 3) OutBox(244,95+21*i,313,109+21*i);  // If they have a 4 in that skill, don't send to Adv Training for it
    else if (Data->P[plr].Cash<3) Help("i121");
    else {
-		 Data->P[plr].Pool[M[now2]].Status=AST_ST_TRAIN_ADV_1;
-	    Data->P[plr].Cash-=3;
-	    Data->P[plr].Pool[M[now2]].Focus=i+1;
+		 if (skilLev>2)  // If they have a 3 in that skill, send them directly to Adv III and charge just 2MB
+		  {
+		   Data->P[plr].Pool[M[now2]].Status=AST_ST_TRAIN_ADV_3;
+	   	   Data->P[plr].Cash-=2;
+		  }
+		 else
+		  {
+		   Data->P[plr].Pool[M[now2]].Status=AST_ST_TRAIN_ADV_1;
+	   	   Data->P[plr].Cash-=3;
+		  }
+	   	 Data->P[plr].Pool[M[now2]].Focus=i+1;
 		 Data->P[plr].Pool[M[now2]].Assign=0;
 		 Data->P[plr].Pool[M[now2]].Una=0;
 		 Data->P[plr].Pool[M[now2]].Moved=0;
@@ -408,7 +425,7 @@ void Limbo(char plr)
 void Clear(void)
 {
  RectFill(44,31,145,40,3);RectFill(49,112,60,119,3);
- RectFill(123,62,145,77,3);RectFill(128,79,145,92,3);
+ RectFill(123,62,145,77,3);RectFill(125,79,145,85,3);RectFill(128,86,145,93,3);
  RectFill(123,95,145,101,3);RectFill(127,113,141,120,3);
  RectFill(130,54,155,61,3);     
  return;
@@ -423,7 +440,7 @@ void LimboText(char plr,int astro)
     if (Data->P[plr].Pool[astro].Mood<40 && Data->P[plr].Pool[astro].Mood>=20) col=8;
     if (Data->P[plr].Pool[astro].Mood<20) col=0;
     if (Data->P[plr].Pool[astro].Mood==0) col=3;
-    grSetColor(col);  // Print 'naut name in green/yellow/red/black depending on mood -Leon
+    grSetColor(col);  // Print name in green/yellow/red/black depending on mood -Leon
    if (Data->P[plr].Pool[astro].RDelay>0) grSetColor(0);  // Print name in black if 'naut has announced retirement (override mood) -Leon
    PrintAt(46,37,Data->P[plr].Pool[astro].Name);
    grSetColor(11);
@@ -440,7 +457,7 @@ void LimboText(char plr,int astro)
    RectFill(131,86,145,92,3);
    RectFill(123,95,145,101,3);
    RectFill(130,54,155,61,3);
-    grSetColor(col); // Print 'naut mood in green/yellow/red/black depending on mood -Leon
+    grSetColor(col); // Print mood in green/yellow/red/black depending on mood -Leon
    DispNum(132,60,Data->P[plr].Pool[astro].Mood);
     grSetColor(11);
    DispNum(125,68,Data->P[plr].Pool[astro].Cap);

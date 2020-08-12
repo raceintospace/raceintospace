@@ -30,7 +30,7 @@
   /*missStep.dat is plain text, with:
 Mission Number (2 first bytes of each line)
 A Coded letter, each drawing a different line (1105-1127 for all possible letters)
-Numbers folowing each letter, which are the parameters of the function
+Numbers following each letter, which are the parameters of the function
 Each line must finish with a Z, so the game stops reading
 Any other char is ignored, but it's easier to read for a human that way */
 
@@ -53,7 +53,7 @@ LOG_DEFAULT_CATEGORY(future)
     char D;   /**< JOINT */
     char E;     /**< MANNED/UNMANNED/Duration 0==unmanned 1-6==duration */
     char X;     /**< the type of mission for assign crew and hardware */
-    char Z;   /**< A duaration mission only */
+    char Z;   /**< A duration mission only */
   } V[62];
 
 extern int Bub_Count;
@@ -188,7 +188,7 @@ void DrawFuture(char plr,int mis,char pad)
   };
   grSetColor(1);
   PrintAt(9,80,"RESET");
-  PrintAt(258,13,"CONTINUE");
+  PrintAt(256,13,"CONTINUE");
   grSetColor(11);
    if (Data->Season==0) PrintAt(200,9,"SPRING");
    else PrintAt(205,9,"FALL");
@@ -1108,7 +1108,8 @@ void Missions(char plr,int X,int Y,int val,char bub)
 	}
 	fclose(MSteps);
 
-	for (int n=2;missStep[n]!='Z';n++)
+  int n;
+	for (n=2;missStep[n]!='Z';n++)
 		switch (missStep[n]) {
 			case 'A': Draw_IJ	(B_Mis(++n));	break;
 			case 'B': Draw_IJV	(B_Mis(++n));	break;
@@ -1143,7 +1144,7 @@ void Missions(char plr,int X,int Y,int val,char bub)
 #ifdef DEAD_CODE
 /** Draws stuff about choosing a program and having < 2 groups available
  * 
- * \deprecated This function appears to be depricated. 
+ * \deprecated This function appears to be deprecated. 
  */
 char FutBad(void)
 {

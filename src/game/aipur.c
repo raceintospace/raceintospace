@@ -254,7 +254,8 @@ void AIAstroPur(char plr)
 
 //Naut Randomize, Nikakd, 10/8/10
 void AIRandomizeNauts() {
-	for (int i=0;i<106;i++) {
+  int i;
+	for (i=0;i<106;i++) {
 		Men[i].Cap = random(5);
 		Men[i].LM  = random(5);
 		Men[i].EVA = random(5);

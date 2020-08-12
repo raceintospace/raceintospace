@@ -85,7 +85,9 @@ void DrawTrain(char plr,char lvl)
   /*  Data->P[plr].AstroLevel     201,41 */
 
   grSetColor(7);
-  PrintAt(169,115,"STATUS:");
+  PrintAt(169,111,"STATUS:");
+  PrintAt(169,120,"MOOD:");
+    
   grSetColor(9);PrintAt(169,133,"SKILL:");
   grSetColor(7);
   PrintAt(192,142,"CAP:"); PrintAt(192,150,"L.M.:");
@@ -105,9 +107,10 @@ TrainText(char plr, int astro, int cnt)
 	char Fritz[20];
 
 	RectFill(200, 83, 291, 88, 3);
+	RectFill(200, 116, 220, 120, 3);
 	RectFill(202, 93, 220, 97, 3);
 	RectFill(216, 102, 294, 106, 3);
-	RectFill(212, 111, 317, 124, 3);
+	RectFill(212, 107, 317, 124, 3);
 	RectFill(215, 138, 235, 142, 3);
 	RectFill(213, 145, 243, 150, 3);
 	RectFill(221, 153, 241, 158, 3);
@@ -118,7 +121,15 @@ TrainText(char plr, int astro, int cnt)
 		return;
 	grSetColor(1);
 	PrintAt(200, 88, &Data->P[plr].Pool[astro].Name[0]);
-	grMoveTo(212, 115);
+	 int col;
+	 if (Data->P[plr].Pool[astro].Mood>=65) col=16;
+	 if (Data->P[plr].Pool[astro].Mood<65 && Data->P[plr].Pool[astro].Mood>=40) col=11;
+	 if (Data->P[plr].Pool[astro].Mood<40 && Data->P[plr].Pool[astro].Mood>=20) col=8;
+	 if (Data->P[plr].Pool[astro].Mood<20) col=0;
+	 if (Data->P[plr].Pool[astro].Mood==0) col=3;
+	 grSetColor(col);  // Print name in green/yellow/red/black depending on mood -Leon
+	PrintAt(200, 120, "   "); DispNum(200, 120, Data->P[plr].Pool[astro].Mood);
+	grMoveTo(212, 111);
 	grSetColor(11);
 	memset(Fritz, 0x00, sizeof(Fritz));
 	if (Data->P[plr].Pool[astro].Status >= AST_ST_TRAIN_BASIC_1
@@ -194,7 +205,7 @@ TrainText(char plr, int astro, int cnt)
 	 2  =  Advanced LM
 	 3  =  Advanced EVA
 	 4  =  Advanced Docking
-	 5  =  Advanced Duration
+	 5  =  Advanced Endurance
 */
 
 void Train(char plr,int level)
@@ -392,7 +403,13 @@ void Train(char plr,int level)
        temp=0;if (plr==0) temp=Help("i102"); else temp=Help("i109");
        if (temp==1)
         {
-	      Data->P[plr].Pool[M[now2]].TrainingLevel=Data->P[plr].Pool[M[now2]].Status;
+	      if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_1) Data->P[plr].Cash+=3; // refunds
+	      if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_2) Data->P[plr].Cash+=2; // for early
+	      if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_3) Data->P[plr].Cash+=1; // withdrawal
+	      if (Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_1 || Data->P[plr].Pool[M[now2]].Status==AST_ST_TRAIN_ADV_2)
+		{ Data->P[plr].Pool[M[now2]].TrainingLevel=0; }
+		else
+		{ Data->P[plr].Pool[M[now2]].TrainingLevel=Data->P[plr].Pool[M[now2]].Status; }
 	      Data->P[plr].Pool[M[now2]].Status=AST_ST_ACTIVE;
 	      Data->P[plr].Pool[M[now2]].Assign=0;
 	      if (Data->P[plr].Pool[M[now2]].Cap<0) Data->P[plr].Pool[M[now2]].Cap=0;

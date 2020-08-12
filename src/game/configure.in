@@ -2,7 +2,7 @@ dnl ===========================
 dnl === Initialize autoconf ===
 dnl ===========================
 
-AC_INIT(Race Into Space,1.0.0,mkmccarty@raceintospace.org,raceintospace)
+AC_INIT(Race Into Space,1.1.0,mkmccarty@raceintospace.org,raceintospace)
 
 AC_CONFIG_MACRO_DIR([m4])
 
