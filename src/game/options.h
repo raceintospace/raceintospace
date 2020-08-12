@@ -17,6 +17,7 @@ typedef struct {
     unsigned feat_no_cTraining;
     unsigned feat_no_backup;
     unsigned feat_show_recruit_stats;
+    unsigned feat_use_endurance;
     unsigned cheat_no_damage;
     unsigned feat_random_eq;
     unsigned feat_eq_new_name;

@@ -376,8 +376,12 @@ AstroTurn(void)
 
                     if (num > 94) {
                         num = brandom(100);
+                        int enduranceFactor =
+                            options.feat_use_endurance
+                            ? 10 * MAX(0, Data->P[j].Pool[i].Endurance)
+                            : 0;
 
-                        if (num > 74) {
+                        if (num > (74 - enduranceFactor)) {
                             Data->P[j].Pool[i].Status = AST_ST_INJURED;
                             Data->P[j].Pool[i].InjuryDelay = 2;
                             Data->P[j].Pool[i].Special = 9;

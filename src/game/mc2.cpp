@@ -26,6 +26,9 @@
 // This file handles part of Mission Control during missions
 
 #include "mc2.h"
+
+#include <cassert>
+
 #include "Buzz_inc.h"
 #include "options.h"
 #include "game_main.h"
@@ -35,6 +38,7 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
+int CrewEndurance(const struct MisAst *crew, size_t crewSize);
 void MissionParse(char plr, char *MCode, char *LCode, char pad);
 char WhichPart(char plr, int which);
 void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad);
@@ -50,6 +54,22 @@ void MissionCodes(char plr, char val, char pad)
     MissionParse(plr, Mis.Code, Mis.Alt, pad);
     return;
 }
+
+
+int CrewEndurance(const struct MisAst *crew, size_t crewSize)
+{
+    assert(crew);
+
+    int value = 0;
+
+    for (size_t i = 0; i < crewSize; i++) {
+        assert(crew[i].A);
+        value += crew[i].A->Endurance;
+    }
+
+    return int((double(value) / double(crewSize)) + 0.5);
+}
+
 
 void
 MissionParse(char plr, char *MCode, char *LCode, char pad)
@@ -446,7 +466,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
             case 10: // durations
                 Mev[step].Class = Mission_Capsule;
                 Mev[step].ast = -1;
-                Mev[step].asf = 0;
+                Mev[step].asf = options.feat_use_endurance
+                                ? CrewEndurance(MA[pad], MANNED[pad]) : 0;
                 break;
 
             default: // remaining
