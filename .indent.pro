@@ -1,0 +1,34 @@
+/* Options for GNU indent(1). Please confirm if this is portable. */
+-bad
+-bap
+-bbo
+-nbc /* no option to have each var & type on separate lines */
+-bbb
+-bl
+-bli0
+-cdw
+-ncdb
+-c36
+-ci4
+-ip4
+-cs
+-cli4
+-cbi4
+-di1
+-nfc1
+-nfca
+-hnl
+-i4
+-l77
+-nlp
+-npcs
+-nprs
+-pmt
+-ppi0 /* indent level for preprocessor macros */
+-psl
+-saf
+-sai
+-sc
+-nss
+-ts4
+-sob

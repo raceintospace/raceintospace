@@ -1,0 +1,2 @@
+?package(raceintospace):needs="X11" section="Games/Simulation"\
+  title="raceintospace" command="/usr/games/raceintospace"

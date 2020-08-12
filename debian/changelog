@@ -1,0 +1,51 @@
+raceintospace (1.0release-1) lucid; urgency=low
+
+  * same as 1.0rc5, just update version number (unfortunately
+  can't use plain 1.0 because I didn't understand the version sorting
+  rules for the pre-releases.  next time use 1.1~rc1-1
+
+ -- Pace Willisson <pace@alum.mit.edu>  Wed, 27 Jul 2011 21:12:56 -0400
+
+raceintospace (1.0rc5-1) unstable; urgency=low
+
+  * upstream V269
+
+ -- Pace Willisson <pace@alum.mit.edu>  Tue, 28 Jun 2011 21:03:10 -0400
+
+raceintospace (1.0rc4-1) lucid; urgency=low
+
+  * more scripts for development
+
+ -- Pace Willisson <pace@alum.mit.edu>  Sat, 25 Jun 2011 23:15:55 -0400
+
+raceintospace (1.0rc3-1) lucid; urgency=low
+
+  * insert into games menu; update icon
+
+ -- Pace Willisson <pace@alum.mit.edu>  Sat, 25 Jun 2011 21:33:27 -0400
+
+raceintospace (1.0rc2-1) lucid; urgency=low
+
+  * change version number in order to make a new ppa package
+
+ -- Pace Willisson <pace@alum.mit.edu>  Sat, 25 Jun 2011 17:09:17 -0400
+
+raceintospace (1.0rc1-3) lucid; urgency=low
+
+  * upstream cleanups
+  
+  * no chance of running on 64 bits, so set Architecture to i386 for now
+  
+ -- Pace Willisson <pace@alum.mit.edu>  Sat, 25 Jun 2011 16:17:36 -0400
+
+raceintospace (1.0rc1-2) lucid; urgency=low
+
+  * fix Build-Depends in control
+
+ -- Pace Willisson <pace@alum.mit.edu>  Fri, 24 Jun 2011 22:51:13 -0400
+
+raceintospace (1.0rc1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Pace Willisson <pace@alum.mit.edu>  Fri, 24 Jun 2011 20:13:34 -0400

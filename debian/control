@@ -1,0 +1,17 @@
+Source: raceintospace
+Section: games
+Priority: extra
+Maintainer: Pace Willisson <pace@alum.mit.edu>
+Build-Depends: debhelper (>= 7.0.50~), autotools-dev, automake, libsdl1.2-dev, libogg-dev, libvorbis-dev, libtheora-dev
+Standards-Version: 3.9.1
+Homepage: http://sourceforge.net/projects/raceintospace/
+Vcs-Cvs: :ext:raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace/race
+Vcs-Browser: http://raceintospace.cvs.sourceforge.net/viewvc/raceintospace/race/
+
+Package: raceintospace
+Architecture: i386
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Re-live the Space Race - all the way to the moon landing
+ Race Into Space is the computer version of the Liftoff! board game by
+ Fritz Bronner. It was developed by Strategic Visions and published by
+ Interplay as a disk-based game in 1993 and a CD-ROM in 1994.

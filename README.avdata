@@ -1,0 +1,17 @@
+raceintospace media files (about 30 megabytes)
+
+the master copies of these file as in a sourceforge git repository
+called "avdata".  It contains two directory subtrees: audio and video,
+plus this readme.  
+
+It is important to use only lowercase filenames for the media files.
+
+When making the .deb file for raceintospace, this repostory is extracted
+over the source tree, so it is important that there not be any files
+here that will clobber files there.
+
+The file avdata-list contains the names of all of the files that will
+be installed.  It need not be in alphabetical order, but it must
+contain nothing but file names.
+
+

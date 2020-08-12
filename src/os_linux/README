@@ -1,0 +1,84 @@
+To set up the developement directory structure:
+
+For project developers with Sourceforge write access:
+
+$ mkdir YOUR-DEVEL-DIRECTORY
+$ cd YOUR-DEVEL-DIRECTORY
+
+$ cvs -d:ext:SFNAME@raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace co race
+$ cvs -d:ext:SFNAME@raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace co gamedat
+$ git clone ssh://SFNAME@raceintospace.git.sourceforge.net/gitroot/raceintospace/avdata
+
+For developers without write access:
+
+$ mkdir YOUR-DEVEL-DIRECTORY
+$ cd YOUR-DEVEL-DIRECTORY
+$ cvs -d:pserver:anonymous@raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace login
+$ cvs -z3 -d:pserver:anonymous@raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace co race
+$ cvs -z3 -d:pserver:anonymous@raceintospace.cvs.sourceforge.net:/cvsroot/raceintospace co gamedat
+$ git clone git://raceintospace.git.sourceforge.net/gitroot/raceintospace/avdata
+
+For ordinary development
+
+$ cd YOUR-DEVEL-DIRECTORY/race
+$ aclocal -I m4
+$ autoconf
+$ configure
+$ make
+# make install
+
+================================================================
+To make a distribution tarball:
+
+cd YOUR-DEVEL-DIRECTORY
+
+$ ./race/make-tarball RELEASE-NUMBER
+
+(for example ./race/make-tarball 1.0rc1)
+
+this results in raceintospace-REL.tar.gz
+
+================================================================
+To make a .deb:
+
+update race/debian/* as needed, especially check the version number
+in debian/changelog, and set the series to "lucid" not "unstable"
+
+$ cd YOUR-DEVEL-DIRECTORY
+
+$ ./race/os_linux/build-setup
+
+(watch out for switching between underlines and dashes in these names)
+
+cd race
+mkdir build
+cd build
+cp ../raceintospace-REL.tar.gz raceintospace_REL.orig.tar.gz
+tar xf raceintospace_REL.orig.tar.gz
+cd raceintospace-REL
+debuild
+
+creates the .deb in the parent directory
+
+================================================================
+To make a .deb using launchpad:
+
+First make a normal deb.  Then make one using pdebuild to make sure 
+the dependencies are ok.  Finally
+
+cd race/build
+debuild -S
+dput ppa:pacew/raceintospace raceintospace_1.0rc5-1_source.changes
+
+================================================================ 
+
+there are some remnants in the Makefile for making rpm files, but they
+probably don't work any more
+
+================================================================
+
+the icon image is from
+http://mix.msfc.nasa.gov/IMAGES/MEDIUM/6870605.jpg
+"AS-205 Launch" (Apollo 7)
+
+

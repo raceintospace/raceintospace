@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+%:
+	dh $@ 
+
+DESTDIR=$(CURDIR)/debian/raceintospace
+
+override_dh_auto_configure:
+	aclocal -I m4
+	autoconf
+	./configure --prefix=/usr --bindir=$(DESTDIR)/usr/games
+
+override_dh_auto_install:
+	make DESTDIR=$(DESTDIR) install
+	install -d $(DESTDIR)/usr/share/applications
+	install -c -m 644 debian/raceintospace.desktop \
+		$(DESTDIR)/usr/share/applications
+	install -d $(DESTDIR)/usr/share/pixmaps
+	install -c -m 644 os_linux/raceintospace.xpm \
+		$(DESTDIR)/usr/share/pixmaps

@@ -1,0 +1,51 @@
+#! /bin/sh
+
+# this sets up the build directory using the upstream tar file,
+# plus the latest files from the race/debian directory
+
+if [ ! -d race -o ! -d gamedat -o ! -d avdata ]
+then
+    echo "it doesn't look like you're in a development directory"
+    exit 1
+fi
+
+rel=`head -1 race/debian/changelog | sed -e 's/.*(//' -e 's/-.*//'`
+if [ -z "$rel" ]
+then
+    echo "can't figure out release number"
+    exit 1
+fi
+
+upstream_tar=raceintospace-${rel}.tar.gz
+
+if [ ! -r ${upstream_tar} ]
+then
+    echo "can't find ${upstream_tar}"
+    echo "you may need ./race/make-tarball"
+    exit 1
+fi
+
+rm -rf build
+mkdir build
+
+orig_tar=raceintospace_${rel}.orig.tar.gz
+cp ${upstream_tar} build/${orig_tar}
+
+tar -C build -xf build/${orig_tar}
+
+build_dir=raceintospace-${rel}
+
+if [ ! -d build/${build_dir} ]
+then
+    echo "the tar file didn't make the expected directory"
+    exit 1
+fi
+
+(cd build/${build_dir}; find debian -type f -print) > TMP.debian-files
+rm -rf build/${build_dir}/debian
+(cd race; cpio -pdm ../build/${build_dir}) < TMP.debian-files
+
+echo "ok - ready to do:"
+echo "cd build/${build_dir}"
+echo "debuild"
+

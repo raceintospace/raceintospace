@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Race Into Space
+GenericName=Game
+Comment=Re-live the Space Race - all the way to the moon landing
+Exec=raceintospace
+Icon=raceintospace
+Terminal=false
+Type=Application
+Categories=Game;Simulation;

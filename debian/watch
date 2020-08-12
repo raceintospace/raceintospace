@@ -1,0 +1,4 @@
+# See uscan(1) for format; run uscan to look for updates
+version=3
+http://sf.net/raceintospace/raceintospace-([0-9].*)\.tar\.gz
+

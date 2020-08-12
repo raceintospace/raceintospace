@@ -1,0 +1,31 @@
+#! /bin/sh
+
+name=@PACKAGE_TARNAME@
+ver=@PACKAGE_VERSION@
+
+name_ver=${name}-${ver}
+
+make tar
+cp ${name_ver}.tar.gz ~/rpmbuild/SOURCES/.
+
+(
+    cat ${name}.spec
+    find /usr/local/share/raceintospace -type f -print | sed 's:/local::'
+) > ~/rpmbuild/SPECS/$name.spec
+
+rpmbuild -ba ~/rpmbuild/SPECS/$name.spec
+
+cp ~/rpmbuild/RPMS/i386/${name}-${ver}-1.i386.rpm ~/race-release/.
+cp ${name_ver}.tar.gz ~/race-release/.
+
+exit
+
+echo -n "send to sourceforge? "
+read x
+
+if [ "$x" = "y" ]
+then
+    ncftpput upload.sourceforge.net /incoming \
+	~/race-release/${name}-${ver}.tar.gz \
+	~/race-release/${name}-${ver}-1.i386.rpm
+fi

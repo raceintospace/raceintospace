@@ -1,0 +1,46 @@
+Name:           @PACKAGE_TARNAME@
+Version:        @PACKAGE_VERSION@
+Release:        1%{?dist}
+Summary:        A turn based space race strategy game
+
+Group:          Games
+License:        GPL
+URL:            http://raceintospace.sourceforge.net/
+Source0:        %{name}-%{version}.tar.gz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+%description
+Open-source version of the Liftoff! board game by Fritz Bronner. It is
+based on the code from original "BARIS" that was developed by Strategic
+Visions and published by Interplay in as a disk based game in 1992 and a
+cd-rom in 1994.
+
+%prep
+%setup -q
+configure --prefix=/usr
+
+
+%build
+make rpm_all
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make rpm_install DESTDIR=$RPM_BUILD_ROOT
+
+
+%clean
+echo rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(755,root,root,-)
+/usr/bin/raceintospace
+
+%defattr(644,root,root,-)
+/usr/man/man6/raceintospace.6.gz
+/usr/share/doc/raceintospace/README
+
+# the mkrpm script will append all of the data files to the
+# end of this file, so nothing else can appear after here
+
+

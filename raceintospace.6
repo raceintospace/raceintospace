@@ -1,0 +1,47 @@
+.\"             -*-Nroff-*-
+.\"
+.TH RACEINTOSPACE 6
+.SH NAME
+raceintospace \- strategy game
+.SH SYNOPSIS
+.B raceintospace
+[\fIoptions\fR]
+.SH DESCRIPTION
+.B raceintospace
+is the free software version of Interplay's Buzz Aldrin's Race into
+Space. This is the reworked version following the source release for the
+computer version of the Liftoff! board game by Fritz Bronner. This was
+developed by Strategic Visions and published by Interplay in as a disk
+based game in 1992 and a cd-rom in 1994.
+.SH OPTIONS
+.TP
+.B -a
+Disable audio output
+.TP
+.B -i
+Skip introduction screens
+.TP
+.B -f
+Full screen mode
+.TP
+.B -n
+Force successful completion of each mission step
+.TP
+.B -v
+Increase verbosity. Multiple invocations accumulate
+.SH ENVIRONMENT
+.IP BARIS_DATA
+Should point at the root of directory containing data files. Defaults to \fI/usr/share/raceintospace\fR
+.RE
+.SH AUTHOR
+Original game was designed by Fritz Bronner and coded by Michael K. McCarty.
+This reworked version was co-authored by Michael K. McCarthy, Pace Willisson,
+Krzysztof Kosciuszkiewicz and others. See also the AUTHORS file in source
+distribution.
+.SH FILES
+.IP ~/.raceintospace/config
+Contains the same options that can be specified using environment variables or
+on the command line.
+.RE
+.SH SEE ALSO
+http://raceintospace.org/
