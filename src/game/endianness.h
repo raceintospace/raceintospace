@@ -20,7 +20,6 @@ void _SwapPatchHdrSmall(PatchHdrSmall *hdr);
 #define SwapPatchHdrSmall(a) _SwapPatchHdrSmall((a))
 
 #else
-#ifdef __LITTLE_ENDIAN__
 
 #define Swap32bit(a)
 #define Swap16bit(a)
@@ -29,10 +28,6 @@ void _SwapPatchHdrSmall(PatchHdrSmall *hdr);
 #define SwapEquipment()
 #define SwapPatchHdr(a)
 #define SwapPatchHdrSmall(a)
-
-#else
-#error "Uh oh! I don't know which endianness to pick."
-#endif
 
 #endif
 

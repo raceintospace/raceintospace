@@ -24,8 +24,8 @@
 //
 // Museum Main Files
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 extern char Month[12][11]; 
 extern char Nums[30][7],AI[2];
 extern struct mStr Mis;
@@ -66,7 +66,7 @@ char tame[29][40]={
 };
 #endif
 
-int16_t TPoints[2];
+i16 TPoints[2];
 extern char Mon[12][4];
 
 #ifdef DEAD_CODE

@@ -1,5 +1,5 @@
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
 
 #ifdef DEAD_CODE

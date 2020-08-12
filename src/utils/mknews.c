@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
-#include "../game/gamedata.h"
+#include "gamedata.h"
 
 static int vflag;
 

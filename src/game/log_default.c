@@ -24,8 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "log4c.h"
-#include "macros.h"
+#include <log4c.h>
+#include <macros.h>
 #include <stdio.h>
 
 /**

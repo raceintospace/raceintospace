@@ -27,11 +27,11 @@
  *
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "av.h"
-#include "utils.h"
-#include "logging.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <av.h>
+#include <utils.h>
+#include <logging.h>
 
 #define MODEM_ERROR 4
 #define NOTSAME 2
@@ -218,7 +218,7 @@ void FileAccess(char mode)
 // mode==0 if save allowed
 {
   char sc=0;
-  int32_t size;
+  long size;
   int tFiles,i,now,done,BarB,temp,left;
   FILE *fin,*fout;
   char Name[12];
@@ -1316,7 +1316,7 @@ char RequestX(char *s,char md)
 #ifdef DEAD_CODE
 void SaveMail(void)
 {
- int32_t size;
+ long size;
  int tFiles,i,done=0,temp,left;
  FILE *fin,*fout;
  char Name[12];

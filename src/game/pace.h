@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <errno.h>
 
-#include "av.h"
+#include <av.h>
 
 typedef struct {
 	unsigned char *vptr;

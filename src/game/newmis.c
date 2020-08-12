@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 char Month[12][11] = {
     "JANUARY ","FEBRUARY ","MARCH ","APRIL ","MAY ","JUNE ",
@@ -369,7 +369,7 @@ void AI_Begin(char plr)
 {
   int i;
   FILE *fin;
-  int32_t len[2];
+  long len[2];
 
 
   for (i=0;i<768;i++) pal[i]=0;

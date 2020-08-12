@@ -25,8 +25,8 @@
 /** \file aimast.c AI Master Routines
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 extern char Month[12][11];
 extern char AI[2];

@@ -23,8 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 #define DELAYCNT 10
 

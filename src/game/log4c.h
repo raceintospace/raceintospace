@@ -129,7 +129,7 @@
  * Here is a more complete example:
  *
  * @code
- *      #include "log4c.h"
+ *      #include <log4c.h>
  *
  *      // create a category and a default subcategory
  *      LOG_NEW_CATEGORY(VSS);
@@ -203,11 +203,8 @@
 #ifndef _LOG4C_H_
 #define _LOG4C_H_
 
+#include <race.h>
 #include <stdarg.h>
-
-#ifdef ALTERED_STRUCTURE_PACKING
-#error "log4c breaks when you include it late"
-#endif
 
 /**
  * @name Priority Values

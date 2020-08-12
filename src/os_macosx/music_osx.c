@@ -1,4 +1,3 @@
-
 /*
  Copyright (C) 2007 Will Glynn
  
@@ -22,7 +21,7 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <CoreMIDI/CoreMIDI.h>
 
-#include "raceintospace_config.h"
+#include "race.h"
 #include "fs.h"
 #include "music.h"
 #include "logging.h"
@@ -160,7 +159,7 @@ void music_load(enum music_track track)
 	rv = NewMusicSequence(&music_files[track].sequence);
 	if (rv == 0) {
 		// Try to load the sequence out of this buffer
-		rv = MusicSequenceLoadSMFDataWithFlags(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, len), 0);
+		rv = MusicSequenceLoadSMFData(music_files[track].sequence, CFDataCreate(NULL, (UInt8*)midi_data, len));		
 	}
 		
 	// Regardless, free the buffer we read off disk, if any

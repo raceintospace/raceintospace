@@ -1,6 +1,7 @@
 #ifndef _FS_H
 #define _FS_H
 
+#include <race.h>
 #include <stdio.h>
 
 /** \file fs.h Definitions for filesystem

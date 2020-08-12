@@ -23,9 +23,9 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>
 
 extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 extern char MAIL;

@@ -1,6 +1,8 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
+#include <race.h>
+#include <int_types.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>

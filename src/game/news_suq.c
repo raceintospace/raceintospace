@@ -15,8 +15,8 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 //extern char BudgetMods[3][6][10];
 extern char AI[2];
@@ -110,7 +110,7 @@ char REvent(char plr)
     if (Data->P[plr].Budget>160) j=5;
 
     fin=sOpen("NTABLE.DAT","rb",0);
-    fseek(fin,(sizeof (int16_t)) * ((plr*60) + (j*10) + random(10)) ,SEEK_SET);
+    fseek(fin,(sizeof (i16)) * ((plr*60) + (j*10) + random(10)) ,SEEK_SET);
     fread(&m,sizeof m,1,fin);
 		Swap16bit(m);
 //    m=BudgetMods[Data->P[plr].Level][(j*10)+random(10)];  // orig code

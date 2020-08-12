@@ -23,8 +23,8 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 int lenprogname;  // Variable to hold and manipulate length of program name
 

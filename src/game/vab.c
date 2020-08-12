@@ -27,12 +27,12 @@
  *
  */
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "utils.h"
-#include "logging.h"
-#include "options.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <utils.h>
+#include <logging.h>
+#include <options.h>
 
 extern char AI[2];
 
@@ -46,7 +46,7 @@ extern char AI[2];
 char isDamaged[8] = {0,0,0,0,0,0,0,0};
 
 struct MDA {
-  int16_t x1,y1,x2,y2,o;
+  i16 x1,y1,x2,y2,o;
 } MI[2*28]; //  MI[2][28] = {
 #if 0
   104,1,119,55,0,   // Atlas  0

@@ -1,9 +1,9 @@
-#include "Buzz_inc.h"
+#include <Buzz_inc.h>
 #include <limits.h>
 #include <assert.h>
-#include "externs.h"
-#include "av.h"
-#include "utils.h"
+#include <externs.h>
+#include <av.h>
+#include <utils.h>
 #include <SDL.h>
 
 extern GXHEADER vhptr;

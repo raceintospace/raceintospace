@@ -2,7 +2,7 @@
 #define _LOGGING_H
 
 #define LOG_ROOT_CAT  baris
-#include "log4c.h"
+#include <log4c.h>
 
 LOG_EXPORT_CATEGORY(LOG_ROOT_CAT);
 LOG_EXPORT_CATEGORY(sdl);

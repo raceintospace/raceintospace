@@ -24,9 +24,9 @@
 //
 // Museum Main Files
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
 
 extern struct mStr Mis;
 

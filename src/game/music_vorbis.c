@@ -19,10 +19,11 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "Buzz_inc.h"
-#include "mmfile.h"
-#include "pace.h"
-#include "utils.h"
+#include <race.h>
+#include <Buzz_inc.h>
+#include <mmfile.h>
+#include <pace.h>
+#include <utils.h>
 
 // A map of music_tracks to filenames
 struct music_key {

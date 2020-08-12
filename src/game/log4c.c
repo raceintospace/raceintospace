@@ -31,9 +31,9 @@
  *
  * See log4c.h for documentation.
  */
-#include "logging.h"
-#include "log4c.h"
-#include "macros.h"
+#include <logging.h>
+#include <log4c.h>
+#include <macros.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -46,6 +46,48 @@ struct LogCategory _LOGV(LOG_ROOT_CAT) = {
     STRINGIFY(LOG_ROOT_CAT), LP_UNINITIALIZED, 0,
     NULL, 0
 };
+
+#if 0
+static const char* s_controlString = NULL;
+
+static const char* applyControlString(struct LogCategory* cat) {
+
+    const char* cp = s_controlString;
+    
+    if (cp == NULL) return NULL;
+
+    while (*cp != 0) {
+        const char *name, *dot, *eq;;
+        cp += strspn(cp, " ");
+        name = cp;
+        cp += strcspn(cp, ".= ");
+        dot = cp;
+        cp += strcspn(cp, "= ");
+        eq = cp;
+        cp += strcspn(cp, " ");
+        if (*dot != '.' || *eq != '=') {
+
+            return "Invalid control string";
+        }
+        else if (0 == strncmp(name, cat->name, dot - name)) {
+            if (0 == strncmp(dot + 1, "thresh", eq - dot - 1)) {
+                char *end = NULL;
+                unsigned long val = 0;
+                errno = 0;
+                val = strtoul(eq + 1, &end, 10);
+                if (end == eq + 1)
+                    return "No digits after 'thresh'";
+                else if (end != NULL)
+                    return "Bad value for 'thresh'";
+                else if (val > INT_MAX)
+                    val = INT_MAX;
+                log_setThreshold(cat, (int)val);
+            }
+        }
+    }
+    return "";
+} // applyControlString
+#endif
 
 void _log_logEvent(struct LogCategory* category, struct LogEvent* ev, ...)
 {
@@ -133,6 +175,17 @@ void log_setThreshold(struct LogCategory* cat, int thresholdPriority) {
     cat->isThreshInherited = 0;
     setInheritedThresholds(cat);
 }
+
+#if 0
+const char* log_setControlString(const char* cs) {
+    if (s_controlString == NULL) {
+        s_controlString = cs;
+        return initCategory(&_LOGV(LOG_ROOT_CAT));
+    } else {
+        return "log_setControlString should not be invoked twice.";
+    }
+}
+#endif
 
 void log_setAppender(struct LogCategory* cat, struct LogAppender* app) {
     cat->appender = app;

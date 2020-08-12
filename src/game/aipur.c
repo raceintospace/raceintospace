@@ -25,9 +25,9 @@
 /** \file aipur.c AI Purchasing Routines
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 
 struct ManPool *Men;
 char AIsel[25],AIMaxSel,Obs[6]; //indexed 1 thru 5
@@ -254,8 +254,7 @@ void AIAstroPur(char plr)
 
 //Naut Randomize, Nikakd, 10/8/10
 void AIRandomizeNauts() {
-  int i;
-	for (i=0;i<106;i++) {
+	for (int i=0;i<106;i++) {
 		Men[i].Cap = random(5);
 		Men[i].LM  = random(5);
 		Men[i].EVA = random(5);
@@ -569,7 +568,7 @@ void RemoveUnhappy(char plr)
 
 void RDafford(char plr,int class,int index)
 {
- int16_t b=0,roll=0,ok=0;
+ i16 b=0,roll=0,ok=0;
  if (class==0) b+=Data->P[plr].Probe[index].RDCost;
  if (class==1) b+=Data->P[plr].Rocket[index].RDCost;
  if (class==2) b+=Data->P[plr].Manned[index].RDCost;

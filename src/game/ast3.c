@@ -25,9 +25,9 @@
 /** \file ast3.c Training and Hospital code
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>
 
 
 void DrawTrain(char plr,char lvl)

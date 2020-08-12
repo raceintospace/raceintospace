@@ -23,12 +23,12 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "mis.h"
-#include "utils.h"
-#include "options.h"
-#include "logging.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <mis.h>
+#include <utils.h>
+#include <options.h>
+#include <logging.h>
 
 #define MIS_SET 0             // FAILURES ON
 
@@ -45,9 +45,9 @@ char MFlag,death,durx,MPad,Unm,SCRUBS,noDock,InSpace;
 char Dock_Skip; /**< used for mission branching */
 extern struct mStr Mis;
 
-extern uint16_t MisStat;
+extern ui16 MisStat;
 extern char pCnt,tMen,BIG;            // Counter for pAry
-extern int16_t pAry[15];         /**< Array for Presige Firsts compelted */
+extern i16 pAry[15];         /**< Array for Presige Firsts compelted */
 extern REPLAY Rep;
 
 void Tick(char);
@@ -57,11 +57,11 @@ void GetFailStat(struct XFails *Now,char *FName,int rnum)
   DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)", rnum);
   int i;
   FILE *fin;
-  int32_t count;
+  long count;
   struct Fdt {
     char Code[6];
-    int32_t offset;
-    int16_t size;
+    long offset;
+    i16 size;
   } Pul;
 
   fin=sOpen("FAILS.CDR","rb",0);

@@ -20,12 +20,12 @@
   extern int x,y,mousebuttons,key;
   extern unsigned char *screen;
   extern unsigned char LOAD,ZOND,QUIT,FADE,XMAS;
-  extern unsigned char pal[3*256];
+  extern char pal[3*256];
   extern char plr[2],Name[20],IDT[5],IKEY[5];
   extern char * buffer;
   extern GXHEADER vhptr,vhptr2;
   extern char * oldpal;
-  extern int32_t xMODE;
+  extern long xMODE;
   extern char *S_Name[];
   extern int cdROM,hDISK;
   extern int screen_dirty;

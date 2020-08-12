@@ -25,8 +25,8 @@
 //
 // Museum Main Files
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 extern GXHEADER but;
 extern char Option, MAIL;

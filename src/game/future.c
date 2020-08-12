@@ -18,10 +18,10 @@
 /** \file future.c This is responsible for Future Mission planning screen.
  * 
  */
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "logging.h"
+#include <logging.h>
 
   //Used to read steps from missStep.dat
   FILE* MSteps;
@@ -42,8 +42,8 @@ LOG_DEFAULT_CATEGORY(future)
   GXHEADER vh;
 
   struct StepInfo {
-    int16_t x_cor;
-    int16_t y_cor;
+    i16 x_cor;
+    i16 y_cor;
   } StepBub[MAXBUB];
 
   struct Parameter {
@@ -1108,8 +1108,7 @@ void Missions(char plr,int X,int Y,int val,char bub)
 	}
 	fclose(MSteps);
 
-  int n;
-	for (n=2;missStep[n]!='Z';n++)
+	for (int n=2;missStep[n]!='Z';n++)
 		switch (missStep[n]) {
 			case 'A': Draw_IJ	(B_Mis(++n));	break;
 			case 'B': Draw_IJV	(B_Mis(++n));	break;

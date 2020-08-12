@@ -24,10 +24,10 @@
 //
 // AI Master Routines
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
-struct cStr {int16_t cost,sf,i;} Mew[5];
+struct cStr {i16 cost,sf,i;} Mew[5];
 int whe[2],rck[2];
 char pc[2],bc[2],Alt_A[2]={0,0},Alt_B[2]={0,0},Alt_C[2]={0,0};
 extern struct VInfo VAS[7][4];

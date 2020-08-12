@@ -25,9 +25,9 @@
 /** \file ast1.c Astronaut Recruitment
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>   //Naut Randomize && Naut Compatibilit, Nikakd, 10/8/10
 
 extern char MCol[110],sel[30],MaxSel;
 extern struct ManPool *Men;
@@ -235,8 +235,7 @@ void DrawAstSel(char plr)
 
 //Naut Randomize, Nikakd, 10/8/10
 void RandomizeNauts() {
-  int i;
-	for (i=0;i<106;i++) {
+	for (int i=0;i<106;i++) {
 		Men[i].Cap = random(5);
 		Men[i].LM  = random(5);
 		Men[i].EVA = random(5);

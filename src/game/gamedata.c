@@ -1,5 +1,7 @@
+#include <race.h>
 #include <stdio.h>
-#include "gamedata.h"
+#include <gamedata.h>
+#include <int_types.h>  /* auto-generated inttypes.h */
 
 /* Definitions for scalar types */
 

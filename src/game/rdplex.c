@@ -25,9 +25,9 @@
 /** \file rdplex.c Research and Development Complex
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>
 
 int call,wh;
 GXHEADER but,mans;

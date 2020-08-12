@@ -16,8 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /* XXX clean this up */
-#include "mmfile.h"
-#include "data.h"
+#include <mmfile.h>
+#include <data.h>
 // ***************************
 //   USEFUL AND RARE DEFINES
 // ***************************
@@ -395,6 +395,7 @@ void NextTurn(char plr);
 // MAIN.C
 void Rout_Debug(int line, char *file);
 void RestoreDir(void);
+int main(int argc, char *argv[]);
 int CheckIfMissionGo(char plr,char launchIdx);
 void oclose(int fil);
 void InitData(void);
@@ -562,7 +563,7 @@ void Replace_Snaut(char plr);
 
 // PACE.C
 int PCX_D (void *src,void *dest,unsigned src_size);
-int32_t RLEC (char *src, char *dest, unsigned int src_size);
+long RLEC (char *src, char *dest, unsigned int src_size);
 void FadeIn(char wh,char *palx,int steps,int val,char mode);
 void FadeOut(char wh,char *palx,int steps,int val,char mode);
 int RLED (void *src, void *dest, unsigned int src_size);
@@ -587,7 +588,7 @@ void SpotCrap(char loc,char mode);
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
 void PadBub(int x,int y,int col);
-void PortPlace(FILE *fin,int32_t table);
+void PortPlace(FILE *fin,long table);
 void PortPal(char plr);
 void DrawSpaceport(char plr);
 void PortText(int x,int y,char *txt,char col);
@@ -611,9 +612,9 @@ void RecvSide(char side);
 //static int timed_get(int n);
 //static int build_block(int l, FILE *file);
 //static void abort_transfer(void);
-int xmit_file(int (*error_handler)(int c, int32_t p, char *s), char *files[]);
+int xmit_file(int (*error_handler)(int c, long p, char *s), char *files[]);
 //static int getblock(int block, int crc);
-int recv_file(int(*error_handler)(int c, int32_t p, char *s), char *path);
+int recv_file(int(*error_handler)(int c, long p, char *s), char *path);
 
 // PREFS.C
 void DrawPrefs(int where,char a1,char a2);
@@ -732,7 +733,7 @@ void SetVoiceVolume(int percent);
 void PlayVoice(void);
 void StopVoice(void);
 void *load_global_timbre( FILE *GTL, unsigned bank, unsigned patch);
-void GetMusic(FILE *fin,int32_t size)  ;
+void GetMusic(FILE *fin,long size)  ;
 void KillMusic(void);
 void FadeMusicIn(int maxvolume, unsigned rate);
 void FadeMusicOut(unsigned rate);
@@ -783,7 +784,7 @@ void CheckFirst(char);
 void UpdateFirst(void);
 void SendFirst(void);
 void RecvFirst(void);
-int e_handler(int c, int32_t p, char *s);
+int e_handler(int c, long p, char *s);
 void SaveFirst(char mode);
 void SendFirst(void);
 void UpdateFirst(void);
@@ -793,13 +794,13 @@ int port_exist(int port);
 void open_port(int port, int inlen);
 void close_port(void);
 void purge_in(void);
-void set_baud(int32_t baud);
-int32_t get_baud(void);
+void set_baud(long baud);
+long get_baud(void);
 int get_bits(void);
 int get_parity(void);
 int get_stopbits(void);
 void set_data_format(int bits, int parity, int stopbit);
-void set_port(int32_t baud, int bits, int parity, int stopbit);
+void set_port(long baud, int bits, int parity, int stopbit);
 int in_ready(void);
 int carrier(void);
 void set_dtr(int n);
@@ -814,7 +815,7 @@ void AAset(void);
 void DialAt(int x,int y,char *s);
 void get_dial(char *old);
 void Read_Config(void);
-int e_handler(int c, int32_t p, char *s);
+int e_handler(int c, long p, char *s);
 void Dnload(void);
 void Upload(void);
 void ReadMsg(void);

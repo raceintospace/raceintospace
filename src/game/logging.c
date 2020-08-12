@@ -1,4 +1,4 @@
-#include "logging.h"
+#include <logging.h>
 
 LOG_NEW_CATEGORY(sdl)
 LOG_NEW_CATEGORY(multimedia)

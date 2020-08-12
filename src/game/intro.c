@@ -23,10 +23,10 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "utils.h"
-#include "logging.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <utils.h>
+#include <logging.h>
 GXHEADER local2;
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
@@ -116,7 +116,7 @@ int nCREDIT = sizeof CREDIT / sizeof CREDIT[0];
 void Credits(void)
 {
   int k,i;
-  int32_t len;
+  i32 len;
   strcpy(IKEY,"i999\0");
   FILE *fin;
 
@@ -275,7 +275,7 @@ done:
 void NextTurn(char plr)
 {
   FILE *fin = NULL;
-  int32_t len = 0;
+  i32 len = 0;
    
 	memset(pal,0x00,sizeof(pal));
   gxSetDisplayPalette(pal);

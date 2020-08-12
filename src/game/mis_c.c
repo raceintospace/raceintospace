@@ -23,15 +23,15 @@
 // Programmed by Michael K McCarty
 //
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "mis.h"
-#include "av.h"
-#include "mmfile.h"
-#include "utils.h"
-#include "logging.h"
-#include "options.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <mis.h>
+#include <av.h>
+#include <mmfile.h>
+#include <utils.h>
+#include <logging.h>
+#include <options.h>
 
 #include <assert.h>
 
@@ -50,19 +50,19 @@ LOG_DEFAULT_CATEGORY(mission)
 
  struct Infin {
   char Code[9],Qty;
-  int16_t List[10];
+  i16 List[10];
  };
 
  struct OF {
   char Name[8];
-  int16_t idx;
+  i16 idx;
  };
 
 struct Infin *Mob;
 struct OF *Mob2;
 int tFrames,cFrame;
 char SHTS[4];
-int32_t aLoc;
+long aLoc;
 GXHEADER dply;
 struct AnimType AHead;
 struct BlockHead BHead;
@@ -151,7 +151,7 @@ void PlaySequence(char plr,int step,char *Seq,char mode)
 	char lnch=0,AEPT,BABY,Tst2,Tst3;
 	unsigned char sts=0,fem=0;
 	FILE *fin,*fout,*ffin,*nfin;
-	int32_t offset;
+	long offset;
 	struct oGROUP *bSeq,aSeq;
 	struct oFGROUP *dSeq,cSeq;
 	struct Table *F;
@@ -620,8 +620,8 @@ void DoPack(char plr,FILE *ffin,char mode,char *cde,char *fName)
 {
  int i,x,y,try,which,mx2,mx1;
  GXHEADER boob;
- uint16_t *bot,off=0;
- int32_t locl;
+ ui16 *bot,off=0;
+ long locl;
  static char kk=0,bub=0;
  char Val1[12],Val2[12],loc;
 
@@ -654,7 +654,7 @@ void DoPack(char plr,FILE *ffin,char mode,char *cde,char *fName)
    y=(loc==0 || loc==2) ? 5+2*plr: 57+plr*9;
    off=64+loc*16;
    GV(&boob,68,46);
-   bot=(uint16_t *) boob.vptr;
+   bot=(ui16 *) boob.vptr;
 
   //:::::::::::::::::::::::::::::::
   //Specs: which holds baby frame :
@@ -734,10 +734,10 @@ void DoPack(char plr,FILE *ffin,char mode,char *cde,char *fName)
   };
 
   //Specs: which holds baby num
-  locl=(int32_t) 1612*which;
+  locl=(long) 1612*which;
   if (which<580) memset(&pal[off*3],0x00,48);
   if(loc!=0 && which<580) {VBlank();gxSetDisplayPalette(pal);}
-  fseek(ffin,(int32_t)locl,SEEK_SET);
+  fseek(ffin,(long)locl,SEEK_SET);
   fread(&pal[off*3],48,1,ffin);
   fread(boob.vptr,1564,1,ffin);
   for (i=0;i<782;i++) {
@@ -991,8 +991,8 @@ FILE *OpenAnim(char *fname)
     FILE  *fin;
     struct TM {
         char ID[4];
-        int32_t offset;
-        int32_t size;
+        long offset;
+        long size;
     } AIndex;
 
     fin=open_gamedat("LIFTOFF.ABZ");
@@ -1155,8 +1155,7 @@ InRFBox(162,28,312,42,10);
 		      "first cosmonaut to");
 	PrintAt(30,80," walk on the moon?");
 
-  int i;
-	for(i=0;i<nauts;i++) {
+	for(int i=0;i<nauts;i++) {
 		IOBox(25,100 +i*25,135,115+i*25);
 		grSetColor(12);
 		GuyDisp(45,110+i*25, MX[cPad][i].A);

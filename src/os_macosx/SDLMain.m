@@ -5,14 +5,24 @@
     Feel free to customize this file to suit your needs
 */
 
-#include "SDLMain.h"
-#import <SDL.h>
+#import "SDL.h"
+#import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
-//#import "SmartCrashReportsInstall.h"
+#import "SmartCrashReportsInstall.h"
 
-int game_main(int argc, char *argv[]);
+/* Portions of CPS.h */
+typedef struct CPSProcessSerNum
+{
+	UInt32		lo;
+	UInt32		hi;
+} CPSProcessSerNum;
+
+extern OSErr	CPSGetCurrentProcess( CPSProcessSerNum *psn);
+extern OSErr 	CPSEnableForegroundOperation( CPSProcessSerNum *psn, UInt32 _arg2, UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
+extern OSErr	CPSSetFrontProcess( CPSProcessSerNum *psn);
+
 
 static int    gArgc;
 static char  **gArgv;
@@ -20,17 +30,16 @@ static BOOL   gFinderLaunch;
 static BOOL   gCalledAppMainline = FALSE;
 
 @interface SDLApplication : NSApplication
-- (void) terminate:(id)sender;
 @end
 
-@implementation SDLApplication : NSApplication
+@implementation SDLApplication
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
 {
-   /* Post a SDL_QUIT event */
-   SDL_Event event;
-   event.type = SDL_QUIT;
-   SDL_PushEvent(&event);
+    /* Post a SDL_QUIT event */
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    SDL_PushEvent(&event);
 }
 @end
 
@@ -47,11 +56,6 @@ static BOOL   gCalledAppMainline = FALSE;
 	/* TODO */
 }
 
-- (IBAction)enableCrashReporting:(id)sender
-{
-}
-
-/*
 - (IBAction)enableCrashReporting:(id)sender
 {
 	if (UnsanitySCR_InstalledVersion(NULL) < UnsanitySCR_InstallableVersion()) {
@@ -93,8 +97,6 @@ static BOOL   gCalledAppMainline = FALSE;
 		NSRunInformationalAlertPanel(@"Crash Reporting Enabled", @"The crash reporting tool is installed. If Race Into Space crashes, please click the Report... button to submit a detailed crash report.", @"Great!", nil, nil);
 	}
 }
-*/
-
 
 /* Set the working directory to the .app directory */
 - (void) setupWorkingDirectory
@@ -164,21 +166,14 @@ static BOOL   gCalledAppMainline = FALSE;
     [self setupWorkingDirectory];
 
     gCalledAppMainline = TRUE;
-    status = game_main(gArgc, gArgv);
+    status = SDL_main(gArgc, gArgv);
 
     exit(status);
 }
 @end
 
-int SDL_main(int argc, char * argv[])
-{
-  abort();
-  return game_main(argc, argv);
-}
-
-/* Ensure that we're actually defining main(), and not an SDL alias */
 #ifdef main
-#undef main
+#  undef main
 #endif
 
 /* Main entry point to executable - should *not* be SDL_main! */
@@ -201,6 +196,7 @@ int main (int argc,  const char *argv[])
         gFinderLaunch = NO;
     }
 
+    [SDLApplication poseAsClass:[NSApplication class]];
     NSApplicationMain (argc, argv);
 
     return 0;

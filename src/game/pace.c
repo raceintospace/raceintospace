@@ -1,11 +1,11 @@
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
-#include "pace.h"
-#include "av.h"
-#include "options.h"
-#include "utils.h"
-#include "logging.h"
+#include <pace.h>
+#include <av.h>
+#include <options.h>
+#include <utils.h>
+#include <logging.h>
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
@@ -100,7 +100,7 @@ RLED (void *src_raw, void *dest_raw, unsigned int src_size)
 	}
 
 	if (0)
-		printf ("total bytes %d\n", (int)((char *)dest - (char *)dest_raw));
+		printf ("total bytes %d\n", (char *)dest - (char *)dest_raw);
 
 	return ((char *)dest - (char *)dest_raw);
 }
@@ -202,6 +202,14 @@ bzdelay (int ticks)
 	idle_loop_secs (ticks / 100.0);
 }
 
+#ifdef DEAD_CODE
+int
+CDAccess (int drive,int track,char op)
+{
+	return (0);
+}
+#endif
+
 int
 brandom (int limit)
 {
@@ -210,7 +218,7 @@ brandom (int limit)
 	return (int) (limit * (rand() / (RAND_MAX + 1.0)));
 }
 
-int32_t RLEC (char *src, char *dest, unsigned int src_size)
+long RLEC (char *src, char *dest, unsigned int src_size)
 {
 	unsigned int src_i;
 	int dest_i,cpr;

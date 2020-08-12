@@ -26,11 +26,11 @@
 //*                                                              *
 //****************************************************************
 
-#include "Buzz_inc.h"
-#include "options.h"
-#include "utils.h"
-#include "logging.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <options.h>
+#include <utils.h>
+#include <logging.h>
+#include <externs.h>
 #include <ctype.h>
 
 #ifdef CONFIG_MACOSX
@@ -49,15 +49,15 @@
   char *buffer;
   GXHEADER vhptr,vhptr2;
   char * oldpal,pNeg[NUM_PLAYERS][MAX_MISSIONS];
-  int32_t xMODE;
+  long xMODE;
   HTIMER server;
   char Option=-1,MAIL=-1;
   int SEG=15,FadeVal,fOFF=-1;
   extern struct mStr Mis;
   extern struct Prest_Upd MP[3];
   struct cdtable *cdt;
-  int32_t PalOff;
-  uint16_t LetHand;
+  long PalOff;
+  ui16 LetHand;
   char BIG, 			   /**< 1 for fullscreen mission playback, 0 otherwise */
 	manOnMoon=0, dayOnMoon=20;
 
@@ -114,7 +114,7 @@ void Plop(char plr,char mode);
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-int game_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   int i;
   FILE *fin;
@@ -708,6 +708,20 @@ void PrintAtKey(int x,int y,char *s,char val)
   return;
 }
 
+#ifdef DEAD_CODE
+void DrawLED(int x,int y,char st)
+{
+  int i,j;
+  unsigned char Dots[2][5][5] ={
+	  {{0,9,9,10,0},{9,8,9,9,10},{9,9,9,9,10},{10,9,9,9,10},{0,10,10,10,0}}, // Red
+	  {{0,15,15,16,0},{15,14,15,15,16},{15,15,15,15,16},{16,15,15,15,16},{0,16,16,16,0}}}; // Grn
+
+  for (i=0;i<5;i++) for (j=0;j<5;j++) if (Dots[st][i][j]!=0)
+    grPutPixel(x+i,y+j,Dots[st][i][j]);
+  return;
+}
+#endif
+
 void DispBig(int x,int y,char *txt,char mode,char te)
 {
   int i,k,l,px;
@@ -777,6 +791,21 @@ void DispMB(int x,int y,int val)
   PrintAt(0,0," MB");
   return;
 }
+
+#ifdef DEAD_CODE
+// Place a glimmer on a box
+void Gl(int x1,int x2,int y,char t)
+{
+  int i,nx;
+  char Glim[13]={31,30,29,28,27,1,1,1,27,28,29,30,31};
+  if ((x2-x1)<30) return;
+  nx=(x2-x1)/2;
+  if (t==0) nx=nx-(nx/3);
+  else nx=nx+(nx/3);
+  for (i=0;i<13;i++) grPutPixel(x1+nx+i,y,Glim[i]);
+  return;
+}
+#endif
 
 void ShBox(int x1,int y1,int x2,int y2)
 {
@@ -1100,8 +1129,8 @@ int MisRandom(void)
 
 #ifdef DEAD_CODE
 #   ifdef CONFIG_THEORA_VIDEO
-#      include "av.h"
-#      include "mmfile.h"
+#      include <av.h>
+#      include <mmfile.h>
 #   endif
 
 void

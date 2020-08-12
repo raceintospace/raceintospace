@@ -23,11 +23,11 @@
 // Programmed by Michael K McCarty
 //
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
-#include "options.h"
+#include <options.h>
 
 extern struct ManPool *Men;
 struct ManPool *Sov;
@@ -242,7 +242,7 @@ int i,num,hum1=0,hum2=0;
 FILE *fin;
 char ch,Name[20],ksel=0;
 GXHEADER local2;
-int32_t size;
+long size;
 
  if (where!=3)
   {

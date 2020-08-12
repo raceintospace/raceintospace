@@ -24,13 +24,13 @@
 //
 // NewsCaster Main Files
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "macros.h"
-#include "av.h"
-#include "mmfile.h"
-#include "logging.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <macros.h>
+#include <av.h>
+#include <mmfile.h>
+#include <logging.h>
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
@@ -73,7 +73,7 @@ static int news_index[2][2][3] = {
 
 struct rNews
 {
-	int16_t offset;
+	i16 offset;
 	char chrs;
 };
 
@@ -550,7 +550,7 @@ News(char plr)
 	char cYr[5];
 	ONEWS oNews;
 	char loc = 0;
-	uint8_t Status = 0, BW = 0;
+	ui8 Status = 0, BW = 0;
     mm_file video_file, *fp = &video_file;
 	FILE *fout = NULL;
 

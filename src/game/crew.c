@@ -15,9 +15,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <options.h>  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 
 extern struct mStr Mis;
 

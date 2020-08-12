@@ -15,11 +15,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "av.h"
-#include "utils.h"
+#include <race.h>
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <av.h>
+#include <utils.h>
 
 extern char IDT[5],IKEY[5],AL_CALL,AI[2];
 extern struct mStr Mis;
@@ -234,7 +235,7 @@ void PatchMe(char plr,int x,int y,char prog,char poff,unsigned char coff)
 void
 AstFaces(char plr, int x, int y, char face)
 {
-	int32_t offset;
+	long offset;
 	GXHEADER local, local2, local3;
 	int fx, fy;
 	unsigned int j;
@@ -243,20 +244,20 @@ AstFaces(char plr, int x, int y, char face)
 
 	memset(&pal[192], 0x00, 192);
 	fin = sOpen("FACES.BUT", "rb", 0);
-	fseek(fin, 87 * sizeof(int32_t), SEEK_SET);
+	fseek(fin, 87 * sizeof(long), SEEK_SET);
 	fread(&pal[192], 96, 1, fin);
-	face_offset = ((int)face) * sizeof(int32_t);
+	face_offset = ((int)face) * sizeof(i32);
 	fseek(fin, face_offset, SEEK_SET);	// Get Face
-	fread(&offset, sizeof(int32_t), 1, fin);
+	fread(&offset, sizeof(long), 1, fin);
 	Swap32bit(offset);
 	fseek(fin, offset, SEEK_SET);
 	GV(&local, 18, 15);
 	fread(local.vptr, 18 * 15, 1, fin);
 
 
-	face_offset = ((int)(85+plr)) * sizeof(int32_t);
+	face_offset = ((int)(85+plr)) * sizeof(i32);
 	fseek(fin, face_offset, SEEK_SET);	// Get Helmet
-	fread(&offset, sizeof(int32_t), 1, fin);
+	fread(&offset, sizeof(long), 1, fin);
 	Swap32bit(offset);
 	fseek(fin, offset, SEEK_SET);
 	GV(&local2, 80, 50);
@@ -335,13 +336,13 @@ void BigHardMe(char plr,int x,int y,char hw,char unit,char sh,unsigned char coff
 	SimpleHdr table;
   char ch;
   GXHEADER local,local2;
-  int32_t size;
+  long size;
   unsigned int j, n;
   FILE *in,*fin;
   struct TM {
       char ID[4];
-      int32_t offset;
-      int32_t size;
+      long offset;
+      long size;
       } AIndex;
 
   extern struct AnimType AHead;
@@ -464,11 +465,11 @@ int Help(char *FName)
   int fsize;
   GXHEADER local;
   FILE *fin;
-  int32_t count;
+  i32 count;
   struct Help {
     char Code[6];
-    int32_t offset;
-    int16_t size;
+    i32 offset;
+    i16 size;
   } Pul;
 
   mode = 0; /* XXX check uninitialized */

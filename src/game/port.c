@@ -23,12 +23,12 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "gamedata.h"
-#include "externs.h"
-#include "macros.h"
-#include "av.h"
-#include "utils.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <macros.h>
+#include <av.h>
+#include <utils.h>
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -53,7 +53,7 @@ extern struct mStr Mis;
 extern char Option;
 
 typedef struct portoutlinerestore {
-   uint16_t loc;
+   ui16 loc;
    char val;
 } PORTOUTLINE;
 
@@ -61,26 +61,26 @@ PORTOUTLINE *pPortOutlineRestore;
 
 struct FHead {
   char Text[28];  /**< File Copyright Notice */
-  int32_t oMObj;     /**< Offset to MObj data table */
-  int32_t oTab;      /**< Offset to Table of data */
-  int32_t oPal;      /**< Offset to Palette */
-  int32_t oPort;     /**< Offset to start of Port Images */
-  int32_t oMse;      /**< Offset to Mouse Objects */
-  int32_t oOut;      /**< Offset to port Outlines */
-  int32_t oAnim;     /**< Offset to start of Port Anims */
+  long oMObj;     /**< Offset to MObj data table */
+  long oTab;      /**< Offset to Table of data */
+  long oPal;      /**< Offset to Palette */
+  long oPort;     /**< Offset to start of Port Images */
+  long oMse;      /**< Offset to Mouse Objects */
+  long oOut;      /**< Offset to port Outlines */
+  long oAnim;     /**< Offset to start of Port Anims */
    } PHead;
 
 typedef struct cBoxx {
-   int16_t x1,y1,x2,y2;
+   i16 x1,y1,x2,y2;
    } BOUND;
 
 typedef struct Img {
-  int32_t Size;         /**<  Size of Image (bytes) */
+  long Size;         /**<  Size of Image (bytes) */
   char Comp;         /**<  Type of Compression Used */
-  int16_t Width;         /**<  Width of Image */
-  int16_t Height;        /**<  Height of Image */
-  int16_t PlaceX;        /**<  Where to Place Img:X */
-  int16_t PlaceY;        /**<  Where to Place Img:Y */
+  i16 Width;         /**<  Width of Image */
+  i16 Height;        /**<  Height of Image */
+  i16 PlaceX;        /**<  Where to Place Img:X */
+  i16 PlaceY;        /**<  Where to Place Img:Y */
    } IMG;
 
 typedef struct region {
@@ -339,7 +339,7 @@ void WaveFlagDel(void)
  * when the data is bigger than needed.  there's still a bug somewhere,
  * so this table is a useful list of funny images to check later
  */
-int32_t fix_width[] = {
+long fix_width[] = {
 	// normal
 	80615, // 4/0 VAB in mode 0
 	101712, // 8/1 Medical center
@@ -359,7 +359,7 @@ int32_t fix_width[] = {
 };
 
 int
-need_to_fix_width (int32_t table)
+need_to_fix_width (long table)
 {
 	int i;
 	for (i = 0; fix_width[i]; i++) {
@@ -369,7 +369,7 @@ need_to_fix_width (int32_t table)
 	return (0);
 }
 
-void PortPlace(FILE * fin,int32_t table)
+void PortPlace(FILE * fin,long table)
 {
   IMG Img;
   GXHEADER local,local2;
@@ -413,7 +413,7 @@ void PortPal(char plr)
 
 void DrawSpaceport(char plr)
 {
-  int32_t table[S_QTY];
+  long table[S_QTY];
   int i,fm,idx;
   FILE *fin;
   GXHEADER local,local2;
@@ -795,7 +795,7 @@ DoCycle(void)					// Three ranges of color cycling
  * \param mode ...  0 = ?   1 = copy stored outline ?
  */
 void
-PortOutLine(unsigned int Count, uint16_t * outline, char mode)
+PortOutLine(unsigned int Count, ui16 * outline, char mode)
 {
 	int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
 	unsigned int i;
@@ -907,11 +907,11 @@ int i,j,kMode,kEnt,k;
 char good, res;
 int kPad,pKey,gork;
 FILE *fin;
-int32_t stable[55];
-uint16_t Count,*bone;
+long stable[55];
+ui16 Count,*bone;
 
   strcpy(IDT,"i043");strcpy(IKEY,"k043");
-  bone=(uint16_t *) buffer;
+  bone=(ui16 *) buffer;
 
   fin=sOpen((plr==0)?"USA_PORT.DAT":"SOV_PORT.DAT","rb",0);
   fread(&PHead,sizeof PHead,1,fin);

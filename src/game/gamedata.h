@@ -7,8 +7,9 @@
 #undefined /* to make errors appear on all compilers */
 #endif
 
-#include <stdint.h>
+#include <race.h>
 #include <stdio.h>
+#include <int_types.h>  /* auto-generated inttypes.h */
 
 /** Routines for read/write access to LITTLE ENDIAN data in game files */
 extern size_t fread_uint8_t(uint8_t *dst, size_t nelem, FILE *file);

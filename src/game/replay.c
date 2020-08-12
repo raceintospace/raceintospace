@@ -22,13 +22,13 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
-#include "mmfile.h"
-#include "av.h"
-#include "logging.h"
+#include <mmfile.h>
+#include <av.h>
+#include <logging.h>
 
 #ifdef DEADCODE
 
@@ -41,7 +41,7 @@ extern char STEPnum, loc[4];
 extern struct MisEval Mev[60];
 extern char MANNED[2], STEP, pal2[768], AI[2];
 extern int tFrames, cFrame;
-extern int32_t aLoc;
+extern long aLoc;
 extern GXHEADER dply;
 extern struct AnimType AHead;
 extern struct BlockHead BHead;
@@ -176,7 +176,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height, char *Type)
 	int keep_going;
 	int i, kk, mode, max;
 	FILE *seqf, *fseqf;
-	int32_t offset;
+	long offset;
 	struct oGROUP group;
 	struct oFGROUP fgroup;
 	struct Table table;
@@ -308,16 +308,16 @@ DispBaby(int x, int y, int loc, char neww)
 	int i;
 	FILE *fin;
 	GXHEADER boob;
-	uint16_t *bot, off = 0;
-	int32_t locl;
+	ui16 *bot, off = 0;
+	long locl;
 
 	off = 224;
 
 	GV(&boob, 68, 46);
-	bot = (uint16_t *) boob.vptr;
+	bot = (ui16 *) boob.vptr;
 
 	fin = sOpen("BABYPICX.CDR", "rb", 0);
-	locl = (int32_t) 1612 *loc;	// First Image
+	locl = (long) 1612 *loc;	// First Image
 
 	fseek(fin, locl, SEEK_SET);
 	for (i = 0; i < 48; i++)

@@ -18,8 +18,8 @@
 /** \file endgame.c End Game Routines
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 #define NUM_LIGHTS 100
 #define FLY_TIME 20
@@ -59,7 +59,7 @@ Burst(char win)
 		char clr;
 		float vel[2];
 		float psn[2];
-		int16_t per;
+		i16 per;
 	} Bomb[NUM_LIGHTS];
 	int lp1, lp2, Region, xx, yy;
 	float Ang, Spd, InitSpd;

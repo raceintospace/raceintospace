@@ -23,9 +23,9 @@
 // Programmed by Michael K McCarty
 //
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
 
 extern char AI[2];
 int missions;     // Variable for how many missions each 'naut has flown

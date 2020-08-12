@@ -34,9 +34,9 @@ Unit Cost is loosly based in the basic model, but depends on initial cost
 RD cost is loosly based in the basic model
 */
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <gamedata.h>
+#include <Buzz_inc.h>
+#include <externs.h>
 #include <assert.h>
 
 /*random_number divides the randomization in 2,
@@ -57,8 +57,7 @@ random_min  (int n)
 
 
 void RandomizeEq(void) {
-  int i;
-	for (i=0; i<2; i++) { //for each player
+	for (int i=0; i<2; i++) { //for each player
 		//Satellite
 		Data->P[i].Probe[0].UnitWeight 	= random_number (100,500);
 		Data->P[i].Probe[0].MaxSafety	= random_number (86,98);
@@ -223,20 +222,18 @@ void SetEquipName (char plr) {
 	grSetColor(9);
 	PrintAt(103,59, "EQUIPMENT NAME CHANGE");
 	PrintAt(123,69, "(ESCAPE TO SKIP)");
-  int n;
-	for (n=0; skip==0 && n<3; n++)
+	for (int n=0; skip==0 && n<3; n++)
 		skip = GetNewName(Data->P[plr].Probe[n].Name);
-	for (n=0; skip==0 && n<7; n++)
+	for (int n=0; skip==0 && n<7; n++)
 		skip = GetNewName(Data->P[plr].Manned[n].Name);
-	for (n=0; skip==0 && n<4; n++)
+	for (int n=0; skip==0 && n<4; n++)
 		skip = GetNewName(Data->P[plr].Rocket[n].Name);
 }
 
 
 char GetNewName (char old_name[20]) {
 	char ch=0, num=0, name[20];
-  int i;
-	for(i=0;i<20;i++) name[i]=0x00;
+	for(int i=0;i<20;i++) name[i]=0x00;
 
 	RectFill(100,74,223,91,3);
 	grSetColor(6);PrintAt(162-3*strlen(old_name),80,&old_name[0]);

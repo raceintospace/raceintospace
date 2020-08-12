@@ -22,10 +22,10 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty
 //
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "mis.h"
-#include "av.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <mis.h>
+#include <av.h>
 
   Equipment *MH[2][8];   // Pointer to the hardware
   struct MisAst MA[2][4];  //[2][4]
@@ -44,7 +44,7 @@
   extern char STEPnum;
   extern char pNeg[NUM_PLAYERS][MAX_MISSIONS];
   extern char AI[2];
-  uint16_t MisStat;
+  ui16 MisStat;
   /* STEP tracks mission step numbers             */
   /* FINAL is the ultimate result of safety check */
   /* JOINT signals the joint mission code         */
@@ -65,7 +65,7 @@ void VerifyData(void)
 void DrawControl(char plr)
 {
   FILE *fin;
-  int32_t len;
+  i32 len;
   fin=sOpen("CONTROL.IMG","rb",0);
   fread(pal,768,1,fin);
   fread(&len,4,1,fin);
@@ -300,7 +300,7 @@ void MissionPast(char plr,char pad,int prest)
   int loc,i,j,loop,mc;
   FILE *fout,*fin;
   unsigned int num;
-  int32_t size;
+  long size;
   char dys[7]={0,2,5,7,12,16,20};
 
   loc=Data->P[plr].PastMis;

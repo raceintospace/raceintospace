@@ -15,14 +15,13 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-#include "Buzz_inc.h"
-#include "options.h"
-#include "macros.h"
-#include "pace.h"
-#include "fs.h"
-#include "utils.h"
-#include "logging.h"
+#include <race.h>
+#include <options.h>
+#include <macros.h>
+#include <pace.h>
+#include <fs.h>
+#include <utils.h>
+#include <logging.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -34,7 +33,6 @@
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")
 
-/*
 #if CONFIG_WIN32
 #  define DEFAULT_DATADIR ("c:/" PACKAGE_TARNAME )
 #  define DEFAULT_SAVEDIR ("c:/" PACKAGE_TARNAME "/savedat")
@@ -45,7 +43,6 @@
 #  define DEFAULT_DATADIR CONFIG_DATADIR
 #  define DEFAULT_SAVEDIR (".")
 #endif
-*/
 
 /* and provide defaults for unspecified OS */
 #ifndef DEFAULT_DATADIR

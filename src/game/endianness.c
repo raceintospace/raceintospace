@@ -1,6 +1,6 @@
 #include <assert.h>
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 // Need these functions to always exist
 uint32_t _Swap32bit(uint32_t value)
@@ -35,8 +35,8 @@ float _SwapFloat(float value)
 // This will swap all the player structures
 void _SwapGameDat(void)
 {
-	int16_t i, j;
-	uint32_t val_ui32;
+	i16 i, j;
+	ui32 val_ui32;
 
 	memcpy (&val_ui32, Data->EMark, 4);
 	val_ui32 = _Swap32bit (val_ui32);

@@ -23,11 +23,11 @@
 // Programmed by Michael K McCarty
 //
 
-#include "Buzz_inc.h"
-#include "externs.h"
-#include "macros.h"
-#include "logging.h"
-#include "options.h"
+#include <Buzz_inc.h>
+#include <externs.h>
+#include <macros.h>
+#include <logging.h>
+#include <options.h>
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

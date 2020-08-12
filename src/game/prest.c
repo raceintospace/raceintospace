@@ -18,8 +18,8 @@
 /** \file prest.c Handles all the prestige related code.
  */
 
-#include "Buzz_inc.h"
-#include "externs.h"
+#include <Buzz_inc.h>
+#include <externs.h>
 
 extern struct mStr Mis;
 extern struct MisEval Mev[60];

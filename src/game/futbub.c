@@ -23,8 +23,8 @@
  * It also draws the splines.
  */
 
-#include  "Buzz_inc.h"
-#include "externs.h"
+#include  <Buzz_inc.h>
+#include <externs.h>
 
 extern int SEG;
 int Bub_Num,Bub_Count;
