@@ -466,7 +466,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
             case 10: // durations
                 Mev[step].Class = Mission_Capsule;
                 Mev[step].ast = -1;
-                Mev[step].asf = CrewEndurance(MA[pad], MANNED[pad]);
+                Mev[step].asf = options.feat_use_endurance
+                                ? CrewEndurance(MA[pad], MANNED[pad]) : 0;
                 break;
 
             default: // remaining

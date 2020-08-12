@@ -151,6 +151,12 @@ static struct {
         "setting\n# where only Capsule and Endurance are shown."
     },   // Depending on difficulty, show recruit's Docking, EVA, LM
     {
+        "use_endurance", &options.feat_use_endurance, "%u", 1,
+        "Add the crew's endurance when making duration tests, and when "
+        "avoiding injury.\n# Set to 0 to disabled (Classic setting)."
+
+    },
+    {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
         "Set to non-zero to disable damaged equipment (will prevent future damage)."
     },
@@ -449,6 +455,7 @@ void ResetToDefaultOptions()
     //No Backup crew required -Leon
     options.feat_no_backup = 1;
     options.feat_show_recruit_stats = 1;
+    options.feat_use_endurance = 1;
     options.feat_random_eq = 0;
     options.feat_eq_new_name = 0;
     options.boosterSafety = 0;
@@ -470,13 +477,14 @@ void ResetToDefaultOptions()
  */
 void ResetToClassicOptions()
 {
+    options.boosterSafety = 2;
     options.feat_shorter_advanced_training = 0;
     options.feat_female_nauts = 0;
     options.feat_compat_nauts = 10;
     options.feat_no_cTraining = 0;
     options.feat_no_backup = 0;
     options.feat_show_recruit_stats = 0;
-    options.boosterSafety = 2;
+    options.feat_use_endurance = 0;
 
     // These may not be implemented, but disable anyways...
     options.feat_random_nauts = 0;
