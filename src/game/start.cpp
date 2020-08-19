@@ -295,375 +295,369 @@ AstroTurn(void)
 
     /* Update All Astronauts */
     for (j = 0; j < NUM_PLAYERS; j++) {
-        if (MAIL == -1 || (MAIL == j)) {
-            for (i = 0; i < Data->P[j].AstroCount; i++) {
-                updateAstronautSkills(j, &Data->P[j].Pool[i]);
-            }
+        for (i = 0; i < Data->P[j].AstroCount; i++) {
+            updateAstronautSkills(j, &Data->P[j].Pool[i]);
         }
     }
 
     for (j = 0; j < NUM_PLAYERS; j++) {  /* Player Analysis */
-        if (MAIL == -1 || (MAIL == j)) {
-            for (i = 0; i < Data->P[j].AstroCount; i++) {
+        for (i = 0; i < Data->P[j].AstroCount; i++) {
 
-                /* Injury Resolution */
-                if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
-                    Data->P[j].Pool[i].InjuryDelay--;
+            /* Injury Resolution */
+            if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
+                Data->P[j].Pool[i].InjuryDelay--;
 
-                    if (Data->P[j].Pool[i].InjuryDelay == 0) {
-                        Data->P[j].Pool[i].Status = AST_ST_ACTIVE;
-                        Data->P[j].Pool[i].Assign = 0;
-                        Data->P[j].Pool[i].Special = 5;
-                    }
+                if (Data->P[j].Pool[i].InjuryDelay == 0) {
+                    Data->P[j].Pool[i].Status = AST_ST_ACTIVE;
+                    Data->P[j].Pool[i].Assign = 0;
+                    Data->P[j].Pool[i].Special = 5;
                 }
-
-                /* Mustering Out - even seasons after 8 */
-                if ((Data->P[j].Pool[i].Active >= 8)
-                    && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
-                    && Data->P[j].Pool[i].RetirementDelay == 0) {
-                    num = brandom(100);
-
-                    if (num > 89) {
-                        /* Guy retires */
-                        if (j == 0) {
-                            Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
-                            Data->P[j].Pool[i].Special = 1;
-                        }
-
-                        if (j == 1) {
-                            Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires in 1 */
-                            Data->P[j].Pool[i].Special = 1;
-                        }
-
-                        Data->P[j].Pool[i].RetirementReason = brandom(6) + 1;  /* Reason for Retirement */
-                    }
-                }
-
-                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RetirementDelay == 0 &&
-                    Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
-                    /* Catastrophic Failure */
-                    num = brandom(100);
-
-                    if (j == 1) {
-                        temp = 89;
-                    } else {
-                        temp = 79;
-                    }
-
-                    if (num > temp && cnt < (ActTotal[j] * .4)) {
-                        /* Guy retires due to being scared */
-                        if (j == 0) {
-                            Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
-                            Data->P[j].Pool[i].Special = 1;
-                        }
-
-                        if (j == 1) {
-                            Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
-                            Data->P[j].Pool[i].Special = 1;
-                        }
-
-                        Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
-
-                        cnt++;
-                    }
-                }
-
-                /* Training Washout */
-                if (Data->P[j].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
-                    && Data->P[j].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
-                    && strncmp(Data->P[j].Pool[i].Name, "ALDRIN", 6) != 0) {
-                    num = brandom(100);
-
-                    if (num > 94) {
-                        num = brandom(100);
-                        int enduranceFactor =
-                            options.feat_use_endurance
-                            ? 10 * MAX(0, Data->P[j].Pool[i].Endurance)
-                            : 0;
-
-                        if (num > (74 - enduranceFactor)) {
-                            Data->P[j].Pool[i].Status = AST_ST_INJURED;
-                            Data->P[j].Pool[i].InjuryDelay = 2;
-                            Data->P[j].Pool[i].Special = 9;
-                        } else {
-                            Data->P[j].Pool[i].Status = AST_ST_RETIRED;
-                            Data->P[j].Pool[i].Special = 10;
-                            Data->P[j].Pool[i].RetirementReason = 12;    /* Washout */
-                        }
-
-                        if (Data->P[j].Pool[i].Cap < 0) {
-                            Data->P[j].Pool[i].Cap = 0;    //modified from Data->P[j].Pool[i].Endurance, as it's probably a bug
-                        }
-
-                        if (Data->P[j].Pool[i].LM < 0) {
-                            Data->P[j].Pool[i].LM = 0;
-                        }
-
-                        if (Data->P[j].Pool[i].EVA < 0) {
-                            Data->P[j].Pool[i].EVA = 0;
-                        }
-
-                        if (Data->P[j].Pool[i].Docking < 0) {
-                            Data->P[j].Pool[i].Docking = 0;
-                        }
-
-                        if (Data->P[j].Pool[i].Endurance < 0) {
-                            Data->P[j].Pool[i].Endurance = 0;
-                        }
-                    }
-                }
-
-                if (Data->P[j].Pool[i].RetirementDelay >= 1
-                    && (Data->P[j].Pool[i].Status > AST_ST_INJURED
-                        || Data->P[j].Pool[i].Status == AST_ST_ACTIVE)) {
-                    /* Actual retirement */
-                    Data->P[j].Pool[i].RetirementDelay--;
-
-                    if (Data->P[j].Pool[i].RetirementDelay == 0) {
-                        Data->P[j].Pool[i].Status = AST_ST_RETIRED;
-                        Data->P[j].Pool[i].Assign = 0;
-                        Data->P[j].Pool[i].Special = 2;
-                    }
-                }
-
-                /* END OF SEASON - Positive */
-                if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
-                    /* Program First */
-                    Data->P[j].Pool[i].Mood += 5;
-
-                    if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_FAILURE) {
-                        Data->P[j].Pool[i].Mood += 20;    /* Self */
-                    }
-                }
-
-                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SUCCESS) {
-                    if (j == 0 && Data->Def.Ast1 == 0) {
-                        Data->P[j].Pool[i].Mood += 20;
-                    } else {
-                        Data->P[j].Pool[i].Mood += 15;
-                    }
-
-                    if (j == 1 && Data->Def.Ast2 == 0) {
-                        Data->P[j].Pool[i].Mood += 20;
-                    } else {
-                        Data->P[j].Pool[i].Mood += 15;
-                    }
-                }
-
-                if (Data->Season == 1) {
-                    /* End of turn what the hell 5% happy */
-                    num = brandom(100);
-
-                    if (num > 94) {
-                        Data->P[j].Pool[i].Mood += 5;
-                    }
-                }
-
-                temp = 0;
-                cnt = Data->P[j].Pool[i].Crew;  /* Crew in */
-                l = Data->P[j].Pool[i].Assign;  /* Prog in */
-
-                for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                    if (Data->P[j].Pool[Data->P[j].Crew[l][cnt][k] -
-                                        1].Hero == 1) {
-                        temp++;
-                    }
-                }
-
-                if (temp > 1) {
-                    Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
-                }
-
-                /* END OF SEASON - Negative */
-
-                /* In Merc for too long */
-                if (Data->P[j].Pool[i].Assign == 1
-                    && Data->P[j].Pool[i].Moved >= 6) {
-                    Data->P[j].Pool[i].Mood -= 4;
-                }
-
-                /* Moved Around */
-                if (Data->P[j].Pool[i].Moved == 0) {
-                    Data->P[j].Pool[i].Mood -= 4;
-                }
-
-                // Mission Stuff
-                if (Data->P[j].Pool[i].Prime == 3
-                    || Data->P[j].Pool[i].Prime == 1) {
-                    Data->P[j].Pool[i].Prime = 0;
-                }
-
-                if (Data->P[j].Pool[i].Prime == 4
-                    || Data->P[j].Pool[i].Prime == 2) {
-                    Data->P[j].Pool[i].Prime--;
-                }
-
-                if (Data->P[j].Pool[i].Status != AST_ST_INJURED) {
-                    if (Data->P[j].Pool[i].Prime == 0) {
-                        Data->P[j].Pool[i].Mood -= 6;
-                    }
-
-                    if (Data->P[j].Pool[i].Prime > 0) {
-                        Data->P[j].Pool[i].Mood -= 3;
-                    }
-
-                    /* scrubbed mission */
-                    if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
-                        Data->P[j].Pool[i].Mood -= 5;
-                    }
-
-                    /* successful mission */
-                } else {
-                    Data->P[j].Pool[i].Mood -= 4;
-                }
-
-                /* catastrophic death */
-                if (Data->P[j].MissionCatastrophicFailureOnTurn & 1) {
-                    Data->P[j].Pool[i].Mood -= 5;
-                }
-
-                /* card death */
-                if (Data->P[j].MissionCatastrophicFailureOnTurn & 2) {
-                    Data->P[j].Pool[i].Mood -= brandom(2) + 1;
-                }
-
-                /* Compatibility */
-                for (k = 0; k < 5; k++) {
-                    Compat[k] = 0;
-                }
-
-                cnt = 0;
-
-                if (Data->P[j].Pool[i].Compat == 1) {
-                    if (Data->P[j].Pool[i].CL == 2) {
-                        Compat[cnt++] = 9;
-                    }
-
-                    Compat[cnt++] = 10;
-                    Compat[cnt++] = 1;
-                    Compat[cnt++] = 2;
-
-                    if (Data->P[j].Pool[i].CR == 2) {
-                        Compat[cnt++] = 3;
-                    }
-                }
-
-                if (Data->P[j].Pool[i].Compat == 2) {
-                    if (Data->P[j].Pool[i].CL == 2) {
-                        Compat[cnt++] = 10;
-                    }
-
-                    Compat[cnt++] = 1;
-                    Compat[cnt++] = 2;
-                    Compat[cnt++] = 3;
-
-                    if (Data->P[j].Pool[i].CR == 2) {
-                        Compat[cnt++] = 4;
-                    }
-                }
-
-                if (Data->P[j].Pool[i].Compat >= 3
-                    && Data->P[j].Pool[i].Compat <= 8) {
-                    if (Data->P[j].Pool[i].CL == 2) {
-                        Compat[cnt++] = Data->P[j].Pool[i].Compat - 2;
-                    }
-
-                    Compat[cnt++] = Data->P[j].Pool[i].Compat - 1;
-                    Compat[cnt++] = Data->P[j].Pool[i].Compat;
-                    Compat[cnt++] = Data->P[j].Pool[i].Compat + 1;
-
-                    if (Data->P[j].Pool[i].CR == 2) {
-                        Compat[cnt++] = Data->P[j].Pool[i].Compat + 2;
-                    }
-                }
-
-                if (Data->P[j].Pool[i].Compat == 9) {
-                    if (Data->P[j].Pool[i].CL == 2) {
-                        Compat[cnt++] = 7;
-                    }
-
-                    Compat[cnt++] = 8;
-                    Compat[cnt++] = 9;
-                    Compat[cnt++] = 10;
-
-                    if (Data->P[j].Pool[i].CR == 2) {
-                        Compat[cnt++] = 1;
-                    }
-                }
-
-                if (Data->P[j].Pool[i].Compat == 10) {
-                    if (Data->P[j].Pool[i].CL == 2) {
-                        Compat[cnt++] = 8;
-                    }
-
-                    Compat[cnt++] = 9;
-                    Compat[cnt++] = 10;
-                    Compat[cnt++] = 1;
-
-                    if (Data->P[j].Pool[i].CR == 2) {
-                        Compat[cnt++] = 2;
-                    }
-                }
-
-                temp = 0;
-                char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
-
-                for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                    char guyCode = Data->P[j].Crew[Data->P[j].Pool[i].Assign][Data->P[j].Pool[i].Crew - 1][k] - 1;
-
-                    if (guyCode > -1 && guyCode != i) {
-                        mates++;
-
-                        for (l = 0; l < cnt; l++) {
-                            if (Compat[l] ==
-                                Data->P[j].Pool[guyCode].Compat
-                               ) {
-                                temp++;
-                            }
-                        }
-
-                        if (group == Data->P[j].Pool[guyCode].Group) {
-                            sameGroup++;
-                        }
-                    }
-                }
-
-                if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
-                    Data->P[j].Pool[i].Mood -= (Data->P[j].Pool[i].Assign == 5 || Data->P[j].Pool[i].Assign == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
-                }
-
-                /* Final record updating */
-
-                if (Data->P[j].Pool[i].Mood > 100) {
-                    Data->P[j].Pool[i].Mood = 100;
-                }
-
-                if (Data->P[j].Pool[i].Mood < 0) {
-                    Data->P[j].Pool[i].Mood = 0;
-                }
-
-                Data->P[j].Pool[i].Moved++;
-
-                /* Retirement stuff */
-
-                if (Data->P[j].Pool[i].Mood < 20
-                    && Data->P[j].Pool[i].RetirementDelay == 0
-                    && Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
+            }
+
+            /* Mustering Out - even seasons after 8 */
+            if ((Data->P[j].Pool[i].Active >= 8)
+                && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
+                && Data->P[j].Pool[i].RetirementDelay == 0) {
+                num = brandom(100);
+
+                if (num > 89) {
+                    /* Guy retires */
                     if (j == 0) {
-                        Data->P[j].Pool[i].RetirementDelay = 2;  /* US Guy Retires in 2 */
+                        Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                         Data->P[j].Pool[i].Special = 1;
                     }
 
                     if (j == 1) {
-                        Data->P[j].Pool[i].Status = AST_ST_RETIRED; /* URS Guy Retires Now */
-                        Data->P[j].Pool[i].Special = 2;
+                        Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires in 1 */
+                        Data->P[j].Pool[i].Special = 1;
                     }
 
-                    Data->P[j].Pool[i].RetirementReason = 13;    /* Reason=Unhappy */
+                    Data->P[j].Pool[i].RetirementReason = brandom(6) + 1;  /* Reason for Retirement */
+                }
+            }
+
+            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RetirementDelay == 0 &&
+                Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
+                /* Catastrophic Failure */
+                num = brandom(100);
+
+                if (j == 1) {
+                    temp = 89;
+                } else {
+                    temp = 79;
                 }
 
-                Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;
+                if (num > temp && cnt < (ActTotal[j] * .4)) {
+                    /* Guy retires due to being scared */
+                    if (j == 0) {
+                        Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
+                        Data->P[j].Pool[i].Special = 1;
+                    }
+
+                    if (j == 1) {
+                        Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
+                        Data->P[j].Pool[i].Special = 1;
+                    }
+
+                    Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
+
+                    cnt++;
+                }
             }
+
+            /* Training Washout */
+            if (Data->P[j].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
+                && Data->P[j].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
+                && strncmp(Data->P[j].Pool[i].Name, "ALDRIN", 6) != 0) {
+                num = brandom(100);
+
+                if (num > 94) {
+                    num = brandom(100);
+                    int enduranceFactor =
+                        options.feat_use_endurance
+                        ? 10 * MAX(0, Data->P[j].Pool[i].Endurance)
+                        : 0;
+
+                    if (num > (74 - enduranceFactor)) {
+                        Data->P[j].Pool[i].Status = AST_ST_INJURED;
+                        Data->P[j].Pool[i].InjuryDelay = 2;
+                        Data->P[j].Pool[i].Special = 9;
+                    } else {
+                        Data->P[j].Pool[i].Status = AST_ST_RETIRED;
+                        Data->P[j].Pool[i].Special = 10;
+                        Data->P[j].Pool[i].RetirementReason = 12;    /* Washout */
+                    }
+
+                    if (Data->P[j].Pool[i].Cap < 0) {
+                        Data->P[j].Pool[i].Cap = 0;    //modified from Data->P[j].Pool[i].Endurance, as it's probably a bug
+                    }
+
+                    if (Data->P[j].Pool[i].LM < 0) {
+                        Data->P[j].Pool[i].LM = 0;
+                    }
+
+                    if (Data->P[j].Pool[i].EVA < 0) {
+                        Data->P[j].Pool[i].EVA = 0;
+                    }
+
+                    if (Data->P[j].Pool[i].Docking < 0) {
+                        Data->P[j].Pool[i].Docking = 0;
+                    }
+
+                    if (Data->P[j].Pool[i].Endurance < 0) {
+                        Data->P[j].Pool[i].Endurance = 0;
+                    }
+                }
+            }
+
+            if (Data->P[j].Pool[i].RetirementDelay >= 1
+                && (Data->P[j].Pool[i].Status > AST_ST_INJURED
+                    || Data->P[j].Pool[i].Status == AST_ST_ACTIVE)) {
+                /* Actual retirement */
+                Data->P[j].Pool[i].RetirementDelay--;
+
+                if (Data->P[j].Pool[i].RetirementDelay == 0) {
+                    Data->P[j].Pool[i].Status = AST_ST_RETIRED;
+                    Data->P[j].Pool[i].Assign = 0;
+                    Data->P[j].Pool[i].Special = 2;
+                }
+            }
+
+            /* END OF SEASON - Positive */
+            if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
+                /* Program First */
+                Data->P[j].Pool[i].Mood += 5;
+
+                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_FAILURE) {
+                    Data->P[j].Pool[i].Mood += 20;    /* Self */
+                }
+            }
+
+            if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SUCCESS) {
+                if (j == 0 && Data->Def.Ast1 == 0) {
+                    Data->P[j].Pool[i].Mood += 20;
+                } else {
+                    Data->P[j].Pool[i].Mood += 15;
+                }
+
+                if (j == 1 && Data->Def.Ast2 == 0) {
+                    Data->P[j].Pool[i].Mood += 20;
+                } else {
+                    Data->P[j].Pool[i].Mood += 15;
+                }
+            }
+
+            if (Data->Season == 1) {
+                /* End of turn what the hell 5% happy */
+                num = brandom(100);
+
+                if (num > 94) {
+                    Data->P[j].Pool[i].Mood += 5;
+                }
+            }
+
+            temp = 0;
+            cnt = Data->P[j].Pool[i].Crew;  /* Crew in */
+            l = Data->P[j].Pool[i].Assign;  /* Prog in */
+
+            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
+                if (Data->P[j].Pool[Data->P[j].Crew[l][cnt][k] -
+                                    1].Hero == 1) {
+                    temp++;
+                }
+            }
+
+            if (temp > 1) {
+                Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+            }
+
+            /* END OF SEASON - Negative */
+
+            /* In Merc for too long */
+            if (Data->P[j].Pool[i].Assign == 1
+                && Data->P[j].Pool[i].Moved >= 6) {
+                Data->P[j].Pool[i].Mood -= 4;
+            }
+
+            /* Moved Around */
+            if (Data->P[j].Pool[i].Moved == 0) {
+                Data->P[j].Pool[i].Mood -= 4;
+            }
+
+            // Mission Stuff
+            if (Data->P[j].Pool[i].Prime == 3
+                || Data->P[j].Pool[i].Prime == 1) {
+                Data->P[j].Pool[i].Prime = 0;
+            }
+
+            if (Data->P[j].Pool[i].Prime == 4
+                || Data->P[j].Pool[i].Prime == 2) {
+                Data->P[j].Pool[i].Prime--;
+            }
+
+            if (Data->P[j].Pool[i].Status != AST_ST_INJURED) {
+                if (Data->P[j].Pool[i].Prime == 0) {
+                    Data->P[j].Pool[i].Mood -= 6;
+                }
+
+                if (Data->P[j].Pool[i].Prime > 0) {
+                    Data->P[j].Pool[i].Mood -= 3;
+                }
+
+                /* scrubbed mission */
+                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
+                    Data->P[j].Pool[i].Mood -= 5;
+                }
+
+                /* successful mission */
+            } else {
+                Data->P[j].Pool[i].Mood -= 4;
+            }
+
+            /* catastrophic death */
+            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1) {
+                Data->P[j].Pool[i].Mood -= 5;
+            }
+
+            /* card death */
+            if (Data->P[j].MissionCatastrophicFailureOnTurn & 2) {
+                Data->P[j].Pool[i].Mood -= brandom(2) + 1;
+            }
+
+            /* Compatibility */
+            for (k = 0; k < 5; k++) {
+                Compat[k] = 0;
+            }
+
+            cnt = 0;
+
+            if (Data->P[j].Pool[i].Compat == 1) {
+                if (Data->P[j].Pool[i].CL == 2) {
+                    Compat[cnt++] = 9;
+                }
+
+                Compat[cnt++] = 10;
+                Compat[cnt++] = 1;
+                Compat[cnt++] = 2;
+
+                if (Data->P[j].Pool[i].CR == 2) {
+                    Compat[cnt++] = 3;
+                }
+            }
+
+            if (Data->P[j].Pool[i].Compat == 2) {
+                if (Data->P[j].Pool[i].CL == 2) {
+                    Compat[cnt++] = 10;
+                }
+
+                Compat[cnt++] = 1;
+                Compat[cnt++] = 2;
+                Compat[cnt++] = 3;
+
+                if (Data->P[j].Pool[i].CR == 2) {
+                    Compat[cnt++] = 4;
+                }
+            }
+
+            if (Data->P[j].Pool[i].Compat >= 3
+                && Data->P[j].Pool[i].Compat <= 8) {
+                if (Data->P[j].Pool[i].CL == 2) {
+                    Compat[cnt++] = Data->P[j].Pool[i].Compat - 2;
+                }
+
+                Compat[cnt++] = Data->P[j].Pool[i].Compat - 1;
+                Compat[cnt++] = Data->P[j].Pool[i].Compat;
+                Compat[cnt++] = Data->P[j].Pool[i].Compat + 1;
+
+                if (Data->P[j].Pool[i].CR == 2) {
+                    Compat[cnt++] = Data->P[j].Pool[i].Compat + 2;
+                }
+            }
+
+            if (Data->P[j].Pool[i].Compat == 9) {
+                if (Data->P[j].Pool[i].CL == 2) {
+                    Compat[cnt++] = 7;
+                }
+
+                Compat[cnt++] = 8;
+                Compat[cnt++] = 9;
+                Compat[cnt++] = 10;
+
+                if (Data->P[j].Pool[i].CR == 2) {
+                    Compat[cnt++] = 1;
+                }
+            }
+
+            if (Data->P[j].Pool[i].Compat == 10) {
+                if (Data->P[j].Pool[i].CL == 2) {
+                    Compat[cnt++] = 8;
+                }
+
+                Compat[cnt++] = 9;
+                Compat[cnt++] = 10;
+                Compat[cnt++] = 1;
+
+                if (Data->P[j].Pool[i].CR == 2) {
+                    Compat[cnt++] = 2;
+                }
+            }
+
+            temp = 0;
+            char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
+
+            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
+                char guyCode = Data->P[j].Crew[Data->P[j].Pool[i].Assign][Data->P[j].Pool[i].Crew - 1][k] - 1;
+
+                if (guyCode > -1 && guyCode != i) {
+                    mates++;
+
+                    for (l = 0; l < cnt; l++) {
+                        if (Compat[l] == Data->P[j].Pool[guyCode].Compat) {
+                            temp++;
+                        }
+                    }
+
+                    if (group == Data->P[j].Pool[guyCode].Group) {
+                        sameGroup++;
+                    }
+                }
+            }
+
+            if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
+                Data->P[j].Pool[i].Mood -= (Data->P[j].Pool[i].Assign == 5 || Data->P[j].Pool[i].Assign == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
+            }
+
+            /* Final record updating */
+
+            if (Data->P[j].Pool[i].Mood > 100) {
+                Data->P[j].Pool[i].Mood = 100;
+            }
+
+            if (Data->P[j].Pool[i].Mood < 0) {
+                Data->P[j].Pool[i].Mood = 0;
+            }
+
+            Data->P[j].Pool[i].Moved++;
+
+            /* Retirement stuff */
+
+            if (Data->P[j].Pool[i].Mood < 20
+                && Data->P[j].Pool[i].RetirementDelay == 0
+                && Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
+                if (j == 0) {
+                    Data->P[j].Pool[i].RetirementDelay = 2;  /* US Guy Retires in 2 */
+                    Data->P[j].Pool[i].Special = 1;
+                }
+
+                if (j == 1) {
+                    Data->P[j].Pool[i].Status = AST_ST_RETIRED; /* URS Guy Retires Now */
+                    Data->P[j].Pool[i].Special = 2;
+                }
+
+                Data->P[j].Pool[i].RetirementReason = 13;    /* Reason=Unhappy */
+            }
+
+            Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;
         }
 
         Data->P[j].MissionCatastrophicFailureOnTurn = 0;
@@ -671,63 +665,52 @@ AstroTurn(void)
 
     //      break all groups with dead, injured or retired folks.
     for (j = 0; j < NUM_PLAYERS; j++) {  // for each player
-        if (MAIL == -1 || (MAIL == j)) {
-            for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
-                for (l = 0; l < ASTRONAUT_CREW_MAX; l++) {
-                    temp = 0;
+        for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
+            for (l = 0; l < ASTRONAUT_CREW_MAX; l++) {
+                temp = 0;
 
-                    if (Data->P[j].CrewCount[k][l] > 0) {
+                if (Data->P[j].CrewCount[k][l] > 0) {
+                    for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
+                        if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Status == AST_ST_DEAD
+                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                               1].Status == AST_ST_RETIRED
+                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                               1].Status == AST_ST_INJURED) {
+                            temp++;
+                        }
+                    }          /* for i */
+
+                    if (temp > 0) {
                         for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
-                            if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Status == AST_ST_DEAD
-                                || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                   1].Status == AST_ST_RETIRED
-                                || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                   1].Status == AST_ST_INJURED) {
-                                temp++;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].oldAssign = Data->P[j].Pool[Data->P[j]. Crew[k][l][i] - 1].Assign;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Assign = 0;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Prime = 0;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Crew = 0;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Task = 0;
+                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
+                                            1].Moved = 0;
+
+                            if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special == 0) {
+                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special = 6;
                             }
-                        }          /* for i */
 
-                        if (temp > 0) {
-                            for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].oldAssign =
-                                                    Data->P[j].Pool[Data->P[j].
-                                                                    Crew[k][l][i] - 1].Assign;
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Assign = 0;
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Prime = 0;
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Crew = 0;
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Task = 0;
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                                1].Moved = 0;
+                            Data->P[j].Crew[k][l][i] = 0;
+                        }      /* for i */
 
-                                if (Data->P[j].Pool[Data->P[j].
-                                                    Crew[k][l][i] - 1].Special == 0)
-                                    Data->P[j].Pool[Data->P[j].
-                                                    Crew[k][l][i] - 1].Special = 6;
+                        Data->P[j].CrewCount[k][l] = 0;
+                    }          /* it temp */
+                }              /* if Gcnt */
+            }                  /* for l */
+        }                      /* for k */
+    }                          /* for j */
 
-                                Data->P[j].Crew[k][l][i] = 0;
-                            }      /* for i */
-
-                            Data->P[j].CrewCount[k][l] = 0;
-                        }          /* it temp */
-                    }              /* if Gcnt */
-                }                  /* for l */
-            }                      /* for k */
-        }
-    }                              /* for j */
-
-    if (MAIL == -1 || MAIL == 0) {
-        UpdateHardTurn(0);
-    }
-
-    if (MAIL == -1 || MAIL == 1) {
-        UpdateHardTurn(1);
-    }
+    UpdateHardTurn(0);
+    UpdateHardTurn(1);
 
     return;
 }
