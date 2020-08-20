@@ -62,6 +62,7 @@ set(game_sources
   news_suq.cpp
   options.cpp
   pace.cpp
+  pbm.cpp
   place.cpp
   port.cpp
   prefs.cpp

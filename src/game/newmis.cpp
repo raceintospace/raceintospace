@@ -29,6 +29,7 @@
 #include "draw.h"
 #include "hardware.h"
 #include "ioexception.h"
+#include "mis_c.h"
 #include "place.h"
 #include "port.h"
 #include "state_utils.h"
@@ -78,6 +79,18 @@ cmp_order(const void *p1, const void *p2)
         if (o1->budget > o2->budget) {
             return -1;
         } else if (o1->budget == o2->budget) {
+
+            // Never randomly reshuffle missions by the same player as
+            // this would break mail games; order by launch pad in
+            // this case.
+            if (o1->plr == o2->plr) {
+                if (o1->loc < o2->loc) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
             char whoFirst = brandom(2);
 
             if (whoFirst == 1) {
