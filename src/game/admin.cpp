@@ -487,8 +487,8 @@ void FileAccess(char mode)
                 rewind(fin);
                 fread(SaveHdr, 1, sizeof(SaveFileHdr), fin);
 
-                // Determine Endian Swap
-                if (SaveHdr->dataSize != sizeof(struct Players)) {
+                // Determine Endian Swap, 31663 is for old save games
+                if (SaveHdr->dataSize != sizeof(struct Players) && SaveHdr->dataSize != 31663) {
                     endianSwap = 1;
                 }
 
@@ -502,7 +502,7 @@ void FileAccess(char mode)
 
                 fread(load_buffer, 1, readLen, fin);
 
-                if (SaveHdr->dataSize == sizeof(struct Players)) {
+                if (SaveHdr->dataSize == sizeof(struct Players) || SaveHdr->dataSize == 31663) {
                     RLED((char *) load_buffer, (char *)Data, SaveHdr->compSize);
                     free(load_buffer);
 
@@ -581,6 +581,7 @@ void FileAccess(char mode)
                         plr[1] = Data->Def.Plr2;
                         Data->plr[0] = Data->Def.Plr1;
                         Data->plr[1] = Data->Def.Plr2;
+                        MAIL = -1;
 
                         if (plr[0] == 2 || plr[0] == 3) {
                             AI[0] = 1;
