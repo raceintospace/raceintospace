@@ -281,7 +281,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 void
 AstroTurn(void)
 {
-    int i, j, k, l, num, temp, Compat[5];
+    int i, j, k, l, num, temp;
     int ActTotal[2] = {0, 0};  /* Count of active astronauts per player */
     int cnt = 0;
 
@@ -526,83 +526,6 @@ AstroTurn(void)
             }
 
             /* Compatibility */
-            for (k = 0; k < 5; k++) {
-                Compat[k] = 0;
-            }
-
-            cnt = 0;
-
-            if (Data->P[j].Pool[i].Compat == 1) {
-                if (Data->P[j].Pool[i].CL == 2) {
-                    Compat[cnt++] = 9;
-                }
-
-                Compat[cnt++] = 10;
-                Compat[cnt++] = 1;
-                Compat[cnt++] = 2;
-
-                if (Data->P[j].Pool[i].CR == 2) {
-                    Compat[cnt++] = 3;
-                }
-            }
-
-            if (Data->P[j].Pool[i].Compat == 2) {
-                if (Data->P[j].Pool[i].CL == 2) {
-                    Compat[cnt++] = 10;
-                }
-
-                Compat[cnt++] = 1;
-                Compat[cnt++] = 2;
-                Compat[cnt++] = 3;
-
-                if (Data->P[j].Pool[i].CR == 2) {
-                    Compat[cnt++] = 4;
-                }
-            }
-
-            if (Data->P[j].Pool[i].Compat >= 3
-                && Data->P[j].Pool[i].Compat <= 8) {
-                if (Data->P[j].Pool[i].CL == 2) {
-                    Compat[cnt++] = Data->P[j].Pool[i].Compat - 2;
-                }
-
-                Compat[cnt++] = Data->P[j].Pool[i].Compat - 1;
-                Compat[cnt++] = Data->P[j].Pool[i].Compat;
-                Compat[cnt++] = Data->P[j].Pool[i].Compat + 1;
-
-                if (Data->P[j].Pool[i].CR == 2) {
-                    Compat[cnt++] = Data->P[j].Pool[i].Compat + 2;
-                }
-            }
-
-            if (Data->P[j].Pool[i].Compat == 9) {
-                if (Data->P[j].Pool[i].CL == 2) {
-                    Compat[cnt++] = 7;
-                }
-
-                Compat[cnt++] = 8;
-                Compat[cnt++] = 9;
-                Compat[cnt++] = 10;
-
-                if (Data->P[j].Pool[i].CR == 2) {
-                    Compat[cnt++] = 1;
-                }
-            }
-
-            if (Data->P[j].Pool[i].Compat == 10) {
-                if (Data->P[j].Pool[i].CL == 2) {
-                    Compat[cnt++] = 8;
-                }
-
-                Compat[cnt++] = 9;
-                Compat[cnt++] = 10;
-                Compat[cnt++] = 1;
-
-                if (Data->P[j].Pool[i].CR == 2) {
-                    Compat[cnt++] = 2;
-                }
-            }
-
             temp = 0;
             char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
 
@@ -612,10 +535,9 @@ AstroTurn(void)
                 if (guyCode > -1 && guyCode != i) {
                     mates++;
 
-                    for (l = 0; l < cnt; l++) {
-                        if (Compat[l] == Data->P[j].Pool[guyCode].Compat) {
-                            temp++;
-                        }
+                    if (Compatible(Data->P[j].Pool[i],
+                                   Data->P[j].Pool[guyCode])) {
+                        temp++;
                     }
 
                     if (group == Data->P[j].Pool[guyCode].Group) {
