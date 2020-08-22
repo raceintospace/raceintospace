@@ -28,6 +28,7 @@
 #include <assert.h>
 
 #include "start.h"
+#include "astros.h"
 #include "pace.h"
 #include "Buzz_inc.h"
 #include "options.h"
@@ -663,50 +664,9 @@ AstroTurn(void)
         Data->P[j].MissionCatastrophicFailureOnTurn = 0;
     }
 
-    //      break all groups with dead, injured or retired folks.
+    // Break all groups with dead, injured or retired folks.
     for (j = 0; j < NUM_PLAYERS; j++) {  // for each player
-        for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
-            for (l = 0; l < ASTRONAUT_CREW_MAX; l++) {
-                temp = 0;
-
-                if (Data->P[j].CrewCount[k][l] > 0) {
-                    for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
-                        if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Status == AST_ST_DEAD
-                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                               1].Status == AST_ST_RETIRED
-                            || Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                               1].Status == AST_ST_INJURED) {
-                            temp++;
-                        }
-                    }          /* for i */
-
-                    if (temp > 0) {
-                        for (i = 0; i < Data->P[j].CrewCount[k][l]; i++) {
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].oldAssign = Data->P[j].Pool[Data->P[j]. Crew[k][l][i] - 1].Assign;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Assign = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Prime = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Crew = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Task = 0;
-                            Data->P[j].Pool[Data->P[j].Crew[k][l][i] -
-                                            1].Moved = 0;
-
-                            if (Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special == 0) {
-                                Data->P[j].Pool[Data->P[j].Crew[k][l][i] - 1].Special = 6;
-                            }
-
-                            Data->P[j].Crew[k][l][i] = 0;
-                        }      /* for i */
-
-                        Data->P[j].CrewCount[k][l] = 0;
-                    }          /* it temp */
-                }              /* if Gcnt */
-            }                  /* for l */
-        }                      /* for k */
+        CheckFlightCrews(j);
     }                          /* for j */
 
     UpdateHardTurn(0);
