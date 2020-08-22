@@ -23,6 +23,7 @@
 #include <algorithm>
 
 #include "Buzz_inc.h"
+#include "astros.h"
 #include "game_main.h"
 #include "mission_util.h"
 #include "news_sup.h"
@@ -32,8 +33,6 @@
 #include "news.h"
 #include "pace.h"
 #include "endianness.h"
-
-void Replace_Snaut(char plr);
 
 
 /**
@@ -73,49 +72,6 @@ char CheckCrewOK(char plr, char pad)
     return RT_value;
 }
 
-
-void Replace_Snaut(char plr)
-{
-    int i, j, k, temp;
-
-    for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
-        for (j = 0; j < ASTRONAUT_CREW_MAX; j++) {
-            temp = 0;
-
-            if (Data->P[plr].CrewCount[k][j] > 0) {
-                for (i = 0; i < Data->P[plr].CrewCount[k][j] + 1; i++) {
-                    if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_DEAD ||
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_RETIRED ||
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Status == AST_ST_INJURED) {
-                        temp++;
-                    }
-                }
-
-                if (temp > 0) {
-                    for (i = 0; i < Data->P[plr].CrewCount[k][j] + 1; i++) {
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].oldAssign =
-                            Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign;
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Assign = 0;
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Crew = 0;
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Prime = 0;
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Task = 0;
-                        Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Moved = 0;
-
-                        if (Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Special == 0) {
-                            Data->P[plr].Pool[Data->P[plr].Crew[k][j][i] - 1].Special = 6;
-                        }
-
-                        Data->P[plr].Crew[k][j][i] = 0;
-                    }
-
-                    Data->P[plr].CrewCount[k][j] = 0;
-                }
-            }
-        }
-    }
-
-    return;
-}
 
 char REvent(char plr)
 {
@@ -718,7 +674,7 @@ char REvent(char plr)
         }
 
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            Replace_Snaut(plr);
+            CheckFlightCrews(plr);
         }
 
         break;
@@ -768,7 +724,7 @@ char REvent(char plr)
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
         Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
         xMODE |= xMODE_SPOT_ANIM;  //trigger spot anim
-        Replace_Snaut(plr);
+        CheckFlightCrews(plr);
 
         //cancel manned missions
         for (size_t pad = 0; pad < MAX_LAUNCHPADS; pad++) {
@@ -801,7 +757,7 @@ char REvent(char plr)
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_DEAD;
         Data->P[plr].MissionCatastrophicFailureOnTurn = 2;
-        Replace_Snaut(plr);
+        CheckFlightCrews(plr);
         break;
 
     case 60:
@@ -828,7 +784,7 @@ char REvent(char plr)
         Data->P[plr].Pool[i].Status = AST_ST_INJURED;
         Data->P[plr].Pool[i].InjuryDelay = 2;
         Data->P[plr].Pool[i].Special = 4;
-        Replace_Snaut(plr);
+        CheckFlightCrews(plr);
         break;
 
     case 56:  /* hardware 50% less this season */
@@ -984,7 +940,7 @@ char REvent(char plr)
         }
 
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
-            Replace_Snaut(plr);
+            CheckFlightCrews(plr);
         }
 
         break;

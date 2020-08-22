@@ -24,6 +24,7 @@ set(game_sources
   ast2.cpp
   ast3.cpp
   ast4.cpp
+  astros.cpp
   budget.cpp
   crash.cpp
   crew.cpp

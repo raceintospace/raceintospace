@@ -33,6 +33,7 @@
 #include "Buzz_inc.h"
 #include "ast0.h"
 #include "ast4.h"
+#include "astros.h"
 #include "draw.h"
 #include "game_main.h"
 #include "hardware.h"
@@ -67,96 +68,7 @@ void FltsTxt(char nw, char col);
 void AstLevel(char plr, char prog, char crew, char ast)
 {
     int i, k, man, over = 0, temp, val;
-    char Compat[5], cnt;
-    i = man = Guy(plr, prog, crew, ast);
-
-    cnt = 0;
-
-    for (k = 0; k < 5; k++) {
-        Compat[k] = 0;
-    }
-
-    switch (Data->P[plr].Pool[i].Compat) {
-    case 1:
-        if (Data->P[plr].Pool[i].CL == 2) {
-            Compat[cnt++] = 9;
-        }
-
-        Compat[cnt++] = 10;
-        Compat[cnt++] = 1;
-        Compat[cnt++] = 2;
-
-        if (Data->P[plr].Pool[i].CR == 2) {
-            Compat[cnt++] = 3;
-        }
-
-        break;
-
-    case 2:
-        if (Data->P[plr].Pool[i].CL == 2) {
-            Compat[cnt++] = 10;
-        }
-
-        Compat[cnt++] = 1;
-        Compat[cnt++] = 2;
-        Compat[cnt++] = 3;
-
-        if (Data->P[plr].Pool[i].CR == 2) {
-            Compat[cnt++] = 4;
-        }
-
-        break;
-
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-        if (Data->P[plr].Pool[i].CL == 2) {
-            Compat[cnt++] = Data->P[plr].Pool[i].Compat - 2;
-        }
-
-        Compat[cnt++] = Data->P[plr].Pool[i].Compat - 1;
-        Compat[cnt++] = Data->P[plr].Pool[i].Compat;
-        Compat[cnt++] = Data->P[plr].Pool[i].Compat + 1;
-
-        if (Data->P[plr].Pool[i].CR == 2) {
-            Compat[cnt++] = Data->P[plr].Pool[i].Compat + 2;
-        }
-
-        break;
-
-    case 9:
-        if (Data->P[plr].Pool[i].CL == 2) {
-            Compat[cnt++] = 7;
-        }
-
-        Compat[cnt++] = 8;
-        Compat[cnt++] = 9;
-        Compat[cnt++] = 10;
-
-        if (Data->P[plr].Pool[i].CR == 2) {
-            Compat[cnt++] = 1;
-        }
-
-        break;
-
-    case 10:
-        if (Data->P[plr].Pool[i].CL == 2) {
-            Compat[cnt++] = 8;
-        }
-
-        Compat[cnt++] = 9;
-        Compat[cnt++] = 10;
-        Compat[cnt++] = 1;
-
-        if (Data->P[plr].Pool[i].CR == 2) {
-            Compat[cnt++] = 2;
-        }
-
-        break;
-    }
+    man = Guy(plr, prog, crew, ast);
 
     display::LegacySurface local(143, 74);
     local.copyFrom(display::graphics.legacyScreen(), 94, 38, 236, 111);
@@ -172,10 +84,9 @@ void AstLevel(char plr, char prog, char crew, char ast)
         if (man != Guy(plr, prog, crew, i)) {
             temp = 0;
 
-            for (k = 0; k < cnt; k++) {
-                if (Compat[k] == Data->P[plr].Pool[Guy(plr, prog, crew, i)].Compat) {
-                    temp++;
-                }
+            if (Compatible(Data->P[plr].Pool[man],
+                           Data->P[plr].Pool[Guy(plr, prog, crew, i)])) {
+                temp++;
             }
 
             if ((plr == 1 && Data->Def.Ast2 == 0) || (plr == 0 && Data->Def.Ast1 == 0)) {
