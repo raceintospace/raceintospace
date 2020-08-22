@@ -80,97 +80,20 @@ void CheckFlightCrews(int player)
  * Astronaut compatability is not transitive. An astronaut may dislike
  * a crewmate who is fine with them.
  *
- * TODO: This is... a needlessly complicated method for checking
- * compatibility.  -- rnyoakum
+ * Astronauts / Cosmonauts have a compatibility score of 1-10. They
+ * feel compatible with others who have a score within
+ * [compat - cl, compat + cr], wrapping.
  *
- * \param ast
- * \param peer
+ * \param ast  the astronaut / cosmonaut whose feelings these are.
+ * \param peer  their companion astronaut / cosmonaut.
  * \return  true if ast works well with peer, false otherwise.
  */
 bool Compatible(const struct Astros &ast, const struct Astros &peer)
 {
-    int cnt = 0, Compat[5];
+    int low = ast.Compat - ast.CL;
+    int high = ast.Compat + ast.CR;
 
-    /* Compatibility */
-    for (int k = 0; k < 5; k++) {
-        Compat[k] = 0;
-    }
-
-    if (ast.Compat == 1) {
-        if (ast.CL == 2) {
-            Compat[cnt++] = 9;
-        }
-
-        Compat[cnt++] = 10;
-        Compat[cnt++] = 1;
-        Compat[cnt++] = 2;
-
-        if (ast.CR == 2) {
-            Compat[cnt++] = 3;
-        }
-    }
-
-    if (ast.Compat == 2) {
-        if (ast.CL == 2) {
-            Compat[cnt++] = 10;
-        }
-
-        Compat[cnt++] = 1;
-        Compat[cnt++] = 2;
-        Compat[cnt++] = 3;
-
-        if (ast.CR == 2) {
-            Compat[cnt++] = 4;
-        }
-    }
-
-    if (ast.Compat >= 3 && ast.Compat <= 8) {
-        if (ast.CL == 2) {
-            Compat[cnt++] = ast.Compat - 2;
-        }
-
-        Compat[cnt++] = ast.Compat - 1;
-        Compat[cnt++] = ast.Compat;
-        Compat[cnt++] = ast.Compat + 1;
-
-        if (ast.CR == 2) {
-            Compat[cnt++] = ast.Compat + 2;
-        }
-    }
-
-    if (ast.Compat == 9) {
-        if (ast.CL == 2) {
-            Compat[cnt++] = 7;
-        }
-
-        Compat[cnt++] = 8;
-        Compat[cnt++] = 9;
-        Compat[cnt++] = 10;
-
-        if (ast.CR == 2) {
-            Compat[cnt++] = 1;
-        }
-    }
-
-    if (ast.Compat == 10) {
-        if (ast.CL == 2) {
-            Compat[cnt++] = 8;
-        }
-
-        Compat[cnt++] = 9;
-        Compat[cnt++] = 10;
-        Compat[cnt++] = 1;
-
-        if (ast.CR == 2) {
-            Compat[cnt++] = 2;
-        }
-    }
-
-    for (int l = 0; l < cnt; l++) {
-        if (Compat[l] == peer.Compat) {
-            return true;
-        }
-    }
-
-    return false;
+    return ((peer.Compat >= low && peer.Compat <= high) ||
+            (peer.Compat + 10 >= low && peer.Compat + 10 <= high) ||
+            (peer.Compat - 10 >= low && peer.Compat - 10 <= high));
 }
