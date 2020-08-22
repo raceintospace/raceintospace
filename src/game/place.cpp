@@ -63,8 +63,8 @@ int MainMenuChoice()
         const char *hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9, "N" },
-        { "PLAY BY MAIL", 36, "P"},
-        { "OLD GAME", 63, "O" },
+        { "PLAY BY MAIL", 63, "P"},
+        { "OLD GAME", 36, "O" },
         { "CREDITS", 90, "C" },
         { "EXIT", 117, "EXQ" }
     };
