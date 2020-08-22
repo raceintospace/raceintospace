@@ -16,7 +16,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// This file shows the Mission Review (the summary you see at the end of a mission).
+// This file handles the main screen, and shows the Mission Review (the summary you see at the end of a mission).
 
 #include <assert.h>
 #include <boost/format.hpp>
@@ -63,7 +63,7 @@ int MainMenuChoice()
         const char *hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9, "N" },
-        { "MAIL GAME", 36, "M"},
+        { "PLAY BY MAIL", 36, "P"},
         { "OLD GAME", 63, "O" },
         { "CREDITS", 90, "C" },
         { "EXIT", 117, "EXQ" }
