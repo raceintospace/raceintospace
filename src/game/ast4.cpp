@@ -1281,7 +1281,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
  */
 void AstStats(char plr, char man, char num)
 {
-    int y;
+    int y,yy;
     display::graphics.setForegroundColor(1);
     y = 91 + man * 9;
 
@@ -1290,7 +1290,9 @@ void AstStats(char plr, char man, char num)
     }
 
     draw_string(119, y, "CA:");
-    draw_number(0, 0, Data->P[plr].Pool[num].Cap);
+    yy = 0;
+    if (Data->P[plr].Pool[num].Cap == 1) { yy = 134; }
+    draw_number(yy, y, Data->P[plr].Pool[num].Cap);
     display::graphics.setForegroundColor(1);
 
     if (man == 1 && program > 1) {
@@ -1298,7 +1300,9 @@ void AstStats(char plr, char man, char num)
     }
 
     draw_string(143, y, "LM:");
-    draw_number(0, 0, Data->P[plr].Pool[num].LM);
+    yy = 0;
+    if (Data->P[plr].Pool[num].LM == 1) { yy = 158; }
+    draw_number(yy, y, Data->P[plr].Pool[num].LM);
     display::graphics.setForegroundColor(1);
 
     if (program == 1 || ((program == 2 || program == 3 || program == 4) && man == 1) || (program == 5 && man > 1)) {
@@ -1306,7 +1310,9 @@ void AstStats(char plr, char man, char num)
     }
 
     draw_string(167, y, "EV:");
-    draw_number(0, 0, Data->P[plr].Pool[num].EVA);
+    yy = 0;
+    if (Data->P[plr].Pool[num].EVA == 1) { yy = 182; }
+    draw_number(yy, y, Data->P[plr].Pool[num].EVA);
     display::graphics.setForegroundColor(1);
 
     if ((program == 2 && man == 0) || ((program == 3 || program == 4) && man == 2)) {
@@ -1314,10 +1320,15 @@ void AstStats(char plr, char man, char num)
     }
 
     draw_string(192, y, "DO:");
-    draw_number(0, 0, Data->P[plr].Pool[num].Docking);
+    yy = 0;
+    if (Data->P[plr].Pool[num].Docking == 1) { yy = 207; }
+    draw_number(yy, y, Data->P[plr].Pool[num].Docking);
+
     display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
     draw_string(217, y, "EN:");
-    draw_number(0, 0, Data->P[plr].Pool[num].Endurance);
+    yy = 0;
+    if (Data->P[plr].Pool[num].Endurance == 1) { yy = 232; }
+    draw_number(yy, y, Data->P[plr].Pool[num].Endurance);
     // Now tell if this 'naut is assigned to a crew
     fill_rectangle(4, 40, 53, 66, 3);
 
