@@ -302,6 +302,8 @@ AstroTurn(void)
     }
 
     for (j = 0; j < NUM_PLAYERS; j++) {  /* Player Analysis */
+        int retirements = 0;
+
         for (i = 0; i < Data->P[j].AstroCount; i++) {
 
             /* Injury Resolution */
@@ -348,13 +350,15 @@ AstroTurn(void)
                     temp = 79;
                 }
 
-                if (num > temp && cnt < (ActTotal[j] * .4)) {
+                if (num > temp && retirements < (ActTotal[j] * .4)) {
                     /* Guy retires due to being scared */
                     if (j == 0) {
                         Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                         Data->P[j].Pool[i].Special = 1;
                     }
 
+                    // TODO: Either the comment is wrong or the delay
+                    // is wrong -- rnyoakum
                     if (j == 1) {
                         Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
                         Data->P[j].Pool[i].Special = 1;
@@ -362,7 +366,7 @@ AstroTurn(void)
 
                     Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
 
-                    cnt++;
+                    retirements++;
                 }
             }
 
