@@ -1365,7 +1365,12 @@ int FutureCheck(char plr, char type)
 
         if (p[i] > 1) {
             display::graphics.setForegroundColor(5);
-            draw_string(111, 50 + i * 51, "THIS FACILITY IS DAMAGED.");
+            draw_string(111, 50 + i * 51, "THIS FACILITY IS ");
+            if (p[i] == 20) {
+                draw_string(0, 0, "DESTROYED.");
+            } else {
+                draw_string(0, 0, "DAMAGED.");
+            }
             draw_string(111, 57 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
