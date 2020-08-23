@@ -141,7 +141,7 @@ void PadDraw(char plr, char pad)
     if (Data->P[plr].LaunchFacility[pad] == 1) {
         draw_string(0, 0, "OPERATIONAL");
     } else {
-        draw_string(0, 0, "DESTROYED");
+        draw_string(0, 0, "DAMAGED");
     }
 
     display::graphics.setForegroundColor(1);
