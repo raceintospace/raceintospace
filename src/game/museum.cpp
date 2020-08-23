@@ -1036,9 +1036,9 @@ void ShowAstrosHist(char plr)
     ORBox(0, 0, 319, 22, 3);  // Draw Inbox around top
 
     if (plr == 0) {
-        draw_heading(43, 4, "ASTRONAUT HISTORY", 0, -1);
+        draw_heading(43, 5, "ASTRONAUT HISTORY", 0, -1);
     } else {
-        draw_heading(41, 4, "COSMONAUT HISTORY", 0, -1);
+        draw_heading(41, 5, "COSMONAUT HISTORY", 0, -1);
     }
 
     IRBox(243, 3, 316, 19, 0);  // Inbox around cont box

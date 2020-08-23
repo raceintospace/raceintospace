@@ -322,9 +322,9 @@ void DispVAB(char plr, char pad)
     display::graphics.setForegroundColor(1);
 
     if (plr == 0) {
-        draw_heading(42, 4, "VEHICLE ASSEMBLY", 0, -1);
+        draw_heading(42, 5, "VEHICLE ASSEMBLY", 0, -1);
     } else {
-        draw_heading(37, 4, "VEHICLE INTEGRATION", 0, -1);
+        draw_heading(37, 5, "VEHICLE INTEGRATION", 0, -1);
     }
 
     display::graphics.setForegroundColor(5);
