@@ -62,7 +62,7 @@ void SRdraw_string(int x, int y, char *text, char fgd, char bck);
 void DrawRD(char plr);
 void DrawCashOnHand(char plr);
 void DrawRDButtons(char plr, int maxButton = MAX_RD_TEAMS);
-void RDButTxt(int v1, int val, char plr, char SpDModule); //DM Screen, Nikakd, 10/8/10
+void RDButTxt(int v1, int val, char plr, char SpDModule);  //DM Screen, Nikakd, 10/8/10
 void ManSel(int activeButtonIndex, int maxAvailable = MAX_RD_TEAMS);
 int MaxTeamsNeeded(char plr, Equipment &equip);
 int MaxTeamsNeeded(char plr, int hardware, int unit);
@@ -1168,7 +1168,7 @@ void DrawHPurc(char player_index)
     draw_string(0, 0, "URCHASE EQUIPMENT");
 
     if (Data->Season == 0) {
-        draw_string(158, 9, "SPRING");
+        draw_string(157, 9, "SPRING");
     } else {
         draw_string(162, 9, "FALL");
     }
