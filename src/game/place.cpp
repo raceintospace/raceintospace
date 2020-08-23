@@ -517,7 +517,7 @@ int Help(const char *FName)
     local.palette().copy_from(display::graphics.legacyScreen()->palette());
     local.draw(*display::graphics.screen(), 34, 32, 250, 128);
 
-    ShBox(34, 32, 283, 169);
+    ShBox(34, 32, 283, 159);
     InBox(37, 35, 279, 45);
     InBox(37, 48, 261, 128);
     InBox(264, 48, 279, 128);
