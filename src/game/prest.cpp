@@ -1125,7 +1125,7 @@ int U_AllotPrest(char plr, char mis)
     lun = Check_Photo();
 
     // Don't improve photo recon twice in mail games
-    if (!(MAIL == 1 && plr == 0)) {
+    if (MAIL == 1 && plr == 0) {
         lun = 0;
     }
 
