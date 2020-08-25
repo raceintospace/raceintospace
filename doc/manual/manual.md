@@ -699,8 +699,8 @@ The Satellite building shows information on several programs, mainly unmanned.  
     <td> -10*</td>
   </tr>
 </table>
-
   * Missions with a -10 for failure will instead suffer -7 to -10 if no crew deaths occur.
+
 
 ## SPACE HARDWARE
 
