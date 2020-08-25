@@ -351,6 +351,10 @@ AstroTurn(void)
                     temp = 79;
                 }
 
+                // TODO: The cap on retirements means it's more likely
+                // for astronauts earlier in the pool to retire. This
+                // is justifiable for earlier groups vs later ones,
+                // but since the pool is subordered alphabetically...
                 if (num > temp && retirements < (ActTotal[j] * .4)) {
                     /* Guy retires due to being scared */
                     if (j == 0) {
@@ -465,18 +469,19 @@ AstroTurn(void)
                 }
             }
 
-            temp = 0;
+            if (prog > 0) {
+                temp = 0;
 
-            // TODO: This should not be checked if prog == 0
-            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                if (Data->P[j].Pool[
-                        Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
-                    temp++;
+                for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
+                    if (Data->P[j].Pool[
+                            Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
+                        temp++;
+                    }
                 }
-            }
 
-            if (temp > 1) {
-                Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+                if (temp > 1) {
+                    Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+                }
             }
 
             /* END OF SEASON - Negative */
@@ -533,30 +538,30 @@ AstroTurn(void)
             }
 
             /* Compatibility */
-            // TODO: Again, this should not be checked if the
-            // astronaut / cosmonaut isn't assigned to a program.
-            temp = 0;
-            char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
+            if (prog > 0) {
+                temp = 0;
+                char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
 
-            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                char guyCode = Data->P[j].Crew[prog][crew][k] - 1;
+                for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
+                    char guyCode = Data->P[j].Crew[prog][crew][k] - 1;
 
-                if (guyCode > -1 && guyCode != i) {
-                    mates++;
+                    if (guyCode > -1 && guyCode != i) {
+                        mates++;
 
-                    if (Compatible(Data->P[j].Pool[i],
-                                   Data->P[j].Pool[guyCode])) {
-                        temp++;
-                    }
+                        if (Compatible(Data->P[j].Pool[i],
+                                       Data->P[j].Pool[guyCode])) {
+                            temp++;
+                        }
 
-                    if (group == Data->P[j].Pool[guyCode].Group) {
-                        sameGroup++;
+                        if (group == Data->P[j].Pool[guyCode].Group) {
+                            sameGroup++;
+                        }
                     }
                 }
-            }
 
-            if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
-                Data->P[j].Pool[i].Mood -= (prog == 5 || prog == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
+                if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
+                    Data->P[j].Pool[i].Mood -= (prog == 5 || prog == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
+                }
             }
 
             /* Final record updating */
