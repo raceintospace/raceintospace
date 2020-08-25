@@ -43,7 +43,9 @@ char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
 
+void AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
+int  CrewConflicts(int player, const struct Astros &astro);
 void UpdAll(char side);
 void TestFMis(int plr, int i);
 void UpdateHardTurn(char plr);
@@ -277,13 +279,24 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     }
 }
 
+
+/**
+ * Modify the astronaut/cosmonaut's morale due to flight crew conflicts.
+ */
+void AstroConflictsMod(int player, struct Astros &astro)
+{
+    //-2 for each in Jupiter/Minishuttle , -3 in others
+    astro.Mood -= ((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
+        CrewConflicts(player, astro);
+}
+
+
 /** \todo: This code must be split... it's cluttered beyond hope */
 void
 AstroTurn(void)
 {
-    int i, j, k, l, num, temp;
+    int i, j, k, num, temp;
     int ActTotal[2] = {0, 0};  /* Count of active astronauts per player */
-    int cnt = 0;
 
     /* Count total number of active astronauts */
     for (j = 0; j < NUM_PLAYERS; j++) {
@@ -302,7 +315,11 @@ AstroTurn(void)
     }
 
     for (j = 0; j < NUM_PLAYERS; j++) {  /* Player Analysis */
+        int retirements = 0;
+
         for (i = 0; i < Data->P[j].AstroCount; i++) {
+            int prog = Data->P[j].Pool[i].Assign;  // Program index
+            int crew = Data->P[j].Pool[i].Crew - 1;  // Crew index
 
             /* Injury Resolution */
             if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
@@ -310,13 +327,14 @@ AstroTurn(void)
 
                 if (Data->P[j].Pool[i].InjuryDelay == 0) {
                     Data->P[j].Pool[i].Status = AST_ST_ACTIVE;
-                    Data->P[j].Pool[i].Assign = 0;
+                    prog = Data->P[j].Pool[i].Assign = 0;
                     Data->P[j].Pool[i].Special = 5;
                 }
             }
 
             /* Mustering Out - even seasons after 8 */
             if ((Data->P[j].Pool[i].Active >= 8)
+                && Data->P[j].Pool[i].Active % 2 == 0
                 && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
                 && Data->P[j].Pool[i].RetirementDelay == 0) {
                 num = brandom(100);
@@ -348,13 +366,19 @@ AstroTurn(void)
                     temp = 79;
                 }
 
-                if (num > temp && cnt < (ActTotal[j] * .4)) {
+                // TODO: The cap on retirements means it's more likely
+                // for astronauts earlier in the pool to retire. This
+                // is justifiable for earlier groups vs later ones,
+                // but since the pool is subordered alphabetically...
+                if (num > temp && retirements < (ActTotal[j] * .4)) {
                     /* Guy retires due to being scared */
                     if (j == 0) {
                         Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
                         Data->P[j].Pool[i].Special = 1;
                     }
 
+                    // TODO: Either the comment is wrong or the delay
+                    // is wrong -- rnyoakum
                     if (j == 1) {
                         Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
                         Data->P[j].Pool[i].Special = 1;
@@ -362,7 +386,7 @@ AstroTurn(void)
 
                     Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
 
-                    cnt++;
+                    retirements++;
                 }
             }
 
@@ -419,10 +443,13 @@ AstroTurn(void)
 
                 if (Data->P[j].Pool[i].RetirementDelay == 0) {
                     Data->P[j].Pool[i].Status = AST_ST_RETIRED;
-                    Data->P[j].Pool[i].Assign = 0;
+                    prog = Data->P[j].Pool[i].Assign = 0;
                     Data->P[j].Pool[i].Special = 2;
                 }
             }
+
+            // TODO: Shouldn't adjust mood if the astronaut / cosmonaut
+            // is no longer in service.
 
             /* END OF SEASON - Positive */
             if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
@@ -457,19 +484,19 @@ AstroTurn(void)
                 }
             }
 
-            temp = 0;
-            cnt = Data->P[j].Pool[i].Crew;  /* Crew in */
-            l = Data->P[j].Pool[i].Assign;  /* Prog in */
+            if (prog > 0) {
+                temp = 0;
 
-            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                if (Data->P[j].Pool[Data->P[j].Crew[l][cnt][k] -
-                                    1].Hero == 1) {
-                    temp++;
+                for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
+                    if (Data->P[j].Pool[
+                            Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
+                        temp++;
+                    }
                 }
-            }
 
-            if (temp > 1) {
-                Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+                if (temp > 1) {
+                    Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+                }
             }
 
             /* END OF SEASON - Negative */
@@ -526,28 +553,8 @@ AstroTurn(void)
             }
 
             /* Compatibility */
-            temp = 0;
-            char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
-
-            for (k = 0; k < ASTRONAUT_FLT_CREW_MAX; k++) {
-                char guyCode = Data->P[j].Crew[Data->P[j].Pool[i].Assign][Data->P[j].Pool[i].Crew - 1][k] - 1;
-
-                if (guyCode > -1 && guyCode != i) {
-                    mates++;
-
-                    if (Compatible(Data->P[j].Pool[i],
-                                   Data->P[j].Pool[guyCode])) {
-                        temp++;
-                    }
-
-                    if (group == Data->P[j].Pool[guyCode].Group) {
-                        sameGroup++;
-                    }
-                }
-            }
-
-            if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
-                Data->P[j].Pool[i].Mood -= (Data->P[j].Pool[i].Assign == 5 || Data->P[j].Pool[i].Assign == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
+            if (prog > 0) {
+                AstroConflictsMod(j, Data->P[j].Pool[i]);
             }
 
             /* Final record updating */
@@ -596,6 +603,35 @@ AstroTurn(void)
 
     return;
 }
+
+
+/**
+ * Count how many personality conflicts the astronaut/cosmonaut has
+ * with their flight crew.
+ */
+int CrewConflicts(const int player, const struct Astros &astro)
+{
+    int conflicts = 0;
+
+    if (astro.Assign <= 0 || astro.Crew <= 0) {
+        return conflicts;
+    }
+
+    const int program = astro.Assign;
+    const int crew = astro.Crew - 1;
+
+    for (int i = 0; i < Data->P[player].CrewCount[program][crew]; i++) {
+        int mate = Data->P[player].Crew[program][crew][i] - 1;
+        assert(mate >= 0);
+
+        if (!Compatible(astro, Data->P[player].Pool[mate])) {
+            conflicts++;
+        }
+    }
+
+    return conflicts;
+}
+
 
 void Update(void)
 {
