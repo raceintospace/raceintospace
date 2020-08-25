@@ -43,7 +43,9 @@ char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
 
+void AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
+int  CrewConflicts(int player, const struct Astros &astro);
 void UpdAll(char side);
 void TestFMis(int plr, int i);
 void UpdateHardTurn(char plr);
@@ -276,6 +278,18 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         break;
     }
 }
+
+
+/**
+ * Modify the astronaut/cosmonaut's morale due to flight crew conflicts.
+ */
+void AstroConflictsMod(int player, struct Astros &astro)
+{
+    //-2 for each in Jupiter/Minishuttle , -3 in others
+    astro.Mood -= ((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
+        CrewConflicts(player, astro);
+}
+
 
 /** \todo: This code must be split... it's cluttered beyond hope */
 void
@@ -539,29 +553,7 @@ AstroTurn(void)
 
             /* Compatibility */
             if (prog > 0) {
-                temp = 0;
-                char sameGroup = 0, group = Data->P[j].Pool[i].Group, mates = 0;
-
-                for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
-                    char guyCode = Data->P[j].Crew[prog][crew][k] - 1;
-
-                    if (guyCode > -1 && guyCode != i) {
-                        mates++;
-
-                        if (Compatible(Data->P[j].Pool[i],
-                                       Data->P[j].Pool[guyCode])) {
-                            temp++;
-                        }
-
-                        if (group == Data->P[j].Pool[guyCode].Group) {
-                            sameGroup++;
-                        }
-                    }
-                }
-
-                if (mates > 0) {  //-2 for each in Jupiter/Minishuttle , -3 in others
-                    Data->P[j].Pool[i].Mood -= (prog == 5 || prog == 4) ? 2 * (mates - temp) : 3 * (mates - temp);
-                }
+                AstroConflictsMod(j, Data->P[j].Pool[i]);
             }
 
             /* Final record updating */
@@ -610,6 +602,35 @@ AstroTurn(void)
 
     return;
 }
+
+
+/**
+ * Count how many personality conflicts the astronaut/cosmonaut has
+ * with their flight crew.
+ */
+int CrewConflicts(const int player, const struct Astros &astro)
+{
+    int conflicts = 0;
+
+    if (astro.Assign <= 0 || astro.Crew <= 0) {
+        return conflicts;
+    }
+
+    const int program = astro.Assign;
+    const int crew = astro.Crew - 1;
+
+    for (int i = 0; i < Data->P[player].CrewCount[program][crew]; i++) {
+        int mate = Data->P[player].Crew[program][crew][i] - 1;
+        assert(mate >= 0);
+
+        if (!Compatible(astro, Data->P[player].Pool[mate])) {
+            conflicts++;
+        }
+    }
+
+    return conflicts;
+}
+
 
 void Update(void)
 {
