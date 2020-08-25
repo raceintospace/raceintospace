@@ -334,6 +334,7 @@ AstroTurn(void)
 
             /* Mustering Out - even seasons after 8 */
             if ((Data->P[j].Pool[i].Active >= 8)
+                && Data->P[j].Pool[i].Active % 2 == 0
                 && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
                 && Data->P[j].Pool[i].RetirementDelay == 0) {
                 num = brandom(100);
