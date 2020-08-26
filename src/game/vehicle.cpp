@@ -133,7 +133,7 @@ int Vehicle::available() const
 
 bool Vehicle::damaged() const
 {
-    return mPrimary->Damage > 0 || (mSecondary && mSecondary->Damage > 0);
+    return mPrimary->Damage || (mSecondary && mSecondary->Damage);
 }
 
 
