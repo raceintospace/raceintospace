@@ -506,7 +506,8 @@ void NGetVoice(char plr, char val)
     char fname[100];
     ssize_t bytes = 0;
 
-    sprintf(fname, "%s_%03d.ogg", (plr ? "sov" : "usa"), val);
+    snprintf(fname, sizeof(fname), "%s_%03d.ogg",
+             (plr ? "sov" : "usa"), val);
     bytes = load_audio_file(fname, &soundbuf, &soundbuf_size);
     soundbuf_used = (bytes > 0) ? bytes : 0;
 }

@@ -852,7 +852,7 @@ void DrawMisHist(char plr, int *where)
     yr = (*where - (*where % 2)) / 2 + 57;
     season = *where % 2;
     ORBox(95, 176, 224, 193, 3);  // draw the boxes under date
-    sprintf(cYr, "%d", 1900 + yr);
+    snprintf(cYr, sizeof(cYr), "%d", 1900 + yr);
     draw_heading(103 + (yr - 57) * 4, 178, cYr, 0, -1);
 
     fill_rectangle(5, 29, 314, 169, 0);
@@ -910,7 +910,8 @@ void DrawMisHist(char plr, int *where)
 
         // first check for joint missions
         if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] > 0) {
-            sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[1]);
+            snprintf(mtext, sizeof(mtext), "%s",
+                     Data->P[plr].History[index].MissionName[1]);
             display::graphics.setForegroundColor(11);
             draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
 
@@ -996,7 +997,8 @@ void DrawMisHist(char plr, int *where)
                 planet = 0;
             }
 
-            sprintf(mtext, "%s", Data->P[plr].History[index].MissionName[0]);
+            snprintf(mtext, sizeof(mtext), "%s",
+                     Data->P[plr].History[index].MissionName[0]);
             display::graphics.setForegroundColor(11);
             draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
             SmHardMe(plr, 44 + 49 * j, 50 + 40 * temp, prog, planet, 64);

@@ -129,9 +129,9 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
         }
 
         if (strlen(p)) {
-            sprintf(cooked, "%s/%s/%s", base, p, name);
+            snprintf(cooked, len, "%s/%s/%s", base, p, name);
         } else {
-            sprintf(cooked, "%s/%s", base, name);
+            snprintf(cooked, len, "%s/%s", base, name);
         }
 
         fix_pathsep(cooked);
@@ -315,7 +315,8 @@ remove_savedat(const char *name)
     char *cooked = (char *)xmalloc(len_base + len_name);
     int rv = 0;
 
-    sprintf(cooked, "%s/%s", options.dir_savegame, name);
+    snprintf(cooked, len_base + len_name, "%s/%s",
+             options.dir_savegame, name);
     INFO2("removing save game file `%s'", cooked);
     fix_pathsep(cooked);
     rv = remove(cooked);

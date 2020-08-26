@@ -644,11 +644,12 @@ write_image(char *data, int width, int height, unsigned char *palette,
     };
 
     /* who the hell designed these indices?? */
-    sprintf(fname, "%s/%s%s%s_%s_%s_%02d.ppm", dirname, basename,
-            (basename[0] ? "_" : ""),
-            (sequence[anim_no].is_usa ? "usa" : "sov"),
-            (sequence[anim_no].is_bw  ? "bw"  : "col"),
-            sequence[anim_no].shot, frame_no);
+    snprintf(fname, sizeof(fname), "%s/%s%s%s_%s_%s_%02d.ppm",
+             dirname, basename,
+             (basename[0] ? "_" : ""),
+             (sequence[anim_no].is_usa ? "usa" : "sov"),
+             (sequence[anim_no].is_bw  ? "bw"  : "col"),
+             sequence[anim_no].shot, frame_no);
 
     fp = fopen(fname, "wt");
 

@@ -219,12 +219,12 @@ struct mStr GetMissionPlan(const int code)
     // Find Mission Type
     if (fseek(fin, code * (sizeof(struct mStr)), SEEK_SET)) {
         char error[1000];
-        sprintf(error, "Error %d while seeking position in file "
-                "MISSION.DAT: Seeking position %lu"
-                " (%d blocks of size %lu)",
-                ferror(fin),
-                static_cast<const size_t>(code) * (sizeof(struct mStr)),
-                code, sizeof(struct mStr));
+        snprintf(error, sizeof(error),
+                 "Error %d while seeking position in file MISSION.DAT: "
+                 "Seeking position %lu (%d blocks of size %lu)",
+                 ferror(fin),
+                 static_cast<const size_t>(code) * (sizeof(struct mStr)),
+                 code, sizeof(struct mStr));
         fclose(fin);
         throw IOException(error);
         // throw IOException("Error seeking position in file MISSION.DAT");

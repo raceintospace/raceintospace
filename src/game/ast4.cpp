@@ -447,7 +447,7 @@ void DamProb(char plr, char prog, int chk)
     display::graphics.setForegroundColor(6);
     draw_string(121, 113, "DAMAGE COST: ");
     display::graphics.setForegroundColor(1);
-    sprintf(&Digit[0], "%d", D_Cost);
+    snprintf(&Digit[0], sizeof(Digit), "%d", D_Cost);
     draw_string(0, 0, &Digit[0]);
     draw_string(0, 0, " M.B.  (OF ");
     draw_megabucks(0, 0, Data->P[plr].Cash);
@@ -455,10 +455,10 @@ void DamProb(char plr, char prog, int chk)
     display::graphics.setForegroundColor(6);
     draw_string(121, 122, "SAFETY LOSS: ");
     display::graphics.setForegroundColor(1);
-    sprintf(&Digit[0], "%d", Saf_Loss);
+    snprintf(&Digit[0], sizeof(Digit), "%d", Saf_Loss);
     draw_string(0, 0, &Digit[0]);
     draw_string(0, 0, "%  (FROM ");
-    sprintf(&Digit[0], "%d", ESafety);
+    snprintf(&Digit[0], sizeof(Digit), "%d", ESafety);
     draw_string(0, 0, &Digit[0]);
     draw_string(0, 0, "%)");
     FadeIn(2, 10, 0, 0);

@@ -606,7 +606,7 @@ void LMBld(char plr)
     InBox(41, 172, 279, 192);
     draw_heading(71, 176, "TOTAL LM POINTS", 0, -1);
     memset(Name, 0, sizeof Name);
-    sprintf(&Name[0], "%d", Data->P[plr].LMpts);
+    snprintf(&Name[0], sizeof(Name), "%d", Data->P[plr].LMpts);
     draw_heading(240, 176, &Name[0], 0, -1);
 
     for (i = 0; i < 2; i++) {
