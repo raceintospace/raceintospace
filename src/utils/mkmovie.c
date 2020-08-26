@@ -225,7 +225,8 @@ main(int argc, char **argv)
             break;
         }
 
-        sprintf(outfname, "%s/%s.%04d.ppm", dirname, basename, num++);
+        snprintf(outfname, sizeof(outfname), "%s/%s.%04d.ppm",
+                 dirname, basename, num++);
 
         if ((movief = fopen(outfname, "wb")) == NULL) {
             fprintf(stderr, "can't create %s\n", outfname);

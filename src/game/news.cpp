@@ -339,7 +339,7 @@ DispNews(char plr, char *src, char *dest)
         case 'f':
         case 'j':
         case 'i':
-            sprintf(&Name[0], "%d", evflag);
+            snprintf(&Name[0], sizeof(Name), "%d", evflag);
             strncpy(&dest[j], &Name[0], strlen(Name));
             j += strlen(Name) - 1;
             break;
@@ -632,7 +632,7 @@ News(char plr)
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {
 
-        sprintf(cYr, "%d", 1900 + Data->Year);
+        snprintf(cYr, sizeof(cYr), "%d", 1900 + Data->Year);
 
         if (Data->Season == 1) {
             draw_heading(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
@@ -985,10 +985,10 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         display::graphics.newsRect().w = 0;
         display::graphics.newsRect().h = 0;
 
-        sprintf(fname, "%s_%s_%s.ogg",
-                plr ? "sov" : "usa",
-                bw  ? "bw"  : "col",
-                news_shots[type]);
+        snprintf(fname, sizeof(fname), "%s_%s_%s.ogg",
+                 plr ? "sov" : "usa",
+                 bw  ? "bw"  : "col",
+                 news_shots[type]);
 
         /* XXX error checking */
         mm_open_fp(fp, sOpen(fname, "rb", FT_VIDEO));

@@ -153,7 +153,8 @@ int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
         BCDraw(starty + 23 * i);
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
 
-        sprintf(filename, "images/portbut.but.%d.png", (int) Imx[i]);
+        snprintf(filename, sizeof(filename), "images/portbut.but.%d.png",
+                 (int) Imx[i]);
         boost::shared_ptr<display::PalettizedSurface> icon(
             Filesystem::readImage(filename));
         display::graphics.screen()->draw(icon, 24, starty + 1 + 23 * i);
@@ -220,9 +221,8 @@ void PatchMe(char plr, int x, int y, char prog, char poff)
     assert(patchNum >= 0 && patchNum < 110);
 
     char filename[128];
-    sprintf(filename,
-            "images/patches.but.%d.png",
-            (int) patchNum);
+    snprintf(filename, sizeof(filename), "images/patches.but.%d.png",
+             (int) patchNum);
 
     boost::shared_ptr<display::PalettizedSurface> patch(
         Filesystem::readImage(filename));
@@ -247,18 +247,17 @@ void PatchMe(char plr, int x, int y, char prog, char poff)
  */
 void AstFaces(char plr, int x, int y, char face)
 {
+    assert(face >= 0 && face <= 84);
     char filename[128];
-    sprintf(filename,
-            "images/faces.but.%d.png",
-            (int)face);
+    snprintf(filename, sizeof(filename), "images/faces.but.%d.png",
+             (int)face);
 
     boost::shared_ptr<display::PalettizedSurface> icon(
         Filesystem::readImage(filename));
     icon->exportPalette(64, 64 + 31);  // Palette space [64, 96)
 
-    sprintf(filename,
-            "images/faces.but.%d.png",
-            (int) plr + 85);
+    snprintf(filename, sizeof(filename), "images/faces.but.%d.png",
+             (int) plr + 85);
     boost::shared_ptr<display::PalettizedSurface> helmet(
         Filesystem::readImage(filename));
 
@@ -317,7 +316,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet,
     assert(patch >= 0 && patch <= 22);
 
     char filename[128];
-    sprintf(filename, "images/mhist.but.%d.png", patch);
+    snprintf(filename, sizeof(filename), "images/mhist.but.%d.png", patch);
     boost::shared_ptr<display::PalettizedSurface> image(
         Filesystem::readImage(filename));
 

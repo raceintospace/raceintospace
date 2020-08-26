@@ -200,7 +200,7 @@ void DrawBudget(char player, char *pStatus)
         strcpy(&name[0], "FALL 19");
     }
 
-    sprintf(&str[0], "%d", Data->Year);
+    snprintf(&str[0], sizeof(str), "%d", Data->Year);
 
     strcat(&name[0], &str[0]);
     draw_heading(122, 5, &name[0], 0, -1);
@@ -675,7 +675,6 @@ int RetFile(char plr, int card)
     int bline, i;
 
     oldNews = &interimData.tempEvents[card + plr * 42];
-    // sprintf(buffer, "%s", interimData.eventBuffer + oldNews->offset);
     memcpy(buffer, interimData.eventBuffer + oldNews->offset, oldNews->size);
     buffer[oldNews->size] = '\0';
 

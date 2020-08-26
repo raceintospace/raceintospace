@@ -781,7 +781,7 @@ void FileAccess(char mode)
                         }
 
                         i++;
-                        sprintf(Name, "BUZZ%d.SAV", i);
+                        snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
                         fin = sOpen(Name, "rb", FT_SAVE_CHECK);
                     } while (fin != NULL); // Find unique name
 
@@ -1749,7 +1749,7 @@ void MailSave()
                     fclose(fin);
                 }
 
-                sprintf(Name, "BUZZ%d.SAV", i);
+                snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
                 fin = sOpen(Name, "rb", 1);
             } while (fin != NULL); // Find unique name
 

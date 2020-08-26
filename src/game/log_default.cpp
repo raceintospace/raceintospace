@@ -72,9 +72,9 @@ static void doAppend(struct LogAppender *this0, struct LogEvent *ev)
     } else if ((size_t)ev->priority < ARRAY_LENGTH(priorityNames)) {
         pn = priorityNames[ev->priority];
     } else {
-        sprintf(buf, "%s+%d",
-                priorityNames[ARRAY_LENGTH(priorityNames) - 1],
-                ev->priority - (int) sizeof(priorityNames) + 1);
+        snprintf(buf, sizeof(buf), "%s+%d",
+                 priorityNames[ARRAY_LENGTH(priorityNames) - 1],
+                 ev->priority - (int) sizeof(priorityNames) + 1);
     }
 
     fprintf(appender->file, "%-7s ", pn);

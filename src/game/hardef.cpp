@@ -1710,7 +1710,7 @@ DrawRank(char plr)
         display::graphics.setForegroundColor(1);
         draw_string(60, 27, "SCORE:");
         score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
-        sprintf(&Digit[0], "%d", score);
+        snprintf(&Digit[0], sizeof(Digit), "%d", score);
         draw_string(95, 27, &Digit[0]);
     }
 
@@ -1719,7 +1719,7 @@ DrawRank(char plr)
         display::graphics.setForegroundColor(1);
         draw_string(208, 27, "SCORE:");
         score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
-        sprintf(&Digit[0], "%d", score);
+        snprintf(&Digit[0], sizeof(Digit), "%d", score);
         draw_string(243, 27, &Digit[0]);
     }
 

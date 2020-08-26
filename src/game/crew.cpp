@@ -742,17 +742,22 @@ void DrawHard(char mode, char pad, char mis, char plr)
         break;
     }
 
-    char str[10];  // Make sure the capsule/shuttle name is centered
-    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
-    draw_string(119 - TextDisplayLength(&str[0]) / 2, 109, Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
-    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
-    draw_string(198 - TextDisplayLength(&str[0]) / 2, 109, Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
-    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
-    draw_string(119 - TextDisplayLength(&str[0]) / 2, 126, Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
-    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
-    draw_string(198 - TextDisplayLength(&str[0]) / 2, 126, Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
-    sprintf(&str[0], Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
-    draw_string(159 - TextDisplayLength(&str[0]) / 2, 143, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+    char str[21];  // Make sure the capsule/shuttle name is centered
+    snprintf(&str[0], sizeof(str),
+             Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
+    draw_string(119 - TextDisplayLength(&str[0]) / 2, 109, &str[0]);
+    snprintf(&str[0], sizeof(str),
+             Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
+    draw_string(198 - TextDisplayLength(&str[0]) / 2, 109, &str[0]);
+    snprintf(&str[0], sizeof(str),
+             Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
+    draw_string(119 - TextDisplayLength(&str[0]) / 2, 126, &str[0]);
+    snprintf(&str[0], sizeof(str),
+             Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
+    draw_string(198 - TextDisplayLength(&str[0]) / 2, 126, &str[0]);
+    snprintf(&str[0], sizeof(str),
+             Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+    draw_string(159 - TextDisplayLength(&str[0]) / 2, 143, &str[0]);
     draw_string(142, 162, "CANCEL");
     return;
 }

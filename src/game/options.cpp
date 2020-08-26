@@ -237,7 +237,7 @@ parse_var_value(FILE *f, int index)
     assert(i >= 0 && i < (int)ARRAY_LENGTH(config_strings));
 
     need_alloc = config_strings[i].need_alloc;
-    sprintf(format, " %s%%n", config_strings[i].format);
+    snprintf(format, sizeof(format), " %s%%n", config_strings[i].format);
 
     if (need_alloc > 0) {
         /* config_strings[].dest points to a pointer */
@@ -516,7 +516,8 @@ setup_options(int argc, char *argv[])
             size_t len = strlen(str) + strlen(PACKAGE_TARNAME) + 3;
 
             *env_vars[i].dest = (char *)xmalloc(len);
-            sprintf(*env_vars[i].dest, "%s/.%s", str, PACKAGE_TARNAME);
+            snprintf(*env_vars[i].dest, len, "%s/.%s",
+                     str, PACKAGE_TARNAME);
             free(str);
         } else {
             *env_vars[i].dest = xstrdup(env_vars[i].def_val);

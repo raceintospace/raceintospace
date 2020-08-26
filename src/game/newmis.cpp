@@ -334,7 +334,9 @@ void MisAnn(char plr, char pad)
                     display::graphics.setForegroundColor(11);
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                    sprintf(&Digit[0], "%d", Data->P[plr].Manned[hold].Safety + Data->P[plr].Manned[hold].Damage);
+                    snprintf(&Digit[0], sizeof(Digit), "%d",
+                             Data->P[plr].Manned[hold].Safety +
+                             Data->P[plr].Manned[hold].Damage);
                     draw_string(0, 0, &Digit[0]);
                     draw_string(0, 0, "%");
                     // draw_string(144+i*111,116+14*k,"%");
@@ -352,7 +354,9 @@ void MisAnn(char plr, char pad)
                     display::graphics.setForegroundColor(11);
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                    sprintf(&Digit[0], "%d", Data->P[plr].Misc[hold].Safety + Data->P[plr].Misc[hold].Damage);
+                    snprintf(&Digit[0], sizeof(Digit), "%d",
+                             Data->P[plr].Misc[hold].Safety +
+                             Data->P[plr].Misc[hold].Damage);
                     draw_string(0, 0, &Digit[0]);
                     draw_string(0, 0, "%");
                     // draw_number(0,0,Data->P[plr].Misc[hold].Safety);
@@ -371,7 +375,9 @@ void MisAnn(char plr, char pad)
                     display::graphics.setForegroundColor(11);
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                    sprintf(&Digit[0], "%d", Data->P[plr].Manned[hold].Safety + Data->P[plr].Manned[hold].Damage);
+                    snprintf(&Digit[0], sizeof(Digit), "%d",
+                             Data->P[plr].Manned[hold].Safety +
+                             Data->P[plr].Manned[hold].Damage);
                     draw_string(0, 0, &Digit[0]);
                     draw_string(0, 0, "%");
                     //draw_number(0,0,Data->P[plr].Manned[hold].Safety);
@@ -391,7 +397,9 @@ void MisAnn(char plr, char pad)
                         display::graphics.setForegroundColor(11);
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Probe[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                        sprintf(&Digit[0], "%d", Data->P[plr].Probe[hold].Safety + Data->P[plr].Probe[hold].Damage);
+                        snprintf(&Digit[0], sizeof(Digit), "%d",
+                                 Data->P[plr].Probe[hold].Safety +
+                                 Data->P[plr].Probe[hold].Damage);
                         draw_string(0, 0, &Digit[0]);
                         draw_string(0, 0, "%");
                         //draw_number(0,0,Data->P[plr].Probe[hold].Safety);
@@ -405,7 +413,9 @@ void MisAnn(char plr, char pad)
                         display::graphics.setForegroundColor(11);
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                        sprintf(&Digit[0], "%d", Data->P[plr].Misc[hold].Safety + Data->P[plr].Misc[hold].Damage);
+                        snprintf(&Digit[0], sizeof(Digit), "%d",
+                                 Data->P[plr].Misc[hold].Safety +
+                                 Data->P[plr].Misc[hold].Damage);
                         draw_string(0, 0, &Digit[0]);
                         draw_string(0, 0, "%");
                         //draw_number(0,0,Data->P[plr].Misc[hold].Safety);
@@ -426,7 +436,9 @@ void MisAnn(char plr, char pad)
                         display::graphics.setForegroundColor(11);
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Rocket[hold - 1].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                        sprintf(&Digit[0], "%d", Data->P[plr].Rocket[hold - 1].Safety + Data->P[plr].Rocket[hold - 1].Damage);
+                        snprintf(&Digit[0], sizeof(Digit), "%d",
+                                 Data->P[plr].Rocket[hold - 1].Safety +
+                                 Data->P[plr].Rocket[hold - 1].Damage);
                         draw_string(0, 0, &Digit[0]);
                         draw_string(0, 0, "%");
                         //draw_number(0,0,Data->P[plr].Rocket[hold-1].Safety);
@@ -441,7 +453,7 @@ void MisAnn(char plr, char pad)
                         display::graphics.setForegroundColor(11);
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         (Data->P[plr].Rocket[hold - 5].Damage != 0 || Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage != 0) ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment && Booster's Safety Mod, Nikakd, 10/8/10
-                        sprintf(&Digit[0], "%d", RocketBoosterSafety(Data->P[plr].Rocket[hold - 5].Safety + Data->P[plr].Rocket[hold - 5].Damage, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage));
+                        snprintf(&Digit[0], sizeof(Digit), "%d", RocketBoosterSafety(Data->P[plr].Rocket[hold - 5].Safety + Data->P[plr].Rocket[hold - 5].Damage, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage));
                         draw_string(0, 0, &Digit[0]);
                         draw_string(0, 0, "%");
                         // draw_number(0,0,(Data->P[plr].Rocket[hold-5].Safety+Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety)/2);
