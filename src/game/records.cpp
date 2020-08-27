@@ -396,10 +396,8 @@ void ForEnd(char *pos, char *pos2)
 
 void Drec(char *pos, char *pos2, char mde)
 {
-    char i, j = 0, Digit[10];
+    char i, j = 0;
 
-
-    memset(Digit, 0x00, sizeof(Digit));
     display::graphics.setForegroundColor(1);
     draw_number(12, 42, 1);
     draw_number(12, 66, 2);
@@ -499,9 +497,7 @@ void Drec(char *pos, char *pos2, char mde)
             display::graphics.setForegroundColor(1);
             draw_string(0, 0, Months[rec[*pos2][i].month]);
             draw_string(0, 0, " ");
-            snprintf(&Digit[0], sizeof(Digit), "%d",
-                     rec[*pos2][i].yr + 1900);
-            draw_string(0, 0, &Digit[0]);
+            draw_number(0, 0, rec[*pos2][i].yr + 1900);
 
             if (*pos2 == 29) {
                 display::graphics.setForegroundColor(6);
@@ -564,9 +560,7 @@ void Drec(char *pos, char *pos2, char mde)
                 display::graphics.setForegroundColor(1);
                 draw_string(0, 0, Months[rec[*pos2][i].month]);
                 draw_string(0, 0, " ");
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].yr + 1900);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].yr + 1900);
                 break;
 
             case 35:
@@ -574,9 +568,7 @@ void Drec(char *pos, char *pos2, char mde)
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "MISSIONS: ");
                 display::graphics.setForegroundColor(1);
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
             case 37:
@@ -584,9 +576,7 @@ void Drec(char *pos, char *pos2, char mde)
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "PRESTIGE: ");
                 display::graphics.setForegroundColor(1);
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
             case 39:
@@ -594,18 +584,14 @@ void Drec(char *pos, char *pos2, char mde)
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "DAYS: ");
                 display::graphics.setForegroundColor(1);
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
             case 41:
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "SEASONS: ");
                 display::graphics.setForegroundColor(1);
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
             default:
@@ -625,13 +611,9 @@ void Drec(char *pos, char *pos2, char mde)
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "PRESTIGE: ");
                 display::graphics.setForegroundColor(1);
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(0, 0, &Digit[0]);
+                draw_number(0, 0, rec[*pos2][i].tag);
             } else {
-                snprintf(&Digit[0], sizeof(Digit), "%d",
-                         rec[*pos2][i].tag);
-                draw_string(101, 38 + (i * 24), &Digit[0]);
+                draw_number(101, 38 + (i * 24), rec[*pos2][i].tag);
 
                 switch (*pos2) {
                 case 22:

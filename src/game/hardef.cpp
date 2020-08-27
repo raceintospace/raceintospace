@@ -1551,7 +1551,6 @@ DrawRank(char plr)
 {
     int i, MaxPz = 0, MaxNg = 0, Px, Py, t1, t2, Cur = 0, OffSet, Year_Inc =
                                   12, score;
-    char Digit[4];
 
     helpText = "i030";
     keyHelpText = "k030";
@@ -1710,8 +1709,7 @@ DrawRank(char plr)
         display::graphics.setForegroundColor(1);
         draw_string(60, 27, "SCORE:");
         score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
-        snprintf(&Digit[0], sizeof(Digit), "%d", score);
-        draw_string(95, 27, &Digit[0]);
+        draw_number(95, 27, score);
     }
 
     if (Option == -1 || Option == 1) {
@@ -1719,10 +1717,8 @@ DrawRank(char plr)
         display::graphics.setForegroundColor(1);
         draw_string(208, 27, "SCORE:");
         score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
-        snprintf(&Digit[0], sizeof(Digit), "%d", score);
-        draw_string(243, 27, &Digit[0]);
+        draw_number(243, 27, score);
     }
-
 }
 
 int
