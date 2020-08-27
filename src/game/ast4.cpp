@@ -403,7 +403,7 @@ void FixPrograms(char plr)
 void DamProb(char plr, char prog, int chk)
 {
     int D_Cost, Saf_Loss, ESafety;
-    char Digit[4], Name[30];
+    char Name[30];
 
     Saf_Loss = D_Cost = ESafety = 0;
 
@@ -447,19 +447,16 @@ void DamProb(char plr, char prog, int chk)
     display::graphics.setForegroundColor(6);
     draw_string(121, 113, "DAMAGE COST: ");
     display::graphics.setForegroundColor(1);
-    snprintf(&Digit[0], sizeof(Digit), "%d", D_Cost);
-    draw_string(0, 0, &Digit[0]);
+    draw_number(0, 0, D_Cost);
     draw_string(0, 0, " M.B.  (OF ");
     draw_megabucks(0, 0, Data->P[plr].Cash);
     draw_string(0, 0, ")");
     display::graphics.setForegroundColor(6);
     draw_string(121, 122, "SAFETY LOSS: ");
     display::graphics.setForegroundColor(1);
-    snprintf(&Digit[0], sizeof(Digit), "%d", Saf_Loss);
-    draw_string(0, 0, &Digit[0]);
+    draw_number(0, 0, Saf_Loss);
     draw_string(0, 0, "%  (FROM ");
-    snprintf(&Digit[0], sizeof(Digit), "%d", ESafety);
-    draw_string(0, 0, &Digit[0]);
+    draw_number(0, 0, ESafety);
     draw_string(0, 0, "%)");
     FadeIn(2, 10, 0, 0);
 
