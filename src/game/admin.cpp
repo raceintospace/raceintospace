@@ -68,6 +68,7 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 SaveFileHdr *SaveHdr;
 SFInfo *FList;
 
+void DrawTimeCapsule(int display);
 int GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
 SaveGameType GetSaveType(const SaveFileHdr &header);
@@ -77,6 +78,17 @@ void FileText(char *name);
 int FutureCheck(char plr, char type);
 char RequestX(char *s, char md);
 
+namespace
+{
+enum FileButtons {
+    ENABLE_LOAD = 0x01,
+    ENABLE_SAVE = 0x02,
+    ENABLE_PBEM = 0x04,
+    ENABLE_DELETE = 0x08,
+    ENABLE_PLAY = 0x10,
+    ENABLE_QUIT = 0x20
+};
+};
 
 
 /* Control loop for the Administration Office menu.
@@ -340,7 +352,6 @@ void FileAccess(char mode)
         sc = 1; //only allow mail save
     }
 
-
     helpText = "i128";
     keyHelpText = "k128";
     FadeOut(2, 10, 0, 0);
@@ -356,66 +367,25 @@ void FileAccess(char mode)
 
     tFiles = GenerateTables(saveType);
 
-    ShBox(34, 32, 283, 159);
-    InBox(37, 35, 204, 45);
-    fill_rectangle(38, 36, 203, 44, 7);
-    InBox(207, 35, 280, 45);
-    fill_rectangle(208, 36, 279, 44, 10);
-    InBox(37, 48, 204, 128);
-    fill_rectangle(38, 49, 203, 127, 0);
-    InBox(37, 132, 280, 156);
-    ShBox(191, 50, 202, 87);
-    draw_up_arrow(194, 55);
-    ShBox(191, 89, 202, 126);
-    draw_down_arrow(194, 94);
-
-    if (tFiles > 0 && (sc == 0 || sc == 2)) {
-        IOBox(207, 48, 280, 60);
-    } else {
-        InBox(207, 48, 280, 60);
-    }
+    int enable = ENABLE_PLAY | ENABLE_QUIT;
 
     if (mode == 0) {
         if (sc == 0 || sc == 2) {
-            IOBox(207, 62, 280, 74);    // Regular Save game
-        } else {
-            InBox(207, 62, 280, 74);
+            enable |= ENABLE_SAVE;
+        } else if (sc == 1) {
+            enable |= ENABLE_PBEM;
         }
-
-        if (sc == 1) {
-            IOBox(207, 76, 280, 88);    // Mail Save game
-        } else {
-            InBox(207, 76, 280, 88);
-        }
-    } else {
-        InBox(207, 62, 280, 74);
-        InBox(207, 76, 280, 88);
     }
 
     if (tFiles > 0) {
-        IOBox(207, 90, 280, 102);
-    } else {
-        InBox(207, 90, 280, 102);    // Delete
+        enable |= ENABLE_DELETE;
+
+        if (sc == 0 || sc == 2) {
+            enable |= ENABLE_LOAD;
+        }
     }
 
-    IOBox(207, 104, 280, 116); // Play
-    IOBox(207, 118, 280, 130); // Quit
-
-    display::graphics.setForegroundColor(11);
-    draw_string(59, 42, "TIME CAPSULE REQUEST");
-    draw_string(219, 42, "FUNCTIONS");
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 56, "LOAD", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 70, "SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(227, 98, "DELETE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 112, "PLAY", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(234, 126, "QUIT", 0);
+    DrawTimeCapsule(enable);
 
     done = BarB = now = 0;
     ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
@@ -991,6 +961,80 @@ void FileAccess(char mode)
     if (mode == 1 && QUIT == 1) {
         FadeOut(2, 10, 0, 0);
     }
+}
+
+
+/**
+ * Display the savegame file interface GUI.
+ *
+ * \param display  flags indicating which buttons to enable.
+ */
+void DrawTimeCapsule(int display)
+{
+    ShBox(34, 32, 283, 159);
+    InBox(37, 35, 204, 45);
+    fill_rectangle(38, 36, 203, 44, 7);
+    InBox(207, 35, 280, 45);
+    fill_rectangle(208, 36, 279, 44, 10);
+    InBox(37, 48, 204, 128);
+    fill_rectangle(38, 49, 203, 127, 0);
+    InBox(37, 132, 280, 156);
+    ShBox(191, 50, 202, 87);
+    draw_up_arrow(194, 55);
+    ShBox(191, 89, 202, 126);
+    draw_down_arrow(194, 94);
+
+    if (display & ENABLE_LOAD) {
+        IOBox(207, 48, 280, 60);  // Load
+    } else {
+        InBox(207, 48, 280, 60);
+    }
+
+    if (display & ENABLE_SAVE) {
+        IOBox(207, 62, 280, 74);  // Regular Save game
+    } else {
+        InBox(207, 62, 280, 74);
+    }
+
+    if (display & ENABLE_PBEM) {
+        IOBox(207, 76, 280, 88);  // Mail Save game
+    } else {
+        InBox(207, 76, 280, 88);
+    }
+
+    if (display & ENABLE_DELETE) {
+        IOBox(207, 90, 280, 102);  // Delete
+    } else {
+        InBox(207, 90, 280, 102);
+    }
+
+    if (display & ENABLE_PLAY) {
+        IOBox(207, 104, 280, 116);  // Play
+    } else {
+        InBox(207, 104, 280, 116);
+    }
+
+    if (display & ENABLE_QUIT) {
+        IOBox(207, 118, 280, 130);  // Quit
+    } else {
+        InBox(207, 118, 280, 130);
+    }
+
+    display::graphics.setForegroundColor(11);
+    draw_string(59, 42, "TIME CAPSULE REQUEST");
+    draw_string(219, 42, "FUNCTIONS");
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 56, "LOAD", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 70, "SAVE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(227, 98, "DELETE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 112, "PLAY", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(234, 126, "QUIT", 0);
 }
 
 
