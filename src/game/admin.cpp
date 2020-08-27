@@ -68,11 +68,11 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 SaveFileHdr *SaveHdr;
 SFInfo *FList;
 
+void DrawFiles(char now, char loc, char tFiles);
 void DrawTimeCapsule(int display);
 int GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
 SaveGameType GetSaveType(const SaveFileHdr &header);
-void DrawFiles(char now, char loc, char tFiles);
 void BadFileType();
 void FileText(char *name);
 int FutureCheck(char plr, char type);
@@ -388,7 +388,6 @@ void FileAccess(char mode)
     DrawTimeCapsule(enable);
 
     done = BarB = now = 0;
-    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
     DrawFiles(0, 0, tFiles);
 
     if (tFiles) {
@@ -408,8 +407,6 @@ void FileAccess(char mode)
                 now -= BarB;
                 now += i;
                 BarB = i;
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
                 WaitForMouseUp();
@@ -815,8 +812,6 @@ void FileAccess(char mode)
                 tFiles = GenerateTables(saveType);
                 now = 0;
                 BarB = 0;
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
 
@@ -866,18 +861,14 @@ void FileAccess(char mode)
             if (BarB == 0) {
                 if (now > 0) {
                     now--;
-                    fill_rectangle(38, 49, 190, 127, 0);
-                    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                     DrawFiles(now, BarB, tFiles);
                     FileText(&FList[now].Name[0]);
                 }
             }
 
             if (BarB > 0) {
-                fill_rectangle(38, 49, 190, 127, 0);
                 BarB--;
                 now--;
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
             }
@@ -890,7 +881,6 @@ void FileAccess(char mode)
         } else if (key == K_PGUP) { // Page Up
 
             if (now > 0) {
-                fill_rectangle(38, 49, 190, 127, 0);
                 now -= 9;
 
                 if (now < 0) {
@@ -898,7 +888,6 @@ void FileAccess(char mode)
                     BarB = 0;
                 }
 
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
             }
@@ -916,8 +905,6 @@ void FileAccess(char mode)
                     BarB = 8;
                 }
 
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
             }
@@ -929,18 +916,14 @@ void FileAccess(char mode)
             if (BarB == 8) {
                 if (now < (tFiles - 1)) {
                     now++;
-                    fill_rectangle(38, 49, 190, 127, 0);
-                    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                     DrawFiles(now, BarB, tFiles);
                     FileText(&FList[now].Name[0]);
                 }
             }
 
             if (BarB < 8 && now < (tFiles - 1)) {
-                fill_rectangle(38, 49, 190, 127, 0);
                 BarB++;
                 now++;
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
                 DrawFiles(now, BarB, tFiles);
                 FileText(&FList[now].Name[0]);
             }
@@ -960,6 +943,33 @@ void FileAccess(char mode)
 
     if (mode == 1 && QUIT == 1) {
         FadeOut(2, 10, 0, 0);
+    }
+}
+
+
+/* Displays (a section of) the savegame files.
+ *
+ * Up to 9 files are shown at a given time.
+ *
+ * \param now     The savegame index of the current save file.
+ * \param loc     The display index of the current save file.
+ * \param tFiles  The total count of savegame files.
+ */
+void DrawFiles(char now, char loc, char tFiles)
+{
+    int j = 0;
+    int start = now - loc;
+
+    fill_rectangle(38, 49, 190, 127, 0);
+
+    if (tFiles > 0) {
+        ShBox(39, 52 + loc * 8, 189, 60 + loc * 8);
+    }
+
+    display::graphics.setForegroundColor(1);
+
+    for (int i = start; i < start + 9 && i < tFiles; i++, j++) {
+        draw_string(40, 58 + j * 8, FList[i].Title);
     }
 }
 
@@ -1191,30 +1201,6 @@ char GetBlockName(char *Nam)
         return 1;
     } else {
         return 0;
-    }
-}
-
-
-/* Displays (a section of) the savegame files.
- *
- * Up to 9 files are shown at a given time.
- *
- * \param now     The savegame index of the current save file.
- * \param loc     The display index of the current save file.
- * \param tFiles  The total count of savegame files.
- */
-void DrawFiles(char now, char loc, char tFiles)
-{
-    int i, j, start;
-    start = now - loc;
-    display::graphics.setForegroundColor(1);
-    j = 0;
-
-    for (i = start; i < start + 9; i++) {
-        if (i < tFiles) {
-            draw_string(40, 58 + j * 8, FList[i].Title);
-            j++;
-        }
     }
 }
 
