@@ -70,6 +70,7 @@ SFInfo *FList;
 
 int GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
+SaveGameType GetSaveType(const SaveFileHdr &header);
 void DrawFiles(char now, char loc, char tFiles);
 void BadFileType();
 void FileText(char *name);
@@ -227,26 +228,20 @@ void Admin(char plr)
  * ptr, and a list of SaveFileHdr structs, accessible via the global
  * SaveHdr ptr. FList entries are ordered by save title.
  *
+ * Currently, only the first 100 valid savegames are detected.
+ *
  * TODO: Storing the results of the search as a byte dump in a globally
  * accessible buffer is incredibly legacy and needs to be changed to
  * something safer.
  *
  * \param saveType  Include Normal, Modem, or Play by Email.
- * \return  The number of savegame files found (up to 100).
+ * \return  The number of savegame files found.
  */
 int GenerateTables(SaveGameType saveType)
 {
     struct ffblk ffblk;
-    int i, j, tFiles, done;
-    FILE *fin;
-    tFiles = 0;
-
-    done = first_saved_game(&ffblk);
-
-    while (!done && tFiles < 100) {
-        tFiles++;    // Count Total Files
-        done = next_saved_game(&ffblk);
-    }
+    int tFiles = 0;
+    const int maxSaves = 100;  // So as not to overflow buffer
 
     memset(buffer, 0x00, 20480);
 
@@ -254,61 +249,54 @@ int GenerateTables(SaveGameType saveType)
     FList = (SFInfo *)(buffer + 5000);
     SaveHdr = (SaveFileHdr *) buffer;
 
-    if (tFiles > 0) {
-        tFiles = 0;
-        done = first_saved_game(&ffblk);
+    for (bool done = first_saved_game(&ffblk);
+         done != true && tFiles < maxSaves;
+         done = next_saved_game(&ffblk)) {
 
-        while (!done && tFiles < 100) { // Get All File Names And Save Dates.
-            if (strlen(ffblk.ff_name) > sizeof FList[tFiles].Name - 1) {
-                goto next;
-            }
+        if (strlen(ffblk.ff_name) > sizeof(FList[tFiles].Name) - 1) {
+            NOTICE2("Save name too long: %s, skipping", ffblk.ff_name);
+            continue;
+        }
 
-            memset(&FList[tFiles], 0, sizeof FList[tFiles]);
+        FILE *fin = sOpen(ffblk.ff_name, "rb", 1);
+
+        if (fin == NULL) {
+            NOTICE2("Unable to open save file %s, skipping",
+                    ffblk.ff_name);
+            continue;
+        }
+
+        size_t bytes = fread(SaveHdr, 1, sizeof(SaveHdr[0]), fin);
+        fclose(fin);
+
+        if (bytes != sizeof(SaveHdr[0])) {
+            NOTICE2("Unable to read save file %s, skipping",
+                    ffblk.ff_name);
+            continue;
+        }
+
+        if (saveType == SAVEGAME_Normal ||
+            saveType == GetSaveType(*SaveHdr)) {
+            memset(&FList[tFiles], 0, sizeof(FList[tFiles]));
+            strcpy(FList[tFiles].Title, SaveHdr->Name);
             strcpy(FList[tFiles].Name, ffblk.ff_name);
             FList[tFiles].time = ffblk.ff_ftime;
             FList[tFiles].date = ffblk.ff_fdate;
-            fin = sOpen(ffblk.ff_name, "rb", 1);
-
-            if (fin == NULL) {
-                goto next;
-            }
-
-            fread(SaveHdr, 1, sizeof(SaveFileHdr), fin);
-            fclose(fin);
-
-            if (saveType == SAVEGAME_Normal) {
-                strcpy(FList[tFiles].Title, SaveHdr->Name);
-                tFiles++;
-            } else if (saveType == SAVEGAME_PlayByMail) {
-                if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
-                    strcpy(FList[tFiles].Title, SaveHdr->Name);
-                    tFiles++;
-                }
-            } else if (saveType == SAVEGAME_Modem) {
-                if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
-                    strcpy(FList[tFiles].Title, SaveHdr->Name);
-                    tFiles++;
-                }
-            }
-
-next:
-            done = next_saved_game(&ffblk);
+            tFiles++;
         }
+    }
 
-        if (tFiles != 0) {
-            {
-                for (i = 0; i < tFiles - 1; i++) {
-                    for (j = i + 1; j < tFiles; j++) {
-                        if (xstrcasecmp(FList[j].Title, FList[i].Title) < 0) {
-                            memcpy(&FList[tFiles], &FList[i], sizeof(SFInfo));
-                            memcpy(&FList[i], &FList[j], sizeof(SFInfo));
-                            memcpy(&FList[j], &FList[tFiles], sizeof(SFInfo));
-                        }
-                    }
+    // TODO: Replace this with a better sort routine
+    if (tFiles != 0) {
+        for (int i = 0; i < tFiles - 1; i++) {
+            for (int j = i + 1; j < tFiles; j++) {
+                if (xstrcasecmp(FList[j].Title, FList[i].Title) < 0) {
+                    memcpy(&FList[tFiles], &FList[i], sizeof(SFInfo));
+                    memcpy(&FList[i], &FList[j], sizeof(SFInfo));
+                    memcpy(&FList[j], &FList[tFiles], sizeof(SFInfo));
                 }
             }
         }
-
     }
 
     return tFiles;
@@ -332,7 +320,6 @@ next:
  * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
  */
 void FileAccess(char mode)
-// mode==0 if save allowed
 {
     char sc = 0;
     int32_t size;
@@ -1007,6 +994,26 @@ void FileAccess(char mode)
 }
 
 
+/**
+ * Extract the Save file type from its header.
+ *
+ * This function doesn't guarantee correctness for malformed headers.
+ *
+ * \param header  the header of a save game file.
+ * \return  if standard, PBEM, or network game.
+ */
+SaveGameType GetSaveType(const SaveFileHdr &header)
+{
+    if (header.Country[0] == 8 || header.Country[1] == 9) {
+        return SAVEGAME_PlayByMail;
+    } else if (header.Country[0] == 6 || header.Country[1] == 7) {
+        return SAVEGAME_Modem;
+    } else {
+        return SAVEGAME_Normal;
+    }
+}
+
+
 /* Creates an Autosave with the supplied save name.
  *
  * The save is composed of:
@@ -1023,7 +1030,6 @@ void save_game(char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
-    char *buf = NULL;
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
 
@@ -1047,10 +1053,9 @@ void save_game(char *name)
     hdr.dataSize = sizeof(struct Players);
     hdr.compSize = interimData.endTurnSaveSize;
 
-
     if ((outf = sOpen(name, "wb", 1)) == NULL) {
         WARNING2("can't save to file `%s'", name);
-        goto cleanup;
+        return;
     }
 
     // Write Save Game Header
@@ -1066,15 +1071,7 @@ void save_game(char *name)
     // Copy Event data into Save file
     fwrite(interimData.eventBuffer, interimData.eventSize, 1, outf);
 
-cleanup:
-
-    if (outf) {
-        fclose(outf);
-    }
-
-    if (buf) {
-        free(buf);
-    }
+    fclose(outf);
 }
 
 
@@ -1366,11 +1363,13 @@ int FutureCheck(char plr, char type)
         if (p[i] > 1) {
             display::graphics.setForegroundColor(5);
             draw_string(111, 50 + i * 51, "THIS FACILITY IS ");
+
             if (p[i] == 20) {
                 draw_string(0, 0, "DESTROYED.");
             } else {
                 draw_string(0, 0, "DAMAGED.");
             }
+
             draw_string(111, 57 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
