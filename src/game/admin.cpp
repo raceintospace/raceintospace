@@ -32,6 +32,9 @@
 
 #include <assert.h>
 
+#include <algorithm>
+#include <vector>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -65,16 +68,15 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-SFInfo *FList;
-
-void DrawFiles(char now, char loc, char tFiles);
+void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
 void DrawTimeCapsule(int display);
-int GenerateTables(SaveGameType saveType);
+std::vector<SFInfo> GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
 SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
 void FileText(char *name);
 int FutureCheck(char plr, char type);
+bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
 
 namespace
@@ -234,36 +236,26 @@ void Admin(char plr)
 
 /* Creates a list of all the save files of the selected type, up to 100.
  *
- * The results are stored in the global "buffer" variable. They are
- * stored as a list of SFInfo structs, accessible via the global FList
- * ptr. FList entries are ordered by save title.
+ * Entries are ordered by save title.
  *
  * Currently, only the first 100 valid savegames are detected.
  *
- * TODO: Storing the results of the search as a byte dump in a globally
- * accessible buffer is incredibly legacy and needs to be changed to
- * something safer.
- *
  * \param saveType  Include Normal, Modem, or Play by Email.
- * \return  The number of savegame files found.
+ * \return  Entries ordered by save title.
  */
-int GenerateTables(SaveGameType saveType)
+std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 {
     struct ffblk ffblk;
-    int tFiles = 0;
-    const int maxSaves = 100;  // So as not to overflow buffer
-
-    memset(buffer, 0x00, 20480);
-
-    /** \note old code lacked parans, so pointed FList off into space - pace */
-    FList = (SFInfo *)(buffer + 5000);
+    const int maxSaves = 100;
     SaveFileHdr header;
+    SFInfo saveInfo;
+    std::vector<SFInfo> results;
 
     for (bool done = first_saved_game(&ffblk);
-         done != true && tFiles < maxSaves;
+         done != true && results.size() < maxSaves;
          done = next_saved_game(&ffblk)) {
 
-        if (strlen(ffblk.ff_name) > sizeof(FList[tFiles].Name) - 1) {
+        if (strlen(ffblk.ff_name) > sizeof(saveInfo.Name) - 1) {
             NOTICE2("Save name too long: %s, skipping", ffblk.ff_name);
             continue;
         }
@@ -287,29 +279,17 @@ int GenerateTables(SaveGameType saveType)
 
         if (saveType == SAVEGAME_Normal ||
             saveType == GetSaveType(header)) {
-            memset(&FList[tFiles], 0, sizeof(FList[tFiles]));
-            strcpy(FList[tFiles].Title, header.Name);
-            strcpy(FList[tFiles].Name, ffblk.ff_name);
-            FList[tFiles].time = ffblk.ff_ftime;
-            FList[tFiles].date = ffblk.ff_fdate;
-            tFiles++;
+            memset(&saveInfo, 0, sizeof(saveInfo));
+            strcpy(saveInfo.Title, header.Name);
+            strcpy(saveInfo.Name, ffblk.ff_name);
+            saveInfo.time = ffblk.ff_ftime;
+            saveInfo.date = ffblk.ff_fdate;
+            results.push_back(saveInfo);
         }
     }
 
-    // TODO: Replace this with a better sort routine
-    if (tFiles != 0) {
-        for (int i = 0; i < tFiles - 1; i++) {
-            for (int j = i + 1; j < tFiles; j++) {
-                if (xstrcasecmp(FList[j].Title, FList[i].Title) < 0) {
-                    memcpy(&FList[tFiles], &FList[i], sizeof(SFInfo));
-                    memcpy(&FList[i], &FList[j], sizeof(SFInfo));
-                    memcpy(&FList[j], &FList[tFiles], sizeof(SFInfo));
-                }
-            }
-        }
-    }
-
-    return tFiles;
+    std::sort(results.begin(), results.end(), OrderSaves);
+    return results;
 }
 
 
@@ -322,18 +302,13 @@ int GenerateTables(SaveGameType saveType)
  * 0 for Player 1 (USA), 1 for Player 2 (USSR). Practically, both
  * Play-by-mail and Modem play are currently disabled.
  *
- * This relies on a number of global and local file global variables.
- * FList is a local file global pointer to save file data,
- * loaded into the global byte array "buffer". It is assigned, and
- * buffer populated, via GenerateTables().
- *
  * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
  */
 void FileAccess(char mode)
 {
     char sc = 0;
     int32_t size;
-    int tFiles, i, now, done, BarB, temp;
+    int i, now, done, BarB, temp;
     FILE *fin, *fout;
     char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;
@@ -363,7 +338,7 @@ void FileAccess(char mode)
         saveType = SAVEGAME_PlayByMail;
     }
 
-    tFiles = GenerateTables(saveType);
+    std::vector<SFInfo> savegames = GenerateTables(saveType);
 
     int enable = ENABLE_PLAY | ENABLE_QUIT;
 
@@ -375,7 +350,7 @@ void FileAccess(char mode)
         }
     }
 
-    if (tFiles > 0) {
+    if (savegames.size() > 0) {
         enable |= ENABLE_DELETE;
 
         if (sc == 0 || sc == 2) {
@@ -386,10 +361,10 @@ void FileAccess(char mode)
     DrawTimeCapsule(enable);
 
     done = BarB = now = 0;
-    DrawFiles(0, 0, tFiles);
+    DrawFiles(0, 0, savegames);
 
-    if (tFiles) {
-        FileText(&FList[now].Name[0]);
+    if (savegames.size()) {
+        FileText(&savegames[now].Name[0]);
     }
 
     FadeIn(2, 10, 0, 0);
@@ -400,18 +375,18 @@ void FileAccess(char mode)
 
         for (i = 0; i < 9; i++) {
             // Right Select Box
-            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) && mousebuttons > 0 && (now - BarB + i) <= (tFiles - 1)) {
+            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) && mousebuttons > 0 && (now - BarB + i) <= (savegames.size() - 1)) {
 
                 now -= BarB;
                 now += i;
                 BarB = i;
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
                 WaitForMouseUp();
             }
         }
 
-        if ((sc == 0 || sc == 2) && tFiles > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
+        if ((sc == 0 || sc == 2) && savegames.size() > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
             int endianSwap = 0;   // Default this to false
             REPLAY *load_buffer = NULL;
@@ -433,7 +408,7 @@ void FileAccess(char mode)
             if (temp >= 0) {
                 // Read in Saved game data
 
-                fin = sOpen(FList[now].Name, "rb", 1);
+                fin = sOpen(savegames[now].Name, "rb", 1);
 
                 fseek(fin, 0, SEEK_END);
                 fileLength = ftell(fin);
@@ -679,8 +654,8 @@ void FileAccess(char mode)
             header.Name[sizeof(header.Name) - 1] = 0x1A;
             temp = NOTSAME;
 
-            for (i = 0; (i < tFiles && temp == 2); i++) {
-                if (strcmp(header.Name, FList[i].Title) == 0) {
+            for (i = 0; (i < savegames.size() && temp == 2); i++) {
+                if (strcmp(header.Name, savegames[i].Title) == 0) {
                     temp = RequestX("REPLACE FILE", 1);
 
                     if (temp == SAME_ABORT) {
@@ -743,7 +718,7 @@ void FileAccess(char mode)
 
                     fin = sOpen(Name, "wb", 1);
                 } else {
-                    fin = sOpen(FList[i].Name, "wb", 1);
+                    fin = sOpen(savegames[i].Name, "wb", 1);
                 }
 
                 fwrite(&header, sizeof(header), 1, fin);
@@ -790,8 +765,8 @@ void FileAccess(char mode)
             key = 0;
             QUIT = 1;
             return;
-        } else if (tFiles > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
-                                  || (key == 'D'))) {
+        } else if (savegames.size() > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
+                                            || (key == 'D'))) {
             InBox(209, 92, 278, 100);
             delay(250);
             WaitForMouseUp();
@@ -801,7 +776,7 @@ void FileAccess(char mode)
 
             if (i == 1) {
 
-                remove_savedat(FList[now].Name);
+                remove_savedat(savegames[now].Name);
                 memset(Name, 0x00, sizeof Name);
                 saveType = SAVEGAME_Normal;
 
@@ -811,13 +786,13 @@ void FileAccess(char mode)
                     saveType = SAVEGAME_PlayByMail;
                 }
 
-                tFiles = GenerateTables(saveType);
+                savegames = GenerateTables(saveType);
                 now = 0;
                 BarB = 0;
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
 
-                if (tFiles == 0) {
+                if (savegames.size() == 0) {
                     InBox(207, 48, 280, 60);
                     fill_rectangle(208, 49, 279, 59, 3);
                     display::graphics.setForegroundColor(1);
@@ -863,16 +838,16 @@ void FileAccess(char mode)
             if (BarB == 0) {
                 if (now > 0) {
                     now--;
-                    DrawFiles(now, BarB, tFiles);
-                    FileText(&FList[now].Name[0]);
+                    DrawFiles(now, BarB, savegames);
+                    FileText(&savegames[now].Name[0]);
                 }
             }
 
             if (BarB > 0) {
                 BarB--;
                 now--;
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             //  WaitForMouseUp();
@@ -890,8 +865,8 @@ void FileAccess(char mode)
                     BarB = 0;
                 }
 
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             // perform Up Button
@@ -899,16 +874,16 @@ void FileAccess(char mode)
 
         } else if (key == K_PGDN) { // Page Down
 
-            if (now < (tFiles - 9)) {
+            if (now < (savegames.size() - 9)) {
                 now += 9;
 
-                if (now > (tFiles - 1)) {
-                    now = tFiles - 1;
+                if (now > (savegames.size() - 1)) {
+                    now = savegames.size() - 1;
                     BarB = 8;
                 }
 
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             key = 0;
@@ -916,18 +891,18 @@ void FileAccess(char mode)
             InBox(191, 89, 202, 126);
 
             if (BarB == 8) {
-                if (now < (tFiles - 1)) {
+                if (now < (savegames.size() - 1)) {
                     now++;
-                    DrawFiles(now, BarB, tFiles);
-                    FileText(&FList[now].Name[0]);
+                    DrawFiles(now, BarB, savegames);
+                    FileText(&savegames[now].Name[0]);
                 }
             }
 
-            if (BarB < 8 && now < (tFiles - 1)) {
+            if (BarB < 8 && now < (savegames.size() - 1)) {
                 BarB++;
                 now++;
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
 
@@ -955,23 +930,23 @@ void FileAccess(char mode)
  *
  * \param now     The savegame index of the current save file.
  * \param loc     The display index of the current save file.
- * \param tFiles  The total count of savegame files.
+ * \param savegames  TODO
  */
-void DrawFiles(char now, char loc, char tFiles)
+void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
 {
     int j = 0;
     int start = now - loc;
 
     fill_rectangle(38, 49, 190, 127, 0);
 
-    if (tFiles > 0) {
+    if (savegames.size() > 0) {
         ShBox(39, 52 + loc * 8, 189, 60 + loc * 8);
     }
 
     display::graphics.setForegroundColor(1);
 
-    for (int i = start; i < start + 9 && i < tFiles; i++, j++) {
-        draw_string(40, 58 + j * 8, FList[i].Title);
+    for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
+        draw_string(40, 58 + j * 8, savegames[i].Title);
     }
 }
 
@@ -1592,6 +1567,17 @@ int FutureCheck(char plr, char type)
 }
 
 
+/**
+ * Sort SFInfo objects by Title then Name.
+ */
+bool OrderSaves(const SFInfo &a, const SFInfo &b)
+{
+    int titleOrder = xstrcasecmp(a.Title, b.Title);
+    return (titleOrder < 0) ||
+           (titleOrder == 0 && xstrcasecmp(a.Name, b.Name) < 0);
+}
+
+
 /* Creates a popup confirmation box, blocking input until resolved.
  *
  * \param s   The heading text.
@@ -1706,11 +1692,11 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
 
 void MailSave()
 {
-    int done, temp, i, tFiles;
+    int done, temp, i;
     FILE *fin;
     SaveFileHdr header;
 
-    tFiles = GenerateTables(SAVEGAME_PlayByMail);
+    std::vector<SFInfo> savegames = GenerateTables(SAVEGAME_PlayByMail);
 
     display::graphics.screen()->clear();
 
@@ -1725,8 +1711,8 @@ void MailSave()
         header.Name[sizeof(header.Name) - 1] = 0x1A;
         temp = NOTSAME;
 
-        for (i = 0; (i < tFiles && temp == 2); i++) {
-            if (strcmp(header.Name, FList[i].Title) == 0) {
+        for (i = 0; (i < savegames.size() && temp == 2); i++) {
+            if (strcmp(header.Name, savegames[i].Title) == 0) {
                 temp = RequestX("REPLACE FILE", 1);
 
                 if (temp == SAME_ABORT) {
@@ -1788,7 +1774,7 @@ void MailSave()
 
             fin = sOpen(Name, "wb", 1);
         } else {
-            fin = sOpen(FList[i].Name, "wb", 1);
+            fin = sOpen(savegames[i].Name, "wb", 1);
         }
 
         // Write the Save Game Header
