@@ -461,17 +461,17 @@ void Rush(char plr)
                 }
             } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) {                
                 OutBox(20, 38, 60, 69);
-                delay(250);
+                delay(100);
                 InBox(20, 38, 60, 69);
                 DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[0].MissionCode));
             } else if (x >= 20 && x <= 60 && y >= 96 && y <= 127 && mousebuttons > 0 && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) {
                 OutBox(20, 96, 60, 127);
-                delay(250);
+                delay(100);
                 InBox(20, 96, 60, 127);
                 DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[1].MissionCode));
             } else if (x >= 20 && x <= 60 && y >= 154 && y <= 185 && mousebuttons > 0 && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) {
                 OutBox(20, 154, 60, 185);
-                delay(250);
+                delay(100);
                 InBox(20, 154, 60, 185);
                 DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[2].MissionCode));
             }
