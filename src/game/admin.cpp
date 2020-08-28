@@ -76,6 +76,7 @@ SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
 void FileText(char *name);
 int FutureCheck(char plr, char type);
+void LoadGame(const char *filename);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
 
@@ -307,7 +308,6 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 void FileAccess(char mode)
 {
     char sc = 0;
-    int32_t size;
     int i, now, done, BarB, temp;
     FILE *fin, *fout;
     char Name[12];
@@ -320,6 +320,9 @@ void FileAccess(char mode)
         sc = 2;
     }
 
+    // TODO: Since mode == 2 is checked later, when it cannot occur,
+    // I'm guessing this is some kind of hack added at a later time.
+    // This needs to be deciphered and better documented. -- rnyoakum
     if (mode == 2) {
         mode = 0;
         sc = 1; //only allow mail save
@@ -388,12 +391,6 @@ void FileAccess(char mode)
 
         if ((sc == 0 || sc == 2) && savegames.size() > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
-            int endianSwap = 0;   // Default this to false
-            REPLAY *load_buffer = NULL;
-            size_t fileLength = 0, eventSize = 0;
-            size_t readLen = 0;
-            SaveFileHdr header;
-
             InBox(209, 50, 278, 58);
             delay(250);
 
@@ -407,232 +404,11 @@ void FileAccess(char mode)
 
             if (temp >= 0) {
                 // Read in Saved game data
+                LoadGame(savegames[now].Name);
+                done = LOAD;
 
-                fin = sOpen(savegames[now].Name, "rb", 1);
-
-                fseek(fin, 0, SEEK_END);
-                fileLength = ftell(fin);
-                rewind(fin);
-                fread(&header, 1, sizeof(header), fin);
-
-                // Determine Endian Swap, 31663 is for old save games
-                if (header.dataSize != sizeof(struct Players) &&
-                    header.dataSize != 31663) {
-                    endianSwap = 1;
-                }
-
-                if (endianSwap) {
-                    header.compSize = _Swap16bit(header.compSize);
-                    header.dataSize = _Swap16bit(header.dataSize);
-                }
-
-                readLen = header.compSize;
-                load_buffer = (REPLAY *)malloc(readLen);
-
-                fread(load_buffer, 1, readLen, fin);
-
-                if (header.dataSize == sizeof(struct Players) ||
-                    header.dataSize == 31663) {
-                    RLED((char *) load_buffer, (char *)Data, header.compSize);
-                    free(load_buffer);
-
-                    // Swap Players' Data
-                    if (endianSwap) {
-                        _SwapGameDat();
-                    }
-
-                    //MSF now holds MaxRDBase (from 1.0.0)
-                    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-                        int j, k;
-
-                        for (j = 0; j < NUM_PLAYERS; j++) {
-                            for (k = 0; k < 7; k++) {
-                                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-                                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-                                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-                                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-                            }
-                        }
-                    }
-
-                    // Read the Replay Data
-                    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-                    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
-
-                    if (endianSwap) {
-                        REPLAY *r = NULL;
-                        r = load_buffer;
-
-                        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
-                            for (int k = 0; k < r->Qty; k++) {
-                                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
-                            }
-                        }
-                    }
-
-                    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-                    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
-                    free(load_buffer);
-
-                    eventSize = fileLength - ftell(fin);
-
-                    // Read the Event Data
-                    load_buffer = (REPLAY *)malloc(eventSize);
-                    fread(load_buffer, 1, eventSize, fin);
-                    fclose(fin);
-
-                    if (endianSwap) {
-                        for (int j = 0; j < 84; j++) {
-                            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
-
-                            if (on->offset) {
-                                on->offset = _Swap32bit(on->offset);
-                                on->size = _Swap16bit(on->size);
-                            }
-                        }
-
-                        // File Structure is 84 longs 42 per side
-                    }
-
-                    // Save Event information
-                    if (interimData.eventBuffer) {
-                        free(interimData.eventBuffer);
-                    }
-
-                    interimData.eventBuffer = (char *) malloc(eventSize);
-                    interimData.eventSize = eventSize;
-                    memcpy(interimData.eventBuffer, load_buffer, eventSize);
-                    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-
-                    free(load_buffer);
-
-                    if (GetSaveType(header) == SAVEGAME_Normal) {
-                        plr[0] = Data->Def.Plr1;
-                        plr[1] = Data->Def.Plr2;
-                        Data->plr[0] = Data->Def.Plr1;
-                        Data->plr[1] = Data->Def.Plr2;
-                        MAIL = -1;
-
-                        if (plr[0] == 2 || plr[0] == 3) {
-                            AI[0] = 1;
-                        } else {
-                            AI[0] = 0;    // SET AI FLAGS
-                        }
-
-                        if (plr[1] == 2 || plr[1] == 3) {
-                            AI[1] = 1;
-                        } else {
-                            AI[1] = 0;
-                        }
-                    }
-
-
-                    if (GetSaveType(header) == SAVEGAME_PlayByMail) {
-                        // Play-By-Mail save game LOAD
-                        Option = -1;
-                        fOFF = -1;
-                        // save file offset
-                        fOFF = now;
-
-                        Data->Season = header.Season;
-                        Data->Year = header.Year;
-
-                        if (header.Country[0] == 8) {
-                            MAIL = plr[0] = 0; // U.S. turn coming up
-                            plr[1] = 1;
-                        } else {
-                            MAIL = plr[1] = 1; // Soviet turn coming up
-                            plr[0] = 0;
-                        }
-
-                        AI[0] = AI[1] = 0;
-                        Data->Def.Plr1 = 0;
-                        Data->Def.Plr2 = 1;
-                        Data->plr[0] = Data->Def.Plr1;
-                        Data->plr[1] = Data->Def.Plr2;
-
-                        if (Data->Def.Input == 0 || Data->Def.Input == 2) {
-                            // Hist Crews
-                            fin = sOpen("CREW.DAT", "rb", 0);
-                            size = fread(buffer, 1, BUFFER_SIZE, fin);
-                            fclose(fin);
-                            fin = sOpen("MEN.DAT", "wb", 1);
-                            fwrite(buffer, size, 1, fin);
-                            fclose(fin);
-                        } else if (Data->Def.Input == 1 || Data->Def.Input == 3) {
-                            // User Crews
-                            fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                            if (!fin) {
-                                fin = sOpen("USER.DAT", "rb", FT_DATA);
-                            }
-
-                            size = fread(buffer, 1, BUFFER_SIZE, fin);
-                            fclose(fin);
-                            fin = sOpen("MEN.DAT", "wb", 1);
-                            fwrite(buffer, size, 1, fin);
-                            fclose(fin);
-                        }
-                    } else
-
-                        // Modem save game LOAD
-                        if (GetSaveType(header) == SAVEGAME_Modem) {
-                            // Modem connect up
-                            if (header.Country[0] == 6) {
-                                plr[0] = header.Country[0];
-                                plr[1] = 1;
-                            } else {
-                                plr[1] = header.Country[1];
-                                plr[0] = 0;
-                            }
-
-                            // Modem Play => reset the modem
-                            if (Option != -1) {
-                                DoModem(2);
-                            }
-
-                            Option = MPrefs(1);
-
-                            // kludge
-                            if (Option == 0 || Option == 2) {
-                                Option = 0;
-                            } else if (Option == 1 || Option == 3) {
-                                Option = 1;
-                            }
-                        } else {
-                            // Regular save game LOAD
-                            if (Data->Def.Input == 0 || Data->Def.Input == 2) { // Hist Crews
-                                fin = sOpen("CREW.DAT", "rb", 0);
-                                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                                fclose(fin);
-                                fin = sOpen("MEN.DAT", "wb", 1);
-                                fwrite(buffer, size, 1, fin);
-                                fclose(fin);
-                            } else if (Data->Def.Input == 1 || Data->Def.Input == 3) { // User Crews
-                                fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                                if (!fin) {
-                                    fin = sOpen("USER.DAT", "rb", FT_DATA);
-                                }
-
-                                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                                fclose(fin);
-                                fin = sOpen("MEN.DAT", "wb", 1);
-                                fwrite(buffer, size, 1, fin);
-                                fclose(fin);
-                            }
-                        }
-
-                    if (Option != MODEM_ERROR) {
-                        LOAD = done = 1;
-                    } else {
-                        Option = -1;
-                        LOAD = done = 0;
-                        return;
-                    }
-                } else {
-                    fclose(fin);
-                    BadFileType();
+                if (LOAD) {
+                    fOFF = now;  // save file offset
                 }
             } // temp
 
@@ -1564,6 +1340,266 @@ int FutureCheck(char plr, char type)
     }
 
     return pad;
+}
+
+
+/**
+ * Reads a save file and populates the active game data.
+ *
+ * Fills the Data and interimData global variables with data
+ * extracted from the save file. Automatically corrects for endian
+ * differences between the system and saved information.
+ *
+ * The Play-by-Modem mode is disabled in the game, and the code is a
+ * bit of a mess. It's preserved here faithfully, but that doesn't
+ * guarantee it will _work_.
+ *
+ *   header.compSize   is the size (in bytes) of the Data global
+ *                     when compressed.
+ *   header.dataSize   is the size of the Data global when expanded
+ *
+ * TODO: The new values for the global variables are assigned as they
+ * are read, which reduces memory requirements but means the
+ * current game state may be overwritten before an error in the file
+ * is noticed. This would prevent loading, but make it impossible to
+ * return to the active game.
+ *
+ * TODO: Add error handling on read/write commands.
+ *
+ * \param filename  the name, including extension, relative to the
+ *     save directory.
+ */
+void LoadGame(const char *filename)
+{
+    size_t size = 0;
+    int endianSwap = 0;   // Default this to false
+    REPLAY *load_buffer = NULL;
+    size_t fileLength = 0, eventSize = 0;
+    size_t readLen = 0;
+    SaveFileHdr header;
+
+    FILE *fin = sOpen(filename, "rb", 1);
+
+    fseek(fin, 0, SEEK_END);
+    fileLength = ftell(fin);
+    rewind(fin);
+    fread(&header, 1, sizeof(header), fin);
+
+    // Determine Endian Swap, 31663 is for old save games
+    if (header.dataSize != sizeof(struct Players) &&
+        header.dataSize != 31663) {
+        endianSwap = 1;
+    }
+
+    if (endianSwap) {
+        header.compSize = _Swap16bit(header.compSize);
+        header.dataSize = _Swap16bit(header.dataSize);
+    }
+
+    readLen = header.compSize;
+    load_buffer = (REPLAY *)malloc(readLen);
+
+    fread(load_buffer, 1, readLen, fin);
+
+    if (header.dataSize == sizeof(struct Players) ||
+        header.dataSize == 31663) {
+        RLED((char *) load_buffer, (char *)Data, header.compSize);
+        free(load_buffer);
+
+        // Swap Players' Data
+        if (endianSwap) {
+            _SwapGameDat();
+        }
+
+        //MSF now holds MaxRDBase (from 1.0.0)
+        if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
+            int j, k;
+
+            for (j = 0; j < NUM_PLAYERS; j++) {
+                for (k = 0; k < 7; k++) {
+                    Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+                    Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+                    Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+                    Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
+                }
+            }
+        }
+
+        // Read the Replay Data
+        load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+        fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+
+        if (endianSwap) {
+            REPLAY *r = NULL;
+            r = load_buffer;
+
+            for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+                for (int k = 0; k < r->Qty; k++) {
+                    r[j].Off[k] = _Swap16bit(r[j].Off[k]);
+                }
+            }
+        }
+
+        interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+        memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
+        free(load_buffer);
+
+        eventSize = fileLength - ftell(fin);
+
+        // Read the Event Data
+        load_buffer = (REPLAY *)malloc(eventSize);
+        fread(load_buffer, 1, eventSize, fin);
+        fclose(fin);
+
+        if (endianSwap) {
+            for (int j = 0; j < 84; j++) {
+                OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
+
+                if (on->offset) {
+                    on->offset = _Swap32bit(on->offset);
+                    on->size = _Swap16bit(on->size);
+                }
+            }
+
+            // File Structure is 84 longs 42 per side
+        }
+
+        // Save Event information
+        if (interimData.eventBuffer) {
+            free(interimData.eventBuffer);
+        }
+
+        interimData.eventBuffer = (char *) malloc(eventSize);
+        interimData.eventSize = eventSize;
+        memcpy(interimData.eventBuffer, load_buffer, eventSize);
+        interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+
+        free(load_buffer);
+
+        if (GetSaveType(header) == SAVEGAME_Normal) {
+            plr[0] = Data->Def.Plr1;
+            plr[1] = Data->Def.Plr2;
+            Data->plr[0] = Data->Def.Plr1;
+            Data->plr[1] = Data->Def.Plr2;
+            MAIL = -1;
+
+            if (plr[0] == 2 || plr[0] == 3) {
+                AI[0] = 1;
+            } else {
+                AI[0] = 0;    // SET AI FLAGS
+            }
+
+            if (plr[1] == 2 || plr[1] == 3) {
+                AI[1] = 1;
+            } else {
+                AI[1] = 0;
+            }
+        }
+
+
+        if (GetSaveType(header) == SAVEGAME_PlayByMail) {
+            // Play-By-Mail save game LOAD
+            Option = -1;
+
+            Data->Season = header.Season;
+            Data->Year = header.Year;
+
+            if (header.Country[0] == 8) {
+                MAIL = plr[0] = 0; // U.S. turn coming up
+                plr[1] = 1;
+            } else {
+                MAIL = plr[1] = 1; // Soviet turn coming up
+                plr[0] = 0;
+            }
+
+            AI[0] = AI[1] = 0;
+            Data->Def.Plr1 = 0;
+            Data->Def.Plr2 = 1;
+            Data->plr[0] = Data->Def.Plr1;
+            Data->plr[1] = Data->Def.Plr2;
+
+            if (Data->Def.Input == 0 || Data->Def.Input == 2) {
+                // Hist Crews
+                fin = sOpen("CREW.DAT", "rb", 0);
+                size = fread(buffer, 1, BUFFER_SIZE, fin);
+                fclose(fin);
+                fin = sOpen("MEN.DAT", "wb", 1);
+                fwrite(buffer, size, 1, fin);
+                fclose(fin);
+            } else if (Data->Def.Input == 1 || Data->Def.Input == 3) {
+                // User Crews
+                fin = sOpen("USER.DAT", "rb", FT_SAVE);
+
+                if (!fin) {
+                    fin = sOpen("USER.DAT", "rb", FT_DATA);
+                }
+
+                size = fread(buffer, 1, BUFFER_SIZE, fin);
+                fclose(fin);
+                fin = sOpen("MEN.DAT", "wb", 1);
+                fwrite(buffer, size, 1, fin);
+                fclose(fin);
+            }
+        } else
+
+            // Modem save game LOAD
+            if (GetSaveType(header) == SAVEGAME_Modem) {
+                // Modem connect up
+                if (header.Country[0] == 6) {
+                    plr[0] = header.Country[0];
+                    plr[1] = 1;
+                } else {
+                    plr[1] = header.Country[1];
+                    plr[0] = 0;
+                }
+
+                // Modem Play => reset the modem
+                if (Option != -1) {
+                    DoModem(2);
+                }
+
+                Option = MPrefs(1);
+
+                // kludge
+                if (Option == 0 || Option == 2) {
+                    Option = 0;
+                } else if (Option == 1 || Option == 3) {
+                    Option = 1;
+                }
+            } else {
+                // Regular save game LOAD
+                if (Data->Def.Input == 0 || Data->Def.Input == 2) { // Hist Crews
+                    fin = sOpen("CREW.DAT", "rb", 0);
+                    size = fread(buffer, 1, BUFFER_SIZE, fin);
+                    fclose(fin);
+                    fin = sOpen("MEN.DAT", "wb", 1);
+                    fwrite(buffer, size, 1, fin);
+                    fclose(fin);
+                } else if (Data->Def.Input == 1 || Data->Def.Input == 3) { // User Crews
+                    fin = sOpen("USER.DAT", "rb", FT_SAVE);
+
+                    if (!fin) {
+                        fin = sOpen("USER.DAT", "rb", FT_DATA);
+                    }
+
+                    size = fread(buffer, 1, BUFFER_SIZE, fin);
+                    fclose(fin);
+                    fin = sOpen("MEN.DAT", "wb", 1);
+                    fwrite(buffer, size, 1, fin);
+                    fclose(fin);
+                }
+            }
+
+        if (Option != MODEM_ERROR) {
+            LOAD = 1;
+        } else {
+            Option = -1;
+            LOAD = 0;
+        }
+    } else {
+        fclose(fin);
+        BadFileType();
+    }
 }
 
 
