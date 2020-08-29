@@ -388,7 +388,7 @@ void DrawAstSel(char plr)
     draw_down_arrow(170, 166); //Right
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
-    draw_heading(35, 5, "RECRUITMENT", 0, -1);
+    draw_heading(40, 5, "RECRUITMENT", 0, -1);
     draw_small_flag(plr, 4, 4);
 
     InBox(3, 27, 155, 44);
