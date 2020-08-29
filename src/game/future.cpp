@@ -390,8 +390,13 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
 
     display::graphics.setForegroundColor(1);
     draw_string(99, 116, "MILESTONE PENALT");
-    if (milestonePenalty == 3) { draw_string(0, 0, "Y");
-        } else { draw_string(0, 0, "IES"); }
+
+    if (milestonePenalty == 3) {
+        draw_string(0, 0, "Y");
+    } else {
+        draw_string(0, 0, "IES");
+    }
+
     draw_string(220, 116, "-");
 
     if (milestonePenalty > 0) {
@@ -401,8 +406,13 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     }
 
     draw_string(99, 124, "DURATION PENALT");
-    if (durationPenalty == 5) { draw_string(0, 0, "Y");
-        } else { draw_string(0, 0, "IES"); }
+
+    if (durationPenalty == 5) {
+        draw_string(0, 0, "Y");
+    } else {
+        draw_string(0, 0, "IES");
+    }
+
     draw_string(220, 124, "-");
 
     if (durationPenalty > 0) {
@@ -1258,7 +1268,20 @@ void Future(char plr)
                 delay(150);
                 OutBox(203, 33, 238, 47);
                 OutBox(203, 34, 238, 47);
-                DrawPenaltyPopup(plr, missionData[misType]);
+
+                if (missionData[misType].Dur) {
+                    struct mStr mission = missionData[misType];
+                    int duration = MAX(nav.duration.value,
+                                       missionData[misType].Days);
+                    bool valid =
+                        (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
+
+                    mission.Days = duration;
+                    DrawPenaltyPopup(plr, mission);
+                } else {
+                    DrawPenaltyPopup(plr, missionData[misType]);
+                }
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
                 // Scroll up among Mission Types
