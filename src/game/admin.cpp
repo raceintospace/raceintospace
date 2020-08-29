@@ -1408,193 +1408,160 @@ int FutureCheck(char plr, char type)
  */
 void LoadGame(const char *filename)
 {
-    int endianSwap = 0;   // Default this to false
     REPLAY *load_buffer = NULL;
-    size_t fileLength = 0, eventSize = 0;
-    size_t readLen = 0;
     SaveFileHdr header;
 
     FILE *fin = sOpen(filename, "rb", 1);
 
     fseek(fin, 0, SEEK_END);
-    fileLength = ftell(fin);
+    size_t fileLength = ftell(fin);
     rewind(fin);
     fread(&header, 1, sizeof(header), fin);
 
     // Determine Endian Swap, 31663 is for old save games
-    if (header.dataSize != sizeof(struct Players) &&
-        header.dataSize != 31663) {
-        endianSwap = 1;
-    }
+    bool endianSwap = (header.dataSize != sizeof(struct Players) &&
+                       header.dataSize != 31663);
 
     if (endianSwap) {
         header.compSize = _Swap16bit(header.compSize);
         header.dataSize = _Swap16bit(header.dataSize);
+
+        if (header.dataSize != sizeof(struct Players) &&
+            header.dataSize != 31663) {
+            // TODO: Feels like BadFileType() should be launched by
+            // FileAccess, which runs the interface. Throw an
+            // exception or return an error code?
+            fclose(fin);
+            BadFileType();
+            return;
+        }
     }
 
-    readLen = header.compSize;
+    size_t readLen = header.compSize;
     load_buffer = (REPLAY *)malloc(readLen);
-
     fread(load_buffer, 1, readLen, fin);
+    RLED((char *) load_buffer, (char *)Data, header.compSize);
+    free(load_buffer);
 
-    if (header.dataSize == sizeof(struct Players) ||
-        header.dataSize == 31663) {
-        RLED((char *) load_buffer, (char *)Data, header.compSize);
-        free(load_buffer);
+    // Swap Players' Data
+    if (endianSwap) {
+        _SwapGameDat();
+    }
 
-        // Swap Players' Data
-        if (endianSwap) {
-            _SwapGameDat();
-        }
-
-        //MSF now holds MaxRDBase (from 1.0.0)
-        if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-            int j, k;
-
-            for (j = 0; j < NUM_PLAYERS; j++) {
-                for (k = 0; k < 7; k++) {
-                    Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-                    Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-                    Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-                    Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-                }
+    //MSF now holds MaxRDBase (from 1.0.0)
+    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
+        for (int j = 0; j < NUM_PLAYERS; j++) {
+            for (int k = 0; k < 7; k++) {
+                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
             }
         }
+    }
 
-        // Read the Replay Data
-        load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-        fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+    // Read the Replay Data
+    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
 
-        if (endianSwap) {
-            REPLAY *r = NULL;
-            r = load_buffer;
+    if (endianSwap) {
+        REPLAY *r = NULL;
+        r = load_buffer;
 
-            for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
-                for (int k = 0; k < r->Qty; k++) {
-                    r[j].Off[k] = _Swap16bit(r[j].Off[k]);
-                }
+        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+            for (int k = 0; k < r->Qty; k++) {
+                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
             }
         }
+    }
 
-        interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-        memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
-        free(load_buffer);
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
+    free(load_buffer);
 
-        eventSize = fileLength - ftell(fin);
+    size_t eventSize = fileLength - ftell(fin);
 
-        // Read the Event Data
-        load_buffer = (REPLAY *)malloc(eventSize);
-        fread(load_buffer, 1, eventSize, fin);
-        fclose(fin);
+    // Read the Event Data
+    load_buffer = (REPLAY *)malloc(eventSize);
+    fread(load_buffer, 1, eventSize, fin);
+    fclose(fin);
 
-        if (endianSwap) {
-            for (int j = 0; j < 84; j++) {
-                OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
+    if (endianSwap) {
+        // File Structure is 84 longs 42 per side
+        for (int j = 0; j < 84; j++) {
+            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
 
-                if (on->offset) {
-                    on->offset = _Swap32bit(on->offset);
-                    on->size = _Swap16bit(on->size);
-                }
-            }
-
-            // File Structure is 84 longs 42 per side
-        }
-
-        // Save Event information
-        if (interimData.eventBuffer) {
-            free(interimData.eventBuffer);
-        }
-
-        interimData.eventBuffer = (char *) malloc(eventSize);
-        interimData.eventSize = eventSize;
-        memcpy(interimData.eventBuffer, load_buffer, eventSize);
-        interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-
-        free(load_buffer);
-
-        if (GetSaveType(header) == SAVEGAME_Normal) {
-            plr[0] = Data->Def.Plr1;
-            plr[1] = Data->Def.Plr2;
-            Data->plr[0] = Data->Def.Plr1;
-            Data->plr[1] = Data->Def.Plr2;
-            MAIL = -1;
-
-            if (plr[0] == 2 || plr[0] == 3) {
-                AI[0] = 1;
-            } else {
-                AI[0] = 0;    // SET AI FLAGS
-            }
-
-            if (plr[1] == 2 || plr[1] == 3) {
-                AI[1] = 1;
-            } else {
-                AI[1] = 0;
+            if (on->offset) {
+                on->offset = _Swap32bit(on->offset);
+                on->size = _Swap16bit(on->size);
             }
         }
+    }
 
+    // Save Event information
+    if (interimData.eventBuffer) {
+        free(interimData.eventBuffer);
+    }
 
-        if (GetSaveType(header) == SAVEGAME_PlayByMail) {
-            // Play-By-Mail save game LOAD
-            Option = -1;
+    interimData.eventBuffer = (char *) malloc(eventSize);
+    interimData.eventSize = eventSize;
+    memcpy(interimData.eventBuffer, load_buffer, eventSize);
+    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
 
-            Data->Season = header.Season;
-            Data->Year = header.Year;
+    free(load_buffer);
 
-            if (header.Country[0] == 8) {
-                MAIL = plr[0] = 0; // U.S. turn coming up
-                plr[1] = 1;
-            } else {
-                MAIL = plr[1] = 1; // Soviet turn coming up
-                plr[0] = 0;
-            }
+    if (GetSaveType(header) == SAVEGAME_Normal) {
+        Option = MAIL = -1;
 
-            AI[0] = AI[1] = 0;
-            Data->Def.Plr1 = 0;
-            Data->Def.Plr2 = 1;
-            Data->plr[0] = Data->Def.Plr1;
-            Data->plr[1] = Data->Def.Plr2;
+        Data->plr[0] = plr[0] = Data->Def.Plr1;
+        Data->plr[1] = plr[1] = Data->Def.Plr2;
 
-            CacheCrewFile();
-        } else
+        AI[0] = (plr[0] == 2 || plr[0] == 3);
+        AI[1] = (plr[1] == 2 || plr[1] == 3);
 
-            // Modem save game LOAD
-            if (GetSaveType(header) == SAVEGAME_Modem) {
-                // Modem connect up
-                if (header.Country[0] == 6) {
-                    plr[0] = header.Country[0];
-                    plr[1] = 1;
-                } else {
-                    plr[1] = header.Country[1];
-                    plr[0] = 0;
-                }
+        CacheCrewFile();
+        LOAD = 1;
+    } else if (GetSaveType(header) == SAVEGAME_PlayByMail) {
+        Option = -1;
+        MAIL = !(header.Country[0] == 8);
 
-                // Modem Play => reset the modem
-                if (Option != -1) {
-                    DoModem(2);
-                }
+        Data->plr[0] = Data->Def.Plr1 = plr[0] = 0;
+        Data->plr[1] = Data->Def.Plr2 = plr[1] = 1;
 
-                Option = MPrefs(1);
+        AI[0] = AI[1] = 0;
+        Data->Season = header.Season;
+        Data->Year = header.Year;
 
-                // kludge
-                if (Option == 0 || Option == 2) {
-                    Option = 0;
-                } else if (Option == 1 || Option == 3) {
-                    Option = 1;
-                }
-            } else {
-                // Regular save game LOAD
-                CacheCrewFile();
-            }
-
-        if (Option != MODEM_ERROR) {
-            LOAD = 1;
+        CacheCrewFile();
+        LOAD = 1;
+    } else if (GetSaveType(header) == SAVEGAME_Modem) {
+        // Modem connect up
+        if (header.Country[0] == 6) {
+            plr[0] = header.Country[0];
+            plr[1] = 1;
         } else {
-            Option = -1;
-            LOAD = 0;
+            plr[1] = header.Country[1];
+            plr[0] = 0;
         }
-    } else {
-        fclose(fin);
-        BadFileType();
+
+        // Modem Play => reset the modem
+        if (Option != -1) {
+            DoModem(2);
+        }
+
+        Option = MPrefs(1);
+        LOAD = (Option != MODEM_ERROR);
+
+        // kludge
+        if (Option == 0 || Option == 2) {
+            Option = 0;
+        } else if (Option == 1 || Option == 3) {
+            Option = 1;
+        } else if (Option == MODEM_ERROR) {
+            Option = -1;
+        }
+
+        // TODO: Should Modem games call CacheCrewFile()?
     }
 }
 
