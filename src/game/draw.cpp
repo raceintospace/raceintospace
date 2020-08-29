@@ -193,8 +193,8 @@ void draw_up_arrow_highlight(int x1, int y1)
     display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 15);
     display::graphics.legacyScreen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 15);
 
-    display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 11);
-    display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 11);
+    display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 15);
+    display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 15);
     return;
 }
 
@@ -233,8 +233,8 @@ void draw_down_arrow_highlight(int x1, int y1)
     display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 15);
     display::graphics.legacyScreen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 15);
 
-    display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 11);
-    display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 11);
+    display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 15);
+    display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 15);
 
     return;
 }

@@ -720,14 +720,14 @@ void Viewing(char plr)
         key = 0;
         GetMouse();
 
-        if (ctop > 0 && key == K_HOME) { // Home Key
+        if (ctop > 0 && key == K_HOME) {  // Home Key
             ctop = 1;
 
             DrawVText(ctop);
             bzdelay(DELAYCNT);
         }
 
-        if (ctop > 0 && key == K_PGUP) { // Page Up Key
+        if (ctop > 0 && key == K_PGUP) {  // Page Up Key
             ctop -= 7;
 
             if (ctop < 0) {
@@ -738,7 +738,7 @@ void Viewing(char plr)
             bzdelay(DELAYCNT);
         }
 
-        if (ctop < bline && key == K_PGDN) { // Page Down Key
+        if (ctop < bline && key == K_PGDN) {  // Page Down Key
             ctop += 7;
 
             if (ctop > bline) {
@@ -749,7 +749,7 @@ void Viewing(char plr)
             bzdelay(DELAYCNT);
         }
 
-        if (ctop < bline && key == K_END) { // End Key
+        if (ctop < bline && key == K_END) {  // End Key
             ctop = bline;
 
             DrawVText(ctop);
@@ -853,6 +853,16 @@ void Viewing(char plr)
                 OutBox(244, 28, 313, 38);    //Button Newer
             }
         }
+    if (ctop <= 0) {
+        draw_up_arrow(304, 118);
+    } else {
+        draw_up_arrow_highlight(304, 118);
+    }
+    if (ctop >= bline) {
+        draw_down_arrow(304, 149);
+    } else {
+        draw_down_arrow_highlight(304, 149);
+    }
     }
 }
 /* EOF */
