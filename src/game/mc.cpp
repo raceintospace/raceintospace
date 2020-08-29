@@ -116,7 +116,7 @@ void SetW(char ch)
 
 int Launch(char plr, char mis)
 {
-    int i, j, t, k, mcode, avg, temp = 0;
+    int i, j, t, k, mcode, avg, spResult, temp = 0;
     char total;
     STEP = FINAL = JOINT = PastBANG = 0;
     MisStat = tMen = 0x00; // clear mission status flags
@@ -126,6 +126,16 @@ int Launch(char plr, char mis)
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
         GetMisType(Data->P[plr].Mission[mis].MissionCode);
+
+        // Check for Mission death
+        spResult = Data->P[plr].History[Data->P[plr].PastMissionCount].spResult;
+
+        if (spResult >= 3000 && spResult < 5000) {
+            death = 1;
+        } else {
+            death = 0;
+        }
+
         return Update_Prestige_Data(plr, mis);
     }
 
