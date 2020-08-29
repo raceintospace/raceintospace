@@ -544,7 +544,7 @@ void DrawViewing(char plr)
     ShBox(302, 116, 312, 145);
     draw_up_arrow(304, 118);
     ShBox(302, 147, 312, 176);
-    draw_down_arrow(304, 149);
+    draw_down_arrow_highlight(304, 149);
 
     display::graphics.setForegroundColor(11);
     draw_string(113, 35, "PREVIOUS MISSIONS");
