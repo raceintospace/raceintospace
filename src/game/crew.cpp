@@ -654,35 +654,63 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(11);   /* Highlight CA for Command Pilot */
             }
 
-            draw_string(87, 51 + i * 14, "CP:");
-            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Cap);
+            int xloc;
+
+            draw_string(87, 51 + i * 14, "CA:");
+            if (Data->P[plr].Pool[m[i] - 1].Cap == 1) {
+                xloc = 102;
+            } else {
+                xloc = 101;
+            }
+            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Cap);
             display::graphics.setForegroundColor(1);
 
             if (i == 1 && men > 1) {
                 display::graphics.setForegroundColor(11);   /* Highlight LM for LM Pilot */
             }
 
-            draw_string(0, 0, "  LM:");
-            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].LM);
+            draw_string(113, 51 + i * 14, "LM:");
+            if (Data->P[plr].Pool[m[i] - 1].LM == 1) {
+                xloc = 128;
+            } else {
+                xloc = 127;
+            }
+            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].LM);
             display::graphics.setForegroundColor(1);
 
             if (men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) {
                 display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist */
             }
 
-            draw_string(0, 0, "  EV:");
-            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].EVA);
+            draw_string(139, 51 + i * 14, "EV:");
+            if (Data->P[plr].Pool[m[i] - 1].EVA == 1) {
+                xloc = 154;
+            } else {
+                xloc = 153;
+            }
+            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].EVA);
             display::graphics.setForegroundColor(1);
 
             if ((men == 2 && i == 0) || (men == 3 && i == 2)) {
                 display::graphics.setForegroundColor(11);   /* Highlight DO for Docking Specialist */
             }
 
-            draw_string(0, 0, "  DO:");
-            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Docking);
+            draw_string(165, 51 + i * 14, "DO:");
+            if (Data->P[plr].Pool[m[i] - 1].Docking == 1) {
+                xloc = 180;
+            } else {
+                xloc = 179;
+            }
+            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
+
             display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
-            draw_string(0, 0, "  EN:");
-            draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Endurance);
+            draw_string(191, 51 + i * 14, "EN:");
+            if (Data->P[plr].Pool[m[i] - 1].Endurance == 1) {
+                xloc = 206;
+            } else {
+                xloc = 205;
+            }
+            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Endurance);
         }
     }
 
