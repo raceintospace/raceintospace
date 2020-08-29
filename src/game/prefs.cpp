@@ -32,6 +32,7 @@
 #include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "admin.h"
 #include "draw.h"
 #include "options.h"
 #include "game_main.h"
@@ -451,28 +452,7 @@ void Prefs(int where)
                         }
                     }
 
-                    if (Data->Def.Input == 0 || Data->Def.Input == 2 || Data->Def.Input == 4) {
-                        // Hist Crews
-                        fin = sOpen("CREW.DAT", "rb", 0);
-                        size = fread(buffer, 1, BUFFER_SIZE, fin);
-                        fclose(fin);
-                        fin = sOpen("MEN.DAT", "wb", 1);
-                        fwrite(buffer, size, 1, fin);
-                        fclose(fin);
-                    } else if (Data->Def.Input == 1 || Data->Def.Input == 3 || Data->Def.Input == 5) {
-                        // User Crews
-                        fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                        if (!fin) {
-                            fin = sOpen("USER.DAT", "rb", FT_DATA);
-                        }
-
-                        size = fread(buffer, 1, BUFFER_SIZE, fin);
-                        fclose(fin);
-                        fin = sOpen("MEN.DAT", "wb", 1);
-                        fwrite(buffer, size, 1, fin);
-                        fclose(fin);
-                    }
+                    CacheCrewFile();
 
                     music_stop();
                     return;

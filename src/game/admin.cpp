@@ -32,6 +32,9 @@
 
 #include <assert.h>
 
+#include <algorithm>
+#include <vector>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -65,17 +68,29 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-SaveFileHdr *SaveHdr;
-SFInfo *FList;
-
-int GenerateTables(SaveGameType saveType);
+void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
+void DrawTimeCapsule(int display);
+std::vector<SFInfo> GenerateTables(SaveGameType saveType);
 char GetBlockName(char *Nam);
-void DrawFiles(char now, char loc, char tFiles);
+SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
 void FileText(char *name);
 int FutureCheck(char plr, char type);
+void LoadGame(const char *filename);
+bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
 
+namespace
+{
+enum FileButtons {
+    ENABLE_LOAD = 0x01,
+    ENABLE_SAVE = 0x02,
+    ENABLE_PBEM = 0x04,
+    ENABLE_DELETE = 0x08,
+    ENABLE_PLAY = 0x10,
+    ENABLE_QUIT = 0x20
+};
+};
 
 
 /* Control loop for the Administration Office menu.
@@ -220,98 +235,99 @@ void Admin(char plr)
 }
 
 
+/**
+ * Copies the astronaut/cosmonaut pools into the cache.
+ *
+ * Since the game supports both historical and custom-defined rosters,
+ * depending on the game setting the appropriate roster is copied into
+ * a cache - MEN.DAT - so the game will be assured of having roster
+ * data available.
+ *
+ * TODO: Eliminate use of global buffer.
+ */
+void CacheCrewFile()
+{
+    if (Data->Def.Input % 2 == 0) {
+        // Historical Crews
+        FILE *fin = sOpen("CREW.DAT", "rb", FT_DATA);
+        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
+        fclose(fin);
+        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
+        fwrite(buffer, size, 1, fin);
+        fclose(fin);
+    } else {
+        // User Crews
+        FILE *fin = sOpen("USER.DAT", "rb", FT_SAVE);
+
+        if (!fin) {
+            fin = sOpen("USER.DAT", "rb", FT_DATA);
+        }
+
+        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
+        fclose(fin);
+        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
+        fwrite(buffer, size, 1, fin);
+        fclose(fin);
+    }
+}
+
+
 /* Creates a list of all the save files of the selected type, up to 100.
  *
- * The results are stored in the global "buffer" variable. They are
- * stored as a list of SFInfo structs, accessible via the global FList
- * ptr, and a list of SaveFileHdr structs, accessible via the global
- * SaveHdr ptr. FList entries are ordered by save title.
+ * Entries are ordered by save title.
  *
- * TODO: Storing the results of the search as a byte dump in a globally
- * accessible buffer is incredibly legacy and needs to be changed to
- * something safer.
+ * Currently, only the first 100 valid savegames are detected.
  *
  * \param saveType  Include Normal, Modem, or Play by Email.
- * \return  The number of savegame files found (up to 100).
+ * \return  Entries ordered by save title.
  */
-int GenerateTables(SaveGameType saveType)
+std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 {
     struct ffblk ffblk;
-    int i, j, tFiles, done;
-    FILE *fin;
-    tFiles = 0;
+    const int maxSaves = 100;
+    SaveFileHdr header;
+    SFInfo saveInfo;
+    std::vector<SFInfo> results;
 
-    done = first_saved_game(&ffblk);
+    for (bool done = first_saved_game(&ffblk);
+         done != true && results.size() < maxSaves;
+         done = next_saved_game(&ffblk)) {
 
-    while (!done && tFiles < 100) {
-        tFiles++;    // Count Total Files
-        done = next_saved_game(&ffblk);
-    }
-
-    memset(buffer, 0x00, 20480);
-
-    /** \note old code lacked parans, so pointed FList off into space - pace */
-    FList = (SFInfo *)(buffer + 5000);
-    SaveHdr = (SaveFileHdr *) buffer;
-
-    if (tFiles > 0) {
-        tFiles = 0;
-        done = first_saved_game(&ffblk);
-
-        while (!done && tFiles < 100) { // Get All File Names And Save Dates.
-            if (strlen(ffblk.ff_name) > sizeof FList[tFiles].Name - 1) {
-                goto next;
-            }
-
-            memset(&FList[tFiles], 0, sizeof FList[tFiles]);
-            strcpy(FList[tFiles].Name, ffblk.ff_name);
-            FList[tFiles].time = ffblk.ff_ftime;
-            FList[tFiles].date = ffblk.ff_fdate;
-            fin = sOpen(ffblk.ff_name, "rb", 1);
-
-            if (fin == NULL) {
-                goto next;
-            }
-
-            fread(SaveHdr, 1, sizeof(SaveFileHdr), fin);
-            fclose(fin);
-
-            if (saveType == SAVEGAME_Normal) {
-                strcpy(FList[tFiles].Title, SaveHdr->Name);
-                tFiles++;
-            } else if (saveType == SAVEGAME_PlayByMail) {
-                if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
-                    strcpy(FList[tFiles].Title, SaveHdr->Name);
-                    tFiles++;
-                }
-            } else if (saveType == SAVEGAME_Modem) {
-                if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
-                    strcpy(FList[tFiles].Title, SaveHdr->Name);
-                    tFiles++;
-                }
-            }
-
-next:
-            done = next_saved_game(&ffblk);
+        if (strlen(ffblk.ff_name) > sizeof(saveInfo.Name) - 1) {
+            NOTICE2("Save name too long: %s, skipping", ffblk.ff_name);
+            continue;
         }
 
-        if (tFiles != 0) {
-            {
-                for (i = 0; i < tFiles - 1; i++) {
-                    for (j = i + 1; j < tFiles; j++) {
-                        if (xstrcasecmp(FList[j].Title, FList[i].Title) < 0) {
-                            memcpy(&FList[tFiles], &FList[i], sizeof(SFInfo));
-                            memcpy(&FList[i], &FList[j], sizeof(SFInfo));
-                            memcpy(&FList[j], &FList[tFiles], sizeof(SFInfo));
-                        }
-                    }
-                }
-            }
+        FILE *fin = sOpen(ffblk.ff_name, "rb", 1);
+
+        if (fin == NULL) {
+            NOTICE2("Unable to open save file %s, skipping",
+                    ffblk.ff_name);
+            continue;
         }
 
+        size_t bytes = fread(&header, 1, sizeof(header), fin);
+        fclose(fin);
+
+        if (bytes != sizeof(header)) {
+            NOTICE2("Unable to read save file %s, skipping",
+                    ffblk.ff_name);
+            continue;
+        }
+
+        if (saveType == SAVEGAME_Normal ||
+            saveType == GetSaveType(header)) {
+            memset(&saveInfo, 0, sizeof(saveInfo));
+            strcpy(saveInfo.Title, header.Name);
+            strcpy(saveInfo.Name, ffblk.ff_name);
+            saveInfo.time = ffblk.ff_ftime;
+            saveInfo.date = ffblk.ff_fdate;
+            results.push_back(saveInfo);
+        }
     }
 
-    return tFiles;
+    std::sort(results.begin(), results.end(), OrderSaves);
+    return results;
 }
 
 
@@ -324,19 +340,12 @@ next:
  * 0 for Player 1 (USA), 1 for Player 2 (USSR). Practically, both
  * Play-by-mail and Modem play are currently disabled.
  *
- * This relies on a number of global and local file global variables.
- * SaveHdr & FList are local file global pointers to save file data,
- * loaded into the global byte array "buffer". They are assigned, and
- * buffer populated, via GenerateTables().
- *
  * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
  */
 void FileAccess(char mode)
-// mode==0 if save allowed
 {
     char sc = 0;
-    int32_t size;
-    int tFiles, i, now, done, BarB, temp;
+    int i, now, done, BarB, temp;
     FILE *fin, *fout;
     char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;
@@ -348,11 +357,13 @@ void FileAccess(char mode)
         sc = 2;
     }
 
+    // TODO: Since mode == 2 is checked later, when it cannot occur,
+    // I'm guessing this is some kind of hack added at a later time.
+    // This needs to be deciphered and better documented. -- rnyoakum
     if (mode == 2) {
         mode = 0;
         sc = 1; //only allow mail save
     }
-
 
     helpText = "i128";
     keyHelpText = "k128";
@@ -367,75 +378,33 @@ void FileAccess(char mode)
         saveType = SAVEGAME_PlayByMail;
     }
 
-    tFiles = GenerateTables(saveType);
+    std::vector<SFInfo> savegames = GenerateTables(saveType);
 
-    ShBox(34, 32, 283, 159);
-    InBox(37, 35, 204, 45);
-    fill_rectangle(38, 36, 203, 44, 7);
-    InBox(207, 35, 280, 45);
-    fill_rectangle(208, 36, 279, 44, 10);
-    InBox(37, 48, 204, 128);
-    fill_rectangle(38, 49, 203, 127, 0);
-    InBox(37, 132, 280, 156);
-    ShBox(191, 50, 202, 87);
-    draw_up_arrow(194, 55);
-    ShBox(191, 89, 202, 126);
-    draw_down_arrow(194, 94);
-
-    if (tFiles > 0 && (sc == 0 || sc == 2)) {
-        IOBox(207, 48, 280, 60);
-    } else {
-        InBox(207, 48, 280, 60);
-    }
+    int enable = ENABLE_PLAY | ENABLE_QUIT;
 
     if (mode == 0) {
         if (sc == 0 || sc == 2) {
-            IOBox(207, 62, 280, 74);    // Regular Save game
-        } else {
-            InBox(207, 62, 280, 74);
+            enable |= ENABLE_SAVE;
+        } else if (sc == 1) {
+            enable |= ENABLE_PBEM;
         }
-
-        if (sc == 1) {
-            IOBox(207, 76, 280, 88);    // Mail Save game
-        } else {
-            InBox(207, 76, 280, 88);
-        }
-    } else {
-        InBox(207, 62, 280, 74);
-        InBox(207, 76, 280, 88);
     }
 
-    if (tFiles > 0) {
-        IOBox(207, 90, 280, 102);
-    } else {
-        InBox(207, 90, 280, 102);    // Delete
+    if (savegames.size() > 0) {
+        enable |= ENABLE_DELETE;
+
+        if (sc == 0 || sc == 2) {
+            enable |= ENABLE_LOAD;
+        }
     }
 
-    IOBox(207, 104, 280, 116); // Play
-    IOBox(207, 118, 280, 130); // Quit
-
-    display::graphics.setForegroundColor(11);
-    draw_string(59, 42, "TIME CAPSULE REQUEST");
-    draw_string(219, 42, "FUNCTIONS");
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 56, "LOAD", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 70, "SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(227, 98, "DELETE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 112, "PLAY", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(234, 126, "QUIT", 0);
+    DrawTimeCapsule(enable);
 
     done = BarB = now = 0;
-    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-    DrawFiles(0, 0, tFiles);
+    DrawFiles(0, 0, savegames);
 
-    if (tFiles) {
-        FileText(&FList[now].Name[0]);
+    if (savegames.size()) {
+        FileText(&savegames[now].Name[0]);
     }
 
     FadeIn(2, 10, 0, 0);
@@ -446,26 +415,19 @@ void FileAccess(char mode)
 
         for (i = 0; i < 9; i++) {
             // Right Select Box
-            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) && mousebuttons > 0 && (now - BarB + i) <= (tFiles - 1)) {
+            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) && mousebuttons > 0 && (now - BarB + i) <= (savegames.size() - 1)) {
 
                 now -= BarB;
                 now += i;
                 BarB = i;
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
                 WaitForMouseUp();
             }
         }
 
-        if ((sc == 0 || sc == 2) && tFiles > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
+        if ((sc == 0 || sc == 2) && savegames.size() > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
-            int endianSwap = 0;   // Default this to false
-            REPLAY *load_buffer = NULL;
-            size_t fileLength = 0, eventSize = 0;
-            size_t readLen = 0;
-
             InBox(209, 50, 278, 58);
             delay(250);
 
@@ -479,230 +441,11 @@ void FileAccess(char mode)
 
             if (temp >= 0) {
                 // Read in Saved game data
+                LoadGame(savegames[now].Name);
+                done = LOAD;
 
-                fin = sOpen(FList[now].Name, "rb", 1);
-
-                fseek(fin, 0, SEEK_END);
-                fileLength = ftell(fin);
-                rewind(fin);
-                fread(SaveHdr, 1, sizeof(SaveFileHdr), fin);
-
-                // Determine Endian Swap, 31663 is for old save games
-                if (SaveHdr->dataSize != sizeof(struct Players) && SaveHdr->dataSize != 31663) {
-                    endianSwap = 1;
-                }
-
-                if (endianSwap) {
-                    SaveHdr->compSize = _Swap16bit(SaveHdr->compSize);
-                    SaveHdr->dataSize = _Swap16bit(SaveHdr->dataSize);
-                }
-
-                readLen = SaveHdr->compSize;
-                load_buffer = (REPLAY *)malloc(readLen);
-
-                fread(load_buffer, 1, readLen, fin);
-
-                if (SaveHdr->dataSize == sizeof(struct Players) || SaveHdr->dataSize == 31663) {
-                    RLED((char *) load_buffer, (char *)Data, SaveHdr->compSize);
-                    free(load_buffer);
-
-                    // Swap Players' Data
-                    if (endianSwap) {
-                        _SwapGameDat();
-                    }
-
-                    //MSF now holds MaxRDBase (from 1.0.0)
-                    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-                        int j, k;
-
-                        for (j = 0; j < NUM_PLAYERS; j++) {
-                            for (k = 0; k < 7; k++) {
-                                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-                                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-                                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-                                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-                            }
-                        }
-                    }
-
-                    // Read the Replay Data
-                    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-                    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
-
-                    if (endianSwap) {
-                        REPLAY *r = NULL;
-                        r = load_buffer;
-
-                        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
-                            for (int k = 0; k < r->Qty; k++) {
-                                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
-                            }
-                        }
-                    }
-
-                    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-                    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
-                    free(load_buffer);
-
-                    eventSize = fileLength - ftell(fin);
-
-                    // Read the Event Data
-                    load_buffer = (REPLAY *)malloc(eventSize);
-                    fread(load_buffer, 1, eventSize, fin);
-                    fclose(fin);
-
-                    if (endianSwap) {
-                        for (int j = 0; j < 84; j++) {
-                            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
-
-                            if (on->offset) {
-                                on->offset = _Swap32bit(on->offset);
-                                on->size = _Swap16bit(on->size);
-                            }
-                        }
-
-                        // File Structure is 84 longs 42 per side
-                    }
-
-                    // Save Event information
-                    if (interimData.eventBuffer) {
-                        free(interimData.eventBuffer);
-                    }
-
-                    interimData.eventBuffer = (char *) malloc(eventSize);
-                    interimData.eventSize = eventSize;
-                    memcpy(interimData.eventBuffer, load_buffer, eventSize);
-                    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-
-                    free(load_buffer);
-
-                    if (!(SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7 || SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9)) {
-                        plr[0] = Data->Def.Plr1;
-                        plr[1] = Data->Def.Plr2;
-                        Data->plr[0] = Data->Def.Plr1;
-                        Data->plr[1] = Data->Def.Plr2;
-                        MAIL = -1;
-
-                        if (plr[0] == 2 || plr[0] == 3) {
-                            AI[0] = 1;
-                        } else {
-                            AI[0] = 0;    // SET AI FLAGS
-                        }
-
-                        if (plr[1] == 2 || plr[1] == 3) {
-                            AI[1] = 1;
-                        } else {
-                            AI[1] = 0;
-                        }
-                    }
-
-
-                    if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
-                        // Play-By-Mail save game LOAD
-                        Option = -1;
-                        fOFF = -1;
-                        // save file offset
-                        fOFF = now;
-
-                        Data->Season = SaveHdr->Season;
-                        Data->Year = SaveHdr->Year;
-
-                        if (SaveHdr->Country[0] == 8) {
-                            MAIL = plr[0] = 0; // U.S. turn coming up
-                            plr[1] = 1;
-                        } else {
-                            MAIL = plr[1] = 1; // Soviet turn coming up
-                            plr[0] = 0;
-                        }
-
-                        AI[0] = AI[1] = 0;
-                        Data->Def.Plr1 = 0;
-                        Data->Def.Plr2 = 1;
-                        Data->plr[0] = Data->Def.Plr1;
-                        Data->plr[1] = Data->Def.Plr2;
-
-                        if (Data->Def.Input == 0 || Data->Def.Input == 2) {
-                            // Hist Crews
-                            fin = sOpen("CREW.DAT", "rb", 0);
-                            size = fread(buffer, 1, BUFFER_SIZE, fin);
-                            fclose(fin);
-                            fin = sOpen("MEN.DAT", "wb", 1);
-                            fwrite(buffer, size, 1, fin);
-                            fclose(fin);
-                        } else if (Data->Def.Input == 1 || Data->Def.Input == 3) {
-                            // User Crews
-                            fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                            if (!fin) {
-                                fin = sOpen("USER.DAT", "rb", FT_DATA);
-                            }
-
-                            size = fread(buffer, 1, BUFFER_SIZE, fin);
-                            fclose(fin);
-                            fin = sOpen("MEN.DAT", "wb", 1);
-                            fwrite(buffer, size, 1, fin);
-                            fclose(fin);
-                        }
-                    } else
-
-                        // Modem save game LOAD
-                        if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
-                            // Modem connect up
-                            if (SaveHdr->Country[0] == 6) {
-                                plr[0] = SaveHdr->Country[0];
-                                plr[1] = 1;
-                            } else {
-                                plr[1] = SaveHdr->Country[1];
-                                plr[0] = 0;
-                            }
-
-                            // Modem Play => reset the modem
-                            if (Option != -1) {
-                                DoModem(2);
-                            }
-
-                            Option = MPrefs(1);
-
-                            // kludge
-                            if (Option == 0 || Option == 2) {
-                                Option = 0;
-                            } else if (Option == 1 || Option == 3) {
-                                Option = 1;
-                            }
-                        } else {
-                            // Regular save game LOAD
-                            if (Data->Def.Input == 0 || Data->Def.Input == 2) { // Hist Crews
-                                fin = sOpen("CREW.DAT", "rb", 0);
-                                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                                fclose(fin);
-                                fin = sOpen("MEN.DAT", "wb", 1);
-                                fwrite(buffer, size, 1, fin);
-                                fclose(fin);
-                            } else if (Data->Def.Input == 1 || Data->Def.Input == 3) { // User Crews
-                                fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                                if (!fin) {
-                                    fin = sOpen("USER.DAT", "rb", FT_DATA);
-                                }
-
-                                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                                fclose(fin);
-                                fin = sOpen("MEN.DAT", "wb", 1);
-                                fwrite(buffer, size, 1, fin);
-                                fclose(fin);
-                            }
-                        }
-
-                    if (Option != MODEM_ERROR) {
-                        LOAD = done = 1;
-                    } else {
-                        Option = -1;
-                        LOAD = done = 0;
-                        return;
-                    }
-                } else {
-                    fclose(fin);
-                    BadFileType();
+                if (LOAD) {
+                    fOFF = now;  // save file offset
                 }
             } // temp
 
@@ -717,14 +460,15 @@ void FileAccess(char mode)
 
             WaitForMouseUp();
 
-            memset(SaveHdr->Name, 0x00, 23);
-            done = GetBlockName(SaveHdr->Name); // Checks Free Space
-            SaveHdr->ID = RaceIntoSpace_Signature;
-            SaveHdr->Name[22] = 0x1A;
+            SaveFileHdr header;
+            memset(&header, 0x00, sizeof(header));
+            done = GetBlockName(header.Name); // Checks Free Space
+            header.ID = RaceIntoSpace_Signature;
+            header.Name[sizeof(header.Name) - 1] = 0x1A;
             temp = NOTSAME;
 
-            for (i = 0; (i < tFiles && temp == 2); i++) {
-                if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
+            for (i = 0; (i < savegames.size() && temp == 2); i++) {
+                if (strcmp(header.Name, savegames[i].Title) == 0) {
                     temp = RequestX("REPLACE FILE", 1);
 
                     if (temp == SAME_ABORT) {
@@ -735,8 +479,8 @@ void FileAccess(char mode)
 
             if (done == YES) {
                 i--;  // decrement to correct for the FOR loop
-                strcpy(SaveHdr->PName[0], Data->P[plr[0] % 2].Name);
-                strcpy(SaveHdr->PName[1], Data->P[plr[1] % 2].Name);
+                strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
+                strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
 
                 // Modem save game hack
                 if (Option != -1) {
@@ -756,18 +500,18 @@ void FileAccess(char mode)
                     AI[1] = 0;
                 }
 
-                SaveHdr->Country[0] = Data->plr[0];
-                SaveHdr->Country[1] = Data->plr[1];
-                SaveHdr->Season = Data->Season;
-                SaveHdr->Year = Data->Year;
-                SaveHdr->dataSize = sizeof(struct Players);
+                header.Country[0] = Data->plr[0];
+                header.Country[1] = Data->plr[1];
+                header.Season = Data->Season;
+                header.Year = Data->Year;
+                header.dataSize = sizeof(struct Players);
 
                 // Copy in the end of turn save data
                 if (interimData.endTurnSaveSize) {
-                    SaveHdr->compSize = interimData.endTurnSaveSize;
+                    header.compSize = interimData.endTurnSaveSize;
                     memcpy(scratch, interimData.endTurnBuffer, interimData.endTurnSaveSize);
                 } else {
-                    SaveHdr->compSize = 0;
+                    header.compSize = 0;
                     memset(scratch, 0, SCRATCH_SIZE);
                 }
 
@@ -787,10 +531,10 @@ void FileAccess(char mode)
 
                     fin = sOpen(Name, "wb", 1);
                 } else {
-                    fin = sOpen(FList[i].Name, "wb", 1);
+                    fin = sOpen(savegames[i].Name, "wb", 1);
                 }
 
-                fwrite(SaveHdr, sizeof(SaveFileHdr), 1, fin);
+                fwrite(&header, sizeof(header), 1, fin);
 
                 //----------------------------------
                 //Specs: Special Modem Save Kludge |
@@ -834,8 +578,8 @@ void FileAccess(char mode)
             key = 0;
             QUIT = 1;
             return;
-        } else if (tFiles > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
-                                  || (key == 'D'))) {
+        } else if (savegames.size() > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
+                                            || (key == 'D'))) {
             InBox(209, 92, 278, 100);
             delay(250);
             WaitForMouseUp();
@@ -845,7 +589,7 @@ void FileAccess(char mode)
 
             if (i == 1) {
 
-                remove_savedat(FList[now].Name);
+                remove_savedat(savegames[now].Name);
                 memset(Name, 0x00, sizeof Name);
                 saveType = SAVEGAME_Normal;
 
@@ -855,15 +599,13 @@ void FileAccess(char mode)
                     saveType = SAVEGAME_PlayByMail;
                 }
 
-                tFiles = GenerateTables(saveType);
+                savegames = GenerateTables(saveType);
                 now = 0;
                 BarB = 0;
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
 
-                if (tFiles == 0) {
+                if (savegames.size() == 0) {
                     InBox(207, 48, 280, 60);
                     fill_rectangle(208, 49, 279, 59, 3);
                     display::graphics.setForegroundColor(1);
@@ -909,20 +651,16 @@ void FileAccess(char mode)
             if (BarB == 0) {
                 if (now > 0) {
                     now--;
-                    fill_rectangle(38, 49, 190, 127, 0);
-                    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                    DrawFiles(now, BarB, tFiles);
-                    FileText(&FList[now].Name[0]);
+                    DrawFiles(now, BarB, savegames);
+                    FileText(&savegames[now].Name[0]);
                 }
             }
 
             if (BarB > 0) {
-                fill_rectangle(38, 49, 190, 127, 0);
                 BarB--;
                 now--;
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             //  WaitForMouseUp();
@@ -933,7 +671,6 @@ void FileAccess(char mode)
         } else if (key == K_PGUP) { // Page Up
 
             if (now > 0) {
-                fill_rectangle(38, 49, 190, 127, 0);
                 now -= 9;
 
                 if (now < 0) {
@@ -941,9 +678,8 @@ void FileAccess(char mode)
                     BarB = 0;
                 }
 
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             // perform Up Button
@@ -951,18 +687,16 @@ void FileAccess(char mode)
 
         } else if (key == K_PGDN) { // Page Down
 
-            if (now < (tFiles - 9)) {
+            if (now < (savegames.size() - 9)) {
                 now += 9;
 
-                if (now > (tFiles - 1)) {
-                    now = tFiles - 1;
+                if (now > (savegames.size() - 1)) {
+                    now = savegames.size() - 1;
                     BarB = 8;
                 }
 
-                fill_rectangle(38, 49, 190, 127, 0);
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
             key = 0;
@@ -970,22 +704,18 @@ void FileAccess(char mode)
             InBox(191, 89, 202, 126);
 
             if (BarB == 8) {
-                if (now < (tFiles - 1)) {
+                if (now < (savegames.size() - 1)) {
                     now++;
-                    fill_rectangle(38, 49, 190, 127, 0);
-                    ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                    DrawFiles(now, BarB, tFiles);
-                    FileText(&FList[now].Name[0]);
+                    DrawFiles(now, BarB, savegames);
+                    FileText(&savegames[now].Name[0]);
                 }
             }
 
-            if (BarB < 8 && now < (tFiles - 1)) {
-                fill_rectangle(38, 49, 190, 127, 0);
+            if (BarB < 8 && now < (savegames.size() - 1)) {
                 BarB++;
                 now++;
-                ShBox(39, 52 + BarB * 8, 189, 60 + BarB * 8);
-                DrawFiles(now, BarB, tFiles);
-                FileText(&FList[now].Name[0]);
+                DrawFiles(now, BarB, savegames);
+                FileText(&savegames[now].Name[0]);
             }
 
 
@@ -1007,6 +737,127 @@ void FileAccess(char mode)
 }
 
 
+/* Displays (a section of) the savegame files.
+ *
+ * Up to 9 files are shown at a given time.
+ *
+ * \param now     The savegame index of the current save file.
+ * \param loc     The display index of the current save file.
+ * \param savegames  TODO
+ */
+void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
+{
+    int j = 0;
+    int start = now - loc;
+
+    fill_rectangle(38, 49, 190, 127, 0);
+
+    if (savegames.size() > 0) {
+        ShBox(39, 52 + loc * 8, 189, 60 + loc * 8);
+    }
+
+    display::graphics.setForegroundColor(1);
+
+    for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
+        draw_string(40, 58 + j * 8, savegames[i].Title);
+    }
+}
+
+
+/**
+ * Display the savegame file interface GUI.
+ *
+ * \param display  flags indicating which buttons to enable.
+ */
+void DrawTimeCapsule(int display)
+{
+    ShBox(34, 32, 283, 159);
+    InBox(37, 35, 204, 45);
+    fill_rectangle(38, 36, 203, 44, 7);
+    InBox(207, 35, 280, 45);
+    fill_rectangle(208, 36, 279, 44, 10);
+    InBox(37, 48, 204, 128);
+    fill_rectangle(38, 49, 203, 127, 0);
+    InBox(37, 132, 280, 156);
+    ShBox(191, 50, 202, 87);
+    draw_up_arrow(194, 55);
+    ShBox(191, 89, 202, 126);
+    draw_down_arrow(194, 94);
+
+    if (display & ENABLE_LOAD) {
+        IOBox(207, 48, 280, 60);  // Load
+    } else {
+        InBox(207, 48, 280, 60);
+    }
+
+    if (display & ENABLE_SAVE) {
+        IOBox(207, 62, 280, 74);  // Regular Save game
+    } else {
+        InBox(207, 62, 280, 74);
+    }
+
+    if (display & ENABLE_PBEM) {
+        IOBox(207, 76, 280, 88);  // Mail Save game
+    } else {
+        InBox(207, 76, 280, 88);
+    }
+
+    if (display & ENABLE_DELETE) {
+        IOBox(207, 90, 280, 102);  // Delete
+    } else {
+        InBox(207, 90, 280, 102);
+    }
+
+    if (display & ENABLE_PLAY) {
+        IOBox(207, 104, 280, 116);  // Play
+    } else {
+        InBox(207, 104, 280, 116);
+    }
+
+    if (display & ENABLE_QUIT) {
+        IOBox(207, 118, 280, 130);  // Quit
+    } else {
+        InBox(207, 118, 280, 130);
+    }
+
+    display::graphics.setForegroundColor(11);
+    draw_string(59, 42, "TIME CAPSULE REQUEST");
+    draw_string(219, 42, "FUNCTIONS");
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 56, "LOAD", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 70, "SAVE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(227, 98, "DELETE", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(233, 112, "PLAY", 0);
+    display::graphics.setForegroundColor(1);
+    draw_string_highlighted(234, 126, "QUIT", 0);
+}
+
+
+/**
+ * Extract the Save file type from its header.
+ *
+ * This function doesn't guarantee correctness for malformed headers.
+ *
+ * \param header  the header of a save game file.
+ * \return  if standard, PBEM, or network game.
+ */
+SaveGameType GetSaveType(const SaveFileHdr &header)
+{
+    if (header.Country[0] == 8 || header.Country[1] == 9) {
+        return SAVEGAME_PlayByMail;
+    } else if (header.Country[0] == 6 || header.Country[1] == 7) {
+        return SAVEGAME_Modem;
+    } else {
+        return SAVEGAME_Normal;
+    }
+}
+
+
 /* Creates an Autosave with the supplied save name.
  *
  * The save is composed of:
@@ -1023,7 +874,6 @@ void save_game(char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
-    char *buf = NULL;
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
 
@@ -1047,10 +897,9 @@ void save_game(char *name)
     hdr.dataSize = sizeof(struct Players);
     hdr.compSize = interimData.endTurnSaveSize;
 
-
     if ((outf = sOpen(name, "wb", 1)) == NULL) {
         WARNING2("can't save to file `%s'", name);
-        goto cleanup;
+        return;
     }
 
     // Write Save Game Header
@@ -1066,15 +915,7 @@ void save_game(char *name)
     // Copy Event data into Save file
     fwrite(interimData.eventBuffer, interimData.eventSize, 1, outf);
 
-cleanup:
-
-    if (outf) {
-        fclose(outf);
-    }
-
-    if (buf) {
-        free(buf);
-    }
+    fclose(outf);
 }
 
 
@@ -1154,30 +995,6 @@ char GetBlockName(char *Nam)
 }
 
 
-/* Displays (a section of) the savegame files.
- *
- * Up to 9 files are shown at a given time.
- *
- * \param now     The savegame index of the current save file.
- * \param loc     The display index of the current save file.
- * \param tFiles  The total count of savegame files.
- */
-void DrawFiles(char now, char loc, char tFiles)
-{
-    int i, j, start;
-    start = now - loc;
-    display::graphics.setForegroundColor(1);
-    j = 0;
-
-    for (i = start; i < start + 9; i++) {
-        if (i < tFiles) {
-            draw_string(40, 58 + j * 8, FList[i].Title);
-            j++;
-        }
-    }
-}
-
-
 /* Displays an alert popup warning that a save file is corrupted.
  */
 void BadFileType()
@@ -1206,6 +1023,7 @@ void BadFileType()
 void FileText(char *name)
 {
     FILE *fin;
+    SaveFileHdr header;
 
     fill_rectangle(38, 133, 279, 155, 3);
     display::graphics.setForegroundColor(1);
@@ -1217,7 +1035,7 @@ void FileText(char *name)
         return;
     }
 
-    fread(SaveHdr, sizeof(SaveFileHdr), 1, fin);
+    fread(&header, sizeof(header), 1, fin);
 
     fclose(fin);
 
@@ -1228,17 +1046,17 @@ void FileText(char *name)
     display::graphics.setForegroundColor(5);
 
     //display::graphics.setForegroundColor(6+(SaveHdr->Country[0]%2)*3);
-    if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
+    if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "MODEM DIRECTOR ");
-    } else if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
+    } else if (header.Country[0] == 8 || header.Country[1] == 9) {
         draw_string(0, 0, "MAIL DIRECTOR ");
-    } else if (SaveHdr->Country[0] == 2) {
+    } else if (header.Country[0] == 2) {
         draw_string(0, 0, "COMPUTER DIRECTOR ");
     } else {
         draw_string(0, 0, "HUMAN DIRECTOR ");
     }
 
-    draw_string(0, 0, &SaveHdr->PName[0][0]);
+    draw_string(0, 0, &header.PName[0][0]);
     draw_string(0, 0, " OF THE U.S.A.");
 
     grMoveTo(40, 147);
@@ -1246,34 +1064,34 @@ void FileText(char *name)
 
     display::graphics.setForegroundColor(9);
 
-    if (SaveHdr->Country[0] == 6 || SaveHdr->Country[1] == 7) {
+    if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "VS. MODEM DIRECTOR ");
-    } else if (SaveHdr->Country[0] == 8 || SaveHdr->Country[1] == 9) {
+    } else if (header.Country[0] == 8 || header.Country[1] == 9) {
         draw_string(0, 0, "VS. MAIL DIRECTOR ");
-    } else if (SaveHdr->Country[1] == 3) {
+    } else if (header.Country[1] == 3) {
         draw_string(0, 0, "VS. COMPUTER DIRECTOR ");
     } else {
         draw_string(0, 0, "VS. HUMAN DIRECTOR ");
     }
 
-    draw_string(0, 0, &SaveHdr->PName[1][0]);
+    draw_string(0, 0, &header.PName[1][0]);
     draw_string(0, 0, " OF THE U.S.S.R.");
 
     grMoveTo(40, 154);
     display::graphics.setForegroundColor(11);
 
-    if (SaveHdr->Season == 0) {
-        if (SaveHdr->Country[0] == 8) {
+    if (header.Season == 0) {
+        if (header.Country[0] == 8) {
             draw_string(0, 0, "U.S.A. TURN IN THE SPRING OF ");
-        } else if (SaveHdr->Country[1] == 9) {
+        } else if (header.Country[1] == 9) {
             draw_string(0, 0, "SOVIET TURN IN THE SPRING OF ");
         } else {
             draw_string(0, 0, "THE SPRING OF ");
         }
     } else {
-        if (SaveHdr->Country[0] == 8) {
+        if (header.Country[0] == 8) {
             draw_string(0, 0, "U.S.A. TURN IN THE FALL OF ");
-        } else if (SaveHdr->Country[1] == 9) {
+        } else if (header.Country[1] == 9) {
             draw_string(0, 0, "SOVIET TURN IN THE FALL OF ");
         } else {
             draw_string(0, 0, "THE FALL OF ");
@@ -1281,7 +1099,7 @@ void FileText(char *name)
     }
 
     draw_number(0, 0, 19);
-    draw_number(0, 0, SaveHdr->Year);
+    draw_number(0, 0, header.Year);
     draw_string(0, 0, ".");
 }
 
@@ -1366,11 +1184,13 @@ int FutureCheck(char plr, char type)
         if (p[i] > 1) {
             display::graphics.setForegroundColor(5);
             draw_string(111, 50 + i * 51, "THIS FACILITY IS ");
+
             if (p[i] == 20) {
                 draw_string(0, 0, "DESTROYED.");
             } else {
                 draw_string(0, 0, "DAMAGED.");
             }
+
             draw_string(111, 57 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
@@ -1560,6 +1380,203 @@ int FutureCheck(char plr, char type)
 }
 
 
+/**
+ * Reads a save file and populates the active game data.
+ *
+ * Fills the Data and interimData global variables with data
+ * extracted from the save file. Automatically corrects for endian
+ * differences between the system and saved information.
+ *
+ * The Play-by-Modem mode is disabled in the game, and the code is a
+ * bit of a mess. It's preserved here faithfully, but that doesn't
+ * guarantee it will _work_.
+ *
+ *   header.compSize   is the size (in bytes) of the Data global
+ *                     when compressed.
+ *   header.dataSize   is the size of the Data global when expanded
+ *
+ * TODO: The new values for the global variables are assigned as they
+ * are read, which reduces memory requirements but means the
+ * current game state may be overwritten before an error in the file
+ * is noticed. This would prevent loading, but make it impossible to
+ * return to the active game.
+ *
+ * TODO: Add error handling on read/write commands.
+ *
+ * \param filename  the name, including extension, relative to the
+ *     save directory.
+ */
+void LoadGame(const char *filename)
+{
+    REPLAY *load_buffer = NULL;
+    SaveFileHdr header;
+
+    FILE *fin = sOpen(filename, "rb", 1);
+
+    fseek(fin, 0, SEEK_END);
+    size_t fileLength = ftell(fin);
+    rewind(fin);
+    fread(&header, 1, sizeof(header), fin);
+
+    // Determine Endian Swap, 31663 is for old save games
+    bool endianSwap = (header.dataSize != sizeof(struct Players) &&
+                       header.dataSize != 31663);
+
+    if (endianSwap) {
+        header.compSize = _Swap16bit(header.compSize);
+        header.dataSize = _Swap16bit(header.dataSize);
+
+        if (header.dataSize != sizeof(struct Players) &&
+            header.dataSize != 31663) {
+            // TODO: Feels like BadFileType() should be launched by
+            // FileAccess, which runs the interface. Throw an
+            // exception or return an error code?
+            fclose(fin);
+            BadFileType();
+            return;
+        }
+    }
+
+    size_t readLen = header.compSize;
+    load_buffer = (REPLAY *)malloc(readLen);
+    fread(load_buffer, 1, readLen, fin);
+    RLED((char *) load_buffer, (char *)Data, header.compSize);
+    free(load_buffer);
+
+    // Swap Players' Data
+    if (endianSwap) {
+        _SwapGameDat();
+    }
+
+    //MSF now holds MaxRDBase (from 1.0.0)
+    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
+        for (int j = 0; j < NUM_PLAYERS; j++) {
+            for (int k = 0; k < 7; k++) {
+                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
+            }
+        }
+    }
+
+    // Read the Replay Data
+    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+
+    if (endianSwap) {
+        REPLAY *r = NULL;
+        r = load_buffer;
+
+        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+            for (int k = 0; k < r->Qty; k++) {
+                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
+            }
+        }
+    }
+
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
+    free(load_buffer);
+
+    size_t eventSize = fileLength - ftell(fin);
+
+    // Read the Event Data
+    load_buffer = (REPLAY *)malloc(eventSize);
+    fread(load_buffer, 1, eventSize, fin);
+    fclose(fin);
+
+    if (endianSwap) {
+        // File Structure is 84 longs 42 per side
+        for (int j = 0; j < 84; j++) {
+            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
+
+            if (on->offset) {
+                on->offset = _Swap32bit(on->offset);
+                on->size = _Swap16bit(on->size);
+            }
+        }
+    }
+
+    // Save Event information
+    if (interimData.eventBuffer) {
+        free(interimData.eventBuffer);
+    }
+
+    interimData.eventBuffer = (char *) malloc(eventSize);
+    interimData.eventSize = eventSize;
+    memcpy(interimData.eventBuffer, load_buffer, eventSize);
+    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+
+    free(load_buffer);
+
+    if (GetSaveType(header) == SAVEGAME_Normal) {
+        Option = MAIL = -1;
+
+        Data->plr[0] = plr[0] = Data->Def.Plr1;
+        Data->plr[1] = plr[1] = Data->Def.Plr2;
+
+        AI[0] = (plr[0] == 2 || plr[0] == 3);
+        AI[1] = (plr[1] == 2 || plr[1] == 3);
+
+        CacheCrewFile();
+        LOAD = 1;
+    } else if (GetSaveType(header) == SAVEGAME_PlayByMail) {
+        Option = -1;
+        MAIL = !(header.Country[0] == 8);
+
+        Data->plr[0] = Data->Def.Plr1 = plr[0] = 0;
+        Data->plr[1] = Data->Def.Plr2 = plr[1] = 1;
+
+        AI[0] = AI[1] = 0;
+        Data->Season = header.Season;
+        Data->Year = header.Year;
+
+        CacheCrewFile();
+        LOAD = 1;
+    } else if (GetSaveType(header) == SAVEGAME_Modem) {
+        // Modem connect up
+        if (header.Country[0] == 6) {
+            plr[0] = header.Country[0];
+            plr[1] = 1;
+        } else {
+            plr[1] = header.Country[1];
+            plr[0] = 0;
+        }
+
+        // Modem Play => reset the modem
+        if (Option != -1) {
+            DoModem(2);
+        }
+
+        Option = MPrefs(1);
+        LOAD = (Option != MODEM_ERROR);
+
+        // kludge
+        if (Option == 0 || Option == 2) {
+            Option = 0;
+        } else if (Option == 1 || Option == 3) {
+            Option = 1;
+        } else if (Option == MODEM_ERROR) {
+            Option = -1;
+        }
+
+        // TODO: Should Modem games call CacheCrewFile()?
+    }
+}
+
+
+/**
+ * Sort SFInfo objects by Title then Name.
+ */
+bool OrderSaves(const SFInfo &a, const SFInfo &b)
+{
+    int titleOrder = xstrcasecmp(a.Title, b.Title);
+    return (titleOrder < 0) ||
+           (titleOrder == 0 && xstrcasecmp(a.Name, b.Name) < 0);
+}
+
+
 /* Creates a popup confirmation box, blocking input until resolved.
  *
  * \param s   The heading text.
@@ -1674,26 +1691,27 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
 
 void MailSave()
 {
-    int done, temp, i, tFiles;
+    int done, temp, i;
     FILE *fin;
+    SaveFileHdr header;
 
-    tFiles = GenerateTables(SAVEGAME_PlayByMail);
+    std::vector<SFInfo> savegames = GenerateTables(SAVEGAME_PlayByMail);
 
     display::graphics.screen()->clear();
 
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
-    memset(SaveHdr->Name, 0x00, 23);
+    memset(header.Name, 0x00, sizeof(header.Name));
 
     do {
-        done = GetBlockName(SaveHdr->Name); // Checks Free Space
-        SaveHdr->ID = RaceIntoSpace_Signature;
-        SaveHdr->Name[22] = 0x1A;
+        done = GetBlockName(header.Name); // Checks Free Space
+        header.ID = RaceIntoSpace_Signature;
+        header.Name[sizeof(header.Name) - 1] = 0x1A;
         temp = NOTSAME;
 
-        for (i = 0; (i < tFiles && temp == 2); i++) {
-            if (strcmp(SaveHdr->Name, FList[i].Title) == 0) {
+        for (i = 0; (i < savegames.size() && temp == 2); i++) {
+            if (strcmp(header.Name, savegames[i].Title) == 0) {
                 temp = RequestX("REPLACE FILE", 1);
 
                 if (temp == SAME_ABORT) {
@@ -1705,8 +1723,8 @@ void MailSave()
 
     if (done == YES) {
         i--;  // decrement to correct for the FOR loop
-        strcpy(SaveHdr->PName[0], Data->P[plr[0] % 2].Name);
-        strcpy(SaveHdr->PName[1], Data->P[plr[1] % 2].Name);
+        strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
+        strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
 
         // Play-By-Mail save game hack
         //
@@ -1729,14 +1747,14 @@ void MailSave()
         AI[0] = 0;
         AI[1] = 0;
 
-        SaveHdr->Country[0] = Data->plr[0];
-        SaveHdr->Country[1] = Data->plr[1];
-        SaveHdr->Season = Data->Season;
-        SaveHdr->Year = Data->Year;
-        SaveHdr->dataSize = sizeof(struct Players);
+        header.Country[0] = Data->plr[0];
+        header.Country[1] = Data->plr[1];
+        header.Season = Data->Season;
+        header.Year = Data->Year;
+        header.dataSize = sizeof(struct Players);
 
         EndOfTurnSave((char *) Data, sizeof(struct Players));
-        SaveHdr->compSize = interimData.endTurnSaveSize;
+        header.compSize = interimData.endTurnSaveSize;
 
         if (temp == NOTSAME) {
             i = 0;
@@ -1755,11 +1773,11 @@ void MailSave()
 
             fin = sOpen(Name, "wb", 1);
         } else {
-            fin = sOpen(FList[i].Name, "wb", 1);
+            fin = sOpen(savegames[i].Name, "wb", 1);
         }
 
         // Write the Save Game Header
-        fwrite(SaveHdr, sizeof(SaveFileHdr), 1, fin);
+        fwrite(&header, sizeof(header), 1, fin);
 
         // Save End of Turn Data
         fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
