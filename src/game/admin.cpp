@@ -235,6 +235,43 @@ void Admin(char plr)
 }
 
 
+/**
+ * Copies the astronaut/cosmonaut pools into the cache.
+ *
+ * Since the game supports both historical and custom-defined rosters,
+ * depending on the game setting the appropriate roster is copied into
+ * a cache - MEN.DAT - so the game will be assured of having roster
+ * data available.
+ *
+ * TODO: Eliminate use of global buffer.
+ */
+void CacheCrewFile()
+{
+    if (Data->Def.Input % 2 == 0) {
+        // Historical Crews
+        FILE *fin = sOpen("CREW.DAT", "rb", FT_DATA);
+        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
+        fclose(fin);
+        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
+        fwrite(buffer, size, 1, fin);
+        fclose(fin);
+    } else {
+        // User Crews
+        FILE *fin = sOpen("USER.DAT", "rb", FT_SAVE);
+
+        if (!fin) {
+            fin = sOpen("USER.DAT", "rb", FT_DATA);
+        }
+
+        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
+        fclose(fin);
+        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
+        fwrite(buffer, size, 1, fin);
+        fclose(fin);
+    }
+}
+
+
 /* Creates a list of all the save files of the selected type, up to 100.
  *
  * Entries are ordered by save title.
@@ -1371,7 +1408,6 @@ int FutureCheck(char plr, char type)
  */
 void LoadGame(const char *filename)
 {
-    size_t size = 0;
     int endianSwap = 0;   // Default this to false
     REPLAY *load_buffer = NULL;
     size_t fileLength = 0, eventSize = 0;
@@ -1518,28 +1554,7 @@ void LoadGame(const char *filename)
             Data->plr[0] = Data->Def.Plr1;
             Data->plr[1] = Data->Def.Plr2;
 
-            if (Data->Def.Input == 0 || Data->Def.Input == 2) {
-                // Hist Crews
-                fin = sOpen("CREW.DAT", "rb", 0);
-                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                fclose(fin);
-                fin = sOpen("MEN.DAT", "wb", 1);
-                fwrite(buffer, size, 1, fin);
-                fclose(fin);
-            } else if (Data->Def.Input == 1 || Data->Def.Input == 3) {
-                // User Crews
-                fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                if (!fin) {
-                    fin = sOpen("USER.DAT", "rb", FT_DATA);
-                }
-
-                size = fread(buffer, 1, BUFFER_SIZE, fin);
-                fclose(fin);
-                fin = sOpen("MEN.DAT", "wb", 1);
-                fwrite(buffer, size, 1, fin);
-                fclose(fin);
-            }
+            CacheCrewFile();
         } else
 
             // Modem save game LOAD
@@ -1568,26 +1583,7 @@ void LoadGame(const char *filename)
                 }
             } else {
                 // Regular save game LOAD
-                if (Data->Def.Input == 0 || Data->Def.Input == 2) { // Hist Crews
-                    fin = sOpen("CREW.DAT", "rb", 0);
-                    size = fread(buffer, 1, BUFFER_SIZE, fin);
-                    fclose(fin);
-                    fin = sOpen("MEN.DAT", "wb", 1);
-                    fwrite(buffer, size, 1, fin);
-                    fclose(fin);
-                } else if (Data->Def.Input == 1 || Data->Def.Input == 3) { // User Crews
-                    fin = sOpen("USER.DAT", "rb", FT_SAVE);
-
-                    if (!fin) {
-                        fin = sOpen("USER.DAT", "rb", FT_DATA);
-                    }
-
-                    size = fread(buffer, 1, BUFFER_SIZE, fin);
-                    fclose(fin);
-                    fin = sOpen("MEN.DAT", "wb", 1);
-                    fwrite(buffer, size, 1, fin);
-                    fclose(fin);
-                }
+                CacheCrewFile();
             }
 
         if (Option != MODEM_ERROR) {
