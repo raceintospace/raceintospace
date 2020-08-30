@@ -350,7 +350,7 @@ void FileAccess(char mode)
     char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;
     const int SCRATCH_SIZE = 64000;
-    char scratch[SCRATCH_SIZE]; // scratch buffer, will be tossed automatically at the end of the routine
+    char scratch[SCRATCH_SIZE];  // scratch buffer, will be tossed automatically at the end of the routine
 
     //sp. case -> no regular save off mail/modem game
     if ((mode == 0 || mode == 1) && (MAIL != -1 || Option != -1)) {
@@ -362,7 +362,7 @@ void FileAccess(char mode)
     // This needs to be deciphered and better documented. -- rnyoakum
     if (mode == 2) {
         mode = 0;
-        sc = 1; //only allow mail save
+        sc = 1;  //only allow mail save
     }
 
     helpText = "i128";
@@ -447,12 +447,12 @@ void FileAccess(char mode)
                 if (LOAD) {
                     fOFF = now;  // save file offset
                 }
-            } // temp
+            }  // temp
 
-            OutBox(209, 50, 278, 58); // Button Out
+            OutBox(209, 50, 278, 58);  // Button Out
             key = 0;
 
-        } // LOAD
+        }  // LOAD
         else if ((sc == 0 || sc == 2) && mode == 0 && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
                  || (key == 'S'))) {
             InBox(209, 64, 278, 72);
@@ -462,7 +462,7 @@ void FileAccess(char mode)
 
             SaveFileHdr header;
             memset(&header, 0x00, sizeof(header));
-            done = GetBlockName(header.Name); // Checks Free Space
+            done = GetBlockName(header.Name);  // Checks Free Space
             header.ID = RaceIntoSpace_Signature;
             header.Name[sizeof(header.Name) - 1] = 0x1A;
             temp = NOTSAME;
@@ -506,7 +506,7 @@ void FileAccess(char mode)
                 header.Year = Data->Year;
                 header.dataSize = sizeof(struct Players);
 
-                // Copy in the end of turn save data
+                // Copy in the end-of-turn save data
                 if (interimData.endTurnSaveSize) {
                     header.compSize = interimData.endTurnSaveSize;
                     memcpy(scratch, interimData.endTurnBuffer, interimData.endTurnSaveSize);
@@ -527,7 +527,7 @@ void FileAccess(char mode)
                         i++;
                         snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
                         fin = sOpen(Name, "rb", FT_SAVE_CHECK);
-                    } while (fin != NULL); // Find unique name
+                    } while (fin != NULL);  // Find unique name
 
                     fin = sOpen(Name, "wb", 1);
                 } else {
@@ -536,9 +536,9 @@ void FileAccess(char mode)
 
                 fwrite(&header, sizeof(header), 1, fin);
 
-                //----------------------------------
-                //Specs: Special Modem Save Kludge |
-                //----------------------------------
+                //-----------------------------------
+                // Specs: Special Modem Save Kludge |
+                //-----------------------------------
                 if (Option != -1) {
                     if (Option == 0) {
                         plr[0] = 0;
@@ -663,7 +663,7 @@ void FileAccess(char mode)
                 FileText(&savegames[now].Name[0]);
             }
 
-            //  WaitForMouseUp();
+            // WaitForMouseUp();
             OutBox(191, 50, 202, 87);
 
             // perform Up Button
@@ -685,7 +685,7 @@ void FileAccess(char mode)
             // perform Up Button
             key = 0;
 
-        } else if (key == K_PGDN) { // Page Down
+        } else if (key == K_PGDN) {  // Page Down
 
             if (now < (savegames.size() - 9)) {
                 now += 9;
@@ -725,10 +725,10 @@ void FileAccess(char mode)
             // perform Down Button
             key = 0;
         }
-    } //while
+    }  //while
 
     if (LOAD == 1) {
-        OutBox(209, 50, 278, 60);   // Button Out
+        OutBox(209, 50, 278, 60);  // Button Out
     }
 
     if (mode == 1 && QUIT == 1) {
@@ -1049,7 +1049,7 @@ void FileText(char *name)
     if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "MODEM DIRECTOR ");
     } else if (header.Country[0] == 8 || header.Country[1] == 9) {
-        draw_string(0, 0, "MAIL DIRECTOR ");
+        draw_string(0, 0, "PBEM DIRECTOR ");
     } else if (header.Country[0] == 2) {
         draw_string(0, 0, "COMPUTER DIRECTOR ");
     } else {
@@ -1067,7 +1067,7 @@ void FileText(char *name)
     if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "VS. MODEM DIRECTOR ");
     } else if (header.Country[0] == 8 || header.Country[1] == 9) {
-        draw_string(0, 0, "VS. MAIL DIRECTOR ");
+        draw_string(0, 0, "VS. PBEM DIRECTOR ");
     } else if (header.Country[1] == 3) {
         draw_string(0, 0, "VS. COMPUTER DIRECTOR ");
     } else {
@@ -1235,8 +1235,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 41 + i * 51, Mis.Abbr);
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
-                // Show duration level only on missions with a
-                // Duration step - Leon
+                // Show duration level only on missions with a Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Future[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
@@ -1390,6 +1389,10 @@ int FutureCheck(char plr, char type)
  * The Play-by-Modem mode is disabled in the game, and the code is a
  * bit of a mess. It's preserved here faithfully, but that doesn't
  * guarantee it will _work_.
+ * (Note: Modem never worked in Windows, even in DOSBox running on
+ *        Windows 98SE. It worked only in a native DOS environment,
+ *        and then of course wouldn't have worked with a winmodem.
+ *         -Leon)
  *
  *   header.compSize   is the size (in bytes) of the Data global
  *                     when compressed.
