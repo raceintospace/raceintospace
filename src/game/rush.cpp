@@ -64,6 +64,7 @@ void DrawRush(char plr);
 void ResetRush(int mode, int pad);
 void SetLaunchDates(char plr);
 void SetRush(int mode, int pad);
+void DrawPenaltyPopup(char plr, const struct MissionType &mission);
 void DrawPenaltyPopup(char plr, const struct mStr &mission);
 
 }; // End of Unnamed namespace part 1
@@ -459,21 +460,21 @@ void Rush(char plr)
                     fCsh -= (R3 - oR3) * 3;
                     oR3 = R3;
                 }
-            } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) {                
+            } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 && Data->P[plr].Mission[0].MissionCode && Data->P[plr].Mission[0].part != 1) {
                 OutBox(20, 38, 60, 69);
                 delay(100);
                 InBox(20, 38, 60, 69);
-                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[0].MissionCode));
+                DrawPenaltyPopup(plr, Data->P[plr].Mission[0]);
             } else if (x >= 20 && x <= 60 && y >= 96 && y <= 127 && mousebuttons > 0 && Data->P[plr].Mission[1].MissionCode && Data->P[plr].Mission[1].part != 1) {
                 OutBox(20, 96, 60, 127);
                 delay(100);
                 InBox(20, 96, 60, 127);
-                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[1].MissionCode));
+                DrawPenaltyPopup(plr, Data->P[plr].Mission[1]);
             } else if (x >= 20 && x <= 60 && y >= 154 && y <= 185 && mousebuttons > 0 && Data->P[plr].Mission[2].MissionCode && Data->P[plr].Mission[2].part != 1) {
                 OutBox(20, 154, 60, 185);
                 delay(100);
                 InBox(20, 154, 60, 185);
-                DrawPenaltyPopup(plr, GetMissionPlan(Data->P[plr].Mission[2].MissionCode));
+                DrawPenaltyPopup(plr, Data->P[plr].Mission[2]);
             }
 
             // DOWNGRADE MISSION KEYBOARD
@@ -700,12 +701,26 @@ void SetRush(int mode, int pad)
 
     return;
 }
+
+
+void DrawPenaltyPopup(char plr, const struct MissionType &mission)
+{
+    struct mStr plan = GetMissionPlan(mission.MissionCode);
+
+    if (plan.Dur) {
+        plan.Days = mission.Duration;
+    }
+
+    DrawPenaltyPopup(plr, plan);
+}
+
+
 void DrawPenaltyPopup(char plr, const struct mStr &mission)
 {
     int milestonePenalty = MilestonePenalty(plr, mission);
     int durationPenalty = DurationPenalty(plr, mission);
     int newMissionPenalty = NewMissionPenalty(plr, mission);
-    
+
     display::LegacySurface local(165, 124);
     local.copyFrom(display::graphics.legacyScreen(), 85, 52, 249, 175);
 
@@ -716,9 +731,14 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
 
     display::graphics.setForegroundColor(1);
     draw_string(99, 92, "MILESTONE PENALT");
-    if (milestonePenalty == 3) { draw_string(0, 0, "Y");
-         } else { draw_string(0, 0, "IES"); }
-        draw_string(220, 92, "-");
+
+    if (milestonePenalty == 3) {
+        draw_string(0, 0, "Y");
+    } else {
+        draw_string(0, 0, "IES");
+    }
+
+    draw_string(220, 92, "-");
 
     if (milestonePenalty > 0) {
         draw_number(0, 0, milestonePenalty);
@@ -727,10 +747,15 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     }
 
     draw_string(99, 100, "DURATION PENALT");
-    if (durationPenalty == 5) { draw_string(0, 0, "Y");
-        } else { draw_string(0, 0, "IES"); }
+
+    if (durationPenalty == 5) {
+        draw_string(0, 0, "Y");
+    } else {
+        draw_string(0, 0, "IES");
+    }
+
     draw_string(220, 100, "-");
-            
+
     if (durationPenalty > 0) {
         draw_number(0, 0, durationPenalty);
     } else {
@@ -763,6 +788,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     display::graphics.setForegroundColor(5);
     draw_heading(123, 131, "CONTINUE", 0, -2);
     bool close = false;
+
     while (! close) {
         key = 0;
         GetMouse();
