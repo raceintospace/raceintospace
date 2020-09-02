@@ -1196,12 +1196,15 @@ int U_AllotPrest(char plr, char mis)
 
     } // if
 
-    if (Check_Dock(2) == 2) {
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
-    } else if (Check_Dock(2) == 1) {
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+    // Don't increase docking safety twice in mail games
+    if (!(MAIL == 1 && plr == 0)) {
+        if (Check_Dock(2) == 2) {
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+        } else if (Check_Dock(2) == 1) {
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+        }
     }
 
     return total + negs;
