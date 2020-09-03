@@ -40,6 +40,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
+#include "pbm.h"
 
 struct order Order[7] ;
 
@@ -117,13 +118,16 @@ OrderMissions(void)
 
     for (i = 0; i < NUM_PLAYERS; i++) {
         for (j = 0; j < MAX_MISSIONS; j++) {
-            if (Data->P[i].Mission[j].MissionCode
-                && Data->P[i].Mission[j].part != 1) {
-                Order[k].plr = i;
-                Order[k].loc = j;
-                Order[k].budget = Data->P[i].Budget;
-                Order[k].date = Data->P[i].Mission[j].Month;
-                k++;
+            // Don't run the Soviet missions during the U.S. turn
+            if (!(MAIL_PLAYER == 0 && i == MAIL_OPPONENT)) {
+                if (Data->P[i].Mission[j].MissionCode
+                    && Data->P[i].Mission[j].part != 1) {
+                    Order[k].plr = i;
+                    Order[k].loc = j;
+                    Order[k].budget = Data->P[i].Budget;
+                    Order[k].date = Data->P[i].Mission[j].Month;
+                    k++;
+                }
             }
         }
     }
@@ -335,7 +339,7 @@ void MisAnn(char plr, char pad)
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
-                                      Data->P[plr].Manned[hold].Damage);
+                                Data->P[plr].Manned[hold].Damage);
                     draw_string(0, 0, "%");
                     ++k;
                 }
@@ -352,7 +356,7 @@ void MisAnn(char plr, char pad)
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
-                                      Data->P[plr].Misc[hold].Damage);
+                                Data->P[plr].Misc[hold].Damage);
                     draw_string(0, 0, "%");
                     ++k;
                 }
@@ -369,7 +373,7 @@ void MisAnn(char plr, char pad)
                     draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                     draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
-                                      Data->P[plr].Manned[hold].Damage);
+                                Data->P[plr].Manned[hold].Damage);
                     draw_string(0, 0, "%");
                     ++k;
                 }
@@ -386,8 +390,8 @@ void MisAnn(char plr, char pad)
                         display::graphics.setForegroundColor(11);
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Probe[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-                        draw_number(0 ,0, Data->P[plr].Probe[hold].Safety +
-                                          Data->P[plr].Probe[hold].Damage);
+                        draw_number(0, 0, Data->P[plr].Probe[hold].Safety +
+                                    Data->P[plr].Probe[hold].Damage);
                         draw_string(0, 0, "%");
                         ++k;
                     } else if (hold == 4) {
@@ -399,7 +403,7 @@ void MisAnn(char plr, char pad)
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                         draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
-                                          Data->P[plr].Misc[hold].Damage);
+                                    Data->P[plr].Misc[hold].Damage);
                         draw_string(0, 0, "%");
                         ++k;
                     }
@@ -418,7 +422,7 @@ void MisAnn(char plr, char pad)
                         draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
                         Data->P[plr].Rocket[hold - 1].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
                         draw_number(0, 0, Data->P[plr].Rocket[hold - 1].Safety +
-                                          Data->P[plr].Rocket[hold - 1].Damage);
+                                    Data->P[plr].Rocket[hold - 1].Damage);
                         draw_string(0, 0, "%");
                         ++k;
                     } else {

@@ -678,9 +678,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         IDLE[0] = IDLE[1] = 0;
                     }
 
-                    if (!(Data->P[Order[i].plr].Mission[Order[i].loc].part == 1
-                          || Data->P[Order[i].plr].Mission[Order[i].loc].Hard[4] ==
-                          0)) {
+                    if (Data->P[Order[i].plr].Mission[Order[i].loc].part != 1
+                        && Data->P[Order[i].plr].Mission[Order[i].loc].Hard[4]) {
                         prest = Launch(Order[i].plr, Order[i].loc);
 
                         // check for prestige firsts
