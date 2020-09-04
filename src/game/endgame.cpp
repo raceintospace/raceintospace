@@ -22,6 +22,8 @@
 
 #include "endgame.h"
 
+#include <string>
+
 #include <boost/shared_ptr.hpp>
 
 #include "display/graphics.h"
@@ -63,9 +65,9 @@ void EndGame(char win, char pad);
 void Load_LenFlag(char win);
 void Draw_NewEnd(char win);
 void FakeHistory(char plr, char Fyear);
-void HistFile(char *buf, unsigned char bud);
-void PrintHist(char *buf);
-void PrintOne(char *buf, char tken);
+std::string HistFile(unsigned char bud);
+void PrintHist(const char *buf);
+void PrintOne(const char *buf, char tken);
 void AltHistory(char plr);
 void EndPict(int x, int y, char poff, unsigned char coff);
 void LoserPict(char poff, unsigned char coff);
@@ -893,7 +895,6 @@ void FakeWin(char win)
 void FakeHistory(char plr, char Fyear) // holds the winning player
 {
     char bud;
-    memset(buffer, 0, BUFFER_SIZE);
 
     if (Fyear <= 65) {
         bud = 0 + plr;
@@ -909,23 +910,24 @@ void FakeHistory(char plr, char Fyear) // holds the winning player
         bud = 10 + plr;
     }
 
-    HistFile(buffer + 1000, bud);
-    PrintHist(buffer + 1000);
+    std::string history = HistFile(bud);
+    PrintHist(history.c_str());
     return;
 }
 
-void HistFile(char *buf, unsigned char bud)
+std::string HistFile(unsigned char bud)
 {
-    FILE *fin;
-    long i;
-    i = bud * 600;
-    fin = sOpen("ENDGAME.DAT", "rb", 0);
-    fseek(fin, i, SEEK_SET);
-    fread(buf, 600, 1, fin);
+    std::string text;
+    text.resize(600);
+    FILE *fin = sOpen("ENDGAME.DAT", "rb", 0);
+    fseek(fin, bud * 600, SEEK_SET);
+    fread(&text[0], 600, 1, fin);
     fclose(fin);
+
+    return text;
 }
 
-void PrintHist(char *buf)
+void PrintHist(const char *buf)
 {
     int i, k;
     display::graphics.setForegroundColor(8);
@@ -942,7 +944,7 @@ void PrintHist(char *buf)
     }
 }
 
-void PrintOne(char *buf, char tken)
+void PrintOne(const char *buf, char tken)
 {
     int i, k;
     display::graphics.setForegroundColor(7);
@@ -968,7 +970,6 @@ void PrintOne(char *buf, char tken)
 void AltHistory(char plr)  // holds the winning player
 {
     char bud;
-    memset(buffer, 0, BUFFER_SIZE);
 
     if (Data->Year <= 65) {
         bud = 0 + plr;
@@ -984,8 +985,8 @@ void AltHistory(char plr)  // holds the winning player
         bud = 10 + plr;
     }
 
-    HistFile(buffer + 1000, bud);
-    PrintHist(buffer + 1000);
+    std::string history = HistFile(bud);
+    PrintHist(history.c_str());
     return;
 }
 
@@ -1015,12 +1016,10 @@ void SpecialEnd(void)
     InBox(210, 3, 237, 19);
     draw_small_flag(1, 211, 4);
     LoserPict(0, 128); // load loser picture
-    memset(buffer, 0x00, BUFFER_SIZE);
-    HistFile(buffer + 1000, 10);
-    PrintOne(buffer + 1000, 0);
-    memset(buffer, 0x00, BUFFER_SIZE);
-    HistFile(buffer + 1000, 11);
-    PrintOne(buffer + 1000, 1);
+    std::string history = HistFile(10);
+    PrintOne(history.c_str(), 0);
+    history = HistFile(11);
+    PrintOne(history.c_str(), 1);
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
