@@ -26,6 +26,7 @@
 // This file handles missions in progress, particularly mission failures and their results
 
 #include <assert.h>
+#include <vector>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -62,8 +63,6 @@ struct OF {
     int16_t idx;
 };
 
-struct Infin *Mob;
-struct OF *Mob2;
 int tFrames, cFrame;
 char SHTS[4];
 int32_t aLoc;
@@ -81,7 +80,9 @@ void Clock(char plr, char clck, char mode, char tm);
 // Who and What the hell are "Shining Happy People?"
 
 
-void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName);
+void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
+            const std::vector<struct Infin> &Mob,
+            const std::vector<struct OF> &Mob2);
 void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
 FILE *OpenAnim(char *fname);
@@ -126,6 +127,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     int hold_count;
     const int SCRATCH_SIZE = 64000;
     char scratch[SCRATCH_SIZE];
+    std::vector<struct Infin> Mob;
+    std::vector<struct OF> Mob2;
 
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
@@ -134,7 +137,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     F = NULL; /* XXX check uninitialized */
     i = j = 0; /* XXX check uninitialized */
 
-    memset(buffer, 0x00, BUFFER_SIZE);
     SHTS[0] = brandom(10);
     SHTS[1] = brandom(10);
     SHTS[2] = brandom(10);
@@ -403,9 +405,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     ffin = open_gamedat("BABYPICX.CDR");
 
-    // TODO: Replace use of buffer.
-    Mob = (struct Infin *) buffer;
-
     if (AEPT && !mode) {
         // BABYCLIF.CDR consists of two tables:
         //  * 240 Infin entries, each 40 bytes (7200 bytes)
@@ -415,37 +414,39 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             return;
         }
 
+        Mob.reserve(CLIF_TABLE);
+
         // Specs: First Table
         for (i = 0; i < CLIF_TABLE; i++) {
-            ImportInfin(nfin, Mob[i]);
+            struct Infin entry;
+            ImportInfin(nfin, entry);
+            Mob.push_back(entry);
         }
 
-        // Since information is being written blindly into buffer,
-        // check to make sure it won't be overwritten by the other
-        // pointer accessing buffer...
-        assert(CLIF_TABLE * sizeof(struct Infin) < 15000);
-
-        Mob2 = (struct OF *)&buffer[15000];
-        fseek(nfin, 7200, SEEK_SET);
+        fseek(nfin, CLIF_TABLE * sizeof(struct Infin), SEEK_SET);
+        Mob2.reserve(SCND_TABLE);
 
         // Specs: Second Table
         for (i = 0; i < SCND_TABLE; i++) {
-            ImportOF(nfin, Mob2[i]);
-            Mob2[i].Name[strlen(Mob2[i].Name) - 3] = '-'; // patch
+            struct OF entry;
+            ImportOF(nfin, entry);
+            entry.Name[MIN(sizeof(entry.Name), strlen(entry.Name)) - 3] = '-'; // patch
+            Mob2.push_back(entry);
         }
 
         fclose(nfin);
     } else {
         nfin = open_gamedat("BABYNORM.CDR");
+        Mob.reserve(NORM_TABLE);
 
         for (i = 0; i < NORM_TABLE; i++) {
-            ImportInfin(nfin, Mob[i]);
+            struct Infin entry;
+            ImportInfin(nfin, entry);
+            Mob.push_back(entry);
         }
 
         fclose(nfin);
     }
-
-    // Plop(plr,1); //Specs: random single frame for sound buffering
 
     i = 0;
 
@@ -561,7 +562,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
             if (sts < 23) {
                 if (BABY == 0 && !fullscreenMissionPlayback) {
-                    DoPack(plr, ffin, (AEPT && !mode) ? 1 : 0, Seq, seq_name);
+                    DoPack(plr, ffin, (AEPT && !mode) ? 1 : 0, Seq,
+                           seq_name, Mob, Mob2);
                 }
 
                 ++sts;
@@ -783,7 +785,9 @@ void Clock(char plr, char clck, char mode, char tm)
     }
 }
 
-void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
+void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
+            const std::vector<struct Infin> &Mob,
+            const std::vector<struct OF> &Mob2)
 {
     int x, y, attempt, which, mx2, mx1;
     uint16_t *bot, off = 0;
@@ -843,21 +847,23 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         ++bub;
     } else if (mode == 1) {
         attempt = 0;
-
         which = 0;
 
-        while (attempt < SCND_TABLE) {
-            if (xstrncasecmp(fName, Mob2[attempt].Name, strlen(Mob2[attempt].Name)) == 0) {
+        while (attempt < SCND_TABLE && attempt < Mob2.size()) {
+            int maxlength = MIN(strlen(Mob2[attempt].Name),
+                                sizeof(Mob2[attempt].Name));
+
+            if (xstrncasecmp(fName, Mob2[attempt].Name, maxlength) == 0) {
                 break;
             } else {
                 attempt++;
             }
         }
 
-        if (attempt >= SCND_TABLE) {
+        if (attempt >= SCND_TABLE || attempt >= Mob2.size()) {
             which = 415 + brandom(25);
         } else {
-            if (Val1[0] != '#')
+            if (Val1[0] != '#') {
                 switch (Mob2[attempt].idx) {
                 case 0:
                     strcat(Val1, "0\0");
@@ -910,32 +916,32 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
                 default:
                     which = 415 + brandom(25);
                 }
+            }
 
             if (which == 0) {
                 attempt = 0;
+                assert(sizeof(Val2) >= sizeof(Mob[0].Code));
 
-                while (attempt < CLIF_TABLE) {
+                while (attempt < CLIF_TABLE && attempt < Mob.size()) {
+                    strncpy(Val2, &Mob[attempt].Code[0],
+                            sizeof(Mob[attempt].Code));
+                    int maxlength = MIN(strlen(Val1), sizeof(Val1));
 
-                    strcpy(Val2, &Mob[attempt].Code[0]);
-
-                    if (xstrncasecmp(Val1, Val2, strlen(Val1)) == 0) {
+                    if (xstrncasecmp(Val1, Val2, maxlength) == 0) {
                         break;
                     } else {
                         attempt++;
                     }
                 }
 
-                if (attempt >= CLIF_TABLE) {
+                if (attempt >= CLIF_TABLE || attempt >= Mob.size()) {
                     which = 415 + brandom(25);
                 } else {
-
                     which = brandom(Mob[attempt].Qty);
 
                     if (which >= 10) {
-
                         which = Mob[attempt].List[which % 10];
                     } else {
-
                         which = Mob[attempt].List[which];
                     }
                 }
@@ -943,10 +949,12 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
         }
     } else {
         attempt = 0;
+        assert(sizeof(Val2) >= sizeof(Mob[0].Code));
 
-        while (attempt < NORM_TABLE) {
-
-            strcpy(Val2, &Mob[attempt].Code[0]);
+        while (attempt < NORM_TABLE && attempt < Mob.size()) {
+            strncpy(Val2, &Mob[attempt].Code[0],
+                    sizeof(Mob[attempt].Code));
+            int maxlength = MIN(strlen(Val2), sizeof(Val2));
 
             if (strncmp(Val1, Val2, strlen(Val2)) == 0) {
                 break;
@@ -955,10 +963,9 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName)
             }
         }
 
-        if (attempt >= NORM_TABLE) {
+        if (attempt >= NORM_TABLE || attempt >= Mob.size()) {
             which = 415 + brandom(25);
         } else {
-
             which = brandom(Mob[attempt].Qty);
 
             if (which >= 10) {
