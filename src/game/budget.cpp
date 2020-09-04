@@ -25,6 +25,8 @@
 
 // This file controls the Budget Office and the Viewing Stand
 
+#include <string>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -42,6 +44,8 @@
 #include "endianness.h"
 #include "filesystem.h"
 
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
+
 #define DELAYCNT 10
 
 char olderMiss;
@@ -50,9 +54,9 @@ char olderMiss;
 void DrawBudget(char player, char *pStatus);
 void DrawPastExp(char player, char *pStatus);
 void DrawViewing(char plr);
-void DrawVText(char got);
-int RetFile(char plr, int card);
+void DrawViewstandNews(const std::string &card, int got);
 void DrawPreviousMissions(char plr);
+std::string OldNewsCard(char plr, int card);
 
 
 
@@ -487,7 +491,8 @@ void DrawPreviousMissions(char plr)
 
         GetMisType(Data->P[plr].History[i].MissionCode);
 
-        draw_string(9, 49 + 16 * misnum, Data->P[plr].History[i].MissionName[0]);
+        draw_string(9, 49 + 16 * misnum,
+                    Data->P[plr].History[i].MissionName[0]);
         draw_string(9, 55 + 16 * misnum, Mis.Abbr);
 
         // Check the mission code to see if it's a duration mission.
@@ -518,7 +523,6 @@ void DrawViewing(char plr)
 
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
-    memset(buffer, 0x00, BUFFER_SIZE);
     ShBox(0, 0, 319, 22);
     InBox(3, 3, 30, 19);
     draw_small_flag(plr, 4, 4);
@@ -569,11 +573,10 @@ void DrawViewing(char plr)
     return;
 }
 
-void DrawVText(char got)
+void DrawViewstandNews(const std::string &card, int got)
 {
     int xx = 10, yy = 122, i;
-    char *buf;
-    buf = buffer;
+    const char *buf = card.c_str();
     display::graphics.setForegroundColor(1);
 
     for (i = 0; i < got; i++) {
@@ -658,7 +661,6 @@ void DrawVText(char got)
         }
 
         yy += 7;
-
         buf++;
 
         if (*buf == '\0') {
@@ -669,24 +671,11 @@ void DrawVText(char got)
     return;
 }
 
-int RetFile(char plr, int card)
+std::string OldNewsCard(char plr, int card)
 {
-    OLDNEWS *oldNews;
-    int bline, i;
-
-    oldNews = &interimData.tempEvents[card + plr * 42];
-    memcpy(buffer, interimData.eventBuffer + oldNews->offset, oldNews->size);
-    buffer[oldNews->size] = '\0';
-
-    bline = 0;
-
-    for (i = 0; i < (int)strlen(buffer); i++) {
-        if (buffer[i] == 'x') {
-            bline++;
-        }
-    }
-
-    bline -= 8;
+    const OLDNEWS *oldNews = &interimData.tempEvents[card + plr * 42];
+    std::string text(interimData.eventBuffer + oldNews->offset,
+                     oldNews->size);
 
     fill_rectangle(82, 183, 237, 195, 7);
     display::graphics.setForegroundColor(11);
@@ -699,18 +688,32 @@ int RetFile(char plr, int card)
 
     draw_number(0, 0, (card >> 1) + 57);
 
-    return bline;
+    return text;
 }
 
 void Viewing(char plr)
 {
     int ctop, bline = 0, oset, maxcard;
     olderMiss = 1;
-    DrawViewing(plr);
     maxcard = oset = Data->P[plr].eCount - 1;
-    bline = RetFile(plr, oset);
+    const int turn = 2 * (Data->Year - 57) + Data->Season;
+
+    if (maxcard < 0 || maxcard > turn) {
+        ERROR3("Invalid event card count %d: Must be in range (0, %d]",
+              Data->P[plr].eCount, turn + 1);
+        return;
+    }
+
+    if (Data->P[plr].eCount != turn + 1) {
+        WARNING3("Unexpected event count: turn=%d, event=%d", turn + 1,
+                 Data->P[plr].eCount);
+    }
+
+    DrawViewing(plr);
+    std::string card = OldNewsCard(plr, oset);
+    bline = MAX(0, std::count(card.begin(), card.end(), 'x') - 8);
     ctop = 0;
-    DrawVText(ctop);
+    DrawViewstandNews(card, ctop);
     InBox(244, 184, 313, 194);
     FadeIn(2, 10, 0, 0);
     music_start(M_SOVTYP);
@@ -721,9 +724,9 @@ void Viewing(char plr)
         GetMouse();
 
         if (ctop > 0 && key == K_HOME) {  // Home Key
-            ctop = 1;
+            ctop = 0;
 
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT);
         }
 
@@ -734,7 +737,7 @@ void Viewing(char plr)
                 ctop = 0;
             }
 
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT);
         }
 
@@ -745,37 +748,38 @@ void Viewing(char plr)
                 ctop = bline;
             }
 
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT);
         }
 
         if (ctop < bline && key == K_END) {  // End Key
             ctop = bline;
 
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT);
         }
 
         if (ctop > 0 && ((mousebuttons > 0 && x >= 302 && y >= 116 && x <= 312 && y <= 145) || key == UP_ARROW)) {
             InBox(302, 116, 312, 145);
             ctop--;
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT / 2);
             OutBox(302, 116, 312, 145);
         } // UP
         else if (ctop < bline && ((mousebuttons > 0 && x >= 302 && y > 147 && x <= 312 && y <= 176) || key == DN_ARROW)) {
             InBox(302, 147, 312, 176);
             ctop++;
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT / 2);
             OutBox(302, 147, 312, 176);
         }  // Down
         else if (oset > 0 && ((mousebuttons > 0 && x >= 6 && y >= 184 && x <= 75 && y <= 194) || key == LT_ARROW)) {
             InBox(6, 184, 75, 194);
             oset--;
-            bline = RetFile(plr, oset);
+            card = OldNewsCard(plr, oset);
+            bline = MAX(0, std::count(card.begin(), card.end(), 'x') - 8);
             ctop = 0;
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
 
             if (oset != 0) {
                 OutBox(6, 184, 75, 194);
@@ -788,9 +792,10 @@ void Viewing(char plr)
         } else if (oset < maxcard && ((mousebuttons > 0 && x >= 244 && y >= 184 && x <= 313 && y <= 194) || key == RT_ARROW)) {
             InBox(244, 184, 313, 194);
             oset++;
-            bline = RetFile(plr, oset);
+            card = OldNewsCard(plr, oset);
+            bline = MAX(0, std::count(card.begin(), card.end(), 'x') - 8);
             ctop = 0;
-            DrawVText(ctop);
+            DrawViewstandNews(card, ctop);
 
             if (oset != maxcard) {
                 OutBox(244, 184, 313, 194);
@@ -853,16 +858,18 @@ void Viewing(char plr)
                 OutBox(244, 28, 313, 38);    //Button Newer
             }
         }
-    if (ctop <= 0) {
-        draw_up_arrow(304, 118);
-    } else {
-        draw_up_arrow_highlight(304, 118);
-    }
-    if (ctop >= bline) {
-        draw_down_arrow(304, 149);
-    } else {
-        draw_down_arrow_highlight(304, 149);
-    }
+
+        if (ctop <= 0) {
+            draw_up_arrow(304, 118);
+        } else {
+            draw_up_arrow_highlight(304, 118);
+        }
+
+        if (ctop >= bline) {
+            draw_down_arrow(304, 149);
+        } else {
+            draw_down_arrow_highlight(304, 149);
+        }
     }
 }
 /* EOF */
