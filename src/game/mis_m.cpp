@@ -1008,23 +1008,23 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 15;
         break;
 
-    case 16:  // VAL% injury,   XTRA% death
+    case 16:  // VAL% injury,  XTRA% death
         FNote = 0;
         Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
-
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) >= val) {
-                F_IRCrew(F_INJ, MA[Mev[STEP].pad][k].A);
-                Mev[STEP].StepInfo = 2100 + Mev[STEP].loc;
-                FNote = 9;
-            }
-        }  // for
 
         ctr = 0;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (Data->P[plr].Pool[temp].Status == AST_ST_RETIRED) {
-                if (brandom(100) > xtra) {
+            if (brandom(100) < val) {
+                if (brandom(100) >= xtra) {
+                    F_IRCrew(F_INJ, MA[Mev[STEP].pad][k].A);
+                    Mev[STEP].StepInfo =
+                        MAX(2100 + Mev[STEP].loc, Mev[STEP].StepInfo);
+
+                    if (FNote == 0) {
+                        FNote = 9;
+                    }
+                } else {
                     F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
                     Mev[STEP].StepInfo = 3100 + Mev[STEP].loc;
                     FNote = 8;
@@ -1048,13 +1048,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         break;
 
-
-
-    case 17:  // VAL% survival and XTRA% if injury and retirement
+    case 17:  // VAL% survival and XTRA% of injury and retirement
         Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) >= xtra) {
+            if (brandom(100) < xtra) {
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2300 + Mev[STEP].loc;
                 FNote = 9;
@@ -1070,7 +1068,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                 FNote = 8;
                 ctr++;
             }
-        }  // for
+        }
 
         if (ctr == MANNED[Mev[STEP].pad]) {
             Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
@@ -1150,11 +1148,10 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 23 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) >= val) {
+            if (brandom(100) < val) {
                 FNote = 9;
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2400 + Mev[STEP].loc;
-                ctr++;
             }
         }
 
