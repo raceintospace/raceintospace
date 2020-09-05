@@ -26,6 +26,7 @@
 #include "draw.h"
 #include "game_main.h"
 #include "endianness.h"
+#include "mission_util.h"
 #include "place.h"
 #include "port.h"
 #include "replay.h"
@@ -865,23 +866,16 @@ void UpdateRecords(char Ty)
 {
     int i, j, k, m, loop, temp, max;
 
-    struct mStr *Miss;
     char Rec_Change, hold, craft;
     FILE *file;
 
     hold = 0; /* XXX check uninitialized */
-
-    Miss = (struct mStr *)buffer;
 
     for (j = 0; j < 56; j++) {
         for (i = 0; i < 3; i++) {
             NREC[j][i] = 0x00;
         }
     }
-
-    file = sOpen("MISSION.DAT", "rb", 0);  //Get Whole File
-    fread(Miss, 60 * (sizeof(struct mStr)), 1, file);
-    fclose(file);
 
     file = sOpen("RECORDS.DAT", "rb", 1);
 
@@ -1023,7 +1017,7 @@ void UpdateRecords(char Ty)
                                 break;
                             }
 
-                            if (Miss[Data->P[i].History[j].MissionCode].EVA) {
+                            if (GetMissionPlan(Data->P[i].History[j].MissionCode).EVA) {
                                 if (Data->P[i].History[j].Man[PAD_A][m] != -1)
                                     if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 0) {
                                         temp = Data->P[i].History[j].Man[PAD_A][m];
@@ -1067,7 +1061,7 @@ void UpdateRecords(char Ty)
                                 break;
                             }
 
-                            if (Miss[Data->P[i].History[j].MissionCode].EVA) {
+                            if (GetMissionPlan(Data->P[i].History[j].MissionCode).EVA) {
                                 if (Data->P[i].History[j].Man[PAD_A][m] != -1)
                                     if (Data->P[i].Pool[Data->P[i].History[j].Man[PAD_A][m]].Sex == 1) {
                                         temp = Data->P[i].History[j].Man[PAD_A][m];

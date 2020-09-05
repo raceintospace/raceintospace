@@ -43,7 +43,7 @@
 
 void DrawReview(char plr);
 void PresPict(char image);
-void DrawRevText(char plr, int val);
+void DrawReviewText(char plr, int val);
 
 
 void DrawReview(char plr)
@@ -162,7 +162,7 @@ void DrawReview(char plr)
         Data->P[plr].PresRev[0] = (clr >= 2) ? 17 : 16;
     }
 
-    DrawRevText(plr, Data->P[plr].PresRev[0]);
+    DrawReviewText(plr, Data->P[plr].PresRev[0]);
 
     if (Data->P[plr].PresRev[0] == 17) {
         Data->P[plr].PresRev[0] = 16;
@@ -366,16 +366,20 @@ void CalcPresRev(void)
 
 }
 
-void DrawRevText(char plr, int val)
+/**
+ * Prints the text for the Presidential / Politburo review.
+ */
+void DrawReviewText(char plr, int val)
 {
     int index = 0;
     int length = 0;
     int line = 0;
     FILE *fin;
-    memset(buffer, 0x00, 10000);
+    char *text = new char[205];
+    memset(text, 0x00, sizeof(*text));
     fin = sOpen("P_REV.DAT", "rb", 0);  // Read Mission Structure
     fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
-    fread(buffer, 204, 1, fin);
+    fread(text, 204, 1, fin);
     fclose(fin);
 
     display::graphics.setForegroundColor(1);
@@ -383,17 +387,19 @@ void DrawRevText(char plr, int val)
     grMoveTo(20, 140);
 
     do {
-        if (buffer[index] == '*') {
+        if (text[index] == '*') {
             length = 0;
             index++;
             line++;
             grMoveTo(20, 140 + 12 * line);
         }
 
-        draw_character(buffer[index]);
+        draw_character(text[index]);
         length++;
         index++;
-    } while (buffer[index] != 0);
+    } while (text[index] != 0);
+
+    delete[] text;
 }
 
 

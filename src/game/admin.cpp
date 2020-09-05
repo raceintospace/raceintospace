@@ -47,6 +47,7 @@
 #include "budget.h"
 #include "future.h"
 #include "game_main.h"
+#include "ioexception.h"
 #include "place.h"
 #include "port.h"
 #include "prefs.h"
@@ -243,32 +244,41 @@ void Admin(char plr)
  * a cache - MEN.DAT - so the game will be assured of having roster
  * data available.
  *
- * TODO: Eliminate use of global buffer.
+ * \throws IOException  if unable to open roster or MEN.DAT
  */
 void CacheCrewFile()
 {
+    FILE *fin;
+
     if (Data->Def.Input % 2 == 0) {
         // Historical Crews
-        FILE *fin = sOpen("CREW.DAT", "rb", FT_DATA);
-        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
-        fclose(fin);
-        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
-        fwrite(buffer, size, 1, fin);
-        fclose(fin);
+        fin = sOpen("CREW.DAT", "rb", FT_DATA);
     } else {
-        // User Crews
-        FILE *fin = sOpen("USER.DAT", "rb", FT_SAVE);
+        fin = sOpen("USER.DAT", "rb", FT_SAVE);
 
         if (!fin) {
             fin = sOpen("USER.DAT", "rb", FT_DATA);
         }
-
-        size_t size = fread(buffer, 1, BUFFER_SIZE, fin);
-        fclose(fin);
-        fin = sOpen("MEN.DAT", "wb", FT_SAVE);
-        fwrite(buffer, size, 1, fin);
-        fclose(fin);
     }
+
+    if (!fin) {
+        throw IOException("Unable to open roster file");
+    }
+
+    size_t size;
+    char buffer[BUFSIZ];
+    FILE *dest = sOpen("MEN.DAT", "wb", FT_SAVE);
+
+    if (!dest) {
+        throw IOException("Unable to open MEN.DAT");
+    }
+
+    while ((size = fread(buffer, 1, BUFSIZ, fin)) > 0) {
+        fwrite(buffer, size, 1, dest);
+    }
+
+    fclose(fin);
+    fclose(dest);
 }
 
 
