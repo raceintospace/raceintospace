@@ -1,9 +1,12 @@
 #ifndef START_H
 #define START_H
 
-void Update(void);
-void InitializeEvents(void);
+#include <string>
 
-extern char Nums[30][7];
+
+void InitializeEvents(void);
+std::string RomanNumeral(unsigned int value);
+void Update(void);
+
 
 #endif // START_H
