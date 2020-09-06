@@ -1042,7 +1042,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             Mev[STEP].trace = STEP + 1;
         }
 
-        if (Mev[STEP].FName[3] == 0x30) {
+        if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
             Mev[STEP].trace = 0x7f;
         }
 
@@ -1077,6 +1077,10 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             Mev[STEP].trace = 0x7F;
         } else {
             Mev[STEP].trace = STEP + 1;
+        }
+
+        if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
+            Mev[STEP].trace = 0x7f;
         }
 
         break;
