@@ -603,6 +603,12 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         return;
                     }
 
+                    if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1 && newTurn == false) { // Nobody won
+                        SpecialEnd();
+                        FadeOut(2, 10, 0, 0);
+                        return;
+                    }
+
                     PlayAllFirsts(MAIL_OPPONENT);
                     ShowPrestigeResults(MAIL);
                 }
@@ -687,16 +693,13 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                             PlayAllFirsts(Order[i].plr);
                         }
 
-                        if (MAIL != 0 && Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
-                            UpdateRecords(1);
-                            NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
-
-                            if (MAIL == 1) { // Hand back to the U.S. side
-                                MAIL = 0;
-                                MailSave();
+                        if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
+                            if (MAIL != 0) {
+                                UpdateRecords(1);
+                                NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
                             }
 
-                            FadeOut(2, 10, 0, 0);
+                            MailSwitchPlayer();
                             return;
                         }
 
@@ -710,12 +713,11 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         if (MAIL == 0) { // Hand over to the Soviet side
-            MAIL = 1;
             // Restore mission counter
             Data->P[0].PastMissionCount = old_mission_count;
             // Restore prestige data to the status before the U.S. missions
             memcpy(Data->Prestige, oldPrestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
-            MailSave();
+            MailSwitchPlayer();
             return;
         }
 
@@ -724,7 +726,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {
             // nobody wins .....
             SpecialEnd();
-            FadeOut(2, 10, 0, 0);
+            MailSwitchPlayer();
             return;
         }
 
@@ -781,8 +783,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         newTurn = true;
 
         if (MAIL == 1) { // Hand back to the U.S. side
-            MAIL = 0;
-            MailSave();
+            MailSwitchPlayer();
             return;
         }
 

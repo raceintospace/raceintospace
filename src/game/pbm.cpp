@@ -25,8 +25,11 @@
 
 // This file handles play by e-mail.
 
+#include "admin.h"
 #include "data.h"
 #include "game_main.h"
+#include "pace.h"
+#include "pbm.h"
 #include "review.h"
 
 /* Show the prestige results of all the missions perfomed in the
@@ -55,4 +58,18 @@ void ShowPrestigeResults(char plr)
             MAIL = old_mail;
         }
     }
+}
+
+/* Updates the MAIL variable for the next player and saves the current
+ * game. Only fades out if the game is not a PBEM game.
+ */
+void MailSwitchPlayer(void)
+{
+    MAIL = MAIL_NEXT;
+
+    if (MAIL != -1) {
+        MailSave();
+    }
+
+    FadeOut(2, 10, 0, 0);
 }
