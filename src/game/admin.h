@@ -1,6 +1,8 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
+#include <cstdint>
+
 void Admin(char plr);
 void CacheCrewFile();
 int32_t EndOfTurnSave(char *inData, int dataLen);  // Create ENDTURN.TMP
