@@ -80,6 +80,7 @@ int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
+void SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
 {
@@ -298,6 +299,7 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
     SaveFileHdr header;
     SFInfo saveInfo;
     std::vector<SFInfo> results;
+    SaveGameType type;
 
     for (bool done = first_saved_game(&ffblk);
          done != true && results.size() < maxSaves;
@@ -325,13 +327,15 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
             continue;
         }
 
-        if (saveType == SAVEGAME_Normal ||
-            saveType == GetSaveType(header)) {
+        type = GetSaveType(header);
+
+        if (saveType == SAVEGAME_Normal || saveType == type) {
             memset(&saveInfo, 0, sizeof(saveInfo));
             strcpy(saveInfo.Title, header.Name);
             strcpy(saveInfo.Name, ffblk.ff_name);
             saveInfo.time = ffblk.ff_ftime;
             saveInfo.date = ffblk.ff_fdate;
+            saveInfo.type = type;
             results.push_back(saveInfo);
         }
     }
@@ -465,124 +469,14 @@ void FileAccess(char mode)
         }  // LOAD
         else if ((sc == 0 || sc == 2) && mode == 0 && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
                  || (key == 'S'))) {
-            InBox(209, 64, 278, 72);
-            delay(250);
 
-            WaitForMouseUp();
-
-            SaveFileHdr header;
-            memset(&header, 0x00, sizeof(header));
-            done = GetBlockName(header.Name);  // Checks Free Space
-            header.ID = RaceIntoSpace_Signature;
-            header.Name[sizeof(header.Name) - 1] = 0x1A;
-            temp = NOTSAME;
-
-            for (i = 0; (i < savegames.size() && temp == 2); i++) {
-                if (strcmp(header.Name, savegames[i].Title) == 0) {
-                    temp = RequestX("REPLACE FILE", 1);
-
-                    if (temp == SAME_ABORT) {
-                        done = 0;
-                    }
-                }
-            }
-
-            if (done == YES) {
-                i--;  // decrement to correct for the FOR loop
-                strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
-                strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
-
-                // Modem save game hack
-                if (Option != -1) {
-                    if (Option == 0) {
-                        plr[0] = 6;
-                        plr[1] = 1;
-                    } else if (Option == 1) {
-                        plr[0] = 0;
-                        plr[1] = 7;
-                    }
-
-                    Data->Def.Plr1 = plr[0];
-                    Data->Def.Plr2 = plr[1];
-                    Data->plr[0] = Data->Def.Plr1;
-                    Data->plr[1] = Data->Def.Plr2;
-                    AI[0] = 0;
-                    AI[1] = 0;
-                }
-
-                header.Country[0] = Data->plr[0];
-                header.Country[1] = Data->plr[1];
-                header.Season = Data->Season;
-                header.Year = Data->Year;
-                header.dataSize = sizeof(struct Players);
-
-                // Copy in the end-of-turn save data
-                if (interimData.endTurnSaveSize) {
-                    header.compSize = interimData.endTurnSaveSize;
-                    memcpy(scratch, interimData.endTurnBuffer, interimData.endTurnSaveSize);
-                } else {
-                    header.compSize = 0;
-                    memset(scratch, 0, SCRATCH_SIZE);
-                }
-
-                if (temp == NOTSAME) {
-                    i = 0;
-                    fin = NULL;
-
-                    do {
-                        if (fin) {
-                            fclose(fin);
-                        }
-
-                        i++;
-                        snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
-                        fin = sOpen(Name, "rb", FT_SAVE_CHECK);
-                    } while (fin != NULL);  // Find unique name
-
-                    fin = sOpen(Name, "wb", 1);
-                } else {
-                    fin = sOpen(savegames[i].Name, "wb", 1);
-                }
-
-                fwrite(&header, sizeof(header), 1, fin);
-
-                //-----------------------------------
-                // Specs: Special Modem Save Kludge |
-                //-----------------------------------
-                if (Option != -1) {
-                    if (Option == 0) {
-                        plr[0] = 0;
-                        plr[1] = 1;
-                    } else if (Option == 1) {
-                        plr[0] = 0;
-                        plr[1] = 1;
-                    }
-
-                    Data->Def.Plr1 = plr[0];
-                    Data->Def.Plr2 = plr[1];
-                    Data->plr[0] = Data->Def.Plr1;
-                    Data->plr[1] = Data->Def.Plr2;
-                    AI[0] = 0;
-                    AI[1] = 0;
-                }
-
-                // Save End Of Turn State
-                fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
-
-                // Save Replay information
-                fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
-
-                // Save Event information
-                fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
-
-                fclose(fin);
-            }  // end done if
-
+            SaveGame(savegames);
             OutBox(209, 64, 278, 72);
             key = 0;
+            break;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
                                             || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
-            MailSave();
+            SaveGame(savegames);
 
             OutBox(209, 78, 278, 86);
             key = 0;
@@ -769,6 +663,12 @@ void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
     display::graphics.setForegroundColor(1);
 
     for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
+        if (savegames[i].type == SAVEGAME_PlayByMail) {
+            display::graphics.setForegroundColor(11);
+        } else {
+            display::graphics.setForegroundColor(1);
+        }
+
         draw_string(40, 58 + j * 8, savegames[i].Title);
     }
 }
@@ -1702,17 +1602,11 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
     return interimData.endTurnSaveSize;
 }
 
-void MailSave()
+void SaveGame(const std::vector<SFInfo> savegames)
 {
     int done, temp, i;
     FILE *fin;
     SaveFileHdr header;
-
-    std::vector<SFInfo> savegames = GenerateTables(SAVEGAME_PlayByMail);
-
-    display::graphics.screen()->clear();
-
-    FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
     memset(header.Name, 0x00, sizeof(header.Name));
@@ -1757,8 +1651,11 @@ void MailSave()
         Data->Def.Plr2 = plr[1];
         Data->plr[0] = Data->Def.Plr1;
         Data->plr[1] = Data->Def.Plr2;
-        AI[0] = 0;
-        AI[1] = 0;
+
+        if (MAIL != -1) {
+            AI[0] = 0;
+            AI[1] = 0;
+        }
 
         header.Country[0] = Data->plr[0];
         header.Country[1] = Data->plr[1];
@@ -1773,7 +1670,11 @@ void MailSave()
             i = 0;
             fin = NULL;
 
-            do {
+            strncpy(Name, header.Name, sizeof(Name));
+            Name[sizeof(Name) - 5] = 0; // Leave enough space for .SAV ending
+            strncat(Name, ".SAV", 4);
+
+            /*            do {
                 i++;
 
                 if (fin) {
@@ -1782,7 +1683,7 @@ void MailSave()
 
                 snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
                 fin = sOpen(Name, "rb", 1);
-            } while (fin != NULL); // Find unique name
+                } while (fin != NULL); // Find unique name*/
 
             fin = sOpen(Name, "wb", 1);
         } else {
