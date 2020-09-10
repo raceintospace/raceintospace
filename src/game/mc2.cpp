@@ -615,8 +615,9 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
     // Special Cases for the Failure Mode Charts
     if ((Mev[step].loc == 0) && // MS Failure Launch
-        MH[pad][Mev[step].Class] &&
-        strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
+        MH[pad][Mission_Capsule] &&
+        strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name,
+                MH[pad][Mission_Capsule]->Name, 5) == 0) {
         Mev[step].FName[1] = '1';
     } else if (Mev[step].loc == 4 && // MS Failure Landing
                MH[pad][Mev[step].Class] &&
