@@ -189,7 +189,8 @@ void Set_LM(char plr, char total)
     int i;
 
     for (i = 0; i < total; i++) {
-        if (Mev[i].loc == 26 && Mev[i].StepInfo == 1) {
+        if (Mev[i].loc == 26
+            && (Mev[i].StepInfo == 1 || Mev[i].StepInfo == 50)) {
             Data->P[plr].LMpts++;
         }
     }
