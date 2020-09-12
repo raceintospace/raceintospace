@@ -22,8 +22,8 @@ endif (WINDOWS)
 
 add_subdirectory(lib)
 add_subdirectory(src)
-install(PROGRAMS icons/raceintospace.desktop DESTINATION /usr/share/applications)
-install(FILES icons/raceintospace.xpm DESTINATION /usr/share/pixmaps)
+install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
+install(FILES icons/raceintospace.xpm DESTINATION share/pixmaps)
 
 set(CPACK_GENERATOR TGZ)
 set(CPACK_SOURCE_GENERATOR TGZ)
