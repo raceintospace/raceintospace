@@ -532,10 +532,10 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         if (Mev[step].Class == Mission_EVA) {
             if (MH[0][Mission_Kicker] &&
                 MH[0][Mission_Kicker]->ID[1] == 0x32) {
-                strncat(Mev[step].Name, "M2", 2);    // Kicker-C
+                strcat(Mev[step].Name, "M2");    // Kicker-C
             } else if (MH[pad][Mission_Capsule] &&
                        MH[pad][Mission_Capsule]->ID[1] == 0x34) {
-                strncat(Mev[step].Name, "C4", 2);    // FourMan
+                strcat(Mev[step].Name, "C4");    // FourMan
             } else { // standard LMs
                 if (mcode == 'P') {
                     if (MH[pad][Mission_LM] != NULL) {
@@ -729,50 +729,51 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-        for (i = Mission_Capsule; i <= Mission_PhotoRecon; i++) {
+        for (i = Mission_Capsule; i < Mission_PhotoRecon; i++) {
+            Equipment *eq = NULL; // Clear Pointers
+
             t = Data->P[plr].Mission[mis + j].Hard[i];
-            MH[j][i] = NULL; // Clear Pointers
 
             if (t >= 0) {
                 switch (i) {
                 case Mission_Capsule:
                 case Mission_LM:   // Cap - LM
-                    MH[j][i] = &Data->P[plr].Manned[t];
+                    eq = &Data->P[plr].Manned[t];
 
-                    if (MH[j][i]->Num && t != MANNED_HW_MINISHUTTLE) {
-                        MH[j][i]->Num--;
+                    if (eq->Num && t != MANNED_HW_MINISHUTTLE) {
+                        eq->Num--;
                     }
 
-                    MH[j][i]->Used++;
+                    eq->Used++;
                     break;
 
                 case Mission_Kicker:           // Kicker
-                    MH[j][i] = &Data->P[plr].Misc[t];
+                    eq = &Data->P[plr].Misc[t];
 
-                    if (MH[j][i]->Num) {
-                        MH[j][i]->Num--;
+                    if (eq->Num) {
+                        eq->Num--;
                     }
 
-                    MH[j][i]->Used++;
+                    eq->Used++;
                     break;
 
                 case Mission_Probe_DM:           // Secondary Equipment
                     if (t != 4) {
-                        MH[j][i] = &Data->P[plr].Probe[t];
-                        MH[j][i]->Used++;
+                        eq = &Data->P[plr].Probe[t];
+                        eq->Used++;
 
                         if (Data->P[plr].Probe[t].Num > 0) {
                             Data->P[plr].Probe[t].Num -= 1;
                         }
                     } else {
-                        MH[j][i] = &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
+                        eq = &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
 
                         if (DMFake == 0) {
-                            if (MH[j][i]->Num > 0) {
-                                MH[j][i]->Num--;
+                            if (eq->Num > 0) {
+                                eq->Num--;
                             }
 
-                            MH[j][i]->Used++;
+                            eq->Used++;
                         }
                     }
 
@@ -782,22 +783,22 @@ void MissionSetup(char plr, char mis)
                     t--;
 
                     if (t < 4) {
-                        MH[j][i] = &Data->P[plr].Rocket[t];
+                        eq = &Data->P[plr].Rocket[t];
 
-                        if (MH[j][i]->Num > 0) {
-                            MH[j][i]->Num--;
+                        if (eq->Num > 0) {
+                            eq->Num--;
                         }
 
-                        MH[j][i]->Used++;
+                        eq->Used++;
                     } else {
-                        MH[j][i] = &Data->P[plr].Rocket[t - 4];
+                        eq = &Data->P[plr].Rocket[t - 4];
                         MH[j][Mission_SecondaryBooster] =
                             &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
-                        MH[j][i]->Used++;
+                        eq->Used++;
                         MH[j][Mission_SecondaryBooster]->Used++;
 
-                        if (MH[j][i]->Num > 0) {
-                            MH[j][i]->Num--;
+                        if (eq->Num > 0) {
+                            eq->Num--;
                         }
 
                         if (MH[j][Mission_SecondaryBooster]->Num > 0) {
@@ -808,38 +809,40 @@ void MissionSetup(char plr, char mis)
                     break;
 
                 case Mission_EVA:  // EVA
-                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
+                    eq = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
                     break;
 
                 case Mission_PhotoRecon:  // Photo Recon
-                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+                    eq = &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
                     break;
                 }
 
-                if (MH[j][i] != NULL) {
-                    MH[j][i]->SMods += MH[j][i]->Damage;    //Damaged Equipment, Nikakd, 10/8/10
-                    MH[j][i]->MisSaf = MH[j][i]->Safety + MH[j][i]->SMods;
+                if (eq != NULL) {
+                    eq->SMods += eq->Damage;    //Damaged Equipment, Nikakd, 10/8/10
+                    eq->MisSaf = eq->Safety + eq->SMods;
 
-                    if (MH[j][i]->ID[1] >= 0x35 && i == Mission_LM &&
+                    if (eq->ID[1] >= 0x35 && i == Mission_LM &&
                         Data->P[plr].Mission[mis].MissionCode >= 53) {
                         switch (Data->P[plr].LMpts) {
                         case 0:
-                            MH[j][i]->MisSaf -= 9;
+                            eq->MisSaf -= 9;
                             break;
 
                         case 1:
-                            MH[j][i]->MisSaf -= 6;
+                            eq->MisSaf -= 6;
                             break;
 
                         case 2:
-                            MH[j][i]->MisSaf -= 3;
+                            eq->MisSaf -= 3;
                             break;
                         }
                     }
                 }
+
             } // if t>=0
-        } // for (0<7)
-    } // for (0<2)
+            MH[j][i] = eq;
+        } // for (i<7)
+    } // for (j<2)
 
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;
