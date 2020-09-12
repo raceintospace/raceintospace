@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 include(CheckIncludeFile)
-check_include_file(dirent.h INCLUDE_INTTYPES_H)
+check_include_file(inttypes.h INCLUDE_INTTYPES_H)
 check_include_file(stdint.h INCLUDE_STDINT_H)
 check_include_file(sys/types.h INCLUDE_SYS_TYPES_H)
 

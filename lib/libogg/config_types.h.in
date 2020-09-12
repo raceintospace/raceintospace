@@ -5,13 +5,13 @@
 #cmakedefine INCLUDE_STDINT_H
 #cmakedefine INCLUDE_SYS_TYPES_H
 
-#if INCLUDE_INTTYPES_H
+#ifdef INCLUDE_INTTYPES_H
 #  include <inttypes.h>
 #endif
-#if INCLUDE_STDINT_H
+#ifdef INCLUDE_STDINT_H
 #  include <stdint.h>
 #endif
-#if INCLUDE_SYS_TYPES_H
+#ifdef INCLUDE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
 
