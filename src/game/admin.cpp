@@ -413,7 +413,7 @@ void FileAccess(char mode)
     done = BarB = now = 0;
     DrawFiles(0, 0, savegames);
 
-    if (savegames.size()) {
+    if (!savegames.empty()) {
         FileText(&savegames[now].Name[0]);
     }
 
@@ -431,12 +431,13 @@ void FileAccess(char mode)
                 now += i;
                 BarB = i;
                 DrawFiles(now, BarB, savegames);
-                FileText(&savegames[now].Name[0]);
+		if (!savegames.empty())
+                    FileText(&savegames[now].Name[0]);
                 WaitForMouseUp();
             }
         }
 
-        if ((sc == 0 || sc == 2) && savegames.size() > 0 && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
+        if ((sc == 0 || sc == 2) && !savegames.empty() && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
             InBox(209, 50, 278, 58);
             delay(250);
