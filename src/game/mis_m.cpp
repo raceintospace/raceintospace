@@ -67,6 +67,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
+void InvalidatePrestige();
 
 /**
  * Load the failure state information explaining a mission step
