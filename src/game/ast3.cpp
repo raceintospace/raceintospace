@@ -298,6 +298,7 @@ TrainText(char plr, int astro, int cnt)
         break;
     }
 
+    fill_rectangle(264, 87, 315, 100, 3);
     draw_number(264, 97, Data->P[plr].Pool[astro].Active);
     draw_string(0, 0, " SEASON");
 
