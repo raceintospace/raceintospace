@@ -1,5 +1,5 @@
 # vim: sts=4:
-app-id: com.raceintospace.Raceintospace
+app-id: org.raceintospace.Raceintospace
 runtime: org.freedesktop.Platform
 runtime-version: '19.08'
 sdk: org.freedesktop.Sdk
@@ -77,8 +77,8 @@ modules:
     - name: icon-rename
       buildsystem: simple
       build-commands:
-        - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/32x32/apps/com.raceintospace.Raceintospace.png
-        - sed -e 's/^Icon=raceintospace/Icon=com.raceintospace.Raceintospace/' -i /app/share/applications/*.desktop
+        - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/32x32/apps/org.raceintospace.Raceintospace.png
+        - sed -e 's/^Icon=raceintospace/Icon=org.raceintospace.Raceintospace/' -i /app/share/applications/*.desktop
 finish-args:
     - --share=ipc
     - --socket=x11
