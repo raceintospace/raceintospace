@@ -26,11 +26,12 @@
 
 // This file handles the Museum and some of its subsections: Space History, Prestige Summary, and Astronaut History
 
+#include "museum.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "museum.h"
 #include "Buzz_inc.h"
 #include "draw.h"
 #include "hardef.h"
@@ -346,6 +347,7 @@ void ShowPrest(char plr)
             ForOne(plr, &pos, &pos2);
             ForOne(plr, &pos, &pos2);
         }
+
         if (key == K_PGUP) {
             BackOne(plr, &pos, &pos2);
             BackOne(plr, &pos, &pos2);
@@ -357,6 +359,7 @@ void ShowPrest(char plr)
             BackOne(plr, &pos, &pos2);
             BackOne(plr, &pos, &pos2);
         }
+
         if (key == K_END) {
             ForEnd(plr, &pos, &pos2);
         }
@@ -1183,11 +1186,13 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     draw_number(214, 78, abuf[*where].Missions);
     draw_number(217, 89, abuf[*where].Prestige);
     draw_number(253, 149, abuf[*where].Days);
+
     if (abuf[*where].Days == 1) {
         draw_string(0, 0, " DAY");
     } else {
         draw_string(0, 0, " DAYS");
     }
+
     draw_number(253, 107, abuf[*where].Cap);
     draw_number(227, 115, abuf[*where].LM);
     draw_number(204, 123, abuf[*where].EVA);
@@ -1209,7 +1214,7 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
 
     draw_string(165, 39, Ast_Name);  // Displays name of astronaut/cosmonaut
     display::graphics.setForegroundColor(11);
-    strcat(temp, Nums[abuf[*where].Group]);
+    strncat(temp, RomanNumeral(abuf[*where].Group + 1).c_str(), 4);
     draw_string(165, 49, temp);
     display::graphics.setForegroundColor(12);
     draw_number(225, 169, *where + 1);
