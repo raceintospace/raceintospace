@@ -18,12 +18,17 @@ modules:
           path: SDL-XData32.patch
       cleanup:
         - SDL*.3
+        - '/lib/*.a'
+        - '/include'
     - name: jsoncpp
       buildsystem: cmake
       sources:
         - type: git
           url: https://github.com/open-source-parsers/jsoncpp.git
           tag: 1.9.3
+      cleanup:
+        - '/lib/*.a'
+        - '/include'
     - name: physfs
       buildsystem: cmake
       sources:
@@ -36,6 +41,9 @@ modules:
         - type: git
           url: https://github.com/protocolbuffers/protobuf.git
           tag: v3.13.0
+      cleanup:
+        - '/lib/libproto*.a'
+        - '/include'
     - name: protobuf-c
       buildsystem: autotools
       sources:
@@ -47,30 +55,30 @@ modules:
       buildsystem: simple
       build-commands:
         - ./bootstrap.sh --prefix=/app
-        - ./b2 headers -j $FLATPAK_BUILDER_N_JOBS
+        - ./b2 --with-headers -j $FLATPAK_BUILDER_N_JOBS
         - ./b2 install
       cleanup:
         - /lib/libboost_*.a
+        - '/include'
       sources:
         - type: archive
           url: https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2
           sha256: 83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1
     - name: raceintospace
       buildsystem: cmake
-      #config-opts:
       sources:
         - type: git
           url: https://github.com/raceintospace/raceintospace.git
+      cleanup:
+        - '/include'
+        - '/lib/lib*.a'
     # Icon should be in different place build system puts it, workaround
     # .xpm icons are unsupported
     - name: icon-rename
       buildsystem: simple
       build-commands:
-        - install -D icons/raceintospace.png /app/share/icons/hicolor/32x32/apps/com.raceintospace.Raceintospace.png
+        - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/32x32/apps/com.raceintospace.Raceintospace.png
         - sed -e 's/^Icon=raceintospace/Icon=com.raceintospace.Raceintospace/' -i /app/share/applications/*.desktop
-      sources:
-        - type: git
-          url: https://github.com/raceintospace/raceintospace.git
 finish-args:
     - --share=ipc
     - --socket=x11
