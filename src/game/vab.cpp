@@ -570,7 +570,9 @@ void ShowVA(char f)
             draw_number(152, 136 + 12 * i, 0);
             draw_number(128, 136 + 12 * i, 0);
         } else {
-            draw_number(152, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
+            int hcol;
+            if (VAS[f][i].qty - VAS[f][i].ac == 1) { hcol = 153; } else { hcol = 152; }
+            draw_number(hcol, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
 
             if (VAS[f][i].dmg) {
                 display::graphics.setForegroundColor(9);
@@ -610,7 +612,9 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
         draw_number(152, 188, 0);
         draw_number(128, 188, 0);
     } else {
-        draw_number(152, 188, rocket.available());
+        int hcol;
+        if (rocket.available() == 1) { hcol = 153; } else { hcol = 152; }
+        draw_number(hcol, 188, rocket.available());
 
         if (rocket.damaged()) {
             display::graphics.setForegroundColor(9);
