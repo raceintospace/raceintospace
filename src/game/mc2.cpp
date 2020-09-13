@@ -811,10 +811,6 @@ void MissionSetup(char plr, char mis)
                 case Mission_EVA:  // EVA
                     eq = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
                     break;
-
-                case Mission_PhotoRecon:  // Photo Recon
-                    eq = &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
-                    break;
                 }
 
                 if (eq != NULL) {
@@ -838,10 +834,24 @@ void MissionSetup(char plr, char mis)
                         }
                     }
                 }
-
             } // if t>=0
+
             MH[j][i] = eq;
         } // for (i<7)
+
+        // TODO: This is a backstop against unexpected behavior.
+        // MissionType.Hard[Mission_EVA] is initialized to 0.
+        // However, it ought to be set in the VAB explicitly. As the
+        // VAB _should_ stop any EVA missions from proceeding this
+        // protects against the mission Hard[] field not being
+        // properly initialized until the VAB EVA assignment is
+        // improved.
+        MH[j][Mission_EVA] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
+
+        // Photo Recon isn't included in MissionType.Hard - it's
+        // always available.
+        MH[j][Mission_PhotoRecon] =
+            &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
     } // for (j<2)
 
     if (DMFake == 1) {
