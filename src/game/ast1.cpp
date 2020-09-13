@@ -998,8 +998,7 @@ void AstSel(char plr)
 
         } else if (key == K_PGUP && ksel == 0) {
             /* Right Page Up */
-
-            InBox(167, 163, 179, 194);
+            InBox(167, 130, 179, 161);
 
             if (now > min) {
                 now = (now >= min + 8) ? now - 8 : min;
@@ -1013,7 +1012,7 @@ void AstSel(char plr)
             }
 
             delay(10);
-            OutBox(167, 163, 179, 194);
+            OutBox(167, 130, 179, 161);
 
         } else if ((x >= 167 && y >= 130 && x <= 179 && y <= 161 && mousebuttons > 0) || (key == UP_ARROW && ksel == 0)) {
             /* Right Up */
