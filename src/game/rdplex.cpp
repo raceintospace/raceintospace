@@ -932,14 +932,14 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 139, "MAXIMUM R&D:");
 
     if (program.Damage) {
-        IOBox(281, 88, 304, 102);
+        IOBox(278, 88, 304, 102);
 
         if (program.DCost > Data->P[player_index].Cash) {
-            InBox(283, 90, 302, 100);
+            InBox(280, 90, 302, 100);
         }
 
         display::graphics.setForegroundColor(8);
-        draw_string(285, 97, "F");
+        draw_string(284, 97, "F");
         display::graphics.setForegroundColor(11);
         draw_string(0, 0, "IX");
     }
@@ -1222,7 +1222,7 @@ char HPurc(char player_index)
 
             if (program.Damage &&
                 program.DCost <= Data->P[player_index].Cash) {
-                InBox(283, 90, 302, 100);
+                InBox(280, 90, 302, 100);
                 DamProb(player_index, hardware, unit);
                 helpText = "i008";
                 keyHelpText = "k008";
