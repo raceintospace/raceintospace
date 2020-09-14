@@ -23,7 +23,10 @@ endif (WINDOWS)
 add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
-install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
+install(FILES icons/raceintospace.xpm DESTINATION share/pixmaps)
+install(FILES icons/raceintospace.png
+	DESTINATION share/icons/hicolor/128x128/apps
+	RENAME org.raceintospace.Raceintospace.png)
 install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
 	DESTINATION share/metainfo)
 
