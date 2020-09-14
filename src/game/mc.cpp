@@ -303,6 +303,10 @@ int Launch(char plr, char mis)
         MisPrt();
     }
 
+    if (Mis.Dur >= 1) {
+        Mis.Days = Data->P[plr].Mission[mis].Duration;
+    }
+
     // MisSkip is based on PrestMin, which calculates penalties for both
     // prestige goals _and_ duration penalties. Consequently, having a
     // distinct MisDur function to add duration penalties results in
