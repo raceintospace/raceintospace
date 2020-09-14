@@ -1,12 +1,18 @@
 # vim: sts=4:
 app-id: org.raceintospace.Raceintospace
 runtime: org.freedesktop.Platform
-runtime-version: '19.08'
+runtime-version: '20.08'
 sdk: org.freedesktop.Sdk
 command: raceintospace
-#rename-icon: raceintospace
 rename-desktop-file: raceintospace.desktop
 rename-appdata-file: raceintospace.appdata.xml
+finish-args:
+    - --share=ipc
+    - --socket=x11
+    - --socket=pulseaudio
+    - --persist=.raceintospace
+    # Until support for SDL2, only X11 will work
+    #- --socket=wayland
 modules:
     - name: sdl
       buildsystem: autotools
@@ -56,7 +62,7 @@ modules:
       build-commands:
         - ./bootstrap.sh --prefix=/app
         - ./b2 --with-headers -j $FLATPAK_BUILDER_N_JOBS
-        - ./b2 install
+        - ./b2 --with-headers install
       cleanup:
         - /lib/libboost_*.a
         - '/include'
@@ -79,11 +85,3 @@ modules:
       build-commands:
         - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/32x32/apps/org.raceintospace.Raceintospace.png
         - sed -e 's/^Icon=raceintospace/Icon=org.raceintospace.Raceintospace/' -i /app/share/applications/*.desktop
-finish-args:
-    - --share=ipc
-    - --socket=x11
-    - --socket=wayland
-    - --socket=pulseaudio
-    - --persist=.raceintospace
-    # TODO: implement XDG variables in RIS
-    #- --filesystem=xdg-documents
