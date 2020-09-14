@@ -24,7 +24,7 @@ add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
 install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
-install(FILES doc/raceintospace.appdata.xml DESTINATION share/metainfo)
+install(FILES doc/org.raceintospace.Raceintospace.appdata.xml DESTINATION share/metainfo)
 
 set(CPACK_GENERATOR TGZ)
 set(CPACK_SOURCE_GENERATOR TGZ)
