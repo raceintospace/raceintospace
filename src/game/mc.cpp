@@ -64,7 +64,6 @@ char EVA[2];
 char STEP;
 char FINAL;
 char JOINT;
-char pal2[768];
 char PastBANG;
 char mcc;
 char fEarly; /**< kind of a boolean indicating early missions */
@@ -281,16 +280,8 @@ int Launch(char plr, char mis)
         SetW('S');
     }
 
-//  if (mcode>15 && NOCOPRO && !AI[plr]) MisPrt();
-
     // Exit missions early
     /** \todo The *early* missions should be defined in a file */
-    /* 1 = Orbital satellite
-     * 7 = Lunar flyby
-     * 8 = Lunar probe landing
-     * 9 = Venus flyby
-     * 11 = Mercury flyby
-     */
     fEarly = (!Mis.Days && !(mcode == Mission_Orbital_Satellite ||
                              mcode == Mission_LunarFlyby ||
                              mcode == Mission_Lunar_Probe ||
@@ -307,22 +298,10 @@ int Launch(char plr, char mis)
         Mis.Days = Data->P[plr].Mission[mis].Duration;
     }
 
-    // MisSkip is based on PrestMin, which calculates penalties for both
-    // prestige goals _and_ duration penalties. Consequently, having a
-    // distinct MisDur function to add duration penalties results in
-    // a double penalty problem. I believe this to be the result of
-    // old code, where skipped prestige steps (MisSkip) were applied
-    // separately from duration penalties (MisDur). However, at some
-    // point the method of computing prestige penalties, PrestMin(),
-    // got used for both. However, the history of this lies back beyond
-    // the First Commit -- rnyoakum
-    MisSkip(plr, Find_MaxGoal());
-    // MisDur(plr, Data->P[plr].Mission[mis].Duration);
-
-    // if (MANNED[0] > 0 || MANNED[1] > 0 || mcode == 1 || mcode == 7 || mcode == 8) {
-    //     MisSkip(plr, Find_MaxGoal());
-    // }
-
+    // Apply general mission penalties (Duration, Milestone, New Mission)
+    // and Rushing penalties. MisSkip requires Mis to be loaded with
+    // the mission data AND corrects Days value for a duration mission.
+    MisSkip(plr);
     MisRush(plr, Data->P[plr].Mission[mis].Rushing);
     STEPnum = 0;
 
@@ -335,7 +314,9 @@ int Launch(char plr, char mis)
 
     memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct
 
-    /* whatever this mcode means... */
+    // TODO: Should explicitly only apply to Lunar Landing missions,
+    // since there are (unimplemented) rescue missions with mission
+    // codes greater than the lunar landing missions.
     if (!AI[plr] && mcode >= Mission_HistoricalLanding) {
         avg = temp = 0;
 

@@ -939,78 +939,15 @@ void MissionSetDown(char plr, char mis)
     return;
 }
 
-/**
- * Apply duration penalty to mission steps in manned missions.
- *
- * TODO: This functionality appears to have been appropriated by
- * MisSkip, via PrestMin(). This needs to be verified, and if so, it
- * should be removed completely.
- * TODO: Addendum - PrestMin() has since been replaced with
- * AchievementPenalty(). This function is now out-of-date, and should
- * be removed or updated to use the latest Penalty functions.
- *
- * \param plr current player
- * \param dur mission duration in duration level (A-F).
- */
-void
-MisDur(char plr, char dur)
-{
-    int i, j, diff;
-    int manned = 0;
-
-    diff = dur - Data->P[plr].DurationLevel;
-
-    if (Data->P[plr].DurationLevel == 0) {
-        diff--;
-    }
-
-    if (diff <= 2) {  // Changed from "diff <= 0" to disable broken Duration milestone system  -Leon
-        return;
-    }
-
-    diff = 5 * diff;
-
-    if ((MH[0][Mission_Capsule] && MH[0][Mission_Capsule]->ID[0] == 'C') ||
-        (MH[1][Mission_Capsule] && MH[1][Mission_Capsule]->ID[0] == 'C')) {
-        manned = 1;
-    }
-
-    /* Don't give negs to unmanned */
-    /* Don't give negs to duration missions */
-    /* ??? will handle individual durations later */
-    if (!manned || !Mis.Dur) {
-        return;
-    }
-
-    if (!AI[plr]) {
-        INFO2("applying duration penalty %d to mission safety", -diff);
-    }
-
-    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
-        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
-            if (MH[i][j] != NULL) {
-                MH[i][j]->MisSaf -= diff;
-            }
-        }
-    }
-}
-
-// #define Coml(a,b) (!(Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a)))
-
 
 /**
  * Compute and apply safety penalties to mission steps.
- *
- *
- * TODO: This takes a parameter ms, used originally to determine the
- * maximum prestige requirement of the mission. However, it's no
- * longer used, and should be removed.
  *
  * \note  This assumes the global variable Mis is correctly filled.
  * \param plr current player
  */
 void
-MisSkip(char plr, char ms)
+MisSkip(char plr)
 {
     int i, j, diff;
 
