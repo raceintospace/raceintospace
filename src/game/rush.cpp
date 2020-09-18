@@ -205,12 +205,12 @@ void DrawMissionEntry(const char plr, const int pad,
     fill_rectangle(144, 29 + pad * 58, 270, 37 + pad * 58, 3);
     fill_rectangle(93, 43 + pad * 58, 262, 57 + pad * 58, 3);
     display::graphics.setForegroundColor(5);
-    GetMisType(mission.MissionCode);
-    draw_string(96, 48 + 58 * pad, Mis.Abbr);
+    struct mStr plan = GetMissionPlan(mission.MissionCode);
+    draw_string(96, 48 + 58 * pad, plan.Abbr);
 
-    if (Mis.Dur >= 1) {
+    if (plan.Dur >= 1) {
         int duration = mission.Duration;
-        Mis.Days = duration;
+        plan.Days = duration;
         draw_string(0, 0, GetDurationParens(duration));
     }
 
@@ -238,7 +238,7 @@ void DrawMissionEntry(const char plr, const int pad,
 
     // draw_string(88, 77 + pad * 58, "REQUIREMENT PENALTIES: ");
     fill_rectangle(215, 71 + pad * 58, 270, 78 + pad * 58, 3);
-    const int penalty = AchievementPenalty(plr, Mis);
+    const int penalty = AchievementPenalty(plr, plan);
     display::graphics.setForegroundColor(11);
     draw_number(215, 77 + pad * 58, penalty);
     draw_string(0, 0, "%");
@@ -270,7 +270,8 @@ void DrawRush(char plr)
         if (Data->P[plr].Mission[i].MissionCode &&
             Data->P[plr].Mission[i].part == 0) {
 
-            GetMisType(Data->P[plr].Mission[i].MissionCode);
+            struct mStr plan =
+                GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
 
             ShBox(0, 25 + i * 58, 80, 82 + i * 58 - 1);
             ShBox(83, 25 + i * 58, 319, 82 + i * 58 - 1);
@@ -295,12 +296,12 @@ void DrawRush(char plr)
             draw_heading(55, 5, "MISSION SCHEDULE", 0, -1);
 
             display::graphics.setForegroundColor(5);
-            draw_string(96, 48 + 58 * i, Mis.Abbr);
+            draw_string(96, 48 + 58 * i, plan.Abbr);
 
             // Show duration level only on missions with a Duration step -Leon
             if (IsDuration(Data->P[plr].Mission[i].MissionCode)) {
                 int duration = Data->P[plr].Mission[i].Duration;
-                Mis.Days = duration;
+                plan.Days = duration;
                 draw_string(0, 0, GetDurationParens(duration));
             }
 
@@ -325,7 +326,7 @@ void DrawRush(char plr)
             // Since the Downgrade penalty isn't being used, its
             // screen space is commandeered to display the mission
             // penalty.
-            const int penalty = AchievementPenalty(plr, Mis);
+            const int penalty = AchievementPenalty(plr, plan);
             display::graphics.setForegroundColor(1);
             draw_string(88, 77 + i * 58, "REQUIREMENT PENALTIES:");
             display::graphics.setForegroundColor(11);

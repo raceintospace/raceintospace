@@ -41,6 +41,7 @@
 #include "budget.h"
 #include "intel.h"
 #include "game_main.h"
+#include "mission_util.h"
 #include "museum.h"
 #include "place.h"
 #include "radar.h"
@@ -859,9 +860,11 @@ void Master(char plr)
     SUSPEND = 0;
     Vab_Spot = 0;
 
+    // TODO: Is there a point to this loop? Can it just be removed?
+    // Can any Mission modification be moved to start-of-turn upkeep?
     for (i = 0; i < 3; i++) {
-        GetMisType(Data->P[plr].Mission[i].MissionCode);
-        Data->P[plr].Mission[i].Joint = Mis.Jt;
+        Data->P[plr].Mission[i].Joint =
+            GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
 
     // Entering screen for the first time so fade out and in.

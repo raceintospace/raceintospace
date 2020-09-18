@@ -84,6 +84,18 @@ bool IsDuration(int mission)
 
 
 /**
+ * Checks if the mission has two separate launches.
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if a joint launch.
+ */
+bool IsJoint(int mission)
+{
+    return GetMissionPlan(mission).Jt >= 1;
+}
+
+
+/**
  * Checks if the mission takes place within the Low Earth Orbit (LEO)
  * region of space.
  *
@@ -99,9 +111,9 @@ bool IsDuration(int mission)
  */
 bool IsLEORegion(int mission)
 {
-    return ! ((mission >= Mission_LunarFlyby &&
-               mission <= Mission_SaturnFlyby) ||
-              (mission >= 42 && mission <= 57));
+    return !((mission >= Mission_LunarFlyby &&
+              mission <= Mission_SaturnFlyby) ||
+             (mission >= 42 && mission <= 57));
 }
 
 

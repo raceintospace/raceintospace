@@ -865,9 +865,8 @@ char REvent(char plr)
 
         for (i = 0; i < 3; i++) {
             if (Data->P[plr].Mission[i].MissionCode) {
-                GetMisType(Data->P[plr].Mission[i].MissionCode);
 
-                if (!Mis.Jt &&
+                if (!IsJoint(Data->P[plr].Mission[i].MissionCode) &&
                     MissionTimingOk(Data->P[plr].Mission[i].MissionCode,
                                     Data->Year, Data->Season)) {
                     evflag++;

@@ -173,8 +173,6 @@ bool JointMissionOK(char plr, char pad)
  * prior. The Future Missions button art is loaded into vh by this
  * function.
  *
- * This modifies the global variable Mis, via DrawMission().
- *
  * \param plr  The player scheduling the mission's design scheme.
  * \param mis  The mission type.
  * \param pad  0, 1, or 2 depending on which pad is being used.
@@ -1423,8 +1421,6 @@ void PrintDuration(int duration, int color)
  * This writes the name of the mission associated with the given mission
  * code
  *
- * \note This sets the global variable Mis, via GetMisType().
- *
  * \param val  The mission code.
  * \param xx   The x coordinates for the name block's upper-left corner.
  * \param yy   The y coordinates for the name block's upper-left corner.
@@ -1436,22 +1432,22 @@ void MissionName(int val, int xx, int yy, int len)
            val, xx, yy, len);
     int i, j = 0;
 
-    GetMisType(val);
+    const struct mStr mission = GetMissionPlan(val);
 
     grMoveTo(xx, yy);
 
     for (i = 0; i < 50; i++) {
-        if (j > len && Mis.Name[i] == ' ') {
+        if (j > len && mission.Name[i] == ' ') {
             yy += 7;
             j = 0;
             grMoveTo(xx, yy);
         } else {
-            draw_character(Mis.Name[i]);
+            draw_character(mission.Name[i]);
         }
 
         j++;
 
-        if (Mis.Name[i] == '\0') {
+        if (mission.Name[i] == '\0') {
             break;
         }
     }
@@ -1472,9 +1468,6 @@ void MissionName(int val, int xx, int yy, int len)
  *  - Set unlocked navigation toggles to match the mission parameters.
  *  - Reset the flight path (clear starfield).
  * It should be called whenever the mission selection changes.
- *
- * This modifies the global value Mis. Specifically, it calls
- * MissionName(), which modifies Mis.
  *
  * \param plr Player
  * \param X screen coord for mission name string
@@ -1501,8 +1494,6 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     draw_number(0, 0, val);
     display::graphics.setForegroundColor(5);
 
-    // Creating a copy of the mission to send to DrawPenalty, rather
-    // than using Mis, to decrease the reliance on global vars.
     struct mStr mission = missionData[val];
 
     // If a duration mission, print the selected duration so long as
@@ -1514,7 +1505,6 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
         PrintDuration(mission.Days, 5);
     }
 
-    // MissionName calls GetMisType, which sets the global var Mis.
     MissionName(val, X, Y, 24);
 
     if (mission.Dur == 1 && mission.Days < nav.duration.value) {

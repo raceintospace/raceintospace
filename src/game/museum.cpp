@@ -36,6 +36,7 @@
 #include "draw.h"
 #include "hardef.h"
 #include "game_main.h"
+#include "mission_util.h"
 #include "place.h"
 #include "port.h"
 #include "records.h"
@@ -1412,8 +1413,9 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
     display::graphics.setForegroundColor(9);
     draw_string(43, 45, &Data->P[plr].History[num].MissionName[0][0]);
 
-    GetMisType(Data->P[plr].History[num].MissionCode);
-    draw_string(10, 93, Mis.Abbr);
+    const struct mStr type =
+        GetMissionPlan(Data->P[plr].History[num].MissionCode);
+    draw_string(10, 93, type.Abbr);
 
     if (*where2 == abuf[*where].Missions - 1) {
         fill_rectangle(1, 114, 157, 184, 3);
@@ -1441,8 +1443,9 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
     display::graphics.setForegroundColor(9);
     draw_string(43, 120, &Data->P[plr].History[num2].MissionName[0][0]);
 
-    GetMisType(Data->P[plr].History[num2].MissionCode);
-    draw_string(10, 168, Mis.Abbr);
+    const struct mStr type2 =
+        GetMissionPlan(Data->P[plr].History[num2].MissionCode);
+    draw_string(10, 168, type2.Abbr);
 
     display::graphics.setForegroundColor(1);
     draw_string(43, 128, "PRESTIGE: ");

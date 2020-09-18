@@ -489,11 +489,12 @@ void DrawPreviousMissions(char plr)
 
     while (i > (Data->P[plr].PastMissionCount - olderMiss - 3) && i >= 0) {
 
-        GetMisType(Data->P[plr].History[i].MissionCode);
+        const struct mStr mission =
+            GetMissionPlan(Data->P[plr].History[i].MissionCode);
 
         draw_string(9, 49 + 16 * misnum,
                     Data->P[plr].History[i].MissionName[0]);
-        draw_string(9, 55 + 16 * misnum, Mis.Abbr);
+        draw_string(9, 55 + 16 * misnum, mission.Abbr);
 
         // Check the mission code to see if it's a duration mission.
         // If so, include the duration length.
@@ -700,7 +701,7 @@ void Viewing(char plr)
 
     if (maxcard < 0 || maxcard > turn) {
         ERROR3("Invalid event card count %d: Must be in range (0, %d]",
-              Data->P[plr].eCount, turn + 1);
+               Data->P[plr].eCount, turn + 1);
         return;
     }
 
