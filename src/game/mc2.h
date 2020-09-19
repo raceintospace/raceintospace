@@ -3,10 +3,9 @@
 
 void MissionCodes(char plr, char val, char pad);
 void MissionSetup(char plr, char mis);
-void MisPrt(void);
-void MisDur(char plr, char dur);
-void MisSkip(char plr, char ms);
-void MisRush(char plr, char rush_level);
 void MissionSetDown(char plr, char mis);
+void MisPrt(void);
+void MisSkip(char plr);
+void MisRush(char plr, char rush_level);
 
 #endif // MC2_H

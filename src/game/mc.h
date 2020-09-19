@@ -9,7 +9,6 @@ extern struct mStr Mis;
 extern Equipment *MH[2][8];
 extern struct MisAst MA[2][4];
 extern struct MisEval Mev[60];
-extern struct MXM *AList;
 extern REPLAY Rep;
 extern char MANNED[2];
 extern char CAP[2];

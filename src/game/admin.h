@@ -1,7 +1,7 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include <cstdint>
+#include <stdint.h>
 
 void Admin(char plr);
 void CacheCrewFile();

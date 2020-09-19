@@ -24,7 +24,7 @@ public:
         Options();
         ~Options();
 
-        int add(int mission, int code);
+        void add(int mission, int code);
         const std::vector<int> downgrades(int mission) const;
     private:
         std::vector< std::vector<int> > mDowngrades;

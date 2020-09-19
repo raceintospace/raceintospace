@@ -42,7 +42,7 @@ Downgrader::Options::~Options()
 }
 
 
-int Downgrader::Options::add(const int mission, const int code)
+void Downgrader::Options::add(const int mission, const int code)
 {
     if (mission >= mDowngrades.size()) {
         mDowngrades.resize(mission + 1);
@@ -249,20 +249,20 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     }
 
     assert(doc.isObject());
-    Json::Value &missionList = doc["missions"];
+    Json::Value missionList = doc["missions"];
     assert(missionList.isArray());
 
     Downgrader::Options options;
 
     for (int i = 0; i < missionList.size(); i++) {
-        Json::Value &missionEntry = missionList[i];
+        const Json::Value &missionEntry = missionList[i];
         assert(missionEntry.isObject());
 
         int missionCode = missionEntry.get("mission", -1).asInt();
         assert(missionCode >= 0);
         // assert(missionCode >= 0 && missionCode <= 61);
 
-        Json::Value &codeGroup = missionEntry["downgrades"];
+        const Json::Value &codeGroup = missionEntry["downgrades"];
         assert(codeGroup.isArray());
 
         for (int j = 0; j < codeGroup.size(); j++) {

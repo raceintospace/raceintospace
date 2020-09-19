@@ -167,9 +167,10 @@ std::list<Equipment *> Vehicle::needed()
         parts.push_back(mPrimary);
     }
 
-    if (mSecondary && mSecondary->Num <= mSecondary->Spok) {
+    if (mSecondary != NULL && mSecondary->Num <= mSecondary->Spok) {
         parts.push_back(mSecondary);
     }
+    return parts;
 }
 
 

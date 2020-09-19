@@ -532,10 +532,10 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         if (Mev[step].Class == Mission_EVA) {
             if (MH[0][Mission_Kicker] &&
                 MH[0][Mission_Kicker]->ID[1] == 0x32) {
-                strncat(Mev[step].Name, "M2", 2);    // Kicker-C
+                strcat(Mev[step].Name, "M2");    // Kicker-C
             } else if (MH[pad][Mission_Capsule] &&
                        MH[pad][Mission_Capsule]->ID[1] == 0x34) {
-                strncat(Mev[step].Name, "C4", 2);    // FourMan
+                strcat(Mev[step].Name, "C4");    // FourMan
             } else { // standard LMs
                 if (mcode == 'P') {
                     if (MH[pad][Mission_LM] != NULL) {
@@ -615,8 +615,9 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
 
     // Special Cases for the Failure Mode Charts
     if ((Mev[step].loc == 0) && // MS Failure Launch
-        MH[pad][Mev[step].Class] &&
-        strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
+        MH[pad][Mission_Capsule] &&
+        strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name,
+                MH[pad][Mission_Capsule]->Name, 5) == 0) {
         Mev[step].FName[1] = '1';
     } else if (Mev[step].loc == 4 && // MS Failure Landing
                MH[pad][Mev[step].Class] &&
@@ -728,50 +729,51 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-        for (i = Mission_Capsule; i <= Mission_PhotoRecon; i++) {
+        for (i = Mission_Capsule; i < Mission_PhotoRecon; i++) {
+            Equipment *eq = NULL; // Clear Pointers
+
             t = Data->P[plr].Mission[mis + j].Hard[i];
-            MH[j][i] = NULL; // Clear Pointers
 
             if (t >= 0) {
                 switch (i) {
                 case Mission_Capsule:
                 case Mission_LM:   // Cap - LM
-                    MH[j][i] = &Data->P[plr].Manned[t];
+                    eq = &Data->P[plr].Manned[t];
 
-                    if (MH[j][i]->Num && t != MANNED_HW_MINISHUTTLE) {
-                        MH[j][i]->Num--;
+                    if (eq->Num && t != MANNED_HW_MINISHUTTLE) {
+                        eq->Num--;
                     }
 
-                    MH[j][i]->Used++;
+                    eq->Used++;
                     break;
 
                 case Mission_Kicker:           // Kicker
-                    MH[j][i] = &Data->P[plr].Misc[t];
+                    eq = &Data->P[plr].Misc[t];
 
-                    if (MH[j][i]->Num) {
-                        MH[j][i]->Num--;
+                    if (eq->Num) {
+                        eq->Num--;
                     }
 
-                    MH[j][i]->Used++;
+                    eq->Used++;
                     break;
 
                 case Mission_Probe_DM:           // Secondary Equipment
                     if (t != 4) {
-                        MH[j][i] = &Data->P[plr].Probe[t];
-                        MH[j][i]->Used++;
+                        eq = &Data->P[plr].Probe[t];
+                        eq->Used++;
 
                         if (Data->P[plr].Probe[t].Num > 0) {
                             Data->P[plr].Probe[t].Num -= 1;
                         }
                     } else {
-                        MH[j][i] = &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
+                        eq = &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
 
                         if (DMFake == 0) {
-                            if (MH[j][i]->Num > 0) {
-                                MH[j][i]->Num--;
+                            if (eq->Num > 0) {
+                                eq->Num--;
                             }
 
-                            MH[j][i]->Used++;
+                            eq->Used++;
                         }
                     }
 
@@ -781,22 +783,22 @@ void MissionSetup(char plr, char mis)
                     t--;
 
                     if (t < 4) {
-                        MH[j][i] = &Data->P[plr].Rocket[t];
+                        eq = &Data->P[plr].Rocket[t];
 
-                        if (MH[j][i]->Num > 0) {
-                            MH[j][i]->Num--;
+                        if (eq->Num > 0) {
+                            eq->Num--;
                         }
 
-                        MH[j][i]->Used++;
+                        eq->Used++;
                     } else {
-                        MH[j][i] = &Data->P[plr].Rocket[t - 4];
+                        eq = &Data->P[plr].Rocket[t - 4];
                         MH[j][Mission_SecondaryBooster] =
                             &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
-                        MH[j][i]->Used++;
+                        eq->Used++;
                         MH[j][Mission_SecondaryBooster]->Used++;
 
-                        if (MH[j][i]->Num > 0) {
-                            MH[j][i]->Num--;
+                        if (eq->Num > 0) {
+                            eq->Num--;
                         }
 
                         if (MH[j][Mission_SecondaryBooster]->Num > 0) {
@@ -807,38 +809,50 @@ void MissionSetup(char plr, char mis)
                     break;
 
                 case Mission_EVA:  // EVA
-                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
-                    break;
-
-                case Mission_PhotoRecon:  // Photo Recon
-                    MH[j][i] = &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+                    eq = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
                     break;
                 }
 
-                if (MH[j][i] != NULL) {
-                    MH[j][i]->SMods += MH[j][i]->Damage;    //Damaged Equipment, Nikakd, 10/8/10
-                    MH[j][i]->MisSaf = MH[j][i]->Safety + MH[j][i]->SMods;
+                if (eq != NULL) {
+                    eq->SMods += eq->Damage;    //Damaged Equipment, Nikakd, 10/8/10
+                    eq->MisSaf = eq->Safety + eq->SMods;
 
-                    if (MH[j][i]->ID[1] >= 0x35 && i == Mission_LM &&
+                    if (eq->ID[1] >= 0x35 && i == Mission_LM &&
                         Data->P[plr].Mission[mis].MissionCode >= 53) {
                         switch (Data->P[plr].LMpts) {
                         case 0:
-                            MH[j][i]->MisSaf -= 9;
+                            eq->MisSaf -= 9;
                             break;
 
                         case 1:
-                            MH[j][i]->MisSaf -= 6;
+                            eq->MisSaf -= 6;
                             break;
 
                         case 2:
-                            MH[j][i]->MisSaf -= 3;
+                            eq->MisSaf -= 3;
                             break;
                         }
                     }
                 }
             } // if t>=0
-        } // for (0<7)
-    } // for (0<2)
+
+            MH[j][i] = eq;
+        } // for (i<7)
+
+        // TODO: This is a backstop against unexpected behavior.
+        // MissionType.Hard[Mission_EVA] is initialized to 0.
+        // However, it ought to be set in the VAB explicitly. As the
+        // VAB _should_ stop any EVA missions from proceeding this
+        // protects against the mission Hard[] field not being
+        // properly initialized until the VAB EVA assignment is
+        // improved.
+        MH[j][Mission_EVA] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
+
+        // Photo Recon isn't included in MissionType.Hard - it's
+        // always available.
+        MH[j][Mission_PhotoRecon] =
+            &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+    } // for (j<2)
 
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;
@@ -925,78 +939,15 @@ void MissionSetDown(char plr, char mis)
     return;
 }
 
-/**
- * Apply duration penalty to mission steps in manned missions.
- *
- * TODO: This functionality appears to have been appropriated by
- * MisSkip, via PrestMin(). This needs to be verified, and if so, it
- * should be removed completely.
- * TODO: Addendum - PrestMin() has since been replaced with
- * AchievementPenalty(). This function is now out-of-date, and should
- * be removed or updated to use the latest Penalty functions.
- *
- * \param plr current player
- * \param dur mission duration in duration level (A-F).
- */
-void
-MisDur(char plr, char dur)
-{
-    int i, j, diff;
-    int manned = 0;
-
-    diff = dur - Data->P[plr].DurationLevel;
-
-    if (Data->P[plr].DurationLevel == 0) {
-        diff--;
-    }
-
-    if (diff <= 2) {  // Changed from "diff <= 0" to disable broken Duration milestone system  -Leon
-        return;
-    }
-
-    diff = 5 * diff;
-
-    if ((MH[0][Mission_Capsule] && MH[0][Mission_Capsule]->ID[0] == 'C') ||
-        (MH[1][Mission_Capsule] && MH[1][Mission_Capsule]->ID[0] == 'C')) {
-        manned = 1;
-    }
-
-    /* Don't give negs to unmanned */
-    /* Don't give negs to duration missions */
-    /* ??? will handle individual durations later */
-    if (!manned || !Mis.Dur) {
-        return;
-    }
-
-    if (!AI[plr]) {
-        INFO2("applying duration penalty %d to mission safety", -diff);
-    }
-
-    for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
-        for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
-            if (MH[i][j] != NULL) {
-                MH[i][j]->MisSaf -= diff;
-            }
-        }
-    }
-}
-
-// #define Coml(a,b) (!(Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a)))
-
 
 /**
  * Compute and apply safety penalties to mission steps.
- *
- *
- * TODO: This takes a parameter ms, used originally to determine the
- * maximum prestige requirement of the mission. However, it's no
- * longer used, and should be removed.
  *
  * \note  This assumes the global variable Mis is correctly filled.
  * \param plr current player
  */
 void
-MisSkip(char plr, char ms)
+MisSkip(char plr)
 {
     int i, j, diff;
 

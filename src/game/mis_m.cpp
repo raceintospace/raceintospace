@@ -67,6 +67,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
+void InvalidatePrestige();
 
 /**
  * Load the failure state information explaining a mission step
@@ -918,17 +919,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].StepInfo = 1900 + Mev[STEP].loc;
 
         if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
-            if (Mev[STEP].PComp > 0) {
-                Mev[STEP].PComp = 4;
-            }
-
+            InvalidatePrestige();
             Mev[STEP].trace = 0x7F;  // End of Mission Signal
             FNote = 5;
         } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-            if (Mev[STEP].PComp > 0) {
-                Mev[STEP].PComp = 4;
-            }
-
+            InvalidatePrestige();
             Mev[STEP].trace = Mev[STEP].fgoto;
         } else {
             Mev[STEP].trace = STEP + 1;
@@ -1091,9 +1086,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             Mev[STEP].StepInfo = 1800 + Mev[STEP].loc;
 
             if (Mev[STEP].fgoto == -1) {
+                InvalidatePrestige();
                 Mev[STEP].trace = 0x7F;
                 FNote = 0;
             } else if (Mev[STEP].fgoto != -2) {
+                InvalidatePrestige();
                 Mev[STEP].trace = Mev[STEP].fgoto;
             } else {
                 Mev[STEP].trace = STEP + 1;
@@ -1162,8 +1159,10 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         // Used to reduce safety
 
         if (Mev[STEP].fgoto == -1) {
+            InvalidatePrestige();
             Mev[STEP].trace = 0x7F;
         } else if (Mev[STEP].fgoto != -2) {
+            InvalidatePrestige();
             Mev[STEP].trace = Mev[STEP].fgoto;
         } else {
             Mev[STEP].trace = STEP + 1;
@@ -1200,9 +1199,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         if (Mev[STEP].fgoto == -1) {
+            InvalidatePrestige();
             Mev[STEP].trace = 0x7F;
             FNote = 7;
         } else if (Mev[STEP].fgoto != -2) {
+            InvalidatePrestige();
             Mev[STEP].trace = Mev[STEP].fgoto;
         } else {
             Mev[STEP].trace = STEP + 1;
@@ -1323,17 +1324,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         if (PROBLEM == 0) {
             if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
-                if (Mev[STEP].PComp > 0) {
-                    Mev[STEP].PComp = 4;
-                }
-
+                InvalidatePrestige();
                 Mev[STEP].trace = 0x7F;  // End of Mission Signal
                 FNote = 5;
             } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-                if (Mev[STEP].PComp > 0) {
-                    Mev[STEP].PComp = 4;
-                }
-
+                InvalidatePrestige();
                 Mev[STEP].trace = Mev[STEP].fgoto;
             } else {
                 Mev[STEP].trace = STEP + 1;
@@ -1362,4 +1357,14 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     death = 0;
     return FNote;
+}
+
+/* Set the PComp flag such that prestige is not being awarded for step
+ * failures.
+ */
+void InvalidatePrestige()
+{
+    if (Mev[STEP].PComp > 0) {
+        Mev[STEP].PComp = 4;
+    }
 }

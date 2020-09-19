@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>raceintospace.desktop</id>
+  <id>org.raceintospace.Raceintospace.desktop</id>
   <name>Race into Space</name>
   <summary>A game to relive the 1960s Space Race</summary>
+  <launchable type="desktop-id">raceintospace.desktop</launchable>
   <url type="homepage">http://raceintospace.org</url>
   <url type="bugtracker">https://github.com/raceintospace/raceintospace/issues</url>
   <url type="help">https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md</url>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
+  <content_rating type="oars-1.1" />
   <description>
     <p>
     Race Into Space is a simulation of the US-Soviet Space Race.
@@ -49,4 +51,15 @@
       <image>https://raw.githubusercontent.com/raceintospace/raceintospace/master/doc/manual/image_13.png</image>
     </screenshot>
   </screenshots>
+  <releases>
+    <release version="1.2" date="2020-09-14" type="development">
+      <location>https://github.com/raceintospace/raceintospace/tags</location>
+    </release>
+    <release version="1.1" date="2013-04-18" type="stable">
+      <location>https://sourceforge.net/projects/raceintospace/files/Race%20Into%20Space/1.1/</location>
+    </release>
+    <release version="1.0" date="2011-07-28" type="stable">
+      <location>https://sourceforge.net/projects/raceintospace/files/Race%20Into%20Space/1.0/</location>
+    </release>
+  </releases>
 </component>

@@ -68,10 +68,8 @@ int MoodColor(const uint8_t mood)
         return 11;
     } else if (mood >= 20) {
         return 8;
-    } else if (mood > 0) {
-        return 0;
     } else {
-        return 3;
+        return 0;
     }
 }
 

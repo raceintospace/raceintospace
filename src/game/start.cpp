@@ -25,21 +25,18 @@
 
 // This file handles start-of-turn events: adjusting 'naut morale, etc.
 
-#include <assert.h>
-
 #include "start.h"
-#include "astros.h"
-#include "pace.h"
-#include "Buzz_inc.h"
-#include "options.h"
-#include "prest.h"
-#include "game_main.h"
 
-char Nums[30][7] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
-                    "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX",
-                    "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII",
-                    "XXVIII", "XXIX", "XXX"
-                   };
+#include <cassert>
+#include <stdexcept>
+
+#include "Buzz_inc.h"
+#include "astros.h"
+#include "game_main.h"
+#include "options.h"
+#include "pace.h"
+#include "prest.h"
+
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
 
@@ -287,7 +284,7 @@ void AstroConflictsMod(int player, struct Astros &astro)
 {
     //-2 for each in Jupiter/Minishuttle , -3 in others
     astro.Mood -= ((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
-        CrewConflicts(player, astro);
+                  CrewConflicts(player, astro);
 }
 
 
@@ -633,6 +630,32 @@ int CrewConflicts(const int player, const struct Astros &astro)
 }
 
 
+/**
+ * Represents a value in Roman numerals.
+ *
+ * This uses Standard Form notation to represent an value via
+ * Roman Numerals, suitable for any number 0 to 3999.
+ * The maximum length of the returned string is 15.
+ */
+std::string RomanNumeral(unsigned int value)
+{
+    std::string thousands[] = { "", "M", "MM", "MMM" };
+    std::string hundreds[] =
+    { "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM" };
+    std::string tens[] =
+    { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
+    std::string ones[] =
+    { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+
+    if (value > 3999) {
+        throw std::runtime_error("Cannot craft a Roman Numeral > 3999");
+    }
+
+    return thousands[value / 1000] + hundreds[(value % 1000) / 100] +
+           tens[(value % 100) / 10] + ones[value % 10];
+}
+
+
 void Update(void)
 {
     int i, j, k;
@@ -667,14 +690,14 @@ void Update(void)
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_ORBITAL].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
+                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_ORBITAL].Code).c_str());
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                 Data->P[j].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode == Mission_Lunar_Probe) {
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_LUNAR].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[(Data->P[j].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
+                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_LUNAR].Code).c_str());
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                 Data->P[j].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode == Mission_LunarFlyby ||
@@ -683,7 +706,7 @@ void Update(void)
                 Data->P[j].Mission[i].Patch = -1;
                 strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code][0]);
+                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code).c_str());
                 strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                 Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
             } else if (Data->P[j].Mission[i].MissionCode > 0) {
@@ -692,7 +715,7 @@ void Update(void)
                     Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
                     strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
                     strcat(&tName[0], " ");
-                    strcat(&tName[0], &Nums[Data->P[j].Manned[k].Code][0]);
+                    strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code).c_str());
                     strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                     Data->P[j].Manned[k].Code++;  // Increase Planned Mission Count
                 } else {
@@ -701,14 +724,14 @@ void Update(void)
                         Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
                         strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
                         strcat(&tName[0], " ");
-                        strcat(&tName[0], &Nums[Data->P[j].Manned[k].Code][0]);
+                        strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code).c_str());
                         strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                     } else {
                         k = Data->P[j].Mission[i].Prog - 1;
                         Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
                         strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
                         strcat(&tName[0], " ");
-                        strcat(&tName[0], &Nums[Data->P[j].Manned[k].Code][0]);
+                        strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code).c_str());
                         strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
                         Data->P[j].Manned[k].Code++;  // Increase Planned Mission Count
                     }
@@ -860,14 +883,14 @@ void UpdAll(char side)
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_ORBITAL].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_ORBITAL].Code) % 30][0]);
+            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_ORBITAL].Code).c_str());
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
             Data->P[side].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode == Mission_Lunar_Probe) {
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_LUNAR].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[(Data->P[side].Probe[PROBE_HW_LUNAR].Code) % 30][0]);
+            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_LUNAR].Code).c_str());
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
             Data->P[side].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode == Mission_LunarFlyby ||
@@ -876,7 +899,7 @@ void UpdAll(char side)
             Data->P[side].Mission[i].Patch = -1;
             strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
             strcat(&tName[0], " ");
-            strcat(&tName[0], &Nums[Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code][0]);
+            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code).c_str());
             strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
             Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
         } else if (Data->P[side].Mission[i].MissionCode > 0) {
@@ -885,7 +908,7 @@ void UpdAll(char side)
                 Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
                 strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
                 strcat(&tName[0], " ");
-                strcat(&tName[0], &Nums[Data->P[side].Manned[k].Code][0]);
+                strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code).c_str());
                 strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
                 Data->P[side].Manned[k].Code++;  // Increase Planned Mission Count
             } else {
@@ -894,14 +917,14 @@ void UpdAll(char side)
                     Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
                     strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
                     strcat(&tName[0], " ");
-                    strcat(&tName[0], &Nums[Data->P[side].Manned[k].Code][0]);
+                    strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code).c_str());
                     strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
                 } else {
                     k = Data->P[side].Mission[i].Prog - 1;
                     Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
                     strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
                     strcat(&tName[0], " ");
-                    strcat(&tName[0], &Nums[Data->P[side].Manned[k].Code][0]);
+                    strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code).c_str());
                     strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
                     Data->P[side].Manned[k].Code++;  // Increase Planned Mission Count
                 }
