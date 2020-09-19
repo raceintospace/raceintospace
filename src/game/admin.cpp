@@ -435,8 +435,11 @@ void FileAccess(char mode)
                 now += i;
                 BarB = i;
                 DrawFiles(now, BarB, savegames);
-		if (!savegames.empty())
+
+                if (!savegames.empty()) {
                     FileText(&savegames[now].Name[0]);
+                }
+
                 WaitForMouseUp();
             }
         }
@@ -1609,6 +1612,14 @@ void SaveGame(const std::vector<SFInfo> savegames)
     FILE *fin;
     SaveFileHdr header;
 
+    if (MAIL == -1) {
+        InBox(209, 64, 278, 72);
+    } else {
+        InBox(209, 78, 278, 86);
+    }
+
+    delay(250);
+
     WaitForMouseUp();
     memset(header.Name, 0x00, sizeof(header.Name));
 
@@ -1674,17 +1685,6 @@ void SaveGame(const std::vector<SFInfo> savegames)
             strncpy(Name, header.Name, sizeof(Name));
             Name[sizeof(Name) - 5] = 0; // Leave enough space for .SAV ending
             strncat(Name, ".SAV", 4);
-
-            /*            do {
-                i++;
-
-                if (fin) {
-                    fclose(fin);
-                }
-
-                snprintf(Name, sizeof(Name), "BUZZ%d.SAV", i);
-                fin = sOpen(Name, "rb", 1);
-                } while (fin != NULL); // Find unique name*/
 
             fin = sOpen(Name, "wb", 1);
         } else {
