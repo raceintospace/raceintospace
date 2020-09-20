@@ -1242,30 +1242,30 @@ void AstStats(char plr, char man, char num)
 
     if (Data->P[plr].Pool[num].Prime == 3) {
         display::graphics.setForegroundColor(6);
-        draw_string(10, 45, "PRIMARY");
-        draw_string(18, 53, "CREW");
-        draw_string(5, 61, "THIS TURN");
+        draw_string(12, 45, "PRIMARY");
+        draw_string(19, 53, "CREW");
+        draw_string(6, 61, "THIS TURN");
     }
 
     if (Data->P[plr].Pool[num].Prime == 4) {
         display::graphics.setForegroundColor(17);
-        draw_string(10, 45, "PRIMARY");
-        draw_string(18, 53, "CREW");
-        draw_string(4, 61, "NEXT TURN");
+        draw_string(12, 45, "PRIMARY");
+        draw_string(19, 53, "CREW");
+        draw_string(5, 61, "NEXT TURN");
     }
 
     if (Data->P[plr].Pool[num].Prime == 1) {
         display::graphics.setForegroundColor(5);
-        draw_string(12, 45, "BACKUP");
-        draw_string(18, 53, "CREW");
-        draw_string(5, 61, "THIS TURN");
+        draw_string(13, 45, "BACKUP");
+        draw_string(19, 53, "CREW");
+        draw_string(6, 61, "THIS TURN");
     }
 
     if (Data->P[plr].Pool[num].Prime == 2) {
         display::graphics.setForegroundColor(16);
-        draw_string(12, 45, "BACKUP");
-        draw_string(18, 53, "CREW");
-        draw_string(4, 61, "NEXT TURN");
+        draw_string(13, 45, "BACKUP");
+        draw_string(19, 53, "CREW");
+        draw_string(5, 61, "NEXT TURN");
     }
 
     return;
