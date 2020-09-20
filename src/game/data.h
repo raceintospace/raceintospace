@@ -813,8 +813,9 @@ typedef struct {
 
 
 typedef struct {
-    char Name[15], Title[23];
+    char Name[20], Title[23];
     uint16_t time, date;
+    SaveGameType type;
 } SFInfo;
 
 

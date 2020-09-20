@@ -68,7 +68,7 @@ void MailSwitchPlayer(void)
     MAIL = MAIL_NEXT;
 
     if (MAIL != -1) {
-        MailSave();
+        FileAccess(2);
     }
 
     FadeOut(2, 10, 0, 0);
