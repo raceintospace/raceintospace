@@ -33,15 +33,17 @@
 #include "options.h"
 #include "game_main.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "prest.h"
 #include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 int CrewEndurance(const struct MisAst *crew, size_t crewSize);
-void MissionParse(char plr, char *MCode, char *LCode, char pad);
+void MissionParse(char plr, struct mStr &misType, char pad);
 char WhichPart(char plr, int which);
-void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad);
+void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
+                  const struct mStr &mission);
 
 
 //********************************************************************
@@ -50,8 +52,8 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad);
 
 void MissionCodes(char plr, char val, char pad)
 {
-    GetMisType(val);
-    MissionParse(plr, Mis.Code, Mis.Alt, pad);
+    struct mStr plan = GetMissionPlan(val);
+    MissionParse(plr, plan, pad);
     return;
 }
 
@@ -72,25 +74,28 @@ int CrewEndurance(const struct MisAst *crew, size_t crewSize)
 
 
 void
-MissionParse(char plr, char *MCode, char *LCode, char pad)
+MissionParse(char plr, struct mStr &misType, char pad)
 {
     int i, loc, j;
 
     STEP = 0;
     loc = pad;
+    char *MCode = misType.Code;
+    char *LCode = misType.Alt;
 
     for (i = 0; MCode[i] != '|'; ++i) {
         switch (MCode[i]) {
         case '@':
             i++;
             MCode[i] = 'b';    // duration step
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad);
+            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
+                         misType);
             break;
 
         case '~':              //printf("      :Delay of %d seasons\n",MCode[i+1]-0x30);
             for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
                 MissionSteps(plr, MCode[i + 2], LCode[STEP], STEP,
-                             loc - pad);
+                             loc - pad, misType);
             }
 
             i += 2;
@@ -112,7 +117,8 @@ MissionParse(char plr, char *MCode, char *LCode, char pad)
         case '%':
             i++;
             MCode[i] = 'c';
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad);
+            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
+                         misType);
             break;
 
         case 'A':
@@ -153,7 +159,8 @@ MissionParse(char plr, char *MCode, char *LCode, char pad)
                 loc = pad;
             }
 
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad);
+            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
+                         misType);
             break;
         }
     }
@@ -176,7 +183,8 @@ char WhichPart(char plr, int which)
     return val;
 }
 
-void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
+void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
+                  const struct mStr &mission)
 {
     switch (mcode) {
     // Booster Programs    :: VAB order for the class
@@ -492,7 +500,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
         Mev[step].sgoto = 0;
 
         Mev[step].fgoto = (Mgoto == -2) ? step + 1 : Mgoto;  // prevents mission looping
-        Mev[step].dgoto = Mis.AltD[STEP];  // death branching (tm)
+        Mev[step].dgoto = mission.AltD[STEP];  // death branching (tm)
         Mev[step].E = MH[pad][Mev[step].Class];
 
         Mev[step].pad = pad;
@@ -584,7 +592,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad)
                 Mev[step].loc -= 6;
             }
 
-            if (Mev[step].loc == 32 && Mis.Lun) {
+            if (Mev[step].loc == 32 && mission.Lun) {
                 Mev[step].loc = 29;
             }
         }
@@ -695,15 +703,21 @@ void MisPrt(void)
     return;
 }
 
+/**
+ * \param plr  the player index
+ * \param mis  the pad index for player's Mission array.
+ */
 void MissionSetup(char plr, char mis)
 {
     char i, j, t;
     DMFake = 0;
-    GetMisType(Data->P[plr].Mission[mis].MissionCode);
+    const struct mStr plan =
+        GetMissionPlan(Data->P[plr].Mission[mis].MissionCode);
 
     for (j = 0; j < (1 + Data->P[plr].Mission[mis].Joint); j++) {
 
-        if ((Mis.mVab[j] & 0x10) > 0 && Data->P[plr].DockingModuleInOrbit > 0) { // DMO
+        if ((plan.mVab[j] & 0x10) > 0 &&
+            Data->P[plr].DockingModuleInOrbit > 0) { // DMO
             Data->P[plr].Mission[mis + j].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
@@ -943,16 +957,16 @@ void MissionSetDown(char plr, char mis)
 /**
  * Compute and apply safety penalties to mission steps.
  *
- * \note  This assumes the global variable Mis is correctly filled.
- * \param plr current player
+ * \param plr  the index of the current player
+ * \param mission  the mission plan with configured Days duration.
  */
 void
-MisSkip(char plr)
+MisSkip(const char plr, const struct mStr &mission)
 {
     int i, j, diff;
 
-    diff = AchievementPenalty(plr, Mis);
-
+    // MAX is a macro, not a function, so don't combine...
+    diff = AchievementPenalty(plr, mission);
     diff = MAX(diff, 0);
 
     if (!AI[plr]) {

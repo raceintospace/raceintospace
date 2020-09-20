@@ -37,6 +37,7 @@
 #include "draw.h"
 #include "utils.h"
 #include "game_main.h"
+#include "mission_util.h"
 #include "museum.h"
 #include "port.h"
 #include "replay.h"
@@ -866,14 +867,14 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     mcode = Data->P[plr].History[index].MissionCode;
 
-    GetMisType(mcode);
+    const struct mStr plan = GetMissionPlan(mcode);
 
     display::graphics.setForegroundColor(1);
     draw_string(12, 56, "MISSION NAME: ");
     draw_string(0, 0, (char *)Data->P[plr].History[index].MissionName);
     draw_string(12, 64, "MISSION TYPE:");
     display::graphics.setForegroundColor(11);
-    draw_string(15, 72, Mis.Abbr);
+    draw_string(15, 72, plan.Abbr);
 
     display::graphics.setForegroundColor(1);
     draw_string(12, 80, "RESULT: ");

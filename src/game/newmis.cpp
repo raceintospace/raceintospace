@@ -216,13 +216,15 @@ void MisAnn(char plr, char pad)
     draw_number(0, 0, Data->Year);
     display::graphics.setForegroundColor(1);
 
-    GetMisType(Data->P[plr].Mission[pad].MissionCode);
+    struct mStr plan =
+        GetMissionPlan(Data->P[plr].Mission[pad].MissionCode);
 
     // Check to ensure there is a docking module in orbit before
     // allowing a docking mission to proceed.
     // This assumes an unmanned docking mission cannot be attempted
     // without including a docking module.
-    if ((Mis.mVab[0] & 0x10) == 0x10 && Data->P[plr].DockingModuleInOrbit <= 0) {
+    if ((plan.mVab[0] & 0x10) == 0x10 &&
+        Data->P[plr].DockingModuleInOrbit <= 0) {
         Downgrader::Options options = LoadJsonDowngrades("DOWNGRADES.JSON");
         Downgrader replace(Data->P[plr].Mission[pad], options);
         MissionType downgrade;
@@ -235,6 +237,7 @@ void MisAnn(char plr, char pad)
 
             downgrade = replace.current();
         } catch (IOException &err) {
+            // TODO: Can't download to Earth Orbital if Joint mission.
             CCRITICAL3(baris, "Error loading mission downgrades: %s",
                        err.what());
             CWARNING2(baris, "Defaulting to Manned Earth Orbital.");
@@ -244,11 +247,11 @@ void MisAnn(char plr, char pad)
         }
 
         Downgrade(plr, pad, downgrade);
-        GetMisType(Data->P[plr].Mission[pad].MissionCode);
+        plan = GetMissionPlan(Data->P[plr].Mission[pad].MissionCode);
         HelpFlag = 1;
     }
 
-    draw_string(127, 54, Mis.Abbr);
+    draw_string(127, 54, plan.Abbr);
 
     // Show duration level only on missions with a Duration step - Leon
     if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {

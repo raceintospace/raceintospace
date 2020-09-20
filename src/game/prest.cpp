@@ -29,6 +29,7 @@
 #include "pace.h"
 #include "mis_c.h"
 #include "mis_m.h"
+#include "mission_util.h"
 #include "pbm.h"
 
 char tYr, tMo;
@@ -292,17 +293,22 @@ PrestMap(int val)
 
 /** Returns the amount of prestige added
  *
+ * TODO: This function no longer appears to be used. Find out why
+ * it's useful or mark for deletion. -- rnyoakum
+ *
  * \note Assumes that the Mis Structure is Loaded
  */
-int PrestCheck(char plr)
+int PrestCheck(char plr, int code)
 {
     int i, total = 0;
     char prg, tm;
 
-    prg = Mis.mEq;
+    const struct mStr misType = GetMissionPlan(code);
+
+    prg = misType.mEq;
 
     for (i = 0; i < 5; i++) {  // Sum all first/second Nation Bonuses
-        tm = Mis.PCat[i];
+        tm = misType.PCat[i];
 
         if (tm != -1 && Data->Prestige[tm].Goal[plr] == 0) {  // First Mission Bonus
             if (Data->Prestige[tm].Goal[other(plr)] == 0 && tm < 27) {
@@ -313,7 +319,7 @@ int PrestCheck(char plr)
         }
     }
 
-    if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
+    if (misType.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
         if (Data->Prestige[Prestige_MannedDocking].Goal[other(plr)] == 0) {
             total += Data->Prestige[Prestige_MannedDocking].Add[0];    // you're first
         } else {
@@ -321,7 +327,7 @@ int PrestCheck(char plr)
         }
     }
 
-    if (Mis.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
+    if (misType.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
         if (Data->Prestige[Prestige_Spacewalk].Goal[other(plr)] == 0) {
             total += Data->Prestige[Prestige_Spacewalk].Add[0];    // you're first
         } else {
@@ -329,22 +335,22 @@ int PrestCheck(char plr)
         }
     }
 
-    if (Mis.Days > 1 && Data->P[plr].DurationLevel < Mis.Days) {
-        if (Mis.Days == 6 && Data->Prestige[Prestige_Duration_Calc - Mis.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - Mis.Days].Add[0];
-        } else if (Mis.Days == 5 && Data->Prestige[Prestige_Duration_Calc - Mis.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - Mis.Days].Add[0];
-        } else if (Mis.Days == 4 && Data->Prestige[Prestige_Duration_Calc - Mis.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - Mis.Days].Add[0];
-        } else if (Mis.Days == 3 && Data->Prestige[Prestige_Duration_Calc - Mis.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - Mis.Days].Add[0];
-        } else if (Mis.Days == 2 && Data->Prestige[Prestige_Duration_Calc - Mis.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - Mis.Days].Add[0];
+    if (misType.Days > 1 && Data->P[plr].DurationLevel < misType.Days) {
+        if (misType.Days == 6 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
+            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
+        } else if (misType.Days == 5 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
+            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
+        } else if (misType.Days == 4 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
+            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
+        } else if (misType.Days == 3 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
+            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
+        } else if (misType.Days == 2 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
+            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
         }
     }
 
     // Hardware Checks
-    if (Mis.Days > 1 && Data->Prestige[Prestige_Duration_B + prg].Goal[plr] == 0) {
+    if (misType.Days > 1 && Data->Prestige[Prestige_Duration_B + prg].Goal[plr] == 0) {
         if (Data->Prestige[Prestige_Duration_B + prg].Goal[other(plr)] == 0) {
             total += Data->Prestige[Prestige_Duration_B + prg].Add[0];    // you're first
         } else {
@@ -360,16 +366,16 @@ int PrestCheck(char plr)
 
     // Sum all additional Mission Bonuses
     for (i = 0; i < 5; i++) {
-        if (Mis.PCat[i] != -1) {
-            total += Data->Prestige[Mis.PCat[i]].Add[2];
+        if (misType.PCat[i] != -1) {
+            total += Data->Prestige[misType.PCat[i]].Add[2];
         }
     }
 
-    if (Mis.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
+    if (misType.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
         total += Data->Prestige[Prestige_MannedDocking].Add[2];
     }
 
-    if (Mis.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
+    if (misType.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
         total += Data->Prestige[Prestige_Spacewalk].Add[2];
     }
 
@@ -799,8 +805,7 @@ int AllotPrest(char plr, char mis)
 
     // SETUP INFO
     mcode = Data->P[plr].Mission[mis].MissionCode;
-
-    GetMisType(mcode);
+    const struct mStr misType = GetMissionPlan(mcode);
 
     other = MaxFail();
 
@@ -847,16 +852,20 @@ int AllotPrest(char plr, char mis)
     }
 
     // EVA FIX FOR ALTERNATE STEPS LATER IN MISSION
-    if (Mis.EVA == 1 && (PVal[Prestige_Spacewalk] == 0 || PVal[Prestige_Spacewalk] == 5)) {
+    if (misType.EVA == 1 &&
+        (PVal[Prestige_Spacewalk] == 0 ||
+         PVal[Prestige_Spacewalk] == 5)) {
         PVal[Prestige_Spacewalk] = 4;
-    } else if (Mis.EVA == 0 && PVal[Prestige_Spacewalk] == 5) {
+    } else if (misType.EVA == 0 && PVal[Prestige_Spacewalk] == 5) {
         PVal[Prestige_Spacewalk] = 0;
     }
 
     // DOCKING FIX FOR ALTERNATE STEPS LATER IN SESSION
-    if (Mis.Doc == 1 && (PVal[Prestige_MannedDocking] == 0 || PVal[Prestige_MannedDocking] == 5)) {
+    if (misType.Doc == 1 &&
+        (PVal[Prestige_MannedDocking] == 0 ||
+         PVal[Prestige_MannedDocking] == 5)) {
         PVal[Prestige_MannedSpaceMission] = 4;
-    } else if (Mis.EVA == 0 && PVal[Prestige_MannedDocking] == 5) {
+    } else if (misType.EVA == 0 && PVal[Prestige_MannedDocking] == 5) {
         PVal[Prestige_MannedDocking] = 0;
     }
 
@@ -931,7 +940,7 @@ int AllotPrest(char plr, char mis)
     // DURATION FIRSTS
     Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, 1);
 
-    if (!Mis.Dur) {
+    if (!misType.Dur) {
         switch (P_Goal) {
         case Prestige_MannedSpaceMission:
             mike = 7;
@@ -939,7 +948,7 @@ int AllotPrest(char plr, char mis)
             break;
 
         case Prestige_MannedOrbital:
-            mike = (Mis.Index <= Mission_Earth_Orbital_EVA) ? (Data->P[plr].Mission[mis].Duration = 1, 7) : (Data->P[plr].Mission[mis].Duration = 2, 12);
+            mike = (misType.Index <= Mission_Earth_Orbital_EVA) ? (Data->P[plr].Mission[mis].Duration = 1, 7) : (Data->P[plr].Mission[mis].Duration = 2, 12);
             break;
 
         case Prestige_MannedLunarPass:
@@ -1121,7 +1130,6 @@ int U_AllotPrest(char plr, char mis)
 
     // SETUP INFO
     mcode = Data->P[plr].Mission[mis].MissionCode;
-    GetMisType(mcode);
 
     lun = Check_Photo();
 
@@ -1215,22 +1223,22 @@ int U_AllotPrest(char plr, char mis)
  * and update the player prestige data. Returns the total prestige
  * awarded for the mission.
  */
-int Update_Prestige_Data(char plr, char mis)
+int Update_Prestige_Data(char plr, char mis, int code)
 {
     int total;
 
     assert(0 <= plr && plr < NUM_PLAYERS);
 
-    if (Mis.Days == 0) {
+    const struct mStr misType = GetMissionPlan(code);
+
+    if (misType.Days == 0) {
         total = U_AllotPrest(plr, mis);    // Unmanned Prestige
     } else {
         total = AllotPrest(plr, mis);    // Manned Prestige
     }
 
     total = total - (pNeg[plr][mis] * 3);
-
     Data->P[plr].Prestige += total;
-
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
     if (MAIL == 1 && plr == MAIL_OPPONENT) {

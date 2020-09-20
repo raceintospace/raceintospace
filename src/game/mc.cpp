@@ -41,6 +41,7 @@
 #include "state_utils.h"
 #include "game_main.h"
 #include "mis_c.h"
+#include "mission_util.h"
 #include "sdlhelper.h"
 #include "pace.h"
 #include "endianness.h"
@@ -51,7 +52,6 @@
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
 struct MisEval Mev[60];  // was *Mev;
-struct mStr Mis;
 REPLAY Rep;
 
 char tMen;
@@ -124,8 +124,6 @@ int Launch(char plr, char mis)
     if (MAIL == 1 && plr == 0) {
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
-        GetMisType(Data->P[plr].Mission[mis].MissionCode);
-
         // Check for Mission death
         spResult = Data->P[plr].History[Data->P[plr].PastMissionCount].spResult;
 
@@ -135,7 +133,8 @@ int Launch(char plr, char mis)
             death = 0;
         }
 
-        return Update_Prestige_Data(plr, mis);
+        return Update_Prestige_Data(
+                   plr, mis, Data->P[plr].Mission[mis].MissionCode);
     }
 
     remove_savedat("REPLAY.TMP");  // make sure replay buffer isn't there
@@ -250,6 +249,7 @@ int Launch(char plr, char mis)
     // Do actual Missions
 
     mcc = mcode = Data->P[plr].Mission[mis].MissionCode;
+    struct mStr misType = GetMissionPlan(mcode);
 
     // Fixup for Mercury Duration C stuff
     if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 0) {
@@ -282,11 +282,11 @@ int Launch(char plr, char mis)
 
     // Exit missions early
     /** \todo The *early* missions should be defined in a file */
-    fEarly = (!Mis.Days && !(mcode == Mission_Orbital_Satellite ||
-                             mcode == Mission_LunarFlyby ||
-                             mcode == Mission_Lunar_Probe ||
-                             mcode == Mission_VenusFlyby ||
-                             mcode == Mission_MercuryFlyby));
+    fEarly = (!misType.Days && !(mcode == Mission_Orbital_Satellite ||
+                                 mcode == Mission_LunarFlyby ||
+                                 mcode == Mission_Lunar_Probe ||
+                                 mcode == Mission_VenusFlyby ||
+                                 mcode == Mission_MercuryFlyby));
 
     STEPnum = STEP;
 
@@ -294,14 +294,15 @@ int Launch(char plr, char mis)
         MisPrt();
     }
 
-    if (Mis.Dur >= 1) {
-        Mis.Days = Data->P[plr].Mission[mis].Duration;
+    if (misType.Dur >= 1) {
+        misType.Days = Data->P[plr].Mission[mis].Duration;
     }
 
     // Apply general mission penalties (Duration, Milestone, New Mission)
-    // and Rushing penalties. MisSkip requires Mis to be loaded with
-    // the mission data AND corrects Days value for a duration mission.
-    MisSkip(plr);
+    // and Rushing penalties. MisSkip requires the second argument to be
+    // loaded with the mission data AND corrects Days value for a
+    // duration mission.
+    MisSkip(plr, misType);
     MisRush(plr, Data->P[plr].Mission[mis].Rushing);
     STEPnum = 0;
 
@@ -366,7 +367,7 @@ int Launch(char plr, char mis)
         Data->Step[mis] = STEPnum;
     }
 
-    total = Update_Prestige_Data(plr, mis);
+    total = Update_Prestige_Data(plr, mis, misType.Index);
 
     MissionSetDown(plr, mis);
     MissionPast(plr, mis, total);
