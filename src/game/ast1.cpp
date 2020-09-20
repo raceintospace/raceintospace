@@ -1259,6 +1259,10 @@ void AstSel(char plr)
                 }
             }
 
+            if (count != MaxSel) {
+                Help("i045");
+            }
+
             if ((! femaleAstronautsRequired || femaleAstronautsSelected) &&
                 count == MaxSel) {
                 InBox(245, 5, 314, 17);
