@@ -68,7 +68,7 @@ A great emphasis is given to the magnitude of this Cold War space race.  The con
 
 ## Multiplayer
 
-![Race Into Space main screen](image_00.jpg)
+![Race Into Space main screen](image_00.png)
 
 Race Into Space offers two forms of multiplayer: hotseat and play by email (PBEM).  To start a hotseat game, select New Game at the main menu and make both sides human players.  Everything for a hotseat game is just like a single-player game.
 
