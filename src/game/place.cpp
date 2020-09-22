@@ -18,7 +18,12 @@
 
 // This file handles the main screen, and shows the Mission Review (the summary you see at the end of a mission).
 
+#include "place.h"
+
 #include <assert.h>
+#include <stdexcept>
+#include <string>
+
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -27,7 +32,6 @@
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "place.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "draw.h"
@@ -43,6 +47,8 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
+#include "ioexception.h"
+#include "logging.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, char *txt);
@@ -418,8 +424,20 @@ DispHelp(char top, char bot, char *txt)
     return;
 }
 
+/**
+ * Launch a Help dialogue popup.
+ *
+ * Sets the global AL_CALL to signify a Help popup is open, and
+ * another should not be allowed to open.
+ *
+ * \param FName  the help entry identifier (Ex: "i043")
+ * \return  -1 for No, 1 for Yes, 0 for Continue.
+ * \throws IOException  if unable to open the help file.
+ * \throws runtime_error  if help entry seems invalid.
+ */
 int Help(const char *FName)
 {
+    const int PAGE_SIZE = 11;
     int i, j, line, top = 0, bot = 0, plc = 0;
     char *Help, *NTxt, mode;
     int fsize;
@@ -434,17 +452,21 @@ int Help(const char *FName)
     mode = 0; /* XXX check uninitialized */
     NTxt = NULL; /* XXX check uninitialized */
 
-    if (strncmp(&FName[1], "000", 3) == 0) {
+    if (!FName || strncmp(&FName[1], "000", 3) == 0) {
         return 0;
     }
 
     fin = sOpen("HELP.CDR", "rb", 0);
+
+    if (! fin) {
+        throw IOException("Could not open help file HELP.CDR.");
+    }
+
     fread(&count, sizeof count, 1, fin);
     Swap32bit(count);
 
     if (count <= 0) {
-        // TODO: Add logging statement.
-        return 0;
+        throw IOException("Invalid help entry count");
     }
 
     i = 0;
@@ -453,17 +475,24 @@ int Help(const char *FName)
         fread(&Pul.Code[0], sizeof(Pul.Code), 1, fin);
         fread(&Pul.offset, sizeof(Pul.offset), 1, fin);
         fread(&Pul.size, sizeof(Pul.size), 1, fin);
-    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && i++ < count);
+    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && ++i < count);
 
     // This uses short-circuit evaluation to distinguish between
     // string match and iterator comparison.
     if (i == count) {
         fclose(fin);
+        CERROR3(baris, "Could not find help entry %s", FName);
         return 0;
     }
 
     Swap32bit(Pul.offset);
     Swap16bit(Pul.size);
+
+    if (Pul.size > 1000000) {
+        CERROR5(baris, "Help entry %s reporting length of %d, "
+                " capped at %d", FName, Pul.size, 1000000);
+        throw std::runtime_error("Could not load help entry");
+    }
 
     AL_CALL = 1;
     Help = (char *)xmalloc(Pul.size);
@@ -543,6 +572,11 @@ int Help(const char *FName)
     draw_string(157 - fsize * 3, 42, &NTxt[2]);
     top = plc = 1;
     DispHelp(plc, bot - 1, &NTxt[0]);
+
+    if (plc + PAGE_SIZE < bot) {
+        draw_down_arrow_highlight(268, 95);
+    }
+
     av_sync();
 
     WaitForMouseUp();
@@ -575,36 +609,88 @@ int Help(const char *FName)
             // No Response
         }
 
-        if (plc > top && ((x >= 266 && y > 50 && x <= 277 && y <= 87 && mousebuttons > 0) || (key >> 8) == 72)) {
+        if (plc > top && ((x >= 266 && y > 50 && x <= 277 && y <= 87 && mousebuttons > 0) || key == UP_ARROW)) {
             InBox(266, 50, 277, 87);
             // WaitForMouseUp();
+
+            if (plc + PAGE_SIZE == bot) {
+                draw_down_arrow_highlight(268, 95);
+            }
+
             plc--;
             DispHelp(plc, bot, &NTxt[0]);
             OutBox(266, 50, 277, 87);
             key = 0;
+
+            if (plc <= top) {
+                draw_up_arrow(268, 56);
+            } else {
+                draw_up_arrow_highlight(268, 56);
+            }
         }   // Up
 
-        if ((plc + 11) < bot && ((x >= 266 && y > 89 && x <= 277 && y <= 126 && mousebuttons > 0) || (key >> 8) == 80)) {
+        if (plc > top && (key == K_PGUP || key == K_HOME)) {
+            // PageUp / Home
+            InBox(266, 50, 277, 87);
+
+            if (plc + PAGE_SIZE == bot) {
+                draw_down_arrow_highlight(268, 95);
+            }
+
+            plc = (key == K_HOME) ? top : MAX(plc - PAGE_SIZE, top);
+            plc = MAX(plc - PAGE_SIZE, top);
+            DispHelp(plc, bot, &NTxt[0]);
+            OutBox(266, 50, 277, 87);
+            key = 0;
+
+            if (plc <= top) {
+                draw_up_arrow(268, 56);
+            } else {
+                draw_up_arrow_highlight(268, 56);
+            }
+        }
+
+        if ((plc + PAGE_SIZE) < bot && ((x >= 266 && y > 89 && x <= 277 && y <= 126 && mousebuttons > 0) || key == DN_ARROW)) {
             InBox(266, 89, 277, 126);
             // WaitForMouseUp();
+
+            if (plc == top) {
+                draw_up_arrow_highlight(268, 56);
+            }
+
             plc++;
             DispHelp(plc, bot, &NTxt[0]);
             OutBox(266, 89, 277, 126);
             key = 0;
+
+            if ((plc + PAGE_SIZE) >= bot) {
+                draw_down_arrow(268, 95);
+            } else {
+                draw_down_arrow_highlight(268, 95);
+            }
         }   // Down
 
-        if (plc <= top) {
-            draw_up_arrow(268, 56);
-        } else {
-            draw_up_arrow_highlight(268, 56);
-        }
+        if ((plc + PAGE_SIZE) < bot && (key == K_PGDN || key == K_END)) {
+            // Page Down / End
+            InBox(266, 89, 277, 126);
+            // WaitForMouseUp();
 
-        if ((plc + 12) > bot) {
-            draw_down_arrow(268, 95);
-        } else {
-            draw_down_arrow_highlight(268, 95);
-        }
+            if (plc == top) {
+                draw_up_arrow_highlight(268, 56);
+            }
 
+            plc = (key == K_END) ? bot - PAGE_SIZE
+                  : MIN(plc + PAGE_SIZE, bot - PAGE_SIZE);
+            DispHelp(plc, bot, &NTxt[0]);
+            OutBox(266, 89, 277, 126);
+            key = 0;
+
+            if ((plc + PAGE_SIZE) >= bot) {
+                draw_down_arrow(268, 95);
+            } else {
+                draw_down_arrow_highlight(268, 95);
+            }
+        }
     }
 
     local.copyTo(display::graphics.legacyScreen(), 34, 32);
