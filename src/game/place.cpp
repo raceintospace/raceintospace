@@ -431,11 +431,13 @@ DispHelp(char top, char bot, char *txt)
  * another should not be allowed to open.
  *
  * \param FName  the help entry identifier (Ex: "i043")
+ * \return  -1 for No, 1 for Yes, 0 for Continue.
  * \throws IOException  if unable to open the help file.
  * \throws runtime_error  if help entry seems invalid.
  */
 int Help(const char *FName)
 {
+    const int PAGE_SIZE = 11;
     int i, j, line, top = 0, bot = 0, plc = 0;
     char *Help, *NTxt, mode;
     int fsize;
@@ -570,6 +572,11 @@ int Help(const char *FName)
     draw_string(157 - fsize * 3, 42, &NTxt[2]);
     top = plc = 1;
     DispHelp(plc, bot - 1, &NTxt[0]);
+
+    if (plc + PAGE_SIZE < bot) {
+        draw_down_arrow_highlight(268, 95);
+    }
+
     av_sync();
 
     WaitForMouseUp();
@@ -602,36 +609,88 @@ int Help(const char *FName)
             // No Response
         }
 
-        if (plc > top && ((x >= 266 && y > 50 && x <= 277 && y <= 87 && mousebuttons > 0) || (key >> 8) == 72)) {
+        if (plc > top && ((x >= 266 && y > 50 && x <= 277 && y <= 87 && mousebuttons > 0) || key == UP_ARROW)) {
             InBox(266, 50, 277, 87);
             // WaitForMouseUp();
+
+            if (plc + PAGE_SIZE == bot) {
+                draw_down_arrow_highlight(268, 95);
+            }
+
             plc--;
             DispHelp(plc, bot, &NTxt[0]);
             OutBox(266, 50, 277, 87);
             key = 0;
+
+            if (plc <= top) {
+                draw_up_arrow(268, 56);
+            } else {
+                draw_up_arrow_highlight(268, 56);
+            }
         }   // Up
 
-        if ((plc + 11) < bot && ((x >= 266 && y > 89 && x <= 277 && y <= 126 && mousebuttons > 0) || (key >> 8) == 80)) {
+        if (plc > top && (key == K_PGUP || key == K_HOME)) {
+            // PageUp / Home
+            InBox(266, 50, 277, 87);
+
+            if (plc + PAGE_SIZE == bot) {
+                draw_down_arrow_highlight(268, 95);
+            }
+
+            plc = (key == K_HOME) ? top : MAX(plc - PAGE_SIZE, top);
+            plc = MAX(plc - PAGE_SIZE, top);
+            DispHelp(plc, bot, &NTxt[0]);
+            OutBox(266, 50, 277, 87);
+            key = 0;
+
+            if (plc <= top) {
+                draw_up_arrow(268, 56);
+            } else {
+                draw_up_arrow_highlight(268, 56);
+            }
+        }
+
+        if ((plc + PAGE_SIZE) < bot && ((x >= 266 && y > 89 && x <= 277 && y <= 126 && mousebuttons > 0) || key == DN_ARROW)) {
             InBox(266, 89, 277, 126);
             // WaitForMouseUp();
+
+            if (plc == top) {
+                draw_up_arrow_highlight(268, 56);
+            }
+
             plc++;
             DispHelp(plc, bot, &NTxt[0]);
             OutBox(266, 89, 277, 126);
             key = 0;
+
+            if ((plc + PAGE_SIZE) >= bot) {
+                draw_down_arrow(268, 95);
+            } else {
+                draw_down_arrow_highlight(268, 95);
+            }
         }   // Down
 
-        if (plc <= top) {
-            draw_up_arrow(268, 56);
-        } else {
-            draw_up_arrow_highlight(268, 56);
-        }
+        if ((plc + PAGE_SIZE) < bot && (key == K_PGDN || key == K_END)) {
+            // Page Down / End
+            InBox(266, 89, 277, 126);
+            // WaitForMouseUp();
 
-        if ((plc + 12) > bot) {
-            draw_down_arrow(268, 95);
-        } else {
-            draw_down_arrow_highlight(268, 95);
-        }
+            if (plc == top) {
+                draw_up_arrow_highlight(268, 56);
+            }
 
+            plc = (key == K_END) ? bot - PAGE_SIZE
+                  : MIN(plc + PAGE_SIZE, bot - PAGE_SIZE);
+            DispHelp(plc, bot, &NTxt[0]);
+            OutBox(266, 89, 277, 126);
+            key = 0;
+
+            if ((plc + PAGE_SIZE) >= bot) {
+                draw_down_arrow(268, 95);
+            } else {
+                draw_down_arrow_highlight(268, 95);
+            }
+        }
     }
 
     local.copyTo(display::graphics.legacyScreen(), 34, 32);
