@@ -26,6 +26,8 @@
 
 // This page handles the Intelligence Briefing
 
+#include "intel.h"
+
 #include <assert.h>
 
 #include <stdexcept>
@@ -38,8 +40,8 @@
 #include "Buzz_inc.h"
 #include "future.h"
 #include "draw.h"
-#include "intel.h"
 #include "game_main.h"
+#include "mission_util.h"
 #include "place.h"
 #include "port.h"
 #include "rdplex.h"
@@ -549,14 +551,19 @@ void MisIntel(char plr, char acc)
     SaveIntel(plr, 5, (unsigned char) mis);
 }
 
+/**
+ * \param plr  the player index
+ * \param mis  the mission code (mStr.Index)
+ * \param year the year of the intelligence report
+ */
 void XSpec(char plr, char mis, char year)
 {
-    GetMisType(mis);
+    const struct mStr plan = GetMissionPlan(mis);
     display::graphics.setForegroundColor(6);
     draw_string(17, 75, "CLASS: ");
     display::graphics.setForegroundColor(9);
 
-    if (Mis.Days >= 1) {
+    if (plan.Days >= 1) {
         draw_string(39, 81, "MANNED");
     } else {
         draw_string(39, 81, "UNMANNED");
@@ -566,7 +573,7 @@ void XSpec(char plr, char mis, char year)
     draw_string(17, 96, "TYPE: ");
     display::graphics.setForegroundColor(9);
 
-    if (Mis.Jt == 1) {
+    if (plan.Jt == 1) {
         draw_string(0, 0, "JOINT LAUNCH");
     } else {
         draw_string(0, 0, "SINGLE LAUNCH");
@@ -576,7 +583,7 @@ void XSpec(char plr, char mis, char year)
     draw_string(17, 112, "DOCKING: ");
     display::graphics.setForegroundColor(9);
 
-    if (Mis.Doc == 1) {
+    if (plan.Doc == 1) {
         draw_string(0, 0, "YES");
     } else {
         draw_string(0, 0, "NO");
@@ -586,7 +593,7 @@ void XSpec(char plr, char mis, char year)
     draw_string(17, 128, "DURATION: ");
     display::graphics.setForegroundColor(9);
 
-    if (Mis.Dur >= 1) {
+    if (plan.Dur >= 1) {
         draw_string(0, 0, "YES");
     } else {
         draw_string(0, 0, "NO");

@@ -9,7 +9,6 @@ class LegacySurface;
 };
 
 void WaitForMouseUp(void);
-void GetMisType(char mcode);
 void GetMouse(void);
 void WaitForKeyOrMouseDown(void) ;
 void VerifySF(char plr)  ;

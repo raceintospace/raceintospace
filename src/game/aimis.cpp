@@ -31,6 +31,7 @@
 #include "aipur.h"
 #include "game_main.h"
 #include "hardware.h"
+#include "mission_util.h"
 #include "state_utils.h"
 #include "vab.h"
 #include "mc.h"
@@ -58,11 +59,11 @@ void AIVabCheck(char plr, char mis, char prog)
 {
     VASqty = 0;
     //prog=1; 0=UnM : 1=1Mn ...
-    GetMisType(mis);
+    const struct mStr plan = GetMissionPlan(mis);
     whe[0] = whe[1] = -1;
 
     if (prog == 5) {
-        if (Mis.Jt == 0 && Mis.LM == 0 && Mis.Doc == 0) {
+        if (plan.Jt == 0 && plan.LM == 0 && plan.Doc == 0) {
             BuildVAB(plr, mis, 1, 0, prog - 1);
             CalcSaf(plr, VASqty);
             whe[0] = Best();
@@ -71,8 +72,8 @@ void AIVabCheck(char plr, char mis, char prog)
                 whe[0] = 0;    // Weed out low safeties
             }
         }
-    } else if (prog >= Mis.mEq && (prog != 0)) { // && (Mis.mVab[0]&0x80 || Mis.mVab[1]&0x80)) )
-        if (Mis.Jt == 1) {                      // Joint mission
+    } else if (prog >= plan.mEq && (prog != 0)) { // && (plan.mVab[0]&0x80 || plan.mVab[1]&0x80)) )
+        if (plan.Jt == 1) {                      // Joint mission
             BuildVAB(plr, mis, 1, 0, prog - 1);     // first launch
             CalcSaf(plr, VASqty);
             whe[0] = Best();
@@ -103,7 +104,7 @@ void AIVabCheck(char plr, char mis, char prog)
                 whe[0] = 0;
             }
         }
-    } else if (prog == 0 && prog == Mis.mEq) { // Unmanned Vechicle
+    } else if (prog == 0 && prog == plan.mEq) { // Unmanned Vechicle
         BuildVAB(plr, mis, 1, 0, prog);         //  plr,mcode,ty=1,part,prog
         CalcSaf(plr, VASqty);
         whe[0] = Best();
@@ -1099,10 +1100,10 @@ void NewAI(char plr, char frog)
             mis2 = Mission_Lunar_Probe;
         }
 
-    GetMisType(mis1);
+    const struct mStr plan = GetMissionPlan(mis1);
 
 // deal with lunar modules
-    if (Mis.LM == 1) {
+    if (plan.LM == 1) {
         if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
             if (GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
                 RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
@@ -1120,7 +1121,7 @@ void NewAI(char plr, char frog)
         }
     }
 
-    if (Mis.Jt == 1) {
+    if (plan.Jt == 1) {
         // JOINT LAUNCH
         if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == 1 &&
             Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == 1) {
@@ -1336,18 +1337,18 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         prog = fake_prog;
     }
 
-    GetMisType(mis);
+    const struct mStr plan = GetMissionPlan(mis);
 
-    for (i = 0; i < (Mis.Jt + 1); i++) {
+    for (i = 0; i < (plan.Jt + 1); i++) {
         Data->P[plr].Future[pad + i].MissionCode = mis;
         Data->P[plr].Future[pad + i].part = i;
 
         // duration
         if (Data->P[plr].DurationLevel <= 5 && Data->P[plr].Future[pad + i].Duration == 0) {
-            if (Mis.Dur == 1) Data->P[plr].Future[pad + i].Duration =
-                    MAX(Mis.Days, MIN(Data->P[plr].DurationLevel + 1, 6));
+            if (plan.Dur == 1) Data->P[plr].Future[pad + i].Duration =
+                    MAX(plan.Days, MIN(Data->P[plr].DurationLevel + 1, 6));
             else {
-                Data->P[plr].Future[pad + i].Duration = Mis.Days;
+                Data->P[plr].Future[pad + i].Duration = plan.Days;
             }
         }
 
@@ -1374,7 +1375,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         }; // limit duration 'C' one-man capsule
 
         // lunar mission kludge
-        if (Mis.Lun == 1 ||
+        if (plan.Lun == 1 ||
             Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_EOR ||
             Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_LOR ||
             Data->P[plr].Future[pad + i].MissionCode == Mission_HistoricalLanding) {
@@ -1382,11 +1383,11 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         }
 
         // unmanned duration kludge
-        if (Mis.Days == 0) {
+        if (plan.Days == 0) {
             Data->P[plr].Future[pad + i].Duration = 0;
         }
 
-        Data->P[plr].Future[pad + i].Joint = Mis.Jt;
+        Data->P[plr].Future[pad + i].Joint = plan.Jt;
         Data->P[plr].Future[pad + i].Month = 0;
 
         if (mis == 1) {
@@ -1395,7 +1396,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
         Data->P[plr].Future[pad + i].Prog = prog[0];
 
-        if (prog[i] > 0 && Mis.Days > 0) {
+        if (prog[i] > 0 && plan.Days > 0) {
             for (j = 1; j < 6; j++) {
                 DumpAstro(plr, j);
             }
@@ -1448,7 +1449,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
             if (pc[i] == -1) {
                 // astronaut/duration kludge
-                if (Mis.Days > 0) {
+                if (plan.Days > 0) {
                     Data->P[plr].Future[pad + i].Men = max;
                 }
 

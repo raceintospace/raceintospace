@@ -39,6 +39,7 @@
 #include "hardware.h"
 #include "mc.h"
 #include "mis_c.h"
+#include "mission_util.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
@@ -192,7 +193,8 @@ void MisCheck(char plr, char mpad)
     MPad = mpad;
     SCRUBS = noDock = InSpace = 0;
 
-
+    const int code = Data->P[plr].Mission[mpad].MissionCode;
+    const struct mStr plan = GetMissionPlan(code);
 
     if (!AI[plr] && !fullscreenMissionPlayback) {
         //FadeOut(1,pal,100,128,1);
@@ -249,8 +251,8 @@ void MisCheck(char plr, char mpad)
             }
         }
 
-        if (Mev[STEP].loc == 16 && Mis.PCat[4] == 22) {
-            FirstManOnMoon(plr, 0, Mis.Index);
+        if (Mev[STEP].loc == 16 && plan.PCat[4] == 22) {
+            FirstManOnMoon(plr, 0, code);
         }
 
         // Duration Hack Part 1 of 3   (during the Duration stuff)
@@ -601,7 +603,7 @@ void MisCheck(char plr, char mpad)
         //
 
         if (Mev[STEP].trace == 0x7f && STEP == 3) {
-            switch (Mis.Index) {
+            switch (code) {
             case 19:
             case 22:
             case 23:

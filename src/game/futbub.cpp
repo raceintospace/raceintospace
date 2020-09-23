@@ -155,7 +155,7 @@ void IncreasePathResolution()
  * Any other char is ignored, but it's easier for a human to read that
  * way.
  *
- * This modifies the global variables Mis and Mev via MissionCodes().
+ * This modifies the global variables Mev via MissionCodes().
  *
  * TODO: This should try to redraw the starfield.
  *

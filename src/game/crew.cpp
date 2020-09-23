@@ -657,11 +657,13 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             int xloc;
 
             draw_string(87, 51 + i * 14, "CA:");
+
             if (Data->P[plr].Pool[m[i] - 1].Cap == 1) {
                 xloc = 102;
             } else {
                 xloc = 101;
             }
+
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Cap);
             display::graphics.setForegroundColor(1);
 
@@ -670,11 +672,13 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             draw_string(113, 51 + i * 14, "LM:");
+
             if (Data->P[plr].Pool[m[i] - 1].LM == 1) {
                 xloc = 128;
             } else {
                 xloc = 127;
             }
+
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].LM);
             display::graphics.setForegroundColor(1);
 
@@ -683,11 +687,13 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             draw_string(139, 51 + i * 14, "EV:");
+
             if (Data->P[plr].Pool[m[i] - 1].EVA == 1) {
                 xloc = 154;
             } else {
                 xloc = 153;
             }
+
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].EVA);
             display::graphics.setForegroundColor(1);
 
@@ -696,20 +702,24 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             draw_string(165, 51 + i * 14, "DO:");
+
             if (Data->P[plr].Pool[m[i] - 1].Docking == 1) {
                 xloc = 180;
             } else {
                 xloc = 179;
             }
+
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
 
             display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
             draw_string(191, 51 + i * 14, "EN:");
+
             if (Data->P[plr].Pool[m[i] - 1].Endurance == 1) {
                 xloc = 206;
             } else {
                 xloc = 205;
             }
+
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Endurance);
         }
     }
@@ -744,8 +754,8 @@ void DrawHard(char mode, char pad, char mis, char plr)
     }
 
     display::graphics.setForegroundColor(1);
-    GetMisType(mis);
-    draw_string(85, 70, Mis.Abbr);
+    const struct mStr plan = GetMissionPlan(mis);
+    draw_string(85, 70, plan.Abbr);
 //Missions(plr,85,70,mis,0);
 
     // Show duration level only on missions with a Duration step - Leon
@@ -824,23 +834,22 @@ int HardRequest(char plr, char mode, char mis, char pad)
         }
     }
 
-    // special case: 1-man capsule can't go to the Moon
-    GetMisType(mis);
+    const struct mStr plan = GetMissionPlan(mis);
 
     // Exceptions
     // One-man capsules cannot perform Lunar missions, Docking missions.
-    // TODO: Mis.Days value differs from logic in SecondHard
-    if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 1 ||
+    // TODO: plan.Days value differs from logic in SecondHard
+    if (plan.Lun == 1 || plan.Doc == 1 || plan.mEq > 1 || plan.Days > 1 ||
         Data->P[plr].Future[pad].Duration > 2) {
         pr[0] = 0;
     }
 
     // TODO: Just compare hardware duration with mission duration?
-    // TODO: Check if Mis.Days is indexed the same as
+    // TODO: Check if plan.Days is indexed the same as
     //       struct MissionType.Duration?
 
     // Gemini/Voskhod cannot attempt Duration F
-    if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {
+    if (Data->P[plr].Future[pad].Duration > 5 || plan.Days > 5) {
         pr[1] = 0;
     }
 
@@ -861,7 +870,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
     }
 
     // Jupiter/Kvartet can not attempt docking missions.
-    if (Mis.Doc == 1) {
+    if (plan.Doc == 1) {
         pr[4] = 0;
     }
 
@@ -1005,22 +1014,22 @@ int SecondHard(char plr, char mode, char mis, char pad)
         }
     }
 
-    GetMisType(mis);
+    const struct mStr plan = GetMissionPlan(mis);
 
     // Exceptions
     // One-man capsules cannot perform Lunar missions, Docking missions.
-    // TODO: Mis.Days value differs from logic in HardRequest
-    if (Mis.Lun == 1 || Mis.Doc == 1 || Mis.mEq > 1 || Mis.Days > 2 ||
+    // TODO: plan.Days value differs from logic in HardRequest
+    if (plan.Lun == 1 || plan.Doc == 1 || plan.mEq > 1 || plan.Days > 2 ||
         Data->P[plr].Future[pad].Duration > 2) {
         prog[0] = 0;
     }
 
     // TODO: Just compare hardware duration with mission duration?
-    // TODO: Check if Mis.Days is indexed the same as
+    // TODO: Check if plan.Days is indexed the same as
     //       struct MissionType.Duration?
 
     // Gemini/Voskhod cannot attempt Duration F
-    if (Data->P[plr].Future[pad].Duration > 5 || Mis.Days > 5) {
+    if (Data->P[plr].Future[pad].Duration > 5 || plan.Days > 5) {
         prog[1] = 0;
     }
 
@@ -1037,7 +1046,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     }
 
     // Jupiter/Kvartet may not attempt docking missions.
-    if (Mis.Doc == 1) {
+    if (plan.Doc == 1) {
         prog[4] = 0;
     }
 

@@ -1121,9 +1121,12 @@ int FutureCheck(char plr, char type)
         if (p[i] == 1) {
             display::graphics.setForegroundColor(1);
 
+            // TODO: Rewrite this to use a MissionType& and remove the
+            // duplicate code.
             if (type == 1) {
-                GetMisType(Data->P[plr].Mission[i].MissionCode);
-                draw_string(111, 41 + i * 51, Mis.Abbr);
+                const struct mStr plan =
+                    GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
+                draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
                 // Show duration level only on missions with a
@@ -1144,12 +1147,13 @@ int FutureCheck(char plr, char type)
                     display::graphics.setForegroundColor(1);
                 }
 
-                GetMisType(Data->P[plr].Future[i].MissionCode);
-
-                draw_string(111, 41 + i * 51, Mis.Abbr);
+                const struct mStr plan =
+                    GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
-                // Show duration level only on missions with a Duration step - Leon
+                // Show duration level only on missions with a
+                // Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Future[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
