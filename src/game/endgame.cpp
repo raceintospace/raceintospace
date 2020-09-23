@@ -184,7 +184,7 @@ void EndGame(char win, char pad)
             prog = Data->P[win].History[Data->Prestige[Prestige_MannedLunarLanding].Index].Hard[i][0] + 1;
             strcpy(capName, &Data->P[win].Manned[prog - 1].Name[0]);
             strcat(capName, " ");
-            strncat(capName, RomanNumeral(Data->P[win].Manned[prog - 1].Used).c_str(), 8);
+            strncat(capName, RomanNumeral(Data->P[win].Manned[prog - 1].Used + 1).c_str(), 8);
         }
     }
 
@@ -704,7 +704,7 @@ void FakeWin(char win)
     display::graphics.setForegroundColor(8);
     draw_string(0, 0, &Data->P[win].Manned[prog - 1].Name[0]);
     draw_string(0, 0, " ");
-    draw_string(0, 0, RomanNumeral(brandom(15) + 1).c_str());
+    draw_string(0, 0, RomanNumeral(brandom(15) + 2).c_str());
     display::graphics.setForegroundColor(6);
     draw_string(0, 0, "  -  ");
     display::graphics.setForegroundColor(8);;
