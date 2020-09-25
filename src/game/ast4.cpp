@@ -787,8 +787,10 @@ void Programs(char plr, char prog)
                 DispLeft(plr, BarA, count, now2, &M[0]);
             } else if (key == 'S') {
                 // Show Skill
-                ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                BarSkill(plr, BarA, now2, &M[0]);
+                if (now2 >= 0 && now2 < count) {
+                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                    BarSkill(plr, BarA, now2, &M[0]);
+                }
             } else if (((x >= 4 && y >= 86 && x <= 117 && y <= 92  // used to be x <= 12
                          && mousebuttons > 0) || key == '1')
                        && CrewCount[grp] >= 1) {
