@@ -1029,7 +1029,7 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
     assert(Guy != NULL);
 
     if (Guy->Sex == 1) {
-        display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white
+        display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white  -Leon
     }
 
     draw_string(xa, ya - 1, Guy->Name);
@@ -1105,7 +1105,7 @@ char FailureMode(char plr, int prelim, char *text)
     draw_string(0, 0, " VS ");
     draw_number(0, 0, Mev[STEP].dice);
 
-    draw_heading(40, 5, "STEP FAILURE", 0, -1);
+    draw_heading(45, 5, "STEP FAILURE", 0, -1);
 
 //  InRFBox(4,61,153,109,0); // Image, Small Left Side
 
@@ -1115,8 +1115,8 @@ char FailureMode(char plr, int prelim, char *text)
     // Display Result of Mission
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
-        display::graphics.setForegroundColor(1);
-        draw_string(8, 122, "RECOMMEND MISSION SCRUB");
+        display::graphics.setForegroundColor(9);
+        draw_string(15, 122, "RECOMMEND MISSION SCRUB");
     } else {
         display::graphics.setForegroundColor(9);
 
@@ -1144,7 +1144,7 @@ char FailureMode(char plr, int prelim, char *text)
 
         case 6:
             display::graphics.setForegroundColor(15);
-            draw_string(10, 122, "MISSION SUCCESS");
+            draw_string(10, 121, "MISSION SUCCESS");
             break;
 
         case 7:
@@ -1189,7 +1189,7 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] == 0) {
-        if (((Mev[STEP].E->ID[1] == 0x35 || Mev[STEP].E->ID[1] == 0x36) && STEP > 5)) { // if LEMS
+        if (((Mev[STEP].E->ID[1] == 0x35 || Mev[STEP].E->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
             GuyDisp(49, 138, MA[1][LM[1]].A);
 
             if (EVA[1] != LM[1]) {
@@ -1199,7 +1199,7 @@ char FailureMode(char plr, int prelim, char *text)
             GuyDisp(49, 138, MA[other(Mev[STEP].pad)][0].A);
             GuyDisp(49, 146, MA[other(Mev[STEP].pad)][1].A);
             GuyDisp(182, 138, MA[other(Mev[STEP].pad)][2].A);
-        } else if (strncmp(Mev[STEP].E->ID, "M3", 2) == 0) { // EVA
+        } else if (strncmp(Mev[STEP].E->ID, "M3", 2) == 0) {  // EVA
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
             display::graphics.setForegroundColor(1);
