@@ -26,6 +26,7 @@
             "Sound": 0
         },
         "Year": 57,
+        "Season": 0,
         "Prestige": {
             "value0": {
                 "cereal_class_version": 0,
@@ -1832,6 +1833,7 @@
                     "value2": -1
                 },
                 "AstroCount": 0,
+                "AstroLevel": 0,
                 "AstroDelay": 2,
                 "Pool": {
                     "value0": {
@@ -12589,6 +12591,7 @@
                     "value2": -1
                 },
                 "AstroCount": 0,
+                "AstroLevel": 0,
                 "AstroDelay": 2,
                 "Pool": {
                     "value0": {

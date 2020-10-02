@@ -1747,7 +1747,7 @@ void write_save_file(char *Name, SaveFileHdr header)
 
     }
 
-    size = sizeof(char) * stream.str().size();
+    size = sizeof(char) * stream.str().size() + 1;
 
     fin = sOpen(Name, "wb", 1);
 

@@ -168,7 +168,7 @@ struct PrestType {
 
         ARCHIVE_VECTOR(Add, int8_t, 4);
         ARCHIVE_VECTOR(Goal, int8_t, 2);
-        ARCHIVE_VECTOR(Points, int8_t, 2);
+        ARCHIVE_VECTOR(Points, int16_t, 2);
 
         ar(CEREAL_NVP(Index));
         ar(CEREAL_NVP(Place));
@@ -770,6 +770,7 @@ struct Players {
         ar(CEREAL_NVP(plr));
         ar(CEREAL_NVP(Def));
         ar(CEREAL_NVP(Year));
+        ar(CEREAL_NVP(Season));
         ar(CEREAL_NVP(Prestige));
         ar(CEREAL_NVP(P));
         ar(CEREAL_NVP(unused_EMark));

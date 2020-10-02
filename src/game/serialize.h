@@ -9,11 +9,11 @@
 
 using namespace std;
 
-#define ARCHIVE_VECTOR(arr, type, size)         \
-    do {                                        \
-        std::vector<type> vec(arr, arr+size);   \
-        ar(cereal::make_nvp(#arr, vec));        \
-        memcpy(arr, vec.data(), size);          \
+#define ARCHIVE_VECTOR(arr, type, size)                 \
+    do {                                                \
+        std::vector<type> vec(arr, arr+size);           \
+        ar(cereal::make_nvp(#arr, vec));                \
+        memcpy(arr, vec.data(), size * sizeof(type));   \
     } while (0)
 
 #define ARCHIVE_STRING(arr)                             \
