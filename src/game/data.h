@@ -672,6 +672,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         ar(CEREAL_NVP(DockingModuleInOrbit));
         ar(CEREAL_NVP(LaunchFacility));
         ar(CEREAL_NVP(AstroCount));
+        ar(CEREAL_NVP(AstroLevel));
         ar(CEREAL_NVP(AstroDelay));
         ar(CEREAL_NVP(Pool));
         ar(CEREAL_NVP(IntelHardwareTable));

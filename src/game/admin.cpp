@@ -1352,6 +1352,10 @@ void LoadGame(const char *filename)
             }
 
             // Load Event Data
+            if (interimData.eventBuffer) {
+                free(interimData.eventBuffer);
+            }
+
             std::vector<OLDNEWS> vEvent;
             archive(CEREAL_NVP(vEvent));
             archive(cereal::make_nvp("eventSize", interimData.eventSize));
@@ -1366,6 +1370,7 @@ void LoadGame(const char *filename)
             std::string sEvent;
             archive(CEREAL_NVP(sEvent));
             strncpy(interimData.eventBuffer + offset, sEvent.c_str(), interimData.eventSize - offset);
+            interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
         }
 
     } else { // Not zlib compressed data
