@@ -268,19 +268,30 @@ int game_main_impl(int argc, char *argv[])
         choice = MainMenuChoice();
 
         switch (choice) {
-        case 0:  // New Game
-        case 1:  // New Mail Game
+        case MAIN_NEW_GAME:  // New Game
+#ifdef ALLOW_PBEM
+        case MAIN_PBEM_GAME:  // New Mail Game
+#endif // ALLOW_PBEM
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
-            MAIL = choice ? 0 : -1;
+#ifdef ALLOW_PBEM
+            MAIL = (choice == MAIN_PBEM_GAME) ? 0 : -1;
+#else
+            MAIL = -1;
+#endif
             Option = -1;
             helpText = "i013";
 
             if (MAIL == -1) {
                 Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
-            } else { // MAIL GAME
+            }
+
+#ifdef ALLOW_PBEM
+            else { // MAIL GAME
                 Prefs(3);
             }
+
+#endif // ALLOW_PBEM
 
             plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
             plr[1] = Data->Def.Plr2;
@@ -306,7 +317,7 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 2: // Play Old Game
+        case MAIN_OLD_GAME: // Play Old Game
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
             MAIL = -1;
@@ -328,11 +339,11 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 3:
+        case MAIN_CREDITS:
             Credits();
             break;
 
-        case 4:
+        case MAIN_EXIT:
             //KillMusic();
             ex = 1;
             FadeOut(2, 10, 0, 0);

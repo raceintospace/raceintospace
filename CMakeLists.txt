@@ -20,6 +20,8 @@ if (WINDOWS)
   set(CMAKE_INSTALL_PREFIX "C:/Program Files/Race Into Space")
 endif (WINDOWS)
 
+option(PBEM "Enable experimental Play-by-EMail feature" OFF)
+
 add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
