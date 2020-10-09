@@ -798,11 +798,6 @@ typedef struct {
 #define RaceIntoSpace_Signature 0x52695350
 #define RaceIntoSpace_Old_Sig 0x49443a00  //'ID:\0"
 
-typedef enum {
-    SAVEGAME_Normal = 0,
-    SAVEGAME_PlayByMail,
-    SAVEGAME_Modem
-} SaveGameType;
 
 typedef struct {
     uint32_t ID;        // Going to use this to determine endianness of the save file
@@ -810,14 +805,6 @@ typedef struct {
     uint16_t dataSize;      // Size of Players struct
     uint16_t compSize;      // Compressed size of data
 } SaveFileHdr;
-
-
-typedef struct {
-    char Name[20], Title[23];
-    uint16_t time, date;
-    SaveGameType type;
-} SFInfo;
-
 
 
 /**
