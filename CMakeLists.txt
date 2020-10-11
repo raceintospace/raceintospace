@@ -3,12 +3,14 @@ project(raceintospace)
 
 enable_testing()
 
-set (raceintospace_VERSION_MAJOR 1)
-set (raceintospace_VERSION_MINOR 1)
-set (raceintospace_VERSION_RELEASE 0)
+set (raceintospace_VERSION_MAJOR 2)
+set (raceintospace_VERSION_MINOR 0)
+set (raceintospace_VERSION_PATCH 0)
+set (raceintospace_VERSION_EXTRA a1)
 if (NOT DEFINED CMAKE_PROJECT_VERSION)
 # TODO: use project VERSION & cmake 3.0
-  set (CMAKE_PROJECT_VERSION "${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_RELEASE}")
+  set (CMAKE_PROJECT_VERSION
+	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
 endif (NOT DEFINED CMAKE_PROJECT_VERSION)
 
 # Platform detection
@@ -31,6 +33,8 @@ set(CPACK_GENERATOR TGZ)
 set(CPACK_SOURCE_GENERATOR TGZ)
 include(CPack)
 
+find_program(GIT git DOC "Git program path")
+
 add_custom_target(dist
 	COMMAND ${CMAKE_COMMAND} -D ARCHIVE_PREFIX="${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}" -D SOURCE_DIR="${CMAKE_SOURCE_DIR}" -D OUTPUT_DIR="${CMAKE_BINARY_DIR}" -P ${CMAKE_CURRENT_SOURCE_DIR}/make_archive.cmake
 )
@@ -38,3 +42,7 @@ add_custom_target(run
 	COMMAND ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
 	DEPENDS raceintospace
 )
+
+add_custom_target(tag
+	COMMAND ${GIT} tag v${CMAKE_PROJECT_VERSION})
+
