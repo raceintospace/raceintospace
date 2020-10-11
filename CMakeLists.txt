@@ -45,5 +45,5 @@ add_custom_target(run
 )
 
 add_custom_target(tag
-	COMMAND ${GIT} tag v${CMAKE_PROJECT_VERSION})
+	COMMAND ${GIT} tag -a v${CMAKE_PROJECT_VERSION})
 
