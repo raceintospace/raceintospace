@@ -47,6 +47,12 @@ else()
   link_directories(/usr/local/lib)
 endif ()
 
+if (GIT)
+  execute_process(COMMAND ${GIT} describe
+		  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		  OUTPUT_VARIABLE raceintospace_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+
 # generate the raceintospace_config.h
 configure_file(
   "raceintospace_config.h.in"
