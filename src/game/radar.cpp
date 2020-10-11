@@ -130,7 +130,9 @@ void PadDraw(char plr, char pad)
         PadPict(2 + plr);
     } else if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode == Mission_None) {
         PadPict(4 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] > 1) {
+    } else if (Data->P[plr].LaunchFacility[pad] == 20) {  // Destroyed Pad
+        PadPict(6 + plr);
+    } else if (Data->P[plr].LaunchFacility[pad] > 1) {  // Damaged Pad
         PadPict(0 + plr);
     }
 
@@ -396,13 +398,15 @@ void PadDraw(char plr, char pad)
  *   3: USSR Launch Pad, scheduled launch
  *   4: USA Launch Pad, no mission
  *   5: USSR Launch Pad, no mission
+ *   6: USA Launch Pad, destroyed
+ *   7: USSR Launch Pad, destroyed
  *
  * \param poff  which of the pad images to display (0-6).
  * \throws runtime_error  if Filesystem cannot load the image.
  */
 void PadPict(char poff)
 {
-    assert(poff >= 0 && poff <= 5);
+    assert(poff >= 0 && poff <= 7);
 
     char filename[128];
     snprintf(filename, sizeof(filename),
