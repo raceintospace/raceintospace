@@ -12,6 +12,8 @@ include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 # Silence some warnings on MSVC
 if (MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+else (MSVC)
+  # add_definitions(-Werror=format -Werror=format-security)
 endif (MSVC)
 
 set(game_sources

@@ -60,7 +60,7 @@ static void doAppend(struct LogAppender *this0, struct LogEvent *ev)
 
     // TODO: define a format field in struct for timestamp, etc.
     const char *pn = NULL;
-    char buf[20];
+    char buf[30];
     struct DefaultLogAppender *appender = (struct DefaultLogAppender *)this0;
 
     if (appender->file == NULL) {
