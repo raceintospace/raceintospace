@@ -6,7 +6,7 @@ enable_testing()
 set (raceintospace_VERSION_MAJOR 2)
 set (raceintospace_VERSION_MINOR 0)
 set (raceintospace_VERSION_PATCH 0)
-set (raceintospace_VERSION_EXTRA a2)
+set (raceintospace_VERSION_EXTRA a3)
 set (raceintospace_VERSION
 	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
 if (NOT DEFINED CMAKE_PROJECT_VERSION)
