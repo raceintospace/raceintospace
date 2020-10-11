@@ -5,7 +5,7 @@
 #define DEFAULT_DATADIR "@DEFAULT_DATADIR@"
 #define DEFAULT_SAVEDIR "@DEFAULT_SAVEDIR@"
 
-#define PACKAGE_STRING "Race Into Space"
+#define PACKAGE_STRING "Race Into Space 2.0"
 #define PACKAGE_TARNAME "raceintospace"
 #define PACKAGE_VERSION "@raceintospace_VERSION@"
 
