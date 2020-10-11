@@ -1,14 +1,13 @@
 #ifndef __RACEINTOSPACE_CONFIG_H__
 #define __RACEINTOSPACE_CONFIG_H__
 
-#define RACEINTOSPACE_VERSION_MAJOR @raceintospace_VERSION_MAJOR@
-#define RACEINTOSPACE_VERSION_MINOR @raceintospace_VERSION_MINOR@
 
 #define DEFAULT_DATADIR "@DEFAULT_DATADIR@"
 #define DEFAULT_SAVEDIR "@DEFAULT_SAVEDIR@"
 
 #define PACKAGE_STRING "Race Into Space"
 #define PACKAGE_TARNAME "raceintospace"
+#define PACKAGE_VERSION "@raceintospace_VERSION@"
 
 #cmakedefine HAVE_LRINT
 

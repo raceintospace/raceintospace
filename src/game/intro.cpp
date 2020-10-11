@@ -28,6 +28,7 @@
 #include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "raceintospace_config.h"
 
 #include "Buzz_inc.h"
 #include "utils.h"
@@ -39,16 +40,16 @@
 #include "pace.h"
 #include "filesystem.h"
 
-struct CREDIT {
+const struct CREDIT {
     char page;
     int col;
     int x, y;
-    char Txt[35];
+    const char *Txt;
 } CREDIT[] = {
     { 0, 22, 96, 12, "OPEN-SOURCED THE GAME"},
     { 0, 10, 119, 20, "FRITZ BRONNER"},
     { 0, 10, 108, 27, "MICHAEL K MCCARTY"},
-    { 0, 22, 70, 39, "WORK ON THE OPEN-SOURCE VERSION"},
+    { 0, 22, 55, 39, "WORK ON THE OPEN-SOURCE VERSION " PACKAGE_VERSION},
     { 0, 22, 109, 51, "PROJECT MANAGERS"},
     { 0, 48, 108, 58, "MICHAEL K MCCARTY"},
     { 0, 48, 121, 65, "LEON BARADAT"},

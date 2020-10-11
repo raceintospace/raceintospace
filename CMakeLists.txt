@@ -6,11 +6,12 @@ enable_testing()
 set (raceintospace_VERSION_MAJOR 2)
 set (raceintospace_VERSION_MINOR 0)
 set (raceintospace_VERSION_PATCH 0)
-set (raceintospace_VERSION_EXTRA a1)
+set (raceintospace_VERSION_EXTRA a2)
+set (raceintospace_VERSION
+	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
 if (NOT DEFINED CMAKE_PROJECT_VERSION)
 # TODO: use project VERSION & cmake 3.0
-  set (CMAKE_PROJECT_VERSION
-	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
+  set (CMAKE_PROJECT_VERSION "${raceintospace_VERSION}")
 endif (NOT DEFINED CMAKE_PROJECT_VERSION)
 
 # Platform detection
