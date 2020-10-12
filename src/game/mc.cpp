@@ -221,18 +221,9 @@ int Launch(char plr, char mis)
             break;  // Last in LM
 
         case 3:
-
-            // LM is always on first mission part!!! :: makes things easier
-            if (MH[0][Mission_LM] && MH[0][Mission_LM]->ID[1] == 0x35) {
-                CAP[i] = 0;
-                LM[i] = 1;
-                DOC[i] = EVA[i] = 2;
-            } else {
-                CAP[i] = 0;
-                LM[i] = EVA[i] = 1;
-                DOC[i] = 2;
-            }
-
+            CAP[i] = 0;
+            LM[i] = EVA[i] = 1;
+            DOC[i] = 2;
             break;
 
         case 4:

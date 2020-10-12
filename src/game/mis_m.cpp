@@ -26,6 +26,7 @@
 // This file is part of mission branching and failure handling
 
 #include <cassert>
+#include <vector>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -68,6 +69,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
+std::vector<Astros *> LMCrew(int pad, Equipment *module);
 void InvalidatePrestige();
 
 /**
@@ -767,6 +769,20 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
 #define F_ALL 0
 #define F_ONE 1
 
+/**
+ * Kill one or all member(s) of the flight crew.
+ *
+ * TODO: The safety penalty suffered by the hardware program is applied
+ * each time this method is called. While it is supposed to be a lesser
+ * penalty on the lowest difficulty, that penalty may be triggered
+ * multiple times if crew members are all killed with individual calls
+ * (ex: Lunar Module).
+ *
+ * TODO: Reassign mission roles for any remaining crew.
+ *
+ * \param mode  F_ONE or F_ALL
+ * \param Victim  if F_ONE is set, the crew member to kill.
+ */
 void F_KillCrew(char mode, struct Astros *Victim)
 {
     int k = 0, p = 0;
@@ -779,6 +795,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
         p = 1;
     }
 
+    // TODO: Need to set the Base as the minimum value when dividing by 2
     if ((Data->Def.Lev1 == 0 && p == 0) || (Data->Def.Lev2 == 0 && p == 1)) {
         Mev[STEP].E->Safety /= 2;
     } else {
@@ -1223,27 +1240,16 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         break;
 
-    case 31:  // kill EVA and LM people and branch VAL steps
-        //Dock_Skip=1;
+    case 31:  // kill LM crew and branch VAL steps
         Mev[STEP].trace = Mev[STEP].dgoto;
         Mev[STEP].StepInfo = 3100 + STEP;
 
-        if (strncmp(Mev[STEP].E->ID, "C4", 2) == 0) {
-            F_KillCrew(F_ALL, 0);
-            Mev[STEP].StepInfo = 4100 + STEP;
-        } else {
-            if (JOINT == 0) {
-                F_KillCrew(F_ONE, MA[0][EVA[0]].A);
+        {
+            std::vector<Astros *> crew = LMCrew(Mev[STEP].pad, Mev[STEP].E);
 
-                if (LM[0] != EVA[0]) {
-                    F_KillCrew(F_ONE, MA[0][LM[0]].A);
-                }
-            } else {
-                F_KillCrew(F_ONE, MA[1][EVA[1]].A);
-
-                if (LM[1] != EVA[1]) {
-                    F_KillCrew(F_ONE, MA[1][LM[1]].A);
-                }
+            for (std::vector<Astros *>::iterator it = crew.begin();
+                 it != crew.end(); it++) {
+                F_KillCrew(F_ONE, *it);
             }
         }
 
@@ -1360,6 +1366,41 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     death = 0;
     return FNote;
 }
+
+
+/**
+ * Return the crew for the Lunar Module.
+ *
+ * The crew of a Lunar Module consists of the LM specialist for a
+ * one-person module, adding the mission commander for a two-person LM.
+ *
+ * \param pad  0 for primary launch, 1 for secondary launch
+ * \param module  The lunar module
+ */
+std::vector<Astros *> LMCrew(int pad, Equipment *module)
+{
+    assert(pad >= 0 && pad <= JOINT);
+    assert(module && HardwareType(*module) == Mission_LM);
+
+    std::vector<Astros *> crew;
+    int capacity = CrewSize(*module);
+
+    if (LM[pad] > 0 && MA[pad][LM[pad]].A) {
+        crew.push_back(MA[pad][LM[pad]].A);
+    }
+
+    if (capacity == 2 && CAP[pad] >= 0 && MA[pad][CAP[pad]].A) {
+        crew.push_back(MA[pad][CAP[pad]].A);
+    }
+
+    if (crew.size() != capacity) {
+        ERROR3("LM module should have %d crew, only found %d",
+               capacity, crew.size());
+    }
+
+    return crew;
+}
+
 
 /* Set the PComp flag such that prestige is not being awarded for step
  * failures.
