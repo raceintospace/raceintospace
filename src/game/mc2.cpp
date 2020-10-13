@@ -853,19 +853,13 @@ void MissionSetup(char plr, char mis)
             MH[j][i] = eq;
         } // for (i<7)
 
-        // TODO: This is a backstop against unexpected behavior.
-        // MissionType.Hard[Mission_EVA] is initialized to 0.
-        // However, it ought to be set in the VAB explicitly. As the
-        // VAB _should_ stop any EVA missions from proceeding this
-        // protects against the mission Hard[] field not being
-        // properly initialized until the VAB EVA assignment is
-        // improved.
-        MH[j][Mission_EVA] = &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
-
         // Photo Recon isn't included in MissionType.Hard - it's
         // always available.
         MH[j][Mission_PhotoRecon] =
             &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+        // Photo Recon should never be damaged.
+        MH[j][Mission_PhotoRecon]->MisSaf =
+            MH[j][Mission_PhotoRecon]->Safety;
     } // for (j<2)
 
     if (DMFake == 1) {
@@ -956,6 +950,9 @@ void MissionSetDown(char plr, char mis)
 
 /**
  * Compute and apply safety penalties to mission steps.
+ *
+ * This should only be called after MissionSetup() so the global array
+ * MH[][] will be populated.
  *
  * \param plr  the index of the current player
  * \param mission  the mission plan with configured Days duration.
