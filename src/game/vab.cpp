@@ -978,6 +978,13 @@ void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket)
         }
     }
 
+    if (IsManned(Data->P[plr].Mission[pad].MissionCode) &&
+        Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num != PROGRAM_NOT_STARTED) {
+        Data->P[plr].Mission[pad].Hard[Mission_EVA] = MISC_HW_EVA_SUITS;
+    } else {
+        Data->P[plr].Mission[pad].Hard[Mission_EVA] = -1;
+    }
+
     rocket.assignTo(pad);
 }
 

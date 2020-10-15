@@ -19,7 +19,7 @@ set(ARCHIVE_NAME "${ARCHIVE_PREFIX}${ARCHIVE_SUFFIX}")
 
 message(STATUS "Making archive ${ARCHIVE_NAME}")
 execute_process(
-    COMMAND ${GIT} archive --prefix="${ARCHIVE_NAME}/" HEAD
+    COMMAND ${GIT} archive "--prefix=${ARCHIVE_NAME}/" HEAD
     OUTPUT_FILE "${OUTPUT_DIR}/${ARCHIVE_NAME}.tar"
     WORKING_DIRECTORY ${SOURCE_DIR}
 )

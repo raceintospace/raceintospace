@@ -40,7 +40,7 @@
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
 
-void AstroConflictsMod(int player, struct Astros &astro);
+int AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
 int  CrewConflicts(int player, const struct Astros &astro);
 void UpdAll(char side);
@@ -278,13 +278,13 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
 
 /**
- * Modify the astronaut/cosmonaut's morale due to flight crew conflicts.
+ * Modifier to astronaut/cosmonaut's morale due to flight crew conflicts.
  */
-void AstroConflictsMod(int player, struct Astros &astro)
+int AstroConflictsMod(int player, struct Astros &astro)
 {
-    //-2 for each in Jupiter/Minishuttle , -3 in others
-    astro.Mood -= ((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
-                  CrewConflicts(player, astro);
+    //-2 for each conflict in Jupiter/Minishuttle, -3 in others
+    return -((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
+           CrewConflicts(player, astro);
 }
 
 
@@ -317,6 +317,9 @@ AstroTurn(void)
         for (i = 0; i < Data->P[j].AstroCount; i++) {
             int prog = Data->P[j].Pool[i].Assign;  // Program index
             int crew = Data->P[j].Pool[i].Crew - 1;  // Crew index
+            // Work with mood as a temporary value rather than storing
+            // an illegal value. Also stops int8_t overflow.
+            int mood = Data->P[j].Pool[i].Mood;
 
             /* Injury Resolution */
             if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
@@ -352,7 +355,8 @@ AstroTurn(void)
                 }
             }
 
-            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 && Data->P[j].Pool[i].RetirementDelay == 0 &&
+            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 &&
+                Data->P[j].Pool[i].RetirementDelay == 0 &&
                 Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
                 /* Catastrophic Failure */
                 num = brandom(100);
@@ -451,24 +455,24 @@ AstroTurn(void)
             /* END OF SEASON - Positive */
             if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
                 /* Program First */
-                Data->P[j].Pool[i].Mood += 5;
+                mood += 5;
 
                 if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_FAILURE) {
-                    Data->P[j].Pool[i].Mood += 20;    /* Self */
+                    mood += 20;    /* Self */
                 }
             }
 
             if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SUCCESS) {
                 if (j == 0 && Data->Def.Ast1 == 0) {
-                    Data->P[j].Pool[i].Mood += 20;
+                    mood += 20;
                 } else {
-                    Data->P[j].Pool[i].Mood += 15;
+                    mood += 15;
                 }
 
                 if (j == 1 && Data->Def.Ast2 == 0) {
-                    Data->P[j].Pool[i].Mood += 20;
+                    mood += 20;
                 } else {
-                    Data->P[j].Pool[i].Mood += 15;
+                    mood += 15;
                 }
             }
 
@@ -477,7 +481,7 @@ AstroTurn(void)
                 num = brandom(100);
 
                 if (num > 94) {
-                    Data->P[j].Pool[i].Mood += 5;
+                    mood += 5;
                 }
             }
 
@@ -492,7 +496,7 @@ AstroTurn(void)
                 }
 
                 if (temp > 1) {
-                    Data->P[j].Pool[i].Mood += 5;    /* Hero Mod */
+                    mood += 5;    /* Hero Mod */
                 }
             }
 
@@ -501,12 +505,12 @@ AstroTurn(void)
             /* In Merc for too long */
             if (Data->P[j].Pool[i].Assign == 1
                 && Data->P[j].Pool[i].Moved >= 6) {
-                Data->P[j].Pool[i].Mood -= 4;
+                mood -= 4;
             }
 
             /* Moved Around */
             if (Data->P[j].Pool[i].Moved == 0) {
-                Data->P[j].Pool[i].Mood -= 4;
+                mood -= 4;
             }
 
             // Mission Stuff
@@ -522,47 +526,40 @@ AstroTurn(void)
 
             if (Data->P[j].Pool[i].Status != AST_ST_INJURED) {
                 if (Data->P[j].Pool[i].Prime == 0) {
-                    Data->P[j].Pool[i].Mood -= 6;
+                    mood -= 6;
                 }
 
                 if (Data->P[j].Pool[i].Prime > 0) {
-                    Data->P[j].Pool[i].Mood -= 3;
+                    mood -= 3;
                 }
 
                 /* scrubbed mission */
                 if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
-                    Data->P[j].Pool[i].Mood -= 5;
+                    mood -= 5;
                 }
 
                 /* successful mission */
             } else {
-                Data->P[j].Pool[i].Mood -= 4;
+                mood -= 4;
             }
 
             /* catastrophic death */
             if (Data->P[j].MissionCatastrophicFailureOnTurn & 1) {
-                Data->P[j].Pool[i].Mood -= 5;
+                mood -= 5;
             }
 
             /* card death */
             if (Data->P[j].MissionCatastrophicFailureOnTurn & 2) {
-                Data->P[j].Pool[i].Mood -= brandom(2) + 1;
+                mood -= brandom(2) + 1;
             }
 
             /* Compatibility */
             if (prog > 0) {
-                AstroConflictsMod(j, Data->P[j].Pool[i]);
+                mood += AstroConflictsMod(j, Data->P[j].Pool[i]);
             }
 
             /* Final record updating */
-
-            if (Data->P[j].Pool[i].Mood > 100) {
-                Data->P[j].Pool[i].Mood = 100;
-            }
-
-            if (Data->P[j].Pool[i].Mood < 0) {
-                Data->P[j].Pool[i].Mood = 0;
-            }
+            Data->P[j].Pool[i].Mood = MAX(0, MIN(100, mood));
 
             Data->P[j].Pool[i].Moved++;
 

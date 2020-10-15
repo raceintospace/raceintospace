@@ -70,6 +70,7 @@ void ShowUnit(char hw, char un, char plr);
 void OnHand(char qty);
 void DrawHPurc(char plr);
 void BuyUnit(char hw2, char un2, char plr);
+void ShowHardwareDescription(int player, int hardware, int unit);
 
 
 /* We need to mask number of rolls into R&D history for current turn
@@ -240,10 +241,10 @@ void DrawRD(char player_index)
 void DrawCashOnHand(char plr)
 {
     char str[10];
-    snprintf(&str[0], 9, "%d MB", Data->P[plr].Cash);
+    snprintf(str, sizeof(str), "%d MB", Data->P[plr].Cash);
     fill_rectangle(195, 10, 240, 21, 3);
     display::graphics.setForegroundColor(11);
-    draw_string(213 - TextDisplayLength(&str[0]) / 2, 16, &str[0]);
+    draw_string(213 - TextDisplayLength(str) / 2, 16, str);
 }
 
 
@@ -730,6 +731,13 @@ char RD(char player_index)
                 music_start(M_HARDWARE);
 
                 WaitForMouseUp();
+            
+            } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
+                OutBox(26, 94, 131, 172);
+                delay(10);
+                WaitForMouseUp();
+                InBox(26, 94, 131, 172);
+                ShowHardwareDescription(player_index, hardware, unit); 
             }
         }
 
@@ -756,6 +764,33 @@ void ManSel(int activeButtonIndex, int maxAvailable)
             OutBox(165 + i * dx, 157, 185 + i * dx, 175);
         }
     }
+}
+
+void ShowHardwareDescription(int player, int hardware, int unit)
+{
+    unsigned char helpIndex = 0;
+    char helpEntry[7];
+
+    switch (hardware) {
+    case PROBE_HARDWARE:
+        helpIndex = 201;
+        break;
+
+    case ROCKET_HARDWARE:
+        helpIndex = 207;
+        break;
+
+    case MANNED_HARDWARE:
+        helpIndex = 217;
+        break;
+
+    case MISC_HARDWARE:
+        helpIndex = 231;
+        break;
+    }
+    helpIndex = helpIndex + unit * 2 + player;
+    snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
+    Help(helpEntry);
 }
 
 
@@ -903,6 +938,7 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 132, "MAXIMUM PAYLOAD:");
     draw_string(170, 146, "MAXIMUM SAFETY:");
 
+
     // Set Avoid Failure notification
     if (program.SaveCard > 0) {
         fill_rectangle(286, 71, 316, 71, 5);
@@ -1042,8 +1078,12 @@ void ShowUnit(char hw, char un, char player_index)
 
     draw_number(241, 97, Init_Cost);
     draw_number(230, 104, Unit_Cost);
-    draw_number(275, 118, program.RDCost);
-
+    if (program.RDCost == 0) {
+        draw_string(275, 118, "--");
+    } else {
+        draw_number(275, 118, program.RDCost);
+    }
+    
     if (hw != ROCKET_HARDWARE) {
         draw_number(240, 125, program.UnitWeight);
     } else {
@@ -1405,6 +1445,13 @@ char HPurc(char player_index)
             FadeIn(2, 10, 0, 0);
             music_start(M_FILLER);
             WaitForMouseUp();
+
+         } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
+            OutBox(26, 94, 131, 172);
+            delay(10);
+            WaitForMouseUp();
+            InBox(26, 94, 131, 172);
+            ShowHardwareDescription(player_index, hardware, unit); 
         }
     }
 }

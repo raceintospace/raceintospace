@@ -597,7 +597,7 @@ void Programs(char plr, char prog)
             int stt = 1;
 
             tst = Data->P[plr].Crew[prog][i][0] - 1;
-            fill_rectangle(4, 40, 53, 66, 3);
+            fill_rectangle(4, 40, 54, 66, 3);
 
             if (Data->P[plr].Pool[tst].Prime == 3) {
                 // Primary crew this turn
@@ -1139,7 +1139,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
     /* This will be used to highlight the skills for each crew member's role  -Leon */
 
-    fill_rectangle(4, 40, 53, 66, 3);  /* Clear area that says Primary Crew Next Turn etc. */
+    fill_rectangle(4, 40, 54, 66, 3);  /* Clear area that says Primary Crew Next Turn etc. */
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
@@ -1239,19 +1239,20 @@ void AstStats(char plr, char man, char num)
     yy = 0;
     if (Data->P[plr].Pool[num].Endurance == 1) { yy = 232; }
     draw_number(yy, y, Data->P[plr].Pool[num].Endurance);
+
+    fill_rectangle(4, 40, 54, 66, 3);
     // Now tell if this 'naut is assigned to a crew
-    fill_rectangle(4, 40, 53, 66, 3);
 
     if (Data->P[plr].Pool[num].Prime == 3) {
         display::graphics.setForegroundColor(6);
-        draw_string(12, 45, "PRIMARY");
+        draw_string(11, 45, "PRIMARY");
         draw_string(19, 53, "CREW");
         draw_string(6, 61, "THIS TURN");
     }
 
     if (Data->P[plr].Pool[num].Prime == 4) {
         display::graphics.setForegroundColor(17);
-        draw_string(12, 45, "PRIMARY");
+        draw_string(11, 45, "PRIMARY");
         draw_string(19, 53, "CREW");
         draw_string(5, 61, "NEXT TURN");
     }

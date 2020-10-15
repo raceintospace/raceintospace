@@ -110,6 +110,8 @@ void DrawLimbo(char plr)
     draw_string(185, 85, "TRANSFER TO LOCATION");
 
     for (i = 0; i < 5; i++) {
+        char str[21];
+
         IOBox(165, 93 + 21 * i, 238, 111 + 21 * i);
         IOBox(242, 93 + 21 * i, 315, 111 + 21 * i);
 
@@ -121,9 +123,8 @@ void DrawLimbo(char plr)
         }
 
         assert(sizeof(Data->P[plr].Manned[i].Name) <= 20);
-        char str[21];
-        snprintf(&str[0], sizeof(str), Data->P[plr].Manned[i].Name);
-        draw_string(201 - TextDisplayLength(&str[0]) / 2, 101 + 21 * i, &str[0]);  // Program name is centered
+        snprintf(str, sizeof(str), "%s", Data->P[plr].Manned[i].Name);
+        draw_string(201 - TextDisplayLength(str) / 2, 101 + 21 * i, str);  // Program name is centered
         draw_string(181, 107 + 21 * i, "PROGRAM");
 
         display::graphics.setForegroundColor(11);

@@ -28,6 +28,7 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "raceintospace_config.h"
 
 #include "sdlhelper.h"
 #include <assert.h>
@@ -223,10 +224,10 @@ sdl_timer_callback(Uint32 interval, void *param)
 void
 av_setup(void)
 {
+    std::string title(PACKAGE_STRING " " PACKAGE_VERSION);
 #ifdef PACKAGE_BUILD
-    std::string title(PACKAGE_NAME " " PACKAGE_VERSION " build " PACKAGE_BUILD);
-#else
-    std::string title(PACKAGE_STRING);
+    if (!std::string(PACKAGE_BUILD).empty())
+	   title += " build " PACKAGE_BUILD;
 #endif
 
 
