@@ -244,3 +244,24 @@ else (BUILD_XIPH)
   set_target_properties(theora PROPERTIES IMPORTED_LOCATION_NOCONFIG ${Theora_LIBRARY})
   
 endif (BUILD_XIPH)
+
+
+
+###
+# cereal
+
+if (BUILD_CEREAL)
+  set (cereal_Version 1.3.0)
+  set (cereal_URL https://github.com/USCiLab/cereal/archive/v${cereal_Version}.tar.gz)
+  set (cereal_Dir ${CMAKE_CURRENT_BINARY_DIR}/cereal-${cereal_Version})
+
+  ExternalProject_Add(ext_cereal
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/downloads
+    URL ${cereal_URL}
+    PREFIX ${cereal_Dir}
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/cereal/CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${LocalPrefix} -DLocalPrefix=${LocalPrefix}
+    )
+
+  add_dependencies(libs ext_cereal)
+endif (BUILD_CEREAL)

@@ -23,6 +23,9 @@ if (WINDOWS)
   set(CMAKE_INSTALL_PREFIX "C:/Program Files/Race Into Space")
 endif (WINDOWS)
 
+# Require C++11
+set (CMAKE_CXX_STANDARD 11)
+
 add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
