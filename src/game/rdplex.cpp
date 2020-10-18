@@ -241,10 +241,10 @@ void DrawRD(char player_index)
 void DrawCashOnHand(char plr)
 {
     char str[10];
-    snprintf(str, sizeof(str), "%d MB", Data->P[plr].Cash);
+    snprintf(&str[0], 9, "%d MB", Data->P[plr].Cash);
     fill_rectangle(195, 10, 240, 21, 3);
     display::graphics.setForegroundColor(11);
-    draw_string(213 - TextDisplayLength(str) / 2, 16, str);
+    draw_string(213 - TextDisplayLength(&str[0]) / 2, 16, &str[0]);
 }
 
 
@@ -386,7 +386,7 @@ char RD(char player_index)
                     if (buy[hardware][unit] == 0) {
                         QueryUnit(hardware, unit, player_index);
                     } else {
-                        InBox(164, 184, 315, 194);
+                        InBox(165, 184, 315, 194);
                     }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]),
@@ -768,9 +768,7 @@ void ManSel(int activeButtonIndex, int maxAvailable)
 
 void ShowHardwareDescription(int player, int hardware, int unit)
 {
-    unsigned char helpIndex = 0;
-    char helpEntry[7];
-
+    int helpIndex = 0;
     switch (hardware) {
     case PROBE_HARDWARE:
         helpIndex = 201;
@@ -789,6 +787,7 @@ void ShowHardwareDescription(int player, int hardware, int unit)
         break;
     }
     helpIndex = helpIndex + unit * 2 + player;
+    char helpEntry[5];
     snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
     Help(helpEntry);
 }
