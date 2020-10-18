@@ -44,6 +44,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "place.h"
 
 #define FRM_Delay 22
 
@@ -66,6 +67,7 @@ struct OF {
 int tFrames, cFrame;
 char SHTS[4];
 int32_t aLoc;
+int scrubMis;
 display::LegacySurface *dply;
 struct AnimType AHead;
 struct BlockHead BHead;
@@ -1116,7 +1118,11 @@ char FailureMode(char plr, int prelim, char *text)
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
         display::graphics.setForegroundColor(9);
-        draw_string(15, 122, "RECOMMEND MISSION SCRUB");
+        draw_string(15, 122, "RECOMMEND MISSION ");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, "S");
+        display::graphics.setForegroundColor(9);
+        draw_string(0, 0, "CRUB");
     } else {
         display::graphics.setForegroundColor(9);
 
@@ -1338,7 +1344,13 @@ char FailureMode(char plr, int prelim, char *text)
 
             FadeIn(2, 10, 0, 0);
             key = 0;
-            return 1;  /* Scrub */
+
+            scrubMis = Help("i165");  
+            if (scrubMis >= 0) {
+                return 1;  /* Scrub */
+            } else {
+                return 0;  /* Don't Scrub */
+            }
         }
     }
 }
