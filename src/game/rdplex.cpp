@@ -374,7 +374,7 @@ char RD(char player_index)
 
                 if (Program.Damage &&
                     Program.DCost <= Data->P[player_index].Cash) {
-                    InBox(283, 90, 302, 100);
+                    InBox(280, 90, 302, 100);
                     DamProb(player_index, hardware, unit);
                     DrawRD(player_index);
                     hardware_buttons.drawButtons(hardware);
@@ -386,7 +386,7 @@ char RD(char player_index)
                     if (buy[hardware][unit] == 0) {
                         QueryUnit(hardware, unit, player_index);
                     } else {
-                        InBox(165, 184, 315, 194);
+                        InBox(164, 184, 315, 194);
                     }
 
                     ManSel(decodeNumRolls(buy[hardware][unit]),
