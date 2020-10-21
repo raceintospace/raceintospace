@@ -84,6 +84,18 @@ bool IsDuration(int mission)
 
 
 /**
+ * Checks if the mission contains a spacewalk.
+ *
+ * \param mission  The type per mStr.Index or MissionType.MissionCode.
+ * \return  true if an EVA step is required.
+ */
+bool IsEVA(int mission)
+{
+    return GetMissionPlan(mission).EVA >= 1;
+}
+
+
+/**
  * Checks if the mission has two separate launches.
  *
  * \param mission  The type per mStr.Index or MissionType.MissionCode.

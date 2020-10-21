@@ -328,7 +328,7 @@ void MisAnn(char plr, char pad)
             bud = 160;
         }
 
-        for (j = Mission_Capsule; j <= Mission_PrimaryBooster; j++) {
+        for (j = Mission_Capsule; j <= Mission_EVA; j++) {
             hold = Data->P[plr].Mission[pad + i].Hard[j];
 
             switch (j) {
@@ -441,6 +441,28 @@ void MisAnn(char plr, char pad)
                         draw_string(0, 0, "%");
                         ++k;
                     }
+                }
+
+                break;
+
+            case Mission_EVA:
+
+                // EVA suits are added to _all_ manned missions once
+                // developed (for emergencies). Only display if needed.
+                if (hold > -1 &&
+                    IsEVA(Data->P[plr].Mission[pad].MissionCode)) {
+                    display::graphics.setForegroundColor(7);
+                    draw_string(bud, 109 + 14 * k, "EVA: ");
+                    display::graphics.setForegroundColor(1);
+                    draw_string(0, 0, &Data->P[plr].Misc[hold].Name[0]);
+                    display::graphics.setForegroundColor(11);
+                    draw_string(bud, 116 + 14 * k, "SAFETY FACTOR: ");
+                    display::graphics.setForegroundColor(
+                        Data->P[plr].Misc[hold].Damage != 0 ? 9 : 1);
+                    draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
+                                Data->P[plr].Misc[hold].Damage);
+                    draw_string(0, 0, "%");
+                    ++k;
                 }
 
                 break;
