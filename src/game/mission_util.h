@@ -7,6 +7,7 @@ const char *GetDurationParens(int duration);
 struct mStr GetMissionPlan(int code);
 bool IsDocking(int mission);
 bool IsDuration(int mission);
+bool IsEVA(int mission);
 bool IsJoint(int mission);
 bool IsLEORegion(int mission);
 bool IsLunarLanding(int mission);
