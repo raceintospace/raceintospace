@@ -42,7 +42,7 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 int CrewEndurance(const struct MisAst *crew, size_t crewSize);
 void MissionParse(char plr, struct mStr &misType, char pad);
 char WhichPart(char plr, int which);
-void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
+void MissionSteps(char plr, int mcode, int step, int pad,
                   const struct mStr &mission);
 
 
@@ -50,6 +50,17 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
 // Setup for the Mission
 // Routines used by MControl and Future Missions
 
+/**
+ * Interprets the mission plan "code" as a series of mission steps.
+ *
+ * Fills the Mev[] global variable with mission step data.
+ * Increments the STEP global via MissionParse to account for how
+ * many mission steps are possible.
+ *
+ * \param plr  the player index.
+ * \param val  the mission code (MissionType.MissionCode or mStr.Index).
+ * \param pad  the pad index of the mission's first launch.
+ */
 void MissionCodes(char plr, char val, char pad)
 {
     struct mStr plan = GetMissionPlan(val);
@@ -81,21 +92,21 @@ MissionParse(char plr, struct mStr &misType, char pad)
     STEP = 0;
     loc = pad;
     char *MCode = misType.Code;
-    char *LCode = misType.Alt;
 
     for (i = 0; MCode[i] != '|'; ++i) {
         switch (MCode[i]) {
         case '@':
             i++;
             MCode[i] = 'b';    // duration step
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
-                         misType);
+            MissionSteps(plr, MCode[i], STEP++, loc - pad, misType);
             break;
 
-        case '~':              //printf("      :Delay of %d seasons\n",MCode[i+1]-0x30);
+        case '~':
+
+            // printf("      :Delay of %d seasons\n", MCode[i + 1] - 0x30);
             for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
-                MissionSteps(plr, MCode[i + 2], LCode[STEP], STEP,
-                             loc - pad, misType);
+                MissionSteps(plr, MCode[i + 2], STEP++, loc - pad,
+                             misType);
             }
 
             i += 2;
@@ -117,8 +128,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
         case '%':
             i++;
             MCode[i] = 'c';
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
-                         misType);
+            MissionSteps(plr, MCode[i], STEP++, loc - pad, misType);
             break;
 
         case 'A':
@@ -159,8 +169,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
                 loc = pad;
             }
 
-            MissionSteps(plr, MCode[i], LCode[STEP], STEP, loc - pad,
-                         misType);
+            MissionSteps(plr, MCode[i], STEP++, loc - pad, misType);
             break;
         }
     }
@@ -183,7 +192,7 @@ char WhichPart(char plr, int which)
     return val;
 }
 
-void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
+void MissionSteps(char plr, int mcode, int step, int pad,
                   const struct mStr &mission)
 {
     switch (mcode) {
@@ -420,15 +429,15 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
 
     if (mcode == 'd') {
         // Alternative path Mission.Alt
-        if (Mgoto == 0) {
+        if (mission.Alt[step] == 0) {
             Mev[step - 1].sgoto = Mev[step - 1].fgoto = 100;
         } else {
-            Mev[step - 1].sgoto = Mev[step - 1].fgoto = Mgoto;
+            Mev[step - 1].sgoto = Mev[step - 1].fgoto = mission.Alt[step];
         }
     } else {
         Mev[step].asf = 0;
 
-        if (MANNED[pad] > 0)
+        if (MANNED[pad] > 0) {
             switch (Mev[step].Class) {
             case Mission_Capsule:
                 Mev[step].ast = CAP[pad]; // index into MA
@@ -483,6 +492,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
                 Mev[step].asf = 0;
                 break;
             };
+        }
 
 
 //      if (step==0 && Data->P[plr].TurnOnly==5)
@@ -491,16 +501,18 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
         Mev[step].step = step;
 
         if ((Data->Def.Lev1 == 0 && plr == 0) || (Data->Def.Lev2 == 0 && plr == 1)) {
-            Mev[STEP].dice = MisRandom();
+            Mev[step].dice = MisRandom();
         } else {
-            Mev[STEP].dice = brandom((AI[plr]) ? 98 : 100) + 1;
+            Mev[step].dice = brandom((AI[plr]) ? 98 : 100) + 1;
         }
 
         Mev[step].rnum = brandom(10000) + 1;
         Mev[step].sgoto = 0;
 
-        Mev[step].fgoto = (Mgoto == -2) ? step + 1 : Mgoto;  // prevents mission looping
-        Mev[step].dgoto = mission.AltD[STEP];  // death branching (tm)
+        // prevents mission looping
+        Mev[step].fgoto =
+            (mission.Alt[step] == -2) ? step + 1 : mission.Alt[step];
+        Mev[step].dgoto = mission.AltD[step];  // death branching (tm)
         Mev[step].E = MH[pad][Mev[step].Class];
 
         Mev[step].pad = pad;
@@ -656,7 +668,7 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
             Mev[step].FName[1] = '1';
         }
 
-        if (Mev[step].loc == 16 && STEP > 8) {
+        if (Mev[step].loc == 16 && step > 8) {
             if (Mev[step - 1].loc == 18 && Mev[step].Name[4] >= 0x35) {
                 Mev[step].FName[1] = '2';
             } else if (Mev[step - 1].loc == 18 && Mev[step].Name[4] <= 0x34) {
@@ -685,8 +697,6 @@ void MissionSteps(char plr, int mcode, int Mgoto, int step, int pad,
 
     }
 
-    //if (mcode!='d')
-    STEP++;
     return;
 }
 
