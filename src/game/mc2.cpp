@@ -655,7 +655,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
 
     // New expanded cases for failure mode charts
-    if (Mev[step].Name[3] == 'C' && Mev[step].loc == 2) {
+    if (Mev[step].Name[2] == 'C' && Mev[step].loc == 2) {
         Mev[step].FName[1] = '1';
     }
 
@@ -663,39 +663,41 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].FName[1] = '1';
     }
 
-    if (Mev[step].FName[3] != 'P') { // exclude any probes
-        if (Mev[step].loc == 15 && Mev[step].Name[6] == 0x36) {
+    if (Mev[step].Name[2] != 'P') { // exclude any probes
+        if (Mev[step].loc == 15 && Mev[step].Name[5] == 0x36) {
+            // Lunar EVA w/ one-man capsule (F115)
             Mev[step].FName[1] = '1';
         }
 
+        // (loc == 16) => LEM Activities, step > 8 => Lunar orbit/surface
         if (Mev[step].loc == 16 && step > 8) {
-            if (Mev[step - 1].loc == 18 && Mev[step].Name[4] >= 0x35) {
+            // (loc == 18) => Lunar Landing
+            if (Mev[step - 1].loc == 18 && Mev[step].Name[3] >= 0x35) {
                 Mev[step].FName[1] = '2';
-            } else if (Mev[step - 1].loc == 18 && Mev[step].Name[4] <= 0x34) {
+            } else if (Mev[step - 1].loc == 18 && Mev[step].Name[3] <= 0x34) {
                 Mev[step].FName[1] = '3';
             } else {
                 Mev[step].FName[1] = '1';
             }
         }
 
-        if ((Mev[step].loc >= 17 && Mev[step].loc <= 19) && (Mev[step].Name[4] <= 0x34)) {
+        if ((Mev[step].loc >= 17 && Mev[step].loc <= 19) &&
+            (Mev[step].Name[3] <= 0x34)) {
             Mev[step].FName[1] = '1';
         }
 
-        //if (Mev[step].loc==18 && Mev[step].Name[3]=='P') Mev[step].FName[1]='0';
-
+        // Use F018 error group for Lunar Landing step unless:
+        // Kicker-C (Name is "SSM2") or Four-man capsule ("S?C4")
         if (Mev[step].loc == 18 && (Mev[step].Name[3] != '4' && Mev[step].Name[2] != 'M')) {
             Mev[step].FName[1] = '0';
         }
 
-
         if (Mev[step].loc == 20 && (Mev[step].Name[4] == 0x34 || Mev[step].Name[4] == 0x33)) {
             Mev[step].FName[1] = '1';
         }
-
-        Mev[step].StepInfo = 0;
-
     }
+
+    Mev[step].StepInfo = 0;
 
     return;
 }
