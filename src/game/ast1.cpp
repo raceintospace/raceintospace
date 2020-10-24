@@ -738,6 +738,7 @@ void AstSel(char plr)
         break;
     }
 
+    display::graphics.setForegroundColor(11);
     draw_number(292, 41, MaxSel);
 
     Data->P[plr].Cash -= cost;
