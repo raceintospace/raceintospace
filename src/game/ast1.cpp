@@ -431,7 +431,7 @@ void DrawAstSel(char plr)
         break;
     }
 
-    draw_string(185, 41, "REMAINING POSITIONS:");
+    draw_string(185, 41, "REMAINING POSITIONS: ");
 
     if (Data->Season == 0) {
         draw_string(88, 41, "SPRING 19");
@@ -737,6 +737,8 @@ void AstSel(char plr)
         femaleAstronautsRequired = false;
         break;
     }
+
+    draw_number(292, 41, MaxSel);
 
     Data->P[plr].Cash -= cost;
     Data->P[plr].Spend[0][2] += cost;
