@@ -702,18 +702,6 @@ void MissionSteps(char plr, int mcode, int step, int pad,
     return;
 }
 
-void MisPrt(void)
-{
-    int i;
-
-    for (i = 0; i < STEP - 1; i++) {
-        Mev[i].dice = 100;
-        Mev[0].E->MisSaf = 5;
-        Mev[0].rnum = 9999;
-    }
-
-    return;
-}
 
 /**
  * \param plr  the player index

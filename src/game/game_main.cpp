@@ -214,8 +214,6 @@ int game_main_impl(int argc, char *argv[])
 
     xMODE = 0;
 
-    xMODE |= xMODE_NOCOPRO;
-
     Data = (Players *)xmalloc(sizeof(struct Players) + 1);
     buffer = (char *)xmalloc(BUFFER_SIZE);
 
@@ -614,13 +612,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 }
 
                 News(plr[i]);                  // EVENT FOR PLAYER
-
-                if ((Data->P[plr[i] % NUM_PLAYERS].Mission[0].MissionCode > 6 ||
-                     Data->P[plr[i] % NUM_PLAYERS].Mission[1].MissionCode > 6 ||
-                     Data->P[plr[i] % NUM_PLAYERS].Mission[2].MissionCode > 6) &&
-                    (NOCOPRO && !EASYMODE)) {
-                    xMODE &= ~xMODE_NOCOPRO;
-                }
 
                 VerifyCrews(plr[i]);
                 VerifySF(plr[i]);
