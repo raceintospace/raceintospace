@@ -260,15 +260,15 @@ void MisAnn(char plr, char pad)
     }
 
     IOBox(57, 68, 118, 84);
-    IOBox(131, 68, 197, 84);
+    IOBox(129, 68, 195, 84);
     IOBox(205, 68, 266, 84);
     display::graphics.setForegroundColor(1);
     draw_string(65, 78, "CONTINUE");
-    draw_string(139, 78, "PLAY FULL");
+    draw_string(137, 78, "PLAY FULL");
     draw_string(221, 78, "SCRUB");
     display::graphics.setForegroundColor(9);
     draw_string(65, 78, "C");
-    draw_string(139, 78, "P");
+    draw_string(137, 78, "P");
     draw_string(221, 78, "S");
 
     //IOBox(85,68,158,84);IOBox(172,68,245,84);
@@ -277,11 +277,12 @@ void MisAnn(char plr, char pad)
     //draw_string(102,78,"C");draw_string(189,78,"S");
 
     if (Data->P[plr].Mission[pad].Joint == 0) {
-        draw_string(128, 91, "SINGLE LAUNCH");
+        draw_string(126, 91, "SINGLE LAUNCH");
     } else {
-        draw_string(131, 91, "JOINT LAUNCH");
-        draw_string(49, 101, "PART ONE");
-        draw_string(102, 101, "PAD ");
+        draw_string(129, 91, "JOINT LAUNCH");
+        display::graphics.setForegroundColor(17);
+        draw_string(59, 92, "PART 1: ");
+        draw_string(0, 0, "PAD ");
 
         //draw_number(0,0,pad);
         switch (pad) {
@@ -298,9 +299,9 @@ void MisAnn(char plr, char pad)
             break;
         }
 
-        draw_string(160, 101, "PART TWO");
+        draw_string(201, 92, "PART 2: ");
 
-        draw_string(213, 101, "PAD ");
+        draw_string(0, 0, "PAD ");
 
         //draw_number(0,0,pad+1);
         switch (pad + 1) {
@@ -323,9 +324,9 @@ void MisAnn(char plr, char pad)
         k = 0;
 
         if (i == 0) {
-            bud = 49;
+            bud = 59;
         } else {
-            bud = 160;
+            bud = 168;
         }
 
         for (j = Mission_Capsule; j <= Mission_EVA; j++) {
@@ -502,10 +503,10 @@ void MisAnn(char plr, char pad)
             FadeOut(2, 10, 0, 0);
             fullscreenMissionPlayback = false;
             return;
-        } else if ((x >= 133 && y >= 70 && x <= 195 && y <= 82 && mousebuttons > 0) || key == K_ENTER || key == 'P') {
-            InBox(133, 70, 195, 82);
+        } else if ((x >= 131 && y >= 70 && x <= 195 && y <= 82 && mousebuttons > 0) || key == K_ENTER || key == 'P') {
+            InBox(131, 70, 193, 82);
             WaitForMouseUp();
-            OutBox(133, 70, 195, 82);
+            OutBox(131, 70, 193, 82);
             FadeOut(2, 10, 0, 0);
             fullscreenMissionPlayback = true;
             return;
