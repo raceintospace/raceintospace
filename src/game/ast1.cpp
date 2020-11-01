@@ -202,7 +202,7 @@ void DrawAstCheck(char plr)
 {
     int i, pos, ad = 0;
 
-    pos = 0; /* XXX check uninitialized */
+    pos = 0;  /* XXX check uninitialized */
 
     if (Data->P[plr].AstroDelay > 0) {
         ad = 1;
@@ -383,9 +383,9 @@ void DrawAstSel(char plr)
     InBox(165, 128, 181, 196);
     InBox(3, 3, 30, 19);
     draw_up_arrow(9, 133);
-    draw_down_arrow(9, 166); //Left
+    draw_down_arrow(9, 166);  //Left
     draw_up_arrow(170, 133);
-    draw_down_arrow(170, 166); //Right
+    draw_down_arrow(170, 166);  //Right
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
     draw_heading(40, 5, "RECRUITMENT", 0, -1);
@@ -581,7 +581,7 @@ int ProfileMask(int player)
 }
 
 
-//Naut Randomize, Nikakd, 10/8/10
+// Naut Randomize, Nikakd, 10/8/10
 // Note: These stats are far more generous than the historical stats.
 void RandomizeNauts()
 {
@@ -629,7 +629,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
     recruit.Crew = 0;
     recruit.Unassigned = 0;
     recruit.Pool = 0;
-    recruit.Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
+    recruit.Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
     recruit.Mood = 85 + 5 * brandom(4);
     recruit.Face = recruit.Sex ? brandom(77) : (77 + brandom(8));
 
@@ -695,7 +695,7 @@ void AstSel(char plr)
 
     //TODO: Candidate for protobuf replacement?
     Men = (struct ManPool *) buffer;
-    fin = sOpen("MEN.DAT", "rb", 1); /* Open Astronaut Data File  */
+    fin = sOpen("MEN.DAT", "rb", 1);  /* Open Astronaut Data File  */
     fseek(fin, ((sizeof(struct ManPool)) * 106)*plr, SEEK_SET);
     fread(Men, (sizeof(struct ManPool)) * 106, 1, fin);
     fclose(fin);
@@ -754,7 +754,7 @@ void AstSel(char plr)
     max = Index + MaxMen;
     min = Index;
     now2 = 0;
-    count = 0; /* counter for # selected */
+    count = 0;  /* counter for # selected */
 
     DispEight(now, BarB);
     DrawRecruitProfile(173, 47, &Men[now], showStats);
@@ -1177,7 +1177,7 @@ void AstSel(char plr)
                 sel[i] = sel[i + 1];
             }
 
-            sel[i] = -1; /* remove astronaut from left */
+            sel[i] = -1;  /* remove astronaut from left */
 
             if (now2 == count) {
                 if (now2 > 0) {
@@ -1208,7 +1208,7 @@ void AstSel(char plr)
             InBox(168, 111, 313, 123);
 
             if (count < MaxSel) {
-                sel[count] = now; /* move astronaut into left */
+                sel[count] = now;  /* move astronaut into left */
                 MCol[now] = 1;
                 count++;
 
@@ -1244,7 +1244,7 @@ void AstSel(char plr)
             OutBox(168, 111, 313, 123);
         }
 
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) { /* Exit - not 'til done */
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  /* Exit - not 'til done */
             bool femaleAstronautsSelected = false;
 
             if (femaleAstronautsRequired) {
@@ -1307,6 +1307,11 @@ void AstSel(char plr)
 
                 return;  /* Done */
             }
+        }
+            
+        if (key == K_ESCAPE) {  /* Cancel - and give the player a refund */
+            Data->P[plr].Cash += cost;
+            return;  /* Cancel out */
         }
     }
 }
