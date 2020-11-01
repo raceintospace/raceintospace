@@ -1067,6 +1067,7 @@ char FailureMode(char plr, int prelim, char *text)
     int i, j, k;
     FILE *fin;
     double last_secs;
+    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     FadeOut(2, 10, 0, 0);
@@ -1088,19 +1089,20 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(1);
     MisStep(9, 34, Mev[STEP].loc);
+    e = GetEquipment(Mev[STEP]);
     draw_string(9, 41, "MISSION STEP: ");
     draw_number(0, 0, STEP);
-    draw_string(9, 48, Mev[STEP].E->Name);
+    draw_string(9, 48, e->Name);
     draw_string(0, 0, " CHECK");
 
-    if (strncmp(Mev[STEP].E->Name, "DO", 2) == 0) {
+    if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            draw_number(9, 55, Mev[STEP].E->MSF);
+            draw_number(9, 55, e->MSF);
         } else {
-            draw_number(9, 55, Mev[STEP].E->MisSaf);
+            draw_number(9, 55, e->MisSaf);
         }
     } else {
-        draw_number(9, 55, Mev[STEP].E->MisSaf);
+        draw_number(9, 55, e->MisSaf);
     }
 
 
@@ -1195,17 +1197,17 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] == 0) {
-        if (((Mev[STEP].E->ID[1] == 0x35 || Mev[STEP].E->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
+        if (((e->ID[1] == 0x35 || e->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
             GuyDisp(49, 138, MA[1][LM[1]].A);
 
             if (EVA[1] != LM[1]) {
                 GuyDisp(49, 146, MA[1][EVA[1]].A);
             }
-        } else if (strncmp(Mev[STEP].E->ID, "M2", 2) == 0) {
+        } else if (strncmp(e->ID, "M2", 2) == 0) {
             GuyDisp(49, 138, MA[other(Mev[STEP].pad)][0].A);
             GuyDisp(49, 146, MA[other(Mev[STEP].pad)][1].A);
             GuyDisp(182, 138, MA[other(Mev[STEP].pad)][2].A);
-        } else if (strncmp(Mev[STEP].E->ID, "M3", 2) == 0) {  // EVA
+        } else if (strncmp(e->ID, "M3", 2) == 0) {  // EVA
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
             display::graphics.setForegroundColor(1);
@@ -1282,7 +1284,7 @@ char FailureMode(char plr, int prelim, char *text)
         strcat(Name, "SV");
     }
 
-    strncat(Name, Mev[STEP].E->ID, 2);
+    strncat(Name, e->ID, 2);
 
     if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
@@ -1460,6 +1462,8 @@ int StepAnim(int x, int y, FILE *fin)
 void FirstManOnMoon(char plr, char isAI, char misNum)
 {
     int nautsOnMoon = 0;
+    Equipment *e = GetEquipment(Mev[STEP]);
+
     dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
 
     if (misNum == Mission_Soyuz_LL && plr == 1) {
@@ -1468,17 +1472,17 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
 
 
     //Direct Ascent
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
         nautsOnMoon = 4;
     }
 
     //2 men LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 2;
     }
 
     //1 man LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 1;
     }
 
@@ -1506,6 +1510,7 @@ char DrawMoonSelection(char nauts, char plr)
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
+    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
@@ -1545,7 +1550,8 @@ char DrawMoonSelection(char nauts, char plr)
         strcat(Name, "SV");
     }
 
-    strncat(Name, Mev[STEP].E->ID, 2);
+    e = GetEquipment(Mev[STEP]);
+    strncat(Name, e->ID, 2);
 
     if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");

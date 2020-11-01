@@ -315,11 +315,11 @@ int Launch(char plr, char mis)
         for (i = 0; Mev[i].loc != 0x7f; ++i) {
             /* Bugfix -> We need to skip cases when Mev[i].E is NULL */
             /* Same solution as used in mis_m.c (MisCheck):207 */
-            if (!Mev[i].E) {
+            if (!GetEquipment(Mev[i])) {
                 continue;
             }
 
-            avg += Mev[i].E->MisSaf + Mev[i].asf;
+            avg += GetEquipment(Mev[i])->MisSaf + Mev[i].asf;
             temp += 1;
         }
 

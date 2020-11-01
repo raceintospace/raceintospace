@@ -464,7 +464,10 @@ struct MisEval {
     char step;              /**< actual step id number */
     char loc;               /**< Mission Step Name Index */
     uint16_t StepInfo;      /**< ID of step success  1=succ   !1=fail */
-    Equipment *E;           /**< Pointer into equipment */
+    union {
+        Equipment *Ep;      /**< Pointer into equipment, use GetEquipment() */
+        uint64_t Ebits;     /**< keep 64b also on 32b platforms.  */
+	};
     char Prest;             /**< Prestige Step #  (-1 for none) */
     char PComp;             /**< PComp will be set to amt of prest to be awarded. */
     char pad;               /**< pad location  (Index into First Part of MH[x][] */
@@ -849,6 +852,7 @@ BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
 BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
 BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
+BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
 BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
 
 #endif // __DATA_H__

@@ -192,6 +192,13 @@ char WhichPart(char plr, int which)
     return val;
 }
 
+Equipment * GetEquipment(const struct MisEval &Mev)
+{
+	Equipment *e = MH[Mev.pad][Mev.Class];
+	assert(e == Mev.Ep);
+	return e;
+}
+
 void MissionSteps(char plr, int mcode, int step, int pad,
                   const struct mStr &mission)
 {
@@ -513,7 +520,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].fgoto =
             (mission.Alt[step] == -2) ? step + 1 : mission.Alt[step];
         Mev[step].dgoto = mission.AltD[step];  // death branching (tm)
-        Mev[step].E = MH[pad][Mev[step].Class];
+        Mev[step].Ep = MH[pad][Mev[step].Class]; // FIXME: << this sets E
 
         Mev[step].pad = pad;
 
