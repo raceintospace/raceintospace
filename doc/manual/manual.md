@@ -962,7 +962,7 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
   <tr>
     <td>#</td>
     <td>Mission Name</td>
-    <td>Comments</td>
+    <td>Description</td>
   </tr>
   <tr>
     <td>0</td>
@@ -972,217 +972,228 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
   <tr>
     <td>1</td>
     <td>Orbital Satellite</td>
-    <td>Typically your first space mission</td>
+    <td>Places a simple satellite in orbit. This is a milestone step for the Manned Suborbital.<br/><br/>
+Typically your first space mission<br/><br/>
+Uses: Explorer/Sputnik</td>
   </tr>
   <tr>
     <td>2</td>
     <td>Manned Suborbital</td>
-    <td>Typically your first manned space mission</td>
+    <td>Launches a spacecraft and crew on a ballistic up-and-down mission into space, and lasts 15 minutes. This is a milestone step for the Manned Orbital.<br/><br/>
+Typically your first manned space mission<br/><br/>
+Uses: Any capsule or shuttle</td>
   </tr>
   <tr>
     <td>3</td>
     <td>Unmanned Suborbital</td>
-    <td></td>
+    <td>Launches an empty spacecraft on a ballistic up-and-down mission into space. This is a dummy test that improves your spacecraft.<br/><br/>
+Uses: Any capsule or shuttle</td>
   </tr>
   <tr>
     <td>4</td>
     <td>Manned Earth Orbital</td>
-    <td></td>
+    <td>Launches a spacecraft and crew into a simple Earth orbit. This is a milestone step for the Lunar Flyby.<br/><br/>
+Uses: Any capsule or shuttle</td>
   </tr>
   <tr>
     <td>5</td>
     <td>Unmanned Earth Orbital</td>
-    <td></td>
+    <td>Launches an empty spacecraft into a simple Earth orbit. This is a dummy test that improves your spacecraft.<br/><br/>
+Uses: Any capsule or shuttle</td>
   </tr>
   <tr>
     <td>6</td>
     <td>Manned Orbital EVA</td>
-    <td></td>
+    <td>This is a Manned Orbital that also includes a spacewalk.<br/><br/>
+Uses: Any capsule or shuttle, plus EVA suits</td>
   </tr>
   <tr>
     <td>7</td>
     <td>Lunar Flyby</td>
-    <td>Worth 5% lunar recon</td>
+    <td>Flies a probe past the Moon. Worth 5% lunar recon.<br/><br/>
+Uses: Ranger/Cosmos</td>
   </tr>
   <tr>
     <td>8</td>
     <td>Lunar Probe Landing</td>
-    <td>Worth 15% lunar recon, 5% on some failures</td>
+    <td>Lands a probe on the surface of the Moon. Worth 15% lunar recon, 5% on some failures.<br/><br/>
+Uses: Surveyor/Luna</td>
   </tr>
   <tr>
     <td>9</td>
     <td>Venus Flyby</td>
-    <td>The most worthwhile planetary flyby</td>
+    <td>Flies a probe past the planet Venus for prestige. The most worthwhile planetary flyby.</td>
   </tr>
   <tr>
     <td>10</td>
     <td>Mars Flyby</td>
-    <td>Takes 2 turns to arrive</td>
+    <td>Flies a probe past the planet Mars for prestige. Takes 2 turns to arrive.</td>
   </tr>
   <tr>
     <td>11</td>
     <td>Mercury Flyby</td>
-    <td></td>
+    <td>Flies a probe past the planet Mercury for prestige.</td>
   </tr>
   <tr>
     <td>12</td>
     <td>Jupiter Flyby</td>
-    <td>Takes 4 turns to arrive</td>
+    <td>Flies a probe past the planet Jupiter for prestige. Takes 4 turns to arrive.</td>
   </tr>
   <tr>
     <td>13</td>
     <td>Saturn Flyby</td>
-    <td>Takes 7 turns to arrive</td>
+    <td>Flies a probe past the planet Saturn for prestige. Takes 7 turns to arrive.</td>
   </tr>
   <tr>
     <td>14</td>
     <td>Manned Orbital Docking</td>
-    <td>Also doubles as dummy-testing your capsule</td>
+    <td>A Manned Orbital that tests the docking module. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>15</td>
     <td>Unmanned Orbital Docking</td>
-    <td></td>
+    <td>An Unmanned Orbital that tests the docking module robotically. DM gains 10% Safety on successes, 5% on failures. Also doubles as dummy-testing your capsule.</td>
   </tr>
   <tr>
     <td>16</td>
     <td>Joint Manned Orbital Docking</td>
-    <td></td>
+    <td>One rocket lifts the DM; the other lifts the spacecraft. The crew then makes a docking attempt.  DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>17</td>
     <td>Manned Orbital Docking (Orbit)</td>
-    <td>Requires a DM already in orbit</td>
+    <td>Manned Docking test that lifts only the spacecraft. There must be a DM already in orbit from a mission launched this turn or last.</td>
   </tr>
   <tr>
     <td>18</td>
     <td>Joint Unmanned Orbital Docking</td>
-    <td></td>
+    <td>One rocket lifts the DM; the other lifts the spacecraft. DM is robotically tested, gains 10% on successes and 5% on failures.</td>
   </tr>
   <tr>
     <td>19</td>
     <td>Joint Manned Orbitals Docking</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit and attempt to dock. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>20</td>
     <td>Manned Orbital Docking EVA</td>
-    <td></td>
+    <td>A Manned Orbital with spacewalk that tests the docking module. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>21</td>
     <td>Joint Manned Orbital Docking EVA</td>
-    <td></td>
+    <td>One rocket lifts the DM; the other lifts the spacecraft. The crew then makes a spacewalk and a docking attempt.  DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>22</td>
     <td>Joint Manned Orbitals Docking EVA</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit, peform spacewalk, and attempt to dock. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>23</td>
     <td>Joint Manned Orbitals Docking Joint EVA</td>
-    <td>As seen on Soyuz 4/5; Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit, peform two spacewalks, and attempt to dock. DM gains 10% Safety on successes, 5% on failures.<br/><br/>
+As seen on Soyuz 4/5</td>
   </tr>
   <tr>
     <td>24</td>
-    <td>Manned Orbital Docking (Orbit) </td>
-    <td>Requires a DM already in orbit</td>
+    <td>Manned Orbital Docking (Orbit) EVA</td>
+    <td>Manned spacewalk and Docking test that lifts only the spacecraft. There must be a DM already in orbit from a mission launched this turn or last.</td>
   </tr>
   <tr>
     <td>25</td>
     <td>Manned Orbital Duration</td>
-    <td></td>
+    <td>Launches a spacecraft and crew into a simple Earth orbit, but for several days.</td>
   </tr>
   <tr>
     <td>26</td>
     <td>Manned Orbital EVA Duration</td>
-    <td></td>
+    <td>This is a Manned Orbital that also includes a spacewalk, and lasts for several days.</td>
   </tr>
   <tr>
     <td>27</td>
     <td>Manned Orbital Docking Duration</td>
-    <td></td>
+    <td>A Manned Orbital that tests the docking module and then stays in orbit several days. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>28</td>
     <td>Manned Orbital Docking (Orbit) Duration</td>
-    <td>Requires a DM already in orbit</td>
+    <td>Manned Duration plus Docking test that lifts only the spacecraft. There must be a DM already in orbit from a mission launched this turn or last.</td>
   </tr>
   <tr>
     <td>29</td>
     <td>Manned Orbital Docking (Orbit) EVA Duration</td>
-    <td>Requires a DM already in orbit</td>
+    <td>Manned spacewalk, Duration, and Docking test that lifts only the spacecraft. There must be a DM already in orbit from a mission launched this turn or last.</td>
   </tr>
   <tr>
     <td>30</td>
     <td>Joint Manned Orbitals Docking EVA Duration</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit, peform spacewalk, and attempt to dock, then stay in orbit several days. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>31</td>
     <td>Joint Manned Orbital Docking Duration</td>
-    <td></td>
+    <td>One rocket lifts the DM; the other lifts the crewed spacecraft. Crew performs docking test and stays in orbit several days. DM gains 10% on successes and 5% on failures.</td>
   </tr>
   <tr>
     <td>32</td>
     <td>Joint Manned Orbiting Lab</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft launch and dock in orbit, stay for Duration C, and return home</td>
   </tr>
   <tr>
     <td>33</td>
     <td>Manned Orbital Docking EVA Duration</td>
-    <td></td>
+    <td>A Manned Orbital that tests the docking module, performs a spacewalk, and stays in orbit several days. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>34</td>
     <td>Joint Manned Orbital Docking EVA Duration</td>
-    <td></td>
+    <td>One rocket lifts the DM; the other lifts the crewed spacecraft. Crew performs spacewalk and docking test and stays in orbit several days. DM gains 10% on successes and 5% on failures.</td>
   </tr>
   <tr>
     <td>35</td>
     <td>Joint Manned Orbitals Docking EVA Duration</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit, peform spacewalk, and attempt to dock, then stay in orbit several days. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>36</td>
     <td>Joint Manned Orbiting Lab EVA</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft launch and dock in orbit, perform spacewalk, stay for Duration C, and return home</td>
   </tr>
   <tr>
     <td>37</td>
     <td>Joint Manned Orbitals Docking Duration</td>
-    <td>Requires two spacecraft</td>
+    <td>Two crewed spacecraft go into orbit and attempt to dock, then stay in orbit several days. DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>38</td>
     <td>Manned Earth Orbital LM Test</td>
-    <td>Worth 1 LM Point</td>
+    <td>Test of lunar module in Earth orbit. Worth 1 LM Point.</td>
   </tr>
   <tr>
     <td>39</td>
     <td>Joint Manned Earth Orbital LM Test</td>
-    <td>Worth 1 LM Point</td>
+    <td>One rocket lifts the LM; the other lifts the crewed spacecraft. Lunar Module is tested in Earth orbit. Worth 1 LM Point.</td>
   </tr>
   <tr>
     <td>40</td>
     <td>Manned Earth Orbital LM Test EVA Duration</td>
-    <td>Worth 1 LM Point</td>
+    <td>Test of lunar module in Earth orbit plus Duration and spacewalk. Worth 1 LM Point.</td>
   </tr>
   <tr>
     <td>41</td>
     <td>Joint Manned Earth Orbital LM Test EVA Duration</td>
-    <td>Worth 1 LM Point</td>
+    <td>One rocket lifts the LM; the other lifts the crewed spacecraft. Lunar Module is tested in Earth orbit and a spacewalk is performed, plus duration. Worth 1 LM Point.</td>
   </tr>
   <tr>
     <td>42</td>
     <td>Unmanned Lunar Pass</td>
-    <td>With capsule/shuttle, not probe; good for testing kickers</td>
+    <td>A capsule or shuttle (not a probe) is flown around the Moon; good for testing kickers</td>
   </tr>
   <tr>
     <td>43</td>
     <td>Manned Lunar Pass</td>
-    <td>Duration C mission; worth 5% lunar recon</td>
+    <td>Human beings fly around the Moon for the first time. Duration C mission; worth 5% lunar recon. This is a milestone step for the Lunar Orbital.</td>
   </tr>
   <tr>
     <td>44</td>
@@ -1192,12 +1203,12 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
   <tr>
     <td>45</td>
     <td>Unmanned Lunar Orbital</td>
-    <td>With capsule/shuttle, not probe; good for testing kickers</td>
+    <td>A capsule or shuttle (not a probe) is flown into lunar orbit; good for testing kickers</td>
   </tr>
   <tr>
     <td>46</td>
     <td>Manned Lunar Orbital</td>
-    <td>Duration D mission; worth 5% lunar recon</td>
+    <td>Human beings fly in lunar orbit for the first time. Duration D mission; worth 5% lunar recon. This is a milestone step for the Lunar Landing.</td>
   </tr>
   <tr>
     <td>47</td>
@@ -1207,12 +1218,12 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
   <tr>
     <td>48</td>
     <td>Manned Lunar Orbital LM Test</td>
-    <td>Duration D mission; worth 2 LM Points and 5% lunar recon</td>
+    <td>Humans fly in lunar orbit and test the Lunar Module. Duration D mission; worth 2 LM Points and 5% lunar recon. Can double as Lunar Orbital.</td>
   </tr>
   <tr>
     <td>49</td>
     <td>Joint Manned Lunar Orbital LM Test: LOR</td>
-    <td>Duration D mission; worth 2 LM Points and 5% lunar recon</td>
+    <td>One rocket launches LM to the Moon; the other sends the spacecraft there, and then the lunar module is tested. Duration D mission; worth 2 LM Points and 5% lunar recon. Can double as Lunar Orbital.</td>
   </tr>
   <tr>
     <td>50</td>
@@ -1222,37 +1233,40 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
   <tr>
     <td>51</td>
     <td>Joint Manned Lunar Orbital LM Test: LOR EVA</td>
-    <td>Duration D mission; worth 2 LM Points and 5% lunar recon</td>
+    <td>One rocket launches LM to the Moon; the other sends the spacecraft there, and then a spacewalk is performed and the lunar module is tested. Duration D mission; worth 2 LM Points and 5% lunar recon. Can double as Lunar Orbital.</td>
   </tr>
   <tr>
     <td>52</td>
     <td>Joint Manned Lunar Orbital LM Test: EOR</td>
-    <td>Duration D mission; worth 2 LM Points and 5% lunar recon</td>
+    <td>One rocket launches LM to Earth orbit; the other sends up the spacecraft, and they fly together to the Moon, where the lunar module is then tested. Duration D mission; worth 2 LM Points and 5% lunar recon. Can double as Lunar Orbital.</td>
   </tr>
   <tr>
     <td>53</td>
     <td>Historical Manned Lunar Landing</td>
-    <td>As seen on Apollos 11, 12, 14, 15, 16, & 17</td>
+    <td>One rocket launches capsule/shuttle and LM to the Moon together and landing is attempted.<br/><br/>
+As seen on Apollos 11, 12, 14, 15, 16, & 17</td>
   </tr>
   <tr>
     <td>54</td>
     <td>Direct Ascent Lunar Landing</td>
-    <td>As seen in old science fiction, but bigger</td>
+    <td>One rocket launches a Jupiter/LK-700 capsule straight to the Moon.<br/><br/>
+As seen in old science fiction, but bigger</td>
   </tr>
   <tr>
     <td>55</td>
     <td>Joint Lunar Landing: EOR</td>
-    <td>Capsule/shuttle & LM fly to the Moon together</td>
+    <td>One rocket launches the LM into orbit, another launches the capsule/shuttle. They dock in Earth orbit, fly to the Moon together and attempt the landing.</td>
   </tr>
   <tr>
     <td>56</td>
     <td>Joint Lunar Landing: LOR</td>
-    <td>Capsule/shuttle & LM fly to the Moon separately</td>
+    <td>One rocket sends the LM to lunar orbit; another sends the capsule/shuttle there. They dock in lunar orbit and then attempt the landing.<br/><br/>
+Note: the LM will require a kicker.</td>
   </tr>
   <tr>
     <td>57</td>
     <td>Soyuz Lunar Landing</td>
-    <td>Soviet only; Joint mission using Soyuz with a C-Kicker</td>
+    <td>Soviet only. One rocket sends Kicker-C to lunar orbit; another sends a Soyuz capsule. They dock in lunar orbit and then attempt the landing.</td>
   </tr>
 </table>
 
