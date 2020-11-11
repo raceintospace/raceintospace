@@ -1259,6 +1259,17 @@ void Future(char plr)
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
 
+            } else if (x >= 6 && y >= 25 && x <= 200 && y <= 46 && mousebuttons > 0) {
+                // Show description of mission
+                InBox(5, 24, 201, 47);
+                int helpIndex = 300 + misType;
+                char helpEntry[5];
+                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);                
+                WaitForMouseUp();
+                delay(100);
+                OutBox(5, 24, 201, 47);
+                Help(helpEntry);
+
             } else if (x >= 203 && y >= 34 && x <= 241 && y <= 44 && mousebuttons > 0) {
                 // Penalties popup
                 InBox(203, 33, 238, 46);
