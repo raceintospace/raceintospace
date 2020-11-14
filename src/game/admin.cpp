@@ -69,6 +69,34 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
+namespace
+{
+enum FileButtons {
+    ENABLE_LOAD = 0x01,
+    ENABLE_SAVE = 0x02,
+    ENABLE_PBEM = 0x04,
+    ENABLE_DELETE = 0x08,
+    ENABLE_PLAY = 0x10,
+    ENABLE_QUIT = 0x20
+};
+
+enum SaveGameType {
+    SAVEGAME_Normal = 0x01,
+    SAVEGAME_PlayByMail = 0x02,
+    SAVEGAME_Modem = 0x04
+};
+
+inline SaveGameType operator|(SaveGameType a, SaveGameType b);
+inline SaveGameType operator&(SaveGameType a, SaveGameType b);
+
+struct SFInfo {
+    char Name[20], Title[23];
+    uint16_t time, date;
+    SaveGameType type;
+};
+};  // End of anon namespace
+
+
 void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
 void DrawTimeCapsule(int display);
 std::vector<SFInfo> GenerateTables(SaveGameType saveType);
@@ -84,14 +112,17 @@ void SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
 {
-enum FileButtons {
-    ENABLE_LOAD = 0x01,
-    ENABLE_SAVE = 0x02,
-    ENABLE_PBEM = 0x04,
-    ENABLE_DELETE = 0x08,
-    ENABLE_PLAY = 0x10,
-    ENABLE_QUIT = 0x20
-};
+inline SaveGameType operator|(SaveGameType a, SaveGameType b)
+{
+    return static_cast<SaveGameType>(
+               static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline SaveGameType operator&(SaveGameType a, SaveGameType b)
+{
+    return static_cast<SaveGameType>(
+               static_cast<int>(a) & static_cast<int>(b));
+}
 };
 
 
@@ -329,7 +360,7 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 
         type = GetSaveType(header);
 
-        if (saveType == SAVEGAME_Normal || saveType == type) {
+        if (type & saveType) {
             memset(&saveInfo, 0, sizeof(saveInfo));
             strcpy(saveInfo.Title, header.Name);
             strcpy(saveInfo.Name, ffblk.ff_name);
@@ -361,10 +392,7 @@ void FileAccess(char mode)
     char sc = 0;
     int i, now, done, BarB, temp;
     FILE *fin, *fout;
-    char Name[12];
     SaveGameType saveType = SAVEGAME_Normal;
-    const int SCRATCH_SIZE = 64000;
-    char scratch[SCRATCH_SIZE];  // scratch buffer, will be tossed automatically at the end of the routine
 
     //sp. case -> no regular save off mail/modem game
     if ((mode == 0 || mode == 1) && (MAIL != -1 || Option != -1)) {
@@ -384,13 +412,21 @@ void FileAccess(char mode)
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
 
-    saveType = SAVEGAME_Normal;
+#ifdef ALLOW_PBEM
+
+    saveType = SAVEGAME_Normal | SAVEGAME_Modem | SAVEGAME_PlayByMail;
 
     if (Option != -1) {
         saveType = SAVEGAME_Modem;
     } else if (mode == 2) {
         saveType = SAVEGAME_PlayByMail;
     }
+
+#else
+
+    saveType = SAVEGAME_Normal;
+
+#endif
 
     std::vector<SFInfo> savegames = GenerateTables(saveType);
 
@@ -498,16 +534,8 @@ void FileAccess(char mode)
             if (i == 1) {
 
                 remove_savedat(savegames[now].Name);
-                memset(Name, 0x00, sizeof Name);
-                saveType = SAVEGAME_Normal;
-
-                if (Option != -1) {
-                    saveType = SAVEGAME_Modem;
-                } else if (mode == 2) {
-                    saveType = SAVEGAME_PlayByMail;
-                }
-
-                savegames = GenerateTables(saveType);
+                savegames.erase(savegames.begin() + now);
+                // TODO: Preserve positioning
                 now = 0;
                 BarB = 0;
                 DrawFiles(now, BarB, savegames);

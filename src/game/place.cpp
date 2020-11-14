@@ -69,18 +69,24 @@ int MainMenuChoice()
         int y;
         const char *hotkeys;
     } const menu_options[] = {
-        { "NEW GAME", 9, "N" },
-        { "PLAY BY MAIL", 63, "P"},
-        { "OLD GAME", 36, "O" },
-        { "CREDITS", 90, "C" },
-        { "EXIT", 117, "EXQ" }
+        { "NEW GAME", 9 + 27 * MAIN_NEW_GAME, "N" },
+        { "OLD GAME", 9 + 27 * MAIN_OLD_GAME, "O" },
+#ifdef ALLOW_PBEM
+        { "PLAY BY MAIL", 9 + 27 * MAIN_PBEM_GAME, "P"},
+#endif
+        { "CREDITS", 9 + 27 * MAIN_CREDITS, "C" },
+        { "EXIT", 9 + 27 * MAIN_EXIT, "EXQ" }
     };
     const int menu_option_count = sizeof(menu_options) / sizeof(menu_options[0]);
 
     int selected_option = -1;
 
     {
+#ifdef ALLOW_PBEM
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/main_menu.png"));
+#else
+        boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/main_menu_4slot.png"));
+#endif
 
         image->exportPalette();
         display::graphics.screen()->draw(image, 0, 0);
