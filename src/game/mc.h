@@ -24,4 +24,6 @@ extern char fEarly;
 extern char mcc;
 extern char hero;
 
+Equipment * GetEquipment(const struct MisEval &Mev);
+
 #endif // MC_H
