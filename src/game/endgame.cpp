@@ -18,7 +18,7 @@
 /** \file endgame.cpp End Game Routines
  */
 
-// This file shows the End Game screen, intuitively enough.
+// This file shows the End Game screen, intuitively enough - also shows the Prestige First window
 
 #include "endgame.h"
 
@@ -349,7 +349,7 @@ void EndGame(char win, char pad)
         }
     }
 
-    //Print the first on the Moon
+    // Print the first to walk on the Moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
@@ -1108,7 +1108,7 @@ LoserPict(char poff, unsigned char coff)
     boost::shared_ptr<display::PalettizedSurface> image(
         Filesystem::readImage(filename));
 
-    image->exportPalette(coff, coff + 127); // 128-color palette
+    image->exportPalette(coff, coff + 127);  // 128-color palette
     display::graphics.screen()->draw(image, x, y);
 }
 
@@ -1121,17 +1121,17 @@ void PlayFirst(char plr, char first)
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     music_start(M_LIFTOFF);
-    ShBox(80, 18, 240, 39);
-    draw_heading(92, 22, "PRESTIGE FIRST", 0, -1);
-    ShBox(80, 41, 240, 132);
-    InBox(84, 45, 236, 128);
-    fill_rectangle(85, 46, 235, 127, 0);
-    ShBox(80, 134, 240, 189); //77 first parameter
+    ShBox(80, 10, 240, 31);
+    draw_heading(92, 14, "PRESTIGE FIRST", 0, -1);
+    ShBox(80, 33, 240, 124);
+    InBox(84, 37, 236, 118);
+    //fill_rectangle(85, 46, 235, 125, 0);
+    ShBox(80, 126, 240, 190);  // 77 first parameter
     display::graphics.setForegroundColor(1);
-    draw_string(84, 141, "GOAL STEP COMPLETE: ");
+    draw_string(84, 132, "GOAL STEP COMPLETE: ");
     display::graphics.setForegroundColor(6);
 
-//Modem Opponent => assure prestige first that mission
+// Modem Opponent => assure prestige first that mission
     Check = Data->Prestige[first].Index;
     index = plr;
 
@@ -1146,13 +1146,13 @@ void PlayFirst(char plr, char first)
 
         if (Data->Prestige[i].Place == index && !(Data->PD[plr][i] & 2)) {
             if (Option == -1 && MAIL == -1) {
-                draw_string(84, 148 + w * 8, &PF[i][0]);
+                draw_string(84, 140 + w * 8, &PF[i][0]);
                 ++w;
                 Data->PD[index][i] |= 2;
             } else {
-                //Found prestige first same mission
+                // Found prestige first same mission
                 if (Data->Prestige[i].Index == Check) {
-                    draw_string(84, 148 + w * 8, &PF[i][0]);
+                    draw_string(84, 140 + w * 8, &PF[i][0]);
                     ++w;
                     Data->PD[index][i] |= 2;
                 }
@@ -1163,10 +1163,11 @@ void PlayFirst(char plr, char first)
     display::graphics.setForegroundColor(7);
     FadeIn(2, 10, 0, 0);
 
+    // Play the mission replay video
     if (Option == -1 && MAIL == -1) {
-        Replay(plr, Data->P[plr].PastMissionCount - 1, 85, 46, 151, 82, "OOOO");
+        Replay(plr, Data->P[plr].PastMissionCount - 1, 85, 38, 150, 80, "OOOO");
     } else {
-        Replay(index, Data->Prestige[first].Index, 85, 46, 151, 82, "OOOO");
+        Replay(index, Data->Prestige[first].Index, 85, 38, 150, 80, "OOOO");
     }
 
     PauseMouse();
@@ -1176,7 +1177,7 @@ void PlayFirst(char plr, char first)
     return;
 }
 
-/* Play all pending Prestige First videos. */
+/* Play all pending Prestige First videos */
 void PlayAllFirsts(char plr)
 {
     int i;
