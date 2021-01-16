@@ -1131,11 +1131,11 @@ char FailureMode(char plr, int prelim, char *text)
         switch (prelim) {
         case 0:
             display::graphics.setForegroundColor(15);
-            draw_string(10, 122, "ALL SYSTEMS ARE GO");
+            draw_string(30, 122, "ALL SYSTEMS ARE GO");
             break;
 
         case 1:
-            draw_string(10, 122, "FAILURE: USE ALTERNATE");
+            draw_string(19, 122, "FAILURE: USE ALTERNATE");
             break;
 
         case 2:
@@ -1143,28 +1143,28 @@ char FailureMode(char plr, int prelim, char *text)
             break;
 
         case 4:
-            draw_string(10, 122, "CREW STRANDED IN SPACE");
+            draw_string(19, 122, "CREW STRANDED IN SPACE");
             break;
 
         case 5:
-            draw_string(10, 122, "MISSION FAILURE");
+            draw_string(39, 122, "MISSION FAILURE");
             break;
 
         case 6:
             display::graphics.setForegroundColor(15);
-            draw_string(10, 121, "MISSION SUCCESS");
+            draw_string(33, 121, "MISSION SUCCESS");
             break;
 
         case 7:
-            draw_string(10, 122, "STEP FAILURE");
+            draw_string(45, 122, "STEP FAILURE");
             break;
 
         case 8:
-            draw_string(10, 122, "CATASTROPHIC FAILURE");
+            draw_string(23, 122, "CATASTROPHIC FAILURE");
             break;
 
         case 9:
-            draw_string(10, 122, "CREW INJURIES");
+            draw_string(44, 122, "CREW INJURIES");
             break;
         }
     }
