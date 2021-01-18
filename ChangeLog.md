@@ -211,6 +211,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - All the Credits now in a different color to be easier to read against the background (#211)<br/>
 - Added names for people who were mentioned in a text file on the CD version but didn't actually 
   make it into the credits for that version<br/>
+- The result text in the Step Failure screen ("Catastrophic Failure", "All Systems Are Go", etc.) is 
+  now centered in its box.  It used to be left-justified.<br/>
 - When playing against the AI, at the end of the game, if you clicked on STATS, it showed your 
   opponent's name as COMPUTER# (e.g., COMPUTER2), the # representing which strategy the computer 
   player used.  Now it gives the name of the AI player and tells the strategy number. (#323)<br/>
