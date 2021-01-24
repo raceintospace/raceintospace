@@ -24,8 +24,9 @@ Below are improvements that have been made over what the game offered in v.1.1.
   missions as well (#164)
 - 'Nauts killed in a newscast (train accident, etc.) are now removed immediately (#240)
    - Before, they wouldn't be removed until the start of the following turn, making it possible for 
-     the dead crew member to fly on a mission<br/>
-<br/>
+     the dead crew member to fly on a mission
+
+
 - The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
    - Before, it had called it "the H launch facility"
 - When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
