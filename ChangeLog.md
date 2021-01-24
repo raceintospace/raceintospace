@@ -118,8 +118,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - In Future Missions, the name box is now also a button that brings up a description of the currently
   selected mission (#492)<br/>
 - Mission Control also now includes a penalty pop-up, activated by clicking on the image of the pad
-  on the left. (#168)<br/>
-<br/>
+  on the left. (#168)<br/><br/>
 - When the computer player wins the game, you now see its Moon landing play out like other prestige 
   firsts.<br/>
 - Increased height of Prestige First window so one more prestige first can be listed - which also 
