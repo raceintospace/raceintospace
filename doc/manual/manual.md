@@ -1348,7 +1348,7 @@ You'll also want to develop the Ranger satellite and fly Lunar Flybys to accumul
 
 *Note: The Intelligence screens move some hardware around (e.g., LMs show under Unmanned) to avoid crowding the displays.*
 
-(image_31.png)
+![Unmanned](image_31.png)
 <table>
   <tr>
     <td>Unmanned (Satellites & Probes)<br/>
@@ -1367,7 +1367,7 @@ Luna</td>
 </table>
 
 
-(image_32.png)
+![Rockets](image_32.png)
 <table>
   <tr>
     <td>Rockets<br/>
@@ -1384,7 +1384,7 @@ UR-700</td>
 </table>
 
 
-(image_33.png)
+![Capsules](image_33.png)
 <table>
   <tr>
     <td>Capsule (and Minishuttle)<br/>
@@ -1403,7 +1403,7 @@ LK-700</td>
 </table>
 
 
-(image_34.png)
+![Miscellaneous](image_34.png)
 <table>
   <tr>
     <td>Miscellaneous<br/>
