@@ -997,14 +997,14 @@ void SpecialEnd(void)
 
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 24);
-    draw_heading(5, 5, "FAILED OBJECTIVE", 1, -1);
+    draw_heading(7, 5, "FAILED OBJECTIVE", 1, -1);
     ShBox(0, 26, 319, 199);
     fill_rectangle(1, 27, 318, 198, 7);
     InBox(5, 31, 314, 194);
     fill_rectangle(6, 32, 313, 193, 3);
     IOBox(242, 3, 315, 19);
     display::graphics.setForegroundColor(1);
-    draw_string(258, 13, "CONTINUE");
+    draw_string(257, 13, "CONTINUE");
     ShBox(6, 109, 313, 119);
     ShBox(6, 151, 313, 161);
     display::graphics.setForegroundColor(9);
