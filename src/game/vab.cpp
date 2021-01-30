@@ -332,7 +332,7 @@ void DispVAB(char plr, char pad)
     draw_string(0, 0, mission.Name);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 61, "CREW: ");
+    draw_string(5, 62, "CREW: ");
 
     switch (mission.Men) {
     case 0:
@@ -364,7 +364,7 @@ void DispVAB(char plr, char pad)
     struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 52, missionPlan.Abbr);
+    draw_string(5, 53, missionPlan.Abbr);
 
     // Show duration level only on missions with a Duration step  -Leon
     if (IsDuration(mission.MissionCode)) {
@@ -1002,11 +1002,11 @@ void DispWts(int payload, int thrust)
     fill_rectangle(5, 65, 140, 83, 3);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 77, "MAXIMUM PAYLOAD: ");
+    draw_string(5, 78, "MAXIMUM PAYLOAD: ");
     draw_number(0, 0, thrust);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 70, "CURRENT PAYLOAD: ");
+    draw_string(5, 71, "CURRENT PAYLOAD: ");
 
     if (thrust < payload) {
         display::graphics.setForegroundColor(9);
