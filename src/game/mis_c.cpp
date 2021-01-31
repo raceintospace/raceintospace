@@ -1135,7 +1135,7 @@ char FailureMode(char plr, int prelim, char *text)
             break;
 
         case 1:
-            draw_string(19, 122, "FAILURE: USE ALTERNATE");
+            draw_string(20, 122, "FAILURE: USE ALTERNATE");
             break;
 
         case 2:
