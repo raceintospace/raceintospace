@@ -38,6 +38,7 @@ LegacySurface *Graphics::legacyScreen()
 
 void Graphics::create(const std::string &title, bool fullscreen)
 {
+    uint32_t modeFlag = 0;
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
         throw std::runtime_error(SDL_GetError());
@@ -50,9 +51,11 @@ void Graphics::create(const std::string &title, bool fullscreen)
     //END:TODO
 
 
+    if (fullscreen) {
+        modeFlag = SDL_FULLSCREEN;
+    }
 
-
-    _display = SDL_SetVideoMode(WIDTH * SCALE, HEIGHT * SCALE, 24, 0);
+    _display = SDL_SetVideoMode(WIDTH * SCALE, HEIGHT * SCALE, 24, modeFlag);
 
     if (!_display) {
         throw std::runtime_error(SDL_GetError());
@@ -101,6 +104,8 @@ void Graphics::destroy()
     _scaledScreen = NULL;
     _screen = NULL;
     _display = NULL;
+
+    SDL_Quit();
 }
 
 void Graphics::setForegroundColor(char color)
