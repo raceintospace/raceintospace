@@ -1351,7 +1351,7 @@ You'll also want to develop the Ranger satellite and launch Lunar Flybys to accu
 ![Unmanned](image_31.png)
 <table>
   <tr>
-    <td>**Unmanned** (Satellites & Probes)<br/>
+    <td>Unmanned (Satellites & Probes)<br/>
 
 Cricket (moved from Capsule)<br/>
 LK (moved from Capsule)<br/>
@@ -1370,7 +1370,7 @@ Luna</td>
 ![Rockets](image_32.png)
 <table>
   <tr>
-    <td>**Rockets**<br/>
+    <td>Rockets<br/>
 
 Atlas<br/>
 R-7<br/>
@@ -1387,7 +1387,7 @@ UR-700</td>
 ![Capsules](image_33.png)
 <table>
   <tr>
-    <td>**Capsule** (and Minishuttle)<br/>
+    <td>Capsule (and Minishuttle)<br/>
 
 Mercury<br/>
 Vostok<br/>
@@ -1406,7 +1406,7 @@ LK-700</td>
 ![Miscellaneous](image_34.png)
 <table>
   <tr>
-    <td>**Miscellaneous**<br/>
+    <td>Miscellaneous<br/>
 
 US EVA suit<br/>
 Soviet EVA suit<br/>
