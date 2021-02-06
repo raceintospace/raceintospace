@@ -63,6 +63,8 @@
 #include "vehicle.h"
 #include "vehicle_selector.h"
 
+int currentPayload;
+
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
@@ -624,6 +626,7 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
     }
 
     draw_string(0, 0, "%");
+    currentPayload = payloadWeight;
 
     return;
 }
@@ -1112,9 +1115,13 @@ void VAB(char plr)
 
                 int cost = FillVab(plr, ccc, 0) +
                            BuyVabRkt(plr, rocket, 0);
-
                 if (Data->P[plr].Cash >= cost && ac == true) {
-                    if (Help("i166") > 0) {
+                    int goAhead;
+                    if (rocket.thrust() >= currentPayload) { goAhead = 1; } else { goAhead = 0; }
+                    if (goAhead < 1) {
+                        goAhead = Help("i166");
+                    }
+                    if (goAhead > 0) {
                         FillVab(plr, ccc, 1);
                         BuyVabRkt(plr, rocket, 1);
                         // Repopulate VAB data to update components with
