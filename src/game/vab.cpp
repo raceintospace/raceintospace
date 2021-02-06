@@ -1114,15 +1114,16 @@ void VAB(char plr)
                            BuyVabRkt(plr, rocket, 0);
 
                 if (Data->P[plr].Cash >= cost && ac == true) {
-                    FillVab(plr, ccc, 1);
-                    BuyVabRkt(plr, rocket, 1);
-                    // Repopulate VAB data to update components with
-                    // autopurchased quantities.
-                    BuildVAB(plr, mis, 0, 0, 1);
+                    if (Help("i166") > 0) {
+                        FillVab(plr, ccc, 1);
+                        BuyVabRkt(plr, rocket, 1);
+                        // Repopulate VAB data to update components with
+                        // autopurchased quantities.
+                        BuildVAB(plr, mis, 0, 0, 1);
 
-
-                    //display cost (XX of XX)
-                    ShowAutopurchase(plr, ccc, rocket);
+                        //display cost (XX of XX)
+                        ShowAutopurchase(plr, ccc, rocket);
+                    }  
                 } else if (ac == false) {
                     Help("i135");    // delay on purchase
                 } else {
