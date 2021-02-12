@@ -214,31 +214,31 @@ There are four categories of space hardware:
 
 <table>
 <tr>
-  <td>Satellites:
-    * Explorer/Sputnik
-    * Ranger/Cosmos
-    * Surveyor/Luna</td>
-  <td>Launch Vehicles:
-    * Atlas/R-7
-    * Titan/Proton
-    * Saturn/N1
-    * Nova/UR-700
-    * Boosters</td>
+  <td>Satellites:<br/>
+    Explorer/Sputnik<br/>
+    Ranger/Cosmos<br/>
+    Surveyor/Luna</td>
+  <td>Launch Vehicles:<br/>
+    Atlas/R-7<br/>
+    Titan/Proton<br/>
+    Saturn/N1<br/>
+    Nova/UR-700<br/>
+    Boosters</td>
 </tr><tr>
-  <td>Manned Spacecraft:
-    * Mercury/Vostok
-    * Gemini/Voskhod
-    * Apollo/Soyuz
-    * XMS-2/Lapot
-    * Jupiter/LK-700
-    * Eagle/LKM
-    * Cricket/LK</td>
-  <td>Miscellaneous:
-    * Kicker-A
-    * Kicker-B
-    * Kicker-C (USSR only)
-    * EVA Suit
-    * Docking Module</td>
+  <td>Manned Spacecraft:<br/>
+    Mercury/Vostok<br/>
+    Gemini/Voskhod<br/>
+    Apollo/Soyuz<br/>
+    XMS-2/Lapot<br/>
+    Jupiter/LK-700<br/>
+    Eagle/LKM<br/>
+    Cricket/LK</td>
+  <td>Miscellaneous:<br/>
+    Kicker-A<br/>
+    Kicker-B<br/>
+    Kicker-C (USSR only)<br/>
+    EVA Suit<br/>
+    Docking Module</td>
 </tr>
 </table>
 
@@ -1002,7 +1002,7 @@ As seen on Sputnik 1 and Explorer 1, 3, 4.</td>
     <td>2</td>
     <td>Manned Suborbital</td>
     <td>Launches a spacecraft and crew on a ballistic up-and-down mission into space, lasting 15 minutes. This is a milestone step for the Manned Orbital.<br/>
-Typically your first *manned* space mission.<br/>
+Typically your first _manned_ space mission.<br/>
 As seen on Mercury 3, 4.</td>
   </tr>
   <tr>
@@ -1356,6 +1356,7 @@ You'll also want to develop the Ranger satellite and launch Lunar Flybys to accu
 *Note: The Intelligence screens move some hardware around (LMs show under Unmanned, boosters under Misc) to avoid crowding the displays.*
 
 ![Unmanned](image_31.png)
+<br/>
 **Unmanned (Satellites & Probes)**
 <table>
   <tr>
@@ -1375,6 +1376,7 @@ Luna</td>
 
 
 ![Rockets](image_32.png)
+<br/>
 **Rockets**
 <table>
   <tr>
@@ -1392,6 +1394,7 @@ UR-700</td>
 
 
 ![Capsules](image_33.png)
+<br/>
 **Capsule (and Minishuttle)**
 <table>
   <tr>
@@ -1411,6 +1414,7 @@ LK-700</td>
 
 
 ![Miscellaneous](image_34.png)
+<br/>
 **Miscellaneous**
 <table>
   <tr>
