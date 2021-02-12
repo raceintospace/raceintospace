@@ -214,27 +214,27 @@ There are four categories of space hardware:
 
 <table>
 <tr>
-  <td>Satellites:<br/>
-    Explorer/Sputnik<br/>
+  <td>Satellites:</td>
+  <td>Launch Vehicles:</td>
+  <td>Manned Spacecraft:</td>
+  <td>Miscellaneous:</td>
+</tr><tr>
+  <td>Explorer/Sputnik<br/>
     Ranger/Cosmos<br/>
     Surveyor/Luna</td>
-  <td>Launch Vehicles:<br/>
-    Atlas/R-7<br/>
+  <td>Atlas/R-7<br/>
     Titan/Proton<br/>
     Saturn/N1<br/>
     Nova/UR-700<br/>
     Boosters</td>
-</tr><tr>
-  <td>Manned Spacecraft:<br/>
-    Mercury/Vostok<br/>
+  <td>Mercury/Vostok<br/>
     Gemini/Voskhod<br/>
     Apollo/Soyuz<br/>
     XMS-2/Lapot<br/>
     Jupiter/LK-700<br/>
     Eagle/LKM<br/>
     Cricket/LK</td>
-  <td>Miscellaneous:<br/>
-    Kicker-A<br/>
+  <td>Kicker-A<br/>
     Kicker-B<br/>
     Kicker-C (USSR only)<br/>
     EVA Suit<br/>
@@ -1002,7 +1002,7 @@ As seen on Sputnik 1 and Explorer 1, 3, 4.</td>
     <td>2</td>
     <td>Manned Suborbital</td>
     <td>Launches a spacecraft and crew on a ballistic up-and-down mission into space, lasting 15 minutes. This is a milestone step for the Manned Orbital.<br/>
-Typically your first _manned_ space mission.<br/>
+Typically your first Manned space mission.<br/>
 As seen on Mercury 3, 4.</td>
   </tr>
   <tr>
