@@ -196,7 +196,7 @@ Five offices are located here:
 
 On the left you see one graph displaying your and your opponent's prestige over the past two years, and another showing selectable information on your expenditures in the four different classifications of space hardware.  On the right you see your budget over the past two years, next to an estimate of your opponent's, courtesy of the CIA/KGB.
 
-![Hardware description pop-up](image_3.5.png)
+![Hardware Purchase](image_3.4.png)
 
 #### Hardware Purchase
 
@@ -207,6 +207,10 @@ There is a built-in advantage to developing programs in progressive order, calle
 In BARIS, this was all or nothing.  If a component wasn't quite at 75%, it would give no tech transfer at all.  RIS (starting with v.1.1) gives partial tech transfer when your hardware is above starting Safety.
 
 Technology transfer is a good and useful thing, but you don't have to take advantage of it.  It will sometimes be in your interest to skip programs or take alternate paths to your objective.  You will get a feel for this over time.
+
+![Hardware description pop-up](image_3.5.png)
+
+If you click on the image on the left, you'll see a pop-up description of that piece of hardware.
 
 The "Visit  R&D Facility" button is a shortcut to your Research building.  You can't just start, say, a capsule program and use it immediately; you first have to invest time and money to make it spaceworthy.
 
@@ -402,7 +406,7 @@ Once a year, your country's leader reviews your performance.  If you're doing ve
 
 If you scheduled a mission last turn, you now need to assemble it for launch.  In the top left you'll see the mission name and type, and an Autopurchase button to make it easy to buy the equipment for it.  On the right you see the hardware as currently assembled—when you change the configuration, this display will update to match it.  To change rockets or add/remove boosters, click on the Rocket button near the bottom left.  It defaults to the smallest rocket that can lift the payload without boosters; if you want to use a smaller rocket with boosters (e.g., B/Titan), click the button a few times.  Whatever the mission, your rocketry needs a high enough Maximum Payload to launch the Current Payload (above the Autopurchase button).  To change the payload (generally, to switch kickers or lunar landers), click on the larger button above the Rocket button.  Note that Autopurchase does not prompt you for confirmation (unless the rocketry can't lift the payload) and cannot be undone.
 
-Once you're ready, click the Assign button or press Enter.  If you want to cancel out of this screen without assigning anything, press Exit.  If you want to cancel the flight entirely, press Scrub.  If your hardware isn't quite ready yet (like the rocket in the above example) and you want to fly it next turn instead, press the Delay button.
+Once you're ready, click the Assign button or press Enter.  If you want to cancel out of this screen without assigning anything, press Exit.  If you want to cancel the flight entirely, press Scrub.  If your hardware isn't quite ready yet (like the LM in the above example) and you want to fly it next turn instead, press the Delay button.
 
 It is often a good idea to make this your first stop when you begin your turn, so you don't accidentally spend all your money on research when you need to buy hardware for a launch.
 
