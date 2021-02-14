@@ -107,7 +107,7 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-
+int goAhead;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -1049,9 +1049,19 @@ void Future(char plr)
 
                 key = 0;
 
-                if (! FutureMissionOk(plr, nav, misType)) {
-                    OutBox(244, 5, 313, 17);
-                    continue;
+                if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
+                    if (goAhead != 1) {
+                        goAhead = Help("i167");
+                    } 
+                    if (goAhead != 1) { 
+                       OutBox(244, 5, 313, 17);
+                       continue; 
+                    }
+                } else {
+                    if (! FutureMissionOk(plr, nav, misType)) {
+                        OutBox(244, 5, 313, 17);
+                        continue;
+                    }
                 }
 
                 OutBox(244, 5, 313, 17);
