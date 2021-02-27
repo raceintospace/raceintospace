@@ -1042,6 +1042,7 @@ void Future(char plr)
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
+                goAhead = 0;
 
                 if (key > 0) {
                     delay(300);
@@ -1060,6 +1061,7 @@ void Future(char plr)
                 } else {
                     if (! FutureMissionOk(plr, nav, misType)) {
                         OutBox(244, 5, 313, 17);
+                        goAhead = 0;
                         continue;
                     }
                 }
