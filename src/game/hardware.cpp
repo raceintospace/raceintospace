@@ -77,26 +77,28 @@ int CrewSize(const Equipment &program)
  */
 MissionHardwareType HardwareType(const Equipment &program)
 {
+    int categoryIndex = int(program.ID[1] - '0');
+
     switch (program.ID[0]) {
     case 'P':
         return Mission_Probe_DM;
 
     case 'C':
-        return (program.ID[1] <= MANNED_HW_FOUR_MAN_CAPSULE)
+        return (categoryIndex <= MANNED_HW_FOUR_MAN_CAPSULE)
                ? Mission_Capsule : Mission_LM;
 
     case 'R':
-        return (program.ID[1] != ROCKET_HW_BOOSTERS)
+        return (categoryIndex != ROCKET_HW_BOOSTERS)
                ? Mission_PrimaryBooster : Mission_SecondaryBooster;
 
     case 'M':
-        if (program.ID[1] <= MISC_HW_KICKER_C) {
+        if (categoryIndex <= MISC_HW_KICKER_C) {
             return Mission_Kicker;
-        } else if (program.ID[1] == MISC_HW_EVA_SUITS) {
+        } else if (categoryIndex == MISC_HW_EVA_SUITS) {
             return Mission_EVA;
-        } else if (program.ID[1] == MISC_HW_DOCKING_MODULE) {
+        } else if (categoryIndex == MISC_HW_DOCKING_MODULE) {
             return Mission_Probe_DM;
-        } else if (program.ID[1] == MISC_HW_PHOTO_RECON) {
+        } else if (categoryIndex == MISC_HW_PHOTO_RECON) {
             return Mission_PhotoRecon;
         } else {
             throw std::invalid_argument(
