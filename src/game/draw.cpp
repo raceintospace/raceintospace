@@ -745,6 +745,19 @@ void draw_character(char chr)
         break;
 
     case '@':
+        MR(1, 0);
+        LR(0, 0);
+        MR(-1, -1);
+        LR(0, -2);
+        MR(1, -1);
+        LR(2, 0);
+        MR(1, 1);
+        LR(0, 2);
+        MR(-1, -1);
+        LR(0, 1);
+        MR(4, 1);
+        break;
+
     case '#':
         MR(1, 0);
         LR(0, -4);
@@ -809,15 +822,14 @@ void draw_character(char chr)
         break;
 
     case '*':
-        MR(1, 0);
-        LR(0, -4);
-        MR(-1, 1);
-        LR(4, 0);
-        MR(-1, -1);
+        LR(4, -4);
+        MR(-2, 0);
         LR(0, 4);
-        MR(1, -1);
-        LR(-4, 0);
-        MR(6, 1);
+        MR(-2, -2);
+        LR(4, 0);
+        MR(-4, -2);
+        LR(4, 4);
+        MR(2, 0);
         break;
 
     case '^':
