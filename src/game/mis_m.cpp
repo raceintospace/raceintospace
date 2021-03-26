@@ -1380,6 +1380,14 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 std::vector<Astros *> LMCrew(int pad, Equipment *module)
 {
     assert(pad >= 0 && pad <= JOINT);
+
+    if (module == NULL) {
+        ERROR1("LMCrew: argument 'module' is null");
+    } else if (HardwareType(*module) != Mission_LM) {
+        ERROR3("LMCrew: module ID %c%c is not a lunar module",
+               module->ID[0], module->ID[1]);
+    }
+
     assert(module && HardwareType(*module) == Mission_LM);
 
     std::vector<Astros *> crew;
