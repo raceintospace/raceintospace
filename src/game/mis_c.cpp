@@ -1034,7 +1034,7 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
         display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white  -Leon
     }
 
-    draw_string(xa, ya - 1, Guy->Name);
+    draw_string(xa, ya, Guy->Name);
     draw_string(0, 0, ": ");
 
     switch (Guy->Status) {
@@ -1185,7 +1185,7 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] > 1) {
-        GuyDisp(49, 147, MA[Mev[STEP].pad][1].A);
+        GuyDisp(49, 146, MA[Mev[STEP].pad][1].A);
     }
 
     if (MANNED[Mev[STEP].pad] > 2) {
@@ -1193,7 +1193,7 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] > 3) {
-        GuyDisp(182, 147, MA[Mev[STEP].pad][3].A);
+        GuyDisp(182, 146, MA[Mev[STEP].pad][3].A);
     }
 
     if (MANNED[Mev[STEP].pad] == 0) {
@@ -1218,23 +1218,30 @@ char FailureMode(char plr, int prelim, char *text)
     display::graphics.setForegroundColor(11);  // Specialist
 
     if (MANNED[Mev[STEP].pad] > 0) {
+        display::graphics.setForegroundColor(1);
+        draw_string(57, 55, "(");
         switch (Mev[STEP].ast) {
         case 0:
-            display::graphics.legacyScreen()->line(49, 140, 172, 140, 11);
+            draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
+            //display::graphics.legacyScreen()->line(49, 140, 172, 140, 11);
             break;
 
         case 1:
-            display::graphics.legacyScreen()->line(49, 148, 172, 148, 11);
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            //display::graphics.legacyScreen()->line(49, 148, 172, 148, 11);
             break;
 
         case 2:
-            display::graphics.legacyScreen()->line(182, 140, 305, 140, 11);
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            //display::graphics.legacyScreen()->line(182, 140, 305, 140, 11);
             break;
 
         case 3:
-            display::graphics.legacyScreen()->line(182, 148, 305, 148, 11);
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            //display::graphics.legacyScreen()->line(182, 148, 305, 148, 11);
             break;
         }
+        draw_string(0, 0, ")");
     }
 
     // Display Failure Text
