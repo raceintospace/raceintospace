@@ -313,7 +313,7 @@ void Intel(char plr)
 
     // FadeOut(2,pal,10,0,0);
     if (plr == 1) {
-        music_start(M_INTELLEG);
+        music_start(M_INTELLIG);
         strncpy((char *)&IName[1], "KGB", 3);
     } else {
         music_start(M_INTEL);

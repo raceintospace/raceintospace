@@ -28,7 +28,7 @@ enum music_track {
     M_HARDWARE,
     M_HISTORY,
     M_INTEL,
-    M_INTELLEG,
+    M_INTELLIG,
     M_INTERLUD,
     M_LIFTOFF,
     M_MISSPLAN,
