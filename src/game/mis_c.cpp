@@ -1219,29 +1219,31 @@ char FailureMode(char plr, int prelim, char *text)
 
     if (MANNED[Mev[STEP].pad] > 0) {
         display::graphics.setForegroundColor(1);
-        draw_string(57, 55, "(");
         switch (Mev[STEP].ast) {
         case 0:
+            draw_string(57, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
-            //display::graphics.legacyScreen()->line(49, 140, 172, 140, 11);
+            draw_string(0, 0, ")");
             break;
 
         case 1:
+            draw_string(57, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
-            //display::graphics.legacyScreen()->line(49, 148, 172, 148, 11);
+            draw_string(0, 0, ")");
             break;
 
         case 2:
+            draw_string(57, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
-            //display::graphics.legacyScreen()->line(182, 140, 305, 140, 11);
+            draw_string(0, 0, ")");
             break;
 
         case 3:
+            draw_string(57, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
-            //display::graphics.legacyScreen()->line(182, 148, 305, 148, 11);
+            draw_string(0, 0, ")");
             break;
         }
-        draw_string(0, 0, ")");
     }
 
     // Display Failure Text
