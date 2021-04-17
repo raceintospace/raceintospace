@@ -125,7 +125,7 @@ In the Basic Model, the costs and Safety factors for US and Soviet hardware are 
 
 Advanced Preferences is specific to RIS; it didn't exist in BARIS.  So the game doesn't offer a fancy graphical screen for it, just a plain text file.  The file can be in different locations, but is usually found in a user's Documents\raceintospace folder (Windows) or ~/.raceintospace folder (Linux and Mac).  Windows users may find it in an alternate location such as %userprofile%\AppData\Local\VirtualStore\Program Files (x86)\raceintospace.  Another possibility is that it may be located in the folder where the game resides on your hard drive (e.g., Program Files or Program Files (x86) on Windows, /usr/games on Ubuntu).  Wherever you find it, it will be named simply `config` (with no extension).  Open the config file with a plain text editor such as Notepad, Mousepad, or TextEdit.
 
-Advanced Preferences includes a list of settings you can change.  Warning: some are technical or meant for developers; others are experimental or upsetting to game balance: in particular, `nofail`, `short_training`, `random_eq`, `eq_name_change`, and `altasLunar` (yes, this last is a typo).  Each setting is preceded by an explanation; for example:
+Advanced Preferences includes a list of settings you can change.  Warning: some are technical or meant for developers; others are experimental or upsetting to game balance: in particular, `nofail`, `short_training`, `random_eq`, `eq_name_change`, and `atlasLunar`.  Each setting is preceded by an explanation; for example:
 
     # Set to non-zero to enable randomization of nauts.
     # random_nauts
@@ -258,7 +258,7 @@ There are four categories of space hardware:
 
 ![US Launch Vehicles](image_6.png)  ![Soviet Launch Vehicles](image_7.png)
 
-* Atlas/R-7: Light-duty rocket; can't send anything beyond Earth orbit, even with boosters (unless you set `altasLunar 1` (or any non-zero number) in Advanced Preferences, not recommended).  The R-7 was known as A-Series in BARIS.
+* Atlas/R-7: Light-duty rocket; can't send anything beyond Earth orbit, even with boosters (unless you set `atlasLunar 1` (or any non-zero number) in Advanced Preferences, not recommended).  The R-7 was known as A-Series in BARIS.
 * Titan/Proton: Medium-duty rocket; normally the minimum for sending anything to the Moon or beyond.  Can be used to launch Joint docking and LM tests and Joint lunar landings.
 * Saturn/N1: Heavy-duty rocket, known historically as "Moon rockets".  Required for launching a Single LM Test or the Historical Lunar Landing.  The N1 was called N-1 in BARIS, and the Saturn was called Saturn V though RIS 1.1.
 * Nova/UR-700: "Mega"-duty rocket, required for direct ascent capsules.  The UR-700 was called Vulkon in BARIS (historically, it would have been an expanded version of the Proton, whose designation is UR-500).
@@ -758,7 +758,7 @@ This is an unmanned probe designed to be soft-landed on the Moon.  A probe landi
 
 ### Atlas / R-7 Rocket
 
-These have the smallest lift capability of all your rockets.  They can put things into orbit, but cannot send them to the Moon or beyond, even with boosters (again, unless `altaslunar 1` set.  The R-7 was known as the A-Series in BARIS and early versions of RIS.
+These have the smallest lift capability of all your rockets.  They can put things into orbit, but cannot send them to the Moon or beyond, even with boosters (again, unless `atlaslunar 1` set.  The R-7 was known as the A-Series in BARIS and early versions of RIS.
 
 ### Titan / Proton Rocket
 
