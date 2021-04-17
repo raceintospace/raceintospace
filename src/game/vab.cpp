@@ -1246,7 +1246,7 @@ void VAB(char plr)
 
                 if (! IsLEORegion(Data->P[plr].Mission[mis].MissionCode) &&
                     ! rocket.translunar()) {
-                    if (options.cheat_altasOnMoon == 0) {
+                    if (options.cheat_atlasOnMoon == 0) {
                         rocket = rocketList.next();
                     }
                 }

@@ -169,7 +169,7 @@ static struct {
         "Set to non-zero to be able to change equipment name when starting a new game."
     },
     {
-        "altasLunar", &options.cheat_altasOnMoon, "%u", 0,
+        "atlasLunar", &options.cheat_atlasOnMoon, "%u", 0,
         "Set to non-zero to enable Atlas rockets in lunar missions."
     },
     {
@@ -463,7 +463,7 @@ void ResetToDefaultOptions()
     // Cheats
     //Damaged Equipment Cheat, Nikakd, 10/8/10
     options.cheat_no_damage = 0;
-    options.cheat_altasOnMoon = 0;
+    options.cheat_atlasOnMoon = 0;
     options.cheat_addMaxS = 1;
 }
 
