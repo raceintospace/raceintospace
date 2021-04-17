@@ -1273,6 +1273,48 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].trace = 0x7F;
         break;
 
+    case 40:  // minor docking failure
+
+        FNote = 1;
+        Mev[STEP].StepInfo = 1951;
+
+        /* Scrub the mission if docking is required for any subsequent step */
+
+        ctr = 0;
+
+        for (k = 0; k < 60; k++) {
+            switch (Mev[k].loc) {
+            case 9: // trans-lunar injection
+            case 26: // LEM thrust test
+            case 28: // joint duration
+                ctr = 1;
+            }
+        }
+
+        if (ctr) {
+            if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
+                InvalidatePrestige();
+                Mev[STEP].trace = 0x7F;  // End of Mission Signal
+                FNote = 5;
+            } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
+                InvalidatePrestige();
+                Mev[STEP].trace = Mev[STEP].fgoto;
+            } else {
+                Mev[STEP].trace = STEP + 1;
+            }
+        }  else {
+            FNote = 7;
+            InvalidatePrestige();
+
+            if (Mev[STEP].fgoto == -1) {
+                Mev[STEP].trace = 0x7F;
+            } else {
+                Mev[STEP].trace = STEP + 1;
+            }
+        }
+
+        break;
+
     case 1:
     case 8:
     case 10:
