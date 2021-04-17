@@ -292,9 +292,9 @@ struct Astros {
     char Name[14];     /**< Astronaut Name */
     char Face;         /**< Code for Astronaut Face */
     char Sex;          /**< Male or Female */
-    char Compat;       /**< Compatability Code */
-    char CR;           /**< Range of Compatability Right */
-    char CL;           /**< Range of Compatability Left */
+    char Compat;       /**< Compatibility Code */
+    char CR;           /**< Range of Compatibility Right */
+    char CL;           /**< Range of Compatibility Left */
     char Moved;        /**< if 0 Astro Moved around this turn */
     char currentMissionStatus;          /**< Successful Mission this Turn */
     char Happy;        /**< \brief Happy within group */
