@@ -1597,7 +1597,7 @@ char DrawMoonSelection(char nauts, char plr)
     for (i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
         display::graphics.setForegroundColor(12);
-        GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
+        GuyDisp(45, 109 + i * 25, MX[cPad][i].A);
     }
 
     FadeIn(2, 10, 0, 0);
