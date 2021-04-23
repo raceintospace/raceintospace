@@ -44,7 +44,20 @@ add_custom_target(dist
 add_custom_target(run
 	COMMAND ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
 	DEPENDS raceintospace
-)
+	)
+
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
+if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_custom_target(gdb
+		COMMAND gdb -ex run --args ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
+		DEPENDS raceintospace
+		)
+else(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_custom_target(gdb
+		COMMENT "Set CMAKE_BUILD_TYPE=Debug for debugging information (e.g., \"cmake -DCMAKE_BUILD_TYPE=Debug ${CMAKE_SOURCE_DIR}\")"
+		COMMAND false
+		)
+endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
 
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${CMAKE_PROJECT_VERSION})
