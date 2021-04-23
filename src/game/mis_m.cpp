@@ -71,6 +71,7 @@ void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
 std::vector<Astros *> LMCrew(int pad, Equipment *module);
 void InvalidatePrestige();
+void BranchIfAlive(int *FNote);
 
 /**
  * Load the failure state information explaining a mission step
@@ -1026,8 +1027,6 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 0;
         Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
 
-        ctr = 0;
-
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) < val) {
                 if (brandom(100) >= xtra) {
@@ -1042,27 +1041,15 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
                     F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
                     Mev[STEP].StepInfo = 3100 + Mev[STEP].loc;
                     FNote = 8;
-                    ctr++;
                 }
             }
         }
 
-        if (ctr == MANNED[Mev[STEP].pad]) {
-            Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
-            Mev[STEP].trace = 0x7F;
-        } else if (Mev[STEP].fgoto == -1) {
-            Mev[STEP].trace = 0x7F;
-        } else {
-            Mev[STEP].trace = STEP + 1;
-        }
-
-        if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
-            Mev[STEP].trace = 0x7f;
-        }
-
+        BranchIfAlive(&FNote);
         break;
 
     case 17:  // VAL% survival and XTRA% of injury and retirement
+        FNote = 0;
         Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
 
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
@@ -1073,8 +1060,6 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             }
         }
 
-        ctr = 0;
-
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) >= val) {
                 F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
@@ -1084,19 +1069,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             }
         }
 
-        if (ctr == MANNED[Mev[STEP].pad]) {
-            Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
-            Mev[STEP].trace = 0x7F;
-        } else if (Mev[STEP].fgoto == -1) {
-            Mev[STEP].trace = 0x7F;
-        } else {
-            Mev[STEP].trace = STEP + 1;
-        }
-
-        if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
-            Mev[STEP].trace = 0x7f;
-        }
-
+        BranchIfAlive(&FNote);
         break;
 
     case 18:    // set MFlag from VAL, branch if already set
@@ -1158,6 +1131,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             }
 
             Mev[STEP].StepInfo = 3200 + Mev[STEP].loc;
+        }
+
+        if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
+            Mev[STEP].trace = Mev[STEP].fgoto;
+        } else {
             Mev[STEP].trace = STEP + 1;
         }
 
@@ -1349,7 +1327,6 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     VerifySF(plr);  // Keep all safeties within the proper ranges
 
-    // check for all astros that are dead.  End mission if this is the case.
     while (bioskey(1)) {
         bioskey(0);
     }
@@ -1459,5 +1436,50 @@ void InvalidatePrestige()
 {
     if (Mev[STEP].PComp > 0) {
         Mev[STEP].PComp = 4;
+    }
+}
+
+/* Perform branching to alternate unless all nauts have been killed.
+   Abort the mission in case of launch failures.
+ */
+void BranchIfAlive(int *FNote)
+{
+    struct Astros *crw;
+    int ctr, k;
+
+    // Check for all astros that are dead. End mission if this is the case.
+    ctr = 0;
+
+    for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        crw = MA[Mev[STEP].pad][k].A;
+
+        if (crw != NULL) {
+            if (crw->Status == AST_ST_DEAD) {
+                ctr++;
+            }
+        }
+    }
+
+    if (ctr == MANNED[Mev[STEP].pad]) {
+        Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
+        Mev[STEP].trace = 0x7F;
+    } else if (Mev[STEP].fgoto == -1) {
+        Mev[STEP].trace = 0x7F;
+    } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
+        if (*FNote == 0) {
+            *FNote = 1;
+        }
+
+        Mev[STEP].trace = Mev[STEP].fgoto;
+    } else {
+        Mev[STEP].trace = STEP + 1;
+    }
+
+    if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
+        if (*FNote == 0) {
+            *FNote = 5;
+        }
+
+        Mev[STEP].trace = 0x7f;
     }
 }
