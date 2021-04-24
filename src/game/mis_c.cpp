@@ -1541,7 +1541,7 @@ char DrawMoonSelection(char nauts, char plr)
     InBox(3, 3, 30, 19);
     draw_small_flag(plr, 4, 4);
     ShBox(0, 24, 319, 199);
-    draw_heading(40, 5, "FIRST LUNAR EVA", 0, -1);
+    draw_heading(42, 5, "FIRST LUNAR EVA", 0, -1);
 
     InRFBox(162, 28, 312, 42, 10);
     display::graphics.setForegroundColor(11);
@@ -1586,18 +1586,18 @@ char DrawMoonSelection(char nauts, char plr)
 
     InRFBox(25, 51, 135, 85, 10);
     display::graphics.setForegroundColor(11);
-    draw_string(30, 60, " Who should be the");
-    draw_string(30, 70, plr == 0 ?
+    draw_string(35, 60, "Who should be the");
+    draw_string(31, 70, plr == 0 ?
                 "first astronaut to" :
                 "first cosmonaut to");
-    draw_string(30, 80, " walk on the moon?");
+    draw_string(35, 80, "walk on the moon?");
 
     int i;
 
     for (i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
         display::graphics.setForegroundColor(12);
-        GuyDisp(45, 109 + i * 25, MX[cPad][i].A);
+        GuyDisp(32, 109 + i * 25, MX[cPad][i].A);
     }
 
     FadeIn(2, 10, 0, 0);
