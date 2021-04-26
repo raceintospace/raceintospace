@@ -918,6 +918,7 @@ int TextDisplayLength(const char *str)
         case '&':
         case '@':
         case '#':
+        case '*':
         case '%':
         case '/':
         case '<':
@@ -940,7 +941,7 @@ int TextDisplayLength(const char *str)
         case ' ':
         case '(':
         case ')':
-        case '^':  // 3-pixels, no trailing space
+        case '^':  // 3 pixels, no trailing space
             pixels += 3;
             break;
 
