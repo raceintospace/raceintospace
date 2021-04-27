@@ -27,8 +27,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
    - Before, they wouldn't be removed until the start of the following turn, making it possible for 
      the dead crew member to fly on a mission<br/>
 - If you flew a Docking Duration mission and the Docking step failed, it would cancel the mission 
-  without attempting Duration (#322)
-<br/>
+  without attempting Duration (#322)<br/><br/>
 - The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
    - Before, it had called it "the H launch facility"
 - When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
@@ -128,8 +127,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
   or duration penalty you can see that, and can try downgrading the mission to remove the 
   penalty. (#320)<br/>
 - Clicking on the image of the pad in Mission Control will now pop up a window that breaks down those 
-  requirement penalties. (#168)<br/>
-<br/>
+  requirement penalties. (#168)<br/><br/>
 - Lots of improvements to the help file: grammar corrections, readability, more needed clarifications, 
   and in a few places updates to reflect additions we've made to the game.<br/>
 - When the computer player wins the game, you now see its Moon landing play out like other prestige 
