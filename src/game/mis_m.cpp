@@ -1483,3 +1483,15 @@ void BranchIfAlive(int *FNote)
         Mev[STEP].trace = 0x7f;
     }
 }
+
+/* Clear n steps for debugging purposes. */
+#ifdef DEBUG
+void clear_steps(int n)
+{
+    int i;
+
+    for (i = 0; i < n; i++) {
+        Mev[i].dice = -128;
+    }
+}
+#endif
