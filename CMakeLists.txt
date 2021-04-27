@@ -25,6 +25,11 @@ endif (WINDOWS)
 
 option(PBEM "Enable experimental Play-by-EMail feature" OFF)
 
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
+if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_definitions(-DDEBUG)
+endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+
 add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
@@ -46,8 +51,8 @@ add_custom_target(run
 	DEPENDS raceintospace
 	)
 
-string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
 if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_definitions(-DDEBUG)
 	add_custom_target(gdb
 		COMMAND gdb -ex run --args ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
 		DEPENDS raceintospace
