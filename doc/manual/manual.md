@@ -1273,7 +1273,7 @@ It's at about this point (while you're still flying Mercury) you should decide w
 
 You'll also want to develop the Ranger satellite and launch Lunar Flybys to accumulate lunar recon, which should usually be at least 65-70% before you fly a lunar pass.  As you're able, develop a lunar module (Cricket for Gemini, Eagle for Apollo) and, if you're flying Gemini, develop the B-Kicker as well.  When you've accomplished at least Duration C and your capsule is at Max Safety, fly a Lunar Pass.  If you can afford it, develop the Saturn rocket.  When you've done Duration D and a lunar pass and your capsule is at Max Safety, fly a Lunar Orbital.  Following that, fly the lunar landing.  If the Saturn is ready, fly a Historical landing; if not, either wait until it is or fly an EOR lunar landing.
 
-##APPENDIX B
+## APPENDIX B
 
 **Hardware Artwork**
 
@@ -1358,9 +1358,9 @@ Soviet Kicker-C</td>
 </table>
 
 
-##APPENDIX C
+## APPENDIX C
 
-###Quick Reference
+### Quick Reference
 
 **Mission Abbreviations**
 
