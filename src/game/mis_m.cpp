@@ -254,7 +254,7 @@ void MisCheck(char plr, char mpad)
             }
         }
 
-        if (Mev[STEP].loc == 16 && plan.PCat[4] == 22) {
+        if (Mev[STEP].loc == 16 && Mev[Mev[STEP].trace].loc == 15) {
             FirstManOnMoon(plr, 0, code);
         }
 
