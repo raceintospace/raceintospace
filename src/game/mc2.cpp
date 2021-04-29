@@ -192,11 +192,11 @@ char WhichPart(char plr, int which)
     return val;
 }
 
-Equipment * GetEquipment(const struct MisEval &Mev)
+Equipment *GetEquipment(const struct MisEval &Mev)
 {
-	Equipment *e = MH[Mev.pad][Mev.Class];
-	assert(e == Mev.Ep);
-	return e;
+    Equipment *e = MH[Mev.pad][Mev.Class];
+    assert(e == Mev.Ep);
+    return e;
 }
 
 void MissionSteps(char plr, int mcode, int step, int pad,
@@ -347,7 +347,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         break;
 
-    case 'E':
+    case 'D':
         Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -27);
         break;
 
