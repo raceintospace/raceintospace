@@ -362,7 +362,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         break;
 
-    case 'M':
+    case 'L':
         Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -20);
         break;
 
@@ -430,7 +430,8 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].PComp = WhichPart(plr, Mev[step].Prest);
     }
 
-    if (PastBANG == 1 && Mev[step].PComp > 0) {
+    // Invalidate any steps on an alternate branch except for Lunar Orbital
+    if (PastBANG == 1 && Mev[step].PComp > 0 && !(mcode == 'L')) {
         Mev[step].PComp = 5;
     }
 

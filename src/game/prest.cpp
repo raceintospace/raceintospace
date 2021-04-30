@@ -809,7 +809,7 @@ int AllotPrest(char plr, char mis)
 
     other = MaxFail();
 
-    for (i = 0; i < STEPnum; i++) {
+    for (i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
         if (Mev[i].PComp == 5 && Mev[i].StepInfo == 0) {
             Mev[i].PComp = 0;
             Mev[i].Prest = -100;
@@ -834,7 +834,7 @@ int AllotPrest(char plr, char mis)
                                   || (MA[1][2].A != NULL && MA[1][2].A->Sex)
                                   || (MA[1][3].A != NULL && MA[1][3].A->Sex);
 
-    for (i = 0; i < STEPnum; i++) {
+    for (i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
         ival = abs(Mev[i].Prest);
         cval = Mev[i].PComp;
 
