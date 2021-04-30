@@ -918,7 +918,6 @@ int TextDisplayLength(const char *str)
         case '&':
         case '@':
         case '#':
-        case '*':
         case '%':
         case '/':
         case '<':
