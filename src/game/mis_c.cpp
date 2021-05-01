@@ -1593,11 +1593,12 @@ char DrawMoonSelection(char nauts, char plr)
     draw_string(35, 80, "walk on the moon?");
 
     int i;
+    char str;
 
     for (i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
         display::graphics.setForegroundColor(12);
-        GuyDisp(32, 109 + i * 25, MX[cPad][i].A);
+        GuyDisp(71 - TextDisplayLength(MX[cPad][i].A->Name) / 2, 109 + i * 25, MX[cPad][i].A);
     }
 
     FadeIn(2, 10, 0, 0);
