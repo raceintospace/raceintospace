@@ -77,7 +77,7 @@ void CheckFlightCrews(int player)
 /*
  * Is an astronaut happy with their crewmate?
  *
- * Astronaut compatability is not transitive. An astronaut may dislike
+ * Astronaut compatibility is not transitive. An astronaut may dislike
  * a crewmate who is fine with them.
  *
  * Astronauts / Cosmonauts have a compatibility score of 1-10. They

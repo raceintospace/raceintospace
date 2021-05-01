@@ -82,7 +82,7 @@ void DrawStatistics(char Win)
     draw_heading(47, 44, "STATISTICS", 1, -1);
     draw_heading(215, 45, "EXIT", 1, -1);
     display::graphics.setForegroundColor(6);
-    draw_string(122, 78, "WINNING DIRECTOR: ");
+    draw_string(122, 76, "WINNING DIRECTOR: ");
     display::graphics.setForegroundColor(8);
     draw_string(0, 0, &Data->P[Win].Name[0]);
 
@@ -103,7 +103,7 @@ void DrawStatistics(char Win)
     // AI strategy is listed.
     if (AI[Win] || AI[other(Win)]) {
         display::graphics.setForegroundColor(6);
-        draw_string(122, 86, "AI STRATEGY: ");
+        draw_string(122, 84, "AI STRATEGY: ");
         display::graphics.setForegroundColor(8);
 
         int ai_player = AI[Win] ? Win : other(Win);

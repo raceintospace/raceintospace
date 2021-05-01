@@ -9,6 +9,10 @@ endif (JsonCPP_INCLUDE_DIR)
 # Make sure we can access our local includes
 include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 
+if (PBEM)
+  add_definitions(-DALLOW_PBEM=1)
+endif (PBEM)
+
 # Silence some warnings on MSVC
 if (MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)

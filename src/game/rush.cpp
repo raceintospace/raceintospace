@@ -730,7 +730,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     ShBox(85, 68, 249, 151);
     InBox(92, 74, 243, 120);
     display::graphics.setForegroundColor(11);
-    draw_string(97, 81, "REQUIREMENT PENALTIES:");
+    draw_string(99, 81, "REQUIREMENT PENALTIES:");
 
     display::graphics.setForegroundColor(1);
     draw_string(99, 92, "MILESTONE PENALT");

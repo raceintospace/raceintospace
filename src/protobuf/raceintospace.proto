@@ -233,7 +233,7 @@ message BuzzData {
 	repeated int32 buy_misc = 50;
 	
 	required int32 news_event_count = 51;    // eCount
-	repeated PastIntel past_intellegence = 52;  // PastIntel[30]
+	repeated PastIntel past_intelligence = 52;  // PastIntel[30]
 	required int32 ai_strategy = 53; // char[10]
 	
 	required int32 ai_Lunar = 54;

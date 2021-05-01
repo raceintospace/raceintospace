@@ -278,7 +278,7 @@ void DrawProgs(char plr, char prog)
     draw_string(152, 67, "MAX DURATION: ");
     display::graphics.setForegroundColor(11);
     draw_number(0, 0, Data->P[plr].Manned[prog - 1].Duration);
-    draw_string(0, 0, " DAYS (LVL ");
+    draw_string(0, 0, " DAYS (");
 
     if (prog == 1) {
         draw_string(0, 0, "B)");

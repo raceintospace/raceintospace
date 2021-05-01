@@ -393,9 +393,9 @@ struct Astros {
     char Name[14];     /**< Astronaut Name */
     int8_t Face;         /**< Code for Astronaut Face */
     int8_t Sex;          /**< Male or Female */
-    int8_t Compat;       /**< Compatability Code */
-    int8_t CR;           /**< Range of Compatability Right */
-    int8_t CL;           /**< Range of Compatability Left */
+    int8_t Compat;       /**< Compatibility Code */
+    int8_t CR;           /**< Range of Compatibility Right */
+    int8_t CL;           /**< Range of Compatibility Left */
     int8_t Moved;        /**< if 0 Astro Moved around this turn */
     int8_t currentMissionStatus;          /**< Successful Mission this Turn */
     int8_t Happy;        /**< \brief Happy within group */
@@ -702,7 +702,10 @@ struct MisEval {
     int8_t step;              /**< actual step id number */
     int8_t loc;               /**< Mission Step Name Index */
     uint16_t StepInfo;      /**< ID of step success  1=succ   !1=fail */
-    Equipment *E;           /**< Pointer into equipment */
+    union {
+        Equipment *Ep;      /**< Pointer into equipment, use GetEquipment() */
+        uint64_t Ebits;     /**< keep 64b also on 32b platforms.  */
+    };
     int8_t Prest;             /**< Prestige Step #  (-1 for none) */
     int8_t PComp;             /**< PComp will be set to amt of prest to be awarded. */
     int8_t pad;               /**< pad location  (Index into First Part of MH[x][] */
@@ -1096,11 +1099,6 @@ typedef struct {
 #define RaceIntoSpace_Signature 0x52695350
 #define RaceIntoSpace_Old_Sig 0x49443a00  //'ID:\0"
 
-typedef enum {
-    SAVEGAME_Normal = 0,
-    SAVEGAME_PlayByMail,
-    SAVEGAME_Modem
-} SaveGameType;
 
 typedef struct {
     uint32_t ID;        // Going to use this to determine endianness of the save file
@@ -1151,6 +1149,7 @@ BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
 BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
 BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
+BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
 BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
 
 #endif // __DATA_H__

@@ -107,7 +107,7 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-
+int goAhead;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -384,7 +384,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     ShBox(85, 92, 249, 175);
     InBox(92, 98, 243, 144);
     display::graphics.setForegroundColor(11);
-    draw_string(97, 105, "REQUIREMENT PENALTIES:");
+    draw_string(99, 105, "REQUIREMENT PENALTIES:");
 
     display::graphics.setForegroundColor(1);
     draw_string(99, 116, "MILESTONE PENALT");
@@ -1042,6 +1042,7 @@ void Future(char plr)
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
+                goAhead = 0;
 
                 if (key > 0) {
                     delay(300);
@@ -1049,9 +1050,20 @@ void Future(char plr)
 
                 key = 0;
 
-                if (! FutureMissionOk(plr, nav, misType)) {
-                    OutBox(244, 5, 313, 17);
-                    continue;
+                if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
+                    if (goAhead != 1) {
+                        goAhead = Help("i167");
+                    } 
+                    if (goAhead != 1) { 
+                       OutBox(244, 5, 313, 17);
+                       continue; 
+                    }
+                } else {
+                    if (! FutureMissionOk(plr, nav, misType)) {
+                        OutBox(244, 5, 313, 17);
+                        goAhead = 0;
+                        continue;
+                    }
                 }
 
                 OutBox(244, 5, 313, 17);
@@ -1258,6 +1270,17 @@ void Future(char plr)
 
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
+
+            } else if ((x >= 6 && y >= 25 && x <= 200 && y <= 46 && mousebuttons > 0) || (key == '?')) {
+                // Show description of mission
+                InBox(5, 24, 201, 47);
+                int helpIndex = 300 + misType;
+                char helpEntry[5];
+                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);                
+                WaitForMouseUp();
+                delay(100);
+                OutBox(5, 24, 201, 47);
+                Help(helpEntry);
 
             } else if (x >= 203 && y >= 34 && x <= 241 && y <= 44 && mousebuttons > 0) {
                 // Penalties popup

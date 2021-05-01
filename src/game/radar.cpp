@@ -175,7 +175,7 @@ void PadDraw(char plr, char pad)
 
     if (Data->P[plr].LaunchFacility[pad] == 1) {
         display::graphics.setForegroundColor(9);
-        draw_string(210, 189, "S");
+        draw_string(207, 189, "S");
         display::graphics.setForegroundColor(1);
         draw_string(0, 0, "CRUB MISSION");
     } else {

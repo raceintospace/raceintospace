@@ -215,7 +215,7 @@ void Records(char plr)
     fill_rectangle(72, 111, 264, 119, 0);
     IOBox(234, 84, 309, 99);
     display::graphics.setForegroundColor(1);
-    draw_string(238, 94, "CLEAR RECORD");
+    draw_string(238, 93, "CLEAR RECORD");
     InBox(237, 34, 306, 81);
     Drec(&pos, &pos2, 0);
     FadeIn(2, 10, 0, 0);

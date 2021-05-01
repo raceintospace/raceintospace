@@ -63,6 +63,8 @@
 #include "vehicle.h"
 #include "vehicle_selector.h"
 
+int currentPayload;
+
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
@@ -332,7 +334,7 @@ void DispVAB(char plr, char pad)
     draw_string(0, 0, mission.Name);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 61, "CREW: ");
+    draw_string(5, 62, "CREW: ");
 
     switch (mission.Men) {
     case 0:
@@ -364,7 +366,7 @@ void DispVAB(char plr, char pad)
     struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 52, missionPlan.Abbr);
+    draw_string(5, 53, missionPlan.Abbr);
 
     // Show duration level only on missions with a Duration step  -Leon
     if (IsDuration(mission.MissionCode)) {
@@ -624,6 +626,7 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
     }
 
     draw_string(0, 0, "%");
+    currentPayload = payloadWeight;
 
     return;
 }
@@ -1002,11 +1005,11 @@ void DispWts(int payload, int thrust)
     fill_rectangle(5, 65, 140, 83, 3);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 77, "MAXIMUM PAYLOAD: ");
+    draw_string(5, 78, "MAXIMUM PAYLOAD: ");
     draw_number(0, 0, thrust);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 70, "CURRENT PAYLOAD: ");
+    draw_string(5, 71, "CURRENT PAYLOAD: ");
 
     if (thrust < payload) {
         display::graphics.setForegroundColor(9);
@@ -1112,17 +1115,22 @@ void VAB(char plr)
 
                 int cost = FillVab(plr, ccc, 0) +
                            BuyVabRkt(plr, rocket, 0);
-
                 if (Data->P[plr].Cash >= cost && ac == true) {
-                    FillVab(plr, ccc, 1);
-                    BuyVabRkt(plr, rocket, 1);
-                    // Repopulate VAB data to update components with
-                    // autopurchased quantities.
-                    BuildVAB(plr, mis, 0, 0, 1);
+                    int goAhead;
+                    if (rocket.thrust() >= currentPayload) { goAhead = 1; } else { goAhead = 0; }
+                    if (goAhead < 1) {
+                        goAhead = Help("i166");
+                    }
+                    if (goAhead > 0) {
+                        FillVab(plr, ccc, 1);
+                        BuyVabRkt(plr, rocket, 1);
+                        // Repopulate VAB data to update components with
+                        // autopurchased quantities.
+                        BuildVAB(plr, mis, 0, 0, 1);
 
-
-                    //display cost (XX of XX)
-                    ShowAutopurchase(plr, ccc, rocket);
+                        //display cost (XX of XX)
+                        ShowAutopurchase(plr, ccc, rocket);
+                    }  
                 } else if (ac == false) {
                     Help("i135");    // delay on purchase
                 } else {
@@ -1238,7 +1246,7 @@ void VAB(char plr)
 
                 if (! IsLEORegion(Data->P[plr].Mission[mis].MissionCode) &&
                     ! rocket.translunar()) {
-                    if (options.cheat_altasOnMoon == 0) {
+                    if (options.cheat_atlasOnMoon == 0) {
                         rocket = rocketList.next();
                     }
                 }

@@ -190,11 +190,11 @@ void draw_up_arrow(int x1, int y1)
 
 void draw_up_arrow_highlight(int x1, int y1)
 {
-    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 11);
-    display::graphics.legacyScreen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 11);
+    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 1);
+    display::graphics.legacyScreen()->line(3 + x1, 11 + y1, 5 + x1, 11 + y1, 1);
 
-    display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 11);
-    display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 11);
+    display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 1);
+    display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 1);
     return;
 }
 
@@ -230,11 +230,11 @@ void draw_down_arrow(int x1, int y1)
 
 void draw_down_arrow_highlight(int x1, int y1)
 {
-    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 11);
-    display::graphics.legacyScreen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 11);
+    display::graphics.legacyScreen()->line(x1, y1, x1, 25 + y1, 1);
+    display::graphics.legacyScreen()->line(3 + x1, 14 + y1, 5 + x1, 14 + y1, 1);
 
-    display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 11);
-    display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 11);
+    display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 1);
+    display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 1);
 
     return;
 }
@@ -745,6 +745,19 @@ void draw_character(char chr)
         break;
 
     case '@':
+        MR(1, 0);
+        LR(0, 0);
+        MR(-1, -1);
+        LR(0, -2);
+        MR(1, -1);
+        LR(2, 0);
+        MR(1, 1);
+        LR(0, 2);
+        MR(-1, -1);
+        LR(0, 1);
+        MR(4, 1);
+        break;
+
     case '#':
         MR(1, 0);
         LR(0, -4);
@@ -809,15 +822,14 @@ void draw_character(char chr)
         break;
 
     case '*':
-        MR(1, 0);
-        LR(0, -4);
-        MR(-1, 1);
-        LR(4, 0);
-        MR(-1, -1);
+        LR(4, -4);
+        MR(-2, 0);
         LR(0, 4);
-        MR(1, -1);
-        LR(-4, 0);
-        MR(6, 1);
+        MR(-2, -2);
+        LR(4, 0);
+        MR(-4, -2);
+        LR(4, 4);
+        MR(2, 0);
         break;
 
     case '^':
@@ -928,7 +940,7 @@ int TextDisplayLength(const char *str)
         case ' ':
         case '(':
         case ')':
-        case '^':  // 3-pixels, no trailing space
+        case '^':  // 3 pixels, no trailing space
             pixels += 3;
             break;
 

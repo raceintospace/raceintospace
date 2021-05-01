@@ -312,7 +312,7 @@ int AsnCrew(char plr, char pad, char part)
 
     display::graphics.setForegroundColor(9);
 
-    draw_string(184, 16, "A");
+    draw_string(185, 16, "A");
 
     display::graphics.setForegroundColor(1);
 
@@ -341,9 +341,9 @@ int AsnCrew(char plr, char pad, char part)
     display::graphics.setForegroundColor(11);
 
     if (part == 0) {
-        draw_string(105, 31, "SELECT PRIMARY CREW");
+        draw_string(106, 30, "SELECT PRIMARY CREW");
     } else {
-        draw_string(100, 31, "SELECT SECONDARY CREW");
+        draw_string(100, 30, "SELECT SECONDARY CREW");
     }
 
     display::graphics.setForegroundColor(1);  // reset the color

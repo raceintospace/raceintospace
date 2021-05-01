@@ -215,8 +215,6 @@ int game_main_impl(int argc, char *argv[])
 
     xMODE = 0;
 
-    xMODE |= xMODE_NOCOPRO;
-
     Data = (Players *)xmalloc(sizeof(struct Players) + 1);
     buffer = (char *)xmalloc(BUFFER_SIZE);
 
@@ -256,19 +254,30 @@ int game_main_impl(int argc, char *argv[])
         choice = MainMenuChoice();
 
         switch (choice) {
-        case 0:  // New Game
-        case 1:  // New Mail Game
+        case MAIN_NEW_GAME:  // New Game
+#ifdef ALLOW_PBEM
+        case MAIN_PBEM_GAME:  // New Mail Game
+#endif // ALLOW_PBEM
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
-            MAIL = choice ? 0 : -1;
+#ifdef ALLOW_PBEM
+            MAIL = (choice == MAIN_PBEM_GAME) ? 0 : -1;
+#else
+            MAIL = -1;
+#endif
             Option = -1;
             helpText = "i013";
 
             if (MAIL == -1) {
                 Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
-            } else { // MAIL GAME
+            }
+
+#ifdef ALLOW_PBEM
+            else { // MAIL GAME
                 Prefs(3);
             }
+
+#endif // ALLOW_PBEM
 
             plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
             plr[1] = Data->Def.Plr2;
@@ -294,7 +303,7 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 2: // Play Old Game
+        case MAIN_OLD_GAME: // Play Old Game
             LOAD = QUIT = 0;
             HARD1 = UNIT1 = 0;
             MAIL = -1;
@@ -316,11 +325,11 @@ int game_main_impl(int argc, char *argv[])
             display::graphics.screen()->clear();
             break;
 
-        case 3:
+        case MAIN_CREDITS:
             Credits();
             break;
 
-        case 4:
+        case MAIN_EXIT:
             //KillMusic();
             ex = 1;
             FadeOut(2, 10, 0, 0);
@@ -602,13 +611,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 }
 
                 News(plr[i]);                  // EVENT FOR PLAYER
-
-                if ((Data->P[plr[i] % NUM_PLAYERS].Mission[0].MissionCode > 6 ||
-                     Data->P[plr[i] % NUM_PLAYERS].Mission[1].MissionCode > 6 ||
-                     Data->P[plr[i] % NUM_PLAYERS].Mission[2].MissionCode > 6) &&
-                    (NOCOPRO && !EASYMODE)) {
-                    xMODE &= ~xMODE_NOCOPRO;
-                }
 
                 VerifyCrews(plr[i]);
                 VerifySF(plr[i]);

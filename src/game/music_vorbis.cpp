@@ -42,7 +42,7 @@ struct music_key {
     { M_HARDWARE, "hardware" },
     { M_HISTORY, "history" },
     { M_INTEL, "intel" },
-    { M_INTELLEG, "intelleg" },
+    { M_INTELLIG, "intellig" },
     { M_INTERLUD, "interlud" },
     { M_LIFTOFF, "liftoff" },
     { M_MISSPLAN, "missplan" },

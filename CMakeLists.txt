@@ -6,7 +6,7 @@ enable_testing()
 set (raceintospace_VERSION_MAJOR 2)
 set (raceintospace_VERSION_MINOR 0)
 set (raceintospace_VERSION_PATCH 0)
-set (raceintospace_VERSION_EXTRA a3)
+set (raceintospace_VERSION_EXTRA rc1)
 set (raceintospace_VERSION
 	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
 if (NOT DEFINED CMAKE_PROJECT_VERSION)
@@ -25,6 +25,12 @@ endif (WINDOWS)
 
 # Require C++11
 set (CMAKE_CXX_STANDARD 11)
+option(PBEM "Enable experimental Play-by-EMail feature" OFF)
+
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
+if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_definitions(-DDEBUG)
+endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
 
 add_subdirectory(lib)
 add_subdirectory(src)
@@ -45,7 +51,20 @@ add_custom_target(dist
 add_custom_target(run
 	COMMAND ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
 	DEPENDS raceintospace
-)
+	)
+
+if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_definitions(-DDEBUG)
+	add_custom_target(gdb
+		COMMAND gdb -ex run --args ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
+		DEPENDS raceintospace
+		)
+else(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+	add_custom_target(gdb
+		COMMENT "Set CMAKE_BUILD_TYPE=Debug for debugging information (e.g., \"cmake -DCMAKE_BUILD_TYPE=Debug ${CMAKE_SOURCE_DIR}\")"
+		COMMAND false
+		)
+endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
 
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${CMAKE_PROJECT_VERSION})

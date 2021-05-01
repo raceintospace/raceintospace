@@ -21,7 +21,7 @@ typedef struct {
     unsigned cheat_no_damage;
     unsigned feat_random_eq;
     unsigned feat_eq_new_name;
-    unsigned cheat_altasOnMoon;
+    unsigned cheat_atlasOnMoon;
     unsigned cheat_addMaxS;
     unsigned boosterSafety;
 } game_options;

@@ -44,6 +44,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "place.h"
 
 #define FRM_Delay 22
 
@@ -66,6 +67,7 @@ struct OF {
 int tFrames, cFrame;
 char SHTS[4];
 int32_t aLoc;
+int scrubMis;
 display::LegacySurface *dply;
 struct AnimType AHead;
 struct BlockHead BHead;
@@ -1032,7 +1034,7 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
         display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white  -Leon
     }
 
-    draw_string(xa, ya - 1, Guy->Name);
+    draw_string(xa, ya, Guy->Name);
     draw_string(0, 0, ": ");
 
     switch (Guy->Status) {
@@ -1065,6 +1067,7 @@ char FailureMode(char plr, int prelim, char *text)
     int i, j, k;
     FILE *fin;
     double last_secs;
+    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     FadeOut(2, 10, 0, 0);
@@ -1086,19 +1089,20 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(1);
     MisStep(9, 34, Mev[STEP].loc);
+    e = GetEquipment(Mev[STEP]);
     draw_string(9, 41, "MISSION STEP: ");
     draw_number(0, 0, STEP);
-    draw_string(9, 48, Mev[STEP].E->Name);
+    draw_string(9, 48, e->Name);
     draw_string(0, 0, " CHECK");
 
-    if (strncmp(Mev[STEP].E->Name, "DO", 2) == 0) {
+    if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            draw_number(9, 55, Mev[STEP].E->MSF);
+            draw_number(9, 55, e->MSF);
         } else {
-            draw_number(9, 55, Mev[STEP].E->MisSaf);
+            draw_number(9, 55, e->MisSaf);
         }
     } else {
-        draw_number(9, 55, Mev[STEP].E->MisSaf);
+        draw_number(9, 55, e->MisSaf);
     }
 
 
@@ -1116,18 +1120,22 @@ char FailureMode(char plr, int prelim, char *text)
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
         display::graphics.setForegroundColor(9);
-        draw_string(15, 122, "RECOMMEND MISSION SCRUB");
+        draw_string(15, 122, "RECOMMEND MISSION ");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, "S");
+        display::graphics.setForegroundColor(9);
+        draw_string(0, 0, "CRUB");
     } else {
         display::graphics.setForegroundColor(9);
 
         switch (prelim) {
         case 0:
             display::graphics.setForegroundColor(15);
-            draw_string(10, 122, "ALL SYSTEMS ARE GO");
+            draw_string(30, 122, "ALL SYSTEMS ARE GO");
             break;
 
         case 1:
-            draw_string(10, 122, "FAILURE: USE ALTERNATE");
+            draw_string(20, 122, "FAILURE: USE ALTERNATE");
             break;
 
         case 2:
@@ -1135,28 +1143,28 @@ char FailureMode(char plr, int prelim, char *text)
             break;
 
         case 4:
-            draw_string(10, 122, "CREW STRANDED IN SPACE");
+            draw_string(19, 122, "CREW STRANDED IN SPACE");
             break;
 
         case 5:
-            draw_string(10, 122, "MISSION FAILURE");
+            draw_string(39, 122, "MISSION FAILURE");
             break;
 
         case 6:
             display::graphics.setForegroundColor(15);
-            draw_string(10, 121, "MISSION SUCCESS");
+            draw_string(33, 121, "MISSION SUCCESS");
             break;
 
         case 7:
-            draw_string(10, 122, "STEP FAILURE");
+            draw_string(45, 122, "STEP FAILURE");
             break;
 
         case 8:
-            draw_string(10, 122, "CATASTROPHIC FAILURE");
+            draw_string(23, 122, "CATASTROPHIC FAILURE");
             break;
 
         case 9:
-            draw_string(10, 122, "CREW INJURIES");
+            draw_string(44, 122, "CREW INJURIES");
             break;
         }
     }
@@ -1177,7 +1185,7 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] > 1) {
-        GuyDisp(49, 147, MA[Mev[STEP].pad][1].A);
+        GuyDisp(49, 146, MA[Mev[STEP].pad][1].A);
     }
 
     if (MANNED[Mev[STEP].pad] > 2) {
@@ -1185,21 +1193,21 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     if (MANNED[Mev[STEP].pad] > 3) {
-        GuyDisp(182, 147, MA[Mev[STEP].pad][3].A);
+        GuyDisp(182, 146, MA[Mev[STEP].pad][3].A);
     }
 
     if (MANNED[Mev[STEP].pad] == 0) {
-        if (((Mev[STEP].E->ID[1] == 0x35 || Mev[STEP].E->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
+        if (((e->ID[1] == 0x35 || e->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
             GuyDisp(49, 138, MA[1][LM[1]].A);
 
             if (EVA[1] != LM[1]) {
                 GuyDisp(49, 146, MA[1][EVA[1]].A);
             }
-        } else if (strncmp(Mev[STEP].E->ID, "M2", 2) == 0) {
+        } else if (strncmp(e->ID, "M2", 2) == 0) {
             GuyDisp(49, 138, MA[other(Mev[STEP].pad)][0].A);
             GuyDisp(49, 146, MA[other(Mev[STEP].pad)][1].A);
             GuyDisp(182, 138, MA[other(Mev[STEP].pad)][2].A);
-        } else if (strncmp(Mev[STEP].E->ID, "M3", 2) == 0) {  // EVA
+        } else if (strncmp(e->ID, "M3", 2) == 0) {  // EVA
             GuyDisp(49, 138, MA[1][EVA[1]].A);
         } else {
             display::graphics.setForegroundColor(1);
@@ -1210,21 +1218,30 @@ char FailureMode(char plr, int prelim, char *text)
     display::graphics.setForegroundColor(11);  // Specialist
 
     if (MANNED[Mev[STEP].pad] > 0) {
+        display::graphics.setForegroundColor(1);
         switch (Mev[STEP].ast) {
         case 0:
-            display::graphics.legacyScreen()->line(49, 140, 172, 140, 11);
+            draw_string(57, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
+            draw_string(0, 0, ")");
             break;
 
         case 1:
-            display::graphics.legacyScreen()->line(49, 148, 172, 148, 11);
+            draw_string(57, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(0, 0, ")");
             break;
 
         case 2:
-            display::graphics.legacyScreen()->line(182, 140, 305, 140, 11);
+            draw_string(57, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(0, 0, ")");
             break;
 
         case 3:
-            display::graphics.legacyScreen()->line(182, 148, 305, 148, 11);
+            draw_string(57, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(0, 0, ")");
             break;
         }
     }
@@ -1276,7 +1293,7 @@ char FailureMode(char plr, int prelim, char *text)
         strcat(Name, "SV");
     }
 
-    strncat(Name, Mev[STEP].E->ID, 2);
+    strncat(Name, e->ID, 2);
 
     if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
@@ -1338,7 +1355,13 @@ char FailureMode(char plr, int prelim, char *text)
 
             FadeIn(2, 10, 0, 0);
             key = 0;
-            return 1;  /* Scrub */
+
+            scrubMis = Help("i165");  
+            if (scrubMis >= 0) {
+                return 1;  /* Scrub */
+            } else {
+                return 0;  /* Don't Scrub */
+            }
         }
     }
 }
@@ -1448,6 +1471,8 @@ int StepAnim(int x, int y, FILE *fin)
 void FirstManOnMoon(char plr, char isAI, char misNum)
 {
     int nautsOnMoon = 0;
+    Equipment *e = GetEquipment(Mev[STEP]);
+
     dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
 
     if (misNum == Mission_Soyuz_LL && plr == 1) {
@@ -1456,17 +1481,17 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
 
 
     //Direct Ascent
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
         nautsOnMoon = 4;
     }
 
     //2 men LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 2;
     }
 
     //1 man LL
-    if (strcmp(Mev[STEP].E->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
+    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 1;
     }
 
@@ -1494,6 +1519,7 @@ char DrawMoonSelection(char nauts, char plr)
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
+    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
@@ -1515,7 +1541,7 @@ char DrawMoonSelection(char nauts, char plr)
     InBox(3, 3, 30, 19);
     draw_small_flag(plr, 4, 4);
     ShBox(0, 24, 319, 199);
-    draw_heading(40, 5, "FIRST LUNAR EVA", 0, -1);
+    draw_heading(42, 5, "FIRST LUNAR EVA", 0, -1);
 
     InRFBox(162, 28, 312, 42, 10);
     display::graphics.setForegroundColor(11);
@@ -1533,7 +1559,8 @@ char DrawMoonSelection(char nauts, char plr)
         strcat(Name, "SV");
     }
 
-    strncat(Name, Mev[STEP].E->ID, 2);
+    e = GetEquipment(Mev[STEP]);
+    strncat(Name, e->ID, 2);
 
     if (Mev[STEP].Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
@@ -1559,18 +1586,19 @@ char DrawMoonSelection(char nauts, char plr)
 
     InRFBox(25, 51, 135, 85, 10);
     display::graphics.setForegroundColor(11);
-    draw_string(30, 60, " Who should be the");
-    draw_string(30, 70, plr == 0 ?
+    draw_string(35, 60, "Who should be the");
+    draw_string(31, 70, plr == 0 ?
                 "first astronaut to" :
                 "first cosmonaut to");
-    draw_string(30, 80, " walk on the moon?");
+    draw_string(35, 80, "walk on the moon?");
 
     int i;
+    char str;
 
     for (i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
         display::graphics.setForegroundColor(12);
-        GuyDisp(45, 110 + i * 25, MX[cPad][i].A);
+        GuyDisp(71 - TextDisplayLength(MX[cPad][i].A->Name) / 2, 109 + i * 25, MX[cPad][i].A);
     }
 
     FadeIn(2, 10, 0, 0);
