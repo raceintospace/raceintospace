@@ -796,7 +796,7 @@ int PrestNeg(char plr, int i)
 int AllotPrest(char plr, char mis)
 {
     int i, total, other, negs, mcode, mike, P_Goal, N_Goal, S_Goal, ival, cval;
-    char PVal[28];
+    char PVal[MAXIMUM_PRESTIGE_NUM];
 
     hero = 0;
     tMo = Data->P[plr].Mission[mis].Month;

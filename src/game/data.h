@@ -95,6 +95,7 @@ using namespace std;
 
 #define MAXIMUM_NEWS_EVENTS         100
 #define MAXIMUM_PRESTIGE_NUM        28
+#define MAX_STEPS                   60
 
 /** \name Astronaut related
  *@{
@@ -743,6 +744,10 @@ struct MisEval {
         ARCHIVE_STRING(FName);
         ARCHIVE_STRING(Name);
 
+        // SECURITY: Data sanitization
+        assert(abs(Prest) < MAXIMUM_PRESTIGE_NUM || abs(Prest) == 100);
+        assert(trace < MAX_STEPS || trace == 0x7f);
+
     }
 
 };
@@ -1111,13 +1116,6 @@ typedef struct {
     // uint16_t compSize;      // Compressed size of data
 
 } SaveFileHdr;
-
-
-typedef struct {
-    char Name[20], Title[23];
-    uint16_t time, date;
-    SaveGameType type;
-} SFInfo;
 
 
 /**
