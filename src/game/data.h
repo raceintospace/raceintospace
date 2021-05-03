@@ -97,6 +97,9 @@ using namespace std;
 #define MAXIMUM_PRESTIGE_NUM        28
 #define MAX_STEPS                   60
 #define MAX_MISSION_COUNT           100
+#define MAX_REPLAY_ITEMS            200L
+#define MAX_NEWS_ITEMS              84
+
 
 /** \name Astronaut related
  *@{
@@ -699,6 +702,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
 
         // SECURITY: Data sanitization
         assert(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
+        assert(eCount >= 0 && eCount < MAX_NEWS_ITEMS / 2);
     }
 
 };
@@ -1070,9 +1074,6 @@ typedef struct {
     uint32_t offset;
 } PatchHdrSmall;
 
-
-#define MAX_REPLAY_ITEMS        200L
-#define MAX_NEWS_ITEMS          84
 
 // Mission Replay Data Structure
 typedef struct ReplayItem {

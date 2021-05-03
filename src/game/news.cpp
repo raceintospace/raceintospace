@@ -115,6 +115,7 @@ GoNews(char plr)
     OpenNews(plr, buffer + 6000, (int) Data->Events[Data->Count]);
 
     Data->P[plr].eCount++;
+    assert(Data->P[plr].eCount < MAX_NEWS_ITEMS / 2);
 
     DispNews(plr, buffer + 6000, buffer);
 
@@ -255,6 +256,7 @@ OpenNews(char plr, char *buf, int bud)
     if (Data->P[plr].Plans & 0x0f) {
         // Failures
         display::graphics.setForegroundColor(6);
+
         if (Data->P[plr].Plans & 0x01) {
             strcpy(&buf[strlen(buf)], "MARS FLYBY FAILS!x");
         }
@@ -270,6 +272,7 @@ OpenNews(char plr, char *buf, int bud)
 
     if (Data->P[plr].Plans & 0xf0) {
         display::graphics.setForegroundColor(5);
+
         if (Data->P[plr].Plans & 0x10) {
             display::graphics.setForegroundColor(13);
             strcpy(&buf[strlen(buf)], "MARS FLYBY SUCCEEDS!x");
@@ -841,16 +844,17 @@ News(char plr)
             OutBox(303, 158, 313, 194);
         }
 
-    if (ctop <= 0) {
-        draw_up_arrow(305, 126);
-    } else {
-        draw_up_arrow_highlight(305, 126);
-    }
-    if (ctop >= bline) {
-        draw_down_arrow(305, 163);
-    } else {
-        draw_down_arrow_highlight(305, 163);
-    }
+        if (ctop <= 0) {
+            draw_up_arrow(305, 126);
+        } else {
+            draw_up_arrow_highlight(305, 126);
+        }
+
+        if (ctop >= bline) {
+            draw_down_arrow(305, 163);
+        } else {
+            draw_down_arrow_highlight(305, 163);
+        }
 
 //   gr_sync ();
     }
