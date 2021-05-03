@@ -96,6 +96,7 @@ using namespace std;
 #define MAXIMUM_NEWS_EVENTS         100
 #define MAXIMUM_PRESTIGE_NUM        28
 #define MAX_STEPS                   60
+#define MAX_MISSION_COUNT           100
 
 /** \name Astronaut related
  *@{
@@ -600,7 +601,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     struct MissionType Mission[MAX_MISSIONS];   // Current Mission Info
     int8_t Block;                      // Blocked Mission Number
     struct MissionType Future[MAX_MISSIONS];    // Future Mission Info
-    struct PastInfo History[100];    // Past Mission History
+    struct PastInfo History[MAX_MISSION_COUNT];    // Past Mission History
     int16_t PastMissionCount;                   // Number of Past Missions
     int8_t MissionCatastrophicFailureOnTurn;                      // Catastrophic Fail on Turn
     // 1 = Cat Failure
@@ -695,6 +696,9 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         ar(CEREAL_NVP(AIStat));
         ar(CEREAL_NVP(BadCardEventFlag));
         ar(CEREAL_NVP(Port));
+
+        // SECURITY: Data sanitization
+        assert(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
     }
 
 };

@@ -1243,6 +1243,7 @@ int Update_Prestige_Data(char plr, char mis, int code)
 
     if (MAIL == 1 && plr == MAIL_OPPONENT) {
         Data->P[plr].PastMissionCount++; // Normally done in MissionPast()
+        assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     }
 
     // Player prestige gets updated after the Soviet turn
