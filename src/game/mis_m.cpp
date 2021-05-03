@@ -69,6 +69,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
+Equipment* FindLunarModule();
 std::vector<Astros *> LMCrew(int pad, Equipment *module);
 void InvalidatePrestige();
 void BranchIfAlive(int *FNote);
@@ -1222,8 +1223,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].trace = Mev[STEP].dgoto;
         Mev[STEP].StepInfo = 3100 + STEP;
 
+        // This error can occur on Photo Recon tests, so the LM must
+        // be identified first.
         {
-            std::vector<Astros *> crew = LMCrew(Mev[STEP].pad, GetEquipment(Mev[STEP]));
+            std::vector<Astros *> crew =
+                LMCrew(Mev[STEP].pad, FindLunarModule());
 
             for (std::vector<Astros *>::iterator it = crew.begin();
                  it != crew.end(); it++) {
@@ -1384,6 +1388,23 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     death = 0;
     return FNote;
+}
+
+
+/**
+ * Return the active Lunar Module for the current mission.
+ *
+ * This is used to find the LM for steps that affect the LM but do
+ * not test the LM directly, such as Photo Recon tests.
+ *
+ * \return the LM, or NULL if there is none for the mission.
+ */
+Equipment* FindLunarModule()
+{
+    // For joint missions, the LM is always found on the first launch,
+    // because if there's a problem launching it, there's no reason to
+    // risk the manned launch.
+    return MH[0][Mission_LM];
 }
 
 
