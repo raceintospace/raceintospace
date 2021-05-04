@@ -737,7 +737,13 @@ char RD(char player_index)
                 delay(10);
                 WaitForMouseUp();
                 InBox(26, 94, 131, 172);
-                ShowHardwareDescription(player_index, hardware, unit); 
+                ShowHardwareDescription(player_index, hardware, unit);  
+            } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+                OutBox(285, 70, 317, 87);
+                delay(10);
+                WaitForMouseUp();
+                InBox(285, 70, 317, 87);
+                Help("i168");
             }
         }
 
@@ -940,10 +946,7 @@ void ShowUnit(char hw, char un, char player_index)
 
     // Set Avoid Failure notification
     if (program.SaveCard > 0) {
-        fill_rectangle(286, 71, 316, 71, 5);
-        fill_rectangle(286, 86, 316, 86, 5);
-        fill_rectangle(286, 72, 286, 85, 5);
-        fill_rectangle(316, 72, 316, 85, 5);
+        IOBox(285, 70, 317, 87);
         display::graphics.setForegroundColor(11);
         draw_string(288, 77, "AVOID");
         draw_string(291, 84, "FAIL");
@@ -1451,6 +1454,12 @@ char HPurc(char player_index)
             WaitForMouseUp();
             InBox(26, 94, 131, 172);
             ShowHardwareDescription(player_index, hardware, unit); 
+         } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+            OutBox(285, 70, 317, 87);
+            delay(10);
+            WaitForMouseUp();
+            InBox(285, 70, 317, 87);
+            Help("i168");
         }
     }
 }
