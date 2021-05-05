@@ -52,7 +52,6 @@ find_replay(REPLAY *rep, struct oGROUP *grp, char player, int num,
 {
     FILE *fseq = NULL;
     struct oGROUP group;
-    size_t offset = 0;
     int retval = 0;
 
     assert(rep);
@@ -65,8 +64,7 @@ find_replay(REPLAY *rep, struct oGROUP *grp, char player, int num,
     }
 
     if (strncmp("OOOO", type, 4) == 0) {
-        offset = (player * 100) + num;
-        memcpy(rep, &interimData.tempReplay[offset], sizeof(REPLAY));
+        memcpy(rep, &interimData.tempReplay[player].at(num), sizeof(REPLAY));
 
         if (grp && fseek(fseq, sizeof_oGROUP * rep->Off[0], SEEK_SET) == 0) {
             fread_oGROUP(grp, 1, fseq);

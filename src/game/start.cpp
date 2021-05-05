@@ -77,6 +77,7 @@ void InitializeEvents(void)
         {63, 17, 0},
         {80, 20, 0}
     };
+    REPLAY rep;
 
     // Initialize base event data to 0's
     for (int i = 0; i < MAXIMUM_NEWS_EVENTS; i++) {
@@ -125,8 +126,12 @@ random_card:
     }
 
     // Initialize in Memory REPLAY.DAT
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-    memset(interimData.tempReplay, 0, interimData.replaySize);
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS;
+    memset(&rep, 0, sizeof(REPLAY));
+
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        interimData.tempReplay[i].assign(MAX_REPLAY_ITEMS, rep);
+    }
 
     // Initialize in memory for Event Saves
     interimData.eventSize = MAX_NEWS_ITEMS * sizeof(OLDNEWS);

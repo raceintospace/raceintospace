@@ -1372,12 +1372,7 @@ void LoadGame(const char *filename)
             archive(cereal::make_nvp("Data", *Data));
 
             // Load Replay Data
-            std::vector<REPLAY> vReplay;
-            archive(CEREAL_NVP(vReplay));
-
-            for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-                interimData.tempReplay[i] = vReplay.at(i);
-            }
+            archive(cereal::make_nvp("vReplay", interimData.tempReplay));
 
             // Load Event Data
             if (interimData.eventBuffer) {
@@ -1467,6 +1462,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
 {
     REPLAY *load_buffer = NULL;
     uint16_t dataSize, compSize;
+    int i, j;
 
     dataSize = *(uint16_t *) header.dataSize;
     compSize = *(uint16_t *)(header.dataSize + 2);
@@ -1500,22 +1496,28 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     // Read the Replay Data
-    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS * NUM_PLAYERS);
+    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS, fin);
 
     if (endianSwap) {
         REPLAY *r = NULL;
         r = load_buffer;
 
-        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+        for (int j = 0; j < MAX_REPLAY_ITEMS * NUM_PLAYERS; j++) {
             for (int k = 0; k < r->Qty; k++) {
                 r[j].Off[k] = _Swap16bit(r[j].Off[k]);
             }
         }
     }
 
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS;
+
+    for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
+        for (j = 0; j < NUM_PLAYERS; j++) {
+            interimData.tempReplay[j].push_back(load_buffer[j * MAX_REPLAY_ITEMS + i]);
+        }
+    }
+
     free(load_buffer);
 
     size_t eventSize = fileLength - ftell(fin);
@@ -1746,13 +1748,7 @@ void write_save_file(char *Name, SaveFileHdr header)
         archive(cereal::make_nvp("Data", *Data));
 
         // Save Replay Data
-        std::vector<REPLAY> vReplay;
-
-        for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-            vReplay.push_back(interimData.tempReplay[i]);
-        }
-
-        archive(CEREAL_NVP(vReplay));
+        archive(cereal::make_nvp("vReplay", interimData.tempReplay));
 
         // Save Event Data
         std::vector<OLDNEWS> vEvent;

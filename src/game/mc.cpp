@@ -586,7 +586,7 @@ void MissionPast(char plr, char pad, int prest)
     }
 
     // Save this replay
-    memcpy(&interimData.tempReplay[(plr * 100) + Data->P[plr].PastMissionCount ], &Rep, sizeof(REPLAY));
+    interimData.tempReplay[plr].at(Data->P[plr].PastMissionCount) = Rep;
     Data->P[plr].PastMissionCount++;
     assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     return;
