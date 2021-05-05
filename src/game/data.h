@@ -1113,13 +1113,6 @@ typedef struct {
 } SaveFileHdr;
 
 
-typedef struct {
-    char Name[20], Title[23];
-    uint16_t time, date;
-    SaveGameType type;
-} SFInfo;
-
-
 /**
  * Data structure to hold transient save game data
  */
