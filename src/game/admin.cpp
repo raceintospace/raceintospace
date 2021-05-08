@@ -1496,26 +1496,24 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     // Read the Replay Data
-    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS * NUM_PLAYERS);
-    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS, fin);
+    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
 
     if (endianSwap) {
         REPLAY *r = NULL;
         r = load_buffer;
 
-        for (int j = 0; j < MAX_REPLAY_ITEMS * NUM_PLAYERS; j++) {
+        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
             for (int k = 0; k < r->Qty; k++) {
                 r[j].Off[k] = _Swap16bit(r[j].Off[k]);
             }
         }
     }
 
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS;
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
 
     for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-        for (j = 0; j < NUM_PLAYERS; j++) {
-            interimData.tempReplay[j].push_back(load_buffer[j * MAX_REPLAY_ITEMS + i]);
-        }
+        interimData.tempReplay.push_back(load_buffer[i]);
     }
 
     free(load_buffer);

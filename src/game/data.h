@@ -97,7 +97,7 @@ using namespace std;
 #define MAXIMUM_PRESTIGE_NUM        28
 #define MAX_STEPS                   60
 #define MAX_MISSION_COUNT           100
-#define MAX_REPLAY_ITEMS            100
+#define MAX_REPLAY_ITEMS            200
 #define MAX_NEWS_ITEMS              84
 
 
@@ -1129,7 +1129,7 @@ typedef struct {
 typedef struct {
     // REPLAY.DAT related variables
     uint32_t replaySize;
-    std::vector<REPLAY> tempReplay[NUM_PLAYERS];
+    std::vector<REPLAY> tempReplay;
     // EVENT.TMP related variables
     //   Format: array of 84 OLDNEWS structures followed by all the text of the displayed
     //   event strings.  This text is listed in card order and offset via the OLDNEWS structure

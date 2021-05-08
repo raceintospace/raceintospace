@@ -126,12 +126,9 @@ random_card:
     }
 
     // Initialize in Memory REPLAY.DAT
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS * NUM_PLAYERS;
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
     memset(&rep, 0, sizeof(REPLAY));
-
-    for (int i = 0; i < NUM_PLAYERS; i++) {
-        interimData.tempReplay[i].assign(MAX_REPLAY_ITEMS, rep);
-    }
+    interimData.tempReplay.assign(MAX_REPLAY_ITEMS, rep);
 
     // Initialize in memory for Event Saves
     interimData.eventSize = MAX_NEWS_ITEMS * sizeof(OLDNEWS);
