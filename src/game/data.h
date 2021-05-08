@@ -1085,6 +1085,9 @@ typedef struct ReplayItem {
     {
         ar(CEREAL_NVP(Qty));
         ARCHIVE_VECTOR(Off, uint16_t, 35);
+
+        // SECURITY: Data sanitization
+        assert(Qty <= 35);
     }
 
 } REPLAY;
