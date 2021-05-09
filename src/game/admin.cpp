@@ -459,6 +459,9 @@ void FileAccess(char mode)
 
     FadeIn(2, 10, 0, 0);
 
+    if (savegames.size() > 9) {
+        draw_down_arrow_highlight(194, 94);
+    }
 
     while (!done) {
         GetMouse();
@@ -601,6 +604,12 @@ void FileAccess(char mode)
 
             // WaitForMouseUp();
             OutBox(191, 50, 202, 87);
+            if (now == 0) {
+                draw_up_arrow(194, 55);
+            }
+            if (savegames.size() > now + (9 - BarB)) {
+                draw_down_arrow_highlight(194, 94);
+            }
 
             // perform Up Button
             key = 0;
@@ -618,8 +627,21 @@ void FileAccess(char mode)
                 FileText(&savegames[now].Name[0]);
             }
 
+            if (now == 0) {
+                draw_up_arrow(194, 55);
+            }
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
+
             // perform Up Button
             key = 0;
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
+            if (savegames.size() > now + (8 - BarB)) {
+                draw_down_arrow_highlight(194, 94);
+            }
 
         } else if (key == K_PGDN) {  // Page Down
 
@@ -633,6 +655,7 @@ void FileAccess(char mode)
 
                 DrawFiles(now, BarB, savegames);
                 FileText(&savegames[now].Name[0]);
+                draw_up_arrow_highlight(194, 55);
             }
 
             key = 0;
@@ -644,6 +667,7 @@ void FileAccess(char mode)
                     now++;
                     DrawFiles(now, BarB, savegames);
                     FileText(&savegames[now].Name[0]);
+                    draw_up_arrow_highlight(194, 55);
                 }
             }
 
@@ -660,6 +684,13 @@ void FileAccess(char mode)
 
             // perform Down Button
             key = 0;
+
+            if (BarB - now > 0) {
+                draw_up_arrow_highlight(194, 55);
+            }
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
         }
     }  //while
 
@@ -763,7 +794,7 @@ void DrawTimeCapsule(int display)
     }
 
     display::graphics.setForegroundColor(11);
-    draw_string(59, 42, "TIME CAPSULE REQUEST");
+    draw_string(65, 42, "TIME CAPSULE REQUEST");
     draw_string(219, 42, "FUNCTIONS");
     display::graphics.setForegroundColor(1);
     draw_string_highlighted(233, 56, "LOAD", 0);
