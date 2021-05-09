@@ -1260,7 +1260,7 @@ void AstSel(char plr)
                 if (! femaleAstronautsSelected) {
                     InBox(245, 5, 314, 17);
                     Help("i100");
-                    OutBox(245, 5, 314, 17);
+                    OutBox(246, 5, 314, 17);
                 }
             }
 
@@ -1303,7 +1303,7 @@ void AstSel(char plr)
                     break;
                 }
 
-                OutBox(245, 5, 314, 17);
+                OutBox(246, 5, 314, 17);
 
                 music_stop();
 
