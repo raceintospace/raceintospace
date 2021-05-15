@@ -1131,17 +1131,19 @@ typedef struct {
  */
 typedef struct {
     // REPLAY.DAT related variables
-    uint32_t replaySize;
-    std::vector<REPLAY> tempReplay;
+    std::array<REPLAY, MAX_REPLAY_ITEMS> tempReplay;
     // EVENT.TMP related variables
-    //   Format: array of 84 OLDNEWS structures followed by all the text of the displayed
-    //   event strings.  This text is listed in card order and offset via the OLDNEWS structure
-    uint32_t eventSize;
-    OLDNEWS *tempEvents;   // helper pointer, always set to eventBuffer.  EVENT.TMP
-    char *eventBuffer;   // raw buffer for event data
+    std::array<std::string, MAX_NEWS_ITEMS> tempEvents;
     // ENDTURN.TMP related variables
     uint32_t endTurnSaveSize;
     char *endTurnBuffer;
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+        ARCHIVE_ARRAY(tempReplay, REPLAY);
+        ARCHIVE_ARRAY(tempEvents, std::string);
+    }
 } INTERIMDATA;
 
 #pragma pack(pop)

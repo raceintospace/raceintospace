@@ -1371,29 +1371,9 @@ void LoadGame(const char *filename)
             // Load game data
             archive(cereal::make_nvp("Data", *Data));
 
-            // Load Replay Data
-            archive(cereal::make_nvp("vReplay", interimData.tempReplay));
+            // Load Replay and Event Data
+            archive(interimData);
 
-            // Load Event Data
-            if (interimData.eventBuffer) {
-                free(interimData.eventBuffer);
-            }
-
-            std::vector<OLDNEWS> vEvent;
-            archive(CEREAL_NVP(vEvent));
-            archive(cereal::make_nvp("eventSize", interimData.eventSize));
-            interimData.eventBuffer = (char *) malloc(interimData.eventSize);
-            assert(interimData.eventBuffer);
-
-            for (i = 0; i < MAX_NEWS_ITEMS; i++) {
-                ((OLDNEWS *) interimData.eventBuffer)[i] = vEvent.at(i);
-            }
-
-            offset = MAX_NEWS_ITEMS * sizeof(OLDNEWS);
-            std::string sEvent;
-            archive(CEREAL_NVP(sEvent));
-            strncpy(interimData.eventBuffer + offset, sEvent.c_str(), interimData.eventSize - offset);
-            interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
         }
 
     } else { // Not zlib compressed data
@@ -1510,10 +1490,8 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
         }
     }
 
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-
     for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-        interimData.tempReplay.push_back(load_buffer[i]);
+        interimData.tempReplay.at(i) = load_buffer[i];
     }
 
     free(load_buffer);
@@ -1538,14 +1516,16 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     // Save Event information
-    if (interimData.eventBuffer) {
-        free(interimData.eventBuffer);
-    }
 
-    interimData.eventBuffer = (char *) malloc(eventSize);
-    interimData.eventSize = eventSize;
-    memcpy(interimData.eventBuffer, load_buffer, eventSize);
-    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+    for (int j = 0; j < MAX_NEWS_ITEMS; j++) {
+        OLDNEWS *on = (OLDNEWS *) load_buffer + j;
+        char *text = (char *) load_buffer + on->offset;
+        interimData.tempEvents.at(j) = "";
+
+        for (int k = 0; k < on->size; k++) {
+            interimData.tempEvents.at(j).push_back(text[k]);
+        }
+    }
 
     free(load_buffer);
 
@@ -1745,27 +1725,8 @@ void write_save_file(char *Name, SaveFileHdr header)
         // Save End of Turn Data
         archive(cereal::make_nvp("Data", *Data));
 
-        // Save Replay Data
-        archive(cereal::make_nvp("vReplay", interimData.tempReplay));
-
-        // Save Event Data
-        std::vector<OLDNEWS> vEvent;
-
-        for (i = 0; i < MAX_NEWS_ITEMS; i++) {
-            vEvent.push_back(((OLDNEWS *) interimData.eventBuffer)[i]);
-        }
-
-        archive(CEREAL_NVP(vEvent));
-
-        // Really ugly hack: eventBuffer actually contains two data
-        // structures: 1. an OLDNEWS array of MAX_NEWS_ITEMS elements
-        // that points to the offsets and lengths of the
-        // (non-terminated) strings in 2. a long char[] of all the
-        // news event texts.
-        archive(cereal::make_nvp("eventSize", interimData.eventSize));
-        offset = MAX_NEWS_ITEMS * sizeof(OLDNEWS);
-        std::string sEvent(interimData.eventBuffer + offset, interimData.eventSize - offset);
-        archive(CEREAL_NVP(sEvent));
+        // Save Replay and Event Data
+        archive(interimData);
 
     }
 

@@ -126,15 +126,12 @@ random_card:
     }
 
     // Initialize in Memory REPLAY.DAT
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
     memset(&rep, 0, sizeof(REPLAY));
-    interimData.tempReplay.assign(MAX_REPLAY_ITEMS, rep);
+    interimData.tempReplay.fill(rep);
 
     // Initialize in memory for Event Saves
-    interimData.eventSize = MAX_NEWS_ITEMS * sizeof(OLDNEWS);
-    interimData.eventBuffer = (char *) malloc(interimData.eventSize);
-    memset(interimData.eventBuffer, 0, interimData.eventSize);
-    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
+    interimData.tempEvents.fill("");
+
 }
 
 /**

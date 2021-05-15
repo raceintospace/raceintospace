@@ -674,10 +674,6 @@ void DrawViewstandNews(const std::string &card, int got)
 
 std::string OldNewsCard(char plr, int card)
 {
-    const OLDNEWS *oldNews = &interimData.tempEvents[card + plr * 42];
-    std::string text(interimData.eventBuffer + oldNews->offset,
-                     oldNews->size);
-
     fill_rectangle(82, 183, 237, 195, 7);
     display::graphics.setForegroundColor(11);
 
@@ -689,7 +685,7 @@ std::string OldNewsCard(char plr, int card)
 
     draw_number(0, 0, (card >> 1) + 57);
 
-    return text;
+    return interimData.tempEvents.at(card + plr * 42);
 }
 
 void Viewing(char plr)

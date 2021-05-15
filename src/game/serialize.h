@@ -6,6 +6,7 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,7 +24,12 @@ using namespace std;
         strntcpy(arr, str.c_str(), sizeof(arr));        \
     } while (0)
 
-
+#define ARCHIVE_ARRAY(arr, type)                                   \
+    do {                                                           \
+        std::vector<type> vec(arr.begin(), arr.end());             \
+        ar(cereal::make_nvp(#arr, vec));                           \
+        std::copy_n(vec.begin(), arr.size(), arr.begin());         \
+    } while (0)
 
 #define SERIALIZE_XML_FILE(x, filename)         \
     do {                                        \
