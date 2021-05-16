@@ -613,10 +613,25 @@ void FileAccess(char mode)
 
             // perform Up Button
             key = 0;
+
+        } else if (key == K_HOME) {  // 
+
+            now = 0; 
+            BarB = 0;
+            DrawFiles(now, BarB, savegames);
+            FileText(&savegames[now].Name[0]);
+            if (savegames.size() > 8) {
+                draw_up_arrow_highlight(194, 55);
+            } else {
+                draw_up_arrow(194, 55);
+            }
+            key = 0;
+
         } else if (key == K_PGUP) { // Page Up
 
             if (now > 0) {
                 now -= 9;
+                BarB = 0;
 
                 if (now < 0) {
                     now = 0;
@@ -650,15 +665,43 @@ void FileAccess(char mode)
 
                 if (now > (savegames.size() - 1)) {
                     now = savegames.size() - 1;
+                    BarB = savegames.size() - 1;
+                } else {
+                    now = savegames.size() - 1;
                     BarB = 8;
                 }
 
                 DrawFiles(now, BarB, savegames);
                 FileText(&savegames[now].Name[0]);
-                draw_up_arrow_highlight(194, 55);
+                if (savegames.size() > 8) {
+                    draw_up_arrow_highlight(194, 55);
+                } else {
+                    draw_up_arrow(194, 55);
+                }
             }
 
             key = 0;
+
+        } else if (key == K_END) {  // 
+
+            now = savegames.size() - 1;
+
+            BarB = 8;
+            if (BarB > savegames.size() - 1) {
+                BarB = savegames.size() - 1;
+            }
+            
+            if (savegames.size() > 8) {
+                draw_up_arrow_highlight(194, 55);
+            } else {
+                draw_up_arrow(194, 55);
+            }
+
+            DrawFiles(now, BarB, savegames);
+            FileText(&savegames[now].Name[0]);
+
+            key = 0;
+
         } else if ((x >= 191 && y >= 89 && x <= 202 && y <= 126 && mousebuttons > 0) || key == DN_ARROW) {
             InBox(191, 89, 202, 126);
 
@@ -727,7 +770,7 @@ void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
 
     for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
         if (savegames[i].type == SAVEGAME_PlayByMail) {
-            display::graphics.setForegroundColor(11);
+            display::graphics.setForegroundColor(11);  // Show PBEM saves in yellow
         } else {
             display::graphics.setForegroundColor(1);
         }
