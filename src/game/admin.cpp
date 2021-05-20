@@ -952,6 +952,10 @@ void FileText(char *name)
 
     fclose(fin);
 
+    // Make sure player names are null-terminated
+    header.PName[0][19] = 0;
+    header.PName[1][19] = 0;
+
     grMoveTo(40, 139);
 
     //if (((char)SaveHdr->Country[0])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
@@ -1362,6 +1366,9 @@ void LoadGame(const char *filename)
             BadFileType();
             return;
         }
+
+        // Make sure that the uncompressed data is null-terminated
+        buf[usize - 1] = 0;
 
         {
             stringstream stream;
