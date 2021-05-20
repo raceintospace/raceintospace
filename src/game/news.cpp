@@ -618,7 +618,7 @@ News(char plr)
         // Copy the recorded news event for the turn into the buffer
         // so it will be available for display.
         strntcpy(buffer, interimData.tempEvents.at(plr * 42 + turn - 1).c_str(),
-                 interimData.tempEvents.at(plr * 42 + turn - 1).length() + 1);
+                 BUFFER_SIZE);
     }
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {
