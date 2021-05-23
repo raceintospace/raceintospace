@@ -60,7 +60,7 @@ const char *code_names[] = {
     "TUMBLEWEED",
     "BUMBLEBEE",
     "SPIKE",
-    "POST-HOLE",
+    "POSTHOLE",
     "BULLET",
     "MECHTA",
     "LUNAYA",
@@ -140,8 +140,8 @@ const char *code_names[] = {
     "DUO",
     "BABUSHKA",
     "DECADENCE",
-    "BELL-BOTTOM",
-    "HAMSTER-CAGE",
+    "BELL BOTTOM",
+    "HAMSTER CAGE",
     "BIKINI",
     "TROIKA",
     "TRIPLET",
@@ -154,7 +154,7 @@ const char *code_names[] = {
     "ROWBOAT",
     "SPUD",
     "GOLIATH",
-    "LONG-HAUL",
+    "LONG HAUL",
     "BORSCHT",
     "BABA YAGA",
     "ATILLA",
@@ -279,6 +279,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
 
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
+/*if (Data->Year > 58) {
+    draw_up_arrow_highlight(137, 42);
+}*/
 
 
 /* Returns the index into the record of Intel Briefings for the
@@ -739,6 +742,18 @@ void BackIntel(char p, char year)
     } else {
         draw_string(0, 0, "F");
     }
+
+    if (year < Data->Year - 59) {
+        draw_up_arrow_highlight(137, 42);
+    } else {
+        draw_up_arrow(137, 42);
+    }
+    if (year > 0) {
+        draw_down_arrow_highlight(137, 95);
+    } else {
+        draw_down_arrow(137, 95);
+    }
+
 
     draw_number(0, 0, 58 + year);
     display::graphics.setForegroundColor(6);
@@ -1538,7 +1553,6 @@ void DrawBre(char plr)
     draw_string(256, 13, "CONTINUE");
     draw_up_arrow(137, 42);
     draw_down_arrow(137, 95);
-
 }
 
 void Bre(char plr)
@@ -1571,8 +1585,19 @@ void Bre(char plr)
                     year++;
                     BackIntel(plr, year);
                 }
-
                 OutBox(135, 32, 145, 77);
+
+            } else if (mousebuttons > 0 || key == K_HOME) {
+                fill_rectangle(45, 32, 98, 38, 3);
+                fill_rectangle(38, 54, 127, 60, 3);
+                fill_rectangle(38, 76, 127, 82, 3);
+                fill_rectangle(16, 91, 127, 98, 3);
+                fill_rectangle(16, 107, 127, 113, 3);
+                fill_rectangle(16, 123, 127, 129, 3);
+                fill_rectangle(30, 148, 300, 186, 7);
+                year = Data->Year - 59;
+                BackIntel(plr, year);
+
             } else if ((x >= 135 && y > 85 && x <= 145 && y <= 130 && mousebuttons > 0) || key == DN_ARROW) {
                 InBox(135, 85, 145, 130);
                 WaitForMouseUp();
@@ -1589,8 +1614,19 @@ void Bre(char plr)
                     year--;
                     BackIntel(plr, year);
                 }
-
                 OutBox(135, 85, 145, 130);
+
+            } else if (mousebuttons > 0 || key == K_END) {
+                fill_rectangle(45, 32, 98, 38, 3);
+                fill_rectangle(38, 54, 127, 60, 3);
+                fill_rectangle(38, 76, 127, 82, 3);
+                fill_rectangle(16, 91, 127, 98, 3);
+                fill_rectangle(16, 107, 127, 113, 3);
+                fill_rectangle(16, 123, 127, 129, 3);
+                fill_rectangle(30, 148, 300, 186, 7);
+                year = 0;
+                BackIntel(plr, year);
+
             } else if ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
