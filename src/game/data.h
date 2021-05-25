@@ -100,6 +100,9 @@ using namespace std;
 #define MAX_REPLAY_ITEMS            200
 #define MAX_NEWS_ITEMS              84
 
+#define MAX_PORT_LEVEL              40
+#define MAX_PORT_REGION             4
+
 
 /** \name Astronaut related
  *@{
@@ -647,7 +650,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     int8_t unused_X[20]; // unused
     int8_t unused_AIMissions[62];                      // How many missions of type done
     int8_t BadCardEventFlag[15];                // Flag for Bad Events
-    int8_t Port[40];                   // Levels for SPort display
+    int8_t Port[MAX_PORT_LEVEL];                   // Levels for SPort display
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
@@ -703,6 +706,11 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         // SECURITY: Data sanitization
         assert(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
         assert(eCount >= 0 && eCount < MAX_NEWS_ITEMS / 2);
+
+        for (int i = 0; i < MAX_PORT_LEVEL; i++) {
+            assert(Port[i] >= 0 && Port[i] < MAX_PORT_REGION);
+        }
+
     }
 
 };
