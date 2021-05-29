@@ -365,6 +365,9 @@ void Train(char plr, int level)
     if (count > 0) {
         TrainText(plr, M[0], count);
     }
+    if (count > 8) {
+        draw_down_arrow_highlight(9, 166);
+    } 
 
     FadeIn(2, 10, 0, 0);
 
@@ -683,16 +686,17 @@ void Train(char plr, int level)
                 return;  /* Done */
             } /* end x-y if */
 
-            if (now2 < count - 1) {
+            if (now2 < count - 1 && count > 8 && (8 - BarA) + now2 < count) {
                 draw_down_arrow_highlight(9, 166);
             } else {
                 draw_down_arrow(9, 166);
             }
-            if (now2 - BarA > 1) {
+            if (now2 - BarA > 0) {
                 draw_up_arrow_highlight(9, 133);
             } else {
                 draw_up_arrow(9, 133);
             }
+
         } /* end mouse if */
     }  /* end while */
 } /* end Limbo */
