@@ -273,8 +273,7 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man1].Sex == 1) {
-                // Show females in orange
-                display::graphics.setForegroundColor(14);
+                display::graphics.setForegroundColor(14);  // Show females in orange
             }
 
             if (man1 != -1) {
@@ -294,8 +293,7 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man2].Sex == 1) {
-                // Show females in orange
-                display::graphics.setForegroundColor(14);
+                display::graphics.setForegroundColor(14);  // Show females in orange
             }
 
             if (man2 != -1) {
@@ -315,8 +313,7 @@ void EndGame(char win, char pad)
             display::graphics.setForegroundColor(8);
 
             if (Data->P[win].Pool[man3].Sex == 1) {
-                // Show females in orange
-                display::graphics.setForegroundColor(14);
+                display::graphics.setForegroundColor(14);  // Show females in orange
             }
 
             if (man3 != -1 && prog > 2) {
@@ -332,8 +329,7 @@ void EndGame(char win, char pad)
                 display::graphics.setForegroundColor(8);
 
                 if (Data->P[win].Pool[man4].Sex == 1) {
-                    // Show females in orange
-                    display::graphics.setForegroundColor(14);
+                    display::graphics.setForegroundColor(14);  // Show females in orange
                 }
 
                 if (man4 != -1) {
@@ -349,14 +345,13 @@ void EndGame(char win, char pad)
         }
     }
 
-    // Print the first to walk on the Moon
+    // Show the first to walk on the Moon
     firstOnMoon = (manOnMoon == 1 ? man1 : manOnMoon == 2 ? man2 : manOnMoon == 3 ? man3 : manOnMoon == 4 ? man4 : man2);
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
-    display::graphics.setForegroundColor(14);
-
+    display::graphics.setForegroundColor(15);
     if (Data->P[win].Pool[firstOnMoon].Sex == 1) {
-        display::graphics.setForegroundColor(5);  // Show females in blue
+        display::graphics.setForegroundColor(17);  // Show females in light green
     }
 
     draw_string(0, 0, &Data->P[win].Pool[firstOnMoon].Name[0]);
@@ -859,7 +854,11 @@ void FakeWin(char win)
 
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
-    display::graphics.setForegroundColor(14);
+    if (&Data->P[win].Pool[manOnMoon].Sex == 0) {
+        display::graphics.setForegroundColor(15);
+    } else {
+        display::graphics.setForegroundColor(17);
+    }
     draw_string(0, 0, &Data->P[win].Pool[manOnMoon].Name[0]);
     display::graphics.setForegroundColor(6);
     FakeHistory(win, yr);
@@ -892,7 +891,7 @@ void FakeWin(char win)
     return;
 }
 
-void FakeHistory(char plr, char Fyear) // holds the winning player
+void FakeHistory(char plr, char Fyear)  // holds the winning player
 {
     char bud;
 
@@ -1015,7 +1014,7 @@ void SpecialEnd(void)
     draw_small_flag(0, 179, 4);
     InBox(210, 3, 237, 19);
     draw_small_flag(1, 211, 4);
-    LoserPict(0, 128); // load loser picture
+    LoserPict(0, 128);  // load loser picture
     std::string history = HistFile(10);
     PrintOne(history.c_str(), 0);
     history = HistFile(11);
@@ -1073,7 +1072,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
     boost::shared_ptr<display::PalettizedSurface> endgame(
         Filesystem::readImage(filename));
 
-    endgame->exportPalette(coff, coff + 127); // 128-color palette
+    endgame->exportPalette(coff, coff + 127);  // 128-color palette
     display::graphics.screen()->draw(endgame, x, y);
 }
 
@@ -1125,7 +1124,7 @@ void PlayFirst(char plr, char first)
     draw_heading(92, 14, "PRESTIGE FIRST", 0, -1);
     ShBox(80, 33, 240, 124);
     InBox(84, 37, 236, 118);
-    //fill_rectangle(85, 46, 235, 125, 0);
+    // fill_rectangle(85, 46, 235, 125, 0);
     ShBox(80, 126, 240, 190);  // 77 first parameter
     display::graphics.setForegroundColor(1);
     draw_string(84, 132, "GOAL STEP COMPLETE: ");
