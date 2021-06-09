@@ -604,9 +604,11 @@ void FileAccess(char mode)
 
             // WaitForMouseUp();
             OutBox(191, 50, 202, 87);
+
             if (now == 0) {
                 draw_up_arrow(194, 55);
             }
+
             if (savegames.size() > now + (9 - BarB)) {
                 draw_down_arrow_highlight(194, 94);
             }
@@ -614,17 +616,19 @@ void FileAccess(char mode)
             // perform Up Button
             key = 0;
 
-        } else if (key == K_HOME) {  // 
+        } else if (key == K_HOME) {  //
 
-            now = 0; 
+            now = 0;
             BarB = 0;
             DrawFiles(now, BarB, savegames);
             FileText(&savegames[now].Name[0]);
+
             if (savegames.size() > 8) {
                 draw_up_arrow_highlight(194, 55);
             } else {
                 draw_up_arrow(194, 55);
             }
+
             key = 0;
 
         } else if (key == K_PGUP) { // Page Up
@@ -645,15 +649,18 @@ void FileAccess(char mode)
             if (now == 0) {
                 draw_up_arrow(194, 55);
             }
+
             if (savegames.size() <= now + (9 - BarB)) {
                 draw_down_arrow(194, 94);
             }
 
             // perform Up Button
             key = 0;
+
             if (savegames.size() <= now + (9 - BarB)) {
                 draw_down_arrow(194, 94);
             }
+
             if (savegames.size() > now + (8 - BarB)) {
                 draw_down_arrow_highlight(194, 94);
             }
@@ -673,6 +680,7 @@ void FileAccess(char mode)
 
                 DrawFiles(now, BarB, savegames);
                 FileText(&savegames[now].Name[0]);
+
                 if (savegames.size() > 8) {
                     draw_up_arrow_highlight(194, 55);
                 } else {
@@ -682,15 +690,16 @@ void FileAccess(char mode)
 
             key = 0;
 
-        } else if (key == K_END) {  // 
+        } else if (key == K_END) {  //
 
             now = savegames.size() - 1;
 
             BarB = 8;
+
             if (BarB > savegames.size() - 1) {
                 BarB = savegames.size() - 1;
             }
-            
+
             if (savegames.size() > 8) {
                 draw_up_arrow_highlight(194, 55);
             } else {
@@ -731,6 +740,7 @@ void FileAccess(char mode)
             if (BarB - now > 0) {
                 draw_up_arrow_highlight(194, 55);
             }
+
             if (savegames.size() <= now + (9 - BarB)) {
                 draw_down_arrow(194, 94);
             }
@@ -1201,7 +1211,7 @@ int FutureCheck(char plr, char type)
             display::graphics.setForegroundColor(5);
             draw_string(111, 50 + i * 51, "THIS FACILITY IS ");
 
-            if (p[i] == 20) {
+            if (p[i] >= 20) {
                 draw_string(0, 0, "DESTROYED.");
             } else {
                 draw_string(0, 0, "DAMAGED.");
