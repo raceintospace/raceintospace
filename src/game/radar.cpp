@@ -142,9 +142,9 @@ void PadDraw(char plr, char pad)
 
     if (Data->P[plr].LaunchFacility[pad] == 1) {
         draw_string(0, 0, "OPERATIONAL");
-    } else if (Data->P[plr].LaunchFacility[pad] == 20) {
+    } else if (Data->P[plr].LaunchFacility[pad] >= 20) {
         draw_string(0, 0, "DESTROYED");
-        } else {
+    } else {
         draw_string(0, 0, "DAMAGED");
     }
 
