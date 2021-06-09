@@ -69,6 +69,15 @@ using namespace std;
         iarchive(*x);                            \
     } while (0)
 
+#define ASSERT(expr)                                                    \
+    do {                                                                \
+        if (!(expr)) {                                                  \
+            std::stringstream err;                                      \
+            err << "Sanitization check failed: " <<  #expr << " (" << __FILE__ << ":" << __LINE__ << ")"; \
+            throw std::out_of_range(err.str());                         \
+        }                                                               \
+    } while (0)
+
 
 /* Null-terminated version of strncpy */
 static inline char *strntcpy(char *dest, const char *src, size_t n)

@@ -148,6 +148,10 @@ struct Defl {
         ar(CEREAL_NVP(Anim));
         ar(CEREAL_NVP(Music));
         ar(CEREAL_NVP(Sound));
+
+        // SECURITY: Data sanitization
+        ASSERT(Plr1 >= 0 && Plr1 < 8);
+        ASSERT(Plr2 >= 0 && Plr2 < 8);
     }
 };
 
@@ -183,6 +187,9 @@ struct PrestType {
         ar(CEREAL_NVP(mPlace));
         ar(CEREAL_NVP(Month));
         ar(CEREAL_NVP(Year));
+
+        // SECURITY: Data sanitization
+        ASSERT(Month >= 0 && Month < 12);
     }
 
 };
@@ -339,6 +346,16 @@ struct MissionType {
         ar(CEREAL_NVP(PCrew));
         ar(CEREAL_NVP(BCrew));
         ar(CEREAL_NVP(Crew));
+
+        // SECURITY: Data sanitization
+        ASSERT(Month >= 0 && Month < 12);
+        ASSERT(Joint == 0 || Joint == 1);
+        ASSERT(part == 0 || part == 1);
+        ASSERT(Prog >= 0 && Prog < 6);
+
+        for (int i = 0; i < 6; i++) {
+            ASSERT(Hard[i] >= -1 && Hard[i] < 7);
+        }
     }
 };
 
@@ -535,6 +552,9 @@ struct PastInfo {
         ar(CEREAL_NVP(Part));
         ar(CEREAL_NVP(Prestige));
         ar(CEREAL_NVP(Duration));
+
+        // SECURITY: Data sanitization
+        ASSERT(Month >= 0 && Month < 12);
     }
 };
 
@@ -704,11 +724,11 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         ar(CEREAL_NVP(Port));
 
         // SECURITY: Data sanitization
-        assert(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
-        assert(eCount >= 0 && eCount < MAX_NEWS_ITEMS / 2);
+        ASSERT(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
+        ASSERT(eCount >= 0 && eCount < MAX_NEWS_ITEMS / 2);
 
         for (int i = 0; i < MAX_PORT_LEVEL; i++) {
-            assert(Port[i] >= 0 && Port[i] < MAX_PORT_REGION);
+            ASSERT(Port[i] >= 0 && Port[i] < MAX_PORT_REGION);
         }
 
     }
@@ -761,8 +781,8 @@ struct MisEval {
         ARCHIVE_STRING(Name);
 
         // SECURITY: Data sanitization
-        assert(abs(Prest) < MAXIMUM_PRESTIGE_NUM || abs(Prest) == 100);
-        assert(trace < MAX_STEPS || trace == 0x7f);
+        ASSERT(abs(Prest) < MAXIMUM_PRESTIGE_NUM || abs(Prest) == 100);
+        ASSERT(trace < MAX_STEPS || trace == 0x7f);
 
     }
 
@@ -804,6 +824,9 @@ struct Players {
         ar(CEREAL_NVP(Mile));
         ar(CEREAL_NVP(Mev));
         ar(CEREAL_NVP(Step));
+
+        // SECURITY: Data sanitization
+        ASSERT(Count >= 0 && Count < MAX_NEWS_ITEMS);
     }
 };
 
@@ -1095,7 +1118,7 @@ typedef struct ReplayItem {
         ARCHIVE_VECTOR(Off, uint16_t, 35);
 
         // SECURITY: Data sanitization
-        assert(Qty <= 35);
+        ASSERT(Qty <= 35);
     }
 
 } REPLAY;

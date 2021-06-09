@@ -1358,11 +1358,11 @@ void LoadGame(const char *filename)
         buf = (unsigned char *) malloc(usize);
         assert(cbuf && buf);
         fread(cbuf, csize, 1, fin);
+        fclose(fin);
 
         ok = uncompress(buf, &usize, cbuf, csize);
 
         if (ok != Z_OK) {
-            fclose(fin);
             BadFileType();
             return;
         }
@@ -1370,7 +1370,7 @@ void LoadGame(const char *filename)
         // Make sure that the uncompressed data is null-terminated
         buf[usize - 1] = 0;
 
-        {
+        try {
             stringstream stream;
             stream << buf;
             cereal::JSONInputArchive archive(stream);
@@ -1380,7 +1380,10 @@ void LoadGame(const char *filename)
 
             // Load Replay and Event Data
             archive(interimData);
-
+        } catch (std::exception &e) {
+            WARNING1(e.what());
+            BadFileType();
+            return;
         }
 
     } else { // Not zlib compressed data
