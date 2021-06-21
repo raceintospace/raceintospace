@@ -1188,7 +1188,7 @@ int FutureCheck(char plr, char type)
     display::graphics.setForegroundColor(11);
     draw_string(231, 25, "E");
     display::graphics.setForegroundColor(9);
-    draw_string(235, 25, "XIT");
+    draw_string(236, 25, "XIT");
     display::graphics.setForegroundColor(11);
 
     if (type == 0) {
