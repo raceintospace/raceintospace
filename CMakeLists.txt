@@ -26,9 +26,9 @@ endif (WINDOWS)
 option(PBEM "Enable experimental Play-by-EMail feature" OFF)
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
-if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+if(lc_CMAKE_BUILD_TYPE STREQUAL "debug")
 	add_definitions(-DDEBUG)
-endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+endif(lc_CMAKE_BUILD_TYPE STREQUAL "debug")
 
 add_subdirectory(lib)
 add_subdirectory(src)
@@ -51,18 +51,17 @@ add_custom_target(run
 	DEPENDS raceintospace
 	)
 
-if(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
-	add_definitions(-DDEBUG)
+if(lc_CMAKE_BUILD_TYPE STREQUAL "debug")
 	add_custom_target(gdb
 		COMMAND gdb -ex run --args ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
 		DEPENDS raceintospace
 		)
-else(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+else(lc_CMAKE_BUILD_TYPE STREQUAL "debug")
 	add_custom_target(gdb
 		COMMENT "Set CMAKE_BUILD_TYPE=Debug for debugging information (e.g., \"cmake -DCMAKE_BUILD_TYPE=Debug ${CMAKE_SOURCE_DIR}\")"
 		COMMAND false
 		)
-endif(${lc_CMAKE_BUILD_TYPE} STREQUAL "debug")
+endif(lc_CMAKE_BUILD_TYPE STREQUAL "debug")
 
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${CMAKE_PROJECT_VERSION})
