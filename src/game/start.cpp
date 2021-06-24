@@ -129,7 +129,7 @@ random_card:
     memset(interimData.tempReplay, 0, interimData.replaySize);
 
     // Initialize in memory for Event Saves
-    interimData.eventSize = 84 * sizeof(OLDNEWS);
+    interimData.eventSize = MAX_NEWS_ITEMS * sizeof(OLDNEWS);
     interimData.eventBuffer = (char *) malloc(interimData.eventSize);
     memset(interimData.eventBuffer, 0, interimData.eventSize);
     interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
@@ -143,7 +143,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 {
     /* constants related to training */
     const unsigned NUM_SKILLS = 5;
-    char *skills[5] = {
+    int8_t *skills[5] = {
         &astro->Cap,
         &astro->LM,
         &astro->EVA,
@@ -213,7 +213,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
         if (j > 0) {
             /* If found, pick one skill at random */
-            char *skill = skills[choices[brandom(j)]];
+            int8_t *skill = skills[choices[brandom(j)]];
             *skill = MIN(*skill + delta, skillMax);
         }
 
@@ -245,7 +245,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         {
             assert((unsigned) astro->Focus <= NUM_SKILLS);
             /* Increase trained skill by 1 ('naut is halfway through Adv Training) */
-            char *skill = skills[astro->Focus - 1];
+            int8_t *skill = skills[astro->Focus - 1];
             *skill = MIN(*skill + 1, skillMax);
         }
 
@@ -265,7 +265,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         assert((unsigned) astro->Focus <= NUM_SKILLS);
 
         /* Increase trained skill by 1 */
-        char *skill = skills[astro->Focus - 1];
+        int8_t *skill = skills[astro->Focus - 1];
         *skill = MIN(*skill + 1, skillMax);
 
         break;
