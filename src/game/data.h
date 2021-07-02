@@ -103,6 +103,8 @@ using namespace std;
 #define MAX_PORT_LEVEL              40
 #define MAX_PORT_REGION             4
 
+#define NUM_PROGRAMS                5 /**< 1,2,3,4 seater + shuttle */
+
 
 /** \name Astronaut related
  *@{
@@ -110,6 +112,7 @@ using namespace std;
 #define ASTRONAUT_POOLS             5
 #define ASTRONAUT_CREW_MAX          8
 #define ASTRONAUT_FLT_CREW_MAX      4
+#define MAX_POOL                    65
 /*@}*/
 
 
@@ -351,7 +354,10 @@ struct MissionType {
         ASSERT(Month >= 0 && Month < 12);
         ASSERT(Joint == 0 || Joint == 1);
         ASSERT(part == 0 || part == 1);
-        ASSERT(Prog >= 0 && Prog < 6);
+        ASSERT(Prog >= 0 && Prog < NUM_PROGRAMS + 1);
+        ASSERT(PCrew >= 0 && PCrew <= ASTRONAUT_CREW_MAX);
+        ASSERT(BCrew >= 0 && BCrew <= ASTRONAUT_CREW_MAX);
+        ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
 
         for (int i = 0; i < 6; i++) {
             ASSERT(Hard[i] >= -1 && Hard[i] < 7);
@@ -505,6 +511,11 @@ struct Astros {
         ar(CEREAL_NVP(Mood));
         ar(CEREAL_NVP(Pool));
         ar(CEREAL_NVP(Hero));
+
+        // SECURITY: Data sanitization
+        ASSERT(Assign >= 0 && Assign <= NUM_PROGRAMS + 1);
+        ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
+
     }
 };
 
@@ -608,7 +619,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     int8_t AstroCount;                 // Current # in Program
     int8_t AstroLevel;                 // Level of selection
     int8_t AstroDelay;                 // Wait until next selection
-    struct Astros Pool[65];          // Pool of SpaceMen
+    struct Astros Pool[MAX_POOL];      // Pool of SpaceMen
     struct {
         char Vle;
         char Asp;
@@ -726,9 +737,20 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         // SECURITY: Data sanitization
         ASSERT(PastMissionCount >= 0 && PastMissionCount < MAX_MISSION_COUNT);
         ASSERT(eCount >= 0 && eCount < MAX_NEWS_ITEMS / 2);
+        ASSERT(AstroCount >= 0 && AstroCount <= MAX_POOL);
 
         for (int i = 0; i < MAX_PORT_LEVEL; i++) {
             ASSERT(Port[i] >= 0 && Port[i] < MAX_PORT_REGION);
+        }
+
+        for (int i = 0; i <= ASTRONAUT_POOLS; i++) {
+            for (int j = 0; j < ASTRONAUT_CREW_MAX; j++) {
+                for (int k = 0; k <= ASTRONAUT_FLT_CREW_MAX; k++) {
+                    ASSERT(Crew[i][j][k] >= 0 && Crew[i][j][k] <= MAX_POOL);
+                }
+
+                ASSERT(CrewCount[i][j] >= 0 && CrewCount[i][j] <= ASTRONAUT_FLT_CREW_MAX);
+            }
         }
 
     }
