@@ -849,6 +849,8 @@ struct Players {
 
         // SECURITY: Data sanitization
         ASSERT(Count >= 0 && Count < MAX_NEWS_ITEMS);
+        ASSERT(Year >= 57 && Year <= 78);
+        ASSERT(Season == 0 || Season == 1);
     }
 };
 
