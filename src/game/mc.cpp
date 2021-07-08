@@ -281,10 +281,6 @@ int Launch(char plr, char mis)
 
     STEPnum = STEP;
 
-    if (NOFAIL == 1) {
-        MisPrt();
-    }
-
     if (misType.Dur >= 1) {
         misType.Days = Data->P[plr].Mission[mis].Duration;
     }

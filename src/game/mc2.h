@@ -6,7 +6,6 @@
 void MissionCodes(char plr, char val, char pad);
 void MissionSetup(char plr, char mis);
 void MissionSetDown(char plr, char mis);
-void MisPrt(void);
 void MisSkip(char plr, const struct mStr &mission);
 void MisRush(char plr, char rush_level);
 

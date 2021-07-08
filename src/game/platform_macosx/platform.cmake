@@ -5,6 +5,12 @@ find_library(AudioToolbox_LIBRARY NAMES AudioToolbox REQUIRED)
 find_library(AudioUnit_LIBRARY NAMES AudioUnit REQUIRED)
 find_library(IOKit_LIBRARY NAMES IOKit REQUIRED)
 
+list(APPEND game_libraries
+  ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY} ${IOKit_LIBRARY}
+  )
+
+list(APPEND game_sources platform_macosx/utils.m)
+
 # Sparkle!
 #file(DOWNLOAD http://sparkle.andymatuschak.org/files/Sparkle%201.5b6.zip sparkle.zip)
 
@@ -44,10 +50,7 @@ add_executable("${app}" MACOSX_BUNDLE
   ${BundleResources}
   )
 
-target_link_libraries("${app}"
-  ${game_libraries}
-  ${CoreMIDI_LIBRARY} ${CoreAudio_LIBRARY} ${AudioToolbox_LIBRARY} ${AudioUnit_LIBRARY} ${IOKit_LIBRARY}
-  )
+target_link_libraries("${app}" ${game_libraries})
 
 add_dependencies("${app}" libs)
 
