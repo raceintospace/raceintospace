@@ -358,6 +358,7 @@ struct MissionType {
         ASSERT(PCrew >= 0 && PCrew <= ASTRONAUT_CREW_MAX);
         ASSERT(BCrew >= 0 && BCrew <= ASTRONAUT_CREW_MAX);
         ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
+        ASSERT(Men >= 0 && Men <= ASTRONAUT_FLT_CREW_MAX);
 
         for (int i = 0; i < 6; i++) {
             ASSERT(Hard[i] >= -1 && Hard[i] < 7);
