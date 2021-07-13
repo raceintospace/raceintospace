@@ -36,6 +36,12 @@
 #include "vab.h"
 #include "mc.h"
 #include "aimast.h"
+#include "downgrader.h"
+#include "future.h"
+#include "ioexception.h"
+#include "logging.h"
+
+LOG_DEFAULT_CATEGORY(mission)
 
 struct {
     int16_t cost, sf, i;
@@ -1457,6 +1463,52 @@ void AIFuture(char plr, char mis, char pad, char *prog)
                 Data->P[plr].Future[pad + i].Men = 0;
                 Data->P[plr].Future[pad + i].PCrew = 0;
                 Data->P[plr].Future[pad + i].BCrew = 0;
+
+                Downgrader::Options options = LoadJsonDowngrades("DOWNGRADES.JSON");
+                Downgrader replace(Data->P[plr].Future[pad + i], options);
+                char mcode = -1;
+
+                //  Find a mission that can be flown unmanned
+                try {
+                    std::vector<struct mStr> missionData = GetMissionData();
+
+                    while (mcode < 0) {
+
+                        std::string cName = missionData[replace.current().MissionCode].Name;
+                        std::size_t pos = cName.find("MANNED");
+
+                        if (pos != std::string::npos) {
+
+                            // "MANNED" -> "UNMANNED"
+                            std::string uName = cName.replace(pos, 0, "UN");
+
+                            // Check whether unmanned counterpart exists
+                            for (int i = 0; i < missionData.size(); i++) {
+                                if (!uName.compare(missionData[i].Name)) {
+                                    mcode = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        replace.next();
+
+                        if (mcode < 0 && replace.current().MissionCode == Mission_None) {
+                            // Fly Unmanned Earth Orbital as a last resort
+                            mcode = Mission_Unmanned_Earth_Orbital;
+                        }
+                    }
+
+                    TRACE3("AI replacing mission code %i by %i", Data->P[plr].Future[pad + i].MissionCode, mcode);
+                    Data->P[plr].Future[pad + i].MissionCode = mcode;
+
+                } catch (IOException &err) {
+                    // TODO: Can't download to Earth Orbital if Joint mission.
+                    CRITICAL2("Error loading data file: %s", err.what());
+                    WARNING1("Defaulting to Unmanned Earth Orbital.");
+                    Data->P[plr].Future[pad + i].MissionCode = Mission_Unmanned_Earth_Orbital;
+                }
+
                 return;
             }
 

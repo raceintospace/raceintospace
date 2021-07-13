@@ -79,7 +79,7 @@ enum FMFields {
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
 // missionData is used in SetParameters, PianoKey, UpSearchRout,
-// DownSearchRout, and Future.
+// DownSearchRout, Future, and GetMissionData.
 std::vector<struct mStr> missionData;
 } // End unnamed namespace
 
@@ -1053,10 +1053,11 @@ void Future(char plr)
                 if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
                     if (goAhead != 1) {
                         goAhead = Help("i167");
-                    } 
-                    if (goAhead != 1) { 
-                       OutBox(244, 5, 313, 17);
-                       continue; 
+                    }
+
+                    if (goAhead != 1) {
+                        OutBox(244, 5, 313, 17);
+                        continue;
                     }
                 } else {
                     if (! FutureMissionOk(plr, nav, misType)) {
@@ -1276,7 +1277,7 @@ void Future(char plr)
                 InBox(5, 24, 201, 47);
                 int helpIndex = 300 + misType;
                 char helpEntry[5];
-                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);                
+                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
                 WaitForMouseUp();
                 delay(100);
                 OutBox(5, 24, 201, 47);
@@ -1583,6 +1584,12 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
     }
 
     return true;
+}
+
+std::vector<struct mStr> GetMissionData()
+{
+    SetParameters();
+    return missionData;
 }
 
 
