@@ -1474,7 +1474,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
                     while (mcode < 0) {
 
-                        std::string cName = missionData[replace.current().MissionCode].Name;
+                        std::string cName = missionData.at(replace.current().MissionCode).Name;
                         std::size_t pos = cName.find("MANNED");
 
                         if (pos != std::string::npos) {
