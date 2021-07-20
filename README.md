@@ -108,7 +108,7 @@ commands also run the game automatically.
 
     mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
 
-Once built, you can delete the -build folder and recompile automatically by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder:
+Once built, you can delete the -build folder and recompile automatically by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
 
     cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
