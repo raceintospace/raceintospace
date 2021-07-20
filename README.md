@@ -103,18 +103,22 @@ If you are on a Fedora-based system, you can get everything with:
 
 To compile the game quickly you can run a series of commands in-line. This 
 creates a folder where the compiled game will be installed. If you want it named 
-something other than raceintospace-go, simply change the name. The last two 
+something other than raceintospace-build, simply change the name. The last two 
 commands also run the game automatically.
 
-    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make run
+    mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
+
+Once built, you can delete the -build folder and recompile automatically by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder:
+
+    cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
 You can run these commands separately, or just run the ones you need (for instance, 
 if you already have the folder you want the game installed to, there's of course 
 no need to create it.
 
-    mkdir raceintospace-go
-    cd raceintospace-go
-    cmake ../raceintospace
+    mkdir raceintospace-build
+    cd raceintospace-build
+    cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace
     make run
 
 Mac OS X
