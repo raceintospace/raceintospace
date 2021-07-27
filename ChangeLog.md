@@ -12,7 +12,7 @@
   embedded into the code
 - Vestigial copy protection code finally removed (#493)
 - We've added some JSON serialization for game data and save games. (#478)
-- The abbreviation for the sound to playin the Intelligence screens was INTELLEG rather than INTELLIG
+- The abbreviation for the sound to play in the Intelligence screens was "INTELLEG" - now "INTELLIG"
 
 Since transitioning to C++ on GIT, the game has been brought up to where we left off
  (that is, bugs introduced by the transition have been fixed).
@@ -84,6 +84,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
      couldn't lift that combo, but "B/TITAN" under Rocket still showed in white, sometimes leading 
      the player to purchase hardware that couldn't do the job.<br/>
 - Fixed an array overflow error that used to occasionally crash toward the end of the game (#40, #200)<br/>
+- Fixed a bug that caused the game to crash with a black screen, if the AI can't find an available crew 
+  to send on the mission it's about to fly. This happened most often with direct ascent missions. (#552)
 - When you're flying docking tests, the game used to get stuck sometimes at 2 DMs. For the rest of 
   the game you always had two docking modules and didn't have to buy them again (#319) [not sure if this was in 1.1]<br/>
 - An "A-OK" failure on an LEM Thrust Test (that is, one that let the test continue successfully) 
@@ -182,7 +184,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - You can now cancel out of astronaut/cosmonaut recruitment if you change your mind (#295)<br/>
 - Recruitment now shows more candidate skills. In addition to Capsule and Endurance, at Astronaut Level 
   2, Docking also shows, and at Level 1, all skills show. This can be returned to the way it used to be 
-  in Advanced Preferences. (#176)
+  with an Advanced Preferences setting. (#176)
 - There's now an option in Advanced Preferences that will let you recruit female 'nauts without having 
   to receive the newscast which requires you to recruit them (#329)<br/>
 - Another option in Advanced Preferenes is the Classic setting, which makes the game behave more like 
@@ -201,6 +203,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The opening screen now defaults to the Historical Model rather than the Basic Model (#221)<br/>
 - The country insignia at the start of a player's turn is now circular; it used to look oval, kind 
   of squashed (see #51)<br/>
+- In R&D and Purchasing, the Atlas rocket now looks more like an Atlas rocket (#556)
 - Question marks now look a little better (see middle of #207)<br/>
 - In R&D, removed the percent sign from the RESEARCH STRONG: +1%/TEAM line, since the research news 
   events change the dice being rolled (7-sided instead of 6-sided, etc.) rather than rolling 6-sided 
@@ -228,6 +231,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
   Atlas doesn't look so phallic.<br/>
 - The VAB (but not the VIB) showed a weird stripe up the middle of the rocket fairing, which has been 
   removed. (#515)
+- Some hardware (the US B-Kicker, the Lapot, and Soyuz) were showing odd black spots caused by transparency
+  issues in the color palette (#513)
 - In Future Missions, the cash figure is now centered under "CASH:"<br/>
 - Better centering of program names containing "I" (Gemini, Jupiter) in Astronaut Complex / Cosmonaut 
   Center and Future Missions (#345, #361)<br/>
@@ -237,6 +242,9 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - Added Home, End, PgUp, and PgDn functionality to the Help pop-up (#468)<br/>
 - Added PgUp, PgDn, Home, and End key functionality in the recruitment screen - especially helpful when
   female candidates are available (#206)<br/>
+- Added Home, End, PgUp, and PgDn functionality to the Time Capsule<br/>
+- The CIA/KGB Library now responds to the Home and End keys, and the up and down arrows highlight if 
+  you can go up or down respectively<br/>
 - In recruitment, the Continue button is disabled until you've selected a full complement of 'nauts.
   Now it also pops up a message telling you you haven't selected enough. (#462)<br/>
 - The number of spots to fill in recruitment now shows immediately instead of after you've selected 
