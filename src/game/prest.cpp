@@ -892,6 +892,16 @@ int AllotPrest(char plr, char mis)
 
     // GOAL FILTER: MANNED
     P_Goal = PosGoal(PVal);
+
+    for (i = 0; i < MAX_PCAT; i++) {
+        N_Goal = misType.PCat[i];
+
+        // goals never tried count as failures
+        if (N_Goal != -1 && PVal[N_Goal] == 0) {
+            PVal[N_Goal] = 4;
+        }
+    }
+
     N_Goal = NegGoal(PVal);
     S_Goal = SupGoal(PVal);
 
