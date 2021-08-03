@@ -91,6 +91,7 @@
 
 #define MAXIMUM_NEWS_EVENTS         100
 #define MAXIMUM_PRESTIGE_NUM                28
+#define MAX_PCAT                    5
 
 /** \name Astronaut related
  *@{
@@ -467,7 +468,7 @@ struct MisEval {
     union {
         Equipment *Ep;      /**< Pointer into equipment, use GetEquipment() */
         uint64_t Ebits;     /**< keep 64b also on 32b platforms.  */
-	};
+    };
     char Prest;             /**< Prestige Step #  (-1 for none) */
     char PComp;             /**< PComp will be set to amt of prest to be awarded. */
     char pad;               /**< pad location  (Index into First Part of MH[x][] */
@@ -576,7 +577,7 @@ struct mStr {
          mEq,              /**< Minimum Equipment */
          mCrew;            /**< Useful for Morgans Code */
     uint8_t mVab[2];  /**< Hardware Requirements */
-    char PCat[5],     /**< Prestige Category List */
+    char PCat[MAX_PCAT],   /**< Prestige Category List */
          LMAd;             /**< LM Addition Points */
 };
 
