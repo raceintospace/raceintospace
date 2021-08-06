@@ -190,7 +190,7 @@ void DrawRD(char player_index)
     draw_left_arrow(24, 186);
     draw_right_arrow(101, 186);
 
-    //GradRect(27,95,130,171,player_index*16+128);
+    // GradRect(27,95,130,171,player_index*16+128);
     fill_rectangle(27, 95, 130, 171, 0);
 
     display::graphics.setForegroundColor(9);
@@ -362,6 +362,14 @@ char RD(char player_index)
     music_start(M_HARDWARE);
 
     WaitForMouseUp();
+
+    // The following warnings are added on the principle that normally you would have both DMs and EVA suits before prototyping your lunar landing craft.
+    if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
+        Help("i046");  // Warn player that they haven't started EVA suits yet, though they have an LM or Kicker-C  -LPB
+    }
+    if (Data->P[player_index].Misc[4].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
+        Help("i047");  // Warn player that they haven't started DMs yet, though they have an LM or Kicker-C  -LPB
+    }
 
     while (1) {
         key = 0;
