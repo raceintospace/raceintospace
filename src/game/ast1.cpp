@@ -276,9 +276,14 @@ void DrawAstCheck(char plr)
         }
 
         draw_string(0, 0, " POSITIONS TO FILL");
-        draw_string(133, 97, "COST: ");
+        draw_string(116, 97, "COST: ");
+        display::graphics.setForegroundColor(1);
         draw_number(0, 0, i);
-        draw_string(0, 0, " MB");
+        draw_string(0, 0, " MB ");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, "(OF ");
+        draw_number(0, 0, Data->P[plr].Cash);
+        draw_string(0, 0, ")");
     } else {
         if (Data->P[plr].AstroDelay != 1) {
             draw_number(114, 86, Data->P[plr].AstroDelay);
