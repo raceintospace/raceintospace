@@ -1443,8 +1443,8 @@ void UpDateTable(char plr)
  * facilities), and 2) updating the CIA/KGB statistics table.
  *
  * Intelligence gathered about opponent plans and/or capabilities is
- * notoriously unreliable, being slightly more accurate on lower
- * difficulty levels and less accurate on higher.
+ * notoriously unreliable, being slightly more than half accurate on 
+ * lower difficulty levels and less accurate on higher.
  *
  * Due to limited space for saving intelligence briefings, they can
  * only be generated at a rate of one each year, so updating is
