@@ -279,9 +279,6 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
 
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
-/*if (Data->Year > 58) {
-    draw_up_arrow_highlight(137, 42);
-}*/
 
 
 /* Returns the index into the record of Intel Briefings for the
@@ -743,7 +740,7 @@ void BackIntel(char p, char year)
         draw_string(0, 0, "F");
     }
 
-    if (year < Data->Year - 58) {
+    if (year < Data->Year - 59) {
         draw_up_arrow_highlight(137, 42);
     } else {
         draw_up_arrow(137, 42);
