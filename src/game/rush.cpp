@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-// This file handles Downgrading and Rushing missions.
+// This file handles Mission Control in the spaceport, for Downgrading and Rushing missions.
 
 #include <stdexcept>
 
@@ -239,7 +239,10 @@ void DrawMissionEntry(const char plr, const int pad,
     // draw_string(88, 77 + pad * 58, "REQUIREMENT PENALTIES: ");
     fill_rectangle(215, 71 + pad * 58, 270, 78 + pad * 58, 3);
     const int penalty = AchievementPenalty(plr, plan);
-    display::graphics.setForegroundColor(11);
+    display::graphics.setForegroundColor(16);
+    if (penalty > 2) { display::graphics.setForegroundColor(11); }
+    if (penalty > 9) { display::graphics.setForegroundColor(9); }
+    draw_string(88, 77 + pad * 58, "REQUIREMENT PENALTIES:");
     draw_number(215, 77 + pad * 58, penalty);
     draw_string(0, 0, "%");
 }
@@ -328,8 +331,12 @@ void DrawRush(char plr)
             // penalty.
             const int penalty = AchievementPenalty(plr, plan);
             display::graphics.setForegroundColor(1);
+            if (penalty > 2) { display::graphics.setForegroundColor(11); }
+            if (penalty > 9) { display::graphics.setForegroundColor(9); }
             draw_string(88, 77 + i * 58, "REQUIREMENT PENALTIES:");
-            display::graphics.setForegroundColor(11);
+            display::graphics.setForegroundColor(16);
+            if (penalty > 2) { display::graphics.setForegroundColor(11); }
+            if (penalty > 9) { display::graphics.setForegroundColor(9); }
             draw_number(215, 77 + i * 58, penalty);
             draw_string(0, 0, "%");
         } /* End if */
@@ -730,6 +737,8 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     ShBox(85, 68, 249, 151);
     InBox(92, 74, 243, 120);
     display::graphics.setForegroundColor(11);
+    if (milestonePenalty + durationPenalty > 2) { display::graphics.setForegroundColor(11); }
+    if (milestonePenalty + durationPenalty > 9) { display::graphics.setForegroundColor(9); }
     draw_string(99, 81, "REQUIREMENT PENALTIES:");
 
     display::graphics.setForegroundColor(1);
