@@ -69,7 +69,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
-Equipment* FindLunarModule();
+Equipment *FindLunarModule();
 std::vector<Astros *> LMCrew(int pad, Equipment *module);
 void InvalidatePrestige();
 void BranchIfAlive(int *FNote);
@@ -849,6 +849,7 @@ void F_IRCrew(char mode, struct Astros *Guy)
 
     if (mode == F_RET) {  // should work in news
         Guy->Status = AST_ST_RETIRED;
+        Guy->Special = 2;
         Guy->RetirementDelay = 1;  // Retire beginning of next season
         Guy->RetirementReason = 9;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
@@ -1399,7 +1400,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
  *
  * \return the LM, or NULL if there is none for the mission.
  */
-Equipment* FindLunarModule()
+Equipment *FindLunarModule()
 {
     // For joint missions, the LM is always found on the first launch,
     // because if there's a problem launching it, there's no reason to

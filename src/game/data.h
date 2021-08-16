@@ -73,10 +73,10 @@
  *                 News specials
  * \li   1 = Retirement announcement
  * \li   2 = Actual retirement
- * \li   3 = ??? unused ???
- * \li   4 = ??? unused ???
+ * \li   3 = Death during mission
+ * \li   4 = Injury during mission
  * \li   5 = Injury resolution
- * \li   6 = ??? Breaking Group/Replacing Astronaut ???
+ * \li   6 = Removed from FLT crew
  * \li   7 = Finished Training
  * \li   8 = Finished Advanced
  * \li   9 = Injury during training
