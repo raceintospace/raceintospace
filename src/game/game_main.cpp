@@ -89,7 +89,7 @@ unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
 std::string keyHelpText;
-char IDLE[2];
+std::array<char, 2> IDLE;
 char *buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
@@ -624,11 +624,12 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 //restore sound
 //       SetVoiceVolume(115);
                 display::graphics.screen()->clear();
-                IDLE[plr[i]]++;
 
                 if (LOAD == 1) {
                     goto restart;    // TEST FOR LOAD
                 }
+
+                IDLE.at(plr[i])++;
             } else {
                 AI_Begin(plr[i] - 2); // Turns off Mouse for AI
                 GetMouse();
