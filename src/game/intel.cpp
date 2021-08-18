@@ -387,7 +387,8 @@ void Intel(char plr)
 
 void MisIntel(char plr, char acc)
 {
-    int i = 0, mr, j = 0, k = 0, save[20], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
+    int i = 0, mr, j = 0, k = 0, lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
+    int save[hi + 1];
     char mis, found;
     static char F[3][14] = {
         {6, 1, 2, 3, 4, 5}, //58 & 59
