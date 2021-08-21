@@ -330,7 +330,7 @@ void DrawRush(char plr)
             // screen space is commandeered to display the mission
             // penalty.
             const int penalty = AchievementPenalty(plr, plan);
-            display::graphics.setForegroundColor(1);
+            display::graphics.setForegroundColor(16);
             if (penalty > 2) { display::graphics.setForegroundColor(11); }
             if (penalty > 9) { display::graphics.setForegroundColor(9); }
             draw_string(88, 77 + i * 58, "REQUIREMENT PENALTIES:");
