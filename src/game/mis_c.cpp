@@ -1094,20 +1094,20 @@ char FailureMode(char plr, int prelim, char *text)
     draw_number(0, 0, STEP);
     draw_string(9, 48, e->Name);
     draw_string(0, 0, " CHECK");
+    draw_number(9, 55, Mev[STEP].dice);
+    draw_string(0, 0, " VS. ");
 
     if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            draw_number(9, 55, e->MSF);
+            draw_number(0, 0, e->MSF);
         } else {
-            draw_number(9, 55, e->MisSaf);
+            draw_number(0, 0, e->MisSaf);
         }
     } else {
-        draw_number(9, 55, e->MisSaf);
+        draw_number(0, 0, e->MisSaf);
     }
+    draw_string(0, 0, "%");
 
-
-    draw_string(0, 0, " VS ");
-    draw_number(0, 0, Mev[STEP].dice);
 
     draw_heading(45, 5, "STEP FAILURE", 0, -1);
 
@@ -1221,7 +1221,7 @@ char FailureMode(char plr, int prelim, char *text)
         display::graphics.setForegroundColor(1);
         switch (Mev[STEP].ast) {
         case 0:
-            draw_string(57, 55, "(");
+            draw_string(65, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
             draw_string(0, 0, ")");
             break;
