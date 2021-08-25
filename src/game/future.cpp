@@ -1032,7 +1032,10 @@ void Future(char plr)
                 if (prev_setting != setting) {
                     ShBox(18, 186, 183, 194);
                     display::graphics.setForegroundColor(1);
-                    MisStep(21, 192, Mev[setting].loc);
+
+                    if (Mev[setting].loc != 0x7f) {
+                        MisStep(21, 192, Mev[setting].loc);
+                    }
                 }
             } else if (setting < 0 && prev_setting >= 0) {
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
@@ -1053,10 +1056,11 @@ void Future(char plr)
                 if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
                     if (goAhead != 1) {
                         goAhead = Help("i167");
-                    } 
-                    if (goAhead != 1) { 
-                       OutBox(244, 5, 313, 17);
-                       continue; 
+                    }
+
+                    if (goAhead != 1) {
+                        OutBox(244, 5, 313, 17);
+                        continue;
                     }
                 } else {
                     if (! FutureMissionOk(plr, nav, misType)) {
@@ -1276,7 +1280,7 @@ void Future(char plr)
                 InBox(5, 24, 201, 47);
                 int helpIndex = 300 + misType;
                 char helpEntry[5];
-                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);                
+                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
                 WaitForMouseUp();
                 delay(100);
                 OutBox(5, 24, 201, 47);
