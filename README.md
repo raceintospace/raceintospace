@@ -146,9 +146,9 @@ project file:
 Windows
 -------
 
-_NOTE: The game may not successfully compile in Windows. See #498, #128, #57 for details.
+**NOTE:** The game may not successfully compile in Windows. See Issues #498, #128, #57 for details.
 
-To run the latest version of the game you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above._
+To run the latest version of the game you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.
 
 Ingredients:
 
