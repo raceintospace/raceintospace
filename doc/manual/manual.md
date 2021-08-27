@@ -1693,6 +1693,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
 </table>
   * Except Soyuz Lunar Landing
 
+
 **Hardware and R&D Costs**
 
 **Historical Model**
