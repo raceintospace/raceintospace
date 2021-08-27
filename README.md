@@ -4,7 +4,7 @@ Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/race
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
 Aldrin's Race into Space.  This is the  reworked version  following  the
 source release  for the computer version  of the Liftoff! board  game by
-Fritz Bronner.  This was developed by Strategic Visions and published by
+Fritz Bronner.  The original was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
 The Race Into Space project home page is
@@ -145,6 +145,10 @@ project file:
 
 Windows
 -------
+
+_NOTE: The game may not successfully compile in Windows. See #498, #128, #57 for details.
+
+To run the latest version of the game you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above._
 
 Ingredients:
 
