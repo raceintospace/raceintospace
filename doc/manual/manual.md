@@ -1577,7 +1577,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1500</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp;boosted</td>
     <td>1600</td>
     <td></td>
     <td>Mercury/Vostok</td>
@@ -1694,222 +1694,6 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
   * Except Soyuz Lunar Landing
 
 **Hardware and R&D Costs**
-
-**Basic Model**
-
-<table>
-  <tr>
-    <td>Program</td>
-    <td>Cost</td>
-    <td>Unit</td>
-    <td>R&D</td>
-    <td>Weight</td>
-    <td>Payload Lift</td>
-    <td>Max R&D</td>
-    <td>Max Safety</td>
-  </tr>
-  <tr>
-    <td>Explorer/Sputnik</td>
-    <td>6/6</td>
-    <td>1/1</td>
-    <td>1/1</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Ranger/Cosmos</td>
-    <td>24/24</td>
-    <td>4/4</td>
-    <td>3/3</td>
-    <td>700/700</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>93%/93%</td>
-  </tr>
-  <tr>
-    <td>Surveyor/Luna</td>
-    <td>30/30</td>
-    <td>6/6</td>
-    <td>4/4</td>
-    <td>1200/1200</td>
-    <td>--/--</td>
-    <td>85%/85%</td>
-    <td>88%/88%</td>
-  </tr>
-  <tr>
-    <td>Atlas/R-7</td>
-    <td>24/24</td>
-    <td>3/3</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>600/600</td>
-    <td>84%/84%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Titan/Proton</td>
-    <td>60/60</td>
-    <td>12/12</td>
-    <td>4/4</td>
-    <td>--/--</td>
-    <td>1500/1500</td>
-    <td>90%/90%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Saturn/N1</td>
-    <td>84/84</td>
-    <td>18/18</td>
-    <td>6/6</td>
-    <td>--/--</td>
-    <td>3200/3200</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Nova/UR-700</td>
-    <td>150/150</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>--/--</td>
-    <td>4800/4800</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>B. Strap-On / B. Stage</td>
-    <td>12/12</td>
-    <td>3/3</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>1000/1000</td>
-    <td>85%/85%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Mercury/Vostok</td>
-    <td>18/18</td>
-    <td>2/2</td>
-    <td>1/1</td>
-    <td>500/500</td>
-    <td>--/--</td>
-    <td>76%/76%</td>
-    <td>90%/90%</td>
-  </tr>
-  <tr>
-    <td>Gemini/Voskhod</td>
-    <td>24/24</td>
-    <td>6/6</td>
-    <td>2/2</td>
-    <td>1200/1200</td>
-    <td>--/--</td>
-    <td>81%/81%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Apollo/Soyuz</td>
-    <td>36/36</td>
-    <td>12/12</td>
-    <td>5/5</td>
-    <td>1600/1600</td>
-    <td>--/--</td>
-    <td>87%/87%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>XMS-2/Lapot</td>
-    <td>60/60</td>
-    <td>30/30</td>
-    <td>7/7</td>
-    <td>1500/1500</td>
-    <td>--/--</td>
-    <td>91%/91%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Jupiter/LK-700</td>
-    <td>60/60</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>4300/4300</td>
-    <td>--/--</td>
-    <td>89%/89%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Eagle/LKM</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>2/2</td>
-    <td>1500/1500</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Cricket/LK</td>
-    <td>42/42</td>
-    <td>8/8</td>
-    <td>4/4</td>
-    <td>1000/1000</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>US Kicker-A / Sov Kicker-A</td>
-    <td>12/12</td>
-    <td>3/3</td>
-    <td>1/1</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>94%/94%</td>
-    <td>97%/97%</td>
-  </tr>
-  <tr>
-    <td>US Kicker-B / Sov Kicker-B</td>
-    <td>18/18</td>
-    <td>6/6</td>
-    <td>2/2</td>
-    <td>600/600</td>
-    <td>--/--</td>
-    <td>94%/94%</td>
-    <td>96%/96%</td>
-  </tr>
-  <tr>
-    <td>Sov Kicker-C</td>
-    <td>40</td>
-    <td>20</td>
-    <td>4</td>
-    <td>2500</td>
-    <td>n/a</td>
-    <td>90%</td>
-    <td>95%</td>
-  </tr>
-  <tr>
-    <td>US EVA Suit / Sov EVA Suit</td>
-    <td>18/18</td>
-    <td>--/--</td>
-    <td>1/1</td>
-    <td>--/--</td>
-    <td>--/--</td>
-    <td>91%/91%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>US DM / Sov DM</td>
-    <td>18/18</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>--/--</td>
-    <td>93%/93%</td>
-  </tr>
-</table>
-
 
 **Historical Model**
 
@@ -2123,6 +1907,221 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>--/--</td>
     <td>--/--</td>
     <td>93%/94%</td>
+  </tr>
+</table>
+
+**Basic Model**
+
+<table>
+  <tr>
+    <td>Program</td>
+    <td>Cost</td>
+    <td>Unit</td>
+    <td>R&D</td>
+    <td>Weight</td>
+    <td>Payload Lift</td>
+    <td>Max R&D</td>
+    <td>Max Safety</td>
+  </tr>
+  <tr>
+    <td>Explorer/Sputnik</td>
+    <td>6/6</td>
+    <td>1/1</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Ranger/Cosmos</td>
+    <td>24/24</td>
+    <td>4/4</td>
+    <td>3/3</td>
+    <td>700/700</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>93%/93%</td>
+  </tr>
+  <tr>
+    <td>Surveyor/Luna</td>
+    <td>30/30</td>
+    <td>6/6</td>
+    <td>4/4</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>85%/85%</td>
+    <td>88%/88%</td>
+  </tr>
+  <tr>
+    <td>Atlas/R-7</td>
+    <td>24/24</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>600/600</td>
+    <td>84%/84%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Titan/Proton</td>
+    <td>60/60</td>
+    <td>12/12</td>
+    <td>4/4</td>
+    <td>--/--</td>
+    <td>1500/1500</td>
+    <td>90%/90%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Saturn/N1</td>
+    <td>84/84</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>--/--</td>
+    <td>3200/3200</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Nova/UR-700</td>
+    <td>150/150</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>--/--</td>
+    <td>4800/4800</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>B. Strap-On / B. Stage</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>1000/1000</td>
+    <td>85%/85%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Mercury/Vostok</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>1/1</td>
+    <td>500/500</td>
+    <td>--/--</td>
+    <td>76%/76%</td>
+    <td>90%/90%</td>
+  </tr>
+  <tr>
+    <td>Gemini/Voskhod</td>
+    <td>24/24</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>81%/81%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Apollo/Soyuz</td>
+    <td>36/36</td>
+    <td>12/12</td>
+    <td>5/5</td>
+    <td>1600/1600</td>
+    <td>--/--</td>
+    <td>87%/87%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>XMS-2/Lapot</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>7/7</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Jupiter/LK-700</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>4300/4300</td>
+    <td>--/--</td>
+    <td>89%/89%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Eagle/LKM</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>2/2</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Cricket/LK</td>
+    <td>42/42</td>
+    <td>8/8</td>
+    <td>4/4</td>
+    <td>1000/1000</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>US Kicker-A / Sov Kicker-A</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>97%/97%</td>
+  </tr>
+  <tr>
+    <td>US Kicker-B / Sov Kicker-B</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>600/600</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>96%/96%</td>
+  </tr>
+  <tr>
+    <td>Sov Kicker-C</td>
+    <td>40</td>
+    <td>20</td>
+    <td>4</td>
+    <td>2500</td>
+    <td>n/a</td>
+    <td>90%</td>
+    <td>95%</td>
+  </tr>
+  <tr>
+    <td>US EVA Suit / Sov EVA Suit</td>
+    <td>18/18</td>
+    <td>--/--</td>
+    <td>1/1</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>US DM / Sov DM</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>93%/93%</td>
   </tr>
 </table>
 
