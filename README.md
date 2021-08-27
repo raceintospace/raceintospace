@@ -148,7 +148,7 @@ Windows
 
 **NOTE:** The game may not successfully compile in Windows. See Issues #498, #128, #57 for details.
 
-To run the latest version of the game you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.
+To run the latest version of the game you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
 
 Ingredients:
 
