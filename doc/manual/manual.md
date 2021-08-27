@@ -1425,7 +1425,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1500</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>1300</td>
     <td></td>
     <td>Mercury</td>
@@ -1445,7 +1445,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2000</td>
     <td></td>
     <td>Apollo</td>
@@ -1465,7 +1465,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>4300</td>
     <td></td>
     <td>Jupiter</td>
@@ -1501,7 +1501,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2000</td>
     <td></td>
     <td>Vostok</td>
@@ -1521,7 +1521,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>3100</td>
     <td></td>
     <td>Soyuz</td>
@@ -1541,7 +1541,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>5100</td>
     <td></td>
     <td>LK-700</td>
@@ -1577,7 +1577,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1500</td>
   </tr>
   <tr>
-    <td>&nbsp;boosted</td>
+    <td>&nbsp; boosted</td>
     <td>1600</td>
     <td></td>
     <td>Mercury/Vostok</td>
@@ -1597,7 +1597,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2500</td>
     <td></td>
     <td>Apollo/Soyuz</td>
@@ -1617,7 +1617,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>600</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>4200</td>
     <td></td>
     <td>Jupiter/LK-700</td>
