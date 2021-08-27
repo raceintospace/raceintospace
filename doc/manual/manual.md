@@ -1290,9 +1290,10 @@ You'll also want to develop the Ranger satellite and launch Lunar Flybys to accu
 <table>
   <tr>
 <td>
-Cricket* | LK* | Eagle* | LKM* | Explorer | Sputnik | Ranger | Cosmos | Surveyor | Luna
+Cricket*</td><td>LK*</td><td>Eagle*</td><td>LKM*</td><td>Explorer</td><td>Sputnik</td><td>Ranger</td><td>Cosmos</td><td>Surveyor</td><td>Luna
   </tr>
 </table>
+* from Capsule
 
 
 ![Rockets](image_32.png)
@@ -1301,14 +1302,7 @@ Cricket* | LK* | Eagle* | LKM* | Explorer | Sputnik | Ranger | Cosmos | Surveyor
 <table>
   <tr>
     <td>
-Atlas<br/>
-R-7<br/>
-Titan<br/>
-Proton<br/>
-Saturn<br/>
-N1<br/>
-Nova<br/>
-UR-700</td>
+Atlas</td><td>R-7</td><td>Titan</td><td>Proton</td><td>Saturn</td><td>N1</td><td>Nova</td><td>UR-700</td>
   </tr>
 </table>
 
@@ -1319,16 +1313,7 @@ UR-700</td>
 <table>
   <tr>
     <td>
-Mercury<br/>
-Vostok<br/>
-Gemini<br/>
-Voskhod<br/>
-Apollo<br/>
-Soyuz<br/>
-XMS-2<br/>
-Lapot<br/>
-Jupiter<br/>
-LK-700</td>
+Mercury</td><td>Vostok</td><td>Gemini</td><td>Voskhod</td><td>Apollo</td><td>Soyuz</td><td>XMS-2</td><td>Lapot</td><td>Jupiter</td><td>LK-700</td>
   </tr>
 </table>
 
@@ -1339,19 +1324,10 @@ LK-700</td>
 <table>
   <tr>
     <td>
-US EVA suit<br/>
-Soviet EVA suit<br/>
-US Docking Module<br/>
-Soviet Docking Module<br/>
-US Strap-on Booster (from Rockets)<br/>
-Soviet Booster Stage (from Rockets)<br/>
-US Kicker-A<br/>
-Soviet Kicker-A<br/>
-US Kicker-B<br/>
-Soviet Kicker-B<br/>
-Soviet Kicker-C</td>
+US EVA suit</td><td>Soviet EVA suit</td><td>US Docking Module</td><td>Soviet Docking Module</td><td>US Strap-on Booster*</td><td>Soviet Booster Stage*</td><td>US Kicker-A</td><td>Soviet Kicker-A</td><td>US Kicker-B</td><td>Soviet Kicker-B</td><td>Soviet Kicker-C</td>
   </tr>
 </table>
+* from Rockets
 
 
 ## APPENDIX C
