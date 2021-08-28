@@ -1106,7 +1106,7 @@ char FailureMode(char plr, int prelim, char *text)
     } else {
         draw_number(0, 0, e->MisSaf);
     }
-    draw_string(0, 0, "%");
+    // draw_string(0, 0, "%");
 
 
     draw_heading(45, 5, "STEP FAILURE", 0, -1);
