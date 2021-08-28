@@ -1121,7 +1121,7 @@ void PlayFirst(char plr, char first)
     display::graphics.screen()->clear();
     music_start(M_LIFTOFF);
     ShBox(80, 10, 240, 31);
-    draw_heading(92, 14, "PRESTIGE FIRST", 0, -1);
+    draw_heading(93, 14, "PRESTIGE FIRST", 0, -1);
     ShBox(80, 33, 240, 124);
     InBox(84, 37, 236, 118);
     // fill_rectangle(85, 46, 235, 125, 0);
