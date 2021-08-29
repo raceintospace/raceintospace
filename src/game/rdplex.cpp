@@ -364,8 +364,8 @@ char RD(char player_index)
     WaitForMouseUp();
 
     // The following warnings are added on the principle that normally you would have both DMs and EVA suits before prototyping your lunar landing craft.
-    if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
-        Help("i046");  // Warn player that they haven't started EVA suits yet, though they have an LM or Kicker-C  -LPB
+    if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[4].Num >= 0 || Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
+        Help("i046");  // Warn player that they haven't started EVA suits yet, though they have an LM or Kicker-C or direct ascent capsule  -LPB
     }
     if (Data->P[player_index].Misc[4].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
         Help("i047");  // Warn player that they haven't started DMs yet, though they have an LM or Kicker-C  -LPB
