@@ -1221,7 +1221,7 @@ char FailureMode(char plr, int prelim, char *text)
         display::graphics.setForegroundColor(1);
         switch (Mev[STEP].ast) {
         case 0:
-            draw_string(65, 55, "(");
+            draw_string(57, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
             draw_string(0, 0, ")");
             break;
