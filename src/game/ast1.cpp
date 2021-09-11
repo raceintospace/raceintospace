@@ -1207,6 +1207,9 @@ void AstSel(char plr)
             if (key > 0) {
                 delay(110);
             }
+            fill_rectangle(292, 36, 301, 41, 7);
+            display::graphics.setForegroundColor(11);
+            draw_number(292, 41, MaxSel - count);
 
             OutBox(7, 111, 151, 123);
 
