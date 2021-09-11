@@ -18,7 +18,7 @@ Race Into Space (RIS) is a port to modern operating systems of Buzz Aldrin's Rac
 
 This is a strategy game that requires some planning ahead.  There are different paths to victory; any of these can be used, and each has its own advantages. 
 
-* Gemini/Voskhod – a two-person capsule that requires a one-person lander.  Easiest to get started but tricky, and riskier than other approaches—especially Voskhod.
+* Gemini/Voskhod – a two-person capsule that requires a one-person lander.  Easiest to get started but tricky, and riskier than other approaches.  Voskhod is especially dangerous.
 
 * Apollo/Soyuz – the historic approach.  Fairly straightforward, but it can be difficult to afford early on.
 
@@ -26,13 +26,13 @@ This is a strategy game that requires some planning ahead.  There are different 
 
 * Jupiter/LK-700 (formerly Kvartet) – a four-person direct ascent capsule.  The simplest way to get to the Moon, but startup costs can be prohibitive.
 
-One rule of thumb is that the latter two are so expensive to prototype and research that they're usually not practical options if your prestige is low when you're ready to choose your approach to the Moon (often, about the time you're flying Orbital missions with Mercury/Vostok).  Conversely, if you happen to receive a newscast just then saying all hardware will be 50% off that turn, direct ascent and the minishuttles suddenly become very feasible.
+One rule of thumb is that the latter two are so expensive to prototype and research that they're usually not practical options if your prestige is low when you're ready to choose your approach to the Moon (often, about the time you're flying Orbital missions with Mercury/Vostok), though Lapot isn't oo bad in that respect.  Conversely, if you happen to receive a newscast just then saying all hardware will be 50% off for a turn, direct ascent and the minishuttles suddenly become very feasible.
 
-One question to consider is whether to maintain a backup strategy.  Early testers recommended the historical path, flying the one-person capsule, then the two, then moving on to the three-person spacecraft for lunar missions.  They would then keep Gemini/Voskhod as a backup program, and switch over to it if their primary suffered a catastrophic failure.  This can be a helpful strategy, though it's only practical if you are planning to go to the Moon with Apollo/Soyuz or XMS-2/Lapot.  It is also more costly than going straight from Mercury/Vostok to what you plan to fly to the Moon.
+One question to consider is whether to maintain a backup strategy.  Early testers recommended the historical path, flying the one-person capsule, then the two, then moving on to the three-person spacecraft for lunar missions.  They would then keep Gemini/Voskhod as a backup program, and switch over to it if their primary suffered a catastrophic failure.  This can be a helpful strategy, though it's only practical if you are planning to go to the Moon with Apollo/Soyuz or XMS-2/Lapot.  It is also more costly than going straight from Mercury/Vostok to your final spacecraft.
 
 The game has many keyboard commands; those that activate buttons usually have the corresponding letter displayed in a different color in the relevant button.  Pressing F2 will show the keyboard commands for that screen; also, pressing F1 will activate context-sensitive help for the screen.
 
-Although RIS includes a number of improvements over the original BARIS, the look and feel and the gameplay should be mostly the same.  For the most part, the changes should simply make it easier to play, as the game used to have a lot of rough edges.  Also a few of the names (of rockets, capsules, and spacepeople) have been changed to improve the game's educational potential, as a historical simulation of the 1960s Space Race.  Information about the Soviet lunar program was limited when BARIS was developed, which required some educated guesses at names for some of the Soviet hardware and cosmonauts.  RIS has been able to take advantage of what's known today to use more historical names.  It also includes a large number of bug fixes, especially in mission failure handling and newscasts that didn't work as they should.
+Although RIS includes a number of improvements over the original BARIS, the look and feel and the gameplay should be mostly the same.  For the most part, the changes should simply make it easier to play, as the game used to have a lot of rough edges.  Also a few of the names (of rockets, capsules, and spacepeople) have been changed to improve its educational potential, as a historical simulation of the 1960s Space Race.  Information about the Soviet lunar program was limited when BARIS was developed, which required some educated guesses at names for some of the Soviet hardware and cosmonauts.  RIS has been able to take advantage of what's known today to use more historical names.  It also includes a large number of bug fixes, especially in mission failure handling, and newscasts that didn't work as they should.
 
 Race Into Space, like BARIS, uses its own flight profile for the historically considered approaches to the Moon.  So the terms in RIS don't correspond to those used during the Space Race, but they work well in-game and their meaning is more straightforward.  You will see these terms mentioned in newscasts; just bear in mind that the newscast is referring to the historic proposal and has no bearing on your space program.
 
@@ -123,14 +123,14 @@ In the Basic Model, the costs and Safety factors for US and Soviet hardware are 
 
 ### Advanced Preferences
 
-Advanced Preferences is specific to RIS; it didn't exist in BARIS.  So the game doesn't offer a fancy graphical screen for it, just a plain text file.  The file can be in different locations, but is usually found in a user's Documents\raceintospace folder (Windows) or ~/.raceintospace folder (Linux and Mac), along with your saved games.  Windows users may find it in an alternate location such as %userprofile%\AppData\Local\VirtualStore\Program Files (x86)\raceintospace.  Another possibility is that it may be located in the folder where the game resides on your hard drive (e.g., Program Files or Program Files (x86) on Windows, /usr/games on Ubuntu).  Wherever you find it, it will be named simply `config` (with no extension).  Open the config file with a plain text editor such as Notepad, Mousepad, or TextEdit.
+Advanced Preferences is specific to RIS; it didn't exist in BARIS.  So the game doesn't offer a fancy graphical screen for it, just a plain text file.  The file can be in different locations, but is usually found in a user's Documents\raceintospace folder (Windows) or ~/.raceintospace folder (Linux and Mac), along with your saved games.  Windows users may find it in an alternate location such as %userprofile%\AppData\Local\VirtualStore\Program Files (x86)\raceintospace.  Another possibility is that it may be located in the folder where the game resides on your hard drive (e.g., Program Files or Program Files (x86) on Windows, /usr/games on Ubuntu).  Wherever you find it, it will be named simply `config` with no extension.  Open the config file with a plain text editor such as Notepad, Mousepad, or TextEdit.
 
 Advanced Preferences includes a list of settings you can change.  Warning: some are technical or meant for developers, and some are experimental or upsetting to game balance: in particular, `nofail`, `short_training`, `random_eq`, `eq_name_change`, and `atlasLunar`.  Each setting is preceded by an explanation; for example:
 
     # Set to non-zero to enable randomization of nauts.
     # random_nauts
 
-If you should wish to randomize the skills of your astronauts/cosmonauts in the game, change the second line from `# random_nauts` to `random_nauts 1` (or higher).  Be sure to remove the hash tag (`#`) before `random_nauts`; the hash tag makes that line a remark, so the setting will be ignored if you don't take it out.  Also note the lack of an equal sign.
+If you should wish, say, to run the game with the rules as they were in BARIS, find `# game_style` and change it to `game_style 1`.  Be sure to remove the hash tag (`#`) at the beginning; the hash tag makes that line a remark, so the setting will be ignored if you don't take it out.  Also note the lack of an equal sign.
 
 Those Advanced Preferences that should be of most interest to the average user (and which shouldn't break the game) are as follows.
 
@@ -152,15 +152,15 @@ Those Advanced Preferences that should be of most interest to the average user (
 * `no_backup` – Forces you to assign a Backup as well as a Primary crew to all missions (Classic setting)
     
     The requirement was dropped because it's your space program after all; surely you should be able to forgo assigning a backup crew if you want, though it's still recommended since it reduces the risk of cancellation.
-* `show_recruit_stats` –  Allows seeing skills other than CA and EN during recruitment (Classic setting disables this) [May prevent game from opening]
+* `show_recruit_stats` –  By default you can now see skills other than CA and EN during recruitment; setting `show_recruit_stats 0` will return to Classic behavior [May prevent game from opening]
 
-* `use_endurance` –  The game will make use of the Endurance skill.  It adds average of crew's EN to duration steps on duration missions, and spacepeople with high EN hurt in a newscast are less likely to retire (Classic setting disables this) [May prevent game from opening]
+* `use_endurance` –  By default the game now makes some use of the Endurance skill.  It adds average of crew's EN to duration steps on duration missions, and spacepeople with high EN hurt in a newscast are less likely to retire; set to `use_endurance 0` to return to Classic behavior [May prevent game from opening]
 
 * `succesRDMax` –  Max R&D will increase 1 pt/mission only if the component was already at Max R&D (Classic setting).
     
-    The change made in RIS (which this option turns off) does two things.  One is that dummy tests on equipment not yet at Max R&D still count toward reaching Max Safety; if you fly a Vostok at, say, 70% its Safety will go up to 71% *and* the Max R&D will go up a percent; this encourages players to fly dummy tests by making it worthwhile to fly them early.  The other thing this does is allow you to research back to where you left off if your component was downgraded due to a newscast.  Of course, Max R&D is reset to its starting point if you suffer a catastrophic failure.  Setting `succesRDMax 0` will require the usual dummy tests to return your hardware to its previous Safety rating after a newscast, and will reintroduce "wasted" dummy tests.
+    The change made in RIS 2.0 (which this option turns off) does two things.  One is that dummy tests on equipment not yet at Max R&D still count toward reaching Max Safety; if you fly a Vostok at, say, 70% its Safety will go up to 71% *and* the Max R&D will go up a percent; this encourages players to fly dummy tests by making it worthwhile to fly them early.  The other thing this does is allow you to research back to where you left off if your component was downgraded due to a newscast.  Of course, Max R&D is still reset if you suffer a catastrophic failure.  Setting `succesRDMax 0` will require the usual dummy tests to return your hardware to its previous Safety rating after a newscast, and will reintroduce "wasted" dummy tests.
 
-* `boosterSafety` –  The Safety of a boosted rocket will be the average of rocket and booster safety (Classic setting), rather than the two multiplied by one another (e.g., rocket at 85% and booster at 45% would work out to 85+45÷2=65%, rather than .85x.45=.38 or 38%)
+* `boosterSafety` –  The Safety of a boosted rocket will be the average of rocket and booster safety (Classic setting), rather than the two multiplied by one another (e.g., rocket at 85% and booster at 45% would work out to 85+45÷2=65%, rather than .85x.45=.38 or 38%).
     
     This change was made for two reasons.  First, it's more realistic: the rocket and booster *both* have to work right, or the launch step will fail.  In fact, during the Space Race, the Americans didn't consider boosters safe enough for manned flights at all.  In statistics, the odds of two things *both* succeeding are calculated by multiplying the two probabilities together.  The other reason for the change was that the old system allowed an unfair exploit: it let players squeak by with a booster that really wasn't ready: in the example above, for instance, in BARIS a player would be tempted to try using his booster at less than half safety.  This new system also introduces a new dynamic that offers a significant tradeoff, and a real advantage to non-boosted rockets: so for instance, there is now some real motivation to consider flying Gemini on Titans like we did historically, rather than using boosted Atlases.
 
@@ -202,7 +202,7 @@ On the left you see one graph displaying your and your opponent's prestige over 
 
 This is where you start new programs or buy additional hardware.  Everything here is potentially useful, but not all of it will be needed.  For instance, lunar landers will be unnecessary if you have chosen direct ascent or the Kicker-C.  Note that you can never have more than 6 of any component at any given time.
 
-There is a built-in advantage to developing programs in progressive order, called technology transfer.  If, for instance, you have researched your Mercury capsule to a high level and then begin the Gemini program, your Gemini capsules will start off with a higher Safety than if you had skipped Mercury.  The same would happen for Apollo if your Gemini was highly reliable; however, Apollo wouldn't get very much technology transfer from Mercury.  Jupiter would get very little from Mercury, and XMS-2 would get none at all since it's a completely different sort of spacecraft.
+There is a built-in advantage to developing programs in progressive order, called technology transfer.  If, for instance, you have researched your Mercury capsule to a high level and then begin the Gemini program, your Gemini capsules will start off at a higher Safety than if you had skipped Mercury.  The same would happen for Apollo if your Gemini was highly reliable; however, Apollo wouldn't get very much technology transfer from Mercury.  Jupiter would get very little from Mercury, and XMS-2 will get none in any case since it's a completely different sort of spacecraft.
 
 In BARIS, this was all or nothing.  If a component wasn't quite at 75%, it would give no tech transfer at all.  RIS (starting with v.1.1) gives partial tech transfer when your hardware is above starting Safety.
 
@@ -251,7 +251,7 @@ There are four categories of space hardware:
 ![US Satellites](image_4.png)  ![Soviet Satellites](image_5.png)
 
 * Explorer/Sputnik: A simple satellite which can only be used for the Orbital Satellite mission.  However, the Safety rating of this device is what's rolled against on the Hardware Power-On step of Docking tests, so a high Explorer/Sputnik Safety is helpful unless you're flying direct ascent.
-* Ranger/Cosmos:  A flyby probe, which can be sent past the Moon or any of the planets out to Saturn.  So Voyager isn't an option in this game, but with two probes you can (sort of) recreate Pioneer 10 and 11.  Usually requires at least a Titan/Proton to leave orbit.  A very good way to gather lunar reconnaissance.
+* Ranger/Cosmos:  A flyby probe, which can be sent past the Moon or any of the planets out to Saturn.  So Voyager isn't an option in this game, but with two probes you can (sort of) recreate Pioneer 10 and 11.  A very good way to gather lunar reconnaissance.
 * Surveyor/Luna:  A lunar landing probe.  Unlike Ranger/Cosmos it can't be sent to other planets, just the Moon; it may, however, act as a lunar flyby probe if it should miss the Moon, giving you some photo recon.
 
 ##### Launch Vehicles
@@ -273,14 +273,14 @@ There are four categories of space hardware:
 * Apollo/Soyuz: Three-person capsule, very lunar-capable.  Includes built-in kicker and docking module.
 * XMS-2/Lapot: Three-person reusable minishuttle; lunar-capable.  Requires a kicker to go to the Moon.
 * Jupiter/LK-700: Four-person direct ascent capsule.  Does not require kickers, docking modules, or lunar modules.  The LK-700 was called Kvartet in BARIS.
-* Eagle/LKM: Two-person lunar lander.  Can be used with Apollo/Soyuz or XMS-2/Lapot.  The LKM was called Duet in BARIS.
+* Eagle/LKM: Two-person lunar lander; can be used with Apollo/Soyuz or XMS-2/Lapot.  The LKM was called Duet in BARIS.
 * Cricket/LK: One-person lunar lander; required for Gemini/Voskhod.  More costly than Eagle/LKM due to extra backups and automated systems needed to compensate for lack of a second pilot.  The LK was called L-3 in BARIS.
 
 ##### Miscellaneous
 
 ![US Misc Hardware](image_10.png) ![Soviet Misc Hardware](image_11.png)
 
-* Kicker-A: Used to send a Gemini/Voskhod, XMS-2/Lapot, or an LM, out of orbit toward the Moon.  Can push only one major component (capsule/shuttle or lunar lander), so can be used on LOR but not EOR or the Historical Lunar Landing.  It can be used for a Joint Lunar Orbital LM Test, but again, LOR only.
+* Kicker-A: Used to send a Gemini/Voskhod, XMS-2/Lapot, or an LM by itself, out of orbit toward the Moon.  Can push only one major component (capsule/shuttle or lunar lander), so can be used on LOR but not EOR or the Historical Lunar Landing.  It can be used for a Joint Lunar Orbital LM Test, but again, LOR only.
 * Kicker-B: Used to send a Gemini/Voskhod or XMS-2/Lapot, plus an LM, out of orbit toward the Moon.  Can push one or two major components (capsule/shuttle and lunar lander), so can be used on LOR, EOR, or Historical missions.
 * Kicker-C: Soviet-only technology.  Replaces lunar modules; lands a Soyuz capsule on the Moon and lifts it off for return to Earth.  Cannot be used with any other type of spacecraft.
 * EVA Suit: Required for spacewalks and lunar landings.  These are different from pressure suits and are not needed on missions where the crew stays inside the spacecraft.
@@ -300,7 +300,7 @@ In the top left in the gray area you will see the selected pad, and the mission'
 
 Clicking on the mission name box will show a pop-up describing the mission, as above.
 
-To the right of the name box are the milestone risk and safety risk indicators.  If you've skipped a milestone (say, if you're scheduling an Orbital without having first flown a Suborbital), each step of that mission will suffer a -3% safety penalty; these are cumulative, of course, as in the very premature lunar landing shown below.  If you've skipped a _duration_ level you're penalized 5 percentage points, which are also cumulative.  If you haven't flown this type of mission before and it represents a milestone step, even if you haven't skipped anything, you'll suffer a -1% penalty because there's always a little extra risk the first time you try something.  
+To the right of the name box are the milestone risk and safety risk indicators.  If you've skipped a milestone (say, if you're scheduling an Orbital without having first flown a Suborbital), each step of that mission will suffer a -3% safety penalty; these are cumulative, of course, as in the very premature lunar landing shown below.  If you've skipped a _duration_ level you're docked 5 percentage points, which are also cumulative.  If you haven't flown this type of mission before and it represents a milestone step, even if you haven't skipped anything, you'll suffer a -1% penalty because there's always a little extra risk the first time you try something.  
 
 ![Future Missions with Requirement Penalties pop-up](image_13a.png)
 
@@ -314,7 +314,7 @@ Once you have selected the mission you want, click Continue or press Enter.
 
 ![Capsule and Crew Selection for a mission](image_14-15.png)
 
-If the mission you've chosen involves a capsule or shuttle, you'll be prompted to select which you want to use, as shown in the lefthand image above.  If this is a manned mission, you will then select crews for it as in the righthand image.  In BARIS, crews currently in Training (meaning they had been assembled that turn) could not be assigned to a mission; they had to wait a turn first.  In RIS this is no longer necessary, unless you set `no_c_training 0` in Advanced Preferences.  Similarly, BARIS required you to assign both a primary and backup crew to each mission.  RIS allows you to select only a primary if you wish, though you can make backup crews required again by setting `no_backup 0` in Advanced Preferences.
+If this mission involves a capsule or shuttle, you'll be prompted to select which you want to use, as shown in the lefthand image above.  If this is a manned mission, you will then select crews for it as in the righthand image.  In BARIS, crews currently in Training (meaning they had been assembled that turn) could not be assigned to a mission; they had to wait a turn first.  In RIS this is no longer necessary, unless you set `no_c_training 0` in Advanced Preferences.  Similarly, BARIS required you to assign both a primary and backup crew to each mission.  RIS allows you to select only a primary if you wish, though you can make backup crews required again by setting `no_backup 0` in Advanced Preferences.
 
 #### Dummy Tests
 
@@ -328,15 +328,15 @@ In BARIS, dummy tests flown below Max R&D would give the player no advantage bey
 
 If human figures appear in the box next to the name of this office in the Administration menu, then you are able to recruit people this turn.  You may recruit up to five groups of astro/cosmonauts over the course of the game.  Random events may give you three additional spacemen from the military, or make female candidates available (and required).  You can make women always available by setting `female nauts 1` in Advanced Preferences.
 
-In the recruitment screen, you will see the number of available positions, with each selected candidate's name and skills.  New to RIS 2.0, by default all skills are shown at Astronaut Level 1, LM and EVA won't show at Level 2, and LM, EVA, and Docking won't show at Level 3.  Setting `show_recruit_stats 0` in Advanced Preferences will restore the Classic behavior, so that LM, EVA, and Docking will never be known during recruitment.  Candidate skills are as follows:
+In the recruitment screen, you will see the number of available positions, with each selected candidate's name and skills.  New to RIS 2.0, by default all skills are shown at Astronaut Level 1, LM and EVA won't show at Level 2, and LM, EVA, and Docking won't show at Level 3.  Setting `show_recruit_stats 0` in Advanced Preferences will restore the Classic behavior, so that LM, EVA, and Docking will never be known during recruitment, the way the game used to work.  Candidate skills are as follows:
 
 <table>
   <tr>
-    <td>Capsule Pilot</td><td>This is added to all Capsule steps of a mission—generally, anything involving piloting, navigation, or shipboard operations.  Easily the most important skill, since it's rolled against multiple times per mission.</td></tr>
+    <td>Capsule Pilot</td><td>This is added to all Capsule steps of a mission—generally, anything involving piloting, navigation, or shipboard operations.  Easily the most important skill, since it's rolled against multiple times per flight.</td></tr>
 <tr><td>L.M. Pilot</td><td>This is added to LM steps of a mission—the actual testing of a lander, or flying it on lunar landings. Mostly irrelevant until late in the game.</td></tr>
 <tr><td>E.V.A.</td><td>This is added to spacewalks and lunar EVA. Not very important, since these rarely fail in any case.</td></tr>
 <tr><td>Docking</td><td>This is added to attempts at docking. Especially helpful midway through the game.</td></tr>
-<tr><td>Endurance</td><td>This is added to Duration steps of duration missions, and astronauts with high EN have less chance of washing out of the space program (unless you set `game_style` or `use_endurance`).</td>
+<tr><td>Endurance</td><td>This is added to Duration steps of duration missions, and astronauts with high EN have less chance of washing out of the space program (unless you set `game_style 1` or `use_endurance 0`).</td>
   </tr>
 </table>
 
@@ -360,7 +360,7 @@ The Museum offers various information on your space program and its accomplishme
 
 #### Director Ranking
 
-This shows your prestige compared to your opponent's, and how it has progressed over time.  The graph can give you some idea of how things are faring with your opponent—in particular, sudden sharp drops usually indicate a catastrophic failure, which can take the pressure off you for a bit.  When deciding which approach to take to the Moon, this may give you some idea whether you're secure enough to take a chance on the more expensive options, the minishuttles or direct ascent.
+This shows your prestige compared to your opponent's, and how it has progressed over time.  The graph can give you some idea of how things are faring with your opponent—in particular, a sudden sharp drop usually indicates a catastrophic failure, which can take the pressure off you for a bit.  When deciding which approach to take to the Moon, this may give you some idea whether you're secure enough to take a chance on the more expensive options: minishuttle or direct ascent.
 
 #### Space History
 
@@ -468,7 +468,7 @@ You will see the computer's missions only when they represent successful prestig
 
 ### Basic Training
 
-The turn after you recruit your first group of spacepeople, a host of new buildings will appear to accommodate them.  The first place they will go is Basic Training; you can withdraw them early at any time, but withdrawal is a one-way trip.  If you don't need people right away, it's recommended to leave them here for the duration, as that will improve their skills.  This is especially helpful for Capsule pilot, the most important skill—if you need to pull someone out early, anyone with a CA4 is a good candidate for withdrawal, and failing that a CA1 or CA2.  Anyone CA3 is best left in Basic if possible, as their skill might rise to CA4 if they're left alone.
+The turn after you recruit your first group of spacepeople, a host of new buildings will appear to accommodate them.  The first place they go is Basic Training; you can withdraw them early at any time, but withdrawal is a one-way trip.  If you don't need people right away, it's recommended to leave them here for the duration, as that will improve their skills.  This is especially helpful for Capsule pilot, the most important skill—if you need to pull someone out early, anyone with a CA4 is a good candidate for withdrawal, and failing that a CA2 or less.  Anyone CA3 is best left in Basic if possible, as their skill might rise to CA4 if they're left alone.
 
 After 3 turns, they leave Basic Training and go to the Astronaut Complex (US) or Cosmonaut Center (USSR).
 
@@ -521,7 +521,9 @@ For anyone with a skill of 2 or less, it used to be that Advanced Training would
 
 ### L.M. Program
 
-The LM Facility gives you some important information about your lunar module(s).  Current Safety is displayed here, and the number you have in your inventory, and it also shows whether your lander holds a failure avoidance card.  The number of Attempts represents not the number of tests a module has flown, but the total number of times it's been rolled against.  Last and most important, you see your current number of LM points.  Each successful Earth orbital test is worth one point; each lunar LM test is worth two.  If you don't have at least three points, the LM steps of your lunar landing mission will suffer a -3 penalty for each point you are missing.
+The LM Facility gives you some important information about your lunar module(s).  Current Safety is displayed here, and the number you have in your inventory, and it also shows whether your lander holds a failure avoidance card.  The number of Attempts represents not the number of tests a module has flown, but the total number of times it's been rolled against, reflecting what's shown in the Hardware Efficiency screen.
+
+Last and most important, you see your current number of LM points.  Each successful Earth orbital test is worth one point; each lunar LM test is worth two.  If you don't have at least three points, the LM steps of your lunar landing mission will suffer a -3 penalty for each point you are missing.
 
 LM Points are not specific to the lander they were earned with.  So, if for some reason you have purchased both landers (as above) and gained 3 points with one lander, you could use the other for the lunar landing with no LM penalty.
 
@@ -898,7 +900,7 @@ On Jan. 27, 1967, a ten-year old Cub Scout toured NASA and saw America's proud n
 
 ## MISSION DESCRIPTIONS
 
-These are all the mission types available in the game.  You will never fly all of them in one game, and most likely there are some you will never fly.  Milestone steps are cumulative: so flying the Orbital without having flown the Orbital Satellite or the Manned Suborbital will incur two milestone penalties.  Examples given should include all successful missions prior to 1970.
+These are all the mission types available in the game.  You'll never fly all of them in one game, and most likely there are some you will never fly.  Milestone steps are cumulative: so flying the Orbital without having flown the Orbital Satellite or the Manned Suborbital will incur two milestone penalties.  Examples given should include all successful missions prior to 1970.
 
 <table>
   <tr>
@@ -1003,7 +1005,7 @@ As seen on Gemini 8.</td>
   <tr>
     <td>16</td>
     <td>Joint Manned Orbital Docking</td>
-    <td>One rocket lifts the docking module while the other lifts the spacecraft and crew. The crew then tests the docking module.  DM gains 10% Safety on successes, 5% on failures.</td>
+    <td>One rocket lifts the docking module and another lifts the spacecraft and crew. The crew then tests the docking module.  DM gains 10% Safety on successes, 5% on failures.</td>
   </tr>
   <tr>
     <td>17</td>
@@ -1045,7 +1047,7 @@ As seen on Soyuz 4/5.</td>
   <tr>
     <td>24</td>
     <td>Manned Orbital Docking (Orbit) EVA</td>
-    <td>Manned docking test and spacewalk where only the spacecraft is launched. There must be a DM already in orbit from a mission launched this turn or last. DM gains 10% Safety on successes, 5% on failures.<br/>
+    <td>Manned docking test and spacewalk where only the spacecraft is launched. DM gains 10% Safety on successes, 5% on failures. There must be a DM already in orbit from a mission launched this turn or last.<br/>
 As seen on Gemini 10, 12.</td>
   </tr>
   <tr>
@@ -1148,6 +1150,7 @@ As seen on Zond 4, 5, 6, 7, 8.</td>
     <td>43</td>
     <td>Manned Lunar Pass</td>
     <td>A crewed spacecraft flies around the Moon and returns to Earth. Worth 5% lunar recon. A Lunar Pass is a milestone step for the Lunar Orbital.<br/>
+As seen (as an emergency measure) on Apollo 13.<br/>
 This mission requires Duration C.</td>
   </tr>
   <tr>
@@ -1185,7 +1188,8 @@ This mission requires Duration D.</td>
     <td>49</td>
     <td>Joint Manned Lunar Orbital LM Test: LOR</td>
     <td>One rocket sends the LM to the Moon and another sends the spacecraft to join it there. Crew then tests the lunar module and returns to Earth. Worth 2 LM Points and 5% lunar recon. Can double as a Lunar Orbital (if the LM test is a success). A Lunar Orbital is a milestone step for the Lunar Landing.<br/>
-This mission requires Duration D.</td>
+This mission requires Duration D.<br/>
+Since the lunar module goes to the Moon by itself it will require a kicker, even if your spacecraft does not.</td>
   </tr>
   <tr>
     <td>50</td>
@@ -1197,7 +1201,8 @@ This mission requires Duration D.</td>
     <td>51</td>
     <td>Joint Manned Lunar Orbital LM Test: LOR EVA</td>
     <td>One rocket sends the LM to the Moon and another sends the spacecraft to join it there. Crew then performs a spacewalk, tests the lunar module, and returns to Earth.  Can double as a Lunar Orbital (if the LM test is a success). Worth 2 LM Points and 5% lunar recon. A Lunar Orbital is a milestone step for the Lunar Landing.<br/>
-This mission requires Duration D.</td>
+This mission requires Duration D.<br/>
+Since the lunar module goes to the Moon by itself it will require a kicker, even if your spacecraft does not.</td>
   </tr>
   <tr>
     <td>52</td>
@@ -1235,7 +1240,7 @@ Since the lunar module goes to the Moon by itself it will require a kicker, even
   <tr>
     <td>57</td>
     <td>Soyuz Lunar Landing</td>
-    <td>Soviet only, and always a Joint mission. One rocket sends a Kicker-C to the Moon, and another sends a Soyuz capsule to join it. They dock in lunar orbit, then perform the lunar landing. Rather than send down a lunar module, the capsule itself lands on the Moon atop the C-Kicker.<br/>
+    <td>Soviet-only Joint mission. One rocket sends a Kicker-C to the Moon, and another sends a Soyuz capsule to join it. They dock in lunar orbit, then perform the lunar landing. Rather than send down a lunar module, the capsule itself lands on the Moon atop the C-Kicker.<br/>
 This mission requires Duration D.</td>
   </tr>
 </table>
@@ -1247,7 +1252,7 @@ This mission requires Duration D.</td>
 
 Here follows a very basic getting-started guide to RIS.  If you would like something more thorough, you can download the step-by-step RIS Tutorial from the Files section of Race Into Space's Sourceforge site.
 
-When you start the game, leave it at human player for the US and computer for the USSR and the Historical Model.  You can change the player names if you like.  Leave yourself at difficulty level 1 and the computer at 3.  You might want to handicap the AI a bit further by also setting it to cosmonaut level 3.
+When you start the game, leave it on Historical Model with human player for the US and computer for the USSR.  You can change the player names if you like.  Leave yourself at difficulty level 1 and the computer at 3.  You might want to handicap the AI a bit further by also setting it to cosmonaut level 3.
 
 **First turn:**  Go to Research & Development and visit the Purchasing Facility.  In Unmanned, purchase the Explorer satellite and in Rockets purchase the Atlas rocket.  Visit the R&D building and have each researched by 5 teams.  End turn.
 
@@ -1285,18 +1290,10 @@ You'll also want to develop the Ranger satellite and launch Lunar Flybys to accu
 <table>
   <tr>
 <td>
-Cricket (from Capsule)<br/>
-LK (from Capsule)<br/>
-Eagle (from Capsule)<br/>
-LKM (from Capsule)<br/>
-Explorer<br/>
-Sputnik<br/>
-Ranger<br/>
-Cosmos<br/>
-Surveyor<br/>
-Luna</td>
+Cricket*</td><td>LK*</td><td>Eagle*</td><td>LKM*</td><td>Explorer</td><td>Sputnik</td><td>Ranger</td><td>Cosmos</td><td>Surveyor</td><td>Luna
   </tr>
 </table>
+* from Capsule
 
 
 ![Rockets](image_32.png)
@@ -1305,14 +1302,7 @@ Luna</td>
 <table>
   <tr>
     <td>
-Atlas<br/>
-R-7<br/>
-Titan<br/>
-Proton<br/>
-Saturn<br/>
-N1<br/>
-Nova<br/>
-UR-700</td>
+Atlas</td><td>R-7</td><td>Titan</td><td>Proton</td><td>Saturn</td><td>N1</td><td>Nova</td><td>UR-700</td>
   </tr>
 </table>
 
@@ -1323,16 +1313,7 @@ UR-700</td>
 <table>
   <tr>
     <td>
-Mercury<br/>
-Vostok<br/>
-Gemini<br/>
-Voskhod<br/>
-Apollo<br/>
-Soyuz<br/>
-XMS-2<br/>
-Lapot<br/>
-Jupiter<br/>
-LK-700</td>
+Mercury</td><td>Vostok</td><td>Gemini</td><td>Voskhod</td><td>Apollo</td><td>Soyuz</td><td>XMS-2</td><td>Lapot</td><td>Jupiter</td><td>LK-700</td>
   </tr>
 </table>
 
@@ -1343,19 +1324,10 @@ LK-700</td>
 <table>
   <tr>
     <td>
-US EVA suit<br/>
-Soviet EVA suit<br/>
-US Docking Module<br/>
-Soviet Docking Module<br/>
-US Strap-on Booster (from Rockets)<br/>
-Soviet Booster Stage (from Rockets)<br/>
-US Kicker-A<br/>
-Soviet Kicker-A<br/>
-US Kicker-B<br/>
-Soviet Kicker-B<br/>
-Soviet Kicker-C</td>
+US EVA suit</td><td>Soviet EVA suit</td><td>US Docking Module</td><td>Soviet Docking Module</td><td>US Strap-on Booster*</td><td>Soviet Booster Stage*</td><td>US Kicker-A</td><td>Soviet Kicker-A</td><td>US Kicker-B</td><td>Soviet Kicker-B</td><td>Soviet Kicker-C</td>
   </tr>
 </table>
+* from Rockets
 
 
 ## APPENDIX C
@@ -1453,7 +1425,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1500</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>1300</td>
     <td></td>
     <td>Mercury</td>
@@ -1473,7 +1445,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2000</td>
     <td></td>
     <td>Apollo</td>
@@ -1493,7 +1465,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>4300</td>
     <td></td>
     <td>Jupiter</td>
@@ -1529,7 +1501,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2000</td>
     <td></td>
     <td>Vostok</td>
@@ -1549,7 +1521,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>3100</td>
     <td></td>
     <td>Soyuz</td>
@@ -1569,7 +1541,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>700</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>5100</td>
     <td></td>
     <td>LK-700</td>
@@ -1605,7 +1577,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>1500</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>1600</td>
     <td></td>
     <td>Mercury/Vostok</td>
@@ -1625,7 +1597,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td></td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>2500</td>
     <td></td>
     <td>Apollo/Soyuz</td>
@@ -1645,7 +1617,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>600</td>
   </tr>
   <tr>
-    <td>  boosted</td>
+    <td>&nbsp; boosted</td>
     <td>4200</td>
     <td></td>
     <td>Jupiter/LK-700</td>
@@ -1721,223 +1693,8 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
 </table>
   * Except Soyuz Lunar Landing
 
+
 **Hardware and R&D Costs**
-
-**Basic Model**
-
-<table>
-  <tr>
-    <td>Program</td>
-    <td>Cost</td>
-    <td>Unit</td>
-    <td>R&D</td>
-    <td>Weight</td>
-    <td>Payload Lift</td>
-    <td>Max R&D</td>
-    <td>Max Safety</td>
-  </tr>
-  <tr>
-    <td>Explorer/Sputnik</td>
-    <td>6/6</td>
-    <td>1/1</td>
-    <td>1/1</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Ranger/Cosmos</td>
-    <td>24/24</td>
-    <td>4/4</td>
-    <td>3/3</td>
-    <td>700/700</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>93%/93%</td>
-  </tr>
-  <tr>
-    <td>Surveyor/Luna</td>
-    <td>30/30</td>
-    <td>6/6</td>
-    <td>4/4</td>
-    <td>1200/1200</td>
-    <td>--/--</td>
-    <td>85%/85%</td>
-    <td>88%/88%</td>
-  </tr>
-  <tr>
-    <td>Atlas/R-7</td>
-    <td>24/24</td>
-    <td>3/3</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>600/600</td>
-    <td>84%/84%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Titan/Proton</td>
-    <td>60/60</td>
-    <td>12/12</td>
-    <td>4/4</td>
-    <td>--/--</td>
-    <td>1500/1500</td>
-    <td>90%/90%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Saturn/N1</td>
-    <td>84/84</td>
-    <td>18/18</td>
-    <td>6/6</td>
-    <td>--/--</td>
-    <td>3200/3200</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Nova/UR-700</td>
-    <td>150/150</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>--/--</td>
-    <td>4800/4800</td>
-    <td>95%/95%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>B. Strap-On / B. Stage</td>
-    <td>12/12</td>
-    <td>3/3</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>1000/1000</td>
-    <td>85%/85%</td>
-    <td>98%/98%</td>
-  </tr>
-  <tr>
-    <td>Mercury/Vostok</td>
-    <td>18/18</td>
-    <td>2/2</td>
-    <td>1/1</td>
-    <td>500/500</td>
-    <td>--/--</td>
-    <td>76%/76%</td>
-    <td>90%/90%</td>
-  </tr>
-  <tr>
-    <td>Gemini/Voskhod</td>
-    <td>24/24</td>
-    <td>6/6</td>
-    <td>2/2</td>
-    <td>1200/1200</td>
-    <td>--/--</td>
-    <td>81%/81%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Apollo/Soyuz</td>
-    <td>36/36</td>
-    <td>12/12</td>
-    <td>5/5</td>
-    <td>1600/1600</td>
-    <td>--/--</td>
-    <td>87%/87%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>XMS-2/Lapot</td>
-    <td>60/60</td>
-    <td>30/30</td>
-    <td>7/7</td>
-    <td>1500/1500</td>
-    <td>--/--</td>
-    <td>91%/91%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Jupiter/LK-700</td>
-    <td>60/60</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>4300/4300</td>
-    <td>--/--</td>
-    <td>89%/89%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Eagle/LKM</td>
-    <td>30/30</td>
-    <td>8/8</td>
-    <td>2/2</td>
-    <td>1500/1500</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>Cricket/LK</td>
-    <td>42/42</td>
-    <td>8/8</td>
-    <td>4/4</td>
-    <td>1000/1000</td>
-    <td>--/--</td>
-    <td>90%/90%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>US Kicker-A / Sov Kicker-A</td>
-    <td>12/12</td>
-    <td>3/3</td>
-    <td>1/1</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>94%/94%</td>
-    <td>97%/97%</td>
-  </tr>
-  <tr>
-    <td>US Kicker-B / Sov Kicker-B</td>
-    <td>18/18</td>
-    <td>6/6</td>
-    <td>2/2</td>
-    <td>600/600</td>
-    <td>--/--</td>
-    <td>94%/94%</td>
-    <td>96%/96%</td>
-  </tr>
-  <tr>
-    <td>Sov Kicker-C</td>
-    <td>40</td>
-    <td>20</td>
-    <td>4</td>
-    <td>2500</td>
-    <td>n/a</td>
-    <td>90%</td>
-    <td>95%</td>
-  </tr>
-  <tr>
-    <td>US EVA Suit / Sov EVA Suit</td>
-    <td>18/18</td>
-    <td>--/--</td>
-    <td>1/1</td>
-    <td>--/--</td>
-    <td>--/--</td>
-    <td>91%/91%</td>
-    <td>94%/94%</td>
-  </tr>
-  <tr>
-    <td>US DM / Sov DM</td>
-    <td>18/18</td>
-    <td>2/2</td>
-    <td>--/--</td>
-    <td>300/300</td>
-    <td>--/--</td>
-    <td>--/--</td>
-    <td>93%/93%</td>
-  </tr>
-</table>
-
 
 **Historical Model**
 
@@ -2151,6 +1908,221 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>--/--</td>
     <td>--/--</td>
     <td>93%/94%</td>
+  </tr>
+</table>
+
+**Basic Model**
+
+<table>
+  <tr>
+    <td>Program</td>
+    <td>Cost</td>
+    <td>Unit</td>
+    <td>R&D</td>
+    <td>Weight</td>
+    <td>Payload Lift</td>
+    <td>Max R&D</td>
+    <td>Max Safety</td>
+  </tr>
+  <tr>
+    <td>Explorer/Sputnik</td>
+    <td>6/6</td>
+    <td>1/1</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Ranger/Cosmos</td>
+    <td>24/24</td>
+    <td>4/4</td>
+    <td>3/3</td>
+    <td>700/700</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>93%/93%</td>
+  </tr>
+  <tr>
+    <td>Surveyor/Luna</td>
+    <td>30/30</td>
+    <td>6/6</td>
+    <td>4/4</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>85%/85%</td>
+    <td>88%/88%</td>
+  </tr>
+  <tr>
+    <td>Atlas/R-7</td>
+    <td>24/24</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>600/600</td>
+    <td>84%/84%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Titan/Proton</td>
+    <td>60/60</td>
+    <td>12/12</td>
+    <td>4/4</td>
+    <td>--/--</td>
+    <td>1500/1500</td>
+    <td>90%/90%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Saturn/N1</td>
+    <td>84/84</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>--/--</td>
+    <td>3200/3200</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Nova/UR-700</td>
+    <td>150/150</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>--/--</td>
+    <td>4800/4800</td>
+    <td>95%/95%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>B. Strap-On / B. Stage</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>1000/1000</td>
+    <td>85%/85%</td>
+    <td>98%/98%</td>
+  </tr>
+  <tr>
+    <td>Mercury/Vostok</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>1/1</td>
+    <td>500/500</td>
+    <td>--/--</td>
+    <td>76%/76%</td>
+    <td>90%/90%</td>
+  </tr>
+  <tr>
+    <td>Gemini/Voskhod</td>
+    <td>24/24</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>1200/1200</td>
+    <td>--/--</td>
+    <td>81%/81%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Apollo/Soyuz</td>
+    <td>36/36</td>
+    <td>12/12</td>
+    <td>5/5</td>
+    <td>1600/1600</td>
+    <td>--/--</td>
+    <td>87%/87%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>XMS-2/Lapot</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>7/7</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Jupiter/LK-700</td>
+    <td>60/60</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>4300/4300</td>
+    <td>--/--</td>
+    <td>89%/89%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Eagle/LKM</td>
+    <td>30/30</td>
+    <td>8/8</td>
+    <td>2/2</td>
+    <td>1500/1500</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>Cricket/LK</td>
+    <td>42/42</td>
+    <td>8/8</td>
+    <td>4/4</td>
+    <td>1000/1000</td>
+    <td>--/--</td>
+    <td>90%/90%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>US Kicker-A / Sov Kicker-A</td>
+    <td>12/12</td>
+    <td>3/3</td>
+    <td>1/1</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>97%/97%</td>
+  </tr>
+  <tr>
+    <td>US Kicker-B / Sov Kicker-B</td>
+    <td>18/18</td>
+    <td>6/6</td>
+    <td>2/2</td>
+    <td>600/600</td>
+    <td>--/--</td>
+    <td>94%/94%</td>
+    <td>96%/96%</td>
+  </tr>
+  <tr>
+    <td>Sov Kicker-C</td>
+    <td>40</td>
+    <td>20</td>
+    <td>4</td>
+    <td>2500</td>
+    <td>n/a</td>
+    <td>90%</td>
+    <td>95%</td>
+  </tr>
+  <tr>
+    <td>US EVA Suit / Sov EVA Suit</td>
+    <td>18/18</td>
+    <td>--/--</td>
+    <td>1/1</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>91%/91%</td>
+    <td>94%/94%</td>
+  </tr>
+  <tr>
+    <td>US DM / Sov DM</td>
+    <td>18/18</td>
+    <td>2/2</td>
+    <td>--/--</td>
+    <td>300/300</td>
+    <td>--/--</td>
+    <td>--/--</td>
+    <td>93%/93%</td>
   </tr>
 </table>
 

@@ -442,7 +442,7 @@ void Draw_NewEnd(char win)
     draw_string(85, 188, "STATS");
     draw_string(142, 188, "PARADE");
     draw_string(198, 188, "MOON EVA");
-    draw_string(269, 188, "EXIT");
+    draw_string(271, 188, "EXIT");
     FadeIn(0, 10, 128, 0);
     Load_LenFlag(win);
     FadeIn(1, 40, 128, 1);
@@ -1121,7 +1121,7 @@ void PlayFirst(char plr, char first)
     display::graphics.screen()->clear();
     music_start(M_LIFTOFF);
     ShBox(80, 10, 240, 31);
-    draw_heading(92, 14, "PRESTIGE FIRST", 0, -1);
+    draw_heading(93, 14, "PRESTIGE FIRST", 0, -1);
     ShBox(80, 33, 240, 124);
     InBox(84, 37, 236, 118);
     // fill_rectangle(85, 46, 235, 125, 0);

@@ -795,16 +795,46 @@ char REvent(char plr)
         for (i = 0; i < 3; i++) {
             if (i == 0 && plr == 0) {
                 strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "MANKE");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
             } else if (i == 1 && plr == 0) {
                 strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "POWELL");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 0;
             } else if (i == 2 && plr == 0) {
                 strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "YEAGER");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 3;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 2;
             } else if (i == 0 && plr == 1) {
                 strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "ILYUSHIN");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 3;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 3;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
             } else if (i == 1 && plr == 1) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "SHIBORIN");
+                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "KRAMARENKO");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 1;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
             } else if (i == 2 && plr == 1) {
                 strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "DOLGOV");
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 3;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 0;
+                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 1;
             }
 
             /* The original bonus astronauts & cosmonauts were:

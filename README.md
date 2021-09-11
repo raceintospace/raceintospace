@@ -4,7 +4,7 @@ Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/race
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
 Aldrin's Race into Space.  This is the  reworked version  following  the
 source release  for the computer version  of the Liftoff! board  game by
-Fritz Bronner.  This was developed by Strategic Visions and published by
+Fritz Bronner.  The original was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
 The Race Into Space project home page is
@@ -103,18 +103,22 @@ If you are on a Fedora-based system, you can get everything with:
 
 To compile the game quickly you can run a series of commands in-line. This 
 creates a folder where the compiled game will be installed. If you want it named 
-something other than raceintospace-go, simply change the name. The last two 
+something other than raceintospace-build, simply change the name. The last two 
 commands also run the game automatically.
 
-    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make run
+    mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
+
+Once built, you can automatically delete the -build folder and recompile by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
+
+    cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
 You can run these commands separately, or just run the ones you need (for instance, 
 if you already have the folder you want the game installed to, there's of course 
 no need to create it.
 
-    mkdir raceintospace-go
-    cd raceintospace-go
-    cmake ../raceintospace
+    mkdir raceintospace-build
+    cd raceintospace-build
+    cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace
     make run
 
 Mac OS X
@@ -141,6 +145,10 @@ project file:
 
 Windows
 -------
+
+**NOTE:** The game may not successfully compile in Windows. See Issues #498, #128, #57 for details.
+
+If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
 
 Ingredients:
 

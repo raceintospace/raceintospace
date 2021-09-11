@@ -357,9 +357,8 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         std::string filename((boost::format("images/rdfull.but.%1%.png") % index).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        image->exportPalette(32, 32 + 63);
         display::graphics.screen()->draw(image, x, y);
-
     } else {
         char name[5];
 
@@ -395,7 +394,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         std::string filename((boost::format("images/liftoff.abz.%1%.png") % name).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        image->exportPalette(32, 32 + 63);
         display::graphics.screen()->draw(image, x, y);
     }
 }

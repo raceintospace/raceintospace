@@ -276,9 +276,14 @@ void DrawAstCheck(char plr)
         }
 
         draw_string(0, 0, " POSITIONS TO FILL");
-        draw_string(133, 97, "COST: ");
+        draw_string(116, 97, "COST: ");
+        display::graphics.setForegroundColor(1);
         draw_number(0, 0, i);
-        draw_string(0, 0, " MB");
+        draw_string(0, 0, " MB ");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, "(OF ");
+        draw_number(0, 0, Data->P[plr].Cash);
+        draw_string(0, 0, ")");
     } else {
         if (Data->P[plr].AstroDelay != 1) {
             draw_number(114, 86, Data->P[plr].AstroDelay);
@@ -1202,6 +1207,9 @@ void AstSel(char plr)
             if (key > 0) {
                 delay(110);
             }
+            fill_rectangle(292, 36, 301, 41, 7);
+            display::graphics.setForegroundColor(11);
+            draw_number(292, 41, MaxSel - count);
 
             OutBox(7, 111, 151, 123);
 
@@ -1258,7 +1266,7 @@ void AstSel(char plr)
                 }
 
                 if (! femaleAstronautsSelected) {
-                    InBox(245, 5, 314, 17);
+                    InBox(246, 5, 314, 17);
                     Help("i100");
                     OutBox(246, 5, 314, 17);
                 }
@@ -1270,7 +1278,7 @@ void AstSel(char plr)
 
             if ((! femaleAstronautsRequired || femaleAstronautsSelected) &&
                 count == MaxSel) {
-                InBox(245, 5, 314, 17);
+                InBox(246, 5, 314, 17);
                 WaitForMouseUp();
 
                 if (key > 0) {
@@ -1312,10 +1320,10 @@ void AstSel(char plr)
         }
             
         if ((x >= 174 && y >= 5 && x <= 238 && y <= 17 && mousebuttons > 0) || key == K_ESCAPE) {  /* Cancel - and give the player a refund */
-            InBox(172, 3, 240, 19);
+            InBox(174, 5, 238, 17);
             WaitForMouseUp();
             Data->P[plr].Cash += cost;
-            OutBox(172, 3, 240, 19);
+            OutBox(174, 5, 238, 17);
             return;  /* Cancel out */
         }
     }

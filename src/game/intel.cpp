@@ -279,9 +279,6 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
 
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
-/*if (Data->Year > 58) {
-    draw_up_arrow_highlight(137, 42);
-}*/
 
 
 /* Returns the index into the record of Intel Briefings for the
@@ -393,14 +390,14 @@ void MisIntel(char plr, char acc)
     int i = 0, mr, j = 0, k = 0, save[20], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
     char mis, found;
     static char F[3][14] = {
-        {6, 1, 2, 3, 4, 5}, //58 & 59
-        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16}, // 60 to 64
-        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50} // 65 and up
+        {6, 1, 2, 3, 4, 5},  //58 & 59
+        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16},  // 60 to 64
+        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
     };
     static char W[3][16] = {
         {11, 7, 3, 1, 1, 2, 2}, //58 & 59
-        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1}, // 60 to 64
-        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1} // 65 and up
+        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
+        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
 
     for (i = 0; i < 20; i++) {
@@ -436,7 +433,7 @@ void MisIntel(char plr, char acc)
             break;
         }
 
-        //i=Data->Year-58;
+        // i=Data->Year-58;
         if (Data->Year <= 59) {
             i = 0;
         } else if (Data->Year <= 64) {
@@ -488,7 +485,7 @@ void MisIntel(char plr, char acc)
     else {
         found = 0;
 
-        // mission intelligence
+        //  Mission intelligence
         for (i = 0; i < 20; i++) {
             save[i] = 0;
         }
@@ -917,26 +914,26 @@ void HarIntel(char p, char acc)
     int mr, i, prg = 0, ind = 0, j = 0, k = 0, save[28], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
 
     static char F[10][11] = {
-        {7, 0, 7, 8, 11, 14, 15, 12, 12, 12}, //58
-        {4, 3, 5, 17, 12, 12, 12, 12, 12, 12}, //59
-        {3, 16, 24, 12, 12, 12, 12, 12, 12, 12}, //60
-        {9, 1, 4, 6, 8, 11, 14, 15, 17, 24}, //61
-        {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18}, //62
-        {5, 19, 20, 9, 12, 12, 12, 12, 12, 12}, //63
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}, //64
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}, //65
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12} //66
+        {7, 0, 7, 8, 11, 14, 15, 12, 12, 12},  //58
+        {4, 3, 5, 17, 12, 12, 12, 12, 12, 12},  //59
+        {3, 16, 24, 12, 12, 12, 12, 12, 12, 12},  //60
+        {9, 1, 4, 6, 8, 11, 14, 15, 17, 24},  //61
+        {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18},  //62
+        {5, 19, 20, 9, 12, 12, 12, 12, 12, 12},  //63
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //64
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //65
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}  //66
     };
     static char W[10][15] = {
-        {9, 8, 3, 2, 1, 1, 3, 1}, // 58
-        {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1}, // 59
-        {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2}, // 60
-        {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2}, // 61
-        {5, 10, 3, 3, 2, 3, 2, 3, 2, 2}, // 62
-        {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3}, // 63
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}, // 64
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}, // 65
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3} // 66
+        {9, 8, 3, 2, 1, 1, 3, 1},  // 58
+        {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1},  // 59
+        {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2},  // 60
+        {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2},  // 61
+        {5, 10, 3, 3, 2, 3, 2, 3, 2, 2},  // 62
+        {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3},  // 63
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 64
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 65
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}  // 66
     };
 
     for (i = 0; i < 28; i++) {
@@ -1151,7 +1148,7 @@ void HarIntel(char p, char acc)
         j = brandom(hi - lo);
         k = 0;
 
-        while ((k < (hi - lo)) && (save[j] != 1)) { // finds candidate
+        while ((k < (hi - lo)) && (save[j] != 1)) {  // finds candidate
 // draw_number(100,5+k*6,j);
             j = brandom(hi - lo);
             k++;
@@ -1161,7 +1158,7 @@ void HarIntel(char p, char acc)
             HarIntel(p, 0);
             return;
         }
-    } // end else
+    }  // end else
 
     if (j >= 0 && j < 7) {
         prg = 0;
@@ -1432,9 +1429,9 @@ void UpDateTable(char plr)
 
             default:
                 break;
-            } // switch
+            }  // switch
         }  // if
-    } // for
+    }  // for
 }
 
 /* Updates the current intelligence information for a player about
@@ -1446,8 +1443,8 @@ void UpDateTable(char plr)
  * facilities), and 2) updating the CIA/KGB statistics table.
  *
  * Intelligence gathered about opponent plans and/or capabilities is
- * notoriously unreliable, being slightly more accurate on lower
- * difficulty levels and less accurate on higher.
+ * notoriously unreliable, being slightly more than half accurate on 
+ * lower difficulty levels and less accurate on higher.
  *
  * Due to limited space for saving intelligence briefings, they can
  * only be generated at a rate of one each year, so updating is
@@ -1530,17 +1527,17 @@ void DrawBre(char plr)
     ShBox(132, 29, 148, 80);
     ShBox(132, 82, 148, 133);
     ShBox(6, 29, 130, 41);
-    InBox(8, 31, 128, 39); // code
+    InBox(8, 31, 128, 39);  // code
     ShBox(6, 43, 130, 63);
-    InBox(8, 45, 128, 61); // code name
+    InBox(8, 45, 128, 61);  // code name
     ShBox(6, 65, 130, 85);
-    InBox(8, 67, 128, 83); // class
+    InBox(8, 67, 128, 83);  // class
     ShBox(6, 87, 130, 101);
-    InBox(8, 89, 128, 99); // crew
+    InBox(8, 89, 128, 99);  // crew
     ShBox(6, 103, 130, 118);
-    InBox(8, 105, 128, 116); // program
+    InBox(8, 105, 128, 116);  // program
     ShBox(6, 120, 130, 133);
-    InBox(8, 122, 128, 131); // duration
+    InBox(8, 122, 128, 131);  // duration
     IOBox(133, 30, 147, 79);
     IOBox(133, 83, 147, 132);
     ShBox(6, 135, 313, 194);
@@ -1559,7 +1556,7 @@ void Bre(char plr)
 {
     int year = Data->P[plr].PastIntel[0].cur - 1;
     DrawBre(plr);
-    DrawIntelBackground(); // just the blue background
+    DrawIntelBackground();  // just the blue background
     BackIntel(plr, year);
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -1568,13 +1565,12 @@ void Bre(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Gameplay */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if ((x >= 135 && y > 32 && x <= 145 && y <= 77 && mousebuttons > 0) || key == UP_ARROW) {
                 InBox(135, 32, 145, 77);
                 WaitForMouseUp();
 
                 if (year >= 0 && year + 1 <= Data->P[plr].PastIntel[0].cur - 1) {
-
                     fill_rectangle(45, 32, 98, 38, 3);
                     fill_rectangle(38, 54, 127, 60, 3);
                     fill_rectangle(38, 76, 127, 82, 3);
@@ -1587,7 +1583,7 @@ void Bre(char plr)
                 }
                 OutBox(135, 32, 145, 77);
 
-            } else if (mousebuttons > 0 || key == K_HOME) {
+            } else if (key == K_HOME) {
                 fill_rectangle(45, 32, 98, 38, 3);
                 fill_rectangle(38, 54, 127, 60, 3);
                 fill_rectangle(38, 76, 127, 82, 3);
@@ -1595,7 +1591,7 @@ void Bre(char plr)
                 fill_rectangle(16, 107, 127, 113, 3);
                 fill_rectangle(16, 123, 127, 129, 3);
                 fill_rectangle(30, 148, 300, 186, 7);
-                year = Data->Year - 59;
+                year = Data->Year - 58;
                 BackIntel(plr, year);
 
             } else if ((x >= 135 && y > 85 && x <= 145 && y <= 130 && mousebuttons > 0) || key == DN_ARROW) {
@@ -1603,7 +1599,6 @@ void Bre(char plr)
                 WaitForMouseUp();
 
                 if (year - 1 >= 0) {
-
                     fill_rectangle(45, 32, 98, 38, 3);
                     fill_rectangle(38, 54, 127, 60, 3);
                     fill_rectangle(38, 76, 127, 82, 3);
@@ -1616,7 +1611,7 @@ void Bre(char plr)
                 }
                 OutBox(135, 85, 145, 130);
 
-            } else if (mousebuttons > 0 || key == K_END) {
+            } else if (key == K_END) {
                 fill_rectangle(45, 32, 98, 38, 3);
                 fill_rectangle(38, 54, 127, 60, 3);
                 fill_rectangle(38, 76, 127, 82, 3);
@@ -1729,7 +1724,7 @@ void IStat(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Gameplay */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if (((x >= 7 && y >= 164 && x <= 75 && y <= 195 && mousebuttons > 0) || key == 'U') && place != 0) {
                 InBox(7, 164, 75, 195);
                 WaitForMouseUp();
@@ -1754,7 +1749,7 @@ void IStat(char plr)
                 InBox(164, 164, 237, 195);
                 WaitForMouseUp();
                 OutBox(164, 164, 237, 195);
-                /* MANNED */
+                /* Manned */
                 place = 2;
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0, dctx);
@@ -1767,7 +1762,7 @@ void IStat(char plr)
                 place = 3;
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0, dctx);
-                /* MISC */
+                /* Misc */
             }
 
             if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
@@ -1835,7 +1830,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
     display::graphics.setForegroundColor(1);
 
     switch (loc) {
-    case ROCKET_HARDWARE: //draw_string(137,150,"ROCKETS");
+    case ROCKET_HARDWARE:  //draw_string(137,150,"ROCKETS");
         for (i = 0; i < 4; i++) {
             sfu = -1;
             sfs = -1;
@@ -1922,7 +1917,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MANNED_HARDWARE: //draw_string(137,150,"CAPSULES");
+    case MANNED_HARDWARE:  //draw_string(137,150,"CAPSULES");
         for (i = 0; i < 5; i++) {
             sfu = -1;
             sfs = -1;
@@ -2024,7 +2019,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case PROBE_HARDWARE: //draw_string(100,150,"SATELLITES & LM'S");
+    case PROBE_HARDWARE:  //draw_string(100,150,"SATELLITES & LM'S");
         sfu = -1;
         sfs = -1;
 
@@ -2155,7 +2150,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MISC_HARDWARE: //draw_string(100,150,"ADDITIONAL PROGRAMS");
+    case MISC_HARDWARE:  //draw_string(100,150,"ADDITIONAL PROGRAMS");
         sfu = -1;
         sfs = -1;
 
