@@ -44,7 +44,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4);
 void DrawHard(char mode, char pad, char mis, char plr);
 int HardRequest(char plr, char mode, char mis, char pad);
 int SecondHard(char plr, char mode, char mis, char pad);
-
+int mType;
 
 /* Assign the hardware for a planned mission in the Future Missions screen.
  *
@@ -69,6 +69,7 @@ int SecondHard(char plr, char mode, char mis, char pad);
 int HardCrewAssign(char plr, char pad, int misType, char newType)
 {
     int M = 0;
+    mType = misType;
 
     if (newType <= 2) {
         Data->P[plr].Future[misType].Joint = 0;
@@ -711,7 +712,10 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
 
-            display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
+            display::graphics.setForegroundColor(1);
+            if ((mType > 24 && mType < 32) || (mType == 33 || mType == 34 || mType == 35 || mType == 37 || mType == 40)) {
+                display::graphics.setForegroundColor(11);  /* Highlight EN skill for everyone on Duration missions */
+            }
             draw_string(191, 51 + i * 14, "EN:");
 
             if (Data->P[plr].Pool[m[i] - 1].Endurance == 1) {
