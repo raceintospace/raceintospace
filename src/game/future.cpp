@@ -423,7 +423,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     draw_string(220, 132, "-");
 
     if (newMissionPenalty > 0) {
-        draw_number(0, 0, newMissionPenalty);
+        draw_number(226, 132, newMissionPenalty);
     } else {
         draw_string(0, 0, "-");
     }
