@@ -13,6 +13,9 @@ stable releases are available from
 [SourceForge](http://sourceforge.net/projects/raceintospace/). This
 repository contains a work-in-progress modernization of the game.
 
+We have made a number of improvements to the game, and are hoping to do a 
+release soon.  The changes made can be viewed in ChangeLog.md above.
+
 License
 =======
 
