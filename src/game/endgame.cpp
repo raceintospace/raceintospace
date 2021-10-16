@@ -442,7 +442,7 @@ void Draw_NewEnd(char win)
     draw_string(85, 188, "STATS");
     draw_string(142, 188, "PARADE");
     draw_string(198, 188, "MOON EVA");
-    draw_string(271, 188, "EXIT");
+    draw_string(270, 188, "EXIT");
     FadeIn(0, 10, 128, 0);
     Load_LenFlag(win);
     FadeIn(1, 40, 128, 1);
