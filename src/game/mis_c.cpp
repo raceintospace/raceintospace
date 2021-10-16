@@ -1096,6 +1096,8 @@ char FailureMode(char plr, int prelim, char *text)
     draw_string(0, 0, " CHECK");
     draw_number(9, 55, Mev[STEP].dice);
     draw_string(0, 0, " VS. ");
+    int xloc;
+    if (Mev[STEP].dice > 99) { xloc = 63; } else { xloc = 57; }
 
     if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
@@ -1125,6 +1127,7 @@ char FailureMode(char plr, int prelim, char *text)
         draw_string(0, 0, "S");
         display::graphics.setForegroundColor(9);
         draw_string(0, 0, "CRUB");
+        draw_string(7, 108, "(TEMP. PENALTY TO HARDWARE)");
     } else {
         display::graphics.setForegroundColor(9);
 
@@ -1221,25 +1224,25 @@ char FailureMode(char plr, int prelim, char *text)
         display::graphics.setForegroundColor(1);
         switch (Mev[STEP].ast) {
         case 0:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 1:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 2:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 3:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
             draw_string(0, 0, ")");
             break;
