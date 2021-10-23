@@ -1131,7 +1131,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
                 i = 5;
                 WaitForMouseUp();
             } // Four-Man Program
-            else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER) {
+            else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(83, 156, 236, 165);
                 WaitForMouseUp();
 
