@@ -632,6 +632,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(3);
             }
 
+            display::graphics.setForegroundColor(1);  // Set color back to white in case ENs are set to yellow
             draw_string(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
             display::graphics.setForegroundColor(3);
 
