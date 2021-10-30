@@ -119,7 +119,7 @@ endif (NOT DEFINED BUILD_JSONCPP)
 
 if (NOT DEFINED BUILD_PHYSFS)
   find_library(Physfs_LIBRARY NAMES physfs)
-  find_path(Physfs_INCLUDE_DIR json/json.h physfs)
+  find_path(Physfs_INCLUDE_DIR physfs.h)
   if (NOT Physfs_LIBRARY OR NOT Physfs_INCLUDE_DIR)
     set(BUILD_PHYSFS ON)
     set(Physfs_LIBRARY physfs)
