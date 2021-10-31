@@ -357,7 +357,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         std::string filename((boost::format("images/rdfull.but.%1%.png") % index).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        image->exportPalette(32, 2 + 63);
+        image->exportPalette(32, 2 + 33);
         display::graphics.screen()->draw(image, x, y);
     } else {
         char name[5];
