@@ -669,8 +669,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Cap);
             display::graphics.setForegroundColor(1);
 
-            if (i == 1 && men > 1) {
-                display::graphics.setForegroundColor(11);   /* Highlight LM for LM Pilot */
+            if ((i == 1 && men > 1) && ((mType > 37 && mType < 42) || mType > 47)) {
+                display::graphics.setForegroundColor(11);   /* Highlight LM for LM Pilot, if the mission involves LM skill */
             }
 
             draw_string(113, 51 + i * 14, "LM:");
@@ -684,8 +684,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].LM);
             display::graphics.setForegroundColor(1);
 
-            if (men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) {
-                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist */
+            if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 6 || (mType > 19 && mType < 25) || mType == 26 || mType == 29 || mType == 30 || (mType > 32 && mType < 37) || (mType > 39 && mType < 42) || mType > 49)) {
+                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist, if the mission will include EVA */
             }
 
             draw_string(139, 51 + i * 14, "EV:");
@@ -699,8 +699,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].EVA);
             display::graphics.setForegroundColor(1);
 
-            if ((men == 2 && i == 0) || (men == 3 && i == 2)) {
-                display::graphics.setForegroundColor(11);   /* Highlight DO for Docking Specialist */
+            if ((men == 2 && i == 0) || (men == 3 && i == 2) && ((mType > 13 && mType < 25) || (mType > 26 && mType < 42) || mType == 44 || (mType > 46 && mType < 54) || mType > 54)) {
+                display::graphics.setForegroundColor(11);   /* Highlight DO for Docking Specialist, if the mission will include docking */
             }
 
             draw_string(165, 51 + i * 14, "DO:");
