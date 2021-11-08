@@ -558,7 +558,7 @@ void FileAccess(char mode)
             }
 
             key = 0;
-        } else if ((x >= 209 && y >= 106 && x <= 278 && y <= 114 && mousebuttons > 0) || (key == 'P')) {
+        } else if ((x >= 209 && y >= 106 && x <= 278 && y <= 114 && mousebuttons > 0) || (key == 'P') || key == K_ESCAPE) {
             InBox(209, 106, 278, 114);
             delay(250);
             WaitForMouseUp();
