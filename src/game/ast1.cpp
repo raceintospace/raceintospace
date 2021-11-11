@@ -638,7 +638,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
     recruit.Pool = 0;
     recruit.Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
     recruit.Mood = 85 + 5 * brandom(4);
-    recruit.Face = recruit.Sex ? brandom(77) : (77 + brandom(8));
+    recruit.Face = recruit.Sex ? (77 + brandom(8)) : brandom(77);
 
     if (brandom(10) > 5) {
         if (brandom(2) == 0) {
