@@ -687,6 +687,9 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 6 || (mType > 19 && mType < 25) || mType == 26 || mType == 29 || mType == 30 || (mType > 32 && mType < 37) || (mType > 39 && mType < 42) || mType > 49)) {
                 display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist, if the mission will include EVA */
             }
+            if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 38 || mType == 39 || (mType > 47 && mType < 50) || mType == 52)) {
+                display::graphics.setForegroundColor(15);   /* Highlight EV for EVA Specialist, if the mission might include an emergency EVA */
+            }
 
             draw_string(139, 51 + i * 14, "EV:");
 
