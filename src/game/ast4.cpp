@@ -269,7 +269,7 @@ void DrawProgs(char plr, char prog)
     draw_string(152, 51, "SAFETY FACTOR: ");
     display::graphics.setForegroundColor(11);
     draw_number(0, 0, Data->P[plr].Manned[prog - 1].Safety);
-    draw_string(0, 0, " %");
+    draw_string(0, 0, "%");
     display::graphics.setForegroundColor(7);
     draw_string(152, 59, "UNIT WEIGHT: ");
     display::graphics.setForegroundColor(11);
