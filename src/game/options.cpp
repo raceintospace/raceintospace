@@ -160,6 +160,7 @@ static struct {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
         "Set to non-zero to disable damaged equipment (will prevent future damage)."
     },
+/*      These two removed because they were never implemented, per #520
     {
         "random_eq", &options.feat_random_eq, "%u", 0,
         "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
@@ -168,6 +169,7 @@ static struct {
         "eq_name_change", &options.feat_eq_new_name, "%u", 0,
         "Set to non-zero to be able to change equipment name when starting a new game."
     },
+*/
     {
         "atlasLunar", &options.cheat_atlasOnMoon, "%u", 0,
         "Set to non-zero to enable Atlas rockets in lunar missions."
