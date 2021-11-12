@@ -125,7 +125,7 @@ In the Basic Model, the costs and Safety factors for US and Soviet hardware are 
 
 Advanced Preferences is specific to RIS; it didn't exist in BARIS.  So the game doesn't offer a fancy graphical screen for it, just a plain text file.  The file can be in different locations, but is usually found in a user's Documents\raceintospace folder (Windows) or ~/.raceintospace folder (Linux and Mac), along with your saved games.  Windows users may find it in an alternate location such as %userprofile%\AppData\Local\VirtualStore\Program Files (x86)\raceintospace.  Another possibility is that it may be located in the folder where the game resides on your hard drive (e.g., Program Files or Program Files (x86) on Windows, /usr/games on Ubuntu).  Wherever you find it, it will be named simply `config` with no extension.  Open the config file with a plain text editor such as Notepad, Mousepad, or TextEdit.
 
-Advanced Preferences includes a list of settings you can change.  Warning: some are technical or meant for developers, and some are experimental or upsetting to game balance: in particular, `nofail`, `short_training`, `random_eq`, `eq_name_change`, and `atlasLunar`.  Each setting is preceded by an explanation; for example:
+Advanced Preferences includes a list of settings you can change.  Warning: some are technical or meant for developers, and some are experimental or upsetting to game balance: in particular, `nofail`, `short_training`, and `atlasLunar`.  Each setting is preceded by an explanation; for example:
 
     # Set to non-zero to enable randomization of nauts.
     # random_nauts
