@@ -1097,7 +1097,7 @@ char FailureMode(char plr, int prelim, char *text)
     draw_number(9, 55, Mev[STEP].dice);
     draw_string(0, 0, " VS. ");
     int xloc;
-    if (Mev[STEP].dice > 99) { xloc = 63; } else { xloc = 57; }
+    if (Mev[STEP].dice > 99) { xloc = 62; } else { xloc = 57; }
 
     if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
