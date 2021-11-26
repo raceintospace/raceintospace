@@ -621,6 +621,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
     for (i = 0; i < men; i++) {
         if (m[i] > 0) {
+
+            display::graphics.setForegroundColor(1);  // Set color back to white in case ENs are set to yellow
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
                 // Print name in blue if 'naut is female
                 display::graphics.setForegroundColor(5);
@@ -632,7 +634,6 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
                 display::graphics.setForegroundColor(3);
             }
 
-            display::graphics.setForegroundColor(1);  // Set color back to white in case ENs are set to yellow
             draw_string(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
             display::graphics.setForegroundColor(3);
 
