@@ -145,13 +145,13 @@ static struct {
         "Set to zero to require assigning a Backup crew (Classic setting)."
     },   // No Backup crew required -Leon
     {
-        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 1,
+        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 0,
         "By default astronaut/cosmonaut candidate stats are revealed based"
-        "\n# on Astronaut difficulty. Set to 0 to restore the classic"
+        "\n# on Astronaut difficulty. Set to 0 to restore the classic "
         "setting\n# where only Capsule and Endurance are shown."
     },   // Depending on difficulty, show recruit's Docking, EVA, LM
     {
-        "use_endurance", &options.feat_use_endurance, "%u", 1,
+        "use_endurance", &options.feat_use_endurance, "%u", 0,
         "Add the crew's endurance when making duration tests, and when "
         "avoiding injury.\n# Set to 0 to disabled (Classic setting)."
 
