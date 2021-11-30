@@ -283,7 +283,7 @@ void NextTurn(char plr)
     }
 
     draw_number(0, 0, Data->Year);
-    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 94, 30, 85);
+    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 95, 30, 85);
 
     FadeIn(2, 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);
