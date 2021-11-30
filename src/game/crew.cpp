@@ -718,8 +718,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
 
             display::graphics.setForegroundColor(1);
-            if ((mType > 24 && mType < 32) || (mType == 33 || mType == 34 || mType == 35 || mType == 37 || mType == 40)) {
-                display::graphics.setForegroundColor(11);  /* Highlight EN skill for everyone on Duration missions */
+            if (IsDuration(mType) && options.feat_use_endurance) {
+                display::graphics.setForegroundColor(11);  /* Highlight EN skill for everyone on Duration missions, unless EN is disabled (Classic behavior) */
             }
             draw_string(191, 51 + i * 14, "EN:");
 
