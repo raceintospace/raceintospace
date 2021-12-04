@@ -555,7 +555,7 @@ void AI_Begin(char plr)
     }
 
     draw_number(0, 0, Data->Year);
-    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 93, 30, 85);
+    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 95, 30, 85);
     display::graphics.setForegroundColor(11);
     draw_string(60, 58, "COMPUTER TURN:  THINKING...");
     music_start(M_SOVTYP);
