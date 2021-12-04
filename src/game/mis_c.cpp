@@ -158,7 +158,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     //Specs: LEM Activities Kludge
     if (Seq[0] == 'h') {
-        if (Mev[STEP - 1].Name[0] == 'S') {
+        assert(step > 0);
+
+        if (Mev[step - 1].Name[0] == 'S') {
             Seq[0] = 'Q';
         } else {
             Seq[0] = 'i';
@@ -167,7 +169,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (Seq[0] == 'Q') {
-        if (Mev[STEP - 1].Name[0] != 'S') {
+        assert(step > 0);
+
+        if (Mev[step - 1].Name[0] != 'S') {
             if (mode == 0) {
                 Seq[0] = 'i';
             } else if (mode == 1) {
@@ -189,19 +193,19 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     if (mode == 1) {
         if (Seq[0] == 'T') {
             if (Seq[3] == '6' || Seq[3] == '5') {
-                strncpy(Mev[STEP].FName, "F019", 4);
+                strncpy(Mev[step].FName, "F019", 4);
             }
         }
 
         if (Seq[0] == 'Q') {
             if (Seq[3] == '6' || Seq[3] == '5') {
-                strncpy(Mev[STEP].FName, "F216", 4);
+                strncpy(Mev[step].FName, "F216", 4);
             }
         }
 
         if (Seq[0] == 'S') {
             if (Seq[2] == 'P') {
-                strncpy(Mev[STEP].FName, "F118", 4);
+                strncpy(Mev[step].FName, "F118", 4);
             }
         }
 
@@ -214,7 +218,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 Seq[5] = Seq[3];
                 Seq[2] = Tst2;
                 Seq[3] = Tst3;
-                strncpy(Mev[STEP].FName, "F115", 4);
+                strncpy(Mev[step].FName, "F115", 4);
             }
         }
     }
