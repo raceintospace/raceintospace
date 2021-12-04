@@ -256,7 +256,7 @@ void MisCheck(char plr, char mpad)
         }
 
         if (Mev[STEP].loc == 16 && Mev[Mev[STEP].trace].loc == 15) {
-            FirstManOnMoon(plr, 0, code);
+            FirstManOnMoon(plr, 0, code, Mev[STEP]);
         }
 
         // Duration Hack Part 1 of 3   (during the Duration stuff)
