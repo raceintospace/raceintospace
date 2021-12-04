@@ -90,7 +90,7 @@ void GuyDisp(int xa, int ya, struct Astros *Guy);
 FILE *OpenAnim(char *fname);
 int CloseAnim(FILE *fin);
 int StepAnim(int x, int y, FILE *fin);
-char DrawMoonSelection(char nauts, char plr);
+char DrawMoonSelection(char plr, char nauts, const struct MisEval &step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
 size_t ImportAnimType(FILE *fin, struct AnimType &target);
@@ -1475,17 +1475,17 @@ int StepAnim(int x, int y, FILE *fin)
 
 
 
-void FirstManOnMoon(char plr, char isAI, char misNum)
+void FirstManOnMoon(char plr, char isAI, char misNum,
+                    const struct MisEval &step)
 {
     int nautsOnMoon = 0;
-    Equipment *e = GetEquipment(Mev[STEP]);
+    Equipment *e = GetEquipment(step);
 
-    dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
+    dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[step.pad].Month]) + 1;
 
     if (misNum == Mission_Soyuz_LL && plr == 1) {
         nautsOnMoon = 3;
     }
-
 
     //Direct Ascent
     if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
@@ -1509,20 +1509,22 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
     }
 
     if (!AI[plr]) {
-        manOnMoon = DrawMoonSelection(nautsOnMoon, plr);
+        manOnMoon = DrawMoonSelection(plr, nautsOnMoon, step);
     } else {
         manOnMoon = brandom(nautsOnMoon) + 1;
     }
 
     EVA[0] = EVA[1] = manOnMoon - 1;
 
-
-
     return;
 }
 
-char DrawMoonSelection(char nauts, char plr)
+
+char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 {
+    // TODO: Using MX as a copy of MA to avoid modifying it is nice,
+    // but it never gets modified and a global var (MA) is still being
+    // directly accessed.
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
@@ -1532,10 +1534,10 @@ char DrawMoonSelection(char nauts, char plr)
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
     char cPad;
 
-    if (MX[Mev[STEP].pad][0].A != NULL) {
-        cPad = Mev[STEP].pad;
-    } else if (MX[other(Mev[STEP].pad)][0].A != NULL) {
-        cPad = other(Mev[STEP].pad);
+    if (MX[step.pad][0].A != NULL) {
+        cPad = step.pad;
+    } else if (MX[other(step.pad)][0].A != NULL) {
+        cPad = other(step.pad);
     } else {
         return 2;
     }
@@ -1566,15 +1568,17 @@ char DrawMoonSelection(char nauts, char plr)
         strcat(Name, "SV");
     }
 
-    e = GetEquipment(Mev[STEP]);
+    // TODO: Simpler to remove the intermediary var 'e'.
+    e = GetEquipment(step);
     strncat(Name, e->ID, 2);
 
-    if (Mev[STEP].Class == Mission_PhotoRecon) {
+    if (step.Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
     }
 
     strcat(Name, ".BZ\0");
 
+    // TODO: fin is never closed! It needs to be closed with CloseAnim().
     fin = OpenAnim(Name);
     StepAnim(188, 47, fin);
 
@@ -1582,12 +1586,15 @@ char DrawMoonSelection(char nauts, char plr)
 
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
-    draw_string(83 - strlen(Data->P[plr].Mission[Mev[STEP].pad].Name) * 3, 40, Data->P[plr].Mission[Mev[STEP].pad].Name);
+    // TODO: Use TextDisplayLength instead of strlen * 3 for better
+    // centering?
+    draw_string(83 - strlen(Data->P[plr].Mission[step.pad].Name) * 3, 40,
+                Data->P[plr].Mission[step.pad].Name);
     InRFBox(162, 161, 313, 175, 10);
     display::graphics.setForegroundColor(11);
     draw_number(198, 170, dayOnMoon);
     draw_string(0, 0, " ");
-    draw_string(0, 0, Month[Data->P[plr].Mission[Mev[STEP].pad].Month]);
+    draw_string(0, 0, Month[Data->P[plr].Mission[step.pad].Month]);
     draw_string(0, 0, "19");
     draw_number(0, 0, Data->Year);
 
@@ -1600,6 +1607,7 @@ char DrawMoonSelection(char nauts, char plr)
     draw_string(35, 80, "walk on the moon?");
 
     int i;
+    // TODO: This does nothing? If so, remove.
     char str;
 
     for (i = 0; i < nauts; i++) {
