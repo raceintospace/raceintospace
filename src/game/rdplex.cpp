@@ -1465,6 +1465,9 @@ char HPurc(char player_index)
             WaitForMouseUp();
             InBox(26, 94, 131, 172);
             ShowHardwareDescription(player_index, hardware, unit); 
+         } else if (key == '$' && (Data->P[0].AIStat == 1 || Data->P[1].AIStat == 1)) {
+            Data->P[player_index].Cash += 100;  // Cheat - add 100MB to cash on hand
+            DrawCashOnHand(player_index);
          } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
             OutBox(285, 70, 317, 87);
             delay(10);
