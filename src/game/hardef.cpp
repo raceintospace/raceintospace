@@ -1721,16 +1721,27 @@ DrawRank(char plr)
     }
 }
 
+
+/**
+ * Calculate the player's game score.
+ *
+ * The player's score is based on the player's prestige gains times
+ * their difficulty level. The higher the difficulty level, the harder
+ * the game.
+ *
+ * \param plr  the player's side.
+ * \param lvA  the player's difficulty level.
+ * \param lvB  the opponent's difficulty level.
+ */
 int
 CalcScore(char plr, char lvA, char lvB)
 {
-    char i;
     int total = 0;
 
     ++lvA;
     ++lvB;
 
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
+    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
             switch (lvA) {
             case 1:
@@ -1744,8 +1755,8 @@ CalcScore(char plr, char lvA, char lvB)
                         Data->P[plr].History[i].Prestige / 3;
                 else if (lvB == 3)
                     total +=
-                        2 * Data->P[plr].History[i].Prestige +
-                        Data->P[plr].History[i].Prestige / 3;
+                        Data->P[plr].History[i].Prestige +
+                        (2 * Data->P[plr].History[i].Prestige) / 3;
                 else {
                     total += 2 * Data->P[plr].History[i].Prestige;
                 }
@@ -1755,7 +1766,7 @@ CalcScore(char plr, char lvA, char lvB)
             case 3:
                 if (lvB == 1)
                     total +=
-                        2 * Data->P[plr].History[i].Prestige +
+                        3 * Data->P[plr].History[i].Prestige +
                         (2 * Data->P[plr].History[i].Prestige) / 3;
                 else if (lvB == 2)
                     total +=
