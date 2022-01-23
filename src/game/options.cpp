@@ -160,6 +160,10 @@ static struct {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
         "Set to non-zero to disable damaged equipment (will prevent future damage)."
     },
+    {
+        "no_money_cheat", &options.no_money_cheat, "%u", 0,
+        "Set to 1 to disallow the money cheat in Purchasing"
+    },
 /*      These two removed because they were never implemented, per #520
     {
         "random_eq", &options.feat_random_eq, "%u", 0,

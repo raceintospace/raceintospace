@@ -19,6 +19,7 @@ typedef struct {
     unsigned feat_show_recruit_stats;
     unsigned feat_use_endurance;
     unsigned cheat_no_damage;
+    unsigned no_money_cheat;
     unsigned feat_random_eq;
     unsigned feat_eq_new_name;
     unsigned cheat_atlasOnMoon;
