@@ -804,7 +804,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
         GetEquipment(Mev[STEP])->Safety = GetEquipment(Mev[STEP])->Base;
     }
 
-    GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF - 1;
+    GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF;
 
     if (mode == F_ALL) {
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
