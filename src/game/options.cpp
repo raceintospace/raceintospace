@@ -162,7 +162,7 @@ static struct {
     },
     {
         "no_money_cheat", &options.no_money_cheat, "%u", 0,
-        "Set to 1 to disallow the money cheat in Purchasing"
+        "Set to 1 to disallow the money cheat in Purchasing (Classic setting)"
     },
 /*      These two removed because they were never implemented, per #520
     {
@@ -460,6 +460,7 @@ void ResetToDefaultOptions()
     options.feat_no_cTraining = 1;
     //No Backup crew required -Leon
     options.feat_no_backup = 1;
+    options.no_money_cheat = 0;
     options.feat_show_recruit_stats = 1;
     options.feat_use_endurance = 1;
     options.feat_random_eq = 0;
@@ -489,6 +490,7 @@ void ResetToClassicOptions()
     options.feat_compat_nauts = 10;
     options.feat_no_cTraining = 0;
     options.feat_no_backup = 0;
+    options.no_money_cheat = 1;
     options.feat_show_recruit_stats = 0;
     options.feat_use_endurance = 0;
 
