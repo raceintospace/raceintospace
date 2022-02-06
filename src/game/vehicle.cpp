@@ -220,6 +220,16 @@ int Vehicle::safety() const
 }
 
 
+int Vehicle::MaxRD() const
+{
+    if (mSecondary) {
+        return RocketMaxRD(mPrimary->MaxRD, mSecondary->MaxRD);
+    } else {
+        return mPrimary->MaxRD;
+    }
+}
+
+
 bool Vehicle::started() const
 {
     return mPrimary->Num >= 0 && ((!mSecondary) || mSecondary->Num >= 0);
