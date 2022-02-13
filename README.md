@@ -115,6 +115,11 @@ Once built, you can automatically delete the -build folder and recompile by ente
 
     cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
+Builds after the first should delete raceintospace-build:
+
+    cd ~/ && sudo rm -r raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+
 You can run these commands separately, or just run the ones you need (for instance, 
 if you already have the folder you want the game installed to, there's of course 
 no need to create it.
