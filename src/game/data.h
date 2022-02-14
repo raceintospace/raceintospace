@@ -589,10 +589,12 @@ struct mStr {
 // img = the image to use for this, -1 for none
 // wt = unit weight, used to deterine launch vehicle
 // dmg = Equipment->Damage flag
+// MaxRD = Mar R&D
 struct VInfo {
     char name[15], qty, ac, sf, dex, img;
     int16_t wt;
     char dmg;
+    int MaxRD;
 };
 struct ManPool {
     char Name[14], Sex, Cap, LM, EVA, Docking, Endurance;
