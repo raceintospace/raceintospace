@@ -82,7 +82,7 @@ Linux
 We rely on the operating system to provide most of the dependencies. If you're
 on a Debian-based system, you can get everything with:
 
-    $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
+    sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
         libprotobuf-dev protobuf-compiler
 
@@ -92,7 +92,11 @@ Or enter this all on one line:
 
 If you don't already have git installed, you'll also have to run:
 
-    $ sudo apt install git
+    sudo apt install git
+
+You may also need to run:
+
+    sudo apt-get install build-essential
 
 ### Fedora
 
@@ -112,6 +116,10 @@ commands also run the game automatically.
     mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
 
 Once built, you can automatically delete the -build folder and recompile by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
+
+    cd ~/ && sudo mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+Used to be:
 
     cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
