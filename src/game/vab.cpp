@@ -64,6 +64,7 @@
 #include "vehicle_selector.h"
 
 int currentPayload;
+int EVAmis;
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
@@ -379,8 +380,9 @@ void DispVAB(char plr, char pad)
                 display::graphics.setForegroundColor(24);  // Show it in deep red because it's below Max R&D
                 draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
                 draw_string(0, 0, "%");
-                IOBox(140, 64, 165, 82);
-            }
+                InBox(140, 64, 165, 82);
+            EVAmis = 1;
+            }            
     }
     if (IsManned(Data->P[plr].Mission[pad].MissionCode) && (Data->P[plr].Mission[pad].MissionCode == 38 || Data->P[plr].Mission[pad].MissionCode == 39 || (Data->P[plr].Mission[pad].MissionCode > 47 && Data->P[plr].Mission[pad].MissionCode < 50)) || Data->P[plr].Mission[pad].MissionCode == 52) {
         draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
@@ -388,6 +390,7 @@ void DispVAB(char plr, char pad)
         draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
         draw_string(0, 0, "%");
         IOBox(140, 64, 165, 82);
+    EVAmis = 2;
     }
 
     draw_small_flag(plr, 4, 4);
@@ -1265,7 +1268,7 @@ void VAB(char plr)
                 }
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
                 // Choose Rocket
-                InBox(64, 181, 161, 191);
+                InBox(62, 181, 161, 191);
 
                 rocket = rocketList.next();
 
@@ -1288,6 +1291,13 @@ void VAB(char plr)
                 }
 
                 OutBox(64, 181, 161, 191);
+
+            } else if ((x >= 144 && y >= 64 && x <= 168 && y <= 78)) {
+                OutBox(140, 64, 165, 82);
+                delay(100);
+                Help("i171");  // Pull up help text explaining why player's seeing EVA box
+                InBox(140, 64, 165, 82);
+
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
                 // Cycle through payload selections
                 InBox(64, 129, 161, 175);
