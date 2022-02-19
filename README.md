@@ -114,6 +114,9 @@ something other than raceintospace-build, simply change the name. The last two
 commands also run the game automatically.
 
     mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
+Or:
+    mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
 
 Once built, you can automatically delete the -build folder and recompile by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
 
@@ -123,7 +126,12 @@ Used to be:
 
     cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
-Builds after the first should delete raceintospace-build:
+
+After the first build, you can download the latest version of the source with:
+
+    cd ~/ && sudo rm -r raceintospace && git clone https://github.com/raceintospace/raceintospace
+
+Then delete raceintospace-build and recompile:
 
     cd ~/ && sudo rm -r raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
 
