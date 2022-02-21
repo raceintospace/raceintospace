@@ -1268,7 +1268,7 @@ void VAB(char plr)
                 }
             } else if ((x >= 64 && y >= 181 && x <= 161 && y <= 191 && mousebuttons > 0) || key == 'R') {
                 // Choose Rocket
-                InBox(62, 181, 161, 191);
+                InBox(64, 181, 161, 191);
 
                 rocket = rocketList.next();
 
