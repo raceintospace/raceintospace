@@ -927,6 +927,7 @@ int TextDisplayLength(const char *str)
         case '%':
         case '/':
         case '<':
+        case '>':
         case '*':
         case '?':
             pixels += 6;
@@ -938,7 +939,6 @@ int TextDisplayLength(const char *str)
 
         case 'I':
         case '1':
-        case '>':
             pixels += 4;
             break;
 
