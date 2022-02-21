@@ -380,7 +380,7 @@ void DispVAB(char plr, char pad)
                 display::graphics.setForegroundColor(24);  // Show it in deep red because it's below Max R&D
                 draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
                 draw_string(0, 0, "%");
-                InBox(140, 64, 165, 82);
+                IOBox(140, 64, 165, 82);
             EVAmis = 1;
             }            
     }
