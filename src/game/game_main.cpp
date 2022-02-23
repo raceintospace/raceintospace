@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <assert.h>
+#include <math.h>
 
 #include "display/graphics.h"
 #include "display/surface.h"

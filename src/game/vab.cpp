@@ -33,6 +33,7 @@
 
 #include <cassert>
 
+#include <algorithm>
 #include <stdexcept>
 
 #include <boost/shared_ptr.hpp>
