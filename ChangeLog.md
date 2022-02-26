@@ -12,6 +12,7 @@
 - Vestigial copy protection code finally removed (#493)
 - We've added some JSON serialization for game data and save games. (#478)
 - The abbreviation for the sound to play in the Intelligence screens was "INTELLEG" - now "INTELLIG"
+- In the config file, "altasLunar" has been corrected to "atlasLunar"
 
 Since transitioning to C++ on GIT, the game has been brought up to where we left off
  (that is, bugs introduced by the transition have been fixed).
@@ -64,7 +65,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - There was also a newscast that was supposed to increase your budget by 20MB, but the conditions under 
   which it was allowed effectively prevented it ever happening (#397)<br/>
 - When a newscast gives you three Air Force pilots, they now come with skills. They used to start out in 
-  Basic Training with 0s in everything.<br/>
+  Basic Training with 0s in everything (#541) <br/>
 - In the Capsule Screen, if you tried to break an empty crew, it would tell you the crew was assigned 
   as the backup crew for a current mission - now it says it's an empty crew (#348)<br/>
 - Jupiter flybys were set to take 7 turns to arrive, the same as Saturn - now they're set to 4 like
@@ -101,7 +102,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
   without any mention of the emergency-eject system being used (#547)
 - The image for a damaged/destroyed Soviet launch pad instead showed a functioning pad with a rocket
   ready for launch. It now shows a damaged pad. The damaged-pad icon for the US wasn't too obviously 
-  damaged either, so now it's more so.<br/>
+  damaged either, so now it's more so. (#412) <br/>
 - BARIS allowed you to use PgUp and PgDn to scroll through the newscast more efficiently, both at the 
   start of your turn and later in the Viewing Stand.  That functionality was lost in RIS because DOS 
   has a peculiar way of processing those keys, but it's now been restored - along with the Home and 
@@ -113,6 +114,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
   should retire.<br/>
 - In recruitment, if you clicked and held on the up or down arrow, it would take 3 or 4 seconds 
   before the list would start to scroll.<br/>
+- Addressed an oversight: in recruitment, if you dismissed a candidate, the number of available spots 
+  didn't show any higher on the right. (#581)
 - In recruitment, the Continue button didn't look quite right when clicked on (off by 1px).
 - In Preferences, the Human/AI button nestled into the world map never looked quite right on the 
   Soviet side.  Now it does. (#353)<br/>
@@ -137,7 +140,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
   (#131) *[However, it has been disabled by default.]* <br/>
 - If you have no missions planned for next turn when you hit the Flagpole, you now receive a warning 
   about it. (#166)<br/>
-- When you open R&D, you will receive a warning if:
+- When you open R&D, you will receive a warning if (#166):
    - You've prototyped an LM or Kicker-C but haven't started docking modules yet
    - You've prototyped a landing craft (LM, Kicker-C, direct ascent) but haven't started EVA suits yet
    - You've prototyped Gemini/Voskhod or a minishuttle, but haven't started a kicker yet<br/>
@@ -150,6 +153,15 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - In Future Missions, the part of the screen that shows the safety risk is now a button that will 
   launch a pop-up breaking down your requirement penalty into milestone, duration, and 
   new mission penalties.  It also shows penalties on the LM steps of lunar landings. (#168, #373)<br/>
+- In Future Missions, when you select crews, now skills only highlight when they'll be used on the 
+  mission.  DO only lights up on missions that include docking, for instance. 
+   - In addition, LM Tests without EVA now highlight EV, but less brightly than other skills, because 
+     an emergency EVA may be necessary - in case docking the LM back to the capsule fails.<br/>
+- When you assign crews to a mission, their members' Endurance is now highlighted along with the skills 
+  related to their roles in the crew - since Endurance now helps out on Duration missions.  They will not 
+  highlight if use of endurance is turned off or game is set to Classic mode.  (#586) <br/>
+- When you select a mission and are at the window to select the type of spacecraft, you can cancel out 
+  of there by pressing Esc.  Previously you had to hit the Cancel button, but now you can do either. <br/>
 - Mission Control now shows a figure for requirement penalties: the total of any milestone penalties, 
   duration penalties, and new mission penalty, if any (same as in Future Missions). This way, if say 
   your mission has a milestone or duration penalty you can see that, and can try downgrading it 
@@ -158,8 +170,16 @@ Below are improvements that have been made over what the game offered in v.1.1.
   would show in the A-OK!/CAUTION!/DANGER! section.<br/>
 - Clicking on the image of the pad in Mission Control will now pop up a window that breaks down those 
   requirement penalties. (#168)<br/><br/>
+- In the VAB/VIB, any hardware whose Safety is below Max R&D will now show in deep red, so you can go back 
+  into R&D to research it more.  It was too easy to miss that before. (#166)
+- The VAB/VIB also now shows the Safety of your EVA suits, if they're below Max R&D or have been 
+  damaged (#166) <br/>
+- The last-minute launch confirmation screen now also shows hardware Safety percentages in red if they're 
+  below Max R&D. (#166)
 - Lots of improvements to the help file: grammar corrections, readability, more clarifications, 
   and in a few places updates to reflect additions we've made to the game.<br/>
+- In single-player games, the Purchasing screen now includes a cheat: pressing $ will add 100MB to your 
+  cash on hand.  This can be disabled in the config file, and is a Classic setting. (#597) <br/>
 - When the AI wins the game, you now see its Moon landing play out like other prestige firsts.<br/>
 - Increased height of Prestige First window so one more prestige first can be listed - which also 
   better centers the window on the screen.<br/>
@@ -194,10 +214,13 @@ Below are improvements that have been made over what the game offered in v.1.1.
      the more likely they are to go to the Hospital rather than simply retire. <br/>
 - When Mission Control recommends you scrub a mission, if you hit the button to do so, you're now prompted 
   for confirmation so you won't cancel it accidentally, plus it shows a bit more prominently so you're 
-  less likely to miss it. (#475)<br/>
+  less likely to miss it. (#475)
+   - If you should opt to continue the mission, the hardware will suffer a temporary Safety penalty. 
+     So this screen now mentions that fact above the button for scrubbing it. (#589)<br/>
 - When you click on Recruitment and it asks to confirm whether to recruit spacepeople, the game now 
   shows how much money you have to help you decide whether to go ahead with it.
 - You can now cancel out of astronaut/cosmonaut recruitment if you change your mind (#295)<br/>
+- Similarly, the Esc key now cancels you out of the Time Capsule, same as pressing PLAY. <br/>
 - Recruitment now shows more candidate skills. In addition to Capsule and Endurance, at Astronaut Level 
   2, Docking also shows, and at Level 1, all skills show. This can be returned to the way it used to be 
   with an Advanced Preferences setting. (#176)
@@ -209,6 +232,9 @@ Below are improvements that have been made over what the game offered in v.1.1.
   version (Apollo was different only in the Basic Model) (#216)<br/>
 - Player now has more mission downgrade options - in particular, it is now possible to downgrade a Lunar 
   Landing to a Lunar Orbital LM Test<br/>
+- If you get the newscast saying you won't be able to purchase rockets for a year, or the equivalent one 
+  for capsules, Future Missions will now warn you so you don't accidentally schedule missions you'll have 
+  to cancel next turn. (#611)
 - Future Missions now shows the Duration Level (B-F) of manned missions above level A (#251)<br/>
 - In Mission Control, your downgrade options now include an option to scrub the flight.<br/>
 - If you scheduled an (Orbit) docking mission (which uses a DM left by a previous mission) 
@@ -219,8 +245,15 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The opening screen now defaults to the Historical Model rather than the Basic Model (#221)<br/>
 - The country insignia at the start of a player's turn is now circular; it used to look oval, kind 
   of squashed (see #51)<br/>
-- In R&D and Purchasing, the Atlas rocket now looks more like an Atlas rocket (#556)
-- In R&D and Purchasing, the Soyuz capsule now looks a bit more like the real thing.
+- In R&D and Purchasing, the Atlas rocket now looks more like an Atlas rocket (#556) <br/>
+- In R&D and Purchasing, the Soyuz capsule now looks a bit more like the real thing. <br/>
+- The Boosted Atlas in the VAB looked short and fat, so it's been slimmed a bit. <br/>
+- The Soyuz image in R&D and Purchasing now looks more like the real thing. <br/>
+- The LK lander now looks more like the real thing, in R&D and Purchasing, the LM Program building, 
+  the VIB, and the CIA/KGB report, though not in mission movies (#588)
+- The VIB image for the Lapot shuttle was too long, causing an invisible error message (unless you 
+  ran the program from the command prompt) saying it can't fit the lunar module - and sure enough, 
+  you didn't see it on the righthand side in the VIB.  That's been fixed.  (#418)
 - Question marks now look a little better (see middle of #207)<br/>
 - In R&D, removed the percent sign from the RESEARCH STRONG: +1%/TEAM line, since the research news 
   events change the dice being rolled (7-sided instead of 6-sided, etc.) rather than rolling 6-sided 
@@ -281,6 +314,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The Credits are now in a different color to be easier to read against the background (#211)<br/>
 - Added names for people who were mentioned in a text file on the CD version but didn't actually 
   make it into the credits for that version<br/>
+- The waving flag sequence for the Soviet spaceport was generating CRC errors. (#594) <br/>
 - The result text in the Step Failure screen ("Catastrophic Failure", "All Systems Are Go", etc.) is 
   now centered in its box.  It used to be left-justified.<br/>
 - The Step Failure screen also used to underline the crew member who failed a roll, which wasn't very 
