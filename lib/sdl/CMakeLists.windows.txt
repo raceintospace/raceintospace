@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 
 file(GLOB hdrs "${PROJECT_SOURCE_DIR}/include/*.h")
-if (WIN32)
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
   file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x86/*.lib")
   file(GLOB dlls "${PROJECT_SOURCE_DIR}/lib/x86/*.dll")
-else (WIN32)
+else (CMAKE_SIZEOF_VOID_P EQUAL 4)
   file(GLOB libs "${PROJECT_SOURCE_DIR}/lib/x64/*.lib")
   file(GLOB dlls "${PROJECT_SOURCE_DIR}/lib/x64/*.dll")
-endif (WIN32)
+endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
 install(
    FILES ${hdrs}
