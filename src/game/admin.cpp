@@ -59,6 +59,7 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
+#include "options.h"
 
 #include <ctype.h>
 
@@ -94,6 +95,18 @@ struct SFInfo {
     uint16_t time, date;
     SaveGameType type;
 };
+
+/* Result of savegame search */
+struct SaveGameEnumerator : public PhysFsEnumerator {
+    SaveGameType type;
+    int maxSaves = 100;
+    std::vector<SFInfo> results;
+
+    SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : type(type), maxSaves(maxSaves), PhysFsEnumerator("/") {}
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string& origdir, const std::string& fname);
+};
+
+
 };  // End of anon namespace
 
 
@@ -313,6 +326,54 @@ void CacheCrewFile()
     fclose(dest);
 }
 
+bool ReadGameSaveInfo(const std::string& fname, SFInfo &saveInfo)
+{
+    SaveFileHdr header;
+    FILE* fin = sOpen(fname.c_str(), "rb", FT_SAVE);
+
+    if (fin == NULL) {
+        NOTICE2("Unable to open save file %s, skipping",
+            fname);
+        return false;
+    }
+
+    size_t bytes = fread(&header, 1, sizeof(header), fin);
+    fclose(fin);
+
+    if (bytes != sizeof(header)) {
+        NOTICE2("Unable to read save file %s, skipping",
+            fname);
+        return false;
+    }
+
+    memset(&saveInfo, 0, sizeof(saveInfo));
+    strcpy(saveInfo.Title, header.Name);
+    strcpy(saveInfo.Name, fname.c_str());
+    saveInfo.time = 0; /* Were this ever read from somewhere? */
+    saveInfo.date = 0;
+    saveInfo.type = GetSaveType(header);
+    return true;
+}
+
+PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string& origdir, const std::string& fname)
+{
+    size_t len = fname.size();
+    SaveGameType type;
+    std::string name;
+    SFInfo saveInfo;
+
+    if (len >= 4 && xstrncasecmp(fname.c_str() + len - 4, ".SAV", 4) == 0 &&
+        fname.size() <= (sizeof(saveInfo.Name) - 1) &&
+        ReadGameSaveInfo(fname, saveInfo)) {
+            results.push_back(saveInfo);
+    }
+
+    if (results.size() < maxSaves)
+        return PHYSFS_ENUM_OK;
+    else
+        return PHYSFS_ENUM_STOP;
+
+}
 
 /* Creates a list of all the save files of the selected type, up to 100.
  *
@@ -325,54 +386,12 @@ void CacheCrewFile()
  */
 std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 {
-    struct ffblk ffblk;
-    const int maxSaves = 100;
-    SaveFileHdr header;
-    SFInfo saveInfo;
-    std::vector<SFInfo> results;
-    SaveGameType type;
 
-    for (bool done = first_saved_game(&ffblk);
-         done != true && results.size() < maxSaves;
-         done = next_saved_game(&ffblk)) {
+    SaveGameEnumerator saves(saveType);
 
-        if (strlen(ffblk.ff_name) > sizeof(saveInfo.Name) - 1) {
-            NOTICE2("Save name too long: %s, skipping", ffblk.ff_name);
-            continue;
-        }
-
-        FILE *fin = sOpen(ffblk.ff_name, "rb", 1);
-
-        if (fin == NULL) {
-            NOTICE2("Unable to open save file %s, skipping",
-                    ffblk.ff_name);
-            continue;
-        }
-
-        size_t bytes = fread(&header, 1, sizeof(header), fin);
-        fclose(fin);
-
-        if (bytes != sizeof(header)) {
-            NOTICE2("Unable to read save file %s, skipping",
-                    ffblk.ff_name);
-            continue;
-        }
-
-        type = GetSaveType(header);
-
-        if (type & saveType) {
-            memset(&saveInfo, 0, sizeof(saveInfo));
-            strcpy(saveInfo.Title, header.Name);
-            strcpy(saveInfo.Name, ffblk.ff_name);
-            saveInfo.time = ffblk.ff_ftime;
-            saveInfo.date = ffblk.ff_fdate;
-            saveInfo.type = type;
-            results.push_back(saveInfo);
-        }
-    }
-
-    std::sort(results.begin(), results.end(), OrderSaves);
-    return results;
+    if (saves.enumerate())
+        std::sort(saves.results.begin(), saves.results.end(), OrderSaves);
+    return saves.results;
 }
 
 

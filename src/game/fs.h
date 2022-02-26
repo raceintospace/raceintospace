@@ -2,6 +2,8 @@
 #define _FS_H
 
 #include <stdio.h>
+#include <physfs.h>
+#include <string>
 
 /** \file fs.h Definitions for filesystem
  *
@@ -25,6 +27,19 @@ struct ffblk {
     int ff_fdate;
 };
 
+/* Physfs provides multiplatform implementation of directory contents listing. */
+struct PhysFsEnumerator {
+public:
+    PhysFsEnumerator(const std::string& name) : m_name(name) {}
+    int enumerate();
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string& origdir, const std::string& fname) = 0;
+protected:
+    static PHYSFS_EnumerateCallbackResult
+        enumerate_callback(void* data, const char* origdir, const char* fname);
+private:
+    std::string m_name;
+};
+
 extern FILE *sOpen(const char *name, const char *mode, int type);
 extern char *locate_file(const char *name, int type);
 extern FILE *open_gamedat(const char *name);
@@ -32,8 +47,6 @@ extern FILE *open_savedat(const char *name, const char *mode);
 extern char *slurp_gamedat(const char *name);
 extern int create_save_dir(void);
 extern int remove_savedat(const char *name);
-extern int first_saved_game(struct ffblk *ffblk);
-extern int next_saved_game(struct ffblk *ffblk);
 extern void fix_pathsep(char *path);
 
 #endif /* _FS_H */

@@ -408,9 +408,12 @@ static char *get_homedir(void)
 
     if ((s = getenv("HOMEPATH"))) {
         char *s2 = NULL;
+        std::string path(s);
 
         if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
-            return xstrcat2(s2, s);
+            std::string drive(s2);
+            drive += path;
+            return xstrdup(drive.c_str());
         }
     }
 

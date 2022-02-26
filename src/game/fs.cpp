@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <ctype.h>
+#include <physfs.h>
 
 /** path separator setup */
 #ifndef PATHSEP
@@ -389,50 +390,16 @@ create_save_dir(void)
 }
 
 int
-first_saved_game(struct ffblk *ffblk)
+PhysFsEnumerator::enumerate()
 {
-    if (save_dir) {
-        closedir(save_dir);
-        save_dir = NULL;
-    }
-
-    if ((save_dir = opendir(options.dir_savegame)) == NULL) {
-        return (1);
-    }
-
-    return (next_saved_game(ffblk));
+    return PHYSFS_enumerate(this->m_name.c_str(), this->enumerate_callback, this);
 }
 
-int
-next_saved_game(struct ffblk *ffblk)
+PHYSFS_EnumerateCallbackResult
+PhysFsEnumerator::enumerate_callback(void* data, const char* origdir, const char* fname)
 {
-    struct dirent *dp;
-    int len;
-
-    memset(ffblk, 0, sizeof * ffblk);
-
-    if (save_dir == NULL) {
-        return (1);
-    }
-
-    while ((dp = readdir(save_dir)) != NULL) {
-        len = NAMLEN(dp);
-
-        if (len < 4) {
-            continue;
-        }
-
-        if (xstrncasecmp(dp->d_name + len - 4, ".SAV", 4) != 0) {
-            continue;
-        }
-
-        strncpy(ffblk->ff_name, dp->d_name, sizeof ffblk->ff_name);
-        ffblk->ff_name[sizeof ffblk->ff_name - 1] = 0;
-
-        return (0);
-    }
-
-    return (1);
+    PhysFsEnumerator* self = static_cast<PhysFsEnumerator*>(data);
+    return self->onItem(origdir, fname);
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */
