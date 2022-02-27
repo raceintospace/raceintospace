@@ -98,7 +98,7 @@ set (ui_sources
 
 set(game_libraries
   ${SDL_LIBRARY} ogg vorbis theora protobuf
-  ${JsonCPP_LIBRARY} physfs ${zlib_LIBRARY}
+  ${JsonCPP_LIBRARY} ${Physfs_LIBRARY} ${zlib_LIBRARY}
   raceintospace_display ${raceintospace_display_libraries}
   raceintospace_protobuf
   )

@@ -11,5 +11,6 @@ add_library(
   palettized_surface.cpp
   surface.cpp
   )
+target_link_libraries(raceintospace_display ${SDL_LIBRARY})
 
 add_dependencies(raceintospace_display libs)

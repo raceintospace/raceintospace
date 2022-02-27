@@ -4,7 +4,10 @@ add_definitions(-DCONFIG_WIN32)
 
 # Here too. This depends on probing the libsdl that may not have existed
 # until after we started the build process.
-add_definitions(-DHAVE_SDL_GETENV)
+add_definitions(-DHAVE_SDL_GETENV
+				-DNOMINMAX # std::max() fix on windows
+				-D_USE_MATH_DEFINES
+				)
 
 # Make sure we can find fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
