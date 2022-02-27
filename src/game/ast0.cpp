@@ -601,7 +601,7 @@ void LMBld(char plr)
     ShBox(160, 120, 319, 168);
     InBox(163, 122, 316, 166);
     ShBox(1, 170, 319, 194);
-    InBox(41, 172, 279, 192);
+    IOBox(41, 172, 279, 193);
     draw_heading(71, 176, "TOTAL LM POINTS", 0, -1);
     memset(Name, 0, sizeof Name);
     snprintf(&Name[0], sizeof(Name), "%d", Data->P[plr].LMpts);
@@ -666,6 +666,13 @@ void LMBld(char plr)
             music_stop();
             key = 0;
             return; // Continue
+        }
+        if (x >= 41 && y >= 172 && x <= 314 && y <= 193 && mousebuttons > 0) {
+            OutBox(41, 172, 279, 193);
+            delay(100);
+            WaitForMouseUp();
+            InBox(41, 172, 279, 193);
+            Help("i172");  // Show help item explaining the LM Points system
         }
     }
 }
