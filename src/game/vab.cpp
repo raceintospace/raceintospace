@@ -1293,7 +1293,7 @@ void VAB(char plr)
 
                 OutBox(64, 181, 161, 191);
 
-            } else if ((x >= 144 && y >= 64 && x <= 168 && y <= 78)) {
+            } else if ((x >= 144 && y >= 64 && x <= 168 && y <= 78) && EVAmis > 0) {
                 OutBox(140, 64, 165, 82);
                 delay(100);
                 Help("i171");  // Pull up help text explaining why player's seeing EVA box
