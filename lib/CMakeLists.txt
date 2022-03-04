@@ -93,7 +93,7 @@ if (BUILD_SDL)
       )
 
   else (WINDOWS)
-    message(FATAL_ERROR "I don't know how to build CMake on this platform.")
+    message(FATAL_ERROR "I don't know how to build SDL on this platform.")
   endif (WINDOWS)
 
   add_dependencies(libs ext_sdl)
