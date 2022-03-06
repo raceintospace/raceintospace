@@ -349,7 +349,7 @@ bool ReadGameSaveInfo(const std::string& fname, SFInfo &saveInfo)
     memset(&saveInfo, 0, sizeof(saveInfo));
     strcpy(saveInfo.Title, header.Name);
     strcpy(saveInfo.Name, fname.c_str());
-    saveInfo.time = 0; /* Were this ever read from somewhere? */
+    saveInfo.time = 0;  /* Were this ever read from somewhere? */
     saveInfo.date = 0;
     saveInfo.type = GetSaveType(header);
     return true;
@@ -400,9 +400,9 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
  * To determine which menu options are accessible, this uses the
  * global MAIL and Option variables. For normal games, MAIL & Option
  * are set to -1. These are used to identify the current player in a
- * Play-by-mail or Modem game, being set to the side of the player:
+ * Play-by-Mail or Modem game, being set to the side of the player:
  * 0 for Player 1 (USA), 1 for Player 2 (USSR). Practically, both
- * Play-by-mail and Modem play are currently disabled.
+ * Play-by-Mail and Modem play are currently disabled.
  *
  * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
  */
@@ -635,7 +635,7 @@ void FileAccess(char mode)
             // perform Up Button
             key = 0;
 
-        } else if (key == K_HOME) {  //
+        } else if (key == K_HOME) {  // Top of list
 
             now = 0;
             BarB = 0;
@@ -650,7 +650,7 @@ void FileAccess(char mode)
 
             key = 0;
 
-        } else if (key == K_PGUP) { // Page Up
+        } else if (key == K_PGUP) {  // Page Up
 
             if (now > 0) {
                 now -= 9;
@@ -709,7 +709,7 @@ void FileAccess(char mode)
 
             key = 0;
 
-        } else if (key == K_END) {  //
+        } else if (key == K_END) {  // End of list
 
             now = savegames.size() - 1;
 
@@ -983,14 +983,14 @@ char GetBlockName(char *Nam)
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        draw_string(47, 74, "ENTER FILE DESCRIPTION");
+        draw_string(61, 74, "ENTER FILE DESCRIPTION");
         InBox(51, 95, 190, 105);
         fill_rectangle(52, 96, 189, 104, 0);
     } else {
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        draw_string(47, 74, "NOT ENOUGH DISK SPACE");
+        draw_string(60, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         local.copyTo(display::graphics.legacyScreen(), 39, 50);
         return 0;
@@ -1011,7 +1011,7 @@ char GetBlockName(char *Nam)
 
         if (key & 0x00ff) {
             if ((i < 21) && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
-                             (key >= '0' && key <= '9'))) { // valid key
+                             (key >= '0' && key <= '9'))) {  // valid key
                 Nam[i++] = key;
                 display::graphics.setForegroundColor(1);
                 draw_string(53, 102, &Nam[0]);
@@ -1050,7 +1050,7 @@ void BadFileType()
     InBox(43, 67, 197, 77);
     fill_rectangle(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
-    draw_string(47, 74, "CORRUPT SAVE FILE");
+    draw_string(66, 74, "CORRUPT SAVE FILE");
     delay(2000);
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
     PauseMouse();
@@ -1260,8 +1260,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
-                // Show duration level only on missions with a
-                // Duration step - Leon
+                // Show duration level only on missions with a Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Mission[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
@@ -1283,8 +1282,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
-                // Show duration level only on missions with a
-                // Duration step - Leon
+                // Show duration level only on missions with a Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Future[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
@@ -1500,7 +1498,7 @@ void LoadGame(const char *filename)
         _SwapGameDat();
     }
 
-    //MSF now holds MaxRDBase (from 1.0.0)
+    // MSF now holds MaxRDBase (from 1.0.0)
     if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
         for (int j = 0; j < NUM_PLAYERS; j++) {
             for (int k = 0; k < 7; k++) {
@@ -1641,7 +1639,7 @@ char RequestX(char *s, char md)
     display::LegacySurface local(196, 84);
 
 
-    if (md == 1) { // Save Buffer
+    if (md == 1) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
@@ -1759,7 +1757,7 @@ void SaveGame(const std::vector<SFInfo> savegames)
     memset(header.Name, 0x00, sizeof(header.Name));
 
     do {
-        done = GetBlockName(header.Name); // Checks Free Space
+        done = GetBlockName(header.Name);  // Checks Free Space
         header.ID = RaceIntoSpace_Signature;
         header.Name[sizeof(header.Name) - 1] = 0x1A;
         temp = NOTSAME;
@@ -1818,7 +1816,7 @@ void SaveGame(const std::vector<SFInfo> savegames)
             fin = NULL;
 
             strncpy(Name, header.Name, sizeof(Name));
-            Name[sizeof(Name) - 5] = 0; // Leave enough space for .SAV ending
+            Name[sizeof(Name) - 5] = 0;  // Leave enough space for .SAV ending
             strncat(Name, ".SAV", 4);
 
             fin = sOpen(Name, "wb", 1);
