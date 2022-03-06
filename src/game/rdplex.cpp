@@ -289,7 +289,7 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Scr
 
     int diceRoll = decodeRollValue(encodedRolls);
 
-    //DM Screen, Nikakd, 10/8/10
+    // DM Screen, Nikakd, 10/8/10
     if (SpDModule == 1) {
         draw_string(184, 191, "CANNOT BE RESEARCHED");
         return;
@@ -363,7 +363,7 @@ char RD(char player_index)
 
     WaitForMouseUp();
 
-    // The following warnings are added on the principle that normally you would have both DMs and EVA suits before prototyping your lunar landing craft.
+    // These two warnings are here on the principle that normally you would have both DMs and EVA suits before prototyping your lunar landing craft.
     if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[4].Num >= 0 || Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
         Help("i046");  // Warn player that they haven't started EVA suits yet, though they have an LM or Kicker-C or direct ascent capsule  -LPB
     }
@@ -675,7 +675,7 @@ char RD(char player_index)
                 } else {
                     QueryUnit(hardware, unit, player_index);
                 }
-            } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER) {
+            } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
@@ -701,7 +701,7 @@ char RD(char player_index)
 
                 music_stop();
 
-                // DM Screen, Nikakd, 10/8/10 (Removed line)
+                //DM Screen, Nikakd, 10/8/10 (Removed line)
                 if (call == 1) {
                     return 1;    // go back through gateway
                 }
@@ -813,7 +813,7 @@ void ShowHardwareDescription(int player, int hardware, int unit)
 /**
  * Get the maximum number of R&D teams allowed for a program.
  *
- * If playing RIS in "classic" mode, this should always return
+ * If playing RIS in Classic mode, this should always return
  * the maximum value.
  *
  * \param plr  the player index.
@@ -1414,7 +1414,7 @@ char HPurc(char player_index)
             } else {
                 Help("i135");
             }
-        } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER) {
+        } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
             music_stop();
