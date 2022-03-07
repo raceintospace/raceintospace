@@ -35,7 +35,7 @@
 #include "options.h"
 #include "pace.h"
 
-/** ???
+/**
  *
  * \param type 1:postive -1:negative search
  */
@@ -53,19 +53,20 @@ int Steal(int p, int prog, int type)
 
     for (int hwType = 0; hwType < 4; hwType++) {
         for (int i = 0; i < 7; i++) {
+            int eqIndex = i + 7 * hwType;
             Equipment &equip = HardwareProgram(p, hwMap[hwType], i);
             Equipment &rival = HardwareProgram(other(p), hwMap[hwType], i);
 
             if (equip.Num >= 0 && rival.Num >= 0) {
                 if (type == 1) {
-                    save[i + 7 * hwType] = rival.Safety - equip.Safety;
+                    save[eqIndex] = rival.Safety - equip.Safety;
                 } else {
-                    save[i + 7 * hwType] = equip.Safety - rival.Safety;
+                    save[eqIndex] = equip.Safety - rival.Safety;
                 }
 
-                if (type == -1 && save[i] < 0 &&
-                    (equip.Safety + save[i]) < equip.Base) {
-                    save[i + 7 * hwType] = 0;
+                if (type == -1 && save[eqIndex] < 0 &&
+                    (equip.Safety + save[eqIndex]) < equip.Base) {
+                    save[eqIndex] = 0;
                 }
             }
         }
@@ -101,9 +102,9 @@ int Steal(int p, int prog, int type)
         return 0;
     }
 
-    j = brandom(hi - lo);
+    j = brandom(hi - lo) + lo;
 
-    while ((k < 100) && (save[j + lo] <= 0)) { // finds candidate
+    while ((k < 100) && (save[j] <= 0)) { // finds candidate
         j = brandom(hi - lo) + lo;
         k++;
     }
