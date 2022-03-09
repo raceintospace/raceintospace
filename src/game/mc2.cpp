@@ -890,7 +890,7 @@ void MissionSetDown(char plr, char mis)
                 MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
 
                 if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc > 0) {
-                    MH[j][i]->Safety++;
+                    MH[j][i]->Safety = MIN(MH[j][i]->Safety + 1, MH[j][i]->MaxSafety);
 
                     if (options.cheat_addMaxS) {
                         MH[j][i]->MaxRD++;
@@ -921,7 +921,9 @@ void MissionSetDown(char plr, char mis)
                 if (i == Mission_PrimaryBooster &&
                     MH[j][Mission_SecondaryBooster] != NULL) { // Boosters
                     if (MH[j][Mission_PrimaryBooster]->MisSucc > 0)  {
-                        MH[j][Mission_SecondaryBooster]->Safety++;
+                        MH[j][Mission_SecondaryBooster]->Safety =
+                            MIN(MH[j][Mission_SecondaryBooster]->Safety + 1,
+                                MH[j][Mission_SecondaryBooster]->MaxSafety);
 
                         if (options.cheat_addMaxS) {
                             MH[j][Mission_SecondaryBooster]->MaxRD++;
