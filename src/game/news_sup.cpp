@@ -149,15 +149,19 @@ int NMod(int plr, int prog, int type, int per)
         }
     }
 
-    for (i = 0; i < (int)ARRAY_LENGTH(save); i++) if (save[i] < 0) {
+    for (i = 0; i < (int)ARRAY_LENGTH(save); i++) {
+        if (save[i] < 0) {
             save[i] = 0;
         }
+    }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -196,16 +200,20 @@ int DamMod(int plr, int prog, int dam, int cost)
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     }
 
-    for (i = 0; i < 25; i++) if (save[i] < dam) {
+    for (i = 0; i < 25; i++) {
+        if (save[i] < dam) {
             save[i] = 0;
         }
+    }
 
     save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = save[11] = 0;
     save[19] = save[20] = 0; //remove LM's
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -247,13 +255,17 @@ int RDMods(int plr, int prog, int type, int val)
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = 0; i < 28; i++) if (save[i] < 0) {
+    for (i = 0; i < 28; i++) {
+        if (save[i] < 0) {
             save[i] = 0;
         }
+    }
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -326,9 +338,11 @@ int SaveMods(char plr, char prog)
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
