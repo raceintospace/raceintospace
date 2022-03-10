@@ -667,6 +667,7 @@ void LMBld(char plr)
             key = 0;
             return; // Continue
         }
+
         if (x >= 41 && y >= 172 && x <= 314 && y <= 193 && mousebuttons > 0) {
             OutBox(41, 172, 279, 193);
             delay(100);

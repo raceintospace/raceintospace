@@ -1191,7 +1191,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
  */
 void AstStats(char plr, char man, char num)
 {
-    int y,yy;
+    int y, yy;
     display::graphics.setForegroundColor(1);
     y = 91 + man * 9;
 
@@ -1201,7 +1201,11 @@ void AstStats(char plr, char man, char num)
 
     draw_string(119, y, "CA:");
     yy = 0;
-    if (Data->P[plr].Pool[num].Cap == 1) { yy = 134; }
+
+    if (Data->P[plr].Pool[num].Cap == 1) {
+        yy = 134;
+    }
+
     draw_number(yy, y, Data->P[plr].Pool[num].Cap);
     display::graphics.setForegroundColor(1);
 
@@ -1211,7 +1215,11 @@ void AstStats(char plr, char man, char num)
 
     draw_string(143, y, "LM:");
     yy = 0;
-    if (Data->P[plr].Pool[num].LM == 1) { yy = 158; }
+
+    if (Data->P[plr].Pool[num].LM == 1) {
+        yy = 158;
+    }
+
     draw_number(yy, y, Data->P[plr].Pool[num].LM);
     display::graphics.setForegroundColor(1);
 
@@ -1221,7 +1229,11 @@ void AstStats(char plr, char man, char num)
 
     draw_string(167, y, "EV:");
     yy = 0;
-    if (Data->P[plr].Pool[num].EVA == 1) { yy = 182; }
+
+    if (Data->P[plr].Pool[num].EVA == 1) {
+        yy = 182;
+    }
+
     draw_number(yy, y, Data->P[plr].Pool[num].EVA);
     display::graphics.setForegroundColor(1);
 
@@ -1231,13 +1243,21 @@ void AstStats(char plr, char man, char num)
 
     draw_string(192, y, "DO:");
     yy = 0;
-    if (Data->P[plr].Pool[num].Docking == 1) { yy = 207; }
+
+    if (Data->P[plr].Pool[num].Docking == 1) {
+        yy = 207;
+    }
+
     draw_number(yy, y, Data->P[plr].Pool[num].Docking);
 
     display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
     draw_string(217, y, "EN:");
     yy = 0;
-    if (Data->P[plr].Pool[num].Endurance == 1) { yy = 232; }
+
+    if (Data->P[plr].Pool[num].Endurance == 1) {
+        yy = 232;
+    }
+
     draw_number(yy, y, Data->P[plr].Pool[num].Endurance);
 
     fill_rectangle(4, 40, 54, 66, 3);

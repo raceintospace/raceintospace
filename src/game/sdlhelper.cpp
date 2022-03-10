@@ -226,8 +226,11 @@ av_setup(void)
 {
     std::string title(PACKAGE_STRING " " PACKAGE_VERSION);
 #ifdef PACKAGE_BUILD
-    if (!std::string(PACKAGE_BUILD).empty())
-	   title += " build " PACKAGE_BUILD;
+
+    if (!std::string(PACKAGE_BUILD).empty()) {
+        title += " build " PACKAGE_BUILD;
+    }
+
 #endif
 
 

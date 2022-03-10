@@ -1100,8 +1100,8 @@ char FailureMode(char plr, int prelim, char *text)
     draw_string(0, 0, " CHECK");
     draw_number(9, 55, Mev[STEP].dice);
     draw_string(0, 0, " VS. ");
-    int xloc;
-    if (Mev[STEP].dice > 99) { xloc = 62; } else { xloc = 57; }
+
+    int xloc = (Mev[STEP].dice > 99) ? 62 : 57;
 
     if (strncmp(e->Name, "DO", 2) == 0) {
         if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
@@ -1112,6 +1112,7 @@ char FailureMode(char plr, int prelim, char *text)
     } else {
         draw_number(0, 0, e->MisSaf);
     }
+
     // draw_string(0, 0, "%");
 
 
@@ -1226,6 +1227,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     if (MANNED[Mev[STEP].pad] > 0) {
         display::graphics.setForegroundColor(1);
+
         switch (Mev[STEP].ast) {
         case 0:
             draw_string(xloc, 55, "(");
@@ -1363,7 +1365,8 @@ char FailureMode(char plr, int prelim, char *text)
             FadeIn(2, 10, 0, 0);
             key = 0;
 
-            scrubMis = Help("i165");  
+            scrubMis = Help("i165");
+
             if (scrubMis >= 0) {
                 return 1;  /* Scrub */
             } else {

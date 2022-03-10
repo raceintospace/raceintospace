@@ -623,6 +623,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
         if (m[i] > 0) {
 
             display::graphics.setForegroundColor(1);  // Set color back to white in case ENs are set to yellow
+
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
                 // Print name in blue if 'naut is female
                 display::graphics.setForegroundColor(5);
@@ -688,6 +689,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 6 || (mType > 19 && mType < 25) || mType == 26 || mType == 29 || mType == 30 || (mType > 32 && mType < 37) || (mType > 39 && mType < 42) || mType > 49)) {
                 display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist, if the mission will include EVA */
             }
+
             if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 38 || mType == 39 || (mType > 47 && mType < 50) || mType == 52)) {
                 display::graphics.setForegroundColor(15);   /* Highlight EV for EVA Specialist, if the mission might include an emergency EVA */
             }
@@ -718,9 +720,11 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
 
             display::graphics.setForegroundColor(1);
+
             if (IsDuration(mType) && options.feat_use_endurance) {
                 display::graphics.setForegroundColor(11);  /* Highlight EN skill for everyone on Duration missions, unless EN is disabled (Classic behavior) */
             }
+
             draw_string(191, 51 + i * 14, "EN:");
 
             if (Data->P[plr].Pool[m[i] - 1].Endurance == 1) {

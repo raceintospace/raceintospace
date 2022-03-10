@@ -103,7 +103,7 @@ struct SaveGameEnumerator : public PhysFsEnumerator {
     std::vector<SFInfo> results;
 
     SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : type(type), maxSaves(maxSaves), PhysFsEnumerator("/") {}
-    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string& origdir, const std::string& fname);
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string &origdir, const std::string &fname);
 };
 
 
@@ -326,14 +326,14 @@ void CacheCrewFile()
     fclose(dest);
 }
 
-bool ReadGameSaveInfo(const std::string& fname, SFInfo &saveInfo)
+bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
 {
     SaveFileHdr header;
-    FILE* fin = sOpen(fname.c_str(), "rb", FT_SAVE);
+    FILE *fin = sOpen(fname.c_str(), "rb", FT_SAVE);
 
     if (fin == NULL) {
         NOTICE2("Unable to open save file %s, skipping",
-            fname);
+                fname);
         return false;
     }
 
@@ -342,7 +342,7 @@ bool ReadGameSaveInfo(const std::string& fname, SFInfo &saveInfo)
 
     if (bytes != sizeof(header)) {
         NOTICE2("Unable to read save file %s, skipping",
-            fname);
+                fname);
         return false;
     }
 
@@ -355,7 +355,7 @@ bool ReadGameSaveInfo(const std::string& fname, SFInfo &saveInfo)
     return true;
 }
 
-PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string& origdir, const std::string& fname)
+PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &origdir, const std::string &fname)
 {
     size_t len = fname.size();
     SaveGameType type;
@@ -365,13 +365,14 @@ PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string& ori
     if (len >= 4 && xstrncasecmp(fname.c_str() + len - 4, ".SAV", 4) == 0 &&
         fname.size() <= (sizeof(saveInfo.Name) - 1) &&
         ReadGameSaveInfo(fname, saveInfo)) {
-            results.push_back(saveInfo);
+        results.push_back(saveInfo);
     }
 
-    if (results.size() < maxSaves)
+    if (results.size() < maxSaves) {
         return PHYSFS_ENUM_OK;
-    else
+    } else {
         return PHYSFS_ENUM_STOP;
+    }
 
 }
 
@@ -389,8 +390,10 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 
     SaveGameEnumerator saves(saveType);
 
-    if (saves.enumerate())
+    if (saves.enumerate()) {
         std::sort(saves.results.begin(), saves.results.end(), OrderSaves);
+    }
+
     return saves.results;
 }
 

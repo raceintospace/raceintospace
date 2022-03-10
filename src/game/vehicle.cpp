@@ -170,6 +170,7 @@ std::list<Equipment *> Vehicle::needed()
     if (mSecondary != NULL && mSecondary->Num <= mSecondary->Spok) {
         parts.push_back(mSecondary);
     }
+
     return parts;
 }
 

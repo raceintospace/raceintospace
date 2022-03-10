@@ -350,6 +350,7 @@ void EndGame(char win, char pad)
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
     display::graphics.setForegroundColor(15);
+
     if (Data->P[win].Pool[firstOnMoon].Sex == 1) {
         display::graphics.setForegroundColor(17);  // Show females in light green
     }
@@ -854,11 +855,13 @@ void FakeWin(char win)
 
     display::graphics.setForegroundColor(11);
     draw_string(10, 60, "FIRST ON THE MOON: ");
+
     if (&Data->P[win].Pool[manOnMoon].Sex == 0) {
         display::graphics.setForegroundColor(15);
     } else {
         display::graphics.setForegroundColor(17);
     }
+
     draw_string(0, 0, &Data->P[win].Pool[manOnMoon].Name[0]);
     display::graphics.setForegroundColor(6);
     FakeHistory(win, yr);

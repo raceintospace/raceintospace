@@ -365,9 +365,10 @@ void Train(char plr, int level)
     if (count > 0) {
         TrainText(plr, M[0], count);
     }
+
     if (count > 8) {
         draw_down_arrow_highlight(9, 166);
-    } 
+    }
 
     FadeIn(2, 10, 0, 0);
 
@@ -534,7 +535,7 @@ void Train(char plr, int level)
 
                         i = 51;
                     }
-                } 
+                }
 
                 while (mousebuttons == 1 || key == DN_ARROW) {
                     delay(100);
@@ -565,7 +566,11 @@ void Train(char plr, int level)
             } else if (key == K_PGUP) {
                 BarA = 0;
                 now2 -= 7;
-                if (now2 < 0) { now2 = 0; }
+
+                if (now2 < 0) {
+                    now2 = 0;
+                }
+
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 TrainText(plr, M[now2], count);
                 key = 0;
@@ -573,7 +578,11 @@ void Train(char plr, int level)
             } else if (key == K_PGDN) {
                 BarA = 7;
                 now2 += 7;
-                if (now2 > count - 1) { now2 = count - 1; }
+
+                if (now2 > count - 1) {
+                    now2 = count - 1;
+                }
+
                 DispLeft(plr, BarA, count, now2, &M[0]);
                 TrainText(plr, M[now2], count);
                 key = 0;
@@ -585,7 +594,7 @@ void Train(char plr, int level)
                 TrainText(plr, M[now2], count);
                 key = 0;
                 delay(10);
-                
+
             } else if (((x >= 168 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0) || key == 'W') && count > 0) {
                 InBox(168, 181, 314, 193);
                 WaitForMouseUp();
@@ -691,6 +700,7 @@ void Train(char plr, int level)
             } else {
                 draw_down_arrow(9, 166);
             }
+
             if (now2 - BarA > 0) {
                 draw_up_arrow_highlight(9, 133);
             } else {

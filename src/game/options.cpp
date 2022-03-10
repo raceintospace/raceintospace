@@ -164,16 +164,16 @@ static struct {
         "no_money_cheat", &options.no_money_cheat, "%u", 0,
         "Set to 1 to disallow the money cheat in Purchasing (Classic setting)"
     },
-/*      These two removed because they were never implemented, per #520
-    {
-        "random_eq", &options.feat_random_eq, "%u", 0,
-        "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
-    },
-    {
-        "eq_name_change", &options.feat_eq_new_name, "%u", 0,
-        "Set to non-zero to be able to change equipment name when starting a new game."
-    },
-*/
+    /* These two removed because they were never implemented, per #520
+        {
+            "random_eq", &options.feat_random_eq, "%u", 0,
+            "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
+        },
+        {
+            "eq_name_change", &options.feat_eq_new_name, "%u", 0,
+            "Set to non-zero to be able to change equipment name when starting a new game."
+        },
+    */
     {
         "atlasLunar", &options.cheat_atlasOnMoon, "%u", 0,
         "Set to non-zero to enable Atlas rockets in lunar missions."

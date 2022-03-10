@@ -375,17 +375,18 @@ void DispVAB(char plr, char pad)
     }
 
     if (IsManned(Data->P[plr].Mission[pad].MissionCode) && IsEVA(Data->P[plr].Mission[pad].MissionCode) && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
-        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) { 
+        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
             display::graphics.setForegroundColor(24);  // Show it in deep red because it's below Max R&D
             draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
             draw_string(0, 0, "%");
             IOBox(140, 64, 165, 82);
             EVAmis = 1;
-        }            
+        }
     }
+
     if (IsManned(Data->P[plr].Mission[pad].MissionCode) && (Data->P[plr].Mission[pad].MissionCode == 38 || Data->P[plr].Mission[pad].MissionCode == 39 || (Data->P[plr].Mission[pad].MissionCode > 47 && Data->P[plr].Mission[pad].MissionCode < 50)) || Data->P[plr].Mission[pad].MissionCode == 52) {
-        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) { 
+        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
             display::graphics.setForegroundColor(11);  // Show it in yellow if there may be an emergency EVA on this mission
             draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
@@ -595,7 +596,13 @@ void ShowVA(char f)
             draw_number(128, 136 + 12 * i, 0);
         } else {
             int hcol;
-            if (VAS[f][i].qty - VAS[f][i].ac == 1) { hcol = 153; } else { hcol = 152; }
+
+            if (VAS[f][i].qty - VAS[f][i].ac == 1) {
+                hcol = 153;
+            } else {
+                hcol = 152;
+            }
+
             draw_number(hcol, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
 
             if (VAS[f][i].sf > 0 && VAS[f][i].sf < VAS[f][i].MaxRD) {
@@ -641,7 +648,13 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
         draw_number(128, 188, 0);
     } else {
         int hcol;
-        if (rocket.available() == 1) { hcol = 153; } else { hcol = 152; }
+
+        if (rocket.available() == 1) {
+            hcol = 153;
+        } else {
+            hcol = 152;
+        }
+
         draw_number(hcol, 188, rocket.available());
 
         if (rocket.safety() < rocket.MaxRD()) {
@@ -1145,12 +1158,20 @@ void VAB(char plr)
 
                 int cost = FillVab(plr, ccc, 0) +
                            BuyVabRkt(plr, rocket, 0);
+
                 if (Data->P[plr].Cash >= cost && ac == true) {
                     int goAhead;
-                    if (rocket.thrust() >= currentPayload) { goAhead = 1; } else { goAhead = 0; }
+
+                    if (rocket.thrust() >= currentPayload) {
+                        goAhead = 1;
+                    } else {
+                        goAhead = 0;
+                    }
+
                     if (goAhead < 1) {
                         goAhead = Help("i166");
                     }
+
                     if (goAhead > 0) {
                         FillVab(plr, ccc, 1);
                         BuyVabRkt(plr, rocket, 1);
@@ -1160,7 +1181,7 @@ void VAB(char plr)
 
                         // display cost (XX of XX)
                         ShowAutopurchase(plr, ccc, rocket);
-                    }  
+                    }
                 } else if (ac == false) {
                     Help("i135");    // delay on purchase
                 } else {

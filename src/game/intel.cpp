@@ -745,6 +745,7 @@ void BackIntel(char p, char year)
     } else {
         draw_up_arrow(137, 42);
     }
+
     if (year > 0) {
         draw_down_arrow_highlight(137, 95);
     } else {
@@ -1443,7 +1444,7 @@ void UpDateTable(char plr)
  * facilities), and 2) updating the CIA/KGB statistics table.
  *
  * Intelligence gathered about opponent plans and/or capabilities is
- * notoriously unreliable, being slightly more than half accurate on 
+ * notoriously unreliable, being slightly more than half accurate on
  * lower difficulty levels and less accurate on higher.
  *
  * Due to limited space for saving intelligence briefings, they can
@@ -1581,6 +1582,7 @@ void Bre(char plr)
                     year++;
                     BackIntel(plr, year);
                 }
+
                 OutBox(135, 32, 145, 77);
 
             } else if (key == K_HOME) {
@@ -1609,6 +1611,7 @@ void Bre(char plr)
                     year--;
                     BackIntel(plr, year);
                 }
+
                 OutBox(135, 85, 145, 130);
 
             } else if (key == K_END) {

@@ -262,11 +262,11 @@ void DrawRDButtons(char plr, int maxButton)
 
     boost::shared_ptr<display::PalettizedSurface> rd_men;
     rd_men = boost::shared_ptr<display::PalettizedSurface>(
-        Filesystem::readImage(filename));
+                 Filesystem::readImage(filename));
 
     boost::shared_ptr<display::PalettizedSurface> shadow_men;
     shadow_men = boost::shared_ptr<display::PalettizedSurface>(
-        Filesystem::readImage("images/rd_men.none.png"));
+                     Filesystem::readImage("images/rd_men.none.png"));
 
     for (int i = 0; i <= maxButton; i++) {
         display::graphics.screen()->draw(
@@ -363,15 +363,27 @@ char RD(char player_index)
 
     WaitForMouseUp();
 
-    // These two warnings are here on the principle that normally you would have both DMs and EVA suits before prototyping your lunar landing craft.
+    // These two warnings are here on the principle that normally
+    // you would have both DMs and EVA suits before prototyping
+    // your lunar landing craft.
+
+    // Warn player that they haven't started EVA suits yet,
+    // though they have an LM or Kicker-C or direct ascent capsule  -LPB
     if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[4].Num >= 0 || Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
-        Help("i046");  // Warn player that they haven't started EVA suits yet, though they have an LM or Kicker-C or direct ascent capsule  -LPB
+        Help("i046");
     }
+
+    // Warn player that they haven't started DMs yet, though they
+    // have an LM or Kicker-C  -LPB
     if (Data->P[player_index].Misc[4].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
-        Help("i047");  // Warn player that they haven't started DMs yet, though they have an LM or Kicker-C  -LPB
+        Help("i047");
     }
+
+    // Warn player that they haven't started a kicker yet,
+    // though they have Gemini/Voskhod or a minishuttle fully researched
+    // -LPB
     if ((Data->P[player_index].Misc[0].Num < 0 && Data->P[player_index].Misc[1].Num < 0) && Data->P[player_index].Manned[2].Num < 0 && (Data->P[player_index].Manned[1].Safety >= Data->P[player_index].Manned[1].MaxRD || Data->P[player_index].Manned[3].Safety >= Data->P[player_index].Manned[3].MaxRD)) {
-        Help("i048");  // Warn player that they haven't started a kicker yet, though they have Gemini/Voskhod or a minishuttle fully researched  -LPB
+        Help("i048");
     }
 
     while (1) {
@@ -742,13 +754,13 @@ char RD(char player_index)
                 music_start(M_HARDWARE);
 
                 WaitForMouseUp();
-            
+
             } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
                 OutBox(26, 94, 131, 172);
                 delay(10);
                 WaitForMouseUp();
                 InBox(26, 94, 131, 172);
-                ShowHardwareDescription(player_index, hardware, unit);  
+                ShowHardwareDescription(player_index, hardware, unit);
             } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
                 OutBox(285, 70, 317, 87);
                 delay(10);
@@ -786,6 +798,7 @@ void ManSel(int activeButtonIndex, int maxAvailable)
 void ShowHardwareDescription(int player, int hardware, int unit)
 {
     int helpIndex = 0;
+
     switch (hardware) {
     case PROBE_HARDWARE:
         helpIndex = 201;
@@ -803,6 +816,7 @@ void ShowHardwareDescription(int player, int hardware, int unit)
         helpIndex = 231;
         break;
     }
+
     helpIndex = helpIndex + unit * 2 + player;
     char helpEntry[5];
     snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
@@ -1091,12 +1105,13 @@ void ShowUnit(char hw, char un, char player_index)
 
     draw_number(241, 97, Init_Cost);
     draw_number(230, 104, Unit_Cost);
+
     if (program.RDCost == 0) {
         draw_string(275, 118, "--");
     } else {
         draw_number(275, 118, program.RDCost);
     }
-    
+
     if (hw != ROCKET_HARDWARE) {
         draw_number(240, 125, program.UnitWeight);
     } else {
@@ -1151,7 +1166,7 @@ void ShowUnit(char hw, char un, char player_index)
 
         qty = 0;
     }
-    
+
     fill_rectangle(27, 95, 130, 171, 0);
 
     BigHardMe(player_index, 27, 95, hw, un, qty);
@@ -1459,16 +1474,16 @@ char HPurc(char player_index)
             music_start(M_FILLER);
             WaitForMouseUp();
 
-         } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
+        } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
             OutBox(26, 94, 131, 172);
             delay(10);
             WaitForMouseUp();
             InBox(26, 94, 131, 172);
-            ShowHardwareDescription(player_index, hardware, unit); 
-         } else if ((Data->P[0].AIStat > 0 || Data->P[1].AIStat > 0) && key == '$' && !options.no_money_cheat) {
+            ShowHardwareDescription(player_index, hardware, unit);
+        } else if ((Data->P[0].AIStat > 0 || Data->P[1].AIStat > 0) && key == '$' && !options.no_money_cheat) {
             Data->P[player_index].Cash += 100;  // Cheat - add 100MB to cash on hand
             DrawCashOnHand(player_index);
-         } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+        } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
             OutBox(285, 70, 317, 87);
             delay(10);
             WaitForMouseUp();

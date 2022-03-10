@@ -77,7 +77,7 @@ void ClearMissionCrew(const char plr, const int pad, const CrewType crew)
     if (pad < 0 || pad >= MAX_MISSIONS) {
         char buffer[70];
         snprintf(buffer, sizeof(buffer), "ClearFutureCrew argument pad=%d"
-                ", must be 0 <= pad < %d", pad, MAX_MISSIONS);
+                 ", must be 0 <= pad < %d", pad, MAX_MISSIONS);
         throw std::invalid_argument(buffer);
     }
 
@@ -184,7 +184,7 @@ void FreeLaunchHardware(const char plr, const int pad)
     if (pad < 0 || pad >= MAX_LAUNCHPADS) {
         char buffer[70];
         snprintf(buffer, sizeof(buffer), "FreeLaunchHardware argument "
-                "pad=%d must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
+                 "pad=%d must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
         throw std::invalid_argument(buffer);
     }
 
@@ -240,7 +240,7 @@ void ScrubMission(const char plr, int pad)
     if (pad < 0 || pad >= MAX_LAUNCHPADS) {
         char buffer[70];
         snprintf(buffer, sizeof(buffer),  "ScrubMission argument pad=%d"
-                "must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
+                 "must be 0 <= pad < %d", pad, MAX_LAUNCHPADS);
         throw std::invalid_argument(buffer);
     }
 

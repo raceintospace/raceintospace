@@ -1207,6 +1207,7 @@ void AstSel(char plr)
             if (key > 0) {
                 delay(110);
             }
+
             fill_rectangle(292, 36, 301, 41, 7);
             display::graphics.setForegroundColor(11);
             draw_number(292, 41, MaxSel - count);
@@ -1318,7 +1319,7 @@ void AstSel(char plr)
                 return;  /* Done */
             }
         }
-            
+
         if ((x >= 174 && y >= 5 && x <= 238 && y <= 17 && mousebuttons > 0) || key == K_ESCAPE) {  /* Cancel - and give the player a refund */
             InBox(174, 5, 238, 17);
             WaitForMouseUp();
