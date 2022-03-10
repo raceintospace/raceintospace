@@ -280,8 +280,14 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     draw_small_flag(plr, 4, 4);
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, 10, 0, 0);
-    if (Data->P[plr].Rocket[0].Delay > 1) { Help("i169"); }
-    if (Data->P[plr].Manned[0].Delay > 1) { Help("i170"); }
+
+    if (Data->P[plr].Rocket[0].Delay > 1) {
+        Help("i169");
+    }
+
+    if (Data->P[plr].Manned[0].Delay > 1) {
+        Help("i170");
+    }
 
     return;
 }

@@ -39,7 +39,7 @@
  *
  * \param type 1:postive -1:negative search
  */
-int Steal(int p, int prog, int type)
+int Steal(int plr, int prog, int type)
 {
     int i = 0, j = 0, k = 0, save[28], lo = 0, hi = 28;
 
@@ -54,8 +54,9 @@ int Steal(int p, int prog, int type)
     for (int hwType = 0; hwType < 4; hwType++) {
         for (int i = 0; i < 7; i++) {
             int eqIndex = i + 7 * hwType;
-            Equipment &equip = HardwareProgram(p, hwMap[hwType], i);
-            Equipment &rival = HardwareProgram(other(p), hwMap[hwType], i);
+            Equipment &equip = HardwareProgram(plr, hwMap[hwType], i);
+            Equipment &rival =
+                HardwareProgram(other(plr), hwMap[hwType], i);
 
             if (equip.Num >= 0 && rival.Num >= 0) {
                 if (type == 1) {
@@ -113,7 +114,7 @@ int Steal(int p, int prog, int type)
         return 0;
     }
 
-    Equipment &chosen = HardwareProgram(p, hwMap[j / 7], j % 7);
+    Equipment &chosen = HardwareProgram(plr, hwMap[j / 7], j % 7);
     chosen.Safety += (save[j] * type);
     strcpy(&Name[0], &chosen.Name[0]);
 
@@ -125,7 +126,7 @@ int Steal(int p, int prog, int type)
  * \param type 1:postive -1:negative search
  * \param per Amount of modification in percent
  */
-int NMod(int p, int prog, int type, int per)
+int NMod(int plr, int prog, int type, int per)
 {
     int i = 0, j = 0, save[28], lo = 0, hi = 28;
     Equipment *Eptr[28];
@@ -140,7 +141,7 @@ int NMod(int p, int prog, int type, int per)
     /* drvee: this loop was going to 25, not 28 */
     for (i = 0; i < (int)ARRAY_LENGTH(Eptr); i++) {
         /** \bug Mismatch between data.h(250) and this code here */
-        Eptr[i] = &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[plr].Probe[i];
         save[i] = ((Eptr[i]->Safety + per * type) <= (Eptr[i]->MaxSafety) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety + per * type : 0;
 
         if (Eptr[i]->Num < 0) {
@@ -148,15 +149,19 @@ int NMod(int p, int prog, int type, int per)
         }
     }
 
-    for (i = 0; i < (int)ARRAY_LENGTH(save); i++) if (save[i] < 0) {
+    for (i = 0; i < (int)ARRAY_LENGTH(save); i++) {
+        if (save[i] < 0) {
             save[i] = 0;
         }
+    }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -180,7 +185,7 @@ int NMod(int p, int prog, int type, int per)
 }
 
 
-int DamMod(int p, int prog, int dam, int cost)
+int DamMod(int plr, int prog, int dam, int cost)
 {
     int i = 0, j = 0, lo = 0, hi = 28;
     int save[28];
@@ -191,20 +196,24 @@ int DamMod(int p, int prog, int dam, int cost)
     hi = (prog > 0) ? lo + 7 : 28;
 
     for (i = 0; i < 25; i++) {
-        Eptr[i] = &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[plr].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     }
 
-    for (i = 0; i < 25; i++) if (save[i] < dam) {
+    for (i = 0; i < 25; i++) {
+        if (save[i] < dam) {
             save[i] = 0;
         }
+    }
 
     save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = save[11] = 0;
     save[19] = save[20] = 0; //remove LM's
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -230,7 +239,7 @@ int DamMod(int p, int prog, int dam, int cost)
 }
 
 
-int RDMods(int p, int prog, int type, int val)
+int RDMods(int plr, int prog, int type, int val)
 {
     int i = 0, j = 0, save[28], lo = 0, hi = 28;
     Equipment *Eptr[28];
@@ -240,19 +249,23 @@ int RDMods(int p, int prog, int type, int val)
     hi = (prog > 0) ? lo + 7 : 28;
 
     for (i = 0; i < 25; i++) {
-        Eptr[i] = &Data->P[p].Probe[i];
+        Eptr[i] = &Data->P[plr].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = 0; i < 28; i++) if (save[i] < 0) {
+    for (i = 0; i < 28; i++) {
+        if (save[i] < 0) {
             save[i] = 0;
         }
+    }
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -270,7 +283,7 @@ int RDMods(int p, int prog, int type, int val)
 }
 
 
-int SaveMods(char p, char prog)
+int SaveMods(char plr, char prog)
 {
     int i = 0, j = 0, save[28], lo = 0, hi = 28;
 
@@ -306,28 +319,30 @@ int SaveMods(char p, char prog)
     }
 
     for (i = 0; i < 7; i++) {
-        if (Data->P[p].Probe[i].Num >= 0) {
+        if (Data->P[plr].Probe[i].Num >= 0) {
             save[i] = 1;
         }
 
-        if (Data->P[p].Rocket[i].Num >= 0) {
+        if (Data->P[plr].Rocket[i].Num >= 0) {
             save[i + 7] = 1;
         }
 
-        if (Data->P[p].Manned[i].Num >= 0) {
+        if (Data->P[plr].Manned[i].Num >= 0) {
             save[i + 14] = 1;
         }
 
-        if (Data->P[p].Misc[i].Num >= 0) {
+        if (Data->P[plr].Misc[i].Num >= 0) {
             save[i + 21] = 1;
         }
     }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) if (save[i] > 0) {
+    for (i = lo; i < hi; i++) {
+        if (save[i] > 0) {
             j++;    // Check if event is good.
         }
+    }
 
     if (j == 0) {
         return 0;
@@ -341,18 +356,18 @@ int SaveMods(char p, char prog)
 
     // Increment value and return program name
     if (j >= 0 && j < 7) {
-        Data->P[p].Probe[j].SaveCard = 1;
-        strcpy(&Name[0], &Data->P[p].Probe[j].Name[0]);
+        Data->P[plr].Probe[j].SaveCard = 1;
+        strcpy(&Name[0], &Data->P[plr].Probe[j].Name[0]);
     }
 
     if (j >= 7 && j < 14) {
-        Data->P[p].Rocket[j - 7].SaveCard = 1;
-        strcpy(&Name[0], &Data->P[p].Rocket[j - 7].Name[0]);
+        Data->P[plr].Rocket[j - 7].SaveCard = 1;
+        strcpy(&Name[0], &Data->P[plr].Rocket[j - 7].Name[0]);
     }
 
     if (j >= 14 && j < 21) {
-        Data->P[p].Manned[j - 14].SaveCard = 1;
-        strcpy(&Name[0], &Data->P[p].Manned[j - 14].Name[0]);
+        Data->P[plr].Manned[j - 14].SaveCard = 1;
+        strcpy(&Name[0], &Data->P[plr].Manned[j - 14].Name[0]);
     }
 
     return save[j];

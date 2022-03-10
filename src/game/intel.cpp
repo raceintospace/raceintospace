@@ -265,10 +265,10 @@ inline unsigned int BriefingIndex();
 inline unsigned int BriefingIndex(char year, char season);
 void MisIntel(char plr, char acc);
 void XSpec(char plr, char mis, char year);
-void Special(char p, int ind);
-void BackIntel(char p, char year);
-void HarIntel(char p, char acc);
-void SaveIntel(char p, char prg, char ind);
+void Special(char plr, int ind);
+void BackIntel(char plr, char year);
+void HarIntel(char plr, char acc);
+void SaveIntel(char plr, char prg, char ind);
 void ImpHard(char plr, char hd, char dx);
 void UpDateTable(char plr);
 void DrawBre(char plr);
@@ -277,6 +277,7 @@ void DrawIStat(char plr);
 void IStat(char plr);
 void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
 
+void ClearIntelReportText();
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
 
@@ -624,7 +625,7 @@ void XSpec(char plr, char mis, char year)
     DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
-void Special(char p, int ind)
+void Special(char plr, int ind)
 {
 
     display::graphics.setForegroundColor(6);
@@ -673,7 +674,7 @@ void Special(char p, int ind)
     display::graphics.setForegroundColor(1);
     draw_string(33, 155, "THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "CIA ");
     } else {
         draw_string(0, 0, "KGB ");
@@ -681,7 +682,7 @@ void Special(char p, int ind)
 
     draw_string(0, 0, "REPORTS THAT THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "SOVIET UNION HAS ");
     } else {
         draw_string(0, 0, "UNITED STATES HAS ");
@@ -694,7 +695,7 @@ void Special(char p, int ind)
     if (ind >= 5) {
         draw_string(0, 0, " GROUP OF ");
 
-        if (p == 0) {
+        if (plr == 0) {
             draw_string(0, 0, "COSMO");
         } else {
             draw_string(0, 0, "ASTRO");
@@ -709,29 +710,29 @@ void Special(char p, int ind)
 
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "FOR ITS SPACE PROGRAM");
-    DrawIntelImage(p, ind);
+    DrawIntelImage(plr, ind);
 }
 
 
 /**
  * View Intelligence report.
  *
- * \param p     player index.
+ * \param plr   player index.
  * \param year  the year the intel was collected.
  */
-void BackIntel(char p, char year)
+void BackIntel(char plr, char year)
 {
     int prg, ind, xc, yc;
     char code, w;
 
-    display::graphics.setForegroundColor(6);
-    prg = Data->P[p].PastIntel[year].prog;
-    ind = Data->P[p].PastIntel[year].index;
+    prg = Data->P[plr].PastIntel[year].prog;
+    ind = Data->P[plr].PastIntel[year].index;
+
     display::graphics.setForegroundColor(6);
     draw_string(17, 37, "CODE: ");
     display::graphics.setForegroundColor(9);
-    draw_number(0, 0, Data->P[p].PastIntel[year].num);
-    draw_character(Data->P[p].PastIntel[year].code);
+    draw_number(0, 0, Data->P[plr].PastIntel[year].num);
+    draw_character(Data->P[plr].PastIntel[year].code);
     draw_string(0, 0, "-");
 
     if (Data->Season == 0) {
@@ -745,6 +746,7 @@ void BackIntel(char p, char year)
     } else {
         draw_up_arrow(137, 42);
     }
+
     if (year > 0) {
         draw_down_arrow_highlight(137, 95);
     } else {
@@ -768,13 +770,13 @@ void BackIntel(char p, char year)
     } else if (prg == 2) {
         code = ind + 12;
     } else if (prg == 5) {
-        code = Data->P[p].PastIntel[year].SafetyFactor - 1;
+        code = Data->P[plr].PastIntel[year].SafetyFactor - 1;
     }
 
     if (code == -1) {
         draw_string(xc, yc, "TOP SECRET");
     } else {
-        w = Data->P[p].PastIntel[year].cdex;
+        w = Data->P[plr].PastIntel[year].cdex;
 
         int code_name_index = code * 6 + w;
         assert(code_name_index >= 0);
@@ -783,7 +785,7 @@ void BackIntel(char p, char year)
     }
 
     if (prg == 5) {
-        XSpec(p, ind, year);
+        XSpec(plr, ind, year);
         return;
     }
 
@@ -794,7 +796,7 @@ void BackIntel(char p, char year)
     switch (prg) {
     case 0:
         if (ind >= 5 && ind <= 6) {
-            if (p == 0) {
+            if (plr == 0) {
                 draw_string(39, 82, "COSMO");
             } else {
                 draw_string(39, 81, "ASTRO");
@@ -838,7 +840,7 @@ void BackIntel(char p, char year)
     }
 
     if (prg == 0 && ind >= 3) {
-        Special(p, ind);
+        Special(plr, ind);
         return;
     }
 
@@ -864,7 +866,7 @@ void BackIntel(char p, char year)
     draw_string(17, 112, "PROGRAM: ");
     display::graphics.setForegroundColor(9);
 
-    Equipment &hardware = HardwareProgram(abs(p - 1), prg, ind);
+    Equipment &hardware = HardwareProgram(abs(plr - 1), prg, ind);
     draw_string(0, 0, &hardware.Name[0]);
 
     display::graphics.setForegroundColor(6);
@@ -881,7 +883,7 @@ void BackIntel(char p, char year)
     display::graphics.setForegroundColor(1);
     draw_string(33, 155, "THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "CIA ");
     } else {
         draw_string(0, 0, "KGB ");
@@ -889,7 +891,7 @@ void BackIntel(char p, char year)
 
     draw_string(0, 0, "REPORTS THAT THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "SOVIET UNION IS");
     } else {
         draw_string(0, 0, "UNITED STATES IS");
@@ -901,15 +903,15 @@ void BackIntel(char p, char year)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, " AND RATES THE");
     draw_string(33, 183, "RELIABILITY AT ABOUT ");
-    draw_number(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
+    draw_number(0, 0, Data->P[plr].PastIntel[year].SafetyFactor);
     draw_string(0, 0, " PERCENT.");
 
     if (prg != 5) {
-        DrawIntelImage(p, prg * 7 + ind);
+        DrawIntelImage(plr, prg * 7 + ind);
     }
 }
 
-void HarIntel(char p, char acc)
+void HarIntel(char plr, char acc)
 {
     int mr, i, prg = 0, ind = 0, j = 0, k = 0, save[28], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
 
@@ -1099,38 +1101,38 @@ void HarIntel(char p, char acc)
     } else {
         // accurate programs pick one
         for (i = 0; i < 7; i++) {
-            if (Data->P[abs(p - 1)].Probe[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Probe[i].Num >= 0) {
                 save[i] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Rocket[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Rocket[i].Num >= 0) {
                 save[i + 7] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Manned[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Manned[i].Num >= 0) {
                 save[i + 14] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Misc[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Misc[i].Num >= 0) {
                 save[i + 21] = 1;
             }
         }
 
         save[3] = save[4] = save[5] = save[6] = save[12] = save[13] = save[26] = save[27] = 0;
 
-        if (Data->P[abs(p - 1)].LaunchFacility[1] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[1] == 1) {
             save[3] = 1;
         }
 
-        if (Data->P[abs(p - 1)].LaunchFacility[2] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[2] == 1) {
             save[4] = 1;
         }
 
-        if (Data->P[abs(p - 1)].AstroLevel == 0) {
+        if (Data->P[abs(plr - 1)].AstroLevel == 0) {
             save[5] = 1;
         }
 
-        if (Data->P[abs(p - 1)].AstroLevel == 1) {
+        if (Data->P[abs(plr - 1)].AstroLevel == 1) {
             save[6] = 1;
         }
 
@@ -1141,7 +1143,7 @@ void HarIntel(char p, char acc)
         }
 
         if (j <= 2) {
-            HarIntel(p, 0);
+            HarIntel(plr, 0);
             return;
         }
 
@@ -1155,7 +1157,7 @@ void HarIntel(char p, char acc)
         }
 
         if (k >= 28) {
-            HarIntel(p, 0);
+            HarIntel(plr, 0);
             return;
         }
     }  // end else
@@ -1174,22 +1176,22 @@ void HarIntel(char p, char acc)
         ind = j - 21;
     }
 
-    mr = Data->P[p].PastIntel[0].cur;
+    mr = Data->P[plr].PastIntel[0].cur;
     nf = 0;
 
     for (i = 0; i < mr; i++) {
-        if (Data->P[p].PastIntel[i].prog == prg && Data->P[p].PastIntel[i].index == ind) {
+        if (Data->P[plr].PastIntel[i].prog == prg && Data->P[plr].PastIntel[i].index == ind) {
             nf = 1;
         }
     }
 
     if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
         (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {
-        MisIntel(p, 0);
+        MisIntel(plr, 0);
         return;
     }
 
-    SaveIntel(p, prg, ind);
+    SaveIntel(plr, prg, ind);
 }
 
 /* Clears the Intel image area and draws the intel background layer.
@@ -1246,7 +1248,7 @@ void DrawIntelImage(char plr, char poff)
     display::graphics.screen()->draw(image, 153, 32);
 }
 
-void SaveIntel(char p, char prg, char ind)
+void SaveIntel(char plr, char prg, char ind)
 {
     char Op[61] = {
         0, 19, 20, 20, 21, 21, 21, 22, 28, 24, 25,
@@ -1265,10 +1267,10 @@ void SaveIntel(char p, char prg, char ind)
 
     mr = brandom(9998) + 1;
     ky = 65 + brandom(26);
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].code = ky;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].num = mr;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].prog = prg;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].index = ind;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].code = ky;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].num = mr;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].prog = prg;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].index = ind;
     j = brandom(100);
 
     if (j < 33) {
@@ -1279,11 +1281,11 @@ void SaveIntel(char p, char prg, char ind)
         k = 2;
     }
 
-    if (p == 1) {
+    if (plr == 1) {
         k = k + 3;
     }
 
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].cdex = k;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].cdex = k;
 
     if (prg == 5) {
         safetyFactor = Op[ind];
@@ -1291,10 +1293,10 @@ void SaveIntel(char p, char prg, char ind)
         safetyFactor = brandom(22) + 77;
     }
 
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].SafetyFactor = safetyFactor;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].SafetyFactor = safetyFactor;
 
     if (prg != 5) {
-        Data->P[p].IntelHardwareTable[prg][ind] = safetyFactor;
+        Data->P[plr].IntelHardwareTable[prg][ind] = safetyFactor;
     }
 }
 
@@ -1443,7 +1445,7 @@ void UpDateTable(char plr)
  * facilities), and 2) updating the CIA/KGB statistics table.
  *
  * Intelligence gathered about opponent plans and/or capabilities is
- * notoriously unreliable, being slightly more than half accurate on 
+ * notoriously unreliable, being slightly more than half accurate on
  * lower difficulty levels and less accurate on higher.
  *
  * Due to limited space for saving intelligence briefings, they can
@@ -1510,9 +1512,12 @@ void IntelPhase(char plr, char pt)
 }
 
 
+/**
+ * Draws the background for the Intelligence Briefing screen, including
+ * buttons and text but excluding entry-specific text.
+ */
 void DrawBre(char plr)
 {
-
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1552,6 +1557,27 @@ void DrawBre(char plr)
     draw_down_arrow(137, 95);
 }
 
+
+/**
+ * Clear the text in the Intelligence Briefing screen so a new
+ * report may be displayed.
+ */
+void ClearIntelReportText()
+{
+    fill_rectangle(45, 32, 98, 38, 3);
+    fill_rectangle(38, 54, 127, 60, 3);
+    fill_rectangle(38, 76, 127, 82, 3);
+    fill_rectangle(16, 91, 127, 98, 3);
+    fill_rectangle(16, 107, 127, 113, 3);
+    fill_rectangle(16, 123, 127, 129, 3);
+    fill_rectangle(30, 148, 300, 186, 7);
+}
+
+
+/**
+ * Creates the Intelligence Briefing screen in the Pentagon/KGB and
+ * handles its control loop.
+ */
 void Bre(char plr)
 {
     int year = Data->P[plr].PastIntel[0].cur - 1;
@@ -1571,26 +1597,15 @@ void Bre(char plr)
                 WaitForMouseUp();
 
                 if (year >= 0 && year + 1 <= Data->P[plr].PastIntel[0].cur - 1) {
-                    fill_rectangle(45, 32, 98, 38, 3);
-                    fill_rectangle(38, 54, 127, 60, 3);
-                    fill_rectangle(38, 76, 127, 82, 3);
-                    fill_rectangle(16, 91, 127, 98, 3);
-                    fill_rectangle(16, 107, 127, 113, 3);
-                    fill_rectangle(16, 123, 127, 129, 3);
-                    fill_rectangle(30, 148, 300, 186, 7);
+                    ClearIntelReportText();
                     year++;
                     BackIntel(plr, year);
                 }
+
                 OutBox(135, 32, 145, 77);
 
             } else if (key == K_HOME) {
-                fill_rectangle(45, 32, 98, 38, 3);
-                fill_rectangle(38, 54, 127, 60, 3);
-                fill_rectangle(38, 76, 127, 82, 3);
-                fill_rectangle(16, 91, 127, 98, 3);
-                fill_rectangle(16, 107, 127, 113, 3);
-                fill_rectangle(16, 123, 127, 129, 3);
-                fill_rectangle(30, 148, 300, 186, 7);
+                ClearIntelReportText();
                 year = Data->Year - 58;
                 BackIntel(plr, year);
 
@@ -1599,26 +1614,15 @@ void Bre(char plr)
                 WaitForMouseUp();
 
                 if (year - 1 >= 0) {
-                    fill_rectangle(45, 32, 98, 38, 3);
-                    fill_rectangle(38, 54, 127, 60, 3);
-                    fill_rectangle(38, 76, 127, 82, 3);
-                    fill_rectangle(9, 90, 127, 98, 3);
-                    fill_rectangle(9, 106, 127, 115, 3);
-                    fill_rectangle(9, 123, 127, 130, 3);
-                    fill_rectangle(30, 148, 300, 186, 7);
+                    ClearIntelReportText();
                     year--;
                     BackIntel(plr, year);
                 }
+
                 OutBox(135, 85, 145, 130);
 
             } else if (key == K_END) {
-                fill_rectangle(45, 32, 98, 38, 3);
-                fill_rectangle(38, 54, 127, 60, 3);
-                fill_rectangle(38, 76, 127, 82, 3);
-                fill_rectangle(16, 91, 127, 98, 3);
-                fill_rectangle(16, 107, 127, 113, 3);
-                fill_rectangle(16, 123, 127, 129, 3);
-                fill_rectangle(30, 148, 300, 186, 7);
+                ClearIntelReportText();
                 year = 0;
                 BackIntel(plr, year);
 
