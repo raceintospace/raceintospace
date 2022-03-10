@@ -36,7 +36,6 @@ int32_t RLEC(char *src, char *dest, unsigned int src_size);
 int RLED(char *src, char *dest, unsigned int src_size);
 char MPrefs(char mode);
 int bioskey(int wait);
-int brandom(int limit);
 
 extern int show_intro_flag;
 extern char *letter_dat;
