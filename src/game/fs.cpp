@@ -21,16 +21,20 @@
  *
  */
 
+#include "fs.h"
+
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+
+#include <sys/stat.h>
+#include <physfs.h>
+
 #include "Buzz_inc.h"
-#include "raceintospace_config.h"
 #include "options.h"
 #include "pace.h"
+#include "raceintospace_config.h"
 #include "utils.h"
-#include <assert.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <ctype.h>
-#include <physfs.h>
 
 /** path separator setup */
 #ifndef PATHSEP

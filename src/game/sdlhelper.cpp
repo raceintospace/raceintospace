@@ -25,15 +25,16 @@
  */
 
 // This file helps with processing A/V.
+#include "sdlhelper.h"
 
+#include <cassert>
+#include <memory>
+
+#include <SDL/SDL.h>
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "raceintospace_config.h"
 
-#include "sdlhelper.h"
-#include <assert.h>
-#include <memory.h>
-#include <SDL/SDL.h>
 #include "Buzz_inc.h"
 #include "options.h"
 #include "utils.h"

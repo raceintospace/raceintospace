@@ -1,7 +1,7 @@
 #ifndef _FORTIFY_WORKAROUND_
 #define _FORTIFY_WORKAROUND_
 
-#include <stdio.h>
+#include <cstdio>
 
 /*
  * there are over 100 places that call fread without checking the

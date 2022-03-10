@@ -1,9 +1,10 @@
 #ifndef _FS_H
 #define _FS_H
 
-#include <stdio.h>
-#include <physfs.h>
+#include <cstdio>
 #include <string>
+
+#include <physfs.h>
 
 /** \file fs.h Definitions for filesystem
  *

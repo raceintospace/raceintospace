@@ -25,11 +25,16 @@
 
 // This file handles the main Spaceport screen, including animations
 
+#include "port.h"
+
+#include <cstdio>
+
+#include <boost/shared_ptr.hpp>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "port.h"
 #include "Buzz_inc.h"
 #include "draw.h"
 #include "utils.h"
@@ -56,8 +61,6 @@
 #include "endianness.h"
 #include "filesystem.h"
 
-#include <stdio.h>
-#include <boost/shared_ptr.hpp>
 
 #define LET_A   0x09
 #define LET_M   0x0A

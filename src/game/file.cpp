@@ -1,9 +1,10 @@
-#include <assert.h>
-#include <physfs.h>
+#include "file.h"
 
+#include <cassert>
 #include <stdexcept>
 
-#include "file.h"
+#include <physfs.h>
+
 
 #define m_phys_handle ((PHYSFS_File*)m_handle)
 

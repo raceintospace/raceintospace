@@ -1,9 +1,9 @@
 #include "legacy_surface.h"
 
-#include <assert.h>
-
+#include <cassert>
 #include <cstdlib>
 #include <algorithm>
+
 
 namespace display
 {

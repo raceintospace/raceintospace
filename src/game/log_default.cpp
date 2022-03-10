@@ -25,8 +25,10 @@
  */
 
 #include "log4c.h"
+
+#include <cstdio>
+
 #include "macros.h"
-#include <stdio.h>
 
 /**
  * The root category's default logging function.

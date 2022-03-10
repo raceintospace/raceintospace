@@ -28,8 +28,7 @@
 
 #include "intel.h"
 
-#include <assert.h>
-
+#include <cassert>
 #include <stdexcept>
 
 #include "display/graphics.h"

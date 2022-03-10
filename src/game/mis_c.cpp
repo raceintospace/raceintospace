@@ -25,13 +25,14 @@
 
 // This file handles missions in progress, particularly mission failures and their results
 
-#include <assert.h>
+#include "mis_c.h"
+
+#include <cassert>
 #include <vector>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 
-#include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "draw.h"

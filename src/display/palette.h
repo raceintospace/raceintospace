@@ -2,9 +2,12 @@
 #define DISPLAY__PALETTE_H
 
 #include "color.h"
-#include <stdio.h>
+
+#include <cassert>
+#include <cstdio>
+
 #include <SDL/SDL.h>
-#include <assert.h>
+
 
 namespace display
 {

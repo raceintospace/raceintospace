@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include "fortify_workaround.h"
+
 
 #if _FORTIFY_SOURCE > 0
 
