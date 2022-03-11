@@ -490,7 +490,7 @@ void MisIntel(char plr, char acc)
             save[i] = 0;
         }
 
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
                 save[found] = mis;
@@ -498,7 +498,7 @@ void MisIntel(char plr, char acc)
             }
         }
 
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
                 save[found] = mis;
@@ -1299,6 +1299,14 @@ void SaveIntel(char plr, char prg, char ind)
     }
 }
 
+
+/**
+ * Updates the Intel hardware table.
+ *
+ * \param plr
+ * \param hd   The hardware field (per EquipmentIndex enum).
+ * \param dx   The hardware program index (per EquipProbeIndex, etc.).
+ */
 void ImpHard(char plr, char hd, char dx)
 {
     // based on the hardware improve safety factor
@@ -1331,101 +1339,101 @@ void ImpHard(char plr, char hd, char dx)
 void UpDateTable(char plr)
 {
     // based on prestige
-    char i, j, p;
+    char j, p;
     p = other(plr);
 
     if (Data->P[p].LMpts > 0) {
         j = brandom(100);
 
         if (j < 60) {
-            ImpHard(plr, 2, 5);
+            ImpHard(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_MODULE);
         } else {
-            ImpHard(plr, 2, 6);
+            ImpHard(plr, MANNED_HARDWARE, MANNED_HW_ONE_MAN_MODULE);
         }
     }
 
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < MAXIMUM_PRESTIGE_NUM; i++) {
         if (Data->Prestige[i].Place == p || Data->Prestige[i].mPlace == p) {
             switch (i) {
-            case 0:
-                ImpHard(plr, 0, 0);
+            case Prestige_OrbitalSatellite:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
                 break;
 
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                ImpHard(plr, 0, 1);
-                ImpHard(plr, 1, 1);
+            case Prestige_LunarFlyby:
+            case Prestige_MercuryFlyby:
+            case Prestige_VenusFlyby:
+            case Prestige_MarsFlyby:
+            case Prestige_JupiterFlyby:
+            case Prestige_SaturnFlyby:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 7:
-                ImpHard(plr, 0, 2);
-                ImpHard(plr, 1, 1);
+            case Prestige_LunarProbeLanding:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 13:
-                ImpHard(plr, 2, 0);
-                ImpHard(plr, 1, 1);
+            case Prestige_OnePerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_ONE_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 14:
-                ImpHard(plr, 2, 1);
-                ImpHard(plr, 1, 2);
+            case Prestige_TwoPerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 15:
-                ImpHard(plr, 2, 2);
-                ImpHard(plr, 1, 2);
+            case Prestige_ThreePerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 16:
-                ImpHard(plr, 2, 3);
-                ImpHard(plr, 1, 2);
+            case Prestige_Minishuttle:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 17:
-                ImpHard(plr, 2, 4);
-                ImpHard(plr, 1, 3);
+            case Prestige_FourPerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
                 break;
 
-            case 18:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedOrbital:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 break;
 
-            case 19:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedLunarPass:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 j = brandom(100);
 
                 if (j < 70) {
-                    ImpHard(plr, 3, 1);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_B);
                 } else {
-                    ImpHard(plr, 3, 0);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_A);
                 }
 
                 break;
 
-            case 20:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedLunarOrbit:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 j = brandom(100);
 
                 if (j < 70) {
-                    ImpHard(plr, 3, 1);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_B);
                 } else {
-                    ImpHard(plr, 3, 0);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_A);
                 }
 
                 break;
 
-            case 24:
-                ImpHard(plr, 3, 4);
+            case Prestige_MannedDocking:
+                ImpHard(plr, MISC_HARDWARE, MISC_HW_DOCKING_MODULE);
                 break;
 
-            case 26:
-            case 27:
-                ImpHard(plr, 3, 3);
+            case Prestige_Spacewalk:
+            case Prestige_MannedSpaceMission:
+                ImpHard(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
                 break;
 
             default:
