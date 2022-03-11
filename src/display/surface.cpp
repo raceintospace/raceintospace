@@ -1,9 +1,10 @@
-
 #include "surface.h"
 
-#include <SDL/SDL.h>
+#include <cassert>
 #include <algorithm>
-#include <assert.h>
+
+#include <SDL/SDL.h>
+
 
 namespace display
 {

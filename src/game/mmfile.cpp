@@ -18,16 +18,20 @@
 
 // This file handles multimedia files
 
-#include <math.h>
-#include <assert.h>
-#include <stdio.h>
-#include <memory.h>
-#include <stdlib.h>
-#include <limits.h>
+#include "mmfile.h"
+
+#include <stdint.h>
+
+#include <cassert>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <memory>
+#include <limits>
+
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <theora/theora.h>
-#include <stdint.h>
 #include <SDL/SDL.h>
 
 #include "raceintospace_config.h"
@@ -38,7 +42,6 @@
 #include "fake_unistd.h"
 #endif
 
-#include "mmfile.h"
 #include "macros.h"
 #include "utils.h"
 #include "logging.h"

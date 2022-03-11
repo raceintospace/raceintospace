@@ -26,24 +26,26 @@
 //*                                                              *
 //****************************************************************
 
-#include <errno.h>
-#include <ctype.h>
-#include <assert.h>
+#include <cassert>
+#include <cctype>
+#include <cerrno>
 #include <math.h>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "filesystem.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
-#include "options.h"
-#include "utils.h"
+#include "game_main.h"  // Below Buzz_inc.h b/c game_main.h needs data.h
 #include "admin.h"
 #include "aimast.h"
 #include "ast4.h"
+#include "crash.h"
+#include "crew.h"
 #include "endgame.h"
+#include "endianness.h"
+#include "filesystem.h"
+#include "gr.h"
 #include "hardware.h"
 #include "intel.h"
 #include "intro.h"
@@ -52,20 +54,18 @@
 #include "museum.h"
 #include "newmis.h"
 #include "news.h"
+#include "options.h"
+#include "pace.h"
+#include "pbm.h"
 #include "place.h"
 #include "port.h"
 #include "prefs.h"
 #include "records.h"
 #include "review.h"
+#include "sdlhelper.h"
 #include "start.h"
 #include "state_utils.h"
-#include "pace.h"
-#include "sdlhelper.h"
-#include "gr.h"
-#include "crash.h"
-#include "endianness.h"
-#include "crew.h"
-#include "pbm.h"
+#include "utils.h"
 
 #ifdef CONFIG_MACOSX
 // SDL.h needs to be included here to replace the original main() with

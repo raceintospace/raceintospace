@@ -1,12 +1,14 @@
+#include "gr.h"
+
+#include <cassert>
+
+#include <boost/swap.hpp>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 
-#include "gr.h"
 #include "Buzz_inc.h"
-#include <assert.h>
 #include "sdlhelper.h"
-
-#include <boost/swap.hpp>
 
 using boost::swap;
 

@@ -1,13 +1,14 @@
-#include <assert.h>
-#include <physfs.h>
+#include "filesystem.h"
 
+#include <cassert>
 #include <stdexcept>
+
 #include <boost/format.hpp>
+#include <physfs.h>
 
 #include "display/image.h"
 
 #include "raceintospace_config.h"
-#include "filesystem.h"
 
 using boost::format;
 

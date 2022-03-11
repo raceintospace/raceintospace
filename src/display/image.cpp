@@ -1,17 +1,18 @@
 #include "image.h"
 
+#include <cassert>
+#include <cerrno>
+#include <stdexcept>
+#include <string>
+
+#include <boost/format.hpp>
+#include <png.h>
+#include <zlib.h>
+
 #include "graphics.h"
 #include "surface.h"
 #include "palettized_surface.h"
 
-#include <png.h>
-#include <zlib.h>
-#include <assert.h>
-#include <errno.h>
-
-#include <boost/format.hpp>
-#include <string>
-#include <stdexcept>
 
 namespace display
 {

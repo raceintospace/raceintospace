@@ -18,20 +18,23 @@
 
 // This file handles Advanced Preferences.
 
-#include "Buzz_inc.h"
 #include "options.h"
+
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include <SDL/SDL.h>
+
+#include "Buzz_inc.h"
 #include "macros.h"
 #include "pace.h"
 #include "fs.h"
 #include "utils.h"
 #include "logging.h"
-#include <assert.h>
-#include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <SDL/SDL.h>
 
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")

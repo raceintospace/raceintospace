@@ -1,19 +1,20 @@
 // This file defines how characters are printed on the screen
 
 #include "draw.h"
-#include "gr.h"
-#include "logging.h"
-#include "pace.h"
-#include "sdlhelper.h"
-#include "filesystem.h"
+
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "filesystem.h"
+#include "gr.h"
+#include "logging.h"
+#include "pace.h"
+#include "sdlhelper.h"
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);

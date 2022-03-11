@@ -25,11 +25,14 @@
 
 // This file handles original (main) game Preferences
 
+#include "prefs.h"
+
+#include <cctype>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "prefs.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "admin.h"
@@ -42,7 +45,6 @@
 #include "pace.h"
 #include "filesystem.h"
 
-#include <ctype.h>
 
 struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
