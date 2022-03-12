@@ -1310,26 +1310,9 @@ void SaveIntel(char plr, char prg, char ind)
 void ImpHard(char plr, char hd, char dx)
 {
     // based on the hardware improve safety factor
-    switch (hd) {
-    case PROBE_HARDWARE:
-        Data->P[plr].IntelHardwareTable[PROBE_HARDWARE][dx] = Data->P[plr].Probe[dx].MaxRD - brandom(Data->P[plr].Probe[dx].MaxSafety - Data->P[plr].Probe[dx].MaxRD);
-        break;
-
-    case ROCKET_HARDWARE:
-        Data->P[plr].IntelHardwareTable[ROCKET_HARDWARE][dx] = Data->P[plr].Rocket[dx].MaxRD - brandom(Data->P[plr].Rocket[dx].MaxSafety - Data->P[plr].Rocket[dx].MaxRD);
-        break;
-
-    case MANNED_HARDWARE:
-        Data->P[plr].IntelHardwareTable[MANNED_HARDWARE][dx] = Data->P[plr].Manned[dx].MaxRD - brandom(Data->P[plr].Manned[dx].MaxSafety - Data->P[plr].Manned[dx].MaxRD);
-        break;
-
-    case MISC_HARDWARE:
-        Data->P[plr].IntelHardwareTable[MISC_HARDWARE][dx] = Data->P[plr].Misc[dx].MaxRD - brandom(Data->P[plr].Misc[dx].MaxSafety - Data->P[plr].Misc[dx].MaxRD);
-        break;
-
-    default:
-        break;
-    }
+    Equipment &program = HardwareProgram(plr, hd, dx);
+    Data->P[plr].IntelHardwareTable[hd][dx] =
+        program.MaxRD - brandom(program.MaxSafety - program.MaxRD);
 }
 
 /* Updates the hardware statistics table in the Intelligence section.
