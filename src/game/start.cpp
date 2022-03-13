@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-// This file handles start-of-turn events: adjusting 'naut morale, etc.
+// This file handles start-of-turn events, including adjusting 'naut morale.
 
 #include "start.h"
 
@@ -141,7 +141,7 @@ random_card:
 static void
 updateAstronautSkills(unsigned plr, struct Astros *astro)
 {
-    /* constants related to training */
+    /* Constants related to training */
     const unsigned NUM_SKILLS = 5;
     char *skills[5] = {
         &astro->Cap,
@@ -159,6 +159,12 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     {
         astro->Mood += 5;
     }
+
+    // Determine Astronaut/Cosmonaut Level setting
+    int AstLevel;
+    if ((plr == 1 && Data->Def.Ast2 == 2) || (plr == 0 && Data->Def.Ast1 == 2)) { AstLevel = 3; }
+    else if ((plr == 1 && Data->Def.Ast2 == 1) || (plr == 0 && Data->Def.Ast1 == 1)) { AstLevel = 2; }
+    else { AstLevel = 1; }
 
     /* TODO: Moved has to be reset somewhere, right? */
 
@@ -230,6 +236,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     case AST_ST_TRAIN_ADV_1:
         astro->TrainingLevel = AST_ST_TRAIN_ADV_1;
         astro->Status = AST_ST_TRAIN_ADV_2;
+        astro->Mood += 6 - AstLevel;
         break;
 
     case AST_ST_TRAIN_ADV_2:
@@ -240,6 +247,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         } else {
             astro->Status = AST_ST_TRAIN_ADV_3;
         }
+        astro->Mood += 6 - AstLevel;
 
         // Block created to localize 'skill' declaration
         {
@@ -254,6 +262,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     case AST_ST_TRAIN_ADV_3:
         astro->TrainingLevel = AST_ST_TRAIN_ADV_3;
         astro->Status = AST_ST_TRAIN_ADV_4;
+        astro->Mood += 6 - AstLevel;
         break;
 
     case AST_ST_TRAIN_ADV_4: {
@@ -261,6 +270,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         astro->TrainingLevel = astro->Status;
         astro->Status = AST_ST_ACTIVE;
         astro->Assign = 0;  /* Put in Limbo */
+        astro->Mood += 6 - AstLevel;
 
         assert((unsigned) astro->Focus <= NUM_SKILLS);
 
@@ -676,8 +686,8 @@ void Update(void)
             memset(&Data->P[j].Future[i], 0x00, sizeof(struct MissionType));
             strcpy(Data->P[j].Future[i].Name, "UNDETERMINED");
 
-        } /* End j for loop */
-    } /* End i for loop */
+        }  /* End j for loop */
+    }  /* End i for loop */
 
     // Name the Missions
 
