@@ -2038,7 +2038,7 @@ NOTE: The above is for Single missions; Joint missions can often use smaller roc
     <td>5/5</td>
     <td>1600/1600</td>
     <td>--/--</td>
-    <td>87%/87%</td>
+    <td>87%/84%</td>
     <td>94%/94%</td>
   </tr>
   <tr>
