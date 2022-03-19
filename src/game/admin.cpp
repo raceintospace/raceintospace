@@ -122,6 +122,7 @@ void LoadGame(const char *filename);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
 void SaveGame(const std::vector<SFInfo> savegames);
+int Esc;
 
 namespace
 {
@@ -426,7 +427,7 @@ void FileAccess(char mode)
     // This needs to be deciphered and better documented. -- rnyoakum
     if (mode == 2) {
         mode = 0;
-        sc = 1;  //only allow mail save
+        sc = 1;  // only allow mail save
     }
 
     helpText = "i128";
@@ -767,7 +768,7 @@ void FileAccess(char mode)
                 draw_down_arrow(194, 94);
             }
         }
-    }  //while
+    }  // while
 
     if (LOAD == 1) {
         OutBox(209, 50, 278, 60);  // Button Out
@@ -976,6 +977,7 @@ void save_game(char *name)
 char GetBlockName(char *Nam)
 {
     int i, key;
+    Esc = 0;
 
     display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
@@ -1007,6 +1009,10 @@ char GetBlockName(char *Nam)
         av_block();
         gr_sync();
         key = bioskey(0);
+        if (key == K_ESCAPE) { 
+            Esc = 1;
+            return 1;  // Close without saving
+        }
 
         if (key >= 'a' && key <= 'z') {
             key = toupper(key);
@@ -1767,16 +1773,20 @@ void SaveGame(const std::vector<SFInfo> savegames)
 
         for (i = 0; (i < savegames.size() && temp == 2); i++) {
             if (strcmp(header.Name, savegames[i].Title) == 0) {
+            if (Esc > 0) {
+                temp = SAME_ABORT;
+            } else {
                 temp = RequestX("REPLACE FILE", 1);
 
                 if (temp == SAME_ABORT) {
                     done = 0;
                 }
             }
+            }
         }
     } while (done == 0);
 
-    if (done == YES) {
+    if (done == YES && Esc == 0) {
         i--;  // decrement to correct for the FOR loop
         strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
         strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
