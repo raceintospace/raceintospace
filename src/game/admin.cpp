@@ -1337,7 +1337,12 @@ int FutureCheck(char plr, char type)
 
             if (type == 0) {
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
-                draw_string(111, 57 + i * 51, "FOR: 20 MB'S");
+                draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
+                display::graphics.setForegroundColor(11);
+                draw_string(0, 0, "(OF ");
+                draw_number(0, 0, Data->P[plr].Cash);
+                draw_string(0, 0, ")");
+                display::graphics.setForegroundColor(9);
                 draw_string(113, 75 + i * 51, "PURCHASE FACILITY");
             } else {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);
