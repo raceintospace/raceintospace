@@ -387,9 +387,9 @@ void DispVAB(char plr, char pad)
 
     if (IsManned(Data->P[plr].Mission[pad].MissionCode) && (Data->P[plr].Mission[pad].MissionCode == 38 || Data->P[plr].Mission[pad].MissionCode == 39 || (Data->P[plr].Mission[pad].MissionCode > 47 && Data->P[plr].Mission[pad].MissionCode < 50)) || Data->P[plr].Mission[pad].MissionCode == 52) {
         if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
-            draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
+            draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
             display::graphics.setForegroundColor(15);  // Show it in light green if there may be an emergency EVA on this mission
-            draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
+            draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
             draw_string(0, 0, "%");
             IOBox(140, 64, 165, 82);
             EVAmis = 2;
@@ -1045,7 +1045,7 @@ void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket)
  */
 void DispWts(int payload, int thrust)
 {
-    fill_rectangle(5, 65, 140, 83, 3);
+    fill_rectangle(5, 65, 139, 83, 3);
 
     display::graphics.setForegroundColor(1);
     draw_string(5, 78, "MAXIMUM PAYLOAD: ");
