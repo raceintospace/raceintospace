@@ -91,7 +91,7 @@ inline SaveGameType operator|(SaveGameType a, SaveGameType b);
 inline SaveGameType operator&(SaveGameType a, SaveGameType b);
 
 struct SFInfo {
-    char Name[20], Title[23];
+    char Name[27], Title[23];
     uint16_t time, date;
     SaveGameType type;
 };
@@ -113,7 +113,7 @@ struct SaveGameEnumerator : public PhysFsEnumerator {
 void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
 void DrawTimeCapsule(int display);
 std::vector<SFInfo> GenerateTables(SaveGameType saveType);
-char GetBlockName(char *Nam);
+std::string GetBlockName();
 SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
 void FileText(char *name);
@@ -121,8 +121,7 @@ int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(char *s, char md);
-void SaveGame(const std::vector<SFInfo> savegames);
-int Esc;
+int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
 {
@@ -508,6 +507,7 @@ void FileAccess(char mode)
 
         if ((sc == 0 || sc == 2) && !savegames.empty() && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
+            // LOAD
             InBox(209, 50, 278, 58);
             delay(250);
 
@@ -532,22 +532,29 @@ void FileAccess(char mode)
             OutBox(209, 50, 278, 58);  // Button Out
             key = 0;
 
-        }  // LOAD
-        else if ((sc == 0 || sc == 2) && mode == 0 && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
-                 || (key == 'S'))) {
+        } else if ((sc == 0 || sc == 2) && mode == 0
+                   && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
+                       || (key == 'S'))) {
+            InBox(209, 64, 278, 72);
+            delay(250);
+            WaitForMouseUp();
 
-            SaveGame(savegames);
+            done = !SaveGame(savegames);
             OutBox(209, 64, 278, 72);
             key = 0;
-            break;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
                                             || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
-            SaveGame(savegames);
+            InBox(209, 78, 278, 86);
+            delay(250);
+            WaitForMouseUp();
 
+            QUIT = SaveGame(savegames) ? 0 : 1;
             OutBox(209, 78, 278, 86);
             key = 0;
-            QUIT = 1;
-            return;
+
+            if (QUIT) {
+                return;
+            }
         } else if (savegames.size() > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
                                             || (key == 'D'))) {
             InBox(209, 92, 278, 100);
@@ -968,23 +975,30 @@ void save_game(char *name)
 }
 
 
-/* Creates and displays an entry form for submitting a savegame name
- * and accepts the game description as input.
+/* Launches an entry form for naming a savegame.
+ *
+ * The savegame title is used as the basis for the file names, as
+ * "{title}.SAV". Consequently, the title is limited to the same
+ * length as SaveFileHdr::Name, plus delimiter.
  *
  * \param name  The string location where the name is stored.
- * \return  1 if the name is submitted, 0 if aborted.
+ * \return  the user-supplied file name, ("" if aborted).
+ * \throws IOException  if insufficient disk space remaining.
  */
-char GetBlockName(char *Nam)
+std::string GetBlockName()
 {
-    int i, key;
-    Esc = 0;
+    const int maxLength = sizeof(SaveFileHdr().Name) - 1;
 
     display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
-    i = 1;
 
-    if (i == 1) {
+    // TODO: Move this to wherever disk space should actually be
+    // checked. Consider modifying BadFileType() to accept a string
+    // argument?
+    // TODO: This is supposed to check if there is sufficient disk
+    // space to write a save, but isn't implemented.
+    if (true) {
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
@@ -998,42 +1012,36 @@ char GetBlockName(char *Nam)
         draw_string(60, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         local.copyTo(display::graphics.legacyScreen(), 39, 50);
-        return 0;
+        throw IOException("Not enough disk space");
     }
 
     gr_sync();
-    key = 0;
-    i = 0;
+
+    int key = 0;
+    std::string name;
+    name.reserve(maxLength + 1);
+    display::graphics.setForegroundColor(1);
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
         gr_sync();
         key = bioskey(0);
-        if (key == K_ESCAPE) { 
-            Esc = 1;
-            return 1;  // Close without saving
-        }
 
         if (key >= 'a' && key <= 'z') {
             key = toupper(key);
         }
 
         if (key & 0x00ff) {
-            if ((i < 21) && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
-                             (key >= '0' && key <= '9'))) {  // valid key
-                Nam[i++] = key;
-                display::graphics.setForegroundColor(1);
-                draw_string(53, 102, &Nam[0]);
+            if ((name.length() < maxLength)
+                && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
+                    (key >= '0' && key <= '9'))) {
+                name.push_back(key);
+                draw_string(53, 102, name.c_str());
                 key = 0;
-            }
-
-            if (i > 0 && key == 0x08) {
-                Nam[--i] = 0x00;
-
+            } else if (name.length() && key == 0x08) {
+                name.erase(name.end() - 1);
                 fill_rectangle(52, 96, 189, 104, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(53, 102, &Nam[0]);
-
+                draw_string(53, 102, name.c_str());
                 key = 0;
             }
         }
@@ -1041,10 +1049,10 @@ char GetBlockName(char *Nam)
 
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
 
-    if (key == K_ENTER && i >= 1) {
-        return 1;
+    if (key == K_ENTER && name.length()) {
+        return name;
     } else {
-        return 0;
+        return "";
     }
 }
 
@@ -1753,110 +1761,113 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
     return interimData.endTurnSaveSize;
 }
 
-void SaveGame(const std::vector<SFInfo> savegames)
+
+/**
+ * Launches the Save Game process.
+ *
+ * TODO: Add a option to toggle between classic save file naming
+ * (ex: BUZZ1.SAV) and updated format ({title}.SAV).
+ *
+ * \return  0 if successfully saved, 1 if aborted.
+ */
+int SaveGame(const std::vector<SFInfo> savegames)
 {
-    int done, temp, i;
+    int done = 0, temp, i;
     FILE *fin;
     SaveFileHdr header;
+    std::string title;
 
-    if (MAIL == -1) {
-        InBox(209, 64, 278, 72);
-    } else {
-        InBox(209, 78, 278, 86);
-    }
-
-    delay(250);
-
-    WaitForMouseUp();
-    memset(header.Name, 0x00, sizeof(header.Name));
+    memset(&header, 0x00, sizeof(header));
+    header.ID = RaceIntoSpace_Signature;
+    header.Name[sizeof(header.Name) - 1] = 0x1a;
 
     do {
-        done = GetBlockName(header.Name);  // Checks Free Space
-        header.ID = RaceIntoSpace_Signature;
-        header.Name[sizeof(header.Name) - 1] = 0x1A;
+        title = GetBlockName();
+
+        if (title.length()) {
+            done = 1;
+        } else {
+            return 1;
+        }
+
         temp = NOTSAME;
 
-        for (i = 0; (i < savegames.size() && temp == 2); i++) {
-            if (strcmp(header.Name, savegames[i].Title) == 0) {
-            if (Esc > 0) {
-                temp = SAME_ABORT;
-            } else {
+        // TODO: If savegames guarantees ordering by title, we can
+        // eliminate unneccesary checks.
+        for (i = 0; (i < savegames.size() && temp == NOTSAME); i++) {
+            if (title.compare(savegames[i].Title) == 0) {
                 temp = RequestX("REPLACE FILE", 1);
 
                 if (temp == SAME_ABORT) {
                     done = 0;
                 }
             }
-            }
         }
     } while (done == 0);
 
-    if (done == YES && Esc == 0) {
-        i--;  // decrement to correct for the FOR loop
-        strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
-        strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
+    i--;  // decrement to correct for the FOR loop
+    strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
+    strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
 
-        // Play-By-Mail save game hack
-        //
-        // If MAIL == 0, we are playing as the U.S. We need to
-        // save the game such that the U.S. starts again
-        if (MAIL == 0) {
-            plr[0] = 8;
-            plr[1] = 0;
-        }
-        // Playing as the Soviets
-        else if ((MAIL == 1)) {
-            plr[0] = 0;
-            plr[1] = 9;
-        }
-
-        Data->Def.Plr1 = plr[0];
-        Data->Def.Plr2 = plr[1];
-        Data->plr[0] = Data->Def.Plr1;
-        Data->plr[1] = Data->Def.Plr2;
-
-        if (MAIL != -1) {
-            AI[0] = 0;
-            AI[1] = 0;
-        }
-
-        header.Country[0] = Data->plr[0];
-        header.Country[1] = Data->plr[1];
-        header.Season = Data->Season;
-        header.Year = Data->Year;
-        header.dataSize = sizeof(struct Players);
-
-        EndOfTurnSave((char *) Data, sizeof(struct Players));
-        header.compSize = interimData.endTurnSaveSize;
-
-        if (temp == NOTSAME) {
-            i = 0;
-            fin = NULL;
-
-            strncpy(Name, header.Name, sizeof(Name));
-            Name[sizeof(Name) - 5] = 0;  // Leave enough space for .SAV ending
-            strncat(Name, ".SAV", 4);
-
-            fin = sOpen(Name, "wb", 1);
-        } else {
-            fin = sOpen(savegames[i].Name, "wb", 1);
-        }
-
-        // Write the Save Game Header
-        fwrite(&header, sizeof(header), 1, fin);
-
-        // Save End of Turn Data
-        fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
-
-        // Save Replay Data
-        interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-        fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
-
-        // Save Event Data
-        fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
-
-        fclose(fin);
+    // Play-By-Mail save game hack
+    //
+    // If MAIL == 0, we are playing as the U.S. We need to
+    // save the game such that the U.S. starts again
+    if (MAIL == 0) {
+        plr[0] = 8;
+        plr[1] = 0;
+    } else if ((MAIL == 1)) {
+        plr[0] = 0;
+        plr[1] = 9;
     }
+
+    Data->Def.Plr1 = plr[0];
+    Data->Def.Plr2 = plr[1];
+    Data->plr[0] = Data->Def.Plr1;
+    Data->plr[1] = Data->Def.Plr2;
+
+    if (MAIL != -1) {
+        AI[0] = 0;
+        AI[1] = 0;
+    }
+
+    assert(sizeof(header.Name) >= title.length());
+    strncpy(header.Name, title.c_str(), sizeof(header.Name));
+    header.Country[0] = Data->plr[0];
+    header.Country[1] = Data->plr[1];
+    header.Season = Data->Season;
+    header.Year = Data->Year;
+    header.dataSize = sizeof(struct Players);
+
+    EndOfTurnSave((char *) Data, sizeof(struct Players));
+    header.compSize = interimData.endTurnSaveSize;
+
+    // Create the filename from the title.
+    // The field savegames[i].Name is a filename provided by
+    // the file system, so it already includes the .SAV extension.
+    if (temp == NOTSAME) {
+        std::string filename = title + ".SAV";
+        fin = sOpen(filename.c_str(), "wb", 1);
+    } else {
+        fin = sOpen(savegames[i].Name, "wb", 1);
+    }
+
+    // Write the Save Game Header
+    fwrite(&header, sizeof(header), 1, fin);
+
+    // Save End of Turn Data
+    fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
+
+    // Save Replay Data
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+    fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
+
+    // Save Event Data
+    fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
+
+    fclose(fin);
+
+    return 0;
 }
 
 
