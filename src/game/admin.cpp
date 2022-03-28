@@ -507,6 +507,7 @@ void FileAccess(char mode)
 
         if ((sc == 0 || sc == 2) && !savegames.empty() && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
+            // LOAD
             InBox(209, 50, 278, 58);
             delay(250);
 
@@ -531,15 +532,22 @@ void FileAccess(char mode)
             OutBox(209, 50, 278, 58);  // Button Out
             key = 0;
 
-        }  // LOAD
-        else if ((sc == 0 || sc == 2) && mode == 0 && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
-                 || (key == 'S'))) {
+        } else if ((sc == 0 || sc == 2) && mode == 0
+                   && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
+                       || (key == 'S'))) {
+            InBox(209, 64, 278, 72);
+            delay(250);
+            WaitForMouseUp();
 
             done = !SaveGame(savegames);
             OutBox(209, 64, 278, 72);
             key = 0;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
                                             || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
+            InBox(209, 78, 278, 86);
+            delay(250);
+            WaitForMouseUp();
+
             QUIT = SaveGame(savegames) ? 0 : 1;
             OutBox(209, 78, 278, 86);
             key = 0;
@@ -1012,6 +1020,7 @@ std::string GetBlockName()
     int key = 0;
     std::string name;
     name.reserve(maxLength + 1);
+    display::graphics.setForegroundColor(1);
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
@@ -1027,18 +1036,12 @@ std::string GetBlockName()
                 && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
                     (key >= '0' && key <= '9'))) {
                 name.push_back(key);
-                display::graphics.setForegroundColor(1);
                 draw_string(53, 102, name.c_str());
                 key = 0;
-            }
-
-            if (name.length() && key == 0x08) {
+            } else if (name.length() && key == 0x08) {
                 name.erase(name.end() - 1);
-
                 fill_rectangle(52, 96, 189, 104, 0);
-                display::graphics.setForegroundColor(1);
                 draw_string(53, 102, name.c_str());
-
                 key = 0;
             }
         }
@@ -1774,15 +1777,6 @@ int SaveGame(const std::vector<SFInfo> savegames)
     SaveFileHdr header;
     std::string title;
 
-    if (MAIL == -1) {
-        InBox(209, 64, 278, 72);
-    } else {
-        InBox(209, 78, 278, 86);
-    }
-
-    delay(250);
-
-    WaitForMouseUp();
     memset(&header, 0x00, sizeof(header));
     header.ID = RaceIntoSpace_Signature;
     header.Name[sizeof(header.Name) - 1] = 0x1a;
@@ -1811,71 +1805,67 @@ int SaveGame(const std::vector<SFInfo> savegames)
         }
     } while (done == 0);
 
-    if (done) {
-        i--;  // decrement to correct for the FOR loop
-        strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
-        strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
+    i--;  // decrement to correct for the FOR loop
+    strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
+    strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
 
-        // Play-By-Mail save game hack
-        //
-        // If MAIL == 0, we are playing as the U.S. We need to
-        // save the game such that the U.S. starts again
-        if (MAIL == 0) {
-            plr[0] = 8;
-            plr[1] = 0;
-        }
-        // Playing as the Soviets
-        else if ((MAIL == 1)) {
-            plr[0] = 0;
-            plr[1] = 9;
-        }
-
-        Data->Def.Plr1 = plr[0];
-        Data->Def.Plr2 = plr[1];
-        Data->plr[0] = Data->Def.Plr1;
-        Data->plr[1] = Data->Def.Plr2;
-
-        if (MAIL != -1) {
-            AI[0] = 0;
-            AI[1] = 0;
-        }
-
-        assert(sizeof(header.Name) >= title.length());
-        strncpy(header.Name, title.c_str(), sizeof(header.Name));
-        header.Country[0] = Data->plr[0];
-        header.Country[1] = Data->plr[1];
-        header.Season = Data->Season;
-        header.Year = Data->Year;
-        header.dataSize = sizeof(struct Players);
-
-        EndOfTurnSave((char *) Data, sizeof(struct Players));
-        header.compSize = interimData.endTurnSaveSize;
-
-        // Create the filename from the title.
-        // The field savegames[i].Name is a filename provided by
-        // the file system, so it already includes the .SAV extension.
-        if (temp == NOTSAME) {
-            std::string filename = title + ".SAV";
-            fin = sOpen(filename.c_str(), "wb", 1);
-        } else {
-            fin = sOpen(savegames[i].Name, "wb", 1);
-        }
-
-        // Write the Save Game Header
-        fwrite(&header, sizeof(header), 1, fin);
-
-        // Save End of Turn Data
-        fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
-
-        // Save Replay Data
-        interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-        fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
-
-        // Save Event Data
-        fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
-
-        fclose(fin);
+    // Play-By-Mail save game hack
+    //
+    // If MAIL == 0, we are playing as the U.S. We need to
+    // save the game such that the U.S. starts again
+    if (MAIL == 0) {
+        plr[0] = 8;
+        plr[1] = 0;
+    } else if ((MAIL == 1)) {
+        plr[0] = 0;
+        plr[1] = 9;
     }
+
+    Data->Def.Plr1 = plr[0];
+    Data->Def.Plr2 = plr[1];
+    Data->plr[0] = Data->Def.Plr1;
+    Data->plr[1] = Data->Def.Plr2;
+
+    if (MAIL != -1) {
+        AI[0] = 0;
+        AI[1] = 0;
+    }
+
+    assert(sizeof(header.Name) >= title.length());
+    strncpy(header.Name, title.c_str(), sizeof(header.Name));
+    header.Country[0] = Data->plr[0];
+    header.Country[1] = Data->plr[1];
+    header.Season = Data->Season;
+    header.Year = Data->Year;
+    header.dataSize = sizeof(struct Players);
+
+    EndOfTurnSave((char *) Data, sizeof(struct Players));
+    header.compSize = interimData.endTurnSaveSize;
+
+    // Create the filename from the title.
+    // The field savegames[i].Name is a filename provided by
+    // the file system, so it already includes the .SAV extension.
+    if (temp == NOTSAME) {
+        std::string filename = title + ".SAV";
+        fin = sOpen(filename.c_str(), "wb", 1);
+    } else {
+        fin = sOpen(savegames[i].Name, "wb", 1);
+    }
+
+    // Write the Save Game Header
+    fwrite(&header, sizeof(header), 1, fin);
+
+    // Save End of Turn Data
+    fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
+
+    // Save Replay Data
+    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
+    fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
+
+    // Save Event Data
+    fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
+
+    fclose(fin);
 
     return 0;
 }
