@@ -374,6 +374,8 @@ void DispVAB(char plr, char pad)
         draw_string(0, 0, GetDurationParens(mission.Duration));
     }
 
+    EVAmis = 0;
+
     if (IsManned(Data->P[plr].Mission[pad].MissionCode) && IsEVA(Data->P[plr].Mission[pad].MissionCode) && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
         if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
