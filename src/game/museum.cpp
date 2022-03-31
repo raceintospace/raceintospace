@@ -1207,7 +1207,7 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     }
 
     memset(Ast_Name, 0x00, sizeof Ast_Name);
-    strncpy(Ast_Name, abuf[*where].Name, 10);
+    strncpy(Ast_Name, abuf[*where].Name, 11);
 
     if (abuf[*where].Sex == 1) {
         display::graphics.setForegroundColor(5);  // Show females in blue
