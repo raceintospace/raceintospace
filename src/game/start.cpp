@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <string>
 
 #include "Buzz_inc.h"
 #include "astros.h"
@@ -40,11 +41,13 @@
 
 /** \todo This function fills Data->Events, but how it's a mystery... */
 
+void AssignMissionName(int plr, int pad);
 int AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
 int  CrewConflicts(int player, const struct Astros &astro);
 void UpdAll(char side);
 void TestFMis(int plr, int i);
+void UpdateFlybys();
 void UpdateHardTurn(char plr);
 
 
@@ -283,6 +286,89 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
     default:
         break;
+    }
+}
+
+
+/**
+ * Assign a designation and patch to a mission.
+ *
+ * Updates the mission hardware's Code field, which tracks the mission's
+ * designation (For example, Gemini V -> Gemini VI). Mission names
+ * and codes should not be assigned to Future missions, as they are
+ * not finalized.
+ *
+ * \param plr  the player index.
+ * \param pad  the mission's launch pad index.
+ */
+void AssignMissionName(int plr, int pad)
+{
+    assert(plr >= 0 && plr < NUM_PLAYERS);
+    assert(pad >= 0 && pad < MAX_MISSIONS);
+
+    struct MissionType &mission = Data->P[plr].Mission[pad];
+    Equipment *equip = NULL;
+
+    if (mission.MissionCode == Mission_Orbital_Satellite) {
+        equip = &Data->P[plr].Probe[PROBE_HW_ORBITAL];
+        mission.Patch = -1;
+        std::string name(equip->Name);
+        name += " ";
+        name += RomanNumeral(equip->Code + 1);
+        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
+        equip->Code++;  // Increase Planned Mission Count
+    } else if (mission.MissionCode == Mission_Lunar_Probe) {
+        equip = &Data->P[plr].Probe[PROBE_HW_LUNAR];
+        mission.Patch = -1;
+        std::string name(equip->Name);
+        name += " ";
+        name += RomanNumeral(equip->Code + 1);
+        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
+        equip->Code++;  // Increase Planned Mission Count
+    } else if (mission.MissionCode == Mission_LunarFlyby ||
+               (mission.MissionCode >= Mission_VenusFlyby &&
+                mission.MissionCode <= Mission_SaturnFlyby)) {
+        equip = &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY];
+        mission.Patch = -1;
+        std::string name(equip->Name);
+        name += " ";
+        name += RomanNumeral(equip->Code + 1);
+        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
+        equip->Code++;  // Increase Planned Mission Count
+    } else if (mission.MissionCode > 0) {
+        if (mission.Joint == 0) {
+            int capsule = mission.Prog - 1;
+            equip = &Data->P[plr].Manned[capsule];
+            mission.Patch = equip->Code % 10;
+            std::string name(equip->Name);
+            name += " ";
+            name += RomanNumeral(equip->Code + 1);
+            strncpy(&mission.Name[0], name.c_str(),
+                    sizeof(mission.Name) - 1);
+            equip->Code++;  // Increase Planned Mission Count
+        } else {
+            if (mission.Prog == 0) {
+                assert(pad + 1 < MAX_MISSIONS);
+                int capsule = Data->P[plr].Mission[pad + 1].Prog - 1;
+                equip = &Data->P[plr].Manned[capsule];
+                mission.Patch = equip->Code % 10;
+                std::string name(equip->Name);
+                name += " ";
+                name += RomanNumeral(equip->Code + 1);
+                strncpy(&mission.Name[0], name.c_str(),
+                        sizeof(mission.Name) - 1);
+            } else {
+                int capsule = mission.Prog - 1;
+                equip = &Data->P[plr].Manned[capsule];
+                mission.Patch = equip->Code % 10;
+                std::string name(equip->Name);
+                name += " ";
+                name += RomanNumeral(equip->Code + 1);
+                strncpy(&mission.Name[0], name.c_str(),
+                        sizeof(mission.Name) - 1);
+                equip->Code++;  // Increase Planned Mission Count
+            }
+        }
     }
 }
 
@@ -667,7 +753,6 @@ void Update(void)
 {
     int i, j, k;
     char p0, p1;
-    char tName[20];
 
     for (j = 0; j < NUM_PLAYERS; j++) {
 
@@ -693,57 +778,7 @@ void Update(void)
 
     for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 0; i < MAX_MISSIONS; i++) {
-            if (Data->P[j].Mission[i].MissionCode == Mission_Orbital_Satellite) {
-                Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_ORBITAL].Name[0]);
-                strcat(&tName[0], " ");
-                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_ORBITAL].Code + 1).c_str());
-                strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                Data->P[j].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
-            } else if (Data->P[j].Mission[i].MissionCode == Mission_Lunar_Probe) {
-                Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_LUNAR].Name[0]);
-                strcat(&tName[0], " ");
-                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_LUNAR].Code + 1).c_str());
-                strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                Data->P[j].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
-            } else if (Data->P[j].Mission[i].MissionCode == Mission_LunarFlyby ||
-                       (Data->P[j].Mission[i].MissionCode >= Mission_VenusFlyby &&
-                        Data->P[j].Mission[i].MissionCode <= Mission_SaturnFlyby)) {
-                Data->P[j].Mission[i].Patch = -1;
-                strcpy(&tName[0], &Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
-                strcat(&tName[0], " ");
-                strcat(&tName[0], RomanNumeral(Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code + 1).c_str());
-                strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
-            } else if (Data->P[j].Mission[i].MissionCode > 0) {
-                if (Data->P[j].Mission[i].Joint == 0) {
-                    k = Data->P[j].Mission[i].Prog - 1;
-                    Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
-                    strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
-                    strcat(&tName[0], " ");
-                    strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code + 1).c_str());
-                    strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                    Data->P[j].Manned[k].Code++;  // Increase Planned Mission Count
-                } else {
-                    if (Data->P[j].Mission[i].Prog == 0) {
-                        k = Data->P[j].Mission[i + 1].Prog - 1;
-                        Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
-                        strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
-                        strcat(&tName[0], " ");
-                        strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code + 1).c_str());
-                        strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                    } else {
-                        k = Data->P[j].Mission[i].Prog - 1;
-                        Data->P[j].Mission[i].Patch = Data->P[j].Manned[k].Code % 10;
-                        strcpy(&tName[0], &Data->P[j].Manned[k].Name[0]);
-                        strcat(&tName[0], " ");
-                        strcat(&tName[0], RomanNumeral(Data->P[j].Manned[k].Code + 1).c_str());
-                        strcpy(&Data->P[j].Mission[i].Name[0], &tName[0]);  // copy into struct
-                        Data->P[j].Manned[k].Code++;  // Increase Planned Mission Count
-                    }
-                }
-            }
+            AssignMissionName(j, i);
         }
     }
 
@@ -764,54 +799,9 @@ void Update(void)
         Data->P[j].TurnOnly = Data->P[j].MissionCatastrophicFailureOnTurn = Data->P[j].Block = 0;
     }
 
-    // Update any delayed Missions
-    p0 = p1 = 0;
-
-    while (p0 < Data->P[0].PastMissionCount && p1 < Data->P[1].PastMissionCount) {
-        if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
-            TestFMis(0, p0);
-            p0++;
-        } else if (Data->P[0].History[p0].MissionYear > Data->P[1].History[p1].MissionYear) {
-            TestFMis(1, p1);
-            p1++;
-        } else if (Data->P[0].History[p0].MissionYear == Data->P[1].History[p1].MissionYear) {
-            if (Data->P[0].History[p0].Month < Data->P[1].History[p1].Month) {
-                TestFMis(0, p0);
-                p0++;
-            } else if (Data->P[0].History[p0].Month > Data->P[1].History[p1].Month) {
-                TestFMis(1, p1);
-                p1++;
-            } else if (Data->P[0].History[p0].Month == Data->P[1].History[p1].Month) {
-                if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMissionCount)) {
-                    TestFMis(0, p0);
-                    p0++;
-                } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMissionCount)) {
-                    TestFMis(1, p1);
-                    p1++;
-                } else if ((p0 < Data->P[0].PastMissionCount) && (p1 < Data->P[1].PastMissionCount)) {
-                    if (brandom(100) < 50) {
-                        TestFMis(0, p0);
-                        p0++;
-                    } else {
-                        TestFMis(1, p1);
-                        p1++;
-                    }
-                }
-            }
-        }
-    }  // end while
+    UpdateFlybys();
 
     memset(pNeg, 0x00, sizeof pNeg);
-
-    while (p0 < Data->P[0].PastMissionCount) {
-        TestFMis(0, p0);
-        p0++;
-    }
-
-    while (p1 < Data->P[1].PastMissionCount) {
-        TestFMis(1, p1);
-        p1++;
-    }
 
     // Fix Prestige Values for Mars, Jup, Sat.
     for (j = 0; j < NUM_PLAYERS; j++) {
@@ -869,7 +859,6 @@ void UpdAll(char side)
 {
     int i, k;
     char p0 = 0, p1 = 0;
-    char tName[20];
 
     if (Data->P[side].DockingModuleInOrbit > 0) {
         Data->P[side].DockingModuleInOrbit--;
@@ -886,57 +875,7 @@ void UpdAll(char side)
     }
 
     for (i = 0; i < 3; i++) {
-        if (Data->P[side].Mission[i].MissionCode == Mission_Orbital_Satellite) {
-            Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_ORBITAL].Name[0]);
-            strcat(&tName[0], " ");
-            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_ORBITAL].Code + 1).c_str());
-            strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
-            Data->P[side].Probe[PROBE_HW_ORBITAL].Code++;  // Increase Planned Mission Count
-        } else if (Data->P[side].Mission[i].MissionCode == Mission_Lunar_Probe) {
-            Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_LUNAR].Name[0]);
-            strcat(&tName[0], " ");
-            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_LUNAR].Code + 1).c_str());
-            strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
-            Data->P[side].Probe[PROBE_HW_LUNAR].Code++;  // Increase Planned Mission Count
-        } else if (Data->P[side].Mission[i].MissionCode == Mission_LunarFlyby ||
-                   (Data->P[side].Mission[i].MissionCode >= Mission_VenusFlyby &&
-                    Data->P[side].Mission[i].MissionCode <= Mission_SaturnFlyby)) {
-            Data->P[side].Mission[i].Patch = -1;
-            strcpy(&tName[0], &Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Name[0]);
-            strcat(&tName[0], " ");
-            strcat(&tName[0], RomanNumeral(Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code + 1).c_str());
-            strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
-            Data->P[side].Probe[PROBE_HW_INTERPLANETARY].Code++;  // Increase Planned Mission Count
-        } else if (Data->P[side].Mission[i].MissionCode > 0) {
-            if (Data->P[side].Mission[i].Joint == 0) {
-                k = Data->P[side].Mission[i].Prog - 1;
-                Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
-                strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
-                strcat(&tName[0], " ");
-                strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code + 1).c_str());
-                strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
-                Data->P[side].Manned[k].Code++;  // Increase Planned Mission Count
-            } else {
-                if (Data->P[side].Mission[i].Prog == 0) {
-                    k = Data->P[side].Mission[i + 1].Prog - 1;
-                    Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
-                    strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
-                    strcat(&tName[0], " ");
-                    strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code + 1).c_str());
-                    strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]);  // copy into struct
-                } else {
-                    k = Data->P[side].Mission[i].Prog - 1;
-                    Data->P[side].Mission[i].Patch = Data->P[side].Manned[k].Code % 10;
-                    strcpy(&tName[0], &Data->P[side].Manned[k].Name[0]);
-                    strcat(&tName[0], " ");
-                    strcat(&tName[0], RomanNumeral(Data->P[side].Manned[k].Code + 1).c_str());
-                    strcpy(&Data->P[side].Mission[i].Name[0], &tName[0]); // copy into struct
-                    Data->P[side].Manned[k].Code++;  // Increase Planned Mission Count
-                }
-            }
-        }
+        AssignMissionName(side, i);
     }
 
     // Reset R&D Purchasing Ability
@@ -954,57 +893,12 @@ void UpdAll(char side)
     Data->P[side].TurnOnly = Data->P[side].MissionCatastrophicFailureOnTurn = Data->P[side].Block = 0;
 
 
+    // Only want to update missions once each turn.
     if (side == 1) {
-        p0 = p1 = 0;
-
-        while (p0 < Data->P[0].PastMissionCount && p1 < Data->P[1].PastMissionCount) {
-            if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
-                TestFMis(0, p0);
-                p0++;
-            } else if (Data->P[0].History[p0].MissionYear > Data->P[1].History[p1].MissionYear) {
-                TestFMis(1, p1);
-                p1++;
-            } else if (Data->P[0].History[p0].MissionYear == Data->P[1].History[p1].MissionYear) {
-                if (Data->P[0].History[p0].Month < Data->P[1].History[p1].Month) {
-                    TestFMis(0, p0);
-                    p0++;
-                } else if (Data->P[0].History[p0].Month > Data->P[1].History[p1].Month) {
-                    TestFMis(1, p1);
-                    p1++;
-                } else if (Data->P[0].History[p0].Month == Data->P[1].History[p1].Month) {
-                    if (Data->P[0].Budget < Data->P[1].Budget && (p0 < Data->P[0].PastMissionCount)) {
-                        TestFMis(0, p0);
-                        p0++;
-                    } else if (Data->P[0].Budget > Data->P[1].Budget && (p1 < Data->P[1].PastMissionCount)) {
-                        TestFMis(1, p1);
-                        p1++;
-                    } else if ((p0 < Data->P[0].PastMissionCount) && (p1 < Data->P[1].PastMissionCount)) {
-                        if (brandom(100) < 50) {
-                            TestFMis(0, p0);
-                            p0++;
-                        } else {
-                            TestFMis(1, p1);
-                            p1++;
-                        }
-                    }
-                }
-            }
-        }  // end while
+        UpdateFlybys();
     }
 
     memset(pNeg, 0x00, sizeof pNeg);
-
-    if (side == 1) {
-        while (p0 < Data->P[0].PastMissionCount) {
-            TestFMis(0, p0);
-            p0++;
-        }
-
-        while (p1 < Data->P[1].PastMissionCount) {
-            TestFMis(1, p1);
-            p1++;
-        }
-    }
 
     // Fix Prestige Values for Mars, Jup, Sat.
     Data->Prestige[Prestige_MarsFlyby].Goal[side] = 0;  // Clear Mars
@@ -1094,6 +988,61 @@ void TestFMis(int plr, int i)
         }
     }
 }
+
+
+/**
+ * Update any outstanding Flyby missions.
+ *
+ * Missions are tested in chronological order of launch so prestige
+ * will be awarded correctly. If both month and year match, the player
+ * with the lower budget proceeds first.
+ */
+void UpdateFlybys()
+{
+    int p0 = 0, p1 = 0;
+
+    // Missions are tested in chronological order of launch.
+    // In case of a tie, the player with the lower budget wins.
+    // If budgets are tied, a coin is tossed.
+    while (p0 < Data->P[0].PastMissionCount &&
+           p1 < Data->P[1].PastMissionCount) {
+        if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
+            TestFMis(0, p0++);
+        } else if (Data->P[0].History[p0].MissionYear > Data->P[1].History[p1].MissionYear) {
+            TestFMis(1, p1++);
+        } else {  // Same year
+            if (Data->P[0].History[p0].Month < Data->P[1].History[p1].Month) {
+                TestFMis(0, p0++);
+            } else if (Data->P[0].History[p0].Month > Data->P[1].History[p1].Month) {
+                TestFMis(1, p1++);
+            } else {
+                if (Data->P[0].Budget < Data->P[1].Budget) {
+                    TestFMis(0, p0++);
+                } else if (Data->P[0].Budget > Data->P[1].Budget) {
+                    TestFMis(1, p1++);
+                } else {
+                    // If the tie-breaker is tied, toss a coin.
+                    if (brandom(100) < 50) {
+                        TestFMis(0, p0++);
+                    } else {
+                        TestFMis(1, p1++);
+                    }
+                }
+            }
+        }
+    }
+
+    // After updating all of one player's past missions, handle
+    // the remainder of the other player's missions, if any.
+    while (p0 < Data->P[0].PastMissionCount) {
+        TestFMis(0, p0++);
+    }
+
+    while (p1 < Data->P[1].PastMissionCount) {
+        TestFMis(1, p1++);
+    }
+}
+
 
 /** End of turn equipment accounting update
  */
