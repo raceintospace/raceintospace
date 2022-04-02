@@ -39,8 +39,6 @@
 #include "prest.h"
 
 
-/** \todo This function fills Data->Events, but how it's a mystery... */
-
 void AssignMissionName(int plr, int pad);
 int AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
@@ -54,7 +52,11 @@ void UpdateHardTurn(char plr);
 #define EVENT_PERIODS 6
 #define EVENT_PERIOD_POOL 5
 
-/* Initialize the event cards */
+/**
+ * Initialize the event cards.
+ *
+ * \todo This function fills Data->Events, but how it's a mystery...
+ */
 void InitializeEvents(void)
 {
     int cardCount = 2;  // Starting event card index
@@ -138,6 +140,7 @@ random_card:
     interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
 }
 
+
 /**
  * Handle astronaut mood and training
  */
@@ -156,28 +159,18 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     const char skillMax = 4;
     const char skillMin = 0;
 
-    if ((astro->Moved == 0)
-        && (astro->oldAssign < astro->Assign))
-        /* Moved to better prog, increase morale */
-    {
+    /* Moved to better prog, increase morale */
+    if ((astro->Moved == 0) && (astro->oldAssign < astro->Assign)) {
         astro->Mood += 5;
     }
 
     // Determine Astronaut/Cosmonaut Level setting
-    int AstLevel;
-    if ((plr == 1 && Data->Def.Ast2 == 2) || (plr == 0 && Data->Def.Ast1 == 2)) { AstLevel = 3; }
-    else if ((plr == 1 && Data->Def.Ast2 == 1) || (plr == 0 && Data->Def.Ast1 == 1)) { AstLevel = 2; }
-    else { AstLevel = 1; }
+    int AstLevel = (plr == 1) ? Data->Def.Ast2 + 1 : Data->Def.Ast1 + 1;
 
     /* TODO: Moved has to be reset somewhere, right? */
 
     /* Increase number of seasons astronaut was in active duty */
-    switch (astro->Status) {
-    case AST_ST_DEAD:
-    case AST_ST_RETIRED:
-        break;
-
-    default:
+    if (astro->Status != AST_ST_DEAD && astro->Status != AST_ST_RETIRED) {
         astro->Active++;
     }
 
@@ -250,6 +243,7 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
         } else {
             astro->Status = AST_ST_TRAIN_ADV_3;
         }
+
         astro->Mood += 6 - AstLevel;
 
         // Block created to localize 'skill' declaration
@@ -447,7 +441,8 @@ AstroTurn(void)
                         Data->P[j].Pool[i].Special = 1;
                     }
 
-                    Data->P[j].Pool[i].RetirementReason = brandom(6) + 1;  /* Reason for Retirement */
+                    /* Reason for Retirement */
+                    Data->P[j].Pool[i].RetirementReason = brandom(6) + 1;
                 }
             }
 
@@ -505,13 +500,14 @@ AstroTurn(void)
                         Data->P[j].Pool[i].InjuryDelay = 2;
                         Data->P[j].Pool[i].Special = 9;
                     } else {
+                        // Injury washout and retirement
                         Data->P[j].Pool[i].Status = AST_ST_RETIRED;
                         Data->P[j].Pool[i].Special = 10;
-                        Data->P[j].Pool[i].RetirementReason = 12;    /* Washout */
+                        Data->P[j].Pool[i].RetirementReason = 12;
                     }
 
                     if (Data->P[j].Pool[i].Cap < 0) {
-                        Data->P[j].Pool[i].Cap = 0;    //modified from Data->P[j].Pool[i].Endurance, as it's probably a bug
+                        Data->P[j].Pool[i].Cap = 0;
                     }
 
                     if (Data->P[j].Pool[i].LM < 0) {
@@ -684,9 +680,9 @@ AstroTurn(void)
     }
 
     // Break all groups with dead, injured or retired folks.
-    for (j = 0; j < NUM_PLAYERS; j++) {  // for each player
+    for (j = 0; j < NUM_PLAYERS; j++) {
         CheckFlightCrews(j);
-    }                          /* for j */
+    }
 
     UpdateHardTurn(0);
     UpdateHardTurn(1);
@@ -774,8 +770,7 @@ void Update(void)
         }  /* End j for loop */
     }  /* End i for loop */
 
-    // Name the Missions
-
+    // Name the upcoming Missions
     for (j = 0; j < NUM_PLAYERS; j++) {
         for (i = 0; i < MAX_MISSIONS; i++) {
             AssignMissionName(j, i);
@@ -855,6 +850,19 @@ void Update(void)
     return;
 }
 
+
+/**
+ *  Perform start of turn maintenance.
+ *
+ *  TODO: This appears to be essentially the same as the function
+ *  Update(), but is never called. There are a few oddities which
+ *  result from this:
+ *  - AstroTurn will likely be called for each side, but AstroTurn
+ *    handles updates for both players.
+ *  - UpdateFlybys is only called when side == 1 to avoid the same
+ *    issue. UpdateFlybys needs to handle Flyby progress in
+ *    chronological order to get Prestige firsts correct.
+ */
 void UpdAll(char side)
 {
     int i, k;
@@ -916,7 +924,7 @@ void UpdAll(char side)
 
             case Mission_JupiterFlyby:
                 Data->Prestige[Prestige_JupiterFlyby].Goal[side]++;
-                break;  // Juptier
+                break;  // Jupiter
 
             case Mission_SaturnFlyby:
                 Data->Prestige[Prestige_SaturnFlyby].Goal[side]++;
