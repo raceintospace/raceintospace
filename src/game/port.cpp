@@ -1812,9 +1812,9 @@ char PortSel(char plr, char loc)
         if (MisOK >= 10) {
             Help("i005");
             return pNOREDRAW;
-        } else if (LPad == 0) {
-            // Warn player that they have no missions scheduled for
-            // next turn, except on the first turn of the game. -Leon
+        } else if (LPad == 0 && Data->P[plr].Rocket[0].Delay < 1) {
+            // Warn player that they have no missions scheduled for next turn, except
+            // on the first turn of the game, or if you can't buy rockets next turn. -Leon
             if (Help("i161") >= 0) {
                 LPad = 10;  // Set LPad above zero so you won't be warned again this turn  -Leon
                 i = Request(plr, "END TURN", 1);
