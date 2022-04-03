@@ -344,7 +344,7 @@ void MisAnn(char plr, char pad)
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                     if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(11);
                     }
 
                     draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
@@ -366,7 +366,7 @@ void MisAnn(char plr, char pad)
                     Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                     if (Data->P[plr].Misc[hold].Safety < Data->P[plr].Misc[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(11);
                     }
 
                     draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
@@ -388,7 +388,7 @@ void MisAnn(char plr, char pad)
                     Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                     if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(11);
                     }
 
                     draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
@@ -413,7 +413,7 @@ void MisAnn(char plr, char pad)
                         Data->P[plr].Probe[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                         if (Data->P[plr].Probe[hold].Safety < Data->P[plr].Probe[hold].MaxRD && Data->P[plr].Probe[hold].Damage == 0) {
-                            display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(11);
                         }
 
                         draw_number(0, 0, Data->P[plr].Probe[hold].Safety +
@@ -430,7 +430,7 @@ void MisAnn(char plr, char pad)
                         Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                         if (Data->P[plr].Probe[hold].Safety < Data->P[plr].Probe[hold].MaxRD && Data->P[plr].Probe[hold].Damage == 0) {
-                            display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(11);
                         }
 
                         draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
@@ -454,7 +454,7 @@ void MisAnn(char plr, char pad)
                         Data->P[plr].Rocket[hold - 1].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
 
                         if (Data->P[plr].Rocket[hold - 1].Safety < Data->P[plr].Rocket[hold - 1].MaxRD && Data->P[plr].Rocket[hold - 1].Damage == 0) {
-                            display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(11);
                         }
 
                         draw_number(0, 0, Data->P[plr].Rocket[hold - 1].Safety +
@@ -472,7 +472,7 @@ void MisAnn(char plr, char pad)
                         (Data->P[plr].Rocket[hold - 5].Damage != 0 || Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage != 0) ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment && Booster's Safety Mod, Nikakd, 10/8/10
 
                         if ((Data->P[plr].Rocket[hold - 5].Safety < Data->P[plr].Rocket[hold - 5].MaxRD || Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety < Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxRD) && Data->P[plr].Rocket[hold - 5].Damage == 0 && Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage == 0) {
-                            display::graphics.setForegroundColor(9);
+                            display::graphics.setForegroundColor(11);
                         }
 
                         draw_number(0, 0, RocketBoosterSafety(Data->P[plr].Rocket[hold - 5].Safety + Data->P[plr].Rocket[hold - 5].Damage, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage));
@@ -499,7 +499,7 @@ void MisAnn(char plr, char pad)
                         Data->P[plr].Misc[hold].Damage != 0 ? 9 : 1);
 
                     if (Data->P[plr].Misc[hold].Safety < Data->P[plr].Misc[hold].MaxRD && Data->P[plr].Misc[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(9);
+                        display::graphics.setForegroundColor(11);
                     }
 
                     draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
