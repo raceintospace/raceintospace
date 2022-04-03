@@ -385,10 +385,16 @@ void Intel(char plr)
 }
 
 
+/**
+ * Create a mission intel report.
+ *
+ * \param plr  the country index.
+ * \param acc  true if the intel is accurate.
+ */
 void MisIntel(char plr, char acc)
 {
-    int i = 0, mr, j = 0, k = 0, save[20], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
-    char mis, found;
+    int i = 0, mr, j = 0, k = 0, tot = 0, nf = 0, seg = 0;
+    char mis;
     static char F[3][14] = {
         {6, 1, 2, 3, 4, 5},  //58 & 59
         {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16},  // 60 to 64
@@ -400,11 +406,13 @@ void MisIntel(char plr, char acc)
         {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
 
-    for (i = 0; i < 20; i++) {
-        save[i] = 0;
-    }
-
     if (acc == 0) {
+        int save[20];
+
+        for (i = 0; i < 20; i++) {
+            save[i] = 0;
+        }
+
         switch (Data->Year) {
         case 58:
         case 59:
@@ -481,59 +489,34 @@ void MisIntel(char plr, char acc)
         if (j > 0) {
             j = j - 1;
         }
-    }  // end if
-    else {
-        found = 0;
 
-        //  Mission intelligence
-        for (i = 0; i < 20; i++) {
-            save[i] = 0;
-        }
+        mis = save[j];
+    } else {
+        int save[2 * MAX_MISSIONS];
+        int found = 0;
 
         for (i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
-                save[found] = mis;
-                ++found;
+                save[found++] = mis;
             }
         }
 
         for (i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
                 mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
-                save[found] = mis;
-                ++found;
+                save[found++] = mis;
             }
         }
 
-        //}
-        for (i = lo; i < hi; i++) {
-            if (save[i] > 0) {
-                j++;    // Check if event is good.
-            }
-        }
-
-        if (j <= 1) {
+        if (!found) {
             MisIntel(plr, 0);
             return;
         }
 
-        j = brandom(hi - lo);
-        k = 0;
-
-        while ((k < (hi - lo)) && (save[j] == 0)) {
-            // finds candidate
-            j = brandom(hi - lo);
-            k++;
-        }
-
-        if (k >= 20) {
-            MisIntel(plr, 0);
-            return;
-        }
+        mis = save[brandom(found)];
     }
 
-    mis = save[j];
     mr = Data->P[plr].PastIntel[0].cur;
     nf = 0;
 
