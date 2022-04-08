@@ -22,9 +22,9 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty & Morgan Roarty
 //
-// Museum Main Files
+// Pentagon / KGB Headquarters Main Files
 
-// This page handles the Intelligence Briefing
+// This page handles the Intel Library and CIA/KGB Statistics
 
 #include "intel.h"
 
@@ -52,6 +52,37 @@
 #include "hardware.h"
 #include "hardware_buttons.h"
 #include "logging.h"
+
+
+/**
+ * Intelligence Briefings
+ *
+ * The Intel briefings are tracked by 'program' and 'index'. The
+ * program keeps track of what class of intel is being reviewed,
+ * while the index keeps track of the specific mission, hardware, etc.
+ *
+ * Program
+ * 0: Probes / (Astro/Cosmo)nauts / Launch Facilities
+ * 1: Rockets
+ * 2: Manned Craft (Capsules, LMs)
+ * 3: Misc. Hardware
+ * 4: - None -
+ * 5: Planned Mission
+ *
+ * The first four entries correspond to the EquipmentIndex for the
+ * most part, which is logical. But while Space Program / Administration
+ * stuff like 'nauts and launch facilities would logically be classified
+ * as their own program (4), they are lumped in with Probes, and their
+ * space left empty.
+ *
+ * This appears to be connected to how the legacy image storage,
+ * INTEL.BUT, stored the briefing images. The position of the image
+ * within the file would be calculated based on the program and index
+ * values, plus an offset if a USSR player was viewing reports on US
+ * programs. Combining Admin & Probes saved disk space in this
+ * calculation.
+ */
+
 
 // imported from CODENAME.DAT
 const char *code_names[] = {
@@ -305,6 +336,11 @@ unsigned int BriefingIndex(const char year, const char season)
 }
 
 
+/**
+ * The interface for the main Intel center (CIA/KGB) menu.
+ *
+ * \param plr  The player viewing the intel.
+ */
 void Intel(char plr)
 {
     char IName[3][22] = {"LIBRARY", "CIA STATISTICS", "EXIT INTELLIGENCE"};
@@ -386,9 +422,9 @@ void Intel(char plr)
 
 
 /**
- * Create a mission intel report.
+ * Create a mission intel report describing a planned launch.
  *
- * \param plr  the country index.
+ * \param plr  the active player (0 for USA, 1 for USSR).
  * \param acc  true if the intel is accurate.
  */
 void MisIntel(char plr, char acc)
@@ -535,8 +571,10 @@ void MisIntel(char plr, char acc)
 }
 
 /**
+ * Display the Intel Library report for a planned mission.
+ *
  * \param plr  the player index
- * \param mis  the mission code (mStr.Index)
+ * \param mis  the mission code (mStr::Index)
  * \param year the year of the intelligence report
  */
 void XSpec(char plr, char mis, char year)
@@ -607,6 +645,14 @@ void XSpec(char plr, char mis, char year)
     DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
+
+/**
+ * View an intel report discussing astronaut/cosmonaut recruitment
+ * or a launch facility purchase.
+ *
+ * \param plr  the active player.
+ * \param ind  3/4 for a launch pad B/C, 5/6 for recruit class I/II.
+ */
 void Special(char plr, int ind)
 {
 
@@ -697,10 +743,16 @@ void Special(char plr, int ind)
 
 
 /**
- * View Intelligence report.
+ * View an intelligence report for a given turn.
+ *
+ * The task of drawing mission briefings is passed off to XSpec()
+ * and briefings for Launch facilities or (Astro/Cosmo)nauts is handed
+ * off to the Special() function. This method draws the intelligence
+ * briefing for hardware projects, which includes opponent probes,
+ * rockets, manned craft, and miscellaneous hardware.
  *
  * \param plr   player index.
- * \param year  the year the intel was collected.
+ * \param year  the report's index (# of years since 1958).
  */
 void BackIntel(char plr, char year)
 {
@@ -717,13 +769,16 @@ void BackIntel(char plr, char year)
     draw_character(Data->P[plr].PastIntel[year].code);
     draw_string(0, 0, "-");
 
+    // TODO: BackIntel uses the current season even when displaying
+    // old intel. Since intel is only collected in the fall (due to
+    // PastIntel size limitations), that should be used.
     if (Data->Season == 0) {
         draw_string(0, 0, "S");
     } else {
         draw_string(0, 0, "F");
     }
 
-    if (year < Data->Year - 59) {
+    if (year < Data->Year - 59) {  // TODO: Should use PastIntel[0].cur
         draw_up_arrow_highlight(137, 42);
     } else {
         draw_up_arrow(137, 42);
@@ -893,6 +948,19 @@ void BackIntel(char plr, char year)
     }
 }
 
+
+/**
+ * Create an intel report detailing the opponent's hardware
+ * capabilities.
+ *
+ * An 'inaccurate' report selects a program reasonably plausible for
+ * the time period and reports on it. An 'accurate' reports details
+ * a program the opponent *does* have. Both generate a random safety
+ * rating.
+ *
+ * \param plr  the active player (0 for USA, 1 for USSR).
+ * \param acc  true if the intel report is accurate.
+ */
 void HarIntel(char plr, char acc)
 {
     int mr, i, prg = 0, ind = 0, j = 0, k = 0, save[28], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
@@ -1176,6 +1244,7 @@ void HarIntel(char plr, char acc)
     SaveIntel(plr, prg, ind);
 }
 
+
 /* Clears the Intel image area and draws the intel background layer.
  */
 void DrawIntelBackground()
@@ -1185,6 +1254,7 @@ void DrawIntelBackground()
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
 }
+
 
 /* Draws the image for an Intelligence Briefing.
  *
@@ -1230,6 +1300,65 @@ void DrawIntelImage(char plr, char poff)
     display::graphics.screen()->draw(image, 153, 32);
 }
 
+
+/**
+ * Save an Intel Library briefing to record.
+ *
+ * Each Intel briefing is given a unique ID, its' record # within
+ * the CIA/KGB's filing system. It takes the form
+ *    {num}{code}-{Season}{Year}
+ * where Season (F or S) and Year (ex: 62) are the date when the
+ * intel was collected. For example, 7183V-F59.
+ *
+ * Intel reports are stored in BuzzData::PastIntel[].
+ * PastIntel structs have seven fields:
+ *
+ *   char code
+ *   int16_t num
+ *   char prog
+ *   char cur
+ *   char index
+ *   char SafetyFactor
+ *   char cdex
+ *
+ * 'code' and 'num' are components of the intel briefing's id.
+ * 'code' is a random letter and 'num' a random four-digit value.
+ *
+ * 'prog' records the type of intel recorded. Options are
+ *   0: Hardware intel for a probe, or
+ *      a new astronaut/cosmonaut recruit class, or
+ *      a launch facility purchase.
+ *   1: Hardware intel for a rocket program.
+ *   2: Hardware intel for a manned program.
+ *   3: Hardware intel for a kicker, EVA suit, or docking module.
+ *   5: Mission intel (an upcoming launch)
+ *
+ * PastIntel[0].cur is used to store how many entries of the array
+ * have been filled (i.e. its length).
+ *
+ * 'index' is contextually dependent on 'prog'.
+ *   - For hardware intel, it's the program index for the type
+ *     specified by 'prog'.
+ *   - For mission intel, it's the mission code.
+ *   - For a launch facility it's 3 or 4 for Pad B or C, respectively.
+ *   - For a class of recruits, 'index' is 5 or 6 for the first or
+ *     second class, respectively.
+ *
+ * 'SafetyFactor' is also contextually dependent on 'prog'.
+ *   - For hardware intel, the program's safety rating.
+ *   - For mission intel, designates the correct intel image.
+ *   - Not used for launch facility / recruit classes.
+ *
+ * 'cdex' is a random value [0, 5] used as part of an index into
+ * the code_names array to determine the briefing's Code Name.
+ *
+ * TODO: Even 'accurate' hardware reports use a completely random
+ * SafetyFactor for the hardware program.
+ *
+ * \param plr
+ * \param prg  the type of intel briefing.
+ * \param ind  the program index/mission code/recruit class/facility.
+ */
 void SaveIntel(char plr, char prg, char ind)
 {
     char Op[61] = {
@@ -1255,6 +1384,7 @@ void SaveIntel(char plr, char prg, char ind)
     Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].index = ind;
     j = brandom(100);
 
+    // TODO: Why not k = brandom(3)? Or k = brandom(99) / 33?
     if (j < 33) {
         k = 0;
     } else if (j < 66) {
@@ -1286,6 +1416,11 @@ void SaveIntel(char plr, char prg, char ind)
 /**
  * Updates the Intel hardware table.
  *
+ * TODO: Explain _why_ the algorithm chosen is used...
+ * TODO: This overwrites the previous value, even if that value is a
+ * just-researched Intel briefing. Not that one random value is better
+ * than the other...
+ *
  * \param plr
  * \param hd   The hardware field (per EquipmentIndex enum).
  * \param dx   The hardware program index (per EquipProbeIndex, etc.).
@@ -1298,7 +1433,11 @@ void ImpHard(char plr, char hd, char dx)
         program.MaxRD - brandom(program.MaxSafety - program.MaxRD);
 }
 
+
 /* Updates the hardware statistics table in the Intelligence section.
+ *
+ * TODO: Should ImpHard be called with plr or other(plr)?
+ * If plr, document the reasoning behind the choice.
  *
  * \param plr  Player side (0 for USA, 1 for USSR)
  */
@@ -1409,6 +1548,7 @@ void UpDateTable(char plr)
     }  // for
 }
 
+
 /* Updates the current intelligence information for a player about
  * opponent plans and capabilities.
  *
@@ -1486,8 +1626,13 @@ void IntelPhase(char plr, char pt)
 
 
 /**
- * Draws the background for the Intelligence Briefing screen, including
- * buttons and text but excluding entry-specific text.
+ * Draws the standard background layout for the Intelligence Library
+ * screen.
+ *
+ * Draws the Library interface including buttons and text but
+ * excluding entry-specific text.
+ *
+ * \param plr  the active player's country index.
  */
 void DrawBre(char plr)
 {
@@ -1532,8 +1677,17 @@ void DrawBre(char plr)
 
 
 /**
- * Clear the text in the Intelligence Briefing screen so a new
- * report may be displayed.
+ * Clear the text in the Intel Library screen so a new report may be
+ * displayed.
+ *
+ * Scrub the entered data from the Briefing template for reuse.
+ * This method is quicker than redrawing the entire Library template,
+ * as done in DrawBre. The values used depend upon the specific
+ * positioning of text strings in other draw functions, and may need
+ * adjusting if those are altered.
+ *
+ * This does not clear the briefing image, which is handled
+ * separately.
  */
 void ClearIntelReportText()
 {
@@ -1548,8 +1702,11 @@ void ClearIntelReportText()
 
 
 /**
- * Creates the Intelligence Briefing screen in the Pentagon/KGB and
- * handles its control loop.
+ * Interface for the Intel Library.
+ *
+ * Navigates the Intel briefings, ordered chronologically.
+ *
+ * \param plr  the active player index.
  */
 void Bre(char plr)
 {
@@ -1614,6 +1771,7 @@ void Bre(char plr)
     }
 }
 
+
 /**
  * Load the CIA hardware icons into a buffer image.
  *
@@ -1641,6 +1799,9 @@ boost::shared_ptr<display::LegacySurface> LoadCIASprite()
 }
 
 
+/**
+ * Draw the CIA/KGB Statistics screen (excluding the hardware buttons).
+ */
 void DrawIStat(char plr)
 {
     int i;
@@ -1684,6 +1845,10 @@ void DrawIStat(char plr)
 
 }
 
+
+/**
+ * Interface function for the CIA/KGB Statistics screen.
+ */
 void IStat(char plr)
 {
     int place = -1;
@@ -1782,10 +1947,32 @@ void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, i
     display::graphics.screen()->draw(local, s, t);
 }
 
+
+/**
+ * Illustrate the known hardware statistics in the CIA/KGB Statistics
+ * view.
+ *
+ * Draws a chart showing the known safety factors of the existing
+ * hardware programs. Values shown for a sides' own hardware are the
+ * current value, while safety values for opponent's hardware are
+ * pulled from intelligence findings (and thus may be inaccurate).
+ *
+ * Because the chart has to handle a side-by-side comparison of US
+ * and USSR hardware, LMs are displayed with Probes rather than
+ * Manned craft. Otherwise, Probes would have 6 items to display
+ * while Manned craft would have 14. As rocket illustrations are
+ * especially large, rocket boosters are shows in Miscellaneous.
+ *
+ * \param plr   the active player's country index.
+ * \param loc   hardware class to display (per EquipmentIndex enum).
+ * \param w     false if the graph area should be redrawn.
+ * \param dctx  the sprite with the hardware models.
+ */
 void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 {
     int i, sfu, sfs;
 
+    // Redraw the chart background
     if (w == 0) {
         GradRect(4, 23, 315, 159, 0);
 
