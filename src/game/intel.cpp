@@ -293,7 +293,9 @@ struct DisplayContext {
 
 inline unsigned int BriefingIndex();
 inline unsigned int BriefingIndex(char year, char season);
-void MisIntel(char plr, char acc);
+int MissionIntelFake(char plr);
+int MissionIntelReal(char plr);
+void MissionIntel(char plr, bool acc);
 void XSpec(char plr, char mis, char year);
 void Special(char plr, int ind);
 void BackIntel(char plr, char year);
@@ -421,153 +423,118 @@ void Intel(char plr)
 }
 
 
+
+/**
+ * Generate a fake mission report detailing an era-appropriate mission.
+ *
+ * While the plr variable is not used, it is reserved in case a future
+ * implementation wishes to return nation-specific missions such as the
+ * Soyuz Lunar Landing.
+ *
+ * \param plr  the active player.
+ * \return  the mission code or Mission_None on failure.
+ */
+int MissionIntelFake(char plr)
+{
+    int era, k, total = 0, roll = 0;
+    // TODO: Weights and Missions aren't aligned for mid-game era!
+    static const char F[3][14] = {
+        {6, 1, 2, 3, 4, 5},  //58 & 59
+        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16},  // 60 to 64
+        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
+    };
+    static const char Weights[3][16] = {
+        {11, 7, 3, 1, 1, 2, 2}, //58 & 59
+        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
+        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
+    };
+
+    if (Data->Year <= 59) {
+        era = 0;
+    } else if (Data->Year <= 64) {
+        era = 1;
+    } else {
+        era = 2;
+    }
+
+    roll = brandom(100);
+    k = 2;
+    total = 0;
+
+    do {
+        total += Weights[era][k] * Weights[era][0];
+    } while (roll > total && ++k < Weights[era][1]);
+
+    // Translate k from Weights[] to F[] indexing.
+    return (k < Weights[era][1]) ? F[era][k - 1] : Mission_None;
+}
+
+
+/**
+ * Identify an upcoming mission planned by an opposing player.
+ *
+ * \param plr  the active player.
+ * \return  the mission code or Mission_None if no candidate found.
+ */
+int MissionIntelReal(char plr)
+{
+    int save[2 * MAX_MISSIONS];
+    int found = 0;
+
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[other(plr)].Future[i].MissionCode) {
+            save[found++] = Data->P[other(plr)].Future[i].MissionCode;
+        }
+    }
+
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[other(plr)].Mission[i].MissionCode) {
+            save[found++] = Data->P[other(plr)].Mission[i].MissionCode;
+        }
+    }
+
+    return found ? save[brandom(found)] : Mission_None;
+}
+
+
 /**
  * Create a mission intel report describing a planned launch.
  *
  * \param plr  the active player (0 for USA, 1 for USSR).
  * \param acc  true if the intel is accurate.
  */
-void MisIntel(char plr, char acc)
+void MissionIntel(char plr, bool acc)
 {
-    int i = 0, mr, j = 0, k = 0, tot = 0, nf = 0, seg = 0;
-    char mis;
-    static char F[3][14] = {
-        {6, 1, 2, 3, 4, 5},  //58 & 59
-        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16},  // 60 to 64
-        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
-    };
-    static char W[3][16] = {
-        {11, 7, 3, 1, 1, 2, 2}, //58 & 59
-        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
-        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
-    };
+    bool prevReported = false;
+    int mis = Mission_None;
 
-    if (acc == 0) {
-        int save[20];
+    if (acc) {
+        mis = MissionIntelReal(plr);
 
-        for (i = 0; i < 20; i++) {
-            save[i] = 0;
+        if (mis == Mission_None) {
+            mis = MissionIntelFake(plr);
         }
-
-        switch (Data->Year) {
-        case 58:
-        case 59:
-            for (i = 1; i < F[0][0]; i++) {
-                save[i] = F[0][i];
-            }
-
-            break;
-
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-            for (i = 1; i < F[1][0]; i++) {
-                save[i] = F[1][i];
-            }
-
-            break;
-
-        default:
-            for (i = 1; i < F[2][0]; i++) {
-                save[i] = F[2][i];
-            }
-
-            break;
-        }
-
-        // i=Data->Year-58;
-        if (Data->Year <= 59) {
-            i = 0;
-        } else if (Data->Year <= 64) {
-            i = 1;
-        } else {
-            i = 2;
-        }
-
-        seg = W[i][0];
-        j = brandom(100);
-        k = 2;
-        nf = 0;
-        tot = 0;
-
-        while (nf == 0 && k < W[i][1]) {
-            tot = tot + W[i][k] * seg;
-
-            if (j <= tot) {
-                nf = 1;
-            } else {
-                k++;
-            }
-        }
-
-        nf = 0;
-
-        j = 0;
-
-        tot = 0;
-
-        k = k - 2;
-
-        while (nf == 0 && j < 20) {
-            if (tot == k) {
-                nf = 1;
-            } else if (save[j] >= 1) {
-                tot++;
-            }
-
-            if (nf == 0) {
-                j++;
-            }
-        }
-
-        if (j > 0) {
-            j = j - 1;
-        }
-
-        mis = save[j];
     } else {
-        int save[2 * MAX_MISSIONS];
-        int found = 0;
-
-        for (i = 0; i < MAX_MISSIONS; i++) {
-            if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
-                mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
-                save[found++] = mis;
-            }
-        }
-
-        for (i = 0; i < MAX_MISSIONS; i++) {
-            if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
-                mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
-                save[found++] = mis;
-            }
-        }
-
-        if (!found) {
-            MisIntel(plr, 0);
-            return;
-        }
-
-        mis = save[brandom(found)];
+        mis = MissionIntelFake(plr);
     }
 
-    mr = Data->P[plr].PastIntel[0].cur;
-    nf = 0;
+    assert(mis >= 0 && mis <= 56 + plr);
 
-    for (i = 0; i < mr; i++) {
-        if (Data->P[plr].PastIntel[i].prog == 5 && Data->P[plr].PastIntel[i].index == mis) {
-            nf = 1;
+    for (int i = 0; i < Data->P[plr].PastIntel[0].cur; i++) {
+        if (Data->P[plr].PastIntel[i].prog == 5 &&
+            Data->P[plr].PastIntel[i].index == mis) {
+            prevReported = true;
         }
     }
 
-    if (nf == 1 || mis > 56 + plr || mis < 0) {
+    // TODO: It would be nice to pass acc to HarIntel, but that sets
+    // up the possibiliity of an infinite loop.
+    if (mis == Mission_None || prevReported) {
         HarIntel(plr, 0);
         return;
     }
 
-    SaveIntel(plr, 5, (unsigned char) mis);
+    SaveIntel(plr, 5, (char) mis);
 }
 
 /**
@@ -1125,11 +1092,8 @@ void HarIntel(char plr, char acc)
         }
 
         nf = 0;
-
         j = 0;
-
         tot = 0;
-
         k = k - 2;
 
         while (nf == 0 && j < 28) {
@@ -1237,7 +1201,7 @@ void HarIntel(char plr, char acc)
 
     if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
         (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {
-        MisIntel(plr, 0);
+        MissionIntel(plr, false);
         return;
     }
 
@@ -1617,7 +1581,7 @@ void IntelPhase(char plr, char pt)
     if (splt < 500) {
         HarIntel(plr, acc);
     } else {
-        MisIntel(plr, acc);
+        MissionIntel(plr, acc);
     }
 
     Data->P[plr].PastIntel[0].cur++;
