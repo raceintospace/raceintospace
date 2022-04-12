@@ -436,17 +436,16 @@ void Intel(char plr)
  */
 int MissionIntelFake(char plr)
 {
-    int era, k, total = 0, roll = 0;
-    // TODO: Weights and Missions aren't aligned for mid-game era!
-    static const char F[3][14] = {
+    int era, k, total = 0, roll = 0, sumWeight;
+    static const char F[3][15] = {
         {6, 1, 2, 3, 4, 5},  //58 & 59
-        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16},  // 60 to 64
+        {14, 6, 25, 7, 9, 10, 11, 12, 13, 8, 14, 15, 18, 16},  // 60 to 64
         {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
     };
-    static const char Weights[3][16] = {
-        {11, 7, 3, 1, 1, 2, 2}, //58 & 59
-        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
-        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
+    static const char Weights[3][15] = {
+        {6, 3, 1, 1, 2, 2}, //58 & 59
+        {14, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
+        {11, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
 
     if (Data->Year <= 59) {
@@ -457,16 +456,19 @@ int MissionIntelFake(char plr)
         era = 2;
     }
 
-    roll = brandom(100);
-    k = 2;
+    sumWeight = std::accumulate(&Weights[era][1],
+                                Weights[era] + Weights[era][0],
+                                0);
+
+    roll = brandom(sumWeight) + 1;
+    k = 1;
     total = 0;
 
     do {
-        total += Weights[era][k] * Weights[era][0];
-    } while (roll > total && ++k < Weights[era][1]);
+        total += Weights[era][k];
+    } while (roll > total && ++k < Weights[era][0]);
 
-    // Translate k from Weights[] to F[] indexing.
-    return (k < Weights[era][1]) ? F[era][k - 1] : Mission_None;
+    return (k < Weights[era][0]) ? F[era][k] : Mission_None;
 }
 
 
