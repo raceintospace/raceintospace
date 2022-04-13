@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <numeric>
 
 #include "display/graphics.h"
 #include "display/surface.h"
