@@ -795,7 +795,7 @@ News(char plr)
 
         if (ctop > 0 && key == K_HOME) {
             // Home Key
-            ctop = 1;
+            ctop = 0;
             DrawNText(plr, ctop);
 
         } else if (ctop > 0 && key == K_PGUP) {
