@@ -2,10 +2,12 @@
 #define BZ_ANIMATION_H
 
 #include <stdint.h>
+#include <vector>
 
 #include <boost/shared_ptr.hpp>
 
 #include "display/legacy_surface.h"
+#include "display/palette.h"
 
 #include "data.h"
 
@@ -28,16 +30,13 @@ public:
 private:
     int mX, mY;
     int tFrames, cFrame;
-    int32_t aLoc;
     display::LegacySurface *dply;
-    FILE *fin;
     struct AnimType AHead;
-    struct BlockHead BHead;
+    std::vector<uint8_t *> mFrameData;
 
-    BZAnimation(int x, int y);
+    BZAnimation(struct AnimType header, display::Palette palette,
+                std::vector<uint8_t *> frames, int x, int y);
 
-    void openAnim(const char *fname);
-    int stepAnim(int x, int y);
 };
 
 

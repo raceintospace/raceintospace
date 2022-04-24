@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "display/graphics.h"
+#include "display/palette.h"
 
 #include "data.h"
 #include "endianness.h"
@@ -20,6 +21,9 @@ namespace
 {
 size_t ImportAnimType(FILE *fin, struct AnimType &target);
 size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
+uint8_t *ReadFrame(FILE *fin, int width, int height);
+display::Palette ReadPalette(FILE *fin, int offset, int colors);
+void SeekAnimation(FILE *fin, const char *name);
 };
 
 
@@ -28,11 +32,6 @@ size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
  *
  * This method automatically exports the animation's palette to the
  * global display.
- *
- * TODO: This basically uses openAnim as an initialization function.
- * That is done to clearly show how code is being moved and rewritten
- * as the class is created, as a step-by-step process rather than a
- * sudden dump of entirely new code. It will be changed.
  *
  * \param file  the animation file.
  * \param id    the animation ID.
@@ -59,9 +58,20 @@ BZAnimation::Ptr BZAnimation::load(
         throw IOException(msg);
     }
 
-    BZAnimation::Ptr animation( new BZAnimation(x, y) );
-    animation->fin = fin;
-    animation->openAnim(id);
+    struct AnimType AHead;
+    std::vector<uint8_t *> frames;
+
+    SeekAnimation(fin, id);
+    ImportAnimType(fin, AHead);
+    display::Palette palette = ReadPalette(fin, AHead.cOff, AHead.cNum);
+
+    for (int i = 0; i < AHead.fNum; i++) {
+        uint8_t *pixels = ReadFrame(fin, AHead.w, AHead.h);
+        frames.push_back(pixels);
+    }
+
+    BZAnimation::Ptr animation(
+        new BZAnimation(AHead, palette, frames, x, y));
 
     return animation;
 }
@@ -72,8 +82,12 @@ BZAnimation::Ptr BZAnimation::load(
  * \param x  the top-left x coordinate of the animation window.
  * \param y  the top-left y coordinate of the animation window.
  */
-BZAnimation::BZAnimation(int x, int y)
-    : dply(NULL), fin(NULL)
+BZAnimation::BZAnimation(struct AnimType header,
+                         display::Palette palette,
+                         std::vector<uint8_t *> frames,
+                         int x,
+                         int y)
+    : dply(NULL), AHead(header), mFrameData(frames)
 {
     if (x < 0 || x >= display::Graphics::WIDTH) {
         WARNING2("Animation param x=%d out of range.", x);
@@ -85,6 +99,16 @@ BZAnimation::BZAnimation(int x, int y)
 
     mX = x;
     mY = y;
+
+    dply = new display::LegacySurface(AHead.w, AHead.h);
+    dply->palette().copy_from(display::graphics.legacyScreen()->palette());
+
+    dply->palette().copy_from(
+        palette, AHead.cOff, AHead.cOff + AHead.cNum - 1);
+    display::graphics.legacyScreen()->palette().copy_from(dply->palette());
+
+    tFrames = AHead.fNum;
+    cFrame = 0;
 }
 
 
@@ -98,9 +122,13 @@ BZAnimation::~BZAnimation()
         delete dply;
     }
 
-    if (fin) {
-        fclose(fin);
+    for (int i = 0; i < mFrameData.size(); i++) {
+        delete[] mFrameData[i];
     }
+
+    // if (fin) {
+    //     fclose(fin);
+    // }
 }
 
 
@@ -109,96 +137,22 @@ BZAnimation::~BZAnimation()
  */
 void BZAnimation::advance()
 {
-    stepAnim(mX, mY);
-}
-
-
-/**
- * Open the animations file and seek the proper animation.
- */
-void BZAnimation::openAnim(const char *fname)
-{
-    struct TM {
-        char ID[4];
-        int32_t offset;
-        int32_t size;
-    } AIndex;
-
-    assert(fin);
-
-    // TODO: Add a check to make sure fname is found in file, else
-    // this becomes an infinite loop.
-    do {
-        // fread(&AIndex, sizeof AIndex, 1, fin);
-        fread(&AIndex.ID[0], sizeof(AIndex.ID), 1, fin);
-        fread(&AIndex.offset, sizeof(AIndex.offset), 1, fin);
-        fread(&AIndex.size, sizeof(AIndex.size), 1, fin);
-    } while (strncmp(AIndex.ID, fname, 4) != 0);
-
-    Swap32bit(AIndex.offset);
-    Swap32bit(AIndex.size);
-    fseek(fin, AIndex.offset, SEEK_SET);
-    ImportAnimType(fin, AHead);
-
-    dply = new display::LegacySurface(AHead.w, AHead.h);
-    dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-    {
-        display::AutoPal p(dply);
-        fread(&p.pal[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
-    }
-    aLoc = ftell(fin);
-    tFrames = AHead.fNum;
-    cFrame = 0;
-
-    display::graphics.legacyScreen()->palette().copy_from(dply->palette());
-}
-
-
-/**
- * Advance to the next frame of the animation and display it.
- *
- * \param x  the top-left x coordinate of the animation window.
- * \param y  the top-left y coordinate of the animation window.
- * \return  the count of remaining frames.
- */
-int BZAnimation::stepAnim(int x, int y)
-{
     if (cFrame == tFrames) {
-        fseek(fin, aLoc, SEEK_SET);
         cFrame = 0;
     }
 
     if (cFrame < tFrames) {
-        ImportBlockHead(fin, BHead);
+        uint8_t *pixels = mFrameData[cFrame];
+        memcpy(dply->pixels(), pixels, dply->width() * dply->height());
 
-        assert(BHead.fSize < 128 * 1024);
-        char *buf = (char *)alloca(BHead.fSize);
-        fread(buf, BHead.fSize, 1, fin);
-
-        switch (BHead.cType) {
-        case 0:
-            memcpy(dply->pixels(), buf, BHead.fSize);
-            break;
-
-        case 1:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        case 2:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        default:
-            break;
-        }
-
-        dply->pixels()[AHead.w * AHead.h - 1] = dply->pixels()[AHead.w * AHead.h - 2];
-        dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-        display::graphics.screen()->draw(*dply, x, y);
+        // dply->palette().copy_from(display::graphics.legacyScreen()->palette());
+        display::graphics.screen()->draw(*dply, mX, mY);
         cFrame++;
     }
 
-    return (tFrames - cFrame); //remaining frames
+    // TODO: Add duration method(s) to give access to time length,
+    // time remaining information.
+    // return (tFrames - cFrame); //remaining frames
 }
 
 
@@ -255,4 +209,116 @@ size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
     return (success ? 1 : 0);
 }
 
-};
+
+/**
+ * Reads and decodes the raw pixel data for a frame.
+ *
+ * The returned pixel data is an array of length (width * height),
+ * containing codes corresponding ti a 256-color palette. The relevant
+ * color space of that palette is found following the Animation Header.
+ *
+ * \param fin     File positioned at the start of the frame.
+ * \param width   The frame width (in pixels).
+ * \param height  The frame height (in pixels).
+ * \return  uncompressed pixel data.
+ */
+uint8_t *ReadFrame(FILE *fin, int width, int height)
+{
+    assert(fin);
+
+    struct BlockHead header;
+    ImportBlockHead(fin, header);
+
+    assert(header.fSize < 128 * 1024);
+    uint8_t *buf = (uint8_t *)alloca(header.fSize);
+    fread(buf, header.fSize, 1, fin);
+
+    uint8_t *frame = new uint8_t[width * height];
+
+    // TODO: Create an enum for the different compression codes.
+    // TODO: What makes codes 1 & 2 different?  - rnyoakum
+    switch (header.cType) {
+    case 0:
+        memcpy(frame, buf, header.fSize);
+        break;
+
+    case 1:
+        RLED_img((char *)buf, (char *)frame, header.fSize, width, height);
+        break;
+
+    case 2:
+        RLED_img((char *)buf, (char *)frame, header.fSize, width, height);
+        break;
+
+    default:
+        break;
+    }
+
+    frame[width * height - 1] = frame[width * height - 2];
+
+    return frame;
+}
+
+
+/**
+ * Reads the raw palette data from a file.
+ *
+ * \param fin  File positioned at the start of the animation palette data.
+ * \param offset  The start of the color space.
+ * \param colors  The number of colors in the color space.
+ * \return  a palette with colors defined for [offset, offset + colors).
+ * \throws  IOException  if palette data could not be read.
+ */
+display::Palette ReadPalette(FILE *fin, int offset, int colors)
+{
+    assert(fin);
+    display::Palette palette;
+
+    {
+        display::AutoPal p(palette);
+
+        if (! fread(&p.pal[offset * 3], colors * 3, 1, fin)) {
+            throw IOException("Could not read palette data.");
+        }
+    }
+
+    return palette;
+}
+
+
+/**
+ * Sets the file position to the start of the animation header.
+ *
+ * After calling the function, the file header will be positioned
+ * to read the AnimType data for the specified animation. If the
+ * named animation isn't found in the animation index, behavior
+ * is undefined.
+ *
+ * \param fin   An open .abz animation file.
+ * \param name  The 4-character animation identifier.
+ */
+void SeekAnimation(FILE *fin, const char *name)
+{
+    struct BZFileHeader {
+        char ID[4];
+        int32_t offset;
+        int32_t size;
+    } indexEntry;
+
+    assert(fin);
+    fseek(fin, 0, SEEK_SET);
+
+    // TODO: Add a check to make sure fname is found in file, else
+    // this becomes an infinite loop.
+    do {
+        fread(&indexEntry.ID[0], sizeof(indexEntry.ID), 1, fin);
+        fread(&indexEntry.offset, sizeof(indexEntry.offset), 1, fin);
+        fread(&indexEntry.size, sizeof(indexEntry.size), 1, fin);
+    } while (strncmp(indexEntry.ID, name, 4) != 0);
+
+    Swap32bit(indexEntry.offset);
+    Swap32bit(indexEntry.size);
+    fseek(fin, indexEntry.offset, SEEK_SET);
+}
+
+};  // End of namespace
