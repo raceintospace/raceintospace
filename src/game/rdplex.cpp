@@ -386,6 +386,15 @@ char RD(char player_index)
         Help("i048");
     }
 
+    // Warn player with little money that they should visit the VAB/VIB
+    int Unass = 0;
+    for (i = 0; i < 4; i++) {
+        if (Data->P[player_index].LaunchFacility[i] > 0 && Data->P[player_index].Mission[i].MissionCode > 0 && Data->P[player_index].Mission[0].Hard[4] == 0) { Unass += 1; }
+    }
+    if (Unass > 0 && Data->P[player_index].Cash < 61) {
+        Help("i173");
+    }
+
     while (1) {
         key = 0;
         GetMouse();
