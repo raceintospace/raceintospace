@@ -35,6 +35,7 @@
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "bzanim.h"
 #include "draw.h"
 #include "mmfile.h"
 #include "utils.h"
@@ -45,6 +46,7 @@
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "ioexception.h"
 #include "place.h"
 
 #define FRM_Delay 22
@@ -65,13 +67,8 @@ struct OF {
     int16_t idx;
 };
 
-int tFrames, cFrame;
 char SHTS[4];
-int32_t aLoc;
 int scrubMis;
-display::LegacySurface *dply;
-struct AnimType AHead;
-struct BlockHead BHead;
 
 char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -88,14 +85,9 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct OF> &Mob2);
 void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
-FILE *OpenAnim(char *fname);
-int CloseAnim(FILE *fin);
-int StepAnim(int x, int y, FILE *fin);
 char DrawMoonSelection(char plr, char nauts, const struct MisEval &step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
-size_t ImportAnimType(FILE *fin, struct AnimType &target);
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -842,6 +834,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 
     off = 64 + loc * 16;
 
+    // TODO: Rename variable to indicate purpose.
     display::LegacySurface boob(68, 46);
 
     bot = (uint16_t *) boob.pixels();
@@ -1311,10 +1304,19 @@ char FailureMode(char plr, int prelim, char *text)
 
     strcat(Name, ".BZ\0");
 
-    fin = OpenAnim(Name);
-    StepAnim(188, 47, fin);
+    BZAnimation::Ptr modelAnim;
 
-    last_secs = get_time();
+    try {
+        modelAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
+    } catch (IOException &err) {
+        ERROR4("Unable to load animation %s in file %s: %s",
+               Name, "LIFTOFF.ABZ", err.what());
+    }
+
+    if (modelAnim) {
+        last_secs = get_time();
+        modelAnim->advance();
+    }
 
     FadeIn(2, 10, 0, 0);
 
@@ -1327,9 +1329,9 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     while (1) {
-        if (get_time() - last_secs > .55) {
+        if (modelAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
-            StepAnim(188, 47, fin);
+            modelAnim->advance();
         }
 
         GetMouse();
@@ -1341,7 +1343,6 @@ char FailureMode(char plr, int prelim, char *text)
             delay(10);
             FadeOut(2, 10, 0, 0);
             //  DrawControl(plr);
-            CloseAnim(fin);
 
             display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
             display::graphics.screen()->draw(saveScreen, 0, 0);
@@ -1358,7 +1359,6 @@ char FailureMode(char plr, int prelim, char *text)
             delay(10);
             FadeOut(2, 10, 0, 0);
             //   DrawControl(plr);
-            CloseAnim(fin);
 
             display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
             display::graphics.screen()->draw(saveScreen, 0, 0);
@@ -1376,107 +1376,6 @@ char FailureMode(char plr, int prelim, char *text)
         }
     }
 }
-
-/** open the animations file and seek the proper animation
- *
- * \param fname Name of the Animation to search for
- */
-FILE *OpenAnim(char *fname)
-{
-    DEBUG2("->OpenAnim(fname %s)", fname);
-    FILE  *fin;
-    struct TM {
-        char ID[4];
-        int32_t offset;
-        int32_t size;
-    } AIndex;
-
-    fin = open_gamedat("LIFTOFF.ABZ");
-
-    if (!fin) {
-        WARNING1("can't access file LIFTOFF.ABZ");
-        return fin;
-    }
-
-    // TODO: Add a check to make sure fname is found in file, else
-    // this becomes an infinite loop.
-    do {
-        // fread(&AIndex, sizeof AIndex, 1, fin);
-        fread(&AIndex.ID[0], sizeof(AIndex.ID), 1, fin);
-        fread(&AIndex.offset, sizeof(AIndex.offset), 1, fin);
-        fread(&AIndex.size, sizeof(AIndex.size), 1, fin);
-    } while (strncmp(AIndex.ID, fname, 4) != 0);
-
-    Swap32bit(AIndex.offset);
-    Swap32bit(AIndex.size);
-    fseek(fin, AIndex.offset, SEEK_SET);
-    ImportAnimType(fin, AHead);
-
-    dply = new display::LegacySurface(AHead.w, AHead.h);
-    dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-    {
-        display::AutoPal p(dply);
-        fread(&p.pal[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
-    }
-    aLoc = ftell(fin);
-    tFrames = AHead.fNum;
-    cFrame = 0;
-
-    display::graphics.legacyScreen()->palette().copy_from(dply->palette());
-    DEBUG1("<-OpenAnim");
-    return fin;
-}
-
-int CloseAnim(FILE *fin)
-{
-    delete dply;
-    dply = NULL;
-    tFrames = cFrame = 0;
-    aLoc = 0;
-    fclose(fin);
-    return 0;
-}
-
-int StepAnim(int x, int y, FILE *fin)
-{
-    if (cFrame == tFrames) {
-        fseek(fin, aLoc, SEEK_SET);
-        cFrame = 0;
-    }
-
-    if (cFrame < tFrames) {
-        ImportBlockHead(fin, BHead);
-
-        assert(BHead.fSize < 128 * 1024);
-        char *buf = (char *)alloca(BHead.fSize);
-        fread(buf, BHead.fSize, 1, fin);
-
-        switch (BHead.cType) {
-        case 0:
-            memcpy(dply->pixels(), buf, BHead.fSize);
-            break;
-
-        case 1:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        case 2:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        default:
-            break;
-        }
-
-        dply->pixels()[AHead.w * AHead.h - 1] = dply->pixels()[AHead.w * AHead.h - 2];
-        dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-        display::graphics.screen()->draw(*dply, x, y);
-        cFrame++;
-    }
-
-    return (tFrames - cFrame); //remaining frames
-}
-
 
 
 void FirstManOnMoon(char plr, char isAI, char misNum,
@@ -1524,6 +1423,8 @@ void FirstManOnMoon(char plr, char isAI, char misNum,
 }
 
 
+// TODO: Move drawing the interface into its own function distinct
+// from the main control loop.
 char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 {
     // TODO: Using MX as a copy of MA to avoid modifying it is nice,
@@ -1582,11 +1483,19 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 
     strcat(Name, ".BZ\0");
 
-    // TODO: fin is never closed! It needs to be closed with CloseAnim().
-    fin = OpenAnim(Name);
-    StepAnim(188, 47, fin);
+    BZAnimation::Ptr moonAnim;
 
-    last_secs = get_time();
+    try {
+        moonAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
+    } catch (IOException &err) {
+        ERROR4("Unable to load animation %s in file %s: %s",
+               Name, "LIFTOFF.ABZ", err.what());
+    }
+
+    if (moonAnim) {
+        last_secs = get_time();
+        moonAnim->advance();
+    }
 
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
@@ -1625,9 +1534,9 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     key = 0;
 
     while (1) {
-        if (get_time() - last_secs > .55) {
+        if (moonAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
-            StepAnim(188, 47, fin);
+            moonAnim->advance();
         }
 
         GetMouse();
@@ -1738,52 +1647,3 @@ int ImportOF(FILE *fin, struct OF &target)
     return 0;
 }
 
-
-/**
- * Read an AnimType struct stored in a file as raw data.
- *
- * \param fin  Pointer to a FILE object that specifies an input stream.
- * \param target  The destination for the read data.
- * \return  1 if successful, 0 otherwise.
- */
-size_t ImportAnimType(FILE *fin, struct AnimType &target)
-{
-    bool success =
-        fread(&target.ID[0], sizeof(target.ID), 1, fin) &&
-        fread(&target.OVL[0], sizeof(target.OVL), 1, fin) &&
-        fread(&target.SD[0][0], sizeof(target.SD), 1, fin) &&
-        fread(&target.w, sizeof(target.w), 1, fin) &&
-        fread(&target.h, sizeof(target.h), 1, fin) &&
-        fread(&target.sPlay[0], sizeof(target.sPlay), 1, fin) &&
-        fread(&target.fNum, sizeof(target.fNum), 1, fin) &&
-        fread(&target.fLoop, sizeof(target.fLoop), 1, fin) &&
-        fread(&target.cOff, sizeof(target.cOff), 1, fin) &&
-        fread(&target.cNum, sizeof(target.cNum), 1, fin);
-
-    Swap16bit(target.w);
-    Swap16bit(target.h);
-    return (success ? 1 : 0);
-}
-
-
-/**
- * Read a BlockHead struct stored in a file as raw data.
- *
- * A BlockHead is a header in an animation file, at the beginning of
- * an animation frame. It contains a value for identifying the
- * compression, and the size (in bytes) of the animation pixel data
- * that follows.
- *
- * \param fin  Pointer to a FILE object that specifies an input stream.
- * \param target  The destination for the read data
- * \return  1 if successful, 0 otherwise
- */
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
-{
-    bool success =
-        fread(&target.cType, sizeof(target.cType), 1, fin) &&
-        fread(&target.fSize, sizeof(target.fSize), 1, fin);
-
-    Swap32bit(target.fSize);
-    return (success ? 1 : 0);
-}

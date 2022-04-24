@@ -32,6 +32,7 @@ set(game_sources
   ast4.cpp
   astros.cpp
   budget.cpp
+  bzanim.cpp
   crash.cpp
   crew.cpp
   downgrader.cpp
