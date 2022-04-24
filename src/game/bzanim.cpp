@@ -1,3 +1,21 @@
+/* Copyright (C) 2022
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ */
+
+
 #include "bzanim.h"
 
 #include <cassert>
@@ -58,27 +76,39 @@ BZAnimation::Ptr BZAnimation::load(
         throw IOException(msg);
     }
 
-    struct AnimType AHead;
+    struct AnimType header;
+
     std::vector<uint8_t *> frames;
 
     SeekAnimation(fin, id);
-    ImportAnimType(fin, AHead);
-    display::Palette palette = ReadPalette(fin, AHead.cOff, AHead.cNum);
 
-    for (int i = 0; i < AHead.fNum; i++) {
-        uint8_t *pixels = ReadFrame(fin, AHead.w, AHead.h);
+    ImportAnimType(fin, header);
+
+    display::Palette palette =
+        ReadPalette(fin, header.cOff, header.cNum);
+
+    for (int i = 0; i < header.fNum; i++) {
+        uint8_t *pixels = ReadFrame(fin, header.w, header.h);
         frames.push_back(pixels);
     }
 
     BZAnimation::Ptr animation(
-        new BZAnimation(AHead, palette, frames, x, y));
+        new BZAnimation(header, palette, frames, x, y));
 
     return animation;
 }
 
 
 /**
+ * Initializes the animation to the first frame.
  *
+ * The constructor exports the animation's palette to the global
+ * color space. This instance takes ownership of and responsibility
+ * for the memory holding the frame pixel data.
+ *
+ * \param header
+ * \param palette
+ * \param frames   the raw pixel data (as palette indexes).
  * \param x  the top-left x coordinate of the animation window.
  * \param y  the top-left y coordinate of the animation window.
  */
@@ -87,7 +117,7 @@ BZAnimation::BZAnimation(struct AnimType header,
                          std::vector<uint8_t *> frames,
                          int x,
                          int y)
-    : dply(NULL), AHead(header), mFrameData(frames)
+    : mDisplay(NULL), mHeader(header), mFrameData(frames)
 {
     if (x < 0 || x >= display::Graphics::WIDTH) {
         WARNING2("Animation param x=%d out of range.", x);
@@ -100,65 +130,62 @@ BZAnimation::BZAnimation(struct AnimType header,
     mX = x;
     mY = y;
 
-    dply = new display::LegacySurface(AHead.w, AHead.h);
-    dply->palette().copy_from(display::graphics.legacyScreen()->palette());
+    mDisplay = new display::LegacySurface(mHeader.w, mHeader.h);
+    mDisplay->palette().copy_from(
+        display::graphics.legacyScreen()->palette());
 
-    dply->palette().copy_from(
-        palette, AHead.cOff, AHead.cOff + AHead.cNum - 1);
-    display::graphics.legacyScreen()->palette().copy_from(dply->palette());
+    mDisplay->palette().copy_from(
+        palette, mHeader.cOff, mHeader.cOff + mHeader.cNum - 1);
+    display::graphics.legacyScreen()->palette().copy_from(
+        mDisplay->palette());
 
-    tFrames = AHead.fNum;
-    cFrame = 0;
+    mCurrentFrame = 0;
 }
 
 
 /**
- *
- *
+ * Clean up outstanding memory demands, particularly the pixel data.
  */
 BZAnimation::~BZAnimation()
 {
-    if (dply) {
-        delete dply;
+    if (mDisplay) {
+        delete mDisplay;
     }
 
     for (int i = 0; i < mFrameData.size(); i++) {
         delete[] mFrameData[i];
     }
-
-    // if (fin) {
-    //     fclose(fin);
-    // }
 }
 
 
 /**
  * Advance the animation to the next frame and display it.
+ *
+ * TODO: Currently, the animation loops indefinitely. The animation
+ * header has an fLoop field to specify how many loops to perform.
+ * This is likely irrelevant, but it would be nice to check.
  */
 void BZAnimation::advance()
 {
-    if (cFrame == tFrames) {
-        cFrame = 0;
+    if (mCurrentFrame == mHeader.fNum) {
+        mCurrentFrame = 0;
     }
 
-    if (cFrame < tFrames) {
-        uint8_t *pixels = mFrameData[cFrame];
-        memcpy(dply->pixels(), pixels, dply->width() * dply->height());
+    if (mCurrentFrame < mHeader.fNum) {
+        uint8_t *pixels = mFrameData[mCurrentFrame];
+        memcpy(mDisplay->pixels(), pixels, mDisplay->width() * mDisplay->height());
 
         // dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-        display::graphics.screen()->draw(*dply, mX, mY);
-        cFrame++;
+        display::graphics.screen()->draw(*mDisplay, mX, mY);
+        mCurrentFrame++;
     }
-
-    // TODO: Add duration method(s) to give access to time length,
-    // time remaining information.
-    // return (tFrames - cFrame); //remaining frames
 }
 
 
 //----------------------------------------------------------------------
 
-namespace {
+namespace
+{
 
 /**
  * Read an AnimType struct stored in a file as raw data.

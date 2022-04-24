@@ -6,18 +6,20 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "display/legacy_surface.h"
 #include "display/palette.h"
 
 #include "data.h"
 
 
 /**
+ * This class is an interface for an animation loaded from a .abz
+ * animation file.
  *
- *
- *
+ * TODO: Add duration methods to show the animation length & time
+ * remaining.
  */
-class BZAnimation {
+class BZAnimation
+{
 public:
     typedef boost::shared_ptr<BZAnimation> Ptr;
 
@@ -29,9 +31,10 @@ public:
 
 private:
     int mX, mY;
-    int tFrames, cFrame;
-    display::LegacySurface *dply;
-    struct AnimType AHead;
+    int mCurrentFrame;
+    // mDisplay is where frames are staged before being drawn.
+    display::LegacySurface *mDisplay;
+    struct AnimType mHeader;
     std::vector<uint8_t *> mFrameData;
 
     BZAnimation(struct AnimType header, display::Palette palette,
