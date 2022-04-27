@@ -107,7 +107,6 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-int goAhead;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -1050,7 +1049,6 @@ void Future(char plr)
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
-                goAhead = 0;
 
                 if (key > 0) {
                     delay(300);
@@ -1058,21 +1056,9 @@ void Future(char plr)
 
                 key = 0;
 
-                if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
-                    if (goAhead != 1) {
-                        goAhead = Help("i167");
-                    }
-
-                    if (goAhead != 1) {
-                        OutBox(244, 5, 313, 17);
-                        continue;
-                    }
-                } else {
-                    if (! FutureMissionOk(plr, nav, misType)) {
-                        OutBox(244, 5, 313, 17);
-                        goAhead = 0;
-                        continue;
-                    }
+                if (! FutureMissionOk(plr, nav, misType)) {
+                    OutBox(244, 5, 313, 17);
+                    continue;
                 }
 
                 OutBox(244, 5, 313, 17);
@@ -1576,6 +1562,17 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
     if (mission.Dur && nav.duration.value < mission.Days) {
         Help("i160");
         return false;
+    }
+
+    // Warn players they may need to launch a DM separately if they
+    // are planning an (ORBIT) mission.
+    // TODO: Add a Tutorial mode option to enable/disable advice?
+    if (mis == 17 || mis == 24 || mis == 28 || mis == 29) {
+        int goAhead = Help("i167");
+
+        if (goAhead != 1) {
+            return false;
+        }
     }
 
     if (options.classic) {

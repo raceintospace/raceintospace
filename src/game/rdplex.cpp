@@ -70,6 +70,7 @@ void ShowUnit(char hw, char un, char plr);
 void OnHand(char qty);
 void DrawHPurc(char plr);
 void BuyUnit(char hw2, char un2, char plr);
+void RDHelpWarnings(int plr);
 void ShowHardwareDescription(int player, int hardware, int unit);
 
 
@@ -363,36 +364,10 @@ char RD(char player_index)
 
     WaitForMouseUp();
 
-    // These two warnings are here on the principle that normally
-    // you would have both DMs and EVA suits before prototyping
-    // your lunar landing craft.
+    bool enableAdvice = true;  // TODO: Create an option for this?
 
-    // Warn player that they haven't started EVA suits yet,
-    // though they have an LM or Kicker-C or direct ascent capsule  -LPB
-    if (Data->P[player_index].Misc[3].Num < 0 && (Data->P[player_index].Manned[4].Num >= 0 || Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
-        Help("i046");
-    }
-
-    // Warn player that they haven't started DMs yet, though they
-    // have an LM or Kicker-C  -LPB
-    if (Data->P[player_index].Misc[4].Num < 0 && (Data->P[player_index].Manned[5].Num >= 0 || Data->P[player_index].Manned[6].Num >= 0 || Data->P[player_index].Misc[2].Num >= 0)) {
-        Help("i047");
-    }
-
-    // Warn player that they haven't started a kicker yet,
-    // though they have Gemini/Voskhod or a minishuttle fully researched
-    // -LPB
-    if ((Data->P[player_index].Misc[0].Num < 0 && Data->P[player_index].Misc[1].Num < 0) && Data->P[player_index].Manned[2].Num < 0 && (Data->P[player_index].Manned[1].Safety >= Data->P[player_index].Manned[1].MaxRD || Data->P[player_index].Manned[3].Safety >= Data->P[player_index].Manned[3].MaxRD)) {
-        Help("i048");
-    }
-
-    // Warn player with little money that they should visit the VAB/VIB
-    int Unass = 0;
-    for (i = 0; i < 4; i++) {
-        if (Data->P[player_index].LaunchFacility[i] > 0 && Data->P[player_index].Mission[i].MissionCode > 0 && Data->P[player_index].Mission[0].Hard[4] == 0) { Unass += 1; }
-    }
-    if (Unass > 0 && Data->P[player_index].Cash < 61) {
-        Help("i173");
+    if (enableAdvice) {
+        RDHelpWarnings(player_index);
     }
 
     while (1) {
@@ -2156,5 +2131,59 @@ BuyUnit(char category, char unit, char player_index)
     ShowUnit(category, unit, player_index);
     return;
 }
+
+
+/**
+ * Trigger advisory warnings when entering the R&D facility.
+ */
+void RDHelpWarnings(int plr)
+{
+    // These two warnings are here on the principle that normally
+    // you would have both DMs and EVA suits before prototyping
+    // your lunar landing craft.
+
+    // Warn player that they haven't started EVA suits yet,
+    // though they have an LM or Kicker-C or direct ascent capsule  -LPB
+    if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
+        Help("i046");
+    }
+
+    // Warn player that they haven't started DMs yet, though they
+    // have an LM or Kicker-C  -LPB
+    if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
+        Help("i047");
+    }
+
+    // Warn player that they haven't started a kicker yet,
+    // though they have Gemini/Voskhod or a minishuttle fully researched
+    // -LPB
+    if ((Data->P[plr].Misc[MISC_HW_KICKER_A].Num < 0 &&
+         Data->P[plr].Misc[MISC_HW_KICKER_B].Num < 0) &&
+        Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety >=
+         Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD ||
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >=
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD)) {
+        Help("i048");
+    }
+
+    // Warn player with little money that they should visit the VAB/VIB
+    if (Data->P[plr].Cash <= 60) {
+        for (int i = 0; i < MAX_MISSIONS; i++) {
+            if (Data->P[plr].Mission[i].MissionCode > 0 &&
+                Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
+                Help("i173");
+            }
+        }
+    }
+}
+
 
 /* vim: set noet ts=4 sw=4 tw=77 */
