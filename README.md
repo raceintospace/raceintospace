@@ -94,7 +94,7 @@ If you don't already have git installed, you'll also have to run:
 
     sudo apt install git
 
-You may also need to run:
+You may also need to run (especially if you get "No CMAKE_CXX_COMPILER could be found."):
 
     sudo apt-get install build-essential
 
