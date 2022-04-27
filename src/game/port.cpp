@@ -79,7 +79,7 @@
 
 int put_serial(unsigned char n);
 
-char RUSH, SUSPEND;
+char SUSPEND;
 
 typedef struct portoutlinerestore {
     uint16_t loc;
@@ -171,8 +171,16 @@ uint32_t pTable, pLoc;
 // TODO: Move other file variables here.
 namespace
 {
+char RUSH;
 boost::shared_ptr<display::LegacySurface> portViewBuffer;
+
+enum MissionReadyStatus {
+    MISSIONS_NONE = 0,
+    MISSIONS_UNSTAGED,
+    MISSIONS_UNSCHEDULED,
+    MISSIONS_READY
 };
+};  // End of anonymous namespace
 
 
 /**
@@ -222,6 +230,8 @@ void PortPlace(FILE *fin, int32_t table);
 void PortText(int x, int y, char *txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
+bool EndTurnOk(int plr);
+int MissionStatus(int plr);
 void PortOutLine(unsigned int Count, uint16_t *buf, char mode);
 void PortRestore(unsigned int Count);
 int MapKey(char plr, int key, int old) ;
@@ -1044,6 +1054,80 @@ DoCycle(void)                   // Three ranges of color cycling
     p.pal[j + 3 * i + 2] = tmp3;
 }
 
+
+/**
+ * Check if the player is cleared to end their turn.
+ *
+ * \param plr  the currently active player.
+ */
+bool EndTurnOk(int plr)
+{
+    int status = MissionStatus(plr);
+    bool enableTutorial = true;  // Implement option to disable advice
+
+    if (status == MISSIONS_UNSTAGED) {
+        Help("i005");
+        return false;
+    } else if (status == MISSIONS_UNSCHEDULED) {
+        Help("i103");
+        return false;
+    }
+
+    if (enableTutorial) {
+
+        // Warn player that they have no missions scheduled for next
+        // turn, except on the first turn of the game, or if you can't
+        // buy rockets next turn. -Leon
+        if (Data->P[plr].Rocket[0].Delay < 1 &&
+            !(Data->Year == 57 && Data->Season == 0)) {
+            bool future = false;
+
+            for (int i = 0; i < MAX_MISSIONS; i++) {
+                if (Data->P[plr].Future[i].MissionCode) {
+                    future = true;
+                    break;
+                }
+            }
+
+            if (!future && Help("i161") <= 0) {
+                return false;
+            }
+        }
+    }
+
+    if (status == MISSIONS_NONE) {
+        return Request(plr, "END TURN", 1);
+    } else {  // status == MISSIONS_READY
+        return Help("i004") >= 1;
+    }
+}
+
+
+/**
+ * Report on the status of the missions planned for the current turn.
+ */
+int MissionStatus(int plr)
+{
+    bool prepped = false;
+
+    // Check to see if missions are good to go
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[plr].Mission[i].MissionCode &&
+            Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
+            return MISSIONS_UNSTAGED;
+        }
+
+        prepped |= (Data->P[plr].Mission[i].MissionCode != Mission_None);
+    }
+
+    if (!prepped) {
+        return MISSIONS_NONE;
+    } else {
+        return RUSH ? MISSIONS_READY : MISSIONS_UNSCHEDULED;
+    }
+}
+
+
 /** ???
  *
  * \param mode ...  0 = ?   1 = copy stored outline ?
@@ -1579,7 +1663,7 @@ void Port(char plr)
  */
 char PortSel(char plr, char loc)
 {
-    int i, MisOK, LPad = 0;
+    int MisOK;
     Vab_Spot = 0;  // clear the damn thing.
 
     switch (loc) {
@@ -1755,27 +1839,16 @@ char PortSel(char plr, char loc)
     case PORT_MissionControl:
         helpText = "i018";
         keyHelpText = "k018";
-        MisOK = 0;
+        MisOK = MissionStatus(plr);
 
-        for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode &&
-                Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
-                MisOK = 10;
-            }
-
-            if (Data->P[plr].Mission[i].MissionCode) {
-                MisOK++;
-            }
-        }
-
-        if (MisOK >= 10) {
+        if (MisOK == MISSIONS_NONE) {
+            Help("i104");
+        } else if (MisOK == MISSIONS_UNSTAGED) {
             Help("i005");
-        } else if (MisOK > 0) {
+        } else {
             Rush(plr);
             RUSH = 1;
             return pREDRAW;
-        } else  {
-            Help("i104");
         }
 
         return pNOFADE;
@@ -1787,63 +1860,16 @@ char PortSel(char plr, char loc)
         return pREDRAW;
 
     case PORT_FlagPole:  // Flagpole : End turn
-        MisOK = 0;
 
-        // Check to see if missions are good to go
-        for (i = 0; i < 3; i++) {
-            if (Data->P[plr].Mission[i].MissionCode &&
-                Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
-                MisOK = 10;
+        if (EndTurnOk(plr)) {
+            if (Option != -1 && MissionStatus(plr) == MISSIONS_READY) {
+                put_serial(LET_O);
+                put_serial(LET_O);
+                put_serial(LET_O);
             }
 
-            if (Data->P[plr].Mission[i].MissionCode) {
-                MisOK++;
-            }
-
-            if (Data->P[plr].Future[i].MissionCode) {
-                LPad++;
-            }
-        }
-
-        if (Data->Year == 57 && Data->Season == 0) {
-            LPad = 1;
-        }
-
-        if (MisOK >= 10) {
-            Help("i005");
-            return pNOREDRAW;
-        } else if (LPad == 0 && Data->P[plr].Rocket[0].Delay < 1) {
-            // Warn player that they have no missions scheduled for next turn, except
-            // on the first turn of the game, or if you can't buy rockets next turn. -Leon
-            if (Help("i161") >= 0) {
-                LPad = 10;  // Set LPad above zero so you won't be warned again this turn  -Leon
-                i = Request(plr, "END TURN", 1);
-
-                if (i) {
-                    return pEXIT;
-                }
-            }
-        } else if (MisOK == 0) {
-            i = Request(plr, "END TURN", 1);
-
-            if (i) {
-                return pEXIT;
-            }
-        } else if (RUSH == 1 && MisOK > 0 && MisOK < 10) {
-            MisOK = Help("i004");           // Mission Control
-
-            if (MisOK >= 0) {
-                if (Option != -1) {
-                    put_serial(LET_O);
-                    put_serial(LET_O);
-                    put_serial(LET_O);
-                }
-
-                RUSH = 0;
-                return pEXIT;
-            }
-        } else if (RUSH == 0) {
-            Help("i103");
+            RUSH = 0;
+            return pEXIT;
         }
 
         return pNOREDRAW;
