@@ -7,7 +7,8 @@
 - Game brought over from Sourceforge to GitHub
 - Versioning system converted from CVS to GIT
 - Code converted from C to C++
-- Code cleanup to make the game easier to modify
+- Code cleanup to make the game easier to modify (#623, #626, among others)
+- Parts of the code brought into line with standards (#624)
 - Many of the data files and images have been changed to use discrete image files rather than being embedded into the code
 - Vestigial copy protection code finally removed (#493)
 - We've added some JSON serialization for game data and save games. (#478)
@@ -96,6 +97,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The game used to allow you to assign Duration missions with an illegally low duration (#257, #278)<br/>
 - Scrubbing a mission in the launch pad screen failed to free up any hardware you had purchased for 
   it (#292)<br/>
+- If you had two missions ready to launch, and the first was successful and flown with hardware at Max
+  Safety, if the second used the same hardware, that hardware would fly at above Max Safety (#614)
 - When the capsule's emergency-eject system has to be used, the mission would often continue right 
   after, or say it was used successfully but all the crew shows as dead (#244)<br/>
 - Fixed a  bug where a rocket suffers a major fire on the pad, destroying it; the crew survives, but 
@@ -127,6 +130,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - If your lunar landing failed with the message "Maneuvering failure, craft lands in rough terrain causing damage", 
   the mission would go straight to Lunar Orbital Activities, skipping the liftoff (#505)
 - On the lunar landing mission, the Photo Recon check was rolling against the Safety of the wrong device (#482)
+- Director rankings were being calculated improperly (#580)
  
  
 ### GAME CHANGES
@@ -146,6 +150,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
    - You've prototyped Gemini/Voskhod or a minishuttle, but haven't started a kicker yet<br/>
 - The VAB/VIB now has a Delay button to let you put a launch back a turn rather than having to scrub 
   it and reschedule. (#167)<br/>
+- R&D and Purchasing can now by closed with the Esc key as well as Enter.
 - In R&D and Purchasing, clicking on the image of the currently displayed hardware item will now pop 
   up a help message giving information about it (#467)<br/>
 - Similarly, in Future Missions, the name box is now a button that brings up a description of the 
@@ -170,12 +175,12 @@ Below are improvements that have been made over what the game offered in v.1.1.
   would show in the A-OK!/CAUTION!/DANGER! section.<br/>
 - Clicking on the image of the pad in Mission Control will now pop up a window that breaks down those 
   requirement penalties. (#168)<br/><br/>
-- In the VAB/VIB, any hardware whose Safety is below Max R&D will now show in deep red, so you can go back 
+- In the VAB/VIB, any hardware whose Safety is below Max R&D will now show in yellow, so you can go back 
   into R&D to research it more.  It was too easy to miss that before. (#166)
-- The VAB/VIB also now shows the Safety of your EVA suits, if they're below Max R&D or have been 
-  damaged (#166) <br/>
-- The last-minute launch confirmation screen now also shows hardware Safety percentages in red if they're 
-  below Max R&D. (#166)
+- The VAB/VIB also now shows the Safety of your EVA suits on missiones that will use them, if they're 
+  below Max R&D or have been damaged (#166) <br/>
+- The last-minute launch confirmation screen now also shows hardware Safety percentages in yellow if 
+  they're below Max R&D. (#166)
 - Lots of improvements to the help file: grammar corrections, readability, more clarifications, 
   and in a few places updates to reflect additions we've made to the game.<br/>
 - In single-player games, the Purchasing screen now includes a cheat: pressing $ will add 100MB to your 
@@ -197,6 +202,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The R&D building now greys out research teams you can't afford.  Also, if you are within 5 points 
   of Max R&D, teams will be greyed out so you can't assign more teams than there are points of Safety 
   you can gain by research (#318)<br/>
+- In the Time Capsule, if you hit Save game but change your mind, pressing Esc will cancel the save (#620)
 - In the Capsule Screen, crews assigned to a mission now show in a different color. Those assigned 
   to a mission for this turn show in blue, those for next turn in green; primary crews show in a 
   darker shade. And next to the capsule pic it says that they're Primary or Backup crew for this 
@@ -232,9 +238,14 @@ Below are improvements that have been made over what the game offered in v.1.1.
   version (Apollo was different only in the Basic Model) (#216)<br/>
 - Player now has more mission downgrade options - in particular, it is now possible to downgrade a Lunar 
   Landing to a Lunar Orbital LM Test<br/>
+- If your cash is at or below 60MB and you have mission(s) scheduled for this turn but haven't assembled 
+  them yet, if you open R&D it will now pop up a reminder to assemble the missions before spending your 
+  money on research (#511)
 - If you get the newscast saying you won't be able to purchase rockets for a year, or the equivalent one 
   for capsules, Future Missions will now warn you so you don't accidentally schedule missions you'll have 
   to cancel next turn. (#611)
+- The newscast saying a given piece of hardware has lost x% Safety could sometims claim it lost more 
+  than it actually had (#569)
 - Future Missions now shows the Duration Level (B-F) of manned missions above level A (#251)<br/>
 - In Mission Control, your downgrade options now include an option to scrub the flight.<br/>
 - If you scheduled an (Orbit) docking mission (which uses a DM left by a previous mission) 
@@ -314,7 +325,6 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The Credits are now in a different color to be easier to read against the background (#211)<br/>
 - Added names for people who were mentioned in a text file on the CD version but didn't actually 
   make it into the credits for that version<br/>
-- The waving flag sequence for the Soviet spaceport was generating CRC errors. (#594) <br/>
 - The result text in the Step Failure screen ("Catastrophic Failure", "All Systems Are Go", etc.) is 
   now centered in its box.  It used to be left-justified.<br/>
 - The Step Failure screen also used to underline the crew member who failed a roll, which wasn't very 
@@ -323,9 +333,13 @@ Below are improvements that have been made over what the game offered in v.1.1.
   backward. Now it shows Roll vs. Safety (e.g., 92 VS. 85).
 - At the end of a single-player game, if you clicked on STATS, it showed your opponent's name as 
   COMPUTER# (e.g., COMPUTER2), the # representing which strategy the computer player used.  Now it 
-  gives the name of the AI player and shows its strategy number. (#323)<br/>
+  gives the name of the AI player and shows the number of its (randomly) chosen strategy. (#323)
 - If any of the crew on the Moon landing is female, they now show in a different color 
   in the History section of the endgame.<br/>
 - In the screen that asks who will be first on the Moon, the names have been centered in their
   respective buttons. Longer names were bleeding out past the edge of the button. (#535)
+- People in Advanced Training now don't suffer the usual 4-point/turn loss of morale, since they're 
+  presumably being groomed for something special (#279)
+- In the Lunar Module screen, the square at the bottom showing TOTAL LM POINTS is now a button that 
+  brings up a pop-up explaining the LM Point system (#506)
 
