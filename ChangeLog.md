@@ -202,6 +202,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - The R&D building now greys out research teams you can't afford.  Also, if you are within 5 points 
   of Max R&D, teams will be greyed out so you can't assign more teams than there are points of Safety 
   you can gain by research (#318)<br/>
+- Saved games are now stored on disk with the name you give them, rather than as BUZZ1.SAV, BUZZ2.SAV, etc.
 - In the Time Capsule, if you hit Save game but change your mind, pressing Esc will cancel the save (#620)
 - In the Capsule Screen, crews assigned to a mission now show in a different color. Those assigned 
   to a mission for this turn show in blue, those for next turn in green; primary crews show in a 
