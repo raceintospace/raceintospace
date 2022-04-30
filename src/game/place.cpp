@@ -52,7 +52,7 @@
 #include "logging.h"
 
 void BCDraw(int y);
-void DispHelp(char top, char bot, char *txt);
+void DispHelp(char top, char bot, const char *txt);
 void writePrestigeFirst(char index);
 
 
@@ -400,11 +400,10 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
 }
 
 void
-DispHelp(char top, char bot, char *txt)
+DispHelp(char top, char bot, const char *txt)
 {
-    int i, pl = 0;
-
-    i = 0;
+    int i = 0;
+    int pl = 0;
 
     while (i++ < top) {
         if (txt[i * 42] == (char) 0xcc) {

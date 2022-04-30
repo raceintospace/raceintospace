@@ -227,7 +227,7 @@ void SpotCrap(char loc, char mode);
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
 void PortPlace(FILE *fin, int32_t table);
-void PortText(int x, int y, char *txt, char col);
+void PortText(int x, int y, const char *txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
 bool EndTurnOk(int plr);
@@ -237,7 +237,7 @@ void PortRestore(unsigned int Count);
 int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
-char Request(char plr, char *s, char md);
+char Request(char plr, const char *s, char md);
 size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
 size_t ImportMOBJ(FILE *fin, MOBJ &target);
 size_t ImportSPath(FILE *fin, struct sPATH &target);
@@ -765,7 +765,7 @@ void DrawSpaceport(char plr)
     }
 }
 
-void PortText(int x, int y, char *txt, char col)
+void PortText(int x, int y, const char *txt, char col)
 {
     fill_rectangle(1, 192, 160, 198, 3);
     display::graphics.setForegroundColor(0);
@@ -1921,7 +1921,7 @@ char PortSel(char plr, char loc)
 }
 
 
-char Request(char plr, char *s, char md)
+char Request(char plr, const char *s, char md)
 {
     char i;
     display::LegacySurface local(196, 84);

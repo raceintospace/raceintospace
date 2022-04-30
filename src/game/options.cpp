@@ -76,20 +76,20 @@ LOG_DEFAULT_CATEGORY(config)
 
 /*set up array for environment vars */
 static struct {
-    char *name;
+    const char *name;
     char **dest;
-    char *def_val;
+    const char *def_val;
 } env_vars[] = {
     {ENVIRON_DATADIR, &options.dir_gamedata, DEFAULT_DATADIR},
     {ENVIRON_SAVEDIR, &options.dir_savegame, DEFAULT_SAVEDIR},
 };
 
-static struct {
-    char *name; /**< name of option */
-    void *dest; /**< pointer to the variable holding the content */
-    char *format; /**< scanf format of the data we get */
+static const struct {
+    const char *name; /**< name of option */
+    const void *dest; /**< pointer to the variable holding the content */
+    const char *format; /**< scanf format of the data we get */
     int need_alloc; /**< max memory size to be allocated for value */
-    char *comment; /**< a note to the user */
+    const char *comment; /**< a note to the user */
 } config_strings[] = {
     {
         "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
@@ -265,7 +265,7 @@ parse_var_value(FILE *f, int index)
         }
     } else {
         /* config_strings[].dest points to a value */
-        void *target = config_strings[i].dest;
+        const void *target = config_strings[i].dest;
 
         res = fscanf(f, format, target, &chars);
 

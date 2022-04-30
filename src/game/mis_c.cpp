@@ -114,8 +114,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     struct oFGROUP *dSeq, cSeq;
     struct Table *F;
     char sName[20], err = 0;
-    char *SEQ_DAT = "SEQ.DAT";
-    char *FSEQ_DAT = "FSEQ.DAT";
+    const char *SEQ_DAT = "SEQ.DAT";
+    const char *FSEQ_DAT = "FSEQ.DAT";
     mm_file vidfile;
     FILE *mmfp;
     float fps;

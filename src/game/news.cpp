@@ -49,7 +49,7 @@
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
-static char *news_shots[] = { "angle", "opening", "closing" };
+static const char *news_shots[] = { "angle", "opening", "closing" };
 
 double load_news_anim_start;
 

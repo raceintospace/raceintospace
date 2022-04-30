@@ -105,7 +105,7 @@ char AI[2] = {0, 0};
 // Used to hold mid-turn save game related information
 INTERIMDATA interimData;
 
-char *S_Name[] = {
+const char *S_Name[] = {
     "LAUNCH",
     "ORBITAL INS. BURN",
     "HARDWARE POWER-ON",
