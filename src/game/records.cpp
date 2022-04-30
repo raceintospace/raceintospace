@@ -66,7 +66,7 @@ int Pict[56] = {
     317, 247, 239, 322, 291
 };
 
-char *Record_Names[56] = {
+const char *Record_Names[56] = {
     "ORBITAL SATELLITE",
     "MAN IN SPACE",
     "WOMAN IN SPACE",
@@ -126,9 +126,10 @@ char *Record_Names[56] = {
 };
 
 
-char *Months[12] = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-                     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-                   };
+const char *Months[12] = {
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+};
 
 int ISDOCK(int a)
 {

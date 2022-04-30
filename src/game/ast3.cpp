@@ -59,7 +59,7 @@ void InjuredNautCenter(char plr, int sel);
 void DrawTrain(char plr, char lvl)
 {
     char TrnName[20];
-    char *Trner = "TRAINING\0";
+    const char *Trner = "TRAINING\0";
 
     if (lvl == 0) {
         helpText = "i038";

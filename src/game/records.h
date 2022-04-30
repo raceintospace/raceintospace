@@ -45,9 +45,9 @@ extern Record_Entry rec[56][3];
 
 extern int Pict[56];
 
-extern char *Record_Names[56];
+extern const char *Record_Names[56];
 
-extern char *Months[12];
+extern const char *Months[12];
 
 
 #endif // RECORDS_H

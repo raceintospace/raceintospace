@@ -116,11 +116,11 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType);
 std::string GetBlockName();
 SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
-void FileText(char *name);
+void FileText(const char *name);
 int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
-char RequestX(char *s, char md);
+char RequestX(const char *s, char md);
 int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
@@ -926,7 +926,7 @@ SaveGameType GetSaveType(const SaveFileHdr &header)
  *
  * \param name  The filename to write the save under.
  */
-void save_game(char *name)
+void save_game(const char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
@@ -1082,7 +1082,7 @@ void BadFileType()
  *
  * \param name  A savegame filename.
  */
-void FileText(char *name)
+void FileText(const char *name)
 {
     FILE *fin;
     SaveFileHdr header;
@@ -1659,7 +1659,7 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b)
  * \param md  1 if the background underneath should be redrawn on close.
  * \return  1 for yes, 0 for no.
  */
-char RequestX(char *s, char md)
+char RequestX(const char *s, char md)
 {
     char i;
     display::LegacySurface local(196, 84);
