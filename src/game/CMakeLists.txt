@@ -30,6 +30,7 @@ set(game_sources
   ast2.cpp
   ast3.cpp
   ast4.cpp
+  ast_mod.cpp
   astros.cpp
   budget.cpp
   bzanim.cpp
