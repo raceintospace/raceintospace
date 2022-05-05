@@ -36,6 +36,7 @@
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "admin.h"
+#include "ast_mod.h"
 #include "draw.h"
 #include "options.h"
 #include "game_main.h"
@@ -478,6 +479,12 @@ void Prefs(int where)
                 }
             } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0) || key == 'E') {
                 // Edit astronauts has been ripped out
+                InBox(146, 30, 219, 61);
+                delay(500);
+                AstronautModification();
+                // TODO: Make sure *everything* is redrawn with the
+                // correct values!
+                DrawPrefs(where, hum1, hum2, dctx);
 
             } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) && (where == 3 || where == 0)) {  // Hist
                 char maxHModels;
