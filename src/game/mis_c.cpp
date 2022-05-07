@@ -1237,13 +1237,13 @@ char FailureMode(char plr, int prelim, char *text)
 
         case 2:
             draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(0, 0, MA[Mev[STEP].pad][2].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 3:
             draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(0, 0, MA[Mev[STEP].pad][3].A->Name);
             draw_string(0, 0, ")");
             break;
         }
