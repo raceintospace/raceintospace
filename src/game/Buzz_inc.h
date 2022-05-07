@@ -16,8 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __BUZZ_INC_H__
-#define __BUZZ_INC_H__ 1
+#ifndef RIS_BUZZ_INC_H
+#define RIS_BUZZ_INC_H 1
 
 extern "C" {
     int game_main(int argc, char *argv[]);
@@ -77,4 +77,4 @@ extern "C" {
 #include "macros.h"     // Collected Macros
 #include "fs.h"
 
-#endif /* __BUZZ_INC_H__ */
+#endif // RIS_BUZZ_INC_H

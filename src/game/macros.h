@@ -1,6 +1,5 @@
-
-#ifndef __MACROS_H__
-#define __MACROS_H__
+#ifndef RIS_MACROS_H
+#define RIS_MACROS_H
 
 #define ARRAY_LENGTH(arr) ((sizeof (arr)) / (sizeof ((arr)[0])))
 
@@ -41,5 +40,4 @@
 #define IsHumanPlayer(a) ( (plr[(a)]==0 || plr[(a)]==1) )
 
 
-#endif
-
+#endif // RIS_MACROS_H

@@ -1,5 +1,5 @@
-#ifndef __DATA_H__
-#define __DATA_H__
+#ifndef RIS_DATA_H
+#define RIS_DATA_H
 
 #include <stdint.h>
 
@@ -845,6 +845,6 @@ BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
 BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
 BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
 
-#endif // __DATA_H__
+#endif // RIS_DATA_H
 
 /* vim: set noet ts=4 sw=4 tw=77: */
