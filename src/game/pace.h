@@ -1,5 +1,5 @@
-#ifndef __PACE_H__
-#define __PACE_H__
+#ifndef RIS_PACE_H
+#define RIS_PACE_H
 
 #include <SDL/SDL.h>
 
@@ -42,4 +42,4 @@ extern int show_intro_flag;
 extern char *letter_dat;
 
 
-#endif /* __PACE_H__ */
+#endif // RIS_PACE_H
