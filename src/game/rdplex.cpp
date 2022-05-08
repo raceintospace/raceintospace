@@ -2180,6 +2180,7 @@ void RDHelpWarnings(int plr)
             if (Data->P[plr].Mission[i].MissionCode > 0 &&
                 Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 Help("i173");
+                break;
             }
         }
     }
