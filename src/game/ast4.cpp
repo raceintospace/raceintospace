@@ -26,6 +26,7 @@
 // This file handles the Capsule/Shuttle Screen.
 
 #include <cassert>
+#include <string>
 
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
@@ -45,10 +46,6 @@
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
-int missions;   // Variable for how many missions each 'naut has flown
-int retdel;  // Variable to store whether a given 'naut has announced retirement
-int sex;  // Variable to store a given 'naut sex
-
 
 void AstLevel(char plr, char prog, char crew, char ast);
 void DrawProgs(char plr, char prog);
@@ -57,7 +54,7 @@ void DrawPosition(char prog, int pos);
 void ClearIt(void);
 void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4);
 void AstStats(int plr, int prog, int man, int num);
-void AstNames(int man, char *name, char att);
+void AstNames(int man, const Astros &crew);
 void Flts(char old, char nw);
 void FltsTxt(char nw, char col);
 
@@ -933,8 +930,7 @@ void Programs(char plr, char prog)
                     InBox(245, 88, 314, 100);
                     Data->P[plr].Crew[prog][grp][CrewCount[grp]] = M[now2] + 1;
 
-                    AstNames(CrewCount[grp], &Data->P[plr].Pool[M[now2]].Name[0],
-                             Data->P[plr].Pool[M[now2]].Mood);
+                    AstNames(CrewCount[grp], Data->P[plr].Pool[M[now2]]);
                     Data->P[plr].Pool[M[now2]].Crew = grp + 1;
                     Data->P[plr].Pool[M[now2]].Task = CrewCount[grp];
                     Data->P[plr].Pool[M[now2]].Unassigned = 1;
@@ -1133,45 +1129,34 @@ void ClearIt(void)
 
 void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
 {
-    fill_rectangle(4, 40, 54, 66, 3);  /* Clear area that says Primary Crew Next Turn etc. */
+    /* Clear area that says Primary Crew Next Turn etc. */
+    fill_rectangle(4, 40, 54, 66, 3);
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
     if (M1 > 0) {
-        retdel = Data->P[plr].Pool[M1 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M1 - 1].Sex;  // Sets whether 'naut is male or female
-        missions = Data->P[plr].Pool[M1 - 1].Missions;
-        AstNames(0, &Data->P[plr].Pool[M1 - 1].Name[0], Data->P[plr].Pool[M1 - 1].Mood);
+        AstNames(0, Data->P[plr].Pool[M1 - 1]);
         AstStats(plr, prog, 0, M1 - 1);
     } else {
         DrawPosition(prog, 1);
     }
 
     if (M2 > 0) {
-        retdel = Data->P[plr].Pool[M2 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M2 - 1].Sex;  // Sets whether 'naut is male or female
-        missions = Data->P[plr].Pool[M2 - 1].Missions;
-        AstNames(1, &Data->P[plr].Pool[M2 - 1].Name[0], Data->P[plr].Pool[M2 - 1].Mood);
+        AstNames(1, Data->P[plr].Pool[M2 - 1]);
         AstStats(plr, prog, 1, M2 - 1);
     } else {
         DrawPosition(prog, 2);
     }
 
     if (M3 > 0) {
-        retdel = Data->P[plr].Pool[M3 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M3 - 1].Sex;  // Sets whether 'naut is male or female
-        missions = Data->P[plr].Pool[M3 - 1].Missions;
-        AstNames(2, &Data->P[plr].Pool[M3 - 1].Name[0], Data->P[plr].Pool[M3 - 1].Mood);
+        AstNames(2, Data->P[plr].Pool[M3 - 1]);
         AstStats(plr, prog, 2, M3 - 1);
     } else {
         DrawPosition(prog, 3);
     }
 
     if (M4 > 0) {
-        retdel = Data->P[plr].Pool[M4 - 1].RetirementDelay;  // Sets whether 'naut has announced retirement
-        sex = Data->P[plr].Pool[M4 - 1].Sex;  // Sets whether 'naut is male or female
-        missions = Data->P[plr].Pool[M4 - 1].Missions;
-        AstNames(3, &Data->P[plr].Pool[M4 - 1].Name[0], Data->P[plr].Pool[M4 - 1].Mood);
+        AstNames(3, Data->P[plr].Pool[M4 - 1]);
         AstStats(plr, prog, 3, M4 - 1);
     } else {
         DrawPosition(prog, 4);
@@ -1298,7 +1283,8 @@ void AstStats(int plr, int program, int man, int num)
     return;
 }
 
-void AstNames(int man, char *name, char att)
+
+void AstNames(int man, const Astros &crew)
 {
     switch (man) {
     case 0:
@@ -1324,67 +1310,74 @@ void AstNames(int man, char *name, char att)
 
     display::graphics.setForegroundColor(1);
 
-    if (sex == 1) {
-        display::graphics.setForegroundColor(18);    // Show name in blue if 'naut is female
+    if (crew.Sex == 1) {
+        // Show name in blue if 'naut is female.
+        display::graphics.setForegroundColor(18);
     }
 
-    if (retdel > 0) {
-        display::graphics.setForegroundColor(0);    // Show name in black if 'naut is male and has announced retirement
+    if (crew.RetirementDelay > 0) {
+        // Show name in black if 'naut is male and has announced
+        // retirement.
+        display::graphics.setForegroundColor(0);
     }
 
-    if (sex == 1 && retdel > 0) {
-        display::graphics.setForegroundColor(7);    // Show name in purple if 'naut is female and has announced retirement
+    if (crew.Sex == 1 && crew.RetirementDelay > 0) {
+        // Show name in purple if 'naut is female and has announced
+        // retirement.
+        display::graphics.setForegroundColor(7);
     }
+
+    std::string name(&crew.Name[0], ARRAY_LENGTH(crew.Name));
+
 
     switch (man) {
     case 0:
-        draw_string(17, 91, &name[0]);
+        draw_string(17, 91, name.c_str());
 
-        if (missions > 0) {
+        if (crew.Missions > 0) {
             draw_string(0, 0, " (");
-            draw_number(0, 0, missions);
+            draw_number(0, 0, crew.Missions);
             draw_string(0, 0, ")");
         }
 
         break;
 
     case 1:
-        draw_string(17, 100, &name[0]);
+        draw_string(17, 100, name.c_str());
 
-        if (missions > 0) {
+        if (crew.Missions > 0) {
             draw_string(0, 0, " (");
-            draw_number(0, 0, missions);
+            draw_number(0, 0, crew.Missions);
             draw_string(0, 0, ")");
         }
 
         break;
 
     case 2:
-        draw_string(17, 109, &name[0]);
+        draw_string(17, 109, name.c_str());
 
-        if (missions > 0) {
+        if (crew.Missions > 0) {
             draw_string(0, 0, " (");
-            draw_number(0, 0, missions);
+            draw_number(0, 0, crew.Missions);
             draw_string(0, 0, ")");
         }
 
         break;
 
     case 3:
-        draw_string(17, 118, &name[0]);
+        draw_string(17, 118, name.c_str());
 
-        if (missions > 0) {
+        if (crew.Missions > 0) {
             draw_string(0, 0, " (");
-            draw_number(0, 0, missions);
+            draw_number(0, 0, crew.Missions);
             draw_string(0, 0, ")");
         }
 
         break;
     }
 
-    uint8_t color = MoodColor(att);
+    uint8_t color = MoodColor(crew.Mood);
 
-//  if (retdel>0) color=7;
     switch (man) {
     case 0:
         fill_rectangle(5, 87, 11, 91, color);
