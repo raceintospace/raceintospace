@@ -45,8 +45,6 @@
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
-static char program;  /* Variable to store prog data for "Draws Astronaut attributes" section: 1=Mercury/Vostok...5=Jupiter/Kvartet */
-
 int missions;   // Variable for how many missions each 'naut has flown
 int retdel;  // Variable to store whether a given 'naut has announced retirement
 int sex;  // Variable to store a given 'naut sex
@@ -58,7 +56,7 @@ int CheckProgram(char plr, char prog);
 void DrawPosition(char prog, int pos);
 void ClearIt(void);
 void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4);
-void AstStats(char plr, char man, char num);
+void AstStats(int plr, int prog, int man, int num);
 void AstNames(int man, char *name, char att);
 void Flts(char old, char nw);
 void FltsTxt(char nw, char col);
@@ -1132,13 +1130,9 @@ void ClearIt(void)
     return;
 }
 
+
 void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
 {
-
-    program = prog; /* Sets capsule/shuttle program for "Draws Astronaut attributes" section */
-    /* 1=Mercury/Vostok, 2=Gemini/Voskhod, 3=Apollo/Soyuz, 4=XMS-2/Lapot, 5=Jupiter/Kvartet */
-    /* This will be used to highlight the skills for each crew member's role  -Leon */
-
     fill_rectangle(4, 40, 54, 66, 3);  /* Clear area that says Primary Crew Next Turn etc. */
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
@@ -1148,7 +1142,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
         sex = Data->P[plr].Pool[M1 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M1 - 1].Missions;
         AstNames(0, &Data->P[plr].Pool[M1 - 1].Name[0], Data->P[plr].Pool[M1 - 1].Mood);
-        AstStats(plr, 0, M1 - 1);
+        AstStats(plr, prog, 0, M1 - 1);
     } else {
         DrawPosition(prog, 1);
     }
@@ -1158,7 +1152,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
         sex = Data->P[plr].Pool[M2 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M2 - 1].Missions;
         AstNames(1, &Data->P[plr].Pool[M2 - 1].Name[0], Data->P[plr].Pool[M2 - 1].Mood);
-        AstStats(plr, 1, M2 - 1);
+        AstStats(plr, prog, 1, M2 - 1);
     } else {
         DrawPosition(prog, 2);
     }
@@ -1168,7 +1162,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
         sex = Data->P[plr].Pool[M3 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M3 - 1].Missions;
         AstNames(2, &Data->P[plr].Pool[M3 - 1].Name[0], Data->P[plr].Pool[M3 - 1].Mood);
-        AstStats(plr, 2, M3 - 1);
+        AstStats(plr, prog, 2, M3 - 1);
     } else {
         DrawPosition(prog, 3);
     }
@@ -1178,7 +1172,7 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
         sex = Data->P[plr].Pool[M4 - 1].Sex;  // Sets whether 'naut is male or female
         missions = Data->P[plr].Pool[M4 - 1].Missions;
         AstNames(3, &Data->P[plr].Pool[M4 - 1].Name[0], Data->P[plr].Pool[M4 - 1].Mood);
-        AstStats(plr, 3, M4 - 1);
+        AstStats(plr, prog, 3, M4 - 1);
     } else {
         DrawPosition(prog, 4);
     }
@@ -1188,8 +1182,18 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
 
 /** Draws Astronaut attributes
  *
+ * The program parameter is used for highlighting crew role attribues.
+ * It **does not** use the standard EquipMannedIndex values.
+ * Instead, it uses the indexing in the Crew[][][] array:
+ *    1=Mercury/Vostok   2=Gemini/Voskhod    3=Apollo/Soyuz
+ *    4=XMS-2/Lapot      5=Jupiter/Kvartet
+ *
+ * \param plr
+ * \param program  Capsule/shuttle index in Crew[].
+ * \param man
+ * \param num
  */
-void AstStats(char plr, char man, char num)
+void AstStats(int plr, int program, int man, int num)
 {
     int y, yy;
     display::graphics.setForegroundColor(1);

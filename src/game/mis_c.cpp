@@ -68,18 +68,12 @@ struct OF {
 };
 
 char SHTS[4];
-int scrubMis;
 
 char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, char clck, char mode, char tm);
-// void Plop(char plr,char mode);
-
-// Who and What the hell are "Shining Happy People?"
-
-
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct Infin> &Mob,
             const std::vector<struct OF> &Mob2);
@@ -1060,6 +1054,15 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
     return;
 }
 
+
+/**
+ * Interface for the Mission Step Failure report.
+ *
+ * \param plr    0 for the USA, 1 for the USSR.
+ * \param prelim
+ * \param text   description of the problem encountered.
+ * \return  0 to continue the mission, 1 to scrub.
+ */
 char FailureMode(char plr, int prelim, char *text)
 {
     int i, j, k;
@@ -1366,13 +1369,7 @@ char FailureMode(char plr, int prelim, char *text)
             FadeIn(2, 10, 0, 0);
             key = 0;
 
-            scrubMis = Help("i165");
-
-            if (scrubMis >= 0) {
-                return 1;  /* Scrub */
-            } else {
-                return 0;  /* Don't Scrub */
-            }
+            return Help("i165") >= 0;
         }
     }
 }
