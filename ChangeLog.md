@@ -7,7 +7,7 @@
 - Game brought over from Sourceforge to GitHub
 - Versioning system converted from CVS to GIT
 - Code converted from C to C++
-- Code cleanup to make the game easier to modify (#623, #626, #639, #644, $645, among others)
+Code cleanup to make the game easier to modify (#623, #626, #639, #644, $645, among others)
 - Parts of the code brought into line with standards (#624)
 - Many of the data files and images have been changed to use discrete image files rather than being embedded into the code (#51)
 - Vestigial copy protection code finally removed (#493)
