@@ -576,11 +576,11 @@ void DisplayRecruit(int plr, const struct ManPool &recruit)
     display::graphics.setForegroundColor(plr ? 9 : 6);
     draw_string(102, 139, recruit.Name);
     display::graphics.setForegroundColor(11);
-    draw_number(127, 155, recruit.Cap);
-    draw_number(127, 163, recruit.LM);
-    draw_number(127, 171, recruit.EVA);
-    draw_number(127, 179, recruit.Docking);
-    draw_number(127, 187, recruit.Endurance);
+    if (recruit.Cap == 1) { draw_number(128, 155, recruit.Cap); } else { draw_number(127, 155, recruit.Cap); }
+    if (recruit.LM == 1) { draw_number(128, 163, recruit.LM); } else { draw_number(127, 163, recruit.LM); }
+    if (recruit.EVA == 1) { draw_number(128, 171, recruit.EVA); } else { draw_number(127, 171, recruit.EVA); }
+    if (recruit.Docking == 1) { draw_number(128, 179, recruit.Docking); } else { draw_number(127, 179, recruit.Docking); }
+    if (recruit.Endurance == 1) { draw_number(128, 187, recruit.Endurance); } else { draw_number(127, 187, recruit.Endurance); }
 }
 
 
@@ -714,7 +714,7 @@ void DrawInterface()
     fill_rectangle(67, 131, 187, 189, 3);
     display::graphics.setForegroundColor(1);
     draw_string(72, 139, "NAME:");
-    draw_string(72, 147, "SKILL:");
+    draw_string(72, 147, "SKILLS:");
     draw_string(97, 155, "CAP");
     draw_string(97, 163, "L.M.");
     draw_string(97, 171, "EVA");
@@ -761,16 +761,16 @@ void DrawSkillEditor()
 {
     fill_rectangle(208, 131, 305, 141, 3);
     display::graphics.setForegroundColor(9);
-    draw_string(256 - TextDisplayLength("SKILL CHANGE") / 2, 138,
+    draw_string(257 - TextDisplayLength("SKILL CHANGE") / 2, 138,
                 "SKILL CHANGE");
 
     fill_rectangle(204, 150, 309, 195, 3);
     InBox(207, 150, 242, 160);
     display::graphics.setForegroundColor(9);
-    draw_string(211, 157, "MIN 0");
+    draw_string(213, 157, "MIN 0");
     InBox(271, 150, 306, 160);
     display::graphics.setForegroundColor(9);
-    draw_string(275, 157, "MAX 4");
+    draw_string(276, 157, "MAX 4");
 
     InBox(247, 150, 266, 160);
     fill_rectangle(248, 151, 265, 159, 0);
