@@ -93,101 +93,116 @@ static const struct {
 } config_strings[] = {
     {
         "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
-        "Path to directory with game data files."
+        "Path to directory with game data files (only if different from default location)."
     },
     {
-        "audio", &options.want_audio, "%u", 0,
-        "Set to 0 if you don't want audio in game."
+        "audio 1", &options.want_audio, "%u", 0,
+        "Set to 0 if you don't want audio in the game."
     },
     {
-        "nofail",  &options.want_cheats, "%u", 0,
+        "nofail 0",  &options.want_cheats, "%u", 0,
         "Set to 1 if you want every mission step check to succeed."
     },
     {
-        "intro", &options.want_intro, "%u", 0,
+        "intro 1", &options.want_intro, "%u", 0,
         "Set to 0 if do not want intro displayed at startup."
     },
     {
-        "fullscreen", &options.want_fullscreen, "%u", 0,
+        "fullscreen 0", &options.want_fullscreen, "%u", 0,
         "Set to 1 if you want (ugly) full-screen game."
     },
     {
-        "debuglevel", &options.want_debug, "%u", 0,
+        "debuglevel 0", &options.want_debug, "%u", 0,
         "Set to positive values to increase debugging verbosity."
     },
     {
-        "game_style", &options.classic, "%u", 0,
+        "game_style 0", &options.classic, "%u", 0,
         "Set to 1 to play the game in the classic style."
         "\n# This will override other configuration options in-game,"
         " forcing them\n# to their 'classic' setting."
     },
     {
-        "short_training", &options.feat_shorter_advanced_training, "%u", 0,
-        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (may cause trouble)."
+        "short_training 0", &options.feat_shorter_advanced_training, "%u", 0,
+        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (experimental)."
     },
     {
-        "female_nauts", &options.feat_female_nauts, "%u", 0,
+        "female_nauts 0", &options.feat_female_nauts, "%u", 0,
         "Set to determine when female astronauts may be recruited:"
-        "\n#   0  Classic (only after a news event)"
-        "\n#   1  Always allow recruitment"
+        "\n#   0  Classic (only after the newscast that requires it)"
+        "\n#   1  Always allow recruitment (newscast will still require it)"
     },
     {
-        "random_nauts", &options.feat_random_nauts, "%u", 0,
+        "random_nauts 0", &options.feat_random_nauts, "%u", 0,
         "Set to non-zero to enable randomization of 'nauts."
     },  //Naut Randomize, Nikakd, 10/8/10
     {
-        "compt_nauts", &options.feat_compat_nauts, "%u", 0,
-        "Set the compatibility level of nauts (10 is default, 1 complete)."
+        "compt_nauts 10", &options.feat_compat_nauts, "%u", 0,
+        "Set the compatibility level of 'nauts (10 is default, 1 complete)."
     }, //Naut Compatibility, Nikakd, 10/8/10
     {
-        "no_c_training", &options.feat_no_cTraining, "%u", 0,
-        "Set to zero to disable assigning crews in Training to a mission (Classic setting)."
+        "no_c_training 1", &options.feat_no_cTraining, "%u", 0,
+        "Crews that have just been assigned are in Training status. By default, newly"
+        "\n# assembled crews (i.e., those in Training) are not required to wait a turn"
+        "\n# before being assigned to a mission."
+        "\n# Set to zero to disable assigning crews in Training to a mission (Classic setting)."
     },   //No Capsule Training, Nikakd, 10/8/10
     {
-        "no_backup", &options.feat_no_backup, "%u", 0,
+        "no_backup 1", &options.feat_no_backup, "%u", 0,
         "Set to zero to require assigning a Backup crew (Classic setting)."
     },   // No Backup crew required -Leon
     {
-        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 0,
-        "By default astronaut/cosmonaut candidate stats are revealed based"
-        "\n# on Astronaut difficulty. Set to 0 to restore the classic "
-        "setting\n# where only Capsule and Endurance are shown."
+        "show_recruit_stats 1", &options.feat_show_recruit_stats, "%u", 0,
+        "By default, astronaut/cosmonaut candidate stats are revealed based on"
+        "\n# Astronaut difficulty level. Set to 0 to restore the classic setting"
+        "\n# where only Capsule and Endurance are shown."
     },   // Depending on difficulty, show recruit's Docking, EVA, LM
     {
-        "use_endurance", &options.feat_use_endurance, "%u", 0,
-        "Add the crew's endurance when making duration tests, and when "
-        "avoiding injury.\n# Set to 0 to disabled (Classic setting)."
+        "use_endurance 1", &options.feat_use_endurance, "%u", 0,
+        "By default, crew's endurance is added to duration steps of missions,"
+        "\n# and when a newscast has someone retire or be injured, high endurance"
+        "\n# makes them less likely to retire."
+        "\n# Set to 0 to disable (Classic setting)."
 
     },
     {
-        "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
-        "Set to non-zero to disable damaged equipment (will prevent future damage)."
+        "cheat_no_damage 0", &options.cheat_no_damage, "%u", 0,
+        "Set to non-zero to disable damaged equipment - will not affect equipment already damaged."
+        "\n# ('Damaged' means you have to pay xMB to avoid a y% penalty on its next mission.)"
     },
     {
-        "no_money_cheat", &options.no_money_cheat, "%u", 0,
-        "Set to 1 to disallow the money cheat in Purchasing (Classic setting)"
+        "no_money_cheat 0", &options.no_money_cheat, "%u", 0,
+        "Set to 1 to disallow the money cheat in Purchasing (Classic setting)."
+        "\n# (By default, in single-player games, pressing $ in Purchasing raises your Cash by 100MB.)"
     },
     /* These two removed because they were never implemented, per #520
         {
-            "random_eq", &options.feat_random_eq, "%u", 0,
+            "random_eq 0", &options.feat_random_eq, "%u", 0,
             "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
         },
         {
-            "eq_name_change", &options.feat_eq_new_name, "%u", 0,
+            "eq_name_change 0", &options.feat_eq_new_name, "%u", 0,
             "Set to non-zero to be able to change equipment name when starting a new game."
         },
     */
     {
-        "atlasLunar", &options.cheat_atlasOnMoon, "%u", 0,
-        "Set to non-zero to enable Atlas rockets in lunar missions."
+        "atlasLunar 0", &options.cheat_atlasOnMoon, "%u", 0,
+        "Set to non-zero to enable Atlas/R-7 rockets on lunar missions."
+        "\n# (By default, leaving Earth orbit requires at least a Titan/Proton.)"
     },
     {
-        "succesRDMax", &options.cheat_addMaxS, "%u", 0,
-        "Set to zero to make MaxRD not change with successful missions (Classic setting)."
+        "succesRDMax 1", &options.cheat_addMaxS, "%u", 0,
+        "By default, a component used successfully on a mission will gain +1% Max R&D."
+        "\n# This lets you research back to where you started if hardware is downgraded"
+        "\n# by a newscast, and lets you improve your hardware's Max R&D even if it hasn't"
+        "\n# reached that yet."
+        "\n# Set to zero to make MaxRD never change (Classic setting)."
     },
     {
-        "boosterSafety", &options.boosterSafety, "%u", 0,
-        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety (Classic setting)"
+        "boosterSafety 0", &options.boosterSafety, "%u", 0,
+        "Determine how Safety of boosted rockets is calculated:"
+        "\n#   0: Statistical Safety (default) - Boosted rocket = rocket * booster, e.g. .87 * .85"
+        "\n#   1: Minimum Safety - Boosted rocket = rocket or booster, whichever is lower"
+        "\n#   2: Average Safety (Classic setting) - Boosted rocket = average of rocket & booster"
     },
 };
 
@@ -377,10 +392,12 @@ write_default_config(void)
             PACKAGE_STRING);
     fprintf(f, "# Comments start with '#' and span the whole line.\n");
     fprintf(f, "# Active (non-comment) lines should look like:\n\n");
-    fprintf(f, "# variable_name variable_value\n");
+    fprintf(f, "# variable_name variable_value\n\n");
     fprintf(f, "# (be sure to remove the #), e.g.:\n");
-    fprintf(f, "# female_nauts 1 (but without the # and space at the beginning)\n\n");
-    fprintf(f, "# 'Classic' settings return to how the game worked in BARIS\n\n\n");
+    fprintf(f, "# female_nauts 1\n");
+    fprintf(f, "# (but without the # and space at the beginning)\n\n");
+    fprintf(f, "# 'Classic' settings return to how the game worked in BARIS.\n");
+    fprintf(f, "# Variables are on default settings unless you have changed them.\n\n\n");
 
     for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
         fprintf(f, "# %s\n# %s\n\n",
