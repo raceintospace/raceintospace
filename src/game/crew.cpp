@@ -282,6 +282,7 @@ int AsnCrew(char plr, char pad, char part)
     } else if (count >= 8 && options.feat_no_backup > 0) {
         keyHelpText = oldKeyHelpText;
         Help("i099");
+        return 0;
     } else {
         bug = 0;
     }
