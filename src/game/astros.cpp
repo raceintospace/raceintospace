@@ -23,6 +23,32 @@
 
 #include "data.h"
 #include "game_main.h"
+#include "options.h"
+
+
+/**
+ * Count how many flight crews are available for mission assignment.
+ *
+ * \param plr  the player index.
+ * \param program  the manned program index (per EquipMannedIndex).
+ * \return  the number of assignable crews.
+ */
+int AvailableCrewsCount(int plr, int program)
+{
+    int count = 0;
+
+    for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+        const int commanderIndex = Data->P[plr].Crew[program][i][0];
+        const Astros &commander  = Data->P[plr].Pool[commanderIndex - 1];
+
+        if (commanderIndex != 0 && commander.Prime == 0 &&
+            (options.feat_no_cTraining != 0 || commander.Moved == 0)) {
+            count++;
+        }
+    }
+
+    return count;
+}
 
 
 /**
