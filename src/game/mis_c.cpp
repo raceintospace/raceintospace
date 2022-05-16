@@ -41,6 +41,7 @@
 #include "utils.h"
 #include "game_main.h"
 #include "mc.h"
+#include "mis_m.h"
 #include "sdlhelper.h"
 #include "newmis.h"
 #include "gr.h"
@@ -1097,21 +1098,8 @@ char FailureMode(char plr, int prelim, char *text)
     draw_string(0, 0, " CHECK");
     draw_number(9, 55, Mev[STEP].dice);
     draw_string(0, 0, " VS. ");
-
-    int xloc = (Mev[STEP].dice > 99) ? 62 : 57;
-
-    if (strncmp(e->Name, "DO", 2) == 0) {
-        if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            draw_number(0, 0, e->MSF);
-        } else {
-            draw_number(0, 0, e->MisSaf);
-        }
-    } else {
-        draw_number(0, 0, e->MisSaf);
-    }
-
+    draw_number(0, 0, StepSafety(Mev[STEP]));
     // draw_string(0, 0, "%");
-
 
     draw_heading(45, 5, "STEP FAILURE", 0, -1);
 
@@ -1224,6 +1212,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     if (MANNED[Mev[STEP].pad] > 0) {
         display::graphics.setForegroundColor(1);
+        int xloc = (Mev[STEP].dice > 99) ? 62 : 57;
 
         switch (Mev[STEP].ast) {
         case 0:

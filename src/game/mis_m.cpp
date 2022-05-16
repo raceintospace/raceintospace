@@ -184,7 +184,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 void MisCheck(char plr, char mpad)
 {
     int tomflag = 0;  // Tom's checking flag
-    int val, safety, save, PROBLEM, i, lc, durxx;
+    int save, PROBLEM, i, lc, durxx;
     struct XFails Now;
     unsigned char gork = 0;
 
@@ -362,43 +362,11 @@ void MisCheck(char plr, char mpad)
             }
         }
 
-
         // SAFETY FACTOR STUFF
-
-        safety = GetEquipment(Mev[STEP])->MisSaf;
-
-        if ((Mev[STEP].Name[0] == 'A') &&
-            MH[Mev[STEP].pad][Mission_SecondaryBooster] != NULL) {
-            // boosters involved
-            safety = RocketBoosterSafety(safety, MH[Mev[STEP].pad][Mission_SecondaryBooster]->Safety);
-        }
-
-        // Duration Hack Part 3 of 3
-        if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
-            safety = GetEquipment(Mev[STEP])->MisSaf;  // needs to be for both
-
-            // Use average of capsule ratings for Joint duration
-            if (InSpace == 2) {
-                safety = (MH[0][Mission_Capsule]->MisSaf +
-                          MH[1][Mission_Capsule]->MisSaf) / 2;
-            }
-        }
-
-        if (strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) == 0) {
-            if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-                safety = GetEquipment(Mev[STEP])->MSF;
-            }
-        }
-
-        val = Mev[STEP].dice;
-        safety += Mev[STEP].asf;
-
-        if (safety >= 100) {
-            safety = 99;
-        }
+        int val = Mev[STEP].dice;
+        int safety = StepSafety(Mev[STEP]);
 
         save = (GetEquipment(Mev[STEP])->SaveCard == 1) ? 1 : 0;
-
         PROBLEM = val > safety;
 
         if (!AI[plr] && options.want_cheats) {
@@ -674,6 +642,43 @@ void MisCheck(char plr, char mpad)
 
     return;
 }
+
+
+/**
+ * Calculate the safety factor to test against for a mission step.
+ *
+ * Relies upon the global values MH and InSpace. Because of this, the
+ * function IS NOT guaranteed to give the correct value for any steps
+ * but the current one.
+ *
+ * TODO: Eliminate the use of global variables.
+ *
+ * \param step  the current mission step.
+ */
+int StepSafety(const struct MisEval &step)
+{
+    int safety = GetEquipment(step)->MisSaf;
+
+    if ((step.Name[0] == 'A') && MH[step.pad][Mission_SecondaryBooster]) {
+        // Account for Boosters - if used - on launch steps
+        safety = RocketBoosterSafety(
+                     safety,
+                     MH[step.pad][Mission_SecondaryBooster]->Safety);
+    } else if ((step.loc == 28 || step.loc == 27) && InSpace == 2) {
+        // For joint duration tests, use the average capsule safety
+        safety = (MH[0][Mission_Capsule]->MisSaf +
+                  MH[1][Mission_Capsule]->MisSaf) / 2;
+    } else if (strncmp(GetEquipment(step)->Name, "DO", 2) == 0) {
+        if (step.loc == 1 || step.loc == 2) {
+            safety = GetEquipment(step)->MSF;
+        }
+    }
+
+    safety += step.asf;
+
+    return MIN(safety, 99);
+}
+
 
 /** Draw mission step rectangle
  *
