@@ -376,21 +376,29 @@ void DispVAB(char plr, char pad)
 
     EVAmis = 0;
 
-    if (IsManned(Data->P[plr].Mission[pad].MissionCode) && IsEVA(Data->P[plr].Mission[pad].MissionCode) && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
-        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
+    if (IsEVA(Data->P[plr].Mission[pad].MissionCode) &&
+        Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
+        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
+             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
+            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
-            display::graphics.setForegroundColor(11);  // Show it in yellow because it's below Max R&D
+            // Show it in yellow because it's below Max R&D
+            display::graphics.setForegroundColor(11);
             draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
             draw_string(0, 0, "%");
             IOBox(140, 64, 165, 82);
             EVAmis = 1;
         }
-    }
-
-    if (IsManned(Data->P[plr].Mission[pad].MissionCode) && (Data->P[plr].Mission[pad].MissionCode == 38 || Data->P[plr].Mission[pad].MissionCode == 39 || (Data->P[plr].Mission[pad].MissionCode > 47 && Data->P[plr].Mission[pad].MissionCode < 50)) || Data->P[plr].Mission[pad].MissionCode == 52) {
-        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage < Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
+    } else if (IsLM(Data->P[plr].Mission[pad].MissionCode)) {
+        // Any LM mission could require an emergency EVA to traverse
+        // the distance between the LM and the capsule.
+        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
+             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
+            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
-            display::graphics.setForegroundColor(15);  // Show it in light green if there may be an emergency EVA on this mission
+            // Show it in light green if there may be an emergency EVA
+            // on this mission
+            display::graphics.setForegroundColor(15);
             draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
             draw_string(0, 0, "%");
             IOBox(140, 64, 165, 82);

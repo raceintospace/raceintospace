@@ -39,7 +39,6 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 #define MLL(a,b) (Data->P[a].History[b].MissionCode>=53 && Data->P[a].History[b].MissionCode<=56)
 
 void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hold);
-int ISDOCK(int a);
 
 char NREC[56][3];
 Record_Entry rec[56][3];
@@ -131,15 +130,6 @@ const char *Months[12] = {
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 };
 
-int ISDOCK(int a)
-{
-    if ((a >= 14 && a <= 24) || (a >= 27 && a <= 41) || a == 44 ||
-        a == 47 || (a >= 48 && a <= 52) || a == 53 || a == 55 || a == 56) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
 
 void MakeRecords(void)
 {
@@ -1458,10 +1448,10 @@ void UpdateRecords(char Ty)
                             rec[k][2].type = 1;
 
                             if (rec[k][0].place == 0) {  //Earliest Docking Mission
-                                if (ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
+                                if (IsDocking(Data->P[i].History[j].MissionCode)) {
                                     Rec_Change = 0;
                                 }
-                            } else if (ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
+                            } else if (IsDocking(Data->P[i].History[j].MissionCode)) {
                                 Rec_Change = 1;
                             }
 
@@ -1474,11 +1464,11 @@ void UpdateRecords(char Ty)
 
                             if (rec[k][0].place == 0) {  //Earliest Manned Docking
                                 if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
-                                    ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
+                                    IsDocking(Data->P[i].History[j].MissionCode)) {
                                     Rec_Change = 0;
                                 }
                             } else if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
-                                       ISDOCK(Data->P[i].History[j].MissionCode) == 1) {
+                                       IsDocking(Data->P[i].History[j].MissionCode)) {
                                 Rec_Change = 1;
                             }
 

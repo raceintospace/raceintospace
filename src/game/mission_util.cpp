@@ -130,6 +130,20 @@ bool IsLEORegion(int mission)
 
 
 /**
+ * Checks if the mission uses a Lunar Module.
+ *
+ * All missions using a LEM are manned.
+ *
+ * \param mission  The type per mStr.Index of MissionType.MissionCode.
+ * \return  true if the crew operates the lunar module.
+ */
+bool IsLM(int mission)
+{
+    return GetMissionPlan(mission).LM >= 1;
+}
+
+
+/**
  * Checks if the mission is a lunar landing.
  *
  * This implementation depends upon strict mission numbering, so any
