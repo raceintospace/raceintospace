@@ -1,7 +1,10 @@
 #include "ast_mod.h"
 
 #include <cassert>
+#include <cctype>
 #include <cstdio>
+#include <cstring>
+#include <string>
 #include <vector>
 
 #include "display/graphics.h"
@@ -52,6 +55,7 @@ void DrawSkillEditor();
 void DrawSkillSelect(SkillSelection button, bool selected);
 void ExportRoster(const std::vector<struct ManPool> &usaRoster,
                   const std::vector<struct ManPool> &sovRoster);
+std::string LaunchNameEditor(const struct ManPool &recruit);
 std::vector<struct ManPool> LoadRoster(int plr);
 void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
                    int rating);
@@ -523,6 +527,33 @@ void AstronautModification()
 
                 OutBox(209, 184, 304, 192);
             }
+        } else if (mode == EDITOR_NAME &&
+                   (Clicked(208, 156, 305, 167) || key == K_SPACE)) {
+            WaitForMouseUp();
+
+            if (key) {
+                delay(100);
+            }
+
+            struct ManPool &recruit = nation ? sovRoster[sovIndex] :
+                                          usaRoster[usaIndex];
+
+            std::string name = LaunchNameEditor(recruit);
+
+            if (strcmp(recruit.Name, name.c_str()) != 0) {
+                strncpy(recruit.Name, name.c_str(),
+                        sizeof(recruit.Name) - 1);
+                editFlag = true;
+                DisplayRecruit(nation, recruit);
+
+                if (nation == 0) {
+                    DisplayRoster(nation, usaIndex, usaBar, usaRoster);
+                } else if (nation == 1) {
+                    DisplayRoster(nation, sovIndex, sovBar, sovRoster);
+                }
+            }
+
+            DrawNameEditor();
         }
     }
 
@@ -576,11 +607,11 @@ void DisplayRecruit(int plr, const struct ManPool &recruit)
     display::graphics.setForegroundColor(plr ? 9 : 6);
     draw_string(102, 139, recruit.Name);
     display::graphics.setForegroundColor(11);
-    if (recruit.Cap == 1) { draw_number(128, 155, recruit.Cap); } else { draw_number(127, 155, recruit.Cap); }
-    if (recruit.LM == 1) { draw_number(128, 163, recruit.LM); } else { draw_number(127, 163, recruit.LM); }
-    if (recruit.EVA == 1) { draw_number(128, 171, recruit.EVA); } else { draw_number(127, 171, recruit.EVA); }
-    if (recruit.Docking == 1) { draw_number(128, 179, recruit.Docking); } else { draw_number(127, 179, recruit.Docking); }
-    if (recruit.Endurance == 1) { draw_number(128, 187, recruit.Endurance); } else { draw_number(127, 187, recruit.Endurance); }
+    draw_number(recruit.Cap == 1 ? 128 : 127, 155, recruit.Cap);
+    draw_number(recruit.LM == 1 ? 128 : 127, 163, recruit.LM);
+    draw_number(recruit.EVA == 1 ? 128 : 127, 171, recruit.EVA);
+    draw_number(recruit.Docking == 1 ? 128 : 127, 179, recruit.Docking);
+    draw_number(recruit.Endurance == 1 ? 128 : 127, 187, recruit.Endurance);
 }
 
 
@@ -749,11 +780,17 @@ void DrawNameEditor()
     InBox(207, 155, 306, 168);
     fill_rectangle(208, 156, 305, 167, 0);
 
-    display::graphics.setForegroundColor(9);
-    draw_string(257 - TextDisplayLength("SORRY, NAME EDITING") / 2, 180,
-                "SORRY, NAME EDITING");
-    draw_string(257 - TextDisplayLength("IS NOT YET FINISHED") / 2, 188,
-                "IS NOT YET FINISHED");
+    display::graphics.setForegroundColor(1);
+    draw_string(257 - TextDisplayLength("PRESS <SPACE> TO") / 2, 180,
+                "PRESS <SPACE> TO");
+    draw_string(257 - TextDisplayLength("EDIT RECRUIT NAME") / 2, 188,
+                "EDIT RECRUIT NAME");
+
+    // display::graphics.setForegroundColor(9);
+    // draw_string(257 - TextDisplayLength("SORRY, NAME EDITING") / 2, 180,
+    //             "SORRY, NAME EDITING");
+    // draw_string(257 - TextDisplayLength("IS NOT YET FINISHED") / 2, 188,
+    //             "IS NOT YET FINISHED");
 }
 
 
@@ -852,6 +889,71 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
     }
 
     fclose(file);
+}
+
+
+/**
+ * Creates a form for editing the current Astronaut/Cosmonaut's name.
+ *
+ * \return  the new name (original if cancelled).
+ */
+std::string LaunchNameEditor(const struct ManPool &recruit)
+{
+    const int maxLength = sizeof(recruit.Name) - 1;
+    std::string originalName(
+        recruit.Name, MIN(strlen(recruit.Name), sizeof(recruit.Name)));
+    std::string name(originalName);
+    name.reserve(maxLength + 1);
+
+    display::graphics.setForegroundColor(1);
+    fill_rectangle(204, 170, 309, 195, 3);
+    draw_string(257 - TextDisplayLength("PRESS <ENTER> TO") / 2, 179,
+                "PRESS <ENTER> TO");
+    draw_string(257 - TextDisplayLength("SAVE RECRUIT NAME") / 2, 187,
+                "SAVE RECRUIT NAME");
+    draw_string(257 - TextDisplayLength("<ESC> TO CANCEL") / 2, 195,
+                "<ESC> TO CANCEL");
+
+    fill_rectangle(208, 156, 305, 167, 0);
+    display::graphics.setForegroundColor(1);
+    draw_string(211, 164, name.c_str());
+    display::graphics.setForegroundColor(9);
+    draw_character(0x14);
+
+    while (!(key == K_ENTER || key == K_ESCAPE)) {
+        key = 0;
+        GetMouse();
+
+        if (key >= 'a' && key <= 'z') {
+            key = toupper(key);
+        }
+
+        if (key & 0x00ff) {
+
+            if ((name.length() < maxLength)
+                && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
+                    (key >= '0' && key <= '9'))) {
+                name.push_back(key);
+                fill_rectangle(208, 156, 305, 167, 0);
+                display::graphics.setForegroundColor(1);
+                draw_string(211, 164, name.c_str());
+                display::graphics.setForegroundColor(9);
+                draw_character(0x14);
+                key = 0;
+            } else if (name.length() && key == 0x08) {
+                name.erase(name.end() - 1);
+                fill_rectangle(208, 156, 305, 167, 0);
+                display::graphics.setForegroundColor(1);
+                draw_string(211, 164, name.c_str());
+                display::graphics.setForegroundColor(9);
+                draw_character(0x14);
+                key = 0;
+            }
+        }
+    }
+
+    fill_rectangle(208, 156, 305, 167, 0);
+    return (key == K_ENTER && name.length()) ? name : originalName;
 }
 
 
