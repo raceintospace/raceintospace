@@ -18,12 +18,14 @@
 
 // This file handles choosing type of spacecraft (if applicable) and crew(s) to man it (if applicable)
 
+#include "crew.h"
+
 #include <string>
 
 #include "display/graphics.h"
 
-#include "crew.h"
 #include "ast0.h"
+#include "astros.h"
 #include "Buzz_inc.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "game_main.h"
@@ -78,10 +80,10 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
     }
 
     switch (newType) {
-    case 0:
+    case 0:  // Probe
         return 1;
 
-    case 1:
+    case 1:  // Unmanned capsule/minishuttle single launch
         M = HardRequest(plr, 0, misType, pad);
 
         if (M == 0) {
@@ -90,7 +92,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
             return 1;
         }
 
-    case 2:
+    case 2:  // Manned single launch
         M = SecondHard(plr, 0, misType, pad);
 
         if (M != 0) {
@@ -101,7 +103,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
 
         return (M != 0);
 
-    case 3:
+    case 3:  // A joint mission with a single manned launch
         M = SecondHard(plr, 1, misType, pad);
         Data->P[plr].Future[pad].part = 0;
         Data->P[plr].Future[pad].Joint = 1;
@@ -123,7 +125,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
             return 1;
         }
 
-    case 4:
+    case 4:  // A joint mission with two manned launches
         M = SecondHard(plr, 0, misType, pad);
         {
             // scope block to avoid initialization skipped by 'case' label error"
@@ -165,7 +167,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
             return 1;
         }
 
-    case 5:
+    case 5:  // A joint mission with an unmanned capsule/minishuttle
         M = SecondHard(plr, 0, misType, pad + 1);
         Data->P[plr].Future[pad].part = 0;
         Data->P[plr].Future[pad].MissionCode = misType;
@@ -260,30 +262,18 @@ int AsnCrew(char plr, char pad, char part)
 
     prime = -1;
     back = -1;
-    count = 0;
+    count = AvailableCrewsCount(plr, prg);
 
-    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {  // Flight Crew Settings
-        if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
-            || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
-            stflag = 0;
-        } else {
-            stflag = 1;
-        }
-
-        if (stflag == 0) {
-            count++;    // increment the counter
-        }
-    }
-
-    if (count >= 7 && options.feat_no_backup == 0) {
+    if (count < 2 && options.feat_no_backup == 0) {
         keyHelpText = oldKeyHelpText;
         Help("i107");
         return 0;
-    } else if (count >= 8 && options.feat_no_backup > 0) {
+    } else if (!count && options.feat_no_backup) {
         keyHelpText = oldKeyHelpText;
         Help("i099");
         return 0;
     } else {
+        // TODO: If this doesn't trigger, bug is never initialized.
         bug = 0;
     }
 
@@ -349,7 +339,6 @@ int AsnCrew(char plr, char pad, char part)
     }
 
     display::graphics.setForegroundColor(1);  // reset the color
-    count = 0;
 
     WaitForMouseUp();
 
@@ -363,10 +352,6 @@ int AsnCrew(char plr, char pad, char part)
                 stflag = 0;
             } else {
                 stflag = 1;
-            }
-
-            if (stflag == 0) {
-                ++count;    // increment the counter
             }
 
             t = (i < 4) ? 0 : 1;
@@ -473,6 +458,7 @@ int AsnCrew(char plr, char pad, char part)
         }  // End Backup Set
     }  // end while
 }
+
 
 void FutFltsTxt(char nw, char col)
 {
@@ -622,8 +608,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
     for (i = 0; i < men; i++) {
         if (m[i] > 0) {
-
-            display::graphics.setForegroundColor(1);  // Set color back to white in case ENs are set to yellow
+            // Set color back to white in case ENs are set to yellow
+            display::graphics.setForegroundColor(1);
 
             if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
                 // Print name in blue if 'naut is female
@@ -656,7 +642,8 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             //87 - 169
             if (i == 0) {
-                display::graphics.setForegroundColor(11);   /* Highlight CA for Command Pilot */
+                // Highlight CA for Command Pilot
+                display::graphics.setForegroundColor(11);
             }
 
             int xloc;
@@ -687,12 +674,16 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].LM);
             display::graphics.setForegroundColor(1);
 
-            if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 6 || (mType > 19 && mType < 25) || mType == 26 || mType == 29 || mType == 30 || (mType > 32 && mType < 37) || (mType > 39 && mType < 42) || mType > 49)) {
-                display::graphics.setForegroundColor(11);   /* Highlight EV for EVA Specialist, if the mission will include EVA */
-            }
-
-            if ((men == 1 || ((men == 2 || men == 3) && i == 1) || (men == 4 && i > 1)) && (mType == 38 || mType == 39 || (mType > 47 && mType < 50) || mType == 52)) {
-                display::graphics.setForegroundColor(15);   /* Highlight EV for EVA Specialist, if the mission might include an emergency EVA */
+            // Highlight EVA for EVA Specialist, if the mission...
+            if (men == 1 || ((men == 2 || men == 3) && i == 1) ||
+                 (men == 4 && i > 1)) {
+                if (IsEVA(mType)) {
+                    // ...will include an EVA...
+                    display::graphics.setForegroundColor(11);
+                } else if (IsLM(mType)) {
+                    // ... or might include an emergency EVA
+                    display::graphics.setForegroundColor(15);
+                }
             }
 
             draw_string(139, 51 + i * 14, "EV:");
@@ -704,10 +695,14 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             }
 
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].EVA);
-            display::graphics.setForegroundColor(1);
 
-            if ((men == 2 && i == 0) || (men == 3 && i == 2) && ((mType > 13 && mType < 25) || (mType > 26 && mType < 42) || mType == 44 || (mType > 46 && mType < 54) || mType > 54)) {
-                display::graphics.setForegroundColor(11);   /* Highlight DO for Docking Specialist, if the mission will include docking */
+            // Highlight DO for Docking Specialist, if the mission
+            // will include docking
+            if (((men == 2 && i == 0) || (men == 3 && i == 2)) &&
+                IsDocking(mType)) {
+                display::graphics.setForegroundColor(11);
+            } else {
+                display::graphics.setForegroundColor(1);
             }
 
             draw_string(165, 51 + i * 14, "DO:");
@@ -720,10 +715,12 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
 
-            display::graphics.setForegroundColor(1);
-
+            // Highlight EN skill for everyone on Duration missions,
+            // unless EN is disabled (Classic behavior)
             if (IsDuration(mType) && options.feat_use_endurance) {
-                display::graphics.setForegroundColor(11);  /* Highlight EN skill for everyone on Duration missions, unless EN is disabled (Classic behavior) */
+                display::graphics.setForegroundColor(11);
+            } else {
+                display::graphics.setForegroundColor(1);
             }
 
             draw_string(191, 51 + i * 14, "EN:");

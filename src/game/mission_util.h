@@ -11,6 +11,7 @@ bool IsEVA(int mission);
 bool IsJoint(int mission);
 bool IsLEORegion(int mission);
 bool IsLunarLanding(int mission);
+bool IsLM(int mission);
 bool IsManned(int mission);
 bool MissionTimingOk(int mission, unsigned int year, unsigned int season);
 
