@@ -17,6 +17,7 @@
 #include "logging.h"
 #include "macros.h"
 #include "pace.h"
+#include "place.h"
 #include "proto.h"
 
 
@@ -88,8 +89,8 @@ void AstronautModification()
     int rating = 0;
     bool editFlag = false;
 
-    helpText = "";
-    keyHelpText = "";
+    helpText = "I040";
+    keyHelpText = "K040";
 
     FadeOut(2, 10, 0, 0);
     DrawInterface();
@@ -138,11 +139,21 @@ void AstronautModification()
             }
 
             if (editFlag) {
-                try {
-                    ExportRoster(usaRoster, sovRoster);
-                } catch (IOException &err) {
-                    CERROR3(filesys, "Unable to save roster changes: %s",
-                            err.what());
+                bool proceed = true;
+                FILE *file = sOpen("USER.DAT", "rb", FT_SAVE_CHECK);
+
+                if (file != NULL) {
+                    fclose(file);
+                    proceed = Help("I106") > 0;
+                }
+
+                if (proceed) {
+                    try {
+                        ExportRoster(usaRoster, sovRoster);
+                    } catch (IOException &err) {
+                        CERROR3(filesys, "Unable to save roster changes: %s",
+                                err.what());
+                    }
                 }
             }
 
