@@ -56,8 +56,9 @@ void DrawSkillEditor();
 void DrawSkillSelect(SkillSelection button, bool selected);
 void ExportRoster(const std::vector<struct ManPool> &usaRoster,
                   const std::vector<struct ManPool> &sovRoster);
+FILE *GetRosterFile();
 std::string LaunchNameEditor(const struct ManPool &recruit);
-std::vector<struct ManPool> LoadRoster(int plr);
+std::vector<struct ManPool> LoadRoster(FILE *file, int plr);
 void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
                    int rating);
 int SkillLevel(const struct ManPool &recruit, SkillSelection skill);
@@ -104,17 +105,23 @@ void AstronautModification()
     std::vector<struct ManPool> usaRoster;
     std::vector<struct ManPool> sovRoster;
 
-    // TODO: Check if the user wishes to load from the original
-    // roster or the custom roster? Query in Help("I105").
-    try {
-        // Using two function calls means that any File Not Found
-        // messages are duplicated.
-        usaRoster = LoadRoster(0);
-        sovRoster = LoadRoster(1);
-    } catch (IOException &err) {
-        // TODO: Use a pop-up error display.
-        CERROR3(filesys, "Unable to access rosters: %s", err.what());
-        return;
+    {
+        FILE *file;
+
+        try {
+            file = GetRosterFile();
+            usaRoster = LoadRoster(file, 0);
+            sovRoster = LoadRoster(file, 1);
+            fclose(file);
+        } catch (IOException &err) {
+            // TODO: Use a pop-up error display.
+            if (file) {
+                fclose(file);
+            }
+
+            CERROR3(filesys, "Unable to access rosters: %s", err.what());
+            return;
+        }
     }
 
     // Start by loading the USA Roster information.
@@ -929,6 +936,42 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
 
 
 /**
+ * Determine which roster file to use as the base for the custom roster.
+ *
+ * \return  Open roster file.
+ * \throw IOException  if unable to load a file.
+ */
+FILE *GetRosterFile()
+{
+    FILE *file;
+
+    if ((file = sOpen("USER.DAT", "rb", FT_SAVE_CHECK)) != NULL) {
+        bool useOriginal = Help("I105") > 0;
+
+        if (useOriginal) {
+            fclose(file);
+            file = sOpen("CREW.DAT", "rb", FT_DATA);
+
+            if (file == NULL) {
+                throw IOException("Unable to open file CREW.DAT");
+            }
+        }
+    } else {
+        // Should this be CNOTICE2?
+        CINFO2(filesys,
+               "USER.DAT not found. Loading CREW.DAT rosters...");
+        file = sOpen("CREW.DAT", "rb", FT_DATA);
+
+        if (file == NULL) {
+            throw IOException("Unable to open file CREW.DAT");
+        }
+    }
+
+    return file;
+}
+
+
+/**
  * Creates a form for editing the current Astronaut/Cosmonaut's name.
  *
  * \return  the new name (original if cancelled).
@@ -997,25 +1040,9 @@ std::string LaunchNameEditor(const struct ManPool &recruit)
  *
  *
  */
-std::vector<struct ManPool> LoadRoster(int plr)
+std::vector<struct ManPool> LoadRoster(FILE *file, int plr)
 {
     assert(plr >= 0 && plr < NUM_PLAYERS);
-    FILE *file;
-
-    // Search for custom roster first
-    if ((file  = sOpen("USER.DAT", "rb", FT_SAVE_CHECK)) == NULL) {
-        file = sOpen("CREW.DAT", "rb", FT_DATA);
-
-        if (file == NULL) {
-            throw IOException("Unable to open file CREW.DAT");
-        }
-
-        // Should this be CNOTICE2?
-        CINFO2(filesys,
-               "USER.DAT not found. Loading CREW.DAT rosters...");
-    } else {
-        CINFO2(filesys, "Loading USER.DAT rosters...");
-    }
 
     struct ManPool recruit;
 
@@ -1032,7 +1059,6 @@ std::vector<struct ManPool> LoadRoster(int plr)
         roster.push_back(recruit);
     }
 
-    fclose(file);
     return roster;
 }
 
