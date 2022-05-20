@@ -104,6 +104,8 @@ void AstronautModification()
     std::vector<struct ManPool> usaRoster;
     std::vector<struct ManPool> sovRoster;
 
+    // TODO: Check if the user wishes to load from the original
+    // roster or the custom roster? Query in Help("I105").
     try {
         // Using two function calls means that any File Not Found
         // messages are duplicated.
@@ -127,6 +129,10 @@ void AstronautModification()
     while (true) {
         key = 0;
         GetMouse();
+
+        if (key >= 'a' && key <= 'z') {
+            key = toupper(key);
+        }
 
         if (Clicked(246, 5, 314, 17) || key == K_ESCAPE ||
             (mode != EDITOR_SKILLS && key == K_ENTER)) {
@@ -159,7 +165,7 @@ void AstronautModification()
 
             OutBox(246, 5, 314, 17);
             break;
-        } else if (Clicked(6, 29, 31, 43)) {
+        } else if (Clicked(6, 29, 31, 43) || key == 'U') {
             if (nation != 0) {
                 nation = 0;
                 InBox(5, 28, 5 + 27, 28 + 16);
@@ -175,7 +181,7 @@ void AstronautModification()
             }
 
             WaitForMouseUp();
-        } else if (Clicked(166, 29, 191, 43)) {
+        } else if (Clicked(166, 29, 191, 43) || key == 'S') {
             if (nation != 1) {
                 nation = 1;
                 OutBox(5, 28, 5 + 27, 28 + 16);
@@ -235,7 +241,8 @@ void AstronautModification()
             }
 
             WaitForMouseUp();
-        } else if (Clicked(6, 124, 42, 196)) {
+        } else if (Clicked(6, 124, 42, 196) || key == 'C' ||
+                   key == 'L' || key == 'E' || key == 'D' || key == 'N') {
             if (nation >= 0 && nation < NUM_PLAYERS) {
                 int selection = SKILL_NONE;
 
@@ -243,6 +250,18 @@ void AstronautModification()
                     if (Clicked(6, 124 + i * 15, 42, 136 + i * 15)) {
                         selection = i;
                     }
+                }
+
+                if (key == 'C') {
+                    selection = SKILL_CAP;
+                } else if (key == 'L') {
+                    selection = SKILL_LM;
+                } else if (key == 'E') {
+                    selection = SKILL_EVA;
+                } else if (key == 'D') {
+                    selection = SKILL_DOCK;
+                } else if (key == 'N') {
+                    selection = SKILL_ENDR;
                 }
 
                 if (selection != SKILL_NONE) {
@@ -537,6 +556,12 @@ void AstronautModification()
                 }
 
                 OutBox(209, 184, 304, 192);
+                DrawSkillSelect(current, false);
+                current = SKILL_NONE;
+                prev = SKILL_NONE;
+                mode = EDITOR_NAME;
+                DrawNameEditor();
+
             }
         } else if (mode == EDITOR_NAME &&
                    (Clicked(208, 156, 305, 167) || key == K_SPACE)) {
