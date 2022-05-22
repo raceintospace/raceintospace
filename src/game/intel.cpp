@@ -227,7 +227,7 @@ const char *code_names[] = {
     "FID",
     "FLEETFOOT",
     "ACHILLES",
-    "ROAD RUNNER",
+    "ROADRUNNER",
     "SEAGULL",
     "SPHINX",
     "HOT FOOT",
@@ -264,7 +264,7 @@ const char *code_names[] = {
     "DOUBLE",
     "CATAPULT",
     "SNAPSHOT",
-    "SLING SHOT",
+    "SLINGSHOT",
     "SLEIGH RIDE",
     "JOURNEY",
     "TRIPLE",
@@ -439,12 +439,12 @@ int MissionIntelFake(char plr)
 {
     int era, k, total = 0, roll = 0, sumWeight;
     static const char F[3][15] = {
-        {6, 1, 2, 3, 4, 5},  //58 & 59
+        {6, 1, 2, 3, 4, 5},  // 58 & 59
         {14, 6, 25, 7, 9, 10, 11, 12, 13, 8, 14, 15, 18, 16},  // 60 to 64
         {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
     };
     static const char Weights[3][15] = {
-        {6, 3, 1, 1, 2, 2}, //58 & 59
+        {6, 3, 1, 1, 2, 2}, // 58 & 59
         {14, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
         {11, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
@@ -531,7 +531,7 @@ void MissionIntel(char plr, bool acc)
     }
 
     // TODO: It would be nice to pass acc to HarIntel, but that sets
-    // up the possibiliity of an infinite loop.
+    // up the possibility of an infinite loop.
     if (mis == Mission_None || prevReported) {
         HarIntel(plr, 0);
         return;
@@ -748,7 +748,7 @@ void BackIntel(char plr, char year)
         draw_string(0, 0, "F");
     }
 
-    if (year < Data->Year - 59) {  // TODO: Should use PastIntel[0].cur
+    if (year < Data->Year - 58) {  // TODO: Should use PastIntel[0].cur
         draw_up_arrow_highlight(137, 42);
     } else {
         draw_up_arrow(137, 42);
@@ -1271,7 +1271,7 @@ void DrawIntelImage(char plr, char poff)
 /**
  * Save an Intel Library briefing to record.
  *
- * Each Intel briefing is given a unique ID, its' record # within
+ * Each Intel briefing is given a unique ID, its record # within
  * the CIA/KGB's filing system. It takes the form
  *    {num}{code}-{Season}{Year}
  * where Season (F or S) and Year (ex: 62) are the date when the
@@ -1920,7 +1920,7 @@ void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, i
  * view.
  *
  * Draws a chart showing the known safety factors of the existing
- * hardware programs. Values shown for a sides' own hardware are the
+ * hardware programs. Values shown for a side's own hardware are the
  * current value, while safety values for opponent's hardware are
  * pulled from intelligence findings (and thus may be inaccurate).
  *
@@ -1928,7 +1928,7 @@ void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, i
  * and USSR hardware, LMs are displayed with Probes rather than
  * Manned craft. Otherwise, Probes would have 6 items to display
  * while Manned craft would have 14. As rocket illustrations are
- * especially large, rocket boosters are shows in Miscellaneous.
+ * especially large, rocket boosters are shown in Miscellaneous.
  *
  * \param plr   the active player's country index.
  * \param loc   hardware class to display (per EquipmentIndex enum).
@@ -2048,7 +2048,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MANNED_HARDWARE:  //draw_string(137,150,"CAPSULES");
+    case MANNED_HARDWARE:  // draw_string(137,150,"CAPSULES");
         for (i = 0; i < 5; i++) {
             sfu = -1;
             sfs = -1;
@@ -2150,7 +2150,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case PROBE_HARDWARE:  //draw_string(100,150,"SATELLITES & LM'S");
+    case PROBE_HARDWARE:  // draw_string(100,150,"SATELLITES & LM'S");
         sfu = -1;
         sfs = -1;
 
@@ -2281,7 +2281,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MISC_HARDWARE:  //draw_string(100,150,"ADDITIONAL PROGRAMS");
+    case MISC_HARDWARE:  // draw_string(100,150,"ADDITIONAL PROGRAMS");
         sfu = -1;
         sfs = -1;
 
