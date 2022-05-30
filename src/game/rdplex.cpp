@@ -2170,7 +2170,9 @@ void RDHelpWarnings(int plr)
         (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety >=
          Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD ||
          Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >=
-         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD)) {
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD) &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety > 85 ||
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety > 88)) {
         Help("i048");
     }
 
