@@ -31,10 +31,14 @@
  *
  * See log4c.h for documentation.
  */
+#include "log4c.h"
+
+#include <cstdlib>
+#include <cassert>
+
 #include "logging.h"
 #include "macros.h"
-#include <stdlib.h>
-#include <assert.h>
+
 
 struct LogCategory _LOGV(LOG_ROOT_CAT) = {
     0, 0, 0,

@@ -25,11 +25,12 @@
 
 // This file handles replay of missions (I think).
 
-#include <assert.h>
+#include "replay.h"
+
+#include <cassert>
 
 #include "display/graphics.h"
 
-#include "replay.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
 #include "mmfile.h"
@@ -111,7 +112,8 @@ done:
  * \returns nothing if it can't open the [f]seq.dat file
  */
 void
-Replay(char plr, int num, int dx, int dy, int width, int height, const char *Type)
+Replay(char plr, int num, int dx, int dy, int width, int height,
+       const char *Type)
 {
     int keep_going;
     int i, kk, mode, max;
@@ -292,7 +294,7 @@ DispBaby(int x, int y, int loc, char neww)
 
 void
 AbzFrame(char plr, int num, int dx, int dy, int width, int height,
-         char *Type, char mode)
+         const char *Type, char mode)
 {
     int idx = 0;
     struct oGROUP grp;

@@ -33,6 +33,7 @@
 
 #include <cassert>
 
+#include <algorithm>
 #include <stdexcept>
 
 #include <boost/shared_ptr.hpp>
@@ -64,6 +65,7 @@
 #include "vehicle_selector.h"
 
 int currentPayload;
+int EVAmis;
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
@@ -156,7 +158,6 @@ bool PayloadReady(int plr, int payload);
 void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket);
 void LMAdd(char plr, char prog, char kic, char part);
 void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
-
 
 /* Load the coordinates of vehicle hardware components' images into the
  * MI global variable.
@@ -373,6 +374,38 @@ void DispVAB(char plr, char pad)
         draw_string(0, 0, GetDurationParens(mission.Duration));
     }
 
+    EVAmis = 0;
+
+    if (IsEVA(Data->P[plr].Mission[pad].MissionCode) &&
+        Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
+        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
+             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
+            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
+            draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
+            // Show it in yellow because it's below Max R&D
+            display::graphics.setForegroundColor(11);
+            draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
+            draw_string(0, 0, "%");
+            IOBox(140, 64, 165, 82);
+            EVAmis = 1;
+        }
+    } else if (IsLM(Data->P[plr].Mission[pad].MissionCode)) {
+        // Any LM mission could require an emergency EVA to traverse
+        // the distance between the LM and the capsule.
+        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
+             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
+            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
+            draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
+            // Show it in light green if there may be an emergency EVA
+            // on this mission
+            display::graphics.setForegroundColor(15);
+            draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
+            draw_string(0, 0, "%");
+            IOBox(140, 64, 165, 82);
+            EVAmis = 2;
+        }
+    }
+
     draw_small_flag(plr, 4, 4);
 
     return;
@@ -550,7 +583,7 @@ void ShowAutopurchase(const char plr, const int payload, Vehicle &rocket)
 /* Prints the payload components for the selected payload configuration.
  *
  * The text is printed on the Mission Hardware button found in the
- * lower left corner of the main Vehicle Assembly screen.
+ * lower-left corner of the main Vehicle Assembly screen.
  *
  * \param  f   The VAS index of the given payload hardware set.
  */
@@ -573,11 +606,21 @@ void ShowVA(char f)
             draw_number(128, 136 + 12 * i, 0);
         } else {
             int hcol;
-            if (VAS[f][i].qty - VAS[f][i].ac == 1) { hcol = 153; } else { hcol = 152; }
+
+            if (VAS[f][i].qty - VAS[f][i].ac == 1) {
+                hcol = 153;
+            } else {
+                hcol = 152;
+            }
+
             draw_number(hcol, 136 + 12 * i, VAS[f][i].qty - VAS[f][i].ac);
 
+            if (VAS[f][i].sf > 5 && VAS[f][i].sf > 0 && VAS[f][i].sf < VAS[f][i].MaxRD) {
+                display::graphics.setForegroundColor(11);  // Show in yellow if below Max R&D
+            }
+
             if (VAS[f][i].dmg) {
-                display::graphics.setForegroundColor(9);
+                display::graphics.setForegroundColor(9);  // Show in red if equipment is damaged
             }
 
             draw_number(128, 136 + 12 * i, VAS[f][i].sf);
@@ -615,11 +658,21 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
         draw_number(128, 188, 0);
     } else {
         int hcol;
-        if (rocket.available() == 1) { hcol = 153; } else { hcol = 152; }
+
+        if (rocket.available() == 1) {
+            hcol = 153;
+        } else {
+            hcol = 152;
+        }
+
         draw_number(hcol, 188, rocket.available());
 
+        if (rocket.safety() > 10 && rocket.safety() < rocket.MaxRD()) {
+            display::graphics.setForegroundColor(11);  // Show in yellow if below Max R&D
+        }
+
         if (rocket.damaged()) {
-            display::graphics.setForegroundColor(9);
+            display::graphics.setForegroundColor(9);  // Show in red if equipment is damaged
         }
 
         draw_number(128, 188, rocket.safety());
@@ -653,7 +706,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     int casingWidth, casingHeight, x1, y1, x2, y2, w2, h2, cx, off = 0;
     uint8_t casing, images, img;
 
-    images = 0; /**< number of pictures */
+    images = 0;  /**< number of pictures */
 
     for (i = 0; i < 4; i++) {
         if (VAS[payload][i].img > 0) {
@@ -747,7 +800,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
             y2 = MI[plr * 28 + img].y2;
             w2 = x2 - x1 + 1;
             h2 = y2 - y1 + 1;
-            cx = casingWidth / 2 - w2 / 2 - 1;  // Center on x-axis
+            cx = casingWidth / 2 - w2 / 2 - 1;  // Center on x axis
 
             if (cx + w2 > casingWidth || IncY + h2 > casingHeight) {
                 CWARNING3(graphic, "can't fit %s image into spaceship casing!",
@@ -814,13 +867,13 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
  * This function makes extensive use of the global variable MI.
  *
  * The rockets are indexed in the MI[] array as:
- *   0 / 28:   Atlas  / A-Series
+ *   0 / 28:   Atlas  / R-7 (A-Series)
  *   1 / 29:   Titan  / Proton
- *   2 / 30:   Saturn / N-1
- *   3 / 31:   Nova   / Energia
- *   4 / 32:   Atlas + Boosters  / A-Series + Boosters
+ *   2 / 30:   Saturn / N1 (N-1)
+ *   3 / 31:   Nova   / UR-700 (Vulkon/Energia)
+ *   4 / 32:   Atlas + Boosters  / R-7(A-Series) + Boosters
  *   5 / 33:   Titan + Boosters  / Proton + Boosters
- *   6 / 34:   Saturn + Boosters / N-1 + Boosters
+ *   6 / 34:   Saturn + Boosters / N1(N-1) + Boosters
  *
  * \param plr  The assembling player (0 for USA, 1 for USSR).
  * \param wh   The rocket's index in the MI[] array.
@@ -998,11 +1051,11 @@ void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket)
  * maximum payload supported by the rocket currently assigned.
  *
  * \param payload  The total weight of the current payload hardware.
- * \param thrust  The maximum payload weight for the current rocket.
+ * \param thrust   The maximum payload weight for the current rocket.
  */
 void DispWts(int payload, int thrust)
 {
-    fill_rectangle(5, 65, 140, 83, 3);
+    fill_rectangle(5, 65, 139, 83, 3);
 
     display::graphics.setForegroundColor(1);
     draw_string(5, 78, "MAXIMUM PAYLOAD: ");
@@ -1090,7 +1143,7 @@ void VAB(char plr)
         DispRck(plr, rocket.index(), hw.get());
         DispVA(plr, ccc, hw.get());
         DispWts(weight, rocket.thrust());
-        //display cost (XX of XX)
+        // display cost (XX of XX)
         ShowAutopurchase(plr, ccc, rocket);
 
         FadeIn(2, 10, 0, 0);
@@ -1115,12 +1168,20 @@ void VAB(char plr)
 
                 int cost = FillVab(plr, ccc, 0) +
                            BuyVabRkt(plr, rocket, 0);
+
                 if (Data->P[plr].Cash >= cost && ac == true) {
                     int goAhead;
-                    if (rocket.thrust() >= currentPayload) { goAhead = 1; } else { goAhead = 0; }
+
+                    if (rocket.thrust() >= currentPayload) {
+                        goAhead = 1;
+                    } else {
+                        goAhead = 0;
+                    }
+
                     if (goAhead < 1) {
                         goAhead = Help("i166");
                     }
+
                     if (goAhead > 0) {
                         FillVab(plr, ccc, 1);
                         BuyVabRkt(plr, rocket, 1);
@@ -1128,9 +1189,9 @@ void VAB(char plr)
                         // autopurchased quantities.
                         BuildVAB(plr, mis, 0, 0, 1);
 
-                        //display cost (XX of XX)
+                        // display cost (XX of XX)
                         ShowAutopurchase(plr, ccc, rocket);
-                    }  
+                    }
                 } else if (ac == false) {
                     Help("i135");    // delay on purchase
                 } else {
@@ -1251,7 +1312,7 @@ void VAB(char plr)
                     }
                 }
 
-                //display cost (XX of XX)
+                // display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rocket);
                 ShowRkt(rocket, weight);
                 DispWts(weight, rocket.thrust());
@@ -1263,6 +1324,13 @@ void VAB(char plr)
                 }
 
                 OutBox(64, 181, 161, 191);
+
+            } else if ((x >= 144 && y >= 64 && x <= 168 && y <= 78) && EVAmis > 0) {
+                OutBox(140, 64, 165, 82);
+                delay(100);
+                Help("i171");  // Pull up help text explaining why player's seeing EVA box
+                InBox(140, 64, 165, 82);
+
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
                 // Cycle through payload selections
                 InBox(64, 129, 161, 175);
@@ -1282,7 +1350,7 @@ void VAB(char plr)
                 DispWts(weight, rocket.thrust());
                 ShowRkt(rocket, weight);
                 DispVA(plr, ccc, hw.get());
-                //display cost (XX of XX)
+                // display cost (XX of XX)
                 ShowAutopurchase(plr, ccc, rocket);
                 WaitForMouseUp();
 
@@ -1323,7 +1391,7 @@ void VAB(char plr)
  * This function is used by the AI, so beware of making changes without
  * understanding what the AI is doing!
  *
- * \param plr  The player assembling the launch vehichle.
+ * \param plr  The player assembling the launch vehicle.
  * \param mis  The pad the mission is on.
  * \param ty   >0 if called by the AI.
  * \param pa   0 if the primary half of a joint mission.
@@ -1484,6 +1552,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         }
 
         // EVA Check
+
     }
 
     return;
@@ -1585,6 +1654,7 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite)
     VAS[VASqty][tx].qty = EQ->Num;
     VAS[VASqty][tx].ac = EQ->Spok;
     VAS[VASqty][tx].wt = EQ->UnitWeight;
+    VAS[VASqty][tx].MaxRD = EQ->MaxRD;
 
     if (tx == Mission_Probe_DM && v4 == MISC_HW_DOCKING_MODULE &&
         AI[plr] == 1) {

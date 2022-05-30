@@ -44,7 +44,7 @@ extern int key;
 extern char Name[20];
 extern char *buffer;
 extern int32_t xMODE;
-extern char *S_Name[];
+extern const char *S_Name[];
 extern INTERIMDATA interimData;
 
 #endif // GAME_MAIN_H

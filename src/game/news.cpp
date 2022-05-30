@@ -49,7 +49,7 @@
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
-static char *news_shots[] = { "angle", "opening", "closing" };
+static const char *news_shots[] = { "angle", "opening", "closing" };
 
 double load_news_anim_start;
 
@@ -199,8 +199,11 @@ OpenNews(char plr, char *buf, int bud)
             fread(&buf[bufsize], 50, 1, fp);
         }
 
+        /* Show reasons for retirement announcements, mission deaths (8), and
+           retirements due to mission injuries (9) */
+
         if (Data->P[plr].Pool[j].Special == 1
-            || (Data->P[plr].Pool[j].Special > 0 && Data->P[plr].Pool[j].RetirementReason == 8)) {
+            || (Data->P[plr].Pool[j].Special > 0 && (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9))) {
             //13 other things
             i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
 
@@ -782,7 +785,7 @@ News(char plr)
 
         if (ctop > 0 && key == K_HOME) {
             // Home Key
-            ctop = 1;
+            ctop = 0;
             DrawNText(plr, ctop);
 
         } else if (ctop > 0 && key == K_PGUP) {

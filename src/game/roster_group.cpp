@@ -1,6 +1,7 @@
 #include "roster_group.h"
 
-#include <assert.h>
+#include <cassert>
+
 #include <boost/foreach.hpp>
 
 RosterGroup::RosterGroup(int player, int group_number, const Json::Value &json_object)

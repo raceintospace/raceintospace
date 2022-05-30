@@ -178,3 +178,15 @@ int RocketBoosterSafety(int safetyRocket, int safetyBooster)
         return ((safetyRocket + safetyBooster) / 2);
     }
 }
+int RocketMaxRD(int MaxRDRocket, int MaxRDBooster)
+{
+    if (options.boosterSafety == 0) {
+        return ((MaxRDRocket * MaxRDBooster) / 100);
+    }
+
+    if (options.boosterSafety == 1) {
+        return (MIN(MaxRDRocket, MaxRDBooster));
+    } else {
+        return ((MaxRDRocket + MaxRDBooster) / 2);
+    }
+}

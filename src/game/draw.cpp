@@ -1,18 +1,24 @@
 // This file defines how characters are printed on the screen
 
 #include "draw.h"
-#include "gr.h"
-#include "pace.h"
-#include "sdlhelper.h"
-#include "filesystem.h"
+
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "filesystem.h"
+#include "gr.h"
+#include "logging.h"
+#include "pace.h"
+#include "sdlhelper.h"
+
+
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
+
 
 /** Print string at specific position
  *
@@ -81,19 +87,20 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
     for (i = 0; i < (int)strlen(txt); i++) {
         if (txt[i] == 0x20) {
             x += 6;
-            i++;
+            continue;
         }
 
         c = toupper(txt[i] & 0xff);
 
-        if (c >= 0x30 && c <= 0x39) {
+        // Map the ASCII code to the image index.
+        // Currently, no image exists for the '@' character.
+        if (c >= 0x20 && c <= 0x3F) {
             px = c - 32;
-        } else {
+        } else if (c >= 0x41 && c <= 0x60) {
             px = c - 33;
-        }
-
-        if (c == '-') {
-            px++;
+        } else {
+            WARNING2("Cannot print header character %c", txt[i]);
+            continue;
         }
 
         // Read into letter piecewise to avoid packing issues.
@@ -921,6 +928,7 @@ int TextDisplayLength(const char *str)
         case '%':
         case '/':
         case '<':
+        case '>':
         case '*':
         case '?':
             pixels += 6;
@@ -932,7 +940,6 @@ int TextDisplayLength(const char *str)
 
         case 'I':
         case '1':
-        case '>':
             pixels += 4;
             break;
 

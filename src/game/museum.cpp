@@ -1150,9 +1150,6 @@ void ShowAstrosHist(char plr)
 
 void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {
-    char temp[11] = "GROUP \0";
-    char Ast_Name[11];
-
     if (Data->P[plr].AstroCount == 0) {
         return;
     }
@@ -1206,17 +1203,15 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
         draw_string(0, 0, "S");
     }
 
-    memset(Ast_Name, 0x00, sizeof Ast_Name);
-    strncpy(Ast_Name, abuf[*where].Name, 10);
-
     if (abuf[*where].Sex == 1) {
         display::graphics.setForegroundColor(5);  // Show females in blue
     }
 
-    draw_string(165, 39, Ast_Name);  // Displays name of astronaut/cosmonaut
+    // Displays name of astronaut/cosmonaut
+    draw_string(165, 39, std::string(abuf[*where].Name, 11).c_str());
     display::graphics.setForegroundColor(11);
-    strncat(temp, RomanNumeral(abuf[*where].Group + 1).c_str(), 4);
-    draw_string(165, 49, temp);
+    draw_string(165, 49, "GROUP ");
+    draw_string(0, 0, RomanNumeral(abuf[*where].Group + 1).c_str());
     display::graphics.setForegroundColor(12);
     draw_number(225, 169, *where + 1);
     draw_string(0, 0, " OF ");
@@ -1225,8 +1220,8 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     DisplAstData(plr, where, where2, vhptr2);
     GradRect(234, 30, 313, 79, plr);
     AstFaces(plr, 234, 30, abuf[*where].Face); //30
-
 }
+
 
 void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
 {

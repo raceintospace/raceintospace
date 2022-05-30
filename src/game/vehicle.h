@@ -27,6 +27,7 @@ public:
     std::list<Equipment *> needed();
     void release();
     int safety() const;
+    int MaxRD() const;
     bool started() const;
     int thrust() const;
     bool translunar() const;

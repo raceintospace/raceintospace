@@ -1,11 +1,11 @@
 #include "roster_entry.h"
-#include "roster_group.h"
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 
 #include "options.h"
 #include "pace.h"
+#include "roster_group.h"
 
 RosterEntry::RosterEntry(const RosterGroup &group, const Json::Value &json_object)
     : m_group_number(group.getGroupNumber())

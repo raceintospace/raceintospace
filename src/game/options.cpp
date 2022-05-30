@@ -18,20 +18,23 @@
 
 // This file handles Advanced Preferences.
 
-#include "Buzz_inc.h"
 #include "options.h"
+
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include <SDL/SDL.h>
+
+#include "Buzz_inc.h"
 #include "macros.h"
 #include "pace.h"
 #include "fs.h"
 #include "utils.h"
 #include "logging.h"
-#include <assert.h>
-#include <ctype.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <SDL/SDL.h>
 
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")
@@ -73,28 +76,28 @@ LOG_DEFAULT_CATEGORY(config)
 
 /*set up array for environment vars */
 static struct {
-    char *name;
+    const char *name;
     char **dest;
-    char *def_val;
+    const char *def_val;
 } env_vars[] = {
     {ENVIRON_DATADIR, &options.dir_gamedata, DEFAULT_DATADIR},
     {ENVIRON_SAVEDIR, &options.dir_savegame, DEFAULT_SAVEDIR},
 };
 
-static struct {
-    char *name; /**< name of option */
-    void *dest; /**< pointer to the variable holding the content */
-    char *format; /**< scanf format of the data we get */
+static const struct {
+    const char *name; /**< name of option */
+    const void *dest; /**< pointer to the variable holding the content */
+    const char *format; /**< scanf format of the data we get */
     int need_alloc; /**< max memory size to be allocated for value */
-    char *comment; /**< a note to the user */
+    const char *comment; /**< a note to the user */
 } config_strings[] = {
     {
         "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
-        "Path to directory with game data files."
+        "Path to directory with game data files (only if different from default location)."
     },
     {
         "audio", &options.want_audio, "%u", 0,
-        "Set to 0 if you don't want audio in game."
+        "Set to 0 if you don't want audio in the game."
     },
     {
         "nofail",  &options.want_cheats, "%u", 0,
@@ -120,65 +123,86 @@ static struct {
     },
     {
         "short_training", &options.feat_shorter_advanced_training, "%u", 0,
-        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (may cause trouble)."
+        "Set to non-zero to shorten Advanced Training duration from 4 to 3 seasons (experimental)."
     },
     {
         "female_nauts", &options.feat_female_nauts, "%u", 0,
         "Set to determine when female astronauts may be recruited:"
-        "\n#   0  Classic (only after a news event)"
-        "\n#   1  Always allow recruitment"
+        "\n#   0  Classic (only after the newscast that requires it)"
+        "\n#   1  Always allow recruitment (newscast will still require it)"
     },
     {
         "random_nauts", &options.feat_random_nauts, "%u", 0,
-        "Set to non-zero to enable randomization of 'nauts."
+        "Set to non-zero to enable randomization of 'nauts for the AI."
     },  //Naut Randomize, Nikakd, 10/8/10
     {
         "compt_nauts", &options.feat_compat_nauts, "%u", 0,
-        "Set the compatibility level of nauts (10 is default, 1 complete)."
+        "Set the compatibility level of 'nauts (10 is default, 1 complete)."
     }, //Naut Compatibility, Nikakd, 10/8/10
     {
         "no_c_training", &options.feat_no_cTraining, "%u", 0,
-        "Set to zero to disable assigning crews in Training to a mission (Classic setting)."
+        "Crews that have just been assigned are in Training status. By default, newly"
+        "\n# assembled crews (i.e., those in Training) are not required to wait a turn"
+        "\n# before being assigned to a mission."
+        "\n# Set to zero to disable assigning crews in Training to a mission (Classic setting)."
     },   //No Capsule Training, Nikakd, 10/8/10
     {
         "no_backup", &options.feat_no_backup, "%u", 0,
         "Set to zero to require assigning a Backup crew (Classic setting)."
     },   // No Backup crew required -Leon
     {
-        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 1,
-        "By default astronaut/cosmonaut candidate stats are revealed based"
-        "\n# on Astronaut difficulty. Set to 0 to restore the classic"
-        "setting\n# where only Capsule and Endurance are shown."
+        "show_recruit_stats", &options.feat_show_recruit_stats, "%u", 0,
+        "By default, astronaut/cosmonaut candidate stats are revealed based on"
+        "\n# Astronaut difficulty level. Set to 0 to restore the classic setting"
+        "\n# where only Capsule and Endurance are shown."
     },   // Depending on difficulty, show recruit's Docking, EVA, LM
     {
-        "use_endurance", &options.feat_use_endurance, "%u", 1,
-        "Add the crew's endurance when making duration tests, and when "
-        "avoiding injury.\n# Set to 0 to disabled (Classic setting)."
+        "use_endurance", &options.feat_use_endurance, "%u", 0,
+        "By default, crew's endurance is added to duration steps of missions,"
+        "\n# and when a newscast has someone retire or be injured, high endurance"
+        "\n# makes them less likely to retire."
+        "\n# Set to 0 to disable (Classic setting)."
 
     },
     {
         "cheat_no_damage", &options.cheat_no_damage, "%u", 0,
-        "Set to non-zero to disable damaged equipment (will prevent future damage)."
+        "Set to non-zero to disable damaged equipment - will not affect equipment already damaged."
+        "\n# ('Damaged' means you have to pay xMB to avoid a y% penalty on its next mission.)"
     },
     {
-        "random_eq", &options.feat_random_eq, "%u", 0,
-        "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
+        "no_money_cheat", &options.no_money_cheat, "%u", 0,
+        "Set to 1 to disallow the money cheat in Purchasing (Classic setting)."
+        "\n# (By default, in single-player games, pressing $ in Purchasing raises your Cash by 100MB.)"
     },
-    {
-        "eq_name_change", &options.feat_eq_new_name, "%u", 0,
-        "Set to non-zero to be able to change equipment name when starting a new game."
-    },
+    /* These two removed because they were never implemented, per #520
+        {
+            "random_eq", &options.feat_random_eq, "%u", 0,
+            "Set to non-zero to enable random equipment model (will break game balance and possibly break the AI)."
+        },
+        {
+            "eq_name_change", &options.feat_eq_new_name, "%u", 0,
+            "Set to non-zero to be able to change equipment name when starting a new game."
+        },
+    */
     {
         "atlasLunar", &options.cheat_atlasOnMoon, "%u", 0,
-        "Set to non-zero to enable Atlas rockets in lunar missions."
+        "Set to non-zero to enable Atlas/R-7 rockets on lunar missions."
+        "\n# (By default, leaving Earth orbit requires at least a Titan/Proton.)"
     },
     {
         "succesRDMax", &options.cheat_addMaxS, "%u", 0,
-        "Set to zero to make MaxRD not change with successful missions (Classic setting)."
+        "By default, a component used successfully on a mission will gain +1% Max R&D."
+        "\n# This lets you research back to where you started if hardware is downgraded"
+        "\n# by a newscast, and lets you improve your hardware's Max R&D even if it hasn't"
+        "\n# reached that yet."
+        "\n# Set to zero to make MaxRD never change (Classic setting)."
     },
     {
         "boosterSafety", &options.boosterSafety, "%u", 0,
-        "0: Statistical Safety (default) - 1: Min Safety - 2: Average Safety (Classic setting)"
+        "Determine how Safety of boosted rockets is calculated:"
+        "\n#   0: Statistical Safety (default) - Boosted rocket = rocket * booster, e.g. .87 * .85"
+        "\n#   1: Minimum Safety - Boosted rocket = rocket or booster, whichever is lower"
+        "\n#   2: Average Safety (Classic setting) - Boosted rocket = average of rocket & booster"
     },
 };
 
@@ -256,7 +280,7 @@ parse_var_value(FILE *f, int index)
         }
     } else {
         /* config_strings[].dest points to a value */
-        void *target = config_strings[i].dest;
+        const void *target = config_strings[i].dest;
 
         res = fscanf(f, format, target, &chars);
 
@@ -368,10 +392,13 @@ write_default_config(void)
             PACKAGE_STRING);
     fprintf(f, "# Comments start with '#' and span the whole line.\n");
     fprintf(f, "# Active (non-comment) lines should look like:\n\n");
-    fprintf(f, "# variable_name variable_value\n");
+    fprintf(f, "# variable_name variable_value\n\n");
     fprintf(f, "# (be sure to remove the #), e.g.:\n");
-    fprintf(f, "# female_nauts 1 (but without the # and space at the beginning)\n\n");
-    fprintf(f, "# 'Classic' settings return to how the game worked in BARIS\n\n\n");
+    fprintf(f, "# female_nauts 1\n");
+    fprintf(f, "# (but without the # and space at the beginning)\n\n");
+    fprintf(f, "# 'Classic' settings return to how the game worked in BARIS.\n");
+    fprintf(f, "# If you should want to return this file to default settings, you can\n");
+    fprintf(f, "# delete it and the game will create a fresh one next time it opens.\n\n\n");
 
     for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
         fprintf(f, "# %s\n# %s\n\n",
@@ -402,9 +429,12 @@ static char *get_homedir(void)
 
     if ((s = getenv("HOMEPATH"))) {
         char *s2 = NULL;
+        std::string path(s);
 
         if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
-            return xstrcat2(s2, s);
+            std::string drive(s2);
+            drive += path;
+            return xstrdup(drive.c_str());
         }
     }
 
@@ -454,6 +484,7 @@ void ResetToDefaultOptions()
     options.feat_no_cTraining = 1;
     //No Backup crew required -Leon
     options.feat_no_backup = 1;
+    options.no_money_cheat = 0;
     options.feat_show_recruit_stats = 1;
     options.feat_use_endurance = 1;
     options.feat_random_eq = 0;
@@ -483,6 +514,7 @@ void ResetToClassicOptions()
     options.feat_compat_nauts = 10;
     options.feat_no_cTraining = 0;
     options.feat_no_backup = 0;
+    options.no_money_cheat = 1;
     options.feat_show_recruit_stats = 0;
     options.feat_use_endurance = 0;
 

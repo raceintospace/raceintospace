@@ -170,6 +170,7 @@ std::list<Equipment *> Vehicle::needed()
     if (mSecondary != NULL && mSecondary->Num <= mSecondary->Spok) {
         parts.push_back(mSecondary);
     }
+
     return parts;
 }
 
@@ -216,6 +217,16 @@ int Vehicle::safety() const
         return RocketBoosterSafety(mPrimary->Safety, mSecondary->Safety);
     } else {
         return mPrimary->Safety;
+    }
+}
+
+
+int Vehicle::MaxRD() const
+{
+    if (mSecondary) {
+        return RocketMaxRD(mPrimary->MaxRD, mSecondary->MaxRD);
+    } else {
+        return mPrimary->MaxRD;
     }
 }
 

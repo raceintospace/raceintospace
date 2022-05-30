@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 
-namespace display {
-    class LegacySurface;
+namespace display
+{
+class LegacySurface;
 }
 
 /**

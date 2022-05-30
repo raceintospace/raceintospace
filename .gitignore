@@ -3,3 +3,4 @@ build_*
 .DS_Store
 *.swp
 
+/vsbuild/.vs/raceintospace/v16

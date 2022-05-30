@@ -1,11 +1,14 @@
 #ifndef _MM_FILE_H
 #define _MM_FILE_H
 
-#include <stdio.h>
+#include <cstdio>
+
 #include <ogg/ogg.h>
 #include <vorbis/codec.h>
 #include <theora/theora.h>
 #include <SDL/SDL.h>
+
+
 enum stream_type {
     MEDIA_AUDIO = 1,
 

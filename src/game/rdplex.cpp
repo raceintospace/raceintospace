@@ -70,6 +70,7 @@ void ShowUnit(char hw, char un, char plr);
 void OnHand(char qty);
 void DrawHPurc(char plr);
 void BuyUnit(char hw2, char un2, char plr);
+void RDHelpWarnings(int plr);
 void ShowHardwareDescription(int player, int hardware, int unit);
 
 
@@ -190,7 +191,7 @@ void DrawRD(char player_index)
     draw_left_arrow(24, 186);
     draw_right_arrow(101, 186);
 
-    //GradRect(27,95,130,171,player_index*16+128);
+    // GradRect(27,95,130,171,player_index*16+128);
     fill_rectangle(27, 95, 130, 171, 0);
 
     display::graphics.setForegroundColor(9);
@@ -262,11 +263,11 @@ void DrawRDButtons(char plr, int maxButton)
 
     boost::shared_ptr<display::PalettizedSurface> rd_men;
     rd_men = boost::shared_ptr<display::PalettizedSurface>(
-        Filesystem::readImage(filename));
+                 Filesystem::readImage(filename));
 
     boost::shared_ptr<display::PalettizedSurface> shadow_men;
     shadow_men = boost::shared_ptr<display::PalettizedSurface>(
-        Filesystem::readImage("images/rd_men.none.png"));
+                     Filesystem::readImage("images/rd_men.none.png"));
 
     for (int i = 0; i <= maxButton; i++) {
         display::graphics.screen()->draw(
@@ -289,7 +290,7 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Scr
 
     int diceRoll = decodeRollValue(encodedRolls);
 
-    //DM Screen, Nikakd, 10/8/10
+    // DM Screen, Nikakd, 10/8/10
     if (SpDModule == 1) {
         draw_string(184, 191, "CANNOT BE RESEARCHED");
         return;
@@ -362,6 +363,12 @@ char RD(char player_index)
     music_start(M_HARDWARE);
 
     WaitForMouseUp();
+
+    bool enableAdvice = true;  // TODO: Create an option for this?
+
+    if (enableAdvice) {
+        RDHelpWarnings(player_index);
+    }
 
     while (1) {
         key = 0;
@@ -664,7 +671,7 @@ char RD(char player_index)
                 } else {
                     QueryUnit(hardware, unit, player_index);
                 }
-            } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER) {
+            } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
@@ -690,7 +697,7 @@ char RD(char player_index)
 
                 music_stop();
 
-                // DM Screen, Nikakd, 10/8/10 (Removed line)
+                //DM Screen, Nikakd, 10/8/10 (Removed line)
                 if (call == 1) {
                     return 1;    // go back through gateway
                 }
@@ -731,13 +738,19 @@ char RD(char player_index)
                 music_start(M_HARDWARE);
 
                 WaitForMouseUp();
-            
+
             } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
                 OutBox(26, 94, 131, 172);
                 delay(10);
                 WaitForMouseUp();
                 InBox(26, 94, 131, 172);
-                ShowHardwareDescription(player_index, hardware, unit); 
+                ShowHardwareDescription(player_index, hardware, unit);
+            } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+                OutBox(285, 70, 317, 87);
+                delay(10);
+                WaitForMouseUp();
+                InBox(285, 70, 317, 87);
+                Help("i168");
             }
         }
 
@@ -769,6 +782,7 @@ void ManSel(int activeButtonIndex, int maxAvailable)
 void ShowHardwareDescription(int player, int hardware, int unit)
 {
     int helpIndex = 0;
+
     switch (hardware) {
     case PROBE_HARDWARE:
         helpIndex = 201;
@@ -786,6 +800,7 @@ void ShowHardwareDescription(int player, int hardware, int unit)
         helpIndex = 231;
         break;
     }
+
     helpIndex = helpIndex + unit * 2 + player;
     char helpEntry[5];
     snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
@@ -796,7 +811,7 @@ void ShowHardwareDescription(int player, int hardware, int unit)
 /**
  * Get the maximum number of R&D teams allowed for a program.
  *
- * If playing RIS in "classic" mode, this should always return
+ * If playing RIS in Classic mode, this should always return
  * the maximum value.
  *
  * \param plr  the player index.
@@ -940,10 +955,7 @@ void ShowUnit(char hw, char un, char player_index)
 
     // Set Avoid Failure notification
     if (program.SaveCard > 0) {
-        fill_rectangle(286, 71, 316, 71, 5);
-        fill_rectangle(286, 86, 316, 86, 5);
-        fill_rectangle(286, 72, 286, 85, 5);
-        fill_rectangle(316, 72, 316, 85, 5);
+        IOBox(285, 70, 317, 87);
         display::graphics.setForegroundColor(11);
         draw_string(288, 77, "AVOID");
         draw_string(291, 84, "FAIL");
@@ -1077,12 +1089,13 @@ void ShowUnit(char hw, char un, char player_index)
 
     draw_number(241, 97, Init_Cost);
     draw_number(230, 104, Unit_Cost);
+
     if (program.RDCost == 0) {
         draw_string(275, 118, "--");
     } else {
         draw_number(275, 118, program.RDCost);
     }
-    
+
     if (hw != ROCKET_HARDWARE) {
         draw_number(240, 125, program.UnitWeight);
     } else {
@@ -1137,7 +1150,7 @@ void ShowUnit(char hw, char un, char player_index)
 
         qty = 0;
     }
-    
+
     fill_rectangle(27, 95, 130, 171, 0);
 
     BigHardMe(player_index, 27, 95, hw, un, qty);
@@ -1400,7 +1413,7 @@ char HPurc(char player_index)
             } else {
                 Help("i135");
             }
-        } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER) {
+        } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
             music_stop();
@@ -1445,12 +1458,21 @@ char HPurc(char player_index)
             music_start(M_FILLER);
             WaitForMouseUp();
 
-         } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
+        } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
             OutBox(26, 94, 131, 172);
             delay(10);
             WaitForMouseUp();
             InBox(26, 94, 131, 172);
-            ShowHardwareDescription(player_index, hardware, unit); 
+            ShowHardwareDescription(player_index, hardware, unit);
+        } else if ((Data->P[0].AIStat > 0 || Data->P[1].AIStat > 0) && key == '$' && !options.no_money_cheat) {
+            Data->P[player_index].Cash += 100;  // Cheat - add 100MB to cash on hand
+            DrawCashOnHand(player_index);
+        } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+            OutBox(285, 70, 317, 87);
+            delay(10);
+            WaitForMouseUp();
+            InBox(285, 70, 317, 87);
+            Help("i168");
         }
     }
 }
@@ -2109,5 +2131,62 @@ BuyUnit(char category, char unit, char player_index)
     ShowUnit(category, unit, player_index);
     return;
 }
+
+
+/**
+ * Trigger advisory warnings when entering the R&D facility.
+ */
+void RDHelpWarnings(int plr)
+{
+    // These two warnings are here on the principle that normally
+    // you would have both DMs and EVA suits before prototyping
+    // your lunar landing craft.
+
+    // Warn player that they haven't started EVA suits yet,
+    // though they have an LM or Kicker-C or direct ascent capsule  -LPB
+    if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
+        Help("i046");
+    }
+
+    // Warn player that they haven't started DMs yet, though they
+    // have an LM or Kicker-C  -LPB
+    if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
+         Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
+        Help("i047");
+    }
+
+    // Warn player that they haven't started a kicker yet,
+    // though they have Gemini/Voskhod or a minishuttle fully researched
+    // -LPB
+    if ((Data->P[plr].Misc[MISC_HW_KICKER_A].Num < 0 &&
+         Data->P[plr].Misc[MISC_HW_KICKER_B].Num < 0) &&
+        Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0 &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety >=
+         Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].MaxRD ||
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >=
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD) &&
+        (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety > 85 ||
+         Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety > 88)) {
+        Help("i048");
+    }
+
+    // Warn player with little money that they should visit the VAB/VIB
+    if (Data->P[plr].Cash <= 60) {
+        for (int i = 0; i < MAX_MISSIONS; i++) {
+            if (Data->P[plr].Mission[i].MissionCode > 0 &&
+                Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
+                Help("i173");
+                break;
+            }
+        }
+    }
+}
+
 
 /* vim: set noet ts=4 sw=4 tw=77 */

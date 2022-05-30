@@ -30,8 +30,10 @@
 // This file handles the Administration building and some of its subsections: Future Missions, Time Capsule (save/load game).
 // It also includes some code for Modem and PBEM.
 
-#include <assert.h>
+#include "admin.h"
 
+#include <cassert>
+#include <cctype>
 #include <algorithm>
 #include <vector>
 
@@ -39,7 +41,6 @@
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "admin.h"
 #include "Buzz_inc.h"
 #include "utils.h"
 #include "ast1.h"
@@ -59,8 +60,8 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
+#include "options.h"
 
-#include <ctype.h>
 
 #include <zlib.h>
 
@@ -92,27 +93,39 @@ inline SaveGameType operator|(SaveGameType a, SaveGameType b);
 inline SaveGameType operator&(SaveGameType a, SaveGameType b);
 
 struct SFInfo {
-    char Name[20], Title[23];
+    char Name[27], Title[23];
     uint16_t time, date;
     SaveGameType type;
 };
+
+/* Result of savegame search */
+struct SaveGameEnumerator : public PhysFsEnumerator {
+    SaveGameType type;
+    int maxSaves = 100;
+    std::vector<SFInfo> results;
+
+    SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : type(type), maxSaves(maxSaves), PhysFsEnumerator("/") {}
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string &origdir, const std::string &fname);
+};
+
+
 };  // End of anon namespace
 
 
 void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
 void DrawTimeCapsule(int display);
 std::vector<SFInfo> GenerateTables(SaveGameType saveType);
-char GetBlockName(char *Nam);
+std::string GetBlockName();
 SaveGameType GetSaveType(const SaveFileHdr &header);
 void BadFileType();
-void FileText(char *name);
+void FileText(const char *name);
 int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
 void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
-char RequestX(char *s, char md);
+char RequestX(const char *s, char md);
 void write_save_file(char *Name, SaveFileHdr header);
-void SaveGame(const std::vector<SFInfo> savegames);
+int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
 {
@@ -317,6 +330,55 @@ void CacheCrewFile()
     fclose(dest);
 }
 
+bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
+{
+    SaveFileHdr header;
+    FILE *fin = sOpen(fname.c_str(), "rb", FT_SAVE);
+
+    if (fin == NULL) {
+        NOTICE2("Unable to open save file %s, skipping",
+                fname);
+        return false;
+    }
+
+    size_t bytes = fread(&header, 1, sizeof(header), fin);
+    fclose(fin);
+
+    if (bytes != sizeof(header)) {
+        NOTICE2("Unable to read save file %s, skipping",
+                fname);
+        return false;
+    }
+
+    memset(&saveInfo, 0, sizeof(saveInfo));
+    strcpy(saveInfo.Title, header.Name);
+    strcpy(saveInfo.Name, fname.c_str());
+    saveInfo.time = 0;  /* Were this ever read from somewhere? */
+    saveInfo.date = 0;
+    saveInfo.type = GetSaveType(header);
+    return true;
+}
+
+PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &origdir, const std::string &fname)
+{
+    size_t len = fname.size();
+    SaveGameType type;
+    std::string name;
+    SFInfo saveInfo;
+
+    if (len >= 4 && xstrncasecmp(fname.c_str() + len - 4, ".SAV", 4) == 0 &&
+        fname.size() <= (sizeof(saveInfo.Name) - 1) &&
+        ReadGameSaveInfo(fname, saveInfo)) {
+        results.push_back(saveInfo);
+    }
+
+    if (results.size() < maxSaves) {
+        return PHYSFS_ENUM_OK;
+    } else {
+        return PHYSFS_ENUM_STOP;
+    }
+
+}
 
 /* Creates a list of all the save files of the selected type, up to 100.
  *
@@ -329,54 +391,14 @@ void CacheCrewFile()
  */
 std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 {
-    struct ffblk ffblk;
-    const int maxSaves = 100;
-    SaveFileHdr header;
-    SFInfo saveInfo;
-    std::vector<SFInfo> results;
-    SaveGameType type;
 
-    for (bool done = first_saved_game(&ffblk);
-         done != true && results.size() < maxSaves;
-         done = next_saved_game(&ffblk)) {
+    SaveGameEnumerator saves(saveType);
 
-        if (strlen(ffblk.ff_name) > sizeof(saveInfo.Name) - 1) {
-            NOTICE2("Save name too long: %s, skipping", ffblk.ff_name);
-            continue;
-        }
-
-        FILE *fin = sOpen(ffblk.ff_name, "rb", 1);
-
-        if (fin == NULL) {
-            NOTICE2("Unable to open save file %s, skipping",
-                    ffblk.ff_name);
-            continue;
-        }
-
-        size_t bytes = fread(&header, 1, sizeof(header), fin);
-        fclose(fin);
-
-        if (bytes != sizeof(header)) {
-            NOTICE2("Unable to read save file %s, skipping",
-                    ffblk.ff_name);
-            continue;
-        }
-
-        type = GetSaveType(header);
-
-        if (type & saveType) {
-            memset(&saveInfo, 0, sizeof(saveInfo));
-            strcpy(saveInfo.Title, header.Name);
-            strcpy(saveInfo.Name, ffblk.ff_name);
-            saveInfo.time = ffblk.ff_ftime;
-            saveInfo.date = ffblk.ff_fdate;
-            saveInfo.type = type;
-            results.push_back(saveInfo);
-        }
+    if (saves.enumerate()) {
+        std::sort(saves.results.begin(), saves.results.end(), OrderSaves);
     }
 
-    std::sort(results.begin(), results.end(), OrderSaves);
-    return results;
+    return saves.results;
 }
 
 
@@ -385,9 +407,9 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
  * To determine which menu options are accessible, this uses the
  * global MAIL and Option variables. For normal games, MAIL & Option
  * are set to -1. These are used to identify the current player in a
- * Play-by-mail or Modem game, being set to the side of the player:
+ * Play-by-Mail or Modem game, being set to the side of the player:
  * 0 for Player 1 (USA), 1 for Player 2 (USSR). Practically, both
- * Play-by-mail and Modem play are currently disabled.
+ * Play-by-Mail and Modem play are currently disabled.
  *
  * \param mode  0 if saving is allowed, 1 if not, 2 if only email saves.
  */
@@ -408,7 +430,7 @@ void FileAccess(char mode)
     // This needs to be deciphered and better documented. -- rnyoakum
     if (mode == 2) {
         mode = 0;
-        sc = 1;  //only allow mail save
+        sc = 1;  // only allow mail save
     }
 
     helpText = "i128";
@@ -463,6 +485,9 @@ void FileAccess(char mode)
 
     FadeIn(2, 10, 0, 0);
 
+    if (savegames.size() > 9) {
+        draw_down_arrow_highlight(194, 94);
+    }
 
     while (!done) {
         GetMouse();
@@ -486,6 +511,7 @@ void FileAccess(char mode)
 
         if ((sc == 0 || sc == 2) && !savegames.empty() && ((x >= 209 && y >= 50 && x <= 278 && y <= 58 && mousebuttons > 0)
                 || (key == 'L'))) {
+            // LOAD
             InBox(209, 50, 278, 58);
             delay(250);
 
@@ -510,22 +536,29 @@ void FileAccess(char mode)
             OutBox(209, 50, 278, 58);  // Button Out
             key = 0;
 
-        }  // LOAD
-        else if ((sc == 0 || sc == 2) && mode == 0 && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
-                 || (key == 'S'))) {
+        } else if ((sc == 0 || sc == 2) && mode == 0
+                   && ((x >= 209 && y >= 64 && x <= 278 && y <= 72 && mousebuttons > 0)
+                       || (key == 'S'))) {
+            InBox(209, 64, 278, 72);
+            delay(250);
+            WaitForMouseUp();
 
-            SaveGame(savegames);
+            done = !SaveGame(savegames);
             OutBox(209, 64, 278, 72);
             key = 0;
-            break;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
                                             || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
-            SaveGame(savegames);
+            InBox(209, 78, 278, 86);
+            delay(250);
+            WaitForMouseUp();
 
+            QUIT = SaveGame(savegames) ? 0 : 1;
             OutBox(209, 78, 278, 86);
             key = 0;
-            QUIT = 1;
-            return;
+
+            if (QUIT) {
+                return;
+            }
         } else if (savegames.size() > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
                                             || (key == 'D'))) {
             InBox(209, 92, 278, 100);
@@ -559,7 +592,7 @@ void FileAccess(char mode)
             }
 
             key = 0;
-        } else if ((x >= 209 && y >= 106 && x <= 278 && y <= 114 && mousebuttons > 0) || (key == 'P')) {
+        } else if ((x >= 209 && y >= 106 && x <= 278 && y <= 114 && mousebuttons > 0) || (key == 'P') || key == K_ESCAPE) {
             InBox(209, 106, 278, 114);
             delay(250);
             WaitForMouseUp();
@@ -606,12 +639,37 @@ void FileAccess(char mode)
             // WaitForMouseUp();
             OutBox(191, 50, 202, 87);
 
+            if (now == 0) {
+                draw_up_arrow(194, 55);
+            }
+
+            if (savegames.size() > now + (9 - BarB)) {
+                draw_down_arrow_highlight(194, 94);
+            }
+
             // perform Up Button
             key = 0;
-        } else if (key == K_PGUP) { // Page Up
+
+        } else if (key == K_HOME) {  // Top of list
+
+            now = 0;
+            BarB = 0;
+            DrawFiles(now, BarB, savegames);
+            FileText(&savegames[now].Name[0]);
+
+            if (savegames.size() > 8) {
+                draw_up_arrow_highlight(194, 55);
+            } else {
+                draw_up_arrow(194, 55);
+            }
+
+            key = 0;
+
+        } else if (key == K_PGUP) {  // Page Up
 
             if (now > 0) {
                 now -= 9;
+                BarB = 0;
 
                 if (now < 0) {
                     now = 0;
@@ -622,8 +680,24 @@ void FileAccess(char mode)
                 FileText(&savegames[now].Name[0]);
             }
 
+            if (now == 0) {
+                draw_up_arrow(194, 55);
+            }
+
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
+
             // perform Up Button
             key = 0;
+
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
+
+            if (savegames.size() > now + (8 - BarB)) {
+                draw_down_arrow_highlight(194, 94);
+            }
 
         } else if (key == K_PGDN) {  // Page Down
 
@@ -632,14 +706,45 @@ void FileAccess(char mode)
 
                 if (now > (savegames.size() - 1)) {
                     now = savegames.size() - 1;
+                    BarB = savegames.size() - 1;
+                } else {
+                    now = savegames.size() - 1;
                     BarB = 8;
                 }
 
                 DrawFiles(now, BarB, savegames);
                 FileText(&savegames[now].Name[0]);
+
+                if (savegames.size() > 8) {
+                    draw_up_arrow_highlight(194, 55);
+                } else {
+                    draw_up_arrow(194, 55);
+                }
             }
 
             key = 0;
+
+        } else if (key == K_END) {  // End of list
+
+            now = savegames.size() - 1;
+
+            BarB = 8;
+
+            if (BarB > savegames.size() - 1) {
+                BarB = savegames.size() - 1;
+            }
+
+            if (savegames.size() > 8) {
+                draw_up_arrow_highlight(194, 55);
+            } else {
+                draw_up_arrow(194, 55);
+            }
+
+            DrawFiles(now, BarB, savegames);
+            FileText(&savegames[now].Name[0]);
+
+            key = 0;
+
         } else if ((x >= 191 && y >= 89 && x <= 202 && y <= 126 && mousebuttons > 0) || key == DN_ARROW) {
             InBox(191, 89, 202, 126);
 
@@ -648,6 +753,7 @@ void FileAccess(char mode)
                     now++;
                     DrawFiles(now, BarB, savegames);
                     FileText(&savegames[now].Name[0]);
+                    draw_up_arrow_highlight(194, 55);
                 }
             }
 
@@ -664,8 +770,16 @@ void FileAccess(char mode)
 
             // perform Down Button
             key = 0;
+
+            if (BarB - now > 0) {
+                draw_up_arrow_highlight(194, 55);
+            }
+
+            if (savegames.size() <= now + (9 - BarB)) {
+                draw_down_arrow(194, 94);
+            }
         }
-    }  //while
+    }  // while
 
     if (LOAD == 1) {
         OutBox(209, 50, 278, 60);  // Button Out
@@ -700,7 +814,7 @@ void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
 
     for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
         if (savegames[i].type == SAVEGAME_PlayByMail) {
-            display::graphics.setForegroundColor(11);
+            display::graphics.setForegroundColor(11);  // Show PBEM saves in yellow
         } else {
             display::graphics.setForegroundColor(1);
         }
@@ -767,7 +881,7 @@ void DrawTimeCapsule(int display)
     }
 
     display::graphics.setForegroundColor(11);
-    draw_string(59, 42, "TIME CAPSULE REQUEST");
+    draw_string(65, 42, "TIME CAPSULE REQUEST");
     draw_string(219, 42, "FUNCTIONS");
     display::graphics.setForegroundColor(1);
     draw_string_highlighted(233, 56, "LOAD", 0);
@@ -816,7 +930,7 @@ SaveGameType GetSaveType(const SaveFileHdr &header)
  *
  * \param name  The filename to write the save under.
  */
-void autosave_game(char *name)
+void autosave_game(const char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
@@ -832,41 +946,52 @@ void autosave_game(char *name)
 }
 
 
-/* Creates and displays an entry form for submitting a savegame name
- * and accepts the game description as input.
+/* Launches an entry form for naming a savegame.
+ *
+ * The savegame title is used as the basis for the file names, as
+ * "{title}.SAV". Consequently, the title is limited to the same
+ * length as SaveFileHdr::Name, plus delimiter.
  *
  * \param name  The string location where the name is stored.
- * \return  1 if the name is submitted, 0 if aborted.
+ * \return  the user-supplied file name, ("" if aborted).
+ * \throws IOException  if insufficient disk space remaining.
  */
-char GetBlockName(char *Nam)
+std::string GetBlockName()
 {
-    int i, key;
+    const int maxLength = sizeof(SaveFileHdr().Name) - 1;
 
     display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
-    i = 1;
 
-    if (i == 1) {
+    // TODO: Move this to wherever disk space should actually be
+    // checked. Consider modifying BadFileType() to accept a string
+    // argument?
+    // TODO: This is supposed to check if there is sufficient disk
+    // space to write a save, but isn't implemented.
+    if (true) {
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        draw_string(47, 74, "ENTER FILE DESCRIPTION");
+        draw_string(61, 74, "ENTER FILE DESCRIPTION");
         InBox(51, 95, 190, 105);
         fill_rectangle(52, 96, 189, 104, 0);
     } else {
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
         display::graphics.setForegroundColor(11);
-        draw_string(47, 74, "NOT ENOUGH DISK SPACE");
+        draw_string(60, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
         local.copyTo(display::graphics.legacyScreen(), 39, 50);
-        return 0;
+        throw IOException("Not enough disk space");
     }
 
     gr_sync();
-    key = 0;
-    i = 0;
+
+    int key = 0;
+    std::string name;
+    name.reserve(maxLength + 1);
+    display::graphics.setForegroundColor(1);
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
@@ -878,21 +1003,16 @@ char GetBlockName(char *Nam)
         }
 
         if (key & 0x00ff) {
-            if ((i < 21) && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
-                             (key >= '0' && key <= '9'))) { // valid key
-                Nam[i++] = key;
-                display::graphics.setForegroundColor(1);
-                draw_string(53, 102, &Nam[0]);
+            if ((name.length() < maxLength)
+                && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
+                    (key >= '0' && key <= '9'))) {
+                name.push_back(key);
+                draw_string(53, 102, name.c_str());
                 key = 0;
-            }
-
-            if (i > 0 && key == 0x08) {
-                Nam[--i] = 0x00;
-
+            } else if (name.length() && key == 0x08) {
+                name.erase(name.end() - 1);
                 fill_rectangle(52, 96, 189, 104, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(53, 102, &Nam[0]);
-
+                draw_string(53, 102, name.c_str());
                 key = 0;
             }
         }
@@ -900,10 +1020,10 @@ char GetBlockName(char *Nam)
 
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
 
-    if (key == K_ENTER && i >= 1) {
-        return 1;
+    if (key == K_ENTER && name.length()) {
+        return name;
     } else {
-        return 0;
+        return "";
     }
 }
 
@@ -918,7 +1038,7 @@ void BadFileType()
     InBox(43, 67, 197, 77);
     fill_rectangle(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
-    draw_string(47, 74, "CORRUPT SAVE FILE");
+    draw_string(66, 74, "CORRUPT SAVE FILE");
     delay(2000);
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
     PauseMouse();
@@ -933,7 +1053,7 @@ void BadFileType()
  *
  * \param name  A savegame filename.
  */
-void FileText(char *name)
+void FileText(const char *name)
 {
     FILE *fin;
     SaveFileHdr header;
@@ -1079,7 +1199,7 @@ int FutureCheck(char plr, char type)
     display::graphics.setForegroundColor(11);
     draw_string(231, 25, "E");
     display::graphics.setForegroundColor(9);
-    draw_string(235, 25, "XIT");
+    draw_string(236, 25, "XIT");
     display::graphics.setForegroundColor(11);
 
     if (type == 0) {
@@ -1100,17 +1220,21 @@ int FutureCheck(char plr, char type)
 
         if (p[i] > 1) {
             display::graphics.setForegroundColor(5);
-            draw_string(111, 50 + i * 51, "THIS FACILITY IS ");
+            draw_string(111, 44 + i * 51, "THIS FACILITY IS ");
 
-            if (p[i] == 20) {
+            if (p[i] >= 20) {
                 draw_string(0, 0, "DESTROYED.");
             } else {
                 draw_string(0, 0, "DAMAGED.");
             }
 
-            draw_string(111, 57 + i * 51, "IT WILL COST ");
+            draw_string(111, 52 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
+            display::graphics.setForegroundColor(11);
+            draw_string(113, 60 + i * 51, "(OF ");
+            draw_number(0, 0, Data->P[plr].Cash);
+            draw_string(0, 0, "MB)");
 
             if (type == 0) {
                 draw_string(113, 75 + i * 51, "REPAIR LAUNCH FACILITY");
@@ -1132,8 +1256,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
-                // Show duration level only on missions with a
-                // Duration step - Leon
+                // Show duration level only on missions with a Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Mission[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
@@ -1155,8 +1278,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
-                // Show duration level only on missions with a
-                // Duration step - Leon
+                // Show duration level only on missions with a Duration step - Leon
                 if (IsDuration(MisCod)) {
                     int duration = Data->P[plr].Future[i].Duration;
                     draw_string(0, 0, GetDurationParens(duration));
@@ -1202,8 +1324,13 @@ int FutureCheck(char plr, char type)
 
             if (type == 0) {
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
-                draw_string(111, 57 + i * 51, "FOR: 20 MB'S");
-                draw_string(111, 75 + i * 51, "PURCHASE FACILITY");
+                draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
+                display::graphics.setForegroundColor(11);
+                draw_string(0, 0, "(OF ");
+                draw_number(0, 0, Data->P[plr].Cash);
+                draw_string(0, 0, ")");
+                display::graphics.setForegroundColor(9);
+                draw_string(113, 75 + i * 51, "PURCHASE FACILITY");
             } else {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);
             }
@@ -1570,13 +1697,13 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b)
  * \param md  1 if the background underneath should be redrawn on close.
  * \return  1 for yes, 0 for no.
  */
-char RequestX(char *s, char md)
+char RequestX(const char *s, char md)
 {
     char i;
     display::LegacySurface local(196, 84);
 
 
-    if (md == 1) { // Save Buffer
+    if (md == 1) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
@@ -1676,6 +1803,7 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
     return interimData.endTurnSaveSize;
 }
 
+
 /*
  * Writes the actual save file to disk. Data, replay data, and event
  * data are serialized into a JSON string, compressed by zlib, and
@@ -1765,31 +1893,40 @@ void write_save_file(char *Name, SaveFileHdr header)
     free(cbuf);
 }
 
-void SaveGame(const std::vector<SFInfo> savegames)
+/**
+ * Launches the Save Game process.
+ *
+ * TODO: Add a option to toggle between classic save file naming
+ * (ex: BUZZ1.SAV) and updated format ({title}.SAV).
+ *
+ * \return  0 if successfully saved, 1 if aborted.
+ */
+int SaveGame(const std::vector<SFInfo> savegames)
 {
-    int done, temp, i;
+    int done = 0, temp, i;
+    FILE *fin;
     SaveFileHdr header;
-    char *fname;
+    std::string title;
 
-    if (MAIL == -1) {
-        InBox(209, 64, 278, 72);
-    } else {
-        InBox(209, 78, 278, 86);
-    }
-
-    delay(250);
-
-    WaitForMouseUp();
     memset(&header, 0x00, sizeof(header));
+    header.ID = RaceIntoSpace_Signature;
+    header.Name[sizeof(header.Name) - 1] = 0x1a;
 
     do {
-        done = GetBlockName(header.Name); // Checks Free Space
-        header.ID = RaceIntoSpace_Signature;
-        header.Name[sizeof(header.Name) - 1] = 0x1A;
+        title = GetBlockName();
+
+        if (title.length()) {
+            done = 1;
+        } else {
+            return 1;
+        }
+
         temp = NOTSAME;
 
-        for (i = 0; (i < savegames.size() && temp == 2); i++) {
-            if (strcmp(header.Name, savegames[i].Title) == 0) {
+        // TODO: If savegames guarantees ordering by title, we can
+        // eliminate unneccesary checks.
+        for (i = 0; (i < savegames.size() && temp == NOTSAME); i++) {
+            if (title.compare(savegames[i].Title) == 0) {
                 temp = RequestX("REPLACE FILE", 1);
 
                 if (temp == SAME_ABORT) {
@@ -1799,22 +1936,21 @@ void SaveGame(const std::vector<SFInfo> savegames)
         }
     } while (done == 0);
 
-    if (done == YES) {
-        i--;  // decrement to correct for the FOR loop
+    i--;  // decrement to correct for the FOR loop
 
-        if (temp == NOTSAME) {
-            i = 0;
+    EndOfTurnSave((char *) Data, sizeof(struct Players));
+    header.compSize = interimData.endTurnSaveSize;
 
-            strncpy(Name, header.Name, sizeof(Name));
-            Name[sizeof(Name) - 5] = 0; // Leave enough space for .SAV ending
-            strncat(Name, ".SAV", 4);
-
-        } else {
-            strncpy(Name, savegames[i].Name, sizeof(Name));
-        }
-
-        write_save_file(Name, header);
+    // Create the filename from the title.
+    // The field savegames[i].Name is a filename provided by
+    // the file system, so it already includes the .SAV extension.
+    if (temp == NOTSAME) {
+        std::string filename = title + ".SAV";
+        write_save_file(filename.c_str(), header);
+    } else {
+        write_save_file(savegames[i].Name, header);
     }
+
 }
 
 

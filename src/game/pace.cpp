@@ -1,19 +1,20 @@
 // This file is something to do with processing audio files
 
-#include <assert.h>
+#include "pace.h"
+
+#include <cassert>
+#include <cctype>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 
 #include "Buzz_inc.h"
-#include "pace.h"
 #include "utils.h"
 #include "game_main.h"
 #include "sdlhelper.h"
 #include "gr.h"
 #include "mmfile.h"
 
-#include <ctype.h>
 
 void randomize(void);
 void SMove(void *p, int x, int y);
@@ -52,9 +53,9 @@ void OpenEmUp(void)
     letter_dat = slurp_gamedat("letter.dat");
 }
 
-int PCX_D(char *src_raw, char *dest_raw, unsigned src_size)
+int PCX_D(const char *src_raw, char *dest_raw, unsigned src_size)
 {
-    char *src = (char *)src_raw;
+    const char *src = (const char *)src_raw;
     char *dest = (char *)dest_raw;
     char num;
     char *orig_dest = dest;
@@ -88,9 +89,9 @@ int PCX_D(char *src_raw, char *dest_raw, unsigned src_size)
  * \param src_size  Length of the compressed file, in bytes.
  * \return  Size of the decompressed data in bytes.
  */
-int RLED(char *src_raw, char *dest_raw, unsigned int src_size)
+int RLED(const char *src_raw, char *dest_raw, unsigned int src_size)
 {
-    signed char *src = (signed char *)src_raw;
+    const signed char *src = (const signed char *)src_raw;
     signed char *dest = (signed char *)dest_raw;
     unsigned int used;
     int count, val;
@@ -120,9 +121,10 @@ int RLED(char *src_raw, char *dest_raw, unsigned int src_size)
     return ((char *)dest - (char *)dest_raw);
 }
 
-int RLED_img(char *src_raw, char *dest_raw, unsigned int src_size, int w, int h)
+int RLED_img(const char *src_raw, char *dest_raw, unsigned int src_size,
+             int w, int h)
 {
-    signed char *src = (signed char *)src_raw;
+    const signed char *src = (const signed char *)src_raw;
     signed char *dest;
     unsigned int used;
     int count, val;
@@ -241,7 +243,7 @@ int brandom(int limit)
  * \param src_size  Length of the source contents in bytes.
  * \return  Size, in bytes, of the compressed output.
  */
-int32_t RLEC(char *src, char *dest, unsigned int src_size)
+int32_t RLEC(const char *src, char *dest, unsigned int src_size)
 {
     unsigned int src_i;
     int dest_i, cpr;
@@ -300,7 +302,7 @@ struct tblinfo {
  * \param keyname Name of the file to read from
  * \param tbl Pointer to the tblinfo to fill
  */
-void frm_read_tbl(char *keyname, struct tblinfo *tbl)
+void frm_read_tbl(const char *keyname, struct tblinfo *tbl)
 {
     FILE *fin;
     int lo, hi;
@@ -534,7 +536,7 @@ void StopVoice(void)
     av_silence(AV_SOUND_CHANNEL);
 }
 
-void PlayAudio(char *name, char mode)
+void PlayAudio(const char *name, char mode)
 {
     ssize_t bytes = 0;
     bytes = load_audio_file(name, &soundbuf, &soundbuf_size);

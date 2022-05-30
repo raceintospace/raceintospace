@@ -4,14 +4,17 @@ Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/race
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
 Aldrin's Race into Space.  This is the  reworked version  following  the
 source release  for the computer version  of the Liftoff! board  game by
-Fritz Bronner.  This was developed by Strategic Visions and published by
+Fritz Bronner.  The original was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
-The Race Into Space project home page is
-[raceintospace.org](http://www.raceintospace.org), and the most recent
-stable releases are available from
-[SourceForge](http://sourceforge.net/projects/raceintospace/). This
-repository contains a work-in-progress modernization of the game.
+The most recent stable releases are available from
+[SourceForge](http://sourceforge.net/projects/raceintospace/).
+There is a more recent (interim) release on Flatpak, 
+https://flathub.org/apps/details/org.raceintospace.Raceintospace.
+The repository here contains a work-in-progress modernization of the game.
+
+We have made a number of improvements to the game, and are hoping to do a 
+release soon.  The changes made can be viewed in ChangeLog.md above.
 
 License
 =======
@@ -79,7 +82,7 @@ Linux
 We rely on the operating system to provide most of the dependencies. If you're
 on a Debian-based system, you can get everything with:
 
-    $ sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
+    sudo apt-get install cmake libsdl-dev libboost-dev libpng-dev \
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
         libprotobuf-dev protobuf-compiler
 
@@ -89,7 +92,11 @@ Or enter this all on one line:
 
 If you don't already have git installed, you'll also have to run:
 
-    $ sudo apt install git
+    sudo apt install git
+
+You may also need to run (especially if you get "No CMAKE_CXX_COMPILER could be found."):
+
+    sudo apt-get install build-essential
 
 ### Fedora
 
@@ -103,18 +110,39 @@ If you are on a Fedora-based system, you can get everything with:
 
 To compile the game quickly you can run a series of commands in-line. This 
 creates a folder where the compiled game will be installed. If you want it named 
-something other than raceintospace-go, simply change the name. The last two 
+something other than raceintospace-build, simply change the name. The last two 
 commands also run the game automatically.
 
-    mkdir raceintospace-go && cd raceintospace-go && cmake ../raceintospace && make run
+    mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
+Or:
+    mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+
+Once built, you can automatically delete the -build folder and recompile by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
+
+    cd ~/ && sudo mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+Used to be:
+
+    cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
+
+After the first build, you can download the latest version of the source with:
+
+    cd ~/ && sudo rm -r raceintospace && git clone https://github.com/raceintospace/raceintospace
+
+Then delete raceintospace-build and recompile:
+
+    cd ~/ && sudo rm -r raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+
 
 You can run these commands separately, or just run the ones you need (for instance, 
 if you already have the folder you want the game installed to, there's of course 
 no need to create it.
 
-    mkdir raceintospace-go
-    cd raceintospace-go
-    cmake ../raceintospace
+    mkdir raceintospace-build
+    cd raceintospace-build
+    cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace
     make run
 
 Mac OS X
@@ -141,6 +169,10 @@ project file:
 
 Windows
 -------
+
+**NOTE:** The game may not successfully compile in Windows. See Issues #498, #128, #57 for details.
+
+If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
 
 Ingredients:
 

@@ -31,7 +31,7 @@
 // A map of music_tracks to filenames
 struct music_key {
     enum music_track track;
-    char *name;
+    const char *name;
 } music_key[] = {
     { M_ASSEMBLY, "assembly" },
     { M_ASTTRNG, "asttrng" },

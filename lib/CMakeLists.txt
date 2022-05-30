@@ -33,9 +33,10 @@ endif (BUILD_BOOST)
 # zlib
 
 if (BUILD_ZLIB)
-  set (zlib_Version 1.2.8)
+  set (zlib_Version 1.2.11)
   set (zlib_URL http://zlib.net/zlib-${zlib_Version}.tar.gz)
   set (zlib_Dir ${CMAKE_CURRENT_BINARY_DIR}/zlib-${zlib_Version})
+  set (zlib_LIBRARY zlib)
 
   # zlib uses CMake, but it doesn't build on Mac OS X:
   #  https://github.com/madler/zlib/pull/26
@@ -79,7 +80,8 @@ endif (BUILD_LIBPNG)
 if (BUILD_SDL)
   set (SDL_Version 1.2.15)
   set (SDL_Dir ${CMAKE_CURRENT_BINARY_DIR}/sdl-${SDL_Version})
-  
+  set (SDL_LIBRARY SDL)
+
   if (WINDOWS)
     set (SDL_URL http://www.libsdl.org/release/SDL-devel-${SDL_Version}-VC.zip)
     ExternalProject_Add(ext_sdl
@@ -104,6 +106,7 @@ if (BUILD_JSONCPP)
   set (JsonCPP_Version 0.5.0)
   set (JsonCPP_URL http://downloads.sourceforge.net/jsoncpp/jsoncpp/${JsonCPP_Version}/jsoncpp-src-${JsonCPP_Version}.tar.gz)
   set (JsonCPP_Dir ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp-${JsonCPP_Version})
+  set (JsonCPP_LIBRARY jsoncpp)
 
   # JsonCPP uses scons, but it's actually really simple, so instead we ship and
   # build with our own jsoncpp-CMakeLists.txt

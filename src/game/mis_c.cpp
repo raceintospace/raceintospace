@@ -25,25 +25,29 @@
 
 // This file handles missions in progress, particularly mission failures and their results
 
-#include <assert.h>
+#include "mis_c.h"
+
+#include <cassert>
 #include <vector>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 
-#include "mis_c.h"
 #include "gamedata.h"
 #include "Buzz_inc.h"
+#include "bzanim.h"
 #include "draw.h"
 #include "mmfile.h"
 #include "utils.h"
 #include "game_main.h"
 #include "mc.h"
+#include "mis_m.h"
 #include "sdlhelper.h"
 #include "newmis.h"
 #include "gr.h"
 #include "pace.h"
 #include "endianness.h"
+#include "ioexception.h"
 #include "place.h"
 
 #define FRM_Delay 22
@@ -64,37 +68,21 @@ struct OF {
     int16_t idx;
 };
 
-int tFrames, cFrame;
 char SHTS[4];
-int32_t aLoc;
-int scrubMis;
-display::LegacySurface *dply;
-struct AnimType AHead;
-struct BlockHead BHead;
 
 char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, char clck, char mode, char tm);
-// void Plop(char plr,char mode);
-
-// Who and What the hell are "Shining Happy People?"
-
-
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct Infin> &Mob,
             const std::vector<struct OF> &Mob2);
 void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
-FILE *OpenAnim(char *fname);
-int CloseAnim(FILE *fin);
-int StepAnim(int x, int y, FILE *fin);
-char DrawMoonSelection(char nauts, char plr);
+char DrawMoonSelection(char plr, char nauts, const struct MisEval &step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
-size_t ImportAnimType(FILE *fin, struct AnimType &target);
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -121,8 +109,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     struct oFGROUP *dSeq, cSeq;
     struct Table *F;
     char sName[20], err = 0;
-    char *SEQ_DAT = "SEQ.DAT";
-    char *FSEQ_DAT = "FSEQ.DAT";
+    const char *SEQ_DAT = "SEQ.DAT";
+    const char *FSEQ_DAT = "FSEQ.DAT";
     mm_file vidfile;
     FILE *mmfp;
     float fps;
@@ -158,7 +146,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     //Specs: LEM Activities Kludge
     if (Seq[0] == 'h') {
-        if (Mev[STEP - 1].Name[0] == 'S') {
+        assert(step > 0);
+
+        if (Mev[step - 1].Name[0] == 'S') {
             Seq[0] = 'Q';
         } else {
             Seq[0] = 'i';
@@ -167,7 +157,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (Seq[0] == 'Q') {
-        if (Mev[STEP - 1].Name[0] != 'S') {
+        assert(step > 0);
+
+        if (Mev[step - 1].Name[0] != 'S') {
             if (mode == 0) {
                 Seq[0] = 'i';
             } else if (mode == 1) {
@@ -189,19 +181,19 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     if (mode == 1) {
         if (Seq[0] == 'T') {
             if (Seq[3] == '6' || Seq[3] == '5') {
-                strncpy(Mev[STEP].FName, "F019", 4);
+                strncpy(Mev[step].FName, "F019", 4);
             }
         }
 
         if (Seq[0] == 'Q') {
             if (Seq[3] == '6' || Seq[3] == '5') {
-                strncpy(Mev[STEP].FName, "F216", 4);
+                strncpy(Mev[step].FName, "F216", 4);
             }
         }
 
         if (Seq[0] == 'S') {
             if (Seq[2] == 'P') {
-                strncpy(Mev[STEP].FName, "F118", 4);
+                strncpy(Mev[step].FName, "F118", 4);
             }
         }
 
@@ -214,7 +206,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 Seq[5] = Seq[3];
                 Seq[2] = Tst2;
                 Seq[3] = Tst3;
-                strncpy(Mev[STEP].FName, "F115", 4);
+                strncpy(Mev[step].FName, "F115", 4);
             }
         }
     }
@@ -837,6 +829,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 
     off = 64 + loc * 16;
 
+    // TODO: Rename variable to indicate purpose.
     display::LegacySurface boob(68, 46);
 
     bot = (uint16_t *) boob.pixels();
@@ -1062,6 +1055,15 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
     return;
 }
 
+
+/**
+ * Interface for the Mission Step Failure report.
+ *
+ * \param plr    0 for the USA, 1 for the USSR.
+ * \param prelim
+ * \param text   description of the problem encountered.
+ * \return  0 to continue the mission, 1 to scrub.
+ */
 char FailureMode(char plr, int prelim, char *text)
 {
     int i, j, k;
@@ -1094,20 +1096,10 @@ char FailureMode(char plr, int prelim, char *text)
     draw_number(0, 0, STEP);
     draw_string(9, 48, e->Name);
     draw_string(0, 0, " CHECK");
-
-    if (strncmp(e->Name, "DO", 2) == 0) {
-        if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-            draw_number(9, 55, e->MSF);
-        } else {
-            draw_number(9, 55, e->MisSaf);
-        }
-    } else {
-        draw_number(9, 55, e->MisSaf);
-    }
-
-
-    draw_string(0, 0, " VS ");
-    draw_number(0, 0, Mev[STEP].dice);
+    draw_number(9, 55, Mev[STEP].dice);
+    draw_string(0, 0, " VS. ");
+    draw_number(0, 0, StepSafety(Mev[STEP]));
+    // draw_string(0, 0, "%");
 
     draw_heading(45, 5, "STEP FAILURE", 0, -1);
 
@@ -1125,6 +1117,7 @@ char FailureMode(char plr, int prelim, char *text)
         draw_string(0, 0, "S");
         display::graphics.setForegroundColor(9);
         draw_string(0, 0, "CRUB");
+        draw_string(7, 108, "(TEMP. PENALTY TO HARDWARE)");
     } else {
         display::graphics.setForegroundColor(9);
 
@@ -1219,28 +1212,30 @@ char FailureMode(char plr, int prelim, char *text)
 
     if (MANNED[Mev[STEP].pad] > 0) {
         display::graphics.setForegroundColor(1);
+        int xloc = (Mev[STEP].dice > 99) ? 62 : 57;
+
         switch (Mev[STEP].ast) {
         case 0:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 1:
-            draw_string(57, 55, "(");
+            draw_string(xloc, 55, "(");
             draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 2:
-            draw_string(57, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(xloc, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][2].A->Name);
             draw_string(0, 0, ")");
             break;
 
         case 3:
-            draw_string(57, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
+            draw_string(xloc, 55, "(");
+            draw_string(0, 0, MA[Mev[STEP].pad][3].A->Name);
             draw_string(0, 0, ")");
             break;
         }
@@ -1301,10 +1296,19 @@ char FailureMode(char plr, int prelim, char *text)
 
     strcat(Name, ".BZ\0");
 
-    fin = OpenAnim(Name);
-    StepAnim(188, 47, fin);
+    BZAnimation::Ptr modelAnim;
 
-    last_secs = get_time();
+    try {
+        modelAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
+    } catch (IOException &err) {
+        ERROR4("Unable to load animation %s in file %s: %s",
+               Name, "LIFTOFF.ABZ", err.what());
+    }
+
+    if (modelAnim) {
+        last_secs = get_time();
+        modelAnim->advance();
+    }
 
     FadeIn(2, 10, 0, 0);
 
@@ -1317,9 +1321,9 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     while (1) {
-        if (get_time() - last_secs > .55) {
+        if (modelAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
-            StepAnim(188, 47, fin);
+            modelAnim->advance();
         }
 
         GetMouse();
@@ -1331,7 +1335,6 @@ char FailureMode(char plr, int prelim, char *text)
             delay(10);
             FadeOut(2, 10, 0, 0);
             //  DrawControl(plr);
-            CloseAnim(fin);
 
             display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
             display::graphics.screen()->draw(saveScreen, 0, 0);
@@ -1348,7 +1351,6 @@ char FailureMode(char plr, int prelim, char *text)
             delay(10);
             FadeOut(2, 10, 0, 0);
             //   DrawControl(plr);
-            CloseAnim(fin);
 
             display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
             display::graphics.screen()->draw(saveScreen, 0, 0);
@@ -1356,129 +1358,23 @@ char FailureMode(char plr, int prelim, char *text)
             FadeIn(2, 10, 0, 0);
             key = 0;
 
-            scrubMis = Help("i165");  
-            if (scrubMis >= 0) {
-                return 1;  /* Scrub */
-            } else {
-                return 0;  /* Don't Scrub */
-            }
+            return Help("i165") >= 0;
         }
     }
 }
 
-/** open the animations file and seek the proper animation
- *
- * \param fname Name of the Animation to search for
- */
-FILE *OpenAnim(char *fname)
-{
-    DEBUG2("->OpenAnim(fname %s)", fname);
-    FILE  *fin;
-    struct TM {
-        char ID[4];
-        int32_t offset;
-        int32_t size;
-    } AIndex;
 
-    fin = open_gamedat("LIFTOFF.ABZ");
-
-    if (!fin) {
-        WARNING1("can't access file LIFTOFF.ABZ");
-        return fin;
-    }
-
-    // TODO: Add a check to make sure fname is found in file, else
-    // this becomes an infinite loop.
-    do {
-        // fread(&AIndex, sizeof AIndex, 1, fin);
-        fread(&AIndex.ID[0], sizeof(AIndex.ID), 1, fin);
-        fread(&AIndex.offset, sizeof(AIndex.offset), 1, fin);
-        fread(&AIndex.size, sizeof(AIndex.size), 1, fin);
-    } while (strncmp(AIndex.ID, fname, 4) != 0);
-
-    Swap32bit(AIndex.offset);
-    Swap32bit(AIndex.size);
-    fseek(fin, AIndex.offset, SEEK_SET);
-    ImportAnimType(fin, AHead);
-
-    dply = new display::LegacySurface(AHead.w, AHead.h);
-    dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-    {
-        display::AutoPal p(dply);
-        fread(&p.pal[AHead.cOff * 3], AHead.cNum * 3, 1, fin);
-    }
-    aLoc = ftell(fin);
-    tFrames = AHead.fNum;
-    cFrame = 0;
-
-    display::graphics.legacyScreen()->palette().copy_from(dply->palette());
-    DEBUG1("<-OpenAnim");
-    return fin;
-}
-
-int CloseAnim(FILE *fin)
-{
-    delete dply;
-    dply = NULL;
-    tFrames = cFrame = 0;
-    aLoc = 0;
-    fclose(fin);
-    return 0;
-}
-
-int StepAnim(int x, int y, FILE *fin)
-{
-    if (cFrame == tFrames) {
-        fseek(fin, aLoc, SEEK_SET);
-        cFrame = 0;
-    }
-
-    if (cFrame < tFrames) {
-        ImportBlockHead(fin, BHead);
-
-        assert(BHead.fSize < 128 * 1024);
-        char *buf = (char *)alloca(BHead.fSize);
-        fread(buf, BHead.fSize, 1, fin);
-
-        switch (BHead.cType) {
-        case 0:
-            memcpy(dply->pixels(), buf, BHead.fSize);
-            break;
-
-        case 1:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        case 2:
-            RLED_img(buf, dply->pixels(), BHead.fSize, dply->width(), dply->height());
-            break;
-
-        default:
-            break;
-        }
-
-        dply->pixels()[AHead.w * AHead.h - 1] = dply->pixels()[AHead.w * AHead.h - 2];
-        dply->palette().copy_from(display::graphics.legacyScreen()->palette());
-        display::graphics.screen()->draw(*dply, x, y);
-        cFrame++;
-    }
-
-    return (tFrames - cFrame); //remaining frames
-}
-
-
-
-void FirstManOnMoon(char plr, char isAI, char misNum)
+void FirstManOnMoon(char plr, char isAI, char misNum,
+                    const struct MisEval &step)
 {
     int nautsOnMoon = 0;
-    Equipment *e = GetEquipment(Mev[STEP]);
+    Equipment *e = GetEquipment(step);
 
-    dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[Mev[STEP].pad].Month]) + 1;
+    dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[step.pad].Month]) + 1;
 
     if (misNum == Mission_Soyuz_LL && plr == 1) {
         nautsOnMoon = 3;
     }
-
 
     //Direct Ascent
     if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
@@ -1502,20 +1398,24 @@ void FirstManOnMoon(char plr, char isAI, char misNum)
     }
 
     if (!AI[plr]) {
-        manOnMoon = DrawMoonSelection(nautsOnMoon, plr);
+        manOnMoon = DrawMoonSelection(plr, nautsOnMoon, step);
     } else {
         manOnMoon = brandom(nautsOnMoon) + 1;
     }
 
     EVA[0] = EVA[1] = manOnMoon - 1;
 
-
-
     return;
 }
 
-char DrawMoonSelection(char nauts, char plr)
+
+// TODO: Move drawing the interface into its own function distinct
+// from the main control loop.
+char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 {
+    // TODO: Using MX as a copy of MA to avoid modifying it is nice,
+    // but it never gets modified and a global var (MA) is still being
+    // directly accessed.
     struct MisAst MX[2][4];
     FILE *fin;
     double last_secs;
@@ -1525,10 +1425,10 @@ char DrawMoonSelection(char nauts, char plr)
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
     char cPad;
 
-    if (MX[Mev[STEP].pad][0].A != NULL) {
-        cPad = Mev[STEP].pad;
-    } else if (MX[other(Mev[STEP].pad)][0].A != NULL) {
-        cPad = other(Mev[STEP].pad);
+    if (MX[step.pad][0].A != NULL) {
+        cPad = step.pad;
+    } else if (MX[other(step.pad)][0].A != NULL) {
+        cPad = other(step.pad);
     } else {
         return 2;
     }
@@ -1559,28 +1459,41 @@ char DrawMoonSelection(char nauts, char plr)
         strcat(Name, "SV");
     }
 
-    e = GetEquipment(Mev[STEP]);
+    // TODO: Simpler to remove the intermediary var 'e'.
+    e = GetEquipment(step);
     strncat(Name, e->ID, 2);
 
-    if (Mev[STEP].Class == Mission_PhotoRecon) {
+    if (step.Class == Mission_PhotoRecon) {
         strcpy(&Name[0], "XCAM\0");
     }
 
     strcat(Name, ".BZ\0");
 
-    fin = OpenAnim(Name);
-    StepAnim(188, 47, fin);
+    BZAnimation::Ptr moonAnim;
 
-    last_secs = get_time();
+    try {
+        moonAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
+    } catch (IOException &err) {
+        ERROR4("Unable to load animation %s in file %s: %s",
+               Name, "LIFTOFF.ABZ", err.what());
+    }
+
+    if (moonAnim) {
+        last_secs = get_time();
+        moonAnim->advance();
+    }
 
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
-    draw_string(83 - strlen(Data->P[plr].Mission[Mev[STEP].pad].Name) * 3, 40, Data->P[plr].Mission[Mev[STEP].pad].Name);
+    // TODO: Use TextDisplayLength instead of strlen * 3 for better
+    // centering?
+    draw_string(83 - strlen(Data->P[plr].Mission[step.pad].Name) * 3, 40,
+                Data->P[plr].Mission[step.pad].Name);
     InRFBox(162, 161, 313, 175, 10);
     display::graphics.setForegroundColor(11);
     draw_number(198, 170, dayOnMoon);
     draw_string(0, 0, " ");
-    draw_string(0, 0, Month[Data->P[plr].Mission[Mev[STEP].pad].Month]);
+    draw_string(0, 0, Month[Data->P[plr].Mission[step.pad].Month]);
     draw_string(0, 0, "19");
     draw_number(0, 0, Data->Year);
 
@@ -1593,6 +1506,7 @@ char DrawMoonSelection(char nauts, char plr)
     draw_string(35, 80, "walk on the moon?");
 
     int i;
+    // TODO: This does nothing? If so, remove.
     char str;
 
     for (i = 0; i < nauts; i++) {
@@ -1606,9 +1520,9 @@ char DrawMoonSelection(char nauts, char plr)
     key = 0;
 
     while (1) {
-        if (get_time() - last_secs > .55) {
+        if (moonAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
-            StepAnim(188, 47, fin);
+            moonAnim->advance();
         }
 
         GetMouse();
@@ -1719,52 +1633,3 @@ int ImportOF(FILE *fin, struct OF &target)
     return 0;
 }
 
-
-/**
- * Read an AnimType struct stored in a file as raw data.
- *
- * \param fin  Pointer to a FILE object that specifies an input stream.
- * \param target  The destination for the read data.
- * \return  1 if successful, 0 otherwise.
- */
-size_t ImportAnimType(FILE *fin, struct AnimType &target)
-{
-    bool success =
-        fread(&target.ID[0], sizeof(target.ID), 1, fin) &&
-        fread(&target.OVL[0], sizeof(target.OVL), 1, fin) &&
-        fread(&target.SD[0][0], sizeof(target.SD), 1, fin) &&
-        fread(&target.w, sizeof(target.w), 1, fin) &&
-        fread(&target.h, sizeof(target.h), 1, fin) &&
-        fread(&target.sPlay[0], sizeof(target.sPlay), 1, fin) &&
-        fread(&target.fNum, sizeof(target.fNum), 1, fin) &&
-        fread(&target.fLoop, sizeof(target.fLoop), 1, fin) &&
-        fread(&target.cOff, sizeof(target.cOff), 1, fin) &&
-        fread(&target.cNum, sizeof(target.cNum), 1, fin);
-
-    Swap16bit(target.w);
-    Swap16bit(target.h);
-    return (success ? 1 : 0);
-}
-
-
-/**
- * Read a BlockHead struct stored in a file as raw data.
- *
- * A BlockHead is a header in an animation file, at the beginning of
- * an animation frame. It contains a value for identifying the
- * compression, and the size (in bytes) of the animation pixel data
- * that follows.
- *
- * \param fin  Pointer to a FILE object that specifies an input stream.
- * \param target  The destination for the read data
- * \return  1 if successful, 0 otherwise
- */
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
-{
-    bool success =
-        fread(&target.cType, sizeof(target.cType), 1, fin) &&
-        fread(&target.fSize, sizeof(target.fSize), 1, fin);
-
-    Swap32bit(target.fSize);
-    return (success ? 1 : 0);
-}
