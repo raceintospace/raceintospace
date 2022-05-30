@@ -90,7 +90,7 @@ unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
 std::string keyHelpText;
-char IDLE[2];
+std::array<char, 2> IDLE;
 char *buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
@@ -159,7 +159,7 @@ void DockingKludge(void);
 void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
-
+void DumpData(void *ptr, const char *file);
 
 int game_main_impl(int argc, char *argv[])
 {
@@ -167,6 +167,7 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex, choice;
+    char *fname;
 
     // initialize the filesystem
     Filesystem::init(argv[0]);
@@ -234,21 +235,8 @@ int game_main_impl(int argc, char *argv[])
 
         MakeRecords();
 
-#define UNCOMPRESSED_RAST 1
-
-#ifndef UNCOMPRESSED_RAST
-        fin = sOpen("RAST.DAT", "rb", 0);
-        i = fread(buffer, 1, BUFFER_SIZE, fin);
-        fclose(fin);
-
-        DEBUG2("reading Players: size = %d", (int)sizeof(struct Players));
-        RLED(buffer, (char *)Data, i);
-#else
-        fin = sOpen("URAST.DAT", "rb", 0);
-        fread(Data, 1, (sizeof(struct Players)), fin);
-        fclose(fin);
-#endif
-        SwapGameDat();  // Take care of endian read
+        fname = locate_file("urast.json", FT_DATA);
+        DESERIALIZE_JSON_FILE(Data, fname);
 
         if (Data->Checksum != (sizeof(struct Players))) {
             /* XXX: too drastic */
@@ -637,11 +625,12 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 //restore sound
 //       SetVoiceVolume(115);
                 display::graphics.screen()->clear();
-                IDLE[plr[i]]++;
 
                 if (LOAD == 1) {
                     goto restart;    // TEST FOR LOAD
                 }
+
+                IDLE.at(plr[i])++;
             } else {
                 AI_Begin(plr[i] - 2); // Turns off Mouse for AI
                 GetMouse();
@@ -1010,3 +999,6 @@ int MisRandom(void)
 
     return (int) r_gaussian;
 }
+
+
+

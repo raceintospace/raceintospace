@@ -8,6 +8,6 @@ void CacheCrewFile();
 int32_t EndOfTurnSave(char *inData, int dataLen);  // Create ENDTURN.TMP
 void FileAccess(char mode);
 int FutureCheck(char plr, char type);
-void save_game(const char *name);
+void autosave_game(const char *name);
 
 #endif // ADMIN_H

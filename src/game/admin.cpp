@@ -63,6 +63,8 @@
 #include "options.h"
 
 
+#include <zlib.h>
+
 #define MODEM_ERROR 4
 #define NOTSAME 2
 #define SAME_ABORT 0
@@ -119,8 +121,10 @@ void BadFileType();
 void FileText(const char *name);
 int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
+void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
+void write_save_file(char *Name, SaveFileHdr header);
 int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
@@ -926,17 +930,10 @@ SaveGameType GetSaveType(const SaveFileHdr &header)
  *
  * \param name  The filename to write the save under.
  */
-void save_game(const char *name)
+void autosave_game(const char *name)
 {
     FILE *outf;
     SaveFileHdr hdr;
-
-    EndOfTurnSave((char *) Data, sizeof(struct Players));
-
-    if (interimData.endTurnBuffer == NULL) {
-        WARNING1("Don't have End of Turn Save Data!");
-        return;
-    }
 
     memset(&hdr, 0, sizeof hdr);
 
@@ -944,34 +941,8 @@ void save_game(const char *name)
     strcpy(hdr.Name, "AUTOSAVE");
     hdr.Name[sizeof hdr.Name - 1] = 0x1a;
 
-    strcpy(hdr.PName[0], Data->P[plr[0] % 2].Name);
-    strcpy(hdr.PName[1], Data->P[plr[1] % 2].Name);
-    hdr.Country[0] = Data->plr[0];
-    hdr.Country[1] = Data->plr[1];
-    hdr.Season = Data->Season;
-    hdr.Year = Data->Year;
-    hdr.dataSize = sizeof(struct Players);
-    hdr.compSize = interimData.endTurnSaveSize;
+    write_save_file(name, hdr);
 
-    if ((outf = sOpen(name, "wb", 1)) == NULL) {
-        WARNING2("can't save to file `%s'", name);
-        return;
-    }
-
-    // Write Save Game Header
-    fwrite(&hdr, sizeof hdr, 1, outf);
-
-    // Write End of Turn Save Data
-    fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, outf);
-
-    // Copy Replay data into Save file
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-    fwrite(interimData.tempReplay, interimData.replaySize, 1, outf);
-
-    // Copy Event data into Save file
-    fwrite(interimData.eventBuffer, interimData.eventSize, 1, outf);
-
-    fclose(outf);
 }
 
 
@@ -1100,6 +1071,10 @@ void FileText(const char *name)
     fread(&header, sizeof(header), 1, fin);
 
     fclose(fin);
+
+    // Make sure player names are null-terminated
+    header.PName[0][19] = 0;
+    header.PName[1][19] = 0;
 
     grMoveTo(40, 139);
 
@@ -1467,9 +1442,7 @@ int FutureCheck(char plr, char type)
  *        and then of course wouldn't have worked with a winmodem.
  *         -Leon)
  *
- *   header.compSize   is the size (in bytes) of the Data global
- *                     when compressed.
- *   header.dataSize   is the size of the Data global when expanded
+ *   header.dataSize   is the size of the uncompressed JSON string
  *
  * TODO: The new values for the global variables are assigned as they
  * are read, which reduces memory requirements but means the
@@ -1486,6 +1459,10 @@ void LoadGame(const char *filename)
 {
     REPLAY *load_buffer = NULL;
     SaveFileHdr header;
+    unsigned char magic[2];
+    unsigned char *cbuf, *buf;
+    size_t csize, usize = 0;
+    int i, ok, offset;
 
     FILE *fin = sOpen(filename, "rb", 1);
 
@@ -1494,97 +1471,51 @@ void LoadGame(const char *filename)
     rewind(fin);
     fread(&header, 1, sizeof(header), fin);
 
-    // Determine Endian Swap, 31663 is for old save games
-    bool endianSwap = (header.dataSize != sizeof(struct Players) &&
-                       header.dataSize != 31663);
+    // Read the uncompressed size in big endian
+    for (i = 3; i >= 0; i--) {
+        usize += header.dataSize[i] << 8 * i;
+    }
 
-    if (endianSwap) {
-        header.compSize = _Swap16bit(header.compSize);
-        header.dataSize = _Swap16bit(header.dataSize);
+    fread(magic, 1, 2, fin);
+    fseek(fin, -2, SEEK_CUR);
 
-        if (header.dataSize != sizeof(struct Players) &&
-            header.dataSize != 31663) {
-            // TODO: Feels like BadFileType() should be launched by
-            // FileAccess, which runs the interface. Throw an
-            // exception or return an error code?
-            fclose(fin);
+    if (magic[0] == 0x78 && magic[1] == 0xDA) { // zlib magic numbers
+        csize = fileLength - sizeof(header);
+        cbuf = (unsigned char *) malloc(csize);
+        buf = (unsigned char *) malloc(usize);
+        assert(cbuf && buf);
+        fread(cbuf, csize, 1, fin);
+        fclose(fin);
+
+        ok = uncompress(buf, &usize, cbuf, csize);
+
+        if (ok != Z_OK) {
             BadFileType();
             return;
         }
-    }
 
-    size_t readLen = header.compSize;
-    load_buffer = (REPLAY *)malloc(readLen);
-    fread(load_buffer, 1, readLen, fin);
-    RLED((char *) load_buffer, (char *)Data, header.compSize);
-    free(load_buffer);
+        // Make sure that the uncompressed data is null-terminated
+        buf[usize - 1] = 0;
 
-    // Swap Players' Data
-    if (endianSwap) {
-        _SwapGameDat();
-    }
+        try {
+            stringstream stream;
+            stream << buf;
+            cereal::JSONInputArchive archive(stream);
 
-    // MSF now holds MaxRDBase (from 1.0.0)
-    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-        for (int j = 0; j < NUM_PLAYERS; j++) {
-            for (int k = 0; k < 7; k++) {
-                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-            }
+            // Load game data
+            archive(cereal::make_nvp("Data", *Data));
+
+            // Load Replay and Event Data
+            archive(interimData);
+        } catch (std::exception &e) {
+            WARNING1(e.what());
+            BadFileType();
+            return;
         }
+
+    } else { // Not zlib compressed data
+        LegacyLoad(header, fin, fileLength);
     }
-
-    // Read the Replay Data
-    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
-
-    if (endianSwap) {
-        REPLAY *r = NULL;
-        r = load_buffer;
-
-        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
-            for (int k = 0; k < r->Qty; k++) {
-                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
-            }
-        }
-    }
-
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-    memcpy(interimData.tempReplay, load_buffer, interimData.replaySize);
-    free(load_buffer);
-
-    size_t eventSize = fileLength - ftell(fin);
-
-    // Read the Event Data
-    load_buffer = (REPLAY *)malloc(eventSize);
-    fread(load_buffer, 1, eventSize, fin);
-    fclose(fin);
-
-    if (endianSwap) {
-        // File Structure is 84 longs 42 per side
-        for (int j = 0; j < 84; j++) {
-            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
-
-            if (on->offset) {
-                on->offset = _Swap32bit(on->offset);
-                on->size = _Swap16bit(on->size);
-            }
-        }
-    }
-
-    // Save Event information
-    if (interimData.eventBuffer) {
-        free(interimData.eventBuffer);
-    }
-
-    interimData.eventBuffer = (char *) malloc(eventSize);
-    interimData.eventSize = eventSize;
-    memcpy(interimData.eventBuffer, load_buffer, eventSize);
-    interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-
-    free(load_buffer);
 
     if (GetSaveType(header) == SAVEGAME_Normal) {
         Option = MAIL = -1;
@@ -1641,6 +1572,113 @@ void LoadGame(const char *filename)
     }
 }
 
+/**
+ * Load function for old save game formats.
+ */
+void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
+{
+    REPLAY *load_buffer = NULL;
+    uint16_t dataSize, compSize;
+    int i, j;
+
+    dataSize = *(uint16_t *) header.dataSize;
+    compSize = *(uint16_t *)(header.dataSize + 2);
+
+    // Determine Endian Swap, 31663 is for old save games
+    bool endianSwap = (dataSize != sizeof(struct Players) && dataSize != 31663);
+
+    if (endianSwap) {
+        compSize = _Swap16bit(compSize);
+        dataSize = _Swap16bit(dataSize);
+
+        if (dataSize != sizeof(struct Players) && dataSize != 31663) {
+            // TODO: Feels like BadFileType() should be launched by
+            // FileAccess, which runs the interface. Throw an
+            // exception or return an error code?
+            fclose(fin);
+            BadFileType();
+            return;
+        }
+    }
+
+    size_t readLen = compSize;
+    load_buffer = (REPLAY *)malloc(readLen);
+    fread(load_buffer, 1, readLen, fin);
+    RLED((char *) load_buffer, (char *)Data, compSize);
+    free(load_buffer);
+
+    // Swap Players' Data
+    if (endianSwap) {
+        _SwapGameDat();
+    }
+
+    // Read the Replay Data
+    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
+    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+
+    if (endianSwap) {
+        REPLAY *r = NULL;
+        r = load_buffer;
+
+        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
+            for (int k = 0; k < r->Qty; k++) {
+                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
+            }
+        }
+    }
+
+    for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
+        interimData.tempReplay.at(i) = load_buffer[i];
+    }
+
+    free(load_buffer);
+
+    size_t eventSize = fileLength - ftell(fin);
+
+    // Read the Event Data
+    load_buffer = (REPLAY *)malloc(eventSize);
+    fread(load_buffer, 1, eventSize, fin);
+    fclose(fin);
+
+    if (endianSwap) {
+        // File Structure is 84 longs 42 per side
+        for (int j = 0; j < 84; j++) {
+            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
+
+            if (on->offset) {
+                on->offset = _Swap32bit(on->offset);
+                on->size = _Swap16bit(on->size);
+            }
+        }
+    }
+
+    // Save Event information
+
+    for (int j = 0; j < MAX_NEWS_ITEMS; j++) {
+        OLDNEWS *on = (OLDNEWS *) load_buffer + j;
+        char *text = (char *) load_buffer + on->offset;
+        interimData.tempEvents.at(j) = "";
+
+        for (int k = 0; k < on->size; k++) {
+            interimData.tempEvents.at(j).push_back(text[k]);
+        }
+    }
+
+    free(load_buffer);
+
+    //MSF now holds MaxRDBase (from 1.0.0)
+    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
+        for (int j = 0; j < NUM_PLAYERS; j++) {
+            for (int k = 0; k < 7; k++) {
+                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
+            }
+        }
+    }
+
+}
 
 /**
  * Sort SFInfo objects by Title then Name.
@@ -1766,6 +1804,95 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
 }
 
 
+/*
+ * Writes the actual save file to disk. Data, replay data, and event
+ * data are serialized into a JSON string, compressed by zlib, and
+ * written to disk.
+ */
+void write_save_file(char *Name, SaveFileHdr header)
+{
+    FILE *fin;
+    int i, offset, size;
+    long unsigned int csize;
+    unsigned char *cbuf;
+
+    strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
+    strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
+
+    // Play-By-Mail save game hack
+    //
+    // If MAIL == 0, we are playing as the U.S. We need to
+    // save the game such that the U.S. starts again
+    if (MAIL == 0) {
+        plr[0] = 8;
+        plr[1] = 0;
+    }
+    // Playing as the Soviets
+    else if ((MAIL == 1)) {
+        plr[0] = 0;
+        plr[1] = 9;
+    }
+
+    Data->Def.Plr1 = plr[0];
+    Data->Def.Plr2 = plr[1];
+    Data->plr[0] = Data->Def.Plr1;
+    Data->plr[1] = Data->Def.Plr2;
+
+    if (MAIL != -1) {
+        AI[0] = 0;
+        AI[1] = 0;
+    }
+
+    header.Country[0] = Data->plr[0];
+    header.Country[1] = Data->plr[1];
+    header.Season = Data->Season;
+    header.Year = Data->Year;
+
+    EndOfTurnSave((char *) Data, sizeof(struct Players));
+
+    if (interimData.endTurnBuffer == NULL) {
+        WARNING1("Don't have End of Turn Save Data!");
+        return;
+    }
+
+    stringstream stream;
+    {
+        cereal::JSONOutputArchive::Options options = cereal::JSONOutputArchive::Options::NoIndent();
+        cereal::JSONOutputArchive archive(stream, options);
+
+        // Save End of Turn Data
+        archive(cereal::make_nvp("Data", *Data));
+
+        // Save Replay and Event Data
+        archive(interimData);
+
+    }
+
+    size = sizeof(char) * stream.str().size() + 1;
+
+    fin = sOpen(Name, "wb", 1);
+
+    // Uncompressed size in big endian
+    for (i = 3; i >= 0; i--) {
+        header.dataSize[i] = size >> 8 * i;
+    }
+
+    // Write the Save Game Header
+    fwrite(&header, sizeof(header), 1, fin);
+
+    csize = compressBound(size);
+
+    cbuf = (unsigned char *) malloc(csize);
+    assert(cbuf);
+
+    compress2(cbuf, &csize, (unsigned char *) stream.str().data(), size, 9);
+    fwrite(cbuf, csize, 1, fin);
+
+    fclose(fin);
+
+    free(cbuf);
+}
+
 /**
  * Launches the Save Game process.
  *
@@ -1810,38 +1937,6 @@ int SaveGame(const std::vector<SFInfo> savegames)
     } while (done == 0);
 
     i--;  // decrement to correct for the FOR loop
-    strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
-    strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
-
-    // Play-By-Mail save game hack
-    //
-    // If MAIL == 0, we are playing as the U.S. We need to
-    // save the game such that the U.S. starts again
-    if (MAIL == 0) {
-        plr[0] = 8;
-        plr[1] = 0;
-    } else if ((MAIL == 1)) {
-        plr[0] = 0;
-        plr[1] = 9;
-    }
-
-    Data->Def.Plr1 = plr[0];
-    Data->Def.Plr2 = plr[1];
-    Data->plr[0] = Data->Def.Plr1;
-    Data->plr[1] = Data->Def.Plr2;
-
-    if (MAIL != -1) {
-        AI[0] = 0;
-        AI[1] = 0;
-    }
-
-    assert(sizeof(header.Name) >= title.length());
-    strncpy(header.Name, title.c_str(), sizeof(header.Name));
-    header.Country[0] = Data->plr[0];
-    header.Country[1] = Data->plr[1];
-    header.Season = Data->Season;
-    header.Year = Data->Year;
-    header.dataSize = sizeof(struct Players);
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
     header.compSize = interimData.endTurnSaveSize;
@@ -1851,27 +1946,11 @@ int SaveGame(const std::vector<SFInfo> savegames)
     // the file system, so it already includes the .SAV extension.
     if (temp == NOTSAME) {
         std::string filename = title + ".SAV";
-        fin = sOpen(filename.c_str(), "wb", 1);
+        write_save_file(filename.c_str(), header);
     } else {
-        fin = sOpen(savegames[i].Name, "wb", 1);
+        write_save_file(savegames[i].Name, header);
     }
 
-    // Write the Save Game Header
-    fwrite(&header, sizeof(header), 1, fin);
-
-    // Save End of Turn Data
-    fwrite(interimData.endTurnBuffer, interimData.endTurnSaveSize, 1, fin);
-
-    // Save Replay Data
-    interimData.replaySize = sizeof(REPLAY) * MAX_REPLAY_ITEMS;
-    fwrite(interimData.tempReplay, interimData.replaySize, 1, fin);
-
-    // Save Event Data
-    fwrite(interimData.eventBuffer, interimData.eventSize, 1, fin);
-
-    fclose(fin);
-
-    return 0;
 }
 
 

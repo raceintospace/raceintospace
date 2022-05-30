@@ -115,6 +115,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
         case '+':
             i++;
             loc = MCode[i] - 0x30 + pad - 1;
+            ASSERT(loc - pad < 3); // Breaks rescue missions
             break;
 
         case '^':

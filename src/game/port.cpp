@@ -1596,7 +1596,7 @@ void Port(char plr)
 #endif
                                 SpotCrap(0, SPOT_KILL);  // remove spots
                                 music_stop();
-                                save_game("AUTOSAVE.SAV");
+                                autosave_game("AUTOSAVE.SAV");
                                 return;
 
                             case pQUIT:

@@ -796,7 +796,7 @@ int PrestNeg(char plr, int i)
 int AllotPrest(char plr, char mis)
 {
     int i, total, other, negs, mcode, mike, P_Goal, N_Goal, S_Goal, ival, cval;
-    char PVal[28];
+    char PVal[MAXIMUM_PRESTIGE_NUM];
 
     hero = 0;
     tMo = Data->P[plr].Mission[mis].Month;
@@ -1253,6 +1253,7 @@ int Update_Prestige_Data(char plr, char mis, int code)
 
     if (MAIL == 1 && plr == MAIL_OPPONENT) {
         Data->P[plr].PastMissionCount++; // Normally done in MissionPast()
+        assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     }
 
     // Player prestige gets updated after the Soviet turn

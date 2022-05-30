@@ -398,6 +398,8 @@ void MissionPast(char plr, char pad, int prest)
     if (Data->P[plr].Mission[pad].Joint == 1) {
         strcpy(&Data->P[plr].History[loc].MissionName[1][0], Data->P[plr].Mission[pad + 1].Name);
         Data->P[plr].History[loc].Patch[1] = Data->P[plr].Mission[pad + 1].Patch;
+    } else {
+        Data->P[plr].History[loc].MissionName[1][0] = 0;
     }
 
     // TODO: There's a lot of what appears to be duplicated code here,
@@ -580,8 +582,9 @@ void MissionPast(char plr, char pad, int prest)
     }
 
     // Save this replay
-    memcpy(&interimData.tempReplay[(plr * 100) + Data->P[plr].PastMissionCount ], &Rep, sizeof(REPLAY));
+    interimData.tempReplay.at((plr * 100) + Data->P[plr].PastMissionCount) = Rep;
     Data->P[plr].PastMissionCount++;
+    assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     return;
 }
 

@@ -1039,7 +1039,10 @@ void Future(char plr)
                 if (prev_setting != setting) {
                     ShBox(18, 186, 183, 194);
                     display::graphics.setForegroundColor(1);
-                    MisStep(21, 192, Mev[setting].loc);
+
+                    if (Mev[setting].loc != 0x7f) {
+                        MisStep(21, 192, Mev[setting].loc);
+                    }
                 }
             } else if (setting < 0 && prev_setting >= 0) {
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);

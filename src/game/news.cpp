@@ -115,6 +115,7 @@ GoNews(char plr)
     OpenNews(plr, buffer + 6000, (int) Data->Events[Data->Count]);
 
     Data->P[plr].eCount++;
+    assert(Data->P[plr].eCount < MAX_NEWS_ITEMS / 2);
 
     DispNews(plr, buffer + 6000, buffer);
 
@@ -614,25 +615,14 @@ News(char plr)
         // GoNews increments player eCount, so it should equal the turn
         // File Structure is 84 longs 42 per side
         size_t eventIndex = plr * 42 + Data->P[plr].eCount - 1;
-        interimData.tempEvents[eventIndex].offset = interimData.eventSize;
-        interimData.tempEvents[eventIndex].size = strlen(buffer);
-        interimData.eventBuffer =
-            (char *) realloc(interimData.eventBuffer,
-                             interimData.eventSize + strlen(buffer));
-        memcpy(interimData.eventBuffer + interimData.eventSize,
-               buffer,
-               strlen(buffer));
-        interimData.tempEvents = (OLDNEWS *) interimData.eventBuffer;
-        interimData.eventSize += strlen(buffer);
+        interimData.tempEvents.at(eventIndex) = buffer;
 
     } else {
         // Copy the recorded news event for the turn into the buffer
         // so it will be available for display.
-        OLDNEWS *oldNews = &interimData.tempEvents[plr * 42 + turn - 1];
-        strncpy(buffer,
-                interimData.eventBuffer + oldNews->offset,
-                oldNews->size);
-        buffer[oldNews->size] = '\0';
+        strncpy(buffer, interimData.tempEvents.at(plr * 42 + turn - 1).c_str(),
+                BUFFER_SIZE - 1000);
+        memset(buffer + BUFFER_SIZE - 1000, 0, 999);
     }
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {

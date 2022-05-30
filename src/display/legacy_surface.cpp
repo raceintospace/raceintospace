@@ -61,7 +61,10 @@ void LegacySurface::fillRect(const SDL_Rect &area, char color)
 void LegacySurface::setPixel(unsigned int x, unsigned int y, char color)
 {
     _dirty = true;
-    *((char *)(_screen->pixels) + (y * _screen->pitch) + x) = color;
+
+    if ((x >= 0) && (x < _screen->w) && (y >= 0) && (y < _screen->h)) {
+        *((char *)(_screen->pixels) + (y * _screen->pitch) + x) = color;
+    }
 }
 
 char LegacySurface::getPixel(unsigned int x, unsigned int y)

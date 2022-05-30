@@ -23,6 +23,8 @@ if (WINDOWS)
   set(CMAKE_INSTALL_PREFIX "C:/Program Files/Race Into Space")
 endif (WINDOWS)
 
+# Require C++11
+set (CMAKE_CXX_STANDARD 11)
 option(PBEM "Enable experimental Play-by-EMail feature" OFF)
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)

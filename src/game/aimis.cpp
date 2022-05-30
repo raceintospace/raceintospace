@@ -294,7 +294,9 @@ char Panic_Level(char plr, int *m_1, int *m_2)
             *m_2 = Mission_Orbital_Duration;
         } else {
             *m_2 = Mission_Lunar_Probe;
-        }++Alt_A[plr];
+        }
+
+        ++Alt_A[plr];
 
         return 1;
     }
@@ -321,7 +323,9 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = Mission_Manned_Orbital_Docking_EVA;
         } else {
             *m_2 = Mission_Orbital_Docking;
-        }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        }
+
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
         *m_3 = Mission_LunarFlyby;
         break;
@@ -698,7 +702,9 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
             *m_2 = Mission_Manned_Orbital_Docking_EVA;
         } else {
             *m_2 = Mission_Orbital_Docking;
-        }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        }
+
+        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
         *m_3 = Mission_LunarFlyby;
         break;
@@ -1076,7 +1082,9 @@ void NewAI(char plr, char frog)
         case 9:
             if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0) {
                 mis1 = Mission_LunarOrbital;
-            }++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            }
+
+            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
 
             break;
 
