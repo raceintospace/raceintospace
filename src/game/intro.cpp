@@ -58,10 +58,9 @@ const struct CREDIT {
     { 0, 48, 56, 91, "WILL GLYNN"},
     { 0, 48, 45, 98, "PACE WILLISSON"},
     { 0, 48, 41, 105, "NICOLAS LAPLUME"},
-    { 0, 48, 46, 112, "BRYANT MOSCON"},
-    { 0, 48, 52, 119, "RYAN YOAKUM"},
-    { 0, 48, 53, 126, "PETR MENSIK"},
-    { 0, 48, 45, 133, "HENDRIK WEIMER"},
+    { 0, 48, 52, 112, "RYAN YOAKUM"},
+    { 0, 48, 53, 119, "PETR MENSIK"},
+    { 0, 48, 45, 126, "HENDRIK WEIMER"},
     { 0, 22, 194, 77, "ENHANCEMENTS"},
     { 0, 48, 187, 84, "NICOLAS LAPLUME"},
     { 0, 48, 198, 91, "RYAN YOAKUM"},
@@ -69,7 +68,7 @@ const struct CREDIT {
     { 0, 48, 196, 110, "LEON BARADAT"},
     { 0, 22, 178, 122, "INSPIRATION & ADVICE"},
     { 0, 48, 194, 129, "ERIK ANDERSON"},
-    { 0, 22, 110, 145, "WINDOWS RELEASES"},
+    { 0, 22, 69, 145, "MISSION MOVIES, WINDOWS RELEASES"},
     { 0, 48, 87, 152, "KRZYSTOF KOSCIUSZKIEWICZ"},
     { 0, 22, 116, 164, "LINUX RELEASES"},
     { 0, 48, 117, 171, "PACE WILLISSON"},
@@ -283,7 +282,7 @@ void NextTurn(char plr)
     }
 
     draw_number(0, 0, Data->Year);
-    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 94, 30, 85);
+    display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 95, 30, 85);
 
     FadeIn(2, 10, 0, 0);
     music_start((plr == 0) ? M_GOOD : M_FUTURE);

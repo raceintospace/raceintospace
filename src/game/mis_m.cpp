@@ -69,6 +69,7 @@ int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
 void F_IRCrew(char mode, struct Astros *Guy);
 int FailEval(char plr, int type, char *text, int val, int xtra);
+Equipment *FindLunarModule();
 std::vector<Astros *> LMCrew(int pad, Equipment *module);
 void InvalidatePrestige();
 void BranchIfAlive(int *FNote);
@@ -183,7 +184,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 void MisCheck(char plr, char mpad)
 {
     int tomflag = 0;  // Tom's checking flag
-    int val, safety, save, PROBLEM, i, lc, durxx;
+    int save, PROBLEM, i, lc, durxx;
     struct XFails Now;
     unsigned char gork = 0;
 
@@ -255,7 +256,7 @@ void MisCheck(char plr, char mpad)
         }
 
         if (Mev[STEP].loc == 16 && Mev[Mev[STEP].trace].loc == 15) {
-            FirstManOnMoon(plr, 0, code);
+            FirstManOnMoon(plr, 0, code, Mev[STEP]);
         }
 
         // Duration Hack Part 1 of 3   (during the Duration stuff)
@@ -361,43 +362,11 @@ void MisCheck(char plr, char mpad)
             }
         }
 
-
         // SAFETY FACTOR STUFF
-
-        safety = GetEquipment(Mev[STEP])->MisSaf;
-
-        if ((Mev[STEP].Name[0] == 'A') &&
-            MH[Mev[STEP].pad][Mission_SecondaryBooster] != NULL) {
-            // boosters involved
-            safety = RocketBoosterSafety(safety, MH[Mev[STEP].pad][Mission_SecondaryBooster]->Safety);
-        }
-
-        // Duration Hack Part 3 of 3
-        if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
-            safety = GetEquipment(Mev[STEP])->MisSaf;  // needs to be for both
-
-            // Use average of capsule ratings for Joint duration
-            if (InSpace == 2) {
-                safety = (MH[0][Mission_Capsule]->MisSaf +
-                          MH[1][Mission_Capsule]->MisSaf) / 2;
-            }
-        }
-
-        if (strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) == 0) {
-            if (Mev[STEP].loc == 1 || Mev[STEP].loc == 2) {
-                safety = GetEquipment(Mev[STEP])->MSF;
-            }
-        }
-
-        val = Mev[STEP].dice;
-        safety += Mev[STEP].asf;
-
-        if (safety >= 100) {
-            safety = 99;
-        }
+        int val = Mev[STEP].dice;
+        int safety = StepSafety(Mev[STEP]);
 
         save = (GetEquipment(Mev[STEP])->SaveCard == 1) ? 1 : 0;
-
         PROBLEM = val > safety;
 
         if (!AI[plr] && options.want_cheats) {
@@ -674,6 +643,43 @@ void MisCheck(char plr, char mpad)
     return;
 }
 
+
+/**
+ * Calculate the safety factor to test against for a mission step.
+ *
+ * Relies upon the global values MH and InSpace. Because of this, the
+ * function IS NOT guaranteed to give the correct value for any steps
+ * but the current one.
+ *
+ * TODO: Eliminate the use of global variables.
+ *
+ * \param step  the current mission step.
+ */
+int StepSafety(const struct MisEval &step)
+{
+    int safety = GetEquipment(step)->MisSaf;
+
+    if ((step.Name[0] == 'A') && MH[step.pad][Mission_SecondaryBooster]) {
+        // Account for Boosters - if used - on launch steps
+        safety = RocketBoosterSafety(
+                     safety,
+                     MH[step.pad][Mission_SecondaryBooster]->Safety);
+    } else if ((step.loc == 28 || step.loc == 27) && InSpace == 2) {
+        // For joint duration tests, use the average capsule safety
+        safety = (MH[0][Mission_Capsule]->MisSaf +
+                  MH[1][Mission_Capsule]->MisSaf) / 2;
+    } else if (strncmp(GetEquipment(step)->Name, "DO", 2) == 0) {
+        if (step.loc == 1 || step.loc == 2) {
+            safety = GetEquipment(step)->MSF;
+        }
+    }
+
+    safety += step.asf;
+
+    return MIN(safety, 99);
+}
+
+
 /** Draw mission step rectangle
  *
  * The rectangle represents the success or failure rate.
@@ -803,7 +809,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
         GetEquipment(Mev[STEP])->Safety = GetEquipment(Mev[STEP])->Base;
     }
 
-    GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF - 1;
+    GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF;
 
     if (mode == F_ALL) {
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
@@ -848,6 +854,7 @@ void F_IRCrew(char mode, struct Astros *Guy)
 
     if (mode == F_RET) {  // should work in news
         Guy->Status = AST_ST_RETIRED;
+        Guy->Special = 2;
         Guy->RetirementDelay = 1;  // Retire beginning of next season
         Guy->RetirementReason = 9;
         Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
@@ -1222,8 +1229,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].trace = Mev[STEP].dgoto;
         Mev[STEP].StepInfo = 3100 + STEP;
 
+        // This error can occur on Photo Recon tests, so the LM must
+        // be identified first.
         {
-            std::vector<Astros *> crew = LMCrew(Mev[STEP].pad, GetEquipment(Mev[STEP]));
+            std::vector<Astros *> crew =
+                LMCrew(Mev[STEP].pad, FindLunarModule());
 
             for (std::vector<Astros *>::iterator it = crew.begin();
                  it != crew.end(); it++) {
@@ -1384,6 +1394,23 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     death = 0;
     return FNote;
+}
+
+
+/**
+ * Return the active Lunar Module for the current mission.
+ *
+ * This is used to find the LM for steps that affect the LM but do
+ * not test the LM directly, such as Photo Recon tests.
+ *
+ * \return the LM, or NULL if there is none for the mission.
+ */
+Equipment *FindLunarModule()
+{
+    // For joint missions, the LM is always found on the first launch,
+    // because if there's a problem launching it, there's no reason to
+    // risk the manned launch.
+    return MH[0][Mission_LM];
 }
 
 

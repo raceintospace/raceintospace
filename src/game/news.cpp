@@ -49,7 +49,7 @@
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 
-static char *news_shots[] = { "angle", "opening", "closing" };
+static const char *news_shots[] = { "angle", "opening", "closing" };
 
 double load_news_anim_start;
 
@@ -198,8 +198,11 @@ OpenNews(char plr, char *buf, int bud)
             fread(&buf[bufsize], 50, 1, fp);
         }
 
+        /* Show reasons for retirement announcements, mission deaths (8), and
+           retirements due to mission injuries (9) */
+
         if (Data->P[plr].Pool[j].Special == 1
-            || (Data->P[plr].Pool[j].Special > 0 && Data->P[plr].Pool[j].RetirementReason == 8)) {
+            || (Data->P[plr].Pool[j].Special > 0 && (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9))) {
             //13 other things
             i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
 
@@ -255,6 +258,7 @@ OpenNews(char plr, char *buf, int bud)
     if (Data->P[plr].Plans & 0x0f) {
         // Failures
         display::graphics.setForegroundColor(6);
+
         if (Data->P[plr].Plans & 0x01) {
             strcpy(&buf[strlen(buf)], "MARS FLYBY FAILS!x");
         }
@@ -270,6 +274,7 @@ OpenNews(char plr, char *buf, int bud)
 
     if (Data->P[plr].Plans & 0xf0) {
         display::graphics.setForegroundColor(5);
+
         if (Data->P[plr].Plans & 0x10) {
             display::graphics.setForegroundColor(13);
             strcpy(&buf[strlen(buf)], "MARS FLYBY SUCCEEDS!x");
@@ -790,7 +795,7 @@ News(char plr)
 
         if (ctop > 0 && key == K_HOME) {
             // Home Key
-            ctop = 1;
+            ctop = 0;
             DrawNText(plr, ctop);
 
         } else if (ctop > 0 && key == K_PGUP) {
@@ -841,16 +846,17 @@ News(char plr)
             OutBox(303, 158, 313, 194);
         }
 
-    if (ctop <= 0) {
-        draw_up_arrow(305, 126);
-    } else {
-        draw_up_arrow_highlight(305, 126);
-    }
-    if (ctop >= bline) {
-        draw_down_arrow(305, 163);
-    } else {
-        draw_down_arrow_highlight(305, 163);
-    }
+        if (ctop <= 0) {
+            draw_up_arrow(305, 126);
+        } else {
+            draw_up_arrow_highlight(305, 126);
+        }
+
+        if (ctop >= bline) {
+            draw_down_arrow(305, 163);
+        } else {
+            draw_down_arrow_highlight(305, 163);
+        }
 
 //   gr_sync ();
     }

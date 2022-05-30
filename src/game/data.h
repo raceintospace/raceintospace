@@ -1,5 +1,5 @@
-#ifndef __DATA_H__
-#define __DATA_H__
+#ifndef RIS_DATA_H
+#define RIS_DATA_H
 
 #include <stdint.h>
 
@@ -77,10 +77,10 @@ using namespace std;
  *                 News specials
  * \li   1 = Retirement announcement
  * \li   2 = Actual retirement
- * \li   3 = ??? unused ???
- * \li   4 = ??? unused ???
+ * \li   3 = Death during mission
+ * \li   4 = Injury during mission
  * \li   5 = Injury resolution
- * \li   6 = ??? Breaking Group/Replacing Astronaut ???
+ * \li   6 = Removed from FLT crew
  * \li   7 = Finished Training
  * \li   8 = Finished Advanced
  * \li   9 = Injury during training
@@ -95,6 +95,7 @@ using namespace std;
 
 #define MAXIMUM_NEWS_EVENTS         100
 #define MAXIMUM_PRESTIGE_NUM        28
+#define MAX_PCAT                    5
 
 /** \name Astronaut related
  *@{
@@ -857,7 +858,7 @@ struct mStr {
          mEq,              /**< Minimum Equipment */
          mCrew;            /**< Useful for Morgans Code */
     uint8_t mVab[2];  /**< Hardware Requirements */
-    char PCat[5],     /**< Prestige Category List */
+    char PCat[MAX_PCAT],   /**< Prestige Category List */
          LMAd;             /**< LM Addition Points */
 };
 
@@ -869,10 +870,12 @@ struct mStr {
 // img = the image to use for this, -1 for none
 // wt = unit weight, used to deterine launch vehicle
 // dmg = Equipment->Damage flag
+// MaxRD = Mar R&D
 struct VInfo {
     char name[15], qty, ac, sf, dex, img;
     int16_t wt;
     char dmg;
+    int MaxRD;
 };
 struct ManPool {
     char Name[14], Sex, Cap, LM, EVA, Docking, Endurance;
@@ -1145,6 +1148,6 @@ BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
 BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
 BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
 
-#endif // __DATA_H__
+#endif // RIS_DATA_H
 
 /* vim: set noet ts=4 sw=4 tw=77: */

@@ -22,15 +22,15 @@
 // Designed by Fritz Bronner
 // Programmed by Michael K McCarty & Morgan Roarty
 //
-// Museum Main Files
+// Pentagon / KGB Headquarters Main Files
 
-// This page handles the Intelligence Briefing
+// This page handles the Intel Library and CIA/KGB Statistics
 
 #include "intel.h"
 
-#include <assert.h>
-
+#include <cassert>
 #include <stdexcept>
+#include <numeric>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -54,13 +54,44 @@
 #include "hardware_buttons.h"
 #include "logging.h"
 
+
+/**
+ * Intelligence Briefings
+ *
+ * The Intel briefings are tracked by 'program' and 'index'. The
+ * program keeps track of what class of intel is being reviewed,
+ * while the index keeps track of the specific mission, hardware, etc.
+ *
+ * Program
+ * 0: Probes / (Astro/Cosmo)nauts / Launch Facilities
+ * 1: Rockets
+ * 2: Manned Craft (Capsules, LMs)
+ * 3: Misc. Hardware
+ * 4: - None -
+ * 5: Planned Mission
+ *
+ * The first four entries correspond to the EquipmentIndex for the
+ * most part, which is logical. But while Space Program / Administration
+ * stuff like 'nauts and launch facilities would logically be classified
+ * as their own program (4), they are lumped in with Probes, and their
+ * space left empty.
+ *
+ * This appears to be connected to how the legacy image storage,
+ * INTEL.BUT, stored the briefing images. The position of the image
+ * within the file would be calculated based on the program and index
+ * values, plus an offset if a USSR player was viewing reports on US
+ * programs. Combining Admin & Probes saved disk space in this
+ * calculation.
+ */
+
+
 // imported from CODENAME.DAT
 const char *code_names[] = {
     "BASEBALL",
     "TUMBLEWEED",
     "BUMBLEBEE",
     "SPIKE",
-    "POST-HOLE",
+    "POSTHOLE",
     "BULLET",
     "MECHTA",
     "LUNAYA",
@@ -140,8 +171,8 @@ const char *code_names[] = {
     "DUO",
     "BABUSHKA",
     "DECADENCE",
-    "BELL-BOTTOM",
-    "HAMSTER-CAGE",
+    "BELL BOTTOM",
+    "HAMSTER CAGE",
     "BIKINI",
     "TROIKA",
     "TRIPLET",
@@ -154,7 +185,7 @@ const char *code_names[] = {
     "ROWBOAT",
     "SPUD",
     "GOLIATH",
-    "LONG-HAUL",
+    "LONG HAUL",
     "BORSCHT",
     "BABA YAGA",
     "ATILLA",
@@ -196,7 +227,7 @@ const char *code_names[] = {
     "FID",
     "FLEETFOOT",
     "ACHILLES",
-    "ROAD RUNNER",
+    "ROADRUNNER",
     "SEAGULL",
     "SPHINX",
     "HOT FOOT",
@@ -233,7 +264,7 @@ const char *code_names[] = {
     "DOUBLE",
     "CATAPULT",
     "SNAPSHOT",
-    "SLING SHOT",
+    "SLINGSHOT",
     "SLEIGH RIDE",
     "JOURNEY",
     "TRIPLE",
@@ -263,12 +294,14 @@ struct DisplayContext {
 
 inline unsigned int BriefingIndex();
 inline unsigned int BriefingIndex(char year, char season);
-void MisIntel(char plr, char acc);
+int MissionIntelFake(char plr);
+int MissionIntelReal(char plr);
+void MissionIntel(char plr, bool acc);
 void XSpec(char plr, char mis, char year);
-void Special(char p, int ind);
-void BackIntel(char p, char year);
-void HarIntel(char p, char acc);
-void SaveIntel(char p, char prg, char ind);
+void Special(char plr, int ind);
+void BackIntel(char plr, char year);
+void HarIntel(char plr, char acc);
+void SaveIntel(char plr, char prg, char ind);
 void ImpHard(char plr, char hd, char dx);
 void UpDateTable(char plr);
 void DrawBre(char plr);
@@ -277,6 +310,7 @@ void DrawIStat(char plr);
 void IStat(char plr);
 void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
 
+void ClearIntelReportText();
 void DrawIntelImage(char plr, char poff);
 void DrawIntelBackground();
 
@@ -305,6 +339,11 @@ unsigned int BriefingIndex(const char year, const char season)
 }
 
 
+/**
+ * The interface for the main Intel center (CIA/KGB) menu.
+ *
+ * \param plr  The player viewing the intel.
+ */
 void Intel(char plr)
 {
     char IName[3][22] = {"LIBRARY", "CIA STATISTICS", "EXIT INTELLIGENCE"};
@@ -385,175 +424,127 @@ void Intel(char plr)
 }
 
 
-void MisIntel(char plr, char acc)
+
+/**
+ * Generate a fake mission report detailing an era-appropriate mission.
+ *
+ * While the plr variable is not used, it is reserved in case a future
+ * implementation wishes to return nation-specific missions such as the
+ * Soyuz Lunar Landing.
+ *
+ * \param plr  the active player.
+ * \return  the mission code or Mission_None on failure.
+ */
+int MissionIntelFake(char plr)
 {
-    int i = 0, mr, j = 0, k = 0, save[20], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
-    char mis, found;
-    static char F[3][14] = {
-        {6, 1, 2, 3, 4, 5}, //58 & 59
-        {13, 6, 25, 7, 9, 10, 11, 12, 8, 14, 15, 18, 16}, // 60 to 64
-        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50} // 65 and up
+    int era, k, total = 0, roll = 0, sumWeight;
+    static const char F[3][15] = {
+        {6, 1, 2, 3, 4, 5},  // 58 & 59
+        {14, 6, 25, 7, 9, 10, 11, 12, 13, 8, 14, 15, 18, 16},  // 60 to 64
+        {11, 43, 38, 48, 53, 54, 55, 56, 42, 49, 50}  // 65 and up
     };
-    static char W[3][16] = {
-        {11, 7, 3, 1, 1, 2, 2}, //58 & 59
-        {4, 15, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1}, // 60 to 64
-        {5, 12, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1} // 65 and up
+    static const char Weights[3][15] = {
+        {6, 3, 1, 1, 2, 2}, // 58 & 59
+        {14, 1, 1, 3, 3, 3, 2, 2, 2, 2, 1, 3, 1, 1},  // 60 to 64
+        {11, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
 
-    for (i = 0; i < 20; i++) {
-        save[i] = 0;
+    if (Data->Year <= 59) {
+        era = 0;
+    } else if (Data->Year <= 64) {
+        era = 1;
+    } else {
+        era = 2;
     }
 
-    if (acc == 0) {
-        switch (Data->Year) {
-        case 58:
-        case 59:
-            for (i = 1; i < F[0][0]; i++) {
-                save[i] = F[0][i];
-            }
+    sumWeight = std::accumulate(&Weights[era][1],
+                                Weights[era] + Weights[era][0],
+                                0);
 
-            break;
+    roll = brandom(sumWeight) + 1;
+    k = 1;
+    total = 0;
 
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-            for (i = 1; i < F[1][0]; i++) {
-                save[i] = F[1][i];
-            }
+    do {
+        total += Weights[era][k];
+    } while (roll > total && ++k < Weights[era][0]);
 
-            break;
+    return (k < Weights[era][0]) ? F[era][k] : Mission_None;
+}
 
-        default:
-            for (i = 1; i < F[2][0]; i++) {
-                save[i] = F[2][i];
-            }
 
-            break;
-        }
+/**
+ * Identify an upcoming mission planned by an opposing player.
+ *
+ * \param plr  the active player.
+ * \return  the mission code or Mission_None if no candidate found.
+ */
+int MissionIntelReal(char plr)
+{
+    int save[2 * MAX_MISSIONS];
+    int found = 0;
 
-        //i=Data->Year-58;
-        if (Data->Year <= 59) {
-            i = 0;
-        } else if (Data->Year <= 64) {
-            i = 1;
-        } else {
-            i = 2;
-        }
-
-        seg = W[i][0];
-        j = brandom(100);
-        k = 2;
-        nf = 0;
-        tot = 0;
-
-        while (nf == 0 && k < W[i][1]) {
-            tot = tot + W[i][k] * seg;
-
-            if (j <= tot) {
-                nf = 1;
-            } else {
-                k++;
-            }
-        }
-
-        nf = 0;
-
-        j = 0;
-
-        tot = 0;
-
-        k = k - 2;
-
-        while (nf == 0 && j < 20) {
-            if (tot == k) {
-                nf = 1;
-            } else if (save[j] >= 1) {
-                tot++;
-            }
-
-            if (nf == 0) {
-                j++;
-            }
-        }
-
-        if (j > 0) {
-            j = j - 1;
-        }
-    }  // end if
-    else {
-        found = 0;
-
-        // mission intelligence
-        for (i = 0; i < 20; i++) {
-            save[i] = 0;
-        }
-
-        for (i = 0; i < 3; i++) {
-            if (Data->P[abs(plr - 1)].Future[i].MissionCode) {
-                mis = Data->P[abs(plr - 1)].Future[i].MissionCode;
-                save[found] = mis;
-                ++found;
-            }
-        }
-
-        for (i = 0; i < 3; i++) {
-            if (Data->P[abs(plr - 1)].Mission[i].MissionCode) {
-                mis = Data->P[abs(plr - 1)].Mission[i].MissionCode;
-                save[found] = mis;
-                ++found;
-            }
-        }
-
-        //}
-        for (i = lo; i < hi; i++) {
-            if (save[i] > 0) {
-                j++;    // Check if event is good.
-            }
-        }
-
-        if (j <= 1) {
-            MisIntel(plr, 0);
-            return;
-        }
-
-        j = brandom(hi - lo);
-        k = 0;
-
-        while ((k < (hi - lo)) && (save[j] == 0)) {
-            // finds candidate
-            j = brandom(hi - lo);
-            k++;
-        }
-
-        if (k >= 20) {
-            MisIntel(plr, 0);
-            return;
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[other(plr)].Future[i].MissionCode) {
+            save[found++] = Data->P[other(plr)].Future[i].MissionCode;
         }
     }
 
-    mis = save[j];
-    mr = Data->P[plr].PastIntel[0].cur;
-    nf = 0;
-
-    for (i = 0; i < mr; i++) {
-        if (Data->P[plr].PastIntel[i].prog == 5 && Data->P[plr].PastIntel[i].index == mis) {
-            nf = 1;
+    for (int i = 0; i < MAX_MISSIONS; i++) {
+        if (Data->P[other(plr)].Mission[i].MissionCode) {
+            save[found++] = Data->P[other(plr)].Mission[i].MissionCode;
         }
     }
 
-    if (nf == 1 || mis > 56 + plr || mis < 0) {
+    return found ? save[brandom(found)] : Mission_None;
+}
+
+
+/**
+ * Create a mission intel report describing a planned launch.
+ *
+ * \param plr  the active player (0 for USA, 1 for USSR).
+ * \param acc  true if the intel is accurate.
+ */
+void MissionIntel(char plr, bool acc)
+{
+    bool prevReported = false;
+    int mis = Mission_None;
+
+    if (acc) {
+        mis = MissionIntelReal(plr);
+
+        if (mis == Mission_None) {
+            mis = MissionIntelFake(plr);
+        }
+    } else {
+        mis = MissionIntelFake(plr);
+    }
+
+    assert(mis >= 0 && mis <= 56 + plr);
+
+    for (int i = 0; i < Data->P[plr].PastIntel[0].cur; i++) {
+        if (Data->P[plr].PastIntel[i].prog == 5 &&
+            Data->P[plr].PastIntel[i].index == mis) {
+            prevReported = true;
+        }
+    }
+
+    // TODO: It would be nice to pass acc to HarIntel, but that sets
+    // up the possibility of an infinite loop.
+    if (mis == Mission_None || prevReported) {
         HarIntel(plr, 0);
         return;
     }
 
-    SaveIntel(plr, 5, (unsigned char) mis);
+    SaveIntel(plr, 5, (char) mis);
 }
 
 /**
+ * Display the Intel Library report for a planned mission.
+ *
  * \param plr  the player index
- * \param mis  the mission code (mStr.Index)
+ * \param mis  the mission code (mStr::Index)
  * \param year the year of the intelligence report
  */
 void XSpec(char plr, char mis, char year)
@@ -624,7 +615,15 @@ void XSpec(char plr, char mis, char year)
     DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
 }
 
-void Special(char p, int ind)
+
+/**
+ * View an intel report discussing astronaut/cosmonaut recruitment
+ * or a launch facility purchase.
+ *
+ * \param plr  the active player.
+ * \param ind  3/4 for a launch pad B/C, 5/6 for recruit class I/II.
+ */
+void Special(char plr, int ind)
 {
 
     display::graphics.setForegroundColor(6);
@@ -673,7 +672,7 @@ void Special(char p, int ind)
     display::graphics.setForegroundColor(1);
     draw_string(33, 155, "THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "CIA ");
     } else {
         draw_string(0, 0, "KGB ");
@@ -681,7 +680,7 @@ void Special(char p, int ind)
 
     draw_string(0, 0, "REPORTS THAT THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "SOVIET UNION HAS ");
     } else {
         draw_string(0, 0, "UNITED STATES HAS ");
@@ -694,7 +693,7 @@ void Special(char p, int ind)
     if (ind >= 5) {
         draw_string(0, 0, " GROUP OF ");
 
-        if (p == 0) {
+        if (plr == 0) {
             draw_string(0, 0, "COSMO");
         } else {
             draw_string(0, 0, "ASTRO");
@@ -709,36 +708,58 @@ void Special(char p, int ind)
 
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "FOR ITS SPACE PROGRAM");
-    DrawIntelImage(p, ind);
+    DrawIntelImage(plr, ind);
 }
 
 
 /**
- * View Intelligence report.
+ * View an intelligence report for a given turn.
  *
- * \param p     player index.
- * \param year  the year the intel was collected.
+ * The task of drawing mission briefings is passed off to XSpec()
+ * and briefings for Launch facilities or (Astro/Cosmo)nauts is handed
+ * off to the Special() function. This method draws the intelligence
+ * briefing for hardware projects, which includes opponent probes,
+ * rockets, manned craft, and miscellaneous hardware.
+ *
+ * \param plr   player index.
+ * \param year  the report's index (# of years since 1958).
  */
-void BackIntel(char p, char year)
+void BackIntel(char plr, char year)
 {
     int prg, ind, xc, yc;
     char code, w;
 
-    display::graphics.setForegroundColor(6);
-    prg = Data->P[p].PastIntel[year].prog;
-    ind = Data->P[p].PastIntel[year].index;
+    prg = Data->P[plr].PastIntel[year].prog;
+    ind = Data->P[plr].PastIntel[year].index;
+
     display::graphics.setForegroundColor(6);
     draw_string(17, 37, "CODE: ");
     display::graphics.setForegroundColor(9);
-    draw_number(0, 0, Data->P[p].PastIntel[year].num);
-    draw_character(Data->P[p].PastIntel[year].code);
+    draw_number(0, 0, Data->P[plr].PastIntel[year].num);
+    draw_character(Data->P[plr].PastIntel[year].code);
     draw_string(0, 0, "-");
 
+    // TODO: BackIntel uses the current season even when displaying
+    // old intel. Since intel is only collected in the fall (due to
+    // PastIntel size limitations), that should be used.
     if (Data->Season == 0) {
         draw_string(0, 0, "S");
     } else {
         draw_string(0, 0, "F");
     }
+
+    if (year < Data->Year - 58) {  // TODO: Should use PastIntel[0].cur
+        draw_up_arrow_highlight(137, 42);
+    } else {
+        draw_up_arrow(137, 42);
+    }
+
+    if (year > 0) {
+        draw_down_arrow_highlight(137, 95);
+    } else {
+        draw_down_arrow(137, 95);
+    }
+
 
     draw_number(0, 0, 58 + year);
     display::graphics.setForegroundColor(6);
@@ -756,13 +777,13 @@ void BackIntel(char p, char year)
     } else if (prg == 2) {
         code = ind + 12;
     } else if (prg == 5) {
-        code = Data->P[p].PastIntel[year].SafetyFactor - 1;
+        code = Data->P[plr].PastIntel[year].SafetyFactor - 1;
     }
 
     if (code == -1) {
         draw_string(xc, yc, "TOP SECRET");
     } else {
-        w = Data->P[p].PastIntel[year].cdex;
+        w = Data->P[plr].PastIntel[year].cdex;
 
         int code_name_index = code * 6 + w;
         assert(code_name_index >= 0);
@@ -771,7 +792,7 @@ void BackIntel(char p, char year)
     }
 
     if (prg == 5) {
-        XSpec(p, ind, year);
+        XSpec(plr, ind, year);
         return;
     }
 
@@ -782,7 +803,7 @@ void BackIntel(char p, char year)
     switch (prg) {
     case 0:
         if (ind >= 5 && ind <= 6) {
-            if (p == 0) {
+            if (plr == 0) {
                 draw_string(39, 82, "COSMO");
             } else {
                 draw_string(39, 81, "ASTRO");
@@ -826,7 +847,7 @@ void BackIntel(char p, char year)
     }
 
     if (prg == 0 && ind >= 3) {
-        Special(p, ind);
+        Special(plr, ind);
         return;
     }
 
@@ -852,7 +873,7 @@ void BackIntel(char p, char year)
     draw_string(17, 112, "PROGRAM: ");
     display::graphics.setForegroundColor(9);
 
-    Equipment &hardware = HardwareProgram(abs(p - 1), prg, ind);
+    Equipment &hardware = HardwareProgram(abs(plr - 1), prg, ind);
     draw_string(0, 0, &hardware.Name[0]);
 
     display::graphics.setForegroundColor(6);
@@ -869,7 +890,7 @@ void BackIntel(char p, char year)
     display::graphics.setForegroundColor(1);
     draw_string(33, 155, "THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "CIA ");
     } else {
         draw_string(0, 0, "KGB ");
@@ -877,7 +898,7 @@ void BackIntel(char p, char year)
 
     draw_string(0, 0, "REPORTS THAT THE ");
 
-    if (p == 0) {
+    if (plr == 0) {
         draw_string(0, 0, "SOVIET UNION IS");
     } else {
         draw_string(0, 0, "UNITED STATES IS");
@@ -889,39 +910,52 @@ void BackIntel(char p, char year)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, " AND RATES THE");
     draw_string(33, 183, "RELIABILITY AT ABOUT ");
-    draw_number(0, 0, Data->P[p].PastIntel[year].SafetyFactor);
+    draw_number(0, 0, Data->P[plr].PastIntel[year].SafetyFactor);
     draw_string(0, 0, " PERCENT.");
 
     if (prg != 5) {
-        DrawIntelImage(p, prg * 7 + ind);
+        DrawIntelImage(plr, prg * 7 + ind);
     }
 }
 
-void HarIntel(char p, char acc)
+
+/**
+ * Create an intel report detailing the opponent's hardware
+ * capabilities.
+ *
+ * An 'inaccurate' report selects a program reasonably plausible for
+ * the time period and reports on it. An 'accurate' reports details
+ * a program the opponent *does* have. Both generate a random safety
+ * rating.
+ *
+ * \param plr  the active player (0 for USA, 1 for USSR).
+ * \param acc  true if the intel report is accurate.
+ */
+void HarIntel(char plr, char acc)
 {
     int mr, i, prg = 0, ind = 0, j = 0, k = 0, save[28], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
 
     static char F[10][11] = {
-        {7, 0, 7, 8, 11, 14, 15, 12, 12, 12}, //58
-        {4, 3, 5, 17, 12, 12, 12, 12, 12, 12}, //59
-        {3, 16, 24, 12, 12, 12, 12, 12, 12, 12}, //60
-        {9, 1, 4, 6, 8, 11, 14, 15, 17, 24}, //61
-        {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18}, //62
-        {5, 19, 20, 9, 12, 12, 12, 12, 12, 12}, //63
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}, //64
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}, //65
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12} //66
+        {7, 0, 7, 8, 11, 14, 15, 12, 12, 12},  //58
+        {4, 3, 5, 17, 12, 12, 12, 12, 12, 12},  //59
+        {3, 16, 24, 12, 12, 12, 12, 12, 12, 12},  //60
+        {9, 1, 4, 6, 8, 11, 14, 15, 17, 24},  //61
+        {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18},  //62
+        {5, 19, 20, 9, 12, 12, 12, 12, 12, 12},  //63
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //64
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //65
+        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}  //66
     };
     static char W[10][15] = {
-        {9, 8, 3, 2, 1, 1, 3, 1}, // 58
-        {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1}, // 59
-        {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2}, // 60
-        {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2}, // 61
-        {5, 10, 3, 3, 2, 3, 2, 3, 2, 2}, // 62
-        {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3}, // 63
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}, // 64
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}, // 65
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3} // 66
+        {9, 8, 3, 2, 1, 1, 3, 1},  // 58
+        {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1},  // 59
+        {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2},  // 60
+        {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2},  // 61
+        {5, 10, 3, 3, 2, 3, 2, 3, 2, 2},  // 62
+        {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3},  // 63
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 64
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 65
+        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}  // 66
     };
 
     for (i = 0; i < 28; i++) {
@@ -1061,11 +1095,8 @@ void HarIntel(char p, char acc)
         }
 
         nf = 0;
-
         j = 0;
-
         tot = 0;
-
         k = k - 2;
 
         while (nf == 0 && j < 28) {
@@ -1087,38 +1118,38 @@ void HarIntel(char p, char acc)
     } else {
         // accurate programs pick one
         for (i = 0; i < 7; i++) {
-            if (Data->P[abs(p - 1)].Probe[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Probe[i].Num >= 0) {
                 save[i] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Rocket[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Rocket[i].Num >= 0) {
                 save[i + 7] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Manned[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Manned[i].Num >= 0) {
                 save[i + 14] = 1;
             }
 
-            if (Data->P[abs(p - 1)].Misc[i].Num >= 0) {
+            if (Data->P[abs(plr - 1)].Misc[i].Num >= 0) {
                 save[i + 21] = 1;
             }
         }
 
         save[3] = save[4] = save[5] = save[6] = save[12] = save[13] = save[26] = save[27] = 0;
 
-        if (Data->P[abs(p - 1)].LaunchFacility[1] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[1] == 1) {
             save[3] = 1;
         }
 
-        if (Data->P[abs(p - 1)].LaunchFacility[2] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[2] == 1) {
             save[4] = 1;
         }
 
-        if (Data->P[abs(p - 1)].AstroLevel == 0) {
+        if (Data->P[abs(plr - 1)].AstroLevel == 0) {
             save[5] = 1;
         }
 
-        if (Data->P[abs(p - 1)].AstroLevel == 1) {
+        if (Data->P[abs(plr - 1)].AstroLevel == 1) {
             save[6] = 1;
         }
 
@@ -1129,24 +1160,24 @@ void HarIntel(char p, char acc)
         }
 
         if (j <= 2) {
-            HarIntel(p, 0);
+            HarIntel(plr, 0);
             return;
         }
 
         j = brandom(hi - lo);
         k = 0;
 
-        while ((k < (hi - lo)) && (save[j] != 1)) { // finds candidate
+        while ((k < (hi - lo)) && (save[j] != 1)) {  // finds candidate
 // draw_number(100,5+k*6,j);
             j = brandom(hi - lo);
             k++;
         }
 
         if (k >= 28) {
-            HarIntel(p, 0);
+            HarIntel(plr, 0);
             return;
         }
-    } // end else
+    }  // end else
 
     if (j >= 0 && j < 7) {
         prg = 0;
@@ -1162,23 +1193,24 @@ void HarIntel(char p, char acc)
         ind = j - 21;
     }
 
-    mr = Data->P[p].PastIntel[0].cur;
+    mr = Data->P[plr].PastIntel[0].cur;
     nf = 0;
 
     for (i = 0; i < mr; i++) {
-        if (Data->P[p].PastIntel[i].prog == prg && Data->P[p].PastIntel[i].index == ind) {
+        if (Data->P[plr].PastIntel[i].prog == prg && Data->P[plr].PastIntel[i].index == ind) {
             nf = 1;
         }
     }
 
     if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
         (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {
-        MisIntel(p, 0);
+        MissionIntel(plr, false);
         return;
     }
 
-    SaveIntel(p, prg, ind);
+    SaveIntel(plr, prg, ind);
 }
+
 
 /* Clears the Intel image area and draws the intel background layer.
  */
@@ -1189,6 +1221,7 @@ void DrawIntelBackground()
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
 }
+
 
 /* Draws the image for an Intelligence Briefing.
  *
@@ -1234,7 +1267,66 @@ void DrawIntelImage(char plr, char poff)
     display::graphics.screen()->draw(image, 153, 32);
 }
 
-void SaveIntel(char p, char prg, char ind)
+
+/**
+ * Save an Intel Library briefing to record.
+ *
+ * Each Intel briefing is given a unique ID, its record # within
+ * the CIA/KGB's filing system. It takes the form
+ *    {num}{code}-{Season}{Year}
+ * where Season (F or S) and Year (ex: 62) are the date when the
+ * intel was collected. For example, 7183V-F59.
+ *
+ * Intel reports are stored in BuzzData::PastIntel[].
+ * PastIntel structs have seven fields:
+ *
+ *   char code
+ *   int16_t num
+ *   char prog
+ *   char cur
+ *   char index
+ *   char SafetyFactor
+ *   char cdex
+ *
+ * 'code' and 'num' are components of the intel briefing's id.
+ * 'code' is a random letter and 'num' a random four-digit value.
+ *
+ * 'prog' records the type of intel recorded. Options are
+ *   0: Hardware intel for a probe, or
+ *      a new astronaut/cosmonaut recruit class, or
+ *      a launch facility purchase.
+ *   1: Hardware intel for a rocket program.
+ *   2: Hardware intel for a manned program.
+ *   3: Hardware intel for a kicker, EVA suit, or docking module.
+ *   5: Mission intel (an upcoming launch)
+ *
+ * PastIntel[0].cur is used to store how many entries of the array
+ * have been filled (i.e. its length).
+ *
+ * 'index' is contextually dependent on 'prog'.
+ *   - For hardware intel, it's the program index for the type
+ *     specified by 'prog'.
+ *   - For mission intel, it's the mission code.
+ *   - For a launch facility it's 3 or 4 for Pad B or C, respectively.
+ *   - For a class of recruits, 'index' is 5 or 6 for the first or
+ *     second class, respectively.
+ *
+ * 'SafetyFactor' is also contextually dependent on 'prog'.
+ *   - For hardware intel, the program's safety rating.
+ *   - For mission intel, designates the correct intel image.
+ *   - Not used for launch facility / recruit classes.
+ *
+ * 'cdex' is a random value [0, 5] used as part of an index into
+ * the code_names array to determine the briefing's Code Name.
+ *
+ * TODO: Even 'accurate' hardware reports use a completely random
+ * SafetyFactor for the hardware program.
+ *
+ * \param plr
+ * \param prg  the type of intel briefing.
+ * \param ind  the program index/mission code/recruit class/facility.
+ */
+void SaveIntel(char plr, char prg, char ind)
 {
     char Op[61] = {
         0, 19, 20, 20, 21, 21, 21, 22, 28, 24, 25,
@@ -1253,12 +1345,13 @@ void SaveIntel(char p, char prg, char ind)
 
     mr = brandom(9998) + 1;
     ky = 65 + brandom(26);
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].code = ky;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].num = mr;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].prog = prg;
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].index = ind;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].code = ky;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].num = mr;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].prog = prg;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].index = ind;
     j = brandom(100);
 
+    // TODO: Why not k = brandom(3)? Or k = brandom(99) / 33?
     if (j < 33) {
         k = 0;
     } else if (j < 66) {
@@ -1267,11 +1360,11 @@ void SaveIntel(char p, char prg, char ind)
         k = 2;
     }
 
-    if (p == 1) {
+    if (plr == 1) {
         k = k + 3;
     }
 
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].cdex = k;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].cdex = k;
 
     if (prg == 5) {
         safetyFactor = Op[ind];
@@ -1279,148 +1372,149 @@ void SaveIntel(char p, char prg, char ind)
         safetyFactor = brandom(22) + 77;
     }
 
-    Data->P[p].PastIntel[Data->P[p].PastIntel[0].cur].SafetyFactor = safetyFactor;
+    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].SafetyFactor = safetyFactor;
 
     if (prg != 5) {
-        Data->P[p].IntelHardwareTable[prg][ind] = safetyFactor;
+        Data->P[plr].IntelHardwareTable[prg][ind] = safetyFactor;
     }
 }
 
+
+/**
+ * Updates the Intel hardware table.
+ *
+ * TODO: Explain _why_ the algorithm chosen is used...
+ * TODO: This overwrites the previous value, even if that value is a
+ * just-researched Intel briefing. Not that one random value is better
+ * than the other...
+ *
+ * \param plr
+ * \param hd   The hardware field (per EquipmentIndex enum).
+ * \param dx   The hardware program index (per EquipProbeIndex, etc.).
+ */
 void ImpHard(char plr, char hd, char dx)
 {
     // based on the hardware improve safety factor
-    switch (hd) {
-    case PROBE_HARDWARE:
-        Data->P[plr].IntelHardwareTable[PROBE_HARDWARE][dx] = Data->P[plr].Probe[dx].MaxRD - brandom(Data->P[plr].Probe[dx].MaxSafety - Data->P[plr].Probe[dx].MaxRD);
-        break;
-
-    case ROCKET_HARDWARE:
-        Data->P[plr].IntelHardwareTable[ROCKET_HARDWARE][dx] = Data->P[plr].Rocket[dx].MaxRD - brandom(Data->P[plr].Rocket[dx].MaxSafety - Data->P[plr].Rocket[dx].MaxRD);
-        break;
-
-    case MANNED_HARDWARE:
-        Data->P[plr].IntelHardwareTable[MANNED_HARDWARE][dx] = Data->P[plr].Manned[dx].MaxRD - brandom(Data->P[plr].Manned[dx].MaxSafety - Data->P[plr].Manned[dx].MaxRD);
-        break;
-
-    case MISC_HARDWARE:
-        Data->P[plr].IntelHardwareTable[MISC_HARDWARE][dx] = Data->P[plr].Misc[dx].MaxRD - brandom(Data->P[plr].Misc[dx].MaxSafety - Data->P[plr].Misc[dx].MaxRD);
-        break;
-
-    default:
-        break;
-    }
+    Equipment &program = HardwareProgram(plr, hd, dx);
+    Data->P[plr].IntelHardwareTable[hd][dx] =
+        program.MaxRD - brandom(program.MaxSafety - program.MaxRD);
 }
 
+
 /* Updates the hardware statistics table in the Intelligence section.
+ *
+ * TODO: Should ImpHard be called with plr or other(plr)?
+ * If plr, document the reasoning behind the choice.
  *
  * \param plr  Player side (0 for USA, 1 for USSR)
  */
 void UpDateTable(char plr)
 {
     // based on prestige
-    char i, j, p;
+    char j, p;
     p = other(plr);
 
     if (Data->P[p].LMpts > 0) {
         j = brandom(100);
 
         if (j < 60) {
-            ImpHard(plr, 2, 5);
+            ImpHard(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_MODULE);
         } else {
-            ImpHard(plr, 2, 6);
+            ImpHard(plr, MANNED_HARDWARE, MANNED_HW_ONE_MAN_MODULE);
         }
     }
 
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < MAXIMUM_PRESTIGE_NUM; i++) {
         if (Data->Prestige[i].Place == p || Data->Prestige[i].mPlace == p) {
             switch (i) {
-            case 0:
-                ImpHard(plr, 0, 0);
+            case Prestige_OrbitalSatellite:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
                 break;
 
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                ImpHard(plr, 0, 1);
-                ImpHard(plr, 1, 1);
+            case Prestige_LunarFlyby:
+            case Prestige_MercuryFlyby:
+            case Prestige_VenusFlyby:
+            case Prestige_MarsFlyby:
+            case Prestige_JupiterFlyby:
+            case Prestige_SaturnFlyby:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 7:
-                ImpHard(plr, 0, 2);
-                ImpHard(plr, 1, 1);
+            case Prestige_LunarProbeLanding:
+                ImpHard(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 13:
-                ImpHard(plr, 2, 0);
-                ImpHard(plr, 1, 1);
+            case Prestige_OnePerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_ONE_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
                 break;
 
-            case 14:
-                ImpHard(plr, 2, 1);
-                ImpHard(plr, 1, 2);
+            case Prestige_TwoPerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 15:
-                ImpHard(plr, 2, 2);
-                ImpHard(plr, 1, 2);
+            case Prestige_ThreePerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 16:
-                ImpHard(plr, 2, 3);
-                ImpHard(plr, 1, 2);
+            case Prestige_Minishuttle:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
                 break;
 
-            case 17:
-                ImpHard(plr, 2, 4);
-                ImpHard(plr, 1, 3);
+            case Prestige_FourPerson:
+                ImpHard(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
                 break;
 
-            case 18:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedOrbital:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 break;
 
-            case 19:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedLunarPass:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 j = brandom(100);
 
                 if (j < 70) {
-                    ImpHard(plr, 3, 1);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_B);
                 } else {
-                    ImpHard(plr, 3, 0);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_A);
                 }
 
                 break;
 
-            case 20:
-                ImpHard(plr, 1, 4);
+            case Prestige_MannedLunarOrbit:
+                ImpHard(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
                 j = brandom(100);
 
                 if (j < 70) {
-                    ImpHard(plr, 3, 1);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_B);
                 } else {
-                    ImpHard(plr, 3, 0);
+                    ImpHard(plr, MISC_HARDWARE, MISC_HW_KICKER_A);
                 }
 
                 break;
 
-            case 24:
-                ImpHard(plr, 3, 4);
+            case Prestige_MannedDocking:
+                ImpHard(plr, MISC_HARDWARE, MISC_HW_DOCKING_MODULE);
                 break;
 
-            case 26:
-            case 27:
-                ImpHard(plr, 3, 3);
+            case Prestige_Spacewalk:
+            case Prestige_MannedSpaceMission:
+                ImpHard(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
                 break;
 
             default:
                 break;
-            } // switch
+            }  // switch
         }  // if
-    } // for
+    }  // for
 }
+
 
 /* Updates the current intelligence information for a player about
  * opponent plans and capabilities.
@@ -1431,8 +1525,8 @@ void UpDateTable(char plr)
  * facilities), and 2) updating the CIA/KGB statistics table.
  *
  * Intelligence gathered about opponent plans and/or capabilities is
- * notoriously unreliable, being slightly more accurate on lower
- * difficulty levels and less accurate on higher.
+ * notoriously unreliable, being slightly more than half accurate on
+ * lower difficulty levels and less accurate on higher.
  *
  * Due to limited space for saving intelligence briefings, they can
  * only be generated at a rate of one each year, so updating is
@@ -1490,7 +1584,7 @@ void IntelPhase(char plr, char pt)
     if (splt < 500) {
         HarIntel(plr, acc);
     } else {
-        MisIntel(plr, acc);
+        MissionIntel(plr, acc);
     }
 
     Data->P[plr].PastIntel[0].cur++;
@@ -1498,9 +1592,17 @@ void IntelPhase(char plr, char pt)
 }
 
 
+/**
+ * Draws the standard background layout for the Intelligence Library
+ * screen.
+ *
+ * Draws the Library interface including buttons and text but
+ * excluding entry-specific text.
+ *
+ * \param plr  the active player's country index.
+ */
 void DrawBre(char plr)
 {
-
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -1515,17 +1617,17 @@ void DrawBre(char plr)
     ShBox(132, 29, 148, 80);
     ShBox(132, 82, 148, 133);
     ShBox(6, 29, 130, 41);
-    InBox(8, 31, 128, 39); // code
+    InBox(8, 31, 128, 39);  // code
     ShBox(6, 43, 130, 63);
-    InBox(8, 45, 128, 61); // code name
+    InBox(8, 45, 128, 61);  // code name
     ShBox(6, 65, 130, 85);
-    InBox(8, 67, 128, 83); // class
+    InBox(8, 67, 128, 83);  // class
     ShBox(6, 87, 130, 101);
-    InBox(8, 89, 128, 99); // crew
+    InBox(8, 89, 128, 99);  // crew
     ShBox(6, 103, 130, 118);
-    InBox(8, 105, 128, 116); // program
+    InBox(8, 105, 128, 116);  // program
     ShBox(6, 120, 130, 133);
-    InBox(8, 122, 128, 131); // duration
+    InBox(8, 122, 128, 131);  // duration
     IOBox(133, 30, 147, 79);
     IOBox(133, 83, 147, 132);
     ShBox(6, 135, 313, 194);
@@ -1538,14 +1640,46 @@ void DrawBre(char plr)
     draw_string(256, 13, "CONTINUE");
     draw_up_arrow(137, 42);
     draw_down_arrow(137, 95);
-
 }
 
+
+/**
+ * Clear the text in the Intel Library screen so a new report may be
+ * displayed.
+ *
+ * Scrub the entered data from the Briefing template for reuse.
+ * This method is quicker than redrawing the entire Library template,
+ * as done in DrawBre. The values used depend upon the specific
+ * positioning of text strings in other draw functions, and may need
+ * adjusting if those are altered.
+ *
+ * This does not clear the briefing image, which is handled
+ * separately.
+ */
+void ClearIntelReportText()
+{
+    fill_rectangle(45, 32, 98, 38, 3);
+    fill_rectangle(38, 54, 127, 60, 3);
+    fill_rectangle(38, 76, 127, 82, 3);
+    fill_rectangle(16, 91, 127, 98, 3);
+    fill_rectangle(16, 107, 127, 113, 3);
+    fill_rectangle(16, 123, 127, 129, 3);
+    fill_rectangle(30, 148, 300, 186, 7);
+}
+
+
+/**
+ * Interface for the Intel Library.
+ *
+ * Navigates the Intel briefings, ordered chronologically.
+ *
+ * \param plr  the active player index.
+ */
 void Bre(char plr)
 {
     int year = Data->P[plr].PastIntel[0].cur - 1;
     DrawBre(plr);
-    DrawIntelBackground(); // just the blue background
+    DrawIntelBackground();  // just the blue background
     BackIntel(plr, year);
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -1554,43 +1688,41 @@ void Bre(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Gameplay */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if ((x >= 135 && y > 32 && x <= 145 && y <= 77 && mousebuttons > 0) || key == UP_ARROW) {
                 InBox(135, 32, 145, 77);
                 WaitForMouseUp();
 
                 if (year >= 0 && year + 1 <= Data->P[plr].PastIntel[0].cur - 1) {
-
-                    fill_rectangle(45, 32, 98, 38, 3);
-                    fill_rectangle(38, 54, 127, 60, 3);
-                    fill_rectangle(38, 76, 127, 82, 3);
-                    fill_rectangle(16, 91, 127, 98, 3);
-                    fill_rectangle(16, 107, 127, 113, 3);
-                    fill_rectangle(16, 123, 127, 129, 3);
-                    fill_rectangle(30, 148, 300, 186, 7);
+                    ClearIntelReportText();
                     year++;
                     BackIntel(plr, year);
                 }
 
                 OutBox(135, 32, 145, 77);
+
+            } else if (key == K_HOME) {
+                ClearIntelReportText();
+                year = Data->Year - 58;
+                BackIntel(plr, year);
+
             } else if ((x >= 135 && y > 85 && x <= 145 && y <= 130 && mousebuttons > 0) || key == DN_ARROW) {
                 InBox(135, 85, 145, 130);
                 WaitForMouseUp();
 
                 if (year - 1 >= 0) {
-
-                    fill_rectangle(45, 32, 98, 38, 3);
-                    fill_rectangle(38, 54, 127, 60, 3);
-                    fill_rectangle(38, 76, 127, 82, 3);
-                    fill_rectangle(9, 90, 127, 98, 3);
-                    fill_rectangle(9, 106, 127, 115, 3);
-                    fill_rectangle(9, 123, 127, 130, 3);
-                    fill_rectangle(30, 148, 300, 186, 7);
+                    ClearIntelReportText();
                     year--;
                     BackIntel(plr, year);
                 }
 
                 OutBox(135, 85, 145, 130);
+
+            } else if (key == K_END) {
+                ClearIntelReportText();
+                year = 0;
+                BackIntel(plr, year);
+
             } else if ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
@@ -1605,6 +1737,7 @@ void Bre(char plr)
         }
     }
 }
+
 
 /**
  * Load the CIA hardware icons into a buffer image.
@@ -1633,6 +1766,9 @@ boost::shared_ptr<display::LegacySurface> LoadCIASprite()
 }
 
 
+/**
+ * Draw the CIA/KGB Statistics screen (excluding the hardware buttons).
+ */
 void DrawIStat(char plr)
 {
     int i;
@@ -1676,6 +1812,10 @@ void DrawIStat(char plr)
 
 }
 
+
+/**
+ * Interface function for the CIA/KGB Statistics screen.
+ */
 void IStat(char plr)
 {
     int place = -1;
@@ -1693,7 +1833,7 @@ void IStat(char plr)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Gameplay */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if (((x >= 7 && y >= 164 && x <= 75 && y <= 195 && mousebuttons > 0) || key == 'U') && place != 0) {
                 InBox(7, 164, 75, 195);
                 WaitForMouseUp();
@@ -1718,7 +1858,7 @@ void IStat(char plr)
                 InBox(164, 164, 237, 195);
                 WaitForMouseUp();
                 OutBox(164, 164, 237, 195);
-                /* MANNED */
+                /* Manned */
                 place = 2;
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0, dctx);
@@ -1731,7 +1871,7 @@ void IStat(char plr)
                 place = 3;
                 hardware_buttons.drawButtons(place);
                 IInfo(plr, place, 0, dctx);
-                /* MISC */
+                /* Misc */
             }
 
             if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
@@ -1774,10 +1914,32 @@ void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, i
     display::graphics.screen()->draw(local, s, t);
 }
 
+
+/**
+ * Illustrate the known hardware statistics in the CIA/KGB Statistics
+ * view.
+ *
+ * Draws a chart showing the known safety factors of the existing
+ * hardware programs. Values shown for a side's own hardware are the
+ * current value, while safety values for opponent's hardware are
+ * pulled from intelligence findings (and thus may be inaccurate).
+ *
+ * Because the chart has to handle a side-by-side comparison of US
+ * and USSR hardware, LMs are displayed with Probes rather than
+ * Manned craft. Otherwise, Probes would have 6 items to display
+ * while Manned craft would have 14. As rocket illustrations are
+ * especially large, rocket boosters are shown in Miscellaneous.
+ *
+ * \param plr   the active player's country index.
+ * \param loc   hardware class to display (per EquipmentIndex enum).
+ * \param w     false if the graph area should be redrawn.
+ * \param dctx  the sprite with the hardware models.
+ */
 void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 {
     int i, sfu, sfs;
 
+    // Redraw the chart background
     if (w == 0) {
         GradRect(4, 23, 315, 159, 0);
 
@@ -1799,7 +1961,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
     display::graphics.setForegroundColor(1);
 
     switch (loc) {
-    case ROCKET_HARDWARE: //draw_string(137,150,"ROCKETS");
+    case ROCKET_HARDWARE:  //draw_string(137,150,"ROCKETS");
         for (i = 0; i < 4; i++) {
             sfu = -1;
             sfs = -1;
@@ -1886,7 +2048,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MANNED_HARDWARE: //draw_string(137,150,"CAPSULES");
+    case MANNED_HARDWARE:  // draw_string(137,150,"CAPSULES");
         for (i = 0; i < 5; i++) {
             sfu = -1;
             sfs = -1;
@@ -1988,7 +2150,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case PROBE_HARDWARE: //draw_string(100,150,"SATELLITES & LM'S");
+    case PROBE_HARDWARE:  // draw_string(100,150,"SATELLITES & LM'S");
         sfu = -1;
         sfs = -1;
 
@@ -2119,7 +2281,7 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
         break;
 
-    case MISC_HARDWARE: //draw_string(100,150,"ADDITIONAL PROGRAMS");
+    case MISC_HARDWARE:  // draw_string(100,150,"ADDITIONAL PROGRAMS");
         sfu = -1;
         sfs = -1;
 

@@ -1,9 +1,10 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
+#include <cstdio>
+#include <cstdlib>
+
 #include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "raceintospace_config.h"
 

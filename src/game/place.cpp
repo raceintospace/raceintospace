@@ -20,7 +20,7 @@
 
 #include "place.h"
 
-#include <assert.h>
+#include <cassert>
 #include <stdexcept>
 #include <string>
 
@@ -52,7 +52,7 @@
 #include "logging.h"
 
 void BCDraw(int y);
-void DispHelp(char top, char bot, char *txt);
+void DispHelp(char top, char bot, const char *txt);
 void writePrestigeFirst(char index);
 
 
@@ -357,9 +357,8 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         std::string filename((boost::format("images/rdfull.but.%1%.png") % index).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        image->exportPalette(32, 2 + 33);
         display::graphics.screen()->draw(image, x, y);
-
     } else {
         char name[5];
 
@@ -395,17 +394,16 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
         std::string filename((boost::format("images/liftoff.abz.%1%.png") % name).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
-        display::graphics.legacyScreen()->palette().copy_from(image->palette(), 32, 32);
+        image->exportPalette(32, 2 + 63);
         display::graphics.screen()->draw(image, x, y);
     }
 }
 
 void
-DispHelp(char top, char bot, char *txt)
+DispHelp(char top, char bot, const char *txt)
 {
-    int i, pl = 0;
-
-    i = 0;
+    int i = 0;
+    int pl = 0;
 
     while (i++ < top) {
         if (txt[i * 42] == (char) 0xcc) {

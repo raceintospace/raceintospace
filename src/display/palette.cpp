@@ -1,8 +1,10 @@
-#include <memory.h>
-#include <assert.h>
+#include "palette.h"
+
+#include <cassert>
+#include <memory>
 
 #include "graphics.h"
-#include "palette.h"
+
 
 namespace display
 {

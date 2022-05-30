@@ -30,8 +30,10 @@ set(game_sources
   ast2.cpp
   ast3.cpp
   ast4.cpp
+  ast_mod.cpp
   astros.cpp
   budget.cpp
+  bzanim.cpp
   crash.cpp
   crew.cpp
   downgrader.cpp
@@ -98,7 +100,7 @@ set (ui_sources
 
 set(game_libraries
   ${SDL_LIBRARY} ogg vorbis theora protobuf
-  ${JsonCPP_LIBRARY} physfs ${zlib_LIBRARY}
+  ${JsonCPP_LIBRARY} ${Physfs_LIBRARY} ${zlib_LIBRARY}
   raceintospace_display ${raceintospace_display_libraries}
   raceintospace_protobuf
   )

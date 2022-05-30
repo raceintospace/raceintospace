@@ -8,7 +8,8 @@
 #endif
 
 #include <stdint.h>
-#include <stdio.h>
+
+#include <cstdio>
 
 /** Routines for read/write access to LITTLE ENDIAN data in game files */
 extern size_t fread_uint8_t(uint8_t *dst, size_t nelem, FILE *file);

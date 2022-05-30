@@ -276,9 +276,14 @@ void DrawAstCheck(char plr)
         }
 
         draw_string(0, 0, " POSITIONS TO FILL");
-        draw_string(133, 97, "COST: ");
+        draw_string(116, 97, "COST: ");
+        display::graphics.setForegroundColor(1);
         draw_number(0, 0, i);
-        draw_string(0, 0, " MB");
+        draw_string(0, 0, " MB ");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, "(OF ");
+        draw_number(0, 0, Data->P[plr].Cash);
+        draw_string(0, 0, ")");
     } else {
         if (Data->P[plr].AstroDelay != 1) {
             draw_number(114, 86, Data->P[plr].AstroDelay);
@@ -633,7 +638,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
     recruit.Pool = 0;
     recruit.Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
     recruit.Mood = 85 + 5 * brandom(4);
-    recruit.Face = recruit.Sex ? brandom(77) : (77 + brandom(8));
+    recruit.Face = recruit.Sex ? (77 + brandom(8)) : brandom(77);
 
     if (brandom(10) > 5) {
         if (brandom(2) == 0) {
@@ -1203,6 +1208,10 @@ void AstSel(char plr)
                 delay(110);
             }
 
+            fill_rectangle(292, 36, 301, 41, 7);
+            display::graphics.setForegroundColor(11);
+            draw_number(292, 41, MaxSel - count);
+
             OutBox(7, 111, 151, 123);
 
         } else if ((x >= 164 && y >= 111 && x <= 313 && y <= 123 && MCol[now] == 0 && mousebuttons > 0) || (key == 'R' && MCol[now] == 0)) {
@@ -1258,9 +1267,9 @@ void AstSel(char plr)
                 }
 
                 if (! femaleAstronautsSelected) {
-                    InBox(245, 5, 314, 17);
+                    InBox(246, 5, 314, 17);
                     Help("i100");
-                    OutBox(245, 5, 314, 17);
+                    OutBox(246, 5, 314, 17);
                 }
             }
 
@@ -1270,7 +1279,7 @@ void AstSel(char plr)
 
             if ((! femaleAstronautsRequired || femaleAstronautsSelected) &&
                 count == MaxSel) {
-                InBox(245, 5, 314, 17);
+                InBox(246, 5, 314, 17);
                 WaitForMouseUp();
 
                 if (key > 0) {
@@ -1303,19 +1312,19 @@ void AstSel(char plr)
                     break;
                 }
 
-                OutBox(245, 5, 314, 17);
+                OutBox(246, 5, 314, 17);
 
                 music_stop();
 
                 return;  /* Done */
             }
         }
-            
+
         if ((x >= 174 && y >= 5 && x <= 238 && y <= 17 && mousebuttons > 0) || key == K_ESCAPE) {  /* Cancel - and give the player a refund */
-            InBox(172, 3, 240, 19);
+            InBox(174, 5, 238, 17);
             WaitForMouseUp();
             Data->P[plr].Cash += cost;
-            OutBox(172, 3, 240, 19);
+            OutBox(174, 5, 238, 17);
             return;  /* Cancel out */
         }
     }

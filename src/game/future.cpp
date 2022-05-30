@@ -21,12 +21,12 @@
 
 #include "future.h"
 
+#include <cassert>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 #include "display/legacy_surface.h"
-
-#include <assert.h>
 
 #include "Buzz_inc.h"
 #include "admin.h"
@@ -79,7 +79,7 @@ enum FMFields {
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
 // missionData is used in SetParameters, PianoKey, UpSearchRout,
-// DownSearchRout, and Future.
+// DownSearchRout, Future, and GetMissionData.
 std::vector<struct mStr> missionData;
 } // End unnamed namespace
 
@@ -107,7 +107,6 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-int goAhead;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -281,6 +280,14 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, 10, 0, 0);
 
+    if (Data->P[plr].Rocket[0].Delay > 1) {
+        Help("i169");
+    }
+
+    if (Data->P[plr].Manned[0].Delay > 1) {
+        Help("i170");
+    }
+
     return;
 }
 
@@ -423,7 +430,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     draw_string(220, 132, "-");
 
     if (newMissionPenalty > 0) {
-        draw_number(0, 0, newMissionPenalty);
+        draw_number(226, 132, newMissionPenalty);
     } else {
         draw_string(0, 0, "-");
     }
@@ -1042,7 +1049,6 @@ void Future(char plr)
                  key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
-                goAhead = 0;
 
                 if (key > 0) {
                     delay(300);
@@ -1050,20 +1056,9 @@ void Future(char plr)
 
                 key = 0;
 
-                if (misType == 17 || misType == 24 || misType == 28 || misType == 29) {
-                    if (goAhead != 1) {
-                        goAhead = Help("i167");
-                    } 
-                    if (goAhead != 1) { 
-                       OutBox(244, 5, 313, 17);
-                       continue; 
-                    }
-                } else {
-                    if (! FutureMissionOk(plr, nav, misType)) {
-                        OutBox(244, 5, 313, 17);
-                        goAhead = 0;
-                        continue;
-                    }
+                if (! FutureMissionOk(plr, nav, misType)) {
+                    OutBox(244, 5, 313, 17);
+                    continue;
                 }
 
                 OutBox(244, 5, 313, 17);
@@ -1276,7 +1271,7 @@ void Future(char plr)
                 InBox(5, 24, 201, 47);
                 int helpIndex = 300 + misType;
                 char helpEntry[5];
-                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);                
+                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
                 WaitForMouseUp();
                 delay(100);
                 OutBox(5, 24, 201, 47);
@@ -1569,6 +1564,17 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
         return false;
     }
 
+    // Warn players they may need to launch a DM separately if they
+    // are planning an (ORBIT) mission.
+    // TODO: Add a Tutorial mode option to enable/disable advice?
+    if (mis == 17 || mis == 24 || mis == 28 || mis == 29) {
+        int goAhead = Help("i167");
+
+        if (goAhead != 1) {
+            return false;
+        }
+    }
+
     if (options.classic) {
         if (mission.EVA && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
             Help("i118");
@@ -1583,6 +1589,12 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
     }
 
     return true;
+}
+
+std::vector<struct mStr> GetMissionData()
+{
+    SetParameters();
+    return missionData;
 }
 
 
