@@ -124,7 +124,7 @@ void LoadGame(const char *filename);
 void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength);
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
-void write_save_file(char *Name, SaveFileHdr header);
+void write_save_file(const char *Name, SaveFileHdr header);
 int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
@@ -1809,7 +1809,7 @@ int32_t EndOfTurnSave(char *inData, int dataLen)
  * data are serialized into a JSON string, compressed by zlib, and
  * written to disk.
  */
-void write_save_file(char *Name, SaveFileHdr header)
+void write_save_file(const char *Name, SaveFileHdr header)
 {
     FILE *fin;
     int i, offset, size;
@@ -1939,7 +1939,6 @@ int SaveGame(const std::vector<SFInfo> savegames)
     i--;  // decrement to correct for the FOR loop
 
     EndOfTurnSave((char *) Data, sizeof(struct Players));
-    header.compSize = interimData.endTurnSaveSize;
 
     // Create the filename from the title.
     // The field savegames[i].Name is a filename provided by
