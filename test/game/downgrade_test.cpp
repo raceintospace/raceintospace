@@ -18,7 +18,7 @@ struct DowngradeFixture {
         mission.MissionCode = Mission_HistoricalLanding;
         mission.Patch = 29;
         mission.part = 1;
-        strcpy(mission.Hard, "ABCDE");
+        strcpy((char *) mission.Hard, "ABCDE");
         mission.Joint = 1;
         mission.Rushing = 0;
         mission.Month = 7;
