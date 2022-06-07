@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(missiontype_equals_test)
     BOOST_CHECK( Equals(m1, m3) == false );
 
     m3 = m2;
-    strcpy(m3.Hard, "IJKLM");
+    strcpy((char *) m3.Hard, "IJKLM");
 
     BOOST_CHECK( Equals(m1, m3) == false );
 
