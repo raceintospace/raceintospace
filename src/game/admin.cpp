@@ -351,8 +351,8 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
     }
 
     memset(&saveInfo, 0, sizeof(saveInfo));
-    strcpy(saveInfo.Title, header.Name);
-    strcpy(saveInfo.Name, fname.c_str());
+    strncpy(saveInfo.Title, header.Name, sizeof(saveInfo.Title) - 1);
+    strncpy(saveInfo.Name, fname.c_str(), sizeof(saveInfo.Name) - 1);
     saveInfo.time = 0;  /* Were this ever read from somewhere? */
     saveInfo.date = 0;
     saveInfo.type = GetSaveType(header);
@@ -1945,8 +1945,10 @@ int SaveGame(const std::vector<SFInfo> savegames)
     // the file system, so it already includes the .SAV extension.
     if (temp == NOTSAME) {
         std::string filename = title + ".SAV";
+        strncpy(header.Name, title.c_str(), sizeof(header.Name) - 1);
         write_save_file(filename.c_str(), header);
     } else {
+        strncpy(header.Name, savegames[i].Name, sizeof(header.Name) - 1);
         write_save_file(savegames[i].Name, header);
     }
 
