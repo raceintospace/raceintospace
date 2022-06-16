@@ -315,6 +315,29 @@ typedef struct _Equipment {
 
 } Equipment;
 
+/** MissionHard Descriptions
+ * \verbatim
+   0=Capsule
+   1=Kicker
+   2=LM
+   3=Probe/DM
+   4=Primary Booster
+   5=EVA
+   6=Photo Recon
+   7=Secondary Booster
+ * \endverbatim
+*/
+enum MissionHardwareType {
+    Mission_Capsule = 0,            // 0
+    Mission_Kicker,                     // 1
+    Mission_LM,                             // 2
+    Mission_Probe_DM,                   // 3
+    Mission_PrimaryBooster,     // 4
+    Mission_EVA,                            // 5
+    Mission_PhotoRecon,             // 6
+    Mission_SecondaryBooster    // 7 - unused
+};
+
 struct MissionType {
     char Name[25];      /**< name of mission */
     int8_t MissionCode;   /**< internal code of mission type */
@@ -360,9 +383,15 @@ struct MissionType {
         ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
         ASSERT(Men >= 0 && Men <= ASTRONAUT_FLT_CREW_MAX);
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < Mission_PrimaryBooster; i++) {
             ASSERT(Hard[i] >= -1 && Hard[i] < 7);
         }
+        // Saturn V / N1 with boosters has a hardware index of 7
+        ASSERT(Hard[Mission_PrimaryBooster] >= -1
+               && Hard[Mission_PrimaryBooster] < 8);
+        ASSERT(Hard[Mission_EVA] == -1
+               || Hard[Mission_EVA] == 0
+               || Hard[Mission_EVA] == MISC_HW_EVA_SUITS);
     }
 };
 
@@ -853,29 +882,6 @@ struct Players {
         ASSERT(Year >= 57 && Year <= 78);
         ASSERT(Season == 0 || Season == 1);
     }
-};
-
-/** MissionHard Descriptions
- * \verbatim
-   0=Capsule
-   1=Kicker
-   2=LM
-   3=Probe/DM
-   4=Primary Booster
-   5=EVA
-   6=Photo Recon
-   7=Secondary Booster
- * \endverbatim
-*/
-enum MissionHardwareType {
-    Mission_Capsule = 0,            // 0
-    Mission_Kicker,                     // 1
-    Mission_LM,                             // 2
-    Mission_Probe_DM,                   // 3
-    Mission_PrimaryBooster,     // 4
-    Mission_EVA,                            // 5
-    Mission_PhotoRecon,             // 6
-    Mission_SecondaryBooster    // 7 - unused
 };
 
 struct MisAst {  // This struct will be -1's if empty
