@@ -1231,7 +1231,9 @@ int FutureCheck(char plr, char type)
             draw_string(111, 52 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
-            display::graphics.setForegroundColor(11);
+            if (Data->P[plr].Cash >= abs(p[i])) {
+                display::graphics.setForegroundColor(11);
+            }
             draw_string(113, 60 + i * 51, "(OF ");
             draw_number(0, 0, Data->P[plr].Cash);
             draw_string(0, 0, "MB)");
@@ -1325,7 +1327,9 @@ int FutureCheck(char plr, char type)
             if (type == 0) {
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
                 draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
-                display::graphics.setForegroundColor(11);
+                if (Data->P[plr].Cash > 19) {
+                    display::graphics.setForegroundColor(11);
+                }
                 draw_string(0, 0, "(OF ");
                 draw_number(0, 0, Data->P[plr].Cash);
                 draw_string(0, 0, ")");
