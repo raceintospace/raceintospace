@@ -619,7 +619,7 @@ char RD(char player_index)
                         unit++;
                     }
 
-                    break;   //DM Screen, Nikakd, 10/8/10
+                    break;   // DM Screen, Nikakd, 10/8/10
                 }
 
                 RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
@@ -2177,6 +2177,9 @@ void RDHelpWarnings(int plr)
     }
 
     // Warn player with little money that they should visit the VAB/VIB
+    // TODO: This really should check against the base cost of what you have on the pad.
+    //       Or maybe simply a different threshold depending on most advanced capsule the player has:
+    //       Maybe 40MB for Gemini, 30MB for Mercury, 20MB if no capsule program started
     if (Data->P[plr].Cash <= 60) {
         for (int i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[plr].Mission[i].MissionCode > 0 &&
