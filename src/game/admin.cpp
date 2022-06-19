@@ -1156,6 +1156,9 @@ void FileText(const char *name)
 int FutureCheck(char plr, char type)
 {
     int i;
+    int ii;
+    int xx;
+    int yy;
     int pad;
     int p[3];
     int m[3];
@@ -1398,6 +1401,29 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                    // Update player's cash shown on other pads
+                    for (ii = 0; ii < 3; ii++) {
+                        display::graphics.setForegroundColor(9);
+                        if (ii != i && p[ii] > 1) {
+                            if (Data->P[plr].Cash >= abs(p[ii])) { display::graphics.setForegroundColor(11); }
+                        }
+                        if (ii != i && p[ii] == -1) {
+                            if (Data->P[plr].Cash > 19) { display::graphics.setForegroundColor(11); }                                
+                        }
+                        if (p[ii] == -1 || p[ii] > 1) {
+                            if (p[ii] > 1) {
+                                xx = 113;
+                                yy = 56 + ii * 51;
+                            } else {
+                                xx = 171;
+                                yy = 53 + ii * 51;
+                            }
+                            fill_rectangle(xx, yy, xx + 44, yy + 4, 3);
+                            draw_string(xx, yy + 4, "(OF ");
+                            draw_number(0, 0, Data->P[plr].Cash);
+                            draw_string(0, 0, "MB)");
+                        }
+                    }
 
                 } else if (p[i] == -1 && Data->P[plr].Cash < 20 && type == 0) {
                     Help("i129");
@@ -1418,6 +1444,29 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                    // Update player's cash shown on other pads
+                    for (ii = 0; ii < 3; ii++) {
+                        display::graphics.setForegroundColor(9);
+                        if (ii != i && p[ii] > 1) {
+                            if (Data->P[plr].Cash >= abs(p[ii])) { display::graphics.setForegroundColor(11); }
+                        }
+                        if (ii != i && p[ii] == -1) {
+                            if (Data->P[plr].Cash > 19) { display::graphics.setForegroundColor(11); }                                
+                        }
+                        if (p[ii] == -1 || p[ii] > 1) {
+                            if (p[ii] > 1) {
+                                xx = 113;
+                                yy = 56 + ii * 51;
+                            } else {
+                                xx = 171;
+                                yy = 53 + ii * 51;
+                            }
+                            fill_rectangle(xx, yy, xx + 44, yy + 4, 3);
+                            draw_string(xx, yy + 4, "(OF ");
+                            draw_number(0, 0, Data->P[plr].Cash);
+                            draw_string(0, 0, "MB)");
+                        }
+                    }
 
                 } else if (p[i] > 4 && Data->P[plr].Cash < abs(Data->P[plr].LaunchFacility[i])
                            && type == 0) {
