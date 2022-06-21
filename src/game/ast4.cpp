@@ -241,6 +241,14 @@ void DrawProgs(char plr, char prog)
     draw_string(0, 0, "REW SELECTION");
     display::graphics.setForegroundColor(7);
     draw_string(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
+    for (i = 0; i < 8; i++) {
+        if (prog == 1 && Data->P[plr].Pool[i].Assign == 1 && Data->P[plr].Pool[i].Moved >= 5) {
+            // If Mercury/Vostok, mark as obsolete if crew(s) are about to start losing morale for staying here too long
+            display::graphics.setForegroundColor(5);
+            draw_string(0, 0, "  (OBSOLETE)");
+            break;
+        }        
+    }
     display::graphics.setForegroundColor(9);
 
     if (prog == 1) {
