@@ -246,7 +246,7 @@ enum EquipMiscIndex {
 };
 
 
-typedef struct _Equipment {
+struct Equipment {
     char Name[20];      /**< Name of Hardware */
     char ID[2];         /**< EquipID "C0 C1 C2 C3 : Acts as Index */
     int16_t Safety;     /**< current safety factor */
@@ -314,7 +314,7 @@ typedef struct _Equipment {
         ar(CEREAL_NVP(MisFail));
     }
 
-} Equipment;
+};
 
 /** MissionHard Descriptions
  * \verbatim
@@ -1124,20 +1124,20 @@ enum MissionValues {
 };
 
 // Typical
-typedef struct _patch {
+struct PatchHdr {
     int16_t w;
     int16_t h;
     uint16_t size;
     uint32_t offset;
-} PatchHdr;
+};
 
 // Typical, or maybe not?
-typedef struct {
+struct PatchHdrSmall {
     int8_t w;
     int8_t h;
     uint16_t size;
     uint32_t offset;
-} PatchHdrSmall;
+};
 
 
 // Mission Replay Data Structure
@@ -1159,7 +1159,7 @@ typedef struct ReplayItem {
 
 enum Opponent_Status {Ahead, Equal, Behind};
 
-typedef struct {
+struct OLDNEWS {
     uint32_t offset;  // Offset to the memory location of the displayed news string
     uint16_t size;      // Size of the old news string
 
@@ -1170,7 +1170,7 @@ typedef struct {
         ar(CEREAL_NVP(size));
     }
 
-} OLDNEWS;
+};
 
 // Save Game related typedefs
 //#define RaceIntoSpace_Signature   'RiSP'
@@ -1178,7 +1178,7 @@ typedef struct {
 #define RaceIntoSpace_Old_Sig 0x49443a00  //'ID:\0"
 
 
-typedef struct {
+struct SaveFileHdr {
     uint32_t ID;        // Going to use this to determine endianness of the save file
     char Name[23], PName[2][20];
     int8_t Country[2], Season, Year;
@@ -1188,13 +1188,13 @@ typedef struct {
     // uint16_t dataSize;      // Size of Players struct
     // uint16_t compSize;      // Compressed size of data
 
-} SaveFileHdr;
+};
 
 
 /**
  * Data structure to hold transient save game data
  */
-typedef struct {
+struct INTERIMDATA {
     // REPLAY.DAT related variables
     std::array<REPLAY, MAX_REPLAY_ITEMS> tempReplay;
     // EVENT.TMP related variables
@@ -1209,7 +1209,7 @@ typedef struct {
         ARCHIVE_ARRAY(tempReplay, REPLAY);
         ARCHIVE_ARRAY(tempEvents, std::string);
     }
-} INTERIMDATA;
+};
 
 #pragma pack(pop)
 
