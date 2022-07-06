@@ -2,6 +2,7 @@
 #define RIS_DATA_H
 
 #include <stdint.h>
+#include <array>
 
 #include "serialize.h"
 
