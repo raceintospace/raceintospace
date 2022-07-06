@@ -337,7 +337,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
 
     if (fin == NULL) {
         NOTICE2("Unable to open save file %s, skipping",
-                fname);
+                fname.c_str());
         return false;
     }
 
@@ -346,7 +346,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
 
     if (bytes != sizeof(header)) {
         NOTICE2("Unable to read save file %s, skipping",
-                fname);
+                fname.c_str());
         return false;
     }
 
