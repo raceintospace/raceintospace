@@ -2004,7 +2004,7 @@ int SaveGame(const std::vector<SFInfo> savegames)
         strncpy(header.Name, savegames[i].Name, sizeof(header.Name) - 1);
         write_save_file(savegames[i].Name, header);
     }
-
+    return 0;
 }
 
 
