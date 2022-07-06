@@ -1,18 +1,12 @@
-cmake_minimum_required (VERSION 2.8)
-project(raceintospace)
+# CXX_STANDARD requires more recent CMake
+cmake_minimum_required (VERSION 3.1)
+project(raceintospace VERSION 2.0.0)
 
 enable_testing()
 
-set (raceintospace_VERSION_MAJOR 2)
-set (raceintospace_VERSION_MINOR 0)
-set (raceintospace_VERSION_PATCH 0)
-set (raceintospace_VERSION_EXTRA rc1)
-set (raceintospace_VERSION
-	"${raceintospace_VERSION_MAJOR}.${raceintospace_VERSION_MINOR}.${raceintospace_VERSION_PATCH}${raceintospace_VERSION_EXTRA}")
-if (NOT DEFINED CMAKE_PROJECT_VERSION)
-# TODO: use project VERSION & cmake 3.0
-  set (CMAKE_PROJECT_VERSION "${raceintospace_VERSION}")
-endif (NOT DEFINED CMAKE_PROJECT_VERSION)
+set (raceintospace_VERSION_EXTRA rc2)
+set (raceintospace_VERSION_FULL
+	"${raceintospace_VERSION}${raceintospace_VERSION_EXTRA}")
 
 # Platform detection
 if (WIN32 AND NOT WINDOWS)
@@ -46,7 +40,7 @@ include(CPack)
 find_program(GIT git DOC "Git program path")
 
 add_custom_target(dist
-	COMMAND ${CMAKE_COMMAND} -D ARCHIVE_PREFIX="${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}" -D SOURCE_DIR="${CMAKE_SOURCE_DIR}" -D OUTPUT_DIR="${CMAKE_BINARY_DIR}" -P ${CMAKE_CURRENT_SOURCE_DIR}/make_archive.cmake
+	COMMAND ${CMAKE_COMMAND} -D ARCHIVE_PREFIX="${CMAKE_PROJECT_NAME}-${raceintospace_VERSION_FULL}" -D SOURCE_DIR="${CMAKE_SOURCE_DIR}" -D OUTPUT_DIR="${CMAKE_BINARY_DIR}" -P ${CMAKE_CURRENT_SOURCE_DIR}/make_archive.cmake
 )
 add_custom_target(run
 	COMMAND ${CMAKE_BINARY_DIR}/src/game/raceintospace BARIS_DATA=${CMAKE_SOURCE_DIR}/data
@@ -67,5 +61,5 @@ else("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
 add_custom_target(tag
-	COMMAND ${GIT} tag -a v${CMAKE_PROJECT_VERSION})
+	COMMAND ${GIT} tag -a v${raceintospace_VERSION_FULL})
 
