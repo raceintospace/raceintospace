@@ -52,8 +52,8 @@
     </screenshot>
   </screenshots>
   <releases>
-    <release version="2.0" date="2020-12-01" type="stable">
-      <location>https://github.com/raceintospace/raceintospace/tags</location>
+    <release version="2.0rc2" date="2022-07-09" type="development">
+      <location>https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0rc2</location>
     </release>
     <release version="1.1" date="2013-04-18" type="stable">
       <location>https://sourceforge.net/projects/raceintospace/files/Race%20Into%20Space/1.1/</location>
