@@ -1055,7 +1055,7 @@ As seen on Soyuz 4/5.</td>
     <td>24</td>
     <td>Manned Orbital Docking (Orbit) EVA</td>
     <td>Manned docking test and spacewalk where only the spacecraft is launched. DM gains 10% Safety on successes, 5% on failures. There must be a DM already in orbit from a mission launched this turn or last.<br/>
-As seen on Gemini 10, 11, 12.</td>
+As seen on Gemini 10, 11.</td>
   </tr>
   <tr>
     <td>25</td>
@@ -1082,7 +1082,8 @@ As seen on Gemini 4, 9.</td>
   <tr>
     <td>29</td>
     <td>Manned Orbital Docking (Orbit) EVA Duration</td>
-    <td>A Manned Orbital that tests the docking module, performs a spacewalk, then stays up for an extended period. Accomplishes one or more Duration levels. DM gains 10% Safety on successes, 5% on failures. There must be a DM already in orbit from a mission launched this turn or last.</td>
+    <td>A Manned Orbital that tests the docking module, performs a spacewalk, then stays up for an extended period. Accomplishes one or more Duration levels. DM gains 10% Safety on successes, 5% on failures. There must be a DM already in orbit from a mission launched this turn or last.<br/>
+      As seen on Gemini 9, 12.</td>
   </tr>
   <tr>
     <td>30</td>
