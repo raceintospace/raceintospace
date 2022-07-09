@@ -4,7 +4,7 @@ project(raceintospace VERSION 2.0.0)
 
 enable_testing()
 
-set (raceintospace_VERSION_EXTRA rc2)
+set (raceintospace_VERSION_EXTRA rc3)
 set (raceintospace_VERSION_FULL
 	"${raceintospace_VERSION}${raceintospace_VERSION_EXTRA}")
 

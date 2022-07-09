@@ -52,7 +52,7 @@
     </screenshot>
   </screenshots>
   <releases>
-    <release version="2.0rc2" date="2022-07-09" type="development">
+    <release version="2.0rc3" date="2022-07-09" type="development">
       <location>https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0rc2</location>
     </release>
     <release version="1.1" date="2013-04-18" type="stable">
