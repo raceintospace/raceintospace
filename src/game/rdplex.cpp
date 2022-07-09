@@ -2178,9 +2178,10 @@ void RDHelpWarnings(int plr)
 
     // Warn player with little money that they should visit the VAB/VIB
     // TODO: This really should check against the base cost of what you have on the pad.
-    //       Or maybe simply a different threshold depending on most advanced capsule the player has:
-    //       Maybe 40MB for Gemini, 30MB for Mercury, 20MB if no capsule program started
-    if (Data->P[plr].Cash <= 60) {
+    //       For now, it warns at 60 or less if you have a lunar-capable craft, 20 otherwise
+    int chkAmt = 60;
+    if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Num < 0 && Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0 && Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Num < 0 && Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num < 0) { chkAmt = 20; }
+    if (Data->P[plr].Cash <= chkAmt) {
         for (int i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[plr].Mission[i].MissionCode > 0 &&
                 Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
