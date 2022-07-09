@@ -4,7 +4,7 @@
   <name>Race into Space</name>
   <summary>A game to relive the 1960s Space Race</summary>
   <launchable type="desktop-id">raceintospace.desktop</launchable>
-  <url type="homepage">http://raceintospace.org</url>
+  <url type="homepage">https://github.com/raceintospace/raceintospace</url>
   <url type="bugtracker">https://github.com/raceintospace/raceintospace/issues</url>
   <url type="help">https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md</url>
   <metadata_license>CC0-1.0</metadata_license>
@@ -40,7 +40,7 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>http://www.raceintospace.org/images/screenshots/splash_screen.png</image>
+      <image>https://raw.githubusercontent.com/raceintospace/raceintospace/master/doc/manual/image_0.jpg</image>
     </screenshot>
 
     <screenshot>
