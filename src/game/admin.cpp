@@ -27,8 +27,8 @@
  *
  */
 
-// This file handles the Administration building and some of its subsections: Future Missions, Time Capsule (save/load game).
-// It also includes some code for Modem and PBEM.
+// This file handles the Administration building and some of its subsections: Future Missions, Time Capsule (save/load game),
+// and the Future Launch Selection screen.  It also includes some code for Modem and PBEM.
 
 #include "admin.h"
 
@@ -61,6 +61,7 @@
 #include "endianness.h"
 #include "filesystem.h"
 #include "options.h"
+#include "prest.h"
 
 
 #include <zlib.h>
@@ -353,7 +354,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
     memset(&saveInfo, 0, sizeof(saveInfo));
     strncpy(saveInfo.Title, header.Name, sizeof(saveInfo.Title) - 1);
     strncpy(saveInfo.Name, fname.c_str(), sizeof(saveInfo.Name) - 1);
-    saveInfo.time = 0;  /* Were this ever read from somewhere? */
+    saveInfo.time = 0;  /* Was this ever read from somewhere? */
     saveInfo.date = 0;
     saveInfo.type = GetSaveType(header);
     return true;
@@ -547,7 +548,7 @@ void FileAccess(char mode)
             OutBox(209, 64, 278, 72);
             key = 0;
         } else if (sc == 1 && mode == 0 && ((x >= 209 && y >= 78 && x <= 278 && y <= 86 && mousebuttons > 0)
-                                            || (key == 'M'))) { // PLAY-BY-MAIL SAVE GAME
+                                            || (key == 'M'))) {  // PLAY-BY-MAIL SAVE GAME
             InBox(209, 78, 278, 86);
             delay(250);
             WaitForMouseUp();
@@ -1150,7 +1151,7 @@ void FileText(const char *name)
  * building.
  *
  * \param plr   The index of the active player (Player 0 or Player 1).
- * \param type  0 for Future Missions, 1 for Vehicle Assembly.
+ * \param type  0 for Future Missions, 1 for Vehicle Assembly/Integration.
  * \return      0, 1, or 2 for launch pads A, B, and C; 5 to exit.
  */
 int FutureCheck(char plr, char type)
@@ -1255,9 +1256,8 @@ int FutureCheck(char plr, char type)
 
             // TODO: Rewrite this to use a MissionType& and remove the
             // duplicate code.
-            if (type == 1) {
-                const struct mStr plan =
-                    GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
+            if (type == 1) {   // VAB/VIB
+                const struct mStr plan = GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
@@ -1272,14 +1272,22 @@ int FutureCheck(char plr, char type)
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
+                    // Show (RE)ASSEMBLE HARDWARE in other color if missing requirement penalties
+                    int penalty = AchievementPenalty(plr, plan);
+                    if (penalty > 2 && type != 0) {
+                        display::graphics.setForegroundColor(11);
+                    }
+                    if (penalty > 8 && type != 0) {
+                        display::graphics.setForegroundColor(8);
+                    }
                 }
-            } else {
+            } else {   // Future Missions
                 if (!Data->P[plr].Future[i].MissionCode) {
-                    display::graphics.setForegroundColor(1);
+                    display::graphics.setForegroundColor(8);
                 }
 
-                const struct mStr plan =
-                    GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                display::graphics.setForegroundColor(1);
                 draw_string(111, 41 + i * 51, plan.Abbr);
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
@@ -1297,7 +1305,19 @@ int FutureCheck(char plr, char type)
                 }
             }
 
-            if (type == 0) {
+            if (type == 0) {   // Future Missions
+                display::graphics.setForegroundColor(1);
+
+                    // Show (RE)ASSIGN FUTURE MISSION in other color if missing requirement penalties
+                    const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                    int penalty = AchievementPenalty(plr, plan);
+                    if (penalty > 2) {
+                        display::graphics.setForegroundColor(11);
+                    }
+                    if (penalty > 8) {
+                        display::graphics.setForegroundColor(8);
+                    }
+
                 if (Data->P[plr].Future[i].part == 0) {
                     if (m[i] == 0) {
                         draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
@@ -1748,7 +1768,7 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b)
  *
  * \param s   The heading text.
  * \param md  1 if the background underneath should be redrawn on close.
- * \return  1 for yes, 0 for no.
+ * \return    1 for yes, 0 for no.
  */
 char RequestX(const char *s, char md)
 {
@@ -1826,10 +1846,10 @@ char RequestX(const char *s, char md)
  * In normal usage, the variable Data (which contains the game state)
  * is copied into the interimData end-of-turn buffer at the beginning of
  * each player's turn. In this manner, loading the save returns the
- * player to the beginning of their turn (on which the save was
- * created). The interimData buffer is also updated when the player
- * quits the game, updating the Autosave to their current state so the
- * player may resume their game where they left off.
+ * player to the beginning of their turn (on which the save was created).
+ * The interimData buffer is also updated when the player quits the game,
+ * updating the Autosave to their current state so the player may resume
+ * their game where they left off.
  *
  * \param inData   Data formatted as a raw byte block.
  * \param dataLen  the size of the data block in bytes.
@@ -1950,7 +1970,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
  * Launches the Save Game process.
  *
  * TODO: Add a option to toggle between classic save file naming
- * (ex: BUZZ1.SAV) and updated format ({title}.SAV).
+ * (e.g.: BUZZ1.SAV) and updated format ({title}.SAV).
  *
  * \return  0 if successfully saved, 1 if aborted.
  */
