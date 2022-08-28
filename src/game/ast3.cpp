@@ -296,6 +296,10 @@ TrainText(char plr, int astro, int cnt)
     case 3:
         draw_string(0, 0, "IV");
         break;
+        
+    default:
+        draw_string(0, 0, "A.F.");
+        break;
     }
 
     fill_rectangle(264, 87, 315, 100, 3);

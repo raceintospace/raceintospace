@@ -1211,7 +1211,15 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
     draw_string(165, 39, std::string(abuf[*where].Name, 11).c_str());
     display::graphics.setForegroundColor(11);
     draw_string(165, 49, "GROUP ");
-    draw_string(0, 0, RomanNumeral(abuf[*where].Group + 1).c_str());
+    if (abuf[*where].Group + 1 > 4) {
+        if (plr == 0) {
+            draw_string(0, 0, "USAF");
+        } else {
+            draw_string(0, 0, "A.F.");
+        }
+    } else {
+        draw_string(0, 0, RomanNumeral(abuf[*where].Group + 1).c_str());
+    }
     display::graphics.setForegroundColor(12);
     draw_number(225, 169, *where + 1);
     draw_string(0, 0, " OF ");
