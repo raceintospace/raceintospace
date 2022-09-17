@@ -167,7 +167,15 @@ void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
             // Print name in purple if 'naut has announced retirement (black shows poorly here) -Leon
             draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
 
-            if (Data->P[plr].Pool[ary[i]].Missions > 0) {
+            if (Data->P[plr].Pool[ary[i]].InjuryDelay > 0) {
+                if (Data->P[plr].Pool[ary[i]].InjuryDelay == 1) {
+                    draw_number(120, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+                    draw_string(0, 0, " TURN");
+                } else {
+                    draw_number(118, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+                    draw_string(0, 0, " TRNS");
+                }
+            } else if (Data->P[plr].Pool[ary[i]].Missions > 0) {
                 draw_string(0, 0, " (");
                 draw_number(0, 0, Data->P[plr].Pool[ary[i]].Missions);
                 draw_string(0, 0, ")");
