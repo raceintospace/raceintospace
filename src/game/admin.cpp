@@ -2016,12 +2016,11 @@ int SaveGame(const std::vector<SFInfo> savegames)
     // Create the filename from the title.
     // The field savegames[i].Name is a filename provided by
     // the file system, so it already includes the .SAV extension.
+    strncpy(header.Name, title.c_str(), sizeof(header.Name) - 1);
     if (temp == NOTSAME) {
         std::string filename = title + ".SAV";
-        strncpy(header.Name, title.c_str(), sizeof(header.Name) - 1);
         write_save_file(filename.c_str(), header);
     } else {
-        strncpy(header.Name, savegames[i].Name, sizeof(header.Name) - 1);
         write_save_file(savegames[i].Name, header);
     }
     return 0;
