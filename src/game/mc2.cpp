@@ -364,7 +364,15 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         break;
 
     case 'L':
-        Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -20);
+        // Award Manned Lunar Orbital only if done by a (manned)
+        // capsule and not when parking an unmanned LM during a LOR
+        // mission
+        if (MH[pad][Mission_Capsule] != NULL) {
+            Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -20);    // CAP
+        } else {
+            Mev[step].Prest = -100;
+        }
+
         break;
 
     case 'O':
