@@ -521,7 +521,8 @@ void MissionIntel(char plr, bool acc)
         mis = MissionIntelFake(plr);
     }
 
-    assert(mis >= 0 && mis <= 56 + plr);
+    // Soviet side has 57 missions (Soyuz L.L.)
+    assert(mis >= 0 && mis <= 56 + (1 ^ plr));
 
     for (int i = 0; i < Data->P[plr].PastIntel[0].cur; i++) {
         if (Data->P[plr].PastIntel[i].prog == 5 &&
