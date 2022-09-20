@@ -641,7 +641,11 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 AI_Done(); // Fade Out AI Thinking Screen and Restores Mouse
             }
 
-            Data->Count++;
+            // Only increase the global event counter if this is really a new
+            // turn and not one already played in a save game
+            if(Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season) + i) {
+               Data->Count++;
+            }
 
             if (QUIT) {
                 return;
