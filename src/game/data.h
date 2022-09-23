@@ -154,8 +154,8 @@ struct Defl {
         ar(CEREAL_NVP(Sound));
 
         // SECURITY: Data sanitization
-        ASSERT(Plr1 >= 0 && Plr1 < 8);
-        ASSERT(Plr2 >= 0 && Plr2 < 8);
+        ASSERT(Plr1 >= 0 && Plr1 <= 8);
+        ASSERT(Plr2 >= 0 && Plr2 <= 9);
     }
 };
 

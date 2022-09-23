@@ -1897,17 +1897,19 @@ void write_save_file(const char *Name, SaveFileHdr header)
     // If MAIL == 0, we are playing as the U.S. We need to
     // save the game such that the U.S. starts again
     if (MAIL == 0) {
-        plr[0] = 8;
-        plr[1] = 0;
+        Data->Def.Plr1 = 8;
+        Data->Def.Plr2 = 0;
     }
     // Playing as the Soviets
     else if ((MAIL == 1)) {
-        plr[0] = 0;
-        plr[1] = 9;
+        Data->Def.Plr1 = 0;
+        Data->Def.Plr2 = 9;
+    }
+    else {
+        Data->Def.Plr1 = plr[0];
+        Data->Def.Plr2 = plr[1];
     }
 
-    Data->Def.Plr1 = plr[0];
-    Data->Def.Plr2 = plr[1];
     Data->plr[0] = Data->Def.Plr1;
     Data->plr[1] = Data->Def.Plr2;
 
