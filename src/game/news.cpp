@@ -862,7 +862,16 @@ News(char plr)
 void
 AIEvent(char plr)
 {
+    int turn = 2 * (Data->Year - 57) + Data->Season + 1;  // start at turn 1
+    bool freshNews = (turn > Data->P[plr].eCount);
+
     ResolveEvent(plr);
+
+    // Do not update event counter when loading saved game
+    if (freshNews) {
+        Data->P[plr].eCount++;
+        assert(Data->P[plr].eCount < MAX_NEWS_ITEMS / 2);
+    }
 }
 
 // ResolveEvent seems to set a flag in the BadCard array
