@@ -851,11 +851,12 @@ struct Players {
     int8_t Season;                  /**< Season of Year */
     struct PrestType Prestige[MAXIMUM_PRESTIGE_NUM];   /**< Definitions of Prest Vals */
     struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
-    int8_t unused_EMark[4]           ; /**< unused - Event Marker */
+    int8_t unused_EMark[3]           ; /**< unused - Event Marker */
     int8_t Events[MAXIMUM_NEWS_EVENTS]; /**< History of Event Cards */
     int8_t Count;                      /**< Number of Events Picked */
     int8_t PD[NUM_PLAYERS][MAXIMUM_PRESTIGE_NUM]; /**< Prestige First Displayed: First Bit: Seen in MisRev, Second Bit: Seen by Opponent */
     int8_t Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
+    int8_t Mail;                       /* Current status of PBEM game */
     struct MisEval Mev[MAX_LAUNCHPADS][60]; /** < Mission eval for mail games */
     int8_t Step[MAX_LAUNCHPADS]; /** Number of mission steps for mail games */
 
@@ -875,6 +876,9 @@ struct Players {
         ar(CEREAL_NVP(Count));
         ar(CEREAL_NVP(PD));
         ar(CEREAL_NVP(Mile));
+        if (version > 0) {
+            ar(CEREAL_NVP(Mail));
+        }
         ar(CEREAL_NVP(Mev));
         ar(CEREAL_NVP(Step));
 
@@ -884,6 +888,8 @@ struct Players {
         ASSERT(Season == 0 || Season == 1);
     }
 };
+
+CEREAL_CLASS_VERSION(struct Players, 1)
 
 struct MisAst {  // This struct will be -1's if empty
     struct Astros *A;

@@ -50,6 +50,7 @@
 #include "filesystem.h"
 #include "ioexception.h"
 #include "logging.h"
+#include "pbm.h"
 
 void BCDraw(int y);
 void DispHelp(char top, char bot, const char *txt);
@@ -863,7 +864,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 
     draw_string(12, 112, "PRESTIGE EARNED: ");
 
-    if ((MAIL != 0 && Option == -1) || mode == 0) {
+    if ((MAIL != 0 && MAIL != 3 && Option == -1) || mode == 0) {
         draw_number(0, 0, Data->P[plr].History[index].Prestige);
     } else {
         draw_string(0, 0, "PENDING");

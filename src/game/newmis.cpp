@@ -119,7 +119,7 @@ OrderMissions(void)
     for (i = 0; i < NUM_PLAYERS; i++) {
         for (j = 0; j < MAX_MISSIONS; j++) {
             // Don't run the Soviet missions during the U.S. turn
-            if (!(MAIL_PLAYER == 0 && i == MAIL_OPPONENT)) {
+            if (!((MAIL == 0 && i == 1) || (MAIL == 3 && i == 0))) {
                 if (Data->P[i].Mission[j].MissionCode
                     && Data->P[i].Mission[j].part != 1) {
                     Order[k].plr = i;

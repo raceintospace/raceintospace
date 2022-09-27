@@ -60,16 +60,36 @@ void ShowPrestigeResults(char plr)
     }
 }
 
-/* Updates the MAIL variable for the next player and saves the current
- * game. Only fades out if the game is not a PBEM game.
+/* Saves the current game. Only fades out if the game is not a PBEM
+ * game.
  */
 void MailSwitchPlayer(void)
 {
-    MAIL = MAIL_NEXT;
-
     if (MAIL != -1) {
         FileAccess(2);
     }
 
     FadeOut(2, 10, 0, 0);
+}
+
+/* Immediately hand over to the other player during the endgame. MAIL
+   must be either 1 or 2 to show endgame. */
+void MailSwitchEndgame(void)
+{
+    switch (MAIL) {
+    case 0:
+      MAIL = 1;
+      break;
+    case 1:
+      MAIL = 2;
+      break;
+    case 2:
+      MAIL = 1;
+      break;
+    case 3:
+      MAIL = 2;
+      break;
+    }
+                                
+    MailSwitchPlayer();
 }

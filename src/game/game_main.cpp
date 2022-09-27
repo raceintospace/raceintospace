@@ -94,7 +94,6 @@ std::array<char, 2> IDLE;
 char *buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
-char MAIL = -1;
 char Option = -1;
 int fOFF = -1;
 // true for fullscreen mission playback, false otherwise
@@ -502,7 +501,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     // Turn 1 is Spring 1957. The event count begins at 0, and is
     // incremented as the news event text is being generated.
     turn = 2 * (Data->Year - 57) + Data->Season + 1; // Start on turn 1
-    newTurn = (turn > Data->P[0].eCount);    // eCount starts at 0.
+    newTurn = (turn > Data->P[MAIL_INVERTED == 1 ? 1 : 0].eCount); // eCount starts at 0.
 
     LOAD = 0;                           // CLEAR LOAD FLAG
 
@@ -542,28 +541,31 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             if (Data->Season == 0) {
                 CalcPresRev();
             }
-        }
-
-        for (i = 0; i < NUM_PLAYERS; i++) {
-
-            if (!i && (MAIL == 1)) { // Soviet turn coming up
-                continue;
-            }
-
-            if (i && (MAIL == 0)) { // U.S. turn coming up
-                continue;
-            }
-
-            xMODE &= ~xMODE_CLOUDS; // reset clouds for spaceport
 
             // Intel only gets updated in the fall, because there are
             // only 30 Intel Briefing slots in the save record per
             // player.
             // Also, check to make sure this isn't an autosave repeating
             // the start-of-turn actions.
-            if (Data->Season == 1 && newTurn) {
-                IntelPhase(plr[i] - 2 * AI[i], 0);
+            for (i = 0; i < NUM_PLAYERS; i++) {
+                if (Data->Season == 1 && newTurn) {
+                    IntelPhase(plr[i] - 2 * AI[i], 0);
+                }
             }
+
+        }
+
+        for (i = 0; i < NUM_PLAYERS; i++) {
+
+            if (!i && (MAIL_PLAYER == 1)) { // Soviet turn coming up
+                continue;
+            }
+
+            if (i && (MAIL_PLAYER == 0)) { // U.S. turn coming up
+                continue;
+            }
+
+            xMODE &= ~xMODE_CLOUDS; // reset clouds for spaceport
 
             // computer vs. human
 
@@ -591,7 +593,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 VerifySF(plr[i]);
 
                 // Show prestige resulution from the previous turn
-                if (MAIL == 0) {
+                if (MAIL == 1 || MAIL == 2) {
 
                     if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
                         UpdateRecords(1);
@@ -601,14 +603,14 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         return;
                     }
 
-                    if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1 && newTurn == false) { // Nobody won
+                    if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1 && MAIL == 1) { // Nobody won
                         SpecialEnd();
                         FadeOut(2, 10, 0, 0);
                         return;
                     }
 
                     PlayAllFirsts(MAIL_OPPONENT);
-                    ShowPrestigeResults(MAIL);
+                    ShowPrestigeResults(MAIL_PLAYER);
                 }
 
                 News(plr[i]);                  // EVENT FOR PLAYER
@@ -643,8 +645,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             // Only increase the global event counter if this is really a new
             // turn and not one already played in a save game
-            if(Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season) + i) {
-               Data->Count++;
+            if(Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season)
+               + MAIL_INVERTED == 1 ? 1^i : i) {
+                Data->Count++;
             }
 
             if (QUIT) {
@@ -653,13 +656,14 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         // Generate copy of the prestige data to be sent later to the
-        // Soviet side. We need to keep filling the prestige data to
+        // other side. We need to keep filling the prestige data to
         // prevent unwarranted milestone/duration penalties, but the
-        // actual prestige resolution is done after the Soviet turn.
-        if (MAIL == 0) {
+        // actual prestige resolution is done after the opponent's
+        // turn.
+        if (MAIL == 0 || MAIL == 3) {
             memcpy(oldPrestige, Data->Prestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
             // Save the current mission counter
-            old_mission_count = Data->P[0].PastMissionCount;
+            old_mission_count = Data->P[MAIL_PLAYER].PastMissionCount;
         }
 
         DockingKludge();  // fixup for both sides
@@ -685,21 +689,30 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                         prest = Launch(Order[i].plr, Order[i].loc);
 
                         // check for prestige firsts
-                        if (AI[Order[i].plr] == 1 || (MAIL == 1 && Order[i].plr == 0) && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {   // supposed to be 1
+                        if (AI[Order[i].plr] == 1 || (MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1) && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {   // supposed to be 1
                             PlayAllFirsts(Order[i].plr);
                         }
 
                         if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
-                            if (MAIL != 0) {
+                            if (MAIL != 0 && MAIL != 3) {
                                 UpdateRecords(1);
                                 NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
+
+                                // Immediately hand over to the other player
+                                MailSwitchEndgame();
+
+                                return;
                             }
 
-                            MailSwitchPlayer();
-                            return;
+                            // TODO: Don't perform missions after the L.L.
+                            else {
+                                break;
+                            }
+                            
+
                         }
 
-                        if (!(AI[Order[i].plr] || (MAIL == 1 && Order[i].plr == 0)) && prest != -20) { // -20 means scrubbed
+                        if (!(AI[Order[i].plr] || (MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1)) && prest != -20) { // -20 means scrubbed
                             MisRev(Order[i].plr, prest, Data->P[Order[i].plr].PastMissionCount - 1);
                         }
                     }
@@ -708,11 +721,13 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             }                             //for(i=0...
         }
 
-        if (MAIL == 0) { // Hand over to the Soviet side
+        if (MAIL == 0 || MAIL == 3) { // Hand over to the other side
             // Restore mission counter
-            Data->P[0].PastMissionCount = old_mission_count;
-            // Restore prestige data to the status before the U.S. missions
+            Data->P[MAIL_PLAYER].PastMissionCount = old_mission_count;
+            // Restore prestige data to the status before the missions
             memcpy(Data->Prestige, oldPrestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
+            MAIL = MAIL_NEXT;
+
             MailSwitchPlayer();
             return;
         }
@@ -722,7 +737,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         if (Data->Year == 77 && Data->Season == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {
             // nobody wins .....
             SpecialEnd();
-            MailSwitchPlayer();
+            MailSwitchEndgame();
             return;
         }
 
@@ -776,12 +791,16 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             Data->Season++;
         }
 
-        newTurn = true;
 
-        if (MAIL == 1) { // Hand back to the U.S. side
-            MailSwitchPlayer();
-            return;
+        // End of turn MAIL update
+        if (MAIL == 1) {
+            MAIL = 3;
         }
+        else if (MAIL == 2) {
+            MAIL = 0;
+        }
+
+        newTurn = true;
 
     }
 

@@ -46,6 +46,7 @@
 #include "pace.h"
 #include "endianness.h"
 #include "filesystem.h"
+#include "pbm.h"
 
 
 char PF[29][40] = {
