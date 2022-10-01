@@ -1142,8 +1142,8 @@ void ShowUnit(char hw, char un, char player_index)
         // Display Damaged Equipment
         if (program.Damage != 0) {
             display::graphics.setForegroundColor(8);
-            draw_string(280, 111, "(");
-            draw_number(283, 111, program.Safety + program.Damage < 1 ? 1 : program.Safety + program.Damage);
+            draw_string(279, 111, "(");
+            draw_number(282, 111, program.Safety + program.Damage < 1 ? 1 : program.Safety + program.Damage);
             draw_character('%');
             draw_character(')');
         }
