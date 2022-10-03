@@ -48,6 +48,7 @@
 #include "filesystem.h"
 #include "randomize.h"
 #include "data.h"
+#include "pbm.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]
@@ -120,8 +121,8 @@ int Launch(char plr, char mis)
     STEP = FINAL = JOINT = PastBANG = 0;
     MisStat = tMen = 0x00; // clear mission status flags
 
-    // Don't do U.S. missions twice, just update prestige data
-    if (MAIL == 1 && plr == 0) {
+    // Don't do missions twice, just update prestige data
+    if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
         // Check for Mission death
@@ -350,7 +351,7 @@ int Launch(char plr, char mis)
 
 //   if (!AI[plr]) KillMusic();
 
-    if (MAIL == 0) {
+    if (MAIL == 0 || MAIL == 3) {
         Data->Step[mis] = STEPnum;
     }
 
@@ -373,7 +374,7 @@ int Launch(char plr, char mis)
         }
     }
 
-    if (MAIL == 0) {
+    if (MAIL == 0 || MAIL == 3) {
         memcpy(Data->Mev[mis], Mev, 60 * sizeof(struct MisEval));
     }
 

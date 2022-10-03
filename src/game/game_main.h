@@ -18,7 +18,6 @@ void PauseMouse(void);
 void GetMouse_fast(void);
 
 extern char Option;
-extern char MAIL;
 extern int fOFF;
 extern char AI[2];
 extern char manOnMoon;

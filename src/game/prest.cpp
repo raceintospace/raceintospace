@@ -468,7 +468,7 @@ char Set_Goal(char plr, char which, char control)
                 Data->P[plr].MissionCatastrophicFailureOnTurn |= 4;  // for astros
 
 
-                if (MAIL == 0) {
+                if (MAIL == 0 || MAIL == 3) {
                     pd = Mev[0].pad;
                     qt = Data->P[0].Udp[pd].Qty;
                     Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
@@ -494,7 +494,7 @@ char Set_Goal(char plr, char which, char control)
                 case Prestige_Duration_D:
                 case Prestige_Duration_E:
                 case Prestige_Duration_F:
-                    if (MAIL == 0) {
+                    if (MAIL == 0 || MAIL == 3) {
                         pd = Mev[0].pad;
                         qt = Data->P[0].Udp[pd].Qty;
                         Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
@@ -874,7 +874,7 @@ int AllotPrest(char plr, char mis)
     negs = 0;
 
     // PHOTO RECON; don't increase twice in mail games
-    if (!(MAIL == 1 && plr == 0)) {
+    if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         if (PVal[Prestige_MannedLunarPass] > 0 && PVal[Prestige_MannedLunarPass] < 4) {
             Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;    // manned stuff gets 5
         }
@@ -917,7 +917,7 @@ int AllotPrest(char plr, char mis)
     }
 
     // Don't increase docking safety twice in mail games
-    if (!(MAIL == 1 && plr == 0)) {
+    if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         if (Check_Dock(500) == 2) {  // Success
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
@@ -1067,7 +1067,7 @@ int AllotPrest(char plr, char mis)
     }
 
     // LM POINTS; don't add them twice in mail games
-    if (!(MAIL == 1 && plr == 0)) {
+    if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         Set_LM(plr, STEPnum);
 
         if (mcode >= 48 && mcode <= 52 && other < 3000) {
@@ -1144,7 +1144,7 @@ int U_AllotPrest(char plr, char mis)
     lun = Check_Photo();
 
     // Don't improve photo recon twice in mail games
-    if (MAIL == 1 && plr == 0) {
+    if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
         lun = 0;
     }
 
@@ -1251,13 +1251,13 @@ int Update_Prestige_Data(char plr, char mis, int code)
     Data->P[plr].Prestige += total;
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
-    if (MAIL == 1 && plr == MAIL_OPPONENT) {
+    if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
         Data->P[plr].PastMissionCount++; // Normally done in MissionPast()
         assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     }
 
-    // Player prestige gets updated after the Soviet turn
-    if (MAIL != 0) {
+    // Player prestige is delayed in mail games
+    if (MAIL != 0 && MAIL != 3) {
         Data->P[plr].Prestige += total;
     }
 

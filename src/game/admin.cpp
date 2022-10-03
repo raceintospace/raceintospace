@@ -62,7 +62,7 @@
 #include "filesystem.h"
 #include "options.h"
 #include "prest.h"
-
+#include "pbm.h"
 
 #include <zlib.h>
 
@@ -954,7 +954,7 @@ void autosave_game(const char *name)
  * length as SaveFileHdr::Name, plus delimiter.
  *
  * \param name  The string location where the name is stored.
- * \return  the user-supplied file name, ("" if aborted).
+s * \return  the user-supplied file name, ("" if aborted).
  * \throws IOException  if insufficient disk space remaining.
  */
 std::string GetBlockName()
@@ -1603,7 +1603,6 @@ void LoadGame(const char *filename)
         LOAD = 1;
     } else if (GetSaveType(header) == SAVEGAME_PlayByMail) {
         Option = -1;
-        MAIL = !(header.Country[0] == 8);
 
         Data->plr[0] = Data->Def.Plr1 = plr[0] = 0;
         Data->plr[1] = Data->Def.Plr2 = plr[1] = 1;
@@ -1894,14 +1893,14 @@ void write_save_file(const char *Name, SaveFileHdr header)
 
     // Play-By-Mail save game hack
     //
-    // If MAIL == 0, we are playing as the U.S. We need to
+    // If MAIL_PLAYER == 0, we are playing as the U.S. We need to
     // save the game such that the U.S. starts again
-    if (MAIL == 0) {
+    if (MAIL_PLAYER == 0) {
         Data->Def.Plr1 = 8;
         Data->Def.Plr2 = 0;
     }
     // Playing as the Soviets
-    else if ((MAIL == 1)) {
+    else if ((MAIL_PLAYER == 1)) {
         Data->Def.Plr1 = 0;
         Data->Def.Plr2 = 9;
     }
