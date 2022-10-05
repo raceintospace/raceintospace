@@ -1248,7 +1248,6 @@ int Update_Prestige_Data(char plr, char mis, int code)
     }
 
     total = total - (pNeg[plr][mis] * 3);
-    Data->P[plr].Prestige += total;
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
