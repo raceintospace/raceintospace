@@ -467,24 +467,13 @@ char Set_Goal(char plr, char which, char control)
             if (control == 0) {
                 Data->P[plr].MissionCatastrophicFailureOnTurn |= 4;  // for astros
 
-
-                if (MAIL == 0 || MAIL == 3) {
-                    pd = Mev[0].pad;
-                    qt = Data->P[0].Udp[pd].Qty;
-                    Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
-                    Data->P[0].Udp[pd].Poss[qt] = which;
-                    Data->P[0].Udp[pd].PossVal[qt] = 0;
-                    Data->P[0].Udp[pd].Mnth = tMo;
-                    ++Data->P[0].Udp[pd].Qty;
-                } else {
-                    Data->Prestige[which].Place = plr;
-                    Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
-                    Data->Prestige[which].Year = tYr;
-                    Data->Prestige[which].Month = tMo;
-                    Data->Prestige[which].Goal[plr]++;  // increment count
-                    Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[0];
-                    sum += Data->Prestige[which].Add[0];
-                }
+                Data->Prestige[which].Place = plr;
+                Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
+                Data->Prestige[which].Year = tYr;
+                Data->Prestige[which].Month = tMo;
+                Data->Prestige[which].Goal[plr]++;  // increment count
+                Data->Prestige[which].Points[plr] += Data->Prestige[which].Add[0];
+                sum += Data->Prestige[which].Add[0];
 
                 hero |= HeroCheck(which);
             } else if (control == 1) {
