@@ -944,6 +944,10 @@ void autosave_game(const char *name)
 
     write_save_file(name, hdr);
 
+    // Repair data modified by save
+    Data->plr[0] = Data->Def.Plr1 = plr[0] = 0;
+    Data->plr[1] = Data->Def.Plr2 = plr[1] = 1;
+
 }
 
 
