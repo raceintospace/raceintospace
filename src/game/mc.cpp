@@ -134,6 +134,9 @@ int Launch(char plr, char mis)
             death = 0;
         }
 
+        MANNED[0] = Data->P[plr].Mission[mis].Men;
+        MANNED[1] = Data->P[plr].Mission[mis].Joint ? Data->P[plr].Mission[mis + 1].Men : 0;
+
         return Update_Prestige_Data(
                    plr, mis, Data->P[plr].Mission[mis].MissionCode);
     }
