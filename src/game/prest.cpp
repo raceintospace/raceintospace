@@ -483,20 +483,10 @@ char Set_Goal(char plr, char which, char control)
                 case Prestige_Duration_D:
                 case Prestige_Duration_E:
                 case Prestige_Duration_F:
-                    if (MAIL == 0 || MAIL == 3) {
-                        pd = Mev[0].pad;
-                        qt = Data->P[0].Udp[pd].Qty;
-                        Data->P[0].Udp[pd].HInd = Data->P[0].PastMissionCount;
-                        Data->P[0].Udp[pd].Poss[qt] = which;
-                        Data->P[0].Udp[pd].PossVal[qt] = 0;
-                        Data->P[0].Udp[pd].Mnth = tMo;
-                        ++Data->P[0].Udp[pd].Qty;
-                    } else {
-                        Data->Prestige[which].Place = plr;
-                        Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
-                        Data->Prestige[which].Year = tYr;
-                        Data->Prestige[which].Month = tMo;
-                    }
+                    Data->Prestige[which].Place = plr;
+                    Data->Prestige[which].Index = Data->P[plr].PastMissionCount;
+                    Data->Prestige[which].Year = tYr;
+                    Data->Prestige[which].Month = tMo;
 
                 default:
                     break;
@@ -1205,7 +1195,7 @@ int U_AllotPrest(char plr, char mis)
     } // if
 
     // Don't increase docking safety twice in mail games
-    if (!(MAIL == 1 && plr == 0)) {
+    if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         if (Check_Dock(2) == 2) {
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
