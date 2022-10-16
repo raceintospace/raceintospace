@@ -646,7 +646,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             // Only increase the global event counter if this is really a new
             // turn and not one already played in a save game
             if(Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season)
-               + MAIL_INVERTED == 1 ? 1^i : i) {
+               + (MAIL_INVERTED == 1 ? 1^i : i)) {
                 Data->Count++;
             }
 
