@@ -197,24 +197,28 @@ void FreeLaunchHardware(const char plr, const int pad)
     for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
         const uint8_t hardwareID = launch.Hard[i];
 
-        switch (i) {
-        case Mission_Capsule:
-        case Mission_LM:  // Manned+LM
-            Data->P[plr].Manned[hardwareID].Spok--;
-            break;
+        if (hardwareID != 0xFF) { // 0xFF means unused
+            
+            switch (i) {
+            case Mission_Capsule:
+            case Mission_LM:  // Manned+LM
+                Data->P[plr].Manned[hardwareID].Spok--;
+                break;
 
-        case Mission_Kicker:  // Kicker
-            Data->P[plr].Misc[hardwareID].Spok--;
-            break;
+            case Mission_Kicker:  // Kicker
+                Data->P[plr].Misc[hardwareID].Spok--;
+                break;
 
-        case Mission_Probe_DM:  // DM+Probes
-            if (hardwareID == MISC_HW_DOCKING_MODULE) {
-                Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
-            } else {
-                Data->P[plr].Probe[hardwareID].Spok--;
+            case Mission_Probe_DM:  // DM+Probes
+                if (hardwareID == MISC_HW_DOCKING_MODULE) {
+                    Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Spok--;
+                } else {
+                    Data->P[plr].Probe[hardwareID].Spok--;
+                }
+
+                break;
             }
-
-            break;
+            
         }
     }
 
