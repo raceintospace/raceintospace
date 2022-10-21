@@ -254,7 +254,7 @@ void Admin(char plr)
             music_stop();
             helpText = "i013";
             keyHelpText = "k013";
-            Prefs(1);
+            Prefs(1, plr);
             key = 0;
             break;
 

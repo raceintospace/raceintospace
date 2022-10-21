@@ -269,12 +269,12 @@ int game_main_impl(int argc, char *argv[])
             helpText = "i013";
 
             if (MAIL == -1) {
-                Prefs(0);                     // GET INITIAL PREFS FROM PLAYER
+                Prefs(0, -1);                  // GET INITIAL PREFS FROM PLAYER
             }
 
 #ifdef ALLOW_PBEM
             else { // MAIL GAME
-                Prefs(3);
+                Prefs(3, -1);
             }
 
 #endif // ALLOW_PBEM
