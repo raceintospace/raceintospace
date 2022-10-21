@@ -342,7 +342,7 @@ void CLevels(char side, char wh, DisplayContext &dctx)
  *
  * \param where  0 for pregame setup, 1 for in-game settings, 3 for mail game
  */
-void Prefs(int where)
+void Prefs(int where, int player)
 {
     int num, hum1 = 0, hum2 = 0;
     FILE *fin;
@@ -618,8 +618,8 @@ void Prefs(int where)
 
                 Levels(1, Data->Def.Ast2, 0, dctx);
                 /* P2: Astro Level */
-            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
-                       ((where == 3 || where == 0) && ksel == 0 && key == 'N')) {
+            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && (where == 3 || where == 0 || (where == 1 && player == 0)) && mousebuttons > 0) ||
+                       ((where == 3 || where == 0 || (where == 1 && player == 0)) && ksel == 0 && key == 'N')) {
                 fill_rectangle(7, 35, 82, 41, 0);
 
                 for (int i = 0; i < 20; i++) {
@@ -663,8 +663,8 @@ void Prefs(int where)
                 draw_string(8, 40, &Data->P[0].Name[0]);
                 av_sync();
                 /* P1: Director Name */
-            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && (where == 3 || where == 0) && mousebuttons > 0) ||
-                       ((where == 3 || where == 0) && ksel == 1 && key == 'N')) {
+            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && (where == 3 || where == 0 || (where == 1 && player == 1)) && mousebuttons > 0) ||
+                       ((where == 3 || where == 0 || (where == 1 && player == 1)) && ksel == 1 && key == 'N')) {
                 fill_rectangle(237, 35, 312, 41, 0);
 
                 for (int i = 0; i < 20; i++) {
