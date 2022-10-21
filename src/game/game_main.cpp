@@ -297,6 +297,9 @@ int game_main_impl(int argc, char *argv[])
                     AI[1] = 0;
                 }
             }
+            else {
+                AI[0] = AI[1] = 0;
+            }
 
             InitData();                   // PICK EVENT CARDS N STUFF
             MainLoop();                   // PLAY GAME
