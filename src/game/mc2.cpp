@@ -979,7 +979,7 @@ void MissionSetDown(char plr, char mis)
 void
 MisSkip(const char plr, const struct mStr &mission)
 {
-    int i, j, diff;
+    int i, j, k, diff, done;
 
     // MAX is a macro, not a function, so don't combine...
     diff = AchievementPenalty(plr, mission);
@@ -993,7 +993,20 @@ MisSkip(const char plr, const struct mStr &mission)
         for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
             for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
-                    MH[i][j]->MisSaf -= diff;
+                    // Don't subtract twice if already done
+                    done = 0;
+                    
+                    if (i) {
+                        for (k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
+                            if (MH[0][k] == MH[i][j]) {
+                                done = 1;
+                            }
+                        }
+                    }
+
+                    if (!done) {
+                        MH[i][j]->MisSaf -= diff;
+                    }
                 }
             }
         }
