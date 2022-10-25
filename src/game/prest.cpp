@@ -928,6 +928,9 @@ int AllotPrest(char plr, char mis)
 
     // DURATION FIRSTS
     Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, 1);
+    if (Data->P[plr].Mission[mis].Joint) {
+        Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, Data->P[plr].Mission[mis + 1].Duration);
+    }
 
     if (!misType.Dur) {
         switch (P_Goal) {
