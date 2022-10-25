@@ -1022,7 +1022,7 @@ MisSkip(const char plr, const struct mStr &mission)
 void
 MisRush(char plr, char rush_level)
 {
-    int i, j, diff;
+    int i, j, k, diff, done;
 
     diff = 3 * rush_level;
 
@@ -1034,7 +1034,20 @@ MisRush(char plr, char rush_level)
         for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
             for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
                 if (MH[i][j] != NULL) {
-                    MH[i][j]->MisSaf -= diff;
+                    // Don't subtract twice if already done
+                    done = 0;
+
+                    if (i) {
+                        for (k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
+                            if (MH[0][k] == MH[i][j]) {
+                                done = 1;
+                            }
+                        }
+                    }
+
+                    if (!done) {
+                        MH[i][j]->MisSaf -= diff;
+                    }
                 }
             }
         }
