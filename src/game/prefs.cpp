@@ -375,6 +375,15 @@ void Prefs(int where, int player)
             hum2 = 1;
         }
     }
+    else {
+        plr[0] = 0;
+        plr[1] = 0;
+
+        Data->Def.Lev1 = Data->Def.Lev2 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
+        Data->Def.Input = 2;  // Historical Model / Historical Roster
+        Data->Def.Sound = Data->Def.Music = 1;
+        MuteChannel(AV_ALL_CHANNELS, 0);
+    }
 
     boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
     dctx.prefs_image = prefs_image;
