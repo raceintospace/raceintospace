@@ -434,8 +434,8 @@ void Train(char plr, int level)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < 8; i++) { // Right Select Box
-            if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0 && (now2 - BarA + i) <= (count - 1)) { // Left
+        for (i = 0; i < 8; i++) {  // Right Select Box
+            if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0 && (now2 - BarA + i) <= (count - 1)) {  // Left
 
                 now2 -= BarA;
                 now2 += i;
@@ -499,7 +499,7 @@ void Train(char plr, int level)
                     GetMouse();
                 }
 
-                //WaitForMouseUp();
+                // WaitForMouseUp();
                 OutBox(6, 130, 18, 161);
                 delay(10);
             } else if (key == K_HOME) {
@@ -564,7 +564,7 @@ void Train(char plr, int level)
                     GetMouse();
                 }
 
-                //WaitForMouseUp();
+                // WaitForMouseUp();
                 OutBox(6, 163, 18, 194);
                 delay(10);
             } else if (key == K_PGUP) {
@@ -608,7 +608,7 @@ void Train(char plr, int level)
                 }
 
                 OutBox(168, 181, 314, 193);
-                // Help box are you sure
+                // Help box: are you sure you want to withdraw from training early
 
                 if (plr == 0) {
                     temp = Help("i102");
@@ -618,15 +618,15 @@ void Train(char plr, int level)
 
                 if (temp == 1) {
                     if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1) {
-                        Data->P[plr].Cash += 3; // refunds
+                        Data->P[plr].Cash += 3;  // refund for early withdrawal
                     }
 
                     if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
-                        Data->P[plr].Cash += 2; // for early
+                        Data->P[plr].Cash += 2;  // partial refund for early withdrawal
                     }
 
                     if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_3) {
-                        Data->P[plr].Cash += 1; // withdrawal
+                        Data->P[plr].Cash += 1;  // partial refund for early withdrawal
                     }
 
                     if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1 || Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
@@ -685,7 +685,7 @@ void Train(char plr, int level)
 
                 }
 
-            } /* end x-y if */
+            }  /* end x-y if */
             else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
@@ -697,7 +697,7 @@ void Train(char plr, int level)
                 OutBox(245, 5, 314, 17);
                 music_stop();
                 return;  /* Done */
-            } /* end x-y if */
+            }  /* end x-y if */
 
             if (now2 < count - 1 && count > 8 && (8 - BarA) + now2 < count) {
                 draw_down_arrow_highlight(9, 166);
@@ -711,9 +711,9 @@ void Train(char plr, int level)
                 draw_up_arrow(9, 133);
             }
 
-        } /* end mouse if */
+        }  /* end mouse if */
     }  /* end while */
-} /* end Limbo */
+}  /* end Limbo */
 
 
 /* Interface for the Hospital/Cemetery.
@@ -892,7 +892,7 @@ void InjuredNautCenter(char plr, int sel)
             WaitForMouseUp();
             music_stop();
             return;  /* Done */
-        } /* end x-y if */
+        }  /* end x-y if */
     }  /* end while */
 }
 
