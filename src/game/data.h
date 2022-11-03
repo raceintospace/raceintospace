@@ -1208,6 +1208,7 @@ struct INTERIMDATA {
     // ENDTURN.TMP related variables
     uint32_t endTurnSaveSize;
     char *endTurnBuffer;
+    string filename;
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)

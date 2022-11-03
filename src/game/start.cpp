@@ -137,6 +137,8 @@ random_card:
     // Initialize in memory for Event Saves
     interimData.tempEvents.fill("");
 
+    // Empty previous file name suggestions
+    interimData.filename.clear();
 }
 
 

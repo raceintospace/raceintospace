@@ -998,6 +998,11 @@ std::string GetBlockName()
     name.reserve(maxLength + 1);
     display::graphics.setForegroundColor(1);
 
+    if (!interimData.filename.empty()) { // Suggest previous name
+        name = interimData.filename;
+        draw_string(53, 102, name.c_str());
+    }
+
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
         gr_sync();
@@ -1646,6 +1651,9 @@ void LoadGame(const char *filename)
 
         // TODO: Should Modem games call CacheCrewFile()?
     }
+
+    header.Name[23] = 0;
+    interimData.filename.assign(header.Name);
 }
 
 /**
