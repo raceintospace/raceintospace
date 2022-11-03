@@ -310,14 +310,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         break;
 
     case 'I':
-        if (MH[pad][Mission_Probe_DM] != NULL) {
-            Mev[step].Class = Mission_Probe_DM;  // DM
-        } else {
-            // TODO: Huh? Satellite should be Probe/DM i.e. 3, so
-            // comment doesn't make sense. Make sure this is correct.
-            Mev[step].Class = 2;    // Satellite
-        }
-
+        Mev[step].Class = Mission_Probe_DM;  // DM
         break;
 
     case 'd':  // Special
