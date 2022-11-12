@@ -1617,7 +1617,12 @@ void LoadGame(const char *filename)
         }
 
     } else { // Not zlib compressed data
-        LegacyLoad(header, fin, fileLength);
+        if (Help("i174") == 1) {
+            LegacyLoad(header, fin, fileLength);
+        }
+        else {
+            return;
+        }
     }
 
     if (GetSaveType(header) == SAVEGAME_Normal) {
