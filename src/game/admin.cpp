@@ -659,17 +659,18 @@ void FileAccess(char mode)
             FileText(&savegames[now].Name[0]);
 
             if (savegames.size() > 8) {
-                draw_up_arrow_highlight(194, 55);
+                draw_down_arrow_highlight(194, 94);
             } else {
                 draw_up_arrow(194, 55);
             }
 
+            draw_up_arrow(194, 55);
             key = 0;
 
         } else if (key == K_PGUP) {  // Page Up
 
             if (now > 0) {
-                now -= 9;
+                now -= 8;
                 BarB = 0;
 
                 if (now < 0) {
@@ -685,14 +686,14 @@ void FileAccess(char mode)
                 draw_up_arrow(194, 55);
             }
 
-            if (savegames.size() <= now + (9 - BarB)) {
+            if (savegames.size() <= now + (8 - BarB)) {
                 draw_down_arrow(194, 94);
             }
 
             // perform Up Button
             key = 0;
 
-            if (savegames.size() <= now + (9 - BarB)) {
+            if (savegames.size() <= now + (8 - BarB)) {
                 draw_down_arrow(194, 94);
             }
 
@@ -702,26 +703,45 @@ void FileAccess(char mode)
 
         } else if (key == K_PGDN) {  // Page Down
 
-            if (now < (savegames.size() - 9)) {
-                now += 9;
+            if (now < savegames.size()) {
+                now += 8;
+            }
+            
+            if (savegames.size() < 8) {  // user only has a few saves
+                now = savegames.size() - 1;
+                BarB = savegames.size() - 1;
+            } else {
+                if (now < (savegames.size() - 8)) {
+                
+                    if (now > (savegames.size() - 1)) {
+                        now = savegames.size();
+                        BarB = 8; //savegames.size() - 1;
+                    } else {
+                        //now += 8;
+                        //now = savegames.size() - 1;
+                        BarB = 8;
+                    }
 
-                if (now > (savegames.size() - 1)) {
-                    now = savegames.size() - 1;
-                    BarB = savegames.size() - 1;
+                    DrawFiles(now, BarB, savegames);
+                    FileText(&savegames[now].Name[0]);
+
+                    if (savegames.size() > 7) {
+                        draw_up_arrow_highlight(194, 55);
+                    } else {
+                        draw_up_arrow(194, 55);
+                    }
+                    if (now == savegames.size()) {
+                        draw_down_arrow(194, 94);
+                    }
                 } else {
                     now = savegames.size() - 1;
                     BarB = 8;
-                }
-
-                DrawFiles(now, BarB, savegames);
-                FileText(&savegames[now].Name[0]);
-
-                if (savegames.size() > 8) {
-                    draw_up_arrow_highlight(194, 55);
-                } else {
-                    draw_up_arrow(194, 55);
+                    draw_down_arrow(194, 94);
                 }
             }
+            
+            DrawFiles(now, BarB, savegames);
+            FileText(&savegames[now].Name[0]);
 
             key = 0;
 
@@ -741,6 +761,7 @@ void FileAccess(char mode)
                 draw_up_arrow(194, 55);
             }
 
+            draw_down_arrow(194, 94);
             DrawFiles(now, BarB, savegames);
             FileText(&savegames[now].Name[0]);
 
