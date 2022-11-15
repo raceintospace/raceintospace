@@ -40,7 +40,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
   bring the capsule home anyway) (#287)
 <hr/>
 <ul>
-- On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
+<li> On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
   that unless the mission hits the Reentry step. (#330)<br/>
 - The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
