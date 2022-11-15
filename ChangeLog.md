@@ -21,7 +21,7 @@ Since transitioning to C++ on GIT, the game has been brought up to where we left
 Below are improvements that have been made over what the game offered in v.1.1.
 
 ### BUG FIXES AND PROBLEMS SOLVED
-<p>
+
 - The duration penalty system has been fixed, and is working right for the first time ever (#246)
    - This makes a final solution to what has sometimes been called the "Duration B Bug"
 - The newscast that announces all manned missions will be canceled this turn no longer cancels unmanned 
@@ -37,8 +37,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
   crew members instead of just the Commander and LM Pilot (#476)<br/>
 - If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing 
   back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to 
-  bring the capsule home anyway) (#287)<br/>
-</p><p>
+  bring the capsule home anyway) (#287)
+
 - On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
   that unless the mission hits the Reentry step. (#330)<br/>
@@ -189,8 +189,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
   scheduled for this turn but haven't assembled them yet, opening R&D will now pop up a reminder to 
   assemble the missions before spending your money on research (#511)
 - The VAB/VIB now has a Delay button to let you put a launch back a turn rather than having to scrub 
-  it and reschedule. (#167)<br/>
-<br/>
+  it and reschedule. (#167)
+
 - You can now change player names after a game has begun.  In two-player games, you can change your 
   name but not your opponent's. (#705)<br/>
 - R&D and Purchasing can now by closed with the Esc key as well as Enter.<br/>
