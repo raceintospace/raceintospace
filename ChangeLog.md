@@ -42,11 +42,11 @@ Below are improvements that have been made over what the game offered in v.1.1.
 <ul>
 <li> On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
-  that unless the mission hits the Reentry step. (#330)<br/>
-- The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
-   - Before, it had called it "the H launch facility" (since h is used as a variable).<br/>
-- When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
-  mismatch between newscast and actual numbers (#204, #243)<br/>
+  that unless the mission hits the Reentry step. (#330)
+<li> The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
+ <ul><li> Before, it had called it "the H launch facility" (since h is used as a variable).</ul>
+<li> When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
+  mismatch between newscast and actual numbers (#204, #243)
 - The VAB/VIB wasn't properly reporting damage to rockets (where you're required to pay xMB 
   or suffer y% Safety loss on its next mission).<br/>
 - When a component faces a Safety penalty unless the player pays to fix it, it didn't make sure you had 
