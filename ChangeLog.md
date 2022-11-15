@@ -38,135 +38,133 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing 
   back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to 
   bring the capsule home anyway) (#287)
-<hr/>
-<ul>
-<li> On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
+
+* On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
   that unless the mission hits the Reentry step. (#330)
-<li> The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
- <ul><li> Before, it had called it "the H launch facility" (since h is used as a variable).</ul>
-<li> When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
+* The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
+   * Before, it had called it "the H launch facility" (since h is used as a variable).
+* When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a 
   mismatch between newscast and actual numbers (#204, #243)
-- The VAB/VIB wasn't properly reporting damage to rockets (where you're required to pay xMB 
-  or suffer y% Safety loss on its next mission).<br/>
-- When a component faces a Safety penalty unless the player pays to fix it, it didn't make sure you had 
-  enough cash to pay, allowing you to have a negative number of MBs (#268) [not sure if this was in 1.1]<br/>
-- The second of the two newscasts announcing that the primary crew caught cold and will be replaced 
-  with the backup crew never worked before; now it does (#286, #325)<br/>
-- The newscast stating that an astronaut left to become a test pilot or has been transferred for 
-  reeducation instead sent them to the hospital/infirmary (#290)<br/>
-- The newscast saying a given piece of hardware has lost x% Safety could sometimes claim it lost more 
-  than it actually had (#569)<br/>
-- When starting a PBEM game when the previous game had had the US played by the AI, the AI flags would 
-  not reset, causing the game to crash. (#706)<br/>
-- Docking safety was sometimes raised twice in PBEM games (#701)<br/>
-- There was an error in the awarding of prestige prestige for capsule firsts which were not properly 
-  recorded in PBEM games (#700)</br>
-- There was a bug causing a duration step to not be awarded in PBEM games (#695)<br/>
-- Fixed an error when autosaving in PBEM games which led to some data used for array indexing containing 
-  unsafe values. This could lead to a buffer overflow showing strange behavior in the Preferences screen (#699)<br/>
-- On a lunar landing, "Permanent communications loss with ground control. Mission is scrubbed." would 
-  ask who should be first on the Moon, but it shouldn't have because no one was getting out. (#514)<br/>
-- Because of the nature of the variable for 'naut mood, after a successful mission it could roll over
+* The VAB/VIB wasn't properly reporting damage to rockets (where you're required to pay xMB 
+  or suffer y% Safety loss on its next mission).
+* When a component faces a Safety penalty unless the player pays to fix it, it didn't make sure you had 
+  enough cash to pay, allowing you to have a negative number of MBs (#268) [not sure if this was in 1.1]
+* The second of the two newscasts announcing that the primary crew caught cold and will be replaced 
+  with the backup crew never worked before; now it does (#286, #325)
+* The newscast stating that an astronaut left to become a test pilot or has been transferred for 
+  reeducation instead sent them to the hospital/infirmary (#290)
+* The newscast saying a given piece of hardware has lost x% Safety could sometimes claim it lost more 
+  than it actually had (#569)
+* When starting a PBEM game when the previous game had had the US played by the AI, the AI flags would 
+  not reset, causing the game to crash. (#706)
+* Docking safety was sometimes raised twice in PBEM games (#701)
+* There was an error in the awarding of prestige prestige for capsule firsts which were not properly 
+  recorded in PBEM games (#700)
+* There was a bug causing a duration step to not be awarded in PBEM games (#695)
+* Fixed an error when autosaving in PBEM games which led to some data used for array indexing containing 
+  unsafe values. This could lead to a buffer overflow showing strange behavior in the Preferences screen (#699)
+* On a lunar landing, "Permanent communications loss with ground control. Mission is scrubbed." would 
+  ask who should be first on the Moon, but it shouldn't have because no one was getting out. (#514)
+* Because of the nature of the variable for 'naut mood, after a successful mission it could roll over
   above 100, which would result in a very low number, potentially leading to two entire flight 
-  crews resigning out of sudden bitterness during their moment of triumph (#484)<br/>
-- The newscast that delayed a mission on the pad used to delay missions that couldn't have been 
-  put back a turn (such as Mars/Jupiter/Saturn flybys).<br/>
-- There were three newscasts which were supposed to reduce your budget by 20, 25, or 30 MBs, or by 
-  20%, 25%, or 30% of your budget, whichever is less.  Instead, if 20/25/30% was less than 20/25/30 MB,
-  it reduced your budget *****to***** 20/25/30% of what it had been, causing your budget to drop like a rock.
-  (#394)<br/>
-- There was also a newscast that was supposed to increase your budget by 20MB, but the conditions under 
-  which it was allowed effectively prevented it ever happening (#397)<br/>
-- When a newscast gives you three Air Force pilots, they now come with skills. They used to start out in 
-  Basic Training with 0s in everything (#541) <br/>
-- Astronauts from the newscast didn't show a Group. In Basic Training it was blank, and in History they 
+  crews resigning out of sudden bitterness during their moment of triumph (#484)
+* The newscast that delayed a mission on the pad used to delay missions that couldn't have been 
+  put back a turn (such as Mars/Jupiter/Saturn flybys).
+* There were three newscasts which were supposed to reduce your budget by 20, 25, or 30 MBs, or by 20%, 25%,
+  or 30% of your budget, whichever is less.  Instead, if 20/25/30% was less than 20/25/30 MB, it reduced your
+  budget *****to***** 20/25/30% of what it had been, causing your budget to drop like a rock. (#394)
+* There was also a newscast that was supposed to increase your budget by 20MB, but the conditions under 
+  which it was allowed effectively prevented it ever happening (#397)
+* When a newscast gives you three Air Force pilots, they now come with skills. They used to start out in 
+  Basic Training with 0s in everything (#541) 
+* Astronauts from the newscast didn't show a Group. In Basic Training it was blank, and in History they 
   showed as Group X. Now in Basic they show as Group A.F. (for Air Force). In Cosmonaut History they show 
-  as Group A.F.; in Astronaut Hist they show as Group USAF. (#669)<br/>
-- In the Capsule Screen, if you tried to break an empty crew, it would tell you the crew was assigned 
-  as the backup crew for a current mission - now it says it's an empty crew (#348)<br/>
-- The Jupiter flyby was set to take 7 turns to arrive, the same as Saturn - now it's set to 4 as it
-  was supposed to be (#171)<br/>
-- Removed visual artifacts next to astronaut wings and medals in Astronaut/Cosmonaut History 
-  (#299, from #192)<br/>
-- Better centering of astronaut wings in Astro/Cosmonaut history for those who've flown in space.<br/>
-- Fixed a bug with technology transfer for the Titan/Proton rocket: the technology bonus from multiple 
-  rockets at 75%+ was not being applied (#310)<br/>
-- Fixed a bug in Future Missions: if you chose a mission and proceeded to where you select a capsule 
+  as Group A.F.; in Astronaut History they show as Group USAF. (#669)
+* In the Capsule Screen, if you tried to break an empty crew, it would tell you the crew was assigned 
+  as the backup crew for a current mission - now it says it's an empty crew (#348)
+* The Jupiter flyby was set to take 7 turns to arrive, the same as Saturn - now it's set to 4 as it
+  should be (#171)
+* Removed visual artifacts next to astronaut wings and medals in Astronaut/Cosmonaut History 
+  (#299, from #192)
+* Better centering of astronaut wings in Astro/Cosmonaut history for those who've flown in space.
+* Fixed a bug with technology transfer for the Titan/Proton rocket: the technology bonus from multiple 
+  rockets at 75%+ was not being applied (#310)
+* Fixed a bug in Future Missions: if you chose a mission and proceeded to where you select a capsule 
   or crew, then cancel - then press Continue again (either after choosing a different mission or 
   deciding to go ahead with the same one), and you select capsule or crew, when you go back to 
-  Future Missions you find the mission canceled (#222)<br/>
-- Fixed a bug in the VAB/VIB: with some payloads, the color of the rocket/booster combination wasn't 
-  changing to reflect whether it could lift the currently selected payload (#298)<br/>
-   - This was noticed with an XMS-2 Lunar Pass using B/Titan and a B-Kicker.  When you 
+  Future Missions you find the mission canceled (#222)
+* Fixed a bug in the VAB/VIB: with some payloads, the color of the rocket/booster combination wasn't 
+  changing to reflect whether it could lift the currently selected payload (#298)
+   * This was noticed with an XMS-2 Lunar Pass using B/Titan and a B-Kicker.  When you 
      cycled to B/TITAN, the Current Payload displayed in dark red to show that a boosted Titan 
      couldn't lift that combo, but "B/TITAN" under Rocket still showed in white, sometimes leading 
-     the player to purchase hardware that couldn't do the job.<br/>
-- Fixed an out-of-bounds write in the VAB when reassembling hardware, which led to corrupt data and an 
-  assert failure upon autosave. (#704)<br/>
-- Fixed an array overflow error that used to occasionally crash toward the end of the game (#40, #200)<br/>
-- Fixed a bug that caused the game to crash with a black screen, if the AI can't find an available crew 
-  to send on the mission it's about to fly. This happened most often when it was flying direct ascent. (#552)<br/>
-- When you're flying docking tests, the game used to get stuck sometimes at 2 DMs in your inventory. 
+     the player to purchase hardware that couldn't do the job.
+* Fixed an out-of-bounds write in the VAB when reassembling hardware, which led to corrupt data and an 
+  assert failure upon autosave. (#704)
+* Fixed an array overflow error that used to occasionally crash toward the end of the game (#40, #200)
+* Fixed a bug that caused the game to crash with a black screen, if the AI can't find an available crew 
+  to send on the mission it's about to fly. This happened most often when it was flying direct ascent. (#552)
+* When you're flying docking tests, the game used to get stuck sometimes at 2 DMs in your inventory. 
   For the rest of the game you always had two docking modules and didn't have to buy them again (#319)
-  [not sure if this was in 1.1]<br/>
-- If you have a craft that does not require a docking module to dock with an LM (i.e., Apollo/Soyuz), the 
-  docking step was rolled against the safety of the LM and not against the docking module. (#715)
-- An "A-OK" failure on an LEM Thrust Test (that is, one that let the test continue successfully) 
-  used to not award you LM Point(s) for the test (#441)<br/>
-- Certain mission launch steps involving a minishuttle defaulted to the capsule failure cases.<br/>
-- The game used to allow you to assign Duration missions with an illegally low duration (#257, #278)<br/>
-- Fixed a bug that led the game to not count Duration levels achieved on Jt Orbital Docking Duration
-  missions (#690)<br/>
-- Penalties were doubled if hardware was used twice on Joint missions (#709)<br/>
-- A Joint lunar mission that manages to get the unmanned component into orbit would give credit for 
-  performing a manned lunar landing, even if the manned part of the mission failed. (#678)<br/>
-- Scrubbing a mission in the launch pad screen failed to free up any hardware you had purchased for 
-  it (#292)<br/>
-- If you had two missions ready to launch, and the first was successful and flown with hardware at Max
+  [not sure if this was in 1.1]
+* If you have a craft that does not require a docking module to dock with an LM (i.e., Apollo/Soyuz), the 
+  docking step was rolled against the safety of the LM and not against the docking module. 
+* An "A-OK" failure on an LEM Thrust Test (that is, one that let the test continue successfully) 
+  used to not award you LM Point(s) for the test (#441)
+* Certain mission launch steps involving a minishuttle defaulted to the capsule failure cases.
+* The game used to allow you to assign Duration missions with an illegally low duration (#257, #278)
+* Fixed a bug that led the game to not count Duration levels achieved on Jt Orbital Docking Duration
+  missions (#690)
+* Penalties were doubled if hardware was used twice on Joint missions (#709)
+* A Joint lunar mission that manages to get the unmanned component into orbit would give credit for 
+  performing a manned lunar landing, even if the manned part of the mission failed. (#678)
+* Scrubbing a mission in the launch pad screen failed to free up any hardware you had purchased for 
+  it (#292)
+* If you had two missions ready to launch, and the first was successful and flown with hardware at Max
   Safety, if the second used the same hardware, that hardware would fly at above Max Safety (#614)
-- When the capsule's emergency-eject system has to be used, the mission would often continue right 
-  after, or say it was used successfully but all the crew shows as dead (#244)<br/>
-- Fixed a bug where a rocket suffers a major fire on the pad, destroying it; the crew survives, but 
-  without any mention of the emergency-eject system being used (#547)<br/>
-- The image for a damaged/destroyed Soviet launch pad instead showed a functioning pad with a rocket
+* When the capsule's emergency-eject system has to be used, the mission would often continue right 
+  after, or say it was used successfully but all the crew shows as dead (#244)
+* Fixed a bug where a rocket suffers a major fire on the pad, destroying it; the crew survives, but 
+  without any mention of the emergency-eject system being used (#547)
+* The image for a damaged/destroyed Soviet launch pad instead showed a functioning pad with a rocket
   ready for launch. It now shows a damaged pad. The damaged-pad icon for the US wasn't too obviously 
-  damaged either, so now it's more so. (#412) <br/>
-- BARIS allowed you to use PgUp and PgDn to scroll through the newscast more efficiently, both at the 
+  damaged either, so now it's more so. (#412) 
+* BARIS allowed you to use PgUp and PgDn to scroll through the newscast more efficiently, both at the 
   start of your turn and later in the Viewing Stand.  That functionality was lost in RIS because DOS 
   has a peculiar way of processing those keys, but it's now been restored - along with the Home and 
-  End keys.<br/>
-- The Viewing Stand used to show the game's first newscast twice, for both Spring and Fall 1957, so 
-  it never showed the player's second newscast of the game. That's fixed now. (#696)<br/>
-- Mission injuries that led to immediate retirement would retire someone without telling you. Now the 
-  retirement is announced in the newscast. (#568)<br/>
-- Resolved excessive astronaut/cosmonaut retirement checks to match original intent (#428)<br/>
-- Resolved inconsistencies between the code and the comments when the game checks to see if people
-  should retire.<br/>
-- In recruitment, if you clicked and held on the up or down arrow, it would take 3 or 4 seconds 
-  before the list would start to scroll.<br/>
-- Addressed an oversight: in recruitment, if you dismissed a candidate, the number of available spots 
-  didn't show any higher on the right. (#581)<br/>
-- The number of spots to fill in recruitment now shows immediately instead of after you've selected 
-  to recruit one.<br/>
-- In recruitment, the Continue button didn't look quite right when clicked on (off by 1px).<br/>
-- In Preferences, the Human/AI button nestled into the world map never looked quite right on the 
-  Soviet side.  Now it does. (#353)<br/>
-- There were two bugs that would cause the game to do a core dump and close if your LM made a fiery 
-  impact on the lunar surface.  One of them has been fixed (#501)<br/>
-- The Step Failure screen didn't show the correct safety factor (#578, #648)<br/>
-- When a save is loaded in the Fall, the game would create an extra new intelligence briefing. This 
+  End keys.
+* The Viewing Stand used to show the game's first newscast twice, for both Spring and Fall 1957, so 
+  it never showed the player's second newscast of the game. That's fixed now. (#696)
+* Mission injuries that led to immediate retirement would retire someone without telling you. Now the 
+  retirement is announced in the newscast. (#568)
+* Resolved excessive astronaut/cosmonaut retirement checks to match original intent (#428)
+* Resolved inconsistencies between the code and the comments when the game checks to see if people
+  should retire.
+* In recruitment, if you clicked and held on the up or down arrow, it would take 3 or 4 seconds 
+  before the list would start to scroll.
+* Addressed an oversight: in recruitment, if you dismissed a candidate, the number of available spots 
+  didn't show any higher on the right. (#581)
+* The number of spots to fill in recruitment now shows immediately instead of after you've selected 
+  to recruit one.
+* In recruitment, the Continue button didn't look quite right when clicked on (off by 1px).
+* In Preferences, the Human/AI button nestled into the world map never looked quite right on the 
+  Soviet side.  Now it does. (#353)
+* There were two bugs that would cause the game to do a core dump and close if your LM made a fiery 
+  impact on the lunar surface.  One of them has been fixed (#501)
+* The Step Failure screen didn't show the correct safety factor (#578, #648)
+* When a save is loaded in the Fall, the game would create an extra new intelligence briefing. This 
   could potentially have created an array overflow and overwriting of variables in games that were 
-  saved multiple times (#217)<br/>
-- The game would sometimes crash during intelligence report generation if the player was flying the 
-  Soyuz Lunar Landing (mission 57), because it wasn't set to accommodate missions above 56. ($675)<br/>
-- If your lunar landing failed with the message "Maneuvering failure, craft lands in rough terrain causing damage", 
-  the mission would go straight to Lunar Orbital Activities, skipping the liftoff (#505)<br/>
-- On the lunar landing mission, the Photo Recon check was rolling against the Safety of the wrong device (#482)<br/>
-- Director rankings were being calculated improperly (#580)<br/>
-- The event counting system had a bug when the AI played as the US, which could cause its director
-  ranking to tank even when its prestige was high (#683)<br/>
- </ul>
+  saved multiple times (#217)
+* The game would sometimes crash during intelligence report generation if the player was flying the 
+  Soyuz Lunar Landing (mission 57), because it wasn't set to accommodate missions above 56. ($675)
+* If your lunar landing failed with the message "Maneuvering failure, craft lands in rough terrain causing damage", 
+  the mission would go straight to Lunar Orbital Activities, skipping the liftoff (#505)
+* On the lunar landing mission, the Photo Recon check was rolling against the Safety of the wrong device (#482)
+* Director rankings were being calculated improperly (#580)
+* The event counting system had a bug when the AI played as the US, which could cause its director
+  ranking to tank even when its prestige was high (#683)
+
  
 ### GAME CHANGES
 
