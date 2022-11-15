@@ -38,7 +38,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing 
   back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to 
   bring the capsule home anyway) (#287)
-
+<hr length="100"/>
 - On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
   that unless the mission hits the Reentry step. (#330)<br/>
