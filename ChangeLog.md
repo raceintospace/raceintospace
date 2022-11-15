@@ -38,7 +38,8 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing 
   back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to 
   bring the capsule home anyway) (#287)
-<hr length="100"/>
+<hr/>
+<ul>
 - On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling 
   the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for 
   that unless the mission hits the Reentry step. (#330)<br/>
@@ -165,7 +166,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 - Director rankings were being calculated improperly (#580)<br/>
 - The event counting system had a bug when the AI played as the US, which could cause its director
   ranking to tank even when its prestige was high (#683)<br/>
- </p>
+ </ul>
  
 ### GAME CHANGES
 
@@ -190,7 +191,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
   assemble the missions before spending your money on research (#511)
 - The VAB/VIB now has a Delay button to let you put a launch back a turn rather than having to scrub 
   it and reschedule. (#167)
-
+<hr/>
 - You can now change player names after a game has begun.  In two-player games, you can change your 
   name but not your opponent's. (#705)<br/>
 - R&D and Purchasing can now by closed with the Esc key as well as Enter.<br/>
