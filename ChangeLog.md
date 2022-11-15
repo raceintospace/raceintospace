@@ -28,13 +28,13 @@ Below are improvements that have been made over what the game offered in v.1.1.
   missions as well (#164)
 - 'Nauts killed in a newscast (train accident, etc.) are now removed immediately (#240)
    - Before, they wouldn't be removed until the start of the following turn, making it possible for 
-     the dead crew member to fly on a mission<br/>
+     the dead crew member to fly on a mission
 - If you flew a Docking Duration mission and the Docking step failed, it would cancel the remainder 
-  of the mission without attempting Duration (#322)<br/>
+  of the mission without attempting Duration (#322)
 - If you fly a Lunar Orbital LM Test and the LM Test part fails, the game didn't give you credit for 
-  having flown the Lunar Orbital, even though the lunar orbital part was successful. (#332)<br/>
+  having flown the Lunar Orbital, even though the lunar orbital part was successful. (#332)
 - The LM failure "Engine explodes upon ignition. Spacecraft crew is killed." used to kill all three 
-  crew members instead of just the Commander and LM Pilot (#476)<br/>
+  crew members instead of just the Commander and LM Pilot (#476)
 - If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing 
   back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to 
   bring the capsule home anyway) (#287)
