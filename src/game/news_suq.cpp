@@ -31,6 +31,7 @@
 #include "state_utils.h"
 #include "mc.h"
 #include "news.h"
+#include "options.h"
 #include "pace.h"
 #include "endianness.h"
 
@@ -783,6 +784,12 @@ char REvent(char plr)
         strcpy(&Name[0], &Data->P[plr].Pool[i].Name[0]);
         Data->P[plr].Pool[i].Status = AST_ST_INJURED;
         Data->P[plr].Pool[i].InjuryDelay = 2;
+        if (options.feat_use_endurance && (brandom(100) < (Data->P[plr].Pool[i].Endurance - 1) * 25)) {
+            Data->P[plr].Pool[i].InjuryDelay = 1;  // High endurance can shorten time in hospital to half a year
+        }
+        if (options.feat_use_endurance && Data->P[plr].Pool[i].Endurance < 1 && brandom(100) < 25) {
+            Data->P[plr].Pool[i].InjuryDelay = 3;  // An Endurance of 0 can mean 3 turns in the hospital instead
+        }
         Data->P[plr].Pool[i].Special = 4;
         CheckFlightCrews(plr);
         break;

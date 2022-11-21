@@ -499,6 +499,12 @@ AstroTurn(void)
                     if (num > (74 - enduranceFactor)) {
                         Data->P[j].Pool[i].Status = AST_ST_INJURED;
                         Data->P[j].Pool[i].InjuryDelay = 2;
+                        if (options.feat_use_endurance && (brandom(100) < (Data->P[j].Pool[i].Endurance - 1) * 25)) {
+                            Data->P[j].Pool[i].InjuryDelay = 1;  // High endurance can shorten time in hospital to half a year
+                        }
+                        if (options.feat_use_endurance && Data->P[j].Pool[i].Endurance < 1 && brandom(100) < 25) {
+                            Data->P[j].Pool[i].InjuryDelay = 3;  // An Endurance of 0 can mean 3 turns in the hospital instead
+                        }
                         Data->P[j].Pool[i].Special = 9;
                     } else {
                         // Injury washout and retirement
