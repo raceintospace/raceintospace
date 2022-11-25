@@ -732,19 +732,19 @@ void MissionSetup(char plr, char mis)
             DMFake = 1;
         }
 
-        // TODO: Or, rather than checking j == 0 and j == 1, just
-        // use mis + j and use the loop.
-        if (j == 0) { // Apollo (1)  + LM (1)
+        if (j == 0) {
+            // Apollo (1) + LM (1)
             if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
                 Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
                 DMFake = 1;
             }
-        }
-
-        if (j == 1) { // Apollo (2)  + LM (1)
-            if (Data->P[plr].Mission[mis + j].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
-                Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
-                DMFake = 1;
+            
+            if (Data->P[plr].Mission[mis].Joint) {
+                // Apollo (2) + LM (1)
+                if (Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
+                    Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
+                    DMFake = 1;
+                }
             }
         }
 
