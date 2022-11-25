@@ -25,7 +25,7 @@
 /** \file aipur.c AI Purchasing Routines
  */
 
-// This file handles AI purchase and research of hardware, and 'naut recruitment
+// This file handles AI purchase and research of hardware, and 'naut recruitment.  It also shows the STATS part of the endgame.
 
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
@@ -82,16 +82,16 @@ void DrawStatistics(char Win)
     draw_heading(47, 44, "STATISTICS", 1, -1);
     draw_heading(215, 45, "EXIT", 1, -1);
     display::graphics.setForegroundColor(6);
-    draw_string(122, 76, "WINNING DIRECTOR: ");
+    draw_string(122, 76, "WINNING PLAYER: ");
     display::graphics.setForegroundColor(8);
     draw_string(0, 0, &Data->P[Win].Name[0]);
 
-    if (AI[Win]) {
-        draw_string(0, 0, " (AI)");
-    }
+    //if (AI[Win]) {
+    //    draw_string(0, 0, " (AI)");
+    //}
 
     display::graphics.setForegroundColor(6);
-    draw_string(122, 125, "LOSING DIRECTOR: ");
+    draw_string(122, 125, "LOSING PLAYER: ");
     display::graphics.setForegroundColor(8);
     draw_string(0, 0, &Data->P[other(Win)].Name[0]);
 
@@ -295,7 +295,7 @@ void Stat(char Win)
                     i = 0;
                     OutBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
                 }
-            } // matches AI[Win]==0
+            }  // matches AI[Win]==0
         }
 
         for (j = 0; j < 5; j++) {
@@ -584,7 +584,7 @@ void SelectBest(char plr, int pos)
         pData->Pool[i + pData->AstroCount].Crew = 0;
         pData->Pool[i + pData->AstroCount].Unassigned = 0;
         pData->Pool[i + pData->AstroCount].Pool = 0;
-        pData->Pool[i + pData->AstroCount].Compat = brandom(options.feat_compat_nauts) + 1; //Naut Compatibility, Nikakd, 10/8/10
+        pData->Pool[i + pData->AstroCount].Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
         pData->Pool[i + pData->AstroCount].Mood = 100;
         pData->Pool[i + pData->AstroCount].Face = brandom(77);
 
@@ -631,7 +631,7 @@ void DumpAstro(char plr, int inx)
 
     for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
-            pData->Pool[i].Assign = 0; // back to limbo
+            pData->Pool[i].Assign = 0;  // back to limbo
             pData->Pool[i].Unassigned = 0;
         }
     }
@@ -726,7 +726,7 @@ void TransAstro(char plr, int inx)
             }
 
             pData->Pool[i].RetirementReason = 0;
-            pData->Pool[i].Hero = 0; //clear hero flag
+            pData->Pool[i].Hero = 0;  //clear hero flag
 
             if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0 && pData->Pool[i].Prime < 1) {
                 ++count;
@@ -826,16 +826,16 @@ void TransAstro(char plr, int inx)
                             pData->Crew[inx][flt2][j - 1] = w + 1;
                             found = 1;
                         }
-                    } // end if
+                    }  // end if
 
                     ++w;
-                } // end while
+                }  // end while
             }
 
             pData->CrewCount[inx][flt1] = max;
             pData->CrewCount[inx][flt2] = max;
         }
-    } // end while
+    }  // end while
 
     return;
 }
@@ -967,7 +967,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 {
     bool newProgramStarted = false;
     bool itemPurchased = false;
-    int n1, n2, n3, n4, n5, n6, n7; // scratch variables for base safety value init
+    int n1, n2, n3, n4, n5, n6, n7;  // scratch variables for base safety value init
 
     struct BuzzData *pData = &Data->P[plr];
 
@@ -1006,11 +1006,11 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
 #endif
             }
-        }; // end case PROBE_HARDWARE
+        };  // end case PROBE_HARDWARE
 
         break;
 
-    case ROCKET_HARDWARE: // Rockets
+    case ROCKET_HARDWARE:  // Rockets
         if (pData->Rocket[unit_index].Num < ROCKET_HW_THREE_STAGE) {
             // Rocket Programs Purchasing
             if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
@@ -1031,7 +1031,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 if (pData->Rocket[unit_index].Num == 1 && (pData->Rocket[unit_index].Safety < pData->Rocket[unit_index].MaxRD - 15)) {
                     // AI Player does R&D on this purchased item
                     RDafford(plr, ROCKET_HARDWARE, unit_index);
-                    pData->Buy[ROCKET_HARDWARE][unit_index] = 0; // Reset the record of this?
+                    pData->Buy[ROCKET_HARDWARE][unit_index] = 0;  // Reset the record of this?
                     itemPurchased = true;
                 } else if (pData->Rocket[unit_index].Num >= 0) {
                     // Do we have enough to purchase one?
@@ -1051,7 +1051,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 #endif
                 }
             }
-        }; // end case ROCKET_HARDWARE
+        };  // end case ROCKET_HARDWARE
 
         break;
 
@@ -1099,12 +1099,12 @@ int GenPur(char plr, int hardware_index, int unit_index)
 #endif
                 }
             }
-        }; // end case MANNED_HARDWARE
+        };  // end case MANNED_HARDWARE
 
         break;
 
-    case MISC_HARDWARE: // Misc hardware (Kicker, EVA, Docking Module)
-        if (pData->Misc[unit_index].Num < 2) { // Misc Programs
+    case MISC_HARDWARE:  // Misc hardware (Kicker, EVA, Docking Module)
+        if (pData->Misc[unit_index].Num < 2) {  // Misc Programs
             if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
                 // Simply return when starting the EVA program, no cost for this
                 return 1;
@@ -1141,13 +1141,13 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
 #endif
             }
-        }; // end case MISC_HARDWARE
+        };  // end case MISC_HARDWARE
 
         break;
 
     default:
         break;
-    } // end switch
+    }  // end switch
 
     // Initialize starting and cost bonuses
     if (hardware_index == PROBE_HARDWARE && newProgramStarted) {
@@ -1188,7 +1188,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             break;
         }
 
-        e->Base = e->Safety; // Set the base safety level
+        e->Base = e->Safety;  // Set the base safety level
     };
 
     if (hardware_index == ROCKET_HARDWARE && newProgramStarted) {
@@ -1262,7 +1262,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             break;
         }
 
-        e->Base = e->Safety; // Set the base safety level
+        e->Base = e->Safety;  // Set the base safety level
     };
 
     if (hardware_index == MANNED_HARDWARE && newProgramStarted) {
@@ -1356,7 +1356,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             break;
         }
 
-        e->Base = e->Safety; // Set the base safety level
+        e->Base = e->Safety;  // Set the base safety level
 
     }
 
@@ -1387,7 +1387,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
             break;
         }
 
-        e->Base = e->Safety; // Set the base safety level
+        e->Base = e->Safety;  // Set the base safety level
 
     }
 
