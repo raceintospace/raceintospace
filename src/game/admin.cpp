@@ -1267,6 +1267,8 @@ int FutureCheck(char plr, char type)
             draw_string(0, 0, "MB TO REPAIR.");
             if (Data->P[plr].Cash >= abs(p[i])) {
                 display::graphics.setForegroundColor(11);
+            } else {
+                display::graphics.setForegroundColor(9);
             }
             draw_string(113, 60 + i * 51, "(OF ");
             draw_number(0, 0, Data->P[plr].Cash);
