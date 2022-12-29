@@ -19,7 +19,7 @@ endif (WINDOWS)
 
 # Require C++11
 set (CMAKE_CXX_STANDARD 11)
-option(PBEM "Enable experimental Play-by-EMail feature" OFF)
+option(PBEM "Enable Play-by-EMail feature" ON)
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
 if("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
