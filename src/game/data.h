@@ -1108,6 +1108,7 @@ enum MissionValues {
     //"U. LUNAR ORBITAL",     //45
     Mission_LunarOrbital = 46,
     //"JT LUNAR ORBITAL:EOR", //47
+    //"LUNAR ORBITAL-L,"      //48
     Mission_Lunar_Orbital = 48,
     //"JT LUNAR ORB:LOR-L",   //49
 
