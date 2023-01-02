@@ -802,14 +802,16 @@ void F_KillCrew(char mode, struct Astros *Victim)
         p = 1;
     }
 
-    // TODO: Need to set the Base as the minimum value when dividing by 2
     if ((Data->Def.Lev1 == 0 && p == 0) || (Data->Def.Lev2 == 0 && p == 1)) {
+        // VerifySF will check whether Safety falls below Base
         GetEquipment(Mev[STEP])->Safety /= 2;
     } else {
         GetEquipment(Mev[STEP])->Safety = GetEquipment(Mev[STEP])->Base;
     }
 
-    GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF;
+    if (GetEquipment(Mev[STEP])->MaxRD) {
+        GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF;
+    }
 
     if (mode == F_ALL) {
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
