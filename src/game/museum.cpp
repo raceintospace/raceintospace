@@ -1215,7 +1215,7 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
         if (plr == 0) {
             draw_string(0, 0, "USAF");
         } else {
-            draw_string(0, 0, "A.F.");
+            draw_string(0, 0, "VVS");
         }
     } else {
         draw_string(0, 0, RomanNumeral(abuf[*where].Group + 1).c_str());
