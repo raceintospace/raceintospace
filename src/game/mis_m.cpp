@@ -991,6 +991,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 9:  // Recheck Step
+        // We have not reached space yet
+        if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
+            InSpace--;
+        }
+
         FNote = 2;
         Mev[STEP].StepInfo = 9;
 //         Mev[STEP].rnum=random(10000)+1;  // new failure roll
@@ -1111,6 +1116,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 19:   // Set mission flag and recheck step
+        // We have not reached space yet
+        if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
+            InSpace--;
+        }
+        
         if ((MFlag & val) > 0) {
             Mev[STEP].StepInfo = 1200 + Mev[STEP].loc;
             FNote = 2;
