@@ -115,7 +115,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
         case '+':
             i++;
             loc = MCode[i] - 0x30 + pad - 1;
-            ASSERT(loc - pad < 3); // Breaks rescue missions
+            ASSERT(loc - pad < 3);  // Breaks rescue missions
             break;
 
         case '^':
@@ -358,8 +358,8 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
     case 'L':
         // Award Manned Lunar Orbital only if done by a (manned)
-        // capsule and not when parking an unmanned LM during a LOR
-        // mission
+        // capsule and not when parking an unmanned LM during an
+        // LOR mission
         if (MH[pad][Mission_Capsule] != NULL) {
             Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -20);    // CAP
         } else {
@@ -384,7 +384,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         break;
 
-    case 'T': // Done on lunar launch for good reason
+    case 'T':  // Done on lunar launch for good reason
         Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -22);
         break;
 
@@ -450,7 +450,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         if (MANNED[pad] > 0) {
             switch (Mev[step].Class) {
             case Mission_Capsule:
-                Mev[step].ast = CAP[pad]; // index into MA
+                Mev[step].ast = CAP[pad];  // index into MA
 
                 if (Mev[step].ast >= 0) {
                     Mev[step].asf = MA[pad][Mev[step].ast].A->Cap;
@@ -459,7 +459,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
                 break;
 
             case Mission_LM:
-                Mev[step].ast = LM[pad]; // index into MA
+                Mev[step].ast = LM[pad];  // index into MA
 
                 if (Mev[step].ast >= 0) {
                     Mev[step].asf = MA[pad][Mev[step].ast].A->LM;
@@ -468,7 +468,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
                 break;
 
             case Mission_Probe_DM:  // docking
-                Mev[step].ast = DOC[pad]; // index into MA
+                Mev[step].ast = DOC[pad];  // index into MA
 
                 if (Mev[step].ast >= 0) {
                     Mev[step].asf = MA[pad][Mev[step].ast].A->Docking;
@@ -477,7 +477,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
                 break;
 
             case Mission_EVA:  // eva
-                Mev[step].ast = EVA[pad]; // index into MA
+                Mev[step].ast = EVA[pad];  // index into MA
 
                 if (Mev[step].ast >= 0) {
                     Mev[step].asf = MA[pad][Mev[step].ast].A->EVA;
@@ -490,14 +490,14 @@ void MissionSteps(char plr, int mcode, int step, int pad,
                 Mev[step].asf = 0;
                 break;
 
-            case 10: // durations
+            case 10:  // durations
                 Mev[step].Class = Mission_Capsule;
                 Mev[step].ast = -1;
                 Mev[step].asf = options.feat_use_endurance
                                 ? CrewEndurance(MA[pad], MANNED[pad]) : 0;
                 break;
 
-            default: // remaining
+            default:  // remaining
                 Mev[step].ast = -1;
                 Mev[step].asf = 0;
                 break;
@@ -523,7 +523,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].fgoto =
             (mission.Alt[step] == -2) ? step + 1 : mission.Alt[step];
         Mev[step].dgoto = mission.AltD[step];  // death branching (tm)
-        Mev[step].Ep = MH[pad][Mev[step].Class]; // FIXME: << this sets E
+        Mev[step].Ep = MH[pad][Mev[step].Class];  // FIXME: << this sets E
 
         Mev[step].pad = pad;
 
@@ -566,7 +566,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
             } else if (MH[pad][Mission_Capsule] &&
                        MH[pad][Mission_Capsule]->ID[1] == 0x34) {
                 strcat(Mev[step].Name, "C4");    // FourMan
-            } else { // standard LMs
+            } else {  // standard LMs
                 if (mcode == 'P') {
                     if (MH[pad][Mission_LM] != NULL) {
                         strncat(Mev[step].Name, MH[pad][Mission_LM]->ID, 2);
@@ -638,23 +638,23 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].FName[2] = '3';
     }
 
-    if (Mev[step].loc == 32 || Mev[step].loc == 29) { // Fix _g special case #48010
+    if (Mev[step].loc == 32 || Mev[step].loc == 29) {  // Fix _g special case #48010
         Mev[step].FName[2] = '0';
         Mev[step].FName[3] = '1';
     }
 
     // Special Cases for the Failure Mode Charts
-    if ((Mev[step].loc == 0) && // MS Failure Launch
+    if ((Mev[step].loc == 0) &&  // MS Failure Launch
         MH[pad][Mission_Capsule] &&
         strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name,
                 MH[pad][Mission_Capsule]->Name, 5) == 0) {
         Mev[step].FName[1] = '1';
-    } else if (Mev[step].loc == 4 && // MS Failure Landing
+    } else if (Mev[step].loc == 4 &&  // MS Failure Landing
                MH[pad][Mev[step].Class] &&
                strncmp(Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
         Mev[step].FName[1] = '3';
     } else if (plr == 1 && Mev[step].loc == 4) {
-        if ((Mev[step].loc == 4) && // Soviet Capsules: Vostok
+        if ((Mev[step].loc == 4) &&  // Soviet Capsules: Vostok
             MH[pad][Mev[step].Class] &&
             strncmp(Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name, MH[pad][Mev[step].Class]->Name, 5) == 0) {
             Mev[step].FName[1] = '1';
@@ -673,7 +673,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         Mev[step].FName[1] = '1';
     }
 
-    if (Mev[step].Name[2] != 'P') { // exclude any probes
+    if (Mev[step].Name[2] != 'P') {  // exclude any probes
         if (Mev[step].loc == 15 && Mev[step].Name[5] == 0x36) {
             // Lunar EVA w/ one-man capsule (F115)
             Mev[step].FName[1] = '1';
@@ -727,7 +727,7 @@ void MissionSetup(char plr, char mis)
     for (j = 0; j < (1 + Data->P[plr].Mission[mis].Joint); j++) {
 
         if ((plan.mVab[j] & 0x10) > 0 &&
-            Data->P[plr].DockingModuleInOrbit > 0) { // DMO
+            Data->P[plr].DockingModuleInOrbit > 0) {  // DMO
             Data->P[plr].Mission[mis + j].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
@@ -748,13 +748,13 @@ void MissionSetup(char plr, char mis)
             }
         }
 
-        if (Data->P[plr].Mission[mis].MissionCode == Mission_Soyuz_LL) { // Soyuz Kicker-C
+        if (Data->P[plr].Mission[mis].MissionCode == Mission_Soyuz_LL) {  // Soyuz Kicker-C
             Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
 
         for (i = Mission_Capsule; i < Mission_PhotoRecon; i++) {
-            Equipment *eq = NULL; // Clear Pointers
+            Equipment *eq = NULL;  // Clear Pointers
 
             t = Data->P[plr].Mission[mis + j].Hard[i];
 
@@ -838,7 +838,7 @@ void MissionSetup(char plr, char mis)
                 }
 
                 if (eq != NULL) {
-                    eq->SMods += eq->Damage;    //Damaged Equipment, Nikakd, 10/8/10
+                    eq->SMods = eq->Damage;  //Damaged Equipment, Nikakd, 10/8/10 - changed from eq->SMods += eq->Damage 2/11/23 to fix #737 LPB
                     eq->MisSaf = eq->Safety + eq->SMods;
 
                     if (eq->ID[1] >= 0x35 && i == Mission_LM &&
@@ -858,10 +858,10 @@ void MissionSetup(char plr, char mis)
                         }
                     }
                 }
-            } // if t>=0
+            }  // if t>=0
 
             MH[j][i] = eq;
-        } // for (i<7)
+        }  // for (i<7)
 
         // Photo Recon isn't included in MissionType.Hard - it's
         // always available.
@@ -870,7 +870,7 @@ void MissionSetup(char plr, char mis)
         // Photo Recon should never be damaged.
         MH[j][Mission_PhotoRecon]->MisSaf =
             MH[j][Mission_PhotoRecon]->Safety;
-    } // for (j<2)
+    }  // for (j<2)
 
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;
@@ -886,7 +886,7 @@ void MissionSetDown(char plr, char mis)
     char i, j;
 
     for (j = 0; j < (Data->P[plr].Mission[mis].Joint + 1); j++) {
-        for (i = 0; i < 7; i++) { // Ignore Boosters
+        for (i = 0; i < 7; i++) {  // Ignore Boosters
             if (MH[j][i] != NULL && (MH[j][i]->MisSucc > 0 || MH[j][i]->MisFail > 0)) {
 
                 MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
@@ -921,7 +921,7 @@ void MissionSetDown(char plr, char mis)
                 MH[j][i]->Steps += (MH[j][i]->MisFail + MH[j][i]->MisSucc);
 
                 if (i == Mission_PrimaryBooster &&
-                    MH[j][Mission_SecondaryBooster] != NULL) { // Boosters
+                    MH[j][Mission_SecondaryBooster] != NULL) {  // Boosters
                     if (MH[j][Mission_PrimaryBooster]->MisSucc > 0)  {
                         MH[j][Mission_SecondaryBooster]->Safety =
                             MIN(MH[j][Mission_SecondaryBooster]->Safety + 1,
@@ -950,11 +950,11 @@ void MissionSetDown(char plr, char mis)
                 }
 
                 MH[j][i]->MisSucc = MH[j][i]->MisFail = 0;
-            } // if
-        } // for i
+            }  // if
+        }  // for i
 
         VerifySF(j);
-    } // for j
+    }  // for j
 
     return;
 }
@@ -966,7 +966,7 @@ void MissionSetDown(char plr, char mis)
  * This should only be called after MissionSetup() so the global array
  * MH[][] will be populated.
  *
- * \param plr  the index of the current player
+ * \param plr      the index of the current player
  * \param mission  the mission plan with configured Days duration.
  */
 void
