@@ -838,8 +838,7 @@ void MissionSetup(char plr, char mis)
                 }
 
                 if (eq != NULL) {
-                    eq->SMods = eq->Damage;  //Damaged Equipment, Nikakd, 10/8/10 - changed from eq->SMods += eq->Damage 2/11/23 to fix #737 LPB
-                    eq->MisSaf = eq->Safety + eq->SMods;
+                    eq->MisSaf = eq->Safety + eq->SMods + eq->Damage;
 
                     if (eq->ID[1] >= 0x35 && i == Mission_LM &&
                         Data->P[plr].Mission[mis].MissionCode >= 53) {
