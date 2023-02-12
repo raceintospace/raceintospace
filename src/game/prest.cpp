@@ -789,7 +789,8 @@ int AllotPrest(char plr, char mis)
     other = MaxFail();
 
     for (i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
-        if (Mev[i].PComp == 5 && Mev[i].StepInfo == 0) {
+        // PComp == 5 means alternate branch
+        if (Mev[i].PComp == 5) {
             Mev[i].PComp = 0;
             Mev[i].Prest = -100;
         }
