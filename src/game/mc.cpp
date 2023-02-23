@@ -304,8 +304,6 @@ int Launch(char plr, char mis)
         display::graphics.screen()->clear();
     }
 
-    memset(&Rep, 0x00, sizeof Rep);    // Clear Replay Data Struct
-
     // TODO: Should explicitly only apply to Lunar Landing missions,
     // since there are (unimplemented) rescue missions with mission
     // codes greater than the lunar landing missions.
@@ -566,27 +564,10 @@ void MissionPast(char plr, char pad, int prest)
 
     }
 
-    Rep.Qty = 0;
-    fout = sOpen("REPLAY.TMP", "rt", 1);
-
-    while (!feof(fout)) {
-        if (fscanf(fout, "%u\n", &num) != 1) {
-            break;
-        }
-
-        Rep.Off[Rep.Qty++] = num;
-    }
-
-    fclose(fout);
-
-    remove_savedat("REPLAY.TMP");
-
-    if (Rep.Qty == 1 && Data->P[plr].History[loc].spResult < 3000) {
+    if (interimData.tempReplay.at((plr * 100) + loc).size() == 1 && Data->P[plr].History[loc].spResult < 3000) {
         Data->P[plr].History[loc].spResult = 1999;
     }
 
-    // Save this replay
-    interimData.tempReplay.at((plr * 100) + Data->P[plr].PastMissionCount) = Rep;
     Data->P[plr].PastMissionCount++;
     assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     return;

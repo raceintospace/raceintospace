@@ -1562,7 +1562,7 @@ int FutureCheck(char plr, char type)
  */
 void LoadGame(const char *filename)
 {
-    REPLAY *load_buffer = NULL;
+    LEGACY_REPLAY *load_buffer = NULL;
     SaveFileHdr header;
     unsigned char magic[2];
     unsigned char *cbuf, *buf;
@@ -1689,7 +1689,7 @@ void LoadGame(const char *filename)
  */
 void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
 {
-    REPLAY *load_buffer = NULL;
+    LEGACY_REPLAY *load_buffer = NULL;
     uint16_t dataSize, compSize;
     int i, j;
 
@@ -1714,7 +1714,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     size_t readLen = compSize;
-    load_buffer = (REPLAY *)malloc(readLen);
+    load_buffer = (LEGACY_REPLAY *)malloc(readLen);
     fread(load_buffer, 1, readLen, fin);
     RLED((char *) load_buffer, (char *)Data, compSize);
     free(load_buffer);
@@ -1725,11 +1725,11 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     // Read the Replay Data
-    load_buffer = (REPLAY *)malloc((sizeof(REPLAY)) * MAX_REPLAY_ITEMS);
-    fread(load_buffer, 1, sizeof(REPLAY) * MAX_REPLAY_ITEMS, fin);
+    load_buffer = (LEGACY_REPLAY *)malloc((sizeof(LEGACY_REPLAY)) * MAX_REPLAY_ITEMS);
+    fread(load_buffer, 1, sizeof(LEGACY_REPLAY) * MAX_REPLAY_ITEMS, fin);
 
     if (endianSwap) {
-        REPLAY *r = NULL;
+        LEGACY_REPLAY *r = NULL;
         r = load_buffer;
 
         for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
@@ -1739,8 +1739,26 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
         }
     }
 
+    std::vector<std::string> seq;
+    std::map<int, std::string> fseq;
+
+    DESERIALIZE_JSON_FILE(&seq, locate_file("legacy-seq.json", FT_DATA));
+    DESERIALIZE_JSON_FILE(&fseq, locate_file("legacy-fseq.json", FT_DATA));
+
     for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-        interimData.tempReplay.at(i) = load_buffer[i];
+        interimData.tempReplay.at(i).clear();
+        assert(load_buffer[i].Qty <= 35);
+        for (int j = 0; j < load_buffer[i].Qty; j++) {
+
+            int code = load_buffer[i].Off[j];
+
+            if (code < 1000) {
+                interimData.tempReplay.at(i).push_back({false, seq.at(code)});
+            } else {
+                interimData.tempReplay.at(i).push_back({true, fseq.at(code)});
+            }
+            
+        }
     }
 
     free(load_buffer);
@@ -1748,7 +1766,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     size_t eventSize = fileLength - ftell(fin);
 
     // Read the Event Data
-    load_buffer = (REPLAY *)malloc(eventSize);
+    load_buffer = (LEGACY_REPLAY *)malloc(eventSize);
     fread(load_buffer, 1, eventSize, fin);
     fclose(fin);
 

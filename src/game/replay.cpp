@@ -41,172 +41,78 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-/** find and fill REPLAY structure and return 0, or -1 if failed.
- * if grp != NULL and oGROUP at offset rep->off[0] is found, then fill grp too
- *
- * \return -1 on bad sequence
- * \return  0 in all other cases
- */
-static int
-find_replay(REPLAY *rep, struct oGROUP *grp, char player, int num,
-            const char *type)
-{
-    FILE *fseq = NULL;
-    struct oGROUP group;
-    size_t offset = 0;
-    int retval = 0;
-
-    assert(rep);
-
-    /** \note uses SEQ.DAT */
-    fseq = sOpen("SEQ.DAT", "rb", 0);
-
-    if (!fseq) {
-        return -1;
-    }
-
-    if (strncmp("OOOO", type, 4) == 0) {
-        offset = (player * 100) + num;
-        memcpy(rep, &interimData.tempReplay.at(offset), sizeof(REPLAY));
-
-        if (grp && fseek(fseq, sizeof_oGROUP * rep->Off[0], SEEK_SET) == 0) {
-            fread_oGROUP(grp, 1, fseq);
-        }
-    } else {
-        int j = 0;
-
-        while (fread_oGROUP(&group, 1, fseq)) {
-            if (strncmp(group.ID, "XXXX", 4) == 0) {
-                /* bad sequence? */
-                retval = -1;
-                goto done;
-            }
-
-            if (strcmp(&group.ID[3], type) == 0) {
-                break;
-            }
-
-            j++;
-        }
-
-        rep->Qty = 1;
-        rep->Off[0] = j;
-
-        if (grp) {
-            memcpy(grp, &group, sizeof(group));
-        }
-    }
-
-done:
-
-    if (fseq) {
-        fclose(fseq);
-    }
-
-    return retval;
-}
-
-/**
- *
- * \returns nothing if find_replay() fails
- * \returns nothing if it can't open the [f]seq.dat file
- */
 void
 Replay(char plr, int num, int dx, int dy, int width, int height,
        const char *Type)
 {
     int keep_going;
-    int i, kk, mode, max;
-    FILE *seqf, *fseqf;
+    int i, j, kk, mode, max;
     int32_t offset;
-    struct oGROUP group;
-    struct oFGROUP fgroup;
-    struct Table table;
-    REPLAY Rep;
+    std::vector <REPLAY> Rep = interimData.tempReplay.at((plr * 100) + num);
+    std::vector<struct MissionSequenceKey> sSeq, fSeq;
+    char *fname;
 
     mm_file vidfile;
     float fps;
 
-    if (find_replay(&Rep, NULL, plr, num, Type) < 0) {
-        return;
-    }
+    fname = locate_file("seq.json", FT_DATA);
+    DESERIALIZE_JSON_FILE(&sSeq, fname);
 
-    /** \note uses SEQ.DAT
-     *  \note uses FSEQ.DAT
-     */
-    seqf = sOpen("SEQ.DAT", "rb", 0);
-
-    if (!seqf) {
-        return;
-    }
-
-    fseqf = sOpen("FSEQ.DAT", "rb", 0);
-
-    if (!fseqf) {
-        fclose(seqf);
-        return;
-    }
+    fname = locate_file("fseq.json", FT_DATA);
+    DESERIALIZE_JSON_FILE(&fSeq, fname);
 
     WaitForMouseUp();
 
-    DEBUG2("video sequence: %d segments", Rep.Qty);
+    DEBUG2("video sequence: %d segments", Rep.size());
 
-    for (kk = 0; kk < Rep.Qty; kk++) {
-        DEBUG3("playing segment %d: %d", kk, Rep.Off[kk]);
+    for (kk = 0; kk < Rep.size(); kk++) {
+        DEBUG3("playing segment %d: %s", kk, Rep.at(kk).seq.c_str());
 
-        if (Rep.Off[kk] < 1000) {  //Specs: success seq
-            fseek(seqf, Rep.Off[kk] * sizeof_oGROUP, SEEK_SET);
-            fread_oGROUP(&group, 1, seqf);
-            max = group.ID[1] - '0';
-            mode = 0;
-        } else {
-            //Specs: failure seq
-            int j = 0;
-            // MAX 50 Tables
-            i = Rep.Off[kk] / 1000;
-            j = Rep.Off[kk] % 1000;
-
-            if (i == 0 || i == 50) {
-                goto done;
+        if (Rep.at(kk).Failure) {
+            for (j = 0; j < fSeq.size(); j++) {
+                if (fSeq.at(j).MissionIdSequence == Rep.at(kk).seq) {
+                    break;
+                }
             }
 
-            i--;                   //Specs: offset index kludge
-            fseek(fseqf, i * sizeof_Table, SEEK_SET);
-            fread_Table(&table, 1, fseqf);
-            offset = table.foffset;
-            fseek(fseqf, offset + j * sizeof_oFGROUP, SEEK_SET);
-            fread_oFGROUP(&fgroup, 1, fseqf);
-            mode = 1;
-            max = fgroup.ID[1] - '0';
+            if (i == fSeq.size()) {
+                return;
+            }
+        }
+        else {
+            for (j = 0; j < sSeq.size(); j++) {
+                if (sSeq.at(j).MissionIdSequence == Rep.at(kk).seq) {
+                    break;
+                }
+            }
+            if (j == sSeq.size()) {
+                return;
+            }
         }
 
         i = 0;
+        max = Rep.at(kk).seq.at(1) - '0';
 
         keep_going = 1;
 
         //  update_map = 0;
         while (keep_going && i < max) {
             int frm_idx;
-            char *seq_fname = NULL;
+            char seq_name[20];
             char fname[20];
-
-            if (mode == 1) {       /* failure */
-                frm_idx = fgroup.oLIST[i].aIdx;
+            
+            if (Rep.at(kk).Failure) {
+                strntcpy(seq_name, fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
             } else {
-                frm_idx = group.oLIST[i].aIdx;
+                strntcpy(seq_name, sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
             }
 
             /* here we should create YUV Overlay, but we can't use it on
              * pallettized surface, so we use a global Overlay initialized in
              * sdl.c. */
-            seq_fname = seq_filename(frm_idx, mode);
-
-            if (!seq_fname) {
-                seq_fname = "(unknown)";
-            }
 
             /** \todo assumption on file extension */
-            snprintf(fname, sizeof(fname), "%s.ogg", seq_fname);
+            snprintf(fname, sizeof(fname), "%s.ogg", seq_name);
 
             INFO2("opening video file `%s'", fname);
 
@@ -247,8 +153,6 @@ done:
     mm_close(&vidfile);
     display::graphics.videoRect().w = 0;
     display::graphics.videoRect().h = 0;
-    fclose(fseqf);
-    fclose(seqf);
     return;
 }
 
@@ -292,34 +196,38 @@ DispBaby(int x, int y, int loc, char neww)
     boob.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
+/**
+ * This function is used to display the first frame of the replay in
+ * the mission review screen. 
+ */
 void
 AbzFrame(char plr, int num, int dx, int dy, int width, int height,
          const char *Type, char mode)
 {
-    int idx = 0;
-    struct oGROUP grp;
-    REPLAY Rep;
-
-    /* force mode to zero */
-    mode = 0;
-
-    char fname[100];
+    int j = 0;
+    std::vector<struct MissionSequenceKey> sSeq;
+    char *fname;
+    char vname[20];
     mm_file vidfile;
 
-    memset(&grp, 0, sizeof grp);
+    fname = locate_file("seq.json", FT_DATA);
+    DESERIALIZE_JSON_FILE(&sSeq, fname);
 
-    if (find_replay(&Rep, &grp, plr, num, Type) < 0) {
-        return;
+    for (j = 0; j < sSeq.size(); j++) {
+        if (sSeq.at(j).MissionIdSequence == interimData.tempReplay.at((plr * 100) + num).at(0).seq) {
+            break;
+        }
     }
-
-    idx = grp.oLIST[0].aIdx;
+    if (j == sSeq.size()) {
+        return;
+    }    
 
     /* XXX use a generic function */
-    snprintf(fname, sizeof(fname), "%s.ogg", seq_filename(idx, mode));
+    snprintf(vname, sizeof(vname), "%s.ogg", sSeq.at(j).video.at(0).c_str());
 
-    INFO2("opening video file `%s'", fname);
+    INFO2("opening video file `%s'", vname);
 
-    if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0) {
+    if (mm_open_fp(&vidfile, sOpen(vname, "rb", FT_VIDEO)) <= 0) {
         return;
     }
 

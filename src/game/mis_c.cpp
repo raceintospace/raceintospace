@@ -92,25 +92,23 @@ int ImportOF(FILE *fin, struct OF &target);
  *
  * \param plr Player structure
  * \param step Missions step ID
- * \param Seq Sequence-Code for the movies (?)
+ * \param Seq Sequence-Code for the movies (Mev[STEP].Name + XFails.fail)
  * \param mode mode 1 branches to fseq.dat so it's probably failure. However mode 2 is defined by a female 'naut's presence
  */
 void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
-    DEBUG1("->PlaySequence()");
-    //DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %s)", step, Seq, mode);
+    //DEBUG1("->PlaySequence()");
+    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
     int keep_going;
-    int wlen, i, j;
+    int wlen, i, j, k;
     unsigned int fres, max;
     char lnch = 0, AEPT, BABY, Tst2, Tst3;
     unsigned char sts = 0, fem = 0;
     FILE *fout, *ffin, *nfin;
     struct oGROUP *bSeq, aSeq;
-    struct oFGROUP *dSeq, cSeq;
+    //    struct oFGROUP *dSeq, cSeq;
     struct Table *F;
     char sName[20], err = 0;
-    const char *SEQ_DAT = "SEQ.DAT";
-    const char *FSEQ_DAT = "FSEQ.DAT";
     mm_file vidfile;
     FILE *mmfp;
     float fps;
@@ -119,13 +117,16 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     char scratch[SCRATCH_SIZE];
     std::vector<struct Infin> Mob;
     std::vector<struct OF> Mob2;
+    std::vector<struct MissionSequenceKey> sSeq, fSeq;
+    char *fname;
+    std::string ID;
 
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
     strncpy(Seq, InSeq, sizeof(Seq));
 
     F = NULL; /* XXX check uninitialized */
-    i = j = 0; /* XXX check uninitialized */
+    i = j = k = 0; /* XXX check uninitialized */
 
     SHTS[0] = brandom(10);
     SHTS[1] = brandom(10);
@@ -225,146 +226,91 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (mode == 0) {
-        bSeq = (struct oGROUP *)&scratch[35000];
-        // TODO: Move this to a function and return a vector...
-        // Make sure there's enough memory to read in the entire file.
-        assert(818 * sizeof(struct oGROUP) < (SCRATCH_SIZE - 35000));
+      
+        fname = locate_file("seq.json", FT_DATA);
+        DESERIALIZE_JSON_FILE(&sSeq, fname);
 
-        FILE *fin = open_gamedat(SEQ_DAT);
-        fread_oGROUP(bSeq, 818, fin);
-        fclose(fin);
     } else {
-        dSeq = (struct oFGROUP *)&scratch[35000];
 
-        // Make sure the Table entries won't overflow into dSeq
-        assert(50 * sizeof(struct Table) < 35000);
+        fname = locate_file("fseq.json", FT_DATA);
+        DESERIALIZE_JSON_FILE(&fSeq, fname);
 
-        FILE *fin = open_gamedat(FSEQ_DAT);
-        F = (struct Table *)&scratch[0];
-        fread_Table(F, 50, fin);
-
-        err = 0; //Specs: reset error
-
-        /* Search for the proper animation */
-        for (i = 0; i < 50; i++) {
-            if (strncmp(F[i].fname, Mev[step].FName, 4) == 0) {
+        /* i: the first element in fSeq belonging to the right step */
+        for (i = 0; i < fSeq.size(); i++) {
+            if (strncmp(fSeq.at(i).MissionStep.c_str(), Mev[step].FName, 4) == 0) {
                 break;
             }
         }
 
-        if (i == 50) {
+        if (i == fSeq.size()) {
             err = 1;
         }
 
-        if (err == 0) {
-            fseek(fin, F[i].foffset, SEEK_SET);
-            fread_oFGROUP(dSeq, F[i].size / sizeof_oFGROUP, fin);
-        }
-
-        fclose(fin);
     }
 
 
     if (mode == 0) {
         j = 0;
+        ID = sSeq.at(j).MissionIdSequence;
 
-        while (strncmp(bSeq[j].ID, "XXXX", 4) != 0 && strncmp(&bSeq[j].ID[3], Seq, strlen(&bSeq[j].ID[3])) != 0) {
+        while (ID != "XXXX" && strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
+            ID = sSeq.at(j).MissionIdSequence;
         }
 
-        if (bSeq[j].ID[2] - 0x30 == 1) {
+        if (ID[2] - 0x30 == 1) {
             if (fem == 0) {
                 j++;
             }
         }
     } else if (err == 0) {
-        j = 0;
+        j = i;
+        ID = fSeq.at(j).MissionIdSequence;
         memset(sName, 0x00, sizeof sName);
-        strncpy(sName, &dSeq[j].ID[3 + strlen(&dSeq[j].ID[3]) - 2], 2);
+        strncpy(sName, &ID[3 + strlen(&ID[3]) - 2], 2);
 
-        while (strncmp(dSeq[j].ID, "XXXX", 4) != 0 && strncmp(&dSeq[j].ID[3], Seq, strlen(&dSeq[j].ID[3]) - 2) != 0) {
+        while (ID != "XXXX" && strncmp(&ID[3], Seq, strlen(&ID[3]) - 2) != 0) {
             j++;
+            ID = fSeq.at(j).MissionIdSequence;
         }
 
         while (strncmp(sName, &Seq[strlen(Seq) - 2], 2) != 0) {
             j++;
-            strncpy(sName, &dSeq[j].ID[3 + strlen(&dSeq[j].ID[3]) - 2], 2);
+            ID = fSeq.at(j).MissionIdSequence;
+            strncpy(sName, &ID[3 + strlen(&ID[3]) - 2], 2);
 
-            if (j >= F[i].size / sizeof_oFGROUP) {
+            if (strncmp(fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
+                // j is already entering the next MissionStep
                 err = 1;
                 break;
             }
         }
     }
 
-    if ((strncmp((mode == 0) ? bSeq[j].ID : dSeq[j].ID, "XXXX", 4) == 0) || (mode == 1 && err == 1)) {
+    if (ID == "XXXX" || (mode == 1 && err == 1)) {
         //Specs: Search Error Play Static
         if (mode == 0) {
             j = 0;
-        } else {
-            FILE *fin = open_gamedat(FSEQ_DAT);
-            fseek(fin, F[0].foffset, SEEK_SET);
-            fread_oFGROUP(dSeq, F[0].size / sizeof_oFGROUP, fin);
-            fclose(fin);
-        }
+            ID = "110DEFAULT";
+        } 
     }
 
     if (mode == 1 && err == 1) {
         j = 0;
+        ID = "110DEFAULT";
     }
 
-    //::::::::::::::::::::::::::::::::::::
-    // Specs  Success Sequence Variation :
-    //::::::::::::::::::::::::::::::::::::
-    if (mode == 0 && (bSeq[j].ID[0] - 0x30 != 1)) {
-        fres = (unsigned)(bSeq[j].ID[0] - 0x30);
-        max = fres;
-        wlen = 0;
-
-        while (1) {
-            fres = brandom(10000);
-            fres %= 10;
-
-            if (fres < max) {
-                break;
-            }
-
-            wlen++;
-
-            if (wlen > 100) {
-                fres = 0;
-                break;
-            }
+    //::::::::::::::::::::::::::::
+    // Specs: Sequence Variation :
+    //::::::::::::::::::::::::::::
+    if (ID[0] - 0x30 != 1) {
+        max = (unsigned)(ID[0] - 0x30);
+        j += Mev[step].rnum % max;
+        if (mode == 0) {
+            ID = sSeq.at(j).MissionIdSequence;
+        } else {
+            ID = fSeq.at(j).MissionIdSequence;
         }
-
-        j += fres;
-    }
-
-    //::::::::::::::::::::::::::::::::::::
-    // Specs: Failure Sequence Variation :
-    //::::::::::::::::::::::::::::::::::::
-    if (mode == 1 && (dSeq[j].ID[0] - 0x30 != 1)) {
-        fres = (unsigned)(dSeq[j].ID[0] - 0x30);
-        max = fres;
-        wlen = 0;
-
-        while (1) {
-            fres = brandom(10000);
-            fres %= 10;
-
-            if (fres < max) {
-                break;
-            }
-
-            wlen++;
-
-            if (wlen > 100) {
-                fres = 0;
-                break;
-            }
-        }
-
-        j += fres;
     }
 
     BABY = 0;
@@ -376,22 +322,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     if (mode == 0) {
-        memcpy(&aSeq, &bSeq[j], sizeof aSeq);
+        interimData.tempReplay.at((plr * 100) + Data->P[plr].PastMissionCount).push_back({false, ID});
     } else {
-        memcpy(&cSeq, &dSeq[j], sizeof cSeq);
+        interimData.tempReplay.at((plr * 100) + Data->P[plr].PastMissionCount).push_back({true, ID});
     }
-
-    fout = sOpen("REPLAY.TMP", "at", 1);
-
-    if (mode == 0) {
-        fprintf(fout, "%d\n", (unsigned int)j);
-    } else {
-        i += 1;
-        fprintf(fout, "%d\n", (unsigned int)(i * 1000 + j));
-    }
-
-    // Specs: mode==1 save out fail seq (i*1000)+j
-    fclose(fout);
 
     if (AI[plr] == 1) {
         return;
@@ -444,40 +378,31 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     i = 0;
 
-    if (mode == 0) {
-        max = aSeq.ID[1] - '0';
-    } else {
-        max = cSeq.ID[1] - '0';
-    }
+    max = ID[1] - '0';
+    INFO2("playing sequence ID `%s'", ID.c_str());
 
     keep_going = 1;
+    k = j;
 
     while (keep_going && i < (int)max) {
-        int aidx, sidx;
-        char *seq_name = NULL;
+        int aidx=0, sidx=0;
+        char seq_name[20];
         char name[20]; /** \todo assumption about seq_filename len */
 
         if (mode == 0) {
-            aidx = aSeq.oLIST[i].aIdx;
-            sidx = aSeq.oLIST[i].sIdx;
+            play_audio(sSeq.at(k).audio.at(i), mode);
         } else {
-            aidx = cSeq.oLIST[i].aIdx;
-            sidx = cSeq.oLIST[i].sIdx;
+            play_audio(fSeq.at(k).audio.at(i), mode);
         }
 
-        // These should be read correctly by fread_oFGROUP / fread_oGROUP
-        // Swap16bit(aidx);
-        // Swap16bit(sidx);
-
-        if (sidx) {
-            play_audio(sidx, mode);
-        }
-
-        if ((seq_name = seq_filename(aidx, mode)) == NULL) {
-            seq_name = "(unknown)";
+        if (mode == 0) {
+            strntcpy(seq_name, sSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
+        } else {
+            strntcpy(seq_name, fSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
         }
 
         snprintf(name, sizeof(name), "%s.ogg", seq_name);
+                
         mmfp = sOpen(name, "rb", FT_VIDEO);
 
         INFO2("opening video file `%s'", name);
