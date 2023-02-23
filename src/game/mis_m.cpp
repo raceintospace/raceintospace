@@ -105,81 +105,34 @@ void BranchIfAlive(int *FNote);
  */
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
+    std::vector <struct XFails> fails;
+  
     DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)",
            rnum);
-    FILE *fin;
-    int32_t count;
-    struct Fdt {
-        char Code[6];
-        int32_t offset;
-        int16_t size;
-    } Pul;
-
-    // const size_t sizeof_Pul = 6 + 4 + 2;
-    // const size_t sizeof_XFails = 4 + 2 + 2 + 2 + 2 + 200;
-
     assert(Now != NULL);
 
-    fin = sOpen("FAILS.CDR", "rb", 0);
-    count = 44;
-    fread(&count, sizeof count, 1, fin);  // never written to file
-    Swap32bit(count);
+    DESERIALIZE_JSON_FILE(&fails, locate_file("fails.json", FT_DATA));
 
-    int i = 0;
-
-    do {
-        fread(&Pul.Code[0], sizeof Pul.Code, 1, fin);
-        fread(&Pul.offset, sizeof Pul.offset, 1, fin);
-        Swap32bit(Pul.offset);
-        fread(&Pul.size, sizeof Pul.size, 1, fin);
-        Swap16bit(Pul.size);
-    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && ++i < count);
-
-    // This uses short-circuit evaluation to distinguish between
-    // string match and iterator comparison.
-
-    if (i == count) {
-        fclose(fin);
-        return;
+    for (int i = 0; i < fails.size(); i++) {
+        if (!xstrncasecmp(fails.at(i).MissionStep.c_str(), FName, 4)) {
+            if (rnum < 0) { // unmanned
+                if (fails.at(i).percentage == rnum) {
+                    *Now = fails.at(i);
+                    break;
+                }
+            }
+            else { // manned
+                if (fails.at(i).percentage > rnum) {
+                    *Now = fails.at(i);
+                    break;
+                }
+            }
+        }
     }
-
-    fseek(fin, Pul.offset, SEEK_SET);
-
-    if (rnum < 0) { // Unmanned portion
-        do {
-            // Only need to swap Now->per since we're checking only that
-            fread(&Now->per, sizeof(Now->per), 1, fin);
-            fread(&Now->code, sizeof(Now->code), 1, fin);
-            fread(&Now->val, sizeof(Now->val), 1, fin);
-            fread(&Now->xtra, sizeof(Now->xtra), 1, fin);
-            fread(&Now->fail, sizeof(Now->fail), 1, fin);
-            fread(&Now->text[0], sizeof(Now->text), 1, fin);
-            Swap32bit(Now->per);
-            Swap16bit(Now->code);
-            Swap16bit(Now->val);
-            Swap16bit(Now->xtra);
-            Swap16bit(Now->fail);
-        } while (Now->per != rnum);
-    } else {
-        do {
-            fread(&Now->per, sizeof(Now->per), 1, fin);
-            fread(&Now->code, sizeof(Now->code), 1, fin);
-            fread(&Now->val, sizeof(Now->val), 1, fin);
-            fread(&Now->xtra, sizeof(Now->xtra), 1, fin);
-            fread(&Now->fail, sizeof(Now->fail), 1, fin);
-            fread(&Now->text[0], sizeof(Now->text), 1, fin);
-            Swap32bit(Now->per);
-            Swap16bit(Now->code);
-            Swap16bit(Now->val);
-            Swap16bit(Now->xtra);
-            Swap16bit(Now->fail);
-        } while (Now->per <= rnum);
-    }
-
-    fclose(fin);
-
+    
     DEBUG1("<-GetFailStat()");
 }
+
 
 void MisCheck(char plr, char mpad)
 {

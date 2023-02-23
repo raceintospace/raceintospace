@@ -899,10 +899,25 @@ struct MisAst {  // This struct will be -1's if empty
 };
 
 struct XFails {
-    int32_t per;               // Failure Key number
+    std::string MissionStep;
+    int32_t percentage;         // Failure Key number
     int16_t code, val, xtra;   // Failure Codes
     int16_t fail;              // failure value ID
     char text[200];// Failure Text
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+        ar(CEREAL_NVP(MissionStep));
+        ar(CEREAL_NVP(percentage));
+        ar(CEREAL_NVP(code));
+        ar(CEREAL_NVP(val));
+        ar(CEREAL_NVP(xtra));
+        ar(CEREAL_NVP(fail));
+        
+        ARCHIVE_STRING(text);
+    }
+      
 };
 
 struct AnimType {
