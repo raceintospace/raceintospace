@@ -130,10 +130,6 @@ random_card:
         Data->Prestige[i].Place = Data->Prestige[i].mPlace = -1;
     }
 
-    // Initialize in Memory REPLAY.DAT
-    memset(&rep, 0, sizeof(REPLAY));
-    interimData.tempReplay.fill(rep);
-
     // Initialize in memory for Event Saves
     interimData.tempEvents.fill("");
 

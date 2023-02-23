@@ -1,6 +1,8 @@
 #ifndef RIS_PACE_H
 #define RIS_PACE_H
 
+#include <string>
+
 #include <SDL/SDL.h>
 
 #include "raceintospace_config.h"
@@ -31,7 +33,7 @@ void PlayVoice(void);
 void KillVoice(void);
 ssize_t load_audio_file(const char *, char **data, size_t *size);
 void idle_loop(int ticks);
-void play_audio(int sidx, int mode);
+void play_audio(std::string str, int mode);
 void bzdelay(int ticks);
 int32_t RLEC(const char *src, char *dest, unsigned int src_size);
 int RLED(const char *src, char *dest, unsigned int src_size);

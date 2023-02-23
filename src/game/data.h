@@ -3,10 +3,12 @@
 
 #include <stdint.h>
 #include <array>
+#include <map>
 
 #include "serialize.h"
+#include "fs.h"
 
-using namespace std;
+//using namespace std;
 
 /*
     Copyright (C) 2005 Michael K. McCarty & Fritz Bronner
@@ -280,7 +282,7 @@ struct Equipment {
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
     {
-        string sName = Name;
+        std::string sName = Name;
         ar(cereal::make_nvp("Name", sName));
         strntcpy(Name, sName.c_str(), sizeof(Name));
 
@@ -573,7 +575,7 @@ struct PastInfo {
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
     {
-        string sMissionName[2];
+        std::string sMissionName[2];
         sMissionName[0] = MissionName[0];
         sMissionName[1] = MissionName[1];
         ar(cereal::make_nvp("MissionName", sMissionName));
@@ -1146,9 +1148,37 @@ struct PatchHdrSmall {
     uint32_t offset;
 };
 
+// Mission Sequence data read from seq.json and fseq.json
+struct MissionSequenceKey {
+    std::string MissionStep;
+    // MissionIdSequence format:
+    // [0]: number for sequence variation (must be stored in decreasing order)
+    // [1]: Maximum number of video files
+    // [2]: female crew member?
+    // [3-n]: Hardware-specific name (taken from Mev[].Name)
+    // [n+1-n+2]: Only for failures: failure code from XFails.fail
+    std::string MissionIdSequence;
+    std::vector<std::string> video;
+    std::vector<std::string> audio;
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+        try {
+            ar(CEREAL_NVP(MissionStep));
+        } catch (...) { // No MissionStep in seq.json
+        }
+            
+        ar(CEREAL_NVP(MissionIdSequence));
+        ar(CEREAL_NVP(video));
+        ar(CEREAL_NVP(audio));
+    }
+};
+
+
 
 // Mission Replay Data Structure
-typedef struct ReplayItem {
+typedef struct LegacyReplayItem {
     uint8_t Qty;         // Number of Animated Sequences
     uint16_t Off[35];     // Offsets to Each animated Part
 
@@ -1162,6 +1192,20 @@ typedef struct ReplayItem {
         ASSERT(Qty <= 35);
     }
 
+} LEGACY_REPLAY;
+
+typedef struct ReplayItem {
+    bool Failure;
+    std::string seq;
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+        if (version >= 2) {
+            ar(CEREAL_NVP(Failure));
+            ar(CEREAL_NVP(seq));
+        }
+    }
 } REPLAY;
 
 enum Opponent_Status {Ahead, Equal, Behind};
@@ -1203,21 +1247,58 @@ struct SaveFileHdr {
  */
 struct INTERIMDATA {
     // REPLAY.DAT related variables
-    std::array<REPLAY, MAX_REPLAY_ITEMS> tempReplay;
+    std::array<std::vector <REPLAY>, MAX_REPLAY_ITEMS> tempReplay;
     // EVENT.TMP related variables
     std::array<std::string, MAX_NEWS_ITEMS> tempEvents;
     // ENDTURN.TMP related variables
     uint32_t endTurnSaveSize;
     char *endTurnBuffer;
-    string filename;
+    std::string filename;
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
     {
-        ARCHIVE_ARRAY(tempReplay, REPLAY);
-        ARCHIVE_ARRAY(tempEvents, std::string);
+        if (version == 1) {
+            ARCHIVE_ARRAY(tempReplay, std::vector <REPLAY>);
+            ARCHIVE_ARRAY(tempEvents, std::string);
+        }
+        else if (version == 0) {
+            // Legacy replay format
+            ARCHIVE_ARRAY(tempEvents, std::string);
+
+            std::vector<LEGACY_REPLAY> legacyReplay;
+            ar(cereal::make_nvp("tempReplay", legacyReplay));
+
+            std::vector<std::string> seq;
+            std::map<int, std::string> fseq;
+
+            DESERIALIZE_JSON_FILE(&seq, locate_file("legacy-seq.json", FT_DATA));
+            DESERIALIZE_JSON_FILE(&fseq, locate_file("legacy-fseq.json", FT_DATA));
+
+            for (int i = 0; i < legacyReplay.size(); i++) {
+                tempReplay.at(i).clear();
+                assert(legacyReplay.at(i).Qty <= 35);
+                for (int j = 0; j < legacyReplay.at(i).Qty; j++) {
+
+                    int code = legacyReplay.at(i).Off[j];
+
+                    if (code < 1000) {
+                        tempReplay.at(i).push_back({false, seq.at(code)});
+                    } else {
+                        tempReplay.at(i).push_back({true, fseq.at(code)});
+                    }
+                        
+                }
+            }
+            
+        }
+        else {
+            throw(std::invalid_argument("Invalid INTERIMDATA version number"));
+        }
     }
 };
+
+CEREAL_CLASS_VERSION(INTERIMDATA, 1);
 
 #pragma pack(pop)
 

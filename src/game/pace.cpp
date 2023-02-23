@@ -49,7 +49,6 @@ char *letter_dat;
 void OpenEmUp(void)
 {
     randomize();
-    seq_init();
     letter_dat = slurp_gamedat("letter.dat");
 }
 
@@ -290,108 +289,6 @@ void CloseEmUp(unsigned char error, unsigned int value)
     exit(EXIT_SUCCESS);
 }
 
-/** Structure to save the sequence number to name mapping
- */
-struct tblinfo {
-    int count; /**< number of sequences in this array */
-    char **strings; /**< array of strings. Keys are sequence numbers, values are sequence names */
-};
-
-/** Read sequence name array from file
- *
- * \param keyname Name of the file to read from
- * \param tbl Pointer to the tblinfo to fill
- */
-void frm_read_tbl(const char *keyname, struct tblinfo *tbl)
-{
-    FILE *fin;
-    int lo, hi;
-    int idx;
-    char *p;
-    const size_t max_name_len = 8;
-    char name[max_name_len + 1];
-
-    if ((fin = sOpen(keyname, "rb", 0)) == NULL) {
-        WARNING2("Unable to open file '%s'.", keyname);
-        return;
-    }
-
-    /* get number of sequence keys */
-    lo = getc(fin);
-    hi = getc(fin);
-    tbl->count = (hi << 8) | lo;
-
-    /* alloc enough memory for all the sequence names */
-    tbl->strings = (char **)xcalloc(tbl->count, sizeof * tbl->strings);
-
-    idx = 0;
-
-    while (fread(name, 1, max_name_len, fin) == max_name_len) {
-        name[max_name_len] = '\0';
-
-        for (p = name; *p; p++) {
-            *p = tolower(*p);
-
-            if (*p == '#') {
-                *p = '_';
-            }
-        }
-
-        TRACE4("Found name '%s' at position %d in file %s.", name, idx, keyname);
-        tbl->strings[idx++] = xstrdup(name);
-    }
-
-    /* now idx is number of read strings */
-    if (tbl->count != idx) {
-        tbl->count = idx;
-        tbl->strings = (char **)xrealloc(tbl->strings, sizeof * tbl->strings);
-    }
-
-    fclose(fin);
-}
-
-/** Mapping from success sequence numbers to audio/video filenames. */
-static struct tblinfo frm_tbl;
-
-/** Mapping from failure sequence numbers to audio/video filenames. */
-static struct tblinfo frm_ftbl;
-
-/** Initialize the sequence keymaps
- *
- * Reads success and failure sequences
- */
-void seq_init(void)
-{
-    frm_read_tbl("SEQ.KEY", &frm_tbl);
-    frm_read_tbl("FSEQ.KEY", &frm_ftbl);
-}
-
-/** Get sequence filename by sequence number
- *
- * \param seq Index number of sequence
- * \param mode 0=success, other is failure
- *
- * \return NULL if the sequence number is out of bound
- * \return name of the sequence file as string
- *
- */
-char *seq_filename(int seq, int mode)
-{
-    struct tblinfo *tp;
-
-    if (mode == 0) {
-        tp = &frm_tbl;
-    } else {
-        tp = &frm_ftbl;
-    }
-
-    if (seq < 0 || seq >= tp->count) {
-        return NULL;
-    }
-
-    return (tp->strings[seq]);
-}
-
 void SMove(void *p, int x, int y)
 {
     display::LegacySurface local(160, 100);
@@ -557,19 +454,13 @@ int getch(void)
     }
 }
 
-void play_audio(int sidx, int mode)
+void play_audio(std::string str, int mode)
 {
     char filename[40];
     ssize_t size;
-    char *name = seq_filename(sidx, mode);
 
-    if (!name) {
-        CWARNING4(audio, "failed request for sound idx %d, mode %d",
-                  sidx, mode);
-        return;
-    }
+    snprintf(filename, sizeof(filename), "%s.ogg", str.c_str());
 
-    snprintf(filename, sizeof(filename), "%s.ogg", name);
     CINFO3(audio, "play sound file `%s'", filename);
     size = load_audio_file(filename, &soundbuf, &soundbuf_size);
     soundbuf_used = (size > 0) ? size : 0;
