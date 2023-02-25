@@ -384,6 +384,9 @@ void DispVAB(char plr, char pad)
             draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
             // Show it in yellow because it's below Max R&D
             display::graphics.setForegroundColor(11);
+            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
+                display::graphics.setForegroundColor(9);  // Show in red if hardware is damaged
+            }
             draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
             draw_string(0, 0, "%");
             IOBox(140, 64, 165, 82);
