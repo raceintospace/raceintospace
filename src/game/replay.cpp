@@ -43,14 +43,21 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 void
 Replay(char plr, int num, int dx, int dy, int width, int height,
-       const char *Type)
+       std::string Type)
 {
     int keep_going;
     int i, j, kk, mode, max;
     int32_t offset;
-    std::vector <REPLAY> Rep = interimData.tempReplay.at((plr * 100) + num);
+    std::vector <REPLAY> Rep;
     std::vector<struct MissionSequenceKey> sSeq, fSeq;
     char *fname;
+
+    if (Type == "0000") {
+        Rep = interimData.tempReplay.at((plr * 100) + num);
+    }
+    else {
+        Rep.push_back({false, Type});
+    }
 
     mm_file vidfile;
     float fps;
