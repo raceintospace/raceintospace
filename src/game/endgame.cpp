@@ -591,7 +591,8 @@ void NewEnd(char win, char loc)
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_PRGMTRG);
-            Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "UPAR" : "SPAR");
+            // TODO: Sequence variation for the parade
+            Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "310UPAR" : "520SPAR");
             music_stop();
             helpText = "i144";
             keyHelpText = "k044";
@@ -621,7 +622,8 @@ void NewEnd(char win, char loc)
             ShBox(149, 9, 309, 100);
             InBox(153, 13, 305, 96);
             music_start(M_MISSPLAN);
-            Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "PUM3C6" : "PSM3C6");
+            // TODO: show the actual lunar EVA
+            Replay(win, 0, 154, 14, 149, 82, (win == 0) ? "520PUM3C6" : "121PSM3C6");
             music_stop();
             helpText = "i144";
             keyHelpText = "k044";

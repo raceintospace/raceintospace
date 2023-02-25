@@ -4087,6 +4087,56 @@
     "audio": [ "STAT_00", "NONE", "NONE","NONE","NONE" ]
   },
   {
+    "MissionIdSequence": "UTCP",
+    "video": [ "USCAP", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "UTLM",
+    "video": [ "USLMTST", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "UTEV",
+    "video": [ "USEVA", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "UTDO",
+    "video": [ "UDOCK", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "UTDU",
+    "video": [ "UCENTRI", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "STCP",
+    "video": [ "SJETS", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "STLM",
+    "video": [ "SVLEM", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "STEV",
+    "video": [ "SVEVA", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "STDO",
+    "video": [ "SDOCK", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
+    "MissionIdSequence": "STDU",
+    "video": [ "SCENTRI", "NONE", "NONE","NONE","NONE" ],
+    "audio": [ "NONE", "NONE", "NONE","NONE","NONE" ]
+  },
+  {
     "MissionIdSequence": "XXXXXXXX",
     "video": [ "XXXXXX", "XXXXXX", "XXXXXX","XXXXXX","XXXXXX" ],
     "audio": [ "XXXXXX", "XXXXXX", "XXXXXX","XXXXXX","XXXXXX" ]
