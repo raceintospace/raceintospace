@@ -135,9 +135,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR040",
-    "video": [ "CAPF_03", "RECO_07", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "RECO_07", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR040",
+    "video": [ "ALAS_02", "ALAS_03", "ALAS_04", "CAPF_03", "RECO_07" ],
+    "audio": [ "0AUM_02", "ALAS_03", "NONE", "0AUF_03", "RECO_07" ]
   },
   {
     "MissionStep": "F000",
@@ -153,15 +153,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR050",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR050",
+    "video": [ "ALAS_02", "ALAS_03", "ALAS_04", "CAPF_03", "CAPF_04" ],
+    "audio": [ "0AUM_02", "ALAS_03", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR050",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR050",
+    "video": [ "ABOT_01", "ATLS_14", "ROCK_41", "CAPF_03", "CFAL_01" ],
+    "audio": [ "0AUM_02", "ATLS_14", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -237,9 +237,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR140",
-    "video": [ "CAPF_03", "RECO_07", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "RECO_07", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR140",
+    "video": [ "ROCK_21", "TITS_05", "ROCK_33", "CAPF_03", "RECO_07" ],
+    "audio": [ "UFA0_00", "TITS_05", "NONE", "0AUF_03", "RECO_07" ]
   },
   {
     "MissionStep": "F000",
@@ -255,15 +255,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR150",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR150",
+    "video": [ "ROCK_21", "TITS_05", "ROCK_33", "CAPF_03", "CAPF_04" ],
+    "audio": [ "UFA0_00", "TITS_05", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR150",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR150",
+    "video": [ "ROCK_21", "TITS_05", "ROCK_33", "CAPF_03", "CFAL_01" ],
+    "audio": [ "UFA0_00", "TITS_05", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -369,15 +369,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR250",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR250",
+    "video": [ "ROCK_12", "ROCK_49", "ROCK_44", "CAPF_03", "CAPF_04" ],
+    "audio": [ "UFA0_00", "ROCK_49", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR250",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR250",
+    "video": [ "ROCK_12", "ROCK_49", "ROCK_44", "CAPF_03", "CFAL_01" ],
+    "audio": [ "UFA0_00", "ROCK_49", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -435,9 +435,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR340",
-    "video": [ "CAPF_03", "RECO_07", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "RECO_07", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR340",
+    "video": [ "SATN_09", "SATN_13", "SATN_11", "CAPF_03" ],
+    "audio": [ "0AUM_04", "SATN_13", "NONE", "0AUF_03", "RECO_07" ]
   },
   {
     "MissionStep": "F000",
@@ -453,15 +453,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR350",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR350",
+    "video": [ "SATN_09", "SATN_13", "SATN_11", "CAPF_03", "CAPF_04" ],
+    "audio": [ "0AUM_04", "SATN_13", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR350",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR350",
+    "video": [ "SATN_09", "SATN_13", "SATN_11", "CAPF_03", "CFAL_01" ],
+    "audio": [ "0AUM_04", "SATN_13", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -525,9 +525,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR440",
-    "video": [ "CAPF_03", "RECO_07", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "RECO_07", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR440",
+    "video": [ "ATBS_02", "ATBS_03", "ROCK_58", "CAPF_03", "RECO_07" ],
+    "audio": [ "UFA0_00", "ATBS_03", "NONE", "0AUF_03", "RECO_07" ]
   },
   {
     "MissionStep": "F000",
@@ -543,15 +543,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR450",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR450",
+    "video": [ "ATBS_02", "ATBS_03", "ROCK_58", "CAPF_03", "CAPF_04" ],
+    "audio": [ "UFA0_00", "ATBS_03", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR450",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR450",
+    "video": [ "ATBS_02", "ATBS_03", "ROCK_58", "CAPF_03", "CFAL_01" ],
+    "audio": [ "UFA0_00", "ATBS_03", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -723,9 +723,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR640",
-    "video": [ "CAPF_03", "RECO_07", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "RECO_07", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR640",
+    "video": [ "ROCK_17", "ROCK_32", "NOTE_71", "CAPF_03", "RECO_07" ],
+    "audio": [ "UFA0_00", "ROCK_32", "NONE", "0AUF_03", "RECO_07" ]
   },
   {
     "MissionStep": "F000",
@@ -741,15 +741,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220AUR650",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250AUR650",
+    "video": [ "ROCK_17", "ROCK_32", "NOTE_71", "CAPF_03", "CAPF_04" ],
+    "audio": [ "UFA0_00", "ROCK_32", "NONE", "0AUF_03", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120AUR650",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0AUF_03", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150AUR650",
+    "video": [ "ROCK_17", "ROCK_32", "NOTE_71", "CAPF_03", "CFAL_01" ],
+    "audio": [ "UFA0_00", "ROCK_32", "NONE", "0AUF_03", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -819,9 +819,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR040",
-    "video": [ "CAPF_03", "RECZ_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "RECZ_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR040",
+    "video": [ "RROK_10", "RROK_23", "RROK_27", "CAPF_03", "RECZ_01" ],
+    "audio": [ "SFA0_00", "RROK_23", "NONE", "0ASF_01", "RECZ_01" ]
   },
   {
     "MissionStep": "F000",
@@ -837,15 +837,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220ASR050",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250ASR050",
+    "video": [ "RROK_10", "RROK_23", "RROK_27", "CAPF_03", "CAPF_04" ],
+    "audio": [ "SFA0_00", "RROK_23", "NONE", "0ASF_01", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR050",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR050",
+    "video": [ "RROK_10", "RROK_23", "RROK_27", "CAPF_03", "CFAL_01" ],
+    "audio": [ "SFA0_00", "RROK_23", "NONE", "0ASF_01", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -915,9 +915,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "110ASR140",
-    "video": [ "CAPF_03", "NONE", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "NONE", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR140",
+    "video": [ "RROK_35", "RROK_26", "PSIL_01", "CAPF_03", "NONE" ],
+    "audio": [ "0ASM_01", "RROK_26", "NONE", "0ASF_01", "NONE" ]
   },
   {
     "MissionStep": "F000",
@@ -933,15 +933,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220ASR150",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250ASR150",
+    "video": [ "RROK_35", "RROK_26", "PSIL_01", "CAPF_03", "CAPF_04" ],
+    "audio": [ "0ASM_01", "RROK_26", "NONE", "0ASF_01", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR150",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR150",
+    "video": [ "RROK_35", "RROK_26", "PSIL_01", "CAPF_03", "CFAL_01" ],
+    "audio": [ "0ASM_01", "RROK_26", "NONE", "0ASF_01", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -1041,9 +1041,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR240",
-    "video": [ "CAPF_03", "RECZ_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "RECZ_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR240",
+    "video": [ "N1LA_01", "N1LH_01", "N1SR_01", "CAPF_03", "RECZ_01"],
+    "audio": [ "0ASM_00", "N1LH_01", "NONE", "0ASF_01", "RECZ_01"]
   },
   {
     "MissionStep": "F000",
@@ -1059,15 +1059,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220ASR250",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250ASR250",
+    "video": [ "N1LA_01", "N1LH_01", "N1SR_01", "CAPF_03", "CAPF_04" ],
+    "audio": [ "0ASM_00", "N1LH_01", "NONE", "0ASF_01", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR250",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR250",
+    "video": [ "N1LA_01", "N1LH_01", "N1SR_01", "CAPF_03", "CFAL_01"],
+    "audio": [ "0ASM_00", "N1LH_01", "NONE", "0ASF_01", "CFAL_01"]
   },
   {
     "MissionStep": "F000",
@@ -1209,9 +1209,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR440",
-    "video": [ "CAPF_03", "RECZ_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "RECZ_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR440",
+    "video": [ "RROK_35", "RROK_26", "RROK_31", "CAPF_03", "RECZ_01"],
+    "audio": [ "0ASM_00", "RROK_26", "NONE","0ASF_01", "RECZ_01" ]
   },
   {
     "MissionStep": "F000",
@@ -1227,15 +1227,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220ASR450",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "250ASR450",
+    "video": [ "RROK_35", "RROK_26", "RROK_31", "CAPF_03", "CAPF_04" ],
+    "audio": [ "0ASM_00", "RROK_26", "NONE","0ASF_01", "CAPF_04" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR450",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "150ASR450",
+    "video": [ "RROK_35", "RROK_26", "RROK_31", "CAPF_03", "CFAL_01" ],
+    "audio": [ "0ASM_00", "RROK_26", "NONE","0ASF_01", "CFAL_01" ]
   },
   {
     "MissionStep": "F000",
@@ -1293,9 +1293,9 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR540",
-    "video": [ "CAPF_03", "RECZ_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "RECZ_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "140ASR540",
+    "video": [ "ROCK_39", "PROT_05", "CAPF_03", "RECZ_01", "NONE" ],
+    "audio": [ "0ASM_00", "PROT_05", "0ASF_01", "RECZ_01", "NONE" ]
   },
   {
     "MissionStep": "F000",
@@ -1311,15 +1311,15 @@
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "220ASR550",
-    "video": [ "CAPF_03", "CAPF_04", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CAPF_04", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "240ASR550",
+    "video": [ "ROCK_39", "PROT_05", "CAPF_03", "CAPF_04", "NONE" ],
+    "audio": [ "0ASM_00", "PROT_05", "0ASF_01", "CAPF_04", "NONE" ]
   },
   {
     "MissionStep": "F000",
-    "MissionIdSequence": "120ASR550",
-    "video": [ "CAPF_03", "CFAL_01", "NONE","NONE","NONE" ],
-    "audio": [ "0ASF_01", "CFAL_01", "NONE","NONE","NONE" ]
+    "MissionIdSequence": "140ASR550",
+    "video": [ "ROCK_39", "PROT_05",  "CAPF_03", "CFAL_01", "NONE" ],
+    "audio": [ "0ASM_00", "PROT_05", "0ASF_01", "CFAL_01", "NONE" ]
   },
   {
     "MissionStep": "F000",
