@@ -1810,13 +1810,13 @@
   {
     "MissionStep": "F100",
     "MissionIdSequence": "110AUR500",
-    "video": [ "TTBL_01", "NONE", "NONE","NONE","NONE" ],
+    "video": [ "PPIX_07", "NONE", "NONE","NONE","NONE" ],
     "audio": [ "RNG6_00", "NONE", "NONE","NONE","NONE" ]
   },
   {
     "MissionStep": "F100",
     "MissionIdSequence": "110AUR505",
-    "video": [ "TTBL_01", "NONE", "NONE","NONE","NONE" ],
+    "video": [ "PPIX_07", "NONE", "NONE","NONE","NONE" ],
     "audio": [ "RNG6_00", "NONE", "NONE","NONE","NONE" ]
   },
   {
