@@ -248,54 +248,51 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     }
 
-
     if (mode == 0) {
         j = 0;
         ID = sSeq.at(j).MissionIdSequence;
 
-        while (ID != "XXXX" && strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
+        while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
-            ID = sSeq.at(j).MissionIdSequence;
+            if (j == sSeq.size()) {
+                err = 1;
+                break;
+            }
+            else {
+                ID = sSeq.at(j).MissionIdSequence;
+            }
         }
 
         if (ID[2] - 0x30 == 1) {
             if (fem == 0) {
                 j++;
+                ID = sSeq.at(j).MissionIdSequence;
             }
         }
     } else if (err == 0) {
         j = i;
         ID = fSeq.at(j).MissionIdSequence;
-        memset(sName, 0x00, sizeof sName);
-        strncpy(sName, &ID[3 + strlen(&ID[3]) - 2], 2);
 
-        while (ID != "XXXX" && strncmp(&ID[3], Seq, strlen(&ID[3]) - 2) != 0) {
+        while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
-            ID = fSeq.at(j).MissionIdSequence;
-        }
-
-        while (strncmp(sName, &Seq[strlen(Seq) - 2], 2) != 0) {
-            j++;
-            ID = fSeq.at(j).MissionIdSequence;
-            strncpy(sName, &ID[3 + strlen(&ID[3]) - 2], 2);
-
-            if (strncmp(fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
-                // j is already entering the next MissionStep
+            if (j == fSeq.size()) {
                 err = 1;
                 break;
+            }
+            else {
+                if (strncmp(fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
+                    // j is already entering the next MissionStep
+                    err = 1;
+                    break;
+                }
+                else {
+                    ID = fSeq.at(j).MissionIdSequence;
+                }
             }
         }
     }
 
-    if (ID == "XXXX" || (mode == 1 && err == 1)) {
-        //Specs: Search Error Play Static
-        if (mode == 0) {
-            j = 0;
-            ID = "110DEFAULT";
-        } 
-    }
-
-    if (mode == 1 && err == 1) {
+    if (err) {
         j = 0;
         ID = "110DEFAULT";
     }

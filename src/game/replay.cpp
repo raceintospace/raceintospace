@@ -52,7 +52,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
     std::vector<struct MissionSequenceKey> sSeq, fSeq;
     char *fname;
 
-    if (Type == "0000") {
+    if (Type == "OOOO") {
         Rep = interimData.tempReplay.at((plr * 100) + num);
     }
     else {
