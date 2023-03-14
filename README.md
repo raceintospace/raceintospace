@@ -9,9 +9,13 @@ Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
 The most recent stable releases are available from
 [SourceForge](http://sourceforge.net/projects/raceintospace/).
-There is a more recent (interim) release on Flatpak, 
+There is a more recent (interim) 1.2 release on Flatpak (which shows as 2.0), 
 https://flathub.org/apps/details/org.raceintospace.Raceintospace.
-The repository here contains a work-in-progress modernization of the game.
+More recent yet is the 2.0 beta available here at 
+https://github.com/raceintospace/raceintospace/releases/tag/v.2.0beta.
+The repository here contains a work-in-progress modernization of the game, 
+so if you want to run the very latest version, you will have to download
+and compile the source here.
 
 We have made a number of improvements to the game, and are hoping to do a 
 release soon.  The changes made can be viewed in ChangeLog.md above.
