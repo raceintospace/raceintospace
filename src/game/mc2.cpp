@@ -886,11 +886,11 @@ void MissionSetDown(char plr, char mis)
 
     for (j = 0; j < (Data->P[plr].Mission[mis].Joint + 1); j++) {
         for (i = 0; i < 7; i++) {  // Ignore Boosters
-            if (MH[j][i] != NULL && (MH[j][i]->MisSucc > 0 || MH[j][i]->MisFail > 0)) {
+            if (MH[j][i] != NULL && (MH[j][i]->MisSucc[j] > 0 || MH[j][i]->MisFail[j] > 0)) {
 
                 MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
 
-                if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc > 0) {
+                if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc[j] > 0) {
                     MH[j][i]->Safety = MIN(MH[j][i]->Safety + 1, MH[j][i]->MaxSafety);
 
                     if (options.cheat_addMaxS) {
@@ -902,26 +902,26 @@ void MissionSetDown(char plr, char mis)
                     }
                 }
 
-                if (strncmp(MH[j][i]->Name, "DOC", 3) == 0 && (MH[j][i]->MisFail + MH[j][i]->MisSucc) == 0) {
-                    MH[j][i]->MisFail = 1;
+                if (strncmp(MH[j][i]->Name, "DOC", 3) == 0 && (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0) {
+                    MH[j][i]->MisFail[j] = 1;
                 }
 
-                if ((MH[j][i]->MisFail + MH[j][i]->MisSucc) == 0 && (strncmp(MH[j][i]->ID, "M3", 2) != 0)) {
-                    MH[j][i]->MisFail++;
+                if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && (strncmp(MH[j][i]->ID, "M3", 2) != 0)) {
+                    MH[j][i]->MisFail[j]++;
                 }
 
-                if ((MH[j][i]->MisFail + MH[j][i]->MisSucc) == 0 && MH[j][i]->ID[0] == 'P') {
-                    MH[j][i]->MisFail++;
+                if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && MH[j][i]->ID[0] == 'P') {
+                    MH[j][i]->MisFail[j]++;
                 }
 
 
-                MH[j][i]->Failures += MH[j][i]->MisFail;
+                MH[j][i]->Failures += MH[j][i]->MisFail[j];
 
-                MH[j][i]->Steps += (MH[j][i]->MisFail + MH[j][i]->MisSucc);
+                MH[j][i]->Steps += (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]);
 
                 if (i == Mission_PrimaryBooster &&
                     MH[j][Mission_SecondaryBooster] != NULL) {  // Boosters
-                    if (MH[j][Mission_PrimaryBooster]->MisSucc > 0)  {
+                    if (MH[j][Mission_PrimaryBooster]->MisSucc[j] > 0)  {
                         MH[j][Mission_SecondaryBooster]->Safety =
                             MIN(MH[j][Mission_SecondaryBooster]->Safety + 1,
                                 MH[j][Mission_SecondaryBooster]->MaxSafety);
@@ -940,15 +940,15 @@ void MissionSetDown(char plr, char mis)
                     MH[j][Mission_SecondaryBooster]->DCost = 0;
 
                     MH[j][Mission_SecondaryBooster]->Failures +=
-                        MH[j][Mission_PrimaryBooster]->MisFail;
+                        MH[j][Mission_PrimaryBooster]->MisFail[j];
                     MH[j][Mission_SecondaryBooster]->Steps +=
-                        (MH[j][Mission_PrimaryBooster]->MisFail +
-                         MH[j][Mission_PrimaryBooster]->MisSucc);
-                    MH[j][Mission_SecondaryBooster]->MisSucc = 0;
-                    MH[j][Mission_SecondaryBooster]->MisFail = 0;
+                        (MH[j][Mission_PrimaryBooster]->MisFail[j] +
+                         MH[j][Mission_PrimaryBooster]->MisSucc[j]);
+                    MH[j][Mission_SecondaryBooster]->MisSucc[j] = 0;
+                    MH[j][Mission_SecondaryBooster]->MisFail[j] = 0;
                 }
 
-                MH[j][i]->MisSucc = MH[j][i]->MisFail = 0;
+                MH[j][i]->MisSucc[j] = MH[j][i]->MisFail[j] = 0;
             }  // if
         }  // for i
 

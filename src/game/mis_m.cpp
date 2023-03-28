@@ -485,7 +485,7 @@ void MisCheck(char plr, char mpad)
             }
 
             if (!(strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) == 0 && Mev[STEP].loc == 0x02)) {
-                GetEquipment(Mev[STEP])->MisSucc++;  // set for all but docking power on
+                GetEquipment(Mev[STEP])->MisSucc[Mev[STEP].pad]++;  // set for all but docking power on
             }
 
             Mev[STEP].StepInfo = 1;
@@ -830,7 +830,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     temp = 0; /* XXX check uninitialized */
 
     if (!(strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) == 0 && Mev[STEP].loc == 0x02)) {
-        GetEquipment(Mev[STEP])->MisFail++;  // set failure for all but docking power on
+        GetEquipment(Mev[STEP])->MisFail[Mev[STEP].pad]++;  // set failure for all but docking power on
     }
 
     Mev[STEP].StepInfo = 1003;
@@ -849,7 +849,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         // Special Case for PhotoRecon with Lunar Probe
         if (Mev[STEP].loc == 20 && mcc == Mission_Lunar_Probe) {
-            GetEquipment(Mev[STEP - 1])->MisFail++;
+            GetEquipment(Mev[STEP - 1])->MisFail[Mev[STEP].pad]++;
         }
 
         return 0;

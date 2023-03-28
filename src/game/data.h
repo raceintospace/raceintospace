@@ -276,8 +276,8 @@ struct Equipment {
     int8_t Duration;      /**< Days it can last in space */
     int8_t Damage;        /**< Damage percent for next launch */
     int8_t DCost;         /**< Cost to repair damage */
-    int8_t MisSucc;       /**< Mission Successes */
-    int8_t MisFail;       /**< Mission Failures */
+    int8_t MisSucc[2];       /**< Mission Successes */
+    int8_t MisFail[2];       /**< Mission Failures */
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
@@ -312,8 +312,6 @@ struct Equipment {
         ar(CEREAL_NVP(Duration));
         ar(CEREAL_NVP(Damage));
         ar(CEREAL_NVP(DCost));
-        ar(CEREAL_NVP(MisSucc));
-        ar(CEREAL_NVP(MisFail));
     }
 
 };
@@ -1321,13 +1319,13 @@ CEREAL_CLASS_VERSION(INTERIMDATA, 1);
 // Errors in these lines mean that the struct is the wrong shape
 #include <boost/static_assert.hpp>
 BOOST_STATIC_ASSERT(sizeof(PrestType) == 15);
-BOOST_STATIC_ASSERT(sizeof(Equipment) == 58);
+BOOST_STATIC_ASSERT(sizeof(Equipment) == 60);
 BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
 BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
-BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15520);
+BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15576);
 BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
-BOOST_STATIC_ASSERT(sizeof(Players) == 38866);
+BOOST_STATIC_ASSERT(sizeof(Players) == 38978);
 
 #endif // RIS_DATA_H
 
