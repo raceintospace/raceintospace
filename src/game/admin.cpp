@@ -1692,18 +1692,20 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     LEGACY_REPLAY *load_buffer = NULL;
     uint16_t dataSize, compSize;
     int i, j;
+    const int legacySize = 38866;
+    int8_t *p;
 
     dataSize = *(uint16_t *) header.dataSize;
     compSize = *(uint16_t *)(header.dataSize + 2);
 
-    // Determine Endian Swap, 31663 is for old save games
-    bool endianSwap = (dataSize != sizeof(struct Players) && dataSize != 31663);
+    // Determine Endian Swap, 31663 is for pre-PBEM save games
+    bool endianSwap = (dataSize != legacySize && dataSize != 31663);
 
     if (endianSwap) {
         compSize = _Swap16bit(compSize);
         dataSize = _Swap16bit(dataSize);
 
-        if (dataSize != sizeof(struct Players) && dataSize != 31663) {
+        if (dataSize !=  legacySize && dataSize != 31663) {
             // TODO: Feels like BadFileType() should be launched by
             // FileAccess, which runs the interface. Throw an
             // exception or return an error code?
@@ -1718,6 +1720,30 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     fread(load_buffer, 1, readLen, fin);
     RLED((char *) load_buffer, (char *)Data, compSize);
     free(load_buffer);
+
+    // Shift Equipment structs to account for MisSucc/Fail being arrays now
+    for (i = 0; i < NUM_PLAYERS; i++) {
+        for (j = 0; j < 7; j++) {
+            p = Data->P[i].Probe[j].MisFail;
+            // Shift the remaining bytes of the struct by 2
+            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+        }
+        for (j = 0; j < 7; j++) {
+            p = Data->P[i].Rocket[j].MisFail;
+            // Shift the remaining bytes of the struct by 2
+            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+        }
+        for (j = 0; j < 7; j++) {
+            p = Data->P[i].Manned[j].MisFail;
+            // Shift the remaining bytes of the struct by 2
+            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+        }
+        for (j = 0; j < 7; j++) {
+            p = Data->P[i].Misc[j].MisFail;
+            // Shift the remaining bytes of the struct by 2
+            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+        }
+    }
 
     // Swap Players' Data
     if (endianSwap) {
