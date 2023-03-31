@@ -345,7 +345,7 @@ void CLevels(char side, char wh, DisplayContext &dctx)
 void Prefs(int where, int player)
 {
     int num, hum1 = 0, hum2 = 0;
-    FILE *fin;
+    char *fname;
     char ch, Name[20], ksel = 0;
     int32_t size;
     DisplayContext dctx;
@@ -442,10 +442,24 @@ void Prefs(int where, int player)
                     key = 0;
 
                     if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                        fin = sOpen("HIST.DAT", "rb", 0);
-                        fread(&Data->P[0].Probe[PROBE_HW_ORBITAL], 28 * (sizeof(Equipment)), 1, fin);
-                        fread(&Data->P[1].Probe[PROBE_HW_ORBITAL], 28 * (sizeof(Equipment)), 1, fin);
-                        fclose(fin);
+                        fname = locate_file("hist.json", FT_DATA);
+                        
+                        ifstream os(fname);
+                        cereal::JSONInputArchive ar(os);
+
+                        // Don't make a loop over the players as this
+                        // will break the preprocessor macro.
+                        
+                        ARCHIVE_VECTOR(Data->P[0].Probe, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[0].Rocket, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[0].Manned, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[0].Misc, struct Equipment, 7);
+
+                        ARCHIVE_VECTOR(Data->P[1].Probe, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[1].Rocket, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[1].Manned, struct Equipment, 7);
+                        ARCHIVE_VECTOR(Data->P[1].Misc, struct Equipment, 7);
+
                     }
 
                     // Random Equipment
