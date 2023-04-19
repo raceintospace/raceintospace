@@ -1464,9 +1464,12 @@ char HPurc(char player_index)
             WaitForMouseUp();
             InBox(26, 94, 131, 172);
             ShowHardwareDescription(player_index, hardware, unit);
-        } else if ((Data->P[0].AIStat > 0 || Data->P[1].AIStat > 0) && key == '$' && !options.no_money_cheat) {
-            Data->P[player_index].Cash += 100;  // Cheat - add 100MB to cash on hand
-            DrawCashOnHand(player_index);
+        } else if (key == '$') {
+            if (!options.no_money_cheat && (AI[0] || AI[1])) {
+                // Cheat - add 100MB to cash on hand
+                Data->P[player_index].Cash += 100;
+                DrawCashOnHand(player_index);
+            }
         } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
             OutBox(285, 70, 317, 87);
             delay(10);
