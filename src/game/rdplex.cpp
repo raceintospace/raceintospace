@@ -494,7 +494,7 @@ char RD(char player_index)
 
                     RDButTxt(b * roll, buy[hardware][unit], player_index, ((hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE) ? 1 : 0));  //DM Screen, Nikakd, 10/8/10
                 }
-            } else if (((y >= 157 && y <= 175 && mousebuttons > 0) || (key >= '0' && key <= '5')) && buy[hardware][unit] == 0) {
+            } else if (((x >= 165 && x <= 315 && y >= 157 && y <= 175 && mousebuttons > 0) || (key >= '0' && key <= '5')) && buy[hardware][unit] == 0) {
                 /*  R&D Amount */
                 if (((x >= 165 && x <= 185 && mousebuttons > 0) || key == '0') && roll != 0 && MaxTeamsNeeded(player_index, hardware, unit) >= 0) {
                     roll = 0;
