@@ -364,37 +364,9 @@ void Intel(char plr)
         if (beg) {
             beg = 0;
         } else {
-
             FadeOut(2, 10, 0, 0);
             DrawSpaceport(plr);
-            PortPal(plr);
-            fill_rectangle(166, 191, 318, 198, 3);
-            display::graphics.setForegroundColor(0);
-            draw_string(257, 197, "CASH:");
-            draw_megabucks(285, 197, Data->P[plr].Cash);
-            display::graphics.setForegroundColor(11);
-            draw_string(256, 196, "CASH:");
-            draw_megabucks(284, 196, Data->P[plr].Cash);
-            display::graphics.setForegroundColor(0);
-
-            if (Data->Season == 0) {
-                draw_string(166, 197, "SPRING 19");
-            } else {
-                draw_string(166, 197, "FALL 19");
-            }
-
-            draw_number(0, 0, Data->Year);
-            display::graphics.setForegroundColor(11);
-
-            if (Data->Season == 0) {
-                draw_string(165, 196, "SPRING 19");
-            } else {
-                draw_string(165, 196, "FALL 19");
-            }
-
-            draw_number(0, 0, Data->Year);
             FadeIn(2, 10, 0, 0);
-
         }
 
         helpText = (plr == 0) ? "i704" : "i705";
