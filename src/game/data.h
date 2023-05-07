@@ -1263,9 +1263,6 @@ struct INTERIMDATA {
     std::array<std::vector <REPLAY>, MAX_REPLAY_ITEMS> tempReplay;
     // EVENT.TMP related variables
     std::array<std::string, MAX_NEWS_ITEMS> tempEvents;
-    // ENDTURN.TMP related variables
-    uint32_t endTurnSaveSize;
-    char *endTurnBuffer;
     std::string filename;
 
     template<class Archive>

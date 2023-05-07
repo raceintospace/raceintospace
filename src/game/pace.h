@@ -35,7 +35,6 @@ ssize_t load_audio_file(const char *, char **data, size_t *size);
 void idle_loop(int ticks);
 void play_audio(std::string str, int mode);
 void bzdelay(int ticks);
-int32_t RLEC(const char *src, char *dest, unsigned int src_size);
 int RLED(const char *src, char *dest, unsigned int src_size);
 char MPrefs(char mode);
 int bioskey(int wait);
