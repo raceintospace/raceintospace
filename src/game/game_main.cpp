@@ -516,7 +516,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     LOAD = 0;                           // CLEAR LOAD FLAG
 
     while (Data->Year < 78) {            // WHILE THE YEAR IS NOT 1977
-        EndOfTurnSave((char *) Data, sizeof(struct Players));
 
         if (newTurn) {
             // CLEAR ALL TURN RD MODS

@@ -229,55 +229,6 @@ int brandom(int limit)
     return (int)(limit * (rand() / (RAND_MAX + 1.0)));
 }
 
-/* Run-length Encoding (RLE) Compression algorithm.
- *
- * Uncompressed segments are prefaced by their length. Compressed
- * segments - where a character repeats - are stored via the number of
- * repetitions followed by the repeated character. Compression is
- * distinguished from uncompressed segments by using negative values
- * (1 - reps).
- *
- * \param src       Source buffer.
- * \param dest      Buffer for compressed output.
- * \param src_size  Length of the source contents in bytes.
- * \return  Size, in bytes, of the compressed output.
- */
-int32_t RLEC(const char *src, char *dest, unsigned int src_size)
-{
-    unsigned int src_i;
-    int dest_i, cpr;
-
-    for (src_i = dest_i = 0; src_i < src_size;) {
-        int k;  /* holds the number of characters to copy or repeat. */
-        k = 0;
-        cpr = ((src_size - src_i - 1) < 128) ? src_size - src_i - 1 : 128;
-
-        while (k < cpr && src[src_i] != src[src_i + 1]) {
-            k++;       /* increment the number of characters to copy */
-            src_i++;   /* move pointer to the next character */
-        }
-
-        if (k) {
-            dest[dest_i++] = (k - 1);
-            memcpy(&dest[dest_i], &src[src_i - k], k);
-            dest_i += k;
-        } else {
-            k = 2;   /* there are at least two characters to be repeated */
-            src_i++; /* advance pointer beyond the first match*/
-
-            while (k < cpr && src[src_i] == src[src_i + 1]) {
-                k++;       /* increment the number of characters to copy */
-                src_i++;   /* move pointer to the next character */
-            }  /* while */
-
-            dest[dest_i++] = (-k + 1);
-            dest[dest_i++] = src[src_i++];
-        }
-    }
-
-    return (dest_i);
-}
-
 void StopAudio(char mode)
 {
     av_silence(AV_SOUND_CHANNEL);

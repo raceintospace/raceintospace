@@ -1879,58 +1879,6 @@ char RequestX(const char *s, char md)
 }
 
 
-/* Updates the game state stored in the save buffer.
- *
- * The game tracks all the data that will be written to a save file
- * in a buffer, interimData, modifying it when the save should update
- * to reflect changes. Saving the game writes this buffer to a new
- * savegame file. This compresses byte-formatted data and stores it
- * in the interimData end-of-turn buffer which contains the game
- * state information (planned missions, research levels, etc.).
- *
- * When a save file is created, it starts with a SaveFileHdr header
- * and is populated with the data stored in the interimData structure.
- * The interimData variable holds:
- *   - the (compressed) struct Players variable Data holding most of
- *     the state data
- *   - the Replay information detailing the events of launches
- *   - the event data, consisting of each turn's event cards and the
- *     news text generated
- *
- * In normal usage, the variable Data (which contains the game state)
- * is copied into the interimData end-of-turn buffer at the beginning of
- * each player's turn. In this manner, loading the save returns the
- * player to the beginning of their turn (on which the save was created).
- * The interimData buffer is also updated when the player quits the game,
- * updating the Autosave to their current state so the player may resume
- * their game where they left off.
- *
- * \param inData   Data formatted as a raw byte block.
- * \param dataLen  the size of the data block in bytes.
- * \return  the size of the compressed data.
- */
-int32_t EndOfTurnSave(char *inData, int dataLen)
-{
-    if (!inData || dataLen == 0) {
-        return 0;
-    }
-
-    char *buffer = (char *)xmalloc(dataLen * 2);
-    int compressedLen = RLEC(inData, buffer, dataLen);
-
-    if (interimData.endTurnBuffer) {
-        free(interimData.endTurnBuffer);
-    }
-
-    interimData.endTurnSaveSize = compressedLen;
-    interimData.endTurnBuffer = (char *)malloc(interimData.endTurnSaveSize);
-    memcpy(interimData.endTurnBuffer, buffer, interimData.endTurnSaveSize);
-    free(buffer);
-
-    return interimData.endTurnSaveSize;
-}
-
-
 /*
  * Writes the actual save file to disk. Data, replay data, and event
  * data are serialized into a JSON string, compressed by zlib, and
@@ -1976,13 +1924,6 @@ void write_save_file(const char *Name, SaveFileHdr header)
     header.Country[1] = Data->plr[1];
     header.Season = Data->Season;
     header.Year = Data->Year;
-
-    EndOfTurnSave((char *) Data, sizeof(struct Players));
-
-    if (interimData.endTurnBuffer == NULL) {
-        WARNING1("Don't have End of Turn Save Data!");
-        return;
-    }
 
     stringstream stream;
     {
@@ -2066,8 +2007,6 @@ int SaveGame(const std::vector<SFInfo> savegames)
     } while (done == 0);
 
     i--;  // decrement to correct for the FOR loop
-
-    EndOfTurnSave((char *) Data, sizeof(struct Players));
 
     // Create the filename from the title.
     // The field savegames[i].Name is a filename provided by
