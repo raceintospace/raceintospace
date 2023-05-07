@@ -103,6 +103,7 @@ char dayOnMoon = 20;
 char AI[2] = {0, 0};
 // Used to hold mid-turn save game related information
 INTERIMDATA interimData;
+struct AssetData *Assets;
 
 const char *S_Name[] = {
     "LAUNCH",
@@ -215,12 +216,18 @@ int game_main_impl(int argc, char *argv[])
 
     xMODE = 0;
 
-    Data = (Players *)xmalloc(sizeof(struct Players) + 1);
+    Data = new struct Players;
     buffer = (char *)xmalloc(BUFFER_SIZE);
 
     DEBUG3("main buffer %p (%d)", buffer, BUFFER_SIZE);
 
     memset(buffer, 0x00, BUFFER_SIZE);
+
+    Assets = new struct AssetData;
+
+    DESERIALIZE_JSON_FILE(&Assets->sSeq, locate_file("seq.json", FT_DATA));
+    DESERIALIZE_JSON_FILE(&Assets->fSeq, locate_file("fseq.json", FT_DATA));
+    DESERIALIZE_JSON_FILE(&Assets->fails, locate_file("fails.json", FT_DATA));
 
     OpenEmUp();                   // OPEN SCREEN AND SETUP GOODIES
 

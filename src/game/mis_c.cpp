@@ -117,7 +117,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     char scratch[SCRATCH_SIZE];
     std::vector<struct Infin> Mob;
     std::vector<struct OF> Mob2;
-    std::vector<struct MissionSequenceKey> sSeq, fSeq;
     char *fname;
     std::string ID;
 
@@ -225,24 +224,16 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         AEPT = 0;
     }
 
-    if (mode == 0) {
-      
-        fname = locate_file("seq.json", FT_DATA);
-        DESERIALIZE_JSON_FILE(&sSeq, fname);
-
-    } else {
-
-        fname = locate_file("fseq.json", FT_DATA);
-        DESERIALIZE_JSON_FILE(&fSeq, fname);
+    if (mode == 1) {
 
         /* i: the first element in fSeq belonging to the right step */
-        for (i = 0; i < fSeq.size(); i++) {
-            if (strncmp(fSeq.at(i).MissionStep.c_str(), Mev[step].FName, 4) == 0) {
+        for (i = 0; i < Assets->fSeq.size(); i++) {
+            if (strncmp(Assets->fSeq.at(i).MissionStep.c_str(), Mev[step].FName, 4) == 0) {
                 break;
             }
         }
 
-        if (i == fSeq.size()) {
+        if (i == Assets->fSeq.size()) {
             err = 1;
         }
 
@@ -250,43 +241,43 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     if (mode == 0) {
         j = 0;
-        ID = sSeq.at(j).MissionIdSequence;
+        ID = Assets->sSeq.at(j).MissionIdSequence;
 
         while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
-            if (j == sSeq.size()) {
+            if (j == Assets->sSeq.size()) {
                 err = 1;
                 break;
             }
             else {
-                ID = sSeq.at(j).MissionIdSequence;
+                ID = Assets->sSeq.at(j).MissionIdSequence;
             }
         }
 
         if (ID[2] - 0x30 == 1) {
             if (fem == 0) {
                 j++;
-                ID = sSeq.at(j).MissionIdSequence;
+                ID = Assets->sSeq.at(j).MissionIdSequence;
             }
         }
     } else if (err == 0) {
         j = i;
-        ID = fSeq.at(j).MissionIdSequence;
+        ID = Assets->fSeq.at(j).MissionIdSequence;
 
         while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
-            if (j == fSeq.size()) {
+            if (j == Assets->fSeq.size()) {
                 err = 1;
                 break;
             }
             else {
-                if (strncmp(fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
+                if (strncmp(Assets->fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
                     // j is already entering the next MissionStep
                     err = 1;
                     break;
                 }
                 else {
-                    ID = fSeq.at(j).MissionIdSequence;
+                    ID = Assets->fSeq.at(j).MissionIdSequence;
                 }
             }
         }
@@ -304,9 +295,9 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         max = (unsigned)(ID[0] - 0x30);
         j += Mev[step].rnum % max;
         if (mode == 0) {
-            ID = sSeq.at(j).MissionIdSequence;
+            ID = Assets->sSeq.at(j).MissionIdSequence;
         } else {
-            ID = fSeq.at(j).MissionIdSequence;
+            ID = Assets->fSeq.at(j).MissionIdSequence;
         }
     }
 
@@ -387,15 +378,15 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         char name[20]; /** \todo assumption about seq_filename len */
 
         if (mode == 0) {
-            play_audio(sSeq.at(k).audio.at(i), mode);
+            play_audio(Assets->sSeq.at(k).audio.at(i), mode);
         } else {
-            play_audio(fSeq.at(k).audio.at(i), mode);
+            play_audio(Assets->fSeq.at(k).audio.at(i), mode);
         }
 
         if (mode == 0) {
-            strntcpy(seq_name, sSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
+            strntcpy(seq_name, Assets->sSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
         } else {
-            strntcpy(seq_name, fSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
+            strntcpy(seq_name, Assets->fSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
         }
 
         snprintf(name, sizeof(name), "%s.ogg", seq_name);

@@ -105,25 +105,21 @@ void BranchIfAlive(int *FNote);
  */
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
-    std::vector <struct XFails> fails;
-  
     DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)",
            rnum);
     assert(Now != NULL);
 
-    DESERIALIZE_JSON_FILE(&fails, locate_file("fails.json", FT_DATA));
-
-    for (int i = 0; i < fails.size(); i++) {
-        if (!xstrncasecmp(fails.at(i).MissionStep.c_str(), FName, 4)) {
+    for (int i = 0; i < Assets->fails.size(); i++) {
+        if (!xstrncasecmp(Assets->fails.at(i).MissionStep.c_str(), FName, 4)) {
             if (rnum < 0) { // unmanned
-                if (fails.at(i).percentage == rnum) {
-                    *Now = fails.at(i);
+                if (Assets->fails.at(i).percentage == rnum) {
+                    *Now = Assets->fails.at(i);
                     break;
                 }
             }
             else { // manned
-                if (fails.at(i).percentage > rnum) {
-                    *Now = fails.at(i);
+                if (Assets->fails.at(i).percentage > rnum) {
+                    *Now = Assets->fails.at(i);
                     break;
                 }
             }
