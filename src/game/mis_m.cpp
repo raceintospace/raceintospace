@@ -1421,7 +1421,6 @@ std::vector<Astros *> LMCrew(int pad, Equipment *module)
     if (crew.size() != capacity) {
         ERROR3("LM module should have %d crew, only found %d",
                capacity, crew.size());
-        abort();
     }
 
     return crew;
