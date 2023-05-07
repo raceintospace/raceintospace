@@ -45,5 +45,6 @@ extern char *buffer;
 extern int32_t xMODE;
 extern const char *S_Name[];
 extern INTERIMDATA interimData;
+extern struct AssetData *Assets;
 
 #endif // GAME_MAIN_H

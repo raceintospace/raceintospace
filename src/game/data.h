@@ -1313,6 +1313,12 @@ struct INTERIMDATA {
 
 CEREAL_CLASS_VERSION(INTERIMDATA, 1);
 
+struct AssetData {
+    std::vector<struct MissionSequenceKey> sSeq; // Success sequences
+    std::vector<struct MissionSequenceKey> fSeq; // Failure sequences
+    std::vector <struct XFails> fails; // Failure texts and codes
+};
+
 #pragma pack(pop)
 
 // Double-check that the structs we write to disk have the proper size
