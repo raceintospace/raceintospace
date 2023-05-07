@@ -1190,9 +1190,17 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         Mev[STEP].trace = Mev[STEP].dgoto;
         Mev[STEP].StepInfo = 3100 + STEP;
 
-        // This error can occur on Photo Recon tests, so the LM must
-        // be identified first.
-        {
+        // Code 31 errors can also occur during direct ascent missions
+        // or Soyuz L.L. missions. Kill 'em all in this case.
+        temp = Data->P[plr].Mission[Mev[STEP].pad].MissionCode;
+
+        if (temp == Mission_DirectAscent_LL || temp == Mission_Soyuz_LL) {
+            F_KillCrew(F_ALL, 0);
+        }
+        else  {
+            // This error can occur on Photo Recon tests, so the LM must
+            // be identified first.
+
             std::vector<Astros *> crew =
                 LMCrew(Mev[STEP].pad, FindLunarModule());
 
