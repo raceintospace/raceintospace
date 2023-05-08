@@ -196,6 +196,12 @@ char WhichPart(char plr, int which)
 Equipment *GetEquipment(const struct MisEval &Mev)
 {
     Equipment *e = MH[Mev.pad][Mev.Class];
+
+    // Some equipment like docking module can be attached to the other pad
+    if (!e) {
+        e = MH[other(Mev.pad)][Mev.Class];
+    }
+
     assert(e == Mev.Ep);
     return e;
 }
