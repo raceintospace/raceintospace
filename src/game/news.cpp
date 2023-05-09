@@ -115,7 +115,7 @@ GoNews(char plr)
     OpenNews(plr, buffer + 6000, (int) Data->Events[Data->Count]);
 
     Data->P[plr].eCount++;
-    assert(Data->P[plr].eCount < MAX_NEWS_ITEMS / 2);
+    assert(Data->P[plr].eCount <= MAX_NEWS_ITEMS / 2);
 
     DispNews(plr, buffer + 6000, buffer);
 
@@ -870,7 +870,7 @@ AIEvent(char plr)
     // Do not update event counter when loading saved game
     if (freshNews) {
         Data->P[plr].eCount++;
-        assert(Data->P[plr].eCount < MAX_NEWS_ITEMS / 2);
+        assert(Data->P[plr].eCount <= MAX_NEWS_ITEMS / 2);
     }
 }
 
