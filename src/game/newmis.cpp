@@ -92,13 +92,7 @@ cmp_order(const void *p1, const void *p2)
                 }
             }
 
-            char whoFirst = brandom(9);
-
-            if (whoFirst == 1) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return (brandom(2) == 1) ? 1 : -1;
         } else {
             return 1;
         }
