@@ -673,7 +673,7 @@ void FileAccess(char mode)
             }
 
         } else if (key == K_PGDN) {  // Page Down
-
+        
             if (now < savegames.size()) {
                 now += 8;
             }
@@ -686,10 +686,8 @@ void FileAccess(char mode)
                 
                     if (now > (savegames.size() - 1)) {
                         now = savegames.size();
-                        BarB = 8; //savegames.size() - 1;
+                        BarB = 8;
                     } else {
-                        //now += 8;
-                        //now = savegames.size() - 1;
                         BarB = 8;
                     }
 
@@ -701,16 +699,20 @@ void FileAccess(char mode)
                     } else {
                         draw_up_arrow(194, 55);
                     }
-                    if (now == savegames.size()) {
+                    if (now >= (savegames.size() - 1)) {
                         draw_down_arrow(194, 94);
                     }
                 } else {
-                    now = savegames.size() - 1;
                     BarB = 8;
-                    draw_down_arrow(194, 94);
+                    if (now >= (savegames.size() - 1)) { 
+                        now = savegames.size() - 1; 
+                        draw_down_arrow(194, 94);
+                    } else {
+                        draw_down_arrow_highlight(194, 94);
+                    }
                 }
             }
-            
+
             DrawFiles(now, BarB, savegames);
             FileText(&savegames[now].Name[0]);
 
