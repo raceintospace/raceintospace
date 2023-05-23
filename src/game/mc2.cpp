@@ -363,6 +363,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         break;
 
     case 'L':
+
         // Award Manned Lunar Orbital only if done by a (manned)
         // capsule and not when parking an unmanned LM during an
         // LOR mission
@@ -744,7 +745,7 @@ void MissionSetup(char plr, char mis)
                 Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
                 DMFake = 1;
             }
-            
+
             if (Data->P[plr].Mission[mis].Joint) {
                 // Apollo (2) + LM (1)
                 if (Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
@@ -993,7 +994,7 @@ MisSkip(const char plr, const struct mStr &mission)
                 if (MH[i][j] != NULL) {
                     // Don't subtract twice if already done
                     done = 0;
-                    
+
                     if (i) {
                         for (k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
                             if (MH[0][k] == MH[i][j]) {

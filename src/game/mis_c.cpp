@@ -245,11 +245,11 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
         while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
+
             if (j == Assets->sSeq.size()) {
                 err = 1;
                 break;
-            }
-            else {
+            } else {
                 ID = Assets->sSeq.at(j).MissionIdSequence;
             }
         }
@@ -266,17 +266,16 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
         while (strncmp(&ID[3], Seq, strlen(&ID[3])) != 0) {
             j++;
+
             if (j == Assets->fSeq.size()) {
                 err = 1;
                 break;
-            }
-            else {
+            } else {
                 if (strncmp(Assets->fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
                     // j is already entering the next MissionStep
                     err = 1;
                     break;
-                }
-                else {
+                } else {
                     ID = Assets->fSeq.at(j).MissionIdSequence;
                 }
             }
@@ -294,6 +293,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     if (ID[0] - 0x30 != 1) {
         max = (unsigned)(ID[0] - 0x30);
         j += Mev[step].rnum % max;
+
         if (mode == 0) {
             ID = Assets->sSeq.at(j).MissionIdSequence;
         } else {
@@ -373,7 +373,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     k = j;
 
     while (keep_going && i < (int)max) {
-        int aidx=0, sidx=0;
+        int aidx = 0, sidx = 0;
         char seq_name[20];
         char name[20]; /** \todo assumption about seq_filename len */
 
@@ -390,7 +390,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         }
 
         snprintf(name, sizeof(name), "%s.ogg", seq_name);
-                
+
         mmfp = sOpen(name, "rb", FT_VIDEO);
 
         INFO2("opening video file `%s'", name);

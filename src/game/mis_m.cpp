@@ -116,8 +116,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
                     *Now = Assets->fails.at(i);
                     break;
                 }
-            }
-            else { // manned
+            } else { // manned
                 if (Assets->fails.at(i).percentage > rnum) {
                     *Now = Assets->fails.at(i);
                     break;
@@ -125,7 +124,7 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
             }
         }
     }
-    
+
     DEBUG1("<-GetFailStat()");
 }
 
@@ -940,6 +939,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 9:  // Recheck Step
+
         // We have not reached space yet
         if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
             InSpace--;
@@ -1065,11 +1065,12 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 19:   // Set mission flag and recheck step
+
         // We have not reached space yet
         if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
             InSpace--;
         }
-        
+
         if ((MFlag & val) > 0) {
             Mev[STEP].StepInfo = 1200 + Mev[STEP].loc;
             FNote = 2;
@@ -1196,8 +1197,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         if (temp == Mission_DirectAscent_LL || temp == Mission_Soyuz_LL) {
             F_KillCrew(F_ALL, 0);
-        }
-        else  {
+        } else  {
             // This error can occur on Photo Recon tests, so the LM must
             // be identified first.
 

@@ -78,18 +78,21 @@ void MailSwitchEndgame(void)
 {
     switch (MAIL) {
     case 0:
-      MAIL = 1;
-      break;
+        MAIL = 1;
+        break;
+
     case 1:
-      MAIL = 2;
-      break;
+        MAIL = 2;
+        break;
+
     case 2:
-      MAIL = 1;
-      break;
+        MAIL = 1;
+        break;
+
     case 3:
-      MAIL = 2;
-      break;
+        MAIL = 2;
+        break;
     }
-                                
+
     MailSwitchPlayer();
 }

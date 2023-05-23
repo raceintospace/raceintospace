@@ -296,7 +296,7 @@ TrainText(char plr, int astro, int cnt)
     case 3:
         draw_string(0, 0, "IV");
         break;
-        
+
     default:
         draw_string(0, 0, "A.F.");
         break;

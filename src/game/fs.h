@@ -31,12 +31,12 @@ struct ffblk {
 /* Physfs provides multiplatform implementation of directory contents listing. */
 struct PhysFsEnumerator {
 public:
-    PhysFsEnumerator(const std::string& name) : m_name(name) {}
+    PhysFsEnumerator(const std::string &name) : m_name(name) {}
     int enumerate();
-    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string& origdir, const std::string& fname) = 0;
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string &origdir, const std::string &fname) = 0;
 protected:
     static PHYSFS_EnumerateCallbackResult
-        enumerate_callback(void* data, const char* origdir, const char* fname);
+    enumerate_callback(void *data, const char *origdir, const char *fname);
 private:
     std::string m_name;
 };

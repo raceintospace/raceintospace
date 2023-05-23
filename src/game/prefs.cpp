@@ -374,8 +374,7 @@ void Prefs(int where, int player)
             Data->Def.Plr2 -= 2;
             hum2 = 1;
         }
-    }
-    else {
+    } else {
         plr[0] = 0;
         plr[1] = 0;
 
@@ -443,13 +442,13 @@ void Prefs(int where, int player)
 
                     if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
                         fname = locate_file("hist.json", FT_DATA);
-                        
+
                         ifstream os(fname);
                         cereal::JSONInputArchive ar(os);
 
                         // Don't make a loop over the players as this
                         // will break the preprocessor macro.
-                        
+
                         ARCHIVE_VECTOR(Data->P[0].Probe, struct Equipment, 7);
                         ARCHIVE_VECTOR(Data->P[0].Rocket, struct Equipment, 7);
                         ARCHIVE_VECTOR(Data->P[0].Manned, struct Equipment, 7);

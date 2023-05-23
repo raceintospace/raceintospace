@@ -303,8 +303,7 @@ int game_main_impl(int argc, char *argv[])
                 } else {
                     AI[1] = 0;
                 }
-            }
-            else {
+            } else {
                 AI[0] = AI[1] = 0;
             }
 
@@ -654,8 +653,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             // Only increase the global event counter if this is really a new
             // turn and not one already played in a save game
-            if(Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season)
-               + (MAIL_INVERTED == 1 ? 1^i : i)) {
+            if (Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season)
+                + (MAIL_INVERTED == 1 ? 1 ^ i : i)) {
                 Data->Count++;
             }
 
@@ -717,7 +716,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                             else {
                                 break;
                             }
-                            
+
 
                         }
 
@@ -804,8 +803,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         // End of turn MAIL update
         if (MAIL == 1) {
             MAIL = 3;
-        }
-        else if (MAIL == 2) {
+        } else if (MAIL == 2) {
             MAIL = 0;
         }
 

@@ -198,7 +198,7 @@ void FreeLaunchHardware(const char plr, const int pad)
         const uint8_t hardwareID = launch.Hard[i];
 
         if (hardwareID != 0xFF) { // 0xFF means unused
-            
+
             switch (i) {
             case Mission_Capsule:
             case Mission_LM:  // Manned+LM
@@ -218,7 +218,7 @@ void FreeLaunchHardware(const char plr, const int pad)
 
                 break;
             }
-            
+
         }
     }
 
