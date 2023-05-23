@@ -676,7 +676,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             // Highlight EVA for EVA Specialist, if the mission...
             if (men == 1 || ((men == 2 || men == 3) && i == 1) ||
-                 (men == 4 && i > 1)) {
+                (men == 4 && i > 1)) {
                 if (IsEVA(mType)) {
                     // ...will include an EVA...
                     display::graphics.setForegroundColor(11);

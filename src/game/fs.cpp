@@ -400,9 +400,9 @@ PhysFsEnumerator::enumerate()
 }
 
 PHYSFS_EnumerateCallbackResult
-PhysFsEnumerator::enumerate_callback(void* data, const char* origdir, const char* fname)
+PhysFsEnumerator::enumerate_callback(void *data, const char *origdir, const char *fname)
 {
-    PhysFsEnumerator* self = static_cast<PhysFsEnumerator*>(data);
+    PhysFsEnumerator *self = static_cast<PhysFsEnumerator *>(data);
     return self->onItem(origdir, fname);
 }
 

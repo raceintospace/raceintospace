@@ -387,6 +387,7 @@ struct MissionType {
         for (int i = 0; i < Mission_PrimaryBooster; i++) {
             ASSERT(Hard[i] >= -1 && Hard[i] < 7);
         }
+
         // Saturn V / N1 with boosters has a hardware index of 7
         ASSERT(Hard[Mission_PrimaryBooster] >= -1
                && Hard[Mission_PrimaryBooster] < 8);
@@ -876,9 +877,11 @@ struct Players {
         ar(CEREAL_NVP(Count));
         ar(CEREAL_NVP(PD));
         ar(CEREAL_NVP(Mile));
+
         if (version > 0) {
             ar(CEREAL_NVP(Mail));
         }
+
         ar(CEREAL_NVP(Mev));
         ar(CEREAL_NVP(Step));
 
@@ -912,10 +915,10 @@ struct XFails {
         ar(CEREAL_NVP(val));
         ar(CEREAL_NVP(xtra));
         ar(CEREAL_NVP(fail));
-        
+
         ARCHIVE_STRING(text);
     }
-      
+
 };
 
 struct AnimType {
@@ -1181,7 +1184,7 @@ struct MissionSequenceKey {
             ar(CEREAL_NVP(MissionStep));
         } catch (...) { // No MissionStep in seq.json
         }
-            
+
         ar(CEREAL_NVP(MissionIdSequence));
         ar(CEREAL_NVP(video));
         ar(CEREAL_NVP(audio));
@@ -1271,8 +1274,7 @@ struct INTERIMDATA {
         if (version == 1) {
             ARCHIVE_ARRAY(tempReplay, std::vector <REPLAY>);
             ARCHIVE_ARRAY(tempEvents, std::string);
-        }
-        else if (version == 0) {
+        } else if (version == 0) {
             // Legacy replay format
             ARCHIVE_ARRAY(tempEvents, std::string);
 
@@ -1288,6 +1290,7 @@ struct INTERIMDATA {
             for (int i = 0; i < legacyReplay.size(); i++) {
                 tempReplay.at(i).clear();
                 assert(legacyReplay.at(i).Qty <= 35);
+
                 for (int j = 0; j < legacyReplay.at(i).Qty; j++) {
 
                     int code = legacyReplay.at(i).Off[j];
@@ -1297,13 +1300,12 @@ struct INTERIMDATA {
                     } else {
                         tempReplay.at(i).push_back({true, fseq.at(code)});
                     }
-                        
+
                 }
             }
-            
-        }
-        else {
-            throw(std::invalid_argument("Invalid INTERIMDATA version number"));
+
+        } else {
+            throw (std::invalid_argument("Invalid INTERIMDATA version number"));
         }
     }
 };

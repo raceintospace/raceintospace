@@ -54,8 +54,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
 
     if (Type == "OOOO") {
         Rep = interimData.tempReplay.at((plr * 100) + num);
-    }
-    else {
+    } else {
         Rep.push_back({false, Type});
     }
 
@@ -85,13 +84,13 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
             if (i == fSeq.size()) {
                 return;
             }
-        }
-        else {
+        } else {
             for (j = 0; j < sSeq.size(); j++) {
                 if (sSeq.at(j).MissionIdSequence == Rep.at(kk).seq) {
                     break;
                 }
             }
+
             if (j == sSeq.size()) {
                 return;
             }
@@ -107,7 +106,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
             int frm_idx;
             char seq_name[20];
             char fname[20];
-            
+
             if (Rep.at(kk).Failure) {
                 strntcpy(seq_name, fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
             } else {
@@ -205,7 +204,7 @@ DispBaby(int x, int y, int loc, char neww)
 
 /**
  * This function is used to display the first frame of the replay in
- * the mission review screen. 
+ * the mission review screen.
  */
 void
 AbzFrame(char plr, int num, int dx, int dy, int width, int height,
@@ -225,9 +224,10 @@ AbzFrame(char plr, int num, int dx, int dy, int width, int height,
             break;
         }
     }
+
     if (j == sSeq.size()) {
         return;
-    }    
+    }
 
     /* XXX use a generic function */
     snprintf(vname, sizeof(vname), "%s.ogg", sSeq.at(j).video.at(0).c_str());

@@ -673,17 +673,17 @@ void FileAccess(char mode)
             }
 
         } else if (key == K_PGDN) {  // Page Down
-        
+
             if (now < savegames.size()) {
                 now += 8;
             }
-            
+
             if (savegames.size() < 8) {  // user only has a few saves
                 now = savegames.size() - 1;
                 BarB = savegames.size() - 1;
             } else {
                 if (now < (savegames.size() - 8)) {
-                
+
                     if (now > (savegames.size() - 1)) {
                         now = savegames.size();
                         BarB = 8;
@@ -699,13 +699,15 @@ void FileAccess(char mode)
                     } else {
                         draw_up_arrow(194, 55);
                     }
+
                     if (now >= (savegames.size() - 1)) {
                         draw_down_arrow(194, 94);
                     }
                 } else {
                     BarB = 8;
-                    if (now >= (savegames.size() - 1)) { 
-                        now = savegames.size() - 1; 
+
+                    if (now >= (savegames.size() - 1)) {
+                        now = savegames.size() - 1;
                         draw_down_arrow(194, 94);
                     } else {
                         draw_down_arrow_highlight(194, 94);
@@ -939,8 +941,8 @@ void autosave_game(const char *name)
     write_save_file(name, hdr);
 
     // Repair data modified by save
-    Data->plr[0] = Data->Def.Plr1 = plr[0] = 2*AI[0];
-    Data->plr[1] = Data->Def.Plr2 = plr[1] = 1 + 2*AI[1];
+    Data->plr[0] = Data->Def.Plr1 = plr[0] = 2 * AI[0];
+    Data->plr[1] = Data->Def.Plr2 = plr[1] = 1 + 2 * AI[1];
 
 }
 
@@ -1238,11 +1240,13 @@ int FutureCheck(char plr, char type)
             draw_string(111, 52 + i * 51, "IT WILL COST ");
             draw_number(0, 0, abs(p[i]));
             draw_string(0, 0, "MB TO REPAIR.");
+
             if (Data->P[plr].Cash >= abs(p[i])) {
                 display::graphics.setForegroundColor(11);
             } else {
                 display::graphics.setForegroundColor(9);
             }
+
             draw_string(113, 60 + i * 51, "(OF ");
             draw_number(0, 0, Data->P[plr].Cash);
             draw_string(0, 0, "MB)");
@@ -1277,11 +1281,14 @@ int FutureCheck(char plr, char type)
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
+
                     // Show (RE)ASSEMBLE HARDWARE in other color if missing requirement penalties
                     int penalty = AchievementPenalty(plr, plan);
+
                     if (penalty > 2 && type != 0) {
                         display::graphics.setForegroundColor(11);
                     }
+
                     if (penalty > 8 && type != 0) {
                         display::graphics.setForegroundColor(8);
                     }
@@ -1313,15 +1320,17 @@ int FutureCheck(char plr, char type)
             if (type == 0) {   // Future Missions
                 display::graphics.setForegroundColor(1);
 
-                    // Show (RE)ASSIGN FUTURE MISSION in other color if missing requirement penalties
-                    const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
-                    int penalty = AchievementPenalty(plr, plan);
-                    if (penalty > 2) {
-                        display::graphics.setForegroundColor(11);
-                    }
-                    if (penalty > 8) {
-                        display::graphics.setForegroundColor(8);
-                    }
+                // Show (RE)ASSIGN FUTURE MISSION in other color if missing requirement penalties
+                const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                int penalty = AchievementPenalty(plr, plan);
+
+                if (penalty > 2) {
+                    display::graphics.setForegroundColor(11);
+                }
+
+                if (penalty > 8) {
+                    display::graphics.setForegroundColor(8);
+                }
 
                 if (Data->P[plr].Future[i].part == 0) {
                     if (m[i] == 0) {
@@ -1355,9 +1364,11 @@ int FutureCheck(char plr, char type)
             if (type == 0) {
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
                 draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
+
                 if (Data->P[plr].Cash > 19) {
                     display::graphics.setForegroundColor(11);
                 }
+
                 draw_string(0, 0, "(OF ");
                 draw_number(0, 0, Data->P[plr].Cash);
                 draw_string(0, 0, ")");
@@ -1426,15 +1437,23 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+
                     // Update player's cash shown on other pads
                     for (ii = 0; ii < 3; ii++) {
                         display::graphics.setForegroundColor(9);
+
                         if (ii != i && p[ii] > 1) {
-                            if (Data->P[plr].Cash >= abs(p[ii])) { display::graphics.setForegroundColor(11); }
+                            if (Data->P[plr].Cash >= abs(p[ii])) {
+                                display::graphics.setForegroundColor(11);
+                            }
                         }
+
                         if (ii != i && p[ii] == -1) {
-                            if (Data->P[plr].Cash > 19) { display::graphics.setForegroundColor(11); }                                
+                            if (Data->P[plr].Cash > 19) {
+                                display::graphics.setForegroundColor(11);
+                            }
                         }
+
                         if (p[ii] == -1 || p[ii] > 1) {
                             if (p[ii] > 1) {
                                 xx = 113;
@@ -1443,6 +1462,7 @@ int FutureCheck(char plr, char type)
                                 xx = 171;
                                 yy = 53 + ii * 51;
                             }
+
                             fill_rectangle(xx, yy, xx + 44, yy + 4, 3);
                             draw_string(xx, yy + 4, "(OF ");
                             draw_number(0, 0, Data->P[plr].Cash);
@@ -1469,15 +1489,23 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     MissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+
                     // Update player's cash shown on other pads
                     for (ii = 0; ii < 3; ii++) {
                         display::graphics.setForegroundColor(9);
+
                         if (ii != i && p[ii] > 1) {
-                            if (Data->P[plr].Cash >= abs(p[ii])) { display::graphics.setForegroundColor(11); }
+                            if (Data->P[plr].Cash >= abs(p[ii])) {
+                                display::graphics.setForegroundColor(11);
+                            }
                         }
+
                         if (ii != i && p[ii] == -1) {
-                            if (Data->P[plr].Cash > 19) { display::graphics.setForegroundColor(11); }                                
+                            if (Data->P[plr].Cash > 19) {
+                                display::graphics.setForegroundColor(11);
+                            }
                         }
+
                         if (p[ii] == -1 || p[ii] > 1) {
                             if (p[ii] > 1) {
                                 xx = 113;
@@ -1486,6 +1514,7 @@ int FutureCheck(char plr, char type)
                                 xx = 171;
                                 yy = 53 + ii * 51;
                             }
+
                             fill_rectangle(xx, yy, xx + 44, yy + 4, 3);
                             draw_string(xx, yy + 4, "(OF ");
                             draw_number(0, 0, Data->P[plr].Cash);
@@ -1594,8 +1623,7 @@ void LoadGame(const char *filename)
     } else { // Not zlib compressed data
         if (Help("i174") == 1) {
             LegacyLoad(header, fin, fileLength);
-        }
-        else {
+        } else {
             return;
         }
     }
@@ -1699,22 +1727,25 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
         for (j = 0; j < 7; j++) {
             p = Data->P[i].Probe[j].MisFail;
             // Shift the remaining bytes of the struct by 2
-            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
         }
+
         for (j = 0; j < 7; j++) {
             p = Data->P[i].Rocket[j].MisFail;
             // Shift the remaining bytes of the struct by 2
-            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
         }
+
         for (j = 0; j < 7; j++) {
             p = Data->P[i].Manned[j].MisFail;
             // Shift the remaining bytes of the struct by 2
-            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
         }
+
         for (j = 0; j < 7; j++) {
             p = Data->P[i].Misc[j].MisFail;
             // Shift the remaining bytes of the struct by 2
-            std::memmove(p+2, p, (int8_t *) Data + legacySize - p);
+            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
         }
     }
 
@@ -1747,6 +1778,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
         interimData.tempReplay.at(i).clear();
         assert(load_buffer[i].Qty <= 35);
+
         for (int j = 0; j < load_buffer[i].Qty; j++) {
 
             int code = load_buffer[i].Off[j];
@@ -1756,7 +1788,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
             } else {
                 interimData.tempReplay.at(i).push_back({true, fseq.at(code)});
             }
-            
+
         }
     }
 
@@ -1908,8 +1940,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
     else if ((MAIL_PLAYER == 1)) {
         Data->Def.Plr1 = 0;
         Data->Def.Plr2 = 9;
-    }
-    else {
+    } else {
         Data->Def.Plr1 = plr[0];
         Data->Def.Plr2 = plr[1];
     }
@@ -2014,12 +2045,14 @@ int SaveGame(const std::vector<SFInfo> savegames)
     // The field savegames[i].Name is a filename provided by
     // the file system, so it already includes the .SAV extension.
     strncpy(header.Name, title.c_str(), sizeof(header.Name) - 1);
+
     if (temp == NOTSAME) {
         std::string filename = title + ".SAV";
         write_save_file(filename.c_str(), header);
     } else {
         write_save_file(savegames[i].Name, header);
     }
+
     return 0;
 }
 
