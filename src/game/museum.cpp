@@ -93,8 +93,9 @@ void BackOne(char plr, char *pos, char *pos2);
 void ForOne(char plr, char *pos, char *pos2);
 void ForEnd(char plr, char *pos, char *pos2);
 void DPrest(char plr, char *pos, char *pos2);
+void DrawMisHist(char plr, int *where);
+void DrawSpaceHistoryInterface(int plr);
 void Mission_Data_Buttons(char plr, int *where);
-void Draw_Mis_Stats(char plr, char index, int *where, char mode);
 void FastOne(char plr, int *where);
 void FullRewind(char plr, int *where);
 void RewindOne(char plr, int *where);
@@ -672,26 +673,7 @@ void ShowSpHist(char plr)
               ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
     }
 
-    ORBox(0, 0, 319, 22, 3);  // Draw Inbox around top
-    draw_heading(48, 5, "MISSION HISTORY", 0, -1);
-    IOBox(243, 3, 316, 19);
-    InBox(3, 3, 31, 19);  // USA inbox
-    draw_small_flag(plr, 4, 4);
-    display::graphics.setForegroundColor(1);
-    draw_string(257, 13, "CONTINUE");
-
-    ORBox(0, 24, 319, 199, 3);
-    IRBox(4, 28, 315, 170, 0);
-    IRBox(4, 174, 315, 195, 0);
-    ORBox(7, 176, 49, 193, 3);
-    ORBox(51, 176, 93, 193, 3);
-    ORBox(95, 176, 224, 193, 3);  //draw the boxes under date
-    ORBox(226, 176, 268, 193, 3);
-    ORBox(270, 176, 312, 193, 3);
-    Display_ARROW(0, 23, 178);  //left
-    Display_ARROW(1, 63, 178);  //left arrow
-    Display_ARROW(2, 239, 178);  //right
-    Display_ARROW(3, 285, 178);  //right arrow
+    DrawSpaceHistoryInterface(plr);
     DrawMisHist(plr, &pos);
     FadeIn(2, 5, 0, 0);
 
@@ -730,6 +712,12 @@ void Mission_Data_Buttons(char plr, int *where)
 {
     char index, yr, season, j, temp = 0;
 
+    auto launchReview = [](int plr, int index, int *where) {
+        Draw_Mis_Stats(plr, index, where, 0);
+        DrawSpaceHistoryInterface(plr);
+        DrawMisHist(plr, where);
+    };
+
     /* Okay, now we have to decide whether there are any missions displayed
        on the screen at this time. If there are any, parse the button. */
     if (Data->P[plr].PastMissionCount == 0) {
@@ -766,12 +754,15 @@ void Mission_Data_Buttons(char plr, int *where)
         j = (Data->P[plr].History[index].Month < 6) ? Data->P[plr].History[index].Month
             : Data->P[plr].History[index].Month - 6;
 
-        Button2(13 + 49 * j, 40 * (1 + temp), 62 + 49 * j, 40 * (2 + temp) , Draw_Mis_Stats(plr, index, where, 0), key, 0x31 + temp);
+        Button2(13 + 49 * j, 40 * (1 + temp), 62 + 49 * j, 40 * (2 + temp),
+                launchReview(plr, index, where),
+                key, 0x31 + temp);
 
         temp++;
         index++;
     } while (Data->P[plr].History[index].MissionYear == yr);
 }
+
 
 void FastOne(char plr, int *where)
 {
@@ -1012,6 +1003,36 @@ void DrawMisHist(char plr, int *where)
 
     return;
 }
+
+
+/**
+ * Draw the main GUI for the Space History screen, excluding the
+ * timeline display.
+ */
+void DrawSpaceHistoryInterface(int plr)
+{
+    ORBox(0, 0, 319, 22, 3);  // Draw Inbox around top
+    draw_heading(48, 5, "MISSION HISTORY", 0, -1);
+    IOBox(243, 3, 316, 19);
+    InBox(3, 3, 31, 19);  // USA inbox
+    draw_small_flag(plr, 4, 4);
+    display::graphics.setForegroundColor(1);
+    draw_string(257, 13, "CONTINUE");
+
+    ORBox(0, 24, 319, 199, 3);
+    IRBox(4, 28, 315, 170, 0);
+    IRBox(4, 174, 315, 195, 0);
+    ORBox(7, 176, 49, 193, 3);
+    ORBox(51, 176, 93, 193, 3);
+    ORBox(95, 176, 224, 193, 3);  //draw the boxes under date
+    ORBox(226, 176, 268, 193, 3);
+    ORBox(270, 176, 312, 193, 3);
+    Display_ARROW(0, 23, 178);  //left
+    Display_ARROW(1, 63, 178);  //left arrow
+    Display_ARROW(2, 239, 178);  //right
+    Display_ARROW(3, 285, 178);  //right arrow
+}
+
 
 void ShowAstrosHist(char plr)
 {
