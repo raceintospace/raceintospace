@@ -998,7 +998,6 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 delay(150);
             }
 
-            DrawMisHist(plr, where);
             key = 0;
             break;
         } else if (mode == 1 && ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons == 1) || key == K_ENTER)) {
