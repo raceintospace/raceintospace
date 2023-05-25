@@ -138,7 +138,7 @@ void DrawStatistics(char Win)
     qty = 6;
     starty = 118;
     display::LegacySurface local(30, 19);
-    fin = sOpen("PORTBUT.BUT", "rb", 0);
+    fin = sOpen("PORTBUT.BUT", "rb", FT_DATA);
     OutBox(152, 41, 183, 61); // directors ranking
 
     for (i = 0; i < qty; i++) {
@@ -495,7 +495,7 @@ void SelectBest(char plr, int pos)
 
     memset(buffer, 0x00, 5000);
     Men = (struct ManPool *)buffer;
-    fin = sOpen("CREW.DAT", "rb", 0);
+    fin = sOpen("CREW.DAT", "rb", FT_DATA);
     fseek(fin, ((sizeof(struct ManPool)) * 106)*plr, SEEK_SET);
     fread(Men, (sizeof(struct ManPool) * 106), 1, fin);
     fclose(fin);

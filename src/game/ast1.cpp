@@ -702,7 +702,7 @@ void AstSel(char plr)
 
     //TODO: Candidate for protobuf replacement?
     Men = (struct ManPool *) buffer;
-    fin = sOpen("MEN.DAT", "rb", 1);  /* Open Astronaut Data File  */
+    fin = sOpen("MEN.DAT", "rb", FT_SAVE);  // Open Astronaut Data File
     fseek(fin, ((sizeof(struct ManPool)) * 106)*plr, SEEK_SET);
     fread(Men, (sizeof(struct ManPool)) * 106, 1, fin);
     fclose(fin);

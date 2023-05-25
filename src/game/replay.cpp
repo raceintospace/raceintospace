@@ -176,7 +176,7 @@ DispBaby(int x, int y, int loc, char neww)
     display::LegacySurface boob(68, 46);
     bot = (uint16_t *) boob.pixels();
 
-    fin = sOpen("BABYPICX.CDR", "rb", 0);
+    fin = sOpen("BABYPICX.CDR", "rb", FT_DATA);
     locl = (int32_t) 1612 * loc;  // First Image
 
     fseek(fin, locl, SEEK_SET);

@@ -248,7 +248,7 @@ const char *GetDurationParens(int duration)
 struct mStr GetMissionPlan(const int code)
 {
     mStr mission;
-    FILE *fin = sOpen("MISSION.DAT", "rb", 0);
+    FILE *fin = sOpen("MISSION.DAT", "rb", FT_DATA);
 
     if (! fin) {
         throw IOException("Error opening file MISSION.DAT");

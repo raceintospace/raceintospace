@@ -462,7 +462,7 @@ int Help(const char *FName)
         return 0;
     }
 
-    fin = sOpen("HELP.CDR", "rb", 0);
+    fin = sOpen("HELP.CDR", "rb", FT_DATA);
 
     if (! fin) {
         throw IOException("Could not open help file HELP.CDR.");
@@ -734,33 +734,40 @@ void writePrestigeFirst(char index)   ///index==plr
             ++w;
             Data->PD[index][i] |= 1;
 
+            // NOTE: This method, inside a loop as it is, depends upon
+            // a strict ordering of PrestigeValues such that Duration_F
+            // is lower than Duration_E, etc.
             switch (i) {
-            case 8:
-                if (Data->Prestige[Prestige_Duration_E].Place == index && Data->PD[index][9] == 0) {
+            case Prestige_Duration_F:
+                if (Data->Prestige[Prestige_Duration_E].Place == index &&
+                    Data->PD[index][Prestige_Duration_E] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] |= 1;
+                    Data->PD[index][Prestige_Duration_E] |= 1;
                 }
 
-            case 9:
-                if (Data->Prestige[Prestige_Duration_D].Place == index && Data->PD[index][10] == 0) {
+            case Prestige_Duration_E:
+                if (Data->Prestige[Prestige_Duration_D].Place == index &&
+                    Data->PD[index][Prestige_Duration_D] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] |= 1;
+                    Data->PD[index][Prestige_Duration_D] |= 1;
                 }
 
-            case 10:
-                if (Data->Prestige[Prestige_Duration_C].Place == index && Data->PD[index][11] == 0) {
+            case Prestige_Duration_D:
+                if (Data->Prestige[Prestige_Duration_C].Place == index &&
+                    Data->PD[index][Prestige_Duration_C] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] |= 1;
+                    Data->PD[index][Prestige_Duration_C] |= 1;
                 }
 
-            case 11:
-                if (Data->Prestige[Prestige_Duration_B].Place == index && Data->PD[index][12] == 0) {
+            case Prestige_Duration_C:
+                if (Data->Prestige[Prestige_Duration_B].Place == index &&
+                    Data->PD[index][Prestige_Duration_B] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] |= 1;
+                    Data->PD[index][Prestige_Duration_B] |= 1;
                 }
 
-            case 12:
-                i = 12;
+            case Prestige_Duration_B:
+                i = Prestige_Duration_B;
 
             default:
                 break;
@@ -770,7 +777,8 @@ void writePrestigeFirst(char index)   ///index==plr
 
     for (i = 0; i < 28; i++) {
         // Prestige Seconds
-        if (w < 6 && Data->Prestige[i].mPlace == index && Data->PD[index][i] == 0) {
+        if (w < 6 && Data->Prestige[i].mPlace == index &&
+            Data->PD[index][i] == 0) {
             if (draw == 0) {
                 ShBox(6, 170, 314, 197);
                 fill_rectangle(10, 173, 310, 194, 7);
@@ -793,32 +801,36 @@ void writePrestigeFirst(char index)   ///index==plr
             Data->PD[index][i] |= 1;
 
             switch (i) {
-            case 8:
-                if (Data->Prestige[Prestige_Duration_E].mPlace == index && Data->PD[index][9] == 0) {
+            case Prestige_Duration_F:
+                if (Data->Prestige[Prestige_Duration_E].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_E] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] |= 1;
+                    Data->PD[index][Prestige_Duration_E] |= 1;
                 }
 
-            case 9:
-                if (Data->Prestige[Prestige_Duration_D].mPlace == index && Data->PD[index][10] == 0) {
+            case Prestige_Duration_E:
+                if (Data->Prestige[Prestige_Duration_D].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_D] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] |= 1;
+                    Data->PD[index][Prestige_Duration_D] |= 1;
                 }
 
-            case 10:
-                if (Data->Prestige[Prestige_Duration_C].mPlace == index && Data->PD[index][11] == 0) {
+            case Prestige_Duration_D:
+                if (Data->Prestige[Prestige_Duration_C].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_C] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] |= 1;
+                    Data->PD[index][Prestige_Duration_C] |= 1;
                 }
 
-            case 11:
-                if (Data->Prestige[Prestige_Duration_B].mPlace == index && Data->PD[index][12] == 0) {
+            case Prestige_Duration_C:
+                if (Data->Prestige[Prestige_Duration_B].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_B] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] |= 1;
+                    Data->PD[index][Prestige_Duration_B] |= 1;
                 }
 
-            case 12:
-                i = 12;
+            case Prestige_Duration_B:
+                i = Prestige_Duration_B;
 
             default:
                 break;
@@ -1030,9 +1042,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             display::graphics.setForegroundColor(1);
 
             if (x == 0 && y == 0) {
-                FILE *tin;
+                // Create temp image file
+                FILE *tin = sOpen("REPL.TMP", "wb", FT_SAVE);
 
-                tin = sOpen("REPL.TMP", "wb", 1);  // Create temp image file
                 {
                     display::AutoPal p(display::graphics.legacyScreen());
                     fwrite(p.pal, 768, 1, tin);
@@ -1069,7 +1081,8 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 }
 
                 FadeOut(2, 10, 0, 0);
-                tin = sOpen("REPL.TMP", "rb", 1);  // replad temp image file
+                // reload temp image file
+                tin = sOpen("REPL.TMP", "rb", FT_SAVE);
                 {
                     display::AutoPal p(display::graphics.legacyScreen());
                     fread(p.pal, 768, 1, tin);

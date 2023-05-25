@@ -154,7 +154,7 @@ OpenNews(char plr, char *buf, int bud)
         strcpy(&buf[0], "GOOD EVENING. AND NOW, THE NEWS...x");
     }
 
-    fp = sOpen("EVENT.DAT", "rb", 0);
+    fp = sOpen("EVENT.DAT", "rb", FT_DATA);
     fseek(fp, i, SEEK_SET);
     bufsize = strlen(buf);
     fread(&buf[bufsize], 249, 1, fp);
@@ -163,7 +163,7 @@ OpenNews(char plr, char *buf, int bud)
     buf[bufsize] = 'x';
     //Astronaut info
 
-    fp = sOpen("NEWS.DAT", "rb", 0);
+    fp = sOpen("NEWS.DAT", "rb", FT_DATA);
     fread(&len[0], sizeof(len), 1, fp);
 
     for (i = 0; i < 5; i++) {
@@ -231,7 +231,7 @@ OpenNews(char plr, char *buf, int bud)
     //Specs: check tracking station for director's message |
     //------------------------------------------------------
     if (Option != -1) {
-        if ((gork = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", 0)) != NULL) {
+        if ((gork = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA)) != NULL) {
             fread(&old, sizeof(old), 1, gork);
 
             if (old[0] != 0x00) {

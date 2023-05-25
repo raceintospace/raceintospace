@@ -985,8 +985,9 @@ void TestFMis(int plr, int i)
             /* Failed Mission */
             misCode = Data->P[plr].History[i].MissionCode;
             Data->P[plr].History[i].Event = Data->P[plr].History[i].Saf = 0;
+            // TODO: Break this line up; it's unreadable!
             Data->P[plr].History[i].Prestige =
-                PrestNeg(plr, (misCode == Mission_MarsFlyby) ? 4 : (misCode == Mission_JupiterFlyby) ? 5 : 6);
+                PrestNeg(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby : Prestige_SaturnFlyby);
             Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x01 : (misCode == Mission_JupiterFlyby) ? 0x02 : 0x04;
             Data->P[plr].History[i].spResult = 5000;
         }
@@ -995,7 +996,7 @@ void TestFMis(int plr, int i)
             && Data->P[plr].History[i].Prestige == 0) {
             misCode = Data->P[plr].History[i].MissionCode;
             Data->P[plr].History[i].Prestige =
-                Set_Goal(plr, (misCode == Mission_MarsFlyby) ? 4 : (misCode == Mission_JupiterFlyby) ? 5 : 6, 3);
+                Set_Goal(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby : Prestige_SaturnFlyby, 3);
             Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x10 : (misCode == Mission_JupiterFlyby) ? 0x20 : 0x40;
             Data->P[plr].History[i].spResult = 1;
             Data->P[plr].History[i].Saf = 0;
