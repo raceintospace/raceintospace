@@ -832,10 +832,6 @@ void writePrestigeFirst(char index)   ///index==plr
 
 void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 {
-    int j, k, mcode;
-    int let;
-
-
     if (mode == 0) {
         InBox(245, 5, 314, 17);
     }
@@ -853,11 +849,11 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     display::graphics.setForegroundColor(11);
     draw_string(58, 41, "MISSION INFORMATION");
     draw_string(12, 104, "MISSION DURATION: ");
-    Name[0] = Data->P[plr].History[index].Duration + 'A' - 1;
-    Name[1] = 0;
 
-    if (Name[0] >= 'A') {
-        draw_string(0, 0, Name);
+    char duration = 'A' + Data->P[plr].History[index].Duration - 1;
+
+    if (duration >= 'A' && duration <= 'F') {
+        draw_character(duration);
     } else {
         draw_string(0, 0, "NONE");
     }
@@ -870,8 +866,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
         draw_string(0, 0, "PENDING");
     }
 
-    mcode = Data->P[plr].History[index].MissionCode;
-
+    int mcode = Data->P[plr].History[index].MissionCode;
     const struct mStr plan = GetMissionPlan(mcode);
 
     display::graphics.setForegroundColor(1);
@@ -935,13 +930,16 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     // Crew Stuff
     display::graphics.setForegroundColor(11);
 
-    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 && Data->P[plr].History[index].Man[PAD_B][0] == -1) {
+    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 &&
+        Data->P[plr].History[index].Man[PAD_B][0] == -1) {
         draw_string(13, 137, "UNMANNED MISSION");
     } else {
+        int let = 0;
+
         // First Part -- Men
         if (Data->P[plr].History[index].Man[PAD_A][0] != -1) {
-            for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[PAD_A][j];
+            for (int j = 0; j < 4; j++) {
+                int k = Data->P[plr].History[index].Man[PAD_A][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
@@ -955,21 +953,21 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             }
 
             let = 1;    // Men on Part 1
-        } else {
-            let = 0;    // Men not on Part 1
         }
 
         // Second Part -- Men
         if (Data->P[plr].History[index].Man[PAD_B][0] != -1) {
-            for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[PAD_B][j];
+            for (int j = 0; j < 4; j++) {
+                int k = Data->P[plr].History[index].Man[PAD_B][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
-                    display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
+                    // Display women in blue, not yellow
+                    display::graphics.setForegroundColor(18);
                 }
 
                 if (k != -1) {
-                    draw_string(13 + let * 100, 137 + j * 7, Data->P[plr].Pool[k].Name);
+                    draw_string(13 + let * 100, 137 + j * 7,
+                                Data->P[plr].Pool[k].Name);
                 }
 
                 display::graphics.setForegroundColor(11);
@@ -1122,13 +1120,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             key = 0;
 
         }  // if
-
     }  // while
 
     display::graphics.videoRect().w = 0;
-
     display::graphics.videoRect().h = 0;
-
 }
 
 

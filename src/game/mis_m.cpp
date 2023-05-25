@@ -26,6 +26,7 @@
 // This file is part of mission branching and failure handling
 
 #include <cassert>
+#include <string>
 #include <vector>
 
 #include "display/graphics.h"
@@ -272,10 +273,16 @@ void MisCheck(char plr, char mpad)
 
             }
 
-            memset(Name, 0x00, sizeof Name);
-            strcpy(Name, Mev[STEP].Name);
-            Name[0] = '#';  // Launch Code
-            PlaySequence(plr, STEP, Name, 0);  // Special Case #47236
+            std::string name(Mev[STEP].Name);
+
+            if (name.length()) {
+                name[0] = '#';  // Launch Code
+            } else {
+                WARNING2("Video sequence not listed for step %d", STEP);
+            }
+
+            // Special Case #47236
+            PlaySequence(plr, STEP, name.c_str(), 0);
         }
 
         // Necessary to keep code from crashing on bogus mission step
@@ -401,20 +408,14 @@ void MisCheck(char plr, char mpad)
                 GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
             }
 
-
-            memset(Name, 0x00, sizeof Name);
-            memcpy(Name, Mev[STEP].Name, strlen(Mev[STEP].Name)); // copy orig failure
-            Name[strlen(Name)] = 0x30 + (Now.fail / 10);
-            Name[strlen(Name)] = 0x30 + Now.fail % 10;
-            Name[strlen(Name)] = 0x00;
-
-
-
-
             //:::::: STEP FAILURE :::::::::
             //:::::::::::::::::::::::::::::
 
-            PlaySequence(plr, STEP, Name, 1);
+            // copy orig failure
+            std::string name(Mev[STEP].Name);
+            name.push_back(0x30 + (Now.fail / 10));
+            name.push_back(0x30 + Now.fail % 10);
+            PlaySequence(plr, STEP, name.c_str(), 1);
 
             if (!AI[plr]) {
                 Tick(2);    // reset dials
