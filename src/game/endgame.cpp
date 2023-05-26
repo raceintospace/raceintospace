@@ -938,7 +938,7 @@ std::string HistFile(unsigned char bud)
 {
     std::string text;
     text.resize(600);
-    FILE *fin = sOpen("ENDGAME.DAT", "rb", 0);
+    FILE *fin = sOpen("ENDGAME.DAT", "rb", FT_DATA);
     fseek(fin, bud * 600, SEEK_SET);
     fread(&text[0], 600, 1, fin);
     fclose(fin);

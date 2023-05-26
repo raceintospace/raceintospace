@@ -28,6 +28,7 @@
 #include "mis_c.h"
 
 #include <cassert>
+#include <string>
 #include <vector>
 
 #include "display/graphics.h"
@@ -78,11 +79,12 @@ void Clock(char plr, char clck, char mode, char tm);
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct Infin> &Mob,
             const std::vector<struct OF> &Mob2);
-void InRFBox(int a, int b, int c, int d, int col);
 void GuyDisp(int xa, int ya, struct Astros *Guy);
 char DrawMoonSelection(char plr, char nauts, const struct MisEval &step);
+BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
+void InRFBox(int a, int b, int c, int d, int col);
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -922,14 +924,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 }
 
 
-
-void InRFBox(int a, int b, int c, int d, int col)
-{
-    InBox(a, b, c, d);
-    fill_rectangle(a + 1, b + 1, c - 1, d - 1, col);
-    return;
-}
-
 void
 GuyDisp(int xa, int ya, struct Astros *Guy)
 {
@@ -1080,11 +1074,8 @@ char FailureMode(char plr, int prelim, char *text)
     InRFBox(4, 131, 315, 151, 0); // Astro List/Crew
 
     display::graphics.setForegroundColor(12);
-
     draw_string(15, 139, "CREW");
-
     draw_string(9, 146, "STATUS");
-
 
     if (MANNED[Mev[STEP].pad] > 0) {
         GuyDisp(49, 139, MA[Mev[STEP].pad][0].A);
@@ -1186,37 +1177,13 @@ char FailureMode(char plr, int prelim, char *text)
     InRFBox(162, 28, 312, 42, 10);
 
     display::graphics.setForegroundColor(11);
-
     draw_string(194, 37, "EQUIPMENT DETAIL");
 
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
     // Place Image Here
-    // Build Name
-    memset(Name, 0x00, sizeof Name);
 
-    if (plr == 0) {
-        strcat(Name, "US");
-    } else {
-        strcat(Name, "SV");
-    }
-
-    strncat(Name, e->ID, 2);
-
-    if (Mev[STEP].Class == Mission_PhotoRecon) {
-        strcpy(&Name[0], "XCAM\0");
-    }
-
-    strcat(Name, ".BZ\0");
-
-    BZAnimation::Ptr modelAnim;
-
-    try {
-        modelAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
-    } catch (IOException &err) {
-        ERROR4("Unable to load animation %s in file %s: %s",
-               Name, "LIFTOFF.ABZ", err.what());
-    }
+    BZAnimation::Ptr modelAnim = FindHardwareAnim(plr, Mev[STEP]);
 
     if (modelAnim) {
         last_secs = get_time();
@@ -1224,7 +1191,6 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     FadeIn(2, 10, 0, 0);
-
 
     WaitForMouseUp();
     key = 0;
@@ -1363,33 +1329,7 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
     // Place Image Here
-    // Build Name
-    memset(Name, 0x00, sizeof Name);
-
-    if (plr == 0) {
-        strcat(Name, "US");
-    } else {
-        strcat(Name, "SV");
-    }
-
-    // TODO: Simpler to remove the intermediary var 'e'.
-    e = GetEquipment(step);
-    strncat(Name, e->ID, 2);
-
-    if (step.Class == Mission_PhotoRecon) {
-        strcpy(&Name[0], "XCAM\0");
-    }
-
-    strcat(Name, ".BZ\0");
-
-    BZAnimation::Ptr moonAnim;
-
-    try {
-        moonAnim = BZAnimation::load("LIFTOFF.ABZ", Name, 188, 47);
-    } catch (IOException &err) {
-        ERROR4("Unable to load animation %s in file %s: %s",
-               Name, "LIFTOFF.ABZ", err.what());
-    }
+    BZAnimation::Ptr moonAnim = FindHardwareAnim(plr, step);
 
     if (moonAnim) {
         last_secs = get_time();
@@ -1418,14 +1358,11 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
                 "first cosmonaut to");
     draw_string(35, 80, "walk on the moon?");
 
-    int i;
-    // TODO: This does nothing? If so, remove.
-    char str;
-
-    for (i = 0; i < nauts; i++) {
+    for (int i = 0; i < nauts; i++) {
         IOBox(25, 100 + i * 25, 135, 115 + i * 25);
         display::graphics.setForegroundColor(12);
-        GuyDisp(71 - TextDisplayLength(MX[cPad][i].A->Name) / 2, 109 + i * 25, MX[cPad][i].A);
+        GuyDisp(71 - TextDisplayLength(MX[cPad][i].A->Name) / 2,
+                109 + i * 25, MX[cPad][i].A);
     }
 
     FadeIn(2, 10, 0, 0);
@@ -1504,6 +1441,37 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 
 
 /**
+ * Returns an animation for the hardware used in a step.
+ *
+ * This identifies the hardware used in a mission step and returns
+ * the corresponding animation found in the LIFTOFF.ABZ file.
+ * Note that GetEquipment uses the global value MH, so this will only
+ * work _during_ a mission.
+ */
+BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step)
+{
+    BZAnimation::Ptr model;
+    std::string name("XXXX.BZ");
+
+    if (step.Class == Mission_PhotoRecon) {
+        name.replace(0, 4, "XCAM");
+    } else {
+        name.replace(0, 2, (plr == 0) ? "US" : "SV");
+        name.replace(2, 2, GetEquipment(step)->ID);
+    }
+
+    try {
+        model = BZAnimation::load("LIFTOFF.ABZ", name.c_str(), 188, 47);
+    } catch (IOException &err) {
+        ERROR4("Unable to load animation %s in file %s: %s",
+               name.c_str(), "LIFTOFF.ABZ", err.what());
+    }
+
+    return model;
+}
+
+
+/**
  * Read an Infin struct stored in a file as raw data.
  *
  * \param fin  Pointer to a FILE object that specifies an input stream.
@@ -1546,3 +1514,10 @@ int ImportOF(FILE *fin, struct OF &target)
     return 0;
 }
 
+
+void InRFBox(int a, int b, int c, int d, int col)
+{
+    InBox(a, b, c, d);
+    fill_rectangle(a + 1, b + 1, c - 1, d - 1, col);
+    return;
+}

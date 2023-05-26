@@ -137,7 +137,7 @@ void MakeRecords(void)
     int i, j;
 
     if ((file = sOpen("RECORDS.DAT", "rb", FT_SAVE_CHECK)) == NULL) {
-        file = sOpen("RECORDS.DAT", "wb", 1);
+        file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
 
         if (file == NULL) {
             /* XXX: very drastic */
@@ -163,7 +163,7 @@ void Records(char plr)
 {
     FILE *file;
     char pos = 0, pos2 = 0;
-    file = sOpen("RECORDS.DAT", "rb", 1);
+    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
 
     for (int i = 0; i < 56; i++) {
         for (int j = 0; j < 3; j++) {
@@ -295,7 +295,7 @@ void ClearRecord(char *pos2)
         return;
     }
 
-    file = sOpen("RECORDS.DAT", "rb", 1);
+    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
 
     for (int i = 0; i < 56; i++) {
         for (int j = 0; j < 3; j++) {
@@ -324,7 +324,7 @@ void ClearRecord(char *pos2)
     draw_number(12, 66, 2);
     draw_number(12, 90, 3);
 
-    file = sOpen("RECORDS.DAT", "wb", 1);
+    file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
 
     for (int i = 0; i < 56; i++) {
         for (int j = 0; j < 3; j++) {
@@ -764,7 +764,7 @@ void SafetyRecords(char plr, int temp)
 {
     int j, k;
     FILE *fin, *bo;
-    fin = sOpen("RECORDS.DAT", "rb", 1);
+    fin = sOpen("RECORDS.DAT", "rb", FT_SAVE);
 
     for (int i = 0; i < 56; i++) {
         for (j = 0; j < 3; j++) {
@@ -840,7 +840,7 @@ void SafetyRecords(char plr, int temp)
         }
     }  //end while
 
-    bo = sOpen("RECORDS.DAT", "wb", 1);
+    bo = sOpen("RECORDS.DAT", "wb", FT_SAVE);
 
     for (int i = 0; i < 56; i++) {
         for (j = 0; j < 3; j++) {
@@ -868,7 +868,7 @@ void UpdateRecords(char Ty)
         }
     }
 
-    file = sOpen("RECORDS.DAT", "rb", 1);
+    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
 
     for (i = 0; i < 56; i++) {
         for (j = 0; j < 3; j++) {
@@ -2068,7 +2068,7 @@ void UpdateRecords(char Ty)
     }
 
     //Change and Update Records
-    file = sOpen("RECORDS.DAT", "wb", 1);
+    file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
 
     for (i = 0; i < 56; i++) {
         for (j = 0; j < 3; j++) {

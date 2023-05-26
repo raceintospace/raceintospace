@@ -601,7 +601,6 @@ void LMPict(char poff)
 
 void LMBld(char plr)
 {
-    int i, m;
     LMDraw(plr);
 
     ShBox(1, 120, 157, 168);
@@ -611,16 +610,17 @@ void LMBld(char plr)
     ShBox(1, 170, 319, 194);
     IOBox(41, 172, 279, 193);
     draw_heading(71, 176, "TOTAL LM POINTS", 0, -1);
-    memset(Name, 0, sizeof Name);
-    snprintf(&Name[0], sizeof(Name), "%d", Data->P[plr].LMpts);
-    draw_heading(240, 176, &Name[0], 0, -1);
 
-    for (i = 0; i < 2; i++) {
-        if (i == 0) {
-            m = 172;
-        } else {
-            m = 12;
-        }
+    if (Data->P[plr].LMpts > 999) {
+        draw_heading(240, 176, "999+", 0, -1);
+    } else {
+        char points[5];
+        snprintf(&points[0], sizeof(points), "%d", Data->P[plr].LMpts);
+        draw_heading(240, 176, &points[0], 0, -1);
+    }
+
+    for (int i = 0; i < 2; i++) {
+        int m = i ? 12 : 172;
 
         display::graphics.setForegroundColor(8);
         draw_string(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);

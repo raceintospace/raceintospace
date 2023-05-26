@@ -167,9 +167,8 @@ void AstLevel(char plr, char prog, char crew, char ast)
 
 void DrawProgs(char plr, char prog)
 {
-    int i, j, Name[30];
-    strcpy((char *)Name, Data->P[plr].Manned[prog - 1].Name);
-    strcat((char *)Name, " PROGRAM");
+    std::string title(Data->P[plr].Manned[prog - 1].Name);
+    title.append(" PROGRAM");
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     display::graphics.setForegroundColor(1);
@@ -203,8 +202,8 @@ void DrawProgs(char plr, char prog)
 
     }
 
-    for (j = 0; j < 2; j++) {
-        for (i = 0; i < 4; i++) {
+    for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 4; i++) {
             ShBox(164 + 77 * j, 139 + i * 15, 238 + 77 * j, 151 + i * 15);
         }
     }
@@ -242,7 +241,7 @@ void DrawProgs(char plr, char prog)
     display::graphics.setForegroundColor(7);
     draw_string(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
 
-    for (i = 0; i < 8; i++) {
+    for (int8_t i = 0; i < 8; i++) {
         if (prog == 1 && Data->P[plr].Pool[i].Assign == 1 && Data->P[plr].Pool[i].Moved >= 5) {
             // If Mercury/Vostok, mark as obsolete if crew(s) are about to start losing morale for staying here too long
             display::graphics.setForegroundColor(5);
@@ -312,7 +311,7 @@ void DrawProgs(char plr, char prog)
     }
 
     display::graphics.setForegroundColor(1);
-    draw_heading(40, 5, (char *)Name, 0, -1);
+    draw_heading(40, 5, title.c_str(), 0, -1);
     return;
 }
 
@@ -324,10 +323,9 @@ void DrawProgs(char plr, char prog)
  */
 int CheckProgram(char plr, char prog)
 {
-    int check, i;
-    check = 0;
+    int check = 0;
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Crew != 0) {
             ++check;
         }
@@ -339,7 +337,7 @@ int CheckProgram(char plr, char prog)
 
     check = 0;
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Assign == prog) {
             ++check;
         }
@@ -350,7 +348,7 @@ int CheckProgram(char plr, char prog)
     } else if ((prog == 4 || prog == 5) && check >= prog - 1) {
         return 2;
     } else {  // return to limbo
-        for (i = 0; i < Data->P[plr].AstroCount; i++) {
+        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Assign == prog) {
                 Data->P[plr].Pool[i].Assign = 0;
             }

@@ -1243,12 +1243,11 @@ void DrawHPurc(char player_index)
 char HPurc(char player_index)
 {
     short hardware, unit;
-    FILE *undo;
 
     HardwareButtons hardware_buttons(30, player_index);
 
     remove_savedat("UNDO.TMP");
-    undo = sOpen("UNDO.TMP", "wb", 1);
+    FILE *undo = sOpen("UNDO.TMP", "wb", FT_SAVE);
     fwrite(Data, sizeof(struct Players), 1, undo);
     fclose(undo);
 
@@ -1288,7 +1287,7 @@ char HPurc(char player_index)
         } else if ((x > 266 && y > 164 && x < 314 && y < 174 && mousebuttons > 0) || key == 'Z') {
             InBox(266, 164, 314, 174);
             WaitForMouseUp();
-            undo = sOpen("UNDO.TMP", "rb", 1);
+            undo = sOpen("UNDO.TMP", "rb", FT_SAVE);
             fread(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
             ShowUnit(hardware, unit, player_index);
@@ -1450,7 +1449,7 @@ char HPurc(char player_index)
             hardware_buttons.drawButtons(hardware);
 
             // Just Added stuff by mike
-            undo = sOpen("UNDO.TMP", "wb", 1);
+            undo = sOpen("UNDO.TMP", "wb", FT_SAVE);
             fwrite(Data, sizeof(struct Players), 1, undo);
             fclose(undo);
 

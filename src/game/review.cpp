@@ -377,7 +377,7 @@ void DrawReviewText(char plr, int val)
     FILE *fin;
     char *text = new char[205];
     memset(text, 0x00, sizeof(*text));
-    fin = sOpen("P_REV.DAT", "rb", 0);  // Read Mission Structure
+    fin = sOpen("P_REV.DAT", "rb", FT_DATA);  // Read Mission Structure
     fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
     fread(text, 204, 1, fin);
     fclose(fin);

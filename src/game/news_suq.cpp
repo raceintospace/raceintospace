@@ -111,7 +111,7 @@ char REvent(char plr)
             j = 5;
         }
 
-        fin = sOpen("NTABLE.DAT", "rb", 0);
+        fin = sOpen("NTABLE.DAT", "rb", FT_DATA);
         // This is ignoring the budget mods based on the selected game level.
         fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + brandom(10)) , SEEK_SET);
         fread(&m, sizeof m, 1, fin);

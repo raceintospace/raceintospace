@@ -492,7 +492,7 @@ void SetParameters(void)
         return;
     }
 
-    FILE *fin = sOpen("MISSION.DAT", "rb", 0);
+    FILE *fin = sOpen("MISSION.DAT", "rb", FT_DATA);
 
     if (fin == NULL) {
         throw IOException("Could not open MISSION.DAT");

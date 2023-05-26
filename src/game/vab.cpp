@@ -172,7 +172,7 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
  */
 void LoadMIVals()
 {
-    FILE *file = sOpen("VTABLE.DAT", "rb", 0);
+    FILE *file = sOpen("VTABLE.DAT", "rb", FT_DATA);
 
     // Read in the data & perform Endianness swap
     for (int i = 0; i < 2 * 28; i++) {

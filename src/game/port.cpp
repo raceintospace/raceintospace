@@ -318,7 +318,7 @@ void SpotCrap(char loc, char mode)
 
     if (mode == SPOT_LOAD) {
         // Open File
-        sFin = sOpen("SPOTS.CDR", "rb", 0);
+        sFin = sOpen("SPOTS.CDR", "rb", FT_DATA);
 
         // Read in Spot Header
         // fread(&MSPOT, sizeof MSPOT, 1, sFin);
@@ -618,8 +618,8 @@ void PortPlace(FILE *fin, int32_t table)
  */
 void PortPal(char plr)
 {
-    FILE *fin;
-    fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
+    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
+                      "rb", FT_DATA);
     // fread(&PHead, sizeof PHead, 1, fin);
     // TODO: Add in some error checking...
     ImportPortHeader(fin, PHead);
@@ -637,9 +637,9 @@ void PortPal(char plr)
 void DrawSpaceport(char plr)
 {
     int32_t table[S_QTY];
-    FILE *fin;
 
-    fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
+    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
+                      "rb", FT_DATA);
 
     // TODO: Add in some error checking...
     ImportPortHeader(fin, PHead);
@@ -777,10 +777,8 @@ void PortText(int x, int y, const char *txt, char col)
 
 void UpdatePortOverlays(void)
 {
-    char i, j;
-
-    for (i = 0; i < NUM_PLAYERS; i++) {  // Programs
-        for (j = 0; j < 5; j++) {
+    for (int8_t i = 0; i < NUM_PLAYERS; i++) {  // Programs
+        for (int8_t j = 0; j < 5; j++) {
             Data->P[i].Port[PORT_Mercury - j] = (Data->P[i].Manned[j].Num >= 0) ? 1 : 0;
         }
 
@@ -1008,17 +1006,13 @@ DoCycle(void)                   // Three ranges of color cycling
     }
 
     p.pal[j + 3 * i] = tmp1;
-
     p.pal[j + 3 * i + 1] = tmp2;
-
     p.pal[j + 3 * i + 2] = tmp3;
 
     i = 4;
 
     tmp1 = p.pal[j + 3 * i + 0];
-
     tmp2 = p.pal[j + 3 * i + 1];
-
     tmp3 = p.pal[j + 3 * i + 2];
 
     for (; i < 11; i++) {
@@ -1028,17 +1022,13 @@ DoCycle(void)                   // Three ranges of color cycling
     }
 
     p.pal[j + 3 * i] = tmp1;
-
     p.pal[j + 3 * i + 1] = tmp2;
-
     p.pal[j + 3 * i + 2] = tmp3;
 
     i = 12;
 
     tmp1 = p.pal[j + 3 * i + 0];
-
     tmp2 = p.pal[j + 3 * i + 1];
-
     tmp3 = p.pal[j + 3 * i + 2];
 
     for (; i < 15; i++) {
@@ -1048,9 +1038,7 @@ DoCycle(void)                   // Three ranges of color cycling
     }
 
     p.pal[j + 3 * i] = tmp1;
-
     p.pal[j + 3 * i + 1] = tmp2;
-
     p.pal[j + 3 * i + 2] = tmp3;
 }
 
@@ -1183,10 +1171,10 @@ PortRestore(unsigned int Count)
  */
 int MapKey(char plr, int key, int old)
 {
-    int val, j, found = 0;
+    int val, found = 0;
     char high = -1, low = -1;
 
-    for (j = 0; j < 35; j++) {
+    for (int j = 0; j < 35; j++) {
         if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
             if (low == -1) {
                 low = j;
@@ -1201,7 +1189,7 @@ int MapKey(char plr, int key, int old)
     switch (key) {
     case 'A':
         if (MObj[6].Reg[Data->P[plr].Port[PORT_Admin]].sNum > 0) {
-            val = 6;
+            val = PORT_Admin;
         }
 
         mousebuttons = 1;
@@ -1209,7 +1197,7 @@ int MapKey(char plr, int key, int old)
 
     case 'I':
         if (MObj[1].Reg[Data->P[plr].Port[PORT_Pentagon]].sNum > 0) {
-            val = 1;
+            val = PORT_Pentagon;
         }
 
         mousebuttons = 1;
@@ -1217,7 +1205,7 @@ int MapKey(char plr, int key, int old)
 
     case 'M':
         if (MObj[5].Reg[Data->P[plr].Port[PORT_Museum]].sNum > 0) {
-            val = 5;
+            val = PORT_Museum;
         }
 
         mousebuttons = 1;
@@ -1225,7 +1213,7 @@ int MapKey(char plr, int key, int old)
 
     case 'R':
         if (MObj[22].Reg[Data->P[plr].Port[PORT_Research]].sNum > 0) {
-            val = 22;
+            val = PORT_Research;
         }
 
         mousebuttons = 1;
@@ -1233,7 +1221,7 @@ int MapKey(char plr, int key, int old)
 
     case 'P':
         if (MObj[2].Reg[Data->P[plr].Port[PORT_Capitol]].sNum > 0) {
-            val = 2;
+            val = PORT_Capitol;
         }
 
         mousebuttons = 1;
@@ -1241,7 +1229,7 @@ int MapKey(char plr, int key, int old)
 
     case 'V':
         if (MObj[4].Reg[Data->P[plr].Port[PORT_VAB]].sNum > 0) {
-            val = 4;
+            val = PORT_VAB;
         }
 
         mousebuttons = 1;
@@ -1249,7 +1237,7 @@ int MapKey(char plr, int key, int old)
 
     case 'C':
         if (MObj[26].Reg[Data->P[plr].Port[PORT_MissionControl]].sNum > 0) {
-            val = 26;
+            val = PORT_MissionControl;
         }
 
         mousebuttons = 1;
@@ -1257,7 +1245,7 @@ int MapKey(char plr, int key, int old)
 
     case 'Q':
         if (MObj[29].Reg[Data->P[plr].Port[PORT_Gate]].sNum > 0) {
-            val = 29;
+            val = PORT_Gate;
         }
 
         mousebuttons = 1;
@@ -1265,7 +1253,7 @@ int MapKey(char plr, int key, int old)
 
     case 'E':
         if (MObj[28].Reg[Data->P[plr].Port[PORT_FlagPole]].sNum > 0) {
-            val = 28;
+            val = PORT_FlagPole;
         }
 
         mousebuttons = 1;
@@ -1273,7 +1261,7 @@ int MapKey(char plr, int key, int old)
 
     case 'T':
         if (MObj[7].Reg[Data->P[plr].Port[PORT_AstroComplex]].sNum > 0) {
-            val = 7;
+            val = PORT_AstroComplex;
         }
 
         mousebuttons = 1;
@@ -1281,7 +1269,7 @@ int MapKey(char plr, int key, int old)
 
     case 'B':
         if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
-            val = 9;
+            val = PORT_BasicTraining;
         }
 
         mousebuttons = 1;
@@ -1296,7 +1284,7 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j < high + 1; j++) {
+        for (int j = old; j < high + 1; j++) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
@@ -1316,7 +1304,7 @@ int MapKey(char plr, int key, int old)
 
         found = 0;
 
-        for (j = old; j > low - 1; j--) {
+        for (int j = old; j > low - 1; j--) {
             if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
@@ -1340,7 +1328,6 @@ void Port(char plr)
     int i, j, kMode, kEnt, k;
     char good, res;
     int kPad, pKey, gork;
-    FILE *fin;
     int32_t stable[55];
     uint16_t Count, *bone;
 
@@ -1348,7 +1335,8 @@ void Port(char plr)
     keyHelpText = "k043";
     bone = (uint16_t *) buffer;
 
-    fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT", "rb", 0);
+    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
+                      "rb", FT_DATA);
     // TODO: Add some error checking...
     ImportPortHeader(fin, PHead);
 
@@ -1491,8 +1479,9 @@ void Port(char plr)
 
                             // || i==33
 
-                            if (!(i == 28 || i == 29 || i == 0 || i == 31
-                                  || (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
+                            if (!(i == PORT_FlagPole || i == PORT_Gate ||
+                                  i == PORT_Monument || i == PORT_SovMonumentAlt ||
+                                  (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
 #if SPOT_ON
                                 SpotCrap(0, SPOT_KILL);  // remove spots
 #endif
@@ -1603,7 +1592,7 @@ void Port(char plr)
                                 FadeOut(2, 10, 0, 0);
 #if BABYSND
 
-                                if (i == 28 || i == 29) {
+                                if (i == PORT_FlagPole || i == PORT_Gate) {
                                     SUSPEND = 0;
                                 }
 

@@ -462,7 +462,7 @@ int Help(const char *FName)
         return 0;
     }
 
-    fin = sOpen("HELP.CDR", "rb", 0);
+    fin = sOpen("HELP.CDR", "rb", FT_DATA);
 
     if (! fin) {
         throw IOException("Could not open help file HELP.CDR.");
@@ -734,33 +734,40 @@ void writePrestigeFirst(char index)   ///index==plr
             ++w;
             Data->PD[index][i] |= 1;
 
+            // NOTE: This method, inside a loop as it is, depends upon
+            // a strict ordering of PrestigeValues such that Duration_F
+            // is lower than Duration_E, etc.
             switch (i) {
-            case 8:
-                if (Data->Prestige[Prestige_Duration_E].Place == index && Data->PD[index][9] == 0) {
+            case Prestige_Duration_F:
+                if (Data->Prestige[Prestige_Duration_E].Place == index &&
+                    Data->PD[index][Prestige_Duration_E] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] |= 1;
+                    Data->PD[index][Prestige_Duration_E] |= 1;
                 }
 
-            case 9:
-                if (Data->Prestige[Prestige_Duration_D].Place == index && Data->PD[index][10] == 0) {
+            case Prestige_Duration_E:
+                if (Data->Prestige[Prestige_Duration_D].Place == index &&
+                    Data->PD[index][Prestige_Duration_D] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] |= 1;
+                    Data->PD[index][Prestige_Duration_D] |= 1;
                 }
 
-            case 10:
-                if (Data->Prestige[Prestige_Duration_C].Place == index && Data->PD[index][11] == 0) {
+            case Prestige_Duration_D:
+                if (Data->Prestige[Prestige_Duration_C].Place == index &&
+                    Data->PD[index][Prestige_Duration_C] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] |= 1;
+                    Data->PD[index][Prestige_Duration_C] |= 1;
                 }
 
-            case 11:
-                if (Data->Prestige[Prestige_Duration_B].Place == index && Data->PD[index][12] == 0) {
+            case Prestige_Duration_C:
+                if (Data->Prestige[Prestige_Duration_B].Place == index &&
+                    Data->PD[index][Prestige_Duration_B] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] |= 1;
+                    Data->PD[index][Prestige_Duration_B] |= 1;
                 }
 
-            case 12:
-                i = 12;
+            case Prestige_Duration_B:
+                i = Prestige_Duration_B;
 
             default:
                 break;
@@ -770,7 +777,8 @@ void writePrestigeFirst(char index)   ///index==plr
 
     for (i = 0; i < 28; i++) {
         // Prestige Seconds
-        if (w < 6 && Data->Prestige[i].mPlace == index && Data->PD[index][i] == 0) {
+        if (w < 6 && Data->Prestige[i].mPlace == index &&
+            Data->PD[index][i] == 0) {
             if (draw == 0) {
                 ShBox(6, 170, 314, 197);
                 fill_rectangle(10, 173, 310, 194, 7);
@@ -793,32 +801,36 @@ void writePrestigeFirst(char index)   ///index==plr
             Data->PD[index][i] |= 1;
 
             switch (i) {
-            case 8:
-                if (Data->Prestige[Prestige_Duration_E].mPlace == index && Data->PD[index][9] == 0) {
+            case Prestige_Duration_F:
+                if (Data->Prestige[Prestige_Duration_E].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_E] == 0) {
                     draw_string(0, 0, ", E");
-                    Data->PD[index][9] |= 1;
+                    Data->PD[index][Prestige_Duration_E] |= 1;
                 }
 
-            case 9:
-                if (Data->Prestige[Prestige_Duration_D].mPlace == index && Data->PD[index][10] == 0) {
+            case Prestige_Duration_E:
+                if (Data->Prestige[Prestige_Duration_D].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_D] == 0) {
                     draw_string(0, 0, ", D");
-                    Data->PD[index][10] |= 1;
+                    Data->PD[index][Prestige_Duration_D] |= 1;
                 }
 
-            case 10:
-                if (Data->Prestige[Prestige_Duration_C].mPlace == index && Data->PD[index][11] == 0) {
+            case Prestige_Duration_D:
+                if (Data->Prestige[Prestige_Duration_C].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_C] == 0) {
                     draw_string(0, 0, ", C");
-                    Data->PD[index][11] |= 1;
+                    Data->PD[index][Prestige_Duration_C] |= 1;
                 }
 
-            case 11:
-                if (Data->Prestige[Prestige_Duration_B].mPlace == index && Data->PD[index][12] == 0) {
+            case Prestige_Duration_C:
+                if (Data->Prestige[Prestige_Duration_B].mPlace == index &&
+                    Data->PD[index][Prestige_Duration_B] == 0) {
                     draw_string(0, 0, ", B");
-                    Data->PD[index][12] |= 1;
+                    Data->PD[index][Prestige_Duration_B] |= 1;
                 }
 
-            case 12:
-                i = 12;
+            case Prestige_Duration_B:
+                i = Prestige_Duration_B;
 
             default:
                 break;
@@ -832,10 +844,6 @@ void writePrestigeFirst(char index)   ///index==plr
 
 void Draw_Mis_Stats(char plr, char index, int *where, char mode)
 {
-    int j, k, mcode;
-    int let;
-
-
     if (mode == 0) {
         InBox(245, 5, 314, 17);
     }
@@ -853,11 +861,11 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     display::graphics.setForegroundColor(11);
     draw_string(58, 41, "MISSION INFORMATION");
     draw_string(12, 104, "MISSION DURATION: ");
-    Name[0] = Data->P[plr].History[index].Duration + 'A' - 1;
-    Name[1] = 0;
 
-    if (Name[0] >= 'A') {
-        draw_string(0, 0, Name);
+    char duration = 'A' + Data->P[plr].History[index].Duration - 1;
+
+    if (duration >= 'A' && duration <= 'F') {
+        draw_character(duration);
     } else {
         draw_string(0, 0, "NONE");
     }
@@ -870,8 +878,7 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
         draw_string(0, 0, "PENDING");
     }
 
-    mcode = Data->P[plr].History[index].MissionCode;
-
+    int mcode = Data->P[plr].History[index].MissionCode;
     const struct mStr plan = GetMissionPlan(mcode);
 
     display::graphics.setForegroundColor(1);
@@ -935,13 +942,16 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
     // Crew Stuff
     display::graphics.setForegroundColor(11);
 
-    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 && Data->P[plr].History[index].Man[PAD_B][0] == -1) {
+    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 &&
+        Data->P[plr].History[index].Man[PAD_B][0] == -1) {
         draw_string(13, 137, "UNMANNED MISSION");
     } else {
+        int let = 0;
+
         // First Part -- Men
         if (Data->P[plr].History[index].Man[PAD_A][0] != -1) {
-            for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[PAD_A][j];
+            for (int j = 0; j < 4; j++) {
+                int k = Data->P[plr].History[index].Man[PAD_A][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
@@ -955,21 +965,21 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             }
 
             let = 1;    // Men on Part 1
-        } else {
-            let = 0;    // Men not on Part 1
         }
 
         // Second Part -- Men
         if (Data->P[plr].History[index].Man[PAD_B][0] != -1) {
-            for (j = 0; j < 4; j++) {
-                k = Data->P[plr].History[index].Man[PAD_B][j];
+            for (int j = 0; j < 4; j++) {
+                int k = Data->P[plr].History[index].Man[PAD_B][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
-                    display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
+                    // Display women in blue, not yellow
+                    display::graphics.setForegroundColor(18);
                 }
 
                 if (k != -1) {
-                    draw_string(13 + let * 100, 137 + j * 7, Data->P[plr].Pool[k].Name);
+                    draw_string(13 + let * 100, 137 + j * 7,
+                                Data->P[plr].Pool[k].Name);
                 }
 
                 display::graphics.setForegroundColor(11);
@@ -1032,9 +1042,9 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             display::graphics.setForegroundColor(1);
 
             if (x == 0 && y == 0) {
-                FILE *tin;
+                // Create temp image file
+                FILE *tin = sOpen("REPL.TMP", "wb", FT_SAVE);
 
-                tin = sOpen("REPL.TMP", "wb", 1);  // Create temp image file
                 {
                     display::AutoPal p(display::graphics.legacyScreen());
                     fwrite(p.pal, 768, 1, tin);
@@ -1071,7 +1081,8 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
                 }
 
                 FadeOut(2, 10, 0, 0);
-                tin = sOpen("REPL.TMP", "rb", 1);  // replad temp image file
+                // reload temp image file
+                tin = sOpen("REPL.TMP", "rb", FT_SAVE);
                 {
                     display::AutoPal p(display::graphics.legacyScreen());
                     fread(p.pal, 768, 1, tin);
@@ -1122,13 +1133,10 @@ void Draw_Mis_Stats(char plr, char index, int *where, char mode)
             key = 0;
 
         }  // if
-
     }  // while
 
     display::graphics.videoRect().w = 0;
-
     display::graphics.videoRect().h = 0;
-
 }
 
 

@@ -1066,7 +1066,7 @@ void FileText(const char *name)
 
     fill_rectangle(38, 133, 279, 155, 3);
     display::graphics.setForegroundColor(1);
-    fin = sOpen(name, "rb", 1);
+    fin = sOpen(name, "rb", FT_SAVE);
 
     if (fin == NULL) {
         display::graphics.setForegroundColor(11);
@@ -1571,7 +1571,7 @@ void LoadGame(const char *filename)
     size_t csize, usize = 0;
     int i, ok, offset;
 
-    FILE *fin = sOpen(filename, "rb", 1);
+    FILE *fin = sOpen(filename, "rb", FT_SAVE);
 
     fseek(fin, 0, SEEK_END);
     size_t fileLength = ftell(fin);
@@ -1973,7 +1973,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
 
     size = sizeof(char) * stream.str().size() + 1;
 
-    fin = sOpen(Name, "wb", 1);
+    fin = sOpen(Name, "wb", FT_SAVE);
 
     // Uncompressed size in big endian
     for (i = 3; i >= 0; i--) {
