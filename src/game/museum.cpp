@@ -37,6 +37,7 @@
 #include "draw.h"
 #include "hardef.h"
 #include "game_main.h"
+#include "ioexception.h"
 #include "mission_util.h"
 #include "place.h"
 #include "port.h"
@@ -93,7 +94,7 @@ void BackOne(char plr, char *pos, char *pos2);
 void ForOne(char plr, char *pos, char *pos2);
 void ForEnd(char plr, char *pos, char *pos2);
 void DPrest(char plr, char *pos, char *pos2);
-void DrawMisHist(char plr, int *where);
+void DrawMisHist(char plr, int turn);
 void DrawSpaceHistoryInterface(int plr);
 void Mission_Data_Buttons(char plr, int *where);
 void FastOne(char plr, int *where);
@@ -674,7 +675,7 @@ void ShowSpHist(char plr)
     }
 
     DrawSpaceHistoryInterface(plr);
-    DrawMisHist(plr, &pos);
+    DrawMisHist(plr, pos);
     FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
@@ -715,7 +716,7 @@ void Mission_Data_Buttons(char plr, int *where)
     auto launchReview = [](int plr, int index, int *where) {
         Draw_Mis_Stats(plr, index, where, 0);
         DrawSpaceHistoryInterface(plr);
-        DrawMisHist(plr, where);
+        DrawMisHist(plr, *where);
     };
 
     /* Okay, now we have to decide whether there are any missions displayed
@@ -781,7 +782,7 @@ void FastOne(char plr, int *where)
     }
 
     *where += 1;
-    DrawMisHist(plr, where);
+    DrawMisHist(plr, *where);
     return;
 }
 
@@ -789,7 +790,7 @@ void FastOne(char plr, int *where)
 void FullRewind(char plr, int *where)
 {
     *where = 0;
-    DrawMisHist(plr, where);
+    DrawMisHist(plr, *where);
     return;
 }
 
@@ -804,7 +805,7 @@ void RewindOne(char plr, int *where)
         *where -= 1;
     }
 
-    DrawMisHist(plr, where);
+    DrawMisHist(plr, *where);
     return;
 }
 
@@ -817,32 +818,40 @@ void FullFast(char plr, int *where)
 
     *where = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
              ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
-    DrawMisHist(plr, where);
+    DrawMisHist(plr, *where);
 }
 
 
-void DrawMisHist(char plr, int *where)
+/**
+ * Draw the Mission History background and Mission icons in the
+ * Space History section of the Space Museum.
+ *
+ * \param plr   the player index.
+ * \param turn  the game turn (0 for Sp 1957, 1 for July-Dec 1957, etc.)
+ */
+void DrawMisHist(char plr, int turn)
 {
     char cYr[5], mtext[51];
-    char yr, season, i, j, index = 0, prog, planet, pmis, temp = 0, temp2 = 11;
+    int prog, planet;
+    int index = 0, temp = 0;
 
+    // AI kludge (TODO: Explain -- ryoakum)
+    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
+        struct PastInfo &mission = Data->P[plr].History[i];
 
-    //ai kludge
-
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_EOR ||
-            Data->P[plr].History[i].MissionCode == Mission_Jt_LunarLanding_LOR) {
-            for (j = 0; j < 4; j++) {
-                if (Data->P[plr].History[i].Man[PAD_A][j] != -1) {
-                    Data->P[plr].History[i].Man[PAD_B][j] = Data->P[plr].History[i].Man[PAD_A][j];
-                    Data->P[plr].History[i].Man[PAD_A][j] = -1;
+        if (mission.MissionCode == Mission_Jt_LunarLanding_EOR ||
+            mission.MissionCode == Mission_Jt_LunarLanding_LOR) {
+            for (int8_t j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
+                if (mission.Man[PAD_A][j] != -1) {
+                    mission.Man[PAD_B][j] = mission.Man[PAD_A][j];
+                    mission.Man[PAD_A][j] = -1;
                 }
             }
         }
     }
 
-    yr = (*where - (*where % 2)) / 2 + 57;
-    season = *where % 2;
+    int yr = (turn / 2) + 57;
+    int season = turn % 2;
     ORBox(95, 176, 224, 193, 3);  // draw the boxes under date
     snprintf(cYr, sizeof(cYr), "%d", 1900 + yr);
     draw_heading(103 + (yr - 57) * 4, 178, cYr, 0, -1);
@@ -850,20 +859,20 @@ void DrawMisHist(char plr, int *where)
     fill_rectangle(5, 29, 314, 169, 0);
     display::graphics.setForegroundColor(7 + 3 * plr);
 
-    for (i = 0; i < 7; i++) {
+    for (int8_t i = 0; i < 7; i++) {
         pline(13 + 49 * i, 29, 13 + 49 * i, 169);
     }
 
     display::graphics.setForegroundColor(12);
 
-    if (*where % 2 == 0) {
-        for (i = 0; i < 6; i++) {
+    if (season == 0) {
+        for (int8_t i = 0; i < 6; i++) {
             strncpy(cYr, Month[i], 3);
             cYr[3] = 0;
             draw_string(29 + 49 * i, 36, cYr);
         }
     } else {
-        for (i = 0; i < 6; i++) {
+        for (int8_t i = 0; i < 6; i++) {
             strncpy(cYr, Month[i + 6], 3);
             cYr[3] = 0;
             draw_string(29 + 49 * i, 36, cYr);
@@ -871,8 +880,9 @@ void DrawMisHist(char plr, int *where)
     }
 
 
-    // What the hell does this do?
-
+    // Find the first mission in the mission history that begins during
+    // the selected turn (index). Missions are chronologically ordered.
+    // If there are none return without drawing anything.
     while (yr > Data->P[plr].History[index].MissionYear) {
         index++;
     }
@@ -893,80 +903,96 @@ void DrawMisHist(char plr, int *where)
     }
 
     do {
-        if (Data->P[plr].History[index].Month >= 6 && season == 0) {
+        const struct PastInfo &mission = Data->P[plr].History[index];
+
+        if (mission.Month >= 6 && season == 0) {
             break;
         }
 
-        j = (Data->P[plr].History[index].Month < 6)
-            ? Data->P[plr].History[index].Month
-            : Data->P[plr].History[index].Month - 6;
+        int8_t mon = mission.Month % 6;
 
-        // first check for joint missions
-        if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] > 0) {
-            snprintf(mtext, sizeof(mtext), "%s",
-                     Data->P[plr].History[index].MissionName[1]);
+        // First check for joint missions.
+        // Pad B is crewed preferentially, to avoid risking the crew's
+        // safety at launch should the unmanned component fail liftoff.
+        if (mission.Hard[PAD_B][Mission_Capsule] > 0) {
+            // TODO: It would be preferable to list both launch
+            // names, but that can be too wide and produce an
+            // overflow. If the capsules are the same type, maybe
+            // combine the names ala "APOLLO III / IV"?
+            snprintf(mtext, sizeof(mtext), "%s", mission.MissionName[1]);
+
             display::graphics.setForegroundColor(11);
-            draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
+            draw_string(35 + 49 * mon - strlen(mtext) / 2 * 5,
+                        45 + 40 * temp,
+                        mtext);
 
-            if (Data->P[plr].History[index].Man[PAD_A][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp,
-                        Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[0]);
+            // Draw the patch for the first launch if it's manned.
+            if (mission.Man[PAD_A][0] != -1) {
+                PatchMe(plr, 10 + 49 * mon, 50 + 40 * temp,
+                        mission.Hard[PAD_A][Mission_Capsule],
+                        mission.Patch[0]);
             }
 
-            if (Data->P[plr].History[index].Man[PAD_B][0] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
-                PatchMe(plr, 42 + 49 * j, 50 + 40 * temp,
-                        Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[1]);
+            // Draw the patch for the second launch if it's manned.
+            if (mission.Man[PAD_B][0] != -1) {
+                PatchMe(plr, 42 + 49 * mon, 50 + 40 * temp,
+                        mission.Hard[PAD_B][Mission_Capsule],
+                        mission.Patch[1]);
             }
 
-            // FIXME: Same test on either side of this.  Need to research what was intended.
-            if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1 && Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1) {
-                if (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_A][Mission_Capsule] != -1) {
-                    planet = 0;
-                    prog = Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule];
-                    SmHardMe(plr, 44 + 38 * j, 50 + 40 * temp, prog, planet, 64);
+            // Draw a capsule icon for Pad A launch if it's manned.
+            if (mission.Hard[PAD_A][Mission_Capsule] != -1 &&
+                mission.Man[PAD_A][Mission_Capsule] != -1) {
+                planet = 0;  // Don't draw a planet icon.
+                prog = mission.Hard[PAD_A][Mission_Capsule];
+                SmHardMe(plr, 44 + 38 * mon, 50 + 40 * temp,
+                         prog, planet, 64);
+            }
+
+            int8_t pmis = mission.MissionCode;
+            int offset = 11;
+
+            // TODO: Why is there a different *offset* for these
+            // missions? This needs an explanation.
+            if (pmis == Mission_Jt_LunarLanding_EOR ||
+                pmis == Mission_Jt_LunarLanding_LOR) {
+                offset = 0;
+            }
+
+            if (mission.Man[PAD_A][0] < 0 && mission.Man[PAD_B][0] < 0) {
+                // Unmanned missions have no mission patch, so use the
+                // Earth or Moon.
+                try {
+                    planet = GetMissionPlan(pmis).Lun ? 6 : 7;
+                } catch (IOException &err) {
+                    CERROR2(multimedia, "Unable to load mission data,"
+                            " defaulting to Earth icon");
+                    planet = 7;
                 }
-
-                pmis = Data->P[plr].History[index].MissionCode;
-
-                if (pmis == Mission_Jt_LunarLanding_EOR ||
-                    pmis == Mission_Jt_LunarLanding_LOR) {
-                    temp2 = 0;
-                } else {
-                    temp2 = 11;
-                }
-
-                planet = 0;
-                prog = Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule];
-                SmHardMe(plr, 44 + (38 + temp2)*j, 50 + 40 * temp, prog, planet, 64);
-            }
-
-            //else
-            // {
-            //  prog = (Data->P[plr].History[index].Hard[PAD_A][0] != -1) ?
-            //  Data->P[plr].History[index].Hard[PAD_A][0] :
-            //  Data->P[plr].History[index].Hard[PAD_A][3]+5;
-            //  planet=0;
-            //  SmHardMe(plr,44+49*j,50+40*temp,prog,planet,64);
-            // }
-        } else {
-            //fix-Handle Joint Missions
-            if (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_A][0] != -1) {
-                PatchMe(plr, 10 + 49 * j, 50 + 40 * temp,
-                        Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule],
-                        Data->P[plr].History[index].Patch[0]);
-            }
-
-            if (Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule] != -1 && Data->P[plr].History[index].Man[PAD_B][0] != -1) {
-                prog = Data->P[plr].History[index].Hard[PAD_B][Mission_Capsule];
             } else {
-                prog = (Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] != -1) ?
-                       Data->P[plr].History[index].Hard[PAD_A][Mission_Capsule] :
-                       Data->P[plr].History[index].Hard[PAD_A][Mission_Probe_DM] + 5;
+                planet = 0;  // Drew a patch, so don't draw a planet
             }
 
-            pmis = Data->P[plr].History[index].MissionCode;
+            prog = mission.Hard[PAD_B][Mission_Capsule];
+            SmHardMe(plr, 44 + (38 + offset) * mon, 50 + 40 * temp,
+                     prog, planet, 64);
+        } else {
+            // Single-launch missions
+
+            if (mission.Hard[PAD_A][Mission_Capsule] != -1 &&
+                mission.Man[PAD_A][0] != -1) {
+                PatchMe(plr, 10 + 49 * mon, 50 + 40 * temp,
+                        mission.Hard[PAD_A][Mission_Capsule],
+                        mission.Patch[0]);
+            }
+
+            // TODO: Use something like NUM_PROGRAMS instead of a
+            // hardcoded '5'.
+            prog = (mission.Hard[PAD_A][Mission_Capsule] != -1) ?
+                   mission.Hard[PAD_A][Mission_Capsule] :
+                   mission.Hard[PAD_A][Mission_Probe_DM] + 5;
+
+            int8_t pmis = mission.MissionCode;
 
             if (prog == 6 && pmis == Mission_VenusFlyby) {
                 planet = 2;
@@ -978,28 +1004,43 @@ void DrawMisHist(char plr, int *where)
                 planet = 4;
             } else if (prog == 6 && pmis == Mission_SaturnFlyby) {
                 planet = 5;
-            } else if (pmis == Mission_None) {
-                planet = 7;
             } else if (pmis == Mission_Orbital_Satellite) {
                 planet = 7;
             } else if (pmis == Mission_LunarFlyby) {
                 planet = 6;
             } else if (pmis == Mission_Lunar_Probe) {
                 planet = 6;
+            } else if (pmis == Mission_None) {  // Why? -- ryoakum
+                planet = 7;
+            } else if (mission.Man[PAD_A][0] != -1) {
+                planet = 0;  // Drew a patch, so don't draw a planet.
+            } else if (mission.Hard[PAD_A][Mission_Capsule] != -1) {
+                // Unmanned missions have no mission patch, so use the
+                // Earth or Moon.
+                try {
+                    planet = GetMissionPlan(pmis).Lun ? 6 : 7;
+                } catch (IOException &err) {
+                    CERROR2(multimedia, "Unable to load mission data,"
+                            " defaulting to Earth icon");
+                    planet = 7;
+                }
             } else {
                 planet = 0;
             }
 
-            snprintf(mtext, sizeof(mtext), "%s",
-                     Data->P[plr].History[index].MissionName[0]);
+            snprintf(mtext, sizeof(mtext), "%s", mission.MissionName[0]);
             display::graphics.setForegroundColor(11);
-            draw_string(35 + 49 * j - strlen(mtext) / 2 * 5, 45 + 40 * temp, mtext);
-            SmHardMe(plr, 44 + 49 * j, 50 + 40 * temp, prog, planet, 64);
+            draw_string(35 + 49 * mon - strlen(mtext) / 2 * 5,
+                        45 + 40 * temp,
+                        mtext);
+            // For Interplanetary Probes (prog == 6), SmHardMe draws
+            // both the planet and probe icon.
+            SmHardMe(plr, 44 + 49 * mon, 50 + 40 * temp, prog, planet, 64);
         }
 
         temp++;
-        index++;
-    } while (Data->P[plr].History[index].MissionYear == yr);
+    } while (++index < MAX_MISSION_COUNT &&
+             Data->P[plr].History[index].MissionYear == yr);
 
     return;
 }

@@ -559,9 +559,9 @@ struct PastInfo {
     int8_t Patch[2];                 /**< Patch Type */
     int8_t MissionCode;              /**< Type of Mission */
     int8_t MissionYear;              /**< Year Mission Took Place */
-    int8_t Month;                    /**< Month of Launch */
+    int8_t Month;                    /**< Month of Launch (0-11)*/
     int8_t Time;                     /**< Early / Late Flag */
-    int8_t Man[2][4];                /**< Astros # involved in Mis */
+    int8_t Man[2][ASTRONAUT_FLT_CREW_MAX]; /**< Astros # involved in Mis */
     int8_t Hard[2][5];               /**< Set of hardware */
     uint16_t result;               /**< Success / Failure */
     uint16_t spResult;             /**< Actual deciding Result */
