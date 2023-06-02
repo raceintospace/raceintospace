@@ -217,7 +217,8 @@ void Records(char plr)
         GetMouse();
 
         // Parse Button actions, note that return is embedded in first pButton
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) ||
+            key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
 
             if (key > 0) {

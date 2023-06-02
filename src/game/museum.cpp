@@ -142,7 +142,8 @@ void Display_ARROW(char num, int x, int y)
 
 void Museum(char plr)
 {
-    int i, tots = 7, beg;
+    int i;
+    int tots = 7;
     char AName[7][22] = { "DIRECTOR RANKING", "SPACE HISTORY",
                           "MISSION RECORDS", "PRESTIGE SUMMARY",
                           "HARDWARE EFFICIENCY", "ASTRONAUT HISTORY",
@@ -161,7 +162,8 @@ void Museum(char plr)
     AImg[3] += plr;
     // FadeOut(2,pal,10,0,0);
     music_start(M_THEME);
-    beg = 0;
+    int beg = 0;
+    bool exit = false;
 
     do {
         if (beg == 0) {
@@ -206,23 +208,28 @@ void Museum(char plr)
             break;
 
         case 6:
-            helpText = (plr == 0) ? "i133" : "i134";
-            keyHelpText = (plr == 0) ? "k035" : "k441";
-
             if (Data->P[plr].AstroCount > 0) {
+                helpText = (plr == 0) ? "i133" : "i134";
+                keyHelpText = (plr == 0) ? "k035" : "k441";
                 ShowAstrosHist(plr);
+            } else {
+                exit = true;
             }
 
             break;
 
+        case -1:
         case 7:
+            exit = true;
+            break;
+
         default:
             break;
         }
 
         helpText = "i000";
         keyHelpText = "k000";
-    } while (i != beg);
+    } while (! exit);
 
     music_stop();
     return;
@@ -295,7 +302,8 @@ void ShowPrest(char plr)
         GetMouse();
 
         // Parse Button actions, note that return is embedded in first pButton
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) ||
+            key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
 
             if (key > 0) {
@@ -685,7 +693,8 @@ void ShowSpHist(char plr)
         Mission_Data_Buttons(plr, &pos);
 
         // Parse Button actions, note that return is embedded in first pButton
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) ||
+            key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
 
             if (key > 0) {
@@ -1164,7 +1173,8 @@ void ShowAstrosHist(char plr)
         GetMouse();
 
         // Parse Button actions, note that continue button is not a macro
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) ||
+            key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
 
             if (key > 0) {
