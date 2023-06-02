@@ -168,6 +168,7 @@ void Admin(char plr)
     }
 
     beg = 1;
+    bool exit = false;
 
     do {
         if (beg) {
@@ -234,9 +235,16 @@ void Admin(char plr)
             keyHelpText = "k128";
             FileAccess(0);
             key = 0;
+
+            if (QUIT || LOAD) {
+                exit = true;
+            }
+
             break;
 
+        case -1:
         case 7:
+            exit = true;
             break;
 
         default:
@@ -248,7 +256,7 @@ void Admin(char plr)
         if (Data->P[plr].AstroDelay > 0) {
             AImg[3] = 5;
         }
-    } while (!(i == 7 || (i == 6 && (QUIT || LOAD))));
+    } while (! exit);
 
     music_stop();
     helpText = "i000";

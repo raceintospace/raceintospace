@@ -148,14 +148,18 @@ int MainMenuChoice()
  *
  * \param plr   the player index.
  * \param qty   how many menu options are available.
- * \param Name  an array of (qty) 22-character menu option labels.
+ * \param Name  an array of (qty) 22-character menu option labels
+ *              (Name[qty][22]).
  * \param Imx   an array of (qty) numeric indices specifying menu icons.
- * \return  the index of the selected menu option, [0, qty).
+ * \param mayEscape  true if the player may press 'ESC' to abort.
+ * \return  the index of the selected menu option, [0, qty),
+ *          or -1 to abort.
  * \throws runtime_error  if Filesystem cannot read the icon images.
  */
-int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
+int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
 {
-    int i, j, starty = 100;
+    int j;
+    int starty = 100;
     char filename[128];
     //FadeOut(2,pal,10,0,0);
     display::LegacySurface local(30, 19);
@@ -163,7 +167,7 @@ int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
     starty -= (qty * 23 / 2);
 
     /* hard-coded magic numbers, yuck */
-    for (i = 0; i < qty; i++) {
+    for (int i = 0; i < qty; i++) {
         BCDraw(starty + 23 * i);
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
 
@@ -182,7 +186,11 @@ int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
         av_block();
         GetMse(plr, 0);
 
-        for (i = 0; i < qty; i++) // keyboard stuff
+        if (mayEscape && key == K_ESCAPE) {
+            break;
+        }
+
+        for (int i = 0; i < qty; i++)  { // keyboard stuff
             if ((char)key == Name[i * 22]) {
 
                 InBox(23, starty + 23 * i, 54, starty + 20 + 23 * i);
@@ -191,9 +199,10 @@ int BChoice(char plr, char qty, char *Name, char *Imx)  // Name[][22]
                 j = i + 1;
                 key = 0;
             }
+        }
 
         if (mousebuttons != 0) {
-            for (i = 0; i < qty; i++) {
+            for (int i = 0; i < qty; i++) {
                 if ((x >= 23 && x <= 54 && y >= starty + 23 * i && y <= starty + 20 + 23 * i) ||
                     (x > 56 && y > starty + 23 * i && x < 296 && y < starty + 20 + 23 * i)) {
 
