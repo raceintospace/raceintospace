@@ -224,9 +224,15 @@ ShowHard(char plr)
                 }
 
                 /* MISC */
-            } else if ((x >= 244 && y >= 5 && x <= 314 && y <= 17)
-                       || key == K_ENTER) {
+            } else if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0)
+                       || key == K_ENTER || key == K_ESCAPE) {
                 InBox(244, 5, 314, 17);
+
+                if (key > 0) {
+                    delay(250);
+                    key = 0;
+                }
+
                 WaitForMouseUp();
                 OutBox(244, 5, 314, 17);
                 return;            /* Done */
@@ -1531,7 +1537,7 @@ RankMe(char plr)
         GetMouse();
 
         if ((x >= 0 && y >= 0 && x <= 319 && y <= 199 && mousebuttons > 0)
-            || key == K_ENTER) {
+            || key == K_ENTER || key == K_ESCAPE) {
             if (key > 0) {
                 delay(300);
                 key = 0;

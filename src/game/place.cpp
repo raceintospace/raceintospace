@@ -179,6 +179,7 @@ int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
     }
 
     // FadeIn(2,pal,10,0,0);
+    key = 0;
     WaitForMouseUp();
     j = -1;
 

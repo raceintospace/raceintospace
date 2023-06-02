@@ -412,7 +412,7 @@ void Budget(char player)
         GetMouse();
 
         if (mousebuttons > 0 || key > 0) { /* Gameplay */
-            if ((x >= 166 && y >= 29 && x <= 236 && y <= 41 && mousebuttons > 0) || key == K_ENTER) {
+            if ((x >= 166 && y >= 29 && x <= 236 && y <= 41 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(167, 29, 236, 41);
                 WaitForMouseUp();
 
