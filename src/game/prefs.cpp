@@ -28,6 +28,7 @@
 #include "prefs.h"
 
 #include <cctype>
+#include <string>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -52,11 +53,14 @@ struct DisplayContext {
 };
 
 void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx);
+void EditDirectorName(int plr);
+std::string GetTextInput(int x, int y, int maxLength);
 void HModel(char mode, char tx);
 void Levels(char plr, char which, char x, DisplayContext &dctx);
 void BinT(int x, int y, char st);
 void PLevels(char side, char wh, DisplayContext &dctx);
 void CLevels(char side, char wh, DisplayContext &dctx);
+
 
 void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
 {
@@ -175,6 +179,86 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     FadeIn(2, 10, 0, 0);
     return;
 }
+
+
+void EditDirectorName(int plr)
+{
+    int x = (plr == 0) ? 7 : 237;
+    int maxLength = MIN(12, sizeof(Data->P[plr].Name) - 1);
+    fill_rectangle(x, 35, x + 75, 41, 0);
+    std::string name = GetTextInput(x + 1, 40, maxLength);
+
+    if (name.length() > 0 && name.length() <= maxLength) {
+        memset(Data->P[plr].Name, 0, sizeof(Data->P[plr].Name));
+        strncpy(Data->P[plr].Name, name.c_str(), maxLength + 1);
+    }
+
+    display::graphics.setForegroundColor(1);
+    draw_string(x + 1, 40, &Data->P[plr].Name[0]);
+    av_sync();
+}
+
+
+/**
+ * Creates a text input field GUI element and returns user input.
+ *
+ * \param x  the x-coordinate for drawing the inputted text string.
+ * \param y  the y-coordinate for drawing the inputted text string.
+ * \param maxLength  the maximum number of characters the user may enter.
+ */
+std::string GetTextInput(int x, int y, int maxLength)
+{
+    std::string input;
+    input.reserve(maxLength + 1);
+    int key = 0;
+    int width = maxLength * 6 + 1;
+
+    fill_rectangle(x, y - 4, x + width, y, 0);
+    display::graphics.setForegroundColor(1);
+    grMoveTo(x, y);
+    draw_character(0x14);
+    av_sync();
+
+    do {
+        key = getch();
+
+        if (key != (key & 0xff)) {
+            key = 0x00;
+        } else if (key >= 'a' && key <= 'z') {
+            key = toupper(key);
+        }
+
+        if (key == 0x08) {  // Backspace
+            if (input.length()) {
+                input.pop_back();
+                fill_rectangle(x, y - 4, x + width, y, 0);
+                draw_string(x, y, input.c_str());
+                draw_character(0x14);
+                key = 0;
+            }
+        } else if (isupper(key) || isdigit(key) || key == ' ') {
+            if (input.length() < maxLength) {
+                input.push_back(key);
+                fill_rectangle(x, y - 4, x + width, y, 0);
+                draw_string(x, y, input.c_str());
+                draw_character(0x14);
+                key = 0;
+            }
+        }
+
+        av_sync();
+    } while (!(key == K_ENTER || key == K_ESCAPE));
+
+    fill_rectangle(x, y - 4, x + width, y, 0);
+
+    // Trim trailing whitespace
+    while (input.length() && input.back() == ' ') {
+        input.pop_back();
+    }
+
+    return (key == K_ENTER && input.length()) ? input : "";
+}
+
 
 /* Draw the Hardware Model / Roster settings button
  *
@@ -640,96 +724,22 @@ void Prefs(int where, int player)
 
                 Levels(1, Data->Def.Ast2, 0, dctx);
                 /* P2: Astro Level */
-            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && (where == 3 || where == 0 || (where == 1 && player == 0)) && mousebuttons > 0) ||
-                       ((where == 3 || where == 0 || (where == 1 && player == 0)) && ksel == 0 && key == 'N')) {
-                fill_rectangle(7, 35, 82, 41, 0);
+            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0) ||
+                       (ksel == 0 && key == 'N')) {
 
-                for (int i = 0; i < 20; i++) {
-                    Data->P[0].Name[i] = 0x00;
-                }
-
-                num = 0;
-                ch = 0;
-                display::graphics.setForegroundColor(1);
-                grMoveTo(8, 40);
-                draw_character(0x14);
-                av_sync();
-
-                while (ch != K_ENTER) {
-                    ch = getch();
-
-                    if (ch != (ch & 0xff)) {
-                        ch = 0x00;
-                    }
-
-                    if (ch >= 'a' && ch <= 'z') {
-                        ch -= 0x20;
-                    }
-
-                    if (ch == 0x08 && num > 0) {
-                        Data->P[0].Name[--num] = 0x00;
-                    } else if (num < 12 && (isupper(ch) || isdigit(ch) || ch == 0x20)) {
-                        Data->P[0].Name[num++] = ch;
-                    }
-
-                    fill_rectangle(7, 35, 82, 41, 0);
-                    display::graphics.setForegroundColor(1);
-                    draw_string(8, 40, &Data->P[0].Name[0]);
-                    draw_character(0x14);
-                    av_sync();
-                }
-
-                Data->P[0].Name[num] = 0x00;
-                fill_rectangle(7, 35, 82, 41, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(8, 40, &Data->P[0].Name[0]);
-                av_sync();
                 /* P1: Director Name */
-            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && (where == 3 || where == 0 || (where == 1 && player == 1)) && mousebuttons > 0) ||
-                       ((where == 3 || where == 0 || (where == 1 && player == 1)) && ksel == 1 && key == 'N')) {
-                fill_rectangle(237, 35, 312, 41, 0);
-
-                for (int i = 0; i < 20; i++) {
-                    Data->P[1].Name[i] = 0x00;
+                if (where == 0 || where == 3 ||
+                    (where == 1 && player == 0)) {
+                    EditDirectorName(0);
                 }
+            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0) ||
+                       (ksel == 1 && key == 'N')) {
 
-                num = 0;
-                ch = 0;
-                display::graphics.setForegroundColor(1);
-                grMoveTo(238, 40);
-                draw_character(0x14);
-                av_sync();
-
-                while (ch != K_ENTER) {
-                    ch = getch();
-
-                    if (ch != (ch & 0xff)) {
-                        ch = 0x00;
-                    }
-
-                    if (ch >= 'a' && ch <= 'z') {
-                        ch -= 0x20;
-                    }
-
-                    if (ch == 0x08 && num > 0) {
-                        Data->P[1].Name[--num] = 0x00;
-                    } else if (num < 12 && (isupper(ch) || isdigit(ch) || ch == 0x20)) {
-                        Data->P[1].Name[num++] = ch;
-                    }
-
-                    fill_rectangle(237, 35, 312, 41, 0);
-                    display::graphics.setForegroundColor(1);
-                    draw_string(238, 40, &Data->P[1].Name[0]);
-                    draw_character(0x14);
-                    av_sync();
-                }
-
-                Data->P[1].Name[num] = 0x00;
-                fill_rectangle(237, 35, 312, 41, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(238, 40, &Data->P[1].Name[0]);
-                av_sync();
                 /* P2: Director Name */
+                if (where == 0 || where == 3 ||
+                    (where == 1 && player == 1)) {
+                    EditDirectorName(1);
+                }
             }
         }
     }
