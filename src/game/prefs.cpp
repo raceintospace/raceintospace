@@ -729,7 +729,7 @@ void Prefs(int where, int player)
 
                 /* P1: Director Name */
                 if (where == 0 || where == 3 ||
-                    (where == 1 && player == 0)) {
+                    (where == 1 && (player == 0 || !IsHumanPlayer(0)))) {
                     EditDirectorName(0);
                 }
             } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0) ||
@@ -737,7 +737,7 @@ void Prefs(int where, int player)
 
                 /* P2: Director Name */
                 if (where == 0 || where == 3 ||
-                    (where == 1 && player == 1)) {
+                    (where == 1 && (player == 1 || !IsHumanPlayer(1)))) {
                     EditDirectorName(1);
                 }
             }
