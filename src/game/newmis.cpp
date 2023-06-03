@@ -186,6 +186,8 @@ void MisAnn(char plr, char pad)
     char pad_str[2] = {static_cast<char>('A' + pad), '\0'};
 
     display::graphics.screen()->clear();
+    
+    helpText = "i175";
 
     PortPal(plr);
     ShBox(41, 20, 281, 184);
