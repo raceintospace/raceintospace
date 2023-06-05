@@ -381,18 +381,23 @@ void DispVAB(char plr, char pad)
         if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
              Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
             Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
-            draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
-            // Show it in yellow because it's below Max R&D
-            display::graphics.setForegroundColor(11);
+            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
+                draw_string(147, 71, "NO");
+                draw_string(144, 78, "EVA");
+                IOBox(140, 64, 165, 82);
+            } else {
+                draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
+                // Show it in yellow because it's below Max R&D
+                display::graphics.setForegroundColor(11);
 
-            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
-                display::graphics.setForegroundColor(9);  // Show in red if hardware is damaged
+                if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
+                    display::graphics.setForegroundColor(9);  // Show in red if hardware is damaged
+                }
+                draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
+                draw_string(0, 0, "%");
+                IOBox(140, 64, 165, 82);
+                EVAmis = 1;
             }
-
-            draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
-            draw_string(0, 0, "%");
-            IOBox(140, 64, 165, 82);
-            EVAmis = 1;
         }
     } else if (IsLM(Data->P[plr].Mission[pad].MissionCode)) {
         // Any LM mission could require an emergency EVA to traverse
@@ -400,14 +405,20 @@ void DispVAB(char plr, char pad)
         if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
              Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
             Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
-            draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
-            // Show it in light green if there may be an emergency EVA
-            // on this mission
-            display::graphics.setForegroundColor(15);
-            draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
-            draw_string(0, 0, "%");
-            IOBox(140, 64, 165, 82);
-            EVAmis = 2;
+            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
+                draw_string(147, 71, "NO");
+                draw_string(144, 78, "EVA");                
+                IOBox(140, 64, 165, 82);
+            } else {
+                draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
+                // Show it in light green if there may be an emergency EVA
+                // on this mission
+                display::graphics.setForegroundColor(15);
+                draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
+                draw_string(0, 0, "%");
+                IOBox(140, 64, 165, 82);
+                EVAmis = 2;
+            }
         }
     }
 
@@ -1330,11 +1341,11 @@ void VAB(char plr)
 
                 OutBox(64, 181, 161, 191);
 
-            } else if ((x >= 139 && y >= 64 && x <= 168 && y <= 82) && EVAmis > 0) {
+            } else if ((x >= 139 && y >= 64 && x <= 168 && y <= 82) && (EVAmis > 0 || Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0)) {
                 OutBox(140, 64, 165, 82);
                 delay(100);
                 Help("i171");  // Pull up help text explaining why player's seeing EVA box
-                InBox(140, 64, 165, 82);
+                InBox(140, 64, 165, 82);            
 
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
                 // Cycle through payload selections
