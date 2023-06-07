@@ -48,6 +48,13 @@
 #include "filesystem.h"
 
 
+enum PreferencesMode {
+    PREFS_INGAME = 1,
+    PREFS_NEWGAME = 0,
+    PREFS_NEWPBEM = 3
+};
+
+
 struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
@@ -60,6 +67,7 @@ void Levels(char plr, char which, char x, DisplayContext &dctx);
 void BinT(int x, int y, char st);
 void PLevels(char side, char wh, DisplayContext &dctx);
 void CLevels(char side, char wh, DisplayContext &dctx);
+int Preferences(int player, int where);
 
 
 void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
@@ -67,8 +75,6 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     int mode = 0;
 
     FadeOut(2, 10, 0, 0);
-    helpText = "i013";
-    keyHelpText = "K013";
 
     display::graphics.screen()->clear();
     dctx.prefs_image->exportPalette();
@@ -424,15 +430,22 @@ void CLevels(char side, char wh, DisplayContext &dctx)
  * See documentation for HModel() for more about the Hardware Model /
  * Roster settings.
  *
- * \param where  0 for pregame setup, 1 for in-game settings, 3 for mail game
+ * \param where  current game state used for determining options
+ *               (0: Pregame setup
+ *                1: In-game settings menu
+ *                3: New PBEM game)
+ * \return PREFS_ABORTED if cancelling out of menu, PREFS_SET otherwise.
  */
-void Prefs(int where, int player)
+int Preferences(int player, int where)
 {
     int num, hum1 = 0, hum2 = 0;
     char *fname;
     char ch, Name[20], ksel = 0;
     int32_t size;
     DisplayContext dctx;
+
+    helpText = "i013";
+    keyHelpText = "K013";
 
     if (where != 3) {
         // If starting a new game, set default configuration
@@ -564,8 +577,12 @@ void Prefs(int where, int player)
                     CacheCrewFile();
 
                     music_stop();
-                    return;
+                    return PREFS_SET;
                 }
+            } else if (key == K_ESCAPE) {
+                music_stop();
+                FadeOut(2, 10, 0, 0);
+                return PREFS_ABORTED;
             } else if (key == 'P' && (where == 0 || where == 3)) {
                 fill_rectangle(59, 26, 68, 31, 3);
                 fill_rectangle(290, 26, 298, 31, 3);
@@ -743,4 +760,23 @@ void Prefs(int where, int player)
             }
         }
     }
+}
+
+
+
+void IngamePreferences(int player)
+{
+    Preferences(player, PREFS_INGAME);
+}
+
+
+int NewGamePreferences()
+{
+    return Preferences(0, PREFS_NEWGAME);
+}
+
+
+int NewPBEMGamePreferences()
+{
+    return Preferences(0, PREFS_NEWPBEM);
 }
