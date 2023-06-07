@@ -238,7 +238,7 @@ int game_main_impl(int argc, char *argv[])
     ex = 0;
 
     while (ex == 0) {
-
+        bool launchGame = false;
         MakeRecords();
 
         fname = locate_file("urast.json", FT_DATA);
@@ -276,40 +276,44 @@ int game_main_impl(int argc, char *argv[])
             helpText = "i013";
 
             if (MAIL == -1) {
-                Prefs(0, -1);                  // GET INITIAL PREFS FROM PLAYER
+                // GET INITIAL PREFS FROM PLAYER
+                launchGame = (NewGamePreferences() != PREFS_ABORTED);
             }
 
 #ifdef ALLOW_PBEM
             else { // MAIL GAME
-                Prefs(3, -1);
+                launchGame = (NewPBEMGamePreferences() != PREFS_ABORTED);
             }
 
 #endif // ALLOW_PBEM
 
-            plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
-            plr[1] = Data->Def.Plr2;
-            Data->plr[0] = Data->Def.Plr1;  // SET STRUCTURE PLAYER VALUES
-            Data->plr[1] = Data->Def.Plr2;
+            if (launchGame) {
+                plr[0] = Data->Def.Plr1;       // SET GLOBAL PLAYER VALUES
+                plr[1] = Data->Def.Plr2;
+                Data->plr[0] = Data->Def.Plr1;  // SET STRUCTURE PLAYER VALUES
+                Data->plr[1] = Data->Def.Plr2;
 
-            if (MAIL == -1) {
-                if (plr[0] == 2 || plr[0] == 3) {
-                    AI[0] = 1;
+                if (MAIL == -1) {
+                    if (plr[0] == 2 || plr[0] == 3) {
+                        AI[0] = 1;
+                    } else {
+                        AI[0] = 0;
+                    }
+
+                    if (plr[1] == 2 || plr[1] == 3) {
+                        AI[1] = 1;
+                    } else {
+                        AI[1] = 0;
+                    }
                 } else {
-                    AI[0] = 0;
+                    AI[0] = AI[1] = 0;
                 }
 
-                if (plr[1] == 2 || plr[1] == 3) {
-                    AI[1] = 1;
-                } else {
-                    AI[1] = 0;
-                }
-            } else {
-                AI[0] = AI[1] = 0;
+                InitData();                   // PICK EVENT CARDS N STUFF
+                MainLoop();                   // PLAY GAME
+                display::graphics.screen()->clear();
             }
 
-            InitData();                   // PICK EVENT CARDS N STUFF
-            MainLoop();                   // PLAY GAME
-            display::graphics.screen()->clear();
             break;
 
         case MAIN_OLD_GAME: // Play Old Game

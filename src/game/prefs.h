@@ -1,6 +1,15 @@
 #ifndef PREFS_H
 #define PREFS_H
 
-void Prefs(int where, int player);
+enum {
+    PREFS_ABORTED = 0,
+    PREFS_SET
+};
+
+
+void IngamePreferences(int player);
+int NewGamePreferences();
+int NewPBEMGamePreferences();
+
 
 #endif // PREFS_H
