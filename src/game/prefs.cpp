@@ -438,10 +438,9 @@ void CLevels(char side, char wh, DisplayContext &dctx)
  */
 int Preferences(int player, int where)
 {
-    int num, hum1 = 0, hum2 = 0;
+    int hum1 = 0, hum2 = 0, ksel = 0;
     char *fname;
-    char ch, Name[20], ksel = 0;
-    int32_t size;
+    char Name[20];
     DisplayContext dctx;
 
     helpText = "i013";
@@ -450,8 +449,6 @@ int Preferences(int player, int where)
     if (where != 3) {
         // If starting a new game, set default configuration
         if (where == 0) {
-            plr[0] = 0;
-            plr[1] = 1;
             Data->Def.Plr2 = 1;
             Data->Def.Plr1 = 0;
             hum1 = 0, hum2 = 1;
@@ -472,9 +469,6 @@ int Preferences(int player, int where)
             hum2 = 1;
         }
     } else {
-        plr[0] = 0;
-        plr[1] = 0;
-
         Data->Def.Lev1 = Data->Def.Lev2 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
         Data->Def.Input = 2;  // Historical Model / Historical Roster
         Data->Def.Sound = Data->Def.Music = 1;

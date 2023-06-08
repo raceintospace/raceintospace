@@ -393,6 +393,7 @@ void DispVAB(char plr, char pad)
                 if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
                     display::graphics.setForegroundColor(9);  // Show in red if hardware is damaged
                 }
+
                 draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
                 draw_string(0, 0, "%");
                 IOBox(140, 64, 165, 82);
@@ -407,7 +408,7 @@ void DispVAB(char plr, char pad)
             Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
             if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
                 draw_string(147, 71, "NO");
-                draw_string(144, 78, "EVA");                
+                draw_string(144, 78, "EVA");
                 IOBox(140, 64, 165, 82);
             } else {
                 draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
@@ -1345,7 +1346,7 @@ void VAB(char plr)
                 OutBox(140, 64, 165, 82);
                 delay(100);
                 Help("i171");  // Pull up help text explaining why player's seeing EVA box
-                InBox(140, 64, 165, 82);            
+                InBox(140, 64, 165, 82);
 
             } else if ((x >= 64 && y >= 129 && x <= 161 && y <= 175 && mousebuttons > 0) || key == 'P') {
                 // Cycle through payload selections

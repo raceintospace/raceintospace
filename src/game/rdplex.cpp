@@ -50,7 +50,6 @@
 #include "hardware.h"
 
 int call;
-int wh;
 
 enum {
     MAX_RD_TEAMS = 5
@@ -703,7 +702,7 @@ char RD(char player_index)
                 }
 
                 call = 1;
-                wh = HPurc(player_index);
+                HPurc(player_index);
 
                 if (call == 0) {
                     return 0;
@@ -1435,7 +1434,7 @@ char HPurc(char player_index)
             }
 
             call = 1;
-            wh = RD(player_index);
+            RD(player_index);
 
             if (call == 0) {
                 return 0;    // Exit

@@ -85,7 +85,6 @@ unsigned char LOAD;
 unsigned char QUIT;
 unsigned char HARD1;
 unsigned char UNIT1;
-unsigned char FADE;
 unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
@@ -95,7 +94,6 @@ char *buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char Option = -1;
-int fOFF = -1;
 // true for fullscreen mission playback, false otherwise
 bool fullscreenMissionPlayback;
 char manOnMoon = 0;
@@ -273,7 +271,6 @@ int game_main_impl(int argc, char *argv[])
             MAIL = -1;
 #endif
             Option = -1;
-            helpText = "i013";
 
             if (MAIL == -1) {
                 // GET INITIAL PREFS FROM PLAYER

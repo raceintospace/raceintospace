@@ -59,7 +59,6 @@ char noDock;
 char InSpace;
 char Dock_Skip; /**< used for mission branching */
 
-extern uint16_t MisStat;
 extern char tMen;
 extern bool fullscreenMissionPlayback;
 

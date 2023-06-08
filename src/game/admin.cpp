@@ -507,10 +507,6 @@ void FileAccess(char mode)
                 // Read in Saved game data
                 LoadGame(savegames[now].Name);
                 done = LOAD;
-
-                if (LOAD) {
-                    fOFF = now;  // save file offset
-                }
             }  // temp
 
             OutBox(209, 50, 278, 58);  // Button Out
