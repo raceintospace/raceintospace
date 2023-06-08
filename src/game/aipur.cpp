@@ -108,31 +108,11 @@ void DrawStatistics(char Win)
 
         int ai_player = AI[Win] ? Win : other(Win);
         int strat = Data->P[ai_player].AIStrategy[AI_STRATEGY];
-        draw_number(0, 0, strat);  // This displays the computer strategy: 1, 2, or 3
 
-        /*if (strat == 1) {                     Note: this was done when we thought that AI_STRATEGY represents
-            if (Win == 0) {                           the AI's capsule choice, but instead it represents
-                draw_string(0, 0, "JUPITER");         "More the path rather than the craft", per Michael
-            } else {
-                draw_string(0, 0, "LK-700");
-            }
-        } else if (strat == 2) {
-            if (Win == 0) {
-                draw_string(0, 0, "APOLLO");
-            } else {
-                draw_string(0, 0, "SOYUZ");
-            }
-        } else if (strat == 3) {
-            if (Win == 0) {
-                draw_string(0, 0, "GEMINI");
-            } else {
-                draw_string(0, 0, "VOSKHOD");
-            }
-        } else {
-            draw_string(0, 0, "OTHER (");
-            draw_number(0, 0, strat);
-            draw_string(0, 0, ")");
-        } */
+        // This displays the computer strategy: 1, 2, or 2
+        // Per Michael, AI_STRATEGY represents
+        //   "More the path rather than the craft"
+        draw_number(0, 0, strat);
     }
 
     qty = 6;

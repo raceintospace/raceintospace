@@ -18,7 +18,6 @@ void PauseMouse(void);
 void GetMouse_fast(void);
 
 extern char Option;
-extern int fOFF;
 extern char AI[2];
 extern char manOnMoon;
 extern char dayOnMoon;
@@ -33,7 +32,6 @@ extern unsigned char HARD1;
 extern unsigned char UNIT1;
 extern unsigned char LOAD;
 extern unsigned char QUIT;
-extern unsigned char FADE;
 extern char plr[NUM_PLAYERS];
 extern struct Players *Data;
 extern int x;

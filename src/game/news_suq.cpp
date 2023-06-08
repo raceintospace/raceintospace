@@ -568,6 +568,7 @@ char REvent(char plr)
         break;
 
     case 28:  // hardware cost 50% less this season
+    case 56:
         Data->P[plr].TurnOnly = 3;
         break;
 
@@ -795,10 +796,6 @@ char REvent(char plr)
 
         Data->P[plr].Pool[i].Special = 4;
         CheckFlightCrews(plr);
-        break;
-
-    case 56:  /* hardware 50% less this season */
-        Data->P[plr].TurnOnly = 3;
         break;
 
     case 57:

@@ -43,7 +43,6 @@ void AssignMissionName(int plr, int pad);
 int AstroConflictsMod(int player, struct Astros &astro);
 void AstroTurn(void);
 int  CrewConflicts(int player, const struct Astros &astro);
-void UpdAll(char side);
 void TestFMis(int plr, int i);
 void UpdateFlybys();
 void UpdateHardTurn(char plr);
@@ -850,113 +849,6 @@ void Update(void)
                 break;
             }
 
-        }
-    }
-
-    return;
-}
-
-
-/**
- *  Perform start of turn maintenance.
- *
- *  TODO: This appears to be essentially the same as the function
- *  Update(), but is never called. There are a few oddities which
- *  result from this:
- *  - AstroTurn will likely be called for each side, but AstroTurn
- *    handles updates for both players.
- *  - UpdateFlybys is only called when side == 1 to avoid the same
- *    issue. UpdateFlybys needs to handle Flyby progress in
- *    chronological order to get Prestige firsts correct.
- */
-void UpdAll(char side)
-{
-    int i, k;
-    char p0 = 0, p1 = 0;
-
-    if (Data->P[side].DockingModuleInOrbit > 0) {
-        Data->P[side].DockingModuleInOrbit--;
-    }
-
-    if (Data->P[side].AstroDelay != 0) {
-        Data->P[side].AstroDelay -= 1;
-    }
-
-    for (i = 0; i < 3; i++) {
-        memcpy(&Data->P[side].Mission[i], &Data->P[side].Future[i], sizeof(struct MissionType));
-        memset(&Data->P[side].Future[i], 0x00, sizeof(struct MissionType));
-        strcpy(Data->P[side].Future[i].Name, "UNDETERMINED");
-    }
-
-    for (i = 0; i < 3; i++) {
-        AssignMissionName(side, i);
-    }
-
-    // Reset R&D Purchasing Ability
-    memset(Data->P[side].Buy, 0x00, sizeof(Data->P[side].Buy));
-
-    AstroTurn();   /* Process all astronauts */
-
-    Data->P[side].RD_Mods_For_Turn = 0;
-
-    if (Data->P[side].RD_Mods_For_Year > 0) {
-        Data->P[side].RD_Mods_For_Turn = Data->P[side].RD_Mods_For_Year;
-        Data->P[side].RD_Mods_For_Year = 0;
-    }
-
-    Data->P[side].TurnOnly = Data->P[side].MissionCatastrophicFailureOnTurn = Data->P[side].Block = 0;
-
-
-    // Only want to update missions once each turn.
-    if (side == 1) {
-        UpdateFlybys();
-    }
-
-    memset(pNeg, 0x00, sizeof pNeg);
-
-    // Fix Prestige Values for Mars, Jup, Sat.
-    Data->Prestige[Prestige_MarsFlyby].Goal[side] = 0;  // Clear Mars
-    Data->Prestige[Prestige_JupiterFlyby].Goal[side] = 0;  // Clear Jupiter
-    Data->Prestige[Prestige_SaturnFlyby].Goal[side] = 0;  // Clear Saturn
-    Data->P[side].Probe[PROBE_HW_ORBITAL].Failures = Data->P[side].Probe[PROBE_HW_LUNAR].Failures = 0;
-    Data->P[side].Probe[PROBE_HW_ORBITAL].Used = Data->P[side].Probe[PROBE_HW_LUNAR].Used = 0;
-
-    for (i = 0; i < Data->P[side].PastMissionCount; i++) {
-        if (Data->P[side].History[i].Event == 0) {
-            switch (Data->P[side].History[i].MissionCode) {
-            case Mission_MarsFlyby:
-                Data->Prestige[Prestige_MarsFlyby].Goal[side]++;
-                break;  // Mars
-
-            case Mission_JupiterFlyby:
-                Data->Prestige[Prestige_JupiterFlyby].Goal[side]++;
-                break;  // Jupiter
-
-            case Mission_SaturnFlyby:
-                Data->Prestige[Prestige_SaturnFlyby].Goal[side]++;
-                break;  // Saturn
-
-            default:
-                break;
-            }
-        }
-
-        switch (Data->P[side].History[i].MissionCode) {
-        case Mission_Orbital_Satellite:
-            if (Data->P[side].History[i].spResult != 1) {
-                Data->P[side].Probe[PROBE_HW_ORBITAL].Failures++;
-            }
-
-            Data->P[side].Probe[PROBE_HW_ORBITAL].Used++;
-            break;
-
-        case Mission_Lunar_Probe:
-            if (Data->P[side].History[i].spResult != 1) {
-                Data->P[side].Probe[PROBE_HW_LUNAR].Failures++;
-            }
-
-            Data->P[side].Probe[PROBE_HW_LUNAR].Used++;
-            break;
         }
     }
 

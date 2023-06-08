@@ -285,16 +285,16 @@ PInfo(char plr, char loc, DisplayContext &dctx)
                 PrestigeTable[MANNED_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Capsule]] += prestigeSum;
             }
 
-            if (Data->P[plr].History[i].Hard[j][ROCKET_HARDWARE] > -1) {
+            if (Data->P[plr].History[i].Hard[j][Mission_Kicker] > -1) {
                 PrestigeTable[MISC_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Kicker]] += prestigeSum;
             }
 
-            if (Data->P[plr].History[i].Hard[j][MANNED_HARDWARE] > -1) {
+            if (Data->P[plr].History[i].Hard[j][Mission_LM] > -1) {
                 PrestigeTable[MANNED_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_LM]] += prestigeSum;
             }
 
-            if (Data->P[plr].History[i].Hard[j][MISC_HARDWARE] > -1) {
-                if (Data->P[plr].History[i].Hard[j][MISC_HARDWARE] < 4) {
+            if (Data->P[plr].History[i].Hard[j][Mission_Probe_DM] > -1) {
+                if (Data->P[plr].History[i].Hard[j][Mission_Probe_DM] < 4) {
                     PrestigeTable[PROBE_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Probe_DM]] += prestigeSum;
                 } else {
                     PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE] += prestigeSum;

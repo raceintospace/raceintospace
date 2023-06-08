@@ -74,7 +74,7 @@ enum ProfileDisplay {
 };
 }
 
-int AstSelectPrompt(char plr);
+int AstSelectPrompt(char plr, int cost);
 void DispEight(char now, char loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
