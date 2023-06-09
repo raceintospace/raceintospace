@@ -62,8 +62,6 @@ char Dock_Skip; /**< used for mission branching */
 extern char tMen;
 extern bool fullscreenMissionPlayback;
 
-void Tick(char);
-
 void GetFailStat(struct XFails *Now, char *FName, int rnum);
 int MCGraph(char plr, int lc, int safety, int val, char prob);
 void F_KillCrew(char mode, struct Astros *Victim);
@@ -415,11 +413,6 @@ void MisCheck(char plr, char mpad)
             name.push_back(0x30 + (Now.fail / 10));
             name.push_back(0x30 + Now.fail % 10);
             PlaySequence(plr, STEP, name.c_str(), 1);
-
-            if (!AI[plr]) {
-                Tick(2);    // reset dials
-            }
-
             FailEval(plr, Now.code, Now.text, Now.val, Now.xtra);
         } else {   // Step Success
 

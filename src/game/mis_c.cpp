@@ -75,7 +75,7 @@ char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
-void Clock(char plr, char clck, char mode, char tm);
+void Clock(char plr, int clock, int mode, int time);
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct Infin> &Mob,
             const std::vector<struct OF> &Mob2);
@@ -536,14 +536,13 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     DEBUG1("<-PlaySequence()");
 }
 
+
 void Tick(char plr)
 {
     static int Sec = 1, Min = 0, Hour = 5, Day = 5;
-    int g, change = 0;
-    double now;
-    static double last;
+    static double last = 0;
 
-//: Specs: reset clocks
+    //: Specs: reset clocks
     if (plr == 2) {
         Sec = 1;
         Min = 0;
@@ -552,7 +551,7 @@ void Tick(char plr)
         return;
     }
 
-    now = get_time();
+    double now = get_time();
 
     if (now - last < .1) {
         return;
@@ -560,136 +559,82 @@ void Tick(char plr)
 
     last = now;
 
-    for (g = 3; g > -1; g--) {
-        change = 0;
+    Clock(plr, 0, 0, Sec);
+    Sec = (Sec == 7) ? 0 : Sec + 1;
+    Clock(plr, 0, 1, Sec);
 
-        if (g == 3 && Hour == 7) {
-            change = 1;
-        } else if (g == 2 && Min == 7) {
-            change = 1;
-        } else if (g == 1 && Sec == 7) {
-            change = 1;
-        } else if (g == 0) {
-            change = 1;
-        }
+    if (Sec == 0) {
+        Clock(plr, 1, 0, Min);
+        Min = (Min == 7) ? 0 : Min + 1;
+        Clock(plr, 1, 1, Min);
+    }
 
-        if (change == 1) {
-            switch (g) {
-            case 3:
-                Clock(plr, 3, 0, Day);
+    if (Min == 0 && Sec == 0) {
+        Clock(plr, 2, 0, Hour);
+        Hour = (Hour == 7) ? 0 : Hour + 1;
+        Clock(plr, 2, 1, Hour);
+    }
 
-                if (Day == 7) {
-                    Day = 0;
-                } else {
-                    Day++;
-                }
-
-                Clock(plr, 3, 1, Day);
-
-            case 2:
-                Clock(plr, 2, 0, Hour);
-
-                if (Hour == 7) {
-                    Hour = 0;
-                } else {
-                    Hour++;
-                }
-
-                Clock(plr, 2, 1, Hour);
-
-            case 1:
-                Clock(plr, 1, 0, Min);
-
-                if (Min == 7) {
-                    Min = 0;
-                } else {
-                    Min++;
-                }
-
-                Clock(plr, 1, 1, Min);
-
-            default:
-                Clock(plr, 0, 0, Sec);
-
-                if (Sec == 7) {
-                    Sec = 0;
-                } else {
-                    Sec++;
-                }
-
-                Clock(plr, 0, 1, Sec);
-                break;
-            }
-        }
+    if (Hour == 0 && Min == 0 && Sec == 0) {
+        Clock(plr, 3, 0, Day);
+        Day = (Day == 7) ? 0 : Day + 1;
+        Clock(plr, 3, 1, Day);
     }
 }
 
-void Clock(char plr, char clck, char mode, char tm)
+
+void Clock(char plr, int clock, int mode, int time)
 {
-    unsigned sx, sy;
+    unsigned sx = 0;
+    unsigned sy = (plr == 0) ? 108 : 121;  //: Specs: clock y value
+    uint8_t color = mode ? 4 : 3;          //: Specs: color
 
-    sx = 0; /* XXX check uninitialized */
-
-//: Specs: clock y value
-    if (plr == 0) {
-        sy = 108;
-    } else {
-        sy = 121;
-    }
-
-//: Specs: color
-    if (mode == 0) {
-        mode = 3;
-    } else {
-        mode = 4;
-    }
-
-//: Specs: clock x_value
-    if (clck == 0) {
+    //: Specs: clock x_value
+    if (clock == 0) {
         sx = 147;
-    } else if (clck == 1) {
+    } else if (clock == 1) {
         sx = 157;
-    } else if (clck == 2) {
+    } else if (clock == 2) {
         sx = 168;
-    } else if (clck == 3) {
+    } else if (clock == 3) {
         sx = 178;
     }
 
-    switch (tm) {
+    switch (time) {
     case 0:
-        display::graphics.legacyScreen()->setPixel(sx, sy - 1, mode);
-        display::graphics.legacyScreen()->setPixel(sx, sy - 2, mode);
+        display::graphics.legacyScreen()->setPixel(sx, sy - 1, color);
+        display::graphics.legacyScreen()->setPixel(sx, sy - 2, color);
         break;
 
     case 1:
-        display::graphics.legacyScreen()->setPixel(sx + 1, sy - 1, mode);
+        display::graphics.legacyScreen()->setPixel(sx + 1, sy - 1, color);
         break;
 
     case 2:
-        display::graphics.legacyScreen()->setPixel(sx + 1, sy, mode);
-        display::graphics.legacyScreen()->setPixel(sx + 2, sy, mode);
+        display::graphics.legacyScreen()->setPixel(sx + 1, sy, color);
+        display::graphics.legacyScreen()->setPixel(sx + 2, sy, color);
         break;
 
     case 3:
-        display::graphics.legacyScreen()->setPixel(sx + 1, sy + 1, mode);
+        display::graphics.legacyScreen()->setPixel(sx + 1, sy + 1, color);
         break;
 
     case 4:
-        display::graphics.legacyScreen()->setPixel(sx, sy + 1, mode);
-        display::graphics.legacyScreen()->setPixel(sx, sy + 2, mode);
+        display::graphics.legacyScreen()->setPixel(sx, sy + 1, color);
+        display::graphics.legacyScreen()->setPixel(sx, sy + 2, color);
         break;
 
     case 5:
-        display::graphics.legacyScreen()->setPixel(sx - 1, sy + 1, mode);
+        display::graphics.legacyScreen()->setPixel(sx - 1, sy + 1, color);
         break;
 
     case 6:
-        display::graphics.legacyScreen()->setPixel(sx - 1, sy, mode);
-        display::graphics.legacyScreen()->setPixel(sx - 2, sy, mode);
+        display::graphics.legacyScreen()->setPixel(sx - 1, sy, color);
+        display::graphics.legacyScreen()->setPixel(sx - 2, sy, color);
         break;
 
     case 7:
-        display::graphics.legacyScreen()->setPixel(sx - 1, sy - 1, mode);
+        display::graphics.legacyScreen()->setPixel(sx - 1, sy - 1, color);
         break;
     }
 }
