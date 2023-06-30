@@ -644,6 +644,7 @@ int Preferences(int player, int where)
                         33, 29, 101, 31);
                     OutBox(100, 30, 135, 61);
                 }
+
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
                 if (!audio.master.muted) {
@@ -657,6 +658,7 @@ int Preferences(int player, int where)
                         33, 29, 101, 71);
                     OutBox(100, 70, 135, 101);
                 }
+
                 /* Sound Level */
             }
 

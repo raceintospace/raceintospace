@@ -146,20 +146,15 @@ const char *S_Name[] = {
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 
-void Rout_Debug(int line, char *file);
-void RestoreDir(void);
+int game_main_impl(int argc, char *argv[]);
 int CheckIfMissionGo(char plr, char launchIdx);
 void ConfigureAudio();
-void oclose(int fil);
 void InitData(void);
-void MMainLoop(void);
-void Progress(char mode);
 void MainLoop(void);
 void DockingKludge(void);
 void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
-void DumpData(void *ptr, const char *file);
 
 
 
@@ -489,7 +484,7 @@ void InitData(void)
 
 void MainLoop(void)
 {
-    int i, j, t1, t2, t3, prest, sign, turn, kik, old_mission_count;
+    int i, t1, t2, t3, prest, sign, turn, kik, old_mission_count;
     bool newTurn;
     struct PrestType oldPrestige[MAXIMUM_PRESTIGE_NUM];
 
@@ -1053,6 +1048,5 @@ int MisRandom(void)
 
     return (int) r_gaussian;
 }
-
 
 

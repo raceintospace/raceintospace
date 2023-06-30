@@ -17,14 +17,10 @@
 
 
 void randomize(void);
-void SMove(void *p, int x, int y);
-void LMove(void *p);
 double get_time(void);
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
-
-void seq_init(void);
 
 
 char DoModem(int sel)
@@ -42,6 +38,7 @@ int put_serial(unsigned char n)
 {
     return 0;
 }
+
 void MesCenter(void) {}
 
 char *letter_dat;
@@ -238,22 +235,6 @@ void CloseEmUp(unsigned char error, unsigned int value)
 {
     /* DEBUG */ /* fprintf (stderr, "CloseEmUp()\n"); */
     exit(EXIT_SUCCESS);
-}
-
-void SMove(void *p, int x, int y)
-{
-    display::LegacySurface local(160, 100);
-    memcpy(local.pixels(), p, 160 * 100);
-    local.copyTo(display::graphics.legacyScreen(), x, y);
-}
-
-void LMove(void *p)
-{
-    display::graphics.screen()->clear();
-
-    display::LegacySurface local(160, 100);
-    memcpy(local.pixels(), p, 160 * 100);
-    local.copyTo(display::graphics.legacyScreen(), 320 / 4, 200 / 4);
 }
 
 void randomize(void)
