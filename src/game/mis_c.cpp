@@ -518,9 +518,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
             av_block();
 
-            if (Data->Def.Sound == 1) {
-                UpdateAudio();
-            }
+            UpdateAudio();
 
             if (!BABY && !fullscreenMissionPlayback) {
                 Tick(plr);

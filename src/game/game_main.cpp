@@ -63,6 +63,7 @@
 #include "records.h"
 #include "review.h"
 #include "sdlhelper.h"
+#include "settings.h"
 #include "start.h"
 #include "state_utils.h"
 #include "utils.h"
@@ -148,6 +149,7 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 void Rout_Debug(int line, char *file);
 void RestoreDir(void);
 int CheckIfMissionGo(char plr, char launchIdx);
+void ConfigureAudio();
 void oclose(int fil);
 void InitData(void);
 void MMainLoop(void);
@@ -158,6 +160,8 @@ void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
 void DumpData(void *ptr, const char *file);
+
+
 
 int game_main_impl(int argc, char *argv[])
 {
@@ -228,6 +232,8 @@ int game_main_impl(int argc, char *argv[])
     DESERIALIZE_JSON_FILE(&Assets->fails, locate_file("fails.json", FT_DATA));
 
     OpenEmUp();                   // OPEN SCREEN AND SETUP GOODIES
+
+    ConfigureAudio();
 
     if (options.want_intro) {
         Introd();
@@ -820,6 +826,23 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
     return;
 }
+
+
+/**
+ * Initialize audio channels.
+ *
+ * Loads the audio settings from the configuration file and sets the
+ * audio channels per user preferences.
+ */
+void ConfigureAudio()
+{
+    AudioConfig audio = LoadAudioSettings();
+
+    music_set_mute(audio.master.muted || audio.music.muted);
+    MuteChannel(AV_SOUND_CHANNEL,
+                audio.master.muted || audio.soundFX.muted);
+}
+
 
 void DockingKludge(void)
 {

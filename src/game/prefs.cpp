@@ -41,8 +41,10 @@
 #include "draw.h"
 #include "options.h"
 #include "game_main.h"
+#include "ioexception.h"
 #include "randomize.h"
 #include "sdlhelper.h"
+#include "settings.h"
 #include "gr.h"
 #include "pace.h"
 #include "filesystem.h"
@@ -59,7 +61,8 @@ struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
 
-void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx);
+void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
+               DisplayContext &dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
 void HModel(char mode, char tx);
@@ -68,9 +71,11 @@ void BinT(int x, int y, char st);
 void PLevels(char side, char wh, DisplayContext &dctx);
 void CLevels(char side, char wh, DisplayContext &dctx);
 int Preferences(int player, int where);
+void SavePreferences(const AudioConfig &audio);
 
 
-void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
+void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
+               DisplayContext &dctx)
 {
     int mode = 0;
 
@@ -81,8 +86,16 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 89, 199);
     ShBox(91, 24, 228, 107);
-    IOBox(98, 28, 137, 63);
-    IOBox(98, 68, 137, 103);
+
+    // Audio buttons should display as disabled if audio is disabled.
+    if (audio.master.muted) {
+        InBox(98, 28, 137, 63);
+        InBox(98, 68, 137, 103);
+    } else {
+        IOBox(98, 28, 137, 63);
+        IOBox(98, 68, 137, 103);
+    }
+
     IOBox(144, 28, 221, 63);
     /* This draws disabled button around camera */
     /* IOBox(144,68,221,103); */
@@ -174,8 +187,12 @@ void DrawPrefs(int where, char a1, char a2, DisplayContext &dctx)
     draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
     draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
 
-    display::graphics.legacyScreen()->draw(dctx.prefs_image, 153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
-    display::graphics.legacyScreen()->draw(dctx.prefs_image, 221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
+    display::graphics.legacyScreen()->draw(
+        dctx.prefs_image, 153 + 34 * (audio.music.muted ? 0 : 1), 0,
+        33, 29, 101, 31);
+    display::graphics.legacyScreen()->draw(
+        dctx.prefs_image, 221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
+        33, 29, 101, 71);
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 216, 30, 71, 29, 147, 31);
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
@@ -442,6 +459,7 @@ int Preferences(int player, int where)
     char *fname;
     char Name[20];
     DisplayContext dctx;
+    AudioConfig audio = LoadAudioSettings();
 
     helpText = "i013";
     keyHelpText = "K013";
@@ -455,8 +473,6 @@ int Preferences(int player, int where)
             Data->Def.Lev1 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
             Data->Def.Lev2 = 2;   // start computer level 3
             Data->Def.Input = 2;  // Historical Model / Historical Roster
-            Data->Def.Sound = Data->Def.Music = 1;
-            MuteChannel(AV_ALL_CHANNELS, 0);
         }
 
         if (Data->Def.Plr1 > 1) {
@@ -471,15 +487,12 @@ int Preferences(int player, int where)
     } else {
         Data->Def.Lev1 = Data->Def.Lev2 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
         Data->Def.Input = 2;  // Historical Model / Historical Roster
-        Data->Def.Sound = Data->Def.Music = 1;
-        MuteChannel(AV_ALL_CHANNELS, 0);
     }
 
     boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
     dctx.prefs_image = prefs_image;
 
-    /* Data->Def.Sound=Data->Def.Music=1; */
-    DrawPrefs(where, hum1, hum2, dctx);
+    DrawPrefs(where, hum1, hum2, audio, dctx);
     WaitForMouseUp();
 
     while (1) {
@@ -569,11 +582,14 @@ int Preferences(int player, int where)
                     }
 
                     CacheCrewFile();
+                    SavePreferences(audio);
 
                     music_stop();
                     return PREFS_SET;
                 }
             } else if (key == K_ESCAPE) {
+                SavePreferences(audio);
+
                 music_stop();
                 FadeOut(2, 10, 0, 0);
                 return PREFS_ABORTED;
@@ -601,7 +617,7 @@ int Preferences(int player, int where)
                 AstronautModification();
                 // TODO: Make sure *everything* is redrawn with the
                 // correct values!
-                DrawPrefs(where, hum1, hum2, dctx);
+                DrawPrefs(where, hum1, hum2, audio, dctx);
 
             } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) && (where == 3 || where == 0)) {  // Hist
                 char maxHModels;
@@ -617,23 +633,30 @@ int Preferences(int player, int where)
             } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
                 /* disable this option right now */
             } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
-                InBox(100, 30, 135, 61);
-                WaitForMouseUp();
-                Data->Def.Music = !Data->Def.Music;
-                // SetMusicVolume((Data->Def.Music==1)?100:0);
-                music_set_mute(!Data->Def.Music);
-                display::graphics.legacyScreen()->draw(dctx.prefs_image,
-                                                       153 + 34 * (Data->Def.Music), 0, 33, 29, 101, 31);
-                OutBox(100, 30, 135, 61);
+                if (!audio.master.muted) {
+                    InBox(100, 30, 135, 61);
+                    WaitForMouseUp();
+                    audio.music.muted = !audio.music.muted;
+                    music_set_mute(audio.music.muted);
+                    display::graphics.legacyScreen()->draw(
+                        dctx.prefs_image,
+                        153 + 34 * (audio.music.muted ? 0 : 1), 0,
+                        33, 29, 101, 31);
+                    OutBox(100, 30, 135, 61);
+                }
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
-                InBox(100, 70, 135, 101);
-                WaitForMouseUp();
-                Data->Def.Sound = !Data->Def.Sound;
-                MuteChannel(AV_SOUND_CHANNEL, !Data->Def.Sound);
-                display::graphics.legacyScreen()->draw(dctx.prefs_image,
-                                                       221 + 34 * (Data->Def.Sound), 0, 33, 29, 101, 71);
-                OutBox(100, 70, 135, 101);
+                if (!audio.master.muted) {
+                    InBox(100, 70, 135, 101);
+                    WaitForMouseUp();
+                    audio.soundFX.muted = !audio.soundFX.muted;
+                    MuteChannel(AV_SOUND_CHANNEL, audio.soundFX.muted);
+                    display::graphics.legacyScreen()->draw(
+                        dctx.prefs_image,
+                        221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
+                        33, 29, 101, 71);
+                    OutBox(100, 70, 135, 101);
+                }
                 /* Sound Level */
             }
 
@@ -756,6 +779,17 @@ int Preferences(int player, int where)
     }
 }
 
+
+void SavePreferences(const AudioConfig &audio)
+{
+    try {
+        SaveAudioSettings(audio);
+    } catch (const IOException &err) {
+        CERROR2(filesys, err.what());
+    } catch (const cereal::Exception &err) {
+        CERROR2(filesys, err.what());
+    }
+}
 
 
 void IngamePreferences(int player)
