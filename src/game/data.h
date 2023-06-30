@@ -138,8 +138,8 @@ struct Defl {
     int8_t Ast1, Ast2;  /**< 0=Easy, 1=Medium, 2=Hard */
     int8_t Input;       /**< 0=Mouse, 1=Keyboard, 2=Joystick */
     int8_t Anim;        /**< 0=Full, 1=Partial, 2=Results Only */
-    int8_t Music;       /**< 0=Full, 1=Partial, 2=None */
-    int8_t Sound;       /**< 0=On, 1=Off */
+    int8_t Music;       /**< 0=Full, 1=Partial, 2=None (DEPRECATED)*/
+    int8_t Sound;       /**< 0=On, 1=Off (DEPRECATED) */
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)

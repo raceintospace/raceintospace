@@ -86,6 +86,7 @@ set(game_sources
   roster_group.cpp
   roster_entry.cpp
   rush.cpp
+  settings.cpp
   start.cpp
   state_utils.cpp
   utils.cpp
