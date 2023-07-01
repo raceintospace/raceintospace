@@ -28,8 +28,6 @@ extern std::string helpText;
 extern std::string keyHelpText;
 extern int oldx;
 extern int oldy;
-extern unsigned char HARD1;
-extern unsigned char UNIT1;
 extern unsigned char LOAD;
 extern unsigned char QUIT;
 extern char plr[NUM_PLAYERS];
