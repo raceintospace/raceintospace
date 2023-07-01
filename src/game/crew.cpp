@@ -20,6 +20,7 @@
 
 #include "crew.h"
 
+#include <cassert>
 #include <string>
 
 #include "display/graphics.h"
@@ -38,15 +39,15 @@
 #include "state_utils.h"
 #include "logging.h"
 
-int AsnCrew(char plr, char pad, char part);
+int AsnCrew(char plr, int missionCode, char pad, char part);
 void FutFltsTxt(char nw, char col);
 void FutSt(char plr, int pr, int p, int b);
 void FutSt2(int num, int type);
-void FutAstList(char plr, char men, int M1, int M2, int M3, int M4);
+void FutAstList(char plr, int missionCode, char men,
+                int M1, int M2, int M3, int M4);
 void DrawHard(char mode, char pad, char mis, char plr);
 int HardRequest(char plr, char mode, char mis, char pad);
 int SecondHard(char plr, char mode, char mis, char pad);
-int mType;
 
 /* Assign the hardware for a planned mission in the Future Missions screen.
  *
@@ -71,7 +72,6 @@ int mType;
 int HardCrewAssign(char plr, char pad, int misType, char newType)
 {
     int M = 0;
-    mType = misType;
 
     if (newType <= 2) {
         Data->P[plr].Future[misType].Joint = 0;
@@ -96,7 +96,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
         M = SecondHard(plr, 0, misType, pad);
 
         if (M != 0) {
-            M = AsnCrew(plr, pad, 0);
+            M = AsnCrew(plr, misType, pad, 0);
         } else {
             return 0;
         }
@@ -110,7 +110,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
         Data->P[plr].Future[pad].MissionCode = misType;
 
         if (M != 0) {
-            M = AsnCrew(plr, pad + 1, 1);
+            M = AsnCrew(plr, misType, pad + 1, 1);
         } else {
             return 0;
         }
@@ -133,7 +133,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
             local3.copyFrom(display::graphics.legacyScreen(), 74, 3, 244, 190);
 
             if (M != 0) {
-                M = AsnCrew(plr, pad, 0);
+                M = AsnCrew(plr, misType, pad, 0);
             } else {
                 return 0;
             }
@@ -152,7 +152,7 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
         }
 
         if (M != 0) {
-            M = AsnCrew(plr, pad + 1, 1);
+            M = AsnCrew(plr, misType, pad + 1, 1);
         } else {
             return 0;
         }
@@ -234,11 +234,12 @@ void ClrFut(char plr, char pad)
  * for a future mission.
  *
  * \param plr   The player scheduling the mission (0 for USA, 1 for USSR).
+ * \param missionCode  The type of mission being launched.
  * \param pad   The mission launch pad (0, 1, or 2).
  * \param part  0 if the Primary crew, 1 if the Secondary.
  * \return  0 if no crew assigned, 1 if successfully chosen.
  */
-int AsnCrew(char plr, char pad, char part)
+int AsnCrew(char plr, int missionCode, char pad, char part)
 {
     int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
 
@@ -389,7 +390,8 @@ int AsnCrew(char plr, char pad, char part)
                 }
 
                 grp = i;
-                FutAstList(plr, men, Data->P[plr].Crew[prg][grp][0],
+                FutAstList(plr, missionCode, men,
+                           Data->P[plr].Crew[prg][grp][0],
                            Data->P[plr].Crew[prg][grp][1],
                            Data->P[plr].Crew[prg][grp][2],
                            Data->P[plr].Crew[prg][grp][3]);
@@ -595,18 +597,17 @@ void FutSt2(int num, int type)
     return;
 }
 
-void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
+void FutAstList(char plr, int missionCode, char men,
+                int M1, int M2, int M3, int M4)
 {
-    int i = 0, m[4];
+    int m[4] = { M1, M2, M3, M4 };
 
-    m[0] = M1;
-    m[1] = M2;
-    m[2] = M3;
-    m[3] = M4;
+    assert(men <= 4);
+
     fill_rectangle(82, 38, 236, 97, 7 + plr * 3); // center screen
     display::graphics.setForegroundColor(1);
 
-    for (i = 0; i < men; i++) {
+    for (int i = 0; i < men; i++) {
         if (m[i] > 0) {
             // Set color back to white in case ENs are set to yellow
             display::graphics.setForegroundColor(1);
@@ -659,8 +660,10 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Cap);
             display::graphics.setForegroundColor(1);
 
-            if ((i == 1 && men > 1) && ((mType > 37 && mType < 42) || mType > 47)) {
-                display::graphics.setForegroundColor(11);   /* Highlight LM for LM Pilot, if the mission involves LM skill */
+            // Highlight LM for LM Pilot, if the mission involves
+            // LM skill.
+            if (i == 1 && men > 1 && IsLM(missionCode)) {
+                display::graphics.setForegroundColor(11);
             }
 
             draw_string(113, 51 + i * 14, "LM:");
@@ -677,10 +680,10 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             // Highlight EVA for EVA Specialist, if the mission...
             if (men == 1 || ((men == 2 || men == 3) && i == 1) ||
                 (men == 4 && i > 1)) {
-                if (IsEVA(mType)) {
+                if (IsEVA(missionCode)) {
                     // ...will include an EVA...
                     display::graphics.setForegroundColor(11);
-                } else if (IsLM(mType)) {
+                } else if (IsLM(missionCode)) {
                     // ... or might include an emergency EVA
                     display::graphics.setForegroundColor(15);
                 }
@@ -699,7 +702,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
             // Highlight DO for Docking Specialist, if the mission
             // will include docking
             if (((men == 2 && i == 0) || (men == 3 && i == 2)) &&
-                IsDocking(mType)) {
+                IsDocking(missionCode)) {
                 display::graphics.setForegroundColor(11);
             } else {
                 display::graphics.setForegroundColor(1);
@@ -717,7 +720,7 @@ void FutAstList(char plr, char men, int M1, int M2, int M3, int M4)
 
             // Highlight EN skill for everyone on Duration missions,
             // unless EN is disabled (Classic behavior)
-            if (IsDuration(mType) && options.feat_use_endurance) {
+            if (IsDuration(missionCode) && options.feat_use_endurance) {
                 display::graphics.setForegroundColor(11);
             } else {
                 display::graphics.setForegroundColor(1);

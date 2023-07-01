@@ -31,6 +31,9 @@
 #include <cerrno>
 #include <math.h>
 
+#include <sstream>
+#include <stdexcept>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
@@ -84,13 +87,10 @@ int oldx;
 int oldy;
 unsigned char LOAD;
 unsigned char QUIT;
-unsigned char HARD1;
-unsigned char UNIT1;
 unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
 std::string keyHelpText;
-std::array<char, 2> IDLE;
 char *buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
@@ -140,26 +140,18 @@ const char *S_Name[] = {
     "EARTH ORBITAL INS. BURN"
 };
 
-#include <sstream>
-#include <stdexcept>
-
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 
-void Rout_Debug(int line, char *file);
-void RestoreDir(void);
+int game_main_impl(int argc, char *argv[]);
 int CheckIfMissionGo(char plr, char launchIdx);
 void ConfigureAudio();
-void oclose(int fil);
 void InitData(void);
-void MMainLoop(void);
-void Progress(char mode);
 void MainLoop(void);
 void DockingKludge(void);
 void OpenEmUp(void);
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
-void DumpData(void *ptr, const char *file);
 
 
 
@@ -270,7 +262,6 @@ int game_main_impl(int argc, char *argv[])
         case MAIN_PBEM_GAME:  // New Mail Game
 #endif // ALLOW_PBEM
             LOAD = QUIT = 0;
-            HARD1 = UNIT1 = 0;
 #ifdef ALLOW_PBEM
             MAIL = (choice == MAIN_PBEM_GAME) ? 0 : -1;
 #else
@@ -321,7 +312,6 @@ int game_main_impl(int argc, char *argv[])
 
         case MAIN_OLD_GAME: // Play Old Game
             LOAD = QUIT = 0;
-            HARD1 = UNIT1 = 0;
             MAIL = -1;
             Option = -1;
             FileAccess(1);
@@ -473,13 +463,11 @@ int CheckIfMissionGo(char plr, char launchIdx)
 
 void InitData(void)
 {
-    int i, j;
-
     InitializeEvents();                  // RESET EVENT CARDS
     Data->Count = 0;               // SET EVENT COUNTER TO ZERO
 
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        for (i = 0; i < 5; i++) {
+    for (int j = 0; j < NUM_PLAYERS; j++) {
+        for (int i = 0; i < 5; i++) {
             Data->P[j].PresRev[i] = 8;
         }
     }
@@ -489,8 +477,9 @@ void InitData(void)
 
 void MainLoop(void)
 {
-    int i, j, t1, t2, t3, prest, sign, turn, kik, old_mission_count;
+    int t1, t2, t3, prest, sign, turn, old_mission_count;
     bool newTurn;
+    std::array<char, 2> IDLE = {0, 0};
     struct PrestType oldPrestige[MAXIMUM_PRESTIGE_NUM];
 
     if (LOAD != 1) {
@@ -562,7 +551,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             // player.
             // Also, check to make sure this isn't an autosave repeating
             // the start-of-turn actions.
-            for (i = 0; i < NUM_PLAYERS; i++) {
+            for (int i = 0; i < NUM_PLAYERS; i++) {
                 if (Data->Season == 1 && newTurn) {
                     IntelPhase(plr[i] - 2 * AI[i], 0);
                 }
@@ -570,7 +559,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
         }
 
-        for (i = 0; i < NUM_PLAYERS; i++) {
+        for (int i = 0; i < NUM_PLAYERS; i++) {
 
             if (!i && (MAIL_PLAYER == 1)) { // Soviet turn coming up
                 continue;
@@ -684,9 +673,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         DockingKludge();  // fixup for both sides
 
         // Do Missions Here
-        kik = OrderMissions();
+        int kik = OrderMissions();
 
-        for (i = 0; i < kik; i++) {
+        for (int i = 0; i < kik; i++) {
             if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
                 if (AI[Order[i].plr] == 1) {
                     if (!CheckIfMissionGo(Order[i].plr, Order[i].loc)) {
@@ -788,7 +777,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         Data->P[0].Prestige = Data->P[1].Prestige = 0;
 
         if (Data->Season == 1) {
-            for (i = 0; i < NUM_PLAYERS; i++) {
+            for (int i = 0; i < NUM_PLAYERS; i++) {
                 int p = plr[i] % NUM_PLAYERS;
                 int pi = plr[i] - 2 * AI[i];
 
@@ -846,9 +835,7 @@ void ConfigureAudio()
 
 void DockingKludge(void)
 {
-    int j;
-
-    for (j = 0; j < NUM_PLAYERS; j++) {
+    for (int j = 0; j < NUM_PLAYERS; j++) {
         Data->P[j].Misc[MISC_HW_DOCKING_MODULE].MSF =
             MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
                 Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
@@ -967,15 +954,12 @@ void PauseMouse(void)
 
 void VerifySF(char plr)
 {
-    int i;
-    Equipment *px;
-
     // TODO: This is _very_ implementation-specific, relying on the
     // Probe, Rocket, Manned, and Misc arrays all being defined as
     // Equipment arrays of length 7 being defined consecutively in
     // struct BuzzData. This should be rewritten.
-    for (i = 0; i < 28; i++) {
-        px = &Data->P[plr].Probe[i];
+    for (int i = 0; i < 28; i++) {
+        Equipment *px = &Data->P[plr].Probe[i];
 
         if (px->Safety > px->MaxSafety) {
             px->Safety = px->MaxSafety;
@@ -989,9 +973,7 @@ void VerifySF(char plr)
 
 void VerifyCrews(char plr)
 {
-    int i, t, k;
-
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].MissionCode == Mission_Jt_Unmanned_Orbital_Docking && Data->P[plr].Mission[i].part == 0) {
             Data->P[plr].Mission[i].Joint = 1;
             Data->P[plr].Mission[i + 1].Joint = 1;
@@ -1000,8 +982,8 @@ void VerifyCrews(char plr)
         }
 
         if (Data->P[plr].Mission[i].PCrew > 0) { // primary verify
-            t = Data->P[plr].Mission[i].Prog;
-            k = Data->P[plr].Mission[i].PCrew - 1;
+            int t = Data->P[plr].Mission[i].Prog;
+            int k = Data->P[plr].Mission[i].PCrew - 1;
 
             if (Data->P[plr].CrewCount[t][k] == 0) {
                 Data->P[plr].Mission[i].PCrew = 0;
@@ -1029,10 +1011,9 @@ int MisRandom(void)
     const double mu = 57;
     const double sigma = sqrt(1000);
     const int brandom_threshold = 66;
-    int r_uniform;
     double u1, u2, r_gaussian;
 
-    r_uniform = brandom(100) + 1;
+    int r_uniform = brandom(100) + 1;
 
     if (r_uniform < brandom_threshold) {
         return r_uniform;
@@ -1053,6 +1034,5 @@ int MisRandom(void)
 
     return (int) r_gaussian;
 }
-
 
 

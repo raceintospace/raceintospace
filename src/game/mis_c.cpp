@@ -100,33 +100,28 @@ void InRFBox(int a, int b, int c, int d, int col);
 void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
     //DEBUG1("->PlaySequence()");
-    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
+    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)",
+           step, InSeq, mode);
     int keep_going;
-    int wlen, i, j, k;
-    unsigned int fres, max;
-    char lnch = 0, AEPT, BABY, Tst2, Tst3;
+    int i, j, k;
+    unsigned int max;
+    char lnch = 0;
+    char AEPT, BABY, Tst2, Tst3;
     unsigned char sts = 0, fem = 0;
-    FILE *fout, *ffin, *nfin;
-    struct oGROUP *bSeq, aSeq;
-    //    struct oFGROUP *dSeq, cSeq;
-    struct Table *F;
-    char sName[20], err = 0;
+    FILE *ffin, *nfin;
+    char err = 0;
     mm_file vidfile;
     FILE *mmfp;
     float fps;
     int hold_count;
-    const int SCRATCH_SIZE = 64000;
-    char scratch[SCRATCH_SIZE];
     std::vector<struct Infin> Mob;
     std::vector<struct OF> Mob2;
-    char *fname;
     std::string ID;
 
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
     strncpy(Seq, InSeq, sizeof(Seq));
 
-    F = NULL; /* XXX check uninitialized */
     i = j = k = 0; /* XXX check uninitialized */
 
     SHTS[0] = brandom(10);
@@ -917,7 +912,6 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
 char FailureMode(char plr, int prelim, char *text)
 {
     int i, j, k;
-    FILE *fin;
     double last_secs;
     Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
@@ -1239,7 +1233,6 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     // but it never gets modified and a global var (MA) is still being
     // directly accessed.
     struct MisAst MX[2][4];
-    FILE *fin;
     double last_secs;
     Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());

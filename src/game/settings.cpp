@@ -23,7 +23,8 @@
 #include "options.h"
 
 
-namespace {
+namespace
+{
 
 void ResetAudioSettings(AudioConfig &audio);
 
@@ -123,7 +124,8 @@ void SaveAudioSettings(const AudioConfig &settings)
 //----------------------------------------------------------------------
 
 
-namespace {
+namespace
+{
 
 void ResetAudioSettings(AudioConfig &audio)
 {

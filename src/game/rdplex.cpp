@@ -318,10 +318,10 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Scr
 }
 
 
-char RD(char player_index)
+char RD(char player_index, int hardware, int unit)
 {
-    short hardware = HARD1, unit = UNIT1;
-    short roll = 0,  buy[4][7], i, j, b;
+    short roll = 0;
+    short buy[4][7], i, j, b;
 
     b = 0; /* XXX check uninitialized */
 
@@ -337,7 +337,7 @@ char RD(char player_index)
     HardwareButtons hardware_buttons(30, player_index);
 
     DrawRD(player_index);
-    hardware_buttons.drawButtons(HARD1);
+    hardware_buttons.drawButtons(hardware);
 
     ShowUnit(hardware, unit, player_index);
     DrawRDButtons(player_index,
@@ -682,17 +682,15 @@ char RD(char player_index)
 
                 music_stop();
                 call = 0;
-                HARD1 = PROBE_HARDWARE;
-                UNIT1 = PROBE_HW_ORBITAL;
                 return 0;
             } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {
                 InBox(5, 73, 152, 83);
-                HARD1 = hardware;
-                UNIT1 = unit;
 
-                for (i = 0; i < 4; i++) for (j = 0; j < 7; j++) {
+                for (i = 0; i < 4; i++) {
+                    for (j = 0; j < 7; j++) {
                         Data->P[player_index].Buy[i][j] = buy[i][j];
                     }
+                }
 
                 music_stop();
 
@@ -702,14 +700,12 @@ char RD(char player_index)
                 }
 
                 call = 1;
-                HPurc(player_index);
+                HPurc(player_index, hardware, unit);
 
                 if (call == 0) {
                     return 0;
                 }
 
-                hardware = HARD1;
-                unit = UNIT1;
                 call = 0;
 
                 for (i = 0; i < 4; i++) {
@@ -1239,10 +1235,8 @@ void DrawHPurc(char player_index)
     return;
 }
 
-char HPurc(char player_index)
+char HPurc(char player_index, int hardware, int unit)
 {
-    short hardware, unit;
-
     HardwareButtons hardware_buttons(30, player_index);
 
     remove_savedat("UNDO.TMP");
@@ -1250,8 +1244,6 @@ char HPurc(char player_index)
     fwrite(Data, sizeof(struct Players), 1, undo);
     fclose(undo);
 
-    hardware = HARD1;
-    unit = UNIT1;
     helpText = "i008";
     keyHelpText = "k008";
     DrawHPurc(player_index);
@@ -1416,15 +1408,11 @@ char HPurc(char player_index)
             WaitForMouseUp();
             music_stop();
             call = 0;
-            HARD1 = PROBE_HARDWARE;
-            UNIT1 = PROBE_HW_ORBITAL;
             remove_savedat("UNDO.TMP");
             return 0;   // Continue
         } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {  // Gateway to RD
             InBox(5, 73, 152, 83);
             WaitForMouseUp();
-            HARD1 = hardware;
-            UNIT1 = unit;
             music_stop();
             remove_savedat("UNDO.TMP");
 
@@ -1434,15 +1422,13 @@ char HPurc(char player_index)
             }
 
             call = 1;
-            RD(player_index);
+            RD(player_index, hardware, unit);
 
             if (call == 0) {
                 return 0;    // Exit
             }
 
             call = 0;
-            hardware = HARD1;
-            unit = UNIT1;
             DrawHPurc(player_index);
             ShowUnit(hardware, unit, player_index);
             hardware_buttons.drawButtons(hardware);
