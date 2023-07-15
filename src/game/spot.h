@@ -3,15 +3,13 @@
 
 
 #define BABYSND 1
-#define SPOT_LOAD 0
-#define SPOT_STEP 1
-#define SPOT_DONE 2
-#define SPOT_KILL 3
 
 
-void SpotActivity(char loc, char mode);
+void SpotAdvance();
 void SpotClose();
 void SpotInit();
+void SpotKill();
+void SpotLoad(int animationIndex);
 void SpotPause();
 void SpotRefresh();
 void SpotResume();

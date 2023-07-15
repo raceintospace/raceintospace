@@ -30,360 +30,104 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <string>
+
 #include "display/graphics.h"
 
 #include "data.h"
 #include "endianness.h"
 #include "fs.h"
 #include "gamedata.h"
+#include "logging.h"
 #include "macros.h"
 #include "pace.h"
 #include "sdlhelper.h"
 
 
 /** SPOT structures and data structure variables */
-struct {        // Main SPOT Header
+struct SpotHeader {     // Main SPOT Header
     uint8_t ID[40];     /**< Copyright notice */
     uint8_t Qty;        /**< Number of Paths */
     uint32_t sOff;      /**< Spot Offsets */
     uint32_t pOff;      /**< Path Offsets */
-} MSPOT;
+};
 
-struct sPATH {       // Spot Anim Path Struct
-    uint16_t Image;        // Which image to Use
+
+// SimpleHdr is defined in gamedata.h and reprinted here for quick
+// reference.
+//
+// typedef struct {
+//     uint16_t size;
+//     uint32_t offset;
+// } SimpleHdr;
+
+
+struct AnimationStep {       // Spot Anim Path Struct
+    uint16_t Image;        // Which image to Use (by index)
     int16_t xPut, yPut;    // Where to place this image
     int16_t iHold;         // Repeat this # times
     float Scale;           // Scale object
 };
 
-struct sIMG {
+struct CelHeader {
     uint8_t w, h;   // Width and Height
 };
 
-// TODO: Replace this...
-char SUSPEND;
-
 namespace
 {
+const int MAX_X = display::Graphics::WIDTH - 1;
+const int MAX_Y = display::Graphics::HEIGHT - 1;
+
 boost::shared_ptr<display::LegacySurface> portViewBuffer;
-char PName[20];
-int16_t sCount;     // sCount is the number of steps
-FILE *sFin;
-SimpleHdr hSPOT;  // Filled by Seek_sOff();
-struct sPATH sPath, sPathOld;
-struct sIMG sImg, sImgOld;
-uint32_t pTable, pLoc;
+bool SUSPEND = true;
+bool isTrackPlaying = false;
+int16_t stepCount;     // stepCount is the number of steps
+FILE *sFin = NULL;
+struct SpotHeader mainHeader;
+struct AnimationStep sPath;
+struct CelHeader sImg;
+uint32_t pLoc;
+
+void AdvanceFrame();
+#if BABYSND
+std::string AudioTrack(int trackIndex);
+#endif
+size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target);
+size_t ImportSPath(FILE *fin, struct AnimationStep &target);
+void SeekCelData(int celIndex);
+void SeekAnimation(int index);
 };
 
 
-size_t ImportSPath(FILE *fin, struct sPATH &target);
-void Seek_sOff(int where);
-void Seek_pOff(int where);
-
-
 /**
- * Animates a Port background activity.
- *
- * The main spaceport has a variety of animated activities, some
- * triggered by player activities, that run in the background.
- * Examples include planes flying past & rockets being transported
- * to the main launch pad.
- *
- * This function handles animation activity based on the mode:
- *   - SPOT_LOAD begins an animation sequence, selecting it as the
- *     active sequence and starting any sound effects.
- *   - SPOT_STEP plays the next frame in the current animation
- *     sequence.
- *   - SPOT_DONE is used when the animation sequence has completed,
- *     stopping any active sound effects and cleaning up globals.
- *   - SPOT_KILL terminates any active sound effects and stops
- *     animation, closing access to the animation file, performing
- *     less cleanup than SPOT_DONE.
- *
- * The spots.cdr file is composed of:
- * SpotHeader
- * Image Headers
- * Images
- * Sequence Directory
- * <Unknown>
- * Animation[]
- *
- * The SpotHeader (MSPOT) contains offsets to an image headers list and
- * an animaton sequence directory, and the quantity of animation
- * sequences.
- *
- * The Image Headers list is a SimpleHdr array, accessed via MSPOT.sOff
- * and read into hSpot. These contain image size and an offset to the
- * image data.
- *  - Implementation: spots.cdr has space for 300 SimpleHdr structs
- *    reserved (1800 bytes); 0-282 have a SimpleHdr defined.
- *
- * Images consist of a two-byte sIMG header {width, height} followed by
- * raw palettized pixel data (coded to the Port palette). The SimpleHdr
- * size is the length of the pixel data, and does not include the sIMG
- * header.
- *
- * The animation sequence directory is a uint32_t array, accessed via
- * MSPOT.pOff and read into pTable. It contains offsets to the
- * animation sequences.
- *
- * Each animation sequence consists of a header:
- *   - char[20] containing the sequence name
- *   - uint16_t containing the count of sequence parts
- * followed by a series of sPath objects defining each sequence part.
- *
- * \param loc   which spot animation to load when mode=SPOT_LOAD
- * \param mode  SPOT_LOAD, SPOT_STEP, SPOT_DONE, or SPOT_KILL
+ *  Plays the next frame in the currently active animation sequence.
  */
-void SpotActivity(char loc, char mode)
+void SpotAdvance()
 {
-    display::LegacySurface *SP1;
-    display::LegacySurface *SP2;
-    display::LegacySurface *SP3;
-    static char turnoff = 0;
-
-    if (SUSPEND == 1) {
-        if (turnoff == 1) {
-            StopVoice();    //Specs: suspend sound babypics
-        }
-
+    if (SUSPEND) {
         return;
     }
 
-    if (sCount == -1  && mode != SPOT_LOAD) {
-        return;
-    }
-
-    if (mode == SPOT_LOAD) {
-        // Open File
-        sFin = sOpen("SPOTS.CDR", "rb", FT_DATA);
-
-        // Read in Spot Header
-        // fread(&MSPOT, sizeof MSPOT, 1, sFin);
-        fread(&MSPOT.ID[0], sizeof(MSPOT.ID), 1, sFin);
-        fread(&MSPOT.Qty, sizeof(MSPOT.Qty), 1, sFin);
-        fread(&MSPOT.sOff, sizeof(MSPOT.sOff), 1, sFin);
-        fread(&MSPOT.pOff, sizeof(MSPOT.pOff), 1, sFin);
-        Swap32bit(MSPOT.sOff);
-        Swap32bit(MSPOT.pOff);
-
-        Seek_pOff(loc);  // go to correct path
-        fread(&PName, sizeof PName, 1, sFin);
-        fread(&sCount, sizeof sCount, 1, sFin);  // get number of paths parts
-        Swap16bit(sCount);
-        pLoc = ftell(sFin);
-        sPath.iHold = 1;
-        portViewBuffer->copyFrom(display::graphics.legacyScreen(), 0, 0,
-                                 display::graphics.screen()->width() - 1,
-                                 display::graphics.screen()->height() - 1);
-        sPathOld.xPut = -1;
-        SpotActivity(0, SPOT_STEP);
-        // All opened up
-    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount > 0) {
-        // Play Next Seq
-        int xx = 0;
-        fseek(sFin, pLoc, SEEK_SET);     // position at next path
-        // get the next sPATH struct
-        ImportSPath(sFin, sPath);
-
-        pLoc = ftell(sFin);               // Path Update Locations
-
-        Seek_sOff(sPath.Image);          // point to next image
-        // get image header
-        // fread(&sImg, sizeof sImg, 1, sFin);
-        fread(&sImg.w, sizeof(sImg.w), 1, sFin);
-        fread(&sImg.h, sizeof(sImg.h), 1, sFin);
-
-        SP1 = new display::LegacySurface(sImg.w, sImg.h);
-        fread(SP1->pixels(), hSPOT.size, 1, sFin);  // read image data
-
-        if (sPath.Scale != 1.0) {
-            sImg.w = (int)((float) sImg.w * sPath.Scale);
-            sImg.h = (int)((float) sImg.h * sPath.Scale);
-            SP2 = new display::LegacySurface(sImg.w, sImg.h);
-            SP1->scaleTo(SP2);
-        }
-
-        SP3 = new display::LegacySurface(sImg.w, sImg.h);
-
-        portViewBuffer->palette().copy_from(
-            display::graphics.legacyScreen()->palette());
-        SP3->copyFrom(portViewBuffer.get(),
-                      MIN(sPath.xPut, 319), MIN(sPath.yPut, 199),
-                      MIN(sPath.xPut + sImg.w - 1, 319),
-                      MIN(sPath.yPut + sImg.h - 1, 199),
-                      0, 0);
-
-        if (sPath.Scale != 1.0) {
-            xx = hSPOT.size;
-
-            for (int i = 0; i < xx; i++) {
-                if (SP2->pixels()[i] == 0) {
-                    *(SP2->pixels() + i) = SP3->pixels()[i];
-                }
-            }
-
-            if (sPathOld.xPut != -1) {
-                portViewBuffer->copyTo(display::graphics.legacyScreen(),
-                                       sPathOld.xPut, sPathOld.yPut,
-                                       sPathOld.xPut, sPathOld.yPut,
-                                       sPathOld.xPut + sImgOld.w - 1,
-                                       sPathOld.yPut + sImgOld.h - 1);
-            }
-
-            SP2->copyTo(display::graphics.legacyScreen(),
-                        sPath.xPut, sPath.yPut);
-        } else {
-            xx = hSPOT.size;
-
-            for (int i = 0; i < xx; i++) {
-                if (SP1->pixels()[i] == 0) {
-                    *(SP1->pixels() + i) = SP3->pixels()[i];
-                }
-            }
-
-            if (sPathOld.xPut != -1) {
-                portViewBuffer->copyTo(
-                    display::graphics.legacyScreen(),
-                    sPathOld.xPut, sPathOld.yPut,
-                    sPathOld.xPut, sPathOld.yPut,
-                    MIN(sPathOld.xPut + sImgOld.w - 1, 319),
-                    MIN(sPathOld.yPut + sImgOld.h - 1, 199));
-            }
-
-            SP1->copyTo(display::graphics.legacyScreen(),
-                        MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
-        }
-
-        sPathOld = sPath;
-        sImgOld = sImg;
-
-        delete SP3;
-        SP3 = NULL;
-        delete SP1;
-        SP1 = NULL;
-
-        if (sPath.Scale != 1.0) {
-            delete SP2;
-            SP2 = NULL;
-        }
-
-        sCount--;
-
-    } else if (mode == SPOT_STEP && sPath.iHold > 1 && sCount > 0) {
+    if (sPath.iHold == 1 && stepCount > 0) {
+        AdvanceFrame();
+        stepCount--;
+    } else if (sPath.iHold > 1 && stepCount > 0) {
         sPath.iHold--;
-    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount == 0) {
-        SpotActivity(0, SPOT_DONE);
-    } else if ((mode == SPOT_DONE || sCount >= 0) && sFin != NULL) {
-        // Close the file and stop the audio.
-        fclose(sFin);
-        sFin = NULL;
-        sPathOld.xPut = -1;
-        sPath.iHold = 0;
-        sCount = -1;
-#if BABYSND
-
-        if (turnoff == 1) {
-            StopAudio(0);
-            turnoff = 0;
-        }
-
-#endif
-    } else if (mode == SPOT_KILL && sFin != NULL) {
-        fclose(sFin);
-        sFin = NULL;
-#if BABYSND
-
-        if (turnoff == 1) {
-            StopAudio(0);
-            turnoff = 0;
-        }
-
-#endif
+    } else if (sPath.iHold == 1 && stepCount == 0) {
+        SpotKill();  // Close the file and stop the audio.
     }
-
-#if BABYSND
-
-    if ((loc >= 0 && loc <= 8) || (loc >= 15 && loc <= 19) || loc == 12 || loc == 14 || loc == 11 || loc == 10) {
-        if (mode == SPOT_LOAD && !IsChannelMute(AV_SOUND_CHANNEL)) {
-            switch (loc) {
-            case 1:
-            case 6:
-                PlayAudio("jet.ogg", 0);
-                break;
-
-            case 3:
-            case 8:
-                PlayAudio("vcrash.ogg", 0);
-                break;
-
-            case 16:
-                PlayAudio("train.ogg", 0);
-                break;
-
-            case 4:
-                PlayAudio("crawler.ogg", 0);
-                break;
-
-            case 0:
-            case 5:
-                PlayAudio("vthrust.ogg", 0);
-                break;
-
-            case 10:
-                PlayAudio("gate.ogg", 0);
-                break;
-
-            case 18:
-                PlayAudio("svprops.ogg", 0);
-                break;
-
-            case 2:
-            case 7:
-                PlayAudio("heli_00.ogg", 0);
-                break;
-
-            case 17:
-                PlayAudio("radarsv.ogg", 0);
-                break;
-
-            case 11:
-                PlayAudio("radarus.ogg", 0);
-                break;
-
-            case 12:
-            case 14:
-                PlayAudio("lightng.ogg", 0);
-                break;
-
-            case 19:
-                PlayAudio("crane.ogg", 0);
-                break;
-
-            case 15:
-                PlayAudio("truck.ogg", 0);
-                break;
-            }
-
-            turnoff = 1;
-        }
-    }
-
-#endif
-    return;
 }
 
 
 /**
  * Free up resources after the Spaceport Animation is complete.
+ *
+ * Once SpotClose is called, no calls to SpotActivity should be made
+ * until SpotInit() is called.
  */
 void SpotClose()
 {
-    if (sFin) {
-        fclose(sFin);
-        sFin = NULL;
-    }
-
+    SpotKill();
     portViewBuffer.reset();
 }
 
@@ -398,8 +142,9 @@ void SpotClose()
 void SpotInit()
 {
     sFin = NULL;
-    sCount = -1;
-    SUSPEND = 0;
+    stepCount = -1;
+    SUSPEND = false;
+    isTrackPlaying = false;
 
     int height = display::graphics.legacyScreen()->height();
     int width = display::graphics.legacyScreen()->width();
@@ -412,9 +157,150 @@ void SpotInit()
 }
 
 
+/**
+ * Terminate any spaceport animation currently playing.
+ *
+ * Stops any active animation, any active sound effects, and closes
+ * the animation file. An animation stopped with this function is
+ * not paused. It may not be resumed and will have to be reloaded.
+ *
+ * Calling this should be safe when there is no animation loaded.
+ */
+void SpotKill()
+{
+    if (sFin) {
+        fclose(sFin);
+        sFin = NULL;
+    }
+
+    sPath.iHold = 0;
+    sPath.xPut = -1;
+    stepCount = -1;
+
+#if BABYSND
+
+    if (isTrackPlaying) {
+        StopAudio(0);
+        isTrackPlaying = false;
+    }
+
+#endif
+}
+
+
+/**
+ * Animates a Port background activity.
+ *
+ * The main spaceport has a variety of animated activities, some
+ * triggered by player activities, that run in the background.
+ * Examples include planes flying past & rockets being transported
+ * to the main launch pad.
+ *
+ * The spots.cdr file is composed of:
+ *
+ *     SpotHeader
+ *     Image Headers
+ *     Images
+ *     Sequence Directory
+ *     Animations
+ *
+ * The SpotHeader (mainHeader) contains file offsets to an image
+ * headers list and an animaton sequence directory, and the quantity of
+ * animation sequences.
+ *
+ * The Image Headers list is a SimpleHdr array, accessed via
+ * mainHeader.sOff. These contain image size and an offset to the
+ * cel data.
+ *  - Implementation: spots.cdr has space for 300 SimpleHdr structs
+ *    reserved (1800 bytes); 0-282 have a SimpleHdr defined.
+ *
+ * Images consist of raw palettized pixel data (coded to the Port
+ * palette) preceded by a two-byte CelHeader header {width, height}.
+ * The SimpleHdr size gives the length of the pixel data, not including
+ * the CelHeader.
+ *
+ * The animation sequence directory is a uint32_t array, accessed via
+ * mainHeader.pOff. It contains offsets to the animation sequences.
+ *   - Implementation: spots.cdr has space reserved for 30 listings.
+ *     0-20 have offsets defined, the remaining slots are noisy.
+ *
+ * Each animation sequence consists of a header:
+ *   - char[20] containing the sequence name
+ *   - uint16_t containing the count of sequence parts
+ * followed by a series of AnimationStep(s) defining each sequence part.
+ *
+ * Each AnimationStep contains
+ *    Image    - an index for which cel image to use
+ *    xPut     - x coordinate for displaying the image
+ *    yPut     - y coordinate for displaying the image
+ *    iHold    - For timing, how many times to redraw this frame
+ *    Scale    - A multiplier to scale the cel up or down
+ *
+ * \param animationIndex  Animation's index in spots.cdr
+ */
+void SpotLoad(int animationIndex)
+{
+    if (animationIndex < 0 || animationIndex > 19) {
+        CERROR3(multimedia,
+                "Cannot load spaceport animation %d: Invalid choice",
+                animationIndex);
+        return;
+    }
+
+    if (sFin) {
+        SpotKill();
+    }
+
+    // Open File
+    sFin = sOpen("SPOTS.CDR", "rb", FT_DATA);
+
+    // Read in Spot Header
+    ImportSpotHeader(sFin, mainHeader);
+
+    char pathName[20];
+    SeekAnimation(animationIndex);  // go to correct path
+    fread(&pathName, sizeof pathName, 1, sFin);    // Animation name
+    fread(&stepCount, sizeof stepCount, 1, sFin);  // # of path parts
+    Swap16bit(stepCount);
+    pLoc = ftell(sFin);
+
+    // Initialize some values because no animation step has been read.
+    sPath.iHold = 1;
+    sPath.xPut = -1;
+    portViewBuffer->copyFrom(display::graphics.legacyScreen(), 0, 0,
+                             display::graphics.screen()->width() - 1,
+                             display::graphics.screen()->height() - 1);
+
+#if BABYSND
+
+    if (!IsChannelMute(AV_SOUND_CHANNEL)) {
+        std::string track = AudioTrack(animationIndex);
+
+        if (!track.empty()) {
+            PlayAudio(track.c_str(), 0);
+            isTrackPlaying = true;
+        }
+    }
+
+#endif
+
+    // All opened up
+    SpotAdvance();
+}
+
+
 void SpotPause()
 {
-    SUSPEND = 1;
+    SUSPEND = true;
+
+#if BABYSND
+
+    if (isTrackPlaying) {
+        StopAudio(0);
+        isTrackPlaying = false;
+    }
+
+#endif
 }
 
 
@@ -431,7 +317,7 @@ void SpotRefresh()
 
 void SpotResume()
 {
-    SUSPEND = 0;
+    SUSPEND = false;
 }
 
 
@@ -439,24 +325,186 @@ void SpotResume()
 //
 //----------------------------------------------------------------------
 
+namespace
+{
+
 /**
- * Read a sPATH struct stored as raw data in a file, correcting
- * for endianess.
  *
- * If import is not successful, the contents of the target sPATH
+ */
+void AdvanceFrame()
+{
+    bool firstStep = (sPath.xPut == -1);
+
+    portViewBuffer->palette().copy_from(
+        display::graphics.legacyScreen()->palette());
+
+    // Draw over previous frame with cached Port display.
+    if (! firstStep) {
+        portViewBuffer->copyTo(
+            display::graphics.legacyScreen(),
+            sPath.xPut, sPath.yPut,
+            sPath.xPut, sPath.yPut,
+            MIN(sPath.xPut + sImg.w - 1, MAX_X),
+            MIN(sPath.yPut + sImg.h - 1, MAX_Y));
+    }
+
+    fseek(sFin, pLoc, SEEK_SET);  // position at new path step
+    ImportSPath(sFin, sPath);     // Read the AnimationStep
+    pLoc = ftell(sFin);           // Save the next Path step's location
+
+    // No point in creating expensive images if they won't be drawn.
+    if (sPath.xPut > MAX_X || sPath.yPut > MAX_Y) {
+        sPath.xPut = -1;  // Don't draw over this step next frame advance.
+        return;
+    }
+
+    SeekCelData(sPath.Image);     // point to next image
+    fread(&sImg.w, sizeof(sImg.w), 1, sFin);  // Get Cel dimensions
+    fread(&sImg.h, sizeof(sImg.h), 1, sFin);
+
+    // Read in the raw image data
+    display::LegacySurface *celImage =
+        new display::LegacySurface(sImg.w, sImg.h);
+    fread(celImage->pixels(), sImg.w * sImg.h, 1, sFin);
+
+    if (sPath.Scale != 1.0) {
+        sImg.w = (int)((float) sImg.w * sPath.Scale);
+        sImg.h = (int)((float) sImg.h * sPath.Scale);
+        display::LegacySurface *scaledImage =
+            new display::LegacySurface(sImg.w, sImg.h);
+        celImage->scaleTo(scaledImage);
+
+        delete celImage;
+        celImage = scaledImage;
+    }
+
+    display::LegacySurface *frameBackground =
+        new display::LegacySurface(sImg.w, sImg.h);
+
+    frameBackground->copyFrom(portViewBuffer.get(),
+                              sPath.xPut, sPath.yPut,
+                              MIN(sPath.xPut + sImg.w - 1, MAX_X),
+                              MIN(sPath.yPut + sImg.h - 1, MAX_Y),
+                              0, 0);
+
+    celImage->maskCopy(
+        frameBackground, 0, display::LegacySurface::DestinationEqual, 0);
+    celImage->copyTo(
+        display::graphics.legacyScreen(), sPath.xPut, sPath.yPut);
+
+    delete frameBackground;
+    frameBackground = NULL;
+    delete celImage;
+    celImage = NULL;
+}
+
+
+#if BABYSND
+std::string AudioTrack(int trackIndex)
+{
+    switch (trackIndex) {
+    case 0:
+    case 5:
+        return "vthrust.ogg";
+
+    case 1:
+    case 6:
+        return "jet.ogg";
+
+    case 2:
+    case 7:
+        return "heli_00.ogg";
+
+    case 3:
+    case 8:
+        return "vcrash.ogg";
+
+    case 4:
+        return "crawler.ogg";
+
+    case 10:
+        return "gate.ogg";
+
+    case 11:
+        return "radarus.ogg";
+
+    case 12:
+    case 14:
+        return "lightng.ogg";
+
+    case 15:
+        return "truck.ogg";
+
+    case 16:
+        return "train.ogg";
+
+    case 17:
+        return "radarsv.ogg";
+
+    case 18:
+        return "svprops.ogg";
+
+    case 19:
+        return "crane.ogg";
+
+    default:
+        CNOTICE3(multimedia,
+                 "No entry for Spaceport Animation soundtrack index %d",
+                 trackIndex);
+        break;
+    }
+
+    return "";
+}
+#endif
+
+
+/**
+ * Read in the main header of a Spot animation file, correcting for
+ * endianness.
+ *
+ * If import is not successful, the contents of the target
  * are not guaranteed.
  *
- * The format of the sPATH is:
+ * \param fin  An open data file at the start of the SpotHeader data.
+ * \param target  The destination for the read data.
+ * \return  1 if successfully read, 0 otherwise.
+ */
+size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target)
+{
+    bool read =
+        fread(&target.ID[0], sizeof(target.ID),   1, sFin) &&
+        fread(&target.Qty,   sizeof(target.Qty),  1, sFin) &&
+        fread(&target.sOff,  sizeof(target.sOff), 1, sFin) &&
+        fread(&target.pOff,  sizeof(target.pOff), 1, sFin);
+
+    if (read) {
+        Swap32bit(target.sOff);
+        Swap32bit(target.pOff);
+    }
+
+    return read ? 1 : 0;
+}
+
+
+/**
+ * Read a AnimationStep struct stored as raw data in a file, correcting
+ * for endianess.
+ *
+ * If import is not successful, the contents of the target AnimationStep
+ * are not guaranteed.
+ *
+ * The format of the AnimationStep is:
  *   uint16_t Image;        // Which image to Use
  *   int16_t  xPut, yPut;   // Where to place this image
  *   int16_t iHold;         // Repeat this # times
  *   float Scale;       // Scale object
  *
- * \param fin  An open port data file at the start of the sPATH data.
+ * \param fin  An open port data file at the start of the AnimationStep data.
  * \param target  The destination for the read data.
  * \return  1 if successfully read, 0 otherwise.
  */
-size_t ImportSPath(FILE *fin, struct sPATH &target)
+size_t ImportSPath(FILE *fin, struct AnimationStep &target)
 {
     // Chain freads so they stop if one fails...
     bool read =
@@ -479,32 +527,46 @@ size_t ImportSPath(FILE *fin, struct sPATH &target)
 
 
 /**
- * Seeks the point in the spot file
+ * Seeks the beginning of the animation sequence.
  *
- * Seeks in the global FILE sFin and modifies the global var pTable.
+ * There is an animation directory listing the location in the file of
+ * each animation. The file's main header lists how many animations
+ * exist (SpotHeader.Qty) and where the directory is (SpotHeader.pOff).
+ * Each listing is a 32-bit offset value of where to find an animation
+ * header.
  *
- * \param where  the entry index in the animation table.
+ * Modifies the global sFin file.
+ *
+ * \param index  the animation's index in the animation table.
  */
-void Seek_pOff(int where)
+void SeekAnimation(int index)
 {
-    fseek(sFin, where * (sizeof pTable) + (MSPOT.pOff), SEEK_SET);
-    fread(&pTable, sizeof pTable, 1, sFin);
-    Swap32bit(pTable);
-    fseek(sFin, pTable, SEEK_SET);
+    uint32_t animOffset;
+    fseek(sFin, index * (sizeof animOffset) + (mainHeader.pOff), SEEK_SET);
+    fread(&animOffset, sizeof animOffset, 1, sFin);
+    Swap32bit(animOffset);
+    fseek(sFin, animOffset, SEEK_SET);
 }
 
 
 /**
- * Seeks the point in the spot file where
+ * Seeks to the beginning of a cel image's dimension header in the
+ * currently opened animation file.
  *
- * Seeks in the global FILE sFin and modifies the global var hSPOT.
+ * For a given index, finds the entry for the matching animation cel
+ * at the start of the dimension data (uint8_t width, uint8_t height)
+ * right before the raw pixel data.
  *
- * \param where  the entry index in the SimpleHdr table.
+ * Requires the global FILE sFin be open and mainHeader already read.
+ *
+ * \param celIndex  the entry index in the SimpleHdr table.
  */
-void Seek_sOff(int where)
+void SeekCelData(int celIndex)
 {
-    fseek(sFin, where * sizeof_SimpleHdr + MSPOT.sOff, SEEK_SET);
-    fread_SimpleHdr(&hSPOT, 1, sFin);
-    fseek(sFin, hSPOT.offset, SEEK_SET);
+    SimpleHdr imageListing;
+    fseek(sFin, celIndex * sizeof_SimpleHdr + mainHeader.sOff, SEEK_SET);
+    fread_SimpleHdr(&imageListing, 1, sFin);
+    fseek(sFin, imageListing.offset, SEEK_SET);
 }
 
+};  // End of anonymous namespace

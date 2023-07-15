@@ -523,23 +523,23 @@ void Master(char plr)
 
     if (xMODE & xMODE_CLOUDS) {
         if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-            SpotActivity(14, SPOT_LOAD);    //USA Storm
+            SpotLoad(14);    //USA Storm
         } else if (plr == 1) {
-            SpotActivity(12, SPOT_LOAD);    //Sov Storm
+            SpotLoad(12);    //Sov Storm
         }
     } else if ((xMODE & xMODE_SPOT_ANIM) && g_value) {
-        SpotActivity(3 + (5 * plr), SPOT_LOAD);
+        SpotLoad(3 + (5 * plr));
         xMODE &= ~xMODE_SPOT_ANIM;
     } else if (t_value && g_value) {
-        SpotActivity(0 + (5 * plr), SPOT_LOAD);    //LEM
+        SpotLoad(0 + (5 * plr));    //LEM
     } else if (r_value < 150) {
         if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-            SpotActivity(18, SPOT_LOAD);
+            SpotLoad(18);
         } else {
-            SpotActivity(1 + (5 * plr), SPOT_LOAD);
+            SpotLoad(1 + (5 * plr));
         }
     } else if (r_value > 850) {
-        SpotActivity(2 + (5 * plr), SPOT_LOAD);    //Heli
+        SpotLoad(2 + (5 * plr));    //Heli
     }
 
 #endif
@@ -579,7 +579,7 @@ void GetMse(char plr, char fon)
         }
 
 #if SPOT_ON
-        SpotActivity(0, SPOT_STEP);
+        SpotAdvance();
 #endif
         FCtr = FCtr % 5;
 
@@ -1093,7 +1093,7 @@ void Port(char plr)
                                   i == PORT_Monument || i == PORT_SovMonumentAlt ||
                                   (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
 #if SPOT_ON
-                                SpotActivity(0, SPOT_KILL);  // remove spots
+                                SpotKill();
 #endif
                                 music_stop();
                             } else {
@@ -1115,7 +1115,7 @@ void Port(char plr)
                                     music_start((plr == 0) ? M_USPORT : M_SVPORT);
                                 }
 
-                                SpotActivity(0, SPOT_KILL);  // remove spots
+                                SpotKill();
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
@@ -1137,33 +1137,33 @@ void Port(char plr)
 
                                     if (plr == 0) {
                                         if (gork <= 60) {
-                                            SpotActivity(4, SPOT_LOAD);    //Rocket to Pad
+                                            SpotLoad(4);    //Rocket to Pad
                                         } else {
-                                            SpotActivity(15, SPOT_LOAD);    //Rocket&Truck/Door
+                                            SpotLoad(15);    //Rocket&Truck/Door
                                         }
                                     } else if (plr == 1) {
-                                        SpotActivity(16, SPOT_LOAD);
+                                        SpotLoad(16);
                                     }
                                 } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-                                    SpotActivity(19, SPOT_LOAD);
+                                    SpotLoad(19);
                                 } else if (Vab_Spot == 2 && plr == 1) {
-                                    SpotActivity(10, SPOT_LOAD);
+                                    SpotLoad(10);
                                 } else if (Vab_Spot == 3) {
                                     if (plr == 1) {
-                                        SpotActivity(17, SPOT_LOAD);
+                                        SpotLoad(17);
                                     } else if (plr == 0) {
-                                        SpotActivity(11, SPOT_LOAD);
+                                        SpotLoad(11);
                                     }
                                 } else if (gork < 30) {
                                     if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-                                        SpotActivity(18, SPOT_LOAD);
+                                        SpotLoad(18);
                                     } else {
-                                        SpotActivity(1 + (5 * plr), SPOT_LOAD);
+                                        SpotLoad(1 + (5 * plr));
                                     }
                                 } else if (plr == 1 && gork < 40) {
-                                    SpotActivity(10, SPOT_LOAD);
+                                    SpotLoad(10);
                                 } else if (gork < 60) {
-                                    SpotActivity(2 + (5 * plr), SPOT_LOAD);
+                                    SpotLoad(2 + (5 * plr));
                                 }
 
 #endif
@@ -1188,7 +1188,7 @@ void Port(char plr)
                                 }
 
 #endif
-                                SpotActivity(0, SPOT_KILL);  // remove spots
+                                SpotKill();
                                 music_stop();
                                 autosave_game("AUTOSAVE.SAV");
                                 return;
@@ -1202,7 +1202,7 @@ void Port(char plr)
                                 }
 
 #endif
-                                SpotActivity(0, SPOT_KILL);  // remove spots
+                                SpotKill();
                                 music_stop();
                                 return;
                             } // switch
