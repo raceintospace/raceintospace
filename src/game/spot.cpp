@@ -194,17 +194,6 @@ void SpotActivity(char loc, char mode)
         fread(&sImg.w, sizeof(sImg.w), 1, sFin);
         fread(&sImg.h, sizeof(sImg.h), 1, sFin);
 
-        {
-            int expected_w = hSPOT.size / sImg.h;
-
-            /* DEBUG - FIXING sImg.w */
-            if (sImg.w != expected_w) {
-                sImg.w = expected_w;
-            }
-        }
-
-        // TODO: This makes the previous block obsolete
-        sImg.w = hSPOT.size / sImg.h;
         SP1 = new display::LegacySurface(sImg.w, sImg.h);
         fread(SP1->pixels(), hSPOT.size, 1, sFin);  // read image data
 
