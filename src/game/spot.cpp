@@ -240,10 +240,8 @@ void SpotKill()
  */
 void SpotLoad(int animationIndex)
 {
-    if (animationIndex < 0 || animationIndex > 19) {
-        CERROR3(multimedia,
-                "Cannot load spaceport animation %d: Invalid choice",
-                animationIndex);
+    if (animationIndex == SPOT_NONE) {
+        SpotKill();
         return;
     }
 
@@ -256,6 +254,14 @@ void SpotLoad(int animationIndex)
 
     // Read in Spot Header
     ImportSpotHeader(sFin, mainHeader);
+
+    if (animationIndex < 0 || animationIndex >= mainHeader.Qty) {
+        SpotKill();
+        CERROR3(multimedia,
+                "Cannot load spaceport animation %d: Invalid choice",
+                animationIndex);
+        return;
+    }
 
     char pathName[20];
     SeekAnimation(animationIndex);  // go to correct path
@@ -403,48 +409,48 @@ void AdvanceFrame()
 std::string AudioTrack(int trackIndex)
 {
     switch (trackIndex) {
-    case 0:
-    case 5:
+    case USA_LM_TEST:
+    case SOV_LM_TEST:
         return "vthrust.ogg";
 
-    case 1:
-    case 6:
+    case USA_PLANE_FLY_BY:
+    case SOV_PLANE_FLY_BY:
         return "jet.ogg";
 
-    case 2:
-    case 7:
+    case USA_HELICOPTER:
+    case SOV_HELICOPTER:
         return "heli_00.ogg";
 
-    case 3:
-    case 8:
+    case USA_LM_CRASH:
+    case SOV_LM_CRASH:
         return "vcrash.ogg";
 
-    case 4:
+    case USA_ROCKET_TO_PAD:
         return "crawler.ogg";
 
-    case 10:
+    case SOV_GATE:
         return "gate.ogg";
 
-    case 11:
+    case USA_TRACKING:
         return "radarus.ogg";
 
-    case 12:
-    case 14:
+    case SOV_STORM_CLOUDS:
+    case USA_STORM_CLOUDS:
         return "lightng.ogg";
 
-    case 15:
+    case USA_ROCKET_TO_VAB:
         return "truck.ogg";
 
-    case 16:
+    case SOV_ROCKET_TO_PAD:
         return "train.ogg";
 
-    case 17:
+    case SOV_TRACKING:
         return "radarsv.ogg";
 
-    case 18:
+    case SOV_NEW_PLANE:
         return "svprops.ogg";
 
-    case 19:
+    case USA_ROTATING_CRANE:
         return "crane.ogg";
 
     default:

@@ -167,6 +167,8 @@ int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
 char Request(char plr, const char *s, char md);
+int SpaceportAnimationEntry(int plr);
+int SpaceportAnimationOngoing(int plr);
 size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
 size_t ImportMOBJ(FILE *fin, MOBJ &target);
 
@@ -487,7 +489,6 @@ void UpdatePortOverlays(void)
 
 void Master(char plr)
 {
-    int i, r_value, t_value = 0, g_value = 0;
     helpText = "i000";
     keyHelpText = "i000";
     WaveFlagSetup(plr);
@@ -495,7 +496,7 @@ void Master(char plr)
 
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
@@ -509,38 +510,8 @@ void Master(char plr)
 
 #if SPOT_ON
 
-    if ((Data->P[plr].Pool[0].Active | Data->P[plr].Pool[1].Active | Data->P[plr].Pool[2].Active) >= 1) {
-        g_value = 1;
-    }
-
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
-            t_value = 1;
-        }
-    }
-
-    r_value = brandom(1000);
-
-    if (xMODE & xMODE_CLOUDS) {
-        if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-            SpotLoad(14);    //USA Storm
-        } else if (plr == 1) {
-            SpotLoad(12);    //Sov Storm
-        }
-    } else if ((xMODE & xMODE_SPOT_ANIM) && g_value) {
-        SpotLoad(3 + (5 * plr));
-        xMODE &= ~xMODE_SPOT_ANIM;
-    } else if (t_value && g_value) {
-        SpotLoad(0 + (5 * plr));    //LEM
-    } else if (r_value < 150) {
-        if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-            SpotLoad(18);
-        } else {
-            SpotLoad(1 + (5 * plr));
-        }
-    } else if (r_value > 850) {
-        SpotLoad(2 + (5 * plr));    //Heli
-    }
+    int animation = SpaceportAnimationEntry(plr);
+    SpotLoad(animation);
 
 #endif
 
@@ -937,7 +908,7 @@ void Port(char plr)
 {
     int i, j, kMode, kEnt, k;
     char good, res;
-    int kPad, pKey, gork;
+    int kPad, pKey;
     int32_t stable[55];
     uint16_t Count, *bone;
 
@@ -1130,42 +1101,7 @@ void Port(char plr)
 
 #if SPOT_ON
                                 SpotRefresh();
-                                gork = brandom(100);
-
-                                if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
-                                    Data->P[plr].Port[PORT_LaunchPad_A] = 1;
-
-                                    if (plr == 0) {
-                                        if (gork <= 60) {
-                                            SpotLoad(4);    //Rocket to Pad
-                                        } else {
-                                            SpotLoad(15);    //Rocket&Truck/Door
-                                        }
-                                    } else if (plr == 1) {
-                                        SpotLoad(16);
-                                    }
-                                } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-                                    SpotLoad(19);
-                                } else if (Vab_Spot == 2 && plr == 1) {
-                                    SpotLoad(10);
-                                } else if (Vab_Spot == 3) {
-                                    if (plr == 1) {
-                                        SpotLoad(17);
-                                    } else if (plr == 0) {
-                                        SpotLoad(11);
-                                    }
-                                } else if (gork < 30) {
-                                    if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-                                        SpotLoad(18);
-                                    } else {
-                                        SpotLoad(1 + (5 * plr));
-                                    }
-                                } else if (plr == 1 && gork < 40) {
-                                    SpotLoad(10);
-                                } else if (gork < 60) {
-                                    SpotLoad(2 + (5 * plr));
-                                }
-
+                                SpotLoad(SpaceportAnimationOngoing(plr));
 #endif
                                 Vab_Spot = 0;
 #ifdef DEADCODE
@@ -1727,6 +1663,86 @@ char MisReq(char plr)
     local.copyTo(display::graphics.legacyScreen(), 53, 29);
 
     return i;
+}
+
+
+int SpaceportAnimationEntry(int plr)
+{
+    bool helipadBuilt = Data->P[plr].Port[PORT_Helipad] > 0;
+    bool crewInTraining = false;
+
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
+            crewInTraining = true;
+        }
+    }
+
+    int roll = brandom(1000);
+
+    if (xMODE & xMODE_CLOUDS) {
+        if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+            return USA_STORM_CLOUDS;
+        } else if (plr == 1) {
+            return SOV_STORM_CLOUDS;
+        }
+    } else if ((xMODE & xMODE_SPOT_ANIM) && helipadBuilt) {
+        xMODE &= ~xMODE_SPOT_ANIM;
+        return plr == 0 ? USA_LM_CRASH : SOV_LM_CRASH;
+    } else if (crewInTraining && helipadBuilt) {
+        return plr == 0 ? USA_LM_TEST : SOV_LM_TEST;
+    } else if (roll < 150) {
+        if (plr == 1 && Data->P[plr].Port[PORT_Airfield] == 1) {
+            return SOV_NEW_PLANE;
+        } else {
+            return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
+        }
+    } else if (roll >= 850) {
+        return plr == 0 ? USA_HELICOPTER : SOV_HELICOPTER;
+    }
+
+    return SPOT_NONE;
+}
+
+
+int SpaceportAnimationOngoing(int plr)
+{
+    int roll = brandom(100);
+
+    if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
+        Data->P[plr].Port[PORT_LaunchPad_A] = 1;
+
+        if (plr == 0) {
+            if (roll <= 60) {
+                return USA_ROCKET_TO_PAD;
+            } else {
+                return USA_ROCKET_TO_VAB;
+            }
+        } else if (plr == 1) {
+            return SOV_ROCKET_TO_PAD;
+        }
+    } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+        return USA_ROTATING_CRANE;
+    } else if (Vab_Spot == 2 && plr == 1) {
+        return SOV_GATE;
+    } else if (Vab_Spot == 3) {
+        if (plr == 1) {
+            return SOV_TRACKING;
+        } else if (plr == 0) {
+            return USA_TRACKING;
+        }
+    } else if (roll < 30) {
+        if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
+            return SOV_NEW_PLANE;
+        } else {
+            return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
+        }
+    } else if (plr == 1 && roll < 40) {
+        return SOV_GATE;
+    } else if (roll < 60) {
+        return plr == 0 ? USA_HELICOPTER : SOV_HELICOPTER;
+    }
+
+    return SPOT_NONE;
 }
 
 
