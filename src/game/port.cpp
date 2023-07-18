@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-// This file handles the main Spaceport screen, including animations
+// This file handles the main Spaceport screen.
 
 #include "port.h"
 
@@ -54,6 +54,7 @@
 #include "review.h"
 #include "rush.h"
 #include "sdlhelper.h"
+#include "spot.h"
 #include "vab.h"
 #include "mc.h"
 #include "gr.h"
@@ -69,7 +70,6 @@
 #define LET_R   0x08
 
 #define SPOT_ON 1 /**< turn off until everything else works - pace */
-#define BABYSND 1
 #define pNOREDRAW 0
 #define pREDRAW 1
 #define pEXIT 2
@@ -79,7 +79,6 @@
 
 int put_serial(unsigned char n);
 
-char SUSPEND;
 
 typedef struct portoutlinerestore {
     uint16_t loc;
@@ -137,42 +136,13 @@ char HotKeyList[] = "AIMRPVCQETB\0";
 
 int FCtr;
 boost::shared_ptr<display::PalettizedSurface> flaggy;
-
-/** SPOT structures and data structure variables */
-struct {        // Main SPOT Header
-    uint8_t ID[40];     /**< Copyright notice */
-    uint8_t Qty;        /**< Number of Paths */
-    uint32_t sOff;      /**< Spot Offsets */
-    uint32_t pOff;      /**< Path Offsets */
-} MSPOT;
-
-struct sPATH {       // Spot Anim Path Struct
-    uint16_t Image;        // Which image to Use
-    int16_t  xPut, yPut;   // Where to place this image
-    int16_t iHold;         // Repeat this # times
-    float Scale;       // Scale object
-};
-
-struct sIMG {
-    uint8_t w, h;   // Width and Height
-};
-
-
-
-int16_t sCount;     // sCount is the number of steps
 int16_t Vab_Spot;
-FILE *sFin;
-SimpleHdr hSPOT;  // Filled by Seek_sOff();
-struct sPATH sPath, sPathOld;
-struct sIMG sImg, sImgOld;
-uint32_t pTable, pLoc;
 
 // Unnamed namespace for local globals & function prototypes.
 // TODO: Move other file variables here.
 namespace
 {
 char RUSH;
-boost::shared_ptr<display::LegacySurface> portViewBuffer;
 
 enum MissionReadyStatus {
     MISSIONS_NONE = 0,
@@ -183,47 +153,6 @@ enum MissionReadyStatus {
 };  // End of anonymous namespace
 
 
-/**
- * Seeks the point in the spot file where
- *
- * Seeks in the global FILE sFin and modifies the global var hSPOT.
- *
- * \param where  the entry index in the SimpleHdr table.
- */
-void Seek_sOff(int where)
-{
-    fseek(sFin, where * sizeof_SimpleHdr + MSPOT.sOff, SEEK_SET);
-    fread_SimpleHdr(&hSPOT, 1, sFin);
-    fseek(sFin, hSPOT.offset, SEEK_SET);
-}
-
-/**
- * Seeks the point in the spot file
- *
- * Seeks in the global FILE sFin and modifies the global var pTable.
- *
- * \param where  the entry index in the animation table.
- */
-void Seek_pOff(int where)
-{
-    fseek(sFin, where * (sizeof pTable) + (MSPOT.pOff), SEEK_SET);
-    fread(&pTable, sizeof pTable, 1, sFin);
-    Swap32bit(pTable);
-    fseek(sFin, pTable, SEEK_SET);
-}
-
-
-char PName[20];
-
-#define SPOT_LOAD 0
-#define SPOT_STEP 1
-#define SPOT_DONE 2
-#define SPOT_KILL 3
-
-
-void Seek_sOff(int where);
-void Seek_pOff(int where);
-void SpotCrap(char loc, char mode);
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
 void PortPlace(FILE *fin, int32_t table);
@@ -238,313 +167,11 @@ int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
 char Request(char plr, const char *s, char md);
+int SpaceportAnimationEntry(int plr);
+int SpaceportAnimationOngoing(int plr);
 size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
 size_t ImportMOBJ(FILE *fin, MOBJ &target);
-size_t ImportSPath(FILE *fin, struct sPATH &target);
 
-
-/**
- * Animates a Port background activity.
- *
- * The main spaceport has a variety of animated activities, some
- * triggered by player activities, that run in the background.
- * Examples include planes flying past & rockets being transported
- * to the main launch pad.
- *
- * This function handles animation activity based on the mode:
- *   - SPOT_LOAD begins an animation sequence, selecting it as the
- *     active sequence and starting any sound effects.
- *   - SPOT_STEP plays the next frame in the current animation
- *     sequence.
- *   - SPOT_DONE is used when the animation sequence has completed,
- *     stopping any active sound effects and cleaning up globals.
- *   - SPOT_KILL terminates any active sound effects and stops
- *     animation, closing access to the animation file, performing
- *     less cleanup than SPOT_DONE.
- *
- * The spots.cdr file is composed of:
- * SpotHeader
- * Image Headers
- * Images
- * Sequence Directory
- * <Unknown>
- * Animation[]
- *
- * The SpotHeader (MSPOT) contains offsets to an image headers list and
- * an animaton sequence directory, and the quantity of animation
- * sequences.
- *
- * The Image Headers list is a SimpleHdr array, accessed via MSPOT.sOff
- * and read into hSpot. These contain image size and an offset to the
- * image data.
- *  - Implementation: spots.cdr has space for 300 SimpleHdr structs
- *    reserved (1800 bytes); 0-282 have a SimpleHdr defined.
- *
- * Images consist of a two-byte sIMG header {width, height} followed by
- * raw palettized pixel data (coded to the Port palette). The SimpleHdr
- * size is the length of the pixel data, and does not include the sIMG
- * header.
- *
- * The animation sequence directory is a uint32_t array, accessed via
- * MSPOT.pOff and read into pTable. It contains offsets to the
- * animation sequences.
- *
- * Each animation sequence consists of a header:
- *   - char[20] containing the sequence name
- *   - uint16_t containing the count of sequence parts
- * followed by a series of sPath objects defining each sequence part.
- *
- * \param loc   which spot animation to load when mode=SPOT_LOAD
- * \param mode  SPOT_LOAD, SPOT_STEP, SPOT_DONE, or SPOT_KILL
- */
-void SpotCrap(char loc, char mode)
-{
-    display::LegacySurface *SP1;
-    display::LegacySurface *SP2;
-    display::LegacySurface *SP3;
-    static char turnoff = 0;
-
-    if (SUSPEND == 1) {
-        if (turnoff == 1) {
-            StopVoice();    //Specs: suspend sound babypics
-        }
-
-        return;
-    }
-
-    if (sCount == -1  && mode != SPOT_LOAD) {
-        return;
-    }
-
-    if (mode == SPOT_LOAD) {
-        // Open File
-        sFin = sOpen("SPOTS.CDR", "rb", FT_DATA);
-
-        // Read in Spot Header
-        // fread(&MSPOT, sizeof MSPOT, 1, sFin);
-        fread(&MSPOT.ID[0], sizeof(MSPOT.ID), 1, sFin);
-        fread(&MSPOT.Qty, sizeof(MSPOT.Qty), 1, sFin);
-        fread(&MSPOT.sOff, sizeof(MSPOT.sOff), 1, sFin);
-        fread(&MSPOT.pOff, sizeof(MSPOT.pOff), 1, sFin);
-        Swap32bit(MSPOT.sOff);
-        Swap32bit(MSPOT.pOff);
-
-        Seek_pOff(loc);  // go to correct path
-        fread(&PName, sizeof PName, 1, sFin);
-        fread(&sCount, sizeof sCount, 1, sFin);  // get number of paths parts
-        Swap16bit(sCount);
-        pLoc = ftell(sFin);
-        sPath.iHold = 1;
-        portViewBuffer->copyFrom(display::graphics.legacyScreen(), 0, 0,
-                                 display::graphics.screen()->width() - 1,
-                                 display::graphics.screen()->height() - 1);
-        sPathOld.xPut = -1;
-        SpotCrap(0, SPOT_STEP);
-        // All opened up
-    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount > 0) {
-        // Play Next Seq
-        int xx = 0;
-        fseek(sFin, pLoc, SEEK_SET);     // position at next path
-        // get the next sPATH struct
-        ImportSPath(sFin, sPath);
-
-        pLoc = ftell(sFin);               // Path Update Locations
-
-        Seek_sOff(sPath.Image);          // point to next image
-        // get image header
-        // fread(&sImg, sizeof sImg, 1, sFin);
-        fread(&sImg.w, sizeof(sImg.w), 1, sFin);
-        fread(&sImg.h, sizeof(sImg.h), 1, sFin);
-
-        {
-            int expected_w = hSPOT.size / sImg.h;
-
-            /* DEBUG - FIXING sImg.w */
-            if (sImg.w != expected_w) {
-                sImg.w = expected_w;
-            }
-        }
-
-        // TODO: This makes the previous block obsolete
-        sImg.w = hSPOT.size / sImg.h;
-        SP1 = new display::LegacySurface(sImg.w, sImg.h);
-        fread(SP1->pixels(), hSPOT.size, 1, sFin);  // read image data
-
-        if (sPath.Scale != 1.0) {
-            sImg.w = (int)((float) sImg.w * sPath.Scale);
-            sImg.h = (int)((float) sImg.h * sPath.Scale);
-            SP2 = new display::LegacySurface(sImg.w, sImg.h);
-            SP1->scaleTo(SP2);
-        }
-
-        SP3 = new display::LegacySurface(sImg.w, sImg.h);
-
-        portViewBuffer->palette().copy_from(
-            display::graphics.legacyScreen()->palette());
-        SP3->copyFrom(portViewBuffer.get(),
-                      MIN(sPath.xPut, 319), MIN(sPath.yPut, 199),
-                      MIN(sPath.xPut + sImg.w - 1, 319),
-                      MIN(sPath.yPut + sImg.h - 1, 199),
-                      0, 0);
-
-        if (sPath.Scale != 1.0) {
-            xx = hSPOT.size;
-
-            for (int i = 0; i < xx; i++) {
-                if (SP2->pixels()[i] == 0) {
-                    *(SP2->pixels() + i) = SP3->pixels()[i];
-                }
-            }
-
-            if (sPathOld.xPut != -1) {
-                portViewBuffer->copyTo(display::graphics.legacyScreen(),
-                                       sPathOld.xPut, sPathOld.yPut,
-                                       sPathOld.xPut, sPathOld.yPut,
-                                       sPathOld.xPut + sImgOld.w - 1,
-                                       sPathOld.yPut + sImgOld.h - 1);
-            }
-
-            SP2->copyTo(display::graphics.legacyScreen(),
-                        sPath.xPut, sPath.yPut);
-        } else {
-            xx = hSPOT.size;
-
-            for (int i = 0; i < xx; i++) {
-                if (SP1->pixels()[i] == 0) {
-                    *(SP1->pixels() + i) = SP3->pixels()[i];
-                }
-            }
-
-            if (sPathOld.xPut != -1) {
-                portViewBuffer->copyTo(
-                    display::graphics.legacyScreen(),
-                    sPathOld.xPut, sPathOld.yPut,
-                    sPathOld.xPut, sPathOld.yPut,
-                    MIN(sPathOld.xPut + sImgOld.w - 1, 319),
-                    MIN(sPathOld.yPut + sImgOld.h - 1, 199));
-            }
-
-            SP1->copyTo(display::graphics.legacyScreen(),
-                        MIN(sPath.xPut, 319), MIN(sPath.yPut, 199));
-        }
-
-        sPathOld = sPath;
-        sImgOld = sImg;
-
-        delete SP3;
-        SP3 = NULL;
-        delete SP1;
-        SP1 = NULL;
-
-        if (sPath.Scale != 1.0) {
-            delete SP2;
-            SP2 = NULL;
-        }
-
-        sCount--;
-
-    } else if (mode == SPOT_STEP && sPath.iHold > 1 && sCount > 0) {
-        sPath.iHold--;
-    } else if (mode == SPOT_STEP && sPath.iHold == 1 && sCount == 0) {
-        SpotCrap(0, SPOT_DONE);
-    } else if ((mode == SPOT_DONE || sCount >= 0) && sFin != NULL) {
-        // Close the file and stop the audio.
-        fclose(sFin);
-        sFin = NULL;
-        sPathOld.xPut = -1;
-        sPath.iHold = 0;
-        sCount = -1;
-#if BABYSND
-
-        if (turnoff == 1) {
-            StopAudio(0);
-            turnoff = 0;
-        }
-
-#endif
-    } else if (mode == SPOT_KILL && sFin != NULL) {
-        fclose(sFin);
-        sFin = NULL;
-#if BABYSND
-
-        if (turnoff == 1) {
-            StopAudio(0);
-            turnoff = 0;
-        }
-
-#endif
-    }
-
-#if BABYSND
-
-    if ((loc >= 0 && loc <= 8) || (loc >= 15 && loc <= 19) || loc == 12 || loc == 14 || loc == 11 || loc == 10) {
-        if (mode == SPOT_LOAD && !IsChannelMute(AV_SOUND_CHANNEL)) {
-            switch (loc) {
-            case 1:
-            case 6:
-                PlayAudio("jet.ogg", 0);
-                break;
-
-            case 3:
-            case 8:
-                PlayAudio("vcrash.ogg", 0);
-                break;
-
-            case 16:
-                PlayAudio("train.ogg", 0);
-                break;
-
-            case 4:
-                PlayAudio("crawler.ogg", 0);
-                break;
-
-            case 0:
-            case 5:
-                PlayAudio("vthrust.ogg", 0);
-                break;
-
-            case 10:
-                PlayAudio("gate.ogg", 0);
-                break;
-
-            case 18:
-                PlayAudio("svprops.ogg", 0);
-                break;
-
-            case 2:
-            case 7:
-                PlayAudio("heli_00.ogg", 0);
-                break;
-
-            case 17:
-                PlayAudio("radarsv.ogg", 0);
-                break;
-
-            case 11:
-                PlayAudio("radarus.ogg", 0);
-                break;
-
-            case 12:
-            case 14:
-                PlayAudio("lightng.ogg", 0);
-                break;
-
-            case 19:
-                PlayAudio("crane.ogg", 0);
-                break;
-
-            case 15:
-                PlayAudio("truck.ogg", 0);
-                break;
-            }
-
-            turnoff = 1;
-        }
-    }
-
-#endif
-    return;
-}
 
 void WaveFlagSetup(char plr)
 {
@@ -862,18 +489,14 @@ void UpdatePortOverlays(void)
 
 void Master(char plr)
 {
-    int i, r_value, t_value = 0, g_value = 0;
-    sFin = NULL;
     helpText = "i000";
     keyHelpText = "i000";
     WaveFlagSetup(plr);
-    sCount = -1;
-    SUSPEND = 0;
     Vab_Spot = 0;
 
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
@@ -883,49 +506,12 @@ void Master(char plr)
     DrawSpaceport(plr);
     FadeIn(2, 10, 0, 0);
 
-    int height = display::graphics.legacyScreen()->height();
-    int width = display::graphics.legacyScreen()->width();
-
-    portViewBuffer = boost::shared_ptr<display::LegacySurface>(
-                         new display::LegacySurface(width, height));
-    portViewBuffer->palette().copy_from(
-        display::graphics.legacyScreen()->palette());
-    portViewBuffer->draw(*display::graphics.screen(), 0, 0);
+    SpotInit();
 
 #if SPOT_ON
 
-    if ((Data->P[plr].Pool[0].Active | Data->P[plr].Pool[1].Active | Data->P[plr].Pool[2].Active) >= 1) {
-        g_value = 1;
-    }
-
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
-            t_value = 1;
-        }
-    }
-
-    r_value = brandom(1000);
-
-    if (xMODE & xMODE_CLOUDS) {
-        if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-            SpotCrap(14, SPOT_LOAD);    //USA Storm
-        } else if (plr == 1) {
-            SpotCrap(12, SPOT_LOAD);    //Sov Storm
-        }
-    } else if ((xMODE & xMODE_SPOT_ANIM) && g_value) {
-        SpotCrap(3 + (5 * plr), SPOT_LOAD);
-        xMODE &= ~xMODE_SPOT_ANIM;
-    } else if (t_value && g_value) {
-        SpotCrap(0 + (5 * plr), SPOT_LOAD);    //LEM
-    } else if (r_value < 150) {
-        if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-            SpotCrap(18, SPOT_LOAD);
-        } else {
-            SpotCrap(1 + (5 * plr), SPOT_LOAD);
-        }
-    } else if (r_value > 850) {
-        SpotCrap(2 + (5 * plr), SPOT_LOAD);    //Heli
-    }
+    int animation = SpaceportAnimationEntry(plr);
+    SpotLoad(animation);
 
 #endif
 
@@ -934,12 +520,7 @@ void Master(char plr)
     keyHelpText = "i000";
     WaveFlagDel();
 
-    if (sFin) {
-        fclose(sFin);
-        sFin = NULL;
-    }
-
-    portViewBuffer.reset();
+    SpotClose();
 }
 
 
@@ -969,7 +550,7 @@ void GetMse(char plr, char fon)
         }
 
 #if SPOT_ON
-        SpotCrap(0, SPOT_STEP);
+        SpotAdvance();
 #endif
         FCtr = FCtr % 5;
 
@@ -1327,7 +908,7 @@ void Port(char plr)
 {
     int i, j, kMode, kEnt, k;
     char good, res;
-    int kPad, pKey, gork;
+    int kPad, pKey;
     int32_t stable[55];
     uint16_t Count, *bone;
 
@@ -1483,11 +1064,11 @@ void Port(char plr)
                                   i == PORT_Monument || i == PORT_SovMonumentAlt ||
                                   (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
 #if SPOT_ON
-                                SpotCrap(0, SPOT_KILL);  // remove spots
+                                SpotKill();
 #endif
                                 music_stop();
                             } else {
-                                SUSPEND = 1;
+                                SpotPause();
                             }
 
                             res = PortSel(plr, i);
@@ -1505,7 +1086,7 @@ void Port(char plr)
                                     music_start((plr == 0) ? M_USPORT : M_SVPORT);
                                 }
 
-                                SpotCrap(0, SPOT_KILL);  // remove spots
+                                SpotKill();
 
                                 // Returning to spaceport so fade between redraws
                                 if (res == pREDRAW) {
@@ -1519,48 +1100,8 @@ void Port(char plr)
                                 }
 
 #if SPOT_ON
-                                portViewBuffer->resetPalette();
-                                portViewBuffer->copyFrom(
-                                    display::graphics.legacyScreen(),
-                                    0, 0,
-                                    display::graphics.screen()->width() - 1,
-                                    display::graphics.screen()->height() - 1);
-                                gork = brandom(100);
-
-                                if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
-                                    Data->P[plr].Port[PORT_LaunchPad_A] = 1;
-
-                                    if (plr == 0) {
-                                        if (gork <= 60) {
-                                            SpotCrap(4, SPOT_LOAD);    //Rocket to Pad
-                                        } else {
-                                            SpotCrap(15, SPOT_LOAD);    //Rocket&Truck/Door
-                                        }
-                                    } else if (plr == 1) {
-                                        SpotCrap(16, SPOT_LOAD);
-                                    }
-                                } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
-                                    SpotCrap(19, SPOT_LOAD);
-                                } else if (Vab_Spot == 2 && plr == 1) {
-                                    SpotCrap(10, SPOT_LOAD);
-                                } else if (Vab_Spot == 3) {
-                                    if (plr == 1) {
-                                        SpotCrap(17, SPOT_LOAD);
-                                    } else if (plr == 0) {
-                                        SpotCrap(11, SPOT_LOAD);
-                                    }
-                                } else if (gork < 30) {
-                                    if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
-                                        SpotCrap(18, SPOT_LOAD);
-                                    } else {
-                                        SpotCrap(1 + (5 * plr), SPOT_LOAD);
-                                    }
-                                } else if (plr == 1 && gork < 40) {
-                                    SpotCrap(10, SPOT_LOAD);
-                                } else if (gork < 60) {
-                                    SpotCrap(2 + (5 * plr), SPOT_LOAD);
-                                }
-
+                                SpotRefresh();
+                                SpotLoad(SpaceportAnimationOngoing(plr));
 #endif
                                 Vab_Spot = 0;
 #ifdef DEADCODE
@@ -1579,11 +1120,11 @@ void Port(char plr)
 #if BABYSND
 
                                 if (i == 28 || i == 29) {
-                                    SUSPEND = 0;
+                                    SpotResume();
                                 }
 
 #endif
-                                SpotCrap(0, SPOT_KILL);  // remove spots
+                                SpotKill();
                                 music_stop();
                                 autosave_game("AUTOSAVE.SAV");
                                 return;
@@ -1593,16 +1134,17 @@ void Port(char plr)
 #if BABYSND
 
                                 if (i == PORT_FlagPole || i == PORT_Gate) {
-                                    SUSPEND = 0;
+                                    SpotResume();
                                 }
 
 #endif
-                                SpotCrap(0, SPOT_KILL);  // remove spots
+                                SpotKill();
                                 music_stop();
                                 return;
                             } // switch
 
-                            kMode = good = SUSPEND = 0;
+                            kMode = good = 0;
+                            SpotResume();
 
                             if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
                                 fseek(fin, stable[MObj[i].Reg[Data->P[plr].Port[i]].sNum], SEEK_SET);
@@ -2124,6 +1666,86 @@ char MisReq(char plr)
 }
 
 
+int SpaceportAnimationEntry(int plr)
+{
+    bool helipadBuilt = Data->P[plr].Port[PORT_Helipad] > 0;
+    bool crewInTraining = false;
+
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
+            crewInTraining = true;
+        }
+    }
+
+    int roll = brandom(1000);
+
+    if (xMODE & xMODE_CLOUDS) {
+        if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+            return USA_STORM_CLOUDS;
+        } else if (plr == 1) {
+            return SOV_STORM_CLOUDS;
+        }
+    } else if ((xMODE & xMODE_SPOT_ANIM) && helipadBuilt) {
+        xMODE &= ~xMODE_SPOT_ANIM;
+        return plr == 0 ? USA_LM_CRASH : SOV_LM_CRASH;
+    } else if (crewInTraining && helipadBuilt) {
+        return plr == 0 ? USA_LM_TEST : SOV_LM_TEST;
+    } else if (roll < 150) {
+        if (plr == 1 && Data->P[plr].Port[PORT_Airfield] == 1) {
+            return SOV_NEW_PLANE;
+        } else {
+            return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
+        }
+    } else if (roll >= 850) {
+        return plr == 0 ? USA_HELICOPTER : SOV_HELICOPTER;
+    }
+
+    return SPOT_NONE;
+}
+
+
+int SpaceportAnimationOngoing(int plr)
+{
+    int roll = brandom(100);
+
+    if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
+        Data->P[plr].Port[PORT_LaunchPad_A] = 1;
+
+        if (plr == 0) {
+            if (roll <= 60) {
+                return USA_ROCKET_TO_PAD;
+            } else {
+                return USA_ROCKET_TO_VAB;
+            }
+        } else if (plr == 1) {
+            return SOV_ROCKET_TO_PAD;
+        }
+    } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+        return USA_ROTATING_CRANE;
+    } else if (Vab_Spot == 2 && plr == 1) {
+        return SOV_GATE;
+    } else if (Vab_Spot == 3) {
+        if (plr == 1) {
+            return SOV_TRACKING;
+        } else if (plr == 0) {
+            return USA_TRACKING;
+        }
+    } else if (roll < 30) {
+        if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
+            return SOV_NEW_PLANE;
+        } else {
+            return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
+        }
+    } else if (plr == 1 && roll < 40) {
+        return SOV_GATE;
+    } else if (roll < 60) {
+        return plr == 0 ? USA_HELICOPTER : SOV_HELICOPTER;
+    }
+
+    return SPOT_NONE;
+}
+
+
 /**
  * Read a PortHeader struct stored as raw data in a file, correcting
  * for endianness.
@@ -2212,44 +1834,6 @@ size_t ImportMOBJ(FILE *fin, MOBJ &target)
                      sizeof(target.Reg[i].sNum), 1, fin) &&
                fread(&target.Reg[i].PreDraw,
                      sizeof(target.Reg[i].PreDraw), 1, fin);
-    }
-
-    return (read ? 1 : 0);
-}
-
-/**
- * Read a sPATH struct stored as raw data in a file, correcting
- * for endianess.
- *
- * If import is not successful, the contents of the target sPATH
- * are not guaranteed.
- *
- * The format of the sPATH is:
- *   uint16_t Image;        // Which image to Use
- *   int16_t  xPut, yPut;   // Where to place this image
- *   int16_t iHold;         // Repeat this # times
- *   float Scale;       // Scale object
- *
- * \param fin  An open port data file at the start of the sPATH data.
- * \param target  The destination for the read data.
- * \return  1 if successfully read, 0 otherwise.
- */
-size_t ImportSPath(FILE *fin, struct sPATH &target)
-{
-    // Chain freads so they stop if one fails...
-    bool read =
-        fread(&target.Image, sizeof(target.Image), 1, fin) &&
-        fread(&target.xPut, sizeof(target.xPut), 1, fin) &&
-        fread(&target.yPut, sizeof(target.yPut), 1, fin) &&
-        fread(&target.iHold, sizeof(target.iHold), 1, fin) &&
-        fread(&target.Scale, sizeof(target.Scale), 1, fin);
-
-    if (read) {
-        Swap16bit(target.Image);
-        Swap16bit(target.xPut);
-        Swap16bit(target.yPut);
-        Swap16bit(target.iHold);
-        Swap32bit(target.Scale);
     }
 
     return (read ? 1 : 0);
