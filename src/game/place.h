@@ -12,7 +12,7 @@ enum MainMenuOption {
 };
 
 int Help(const char *FName);
-void Draw_Mis_Stats(char plr, char index, int *where, char mode);
+void Draw_Mis_Stats(int plr, int index, int mode);
 void PatchMe(char plr, int x, int y, char prog, char poff);
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh);
 void AstFaces(char plr, int x, int y, char face);

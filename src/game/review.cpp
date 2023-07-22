@@ -299,7 +299,7 @@ void MisRev(char plr, int pres, int mis)
     draw_small_flag(plr, 4, 4);
 
     key = 0;
-    Draw_Mis_Stats(plr, mis, 0, 1);
+    Draw_Mis_Stats(plr, mis, 1);
     key = 0;
     display::graphics.screen()->clear();
     return;
