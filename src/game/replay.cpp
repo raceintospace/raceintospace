@@ -45,10 +45,8 @@ void
 Replay(char plr, int num, int dx, int dy, int width, int height,
        std::string Type)
 {
-    int keep_going;
-    int i, j, kk, mode, max;
-    int32_t offset;
-    std::vector <REPLAY> Rep;
+    int j;
+    std::vector<REPLAY> Rep;
     std::vector<struct MissionSequenceKey> sSeq, fSeq;
     char *fname;
 
@@ -61,6 +59,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
     mm_file vidfile;
     float fps;
 
+    // TODO: Free up memory in string returned by locate_file.
     fname = locate_file("seq.json", FT_DATA);
     DESERIALIZE_JSON_FILE(&sSeq, fname);
 
@@ -71,7 +70,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
 
     DEBUG2("video sequence: %d segments", Rep.size());
 
-    for (kk = 0; kk < Rep.size(); kk++) {
+    for (int kk = 0; kk < Rep.size(); kk++) {
         DEBUG3("playing segment %d: %s", kk, Rep.at(kk).seq.c_str());
 
         if (Rep.at(kk).Failure) {
@@ -81,7 +80,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
                 }
             }
 
-            if (i == fSeq.size()) {
+            if (j == fSeq.size()) {
                 return;
             }
         } else {
@@ -96,21 +95,26 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
             }
         }
 
-        i = 0;
-        max = Rep.at(kk).seq.at(1) - '0';
-
-        keep_going = 1;
+        int max = Rep.at(kk).seq.at(1) - '0';
+        bool keep_going = true;
 
         //  update_map = 0;
-        while (keep_going && i < max) {
-            int frm_idx;
+        for (int i = 0; i < max && keep_going; i++) {
             char seq_name[20];
-            char fname[20];
+            char fname[20];  // TODO: Don't reuse name within function!
 
             if (Rep.at(kk).Failure) {
                 strntcpy(seq_name, fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
             } else {
                 strntcpy(seq_name, sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
+            }
+
+            // TODO: I added this because there are video sequences that
+            // do not have a numerical prefix (ex: training videos in
+            // ast3.cpp). They should be modified or this check
+            // maintained.  -- rnyoakum
+            if (strncmp(seq_name, "NONE", MIN(4, sizeof(seq_name))) == 0) {
+                break;
             }
 
             /* here we should create YUV Overlay, but we can't use it on
@@ -132,6 +136,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
             }
 
             while (keep_going) {
+                int pressed = 0;
                 display::graphics.videoRect().x = dx;
                 display::graphics.videoRect().y = dy;
                 display::graphics.videoRect().w = width;
@@ -142,8 +147,12 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
                     break;
                 }
 
-                if (bioskey(0) || grGetMouseButtons()) {
-                    keep_going = 0;
+                if ((pressed = bioskey(0)) || grGetMouseButtons()) {
+                    keep_going = false;
+
+                    if (pressed == K_ESCAPE) {
+                        kk = Rep.size();
+                    }
                 }
 
                 /** \todo idle_loop is too inaccurate for this */
@@ -151,7 +160,6 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
             }
 
             mm_close(&vidfile);
-            i++;
         }
     }
 

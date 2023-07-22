@@ -723,7 +723,7 @@ void Mission_Data_Buttons(char plr, int *where)
     char index, yr, season, j, temp = 0;
 
     auto launchReview = [](int plr, int index, int *where) {
-        Draw_Mis_Stats(plr, index, where, 0);
+        Draw_Mis_Stats(plr, index, 0);
         DrawSpaceHistoryInterface(plr);
         DrawMisHist(plr, *where);
     };

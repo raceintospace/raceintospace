@@ -852,7 +852,13 @@ void writePrestigeFirst(char index)   ///index==plr
 }
 
 
-void Draw_Mis_Stats(char plr, char index, int *where, char mode)
+/**
+ *
+ * \param plr   TODO
+ * \param index TODO
+ * \param mode  0 for replay, 1 for after-mission summary.
+ */
+void Draw_Mis_Stats(int plr, int index, int mode)
 {
     if (mode == 0) {
         InBox(245, 5, 314, 17);
