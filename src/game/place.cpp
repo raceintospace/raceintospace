@@ -941,7 +941,7 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     draw_string(225, 41, "MISSION REPLAY");
     InBox(214, 55, 310, 116);
 
-    AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
+    AbzFrame(plr, 215, 56, 94, 60, index);
 
     IOBox(214, 134, 310, 148);
     display::graphics.setForegroundColor(9);
@@ -1136,7 +1136,7 @@ void Draw_Mis_Stats(int plr, int index, int mode)
                     Replay(plr, index, 215, 56, 94, 60, "OOOO");
                 }
 
-                AbzFrame(plr, index, 215, 56, 94, 60, "OOOO", mode);
+                AbzFrame(plr, 215, 56, 94, 60, index);
             }
 
             OutBox(216, 136, 308, 146);

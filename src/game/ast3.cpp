@@ -27,28 +27,53 @@
 
 // This file handles Basic and Advanced Training, Hospital, and Cemetery.
 
+#include "ast3.h"
+
+#include <string>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "ast3.h"
 #include "Buzz_inc.h"
-#include "options.h"
 #include "ast0.h"
 #include "draw.h"
+#include "endianness.h"
+#include "filesystem.h"
 #include "game_main.h"
+#include "gr.h"
+#include "options.h"
+#include "pace.h"
 #include "place.h"
 #include "replay.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "endianness.h"
-#include "filesystem.h"
+
+namespace
+{
 
 enum {
     HOSPITAL_BLD = 0,
     CEMETERY_BLD = 1,
 };
+
+
+class VideoBlock
+{
+public:
+    VideoBlock(int plr, std::string video)
+    {
+        Replay(plr, 0, 4, 28, 149, 82, video);
+        AbzFrame(plr, 4, 28, 149, 82, video);
+    }
+
+    ~VideoBlock()
+    {
+        display::graphics.videoRect().w = 0;
+        display::graphics.videoRect().h = 0;
+    }
+};
+
+};  // end of namespace
 
 
 void DrawTrain(char plr, char lvl);
@@ -401,32 +426,29 @@ void Train(char plr, int level)
     switch (level) {
     case 1:
         strcpy(Train, (plr == 0) ? "UTCP" : "STCP");
-        Replay(plr, 0, 4, 28, 149, 82, Train);
         break;
 
     case 2:
         strcpy(Train, (plr == 0) ? "UTLM" : "STLM");
-        Replay(plr, 0, 4, 28, 149, 82, Train);
         break;
 
     case 3:
         strcpy(Train, (plr == 0) ? "UTEV" : "STEV");
-        Replay(plr, 0, 4, 28, 149, 82, Train);
         break;
 
     case 4:
         strcpy(Train, (plr == 0) ? "UTDO" : "STDO");
-        Replay(plr, 0, 4, 28, 149, 82, Train);
         break;
 
     case 5:
         strcpy(Train, (plr == 0) ? "UTDU" : "STDU");
-        Replay(plr, 0, 4, 28, 149, 82, Train);
         break;
 
     default:
         break;
     }
+
+    VideoBlock video(plr, Train);
 
     WaitForMouseUp();
 

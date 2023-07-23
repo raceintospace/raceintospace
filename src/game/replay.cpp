@@ -210,25 +210,36 @@ DispBaby(int x, int y, int loc, char neww)
     boob.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
+
 /**
  * This function is used to display the first frame of the replay in
  * the mission review screen.
+ *
+ * This relies on the fact that the first video sequence in a mission
+ * is a pre-liftoff video that, by its nature, is not a 'failure' and
+ * thus is found in seq.json.
  */
-void
-AbzFrame(char plr, int num, int dx, int dy, int width, int height,
-         const char *Type, char mode)
+void AbzFrame(int plr, int dx, int dy, int width, int height,
+              int mission)
+{
+    AbzFrame(plr, dx, dy, width, height,
+             interimData.tempReplay.at(plr * 100 + mission).at(0).seq);
+}
+
+
+void AbzFrame(int plr, int dx, int dy, int width, int height,
+              std::string sequence)
 {
     int j = 0;
-    std::vector<struct MissionSequenceKey> sSeq;
-    char *fname;
-    char vname[20];
     mm_file vidfile;
+    std::vector<struct MissionSequenceKey> sSeq;
 
-    fname = locate_file("seq.json", FT_DATA);
+    char *fname = locate_file("seq.json", FT_DATA);
     DESERIALIZE_JSON_FILE(&sSeq, fname);
+    free(fname);
 
     for (j = 0; j < sSeq.size(); j++) {
-        if (sSeq.at(j).MissionIdSequence == interimData.tempReplay.at((plr * 100) + num).at(0).seq) {
+        if (sSeq.at(j).MissionIdSequence == sequence) {
             break;
         }
     }
@@ -237,12 +248,11 @@ AbzFrame(char plr, int num, int dx, int dy, int width, int height,
         return;
     }
 
-    /* XXX use a generic function */
-    snprintf(vname, sizeof(vname), "%s.ogg", sSeq.at(j).video.at(0).c_str());
+    std::string video = sSeq.at(j).video.at(0) + ".ogg";
 
-    INFO2("opening video file `%s'", vname);
+    INFO2("opening video file `%s'", video.c_str());
 
-    if (mm_open_fp(&vidfile, sOpen(vname, "rb", FT_VIDEO)) <= 0) {
+    if (mm_open_fp(&vidfile, sOpen(video.c_str(), "rb", FT_VIDEO)) <= 0) {
         return;
     }
 
