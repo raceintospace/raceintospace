@@ -1224,6 +1224,8 @@ typedef struct ReplayItem {
     }
 } REPLAY;
 
+CEREAL_CLASS_VERSION(ReplayItem, 2);
+
 enum Opponent_Status {Ahead, Equal, Behind};
 
 struct OLDNEWS {
