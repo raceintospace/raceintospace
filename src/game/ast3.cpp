@@ -243,6 +243,9 @@ TrainText(char plr, int astro, int cnt)
     }
 
     display::graphics.setForegroundColor(1);
+    if (Data->P[plr].Pool[astro].Sex == 1) {
+        display::graphics.setForegroundColor(6);  // Show women in navy blue
+    }
     draw_string(200, 88, &Data->P[plr].Pool[astro].Name[0]);
 
     // Print 'naut name in green/yellow/red/black depending on mood -Leon
