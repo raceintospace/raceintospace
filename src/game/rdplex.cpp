@@ -374,7 +374,7 @@ char RD(char player_index, int hardware, int unit)
         GetMouse();
 
         if (mousebuttons > 0 || key > 0) {
-            if ((x >= 283 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
+            if ((x >= 279 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
                 Equipment &Program =
                     HardwareProgram(player_index, hardware, unit);
 
@@ -1258,7 +1258,7 @@ char HPurc(char player_index, int hardware, int unit)
         key = 0;
         GetMouse();
 
-        if ((x >= 283 && y >= 90 && x <= 302 && y <= 100 && mousebuttons > 0) || key == 'F') {
+        if ((x >= 279 && y >= 90 && x <= 302 && y <= 100 && mousebuttons > 0) || key == 'F') {
             Equipment &program =
                 HardwareProgram(player_index, hardware, unit);
 
