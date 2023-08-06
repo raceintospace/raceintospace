@@ -72,7 +72,7 @@ void DrawBudget(char player, char *pStatus)
     ShBox(0, 49, 319, 67);
     ShBox(0, 69, 158, 199);
     ShBox(161, 69, 319, 199);
-    IOBox(165, 27, 238, 43);
+    IOBox(122, 27, 196, 43);  // CONTINUE button
     InBox(3, 3, 74, 43);
     InBox(243, 3, 314, 43);
     InBox(184, 87, 313, 167);
@@ -85,7 +85,7 @@ void DrawBudget(char player, char *pStatus)
     InBox(133, 182, 152, 194);
     draw_flag(4, 4, player);
     display::graphics.setForegroundColor(1);
-    draw_string(180, 37, "CONTINUE");
+    draw_string(138, 37, "CONTINUE");
     draw_string(60, 81, "PRESTIGE");
     draw_string(43, 145, "EXPENDITURES");
     draw_string(212, 79, "BUDGET TRACK");
@@ -198,16 +198,19 @@ void DrawBudget(char player, char *pStatus)
     draw_string(164, 169, "0 MB");
     display::graphics.setForegroundColor(1);
 
+    int placeDate;
     if (Data->Season == 0) {
+        placeDate = 108;
         strcpy(&name[0], "SPRING 19");
     } else {
         strcpy(&name[0], "FALL 19");
+        placeDate = 116;
     }
 
     snprintf(&str[0], sizeof(str), "%d", Data->Year);
 
     strcat(&name[0], &str[0]);
-    draw_heading(122, 5, &name[0], 0, -1);
+    draw_heading(placeDate, 5, &name[0], 0, -1);
     //draw_number(0,0,Data->Year);
 
     display::graphics.setForegroundColor(11);
@@ -298,12 +301,12 @@ void DrawBudget(char player, char *pStatus)
             fill_rectangle(205 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 8);
         }
 
-        fill_rectangle(170, 185, 176, 189, 6);
-        fill_rectangle(170, 185, 175, 188, 5);
+        fill_rectangle(176, 185, 182, 189, 6);
+        fill_rectangle(176, 185, 181, 188, 5);
         fill_rectangle(297, 185, 303, 189, 9);
         fill_rectangle(297, 185, 302, 188, 8);
         display::graphics.setForegroundColor(1);
-        draw_string(181, 189, "U.S.A.");
+        draw_string(187, 189, "U.S.A.");
         draw_string(262, 189, "U.S.S.R.");
     }
 
@@ -315,12 +318,12 @@ void DrawBudget(char player, char *pStatus)
             fill_rectangle(205 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 5);
         }
 
-        fill_rectangle(170, 185, 176, 189, 9);
-        fill_rectangle(170, 185, 175, 188, 8);
+        fill_rectangle(176, 185, 182, 189, 9);
+        fill_rectangle(176, 185, 181, 188, 8);
         fill_rectangle(297, 185, 303, 189, 6);
         fill_rectangle(297, 185, 302, 188, 5);
         display::graphics.setForegroundColor(1);
-        draw_string(181, 189, "U.S.S.R.");
+        draw_string(187, 189, "U.S.S.R.");
         draw_string(262, 189, "U.S.A.");
     }
 
@@ -412,15 +415,15 @@ void Budget(char player)
         GetMouse();
 
         if (mousebuttons > 0 || key > 0) { /* Gameplay */
-            if ((x >= 166 && y >= 29 && x <= 236 && y <= 41 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(167, 29, 236, 41);
+            if ((x >= 124 && y >= 29 && x <= 193 && y <= 41 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
+                InBox(124, 29, 193, 41);
                 WaitForMouseUp();
 
                 if (key > 0) {
                     delay(150);
                 }
 
-                OutBox(167, 29, 236, 41);
+                OutBox(124, 29, 193, 41);
                 return;  /* Done */
             }
 
