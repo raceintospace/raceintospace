@@ -481,7 +481,7 @@ void ShowPad(char plr, char pad)
             if (temp == 1) {
                 return;
             }
-        } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             key = 0;
             WaitForMouseUp();

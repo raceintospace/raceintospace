@@ -128,7 +128,7 @@ void Moon(char plr)
         key = 0;
         GetMouse();
 
-        if ((x >= 115 && y >= 152 && x <= 216 && y <= 162 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 115 && y >= 152 && x <= 216 && y <= 162 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
             InBox(115, 152, 216, 162);
             WaitForMouseUp();
 
@@ -308,7 +308,7 @@ void LMDraw(char plr)
     display::graphics.setForegroundColor(1);
     draw_string(117, 32, "CENTRAL HANGAR");
     draw_small_flag(plr, 5, 4);
-    draw_heading(40, 5, "LUNAR MODULE", 0, -1);
+    draw_heading(50, 5, "LUNAR MODULE", 0, -1);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
 
@@ -663,7 +663,7 @@ void LMBld(char plr)
         key = 0;
         GetMouse();
 
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
 
@@ -708,7 +708,7 @@ void SatBld(char plr)
     while (1) {
         GetMouse();
 
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
 

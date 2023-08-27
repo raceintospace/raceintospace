@@ -1696,7 +1696,7 @@ void Bre(char plr)
                 year = 0;
                 BackIntel(plr, year);
 
-            } else if ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+            } else if ((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
 
@@ -1847,7 +1847,7 @@ void IStat(char plr)
                 /* Misc */
             }
 
-            if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
+            if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
                 InBox(244, 5, 314, 17);
                 WaitForMouseUp();
 

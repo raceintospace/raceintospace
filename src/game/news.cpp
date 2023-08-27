@@ -819,7 +819,7 @@ News(char plr)
             DrawNText(plr, ctop);
             OutBox(303, 120, 313, 156);
         } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17
-                    && mousebuttons > 0) || (key == K_ENTER)) {
+                    && mousebuttons > 0) || (key == K_ENTER || key == K_ESCAPE)) {
             // Continue
             InBox(245, 5, 314, 17);
             WaitForMouseUp();

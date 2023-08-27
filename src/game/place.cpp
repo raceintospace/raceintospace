@@ -601,7 +601,7 @@ int Help(const char *FName)
     while (i == 2) {
         GetMouse();
 
-        if (mode == 0 && ((x > 85 && y >= 133 && x <= 239 && y <= 154 && mousebuttons > 0) || (key == 'C' || key == K_ENTER))) {
+        if (mode == 0 && ((x > 85 && y >= 133 && x <= 239 && y <= 154 && mousebuttons > 0) || (key == 'C' || key == K_ENTER || key == K_ESCAPE))) {
             InBox(85, 133, 239, 154);
             i = 0;
             WaitForMouseUp();

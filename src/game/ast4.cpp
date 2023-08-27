@@ -1037,7 +1037,7 @@ void Programs(char plr, char prog)
 
                         if (mousebuttons > 0 || key > 0) {
                             if ((x >= 83 && y >= 154 && x <= 236 && y <= 165
-                                 && mousebuttons != 0) || key == K_ENTER) {
+                                 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
                                 InBox(83, 154, 236, 165);
                                 WaitForMouseUp();
                                 OutBox(83, 154, 236, 165);
@@ -1077,7 +1077,7 @@ void Programs(char plr, char prog)
                     OutBox(245, 106, 314, 118);
                 }
             } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17
-                        && mousebuttons > 0) || key == K_ENTER) {
+                        && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
                 /* Exit */
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
