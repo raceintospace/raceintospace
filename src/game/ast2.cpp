@@ -220,6 +220,25 @@ void Limbo(char plr)
 
             }
         }
+        
+        if (key == K_HOME) {
+            InBox(6, 130, 18, 161);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                delay(10);
+
+                    now2 = 0;
+                    BarA = 0;
+                        DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                        LimboText(plr, AstroList[now2]);
+
+                    i = 51;
+            }
+
+            OutBox(6, 130, 18, 161);
+            delay(10);
+        }
 
         // Left Arrow Up
         if ((mousebuttons > 0 && x >= 6 && y >= 130 && x <= 18 && y <= 161 && count > 0) || key == UP_ARROW) {
@@ -274,6 +293,76 @@ void Limbo(char plr)
             OutBox(6, 130, 18, 161);
             delay(10);
         }
+        
+        if (key == K_PGUP) {
+            InBox(6, 130, 18, 161);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                delay(10);
+
+                now2 = now2 - 7;
+                if (now2 < 0) {
+                    now2 = 0;
+                }
+                BarA = 0;
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                LimboText(plr, AstroList[now2]);
+
+                i = 51;
+            }
+
+            OutBox(6, 130, 18, 161);
+            delay(10);
+        }
+        
+        if (key == K_PGDN) {
+            InBox(6, 163, 18, 194);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                delay(10);
+
+                now2 = now2 + 7;
+                if (now2 > count - 1) {
+                    now2 = count - 1;
+                }
+                BarA = 7;
+                if (BarA > count - 1) {
+                    BarA = count - 1;
+                }
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                LimboText(plr, AstroList[now2]);
+
+                i = 51;
+            }
+
+            OutBox(6, 163, 18, 194);
+            delay(10);
+        }
+
+        if (key == K_END) {
+            InBox(6, 163, 18, 194);
+
+            for (i = 0; i < 50; i++) {
+                key = 0;
+                delay(10);
+                
+                now2 = count - 1;
+                if (count < 8) {
+                    BarA = count - 1;
+                } else {
+                BarA = 7;
+                }
+                DispLeft(plr, BarA, count, now2, &AstroList[0]);
+                LimboText(plr, AstroList[now2]);
+
+                i = 51;
+            }
+            
+            OutBox(6, 163, 18, 194);
+            delay(10);
+        }
 
         // Left Arrow Down
         if ((mousebuttons > 0 && x >= 6 && y >= 163 && x <= 18 && y <= 194 && count > 0) || key == DN_ARROW) {
@@ -323,8 +412,6 @@ void Limbo(char plr)
 
                 GetMouse();
             }
-
-            //key=0;WaitForMouseUp();key=0;
             OutBox(6, 163, 18, 194);
             delay(10);
         }
