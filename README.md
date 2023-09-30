@@ -110,6 +110,14 @@ If you are on a Fedora-based system, you can get everything with:
         libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
         physfs-devel libpng-devel
 
+### Music
+
+Due to copyright concerns, the game's music has been placed in a nonfree repository.
+To add music to the game, run the following:
+
+    $ cd ~/ && git clone https://github.com/raceintospace/raceintospace-nonfree && cp -r ~/raceintospace-nonfree/data/audio/music/ ~/raceintospace/data/audio/ && cp -r ~/raceintospace-nonfree/data/midi/ ~/raceintospace/data/audio/
+
+
 ### Build
 
 To compile the game quickly you can run a series of commands in-line. This 
