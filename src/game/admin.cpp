@@ -1422,7 +1422,7 @@ int FutureCheck(char plr, char type)
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);
                 WaitForMouseUp();
                 key = 0;
-                delay(300);
+                delay(150);
 
                 if (p[i] == 1) {
                     pad = i;
