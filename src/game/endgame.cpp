@@ -18,7 +18,7 @@
 /** \file endgame.cpp End Game Routines
  */
 
-// This file shows the End Game screen, intuitively enough - also shows the Prestige First window
+// This file shows the End Game screen, intuitively enough.  It also shows the Prestige First window.
 
 #include "endgame.h"
 
@@ -1072,7 +1072,7 @@ void SpecialEnd(void)
  *
  * The endgame.but.%d.png images use a 128-color palette beginning at
  * index 128 through 255. Consequently, the coff parameter is overridden
- * by 128.
+ * by 128. (Changed to 35 to correct corruption in the colors. LPB)
  *
  * \param x     the upper-left x coordinate of the image destination.
  * \param y     the upper-left y coordinate of the image destination.
@@ -1085,7 +1085,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
 {
     assert(poff >= 0 && poff <= 5);
 
-    coff = 128;  // PNG images have their palette at [128, 255]
+    coff = 35;  // PNG images have their palette at [128, 255]
     char filename[128];
     snprintf(filename, sizeof(filename),
              "images/endgame.but.%d.png", (int) poff);
