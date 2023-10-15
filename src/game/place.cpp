@@ -187,7 +187,7 @@ int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
         av_block();
         GetMse(plr, 0);
 
-        if (mayEscape && key == K_ESCAPE) {
+        if (mayEscape && (key == K_ESCAPE || key == K_ENTER)) {
             break;
         }
 
