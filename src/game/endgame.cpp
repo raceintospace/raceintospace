@@ -1085,7 +1085,7 @@ EndPict(int x, int y, char poff, unsigned char coff)
 {
     assert(poff >= 0 && poff <= 5);
 
-    coff = 35;  // PNG images have their palette at [128, 255]
+    coff = 31;  // PNG images have their palette at [128, 255]
     char filename[128];
     snprintf(filename, sizeof(filename),
              "images/endgame.but.%d.png", (int) poff);
