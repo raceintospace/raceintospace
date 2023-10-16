@@ -79,7 +79,7 @@ void LoserPict(char poff, unsigned char coff);
  * Illustrates the endgame fireworks during the victory celebration.
  *
  * \param win  Country index of the winning side (0 for USA, 1 for USSR).
- * \return  Menu code for the player's choice in the control loop.
+ * \return     Menu code for the player's choice in the control loop.
  */
 char Burst(char win)
 {
@@ -1072,7 +1072,7 @@ void SpecialEnd(void)
  *
  * The endgame.but.%d.png images use a 128-color palette beginning at
  * index 128 through 255. Consequently, the coff parameter is overridden
- * by 128. (Changed to 35 to correct corruption in the colors. LPB)
+ * by 128. (Changed to 31 to correct corruption in the colors. LPB)
  *
  * \param x     the upper-left x coordinate of the image destination.
  * \param y     the upper-left y coordinate of the image destination.
