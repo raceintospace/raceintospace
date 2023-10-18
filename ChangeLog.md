@@ -41,6 +41,9 @@ Below are improvements that have been made over what the game offered in v.1.1.
 ---
 **SMALLER ITEMS**
 * **Newscast issues**
+   * The Soviet newscast now plays the Soviet newscast music (#214)
+      * Starting with the CD version of BARIS, and in RIS through v.1.1, it played the US newscast music
+      * The Soviet music improves the timing so that the movie's video better matches the voice of the newscaster
    * The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
       * Before, it had called it "the H launch facility" (since h is used as a variable).
    * When a component faces a Safety penalty unless the player pays to fix it, there was sometimes a mismatch between newscast and actual numbers (#204, #243)
@@ -112,7 +115,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 * Director rankings were being calculated improperly (#580)
 * The event counting system had a bug when the AI played as the US, which could cause its director ranking to tank even when its prestige was high (#683)
 
- 
+---
 ### GAME CHANGES
 
 **LARGER ITEMS**
@@ -224,9 +227,6 @@ Below are improvements that have been made over what the game offered in v.1.1.
 * In Future Missions, when you select a capsule program with no (or insufficient) crews to assign to the mission, it now takes you back to the main Future Missions screen rather than taking you on to the (empty) Select Primary Crew window. (#509)
 * The opening screen now defaults to the Historical Model rather than the Basic Model (#221)
 * Small updates to the 'naut roster (removal of duplicates, etc.)
-* The Soviet newscast now plays the Soviet newscast music (#214)
-   * Starting with the CD version of BARIS, and in RIS through v.1.1, it played the US newscast music
-   * The Soviet music improves the timing so that the movie's video better matches the voice of the newscaster
 * Mission Control and the Launch Facility screen used to play the other side's music: Soviet instead of US, US instead of Soviet (#258)
 * The Saturn V has been renamed simply "Saturn"&mdash;to include other rockets in its family, such as the Saturn IB (#216)
 * The Soviet player's default name has been changed from KOROLOV to KOROLYOV, which is a closer transliteration (#262)
