@@ -96,7 +96,6 @@ Below are improvements that have been made over what the game offered in v.1.1.
    * The number of spots to fill in recruitment now shows when you first open recruitment, rather than after you've selected one to recruit.
    * In recruitment, the Continue button didn't look quite right when clicked on (off by 1px).
    * In Preferences, the Human/AI button nestled into the world map never looked quite right on the Soviet side.  Now it does. (#353)
-
 * Fixed a bug with technology transfer for the Titan/Proton rocket: the technology bonus from multiple rockets at 75%+ was not being applied (#310)
 * When you're flying docking tests, the game used to get stuck sometimes at 2 DMs in your inventory. For the rest of the game you always had two docking modules and didn't have to buy them again (#319)
   [not sure if this was in 1.1]
