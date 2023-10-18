@@ -7,11 +7,15 @@
 * Game brought over from Sourceforge to GitHub
 * Versioning system converted from CVS to GIT
 * Code converted from C to C++
-* Code cleanup to make the game easier to modify (#623, #626, #639, #644, #645, among others)
+* Code cleanup to make the game easier to modify (#623, #626, #639, #644, #645, #783, among others)
 * Parts of the code brought into line with standards (#624, #783)
+* Improved readability of code in spaceport animation (#800)
+* Removed legacy code for compressing save games (#777)
 * Many of the data files and images have been changed to use discrete image files rather than being embedded into the code (#51)
 * Vestigial copy protection code finally removed (#493)
 * We've added some JSON serialization for game data and save games. (#478)
+* Deserialization of JSON files has been moved to the initialization of the game, improving its performance (#774)
+* Removed redundant code in the spaceport menus that redrew the date and cash values (#773)
 * The abbreviation for the sound to play in the Intelligence screens was "INTELLEG"&mdash;now "INTELLIG"
 * In the config file, "altasLunar" has been corrected to "atlasLunar"
 * The music files have been moved to a separate repository for copyright reasons.
@@ -34,6 +38,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 * The LM failure "Engine explodes upon ignition. Spacecraft crew is killed." used to kill all crew members, including the one in orbit (#476)
 * If the LM lifts off from the Moon but fails to develop full thrust and makes an emergency landing back on the surface, stranding the crew, the Docking Specialist up in orbit died too (but managed to bring the capsule home anyway) (#287)
 ---
+**SMALLER ITEMS**
 * On a mission where the rocket explodes but the crew escapes thanks to the Launch Escape System pulling the capsule to safety, you still got credit for Manned Space Mission.  Now you won't get credit for that unless the mission hits the Reentry step. (#330)
 * The newscast announcing that a storm front has blocked a launch window now specifies which pad (#169)
    * Before, it had called it "the H launch facility" (since h is used as a variable).
@@ -114,6 +119,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 * If your cash is at or below 60MB (20MB before you get your first capsule) and you have mission(s) scheduled for this turn but haven't assembled them yet, opening R&D will now pop up a reminder to assemble the missions before spending your money on research (#511)
 * The VAB/VIB now has a Delay button to let you put a launch back a turn rather than having to scrub it and reschedule. (#167)
 ---
+**SMALLER ITEMS**
 * You can now change player names after a game has begun.  In two-player games, you can change your name but not your opponent's. (#705)
 * R&D and Purchasing can now be closed with the Esc key as well as Enter.
 * In R&D and Purchasing, clicking on the image of the currently displayed hardware item will now pop up a help message giving information about it (#467)
