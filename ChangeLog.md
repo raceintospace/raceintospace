@@ -231,39 +231,40 @@ Below are improvements that have been made over what the game offered in v.1.1.
    * In the screen that asks who will be first on the Moon, the names have been centered in their respective buttons. Longer names were bleeding out past the edge of the button. (#535)
    * The Credits are now in a different color to be easier to read against the background (#211)
    * In R&D, removed the percent sign from the RESEARCH STRONG: +1%/TEAM line, since the research news events change the dice being rolled (7-sided instead of 6-sided, etc.) rather than rolling 6-sided dice and then applying a plus or minus (#321)
-* You can now change player names after a game has begun.  In two-player games, you can change your name but not your opponent's. (#591, #705)
-* Lots of improvements to the help file: grammar corrections, readability, more clarifications, and in a few places updates to reflect changes we've made to the game.
-* In single-player games, there is now a cheat in the Purchasing screen: pressing **$** will add 100MB to your cash on hand.  This can be disabled in the config file with no_money_cheat, which is also a Classic setting. (#597) 
+* **INTERFACE IMPROVEMENTS**
+   * You can now change player names after a game has begun.  In two-player games, you can change your name but not your opponent's. (#591, #705)
+   * Lots of improvements to the help file: grammar corrections, readability, more clarifications, and in a few places updates to reflect changes we've made to the game.
+   * In single-player games, there is now a cheat in the Purchasing screen: pressing **$** will add 100MB to your cash on hand.  This can be disabled in the config file with no_money_cheat, which is also a Classic setting. (#597)
+   * In the Capsule Screen, you can now bring up the Compatibility pop-up by clicking on the astronaut's name&mdash;you don't have to click exactly on the morale box.
+   * In the main endgame screen, the buttons at the bottom now highlight the letter that activates them.
+   * When Mission Control recommends you scrub a mission, if you hit the button to do so, you're now prompted for confirmation so you won't cancel it accidentally, plus it shows more prominently so you're less likely to miss it. (#475)
+      * For the rest of the mission, the hardware will suffer a temporary Safety penalty.  So this screen now mentions that fact above the button for scrubbing it. (#589)
+   * You can now cancel out of astronaut/cosmonaut recruitment if you change your mind (#295)
+   * Player now has more mission downgrade options&mdash;in particular, it is now possible to downgrade a Lunar Landing to a Lunar Orbital LM Test
+   * Added a context-sensitive help item for the Launch Confirmation screen (#786)
+   * In Mission Control, your downgrade options now include an option to scrub the flight.
+   * In Future Missions, when you select a capsule program with no (or insufficient) crews to assign to the mission, it now takes you back to the main Future Missions screen rather than taking you on to the (empty) Select Primary Crew window. (#509)
+   * The opening screen now defaults to the Historical Model rather than the Basic Model (#221)
+   * In the main endgame screen, the buttons at the bottom now highlight the letter that activates them.
+   * In Preferences, the movies/stills option has been disabled&mdash;missions now always show movies (#254)
+   * When you assign crews to a mission, if you don't have enough available crews, the game still popped up a message saying you don't have enough crews to assign a primary *and a backup*.  The old game used to require a backup crew, and the message reflected that.  Now it will still show that message if you set the game to require backups, but if not it will say just that you don't have any crews available. (#381)
+   * Credits now shows a screen for those who've worked on RIS, in addition to those who worked on the original BARIS (#263)
+   * Credits also now show names for people who were mentioned in a text file on the CD version but didn't actually make it into the credits for that version.
 * When the AI wins the game, you now see its Moon landing play out like other prestige firsts.
 * Increased height of Prestige First window so one more prestige first can be listed&mdash;which also better centers the window on the screen.
 * Saved games are now stored on disk with the name you give them, rather than as BUZZ1.SAV, BUZZ2.SAV, etc.
 * The security of saved games has been significantly improved. (#655)
-* In the Capsule Screen, you can now bring up the Compatibility pop-up by clicking on the astronaut's name&mdash;you don't have to click exactly on the morale box.
 * Before, using a capsule type on a mission got you only +1 Safety even if you did a mission that flies two capsules such as the MOL.  Now, if you fly a mission that uses a capsule twice, it can get +2 Safety.  This applies mainly to Joint Orbitals and MOL missions. (#328)
 * When the newscast sends someone to the hospital/infirmary, they would always go there for 2 turns.  Now, there's a 1 in 4 chance per point of Endurance that they'll only go for one turn.  'Nauts with an EN0 have a 1 in 4 chance of going for 3 instead. (#384)
 * To keep track of how much time each person has spent in space, the game used to automatically assign the maximum for each flight's duration level (A=2 days, B=5, C=7, D=12, E=16, F=20), rather than choosing a number of days within each range.  As a result, your fellow on the suborbital got credit for two days in space for a 15-minute flight.  Now it assigns a number depending on the type of mission flown (or a random number of days in the range, for E & F). (#300)
-* In the main endgame screen, the buttons at the bottom now highlight the letter that activates them.
 * The game now makes some use of the Endurance skill (#384)
    * It contributes to the Duration steps of Duration flights
    * When the newscast randomly selects a spaceperson to be injured/retired, the higher their Endurance the more likely they are to go to be injured rather than retire altogether.  
    * Also, if injured, those with higher EN are more likely to go for 1 turn instead of 2: 25% chance per point above 1, and EN0 has a 25% chance of going for 3 turns (#384)
-* When Mission Control recommends you scrub a mission, if you hit the button to do so, you're now prompted for confirmation so you won't cancel it accidentally, plus it shows more prominently so you're less likely to miss it. (#475)
-   * For the rest of the mission, the hardware will suffer a temporary Safety penalty.  So this screen now mentions that fact above the button for scrubbing it. (#589)
-* You can now cancel out of astronaut/cosmonaut recruitment if you change your mind (#295)
 * There's now an option in Advanced Preferences (female_nauts) that will let you recruit women without having to receive the newscast which requires you to recruit them (#329)
 * Another option in Advanced Preferences (game_style) is the Classic setting, which makes the game behave more like the original BARIS: you're required to assign backup crews, etc.
 * The Max R&D figures for Mercury and Gemini in the Historical Model have been reset to their levels in the floppy version (#216)
-* Player now has more mission downgrade options&mdash;in particular, it is now possible to downgrade a Lunar Landing to a Lunar Orbital LM Test
-* Added a context-sensitive help item for the Launch Confirmation screen (#786)
-* In Mission Control, your downgrade options now include an option to scrub the flight.
-* In Future Missions, when you select a capsule program with no (or insufficient) crews to assign to the mission, it now takes you back to the main Future Missions screen rather than taking you on to the (empty) Select Primary Crew window. (#509)
-* The opening screen now defaults to the Historical Model rather than the Basic Model (#221)
-* In the main endgame screen, the buttons at the bottom now highlight the letter that activates them.
 * Small updates to the 'naut roster (removal of duplicates, etc.)
 * The Saturn V has been renamed simply "Saturn"&mdash;to include other rockets in its family, such as the Saturn IB (#216)
 * The Soviet player's default name has been changed from KOROLOV to KOROLYOV, which is a closer transliteration (#262)
-* In Preferences, the movies/stills option has been disabled&mdash;missions now always show movies (#254)
-* When you assign crews to a mission, if you don't have enough available crews, the game still popped up a message saying you don't have enough crews to assign a primary *and a backup*.  The old game used to require a backup crew, and the message reflected that.  Now it will still show that message if you set the game to require backups, but if not it will say just that you don't have any crews available. (#381)
-* Credits now shows a screen for those who've worked on RIS, in addition to those who worked on the original BARIS (#263)
-* Credits also now show names for people who were mentioned in a text file on the CD version but didn't actually make it into the credits for that version.
 * People in Advanced Training now don't suffer the usual 4-point/turn loss of morale, since they're presumably being groomed for something special (#279) 
