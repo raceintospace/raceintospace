@@ -467,7 +467,9 @@ When your turn ends and your missions launch, you will watch them unfold.  Dummy
 
 ![Step Failure Screen](image_23.png)
 
-A red bar means a failed roll, which will be followed by a Step Failure screen.  Sometimes the problem is repaired by the crew (as above), especially if your hardware was pretty safe to begin with.  But sometimes, especially if it is under-researched, crew status will not be OK and you'll suffer a failure of some kind.  Failed rolls on unmanned missions always fail the whole mission.  On a manned misson, if the failed roll was for a step affected by crew skill, the crew member who failed the roll will show after the dice roll result (again, as shown).  Prior to RIS 2.0, the crew member's name was underlined instead.
+A red bar means a failed roll, which will be followed by a Step Failure screen.  Sometimes the problem is repaired by the crew, especially if your hardware was pretty safe to begin with.  Occasionally a close call will lead Mission Control to recommend scrubbing the flight, as above.  When this happens, the rest of the mission will suffer a random penalty of 1-20% whether you scrub or not; this option simply allows you to reduce the number of rolls you still have to make.  It may be a good idea to scrub a Moon landing if this happens just before descending to the surface, for instance.
+
+Other times, especially if your hardware is under-researched, you'll suffer a failure of some kind.  On unmanned missions this  will fail the whole mission.  On a manned flight, if the failed roll was for a step affected by crew skill, the crew member who failed the roll will show after the dice roll result (as above).  Prior to RIS 2.0, the crew member's name was underlined instead.
 
 You will see the AI's missions only on successful prestige firsts.  Other missions, even prestige seconds, will not be displayed.
 
