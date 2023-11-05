@@ -152,7 +152,7 @@ void MisOrd(char num)
     for (i = 0; i < num; i++) {
         InBox(78, 39 + 21 * j, 105, 55 + 21 * j);
         draw_small_flag(Order[i].plr, 79, 40 + 21 * j);
-        display::graphics.setForegroundColor(34);
+        display::graphics.setForegroundColor(16);
         draw_string(110, 45 + 21 * j, "SCHEDULED LAUNCH");
         draw_string(110, 52 + 21 * j, "DATE: ");
         display::graphics.setForegroundColor(1);
@@ -197,12 +197,12 @@ void MisAnn(char plr, char pad)
     InBox(122, 25, 276, 65);
     display::graphics.setForegroundColor(9);
     draw_string(127, 33, "SCHEDULED LAUNCH");  //was 154,33
-    display::graphics.setForegroundColor(34);
+    display::graphics.setForegroundColor(16);
     draw_string(127, 40, "LAUNCH FACILITY: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "PAD ");
     draw_string(0, 0, pad_str);
-    display::graphics.setForegroundColor(34);
+    display::graphics.setForegroundColor(16);
     draw_string(127, 47, "DATE: ");
     display::graphics.setForegroundColor(1);
 
@@ -331,6 +331,10 @@ void MisAnn(char plr, char pad)
             switch (j) {
             case Mission_Capsule:
                 if (hold > -1) {
+                    if (Data->P[plr].Manned[hold].SaveCard > 0) {
+                        display::graphics.setForegroundColor(16);
+                        draw_string(bud - 8, 100 + 14 * k, "+");
+                    }
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 100 + 14 * k, "CAPSULE: ");
                     display::graphics.setForegroundColor(1);
@@ -353,6 +357,10 @@ void MisAnn(char plr, char pad)
 
             case Mission_Kicker:
                 if (hold > -1) {
+                    if (Data->P[plr].Misc[hold].SaveCard > 0) {
+                        display::graphics.setForegroundColor(16);
+                        draw_string(bud - 8, 100 + 14 * k, "+");
+                    }
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 100 + 14 * k, "KICKER: ");
                     display::graphics.setForegroundColor(1);
@@ -375,6 +383,10 @@ void MisAnn(char plr, char pad)
 
             case Mission_LM:
                 if (hold > -1) {
+                    if (Data->P[plr].Manned[hold].SaveCard > 0) {
+                        display::graphics.setForegroundColor(16);
+                        draw_string(bud - 8, 100 + 14 * k, "+");
+                    }
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 100 + 14 * k, "LM: ");
                     display::graphics.setForegroundColor(1);
@@ -400,6 +412,10 @@ void MisAnn(char plr, char pad)
 //draw_number(150, 116, Data->P[plr].Probe[hold].MaxRD);
                 if (hold > -1) {
                     if (hold < 3) {
+                        if (Data->P[plr].Probe[hold].SaveCard > 0) {
+                            display::graphics.setForegroundColor(16);
+                            draw_string(bud - 8, 100 + 14 * k, "+");
+                        }
                         display::graphics.setForegroundColor(7);
                         draw_string(bud, 100 + 14 * k, "PROBE: ");
                         display::graphics.setForegroundColor(1);
@@ -417,6 +433,10 @@ void MisAnn(char plr, char pad)
                         draw_string(0, 0, "%");
                         ++k;
                     } else if (hold == 4) {
+                        if (Data->P[plr].Misc[hold].SaveCard > 0) {
+                            display::graphics.setForegroundColor(16);
+                            draw_string(bud - 8, 100 + 14 * k, "+");
+                        }
                         display::graphics.setForegroundColor(7);
                         draw_string(bud, 100 + 14 * k, "DOCKING: ");
                         display::graphics.setForegroundColor(1);
@@ -441,6 +461,10 @@ void MisAnn(char plr, char pad)
             case Mission_PrimaryBooster:
                 if (hold > -1) {
                     if (hold < 5) {
+                        if (Data->P[plr].Rocket[hold - 1].SaveCard > 0) {
+                            display::graphics.setForegroundColor(16);
+                            draw_string(bud - 8, 100 + 14 * k, "+");
+                        }
                         display::graphics.setForegroundColor(7);
                         draw_string(bud, 100 + 14 * k, "ROCKET: ");
                         display::graphics.setForegroundColor(1);
@@ -458,6 +482,10 @@ void MisAnn(char plr, char pad)
                         draw_string(0, 0, "%");
                         ++k;
                     } else {
+                        if (Data->P[plr].Rocket[hold - 5].SaveCard > 0) {
+                            display::graphics.setForegroundColor(16);
+                            draw_string(bud - 8, 100 + 14 * k, "+");
+                        }
                         display::graphics.setForegroundColor(7);
                         draw_string(bud, 100 + 14 * k, "ROCKET: ");
                         display::graphics.setForegroundColor(1);
@@ -485,6 +513,10 @@ void MisAnn(char plr, char pad)
                 // developed (for emergencies). Only display if needed.
                 if (hold > -1 &&
                     IsEVA(Data->P[plr].Mission[pad].MissionCode)) {
+                    if (Data->P[plr].Misc[hold].SaveCard > 0) {
+                        display::graphics.setForegroundColor(44);
+                        draw_string(bud - 8, 100 + 14 * k, "+");
+                    }
                     display::graphics.setForegroundColor(7);
                     draw_string(bud, 100 + 14 * k, "EVA: ");
                     display::graphics.setForegroundColor(1);
