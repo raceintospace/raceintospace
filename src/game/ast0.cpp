@@ -145,7 +145,7 @@ void Moon(char plr)
 
 
 
-void DispLeft(char plr, int lc, int cnt, int nw, int *ary)
+void DispLeft(char plr, int lc, int cnt, int nw, const int *ary)
 {
     int i, start, num;
     start = nw - lc;
