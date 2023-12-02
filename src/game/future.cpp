@@ -1269,7 +1269,7 @@ void Future(char plr)
                 WaitForMouseUp();
                 TogBox(166, 49, 0);
 
-            } else if ((x >= 6 && y >= 25 && x <= 200 && y <= 46 && mousebuttons > 0) || (key == '?')) {
+            } else if ((x >= 5 && y >= 24 && x <= 200 && y <= 46 && mousebuttons > 0) || (key == '?')) {
                 // Show description of mission
                 InBox(5, 24, 201, 47);
                 int helpIndex = 300 + misType;
