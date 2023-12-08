@@ -487,11 +487,14 @@ void Limbo(char plr)
                 WaitForMouseUp();
                 key = 0;
                 OutBox(167, 95 + 21 * i, 236, 109 + 21 * i);
-                Data->P[plr].Pool[AstroList.at(now2)].Assign = i + 1;
-                Data->P[plr].Pool[AstroList.at(now2)].Unassigned = 0;
-                Data->P[plr].Pool[AstroList.at(now2)].Moved = 0;
 
-                AstroList.erase(AstroList.begin() + now2);
+                if (AstroList.size() > 0) {
+                    Data->P[plr].Pool[AstroList.at(now2)].Assign = i + 1;
+                    Data->P[plr].Pool[AstroList.at(now2)].Unassigned = 0;
+                    Data->P[plr].Pool[AstroList.at(now2)].Moved = 0;
+
+                    AstroList.erase(AstroList.begin() + now2);
+                }
 
                 if (now2 == AstroList.size()) {
                     if (now2 > 0) {
