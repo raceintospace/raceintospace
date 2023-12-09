@@ -161,7 +161,7 @@ void DispLeft(char plr, int lc, int cnt, int nw, const int *ary)
             display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
 
             if (Data->P[plr].Pool[ary[i]].RetirementDelay > 0) {
-                display::graphics.setForegroundColor(35);  // Print name in gray if 'naut has announced retirement (black shows poorly here) -Leon
+                display::graphics.setForegroundColor(9);  // Print name in gray if 'naut has announced retirement (black shows poorly here) -Leon
             }
             draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
 
