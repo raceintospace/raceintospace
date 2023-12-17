@@ -93,10 +93,10 @@ void DrawLimbo(char plr)
     fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
     InBox(165, 46, 315, 67);
     fill_rectangle(166, 47, 314, 66, 0);
-    ShBox(167, 48, 228, 65);
-    ShBox(230, 48, 256, 65);
-    ShBox(258, 48, 313, 65);
-    InBox(167, 48, 228, 65);
+    ShBox(167, 48, 225, 65);
+    InBox(167, 48, 225, 65);  // Transfer Astronaut button
+    ShBox(227, 48, 256, 65);  // Send All button
+    ShBox(258, 48, 313, 65);  // Facility Transfer button
     InBox(4, 128, 20, 196);
     InBox(24, 128, 154, 196);
     // new boxes
@@ -106,21 +106,21 @@ void DrawLimbo(char plr)
     InBox(9, 108, 148, 123);
 
     display::graphics.setForegroundColor(11);
-    draw_string(174, 55, "T");
+    draw_string(172, 55, "T");
     display::graphics.setForegroundColor(20);
     draw_string(0, 0, "RANSFER");
 
     if (plr == 0) {
-        draw_string(172, 62, "ASTRONAUT");
+        draw_string(170, 62, "ASTRONAUT");
     } else {
-        draw_string(172, 62, "COSMONAUT");
+        draw_string(170, 62, "COSMONAUT");
     }
 
     display::graphics.setForegroundColor(11);
-    draw_string(232, 55, "S");
+    draw_string(230, 55, "S");
     display::graphics.setForegroundColor(20);
     draw_string(0, 0, "END");
-    draw_string(235, 62, "ALL");
+    draw_string(233, 62, "ALL");
 
     display::graphics.setForegroundColor(11);
     draw_string(264, 55, "F");
@@ -421,9 +421,9 @@ void Limbo(char plr)
         }
 
         // Select Transfer Button
-        if ((mousebuttons > 0 && x >= 167 && y >= 48 && x <= 228 && y <= 65) || key == 'T') {
-            InBox(167, 48, 228, 65);
-            OutBox(230, 48, 256, 65);
+        if ((mousebuttons > 0 && x >= 167 && y >= 48 && x <= 225 && y <= 65) || key == 'T') {
+            InBox(167, 48, 225, 65);
+            OutBox(227, 48, 256, 65);
             OutBox(258, 48, 313, 65);
 
             if (tag == OP_SENDALL) {
@@ -441,8 +441,8 @@ void Limbo(char plr)
         // Select Visit To Button
         if ((mousebuttons > 0 && x >= 256 && y >= 48 && x <= 313 && y <= 65) || key == 'F') {
             InBox(258, 48, 313, 65);
-            OutBox(230, 48, 256, 65);
-            OutBox(167, 48, 228, 65);
+            OutBox(227, 48, 256, 65);
+            OutBox(167, 48, 225, 65);
 
             if (tag == OP_SENDALL) {
                 for (int i = 0; i < 5; i++) {
@@ -457,9 +457,9 @@ void Limbo(char plr)
         }
 
         // Select Send All Button
-        if ((mousebuttons > 0 && x >= 230 && y >= 48 && x <= 256 && y <= 65) || key == 'S') {
-            InBox(230, 48, 256, 65);
-            OutBox(167, 48, 228, 65);
+        if ((mousebuttons > 0 && x >= 227 && y >= 48 && x <= 256 && y <= 65) || key == 'S') {
+            InBox(227, 48, 256, 65);
+            OutBox(167, 48, 225, 65);
             OutBox(258, 48, 313, 65);
 
             for (int i = 0; i < 5; i++) {
