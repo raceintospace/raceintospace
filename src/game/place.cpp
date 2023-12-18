@@ -458,13 +458,6 @@ int Help(const char *FName)
     int i, j, line, top = 0, bot = 0, plc = 0;
     char *NTxt, mode;
     int fsize;
-    //    FILE *fin;
-    int32_t count;
-    /*    struct Help {
-        char Code[6];
-        int32_t offset;
-        int16_t size;
-        } Pul;*/
 
     mode = 0; /* XXX check uninitialized */
     NTxt = NULL; /* XXX check uninitialized */
@@ -472,22 +465,7 @@ int Help(const char *FName)
     if (!FName || strncmp(&FName[1], "000", 3) == 0) {
         return 0;
     }
-
-    
-    /*
-    fin = sOpen("HELP.CDR", "rb", FT_DATA);
-
-    if (! fin) {
-        throw IOException("Could not open help file HELP.CDR.");
-    }
-
-    fread(&count, sizeof count, 1, fin);
-    Swap32bit(count);
-
-    if (count <= 0) {
-        throw IOException("Invalid help entry count");
-        }*/
-
+   
     for (i = 0; i < Assets->help.size(); i++) {
         if(!xstrncasecmp(Assets->help.at(i).Code.c_str(), FName, 4)) {
             break;
@@ -498,15 +476,6 @@ int Help(const char *FName)
         CERROR3(baris, "Could not find help entry %s", FName);
         return 0;
     }
-
-    /*    Swap32bit(Pul.offset);
-    Swap16bit(Pul.size);
-
-    if (Pul.size > 1000000) {
-        CERROR5(baris, "Help entry %s reporting length of %d, "
-                " capped at %d", FName, Pul.size, 1000000);
-        throw std::runtime_error("Could not load help entry");
-        }*/
 
     AL_CALL = 1;
     std::string str = boost::algorithm::join(Assets->help.at(i).description, "\r\n") + "\r\n";
