@@ -921,6 +921,19 @@ struct XFails {
 
 };
 
+struct Help {
+    std::string Code;
+    std::vector<std::string> description;
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+      ar(CEREAL_NVP(Code));
+      ar(CEREAL_NVP(description));
+    }
+
+};
+
 struct AnimType {
     char ID[8];
     char OVL[4];
@@ -1317,7 +1330,8 @@ CEREAL_CLASS_VERSION(INTERIMDATA, 1);
 struct AssetData {
     std::vector<struct MissionSequenceKey> sSeq; // Success sequences
     std::vector<struct MissionSequenceKey> fSeq; // Failure sequences
-    std::vector <struct XFails> fails; // Failure texts and codes
+    std::vector<struct XFails> fails; // Failure texts and codes
+    std::vector<struct Help> help; // Help entries
 };
 
 #pragma pack(pop)

@@ -26,6 +26,7 @@
 
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 #include "display/image.h"
 #include "display/graphics.h"
@@ -455,15 +456,15 @@ int Help(const char *FName)
 {
     const int PAGE_SIZE = 11;
     int i, j, line, top = 0, bot = 0, plc = 0;
-    char *Help, *NTxt, mode;
+    char *NTxt, mode;
     int fsize;
-    FILE *fin;
+    //    FILE *fin;
     int32_t count;
-    struct Help {
+    /*    struct Help {
         char Code[6];
         int32_t offset;
         int16_t size;
-    } Pul;
+        } Pul;*/
 
     mode = 0; /* XXX check uninitialized */
     NTxt = NULL; /* XXX check uninitialized */
@@ -472,6 +473,8 @@ int Help(const char *FName)
         return 0;
     }
 
+    
+    /*
     fin = sOpen("HELP.CDR", "rb", FT_DATA);
 
     if (! fin) {
@@ -483,46 +486,39 @@ int Help(const char *FName)
 
     if (count <= 0) {
         throw IOException("Invalid help entry count");
+        }*/
+
+    for (i = 0; i < Assets->help.size(); i++) {
+        if(!xstrncasecmp(Assets->help.at(i).Code.c_str(), FName, 4)) {
+            break;
+        }
     }
 
-    i = 0;
-
-    do {
-        fread(&Pul.Code[0], sizeof(Pul.Code), 1, fin);
-        fread(&Pul.offset, sizeof(Pul.offset), 1, fin);
-        fread(&Pul.size, sizeof(Pul.size), 1, fin);
-    } while (xstrncasecmp(Pul.Code, FName, 4) != 0 && ++i < count);
-
-    // This uses short-circuit evaluation to distinguish between
-    // string match and iterator comparison.
-    if (i == count) {
-        fclose(fin);
+    if (i == Assets->help.size()) {
         CERROR3(baris, "Could not find help entry %s", FName);
         return 0;
     }
 
-    Swap32bit(Pul.offset);
+    /*    Swap32bit(Pul.offset);
     Swap16bit(Pul.size);
 
     if (Pul.size > 1000000) {
         CERROR5(baris, "Help entry %s reporting length of %d, "
                 " capped at %d", FName, Pul.size, 1000000);
         throw std::runtime_error("Could not load help entry");
-    }
+        }*/
 
     AL_CALL = 1;
-    Help = (char *)xmalloc(Pul.size);
-    fseek(fin, Pul.offset, SEEK_SET);
-    fread(Help, Pul.size, 1, fin);
-    fclose(fin);
+    std::string str = boost::algorithm::join(Assets->help.at(i).description, "\r\n") + "\r\n";
+    const char *Help = str.c_str();
 
-    // Process File
+    // Process entry
     i = 0;
     j = 0;
     line = 0;
     fsize = 1;
 
-    while (line < fsize) {
+    while (Help[i]) {
         if (Help[i] == 0x3B) while (Help[i++] != 0x0a);  // Remove Comments
         else if (Help[i] == 0x25) {  // Percent for line qty
             i++;
@@ -553,8 +549,6 @@ int Help(const char *FName)
             j = line * 42;
         }
     }
-
-    free(Help);
 
     key = 0;
     display::LegacySurface local(250, 128);
