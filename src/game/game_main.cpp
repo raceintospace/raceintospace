@@ -222,6 +222,7 @@ int game_main_impl(int argc, char *argv[])
     DESERIALIZE_JSON_FILE(&Assets->sSeq, locate_file("seq.json", FT_DATA));
     DESERIALIZE_JSON_FILE(&Assets->fSeq, locate_file("fseq.json", FT_DATA));
     DESERIALIZE_JSON_FILE(&Assets->fails, locate_file("fails.json", FT_DATA));
+    DESERIALIZE_JSON_FILE(&Assets->help, locate_file("help.json", FT_DATA));
 
     OpenEmUp();                   // OPEN SCREEN AND SETUP GOODIES
 
