@@ -618,7 +618,8 @@ void DumpAstro(char plr, int inx)
 
     for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
         for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
-            if (pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
+            if (pData->Crew[inx][i][j] > 0
+                && pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
                 pData->Crew[inx][i][j] = 0;
                 pData->CrewCount[inx][i] = 0;
             }

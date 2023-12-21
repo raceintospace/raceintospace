@@ -1351,6 +1351,10 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         prog = fake_prog;
     }
 
+    if (prog[1] < 0 || prog[1] > 5) {
+        prog[1] = prog[0];
+    }
+
     const struct mStr plan = GetMissionPlan(mis);
 
     for (i = 0; i < (plan.Jt + 1); i++) {

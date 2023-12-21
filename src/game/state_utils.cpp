@@ -284,8 +284,9 @@ void RemoveCrew(const char plr, struct MissionType &mission,
         char prime = mission.PCrew - 1;
 
         for (int i = 0; i < men; i++) {
-            Data->P[plr].Pool[
-                Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
+            if (Data->P[plr].Crew[prog][prime][i] > 0) {
+                Data->P[plr].Pool[Data->P[plr].Crew[prog][prime][i] - 1].Prime = 0;
+            }
         }
 
         mission.PCrew = 0;
@@ -296,8 +297,9 @@ void RemoveCrew(const char plr, struct MissionType &mission,
         char backup = mission.BCrew - 1;
 
         for (int i = 0; i < men; i++) {
-            Data->P[plr].Pool[
-                Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
+            if (Data->P[plr].Crew[prog][backup][i] > 0) {
+                Data->P[plr].Pool[Data->P[plr].Crew[prog][backup][i] - 1].Prime = 0;
+            }
         }
 
         mission.BCrew = 0;
