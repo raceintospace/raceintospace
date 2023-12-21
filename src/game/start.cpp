@@ -585,10 +585,11 @@ AstroTurn(void)
             if (prog > 0) {
                 temp = 0;
 
-                for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
-                    if (Data->P[j].Pool[
-                            Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
-                        temp++;
+                if (crew > -1) {
+                    for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
+                        if (Data->P[j].Pool[Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
+                            temp++;
+                        }
                     }
                 }
 
