@@ -1,0 +1,1913 @@
+{
+    "value0": [
+        {
+            "cereal_class_version": 0,
+            "Name": "GRISSOM",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "SHEPARD",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GLENN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "CARPENTER",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "SCHIRRA",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "COOPER",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "SLAYTON",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "KINCHELOE",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "WALKER",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "WOOD",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "ROGERS",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "HURRLE",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "CAGLE",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "COBB",
+            "Sex": 1,
+            "Cap": 3,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "YOUNG",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 4,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "MCDIVITT",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "E.WHITE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 4,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "CONRAD",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 3
+        },
+        {
+            "Name": "STAFFORD",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "BORMAN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "LOVELL",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 4
+        },
+        {
+            "Name": "ARMSTRONG",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "SEE",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "KNIGHT",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "CREWS",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "GIVENS",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "A.WHITE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "R.WHITE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "CROSSFIELD",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "LOUSMA",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "RUSHWORTH",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "PETERSON",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "J.DIETRICH",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "M.DIETRICH",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "HART",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "GRAVELINE",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "CERNAN",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "BASSETT",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "DWIGHT",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "COLLINS",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "CHAFFEE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "GORDON",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "ALDRIN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 3,
+            "EVA": 2,
+            "Docking": 4,
+            "Endurance": 1
+        },
+        {
+            "Name": "EISELE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "CUNNINGHAM",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "ANDERS",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "SCHWEICKART",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 0
+        },
+        {
+            "Name": "WILLIAMS",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "MCCANDLESS",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "SWIGERT",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "HAISE",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "ROOSA",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "MITCHELL",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "WORDEN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "IRWIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "STUMBOUGH",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GORELICK",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "FUNK",
+            "Sex": 1,
+            "Cap": 3,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "BRAND",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "BEAN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "BULL",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "CARR",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 4
+        },
+        {
+            "Name": "DUKE",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "ENGLE",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "EVANS",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "FREEMAN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "SCOTT",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "KERWIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "GIBSON",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GARRIOTT",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "MATTINGLY",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "ENGLAND",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "POGUE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "SCHMITT",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "WEITZ",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "MICHEL",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "LIND",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 4,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "LLEWELLYN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "CRIPPEN",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "FULLERTON",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "HARTSFIELD",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "OVERMYER",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 3,
+            "EVA": 0,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "PETERSON",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 0
+        },
+        {
+            "Name": "TRULY",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "MCKAY",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "HENIZE",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "ADAMS",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "FINLEY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "ABRAHAMSON",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "LAWYER",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "LAWRENCE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "MACLEAY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "ALLEN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "NEUBECK",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "BOBKO",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "HERRES",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 3,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "TAYLOR",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "HOLMQUEST",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "O'LEARY",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "LENOIR",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "THORNTON",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "MUSGRAVE",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "PARKER",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 3,
+            "EVA": 0,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "DANA",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "THOMPSON",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "CHAPMAN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "NELYUBOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "GAGARIN",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "TITOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "NIKOLAYEV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "POPOVICH",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "BYKOVSKY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "KOMAROV",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "BONDARENKO",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "FILATYEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "RAFIKOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "ANIKEYEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "PONOMARYOVA",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "KVASOVA",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "KUZNETSOVA",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "YEGOROV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "FEOKTISTOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 4,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "BELYAYEV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "LEONOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 4,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "BEREGOVOY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 0
+        },
+        {
+            "Name": "SHATALOV",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 4,
+            "Endurance": 2
+        },
+        {
+            "Name": "VOLYNOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "YELISEYEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "KHRUNOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "SARAFANOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GUBARYEV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "AKSYONOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GLAZKOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "RYUMIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 4
+        },
+        {
+            "Name": "DZHANIBEKOV",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 3
+        },
+        {
+            "Name": "LYAKHOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 4
+        },
+        {
+            "Name": "POPOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "KIZIM",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 4,
+            "Docking": 2,
+            "Endurance": 4
+        },
+        {
+            "Name": "TERESHKOVA",
+            "Sex": 1,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "SOLOVYOVA",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "SOKOLOVA",
+            "Sex": 1,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "SHONIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "KUBASOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "VOLKOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "FILIPCHENKO",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GORBATKO",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "SEVASTYANOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "RUKAVISHNIKOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "DOBROVOLSKY",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "PATSAYEV",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "LAZAREV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "MAKAROV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "KLIMUK",
+            "Sex": 0,
+            "Cap": 4,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "KOZELSKIY",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "ARTYUKHIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GRECHKO",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "ZHOLOBOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "KOVALYONOK",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 4
+        },
+        {
+            "Name": "IVANCHENKOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "MALYSHEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "ALEXANDROV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "YORKINA",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "BORZENKOVA",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "YEFREMOVA",
+            "Sex": 1,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "ANDREYEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "ANOKHIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 0
+        },
+        {
+            "Name": "BUGROV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "ILLARIANOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "SOLOVYOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "LYEBEDEV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "SEREBROV",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "BEREZOVOY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "GURRAGCHAA",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "SAVINYKH",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "STREKALOV",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "VIKTORENKO",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "ATKOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "VOLK",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "IVANOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "REMEK",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "VASYUTIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 3,
+            "Endurance": 2
+        },
+        {
+            "Name": "LAVEYKIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "JAEHN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "TUAN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "VOLOSHIN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 3,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "KOLESNIKOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 1
+        },
+        {
+            "Name": "BELOUSOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "VORONOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "YAZDOVSKY",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "KUKLIN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "MATINCHENKO",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 0,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "ZAIKIN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "VARLAMOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "KARTASHOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "FASTOVYETS",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "SHCHUKIN",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 3,
+            "EVA": 3,
+            "Docking": 4,
+            "Endurance": 1
+        },
+        {
+            "Name": "BORODAI",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "BACHURIN",
+            "Sex": 0,
+            "Cap": 3,
+            "LM": 3,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
+            "Name": "STANKAVICHYUS",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 4,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "KONONENKO",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "GULYAYEV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "ZUDOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "ROZHDESTVENSKY",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 0
+        },
+        {
+            "Name": "DYOMIN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "LISUN",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "PREOBRAZHENSKY",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "SHCHEGLOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 3,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "KHLUDEYEV",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 3,
+            "Endurance": 1
+        },
+        {
+            "Name": "FYODOROV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 2,
+            "Endurance": 3
+        },
+        {
+            "Name": "ROMANOV",
+            "Sex": 0,
+            "Cap": 2,
+            "LM": 0,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "STYEPANOV",
+            "Sex": 0,
+            "Cap": 1,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "PETRUSHENKO",
+            "Sex": 0,
+            "Cap": 0,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 3,
+            "Endurance": 1
+        }
+    ]
+}

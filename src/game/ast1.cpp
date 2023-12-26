@@ -594,7 +594,7 @@ void RandomizeNauts()
 {
     int i;
 
-    for (i = 0; i < 106; i++) {
+    for (i = 0; i < Men.size(); i++) {
         Men[i].Cap = brandom(5);
         Men[i].LM  = brandom(5);
         Men[i].EVA = brandom(5);
@@ -700,12 +700,7 @@ void AstSel(char plr)
     memset(sel, -1, sizeof(sel));
     memset(MCol, 0x00, sizeof(MCol));
 
-    //TODO: Candidate for protobuf replacement?
-    Men = (struct ManPool *) buffer;
-    fin = sOpen("MEN.DAT", "rb", FT_SAVE);  // Open Astronaut Data File
-    fseek(fin, ((sizeof(struct ManPool)) * 106)*plr, SEEK_SET);
-    fread(Men, (sizeof(struct ManPool)) * 106, 1, fin);
-    fclose(fin);
+    DESERIALIZE_JSON_FILE(&Men, locate_file("roster.json", FT_SAVE));
 
     if (options.feat_random_nauts == 1) {
         RandomizeNauts();    //Naut Randomize, Nikakd, 10/8/10

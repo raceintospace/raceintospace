@@ -270,10 +270,10 @@ void Admin(char plr)
  *
  * Since the game supports both historical and custom-defined rosters,
  * depending on the game setting the appropriate roster is copied into
- * a cache - MEN.DAT - so the game will be assured of having roster
+ * a cache - roster.json - so the game will be assured of having roster
  * data available.
  *
- * \throws IOException  if unable to open roster or MEN.DAT
+ * \throws IOException  if unable to open roster or roster.json
  */
 void CacheCrewFile()
 {
@@ -281,12 +281,12 @@ void CacheCrewFile()
 
     if (Data->Def.Input % 2 == 0) {
         // Historical Crews
-        fin = sOpen("CREW.DAT", "rb", FT_DATA);
+        fin = sOpen("crew.json", "r", FT_DATA);
     } else {
-        fin = sOpen("USER.DAT", "rb", FT_SAVE);
+        fin = sOpen("user.json", "r", FT_SAVE);
 
         if (!fin) {
-            fin = sOpen("USER.DAT", "rb", FT_DATA);
+            fin = sOpen("crew.json", "r", FT_DATA);
         }
     }
 
@@ -296,10 +296,10 @@ void CacheCrewFile()
 
     size_t size;
     char buffer[BUFSIZ];
-    FILE *dest = sOpen("MEN.DAT", "wb", FT_SAVE);
+    FILE *dest = sOpen("roster.json", "w", FT_SAVE);
 
     if (!dest) {
-        throw IOException("Unable to open MEN.DAT");
+        throw IOException("Unable to open roster.json");
     }
 
     while ((size = fread(buffer, 1, BUFSIZ, fin)) > 0) {
