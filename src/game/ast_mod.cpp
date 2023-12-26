@@ -56,7 +56,6 @@ void DrawSkillEditor();
 void DrawSkillSelect(SkillSelection button, bool selected);
 void ExportRoster(const std::vector<struct ManPool> &usaRoster,
                   const std::vector<struct ManPool> &sovRoster);
-FILE *GetRosterFile();
 std::string LaunchNameEditor(const struct ManPool &recruit);
 std::vector<struct ManPool> LoadRoster(FILE *file, int plr);
 void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
@@ -104,21 +103,35 @@ void AstronautModification()
     // but can't do that within the try...catch scope.
     std::vector<struct ManPool> usaRoster;
     std::vector<struct ManPool> sovRoster;
+    std::vector<struct ManPool> all;
 
     {
-        FILE *file;
-
         try {
-            file = GetRosterFile();
-            usaRoster = LoadRoster(file, 0);
-            sovRoster = LoadRoster(file, 1);
-            fclose(file);
-        } catch (IOException &err) {
-            // TODO: Use a pop-up error display.
-            if (file) {
-                fclose(file);
+
+            if(locate_file("user.json", FT_SAVE_CHECK) != NULL) {
+                bool useOriginal = Help("I105") > 0;
+
+                if (useOriginal) {
+                    DESERIALIZE_JSON_FILE(&all, locate_file("crew.json", FT_DATA));
+                }
+                else {
+                    DESERIALIZE_JSON_FILE(&all, locate_file("user.json", FT_SAVE));
+                }
+
+            } else {
+            // Should this be CNOTICE2?
+                CINFO2(filesys,
+                       "user.json not found. Loading crew.json rosters...");
+                DESERIALIZE_JSON_FILE(&all, locate_file("crew.json", FT_DATA));
             }
 
+            for (int i = 0; i < all.size() / 2; i++) {
+                usaRoster.push_back(all.at(i));
+                sovRoster.push_back(all.at(i + all.size() / 2));
+            }
+
+        } catch (const std::exception& err) {
+            // TODO: Use a pop-up error display.
             CERROR3(filesys, "Unable to access rosters: %s", err.what());
             return;
         }
@@ -153,10 +166,8 @@ void AstronautModification()
 
             if (editFlag) {
                 bool proceed = true;
-                FILE *file = sOpen("USER.DAT", "rb", FT_SAVE_CHECK);
 
-                if (file != NULL) {
-                    fclose(file);
+                if (locate_file("user.json", FT_SAVE_CHECK)) {
                     proceed = Help("I106") > 0;
                 }
 
@@ -894,7 +905,7 @@ void DrawSkillSelect(SkillSelection button, bool selected)
 
 
 /**
- * Write the roster contents to USER.DAT.
+ * Write the roster contents to user.json.
  *
  * TODO: Check the return values of the fwrite commands.
  */
@@ -915,59 +926,29 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
         return;
     }
 
-    FILE *file = sOpen("USER.DAT", "wb", FT_SAVE);
+    std::vector<struct ManPool> all = usaRoster;
+    all.insert(all.end(), sovRoster.begin(), sovRoster.end());
+
+    stringstream stream;
+    {
+        cereal::JSONOutputArchive::Options options = cereal::JSONOutputArchive::Options::NoIndent();
+        cereal::JSONOutputArchive archive(stream, options);
+
+        archive(all);
+    }
+
+    FILE *file = sOpen("user.json", "w", FT_SAVE);
 
     if (file == NULL) {
-        throw IOException("Unable to open file USER.DAT for writing");
+        throw IOException("Unable to open file user.json for writing");
     } else {
-        CINFO2(filesys, "Exporting custom rosters to USER.DAT...");
+        CINFO2(filesys, "Exporting custom rosters to user.json...");
     }
 
-    for (int i = 0; i < ROSTER_SIZE; i++) {
-        fwrite(&usaRoster[i], sizeof(usaRoster[i]), 1, file);
-    }
-
-    for (int i = 0; i < ROSTER_SIZE; i++) {
-        fwrite(&sovRoster[i], sizeof(sovRoster[i]), 1, file);
-    }
+    std::string str = stream.str();
+    fwrite(str.data(), sizeof(char), str.size(), file);
 
     fclose(file);
-}
-
-
-/**
- * Determine which roster file to use as the base for the custom roster.
- *
- * \return  Open roster file.
- * \throw IOException  if unable to load a file.
- */
-FILE *GetRosterFile()
-{
-    FILE *file;
-
-    if ((file = sOpen("USER.DAT", "rb", FT_SAVE_CHECK)) != NULL) {
-        bool useOriginal = Help("I105") > 0;
-
-        if (useOriginal) {
-            fclose(file);
-            file = sOpen("CREW.DAT", "rb", FT_DATA);
-
-            if (file == NULL) {
-                throw IOException("Unable to open file CREW.DAT");
-            }
-        }
-    } else {
-        // Should this be CNOTICE2?
-        CINFO2(filesys,
-               "USER.DAT not found. Loading CREW.DAT rosters...");
-        file = sOpen("CREW.DAT", "rb", FT_DATA);
-
-        if (file == NULL) {
-            throw IOException("Unable to open file CREW.DAT");
-        }
-    }
-
-    return file;
 }
 
 

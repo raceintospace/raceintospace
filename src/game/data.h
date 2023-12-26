@@ -990,7 +990,21 @@ struct VInfo {
     int MaxRD;
 };
 struct ManPool {
-    char Name[14], Sex, Cap, LM, EVA, Docking, Endurance;
+    char Name[14];
+    int8_t Sex, Cap, LM, EVA, Docking, Endurance;
+
+    template<class Archive>
+    void serialize(Archive &ar, uint32_t const version)
+    {
+        ARCHIVE_STRING(Name);
+        ar(CEREAL_NVP(Sex));
+        ar(CEREAL_NVP(Cap));
+        ar(CEREAL_NVP(LM));
+        ar(CEREAL_NVP(EVA));
+        ar(CEREAL_NVP(Docking));
+        ar(CEREAL_NVP(Endurance));
+    }
+
 };
 struct order {
     int16_t plr, loc, budget, date;
