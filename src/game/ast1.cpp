@@ -72,6 +72,11 @@ enum ProfileDisplay {
     SHOW_DOCKING = 0x08,
     SHOW_ENDURANCE = 0x10
 };
+
+  constexpr std::array<char* , 6>AstService = {"CIVILIAN", "AIR FORCE", \
+                                               "NAVY", "MARINE CORPS",  \
+                                               "S. ROCKET FORCE",       \
+                                               "AIR DEF. FORCE"};
 }
 
 int AstSelectPrompt(char plr, int cost);
@@ -527,9 +532,8 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
     if (recruit) {
         draw_string(x + 33, y + 5, recruit->Sex ? "MS. " : "MR. ");
         draw_string(0, 0, &(recruit->Name[0]));
-        // Service placeholder
-        // draw_string(x + 90, y + 14,
-        //             AstService(player, recruit->Service).c_str());
+        // Service
+        draw_string(x + 50, y + 14, AstService.at(recruit->Service));
     }
 
     if (recruit && display & SHOW_CAPSULE) {
@@ -622,6 +626,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 
     strcpy(&recruit.Name[0], &Men[candidate].Name[0]);
     recruit.Sex = Men[candidate].Sex;
+    recruit.Service = Men[candidate].Service;
     recruit.Cap = Men[candidate].Cap;
     recruit.LM = Men[candidate].LM;
     recruit.EVA = Men[candidate].EVA;
