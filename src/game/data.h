@@ -991,13 +991,14 @@ struct VInfo {
 };
 struct ManPool {
     char Name[14];
-    int8_t Sex, Cap, LM, EVA, Docking, Endurance;
+    int8_t Sex, Service, Cap, LM, EVA, Docking, Endurance;
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
     {
         ARCHIVE_STRING(Name);
         ar(CEREAL_NVP(Sex));
+        ar(CEREAL_NVP(Service));
         ar(CEREAL_NVP(Cap));
         ar(CEREAL_NVP(LM));
         ar(CEREAL_NVP(EVA));
