@@ -116,6 +116,8 @@
 #define ASTRONAUT_CREW_MAX          8
 #define ASTRONAUT_FLT_CREW_MAX      4
 #define MAX_POOL                    65
+#define MAX_ROSTER                  212
+#define MAX_SELECTION               30
 /*@}*/
 
 

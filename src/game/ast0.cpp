@@ -43,8 +43,8 @@
 #include <iostream>
 #include <sstream>
 
-char MCol[110];
-char sel[30];
+char MCol[MAX_ROSTER];
+char sel[MAX_SELECTION];
 char MaxSel;
 
 

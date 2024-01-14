@@ -73,10 +73,10 @@ enum ProfileDisplay {
     SHOW_ENDURANCE = 0x10
 };
 
-  constexpr std::array<char* , 6>AstService = {"CIVILIAN", "AIR FORCE", \
+  constexpr std::array<char* , 7>AstService = {"CIVILIAN", "AIR FORCE", \
                                                "NAVY", "MARINE CORPS",  \
                                                "S. ROCKET FORCE",       \
-                                               "AIR DEF. FORCE"};
+                                               "AIR DEF. FORCE", "FOREIGN"};
 }
 
 int AstSelectPrompt(char plr, int cost);
@@ -756,6 +756,8 @@ void AstSel(char plr)
     assert(MaxMen >= 8);
 
     int showStats = ProfileMask(plr);
+
+    Index += plr * Men.size() / 2;
 
     now = Index;
     max = Index + MaxMen;
