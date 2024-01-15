@@ -533,7 +533,7 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
         draw_string(x + 33, y + 5, recruit->Sex ? "MS. " : "MR. ");
         draw_string(0, 0, &(recruit->Name[0]));
         // Service
-        draw_string(x + 50, y + 14, AstService.at(recruit->Service));
+        draw_string(x + 48, y + 14, AstService.at(recruit->Service));
     }
 
     if (recruit && display & SHOW_CAPSULE) {
