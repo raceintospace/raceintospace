@@ -535,8 +535,8 @@ void Limbo(char plr)
                 music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
 
                 InBox(258, 48, 313, 65);
-                OutBox(230, 48, 256, 65);
-                OutBox(167, 48, 228, 65);
+                OutBox(227, 48, 256, 65);
+                OutBox(167, 48, 225, 65);
                 fill_rectangle(166, 78, 314, 88, 10);
                 display::graphics.setForegroundColor(11);
                 draw_string(203, 85, "VISIT LOCATION");
@@ -655,7 +655,7 @@ void Limbo(char plr)
 
                 InBox(258, 48, 313, 65);
                 OutBox(230, 48, 256, 65);
-                OutBox(167, 48, 228, 65);
+                OutBox(167, 48, 225, 65);
                 fill_rectangle(166, 78, 314, 88, 10);
                 display::graphics.setForegroundColor(11);
                 draw_string(203, 85, "VISIT LOCATION");
