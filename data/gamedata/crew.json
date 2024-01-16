@@ -23,8 +23,8 @@
         },
         {
             "Name": "GLENN",
-            "Sex": 3,
-            "Service": 0,
+            "Sex": 0,
+            "Service": 3,
             "Cap": 1,
             "LM": 1,
             "EVA": 1,
