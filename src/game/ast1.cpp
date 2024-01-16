@@ -80,7 +80,7 @@ enum ProfileDisplay {
 }
 
 int AstSelectPrompt(char plr, int cost);
-void DispEight(char now, char loc);
+void DispEight(int now, int loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
@@ -152,7 +152,7 @@ int AstSelectPrompt(char plr, int cost)
  * \param now  index of the selected 'naut among all 'nauts in the pool.
  * \param loc  index of the selection bar relative to top entry (0-7).
  */
-void DispEight(char now, char loc)
+void DispEight(int now, int loc)
 {
     int i, start;
     start = now - loc;
@@ -678,7 +678,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 
 void AstSel(char plr)
 {
-    char i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, change, min, count,
+    int i, j, k, BarA, BarB, MaxMen, Index, now, now2, max, change, min, count,
          ksel = 0;
     FILE *fin;
 

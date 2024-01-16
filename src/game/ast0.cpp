@@ -43,9 +43,9 @@
 #include <iostream>
 #include <sstream>
 
-char MCol[MAX_ROSTER];
-char sel[MAX_SELECTION];
-char MaxSel;
+uint8_t MCol[MAX_ROSTER];
+uint8_t sel[MAX_SELECTION];
+uint8_t MaxSel;
 
 
 void SatDraw(char plr);
