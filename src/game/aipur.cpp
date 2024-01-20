@@ -519,6 +519,8 @@ void SelectBest(char plr, int pos)
         break;
     }
 
+    Index += plr * Men.size() / 2;
+
     now = Index;
     count = 0;
 
