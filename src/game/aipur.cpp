@@ -45,7 +45,7 @@
 #include "pace.h"
 
 std::vector<struct ManPool> Men;
-char AIsel[25];
+uint8_t AIsel[25];
 
 
 void DrawStatistics(char Win);
