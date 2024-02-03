@@ -23,7 +23,7 @@
 // Programmed by Michael K McCarty
 //
 
-// This file handles Luna, the Satellite Building, the LM Program screen, and has a function for someplace where 'nauts are displayed
+// This file handles Luna, the Satellite Building, the LM Program screen, and has a function for displaying 'nauts
 
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
@@ -111,13 +111,13 @@ void Moon(char plr)
     fill_rectangle(113, 42, 142, 59, 3);
     InBox(113, 42, 140, 58);
     display::graphics.setForegroundColor(11);
-    draw_string(117, 35, "PHOTO RECON.");
-    draw_string(118, 137, "CURRENT RECON ");
-    draw_string(118, 143, "LEVEL IS AT ");
+    draw_string(134, 35, "PHOTO RECON.");
+    draw_string(129, 137, "CURRENT RECON ");
+    draw_string(127, 143, "LEVEL IS AT ");
     draw_number(0, 0, val);
     draw_string(0, 0, "%");
     display::graphics.setForegroundColor(1);
-    draw_string(144, 159, "CONTINUE");
+    draw_string(143, 159, "CONTINUE");
     draw_small_flag(plr, 114, 43);
 
     music_start(M_HISTORY);
@@ -284,7 +284,7 @@ void LMDraw(char plr)
     InBox(4, 3, 31, 19);
     ShBox(1, 24, 319, 118);
     InBox(4, 26, 316, 116);
-    fill_rectangle(5, 27, 315, 115, 0); // middle screen
+    fill_rectangle(5, 27, 315, 115, 0);  // middle screen
 
     if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
         ind = 4 + plr;
@@ -325,7 +325,7 @@ void SatText(char plr)
 
             switch (i) {
             case 0:
-                draw_string(5 + i * 80, 80, "DUR LVL: "); // Show highest Duration level achieved -Leon
+                draw_string(5 + i * 80, 80, "DUR LVL: ");  // Show highest Duration level achieved -Leon
 
                 switch (Data->P[plr].DurationLevel) {
                 case 1:
@@ -671,7 +671,7 @@ void LMBld(char plr)
 
             music_stop();
             key = 0;
-            return; // Continue
+            return;  // Continue
         }
 
         if (x >= 41 && y >= 172 && x <= 314 && y <= 193 && mousebuttons > 0) {
