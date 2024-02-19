@@ -2877,17 +2877,19 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%07:0",
+      "%09:0",
       ".011",
       "GEMINI CAPSULE",
       ".005",
       "THIS IS A TWO-PERSON SPACE CAPSULE",
       "WHICH IS FULLY LUNAR-CAPABLE. IT IS",
       "THE MOST BASIC CRAFT WHICH CAN",
-      "PERFORM A LUNAR LANDING.",
+      "FLY A LUNAR LANDING.",
       "",
       "A GEMINI CAPSULE REQUIRES A KICKER",
-      "TO GO TO THE MOON."
+      "TO GO TO THE MOON. IT ALSO REQUIRES",
+      "THE ONE-PERSON CRICKET LUNAR MODULE",
+      "TO PERFORM THE ACTUAL LANDING."
     ]
   },
   {
@@ -2895,17 +2897,19 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%07:0",
+      "%09:0",
       ".011",
       "VOSKHOD CAPSULE",
       ".005",
       "THIS IS A TWO-PERSON SPACE CAPSULE",
       "WHICH IS FULLY LUNAR-CAPABLE. IT IS",
       "THE MOST BASIC CRAFT WHICH CAN",
-      "PERFORM A LUNAR LANDING.",
+      "FLY A LUNAR LANDING.",
       "",
       "A VOSKHOD CAPSULE REQUIRES A KICKER",
-      "TO GO TO THE MOON."
+      "TO GO TO THE MOON. IT ALSO REQUIRES",
+      "THE ONE-PERSON LK LUNAR MODULE TO",
+      "PERFORM THE ACTUAL LANDING."
     ]
   },
   {
@@ -2913,16 +2917,18 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%06:0",
+      "%08:0",
       ".011",
       "APOLLO CAPSULE",
       ".005",
       "THIS IS A THREE-PERSON CAPSULE,",
-      "VERY GOOD FOR PERFORMING THE LUNAR",
+      "VERY GOOD FOR FLYING THE LUNAR",
       "LANDING.",
       "",
       "AN APOLLO CAPSULE DOES NOT NEED A",
-      "KICKER TO GO TO THE MOON."
+      "KICKER TO GO TO THE MOON. APOLLO",
+      "LUNAR LANDINGS CAN USE EITHER LUNAR",
+      "LANDER."
     ]
   },
   {
@@ -2950,7 +2956,7 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%06:0",
+      "%07:0",
       ".011",
       "XMS-2 MINISHUTTLE",
       ".005",
@@ -2959,7 +2965,8 @@
       "LANDINGS.",
       "",
       "AN XMS-2 REQUIRES A KICKER TO GO TO",
-      "THE MOON."
+      "THE MOON. IT CAN USE EITHER LUNAR",
+      "MODULE TO PERFORM THE LANDING."
     ]
   },
   {
@@ -2967,7 +2974,7 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%06:0",
+      "%07:0",
       ".011",
       "LAPOT MINISHUTTLE",
       ".005",
@@ -2976,7 +2983,8 @@
       "LANDINGS.",
       "",
       "A LAPOT REQUIRES A KICKER TO GO TO",
-      "THE MOON."
+      "THE MOON. IT CAN USE EITHER LUNAR",
+      "MODULE TO PERFORM THE LANDING."
     ]
   },
   {
