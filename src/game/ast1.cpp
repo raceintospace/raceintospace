@@ -626,6 +626,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 
     strcpy(&recruit.Name[0], &Men[candidate].Name[0]);
     recruit.Sex = Men[candidate].Sex;
+    recruit.Race = Men[candidate].Race;
     recruit.Service = Men[candidate].Service;
     recruit.Cap = Men[candidate].Cap;
     recruit.LM = Men[candidate].LM;
@@ -643,7 +644,26 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
     recruit.Pool = 0;
     recruit.Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
     recruit.Mood = 85 + 5 * brandom(4);
-    recruit.Face = recruit.Sex ? (77 + brandom(8)) : brandom(77);
+    recruit.Race = Men[candidate].Race;
+    if (recruit.Race == 2) {
+        if (&recruit.Name[0] == "GURRAGCHAA") {
+            recruit.Face = 89;
+        } else if (&recruit.Name[0] == "TUAN") {
+            recruit.Face = 90;
+        } else {
+            recruit.Face = 89 + brandom(1);
+        }
+    } else if (recruit.Race == 1) {
+        if (&recruit.Name[0] == "DWIGHT") {
+            recruit.Face = 87;
+        } else if (&recruit.Name[0] == "LAWRENCE") {
+            recruit.Face = 88;
+        } else {
+            recruit.Face = 87 + brandom(1);
+        }
+    } else {
+        recruit.Face = recruit.Sex ? (77 + brandom(8)) : brandom(77);
+    }
 
     if (brandom(10) > 5) {
         if (brandom(2) == 0) {

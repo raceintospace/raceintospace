@@ -473,6 +473,7 @@ struct Astros {
     int8_t Active;       /**< Seasons Active */
     int8_t AISpecial;    /**< AI Special Astro Note */
     int8_t Service;      /**< Service of Origination */
+    int8_t Race;      /**< Individual's race: white, black, asian */
     int8_t Status;       /**< Current status of Astronaut */
     int8_t Focus;        /**< Focus of Advanced Training 0-4 */
     int8_t InjuryDelay;       /**< Injury Delay - Ok if 0 */
@@ -518,6 +519,7 @@ struct Astros {
         ar(CEREAL_NVP(Active));
         ar(CEREAL_NVP(AISpecial));
         ar(CEREAL_NVP(Service));
+        ar(CEREAL_NVP(Race));
         ar(CEREAL_NVP(Status));
         ar(CEREAL_NVP(Focus));
         ar(CEREAL_NVP(InjuryDelay));
@@ -993,7 +995,7 @@ struct VInfo {
 };
 struct ManPool {
     char Name[14];
-    int8_t Sex, Service, Cap, LM, EVA, Docking, Endurance;
+    int8_t Sex, Service, Race, Cap, LM, EVA, Docking, Endurance;
 
     template<class Archive>
     void serialize(Archive &ar, uint32_t const version)
@@ -1001,6 +1003,7 @@ struct ManPool {
         ARCHIVE_STRING(Name);
         ar(CEREAL_NVP(Sex));
         ar(CEREAL_NVP(Service));
+        ar(CEREAL_NVP(Race));
         ar(CEREAL_NVP(Cap));
         ar(CEREAL_NVP(LM));
         ar(CEREAL_NVP(EVA));
@@ -1359,11 +1362,11 @@ struct AssetData {
 BOOST_STATIC_ASSERT(sizeof(PrestType) == 15);
 BOOST_STATIC_ASSERT(sizeof(Equipment) == 60);
 BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
-BOOST_STATIC_ASSERT(sizeof(Astros) == 63);
+BOOST_STATIC_ASSERT(sizeof(Astros) == 64);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
-BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15576);
+BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15641);
 BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
-BOOST_STATIC_ASSERT(sizeof(Players) == 38978);
+BOOST_STATIC_ASSERT(sizeof(Players) == 39108);
 
 #endif // RIS_DATA_H
 
