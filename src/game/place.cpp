@@ -272,7 +272,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff)
  */
 void AstFaces(char plr, int x, int y, char face)
 {
-    assert(face >= 0 && face <= 84);
+    assert(face >= 0 && face <= 96);
     char filename[128];
     snprintf(filename, sizeof(filename), "images/faces.but.%d.png",
              (int)face);
