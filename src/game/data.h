@@ -509,6 +509,7 @@ struct Astros {
 
         ar(CEREAL_NVP(Face));
         ar(CEREAL_NVP(Sex));
+        ar(CEREAL_NVP(Race));
         ar(CEREAL_NVP(Compat));
         ar(CEREAL_NVP(CR));
         ar(CEREAL_NVP(CL));
@@ -519,7 +520,6 @@ struct Astros {
         ar(CEREAL_NVP(Active));
         ar(CEREAL_NVP(AISpecial));
         ar(CEREAL_NVP(Service));
-        ar(CEREAL_NVP(Race));
         ar(CEREAL_NVP(Status));
         ar(CEREAL_NVP(Focus));
         ar(CEREAL_NVP(InjuryDelay));
