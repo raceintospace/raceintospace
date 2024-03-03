@@ -324,7 +324,7 @@ void DrawAstCheck(char plr)
 
     if (ad == 0) {
         if (Data->P[plr].Cash < i) {
-            draw_string(110, 113, "YOU CANNOT AFFORD");
+            draw_string(111, 113, "YOU CANNOT AFFORD");
 
             if (plr == 0) {
                 draw_string(103, 122, "ASTRONAUTS THIS TURN");
