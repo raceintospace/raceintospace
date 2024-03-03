@@ -1048,7 +1048,7 @@ void BadFileType()
     InBox(43, 67, 197, 77);
     fill_rectangle(44, 68, 196, 76, 13);
     display::graphics.setForegroundColor(11);
-    draw_string(66, 74, "CORRUPT SAVE FILE");
+    draw_string(73, 74, "CORRUPT SAVE FILE");
     delay(2000);
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
     PauseMouse();
