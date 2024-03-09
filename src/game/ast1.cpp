@@ -646,7 +646,7 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
     recruit.Mood = 85 + 5 * brandom(4);
     recruit.Race = Men[candidate].Race;
     if (recruit.Race == 2) {
-        recruit.Face = 89 + brandom(4);
+        recruit.Face = 92 + brandom(4);
     } else if (recruit.Race == 1) {
         recruit.Face = 87 + brandom(4);
     } else {
