@@ -33,7 +33,7 @@
 	<key>NSPrincipalClass</key>
 	<string>SDLApplication</string>
 	<key>SUFeedURL</key>
-	<string>http://update.raceintospace.org/appcast/osx/</string>
+	<string>https://github.com/raceintospace/raceintospace/edit/master/src/game/platform_macosx/</string>
 	<key>SUPublicDSAKey</key>
 	<string>
 -----BEGIN PUBLIC KEY-----
@@ -66,6 +66,6 @@ hIO1NT2CJJt0nh2tebU=
 	<key>SmartCrashReports_CompanyName</key>
 	<string>RaceIntoSpace.org</string>
 	<key>SmartCrashReports_URL</key>
-	<string>http://crash.raceintospace.org/crash/osx/</string>
+	<string>https://github.com/raceintospace/raceintospace/edit/master/src/game/platform_macosx/</string>
 </dict>
 </plist>
