@@ -32,7 +32,7 @@ Summary:	Race into Space game
 
 License:	GPLv2+
 #URL:		https://github.com/raceintospace/raceintospace
-URL:		http://www.raceintospace.org/
+URL:		https://github.com/raceintospace
 #Source0:	raceintospace-%%{pkgversion}.tar.bz2
 Source0:	https://github.com/%{github_owner}/%{name}/archive/%{gittag}/%{name}-%{pkgversion}.%{archive_suffix}
 #Patch1:		0001-Compile-under-clang.patch
