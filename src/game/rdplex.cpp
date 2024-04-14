@@ -1395,14 +1395,16 @@ char HPurc(char player_index, int hardware, int unit)
         } else if ((y >= 182 && y <= 195 && x >= 166 && x <= 314 && mousebuttons > 0) || key == 'P') {  /* PURCHASE */
             InBox(165, 182, 315, 195);
             WaitForMouseUp();
-            OutBox(165, 182, 315, 195);
 
-            // NEED DELAY CHECK
             if (! HardwareProgram(player_index, hardware, unit).Delay) {
                 BuyUnit(hardware, unit, player_index);
             } else {
                 Help("i135");
             }
+
+            delay(10);
+            OutBox(165, 182, 315, 195);
+
         } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
