@@ -244,7 +244,7 @@ void DrawCashOnHand(char plr)
     snprintf(&str[0], 9, "%d MB", Data->P[plr].Cash);
     fill_rectangle(195, 10, 240, 21, 3);
     display::graphics.setForegroundColor(11);
-    draw_string(213 - TextDisplayLength(&str[0]) / 2, 16, &str[0]);
+    draw_string(213, 16, &str[0], ALIGN_CENTER);
 }
 
 

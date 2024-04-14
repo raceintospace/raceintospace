@@ -1,7 +1,14 @@
 #ifndef DRAW_H
 #define DRAW_H
 
+enum StringAlign {
+    ALIGN_LEFT,
+    ALIGN_CENTER,
+    ALIGN_RIGHT
+};
+
 void draw_string(int x, int y, const char *s);
+void draw_string(int x, int y, const char *s, StringAlign align);
 void draw_string_highlighted(int x, int y, const char *s, unsigned int position);
 void draw_heading(int x, int y, const char *txt, char mode, char te);
 void draw_number(int xx, int yy, int num);

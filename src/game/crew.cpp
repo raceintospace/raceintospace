@@ -797,19 +797,19 @@ void DrawHard(char mode, char pad, char mis, char plr)
     char str[21];  // Make sure the capsule/shuttle name is centered
     snprintf(str, sizeof(str), "%s",
              Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
-    draw_string(119 - TextDisplayLength(str) / 2, 109, str);
+    draw_string(119, 109, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
              Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
-    draw_string(198 - TextDisplayLength(str) / 2, 109, str);
+    draw_string(198, 109, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
              Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
-    draw_string(119 - TextDisplayLength(str) / 2, 126, str);
+    draw_string(119, 126, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
              Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
-    draw_string(198 - TextDisplayLength(str) / 2, 126, str);
+    draw_string(198, 126, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
              Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
-    draw_string(159 - TextDisplayLength(str) / 2, 143, str);
+    draw_string(159, 143, str, ALIGN_CENTER);
     draw_string(142, 162, "CANCEL");
     return;
 }

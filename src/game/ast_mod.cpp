@@ -749,8 +749,7 @@ void DrawInterface()
     draw_small_flag(0, 6, 29);  // 26x15
     InBox(40, 29, 150, 43);
     display::graphics.setForegroundColor(6);
-    draw_string(95 - TextDisplayLength("ASTRONAUTS") / 2, 38,
-                "ASTRONAUTS");
+    draw_string(95, 38, "ASTRONAUTS", ALIGN_CENTER);
     DrawArrows(4, 47);
 
     // Draw USA Astro box
@@ -764,8 +763,7 @@ void DrawInterface()
     draw_small_flag(1, 166, 29);
     InBox(200, 29, 310, 43);
     display::graphics.setForegroundColor(9);
-    draw_string(255 - TextDisplayLength("COSMONAUTS") / 2, 38,
-                "COSMONAUTS");
+    draw_string(255, 38, "COSMONAUTS", ALIGN_CENTER);
     DrawArrows(164, 47);
 
     // Draw Soviet Cosmo box
@@ -815,8 +813,7 @@ void DrawInterface()
     // DrawNameEditor();
     // fill_rectangle(208, 131, 305, 141, 3);
     // display::graphics.setForegroundColor(6);
-    // draw_string(256 - TextDisplayLength("NAME CHANGE") / 2, 138,
-    //             "NAME CHANGE");
+    // draw_string(256, 138, "NAME CHANGE", ALIGN_CENTER);
 
     // InBox(207, 155, 306, 168);
     // fill_rectangle(208, 156, 305, 167, 0);
@@ -827,24 +824,19 @@ void DrawNameEditor()
 {
     fill_rectangle(208, 131, 305, 141, 3);
     display::graphics.setForegroundColor(6);
-    draw_string(256 - TextDisplayLength("NAME CHANGE") / 2, 138,
-                "NAME CHANGE");
+    draw_string(256, 138, "NAME CHANGE", ALIGN_CENTER);
 
     fill_rectangle(204, 150, 309, 195, 3);
     InBox(207, 155, 306, 168);
     fill_rectangle(208, 156, 305, 167, 0);
 
     display::graphics.setForegroundColor(1);
-    draw_string(257 - TextDisplayLength("PRESS <SPACE> TO") / 2, 180,
-                "PRESS <SPACE> TO");
-    draw_string(257 - TextDisplayLength("EDIT RECRUIT NAME") / 2, 188,
-                "EDIT RECRUIT NAME");
+    draw_string(257, 180, "PRESS <SPACE> TO", ALIGN_CENTER);
+    draw_string(257, 188, "EDIT RECRUIT NAME", ALIGN_CENTER);
 
     // display::graphics.setForegroundColor(9);
-    // draw_string(257 - TextDisplayLength("SORRY, NAME EDITING") / 2, 180,
-    //             "SORRY, NAME EDITING");
-    // draw_string(257 - TextDisplayLength("IS NOT YET FINISHED") / 2, 188,
-    //             "IS NOT YET FINISHED");
+    // draw_string(257, 180, "SORRY, NAME EDITING", ALIGN_CENTER);
+    // draw_string(257, 188, "IS NOT YET FINISHED", ALIGN_CENTER);
 }
 
 
@@ -852,8 +844,7 @@ void DrawSkillEditor()
 {
     fill_rectangle(208, 131, 305, 141, 3);
     display::graphics.setForegroundColor(9);
-    draw_string(257 - TextDisplayLength("SKILL CHANGE") / 2, 138,
-                "SKILL CHANGE");
+    draw_string(257, 138, "SKILL CHANGE", ALIGN_CENTER);
 
     fill_rectangle(204, 150, 309, 195, 3);
     InBox(207, 150, 242, 160);
@@ -868,13 +859,13 @@ void DrawSkillEditor()
 
     IOBox(207, 166, 253, 178);
     display::graphics.setForegroundColor(1);
-    draw_string(230 - TextDisplayLength("MINUS") / 2, 174, "MINUS");
+    draw_string(230, 174, "MINUS", ALIGN_CENTER);
     IOBox(260, 166, 306, 178);
     display::graphics.setForegroundColor(1);
-    draw_string(283 - TextDisplayLength("PLUS") / 2, 174, "PLUS");
+    draw_string(283, 174, "PLUS", ALIGN_CENTER);
     IOBox(207, 182, 306, 194);
     display::graphics.setForegroundColor(1);
-    draw_string(256 - TextDisplayLength("DONE") / 2, 190, "DONE");
+    draw_string(256, 190, "DONE", ALIGN_CENTER);
 }
 
 
@@ -967,12 +958,9 @@ std::string LaunchNameEditor(const struct ManPool &recruit)
 
     display::graphics.setForegroundColor(1);
     fill_rectangle(204, 170, 309, 195, 3);
-    draw_string(257 - TextDisplayLength("PRESS <ENTER> TO") / 2, 179,
-                "PRESS <ENTER> TO");
-    draw_string(257 - TextDisplayLength("SAVE RECRUIT NAME") / 2, 187,
-                "SAVE RECRUIT NAME");
-    draw_string(257 - TextDisplayLength("<ESC> TO CANCEL") / 2, 195,
-                "<ESC> TO CANCEL");
+    draw_string(257, 179, "PRESS <ENTER> TO", ALIGN_CENTER);
+    draw_string(257, 187, "SAVE RECRUIT NAME", ALIGN_CENTER);
+    draw_string(257, 195, "<ESC> TO CANCEL", ALIGN_CENTER);
 
     fill_rectangle(208, 156, 305, 167, 0);
     display::graphics.setForegroundColor(1);

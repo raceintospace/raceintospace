@@ -1274,10 +1274,7 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
 
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
-    // TODO: Use TextDisplayLength instead of strlen * 3 for better
-    // centering?
-    draw_string(83 - strlen(Data->P[plr].Mission[step.pad].Name) * 3, 40,
-                Data->P[plr].Mission[step.pad].Name);
+    draw_string(83, 40, Data->P[plr].Mission[step.pad].Name, ALIGN_CENTER);
     InRFBox(162, 161, 313, 175, 10);
     display::graphics.setForegroundColor(11);
     draw_number(198, 170, dayOnMoon);

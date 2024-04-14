@@ -147,8 +147,7 @@ void DrawLimbo(char plr)
 
         assert(sizeof(Data->P[plr].Manned[i].Name) <= 20);
         snprintf(str, sizeof(str), "%s", Data->P[plr].Manned[i].Name);
-        // Program name is centered
-        draw_string(201 - TextDisplayLength(str) / 2, 101 + 21 * i, str);
+        draw_string(201, 101 + 21 * i, str, ALIGN_CENTER);
         draw_string(181, 107 + 21 * i, "PROGRAM");
 
         display::graphics.setForegroundColor(11);
