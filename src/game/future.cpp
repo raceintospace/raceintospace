@@ -451,7 +451,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     IOBox(91, 151, 243, 172);
     display::graphics.setForegroundColor(5);
     draw_heading(123, 155, "CONTINUE", 0, -2);
-    //draw_string(167 - TextDisplayLength("CONTINUE") / 2, 163, "CONTINUE");
+    //draw_string(167, 163, "CONTINUE", ALIGN_CENTER);
 
     // Primitive control loop. Don't like using localized control loops,
     // but it's the way RIS is written. -- rnyoakum

@@ -50,6 +50,23 @@ void draw_string(int x, int y, const char *s)
     }
 }
 
+
+void draw_string(int x, int y, const char *s, StringAlign align)
+{
+    int xpos = x;
+
+    if (align == ALIGN_CENTER) {
+        xpos = x - TextDisplayLength(s) / 2;
+    } else if (align == ALIGN_RIGHT) {
+        xpos = x - TextDisplayLength(s);
+    } else if (align != ALIGN_LEFT) {
+        WARNING1("Invalid text alignment in call to draw_string");
+    }
+
+    draw_string(xpos, y, s);
+}
+
+
 void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
 {
     draw_string(x, y, s);
