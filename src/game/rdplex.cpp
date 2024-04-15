@@ -49,11 +49,17 @@
 #include "hardware_buttons.h"
 #include "hardware.h"
 
-int call;
+namespace
+{
+
+int call{0};
+int DisplayedHardware, DisplayedUnit;
 
 enum {
     MAX_RD_TEAMS = 5
 };
+
+};  // End of namespace
 
 
 void LoadVABPalette(char plr);
@@ -318,10 +324,12 @@ RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Scr
 }
 
 
-char RD(char player_index, int hardware, int unit)
+char RD(char player_index)
 {
     short roll = 0;
     short buy[4][7], i, j, b;
+    int hardware = call ? DisplayedHardware : PROBE_HARDWARE;
+    int unit = call ? DisplayedUnit : PROBE_HW_ORBITAL;
 
     b = 0; /* XXX check uninitialized */
 
@@ -694,18 +702,23 @@ char RD(char player_index, int hardware, int unit)
 
                 music_stop();
 
+                DisplayedHardware = hardware;
+                DisplayedUnit = unit;
+
                 //DM Screen, Nikakd, 10/8/10 (Removed line)
                 if (call == 1) {
                     return 1;    // go back through gateway
                 }
 
                 call = 1;
-                HPurc(player_index, hardware, unit);
+                HPurc(player_index);
 
                 if (call == 0) {
                     return 0;
                 }
 
+                hardware = DisplayedHardware;
+                unit = DisplayedUnit;
                 call = 0;
 
                 for (i = 0; i < 4; i++) {
@@ -1235,8 +1248,11 @@ void DrawHPurc(char player_index)
     return;
 }
 
-char HPurc(char player_index, int hardware, int unit)
+char HPurc(char player_index)
 {
+    int hardware = call ? DisplayedHardware : PROBE_HARDWARE;
+    int unit = call ? DisplayedUnit : PROBE_HW_ORBITAL;
+
     HardwareButtons hardware_buttons(30, player_index);
 
     remove_savedat("UNDO.TMP");
@@ -1417,6 +1433,8 @@ char HPurc(char player_index, int hardware, int unit)
             WaitForMouseUp();
             music_stop();
             remove_savedat("UNDO.TMP");
+            DisplayedHardware = hardware;
+            DisplayedUnit = unit;
 
             // DM Screen, Nikakd, 10/8/10 (Removed line)
             if (call == 1) {
@@ -1424,13 +1442,15 @@ char HPurc(char player_index, int hardware, int unit)
             }
 
             call = 1;
-            RD(player_index, hardware, unit);
+            RD(player_index);
 
             if (call == 0) {
                 return 0;    // Exit
             }
 
             call = 0;
+            hardware = DisplayedHardware;
+            unit = DisplayedUnit;
             DrawHPurc(player_index);
             ShowUnit(hardware, unit, player_index);
             hardware_buttons.drawButtons(hardware);
