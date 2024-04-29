@@ -853,8 +853,6 @@ void DockingKludge(void)
  */
 void DestroyPad(char plr, char pad, int cost, char mode)
 {
-    struct MissionType *BMis = NULL, *AMis = NULL;
-
     Data->P[plr].LaunchFacility[pad] = cost; // Destroys pad
 
     if (mode == 0) {

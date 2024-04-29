@@ -370,7 +370,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     k = j;
 
     while (keep_going && i < (int)max) {
-        int aidx = 0, sidx = 0;
         char seq_name[20];
         char name[20]; /** \todo assumption about seq_filename len */
 

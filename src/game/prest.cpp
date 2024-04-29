@@ -415,9 +415,7 @@ char HeroCheck(int which)
  */
 char Set_Goal(char plr, char which, char control)
 {
-    char sum, pd, qt;
-
-    sum = 0;
+    char sum = 0;
 
     if (control != 3) {
         if (MaxFail() > 1999) {
@@ -679,7 +677,7 @@ char Did_Fail(void)
 
 int MaxFail(void)
 {
-    int i = 0, t = 0, bra = 0, count = 0;
+    int i = 0, t = 0, count = 0;
 
     while (i != 0x7f && count < 54) {
         if (Mev[i].StepInfo == 0) {
@@ -687,10 +685,6 @@ int MaxFail(void)
         }
 
         t = MAX(Mev[i].StepInfo, t);
-
-        if (Mev[i].trace != (i + 1)) {
-            bra++;
-        }
 
         i = Mev[i].trace;
         ++count;
