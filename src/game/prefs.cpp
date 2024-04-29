@@ -456,7 +456,6 @@ void CLevels(char side, char wh, DisplayContext &dctx)
 int Preferences(int player, int where)
 {
     int hum1 = 0, hum2 = 0, ksel = 0;
-    char *fname;
     char Name[20];
     DisplayContext dctx;
     AudioConfig audio = LoadAudioSettings();
@@ -545,7 +544,8 @@ int Preferences(int player, int where)
                     key = 0;
 
                     if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                        fname = locate_file("hist.json", FT_DATA);
+                        std::string fname =
+                            locate_file("hist.json", FT_DATA);
 
                         ifstream os(fname);
                         cereal::JSONInputArchive ar(os);

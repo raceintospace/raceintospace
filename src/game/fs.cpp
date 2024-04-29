@@ -297,10 +297,8 @@ sOpen(const char *name, const char *mode, int type)
 }
 
 /** Find and open file, if found return full path.
- * Caller is responsible for freeing the memory.
  */
-char *
-locate_file(const char *name, int type)
+std::string locate_file(const char *name, int type)
 {
     file f = try_find_file(name, "rb", type);
 
@@ -309,7 +307,13 @@ locate_file(const char *name, int type)
         fclose(f.handle);
     }
 
-    return f.path;
+    if (f.path != NULL) {
+        std::string path(f.path);
+        free(f.path);
+        return path;
+    }
+
+    return "";
 }
 
 int

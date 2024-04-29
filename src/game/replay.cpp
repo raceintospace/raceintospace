@@ -48,7 +48,6 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
     int j;
     std::vector<REPLAY> Rep;
     std::vector<struct MissionSequenceKey> sSeq, fSeq;
-    char *fname;
 
     if (Type == "OOOO") {
         Rep = interimData.tempReplay.at((plr * 100) + num);
@@ -59,12 +58,8 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
     mm_file vidfile;
     float fps;
 
-    // TODO: Free up memory in string returned by locate_file.
-    fname = locate_file("seq.json", FT_DATA);
-    DESERIALIZE_JSON_FILE(&sSeq, fname);
-
-    fname = locate_file("fseq.json", FT_DATA);
-    DESERIALIZE_JSON_FILE(&fSeq, fname);
+    DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA));
+    DESERIALIZE_JSON_FILE(&fSeq, locate_file("fseq.json", FT_DATA));
 
     WaitForMouseUp();
 
@@ -101,7 +96,7 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
         //  update_map = 0;
         for (int i = 0; i < max && keep_going; i++) {
             char seq_name[20];
-            char fname[20];  // TODO: Don't reuse name within function!
+            char fname[20];
 
             if (Rep.at(kk).Failure) {
                 strntcpy(seq_name, fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
@@ -234,9 +229,7 @@ void AbzFrame(int plr, int dx, int dy, int width, int height,
     mm_file vidfile;
     std::vector<struct MissionSequenceKey> sSeq;
 
-    char *fname = locate_file("seq.json", FT_DATA);
-    DESERIALIZE_JSON_FILE(&sSeq, fname);
-    free(fname);
+    DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA));
 
     for (j = 0; j < sSeq.size(); j++) {
         if (sSeq.at(j).MissionIdSequence == sequence) {

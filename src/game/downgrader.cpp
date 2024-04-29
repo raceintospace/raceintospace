@@ -230,10 +230,9 @@ struct MissionType Downgrader::next()
  */
 Downgrader::Options LoadJsonDowngrades(std::string filename)
 {
-    char *path = locate_file(filename.c_str(), FT_DATA);
+    std::string path = locate_file(filename.c_str(), FT_DATA);
 
-    if (path == NULL) {
-        free(path);
+    if (path.empty()) {
         throw IOException(std::string("Unable to open path to ") +
                           filename);
     }
@@ -244,7 +243,6 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     bool success = reader.parse(input, doc);
 
     if (! success) {
-        free(path);
         throw IOException("Unable to parse JSON input stream");
     }
 
@@ -271,6 +269,5 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     }
 
     input.close();
-    free(path);
     return options;
 }

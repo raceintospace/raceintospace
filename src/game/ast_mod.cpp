@@ -108,7 +108,7 @@ void AstronautModification()
     {
         try {
 
-            if(locate_file("user.json", FT_SAVE_CHECK) != NULL) {
+            if(!locate_file("user.json", FT_SAVE_CHECK).empty()) {
                 bool useOriginal = Help("I105") > 0;
 
                 if (useOriginal) {
@@ -167,7 +167,7 @@ void AstronautModification()
             if (editFlag) {
                 bool proceed = true;
 
-                if (locate_file("user.json", FT_SAVE_CHECK)) {
+                if (!locate_file("user.json", FT_SAVE_CHECK).empty()) {
                     proceed = Help("I106") > 0;
                 }
 

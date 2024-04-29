@@ -239,18 +239,16 @@ av_setup(void)
 
 
 #ifdef SET_SDL_ICON
-    char *icon_path;
+    std::string icon_path = locate_file("moon_32x32.bmp", FT_IMAGE);
 
-    if ((icon_path = locate_file("moon_32x32.bmp", FT_IMAGE))) {
-        SDL_Surface *icon = SDL_LoadBMP(icon_path);
+    if (!icon_path.empty()) {
+        SDL_Surface *icon = SDL_LoadBMP(icon_path.c_str());
 
         if (icon != NULL) {
             SDL_WM_SetIcon(icon, NULL);
         } else {
             INFO2("setting icon failed: %s\n", SDL_GetError());
         }
-
-        free(icon_path);
     }
 
 #endif

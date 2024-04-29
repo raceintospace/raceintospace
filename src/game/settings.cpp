@@ -17,6 +17,8 @@
 
 #include "settings.h"
 
+#include <string>
+
 #include "fs.h"
 #include "ioexception.h"
 #include "logging.h"
@@ -41,9 +43,10 @@ AudioConfig LoadAudioSettings()
 {
     AudioConfig audio;
 
-    char *configFileName = locate_file("settings.json", FT_SAVE_CHECK);
+    std::string configFileName =
+        locate_file("settings.json", FT_SAVE_CHECK);
 
-    if (configFileName != NULL) {
+    if (!configFileName.empty()) {
         DESERIALIZE_JSON_FILE(&audio, configFileName);
     } else {
         CNOTICE3(filesys,
@@ -72,8 +75,6 @@ AudioConfig LoadAudioSettings()
         }
     }
 
-    free(configFileName);
-
     if (!options.want_audio) {
         audio.master.muted = true;
         audio.music.muted = true;
@@ -92,13 +93,13 @@ AudioConfig LoadAudioSettings()
  */
 void SaveAudioSettings(const AudioConfig &settings)
 {
-    char *configFileName = locate_file("settings.json", FT_SAVE_CHECK);
+    std::string configFileName =
+        locate_file("settings.json", FT_SAVE_CHECK);
 
-    if (configFileName == NULL) {
+    if (configFileName.empty()) {
         FILE *file = sOpen("settings.json", "wb", FT_SAVE);
 
         if (file == NULL) {
-            free(configFileName);
             throw IOException("Unable to create config file "
                               "settings.json");
         }
@@ -107,7 +108,7 @@ void SaveAudioSettings(const AudioConfig &settings)
 
         configFileName = locate_file("settings.json", FT_SAVE_CHECK);
 
-        if (configFileName == NULL) {
+        if (configFileName.empty()) {
             throw IOException("Tried to create config file "
                               "settings.json"
                               " and could not find afterwards.");
@@ -115,9 +116,6 @@ void SaveAudioSettings(const AudioConfig &settings)
     }
 
     SERIALIZE_JSON_FILE(settings, configFileName);
-
-    // Func locate_file requires user to free memory.
-    free(configFileName);
 }
 
 
