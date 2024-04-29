@@ -1088,7 +1088,7 @@ void ShowAstrosHist(char plr)
 {
     display::LegacySurface *vhptr2;
 
-    char pos = 0, pos2 = 0, glorf = 0;
+    char pos = 0, pos2 = 0;
     vhptr2 = new display::LegacySurface(112, 55);
     abuf = (struct Astros *) buffer;
 
@@ -1201,13 +1201,14 @@ void ShowAstrosHist(char plr)
         pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2, vhptr2), key >> 8, 79);
 
         if (key >= 'A' && key <= 'Z') {
-            glorf = 0;
+            int astroIndex= 0;
 
-            while (abuf[glorf].Name[0] < key && glorf < Data->P[plr].AstroCount - 1) {
-                glorf++;
+            while (abuf[astroIndex].Name[0] < key &&
+                   astroIndex < Data->P[plr].AstroCount - 1) {
+                astroIndex++;
             }
 
-            pos = glorf;
+            pos = astroIndex;
             DisplAst(plr, &pos, &pos2, vhptr2);
             key = 0;
         }

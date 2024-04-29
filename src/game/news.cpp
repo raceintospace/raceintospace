@@ -138,9 +138,8 @@ GoNews(char plr)
 void
 OpenNews(char plr, char *buf, int bud)
 {
-    int j, size;
-    FILE *fp, *gork;
-    char old[120];
+    int size;
+    FILE *fp;
     int i, len[5];
 
     size = (plr == 0) ? 232 : 177;
@@ -172,7 +171,7 @@ OpenNews(char plr, char *buf, int bud)
 
     i = 0;
 
-    for (j = 0; j < Data->P[plr].AstroCount; j++) {
+    for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
             i++;
         }
@@ -188,7 +187,7 @@ OpenNews(char plr, char *buf, int bud)
         }
     }
 
-    for (j = 0; j < Data->P[plr].AstroCount; j++) {
+    for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
             // 12 ideas
             bufsize = strlen(buf);
@@ -231,8 +230,11 @@ OpenNews(char plr, char *buf, int bud)
     //Specs: check tracking station for director's message |
     //------------------------------------------------------
     if (Option != -1) {
-        if ((gork = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA)) != NULL) {
-            fread(&old, sizeof(old), 1, gork);
+        FILE *messages = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA);
+        char old[120];
+
+        if (messages != NULL) {
+            fread(&old, sizeof(old), 1, messages);
 
             if (old[0] != 0x00) {
                 if (Option == 0) {
@@ -244,7 +246,7 @@ OpenNews(char plr, char *buf, int bud)
                 }
             }
 
-            fclose(gork);
+            fclose(messages);
         }
     }
 
@@ -334,9 +336,9 @@ OpenNews(char plr, char *buf, int bud)
 void
 DispNews(char plr, char *src, char *dest)
 {
-    int i = 0, j = 0, k = 0;
+    int j = 0, k = 0;
 
-    for (i = 0; i < (int) strlen(src); i++) {
+    for (int i = 0; i < (int) strlen(src); i++) {
         dest[j] = src[i];
 
         switch (dest[j]) {
@@ -478,7 +480,6 @@ DispNews(char plr, char *src, char *dest)
         }
 
         j++;
-
         k++;
     }
 }

@@ -129,10 +129,8 @@ void GetFailStat(struct XFails *Now, char *FName, int rnum)
 
 void MisCheck(char plr, char mpad)
 {
-    int tomflag = 0;  // Tom's checking flag
     int save, PROBLEM, i, lc, durxx;
     struct XFails Now;
-    unsigned char gork = 0;
 
     lc = 0; /* XXX check uninitialized */
 
@@ -362,21 +360,20 @@ void MisCheck(char plr, char mpad)
 
             //***************TC Special little HMOON EVA FAILURE FIX
 
-            tomflag = 0;
+            bool tomflag = false;
 
             if (Mev[STEP].Name[0] == 'H' && Mev[STEP].Name[1] == 'M') {
+                int program = Data->P[plr].Mission[mpad].Prog;
 
-                gork = Data->P[plr].Mission[mpad].Prog;
-
-                if (gork == 2) {
+                if (program == 2) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "HUM3C1" : "HSM3C1");
-                } else if (gork == 3) {
+                } else if (program == 3) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "HUM3C2" : "HSM3C2");
                 } else {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "HUM3C3" : "HSM3C3");
                 }
 
-                tomflag = 1;
+                tomflag = true;
             }
 
 
@@ -384,11 +381,11 @@ void MisCheck(char plr, char mpad)
             //:::::: Failure docking kludge
 
             if (Mev[STEP].Name[0] == 'I') {
-                gork = Data->P[plr].Mission[mpad].Prog;
+                int program = Data->P[plr].Mission[mpad].Prog;
 
-                if (gork == 2) {
+                if (program == 2) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C1" : "ISM4C1");
-                } else if (gork == 3) {
+                } else if (program == 3) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C2" : "ISM4C2");
                 } else {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C3" : "ISM4C3");
@@ -431,11 +428,11 @@ void MisCheck(char plr, char mpad)
             //::: SUCCESS: Docking kludge ::::::
             //::::::::::::::::::::::::::::::::::
             if (Mev[STEP].Name[0] == 'I') {
-                gork = Data->P[plr].Mission[mpad].Prog;
+                int program = Data->P[plr].Mission[mpad].Prog;
 
-                if (gork == 2) {
+                if (program == 2) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C1" : "ISM4C1");
-                } else if (gork == 3) {
+                } else if (program == 3) {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C2" : "ISM4C2");
                 } else {
                     strcpy(Mev[STEP].Name, (plr == 0) ? "IUM4C3" : "ISM4C3");
@@ -452,17 +449,19 @@ void MisCheck(char plr, char mpad)
             // third parameter (0 -> MALE) (2 -> FEMALE)
             //:::::::::::::::::::::::::::::
 
-            gork = ((MA[0][0].A != NULL && MA[0][0].A->Sex && EVA[0] == 0)
-                    || (MA[0][1].A != NULL && MA[0][1].A->Sex && EVA[0] == 1)
-                    || (MA[0][2].A != NULL && MA[0][2].A->Sex && EVA[0] == 2)
-                    || (MA[0][3].A != NULL && MA[0][3].A->Sex && EVA[0] == 3)
-                    || (MA[1][0].A != NULL && MA[1][0].A->Sex && EVA[1] == 0)
-                    || (MA[1][1].A != NULL && MA[1][1].A->Sex && EVA[1] == 1)
-                    || (MA[1][2].A != NULL && MA[1][2].A->Sex && EVA[1] == 2)
-                    || (MA[1][3].A != NULL && MA[1][3].A->Sex && EVA[1] == 3));
+            // TODO: Move to function...
+            bool femaleEVA =
+                ((MA[0][0].A != NULL && MA[0][0].A->Sex && EVA[0] == 0)
+                 || (MA[0][1].A != NULL && MA[0][1].A->Sex && EVA[0] == 1)
+                 || (MA[0][2].A != NULL && MA[0][2].A->Sex && EVA[0] == 2)
+                 || (MA[0][3].A != NULL && MA[0][3].A->Sex && EVA[0] == 3)
+                 || (MA[1][0].A != NULL && MA[1][0].A->Sex && EVA[1] == 0)
+                 || (MA[1][1].A != NULL && MA[1][1].A->Sex && EVA[1] == 1)
+                 || (MA[1][2].A != NULL && MA[1][2].A->Sex && EVA[1] == 2)
+                 || (MA[1][3].A != NULL && MA[1][3].A->Sex && EVA[1] == 3));
 
-            //if (!((mcc==9 || mcc==11) && (Mev[STEP].Name[0]=='W')))
-            PlaySequence(plr, STEP, Mev[STEP].Name, (gork == 1) ? 2 : 0);  // Play Animations
+            // Play Animations
+            PlaySequence(plr, STEP, Mev[STEP].Name, femaleEVA ? 2 : 0);
 
             if (Mev[STEP].sgoto == 100) {
                 Mev[STEP].trace = 0x7F;

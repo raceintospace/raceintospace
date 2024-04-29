@@ -125,7 +125,7 @@ char Burst(char win)
 
 void EndGame(char win, char pad)
 {
-    int i = 0, r, gork;
+    int i = 0, r;
     char miss, prog, man1, man2, man3, man4, bud;
     char month, firstOnMoon, capName[30];
 
@@ -202,20 +202,23 @@ void EndGame(char win, char pad)
     draw_string(0, 0, "19");
     draw_number(0, 0, Data->Year);
 
-// correct mission pictures
+    // correct mission pictures
+    int historyIndex;
 
     if (Option == -1 && MAIL == -1) {
-        gork = Data->P[win].PastMissionCount - 1;
+        historyIndex = Data->P[win].PastMissionCount - 1;
     } else {
-        gork = Data->Prestige[Prestige_MannedLunarLanding].Index;
+        historyIndex = Data->Prestige[Prestige_MannedLunarLanding].Index;
     }
 
-    if (win == 1 && Data->P[win].History[gork].Hard[i][0] >= 3) {
+    struct PastInfo &historyEntry = Data->P[win].History[historyIndex];
+
+    if (win == 1 && historyEntry.Hard[i][0] >= 3) {
         bud = 5;
-    } else if (win == 0 && Data->P[win].History[gork].Hard[i][0] == 4) {
+    } else if (win == 0 && historyEntry.Hard[i][0] == 4) {
         bud = 2;
     } else {
-        bud = ((Data->P[win].History[gork].Hard[i][2] - 5) + (win * 3));
+        bud = ((historyEntry.Hard[i][2] - 5) + (win * 3));
     }
 
     if (bud < 0 || bud > 5) {
@@ -224,12 +227,12 @@ void EndGame(char win, char pad)
 
     InBox(241, 67, 313, 112);
     EndPict(242, 68, bud, 128);
-    PatchMe(win, 270, 34, Data->P[win].History[gork].Hard[i][0],
-            Data->P[win].History[gork].Patch[win]);
-    man1 = Data->P[win].History[gork].Man[i][0];
-    man2 = Data->P[win].History[gork].Man[i][1];
-    man3 = Data->P[win].History[gork].Man[i][2];
-    man4 = Data->P[win].History[gork].Man[i][3];
+    PatchMe(win, 270, 34, historyEntry.Hard[i][0],
+            historyEntry.Patch[win]);
+    man1 = historyEntry.Man[i][0];
+    man2 = historyEntry.Man[i][1];
+    man3 = historyEntry.Man[i][2];
+    man4 = historyEntry.Man[i][3];
 // no astronaut kludge
     r = Data->P[win].AstroCount;
 
@@ -250,13 +253,13 @@ void EndGame(char win, char pad)
     }
 
     if (!(Option == -1 || Option == win)) {
-        Data->P[win].History[gork].Man[i][0] = man1;
-        Data->P[win].History[gork].Man[i][1] = man2;
-        Data->P[win].History[gork].Man[i][2] = man3;
-        Data->P[win].History[gork].Man[i][3] = man4;
+        historyEntry.Man[i][0] = man1;
+        historyEntry.Man[i][1] = man2;
+        historyEntry.Man[i][2] = man3;
+        historyEntry.Man[i][3] = man4;
     }
 
-    prog = Data->P[win].History[gork].Hard[i][0] + 1;
+    prog = historyEntry.Hard[i][0] + 1;
 
     for (i = 1; i < 5; i++) {
         display::graphics.setForegroundColor(6);
@@ -363,10 +366,8 @@ void EndGame(char win, char pad)
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
-    i = 0;
-    key = 0;
 
-    while (i == 0) {
+    while (true) {
         key = 0;
         GetMouse();
 
@@ -378,9 +379,9 @@ void EndGame(char win, char pad)
                 delay(150);
             }
 
-            i = 1;
             key = 0;
             OutBox(244, 5, 313, 17);
+            break;
         }
     }
 
