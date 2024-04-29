@@ -70,7 +70,6 @@ char mcc;
 char fEarly; /**< kind of a boolean indicating early missions */
 char hero;
 char DMFake;
-uint16_t MisStat;
 /* STEP tracks mission step numbers             */
 /* FINAL is the ultimate result of safety check */
 /* JOINT signals the joint mission code         */
@@ -119,7 +118,7 @@ int Launch(char plr, char mis)
     int i, j, t, k, mcode, avg, spResult, temp = 0;
     char total;
     STEP = FINAL = JOINT = PastBANG = 0;
-    MisStat = tMen = 0x00; // clear mission status flags
+    tMen = 0x00; // clear mission status flags
 
     // Don't do missions twice, just update prestige data
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
@@ -193,15 +192,6 @@ int Launch(char plr, char mis)
             MA[i][j].A = &Data->P[plr].Pool[total];
             MA[i][j].loc = i;
         }
-    }
-
-    // Set Mission Status Flag
-    if (MA[0][0].A != NULL && MA[1][0].A == NULL) {
-        MisStat = S_MAN;
-    } else if (MA[0][0].A == NULL && MA[1][0].A != NULL) {
-        MisStat = JT1_UNMAN | JT2_MAN;
-    } else if (MA[0][0].A != NULL && MA[1][0].A != NULL) {
-        MisStat = JT1_MAN | JT2_MAN;
     }
 
     // 0 here is for unused
@@ -387,7 +377,6 @@ int Launch(char plr, char mis)
 void MissionPast(char plr, char pad, int prest)
 {
     int loc, i, j, loop, mc;
-    FILE *fout;
     unsigned int num;
     char dys[7] = {0, 2, 5, 7, 12, 16, 20};
 
