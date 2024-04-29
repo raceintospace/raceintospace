@@ -69,13 +69,11 @@ RosterGroup &Roster::getGroup(int player, int group_number)
 
 Roster Roster::load(const std::string filename_str)
 {
-    char *filename = locate_file(filename_str.c_str(), FT_DATA);
-    assert(filename);
+    std::string path = locate_file(filename_str.c_str(), FT_DATA);
+    assert(!path.empty());
 
-    std::ifstream roster_file(filename);
+    std::ifstream roster_file(path);
     Roster roster(roster_file);
-
-    free(filename);
 
     return roster;
 }

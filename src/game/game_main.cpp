@@ -161,7 +161,6 @@ int game_main_impl(int argc, char *argv[])
     const char *see_readme = "look for further instructions in the README file";
 
     char ex, choice;
-    char *fname;
 
     // initialize the filesystem
     Filesystem::init(argv[0]);
@@ -238,8 +237,7 @@ int game_main_impl(int argc, char *argv[])
         bool launchGame = false;
         MakeRecords();
 
-        fname = locate_file("urast.json", FT_DATA);
-        DESERIALIZE_JSON_FILE(Data, fname);
+        DESERIALIZE_JSON_FILE(Data, locate_file("urast.json", FT_DATA));
 
         if (Data->Checksum != (sizeof(struct Players))) {
             /* XXX: too drastic */
