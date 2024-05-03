@@ -9,13 +9,13 @@ Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
 The most recent stable releases are available from
 [SourceForge](http://sourceforge.net/projects/raceintospace/).
-There is a more recent (interim) 1.2 release on Flatpak (which shows as 2.0), 
+There is a more recent (interim) 1.2 release on Flatpak (which mistakenly shows as 2.0), 
 https://flathub.org/apps/details/org.raceintospace.Raceintospace.
 More recent yet is the 2.0 beta available here at 
 https://github.com/raceintospace/raceintospace/releases/tag/v.2.0beta.
 The repository here contains a work-in-progress modernization of the game, 
 so if you want to run the very latest version, you will have to download
-and compile the source here.
+and compile the source.  Instructions are below.
 
 We have made a number of improvements to the game, and are hoping to do a 
 release soon.  The changes made can be viewed in ChangeLog.md above.
@@ -64,7 +64,7 @@ The build system automatically finds, downloads, and/or compiles:
 * libtheora
 * libprotobuf / protoc
 
-The specifics of which things come from where depend on your platform.
+The specifics of which things come from where will depend on your platform.
 
 On UNIXy systems (including Mac OS X), you can build everything with:
 
@@ -77,6 +77,16 @@ To download a copy of the game, go to the folder where you want the raceintospac
 subfolder to go, and run:
 
     git clone https://github.com/raceintospace/raceintospace
+
+
+## Music
+=====
+
+Due to copyright concerns, the game's music has been placed in a nonfree repository.
+To add music to the game, run the following:
+
+    $ cd ~/ && git clone https://github.com/raceintospace/raceintospace-nonfree && cp -r ~/raceintospace-nonfree/data/audio/music/ ~/raceintospace/data/audio/ && cp -r ~/raceintospace-nonfree/data/midi/ ~/raceintospace/data/audio/
+
 
 Linux
 -----
@@ -109,14 +119,6 @@ If you are on a Fedora-based system, you can get everything with:
     $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel \
         libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
         physfs-devel libpng-devel
-
-### Music
-
-Due to copyright concerns, the game's music has been placed in a nonfree repository.
-To add music to the game, run the following:
-
-    $ cd ~/ && git clone https://github.com/raceintospace/raceintospace-nonfree && cp -r ~/raceintospace-nonfree/data/audio/music/ ~/raceintospace/data/audio/ && cp -r ~/raceintospace-nonfree/data/midi/ ~/raceintospace/data/audio/
-
 
 ### Build
 
@@ -182,7 +184,7 @@ project file:
 Windows
 -------
 
-**NOTE:** The game may not successfully compile in Windows. See Issues #498, #128, #57 for details.
+**NOTE:** The game may not successfully compile in Windows. See Issues [#498](https://github.com/raceintospace/raceintospace/issues/498), [#128](https://github.com/raceintospace/raceintospace/issues/128), [#57](https://github.com/raceintospace/raceintospace/issues/57) for details.
 
 If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
 
