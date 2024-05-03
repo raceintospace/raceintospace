@@ -186,7 +186,7 @@ Windows
 
 **NOTE:** The game may not successfully compile in Windows. See Issues [#498](https://github.com/raceintospace/raceintospace/issues/498), [#128](https://github.com/raceintospace/raceintospace/issues/128), [#57](https://github.com/raceintospace/raceintospace/issues/57) for details.
 
-If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in Oracle VirtualBox, then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
+If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in [Oracle VirtualBox](https://www.virtualbox.org/), then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
 
 Ingredients:
 
