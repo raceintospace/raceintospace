@@ -20,6 +20,8 @@
 * In the config file, "altasLunar" has been corrected to "atlasLunar"
 * The music files have been moved to a separate repository for copyright reasons.
 * Fixed several out-of-bounds memory reads in the AI and astronaut code, which may have led to inconsistent AI behavior, or doing things it shouldn't (#825)
+* Removed several unused variables and renames others given nonsensical names (#846)
+* Added an optional alignment argument to the draw_string method to make text centering easier (#842)
 
 Since transitioning to C++ on GIT, the game has been brought up to where we left off (that is, bugs introduced by the transition have been fixed).
 
@@ -100,6 +102,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
    * The Viewing Stand used to show the game's first newscast twice, for both Spring and Fall 1957, so it never showed the player's second newscast of the game. That's fixed now. (#696)
    * In recruitment, if you clicked and held on the up or down arrow, it would take 3 or 4 seconds before the list would start to scroll.
    * The Step Failure screen didn't show the correct safety factor (#578, #648)
+   * The Purchase button in Hardware Purchasing formerly didn't animate if you pressed P, though it would if you clicked on the button. (#841)
 * **Esthetic Fine-Tuning**
    * Removed visual artifacts next to astronaut wings and medals in Astronaut/Cosmonaut History (#299, from #192)
    * Better centering of astronaut wings in Astro/Cosmonaut history.
@@ -134,6 +137,7 @@ Below are improvements that have been made over what the game offered in v.1.1.
 * Mission Control and the Launch Facility screen used to play the other side's music: Soviet instead of US, US instead of Soviet (#258)
 * The event counting system had a bug when the AI played as the US, which could cause its director ranking to tank even when its prestige was high (#683)
 * The terminal window would sometimes give the error that the LM should have 1 crew, but only found 0 (#607)
+* Fixed some memory leaks in the game (#845)
 
 ---
 ### GAME CHANGES
