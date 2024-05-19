@@ -135,7 +135,7 @@ const struct CREDIT {
     { 2, 48, 46, 168, "KEN HODGES"},
     { 2, 22, 31, 179, "SPACE MINIATURES"},
     { 2, 48, 33, 187, "BRONNER STUDIOS"},
-    { 2, 22, 172, 47, "INTERPLAY'S PRODUCERS"},
+    { 2, 22, 173, 47, "INTERPLAY'S PRODUCERS"},
     { 2, 48, 182, 55, "JACOB R BUCHERT III"},
     { 2, 48, 181, 62, "BRUCE SCHLICKBERND"},
     { 2, 48, 199, 69, "ALAN PAVLISH"},
@@ -147,12 +147,12 @@ const struct CREDIT {
     { 2, 48, 191, 121, "MICHAEL PACKARD"},
     { 2, 48, 197, 128, "MARK HARRISON"},
     { 2, 48, 197, 135, "ERIK ANDERSON"},
-    { 2, 48, 174, 142, "JENNIFER SCHLICKBERND"},
+    { 2, 48, 173, 142, "JENNIFER SCHLICKBERND"},
     { 2, 48, 201, 149, "JOHN SRAMEK"},
     { 2, 22, 167, 160, "DIR OF QUALITY ASSURANCE"},
     { 2, 48, 208, 168, "KIRK TOME"},
     { 2, 22, 210, 179, "SDL PORT"},
-    { 2, 48, 193, 187, "PACE WILLISSON"},
+    { 2, 48, 194, 187, "PACE WILLISSON"},
 };
 // Note: the structure of the items above is:
 // { Screen to display in, Color, X position, Y position, "WORDING"},
