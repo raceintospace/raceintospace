@@ -80,7 +80,7 @@ void DrawStatistics(char Win)
     draw_flag(41, 70, Win);
     draw_flag(41, 115, other(Win));
     draw_heading(47, 44, "STATISTICS", 1, -1);
-    draw_heading(215, 45, "EXIT", 1, -1);
+    draw_heading(216, 45, "EXIT", 1, -1);
     display::graphics.setForegroundColor(6);
     draw_string(122, 76, "WINNING PLAYER: ");
     display::graphics.setForegroundColor(8);
