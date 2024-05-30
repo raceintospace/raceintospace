@@ -1,4 +1,6 @@
-Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/raceintospace.png?branch=master)](https://travis-ci.org/raceintospace/raceintospace)
+![windows build status](https://github.com/kkosciusz/raceintospace/actions/workflows/build-windows-vcpkg.yaml/badge.svg?event=push)
+
+Race into Space
 ===============
 
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
@@ -184,26 +186,32 @@ project file:
 Windows
 -------
 
-**NOTE:** The game may not successfully compile in Windows. See Issues [#498](https://github.com/raceintospace/raceintospace/issues/498), [#128](https://github.com/raceintospace/raceintospace/issues/128), [#57](https://github.com/raceintospace/raceintospace/issues/57) for details.
-
-If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in [Oracle VirtualBox](https://www.virtualbox.org/), then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
-
 Ingredients:
 
-* [Visual C++ Express 2010](http://www.microsoft.com/visualstudio/eng/downloads#d-2010-express) ($0; other versions likely work too)
-* [CMake](http://www.cmake.org/cmake/resources/software.html) (free)
-* A checkout of the source (e.g. from [GitHub for Windows](http://windows.github.com/))
+* [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
+    * Install at least *MSVC*, *C++ CMake for Windows* and *Windows <ver> SDK* components!
+    * Full IDE is not needed
+* [CMake](https://www.cmake.org/cmake/resources/software.html) (free, also included above)
+* [Git](https://git-scm.com/downloads) or [GitHub for Windows](https://desktop.github.com/) (free)
 
-From here, use CMake-GUI or the command-line CMake to generate Visual Studio
-project files. Literally every dependency will be downloaded and compiled
-automatically.
+Open the command prompt and make sure git, your compiler and cmake are accessible (check [Visual Studio Developer Command Prompt and Developer PowerShell](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022))
 
-For example (assuming code cloned in to c:\raceintospace):
+Then clone, configure and build the software:
 
-    # Change to "c:\"
-    md raceintospace-build
-    cd raceintospace-build
-    cmake ..\raceintospace
+```cmd
+cd <some_directory>
+git clone --recursive https://github.com/raceintospace/raceintospace.git
+cd raceintospace
+cmake --build --preset windows-release
+```
+
+After building, you can start the game:
+
+```cmd
+.\build\release\src\game\raceintospace.exe BARIS_DATA=data BARIS_SAVE=.\save
+```
+
+The following instructions may be relevant for setting up in Visual Studio IDE:
 
 - Start Visual Studio by opening "raceintospace.sln".
 - Right-click "ALL_BUILD" and choose "Build"  (Everything will download and install)
