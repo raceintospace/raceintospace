@@ -928,7 +928,7 @@ av_set_fading(int type, int from, int to, int steps, int preserve)
         return;
     }
 
-    if (!steps > 0) {
+    if (steps <= 0) {
         steps = 5;
     }
 

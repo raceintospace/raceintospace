@@ -1,6 +1,7 @@
 #ifndef _LOGGING_H
 #define _LOGGING_H
 
+#undef LOG_ROOT_CAT
 #define LOG_ROOT_CAT  baris
 #include "log4c.h"
 

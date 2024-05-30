@@ -1,16 +1,12 @@
 #include "gr.h"
 
-#include <cassert>
-
-#include <boost/swap.hpp>
-
 #include "display/graphics.h"
 #include "display/surface.h"
 
 #include "Buzz_inc.h"
 #include "sdlhelper.h"
 
-using boost::swap;
+using std::swap;
 
 static int gr_cur_x;
 static int gr_cur_y;
