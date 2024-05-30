@@ -1,6 +1,6 @@
 # Here's where we build external libraries that we need for the game
 # Use CMake to download and compile these projects
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.20)
 
 include(ExternalProject)
 include(Global.cmake)
@@ -26,6 +26,12 @@ if (BUILD_BOOST)
     )
   
   add_dependencies(libs ext_boost)
+else (BUILD_BOOST)
+  find_package(Boost)
+  include_directories(${Boost_INCLUDE_DIRS})
+  # find_package(Boost REQUIRED COMPONENTS format smart_ptr)
+  # target_link_libraries(main PRIVATE Boost::boost Boost::<lib1> Boost::<lib2> ...)
+  # add_dependencies(libs Boost::format Boost::smart_ptr)
 endif (BUILD_BOOST)
 
 
@@ -49,6 +55,10 @@ if (BUILD_ZLIB)
     )
 
   add_dependencies(libs ext_zlib)
+else (BUILD_ZLIB)
+  find_package(ZLIB REQUIRED)
+  # target_link_libraries(main PRIVATE ZLIB::ZLIB)
+  add_dependencies(libs ZLIB::ZLIB)
 endif (BUILD_ZLIB)
 
 ###
@@ -72,6 +82,10 @@ if (BUILD_LIBPNG)
   if (BUILD_ZLIB)
     add_dependencies(ext_libpng ext_zlib)
   endif (BUILD_ZLIB)
+else (BUILD_LIBPNG)
+  find_package(PNG REQUIRED)
+  # target_link_libraries(main PRIVATE PNG::PNG)  
+  add_dependencies(libs PNG::PNG)  
 endif (BUILD_LIBPNG)
 
 ###

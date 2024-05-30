@@ -5,7 +5,7 @@ include(CheckSymbolExists)
 include(CheckFunctionExists)
 include(TestBigEndian)
 
-include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
+# include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
 
 if (NOT WINDOWS)
   check_function_exists(mkdir HAVE_MKDIR)
@@ -63,7 +63,7 @@ configure_file(
 include_directories(${PROJECT_BINARY_DIR}/config)
 
 # build src/display
-include("display/Global.cmake")
+# include("display/Global.cmake")
 add_subdirectory("display")
 
 # build src/protobuf
@@ -73,4 +73,4 @@ add_subdirectory("protobuf")
 add_subdirectory("game")
 
 # build the targets in src/utils too
-add_subdirectory("utils")
+# add_subdirectory("utils")

@@ -1,5 +1,5 @@
 # CXX_STANDARD requires more recent CMake
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.21...3.29)
 project(raceintospace VERSION 2.0.0)
 
 enable_testing()
@@ -19,6 +19,8 @@ endif (WINDOWS)
 
 # Require C++11
 set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF)
 option(PBEM "Enable Play-by-EMail feature" ON)
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
@@ -26,7 +28,7 @@ if("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 	add_definitions(-DDEBUG)
 endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
-add_subdirectory(lib)
+# add_subdirectory(lib)
 add_subdirectory(src)
 install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
 install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)

@@ -14,8 +14,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_windows)
 
 # Add the platform-specific source files needed for testing
 list(APPEND ui_sources music_vorbis.cpp)
+list(APPEND game_libraries Vorbis::vorbis)
 
-set(app "Race Into Space")
+find_package(Vorbis CONFIG REQUIRED)
+
+set(app "raceintospace")
 
 add_executable(${app}
   ${game_sources}
@@ -24,6 +27,6 @@ add_executable(${app}
   platform_windows/main.c
   )
 
-target_link_libraries(${app} ${game_libraries})
+target_link_libraries(${app} PRIVATE ${game_libraries})
 
-add_dependencies(${app} libs)
+# add_dependencies(${app} libs)

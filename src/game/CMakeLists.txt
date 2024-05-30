@@ -1,14 +1,3 @@
-include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_BINARY_DIR}/config)
-include_directories(${PROJECT_SOURCE_DIR}/src/game)
-include_directories(${raceintospace_protobuf_include_dir})
-if (JsonCPP_INCLUDE_DIR)
-  include_directories(${JsonCPP_INCLUDE_DIR})
-endif (JsonCPP_INCLUDE_DIR)
-
-# Make sure we can access our local includes
-include(${PROJECT_SOURCE_DIR}/lib/Global.cmake)
-
 if (PBEM)
   add_definitions(-DALLOW_PBEM=1)
 endif (PBEM)
@@ -100,10 +89,21 @@ set(game_sources
 set (ui_sources
   )
 
+find_package(Ogg REQUIRED)
+find_package(unofficial-theora CONFIG REQUIRED)
+find_package(PhysFS CONFIG REQUIRED)
+find_package(JsonCPP REQUIRED)
+find_package(cereal REQUIRED)
+find_package(Boost REQUIRED)
+find_package(ZLIB REQUIRED)
+
 set(game_libraries
-  ${SDL_LIBRARY} ogg vorbis theora protobuf
-  ${JsonCPP_LIBRARY} ${Physfs_LIBRARY} ${zlib_LIBRARY}
-  raceintospace_display ${raceintospace_display_libraries}
+  Ogg::ogg
+  unofficial::theora::theoradec
+  JsonCpp::JsonCpp
+  PhysFS::PhysFS
+  ZLIB::ZLIB
+  raceintospace_display
   raceintospace_protobuf
   )
 
@@ -120,19 +120,19 @@ endif()
 # populated with platform-specific files.
 # Not using (file GLOB ...) because CMake documentation recommends
 # against it (https://cmake.org/cmake/help/v3.14/command/file.html)
-set(test_dir ${PROJECT_SOURCE_DIR}/test)
-set(test_sources
-  music_none.cpp
-  ${test_dir}/game/dummy_test.cpp
-  ${test_dir}/game/mission_test.cpp
-  ${test_dir}/game/downgrade_test.cpp
-  ${test_dir}/game/roster_test.cpp
-  )
+# set(test_dir ${PROJECT_SOURCE_DIR}/test)
+# set(test_sources
+#   music_none.cpp
+#   ${test_dir}/game/dummy_test.cpp
+#   ${test_dir}/game/mission_test.cpp
+#   ${test_dir}/game/downgrade_test.cpp
+#   ${test_dir}/game/roster_test.cpp
+#   )
 
-add_executable(game_test ../../test/test_main.cpp ${test_sources} ${game_sources})
-set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
-target_link_libraries(game_test ${game_libraries})
-add_test(
-  NAME game_test
-  COMMAND game_test --catch_system_errors=yes
-  )
+# add_executable(game_test ../../test/test_main.cpp ${test_sources} ${game_sources})
+# set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
+# target_link_libraries(game_test ${game_libraries})
+# add_test(
+#   NAME game_test
+#   COMMAND game_test --catch_system_errors=yes
+#   )

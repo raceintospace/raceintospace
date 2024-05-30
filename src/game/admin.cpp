@@ -1572,7 +1572,7 @@ void LoadGame(const char *filename)
     SaveFileHdr header;
     unsigned char magic[2];
     unsigned char *cbuf, *buf;
-    size_t csize, usize = 0;
+    uLongf usize = 0;
     int i, ok, offset;
 
     FILE *fin = sOpen(filename, "rb", FT_SAVE);
@@ -1591,7 +1591,7 @@ void LoadGame(const char *filename)
     fseek(fin, -2, SEEK_CUR);
 
     if (magic[0] == 0x78 && magic[1] == 0xDA) { // zlib magic numbers
-        csize = fileLength - sizeof(header);
+        size_t csize = fileLength - sizeof(header);
         cbuf = (unsigned char *) malloc(csize);
         buf = (unsigned char *) malloc(usize);
         assert(cbuf && buf);

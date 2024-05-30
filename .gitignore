@@ -4,3 +4,6 @@ build_*
 *.swp
 
 /vsbuild/.vs/raceintospace/v16
+CMakeUserPresets.json
+.vscode
+vcpkg_installed
