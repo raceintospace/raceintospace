@@ -8,15 +8,13 @@ on: [push, workflow_dispatch]
 
 jobs:
   job:
-    name: ${{ matrix.os }}-${{ github.workflow }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ github.workflow }}
+    runs-on: windows-latest
     strategy:
       fail-fast: true
-      matrix:
-        os: [windows-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           # This is useful to avoid https://github.com/microsoft/vcpkg/issues/25349
