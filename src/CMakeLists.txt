@@ -73,4 +73,4 @@ add_subdirectory("protobuf")
 add_subdirectory("game")
 
 # build the targets in src/utils too
-# add_subdirectory("utils")
+add_subdirectory("utils")
