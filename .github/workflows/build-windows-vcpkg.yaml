@@ -3,7 +3,7 @@
 # SPDX short identifier: MIT
 #
 # Source: https://raw.githubusercontent.com/lukka/CppBuildTasks-Validation/v10/.github/workflows/hosted-ninja-vcpkg_submod-autocache.yml
-name: Build on Windows with VCPKG
+name: windows build
 on: [push, workflow_dispatch]
 
 jobs:
@@ -53,3 +53,11 @@ jobs:
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-${{ github.ref_name }}-${{ github.sha }}
+          if-no-files-found: error
+          compression-level: 9
+          path: |
+            build/release/src/game/*.exe
+            build/release/src/game/*.dll
