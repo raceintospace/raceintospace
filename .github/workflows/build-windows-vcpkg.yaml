@@ -56,7 +56,7 @@ jobs:
         id: read-package-name
         shell: bash
         run: |
-          PACKAGE_FILE_NAME=$(cat build/release/cpack_package_name.txt)
+          PACKAGE_FILE_NAME=$(cat build/release/cpack_output_files.txt)
           echo "Package file name: $PACKAGE_FILE_NAME"
           echo "{package_file_name}={$PACKAGE_FILE_NAME}" >> "$GITHUB_OUTPUT"
 
