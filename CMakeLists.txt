@@ -47,10 +47,11 @@ if (WINDOWS)
 		"${PROJECT_BINARY_DIR}/NsisCpack.cmake")
     set(CPACK_GENERATOR NSIS)
 	# HACK: can't figure out how to select all dlls
-	# that are prerequisites of target and its dependencies...
+	# that are required for target **and** its dependencies...
+	# need to check IMPORTED_RUNTIME_ARTIFACTS
 	install(TARGETS raceintospace DESTINATION .)
 	install(CODE "
-		file(GLOB dll_files \"${PROJECT_BINARY_DIR}/src/game/*.dll\")
+		file(GLOB dll_files \"$<TARGET_FILE_DIR:raceintospace>/*.dll\")
 		file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/.\" TYPE SHARED_LIBRARY FILES \${dll_files})
 	")
 	install(DIRECTORY data/audio data/gamedata data/images data/video icons DESTINATION .)
