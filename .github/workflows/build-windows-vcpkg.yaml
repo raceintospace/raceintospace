@@ -58,7 +58,7 @@ jobs:
         run: |
           PACKAGE_FILE_NAME=$(cat build/release/cpack_output_files.txt)
           echo "Package file name: $PACKAGE_FILE_NAME"
-          echo "{package_file_name}={$PACKAGE_FILE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "package_file_name=$PACKAGE_FILE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Upload windows binaries artifact
         uses: actions/upload-artifact@v4
