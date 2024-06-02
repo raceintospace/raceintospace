@@ -14,7 +14,8 @@ jobs:
       fail-fast: true
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: true
           # This is useful to avoid https://github.com/microsoft/vcpkg/issues/25349
@@ -22,7 +23,8 @@ jobs:
           # try to access.
           fetch-depth: 0
 
-      - uses: lukka/get-cmake@latest
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
 
       - name: List $RUNNER_WORKSPACE before vcpkg is setup
         run: find $RUNNER_WORKSPACE
@@ -41,7 +43,7 @@ jobs:
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
 
-      - name: Run CMake+vcpkg+Ninja
+      - name: Run CMake and CPack
         uses: lukka/run-cmake@v10
         id: runcmake
         with:
@@ -58,7 +60,8 @@ jobs:
           echo "Package file name: $PACKAGE_FILE_NAME"
           echo "{package_file_name}={$PACKAGE_FILE_NAME}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload windows binaries artifact
+        uses: actions/upload-artifact@v4
         with:
           name: windows-binaries-${{ github.sha }}
           retention-days: 7
@@ -68,7 +71,8 @@ jobs:
             build/release/src/game/*.exe
             build/release/src/game/*.dll
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload windows installer artifact
+        uses: actions/upload-artifact@v4
         with:
           name: windows-installer-latest # keep only one artifact to limit storage requirements
           overwrite: true
