@@ -54,6 +54,11 @@ if (WINDOWS)
 				"^ext-ms-.*" # windows API
 				"^hvsifiletrust\\.dll$"
 				"^pdmutilities\\.dll$"
+				"^wpaxholder\\.dll$"
+				"^ieshims\\.dll$"
+				"^emclient\\.dll$"
+				"^devicelockhelpers\\.dll$"
+				"^efscore\\.dll$"
 			POST_EXCLUDE_REGEXES
 				".*WINDOWS[\\/]system.*"
 			RUNTIME DESTINATION .)
