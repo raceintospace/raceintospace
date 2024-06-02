@@ -53,7 +53,7 @@ jobs:
           packagePreset: 'windows-release'
 
       - name: Read output package name
-        id: read-package-name
+        id: readpkg
         shell: bash
         run: |
           PACKAGE_FILE_NAME=$(cat build/release/cpack_output_files.txt)
@@ -78,4 +78,4 @@ jobs:
           overwrite: true
           if-no-files-found: error
           compression-level: 0
-          path: ${{ steps.read-package-name.outputs.package_file_name }}
+          path: ${{ steps.readpkg.outputs.package_file_name }}
