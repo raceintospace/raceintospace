@@ -46,22 +46,13 @@ if (WINDOWS)
 	set(CPACK_PROJECT_CONFIG_FILE
 		"${PROJECT_BINARY_DIR}/NsisCpack.cmake")
     set(CPACK_GENERATOR NSIS)
+	# HACK: can't figure out how to select all dlls
+	# that are prerequisites of target and its dependencies...
 	install(TARGETS raceintospace DESTINATION .)
-	install(TARGETS raceintospace
-		RUNTIME_DEPENDENCIES
-			PRE_EXCLUDE_REGEXES
-				"^api-ms-.*" # windows API
-				"^ext-ms-.*" # windows API
-				"^hvsifiletrust\\.dll$"
-				"^pdmutilities\\.dll$"
-				"^wpaxholder\\.dll$"
-				"^ieshims\\.dll$"
-				"^emclient\\.dll$"
-				"^devicelockhelpers\\.dll$"
-				"^efscore\\.dll$"
-			POST_EXCLUDE_REGEXES
-				".*WINDOWS[\\/]system.*"
-			RUNTIME DESTINATION .)
+	install(CODE "
+		file(GLOB dll_files \"${PROJECT_BINARY_DIR}/src/game/*.dll\")
+		file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/.\" TYPE SHARED_LIBRARY FILES \${dll_files})
+	")
 	install(DIRECTORY data/audio data/gamedata data/images data/video icons DESTINATION .)
 	install(FILES COPYING README.md AUTHORS DESTINATION .)
 else (WINDOWS)
