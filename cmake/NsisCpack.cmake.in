@@ -1,0 +1,50 @@
+set(CMAKE_SOURCE_DIR "@CMAKE_SOURCE_DIR")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "Race Into Space")
+set(raceintospace_VERSION_FULL "@raceintospace_VERSION_FULL@")
+set(raceintospace_NAME_VERSION "Race Into Space ${raceintospace_VERSION_FULL}")
+set(CPACK_RESOURCE_FILE_LICENSE "@CMAKE_SOURCE_DIR@/COPYING")
+set(CPACK_NSIS_URL_HELP_LINK "https://raceintospace.github.io/manual.html")
+set(CPACK_NSIS_URL_INFO_ABOUT "httsp://github.com/raceintospace/raceintospace")
+SET(CPACK_NSIS_INSTALLED_ICON_NAME "@CMAKE_SOURCE_DIR@/icons/Moon.ico")
+set(CPACK_NSIS_MENU_LINKS "https://raceintospace.github.io/manual.html" "Race Into Space Game Manual")
+set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+Push $OUTDIR
+StrCpy $OUTDIR $INSTDIR
+CreateShortCut '$INSTDIR\\${raceintospace_NAME_VERSION}.lnk' \\
+    '$INSTDIR\\raceintospace.exe' \\
+    '' \\
+    '$INSTDIR\\icons\\Moon.ico' \\
+    0 \\
+    SW_SHOWNORMAL \\
+    '' \\
+    'Launch ${raceintospace_NAME_VERSION}' 
+CreateShortCut '$DESKTOP\\${raceintospace_NAME_VERSION}.lnk' \\
+    '$INSTDIR\\raceintospace.exe' \\
+    '' \\
+    '$INSTDIR\\icons\\Moon.ico' \\
+    0 \\
+    SW_SHOWNORMAL \\
+    '' \\
+    'Launch ${raceintospace_NAME_VERSION}' 
+Pop $OUTDIR
+")
+set(CPACK_NSIS_CREATE_ICONS_EXTRA "
+Push $OUTDIR
+StrCpy $OUTDIR $INSTDIR
+CreateShortCut '$SMPROGRAMS\\$STARTMENU_FOLDER\\${raceintospace_NAME_VERSION}.lnk' \\
+    '$INSTDIR\\raceintospace.exe' \\
+    '' \\
+    '$INSTDIR\\icons\\Moon.ico' \\
+    0 \\
+    SW_SHOWNORMAL \\
+    '' \\
+    'Launch ${raceintospace_NAME_VERSION}' 
+Pop $OUTDIR
+")
+set(CPACK_NSIS_DELETE_ICONS_EXTRA "
+Delete '$SMPROGRAMS\\$STARTMENU_FOLDER\\${raceintospace_NAME_VERSION}.lnk'
+")
+set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+Delete '$INSTDIR\\${raceintospace_NAME_VERSION}.lnk'
+Delete '$DESKTOP\\${raceintospace_NAME_VERSION}.lnk'
+") 

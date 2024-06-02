@@ -23,6 +23,7 @@ jobs:
           fetch-depth: 0
 
       - uses: lukka/get-cmake@latest
+
       - name: List $RUNNER_WORKSPACE before vcpkg is setup
         run: find $RUNNER_WORKSPACE
         shell: bash
@@ -37,11 +38,9 @@ jobs:
           # Leverage the cache containing vcpkg executable and data files (e.g. port files).
           doNotCache: false
 
-      - name: List $RUNNER_WORKSPACE before build
-        run: find $RUNNER_WORKSPACE
-        shell: bash
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+
       - name: Run CMake+vcpkg+Ninja
         uses: lukka/run-cmake@v10
         id: runcmake
@@ -49,15 +48,30 @@ jobs:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'windows-release'
           buildPreset: 'windows-release'
-          #packagePreset: 'windows-release'
-      - name: List $RUNNER_WORKSPACE after build
-        run: find $RUNNER_WORKSPACE
+          packagePreset: 'windows-release'
+
+      - name: Read output package name
+        id: read-package-name
         shell: bash
+        run: |
+          PACKAGE_FILE_NAME=$(cat build/release/cpack_package_name.txt)
+          echo "Package file name: $PACKAGE_FILE_NAME"
+          echo "{package_file_name}={$PACKAGE_FILE_NAME}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: windows-build-${{ github.ref_name }}-${{ github.sha }}
+          name: windows-binaries-${{ github.sha }}
+          retention-days: 7
           if-no-files-found: error
           compression-level: 9
           path: |
             build/release/src/game/*.exe
             build/release/src/game/*.dll
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-latest # keep only one artifact to limit storage requirements
+          overwrite: true
+          if-no-files-found: error
+          compression-level: 0
+          path: ${{ steps.read-package-name.outputs.package_file_name }}

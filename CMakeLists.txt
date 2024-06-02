@@ -1,5 +1,5 @@
 # CXX_STANDARD requires more recent CMake
-cmake_minimum_required (VERSION 3.21...3.29)
+cmake_minimum_required (VERSION 3.25...3.29)
 project(raceintospace VERSION 2.0.0)
 
 enable_testing()
@@ -30,12 +30,49 @@ endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
 # add_subdirectory(lib)
 add_subdirectory(src)
-install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
-install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
-install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
-	DESTINATION share/metainfo)
 
-set(CPACK_GENERATOR TGZ)
+# Distribution
+set(CPACK_PACKAGE_NAME "Race Into Space")
+set(CPACK_PACKAGE_VENDOR "Race Into Space")
+set(CPACK_PACKAGE_VERSION "${raceintospace_VERSION_FULL}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+if (WINDOWS)
+	configure_file("${PROJECT_SOURCE_DIR}/cmake/NsisCpack.cmake.in"
+                   "${PROJECT_BINARY_DIR}/NsisCpack.cmake"
+				   @ONLY)
+	set(CPACK_PROJECT_CONFIG_FILE
+		"${PROJECT_BINARY_DIR}/NsisCpack.cmake")
+    set(CPACK_GENERATOR NSIS)
+	install(TARGETS raceintospace DESTINATION .)
+	install(TARGETS raceintospace
+		RUNTIME_DEPENDENCIES
+			PRE_EXCLUDE_REGEXES
+				"^api-ms-.*" # windows API
+				"^ext-ms-.*" # windows API
+				"^hvsifiletrust\\.dll$"
+				"^pdmutilities\\.dll$"
+			POST_EXCLUDE_REGEXES
+				".*WINDOWS[\\/]system.*"
+			RUNTIME DESTINATION .)
+	install(DIRECTORY data/audio data/gamedata data/images data/video icons DESTINATION .)
+	install(FILES COPYING README.md AUTHORS DESTINATION .)
+else (WINDOWS)
+	install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
+	install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
+	install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
+		DESTINATION share/metainfo)
+
+	set(CPACK_GENERATOR TGZ)
+endif(WINDOWS)
+
+# Output generated CPack package name to a file so we can read that in CI
+configure_file("${PROJECT_SOURCE_DIR}/cmake/CpackWritePackageNames.cmake.in"
+			   "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames.cmake"
+			   @ONLY)
+set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames.cmake")
 set(CPACK_SOURCE_GENERATOR TGZ)
 include(CPack)
 

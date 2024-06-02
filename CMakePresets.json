@@ -1,8 +1,8 @@
 {
-    "version": 3,
+    "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 21,
+        "minor": 25,
         "patch": 0
     },
     "configurePresets": [
@@ -26,6 +26,11 @@
             "name": "windows",
             "displayName": "Windows build vcpkg & ninja settings",
             "generator": "Ninja",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "./vcpkg/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_TARGET_TRIPLET": "x64-windows"
@@ -58,6 +63,15 @@
             "name": "windows-debug",
             "displayName": "Windows debug build",
             "configurePreset": "windows-debug"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "windows-release",
+            "configurePreset": "windows-release",
+            "generators": [
+                "NSIS"
+            ]
         }
     ]
 }
