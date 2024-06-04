@@ -28,16 +28,16 @@ grGetMouseButtons(void)
 int
 grGetMousePressedPos(int *xp, int *yp)
 {
-    *xp = av_mouse_pressed_x / 2;
-    *yp = av_mouse_pressed_y / 2;
+    *xp = av_mouse_pressed_x / display::graphics.SCALE;
+    *yp = av_mouse_pressed_y / display::graphics.SCALE;
     return (0);
 }
 
 int
 grGetMouseCurPos(int *xp, int *yp)
 {
-    *xp = av_mouse_cur_x / 2;
-    *yp = av_mouse_cur_y / 2;
+    *xp = av_mouse_cur_x / display::graphics.SCALE;
+    *yp = av_mouse_cur_y / display::graphics.SCALE;
     return (0);
 }
 
@@ -103,7 +103,7 @@ grLineTo(int x_arg, int y_arg)
 
         error = error + deltay;
 
-        if (2 * error >= deltax) {
+        if (display::graphics.SCALE * error >= deltax) {
             y = y + ystep;
             error = error - deltax;
         }

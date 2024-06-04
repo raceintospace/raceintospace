@@ -509,7 +509,7 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     if (!dst)
         dst = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                   2 * src->w, 2 * src->h,
+                                   display::graphics.SCALE * src->w, display::graphics.SCALE * src->h,
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
 
     if (!dst) {
@@ -518,8 +518,9 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     bpp = pf->BytesPerPixel;
 
-    if (2 * src->h != dst->h
-        || 2 * src->w != dst->w || bpp != dst->format->BytesPerPixel) {
+    if (display::graphics.SCALE * src->h != dst->h
+        || display::graphics.SCALE * src->w != dst->w 
+        || bpp != dst->format->BytesPerPixel) {
         SDL_SetError("dst surface size or bpp mismatch (%d vs %d)",
                      bpp, dst->format->BytesPerPixel);
         return NULL;
@@ -539,11 +540,11 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     SDL_GetClipRect(dst, &clp);
 
-    for (y = clp.y / 2; y < clp.y / 2 + clp.h / 2; ++y) {
-        for (x = clp.x / 2; x < clp.x / 2 + clp.w / 2; ++x) {
+    for (y = clp.y / display::graphics.SCALE; y < clp.y / display::graphics.SCALE + clp.h / display::graphics.SCALE; ++y) {
+        for (x = clp.x / display::graphics.SCALE; x < clp.x / display::graphics.SCALE + clp.w / display::graphics.SCALE; ++x) {
             from = ((uint8_t *) src->pixels) + y * src->pitch + x * bpp;
-            to = ((uint8_t *) dst->pixels) + 2 * y * dst->pitch +
-                 2 * x * bpp;
+            to = ((uint8_t *) dst->pixels) + display::graphics.SCALE * y * dst->pitch +
+                 display::graphics.SCALE * x * bpp;
 
             switch (bpp) {
 #define ASSIGN do { \
@@ -666,24 +667,24 @@ av_sync(void)
     SDL_BlitSurface(display::graphics.scaledScreenSurface(), NULL, display::graphics.displaySurface(), NULL);
 
     if (display::graphics.videoRect().h && display::graphics.videoRect().w) {
-        r.h = 2 * display::graphics.videoRect().h;
-        r.w = 2 * display::graphics.videoRect().w;
-        r.x = 2 * display::graphics.videoRect().x;
-        r.y = 2 * display::graphics.videoRect().y;
+        r.h = display::graphics.SCALE * display::graphics.videoRect().h;
+        r.w = display::graphics.SCALE * display::graphics.videoRect().w;
+        r.x = display::graphics.SCALE * display::graphics.videoRect().x;
+        r.y = display::graphics.SCALE * display::graphics.videoRect().y;
         SDL_DisplayYUVOverlay(display::graphics.videoOverlay(), &r);
     }
 
     if (display::graphics.newsRect().h && display::graphics.newsRect().w) {
-        r.h = 2 * display::graphics.newsRect().h;
-        r.w = 2 * display::graphics.newsRect().w;
-        r.x = 2 * display::graphics.newsRect().x;
-        r.y = 2 * display::graphics.newsRect().y;
+        r.h = display::graphics.SCALE * display::graphics.newsRect().h;
+        r.w = display::graphics.SCALE * display::graphics.newsRect().w;
+        r.x = display::graphics.SCALE * display::graphics.newsRect().x;
+        r.y = display::graphics.SCALE * display::graphics.newsRect().y;
         SDL_DisplayYUVOverlay(display::graphics.newsOverlay(), &r);
     }
 
     //TODO: Since we're not always tracking the right dirty area (due to the graphics refactoring)
     // for now we update the entire display every time.
-    SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, 640, 400);
+    SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, display::graphics.WIDTH * display::graphics.SCALE, display::graphics.HEIGHT * display::graphics.SCALE);
 }
 
 void
