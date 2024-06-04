@@ -1719,7 +1719,7 @@ void Bre(char plr)
  */
 boost::shared_ptr<display::LegacySurface> LoadCIASprite()
 {
-    boost::shared_ptr<display::LegacySurface> surface(new display::LegacySurface(320, 200));
+    boost::shared_ptr<display::LegacySurface> surface(new display::LegacySurface(display::graphics.WIDTH, display::graphics.HEIGHT));
 
     std::string filename("images/cia.but.0.png");
     boost::shared_ptr<display::PalettizedSurface> sprite =
