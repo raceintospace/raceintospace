@@ -1,4 +1,5 @@
 #include "legacy_surface.h"
+#include "graphics.h"
 
 #include <cassert>
 #include <cstdlib>
