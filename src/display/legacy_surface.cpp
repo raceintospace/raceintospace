@@ -127,7 +127,7 @@ void LegacySurface::line(unsigned int x1, unsigned int y1, unsigned int x2, unsi
 
         error = error + deltay;
 
-        if (2 * error >= deltax) {
+        if (display::graphics.SCALE * error >= deltax) {
             y = y + ystep;
             error = error - deltax;
         }
