@@ -207,7 +207,7 @@ boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
 {
     boost::shared_ptr<display::LegacySurface> surface;
 
-    surface = boost::shared_ptr<display::LegacySurface>(new display::LegacySurface(320, 200));
+    surface = boost::shared_ptr<display::LegacySurface>(new display::LegacySurface(display::graphics.WIDTH, display::graphics.HEIGHT));
 
     char filename[128];
     snprintf(filename, sizeof(filename), "images/vab.img.%d.png", plr);
@@ -237,7 +237,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     for (j = x1; j <= x2; j += 3) {
         for (i = y1; i <= y2; i += 3) {
-            display::graphics.legacyScreen()->pixels()[j + 320 * i] = val;
+            display::graphics.legacyScreen()->pixels()[j + display::graphics.WIDTH * i] = val;
         }
     }
 
