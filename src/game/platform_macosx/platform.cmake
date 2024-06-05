@@ -52,6 +52,7 @@ add_executable("${app}" MACOSX_BUNDLE
   )
 
 target_link_libraries("${app}" PRIVATE ${game_libraries})
+target_include_directories("${app}" PRIVATE "${PROJECT_SOURCE_DIR}/src/game")
 
 # add_dependencies("${app}" libs)
 
