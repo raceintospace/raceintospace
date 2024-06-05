@@ -11,13 +11,16 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [windows, ubuntu]
+        os: [windows, ubuntu, macos]
         include:
           - os: windows
             preset: windows-release
-            package: windows-release
+            # package: windows-release
           - os: ubuntu
             preset: linux-vcpkg
+          - os: macos
+            preset: macos-vcpkg
+
     runs-on: ${{ matrix.os }}-latest
     name: ${{ github.workflow }}-${{ matrix.os }}
 
@@ -51,6 +54,11 @@ jobs:
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
 
+      - name: Install dependencies on macos
+        if: ${{ startsWith(matrix.os, 'macos') }}
+        id: macos-deps
+        run: brew install sdl
+
       - name: Run CMake and CPack
         uses: lukka/run-cmake@v10
         id: runcmake
@@ -59,6 +67,10 @@ jobs:
           configurePreset: ${{ matrix.preset }}
           buildPreset: ${{ matrix.preset }}
           packagePreset: ${{ matrix.package }}
+
+      - name: List $RUNNER_WORKSPACE after build
+        run: find $RUNNER_WORKSPACE
+        shell: bash
 
       - name: Read output package name
         if: ${{ matrix.package }}

@@ -91,6 +91,27 @@
                 "vcpkg",
                 "linux"
             ]
+        },
+        {
+            "name": "macos",
+            "displayName": "macos build",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "macos-vcpkg",
+            "displayName": "Macos vcpkg debug build",
+            "inherits": [
+                "debug",
+                "macos",
+                "vcpkg"
+            ],
+            "cacheVariables": {
+                "VCPKG_OVERLAY_PORTS": "./vcpkg-ports/sdl1"
+            }
         }
     ],
     "buildPresets": [
@@ -113,6 +134,11 @@
             "name": "linux-vcpkg",
             "displayName": "Linux vcpkg build",
             "configurePreset": "linux-vcpkg"
+        },
+        {
+            "name": "macos-vcpkg",
+            "displayName": "Macos vcpkg build",
+            "configurePreset": "macos-vcpkg"
         }
     ],
     "packagePresets": [
