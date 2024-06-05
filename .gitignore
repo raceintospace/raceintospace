@@ -7,3 +7,4 @@ build_*
 CMakeUserPresets.json
 .vscode
 vcpkg_installed
+.cache

@@ -23,6 +23,14 @@
             }
         },
         {
+            "name": "vcpkg",
+            "hidden": true,
+            "displayName": "Common vcpkg settings",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "./vcpkg/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
             "name": "windows",
             "displayName": "Windows build vcpkg & ninja settings",
             "generator": "Ninja",
@@ -30,10 +38,6 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
-            },
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "./vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "VCPKG_TARGET_TRIPLET": "x64-windows"
             }
         },
         {
@@ -41,6 +45,7 @@
             "displayName": "Windows release build",
             "inherits": [
                 "release",
+                "vcpkg",
                 "windows"
             ]
         },
@@ -49,7 +54,42 @@
             "displayName": "Windows debug build",
             "inherits": [
                 "debug",
+                "vcpkg",
                 "windows"
+            ]
+        },
+        {
+            "name": "linux",
+            "displayName": "Linux build vcpkg & ninja settings",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux release build",
+            "inherits": [
+                "release",
+                "linux"
+            ]
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux debug build",
+            "inherits": [
+                "debug",
+                "linux"
+            ]
+        },
+        {
+            "name": "linux-vcpkg",
+            "displayName": "Linux vcpkg debug build",
+            "inherits": [
+                "debug",
+                "vcpkg",
+                "linux"
             ]
         }
     ],
@@ -63,6 +103,16 @@
             "name": "windows-debug",
             "displayName": "Windows debug build",
             "configurePreset": "windows-debug"
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux release build",
+            "configurePreset": "linux-release"
+        },
+        {
+            "name": "linux-vcpkg",
+            "displayName": "Linux vcpkg build",
+            "configurePreset": "linux-vcpkg"
         }
     ],
     "packagePresets": [

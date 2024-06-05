@@ -92,7 +92,7 @@ set (ui_sources
 find_package(Ogg REQUIRED)
 find_package(unofficial-theora CONFIG REQUIRED)
 find_package(PhysFS CONFIG REQUIRED)
-find_package(JsonCPP REQUIRED)
+find_package(jsoncpp REQUIRED)
 find_package(cereal REQUIRED)
 find_package(Boost REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -101,7 +101,7 @@ set(game_libraries
   Ogg::ogg
   unofficial::theora::theoradec
   JsonCpp::JsonCpp
-  PhysFS::PhysFS
+  $<IF:$<TARGET_EXISTS:PhysFS::PhysFS>,PhysFS::PhysFS,PhysFS::PhysFS-static>
   ZLIB::ZLIB
   raceintospace_display
   raceintospace_protobuf

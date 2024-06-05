@@ -3,15 +3,23 @@
 # SPDX short identifier: MIT
 #
 # Source: https://raw.githubusercontent.com/lukka/CppBuildTasks-Validation/v10/.github/workflows/hosted-ninja-vcpkg_submod-autocache.yml
-name: windows build
+name: CI
 on: [push, workflow_dispatch]
 
 jobs:
   job:
-    name: ${{ github.workflow }}
-    runs-on: windows-latest
     strategy:
       fail-fast: true
+      matrix:
+        os: [windows, ubuntu]
+        include:
+          - os: windows
+            preset: windows-release
+            package: windows-release
+          - os: ubuntu
+            preset: linux-vcpkg
+    runs-on: ${{ matrix.os }}-latest
+    name: ${{ github.workflow }}-${{ matrix.os }}
 
     steps:
       - name: Checkout repository
@@ -48,11 +56,12 @@ jobs:
         id: runcmake
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'windows-release'
-          buildPreset: 'windows-release'
-          packagePreset: 'windows-release'
+          configurePreset: ${{ matrix.preset }}
+          buildPreset: ${{ matrix.preset }}
+          packagePreset: ${{ matrix.package }}
 
       - name: Read output package name
+        if: ${{ matrix.package }}
         id: readpkg
         shell: bash
         run: |
@@ -61,6 +70,7 @@ jobs:
           echo "package_file_name=$PACKAGE_FILE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Upload windows binaries artifact
+        if: ${{ matrix.package }}
         uses: actions/upload-artifact@v4
         with:
           name: windows-binaries-${{ github.sha }}
@@ -72,6 +82,7 @@ jobs:
             build/release/src/game/*.dll
 
       - name: Upload windows installer artifact
+        if: ${{ matrix.package }}
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer-latest # keep only one artifact to limit storage requirements
