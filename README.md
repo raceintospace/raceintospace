@@ -1,4 +1,4 @@
-![windows build status](https://github.com/kkosciusz/raceintospace/actions/workflows/build-windows-vcpkg.yaml/badge.svg?event=push)
+![build status](https://github.com/kkosciusz/raceintospace/actions/workflows/CI.yaml/badge.svg?event=push)
 
 Race into Space
 ===============
@@ -81,7 +81,7 @@ subfolder to go, and run:
     git clone https://github.com/raceintospace/raceintospace
 
 
-## Music
+Music
 =====
 
 Due to copyright concerns, the game's music has been placed in a nonfree repository.
@@ -189,25 +189,25 @@ Windows
 Ingredients:
 
 * [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
-    * Install at least *MSVC*, *C++ CMake for Windows* and *Windows <ver> SDK* components!
+    * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!
     * Full IDE is not needed
 * [CMake](https://www.cmake.org/cmake/resources/software.html) (free, also included above)
 * [Git](https://git-scm.com/downloads) or [GitHub for Windows](https://desktop.github.com/) (free)
 
 Open the command prompt and make sure git, your compiler and cmake are accessible (check [Visual Studio Developer Command Prompt and Developer PowerShell](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022))
 
-Then clone, configure and build the software:
+Then clone, configure and build the game:
 
-```cmd
+```
 cd <some_directory>
-git clone --recursive https://github.com/raceintospace/raceintospace.git
+git clone --recurse-submodules https://github.com/raceintospace/raceintospace.git
 cd raceintospace
 cmake --build --preset windows-release
 ```
 
 After building, you can start the game:
 
-```cmd
+```
 .\build\release\src\game\raceintospace.exe BARIS_DATA=data BARIS_SAVE=.\save
 ```
 
