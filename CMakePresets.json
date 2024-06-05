@@ -12,6 +12,9 @@
             "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
             }
         },
         {
@@ -20,6 +23,9 @@
             "binaryDir": "${sourceDir}/build/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            },
+            "environment": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
             }
         },
         {
