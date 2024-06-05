@@ -51,9 +51,9 @@ add_executable("${app}" MACOSX_BUNDLE
   ${BundleResources}
   )
 
-target_link_libraries("${app}" ${game_libraries})
+target_link_libraries("${app}" PRIVATE ${game_libraries})
 
-add_dependencies("${app}" libs)
+# add_dependencies("${app}" libs)
 
 set_target_properties("${app}" PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/src/game/platform_macosx/Info.plist.in
