@@ -30,7 +30,7 @@
 #include <cassert>
 #include <memory>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "raceintospace_config.h"

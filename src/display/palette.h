@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstdio>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 
 namespace display

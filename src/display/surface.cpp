@@ -3,7 +3,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 
 namespace display

@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <memory>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "surface.h"
 #include "legacy_surface.h"

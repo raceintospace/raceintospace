@@ -1,7 +1,7 @@
 #ifndef SDLHELPER_H
 #define SDLHELPER_H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 struct audio_chunk {
     struct audio_chunk *next;
