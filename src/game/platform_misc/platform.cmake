@@ -5,10 +5,7 @@ add_definitions(-DHAVE_SDL_GETENV)
 # Make sure we can find fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_misc)
 
-# Make sure music dependencies are met
-find_package(Vorbis CONFIG REQUIRED)
 list(APPEND ui_sources music_vorbis.cpp)
-list(APPEND game_libraries Vorbis::vorbis)
 
 set(app "raceintospace")
 
