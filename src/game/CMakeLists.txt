@@ -90,20 +90,28 @@ set (ui_sources
   )
 
 find_package(Ogg REQUIRED)
-find_package(unofficial-theora CONFIG REQUIRED)
-find_package(Vorbis CONFIG REQUIRED)
-find_package(PhysFS CONFIG REQUIRED)
+find_package(unofficial-theora REQUIRED) # name from vcpkg ports
+find_package(Vorbis REQUIRED)
 find_package(jsoncpp REQUIRED)
 find_package(cereal REQUIRED)
 find_package(Boost REQUIRED)
 find_package(ZLIB REQUIRED)
+
+# vcpkg only works with CONFIG
+find_package(PhysFS CONFIG QUIET)
+set(physfs_library "PhysFS::PhysFS-static")
+if (NOT PhysFS_FOUND)
+  # CMake module FindPhysFS only works without CONFIG
+  find_package(PhysFS REQUIRED)
+  set(physfs_library ${PHYSFS_LIBRARY})
+endif()
 
 set(game_libraries
   Ogg::ogg
   Vorbis::vorbis
   unofficial::theora::theoradec
   JsonCpp::JsonCpp
-  $<IF:$<TARGET_EXISTS:PhysFS::PhysFS>,PhysFS::PhysFS,PhysFS::PhysFS-static>
+  "$<IF:$<TARGET_EXISTS:PhysFS::PhysFS>,PhysFS::PhysFS,${physfs_library}>"
   ZLIB::ZLIB
   raceintospace_display
   raceintospace_protobuf

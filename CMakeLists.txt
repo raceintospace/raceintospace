@@ -8,6 +8,8 @@ set (raceintospace_VERSION_EXTRA rc3)
 set (raceintospace_VERSION_FULL
 	"${raceintospace_VERSION}${raceintospace_VERSION_EXTRA}")
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 # Platform detection
 if (WIN32 AND NOT WINDOWS)
   set (WINDOWS TRUE)

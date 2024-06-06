@@ -100,11 +100,11 @@ on a Debian-based system, you can get everything with:
 
     sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev \
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
-        libprotobuf-dev protobuf-compiler
+        libphysfs-dev libcereal-dev libprotobuf-dev protobuf-compiler
 
 Or enter this all on one line:
 
-    sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
+    sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libphysfs-dev libcereal-dev libprotobuf-dev protobuf-compiler
 
 If you don't already have git installed, you'll also have to run:
 
@@ -120,7 +120,7 @@ If you are on a Fedora-based system, you can get everything with:
 
     $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel \
         libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
-        physfs-devel libpng-devel
+        physfs-devel libpng-devel libcereal-devel
 
 ### Build
 

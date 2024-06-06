@@ -11,18 +11,19 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [windows, ubuntu, macos]
         include:
           - os: windows
             preset: windows-release
             # package: windows-release
           - os: ubuntu
             preset: linux-vcpkg
+          - os: ubuntu
+            preset: linux-release
           - os: macos
             preset: macos-vcpkg
 
     runs-on: ${{ matrix.os }}-latest
-    name: ${{ github.workflow }}-${{ matrix.os }}
+    name: ${{ github.workflow }}-${{ matrix.preset }}
 
     steps:
       - name: Checkout repository
@@ -58,6 +59,11 @@ jobs:
         if: ${{ startsWith(matrix.os, 'macos') }}
         id: macos-deps
         run: brew install sdl
+
+      - name: Install dependencies on linux
+        if: ${{ startsWith(matrix.os, 'ubuntu') && !contains(matrix.preset, 'vcpkg') }}
+        id: linux-deps
+        run: sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
       - name: Run CMake and CPack
         uses: lukka/run-cmake@v10
