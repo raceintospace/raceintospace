@@ -9,7 +9,7 @@ on: [push, workflow_dispatch]
 jobs:
   job:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - os: windows
@@ -65,13 +65,39 @@ jobs:
         id: linux-deps
         run: sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
-      - name: Run CMake and CPack
+      - name: Run CMake configure
         uses: lukka/run-cmake@v10
-        id: runcmake
+        id: runcmake-config
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: ${{ matrix.preset }}
+          configurePresetAdditionalArgs: "['-DPROTOBUF_DEBUG=YES']"
           buildPreset: ${{ matrix.preset }}
+          buildPresetAdditionalArgs: "['--parallel', '--target', 'dummy']"
+
+      - name: List protobuf buildtree
+        if: ${{ contains(matrix.preset, 'windows') }}
+        shell: bash
+        run: find vcpkg/buildtrees/protobuf
+
+      - name: Save protobuf buildtree
+        uses: actions/upload-artifact@v4
+        if: ${{ contains(matrix.preset, 'windows') }}
+        with:
+          name: windows-buildtree-protobuf
+          overwrite: true
+          if-no-files-found: error
+          path: |
+            vcpkg/buildtrees/protobuf/*.log
+            vcpkg/buildtrees/protobuf/*.txt
+
+      - name: Run CMake build
+        uses: lukka/run-cmake@v10
+        id: runcmake-build
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          buildPreset: ${{ matrix.preset }}
+          buildPresetAdditionalArgs: "['--parallel']"
           packagePreset: ${{ matrix.package }}
 
       - name: List $RUNNER_WORKSPACE after build
