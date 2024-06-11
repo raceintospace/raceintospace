@@ -120,6 +120,11 @@ void Graphics::setBackgroundColor(char color)
     _backgroundColor = color;
 }
 
+void Graphics::updateScale(int scale)
+{
+	SCALE = scale;
+}
+
 /*
 void Display::present() {
     doScale();
