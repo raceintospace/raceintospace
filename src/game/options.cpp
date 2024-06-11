@@ -112,10 +112,10 @@ static const struct {
         "Set to 1 if you want (ugly) full-screen game."
     },
     {
-		"4xscale",  &options.want_4xscale, "%u", 0,
-		"By default now the game is displayed at 4x scale."
-		"Set to 0 if you want the game to display at the classic 2x scale"
-	},
+	"4xscale",  &options.want_4xscale, "%u", 0,
+	"By default now the game is displayed at 4x scale."
+	"\n# Set to 0 if you want the game to display at the classic 2x scale."
+    },
     {
         "debuglevel", &options.want_debug, "%u", 0,
         "Set to positive values to increase debugging verbosity."
