@@ -475,7 +475,7 @@ void ResetToDefaultOptions()
     options.want_intro = 1;
     options.want_cheats = 0;
     options.want_fullscreen = 0;
-    options.want_4xscale = 0;
+    options.want_4xscale = 1;
     options.want_debug = 0;
 
     // Gameplay aspects
