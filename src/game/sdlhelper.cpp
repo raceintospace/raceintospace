@@ -509,7 +509,7 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     if (!dst)
         dst = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                   display::graphics.SCALE * src->w, display::graphics.SCALE * src->h,
+                                   2 * src->w, 2 * src->h,
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
 
     if (!dst) {
@@ -518,8 +518,8 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     bpp = pf->BytesPerPixel;
 
-    if (display::graphics.SCALE * src->h != dst->h
-        || display::graphics.SCALE * src->w != dst->w 
+    if (2 * src->h != dst->h
+        || 2 * src->w != dst->w 
         || bpp != dst->format->BytesPerPixel) {
         SDL_SetError("dst surface size or bpp mismatch (%d vs %d)",
                      bpp, dst->format->BytesPerPixel);
@@ -540,11 +540,11 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
 
     SDL_GetClipRect(dst, &clp);
 
-    for (y = clp.y / display::graphics.SCALE; y < clp.y / display::graphics.SCALE + clp.h / display::graphics.SCALE; ++y) {
-        for (x = clp.x / display::graphics.SCALE; x < clp.x / display::graphics.SCALE + clp.w / display::graphics.SCALE; ++x) {
+    for (y = clp.y / 2; y < clp.y / 2 + clp.h / 2; ++y) {
+        for (x = clp.x / 2; x < clp.x / 2 + clp.w / 2; ++x) {
             from = ((uint8_t *) src->pixels) + y * src->pitch + x * bpp;
-            to = ((uint8_t *) dst->pixels) + display::graphics.SCALE * y * dst->pitch +
-                 display::graphics.SCALE * x * bpp;
+            to = ((uint8_t *) dst->pixels) + 2 * y * dst->pitch +
+                 2 * x * bpp;
 
             switch (bpp) {
 #define ASSIGN do { \
@@ -586,6 +586,198 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
                 break;
 #undef TYPE
 #undef ASSIGN
+            }
+        }
+    }
+
+    if (SDL_MUSTLOCK(dst)) {
+        SDL_UnlockSurface(dst);
+    }
+
+    if (SDL_MUSTLOCK(src)) {
+        SDL_UnlockSurface(src);
+    }
+
+    return dst;
+}
+
+static SDL_Surface *
+SDL_Scale4x(SDL_Surface *src, SDL_Surface *dst)
+{
+    int x, y, bpp;
+    uint8_t *from, *to;
+    SDL_Rect clp;
+    SDL_PixelFormat *pf;
+
+    assert(src);
+    assert(src != dst);
+
+    pf = src->format;
+
+    if (!dst)
+        dst = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                   4 * src->w, 4 * src->h,
+                                   pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
+
+    if (!dst) {
+        return NULL;
+    }
+
+    bpp = pf->BytesPerPixel;
+
+    if (4 * src->h != dst->h || 4 * src->w != dst->w || bpp != dst->format->BytesPerPixel) {
+        SDL_SetError("dst surface size or bpp mismatch (%d vs %d)", bpp, dst->format->BytesPerPixel);
+        return NULL;
+    }
+
+    if (bpp == 1) {
+        SDL_SetColors(dst, pf->palette->colors, 0, pf->palette->ncolors);
+    }
+
+    if (SDL_MUSTLOCK(src)) {
+        SDL_LockSurface(src);
+    }
+
+    if (SDL_MUSTLOCK(dst)) {
+        SDL_LockSurface(dst);
+    }
+
+    SDL_GetClipRect(dst, &clp);
+
+    int src_pitch = src->pitch;
+    int dst_pitch = dst->pitch;
+
+    for (y = 0; y < src->h; ++y) {
+        from = (uint8_t *)src->pixels + y * src_pitch;
+        to = (uint8_t *)dst->pixels + 4 * y * dst_pitch;
+
+        for (x = 0; x < src->w; ++x) {
+            uint8_t *src_pixel = from + x * bpp;
+            uint8_t *dst_pixel = to + 4 * x * bpp;
+
+            switch (bpp) {
+                case 1:
+                    dst_pixel[0] = src_pixel[0];
+                    dst_pixel[1] = src_pixel[0];
+                    dst_pixel[2] = src_pixel[0];
+                    dst_pixel[3] = src_pixel[0];
+                    dst_pixel[dst_pitch] = src_pixel[0];
+                    dst_pixel[dst_pitch + 1] = src_pixel[0];
+                    dst_pixel[dst_pitch + 2] = src_pixel[0];
+                    dst_pixel[dst_pitch + 3] = src_pixel[0];
+                    dst_pixel[2 * dst_pitch] = src_pixel[0];
+                    dst_pixel[2 * dst_pitch + 1] = src_pixel[0];
+                    dst_pixel[2 * dst_pitch + 2] = src_pixel[0];
+                    dst_pixel[2 * dst_pitch + 3] = src_pixel[0];
+                    dst_pixel[3 * dst_pitch] = src_pixel[0];
+                    dst_pixel[3 * dst_pitch + 1] = src_pixel[0];
+                    dst_pixel[3 * dst_pitch + 2] = src_pixel[0];
+                    dst_pixel[3 * dst_pitch + 3] = src_pixel[0];
+                    break;
+                case 2:
+                    ((uint16_t *)dst_pixel)[0] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)dst_pixel)[1] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)dst_pixel)[2] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)dst_pixel)[3] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
+                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
+                    break;
+                case 3:
+                    dst_pixel[0] = src_pixel[0];
+                    dst_pixel[1] = src_pixel[1];
+                    dst_pixel[2] = src_pixel[2];
+                    dst_pixel[3] = src_pixel[0];
+                    dst_pixel[4] = src_pixel[1];
+                    dst_pixel[5] = src_pixel[2];
+                    dst_pixel[6] = src_pixel[0];
+                    dst_pixel[7] = src_pixel[1];
+                    dst_pixel[8] = src_pixel[2];
+                    dst_pixel[9] = src_pixel[0];
+                    dst_pixel[10] = src_pixel[1];
+                    dst_pixel[11] = src_pixel[2];
+                    dst_pixel[12] = src_pixel[0];
+                    dst_pixel[13] = src_pixel[1];
+                    dst_pixel[14] = src_pixel[2];
+                    dst_pixel[15] = src_pixel[0];
+                    dst_pixel[16] = src_pixel[1];
+                    dst_pixel[17] = src_pixel[2];
+                    dst_pixel[18] = src_pixel[0];
+                    dst_pixel[19] = src_pixel[1];
+                    dst_pixel[20] = src_pixel[2];
+                    dst_pixel[21] = src_pixel[0];
+                    dst_pixel[22] = src_pixel[1];
+                    dst_pixel[23] = src_pixel[2];
+                    dst_pixel[24] = src_pixel[0];
+                    dst_pixel[25] = src_pixel[1];
+                    dst_pixel[26] = src_pixel[2];
+                    dst_pixel[27] = src_pixel[0];
+                    dst_pixel[27] = src_pixel[1];
+                    dst_pixel[28] = src_pixel[2];
+                    dst_pixel[29] = src_pixel[0];
+                    dst_pixel[30] = src_pixel[1];
+                    dst_pixel[31] = src_pixel[2];
+                    dst_pixel[32] = src_pixel[0];
+                    dst_pixel[33] = src_pixel[1];
+                    dst_pixel[34] = src_pixel[2];
+                    dst_pixel[35] = src_pixel[0];
+                    dst_pixel[36] = src_pixel[1];
+                    dst_pixel[37] = src_pixel[2];
+                    dst_pixel[38] = src_pixel[0];
+                    dst_pixel[39] = src_pixel[1];
+                    dst_pixel[40] = src_pixel[2];
+                    dst_pixel[41] = src_pixel[0];
+                    dst_pixel[42] = src_pixel[1];
+                    dst_pixel[43] = src_pixel[2];
+                    dst_pixel[44] = src_pixel[0];
+                    dst_pixel[45] = src_pixel[1];
+                    dst_pixel[46] = src_pixel[2];
+                    dst_pixel[47] = src_pixel[0];
+                    dst_pixel[48] = src_pixel[1];
+                    dst_pixel[49] = src_pixel[2];
+                    dst_pixel[50] = src_pixel[0];
+                    dst_pixel[51] = src_pixel[1];
+                    dst_pixel[52] = src_pixel[2];
+                    dst_pixel[53] = src_pixel[0];
+                    dst_pixel[54] = src_pixel[1];
+                    dst_pixel[55] = src_pixel[2];
+                    dst_pixel[56] = src_pixel[0];
+                    dst_pixel[57] = src_pixel[1];
+                    dst_pixel[58] = src_pixel[2];
+                    dst_pixel[59] = src_pixel[0];
+                    dst_pixel[60] = src_pixel[1];
+                    dst_pixel[61] = src_pixel[2];
+                    dst_pixel[62] = src_pixel[0];
+                    dst_pixel[63] = src_pixel[1];
+                    dst_pixel[64] = src_pixel[2];
+                    break;
+                case 4:
+                    ((uint32_t *)dst_pixel)[0] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)dst_pixel)[1] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)dst_pixel)[2] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)dst_pixel)[3] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
+                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
+                    break;
             }
         }
     }
@@ -660,8 +852,14 @@ av_sync(void)
     Uint32 ticks = SDL_GetTicks();
 #endif
 
-    SDL_Scale2x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
-    /* copy palette and handle fading! */
+    //Screen scaling Options
+    if (!options.want_4xscale) {
+		SDL_Scale2x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
+	}
+	else {
+		SDL_Scale4x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
+	}
+    
     transform_palette();
     SDL_SetColors(display::graphics.scaledScreenSurface(), pal_colors, 0, 256);
     SDL_BlitSurface(display::graphics.scaledScreenSurface(), NULL, display::graphics.displaySurface(), NULL);

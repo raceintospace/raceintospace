@@ -6,6 +6,7 @@ typedef struct {
     char *dir_gamedata;
     unsigned want_audio;
     unsigned want_fullscreen;
+    unsigned want_4xscale;
     unsigned want_intro;
     unsigned want_cheats;
     unsigned want_debug;

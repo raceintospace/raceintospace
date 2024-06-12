@@ -22,11 +22,12 @@ public:
 
     static const int WIDTH = 320;
     static const int HEIGHT = 200;
-    static const int SCALE = 2;
     static const int VIDEO_WIDTH = 160;
     static const int VIDEO_HEIGHT = 100;
     static const int NEWS_WIDTH = 312;
     static const int NEWS_HEIGHT = 106;
+
+    int SCALE = 4; // SCALE is now a variable to allow Scale Filters
 
     void create(const std::string &title, bool fullscreen);
     void destroy();
@@ -80,6 +81,7 @@ public:
 
     void setForegroundColor(char color);
     void setBackgroundColor(char color);
+    void updateScale(int scale);
 
 private:
     LegacySurface *_screen;
