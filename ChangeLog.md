@@ -16,8 +16,8 @@
 * We've added some JSON serialization for game data and save games. (#478)
 * Deserialization of JSON files has been moved to the initialization of the game, improving its performance (#774)
 * Removed redundant code in the spaceport menus that redrew the date and cash values (#773)
-* The abbreviation for the sound to play in the Intelligence screens was "INTELLEG"&mdash;now "INTELLIG"
-* In the config file, "altasLunar" has been corrected to "atlasLunar"
+* The abbreviation for the sound to play in the Intelligence screens was "INTELLEG"&mdash;now "INTELLIG" (#523, #539)
+* In the config file, "altasLunar" has been corrected to "atlasLunar" (#520)
 * The music files have been moved to a separate repository for copyright reasons.
 * Fixed several out-of-bounds memory reads in the AI and astronaut code, which may have led to inconsistent AI behavior, or doing things it shouldn't (#825)
 * Removed several unused variables and renames others given nonsensical names (#846)
