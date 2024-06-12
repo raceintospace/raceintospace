@@ -10,6 +10,7 @@
 
 #include "surface.h"
 #include "legacy_surface.h"
+#include "../game/options.h" // for setting the scaling
 
 // FIXME: let's try to avoid this
 #include "../game/sdlhelper.h"
@@ -56,6 +57,11 @@ void Graphics::create(const std::string &title, bool fullscreen)
     if (fullscreen) {
         modeFlag = SDL_FULLSCREEN;
     }
+
+	// Check for option wantscale4x
+	if (!options.want_4xscale) {
+		updateScale(2);
+	}
 
     _display = SDL_SetVideoMode(WIDTH * SCALE, HEIGHT * SCALE, 24, modeFlag);
 
