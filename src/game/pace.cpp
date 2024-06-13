@@ -320,7 +320,7 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size)
         offset += read;
 
         if (*size <= offset) {
-            *data = (char *)xrealloc(*data, *size *= 2);
+            *data = (char *)xrealloc(*data, *size += 1024);
         }
     }
 
