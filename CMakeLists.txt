@@ -30,7 +30,6 @@ if("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 	add_definitions(-DDEBUG)
 endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
-# add_subdirectory(lib)
 add_subdirectory(src)
 
 # Distribution
@@ -100,4 +99,3 @@ endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${raceintospace_VERSION_FULL})
-

@@ -17,7 +17,6 @@ add_executable(${app}
 
 target_link_libraries(${app} PRIVATE ${game_libraries})
 
-# add_dependencies(${app} libs)
 install(TARGETS raceintospace DESTINATION bin)
 
 file(GLOB data_dirs "${PROJECT_SOURCE_DIR}/data/*")

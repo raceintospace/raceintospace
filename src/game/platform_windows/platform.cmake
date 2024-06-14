@@ -25,5 +25,3 @@ add_executable(${app}
   )
 
 target_link_libraries(${app} PRIVATE ${game_libraries})
-
-# add_dependencies(${app} libs)
