@@ -101,4 +101,3 @@ endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${raceintospace_VERSION_FULL})
 
-add_custom_target(dummy COMMAND echo dummy)
