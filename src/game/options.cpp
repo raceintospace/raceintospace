@@ -112,7 +112,7 @@ static const struct {
         "Set to 1 if you want to display the game at full-screen."
     },
     {
-	"4xscale",  &options.want_4xscale, "%u", 0,
+	"xscale",  &options.want_4xscale, "%u", 0,
 	"By default now the game is displayed at 4x scale."
 	"\n# Set to 0 if you want to display the game at the classic 2x scale."
     },
