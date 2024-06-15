@@ -27,7 +27,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "Buzz_inc.h"
 #include "macros.h"

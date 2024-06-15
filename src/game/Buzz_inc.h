@@ -41,7 +41,7 @@ extern "C" {
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <SDL/SDL_config.h> // declares some of the same symbols as our config
+#include <SDL_config.h> // declares some of the same symbols as our config
 
 #include "raceintospace_config.h"
 #include "logging.h"

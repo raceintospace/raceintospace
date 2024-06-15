@@ -259,7 +259,7 @@ struct mStr GetMissionPlan(const int code)
         char error[1000];
         snprintf(error, sizeof(error),
                  "Error %d while seeking position in file MISSION.DAT: "
-                 "Seeking position %lu (%d blocks of size %lu)",
+                 "Seeking position %zu (%d blocks of size %zu)",
                  ferror(fin),
                  static_cast<const size_t>(code) * (sizeof(struct mStr)),
                  code, sizeof(struct mStr));

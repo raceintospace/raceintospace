@@ -1,5 +1,6 @@
-Race into Space [![Build Status](https://secure.travis-ci.org/raceintospace/raceintospace.png?branch=master)](https://travis-ci.org/raceintospace/raceintospace)
-===============
+![build status](https://github.com/raceintospace/raceintospace/actions/workflows/CI.yaml/badge.svg?event=push)
+
+# Race into Space
 
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
 Aldrin's Race into Space.  This is the  reworked version  following  the
@@ -18,17 +19,15 @@ so if you want to run the very latest version, you will have to download
 and compile the source.  Instructions are below.
 
 We have made a number of improvements to the game, and are hoping to do a 
-release soon.  The changes made can be viewed in ChangeLog.md above.
+release soon.  The changes made can be viewed in [ChangeLog.md](ChangeLog.md) above.
 
-License
-=======
+# License
 
 Race  Into Space  is distributed  under GNU  General Public  License
 (GPL)  version 2.  You can find  the  terms and  conditions in  file
 `COPYING`.
 
-Contributing
-============
+# Contributing
 
 We coordinate development through the [GitHub issue
 tracker](https://github.com/raceintospace/raceintospace/issues). Feel free to
@@ -47,49 +46,31 @@ Pull requests that don't match the project code style are still likely to be
 accepted after manually formatting and amending your changeset. The formatting
 tool (`astyle`) is completely automated; please try to use it.
 
-Building
-========
+# Obtaining source and data files
 
-You need CMake.
+Clone the git repository:
 
-The build system automatically finds, downloads, and/or compiles:
+    git clone --recurse-submodules git://github.com/raceintospace/raceintospace.git
 
-* SDL
-* Boost
-* zlib
-* libpng
-* jsoncpp
-* libogg
-* libvorbis
-* libtheora
-* libprotobuf / protoc
+Or try via https if you encounter issues with git protocol:
 
-The specifics of which things come from where will depend on your platform.
+    git clone --recurse-submodules https://github.com/raceintospace/raceintospace
 
-On UNIXy systems (including Mac OS X), you can build everything with:
+This creates sub-directory `raceintospace` where you can build the game.
 
-    $ git clone git://github.com/raceintospace/raceintospace.git
-    $ mkdir raceintospace-build; cd raceintospace-build
-    $ cmake ../raceintospace
-    $ make
+In case you did not specify `--recurse-submodules` when cloning the repository,
+you will need to initialize submodules inside the cloned repo:
 
-To download a copy of the game, go to the folder where you want the raceintospace 
-subfolder to go, and run:
+    git submodule init --recursive
 
-    git clone https://github.com/raceintospace/raceintospace
+# Building
 
+You need a modern C++ compiler and CMake.
 
-## Music
-=====
+The build system uses [vcpkg.io](https://vcpkg.io/) to automatically download
+and build all dependencies.
 
-Due to copyright concerns, the game's music has been placed in a nonfree repository.
-To add music to the game, run the following:
-
-    $ cd ~/ && git clone https://github.com/raceintospace/raceintospace-nonfree && cp -r ~/raceintospace-nonfree/data/audio/music/ ~/raceintospace/data/audio/ && cp -r ~/raceintospace-nonfree/data/midi/ ~/raceintospace/data/audio/
-
-
-Linux
------
+## Linux
 
 ### Debian/Ubuntu
 
@@ -98,11 +79,11 @@ on a Debian-based system, you can get everything with:
 
     sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev \
         libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev \
-        libprotobuf-dev protobuf-compiler
+        libphysfs-dev libcereal-dev libprotobuf-dev protobuf-compiler
 
 Or enter this all on one line:
 
-    sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
+    sudo apt-get install cmake libsdl1.2-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libphysfs-dev libcereal-dev libprotobuf-dev protobuf-compiler
 
 If you don't already have git installed, you'll also have to run:
 
@@ -118,92 +99,82 @@ If you are on a Fedora-based system, you can get everything with:
 
     $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel \
         libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
-        physfs-devel libpng-devel
+        physfs-devel libpng-devel libcereal-devel
 
-### Build
+### Build with system dependencies
 
-To compile the game quickly you can run a series of commands in-line. This 
-creates a folder where the compiled game will be installed. If you want it named 
-something other than raceintospace-build, simply change the name. The last two 
-commands also run the game automatically.
+To compile and run the game quickly run the following commands from the source directory:
 
-    mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make run
-Or:
-    mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+    cmake --preset linux-release
+    cmake --build --preset linux-release --target run
 
+The build directory is `build/release`, you can always delete it to start from a clean build.
 
-Once built, you can automatically delete the -build folder and recompile by entering this (assuming raceintospace and raceintospace-build are on the root of your home folder):
+### Build without system depencencies
 
-    cd ~/ && sudo mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+Alternatively, you can have all dependencies downloaded and built automatically:
 
-Used to be:
+    cmake --preset linux-vcpkg
+    cmake --build --preset linux-vcpkg --target run
 
-    cd ~/ && sudo rm -rf ~/raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
+### Installing
 
+To install in the default system location:
 
-After the first build, you can download the latest version of the source with:
+    sudo cmake --build --preset XXX --target install
 
-    cd ~/ && sudo rm -r raceintospace && git clone https://github.com/raceintospace/raceintospace
+To install in your home directory, you need to pass `--prefix` to configure first:
 
-Then delete raceintospace-build and recompile:
+    cmake --preset XXX --prefix "$HOME"
+    cmake --build --preset XXX --target install
 
-    cd ~/ && sudo rm -r raceintospace-build && mkdir raceintospace-build && cd raceintospace-build && cmake ../raceintospace && make && sudo make install && cd src/game && ./raceintospace
-
-
-You can run these commands separately, or just run the ones you need (for instance, 
-if you already have the folder you want the game installed to, there's of course 
-no need to create it.
-
-    mkdir raceintospace-build
-    cd raceintospace-build
-    cmake -DCMAKE_BUILD_TYPE=Debug ../raceintospace
-    make run
-
-Mac OS X
---------
+## Mac OS X
 
 You need CMake, which is readily obtained from
 [Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway.
-Homebrew also has a nice Boost package that doesn't cause any runtime linkage
-issues, so install that along with SDL:
+The only external dependency needed is `sdl`:
 
-    $ brew install cmake boost sdl
+    $ brew install cmake sdl
 
-CMake automatically handles the other dependencies using the stuff in `lib/`.
-Mac OS X sometimes includes libpng, and sometimes it doesn't, so we build our
-own. We do, however, rely on the platform-provided zlib.
+CMake and vcpkg automatically handle all other dependencies.
+
+To obtain source code and build use:
+
+    $ git clone --recurse-submodules git://github.com/raceintospace/raceintospace.git
+    $ cd raceintospace
+    $ cmake --preset macos-vcpkg
+    $ cmake --build --preset macos-vcpkg
 
 You might want to use Xcode for development. CMake can generate an Xcode
 project file:
 
-    $ git clone git://github.com/raceintospace/raceintospace.git
-    $ rm -r raceintospace-build; cd raceintospace-build
-    $ cmake -G Xcode ../raceintospace
+    $ cmake --preset macos-vcpkg -G Xcode
     $ open raceintospace.xcodeproj
 
-Windows
--------
-
-**NOTE:** The game may not successfully compile in Windows. See Issues [#498](https://github.com/raceintospace/raceintospace/issues/498), [#128](https://github.com/raceintospace/raceintospace/issues/128), [#57](https://github.com/raceintospace/raceintospace/issues/57) for details.
-
-If the instructions below don't work, you may have to install Ubuntu (or one of its variants) in a VM, such as in [Oracle VirtualBox](https://www.virtualbox.org/), then follow the Debian/Ubuntu instructions above.  Be sure to enable the VM's access to the host computer's network connection: in VirtualBox this setting is called "Bridged Adapter"; in Hyper-V it's "Default Virtual Switch".
+## Windows
 
 Ingredients:
 
-* [Visual C++ Express 2010](http://www.microsoft.com/visualstudio/eng/downloads#d-2010-express) ($0; other versions likely work too)
-* [CMake](http://www.cmake.org/cmake/resources/software.html) (free)
-* A checkout of the source (e.g. from [GitHub for Windows](http://windows.github.com/))
+* [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
+    * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!
+    * Full IDE is not needed
+* [CMake](https://www.cmake.org/cmake/resources/software.html) (free, also included above)
+* [Git](https://git-scm.com/downloads) or [GitHub for Windows](https://desktop.github.com/) (free)
 
-From here, use CMake-GUI or the command-line CMake to generate Visual Studio
-project files. Literally every dependency will be downloaded and compiled
-automatically.
+Open the command prompt and make sure git, your compiler and cmake are accessible (check [Visual Studio Developer Command Prompt and Developer PowerShell](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022))
 
-For example (assuming code cloned in to c:\raceintospace):
+Then clone, configure and build the game:
 
-    # Change to "c:\"
-    md raceintospace-build
-    cd raceintospace-build
-    cmake ..\raceintospace
+    git clone --recurse-submodules https://github.com/raceintospace/raceintospace.git
+    cd raceintospace
+    cmake --preset windows-release
+    cmake --build --preset windows-release
+
+After building, you can start the game:
+
+    .\build\release\src\game\raceintospace.exe BARIS_DATA=data
+
+The following instructions may be relevant for setting up in Visual Studio IDE:
 
 - Start Visual Studio by opening "raceintospace.sln".
 - Right-click "ALL_BUILD" and choose "Build"  (Everything will download and install)
@@ -215,3 +186,15 @@ Add:
    BARIS_DATA=[path to raceintospace\data]
    BARIS_SAVE=.\save
 Click "run"
+
+# Music
+
+Due to copyright concerns, the game's music has been placed in a nonfree repository.
+To add music to the game, obtain the files from the repository:
+
+    git clone https://github.com/raceintospace/raceintospace-nonfree 
+
+Then copy `data/audio` directory from `raceintospace-nonfree` to:
+
+1. `data/` in the source code directory - if you're building the game from source, or
+2. `data/` in the directory where you installed the game.

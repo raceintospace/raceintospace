@@ -3,7 +3,7 @@
 
 #include <cstdio>
 #include <string>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include <boost/shared_ptr.hpp>
 

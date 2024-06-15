@@ -670,7 +670,7 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
 
     draw_string(67, 188, rocket.name().c_str());
 
-    if (!rocket.started() < 0) {
+    if (!rocket.started()) {
         draw_number(152, 188, 0);
         draw_number(128, 188, 0);
     } else {

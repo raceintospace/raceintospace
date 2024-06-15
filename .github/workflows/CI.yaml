@@ -1,0 +1,110 @@
+# Copyright (c) 2019-2020-2021-2022 Luca Cappa
+# Released under the term specified in file LICENSE.txt
+# SPDX short identifier: MIT
+#
+# Source: https://raw.githubusercontent.com/lukka/CppBuildTasks-Validation/v10/.github/workflows/hosted-ninja-vcpkg_submod-autocache.yml
+name: CI
+on: [push, workflow_dispatch]
+
+jobs:
+  job:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: windows
+            preset: windows-release
+            # package: windows-release
+          - os: ubuntu
+            preset: linux-vcpkg
+          - os: ubuntu
+            preset: linux-release
+          - os: macos
+            preset: macos-vcpkg
+
+    runs-on: ${{ matrix.os }}-latest
+    name: ${{ github.workflow }}-${{ matrix.preset }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          # This is useful to avoid https://github.com/microsoft/vcpkg/issues/25349
+          # which is caused by missing Git history on the vcpkg submodule which ports 
+          # try to access.
+          fetch-depth: 0
+
+      - name: Get CMake
+        uses: lukka/get-cmake@latest
+
+      - name: List $RUNNER_WORKSPACE before vcpkg is setup
+        run: find $RUNNER_WORKSPACE
+        shell: bash
+
+      - name: Restore vcpkg executable and data files from GH Action cache, or setup vcpkg from scratch if there is a cache-miss
+        uses: lukka/run-vcpkg@v11
+        id: runvcpkg
+        with:
+          # This one is not needed, as it is the default value anyway.
+          # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgJsonGlob: 'vcpkg.json'
+          # Leverage the cache containing vcpkg executable and data files (e.g. port files).
+          doNotCache: false
+
+      - name: Prints output of run-vcpkg's action.
+        run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+
+      - name: Install dependencies on macos
+        if: ${{ startsWith(matrix.os, 'macos') }}
+        id: macos-deps
+        run: brew install sdl
+
+      - name: Install dependencies on linux
+        if: ${{ startsWith(matrix.os, 'ubuntu') && !contains(matrix.preset, 'vcpkg') }}
+        id: linux-deps
+        run: sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
+
+      - name: Run CMake and CPack
+        uses: lukka/run-cmake@v10
+        id: runcmake
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: ${{ matrix.preset }}
+          buildPreset: ${{ matrix.preset }}
+          packagePreset: ${{ matrix.package }}
+
+      - name: List $RUNNER_WORKSPACE after build
+        run: find $RUNNER_WORKSPACE
+        shell: bash
+
+      - name: Read output package name
+        if: ${{ matrix.package }}
+        id: readpkg
+        shell: bash
+        run: |
+          PACKAGE_FILE_NAME=$(cat build/release/cpack_output_files.txt)
+          echo "Package file name: $PACKAGE_FILE_NAME"
+          echo "package_file_name=$PACKAGE_FILE_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload windows binaries artifact
+        if: ${{ matrix.package }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries-${{ github.sha }}
+          retention-days: 7
+          if-no-files-found: error
+          compression-level: 9
+          path: |
+            build/release/src/game/*.exe
+            build/release/src/game/*.dll
+
+      - name: Upload windows installer artifact
+        if: ${{ matrix.package }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-latest # keep only one artifact to limit storage requirements
+          overwrite: true
+          if-no-files-found: error
+          compression-level: 0
+          path: ${{ steps.readpkg.outputs.package_file_name }}

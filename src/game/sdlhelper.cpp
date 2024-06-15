@@ -30,7 +30,7 @@
 #include <cassert>
 #include <memory>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "raceintospace_config.h"
@@ -928,7 +928,7 @@ av_set_fading(int type, int from, int to, int steps, int preserve)
         return;
     }
 
-    if (!steps > 0) {
+    if (steps <= 0) {
         steps = 5;
     }
 

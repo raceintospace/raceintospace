@@ -1,0 +1,18 @@
+{
+  "dependencies": [
+    "boost-algorithm",
+    "boost-format",
+    "boost-foreach",
+    "boost-smart-ptr",
+    "libpng",
+    "zlib",
+    "cereal",
+    "protobuf",
+    "libtheora",
+    "libogg",
+    "libvorbis",
+    "sdl1",
+    "physfs",
+    "jsoncpp"
+  ]
+}

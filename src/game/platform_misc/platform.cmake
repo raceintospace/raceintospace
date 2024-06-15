@@ -5,7 +5,6 @@ add_definitions(-DHAVE_SDL_GETENV)
 # Make sure we can find fake_unistd.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/platform_misc)
 
-# Add the platform-specific source files needed for testing
 list(APPEND ui_sources music_vorbis.cpp)
 
 set(app "raceintospace")
@@ -16,9 +15,8 @@ add_executable(${app}
   platform_misc/main.c
   )
 
-target_link_libraries(${app} ${game_libraries})
+target_link_libraries(${app} PRIVATE ${game_libraries})
 
-add_dependencies(${app} libs)
 install(TARGETS raceintospace DESTINATION bin)
 
 file(GLOB data_dirs "${PROJECT_SOURCE_DIR}/data/*")

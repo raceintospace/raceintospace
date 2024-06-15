@@ -41,7 +41,8 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 # Add the platform-specific source files needed for testing
 list(APPEND ui_sources platform_macosx/music_osx.cpp)
 
-set(app "Race Into Space")
+# set(app "Race Into Space") # vcpkg does not like this
+set(app "raceintospace")
 
 add_executable("${app}" MACOSX_BUNDLE
   platform_macosx/SDLMain.m
@@ -50,9 +51,8 @@ add_executable("${app}" MACOSX_BUNDLE
   ${BundleResources}
   )
 
-target_link_libraries("${app}" ${game_libraries})
-
-add_dependencies("${app}" libs)
+target_link_libraries("${app}" PRIVATE ${game_libraries})
+target_include_directories("${app}" PRIVATE "${PROJECT_SOURCE_DIR}/src/game")
 
 set_target_properties("${app}" PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST ${PROJECT_SOURCE_DIR}/src/game/platform_macosx/Info.plist.in

@@ -1,7 +1,7 @@
 #ifndef DISPLAY__GRAPHICS_H
 #define DISPLAY__GRAPHICS_H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <string>
 #include <vector>
 

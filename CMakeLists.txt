@@ -1,5 +1,5 @@
 # CXX_STANDARD requires more recent CMake
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.25...3.29)
 project(raceintospace VERSION 2.0.0)
 
 enable_testing()
@@ -7,6 +7,8 @@ enable_testing()
 set (raceintospace_VERSION_EXTRA rc3)
 set (raceintospace_VERSION_FULL
 	"${raceintospace_VERSION}${raceintospace_VERSION_EXTRA}")
+
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Platform detection
 if (WIN32 AND NOT WINDOWS)
@@ -19,6 +21,8 @@ endif (WINDOWS)
 
 # Require C++11
 set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_EXTENSIONS OFF)
 option(PBEM "Enable Play-by-EMail feature" ON)
 
 string(TOLOWER "${CMAKE_BUILD_TYPE}" lc_CMAKE_BUILD_TYPE)
@@ -26,14 +30,47 @@ if("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 	add_definitions(-DDEBUG)
 endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
-add_subdirectory(lib)
 add_subdirectory(src)
-install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
-install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
-install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
-	DESTINATION share/metainfo)
 
-set(CPACK_GENERATOR TGZ)
+# Distribution
+set(CPACK_PACKAGE_NAME "Race Into Space")
+set(CPACK_PACKAGE_VENDOR "Race Into Space")
+set(CPACK_PACKAGE_VERSION "${raceintospace_VERSION_FULL}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+if (WINDOWS)
+	configure_file("${PROJECT_SOURCE_DIR}/cmake/NsisCpack.cmake.in"
+                   "${PROJECT_BINARY_DIR}/NsisCpack.cmake"
+				   @ONLY)
+	set(CPACK_PROJECT_CONFIG_FILE
+		"${PROJECT_BINARY_DIR}/NsisCpack.cmake")
+    set(CPACK_GENERATOR NSIS)
+	# HACK: can't figure out how to select all dlls
+	# that are required for target **and** its dependencies...
+	# need to check IMPORTED_RUNTIME_ARTIFACTS
+	install(TARGETS raceintospace DESTINATION .)
+	install(CODE "
+		file(GLOB dll_files \"$<TARGET_FILE_DIR:raceintospace>/*.dll\")
+		file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/.\" TYPE SHARED_LIBRARY FILES \${dll_files})
+	")
+	install(DIRECTORY data/audio data/gamedata data/images data/video icons DESTINATION .)
+	install(FILES COPYING README.md AUTHORS DESTINATION .)
+else (WINDOWS)
+	install(PROGRAMS icons/raceintospace.desktop DESTINATION share/applications)
+	install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
+	install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
+		DESTINATION share/metainfo)
+
+	set(CPACK_GENERATOR TGZ)
+endif(WINDOWS)
+
+# Output generated CPack package name to a file so we can read that in CI
+configure_file("${PROJECT_SOURCE_DIR}/cmake/CpackWritePackageNames.cmake.in"
+			   "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames.cmake"
+			   @ONLY)
+set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames.cmake")
 set(CPACK_SOURCE_GENERATOR TGZ)
 include(CPack)
 
@@ -62,4 +99,3 @@ endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 
 add_custom_target(tag
 	COMMAND ${GIT} tag -a v${raceintospace_VERSION_FULL})
-
