@@ -826,7 +826,7 @@ News(char plr)
             WaitForMouseUp();
             key = 0;
             music_stop();
-            KillVoice();
+            stop_voice();
             break;
         } else if (ctop < bline && ((x >= 303 && y > 158 && x <= 313
                                      && y <= 194 && mousebuttons > 0) || (key >> 8) == 80)) {
