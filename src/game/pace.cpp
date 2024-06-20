@@ -355,12 +355,7 @@ void PlayVoice(void)
     play(&news_chunk, AV_SOUND_CHANNEL);
 }
 
-void KillVoice(void)
-{
-    av_silence(AV_SOUND_CHANNEL);
-}
-
-void StopVoice(void)
+void stop_voice(void)
 {
     av_silence(AV_SOUND_CHANNEL);
 }
