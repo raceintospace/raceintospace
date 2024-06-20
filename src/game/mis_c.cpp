@@ -495,7 +495,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
     if (!IsChannelMute(AV_SOUND_CHANNEL)) {
         if (lnch == 0) {
-            PlayAudio("wh.ogg", 0);
+            play_audio("wh", 0);
         }
 
         keep_going = 1;
