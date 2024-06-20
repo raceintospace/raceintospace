@@ -283,7 +283,7 @@ void SpotLoad(int animationIndex)
         std::string track = AudioTrack(animationIndex);
 
         if (!track.empty()) {
-            PlayAudio(track.c_str(), 0);
+            play_audio(track, 0);
             isTrackPlaying = true;
         }
     }
@@ -411,47 +411,47 @@ std::string AudioTrack(int trackIndex)
     switch (trackIndex) {
     case USA_LM_TEST:
     case SOV_LM_TEST:
-        return "vthrust.ogg";
+        return "vthrust";
 
     case USA_PLANE_FLY_BY:
     case SOV_PLANE_FLY_BY:
-        return "jet.ogg";
+        return "jet";
 
     case USA_HELICOPTER:
     case SOV_HELICOPTER:
-        return "heli_00.ogg";
+        return "heli_00";
 
     case USA_LM_CRASH:
     case SOV_LM_CRASH:
-        return "vcrash.ogg";
+        return "vcrash";
 
     case USA_ROCKET_TO_PAD:
-        return "crawler.ogg";
+        return "crawler";
 
     case SOV_GATE:
-        return "gate.ogg";
+        return "gate";
 
     case USA_TRACKING:
-        return "radarus.ogg";
+        return "radarus";
 
     case SOV_STORM_CLOUDS:
     case USA_STORM_CLOUDS:
-        return "lightng.ogg";
+        return "lightng";
 
     case USA_ROCKET_TO_VAB:
-        return "truck.ogg";
+        return "truck";
 
     case SOV_ROCKET_TO_PAD:
-        return "train.ogg";
+        return "train";
 
     case SOV_TRACKING:
-        return "radarsv.ogg";
+        return "radarsv";
 
     case SOV_NEW_PLANE:
-        return "svprops.ogg";
+        return "svprops";
 
     case USA_ROTATING_CRANE:
-        return "crane.ogg";
+        return "crane";
 
     default:
         CNOTICE3(multimedia,

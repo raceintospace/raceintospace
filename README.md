@@ -97,9 +97,7 @@ You may also need to run (especially if you get "No CMAKE_CXX_COMPILER could be 
 
 If you are on a Fedora-based system, you can get everything with:
 
-    $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel \
-        libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel \
-        physfs-devel libpng-devel libcereal-devel
+    $ sudo dnf install cmake gcc-c++ SDL-devel protobuf-devel boost-devel libogg-devel libvorbis-devel libtheora-devel jsoncpp-devel physfs-devel libpng-devel cereal-devel
 
 ### Build with system dependencies
 

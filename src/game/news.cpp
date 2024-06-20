@@ -779,7 +779,7 @@ News(char plr)
 
         //: Repeat News Sequence
         if (key == 'R' && loc == 6) {
-            KillVoice();
+            stop_voice();
             loc = 0;
             Status = 1;
         }
