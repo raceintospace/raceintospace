@@ -23,7 +23,6 @@ int RLED_img(const char *src, char *dest, unsigned int src_size,
 char *seq_filename(int seq, int mode);
 void idle_loop_secs(double secs);
 int getch(void);
-void PlayAudio(const char *name, char mode);
 char DoModem(int sel);
 void MesCenter(void);
 void StopAudio(char mode);
