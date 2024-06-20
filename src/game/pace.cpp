@@ -365,14 +365,6 @@ void StopVoice(void)
     av_silence(AV_SOUND_CHANNEL);
 }
 
-void PlayAudio(const char *name, char mode)
-{
-    ssize_t bytes = 0;
-    bytes = load_audio_file(name, &soundbuf, &soundbuf_size);
-    soundbuf_used = (bytes > 0) ? bytes : 0;
-    PlayVoice();
-}
-
 int getch(void)
 {
     int c;
