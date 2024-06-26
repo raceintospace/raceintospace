@@ -694,7 +694,6 @@ News(char plr)
                 PlayNewsAnim(fp);
                 PlayNewsAnim(fp);
                 PlayNewsAnim(fp);
-                PlayVoice();
                 loc++;
                 break;
 
@@ -708,7 +707,6 @@ News(char plr)
                 }
 
                 NGetVoice(plr, Data->Events[Data->Count] + 2);
-                PlayVoice();
                 Status = 0;
                 i = bline;
                 ShowEvt(plr, Data->Events[Data->Count]);
@@ -729,7 +727,6 @@ News(char plr)
                     PlayNewsAnim(fp);
                 }
 
-                PlayVoice();
                 /* the "mysterious" delay of Soviet newscaster.
                  * she is out of sync anyway... */
                 loc++;
