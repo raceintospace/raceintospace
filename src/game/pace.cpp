@@ -341,6 +341,7 @@ void NGetVoice(char plr, char val)
              (plr ? "sov" : "usa"), val);
     bytes = load_audio_file(fname, &soundbuf, &soundbuf_size);
     soundbuf_used = (bytes > 0) ? bytes : 0;
+    PlayVoice();
 }
 
 void PlayVoice(void)
