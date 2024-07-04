@@ -1419,10 +1419,10 @@ int FutureCheck(char plr, char type)
 
         for (i = 0; i < 3; i++) {
             if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) || (tx[i] != 1 && key == 'A' + i)) {
-                InBox(110, 69 + i * 51, 262, 77 + i * 51);
+                InBox(110, 69 + i * 51, 262, 77 + i * 51);  // Open Future Missions
                 WaitForMouseUp();
                 key = 0;
-                delay(150);
+                delay(50);
 
                 if (p[i] == 1) {
                     pad = i;
