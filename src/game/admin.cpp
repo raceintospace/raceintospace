@@ -958,7 +958,7 @@ void autosave_game(const char *name)
  * length as SaveFileHdr::Name, plus delimiter.
  *
  * \param name  The string location where the name is stored.
-s * \return  the user-supplied file name, ("" if aborted).
+ * \return  the user-supplied file name, ("" if aborted).
  * \throws IOException  if insufficient disk space remaining.
  */
 std::string GetBlockName()
@@ -1088,11 +1088,11 @@ void FileText(const char *name)
 
     grMoveTo(40, 139);
 
-    //if (((char)SaveHdr->Country[0])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
+    // if (((char)SaveHdr->Country[0])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
 
     display::graphics.setForegroundColor(5);
 
-    //display::graphics.setForegroundColor(6+(SaveHdr->Country[0]%2)*3);
+    // display::graphics.setForegroundColor(6+(SaveHdr->Country[0]%2)*3);
     if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "MODEM DIRECTOR ");
     } else if (header.Country[0] == 8 || header.Country[1] == 9) {
@@ -1107,7 +1107,7 @@ void FileText(const char *name)
     draw_string(0, 0, " OF THE U.S.A.");
 
     grMoveTo(40, 147);
-    //if (((char)SaveHdr->Country[1])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
+    // if (((char)SaveHdr->Country[1])&0x02) display::graphics.setForegroundColor(7+(SaveHdr->Country[1]-2)*3);
 
     display::graphics.setForegroundColor(9);
 
@@ -1155,8 +1155,8 @@ void FileText(const char *name)
  *
  * The menu is used for accessing planned missions, either future
  * missions set for next season or missions scheduled for the current
- * season. The former are referenced as "Future" missions, while the
- * latter is used as an entrance point for the Vehicle Assembly
+ * season. The former are referenced to as "Future" missions, while 
+ * the latter is used as an entrance point for the Vehicle Assembly
  * building.
  *
  * \param plr   The index of the active player (Player 0 or Player 1).
@@ -1363,7 +1363,7 @@ int FutureCheck(char plr, char type)
 
         if (p[i] == -1) {
             display::graphics.setForegroundColor(9);  // Changed from 5
-            draw_string(111, 41 + i * 51, "NO FACILITY EXISTS");
+            draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
 
             if (type == 0) {
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
@@ -1831,7 +1831,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
 
     free(load_buffer);
 
-    //MSF now holds MaxRDBase (from 1.0.0)
+    // MSF now holds MaxRDBase (from 1.0.0)
     if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
         for (int j = 0; j < NUM_PLAYERS; j++) {
             for (int k = 0; k < 7; k++) {
@@ -2003,7 +2003,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
 /**
  * Launches the Save Game process.
  *
- * TODO: Add a option to toggle between classic save file naming
+ * TODO: Add an option to toggle between classic save file naming
  * (e.g.: BUZZ1.SAV) and updated format ({title}.SAV).
  *
  * \return  0 if successfully saved, 1 if aborted.
