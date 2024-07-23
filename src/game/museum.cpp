@@ -1387,7 +1387,11 @@ void DispLoc(char plr, char *where)
         return;
 
     case AST_ST_INJURED:
-        draw_string(216, 159, "INJURED");
+	if (plr == 1) {
+	        draw_string(216, 159, "INFIRMARY");
+	} else {
+	        draw_string(216, 159, "HOSPITAL");
+	}
         return;
 
     case AST_ST_TRAIN_BASIC_1:
