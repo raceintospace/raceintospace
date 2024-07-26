@@ -1,18 +1,22 @@
-# vim: sts=4:
 app-id: org.raceintospace.Raceintospace
 runtime: org.freedesktop.Platform
-runtime-version: '20.08'
+runtime-version: '23.08'
 sdk: org.freedesktop.Sdk
 command: raceintospace
 rename-desktop-file: raceintospace.desktop
 rename-appdata-file: raceintospace.appdata.xml
+
 finish-args:
+    # X11
     - --share=ipc
     - --socket=x11
+    # Access to pulseaudio
     - --socket=pulseaudio
+    # Map dir with sandbox
     - --persist=.raceintospace
     # Until support for SDL2, only X11 will work
     #- --socket=wayland
+
 modules:
     - name: sdl
       buildsystem: autotools
@@ -26,62 +30,79 @@ modules:
         - SDL*.3
         - '/lib/*.a'
         - '/include'
+    
     - name: jsoncpp
-      buildsystem: cmake
+      buildsystem: cmake-ninja
+      # build outside source
+      builddir: true
       sources:
         - type: git
           url: https://github.com/open-source-parsers/jsoncpp.git
-          tag: 1.9.3
+          tag: 1.9.5
       cleanup:
         - '/lib/*.a'
         - '/include'
+    
     - name: physfs
       buildsystem: cmake
       sources:
         - type: archive
           url: https://icculus.org/physfs/downloads/physfs-3.0.2.tar.bz2
           sha256: 304df76206d633df5360e738b138c94e82ccf086e50ba84f456d3f8432f9f863
+    
     - name: protobuf
       buildsystem: autotools
       sources:
         - type: git
           url: https://github.com/protocolbuffers/protobuf.git
-          tag: v3.13.0
+          tag: v3.21.0
       cleanup:
         - '/lib/libproto*.a'
         - '/include'
+    
     - name: protobuf-c
       buildsystem: autotools
       sources:
         - type: git
           url: https://github.com/protobuf-c/protobuf-c.git
-          tag: v1.3.3
+          tag: v1.4.0
+    
     - name: boost
       # Borrowed boost build from https://github.com/flathub/org.kde.digikam
       buildsystem: simple
       build-commands:
         - ./bootstrap.sh --prefix=/app
         - ./b2 --with-headers -j $FLATPAK_BUILDER_N_JOBS
-        - ./b2 --with-headers install
+        - ./b2 --with-headers --with-serialization install
       cleanup:
         - /lib/libboost_*.a
         - '/include'
       sources:
         - type: archive
-          url: https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.bz2
-          sha256: 83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1
+          url: https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.bz2
+          sha256: 8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc
+
+    - name: cereal
+      buildsystem: cmake
+      config-opts:
+        - -DBUILD_TESTS=OFF
+        - -DBUILD_SANDBOX=OFF
+      sources:
+        - type: git
+          url: https://github.com/USCiLab/cereal.git
+          tag: v1.3.2
+    
     - name: raceintospace
       buildsystem: cmake
       sources:
         - type: git
+          # Until 2.0 release tag, now build from master
           url: https://github.com/raceintospace/raceintospace.git
       cleanup:
         - '/include'
         - '/lib/lib*.a'
     # Icon should be in different place build system puts it, workaround
     # .xpm icons are unsupported
-    - name: icon-rename
-      buildsystem: simple
-      build-commands:
-        - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/32x32/apps/org.raceintospace.Raceintospace.png
+      post-install:
+        - install -D /app/share/pixmaps/raceintospace.png /app/share/icons/hicolor/128x128/apps/org.raceintospace.Raceintospace.png
         - sed -e 's/^Icon=raceintospace/Icon=org.raceintospace.Raceintospace/' -i /app/share/applications/*.desktop
