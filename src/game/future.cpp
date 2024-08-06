@@ -1140,6 +1140,41 @@ void Future(char plr)
                 // Why was this line here? Foreground gets set in OutBox
                 display::graphics.setForegroundColor(34);
                 OutBox(5, 49, 53, 72);
+
+            } else if (nav.duration.lock != true &&
+                       (key == 'A' || key == 'B' || key == 'C' || key == 'D' || key == 'E' || key == 'F')) {  // Set Duration A-F
+                InBox(5, 49, 53, 72);
+
+                int al = int(key) - 64;  // Convert A-F to 1-6
+
+                if (nav.duration.value == MaxDur) {
+                    nav.duration.value = 0;
+                    Toggle(FM_Duration, 0);
+                } else {
+                    nav.duration.value = al;
+                    Toggle(FM_Duration, 1);
+                    DrawPie(nav.duration.value);
+                }
+
+                // If a duration mission, update the duration & mission
+                // penalty displays
+                if (missionData[misType].Dur) {
+                    struct mStr mission = missionData[misType];
+                    int duration = MAX(nav.duration.value,
+                                       missionData[misType].Days);
+                    bool valid =
+                        (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
+
+                    mission.Days = duration;
+                    DrawPenalty(plr, mission);
+                }
+
+                WaitForMouseUp();
+
+                // Why was this line here? Foreground gets set in OutBox
+                display::graphics.setForegroundColor(34);
+                OutBox(5, 49, 53, 72);
             } else if ((x >= 5 && y >= 74 && x <= 41 && y <= 82 && mousebuttons > 0) ||
                        (key == K_ESCAPE)) {  // Reset mission selection
                 InBox(5, 74, 41, 82);
