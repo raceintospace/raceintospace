@@ -265,9 +265,9 @@ av_setup(void)
     if (have_audio) {
         int i = 0;
 
-        audio_desired.freq = 11025;
+        audio_desired.freq = 44100;
         audio_desired.format = AUDIO_S16SYS;
-        audio_desired.channels = 1;
+        audio_desired.channels = 2;
         /* audio was unresponsive on win32 so let's use shorter buffer */
         audio_desired.samples = 2048;   /* was 8192 */
         audio_desired.callback = audio_callback;

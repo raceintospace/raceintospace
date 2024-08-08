@@ -124,8 +124,8 @@ void music_load(enum music_track track)
 
     // XXX: Trim the last two seconds from the audio file, since it's broken
     // This should really be done on the Vorbis files, rather than in the player
-    if (bytes > 2 * 11025) {
-        music_files[track].buf_size -= 2 * 11025;
+    if (bytes > 2 * 44100) {
+        music_files[track].buf_size -= 2 * 44100;
         music_files[track].buf = (char *)xrealloc(music_files[track].buf, music_files[track].buf_size);
     }
 }

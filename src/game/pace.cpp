@@ -305,8 +305,8 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size)
         return -1;
     }
 
-    if (channels != 1 || rate != 11025) {
-        CERROR3(audio, "file `%s' should be mono, 11025Hz", name);
+    if (channels != 2 || rate != 44100) {
+        CERROR3(audio, "file `%s' should be stereo, 44100Hz", name);
         mm_close(&mf);
         return -1;
     }
