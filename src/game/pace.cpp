@@ -283,7 +283,7 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size)
 {
     mm_file mf;
     unsigned channels, rate;
-    const size_t def_size = 16 * 1024;
+    const size_t def_size = 128 * 1024; // increase from 16b for hq audio files
     size_t offset = 0;
     ssize_t read = 0;
     double start = get_time();
