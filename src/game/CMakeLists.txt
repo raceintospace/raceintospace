@@ -93,6 +93,7 @@ find_package(Ogg REQUIRED)
 find_package(unofficial-theora REQUIRED) # name from vcpkg ports
 find_package(Vorbis REQUIRED)
 find_package(jsoncpp REQUIRED)
+include(FixJsonCppTargets)
 find_package(cereal REQUIRED)
 find_package(Boost REQUIRED)
 find_package(ZLIB REQUIRED)

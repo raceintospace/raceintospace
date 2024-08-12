@@ -6,6 +6,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/utils")
 find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(jsoncpp REQUIRED)
+include(FixJsonCppTargets)
 
 add_executable(but2png EXCLUDE_FROM_ALL but2png.c)
 set_target_properties(but2png PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
