@@ -11,7 +11,7 @@ class LegacySurface;
 void WaitForMouseUp(void);
 void GetMouse(void);
 void WaitForKeyOrMouseDown(void);
-void VerifySF(char plr);
+void VerifySafety(char plr);
 int MisRandom(void);
 void DestroyPad(char plr, char pad, int cost, char mode);
 void PauseMouse(void);

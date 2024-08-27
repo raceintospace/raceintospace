@@ -36,6 +36,16 @@
 #include "endianness.h"
 
 
+// Roll a six die
+int rollSixDie(int nrolls) {
+    int result = 0;
+    for (int i = 0; i < nrolls; i++) {
+        result += brandom(6) + 1;
+    }
+    return result;
+}
+
+
 /**
  *
  * \return true (1) if need to scrub mission because of crews
@@ -174,7 +184,7 @@ char REvent(char plr)
         break;
 
     case 31:
-        evflag = brandom(6) + brandom(6) + brandom(6) + 3;
+        evflag = rollSixDie(3);
         Data->P[plr].Cash += evflag;
         break;
 
@@ -391,7 +401,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 36:  /* damage launch facility */
@@ -400,7 +409,6 @@ char REvent(char plr)
         } else {
             return 1;
         }
-
         break;
 
     // Program Saving cards ------------------------------------
@@ -411,7 +419,14 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
+        break;
 
+    case 48:  // Set Save for Rocket program
+        evflag = SaveMods(plr, 2);
+
+        if (evflag == 0) {
+            return 1;
+        }
         break;
 
     case 77:  // set Save for Capsule Program
@@ -420,7 +435,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 93:  // set Save for LEM Program
@@ -429,7 +443,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 20:  /* the most advanced rocket program is affected.
@@ -476,10 +489,11 @@ char REvent(char plr)
         break;
 
     case 22:
-    case 84:  /* roll six 6-sided dice and add to the current safety
-           factor of the program */
-        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
-        evflag = NMod(plr, 3, 1, x);
+    case 84:  /*  this applies to the most advanced manned program.
+                  roll six 6-sided dice and add to the current 
+                  safety factor. */
+        x = rollSixDie(6);
+        evflag = SafetyMod(plr, 3, 1, x);
 
         if (evflag == 0) {
             return 1;
@@ -491,8 +505,8 @@ char REvent(char plr)
     case 23:  /* this applies to the most advanced rocket program.
                  roll six 6-sided dice and add to the current
                  safety factor. */
-        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + brandom(6) + 6;
-        evflag = NMod(plr, 2, 1, x);
+        x = rollSixDie(6);
+        evflag = SafetyMod(plr, 2, 1, x);
 
         if (evflag == 0) {
             return 1;
@@ -501,10 +515,11 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 24:  /* this for most adv. satellites, roll four 6-sided
-                 dice and add to safety factor. */
-        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
-        evflag = NMod(plr, 1, 1, x);
+    case 24:  /*  this applies for the most advanced satellite program. 
+                  roll four 6-sided dice and add to the current 
+                  safety factor. */
+        x = rollSixDie(4);
+        evflag = SafetyMod(plr, 1, 1, x);
 
         if (evflag == 0) {
             return 1;
@@ -513,10 +528,11 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 94:  /* this for most adv capsule; roll four 6-sided
-                 dice and add to safety factor. */
-        x = brandom(6) + brandom(6) + brandom(6) + brandom(6) + 4;
-        evflag = NMod(plr, 3, 1, x);
+    case 94:  /*  this applies for the most advanced capsule program. 
+                  roll four 6-sided dice and add to the current 
+                  safety factor. */
+        x = rollSixDie(4);
+        evflag = SafetyMod(plr, 4, 1, x);
 
         if (evflag == 0) {
             return 1;
@@ -538,7 +554,7 @@ char REvent(char plr)
         break;
 
     case 26:  /* select most advanced manned program and reduce safety by 25%  */
-        evflag = NMod(plr, 3, -1, 25);
+        evflag = SafetyMod(plr, 3, -1, 25);
 
         if (evflag == 0) {
             return 1;
@@ -547,8 +563,8 @@ char REvent(char plr)
         evflag = 25;
         break;
 
-    case 27:  /* select most advanced probe program and reduce safety by 15%   */
-        evflag = NMod(plr, 1, -1, 15);
+    case 27:  /* select most advanced probe program and reduce safety by 15%  */
+        evflag = SafetyMod(plr, 1, -1, 15);
 
         if (evflag == 0) {
             return 1;
@@ -557,8 +573,8 @@ char REvent(char plr)
         evflag = 15;
         break;
 
-    case 79:
-        evflag = NMod(plr, 0, -1, 20);
+    case 79:  /* select most advanced from all programs and reduce safety by 20%  */
+        evflag = SafetyMod(plr, 0, -1, 20);
 
         if (evflag == 0) {
             return 1;
@@ -576,11 +592,10 @@ char REvent(char plr)
         for (i = 0; i < 5; i++) {
             Data->P[plr].Rocket[i].Delay = 2;
         }
-
         break;
 
-    case 34:  /* 20% loss most advanced capsule */
-        evflag = NMod(plr, 3, -1, 20);
+    case 34:  /* 20% loss most advanced capsule program */
+        evflag = SafetyMod(plr, 4, -1, 20);
 
         if (evflag == 0) {
             return 1;
@@ -595,7 +610,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 38:
@@ -605,7 +619,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 40:  /* blank a program 10 MB's or 10% safety loss */
@@ -614,7 +627,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 54:  /* most advanced rocket program 15 MB's or 20% safety loss */
@@ -623,7 +635,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 55:  /* most advanced rocket program 20 MB's or 10% safety loss */
@@ -632,16 +643,6 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
-        break;
-
-    case 48:  // Set Save for Rocket program
-        evflag = SaveMods(plr, 2);
-
-        if (evflag == 0) {
-            return 1;
-        }
-
         break;
 
     // Astronaut Portion ------------------------------------
@@ -678,7 +679,6 @@ char REvent(char plr)
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             CheckFlightCrews(plr);
         }
-
         break;
 
     case 50:
@@ -734,7 +734,6 @@ char REvent(char plr)
                 ScrubMission(plr, pad);
             }
         }
-
         break;
 
     case 52:
@@ -857,7 +856,6 @@ char REvent(char plr)
             Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
             Data->P[plr].AstroCount++;
         }
-
         break;
 
     case 58:  // 50% chance explosion on pad
@@ -934,14 +932,12 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
     case 80:  // Can't Deliver any Cap/Mods this year
         for (i = 0; i < 5; i++) {
             Data->P[plr].Manned[i].Delay = 2;
         }
-
         break;
 
     case 82:  // Duration E Mission Required
@@ -978,7 +974,6 @@ char REvent(char plr)
         if (Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             CheckFlightCrews(plr);
         }
-
         break;
 
     default:

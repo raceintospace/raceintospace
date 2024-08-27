@@ -526,17 +526,16 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             Data->P[1].BudgetHistoryF[Data->Year - 53] =
                 (Data->P[1].Budget * (brandom(40) + 80)) / 100;
 
-            // Move Expenditures down one
-            for (t1 = 0; t1 < NUM_PLAYERS; t1++) {
-                for (t2 = 4; t2 >= 0; t2--) {
-                    for (t3 = 0; t3 < 4; t3++) {
-                        Data->P[t1].Spend[t2][t3] =
-                            Data->P[t1].Spend[t2 - 1][t3];
+            // MOVE EXPENDITURES DOWN
+            for (int i = 0; i < NUM_PLAYERS; i++) {
+                for ( int j = 3; j >= 0; j--) {
+                    for (int k = 0; k < 4; k++) {
+                        Data->P[i].Spend[j][k] =Data->P[i].Spend[j+1][k];
                     }
                 }
-
-                for (t3 = 0; t3 < 4; t3++) {
-                    Data->P[t1].Spend[0][t3] = 0;
+                // RESET FIRST ROW
+                for (int k = 0; k < 4; k++) {
+                    Data->P[i].Spend[0][k] = 0;
                 }
             }
 
@@ -593,7 +592,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             if (!AI[i]) {
                 NextTurn(plr[i]);
-                VerifySF(plr[i]);
+                VerifySafety(plr[i]);
 
                 // Show prestige resulution from the previous turn
                 if (MAIL == 1 || MAIL == 2) {
@@ -619,7 +618,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                 News(plr[i]);                  // EVENT FOR PLAYER
 
                 VerifyCrews(plr[i]);
-                VerifySF(plr[i]);
+                VerifySafety(plr[i]);
                 helpText = "i000";
                 keyHelpText = "k000";
                 FixPrograms(plr[i]);
@@ -639,9 +638,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             } else {
                 AI_Begin(plr[i] - 2); // Turns off Mouse for AI
                 GetMouse();
-                VerifySF(plr[i] - 2);
+                VerifySafety(plr[i] - 2);
                 AIEvent(plr[i] - 2);
-                VerifySF(plr[i] - 2);
+                VerifySafety(plr[i] - 2);
                 AIMaster(plr[i] - 2);
                 AI_Done(); // Fade Out AI Thinking Screen and Restores Mouse
             }
@@ -949,21 +948,30 @@ void PauseMouse(void)
     GetMouse();
 }
 
-void VerifySF(char plr)
+void VerifySafety(char player)
 {
-    // TODO: This is _very_ implementation-specific, relying on the
-    // Probe, Rocket, Manned, and Misc arrays all being defined as
-    // Equipment arrays of length 7 being defined consecutively in
-    // struct BuzzData. This should be rewritten.
-    for (int i = 0; i < 28; i++) {
-        Equipment *px = &Data->P[plr].Probe[i];
+    // Pointers to each Equipment struct
+    Equipment* arrays[4] = {
+        Data->P[player].Probe,
+        Data->P[player].Rocket,
+        Data->P[player].Manned,
+        Data->P[player].Misc
+    };
+    // Corrected sizes for each Equipment (Probe, Rocket, Manned, Misc)
+    int sizes[4] = { 3, 5, 7, 6 };
 
-        if (px->Safety > px->MaxSafety) {
-            px->Safety = px->MaxSafety;
-        }
+    // Check for safety for each Equipment
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < sizes[i]; j++) {
+            Equipment *px = &arrays[i][j];
 
-        if (px->Safety < px->Base) {
-            px->Safety = px->Base;
+            if (px->Safety > px->MaxSafety) {
+                px->Safety = px->MaxSafety;
+            }
+
+            if (px->Safety < px->Base) {
+                px->Safety = px->Base;
+            }
         }
     }
 }

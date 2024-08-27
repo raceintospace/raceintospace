@@ -13,7 +13,8 @@
 using boost::format;
 
 #define throw_error do { \
-    const char * error = PHYSFS_getLastError(); \
+    PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
+    const char *error = PHYSFS_getErrorByCode(code); \
     if (error == NULL) \
         error = "unknown filesystem error"; \
     throw std::runtime_error(error); \
@@ -21,7 +22,8 @@ using boost::format;
 
 
 #define throw_error_with_detail(detail) do { \
-    const char * error = PHYSFS_getLastError(); \
+    PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
+    const char *error = PHYSFS_getErrorByCode(code); \
     if (error == NULL) \
         error = "unknown filesystem error"; \
     std::string msg = (format("%1%: %2%") % error % detail).str(); \
@@ -120,6 +122,7 @@ void filesystem_enumerate_callback(void *data, const char *directory, const char
     list->push_back(full_path);
 }
 
+/*
 std::list<std::string> Filesystem::enumerate(const std::string &directory)
 {
     std::list<std::string> list;
@@ -132,6 +135,29 @@ std::list<std::string> Filesystem::enumerate(const std::string &directory)
 
     return list;
 }
+*/
+
+std::list<std::string> Filesystem::enumerate(const std::string &directory)
+{
+    // PHYSFS_enumerateFiles returns a pointer array of chars
+    char **files = PHYSFS_enumerateFiles(directory.c_str());
+    
+    // We'll convert to a string later
+    std::list<std::string> list;
+
+    if (files != nullptr) {
+        // Find a nullptr
+        for (char **i = files; *i != nullptr; i++) {
+            list.emplace_back(*i); // Convert char to std::string, place in list
+        }
+
+        PHYSFS_freeList(files); // step required
+    }
+
+    list.sort();
+    return list;
+}
+
 
 bool Filesystem::unlink(const std::string &filename)
 {
