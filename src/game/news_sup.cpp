@@ -35,10 +35,345 @@
 #include "options.h"
 #include "pace.h"
 
-/**
+
+/** Steal technology from rival player
  *
- * \param type 1:postive -1:negative search
+ * \param prog: program
+ * \param type 1:positive -1:negative search
  */
+int StealMod(int plr, int prog, int type)
+{
+      std::array<int, 28> save = {0};  // Initialize in zero
+
+    // Assign safety values in save[]
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[other(plr)].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[other(plr)].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[other(plr)].Manned[i].Safety;
+    }
+    
+    for (int i = 0; i < 6; ++i) {
+        save[i + 21] = Data->P[other(plr)].Misc[i].Safety;
+    }
+   
+    // Remove Kicker C and Photo Recon from options
+    save[23] = save[26] = 0;
+   
+    int lo = 0, hi = 27;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        case 5: lo = 21; hi = 27; break;  // MISC programs
+        // case 0: Default lo=0, hi=27 covers all programs
+    }
+    
+    Equipment* player = nullptr;
+    Equipment* rival = nullptr;
+    
+    int index = lo;
+    int attempts = hi - lo + 1; // Counter
+
+    // Loop to search for rival superior tech
+    while (attempts > 0) {
+        // Find Adv. Program
+        for (int i = lo + 1; i <= hi; i++) {
+            if (save[i] > save[index]) {
+                index = i;
+            }
+        }
+
+        // Assign the correct equipment
+        if (index >= 0 && index <= 2) {
+            player = &Data->P[plr].Probe[index];
+            rival = &Data->P[other(plr)].Probe[index];
+        } else if (index >= 7 && index <= 11) {
+            player = &Data->P[plr].Rocket[index - 7];
+            rival = &Data->P[other(plr)].Rocket[index - 7];
+        } else if (index >= 14 && index <= 18) {
+            player = &Data->P[plr].Manned[index - 14];
+            rival = &Data->P[other(plr)].Manned[index - 14];
+        } else if (index >= 21 && index <= 25) {
+            player = &Data->P[plr].Misc[index - 21];
+            rival = &Data->P[other(plr)].Misc[index - 21];
+        }
+        
+        if (rival->Safety > player->Safety) {
+            break;
+        } else {
+            // If rival Safety value is lower, search another value
+            save[index] = 0;
+        }
+        
+        attempts--;
+    }
+
+    // if not superior tech found
+    if (attempts == 0) {
+        return 0;
+    }
+
+    if (player && rival) {
+        strcpy(Name, player->Name);
+        player->Safety += (rival->Safety - player->Safety)/ 100 * type; 
+    }
+
+    return save[index];
+}
+
+/** Modifies the Safety Factor
+ *  
+ * \param 'type' 1:positive -1:negative modification
+ * \param 'per' is the amount of modification to Safety
+ */
+int SafetyMod(int plr, int prog, int type, int per)
+{
+    std::array<int, 21> save = {0};  // Initialize in zero
+
+    // Assign safety values in save[]
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[plr].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[plr].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[plr].Manned[i].Safety;
+    }
+    
+    int lo = 0, hi = 20;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        // case 0: Default lo=0, hi=20 covers all programs
+    }
+
+    // Find Advanced Program
+    int index = lo;
+    for (int i = lo + 1; i <= hi; i++) {
+        if (save[i] > save[index]) {
+            index = i;
+        }
+    }
+
+    // Assign the correct equipment
+    Equipment* equipment = nullptr;
+    if (index >= 0 && index <= 2) {
+        equipment = &Data->P[plr].Probe[index];
+    } else if (index >= 7 && index <= 11) {
+        equipment = &Data->P[plr].Rocket[index - 7];
+    } else if (index >= 14 && index <= 18) {
+        equipment = &Data->P[plr].Manned[index - 14];
+    }
+
+    if (equipment) {
+        strcpy(Name, equipment->Name);
+        equipment->Safety += equipment->Safety * (per / 100) * type;
+    }
+
+  return save[index];
+}
+
+
+/** Most advanced program is damaged, cost to repair 
+* \param 'prog'
+* \param 'dam' is the amount of damage
+* \param 'cost'
+*/
+int DamMod(int plr, int prog, int dam, int cost)
+{
+    std::array<int, 21> save = {0};  // Initialize in zero
+
+    // Assign safety values in save[]
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[plr].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[plr].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[plr].Manned[i].Safety;
+    }
+    
+    int lo = 0, hi = 20;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        // case 0: Default lo=0, hi=20 covers all programs
+    }
+
+    // Find Advanced Program
+    int index = lo;
+    for (int i = lo + 1; i <= hi; i++) {
+        if (save[i] > save[index]) {
+            index = i;
+        }
+    }
+
+    // Assign the correct equipment
+    Equipment* equipment = nullptr;
+    if (index >= 0 && index <= 2) {
+        equipment = &Data->P[plr].Probe[index];
+    } else if (index >= 7 && index <= 11) {
+        equipment = &Data->P[plr].Rocket[index - 7];
+    } else if (index >= 14 && index <= 18) {
+        equipment = &Data->P[plr].Manned[index - 14];
+    }
+
+    if (equipment) {
+        strcpy(Name, equipment->Name);
+        if (options.cheat_no_damage == 0) {
+            equipment->Damage += dam;
+            equipment->DCost += cost;
+        }
+    }
+
+    return save[index];
+}
+
+/** Increment R&D cost on program
+ *  
+ * \param 'prog'
+ * \param 'type' is the amount of damage
+ * \param 'val'
+ */
+int RDMod(int plr, int prog, int type, int val)
+{
+          std::array<int, 28> save = {0};  // Initialize in zero
+
+    // Assign safety values in save[]
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[other(plr)].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[other(plr)].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[other(plr)].Manned[i].Safety;
+    }
+    
+    for (int i = 0; i < 6; ++i) {
+        save[i + 21] = Data->P[other(plr)].Misc[i].Safety;
+    }
+   
+    // Remove Kicker C and Photo Recon from options
+    save[23] = save[26] = 0;
+   
+    int lo = 0, hi = 27;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        case 5: lo = 21; hi = 27; break;  // MISC programs
+        // case 0: Default lo=0, hi=27 covers all programs
+    }
+    
+    // Find Advanced Program
+    int index = lo;
+    for (int i = lo + 1; i <= hi; i++) {
+        if (save[i] > save[index]) {
+            index = i;
+        }
+    }
+    
+    // Assign the correct equipment
+    Equipment* equipment = nullptr;
+    if (index >= 0 && index <= 2) {
+        equipment = &Data->P[plr].Probe[index];
+    } else if (index >= 7 && index <= 11) {
+        equipment = &Data->P[plr].Rocket[index - 7];
+    } else if (index >= 14 && index <= 18) {
+        equipment = &Data->P[plr].Manned[index - 14];
+    } else if (index >= 21 && index <=25) {
+        equipment = &Data->P[plr].Misc[index - 21];
+    }
+    
+    if (equipment) {
+        strcpy(Name, equipment->Name);
+        equipment->RDCost += type * val;
+    }
+
+    return save[index];
+}
+ 
+/** Set program Safety Save Card to 1
+ *  
+ * \param 'prog'
+ */
+int SaveMod(char plr, char prog)
+{
+    std::array<int, 21> save = {0};  // Initialize in zero
+
+    // Assign safety values in save[]
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[plr].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[plr].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[plr].Manned[i].Safety;
+    }
+    
+    // Remove Strapon Booster from options
+    save[11] = 0;
+    
+    int lo = 0, hi = 20;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        // case 0: Default lo=0, hi=20 covers all programs
+    }
+
+    // Find Advanced Program
+    int index = lo;
+    for (int i = lo + 1; i <= hi; i++) {
+        if (save[i] > save[index]) {
+            index = i;
+        }
+    }
+
+    // Assign the correct equipment
+    Equipment* equipment = nullptr;
+    if (index >= 0 && index <= 2) {
+        equipment = &Data->P[plr].Probe[index];
+    } else if (index >= 7 && index <= 11) {
+        equipment = &Data->P[plr].Rocket[index - 7];
+    } else if (index >= 14 && index <= 18) {
+        equipment = &Data->P[plr].Manned[index - 14];
+    }
+
+    if (equipment) {
+        strcpy(Name, equipment->Name);
+        equipment->SaveCard = 1;
+    }
+    
+    return save[index];
+}
+
+/*
 int Steal(int plr, int prog, int type)
 {
     int i = 0, j = 0, k = 0, save[28], lo = 0, hi = 28;
@@ -120,106 +455,30 @@ int Steal(int plr, int prog, int type)
 
     return save[j];
 }
-
-/**
- *  Modifies the Safety Factor
- * \parameter 'type' 1:positive -1:negative modification
- * \parameter 'percent' is the amount of modification to Safety in percent
- */
-int SafetyMod(int player, int program, int type, int percent)
-{
-    int save[21], lo = 0, hi = 20;
-
-    for (int i = 0; i < 21; i++) {
-        save[i] = 0;
-    }
-    
-    for (int i = 0; i < 3; i++) {
-            save[i] = Data->P[player].Probe[i].Safety;
-    }
-    
-
-    for (int i = 0; i < 5; i++) {
-            save[i + 7] = Data->P[player].Rocket[i].Safety;
-    }
-
-    for (int i = 0; i < 7; i++) {
-            save[i + 14] = Data->P[player].Rocket[i].Safety;
-    }
-    
-    switch (program) {
-    case 0:
-        lo = 0;
-        hi = 20;
-        break;   // check ALL programs
-
-    case 1:
-        lo = 0;
-        hi = 2;
-        break;    // check PROBE programs
-
-    case 2:
-        lo = 7;
-        hi = 13;
-        break;   // check ROCKET programs
-
-    case 3:
-        lo = 14;
-        hi = 20;
-        break;  // check MANNED programs
-
-    case 4:
-        lo = 14;
-        hi = 18;
-        break;  // check CAPSULE programs    
-    }  
-    
-    // Find max Safety
-    int maxSafetyIndex = lo;
-    for (int i = lo + 1; i <= hi; i++) {
-        if (save[i] > save[maxSafetyIndex]) {
-            maxSafetyIndex = i;
-        }
-    }
-    
-    if (maxSafetyIndex >= 0 && maxSafetyIndex <= 2) {
-        Data->P[player].Probe[maxSafetyIndex].Safety += 
-          (Data->P[player].Probe[maxSafetyIndex].Safety * percent / 100) * type;
-        strcpy(Name, Data->P[player].Probe[maxSafetyIndex].Name);
-    } else if (maxSafetyIndex >= 7 && maxSafetyIndex <= 13) {
-        Data->P[player].Rocket[maxSafetyIndex - 7].Safety += 
-          (Data->P[player].Rocket[maxSafetyIndex - 7].Safety * percent / 100) * type;
-        strcpy(Name, Data->P[player].Rocket[maxSafetyIndex - 7].Name);
-    } else if (maxSafetyIndex >= 14 && maxSafetyIndex <= 20) {
-        Data->P[player].Manned[maxSafetyIndex - 14].Safety 
-          += (Data->P[player].Manned[maxSafetyIndex - 14].Safety * percent / 100) * type;
-        strcpy(Name, Data->P[player].Manned[maxSafetyIndex - 14].Name);
-    }
-
-  return save[maxSafetyIndex];
-}
-
-
+*/
 /*
-    lo = (program > 0) ? (program - 1) * 7 : 0;
-    hi = (program > 0) ? lo + 7 : 28;
-     
-    if (program == 1) {
+int NMod(int plr, int prog, int type, int per)
+{
+    int i = 0, j = 0, save[28], lo = 0, hi = 28;
+    Equipment *Eptr[28];
+
+    lo = (prog > 0) ? (prog - 1) * 7 : 0;
+    hi = (prog > 0) ? lo + 7 : 28;
+
+    if (prog == 1) {
         hi = lo + 3;
     }
 
     // drvee: this loop was going to 25, not 28
     for (i = 0; i < (int)ARRAY_LENGTH(Eptr); i++) {
         // bug Mismatch between data.h(250) and this code here
-        Eptr[i] = &Data->P[player].Probe[i];
-        
-        save[i] = ((Eptr[i]->Safety + percent * type) <= (Eptr[i]->MaxSafety) 
-                  && Eptr[i]->Num >= 0) ? Eptr[i]->Safety + percent * type : 0;
+        Eptr[i] = &Data->P[plr].Probe[i];
+        save[i] = ((Eptr[i]->Safety + per * type) <= (Eptr[i]->MaxSafety) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety + per * type : 0;
 
         if (Eptr[i]->Num < 0) {
             save[i] = 0;
         }
-      }
+    }
 
     for (i = 0; i < (int)ARRAY_LENGTH(save); i++) {
         if (save[i] < 0) {
@@ -256,7 +515,7 @@ int SafetyMod(int player, int program, int type, int percent)
     return save[j];
 }
 */
-
+/*
 int DamMod(int plr, int prog, int dam, int cost)
 {
     int i = 0, j = 0, lo = 0, hi = 28;
@@ -309,15 +568,15 @@ int DamMod(int plr, int prog, int dam, int cost)
 
     return save[j];
 }
+*/
 
-// Increment R&D cost by 1 on particular program
+/*
 int RDMods(int plr, int prog, int type, int val)
 {
     int i = 0, j = 0, save[28], lo = 0, hi = 28;
     Equipment *Eptr[28];
 
     memset(save, 0x00, sizeof save);
-    
     lo = (prog > 0) ? (prog - 1) * 7 : 0;
     hi = (prog > 0) ? lo + 7 : 28;
 
@@ -354,73 +613,64 @@ int RDMods(int plr, int prog, int type, int val)
     Eptr[j]->RDCost += type * val;
     return save[j];
 }
-
-// Set Programs Safety Save Card to 1
+*/
+/*
 int SaveMods(char plr, char prog)
 {
-    int i = 0, j = 0, save[21], lo = 0, hi = 20;
+    int i = 0, j = 0, save[28], lo = 0, hi = 28;
 
-    for (i = 0; i < 21; i++) {
+    for (i = 0; i < 28; i++) {
         save[i] = 0;
     }
 
     switch (prog) {
     case 0:
         lo = 0;
-        hi = 20;
-        break;   // check ALL programs
+        hi = 21;
+        break;   // check ALL    programs
 
     case 1:
         lo = 0;
-        hi = 2;
-        break;    // check PROBE programs
+        hi = 7;
+        break;    // check PROBE  programs
 
     case 2:
         lo = 7;
-        hi = 13;
+        hi = 14;
         break;   // check ROCKET programs
 
     case 3:
         lo = 14;
         hi = 18;
-        break;  // check CAPSULE programs
+        break;  // check MANNED programs
 
     case 4:
         lo = 18;
-        hi = 20;
-        break;  // check LEM programs
-    }
-
-// Every loop is now separately to avoid undefined behaviour 
-    for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Probe[i].Num >= 0) {
-            save[i] = 1;
-        }
-    }
-
-    for (i = 0; i < 5; i++) {
-        if (Data->P[plr].Rocket[i].Num >= 0) {
-            save[i + 7] = 1;
-        }
+        hi = 21;
+        break;  // check LEM   programs
     }
 
     for (i = 0; i < 7; i++) {
+        if (Data->P[plr].Probe[i].Num >= 0) {
+            save[i] = 1;
+        }
+
+        if (Data->P[plr].Rocket[i].Num >= 0) {
+            save[i + 7] = 1;
+        }
+
         if (Data->P[plr].Manned[i].Num >= 0) {
             save[i + 14] = 1;
         }
-    }
-/*
-    for (i = 0; i < 6; i++) {
+
         if (Data->P[plr].Misc[i].Num >= 0) {
             save[i + 21] = 1;
         }
     }
-*/
-    // Strap-On Boosters, Docking Modules and Photo Recon values return to 0
-    //save[11] = save[25] = save[26] =  0;
-    save[11] = 0;
 
-    for (i = lo; i <= hi; i++) {
+    save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
+
+    for (i = lo; i < hi; i++) {
         if (save[i] > 0) {
             j++;    // Check if event is good.
         }
@@ -430,7 +680,7 @@ int SaveMods(char plr, char prog)
         return 0;
     }
 
-    j = hi;
+    j = hi - 1;
 
     while (save[j] == 0) {
         j--;
@@ -454,5 +704,7 @@ int SaveMods(char plr, char prog)
 
     return save[j];
 }
+*/
+
 
 // EOF

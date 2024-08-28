@@ -271,7 +271,7 @@ char REvent(char plr)
 
     case 42:
     case 43:  /* increment R&D cost by 1 on particular program */
-        evflag = RDMods(plr, 0, 1, 1);
+        evflag = RDMod(plr, 0, 1, 1);
 
         if (evflag == 0) {
             return 1;
@@ -283,24 +283,21 @@ char REvent(char plr)
     // Improve/Subtract Tech to Other players -------------------
 
     case 5:
-    case 47: // Improve tech of plr prog to other's prog
-        evflag = Steal(plr, 0, 1);
-
-        if (evflag == 0) {
-            return 1;
-        }
-
-        break;
-
     case 6:
-    case 7:
-        // Lower tech of plr prog to other's prog
-        evflag = Steal(plr, 0, -1);
+    case 7: // Lower tech of plr prog from rival prog
+        evflag = StealMod(plr, 0, -1);
 
         if (evflag == 0) {
             return 1;
         }
+        break;
+    
+    case 47: // Improve tech of plr prog from rival prog
+        evflag = StealMod(plr, 0, 1);
 
+        if (evflag == 0) {
+            return 1;
+        }
         break;
 
     // Special Events -------------------------------------------
@@ -414,7 +411,7 @@ char REvent(char plr)
     // Program Saving cards ------------------------------------
 
     case 11:  /* Select program and set safety save to 1 */
-        evflag = SaveMods(plr, 0);
+        evflag = SaveMod(plr, 0);
 
         if (evflag == 0) {
             return 1;
@@ -422,7 +419,7 @@ char REvent(char plr)
         break;
 
     case 48:  // Set Save for Rocket program
-        evflag = SaveMods(plr, 2);
+        evflag = SaveMod(plr, 2);
 
         if (evflag == 0) {
             return 1;
@@ -430,7 +427,7 @@ char REvent(char plr)
         break;
 
     case 77:  // set Save for Capsule Program
-        evflag = SaveMods(plr, 3);
+        evflag = SaveMod(plr, 3);
 
         if (evflag == 0) {
             return 1;
@@ -438,7 +435,7 @@ char REvent(char plr)
         break;
 
     case 93:  // set Save for LEM Program
-        evflag = SaveMods(plr, 4);
+        evflag = SaveMod(plr, 4);
 
         if (evflag == 0) {
             return 1;
@@ -490,8 +487,7 @@ char REvent(char plr)
 
     case 22:
     case 84:  /*  this applies to the most advanced manned program.
-                  roll six 6-sided dice and add to the current 
-                  safety factor. */
+                  roll six 6-sided dice and add to current safety factor. */
         x = rollSixDie(6);
         evflag = SafetyMod(plr, 3, 1, x);
 
@@ -503,8 +499,7 @@ char REvent(char plr)
         break;
 
     case 23:  /* this applies to the most advanced rocket program.
-                 roll six 6-sided dice and add to the current
-                 safety factor. */
+                 roll six 6-sided dice and add to current safety factor. */
         x = rollSixDie(6);
         evflag = SafetyMod(plr, 2, 1, x);
 
@@ -516,8 +511,7 @@ char REvent(char plr)
         break;
 
     case 24:  /*  this applies for the most advanced satellite program. 
-                  roll four 6-sided dice and add to the current 
-                  safety factor. */
+                  roll four 6-sided dice and add to current safety factor. */
         x = rollSixDie(4);
         evflag = SafetyMod(plr, 1, 1, x);
 
@@ -528,29 +522,16 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 94:  /*  this applies for the most advanced capsule program. 
-                  roll four 6-sided dice and add to the current 
-                  safety factor. */
+    case 94:  /*  this applies for the most advanced manned program. 
+                  roll four 6-sided dice and add to current safety factor. */
         x = rollSixDie(4);
-        evflag = SafetyMod(plr, 4, 1, x);
+        evflag = SafetyMod(plr, 3, 1, x);
 
         if (evflag == 0) {
             return 1;
         }
 
         evflag = x;
-        break;
-
-
-    case 25:  /* the blank is all rockets. R&D can't cure it.
-                 the options are to launch one rocket at this setback,
-                 or cancel launch. - 20% if no visit to repairs.*/
-        evflag = DamMod(plr, 2, -20, 15);
-
-        if (evflag == 0) {
-            return 1;
-        }
-
         break;
 
     case 26:  /* select most advanced manned program and reduce safety by 25%  */
@@ -571,6 +552,16 @@ char REvent(char plr)
         }
 
         evflag = 15;
+        break;
+
+    case 34:  /* 20% loss most advanced manned program */
+        evflag = SafetyMod(plr, 3, -1, 20);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = 20;
         break;
 
     case 79:  /* select most advanced from all programs and reduce safety by 20%  */
@@ -594,17 +585,15 @@ char REvent(char plr)
         }
         break;
 
-    case 34:  /* 20% loss most advanced capsule program */
-        evflag = SafetyMod(plr, 4, -1, 20);
+    case 25:  /* cost 15MB repair or 20% safety loss on the most advanced rocket program*/
+        evflag = DamMod(plr, 2, -20, 15);
 
         if (evflag == 0) {
             return 1;
         }
-
-        evflag = 20;
         break;
 
-    case 37:  /* cost 10MB repair or 10% safety loss on the most advanced probe */
+    case 37:  /* cost 10MB repair or 10% safety loss on the most advanced probe program*/
         evflag = DamMod(plr, 1, -10, 10);
 
         if (evflag == 0) {
@@ -613,7 +602,7 @@ char REvent(char plr)
         break;
 
     case 38:
-    case 39:  /* most adv. rocket program 10 MB's or 5% safety loss */
+    case 39:  /* cost 10MB repair or 5% safety loss on the most advanced rocket program*/
         evflag = DamMod(plr, 2, -5, 10);
 
         if (evflag == 0) {
@@ -621,7 +610,7 @@ char REvent(char plr)
         }
         break;
 
-    case 40:  /* blank a program 10 MB's or 10% safety loss */
+    case 40:  /* cost 10MB repair or 10% safety loss on the most advanced program*/
         evflag = DamMod(plr, 0, -10, 10);
 
         if (evflag == 0) {
@@ -637,7 +626,7 @@ char REvent(char plr)
         }
         break;
 
-    case 55:  /* most advanced rocket program 20 MB's or 10% safety loss */
+    case 55:  /* most advanced manned program 20 MB's or 10% safety loss */
         evflag = DamMod(plr, 3, -10, 20);
 
         if (evflag == 0) {
