@@ -2544,6 +2544,38 @@
       "MADE."
     ]
   },
+   {
+    "Code": "I176",
+    "description": [
+      "; Longest Line:                      ",
+      ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "%05:0",
+      ".011",
+      "UNASSIGNED ASTRONAUTS",
+      ".001",
+      "YOU CURRENTLY DO NOT HAVE UNASSIGNED",
+      "ASTRONAUTS.",
+      "FOR ASTRONAUTS IN BASIC TRAINING",
+      "VISIT THE BASIC TRAINING BUILDING",
+      "LOCATED ON THE SPACEPORT."
+    ]
+  },
+   {
+    "Code": "I177",
+    "description": [
+      "; Longest Line:                      ",
+      ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "%05:0",
+      ".011",
+      "UNASSIGNED COSMONAUTS",
+      ".001",
+      "YOU CURRENTLY DO NOT HAVE UNASSIGNED",
+      "COSMONAUTS.",
+      "FOR COSMONAUTS IN BASIC TRAINING",
+      "VISIT THE BASIC TRAINING BUILDING",
+      "LOCATED ON THE SPACEPORT."
+    ]
+  },
   {
     "Code": "I201",
     "description": [
