@@ -93,8 +93,7 @@ void DrawLimbo(char plr)
     fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
     InBox(165, 46, 315, 67);
     fill_rectangle(166, 47, 314, 66, 0);
-    ShBox(167, 48, 225, 65);
-    InBox(167, 48, 225, 65);  // Transfer Astronaut button
+    ShBox(167, 48, 225, 65);  // Transfer Astronaut button
     ShBox(227, 48, 256, 65);  // Send All button
     ShBox(258, 48, 313, 65);  // Facility Transfer button
     InBox(4, 128, 20, 196);
@@ -127,11 +126,8 @@ void DrawLimbo(char plr)
     display::graphics.setForegroundColor(20);
     draw_string(0, 0, "ACILITY");
     draw_string(262, 62, "TRANSFER");
-
-    fill_rectangle(166, 78, 314, 88, 10);
-    display::graphics.setForegroundColor(11);
-    draw_string(185, 85, "TRANSFER TO LOCATION");
-
+    
+    
     for (int i = 0; i < 5; i++) {
         char str[21];
 
@@ -205,8 +201,7 @@ void DrawLimbo(char plr)
 
 void Limbo(char plr)
 {
-    int BarA, now2;
-    int tag = OP_TRANSFER;
+    int BarA, now2, tag ;
     std::vector<int> AstroList;
 
     DrawLimbo(plr);
@@ -225,8 +220,18 @@ void Limbo(char plr)
     FadeIn(2, 10, 0, 0);
 
     if (AstroList.size()) {
+        InBox(167, 48, 225, 65);  // Default Transfer Astronaut button
+        tag = OP_TRANSFER;
+        fill_rectangle(166, 78, 314, 88, 10);
+        display::graphics.setForegroundColor(11);
+        draw_string(185, 85, "TRANSFER TO LOCATION");
         LimboText(plr, AstroList.at(now2));
     } else {
+        InBox(258, 48, 313, 65);  // Default Facility transfer button 
+        tag = OP_VISIT;
+        fill_rectangle(166, 78, 314, 88, 10);
+        display::graphics.setForegroundColor(11);
+        draw_string(203, 85, "VISIT LOCATION");
         Help((plr == 0) ? "i176" : "i177");
     }
 
