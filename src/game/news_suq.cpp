@@ -45,7 +45,6 @@ int rollSixDie(int nrolls) {
     return result;
 }
 
-
 /**
  *
  * \return true (1) if need to scrub mission because of crews
@@ -88,38 +87,24 @@ char CheckCrewOK(char plr, char pad)
 char REvent(char plr)
 {
     FILE *fin;
-    int32_t NoMods = 1, i = 0, j = 0;
-    int16_t m;
+    int NoMods = 1, i = 0, j = 0;
+    int m = 0;
 
     if (NoMods == 1) {
-        m = 0;
 
-        if (Data->P[plr].Budget < 40) {
-            Data->P[plr].Budget = 40;
+	struct BuzzData *pData = &Data->P[plr];
+                
+        if (pData->Budget < 40) {
+            pData->Budget = 40;
         }
 
-        if (Data->P[plr].Budget <= 50) {
-            j = 0;
-        }
-
-        if (Data->P[plr].Budget > 50 && Data->P[plr].Budget <= 90) {
-            j = 1;
-        }
-
-        if (Data->P[plr].Budget > 90 && Data->P[plr].Budget <= 110) {
-            j = 2;
-        }
-
-        if (Data->P[plr].Budget > 110 && Data->P[plr].Budget <= 140) {
-            j = 3;
-        }
-
-        if (Data->P[plr].Budget > 140 && Data->P[plr].Budget <= 160) {
-            j = 4;
-        }
-
-        if (Data->P[plr].Budget > 160) {
-            j = 5;
+	j = 5; // for Budget over 160
+	int range[6] = {0, 50, 90, 110, 140, 160}; // Budget limits
+        
+        for(int k = 0; k < 5; k++){
+             if (pData->Budget > range[k] && pData->Budget <= range[k+1]) {
+        	j = i;
+             }            
         }
 
         fin = sOpen("NTABLE.DAT", "rb", FT_DATA);
@@ -151,7 +136,8 @@ char REvent(char plr)
     if (Data->Year <= 65 && Data->Events[Data->Count] > 80) {
         return 1;
     }
-
+    
+    // evflag defined in news.h
     switch (Data->Events[Data->Count]) {
     case  0:
     case  1:
@@ -286,18 +272,14 @@ char REvent(char plr)
     case 47: // Improve tech of plr prog from rival prog
         evflag = StealMod(plr, 0, 1);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
  
     case 6:
     case 7: // Lower tech of plr prog from rival prog
         evflag = StealMod(plr, 0, -1);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
     
     
@@ -319,21 +301,13 @@ char REvent(char plr)
 
         evflag = 0;
 
-        if (Data->P[plr].Mission[0].MissionCode) {
-            choice[evflag++] = 1;
+        for (int i = 0; i < 3; i++) {
+            if(Data->P[plr].Mission[i].MissionCode) {
+                choice[evflag++] += i + 1;
+            }
         }
 
-        if (Data->P[plr].Mission[1].MissionCode) {
-            choice[evflag++] = 2;
-        }
-
-        if (Data->P[plr].Mission[2].MissionCode) {
-            choice[evflag++] = 3;
-        }
-
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = choice[brandom(evflag)] - 1;
         xMODE |= xMODE_CLOUDS;
@@ -349,28 +323,18 @@ char REvent(char plr)
             return 1;
         }
 
-        if (Data->P[plr].Mission[0].MissionCode) {
-            evflag += 1;
+        for (int i = 0; i < 3; i++) {
+            if(Data->P[plr].Mission[i].MissionCode) {
+                evflag += i * 2;
+            }
         }
 
-        if (Data->P[plr].Mission[1].MissionCode) {
-            evflag += 2;
-        }
-
-        if (Data->P[plr].Mission[2].MissionCode) {
-            evflag += 4;
-        }
-
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         switch (evflag) {
         case 1:
-            evflag = 0;
-            break;
-
         case 2:
+        case 4:
             evflag = 0;
             break;
 
@@ -378,14 +342,7 @@ char REvent(char plr)
             ScrubMission(plr, 1);
             break;
 
-        case 4:
-            evflag = 0;
-            break;
-
         case 5:
-            ScrubMission(plr, 2);
-            break;
-
         case 6:
             ScrubMission(plr, 2);
             break;
@@ -414,33 +371,25 @@ char REvent(char plr)
     case 11:  /* Select program and set safety save to 1 */
         evflag = SaveMod(plr, 0);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 48:  // Set Save for Rocket program
         evflag = SaveMod(plr, 2);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 77:  // set Save for Capsule Program
         evflag = SaveMod(plr, 3);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 93:  // set Save for LEM Program
         evflag = SaveMod(plr, 4);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     // Drop Safety  ------------------------------------
@@ -455,9 +404,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         for (i = 3; i >= 0; i--) {
             if (Data->P[plr].Rocket[i].Num >= 0 && Data->P[plr].Rocket[i].Safety > 50) {
@@ -494,9 +441,7 @@ char REvent(char plr)
         x = rollSixDie(6);
         evflag = SafetyMod(plr, 3, 1, x);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = x;
         break;
@@ -506,9 +451,7 @@ char REvent(char plr)
         x = rollSixDie(6);
         evflag = SafetyMod(plr, 2, 1, x);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = x;
         break;
@@ -518,9 +461,7 @@ char REvent(char plr)
         x = rollSixDie(4);
         evflag = SafetyMod(plr, 1, 1, x);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = x;
         break;
@@ -528,9 +469,7 @@ char REvent(char plr)
     case 26:  /* select most advanced manned program and reduce safety by 25%  */
         evflag = SafetyMod(plr, 3, -1, 25);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = 25;
         break;
@@ -538,9 +477,7 @@ char REvent(char plr)
     case 27:  /* select most advanced probe program and reduce safety by 15%  */
         evflag = SafetyMod(plr, 1, -1, 15);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = 15;
         break;
@@ -548,9 +485,7 @@ char REvent(char plr)
     case 34:  /* 20% loss most advanced manned program */
         evflag = SafetyMod(plr, 3, -1, 20);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = 20;
         break;
@@ -558,9 +493,7 @@ char REvent(char plr)
     case 79:  /* select most advanced from all programs and reduce safety by 20%  */
         evflag = SafetyMod(plr, 0, -1, 20);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         evflag = 20;
         break;
@@ -570,9 +503,7 @@ char REvent(char plr)
         x = rollSixDie(4);
         evflag = SafetyMod(plr, 3, 1, x);
 
-        if (evflag == 0) {
-            return 1;
-        }
+         if (!evflag) return 1;
 
         evflag = x;
         break;
@@ -593,58 +524,44 @@ char REvent(char plr)
     case 25:  /* cost 15MB repair or 20% safety loss on the most advanced rocket program*/
         evflag = DamMod(plr, 2, -20, 15);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 37:  /* cost 10MB repair or 10% safety loss on the most advanced probe program*/
         evflag = DamMod(plr, 1, -10, 10);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 38:
     case 39:  /* cost 10MB repair or 5% safety loss on the most advanced rocket program*/
         evflag = DamMod(plr, 2, -5, 10);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 40:  /* cost 10MB repair or 10% safety loss on the most advanced program*/
         evflag = DamMod(plr, 0, -10, 10);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 54:  /* most advanced rocket program 15 MB's or 20% safety loss */
         evflag = DamMod(plr, 2, -20, 15);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 55:  /* most advanced manned program 20 MB's or 10% safety loss */
         evflag = DamMod(plr, 3, -10, 20);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     case 78:  /* most advanced capsule 10MB's or 10% safety */
         evflag = DamMod(plr, 3, -10, 10);
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
         break;
 
     // Astronaut Portion ------------------------------------
@@ -699,9 +616,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         ClearMissionCrew(plr, --evflag, CREW_PRIMARY);
         break;
@@ -716,9 +631,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         Data->P[plr].Budget -= 5;
         i = brandom(Data->P[plr].AstroCount);
@@ -752,9 +665,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         i = brandom(Data->P[plr].AstroCount);
 
@@ -780,9 +691,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         i = brandom(Data->P[plr].AstroCount);
 
@@ -825,9 +734,7 @@ char REvent(char plr)
             }
         }
 
-        if (j == 20) {
-            return 1;
-        }
+        if (j == 20) return 1;
 
         /* get which of the three facilities damaged */
         Data->P[plr].LaunchFacility[i] = 10;
@@ -842,9 +749,7 @@ char REvent(char plr)
         break;
 
     case 83:  // Apollo or Soyuz will cost additional 3MB's per spacecraft
-        if (Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0) {
-            return 1;
-        }
+        if (Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0) return 1;
 
         Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].UnitCost += 3;
         break;
@@ -863,9 +768,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         i = brandom(3);
 
@@ -899,9 +802,7 @@ char REvent(char plr)
             }
         }
 
-        if (evflag == 0) {
-            return 1;
-        }
+        if (!evflag) return 1;
 
         i = brandom(Data->P[plr].AstroCount);
 

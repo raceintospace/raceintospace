@@ -983,8 +983,7 @@ std::string GetBlockName()
         display::graphics.setForegroundColor(11);
         draw_string(60, 74, "NOT ENOUGH DISK SPACE");
         delay(2000);
-        //local.copyTo(display::graphics.legacyScreen(), 39, 50);
-        display::graphics.screen()->draw(local, 39, 50);
+        local.copyTo(display::graphics.legacyScreen(), 39, 50);
         throw IOException("Not enough disk space");
     }
 
