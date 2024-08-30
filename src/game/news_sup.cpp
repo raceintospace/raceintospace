@@ -37,10 +37,9 @@
 
 
 /** Steal technology from rival player
- *
- * \param prog: program
- * \param type 1:positive -1:negative search
- */
+* \param prog: program
+* \param type 1:positive -1:negative search
+*/
 int StealMod(int plr, int prog, int type)
 {
       std::array<int, 28> save = {0};  // Initialize in zero
@@ -65,14 +64,14 @@ int StealMod(int plr, int prog, int type)
     // Remove Kicker C and Photo Recon from options
     save[23] = save[26] = 0;
    
-    int lo = 0, hi = 27;
+    int lo = 0, hi = 26;
     switch (prog) {
         case 1: lo = 0;  hi = 2;  break;  // PROBE programs
         case 2: lo = 7;  hi = 11; break;  // ROCKET programs
         case 3: lo = 14; hi = 18; break;  // MANNED programs
         case 4: lo = 18; hi = 20; break;  // LEM programs
-        case 5: lo = 21; hi = 27; break;  // MISC programs
-        // case 0: Default lo=0, hi=27 covers all programs
+        case 5: lo = 21; hi = 26; break;  // MISC programs
+        // case 0: Default lo=0, hi=26 covers all programs
     }
     
     Equipment* player = nullptr;
@@ -129,10 +128,10 @@ int StealMod(int plr, int prog, int type)
 }
 
 /** Modifies the Safety Factor
- *  
- * \param 'type' 1:positive -1:negative modification
- * \param 'per' is the amount of modification to Safety
- */
+* \param prog: program
+* \param 'type' 1:positive -1:negative modification
+* \param 'per' : percentage of modification to Safety
+*/
 int SafetyMod(int plr, int prog, int type, int per)
 {
     std::array<int, 21> save = {0};  // Initialize in zero
@@ -187,8 +186,8 @@ int SafetyMod(int plr, int prog, int type, int per)
 
 
 /** Most advanced program is damaged, cost to repair 
-* \param 'prog'
-* \param 'dam' is the amount of damage
+* \param prog: program
+* \param 'dam': damage
 * \param 'cost'
 */
 int DamMod(int plr, int prog, int dam, int cost)
@@ -247,14 +246,13 @@ int DamMod(int plr, int prog, int dam, int cost)
 }
 
 /** Increment R&D cost on program
- *  
  * \param 'prog'
- * \param 'type' is the amount of damage
- * \param 'val'
+ * \param 'type'
+ * \param 'val': increase in RD Cost
  */
 int RDMod(int plr, int prog, int type, int val)
 {
-          std::array<int, 28> save = {0};  // Initialize in zero
+    std::array<int, 28> save = {0};  // Initialize in zero
 
     // Assign safety values in save[]
     for (int i = 0; i < 3; ++i) {
@@ -276,14 +274,14 @@ int RDMod(int plr, int prog, int type, int val)
     // Remove Kicker C and Photo Recon from options
     save[23] = save[26] = 0;
    
-    int lo = 0, hi = 27;
+    int lo = 0, hi = 26;
     switch (prog) {
         case 1: lo = 0;  hi = 2;  break;  // PROBE programs
         case 2: lo = 7;  hi = 11; break;  // ROCKET programs
         case 3: lo = 14; hi = 18; break;  // MANNED programs
         case 4: lo = 18; hi = 20; break;  // LEM programs
-        case 5: lo = 21; hi = 27; break;  // MISC programs
-        // case 0: Default lo=0, hi=27 covers all programs
+        case 5: lo = 21; hi = 26; break;  // MISC programs
+        // case 0: Default lo=0, hi=26 covers all programs
     }
     
     // Find Advanced Program
@@ -318,7 +316,7 @@ int RDMod(int plr, int prog, int type, int val)
  *  
  * \param 'prog'
  */
-int SaveMod(char plr, char prog)
+int SaveMod(int plr, int prog)
 {
     std::array<int, 21> save = {0};  // Initialize in zero
 
@@ -371,6 +369,48 @@ int SaveMod(char plr, char prog)
     }
     
     return save[index];
+}
+
+/** Transfer new nauts
+ */
+void NewNauts(int plr) {
+    
+    /* The original bonus astronauts & cosmonauts were:
+    REEVES, CHAMBERLAIN, YEAGER and STIPPOV, SCHLICKBERND, FARGOV -Leon */
+    
+    // US Astronauts
+    char UsName[3][14] = { "MANKE", "POWELL", "YEAGER"};
+    int8_t UsStatsCap[3] = {1, 2, 3};
+    int8_t UsStatsLM[3] = {2, 0, 0};
+    int8_t UsStatsEVA[3] = {2, 0 ,1};
+    int8_t UsStatsDock[3] = {1, 1, 1};
+    int8_t UsStatsEndur[3] = {3, 0, 2};
+	
+    // USSR Cosmonauts
+    char SovName[3][14] = { "ILYUSHIN", "KRAMARENKO", "DOLGOV"};
+    int8_t SovStatsCap[3] = {3, 2, 2};
+    int8_t SovStatsLM[3] = {0, 1, 3};
+    int8_t SovStatsEVA[3] = {0, 2 ,0};
+    int8_t SovStatsDock[3] = {3, 0, 0};
+    int8_t SovStatsEndur[3] = {3, 3, 1};	
+	
+    for (int i = 0; i < 3; i++) {
+        strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], plr ? UsName[i]: SovName[i]);
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = plr ? UsStatsCap[i] : SovStatsCap[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].LM = plr ? UsStatsLM[i] : SovStatsLM[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = plr ? UsStatsEVA[i] : SovStatsEVA[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = plr ? UsStatsDock[i] : SovStatsDock[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = plr ? UsStatsEndur[i] : SovStatsEndur[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = brandom(10) + 1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].CR = brandom(2) + 1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].CL = brandom(2) + 1;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
+        Data->P[plr].AstroCount++;
+    }
 }
 
 /*

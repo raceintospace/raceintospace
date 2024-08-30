@@ -59,7 +59,8 @@ char CheckCrewOK(char plr, char pad)
     prog = Data->P[plr].Mission[pad].Prog;
     mis = Data->P[plr].Mission[pad].MissionCode;
 
-    if (mis != 0 && Data->P[plr].CrewCount[prog][P_crew] == 0 && Data->P[plr].CrewCount[prog][B_crew] == 0
+    if (mis != 0 && Data->P[plr].CrewCount[prog][P_crew] == 0 
+    && Data->P[plr].CrewCount[prog][B_crew] == 0
         && Data->P[plr].Mission[pad].Men > 0) {
         if (!AI[plr]) {
             switch (pad) {
@@ -276,13 +277,20 @@ char REvent(char plr)
         if (evflag == 0) {
             return 1;
         }
-
         break;
 
 
     // Improve/Subtract Tech to Other players -------------------
 
     case 5:
+    case 47: // Improve tech of plr prog from rival prog
+        evflag = StealMod(plr, 0, 1);
+
+        if (evflag == 0) {
+            return 1;
+        }
+        break;
+ 
     case 6:
     case 7: // Lower tech of plr prog from rival prog
         evflag = StealMod(plr, 0, -1);
@@ -292,14 +300,7 @@ char REvent(char plr)
         }
         break;
     
-    case 47: // Improve tech of plr prog from rival prog
-        evflag = StealMod(plr, 0, 1);
-
-        if (evflag == 0) {
-            return 1;
-        }
-        break;
-
+    
     // Special Events -------------------------------------------
 
     case  8:  // Allow females into space program
@@ -442,6 +443,8 @@ char REvent(char plr)
         }
         break;
 
+    // Drop Safety  ------------------------------------
+
     case 20:  /* the most advanced rocket program is affected.
                  drop the safety factor in half. */
         evflag = 0;
@@ -464,16 +467,17 @@ char REvent(char plr)
                 break;
             }
         }
-
         break;
 
+    // Increase Safety   ------------------------------------
+
     case 21:  // Probes' and Sats' Max SF and RD up 5% */
-        for (i = 1; i < 3; i++) {
+        for (i = 0; i < 3; i++) {
             Data->P[plr].Probe[i].MaxRD += 5;
             Data->P[plr].Probe[i].MaxSafety += 5;
         }
 
-        for (i = 1; i < 3; i++) {
+        for (i = 0; i < 3; i++) {
             if (Data->P[plr].Probe[i].MaxSafety >= 99) {
                 Data->P[plr].Probe[i].MaxSafety = 99;
             }
@@ -482,7 +486,6 @@ char REvent(char plr)
                 Data->P[plr].Probe[i].MaxRD = Data->P[plr].Probe[i].MaxSafety;
             }
         }
-
         break;
 
     case 22:
@@ -514,18 +517,6 @@ char REvent(char plr)
                   roll four 6-sided dice and add to current safety factor. */
         x = rollSixDie(4);
         evflag = SafetyMod(plr, 1, 1, x);
-
-        if (evflag == 0) {
-            return 1;
-        }
-
-        evflag = x;
-        break;
-
-    case 94:  /*  this applies for the most advanced manned program. 
-                  roll four 6-sided dice and add to current safety factor. */
-        x = rollSixDie(4);
-        evflag = SafetyMod(plr, 3, 1, x);
 
         if (evflag == 0) {
             return 1;
@@ -574,6 +565,18 @@ char REvent(char plr)
         evflag = 20;
         break;
 
+    case 94:  /*  this applies for the most advanced manned program. 
+                  roll four 6-sided dice and add to current safety factor. */
+        x = rollSixDie(4);
+        evflag = SafetyMod(plr, 3, 1, x);
+
+        if (evflag == 0) {
+            return 1;
+        }
+
+        evflag = x;
+        break;
+
     case 28:  // hardware cost 50% less this season
     case 56:
         Data->P[plr].TurnOnly = 3;
@@ -584,6 +587,8 @@ char REvent(char plr)
             Data->P[plr].Rocket[i].Delay = 2;
         }
         break;
+
+    // Cost to Repair or Safety Loss   ------------------------------------
 
     case 25:  /* cost 15MB repair or 20% safety loss on the most advanced rocket program*/
         evflag = DamMod(plr, 2, -20, 15);
@@ -634,25 +639,35 @@ char REvent(char plr)
         }
         break;
 
+    case 78:  /* most advanced capsule 10MB's or 10% safety */
+        evflag = DamMod(plr, 3, -10, 10);
+
+        if (evflag == 0) {
+            return 1;
+        }
+        break;
+
     // Astronaut Portion ------------------------------------
 
     case 49:  /* pick random astronaut retire, budget minus 5 MB's */
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
-            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED)) {
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+            Data->P[plr].Pool[i].Status == AST_ST_RETIRED)) {
                 evflag++;
             }
         }
 
-        if (evflag == 0) {
-            return 1;
+        if (evflag) {
+          i = brandom(Data->P[plr].AstroCount);
+          Data->P[plr].Budget -= 5;
+        } else {
+          return 1;
         }
 
-        Data->P[plr].Budget -= 5;
-        i = brandom(Data->P[plr].AstroCount);
-
-        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+        Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             i = brandom(Data->P[plr].AstroCount);
         }
 
@@ -695,7 +710,8 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
-            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+            Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
         }
@@ -707,7 +723,8 @@ char REvent(char plr)
         Data->P[plr].Budget -= 5;
         i = brandom(Data->P[plr].AstroCount);
 
-        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+        Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             i = brandom(Data->P[plr].AstroCount);
         }
 
@@ -729,7 +746,8 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
-            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+            Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
         }
@@ -740,7 +758,8 @@ char REvent(char plr)
 
         i = brandom(Data->P[plr].AstroCount);
 
-        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+        Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             i = brandom(Data->P[plr].AstroCount);
         }
 
@@ -755,7 +774,8 @@ char REvent(char plr)
         evflag = 0;
 
         for (i = 0; i < Data->P[plr].AstroCount; i++) {
-            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
+            if (!(Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+            Data->P[plr].Pool[i].Status == AST_ST_RETIRED))  {
                 evflag++;
             }
         }
@@ -766,7 +786,8 @@ char REvent(char plr)
 
         i = brandom(Data->P[plr].AstroCount);
 
-        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
+        while (Data->P[plr].Pool[i].Status == AST_ST_DEAD || 
+        Data->P[plr].Pool[i].Status == AST_ST_RETIRED) {
             i = brandom(Data->P[plr].AstroCount);
         }
 
@@ -786,65 +807,8 @@ char REvent(char plr)
         CheckFlightCrews(plr);
         break;
 
-    case 57:
-        for (i = 0; i < 3; i++) {
-            if (i == 0 && plr == 0) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "MANKE");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
-            } else if (i == 1 && plr == 0) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "POWELL");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 0;
-            } else if (i == 2 && plr == 0) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "YEAGER");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 3;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 2;
-            } else if (i == 0 && plr == 1) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "ILYUSHIN");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 3;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 3;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
-            } else if (i == 1 && plr == 1) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "KRAMARENKO");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 1;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 3;
-            } else if (i == 2 && plr == 1) {
-                strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], "DOLGOV");
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = 2;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].LM = 3;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = 0;
-                Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = 1;
-            }
-
-            /* The original bonus astronauts & cosmonauts were:
-               REEVES, CHAMBERLAIN, YEAGER and STIPPOV, SCHLICKBERND, FARGOV -Leon */
-
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = brandom(10) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].CR = brandom(2) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].CL = brandom(2) + 1;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
-            Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
-            Data->P[plr].AstroCount++;
-        }
+    case 57:  /* transfer new nauts to space program */
+        NewNauts(plr);
         break;
 
     case 58:  // 50% chance explosion on pad
@@ -855,7 +819,8 @@ char REvent(char plr)
         for (j = 0; j < 20; j++) {
             i = rand() % 3;
 
-            if (Data->P[plr].LaunchFacility[i] == 1 && Data->P[plr].Mission[i].MissionCode == Mission_None) {
+            if (Data->P[plr].LaunchFacility[i] == 1 
+            && Data->P[plr].Mission[i].MissionCode == Mission_None) {
                 break;
             }
         }
@@ -913,14 +878,6 @@ char REvent(char plr)
 
         evflag = i;
         DelayMission(plr, i);
-        break;
-
-    case 78:  /* most advanced capsule 10MB's or 10% safety */
-        evflag = DamMod(plr, 3, -10, 10);
-
-        if (evflag == 0) {
-            return 1;
-        }
         break;
 
     case 80:  // Can't Deliver any Cap/Mods this year
