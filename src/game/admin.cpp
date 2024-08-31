@@ -123,6 +123,8 @@ void FileText(const char *name);
 int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
 void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength);
+void ShiftMemory (int8_t *p, const int legacySize);
+void CheckMSF ();
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
 void write_save_file(const char *Name, SaveFileHdr header);
@@ -357,7 +359,6 @@ PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &ori
     } else {
         return PHYSFS_ENUM_STOP;
     }
-
 }
 
 /* Creates a list of all the save files of the selected type, up to 100.
@@ -371,13 +372,10 @@ PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &ori
  */
 std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 {
-
     SaveGameEnumerator saves(saveType);
-
     if (saves.enumerate()) {
         std::sort(saves.results.begin(), saves.results.end(), OrderSaves);
     }
-
     return saves.results;
 }
 
@@ -474,8 +472,8 @@ void FileAccess(char mode)
 
         for (i = 0; i < 9; i++) {
             // Right Select Box
-            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) && mousebuttons > 0 && (now - BarB + i) <= (savegames.size() - 1)) {
-
+            if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) 
+            && mousebuttons > 0 && (now - BarB + i) <= (savegames.size() - 1)) {
                 now -= BarB;
                 now += i;
                 BarB = i;
@@ -484,7 +482,7 @@ void FileAccess(char mode)
                 if (!savegames.empty()) {
                     FileText(&savegames[now].Name[0]);
                 }
-
+                
                 WaitForMouseUp();
             }
         }
@@ -947,7 +945,6 @@ void autosave_game(const char *name)
     // Repair data modified by save
     Data->plr[0] = Data->Def.Plr1 = plr[0] = 2 * AI[0];
     Data->plr[1] = Data->Def.Plr2 = plr[1] = 1 + 2 * AI[1];
-
 }
 
 
@@ -964,7 +961,6 @@ void autosave_game(const char *name)
 std::string GetBlockName()
 {
     const int maxLength = sizeof(SaveFileHdr().Name) - 1;
-
     display::LegacySurface local(164, 77);
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
@@ -1029,7 +1025,6 @@ std::string GetBlockName()
     }
 
     local.copyTo(display::graphics.legacyScreen(), 39, 50);
-
     if (key == K_ENTER && name.length()) {
         return name;
     } else {
@@ -1190,10 +1185,10 @@ int FutureCheck(char plr, char type)
 
     FadeOut(2, 10, 0, 0);
 
-
     PortPal(plr);
 
-    boost::shared_ptr<display::PalettizedSurface> launchPads(Filesystem::readImage("images/lpads.but.1.png"));
+    boost::shared_ptr<display::PalettizedSurface> 
+      launchPads(Filesystem::readImage("images/lpads.but.1.png"));
 
     if (type == 0) {
         helpText = "i010";
@@ -1286,7 +1281,8 @@ int FutureCheck(char plr, char type)
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
                     }
 
-                    // Show (RE)ASSEMBLE HARDWARE in other color if missing requirement penalties
+                    // Show (RE)ASSEMBLE HARDWARE in other color 
+                    // if missing requirement penalties
                     int penalty = AchievementPenalty(plr, plan);
 
                     if (penalty > 2 && type != 0) {
@@ -1391,7 +1387,8 @@ int FutureCheck(char plr, char type)
 
         draw_character(0x41 + i);
 
-        display::graphics.screen()->draw(launchPads, 156 * plr + t * 39, i * 30, 39, 30, 65, 36 + i * 51);
+        display::graphics.screen()->draw(launchPads, 
+        156 * plr + t * 39, i * 30, 39, 30, 65, 36 + i * 51);
     }
 
     FadeIn(2, 10, 0, 0);
@@ -1411,14 +1408,17 @@ int FutureCheck(char plr, char type)
             key = 0;
         }
 
-        if (((!(x >= 59 && y >= 12 && x <= 269 && y <= 186)) && mousebuttons > 0) || key == K_ESCAPE || key == K_ENTER || key == 'E') {
+        if (((!(x >= 59 && y >= 12 && x <= 269 && y <= 186)) 
+        && mousebuttons > 0) || key == K_ESCAPE || key == K_ENTER || key == 'E') {
             InBox(219, 19, 262, 27);
             pad = 5;
             key = 0;
         }
 
         for (i = 0; i < 3; i++) {
-            if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) || (tx[i] != 1 && key == 'A' + i)) {
+            if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y 
+              <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) 
+              || (tx[i] != 1 && key == 'A' + i)) {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);  // Open Future Missions
                 WaitForMouseUp();
                 key = 0;
@@ -1430,7 +1430,8 @@ int FutureCheck(char plr, char type)
 
                 if (p[i] == -1 && Data->P[plr].Cash >= 20 && type == 0) {
 
-                    display::graphics.screen()->draw(launchPads, 156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
+                    display::graphics.screen()->draw(launchPads, 
+                    156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
                     Data->P[plr].Cash -= 20;
                     Data->P[plr].Spend[0][3] += 20;
                     Data->P[plr].LaunchFacility[i] = 1;
@@ -1482,7 +1483,9 @@ int FutureCheck(char plr, char type)
                 if (p[i] > 4 && Data->P[plr].Cash >= abs(Data->P[plr].LaunchFacility[i])
                     && type == 0) {
 
-                    display::graphics.screen()->draw(launchPads, 156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
+                    display::graphics.screen()->draw(launchPads, 
+                    156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
+                    
                     Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
                     Data->P[plr].Spend[0][3] += Data->P[plr].LaunchFacility[i];
                     Data->P[plr].LaunchFacility[i] = 1;
@@ -1526,7 +1529,8 @@ int FutureCheck(char plr, char type)
                         }
                     }
 
-                } else if (p[i] > 4 && Data->P[plr].Cash < abs(Data->P[plr].LaunchFacility[i])
+                } else if (p[i] > 4 && Data->P[plr].Cash < 
+                  abs(Data->P[plr].LaunchFacility[i])
                            && type == 0) {
                     Help("i129");
                 }
@@ -1685,7 +1689,7 @@ void LoadGame(const char *filename)
         // TODO: Should Modem games call CacheCrewFile()?
     }
 
-    header.Name[23] = 0;
+    header.Name[22] = '\0'; // valid index 0-22
     interimData.filename.assign(header.Name);
 }
 
@@ -1698,7 +1702,6 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     uint16_t dataSize, compSize;
     int i, j;
     const int legacySize = 38866;
-    int8_t *p;
 
     dataSize = *(uint16_t *) header.dataSize;
     compSize = *(uint16_t *)(header.dataSize + 2);
@@ -1727,29 +1730,23 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     free(load_buffer);
 
     // Shift Equipment structs to account for MisSucc/Fail being arrays now
+    // Check for each Equipment struct separately
+    // Shift the remaining bytes of the struct by 2 with ShiftMemory function
     for (i = 0; i < NUM_PLAYERS; i++) {
-        for (j = 0; j < 7; j++) {
-            p = Data->P[i].Probe[j].MisFail;
-            // Shift the remaining bytes of the struct by 2
-            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
+        for (j = 0; j < 3; j++) {
+          ShiftMemory(Data->P[i].Probe[j].MisFail, legacySize);
+        }
+
+        for (j = 0; j < 5; j++) {
+          ShiftMemory(Data->P[i].Rocket[j].MisFail, legacySize);
         }
 
         for (j = 0; j < 7; j++) {
-            p = Data->P[i].Rocket[j].MisFail;
-            // Shift the remaining bytes of the struct by 2
-            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
+          ShiftMemory(Data->P[i].Manned[j].MisFail, legacySize);
         }
 
-        for (j = 0; j < 7; j++) {
-            p = Data->P[i].Manned[j].MisFail;
-            // Shift the remaining bytes of the struct by 2
-            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
-        }
-
-        for (j = 0; j < 7; j++) {
-            p = Data->P[i].Misc[j].MisFail;
-            // Shift the remaining bytes of the struct by 2
-            std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
+        for (j = 0; j < 6; j++) {
+          ShiftMemory(Data->P[i].Misc[j].MisFail, legacySize);
         }
     }
 
@@ -1832,17 +1829,33 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     free(load_buffer);
 
     // MSF now holds MaxRDBase (from 1.0.0)
-    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-        for (int j = 0; j < NUM_PLAYERS; j++) {
-            for (int k = 0; k < 7; k++) {
-                Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-                Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-                Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-                Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-            }
-        }
-    }
+    CheckMSF();
+}
 
+// Shift the remaining bytes of the struct by 2 in LegacyLoad function
+void ShiftMemory (int8_t *p, const int legacySize) {
+    std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
+}
+
+//Checks for MSF in 1st Probe in player, if == 0 resets all MSF Equipment to MaxRD
+// For both players
+void CheckMSF (){
+    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
+      for (int j = 0; j < NUM_PLAYERS; j++) {
+          for (int k = 0; k < 3; k++) {
+            Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
+          }
+          for (int k = 0; k < 5; k++) {
+            Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
+          }
+          for (int k = 0; k < 7; k++) {
+            Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
+          }
+          for (int k = 0; k < 6; k++) {
+            Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
+          }
+      }
+    }
 }
 
 /**
@@ -1867,7 +1880,6 @@ char RequestX(const char *s, char md)
     char i;
     display::LegacySurface local(196, 84);
 
-
     if (md == 1) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
@@ -1891,14 +1903,16 @@ char RequestX(const char *s, char md)
     while (i == 2) {
         GetMouse();
 
-        if ((x >= 172 && y >= 105 && x <= 241 && y <= 128 && mousebuttons != 0) || (key == 'N')) {
+        if ((x >= 172 && y >= 105 && x <= 241 && y <= 128 
+        && mousebuttons != 0) || (key == 'N')) {
             InBox(172, 105, 241, 128);
             i = 0;
             delay(50);
             key = 0;
         }
 
-        if ((x > 93 && y >= 105 && x <= 162 && y <= 128 && mousebuttons != 0) || (key == 'Y')) {
+        if ((x > 93 && y >= 105 && x <= 162 && y <= 128 
+        && mousebuttons != 0) || (key == 'Y')) {
             InBox(93, 105, 162, 128);
             i = 1;
             delay(50);
@@ -1907,7 +1921,6 @@ char RequestX(const char *s, char md)
     }
 
     if (md == 1) {
-
         WaitForMouseUp();
         local.copyTo(display::graphics.legacyScreen(), 85, 52);
     }
@@ -1964,7 +1977,8 @@ void write_save_file(const char *Name, SaveFileHdr header)
 
     stringstream stream;
     {
-        cereal::JSONOutputArchive::Options options = cereal::JSONOutputArchive::Options::NoIndent();
+        cereal::JSONOutputArchive::Options options = 
+            cereal::JSONOutputArchive::Options::NoIndent();
         cereal::JSONOutputArchive archive(stream, options);
 
         // Save End of Turn Data
@@ -1972,7 +1986,6 @@ void write_save_file(const char *Name, SaveFileHdr header)
 
         // Save Replay and Event Data
         archive(interimData);
-
     }
 
     size = sizeof(char) * stream.str().size() + 1;

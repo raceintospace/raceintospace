@@ -743,7 +743,7 @@ void F_KillCrew(char mode, struct Astros *Victim)
     }
 
     if ((Data->Def.Lev1 == 0 && p == 0) || (Data->Def.Lev2 == 0 && p == 1)) {
-        // VerifySF will check whether Safety falls below Base
+        // VerifySafety will check whether Safety falls below Base
         GetEquipment(Mev[STEP])->Safety /= 2;
     } else {
         GetEquipment(Mev[STEP])->Safety = GetEquipment(Mev[STEP])->Base;
@@ -1296,7 +1296,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
     }
 
-    VerifySF(plr);  // Keep all safeties within the proper ranges
+    VerifySafety(plr);  // Keep all safeties within the proper ranges
 
     while (bioskey(1)) {
         bioskey(0);

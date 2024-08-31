@@ -959,7 +959,7 @@ void MissionSetDown(char plr, char mis)
             }  // if
         }  // for i
 
-        VerifySF(j);
+        VerifySafety(j);
     }  // for j
 
     return;

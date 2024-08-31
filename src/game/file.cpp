@@ -9,7 +9,8 @@
 #define m_phys_handle ((PHYSFS_File*)m_handle)
 
 #define throw_error do { \
-    const char * error = PHYSFS_getLastError(); \
+    PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
+    const char *error = PHYSFS_getErrorByCode(code); \
     if (error == NULL) \
         error = "unknown filesystem error"; \
     throw std::runtime_error(error); \
