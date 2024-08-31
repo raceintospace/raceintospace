@@ -257,7 +257,7 @@ char REvent(char plr)
         break;
 
     case 42:
-    case 43:  /* increment R&D cost by 1 on particular program */
+    case 43:  /* increment R&D cost by 1 on most advanced program */
         evflag = RDMod(plr, 0, 1, 1);
 
         if (evflag == 0) {
@@ -368,25 +368,25 @@ char REvent(char plr)
 
     // Program Saving cards ------------------------------------
 
-    case 11:  /* Select program and set safety save to 1 */
+    case 11:  // Set Safety Card for most Advanced program
         evflag = SaveMod(plr, 0);
 
         if (!evflag) return 1;
         break;
 
-    case 48:  // Set Save for Rocket program
+    case 48:  // Set Safety Card for advanced Rocket program
         evflag = SaveMod(plr, 2);
 
         if (!evflag) return 1;
         break;
 
-    case 77:  // set Save for Capsule Program
+    case 77:  // set Safety Card for advanced Capsule Program
         evflag = SaveMod(plr, 3);
 
         if (!evflag) return 1;
         break;
 
-    case 93:  // set Save for LEM Program
+    case 93:  // set Safety Card for advanced LEM Program
         evflag = SaveMod(plr, 4);
 
         if (!evflag) return 1;
@@ -436,15 +436,16 @@ char REvent(char plr)
         break;
 
     case 22:
-    case 84:  /*  this applies to the most advanced manned program.
-                  roll six 6-sided dice and add to current safety factor. */
-        x = rollSixDie(6);
+    case 84:  
+    case 94:  /*  this applies for the most advanced capsule program. 
+                  roll four 6-sided dice and add to current safety factor. */
+        x = rollSixDie(4);
         evflag = SafetyMod(plr, 3, 1, x);
 
-        if (!evflag) return 1;
+         if (!evflag) return 1;
 
         evflag = x;
-        break;
+        break;    
 
     case 23:  /* this applies to the most advanced rocket program.
                  roll six 6-sided dice and add to current safety factor. */
@@ -466,7 +467,7 @@ char REvent(char plr)
         evflag = x;
         break;
 
-    case 26:  /* select most advanced manned program and reduce safety by 25%  */
+    case 26:  /* select most advanced capsule program and reduce safety by 25%  */
         evflag = SafetyMod(plr, 3, -1, 25);
 
         if (!evflag) return 1;
@@ -482,7 +483,7 @@ char REvent(char plr)
         evflag = 15;
         break;
 
-    case 34:  /* 20% loss most advanced manned program */
+    case 34:  /* 20% loss most advanced capsule program */
         evflag = SafetyMod(plr, 3, -1, 20);
 
         if (!evflag) return 1;
@@ -490,22 +491,12 @@ char REvent(char plr)
         evflag = 20;
         break;
 
-    case 79:  /* select most advanced from all programs and reduce safety by 20%  */
+    case 79:  /* select most advanced program and reduce safety by 20%  */
         evflag = SafetyMod(plr, 0, -1, 20);
 
         if (!evflag) return 1;
 
         evflag = 20;
-        break;
-
-    case 94:  /*  this applies for the most advanced manned program. 
-                  roll four 6-sided dice and add to current safety factor. */
-        x = rollSixDie(4);
-        evflag = SafetyMod(plr, 3, 1, x);
-
-         if (!evflag) return 1;
-
-        evflag = x;
         break;
 
     case 28:  // hardware cost 50% less this season
@@ -546,19 +537,19 @@ char REvent(char plr)
         if (!evflag) return 1;
         break;
 
-    case 54:  /* most advanced rocket program 15 MB's or 20% safety loss */
+    case 54:  /* cost 15 MB repair or 20% safety loss on the most advanced rocket program*/
         evflag = DamMod(plr, 2, -20, 15);
 
         if (!evflag) return 1;
         break;
 
-    case 55:  /* most advanced manned program 20 MB's or 10% safety loss */
+    case 55:  /* cost 20 MB repair or 10% safety loss on the most advanced capsule program*/
         evflag = DamMod(plr, 3, -10, 20);
 
         if (!evflag) return 1;
         break;
 
-    case 78:  /* most advanced capsule 10MB's or 10% safety */
+    case 78:  /* cost 10MB repair or 10% safety loss on the most advanced capsule program*/
         evflag = DamMod(plr, 3, -10, 10);
 
         if (!evflag) return 1;

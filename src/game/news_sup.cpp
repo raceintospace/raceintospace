@@ -35,6 +35,72 @@
 #include "options.h"
 #include "pace.h"
 
+// Find Advanced Program - param plr: player - prog: program
+static Equipment* FindAdvProgram(int plr, int prog) {
+    
+    int save[26] = {0};  // Initialize in zero
+
+    // Assign Safety values in save
+    for (int i = 0; i < 3; ++i) {
+        save[i] = Data->P[other(plr)].Probe[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        save[i + 7] = Data->P[other(plr)].Rocket[i].Safety;
+    }
+
+    for (int i = 0; i < 7; ++i) {
+        save[i + 14] = Data->P[other(plr)].Manned[i].Safety;
+    }
+    
+    for (int i = 0; i < 5; ++i) {  //Photo Recon removed
+        save[i + 21] = Data->P[other(plr)].Misc[i].Safety;
+    }
+   
+    // Remove Kicker C (USSR tech only)
+    save[23] = 0;
+   
+    int lo = 0, hi = 25;
+    switch (prog) {
+        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
+        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
+        case 3: lo = 14; hi = 18; break;  // MANNED programs
+        case 4: lo = 18; hi = 20; break;  // LEM programs
+        case 5: lo = 21; hi = 25; break;  // MISC programs
+        // Default lo=0, hi=25 covers all programs
+    }
+
+    // Find most advanced program
+    Equipment* equipment = nullptr;
+    int index = lo;
+    int attempts = hi - lo + 1; // Counter
+    
+    while (attempts > 0) {
+        // Found most researched program
+        // If no program researched, default to initial program
+        for (int i = hi; i > lo; i--) {
+            if (save[i] > save[index] && save[i] > 0) {
+                index = i;
+            }
+        }
+        
+        // Assign the correct program
+        if (index >= 0 && index <= 2) {
+            equipment = &Data->P[plr].Probe[index];
+        } else if (index >= 7 && index <= 11) {
+            equipment = &Data->P[plr].Rocket[index - 7];
+        } else if (index >= 14 && index <= 18) {
+            equipment = &Data->P[plr].Manned[index - 14];
+        }
+        
+        if (equipment->Num > 0 || index == lo) { // Found it !
+            break;
+        } else
+            attempts--;  
+      }
+
+    return equipment;
+}
 
 /** Steal technology from rival player
 * \param prog: program
@@ -42,7 +108,7 @@
 */
 int StealMod(int plr, int prog, int type)
 {
-      std::array<int, 28> save = {0};  // Initialize in zero
+    std::array<int, 28> save = {0};  // Initialize in zero
 
     // Assign safety values in save[]
     for (int i = 0; i < 3; ++i) {
@@ -104,7 +170,7 @@ int StealMod(int plr, int prog, int type)
             rival = &Data->P[other(plr)].Misc[index - 21];
         }
         
-        if (rival->Safety > player->Safety) {
+        if (rival->Safety > player->Safety && player->Num > 0) {
             break;
         } else {
             // If rival Safety value is lower, search another value
@@ -134,54 +200,13 @@ int StealMod(int plr, int prog, int type)
 */
 int SafetyMod(int plr, int prog, int type, int per)
 {
-    std::array<int, 21> save = {0};  // Initialize in zero
-
-    // Assign safety values in save[]
-    for (int i = 0; i < 3; ++i) {
-        save[i] = Data->P[plr].Probe[i].Safety;
-    }
-    
-    for (int i = 0; i < 5; ++i) {
-        save[i + 7] = Data->P[plr].Rocket[i].Safety;
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        save[i + 14] = Data->P[plr].Manned[i].Safety;
-    }
-    
-    int lo = 0, hi = 20;
-    switch (prog) {
-        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
-        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
-        case 3: lo = 14; hi = 18; break;  // MANNED programs
-        case 4: lo = 18; hi = 20; break;  // LEM programs
-        // case 0: Default lo=0, hi=20 covers all programs
-    }
-
-    // Find Advanced Program
-    int index = lo;
-    for (int i = lo + 1; i <= hi; i++) {
-        if (save[i] > save[index]) {
-            index = i;
-        }
-    }
-
-    // Assign the correct equipment
-    Equipment* equipment = nullptr;
-    if (index >= 0 && index <= 2) {
-        equipment = &Data->P[plr].Probe[index];
-    } else if (index >= 7 && index <= 11) {
-        equipment = &Data->P[plr].Rocket[index - 7];
-    } else if (index >= 14 && index <= 18) {
-        equipment = &Data->P[plr].Manned[index - 14];
-    }
-
+    Equipment* equipment = FindAdvProgram(plr, prog);
     if (equipment) {
         strcpy(Name, equipment->Name);
         equipment->Safety += equipment->Safety * (per / 100) * type;
-    }
-
-  return save[index];
+    } else { return 0; }
+    
+    return 1;
 }
 
 
@@ -192,57 +217,16 @@ int SafetyMod(int plr, int prog, int type, int per)
 */
 int DamMod(int plr, int prog, int dam, int cost)
 {
-    std::array<int, 21> save = {0};  // Initialize in zero
-
-    // Assign safety values in save[]
-    for (int i = 0; i < 3; ++i) {
-        save[i] = Data->P[plr].Probe[i].Safety;
-    }
-    
-    for (int i = 0; i < 5; ++i) {
-        save[i + 7] = Data->P[plr].Rocket[i].Safety;
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        save[i + 14] = Data->P[plr].Manned[i].Safety;
-    }
-    
-    int lo = 0, hi = 20;
-    switch (prog) {
-        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
-        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
-        case 3: lo = 14; hi = 18; break;  // MANNED programs
-        case 4: lo = 18; hi = 20; break;  // LEM programs
-        // case 0: Default lo=0, hi=20 covers all programs
-    }
-
-    // Find Advanced Program
-    int index = lo;
-    for (int i = lo + 1; i <= hi; i++) {
-        if (save[i] > save[index]) {
-            index = i;
-        }
-    }
-
-    // Assign the correct equipment
-    Equipment* equipment = nullptr;
-    if (index >= 0 && index <= 2) {
-        equipment = &Data->P[plr].Probe[index];
-    } else if (index >= 7 && index <= 11) {
-        equipment = &Data->P[plr].Rocket[index - 7];
-    } else if (index >= 14 && index <= 18) {
-        equipment = &Data->P[plr].Manned[index - 14];
-    }
-
+    Equipment* equipment = FindAdvProgram(plr, prog);
     if (equipment) {
         strcpy(Name, equipment->Name);
         if (options.cheat_no_damage == 0) {
             equipment->Damage += dam;
             equipment->DCost += cost;
         }
-    }
+    } else { return 0; }
 
-    return save[index];
+    return 1;
 }
 
 /** Increment R&D cost on program
@@ -252,64 +236,13 @@ int DamMod(int plr, int prog, int dam, int cost)
  */
 int RDMod(int plr, int prog, int type, int val)
 {
-    std::array<int, 28> save = {0};  // Initialize in zero
-
-    // Assign safety values in save[]
-    for (int i = 0; i < 3; ++i) {
-        save[i] = Data->P[other(plr)].Probe[i].Safety;
-    }
-    
-    for (int i = 0; i < 5; ++i) {
-        save[i + 7] = Data->P[other(plr)].Rocket[i].Safety;
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        save[i + 14] = Data->P[other(plr)].Manned[i].Safety;
-    }
-    
-    for (int i = 0; i < 6; ++i) {
-        save[i + 21] = Data->P[other(plr)].Misc[i].Safety;
-    }
-   
-    // Remove Kicker C and Photo Recon from options
-    save[23] = save[26] = 0;
-   
-    int lo = 0, hi = 26;
-    switch (prog) {
-        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
-        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
-        case 3: lo = 14; hi = 18; break;  // MANNED programs
-        case 4: lo = 18; hi = 20; break;  // LEM programs
-        case 5: lo = 21; hi = 26; break;  // MISC programs
-        // case 0: Default lo=0, hi=26 covers all programs
-    }
-    
-    // Find Advanced Program
-    int index = lo;
-    for (int i = lo + 1; i <= hi; i++) {
-        if (save[i] > save[index]) {
-            index = i;
-        }
-    }
-    
-    // Assign the correct equipment
-    Equipment* equipment = nullptr;
-    if (index >= 0 && index <= 2) {
-        equipment = &Data->P[plr].Probe[index];
-    } else if (index >= 7 && index <= 11) {
-        equipment = &Data->P[plr].Rocket[index - 7];
-    } else if (index >= 14 && index <= 18) {
-        equipment = &Data->P[plr].Manned[index - 14];
-    } else if (index >= 21 && index <=25) {
-        equipment = &Data->P[plr].Misc[index - 21];
-    }
-    
+    Equipment* equipment = FindAdvProgram(plr, prog);
     if (equipment) {
         strcpy(Name, equipment->Name);
         equipment->RDCost += type * val;
-    }
+    } else { return 0; }
 
-    return save[index];
+    return 1;
 }
  
 /** Set program Safety Save Card to 1
@@ -318,57 +251,13 @@ int RDMod(int plr, int prog, int type, int val)
  */
 int SaveMod(int plr, int prog)
 {
-    std::array<int, 21> save = {0};  // Initialize in zero
-
-    // Assign safety values in save[]
-    for (int i = 0; i < 3; ++i) {
-        save[i] = Data->P[plr].Probe[i].Safety;
-    }
-    
-    for (int i = 0; i < 5; ++i) {
-        save[i + 7] = Data->P[plr].Rocket[i].Safety;
-    }
-
-    for (int i = 0; i < 7; ++i) {
-        save[i + 14] = Data->P[plr].Manned[i].Safety;
-    }
-    
-    // Remove Strapon Booster from options
-    save[11] = 0;
-    
-    int lo = 0, hi = 20;
-    switch (prog) {
-        case 1: lo = 0;  hi = 2;  break;  // PROBE programs
-        case 2: lo = 7;  hi = 11; break;  // ROCKET programs
-        case 3: lo = 14; hi = 18; break;  // MANNED programs
-        case 4: lo = 18; hi = 20; break;  // LEM programs
-        // case 0: Default lo=0, hi=20 covers all programs
-    }
-
-    // Find Advanced Program
-    int index = lo;
-    for (int i = lo + 1; i <= hi; i++) {
-        if (save[i] > save[index]) {
-            index = i;
-        }
-    }
-
-    // Assign the correct equipment
-    Equipment* equipment = nullptr;
-    if (index >= 0 && index <= 2) {
-        equipment = &Data->P[plr].Probe[index];
-    } else if (index >= 7 && index <= 11) {
-        equipment = &Data->P[plr].Rocket[index - 7];
-    } else if (index >= 14 && index <= 18) {
-        equipment = &Data->P[plr].Manned[index - 14];
-    }
-
+    Equipment* equipment = FindAdvProgram(plr, prog);
     if (equipment) {
         strcpy(Name, equipment->Name);
         equipment->SaveCard = 1;
-    }
+    } else { return 0; }
     
-    return save[index];
+    return 1;
 }
 
 /** Transfer new nauts
