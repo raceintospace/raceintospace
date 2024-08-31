@@ -269,19 +269,19 @@ void NewNauts(int plr) {
     
     // US Astronauts
     char UsName[3][14] = { "MANKE", "POWELL", "YEAGER"};
-    int8_t UsStatsCap[3] = {1, 2, 3};
-    int8_t UsStatsLM[3] = {2, 0, 0};
-    int8_t UsStatsEVA[3] = {2, 0 ,1};
-    int8_t UsStatsDock[3] = {1, 1, 1};
-    int8_t UsStatsEndur[3] = {3, 0, 2};
+    int UsStatsCap[3] = {1, 2, 3};
+    int UsStatsLM[3] = {2, 0, 0};
+    int UsStatsEVA[3] = {2, 0 ,1};
+    int UsStatsDock[3] = {1, 1, 1};
+    int UsStatsEndur[3] = {3, 0, 2};
 	
     // USSR Cosmonauts
     char SovName[3][14] = { "ILYUSHIN", "KRAMARENKO", "DOLGOV"};
-    int8_t SovStatsCap[3] = {3, 2, 2};
-    int8_t SovStatsLM[3] = {0, 1, 3};
-    int8_t SovStatsEVA[3] = {0, 2 ,0};
-    int8_t SovStatsDock[3] = {3, 0, 0};
-    int8_t SovStatsEndur[3] = {3, 3, 1};	
+    int SovStatsCap[3] = {3, 2, 2};
+    int SovStatsLM[3] = {0, 1, 3};
+    int SovStatsEVA[3] = {0, 2 ,0};
+    int SovStatsDock[3] = {3, 0, 0};
+    int SovStatsEndur[3] = {3, 3, 1};	
 	
     for (int i = 0; i < 3; i++) {
         strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], plr ? UsName[i]: SovName[i]);

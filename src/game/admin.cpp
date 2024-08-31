@@ -1978,7 +1978,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
     stringstream stream;
     {
         cereal::JSONOutputArchive::Options options = 
-        cereal::JSONOutputArchive::Options::NoIndent();
+            cereal::JSONOutputArchive::Options::NoIndent();
         cereal::JSONOutputArchive archive(stream, options);
 
         // Save End of Turn Data

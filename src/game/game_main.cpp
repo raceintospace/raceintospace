@@ -948,14 +948,14 @@ void PauseMouse(void)
     GetMouse();
 }
 
-void VerifySafety(char player)
+void VerifySafety(char plr)
 {
     // Pointers to each Equipment struct
     Equipment* arrays[4] = {
-        Data->P[player].Probe,
-        Data->P[player].Rocket,
-        Data->P[player].Manned,
-        Data->P[player].Misc
+        Data->P[plr].Probe,
+        Data->P[plr].Rocket,
+        Data->P[plr].Manned,
+        Data->P[plr].Misc
     };
     // Corrected sizes for each Equipment (Probe, Rocket, Manned, Misc)
     int sizes[4] = { 3, 5, 7, 6 };
