@@ -350,6 +350,21 @@ open_savedat(const char *name, const char *mode)
     return sOpen(name, mode, FT_SAVE_CHECK);
 }
 
+char * load_gamedata(const char *name)
+{
+	// Deserialize in vector data
+	std::vector<uint8_t> data;
+	DESERIALIZE_JSON_FILE(&data, locate_file(name, FT_DATA));
+	
+	// Transform vector data in char pointer p
+	char* p = new char[data.size() + 1]; // +1 for null char
+	std::copy(data.begin(), data.end(), p);
+    p[data.size()] = '\0'; // Add null
+	
+	return p;
+}
+
+/*
 char *
 slurp_gamedat(const char *name)
 {
@@ -375,7 +390,7 @@ slurp_gamedat(const char *name)
 
     return p;
 }
-
+*/
 /** Create the savegame directory
  *
  * The directory will be created as defined in options.dir_savegame.

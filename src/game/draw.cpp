@@ -121,7 +121,7 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
         }
 
         // Read into letter piecewise to avoid packing issues.
-        const char *offset = letter_dat + (letterSize * px);
+        const char *offset = letter_data + (letterSize * px);
         memcpy(&letter.width, offset, sizeof(letter.width));
         memcpy(&letter.img, offset + sizeof(letter.width),
                sizeof(letter.img));

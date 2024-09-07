@@ -38,7 +38,7 @@ char MPrefs(char mode);
 int bioskey(int wait);
 
 extern int show_intro_flag;
-extern char *letter_dat;
+extern char *letter_data;
 
 
 #endif // RIS_PACE_H
