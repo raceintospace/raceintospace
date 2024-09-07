@@ -919,12 +919,12 @@ int main(int argc, char **argv)
     // missSteps.dat -- already a text file
     decode(argv[1], "mission.dat", write_mission);
     decode(argv[1], "news.dat", write_news);
-    decode(argv[1], "ntable.dat", write_vab_drawing_offsets);
+    //decode(argv[1], "ntable.dat", write_vab_drawing_offsets);
     decode(argv[1], "p_rev.dat", write_post_mission_review);
     // rast.dat   -- RLED Players
 
     //decode(argv[1], "records.dat", write_records);      // This isn't really a data file
-    decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
+    //decode(argv[1], "vtable.dat", write_vab_drawing_offsets);
 
     decode_seq(argv[1], "seq", write_mission_animation_success_sequence);
     decode_seq(argv[1], "fseq", write_mission_animation_failure_sequence);

@@ -98,12 +98,30 @@ int VASqty;  // How many payload configurations there are
  * offset should be used to move the casing (rather than capsule)
  * down that much.
  */
+ /*
 struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
 } MI[2 * 28];
+*/
+
+struct MDA {
+    int16_t x1, y1, x2, y2, yOffset;
+
+    template<class Archive>
+    void serialize(Archive & ar, std::uint32_t const version ) {
+        ar(CEREAL_NVP(x1));
+        ar(CEREAL_NVP(y1));
+        ar(CEREAL_NVP(x2));
+        ar(CEREAL_NVP(y2));
+        ar(CEREAL_NVP(yOffset));
+    }
+};
+
+// Create MI vector
+std::vector<MDA> MI;
 
 /* ID for the Vab sprite images. Serves as an index into each player's
- * section of vtable.dat, which contains the struct MDA data for
+ * section of vtable.json, which contains the struct MDA data for
  * finding each sprite in the vab.img.(0/1).png image.
  */
 enum VabSprite {
@@ -142,7 +160,7 @@ void LoadMIVals();
 boost::shared_ptr<display::LegacySurface> LoadVABSprite(char plr);
 int ChkDelVab(char plr, char f);
 bool ChkVabRkt(const Vehicle &rocket);
-void GradRect2(int x1, int y1, int x2, int y2, char plr);
+//void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
 int FillVab(char plr, char f, char mode);
 int  BuyVabRkt(char plr, Vehicle &rocket, char mode);
@@ -170,6 +188,27 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
  * variable MI stores the coordinates specifying where to find each
  * component in the VAB sprite.
  */
+ 
+void LoadMIVals() {
+    try {
+        DESERIALIZE_JSON_FILE(&MI, locate_file("vtable.json", FT_DATA));
+
+        // Check if vector MI is empty after deserialization
+        if (MI.empty()) {
+            throw std::runtime_error("Error: vector MI is empty after deserialization.");
+        }
+
+        // You can also check for an expected size, for example:
+        if (MI.size() != 56) {  // Expecting 56 elements
+            throw std::runtime_error("Error: vector MI  doesn't have expected size.");
+        }
+
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Error in deserialization of vtable.json.");
+    }
+}
+
+ /*
 void LoadMIVals()
 {
     FILE *file = sOpen("VTABLE.DAT", "rb", FT_DATA);
@@ -193,7 +232,7 @@ void LoadMIVals()
 
     fclose(file);
 }
-
+*/
 
 /**
  * Load the VAB hardware icons into a local buffer.
@@ -226,7 +265,7 @@ boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
     return surface;
 }
 
-
+/*
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
     register int i, j, val;
@@ -243,7 +282,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     return;
 }
-
+*/
 
 /* Draw the Vehicle Assembly / Integration interface layout and print
  * mission-specific information.
