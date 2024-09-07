@@ -160,7 +160,7 @@ void LoadMIVals();
 boost::shared_ptr<display::LegacySurface> LoadVABSprite(char plr);
 int ChkDelVab(char plr, char f);
 bool ChkVabRkt(const Vehicle &rocket);
-//void GradRect2(int x1, int y1, int x2, int y2, char plr);
+void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
 int FillVab(char plr, char f, char mode);
 int  BuyVabRkt(char plr, Vehicle &rocket, char mode);
@@ -265,7 +265,7 @@ boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
     return surface;
 }
 
-/*
+
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
     register int i, j, val;
@@ -282,7 +282,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 
     return;
 }
-*/
+
 
 /* Draw the Vehicle Assembly / Integration interface layout and print
  * mission-specific information.

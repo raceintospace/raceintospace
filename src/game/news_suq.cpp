@@ -118,16 +118,17 @@ char REvent(char plr)
             return 1;
         }
         
-        /*
-        fin = sOpen("NTABLE.DAT", "rb", FT_DATA);
-        // This is ignoring the budget mods based on the selected game level.
-        fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + brandom(10)) , SEEK_SET);
-        fread(&m, sizeof m, 1, fin);
-        Swap16bit(m);
-        fclose(fin); 
         Data->P[plr].Budget += m;
-        */
-
+        
+        /*
+        display::graphics.setForegroundColor(15);
+        draw_string(200,30,"BUDGET MOD: ");
+        if (m<0) {draw_string(0,0,"-");m*=-1;};
+        draw_number(0,0,m);
+        draw_string(200,40,"BUDGET: ");
+        draw_number(0,0,Data->P[plr].Budget);
+        draw_number(100,10,Data->Events[Data->Count]);*/
+        /*
     } // end if
 
     if (Data->Year <= 60 && Data->Events[Data->Count] > 44) {
