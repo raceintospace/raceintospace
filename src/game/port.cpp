@@ -102,14 +102,6 @@ typedef struct cBoxx {
     int16_t x1, y1, x2, y2;
 } BOUND;
 
-typedef struct Img {
-    int32_t Size;         /**<  Size of Image (bytes) */
-    char Comp;         /**<  Type of Compression Used */
-    int16_t Width;         /**<  Width of Image */
-    int16_t Height;        /**<  Height of Image */
-    int16_t PlaceX;        /**<  Where to Place Img:X */
-    int16_t PlaceY;        /**<  Where to Place Img:Y */
-} IMG;
 
 typedef struct region {
     char qty;          /**< number of BOUNDS */
@@ -127,8 +119,30 @@ typedef struct mobj {
     REGION Reg[4];       /**< At Max 4 regions */
 } MOBJ;
 
-#define S_QTY 43
 
+struct IMG {
+	int32_t Size;         // Size of Image (bytes)
+	char Comp;     		  // Type of Compression Used
+	int16_t Width;        // Width of Image
+	int16_t Height;       // Height of Image
+	int16_t PlaceX;       // Where to Place Img:X
+	int16_t PlaceY;        // Where to Place Img:Y
+	
+	template<class Archive>
+	void serialize(Archive & ar) {
+        ar(Size);
+        ar(Comp);
+        ar(Width);
+        ar(Height);
+        ar(PlaceX);
+        ar(PlaceY);
+	}  
+};
+
+#define S_QTY 43
+#define S_MOBJ 35
+
+//std::vector<MOBJ> MObj(S_MOBJ);
 MOBJ MObj[35];
 
 /** These are the valid hotkeys */
@@ -142,6 +156,7 @@ int16_t Vab_Spot;
 // TODO: Move other file variables here.
 namespace
 {
+
 char RUSH;
 
 enum MissionReadyStatus {
@@ -155,7 +170,7 @@ enum MissionReadyStatus {
 
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
-void PortPlace(FILE *fin, int32_t table);
+void PortPlace(int indx);
 void PortText(int x, int y, const char *txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
@@ -200,37 +215,31 @@ void WaveFlagDel(void)
  * \param fin    an open (usa/sov)_port.dat file.
  * \param table  offset to the image data in the Port file.
  */
-void PortPlace(FILE *fin, int32_t table)
+ 
+void PortPlace(int indx)
 {
-    IMG Img;
-    // const size_t sizeof_IMG = 4 + 1 + 2 + 2 + 2 + 2;
-
-    fseek(fin, table, SEEK_SET);
-    //fread(&Img, sizeof Img, 1, fin);
-    fread(&Img.Size, sizeof(Img.Size), 1, fin);
-    fread(&Img.Comp, sizeof(Img.Comp), 1, fin);
-    fread(&Img.Width, sizeof(Img.Width), 1, fin);
-    fread(&Img.Height, sizeof(Img.Height), 1, fin);
-    fread(&Img.PlaceX, sizeof(Img.PlaceX), 1, fin);
-    fread(&Img.PlaceY, sizeof(Img.PlaceY), 1, fin);
-    Swap32bit(Img.Size);
-    Swap16bit(Img.Width);
-    Swap16bit(Img.Height);
-    Swap16bit(Img.PlaceX);
-    Swap16bit(Img.PlaceY);
-
-    display::LegacySurface local(Img.Width, Img.Height);
-
-    // read the compressed image data into a buffer, decompress, and
-    // write the pixel data into an appropriately sized image.
-    char *buf = (char *)alloca(Img.Size);
-    fread(buf, Img.Size, 1, fin);
-    RLED_img(buf, local.pixels(), Img.Size, local.width(), local.height());
-    local.palette().copy_from(display::graphics.legacyScreen()->palette());
-    local.setTransparentColor(0);
-
-    // draw it
-    display::graphics.screen()->draw(local, Img.PlaceX, Img.PlaceY);
+    // Deserialize Img as a vector
+    std::vector<IMG> Img(S_QTY);
+    std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(Img));
+	
+	char filename[30];
+    snprintf(filename, sizeof(filename), (plr != 0 ? 
+	  "images/usa_port.dat.%d.png" : "images/sov_port.dat.%d.png"), (int) indx);
+    
+    boost::shared_ptr<display::PalettizedSurface> image;
+    try {
+        image = Filesystem::readImage(filename);
+    } catch (const std::runtime_error &err) {
+        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        return;
+    }
+    
+    //image->exportPalette(Img[indx].Width, Img[indx].Height);
+    image->exportPalette();
+    
+    display::graphics.screen()->draw(image, Img[indx].PlaceX, Img[indx].PlaceY);
 }
 
 
@@ -244,25 +253,26 @@ void PortPlace(FILE *fin, int32_t table)
  * \param plr  The player palette to use (0 for USA, 1 for USSR)
  */
 void PortPal(char plr)
-{
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-    // fread(&PHead, sizeof PHead, 1, fin);
-    // TODO: Add in some error checking...
-    ImportPortHeader(fin, PHead);
-
-    fseek(fin, PHead.oPal, SEEK_SET);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
+{   
+    // Deserialize palette
+    std::vector<uint8_t> palette;
+    std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(palette));
+        
+    // Display p and copy data to p.pal
+    display::AutoPal p(display::graphics.legacyScreen());
+    for (size_t i= 0; i < sizeof(p.pal); i++) { // the limit is Autopal p.pal size
+        p.pal[i] = static_cast<char>(palette[i]);
     }
-    fclose(fin);
+    
     return;
 }
 
 
 void DrawSpaceport(char plr)
 {
+    
     int32_t table[S_QTY];
 
     FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
@@ -281,11 +291,17 @@ void DrawSpaceport(char plr)
     for (int i = 0; i < S_QTY; i++) {
         Swap32bit(table[i]);
     }
-
+	
+	/*
+	//Deserialize MObj
+	std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(MObj));
+    */
+    
     // Draw the main port image
     {
-        const char *filename =
-            (plr == 0 ? "images/usa_port.dat.0.png" :
+        const char *filename = (plr == 0 ? "images/usa_port.dat.0.png" :
              "images/sov_port.dat.0.png");
         boost::shared_ptr<display::PalettizedSurface> image(
             Filesystem::readImage(filename));
@@ -296,7 +312,7 @@ void DrawSpaceport(char plr)
     UpdatePortOverlays();
 
     if (xMODE & xMODE_CLOUDS) {
-        PortPlace(fin, table[1]);    // Clouds
+        PortPlace(1);    // Clouds
     }
 
     // Pads
@@ -318,7 +334,7 @@ void DrawSpaceport(char plr)
 
 
     if (Data->P[plr].AstroCount > 0) {
-        PortPlace(fin, table[16 - plr * 4]);  // Draw CPX
+        PortPlace(16 - plr * 4);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
     } else {    // No manned program hotkeys
@@ -327,30 +343,30 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].Pool[0].Active >= 1) {
-        PortPlace(fin, table[17 - plr * 4]);    // Draw TRN
+        PortPlace(17 - plr * 4);    // Draw TRN
     }
 
     if (Data->P[plr].Port[PORT_Research] > 1) {
-        PortPlace(fin, table[13 + 15 * plr]);    // RD Stuff
+        PortPlace(13 + 15 * plr);    // RD Stuff
     }
 
     if (Data->P[plr].Port[PORT_Research] > 2) {
-        PortPlace(fin, table[14 + 15 * plr]);
+        PortPlace(14 + 15 * plr);
     }
 
     if (Data->P[plr].Port[PORT_Research] == 3) {
-        PortPlace(fin, table[15 + 15 * plr]);
+        PortPlace(15 + 15 * plr);
     }
 
-    for (int fm = 0; fm < 35; fm++) {
+    for (int fm = 0; fm < S_MOBJ; fm++) {
         int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
-            PortPlace(fin, table[MObj[fm].Reg[idx].PreDraw]);
+            PortPlace(MObj[fm].Reg[idx].PreDraw);
         }
 
         if (MObj[fm].Reg[idx].iNum > 0) {  // Actual Shape
-            PortPlace(fin, table[MObj[fm].Reg[idx].iNum]);
+            PortPlace(MObj[fm].Reg[idx].iNum);
         }
     }
 
@@ -493,7 +509,7 @@ void Master(char plr)
     keyHelpText = "i000";
     WaveFlagSetup(plr);
     Vab_Spot = 0;
-
+	
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
     for (int i = 0; i < 3; i++) {
@@ -567,8 +583,7 @@ done:
     GetMouse_fast();
 }
 
-void
-DoCycle(void)                   // Three ranges of color cycling
+void DoCycle(void)                   // Three ranges of color cycling
 {
     int i, tmp1, tmp2, tmp3, j;
     display::AutoPal p(display::graphics.legacyScreen());
@@ -701,8 +716,7 @@ int MissionStatus(int plr)
  *
  * \param mode ...  0 = ?   1 = copy stored outline ?
  */
-void
-PortOutLine(unsigned int Count, uint16_t *outline, char mode)
+void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
@@ -727,8 +741,7 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
     }
 }
 
-void
-PortRestore(unsigned int Count)
+void PortRestore(unsigned int Count)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
@@ -755,7 +768,7 @@ int MapKey(char plr, int key, int old)
     int val, found = 0;
     char high = -1, low = -1;
 
-    for (int j = 0; j < 35; j++) {
+    for (int j = 0; j < S_MOBJ; j++) {
         if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
             if (low == -1) {
                 low = j;
@@ -1182,7 +1195,8 @@ void Port(char plr)
             if (kMode == 1) {
                 kEnt++;
             }
-        } while ((kMode == 0 && i < 35 && i >= 0) || (kMode == 1 && kEnt < 35 && kEnt >= 0));
+        } while ((kMode == 0 && i < S_MOBJ && i >= 0) 
+    	  || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
     } // while
 }
 

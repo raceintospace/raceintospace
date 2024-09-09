@@ -98,11 +98,7 @@ int VASqty;  // How many payload configurations there are
  * offset should be used to move the casing (rather than capsule)
  * down that much.
  */
- /*
-struct MDA {
-    int16_t x1, y1, x2, y2, yOffset;
-} MI[2 * 28];
-*/
+
 
 struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
@@ -117,8 +113,10 @@ struct MDA {
     }
 };
 
+#define S_VAB 56 // 2 * 28
+
 // Create MI vector
-std::vector<MDA> MI;
+std::vector<MDA> MI (S_VAB);
 
 /* ID for the Vab sprite images. Serves as an index into each player's
  * section of vtable.json, which contains the struct MDA data for
@@ -198,8 +196,7 @@ void LoadMIVals() {
             throw std::runtime_error("Error: vector MI is empty after deserialization.");
         }
 
-        // You can also check for an expected size, for example:
-        if (MI.size() != 56) {  // Expecting 56 elements
+        if (MI.size() != S_VAB) { 
             throw std::runtime_error("Error: vector MI  doesn't have expected size.");
         }
 
@@ -208,31 +205,6 @@ void LoadMIVals() {
     }
 }
 
- /*
-void LoadMIVals()
-{
-    FILE *file = sOpen("VTABLE.DAT", "rb", FT_DATA);
-
-    // Read in the data & perform Endianness swap
-    for (int i = 0; i < 2 * 28; i++) {
-        // struct MDA {
-        //     int16_t x1, y1, x2, y2, yOffset;
-        // } MI[2 * 28];
-        fread(&MI[i].x1, sizeof(MI[i].x1), 1, file);
-        fread(&MI[i].y1, sizeof(MI[i].y1), 1, file);
-        fread(&MI[i].x2, sizeof(MI[i].x2), 1, file);
-        fread(&MI[i].y2, sizeof(MI[i].y2), 1, file);
-        fread(&MI[i].yOffset, sizeof(MI[i].yOffset), 1, file);
-        Swap16bit(MI[i].x1);
-        Swap16bit(MI[i].y1);
-        Swap16bit(MI[i].x2);
-        Swap16bit(MI[i].y2);
-        Swap16bit(MI[i].yOffset);
-    }
-
-    fclose(file);
-}
-*/
 
 /**
  * Load the VAB hardware icons into a local buffer.
