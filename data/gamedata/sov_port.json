@@ -1,9 +1,9 @@
 {
     "MObj": [
         {
-            "std::string(Name)": "ST. BASIL'S CATHEDRAL",
+            "Name": "ST. BASIL'S CATHEDRAL",
             "qty": 1,
-            "std::string(Help)": "022\u0003",
+            "Help": "022",
             "Reg": {
                 "value0": {
                     "qty": 3,
@@ -136,9 +136,9 @@
             }
         },
         {
-            "std::string(Name)": "K.G.B. HEADQUARTERS",
+            "Name": "K.G.B. HEADQUARTERS",
             "qty": 1,
-            "std::string(Help)": "705\u0002",
+            "Help": "705",
             "Reg": {
                 "value0": {
                     "qty": 2,
@@ -271,9 +271,9 @@
             }
         },
         {
-            "std::string(Name)": "THE KREMLIN",
+            "Name": "THE KREMLIN",
             "qty": 1,
-            "std::string(Help)": "021\u0002",
+            "Help": "021",
             "Reg": {
                 "value0": {
                     "qty": 2,
@@ -406,9 +406,9 @@
             }
         },
         {
-            "std::string(Name)": "THE KREMLIN WALL",
+            "Name": "THE KREMLIN WALL",
             "qty": 1,
-            "std::string(Help)": "020\u0003",
+            "Help": "020",
             "Reg": {
                 "value0": {
                     "qty": 3,
@@ -541,9 +541,9 @@
             }
         },
         {
-            "std::string(Name)": "VEHICLE INTEGRATION",
+            "Name": "VEHICLE INTEGRATION",
             "qty": 3,
-            "std::string(Help)": "016\u0002",
+            "Help": "016",
             "Reg": {
                 "value0": {
                     "qty": 2,
@@ -676,9 +676,9 @@
             }
         },
         {
-            "std::string(Name)": "MUSEUM OF SPACE HISTORY",
+            "Name": "MUSEUM OF SPACE HISTORY",
             "qty": 4,
-            "std::string(Help)": "701\u0002",
+            "Help": "701",
             "Reg": {
                 "value0": {
                     "qty": 2,
@@ -811,9 +811,9 @@
             }
         },
         {
-            "std::string(Name)": "ADMINISTRATION",
+            "Name": "ADMINISTRATION",
             "qty": 3,
-            "std::string(Help)": "703\u0001",
+            "Help": "703",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -946,9 +946,9 @@
             }
         },
         {
-            "std::string(Name)": "COSMONAUT CENTER",
+            "Name": "COSMONAUT CENTER",
             "qty": 2,
-            "std::string(Help)": "039",
+            "Help": "039",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1081,9 +1081,9 @@
             }
         },
         {
-            "std::string(Name)": "INFIRMARY",
+            "Name": "INFIRMARY",
             "qty": 2,
-            "std::string(Help)": "041",
+            "Help": "041",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1216,9 +1216,9 @@
             }
         },
         {
-            "std::string(Name)": "BASIC TRAINING",
+            "Name": "BASIC TRAINING",
             "qty": 2,
-            "std::string(Help)": "038",
+            "Help": "038",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1351,9 +1351,9 @@
             }
         },
         {
-            "std::string(Name)": "HELIPAD: ADV LM",
+            "Name": "HELIPAD: ADV LM",
             "qty": 2,
-            "std::string(Help)": "037",
+            "Help": "037",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1486,9 +1486,9 @@
             }
         },
         {
-            "std::string(Name)": "POOL: ADV EVA",
+            "Name": "POOL: ADV EVA",
             "qty": 2,
-            "std::string(Help)": "037",
+            "Help": "037",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1621,9 +1621,9 @@
             }
         },
         {
-            "std::string(Name)": "PLANETARIUM: ADV DOCKING",
+            "Name": "PLANETARIUM: ADV DOCKING",
             "qty": 2,
-            "std::string(Help)": "037",
+            "Help": "037",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1756,9 +1756,9 @@
             }
         },
         {
-            "std::string(Name)": "CENTRIFUGE: ADV ENDURANCE",
+            "Name": "CENTRIFUGE: ADV ENDURANCE",
             "qty": 2,
-            "std::string(Help)": "037",
+            "Help": "037",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -1891,9 +1891,9 @@
             }
         },
         {
-            "std::string(Name)": "AIRFIELD: ADV CAPSULE",
+            "Name": "AIRFIELD: ADV CAPSULE",
             "qty": 2,
-            "std::string(Help)": "037",
+            "Help": "037",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2026,9 +2026,9 @@
             }
         },
         {
-            "std::string(Name)": "SATELLITE PROGRAMS",
+            "Name": "SATELLITE PROGRAMS",
             "qty": 2,
-            "std::string(Help)": "019",
+            "Help": "019",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2161,9 +2161,9 @@
             }
         },
         {
-            "std::string(Name)": "L.M. PROGRAM",
+            "Name": "L.M. PROGRAM",
             "qty": 2,
-            "std::string(Help)": "044",
+            "Help": "044",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2296,9 +2296,9 @@
             }
         },
         {
-            "std::string(Name)": "LK-700 PROGRAM",
+            "Name": "LK-700 PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2431,9 +2431,9 @@
             }
         },
         {
-            "std::string(Name)": "LAPOT PROGRAM",
+            "Name": "LAPOT PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2566,9 +2566,9 @@
             }
         },
         {
-            "std::string(Name)": "SOYUZ PROGRAM",
+            "Name": "SOYUZ PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2701,9 +2701,9 @@
             }
         },
         {
-            "std::string(Name)": "VOSKHOD PROGRAM",
+            "Name": "VOSKHOD PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2836,9 +2836,9 @@
             }
         },
         {
-            "std::string(Name)": "VOSTOK PROGRAM",
+            "Name": "VOSTOK PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -2971,9 +2971,9 @@
             }
         },
         {
-            "std::string(Name)": "RESEARCH & DEVELOPMENT",
+            "Name": "RESEARCH & DEVELOPMENT",
             "qty": 4,
-            "std::string(Help)": "009\u0004",
+            "Help": "009",
             "Reg": {
                 "value0": {
                     "qty": 4,
@@ -3106,9 +3106,9 @@
             }
         },
         {
-            "std::string(Name)": "LAUNCH FACILITY A",
+            "Name": "LAUNCH FACILITY A",
             "qty": 4,
-            "std::string(Help)": "028",
+            "Help": "028",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -3241,9 +3241,9 @@
             }
         },
         {
-            "std::string(Name)": "LAUNCH FACILITY B",
+            "Name": "LAUNCH FACILITY B",
             "qty": 4,
-            "std::string(Help)": "028",
+            "Help": "028",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -3376,9 +3376,9 @@
             }
         },
         {
-            "std::string(Name)": "LAUNCH FACILITY C",
+            "Name": "LAUNCH FACILITY C",
             "qty": 4,
-            "std::string(Help)": "028",
+            "Help": "028",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -3511,9 +3511,9 @@
             }
         },
         {
-            "std::string(Name)": "MISSION CONTROL",
+            "Name": "MISSION CONTROL",
             "qty": 2,
-            "std::string(Help)": "018\u0001",
+            "Help": "018",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -3646,9 +3646,9 @@
             }
         },
         {
-            "std::string(Name)": "VIEWING STAND",
+            "Name": "VIEWING STAND",
             "qty": 1,
-            "std::string(Help)": "017\u0001",
+            "Help": "017",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -3781,9 +3781,9 @@
             }
         },
         {
-            "std::string(Name)": "FLAGPOLE: END TURN",
+            "Name": "FLAGPOLE: END TURN",
             "qty": 1,
-            "std::string(Help)": "000\u0001",
+            "Help": "000",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -3916,9 +3916,9 @@
             }
         },
         {
-            "std::string(Name)": "SECURITY GATE: QUIT",
+            "Name": "SECURITY GATE: QUIT",
             "qty": 1,
-            "std::string(Help)": "000\u0001",
+            "Help": "000",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -4051,9 +4051,9 @@
             }
         },
         {
-            "std::string(Name)": "LUNA",
+            "Name": "LUNA",
             "qty": 1,
-            "std::string(Help)": "029\u0002",
+            "Help": "029",
             "Reg": {
                 "value0": {
                     "qty": 2,
@@ -4186,9 +4186,9 @@
             }
         },
         {
-            "std::string(Name)": "LENIN'S STATUE",
+            "Name": "LENIN'S STATUE",
             "qty": 2,
-            "std::string(Help)": "025",
+            "Help": "025",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -4321,9 +4321,9 @@
             }
         },
         {
-            "std::string(Name)": "SOYUZ PROGRAM",
+            "Name": "SOYUZ PROGRAM",
             "qty": 2,
-            "std::string(Help)": "036",
+            "Help": "036",
             "Reg": {
                 "value0": {
                     "qty": 0,
@@ -4456,9 +4456,9 @@
             }
         },
         {
-            "std::string(Name)": "TRACKING STATION",
+            "Name": "TRACKING STATION",
             "qty": 2,
-            "std::string(Help)": "042\u0001",
+            "Help": "042",
             "Reg": {
                 "value0": {
                     "qty": 1,
@@ -4591,9 +4591,9 @@
             }
         },
         {
-            "std::string(Name)": "HALLS OF INTERPLAY",
+            "Name": "HALLS OF INTERPLAY",
             "qty": 0,
-            "std::string(Help)": "000",
+            "Help": "000",
             "Reg": {
                 "value0": {
                     "qty": 0,

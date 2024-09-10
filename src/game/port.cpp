@@ -15,13 +15,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// Interplay's BUZZ ALDRIN's RACE into SPACE
-//
-// Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA
-// Copyright 1991 by Strategic Visions, Inc.
-// Designed by Fritz Bronner
-// Programmed by Michael K McCarty
-//
+//****************************************************************
+//*Interplay's BUZZ ALDRIN's RACE into SPACE                     *
+//*                                                              *
+//*Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA   *
+//*Copyright 1991 by Strategic Visions, Inc.                     *
+//*Designed by Fritz Bronner                                     *
+//*Programmed by Michael K McCarty                               *
+//*                                                              *
+//****************************************************************
 
 // This file handles the main Spaceport screen.
 
@@ -77,48 +79,60 @@
 #define pNOFADE 4
 #define pNEWMUSIC 5
 
-int put_serial(unsigned char n);
+#define S_QTY 43
+#define S_MOBJ 35
 
-
-typedef struct portoutlinerestore {
+typedef struct PORTOUTLINE {
     uint16_t loc;
     char val;
-} PORTOUTLINE;
+};
 
-PORTOUTLINE *pPortOutlineRestore;
+struct BOUND {
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
 
-struct PortHeader {
-    char Text[28];  /**< File Copyright Notice */
-    int32_t oMObj;     /**< Offset to MObj data table */
-    int32_t oTab;      /**< Offset to Table of data */
-    int32_t oPal;      /**< Offset to Palette */
-    int32_t oPort;     /**< Offset to start of Port Images */
-    int32_t oMse;      /**< Offset to Mouse Objects */
-    int32_t oOut;      /**< Offset to port Outlines */
-    int32_t oAnim;     /**< Offset to start of Port Anims */
-} PHead;
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(x1));
+        ar(CEREAL_NVP(y1));
+        ar(CEREAL_NVP(x2));
+        ar(CEREAL_NVP(y2));
+    }
+};
 
-typedef struct cBoxx {
-    int16_t x1, y1, x2, y2;
-} BOUND;
-
-
-typedef struct region {
-    char qty;          /**< number of BOUNDS */
-    BOUND CD[4];       /**< boundry coords for mouse location */
+struct REGION {
+    char qty;
+    BOUND CD[4];
     char iNum;
-    char sNum;         /**< value for surround box */
-    char PreDraw;      /**< Code of Special to Draw first */
-} REGION;
+    char sNum;
+    char PreDraw;
 
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(qty));
+        ar(CEREAL_NVP(CD));
+        ar(CEREAL_NVP(iNum));
+        ar(CEREAL_NVP(sNum));
+        ar(CEREAL_NVP(PreDraw));
+    }
+};
 
-typedef struct mobj {
-    char Name[30];       /**< Name of region */
-    char qty;            /**< Number of regions */
-    char Help[3];        /**< Help Box Stuff */
-    REGION Reg[4];       /**< At Max 4 regions */
-} MOBJ;
+struct MOBJ {
+    std::string Name;
+    char qty;
+    std::string Help;
+    REGION Reg[4];
 
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(Name)); 
+        ar(CEREAL_NVP(qty));
+        ar(CEREAL_NVP(Help)); 
+        ar(CEREAL_NVP(Reg));
+    }
+};
 
 struct IMG {
 	int32_t Size;         // Size of Image (bytes)
@@ -139,11 +153,20 @@ struct IMG {
 	}  
 };
 
-#define S_QTY 43
-#define S_MOBJ 35
+struct OUTLINE {
+      uint16_t Count;
+      std::vector<uint16_t> bone;
+      
+      template<class Archive>
+      void serialize(Archive & ar) {
+        ar(CEREAL_NVP(Count));
+        ar(CEREAL_NVP(bone));
+      }
+};
 
-//std::vector<MOBJ> MObj(S_MOBJ);
-MOBJ MObj[35];
+PORTOUTLINE *pPortOutlineRestore;
+
+std::vector<MOBJ> MObj(S_MOBJ);
 
 /** These are the valid hotkeys */
 char HotKeyList[] = "AIMRPVCQETB\0";
@@ -171,7 +194,7 @@ enum MissionReadyStatus {
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
 void PortPlace(int indx);
-void PortText(int x, int y, const char *txt, char col);
+void PortText(int x, int y, std::string txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
 bool EndTurnOk(int plr);
@@ -184,8 +207,6 @@ char PortSel(char plr, char loc);
 char Request(char plr, const char *s, char md);
 int SpaceportAnimationEntry(int plr);
 int SpaceportAnimationOngoing(int plr);
-size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
-size_t ImportMOBJ(FILE *fin, MOBJ &target);
 
 
 void WaveFlagSetup(char plr)
@@ -218,7 +239,7 @@ void WaveFlagDel(void)
  
 void PortPlace(int indx)
 {
-    // Deserialize Img as a vector
+    // Deserialize Img
     std::vector<IMG> Img(S_QTY);
     std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
     cereal::JSONInputArchive ar(file);
@@ -272,32 +293,10 @@ void PortPal(char plr)
 
 void DrawSpaceport(char plr)
 {
-    
-    int32_t table[S_QTY];
-
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-
-    // TODO: Add in some error checking...
-    ImportPortHeader(fin, PHead);
-
-    for (int i = 0; i < (int)(sizeof(MObj) / sizeof(MOBJ)); i++) {
-        ImportMOBJ(fin, MObj[i]);
-    }
-
-    fread(&table[0], sizeof table, 1, fin);
-
-    // Endianness swap
-    for (int i = 0; i < S_QTY; i++) {
-        Swap32bit(table[i]);
-    }
-	
-	/*
 	//Deserialize MObj
-	std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+	std::ifstream file(locate_file((plr == 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
     cereal::JSONInputArchive ar(file);
     ar(CEREAL_NVP(MObj));
-    */
     
     // Draw the main port image
     {
@@ -331,7 +330,6 @@ void DrawSpaceport(char plr)
     if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
         Data->P[plr].Port[PORT_LaunchPad_A] = plr;
     }
-
 
     if (Data->P[plr].AstroCount > 0) {
         PortPlace(16 - plr * 4);  // Draw CPX
@@ -370,8 +368,6 @@ void DrawSpaceport(char plr)
         }
     }
 
-    fclose(fin);
-
     ShBox(0, 190, 319, 199);            // Base Box :: larger
 
     display::graphics.setForegroundColor(0);
@@ -408,13 +404,13 @@ void DrawSpaceport(char plr)
     }
 }
 
-void PortText(int x, int y, const char *txt, char col)
+void PortText(int x, int y, std::string txt, char col)
 {
     fill_rectangle(1, 192, 160, 198, 3);
     display::graphics.setForegroundColor(0);
-    draw_string(x + 1, y + 1, txt);
+    draw_string(x + 1, y + 1, txt.c_str());
     display::graphics.setForegroundColor(col);
-    draw_string(x, y, txt);
+    draw_string(x, y, txt.c_str());
 }
 
 
@@ -921,26 +917,19 @@ void Port(char plr)
 {
     int i, j, kMode, kEnt, k;
     char good, res;
-    int kPad, pKey;
-    int32_t stable[55];
+    int kPad, pKey, index;
     uint16_t Count, *bone;
 
     helpText = "i043";
     keyHelpText = "k043";
     bone = (uint16_t *) buffer;
-
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-    // TODO: Add some error checking...
-    ImportPortHeader(fin, PHead);
-
-    fseek(fin, PHead.oOut, SEEK_SET);
-    fread(&stable[0], sizeof stable, 1, fin);
-
-    for (i = 0; i < 55; i++) {
-        Swap32bit(stable[i]);
-    }
-
+	
+	// Deserialize Count and bone data
+	std::vector<OUTLINE> pOutline(55);
+	std::ifstream file(locate_file((plr == 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(pOutline));
+	
     if (plr == 0 && Data->Year > 65) {
         PortText(5, 196, "CAPE KENNEDY", 12);
     } else if (plr == 0) {
@@ -1017,11 +1006,14 @@ void Port(char plr)
                     PortText(5, 196, MObj[i].Name, 11);
 
                     if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                        fseek(fin, stable[MObj[i].Reg[Data->P[plr].Port[i]].sNum], SEEK_SET);
-                        fread_uint16_t(&Count, 1, fin);
-                        fread_uint16_t(bone, Count, fin);
+                        index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+                        Count = pOutline[index].Count;
+                        bone = new uint16_t[pOutline[index].bone.size()];
+                        std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);
+      
                         PortOutLine(Count, bone, 1);
-                        strncpy(&helpText[1], MObj[i].Help, 3);
+                        delete [] bone;
+                        strncpy(&helpText[1], (MObj[i].Help).c_str(), 3);
                     }
 
                     good = 0;
@@ -1129,7 +1121,7 @@ void Port(char plr)
 
                             case pEXIT:
                                 FadeOut(2, 10, 0, 0);
-                                fclose(fin);
+                                //fclose(fin);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {
@@ -1160,11 +1152,14 @@ void Port(char plr)
                             SpotResume();
 
                             if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                                fseek(fin, stable[MObj[i].Reg[Data->P[plr].Port[i]].sNum], SEEK_SET);
-                                fread_uint16_t(&Count, 1, fin);
-                                fread_uint16_t(bone, Count, fin);
-                                //pPortOutlineRestore = (PORTOUTLINE *) malloc((sizeof (PORTOUTLINE))*Count);
+                                
+                        		index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+				                Count = pOutline[index].Count;
+				                bone = new uint16_t[pOutline[index].bone.size()];
+                    			std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);                                
+
                                 PortOutLine(Count, bone, 1);
+                                delete [] bone;
                             }
 
                             while (mousebuttons == 1) {
@@ -1757,100 +1752,6 @@ int SpaceportAnimationOngoing(int plr)
     }
 
     return SPOT_NONE;
-}
-
-
-/**
- * Read a PortHeader struct stored as raw data in a file, correcting
- * for endianness.
- *
- * If import is not successful, the contents of the target PortHeader
- * are not guaranteed.
- *
- * \param fin  An open port data file at the start of the header data.
- * \param target  The destination for the read data.
- * \return  1 if successfully read, 0 otherwise.
- */
-size_t ImportPortHeader(FILE *fin, struct PortHeader &target)
-{
-    // Chain freads so they stop if one fails...
-    bool read =
-        fread(&target.Text[0], sizeof(target.Text), 1, fin) &&
-        fread(&target.oMObj, sizeof(target.oMObj), 1, fin) &&
-        fread(&target.oTab, sizeof(target.oTab), 1, fin) &&
-        fread(&target.oPal, sizeof(target.oPal), 1, fin) &&
-        fread(&target.oPort, sizeof(target.oPort), 1, fin) &&
-        fread(&target.oMse, sizeof(target.oMse), 1, fin) &&
-        fread(&target.oOut, sizeof(target.oOut), 1, fin) &&
-        fread(&target.oAnim, sizeof(target.oAnim), 1, fin);
-
-    if (read) {
-        Swap32bit(target.oMObj);
-        Swap32bit(target.oTab);
-        Swap32bit(target.oPal);
-        Swap32bit(target.oPort);
-        Swap32bit(target.oMse);
-        Swap32bit(target.oOut);
-        Swap32bit(target.oAnim);
-    }
-
-    return (read ? 1 : 0);
-}
-
-
-/**
- * Read a MOBJ struct stored as raw data in a file, correcting
- * for endianness.
- *
- * If import is not successful, the contents of the target MOBJ
- * are not guaranteed.
- *
- * \param fin  An open port data file at the start of the MOBJ data.
- * \param target  The destination for the read data.
- * \return  1 if successfully read, 0 otherwise.
- */
-size_t ImportMOBJ(FILE *fin, MOBJ &target)
-{
-    // Chain freads so they stop if one fails...
-    bool read =
-        fread(&target.Name[0], sizeof(target.Name), 1, fin) &&
-        fread(&target.qty, sizeof(target.qty), 1, fin) &&
-        fread(&target.Help[0], sizeof(target.Help), 1, fin);
-
-    for (int i = 0; i < 4 && read; i++) {
-        read = read &&
-               fread(&target.Reg[i].qty,
-                     sizeof(target.Reg[i].qty), 1, fin);
-
-        for (int j = 0; j < 4 && read; j++) {
-            read = read &&
-                   fread(&target.Reg[i].CD[j].x1,
-                         sizeof(target.Reg[i].CD[j].x1), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].y1,
-                         sizeof(target.Reg[i].CD[j].y1), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].x2,
-                         sizeof(target.Reg[i].CD[j].x2), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].y2,
-                         sizeof(target.Reg[i].CD[j].y2), 1, fin);
-
-            if (read) {
-                Swap16bit(target.Reg[i].CD[j].x1);
-                Swap16bit(target.Reg[i].CD[j].x2);
-                Swap16bit(target.Reg[i].CD[j].y1);
-                Swap16bit(target.Reg[i].CD[j].y2);
-            }
-        }
-
-        read = read &&
-               fread(&target.Reg[i].iNum,
-                     sizeof(target.Reg[i].iNum), 1, fin) &&
-               fread(&target.Reg[i].sNum,
-                     sizeof(target.Reg[i].sNum), 1, fin) &&
-               fread(&target.Reg[i].PreDraw,
-                     sizeof(target.Reg[i].PreDraw), 1, fin);
-    }
-
-    return (read ? 1 : 0);
 }
 
 // Edit r settings {{{
