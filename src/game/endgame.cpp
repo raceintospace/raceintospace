@@ -937,14 +937,17 @@ void FakeHistory(char plr, char Fyear)  // holds the winning player
 
 std::string HistFile(unsigned char bud)
 {
-    std::string text;
-    text.resize(600);
-    FILE *fin = sOpen("ENDGAME.DAT", "rb", FT_DATA);
-    fseek(fin, bud * 600, SEEK_SET);
-    fread(&text[0], 600, 1, fin);
-    fclose(fin);
-
-    return text;
+    std::vector<std::string> text;
+    
+    std::string filename = "endgame.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+		throw std::runtime_error(filename + " could not be opened.");
+	}
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(text));
+    
+    return text[bud];
 }
 
 void PrintHist(const char *buf)

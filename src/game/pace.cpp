@@ -287,7 +287,7 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size)
 {
     mm_file mf;
     unsigned channels, rate;
-    const size_t def_size = 128 * 1024; // increase from 16b for hq audio files
+    const size_t def_size = 192 * 1024; // increase from 16b for hq audio files
     size_t offset = 0;
     ssize_t read = 0;
     double start = get_time();
@@ -341,9 +341,9 @@ void NGetVoice(char plr, char val)
     char fname[100];
     ssize_t bytes = 0;
 
-    snprintf(fname, sizeof(fname), "%s_%03d.ogg",
-             (plr ? "sov" : "usa"), val);
+    snprintf(fname, sizeof(fname), "%s_%03d.ogg",(plr ? "sov" : "usa"), val);
     bytes = load_audio_file(fname, &soundbuf, &soundbuf_size);
+    soundbuf_size = bytes; // // Assign the correct buffer size
     soundbuf_used = (bytes > 0) ? bytes : 0;
     PlayVoice();
 }

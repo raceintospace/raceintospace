@@ -82,7 +82,7 @@
 #define S_QTY 43
 #define S_MOBJ 35
 
-typedef struct PORTOUTLINE {
+struct PORTOUTLINE {
     uint16_t loc;
     char val;
 };
@@ -164,36 +164,34 @@ struct OUTLINE {
       }
 };
 
-PORTOUTLINE *pPortOutlineRestore;
-
-std::vector<MOBJ> MObj(S_MOBJ);
-
-/** These are the valid hotkeys */
-char HotKeyList[] = "AIMRPVCQETB\0";
-
-int FCtr;
-boost::shared_ptr<display::PalettizedSurface> flaggy;
 int16_t Vab_Spot;
 
-// Unnamed namespace for local globals & function prototypes.
-// TODO: Move other file variables here.
-namespace
-{
+namespace // Local global variables
+{	
+	PORTOUTLINE *pPortOutlineRestore;
 
-char RUSH;
+	std::vector<MOBJ> MObj(S_MOBJ);
+	std::vector<IMG> Img(S_QTY);
 
-enum MissionReadyStatus {
-    MISSIONS_NONE = 0,
-    MISSIONS_UNSTAGED,
-    MISSIONS_UNSCHEDULED,
-    MISSIONS_READY
-};
-};  // End of anonymous namespace
+	/** These are the valid hotkeys */
+	char HotKeyList[] = "AIMRPVCQETB\0";
+	char RUSH;
+	int FCtr;
+
+	boost::shared_ptr<display::PalettizedSurface> flaggy;
+
+	enum MissionReadyStatus {
+		MISSIONS_NONE = 0,
+		MISSIONS_UNSTAGED,
+		MISSIONS_UNSCHEDULED,
+		MISSIONS_READY
+	};
+};  // End of namespace
 
 
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
-void PortPlace(int indx);
+void PortPlace(int plr, int indx);
 void PortText(int x, int y, std::string txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
@@ -237,25 +235,25 @@ void WaveFlagDel(void)
  * \param table  offset to the image data in the Port file.
  */
  
-void PortPlace(int indx)
+void PortPlace(int plr, int indx)
 {
-    // Deserialize Img
-    std::vector<IMG> Img(S_QTY);
-    std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
-    cereal::JSONInputArchive ar(file);
-    ar(CEREAL_NVP(Img));
-	
-	char filename[30];
-    snprintf(filename, sizeof(filename), (plr != 0 ? 
-	  "images/usa_port.dat.%d.png" : "images/sov_port.dat.%d.png"), (int) indx);
+    std::string filename;
+    
+    // Load port sprites
+	if (plr == 0) {
+		filename = "images/usa_port.dat." + std::to_string(indx) + ".png";
+	} else {
+		filename = "images/sov_port.dat." + std::to_string(indx) + ".png";
+	}
     
     boost::shared_ptr<display::PalettizedSurface> image;
-    try {
-        image = Filesystem::readImage(filename);
-    } catch (const std::runtime_error &err) {
-        CERROR4(filesys, "error loading %s: %s", filename, err.what());
-        return;
-    }
+    if (image = Filesystem::readImage(filename)) {
+		printf("%s file loaded.\n", filename.c_str());
+		//INFO2("%s file loaded.", filename.c_str());
+    } else {
+		throw std::runtime_error(filename + " could not be loaded.");
+		//CERROR4(filesys, "error loading %s: %s", filename, err.what());
+    }    
     
     //image->exportPalette(Img[indx].Width, Img[indx].Height);
     image->exportPalette();
@@ -275,9 +273,15 @@ void PortPlace(int indx)
  */
 void PortPal(char plr)
 {   
+    std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    
     // Deserialize palette
     std::vector<uint8_t> palette;
-    std::ifstream file(locate_file((plr != 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+		throw std::runtime_error(filename + " could not be opened.");
+	}
     cereal::JSONInputArchive ar(file);
     ar(CEREAL_NVP(palette));
         
@@ -286,32 +290,33 @@ void PortPal(char plr)
     for (size_t i= 0; i < sizeof(p.pal); i++) { // the limit is Autopal p.pal size
         p.pal[i] = static_cast<char>(palette[i]);
     }
-    
-    return;
 }
 
 
 void DrawSpaceport(char plr)
 {
-	//Deserialize MObj
-	std::ifstream file(locate_file((plr == 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
-    cereal::JSONInputArchive ar(file);
-    ar(CEREAL_NVP(MObj));
+	std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+	
+	// Deserialize Img and MObj
+	{
+		std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+		if (!file) {
+			throw std::runtime_error(filename + " could not be opened.");
+		}
+		
+		cereal::JSONInputArchive ar(file);
+		ar(CEREAL_NVP(MObj));
+		ar(CEREAL_NVP(Img));
+    }
     
     // Draw the main port image
-    {
-        const char *filename = (plr == 0 ? "images/usa_port.dat.0.png" :
-             "images/sov_port.dat.0.png");
-        boost::shared_ptr<display::PalettizedSurface> image(
-            Filesystem::readImage(filename));
-        image->exportPalette();
-        display::graphics.screen()->draw(image, 0, 0);
-    }
+	PortPlace(plr, 0);
 
     UpdatePortOverlays();
 
     if (xMODE & xMODE_CLOUDS) {
-        PortPlace(1);    // Clouds
+        PortPlace(plr, 1);    // Clouds
     }
 
     // Pads
@@ -332,7 +337,7 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].AstroCount > 0) {
-        PortPlace(16 - plr * 4);  // Draw CPX
+        PortPlace(plr, 16 - plr * 4);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
     } else {    // No manned program hotkeys
@@ -341,30 +346,30 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].Pool[0].Active >= 1) {
-        PortPlace(17 - plr * 4);    // Draw TRN
+        PortPlace(plr, 17 - plr * 4);    // Draw TRN
     }
 
     if (Data->P[plr].Port[PORT_Research] > 1) {
-        PortPlace(13 + 15 * plr);    // RD Stuff
+        PortPlace(plr, 13 + 15 * plr);    // RD Stuff
     }
 
     if (Data->P[plr].Port[PORT_Research] > 2) {
-        PortPlace(14 + 15 * plr);
+        PortPlace(plr, 14 + 15 * plr);
     }
 
     if (Data->P[plr].Port[PORT_Research] == 3) {
-        PortPlace(15 + 15 * plr);
+        PortPlace(plr, 15 + 15 * plr);
     }
 
     for (int fm = 0; fm < S_MOBJ; fm++) {
         int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
-            PortPlace(MObj[fm].Reg[idx].PreDraw);
+            PortPlace(plr, MObj[fm].Reg[idx].PreDraw);
         }
 
         if (MObj[fm].Reg[idx].iNum > 0) {  // Actual Shape
-            PortPlace(MObj[fm].Reg[idx].iNum);
+            PortPlace(plr, MObj[fm].Reg[idx].iNum);
         }
     }
 
@@ -924,9 +929,15 @@ void Port(char plr)
     keyHelpText = "k043";
     bone = (uint16_t *) buffer;
 	
+	std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+	
 	// Deserialize Count and bone data
 	std::vector<OUTLINE> pOutline(55);
-	std::ifstream file(locate_file((plr == 0) ? "usa_port.json" : "sov_port.json", FT_DATA));
+	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+	throw std::runtime_error(filename + " could not be opened.");
+	}
     cereal::JSONInputArchive ar(file);
     ar(CEREAL_NVP(pOutline));
 	

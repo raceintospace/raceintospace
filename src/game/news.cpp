@@ -15,15 +15,17 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// Interplay's BUZZ ALDRIN's RACE into SPACE
-//
-// Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA
-// Copyright 1991 by Strategic Visions, Inc.
-// Designed by Fritz Bronner
-// Programmed by Michael K McCarty
-//
-// NewsCaster Main Files
+//****************************************************************
+//*Interplay's BUZZ ALDRIN's RACE into SPACE                     *
+//*                                                              *
+//*Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA   *
+//*Copyright 1991 by Strategic Visions, Inc.                     *
+//*Designed by Fritz Bronner                                     *
+//*Programmed by Michael K McCarty                               *
+//*                                                              *
+//****************************************************************
 
+// NewsCaster Main Files
 // This file controls the newscast.
 
 #include <stdexcept>
@@ -80,6 +82,11 @@ static int news_index[2][2][3] = {
     },
 };
 
+static std::vector<std::string> event;
+static std::vector<std::string> naut_news;
+static std::vector<std::string> reasons;
+static std::vector<std::string> news;
+
 struct rNews {
     int16_t offset;
     char chrs;
@@ -94,6 +101,8 @@ char ResolveEvent(char plr);
 int PlayNewsAnim(mm_file *);
 mm_file *LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp);
 void ShowEvt(char plr, char crd);
+void LoadEventData(char plr);
+void LoadNewsData(char plr);
 
 
 void
@@ -135,41 +144,40 @@ GoNews(char plr)
 
 
 // Open News Constructs a complete event array.
-void
-OpenNews(char plr, char *buf, int bud)
+void OpenNews(char plr, char *buf, int bud)
 {
     int size;
     FILE *fp;
     int i, len[5];
-
-    size = (plr == 0) ? 232 : 177;
-    i = (long) 500 * bud + (long) plr * 250;
-
-    //if (plr==1 && bud==22) i=11250L;
-    // Event Card Info
-    if (plr == 0) {
-        strcpy(&buf[0], "DEVELOPMENTS IN THE NEWS TODAY...x");
-    } else {
-        strcpy(&buf[0], "GOOD EVENING. AND NOW, THE NEWS...x");
-    }
-
-    fp = sOpen("EVENT.DAT", "rb", FT_DATA);
-    fseek(fp, i, SEEK_SET);
+    
+    //size = (plr == 0) ? 232 : 177;
+    size = 250;
+    //i = (long) 500 * bud + (long) plr * 250;
+    
+    
+    LoadEventData(plr);
+    
+    // News Intro - "GOOD EVENING..."
+    strncpy(&buf[0], event[0].c_str(), event[0].size());
+    
+    // Event News
     bufsize = strlen(buf);
-    fread(&buf[bufsize], 249, 1, fp);
-    fclose(fp);
+    strncpy(&buf[bufsize], event[bud + 2].c_str(), event[bud + 2].size());
+ 
     bufsize = strlen(buf);
     buf[bufsize] = 'x';
-    //Astronaut info
 
+    //Astronaut info
     fp = sOpen("NEWS.DAT", "rb", FT_DATA);
     fread(&len[0], sizeof(len), 1, fp);
 
     for (i = 0; i < 5; i++) {
         Swap32bit(len[i]);
     }
-
-    i = 0;
+    
+    LoadNewsData(plr);
+    
+    i = 0; // reset counter
 
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
@@ -177,41 +185,53 @@ OpenNews(char plr, char *buf, int bud)
         }
     }
 
+    // Nauts in the news....
     bufsize = strlen(buf);
-
+    
+    // Nauts in the news...
+    if (i > 0) {
+        strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
+    }
+    
+    /*
     if (i > 0) {
         if (plr == 0) {
             strcpy(&buf[bufsize], "xASTRONAUTS IN THE NEWS...x");
+            
         } else {
             strcpy(&buf[bufsize], "xIN COSMONAUT NEWS...x");
         }
     }
-
+    */
+    
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
-        if (Data->P[plr].Pool[j].Special > 0) {
+        if (Data->P[plr].Pool[j].Special > 0 && i > 1) {
             // 12 ideas
             bufsize = strlen(buf);
-            strcpy(&buf[bufsize], Data->P[plr].Pool[j].Name);
-            i = len[0] + len[1] + (sizeof len) + 50 * (Data->P[plr].Pool[j].Special - 1);
-            fseek(fp, i, SEEK_SET);
+            strcpy(&buf[bufsize], Data->P[plr].Pool[j].Name); // Copy Naut Name
+            //i = len[0] + len[1] + (sizeof len) + 50 * (Data->P[plr].Pool[j].Special - 1);
+            //fseek(fp, i, SEEK_SET);
+            i = Data->P[plr].Pool[j].Special;
             bufsize = strlen(buf);
-            fread(&buf[bufsize], 50, 1, fp);
+            strncpy(&buf[bufsize], naut_news[i].c_str(), naut_news[i].size());
+            //fread(&buf[bufsize], 50, 1, fp);
         }
 
         /* Show reasons for retirement announcements, mission deaths (8), and
            retirements due to mission injuries (9) */
-
-        if (Data->P[plr].Pool[j].Special == 1
-            || (Data->P[plr].Pool[j].Special > 0 && (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9))) {
+        
+        // (Special == 1,) OR (Special greater than 0 AND RetirementReason 8 or 9).
+        if ( (Data->P[plr].Pool[j].Special == 1) || 
+             (Data->P[plr].Pool[j].Special > 0 && 
+             (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9)) ) {
             //13 other things
-            i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
+            //i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
+            i = Data->P[plr].Pool[j].RetirementReason - 1;
+            //if (plr == 1) { i += len[3]; }
 
-            if (plr == 1) {
-                i += len[3];
-            }
-
-            fseek(fp, i, SEEK_SET);
+            //fseek(fp, i, SEEK_SET);
             bufsize = strlen(buf);
+            strncpy(&buf[bufsize], reasons[i].c_str(), reasons[i].size());
             fread(&buf[bufsize], 50, 1, fp);
         }
 
@@ -296,40 +316,28 @@ OpenNews(char plr, char *buf, int bud)
 
     Data->P[plr].Plans = 0;
 
-    // History info
-    fseek(fp, sizeof(len), SEEK_SET);
+    // History News
+    bufsize = strlen(buf);
+
+    // Also in the news... 
+    strncpy(&buf[bufsize], news[0].c_str(), news[0].size());
+
     bufsize = strlen(buf);
 
     if (plr == 0) {
-        strcpy(&buf[bufsize], "xALSO IN THE NEWS...x");
+        // Pool of 6 us news per year
+        i = (Data->Year - 57) * 6 + Data->Season * 3 + brandom(3) + 1;
     } else {
-        strcpy(&buf[bufsize], "xOTHER EVENTS IN THE NEWS...x");
+        // Pool of 4 soviet news per year
+        i = (Data->Year - 57) * 4 + Data->Season * 2 + brandom(2) + 1;
     }
 
-    bufsize = strlen(buf);
-
-    if (plr == 1) {
-        fseek(fp, len[0], SEEK_CUR);    // go to start of Soviet news
-    }
-
-    if (plr == 0) {
-        i = ((Data->Year - 57) * 6 + Data->Season * 3 + brandom(3)) * size;
-    } else {
-        i = ((Data->Year - 57) * 4 + Data->Season * 2 + brandom(2)) * size;
-    }
-
-    fseek(fp, i, SEEK_CUR);
-
-    fread(&buf[bufsize], size, 1, fp);
-    fclose(fp);
+    strncpy(&buf[bufsize], news[i].c_str(), news[i].size());
     strcat(buf, "x");
     bufsize = strlen(buf);
-
-    if (plr == 0) {
-        strcpy(&buf[bufsize], "xAND THAT'S THE NEWS. I'M CARTER WALCRITE.x");
-    } else {
-        strcpy(&buf[bufsize], "xTHIS CONCLUDES OUR NEWS BROADCAST. I'M SVETLANA IZVESTIA. GOOD NIGHT.x");
-    }
+    
+    // News Outro
+    strncpy(&buf[bufsize], event[1].c_str(), event[1].size());
 }
 
 
@@ -1111,5 +1119,44 @@ ShowEvt(char plr, char crd)
     display::graphics.newsRect().w = 0;
     display::graphics.newsRect().h = 0;
 }
+
+void LoadEventData(char plr) {
+    
+    // Deserialize Events
+    std::string filename = "event.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+        throw std::runtime_error(filename + " could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    
+    if (plr == 0) {
+        ar(cereal::make_nvp("us_event", event));
+    } else {
+        ar(cereal::make_nvp("sov_event", event));
+    }
+}
+
+void LoadNewsData(char plr) {
+    // Deserialize Nauts and Historic News
+
+    std::string filename = "news.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+        throw std::runtime_error(filename + " could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    
+    if (plr == 0) {
+        ar(cereal::make_nvp("astro_news", naut_news));
+        ar(cereal::make_nvp("us_reasons", reasons));
+        ar(cereal::make_nvp("us_news", news));
+    } else {
+        ar(cereal::make_nvp("cosmo_news", naut_news));
+        ar(cereal::make_nvp("sov_reasons", reasons));
+        ar(cereal::make_nvp("sov_news", news));
+    }
+}
+
 
 // EOF
