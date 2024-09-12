@@ -1,6 +1,7 @@
 {
     "MObj": [
         {
+            "cereal_class_version": 0,
             "Name": "THE WASHINGTON MONUMENT",
             "qty": 1,
             "Help": "023",

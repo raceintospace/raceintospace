@@ -193,46 +193,27 @@ void OpenNews(char plr, char *buf, int bud)
         strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
     }
     
-    /*
-    if (i > 0) {
-        if (plr == 0) {
-            strcpy(&buf[bufsize], "xASTRONAUTS IN THE NEWS...x");
-            
-        } else {
-            strcpy(&buf[bufsize], "xIN COSMONAUT NEWS...x");
-        }
-    }
-    */
-    
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
-        if (Data->P[plr].Pool[j].Special > 0 && i > 1) {
+        if (Data->P[plr].Pool[j].Special > 0) {
             // 12 ideas
             bufsize = strlen(buf);
             strcpy(&buf[bufsize], Data->P[plr].Pool[j].Name); // Copy Naut Name
-            //i = len[0] + len[1] + (sizeof len) + 50 * (Data->P[plr].Pool[j].Special - 1);
-            //fseek(fp, i, SEEK_SET);
             i = Data->P[plr].Pool[j].Special;
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], naut_news[i].c_str(), naut_news[i].size());
-            //fread(&buf[bufsize], 50, 1, fp);
         }
 
         /* Show reasons for retirement announcements, mission deaths (8), and
            retirements due to mission injuries (9) */
-        
         // (Special == 1,) OR (Special greater than 0 AND RetirementReason 8 or 9).
         if ( (Data->P[plr].Pool[j].Special == 1) || 
              (Data->P[plr].Pool[j].Special > 0 && 
              (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9)) ) {
             //13 other things
-            //i = len[0] + len[1] + len[2] + (sizeof len) + 50 * (Data->P[plr].Pool[j].RetirementReason - 1);
             i = Data->P[plr].Pool[j].RetirementReason - 1;
-            //if (plr == 1) { i += len[3]; }
 
-            //fseek(fp, i, SEEK_SET);
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], reasons[i].c_str(), reasons[i].size());
-            fread(&buf[bufsize], 50, 1, fp);
         }
 
         Data->P[plr].Pool[j].Special = 0;
@@ -735,8 +716,6 @@ News(char plr)
                     PlayNewsAnim(fp);
                 }
 
-                /* the "mysterious" delay of Soviet newscaster.
-                 * she is out of sync anyway... */
                 loc++;
 
                 break;

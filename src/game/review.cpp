@@ -374,13 +374,25 @@ void DrawReviewText(char plr, int val)
     int index = 0;
     int length = 0;
     int line = 0;
-    FILE *fin;
+    //FILE *fin;
     char *text = new char[205];
     memset(text, 0x00, sizeof(*text));
-    fin = sOpen("P_REV.DAT", "rb", FT_DATA);  // Read Mission Structure
-    fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
-    fread(text, 204, 1, fin);
-    fclose(fin);
+    
+    std::vector<std::string> review;
+    
+    std::string filename = "p_rev.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+        throw std::runtime_error(filename + " could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(review));
+    
+    strncpy(&text[205], review[18 * plr + val].c_str(), review[18 * plr + val].size());
+    //fin = sOpen("P_REV.DAT", "rb", FT_DATA);  // Read Mission Structure
+    //fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
+    //fread(text, 204, 1, fin);
+    //fclose(fin);
 
     display::graphics.setForegroundColor(1);
 
