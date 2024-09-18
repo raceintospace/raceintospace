@@ -364,33 +364,7 @@ char * load_gamedata(const char *name)
 	return p;
 }
 
-/*
-char *
-slurp_gamedat(const char *name)
-{
-    FILE *f;
-    ssize_t len;
-    char *p = NULL;
-    size_t buflen = 0;
 
-    f = open_gamedat(name);
-
-    if (!f) {
-        return NULL;
-    }
-
-    len = fread_dyn(&p, &buflen, f);
-
-    if (len < 0) {
-        CRITICAL2("could not read file `%s'", name);
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(f);
-
-    return p;
-}
-*/
 /** Create the savegame directory
  *
  * The directory will be created as defined in options.dir_savegame.

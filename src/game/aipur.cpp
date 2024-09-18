@@ -121,7 +121,6 @@ void DrawStatistics(char Win)
     starty = 118;
     display::LegacySurface local(30, 19);
     
-    //fin = sOpen("PORTBUT.BUT", "rb", FT_DATA);
     LoadPortButtons();
     
     OutBox(152, 41, 183, 61); // directors ranking
@@ -135,8 +134,6 @@ void DrawStatistics(char Win)
             OutBox(starty + (i * 33), 132, 31 + starty + (i * 33), 152);
         }
 
-        //fseek(fin, AImg[i] * 570, SEEK_SET);
-        //fread(local.pixels(), 570, 1, fin);
         memcpy(local.pixels(), portbuttons[i].data(), 570);
         if (memcmp(local.pixels(), portbuttons[i].data(), 570) != 0) {
             throw std::runtime_error("Error: portbuttons data not copied in local surface.");

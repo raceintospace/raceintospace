@@ -289,14 +289,16 @@ struct mStr GetMissionPlan(const int code)
  * \param posY   The y coordinates for the name block's upper-left corner.
  * \param len  The number of characters at which to start a new line.
  */
-void MissionName(mStr mission, int posX, int posY, int len)
+void DrawMissionName(int val, int posX, int posY, int len)
 {
-    TRACE5("->MissionName(Index %d, posX %d, posxY %d, len %d)",
-           mission.Index, posX, posY, len);
+    TRACE5("->DrawMissionName(val %d, posX %d, posxY %d, len %d)",
+           val, posX, posY, len);
     int i, j = 0;
 
     grMoveTo(posX, posY);
-
+    
+    mStr mission = GetMissionPlan(val);    
+    
     for (i = 0; i < 50; i++) {
         if (j > len && mission.Name[i] == ' ') {
             posY += 7;
@@ -313,7 +315,7 @@ void MissionName(mStr mission, int posX, int posY, int len)
         }
     }
 
-    TRACE1("<-MissionName");
+    TRACE1("<-DrawMissionName");
 
     return;
 }

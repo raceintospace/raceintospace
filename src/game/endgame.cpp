@@ -171,8 +171,7 @@ void EndGame(char win, char pad)
         i = 0;
     }
 
-    //MissionName(miss, 80, 50, 24);
-	MissionName(GetMissionPlan(miss), 80, 50, 24);
+    DrawMissionName(miss, 80, 50, 24);
 	
     if (Option == -1 && MAIL == -1) {
         strcpy(capName, Data->P[win].Mission[pad].Name);
@@ -690,8 +689,7 @@ void FakeWin(char win)
     draw_string(10, 50, "MISSION TYPE: ");
     display::graphics.setForegroundColor(8);
 
-    //MissionName(miss, 80, 50, 24);
-    MissionName(GetMissionPlan(miss), 80, 50, 24);
+    DrawMissionName(miss, 80, 50, 24);
     display::graphics.setForegroundColor(6);
 
     if (Data->Year <= 65) {

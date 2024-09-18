@@ -86,7 +86,6 @@ char CheckCrewOK(char plr, char pad)
 
 char REvent(char plr)
 {
-    FILE *fin;
     int NoMods = 1, i = 0, j = 0;
 
     if (NoMods == 1) {

@@ -1053,10 +1053,10 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-				mission = GetMissionPlan(misType);
-				if (mission.Dur) {
-		            int duration = MAX(nav.duration.value, mission.Days);
-		            bool valid = (nav.duration.value >= mission.Days);
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
 		            PrintDuration(duration, valid ? 5 : 9);
 
 		            mission.Days = duration;
@@ -1087,14 +1087,14 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-				mission = GetMissionPlan(misType);
-				if (mission.Dur) {
-                    int duration = MAX(nav.duration.value, mission.Days);
-                    bool valid = (nav.duration.value >= mission.Days);
-                    PrintDuration(duration, valid ? 5 : 9);
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
+		            PrintDuration(duration, valid ? 5 : 9);
 
-                    mission.Days = duration;
-                    DrawPenalty(plr, mission);
+		            mission.Days = duration;
+		            DrawPenalty(plr, mission);
                 }
 
                 WaitForMouseUp();
@@ -1252,13 +1252,13 @@ void Future(char plr)
 				
 				// If a duration mission, update the duration & mission
                 // penalty displays
-				mission = GetMissionPlan(misType);
-				if (mission.Dur) {
-                    int duration = MAX(nav.duration.value, mission.Days);
-                    bool valid = (nav.duration.value >= mission.Days);
-                    PrintDuration(duration, valid ? 5 : 9);
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
+		            PrintDuration(duration, valid ? 5 : 9);
 
-                    mission.Days = duration;
+		            mission.Days = duration;
                     DrawPenaltyPopup(plr, mission);
                 } else {
                     DrawPenaltyPopup(plr, mission);
@@ -1447,7 +1447,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
         PrintDuration(mission.Days, 5);
     }
 
-    MissionName(mission, X, Y, 24);
+    DrawMissionName(val, X, Y, 24);
 
     if (mission.Dur && mission.Days < nav.duration.value) {
         mission.Days = nav.duration.value;

@@ -202,7 +202,8 @@ void PadDraw(char plr, char pad)
     }
 
     display::graphics.setForegroundColor(6);
-    MissionName(GetMissionPlan(Data->P[plr].Mission[pad].MissionCode), 10, 81, 20);
+    int code = Data->P[plr].Mission[pad].MissionCode;
+    DrawMissionName(code, 10, 81, 20);
     display::graphics.setForegroundColor(1);
 
     // joint mission part

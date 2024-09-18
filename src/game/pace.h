@@ -24,7 +24,6 @@ char *seq_filename(int seq, int mode);
 void idle_loop_secs(double secs);
 int getch(void);
 char DoModem(int sel);
-int put_serial(unsigned char n);
 void MesCenter(void);
 void StopAudio(char mode);
 void stop_voice(void);

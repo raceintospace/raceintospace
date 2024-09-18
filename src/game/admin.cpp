@@ -1441,7 +1441,7 @@ int FutureCheck(char plr, char type)
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     display::graphics.setForegroundColor(5);
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    MissionName(GetMissionPlan(m[i]), 111, 41 + i * 51, 24);
+                    DrawMissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                     // Update player's cash shown on other pads
@@ -1495,8 +1495,7 @@ int FutureCheck(char plr, char type)
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     display::graphics.setForegroundColor(5);
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    //MissionName(m[i], 111, 41 + i * 51, 24);
-                    MissionName(GetMissionPlan(m[i]), 111, 41 + i * 51, 24);
+                    DrawMissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                     // Update player's cash shown on other pads
