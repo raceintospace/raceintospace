@@ -378,7 +378,7 @@ void DispVAB(char plr, char pad)
     struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 53, missionPlan.Abbr);
+    draw_string(5, 53, (missionPlan.Abbr).c_str());
 
     // Show duration level only on missions with a Duration step  -Leon
     if (IsDuration(mission.MissionCode)) {

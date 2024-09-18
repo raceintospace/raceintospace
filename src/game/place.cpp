@@ -865,7 +865,7 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     draw_string(0, 0, (char *)Data->P[plr].History[index].MissionName);
     draw_string(12, 64, "MISSION TYPE:");
     display::graphics.setForegroundColor(11);
-    draw_string(15, 72, plan.Abbr);
+    draw_string(15, 72, (plan.Abbr).c_str());
 
     display::graphics.setForegroundColor(1);
     draw_string(12, 80, "RESULT: ");

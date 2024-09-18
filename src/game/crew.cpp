@@ -769,7 +769,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
 
     display::graphics.setForegroundColor(1);
     const struct mStr plan = GetMissionPlan(mis);
-    draw_string(85, 70, plan.Abbr);
+    draw_string(85, 70, (plan.Abbr).c_str());
 //Missions(plr,85,70,mis,0);
 
     // Show duration level only on missions with a Duration step - Leon

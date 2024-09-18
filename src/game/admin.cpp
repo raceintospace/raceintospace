@@ -47,6 +47,7 @@
 #include "draw.h"
 #include "budget.h"
 #include "future.h"
+#include "mission_util.h"
 #include "game_main.h"
 #include "ioexception.h"
 #include "place.h"
@@ -1266,7 +1267,7 @@ int FutureCheck(char plr, char type)
             // duplicate code.
             if (type == 1) {   // VAB/VIB
                 const struct mStr plan = GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
-                draw_string(111, 41 + i * 51, plan.Abbr);
+                draw_string(111, 41 + i * 51, (plan.Abbr).c_str());
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
                 // Show duration level only on missions with a Duration step - Leon
@@ -1300,7 +1301,7 @@ int FutureCheck(char plr, char type)
 
                 const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
                 display::graphics.setForegroundColor(1);
-                draw_string(111, 41 + i * 51, plan.Abbr);
+                draw_string(111, 41 + i * 51, (plan.Abbr).c_str());
                 int MisCod = Data->P[plr].Future[i].MissionCode;
 
                 // Show duration level only on missions with a Duration step - Leon
@@ -1440,7 +1441,7 @@ int FutureCheck(char plr, char type)
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     display::graphics.setForegroundColor(5);
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    MissionName(m[i], 111, 41 + i * 51, 24);
+                    MissionName(GetMissionPlan(m[i]), 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                     // Update player's cash shown on other pads
@@ -1494,7 +1495,8 @@ int FutureCheck(char plr, char type)
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     display::graphics.setForegroundColor(5);
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
-                    MissionName(m[i], 111, 41 + i * 51, 24);
+                    //MissionName(m[i], 111, 41 + i * 51, 24);
+                    MissionName(GetMissionPlan(m[i]), 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                     // Update player's cash shown on other pads

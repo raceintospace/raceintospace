@@ -61,9 +61,9 @@
 #include "mc.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -82,10 +82,6 @@
 #define S_QTY 43
 #define S_MOBJ 35
 
-struct PORTOUTLINE {
-    uint16_t loc;
-    char val;
-};
 
 struct BOUND {
     int16_t x1;
@@ -164,15 +160,21 @@ struct OUTLINE {
       }
 };
 
-int16_t Vab_Spot;
+struct PORTOUTLINE {
+    uint16_t loc;
+    char val;
+};
+
+int Vab_Spot; // Global variable
 
 namespace // Local global variables
 {	
-	PORTOUTLINE *pPortOutlineRestore;
-
 	std::vector<MOBJ> MObj(S_MOBJ);
 	std::vector<IMG> Img(S_QTY);
-
+	std::vector<OUTLINE> pOutline(55);
+	
+	PORTOUTLINE *pPortOutlineRestore;
+	
 	/** These are the valid hotkeys */
 	char HotKeyList[] = "AIMRPVCQETB\0";
 	char RUSH;
@@ -191,7 +193,7 @@ namespace // Local global variables
 
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
-void PortPlace(int plr, int indx);
+void LoadImg(int plr, int indx);
 void PortText(int x, int y, std::string txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
@@ -205,6 +207,7 @@ char PortSel(char plr, char loc);
 char Request(char plr, const char *s, char md);
 int SpaceportAnimationEntry(int plr);
 int SpaceportAnimationOngoing(int plr);
+void LoadPOutline(int plr); 
 
 
 void WaveFlagSetup(char plr)
@@ -231,11 +234,10 @@ void WaveFlagDel(void)
  *     int16_t PlaceX    -- Where to Place Img:X
  *     int16_t PlaceY    -- Where to Place Img:Y
  *
- * \param fin    an open (usa/sov)_port.dat file.
- * \param table  offset to the image data in the Port file.
+ * \param plr    the player (usa/sov)_port.json image file to open.
+ * \param indx  index to the image position data in the Img vector.
  */
- 
-void PortPlace(int plr, int indx)
+void LoadImg(int plr, int indx)
 {
     std::string filename;
     
@@ -248,11 +250,9 @@ void PortPlace(int plr, int indx)
     
     boost::shared_ptr<display::PalettizedSurface> image;
     if (image = Filesystem::readImage(filename)) {
-		printf("%s file loaded.\n", filename.c_str());
-		//INFO2("%s file loaded.", filename.c_str());
+		INFO2("load file `%s'", filename.c_str());
     } else {
 		throw std::runtime_error(filename + " could not be loaded.");
-		//CERROR4(filesys, "error loading %s: %s", filename, err.what());
     }    
     
     //image->exportPalette(Img[indx].Width, Img[indx].Height);
@@ -311,12 +311,12 @@ void DrawSpaceport(char plr)
     }
     
     // Draw the main port image
-	PortPlace(plr, 0);
+	LoadImg(plr, 0);
 
     UpdatePortOverlays();
 
     if (xMODE & xMODE_CLOUDS) {
-        PortPlace(plr, 1);    // Clouds
+        LoadImg(plr, 1);    // Clouds
     }
 
     // Pads
@@ -337,7 +337,7 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].AstroCount > 0) {
-        PortPlace(plr, 16 - plr * 4);  // Draw CPX
+        LoadImg(plr, 16 - plr * 4);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
     } else {    // No manned program hotkeys
@@ -346,30 +346,30 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].Pool[0].Active >= 1) {
-        PortPlace(plr, 17 - plr * 4);    // Draw TRN
+        LoadImg(plr, 17 - plr * 4);    // Draw TRN
     }
 
     if (Data->P[plr].Port[PORT_Research] > 1) {
-        PortPlace(plr, 13 + 15 * plr);    // RD Stuff
+        LoadImg(plr, 13 + 15 * plr);    // RD Stuff
     }
 
     if (Data->P[plr].Port[PORT_Research] > 2) {
-        PortPlace(plr, 14 + 15 * plr);
+        LoadImg(plr, 14 + 15 * plr);
     }
 
     if (Data->P[plr].Port[PORT_Research] == 3) {
-        PortPlace(plr, 15 + 15 * plr);
+        LoadImg(plr, 15 + 15 * plr);
     }
 
     for (int fm = 0; fm < S_MOBJ; fm++) {
         int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
-            PortPlace(plr, MObj[fm].Reg[idx].PreDraw);
+            LoadImg(plr, MObj[fm].Reg[idx].PreDraw);
         }
 
         if (MObj[fm].Reg[idx].iNum > 0) {  // Actual Shape
-            PortPlace(plr, MObj[fm].Reg[idx].iNum);
+            LoadImg(plr, MObj[fm].Reg[idx].iNum);
         }
     }
 
@@ -408,6 +408,7 @@ void DrawSpaceport(char plr)
         display::graphics.screen()->draw(flaggy, FCtr * 23, 0, 23, 22, 220, 141);
     }
 }
+
 
 void PortText(int x, int y, std::string txt, char col)
 {
@@ -504,6 +505,7 @@ void UpdatePortOverlays(void)
     }
 }
 
+
 void Master(char plr)
 {
     helpText = "i000";
@@ -511,13 +513,15 @@ void Master(char plr)
     WaveFlagSetup(plr);
     Vab_Spot = 0;
 	
+	/*
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
     for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
-
+	*/
+	
     // Entering screen for the first time so fade out and in.
     FadeOut(2, 10, 0, 0);
     DrawSpaceport(plr);
@@ -531,7 +535,7 @@ void Master(char plr)
     SpotLoad(animation);
 
 #endif
-
+	
     Port(plr);
     helpText = "i000";
     keyHelpText = "i000";
@@ -583,6 +587,7 @@ done:
 
     GetMouse_fast();
 }
+
 
 void DoCycle(void)                   // Three ranges of color cycling
 {
@@ -928,18 +933,8 @@ void Port(char plr)
     helpText = "i043";
     keyHelpText = "k043";
     bone = (uint16_t *) buffer;
-	
-	std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
-	
-	// Deserialize Count and bone data
-	std::vector<OUTLINE> pOutline(55);
-	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
-    if (!file) {
-	throw std::runtime_error(filename + " could not be opened.");
-	}
-    cereal::JSONInputArchive ar(file);
-    ar(CEREAL_NVP(pOutline));
+    
+	LoadPOutline(plr);
 	
     if (plr == 0 && Data->Year > 65) {
         PortText(5, 196, "CAPE KENNEDY", 12);
@@ -1764,6 +1759,23 @@ int SpaceportAnimationOngoing(int plr)
 
     return SPOT_NONE;
 }
+
+
+// Deserialize Count and bone data in pOutline vector
+void LoadPOutline(int plr) {
+	
+	std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+	  if (!file) {
+	  throw std::runtime_error(filename + " could not be opened.");  
+	}
+
+	cereal::JSONInputArchive ar(file);
+	ar(CEREAL_NVP(pOutline));
+	INFO1("pOutline succesfully uploaded.");
+}
+
 
 // Edit r settings {{{
 // ex: ts=4 noet sw=2

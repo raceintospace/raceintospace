@@ -171,8 +171,38 @@ void MissionPath(char plr, int val, int pad)
     // These are cleared by DrawMission, but no point taking chances.
     bubCount = 0;  // set the initial bub_count
     memset(Mev, 0x00, sizeof Mev);
-
-    // Read mission step data
+    
+    // Deserialize missSteps
+    std::vector<std::string> missSteps;
+    std::ifstream file(locate_file("missSteps.json", FT_DATA));
+    if (!file) {
+        throw std::runtime_error("Error. missSteps.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(missSteps);
+    
+    // Read mission step data and find correct entry
+    int index = 0;
+    std::string code;
+    while (index < missSteps.size()) {
+        code = missSteps[index];
+        // Transform the first characters in a number and compare with val
+        if ((code[0] - '0') * 10 + (code[1] - '0') == val) { 
+            break;
+        }
+      index++;
+    }
+    
+    //Copy string value into missStep
+    if ( size_t pos = missSteps[index].find('A')){
+        code = missSteps[index].substr(pos);
+        strncpy(missStep, code.c_str(), 1024 - 1);
+        missStep[1024-1] = '\0';
+    } else {
+        memset(missStep, 0, 1024);
+    }
+    
+    /*
     FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
 
     if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
@@ -186,7 +216,8 @@ void MissionPath(char plr, int val, int pad)
     }
 
     fclose(MSteps);
-
+    */
+    
     for (int n = 2; missStep[n] != 'Z'; n++) {
         switch (missStep[n]) {
         case 'A':

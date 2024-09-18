@@ -4,21 +4,25 @@
 
 #include <cstring>
 #include <cstdio>
+#include <vector>
 
 #include "Buzz_inc.h"
 #include "ioexception.h"
 #include "logging.h"
+#include "draw.h"
+#include "gr.h"
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
 namespace
 {
-bool MarsInRange(unsigned int year, unsigned int season);
-bool JupiterInRange(unsigned int year, unsigned int season);
-bool SaturnInRange(unsigned int year, unsigned int season);
+    bool MarsInRange(unsigned int year, unsigned int season);
+    bool JupiterInRange(unsigned int year, unsigned int season);
+    bool SaturnInRange(unsigned int year, unsigned int season);
 };
 
+std::vector<struct mStr> missionData;
 
 //----------------------------------------------------------------------
 // Header function definitions
@@ -234,12 +238,30 @@ const char *GetDurationParens(int duration)
 }
 
 
+/**
+ * Cache a subset of mission data in a local array.
+ *
+ * Populates the global vector missionData with stored mission data.
+ */
+std::vector<struct mStr> GetMissionData()
+{       
+    // Deserialize Mission Data
+    std::ifstream file(locate_file("mission.json", FT_DATA));
+    if (!file) {
+      throw IOException("Error. Could not open mission.json");
+    }
+
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(missionData));
+    INFO1("missionData successfully uploaded.");
+    return missionData;
+}
+
+
 /* Gets the mission template for the specified mission code.
  *
- * Opens "MISSION.DAT" and loads the mission data from the file.
+ * Opens "mission.json" and loads the mission data from the file.
  *
- * TODO: This is dependent on the exact size of internal structures.
- *       MISSION.DAT relies on 226-byte mStr structs.
  *
  * \param code  A unique index for the mission.
  * \return  the mStr with the given mStr.Index value.
@@ -247,37 +269,54 @@ const char *GetDurationParens(int duration)
  */
 struct mStr GetMissionPlan(const int code)
 {
-    mStr mission;
-    FILE *fin = sOpen("MISSION.DAT", "rb", FT_DATA);
-
-    if (! fin) {
-        throw IOException("Error opening file MISSION.DAT");
+    if (missionData.empty()) {
+        GetMissionData();
     }
-
-    // Find Mission Type
-    if (fseek(fin, code * (sizeof(struct mStr)), SEEK_SET)) {
-        char error[1000];
-        snprintf(error, sizeof(error),
-                 "Error %d while seeking position in file MISSION.DAT: "
-                 "Seeking position %zu (%d blocks of size %zu)",
-                 ferror(fin),
-                 static_cast<const size_t>(code) * (sizeof(struct mStr)),
-                 code, sizeof(struct mStr));
-        fclose(fin);
-        throw IOException(error);
-        // throw IOException("Error seeking position in file MISSION.DAT");
-    }
-
-    if (fread(&mission, sizeof(struct mStr), 1, fin) != 1) {
-        fclose(fin);
-        throw IOException("Error reading from file MISSION.DAT");
-    }
-
-    fclose(fin);
-
+    
+    mStr mission = missionData[code];
+    INFO2("mission plan `%d' loaded.", code);
+    
     return mission;
 }
 
+
+/* Prints the name of the selected mission.
+ *
+ * This writes the name of the mission associated with the given mission code
+ *
+ * \param mission  The mission data.
+ * \param posX   The x coordinates for the name block's upper-left corner.
+ * \param posY   The y coordinates for the name block's upper-left corner.
+ * \param len  The number of characters at which to start a new line.
+ */
+void MissionName(mStr mission, int posX, int posY, int len)
+{
+    TRACE5("->MissionName(Index %d, posX %d, posxY %d, len %d)",
+           mission.Index, posX, posY, len);
+    int i, j = 0;
+
+    grMoveTo(posX, posY);
+
+    for (i = 0; i < 50; i++) {
+        if (j > len && mission.Name[i] == ' ') {
+            posY += 7;
+            j = 0;
+            grMoveTo(posX, posY);
+        } else {
+            draw_character(mission.Name[i]);
+        }
+
+        j++;
+
+        if (mission.Name[i] == '\0') {
+            break;
+        }
+    }
+
+    TRACE1("<-MissionName");
+
+    return;
+}
 
 /**
  * Check if the mission is viable given the launch period.

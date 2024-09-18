@@ -146,14 +146,8 @@ GoNews(char plr)
 // Open News Constructs a complete event array.
 void OpenNews(char plr, char *buf, int bud)
 {
-    int size;
-    FILE *fp;
-    int i, len[5];
-    
+    int size = 250;
     //size = (plr == 0) ? 232 : 177;
-    size = 250;
-    //i = (long) 500 * bud + (long) plr * 250;
-    
     
     LoadEventData(plr);
     
@@ -168,16 +162,9 @@ void OpenNews(char plr, char *buf, int bud)
     buf[bufsize] = 'x';
 
     //Astronaut info
-    fp = sOpen("NEWS.DAT", "rb", FT_DATA);
-    fread(&len[0], sizeof(len), 1, fp);
-
-    for (i = 0; i < 5; i++) {
-        Swap32bit(len[i]);
-    }
-    
     LoadNewsData(plr);
     
-    i = 0; // reset counter
+    int i = 0; // counter
 
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
@@ -188,7 +175,6 @@ void OpenNews(char plr, char *buf, int bud)
     // Nauts in the news....
     bufsize = strlen(buf);
     
-    // Nauts in the news...
     if (i > 0) {
         strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
     }
@@ -1100,12 +1086,10 @@ ShowEvt(char plr, char crd)
 }
 
 void LoadEventData(char plr) {
-    
     // Deserialize Events
-    std::string filename = "event.json";
-    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    std::ifstream file(locate_file("event.json", FT_DATA));
     if (!file) {
-        throw std::runtime_error(filename + " could not be opened.");
+        throw std::runtime_error("event.json could not be opened.");
     }
     cereal::JSONInputArchive ar(file);
     
@@ -1118,11 +1102,9 @@ void LoadEventData(char plr) {
 
 void LoadNewsData(char plr) {
     // Deserialize Nauts and Historic News
-
-    std::string filename = "news.json";
-    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    std::ifstream file(locate_file("news.json", FT_DATA));
     if (!file) {
-        throw std::runtime_error(filename + " could not be opened.");
+        throw std::runtime_error("news.json could not be opened.");
     }
     cereal::JSONInputArchive ar(file);
     

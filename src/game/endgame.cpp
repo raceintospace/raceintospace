@@ -33,7 +33,7 @@
 #include "Buzz_inc.h"
 #include "aipur.h"
 #include "draw.h"
-#include "future.h"
+#include "mission_util.h"
 #include "fireworks.h"
 #include "game_main.h"
 #include "place.h"
@@ -171,8 +171,9 @@ void EndGame(char win, char pad)
         i = 0;
     }
 
-    MissionName(miss, 80, 50, 24);
-
+    //MissionName(miss, 80, 50, 24);
+	MissionName(GetMissionPlan(miss), 80, 50, 24);
+	
     if (Option == -1 && MAIL == -1) {
         strcpy(capName, Data->P[win].Mission[pad].Name);
         month = Data->P[win].Mission[pad].Month;
@@ -689,7 +690,8 @@ void FakeWin(char win)
     draw_string(10, 50, "MISSION TYPE: ");
     display::graphics.setForegroundColor(8);
 
-    MissionName(miss, 80, 50, 24);
+    //MissionName(miss, 80, 50, 24);
+    MissionName(GetMissionPlan(miss), 80, 50, 24);
     display::graphics.setForegroundColor(6);
 
     if (Data->Year <= 65) {

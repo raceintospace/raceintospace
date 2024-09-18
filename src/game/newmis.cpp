@@ -247,7 +247,7 @@ void MisAnn(char plr, char pad)
         HelpFlag = 1;
     }
 
-    draw_string(127, 54, plan.Abbr);
+    draw_string(127, 54, (plan.Abbr).c_str());
 
     // Show duration level only on missions with a Duration step - Leon
     if (IsDuration(Data->P[plr].Mission[pad].MissionCode)) {

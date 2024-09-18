@@ -35,7 +35,7 @@
 #include "gamedata.h"
 #include "draw.h"
 #include "Buzz_inc.h"
-#include "future.h"
+#include "mission_util.h"
 #include "game_main.h"
 #include "news_suq.h"
 #include "place.h"
@@ -202,7 +202,7 @@ void PadDraw(char plr, char pad)
     }
 
     display::graphics.setForegroundColor(6);
-    MissionName(Data->P[plr].Mission[pad].MissionCode, 10, 81, 20);
+    MissionName(GetMissionPlan(Data->P[plr].Mission[pad].MissionCode), 10, 81, 20);
     display::graphics.setForegroundColor(1);
 
     // joint mission part

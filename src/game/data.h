@@ -959,9 +959,9 @@ struct BlockHead {
 
 struct mStr {
     char Index;       /**< Mission Index Number */
-    char Name[50];    /**< Name of Mission */
-    char Abbr[24];    /**< Name of Mission Abbreviated */
-    char Code[62];    /**< Mission Coding String */
+    std::string Name;    /**< Name of Mission */
+    std::string Abbr;    /**< Name of Mission Abbreviated */
+    std::string Code;    /**< Mission Coding String */
     char Alt[36];     /**< Alternate Sequence */
     char AltD[36];    /**< Alternate Sequence for Deaths (Jt Missions Only) */
     char Days,        /**< Duration Level */
@@ -976,6 +976,28 @@ struct mStr {
     uint8_t mVab[2];  /**< Hardware Requirements */
     char PCat[MAX_PCAT],   /**< Prestige Category List */
          LMAd;             /**< LM Addition Points */
+
+    template <class Archive>
+    void serialize(Archive &ar, uint32_t const version) {
+        ar(CEREAL_NVP(Index)); 
+        ar(CEREAL_NVP(Name));
+        ar(CEREAL_NVP(Abbr));
+        ar(CEREAL_NVP(Code));
+        ar(CEREAL_NVP(Alt));
+        ar(CEREAL_NVP(AltD));
+        ar(CEREAL_NVP(Days));
+        ar(CEREAL_NVP(Dur));
+        ar(CEREAL_NVP(Doc));
+        ar(CEREAL_NVP(EVA));
+        ar(CEREAL_NVP(LM));
+        ar(CEREAL_NVP(Jt));
+        ar(CEREAL_NVP(Lun));
+        ar(CEREAL_NVP(Lun));
+        ar(CEREAL_NVP(mEq));
+        ar(CEREAL_NVP(mVab));
+        ar(CEREAL_NVP(PCat));
+        ar(CEREAL_NVP(LMAd));
+    }
 };
 
 // Vehicle assembly working structure

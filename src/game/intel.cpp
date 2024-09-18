@@ -38,7 +38,7 @@
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "future.h"
+#include "mission_util.h"
 #include "draw.h"
 #include "game_main.h"
 #include "mission_util.h"
@@ -582,7 +582,7 @@ void XSpec(char plr, char mis, char year)
 
     draw_string(33, 169, "PLANNING A ");
     display::graphics.setForegroundColor(9);
-    MissionName(mis, 93, 169, 30);
+    MissionName(plan, 93, 169, 30);
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "SOMETIME IN THE NEXT YEAR.");
     DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);

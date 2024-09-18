@@ -1498,7 +1498,7 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
 
     const struct mStr type =
         GetMissionPlan(Data->P[plr].History[num].MissionCode);
-    draw_string(10, 93, type.Abbr);
+    draw_string(10, 93, (type.Abbr).c_str());
 
     if (*where2 == abuf[*where].Missions - 1) {
         fill_rectangle(1, 114, 157, 184, 3);
@@ -1528,7 +1528,7 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
 
     const struct mStr type2 =
         GetMissionPlan(Data->P[plr].History[num2].MissionCode);
-    draw_string(10, 168, type2.Abbr);
+    draw_string(10, 168, (type2.Abbr).c_str());
 
     display::graphics.setForegroundColor(1);
     draw_string(43, 128, "PRESTIGE: ");
