@@ -35,6 +35,7 @@ void play_audio(std::string str, int mode);
 void bzdelay(int ticks);
 int RLED(const char *src, char *dest, unsigned int src_size);
 char MPrefs(char mode);
+int put_serial(unsigned char n);
 int bioskey(int wait);
 
 extern int show_intro_flag;
