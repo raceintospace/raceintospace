@@ -601,9 +601,7 @@ int StepSafety(const struct MisEval &step)
 
     if ((step.Name[0] == 'A') && MH[step.pad][Mission_SecondaryBooster]) {
         // Account for Boosters - if used - on launch steps
-        safety = RocketBoosterSafety(
-                     safety,
-                     MH[step.pad][Mission_SecondaryBooster]->Safety);
+        safety = RocketBoosterSafety( safety, MH[step.pad][Mission_SecondaryBooster]->Safety);
     } else if ((step.loc == 28 || step.loc == 27) && InSpace == 2) {
         // For joint duration tests, use the average capsule safety
         safety = (MH[0][Mission_Capsule]->MisSaf +

@@ -92,9 +92,9 @@ MissionParse(char plr, struct mStr &misType, char pad)
     STEP = 0;
     loc = pad;
     
-	char *MCode = new char[misType.Code.length() + 1];  
-	std::strncpy(MCode, misType.Code.c_str(), misType.Code.length());
-	MCode[misType.Code.length()] = '\0';
+	char MCode[misType.Code.length() + 1];
+	memset(MCode, 0, sizeof(*MCode));
+	std::strcpy(MCode, misType.Code.c_str());
 
     for (i = 0; MCode[i] != '|'; ++i) {
         switch (MCode[i]) {
@@ -177,7 +177,6 @@ MissionParse(char plr, struct mStr &misType, char pad)
             break;
         }
     }
-	delete[] MCode;
 }
 
 

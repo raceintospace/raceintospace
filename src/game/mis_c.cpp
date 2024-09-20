@@ -100,8 +100,7 @@ void InRFBox(int a, int b, int c, int d, int col);
 void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
     //DEBUG1("->PlaySequence()");
-    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)",
-           step, InSeq, mode);
+    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
     int keep_going;
     int i, j, k;
     unsigned int max;
