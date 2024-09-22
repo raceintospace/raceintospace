@@ -103,7 +103,7 @@ char REvent(char plr)
         
         for(int k = 0; k < 5; k++){
              if (pData->Budget > range[k] && pData->Budget <= range[k+1]) {
-        	j = i;
+        	j = k;
              }            
         }
 
