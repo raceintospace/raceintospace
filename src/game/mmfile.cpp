@@ -421,7 +421,7 @@ mm_open_fp(mm_file *mf, FILE *file)
         goto err;
     }
 
-    DEBUG1("trying theora decoder...");
+    TRACE1("trying theora decoder...");
     res = init_theora(mf, &pg);
 
     if (res < 0) {
@@ -430,7 +430,7 @@ mm_open_fp(mm_file *mf, FILE *file)
         have_theora = !!res * MEDIA_VIDEO;
     }
 
-    DEBUG1("trying vorbis decoder...");
+    TRACE1("trying vorbis decoder...");
     res = init_vorbis(mf, &pg);
 
     if (res < 0) {
@@ -442,7 +442,7 @@ mm_open_fp(mm_file *mf, FILE *file)
     if (have_vorbis) {
         unsigned c = 0, r = 0;
         mm_audio_info(mf, &c, &r);
-        INFO3("audio %u channel(s) at %u Hz", c, r);
+        TRACE3("audio %u channel(s) at %u Hz", c, r);
     }
 
     if (have_theora) {

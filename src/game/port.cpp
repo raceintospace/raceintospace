@@ -250,7 +250,7 @@ void LoadImg(int plr, int indx)
     
     boost::shared_ptr<display::PalettizedSurface> image;
     if (image = Filesystem::readImage(filename)) {
-		INFO2("load file `%s'", filename.c_str());
+		TRACE2("load image `%s'", filename.c_str());
     } else {
 		throw std::runtime_error(filename + " could not be loaded.");
     }    

@@ -200,7 +200,7 @@ try_find_file(const char *name, const char *mode, int type)
     char *where = "";
     const char *newmode = mode;
 
-    DEBUG2("looking for file `%s'", name);
+    TRACE2("looking for file `%s'", name);
 
     /** \note allows write access only to savegame files */
     if (type != FT_SAVE) {

@@ -92,9 +92,9 @@ MissionParse(char plr, struct mStr &misType, char pad)
     STEP = 0;
     loc = pad;
     
-	char MCode[misType.Code.length() + 1];
-	memset(MCode, 0, sizeof(*MCode));
+	char *MCode = new char[misType.Code.length() + 1];
 	std::strcpy(MCode, misType.Code.c_str());
+	DEBUG2("MCode: %s", MCode);
 
     for (i = 0; MCode[i] != '|'; ++i) {
         switch (MCode[i]) {
@@ -108,8 +108,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
 
             // printf("      :Delay of %d seasons\n", MCode[i + 1] - 0x30);
             for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
-                MissionSteps(plr, MCode[i + 2], STEP++, loc - pad,
-                             misType);
+                MissionSteps(plr, MCode[i + 2], STEP++, loc - pad, misType);
             }
 
             i += 2;
@@ -177,6 +176,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
             break;
         }
     }
+    delete MCode;
 }
 
 

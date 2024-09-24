@@ -246,15 +246,15 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     /* lines of text are 1:8,30  2:8,37   3:8,44    */
     switch (pad) { // These used to say Pad 1, 2, 3  -Leon
     case 0:
-        draw_string(8, 30, "PAD A:");
+        draw_string(8, 30, "PAD: A");
         break;
 
     case 1:
-        draw_string(8, 30, "PAD B:");
+        draw_string(8, 30, "PAD: B");
         break;
 
     case 2:
-        draw_string(8, 30, "PAD C:");
+        draw_string(8, 30, "PAD: C");
         break;
     }
 
@@ -1006,6 +1006,8 @@ void Future(char plr)
                 Data->P[plr].Future[pad].Duration = duration;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
+                DEBUG5("HardCrewAssign(plr %d, pad %d, misType %d, mCrew %d)", plr, pad, misType, NewType);
+                DEBUG2("Ok = %d", Ok); 
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 

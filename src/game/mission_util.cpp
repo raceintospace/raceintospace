@@ -253,7 +253,7 @@ std::vector<struct mStr> GetMissionData()
 
     cereal::JSONInputArchive ar(file);
     ar(CEREAL_NVP(missionData));
-    INFO1("missionData successfully uploaded.");
+    DEBUG1("missionData successfully uploaded.");
     return missionData;
 }
 
@@ -274,7 +274,7 @@ struct mStr GetMissionPlan(const int code)
     }
     
     mStr mission = missionData[code];
-    INFO2("mission plan `%d' loaded.", code);
+    TRACE2("mission plan `%d' loaded.", code);
     
     return mission;
 }

@@ -103,8 +103,7 @@ void BranchIfAlive(int *FNote);
  */
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
-    DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)",
-           rnum);
+    DEBUG3("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
     assert(Now != NULL);
 
     for (int i = 0; i < Assets->fails.size(); i++) {
@@ -398,7 +397,7 @@ void MisCheck(char plr, char mpad)
             if (tomflag) {
                 GetFailStat(&Now, Mev[STEP].FName, 7595);
             } else {
-                DEBUG3("Failing !tomflag - calling GetFailStat(&Now, Mev[STEP].FName %s, MEV[STEP].rnum %d))", Mev[STEP].FName, Mev[STEP].rnum);
+                DEBUG1("Failing !tomflag - calling GetFailStat");
                 GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
             }
 

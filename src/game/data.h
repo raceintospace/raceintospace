@@ -994,6 +994,7 @@ struct mStr {
         ar(CEREAL_NVP(Lun));
         ar(CEREAL_NVP(Lun));
         ar(CEREAL_NVP(mEq));
+        ar(CEREAL_NVP(mCrew));
         ar(CEREAL_NVP(mVab));
         ar(CEREAL_NVP(PCat));
         ar(CEREAL_NVP(LMAd));

@@ -91,6 +91,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 0,
                 "value1": 0
@@ -194,6 +195,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 32,
                 "value1": 0
@@ -297,6 +299,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 2,
             "mVab": {
                 "value0": 128,
                 "value1": 0
@@ -400,6 +403,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 1,
             "mVab": {
                 "value0": 128,
                 "value1": 0
@@ -503,6 +507,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 2,
             "mVab": {
                 "value0": 128,
                 "value1": 0
@@ -606,6 +611,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 1,
             "mVab": {
                 "value0": 128,
                 "value1": 0
@@ -709,6 +715,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 2,
             "mVab": {
                 "value0": 136,
                 "value1": 0
@@ -812,6 +819,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -915,6 +923,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 2,
                 "value1": 0
@@ -1018,6 +1027,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -1121,6 +1131,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -1224,6 +1235,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -1327,6 +1339,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -1430,6 +1443,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 0,
+            "mCrew": 0,
             "mVab": {
                 "value0": 4,
                 "value1": 0
@@ -1533,6 +1547,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 160,
                 "value1": 0
@@ -1636,6 +1651,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 1,
             "mVab": {
                 "value0": 160,
                 "value1": 0
@@ -1739,6 +1755,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 128
@@ -1842,6 +1859,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 144,
                 "value1": 0
@@ -1945,6 +1963,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 5,
             "mVab": {
                 "value0": 32,
                 "value1": 128
@@ -2048,6 +2067,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 128
@@ -2151,6 +2171,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 168,
                 "value1": 0
@@ -2254,6 +2275,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 136
@@ -2357,6 +2379,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 136
@@ -2460,6 +2483,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 168,
                 "value1": 136
@@ -2563,6 +2587,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 152,
                 "value1": 0
@@ -2666,6 +2691,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 2,
             "mVab": {
                 "value0": 128,
                 "value1": 0
@@ -2769,6 +2795,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 1,
+            "mCrew": 2,
             "mVab": {
                 "value0": 136,
                 "value1": 0
@@ -2872,6 +2899,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 160,
                 "value1": 0
@@ -2975,6 +3003,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 144,
                 "value1": 0
@@ -3078,6 +3107,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 152,
                 "value1": 0
@@ -3181,6 +3211,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 128
@@ -3284,6 +3315,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 128
@@ -3387,6 +3419,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 128
@@ -3490,6 +3523,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 168,
                 "value1": 0
@@ -3593,6 +3627,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 136
@@ -3696,6 +3731,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 136
@@ -3799,6 +3835,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 136
@@ -3902,6 +3939,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 4,
             "mVab": {
                 "value0": 160,
                 "value1": 128
@@ -4005,6 +4043,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 224,
                 "value1": 0
@@ -4108,6 +4147,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 96,
                 "value1": 128
@@ -4211,6 +4251,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 232,
                 "value1": 0
@@ -4314,6 +4355,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 96,
                 "value1": 136
@@ -4417,6 +4459,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 1,
             "mVab": {
                 "value0": 129,
                 "value1": 0
@@ -4520,6 +4563,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 129,
                 "value1": 0
@@ -4623,6 +4667,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 129
@@ -4726,6 +4771,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 1,
             "mVab": {
                 "value0": 129,
                 "value1": 0
@@ -4829,6 +4875,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 129,
                 "value1": 0
@@ -4932,6 +4979,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 32,
                 "value1": 129
@@ -5035,6 +5083,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 225,
                 "value1": 0
@@ -5138,6 +5187,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 97,
                 "value1": 129
@@ -5241,6 +5291,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 233,
                 "value1": 0
@@ -5344,6 +5395,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 97,
                 "value1": 137
@@ -5447,6 +5499,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 96,
                 "value1": 129
@@ -5550,6 +5603,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 2,
             "mVab": {
                 "value0": 233,
                 "value1": 0
@@ -5653,6 +5707,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 5,
+            "mCrew": 2,
             "mVab": {
                 "value0": 136,
                 "value1": 0
@@ -5756,6 +5811,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 96,
                 "value1": 137
@@ -5859,6 +5915,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 3,
             "mVab": {
                 "value0": 97,
                 "value1": 137
@@ -5962,6 +6019,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 3,
+            "mCrew": 3,
             "mVab": {
                 "value0": 33,
                 "value1": 128
@@ -6065,6 +6123,7 @@
             "Lun": 0,
             "Lun": 0,
             "mEq": 2,
+            "mCrew": 0,
             "mVab": {
                 "value0": 160,
                 "value1": 0
@@ -6168,6 +6227,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 0,
             "mVab": {
                 "value0": 160,
                 "value1": 0
@@ -6271,6 +6331,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 2,
+            "mCrew": 0,
             "mVab": {
                 "value0": 225,
                 "value1": 0
@@ -6374,6 +6435,7 @@
             "Lun": 1,
             "Lun": 1,
             "mEq": 5,
+            "mCrew": 0,
             "mVab": {
                 "value0": 128,
                 "value1": 0

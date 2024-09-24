@@ -421,7 +421,7 @@ av_process_event(SDL_Event *evp)
         break;
 
     default:
-        DEBUG2("got unknown event %d", evp->type);
+        TRACE2("got unknown event %d", evp->type);
         break;
     }
 }
