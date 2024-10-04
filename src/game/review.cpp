@@ -315,7 +315,7 @@ void MisRev(char plr, int pres, int mis)
 void PresPict(char image)
 {
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/presr.but.%d.png", image);
+    snprintf(filename, sizeof(filename), "images/presr/presr.but.%d.png", image);
 
     boost::shared_ptr<display::PalettizedSurface> portrait(
         Filesystem::readImage(filename));

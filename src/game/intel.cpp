@@ -1190,7 +1190,7 @@ void HarIntel(char plr, char acc)
 void DrawIntelBackground()
 {
     fill_rectangle(153, 32, 310, 131, 0);
-    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel_background.png"));
+    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel/intel_background.png"));
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
 }
@@ -1221,7 +1221,7 @@ void DrawIntelImage(char plr, char poff)
     char filename[128];
     snprintf(filename,
              sizeof(filename),
-             "images/intel.but.%d.png",
+             "images/intel/intel.but.%d.png",
              (int)poff + 1);
 
     // If the image cannot be written, report the error and continue.

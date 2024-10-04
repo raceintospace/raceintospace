@@ -172,7 +172,7 @@ int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
         BCDraw(starty + 23 * i);
         draw_heading(60, starty + 4 + 23 * i, &Name[i * 22], 1, 0);
 
-        snprintf(filename, sizeof(filename), "images/portbut.but.%d.png",
+        snprintf(filename, sizeof(filename), "images/portbut/portbut.but.%d.png",
                  (int) Imx[i]);
         boost::shared_ptr<display::PalettizedSurface> icon(
             Filesystem::readImage(filename));
@@ -246,7 +246,7 @@ void PatchMe(char plr, int x, int y, char prog, char poff)
     assert(patchNum >= 0 && patchNum < 110);
 
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/patches.but.%d.png",
+    snprintf(filename, sizeof(filename), "images/patches/patches.but.%d.png",
              (int) patchNum);
 
     boost::shared_ptr<display::PalettizedSurface> patch(
@@ -274,14 +274,14 @@ void AstFaces(char plr, int x, int y, char face)
 {
     assert(face >= 0 && face <= 96);
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/faces.but.%d.png",
+    snprintf(filename, sizeof(filename), "images/faces/faces.but.%d.png",
              (int)face);
 
     boost::shared_ptr<display::PalettizedSurface> icon(
         Filesystem::readImage(filename));
     icon->exportPalette(64, 64 + 31);  // Palette space [64, 96)
 
-    snprintf(filename, sizeof(filename), "images/faces.but.%d.png",
+    snprintf(filename, sizeof(filename), "images/faces/faces.but.%d.png",
              (int) plr + 85);
     boost::shared_ptr<display::PalettizedSurface> helmet(
         Filesystem::readImage(filename));
@@ -341,7 +341,7 @@ void SmHardMe(char plr, int x, int y, char prog, char planet,
     assert(patch >= 0 && patch <= 22);
 
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/mhist.but.%d.png", patch);
+    snprintf(filename, sizeof(filename), "images/mhist/mhist.but.%d.png", patch);
     boost::shared_ptr<display::PalettizedSurface> image(
         Filesystem::readImage(filename));
 
@@ -366,7 +366,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
     if (sh == 0) {
         int index = (plr * 32) + (hw * 8) + unit;
 
-        std::string filename((boost::format("images/rdfull.but.%1%.png") % index).str());
+        std::string filename((boost::format("images/rd/rdfull.but.%1%.png") % index).str());
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
         image->exportPalette(32, 2 + 33);

@@ -228,6 +228,7 @@ size_t ImportAnimType(FILE *fin, struct AnimType &target)
  */
 size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
 {
+    int32_t position = ftell(fin);
     bool success =
         fread(&target.cType, sizeof(target.cType), 1, fin) &&
         fread(&target.fSize, sizeof(target.fSize), 1, fin);

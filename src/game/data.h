@@ -939,8 +939,8 @@ struct Help {
 };
 
 struct AnimType {
-    char ID[8];
-    char OVL[4];
+    std::string ID;
+    std::string OVL;
     char SD[2][4];         // Sound ID : Max 2
     int16_t w, h;
     uint8_t sPlay[2];// Frame to play the Sound
@@ -949,6 +949,20 @@ struct AnimType {
     uint8_t cOff;    // Color offsets
     uint8_t cNum;    // Number of Colors
     // char cPal[cNum];    // Placemarker for RGB Colors
+    
+    template <class Archive>
+    void serialize(Archive &ar) {
+        ar(CEREAL_NVP(ID));
+        ar(CEREAL_NVP(OVL)); 
+        ar(CEREAL_NVP(SD)); 
+        ar(CEREAL_NVP(w)); 
+        ar(CEREAL_NVP(h));
+        ar(CEREAL_NVP(sPlay));
+        ar(CEREAL_NVP(fNum));
+        ar(CEREAL_NVP(fLoop));
+        ar(CEREAL_NVP(cOff));
+        ar(CEREAL_NVP(cNum));
+    }
 };
 
 struct BlockHead {

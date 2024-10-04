@@ -213,7 +213,7 @@ void LoadPOutline(int plr);
 void WaveFlagSetup(char plr)
 {
     char filename[256];
-    snprintf(filename, sizeof(filename), "images/flag.seq.%d.png", plr);
+    snprintf(filename, sizeof(filename), "images/port/flag.seq.%d.png", plr);
     flaggy = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 }
 
@@ -243,9 +243,9 @@ void LoadImg(int plr, int indx)
     
     // Load port sprites
 	if (plr == 0) {
-		filename = "images/usa_port.dat." + std::to_string(indx) + ".png";
+		filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
 	} else {
-		filename = "images/sov_port.dat." + std::to_string(indx) + ".png";
+		filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
 	}
     
     boost::shared_ptr<display::PalettizedSurface> image;

@@ -194,7 +194,7 @@ void DrawProgs(char plr, char prog)
 
     {
         char filename[128];
-        snprintf(filename, sizeof(filename), "images/aprog.%d.%d.png", plr, prog);
+        snprintf(filename, sizeof(filename), "images/aprog/aprog.%d.%d.png", plr, prog);
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
 
         image->exportPalette();
