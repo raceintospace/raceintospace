@@ -212,18 +212,8 @@
             "ID": "sva\u0000",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -240,18 +230,8 @@
             "ID": "svb\u0000",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -268,18 +248,8 @@
             "ID": "svc\u0000",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -296,18 +266,8 @@
             "ID": "svd\u0000",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -324,18 +284,8 @@
             "ID": "svc4",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -352,18 +302,8 @@
             "ID": "svc5",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -380,18 +320,8 @@
             "ID": "svc6",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -408,18 +338,8 @@
             "ID": "svh\u0000",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -436,18 +356,8 @@
             "ID": "svmb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -464,18 +374,8 @@
             "ID": "svma",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -492,18 +392,8 @@
             "ID": "svmc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -520,18 +410,8 @@
             "ID": "svme",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -548,18 +428,8 @@
             "ID": "svmd",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -576,18 +446,8 @@
             "ID": "svpa",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -604,18 +464,8 @@
             "ID": "svp1",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -632,18 +482,8 @@
             "ID": "svpc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -660,18 +500,8 @@
             "ID": "svra",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -688,18 +518,8 @@
             "ID": "svrb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -716,18 +536,8 @@
             "ID": "svrc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -744,18 +554,8 @@
             "ID": "svrd",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -772,18 +572,8 @@
             "ID": "svre",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -800,18 +590,8 @@
             "ID": "usca",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -828,18 +608,8 @@
             "ID": "uscb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -856,18 +626,8 @@
             "ID": "uscc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -884,18 +644,8 @@
             "ID": "uscd",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -912,18 +662,8 @@
             "ID": "usc4",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -940,18 +680,8 @@
             "ID": "usc5",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -968,18 +698,8 @@
             "ID": "usc6",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -996,18 +716,8 @@
             "ID": "usmb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1024,18 +734,8 @@
             "ID": "usma",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1052,18 +752,8 @@
             "ID": "usme",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1080,18 +770,8 @@
             "ID": "usmd",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1108,18 +788,8 @@
             "ID": "uspa",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1136,18 +806,8 @@
             "ID": "uspb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1164,18 +824,8 @@
             "ID": "uspc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1192,18 +842,8 @@
             "ID": "usra",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1220,18 +860,8 @@
             "ID": "usrb",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1248,18 +878,8 @@
             "ID": "usrc",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1276,18 +896,8 @@
             "ID": "usrd",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1304,18 +914,8 @@
             "ID": "usr4",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 100,
             "h": 80,
@@ -1332,18 +932,8 @@
             "ID": "xcam",
             "OVL": "NONE",
             "SD": {
-                "value0": {
-                    "value0": 0,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                },
-                "value1": {
-                    "value0": 78,
-                    "value1": 79,
-                    "value2": 78,
-                    "value3": 69
-                }
+                "value0": "NONE",
+                "value1": "NONE"
             },
             "w": 104,
             "h": 77,

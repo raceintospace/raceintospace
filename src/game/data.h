@@ -941,7 +941,7 @@ struct Help {
 struct AnimType {
     std::string ID;
     std::string OVL;
-    char SD[2][4];         // Sound ID : Max 2
+    std::string SD[2];         // Sound ID : Max 2
     int16_t w, h;
     uint8_t sPlay[2];// Frame to play the Sound
     uint8_t fNum;    // Number of frames

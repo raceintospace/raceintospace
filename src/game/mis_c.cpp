@@ -140,7 +140,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     char err = 0;
     mm_file vidfile;
     FILE *mmfp;
-    float fps = 8;
+    float fps;
     int hold_count;
     std::vector<struct Infin> Mob;
     std::vector<struct OF> Mob2;
