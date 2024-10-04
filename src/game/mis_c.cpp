@@ -89,7 +89,8 @@ struct BZFileHeader {
 
 std::vector<struct BZFileHeader> indexEntry(41);    
 std::vector<struct AnimType> header(41);
-boost::shared_ptr<display::PalettizedSurface> equipAnim;
+std::vector<boost::shared_ptr<display::Surface>> animCache;
+boost::shared_ptr<display::Surface> equipAnim;
 int frameCounter = 0;
 
 char SHTS[4];
@@ -109,7 +110,8 @@ int ImportOF(FILE *fin, struct OF &target);
 void InRFBox(int a, int b, int c, int d, int col);
 std::string getEquipAnimID(char plr, const struct MisEval &step);
 int getEquipAnimIndex(std::string name);
-void drawEquipAnim(int index);
+void loadFrames(int index);
+void playEquipAnim (int index);
 void loadHeader();
 void loadIndexEntry();
 
@@ -1149,12 +1151,13 @@ char FailureMode(char plr, int prelim, char *text)
 
     //BZAnimation::Ptr modelAnim = FindHardwareAnim(plr, Mev[STEP]);
     
-    std::string ID = getEquipAnimID(plr,Mev[STEP]);
+    std::string ID = getEquipAnimID(plr, Mev[STEP]);
     int index = getEquipAnimIndex(ID);
+    loadFrames(index);
     
     if (index > -1) {
         last_secs = get_time();
-        drawEquipAnim(index);
+        playEquipAnim(index);
     }
     
     /*
@@ -1176,7 +1179,7 @@ char FailureMode(char plr, int prelim, char *text)
     while (1) {
         if (index > -1 && get_time() - last_secs > .55) {
             last_secs = get_time();
-            drawEquipAnim(index);
+            playEquipAnim(index);
         }
         
         /*
@@ -1315,10 +1318,11 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     
     std::string ID = getEquipAnimID(plr, step);
     int index = getEquipAnimIndex(ID);
+    loadFrames(index);
     
     if (index > -1) {
         last_secs = get_time();
-        drawEquipAnim(index);
+        playEquipAnim(index);
     }
 
     /*
@@ -1361,7 +1365,7 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     while (1) {
         if (index > -1 && get_time() - last_secs > .55) {
             last_secs = get_time();
-            drawEquipAnim(index);
+            playEquipAnim(index);
         }
         
         /*
@@ -1559,30 +1563,44 @@ int getEquipAnimIndex(std::string name)
 }
 
 
-// TODO: create a chache to load the images and then deleted it from memory
-void drawEquipAnim(int index) {
+// Load the animation frames to a vector that functions as a cache
+void loadFrames(int index) {
     std::string filename;
     
+    // Assign correct size to animCache
+    animCache.resize(header[index].fNum); 
+    
+    for (int i = 0; i < header[index].fNum; i++) {
+    	filename =  "images/liftoff/liftoff." + indexEntry[index].ID + "." 
+          + std::to_string(i) + ".png"; 
+        
+        // Load cache
+    	animCache[i] = Filesystem::readImage(filename);    	
+    }
+    
+    if (!animCache.empty()) {
+    	DEBUG2("frames for %s loaded", (indexEntry[index].ID).c_str());
+    } else {
+    	throw std::runtime_error("Error. " + indexEntry[index].ID 
+    	  + " frames could not be loaded.");
+    }
+}
+
+
+void playEquipAnim (int index) {
     if (frameCounter == header[index].fNum) {
         frameCounter = 0;
     }
-
+    
     if (frameCounter < header[index].fNum) {
-        filename =  "images/liftoff/liftoff." + indexEntry[index].ID + "." 
-          + std::to_string(frameCounter) + ".png"; 
-          
-        if (equipAnim = Filesystem::readImage(filename)) {
-	    DEBUG2("load frame %s", filename.c_str());
-        } else {
-	    throw std::runtime_error(filename + " could not be loaded.");
-        }    
-        
-        fill_rectangle(162, 46, 312, 127, 7); // This avoid frame overlap
-    	equipAnim->exportPalette(188,47);
+    	equipAnim = animCache[frameCounter];
+    	// This avoid frame overlap and the background is a nice blue
+    	fill_rectangle(162, 46, 312, 127, 7);
     	display::graphics.screen()->draw(equipAnim, 188, 47);
 	frameCounter++;	
     }
 }
+
 
 
 void loadHeader() {
@@ -1606,6 +1624,6 @@ if (! indexEntry.empty()) {
     }
     cereal::JSONInputArchive ar(file);
     ar(indexEntry);
-    DEBUG1("IndexEntry deserialized.");
+    DEBUG1("IndexEntry deserialized");
 }
 }
