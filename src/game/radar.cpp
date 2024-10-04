@@ -34,9 +34,9 @@
 #include "radar.h"
 #include "gamedata.h"
 #include "draw.h"
+#include "game_main.h"
 #include "Buzz_inc.h"
 #include "mission_util.h"
-#include "game_main.h"
 #include "news_suq.h"
 #include "place.h"
 #include "sdlhelper.h"
@@ -63,15 +63,22 @@ void PadDraw(char plr, char pad)
     IOBox(243, 3, 316, 19);
     InBox(167, 27, 316, 176);
     fill_rectangle(168, 28, 315, 175, 0);
-    IOBox(167, 179, 316, 195);
+    struct MissionType &mission = Data->P[plr].Mission[pad];
+    if (mission.MissionCode &&
+        MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
+        IOBox(167, 179, 240, 195);  // Delay button disabled because mission can't be delayed
+    } else {
+        InBox(167, 179, 240, 195);  // Delay button
+    }
+    IOBox(242, 179, 316, 195);  // Scrub button
     ShBox(4, 28, 162, 43);
     InBox(6, 30, 160, 41);
     ShBox(4, 46, 162, 61);
     InBox(6, 48, 160, 59);
     ShBox(4, 68, 162, 97);
     InBox(6, 70, 160, 95);
-    ShBox(56, 64, 110, 74);
-    InBox(57, 65, 109, 73);
+    ShBox(55, 64, 109, 74);  // Box for MISSION name
+    InBox(56, 65, 108, 73);  // Box for MISSION name
     ShBox(4, 180, 162, 195);
     InBox(6, 182, 160, 193);  //sched. duration
     InBox(6, 99, 160, 178);
@@ -123,7 +130,7 @@ void PadDraw(char plr, char pad)
     }
 
     display::graphics.setForegroundColor(7);
-    draw_string(65, 71, "MISSION");
+    draw_string(64, 71, "MISSION");
     draw_small_flag(plr, 4, 4);
 
     if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode) {
@@ -175,9 +182,13 @@ void PadDraw(char plr, char pad)
 
     if (Data->P[plr].LaunchFacility[pad] == 1) {
         display::graphics.setForegroundColor(9);
-        draw_string(207, 189, "S");
+        draw_string(189, 189, "D");
         display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "CRUB MISSION");
+        draw_string(0, 0, "ELAY");
+        display::graphics.setForegroundColor(9);
+        draw_string(264, 189, "S");
+        display::graphics.setForegroundColor(1);
+        draw_string(0, 0, "CRUB");
     } else {
         display::graphics.setForegroundColor(9);
         draw_string(205, 189, "F");
@@ -441,10 +452,10 @@ void ShowPad(char plr, char pad)
         key = 0;
         GetMouse();
 
-        if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
+        if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 244 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
             || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode && key == 'S')) {
             // Scrub Mission
-            InBox(169, 181, 314, 193);
+            InBox(244, 181, 314, 193);
             key = 0;
             WaitForMouseUp();
 
@@ -452,11 +463,54 @@ void ShowPad(char plr, char pad)
                 ScrubMission(plr, pad);
             }
 
-            OutBox(169, 181, 314, 193);
+            OutBox(244, 181, 314, 193);
             key = 0;
 
             if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
                 return;
+            }
+        } else if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 169 && y >= 181 && x <= 238 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
+            || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode && key == 'D')) {
+            // Delay Mission
+
+            // There are restrictions on Mars/Jupiter/Saturn Flybys,
+            // so check that this mission _could_ be launched at
+            // this time.
+            bool validLaunch =
+                MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
+                                Data->Year, Data->Season);
+
+            if (validLaunch) {
+                InBox(169, 181, 238, 193);
+                WaitForMouseUp();
+
+                if (key > 0) {
+                    delay(100);
+                }
+
+                bool conflict = false;
+
+                // Check if there's a Future Mission which would be
+                // displaced by delaying the mission.
+                if (Data->P[plr].Future[pad].MissionCode) {
+                    conflict = true;
+                } else if (Data->P[plr].Mission[pad].Joint) {
+                    int other = (Data->P[plr].Mission[pad].part) ?
+                                pad - 1 : pad + 1;
+
+                    if (Data->P[plr].Future[other].MissionCode) {
+                        conflict = true;
+                    }
+                }
+
+                // Confirm that the mission should be delayed.
+                if (Help(conflict ? "i163" : "i162") > 0) {
+                    DelayMission(plr, pad);
+                    OutBox(169, 181, 238, 193);
+                    break;
+                } else {
+                    OutBox(169, 181, 238, 193);
+                }
             }
         } else if ((Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash && Data->P[plr].LaunchFacility[pad] > 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)
                    || (key == 'F' && Data->P[plr].LaunchFacility[pad] > 1 && Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash)) {
