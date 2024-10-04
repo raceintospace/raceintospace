@@ -33,7 +33,7 @@
 #include "Buzz_inc.h"
 #include "aipur.h"
 #include "draw.h"
-#include "future.h"
+#include "mission_util.h"
 #include "fireworks.h"
 #include "game_main.h"
 #include "place.h"
@@ -171,8 +171,8 @@ void EndGame(char win, char pad)
         i = 0;
     }
 
-    MissionName(miss, 80, 50, 24);
-
+    DrawMissionName(miss, 80, 50, 24);
+	
     if (Option == -1 && MAIL == -1) {
         strcpy(capName, Data->P[win].Mission[pad].Name);
         month = Data->P[win].Mission[pad].Month;
@@ -689,7 +689,7 @@ void FakeWin(char win)
     draw_string(10, 50, "MISSION TYPE: ");
     display::graphics.setForegroundColor(8);
 
-    MissionName(miss, 80, 50, 24);
+    DrawMissionName(miss, 80, 50, 24);
     display::graphics.setForegroundColor(6);
 
     if (Data->Year <= 65) {
@@ -937,14 +937,17 @@ void FakeHistory(char plr, char Fyear)  // holds the winning player
 
 std::string HistFile(unsigned char bud)
 {
-    std::string text;
-    text.resize(600);
-    FILE *fin = sOpen("ENDGAME.DAT", "rb", FT_DATA);
-    fseek(fin, bud * 600, SEEK_SET);
-    fread(&text[0], 600, 1, fin);
-    fclose(fin);
-
-    return text;
+    std::vector<std::string> text;
+    
+    std::string filename = "endgame.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+		throw std::runtime_error(filename + " could not be opened.");
+	}
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(text));
+    
+    return text[bud];
 }
 
 void PrintHist(const char *buf)

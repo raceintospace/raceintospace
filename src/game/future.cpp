@@ -78,9 +78,8 @@ enum FMFields {
 
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
 display::LegacySurface *vh;
-// missionData is used in SetParameters, PianoKey, UpSearchRout,
-// DownSearchRout, Future, and GetMissionData.
 std::vector<struct mStr> missionData;
+// missionData is used in Future, UpSearchRout and DownSearchRout
 } // End unnamed namespace
 
 
@@ -91,11 +90,10 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
 void ClearDisplay(void);
 void DrawPenalty(char plr, const struct mStr &mission);
 void DrawPenaltyPopup(char plr, const struct mStr &mission);
-void SetParameters(void);
 void DrawLocks(const MissionNavigator &nav);
 void Toggle(FMFields button, int state);
 void TogBox(int x, int y, int st);
-void PianoKey(int X, MissionNavigator &nav);
+void PianoKey(const struct mStr &mission, MissionNavigator &nav);
 void DrawPie(int s);
 void PlaceRX(FMFields button);
 void ClearRX(FMFields button);
@@ -240,7 +238,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     }
 
     gr_sync();
-
+	
     DrawMission(plr, 8, 37, mis, nav);
 
     display::graphics.setForegroundColor(5);
@@ -248,15 +246,15 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     /* lines of text are 1:8,30  2:8,37   3:8,44    */
     switch (pad) { // These used to say Pad 1, 2, 3  -Leon
     case 0:
-        draw_string(8, 30, "PAD A:");
+        draw_string(8, 30, "PAD: A");
         break;
 
     case 1:
-        draw_string(8, 30, "PAD B:");
+        draw_string(8, 30, "PAD: B");
         break;
 
     case 2:
-        draw_string(8, 30, "PAD C:");
+        draw_string(8, 30, "PAD: C");
         break;
     }
 
@@ -481,40 +479,6 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
 }
 
 
-/**
- * Cache a subset of mission data in a local array.
- *
- * Populates the global array missionData with stored mission data.
- */
-void SetParameters(void)
-{
-    if (! missionData.empty()) {
-        return;
-    }
-
-    FILE *fin = sOpen("MISSION.DAT", "rb", FT_DATA);
-
-    if (fin == NULL) {
-        throw IOException("Could not open MISSION.DAT");
-    }
-
-    for (int i = 0; i < 62; i++) {
-        struct mStr entry;
-
-        if (fread(&entry, sizeof entry, 1, fin) != 1) {
-            missionData.clear();
-            fclose(fin);
-            throw IOException("Error reading entry in MISSION.DAT");
-        }
-
-        missionData.push_back(entry);
-    }
-
-    fclose(fin);
-    return;
-}
-
-
 /* Illustrate all of the mission parameter "locks" in their respective
  * settings.
  *
@@ -664,35 +628,35 @@ void TogBox(int x, int y, int st)
 /* Set the mission navigation buttons to match the parameters of the
  * chosen mission.
  *
- * \param X  the mission code (mStr.Index or MissionType.MissionCode).
+ * \param mission  the mission data (mStr.Index or MissionType.MissionCode).
  * \param nav TODO.
  */
-void PianoKey(int X, MissionNavigator &nav)
-{
-    TRACE2("->PianoKey(X %d)", X);
-
+void PianoKey(const struct mStr &mission, MissionNavigator &nav)
+{   
+    TRACE2("->PianoKey(mission index %d)", mission.Index);
+	
     if (! nav.docking.lock) {
-        nav.docking.value = missionData[X].Doc;
+        nav.docking.value = mission.Doc;
         Toggle(FM_Docking, nav.docking.value);
     }
 
     if (! nav.EVA.lock) {
-        nav.EVA.value = missionData[X].EVA;
+        nav.EVA.value = mission.EVA;
         Toggle(FM_EVA, nav.EVA.value);
     }
 
     if (! nav.LM.lock) {
-        nav.LM.value = missionData[X].LM;
+        nav.LM.value = mission.LM;
         Toggle(FM_LM, nav.LM.value);
     }
 
     if (! nav.joint.lock) {
-        nav.joint.value = missionData[X].Jt;
+        nav.joint.value = mission.Jt;
         Toggle(FM_Joint, nav.joint.value);
     }
 
     if (! nav.duration.lock) {
-        nav.duration.value = missionData[X].Days;
+        nav.duration.value = mission.Days;
         assert(nav.duration.value >= 0);
         Toggle(FM_Duration, nav.duration.value ? 1 : 0);
 
@@ -863,11 +827,8 @@ void NavReset(MissionNavigator &nav)
 }
 
 
-
 /* Find the next mission that matches the given parameters, searching
  * by ascending mission code
- *
- * TODO: This can be tightened up...
  *
  * \param num  The mission code of the currently selected mission.
  * \param plr  The current player (0 for USA, 1 for USSR).
@@ -876,34 +837,21 @@ void NavReset(MissionNavigator &nav)
  *          mission is found.
  */
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
-{
-    bool found = false;
-    int orig = num;
+ {
+    do {
+        ++num;
 
-    if (++num >= 56 + plr) {
-        num = 0;
-    }
-
-    while (! found) {
-
-        if (num == Mission_MarsFlyby && MarsFlag == false ||
-            num == Mission_JupiterFlyby && JupiterFlag == false ||
-            num == Mission_SaturnFlyby && SaturnFlag == false) {
-            found = false;
-        } else {
-            found = NavMatch(navigator, missionData[num]);
+        if (num > 56 + plr) {
+            num = 0;
         }
 
-        if (num == orig) {
-            return 0;
+        if ((num == Mission_MarsFlyby && !MarsFlag) || 
+            (num == Mission_JupiterFlyby && !JupiterFlag) || 
+            (num == Mission_SaturnFlyby && !SaturnFlag)) {
+            continue;
         }
-
-        if (found == false) {
-            if (++num > 56 + plr) {
-                num = 0;
-            }
-        }
-    } /* end while */
+        
+    } while (!NavMatch(navigator, missionData[num]));
 
     return num;
 }
@@ -911,8 +859,6 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
 
 /* Find the next mission that matches the given parameters, searching
  * by descending mission code
- *
- * TODO: This can be tightened up...
  *
  * \param num  The mission code of the currently selected mission.
  * \param plr  The current player (0 for USA, 1 for USSR).
@@ -922,34 +868,20 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
  */
 int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
 {
-    bool found = false;
-    int orig = num;
+    do {
+        --num;
 
-    if (--num < 0) {
-        num = 56 + plr;
-    }
-
-    // TODO: Redo while loop so finding match immediately returns num?
-    while (! found) {
-
-        if (num == Mission_MarsFlyby && MarsFlag == false ||
-            num == Mission_JupiterFlyby && JupiterFlag == false ||
-            num == Mission_SaturnFlyby && SaturnFlag == false) {
-            found = false;
-        } else {
-            found = NavMatch(navigator, missionData[num]);
+        if (num < 0) {
+            num = 56 + plr;
         }
 
-        if (num == orig) {
-            return 0;
+        if ((num == Mission_MarsFlyby && !MarsFlag) || 
+            (num == Mission_JupiterFlyby && !JupiterFlag) || 
+            (num == Mission_SaturnFlyby && !SaturnFlag)) {
+            continue;
         }
-
-        if (! found) {
-            if (--num < 0) {
-                num = 56 + plr;
-            }
-        }
-    } /* end while */
+        
+    } while (!NavMatch(navigator, missionData[num]));
 
     return num;
 }
@@ -964,7 +896,7 @@ int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
  */
 void Future(char plr)
 {
-    /** \todo the whole Future()-function is 500 >lines and unreadable */
+    // TODO: the whole Future()-function is 500 >lines and unreadable
     TRACE1("->Future(plr)");
     const int MaxDur = 6;
     int pad = 0;
@@ -978,13 +910,11 @@ void Future(char plr)
     unsigned int year = Data->Year;
     unsigned int season = Data->Season;
     TRACE3("--- Setting year=Year (%d), season=Season (%d)", year, season);
-
-    try {
-        SetParameters();
-    } catch (IOException &err) {
-        CRITICAL1(err.what());
-        return;
-    }
+	
+	if (missionData.empty()) {
+		missionData = GetMissionData();
+	}
+	struct mStr mission;
 
     MarsFlag = MissionTimingOk(Mission_MarsFlyby, year, season);
     JupiterFlag = MissionTimingOk(Mission_JupiterFlyby, year, season);
@@ -995,7 +925,7 @@ void Future(char plr)
         helpText = "i011";
         char misType = 0;
         ClrFut(plr, pad);
-
+        
         JointFlag = JointMissionOK(plr, pad); // initialize Joint flag
         MissionNavigator nav;
         NavReset(nav);
@@ -1004,15 +934,14 @@ void Future(char plr)
             nav.joint.value = 0;
             nav.joint.lock = true;
         }
-
+		
         DrawFuture(plr, misType, pad, nav);
 
         while (1) {
             key = 0;
             GetMouse();
 
-            prev_setting = setting;
-            setting = -1;
+            prev_setting = setting = -1;
 
             if (key == '-') {
                 DecreasePathResolution();
@@ -1032,8 +961,7 @@ void Future(char plr)
 
             if (setting >= 0) {
                 if (prev_setting < 0) {
-                    local.copyFrom(display::graphics.legacyScreen(),
-                                   18, 186, 183, 194);
+                    local.copyFrom(display::graphics.legacyScreen(), 18, 186, 183, 194);
                 }
 
                 if (prev_setting != setting) {
@@ -1048,8 +976,8 @@ void Future(char plr)
                 local.copyTo(display::graphics.legacyScreen(), 18, 186);
             }
 
-            if (((x >= 244 && y >= 5 && x <= 313 && y <= 17 && mousebuttons > 0) ||
-                 key == K_ENTER)) {
+            if (((x >= 244 && y >= 5 && x <= 313 && y <= 17 
+            	&& mousebuttons > 0) || key == K_ENTER)) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
 
@@ -1071,12 +999,15 @@ void Future(char plr)
                 // created listing the options. Once the pop-up is
                 // dismissed the screen may be redrawn from the buffer.
                 local2.copyFrom(display::graphics.legacyScreen(), 74, 3, 250, 199);
-                int duration = missionData[misType].Dur ?
-                               nav.duration.value : missionData[misType].Days;
-                int NewType = missionData[misType].mCrew;
+                
+                mission = GetMissionPlan(misType);
+                int duration = mission.Dur ? nav.duration.value : mission.Days;
+                int NewType = mission.mCrew;
                 Data->P[plr].Future[pad].Duration = duration;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
+                DEBUG5("HardCrewAssign(plr %d, pad %d, misType %d, mCrew %d)", plr, pad, misType, NewType);
+                DEBUG2("Ok = %d", Ok); 
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
@@ -1089,6 +1020,7 @@ void Future(char plr)
                     Data->P[plr].Future[pad].MissionCode = misType;
                     continue;
                 }
+                
             } else if ((x >= 43 && y >= 74 && x <= 53 && y <= 82 && mousebuttons > 0) ||
                        key == '!') {  // Duration restriction lock
                 nav.duration.lock = (! nav.duration.lock);
@@ -1103,9 +1035,9 @@ void Future(char plr)
 
                 WaitForMouseUp();
 
-            } else if (nav.duration.lock != true &&
-                       ((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
-                        key == '1')) {  // Duration toggle
+            } else if (nav.duration.lock != true && 
+            	((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
+                	key == '1')) {  // Duration toggle
                 InBox(5, 49, 53, 72);
 
                 if (nav.duration.value == MaxDur) {
@@ -1123,16 +1055,14 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-                if (missionData[misType].Dur) {
-                    struct mStr mission = missionData[misType];
-                    int duration = MAX(nav.duration.value,
-                                       missionData[misType].Days);
-                    bool valid =
-                        (nav.duration.value >= missionData[misType].Days);
-                    PrintDuration(duration, valid ? 5 : 9);
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
+		            PrintDuration(duration, valid ? 5 : 9);
 
-                    mission.Days = duration;
-                    DrawPenalty(plr, mission);
+		            mission.Days = duration;
+		            DrawPenalty(plr, mission);
                 }
 
                 WaitForMouseUp();
@@ -1142,7 +1072,8 @@ void Future(char plr)
                 OutBox(5, 49, 53, 72);
 
             } else if (nav.duration.lock != true &&
-                       (key == 'A' || key == 'B' || key == 'C' || key == 'D' || key == 'E' || key == 'F')) {  // Set Duration A-F
+            	(key == 'A' || key == 'B' || key == 'C' || key == 'D' || 
+            		key == 'E' || key == 'F')) {  // Set Duration A-F
                 InBox(5, 49, 53, 72);
 
                 int al = int(key) - 64;  // Convert A-F to 1-6
@@ -1158,16 +1089,14 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-                if (missionData[misType].Dur) {
-                    struct mStr mission = missionData[misType];
-                    int duration = MAX(nav.duration.value,
-                                       missionData[misType].Days);
-                    bool valid =
-                        (nav.duration.value >= missionData[misType].Days);
-                    PrintDuration(duration, valid ? 5 : 9);
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
+		            PrintDuration(duration, valid ? 5 : 9);
 
-                    mission.Days = duration;
-                    DrawPenalty(plr, mission);
+		            mission.Days = duration;
+		            DrawPenalty(plr, mission);
                 }
 
                 WaitForMouseUp();
@@ -1322,20 +1251,21 @@ void Future(char plr)
                 delay(150);
                 OutBox(203, 33, 238, 47);
                 OutBox(203, 34, 238, 47);
+				
+				// If a duration mission, update the duration & mission
+                // penalty displays
+				if (missionData[misType].Dur) {
+		            mission = GetMissionPlan(misType);
+		            int duration = MAX(nav.duration.value, missionData[misType].Days);
+		            bool valid = (nav.duration.value >= missionData[misType].Days);
+		            PrintDuration(duration, valid ? 5 : 9);
 
-                if (missionData[misType].Dur) {
-                    struct mStr mission = missionData[misType];
-                    int duration = MAX(nav.duration.value,
-                                       missionData[misType].Days);
-                    bool valid =
-                        (nav.duration.value >= missionData[misType].Days);
-                    PrintDuration(duration, valid ? 5 : 9);
-
-                    mission.Days = duration;
+		            mission.Days = duration;
                     DrawPenaltyPopup(plr, mission);
                 } else {
-                    DrawPenaltyPopup(plr, missionData[misType]);
+                    DrawPenaltyPopup(plr, mission);
                 }
+                
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
                        (key == UP_ARROW)) {
                 // Scroll up among Mission Types
@@ -1472,48 +1402,6 @@ void PrintDuration(int duration, int color)
 }
 
 
-/* Prints the name of the selected mission.
- *
- * This writes the name of the mission associated with the given mission
- * code
- *
- * \param val  The mission code.
- * \param xx   The x coordinates for the name block's upper-left corner.
- * \param yy   The y coordinates for the name block's upper-left corner.
- * \param len  The number of characters at which to start a new line.
- */
-void MissionName(int val, int xx, int yy, int len)
-{
-    TRACE5("->MissionName(val %d, xx %d, yy %d, len %d)",
-           val, xx, yy, len);
-    int i, j = 0;
-
-    const struct mStr mission = GetMissionPlan(val);
-
-    grMoveTo(xx, yy);
-
-    for (i = 0; i < 50; i++) {
-        if (j > len && mission.Name[i] == ' ') {
-            yy += 7;
-            j = 0;
-            grMoveTo(xx, yy);
-        } else {
-            draw_character(mission.Name[i]);
-        }
-
-        j++;
-
-        if (mission.Name[i] == '\0') {
-            break;
-        }
-    }
-
-    TRACE1("<-MissionName");
-
-    return;
-}
-
-
 /**
  * Update the mission display to reflect the given mission, including
  * the type, name, duration, and navigation toggle buttons.
@@ -1529,18 +1417,20 @@ void MissionName(int val, int xx, int yy, int len)
  * \param X screen coord for mission name string
  * \param Y screen coord for mission name string
  * \param val the mission type (MissionType.MissionCode / mStr.Index)
- * \param bub if set to 0 or 3 the function will not draw stuff
+ * \param bub if set to 0 or 3 the function will not draw stuff (???)
  * \param nav the set of mission parameters for mission selection.
  */
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
 {
     TRACE4("->DrawMission(plr, X %d, Y %d, val %d, nav)", X, Y, val);
-
+	
+	struct mStr mission = GetMissionPlan(val);
+	
     // PianoKey is used whenever the mission selection changes, to
     // update the mission navigator with parameters matching the
     // newly displayed mission. This ensures the navigation display
     // handles the dual task
-    PianoKey(val, nav);   // Should this be moved outside DrawMission?
+    PianoKey(mission, nav);   // Should this be moved outside DrawMission?
 
     ClearDisplay();                     // Redraw solar system display
     fill_rectangle(6, 31, 199, 46, 3);  // Clear mission name
@@ -1549,21 +1439,19 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     draw_string(55, 30, "TYPE: ");
     draw_number(0, 0, val);
     display::graphics.setForegroundColor(5);
-
-    struct mStr mission = missionData[val];
-
+	
     // If a duration mission, print the selected duration so long as
     // it is greater than the minimum mission duration.
-    if (mission.Dur == 1) {
+    if (mission.Dur) {
         int duration = MAX(nav.duration.value, mission.Days);
         PrintDuration(duration, duration >= mission.Days ? 5 : 9);
     } else {
         PrintDuration(mission.Days, 5);
     }
 
-    MissionName(val, X, Y, 24);
+    DrawMissionName(val, X, Y, 24);
 
-    if (mission.Dur == 1 && mission.Days < nav.duration.value) {
+    if (mission.Dur && mission.Days < nav.duration.value) {
         mission.Days = nav.duration.value;
     }
 
@@ -1595,7 +1483,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
  */
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
 {
-    const struct mStr &mission = missionData[mis];
+    struct mStr mission = GetMissionPlan(mis);
 
     if (mission.Dur && nav.duration.value < mission.Days) {
         Help("i160");
@@ -1619,20 +1507,13 @@ bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
             return false;
         }
 
-        if (mission.Doc &&
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
+        if (mission.Doc && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
             Help("i119");
             return false;
         }
     }
 
     return true;
-}
-
-std::vector<struct mStr> GetMissionData()
-{
-    SetParameters();
-    return missionData;
 }
 
 

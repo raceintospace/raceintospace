@@ -8,6 +8,6 @@ void GetMse(char plr, char fon);
 void DrawSpaceport(char plr);
 void Master(char plr);
 
-extern int16_t Vab_Spot;
+extern int Vab_Spot;
 
 #endif // PORT_H

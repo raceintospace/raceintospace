@@ -206,7 +206,7 @@ void DrawMissionEntry(const char plr, const int pad,
     fill_rectangle(93, 43 + pad * 58, 262, 57 + pad * 58, 3);
     display::graphics.setForegroundColor(5);
     struct mStr plan = GetMissionPlan(mission.MissionCode);
-    draw_string(96, 48 + 58 * pad, plan.Abbr);
+    draw_string(96, 48 + 58 * pad, (plan.Abbr).c_str());
 
     if (plan.Dur >= 1) {
         int duration = mission.Duration;
@@ -306,7 +306,7 @@ void DrawRush(char plr)
             draw_heading(55, 5, "MISSION SCHEDULE", 0, -1);
 
             display::graphics.setForegroundColor(5);
-            draw_string(96, 48 + 58 * i, plan.Abbr);
+            draw_string(96, 48 + 58 * i, (plan.Abbr).c_str());
 
             // Show duration level only on missions with a Duration step -Leon
             if (IsDuration(Data->P[plr].Mission[i].MissionCode)) {

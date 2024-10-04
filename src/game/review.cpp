@@ -315,7 +315,7 @@ void MisRev(char plr, int pres, int mis)
 void PresPict(char image)
 {
     char filename[128];
-    snprintf(filename, sizeof(filename), "images/presr.but.%d.png", image);
+    snprintf(filename, sizeof(filename), "images/presr/presr.but.%d.png", image);
 
     boost::shared_ptr<display::PalettizedSurface> portrait(
         Filesystem::readImage(filename));
@@ -374,13 +374,28 @@ void DrawReviewText(char plr, int val)
     int index = 0;
     int length = 0;
     int line = 0;
-    FILE *fin;
-    char *text = new char[205];
-    memset(text, 0x00, sizeof(*text));
-    fin = sOpen("P_REV.DAT", "rb", FT_DATA);  // Read Mission Structure
-    fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
-    fread(text, 204, 1, fin);
-    fclose(fin);
+    //FILE *fin;
+    //char *text = new char[205];
+    char text[205];
+    memset(text, 0, sizeof(*text));
+    
+    std::vector<std::string> review;
+    
+    std::ifstream file(locate_file("p_rev.json", FT_DATA));
+    if (!file) {
+        throw std::runtime_error("p_rev.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(review));
+    
+    std::string pres_review = review[(18 * plr) + val];
+    strncpy(text, pres_review.c_str(), 205 - 1);
+    text[205-1] = '\0';
+    
+    //fin = sOpen("P_REV.DAT", "rb", FT_DATA);  // Read Mission Structure
+    //fseek(fin, 204 * 18 * plr + 204 * val, SEEK_SET);
+    //fread(text, 204, 1, fin);
+    //fclose(fin);
 
     display::graphics.setForegroundColor(1);
 
@@ -398,8 +413,6 @@ void DrawReviewText(char plr, int val)
         length++;
         index++;
     } while (text[index] != 0);
-
-    delete[] text;
 }
 
 

@@ -103,8 +103,7 @@ void BranchIfAlive(int *FNote);
  */
 void GetFailStat(struct XFails *Now, char *FName, int rnum)
 {
-    DEBUG2("->GetFailStat(struct XFails *Now,char *FName,int rnum %d)",
-           rnum);
+    DEBUG3("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
     assert(Now != NULL);
 
     for (int i = 0; i < Assets->fails.size(); i++) {
@@ -398,7 +397,7 @@ void MisCheck(char plr, char mpad)
             if (tomflag) {
                 GetFailStat(&Now, Mev[STEP].FName, 7595);
             } else {
-                DEBUG3("Failing !tomflag - calling GetFailStat(&Now, Mev[STEP].FName %s, MEV[STEP].rnum %d))", Mev[STEP].FName, Mev[STEP].rnum);
+                DEBUG1("Failing !tomflag - calling GetFailStat");
                 GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
             }
 
@@ -601,9 +600,7 @@ int StepSafety(const struct MisEval &step)
 
     if ((step.Name[0] == 'A') && MH[step.pad][Mission_SecondaryBooster]) {
         // Account for Boosters - if used - on launch steps
-        safety = RocketBoosterSafety(
-                     safety,
-                     MH[step.pad][Mission_SecondaryBooster]->Safety);
+        safety = RocketBoosterSafety( safety, MH[step.pad][Mission_SecondaryBooster]->Safety);
     } else if ((step.loc == 28 || step.loc == 27) && InSpace == 2) {
         // For joint duration tests, use the average capsule safety
         safety = (MH[0][Mission_Capsule]->MisSaf +

@@ -38,7 +38,7 @@
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
-#include "future.h"
+#include "mission_util.h"
 #include "draw.h"
 #include "game_main.h"
 #include "mission_util.h"
@@ -582,7 +582,7 @@ void XSpec(char plr, char mis, char year)
 
     draw_string(33, 169, "PLANNING A ");
     display::graphics.setForegroundColor(9);
-    MissionName(mis, 93, 169, 30);
+    DrawMissionName(mis, 93, 169, 30);
     display::graphics.setForegroundColor(1);
     draw_string(33, 183, "SOMETIME IN THE NEXT YEAR.");
     DrawIntelImage(plr, 37 + Data->P[plr].PastIntel[year].SafetyFactor);
@@ -1190,7 +1190,7 @@ void HarIntel(char plr, char acc)
 void DrawIntelBackground()
 {
     fill_rectangle(153, 32, 310, 131, 0);
-    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel_background.png"));
+    boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/intel/intel_background.png"));
     background->exportPalette();
     display::graphics.screen()->draw(background, 153, 32);
 }
@@ -1221,7 +1221,7 @@ void DrawIntelImage(char plr, char poff)
     char filename[128];
     snprintf(filename,
              sizeof(filename),
-             "images/intel.but.%d.png",
+             "images/intel/intel.but.%d.png",
              (int)poff + 1);
 
     // If the image cannot be written, report the error and continue.

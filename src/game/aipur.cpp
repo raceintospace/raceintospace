@@ -45,6 +45,7 @@
 #include "pace.h"
 
 std::vector<struct ManPool> Men;
+std::vector<std::vector<char>> portbuttons(7);
 uint8_t AIsel[25];
 
 
@@ -52,6 +53,7 @@ void DrawStatistics(char Win);
 void SelectBest(char plr, int pos);
 char Skill(char plr, char type);
 void CheckAdv(char plr);
+void LoadPortButtons();
 
 
 /**
@@ -118,7 +120,9 @@ void DrawStatistics(char Win)
     qty = 6;
     starty = 118;
     display::LegacySurface local(30, 19);
-    fin = sOpen("PORTBUT.BUT", "rb", FT_DATA);
+    
+    LoadPortButtons();
+    
     OutBox(152, 41, 183, 61); // directors ranking
 
     for (i = 0; i < qty; i++) {
@@ -130,8 +134,10 @@ void DrawStatistics(char Win)
             OutBox(starty + (i * 33), 132, 31 + starty + (i * 33), 152);
         }
 
-        fseek(fin, AImg[i] * 570, SEEK_SET);
-        fread(local.pixels(), 570, 1, fin);
+        memcpy(local.pixels(), portbuttons[i].data(), 570);
+        if (memcmp(local.pixels(), portbuttons[i].data(), 570) != 0) {
+            throw std::runtime_error("Error: portbuttons data not copied in local surface.");
+        }
 
         if (i == 0) {
             local.copyTo(display::graphics.legacyScreen(), 153, 42);
@@ -1373,6 +1379,18 @@ int GenPur(char plr, int hardware_index, int unit_index)
     return (itemPurchased == true);
 }
 
+
+void LoadPortButtons(){
+    // Deserialize portbuttons
+    std::ifstream file(locate_file("portbut.json", FT_DATA));
+    if (!file) {
+      throw std::runtime_error("portbut.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(portbuttons);
+    printf("portbuttons successfully uploaded.");
+    //INFO1("portbuttons successfully uploaded.");
+}
 
 
 /* EOF */

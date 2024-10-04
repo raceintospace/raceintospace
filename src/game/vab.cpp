@@ -98,12 +98,28 @@ int VASqty;  // How many payload configurations there are
  * offset should be used to move the casing (rather than capsule)
  * down that much.
  */
+
+
 struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
-} MI[2 * 28];
+
+    template<class Archive>
+    void serialize(Archive & ar, std::uint32_t const version ) {
+        ar(CEREAL_NVP(x1));
+        ar(CEREAL_NVP(y1));
+        ar(CEREAL_NVP(x2));
+        ar(CEREAL_NVP(y2));
+        ar(CEREAL_NVP(yOffset));
+    }
+};
+
+#define S_VAB 56 // 2 * 28
+
+// Create MI vector
+std::vector<MDA> MI (S_VAB);
 
 /* ID for the Vab sprite images. Serves as an index into each player's
- * section of vtable.dat, which contains the struct MDA data for
+ * section of vtable.json, which contains the struct MDA data for
  * finding each sprite in the vab.img.(0/1).png image.
  */
 enum VabSprite {
@@ -170,28 +186,23 @@ void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
  * variable MI stores the coordinates specifying where to find each
  * component in the VAB sprite.
  */
-void LoadMIVals()
-{
-    FILE *file = sOpen("VTABLE.DAT", "rb", FT_DATA);
+ 
+void LoadMIVals() {
+    try {
+        DESERIALIZE_JSON_FILE(&MI, locate_file("vtable.json", FT_DATA));
 
-    // Read in the data & perform Endianness swap
-    for (int i = 0; i < 2 * 28; i++) {
-        // struct MDA {
-        //     int16_t x1, y1, x2, y2, yOffset;
-        // } MI[2 * 28];
-        fread(&MI[i].x1, sizeof(MI[i].x1), 1, file);
-        fread(&MI[i].y1, sizeof(MI[i].y1), 1, file);
-        fread(&MI[i].x2, sizeof(MI[i].x2), 1, file);
-        fread(&MI[i].y2, sizeof(MI[i].y2), 1, file);
-        fread(&MI[i].yOffset, sizeof(MI[i].yOffset), 1, file);
-        Swap16bit(MI[i].x1);
-        Swap16bit(MI[i].y1);
-        Swap16bit(MI[i].x2);
-        Swap16bit(MI[i].y2);
-        Swap16bit(MI[i].yOffset);
+        // Check if vector MI is empty after deserialization
+        if (MI.empty()) {
+            throw std::runtime_error("Error: vector MI is empty after deserialization.");
+        }
+
+        if (MI.size() != S_VAB) { 
+            throw std::runtime_error("Error: vector MI  doesn't have expected size.");
+        }
+
+    } catch (const std::exception &e) {
+        throw std::runtime_error("Error in deserialization of vtable.json.");
     }
-
-    fclose(file);
 }
 
 
@@ -367,7 +378,7 @@ void DispVAB(char plr, char pad)
     struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
 
     display::graphics.setForegroundColor(1);
-    draw_string(5, 53, missionPlan.Abbr);
+    draw_string(5, 53, (missionPlan.Abbr).c_str());
 
     // Show duration level only on missions with a Duration step  -Leon
     if (IsDuration(mission.MissionCode)) {

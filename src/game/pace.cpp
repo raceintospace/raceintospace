@@ -41,12 +41,16 @@ int put_serial(unsigned char n)
 
 void MesCenter(void) {}
 
-char *letter_dat;
+char *letter_data;
 
 void OpenEmUp(void)
 {
     randomize();
-    letter_dat = slurp_gamedat("letter.dat");
+    letter_data = load_gamedata("letter.json");
+    
+    if (!letter_data || letter_data[0] == '\0') {
+            throw std::runtime_error("Error: load letter has failed.");
+        }
 }
 
 int PCX_D(const char *src_raw, char *dest_raw, unsigned src_size)
@@ -337,8 +341,7 @@ void NGetVoice(char plr, char val)
     char fname[100];
     ssize_t bytes = 0;
 
-    snprintf(fname, sizeof(fname), "%s_%03d.ogg",
-             (plr ? "sov" : "usa"), val);
+    snprintf(fname, sizeof(fname), "%s_%03d.ogg",(plr ? "sov" : "usa"), val);
     bytes = load_audio_file(fname, &soundbuf, &soundbuf_size);
     soundbuf_size = bytes; // // Assign the correct buffer size
     soundbuf_used = (bytes > 0) ? bytes : 0;

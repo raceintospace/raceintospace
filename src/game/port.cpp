@@ -15,13 +15,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-// Interplay's BUZZ ALDRIN's RACE into SPACE
-//
-// Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA
-// Copyright 1991 by Strategic Visions, Inc.
-// Designed by Fritz Bronner
-// Programmed by Michael K McCarty
-//
+//****************************************************************
+//*Interplay's BUZZ ALDRIN's RACE into SPACE                     *
+//*                                                              *
+//*Formerly -=> LiftOff : Race to the Moon :: IBM version MCGA   *
+//*Copyright 1991 by Strategic Visions, Inc.                     *
+//*Designed by Fritz Bronner                                     *
+//*Programmed by Michael K McCarty                               *
+//*                                                              *
+//****************************************************************
 
 // This file handles the main Spaceport screen.
 
@@ -59,9 +61,9 @@
 #include "mc.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 #define LET_A   0x09
 #define LET_M   0x0A
@@ -77,86 +79,122 @@
 #define pNOFADE 4
 #define pNEWMUSIC 5
 
-int put_serial(unsigned char n);
+#define S_QTY 43
+#define S_MOBJ 35
 
 
-typedef struct portoutlinerestore {
+struct BOUND {
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
+
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(x1));
+        ar(CEREAL_NVP(y1));
+        ar(CEREAL_NVP(x2));
+        ar(CEREAL_NVP(y2));
+    }
+};
+
+struct REGION {
+    char qty;
+    BOUND CD[4];
+    char iNum;
+    char sNum;
+    char PreDraw;
+
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(qty));
+        ar(CEREAL_NVP(CD));
+        ar(CEREAL_NVP(iNum));
+        ar(CEREAL_NVP(sNum));
+        ar(CEREAL_NVP(PreDraw));
+    }
+};
+
+struct MOBJ {
+    std::string Name;
+    char qty;
+    std::string Help;
+    REGION Reg[4];
+
+    template<class Archive>
+    void serialize(Archive & ar) {
+        ar(CEREAL_NVP(Name)); 
+        ar(CEREAL_NVP(qty));
+        ar(CEREAL_NVP(Help)); 
+        ar(CEREAL_NVP(Reg));
+    }
+};
+
+struct IMG {
+	int32_t Size;         // Size of Image (bytes)
+	char Comp;     		  // Type of Compression Used
+	int16_t Width;        // Width of Image
+	int16_t Height;       // Height of Image
+	int16_t PlaceX;       // Where to Place Img:X
+	int16_t PlaceY;        // Where to Place Img:Y
+	
+	template<class Archive>
+	void serialize(Archive & ar) {
+        ar(Size);
+        ar(Comp);
+        ar(Width);
+        ar(Height);
+        ar(PlaceX);
+        ar(PlaceY);
+	}  
+};
+
+struct OUTLINE {
+      uint16_t Count;
+      std::vector<uint16_t> bone;
+      
+      template<class Archive>
+      void serialize(Archive & ar) {
+        ar(CEREAL_NVP(Count));
+        ar(CEREAL_NVP(bone));
+      }
+};
+
+struct PORTOUTLINE {
     uint16_t loc;
     char val;
-} PORTOUTLINE;
-
-PORTOUTLINE *pPortOutlineRestore;
-
-struct PortHeader {
-    char Text[28];  /**< File Copyright Notice */
-    int32_t oMObj;     /**< Offset to MObj data table */
-    int32_t oTab;      /**< Offset to Table of data */
-    int32_t oPal;      /**< Offset to Palette */
-    int32_t oPort;     /**< Offset to start of Port Images */
-    int32_t oMse;      /**< Offset to Mouse Objects */
-    int32_t oOut;      /**< Offset to port Outlines */
-    int32_t oAnim;     /**< Offset to start of Port Anims */
-} PHead;
-
-typedef struct cBoxx {
-    int16_t x1, y1, x2, y2;
-} BOUND;
-
-typedef struct Img {
-    int32_t Size;         /**<  Size of Image (bytes) */
-    char Comp;         /**<  Type of Compression Used */
-    int16_t Width;         /**<  Width of Image */
-    int16_t Height;        /**<  Height of Image */
-    int16_t PlaceX;        /**<  Where to Place Img:X */
-    int16_t PlaceY;        /**<  Where to Place Img:Y */
-} IMG;
-
-typedef struct region {
-    char qty;          /**< number of BOUNDS */
-    BOUND CD[4];       /**< boundry coords for mouse location */
-    char iNum;
-    char sNum;         /**< value for surround box */
-    char PreDraw;      /**< Code of Special to Draw first */
-} REGION;
-
-
-typedef struct mobj {
-    char Name[30];       /**< Name of region */
-    char qty;            /**< Number of regions */
-    char Help[3];        /**< Help Box Stuff */
-    REGION Reg[4];       /**< At Max 4 regions */
-} MOBJ;
-
-#define S_QTY 43
-
-MOBJ MObj[35];
-
-/** These are the valid hotkeys */
-char HotKeyList[] = "AIMRPVCQETB\0";
-
-int FCtr;
-boost::shared_ptr<display::PalettizedSurface> flaggy;
-int16_t Vab_Spot;
-
-// Unnamed namespace for local globals & function prototypes.
-// TODO: Move other file variables here.
-namespace
-{
-char RUSH;
-
-enum MissionReadyStatus {
-    MISSIONS_NONE = 0,
-    MISSIONS_UNSTAGED,
-    MISSIONS_UNSCHEDULED,
-    MISSIONS_READY
 };
-};  // End of anonymous namespace
+
+int Vab_Spot; // Global variable
+
+namespace // Local global variables
+{	
+	std::vector<MOBJ> MObj(S_MOBJ);
+	std::vector<IMG> Img(S_QTY);
+	std::vector<OUTLINE> pOutline(55);
+	
+	PORTOUTLINE *pPortOutlineRestore;
+	
+	/** These are the valid hotkeys */
+	char HotKeyList[] = "AIMRPVCQETB\0";
+	char RUSH;
+	int FCtr;
+
+	boost::shared_ptr<display::PalettizedSurface> flaggy;
+
+	enum MissionReadyStatus {
+		MISSIONS_NONE = 0,
+		MISSIONS_UNSTAGED,
+		MISSIONS_UNSCHEDULED,
+		MISSIONS_READY
+	};
+};  // End of namespace
 
 
 void WaveFlagSetup(void);
 void WaveFlagDel(void);
-void PortPlace(FILE *fin, int32_t table);
-void PortText(int x, int y, const char *txt, char col);
+void LoadImg(int plr, int indx);
+void PortText(int x, int y, std::string txt, char col);
 void UpdatePortOverlays(void);
 void DoCycle(void);
 bool EndTurnOk(int plr);
@@ -169,14 +207,13 @@ char PortSel(char plr, char loc);
 char Request(char plr, const char *s, char md);
 int SpaceportAnimationEntry(int plr);
 int SpaceportAnimationOngoing(int plr);
-size_t ImportPortHeader(FILE *fin, struct PortHeader &target);
-size_t ImportMOBJ(FILE *fin, MOBJ &target);
+void LoadPOutline(int plr); 
 
 
 void WaveFlagSetup(char plr)
 {
     char filename[256];
-    snprintf(filename, sizeof(filename), "images/flag.seq.%d.png", plr);
+    snprintf(filename, sizeof(filename), "images/port/flag.seq.%d.png", plr);
     flaggy = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 }
 
@@ -197,40 +234,31 @@ void WaveFlagDel(void)
  *     int16_t PlaceX    -- Where to Place Img:X
  *     int16_t PlaceY    -- Where to Place Img:Y
  *
- * \param fin    an open (usa/sov)_port.dat file.
- * \param table  offset to the image data in the Port file.
+ * \param plr    the player (usa/sov)_port.json image file to open.
+ * \param indx  index to the image position data in the Img vector.
  */
-void PortPlace(FILE *fin, int32_t table)
+void LoadImg(int plr, int indx)
 {
-    IMG Img;
-    // const size_t sizeof_IMG = 4 + 1 + 2 + 2 + 2 + 2;
-
-    fseek(fin, table, SEEK_SET);
-    //fread(&Img, sizeof Img, 1, fin);
-    fread(&Img.Size, sizeof(Img.Size), 1, fin);
-    fread(&Img.Comp, sizeof(Img.Comp), 1, fin);
-    fread(&Img.Width, sizeof(Img.Width), 1, fin);
-    fread(&Img.Height, sizeof(Img.Height), 1, fin);
-    fread(&Img.PlaceX, sizeof(Img.PlaceX), 1, fin);
-    fread(&Img.PlaceY, sizeof(Img.PlaceY), 1, fin);
-    Swap32bit(Img.Size);
-    Swap16bit(Img.Width);
-    Swap16bit(Img.Height);
-    Swap16bit(Img.PlaceX);
-    Swap16bit(Img.PlaceY);
-
-    display::LegacySurface local(Img.Width, Img.Height);
-
-    // read the compressed image data into a buffer, decompress, and
-    // write the pixel data into an appropriately sized image.
-    char *buf = (char *)alloca(Img.Size);
-    fread(buf, Img.Size, 1, fin);
-    RLED_img(buf, local.pixels(), Img.Size, local.width(), local.height());
-    local.palette().copy_from(display::graphics.legacyScreen()->palette());
-    local.setTransparentColor(0);
-
-    // draw it
-    display::graphics.screen()->draw(local, Img.PlaceX, Img.PlaceY);
+    std::string filename;
+    
+    // Load port sprites
+	if (plr == 0) {
+		filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
+	} else {
+		filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
+	}
+    
+    boost::shared_ptr<display::PalettizedSurface> image;
+    if (image = Filesystem::readImage(filename)) {
+		TRACE2("load image `%s'", filename.c_str());
+    } else {
+		throw std::runtime_error(filename + " could not be loaded.");
+    }    
+    
+    //image->exportPalette(Img[indx].Width, Img[indx].Height);
+    image->exportPalette();
+    
+    display::graphics.screen()->draw(image, Img[indx].PlaceX, Img[indx].PlaceY);
 }
 
 
@@ -244,59 +272,51 @@ void PortPlace(FILE *fin, int32_t table)
  * \param plr  The player palette to use (0 for USA, 1 for USSR)
  */
 void PortPal(char plr)
-{
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-    // fread(&PHead, sizeof PHead, 1, fin);
-    // TODO: Add in some error checking...
-    ImportPortHeader(fin, PHead);
-
-    fseek(fin, PHead.oPal, SEEK_SET);
-    {
-        display::AutoPal p(display::graphics.legacyScreen());
-        fread(p.pal, 768, 1, fin);
+{   
+    std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    
+    // Deserialize palette
+    std::vector<uint8_t> palette;
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+		throw std::runtime_error(filename + " could not be opened.");
+	}
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(palette));
+        
+    // Display p and copy data to p.pal
+    display::AutoPal p(display::graphics.legacyScreen());
+    for (size_t i= 0; i < sizeof(p.pal); i++) { // the limit is Autopal p.pal size
+        p.pal[i] = static_cast<char>(palette[i]);
     }
-    fclose(fin);
-    return;
 }
 
 
 void DrawSpaceport(char plr)
 {
-    int32_t table[S_QTY];
-
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-
-    // TODO: Add in some error checking...
-    ImportPortHeader(fin, PHead);
-
-    for (int i = 0; i < (int)(sizeof(MObj) / sizeof(MOBJ)); i++) {
-        ImportMOBJ(fin, MObj[i]);
+	std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+	
+	// Deserialize Img and MObj
+	{
+		std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+		if (!file) {
+			throw std::runtime_error(filename + " could not be opened.");
+		}
+		
+		cereal::JSONInputArchive ar(file);
+		ar(CEREAL_NVP(MObj));
+		ar(CEREAL_NVP(Img));
     }
-
-    fread(&table[0], sizeof table, 1, fin);
-
-    // Endianness swap
-    for (int i = 0; i < S_QTY; i++) {
-        Swap32bit(table[i]);
-    }
-
+    
     // Draw the main port image
-    {
-        const char *filename =
-            (plr == 0 ? "images/usa_port.dat.0.png" :
-             "images/sov_port.dat.0.png");
-        boost::shared_ptr<display::PalettizedSurface> image(
-            Filesystem::readImage(filename));
-        image->exportPalette();
-        display::graphics.screen()->draw(image, 0, 0);
-    }
+	LoadImg(plr, 0);
 
     UpdatePortOverlays();
 
     if (xMODE & xMODE_CLOUDS) {
-        PortPlace(fin, table[1]);    // Clouds
+        LoadImg(plr, 1);    // Clouds
     }
 
     // Pads
@@ -316,9 +336,8 @@ void DrawSpaceport(char plr)
         Data->P[plr].Port[PORT_LaunchPad_A] = plr;
     }
 
-
     if (Data->P[plr].AstroCount > 0) {
-        PortPlace(fin, table[16 - plr * 4]);  // Draw CPX
+        LoadImg(plr, 16 - plr * 4);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
     } else {    // No manned program hotkeys
@@ -327,34 +346,32 @@ void DrawSpaceport(char plr)
     }
 
     if (Data->P[plr].Pool[0].Active >= 1) {
-        PortPlace(fin, table[17 - plr * 4]);    // Draw TRN
+        LoadImg(plr, 17 - plr * 4);    // Draw TRN
     }
 
     if (Data->P[plr].Port[PORT_Research] > 1) {
-        PortPlace(fin, table[13 + 15 * plr]);    // RD Stuff
+        LoadImg(plr, 13 + 15 * plr);    // RD Stuff
     }
 
     if (Data->P[plr].Port[PORT_Research] > 2) {
-        PortPlace(fin, table[14 + 15 * plr]);
+        LoadImg(plr, 14 + 15 * plr);
     }
 
     if (Data->P[plr].Port[PORT_Research] == 3) {
-        PortPlace(fin, table[15 + 15 * plr]);
+        LoadImg(plr, 15 + 15 * plr);
     }
 
-    for (int fm = 0; fm < 35; fm++) {
+    for (int fm = 0; fm < S_MOBJ; fm++) {
         int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
-            PortPlace(fin, table[MObj[fm].Reg[idx].PreDraw]);
+            LoadImg(plr, MObj[fm].Reg[idx].PreDraw);
         }
 
         if (MObj[fm].Reg[idx].iNum > 0) {  // Actual Shape
-            PortPlace(fin, table[MObj[fm].Reg[idx].iNum]);
+            LoadImg(plr, MObj[fm].Reg[idx].iNum);
         }
     }
-
-    fclose(fin);
 
     ShBox(0, 190, 319, 199);            // Base Box :: larger
 
@@ -392,13 +409,14 @@ void DrawSpaceport(char plr)
     }
 }
 
-void PortText(int x, int y, const char *txt, char col)
+
+void PortText(int x, int y, std::string txt, char col)
 {
     fill_rectangle(1, 192, 160, 198, 3);
     display::graphics.setForegroundColor(0);
-    draw_string(x + 1, y + 1, txt);
+    draw_string(x + 1, y + 1, txt.c_str());
     display::graphics.setForegroundColor(col);
-    draw_string(x, y, txt);
+    draw_string(x, y, txt.c_str());
 }
 
 
@@ -487,20 +505,23 @@ void UpdatePortOverlays(void)
     }
 }
 
+
 void Master(char plr)
 {
     helpText = "i000";
     keyHelpText = "i000";
     WaveFlagSetup(plr);
     Vab_Spot = 0;
-
+	
+	/*
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
     for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
-
+	*/
+	
     // Entering screen for the first time so fade out and in.
     FadeOut(2, 10, 0, 0);
     DrawSpaceport(plr);
@@ -514,7 +535,7 @@ void Master(char plr)
     SpotLoad(animation);
 
 #endif
-
+	
     Port(plr);
     helpText = "i000";
     keyHelpText = "i000";
@@ -567,8 +588,8 @@ done:
     GetMouse_fast();
 }
 
-void
-DoCycle(void)                   // Three ranges of color cycling
+
+void DoCycle(void)                   // Three ranges of color cycling
 {
     int i, tmp1, tmp2, tmp3, j;
     display::AutoPal p(display::graphics.legacyScreen());
@@ -701,8 +722,7 @@ int MissionStatus(int plr)
  *
  * \param mode ...  0 = ?   1 = copy stored outline ?
  */
-void
-PortOutLine(unsigned int Count, uint16_t *outline, char mode)
+void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
@@ -727,8 +747,7 @@ PortOutLine(unsigned int Count, uint16_t *outline, char mode)
     }
 }
 
-void
-PortRestore(unsigned int Count)
+void PortRestore(unsigned int Count)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
     unsigned int i;
@@ -755,7 +774,7 @@ int MapKey(char plr, int key, int old)
     int val, found = 0;
     char high = -1, low = -1;
 
-    for (int j = 0; j < 35; j++) {
+    for (int j = 0; j < S_MOBJ; j++) {
         if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
             if (low == -1) {
                 low = j;
@@ -908,26 +927,15 @@ void Port(char plr)
 {
     int i, j, kMode, kEnt, k;
     char good, res;
-    int kPad, pKey;
-    int32_t stable[55];
+    int kPad, pKey, index;
     uint16_t Count, *bone;
 
     helpText = "i043";
     keyHelpText = "k043";
     bone = (uint16_t *) buffer;
-
-    FILE *fin = sOpen((plr == 0) ? "USA_PORT.DAT" : "SOV_PORT.DAT",
-                      "rb", FT_DATA);
-    // TODO: Add some error checking...
-    ImportPortHeader(fin, PHead);
-
-    fseek(fin, PHead.oOut, SEEK_SET);
-    fread(&stable[0], sizeof stable, 1, fin);
-
-    for (i = 0; i < 55; i++) {
-        Swap32bit(stable[i]);
-    }
-
+    
+	LoadPOutline(plr);
+	
     if (plr == 0 && Data->Year > 65) {
         PortText(5, 196, "CAPE KENNEDY", 12);
     } else if (plr == 0) {
@@ -1004,11 +1012,14 @@ void Port(char plr)
                     PortText(5, 196, MObj[i].Name, 11);
 
                     if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                        fseek(fin, stable[MObj[i].Reg[Data->P[plr].Port[i]].sNum], SEEK_SET);
-                        fread_uint16_t(&Count, 1, fin);
-                        fread_uint16_t(bone, Count, fin);
+                        index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+                        Count = pOutline[index].Count;
+                        bone = new uint16_t[pOutline[index].bone.size()];
+                        std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);
+      
                         PortOutLine(Count, bone, 1);
-                        strncpy(&helpText[1], MObj[i].Help, 3);
+                        delete [] bone;
+                        strncpy(&helpText[1], (MObj[i].Help).c_str(), 3);
                     }
 
                     good = 0;
@@ -1116,7 +1127,7 @@ void Port(char plr)
 
                             case pEXIT:
                                 FadeOut(2, 10, 0, 0);
-                                fclose(fin);
+                                //fclose(fin);
 #if BABYSND
 
                                 if (i == 28 || i == 29) {
@@ -1147,11 +1158,14 @@ void Port(char plr)
                             SpotResume();
 
                             if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                                fseek(fin, stable[MObj[i].Reg[Data->P[plr].Port[i]].sNum], SEEK_SET);
-                                fread_uint16_t(&Count, 1, fin);
-                                fread_uint16_t(bone, Count, fin);
-                                //pPortOutlineRestore = (PORTOUTLINE *) malloc((sizeof (PORTOUTLINE))*Count);
+                                
+                        		index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+				                Count = pOutline[index].Count;
+				                bone = new uint16_t[pOutline[index].bone.size()];
+                    			std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);                                
+
                                 PortOutLine(Count, bone, 1);
+                                delete [] bone;
                             }
 
                             while (mousebuttons == 1) {
@@ -1182,7 +1196,8 @@ void Port(char plr)
             if (kMode == 1) {
                 kEnt++;
             }
-        } while ((kMode == 0 && i < 35 && i >= 0) || (kMode == 1 && kEnt < 35 && kEnt >= 0));
+        } while ((kMode == 0 && i < S_MOBJ && i >= 0) 
+    	  || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
     } // while
 }
 
@@ -1746,98 +1761,21 @@ int SpaceportAnimationOngoing(int plr)
 }
 
 
-/**
- * Read a PortHeader struct stored as raw data in a file, correcting
- * for endianness.
- *
- * If import is not successful, the contents of the target PortHeader
- * are not guaranteed.
- *
- * \param fin  An open port data file at the start of the header data.
- * \param target  The destination for the read data.
- * \return  1 if successfully read, 0 otherwise.
- */
-size_t ImportPortHeader(FILE *fin, struct PortHeader &target)
-{
-    // Chain freads so they stop if one fails...
-    bool read =
-        fread(&target.Text[0], sizeof(target.Text), 1, fin) &&
-        fread(&target.oMObj, sizeof(target.oMObj), 1, fin) &&
-        fread(&target.oTab, sizeof(target.oTab), 1, fin) &&
-        fread(&target.oPal, sizeof(target.oPal), 1, fin) &&
-        fread(&target.oPort, sizeof(target.oPort), 1, fin) &&
-        fread(&target.oMse, sizeof(target.oMse), 1, fin) &&
-        fread(&target.oOut, sizeof(target.oOut), 1, fin) &&
-        fread(&target.oAnim, sizeof(target.oAnim), 1, fin);
+// Deserialize Count and bone data in pOutline vector
+void LoadPOutline(int plr) {
+	
+	std::string filename;
+	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+	  if (!file) {
+	  throw std::runtime_error(filename + " could not be opened.");  
+	}
 
-    if (read) {
-        Swap32bit(target.oMObj);
-        Swap32bit(target.oTab);
-        Swap32bit(target.oPal);
-        Swap32bit(target.oPort);
-        Swap32bit(target.oMse);
-        Swap32bit(target.oOut);
-        Swap32bit(target.oAnim);
-    }
-
-    return (read ? 1 : 0);
+	cereal::JSONInputArchive ar(file);
+	ar(CEREAL_NVP(pOutline));
+	INFO1("pOutline succesfully uploaded.");
 }
 
-
-/**
- * Read a MOBJ struct stored as raw data in a file, correcting
- * for endianness.
- *
- * If import is not successful, the contents of the target MOBJ
- * are not guaranteed.
- *
- * \param fin  An open port data file at the start of the MOBJ data.
- * \param target  The destination for the read data.
- * \return  1 if successfully read, 0 otherwise.
- */
-size_t ImportMOBJ(FILE *fin, MOBJ &target)
-{
-    // Chain freads so they stop if one fails...
-    bool read =
-        fread(&target.Name[0], sizeof(target.Name), 1, fin) &&
-        fread(&target.qty, sizeof(target.qty), 1, fin) &&
-        fread(&target.Help[0], sizeof(target.Help), 1, fin);
-
-    for (int i = 0; i < 4 && read; i++) {
-        read = read &&
-               fread(&target.Reg[i].qty,
-                     sizeof(target.Reg[i].qty), 1, fin);
-
-        for (int j = 0; j < 4 && read; j++) {
-            read = read &&
-                   fread(&target.Reg[i].CD[j].x1,
-                         sizeof(target.Reg[i].CD[j].x1), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].y1,
-                         sizeof(target.Reg[i].CD[j].y1), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].x2,
-                         sizeof(target.Reg[i].CD[j].x2), 1, fin) &&
-                   fread(&target.Reg[i].CD[j].y2,
-                         sizeof(target.Reg[i].CD[j].y2), 1, fin);
-
-            if (read) {
-                Swap16bit(target.Reg[i].CD[j].x1);
-                Swap16bit(target.Reg[i].CD[j].x2);
-                Swap16bit(target.Reg[i].CD[j].y1);
-                Swap16bit(target.Reg[i].CD[j].y2);
-            }
-        }
-
-        read = read &&
-               fread(&target.Reg[i].iNum,
-                     sizeof(target.Reg[i].iNum), 1, fin) &&
-               fread(&target.Reg[i].sNum,
-                     sizeof(target.Reg[i].sNum), 1, fin) &&
-               fread(&target.Reg[i].PreDraw,
-                     sizeof(target.Reg[i].PreDraw), 1, fin);
-    }
-
-    return (read ? 1 : 0);
-}
 
 // Edit r settings {{{
 // ex: ts=4 noet sw=2

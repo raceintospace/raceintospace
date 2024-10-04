@@ -86,9 +86,7 @@ char CheckCrewOK(char plr, char pad)
 
 char REvent(char plr)
 {
-    FILE *fin;
     int NoMods = 1, i = 0, j = 0;
-    int m = 0;
 
     if (NoMods == 1) {
 
@@ -99,7 +97,7 @@ char REvent(char plr)
         }
 
 	j = 5; // for Budget over 160
-	int range[6] = {0, 50, 90, 110, 140, 160}; // Budget limits
+	int range[6] = {0, 50, 90, 110, 140, 160}; // Budget ranges
         
         for(int k = 0; k < 5; k++){
              if (pData->Budget > range[k] && pData->Budget <= range[k+1]) {
@@ -107,23 +105,19 @@ char REvent(char plr)
              }            
         }
 
-        fin = sOpen("NTABLE.DAT", "rb", FT_DATA);
-        // This is ignoring the budget mods based on the selected game level.
-        fseek(fin, (sizeof(int16_t)) * ((plr * 60) + (j * 10) + brandom(10)) , SEEK_SET);
-        fread(&m, sizeof m, 1, fin);
-        Swap16bit(m);
-        //    m=BudgetMods[Data->P[plr].Level][(j*10)+random(10)];  // orig code
-        fclose(fin);
-
-        Data->P[plr].Budget += m;
-        /*display::graphics.setForegroundColor(15);
-        draw_string(200,30,"BUDGET MOD: ");
-        if (m<0) {draw_string(0,0,"-");m*=-1;};
-        draw_number(0,0,m);
-        draw_string(200,40,"BUDGET: ");
-        draw_number(0,0,Data->P[plr].Budget);
-        draw_number(100,10,Data->Events[Data->Count]);*/
-    } /* end if */
+        std::vector<int> nTable; // vector for NTABLE
+        DESERIALIZE_JSON_FILE(&nTable, locate_file("ntable.json", FT_DATA));
+        //int index =  (plr * 60) + (j * 10) + brandom(10);
+        int index =  (j * 10) + brandom(10); // The first table is used for both players
+        // TODO; Change the budget table (+60 / +120) according to difficulty
+        if (index >= 0 && index < nTable.size()){
+            Data->P[plr].Budget += nTable[index];
+        } else {
+            std:cerr << "Index out of ntable range: " << index << std::endl;
+            return 1;
+        }
+        
+    } // end if
 
     if (Data->Year <= 60 && Data->Events[Data->Count] > 44) {
         return 1;

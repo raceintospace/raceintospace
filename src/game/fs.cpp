@@ -200,7 +200,7 @@ try_find_file(const char *name, const char *mode, int type)
     char *where = "";
     const char *newmode = mode;
 
-    DEBUG2("looking for file `%s'", name);
+    TRACE2("looking for file `%s'", name);
 
     /** \note allows write access only to savegame files */
     if (type != FT_SAVE) {
@@ -350,31 +350,20 @@ open_savedat(const char *name, const char *mode)
     return sOpen(name, mode, FT_SAVE_CHECK);
 }
 
-char *
-slurp_gamedat(const char *name)
+char * load_gamedata(const char *name)
 {
-    FILE *f;
-    ssize_t len;
-    char *p = NULL;
-    size_t buflen = 0;
-
-    f = open_gamedat(name);
-
-    if (!f) {
-        return NULL;
-    }
-
-    len = fread_dyn(&p, &buflen, f);
-
-    if (len < 0) {
-        CRITICAL2("could not read file `%s'", name);
-        exit(EXIT_FAILURE);
-    }
-
-    fclose(f);
-
-    return p;
+	// Deserialize in vector data
+	std::vector<uint8_t> data;
+	DESERIALIZE_JSON_FILE(&data, locate_file(name, FT_DATA));
+	
+	// Transform vector data in char pointer p
+	char* p = new char[data.size() + 1]; // +1 for null char
+	std::copy(data.begin(), data.end(), p);
+    p[data.size()] = '\0'; // Add null
+	
+	return p;
 }
+
 
 /** Create the savegame directory
  *

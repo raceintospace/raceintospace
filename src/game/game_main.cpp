@@ -157,7 +157,6 @@ void VerifyCrews(char plr);
 
 int game_main_impl(int argc, char *argv[])
 {
-    FILE *fin;
     const char *see_readme = "look for further instructions in the README file";
 
     char ex, choice;
@@ -178,19 +177,18 @@ int game_main_impl(int argc, char *argv[])
     Filesystem::addPath(options.dir_savegame);
     /* hacking... */
     log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.want_debug));
-
-    fin = open_gamedat("USA_PORT.DAT");
-
-    if (fin == NULL) {
+    
+    std::ifstream file(locate_file("usa_port.json", FT_DATA));
+    if (!file) {
         CRITICAL1("can't find game data files");
         NOTICE1("set environment variable BARIS_DATA or edit config file");
         NOTICE2("%s", see_readme);
-
+        
         crash("Data missing", "Unable to locate game data files.");
+    } else {
+        INFO1("game data files found");
     }
-
-    fclose(fin);
-
+    
     if (create_save_dir() != 0) {
         CRITICAL3("can't create save directory `%s': %s",
                   options.dir_savegame, strerror(errno));

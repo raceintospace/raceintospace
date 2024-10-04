@@ -497,7 +497,7 @@ void DrawPreviousMissions(char plr)
 
         draw_string(9, 49 + 16 * misnum,
                     Data->P[plr].History[i].MissionName[0]);
-        draw_string(9, 55 + 16 * misnum, mission.Abbr);
+        draw_string(9, 55 + 16 * misnum, mission.Abbr.c_str());
 
         // Check the mission code to see if it's a duration mission.
         // If so, include the duration length.

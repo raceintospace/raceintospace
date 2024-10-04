@@ -31,8 +31,10 @@
 #include <string>
 #include <vector>
 
+#include <boost/shared_ptr.hpp>
 #include "display/graphics.h"
 #include "display/surface.h"
+#include "display/image.h"
 
 #include "gamedata.h"
 #include "Buzz_inc.h"
@@ -50,6 +52,7 @@
 #include "endianness.h"
 #include "ioexception.h"
 #include "place.h"
+#include "filesystem.h"
 
 #define FRM_Delay 22
 
@@ -69,8 +72,28 @@ struct OF {
     int16_t idx;
 };
 
-char SHTS[4];
+struct BZFileHeader {
+    std::string ID;
+    int32_t offset; // Offset for AnimType
+    int32_t size;
 
+    template <class Archive>
+    void serialize(Archive &ar, uint32_t const version) 
+    {
+        ar(CEREAL_NVP(ID));
+        ar(CEREAL_NVP(offset));
+        ar(CEREAL_NVP(size));
+    }
+};
+
+
+std::vector<struct BZFileHeader> indexEntry(41);    
+std::vector<struct AnimType> header(41);
+std::vector<boost::shared_ptr<display::Surface>> animCache;
+boost::shared_ptr<display::Surface> equipAnim;
+int frameCounter = 0;
+
+char SHTS[4];
 char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
@@ -85,6 +108,12 @@ BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
 void InRFBox(int a, int b, int c, int d, int col);
+std::string getEquipAnimID(char plr, const struct MisEval &step);
+int getEquipAnimIndex(std::string name);
+void loadFrames(int index);
+void playEquipAnim (int index);
+void loadHeader();
+void loadIndexEntry();
 
 
 /** Finds the video fitting to the current mission step and plays it.
@@ -100,8 +129,7 @@ void InRFBox(int a, int b, int c, int d, int col);
 void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
     //DEBUG1("->PlaySequence()");
-    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)",
-           step, InSeq, mode);
+    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
     int keep_going;
     int i, j, k;
     unsigned int max;
@@ -914,12 +942,11 @@ char FailureMode(char plr, int prelim, char *text)
     double last_secs;
     Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
-
     FadeOut(2, 10, 0, 0);
 
     // this destroys what's in the current page frames
     saveScreen.copyFrom(display::graphics.legacyScreen(), 0, 0, display::graphics.screen()->width() - 1, display::graphics.screen()->height() - 1);
-
+    
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
     IOBox(243, 3, 316, 19);
@@ -1118,14 +1145,28 @@ char FailureMode(char plr, int prelim, char *text)
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
     // Place Image Here
+    
+    // Deserialize header
+    loadHeader();
 
-    BZAnimation::Ptr modelAnim = FindHardwareAnim(plr, Mev[STEP]);
-
+    //BZAnimation::Ptr modelAnim = FindHardwareAnim(plr, Mev[STEP]);
+    
+    std::string ID = getEquipAnimID(plr, Mev[STEP]);
+    int index = getEquipAnimIndex(ID);
+    loadFrames(index);
+    
+    if (index > -1) {
+        last_secs = get_time();
+        playEquipAnim(index);
+    }
+    
+    /*
     if (modelAnim) {
         last_secs = get_time();
         modelAnim->advance();
     }
-
+    */
+    
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
@@ -1136,11 +1177,17 @@ char FailureMode(char plr, int prelim, char *text)
     }
 
     while (1) {
+        if (index > -1 && get_time() - last_secs > .55) {
+            last_secs = get_time();
+            playEquipAnim(index);
+        }
+        
+        /*
         if (modelAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
             modelAnim->advance();
         }
-
+        */
         GetMouse();
 
         if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {
@@ -1264,13 +1311,27 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     InRFBox(162, 46, 312, 127, 0); // Image is 188,49
 
     // Place Image Here
-    BZAnimation::Ptr moonAnim = FindHardwareAnim(plr, step);
+    //BZAnimation::Ptr moonAnim = FindHardwareAnim(plr, step);
 
+    // Deserialize header
+    loadHeader();
+    
+    std::string ID = getEquipAnimID(plr, step);
+    int index = getEquipAnimIndex(ID);
+    loadFrames(index);
+    
+    if (index > -1) {
+        last_secs = get_time();
+        playEquipAnim(index);
+    }
+
+    /*
     if (moonAnim) {
         last_secs = get_time();
         moonAnim->advance();
     }
-
+    */
+    
     InRFBox(25, 31, 135, 45, 10);
     display::graphics.setForegroundColor(11);
     draw_string(83, 40, Data->P[plr].Mission[step.pad].Name, ALIGN_CENTER);
@@ -1302,11 +1363,18 @@ char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
     key = 0;
 
     while (1) {
+        if (index > -1 && get_time() - last_secs > .55) {
+            last_secs = get_time();
+            playEquipAnim(index);
+        }
+        
+        /*
         if (moonAnim && get_time() - last_secs > .55) {
             last_secs = get_time();
             moonAnim->advance();
         }
-
+        */
+        
         GetMouse();
 
         if (MX[cPad][0].A->Status != AST_ST_DEAD &&
@@ -1452,4 +1520,110 @@ void InRFBox(int a, int b, int c, int d, int col)
     InBox(a, b, c, d);
     fill_rectangle(a + 1, b + 1, c - 1, d - 1, col);
     return;
+}
+
+
+std::string getEquipAnimID(char plr, const struct MisEval &step) 
+{
+    std::string name("XXXX");
+
+    if (step.Class == Mission_PhotoRecon) {
+        name.replace(0, 4, "XCAM");
+    } else {
+        name.replace(0, 2, (plr == 0) ? "US" : "SV");
+        name.replace(2, 2, GetEquipment(step)->ID);
+    }
+    // trim to the first 4 chars to compare strings properly in getEquipAnimIndex
+    name = name.substr(0,4); 
+    return name;
+}
+
+
+int getEquipAnimIndex(std::string name) 
+{   
+    // Deserialize indexEntry
+    loadIndexEntry();
+      
+    for (int i = 0; i < 41; i++) {
+        /*
+        DEBUG5("comparing name %s (length: %zu) with ID %s (length: %zu)", 
+           name.c_str(), name.length(), indexEntry[i].ID.c_str(), 
+           indexEntry[i].ID.length());
+        */
+        if (name == indexEntry[i].ID) {
+            int index = i;
+            DEBUG3("EquipAnim ID %s match index %d", name.c_str(), index);
+            return index;
+        }
+    }
+    // Error, no match for name
+    std::string errorMsg = "could not find match for EquipAnim ID " + name;
+    throw std::runtime_error(errorMsg.c_str());
+    return -1;
+}
+
+
+// Load the animation frames to a vector that functions as a cache
+void loadFrames(int index) {
+    std::string filename;
+    
+    // Assign correct size to animCache
+    animCache.resize(header[index].fNum); 
+    
+    for (int i = 0; i < header[index].fNum; i++) {
+    	filename =  "images/liftoff/liftoff." + indexEntry[index].ID + "." 
+          + std::to_string(i) + ".png"; 
+        
+        // Load cache
+    	animCache[i] = Filesystem::readImage(filename);    	
+    }
+    
+    if (!animCache.empty()) {
+    	DEBUG2("frames for %s loaded", (indexEntry[index].ID).c_str());
+    } else {
+    	throw std::runtime_error("Error. " + indexEntry[index].ID 
+    	  + " frames could not be loaded.");
+    }
+}
+
+
+void playEquipAnim (int index) {
+    if (frameCounter == header[index].fNum) {
+        frameCounter = 0;
+    }
+    
+    if (frameCounter < header[index].fNum) {
+    	equipAnim = animCache[frameCounter];
+    	// This avoid frame overlap and the background is a nice blue
+    	fill_rectangle(162, 46, 312, 127, 7);
+    	display::graphics.screen()->draw(equipAnim, 188, 47);
+	frameCounter++;	
+    }
+}
+
+
+
+void loadHeader() {
+if (! header.empty()) { 
+    std::ifstream file(locate_file("liftoff.json", FT_DATA));
+    if (!file) {
+        throw std::runtime_error("liftoff.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(header));
+    DEBUG1("header deserialized.");
+}
+}
+
+
+void loadIndexEntry() {
+if (! indexEntry.empty()) {
+    std::ifstream file(locate_file("liftoff.json", FT_DATA));
+    if (!file) {
+        throw std::runtime_error("liftoff.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar(file);
+    ar(indexEntry);
+    DEBUG1("IndexEntry deserialized");
+}
 }

@@ -939,9 +939,9 @@ struct Help {
 };
 
 struct AnimType {
-    char ID[8];
-    char OVL[4];
-    char SD[2][4];         // Sound ID : Max 2
+    std::string ID;
+    std::string OVL;
+    std::string SD[2];         // Sound ID : Max 2
     int16_t w, h;
     uint8_t sPlay[2];// Frame to play the Sound
     uint8_t fNum;    // Number of frames
@@ -949,6 +949,20 @@ struct AnimType {
     uint8_t cOff;    // Color offsets
     uint8_t cNum;    // Number of Colors
     // char cPal[cNum];    // Placemarker for RGB Colors
+    
+    template <class Archive>
+    void serialize(Archive &ar) {
+        ar(CEREAL_NVP(ID));
+        ar(CEREAL_NVP(OVL)); 
+        ar(CEREAL_NVP(SD)); 
+        ar(CEREAL_NVP(w)); 
+        ar(CEREAL_NVP(h));
+        ar(CEREAL_NVP(sPlay));
+        ar(CEREAL_NVP(fNum));
+        ar(CEREAL_NVP(fLoop));
+        ar(CEREAL_NVP(cOff));
+        ar(CEREAL_NVP(cNum));
+    }
 };
 
 struct BlockHead {
@@ -959,9 +973,9 @@ struct BlockHead {
 
 struct mStr {
     char Index;       /**< Mission Index Number */
-    char Name[50];    /**< Name of Mission */
-    char Abbr[24];    /**< Name of Mission Abbreviated */
-    char Code[62];    /**< Mission Coding String */
+    std::string Name;    /**< Name of Mission */
+    std::string Abbr;    /**< Name of Mission Abbreviated */
+    std::string Code;    /**< Mission Coding String */
     char Alt[36];     /**< Alternate Sequence */
     char AltD[36];    /**< Alternate Sequence for Deaths (Jt Missions Only) */
     char Days,        /**< Duration Level */
@@ -976,6 +990,29 @@ struct mStr {
     uint8_t mVab[2];  /**< Hardware Requirements */
     char PCat[MAX_PCAT],   /**< Prestige Category List */
          LMAd;             /**< LM Addition Points */
+
+    template <class Archive>
+    void serialize(Archive &ar, uint32_t const version) {
+        ar(CEREAL_NVP(Index)); 
+        ar(CEREAL_NVP(Name));
+        ar(CEREAL_NVP(Abbr));
+        ar(CEREAL_NVP(Code));
+        ar(CEREAL_NVP(Alt));
+        ar(CEREAL_NVP(AltD));
+        ar(CEREAL_NVP(Days));
+        ar(CEREAL_NVP(Dur));
+        ar(CEREAL_NVP(Doc));
+        ar(CEREAL_NVP(EVA));
+        ar(CEREAL_NVP(LM));
+        ar(CEREAL_NVP(Jt));
+        ar(CEREAL_NVP(Lun));
+        ar(CEREAL_NVP(Lun));
+        ar(CEREAL_NVP(mEq));
+        ar(CEREAL_NVP(mCrew));
+        ar(CEREAL_NVP(mVab));
+        ar(CEREAL_NVP(PCat));
+        ar(CEREAL_NVP(LMAd));
+    }
 };
 
 // Vehicle assembly working structure

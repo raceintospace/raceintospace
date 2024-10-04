@@ -37,7 +37,6 @@
 #include "mc.h"
 #include "aimast.h"
 #include "downgrader.h"
-#include "future.h"
 #include "ioexception.h"
 #include "logging.h"
 
