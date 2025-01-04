@@ -130,6 +130,7 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
 void write_save_file(const char *Name, SaveFileHdr header);
 int SaveGame(const std::vector<SFInfo> savegames);
+int PadPurchase[3];
 
 namespace
 {
@@ -145,7 +146,6 @@ inline SaveGameType operator&(SaveGameType a, SaveGameType b)
                static_cast<int>(a) & static_cast<int>(b));
 }
 };
-
 
 /* Control loop for the Administration Office menu.
  *
@@ -1170,9 +1170,9 @@ int FutureCheck(char plr, char type)
     int m[3];
     int t = 0;
     int tx[3] = {0, 0, 0};
-
     for (i = 0; i < 3; i++) {
         p[i] = Data->P[plr].LaunchFacility[i];
+        PadPurchase[i] = 0;
 
         if (type == 0) {
             m[i] = Data->P[plr].Future[i].MissionCode;
@@ -1326,11 +1326,10 @@ int FutureCheck(char plr, char type)
                 int penalty = AchievementPenalty(plr, plan);
 
                 if (penalty > 2) {
-                    display::graphics.setForegroundColor(11);
+                    display::graphics.setForegroundColor(11);  // Caution - show in yellow
                 }
-
                 if (penalty > 8) {
-                    display::graphics.setForegroundColor(8);
+                    display::graphics.setForegroundColor(8);  // Warning - show in red
                 }
 
                 if (Data->P[plr].Future[i].part == 0) {
@@ -1417,8 +1416,7 @@ int FutureCheck(char plr, char type)
         }
 
         for (i = 0; i < 3; i++) {
-            if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y 
-              <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) 
+            if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) 
               || (tx[i] != 1 && key == 'A' + i)) {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);  // Open Future Missions
                 WaitForMouseUp();
@@ -1443,6 +1441,10 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     DrawMissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
+                    IOBox(110, 49 + i * 51, 141, 62 + i * 51);
+                    display::graphics.setForegroundColor(1);
+                    draw_string(114, 57 + i * 51, "UNDO");
+                    PadPurchase[i] = 1;
 
                     // Update player's cash shown on other pads
                     for (ii = 0; ii < 3; ii++) {
@@ -1479,7 +1481,6 @@ int FutureCheck(char plr, char type)
                 } else if (p[i] == -1 && Data->P[plr].Cash < 20 && type == 0) {
                     Help("i129");
                 }
-
 
                 if (p[i] > 4 && Data->P[plr].Cash >= abs(Data->P[plr].LaunchFacility[i])
                     && type == 0) {
@@ -1534,6 +1535,66 @@ int FutureCheck(char plr, char type)
                   abs(Data->P[plr].LaunchFacility[i])
                            && type == 0) {
                     Help("i129");
+                }
+            }
+
+            if (x >= 110 && y >= 51 + i * 49 && x <= 141 && y <= 62 + i * 51 > 0 && PadPurchase[i] == 1 && mousebuttons > 0) {  // Undo pad purchase
+
+            InBox(110, 51 + i * 51, 140, 62 + i * 51);
+            delay(100);
+            OutBox(110, 51 + i * 51, 140, 62 + i * 51);
+            fill_rectangle(109, 36 + 51 * i, 262, 63 + 51 * i, 3);
+            Data->P[plr].Cash += 20;
+            Data->P[plr].Spend[0][3] -= 20;
+            Data->P[plr].LaunchFacility[i] = -1;
+            p[i] = 0;
+            display::graphics.setForegroundColor(9);
+            draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
+            draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
+            draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
+            PadPurchase[i] = -1;
+
+            if (Data->P[plr].Cash > 19) {
+                display::graphics.setForegroundColor(11);
+            }
+
+            draw_string(0, 0, "(OF ");
+            draw_number(0, 0, Data->P[plr].Cash);
+            draw_string(0, 0, " MB)");
+            fill_rectangle(111, 70 + i * 51, 261, 76 + i * 51, 3);
+            display::graphics.setForegroundColor(9);
+            draw_string(113, 75 + i * 51, "PURCHASE FACILITY");
+
+                // Update player's cash shown on other pads
+                for (ii = 0; ii < 3; ii++) {
+                    display::graphics.setForegroundColor(9);
+
+                    if (ii != i && p[ii] > 1) {
+                        if (Data->P[plr].Cash >= abs(p[ii])) {
+                            display::graphics.setForegroundColor(11);
+                        }
+                    }
+
+                    if (ii != i && p[ii] == -1) {
+                        if (Data->P[plr].Cash > 19) {
+                            display::graphics.setForegroundColor(11);
+                        }
+                     }
+
+                    if (p[ii] == -1 || p[ii] > 1) {
+                        if (p[ii] > 1) {
+                            xx = 113;
+                            yy = 56 + ii * 51;
+                        } else {
+                            xx = 171;
+                            yy = 53 + ii * 51;
+                        }
+
+                        fill_rectangle(xx, yy, xx + 54, yy + 4, 3);
+                        draw_string(xx, yy + 4, "(OF ");
+                        draw_number(0, 0, Data->P[plr].Cash);
+                        draw_string(0, 0, "MB)");
+                    }
                 }
             }
         }
