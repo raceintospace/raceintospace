@@ -123,15 +123,15 @@
             "Endurance": 2
         },
         {
-            "Name": "HURRLE",
+            "Name": "HART",
             "Sex": 1,
             "Race": 0,
             "Service": 0,
-            "Cap": 2,
-            "LM": 1,
-            "EVA": 0,
-            "Docking": 1,
-            "Endurance": 2
+            "Cap": 1,
+            "LM": 3,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
         },
         {
             "Name": "CAGLE",
@@ -376,15 +376,15 @@
             "Endurance": 2
         },
         {
-            "Name": "HART",
+            "Name": "HIXSON",
             "Sex": 1,
             "Race": 0,
             "Service": 0,
-            "Cap": 1,
-            "LM": 2,
-            "EVA": 1,
-            "Docking": 2,
-            "Endurance": 1
+            "Cap": 3,
+            "LM": 1,
+            "EVA": 0,
+            "Docking": 1,
+            "Endurance": 2
         },
         {
             "Name": "GRAVELINE",
@@ -607,7 +607,18 @@
             "Endurance": 1
         },
         {
-            "Name": "STUMBOUGH",
+            "Name": "STEADMAN",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
+            "Name": "LEVERTON",
             "Sex": 1,
             "Race": 0,
             "Service": 0,
@@ -618,25 +629,14 @@
             "Endurance": 2
         },
         {
-            "Name": "GORELICK",
+            "Name": "HURRLE",
             "Sex": 1,
             "Race": 0,
             "Service": 0,
             "Cap": 2,
-            "LM": 1,
-            "EVA": 1,
-            "Docking": 0,
-            "Endurance": 2
-        },
-        {
-            "Name": "FUNK",
-            "Sex": 1,
-            "Race": 0,
-            "Service": 0,
-            "Cap": 3,
-            "LM": 0,
+            "LM": 2,
             "EVA": 2,
-            "Docking": 0,
+            "Docking": 1,
             "Endurance": 3
         },
         {
@@ -948,6 +948,39 @@
             "Endurance": 2
         },
         {
+            "Name": "STUMBOUGH",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 1,
+            "Endurance": 2
+        },
+        {
+            "Name": "GORELICK",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 0,
+            "Endurance": 2
+        },
+        {
+            "Name": "SLOAN",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
             "Name": "ADAMS",
             "Sex": 0,
             "Race": 0,
@@ -1168,6 +1201,39 @@
             "Endurance": 0
         },
         {
+            "Name": "FUNK",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 3,
+            "LM": 0,
+            "EVA": 2,
+            "Docking": 0,
+            "Endurance": 3
+        },
+        {
+            "Name": "LUCID",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 2,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 3
+        },
+        {
+            "Name": "SEDDON",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 2,
+            "Endurance": 1
+        },
+        {
             "Name": "NELYUBOV",
             "Sex": 0,
             "Race": 0,
@@ -1212,7 +1278,7 @@
             "Endurance": 3
         },
         {
-            "Name": "POPOVICH",
+            "Name": "P.POPOVICH",
             "Sex": 0,
             "Race": 0,
             "Service": 1,
@@ -2114,6 +2180,39 @@
             "Endurance": 2
         },
         {
+            "Name": "M.POPOVICH",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 4,
+            "LM": 1,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 0
+        },
+        {
+            "Name": "MOROZYCHEVA",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 3,
+            "Docking": 0,
+            "Endurance": 4
+        },
+        {
+            "Name": "PRONINA",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 1,
+            "LM": 2,
+            "EVA": 3,
+            "Docking": 2,
+            "Endurance": 2
+        },
+        {
             "Name": "VARLAMOV",
             "Sex": 0,
             "Race": 0,
@@ -2332,6 +2431,39 @@
             "EVA": 0,
             "Docking": 3,
             "Endurance": 1
+        },
+        {
+            "Name": "SAVITSKAYA",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 3,
+            "LM": 2,
+            "EVA": 4,
+            "Docking": 2,
+            "Endurance": 0
+        },
+        {
+            "Name": "IVANOVA",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 2,
+            "LM": 2,
+            "EVA": 2,
+            "Docking": 1,
+            "Endurance": 1
+        },
+        {
+            "Name": "DOBROKVASHINA",
+            "Sex": 1,
+            "Race": 0,
+            "Service": 0,
+            "Cap": 1,
+            "LM": 1,
+            "EVA": 1,
+            "Docking": 2,
+            "Endurance": 2
         }
     ]
 }

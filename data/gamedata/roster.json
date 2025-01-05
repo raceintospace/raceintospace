@@ -92,13 +92,13 @@
                         "name": "ROGERS"
                     },
                     {
-                        "capsule": 2,
-                        "docking": 1,
-                        "endurance": 2,
-                        "eva": 0,
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
                         "female": true,
-                        "lunar": 1,
-                        "name": "HURRLE"
+                        "lunar": 3,
+                        "name": "HART"
                     },
                     {
                         "capsule": 2,
@@ -287,13 +287,13 @@
                         "name": "M.DIETRICH"
                     },
                     {
-                        "capsule": 1,
-                        "docking": 2,
-                        "endurance": 1,
-                        "eva": 1,
+                        "capsule": 3,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 0,
                         "female": true,
-                        "lunar": 2,
-                        "name": "HART"
+                        "lunar": 1,
+                        "name": "HIXSON"
                     }
                 ],
                 "number_to_choose": 9,
@@ -462,31 +462,31 @@
                         "name": "IRWIN"
                     },
                     {
+                        "capsule": 2,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "STEADMAN"
+                    },
+                    {
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
                         "eva": 1,
                         "female": true,
                         "lunar": 2,
-                        "name": "STUMBOUGH"
+                        "name": "LEVERTON"
                     },
                     {
                         "capsule": 2,
-                        "docking": 0,
-                        "endurance": 2,
-                        "eva": 1,
-                        "female": true,
-                        "lunar": 1,
-                        "name": "GORELICK"
-                    },
-                    {
-                        "capsule": 3,
-                        "docking": 0,
+                        "docking": 1,
                         "endurance": 3,
                         "eva": 2,
                         "female": true,
-                        "lunar": 0,
-                        "name": "FUNK"
+                        "lunar": 2,
+                        "name": "HURRLE"
                     }
                 ],
                 "number_to_choose": 14,
@@ -717,6 +717,33 @@
                         "eva": 0,
                         "lunar": 2,
                         "name": "HENIZE"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 1,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "STUMBOUGH"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "GORELICK"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "SLOAN"
                     }
                 ],
                 "number_to_choose": 16,
@@ -883,6 +910,33 @@
                         "eva": 2,
                         "lunar": 2,
                         "name": "CHAPMAN"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 0,
+                        "endurance": 3,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 0,
+                        "name": "FUNK"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 3,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "LUCID"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 1,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "SEDDON"
                     }
                 ],
                 "number_to_choose": 14,
@@ -933,7 +987,7 @@
                         "endurance": 3,
                         "eva": 1,
                         "lunar": 1,
-                        "name": "POPOVICH"
+                        "name": "P.POPOVICH"
                     },
                     {
                         "capsule": 2,
@@ -1609,6 +1663,33 @@
                         "eva": 1,
                         "lunar": 1,
                         "name": "ZAIKIN"
+                    },
+                    {
+                        "capsule": 4,
+                        "docking": 1,
+                        "endurance": 0,
+                        "eva": 3,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "M.POPOVICH"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 0,
+                        "endurance": 4,
+                        "eva": 3,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "MOROZYCHEVA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 3,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "PRONINA"
                     }
                 ],
                 "number_to_choose": 16,
@@ -1771,10 +1852,36 @@
                     {
                         "capsule": 0,
                         "docking": 3,
-                        "endurance": 1,
+                        "endurance": 2,
                         "eva": 0,
                         "lunar": 1,
                         "name": "PETRUSHENKO"
+                    },
+                    {
+                        "capsule": 3,
+                        "docking": 2,
+                        "endurance": 0,
+                        "eva": 4,
+                        "lunar": 2,
+                        "name": "SAVITSKAYA"
+                    },
+                    {
+                        "capsule": 2,
+                        "docking": 1,
+                        "endurance": 1,
+                        "eva": 2,
+                        "female": true,
+                        "lunar": 2,
+                        "name": "IVANOVA"
+                    },
+                    {
+                        "capsule": 1,
+                        "docking": 2,
+                        "endurance": 2,
+                        "eva": 1,
+                        "female": true,
+                        "lunar": 1,
+                        "name": "DOBROKVASHINA"
                     }
                 ],
                 "number_to_choose": 14,
