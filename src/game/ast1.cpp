@@ -149,7 +149,7 @@ int AstSelectPrompt(char plr, int cost)
 /**
  * Display the list of potential astronaut/cosmonaut recruits.
  *
- * \param now  index of the selected 'naut among all 'nauts in the pool.
+ * \param now  index of the selected candidate among all candidates in the pool.
  * \param loc  index of the selection bar relative to top entry (0-7).
  */
 void DispEight(int now, int loc)
@@ -177,9 +177,9 @@ void DispEight(int now, int loc)
 /**
  * Display the list of picked recruits.
  *
- * \param now  index of the selected 'naut among all picked nauts.
+ * \param now  index of the selected candidate among all selected candidates.
  * \param loc  index of the selection bar relative to top entry (0-7).
- * \param cnt  how many nauts have been picked.
+ * \param cnt  how many 'nauts have been picked.
  */
 void DispEight2(int nw, int lc, int cnt)
 {
@@ -569,7 +569,7 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
 
 
 /**
- * Determine which astronaut/cosmonauts stats should be revealed.
+ * Determine which candidate stats should be revealed.
  *
  * \param player  the player index.
  */
@@ -593,7 +593,7 @@ int ProfileMask(int player)
 
 
 // Naut Randomize, Nikakd, 10/8/10
-// Note: These stats are far more generous than the historical stats.
+// Note: These stats are far more generous than the historical ones.
 void RandomizeNauts()
 {
     int i;
@@ -617,7 +617,7 @@ void RandomizeNauts()
  * take the astronaut below 0).
  *
  * \param plr   0 for the USA, 1 for the USSR.
- * \param pool  The index of the astronaut in the recruited 'nauts pool.
+ * \param pool  The index of the astronaut in the recruited candidate pool.
  * \param candidate  The index of the candidate among all available 'nauts.
  */
 void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
@@ -739,16 +739,16 @@ void AstSel(char plr)
         break;
 
     case 3:
-        MaxMen = 27;
+        MaxMen = femaleAstronautsAllowed ? 30 : 27;
         MaxSel = ASTRO_POOL_LVL4;
         Index = 58;
         femaleAstronautsRequired = false;
         break;
 
     case 4:
-        MaxMen = 19;
+        MaxMen = femaleAstronautsAllowed ? 22 : 19;
         MaxSel = ASTRO_POOL_LVL5;
-        Index = 86;
+        Index = 89;
         femaleAstronautsRequired = false;
         break;
     }
