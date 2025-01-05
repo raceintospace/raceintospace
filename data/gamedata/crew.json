@@ -2186,7 +2186,7 @@
             "Service": 0,
             "Cap": 4,
             "LM": 1,
-            "EVA": 2,
+            "EVA": 3,
             "Docking": 1,
             "Endurance": 0
         },
