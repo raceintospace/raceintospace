@@ -239,7 +239,7 @@ void DrawProgs(char plr, char prog)
     display::graphics.setForegroundColor(5);
     draw_string(0, 0, "REW SELECTION");
     display::graphics.setForegroundColor(7);
-    draw_string(152, 35, &Data->P[plr].Manned[prog - 1].Name[0]);
+    draw_string(152, 34, &Data->P[plr].Manned[prog - 1].Name[0]);
 
     for (int8_t i = 0; i < 8; i++) {
         if (prog == 1 && Data->P[plr].Pool[i].Assign == 1 && Data->P[plr].Pool[i].Moved >= 5) {
@@ -253,33 +253,33 @@ void DrawProgs(char plr, char prog)
     display::graphics.setForegroundColor(9);
 
     if (prog == 1) {
-        draw_string(152, 43, "ONE");
+        draw_string(152, 42, "ONE");
     }
 
     if (prog == 2) {
-        draw_string(152, 43, "TWO");
+        draw_string(152, 42, "TWO");
     }
 
     if (prog == 3 || prog == 4) {
-        draw_string(152, 43, "THREE");
+        draw_string(152, 42, "THREE");
     }
 
     if (prog == 5) {
-        draw_string(152, 43, "FOUR");
+        draw_string(152, 42, "FOUR");
     }
 
     draw_string(0, 0, "-PERSON CAPACITY");
     display::graphics.setForegroundColor(7);
-    draw_string(152, 51, "SAFETY FACTOR: ");
+    draw_string(152, 50, "SAFETY FACTOR: ");
     display::graphics.setForegroundColor(11);
     draw_number(0, 0, Data->P[plr].Manned[prog - 1].Safety);
     draw_string(0, 0, "%");
     display::graphics.setForegroundColor(7);
-    draw_string(152, 59, "UNIT WEIGHT: ");
+    draw_string(152, 58, "UNIT WEIGHT: ");
     display::graphics.setForegroundColor(11);
     draw_number(0, 0, Data->P[plr].Manned[prog - 1].UnitWeight);
     display::graphics.setForegroundColor(7);
-    draw_string(152, 67, "MAX DURATION: ");
+    draw_string(152, 66, "MAX DURATION: ");
     display::graphics.setForegroundColor(11);
     draw_number(0, 0, Data->P[plr].Manned[prog - 1].Duration);
     draw_string(0, 0, " DAYS (");
@@ -301,7 +301,7 @@ void DrawProgs(char plr, char prog)
     }
 
     display::graphics.setForegroundColor(7);
-    draw_string(152, 75, "AVOID FAILURE: ");
+    draw_string(152, 74, "AVOID FAILURE: ");
     display::graphics.setForegroundColor(11);
 
     if (Data->P[plr].Manned[prog - 1].SaveCard > 0) {
