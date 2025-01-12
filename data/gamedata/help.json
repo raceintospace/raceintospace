@@ -1536,7 +1536,7 @@
       "THIS WILL SCRUB THE MISSION ON THIS",
       "PAD. SCRUBBING IT WILL COMPLETELY",
       "UNASSIGN ALL THE HARDWARE AND CREW",
-      "MEMBERS ASSOCIATED WITH THIS MISSION.",
+      "MEMBERS ASSIGNED TO THIS MISSION.",
       "THIS IS THE FIRST PART OF A JOINT",
       "MISSION AND SCRUBBING IT WILL ALSO",
       "SCRUB THE SECOND PART.",
@@ -1557,8 +1557,8 @@
       "THE REQUEST IS TO SCRUB THE MISSION",
       "CURRENTLY ON THIS PAD. SCRUBBING IT",
       "WILL COMPLETELY UNASSIGN ALL THE",
-      "HARDWARE AND CREWMEMBERS ASSOCIATED",
-      "WITH THIS MISSION.",
+      "HARDWARE AND CREW MEMBERS ASSIGNED",
+      "TO THIS MISSION.",
       "",
       ".007",
       "DO YOU WISH TO SCRUB THIS MISSION?"
@@ -1846,7 +1846,7 @@
       "CASH PROBLEM",
       ".010",
       "YOU DO NOT HAVE ENOUGH CASH TO DO",
-      "THIS WITH THE LAUNCH PAD."
+      "THAT WITH THE LAUNCH PAD."
     ]
   },
   {
@@ -1962,7 +1962,7 @@
       "PURCHASE DELAY",
       ".006",
       "DUE TO A SHORTAGE OF SUPPLIES YOU",
-      "ARE NOT ABLE TO PURCHASE ANY OF",
+      "ARE NOT ABLE TO PURCHASE ALL OF",
       "THE NEEDED EQUIPMENT THIS SEASON.",
       "",
       "IF YOU HAVE ANY MISSIONS SCHEDULED",
@@ -2420,7 +2420,7 @@
       "EVA SUITS ARE NOT UP TO PAR",
       ".001",
       "THIS BOX INDICATES THAT YOUR EVA",
-      "SUITS ARE NOT UP TO MAX R&D, OR THEY",
+      "SUITS ARE NOT YET AT MAX R&D, OR THEY",
       "FACE A PENALTY ON THEIR NEXT USE",
       "UNLESS MONEY IS PAID TO FIX THEM.",
       "",
@@ -2429,7 +2429,7 @@
       "IT MEANS THE MISSION IS NOT SCHEDULED",
       "FOR A SPACEWALK, BUT MAY REQUIRE AN",
       "EMERGENCY EVA TO GET BACK TO THE",
-      "CAPSULE.",
+      "CAPSULE FROM THE LM.",
       "",
       ".009",
       "IF THIS BUTTON SAYS 'NO EVA', THEN",
@@ -2549,15 +2549,16 @@
     "description": [
       "; Longest Line:                      ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%05:0",
+      "%06:0",
       ".011",
       "UNASSIGNED ASTRONAUTS",
       ".001",
-      "YOU CURRENTLY DO NOT HAVE UNASSIGNED",
-      "ASTRONAUTS.",
-      "FOR ASTRONAUTS IN BASIC TRAINING",
+      "YOU DO NOT CURRENTLY HAVE ANY",
+      "UNASSIGNED ASTRONAUTS.",
+      "",
+      "FOR PEOPLE IN BASIC TRAINING,",
       "VISIT THE BASIC TRAINING BUILDING",
-      "LOCATED ON THE SPACEPORT."
+      "LOCATED AT THE SPACEPORT."
     ]
   },
    {
@@ -2565,15 +2566,16 @@
     "description": [
       "; Longest Line:                      ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%05:0",
+      "%06:0",
       ".011",
       "UNASSIGNED COSMONAUTS",
       ".001",
-      "YOU CURRENTLY DO NOT HAVE UNASSIGNED",
-      "COSMONAUTS.",
-      "FOR COSMONAUTS IN BASIC TRAINING",
+      "YOU DO NOT CURRENTLY HAVE ANY",
+      "UNASSIGNED COSMONAUTS.",
+      "",
+      "FOR PEOPLE IN BASIC TRAINING,",
       "VISIT THE BASIC TRAINING BUILDING",
-      "LOCATED ON THE SPACEPORT."
+      "LOCATED AT THE SPACEPORT."
     ]
   },
   {
@@ -2960,7 +2962,7 @@
       ".005",
       "THIS IS A THREE-PERSON CAPSULE,",
       "VERY GOOD FOR FLYING THE LUNAR",
-      "LANDING.",
+      "LANDING MISSION.",
       "",
       "AN APOLLO CAPSULE DOES NOT NEED A",
       "KICKER TO GO TO THE MOON. APOLLO",
@@ -2979,7 +2981,7 @@
       ".005",
       "THIS IS A THREE-PERSON CAPSULE,",
       "VERY GOOD FOR PERFORMING THE LUNAR",
-      "LANDING.",
+      "LANDING MISSION.",
       "",
       "A SOYUZ CAPSULE DOES NOT NEED A",
       "KICKER TO GO TO THE MOON. HOWEVER,",
@@ -3366,6 +3368,7 @@
       "BALLISTIC UP-AND-DOWN MISSION INTO",
       "SPACE, LASTING 15 MINUTES. IT'S",
       "USUALLY YOUR FIRST MANNED MISSION.",
+      "",
       "AS SEEN ON MERCURY 3, 4.",
       "",
       ".011",
@@ -4171,8 +4174,10 @@
       "TEST OF THE LUNAR MODULE IN EARTH",
       "ORBIT.",
       "",
+      ".016",
       "WORTH 1 LM POINT.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4190,8 +4195,10 @@
       "LIFTS THE SPACECRAFT. CREW TESTS",
       "THE LUNAR MODULE IN EARTH ORBIT.",
       "",
+      ".016",
       "WORTH 1 LM POINT.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4212,8 +4219,10 @@
       "",
       "AS SEEN ON APOLLO 9.",
       "",
+      ".016",
       "WORTH 1 LM POINT.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4233,8 +4242,10 @@
       "PERFORMS A SPACEWALK, THEN STAYS IN",
       "ORBIT FOR AN EXTENDED PERIOD.",
       "",
+      ".016",
       "WORTH 1 LM POINT.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4340,6 +4351,8 @@
       "FLIES TO THE MOON AND ESTABLISHES",
       "AN ORBIT.",
       "",
+      "AS SEEN ON ARTEMIS I (2022).",
+      "",
       "GOOD FOR TESTING KICKER A OR B, IF",
       "YOU'RE USING THEM.",
       "",
@@ -4431,8 +4444,10 @@
       "WORTH 5% LUNAR RECON IF THE LM TEST",
       "SUCCEEDS.",
       "",
+      ".016",
       "WORTH 2 LM POINTS.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4461,8 +4476,10 @@
       "WORTH 5% LUNAR RECON IF THE LM TEST",
       "SUCCEEDS.",
       "",
+      ".016",
       "WORTH 2 LM POINTS.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4493,8 +4510,10 @@
       "WORTH 5% LUNAR RECON IF THE LM TEST",
       "SUCCEEDS.",
       "",
+      ".016",
       "WORTH 2 LM POINTS.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4526,8 +4545,10 @@
       "WORTH 5% LUNAR RECON IF THE LM TEST",
       "SUCCEEDS.",
       "",
+      ".016",
       "WORTH 2 LM POINTS.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
@@ -4559,8 +4580,10 @@
       "WORTH 5% LUNAR RECON IF THE LM TEST",
       "SUCCEEDS.",
       "",
+      ".016",
       "WORTH 2 LM POINTS.",
       "",
+      ".005",
       "USES: GEMINI/VOSKHOD, APOLLO/SOYUZ,",
       "          OR XMS-2/LAPOT"
     ]
