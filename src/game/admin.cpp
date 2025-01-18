@@ -1441,9 +1441,9 @@ int FutureCheck(char plr, char type)
                     // Missions(plr, 111, 41 + i * 51, m[i], 0);
                     DrawMissionName(m[i], 111, 41 + i * 51, 24);
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
-                    IOBox(110, 49 + i * 51, 141, 62 + i * 51);
+                    IOBox(110, 47 + i * 51, 145, 62 + i * 51);
                     display::graphics.setForegroundColor(1);
-                    draw_string(114, 57 + i * 51, "UNDO");
+                    draw_string(116, 56 + i * 51, "UNDO");
                     PadPurchase[i] = 1;
 
                     // Update player's cash shown on other pads
@@ -1538,11 +1538,11 @@ int FutureCheck(char plr, char type)
                 }
             }
 
-            if (x >= 110 && y >= 51 + i * 49 && x <= 141 && y <= 62 + i * 51 > 0 && PadPurchase[i] == 1 && mousebuttons > 0) {  // Undo pad purchase
+            if (x >= 110 && y >= 49 + i * 49 && x <= 145 && y <= 62 + i * 51 > 0 && PadPurchase[i] == 1 && mousebuttons > 0) {  // Undo pad purchase
 
-            InBox(110, 51 + i * 51, 140, 62 + i * 51);
+            InBox(110, 47 + i * 51, 145, 62 + i * 51);
             delay(100);
-            OutBox(110, 51 + i * 51, 140, 62 + i * 51);
+            OutBox(110, 47 + i * 51, 145, 62 + i * 51);
             fill_rectangle(109, 36 + 51 * i, 262, 63 + 51 * i, 3);
             Data->P[plr].Cash += 20;
             Data->P[plr].Spend[0][3] -= 20;
