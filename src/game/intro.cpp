@@ -61,6 +61,7 @@ const struct CREDIT {
     { 0, 48, 52, 112, "RYAN YOAKUM"},
     { 0, 48, 53, 119, "PETR MENSIK"},
     { 0, 48, 45, 126, "HENDRIK WEIMER"},
+    { 0, 48, 70, 133, "ALSED"},
     { 0, 22, 194, 77, "ENHANCEMENTS"},
     { 0, 48, 187, 84, "NICOLAS LAPLUME"},
     { 0, 48, 198, 91, "RYAN YOAKUM"},
