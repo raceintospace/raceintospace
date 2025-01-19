@@ -132,11 +132,11 @@ struct MOBJ {
 
 struct IMG {
 	int32_t Size;         // Size of Image (bytes)
-	char Comp;     		  // Type of Compression Used
+	char Comp;            // Type of Compression Used
 	int16_t Width;        // Width of Image
 	int16_t Height;       // Height of Image
 	int16_t PlaceX;       // Where to Place Img:X
-	int16_t PlaceY;        // Where to Place Img:Y
+	int16_t PlaceY;       // Where to Place Img:Y
 	
 	template<class Archive>
 	void serialize(Archive & ar) {
@@ -176,7 +176,7 @@ namespace // Local global variables
 	PORTOUTLINE *pPortOutlineRestore;
 	
 	/** These are the valid hotkeys */
-	char HotKeyList[] = "AIMRPVCQETB\0";
+	char HotKeyList[] = "AIMRPVCQETBHL\0";
 	char RUSH;
 	int FCtr;
 
@@ -235,7 +235,7 @@ void WaveFlagDel(void)
  *     int16_t PlaceY    -- Where to Place Img:Y
  *
  * \param plr    the player (usa/sov)_port.json image file to open.
- * \param indx  index to the image position data in the Img vector.
+ * \param indx   index to the image position data in the Img vector.
  */
 void LoadImg(int plr, int indx)
 {
@@ -287,7 +287,7 @@ void PortPal(char plr)
         
     // Display p and copy data to p.pal
     display::AutoPal p(display::graphics.legacyScreen());
-    for (size_t i= 0; i < sizeof(p.pal); i++) { // the limit is Autopal p.pal size
+    for (size_t i= 0; i < sizeof(p.pal); i++) {  // the limit is Autopal p.pal size
         p.pal[i] = static_cast<char>(palette[i]);
     }
 }
@@ -429,7 +429,7 @@ void UpdatePortOverlays(void)
 
 #ifdef DEADCODE
         // Zond thingy -- this was never implemented and was available after 6 manned seasons
-        //if (i==1 && Data->P[i].Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) Data->P[i].Port[PORT_Zond]=1;
+        // if (i==1 && Data->P[i].Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) Data->P[i].Port[PORT_Zond]=1;
 #endif
 
         if (Data->P[i].Probe[PROBE_HW_ORBITAL].Num >= 0 || Data->P[i].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 ||
@@ -795,10 +795,24 @@ int MapKey(char plr, int key, int old)
         mousebuttons = 1;
         break;
 
+    case 'H':
+        if (MObj[8].Reg[Data->P[plr].Port[PORT_MedicalCtr]].sNum > 0) {
+            val = PORT_MedicalCtr;
+        }
+
+        mousebuttons = 1;
+        break;
+
     case 'I':
         if (MObj[1].Reg[Data->P[plr].Port[PORT_Pentagon]].sNum > 0) {
             val = PORT_Pentagon;
         }
+
+        mousebuttons = 1;
+        break;
+
+    case 'L':
+            val = PORT_Moon;
 
         mousebuttons = 1;
         break;
@@ -1152,7 +1166,7 @@ void Port(char plr)
                                 SpotKill();
                                 music_stop();
                                 return;
-                            } // switch
+                            }  // switch
 
                             kMode = good = 0;
                             SpotResume();
@@ -1171,8 +1185,8 @@ void Port(char plr)
                             while (mousebuttons == 1) {
                                 GetMse(plr, 1);
                             }
-                        } // if
-                    } //while
+                        }  // if
+                    }  //while
 
                     if (plr == 0 && Data->Year > 65) {
                         PortText(5, 196, "CAPE KENNEDY", 12);
@@ -1186,7 +1200,7 @@ void Port(char plr)
                     Count = 0;
                     helpText = "i043";
                     keyHelpText = "k043";
-                } // if
+                }  // if
             }
 
             if (kMode == 0) {
@@ -1198,7 +1212,7 @@ void Port(char plr)
             }
         } while ((kMode == 0 && i < S_MOBJ && i >= 0) 
     	  || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
-    } // while
+    }  // while
 }
 
 
@@ -1532,7 +1546,7 @@ char Request(char plr, const char *s, char md)
         }
 
         delay(50);
-    } /* End while */
+    }  /* End while */
 
     if (md > 0) {
         display::graphics.legacyScreen()->palette().copy_from(local.palette());
@@ -1673,7 +1687,7 @@ char MisReq(char plr)
             delay(50);
             key = 0;
         }
-    } /* End while */
+    }  /* End while */
 
     local.copyTo(display::graphics.legacyScreen(), 53, 29);
 
