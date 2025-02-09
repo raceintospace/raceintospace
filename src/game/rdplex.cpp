@@ -753,7 +753,7 @@ char RD(char player_index)
                 WaitForMouseUp();
                 InBox(26, 94, 131, 172);
                 ShowHardwareDescription(player_index, hardware, unit);
-            } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+            } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0 && HardwareProgram(player_index, hardware, unit).SaveCard > 0) {
                 OutBox(285, 70, 317, 87);
                 delay(10);
                 WaitForMouseUp();
@@ -1476,7 +1476,7 @@ char HPurc(char player_index)
                 Data->P[player_index].Cash += 100;
                 DrawCashOnHand(player_index);
             }
-        } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0) {
+        } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0 && HardwareProgram(player_index, hardware, unit).SaveCard > 0) {
             OutBox(285, 70, 317, 87);
             delay(10);
             WaitForMouseUp();
