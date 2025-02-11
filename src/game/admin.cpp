@@ -1547,7 +1547,7 @@ int FutureCheck(char plr, char type)
             Data->P[plr].Cash += 20;
             Data->P[plr].Spend[0][3] -= 20;
             Data->P[plr].LaunchFacility[i] = -1;
-            p[i] = 0;
+            p[i] = -1;
             display::graphics.setForegroundColor(9);
             draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
             draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
