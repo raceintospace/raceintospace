@@ -176,7 +176,7 @@ namespace // Local global variables
 	PORTOUTLINE *pPortOutlineRestore;
 	
 	/** These are the valid hotkeys */
-	char HotKeyList[] = "AIMRPVCQETBHL\0";
+	char HotKeyList[] = "AIMRPVCQETBHLS\0";
 	char RUSH;
 	int FCtr;
 
@@ -812,7 +812,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'L':
-            val = PORT_Moon;
+        val = PORT_Moon;
 
         mousebuttons = 1;
         break;
@@ -829,6 +829,12 @@ int MapKey(char plr, int key, int old)
         if (MObj[22].Reg[Data->P[plr].Port[PORT_Research]].sNum > 0) {
             val = PORT_Research;
         }
+
+        mousebuttons = 1;
+        break;
+
+    case 'S':
+        val = PORT_Satellite;
 
         mousebuttons = 1;
         break;
