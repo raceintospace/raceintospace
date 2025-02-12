@@ -2394,7 +2394,7 @@
     "description": [
       "; Longest Line:                      ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%09:0",
+      "%10:0",
       ".011",
       "UNABLE TO BUY CAPSULES NEXT TURN",
       ".001",
@@ -2407,7 +2407,8 @@
       ".011",
       "HOWEVER, IF YOUR UNMANNED PROGRAM IS",
       "READY, THIS WOULD BE A GOOD TIME TO",
-      "SEND PROBES TO THE MOON OR PLANETS."
+      "SEND PROBES TO OTHER PLANETS OR THE",
+      "MOON."
     ]
   },
   {
