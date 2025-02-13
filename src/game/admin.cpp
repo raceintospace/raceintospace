@@ -1110,11 +1110,11 @@ void FileText(const char *name)
     if (header.Country[0] == 6 || header.Country[1] == 7) {
         draw_string(0, 0, "VS. MODEM DIRECTOR ");
     } else if (header.Country[0] == 8 || header.Country[1] == 9) {
-        draw_string(0, 0, "VS. PBEM DIRECTOR ");
+        draw_string(0, 0, "VS. PBEM DESIGNER ");
     } else if (header.Country[1] == 3) {
-        draw_string(0, 0, "VS. COMPUTER DIRECTOR ");
+        draw_string(0, 0, "VS. COMPUTER DESIGNER ");
     } else {
-        draw_string(0, 0, "VS. HUMAN DIRECTOR ");
+        draw_string(0, 0, "VS. HUMAN DESIGNER ");
     }
 
     draw_string(0, 0, &header.PName[1][0]);
