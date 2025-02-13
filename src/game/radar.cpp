@@ -64,13 +64,19 @@ void PadDraw(char plr, char pad)
     InBox(167, 27, 316, 176);
     fill_rectangle(168, 28, 315, 175, 0);
     struct MissionType &mission = Data->P[plr].Mission[pad];
-    if (mission.MissionCode &&
-        MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
-        IOBox(167, 179, 240, 195);  // Delay button disabled because mission can't be delayed
+    if (Data->P[plr].LaunchFacility[pad] > 1) { 
+        IOBox(167, 179, 316, 195);  // Button to fix damaged/destroyed pad
     } else {
-        InBox(167, 179, 240, 195);  // Delay button
+        if (mission.MissionCode &&
+            MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
+            IOBox(167, 179, 240, 195);  // Delay button disabled because mission can't be delayed
+            IOBox(242, 179, 316, 195);  // Scrub button
+        } else {
+            InBox(167, 179, 240, 195);  // Delay button
+            IOBox(242, 179, 316, 195);  // Scrub button
+        }
     }
-    IOBox(242, 179, 316, 195);  // Scrub button
+draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     ShBox(4, 28, 162, 43);
     InBox(6, 30, 160, 41);
     ShBox(4, 46, 162, 61);
@@ -171,7 +177,7 @@ void PadDraw(char plr, char pad)
 
         if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
             draw_string(15, 56, "NO LAUNCH SCHEDULED");
-            InBox(169, 181, 314, 193);
+            //InBox(168, 179, 312, 193);
         } else {
             draw_string(15, 56, "PRE-MISSION CHECK");
         }
