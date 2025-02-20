@@ -174,12 +174,7 @@ void MissionPath(char plr, int val, int pad)
     
     // Deserialize missSteps
     std::vector<std::string> missSteps;
-    std::ifstream file(locate_file("missSteps.json", FT_DATA));
-    if (!file) {
-        throw std::runtime_error("Error. missSteps.json could not be opened.");
-    }
-    cereal::JSONInputArchive ar(file);
-    ar(missSteps);
+    DESERIALIZE_JSON_FILE(&missSteps, locate_file("missSteps.json", FT_DATA));
     
     // Read mission step data and find correct entry
     int index = 0;
@@ -193,31 +188,9 @@ void MissionPath(char plr, int val, int pad)
       index++;
     }
     
-    //Copy string value into missStep
-    if ( size_t pos = missSteps[index].find('A')){
-        code = missSteps[index].substr(pos);
-        strncpy(missStep, code.c_str(), 1024 - 1);
-        missStep[1024-1] = '\0';
-    } else {
-        memset(missStep, 0, 1024);
-    }
-    
-    /*
-    FILE *MSteps = sOpen("missSteps.dat", "r", FT_DATA);
+    strncpy(missStep, code.c_str(), 1024 - 1);
+    missStep[1024-1] = '\0';
 
-    if (! MSteps || fgets(missStep, 1024, MSteps) == NULL) {
-        memset(missStep, 0, sizeof missStep);
-    }
-
-    while (!feof(MSteps) && ((missStep[0] - 0x30) * 10 + (missStep[1] - 0x30)) != val) {
-        if (fgets(missStep, 1024, MSteps) == NULL) {
-            break;
-        }
-    }
-
-    fclose(MSteps);
-    */
-    
     for (int n = 2; missStep[n] != 'Z'; n++) {
         switch (missStep[n]) {
         case 'A':
