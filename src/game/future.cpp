@@ -1263,7 +1263,7 @@ void Future(char plr)
 		            mission.Days = duration;
                     DrawPenaltyPopup(plr, mission);
                 } else {
-                    DrawPenaltyPopup(plr, mission);
+                    DrawPenaltyPopup(plr, missionData[misType]);
                 }
                 
             } else if ((x >= 5 && y >= 84 && x <= 16 && y <= 130 && mousebuttons > 0) ||
