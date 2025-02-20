@@ -43,9 +43,11 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
+#include "serialize.h"
 
 std::vector<struct ManPool> Men;
-std::vector<std::vector<char>> portbuttons(7);
+std::vector<std::vector<int8_t>> portbuttons;//(7, std::vector<int8_t>(570));
+  //std::vector<std::vector<int8_t>> portbuttons = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
 uint8_t AIsel[25];
 
 
@@ -53,7 +55,6 @@ void DrawStatistics(char Win);
 void SelectBest(char plr, int pos);
 char Skill(char plr, char type);
 void CheckAdv(char plr);
-void LoadPortButtons();
 
 
 /**
@@ -66,7 +67,6 @@ void DrawStatistics(char Win)
 {
     char AImg[7] = {8, 9, 10, 11, 13, 14, 0};
     int starty, qty, i;
-    FILE *fin;
     helpText = "i145";
     keyHelpText = "k045";
     FadeOut(2, 10, 0, 0);
@@ -121,7 +121,7 @@ void DrawStatistics(char Win)
     starty = 118;
     display::LegacySurface local(30, 19);
     
-    LoadPortButtons();
+    DESERIALIZE_JSON_FILE(&portbuttons, locate_file("portbut.json", FT_DATA));
     
     OutBox(152, 41, 183, 61); // directors ranking
 
@@ -152,7 +152,6 @@ void DrawStatistics(char Win)
         }
     }
 
-    fclose(fin);
     FadeIn(2, 10, 0, 0);
 
     return;
@@ -1377,19 +1376,6 @@ int GenPur(char plr, int hardware_index, int unit_index)
     }
 
     return (itemPurchased == true);
-}
-
-
-void LoadPortButtons(){
-    // Deserialize portbuttons
-    std::ifstream file(locate_file("portbut.json", FT_DATA));
-    if (!file) {
-      throw std::runtime_error("portbut.json could not be opened.");
-    }
-    cereal::JSONInputArchive ar(file);
-    ar(portbuttons);
-    printf("portbuttons successfully uploaded.");
-    //INFO1("portbuttons successfully uploaded.");
 }
 
 
