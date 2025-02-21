@@ -164,7 +164,7 @@ Equipment* AssignCorrectEquip(int plr, int index) {
 int StealMod(int plr, int prog, int type)
 {
     DEBUG4("StealMod, plr %d, prog %d, type %d", plr, prog, type);
-    int index;
+    int index, oldSafety;
     
     if (type == 1) {
     	// Find rival advanced program
@@ -176,6 +176,8 @@ int StealMod(int plr, int prog, int type)
     
     Equipment* player = AssignCorrectEquip(plr,index);
     Equipment* rival = AssignCorrectEquip(other(plr), index);
+
+    oldSafety = player->Safety;
         
     // Intelligence steals info
     if (type == 1) {
@@ -195,13 +197,16 @@ int StealMod(int plr, int prog, int type)
         DEBUG1("Intelligence has been deceived");
     	if (rival->Safety > player->Base) {
     	    player->Safety -= (rival->Safety - player->Base);
+            if (player->Safety < player->Base) {
+                player->Safety = player->Base;
+            }
     	} else {
     	    player->Safety = player->Base;
     	}
     }
 
     strcpy(Name, player->Name);
-    return player->Safety;
+    return (player->Safety - oldSafety) * type;
 }
 
 
