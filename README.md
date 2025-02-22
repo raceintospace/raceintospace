@@ -192,7 +192,7 @@ To add music to the game, obtain the files from the repository:
 
     git clone https://github.com/raceintospace/raceintospace-nonfree 
 
-Then copy `data/audio` directory from `raceintospace-nonfree` to:
+Then copy the `data/audio/music` directory from `raceintospace-nonfree` to:
 
-1. `data/` in the source code directory - if you're building the game from source, or
-2. `data/` in the directory where you installed the game.
+1. `data/audio` in the source code directory - if you're building the game from source, or
+2. `data/audio` in the directory where you installed the game.
