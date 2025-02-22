@@ -1837,7 +1837,7 @@
                 "AstroDelay": 2,
                 "Pool": {
                     "value0": {
-                        "cereal_class_version": 0,
+                        "cereal_class_version": 1,
                         "Name": "",
                         "Face": 0,
                         "Sex": 0,

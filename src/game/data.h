@@ -509,7 +509,9 @@ struct Astros {
 
         ar(CEREAL_NVP(Face));
         ar(CEREAL_NVP(Sex));
-        ar(CEREAL_NVP(Race));
+        if (version > 0) {
+            ar(CEREAL_NVP(Race));
+        }
         ar(CEREAL_NVP(Compat));
         ar(CEREAL_NVP(CR));
         ar(CEREAL_NVP(CL));
