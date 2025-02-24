@@ -29,7 +29,7 @@ void StopAudio(char mode);
 void stop_voice(void);
 void NGetVoice(char plr, char val);
 void PlayVoice(void);
-ssize_t load_audio_file(const char *, char **data, size_t *size);
+ssize_t load_audio_file(const char *, char **data, size_t *size, bool music);
 void idle_loop(int ticks);
 void play_audio(std::string str, int mode);
 void bzdelay(int ticks);

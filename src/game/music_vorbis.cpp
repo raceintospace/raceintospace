@@ -110,7 +110,7 @@ void music_load(enum music_track track)
     }
 
     // Load the file
-    bytes = load_audio_file(fname, &music_files[track].buf, &music_files[track].buf_size);
+    bytes = load_audio_file(fname, &music_files[track].buf, &music_files[track].buf_size, true);
 
     // Assign the correct buffer size
     music_files[track].buf_size = bytes;
