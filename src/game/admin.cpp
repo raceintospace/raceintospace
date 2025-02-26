@@ -59,11 +59,11 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "options.h"
 #include "prest.h"
 #include "pbm.h"
+#include "legacy.h"
 
 #include <zlib.h>
 
@@ -119,13 +119,9 @@ void DrawTimeCapsule(int display);
 std::vector<SFInfo> GenerateTables(SaveGameType saveType);
 std::string GetBlockName();
 SaveGameType GetSaveType(const SaveFileHdr &header);
-void BadFileType();
 void FileText(const char *name);
 int FutureCheck(char plr, char type);
 void LoadGame(const char *filename);
-void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength);
-void ShiftMemory (int8_t *p, const int legacySize);
-void CheckMSF ();
 bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
 void write_save_file(const char *Name, SaveFileHdr header);
@@ -1753,150 +1749,6 @@ void LoadGame(const char *filename)
 
     header.Name[22] = '\0'; // valid index 0-22
     interimData.filename.assign(header.Name);
-}
-
-/**
- * Load function for old save game formats.
- */
-void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
-{
-    LEGACY_REPLAY *load_buffer = NULL;
-    uint16_t dataSize, compSize;
-    int i, j;
-    const int legacySize = 38866;
-
-    dataSize = *(uint16_t *) header.dataSize;
-    compSize = *(uint16_t *)(header.dataSize + 2);
-
-    // Determine Endian Swap, 31663 is for pre-PBEM save games
-    bool endianSwap = (dataSize != legacySize && dataSize != 31663);
-
-    if (endianSwap) {
-        compSize = _Swap16bit(compSize);
-        dataSize = _Swap16bit(dataSize);
-
-        if (dataSize !=  legacySize && dataSize != 31663) {
-            // TODO: Feels like BadFileType() should be launched by
-            // FileAccess, which runs the interface. Throw an
-            // exception or return an error code?
-            fclose(fin);
-            BadFileType();
-            return;
-        }
-    }
-
-    size_t readLen = compSize;
-    load_buffer = (LEGACY_REPLAY *)malloc(readLen);
-    fread(load_buffer, 1, readLen, fin);
-    RLED((char *) load_buffer, (char *)Data, compSize);
-    free(load_buffer);
-
-    // Shift Equipment structs to account for MisSucc/Fail being arrays now
-    // Check for each Equipment struct separately
-    // Shift the remaining bytes of the struct by 2 with ShiftMemory function
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        for (j = 0; j < 3; j++) {
-          ShiftMemory(Data->P[i].Probe[j].MisFail, legacySize);
-        }
-
-        for (j = 0; j < 5; j++) {
-          ShiftMemory(Data->P[i].Rocket[j].MisFail, legacySize);
-        }
-
-        for (j = 0; j < 7; j++) {
-          ShiftMemory(Data->P[i].Manned[j].MisFail, legacySize);
-        }
-
-        for (j = 0; j < 6; j++) {
-          ShiftMemory(Data->P[i].Misc[j].MisFail, legacySize);
-        }
-    }
-
-    // Swap Players' Data
-    if (endianSwap) {
-        _SwapGameDat();
-    }
-
-    // Read the Replay Data
-    load_buffer = (LEGACY_REPLAY *)malloc((sizeof(LEGACY_REPLAY)) * MAX_REPLAY_ITEMS);
-    fread(load_buffer, 1, sizeof(LEGACY_REPLAY) * MAX_REPLAY_ITEMS, fin);
-
-    if (endianSwap) {
-        LEGACY_REPLAY *r = NULL;
-        r = load_buffer;
-
-        for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {
-            for (int k = 0; k < r->Qty; k++) {
-                r[j].Off[k] = _Swap16bit(r[j].Off[k]);
-            }
-        }
-    }
-
-    std::vector<std::string> seq;
-    std::map<int, std::string> fseq;
-
-    DESERIALIZE_JSON_FILE(&seq, locate_file("legacy-seq.json", FT_DATA));
-    DESERIALIZE_JSON_FILE(&fseq, locate_file("legacy-fseq.json", FT_DATA));
-
-    for (i = 0; i < MAX_REPLAY_ITEMS; i++) {
-        interimData.tempReplay.at(i).clear();
-        assert(load_buffer[i].Qty <= 35);
-
-        for (int j = 0; j < load_buffer[i].Qty; j++) {
-
-            int code = load_buffer[i].Off[j];
-
-            if (code < 1000) {
-                interimData.tempReplay.at(i).push_back({false, seq.at(code)});
-            } else {
-                interimData.tempReplay.at(i).push_back({true, fseq.at(code)});
-            }
-
-        }
-    }
-
-    free(load_buffer);
-
-    size_t eventSize = fileLength - ftell(fin);
-
-    // Read the Event Data
-    load_buffer = (LEGACY_REPLAY *)malloc(eventSize);
-    fread(load_buffer, 1, eventSize, fin);
-    fclose(fin);
-
-    if (endianSwap) {
-        // File Structure is 84 longs 42 per side
-        for (int j = 0; j < 84; j++) {
-            OLDNEWS *on = (OLDNEWS *) load_buffer + (j * sizeof(OLDNEWS));
-
-            if (on->offset) {
-                on->offset = _Swap32bit(on->offset);
-                on->size = _Swap16bit(on->size);
-            }
-        }
-    }
-
-    // Save Event information
-
-    for (int j = 0; j < MAX_NEWS_ITEMS; j++) {
-        OLDNEWS *on = (OLDNEWS *) load_buffer + j;
-        char *text = (char *) load_buffer + on->offset;
-        interimData.tempEvents.at(j) = "";
-
-        for (int k = 0; k < on->size; k++) {
-            interimData.tempEvents.at(j).push_back(text[k]);
-        }
-    }
-
-    free(load_buffer);
-
-    // MSF now holds MaxRDBase (from 1.0.0)
-    CheckMSF();
-}
-
-// Shift the remaining bytes of the struct by 2 in LegacyLoad function
-void ShiftMemory (int8_t *p, const int legacySize) {
-    std::memmove(p + 2, p, (int8_t *) Data + legacySize - p);
 }
 
 //Checks for MSF in 1st Probe in player, if == 0 resets all MSF Equipment to MaxRD
