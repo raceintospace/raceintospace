@@ -45,7 +45,6 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 

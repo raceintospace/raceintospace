@@ -59,7 +59,6 @@
 #include "port.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "vehicle.h"
 #include "vehicle_selector.h"
