@@ -317,12 +317,12 @@ void NewNauts(int plr) {
     int SovStatsEndur[3] = {3, 3, 1};	
 	
     for (int i = 0; i < 3; i++) {
-        strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], plr ? UsName[i]: SovName[i]);
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = plr ? UsStatsCap[i] : SovStatsCap[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].LM = plr ? UsStatsLM[i] : SovStatsLM[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = plr ? UsStatsEVA[i] : SovStatsEVA[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = plr ? UsStatsDock[i] : SovStatsDock[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = plr ? UsStatsEndur[i] : SovStatsEndur[i];
+        strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], plr ? SovName[i]: UsName[i]);
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = plr ? SovStatsCap[i] : UsStatsCap[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].LM = plr ? SovStatsLM[i] : UsStatsLM[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = plr ? SovStatsEVA[i] : UsStatsEVA[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = plr ? SovStatsDock[i] : UsStatsDock[i];
+        Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = plr ? SovStatsEndur[i] : UsStatsEndur[i];
         Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
         Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
         Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;

@@ -278,16 +278,25 @@ void idle_loop(int ticks)
     idle_loop_secs(ticks / 2000.0);
 }
 
-char *soundbuf;
+char *soundbuf = NULL;
 size_t soundbuf_size = 0;
 size_t soundbuf_used = 0;
 struct audio_chunk news_chunk;
 
-ssize_t load_audio_file(const char *name, char **data, size_t *size)
+/* Loads an audio file.
+ *
+ * \param name  Filename to be loaded.
+ * \param data  Buffer storing the uncompressed audio data.
+ * \param size  Size of the data buffer.
+ * \param music Flag indicating whether the file is a music file.
+ *
+ * \return Number of bytes written to the data buffer.
+ */
+ssize_t load_audio_file(const char *name, char **data, size_t *size, bool music)
 {
     mm_file mf;
     unsigned channels, rate;
-    const size_t def_size = 192 * 1024; // increase from 16b for hq audio files
+    const size_t def_size = 1024 * (music ? 192 : 32768); // increase from 16b for hq audio files
     size_t offset = 0;
     ssize_t read = 0;
     double start = get_time();
@@ -323,8 +332,16 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size)
                                        *data + offset, *size - offset))) {
         offset += read;
 
-        if (*size <= offset) {
-            *data = (char *)xrealloc(*data, *size *= 2);
+        /* Do not use a dynamically growing buffer for non-music
+           audio. See the discussion at
+           <https://github.com/raceintospace/raceintospace/issues/920>. */
+        if(!music) {
+            assert(def_size > offset);
+        }
+        else {
+            if (*size <= offset) {
+                *data = (char *)xrealloc(*data, *size *= 2);
+            }
         }
     }
 
@@ -342,8 +359,7 @@ void NGetVoice(char plr, char val)
     ssize_t bytes = 0;
 
     snprintf(fname, sizeof(fname), "%s_%03d.ogg",(plr ? "sov" : "usa"), val);
-    bytes = load_audio_file(fname, &soundbuf, &soundbuf_size);
-    soundbuf_size = bytes; // // Assign the correct buffer size
+    bytes = load_audio_file(fname, &soundbuf, &soundbuf_size, false);
     soundbuf_used = (bytes > 0) ? bytes : 0;
     PlayVoice();
 }
@@ -386,7 +402,7 @@ void play_audio(std::string str, int mode)
     snprintf(filename, sizeof(filename), "%s.ogg", str.c_str());
 
     CINFO3(audio, "play sound file `%s'", filename);
-    size = load_audio_file(filename, &soundbuf, &soundbuf_size);
+    size = load_audio_file(filename, &soundbuf, &soundbuf_size, false);
     soundbuf_used = (size > 0) ? size : 0;
     PlayVoice();
 }
