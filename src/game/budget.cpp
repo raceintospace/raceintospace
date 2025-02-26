@@ -41,7 +41,6 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);

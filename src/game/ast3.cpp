@@ -38,7 +38,6 @@
 #include "Buzz_inc.h"
 #include "ast0.h"
 #include "draw.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "game_main.h"
 #include "gr.h"

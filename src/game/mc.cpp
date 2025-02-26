@@ -44,7 +44,6 @@
 #include "mission_util.h"
 #include "sdlhelper.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "randomize.h"
 #include "data.h"

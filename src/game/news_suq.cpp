@@ -33,7 +33,6 @@
 #include "news.h"
 #include "options.h"
 #include "pace.h"
-#include "endianness.h"
 
 
 // Roll a six die

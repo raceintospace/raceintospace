@@ -44,7 +44,6 @@
 #include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "hardware_buttons.h"
 #include "hardware.h"

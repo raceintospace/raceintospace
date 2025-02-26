@@ -46,7 +46,6 @@
 #include "crash.h"
 #include "crew.h"
 #include "endgame.h"
-#include "endianness.h"
 #include "filesystem.h"
 #include "gr.h"
 #include "hardware.h"

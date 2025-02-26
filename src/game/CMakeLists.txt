@@ -44,6 +44,7 @@ set(game_sources
   hardware_buttons.cpp
   intel.cpp
   intro.cpp
+  legacy.cpp
   log4c.cpp
   log_default.cpp
   logging.cpp
