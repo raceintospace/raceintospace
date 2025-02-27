@@ -455,7 +455,7 @@ enum AI_Tracking {
 \brief This is a structure representing astronauts/cosmonauts.
 */
 struct Astros {
-    char Name[14];     /**< Astronaut Name */
+    char Name[15];     /**< Astronaut Name */
     int8_t Face;         /**< Code for Astronaut Face */
     int8_t Sex;          /**< Male or Female */
     int8_t Compat;       /**< Compatibility Code */
@@ -1033,7 +1033,7 @@ struct VInfo {
     int MaxRD;
 };
 struct ManPool {
-    char Name[14];
+    char Name[15];
     int8_t Sex, Service, Race, Cap, LM, EVA, Docking, Endurance;
 
     template<class Archive>
@@ -1401,11 +1401,11 @@ struct AssetData {
 BOOST_STATIC_ASSERT(sizeof(PrestType) == 15);
 BOOST_STATIC_ASSERT(sizeof(Equipment) == 60);
 BOOST_STATIC_ASSERT(sizeof(MissionType) == 43);
-BOOST_STATIC_ASSERT(sizeof(Astros) == 64);
+BOOST_STATIC_ASSERT(sizeof(Astros) == 65);
 BOOST_STATIC_ASSERT(sizeof(PastInfo) == 84);
-BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15641);
+BOOST_STATIC_ASSERT(sizeof(BuzzData) == 15706);
 BOOST_STATIC_ASSERT(sizeof(MisEval) == 40);
-BOOST_STATIC_ASSERT(sizeof(Players) == 39108);
+BOOST_STATIC_ASSERT(sizeof(Players) == 39238);
 
 #endif // RIS_DATA_H
 
