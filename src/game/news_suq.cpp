@@ -251,7 +251,7 @@ char REvent(char plr)
 
     case 42:
     case 43:  /* increment R&D cost by 1 on most advanced program */
-        evflag = RDMod(plr, 0, 1, 1);
+        evflag = RDMods(plr, 0, 1, 1);
 
         if (evflag == 0) {
             return 1;
@@ -263,14 +263,14 @@ char REvent(char plr)
 
     case 5:
     case 47: // Improve tech of plr prog from rival prog
-        evflag = StealMod(plr, 0, 1);
+        evflag = Steal(plr, 0, 1);
 
         if (!evflag) return 1;
         break;
  
     case 6:
     case 7: // Lower tech of plr prog from rival prog
-        evflag = StealMod(plr, 0, -1);
+        evflag = Steal(plr, 0, -1);
 
         if (!evflag) return 1;
         break;
@@ -362,25 +362,25 @@ char REvent(char plr)
     // Program Saving cards ------------------------------------
 
     case 11:  // Set Safety Card for most Advanced program
-        evflag = SaveMod(plr, 0);
+        evflag = SaveMods(plr, 0);
 
         if (!evflag) return 1;
         break;
 
     case 48:  // Set Safety Card for advanced Rocket program
-        evflag = SaveMod(plr, 2);
+        evflag = SaveMods(plr, 2);
 
         if (!evflag) return 1;
         break;
 
     case 77:  // set Safety Card for advanced Capsule Program
-        evflag = SaveMod(plr, 3);
+        evflag = SaveMods(plr, 3);
 
         if (!evflag) return 1;
         break;
 
     case 93:  // set Safety Card for advanced LEM Program
-        evflag = SaveMod(plr, 4);
+        evflag = SaveMods(plr, 4);
 
         if (!evflag) return 1;
         break;
@@ -433,7 +433,7 @@ char REvent(char plr)
     case 94:  /*  this applies for the most advanced capsule program. 
                   roll four 6-sided dice and add to current safety factor. */
         x = rollSixDie(4);
-        evflag = SafetyMod(plr, 3, 1, x);
+        evflag = NMod(plr, 3, 1, x);
 
          if (!evflag) return 1;
 
@@ -443,7 +443,7 @@ char REvent(char plr)
     case 23:  /* this applies to the most advanced rocket program.
                  roll six 6-sided dice and add to current safety factor. */
         x = rollSixDie(6);
-        evflag = SafetyMod(plr, 2, 1, x);
+        evflag = NMod(plr, 2, 1, x);
 
         if (!evflag) return 1;
 
@@ -453,7 +453,7 @@ char REvent(char plr)
     case 24:  /*  this applies for the most advanced satellite program. 
                   roll four 6-sided dice and add to current safety factor. */
         x = rollSixDie(4);
-        evflag = SafetyMod(plr, 1, 1, x);
+        evflag = NMod(plr, 1, 1, x);
 
         if (!evflag) return 1;
 
@@ -461,7 +461,7 @@ char REvent(char plr)
         break;
 
     case 26:  /* select most advanced capsule program and reduce safety by 25%  */
-        evflag = SafetyMod(plr, 3, -1, 25);
+        evflag = NMod(plr, 3, -1, 25);
 
         if (!evflag) return 1;
 
@@ -469,7 +469,7 @@ char REvent(char plr)
         break;
 
     case 27:  /* select most advanced probe program and reduce safety by 15%  */
-        evflag = SafetyMod(plr, 1, -1, 15);
+        evflag = NMod(plr, 1, -1, 15);
 
         if (!evflag) return 1;
 
@@ -477,7 +477,7 @@ char REvent(char plr)
         break;
 
     case 34:  /* 20% loss most advanced capsule program */
-        evflag = SafetyMod(plr, 3, -1, 20);
+        evflag = NMod(plr, 3, -1, 20);
 
         if (!evflag) return 1;
 
@@ -485,7 +485,7 @@ char REvent(char plr)
         break;
 
     case 79:  /* select most advanced program and reduce safety by 20%  */
-        evflag = SafetyMod(plr, 0, -1, 20);
+        evflag = NMod(plr, 0, -1, 20);
 
         if (!evflag) return 1;
 
