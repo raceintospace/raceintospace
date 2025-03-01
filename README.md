@@ -27,6 +27,17 @@ Race  Into Space  is distributed  under GNU  General Public  License
 (GPL)  version 2.  You can find  the  terms and  conditions in  file
 `COPYING`.
 
+# Getting help
+
+We have a [Matrix space](https://matrix.to/#/#raceintospace:matrix.org), where 
+you can obtain help, discuss the game in general, and also find others to play
+against, The space consists of two rooms:
+
+| Room                  | Description                           |
+| --------------------- | ------------------------------------- |
+| [raceintospace-general](https://matrix.to/#/#raceintospace-general:matrix.org) | General discussions about the game.   |
+| [raceintospace-games](https://matrix.to/#/#raceintospace-games:matrix.org)   | Arrange games to play against others. |
+
 # Contributing
 
 We coordinate development through the [GitHub issue
