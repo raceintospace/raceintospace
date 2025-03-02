@@ -110,7 +110,7 @@ char Burst(char win)
                         && mousebuttons > 0) || key == 'M') {
                 R_value = 4;
             } else if ((x >= 254 && y >= 182 && x <= 305 && y <= 190
-                        && mousebuttons > 0) || key == K_ENTER) {
+                        && mousebuttons > 0) || key == K_ENTER || key == 'E') {
                 R_value = 5;
             }
 
