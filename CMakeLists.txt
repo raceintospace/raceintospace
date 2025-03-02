@@ -33,7 +33,7 @@ endif("${lc_CMAKE_BUILD_TYPE}" STREQUAL "debug")
 add_subdirectory(src)
 
 # Distribution
-set(CPACK_PACKAGE_NAME "Race Into Space")
+set(CPACK_PACKAGE_NAME "raceintospace")
 set(CPACK_PACKAGE_VENDOR "Race Into Space")
 set(CPACK_PACKAGE_VERSION "${raceintospace_VERSION_FULL}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
@@ -62,8 +62,10 @@ else (WINDOWS)
 	install(FILES icons/raceintospace.xpm icons/raceintospace.png DESTINATION share/pixmaps)
 	install(FILES doc/org.raceintospace.Raceintospace.metainfo.xml
 		DESTINATION share/metainfo)
+        if(NOT DEFINED CPACK_GENERATOR)
+                set(CPACK_GENERATOR TGZ)
+        endif(NOT DEFINED CPACK_GENERATOR)
 
-	set(CPACK_GENERATOR TGZ)
 endif(WINDOWS)
 
 # Output generated CPack package name to a file so we can read that in CI
@@ -72,11 +74,13 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/CpackWritePackageNames.cmake.in"
 			   @ONLY)
 set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames.cmake")
 set(CPACK_SOURCE_GENERATOR TGZ)
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Race into Space Team")
+if(NOT WINDOWS)
+       if(${CPACK_GENERATOR} MATCHES TGZ)
+                INSTALL(PROGRAMS dist/linux-tgz/run.sh DESTINATION .)
+       endif(${CPACK_GENERATOR} MATCHES TGZ)
+endif(NOT WINDOWS)
 include(CPack)
-
-if(CPACK_GENERATOR MATCHES TGZ)
-        INSTALL(PROGRAMS dist/linux-tgz/run.sh DESTINATION .)
-endif(CPACK_GENERATOR MATCHES TGZ)
 
 find_program(GIT git DOC "Git program path")
 
