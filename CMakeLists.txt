@@ -74,6 +74,10 @@ set(CPACK_POST_BUILD_SCRIPTS "${PROJECT_BINARY_DIR}/cmake/CpackWritePackageNames
 set(CPACK_SOURCE_GENERATOR TGZ)
 include(CPack)
 
+if(CPACK_GENERATOR MATCHES TGZ)
+        INSTALL(PROGRAMS dist/linux-tgz/run.sh DESTINATION .)
+endif(CPACK_GENERATOR MATCHES TGZ)
+
 find_program(GIT git DOC "Git program path")
 
 add_custom_target(dist
