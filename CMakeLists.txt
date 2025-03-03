@@ -39,6 +39,18 @@ set(CPACK_PACKAGE_VERSION "${raceintospace_VERSION_FULL}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(CPACK_RPM_PACKAGE_SUMMARY "space race strategy simulation game")
+set(CPACK_RPM_PACKAGE_DESCRIPTION
+"Race into Space is an open source strategy game where the United
+States and the Soviet Union compete for the first manned lunar
+landing. It is the computer version of the Liftoff! board game by
+Fritz Bronner, originally published by Interplay in 1993. A number of
+improvements have been made over the original version.")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_RPM_PACKAGE_SUMMARY}
+${CPACK_RPM_PACKAGE_DESCRIPTION}")
+set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libsdl1.2debian, libvorbis0a, libvorbisenc2, libpng16-16, libphysfs1, libjsoncpp25")
+
 
 if (WINDOWS)
 	configure_file("${PROJECT_SOURCE_DIR}/cmake/NsisCpack.cmake.in"

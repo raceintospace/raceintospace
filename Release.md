@@ -11,7 +11,7 @@ Ensure that the main CMakeLists.txt generates the correct version number.
 This produces a tarball in the build directory. 
 
 ## Linux binaries
-We build a generic tarball, a DEB package, and an RPM package.
+We build a generic tarball, a DEB package, and an RPM package. This requires the packages dpkg and rpm being installed.
 1. Copy the music files from raceintospace-nonfree
 2. cmake --preset linux-release $PATH_TO_SOURCE_DIRECTORY
 3. make package
