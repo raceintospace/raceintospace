@@ -4,7 +4,7 @@ project(raceintospace VERSION 2.0.0)
 
 enable_testing()
 
-set (raceintospace_VERSION_EXTRA rc3)
+set (raceintospace_VERSION_EXTRA)
 set (raceintospace_VERSION_FULL
 	"${raceintospace_VERSION}${raceintospace_VERSION_EXTRA}")
 
@@ -41,7 +41,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 set(CPACK_RPM_PACKAGE_SUMMARY "space race strategy simulation game")
 set(CPACK_RPM_PACKAGE_DESCRIPTION
-"Race into Space is an open source strategy game where the United
+"Race into Space is an open-source strategy game where the United
 States and the Soviet Union compete for the first manned lunar
 landing. It is the computer version of the Liftoff! board game by
 Fritz Bronner, originally published by Interplay in 1993. A number of
