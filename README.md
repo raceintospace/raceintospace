@@ -139,11 +139,13 @@ To install in your home directory, you need to pass `--prefix` to configure firs
 
 ## Mac OS X
 
-You need CMake, which is readily obtained from
-[Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway.
-The only external dependency needed is `sdl`:
+Building is supported on MacOS 15 and later, on Apple chips.
 
-    $ brew install cmake sdl
+You need CMake, which is readily obtained from
+[Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway. You also need `pkg-config`, 
+if you don't have it already. The only external dependency needed is `sdl`.
+
+    $ brew install cmake sdl pkg-config
 
 CMake and vcpkg automatically handle all other dependencies.
 
