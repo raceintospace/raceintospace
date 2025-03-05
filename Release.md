@@ -5,9 +5,13 @@ Ensure that the main CMakeLists.txt generates the correct version number.
 
 ## Source distribution
 1. Start with a fresh clone from master
-2. Change into a separate build directory
-3. cmake $PATH_TO_SOURCE_DIRECTORY
-4. make package_source
+
+   `git clone https://github.com/raceintospace/raceintospace`
+
+   Note that this doesn't contain --recurse-submodules, as we don't want vcpkg to be included in the source release.
+3. Change into a separate build directory
+4. cmake $PATH_TO_SOURCE_DIRECTORY
+5. make package_source
 This produces a tarball in the build directory. 
 
 ## Linux binaries
