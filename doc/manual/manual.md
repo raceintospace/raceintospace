@@ -32,13 +32,13 @@ One question to consider is whether to maintain a backup strategy.  Early tester
 
 The game has many keyboard commands; those that activate buttons usually have the corresponding letter displayed in a different color in the relevant button.  Pressing F2 will show the keyboard commands for that screen; also, pressing F1 will activate context-sensitive help for the screen.
 
-Although RIS includes a number of improvements over the original BARIS, the look and feel and the gameplay should be mostly the same.  For the most part, the changes should simply make it easier to play, as the game used to have a lot of rough edges.  Also a few of the names (of rockets, capsules, and spacepeople) have been changed to improve its educational potential, as a historical simulation of the 1960s Space Race.  Information about the Soviet lunar program was limited when BARIS was developed, which required some educated guesses at names for some of the Soviet hardware and cosmonauts.  RIS has been able to take advantage of what's known today to use more historical names.  It also includes a large number of bug fixes, especially in mission failure handling, and newscasts that didn't work as they should, plus a few of the game mechanics are more realistic.
+Although RIS includes a number of improvements over the original BARIS, the look and feel and the gameplay should be mostly the same.  For the most part, the changes should make it easier to play, as the game used to have a lot of rough edges and it's now much more forgiving than the original.  Also a few of the names (of rockets, capsules, and spacepeople) have been changed to improve its educational potential, as a historical simulation of the 1960s Space Race.  Information about the Soviet lunar program was limited when BARIS was developed, which required some educated guesses at names for some of the Soviet hardware and cosmonauts.  RIS has been able to take advantage of what's known today to use more historical names.  It also includes a large number of bug fixes, especially in mission failure handling and newscasts that didn't work as they should, plus a few of the game mechanics are more realistic.
 
-Race Into Space, like BARIS, uses its own flight profile for the historically considered approaches to the Moon.  So the terms in RIS don't correspond to those used during the Space Race, but they work well in-game and their meaning is more straightforward.  You will see these terms mentioned in newscasts; just bear in mind that the newscast is referring to the historic proposal and also does not affect your space program.
+Race Into Space, like BARIS, uses its own flight profile for the historically considered approaches to the Moon.  So the terms in RIS don't correspond to those used during the Space Race, but they work well in-game and their meaning is more straightforward.  You will see these terms mentioned in newscasts; just bear in mind that the newscast is referring to the historic proposal and does not affect your space program.
 
 **Direct Ascent** is the same as the historic proposal: a single capsule which lands on the Moon, like in old sci-fi movies.
 
-**Lunar-Orbital Rendezvous (LOR)** is called the Historical Manned Lunar Landing in the game.  It's what happened on the Apollo landings and what the Soviets were planning—the capsule and LM launch together on a single rocket, go to the Moon together, then rendezvous in lunar orbit when the LM leaves the lunar surface.  In the game, LOR is a Joint mission where the capsule and LM are launched on separate rockets, fly separately to the Moon, and rendezvous in lunar orbit.
+**Lunar-Orbital Rendezvous (LOR)** is called the Historical Manned Lunar Landing in the game.  It's what happened on the Apollo landings and what the Soviets were planning—the capsule and LM launch together on a single rocket, go to the Moon together, then rendezvous in lunar orbit when the LM leaves the lunar surface.  In the game, LOR is a Joint mission where the capsule and LM are launched on separate rockets, fly separately to the Moon, and meet up in lunar orbit.
 
 **Earth-Orbital Rendezvous (EOR)** was a proposal by Wernher von Braun to use multiple smaller rockets to launch the components for a direct-ascent type capsule built in Earth orbit.  The Soyuz Lunar Landing is based on a similar concept proposed early on by the Soviets, but it was converted to a form of LOR mission (in game terms) for balance.  In RIS, EOR is a Joint mission where the capsule and LM are launched on separate rockets, rendezvous in Earth orbit, and fly together to the Moon.
 
@@ -146,18 +146,19 @@ Those Advanced Preferences that should be of most interest to users (and which s
     
 * `no_backup` – Forces you to assign a Backup as well as a Primary crew to all missions (Classic setting).
     
-    The requirement was dropped because it's your space program after all; surely you should be able to forgo assigning a backup crew if you want, though it's still recommended since it reduces the risk of cancellation.
+    The requirement was dropped in version 1.0 because it's your space program after all; surely you should be able to forgo assigning a backup crew if you want, though it's still recommended since it reduces the risk of cancellation.
     
-* `no_money_cheat` – Disables the money cheat (pressing $ in Purchasing) in single-player games.  It is always disabled in multiplayer.
+* `no_money_cheat` – Disables the money cheat (pressing $ in Purchasing) in single-player games (Classic setting).  It is always disabled in multiplayer.
 
 * `show_recruit_stats` –  By default you can now see skills other than CA and EN during recruitment; setting `show_recruit_stats 0` will return to Classic behavior.
 
-* `use_endurance` –  By default the game now makes some use of the Endurance skill, which it didn't before.  It adds the crew's EN average to the duration steps on duration missions, and spacepeople hurt in a newscast are less likely to retire if their endurance is high; set to `use_endurance 0` to return to Classic behavior.
+* `use_endurance` –  By default the game now makes some use of the Endurance skill, which it didn't before.  It adds the crew's EN average to the duration steps on duration missions, and spacepeople hurt in a newscast are less likely to retire if their endurance is high.  Also people sent to the Hospital tend to be released sooner if they have a high EN.  Set to `use_endurance 0` to return to Classic behavior.
 
 * `succesRDMax` –  Max R&D will increase 1 pt/mission only if the component was already at Max R&D (Classic setting).  The change made in RIS 2.0 (which this option turns off) does two things.
 
     1. Dummy tests on equipment not yet at Max R&D still count toward reaching Max Safety; if you fly a Vostok at, say, 70% its Safety will go up to 71% *and* the Max R&D will go up a percent; this encourages players to fly dummy tests, since it makes it worthwhile to fly them early.  
     2. Allows you to research back to where you left off if your component was downgraded due to a newscast.  Of course, Max R&D is still reset by catastrophic failures.
+    
     Setting `succesRDMax 0` will require the usual dummy tests to return your hardware to its previous Safety rating after a newscast, and will reintroduce "wasted" dummy tests.
 
 * `boosterSafety` –  The Safety of a boosted rocket will be the average of rocket and booster safety (Classic setting), rather than the two multiplied by one another (e.g., rocket at 85% and booster at 45% would work out to 85+45÷2=65%, rather than .85x.45=.38 or 38%).
@@ -204,7 +205,7 @@ On the left you see one graph displaying your and your opponent's prestige over 
 
 This is where you start new programs or buy additional hardware.  Everything here is potentially useful, but not all of it will be needed.  For instance, lunar landers will be unnecessary if you have chosen direct ascent or the Kicker-C.  Note that you can never have more than 6 of any component at any given time.
 
-There is a built-in advantage to developing programs in progressive order, called technology transfer.  If, for instance, you have researched your Mercury capsule to a high level and then begin the Gemini program, your Gemini capsules will start off at a higher Safety than if you had skipped Mercury.  The same would happen for Apollo if your Gemini was highly reliable; however, Apollo wouldn't get very much technology transfer from Mercury.  Jupiter would get very little from Mercury, and XMS-2 will get none in any case since it's a completely different sort of spacecraft.
+There is a built-in advantage to developing programs in progressive order, called technology transfer.  If, for instance, you have researched your Mercury capsule to a high level and then begin the Gemini program, your Gemini capsules will start off at a higher Safety than if you had skipped Mercury.  The same would happen for Apollo if your Gemini was highly reliable; however, Apollo wouldn't get very much tech transfer from Mercury.  Jupiter would get very little from Mercury, and XMS-2 will get none in any case since it's a completely different sort of spacecraft.
 
 In BARIS, this was all or nothing.  If a component wasn't quite at 75%, it would give no tech transfer at all.  RIS (starting with v.1.1) gives at least partial tech transfer when your hardware is above starting Safety.
 
@@ -220,10 +221,10 @@ There are four categories of space hardware:
 
 <table>
 <tr>
-  <td>Probes:</td>
-  <td>Launch Vehicles:</td>
-  <td>Manned Spacecraft:</td>
-  <td>Miscellaneous:</td>
+  <td><b>Probes:</b></td>
+  <td><b>Launch Vehicles:</b></td>
+  <td><b>Manned Spacecraft:</b></td>
+  <td><b>Miscellaneous:</b></td>
 </tr><tr>
   <td valign="top">Explorer/Sputnik<br/>
     Ranger/Cosmos<br/>
@@ -253,7 +254,7 @@ There are four categories of space hardware:
 ![US Satellites](image_4.png)  ![Soviet Satellites](image_5.png)
 
 * Explorer/Sputnik: A simple satellite which can only be used for the Orbital Satellite mission.  However, the Safety rating of this device is what's rolled against on the Hardware Power-On step of Docking tests, so a high Explorer/Sputnik Safety is helpful unless you're flying direct ascent.
-* Ranger/Cosmos:  A flyby probe, which can be sent to the Moon or any of the planets out to Saturn.  So Voyager 1 and 2 aren't an option in this game, but with two probes you can (sort of) recreate Pioneer 10 and 11.  A very good way to gather lunar reconnaissance.
+* Ranger/Cosmos:  A flyby probe, which can be sent to the Moon or any of the planets out to Saturn.  So Voyager 1 and 2 aren't an option in this game, but with two probes you can (sort of) recreate Pioneer 10 and 11.  This probe is very useful for gathering lunar reconnaissance.
 * Surveyor/Luna:  A lunar landing probe.  Unlike Ranger/Cosmos it can't be sent to other planets, just the Moon; it may, however, act as a lunar flyby probe if it should miss the Moon, giving you some photo recon.
 
 ##### Launch Vehicles
@@ -286,7 +287,7 @@ There are four categories of space hardware:
 * Kicker-B: Used to send a Gemini/Voskhod or XMS-2/Lapot, plus an LM, out of orbit toward the Moon.  Can push one or two major components (capsule/shuttle and lunar lander), so can be used on LOR, EOR, or Historical missions.
 * Kicker-C: Soviet-only technology.  Replaces lunar modules; lands a Soyuz capsule on the Moon and lifts it off for return to Earth.  Cannot be used with any other spacecraft.
 * EVA Suit: Required for spacewalks and lunar landings.  These are different from pressure suits and are not needed on missions where the crew stays inside the spacecraft.
-* Docking Module: Required for missions involving docking.  Their power-on step is rolled against the Explorer/Sputnik safety.  This is the only component that cannot be researched—it must be tested to improve its safety.  Gains 10% from successes, 5% from failures.
+* Docking Module: Required for missions involving docking.  Their power-on step is rolled against the safety of your Explorer/Sputnik.  This is the only component that cannot be researched—it must be tested to improve its safety.  Gains 10% from successes, 5% from failures.
 
 ![Future Missions](image_12.png)
 
@@ -316,13 +317,13 @@ Once you have selected the mission you want, click Continue or press Enter.
 
 ![Capsule and Crew Selection for a mission](image_14-15.png)
 
-If this mission involves a capsule or shuttle, you'll be prompted to select which vehicle you want to use, as shown in the lefthand image above.  If this is a manned mission, you will then select crews for it as in the righthand image.  In BARIS, crews currently in Training (meaning they had been assembled that turn) could not be assigned to a mission; they had to wait a turn first.  In RIS this is no longer necessary, unless you set `no_c_training 0` in Advanced Preferences.  Similarly, BARIS required you to assign both a primary and backup crew to each mission.  RIS allows you to select only a primary if you wish, though you can make backup crews required again by setting `no_backup 0` in Advanced Preferences.
+If this mission involves a capsule or shuttle, you'll be prompted to select which vehicle to use, as shown in the lefthand image above.  If this is a manned mission, you will then select crews for it as in the righthand image.  In BARIS, crews currently in Training (meaning they had been assembled that turn) could not be assigned to a mission; they had to wait a turn first.  In RIS this is no longer necessary, unless you set `no_c_training 0` or `game_style 1` in Advanced Preferences.  Similarly, BARIS required you to assign both a primary and backup crew to each mission.  RIS allows you to select only a primary if you wish, though you can make backup crews required again by setting `no_backup 0` or `game_style 1` in Advanced Preferences.
 
 #### Dummy Tests
 
 Once your hardware reaches Max R&D, it's impossible to further improve it through research, yet it may not be safe enough to risk lives with.  So it's often advisable to fly it on real, but unmanned, missions.  This puts the hardware through its paces and increases its Safety by 1% per mission, so long as it performs successfully on at least one step of the flight.  Dummy tests don't gain or lose you prestige, but they offer a safe way to improve your hardware.
 
-In BARIS, dummy tests flown below Max R&D would give the player nothing besides a simple 1% Safety, effectively discouraging aggressive testing.  RIS avoids this by raising the Max R&D by 1% on each flight (again, so long as the hardware succeeds on at least one step), which can make it helpful to fly dummy tests before research is complete.  (Catastrophic failures will still reset the Max R&D to its original level, to avoid disrupting game balance.)  This behavior can be reset to the way BARIS worked by setting `succesRDMax 0` in Advanced Preferences.
+In BARIS, dummy tests flown below Max R&D would give the player nothing besides a simple 1% Safety, effectively discouraging aggressive testing.  RIS avoids this by raising the Max R&D by 1% on each flight (again, so long as the hardware succeeds at least once), which can make it helpful to fly dummy tests before research is complete.  (Catastrophic failures will still reset the Max R&D to its original level, to avoid disrupting game balance.)  This behavior can be reset to the way BARIS worked by setting `succesRDMax 0` in Advanced Preferences.
 
 ![Recruitment Screen](image_16.png)
 
@@ -338,7 +339,7 @@ In the recruitment screen, you will see the number of available positions, with 
 <tr><td>L.M. Pilot</td><td>This is added to LM steps of a mission—the actual testing of a lander, or flying it on lunar landings. Mostly irrelevant until late in the game.</td></tr>
 <tr><td>E.V.A.</td><td>This is added to spacewalks and lunar EVA. Not very important, since these rarely fail in any case.</td></tr>
 <tr><td>Docking</td><td>This is added to attempts at docking. Especially helpful midway through the game.</td></tr>
-<tr><td>Endurance</td><td>This is added to Duration steps of duration missions, and astronauts with high EN slightly have less chance of washing out of the space program, unless you set `game_style 1` or `use_endurance 0`.  When injured, they also tend to spend less time in the hospital.</td>
+<tr><td>Endurance</td><td>This is added to Duration steps of duration missions, and astronauts with high EN have slightly less chance of washing out of the space program, unless you set `use_endurance 0` or `game_style 1`.  When injured, they also tend to spend less time in the hospital.</td>
   </tr>
 </table>
 
@@ -347,7 +348,7 @@ There is also a field for Service (where a candidate came from, e.g. which branc
 
 #### Preferences
 
-Once the game has started, you can change only music, sound, and player names. In a two-player game you may change only your name.
+Once the game has started, you can change only music, sound, and player names. In a two-player game you may change only your own name.
 
 #### Time Capsule
 
@@ -366,7 +367,7 @@ This shows your prestige compared to your opponent's, and how it has progressed 
 
 #### Space History
 
-This shows a history of your space missions, one turn per screen.  Each mission you've flown is displayed with its name, an icon showing the type of spacecraft, and its mission patch.  Clicking on the mission will show its History screen, which gives more information on what it was about and who, if anyone, was aboard.  You can also replay it here if you wish.
+This shows the history of your space program, one turn per screen.  Each mission you've flown is displayed with its name, an icon showing the type of spacecraft, and its mission patch.  Clicking on the mission will show its History screen, which gives more information on what it was about and who, if anyone, was aboard.  You can also replay it here if you wish.
 
 #### Mission Records
 
@@ -416,7 +417,7 @@ It is often a good idea to make this your first stop when you begin your turn, s
 
 ### Launch Pads A, B, and C
 
-You start the game with one launch facility (Pad A) and can purchase more as needed.  If you click on one that has a launch going up this turn, you'll see the mission name, crew if any, and duration level, plus the mission patch.  Here too you can repair the pad or Scrub the mission if you so desire.  Note that in the example above, the second member of the backup crew shows in black, as he has announced retirement and will soon be departing the space program.
+You start the game with one launch facility (Pad A) and can purchase more as needed.  If you click on one that has a launch going up this turn, you'll see the mission name, crew if any, and duration level, plus the mission patch.  Here too you can repair the pad, or Delay or Scrub the mission if you so desire.  Note that in the example above, the second member of the backup crew shows in black, as he has announced retirement and will soon be departing the space program.
 
 ![Research & Development](image_20.png)
 
@@ -479,7 +480,7 @@ After 3 turns, they leave Basic Training and go to the Astronaut Complex (US) or
 
 ### Astronaut Complex / Cosmonaut Center
 
-This is the distribution point for your spacepeople.  From here you can send them to a capsule or shuttle program, or to Advanced Training.  Leaving the Transfer Astronaut/Cosmonaut button selected, press the button for where you want the highlighted person to go.  To follow them there, or go somewhere else, select the Facility Transfer button and click on your destination.  The Send All button will send everyone who isn't about to retire to the capsule/shuttle program you select.  Note that here and in many other places, your veterans will show the number of missions they've flown.  This can help you keep track of your veteran versus unflown spacepeople.
+This is the distribution point for your spacepeople.  From here you can send them to a capsule or shuttle program, or to Advanced Training.  Leaving the Transfer Astronaut/Cosmonaut button selected, press the button for where you want the highlighted person to go.  To follow them there, or go somewhere else, select the Facility Transfer button and click on your destination.  The Send All button will send everyone who isn't about to retire (such as Chaffee above) to the capsule/shuttle program you select.  Note that here and in many other places, your veterans will show the number of missions they've flown.  This can help you keep track of your veteran versus unflown spacepeople.
 
 ![Jupiter Program Screen](image_24.png)
 
@@ -499,7 +500,7 @@ Your spacepeople prefer being assigned to a compatible crew to languishing back 
 
 <table>
   <tr>
-    <td>Color</td><td>Mood</td></tr>
+    <td><b>Color</b></td><td><b>Mood</b></td></tr>
 <tr><td>Green</td><td>Happy</td></tr>
 <tr><td>Yellow</td><td>Ok, could be better</td></tr>
 <tr><td>Red</td><td>Frustrated</td></tr>
@@ -546,11 +547,11 @@ The Satellite building shows information on several programs, mainly unmanned.  
 
 <table>
   <tr>
-    <td>Name</td>
-    <td>First</td>
-    <td>Second</td>
-    <td>Other</td>
-    <td>Failure</td>
+    <td><b>Name</b></td>
+    <td><b>First</b></td>
+    <td><b>Second</b></td>
+    <td><b>Other</b></td>
+    <td><b>Failure</b></td>
   </tr>
   <tr>
     <td>Orbital Satellite**</td>
@@ -748,7 +749,7 @@ The Satellite building shows information on several programs, mainly unmanned.  
 
 ## MISSION MILESTONE STEPS
 
-Space exploration was something completely new in the 1950s and early '60s.  Space could be filled with a host of dangers to human beings and living things generally—and some turned out to be real.  Rushing ahead heedless of those possibilities would have been foolhardy.  We sent probes up above the atmosphere to see what was there, and discovered the Van Allen Belt.  Then we sent animals into space: generally, the US used primates and the Soviets used dogs.  Finally we sent up humans, briefly at first, and for longer periods as we learned more about how the human body reacts to weightlessness.  We learned, for instance, that early fears of astronauts losing control of their reasoning were unfounded; however we also discovered unexpected effects such as space sickness and gradual loss of bone and muscle mass, which have to be taken into account on longer voyages.
+Space exploration was something completely new in the 1950s and early '60s.  Space could be filled with a host of dangers to human beings and living things generally—and some turned out to be real.  Rushing ahead heedless of those possibilities would have been foolhardy.  We sent probes up above the atmosphere to see what was there, and discovered the Van Allen Belt.  Then we sent animals into space: generally, the US used primates and the Soviets used dogs.  Finally we sent up humans, briefly at first, and for longer periods as we learned more about how the human body reacts to weightlessness.  We learned, for instance, that early fears of astronauts losing control of their reasoning were unfounded; however we also discovered unexpected effects such as space sickness and gradual loss of bone and muscle mass, which have to be taken into account on space voyages.
 
 Before the US sent anyone into orbit it tossed up a couple astronauts on suborbital missions, and both sides performed simple orbitals before attempting long durations or spacewalks.  Duration, EVA, and docking were all well under our belt before the US ventured beyond Earth orbit, and the Soviets never did—though they did send animals around the Moon.  Race Into Space models the importance of incremental progress by assigning extra risk to missions that skip milestone steps.  Skipping is useful sometimes, but not something to be done lightly.  Each milestone skipped carries a 3% penalty on each step of the flight, so if you skip two milestones for a mission, every step will suffer 6%.  Of course if it succeeds, you'll get credit for having accomplished those steps and won't be penalized for them again.
 
@@ -802,14 +803,14 @@ Docking is a capability required for any manned landing except direct ascent.  R
 
 ### DURATION
 
-Once your space program has performed a simple Earth orbital, it's time to consider longer flights, to see how people perform in space for extended periods.  Certainly they'll have to be able to go for 8-12 days, as lunar orbitals and landings are Duration D missions.  Longer duration isn't necessary (good news if you're flying minishuttles), but earns extra prestige.  It's important to raise your duration level by flying Duration missions incrementally, since skipping a duration level carries a 5% penalty.  That is, if you fly an Orbital (Dur A) followed by a Duration B mission you're fine, but if you went directly from A to C you would face a penalty.  You would also have a duration penalty if you had flown Duration B and then flew a Manned Lunar Pass or Manned Orbiting Lab, which *require* Duration C.  Duration levels are as follows:
+Once your space program has performed a simple Earth orbital, it's time to consider longer flights, to see how people perform in space for extended periods.  Certainly they'll have to be able to go for 8-12 days, as lunar orbitals and landings are Duration D missions.  Longer duration isn't necessary (good news if you're flying minishuttles), but earns extra prestige.  It's important to raise your duration level by flying Duration missions incrementally, since skipping a level carries a 5% penalty.  That is, if you fly an Orbital (Dur A) followed by a Duration B mission you're fine, but if you went directly from A to C you would face a penalty.  You would also have a duration penalty if you had flown Duration B and then flew a Manned Lunar Pass or Manned Orbiting Lab, which *require* Duration C.  Duration levels are as follows:
 
 <table>
   <tr>
-    <td>Days</td>
-    <td>Level</td>
-    <td>Prestige</td>
-    <td>Comments</td>
+    <td><b>Days</b></td>
+    <td><b>Level</b></td>
+    <td><b>Prestige</b></td>
+    <td><b>Comments</b></td>
   </tr>
   <tr>
     <td>1-2</td>
@@ -854,7 +855,7 @@ Once your space program has performed a simple Earth orbital, it's time to consi
 
 Lunar Modules should ideally be tested before they're used for the actual landing.  As mentioned earlier, RIS uses a system of LM Points to model this.  To avoid penalties on your landing you need 3 points, which you get from LM tests&mdash;which are always manned.  Tests in Earth orbit are worth 1 point, and those in lunar orbit are worth 2.  You could run three Earth-orbital tests to get your three points, or one Earth-orbital and one lunar-orbital (as happened with Apollos 9 and 10).  You could do two lunar-orbital tests if you wished, though there's no advantage to racking up more than 3 points.
 
-If you have under 3 points, your lunar landings will face a penalty on the LM portions of the landing.  Each LM step will be docked 3% per missing point, so if you performed no tests, you would face a 9% penalty; if you performed just one Earth-orbital test, you'd be docked 6% on those steps.  Direct ascent capsules do not require LM tests; neither do Soyuz Lunar Landings, which use a Kicker-C in place of an LM..
+If you have under 3 points, your lunar landings will face a penalty on the LM portions of the landing.  Each LM step will be docked 3% per missing point, so if you performed no tests, you would face a 9% penalty; if you performed just one Earth-orbital test, you'd be docked 6% on those steps.  Direct ascent capsules do not require LM tests; neither do Soyuz Lunar Landings, which use a Kicker-C in place of an LM.
 
 ## STRATEGY
 
@@ -908,9 +909,9 @@ These are all the available mission types.  You'll never fly all of them in one 
 
 <table>
   <tr>
-    <td>#</td>
-    <td>Mission Name</td>
-    <td>Description</td>
+    <td><b>#</b></td>
+    <td><b>Mission Name</b></td>
+    <td><b>Description</b></td>
   </tr>
   <tr>
     <td>0</td>
