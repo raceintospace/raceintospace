@@ -164,26 +164,27 @@ project file:
 
 ## Windows
 
-Ingredients:
+The easiest way to compile the game is the following:
 
-* [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
-    * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!
-    * Full IDE is not needed
-* [CMake](https://www.cmake.org/cmake/resources/software.html) (free, also included above)
-* [Git](https://git-scm.com/downloads) or [GitHub for Windows](https://desktop.github.com/) (free)
+1. Before you start, ensure that the following is installed:
 
-Open the command prompt and make sure git, your compiler and cmake are accessible (check [Visual Studio Developer Command Prompt and Developer PowerShell](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022))
+   * [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
+       * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!
+       * If you have already installed Visual Studio but are missing a component, you can launch the Visual Studio installer app, choose "Modify" and select further components for installation.
+   * [Git](https://git-scm.com/downloads)
+2. Start Visual Studio and launch Tools/[Visual Studio Developer Command Prompt](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022). This is important and puts cmake and ninja into your path.
+3. clone, configure and build the game:
 
-Then clone, configure and build the game:
-
+    ```
     git clone --recurse-submodules https://github.com/raceintospace/raceintospace.git
     cd raceintospace
     cmake --preset windows-release
     cmake --build --preset windows-release
+    ```
 
-After building, you can start the game:
+4. After building, you can start the game:
 
-    .\build\release\src\game\raceintospace.exe BARIS_DATA=data
+    `.\build\release\src\game\raceintospace.exe BARIS_DATA=data`
 
 The following instructions may be relevant for setting up in Visual Studio IDE:
 
@@ -194,8 +195,10 @@ The following instructions may be relevant for setting up in Visual Studio IDE:
 - Open "Configuration Properties" and choose "Output Directory" and set it to the path for "raceintospace-build\local\bin"
 - Click on "Debugging" and edit "Environment".
 Add:
+```
    BARIS_DATA=[path to raceintospace\data]
    BARIS_SAVE=.\save
+```
 Click "run"
 
 # Music
