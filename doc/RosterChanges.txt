@@ -1,0 +1,604 @@
+
+CHANGES MADE TO THE NAUT ROSTER SINCE BARIS
+
+
+---------------------------------------------------------------------------
+
+CONTENTS
+
+ - Credits & Background
+ - Typos and Transliteration
+ - Misplacements
+ - Black Astronauts
+ - Fictional Astronauts & Cosmonauts (Male)
+ - Female Astronauts & Cosmonauts
+
+---------------------------------------------------------------------------
+
+CREDITS & BACKGROUND
+
+In February 2008 it was noticed that a few of the Soviet names weren't 
+quite right, and so the Cosmonaut Mod was created correct them.  (It formed
+the kernel of the "Typos and Transliteration" section below.)  Then in May,
+a fellow named Anton wrote to say it was incomplete, as some typos had been
+missed--and that a couple changes shouldn't have been made.  As a native 
+Russian speaker, he was a valuable resource for getting the cosmonaut names
+right.
+
+That prompted a closer look at the roster to see what other changes were in
+order.  In addition to typos and transliteration issues, there were
+nonhistorical names and an effort was made to replace them with people who 
+had actually served in the space program, but didn't make it into BARIS for
+whatever reason.  Along the way it was also noticed there were a few who 
+were out of place chronologically.
+
+Leon had some email conversations with Fritz Bronner, Michael McCarty, and 
+Erik Anderson that June, concerning how the roster was originally created. 
+That gave a feel for what would be appropriate to change and what was best
+left alone.  Their prompt and considered responses were an enormous help.  
+The goal was to make the roster as historically accurate as possible, while 
+minimizing disruption of the original list.  Without their help it would 
+have been difficult to know where to strike that balance.
+
+When BARIS was being put together, the developers relied heavily on Michael
+Cassutt's book "Who's Who in Space: the First 25 Years" and on 
+conversations with Mr. Cassutt, plus some books in Ukrainian that were sent
+to the developers from an acquaintance in Russia.  They used certain 
+outstanding individuals (e.g. Leonov) to establish a "baseline of the 
+best", and tinkered with the numbers based on certain persons having 
+exceptional skills in one category or another.  For the rest, they 
+generally scattered 0s, 1s, and 2s around randomly.
+
+As mentioned above, some of the names in the original roster are fictional.
+On the Soviet side it was done partly because detailed information was just
+becoming available in the West, so the names weren't all known.  Why it 
+happened on the US side is unclear, but some astronauts were either made up
+entirely or belonged to contributors to the game (e.g. Joyce, Kowato, 
+Anderson).  With online research, and using a copy of Cassutt's book for 
+reference, many invented names have been replaced with real ones.
+
+---------------------------------------------------------------------------
+
+TYPOS AND TRANSLITERATION
+
+Clearly the developers went to a lot of trouble researching those who 
+served in the two space programs, and the time and effort that must have 
+gone into assigning skills to each of them must have been a task.  It was 
+also likely a pain to type in all those long, tricky names for the 
+cosmonauts.
+
+But some of the names do have typos, and for the sake of historical 
+accuracy we feel it's worthwhile to get them right, especially considering 
+the game is sometimes touted for its educational potential.  Fritz agreed 
+with the idea of correcting the names, and said that the changes that had 
+been made at that time looked good to him.
+
+Also, beyond the historical and educational concerns, some of the typos 
+were rather distracting.  Some, like "Gurragacha", just didn't sound 
+right: "Gurra-gotcha?" ...And "Voloshiw" was confusing--his name sounded 
+Polish rather than Russian
+
+
+ASTRONAUT TYPOS
+
+There were three typos among the astronauts:
+
+Basset        -> Bassett       (Group III)
+Garriot       -> Garriott      (Group IV)
+Overmeyer     -> Overmyer      (Group IV)
+
+
+COSMONAUT TYPOS
+
+There were a few more on the Soviet side:
+
+Denim         -> Dyomin        (Group I)
+Ponomarera    -> Ponomaryova   (Group I) [Female]
+Kuzinetsova   -> Kuznetsova    (Group I) [Female]
+Yegrov        -> Yegorov       (Group II)
+Feokistov     -> Feoktistov    (Group II)
+Beregovi      -> Beregovoy     (Group II)
+Giazkov       -> Glazkov       (Group II)
+Rukaishnikov  -> Rukavishnikov (Group III)
+Artyukin      -> Artyukhin     (Group III)
+Anokhni       -> Anokhin       (Group IV)
+Gurragacha    -> Gurragchaa    (Group IV) *
+Remekou       -> Remek         (Group IV) *
+Leveikin      -> Laveykin      (Group IV)
+Steekalov     -> Strekalov     (Group IV)
+Voloshiw      -> Voloshin      (Group IV)
+Varlarmov     -> Varlamov      (Group V)
+Nelyubv       -> Nelyubov      (Group V)
+
+ * Gürragchaa and Remek were part of the Interkosmos program, in which the 
+   USSR invited certain countries, largely from the East Bloc, to send two 
+   persons to be trained as cosmonauts and serve on Soyuz spacecraft.  
+   Gürragchaa was from Mongolia.  Remek was from Czechoslovakia, and was 
+   the first person other than an American or Soviet to fly in space.  
+   Other Interkosmos participants who made it into BARIS were Ivanov 
+   (Bulgaria), Jaehn (East Germany), and Tuan (Vietnam).  Volk was ethnic 
+   German, but was a Soviet citizen.
+
+There are some other names that aren't necessarily wrong, but whose 
+transliteration is bad, or might be shaky.  Some of these are really 
+judgement calls.  Some were changed to spellings that are more commonly 
+used today; with others misleading transliterations were corrected (e.g., 
+"Lebedev" is actually pronounced closer to "Lyebedev"), with the help 
+of a native Russian speaker at Leon's office.
+
+Komorov      -> Komarov      (Group I)
+Guberev      -> Gubaryev     (Group II)
+Solovyev     -> Solovyov     (Group IV)
+Lebedev      -> Lyebedev     (Group IV)
+Berezovoi    -> Berezovoy    (Group IV)
+Leveikin     -> Laveykin     (Group IV)
+Kolessniicov -> Kolesnikov   (Group IV)
+Fastovets    -> Fastovyets   (Group V)
+Boroday      -> Borodai      (Group V)
+Filateev     -> Filatyev     (Group V)
+
+
+SOURCES:  http://en.wikipedia.org/wiki/List_of_astronauts_by_selection
+          http://www.spacefacts.de/english/bio_cosm.htm
+          (shows names in the original Cyrillic, which was very helpful)
+
+---------------------------------------------------------------------------
+
+MISPLACEMENTS
+
+Not all the spacemen in the roster are in reasonable chronological order.  
+Of course, it's to be expected that BARIS would fudge a bit, since 
+historical recruitments were more complicated than BARIS's Group I through 
+V.  As an example, the US had military astronauts for the X-20 and MOL, 
+some of whom later transferred to NASA.  Still, BARIS did things like put 
+Lawyer (1965) in Group V, while Haise (1966) was back in Group III.  We 
+didn't want to go through the entire list, but thought it was important 
+to correct the most glaring discrepancies--members of the first US and 
+Soviet recruitments who found themselves down at the bottom in Group V.
+
+
+ASTRONAUTS
+
+Two astronauts from the Man In Space Soonest program (which predated 
+Mercury!) are in Group V.  However that happened, it was easy enough to 
+move them up to Group I and II slots that had fictitious names.
+
+GRP  MISSING   CA LM EV DO EN   REPLACEMENT (Recruitment)
+ I   Cox        3  1  0  2  2   Kincheloe   (Man In Space Soonest)
+II   Verrne     1  2  2  1  3   Rushworth   (Man In Space Soonest, 2nd grp)
+
+Kincheloe replaced Cox, largely because he was one of the best pilots in 
+the X-15 program (Cassutt, 164).  It also made more sense to place him in 
+the Group I slot, since he was recruited earlier than Rushworth.
+
+
+COSMONAUTS
+
+Four members of the first Soviet recruitment are down in Group V, replaced 
+by men who were recruited years later.  This was likely due to the paucity 
+of information in 1992; these guys weren't well-known, and none flew in 
+space.  All four were removed for disciplinary reasons (Rafikov had marital
+issues that got out of hand; Nelyubov, Anikeyev, and Filatyev picked a 
+fight with the police).  The authorities airbrushed them out of early 
+photos to avoid bringing embarrassment to the space program, which helped 
+fuel rumors that they were instead killed on space missions 
+(http://www.straightdope.com/columns/030117.html).
+
+So probably the BARIS designers knew them only as names of former 
+cosmonauts with no indication when they joined the space team, and they've 
+been swapped them with candidates from Group I who were hired after the 
+first Soviet recruitment.  Nelyubov was one of the best pilots in the group
+(Cassutt, 221), so he went in the spot with the highest Capsule skill.  
+The others we matched up as best we could to the skills of the folks we
+swapped them with.
+
+GRP COSMONAUT     CA LM EV DO EN       GRP COSMONAUT        CA LM EV DO EN
+ I  Gulyayev       2  0  1  2  2   ->   V  Nelyubov/Nelyubv  1  0  2  1  0
+ I  Dyomin/Denim   1  0  0  1  1   ->   V  Filatyev/Filateev 1  0  0  1  1
+ I  Zudov          1  1  2  0  2   ->   V  Rafikov           1  0  3  1  0
+ I  Rozhdestvensky 1  0  1  1  1   ->   V  Anikeyev          2  0  1  2  0
+
+Additionally, there are two duplicates in the list of cosmonauts.  
+
+Lebedev showed in Groups III and IV.  Historically he was chosen in the 
+same group as Andreyev, so we've kept him in Group IV (but updated the 
+spelling of his name).  To replace the Group III Lebedev we chose 
+Kozelskiy, who was recruited in the same group as Kovalyonok and Malyshev, 
+who are also Group III.  There were others in Lyebedev's group missing from
+the 'Naut Roster, all unflown, but Kozelskiy was at least chosen for a 
+mission backup crew.
+  Lebedev (Group III) -> Kozelskiy
+  Lebedev (Group IV)  -> Lyebedev
+Giazkov showed in Groups II and IV.  He flew on a Soyuz mission, so we've 
+kept him in Group II (where he has better stats), but corrected his name, 
+and to replace him in Group IV we selected Bugrov, who never flew a 
+mission.
+  Giazkov (Group II) -> Glazkov
+  Giazkov (Group IV) -> Bugrov
+
+
+SOURCES:  http://en.wikipedia.org/wiki/List_of_astronauts_by_selection
+          http://www.spacefacts.de/english/bio_cosm.htm
+
+---------------------------------------------------------------------------
+
+BLACK ASTRONAUTS
+
+When this mod was updated in 2010, we meant to replace both Kowato and 
+Ferguson.  There weren't enough historical astronauts left (that we could 
+find) to fill both slots, so we thought we'd take the opportunity to honor 
+our first black astronaut in space, Guion Bluford...except apparently we 
+missed doing that, somehow.
+
+As it turns out, in July 2019 Leon learned of Edward Dwight, who was a 
+famous astronaut candidate in the first half of the '60s (which made him 
+surprised he'd not heard of him before).  He had impressive credentials and
+was effectively sponsored by the Kennedy Administration, which wanted some 
+diversity in the astronaut corps and saw to it he was admitted to the 
+Aerospace Research Pilot School (ARPS) at Edwards Air Force Base.
+
+The president's assassination in 1963 removed that base of support, which 
+sank what little chance he had of joining NASA.  Typical of the time, most 
+of his peers at Edwards felt he didn't belong, and behaved accordingly.  
+Chuck Yeager, the school commandant (and coincidentally Dwight's hero), 
+didn't want him there and treated him shamefully.  Though he graduated, 
+NASA didn't select him for the Group 3 recruitment in October 1963.  When 
+Kennedy was killed the following month, he found himself effectively 
+grounded, his career at a dead end.  He finally resigned from the Air Force
+in 1966.
+
+Dwight would make a much better candidate than Bluford since he was around 
+during the Space Race, and Group III seems the most appropriate place for 
+him since he applied for the same group that Aldrin was admitted to.  
+Scott's place would be a good choice, since Dwight was a good pilot, and 
+Scott could be moved down to the Musgrave/Ellis slot, giving him even 
+better CA skill (he did, after all, command Apollo 15).  Then Musgrave 
+could be moved down to the Ferguson slot we meant to modify earlier.
+
+GROUP III
+ Scott          -> Dwight (ARPS)
+GROUP IV
+ Musgrave/Ellis -> Scott (Group 3)
+GROUP V
+ Ferguson       -> Musgrave (Group 6)
+
+SOURCES:  https://en.wikipedia.org/wiki/Ed_Dwight
+          https://www.nytimes.com/2019/07/16/us/ed-dwight-was-set-to-be-the-first-black-astronaut-heres-why-that-never-happened.html
+
+In addition, Major Robert Lawrence in Group V was America's first black 
+astronaut.  He was a military astronaut who was chosen for the MOL program 
+in 1967, but was tragically killed in a training accident several months 
+later.  It's a real shame he never had a chance to go into space.
+
+SOURCE:  https://en.wikipedia.org/wiki/Robert_Henry_Lawrence_Jr.
+
+---------------------------------------------------------------------------
+
+FICTIONAL ASTRONAUTS AND COSMONAUTS (MALE)
+
+There may be some confusion here between historical and BARIS recruitment 
+numbers.  Conveniently, while BARIS uses Roman numerals, NASA and the 
+Soviets seem to have used Arabic.  So in this document, Roman numerals 
+indicate (BA)RIS recruitments, and Arabic numerals represent historical 
+ones.
+
+
+MALE ASTRONAUTS
+
+There are fourteen astronauts in BARIS that we can't find any historical 
+record of (some are the names of people involved in BARIS development), and
+two who were misplaced, Rushworth and Kincheloe.
+
+GRP  MISSING   CA LM EV DO EN   REPLACEMENT (Recruitment)
+II   Kelly      1  2  2  1  3   A.White     (Man In Space Soonest)
+II   Joyce      1  2  2  1  3   R.White     (Man In Space Soonest)
+II   Matthews   1  2  2  1  3   Crossfield  (Man In Space Soonest)
+II   Peters     1  2  2  1  3   Peterson    (Man In Space Soonest, 2nd grp)
+III  Covert     1  2  0  1  2   McCandless  (Group 5)
+IV   Ellis      3  1  1  1  2   Dwight      (ARPS)
+                   (previously) Musgrave    (Group 6)
+IV   James      1  0  3  1  2   Llewellyn   (Group 6)
+IV   Gentry     2  2  0  0  2   Henize      (Group 6)
+ V   Henderson  2  1  2  0  1   Allen       (Group 6)
+ V   Anderson   2  2  1  1  2   Holmquest   (Group 6)
+ V   Rogue      1  2  0  3  1   O'Leary     (Group 6)
+ V   Buchard    2  2  0  1  2   Lenoir      (Group 6)
+ V   Kowato     1  2  1  3  1   Thornton    (Group 6)
+ V   Ferguson   1  2  1  1  0   (special - see above)
+GRP  MISPLACED CA LM EV DO EN   REPLACEMENT (Recruitment)
+ V   Rushworth  2  3  0  3  2   Parker      (Group 6)
+ V   Kincheloe	2  2  2  1  0   Chapman     (Group 6)
+
+Man In Space Soonest included two guys named White: Alvin and Robert.  
+Considering his EV rating, the White in the original roster must have been 
+Edward, the first American to perform a spacewalk.  So he was renamed 
+E.White and the others added as A.White and an R.White, just as the female 
+candidates (appropriately) include a J.Dietrich and an M.Dietrich.  
+McCandless fit neatly into Group III since he was from Group 5 instead of 
+6.  Placement of the other Group II astronauts is in no particular order, 
+as they all have the same skills.
+
+At first Groups IV and V were assigned in alphabetical order, but then 
+modified a little for their skills, based on what could be told from their 
+histories in Cassutt's book.  Musgrave was an accomplished pilot, so he 
+took Ellis's spot (though he was moved later).  Allen seemed to have some 
+EVA and piloting skills, so he went into Henderson's place.  Chapman was 
+also a pilot, so he replaced Kincheloe.  Llewellyn and O'Leary likely had 
+low pilot skills, so they filled in for James and Rogue respectively.  
+And Thornton seems to have had low Endurance (he suffered space sickness), 
+so he took Kowato's place.
+
+Feel like giving someone from another country a chance to go into space?  
+Chapman was from Australia and Llewellyn was from Wales, though both had 
+become US citizens.
+
+
+MALE COSMONAUTS
+
+There are seven cosmonauts in BARIS we can't find any historical record of,
+mostly from Group V.  The Soviets' Air Force Group 3 includes twelve who 
+didn't make it into BARIS.  These missing men never flew in space, though 
+some served as "doubles" (backups) to Soyuz flights.  Still, why not use 
+obscure but real cosmonauts rather than fictional ones?  For our fictional 
+Group IV cosmonaut, we used someone from Air Force Group 2 who was
+recruited at the same time as Matinchenko, who's right under him in the 
+'naut roster.
+
+Very little information is available for these fellows, but we used what we 
+could find at http://www.spacefacts.de/english/bio_cosm.htm to try to place
+them.  Lisun and Preobrazhensky were chosen since they served as backups 
+for various Soyuz flights.  Then Shcheglov since he was assigned to a Soyuz
+flight (as a backup, perhaps), though it was later canceled.  We also chose 
+Khludeyev and Styepanov, as they worked on Buran (Styepanov also worked on 
+Salyut and Almaz).  Lastly, Fyodorov and Petrushenko were included mainly 
+for their longevity in the space program, as they stayed into the 1970s.
+
+GRP  MISSING   CA LM EV DO EN   REPLACEMENT
+IV   Zykov      2  1  0  2  3   Kuklin          (backup for Soyuz 5)
+ V   Butenko    1  1  2  1  1   Lisun           (backup for Soyuz 23 & 24)
+ V   Muraviov   1  2  0  2  3   Preobrazhensky  (backup for Soyuz 24)
+ V   Ozoga      2  1  3  1  0   Shcheglov       (assigned to Soyuz 23)*
+ V   Lazovich   0  1  2  3  1   Khludeyev       (worked on Buran)
+ V   Dobrynin   1  0  0  2  3   Fyodorov
+ V   Bekelov    1  0  2  2  1   Stepanov/Styepanov (wkd Buran,Salyut,Almaz)
+ V   Yurimanko  0  1  0  3  1   Petrushenko
+
+Shcheglov took Ozoga's place, since he was a pilot. Khludeyev and Styepanov
+were given spots with good EVA and Docking, as it was assumed that 
+preparing for Buran (and the space stations) would have given them skills 
+in those areas, or that they would have been chosen based on having those 
+skills.  It's a stretch, for sure, but we're working from very little 
+information here.  After that, we tried to assign Lisun and Preobrazhensky 
+to the best remaining skill sets, since they had at least served as Soyuz 
+backups, and the other two (Fyodorov and Petrushenko) filled the spots that
+were left.
+
+* See http://www.astronautix.com/astros/shceglov.htm
+
+
+---------------------------------------------------------------------------
+
+FEMALE ASTRONAUTS AND COSMONAUTS
+
+The women were a bit harder to do, mainly because there were very few 
+female recruitments in the Space Race.  Did you assume the US names were 
+all made up?  Leon did, until he stumbled on a reference to the Mercury 13 
+(see http://en.wikipedia.org/wiki/Mercury_13 & www.mercury13.com).  The men
+of the Mercury 7 were tested and trained by a private contractor, the 
+Lovelace Foundation.  Afterward, Dr. Lovelace was curious how women would 
+perform on the same tests, so he tested a group of female pilots, starting 
+with Jerrie Cobb.  It's important to remember that this was a private 
+venture; NASA didn't ask for it, pay for it, or even know about it at 
+first, and it wasn't done at NASA facilities.  But still, it was performed 
+by the same organization that tested the Mercury 7, and the tests were 
+otherwise identical or actually tougher.
+
+Contrary to expectations, the women scored just as well as the men (partly,
+no doubt, because they had the men's scores to aim for).  But as the group 
+was about to follow Cobb into Phase III testing with the Navy, NASA 
+abruptly called a halt to it.  Because of Lovelace's prestige and clout 
+with NASA, it had been willing to let him do some testing on the side, even
+to the point of having a woman complete all three phases--but a group of 
+thirteen was going too far and would attract attention.  NASA had no 
+intention of using female astronauts, and said so.  The Navy was willing to
+let the foundation use its facilities if NASA wanted the tests done, but 
+without that approval, it wouldn't make its facilities available--and so, 
+the testing was canceled.
+
+Cobb and Hart (the wife of a senator) lobbied Congress and vice president 
+Lyndon Johnson, who was polite but unhelpful.  They got the same treatment 
+from members of the Senate.  The House did finally agree to hold hearings 
+on whether women were being unfairly discriminated against in the space 
+program: bear in mind this was two years before sex discrimination in
+employment became illegal.  Cobb and Hart testified that NASA was actively
+discriminating against women, and that the qualifications specifically 
+excluded women.  NASA representatives testified piously that no, of course 
+not, it was just that jet test pilots were needed for the astronaut corps. 
+The fact that the military only allowed men to become test pilots was 
+strictly coincidental (and no doubt convenient).
+
+The country's foremost female pilot, Jackie Cochran, also testified.  She 
+was a long-time friend of Dr. Lovelace and had muscled her way into the 
+picture.  She wasn't young and healthy enough to be tested herself, so she 
+focused her efforts on replacing Cobb as the group's de facto spokesperson.
+In the hearings, she obligingly testified that she didn't think women were 
+being discriminated against, that NASA shouldn't have female astronauts at 
+that time, but that there should be a long-term program to test and study 
+how women would perform.  Such a program would of course need an 
+experienced pilot to lead it, and she just happened to be available.
+
+Cochran's and NASA's testimony sounded reasonable, and included enough 
+noncommital statements that something should be done toward putting women 
+in space, that it was easy for the commission to let the matter drop.  In 
+retrospect, the deck was stacked against the Mercury 13 from the start, and
+it would have been remarkable if anything had come of these hearings.  This
+was an era when a woman couldn't secure a loan without a man's signature, 
+couldn't buy carpet without her husband's okaying it with the vendor, and 
+female pilots were considered tomboyish or worse.  Female astronauts were 
+exotic, if not downright suspect.  Society wasn't ready for women to join 
+the men in space, and NASA was an old boys' club that was even slower than 
+society as a whole to adapt to changes in coming years.  It effectively 
+missed the Civil Rights Movement.
+
+The Soviets, meanwhile, went ahead with the idea of a woman in space.  It's
+not too much to say that they did it just to do it, to beat the Americans 
+to a space first--but still, they did in fact recruit five official female 
+cosmonauts.  In 1963 they put a woman into space, much to the chagrin of 
+the Mercury 13.  The USSR never did it again, though, until 1982--about 
+when (and because) the US finally did it.  Voskhod 5 was going to have an 
+all-female crew (http://www.spacefacts.de/cancelled/english/voskhod-5.htm),
+but it was canceled with the rest of the Voskhod program.  There were no 
+plans to fly a Soyuz crew with women aboard, so all but Tereshkova resigned
+from the space program in October 1969.
+
+One complication with spacewomen in BARIS is whether to refer to them by 
+their married or maiden names.  We've chosen to use their names at the time
+they were being tested or when they joined the group, which is also what 
+BARIS seems to have generally done.  This often means using maiden names, 
+considering the age at which 'nauts are recruited, though not always.  If 
+any of them are wrong, please let us know.
+
+
+FEMALE ASTRONAUTS
+
+For the Americans, BARIS used the Mercury 13 for Groups I and II, but 
+not for Group III.  The idea was that by that time (ca. 1968), the original
+Thirteen would have been too old for consideration.  But on a closer look, 
+some of them would have been younger in 1968 than the oldest (Hart) was 
+when Mercury 13 began.  So it's still feasible to use them--shaky, to be 
+sure, but probably better than just making up names, and this allows us to 
+honor more members of that group.
+
+Hurrle was Allison's maiden name, and her name at the time of testing.  She
+didn't become Mrs. Allison until after the tests were canceled.  This is 
+one exception to BARIS using the name that was current during participation
+in a program, but this was probably accidental on the developers' part--she
+married shortly after cancellation.
+
+For Moore and Roland in Group III, we used Funk and Gorelick.  Funk is 
+especially appropriate: she was the youngest of the group 
+(http://history.nasa.gov/flats.html), and for years kept trying to find a 
+way to get into space somehow, even if only as a passenger.  After 
+cancellation, she managed to continue testing on the side.  When she took 
+the centrifuge test, she withstood five Gs without a pressure suit, which 
+amazed the personnel running the test.  She also later became a test 
+pilot--she was still doing that in 2003, and was the pilot for one of the 
+entrants in the Ansari X-Prize 
+(http://news.nationalgeographic.com/news/2003/07/0709_030709_tvspacewoman.html).
+As a result she went into Roland's slot, which has the highest Capsule and 
+Endurance skills.  Gorelick was also one of the younger members of the 
+group, and had an engineering background--so it made sense to include her, 
+and she took Moore's place.
+
+Beeson is Fritz's wife's maiden name, and for RIS on SourceForge it was 
+left alone as a sort of easter egg.  It's a holdover from Liftoff!, in 
+which both she and Fritz, and other developers, were recruitable US 
+astronauts.  For RIS on GitHub she's been replaced by Stumbough, since she 
+was easily the youngest member of the group who hadn't been included 
+already.
+
+ORIGINAL    CA LM EV DO EN  CHANGE
+
+Allison      2  1  0  1  2  Hurrle [maiden name] (later Woltman)
+Cagle        2  2  1  2  3  --
+Cobb         3  0  1  1  2  --
+
+J.Dietrich   2  2  1  0  2  --
+M.Dietrich   2  1  2  1  2  --
+Hart         1  2  1  2  1  -- (nee Briggs)
+
+Beeson       1  2  1  1  2  Stumbough (later Jessen)
+Moore        2  1  1  0  2  Gorelick (later Ratley)
+Roland       3  0  2  0  3  Funk
+
+Mercury 13 members not in the mod or the original roster:
+Sloan (nee Hamilton, later Truhill)
+Hixson
+Leverton
+Steadman (nee Trimble)
+
+SOURCES:  "Promised the Moon: The Untold Story of the First Women
+            in the Space Race", by Stephanie Nolen
+          "The Mercury 13: The True Story of Thirteen Women and 
+            the Dream of Space Flight", by Martha Ackmann and 
+            Lynn Sherr
+
+
+FEMALE ASTRONAUTS IN RIS 2.0
+
+The roster underwent revision again when we added female candidates to 
+Groups IV and V.  Hart was moved into Group I, since she was the oldest 
+of the Mercury 13.  Her place in Group II went to Hixson.  In Group III, 
+Stumbough, Gorelick, and Funk were replaced with Steadman, Leverton, and 
+Hurrle.  Group IV now has Stumbough, Gorelick, and Sloan.  Group V has 
+Funk, Lucid, and Seddon, the latter two being early female US astronauts.
+
+
+FEMALE COSMONAUTS
+
+For the cosmonauts, BARIS used the first Soviet female recruitment, but 
+only three of them--Ponomaryova, Tereshkova, and Kuznetsova--seem to have 
+been known in the West in 1992.  Two women from the second recruitment--
+Savitskaya and Ivanova--were substituted, though they fell outside the time
+period of BARIS.  The other four spots were filled with made-up names, some
+of them incorrectly done (e.g., Pilmov is the masculine form; a woman would
+be called Pilmova).
+
+We added the two missing members of the first recruitment, Solovyova and 
+Yorkina.  Also Yefremova, Kvasova, Sokolova, and Borzenkova, who were 
+finalists but were ultimately turned down for the program:
+http://www.astronautix.com/astros/sokolova.htm
+http://epizodsspace.testpilot.ru/bibl/spaceflight/2006/01.html
+http://books.google.com/books?id=VL5TSg2Ut3cC&pg=PA47&lpg=PA47&dq=Sokolova+cosmonaut&source=web&ots=cPKZg-bB6J&sig=uZ56RfZFrDfRwaQRkcAbg-0obQw&hl=en&sa=X&oi=book_result&resnum=9&ct=result#PPA47,M1
+
+Ivanova wasn't recruited until 1983, so she was removed.  Savitskaya is also 
+anachronistic in this game, but in previous versions of this mod we somehow 
+missed seeing Borzenkova, so left Savitskaya in for historical reasons: she 
+was the second woman to fly in space, and the first to perform a spacewalk 
+(which honor would have gone to Solovyova or her backup Yorkina if Voskhod 
+5 had flown).  She was also slightly earlier than Ivanova, being recruited 
+in 1980.
+
+The open slots--Beligrovo, Volkinski, Renkomorov, Ivanova, and Pilmov--have 
+mostly unremarkable skill sets.  Only Renkomorov is a decent CA, so that 
+seat went to Sokolova, who was an instructor pilot.  Solovyova was 
+considered the toughest of the group 
+(http://epizodsspace.testpilot.ru/bibl/spaceflight/2006/01.html), so she 
+took Volkinski's place, which has the highest Endurance.
+
+Of the three spots remaining, Ivanova's seems to be marginally the best, so
+it went to Yorkina, who was one of those accepted as a cosmonaut.  Since 
+Kvasova and Yefremova weren't, and they're known only as names and there's 
+no basis to distinguish them from one another in terms of their skill sets,
+They went in alphabetically, with Kvasova in the earlier slot.  When we 
+later noticed Borzenkova, she took Savitskaya's spot since that one needed 
+a replacement.
+
+ORIGINAL    CA LM EV DO EN  CHANGE
+
+Ponomarera   2  2  1  1  2  [Ponomaryova*]
+Beligrovo    1  0  1  0  2  Kvasova+
+Kuzinetsova  2  0  1  1  2  [Kuznetsova*] (later Pitskhelaura)
+
+Tereshkova   0  1  1  0  1  --
+Volkinski    1  1  1  1  3  Solovyova
+Renkomorov   2  0  1  1  2  Sokolova+
+
+Ivanova      1  1  1  1  2  Yorkina (later Sergeychik)
+Savitskaya   1  1  3  1  2  Borzenkova+
+Pilmov       1  2  1  0  1  Yefremova+
+
+  * Change of spelling--see Typos and Transliteration section
+  + Finalists who weren't ultimately selected in 1962
+
+
+FEMALE COSMONAUTS IN RIS 2.0
+
+Group IV now includes Marina Popovich (not Popovicha, apparently), a pilot 
+who later became the USSR's first female military test pilot.  Also Tatyana
+Morozycheva, who was a strong candidate but wasn't selected.  Finally Irina
+Pronina, who became a cosmonaut and was selected for a backup crew.
+
+Group V has Svetlana Savitskaya and Yekaterina Ivanova, real cosmonauts, 
+and Yelena Dobrokvashina, since she trained for a Soyuz female mission that
+was later canceled.  (Yes, Ivanova's back.)
