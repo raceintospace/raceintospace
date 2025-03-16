@@ -171,11 +171,12 @@ The easiest way to compile the game is the following:
 1. Before you start, ensure that the following is installed:
 
    * [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
-       * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!
+       * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!  It may show as Desktop development with C++
        * If you have already installed Visual Studio but are missing a component, you can launch the Visual Studio installer app, choose "Modify" and select further components for installation.
-   * [Git](https://git-scm.com/downloads)
-2. Start Visual Studio and launch Tools/[Visual Studio Developer Command Prompt](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022). This is important and puts cmake and ninja into your path.
-3. clone, configure and build the game:
+   * [Git](https://git-scm.com/downloads) (You can accept the defaults, though you may want to tell it to use Notepad rather than Vim)
+2. Start Visual Studio and select Continue without code
+3. Launch Tools -> Command Line -> [Visual Studio Developer Command Prompt](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022). This is important and puts cmake and ninja into your path.
+4. In that command prompt (not the Windows one), clone, configure, and build the game:
 
     ```
     git clone --recurse-submodules https://github.com/raceintospace/raceintospace.git
@@ -184,7 +185,7 @@ The easiest way to compile the game is the following:
     cmake --build --preset windows-release
     ```
 
-4. After building, you can start the game:
+5. After building, you can start the game:
 
     `.\build\release\src\game\raceintospace.exe BARIS_DATA=data`
 
