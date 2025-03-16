@@ -81,6 +81,8 @@ You need a modern C++ compiler and CMake.
 The build system uses [vcpkg.io](https://vcpkg.io/) to automatically download
 and build all dependencies.
 
+The creation of binary packages for releases is described in a [set of separate instructions](Release.md).
+
 ## Linux
 
 ### Debian/Ubuntu
