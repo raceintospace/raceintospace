@@ -185,7 +185,7 @@ The easiest way to compile the game is the following:
     cmake --build --preset windows-release
     ```
 
-5. After building, you can start the game:
+5. After building, navigate to the raceintospace folder, and you can start the game:
 
     `.\build\release\src\game\raceintospace.exe BARIS_DATA=data`
 
