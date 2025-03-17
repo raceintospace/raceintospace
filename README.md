@@ -171,11 +171,11 @@ The easiest way to compile the game is the following:
 1. Before you start, ensure that the following is installed:
 
    * [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) ($0, but read the fine print)
-       * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!  It may show as Desktop development with C++
+       * Install at least *MSVC*, *C++ CMake for Windows* and *Windows SDK* components!  It may show as "Desktop development with C++"
        * If you have already installed Visual Studio but are missing a component, you can launch the Visual Studio installer app, choose "Modify" and select further components for installation.
-   * [Git](https://git-scm.com/downloads) (You can accept the defaults, though you may want to tell it to use Notepad rather than Vim)
+   * [Git](https://git-scm.com/downloads) (You can accept the defaults, though you may want to tell it to use Notepad for the default editor.) You may need to reboot for git to be added to your $PATH.
 2. Start Visual Studio and select Continue without code
-3. Launch Tools -> Command Line -> [Visual Studio Developer Command Prompt](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022). This is important and puts cmake and ninja into your path.
+3. Launch Tools -> Command Line -> [Developer Command Prompt](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022). This is important and puts cmake and ninja into your path.
 4. In that command prompt (not the Windows one), clone, configure, and build the game:
 
     ```
