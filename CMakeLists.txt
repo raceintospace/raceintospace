@@ -50,6 +50,8 @@ set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_RPM_PACKAGE_SUMMARY}
 ${CPACK_RPM_PACKAGE_DESCRIPTION}")
 set(CPACK_DEBIAN_PACKAGE_SECTION "games")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libsdl1.2debian, libvorbis0a, libvorbisenc2, libpng16-16, libphysfs1, libjsoncpp25")
+set(CPACK_RPM_SPEC_MORE_DEFINE "%define _build_id_links none")
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /usr/share/applications /usr/share/metainfo /usr/share/pixmaps)
 
 
 if (WINDOWS)
