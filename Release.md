@@ -24,10 +24,11 @@ This produces a tarball in the build directory.
 We build a generic tarball, a DEB package, and an RPM package. This requires the packages dpkg and rpm being installed.
 1. Copy the music files from raceintospace-nonfree
 2. cmake --preset linux-release $PATH_TO_SOURCE_DIRECTORY
-3. make package
+3. navigate to the location it gives, e.g. ~/raceintospace/build/release
 4. cmake -DCMAKE_INSTALL_PREFIX=/usr -DCPACK_GENERATOR=DEB $PATH_TO_SOURCE_DIRECTORY
-5. cpack -G DEB
-6. cpack -G RPM
+5. make package
+6. cpack -G DEB
+7. cpack -G RPM
 
 ## Windows binaries
 In addition to the requirements to build the game, creating the installer also requires [NSIS](https://nsis.sourceforge.io/Download) being present. The safest bet is to install NSIS into the default location (e.g., `C:\Progam Files (x86)\NSIS`) and ensure that makensis.exe is present in that folder.
