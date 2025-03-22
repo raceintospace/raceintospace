@@ -22,8 +22,8 @@ This produces a tarball in the build directory.
 
 ## Linux binaries
 We build a generic tarball, a DEB package, and an RPM package. This requires the packages dpkg and rpm being installed.
-1. Copy the music files from raceintospace-nonfree
-2. cmake --preset linux-release $PATH_TO_SOURCE_DIRECTORY
+1. Copy the music folder from raceintospace-nonfree to raceintospace/data
+2. cmake --preset linux-release $PATH_TO_SOURCE_DIRECTORY (e.g., ~/raceintospace)
 3. navigate to the location it gives, e.g. ~/raceintospace/build/release
 4. make package (probably needs to be sudo make package)
 5. cmake -DCMAKE_INSTALL_PREFIX=/usr -DCPACK_GENERATOR=DEB $PATH_TO_SOURCE_DIRECTORY (e.g., ~/raceintospace)
