@@ -16,6 +16,10 @@ This is a simulation of the US-Soviet Space Race.  In it, you take charge of you
 
 Race Into Space (RIS) is a port to modern operating systems of Buzz Aldrin's Race Into Space (BARIS), a DOS game originally released in 1993 on floppy disk, and a year later in an expanded CD version.  BARIS was developed by Fritz Bronner based on his 1989 board game *Liftoff!*.  Dr. Aldrin's name and imagery have been dropped because permission to use them was limited to the old DOS game.  RIS is available for Windows, Linux, and Mac, and includes some improvements over the original game—which we feel have justified a rewrite of the manual.  Those working on the game are volunteer enthusiasts, and we hope you enjoy this simulation.  You might even find it educational.
 
+RIS 2.0 runs in a screen twice the size of earlier versions.  If you want it to run in the original size, use the -s switch.
+
+![Properties of RIS shortcut](image_2.jpg)
+
 This is a strategy game that requires some planning ahead.  There are different paths to victory; any of these can be used, each with its own advantages. 
 
 * Gemini/Voskhod – a two-person capsule that requires a one-person lander.  Easiest to get started but tricky, and riskier than other approaches.  Voskhod is especially dangerous.
