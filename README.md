@@ -8,18 +8,11 @@ source release  for the computer version  of the Liftoff! board  game by
 Fritz Bronner.  The original was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
-The most recent stable releases are available from
-[SourceForge](http://sourceforge.net/projects/raceintospace/).
-There is a more recent (interim) 1.2 release on Flatpak (which mistakenly shows as 2.0), 
-https://flathub.org/apps/details/org.raceintospace.Raceintospace.
-More recent yet is the 2.0 beta available here at 
-https://github.com/raceintospace/raceintospace/releases/tag/v.2.0beta.
-The repository here contains a work-in-progress modernization of the game, 
-so if you want to run the very latest version, you will have to download
+The most recent stable releases are available from this page, on the righthand 
+side.  The 2.0.0 release can be downloaded directly from 
+https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0.
+If you want to run the very latest version, you will have to download
 and compile the source.  Instructions are below.
-
-We have made a number of improvements to the game, and are hoping to do a 
-release soon.  The changes made can be viewed in [ChangeLog.md](ChangeLog.md) above.
 
 # License
 
