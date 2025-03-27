@@ -14,6 +14,9 @@ https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0.
 If you want to run the very latest version, you will have to download
 and compile the source.  Instructions are below.
 
+The game manual can be viewed from our docs section,
+https://github.com/raceintospace/raceintospace/tree/master/doc.
+
 # License
 
 Race  Into Space  is distributed  under GNU  General Public  License
