@@ -8,14 +8,18 @@ source release  for the computer version  of the Liftoff! board  game by
 Fritz Bronner.  The original was developed by Strategic Visions and published by
 Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 
-The most recent stable releases are available from this page, on the righthand 
-side.  The 2.0.0 release can be downloaded directly from 
-https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0.
-If you want to run the very latest version, you will have to download
-and compile the source.  Instructions are below.
+# Latest release
 
-The game manual can be viewed from our docs section,
-https://github.com/raceintospace/raceintospace/tree/master/doc.
+The most recent stable release is 2.0.0, released on March 27, 2025. The release contains the following files for download:
+* [raceintospace-2.0.0-Linux.deb](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.deb)
+* [raceintospace-2.0.0-Linux.rpm](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.rpm)
+* [raceintospace-2.0.0-Linux.tar.gz](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.tar.gz)
+* [raceintospace-2.0.0-Source.tar.gz](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Source.tar.gz)
+* [raceintospace-2.0.0-win32.exe](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-win32.exe)
+* [raceintospace-macos-arm64.zip](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-macos-arm64.zip)
+
+Further information can be found at the [release page](https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0). The [game manual](https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md
+) can be viewed from our docs section.
 
 # License
 
