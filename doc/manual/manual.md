@@ -18,7 +18,7 @@ Race Into Space (RIS) is a port to modern operating systems of Buzz Aldrin's Rac
 
 RIS 2.0 runs in a screen twice the size of earlier versions.  If you want it to run in the original size, use the -s switch.
 
-![Properties of RIS shortcut](image_2.jpg)
+![Properties of RIS shortcut](image_2.png)
 
 This is a strategy game that requires some planning ahead.  There are different paths to victory; any of these can be used, each with its own advantages. 
 
