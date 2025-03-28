@@ -11,6 +11,7 @@ Interplay as a disk-based game in 1992 and a CD-ROM in 1994.
 # Latest release
 
 The most recent stable release is 2.0.0, released on March 27, 2025. The release contains the following files for download:
+* [raceintospace-2.0.0-Debian12.deb](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Debian12.deb)
 * [raceintospace-2.0.0-Linux.deb](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.deb)
 * [raceintospace-2.0.0-Linux.rpm](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.rpm)
 * [raceintospace-2.0.0-Linux.tar.gz](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.tar.gz)
