@@ -2223,7 +2223,7 @@
       "",
       ".011",
       "DO YOU WISH TO END YOUR TURN WITHOUT",
-      "PLANNING ANY MISSIONS FOR NEXT TURN?"
+      "PLANNING ANY FLIGHTS FOR NEXT TURN?"
     ]
   },
   {
@@ -2555,7 +2555,7 @@
       "UNASSIGNED ASTRONAUTS",
       ".001",
       "YOU DO NOT CURRENTLY HAVE ANY",
-      "UNASSIGNED ASTRONAUTS.",
+      "ASTRONAUTS AVAILABLE.",
       "",
       "FOR PEOPLE IN BASIC TRAINING,",
       "VISIT THE BASIC TRAINING BUILDING",
@@ -2572,7 +2572,7 @@
       "UNASSIGNED COSMONAUTS",
       ".001",
       "YOU DO NOT CURRENTLY HAVE ANY",
-      "UNASSIGNED COSMONAUTS.",
+      "COSMONAUTS AVAILABLE.",
       "",
       "FOR PEOPLE IN BASIC TRAINING,",
       "VISIT THE BASIC TRAINING BUILDING",
@@ -6000,7 +6000,7 @@
     "description": [
       "; Longest Line:                    ",
       ";xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-      "%15:0",
+      "%17:0",
       ".011",
       "SPACEPORT",
       ".001",
@@ -6008,7 +6008,9 @@
       "UP ARROW  HIGHLIGHT NEXT ITEM",
       "DN ARROW  HIGHLIGHT PREVIOUS ITEM",
       "A               ADMINISTRATION",
+      "H               HOSPITAL/INFIRMARY",
       "I                INTELLIGENCE",
+      "L               LUNA / THE MOON",
       "M               MUSEUM",
       "R               RESEARCH & DEVEL.",
       "P               PRESIDENT/POLITBURO",
