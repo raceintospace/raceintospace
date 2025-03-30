@@ -275,8 +275,9 @@ void MisAnn(char plr, char pad)
     if (Data->P[plr].Mission[pad].Joint == 0) {
         draw_string(126, 91, "SINGLE LAUNCH");
     } else {
-        draw_string(129, 91, "JOINT LAUNCH");
         display::graphics.setForegroundColor(9);
+        draw_string(129, 91, "JOINT LAUNCH");
+        display::graphics.setForegroundColor(11);
         draw_string(59, 92, "PART 1: ");
         draw_string(0, 0, "PAD ");
 
