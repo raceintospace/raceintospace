@@ -1040,6 +1040,7 @@ void AstSel(char plr)
 
             for (i = 0; i < 50; i++) {
                 key = 0;
+                ksel = 0;
                 GetMouse();
                 delay(10);
 
@@ -1187,6 +1188,7 @@ void AstSel(char plr)
         } else if ((x >= 7 && y >= 111 && x <= 151 && y <= 123 && count > 0 && mousebuttons > 0) || (key == 'D' && count > 0)) {
             /* Dismiss */
             InBox(7, 111, 151, 123);
+            ksel = 1;
             count--;
             MCol[sel[now2]] = 0;
 
