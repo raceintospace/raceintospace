@@ -1,6 +1,8 @@
-![build status](https://github.com/raceintospace/raceintospace/actions/workflows/CI.yaml/badge.svg?event=push)
+<!-- ![build status](https://github.com/raceintospace/raceintospace/actions/workflows/CI.yaml/badge.svg?event=push) -->
 
 # Race into Space
+
+<img src="doc/manual/image_27.png" width="48%">&nbsp;&nbsp;<img src="doc/manual/image_22.png" width="48%">
 
 Race  into  Space is  the  free  software  version of  Interplay's  Buzz
 Aldrin's Race into Space.  This is the  reworked version  following  the
