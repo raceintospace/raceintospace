@@ -547,7 +547,7 @@ void Rush(char plr)
                 }
             }
 
-            if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  // CONTINUE
+            if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || (key == K_ENTER || key == K_ESCAPE)) {  // CONTINUE
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
