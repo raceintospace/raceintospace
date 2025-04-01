@@ -977,7 +977,7 @@ void Future(char plr)
             }
 
             if (((x >= 244 && y >= 5 && x <= 313 && y <= 17 
-            	&& mousebuttons > 0) || key == K_ENTER)) {
+            	&& mousebuttons > 0) || key == K_ENTER || (misType == 0 && key == K_ESCAPE))) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
 
