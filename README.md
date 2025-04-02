@@ -73,9 +73,9 @@ Or try via https if you encounter issues with git protocol:
 This creates sub-directory `raceintospace` where you can build the game.
 
 In case you did not specify `--recurse-submodules` when cloning the repository,
-you will need to initialize submodules inside the cloned repo:
+you will need to initialize the `vcpkg` submodule inside the cloned repo:
 
-    git submodule init --recursive
+    git submodule update --init
 
 # Building
 
