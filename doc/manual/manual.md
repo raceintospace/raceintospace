@@ -134,6 +134,8 @@ If you should wish, say, to run the game with the rules as they were in BARIS, f
 
 Those Advanced Preferences that should be of most interest to users (and which shouldn't break the game) are as follows.
 
+* `xscale` – sets size of the game window.  By default, RIS 2.0 runs at double the size of previous versions.  Setting `xscale 0` will have it run in the original size.
+
 * `game_style` –  Forces settings below to Classic behavior, if they have a Classic setting: that is, it makes the game run mostly like original BARIS.
 
 * `female_nauts` –  Allows, but does not require, players to choose female spacepeople if they have not received the news event which normally enables recruiting them (Classic setting disables this).  Political directives (via the news event) still mandate recruiting female candidates.
