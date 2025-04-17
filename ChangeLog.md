@@ -80,7 +80,6 @@ Below are improvements that have been made over what the game offered in v.1.1.
    * An "A-OK" failure on an LEM Thrust Test (that is, one that let the test continue successfully) used to not award you LM Point(s) for the test (#441)
    * If an emergency EVA was needed to get back to the capsule after the Moon landing, the game wouldn't give you credit for the landing (#741)
    * A launch failure on a manned mission could sometimes activate the emergency ejection system, show the capsule jetting away successfully, but then crashing. The text, however, would erroneously tell you that the capsule was pulled down by the boosters. (#725)
-   * On the lunar landing mission, if the LM failed to dock with the capsule (but crew spacewalked successfully to the capsule), the game would deny you credit for the landing (#741)
 * **Game Crashes**
    * Fixed an out-of-bounds write in the VAB when reassembling hardware, which led to corrupt data and an assert failure upon autosave. (#704)
    * Fixed an array overflow error that used to occasionally crash toward the end of the game (#40, #200)
