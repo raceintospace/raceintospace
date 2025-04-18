@@ -64,6 +64,7 @@ struct MissionNavigator {
     };
 
     NavButton duration, docking, EVA, LM, joint;
+    bool showpath = false;
 };
 
 enum FMFields {
@@ -1297,18 +1298,31 @@ void Future(char plr)
                 OutBox(5, 84, 16, 130);
             } else if ((x >= 5 && y >= 132 && x < 16 && y <= 146 && mousebuttons > 0) ||
                        (key == K_SPACE)) {
-                // Turn on Mission Steps display
-                InBox(5, 132, 16, 146);
-                WaitForMouseUp();
-                delay(50);
+
                 misType = Data->P[plr].Future[pad].MissionCode;
                 assert(0 <= misType);
 
-                if (misType != 0) {
-                    MissionPath(plr, misType, pad);
+                // Turn off Mission Steps display
+                if (nav.showpath) {
+                    OutBox(5, 132, 16, 146);
+                    WaitForMouseUp();
+                    delay(50);
+                    nav.showpath = false;
+                    DrawMission(plr, 8, 37, misType, nav);
                 }
 
-                OutBox(5, 132, 16, 146);
+                // Turn on Mission Steps display
+                else {
+                    InBox(5, 132, 16, 146);
+                    WaitForMouseUp();
+                    delay(50);
+
+                    if (misType != 0) {
+                        MissionPath(plr, misType, pad);
+                    }
+                    nav.showpath = true;
+                }
+
             } else if ((x >= 5 && y >= 148 && x <= 16 && y <= 194 && mousebuttons > 0) ||
                        (key == DN_ARROW)) {
                 // Scroll down among Mission Types
@@ -1456,6 +1470,10 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     }
 
     DrawPenalty(plr, mission);
+
+    if (nav.showpath) {
+        MissionPath(plr, val, 0);
+    }
 
     gr_sync();
     TRACE1("<-DrawMission()");
