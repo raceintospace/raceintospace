@@ -846,10 +846,10 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
             num = 0;
         }
 
-        if ((num == Mission_MarsFlyby && !MarsFlag) || 
+        while ((num == Mission_MarsFlyby && !MarsFlag) ||
             (num == Mission_JupiterFlyby && !JupiterFlag) || 
             (num == Mission_SaturnFlyby && !SaturnFlag)) {
-            continue;
+            num++;
         }
         
     } while (!NavMatch(navigator, missionData[num]));
@@ -876,10 +876,10 @@ int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
             num = 56 + plr;
         }
 
-        if ((num == Mission_MarsFlyby && !MarsFlag) || 
+        while ((num == Mission_MarsFlyby && !MarsFlag) ||
             (num == Mission_JupiterFlyby && !JupiterFlag) || 
             (num == Mission_SaturnFlyby && !SaturnFlag)) {
-            continue;
+            num--;
         }
         
     } while (!NavMatch(navigator, missionData[num]));
