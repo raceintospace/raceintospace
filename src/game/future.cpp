@@ -64,7 +64,7 @@ struct MissionNavigator {
     };
 
     NavButton duration, docking, EVA, LM, joint;
-    bool showpath = false;
+    bool showpath = true;
 };
 
 enum FMFields {
@@ -236,6 +236,10 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     } else {
         OutBox(191, 74, 201, 82);
         TogBox(166, 49, 0);
+    }
+
+    if (nav.showpath) {
+        InBox(5, 132, 16, 146);
     }
 
     gr_sync();
@@ -928,7 +932,7 @@ void Future(char plr)
         ClrFut(plr, pad);
         
         JointFlag = JointMissionOK(plr, pad); // initialize Joint flag
-        MissionNavigator nav;
+        static MissionNavigator nav;
         NavReset(nav);
 
         if (! JointFlag) {
