@@ -803,12 +803,13 @@ void ClearRX(FMFields button)
  */
 bool NavMatch(const MissionNavigator &nav, const struct mStr &mission)
 {
-    return (! nav.docking.lock || nav.docking.value == mission.Doc) &&
-           (! nav.EVA.lock || nav.EVA.value == mission.EVA) &&
-           (! nav.LM.lock || nav.LM.value == mission.LM) &&
-           (! nav.joint.lock || nav.joint.value == mission.Jt) &&
-           (! nav.duration.lock || nav.duration.value == mission.Days ||
-            (mission.Dur && nav.duration.value >= mission.Days));
+    return (! mission.Index)
+        || (! nav.docking.lock || nav.docking.value == mission.Doc) &&
+        (! nav.EVA.lock || nav.EVA.value == mission.EVA) &&
+        (! nav.LM.lock || nav.LM.value == mission.LM) &&
+        (! nav.joint.lock || nav.joint.value == mission.Jt) &&
+        (! nav.duration.lock || nav.duration.value == mission.Days ||
+          (mission.Dur && nav.duration.value >= mission.Days));
 }
 
 
