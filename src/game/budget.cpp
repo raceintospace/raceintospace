@@ -84,7 +84,7 @@ void DrawBudget(char player, char *pStatus)
     InBox(133, 182, 152, 194);
     draw_flag(4, 4, player);
     display::graphics.setForegroundColor(1);
-    draw_string(138, 37, "CONTINUE");
+    draw_string(137, 37, "CONTINUE");
     draw_string(60, 81, "PRESTIGE");
     draw_string(43, 145, "EXPENDITURES");
     draw_string(212, 79, "BUDGET TRACK");
@@ -106,7 +106,7 @@ void DrawBudget(char player, char *pStatus)
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
     // Draw the Prestige Screen
-    k = (player == 0) ? 0 : 1; // max only checks your prestige and guessed
+    k = (player == 0) ? 0 : 1;  // max only checks your prestige and guessed
 
     for (i = 0; i < 5; i++) {  // value for other player
         max = (max > abs(Data->P[player].PrestHist[i][k])) ? max
@@ -764,7 +764,7 @@ void Viewing(char plr)
             DrawViewstandNews(card, ctop);
             bzdelay(DELAYCNT / 2);
             OutBox(302, 116, 312, 145);
-        } // UP
+        }  // UP
         else if (ctop < bline && ((mousebuttons > 0 && x >= 302 && y > 147 && x <= 312 && y <= 176) || key == DN_ARROW)) {
             InBox(302, 147, 312, 176);
             ctop++;
@@ -848,7 +848,7 @@ void Viewing(char plr)
                 OutBox(6, 28, 75, 38);    //Button Older
             }
 
-            InBox(244, 28, 313, 38); //Button Newer
+            InBox(244, 28, 313, 38);  //Button Newer
             // Debe dibujar la mission [Need to draw the mission]
             DrawPreviousMissions(plr);
             bzdelay(DELAYCNT);
