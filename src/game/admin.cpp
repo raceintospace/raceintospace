@@ -919,8 +919,7 @@ SaveGameType GetSaveType(const SaveFileHdr &header)
  * The save is composed of:
  *
  *   - the save file header (a SaveFileHdr struct)
- *   - the (compressed) struct Players variable Data holding most of
- *     the state data
+ *   - the (compressed) struct Players variable Data holding most of the state data
  *   - the Replay information detailing the events of launches
  *   - the event data, consisting of each turn's news text
  *
@@ -963,10 +962,10 @@ std::string GetBlockName()
     ShBox(39, 50, 202, 126);
 
     // TODO: Move this to wherever disk space should actually be
-    // checked. Consider modifying BadFileType() to accept a string
-    // argument?
+    //       checked. Consider modifying BadFileType() to accept a 
+    //       string argument?
     // TODO: This is supposed to check if there is sufficient disk
-    // space to write a save, but isn't implemented.
+    //       space to write a save, but isn't implemented.
     if (true) {
         InBox(43, 67, 197, 77);
         fill_rectangle(44, 68, 196, 76, 13);
@@ -991,9 +990,9 @@ std::string GetBlockName()
     name.reserve(maxLength + 1);
     display::graphics.setForegroundColor(1);
 
-    if (!interimData.filename.empty()) { // Suggest previous name
+    if (!interimData.filename.empty()) {  // Suggest previous name
         name = interimData.filename;
-        draw_string(53, 102, name.c_str());
+        draw_string(54, 102, name.c_str());
     }
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
@@ -1010,12 +1009,12 @@ std::string GetBlockName()
                 && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
                     (key >= '0' && key <= '9'))) {
                 name.push_back(key);
-                draw_string(53, 102, name.c_str());
+                draw_string(54, 102, name.c_str());
                 key = 0;
             } else if (name.length() && key == 0x08) {
                 name.erase(name.end() - 1);
                 fill_rectangle(52, 96, 189, 104, 0);
-                draw_string(53, 102, name.c_str());
+                draw_string(54, 102, name.c_str());
                 key = 0;
             }
         }
@@ -1147,7 +1146,7 @@ void FileText(const char *name)
  *
  * The menu is used for accessing planned missions, either future
  * missions set for next season or missions scheduled for the current
- * season. The former are referenced to as "Future" missions, while 
+ * season. The former are referred to as "Future" missions, while 
  * the latter is used as an entrance point for the Vehicle Assembly
  * building.
  *
@@ -1260,7 +1259,7 @@ int FutureCheck(char plr, char type)
             display::graphics.setForegroundColor(1);
 
             // TODO: Rewrite this to use a MissionType& and remove the
-            // duplicate code.
+            //       duplicate code.
             if (type == 1) {   // VAB/VIB
                 const struct mStr plan = GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
                 draw_string(111, 41 + i * 51, (plan.Abbr).c_str());
@@ -1609,7 +1608,7 @@ int FutureCheck(char plr, char type)
  *
  * The Play-by-Modem mode is disabled in the game, and the code is a
  * bit of a mess. It's preserved here faithfully, but that doesn't
- * guarantee it will _work_.
+ * guarantee it will _work_.  (Note: it has since been rewritten from scratch.)
  * (Note: Modem never worked in Windows, even in DOSBox running on
  *        Windows 98SE. It worked only in a native DOS environment,
  *        and then of course wouldn't have worked with a winmodem.
@@ -1618,10 +1617,10 @@ int FutureCheck(char plr, char type)
  *   header.dataSize   is the size of the uncompressed JSON string
  *
  * TODO: The new values for the global variables are assigned as they
- * are read, which reduces memory requirements but means the
- * current game state may be overwritten before an error in the file
- * is noticed. This would prevent loading, but make it impossible to
- * return to the active game.
+ *       are read, which reduces memory requirements but means the
+ *       current game state may be overwritten before an error in the file
+ *       is noticed. This would prevent loading, but make it impossible to
+ *       eturn to the active game.
  *
  * TODO: Add error handling on read/write commands.
  *
@@ -1652,7 +1651,7 @@ void LoadGame(const char *filename)
     fread(magic, 1, 2, fin);
     fseek(fin, -2, SEEK_CUR);
 
-    if (magic[0] == 0x78 && magic[1] == 0xDA) { // zlib magic numbers
+    if (magic[0] == 0x78 && magic[1] == 0xDA) {  // zlib magic numbers
         size_t csize = fileLength - sizeof(header);
         cbuf = (unsigned char *) malloc(csize);
         buf = (unsigned char *) malloc(usize);
@@ -1686,7 +1685,7 @@ void LoadGame(const char *filename)
             return;
         }
 
-    } else { // Not zlib compressed data
+    } else {  // Not zlib compressed data
         if (Help("i174") == 1) {
             LegacyLoad(header, fin, fileLength);
         } else {
@@ -1718,7 +1717,7 @@ void LoadGame(const char *filename)
         CacheCrewFile();
         LOAD = 1;
     } else if (GetSaveType(header) == SAVEGAME_Modem) {
-        // Modem connect up
+        //  Modem connect up
         if (header.Country[0] == 6) {
             plr[0] = header.Country[0];
             plr[1] = 1;
@@ -1727,7 +1726,7 @@ void LoadGame(const char *filename)
             plr[0] = 0;
         }
 
-        // Modem Play => reset the modem
+        //  Modem Play => reset the modem
         if (Option != -1) {
             DoModem(2);
         }
@@ -1747,7 +1746,7 @@ void LoadGame(const char *filename)
         // TODO: Should Modem games call CacheCrewFile()?
     }
 
-    header.Name[22] = '\0'; // valid index 0-22
+    header.Name[22] = '\0';  // valid index 0-22
     interimData.filename.assign(header.Name);
 }
 
@@ -1931,7 +1930,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
  * Launches the Save Game process.
  *
  * TODO: Add an option to toggle between classic save file naming
- * (e.g.: BUZZ1.SAV) and updated format ({title}.SAV).
+ *       (e.g.: BUZZ1.SAV) and updated format ({title}.SAV).
  *
  * \return  0 if successfully saved, 1 if aborted.
  */
@@ -1958,7 +1957,7 @@ int SaveGame(const std::vector<SFInfo> savegames)
         temp = NOTSAME;
 
         // TODO: If savegames guarantees ordering by title, we can
-        // eliminate unneccesary checks.
+        //       eliminate unneccesary checks.
         for (i = 0; (i < savegames.size() && temp == NOTSAME); i++) {
             if (title.compare(savegames[i].Title) == 0) {
                 temp = RequestX("REPLACE FILE", 1);
