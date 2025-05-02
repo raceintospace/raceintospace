@@ -27,18 +27,19 @@
 // This file seems to control the planning and execution of AI missions
 
 #include "aimis.h"
-#include "Buzz_inc.h"
+
+#include "aimast.h"
 #include "aipur.h"
+#include "Buzz_inc.h"
+#include "downgrader.h"
 #include "game_main.h"
 #include "hardware.h"
+#include "ioexception.h"
+#include "logging.h"
+#include "mc.h"
 #include "mission_util.h"
 #include "state_utils.h"
 #include "vab.h"
-#include "mc.h"
-#include "aimast.h"
-#include "downgrader.h"
-#include "ioexception.h"
-#include "logging.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 

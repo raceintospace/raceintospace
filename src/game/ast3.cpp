@@ -35,8 +35,8 @@
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "Buzz_inc.h"
 #include "ast0.h"
+#include "Buzz_inc.h"
 #include "draw.h"
 #include "filesystem.h"
 #include "game_main.h"

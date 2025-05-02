@@ -35,18 +35,19 @@
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
-#include "Buzz_inc.h"
-#include "options.h"
-#include "draw.h"
 #include "ast4.h"
+#include "Buzz_inc.h"
+#include "data.h"
+#include "draw.h"
+#include "filesystem.h"
 #include "game_main.h"
+#include "gr.h"
+#include "hardware.h"
+#include "hardware_buttons.h"
+#include "options.h"
+#include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
-#include "hardware_buttons.h"
-#include "hardware.h"
 
 namespace
 {

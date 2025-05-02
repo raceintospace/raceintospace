@@ -1,6 +1,8 @@
 #ifndef MIS_C_H
 #define MIS_C_H
 
+#include "data.h"
+
 void FirstManOnMoon(char plr, char isAI, char misNum,
                     const struct MisEval &step);
 void PlaySequence(char plr, int step, const char *Seq, char mode);

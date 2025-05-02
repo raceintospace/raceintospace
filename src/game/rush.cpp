@@ -25,28 +25,29 @@
 
 // This file handles Mission Control in the spaceport, for Downgrading and Rushing missions.
 
+#include "rush.h"
+
 #include <stdexcept>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "rush.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
 #include "downgrader.h"
 #include "draw.h"
+#include "filesystem.h"
+#include "game_main.h"
+#include "gr.h"
 #include "ioexception.h"
-#include "place.h"
 #include "logging.h"
 #include "mc.h"
 #include "mission_util.h"
+#include "pace.h"
+#include "place.h"
+#include "prest.h"
 #include "sdlhelper.h"
 #include "state_utils.h"
-#include "gr.h"
-#include "pace.h"
-#include "prest.h"
-#include "filesystem.h"
 
 // Function Prototype
 

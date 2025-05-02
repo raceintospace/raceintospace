@@ -40,11 +40,11 @@ RD cost is loosely based on the Basic Model
 
 #include "display/graphics.h"
 
-#include "gamedata.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
-#include "gr.h"
 #include "draw.h"
+#include "game_main.h"
+#include "gamedata.h"
+#include "gr.h"
 #include "pace.h"
 #include "sdlhelper.h"
 

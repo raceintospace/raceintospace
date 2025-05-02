@@ -22,17 +22,17 @@
 
 #include <algorithm>
 
-#include "Buzz_inc.h"
 #include "astros.h"
+#include "Buzz_inc.h"
 #include "game_main.h"
-#include "mission_util.h"
-#include "news_sup.h"
-#include "place.h"
-#include "state_utils.h"
 #include "mc.h"
+#include "mission_util.h"
 #include "news.h"
+#include "news_sup.h"
 #include "options.h"
 #include "pace.h"
+#include "place.h"
+#include "state_utils.h"
 
 
 // Roll a six die

@@ -25,25 +25,26 @@
 
 // This page handles the Launch Pad screen.
 
+#include "radar.h"
+
 #include <cassert>
 
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
 #include "ast0.h"
-#include "radar.h"
-#include "gamedata.h"
-#include "draw.h"
-#include "game_main.h"
 #include "Buzz_inc.h"
+#include "draw.h"
+#include "filesystem.h"
+#include "gamedata.h"
+#include "game_main.h"
+#include "gr.h"
 #include "mission_util.h"
 #include "news_suq.h"
+#include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
 #include "state_utils.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
 
 
 void PadDraw(char plr, char pad);

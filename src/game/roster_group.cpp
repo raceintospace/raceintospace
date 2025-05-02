@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include <boost/foreach.hpp>
+#include <json/json.h>
 
 RosterGroup::RosterGroup(int player, int group_number, const Json::Value &json_object)
     : m_player(player), m_group_number(group_number)

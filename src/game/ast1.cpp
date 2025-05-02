@@ -45,16 +45,16 @@
 
 #include "display/graphics.h"
 
+#include "aipur.h"
+#include "ast0.h"
 #include "Buzz_inc.h"
-#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "draw.h"
 #include "game_main.h"
-#include "place.h"
-#include "ast0.h"
-#include "aipur.h"
-#include "sdlhelper.h"
 #include "gr.h"
+#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "pace.h"
+#include "place.h"
+#include "sdlhelper.h"
 
 
 enum DialogueResponse {

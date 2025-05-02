@@ -8,12 +8,12 @@
 #include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
-#include "game_main.h"
 #include "draw.h"
-#include "gr.h"
-#include "sdlhelper.h"
-#include "pace.h"
 #include "filesystem.h"
+#include "game_main.h"
+#include "gr.h"
+#include "pace.h"
+#include "sdlhelper.h"
 
 enum vertical_alignment {
     ALIGN_TOP,

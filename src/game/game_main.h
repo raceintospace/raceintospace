@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "data.h"
+
 namespace display
 {
 class LegacySurface;

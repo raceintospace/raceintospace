@@ -7,10 +7,10 @@
 #include <vector>
 
 #include "Buzz_inc.h"
-#include "ioexception.h"
-#include "logging.h"
 #include "draw.h"
 #include "gr.h"
+#include "ioexception.h"
+#include "logging.h"
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);

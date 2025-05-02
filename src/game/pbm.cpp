@@ -25,11 +25,12 @@
 
 // This file handles play by e-mail.
 
+#include "pbm.h"
+
 #include "admin.h"
 #include "data.h"
 #include "game_main.h"
 #include "pace.h"
-#include "pbm.h"
 #include "review.h"
 
 /* Show the prestige results of all the missions perfomed in the

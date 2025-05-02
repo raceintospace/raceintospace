@@ -43,8 +43,8 @@
 #endif
 
 #include "macros.h"
-#include "utils.h"
 #include "logging.h"
+#include "utils.h"
 
 LOG_DEFAULT_CATEGORY(multimedia)
 

@@ -25,23 +25,24 @@
 
 // This file controls the Budget Office and the Viewing Stand
 
+#include "budget.h"
+
 #include <string>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "budget.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
 #include "draw.h"
+#include "filesystem.h"
+#include "game_main.h"
+#include "gr.h"
 #include "mc.h"
 #include "mission_util.h"
+#include "pace.h"
 #include "records.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 

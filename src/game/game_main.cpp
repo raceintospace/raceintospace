@@ -34,15 +34,16 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "game_main.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "Buzz_inc.h"
-#include "game_main.h"  // Below Buzz_inc.h b/c game_main.h needs data.h
 #include "admin.h"
 #include "aimast.h"
 #include "ast4.h"
+#include "Buzz_inc.h"
 #include "crash.h"
 #include "crew.h"
 #include "endgame.h"

@@ -30,12 +30,12 @@
 #include <cassert>
 
 #include "Buzz_inc.h"
-#include "options.h"
 #include "game_main.h"
 #include "mc.h"
 #include "mission_util.h"
-#include "prest.h"
+#include "options.h"
 #include "pace.h"
+#include "prest.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

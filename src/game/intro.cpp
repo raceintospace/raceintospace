@@ -25,20 +25,21 @@
 
 // This page diplays the official game credits
 
+#include "intro.h"
+
 #include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "raceintospace_config.h"
 
 #include "Buzz_inc.h"
-#include "utils.h"
-#include "intro.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "game_main.h"
-#include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "filesystem.h"
+#include "sdlhelper.h"
+#include "utils.h"
 
 const struct CREDIT {
     char page;

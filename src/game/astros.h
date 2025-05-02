@@ -1,6 +1,7 @@
 #ifndef ASTROS_H
 #define ASTROS_H
 
+#include "data.h"
 
 int AvailableCrewsCount(int plr, int program);
 void CheckFlightCrews(int player);

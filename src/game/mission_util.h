@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "data.h"
+
 
 bool Equals(const struct MissionType &m1, const struct MissionType &m2);
 const char *GetDurationParens(int duration);
