@@ -16,6 +16,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef MUSIC_H
+#define MUSIC_H
+
 enum music_track {
     M_ASSEMBLY,
     M_ASTTRNG,
@@ -70,3 +73,4 @@ void music_pump();
 
 // Toggle muting of the music system
 void music_set_mute(int muted);
+#endif // MUSIC_H
