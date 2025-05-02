@@ -25,18 +25,20 @@
 
 // This file handles Luna, the Satellite Building, the LM Program screen, and has a function for displaying 'nauts
 
+#include "ast0.h"
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
-#include "ast0.h"
 #include "Buzz_inc.h"
+#include "data.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "game_main.h"
-#include "place.h"
-#include "sdlhelper.h"
 #include "gr.h"
 #include "pace.h"
-#include "filesystem.h"
+#include "place.h"
+#include "sdlhelper.h"
 
 #include <boost/format.hpp>
 #include <iostream>

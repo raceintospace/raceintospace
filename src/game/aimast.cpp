@@ -28,10 +28,10 @@
 // This seems to be the master control for the AI, including selecting its strategy (0-2) and primary & secondary lunar approach
 
 #include "aimast.h"
-#include "game_main.h"
-#include "Buzz_inc.h"
 #include "aimis.h"
 #include "aipur.h"
+#include "Buzz_inc.h"
+#include "game_main.h"
 #include "pace.h"
 
 char Level_Check;

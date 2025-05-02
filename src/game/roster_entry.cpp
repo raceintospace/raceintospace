@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cstring>
 
+#include <json/json.h>
+
 #include "options.h"
 #include "pace.h"
 #include "roster_group.h"

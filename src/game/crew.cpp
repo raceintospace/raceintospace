@@ -28,16 +28,16 @@
 #include "ast0.h"
 #include "astros.h"
 #include "Buzz_inc.h"
-#include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
-#include "game_main.h"
 #include "draw.h"
-#include "place.h"
+#include "game_main.h"
+#include "gr.h"
+#include "logging.h"
 #include "mc.h"
 #include "mission_util.h"
-#include "gr.h"
+#include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "pace.h"
+#include "place.h"
 #include "state_utils.h"
-#include "logging.h"
 
 int AsnCrew(char plr, int missionCode, char pad, char part);
 void FutFltsTxt(char nw, char col);

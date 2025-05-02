@@ -34,20 +34,20 @@
 #include "display/surface.h"
 #include "display/image.h"
 
-#include "gamedata.h"
-#include "Buzz_inc.h"
 #include "admin.h"
 #include "ast_mod.h"
+#include "Buzz_inc.h"
 #include "draw.h"
-#include "options.h"
+#include "filesystem.h"
 #include "game_main.h"
+#include "gamedata.h"
+#include "gr.h"
 #include "ioexception.h"
+#include "options.h"
+#include "pace.h"
 #include "randomize.h"
 #include "sdlhelper.h"
 #include "settings.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
 
 
 enum PreferencesMode {

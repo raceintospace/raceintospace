@@ -18,21 +18,22 @@
 
 // This file handles the Mission Records screen
 
+#include "records.h"
+
 #include "display/graphics.h"
 
 #include "Buzz_inc.h"
-#include "records.h"
-#include "hardef.h"
 #include "draw.h"
-#include "game_main.h"
 #include "endianness.h"
+#include "game_main.h"
+#include "gr.h"
+#include "hardef.h"
 #include "mission_util.h"
+#include "pace.h"
 #include "place.h"
 #include "port.h"
 #include "replay.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

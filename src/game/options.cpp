@@ -30,11 +30,11 @@
 #include <SDL.h>
 
 #include "Buzz_inc.h"
+#include "fs.h"
+#include "logging.h"
 #include "macros.h"
 #include "pace.h"
-#include "fs.h"
 #include "utils.h"
-#include "logging.h"
 
 #define ENVIRON_DATADIR ("BARIS_DATA")
 #define ENVIRON_SAVEDIR ("BARIS_SAVE")

@@ -25,12 +25,12 @@
 
 // This file handles legacy save games.
 
-#include "legacy.h"
+#include "admin.h"
 #include "data.h"
 #include "endianness.h"
-#include "admin.h"
-#include "pace.h"
 #include "game_main.h"
+#include "legacy.h"
+#include "pace.h"
 
 void _SwapEquipment(struct LegacyPlayers *pData)
 {

@@ -25,24 +25,25 @@
 
 // This file handles the Capsule/Shuttle Screen.
 
+#include "ast4.h"
+
 #include <cassert>
 #include <string>
 
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
-#include "Buzz_inc.h"
 #include "ast0.h"
-#include "ast4.h"
 #include "astros.h"
+#include "Buzz_inc.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "game_main.h"
+#include "gr.h"
 #include "hardware.h"
+#include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 

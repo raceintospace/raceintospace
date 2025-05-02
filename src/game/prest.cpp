@@ -20,16 +20,17 @@
 
 // This file handles Prestige.
 
+#include "prest.h"
+
 #include <cassert>
 
-#include "prest.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "mc.h"
-#include "pace.h"
 #include "mis_c.h"
 #include "mis_m.h"
 #include "mission_util.h"
+#include "pace.h"
 #include "pbm.h"
 
 char tYr, tMo;

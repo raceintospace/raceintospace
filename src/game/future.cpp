@@ -28,8 +28,8 @@
 #include "display/palettized_surface.h"
 #include "display/legacy_surface.h"
 
-#include "Buzz_inc.h"
 #include "admin.h"
+#include "Buzz_inc.h"
 #include "crew.h"
 #include "draw.h"
 #include "filesystem.h"

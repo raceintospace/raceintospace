@@ -18,28 +18,29 @@
 
 // This page controls the last-minute confirmation screen just before each launch
 
+#include "newmis.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "newmis.h"
 #include "Buzz_inc.h"
-#include "game_main.h"
 #include "downgrader.h"
 #include "draw.h"
+#include "filesystem.h"
+#include "game_main.h"
+#include "gr.h"
 #include "hardware.h"
 #include "ioexception.h"
+#include "mc.h"
 #include "mis_c.h"
+#include "mission_util.h"
 #include "place.h"
 #include "port.h"
-#include "state_utils.h"
-#include "mc.h"
-#include "mission_util.h"
 #include "rush.h"
 #include "sdlhelper.h"
-#include "gr.h"
+#include "state_utils.h"
 #include "pace.h"
-#include "filesystem.h"
 #include "pbm.h"
 
 struct order Order[7] ;

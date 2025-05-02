@@ -1,6 +1,8 @@
 #ifndef PREST_H
 #define PREST_H
 
+#include "data.h"
+
 int AchievementPenalty(char plr, const struct mStr &mission);
 int DurationPenalty(char plr, const struct mStr &mission);
 int MilestonePenalty(char plr, const struct mStr &mission);

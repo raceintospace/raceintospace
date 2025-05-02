@@ -27,21 +27,22 @@
 
 // This file handles the Hardware Efficiency / Prestige Points screen from the Museum
 
+#include "hardef.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
-#include "hardef.h"
 #include "draw.h"
-#include "intel.h"
 #include "game_main.h"
+#include "gr.h"
+#include "hardware_buttons.h"
+#include "intel.h"
+#include "pace.h"
 #include "port.h"
 #include "rdplex.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "hardware_buttons.h"
 
 struct DisplayContext {
     boost::shared_ptr<display::LegacySurface> intel;

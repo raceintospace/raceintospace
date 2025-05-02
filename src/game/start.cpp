@@ -31,8 +31,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "Buzz_inc.h"
 #include "astros.h"
+#include "Buzz_inc.h"
 #include "game_main.h"
 #include "options.h"
 #include "pace.h"

@@ -22,9 +22,10 @@
 // This file handles music (as you might guess by the name)
 
 #include "Buzz_inc.h"
+#include "music.h"
 #include "pace.h"
-#include "utils.h"
 #include "sdlhelper.h"
+#include "utils.h"
 
 // A map of music_tracks to filenames
 struct music_key {

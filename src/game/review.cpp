@@ -26,20 +26,21 @@
 
 // This file handles your Performance Review
 
+#include "review.h"
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
-#include "review.h"
-#include "gamedata.h"
 #include "Buzz_inc.h"
 #include "draw.h"
+#include "filesystem.h"
 #include "game_main.h"
+#include "gamedata.h"
+#include "gr.h"
+#include "pace.h"
 #include "place.h"
 #include "port.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
-#include "filesystem.h"
 
 void DrawReview(char plr);
 void PresPict(char image);

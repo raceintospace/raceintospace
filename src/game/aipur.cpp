@@ -27,22 +27,24 @@
 
 // This file handles AI purchase and research of hardware, and 'naut recruitment.  It also shows the STATS part of the endgame.
 
+#include "aipur.h"
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
-#include "aipur.h"
 #include "Buzz_inc.h"
-#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
+#include "data.h"
 #include "draw.h"
-#include "hardef.h"
 #include "game_main.h"
+#include "gr.h"
+#include "hardef.h"
 #include "museum.h"
+#include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
+#include "pace.h"
 #include "port.h"
 #include "rdplex.h"
 #include "records.h"
 #include "sdlhelper.h"
-#include "gr.h"
-#include "pace.h"
 #include "serialize.h"
 
 std::vector<struct ManPool> Men;

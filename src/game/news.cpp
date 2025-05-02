@@ -28,25 +28,26 @@
 // NewsCaster Main Files
 // This file controls the newscast.
 
+#include "news.h"
+
 #include <stdexcept>
 
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "news.h"
-#include "gamedata.h"
-#include "draw.h"
 #include "Buzz_inc.h"
-#include "mmfile.h"
-#include "game_main.h"
-#include "news_suq.h"
-#include "sdlhelper.h"
-#include "pace.h"
-#include "gr.h"
-#include "utils.h"
+#include "draw.h"
 #include "filesystem.h"
+#include "gamedata.h"
+#include "game_main.h"
+#include "gr.h"
 #include "logging.h"
+#include "mmfile.h"
+#include "news_suq.h"
+#include "pace.h"
+#include "sdlhelper.h"
+#include "utils.h"
 
 /* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
 

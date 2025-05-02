@@ -31,16 +31,16 @@
 
 #include "display/graphics.h"
 
-#include "Buzz_inc.h"
 #include "ast0.h"
 #include "ast3.h"
 #include "ast4.h"
-#include "game_main.h"
+#include "Buzz_inc.h"
 #include "draw.h"
-#include "place.h"
-#include "sdlhelper.h"
+#include "game_main.h"
 #include "gr.h"
 #include "pace.h"
+#include "place.h"
+#include "sdlhelper.h"
 
 namespace
 {

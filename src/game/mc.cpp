@@ -25,29 +25,30 @@
 
 // This file handles Mission Control during missions
 
+#include "mc.h"
+
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
 
-#include "mc.h"
 #include "Buzz_inc.h"
-#include "mis.h"
+#include "data.h"
+#include "filesystem.h"
+#include "game_main.h"
 #include "mc2.h"
+#include "mis.h"
+#include "mis_c.h"
 #include "mis_m.h"
+#include "mission_util.h"
 #include "newmis.h"
 #include "news_suq.h"
+#include "pace.h"
+#include "pbm.h"
 #include "prest.h"
 #include "records.h"
 #include "state_utils.h"
-#include "game_main.h"
-#include "mis_c.h"
-#include "mission_util.h"
 #include "sdlhelper.h"
-#include "pace.h"
-#include "filesystem.h"
 #include "randomize.h"
-#include "data.h"
-#include "pbm.h"
 
 Equipment *MH[2][8];   // Pointer to the hardware
 struct MisAst MA[2][4];  //[2][4]

@@ -1,8 +1,10 @@
 #include "hardware_buttons.h"
-#include "filesystem.h"
-#include "draw.h"
 
 #include <boost/format.hpp>
+
+#include "draw.h"
+#include "filesystem.h"
+
 
 namespace
 {

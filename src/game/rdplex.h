@@ -1,10 +1,6 @@
 #ifndef RDPLEX_H
 #define RDPLEX_H
 
-#include "display/palettized_surface.h"
-
-#include "data.h"
-
 char RD(char plr);
 char QueryUnit(char hardware_index, char unit_index, char plr);
 char MaxChk(char hardware_index, char unit_index, char plr);
