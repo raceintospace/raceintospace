@@ -12,7 +12,7 @@ class Roster
 {
 public:
     Roster(std::istream &input_stream);
-    ~Roster();
+    ~Roster() = default;
 
     RosterGroup &getGroup(int player, int group_number);
 

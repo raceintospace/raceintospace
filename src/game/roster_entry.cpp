@@ -23,10 +23,6 @@ RosterEntry::RosterEntry(const RosterGroup &group, const Json::Value &json_objec
     m_endurance = json_object.get("endurance", 0).asInt();
 }
 
-RosterEntry::~RosterEntry()
-{
-}
-
 std::string RosterEntry::getName() const
 {
     return m_name;
