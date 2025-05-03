@@ -1,6 +1,8 @@
 #ifndef RDPLEX_H
 #define RDPLEX_H
 
+#include <cstdint>
+
 char RD(char plr);
 char QueryUnit(char hardware_index, char unit_index, char plr);
 char MaxChk(char hardware_index, char unit_index, char plr);
