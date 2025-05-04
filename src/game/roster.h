@@ -3,6 +3,7 @@
 
 #include <list>
 #include <istream>
+#include <string>
 
 #include "roster_group.h"
 
@@ -16,7 +17,7 @@ public:
 
     RosterGroup &getGroup(int player, int group_number);
 
-    static Roster load(const std::string filename = "roster.json");
+    static Roster load(const std::string& filename = "roster.json");
 
 private:
     roster_groups_t m_groups;
