@@ -12,7 +12,7 @@ class RosterEntry
 {
 public:
     RosterEntry(const RosterGroup &group, const Json::Value &json_object);
-    ~RosterEntry();
+    ~RosterEntry() = default;
 
     std::string getName() const;
     bool isFemale() const;

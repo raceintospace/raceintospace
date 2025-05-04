@@ -14,7 +14,7 @@ class RosterGroup
 {
 public:
     RosterGroup(int player, int group_number, const Json::Value &json_array);
-    ~RosterGroup();
+    ~RosterGroup() = default;
 
     const roster_entries_t &getRosterEntries(bool include_females) const;
 
