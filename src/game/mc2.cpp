@@ -176,7 +176,7 @@ MissionParse(char plr, struct mStr &misType, char pad)
             break;
         }
     }
-    delete MCode;
+    delete[] MCode;
 }
 
 
@@ -514,6 +514,9 @@ void MissionSteps(char plr, int mcode, int step, int pad,
             };
         }
 
+        if (Mev[step].Class > 7) {
+            Mev[step].Class = Mission_Capsule; // Prevent out-of-bounds access
+        }
 
 //      if (step==0 && Data->P[plr].TurnOnly==5)
 //         *Mev[step].sf=MIN(*Mev[step].sf,50);
