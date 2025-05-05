@@ -83,58 +83,62 @@ int CrewEndurance(const struct MisAst *crew, size_t crewSize)
     return int((double(value) / double(crewSize)) + 0.5);
 }
 
-
-void
-MissionParse(char plr, struct mStr &misType, char pad)
+// parse mission's Code (mission.json) into individial steps, passing each to the MissionSteps()
+void MissionParse(char plr, mStr& misType, char pad)
 {
-    int i, loc, j;
-
+	const std::string& MCode = misType.Code;
+	DEBUG2("MCode: %s", MCode.c_str());
+	
+	int loc = pad;
     STEP = 0;
-    loc = pad;
-    
-	char *MCode = new char[misType.Code.length() + 1];
-	std::strcpy(MCode, misType.Code.c_str());
-	DEBUG2("MCode: %s", MCode);
 
-    for (i = 0; MCode[i] != '|'; ++i) {
+    for (int i = 0; MCode[i] != '|'; ++i) {
+		assert(i < MCode.length());
         switch (MCode[i]) {
-        case '@':
-            i++;
-            MCode[i] = 'b';    // duration step
-            MissionSteps(plr, MCode[i], STEP++, loc - pad, misType);
+        case '@': // duration step, 2nd character is unused
+			assert(i+1 < MCode.length());
+            MissionSteps(plr, 'b', STEP++, loc - pad, misType);
+
+			i++;
             break;
 
-        case '~':
-
-            // printf("      :Delay of %d seasons\n", MCode[i + 1] - 0x30);
-            for (j = 0; j < (MCode[i + 1] - 0x30); j++) {
+        case '~': // interplanetary mission coasting
+			      // 2nd character - length  of the coast
+			      // 3rd character - type of step in the coast
+			assert(i+2 < MCode.length());
+            // printf("      :Delay of %d seasons\n", MCode[i + 1] - '0');
+            for (int j = 0; j < (MCode[i + 1] - '0'); j++) {
                 MissionSteps(plr, MCode[i + 2], STEP++, loc - pad, misType);
             }
 
             i += 2;
             break;
 
-        case '+':
-            i++;
-            loc = MCode[i] - 0x30 + pad - 1;
+        case '+': // switch vehicle to act steps on, for joint missions
+			      // 2nd character - which vehicle to switch to
+            assert(i+1 < MCode.length());
+            loc = pad + (MCode[i + 1] - '0') - 1;
             ASSERT(loc - pad < 3);  // Breaks rescue missions
+
+			i++;
             break;
 
-        case '^':
+        case '^': // unused? alternative to '+'?
             loc = pad + 1;
             break;
 
-        case '&':
+        case '&': // unused? alternative to '+'?
             loc = pad;
             break;
 
-        case '%':
-            i++;
-            MCode[i] = 'c';
-            MissionSteps(plr, MCode[i], STEP++, loc - pad, misType);
+        case '%': // orbitting lab, 2nd character is unused
+            assert(i+1 < MCode.length());
+            MissionSteps(plr, 'c', STEP++, loc - pad, misType);
+
+			i++;
             break;
 
-        case 'A':
+        case 'A': // standard steps
         case 'B':
         case 'C':
         case 'D':
@@ -176,7 +180,6 @@ MissionParse(char plr, struct mStr &misType, char pad)
             break;
         }
     }
-    delete[] MCode;
 }
 
 
