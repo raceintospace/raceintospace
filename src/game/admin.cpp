@@ -997,7 +997,7 @@ std::string GetBlockName()
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
         gr_sync();
-        key = bioskey(0);
+        key = get_pressed_key();
 
         if (key >= 'a' && key <= 'z') {
             key = toupper(key);

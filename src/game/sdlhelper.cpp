@@ -457,29 +457,33 @@ av_block(void)
     }
 }
 
-int
-bioskey(int peek)
+// Checks ring buffer if there is anything in it
+// false negatives are possible, but aren't important
+bool is_new_key_available()
 {
-    int c;
+	av_step();
+	return keybuf_in_idx != keybuf_out_idx;
+}
 
-    av_step();
-
-    if (peek) {
-        if (keybuf_in_idx != keybuf_out_idx) {
-            return (1);
-        }
-
-        return (0);
+// Returns pressed key from ring buffer
+// or 0 if buffer is empty (false negatives are possible, but aren't important)
+int get_pressed_key()
+{
+    if (!is_new_key_available()) {
+        return 0;
     }
 
-    if (keybuf_in_idx == keybuf_out_idx) {
-        return (0);
-    }
-
-    c = keybuf[keybuf_out_idx];
+	int c = keybuf[keybuf_out_idx];
     keybuf_out_idx = (keybuf_out_idx + 1) % KEYBUF_SIZE;
 
-    return (c);
+    return c;
+}
+
+// Removes all keys from SDL or ring buffer
+void purge_key_buffer()
+{
+	av_step();
+	keybuf_out_idx = keybuf_in_idx;
 }
 
 void

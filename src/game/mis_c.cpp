@@ -503,7 +503,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                     sts = 0;
                 }
 
-                if (bioskey(0) || grGetMouseButtons()) {
+                if (get_pressed_key() || grGetMouseButtons()) {
                     av_silence(AV_SOUND_CHANNEL);
                     keep_going = 0;
                 }
@@ -533,7 +533,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 keep_going = 0;
             }
 
-            if (bioskey(0) || grGetMouseButtons()) {
+            if (get_pressed_key() || grGetMouseButtons()) {
                 av_silence(AV_SOUND_CHANNEL);
                 keep_going = 0;
             }
@@ -1170,12 +1170,10 @@ char FailureMode(char plr, int prelim, char *text)
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
-    key = 0;
+    purge_key_buffer()
+	key = 0;
 
-    while (bioskey(1)) {
-        bioskey(0);
-    }
-
+    
     while (1) {
         if (index > -1 && get_time() - last_secs > .55) {
             last_secs = get_time();

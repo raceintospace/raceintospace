@@ -383,13 +383,12 @@ void stop_voice(void)
 
 int getch(void)
 {
-    int c;
-
-    while (1) {
+    while (true) {
         av_block();
 
-        if ((c = bioskey(0)) != 0) {
-            return (c);
+        int c = pressed_key();
+        if (c != 0) {
+            return c;
         }
     }
 }
