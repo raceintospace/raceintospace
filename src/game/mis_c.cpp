@@ -1170,10 +1170,9 @@ char FailureMode(char plr, int prelim, char *text)
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
-    purge_key_buffer()
-	key = 0;
+    purge_key_buffer();
+    key = 0;
 
-    
     while (1) {
         if (index > -1 && get_time() - last_secs > .55) {
             last_secs = get_time();

@@ -461,8 +461,8 @@ av_block(void)
 // false negatives are possible, but aren't important
 bool is_new_key_available()
 {
-	av_step();
-	return keybuf_in_idx != keybuf_out_idx;
+    av_step();
+    return keybuf_in_idx != keybuf_out_idx;
 }
 
 // Returns pressed key from ring buffer
@@ -473,7 +473,7 @@ int get_pressed_key()
         return 0;
     }
 
-	int c = keybuf[keybuf_out_idx];
+    int c = keybuf[keybuf_out_idx];
     keybuf_out_idx = (keybuf_out_idx + 1) % KEYBUF_SIZE;
 
     return c;
@@ -482,8 +482,8 @@ int get_pressed_key()
 // Removes all keys from SDL or ring buffer
 void purge_key_buffer()
 {
-	av_step();
-	keybuf_out_idx = keybuf_in_idx;
+    av_step();
+    keybuf_out_idx = keybuf_in_idx;
 }
 
 void
