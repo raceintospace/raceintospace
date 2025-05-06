@@ -208,10 +208,10 @@ int game_main_impl(int argc, char *argv[])
     xMODE = 0;
 
     Data = new struct Players;
+    memset(Data, 0x00, sizeof(struct Players));
+
     buffer = (char *)xmalloc(BUFFER_SIZE);
-
     DEBUG3("main buffer %p (%d)", buffer, BUFFER_SIZE);
-
     memset(buffer, 0x00, BUFFER_SIZE);
 
     Assets = new struct AssetData;
