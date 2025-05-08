@@ -1109,11 +1109,11 @@ void HarIntel(char plr, char acc)
 
         save[3] = save[4] = save[5] = save[6] = save[12] = save[13] = save[26] = save[27] = 0;
 
-        if (Data->P[abs(plr - 1)].LaunchFacility[1] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             save[3] = 1;
         }
 
-        if (Data->P[abs(plr - 1)].LaunchFacility[2] == 1) {
+        if (Data->P[abs(plr - 1)].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
             save[4] = 1;
         }
 

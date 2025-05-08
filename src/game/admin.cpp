@@ -125,7 +125,6 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b);
 char RequestX(const char *s, char md);
 void write_save_file(const char *Name, SaveFileHdr header);
 int SaveGame(const std::vector<SFInfo> savegames);
-int PadPurchase[3];
 
 namespace
 {
@@ -1155,26 +1154,21 @@ void FileText(const char *name)
  */
 int FutureCheck(char plr, char type)
 {
-    int i;
-    int ii;
+    assert(type == 0 || type == 1);
     int xx;
     int yy;
-    int pad;
-    int p[3];
-    int m[3];
+    LaunchFacility_Status* p = Data->P[plr].LaunchFacility;
+    LaunchFacility_Status old_p[3];
+    int m[MAX_LAUNCHPADS];
     int t = 0;
-    int tx[3] = {0, 0, 0};
-    for (i = 0; i < 3; i++) {
-        p[i] = Data->P[plr].LaunchFacility[i];
-        PadPurchase[i] = 0;
+    int tx[MAX_LAUNCHPADS] = {0, 0, 0};
+    for (int i = 0; i < MAX_LAUNCHPADS; i++) {
+        old_p[i] = p[i];
 
         if (type == 0) {
             m[i] = Data->P[plr].Future[i].MissionCode;
-        } else if (type == 1) {
-            m[i] = (Data->P[plr].Mission[i].Hard[4] > 0) ? 1 : 0;
         } else {
-            // only types 0 and 1 are valid
-            assert(false);
+            m[i] = (Data->P[plr].Mission[i].Hard[4] > 0) ? 1 : 0;
         }
     }
 
@@ -1215,17 +1209,17 @@ int FutureCheck(char plr, char type)
 
     draw_string(0, 0, "LAUNCH SELECTION");
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < MAX_LAUNCHPADS; i++) {
         InBox(64, 35 + 51 * i, 104, 66 + 51 * i);
         InBox(64, 69 + 51 * i, 104, 79 + 51 * i);
         InBox(108, 35 + 51 * i, 264, 64 + 51 * i);
         IOBox(108, 67 + 51 * i, 264, 79 + 51 * i);
 
-        if (p[i] > 1) {
+        if (p[i] >= LAUNCHPAD_DAMAGED_MARGIN) {
             display::graphics.setForegroundColor(5);
             draw_string(111, 44 + i * 51, "THIS FACILITY IS ");
 
-            if (p[i] >= 20) {
+            if (p[i] >= LAUNCHPAD_DESTROYED_MARGIN) {
                 draw_string(0, 0, "DESTROYED.");
             } else {
                 draw_string(0, 0, "DAMAGED.");
@@ -1254,7 +1248,7 @@ int FutureCheck(char plr, char type)
             t = 2;
         }
 
-        if (p[i] == 1) {
+        if (p[i] == LAUNCHPAD_OPERATIONAL) {
             display::graphics.setForegroundColor(1);
 
             // TODO: Rewrite this to use a MissionType& and remove the
@@ -1270,7 +1264,7 @@ int FutureCheck(char plr, char type)
                     draw_string(0, 0, GetDurationParens(duration));
                 }
 
-                if (i < 2) {
+                if (i != MAX_LAUNCHPADS - 1) {
                     if (Data->P[plr].Mission[i + 1].part == 1) {
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
@@ -1304,7 +1298,7 @@ int FutureCheck(char plr, char type)
                     draw_string(0, 0, GetDurationParens(duration));
                 }
 
-                if (i < 2) {
+                if (i != MAX_LAUNCHPADS - 1) {
                     if (Data->P[plr].Future[i + 1].part == 1) {
                         draw_string(111, 61 + i * 51, "PRIMARY MISSION PART");
                         draw_string(111, 61 + (i + 1) * 51, "SECONDARY MISSION PART");
@@ -1351,7 +1345,7 @@ int FutureCheck(char plr, char type)
             }
         }
 
-        if (p[i] == -1) {
+        if (p[i] == LAUNCHPAD_NOT_BUILT) {
             display::graphics.setForegroundColor(9);  // Changed from 5
             draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
 
@@ -1359,7 +1353,7 @@ int FutureCheck(char plr, char type)
                 draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
                 draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
 
-                if (Data->P[plr].Cash > 19) {
+                if (Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST) {
                     display::graphics.setForegroundColor(11);
                 }
 
@@ -1382,13 +1376,13 @@ int FutureCheck(char plr, char type)
         draw_character(0x41 + i);
 
         display::graphics.screen()->draw(launchPads, 
-        156 * plr + t * 39, i * 30, 39, 30, 65, 36 + i * 51);
+            156 * plr + t * 39, i * 30, 39, 30, 65, 36 + i * 51);
     }
 
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
-    pad = -1;
+    int pad = -1;
     x = y = mousebuttons = key = 0;
 
     while (pad == -1) {
@@ -1409,7 +1403,7 @@ int FutureCheck(char plr, char type)
             key = 0;
         }
 
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < MAX_LAUNCHPADS; i++) {
             if ((x >= 110 && y >= 69 + i * 51 && x <= 262 && y <= 77 + i * 51 && tx[i] != 1 && mousebuttons > 0) 
               || (tx[i] != 1 && key == 'A' + i)) {
                 InBox(110, 69 + i * 51, 262, 77 + i * 51);  // Open Future Missions
@@ -1417,18 +1411,17 @@ int FutureCheck(char plr, char type)
                 key = 0;
                 delay(50);
 
-                if (p[i] == 1) {
+                if (p[i] == LAUNCHPAD_OPERATIONAL) {
                     pad = i;
                 }
 
-                if (p[i] == -1 && Data->P[plr].Cash >= 20 && type == 0) {
+                if (p[i] == LAUNCHPAD_NOT_BUILT && Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST && type == 0) {
 
                     display::graphics.screen()->draw(launchPads, 
                     156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
                     Data->P[plr].Cash -= 20;
                     Data->P[plr].Spend[0][3] += 20;
-                    Data->P[plr].LaunchFacility[i] = 1;
-                    p[i] = 1;
+                    p[i] = LAUNCHPAD_OPERATIONAL;
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     display::graphics.setForegroundColor(5);
@@ -1438,26 +1431,25 @@ int FutureCheck(char plr, char type)
                     IOBox(110, 47 + i * 51, 145, 62 + i * 51);
                     display::graphics.setForegroundColor(1);
                     draw_string(116, 56 + i * 51, "UNDO");
-                    PadPurchase[i] = 1;
 
                     // Update player's cash shown on other pads
-                    for (ii = 0; ii < 3; ii++) {
+                    for (int ii = 0; ii < MAX_LAUNCHPADS; ii++) {
                         display::graphics.setForegroundColor(9);
 
-                        if (ii != i && p[ii] > 1) {
+                        if (ii != i && p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                             if (Data->P[plr].Cash >= abs(p[ii])) {
                                 display::graphics.setForegroundColor(11);
                             }
                         }
 
-                        if (ii != i && p[ii] == -1) {
-                            if (Data->P[plr].Cash > 19) {
+                        if (ii != i && p[ii] == LAUNCHPAD_NOT_BUILT) {
+                            if (Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST) {
                                 display::graphics.setForegroundColor(11);
                             }
                         }
 
-                        if (p[ii] == -1 || p[ii] > 1) {
-                            if (p[ii] > 1) {
+                        if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                                 xx = 113;
                                 yy = 56 + ii * 51;
                             } else {
@@ -1472,20 +1464,19 @@ int FutureCheck(char plr, char type)
                         }
                     }
 
-                } else if (p[i] == -1 && Data->P[plr].Cash < 20 && type == 0) {
+                } else if (p[i] == LAUNCHPAD_NOT_BUILT && Data->P[plr].Cash < LAUNCHPAD_CONSTRUCTION_COST && type == 0) {
                     Help("i129");
                 }
 
-                if (p[i] > 4 && Data->P[plr].Cash >= abs(Data->P[plr].LaunchFacility[i])
+                if (p[i] >= LAUNCHPAD_DAMAGED_MARGIN && Data->P[plr].Cash >= abs(p[i])
                     && type == 0) {
 
                     display::graphics.screen()->draw(launchPads, 
                     156 * plr + 39, i * 30, 39, 30, 65, 36 + i * 51);
                     
-                    Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
-                    Data->P[plr].Spend[0][3] += Data->P[plr].LaunchFacility[i];
-                    Data->P[plr].LaunchFacility[i] = 1;
-                    p[i] = 1;
+                    Data->P[plr].Cash -= p[i];
+                    Data->P[plr].Spend[0][3] += p[i];
+                    p[i] = LAUNCHPAD_OPERATIONAL;
                     fill_rectangle(109, 36 + 51 * i, 263, 63 + 51 * i, 3);
                     ShBox(110, 69 + i * 51, 262, 77 + i * 51);
                     display::graphics.setForegroundColor(5);
@@ -1494,23 +1485,23 @@ int FutureCheck(char plr, char type)
                     draw_string(113, 75 + i * 51, "ASSIGN FUTURE MISSION");
 
                     // Update player's cash shown on other pads
-                    for (ii = 0; ii < 3; ii++) {
+                    for (int ii = 0; ii < MAX_LAUNCHPADS; ii++) {
                         display::graphics.setForegroundColor(9);
 
-                        if (ii != i && p[ii] > 1) {
+                        if (ii != i && p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                             if (Data->P[plr].Cash >= abs(p[ii])) {
                                 display::graphics.setForegroundColor(11);
                             }
                         }
 
-                        if (ii != i && p[ii] == -1) {
-                            if (Data->P[plr].Cash > 19) {
+                        if (ii != i && p[ii] == LAUNCHPAD_NOT_BUILT) {
+                            if (Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST) {
                                 display::graphics.setForegroundColor(11);
                             }
                         }
 
-                        if (p[ii] == -1 || p[ii] > 1) {
-                            if (p[ii] > 1) {
+                        if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                                 xx = 113;
                                 yy = 56 + ii * 51;
                             } else {
@@ -1525,69 +1516,70 @@ int FutureCheck(char plr, char type)
                         }
                     }
 
-                } else if (p[i] > 4 && Data->P[plr].Cash < 
-                  abs(Data->P[plr].LaunchFacility[i])
-                           && type == 0) {
+                } else if (p[i] >= LAUNCHPAD_DAMAGED_MARGIN 
+                        && Data->P[plr].Cash < abs(p[i])
+                        && type == 0) {
                     Help("i129");
                 }
             }
 
-            if (x >= 110 && y >= 49 + i * 49 && x <= 145 && y <= 62 + i * 51 > 0 && PadPurchase[i] == 1 && mousebuttons > 0) {  // Undo pad purchase
-
-            InBox(110, 47 + i * 51, 145, 62 + i * 51);
-            delay(100);
-            OutBox(110, 47 + i * 51, 145, 62 + i * 51);
-            fill_rectangle(109, 36 + 51 * i, 262, 63 + 51 * i, 3);
-            Data->P[plr].Cash += 20;
-            Data->P[plr].Spend[0][3] -= 20;
-            Data->P[plr].LaunchFacility[i] = -1;
-            p[i] = -1;
-            display::graphics.setForegroundColor(9);
-            draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
-            draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
-            draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
-            PadPurchase[i] = -1;
-
-            if (Data->P[plr].Cash > 19) {
-                display::graphics.setForegroundColor(11);
-            }
-
-            draw_string(0, 0, "(OF ");
-            draw_number(0, 0, Data->P[plr].Cash);
-            draw_string(0, 0, " MB)");
-            fill_rectangle(111, 70 + i * 51, 261, 76 + i * 51, 3);
-            display::graphics.setForegroundColor(9);
-            draw_string(113, 75 + i * 51, "PURCHASE FACILITY");
-
-                // Update player's cash shown on other pads
-                for (ii = 0; ii < 3; ii++) {
+            if (x >= 110 && y >= 49 + i * 49 && x <= 145 && y <= 62 + i * 51 > 0 && old_p[i] != p[i] && mousebuttons > 0) {  
+                // Undo button
+                if (old_p[i] == LAUNCHPAD_NOT_BUILT) {
+                    // Undo pad purchase
+                    InBox(110, 47 + i * 51, 145, 62 + i * 51);
+                    delay(100);
+                    OutBox(110, 47 + i * 51, 145, 62 + i * 51);
+                    fill_rectangle(109, 36 + 51 * i, 262, 63 + 51 * i, 3);
+                    Data->P[plr].Cash += LAUNCHPAD_CONSTRUCTION_COST;
+                    Data->P[plr].Spend[0][3] -= LAUNCHPAD_CONSTRUCTION_COST;
+                    p[i] = LAUNCHPAD_NOT_BUILT;
                     display::graphics.setForegroundColor(9);
+                    draw_string(111, 41 + i * 51, "NO FACILITY BUILT");
+                    draw_string(111, 49 + i * 51, "PURCHASE LAUNCH FACILITY");
+                    draw_string(111, 57 + i * 51, "FOR: 20 MB'S ");
 
-                    if (ii != i && p[ii] > 1) {
-                        if (Data->P[plr].Cash >= abs(p[ii])) {
-                            display::graphics.setForegroundColor(11);
-                        }
+                    if (Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST) {
+                        display::graphics.setForegroundColor(11);
                     }
+        
+                    draw_string(0, 0, "(OF ");
+                    draw_number(0, 0, Data->P[plr].Cash);
+                    draw_string(0, 0, " MB)");
+                    fill_rectangle(111, 70 + i * 51, 261, 76 + i * 51, 3);
+                    display::graphics.setForegroundColor(9);
+                    draw_string(113, 75 + i * 51, "PURCHASE FACILITY");
 
-                    if (ii != i && p[ii] == -1) {
-                        if (Data->P[plr].Cash > 19) {
-                            display::graphics.setForegroundColor(11);
+                    // Update player's cash shown on other pads
+                    for (int ii = 0; ii < MAX_LAUNCHPADS; ii++) {
+                        display::graphics.setForegroundColor(9);
+
+                        if (ii != i && p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            if (Data->P[plr].Cash >= abs(p[ii])) {
+                                display::graphics.setForegroundColor(11);
+                            }
                         }
-                     }
 
-                    if (p[ii] == -1 || p[ii] > 1) {
-                        if (p[ii] > 1) {
-                            xx = 113;
-                            yy = 56 + ii * 51;
-                        } else {
-                            xx = 171;
-                            yy = 53 + ii * 51;
+                        if (ii != i && p[ii] == LAUNCHPAD_NOT_BUILT) {
+                            if (Data->P[plr].Cash >= LAUNCHPAD_CONSTRUCTION_COST) {
+                                display::graphics.setForegroundColor(11);
+                            }
+                         }
+
+                        if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                                xx = 113;
+                                yy = 56 + ii * 51;
+                            } else {
+                                xx = 171;
+                                yy = 53 + ii * 51;
+                            }
+
+                            fill_rectangle(xx, yy, xx + 54, yy + 4, 3);
+                            draw_string(xx, yy + 4, "(OF ");
+                            draw_number(0, 0, Data->P[plr].Cash);
+                            draw_string(0, 0, "MB)");
                         }
-
-                        fill_rectangle(xx, yy, xx + 54, yy + 4, 3);
-                        draw_string(xx, yy + 4, "(OF ");
-                        draw_number(0, 0, Data->P[plr].Cash);
-                        draw_string(0, 0, "MB)");
                     }
                 }
             }

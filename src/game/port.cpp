@@ -320,14 +320,14 @@ void DrawSpaceport(char plr)
     }
 
     // Pads
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < MAX_LAUNCHPADS; i++) {
         Data->P[plr].Port[PORT_LaunchPad_A + i] = 1;  // Draw launch pad
 
         if (Data->P[plr].Mission[i].MissionCode) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 2;  // Draw damaged launch pad
-        } else if (Data->P[plr].LaunchFacility[i] > 1) {
+        } else if (Data->P[plr].LaunchFacility[i] >= LAUNCHPAD_DAMAGED_MARGIN) {
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 3;
-        } else if (Data->P[plr].LaunchFacility[i] < 0) {  // No launch facility
+        } else if (Data->P[plr].LaunchFacility[i] == LAUNCHPAD_NOT_BUILT) {  // No launch facility
             Data->P[plr].Port[PORT_LaunchPad_A + i] = 0;
         }
     }

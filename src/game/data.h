@@ -607,6 +607,14 @@ struct PastInfo {
     }
 };
 
+enum LaunchFacility_Status : int8_t {
+    LAUNCHPAD_NOT_BUILT = -1,
+    LAUNCHPAD_CONSTRUCTION_COST = 20,
+    LAUNCHPAD_OPERATIONAL = 1,
+    LAUNCHPAD_DAMAGED_MARGIN = 2, // value at or above this classifies pad as damaged
+    LAUNCHPAD_DESTROYED_MARGIN = 20 // value at or above this classifies pad as destroyed
+};
+
 struct BuzzData {                   // master data list for Buzz Aldrin's
     char Header[4];                  // Sync information
     char Name[20];                   // Player Name
@@ -653,7 +661,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char unused_ZCost; // unused
     char unused_ZFlag; // unused
     int8_t DockingModuleInOrbit;                       // Docking Module in Orbit, in seasons
-    int8_t LaunchFacility[MAX_LAUNCHPADS];    /**< -1=no facility; 1=purchased, >1 repair cost) */
+    LaunchFacility_Status LaunchFacility[MAX_LAUNCHPADS];    /**< -1=no facility; 1=purchased, >1 repair cost) */
     int8_t AstroCount;                 // Current # in Program
     int8_t AstroLevel;                 // Level of selection
     int8_t AstroDelay;                 // Wait until next selection

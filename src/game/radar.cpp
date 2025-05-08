@@ -65,7 +65,7 @@ void PadDraw(char plr, char pad)
     InBox(167, 27, 316, 176);
     fill_rectangle(168, 28, 315, 175, 0);
     struct MissionType &mission = Data->P[plr].Mission[pad];
-    if (Data->P[plr].LaunchFacility[pad] > 1) { 
+    if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) { 
         IOBox(167, 179, 316, 195);  // Button to fix damaged/destroyed pad
     } else {
         if (mission.MissionCode &&
@@ -140,13 +140,13 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(64, 71, "MISSION");
     draw_small_flag(plr, 4, 4);
 
-    if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode) {
+    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode) {
         PadPict(2 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode == Mission_None) {
+    } else if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode == Mission_None) {
         PadPict(4 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] == 20) {  // Destroyed Pad
+    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DESTROYED_MARGIN) {  // Destroyed Pad
         PadPict(6 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] > 1) {  // Damaged Pad
+    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) {  // Damaged Pad
         PadPict(0 + plr);
     }
 
@@ -154,9 +154,9 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(15, 37, "STATUS: ");
     display::graphics.setForegroundColor(9);
 
-    if (Data->P[plr].LaunchFacility[pad] == 1) {
+    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL) {
         draw_string(0, 0, "OPERATIONAL");
-    } else if (Data->P[plr].LaunchFacility[pad] >= 20) {
+    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DESTROYED_MARGIN) {
         draw_string(0, 0, "DESTROYED");
     } else {
         draw_string(0, 0, "DAMAGED");
@@ -164,7 +164,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
 
     display::graphics.setForegroundColor(1);
 
-    if (Data->P[plr].LaunchFacility[pad] > 1) {
+    if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) {
         draw_string(15, 56, "REPAIR COST: ");
         display::graphics.setForegroundColor(9);
         draw_number(0, 0, Data->P[plr].LaunchFacility[pad]);
@@ -187,7 +187,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
 
-    if (Data->P[plr].LaunchFacility[pad] == 1) {
+    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL) {
         display::graphics.setForegroundColor(9);
         draw_string(189, 189, "D");
         display::graphics.setForegroundColor(1);
@@ -459,8 +459,8 @@ void ShowPad(char plr, char pad)
         key = 0;
         GetMouse();
 
-        if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 244 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
-            || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode && key == 'S')) {
+        if ((Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && x >= 244 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
+            || (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode && key == 'S')) {
             // Scrub Mission
             InBox(244, 181, 314, 193);
             key = 0;
@@ -476,8 +476,8 @@ void ShowPad(char plr, char pad)
             if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
                 return;
             }
-        } else if ((Data->P[plr].LaunchFacility[pad] == 1 && x >= 169 && y >= 181 && x <= 238 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
-            || (Data->P[plr].LaunchFacility[pad] == 1 && Data->P[plr].Mission[pad].MissionCode && key == 'D')) {
+        } else if ((Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && x >= 169 && y >= 181 && x <= 238 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
+            || (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode && key == 'D')) {
             // Delay Mission
 
             // There are restrictions on Mars/Jupiter/Saturn Flybys,
@@ -519,8 +519,8 @@ void ShowPad(char plr, char pad)
                     OutBox(169, 181, 238, 193);
                 }
             }
-        } else if ((Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash && Data->P[plr].LaunchFacility[pad] > 1 && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)
-                   || (key == 'F' && Data->P[plr].LaunchFacility[pad] > 1 && Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash)) {
+        } else if ((Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash && Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)
+                   || (key == 'F' && Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN && Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash)) {
             // Scrub Mission
             InBox(169, 181, 314, 193);
             key = 0;
@@ -531,7 +531,7 @@ void ShowPad(char plr, char pad)
 
                 if (temp == 1) {
                     Data->P[plr].Cash -= Data->P[plr].LaunchFacility[pad];
-                    Data->P[plr].LaunchFacility[pad] = 1;
+                    Data->P[plr].LaunchFacility[pad] = LAUNCHPAD_OPERATIONAL;
                 }
             } else {
                 Help("i116");
