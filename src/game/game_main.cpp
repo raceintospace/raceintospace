@@ -887,8 +887,8 @@ void GetMouse_fast(void)
         grGetMouseCurPos(&x, &y);
     }
 
-    while (bioskey(1)) {
-        key = bioskey(0);
+    while (is_new_key_available()) {
+        key = get_pressed_key();
 
         if ((key & 0x00ff) > 0) {
             key = toupper(key & 0xff);

@@ -1296,10 +1296,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     VerifySafety(plr);  // Keep all safeties within the proper ranges
 
-    while (bioskey(1)) {
-        bioskey(0);
-    }
-
+    purge_key_buffer(); // why?
     key = 0;
 
     if (!AI[plr]) {

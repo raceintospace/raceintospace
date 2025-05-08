@@ -31,6 +31,9 @@ void av_set_fading(int type, int from, int to, int steps, int preserve);
 void av_sync(void);
 void av_setup(void);
 void play(struct audio_chunk *cp, int channel);
+bool is_new_key_available();
+ int get_pressed_key();
+void purge_key_buffer();
 
 extern int av_mouse_cur_x;
 extern int av_mouse_cur_y;
