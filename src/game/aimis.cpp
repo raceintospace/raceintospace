@@ -1137,8 +1137,8 @@ void NewAI(char plr, char frog)
 
     if (plan.Jt == 1) {
         // JOINT LAUNCH
-        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == 1 &&
-            Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == 1) {
+        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == LAUNCHPAD_OPERATIONAL &&
+            Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             primaryPad = PAD_A;
         }
 
@@ -1156,11 +1156,11 @@ void NewAI(char plr, char frog)
             prg[0] = 0;
         }
 
-        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == 1) {
+        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == LAUNCHPAD_OPERATIONAL) {
             primaryPad = PAD_A;
         }
 
-        if (Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == 1) {
+        if (Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             if (primaryPad == PAD_A) {
                 secondaryPad = PAD_B;
             } else {
@@ -1168,7 +1168,7 @@ void NewAI(char plr, char frog)
             }
         }
 
-        if (Data->P[plr].Future[2].MissionCode == Mission_None && Data->P[plr].LaunchFacility[2] == 1) {
+        if (Data->P[plr].Future[2].MissionCode == Mission_None && Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
             if (primaryPad != PAD_A && secondaryPad != PAD_B) {
                 if (primaryPad == PAD_B) {
                     secondaryPad = PAD_C;
@@ -1212,7 +1212,7 @@ void NewAI(char plr, char frog)
     }
 
     if (Data->P[plr].Future[2].MissionCode == Mission_None &&
-        Data->P[plr].LaunchFacility[2] == 1) {
+        Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
         if ((mis1 == 0 && frog == 2 && (
                  Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].MaxRD - 10)) ||
             (Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >= Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD - 10)) {

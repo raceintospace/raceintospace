@@ -326,18 +326,18 @@ void AIMaster(char plr)
         }
     }
 
-    for (i = 0; i < 3; i++) {
-        if (Data->P[plr].LaunchFacility[i] > 1) {
+    for (i = 0; i < MAX_LAUNCHPADS; i++) {
+        if (Data->P[plr].LaunchFacility[i] >= LAUNCHPAD_DAMAGED_MARGIN) {
             if (Data->P[plr].LaunchFacility[i] <= Data->P[plr].Cash) {
                 Data->P[plr].Cash -= Data->P[plr].LaunchFacility[i];
-                Data->P[plr].LaunchFacility[i] = 1;
+                Data->P[plr].LaunchFacility[i] = LAUNCHPAD_OPERATIONAL;
             }
         }
     }
 
-    Data->P[plr].LaunchFacility[0] = 1;
-    Data->P[plr].LaunchFacility[1] = 1;
-    Data->P[plr].LaunchFacility[2] = 1;
+    Data->P[plr].LaunchFacility[0] = LAUNCHPAD_OPERATIONAL;
+    Data->P[plr].LaunchFacility[1] = LAUNCHPAD_OPERATIONAL;
+    Data->P[plr].LaunchFacility[2] = LAUNCHPAD_OPERATIONAL;
 
     if (Data->P[plr].AIStat == 3) {
         switch (Data->P[plr].AILunar) {

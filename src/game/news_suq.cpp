@@ -712,7 +712,7 @@ char REvent(char plr)
         for (j = 0; j < 20; j++) {
             i = rand() % 3;
 
-            if (Data->P[plr].LaunchFacility[i] == 1 
+            if (Data->P[plr].LaunchFacility[i] == LAUNCHPAD_OPERATIONAL 
             && Data->P[plr].Mission[i].MissionCode == Mission_None) {
                 break;
             }

@@ -87,7 +87,7 @@ void Vehicle::assignTo(int pad)
         throw std::out_of_range(err.str());
     }
 
-    if (Data->P[mPlayer].LaunchFacility[pad] != 1) {
+    if (Data->P[mPlayer].LaunchFacility[pad] != LAUNCHPAD_OPERATIONAL) {
         std::stringstream err;
         err << "Pad " << 'A' + pad << " is unavailable for a mission.";
         throw std::logic_error(err.str());
