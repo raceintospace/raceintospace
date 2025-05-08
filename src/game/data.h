@@ -607,13 +607,12 @@ struct PastInfo {
     }
 };
 
-enum LaunchFacility_Status : int8_t {
-    LAUNCHPAD_NOT_BUILT = -1,
-    LAUNCHPAD_CONSTRUCTION_COST = 20,
-    LAUNCHPAD_OPERATIONAL = 1,
-    LAUNCHPAD_DAMAGED_MARGIN = 2, // value at or above this classifies pad as damaged
-    LAUNCHPAD_DESTROYED_MARGIN = 20 // value at or above this classifies pad as destroyed
-};
+using LaunchFacility_Status = int8_t;
+#define LAUNCHPAD_NOT_BUILT          -1
+#define LAUNCHPAD_CONSTRUCTION_COST  20
+#define LAUNCHPAD_OPERATIONAL         1
+#define LAUNCHPAD_DAMAGED_MARGIN      2 // value at or above this classifies pad as damaged
+#define LAUNCHPAD_DESTROYED_MARGIN   20 // value at or above this classifies pad as destroyed
 
 struct BuzzData {                   // master data list for Buzz Aldrin's
     char Header[4];                  // Sync information
