@@ -106,6 +106,7 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
+int WarningShown;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -193,18 +194,18 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     InBox(3, 22, 316, 196);
     IOBox(242, 3, 315, 19);
     ShBox(5, 24, 183, 47);
-    ShBox(5, 24, 201, 47); //name box
-    ShBox(5, 74, 41, 82); // RESET
-    ShBox(5, 49, 53, 72); //dur/man
-    ShBox(43, 74, 53, 82);   // Duration lock
+    ShBox(5, 24, 201, 47);  //name box
+    ShBox(5, 74, 41, 82);  // RESET
+    ShBox(5, 49, 53, 72);  //dur/man
+    ShBox(43, 74, 53, 82);  // Duration lock
     ShBox(80, 74, 90, 82);   // Docking lock
-    ShBox(117, 74, 127, 82); // EVA lock
-    ShBox(154, 74, 164, 82); // LM lock
-    ShBox(191, 74, 201, 82); // Joint mission lock
-    ShBox(5, 84, 16, 130); //arrows up
-    ShBox(5, 132, 16, 146); //middle box
-    ShBox(5, 148, 16, 194); //    down
-    ShBox(203, 24, 238, 31); // new right boxes
+    ShBox(117, 74, 127, 82);  // EVA lock
+    ShBox(154, 74, 164, 82);  // LM lock
+    ShBox(191, 74, 201, 82);  // Joint mission lock
+    ShBox(5, 84, 16, 130);  //arrows up
+    ShBox(5, 132, 16, 146);  //middle box
+    ShBox(5, 148, 16, 194);  //    down
+    ShBox(203, 24, 238, 31);  // new right boxes
 
     // Mission penalty numerical display
     fill_rectangle(206, 36, 235, 44, 7);
@@ -249,7 +250,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     display::graphics.setForegroundColor(5);
 
     /* lines of text are 1:8,30  2:8,37   3:8,44    */
-    switch (pad) { // These used to say Pad 1, 2, 3  -Leon
+    switch (pad) {  // These used to say Pad 1, 2, 3  -Leon
     case 0:
         draw_string(8, 30, "PAD: A");
         break;
@@ -283,12 +284,14 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, 10, 0, 0);
 
-    if (Data->P[plr].Rocket[0].Delay > 1) {
+    if (WarningShown < 1 && Data->P[plr].Rocket[0].Delay > 1) {
         Help("i169");
+        WarningShown = 1;
     }
 
-    if (Data->P[plr].Manned[0].Delay > 1) {
+    if (WarningShown < 1 && Data->P[plr].Manned[0].Delay > 1) {
         Help("i170");
+        WarningShown = 1;
     }
 
     return;
@@ -296,7 +299,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
 
 
 /* Draws the mission starfield. The background depicts any heavenly
- * bodies reachable by an interplanetary mission. Earth, the Moon,
+ * bodies reachable for an interplanetary mission. Earth, the Moon,
  * Venus, and Mercury are always shown. Depending on the current year
  * and season, some combination of Mars, Jupiter, and Saturn may be
  * depicted.
@@ -369,9 +372,9 @@ void DrawPenalty(char plr, const struct mStr &mission)
 /**
  * Create a popup detailing the sources of the mission penalties.
  *
- * Launches a popup explaining how the projected mission penalty
- * is calculated, and if there is any LM penalty. The popup starts
- * it own control loop to handle input.
+ * Launches a popup explaining how the projected mission penalty is
+ * calculated, and if there is an LM penalty (lunar landings only). 
+ * The popup starts its own control loop to handle input.
  *
  * TODO: Modify the color for each penalty line depending on how
  *   large the penalty is.
@@ -387,7 +390,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
     int durationPenalty = DurationPenalty(plr, mission);
     int newMissionPenalty = NewMissionPenalty(plr, mission);
 
-    // Buffer the screen contents behing the popup for quick restoration.
+    // Buffer the screen contents behind the popup for quick restoration.
     display::LegacySurface local(165, 124);
     local.copyFrom(display::graphics.legacyScreen(), 85, 52, 249, 175);
 
@@ -533,7 +536,7 @@ void DrawLocks(const MissionNavigator &nav)
  * which reads the information in LoadFutureButtons().
  *
  * \param button  the button index.
- * \param state  1 if selected, 0 if unselected.
+ * \param state   1 if selected, 0 if unselected.
  */
 void Toggle(FMFields button, int state)
 {
@@ -796,8 +799,8 @@ void ClearRX(FMFields button)
  * Determine if the mission is compatible with the requirements locked
  * in the navigator.
  *
- * \param nav a navigator object with locked values for required fields.
- * \param mission a mission template.
+ * \param nav      a navigator object with locked values for required fields.
+ * \param mission  a mission template.
  * \return false if any of the locked navigator values contradict a
  *         mission parameter, true otherwise.
  */
@@ -836,11 +839,11 @@ void NavReset(MissionNavigator &nav)
 /* Find the next mission that matches the given parameters, searching
  * by ascending mission code
  *
- * \param num  The mission code of the currently selected mission.
- * \param plr  The current player (0 for USA, 1 for USSR).
+ * \param num        The mission code of the currently selected mission.
+ * \param plr        The current player (0 for USA, 1 for USSR).
  * \param navigator  The required mission parameters.
- * \return  The code of the next matching mission, or 0 if no other
- *          mission is found.
+ * \return           The code of the next matching mission, or 0 if no other
+ *                   mission is found.
  */
 int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
  {
@@ -866,11 +869,11 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
 /* Find the next mission that matches the given parameters, searching
  * by descending mission code
  *
- * \param num  The mission code of the currently selected mission.
- * \param plr  The current player (0 for USA, 1 for USSR).
- * \param navigator  The required mission parameters.
- * \return  The code of the next matching mission, or 0 if no other
- *          mission is found.
+ * \param num         The mission code of the currently selected mission.
+ * \param plr         The current player (0 for USA, 1 for USSR).
+ * \param navigator   The required mission parameters.
+ * \return            The code of the next matching mission, or 0 if no other
+ *                    mission is found.
  */
 int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
 {
@@ -932,7 +935,7 @@ void Future(char plr)
         char misType = 0;
         ClrFut(plr, pad);
         
-        JointFlag = JointMissionOK(plr, pad); // initialize Joint flag
+        JointFlag = JointMissionOK(plr, pad);  // initialize Joint flag
         static MissionNavigator nav;
         NavReset(nav);
 
@@ -1019,7 +1022,7 @@ void Future(char plr)
 
                 if (Ok == 1) {
                     Data->P[plr].Future[pad].Duration = duration;
-                    break;        // return to launchpad loop
+                    break;  // return to launchpad loop
                 } else {
                     ClrFut(plr, pad);
                     // Set the Mission code after being cleared.
@@ -1061,7 +1064,7 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-				if (missionData[misType].Dur) {
+		        if (missionData[misType].Dur) {
 		            mission = GetMissionPlan(misType);
 		            int duration = MAX(nav.duration.value, missionData[misType].Days);
 		            bool valid = (nav.duration.value >= missionData[misType].Days);
@@ -1069,7 +1072,7 @@ void Future(char plr)
 
 		            mission.Days = duration;
 		            DrawPenalty(plr, mission);
-                }
+                        }
 
                 WaitForMouseUp();
 
@@ -1258,7 +1261,7 @@ void Future(char plr)
                 OutBox(203, 33, 238, 47);
                 OutBox(203, 34, 238, 47);
 				
-				// If a duration mission, update the duration & mission
+		// If a duration mission, update the duration & mission
                 // penalty displays
 				if (missionData[misType].Dur) {
 		            mission = GetMissionPlan(misType);
@@ -1371,10 +1374,10 @@ void Future(char plr)
 /** Update the selected mission view with the given duration.
  *
  * \param duration  0 for unmanned, 1-6 for duration A through F
- * \param color  The palette color for printing the duration
- *     (usually 5, 9 for red).
+ * \param color     The palette color for printing the duration
+ *                  (usually 5, 9 for red).
  *
- * \todo Link this at whatever place the duration is actually defined
+ * \todo  Link this at whatever place the duration is actually defined
  */
 void PrintDuration(int duration, int color)
 {
@@ -1432,12 +1435,12 @@ void PrintDuration(int duration, int color)
  *  - Reset the flight path (clear starfield).
  * It should be called whenever the mission selection changes.
  *
- * \param plr Player
- * \param X screen coord for mission name string
- * \param Y screen coord for mission name string
- * \param val the mission type (MissionType.MissionCode / mStr.Index)
- * \param bub if set to 0 or 3 the function will not draw stuff (???)
- * \param nav the set of mission parameters for mission selection.
+ * \param plr  Player
+ * \param X    screen coord for mission name string
+ * \param Y    screen coord for mission name string
+ * \param val  the mission type (MissionType.MissionCode / mStr.Index)
+ * \param bub  if set to 0 or 3 the function will not draw stuff (???)
+ * \param nav  the set of mission parameters for mission selection.
  */
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
 {
@@ -1451,9 +1454,9 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     // handles the dual task
     PianoKey(mission, nav);   // Should this be moved outside DrawMission?
 
-    ClearDisplay();                     // Redraw solar system display
-    fill_rectangle(6, 31, 199, 46, 3);  // Clear mission name
-    fill_rectangle(80, 25, 112, 30, 3); // Clear mission type
+    ClearDisplay();                      // Redraw solar system display
+    fill_rectangle(6, 31, 199, 46, 3);   // Clear mission name
+    fill_rectangle(80, 25, 112, 30, 3);  // Clear mission type
     display::graphics.setForegroundColor(5);
     draw_string(55, 30, "TYPE: ");
     draw_number(0, 0, val);
