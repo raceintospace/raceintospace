@@ -106,7 +106,8 @@ void PrintDuration(int duration, int color);
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
 void MissionPath(char plr, int val, int pad);
 bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-int WarningShown;
+int WarningRocketShown;
+int WarningCapsuleShown;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -284,14 +285,14 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, 10, 0, 0);
 
-    if (WarningShown < 1 && Data->P[plr].Rocket[0].Delay > 1) {
+    if (WarningRocketShown < 1 && Data->P[plr].Rocket[0].Delay > 1) {
         Help("i169");
-        WarningShown = 1;
+        WarningRocketShown = 1;
     }
 
-    if (WarningShown < 1 && Data->P[plr].Manned[0].Delay > 1) {
+    if (WarningCapsuleShown < 1 && Data->P[plr].Manned[0].Delay > 1) {
         Help("i170");
-        WarningShown = 1;
+        WarningCapsuleShown = 1;
     }
 
     return;
