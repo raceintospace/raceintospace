@@ -77,7 +77,10 @@ void DrawHPurc(char plr);
 void BuyUnit(char hw2, char un2, char plr);
 void RDHelpWarnings(int plr);
 void ShowHardwareDescription(int player, int hardware, int unit);
-
+int WarningLMShown;
+int WarningDMShown;
+int WarningKickerShown;
+int WarningVABShown;
 
 /* We need to mask number of rolls into R&D history for current turn
  * Max number rolled on 5 dice with mods is 5*7 = 35
@@ -2153,27 +2156,29 @@ void RDHelpWarnings(int plr)
 
     // Warn player that they haven't started EVA suits yet,
     // though they have an LM or Kicker-C or direct ascent capsule  -LPB
-    if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0 &&
+    if (WarningLMShown < 1 && Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0 &&
         (Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Num >= 0 ||
          Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
          Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
          Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
         Help("i046");
+        WarningLMShown = 1;
     }
 
     // Warn player that they haven't started DMs yet, though they
     // have an LM or Kicker-C  -LPB
-    if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0 &&
+    if (WarningDMShown < 1 && Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0 &&
         (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 ||
          Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0 ||
          Data->P[plr].Misc[MISC_HW_KICKER_C].Num >= 0)) {
         Help("i047");
+        WarningDMShown = 1;
     }
 
     // Warn player that they haven't started a kicker yet,
     // though they have Gemini/Voskhod or a minishuttle fully researched
     // -LPB
-    if ((Data->P[plr].Misc[MISC_HW_KICKER_A].Num < 0 &&
+    if (WarningKickerShown < 1 && (Data->P[plr].Misc[MISC_HW_KICKER_A].Num < 0 &&
          Data->P[plr].Misc[MISC_HW_KICKER_B].Num < 0) &&
         Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num < 0 &&
         (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety >=
@@ -2183,6 +2188,7 @@ void RDHelpWarnings(int plr)
         (Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Safety > 85 ||
          Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety > 88)) {
         Help("i048");
+        WarningKickerShown = 1;
     }
 
     // Warn player with little money that they should visit the VAB/VIB
@@ -2197,11 +2203,12 @@ void RDHelpWarnings(int plr)
         chkAmt = 20;
     }
 
-    if (Data->P[plr].Cash <= chkAmt) {
+    if (WarningVABShown < 1 && Data->P[plr].Cash <= chkAmt) {
         for (int i = 0; i < MAX_MISSIONS; i++) {
             if (Data->P[plr].Mission[i].MissionCode > 0 &&
                 Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
                 Help("i173");
+                WarningVABShown = 1;
                 break;
             }
         }
