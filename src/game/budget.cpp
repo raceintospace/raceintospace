@@ -414,16 +414,16 @@ void Budget(char player)
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) { /* Gameplay */
+        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
             if ((x >= 124 && y >= 29 && x <= 193 && y <= 41 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(124, 29, 193, 41);
+                InBox(124, 29, 194, 41);
                 WaitForMouseUp();
 
                 if (key > 0) {
                     delay(150);
                 }
 
-                OutBox(124, 29, 193, 41);
+                OutBox(124, 29, 194, 41);
                 return;  /* Done */
             }
 
@@ -830,7 +830,7 @@ void Viewing(char plr)
                 OutBox(244, 28, 313, 38);    //Button Newer
             }
 
-            InBox(6, 28, 75, 38); //Button Older
+            InBox(6, 28, 75, 38);    //Button Older
             // Debe dibujar la mission [Need to draw the mission]
             DrawPreviousMissions(plr);
             bzdelay(DELAYCNT);
