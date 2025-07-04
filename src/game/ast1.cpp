@@ -786,9 +786,10 @@ void AstSel(char plr)
         GetMouse();
 
         for (i = 0; i < 8; i++) {
-            // Right Select Box
+
             if (((x >= 188 && y >= (131 + i * 8) && x <= 312 && y <= (137 + i * 8) && mousebuttons > 0)
                  || (key == RT_ARROW && ksel == 1)) && (now - BarB + i) <= max) {
+                // Right Select Box
 
                 if (ksel == 1) {
                     ksel = 0;
@@ -806,10 +807,7 @@ void AstSel(char plr)
                  || (key == LT_ARROW && ksel == 0)) && (now2 - BarA + i) <= (count - 1)) {
                 // Left Select Box
 
-                if (ksel == 0) {
-                    ksel = 1;
-                }
-
+                ksel = 1;
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
