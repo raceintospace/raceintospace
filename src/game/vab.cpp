@@ -72,7 +72,7 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
 /* VAS holds all possible payload configurations for the given mission.
  * Each payload consists of four components:
- *   0: Primary (a capsule)
+ *   0: Primary (capsule/shuttle)
  *   1: Kicker
  *   2: LM
  *   3: Payload (Probe / DM)
@@ -256,7 +256,7 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
 }
 
 
-/* Draw the Vehicle Assembly / Integration interface layout and print
+/* Draw the Vehicle Assembly/Integration interface layout and print
  * mission-specific information.
  *
  * \param plr  0 for the USA, 1 for the USSR.
@@ -402,7 +402,7 @@ void DispVAB(char plr, char pad)
                 display::graphics.setForegroundColor(11);
 
                 if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
-                    display::graphics.setForegroundColor(9);  // Show in red if hardware is damaged
+                    display::graphics.setForegroundColor(9);  // Show in red if EVA suits are damaged
                 }
 
                 draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
@@ -412,8 +412,8 @@ void DispVAB(char plr, char pad)
             }
         }
     } else if (IsLM(Data->P[plr].Mission[pad].MissionCode)) {
-        // Any LM mission could require an emergency EVA to traverse
-        // the distance between the LM and the capsule.
+        // Any mission using an LM could require an emergency EVA for 
+        // crew to return to the capsule.
         if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
              Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
             Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
@@ -424,7 +424,7 @@ void DispVAB(char plr, char pad)
             } else {
                 draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
                 // Show it in light green if there may be an emergency EVA
-                // on this mission
+                // on this mission (because it uses an LM)
                 display::graphics.setForegroundColor(15);
                 draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
                 draw_string(0, 0, "%");
@@ -451,11 +451,11 @@ void DispVAB(char plr, char pad)
  * This function does not ensure the player has sufficient cash on
  * hand to make the purchases.
  *
- * \param  plr  The player assembling the hardware.
- * \param  f    The VAS index of the given payload hardware set.
- * \param  mode 1 to autopurchase missing components, 0 otherwise.
- * \return      The total cost of all components that will have to be
- *              purchased (0 if autopurchasing).
+ * \param  plr   The player assembling the hardware.
+ * \param  f     The VAS index of the given payload hardware set.
+ * \param  mode  1 to autopurchase missing components, 0 otherwise.
+ * \return       The total cost of all components that will have to be
+ *               purchased (0 if autopurchasing).
  */
 int FillVab(char plr, char f, char mode)
 {
@@ -523,10 +523,10 @@ int ChkDelVab(char plr, char f)
  * will not be made. This will not initiate any new rocket program
  * which hasn't been started.
  *
- * \param plr    The player index.
- * \param rocket
- * \param mode   0 to query the cost, 1 to purchase the rocket parts.
- * \return       The cost of the rocket, 0 if it was purchased.
+ * \param plr     The player index.
+ * \param rocket  
+ * \param mode    0 to query the cost, 1 to purchase the rocket parts.
+ * \return        The cost of the rocket, 0 if it was purchased.
  */
 int BuyVabRkt(char plr, Vehicle &rocket, char mode)
 {
@@ -595,7 +595,7 @@ void ShowAutopurchase(const char plr, const int payload, Vehicle &rocket)
     draw_string(13, 92, "A");
     display::graphics.setForegroundColor(1);
 
-    //if can't buy (delay, cost>cash) ->red letters
+    // if can't buy (delay, cost>cash), show in red
     if (hasDelay == 0 || cost > Data->P[plr].Cash) {
         display::graphics.setForegroundColor(9);
     }
@@ -721,8 +721,7 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
  * For larger casings, the remaining space is occupied by a filler image
  * depicting the rocket's fuel supply.
  *
- * This function makes extensive use of two global variables, VAS and
- * MI.
+ * This function makes extensive use of two global variables, VAS and MI.
  *
  * \param plr      The assembling player (0 for USA, 1 for USSR).
  * \param payload  The VAS index of the given payload hardware set.
@@ -1171,7 +1170,7 @@ void VAB(char plr)
         DispRck(plr, rocket.index(), hw.get());
         DispVA(plr, ccc, hw.get());
         DispWts(weight, rocket.thrust());
-        // display cost (XX of XX)
+        // display cost (XX of YY)
         ShowAutopurchase(plr, ccc, rocket);
 
         FadeIn(2, 10, 0, 0);
@@ -1217,7 +1216,7 @@ void VAB(char plr)
                         // autopurchased quantities.
                         BuildVAB(plr, mis, 0, 0, 1);
 
-                        // display cost (XX of XX)
+                        // display cost (XX of YY)
                         ShowAutopurchase(plr, ccc, rocket);
                     }
                 } else if (ac == false) {
@@ -1244,9 +1243,8 @@ void VAB(char plr)
             } else if (((x >= 225 && y >= 185 && x <= 268 && y <= 195 && mousebuttons > 0) || key == 'D') && Data->P[plr].Mission[mis].MissionCode) {
                 // DELAY the mission for a turn
 
-                // There are restrictions on Mars/Jupiter/Saturn Flybys,
-                // so check that this mission _could_ be launched at
-                // this time.
+                // There are restrictions on Mars/Jupiter/Saturn Flybys, so
+                // check that this mission _could_ be launched at this time.
                 bool validLaunch =
                     MissionTimingOk(Data->P[plr].Mission[mis].MissionCode,
                                     Data->Year, Data->Season);
@@ -1296,9 +1294,9 @@ void VAB(char plr)
 
                 if (ScrubMissionQuery(plr, mis)) {
                     ScrubMission(plr, mis);
+                    break;
                 }
 
-                break;
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) &&
                        ccc != 0 && ButOn == 1 && weight <= rocket.thrust()) {
                 if (missionPlan.EVA == 1 &&
@@ -1340,7 +1338,7 @@ void VAB(char plr)
                     }
                 }
 
-                // display cost (XX of XX)
+                // display cost (XX of YY)
                 ShowAutopurchase(plr, ccc, rocket);
                 ShowRkt(rocket, weight);
                 DispWts(weight, rocket.thrust());
@@ -1537,7 +1535,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
     else if (VX == 0x81) {  // P/S:CAP+KIC XX
         if (prog == MANNED_HW_TWO_MAN_CAPSULE ||
             prog == MANNED_HW_MINISHUTTLE) {
-            if (mcode != 52) {  ///Special Case EOR LM Test
+            if (mcode != 52) {  // Special Case EOR LM Test
                 VASqty++;
                 VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
@@ -1557,14 +1555,14 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         LMAdd(plr, prog, MISC_HW_KICKER_B, 0);
     }
 
-    else if (VX == 0xe9 && part == 0) { // P:CAP+LM+SDM+EVA XX
+    else if (VX == 0xe9 && part == 0) {  // P:CAP+LM+SDM+EVA XX
         LMAdd(plr, prog, MISC_HW_KICKER_B, 0);
         // EVA Check
     }
 
     else if (VX == 0x89 && part == 1) {  // S:CAP+EVA+KIC
         if (prog != MANNED_HW_THREE_MAN_CAPSULE) {
-            if (mcode != Mission_Jt_LunarLanding_EOR) {  ///Special Case EOR Lunar Landing
+            if (mcode != Mission_Jt_LunarLanding_EOR) {  // Special Case EOR Lunar Landing
                 VASqty++;
                 VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
