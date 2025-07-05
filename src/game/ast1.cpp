@@ -519,12 +519,12 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
                         int display)
 {
     // Regular text has a height of 5 pixels.
-    fill_rectangle(x + 33, y + 1, x + 133, y + 5, 3);  // Draws over Name
-    fill_rectangle(x + 48, y + 10, x + 133, y + 14, 3);  // Service
+    fill_rectangle(x + 33, y + 1, x + 133, y + 5, 3);     // Draws over Name
+    fill_rectangle(x + 48, y + 10, x + 133, y + 14, 3);   // Service
     fill_rectangle(x + 120, y + 19, x + 133, y + 23, 3);  // Capsule
-    fill_rectangle(x + 94, y + 27, x + 107, y + 31, 3);  // LM
-    fill_rectangle(x + 71, y + 35, x + 84, y + 39, 3);  // EVA
-    fill_rectangle(x + 87, y + 43, x + 100, y + 47, 3);  // Docking
+    fill_rectangle(x + 94, y + 27, x + 107, y + 31, 3);   // LM
+    fill_rectangle(x + 71, y + 35, x + 84, y + 39, 3);    // EVA
+    fill_rectangle(x + 87, y + 43, x + 100, y + 47, 3);   // Docking
     fill_rectangle(x + 101, y + 51, x + 114, y + 55, 3);  // Endurance
 
     display::graphics.setForegroundColor(1);
@@ -613,8 +613,9 @@ void RandomizeNauts()
  *
  * When an astronaut is recruited from the pool of candidates, there
  * is a chance of losing a point of Capsule or Endurance, and they will
- * lose 3 points randomly split among LM, EVA, and Docking (which can
- * take the astronaut below 0).
+ * lose 3 points randomly split among LM, EVA, and Docking - which can
+ * take the astronaut below 0.  Negative scores will be raised to 0 
+ * when an astronaut leaves Basic Training.
  *
  * \param plr   0 for the USA, 1 for the USSR.
  * \param pool  The index of the astronaut in the recruited candidate pool.
@@ -964,7 +965,6 @@ void AstSel(char plr)
                 }
 
                 key = 0;
-
                 GetMouse();
             }
 
@@ -1146,7 +1146,6 @@ void AstSel(char plr)
                 }
 
                 key = 0;
-
                 GetMouse();
             }
 
@@ -1186,7 +1185,7 @@ void AstSel(char plr)
         } else if ((x >= 7 && y >= 111 && x <= 151 && y <= 123 && count > 0 && mousebuttons > 0) || (key == 'D' && count > 0)) {
             /* Dismiss */
             InBox(7, 111, 151, 123);
-            ksel = 1;
+            ksel = 1;  // Switch focus to left side
             count--;
             MCol[sel[now2]] = 0;
 
@@ -1227,7 +1226,7 @@ void AstSel(char plr)
         } else if ((x >= 164 && y >= 111 && x <= 313 && y <= 123 && MCol[now] == 0 && mousebuttons > 0) || (key == 'R' && MCol[now] == 0)) {
             /* Recruit */
             InBox(168, 111, 313, 123);
-
+            ksel = 0;  // Switch focus to right side
             if (count < MaxSel) {
                 sel[count] = now;  /* move astronaut into left */
                 MCol[now] = 1;
