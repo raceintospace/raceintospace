@@ -58,7 +58,7 @@ void AstStats(int plr, int prog, int man, int num);
 void AstNames(int man, const Astros &crew);
 void Flts(char old, char nw);
 void FltsTxt(char nw, char col);
-
+int sON;
 
 
 void AstLevel(char plr, char prog, char crew, char ast)
@@ -557,7 +557,7 @@ void DrawPosition(char prog, int pos)
  * ones where astronauts may be assigned. This has the main control
  * loop for the capsule building user interface.
  *
- * \param plr  the country running the program
+ * \param plr   the country running the program
  * \param prog  the capsule style
  */
 void Programs(char plr, char prog)
@@ -673,6 +673,7 @@ void Programs(char plr, char prog)
                 BarSkill(plr, BarA, now2, &M[0]);
                 WaitForMouseUp();
                 DispLeft(plr, BarA, count, now2, &M[0]);
+                sON = 0;
             }
         }
 
@@ -731,7 +732,7 @@ void Programs(char plr, char prog)
             } else if (((x >= 6 && y >= 163 && x <= 18 && y <= 194
                          && mousebuttons > 0) || key == DN_ARROW)
                        && count > 0) {
-                /* Lft Dwn */
+                /* Left Dwn */
                 InBox(6, 163, 18, 194);
 
                 for (i = 0; i < 50; i++) {
@@ -792,8 +793,15 @@ void Programs(char plr, char prog)
             } else if (key == 'S') {
                 // Show Skill
                 if (now2 >= 0 && now2 < count) {
-                    ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
-                    BarSkill(plr, BarA, now2, &M[0]);
+                    if (sON < 1) {
+                        ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                        BarSkill(plr, BarA, now2, &M[0]);
+                        sON = 1;
+                    } else {
+                        //ShBox(26, 130 + BarA * 8, 152, 138 + BarA * 8);
+                        DispLeft(plr, BarA, count, now2, &M[0]);
+                        sON = 0;
+                    }
                 }
             } else if (((x >= 4 && y >= 86 && x <= 117 && y <= 92  // used to be x <= 12
                          && mousebuttons > 0) || key == '1')
@@ -1325,19 +1333,16 @@ void AstNames(int man, const Astros &crew)
     }
 
     if (crew.RetirementDelay > 0) {
-        // Show name in black if 'naut is male and has announced
-        // retirement.
+        // Show name in black if 'naut is male and has announced retirement.
         display::graphics.setForegroundColor(0);
     }
 
     if (crew.Sex == 1 && crew.RetirementDelay > 0) {
-        // Show name in purple if 'naut is female and has announced
-        // retirement.
+        // Show name in purple if 'naut is female and has announced retirement.
         display::graphics.setForegroundColor(7);
     }
 
     std::string name(&crew.Name[0], ARRAY_LENGTH(crew.Name));
-
 
     switch (man) {
     case 0:
@@ -1476,7 +1481,7 @@ void Flts(char old, char nw)
         InBox(241, 184, 315, 196);
         break;
     }
-} /* End of Flts */
+}  /* End of Flts */
 
 void FltsTxt(char nw, char col)
 {
@@ -1515,6 +1520,6 @@ void FltsTxt(char nw, char col)
         draw_string(246, 192, "FLT. CREW VIII");
         break;
     }
-} /* End of FltsTxt */
+}  /* End of FltsTxt */
 
 /* vi: set noet ts=4 sw=4 tw=78: */
