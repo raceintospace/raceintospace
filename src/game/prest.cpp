@@ -389,6 +389,9 @@ char HeroCheck(int which)
     case Prestige_MannedSpaceMission:
         return 0x01;  // RECOVERY
 
+    case Prestige_WomanInSpace:
+        return 0x01;  // WOMAN IN SPACE
+
     case Prestige_MannedOrbital:
         return 0x01;  // OIB
 
@@ -970,7 +973,7 @@ int AllotPrest(char plr, char mis)
 
     //total+=(char) Set_Goal(plr,mike,0);
 
-    // GOAL POSTIVE
+    // GOAL POSITIVE
     if (P_Goal != -1) {
         total = Set_Goal(plr, P_Goal, 0);
 
@@ -1230,7 +1233,7 @@ int Update_Prestige_Data(char plr, char mis, int code)
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
-        Data->P[plr].PastMissionCount++; // Normally done in MissionPast()
+        Data->P[plr].PastMissionCount++;  // Normally done in MissionPast()
         assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
     }
 
