@@ -329,7 +329,7 @@ TrainText(char plr, int astro, int cnt)
         break;
     }
 
-    fill_rectangle(264, 87, 315, 100, 3);
+    fill_rectangle(264, 90, 315, 100, 3);
     draw_number(264, 97, Data->P[plr].Pool[astro].Active);
     draw_string(0, 0, " SEASON");
 
@@ -473,7 +473,7 @@ void Train(char plr, int level)
 
         if (mousebuttons > 0 || key > 0) {
             if (((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || key == UP_ARROW) && count > 0) {
-                /* Lft Up */
+                /* Left Up */
                 InBox(6, 130, 18, 161);
 
                 for (i = 0; i < 50; i++) {
@@ -536,7 +536,7 @@ void Train(char plr, int level)
                 OutBox(6, 130, 18, 161);
                 delay(10);
             } else if (((x >= 6 && y >= 163 && x <= 18 && y <= 194 && mousebuttons > 0) || key == DN_ARROW) && count > 0) {
-                /* Lft Dwn */
+                /* Left Dwn */
                 InBox(6, 163, 18, 194);
 
                 for (i = 0; i < 50; i++) {
@@ -632,7 +632,7 @@ void Train(char plr, int level)
                 }
 
                 OutBox(168, 181, 314, 193);
-                // Help box: are you sure you want to withdraw from training early
+                // Help box: are you sure you want to withdraw from training early?
 
                 if (plr == 0) {
                     temp = Help("i102");
