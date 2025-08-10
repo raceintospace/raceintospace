@@ -4,6 +4,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 1,
@@ -12,6 +15,9 @@
                         "name": "GRISSOM"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -20,6 +26,9 @@
                         "name": "SHEPARD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 3,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 1,
@@ -28,6 +37,9 @@
                         "name": "GLENN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -36,6 +48,9 @@
                         "name": "CARPENTER"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -44,6 +59,9 @@
                         "name": "SCHIRRA"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -52,6 +70,9 @@
                         "name": "COOPER"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 4,
                         "docking": 0,
                         "endurance": 1,
@@ -60,6 +81,9 @@
                         "name": "SLAYTON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 2,
@@ -68,6 +92,9 @@
                         "name": "KINCHELOE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 1,
@@ -76,6 +103,9 @@
                         "name": "WALKER"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 1,
@@ -84,6 +114,9 @@
                         "name": "WOOD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -92,6 +125,9 @@
                         "name": "ROGERS"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -101,6 +137,9 @@
                         "name": "HART"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -110,6 +149,9 @@
                         "name": "CAGLE"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 2,
@@ -125,6 +167,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 1,
@@ -133,6 +178,9 @@
                         "name": "YOUNG"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -141,6 +189,9 @@
                         "name": "MCDIVITT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -149,6 +200,9 @@
                         "name": "E.WHITE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 3,
@@ -157,6 +211,9 @@
                         "name": "CONRAD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 1,
@@ -165,6 +222,9 @@
                         "name": "STAFFORD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -173,6 +233,9 @@
                         "name": "BORMAN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 4,
@@ -181,6 +244,9 @@
                         "name": "LOVELL"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 4,
                         "docking": 2,
                         "endurance": 1,
@@ -189,6 +255,9 @@
                         "name": "ARMSTRONG"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -197,6 +266,9 @@
                         "name": "SEE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -205,6 +277,9 @@
                         "name": "KNIGHT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 4,
                         "docking": 2,
                         "endurance": 2,
@@ -213,6 +288,9 @@
                         "name": "CREWS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -221,6 +299,9 @@
                         "name": "GIVENS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -229,6 +310,9 @@
                         "name": "A.WHITE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -237,6 +321,9 @@
                         "name": "R.WHITE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -245,6 +332,9 @@
                         "name": "CROSSFIELD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 3,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -253,6 +343,9 @@
                         "name": "LOUSMA"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -261,6 +354,9 @@
                         "name": "RUSHWORTH"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -269,6 +365,9 @@
                         "name": "PETERSEN"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 2,
@@ -278,6 +377,9 @@
                         "name": "J.DIETRICH"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -287,6 +389,9 @@
                         "name": "M.DIETRICH"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 2,
@@ -302,6 +407,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 0,
                         "docking": 2,
                         "endurance": 2,
@@ -310,6 +418,9 @@
                         "name": "GRAVELINE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 2,
@@ -318,6 +429,9 @@
                         "name": "CERNAN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 2,
@@ -326,14 +440,20 @@
                         "name": "BASSETT"
                     },
                     {
+                        "sex": 0,
+                        "race": 1,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
                         "eva": 1,
                         "lunar": 0,
-                        "name": "SCOTT"
+                        "name": "DWIGHT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -342,6 +462,9 @@
                         "name": "COLLINS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -350,6 +473,9 @@
                         "name": "CHAFFEE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -358,6 +484,9 @@
                         "name": "GORDON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 4,
                         "endurance": 1,
@@ -366,6 +495,9 @@
                         "name": "ALDRIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -374,6 +506,9 @@
                         "name": "EISELE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -382,6 +517,9 @@
                         "name": "CUNNINGHAM"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -398,6 +536,9 @@
                         "name": "SCHWEICKART"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 3,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -406,6 +547,9 @@
                         "name": "WILLIAMS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -414,6 +558,9 @@
                         "name": "MCCANDLESS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -422,6 +569,9 @@
                         "name": "SWIGERT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 1,
@@ -430,6 +580,9 @@
                         "name": "HAISE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -438,6 +591,9 @@
                         "name": "ROOSA"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -446,6 +602,9 @@
                         "name": "MITCHELL"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -454,6 +613,9 @@
                         "name": "WORDEN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -462,6 +624,9 @@
                         "name": "IRWIN"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 1,
@@ -471,6 +636,9 @@
                         "name": "STEADMAN"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -480,6 +648,9 @@
                         "name": "LEVERTON"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -495,6 +666,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -503,6 +677,9 @@
                         "name": "BRAND"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -511,6 +688,9 @@
                         "name": "BEAN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 1,
@@ -519,6 +699,9 @@
                         "name": "BULL"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 3,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 4,
@@ -527,6 +710,9 @@
                         "name": "CARR"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -535,6 +721,9 @@
                         "name": "DUKE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 1,
@@ -543,6 +732,9 @@
                         "name": "ENGLE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -551,6 +743,9 @@
                         "name": "EVANS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -559,14 +754,20 @@
                         "name": "FREEMAN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 2,
                         "eva": 1,
                         "lunar": 1,
-                        "name": "MUSGRAVE"
+                        "name": "SCOTT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 3,
@@ -575,6 +776,9 @@
                         "name": "KERWIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -583,6 +787,9 @@
                         "name": "GIBSON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 3,
@@ -591,6 +798,9 @@
                         "name": "GARRIOTT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -599,6 +809,9 @@
                         "name": "MATTINGLY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -607,6 +820,9 @@
                         "name": "ENGLAND"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -615,6 +831,9 @@
                         "name": "POGUE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 0,
                         "docking": 2,
                         "endurance": 2,
@@ -623,6 +842,9 @@
                         "name": "SCHMITT"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -631,6 +853,9 @@
                         "name": "WEITZ"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 3,
@@ -639,6 +864,9 @@
                         "name": "MICHEL"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 0,
                         "docking": 1,
                         "endurance": 2,
@@ -647,6 +875,9 @@
                         "name": "LIND"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -655,6 +886,9 @@
                         "name": "LLEWELLYN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 3,
                         "docking": 3,
                         "endurance": 1,
@@ -663,6 +897,9 @@
                         "name": "CRIPPEN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -671,6 +908,9 @@
                         "name": "FULLERTON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 0,
                         "endurance": 2,
@@ -679,6 +919,9 @@
                         "name": "HARTSFIELD"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 3,
                         "capsule": 4,
                         "docking": 0,
                         "endurance": 1,
@@ -687,6 +930,9 @@
                         "name": "OVERMYER"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 0,
                         "endurance": 0,
@@ -695,6 +941,9 @@
                         "name": "PETERSON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 4,
                         "docking": 2,
                         "endurance": 2,
@@ -703,6 +952,9 @@
                         "name": "TRULY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 2,
@@ -711,6 +963,9 @@
                         "name": "MCKAY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 2,
@@ -719,6 +974,9 @@
                         "name": "HENIZE"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -728,6 +986,9 @@
                         "name": "STUMBOUGH"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 2,
@@ -737,6 +998,9 @@
                         "name": "GORELICK"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -752,6 +1016,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -760,6 +1027,9 @@
                         "name": "ADAMS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 0,
@@ -768,6 +1038,9 @@
                         "name": "FINLEY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 0,
                         "endurance": 2,
@@ -776,6 +1049,9 @@
                         "name": "ABRAHAMSON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -784,6 +1060,9 @@
                         "name": "LAWYER"
                     },
                     {
+                        "sex": 0,
+                        "race": 1,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 3,
@@ -792,6 +1071,9 @@
                         "name": "LAWRENCE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -800,6 +1082,9 @@
                         "name": "MACLEAY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 1,
@@ -808,6 +1093,9 @@
                         "name": "ALLEN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -816,6 +1104,9 @@
                         "name": "NEUBECK"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -824,6 +1115,9 @@
                         "name": "BOBKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -832,6 +1126,9 @@
                         "name": "HERRES"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 2,
@@ -840,6 +1137,9 @@
                         "name": "TAYLOR"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -848,6 +1148,9 @@
                         "name": "HOLMQUEST"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 1,
@@ -856,6 +1159,9 @@
                         "name": "O'LEARY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -864,22 +1170,31 @@
                         "name": "LENOIR"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 1,
                         "eva": 1,
                         "lunar": 2,
-                        "name": "BLUFORD"
+                        "name": "THORNTON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 0,
                         "eva": 1,
                         "lunar": 2,
-                        "name": "THORNTON"
+                        "name": "MUSGRAVE"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 2,
@@ -888,6 +1203,9 @@
                         "name": "PARKER"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 1,
@@ -896,6 +1214,9 @@
                         "name": "DANA"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 1,
@@ -904,6 +1225,9 @@
                         "name": "THOMPSON"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 0,
@@ -912,6 +1236,9 @@
                         "name": "CHAPMAN"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 0,
                         "endurance": 3,
@@ -921,6 +1248,9 @@
                         "name": "FUNK"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -930,6 +1260,9 @@
                         "name": "LUCID"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -950,6 +1283,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -958,6 +1294,9 @@
                         "name": "NELYUBOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 1,
@@ -966,6 +1305,9 @@
                         "name": "GAGARIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -974,6 +1316,9 @@
                         "name": "TITOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -982,6 +1327,9 @@
                         "name": "NIKOLAYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -990,6 +1338,9 @@
                         "name": "P.POPOVICH"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -998,6 +1349,9 @@
                         "name": "BYKOVSKY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 1,
@@ -1006,6 +1360,9 @@
                         "name": "KOMAROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -1014,6 +1371,9 @@
                         "name": "BONDARENKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1022,6 +1382,9 @@
                         "name": "FILATYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -1030,6 +1393,9 @@
                         "name": "RAFIKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1038,6 +1404,9 @@
                         "name": "ANIKEYEV"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1047,6 +1416,9 @@
                         "name": "PONOMARYOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 2,
@@ -1056,6 +1428,9 @@
                         "name": "KVASOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1071,6 +1446,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1079,6 +1457,9 @@
                         "name": "YEGOROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1087,6 +1468,9 @@
                         "name": "FEOKTISTOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -1095,6 +1479,9 @@
                         "name": "BELYAYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -1103,6 +1490,9 @@
                         "name": "LEONOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 0,
@@ -1111,6 +1501,9 @@
                         "name": "BEREGOVOY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 4,
                         "endurance": 2,
@@ -1119,6 +1512,9 @@
                         "name": "SHATALOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 1,
@@ -1127,6 +1523,9 @@
                         "name": "VOLYNOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1135,6 +1534,9 @@
                         "name": "YELISEYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1143,6 +1545,9 @@
                         "name": "KHRUNOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1151,6 +1556,9 @@
                         "name": "SARAFANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1159,6 +1567,9 @@
                         "name": "GUBAREV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1167,6 +1578,9 @@
                         "name": "AKSYONOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -1175,6 +1589,9 @@
                         "name": "GLAZKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 4,
@@ -1183,6 +1600,9 @@
                         "name": "RYUMIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 3,
                         "endurance": 3,
@@ -1191,6 +1611,9 @@
                         "name": "DZHANIBEKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 4,
@@ -1199,6 +1622,9 @@
                         "name": "LYAKHOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -1207,6 +1633,9 @@
                         "name": "POPOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 4,
@@ -1215,6 +1644,9 @@
                         "name": "KIZIM"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 0,
                         "docking": 0,
                         "endurance": 1,
@@ -1224,6 +1656,9 @@
                         "name": "TERESHKOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -1233,6 +1668,9 @@
                         "name": "SOLOVYOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1248,6 +1686,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 1,
@@ -1256,6 +1697,9 @@
                         "name": "SHONIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1264,6 +1708,9 @@
                         "name": "KUBASOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 2,
@@ -1272,6 +1719,9 @@
                         "name": "VOLKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1280,6 +1730,9 @@
                         "name": "FILIPCHENKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -1288,6 +1741,9 @@
                         "name": "GORBATKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -1296,6 +1752,9 @@
                         "name": "SEVASTYANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1304,6 +1763,9 @@
                         "name": "RUKAVISHNIKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 0,
                         "docking": 2,
                         "endurance": 1,
@@ -1312,6 +1774,9 @@
                         "name": "DOBROVOLSKY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 0,
                         "docking": 1,
                         "endurance": 1,
@@ -1320,6 +1785,9 @@
                         "name": "PATSAYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1328,6 +1796,9 @@
                         "name": "LAZAREV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -1336,6 +1807,9 @@
                         "name": "MAKAROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 4,
                         "docking": 2,
                         "endurance": 2,
@@ -1344,14 +1818,20 @@
                         "name": "KLIMUK"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
                         "eva": 2,
                         "lunar": 1,
-                        "name": "LEBEDEV"
+                        "name": "KOZELSKIY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1360,6 +1840,9 @@
                         "name": "ARTYUKHIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 2,
@@ -1368,6 +1851,9 @@
                         "name": "GRECHKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 3,
@@ -1376,6 +1862,9 @@
                         "name": "ZHOLOBOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 4,
@@ -1384,6 +1873,9 @@
                         "name": "KOVALYANOK"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -1392,6 +1884,9 @@
                         "name": "IVANCHENKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
@@ -1400,6 +1895,9 @@
                         "name": "MALYSHEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -1408,6 +1906,9 @@
                         "name": "ALEXANDROV"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1417,15 +1918,21 @@
                         "name": "YORKINA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
                         "eva": 3,
                         "female": true,
                         "lunar": 1,
-                        "name": "SAVITSKAYA"
+                        "name": "BORZENKOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 1,
@@ -1441,6 +1948,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 3,
@@ -1449,6 +1959,9 @@
                         "name": "ANDREYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 0,
@@ -1457,14 +1970,20 @@
                         "name": "ANOKHIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
                         "eva": 0,
                         "lunar": 1,
-                        "name": "GLAZKOV"
+                        "name": "BUGROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 1,
@@ -1473,22 +1992,31 @@
                         "name": "ILLARIANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
                         "eva": 1,
                         "lunar": 0,
-                        "name": "SOLOVYEV"
+                        "name": "SOLOVYOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
                         "eva": 2,
                         "lunar": 2,
-                        "name": "LEBEDEV"
+                        "name": "LYEBEDEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 3,
                         "endurance": 1,
@@ -1497,14 +2025,20 @@
                         "name": "SEREBROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
                         "eva": 3,
                         "lunar": 2,
-                        "name": "BEREZOVOI"
+                        "name": "BEREZOVOY"
                     },
                     {
+                        "sex": 0,
+                        "race": 2,
+                        "service": 6,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
@@ -1513,6 +2047,9 @@
                         "name": "GURRAGCHAA"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1521,6 +2058,9 @@
                         "name": "SAVINYKH"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 1,
@@ -1529,6 +2069,9 @@
                         "name": "STREKALOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
@@ -1537,6 +2080,9 @@
                         "name": "VIKTORENKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
@@ -1545,6 +2091,9 @@
                         "name": "ATKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 2,
@@ -1553,6 +2102,9 @@
                         "name": "VOLK"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 2,
@@ -1561,6 +2113,9 @@
                         "name": "IVANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 6,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 3,
@@ -1569,6 +2124,9 @@
                         "name": "REMEK"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 3,
                         "endurance": 2,
@@ -1577,14 +2135,20 @@
                         "name": "VASYUTIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 2,
                         "eva": 2,
                         "lunar": 1,
-                        "name": "LAVEIKIN"
+                        "name": "LAVEYKIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 6,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1593,6 +2157,9 @@
                         "name": "JAEHN"
                     },
                     {
+                        "sex": 0,
+                        "race": 2,
+                        "service": 6,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 3,
@@ -1601,6 +2168,9 @@
                         "name": "TUAN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1609,6 +2179,9 @@
                         "name": "VOLOSHIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 0,
                         "endurance": 1,
@@ -1617,6 +2190,9 @@
                         "name": "KOLESNIKOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 4,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1625,6 +2201,9 @@
                         "name": "BELOUSOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -1633,6 +2212,9 @@
                         "name": "VORONOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1641,14 +2223,20 @@
                         "name": "YAZDOVSKY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 3,
                         "eva": 0,
                         "lunar": 1,
-                        "name": "ZYKOV"
+                        "name": "KUKLIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 0,
                         "docking": 1,
                         "endurance": 2,
@@ -1657,6 +2245,9 @@
                         "name": "MATINCHENKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 2,
@@ -1665,6 +2256,9 @@
                         "name": "ZAIKIN"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 4,
                         "docking": 1,
                         "endurance": 0,
@@ -1674,6 +2268,9 @@
                         "name": "M.POPOVICH"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 0,
                         "endurance": 4,
@@ -1683,6 +2280,9 @@
                         "name": "MOROZYCHEVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -1698,6 +2298,9 @@
             {
                 "entries": [
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
@@ -1706,6 +2309,9 @@
                         "name": "VARLAMOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 0,
@@ -1714,6 +2320,9 @@
                         "name": "KARTASHOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 2,
@@ -1722,6 +2331,9 @@
                         "name": "FASTOVYETS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 4,
                         "endurance": 1,
@@ -1730,14 +2342,20 @@
                         "name": "SHCHUKIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 1,
                         "endurance": 3,
                         "eva": 0,
                         "lunar": 2,
-                        "name": "BORODAY"
+                        "name": "BORODAI"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 2,
@@ -1746,14 +2364,20 @@
                         "name": "BACHURIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 3,
                         "eva": 0,
                         "lunar": 4,
-                        "name": "STANKEVICIUS"
+                        "name": "STANKAVICHYUS"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 3,
                         "endurance": 1,
@@ -1762,6 +2386,9 @@
                         "name": "KONONENKO"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 4,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 0,
@@ -1770,6 +2397,9 @@
                         "name": "GULYAYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 0,
@@ -1778,6 +2408,9 @@
                         "name": "ZUDOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 2,
                         "capsule": 2,
                         "docking": 2,
                         "endurance": 0,
@@ -1786,6 +2419,9 @@
                         "name": "ROZHDESTVENSKY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1794,6 +2430,9 @@
                         "name": "DYOMIN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 1,
                         "endurance": 1,
@@ -1802,6 +2441,9 @@
                         "name": "LISUN"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 3,
@@ -1810,6 +2452,9 @@
                         "name": "PREOBRAZHENSKY"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 0,
@@ -1818,6 +2463,9 @@
                         "name": "SHCHEGLOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 4,
                         "capsule": 0,
                         "docking": 3,
                         "endurance": 1,
@@ -1826,6 +2474,9 @@
                         "name": "KHLUDEYEV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 3,
@@ -1834,6 +2485,9 @@
                         "name": "FYODOROV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -1842,14 +2496,20 @@
                         "name": "ROMANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 1,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 1,
                         "eva": 2,
                         "lunar": 0,
-                        "name": "STEPANOV"
+                        "name": "STYEPANOV"
                     },
                     {
+                        "sex": 0,
+                        "race": 0,
+                        "service": 5,
                         "capsule": 0,
                         "docking": 3,
                         "endurance": 2,
@@ -1858,6 +2518,9 @@
                         "name": "PETRUSHENKO"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 3,
                         "docking": 2,
                         "endurance": 0,
@@ -1866,6 +2529,9 @@
                         "name": "SAVITSKAYA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 2,
                         "docking": 1,
                         "endurance": 1,
@@ -1875,6 +2541,9 @@
                         "name": "IVANOVA"
                     },
                     {
+                        "sex": 1,
+                        "race": 0,
+                        "service": 0,
                         "capsule": 1,
                         "docking": 2,
                         "endurance": 2,
