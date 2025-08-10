@@ -1,3 +1,6 @@
+
+// This page handles editing the Custom Roster
+
 #include "ast_mod.h"
 
 #include <cassert>
@@ -624,7 +627,7 @@ namespace
 /**
  * Checks to see if the mouse clicked in the defined rectangle.
  *
- * Relies on the global values x, y, and mousebuttons.
+ * Relies on the global values x, y, and mouse buttons.
  */
 bool Clicked(int x1, int y1, int x2, int y2)
 {
@@ -651,7 +654,7 @@ bool Clicked(int x1, int y1, int x2, int y2)
 /**
  * Draw the Astronaut's stats in the skill profile box.
  *
- * This does not handle full 14 character names well.
+ * This does not handle full 14-character names well.
  */
 void DisplayRecruit(int plr, const struct ManPool &recruit)
 {
@@ -776,19 +779,19 @@ void DrawInterface()
     // Skill Select Buttons
     OutBox(6, 124, 42, 136);
     display::graphics.setForegroundColor(9);
-    draw_string(12, 132, "CAP");
+    draw_string(16, 132, "CAP");
     OutBox(6, 139, 42, 151);
     display::graphics.setForegroundColor(9);
-    draw_string(12, 147, "L.M.");
+    draw_string(17, 147, "L.M.");
     OutBox(6, 154, 42, 166);
     display::graphics.setForegroundColor(9);
-    draw_string(12, 162, "EVA");
+    draw_string(16, 162, "EVA");
     OutBox(6, 169, 42, 181);
     display::graphics.setForegroundColor(9);
-    draw_string(12, 177, "DOCK");
+    draw_string(13, 177, "DOCK");
     OutBox(6, 184, 42, 196);
     display::graphics.setForegroundColor(9);
-    draw_string(12, 192, "ENDR.");
+    draw_string(13, 192, "ENDR");
 
     // Astronaut/Cosmonaut skill display
     OutBox(59, 126, 195, 194);
@@ -802,7 +805,7 @@ void DrawInterface()
     draw_string(97, 163, "L.M.");
     draw_string(97, 171, "EVA");
     draw_string(97, 179, "DOCK");
-    draw_string(97, 187, "ENDR.");
+    draw_string(97, 187, "ENDR");
 
     // Name/Skill Change box
     OutBox(204, 127, 309, 145);
