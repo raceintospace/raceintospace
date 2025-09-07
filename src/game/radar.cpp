@@ -169,6 +169,10 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
         display::graphics.setForegroundColor(9);
         draw_number(0, 0, Data->P[plr].LaunchFacility[pad]);
         draw_string(0, 0, "MB");
+        display::graphics.setForegroundColor(11);
+        draw_string(0, 0, " (OF ");
+        draw_number(0, 0, Data->P[plr].Cash);
+        draw_string(0, 0, ")");
 
         if (Data->P[plr].Cash < Data->P[plr].LaunchFacility[pad]) {
             InBox(169, 181, 314, 193);
@@ -248,7 +252,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(13, 107, "PRIMARY CREW  ");
 
     if (j >= 0) {
-        display::graphics.setForegroundColor(11);  // Now display the crew number, for player's easy reference -Leon
+        display::graphics.setForegroundColor(11);  // Now display the crew number, for reference -Leon
 
         if (j == 0) {
             draw_string(0, 0, "(CREW I)");
@@ -326,7 +330,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(13, 145, "BACKUP CREW  ");
 
     if (l >= 0) {
-        display::graphics.setForegroundColor(11);  // Now display the crew number, for player's easy reference -Leon
+        display::graphics.setForegroundColor(11);  // Now display the crew number, for player's reference -Leon
 
         if (l == 0) {
             draw_string(0, 0, "(CREW I)");
@@ -422,7 +426,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
  *   7: USSR Launch Pad, destroyed
  *
  * \param poff  which of the pad images to display (0-6).
- * \throws runtime_error  if Filesystem cannot load the image.
+ * \throws runtime_error if Filesystem cannot load the image.
  */
 void PadPict(char poff)
 {
@@ -480,9 +484,8 @@ void ShowPad(char plr, char pad)
             || (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode && key == 'D')) {
             // Delay Mission
 
-            // There are restrictions on Mars/Jupiter/Saturn Flybys,
-            // so check that this mission _could_ be launched at
-            // this time.
+            // There are restrictions on Mars/Jupiter/Saturn Flybys, so
+            // check that this mission _could_ be launched at this time.
             bool validLaunch =
                 MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
                                 Data->Year, Data->Season);
