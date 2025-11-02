@@ -1,3 +1,7 @@
+// utilities to draw with digital pen
+// it can "recenter its view" and draw straight lines
+// also can detect mouse position and button presses, which I assume was used by game's graphics designer to make game's font
+
 #include "gr.h"
 
 #include "display/graphics.h"
@@ -11,62 +15,50 @@ using std::swap;
 static int gr_cur_x;
 static int gr_cur_y;
 
-int
-grGetMouseButtons(void)
+int grGetMouseButtons()
 {
-    int val;
-
-    val = av_mouse_pressed_latched || av_mouse_pressed_cur;
+    int val = av_mouse_pressed_latched || av_mouse_pressed_cur;
     av_mouse_pressed_latched = 0;
-    return (val);
+    return val;
 }
 
-int
-grGetMousePressedPos(int *xp, int *yp)
+int grGetMousePressedPos(int *xp, int *yp)
 {
     *xp = av_mouse_pressed_x / display::graphics.SCALE;
     *yp = av_mouse_pressed_y / display::graphics.SCALE;
-    return (0);
+    return 0;
 }
 
-int
-grGetMouseCurPos(int *xp, int *yp)
+int grGetMouseCurPos(int *xp, int *yp)
 {
     *xp = av_mouse_cur_x / display::graphics.SCALE;
     *yp = av_mouse_cur_y / display::graphics.SCALE;
-    return (0);
+    return 0;
 }
 
-void
-gr_sync(void)
+void gr_sync(void)
 {
     av_sync();
 }
 
-void
-grMoveTo(int x, int y)
+// Moves pen onto new (absolute) location without drawing
+void grMoveTo(int x, int y)
 {
     gr_cur_x = x;
     gr_cur_y = y;
 }
 
-void
-grLineTo(int x_arg, int y_arg)
+// Draws pixelated line from pen's position to input (absolute) location
+// via https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm ?
+void grLineTo(int x_arg, int y_arg)
 {
-    int deltax, deltay;
-    int error;
-    int ystep;
-    int x, y;
-    int x0, y0, x1, y1;
-    int steep;
+    int x0 = gr_cur_x;
+    int y0 = gr_cur_y;
 
-    x0 = gr_cur_x;
-    y0 = gr_cur_y;
+    int x1 = x_arg;
+    int y1 = y_arg;
 
-    x1 = x_arg;
-    y1 = y_arg;
-
-    steep = abs(y1 - y0) > abs(x1 - x0);
+    bool steep = abs(y1 - y0) > abs(x1 - x0);
 
     if (steep) {
         swap(x0, y0);
@@ -78,19 +70,18 @@ grLineTo(int x_arg, int y_arg)
         swap(y0, y1);
     }
 
-    deltax = x1 - x0;
-    deltay = abs(y1 - y0);
-    error = 0;
+    int deltax = x1 - x0;
+    int deltay = abs(y1 - y0);
+    int error = 0;
 
-    y = y0;
-
+    int ystep;
     if (y0 < y1) {
         ystep = 1;
     } else {
         ystep = -1;
     }
 
-    for (x = x0; x <= x1; x++) {
+    for (int x = x0, y = y0; x <= x1; x++) {
         if (steep) {
             display::graphics.legacyScreen()->setPixel(y, x, display::graphics.foregroundColor());
         } else {
@@ -109,14 +100,14 @@ grLineTo(int x_arg, int y_arg)
     gr_cur_y = y_arg;
 }
 
-void
-grLineRel(int dx, int dy)
+// Draws line to (relative) location
+void grLineRel(int dx, int dy)
 {
     grLineTo(gr_cur_x + dx, gr_cur_y + dy);
 }
 
-void
-grMoveRel(int dx, int dy)
+// Moves pen to new (relative) location without drawing
+void grMoveRel(int dx, int dy)
 {
     grMoveTo(gr_cur_x + dx, gr_cur_y + dy);
 }
