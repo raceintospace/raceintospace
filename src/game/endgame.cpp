@@ -70,7 +70,7 @@ void PrintHist(const char *buf);
 void PrintOne(const char *buf, char tken);
 void AltHistory(char plr);
 void EndPict(int x, int y, char poff, unsigned char coff);
-void LoserPict(char poff, unsigned char coff);
+void LoserPict();
 
 /**
  * Control loop for post-game celebration.
@@ -1037,7 +1037,7 @@ void SpecialEnd(void)
     draw_small_flag(0, 179, 4);
     InBox(210, 3, 237, 19);
     draw_small_flag(1, 211, 4);
-    LoserPict(0, 128);  // load loser picture
+    LoserPict();  // load loser picture
     std::string history = HistFile(10);
     PrintOne(history.c_str(), 0);
     history = HistFile(11);
@@ -1101,36 +1101,17 @@ EndPict(int x, int y, char poff, unsigned char coff)
 
 /**
  * Draw a 308x77 pixel Moonrise image.
- *
- * This uses a 128-color palette, which is stored to the global
- * display at [128, 255]. Currently, the coff parameter is fixed
- * at 128.
- *
- * NOTE: Originally, this drew the image masking for color = 0
- * transparency. However, the png image isn't transparent, and
- * it isn't meant to be transparent, so that's being skipped.
- *   -- rnyoakum
- *
- * \param poff  which of the "loser" images to draw (only 0 is valid).
- * \param coff  the color index to start storing the image's palette.
- *
  */
-void
-LoserPict(char poff, unsigned char coff)
+void LoserPict()
 {
-    assert(poff == 0);
-    coff = 128;
-
     const int x = 6;
     const int y = 32;
 
-    char filename[128];
-    snprintf(filename, sizeof(filename),
-             "images/loser.but.%d.png", (int) poff);
+    char filename[128] = "images/loser.but.0.png";
     boost::shared_ptr<display::PalettizedSurface> image(
         Filesystem::readImage(filename));
 
-    image->exportPalette(coff, coff + 127);  // 128-color palette
+    image->exportPalette(128, 255);  // 128-color palette
     display::graphics.screen()->draw(image, x, y);
 }
 
