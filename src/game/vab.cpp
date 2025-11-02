@@ -237,22 +237,19 @@ boost::shared_ptr<display::LegacySurface> LoadVABSprite(const char plr)
     return surface;
 }
 
-
+/**
+ *  Draws colored rectangle in player's color
+ */
 void GradRect2(int x1, int y1, int x2, int y2, char plr)
 {
-    register int i, j, val;
-
-    val = 3 * plr + 6;
-
     fill_rectangle(x1, y1, x2, y2, 7 + 3 * plr);
 
-    for (j = x1; j <= x2; j += 3) {
-        for (i = y1; i <= y2; i += 3) {
+    int val = 3 * plr + 6;
+    for (int j = x1; j <= x2; j += 3) {
+        for (int i = y1; i <= y2; i += 3) {
             display::graphics.legacyScreen()->pixels()[j + display::graphics.WIDTH * i] = val;
         }
     }
-
-    return;
 }
 
 
