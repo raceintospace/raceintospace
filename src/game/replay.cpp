@@ -85,7 +85,7 @@ void Replay(char plr, int num,
         auto Seq_iter = std::find_if(Sequence_container.begin(), 
                                      Sequence_container.end(), 
                                      [&](const MissionSequenceKey& ms){
-                                         return ms.MissionIdSequence == r.seq
+                                         return ms.MissionIdSequence == r.seq;
                                     });
         // if step information is bogus, bail
         if (Seq_iter == Sequence_container.end()) return;
