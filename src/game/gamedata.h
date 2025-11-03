@@ -132,16 +132,6 @@ typedef struct {
 #define sizeof_SimpleHdr (2+4)
 extern size_t fread_SimpleHdr(SimpleHdr *dst, size_t num, FILE *f);
 
-#if 0
-typedef struct ReplayItem {
-    uint8_t Qty;             /* Number of Animated Sequences */
-    uint16_t Off[35];        /* Offsets to Each animated Part */
-} REPLAY;
-#define sizeof_REPLAY (1 + 35*2)
-extern size_t fread_REPLAY(REPLAY *dst, size_t num, FILE *f);
-extern size_t fwrite_REPLAY(const REPLAY *src, size_t num, FILE *f);
-#endif
-
 #endif /* _GAMEDATA_H */
 
 /** @} */
