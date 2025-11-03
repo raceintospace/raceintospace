@@ -126,17 +126,11 @@ void AIMaster(char plr)
     }
 
     if (Data->P[plr].AIStat <= 2) {
-        if (GenPur(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL)) {
-            RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
-        } else {
-            RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
-        }
+        GenPur(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
+        RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
 
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
-        }
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
 
         Data->P[plr].Buy[PROBE_HARDWARE][PROBE_HW_ORBITAL] = 0;
         Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_ONE_STAGE] = 0;
@@ -225,11 +219,8 @@ void AIMaster(char plr)
         AILaunch(plr);
     }
 
-    if (GenPur(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS)) {
-        RDafford(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
-    } else {
-        RDafford(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
-    }
+    GenPur(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
+    RDafford(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
 
     Data->P[plr].Buy[MISC_HARDWARE][MISC_HW_EVA_SUITS] = 0;
     RDafford(plr, MISC_HARDWARE, MISC_HW_EVA_SUITS);
@@ -264,11 +255,8 @@ void AIMaster(char plr)
 
 // boosters
     if (Data->P[plr].AIStat >= 2) {
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
-        }
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_BOOSTERS);
     }
 
     if (CheckSafety(plr, Data->P[plr].AIPrim) >= CheckSafety(plr, Data->P[plr].AISec)) {
@@ -284,11 +272,8 @@ void AIMaster(char plr)
         }
 
         if (Data->P[plr].AILunar < 4) {
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
             Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
@@ -297,11 +282,8 @@ void AIMaster(char plr)
                 Data->P[plr].Cash += 25;
             }
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
             Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
@@ -315,11 +297,8 @@ void AIMaster(char plr)
 
     if (Data->P[plr].AILunar > 0 && Data->P[plr].AILunar < 4) {
         if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
-            if (GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            }
+            GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
+            RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
 
             Data->P[plr].Buy[MANNED_HARDWARE][Data->P[plr].AIStrategy[AI_LUNAR_MODULE]] = 0;
             RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
@@ -373,11 +352,8 @@ void AIMaster(char plr)
             Data->P[plr].Cash += Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].InitCost + 30;
 
             if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num <= 0) {
-                if (GenPur(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY)) {
-                    RDafford(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
-                } else {
-                    RDafford(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
-                }
+                GenPur(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
+                RDafford(plr, PROBE_HARDWARE, PROBE_HW_INTERPLANETARY);
             }
 
             Data->P[plr].Buy[PROBE_HARDWARE][PROBE_HW_INTERPLANETARY] = 0;
@@ -388,22 +364,16 @@ void AIMaster(char plr)
             Data->P[plr].Cash += Data->P[plr].Probe[PROBE_HW_LUNAR].InitCost + 30;
 
             if (Data->P[plr].Probe[PROBE_HW_LUNAR].Num <= 0) {
-                if (GenPur(plr, PROBE_HARDWARE, PROBE_HW_LUNAR)) {
-                    RDafford(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
-                } else {
-                    RDafford(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
-                }
+                GenPur(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
+                RDafford(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
             }
 
             Data->P[plr].Buy[PROBE_HARDWARE][PROBE_HW_LUNAR] = 0;
             RDafford(plr, PROBE_HARDWARE, PROBE_HW_LUNAR);
         }
 
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-        }
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
     }
 
     if (PrestigeCheck(plr, Prestige_MannedSpaceMission) || PrestigeCheck(plr, Prestige_MannedOrbital)) {
@@ -616,17 +586,11 @@ void KeepRD(char plr, int m)
 
     case 6:
         if (Data->P[plr].Rocket[ROCKET_HW_TWO_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Num) {
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
 
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_TWO_STAGE] = 0;
@@ -635,17 +599,11 @@ void KeepRD(char plr, int m)
                 RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
             }
         } else {
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_TWO_MAN_CAPSULE);
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_TWO_STAGE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_TWO_STAGE] = 0;
@@ -659,17 +617,11 @@ void KeepRD(char plr, int m)
 
     case 8:
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Num) {
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
@@ -678,17 +630,11 @@ void KeepRD(char plr, int m)
                 RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
             }
         } else {
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_THREE_MAN_CAPSULE);
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
@@ -702,17 +648,11 @@ void KeepRD(char plr, int m)
 
     case 9:
         if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Num) {
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
@@ -721,17 +661,11 @@ void KeepRD(char plr, int m)
                 RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
             }
         } else {
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_MINISHUTTLE);
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
             if (Level_Check != 0) {
                 Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
@@ -745,34 +679,22 @@ void KeepRD(char plr, int m)
 
     case 10:
         if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num <= Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Num) {
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
 
             Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
             Data->P[plr].Buy[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE] = 0;
             RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
         } else {
-            if (GenPur(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE)) {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
-            }
+            GenPur(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
+            RDafford(plr, MANNED_HARDWARE, MANNED_HW_FOUR_MAN_CAPSULE);
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
             Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
             Data->P[plr].Buy[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE] = 0;
