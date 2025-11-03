@@ -1273,7 +1273,7 @@ struct MissionSequenceKey {
 
 
 // Mission Replay Data Structure
-typedef struct LegacyReplayItem {
+struct LegacyReplayItem {
     uint8_t Qty;         // Number of Animated Sequences
     uint16_t Off[35];     // Offsets to Each animated Part
 
@@ -1287,9 +1287,10 @@ typedef struct LegacyReplayItem {
         ASSERT(Qty <= 35);
     }
 
-} LEGACY_REPLAY;
+};
+using LEGACY_REPLAY = LegacyReplayItem;
 
-typedef struct ReplayItem {
+struct ReplayItem {
     bool Failure;
     std::string seq;
 
@@ -1301,7 +1302,8 @@ typedef struct ReplayItem {
             ar(CEREAL_NVP(seq));
         }
     }
-} REPLAY;
+}; 
+using REPLAY = ReplayItem;
 
 CEREAL_CLASS_VERSION(ReplayItem, 2);
 
