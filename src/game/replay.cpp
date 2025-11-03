@@ -28,6 +28,7 @@
 #include "replay.h"
 
 #include <cassert>
+#include <algorithm>
 
 #include "display/graphics.h"
 
@@ -41,74 +42,67 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-void
-Replay(char plr, int num, int dx, int dy, int width, int height,
-       std::string Type)
+/*
+ *  Loads and plays video(s) as specified by Type
+ *  at position dx dy
+ *
+ *  Todo: refactor this into a function that plays 1 video and a function that calls first one multiple times if needed
+ */
+void Replay(char plr, int num, 
+            int dx, int dy, 
+            int width, int height,
+            std::string Type)
 {
-    int j;
     std::vector<REPLAY> Rep;
-    std::vector<struct MissionSequenceKey> sSeq, fSeq;
+    std::vector<MissionSequenceKey> sSeq, fSeq;
 
-    if (Type == "OOOO") {
+    if (Type == "OOOO") { // replay the whole mission
         Rep = interimData.tempReplay.at((plr * 100) + num);
-    } else {
+    } else { // play single video
         Rep.push_back({false, Type});
     }
 
     mm_file vidfile;
     float fps;
 
-    DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA));
-    DESERIALIZE_JSON_FILE(&fSeq, locate_file("fseq.json", FT_DATA));
+    // load json files that translate internal video types into filenames
+    DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA)); // normal events, training montages
+    DESERIALIZE_JSON_FILE(&fSeq, locate_file("fseq.json", FT_DATA)); // failures
 
     WaitForMouseUp();
 
     DEBUG2("video sequence: %d segments", Rep.size());
 
-    for (int kk = 0; kk < Rep.size(); kk++) {
-        DEBUG3("playing segment %d: %s", kk, Rep.at(kk).seq.c_str());
+    int dbg_segment_idx = -1;
+    for (const REPLAY& r : Rep) {
+        ++dbg_segment_idx;
+        DEBUG3("playing segment %d: %s", dbg_segment_idx, r.seq.c_str());
 
-        if (Rep.at(kk).Failure) {
-            for (j = 0; j < fSeq.size(); j++) {
-                if (fSeq.at(j).MissionIdSequence == Rep.at(kk).seq) {
-                    break;
-                }
-            }
+        // select correct json
+        auto& Sequence_container = (r.Failure)? fSeq : sSeq;
 
-            if (j == fSeq.size()) {
-                return;
-            }
-        } else {
-            for (j = 0; j < sSeq.size(); j++) {
-                if (sSeq.at(j).MissionIdSequence == Rep.at(kk).seq) {
-                    break;
-                }
-            }
-
-            if (j == sSeq.size()) {
-                return;
-            }
-        }
-
-        int max = Rep.at(kk).seq.at(1) - '0';
+        // find correct step information
+        auto Seq_iter = std::find_if(Sequence_container.begin(), 
+                                     Sequence_container.end(), 
+                                     [&](const MissionSequenceKey& ms){
+                                         return ms.MissionIdSequence == r.seq;
+                                    });
+        // if step information is bogus, bail
+        if (Seq_iter == Sequence_container.end()) return;
+        
+        int max = r.seq.at(1) - '0';
         bool keep_going = true;
-
+        bool exit_replay = false;
         //  update_map = 0;
         for (int i = 0; i < max && keep_going; i++) {
-            char seq_name[20];
-            char fname[20];
-
-            if (Rep.at(kk).Failure) {
-                strntcpy(seq_name, fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-            } else {
-                strntcpy(seq_name, sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-            }
+            std::string video_filename = Seq_iter->video.at(i) + ".ogg";
 
             // TODO: I added this because there are video sequences that
             // do not have a numerical prefix (ex: training videos in
             // ast3.cpp). They should be modified or this check
             // maintained.  -- rnyoakum
-            if (strncmp(seq_name, "NONE", MIN(4, sizeof(seq_name))) == 0) {
+            if (strncmp(video_filename.c_str(), "NONE", 4) == 0) {
+                // if something went wrong and we are trying to read NONE, move on to the next replay
                 break;
             }
 
@@ -116,17 +110,16 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
              * pallettized surface, so we use a global Overlay initialized in
              * sdl.c. */
 
-            /** \todo assumption on file extension */
-            snprintf(fname, sizeof(fname), "%s.ogg", seq_name);
+            INFO2("opening video file `%s'", video_filename.c_str());
 
-            INFO2("opening video file `%s'", fname);
-
-            if (mm_open_fp(&vidfile, sOpen(fname, "rb", FT_VIDEO)) <= 0) {
+            if (mm_open_fp(&vidfile, sOpen(video_filename.c_str(), "rb", FT_VIDEO)) <= 0) {
+                // if we fail to open video file, stop displaying videos
                 goto done;
             }
 
             /** \todo do not ignore width/height */
             if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0) {
+                // if we fail at reading video info, stop displaying videos
                 goto done;
             }
 
@@ -139,14 +132,17 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
 
                 /** \todo track decoding time and adjust delays */
                 if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
+                    // if video ends (or breaks) - exit loop, move on to the next one
                     break;
                 }
 
+                // pressing any key moves to the next video
                 if ((pressed = bioskey(0)) || grGetMouseButtons()) {
                     keep_going = false;
 
+                    // pressing Esc leaves replay altogether
                     if (pressed == K_ESCAPE) {
-                        kk = Rep.size();
+                        exit_replay = true;
                     }
                 }
 
@@ -156,13 +152,13 @@ Replay(char plr, int num, int dx, int dy, int width, int height,
 
             mm_close(&vidfile);
         }
+        if (exit_replay) break;
     }
 
 done:
     mm_close(&vidfile);
     display::graphics.videoRect().w = 0;
     display::graphics.videoRect().h = 0;
-    return;
 }
 
 void
