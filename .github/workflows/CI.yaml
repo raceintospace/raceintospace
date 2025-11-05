@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - os: windows
-            preset: windows-release
+            preset: windows-vcpkg
             # package: windows-release
           - os: ubuntu
             preset: linux-vcpkg
