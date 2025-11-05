@@ -52,6 +52,7 @@ jobs:
       
       - name: Restore cached vcpkg modules # reads from cache here, stores into cache at job end
         id: vcpkg-cache
+        if: ${{contains(matrix.preset, 'vcpkg')}}
         uses: TAServers/vcpkg-cache@v3
         with: 
           token: ${{ secrets.GITHUB_TOKEN }} # needs token with action:read permission to read action cache
