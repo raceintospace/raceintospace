@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }} # needs token with action:read permission to read action cache
           prefix: ${{matrix.preset}} # used for cache disambiguation
 
-      - name: Restore vcpkg executable and data files from GH Action cache, or setup vcpkg from scratch if there is a cache-miss
+      - name: Setup vcpkg from scratch # until vcpkg and run-vcpkg fix themselves, we have to use vcpkg-cache with token
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
