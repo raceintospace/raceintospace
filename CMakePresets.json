@@ -47,7 +47,7 @@
             }
         },
         {
-            "name": "windows-release",
+            "name": "windows-vcpkg",
             "displayName": "Windows release build",
             "inherits": [
                 "release",
@@ -122,9 +122,9 @@
     ],
     "buildPresets": [
         {
-            "name": "windows-release",
+            "name": "windows-vcpkg",
             "displayName": "Windows release build",
-            "configurePreset": "windows-release"
+            "configurePreset": "windows-vcpkg"
         },
         {
             "name": "windows-debug",
@@ -149,8 +149,8 @@
     ],
     "packagePresets": [
         {
-            "name": "windows-release",
-            "configurePreset": "windows-release",
+            "name": "windows-vcpkg",
+            "configurePreset": "windows-vcpkg",
             "generators": [
                 "NSIS"
             ]

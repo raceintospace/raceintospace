@@ -12,12 +12,14 @@ on:
 
 jobs:
   job:
+    permissions:
+      actions: read  # vcpkg-cache uses github's action cache, needs only read permission
     strategy:
       fail-fast: true
       matrix:
         include:
           - os: windows
-            preset: windows-release
+            preset: windows-vcpkg
             # package: windows-release
           - os: ubuntu
             preset: linux-vcpkg
@@ -47,16 +49,22 @@ jobs:
       - name: List $RUNNER_WORKSPACE before vcpkg is setup
         run: find $RUNNER_WORKSPACE
         shell: bash
+      
+      - name: Restore cached vcpkg modules # reads from cache here, stores into cache at job end
+        id: vcpkg-cache
+        if: ${{contains(matrix.preset, 'vcpkg')}}
+        uses: TAServers/vcpkg-cache@v3
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }} # needs token with action:read permission to read action cache
+          prefix: ${{matrix.preset}} # used for cache disambiguation
 
-      - name: Restore vcpkg executable and data files from GH Action cache, or setup vcpkg from scratch if there is a cache-miss
+      - name: Setup vcpkg from scratch # until vcpkg and run-vcpkg fix themselves, we have to use vcpkg-cache with a secret token
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
           # This one is not needed, as it is the default value anyway.
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgJsonGlob: 'vcpkg.json'
-          # Leverage the cache containing vcpkg executable and data files (e.g. port files).
-          doNotCache: false
 
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
@@ -71,7 +79,7 @@ jobs:
         id: linux-deps
         run: sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
-      - name: Run CMake and CPack
+      - name: Run CMake and CPack # CMake makes exe, CPack makes installer (package)
         uses: lukka/run-cmake@v10
         id: runcmake
         with:
@@ -79,13 +87,15 @@ jobs:
           configurePreset: ${{ matrix.preset }}
           buildPreset: ${{ matrix.preset }}
           packagePreset: ${{ matrix.package }}
+        env:
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite" # makes CMake aware of vcpkg-cache's cache
 
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
 
       - name: Read output package name
-        if: ${{ matrix.package }}
+        if: ${{ matrix.package }} # only make installer if we ask for it
         id: readpkg
         shell: bash
         run: |
@@ -93,24 +103,31 @@ jobs:
           echo "Package file name: $PACKAGE_FILE_NAME"
           echo "package_file_name=$PACKAGE_FILE_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Upload windows binaries artifact
-        if: ${{ matrix.package }}
+      - name: Upload windows binaries artifact # creates temporary archive file with resulting program
+        id: upload_artifact
+        if: ${{ startsWith(matrix.os, 'windows') }}
         uses: actions/upload-artifact@v4
         with:
           name: windows-binaries-${{ github.sha }}
+          overwrite: true # keep only one artifact to limit storage requirements
           retention-days: 7
           if-no-files-found: error
           compression-level: 9
           path: |
             build/release/src/game/*.exe
             build/release/src/game/*.dll
+            
+      - name: Output artifact URL # make download link visible (I hope it's download link?)
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        run: |
+          echo "Artifact URL is: ${{ steps.upload_artifact.outputs.artifact-url }}"
 
       - name: Upload windows installer artifact
         if: ${{ matrix.package }}
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer-latest # keep only one artifact to limit storage requirements
-          overwrite: true
+          name: windows-installer-latest 
+          overwrite: true # keep only one artifact to limit storage requirements
           if-no-files-found: error
           compression-level: 0
           path: ${{ steps.readpkg.outputs.package_file_name }}
