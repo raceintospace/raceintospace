@@ -1248,7 +1248,7 @@ void Future(char plr)
                 InBox(5, 24, 201, 47);
                 int helpIndex = 300 + misType;
                 char helpEntry[5];
-                snprintf(helpEntry, sizeof(helpEntry), "i%d03", helpIndex);
+                snprintf(helpEntry, sizeof(helpEntry), "i%d", helpIndex);
                 WaitForMouseUp();
                 delay(100);
                 OutBox(5, 24, 201, 47);
