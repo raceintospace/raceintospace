@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }} # needs token with action:read permission to read action cache
           prefix: ${{matrix.preset}} # used for cache disambiguation
 
-      - name: Setup vcpkg from scratch # until vcpkg and run-vcpkg fix themselves, we have to use vcpkg-cache with token
+      - name: Setup vcpkg from scratch # until vcpkg and run-vcpkg fix themselves, we have to use vcpkg-cache with a secret token
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
@@ -78,7 +78,7 @@ jobs:
         id: linux-deps
         run: sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
-      - name: Run CMake and CPack
+      - name: Run CMake and CPack # CMake makes exe, CPack makes installer (package)
         uses: lukka/run-cmake@v10
         id: runcmake
         with:
@@ -94,7 +94,7 @@ jobs:
         shell: bash
 
       - name: Read output package name
-        if: ${{ matrix.package }}
+        if: ${{ matrix.package }} # only make installer if we ask for it
         id: readpkg
         shell: bash
         run: |
@@ -102,24 +102,31 @@ jobs:
           echo "Package file name: $PACKAGE_FILE_NAME"
           echo "package_file_name=$PACKAGE_FILE_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Upload windows binaries artifact
-        if: ${{ matrix.package }}
+      - name: Upload windows binaries artifact # creates temporary archive file with resulting program
+        id: upload_artifact
+        if: ${{ startsWith(matrix.os, 'windows') }}
         uses: actions/upload-artifact@v4
         with:
           name: windows-binaries-${{ github.sha }}
+          overwrite: true # keep only one artifact to limit storage requirements
           retention-days: 7
           if-no-files-found: error
           compression-level: 9
           path: |
             build/release/src/game/*.exe
             build/release/src/game/*.dll
+            
+      - name: Output artifact URL # make download link visible (I hope it's download link?)
+        if: ${{ startsWith(matrix.os, 'windows') }}
+        run: |
+          echo "Artifact URL is: ${{ steps.upload_artifact.outputs.artifact-url }}"
 
       - name: Upload windows installer artifact
         if: ${{ matrix.package }}
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer-latest # keep only one artifact to limit storage requirements
-          overwrite: true
+          name: windows-installer-latest 
+          overwrite: true # keep only one artifact to limit storage requirements
           if-no-files-found: error
           compression-level: 0
           path: ${{ steps.readpkg.outputs.package_file_name }}
