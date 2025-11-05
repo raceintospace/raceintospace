@@ -12,6 +12,8 @@ on:
 
 jobs:
   job:
+    permissions:
+      actions: read  # vcpkg-cache uses github's action cache, needs only read permission
     strategy:
       fail-fast: true
       matrix:
@@ -47,6 +49,13 @@ jobs:
       - name: List $RUNNER_WORKSPACE before vcpkg is setup
         run: find $RUNNER_WORKSPACE
         shell: bash
+      
+      - name: Restore cached vcpkg modules # reads from cache here, stores into cache at job end
+        id: vcpkg-cache
+        uses: TAServers/vcpkg-cache@v3
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }} # needs token with action:read permission to read action cache
+          prefix: ${{matrix.preset}} # used for cache disambiguation
 
       - name: Restore vcpkg executable and data files from GH Action cache, or setup vcpkg from scratch if there is a cache-miss
         uses: lukka/run-vcpkg@v11
@@ -55,8 +64,6 @@ jobs:
           # This one is not needed, as it is the default value anyway.
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgJsonGlob: 'vcpkg.json'
-          # Leverage the cache containing vcpkg executable and data files (e.g. port files).
-          doNotCache: false
 
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
@@ -79,6 +86,8 @@ jobs:
           configurePreset: ${{ matrix.preset }}
           buildPreset: ${{ matrix.preset }}
           packagePreset: ${{ matrix.package }}
+        env:
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite" # makes CMake aware of vcpkg-cache's cache
 
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
