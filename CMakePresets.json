@@ -47,7 +47,7 @@
             }
         },
         {
-            "name": "windows-release",
+            "name": "windows-vcpkg",
             "displayName": "Windows release build",
             "inherits": [
                 "release",
