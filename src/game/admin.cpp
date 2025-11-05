@@ -1523,7 +1523,7 @@ int FutureCheck(char plr, char type)
                 }
             }
 
-            if (x >= 110 && y >= 49 + i * 49 && x <= 145 && y <= 62 + i * 51 > 0 && old_p[i] != p[i] && mousebuttons > 0) {  
+            if (x >= 110 && y >= 49 + i * 49 && x <= 145 && y <= 62 + i * 51 && old_p[i] != p[i] && mousebuttons > 0) {  
                 // Undo button
                 if (old_p[i] == LAUNCHPAD_NOT_BUILT) {
                     // Undo pad purchase
