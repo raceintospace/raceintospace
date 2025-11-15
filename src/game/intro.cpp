@@ -27,6 +27,8 @@
 
 #include "intro.h"
 
+#include <vector>
+
 #include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -41,12 +43,14 @@
 #include "sdlhelper.h"
 #include "utils.h"
 
-const struct CREDIT {
-    char page;
-    int col;
-    int x, y;
-    const char *Txt;
-} CREDIT[] = {
+struct CREDIT_t {
+    char page;       // Page to display in
+    int col;         // Text's colour
+    int x, y;        // Text's position
+    const char *Txt; // "WORDING"
+};
+
+std::vector<CREDIT> CREDIT = {
     { 0, 22, 96, 12, "OPEN-SOURCED THE GAME"},
     { 0, 10, 119, 20, "FRITZ BRONNER"},
     { 0, 10, 108, 27, "MICHAEL K MCCARTY"},
@@ -159,20 +163,16 @@ const struct CREDIT {
 // Note: the structure of the items above is:
 // { Screen to display in, Color, X position, Y position, "WORDING"},
 
-int nCREDIT = sizeof CREDIT / sizeof CREDIT[0];
-
 void Credits(void)
 {
-    int k, i;
     keyHelpText = "i999";
 
     FadeOut(2, 30, 0, 0);
 
     boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage("images/first.img.3.png"));
-
     image->exportPalette();
 
-    for (k = 0; k < 3; k++) {
+    for (int k = 0; k < 3; k++) {
 
         if (k != 0) {
             FadeOut(2, 30, 0, 0);    // Screen #2
@@ -181,10 +181,10 @@ void Credits(void)
         image->exportPalette();
         display::graphics.screen()->draw(image, 0, 0);
 
-        for (i = 0; i < nCREDIT; i++) {
-            if (CREDIT[i].page == k) {
-                display::graphics.setForegroundColor(CREDIT[i].col);
-                draw_string(CREDIT[i].x, CREDIT[i].y, CREDIT[i].Txt);
+        for (const CREDIT_t& cred : CREDIT) {
+            if (cred.page == k) {
+                display::graphics.setForegroundColor(cred.col);
+                draw_string(cred.x, cred.y, cred.Txt);
             }
         }
 
@@ -215,16 +215,16 @@ void Credits(void)
 
 #define INTRO_IMAGE_COUNT 15
 
-void Introd(void)
+/*
+ * Draws full screen image sequence (shown on game start)
+ */
+void Introd()
 {
-    int k;
-    double start;
-
     music_start(M_LIFTOFF);
 
     /* Frame 0 is Interplay, and frame 1 is Strategic Visions */
     /* These are both defunct, so start at frame 2 instead */
-    for (k = 2; k < INTRO_IMAGE_COUNT; k++) {
+    for (int k = 2; k < INTRO_IMAGE_COUNT; k++) {
         char filename[64];
         snprintf(filename, sizeof(filename), "images/first.img.%i.png", k);
 
@@ -235,8 +235,8 @@ void Introd(void)
 
         FadeIn(2, 30, 0, 0);
 
-        start = get_time();
-
+        double start = get_time();
+        bool user_exit = false;
         while (get_time() - start < 3) {
             av_step();
 
@@ -244,14 +244,14 @@ void Introd(void)
             PauseMouse();
 
             if (key || grGetMouseButtons()) {
-                goto done;
+                user_exit = true;
+                break;
             }
         }
 
         FadeOut(2, 30, 0, 0);
+        if (user_exit) break;
     }
-
-done:
     display::graphics.screen()->clear();
 }
 
