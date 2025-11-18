@@ -50,7 +50,7 @@ struct CREDIT_t {
     const char *Txt; // "WORDING"
 };
 
-std::vector<CREDIT> CREDIT = {
+std::vector<CREDIT_t> CREDIT = {
     { 0, 22, 96, 12, "OPEN-SOURCED THE GAME"},
     { 0, 10, 119, 20, "FRITZ BRONNER"},
     { 0, 10, 108, 27, "MICHAEL K MCCARTY"},
