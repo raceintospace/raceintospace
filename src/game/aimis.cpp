@@ -65,7 +65,7 @@ void AIVabCheck(char plr, char mis, char prog)
 {
     VASqty = 0;
     //prog=1; 0=UnM : 1=1Mn ...
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
     whe[0] = whe[1] = -1;
 
     if (prog == 5) {
@@ -117,23 +117,17 @@ void AIVabCheck(char plr, char mis, char prog)
         // if (Mew[whe[0]].i<30) whe[0]=0;
         // ShowVA(whe[0]);
     }
-
-    return;
 }
 
 char Best(void)
 {
-    int i, j, ct, ct1;
-    char valid[5];
+    char valid[5]{};
 
-    for (i = 0; i < 5; i++) {
-        valid[i] = 0;
-    }
+    for (int i = 1; i < VASqty + 1; i++) {
+        int ct = 0;
+        int ct1 = 0;
 
-    for (i = 1; i < VASqty + 1; i++) {
-        ct = ct1 = 0;
-
-        for (j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; j++) {
             if (strncmp("NONE", &VAS[i][j].name[0], 4) != 0) {
                 ct1++;
             }
@@ -148,9 +142,9 @@ char Best(void)
         }
     }
 
-    ct1 = 0;
+    int ct1 = 0;
 
-    for (i = 1; i < VASqty + 1; i++) {
+    for (int i = 1; i < VASqty + 1; i++) {
         ct1 = (valid[i] > valid[ct1]) ? i : ct1;
     }
 
@@ -161,59 +155,66 @@ char Best(void)
 int ICost(char plr, char h, char i)
 {
     int cost = 0;
-
+    
     switch (h) {
     case Mission_Capsule:
     case Mission_LM:
-        cost = cost + Data->P[plr].Manned[i].MaxRD - Data->P[plr].Manned[i].Safety;
+        auto& MannedCapsule = Data->P[plr].Manned[i];
+        cost = cost + MannedCapsule.MaxRD - MannedCapsule.Safety;
         cost = cost / 3.5;
-        cost = cost * Data->P[plr].Manned[i].RDCost;
+        cost = cost * MannedCapsule.RDCost;
 
-        if (Data->P[plr].Manned[i].Num < 0) {
-            cost += Data->P[plr].Manned[i].InitCost;
+        if (MannedCapsule.Num < 0) {
+            cost += MannedCapsule.InitCost;
         }
 
-        if (Data->P[plr].Manned[i].Num == 0) {
-            cost += Data->P[plr].Manned[i].UnitCost;
+        if (MannedCapsule.Num == 0) {
+            cost += MannedCapsule.UnitCost;
         }
 
         break;
 
     case Mission_Kicker:
-        cost = cost + Data->P[plr].Misc[i].MaxRD - Data->P[plr].Misc[i].Safety;
-        cost = cost / 3.5;
-        cost = cost * Data->P[plr].Misc[i].RDCost;
+        auto& Kicker = Data->P[plr].Misc[i];
 
-        if (Data->P[plr].Misc[i].Num < 0) {
-            cost += Data->P[plr].Misc[i].InitCost;
+        cost = cost + Kicker.MaxRD - Kicker.Safety;
+        cost = cost / 3.5;
+        cost = cost * Kicker.RDCost;
+
+        if (Kicker.Num < 0) {
+            cost += Kicker.InitCost;
         }
 
-        if (Data->P[plr].Misc[i].Num == 0) {
-            cost += Data->P[plr].Misc[i].UnitCost;
+        if (Kicker.Num == 0) {
+            cost += Kicker.UnitCost;
         }
 
         break;
 
-    case Mission_Probe_DM:
+    case Mission_Probe_DM:        
         if (i < 4) {
-            cost = cost + Data->P[plr].Probe[i].MaxRD - Data->P[plr].Probe[i].Safety;
-            cost = cost / 3.5;
-            cost = cost * Data->P[plr].Probe[i].RDCost;
+            auto& Probe = Data->P[plr].Probe[i];
 
-            if (Data->P[plr].Probe[i].Num < 0) {
-                cost += Data->P[plr].Probe[i].InitCost;
+            cost = cost + Probe.MaxRD - Probe.Safety;
+            cost = cost / 3.5;
+            cost = cost * Probe.RDCost;
+
+            if (Probe.Num < 0) {
+                cost += Probe.InitCost;
             }
 
-            if (Data->P[plr].Probe[i].Num == 0) {
-                cost += Data->P[plr].Probe[i].UnitCost;
+            if (Probe.Num == 0) {
+                cost += Probe.UnitCost;
             }
         } else {
-            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) {
-                cost += Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].InitCost;
+            auto& DockingModule = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
+            
+            if (DockingModule.Num < 0) {
+                cost += DockingModule.InitCost;
             }
 
-            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == 0) {
-                cost += Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].UnitCost;
+            if (DockingModule.Num == 0) {
+                cost += DockingModule.UnitCost;
             }
         }
 
@@ -229,18 +230,17 @@ int ICost(char plr, char h, char i)
 
 void CalcSaf(char plr, char vs)
 {
-    int i, j, k, sum = 0, co = 0, t = 0;
-
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         Mew[i].cost = Mew[i].sf = 0;    // Clear thing
     }
 
     // Do first part
 
-    for (j = 1; j < vs + 1; j++) {
-        for (k = 0; k < 4; k++) {
+    for (int j = 1; j < vs + 1; j++) {
+        int t = 0;
+        for (int k = 0; k < 4; k++) {
             if (VAS[j][k].qty >= 0) {
-                sum += VAS[j][k].sf;
+                Mew[j].sf += VAS[j][k].sf;
             }
 
             if (strncmp("NONE", &VAS[j][k].name[0], 4) != 0) {
@@ -248,23 +248,14 @@ void CalcSaf(char plr, char vs)
             }
 
             if (VAS[j][k].wt > 0)  {
-                co += ICost(plr, k, VAS[j][k].dex);
+                Mew[j].cost += ICost(plr, k, VAS[j][k].dex);
             }
         }
-
-        Mew[j].cost += co;
-        co = 0;
-        Mew[j].sf += sum;
-        sum = 0;
-
+        
         if (t > 0) {
             Mew[j].i = Mew[j].sf / t;
         }
-
-        t = 0;
     }
-
-    return;
 }
 
 char Panic_Level(char plr, int *m_1, int *m_2)
@@ -275,7 +266,8 @@ char Panic_Level(char plr, int *m_1, int *m_2)
         PrestigeCheck(plr, Prestige_MannedDocking) == 0 &&
         PrestigeCheck(plr, Prestige_Spacewalk) == 0 &&
         Data->P[plr].Mission[0].MissionCode != Mission_U_Orbital_D &&
-        Data->P[plr].Mission[1].MissionCode != Mission_Manned_Orbital_Docking_EVA) {
+        Data->P[plr].Mission[1].MissionCode != Mission_Manned_Orbital_Docking_EVA
+       ) {
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_Manned_Orbital_Docking_EVA;
         ++Alt_B[plr];
@@ -287,7 +279,8 @@ char Panic_Level(char plr, int *m_1, int *m_2)
         !PrestigeCheck(plr, Prestige_LunarFlyby) &&
         !PrestigeCheck(plr, Prestige_LunarProbeLanding) &&
         Cur_Status == Ahead &&
-        Alt_A[plr] <= 2) {
+        Alt_A[plr] <= 2
+       ) {
         *m_1 = Mission_LunarFlyby;
 
         if (Data->P[plr].DurationLevel <= 2) {
@@ -394,11 +387,8 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
 
         Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-        }
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
             Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
@@ -495,8 +485,6 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
     default:
         break;
     }
-
-    return;
 }
 
 void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
@@ -680,8 +668,6 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
     default:
         break;
     }
-
-    return;
 }
 
 void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
@@ -773,11 +759,8 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 
         Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-        }
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
         if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
             Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
@@ -872,8 +855,6 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
     default:
         break;
     }
-
-    return;
 }
 
 void NewAI(char plr, char frog)
@@ -979,11 +960,8 @@ void NewAI(char plr, char frog)
 
             Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].InitCost + 25;
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
             if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num >= 0) {
                 Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
@@ -1114,24 +1092,18 @@ void NewAI(char plr, char frog)
             mis2 = Mission_Lunar_Probe;
         }
 
-    const struct mStr plan = GetMissionPlan(mis1);
+    const mStr plan = GetMissionPlan(mis1);
 
 // deal with lunar modules
     if (plan.LM == 1) {
         if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
-            if (GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            }
+            GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
+            RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
         } else {
             Data->P[plr].AIStrategy[AI_LUNAR_MODULE] = 6;
 
-            if (GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE])) {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            } else {
-                RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            }
+            GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
+            RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
         }
     }
 
@@ -1212,10 +1184,16 @@ void NewAI(char plr, char frog)
     }
 
     if (Data->P[plr].Future[2].MissionCode == Mission_None &&
-        Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
-        if ((mis1 == 0 && frog == 2 && (
-                 Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Safety >= Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].MaxRD - 10)) ||
-            (Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Safety >= Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].MaxRD - 10)) {
+        Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) 
+    {
+        auto& ThreeMan = Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE];
+        auto& Minishuttle = Data->P[plr].Manned[MANNED_HW_MINISHUTTLE];
+        if ( (mis1 == 0 && frog == 2 
+              && (ThreeMan.Safety >= ThreeMan.MaxRD - 10)
+             ) 
+            || 
+             (Minishuttle.Safety >= Minishuttle.MaxRD - 10)
+           ) {
             if (PrestigeCheck(plr, Prestige_MannedSpaceMission) == 0 &&
                 PrestigeCheck(other(plr), Prestige_MannedSpaceMission) == 0) {
                 mis3 = Mission_SubOrbital;
@@ -1251,11 +1229,13 @@ void NewAI(char plr, char frog)
                         }
                     }
 
-                if ((Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety > Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 15) &&
-                    mis3 == Mission_None) {
+                if ((Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety > Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 15) 
+                    && mis3 == Mission_None
+                   ) {
                     if (PrestigeCheck(plr, Prestige_LunarFlyby) == 0 &&
                         PrestigeCheck(other(plr), Prestige_LunarFlyby) == 0 &&
-                        Data->P[plr].Mission[2].MissionCode != Mission_LunarFlyby) {
+                        Data->P[plr].Mission[2].MissionCode != Mission_LunarFlyby
+                       ) {
                         mis3 = Mission_LunarFlyby;
                     } else if (PrestigeCheck(plr, Prestige_MercuryFlyby) == 0 &&
                                PrestigeCheck(other(plr), Prestige_MercuryFlyby) == 0 &&
@@ -1310,17 +1290,11 @@ void NewAI(char plr, char frog)
             }
 
         if (mis3 == Mission_None) {
-            if (GenPur(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL)) {
-                RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
-            } else {
-                RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
-            }
+            GenPur(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
+            RDafford(plr, PROBE_HARDWARE, PROBE_HW_ORBITAL);
 
-            if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE)) {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
-            } else {
-                RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
-            }
+            GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
+            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
 
             if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 1 && Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num >= 1) {
                 mis3 = Mission_Orbital_Satellite;
@@ -1337,17 +1311,14 @@ void NewAI(char plr, char frog)
     }
 
     AILaunch(plr);
-    return;
 }
 
 void AIFuture(char plr, char mis, char pad, char *prog)
 {
-    int i, j;
-    char prime, back, max, men;
-    char fake_prog[2];
-
+    char max, men;
+    
+    char fake_prog[2]{};
     if (prog == NULL) {
-        memset(fake_prog, 0, sizeof fake_prog);
         prog = fake_prog;
     }
 
@@ -1355,9 +1326,9 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         prog[1] = prog[0];
     }
 
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
 
-    for (i = 0; i < (plan.Jt + 1); i++) {
+    for (int i = 0; i < (plan.Jt + 1); i++) {
         Data->P[plr].Future[pad + i].MissionCode = mis;
         Data->P[plr].Future[pad + i].part = i;
 
@@ -1415,22 +1386,20 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         Data->P[plr].Future[pad + i].Prog = prog[0];
 
         if (prog[i] > 0 && plan.Days > 0) {
-            for (j = 1; j < 6; j++) {
+            for (int j = 1; j < 6; j++) {
                 DumpAstro(plr, j);
             }
 
             TransAstro(plr, prog[i]); //indexed OK
 
+            int primary_crew = -1;
             if (Data->P[plr].Future[pad + i].PCrew != 0) {
-                prime = Data->P[plr].Future[pad + i].PCrew - 1;
-            } else {
-                prime = -1;
+                primary_crew = Data->P[plr].Future[pad + i].PCrew - 1;
             }
 
+            int backup_crew = -1;
             if (Data->P[plr].Future[pad + i].BCrew != 0) {
-                back = Data->P[plr].Future[pad + i].BCrew - 1;
-            } else {
-                back = -1;
+                backup_crew = Data->P[plr].Future[pad + i].BCrew - 1;
             }
 
             max = prog[i];
@@ -1442,14 +1411,16 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             Data->P[plr].Future[pad + i].Men = max;
             men = Data->P[plr].Future[pad + i].Men;
 
-            if (prime != -1)
-                for (j = 0; j < men; j++) {
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][prime][j] - 1].Prime = 0;
+            if (primary_crew != -1)
+                for (int j = 0; j < men; j++) {
+                    int pool_idx = Data->P[plr].Crew[prog[i]][primary_crew][j] - 1;
+                    Data->P[plr].Pool[pool_idx].Prime = 0;
                 }
 
-            if (back != -1)
-                for (j = 0; j < men; j++) {
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][back][j] - 1].Prime = 0;
+            if (backup_crew != -1)
+                for (int j = 0; j < men; j++) {
+                    int pool_idx = Data->P[plr].Crew[prog[i]][backup_crew][j] - 1;
+                    Data->P[plr].Pool[pool_idx].Prime = 0;
                 }
 
             Data->P[plr].Future[pad + i].PCrew = 0;
@@ -1457,7 +1428,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             pc[i] = -1;
             bc[i] = -1;
 
-            for (j = 0; j < 8; j++) {
+            for (int j = 0; j < 8; j++) {
                 if (pc[i] == -1 &&
                     Data->P[plr].Crew[prog[i]][j][0] != 0 &&
                     Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][j][0] - 1].Prime == 0) {
@@ -1482,7 +1453,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
                 //  Find a mission that can be flown unmanned
                 try {
-                    std::vector<struct mStr> missionData = GetMissionData();
+                    std::vector<mStr> missionData = GetMissionData();
 
                     while (mcode < 0) {
 
@@ -1527,7 +1498,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             Data->P[plr].Future[pad + i].PCrew = pc[i] + 1;
             bc[i] = -1;
 
-            for (j = 0; j < 8; j++) {
+            for (int j = 0; j < 8; j++) {
                 if (bc[i] == -1 &&
                     j != pc[i] &&
                     Data->P[plr].Crew[prog[i]][j][0] != 0 &&
@@ -1538,11 +1509,11 @@ void AIFuture(char plr, char mis, char pad, char *prog)
 
             Data->P[plr].Future[pad + i].BCrew = bc[i] + 1;
 
-            for (j = 0; j < men; j++) {
+            for (int j = 0; j < men; j++) {
                 Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][pc[i]][j] - 1].Prime = 4;
             }
 
-            for (j = 0; j < men; j++) {
+            for (int j = 0; j < men; j++) {
                 Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][bc[i]][j] - 1].Prime = 2;
             }
         } else {
@@ -1565,145 +1536,151 @@ void AIFuture(char plr, char mis, char pad, char *prog)
         Data->P[plr].Future[pad + 1].Duration = Data->P[plr].Future[pad].Duration;
         Data->P[plr].Future[pad].Duration = 0;
     }
-
-    return;
 }
 
 void AILaunch(char plr)
 {
-    int i, j, k = 0, l = 0, JR = 0, wgt, bwgt[7];
-    char boos[7], bdex[7];
-
-
-    for (i = 0; i < 7; i++) {
-        bdex[i] = i;
+    int bwgt[7];
+    char boos[7]; // safety of first stage combination?
+    
+    for (int i = 0; i < 7; i++) {
+        auto& RocketData = Data->P[plr].Rocket;
+        
         boos[i] = (i > 3) ?
-                  RocketBoosterSafety(Data->P[plr].Rocket[i - 4].Safety, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety)
-                  : Data->P[plr].Rocket[i].Safety;
+                  RocketBoosterSafety(RocketData[i - 4].Safety, RocketData[ROCKET_HW_BOOSTERS].Safety)
+                  : RocketData[i].Safety;
         bwgt[i] = (i > 3) ?
-                  (Data->P[plr].Rocket[i - 4].MaxPay + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxPay)
-                  : Data->P[plr].Rocket[i].MaxPay;
+                  (RocketData[i - 4].MaxPay + RocketData[ROCKET_HW_BOOSTERS].MaxPay)
+                  : RocketData[i].MaxPay;
 
         if (boos[i] < 60) {
             boos[i] = -1;    // Get Rid of any Unsafe rocket systems
         }
 
-        if (Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num < 1) for (j = 4; j < 7; j++) {
+        if (RocketData[ROCKET_HW_BOOSTERS].Num < 1) 
+            for (int j = 4; j < 7; j++) {
                 boos[j] = -1;
             }
 
-        for (j = 0; j < 4; j++) if (Data->P[plr].Rocket[j].Num < 1) {
+        for (int j = 0; j < 4; j++) 
+            if (RocketData[j].Num < 1) {
                 boos[j] = -1;
             }
     }
 
-    for (i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_DockingInOrbit_Duration && Data->P[plr].DockingModuleInOrbit == 0) {
-            Data->P[plr].Mission[i].MissionCode = Mission_None;
-            return;
+    // iterate over planned launches
+    for (int i = 0; i < 3; i++) {
+        auto& PlannedMission = Data->P[plr].Mission[i];
+        if (PlannedMission.MissionCode == Mission_Orbital_DockingInOrbit_Duration 
+            && Data->P[plr].DockingModuleInOrbit == 0
+           ) {
+            PlannedMission.MissionCode = Mission_None;
+            continue;
         }
 
-        if (Data->P[plr].Mission[i].MissionCode && Data->P[plr].Mission[i].part == 0) {
-            whe[0] = whe[1] = -1;
+        if (PlannedMission.MissionCode == Mission_None || PlannedMission.part != 0) continue;
+        
+        whe[0] = whe[1] = -1;
 
-            if (Data->P[plr].Mission[i].Joint == 1) {
-                AIVabCheck(plr, Data->P[plr].Mission[i].MissionCode, Data->P[plr].Mission[i + 1].Prog);
+        if (PlannedMission.Joint == 1) {
+            auto& JoinedMissionSecond = Data->P[plr].Mission[i + 1];
+            AIVabCheck(plr, PlannedMission.MissionCode, JoinedMissionSecond.Prog);
+        } else {
+            AIVabCheck(plr, PlannedMission.MissionCode, PlannedMission.Prog);
+        }
+
+        if (whe[0] > 0) {
+            if (PlannedMission.Prog == 0) {
+                BuildVAB(plr, PlannedMission.MissionCode, 1, 0, PlannedMission.Prog);
             } else {
-                AIVabCheck(plr, Data->P[plr].Mission[i].MissionCode, Data->P[plr].Mission[i].Prog);
+                BuildVAB(plr, PlannedMission.MissionCode, 1, 0, PlannedMission.Prog - 1);
             }
 
-            if (whe[0] > 0) {
-                if (Data->P[plr].Mission[i].Prog == 0) {
-                    BuildVAB(plr, Data->P[plr].Mission[i].MissionCode, 1, 0, Data->P[plr].Mission[i].Prog);
-                } else {
-                    BuildVAB(plr, Data->P[plr].Mission[i].MissionCode, 1, 0, Data->P[plr].Mission[i].Prog - 1);
-                }
+            for (int j = Mission_Capsule; j <= Mission_Probe_DM; j++) {
+                PlannedMission.Hard[j] = VAS[whe[0]][j].dex;
+            }
 
-                for (j = Mission_Capsule; j <= Mission_Probe_DM; j++) {
-                    Data->P[plr].Mission[i].Hard[j] = VAS[whe[0]][j].dex;
-                }
+            int wgt = 0;
 
-                wgt = 0;
+            for (int j = 0; j < 4; j++) {
+                wgt += VAS[whe[0]][j].wt;
+            }
 
-                for (j = 0; j < 4; j++) {
-                    wgt += VAS[whe[0]][j].wt;
-                }
+            rck[0] = -1;
 
-                rck[0] = -1;
-
-                for (k = 0; k < 7; k++) {
-                    if (boos[k] != -1 && bwgt[k] >= wgt) {
-                        if (rck[0] == -1) {
-                            rck[0] = bdex[k];
-                        } else if (boos[k] >= boos[rck[0]]) {
-                            rck[0] = bdex[k];
-                        }
+            for (int k = 0; k < 7; k++) {
+                if (boos[k] != -1 && bwgt[k] >= wgt) {
+                    if (rck[0] == -1) {
+                        rck[0] = k;
+                    } else if (boos[k] >= boos[rck[0]]) {
+                        rck[0] = k;
                     }
                 }
+            }
 
-                if (rck[0] == -1) {
-                    ScrubMission(plr, i - Data->P[plr].Mission[i].part);
-                } else {
-                    if (Data->P[plr].Mission[i].MissionCode == Mission_Orbital_Satellite) {
-                        rck[0] = 0;
-                    }
-
-                    if (Data->P[plr].Mission[i].MissionCode >= Mission_LunarFlyby &&
-                        Data->P[plr].Mission[i].MissionCode <= Mission_SaturnFlyby) {
-                        rck[0] = 1;
-                    }
-
-                    if (Data->P[plr].Mission[i].MissionCode == Mission_U_SubOrbital) {
-                        rck[0] = 1;
-                    }
-
-                    if (Data->P[plr].Mission[i].MissionCode == Mission_U_Orbital_D) {
-                        rck[0] = 1;
-                    }
-
-                    Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] = rck[0] + 1;
-                }
+            if (rck[0] == -1) {
+                ScrubMission(plr, i - PlannedMission.part);
             } else {
-                // Clear Mission
-                Data->P[plr].Mission[i].MissionCode = Mission_None;
+                if (PlannedMission.MissionCode == Mission_Orbital_Satellite) {
+                    rck[0] = 0;
+                }
+
+                if (PlannedMission.MissionCode >= Mission_LunarFlyby &&
+                    PlannedMission.MissionCode <= Mission_SaturnFlyby) {
+                    rck[0] = 1;
+                }
+
+                if (PlannedMission.MissionCode == Mission_U_SubOrbital) {
+                    rck[0] = 1;
+                }
+
+                if (PlannedMission.MissionCode == Mission_U_Orbital_D) {
+                    rck[0] = 1;
+                }
+
+                PlannedMission.Hard[Mission_PrimaryBooster] = rck[0] + 1;
+            }
+        } else {
+            // Clear Mission
+            PlannedMission.MissionCode = Mission_None;
+        }
+
+        // joint mission part
+        if (whe[1] > 0 && Data->P[plr].Mission[i + 1].part == 1) {
+            auto& JoinedMissionSecond = Data->P[plr].Mission[i + 1];
+            if (PlannedMission.Prog == 0) {
+                BuildVAB(plr, PlannedMission.MissionCode, 1, 1, PlannedMission.Prog);
+            } else {
+                BuildVAB(plr, PlannedMission.MissionCode, 1, 1, PlannedMission.Prog - 1);
             }
 
-            // joint mission part
-            if (whe[1] > 0 && Data->P[plr].Mission[i + 1].part == 1) {
-                if (Data->P[plr].Mission[i].Prog == 0) {
-                    BuildVAB(plr, Data->P[plr].Mission[i].MissionCode, 1, 1, Data->P[plr].Mission[i].Prog);
-                } else {
-                    BuildVAB(plr, Data->P[plr].Mission[i].MissionCode, 1, 1, Data->P[plr].Mission[i].Prog - 1);
-                }
+            for (int j = Mission_Capsule ; j <= Mission_Probe_DM; j++) {
+                JoinedMissionSecond.Hard[j] = VAS[whe[1]][j].dex;
+            }
 
-                for (j = Mission_Capsule ; j <= Mission_Probe_DM; j++) {
-                    Data->P[plr].Mission[i + 1].Hard[j] = VAS[whe[1]][j].dex;
-                }
+            int wgt = 0;
 
-                wgt = 0;
+            for (int j = 0; j < 4; j++) {
+                wgt += VAS[whe[1]][j].wt;
+            }
 
-                for (j = 0; j < 4; j++) {
-                    wgt += VAS[whe[1]][j].wt;
-                }
+            rck[1] = -1;
 
-                rck[1] = -1;
-
-                for (k = 0; k < 7; k++) {
-                    if (boos[k] != -1 && bwgt[k] >= wgt) {
-                        if (rck[1] == -1) {
-                            rck[1] = bdex[k];
-                        } else if (boos[k] >= boos[rck[1]]) {
-                            rck[1] = bdex[k];
-                        }
+            for (int k = 0; k < 7; k++) {
+                if (boos[k] != -1 && bwgt[k] >= wgt) {
+                    if (rck[1] == -1) {
+                        rck[1] = k;
+                    } else if (boos[k] >= boos[rck[1]]) {
+                        rck[1] = k;
                     }
                 }
-
-                if (rck[1] == -1) {
-                    rck[1] = Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] - 1;
-                }
-
-                Data->P[plr].Mission[i + 1].Hard[Mission_PrimaryBooster] = rck[1] + 1;
             }
+
+            if (rck[1] == -1) {
+                rck[1] = PlannedMission.Hard[Mission_PrimaryBooster] - 1;
+            }
+
+            JoinedMissionSecond.Hard[Mission_PrimaryBooster] = rck[1] + 1;
         }
     }
 
@@ -1726,53 +1703,53 @@ void AILaunch(char plr)
     };
 
     // lunar module kludge
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (Data->P[plr].Mission[i].Hard[Mission_LM] >= 5) {
             Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety >= Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety ? 5 : 6;
         }
     }
 
-    JR = 0;
-    k = 0;
+    bool joint_launch = false;
+    int number_of_missions = 0;
 
-    for (l = 0; l < 3; l++) {
-        if (Data->P[plr].Mission[l].Joint == 1) {
-            JR = 1;
+    for (int i = 0; i < 3; i++) {
+        if (Data->P[plr].Mission[i].Joint == 1) {
+            joint_launch = true;
         }
 
-        if (Data->P[plr].Mission[l].MissionCode &&
-            Data->P[plr].Mission[l].part == 0) {
-            k++;
+        if (Data->P[plr].Mission[i].MissionCode != Mission_None &&
+            Data->P[plr].Mission[i].part == 0) {
+            number_of_missions++;
         }
 
-        Data->P[plr].Mission[l].Rushing = 0; // Clear Data
+        Data->P[plr].Mission[i].Rushing = 0; // Clear Data
     }
 
-    if (k == 3) { // Three non-joint missions
+    if (number_of_missions == 3) { // Three non-joint missions
         Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
         Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
         Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
     };
 
-    if (k == 2 && JR == 0) { // Two non-joint missions
-        l = 3;
+    if (number_of_missions == 2 && !joint_launch) { // Two non-joint missions
+        int l = 3;
 
-        if (Data->P[plr].Mission[0].MissionCode) {
+        if (Data->P[plr].Mission[0].MissionCode != Mission_None) {
             Data->P[plr].Mission[0].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[1].MissionCode) {
+        if (Data->P[plr].Mission[1].MissionCode != Mission_None) {
             Data->P[plr].Mission[1].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[2].MissionCode) {
+        if (Data->P[plr].Mission[2].MissionCode != Mission_None) {
             Data->P[plr].Mission[2].Month = l + Data->Season * 6;
         }
     };
 
-    if (k == 1 && JR == 0) { // Single Mission Non-joint
+    if (number_of_missions == 1 && !joint_launch) { // Single Mission Non-joint
         if (Data->P[plr].Mission[0].MissionCode) {
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
         }
@@ -1786,7 +1763,7 @@ void AILaunch(char plr)
         }
     };
 
-    if (k == 2 && JR == 1) { // Two launches, one Joint;
+    if (number_of_missions == 2 && joined_launch) { // Two launches, one Joint;
         if (Data->P[plr].Mission[1].part == 1) { // Joint first
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
@@ -1800,7 +1777,7 @@ void AILaunch(char plr)
         };
     };
 
-    if (k == 1 && JR == 1) { //  Single Joint Launch
+    if (number_of_missions == 1 && joined_launch) { //  Single Joint Launch
         if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
@@ -1809,8 +1786,6 @@ void AILaunch(char plr)
             Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
         };
     }
-
-    return;
 }
 
 /* EOF */
