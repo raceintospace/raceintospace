@@ -159,6 +159,7 @@ int ICost(char plr, char h, char i)
     switch (h) {
     case Mission_Capsule:
     case Mission_LM:
+    {
         auto& MannedCapsule = Data->P[plr].Manned[i];
         cost = cost + MannedCapsule.MaxRD - MannedCapsule.Safety;
         cost = cost / 3.5;
@@ -171,10 +172,11 @@ int ICost(char plr, char h, char i)
         if (MannedCapsule.Num == 0) {
             cost += MannedCapsule.UnitCost;
         }
-
+    }
         break;
 
     case Mission_Kicker:
+    {
         auto& Kicker = Data->P[plr].Misc[i];
 
         cost = cost + Kicker.MaxRD - Kicker.Safety;
@@ -188,10 +190,11 @@ int ICost(char plr, char h, char i)
         if (Kicker.Num == 0) {
             cost += Kicker.UnitCost;
         }
-
+    }
         break;
 
-    case Mission_Probe_DM:        
+    case Mission_Probe_DM:
+    {
         if (i < 4) {
             auto& Probe = Data->P[plr].Probe[i];
 
@@ -217,7 +220,7 @@ int ICost(char plr, char h, char i)
                 cost += DockingModule.UnitCost;
             }
         }
-
+    }
         break;
 
     default:
