@@ -1763,7 +1763,7 @@ void AILaunch(char plr)
         }
     };
 
-    if (number_of_missions == 2 && joined_launch) { // Two launches, one Joint;
+    if (number_of_missions == 2 && joint_launch) { // Two launches, one Joint;
         if (Data->P[plr].Mission[1].part == 1) { // Joint first
             Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
@@ -1777,7 +1777,7 @@ void AILaunch(char plr)
         };
     };
 
-    if (number_of_missions == 1 && joined_launch) { //  Single Joint Launch
+    if (number_of_missions == 1 && joint_launch) { //  Single Joint Launch
         if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
             Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
             Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
