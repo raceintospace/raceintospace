@@ -44,6 +44,7 @@
 #include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "start.h"
 #include "state_utils.h"
 
 
@@ -53,8 +54,12 @@ void PadPict(char poff);
 
 void PadDraw(char plr, char pad)
 {
-    int i, j, k, l;
-    int missions;     // Variable for how many missions each 'naut has flown
+    MissionType& mission = Data->P[plr].Mission[pad];
+    LaunchFacility_Status launchpad_status = Data->P[plr].LaunchFacility[pad];
+    int MissionCode = mission.MissionCode;
+    int primary_crew = mission.PCrew - 1;
+    int backup_crew = mission.BCrew - 1;
+    int Capsule = mission.Prog;
 
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
@@ -64,12 +69,11 @@ void PadDraw(char plr, char pad)
     IOBox(243, 3, 316, 19);
     InBox(167, 27, 316, 176);
     fill_rectangle(168, 28, 315, 175, 0);
-    struct MissionType &mission = Data->P[plr].Mission[pad];
-    if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) { 
+    if (launchpad_status >= LAUNCHPAD_DAMAGED_MARGIN) { 
         IOBox(167, 179, 316, 195);  // Button to fix damaged/destroyed pad
     } else {
-        if (mission.MissionCode &&
-            MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
+        if (MissionCode != Mission_None &&
+            MissionTimingOk(MissionCode, Data->Year, Data->Season)) {
             IOBox(167, 179, 240, 195);  // Delay button disabled because mission can't be delayed
             IOBox(242, 179, 316, 195);  // Scrub button
         } else {
@@ -77,7 +81,7 @@ void PadDraw(char plr, char pad)
             IOBox(242, 179, 316, 195);  // Scrub button
         }
     }
-draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
+    draw_number(170, 100, launchpad_status);
     ShBox(4, 28, 162, 43);
     InBox(6, 30, 160, 41);
     ShBox(4, 46, 162, 61);
@@ -92,14 +96,12 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     display::graphics.setForegroundColor(9);
     draw_string(18, 190, "SCHEDULED DURATION: ");
     display::graphics.setForegroundColor(7);
-    int MisCod;
-    MisCod = Data->P[plr].Mission[pad].MissionCode;
 
-    if ((MisCod > 24 && MisCod < 37) || MisCod == 40 || MisCod == 41 || MisCod == 43 || MisCod == 44 || MisCod > 45)
+    if ((MissionCode > 24 && MissionCode < 37) || MissionCode == 40 || MissionCode == 41 || MissionCode == 43 || MissionCode == 44 || MissionCode > 45)
         // Show Duration level for manned missions with Duration steps: this keeps the Mission[pad].Duration
         // variable from continuing to show Duration level if mission is scrubbed or downgraded - Leon
     {
-        switch (Data->P[plr].Mission[pad].Duration) {
+        switch (mission.Duration) {
         case 1:
             draw_string(0, 0, "A");
             break;
@@ -129,7 +131,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
             break;
         }
     } else {
-        if (Data->P[plr].Mission[pad].PCrew - 1 >= 0 || Data->P[plr].Mission[pad].BCrew - 1 >= 0) {
+        if (primary_crew >= 0 || backup_crew >= 0) {
             draw_string(0, 0, "A");
         } else {
             draw_string(0, 0, "NONE");
@@ -140,13 +142,13 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(64, 71, "MISSION");
     draw_small_flag(plr, 4, 4);
 
-    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode) {
+    if (launchpad_status == LAUNCHPAD_OPERATIONAL && MissionCode != Mission_None) {
         PadPict(2 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode == Mission_None) {
+    } else if (launchpad_status == LAUNCHPAD_OPERATIONAL && MissionCode == Mission_None) {
         PadPict(4 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DESTROYED_MARGIN) {  // Destroyed Pad
+    } else if (launchpad_status >= LAUNCHPAD_DESTROYED_MARGIN) {  // Destroyed Pad
         PadPict(6 + plr);
-    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) {  // Damaged Pad
+    } else if (launchpad_status >= LAUNCHPAD_DAMAGED_MARGIN) {  // Damaged Pad
         PadPict(0 + plr);
     }
 
@@ -154,9 +156,9 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     draw_string(15, 37, "STATUS: ");
     display::graphics.setForegroundColor(9);
 
-    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL) {
+    if (launchpad_status == LAUNCHPAD_OPERATIONAL) {
         draw_string(0, 0, "OPERATIONAL");
-    } else if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DESTROYED_MARGIN) {
+    } else if (launchpad_status >= LAUNCHPAD_DESTROYED_MARGIN) {
         draw_string(0, 0, "DESTROYED");
     } else {
         draw_string(0, 0, "DAMAGED");
@@ -164,23 +166,23 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
 
     display::graphics.setForegroundColor(1);
 
-    if (Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN) {
+    if (launchpad_status >= LAUNCHPAD_DAMAGED_MARGIN) {
         draw_string(15, 56, "REPAIR COST: ");
         display::graphics.setForegroundColor(9);
-        draw_number(0, 0, Data->P[plr].LaunchFacility[pad]);
+        draw_number(0, 0, launchpad_status);
         draw_string(0, 0, "MB");
         display::graphics.setForegroundColor(11);
         draw_string(0, 0, " (OF ");
         draw_number(0, 0, Data->P[plr].Cash);
         draw_string(0, 0, ")");
 
-        if (Data->P[plr].Cash < Data->P[plr].LaunchFacility[pad]) {
+        if (Data->P[plr].Cash < launchpad_status) {
             InBox(169, 181, 314, 193);
         }
     } else {
         display::graphics.setForegroundColor(9);
 
-        if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
+        if (MissionCode == Mission_None) {
             draw_string(15, 56, "NO LAUNCH SCHEDULED");
             //InBox(168, 179, 312, 193);
         } else {
@@ -191,7 +193,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
 
-    if (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL) {
+    if (launchpad_status == LAUNCHPAD_OPERATIONAL) {
         display::graphics.setForegroundColor(9);
         draw_string(189, 189, "D");
         display::graphics.setForegroundColor(1);
@@ -224,95 +226,65 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     }
 
     display::graphics.setForegroundColor(6);
-    int code = Data->P[plr].Mission[pad].MissionCode;
     DrawMissionName(code, 10, 81, 20);
     display::graphics.setForegroundColor(1);
 
     // joint mission part
-    if (Data->P[plr].Mission[pad].Joint == 1) {
+    if (mission.Joint == 1) {
         ShBox(38, 91, 131, 101);
         InBox(39, 92, 130, 100);
         display::graphics.setForegroundColor(1);
 
-        if (Data->P[plr].Mission[pad].part == 0) {
+        if (mission.part == 0) {
             draw_string(53, 98, "PRIMARY PART");
         } else {
             draw_string(44, 98, "SECONDARY PART");
         }
     }
 
-    // Hardware to Use
-
-    i = Data->P[plr].Mission[pad].Prog;
-    j = Data->P[plr].Mission[pad].PCrew - 1;
-    l = Data->P[plr].Mission[pad].BCrew - 1;
-
     // Crews
     display::graphics.setForegroundColor(7);
     draw_string(13, 107, "PRIMARY CREW  ");
 
-    if (j >= 0) {
+    if (primary_crew >= 0) {
         display::graphics.setForegroundColor(11);  // Now display the crew number, for reference -Leon
-
-        if (j == 0) {
-            draw_string(0, 0, "(CREW I)");
+        if (primary_crew < 8)
+        {
+            draw_string(0,0, "(CREW ");
+            draw_string(0,0, RomanNumeral(primary_crew+1).c_str());
+            draw_string(0,0, ")");
         }
 
-        if (j == 1) {
-            draw_string(0, 0, "(CREW II)");
-        }
-
-        if (j == 2) {
-            draw_string(0, 0, "(CREW III)");
-        }
-
-        if (j == 3) {
-            draw_string(0, 0, "(CREW IV)");
-        }
-
-        if (j == 4) {
-            draw_string(0, 0, "(CREW V)");
-        }
-
-        if (j == 5) {
-            draw_string(0, 0, "(CREW VI)");
-        }
-
-        if (j == 6) {
-            draw_string(0, 0, "(CREW VII)");
-        }
-
-        if (j == 7) {
-            draw_string(0, 0, "(CREW VIII)");
-        }
-
-        for (k = 0; k < Data->P[plr].CrewCount[i][j]; k++) {
+        for (int i = 0; i < Data->P[plr].CrewCount[Capsule][primary_crew]; i++) {
+            int Crew_idx = Data->P[plr].Crew[Capsule][primary_crew][i] - 1;
+            const Astros& CrewMember = Data->P[plr].Pool[Crew_idx];
+            
             // Draw a morale box for each crew member -Leon
             display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 110 + 7 * k, 20, 110 + 7 * k, 2);  // Top
-            fill_rectangle(13, 110 + 7 * k, 13, 116 + 7 * k, 2);  // Left
-            fill_rectangle(13, 116 + 7 * k, 20, 116 + 7 * k, 4);  // Bottom
-            fill_rectangle(21, 110 + 7 * k, 21, 116 + 7 * k, 4);  // Right
+            fill_rectangle(13, 110 + 7 * i, 20, 110 + 7 * i, 2);  // Top
+            fill_rectangle(13, 110 + 7 * i, 13, 116 + 7 * i, 2);  // Left
+            fill_rectangle(13, 116 + 7 * i, 20, 116 + 7 * i, 4);  // Bottom
+            fill_rectangle(21, 110 + 7 * i, 21, 116 + 7 * i, 4);  // Right
 
-            int color = MoodColor(Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Mood);
-            fill_rectangle(14, 111 + 7 * k, 20, 115 + 7 * k, color);
+            int color = MoodColor(CrewMember.Mood);
+            fill_rectangle(14, 111 + 7 * i, 20, 115 + 7 * i, color);
 
             display::graphics.setForegroundColor(1);
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Sex == 1) {
+            if (CrewMember.Sex == 1) {
                 display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
+            if (CrewMember.RetirementDelay > 0) {
                 display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].RetirementDelay > 0) {
+            if (CrewMember.Sex == 1 && CrewMember.RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
-            draw_string(25, 115 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Name[0]);   // Show women who've announced retirement in purple
-            missions = Data->P[plr].Pool[Data->P[plr].Crew[i][j][k] - 1].Missions;
+            draw_string(25, 115 + 7 * i, &CrewMember.Name[0]);   // Show women who've announced retirement in purple
+            int missions = CrewMember.Missions;
 
             if (missions > 0) {
                 draw_string(0, 0, " (");
@@ -321,7 +293,7 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
             }
         }
 
-        if (l == -1) {
+        if (backup_crew == -1) {
             draw_string(25, 174, "UNAVAILABLE");
         }
     }
@@ -329,82 +301,58 @@ draw_number(170, 100, Data->P[plr].LaunchFacility[pad]);
     display::graphics.setForegroundColor(7);
     draw_string(13, 145, "BACKUP CREW  ");
 
-    if (l >= 0) {
+    if (backup_crew >= 0) {
         display::graphics.setForegroundColor(11);  // Now display the crew number, for player's reference -Leon
 
-        if (l == 0) {
-            draw_string(0, 0, "(CREW I)");
+        if (backup_crew < 8) {
+            draw_string(0,0, "(CREW ");
+            draw_string(0,0, RomanNumeral(backup_crew+1).c_str());
+            draw_string(0,0, ")");
         }
 
-        if (l == 1) {
-            draw_string(0, 0, "(CREW II)");
-        }
-
-        if (l == 2) {
-            draw_string(0, 0, "(CREW III)");
-        }
-
-        if (l == 3) {
-            draw_string(0, 0, "(CREW IV)");
-        }
-
-        if (l == 4) {
-            draw_string(0, 0, "(CREW V)");
-        }
-
-        if (l == 5) {
-            draw_string(0, 0, "(CREW VI)");
-        }
-
-        if (l == 6) {
-            draw_string(0, 0, "(CREW VII)");
-        }
-
-        if (l == 7) {
-            draw_string(0, 0, "(CREW VIII)");
-        }
-
-        for (k = 0; k < Data->P[plr].CrewCount[i][l]; k++) {
+        int BackupCrewCount = Data->P[plr].CrewCount[Capsule][backup_crew];
+        for (int i = 0; i < BackupCrewCount; i++) {
+            int crew_idx = Data->P[plr].Crew[Capsule][backup_crew][i] - 1;
+            const Astros& CrewMember = Data->P[plr].Pool[crew_idx];
+            
             // Draw a morale box for each crew member -Leon
             display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 148 + 7 * k, 20, 148 + 7 * k, 2);  // Top
-            fill_rectangle(13, 148 + 7 * k, 13, 154 + 7 * k, 2);  // Left
-            fill_rectangle(13, 154 + 7 * k, 20, 154 + 7 * k, 4);  // Bottom
-            fill_rectangle(21, 148 + 7 * k, 21, 154 + 7 * k, 4);  // Right
+            fill_rectangle(13, 148 + 7 * i, 20, 148 + 7 * i, 2);  // Top
+            fill_rectangle(13, 148 + 7 * i, 13, 154 + 7 * i, 2);  // Left
+            fill_rectangle(13, 154 + 7 * i, 20, 154 + 7 * i, 4);  // Bottom
+            fill_rectangle(21, 148 + 7 * i, 21, 154 + 7 * i, 4);  // Right
 
-            int color = MoodColor(Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Mood);
-            fill_rectangle(14, 149 + 7 * k, 20, 153 + 7 * k, color);
+            int color = MoodColor(CrewMember.Mood);
+            fill_rectangle(14, 149 + 7 * i, 20, 153 + 7 * i, color);
 
             display::graphics.setForegroundColor(1);
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Sex == 1) {
+            if (CrewMember.Sex == 1) {
                 display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
+            if (CrewMember.RetirementDelay > 0) {
                 display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
             }
 
-            if (Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Sex == 1 && Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].RetirementDelay > 0) {
+            if (CrewMember.Sex == 1 && CrewMember.RetirementDelay > 0) {
                 display::graphics.setForegroundColor(7);
             }
 
-            draw_string(25, 153 + 7 * k, &Data->P[plr].Pool[Data->P[plr].Crew[i][l][k] - 1].Name[0]);   // Show women who've announced retirement in purple
+            draw_string(25, 153 + 7 * i, &CrewMember.Name[0]);   // Show women who've announced retirement in purple
         }
 
-        if (j == -1) {
+        if (primary_crew == -1) {
             draw_string(25, 136, "UNAVAILABLE");
         }
     }
 
-    if (Data->P[plr].Mission[pad].Prog > 0) {
-        PatchMe(plr, 126, 40, Data->P[plr].Mission[pad].Prog - 1,
-                Data->P[plr].Mission[pad].Patch);
+    if (mission.Prog > 0) {
+        PatchMe(plr, 126, 40, mission.Prog - 1,
+                mission.Patch);
     }
 
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
 
@@ -445,10 +393,13 @@ void PadPict(char poff)
 
 void ShowPad(char plr, char pad)
 {
-    char temp;
+    MissionType& mission = Data->P[plr].Mission[pad];
+    LaunchFacility_Status launchpad_status = Data->P[plr].LaunchFacility[pad];
+    int MissionCode = mission.MissionCode;
+    
     music_start((plr == 0) ? M_USMIL : M_USSRMIL);
     PadDraw(plr, pad);
-    temp = CheckCrewOK(plr, pad);
+    char temp = CheckCrewOK(plr, pad);
 
     if (temp == 1) {  //found mission no crews
         ScrubMission(plr, pad);
@@ -463,8 +414,8 @@ void ShowPad(char plr, char pad)
         key = 0;
         GetMouse();
 
-        if ((Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && x >= 244 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
-            || (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode && key == 'S')) {
+        if ((launchpad_status == LAUNCHPAD_OPERATIONAL && x >= 244 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0 && MissionCode != Mission_None)
+            || (launchpad_status == LAUNCHPAD_OPERATIONAL && MissionCode != Mission_None && key == 'S')) {
             // Scrub Mission
             InBox(244, 181, 314, 193);
             key = 0;
@@ -477,17 +428,17 @@ void ShowPad(char plr, char pad)
             OutBox(244, 181, 314, 193);
             key = 0;
 
-            if (Data->P[plr].Mission[pad].MissionCode == Mission_None) {
+            if (MissionCode == Mission_None) {
                 return;
             }
-        } else if ((Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && x >= 169 && y >= 181 && x <= 238 && y <= 193 && mousebuttons > 0 && Data->P[plr].Mission[pad].MissionCode)
-            || (Data->P[plr].LaunchFacility[pad] == LAUNCHPAD_OPERATIONAL && Data->P[plr].Mission[pad].MissionCode && key == 'D')) {
+        } else if ((launchpad_status == LAUNCHPAD_OPERATIONAL && x >= 169 && y >= 181 && x <= 238 && y <= 193 && mousebuttons > 0 && MissionCode != Mission_None)
+            || (launchpad_status == LAUNCHPAD_OPERATIONAL && MissionCode != Mission_None && key == 'D')) {
             // Delay Mission
 
             // There are restrictions on Mars/Jupiter/Saturn Flybys, so
             // check that this mission _could_ be launched at this time.
             bool validLaunch =
-                MissionTimingOk(Data->P[plr].Mission[pad].MissionCode,
+                MissionTimingOk(MissionCode,
                                 Data->Year, Data->Season);
 
             if (validLaunch) {
@@ -504,8 +455,8 @@ void ShowPad(char plr, char pad)
                 // displaced by delaying the mission.
                 if (Data->P[plr].Future[pad].MissionCode) {
                     conflict = true;
-                } else if (Data->P[plr].Mission[pad].Joint) {
-                    int other = (Data->P[plr].Mission[pad].part) ?
+                } else if (mission.Joint) {
+                    int other = (mission.part) ?
                                 pad - 1 : pad + 1;
 
                     if (Data->P[plr].Future[other].MissionCode) {
@@ -522,18 +473,18 @@ void ShowPad(char plr, char pad)
                     OutBox(169, 181, 238, 193);
                 }
             }
-        } else if ((Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash && Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)
-                   || (key == 'F' && Data->P[plr].LaunchFacility[pad] >= LAUNCHPAD_DAMAGED_MARGIN && Data->P[plr].LaunchFacility[pad] <= Data->P[plr].Cash)) {
+        } else if ((launchpad_status <= Data->P[plr].Cash && launchpad_status >= LAUNCHPAD_DAMAGED_MARGIN && x >= 169 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0)
+                   || (key == 'F' && launchpad_status >= LAUNCHPAD_DAMAGED_MARGIN && launchpad_status <= Data->P[plr].Cash)) {
             // Scrub Mission
             InBox(169, 181, 314, 193);
             key = 0;
             WaitForMouseUp();
 
-            if (Data->P[plr].Cash >= Data->P[plr].LaunchFacility[pad]) {
+            if (Data->P[plr].Cash >= launchpad_status) {
                 temp = Help("i115");
 
                 if (temp == 1) {
-                    Data->P[plr].Cash -= Data->P[plr].LaunchFacility[pad];
+                    Data->P[plr].Cash -= launchpad_status;
                     Data->P[plr].LaunchFacility[pad] = LAUNCHPAD_OPERATIONAL;
                 }
             } else {
