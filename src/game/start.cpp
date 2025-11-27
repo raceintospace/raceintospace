@@ -30,6 +30,8 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
+#include <vector>
 
 #include "astros.h"
 #include "Buzz_inc.h"
@@ -53,74 +55,52 @@ void UpdateHardTurn(char plr);
 
 /**
  * Initialize the event cards.
- *
- * \todo This function fills Data->Events, but how it's a mystery...
  */
-void InitializeEvents(void)
+void InitializeEvents()
 {
+    std::vector<std::vector<int>> event_cards(EVENT_PERIOD_POOL); // initialize and fill in Event pools
+    event_cards[0].resize(3);  std::iota(event_cards[0].begin(), event_cards[0].end(), 1);
+    event_cards[1].resize(40); std::iota(event_cards[1].begin(), event_cards[1].end(), 4);
+    event_cards[2].resize(19); std::iota(event_cards[2].begin(), event_cards[2].end(), 44);
+    event_cards[3].resize(17); std::iota(event_cards[3].begin(), event_cards[3].end(), 63);
+    event_cards[4].resize(20); std::iota(event_cards[4].begin(), event_cards[4].end(), 80);
+    
     int cardCount = 2;  // Starting event card index
-    int j, selectedCard;
-    bool eventSelected[MAXIMUM_NEWS_EVENTS];  // used to track which event cards have been selected
     char quantityInSet[EVENT_PERIODS] = {2, 8, 8, 12, 16, 52};  // Number of events in each period
     char poolPercentages[EVENT_PERIODS][EVENT_PERIOD_POOL] = {
-        {100, 0, 0, 0, 0},
-        {0, 100, 0, 0, 0},
-        {0, 62, 38, 0, 0},
-        {0, 50, 20, 30, 0},
-        {0, 35, 20, 20, 25},
-        {0, 25, 25, 25, 25}
+        {100, 100, 100, 100, 100},
+        {  0, 100, 100, 100, 100},
+        {  0,  62, 100, 100, 100},
+        {  0,  50,  70, 100, 100},
+        {  0,  35,  55,  75, 100},
+        {  0,  25,  50,  75, 100}
     };
-    struct EventCardQueue {
-        char firstCard;
-        char numberInSet;
-        char pic;
-    } eventCardSet[EVENT_PERIOD_POOL] = {
-        {1, 3, 0},
-        {4, 40, 0},
-        {44, 19, 0},
-        {63, 17, 0},
-        {80, 20, 0}
-    };
-    REPLAY rep;
 
     // Initialize base event data to 0's
     for (int i = 0; i < MAXIMUM_NEWS_EVENTS; i++) {
-        eventSelected[i] =  false;
         Data->Events[i] = 0;
     }
 
     for (int period = 0; period < EVENT_PERIODS; period++) {
+        auto& pool_distribution = poolPercentages[period];
         for (int set = 0; set < quantityInSet[period]; set++) {
-random_card:
-            // Pick a random number
-            int randomCard = brandom(100) + 1;
-            j = selectedCard = 0;
+            int pool_idx; // TODO: take this out into random utility function
+            do{
+                // Randomly pick which pool to take event from
+                // by choosing number [0;100) and finding first pool whose "inclusion zone" is bigger
+                int randomPoolChoice = brandom(100);
+                auto iter = std::find(std::begin(pool_distribution), std::end(pool_distribution), [=](char c){return c > randomPoolChoice;});
+                pool_idx = std::distance(std::begin(pool_distribution), iter);
+            // If the pool we chose has been exhausted, choose again
+            }while(event_cards[pool_idx].empty());
+            auto& chosen_pool = event_cards[pool_idx];
 
-            // This is just wrong...
-            while (randomCard > selectedCard) {
-                selectedCard += poolPercentages[period][j++];
-            }
-
-            j--;
-
-            // If we've reached the end of the card subset then pick another card
-            if (eventCardSet[j].numberInSet == eventCardSet[j].pic) {
-                goto random_card;
-            }
-
-            selectedCard = brandom(eventCardSet[j].numberInSet) + eventCardSet[j].firstCard;
-
-            while (eventSelected[selectedCard]) {
-                if (selectedCard == (eventCardSet[j].numberInSet + eventCardSet[j].firstCard - 1)) {
-                    selectedCard = eventCardSet[j].firstCard;
-                } else {
-                    selectedCard = selectedCard + 1;
-                }
-            }
-
-            eventSelected[selectedCard] = true;
-            Data->Events[cardCount++] = selectedCard;
-            eventCardSet[j].pic++;
+            // choose random event from the pool
+            int card_idx = brandom(chosen_pool.size());
+            // add it to Data->Events
+            Data->Events[cardCount++] = chosen_pool[card_idx];
+            // and remove from the pool
+            chosen_pool.erase(chosen_pool.begin()+card_idx);
         }
     }
 
