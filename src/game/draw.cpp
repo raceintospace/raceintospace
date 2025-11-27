@@ -35,17 +35,16 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
  */
 void draw_string(int x, int y, const char *s)
 {
-    short i;
-
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
     }
 
-    if (strlen(s) > 100) {
+    int len = strlen(s);
+    if (len > 100) {
         return;
     }
 
-    for (i = 0; i < (int)strlen(s); i++) {
+    for (int i = 0; i < len; i++) {
         draw_character(s[i]);
     }
 }
@@ -73,7 +72,6 @@ void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
     grMoveTo(x, y);
     display::graphics.setForegroundColor(9);
     draw_character(s[position]);
-    return;
 }
 
 /**
@@ -87,12 +85,10 @@ void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
  */
 void draw_heading(int x, int y, const char *txt, char mode, char te)
 {
-    int i, k, l, px;
     struct LET {
         char width, img[15][21];
     } letter;
     const int letterSize = sizeof(letter.width) + sizeof(letter.img);
-    int c;
 
     if (txt == NULL) {
         // TODO: This should log an error or throw an exception.
@@ -100,20 +96,21 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
     }
 
     y--;
-
-    for (i = 0; i < (int)strlen(txt); i++) {
-        if (txt[i] == 0x20) {
+    int len = strlen(txt);
+    for (int i = 0; i < len; i++) {
+        if (txt[i] == ' ') {
             x += 6;
             continue;
         }
 
-        c = toupper(txt[i] & 0xff);
+        char c = toupper(txt[i]);
 
         // Map the ASCII code to the image index.
         // Currently, no image exists for the '@' character.
-        if (c >= 0x20 && c <= 0x3F) {
+        char px;
+        if (c >= ' ' && c <= '?') {
             px = c - 32;
-        } else if (c >= 0x41 && c <= 0x60) {
+        } else if (c >= 'A' && c <= '`') {
             px = c - 33;
         } else {
             WARNING2("Cannot print header character %c", txt[i]);
@@ -126,14 +123,14 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
         memcpy(&letter.img, offset + sizeof(letter.width),
                sizeof(letter.img));
 
-        for (k = 0; k < 15; k++) {
-            for (l = 0; l < letter.width; l++) {
-                if (letter.img[k][l] != 0x03) {
-                    if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
-                        display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l] + 7);
-                    } else {
-                        display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l]);
-                    }
+        for (int k = 0; k < 15; k++) {
+            for (int l = 0; l < letter.width; l++) {
+                if (letter.img[k][l] == 0x03) continue;
+                
+                if ((letter.img[k][l] == 0x01 || letter.img[k][l] == 0x02) && i == te) {
+                    display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l] + 7);
+                } else {
+                    display::graphics.legacyScreen()->setPixel(x + l, y + k, letter.img[k][l]);
                 }
             }
         }
@@ -144,47 +141,25 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
 
 void draw_number(int xx, int yy, int num)
 {
-    short n0, n1, n2, n3, t;
-
     if (xx != 0 && yy != 0) {
         grMoveTo(xx, yy);
     }
 
-    t = num;
-    num = abs(t);
-
-    if (t < 0) {
+    if (num < 0) {
         draw_string(0, 0, "-");
     }
+    num = abs(num);
 
-    n0 = num / 1000;
-    n1 = num / 100 - n0 * 10;
-    n2 = num / 10 - n0 * 100 - n1 * 10;
-    n3 = num - n0 * 1000 - n1 * 100 - n2 * 10;
 
-    if (n0 != 0) {
-        draw_character(n0 + 0x30);
-        draw_character(n1 + 0x30);
-        draw_character(n2 + 0x30);
-        draw_character(n3 + 0x30);
-    }
+    int n0 = num / 1000;
+    int n1 = num / 100 - n0 * 10;
+    int n2 = num / 10 - n0 * 100 - n1 * 10;
+    int n3 = num - n0 * 1000 - n1 * 100 - n2 * 10;
 
-    if (n0 == 0 && n1 != 0) {
-        draw_character(n1 + 0x30);
-        draw_character(n2 + 0x30);
-        draw_character(n3 + 0x30);
-    }
-
-    if (n0 == 0 && n1 == 0 && n2 != 0) {
-        draw_character(n2 + 0x30);
-        draw_character(n3 + 0x30);
-    }
-
-    if (n0 == 0 && n1 == 0 && n2 == 0) {
-        draw_character(n3 + 0x30);
-    }
-
-    return;
+    if (n0 != 0) draw_character(n0 + '0');
+    if (n1 != 0) draw_character(n1 + '0');
+    if (n2 != 0) draw_character(n2 + '0');
+    draw_character(n3 + '0');
 }
 
 
@@ -192,14 +167,12 @@ void draw_megabucks(int x, int y, int val)
 {
     draw_number(x, y, val);
     draw_string(0, 0, " MB");
-    return;
 }
 
 void ShBox(int x1, int y1, int x2, int y2)
 {
     fill_rectangle(x1, y1, x2, y2, 3);
     OutBox(x1, y1, x2, y2);
-    return;
 }
 
 void draw_up_arrow(int x1, int y1)
@@ -209,7 +182,6 @@ void draw_up_arrow(int x1, int y1)
 
     display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 2);
     display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 2);
-    return;
 }
 
 void draw_up_arrow_highlight(int x1, int y1)
@@ -219,7 +191,6 @@ void draw_up_arrow_highlight(int x1, int y1)
 
     display::graphics.legacyScreen()->line(1 + x1, y1, 6 + x1, 11 + y1, 1);
     display::graphics.legacyScreen()->line(3 + x1, 12 + y1, 3 + x1, 25 + y1, 1);
-    return;
 }
 
 void draw_right_arrow(int x1, int y1)
@@ -229,7 +200,6 @@ void draw_right_arrow(int x1, int y1)
 
     display::graphics.legacyScreen()->line(x1, y1 + 3, x1 + 19, y1 + 3, 2);
     display::graphics.legacyScreen()->line(x1 + 31, y1 + 1, x1 + 20, y1 + 6, 2);
-    return;
 }
 
 void draw_left_arrow(int x1, int y1)
@@ -239,7 +209,6 @@ void draw_left_arrow(int x1, int y1)
 
     display::graphics.legacyScreen()->line(x1, y1 + 1, x1 + 11, y1 + 6, 2);
     display::graphics.legacyScreen()->line(x1 + 12, y1 + 3, x1 + 31, y1 + 3, 2);
-    return;
 }
 
 void draw_down_arrow(int x1, int y1)
@@ -249,7 +218,6 @@ void draw_down_arrow(int x1, int y1)
 
     display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 2);
     display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 2);
-    return;
 }
 
 void draw_down_arrow_highlight(int x1, int y1)
@@ -259,8 +227,6 @@ void draw_down_arrow_highlight(int x1, int y1)
 
     display::graphics.legacyScreen()->line(3 + x1, y1, 3 + x1, 13 + y1, 1);
     display::graphics.legacyScreen()->line(6 + x1, 14 + y1, 1 + x1, 25 + y1, 1);
-
-    return;
 }
 
 void InBox(int x1, int y1, int x2, int y2)
@@ -307,7 +273,6 @@ void fill_rectangle(int x1, int y1, int x2, int y2, char col)
 {
     display::graphics.setBackgroundColor(col);
     display::graphics.legacyScreen()->fillRect(x1, y1, x2, y2, col);
-    return;
 }
 
 void GradRect(int x1, int y1, int x2, int y2, char plr)
@@ -319,7 +284,6 @@ void GradRect(int x1, int y1, int x2, int y2, char plr)
     //for (j=x1;j<=x2;j+=4)
     //  for (i=y1;i<=y2;i+=4)
     //    screen[j+320*i]=val;
-    return;
 }
 
 void draw_small_flag(char plr, int xm, int ym)
@@ -839,7 +803,7 @@ void draw_character(char chr)
         MR(4, 0);
         break;
 
-    case 0x27:
+    case 0x27: // single quote
         MR(0, -4);
         LR(0, 1);
         MR(2, 3);
@@ -900,6 +864,7 @@ int TextDisplayLength(const char *str)
 {
     unsigned int pixels = 0;
     int count = (int) strlen(str);
+    if (count == 0) return 0;
 
     for (int i = 0; i < count; i++) {
 
@@ -971,7 +936,7 @@ int TextDisplayLength(const char *str)
         case '.':
         case ':':
         case '!':
-        case 0x27:
+        case 0x27: // single quote
         case 0x14:
             pixels += 2;
             break;
@@ -983,7 +948,7 @@ int TextDisplayLength(const char *str)
     }
 
     // Account for the pixel space after the last character.
-    if (count > 0 && str[count - 1] != '^') {
+    if (str[count - 1] != '^') {
         pixels -= 1;
     }
 
