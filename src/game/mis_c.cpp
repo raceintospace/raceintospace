@@ -102,13 +102,13 @@ void Clock(char plr, int clock, int mode, int time);
 void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             const std::vector<struct Infin> &Mob,
             const std::vector<struct OF> &Mob2);
-void GuyDisp(int xa, int ya, struct Astros *Guy);
-char DrawMoonSelection(char plr, char nauts, const struct MisEval &step);
-BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step);
+void GuyDisp(int xa, int ya, Astros* Guy);
+char DrawMoonSelection(char plr, char nauts, const MisEval& step);
+BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step);
 int ImportInfin(FILE *fin, struct Infin &target);
 int ImportOF(FILE *fin, struct OF &target);
 void InRFBox(int a, int b, int c, int d, int col);
-std::string getEquipAnimID(char plr, const struct MisEval &step);
+std::string getEquipAnimID(char plr, const MisEval& step);
 int getEquipAnimIndex(std::string name);
 void loadFrames(int index);
 void playEquipAnim (int index);
@@ -130,7 +130,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 {
     //DEBUG1("->PlaySequence()");
     DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
-    int keep_going;
     int i, j, k;
     unsigned int max;
     char lnch = 0;
@@ -141,7 +140,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     mm_file vidfile;
     FILE *mmfp;
     float fps;
-    int hold_count;
     std::vector<struct Infin> Mob;
     std::vector<struct OF> Mob2;
     std::string ID;
@@ -394,7 +392,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     max = ID[1] - '0';
     INFO2("playing sequence ID `%s'", ID.c_str());
 
-    keep_going = 1;
+    bool keep_going = true;
     k = j;
 
     while (keep_going && i < (int)max) {
@@ -430,7 +428,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
         j = 0;
 
-        hold_count = 0;
+        int hold_count = 0;
 
         while (keep_going) {
             av_step();
@@ -505,7 +503,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
                 if (bioskey(0) || grGetMouseButtons()) {
                     av_silence(AV_SOUND_CHANNEL);
-                    keep_going = 0;
+                    keep_going = false;
                 }
 
                 if (Data->Def.Anim) {
@@ -526,16 +524,16 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             play_audio("wh", 0);
         }
 
-        keep_going = 1;
+        bool keep_going = true;
 
         while (keep_going) {
             if (AnimSoundCheck()) {
-                keep_going = 0;
+                keep_going = false;
             }
 
             if (bioskey(0) || grGetMouseButtons()) {
                 av_silence(AV_SOUND_CHANNEL);
-                keep_going = 0;
+                keep_going = false;
             }
 
             av_block();
@@ -667,10 +665,8 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
     uint16_t *bot, off = 0;
     int32_t locl;
     static char kk = 0, bub = 0;
-    char Val1[12], Val2[12], loc;
+    char Val1[12]{}, Val2[12]{}, loc;
 
-    memset(Val1, 0x00, sizeof Val1);
-    memset(Val2, 0x00, sizeof Val2);
     strcpy(Val1, cde);
 
     if (Val1[0] == 'W') {
@@ -889,8 +885,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 }
 
 
-void
-GuyDisp(int xa, int ya, struct Astros *Guy)
+void GuyDisp(int xa, int ya, Astros* Guy)
 {
     display::graphics.setForegroundColor(1);
     assert(Guy != NULL);
@@ -923,8 +918,6 @@ GuyDisp(int xa, int ya, struct Astros *Guy)
         draw_string(0, 0, "OK");
         break;
     }
-
-    return;
 }
 
 
@@ -1227,7 +1220,7 @@ char FailureMode(char plr, int prelim, char *text)
 
 
 void FirstManOnMoon(char plr, char isAI, char misNum,
-                    const struct MisEval &step)
+                    const MisEval& step)
 {
     int nautsOnMoon = 0;
     Equipment *e = GetEquipment(step);
@@ -1266,19 +1259,17 @@ void FirstManOnMoon(char plr, char isAI, char misNum,
     }
 
     EVA[0] = EVA[1] = manOnMoon - 1;
-
-    return;
 }
 
 
 // TODO: Move drawing the interface into its own function distinct
 // from the main control loop.
-char DrawMoonSelection(char plr, char nauts, const struct MisEval &step)
+char DrawMoonSelection(char plr, char nauts, const MisEval &step)
 {
     // TODO: Using MX as a copy of MA to avoid modifying it is nice,
     // but it never gets modified and a global var (MA) is still being
     // directly accessed.
-    struct MisAst MX[2][4];
+    MisAst MX[2][4];
     double last_secs;
     Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
@@ -1604,7 +1595,8 @@ void playEquipAnim (int index) {
 
 
 void loadHeader() {
-if (! header.empty()) { 
+    if (header.empty()) return;
+    
     std::ifstream file(locate_file("liftoff.json", FT_DATA));
     if (!file) {
         throw std::runtime_error("liftoff.json could not be opened.");
@@ -1613,11 +1605,11 @@ if (! header.empty()) {
     ar(CEREAL_NVP(header));
     DEBUG1("header deserialized.");
 }
-}
 
 
 void loadIndexEntry() {
-if (! indexEntry.empty()) {
+    if (indexEntry.empty()) return;
+    
     std::ifstream file(locate_file("liftoff.json", FT_DATA));
     if (!file) {
         throw std::runtime_error("liftoff.json could not be opened.");
@@ -1625,5 +1617,4 @@ if (! indexEntry.empty()) {
     cereal::JSONInputArchive ar(file);
     ar(indexEntry);
     DEBUG1("IndexEntry deserialized");
-}
 }
