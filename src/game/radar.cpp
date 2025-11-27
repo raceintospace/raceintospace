@@ -226,7 +226,7 @@ void PadDraw(char plr, char pad)
     }
 
     display::graphics.setForegroundColor(6);
-    DrawMissionName(code, 10, 81, 20);
+    DrawMissionName(MissionCode, 10, 81, 20);
     display::graphics.setForegroundColor(1);
 
     // joint mission part
