@@ -659,6 +659,7 @@ char Did_Fail(void)
 
 /*
  * Mev is some sort of flattened linked list?
+ * TODO: rewrite this function somewhat better
  */
 int MaxFail(void)
 {
