@@ -160,7 +160,7 @@ int MilestonePenalty(char plr, const struct mStr &mission)
  * \param mission  the mission to evaluate
  * \return  the penalty if the mission achieves something new, 0 otherwise
  */
-int NewMissionPenalty(char plr, const struct mStr &mission)
+int NewMissionPenalty(char plr, const mStr& mission)
 {
     for (int i = 0; i < 5; i++) {
         int milestone = PrestMap(mission.PCat[i]);
@@ -176,9 +176,7 @@ int NewMissionPenalty(char plr, const struct mStr &mission)
 
 void Set_Dock(char plr, char total)
 {
-    int i;
-
-    for (i = 0; i < total; i++) {
+    for (int i = 0; i < total; i++) {
         if (Mev[i].loc == 8 && Mev[i].StepInfo == 1) {
             Data->Prestige[Prestige_MannedDocking].Goal[plr]++;
             break;
@@ -188,23 +186,17 @@ void Set_Dock(char plr, char total)
 
 void Set_LM(char plr, char total)
 {
-    int i;
-
-    for (i = 0; i < total; i++) {
-        if (Mev[i].loc == 26
-            && (Mev[i].StepInfo == 1 || Mev[i].StepInfo == 50)) {
+    for (int i = 0; i < total; i++) {
+        if (Mev[i].loc != 26) continue; // skip non-LM steps
+        if (Mev[i].StepInfo == 1 || Mev[i].StepInfo == 50) { // award LM points for successful steps
             Data->P[plr].LMpts++;
         }
     }
-
-    return;
 }
 
 int Check_Photo(void)
 {
-    int i;
-
-    for (i = 0; i < STEPnum; i++) {
+    for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 20 && Mev[i].StepInfo == 1) {
             return 1;
         }
@@ -223,9 +215,7 @@ int Check_Photo(void)
 
 int Check_Lab(void)
 {
-    int i;
-
-    for (i = 0; i < STEPnum; i++) {
+    for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 28 && Mev[i].StepInfo == 1) {
             return 1;
         }
@@ -236,9 +226,7 @@ int Check_Lab(void)
 
 int Check_Dock(int limit)
 {
-    int i;
-
-    for (i = 0; i < STEPnum; i++) {
+    for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 8 && Mev[i].StepInfo == 0) {
             return 0;
         }
@@ -258,8 +246,7 @@ int Check_Dock(int limit)
 /**
  * Map prestige category list (mStr::PCat) to milestones.
  */
-int
-PrestMap(int val)
+int PrestMap(int val)
 {
     switch (val) {
     case Prestige_OrbitalSatellite:
@@ -301,22 +288,23 @@ PrestMap(int val)
  */
 int PrestCheck(char plr, int code)
 {
-    int i, total = 0;
-    char prg, tm;
+    int total = 0;
 
-    const struct mStr misType = GetMissionPlan(code);
+    const mStr misType = GetMissionPlan(code);
 
-    prg = misType.mEq;
+    char prg = misType.mEq;
 
-    for (i = 0; i < 5; i++) {  // Sum all first/second Nation Bonuses
-        tm = misType.PCat[i];
+    // Sum all first/second Nation Bonuses
+    for (int i = 0; i < 5; i++) {
+        char tm = misType.PCat[i]; // Look through prestige categories mission can apply for
 
-        if (tm != -1 && Data->Prestige[tm].Goal[plr] == 0) {  // First Mission Bonus
-            if (Data->Prestige[tm].Goal[other(plr)] == 0 && tm < 27) {
-                total += Data->Prestige[tm].Add[0];    // you're first
-            } else {
-                total += Data->Prestige[tm].Add[1];    // you're second
-            }
+        if (tm == -1) continue; // skip empty
+        if (Data->Prestige[tm].Goal[plr] != 0) continue; // skip already achieved
+        
+        if (Data->Prestige[tm].Goal[other(plr)] == 0 && tm < 27) {
+            total += Data->Prestige[tm].Add[0];    // you're first
+        } else {
+            total += Data->Prestige[tm].Add[1];    // you're second
         }
     }
 
@@ -366,7 +354,7 @@ int PrestCheck(char plr, int code)
     // Other mission bonus
 
     // Sum all additional Mission Bonuses
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (misType.PCat[i] != -1) {
             total += Data->Prestige[misType.PCat[i]].Add[2];
         }
@@ -637,24 +625,20 @@ char Set_Goal(char plr, char which, char control)
  */
 char Did_Fail(void)
 {
-    char i, bra;
-    unsigned int fail;
+    char bra = 0;
+    unsigned int fail = 0;
 
-    fail = 0;
-    bra = 0;
-    i = 0;
-
-    while (i != 0x7f) {
+    for (char i = 0; i != 0x7f; i = Mev[i].trace) {
         if (Mev[i].StepInfo >= 5000) {
-            fail += 1000;
+            return -1;
         }
 
         if (Mev[i].StepInfo >= 4000 && Mev[i].StepInfo <= 4999) {
-            fail += 1000;
+            return -1;
         }
 
         if (Mev[i].StepInfo >= 3000 && Mev[i].StepInfo <= 3999) {
-            fail += 100;
+            return -1;
         }
 
         if (Mev[i].StepInfo >= 2000 && Mev[i].StepInfo <= 2999) {
@@ -666,38 +650,29 @@ char Did_Fail(void)
         }
 
         if (Mev[i].trace != (i + 1)) {
-            bra++;
+            return -1;
         }
-
-        i = Mev[i].trace;
     }
 
-    if (fail < 90 && bra == 0) {
-        return 1;
-    } else {
-        return -1;
-    }
+    return (fail < 90)? 1 : -1;
 }
 
+/*
+ * Mev is some sort of flattened linked list?
+ * TODO: rewrite this function somewhat better
+ */
 int MaxFail(void)
 {
-    int i = 0, t = 0, count = 0;
-
-    while (i != 0x7f && count < 54) {
-        if (Mev[i].StepInfo == 0) {
-            Mev[i].StepInfo = 1003;
+    int t = 0, count = 0;
+    for (auto& Mev_item = Mev[0];;Mev_item = Mev[Mev_item.trace],++count) {
+        if (Mev_item.StepInfo == 0) {
+            Mev_item.StepInfo = 1003;
         }
 
-        t = MAX(Mev[i].StepInfo, t);
+        t = MAX(Mev_item.StepInfo, t);
 
-        i = Mev[i].trace;
-        ++count;
-    }
-
-    if (count >= 54) {
-        return 1;
-    } else {
-        return t;
+        if (count == 53) return 1;
+        if (Mev_item.trace == 0x7f) return t;
     }
 }
 
@@ -760,33 +735,27 @@ char SupGoal(char *PVal)
 
 int PrestNeg(char plr, int i)
 {
-    int negs = 0;
-
-    negs = Data->Prestige[i].Add[3];
     Data->Prestige[i].Goal[plr]++;
     Data->Prestige[i].Points[plr] += Data->Prestige[i].Add[3];
-
-    return negs;
+    return Data->Prestige[i].Add[3];
 }
 
 
 int AllotPrest(char plr, char mis)
 {
-    int i, total, other, negs, mcode, mike, P_Goal, N_Goal, S_Goal, ival, cval;
-    char PVal[MAXIMUM_PRESTIGE_NUM];
+    char PVal[MAXIMUM_PRESTIGE_NUM]{};
 
     hero = 0;
     tMo = Data->P[plr].Mission[mis].Month;
     tYr = Data->Year;
-    memset(PVal, 0x00, sizeof PVal);
 
     // SETUP INFO
-    mcode = Data->P[plr].Mission[mis].MissionCode;
-    const struct mStr misType = GetMissionPlan(mcode);
+    int mcode = Data->P[plr].Mission[mis].MissionCode;
+    const mStr misType = GetMissionPlan(mcode);
 
-    other = MaxFail();
+    int other = MaxFail();
 
-    for (i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
+    for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
         // PComp == 5 means alternate branch
         if (Mev[i].PComp == 5) {
             Mev[i].PComp = 0;
@@ -812,9 +781,9 @@ int AllotPrest(char plr, char mis)
                                   || (MA[1][2].A != NULL && MA[1][2].A->Sex)
                                   || (MA[1][3].A != NULL && MA[1][3].A->Sex);
 
-    for (i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
-        ival = abs(Mev[i].Prest);
-        cval = Mev[i].PComp;
+    for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
+        int ival = abs(Mev[i].Prest);
+        int cval = Mev[i].PComp;
 
         // ival of 100 seems to mean "don't record this in PVal[]"
         // Regardless of intention, it's out of bounds, so don't access or overwrite it
@@ -848,8 +817,8 @@ int AllotPrest(char plr, char mis)
     }
 
     // CLEAR TOTAL VALUE
-    total = 0;
-    negs = 0;
+    int total = 0;
+    int negs = 0;
 
     // PHOTO RECON; don't increase twice in mail games
     if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
@@ -861,7 +830,7 @@ int AllotPrest(char plr, char mis)
     Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
 
     if (death == 1) {
-        for (i = 0; i < 28; i++) {
+        for (int i = 0; i < 28; i++) {
             if (PVal[i] > 0 && PVal[i] < 4) {
                 PVal[i] = 4;
             }
@@ -869,10 +838,10 @@ int AllotPrest(char plr, char mis)
     }
 
     // GOAL FILTER: MANNED
-    P_Goal = PosGoal(PVal);
+    int P_Goal = PosGoal(PVal);
 
-    for (i = 0; i < MAX_PCAT; i++) {
-        N_Goal = misType.PCat[i];
+    for (int i = 0; i < MAX_PCAT; i++) {
+        int N_Goal = misType.PCat[i];
 
         // goals never tried count as failures
         if (N_Goal != -1 && PVal[N_Goal] == 0) {
@@ -880,8 +849,8 @@ int AllotPrest(char plr, char mis)
         }
     }
 
-    N_Goal = NegGoal(PVal);
-    S_Goal = SupGoal(PVal);
+    int N_Goal = NegGoal(PVal);
+    int S_Goal = SupGoal(PVal);
 
     if (P_Goal == Prestige_MannedLunarLanding) {  // make sure EVA was done
         if (!(PVal[Prestige_Spacewalk] >= 1 && PVal[Prestige_Spacewalk] <= 3)) {
@@ -932,6 +901,7 @@ int AllotPrest(char plr, char mis)
         Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, Data->P[plr].Mission[mis + 1].Duration);
     }
 
+    int mike;
     if (!misType.Dur) {
         switch (P_Goal) {
         case Prestige_MannedSpaceMission:
@@ -998,7 +968,7 @@ int AllotPrest(char plr, char mis)
     }
 
     // TOTAL ALL MISSION FIRSTS
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < 28; i++) {
         if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
             total += Set_Goal(plr, i, 0);
         }
@@ -1039,7 +1009,7 @@ int AllotPrest(char plr, char mis)
             total = Set_Goal(plr, S_Goal, 0);
         }
 
-        for (i = 0; i < 28; i++) {
+        for (int i = 0; i < 28; i++) {
             if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
                 total += Set_Goal(plr, i, 0);
             } else if (PVal[i] == 3) {
@@ -1094,13 +1064,11 @@ char PosGoal_Check(char *PVal)
 
 int Find_MaxGoal(void)
 {
-    int i, ival, cval;
-    char PVal[28];
-    memset(PVal, 0x00, sizeof PVal);
+    char PVal[28]{};
 
-    for (i = 0; i < STEPnum; i++) {
-        ival = abs(Mev[i].Prest);
-        cval = Mev[i].PComp;
+    for (int i = 0; i < STEPnum; i++) {
+        int ival = abs(Mev[i].Prest);
+        int cval = Mev[i].PComp;
 
         if (ival != 100) {
             PVal[ival] = cval;
@@ -1112,25 +1080,25 @@ int Find_MaxGoal(void)
 
 int U_AllotPrest(char plr, char mis)
 {
-    int i = 0, total, other, negs, mcode, lun;
-    char PVal[28];
+    int i = 0, total, negs;
+    char PVal[28]{};
 
-    memset(PVal, 0x00, sizeof PVal);   // CLEAR TOTAL VALUE
-    total = 0, negs = 0, lun = 0;
+    // CLEAR TOTAL VALUE
+    total = 0, negs = 0;
     tMo = Data->P[plr].Mission[mis].Month;
     tYr = Data->Year;
 
     // SETUP INFO
-    mcode = Data->P[plr].Mission[mis].MissionCode;
+    int mcode = Data->P[plr].Mission[mis].MissionCode;
 
-    lun = Check_Photo();
+    int lun = Check_Photo();
 
     // Don't improve photo recon twice in mail games
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
         lun = 0;
     }
 
-    other = MaxFail();
+    int other = MaxFail();
 
     if ((mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
         mcode == Mission_Orbital_Satellite) {  // Unmanned Probes
@@ -1181,17 +1149,18 @@ int U_AllotPrest(char plr, char mis)
             negs = PrestNeg(plr, i);
         }
 
+        auto& Photo_Recon = Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
         if (mcode == Mission_LunarFlyby || mcode == Mission_Lunar_Probe) {
             if (lun == 1) {  // UNMANNED PHOTO RECON
-                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 5;
-                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
+                Photo_Recon.Safety += 5;
+                Photo_Recon.Safety = MIN(Photo_Recon.Safety, 99);
             } // if
         } // if
 
         if (mcode == Mission_Lunar_Probe && MaxFail() == 1) {  // extra 10 for landing on Moon
             if (lun == 1) {  // UNMANNED PHOTO RECON
-                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety += 10;
-                Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
+                Photo_Recon.Safety += 10;
+                Photo_Recon.Safety = MIN(Photo_Recon.Safety, 99);
             } // if
         } // if
 
@@ -1199,12 +1168,13 @@ int U_AllotPrest(char plr, char mis)
 
     // Don't increase docking safety twice in mail games
     if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
+        auto& Docking_Mod = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
         if (Check_Dock(2) == 2) {
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Docking_Mod.Safety += 10;
+            Docking_Mod.Safety = MIN(Docking_Mod.Safety, Docking_Mod.MaxSafety);
         } else if (Check_Dock(2) == 1) {
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Docking_Mod.Safety += 5;
+            Docking_Mod.Safety = MIN(Docking_Mod.Safety, Docking_Mod.MaxSafety);
         }
     }
 
@@ -1217,12 +1187,11 @@ int U_AllotPrest(char plr, char mis)
  */
 int Update_Prestige_Data(char plr, char mis, int code)
 {
-    int total;
-
     assert(0 <= plr && plr < NUM_PLAYERS);
 
-    const struct mStr misType = GetMissionPlan(code);
+    const mStr misType = GetMissionPlan(code);
 
+    int total;
     if (misType.Days == 0) {
         total = U_AllotPrest(plr, mis);    // Unmanned Prestige
     } else {
