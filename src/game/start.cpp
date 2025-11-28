@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+#include <numeric>
 #include <vector>
 
 #include "astros.h"
@@ -89,7 +90,7 @@ void InitializeEvents()
                 // Randomly pick which pool to take event from
                 // by choosing number [0;100) and finding first pool whose "inclusion zone" is bigger
                 int randomPoolChoice = brandom(100);
-                auto iter = std::find(std::begin(pool_distribution), std::end(pool_distribution), [=](char c){return c > randomPoolChoice;});
+                auto iter = std::find_if(std::begin(pool_distribution), std::end(pool_distribution), [=](char c){return c > randomPoolChoice;});
                 pool_idx = std::distance(std::begin(pool_distribution), iter);
             // If the pool we chose has been exhausted, choose again
             }while(event_cards[pool_idx].empty());
