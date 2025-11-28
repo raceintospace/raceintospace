@@ -856,10 +856,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
         memset(&p.pal[off * 3], 0x00, 48);
     }
 
-    if (loc != 0 && which < 580) {
-        VBlank();
-    }
-
     fseek(ffin, (int32_t)locl, SEEK_SET);
     {
         display::AutoPal p(display::graphics.legacyScreen());
@@ -877,11 +873,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
         boob.pixels()[1564 + i] += off;
     }
 
-    VBlank();
-
     boob.copyTo(display::graphics.legacyScreen(), x, y);
-
-    VBlank();
 }
 
 
