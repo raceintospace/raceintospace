@@ -39,9 +39,11 @@ int AvailableCrewsCount(int plr, int program)
 
     for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
         const int commanderIndex = Data->P[plr].Crew[program][i][0];
-        const Astros &commander  = Data->P[plr].Pool[commanderIndex - 1];
+        if (commanderIndex == 0) continue;
+        
+        const Astros& commander  = Data->P[plr].Pool[commanderIndex - 1];
 
-        if (commanderIndex != 0 && commander.Prime == 0 &&
+        if (commander.Prime == 0 &&
             (options.feat_no_cTraining != 0 || commander.Moved == 0)) {
             count++;
         }
@@ -58,45 +60,44 @@ int AvailableCrewsCount(int plr, int program)
  */
 void CheckFlightCrews(int player)
 {
-    int i, j, k, temp;
+    for (int k = 0; k < ASTRONAUT_POOLS + 1; k++) {
+        for (int j = 0; j < ASTRONAUT_CREW_MAX; j++) {
+            int crew_count = Data->P[player].CrewCount[k][j];
+            if (crew_count <= 0) continue;
+            
+            auto& crew = Data->P[player].Crew[k][j];
 
-    for (k = 0; k < ASTRONAUT_POOLS + 1; k++) {
-        for (j = 0; j < ASTRONAUT_CREW_MAX; j++) {
-            temp = 0;
-
-            if (Data->P[player].CrewCount[k][j] > 0) {
-                for (i = 0; i < Data->P[player].CrewCount[k][j] + 1; i++) {
-                    if (Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Status == AST_ST_DEAD ||
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Status == AST_ST_RETIRED ||
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Status == AST_ST_INJURED) {
-                        temp++;
-                    }
-                }
-
-                if (temp > 0) {
-                    for (i = 0; i < Data->P[player].CrewCount[k][j] + 1; i++) {
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].oldAssign =
-                            Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Assign;
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Assign = 0;
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Crew = 0;
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Prime = 0;
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Task = 0;
-                        Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Moved = 0;
-
-                        if (Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Special == 0) {
-                            Data->P[player].Pool[Data->P[player].Crew[k][j][i] - 1].Special = 6;
-                        }
-
-                        Data->P[player].Crew[k][j][i] = 0;
-                    }
-
-                    Data->P[player].CrewCount[k][j] = 0;
+            bool invalid_crew = false;
+            for (int i = 0; i < crew_count + 1; i++) {
+                const auto& spaceman = Data->P[player].Pool[crew[i] - 1];
+                if (spaceman.Status == AST_ST_DEAD ||
+                    spaceman.Status == AST_ST_RETIRED ||
+                    spaceman.Status == AST_ST_INJURED) {
+                    invalid_crew = true;
+                    break;
                 }
             }
+            if (!invalid_crew) continue;
+
+            for (int i = 0; i < crew_count + 1; i++) {
+                auto& spaceman = Data->P[player].Pool[crew[i] - 1];
+                spaceman.oldAssign = spaceman.Assign;
+                spaceman.Assign = 0;
+                spaceman.Crew = 0;
+                spaceman.Prime = 0;
+                spaceman.Task = 0;
+                spaceman.Moved = 0;
+
+                if (spaceman.Special == 0) {
+                    spaceman.Special = 6;
+                }
+
+                crew[i] = 0;
+            }
+
+            Data->P[player].CrewCount[k][j] = 0;
         }
     }
-
-    return;
 }
 
 
