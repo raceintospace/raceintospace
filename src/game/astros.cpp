@@ -68,7 +68,7 @@ void CheckFlightCrews(int player)
             auto& crew = Data->P[player].Crew[k][j];
 
             bool invalid_crew = false;
-            for (i = 0; i < crew_count + 1; i++) {
+            for (int i = 0; i < crew_count + 1; i++) {
                 const auto& spaceman = Data->P[player].Pool[crew[i] - 1];
                 if (spaceman.Status == AST_ST_DEAD ||
                     spaceman.Status == AST_ST_RETIRED ||
