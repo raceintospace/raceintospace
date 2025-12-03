@@ -48,31 +48,133 @@
 
 LOG_DEFAULT_CATEGORY(multimedia)
 
+struct Theora_info_raii
+{
+    std::unique_ptr<theora_info> th_info;
+
+    Theora_info_raii()
+    : th_info{new theora_info{}}
+    {
+        theora_info_init(th_info.get());
+    }
+
+    theora_info* get() {return th_info.get();}
+
+    theora_info* release() {return th_info.release();}
+
+    ~Theora_info_raii()
+    {
+        if (th_info == nullptr) return;        
+        theora_info_clear(th_info.get());
+    }
+};
+
+struct Theora_comment_raii
+{
+    theora_comment th_comm;
+
+    Theora_comment_raii()
+    {
+        theora_comment_init(&th_comm);
+    }
+
+    theora_comment* get()
+    {
+        return &th_comm;
+    }
+
+    ~Theora_comment_raii()
+    {
+        theora_comment_clear(&th_comm);
+    }
+};
+
+struct Ogg_stream_raii
+{
+    std::unique_ptr<ogg_stream_state> stream;
+
+    Ogg_stream_raii(ogg_page* pg)
+    : stream{new ogg_stream_state{}}
+    {
+        ogg_stream_init(stream.get(), ogg_page_serialno(pg));
+    }
+
+    ogg_stream_state* get() {return stream.get();}
+
+    ogg_stream_state* release() {return stream.release();}
+
+    ~Ogg_stream_raii()
+    {
+        if (stream == nullptr) return;
+        ogg_stream_clear(stream.get());
+    }
+};
+
+struct Vorbis_info_raii
+{
+    std::unique_ptr<vorbis_info> vo_info;
+
+    Vorbis_info_raii()
+    : vo_info{new vorbis_info{}}
+    {
+        vorbis_info_init(vo_info.get());
+    }
+
+    vorbis_info* get() {return vo_info.get();}
+    vorbis_info* release() {return vo_info.release();}
+
+    ~Vorbis_info_raii()
+    {
+        if (vo_info == nullptr) return;
+        vorbis_info_clear(vo_info.get());
+    }
+};
+
+struct Vorbis_comment_raii
+{
+    vorbis_comment vo_comm;
+
+    Vorbis_comment_raii()
+    {
+        vorbis_comment_init(&vo_comm);
+    }
+
+    vorbis_comment* get() {return &vo_comm;}
+
+    ~Vorbis_comment_raii()
+    {
+        vorbis_comment_clear(&vo_comm);
+    }
+};
+
 /** --
  *
  * \return -1 on error
  * \return  0 on end of file
  * \return  1 on successful page read
  */
-static int
-get_page(mm_file *mf, ogg_page *pg)
+static int get_page(mm_file* mf, ogg_page* pg)
 {
-    const int bufsize = 8192;
-    char *p = NULL;
-    int n = 0;
-    int res = 0;
-
     assert(mf);
 
-    while (0 == (res = ogg_sync_pageout(&mf->sync, pg))) {
-        p = ogg_sync_buffer(&mf->sync, bufsize);
-
-        if (!p) {
+    while (true) {
+        int res = ogg_sync_pageout(&mf->sync, pg);
+        if (res < 0) return -1;
+        if (res > 0) {
+        /* XXX: following may segfault if non-ogg file is read */
+            if (ogg_page_version(pg) != 0) return -1;
+            return 1;
+        }   
+        
+        const int bufsize = 8192;
+        char* p = ogg_sync_buffer(&mf->sync, bufsize);
+        if (p == nullptr) {
             ERROR1("ogg buffer synchronization failed");
             return -1;
         }
 
-        if (0 == (n = fread(p, 1, bufsize, mf->file))) {
+        int n = fread(p, 1, bufsize, mf->file);
+        if (n == 0) {
             return (feof(mf->file)) ? 0 : -1;
         }
 
@@ -81,22 +183,12 @@ get_page(mm_file *mf, ogg_page *pg)
             return -1;
         }
     }
-
-    /* XXX: following may segfault if non-ogg file is read */
-    if (res < 0 || ogg_page_version(pg) != 0) {
-        return -1;
-    }
-
-    return 1;
 }
 
-static int
-get_packet(mm_file *mf, ogg_packet *pkt, enum stream_type type)
+static int get_packet(mm_file* mf, ogg_packet* pkt, enum stream_type type)
 {
     ogg_stream_state *stream, *other;
-    ogg_page pg;
     enum stream_type other_type;
-    int rv = 0;
 
     assert(mf);
     assert(pkt);
@@ -126,8 +218,9 @@ get_packet(mm_file *mf, ogg_packet *pkt, enum stream_type type)
     }
 
     while (0 == ogg_stream_packetout(stream, pkt)) {
-        rv = get_page(mf, &pg);
+        ogg_page pg;
 
+        int rv = get_page(mf, &pg);
         if (rv <= 0) {
             return rv;
         }
@@ -161,45 +254,50 @@ get_packet(mm_file *mf, ogg_packet *pkt, enum stream_type type)
     return 1;
 }
 
-static int
-init_theora(mm_file *mf, ogg_page *pg)
+static int init_theora(mm_file* mf, ogg_page* pg)
 {
-    int pkts = 0;
-    int res = 0;
-    int rval = 0;
-    theora_info *th_info = NULL;
-    theora_comment th_comm;
-    ogg_packet pkt;
-    ogg_stream_state stream;
-
     assert(mf);
-    th_info = (theora_info *)xmalloc(sizeof(*mf->video_info));
-    theora_info_init(th_info);
-    theora_comment_init(&th_comm);
-    ogg_stream_init(&stream, ogg_page_serialno(pg));
+
+    Theora_info_raii th_info{};
+    Theora_comment_raii th_comm{};
+    Ogg_stream_raii stream{pg};
 
     if (ogg_page_packets(pg) != 1 || ogg_page_granulepos(pg) != 0) {
-        goto end;
+        mf->video_info = nullptr;
+        return 0;
     }
 
-    if (ogg_stream_pagein(&stream, pg))
+    if (ogg_stream_pagein(stream.get(), pg))
         /* should not happen */
     {
-        goto end;
+        mf->video_info = nullptr;
+        return 0;
     }
 
     /* Three first packets must go successfully through the loop. */
-    for (pkts = 0; pkts < 3; ++pkts) {
-        while ((res = ogg_stream_packetpeek(&stream, &pkt)) != 1) {
-            if (res < 0
-                || get_page(mf, pg) <= 0
-                || ogg_stream_pagein(&stream, pg) < 0) {
-                rval = -1;
-                goto end;
+    for (int pkts = 0; pkts < 3; ++pkts) {
+        ogg_packet pkt;
+        while (true) {
+            int res = ogg_stream_packetpeek(stream.get(), &pkt);
+            if (res == 1) break;
+            
+            if (res < 0) {
+                mf->video_info = nullptr;
+                return -1;
+            }
+
+            if (get_page(mf, pg) <= 0) {
+                mf->video_info = nullptr;
+                return -1;
+            }
+
+            if (ogg_stream_pagein(stream.get(), pg) < 0) {
+                mf->video_info = nullptr;
+                return -1;
             }
         }
 
-        switch (theora_decode_header(th_info, &th_comm, &pkt)) {
+        switch (theora_decode_header(th_info.get(), th_comm.get(), &pkt)) {
         case 0:
             break;
 
@@ -210,74 +308,54 @@ init_theora(mm_file *mf, ogg_page *pg)
         /* fall through */
         case OC_BADHEADER:
         default:
-            goto end;
+            mf->video_info = nullptr;
+            return 0;
         }
 
         /* decode successful so grab packet */
-        ogg_stream_packetout(&stream, &pkt);
+        ogg_stream_packetout(stream.get(), &pkt);
     }
 
-    mf->video_ctx = (theora_state *)xmalloc(sizeof(*mf->video_ctx));
-    mf->video = (ogg_stream_state *)xmalloc(sizeof(*mf->video));
-    memcpy(mf->video, &stream, sizeof(stream));
-    theora_decode_init(mf->video_ctx, th_info);
-    mf->video_info = th_info;
-    rval = 1;
-end:
-    theora_comment_clear(&th_comm);
-
-    if (rval <= 0) {
-        ogg_stream_clear(&stream);
-        theora_info_clear(th_info);
-        free(th_info);
-        mf->video_info = NULL;
-    }
-
-    return rval;
+    mf->video_ctx = new theora_state{};
+    theora_decode_init(mf->video_ctx, th_info.get());
+    mf->video = stream.release();
+    mf->video_info = th_info.release();
+    return 1;
 }
 
-static int
-init_vorbis(mm_file *mf, ogg_page *pg)
+static int init_vorbis(mm_file* mf, ogg_page* pg)
 {
-    int pkts = 0;
-    int res = 0;
-    int rval = 0;
-    vorbis_block *vo_blk = NULL;
-    vorbis_info *vo_info = NULL;
-    vorbis_comment vo_comm;
-    ogg_packet pkt;
-    ogg_stream_state stream;
-
     assert(mf);
-    vo_info = (vorbis_info *)xmalloc(sizeof(*vo_info));
-    vorbis_info_init(vo_info);
-    vorbis_comment_init(&vo_comm);
-    ogg_stream_init(&stream, ogg_page_serialno(pg));
+    
+    Vorbis_info_raii vo_info{};
+    Vorbis_comment_raii vo_comm{};
+    Ogg_stream_raii stream{pg};
 
     if (ogg_page_packets(pg) != 1 || ogg_page_granulepos(pg) != 0) {
-        goto end;
+        return 0;
     }
 
-    if (ogg_stream_pagein(&stream, pg) < 0)
+    if (ogg_stream_pagein(stream.get(), pg) < 0)
         /* should not happen */
     {
-        goto end;
+        return 0;
     }
 
     /*
      * Three first packets must go successfully through the loop.
      */
-    for (pkts = 0; pkts < 3; ++pkts) {
-        while ((res = ogg_stream_packetpeek(&stream, &pkt)) != 1) {
-            if (res < 0
-                || get_page(mf, pg) <= 0
-                || ogg_stream_pagein(&stream, pg) < 0) {
-                rval = -1;
-                goto end;
-            }
+    for (int pkts = 0; pkts < 3; ++pkts) {
+        ogg_packet pkt;
+        while (true) {
+            int res = ogg_stream_packetpeek(stream.get(), &pkt);
+            if (res == 1) break;
+            
+            if (res < 0) return -1;
+            if (get_page(mf, pg) <= 0) return -1;
+            if (ogg_stream_pagein(stream.get(), pg) < 0) return -1;
         }
 
-        switch (vorbis_synthesis_headerin(vo_info, &vo_comm, &pkt)) {
+        switch (vorbis_synthesis_headerin(vo_info.get(), vo_comm.get(), &pkt)) {
         case 0:
             break;
 
@@ -286,51 +364,32 @@ init_vorbis(mm_file *mf, ogg_page *pg)
 
         case OV_ENOTVORBIS:
         default:
-            goto end;
+            return 0;
         }
 
         /* decode successful so grab packet */
-        ogg_stream_packetout(&stream, &pkt);
+        ogg_stream_packetout(stream.get(), &pkt);
     }
 
     /* maybe print something about comment or etc? */
 
-    mf->audio_ctx = (vorbis_dsp_state *)xmalloc(sizeof(*mf->audio_ctx));
-    mf->audio = (ogg_stream_state *)xmalloc(sizeof(*mf->audio));
-    vo_blk = (vorbis_block *)xmalloc(sizeof(*vo_blk));
-    memcpy(mf->audio, &stream, sizeof(stream));
-    vorbis_synthesis_init(mf->audio_ctx, vo_info);
-    vorbis_block_init(mf->audio_ctx, vo_blk);
-    mf->audio_info = vo_info;
-    mf->audio_blk = vo_blk;
-    rval = 1;
-end:
-    vorbis_comment_clear(&vo_comm);
-
-    if (rval <= 0) {
-        ogg_stream_clear(&stream);
-        vorbis_info_clear(vo_info);
-        free(vo_info);
-    }
-
-    return rval;
+    mf->audio_ctx = new vorbis_dsp_state{};
+    mf->audio_blk = new vorbis_block{};
+    mf->audio = stream.release();
+    vorbis_synthesis_init(mf->audio_ctx, vo_info.get());
+    vorbis_block_init(mf->audio_ctx, mf->audio_blk);
+    mf->audio_info = vo_info.release();
+    return 1;
 }
 
-static int
-yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
+static int yuv_to_overlay(const mm_file* mf, const yuv_buffer* yuv, SDL_Overlay* ovl)
 {
-    unsigned i, h, w, xoff, yoff;
-    uint8_t *yp, *up, *vp;
-
     assert(mf);
     assert(yuv);
     assert(ovl);
 
-    h = MIN(mf->video_info->frame_height, (unsigned) ovl->h);
-    w = MIN(mf->video_info->frame_width, (unsigned) ovl->w);
-    xoff = mf->video_info->offset_x;
-    yoff = mf->video_info->offset_y;
-
+    uint8_t* up;
+    uint8_t* vp;
     switch (ovl->format) {
     case SDL_IYUV_OVERLAY:
         up = yuv->u;
@@ -347,15 +406,9 @@ yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
         return -1;
     }
 
-    yp = yuv->y;
+    uint8_t* yp = yuv->y;
 
-    switch (mf->video_info->pixelformat) {
-    case OC_PF_420:
-        break;
-
-    case OC_PF_422:
-    case OC_PF_444:
-    default:
+    if (mf->video_info->pixelformat != OC_PF_420) {
         WARNING1("unknown/unsupported theora pixel format");
         return -1;
     }
@@ -365,8 +418,13 @@ yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
         return -1;
     }
 
+    unsigned h = MIN(mf->video_info->frame_height, (unsigned) ovl->h);
+    unsigned w = MIN(mf->video_info->frame_width, (unsigned) ovl->w);
+    unsigned xoff = mf->video_info->offset_x;
+    unsigned yoff = mf->video_info->offset_y;
+    
     /* luna goes first */
-    for (i = 0; i < h; ++i) {
+    for (unsigned i = 0; i < h; ++i) {
         memcpy(ovl->pixels[0] + i * ovl->pitches[0],
                yp + (i + yoff) * yuv->y_stride + xoff, w);
     }
@@ -378,7 +436,7 @@ yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
     h = h / 2 + h % 2;
 
     /* handle 2x2 subsampled u and v planes */
-    for (i = 0; i < h; ++i) {
+    for (unsigned i = 0; i < h; ++i) {
         memcpy(ovl->pixels[1] + i * ovl->pitches[1],
                up + (i + yoff) * yuv->uv_stride + xoff, w);
         memcpy(ovl->pixels[2] + i * ovl->pitches[2],
@@ -390,15 +448,8 @@ yuv_to_overlay(const mm_file *mf, const yuv_buffer *yuv, SDL_Overlay *ovl)
 }
 
 /* rval < 0: error, > 0: have audio or video */
-int
-mm_open_fp(mm_file *mf, FILE *file)
+int mm_open_fp(mm_file* mf, FILE* file)
 {
-    int retval = -1;
-    int res = 0;
-    int have_vorbis = 0;
-    int have_theora = 0;
-    ogg_page pg;
-
     assert(mf);
     memset(mf, 0, sizeof(*mf));
 
@@ -409,35 +460,53 @@ mm_open_fp(mm_file *mf, FILE *file)
     // pointers so that the other functions
     // ignore the file.
     if (!mf->file) {
-        mf->audio = NULL;
-        mf->video = NULL;
-        return retval;
+        mf->audio = nullptr;
+        mf->video = nullptr;
+        return -1;
     }
 
     ogg_sync_init(&mf->sync);
 
     /* get first page to start things up */
+    ogg_page pg;
     if (get_page(mf, &pg) <= 0) {
-        goto err;
+        WARNING1("unable to decode stream");
+        mm_close(mf);
+        return -1;
     }
 
     TRACE1("trying theora decoder...");
-    res = init_theora(mf, &pg);
-
-    if (res < 0) {
-        goto err;
-    } else {
-        have_theora = !!res * MEDIA_VIDEO;
+    int have_theora = 0;
+    switch(init_theora(mf, &pg))
+    {
+    case 0:
+        have_theora = 0;
+        break;
+    case 1:
+        have_theora = MEDIA_VIDEO;
+        break;
+    case -1: default:
+        WARNING1("unable to decode stream");
+        mm_close(mf);
+        return -1;
     }
 
     TRACE1("trying vorbis decoder...");
-    res = init_vorbis(mf, &pg);
-
-    if (res < 0) {
-        goto err;
-    } else {
-        have_vorbis = !!res * MEDIA_AUDIO;
+    int have_vorbis = 0;
+    switch(init_vorbis(mf, &pg))
+    {
+    case 1:
+        have_vorbis = MEDIA_AUDIO;
+        break;
+    case 0:
+        have_vorbis = 0;
+        break;
+    case -1: default:
+        WARNING1("unable to decode stream");
+        mm_close(mf);
+        return -1;
     }
+
 
     if (have_vorbis) {
         unsigned c = 0, r = 0;
@@ -453,14 +522,9 @@ mm_open_fp(mm_file *mf, FILE *file)
     }
 
     return have_vorbis | have_theora;
-err:
-    WARNING1("unable to decode stream");
-    mm_close(mf);
-    return retval;
 }
 
-int
-mm_open(mm_file *mf, const char *fname)
+int mm_open(mm_file* mf, const char* fname)
 {
     assert(mf);
     assert(fname);
@@ -468,8 +532,7 @@ mm_open(mm_file *mf, const char *fname)
     return mm_open_fp(mf, fopen(fname, "rb"));
 }
 
-unsigned
-mm_ignore(mm_file *mf, unsigned mask)
+unsigned mm_ignore(mm_file* mf, unsigned mask)
 {
     unsigned old = mf->drop_packets;
 
@@ -477,54 +540,55 @@ mm_ignore(mm_file *mf, unsigned mask)
     return old;
 }
 
-int
-mm_close(mm_file *mf)
+int mm_close(mm_file* mf)
 {
     assert(mf);
 
     if (mf->file) {
         fclose(mf->file);
-        mf->file = NULL;
+        mf->file = nullptr;
     }
 
     if (mf->audio) {
-        ogg_stream_destroy(mf->audio);
-        mf->audio = NULL;
+        ogg_stream_clear(mf->audio);
+        delete mf->audio;
+        mf->audio = nullptr;
     }
 
     if (mf->video) {
-        ogg_stream_destroy(mf->video);
-        mf->video = NULL;
+        ogg_stream_clear(mf->video);
+        delete mf->video;
+        mf->video = nullptr;
     }
 
     if (mf->video_ctx) {
         theora_clear(mf->video_ctx);
-        free(mf->video_ctx);
-        mf->video_ctx = NULL;
+        delete mf->video_ctx;
+        mf->video_ctx = nullptr;
     }
 
     if (mf->video_info) {
         theora_info_clear(mf->video_info);
-        free(mf->video_info);
-        mf->video_info = NULL;
+        delete mf->video_info;
+        mf->video_info = nullptr;
     }
 
     if (mf->audio_blk) {
         vorbis_block_clear(mf->audio_blk);
-        free(mf->audio_blk);
-        mf->audio_blk = NULL;
+        delete mf->audio_blk;
+        mf->audio_blk = nullptr;
     }
 
     if (mf->audio_ctx) {
         vorbis_dsp_clear(mf->audio_ctx);
-        free(mf->audio_ctx);
-        mf->audio_ctx = NULL;
+        delete mf->audio_ctx;
+        mf->audio_ctx = nullptr;
     }
 
     if (mf->audio_info) {
         vorbis_info_clear(mf->audio_info);
-        free(mf->audio_info);
-        mf->audio_info = NULL;
+        delete mf->audio_info;
+        mf->audio_info = nullptr;
     }
 
     ogg_sync_clear(&mf->sync);
@@ -534,9 +598,9 @@ mm_close(mm_file *mf)
 /**
  * \return rval < 0: no video in file
  */
-int
-mm_video_info(const mm_file *mf, unsigned *width, unsigned *height,
-              float *fps)
+int mm_video_info(const mm_file* mf, 
+                  unsigned* width, unsigned* height,
+                  float* fps)
 {
     assert(mf);
 
@@ -552,9 +616,10 @@ mm_video_info(const mm_file *mf, unsigned *width, unsigned *height,
         *height = mf->video_info->frame_height;
     }
 
-    if (fps)
+    if (fps) {
         *fps = mf->video_info->fps_numerator
                / mf->video_info->fps_denominator;
+    }
 
     return 1;
 }
@@ -562,8 +627,7 @@ mm_video_info(const mm_file *mf, unsigned *width, unsigned *height,
 /**
  * \return rval < 0: no audio in file
  **/
-int
-mm_audio_info(const mm_file *mf, unsigned *channels, unsigned *rate)
+int mm_audio_info(const mm_file* mf, unsigned* channels, unsigned* rate)
 {
     assert(mf);
 
@@ -582,13 +646,8 @@ mm_audio_info(const mm_file *mf, unsigned *channels, unsigned *rate)
     return 1;
 }
 
-int
-mm_decode_video(mm_file *mf, SDL_Overlay *ovl)
+int mm_decode_video(mm_file* mf, SDL_Overlay* ovl)
 {
-    int rv = 0;
-    ogg_packet pkt;
-    yuv_buffer yuv;
-
     assert(mf);
 
     if (!mf->video) {
@@ -601,8 +660,9 @@ mm_decode_video(mm_file *mf, SDL_Overlay *ovl)
     }
 
     for (;;) {
-        rv = get_packet(mf, &pkt, MEDIA_VIDEO);
-
+        ogg_packet pkt;
+        
+        int rv = get_packet(mf, &pkt, MEDIA_VIDEO);
         if (rv <= 0) {
             return rv;
         }
@@ -616,6 +676,7 @@ mm_decode_video(mm_file *mf, SDL_Overlay *ovl)
         }
     }
 
+    yuv_buffer yuv;
     theora_decode_YUVout(mf->video_ctx, &yuv);
 
     if (yuv_to_overlay(mf, &yuv, ovl) < 0) {
@@ -627,19 +688,16 @@ mm_decode_video(mm_file *mf, SDL_Overlay *ovl)
 
 /* for now just 16bit signed values, mono channels FIXME
  * maybe use SDL_AudioConvert() for this */
-int
-mm_decode_audio(mm_file *mf, void *buf, int buflen)
+int mm_decode_audio(mm_file* mf, void* buf, int buflen)
 {
     const int max_val = 32767;
     const int min_val = -32768;
     const int bytes_per_sample = 2;
 
-    int rv = 0, samples = 0, left = 0, total = 0;
-    unsigned channels = 0;
-
     assert(mf);
 
-    if (-1 == mm_audio_info(mf, &channels, NULL)) {
+    unsigned channels;
+    if (-1 == mm_audio_info(mf, &channels, nullptr)) {
         return -1;
     }
 
@@ -649,29 +707,19 @@ mm_decode_audio(mm_file *mf, void *buf, int buflen)
     }
 
     /* convert buflen [bytes] to left [samples] */
-    left = buflen;
-    left = left / channels / bytes_per_sample;
+    int left = buflen / channels / bytes_per_sample;
 
+    int total = 0;
     while (left > 0) {
-        float **pcm;
-        ogg_packet pkt;
-
         /* also outputs any samples left from last decoding */
-        while (left > 0
-               && (samples = vorbis_synthesis_pcmout(mf->audio_ctx, &pcm)) > 0) {
-            int i = 0;
-            unsigned ch = 0;
+        while (true) {
+            float** pcm;
+            int samples = MIN(vorbis_synthesis_pcmout(mf->audio_ctx, &pcm), left);
+            if (samples <= 0) break;
 
-            samples = MIN(samples, left);
-
-            for (i = 0; i < samples; ++i) {
-                for (ch = 0; ch < channels; ++ch) {
-                    // lrint is not available on MSVC
-#ifdef HAVE_LRINT
+            for (int i = 0; i < samples; ++i) {
+                for (unsigned ch = 0; ch < channels; ++ch) {
                     int val = lrint(pcm[ch][i] * max_val);
-#else
-                    int val = (int)floor(pcm[ch][i] * max_val);
-#endif
 
                     if (val > max_val) {
                         val = max_val;
@@ -688,13 +736,13 @@ mm_decode_audio(mm_file *mf, void *buf, int buflen)
             total += samples;
             left -= samples;
             vorbis_synthesis_read(mf->audio_ctx, samples);
-
         }
 
         /* grab new packets if we need more */
         for (;;) {
-            rv = get_packet(mf, &pkt, MEDIA_AUDIO);
-
+            ogg_packet pkt;
+            
+            int rv = get_packet(mf, &pkt, MEDIA_AUDIO);
             if (rv < 0) {
                 return rv;
             } else if (rv == 0) {
