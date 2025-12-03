@@ -25,6 +25,9 @@ struct Theora_info_raii
         theora_info_init(th_info.get());
     }
 
+    Theora_info_raii(Theora_info_raii&&) = default;
+    Theora_info_raii& operator=(Theora_info_raii&&) = default;
+
     theora_info* get() {return th_info.get();}
     theora_info* release() {return th_info.release();}
 
@@ -32,26 +35,6 @@ struct Theora_info_raii
     {
         if (th_info == nullptr) return;        
         theora_info_clear(th_info.get());
-    }
-};
-
-struct Theora_comment_raii
-{
-    theora_comment th_comm;
-
-    Theora_comment_raii()
-    {
-        theora_comment_init(&th_comm);
-    }
-
-    theora_comment* get()
-    {
-        return &th_comm;
-    }
-
-    ~Theora_comment_raii()
-    {
-        theora_comment_clear(&th_comm);
     }
 };
 
@@ -66,6 +49,9 @@ struct Ogg_stream_raii
     {
         ogg_stream_init(stream.get(), ogg_page_serialno(pg));
     }
+
+    Ogg_stream_raii(Ogg_stream_raii&&) = default;
+    Ogg_stream_raii& operator=(Ogg_stream_raii&&) = default;
 
     ogg_stream_state* get() {return stream.get();}
     ogg_stream_state* release() {return stream.release();}
@@ -86,6 +72,9 @@ struct Vorbis_info_raii
     {
         vorbis_info_init(vo_info.get());
     }
+
+    Vorbis_info_raii(Vorbis_info_raii&&) = default;
+    Vorbis_info_raii& operator=(Vorbis_info_raii&&) = default;
 
     vorbis_info* get() {return vo_info.get();}
     vorbis_info* release() {return vo_info.release();}
