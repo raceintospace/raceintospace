@@ -55,7 +55,7 @@ struct Theora_info_raii
     Theora_info_raii()
     : th_info{new theora_info{}}
     {
-        theora_info_init(th_info);
+        theora_info_init(th_info.get());
     }
 
     theora_info* get() {return th_info.get();}
@@ -64,9 +64,8 @@ struct Theora_info_raii
 
     ~Theora_info_raii()
     {
-        if (th_info == nullptr) return;
-        
-        theora_info_clear(th_info);
+        if (th_info == nullptr) return;        
+        theora_info_clear(th_info.get());
     }
 };
 
@@ -107,8 +106,7 @@ struct Ogg_stream_raii
     ~Ogg_stream_raii()
     {
         if (stream == nullptr) return;
-
-        ogg_stream_clear(&stream);
+        ogg_stream_clear(stream.get());
     }
 };
 
@@ -119,7 +117,7 @@ struct Vorbis_info_raii
     Vorbis_info_raii()
     : vo_info{new vorbis_info{}}
     {
-        vorbis_info_init(vo_info);
+        vorbis_info_init(vo_info.get());
     }
 
     vorbis_info* get() {return vo_info.get();}
@@ -128,7 +126,7 @@ struct Vorbis_info_raii
     ~Vorbis_info_raii()
     {
         if (vo_info == nullptr) return;
-        vorbis_info_clear(vo_info);
+        vorbis_info_clear(vo_info.get());
     }
 };
 
