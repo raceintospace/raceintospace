@@ -119,27 +119,28 @@ private:
         Theora_info_raii video_info;
         std::unique_ptr<theora_state> video_ctx;
     } mmf{};
+    ogg_page last_read;
 
 public:
     Multimedia(FILE* fp);
     Multimedia& operator=(Multimedia&&);
     ~Multimedia();
 
-    bool is_good();
+    bool is_good() const;
 
-    bool is_audio();
-    int channels();
-    int audio_rate();
+    bool is_audio() const;
+    int channels() const;
+    int audio_rate() const;
     int decode_audio(void* buf, int buflen); // returns number of bytes written to buffer
 
-    bool is_video();
-    float fps();
-    int w();
-    int h();
+    bool is_video() const;
+    float fps() const;
+    int w() const;
+    int h() const;
     void draw_video_frame(SDL_Overlay& ovl);
 
 private:
-    ogg_page get_page();
+    void get_page();
     void init_theora();
     void init_vorbis();
     ogg_packet get_packet(enum media_type is_video);
