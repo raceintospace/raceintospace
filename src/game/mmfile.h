@@ -89,8 +89,7 @@ struct Vorbis_info_raii
 class Multimedia
 {
 public:
-    bool ignore_audio{};
-    bool ignore_video{};
+    bool ignore_stream[2]{};
 
 private:
     bool good{true};
