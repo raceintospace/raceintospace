@@ -126,7 +126,7 @@ public:
     float fps() const;
     int w() const;
     int h() const;
-    void draw_video_frame(SDL_Overlay& ovl);
+    bool draw_video_frame(SDL_Overlay& ovl);
 
 private:
     void get_page();
