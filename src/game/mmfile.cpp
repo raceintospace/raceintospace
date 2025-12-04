@@ -242,6 +242,8 @@ float Multimedia::fps() { return (is_video())? mmf.video_info->fps_numerator / m
 
 bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
 {
+    if (!good) return false;
+    
     if (!is_video()) {
         good = false;
         return false;
