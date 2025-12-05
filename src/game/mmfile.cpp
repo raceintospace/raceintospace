@@ -349,7 +349,7 @@ void Multimedia::get_page()
         }
         if (res > 0) { // load succesful
         /* XXX: following may segfault if non-ogg file is read */
-            if (ogg_page_version(last_read) != 0) {good = false;} // idk
+            if (ogg_page_version(&last_read) != 0) {good = false;} // idk
             return;
         }   
         // otherwise load into sync buffer
@@ -449,7 +449,7 @@ void Multimedia::init_vorbis()
     Ogg_stream_raii stream{&last_read};
 
     // check that we're at the start of a new logical ogg stream
-    if (ogg_page_packets(&last_read) != 1 || ogg_page_granulepos(&plast_read) != 0) {
+    if (ogg_page_packets(&last_read) != 1 || ogg_page_granulepos(&last_read) != 0) {
         return;
     }
 
@@ -549,7 +549,7 @@ ogg_packet Multimedia::get_packet(enum media_type media)
         }
     }
 
-    if (pkt->e_o_s) stream_has_ended[media] = true;
+    if (pkt.e_o_s) stream_has_ended[media] = true;
     return pkt;
 }
 
