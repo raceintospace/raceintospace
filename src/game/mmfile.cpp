@@ -85,32 +85,35 @@ struct Vorbis_comment_raii
     }
 };
 
+/* Multimedia constructor. Reads from file pointer, decides if it's video or audio file
+ * Check is_good() afterwards to see if there's been any error
+ */
 Multimedia::Multimedia(FILE* fp)
 {
-    if (fp == nullptr) {
+    if (fp == nullptr) { // nullptr means some caller issue, just error out
         good = false;
         return;
     }
     mmf.file = fp;
     
-    ogg_sync_init(&mmf.sync);
+    ogg_sync_init(&mmf.sync); // sets up ogg lib's file reading buffer
 
     /* get first page to start things up */
-    get_page();
+    get_page(); // read from the file through sync buffer into ogg_page
     if (!good) {
         WARNING1("unable to decode stream");
         return;
     }
 
     TRACE1("trying theora decoder...");
-    init_theora();
+    init_theora(); // if it's a video file, is_video() will be returning true
     if (!good) {
         WARNING1("unable to decode stream");
         return;
     }
 
     TRACE1("trying vorbis decoder...");
-    init_vorbis();
+    init_vorbis(); // if it's an audio file, is_audio() will be returning true
     if (!good) {
         WARNING1("unable to decode stream");
         return;
@@ -124,9 +127,10 @@ Multimedia::Multimedia(FILE* fp)
         INFO4("video %ux%u pixels at %g fps", w(), h(), fps());
     }
 
-    good = is_audio() || is_video();
+    good = is_audio() || is_video(); // if both parsers rejected the file we are no good
 }
 
+// It's easier to replace contents via assigning to temporary than deal with all destructors manually
 Multimedia& Multimedia::operator=(Multimedia&& other)
 {
     std::swap(ignore_stream, other.ignore_stream);
@@ -136,6 +140,7 @@ Multimedia& Multimedia::operator=(Multimedia&& other)
     std::swap(last_read, other.last_read);
 }
 
+// Destructor, deals with member variables that aren't wrapped in raii
 Multimedia::~Multimedia()
 {
     if (mmf.file != nullptr) {
@@ -157,18 +162,22 @@ Multimedia::~Multimedia()
     ogg_sync_clear(&mmf.sync);
 }
 
+// returns false if some catastrophic parsing error occured
 bool Multimedia::is_good() {return good;}
 
-bool Multimedia::is_audio() {return mmf.audio != nullptr;}
-int Multimedia::channels() {return (is_audio)? mmf.audio_info->channels : -1;}
-int Multimedia::audio_rate() {return (is_audio)? mmf.audio_info->rate : -1;}
+bool Multimedia::is_audio() {return mmf.audio.get() != nullptr;}
+int Multimedia::channels() {return (is_audio)? mmf.audio_info.get()->channels : -1;}
+int Multimedia::audio_rate() {return (is_audio)? mmf.audio_info.get()->rate : -1;}
 
 // returns number of bytes written to buffer
 int Multimedia::decode_audio(void* buf, int buflen)
 {
+    if (!good) return -1;
+
     // only dealing with 16-bit samples (todo?)
     int16_t* audio_buf = (int16_t*)buf;
 
+    // can't decode audio if we aren't one
     if (!is_audio()) return -1;
 
     if (ignore_stream[AUDIO]) {
@@ -184,7 +193,7 @@ int Multimedia::decode_audio(void* buf, int buflen)
     while (space_left > 0) {
         /* output samples in audio_ctx (including those left from last decoding) */
         while (true) {
-            // ask for samples to read
+            // ask for audio samples to read
             float** pcm;
             int samples = std::min(vorbis_synthesis_pcmout(mmf.audio_ctx.get(), &pcm), space_left);
             // if we run out of audio samples or buffer space - exit the loop
@@ -203,6 +212,7 @@ int Multimedia::decode_audio(void* buf, int buflen)
                         val = min_val;
                     }
 
+                    // maybe replace this with an iterator?
                     audio_buf[(samples_written + i) * channels() + ch] = val;
                 }
             }
@@ -235,23 +245,21 @@ int Multimedia::decode_audio(void* buf, int buflen)
     return samples_written * channels() * bytes_per_sample;
 }
 
-bool Multimedia::is_video() { return mmf.video != nullptr;}
-int Multimedia::w() { return (is_video())? mmf.video_info->frame_width : -1;}
-int Multimedia::h() { return (is_video())? mmf.video_info->frame_height : -1;}
-float Multimedia::fps() { return (is_video())? mmf.video_info->fps_numerator / mmf.video_info->fps_denominator;}
+bool Multimedia::is_video() { return mmf.video.get() != nullptr;}
+int Multimedia::w() { return (is_video())? mmf.video_info.get()->frame_width : -1;}
+int Multimedia::h() { return (is_video())? mmf.video_info.get()->frame_height : -1;}
+float Multimedia::fps() { return (is_video())? mmf.video_info.get()->fps_numerator / mmf.video_info.get()->fps_denominator;}
 
+// returns true if there's still more frames to draw
 bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
 {
     if (!good) return false;
-    
-    if (!is_video()) {
-        good = false;
-        return false;
-    }
+
+    // can't draw frames if we aren't a video
+    if (!is_video()) return false;
 
     if (ignore_stream[VIDEO]) {
         WARNING1("requested decode but VIDEO is set to ignore");
-        good = false;
         return false;
     }
 
@@ -288,26 +296,23 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
 
     default:
         WARNING1("only IYUV and YV12 SDL overlay formats supported");
-        good = false;
         return false;
     }
 
     if (mmf.video_info->pixelformat != OC_PF_420) {
         WARNING1("unknown/unsupported theora pixel format");
-        good = false;
         return false;
     }
 
     if (SDL_LockYUVOverlay(ovl) < 0) {
         WARNING1("unable to lock overlay");
-        good = false;
         return false;
     }
 
-    unsigned h = std::min(mmf.video_info->frame_height, (unsigned)ovl->h);
-    unsigned w = std::min(mmf.video_info->frame_width, (unsigned) ovl->w);
-    unsigned xoff = mmf.video_info->offset_x;
-    unsigned yoff = mmf.video_info->offset_y;
+    unsigned h = std::min(mmf.video_info.get()->frame_height, (unsigned)ovl->h);
+    unsigned w = std::min(mmf.video_info.get()->frame_width, (unsigned) ovl->w);
+    unsigned xoff = mmf.video_info.get()->offset_x;
+    unsigned yoff = mmf.video_info.get()->offset_y;
     
     /* luna goes first */
     for (unsigned i = 0; i < h; ++i) {
@@ -333,35 +338,36 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     return true;
 }
 
+// loads data from file through sync buffer into ogg page pg
 void Multimedia::get_page()
 {
     while (true) {
-        int res = ogg_sync_pageout(&mmf.sync, &pg);
-        if (res < 0) {
+        int res = ogg_sync_pageout(&mmf.sync, &pg); // attempt loading from the buffer
+        if (res < 0) { // catastropic error
             good = false;
             return;
         }
-        if (res > 0) {
+        if (res > 0) { // load succesful
         /* XXX: following may segfault if non-ogg file is read */
-            if (ogg_page_version(pg) != 0) {good = false;}
+            if (ogg_page_version(pg) != 0) {good = false;} // idk
             return;
         }   
-        
+        // otherwise load into sync buffer
         const int bufsize = 8192;
-        char* p = ogg_sync_buffer(&mmf.sync, bufsize);
+        char* p = ogg_sync_buffer(&mmf.sync, bufsize); // give us space to write into
         if (p == nullptr) {
             ERROR1("ogg buffer synchronization failed");
             good = false;
             return;
         }
 
-        int n = fread(p, 1, bufsize, mmf.file);
+        int n = fread(p, 1, bufsize, mmf.file); // write into buffer
         if (n == 0) { // either error or EOF
             good = false;
             return;
         }
 
-        if (ogg_sync_wrote(&mmf.sync, n)) {
+        if (ogg_sync_wrote(&mmf.sync, n)) { // notify buffer how much we have written
             ERROR1("buffer overflow in ogg_sync_wrote");
             good = false;
             return;
@@ -369,45 +375,50 @@ void Multimedia::get_page()
     }
 }
 
+// video parser
 void Multimedia::init_theora()
 {
-    Theora_info_raii th_info{};
-    Theora_comment_raii th_comm{};
     Ogg_stream_raii stream{&pg};
 
+    // check that we're reading header of a new logical ogg stream
     if (ogg_page_packets(&pg) != 1 || ogg_page_granulepos(&pg) != 0) {
         return;
     }
 
-    if (ogg_stream_pagein(stream.get(), &pg))
-        /* should not happen */
+    if (ogg_stream_pagein(stream.get(), &pg)) // load into ogg stream
+        /* should not error */
     {
         return;
     }
 
-    /* Three first packets must go successfully through the loop. */
+    // try parsing first 3 packets as theora header
+    Theora_info_raii th_info{};
+    Theora_comment_raii th_comm{};
     for (int pkts = 0; pkts < 3; ++pkts) {
         ogg_packet pkt;
         while (true) {
-            int res = ogg_stream_packetpeek(stream.get(), &pkt);
-            if (res == 1) break;
+            int res = ogg_stream_packetpeek(stream.get(), &pkt); // check if packet is ready
+            if (res == 1) break; // if it is, move on to reading it
             
-            if (res < 0) {
+            if (res < 0) { // catastropic error, abort
                 good = false;
                 return;
             }
 
+            // otherwise we need to load from the file more
             get_page();
             if (!good) return;
 
+            // and load into the stream
             if (ogg_stream_pagein(stream.get(), &pg) < 0) {
                 good = false;
                 return;
             }
         }
 
+        //once packet is ready, decode it
         switch (theora_decode_header(th_info.get(), th_comm.get(), &pkt)) {
-        case 0:
+        case 0: // all good
             break;
 
         case OC_VERSION:
@@ -423,18 +434,21 @@ void Multimedia::init_theora()
         ogg_stream_packetout(stream.get(), &pkt);
     }
 
-    mmf.video_ctx.reset(new theora_state{});
-    theora_decode_init(mmf.video_ctx.get(), th_info.get());
+    /* maybe print something about comment or etc? */
+
+    // if we succeded, move everything into Multimedia member variables
     mmf.video = std::move(stream);
     mmf.video_info = std::move(th_info);
+    mmf.video_ctx.reset(new theora_state{});
+    theora_decode_init(mmf.video_ctx.get(), mmf.video_info.get());
 }
 
+// audio parser
 void Multimedia::init_vorbis()
 {
-    Vorbis_info_raii vo_info{};
-    Vorbis_comment_raii vo_comm{};
     Ogg_stream_raii stream{&pg};
 
+    // check that we're at the start of a new logical ogg stream
     if (ogg_page_packets(&pg) != 1 || ogg_page_granulepos(&pg) != 0) {
         return;
     }
@@ -446,26 +460,29 @@ void Multimedia::init_vorbis()
     }
 
     /*
-     * Three first packets must go successfully through the loop.
+     * Try reading the 3 header packets
      */
+    Vorbis_info_raii vo_info{};
+    Vorbis_comment_raii vo_comm{};
     for (int pkts = 0; pkts < 3; ++pkts) {
         ogg_packet pkt;
         while (true) {
-            int res = ogg_stream_packetpeek(stream.get(), &pkt);
-            if (res == 1) break;
+            int res = ogg_stream_packetpeek(stream.get(), &pkt); // check if there's enough data to form a packet
+            if (res == 1) break; // if pkt successfully formed, continue to reading
             
-            if (res < 0) {
+            if (res < 0) { // catastrophic error
                 good = false; return;
             }
             
-            get_page();
+            get_page(); // load page from the file
             if (!good) return;
             
-            if (ogg_stream_pagein(stream.get(), &pg) < 0) {
+            if (ogg_stream_pagein(stream.get(), &pg) < 0) { // and feed to the stream buffer
                 good = false; return;
             }
         }
 
+        // try parsing the header
         switch (vorbis_synthesis_headerin(vo_info.get(), vo_comm.get(), &pkt)) {
         case 0:
             break;
@@ -483,15 +500,18 @@ void Multimedia::init_vorbis()
     }
 
     /* maybe print something about comment or etc? */
-
-    mmf.audio_ctx.reset(new vorbis_dsp_state{});
-    mmf.audio_blk.reset(new vorbis_block{});
+    
+    // if we succeded, move everything into Multimedia member variables
     mmf.audio = std::move(stream);
-    vorbis_synthesis_init(mmf.audio_ctx.get(), vo_info.get());
-    vorbis_block_init(mmf.audio_ctx.get(), mmf.audio_blk.get());
     mmf.audio_info = std::move(vo_info);
+    mmf.audio_ctx.reset(new vorbis_dsp_state{});
+    vorbis_synthesis_init(mmf.audio_ctx.get(), mmf.audio_info.get());
+    mmf.audio_blk.reset(new vorbis_block{});
+    vorbis_block_init(mmf.audio_ctx.get(), mmf.audio_blk.get());
 }
 
+// returns next packet for the selected media stream
+// responsible for setting stream_has_ended
 ogg_packet Multimedia::get_packet(enum media_type media)
 {
     ogg_packet pkt;
@@ -505,9 +525,9 @@ ogg_packet Multimedia::get_packet(enum media_type media)
     }
 
     while (true) {
-        // read from stream into pkt
-        if (0 != ogg_stream_packetout(stream.get(), &pkt)) break; // if read succeeds, exit the loop
-        // otherwise
+        // try reading pkt from the stream
+        if (0 != ogg_stream_packetout(stream.get(), &pkt)) break; // if it was in buffer, exit the loop
+        // otherwise we need to load more
         get_page(); // read next ogg page
         if (!good) { // check that it succeded
             return pkt;
@@ -516,7 +536,7 @@ ogg_packet Multimedia::get_packet(enum media_type media)
         // read from page into stream
         if (ogg_stream_pagein(stream.get(), &pg) >= 0) continue; // if no error, continue in the loop
         // otherwise check if it's an ogg page from the other stream
-        if (other != nullptr && ogg_stream_pagein(other.get(), &pg) == 0) {
+        if (other.get() != nullptr && ogg_stream_pagein(other.get(), &pg) == 0) {
             // If user needs it, move on - page gets buffered in other
             if (!ignore_stream[other_type]) continue;
             
@@ -526,11 +546,6 @@ ogg_packet Multimedia::get_packet(enum media_type media)
         } else {
             INFO2("got page not associated with any stream, "
                   "serial 0x%x", ogg_page_serialno(&pg));
-            /*
-             * drop page. Ogg source code says ogg_page member pointers are
-             * initialized to static buffers, so there is no need to free
-             * anything.
-             */
         }
     }
 
