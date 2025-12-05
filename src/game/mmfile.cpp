@@ -316,7 +316,7 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     
     /* luna goes first */
     for (unsigned i = 0; i < h; ++i) {
-        memcpy(ovl->pixels[0] + i * ovl.pitches[0],
+        memcpy(ovl.pixels[0] + i * ovl.pitches[0],
                yp + (i + yoff) * yuv.y_stride + xoff, w);
     }
 
@@ -338,18 +338,18 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     return true;
 }
 
-// loads data from file through sync buffer into ogg page pg
+// loads data from file through sync buffer into ogg page last_read
 void Multimedia::get_page()
 {
     while (true) {
-        int res = ogg_sync_pageout(&mmf.sync, &pg); // attempt loading from the buffer
+        int res = ogg_sync_pageout(&mmf.sync, &last_read); // attempt loading from the buffer
         if (res < 0) { // catastropic error
             good = false;
             return;
         }
         if (res > 0) { // load succesful
         /* XXX: following may segfault if non-ogg file is read */
-            if (ogg_page_version(pg) != 0) {good = false;} // idk
+            if (ogg_page_version(last_read) != 0) {good = false;} // idk
             return;
         }   
         // otherwise load into sync buffer
@@ -378,14 +378,14 @@ void Multimedia::get_page()
 // video parser
 void Multimedia::init_theora()
 {
-    Ogg_stream_raii stream{&pg};
+    Ogg_stream_raii stream{&last_read};
 
     // check that we're reading header of a new logical ogg stream
-    if (ogg_page_packets(&pg) != 1 || ogg_page_granulepos(&pg) != 0) {
+    if (ogg_page_packets(&last_read) != 1 || ogg_page_granulepos(&last_read) != 0) {
         return;
     }
 
-    if (ogg_stream_pagein(stream.get(), &pg)) // load into ogg stream
+    if (ogg_stream_pagein(stream.get(), &last_read)) // load into ogg stream
         /* should not error */
     {
         return;
@@ -410,7 +410,7 @@ void Multimedia::init_theora()
             if (!good) return;
 
             // and load into the stream
-            if (ogg_stream_pagein(stream.get(), &pg) < 0) {
+            if (ogg_stream_pagein(stream.get(), &last_read) < 0) {
                 good = false;
                 return;
             }
@@ -446,14 +446,14 @@ void Multimedia::init_theora()
 // audio parser
 void Multimedia::init_vorbis()
 {
-    Ogg_stream_raii stream{&pg};
+    Ogg_stream_raii stream{&last_read};
 
     // check that we're at the start of a new logical ogg stream
-    if (ogg_page_packets(&pg) != 1 || ogg_page_granulepos(&pg) != 0) {
+    if (ogg_page_packets(&last_read) != 1 || ogg_page_granulepos(&plast_read) != 0) {
         return;
     }
 
-    if (ogg_stream_pagein(stream.get(), &pg) < 0)
+    if (ogg_stream_pagein(stream.get(), &last_read) < 0)
         /* should not happen */
     {
         return;
@@ -477,7 +477,7 @@ void Multimedia::init_vorbis()
             get_page(); // load page from the file
             if (!good) return;
             
-            if (ogg_stream_pagein(stream.get(), &pg) < 0) { // and feed to the stream buffer
+            if (ogg_stream_pagein(stream.get(), &last_read) < 0) { // and feed to the stream buffer
                 good = false; return;
             }
         }
@@ -534,9 +534,9 @@ ogg_packet Multimedia::get_packet(enum media_type media)
         }
 
         // read from page into stream
-        if (ogg_stream_pagein(stream.get(), &pg) >= 0) continue; // if no error, continue in the loop
+        if (ogg_stream_pagein(stream.get(), &last_read) >= 0) continue; // if no error, continue in the loop
         // otherwise check if it's an ogg page from the other stream
-        if (other.get() != nullptr && ogg_stream_pagein(other.get(), &pg) == 0) {
+        if (other.get() != nullptr && ogg_stream_pagein(other.get(), &last_read) == 0) {
             // If user needs it, move on - page gets buffered in other
             if (!ignore_stream[other_type]) continue;
             
@@ -545,7 +545,7 @@ ogg_packet Multimedia::get_packet(enum media_type media)
             while (ogg_stream_packetout(other.get(), &packet));
         } else {
             INFO2("got page not associated with any stream, "
-                  "serial 0x%x", ogg_page_serialno(&pg));
+                  "serial 0x%x", ogg_page_serialno(&last_read));
         }
     }
 
