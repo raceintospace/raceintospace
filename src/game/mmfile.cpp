@@ -166,8 +166,8 @@ Multimedia::~Multimedia()
 bool Multimedia::is_good() {return good;}
 
 bool Multimedia::is_audio() {return mmf.audio.get() != nullptr;}
-int Multimedia::channels() {return (is_audio)? mmf.audio_info.get()->channels : -1;}
-int Multimedia::audio_rate() {return (is_audio)? mmf.audio_info.get()->rate : -1;}
+int Multimedia::channels() {return (is_audio())? mmf.audio_info.get()->channels : -1;}
+int Multimedia::audio_rate() {return (is_audio())? mmf.audio_info.get()->rate : -1;}
 
 // returns number of bytes written to buffer
 int Multimedia::decode_audio(void* buf, int buflen)
@@ -248,7 +248,7 @@ int Multimedia::decode_audio(void* buf, int buflen)
 bool Multimedia::is_video() { return mmf.video.get() != nullptr;}
 int Multimedia::w() { return (is_video())? mmf.video_info.get()->frame_width : -1;}
 int Multimedia::h() { return (is_video())? mmf.video_info.get()->frame_height : -1;}
-float Multimedia::fps() { return (is_video())? mmf.video_info.get()->fps_numerator / mmf.video_info.get()->fps_denominator;}
+float Multimedia::fps() { return (is_video())? mmf.video_info.get()->fps_numerator / mmf.video_info.get()->fps_denominator : -1;}
 
 // returns true if there's still more frames to draw
 bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
@@ -280,18 +280,18 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     yuv_buffer yuv;
     theora_decode_YUVout(mmf.video_ctx.get(), &yuv);
 
-    uint8_t* yp = yuv->y;
+    uint8_t* yp = &yuv.y;
     uint8_t* up;
     uint8_t* vp;
-    switch (ovl->format) {
+    switch (ovl.format) {
     case SDL_IYUV_OVERLAY:
-        up = yuv->u;
-        vp = yuv->v;
+        up = &yuv.u;
+        vp = &yuv.v;
         break;
         
     case SDL_YV12_OVERLAY:
-        up = yuv->v;
-        vp = yuv->u;
+        up = &yuv.v;
+        vp = &yuv.u;
         break;
 
     default:
