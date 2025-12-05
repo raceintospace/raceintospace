@@ -138,6 +138,8 @@ Multimedia& Multimedia::operator=(Multimedia&& other)
     std::swap(stream_has_ended, other.stream_has_ended);
     std::swap(mmf, other.mmf);
     std::swap(last_read, other.last_read);
+
+    return *this
 }
 
 // Destructor, deals with member variables that aren't wrapped in raii
