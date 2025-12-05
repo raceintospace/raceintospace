@@ -174,9 +174,6 @@ int Multimedia::decode_audio(void* buf, int buflen)
 {
     if (!good) return -1;
 
-    // only dealing with 16-bit samples (todo?)
-    int16_t* audio_buf = (int16_t*)buf;
-
     // can't decode audio if we aren't one
     if (!is_audio()) return -1;
 
@@ -184,6 +181,9 @@ int Multimedia::decode_audio(void* buf, int buflen)
         WARNING1("requested decode but AUDIO is set to ignore");
         return -1;
     }
+    
+    // only dealing with 16-bit samples (todo?)
+    int16_t* audio_buf = (int16_t*)buf;
 
     /* convert buflen [bytes] to left [samples] */
     const int bytes_per_sample = 2;
