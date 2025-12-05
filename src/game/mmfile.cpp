@@ -163,11 +163,11 @@ Multimedia::~Multimedia()
 }
 
 // returns false if some catastrophic parsing error occured
-bool Multimedia::is_good() {return good;}
+bool Multimedia::is_good() const {return good;}
 
-bool Multimedia::is_audio() {return mmf.audio.get() != nullptr;}
-int Multimedia::channels() {return (is_audio)? mmf.audio_info.get()->channels : -1;}
-int Multimedia::audio_rate() {return (is_audio)? mmf.audio_info.get()->rate : -1;}
+bool Multimedia::is_audio() const {return mmf.audio.get() != nullptr;}
+int Multimedia::channels() const {return (is_audio)? mmf.audio_info.get()->channels : -1;}
+int Multimedia::audio_rate() const {return (is_audio)? mmf.audio_info.get()->rate : -1;}
 
 // returns number of bytes written to buffer
 int Multimedia::decode_audio(void* buf, int buflen)
@@ -245,10 +245,10 @@ int Multimedia::decode_audio(void* buf, int buflen)
     return samples_written * channels() * bytes_per_sample;
 }
 
-bool Multimedia::is_video() { return mmf.video.get() != nullptr;}
-int Multimedia::w() { return (is_video())? mmf.video_info.get()->frame_width : -1;}
-int Multimedia::h() { return (is_video())? mmf.video_info.get()->frame_height : -1;}
-float Multimedia::fps() { return (is_video())? mmf.video_info.get()->fps_numerator / mmf.video_info.get()->fps_denominator;}
+bool Multimedia::is_video() const { return mmf.video.get() != nullptr;}
+int Multimedia::w() const { return (is_video())? mmf.video_info.get()->frame_width : -1;}
+int Multimedia::h() const { return (is_video())? mmf.video_info.get()->frame_height : -1;}
+float Multimedia::fps() const { return (is_video())? mmf.video_info.get()->fps_numerator / mmf.video_info.get()->fps_denominator;}
 
 // returns true if there's still more frames to draw
 bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
