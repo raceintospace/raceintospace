@@ -280,18 +280,18 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     yuv_buffer yuv;
     theora_decode_YUVout(mmf.video_ctx.get(), &yuv);
 
-    uint8_t* yp = &yuv.y;
+    uint8_t* yp = yuv.y;
     uint8_t* up;
     uint8_t* vp;
     switch (ovl.format) {
     case SDL_IYUV_OVERLAY:
-        up = &yuv.u;
-        vp = &yuv.v;
+        up = yuv.u;
+        vp = yuv.v;
         break;
         
     case SDL_YV12_OVERLAY:
-        up = &yuv.v;
-        vp = &yuv.u;
+        up = yuv.v;
+        vp = yuv.u;
         break;
 
     default:
@@ -299,25 +299,25 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
         return false;
     }
 
-    if (mmf.video_info->pixelformat != OC_PF_420) {
+    if (mmf.video_info.get()->pixelformat != OC_PF_420) {
         WARNING1("unknown/unsupported theora pixel format");
         return false;
     }
 
-    if (SDL_LockYUVOverlay(ovl) < 0) {
+    if (SDL_LockYUVOverlay(&ovl) < 0) {
         WARNING1("unable to lock overlay");
         return false;
     }
 
-    unsigned h = std::min(mmf.video_info.get()->frame_height, (unsigned)ovl->h);
-    unsigned w = std::min(mmf.video_info.get()->frame_width, (unsigned) ovl->w);
+    unsigned h = std::min(mmf.video_info.get()->frame_height, (unsigned)ovl.h);
+    unsigned w = std::min(mmf.video_info.get()->frame_width, (unsigned) ovl.w);
     unsigned xoff = mmf.video_info.get()->offset_x;
     unsigned yoff = mmf.video_info.get()->offset_y;
     
     /* luna goes first */
     for (unsigned i = 0; i < h; ++i) {
-        memcpy(ovl->pixels[0] + i * ovl->pitches[0],
-               yp + (i + yoff) * yuv->y_stride + xoff, w);
+        memcpy(ovl->pixels[0] + i * ovl.pitches[0],
+               yp + (i + yoff) * yuv.y_stride + xoff, w);
     }
 
     xoff /= 2;
@@ -328,13 +328,13 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
 
     /* handle 2x2 subsampled u and v planes */
     for (unsigned i = 0; i < h; ++i) {
-        memcpy(ovl->pixels[1] + i * ovl->pitches[1],
-               up + (i + yoff) * yuv->uv_stride + xoff, w);
-        memcpy(ovl->pixels[2] + i * ovl->pitches[2],
-               vp + (i + yoff) * yuv->uv_stride + xoff, w);
+        memcpy(ovl.pixels[1] + i * ovl.pitches[1],
+               up + (i + yoff) * yuv.uv_stride + xoff, w);
+        memcpy(ovl.pixels[2] + i * ovl.pitches[2],
+               vp + (i + yoff) * yuv.uv_stride + xoff, w);
     }
 
-    SDL_UnlockYUVOverlay(ovl);
+    SDL_UnlockYUVOverlay(&ovl);
     return true;
 }
 
