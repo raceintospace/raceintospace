@@ -206,10 +206,10 @@ int Multimedia::decode_audio(void* buf, int buflen)
 
                     // todo: std::clamp
                     if (val > std::numeric_limits<int16_t>::max()) {
-                        val = max_val;
+                        val = std::numeric_limits<int16_t>::max();
                     }
                     if (val < std::numeric_limits<int16_t>::min()) {
-                        val = min_val;
+                        val = std::numeric_limits<int16_t>::min();
                     }
 
                     // maybe replace this with an iterator?
