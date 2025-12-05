@@ -114,17 +114,17 @@ public:
     Multimedia& operator=(Multimedia&&);
     ~Multimedia();
 
-    bool is_good() const;
+    bool is_good();
 
-    bool is_audio() const;
-    int channels() const;
-    int audio_rate() const;
+    bool is_audio();
+    int channels();
+    int audio_rate();
     int decode_audio(void* buf, int buflen); // returns number of bytes written to buffer
 
-    bool is_video() const;
-    float fps() const;
-    int w() const;
-    int h() const;
+    bool is_video();
+    float fps();
+    int w();
+    int h();
     bool draw_video_frame(SDL_Overlay& ovl);
 
 private:
