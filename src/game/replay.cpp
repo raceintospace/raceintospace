@@ -213,7 +213,7 @@ void AbzFrame(int plr, int dx, int dy, int width, int height,
                                      return ms.MissionIdSequence == sequence;
                                 });
     // if step information is bogus, bail
-    if (Seq_iter == Sequence_container.end()) return;
+    if (Seq_iter == sSeq.end()) return;
 
     std::string video = Seq_iter->video.at(0) + ".ogg";
 
@@ -224,7 +224,7 @@ void AbzFrame(int plr, int dx, int dy, int width, int height,
         return; // if we failed to open video file, bail
     }
 
-    vidfile.draw_video_frame(display::graphics.videoOverlay());
+    vidfile.draw_video_frame(*display::graphics.videoOverlay());
 
     display::graphics.videoRect().x = dx;
     display::graphics.videoRect().y = dy;
