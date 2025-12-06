@@ -54,7 +54,6 @@ void Replay(char plr, int num,
             std::string Type)
 {
     std::vector<REPLAY> Rep;
-    std::vector<MissionSequenceKey> sSeq, fSeq;
 
     if (Type == "OOOO") { // replay the whole mission
         Rep = interimData.tempReplay.at((plr * 100) + num);
@@ -62,10 +61,8 @@ void Replay(char plr, int num,
         Rep.push_back({false, Type});
     }
 
-    mm_file vidfile;
-    float fps;
-
     // load json files that translate internal video types into filenames
+    std::vector<MissionSequenceKey> sSeq, fSeq;
     DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA)); // normal events, training montages
     DESERIALIZE_JSON_FILE(&fSeq, locate_file("fseq.json", FT_DATA)); // failures
 
@@ -112,15 +109,11 @@ void Replay(char plr, int num,
 
             INFO2("opening video file `%s'", video_filename.c_str());
 
-            if (mm_open_fp(&vidfile, sOpen(video_filename.c_str(), "rb", FT_VIDEO)) <= 0) {
+            Multimedia vidfile{sOpen(video_filename.c_str(), "rb", FT_VIDEO)};
+            if (!vidfile.is_good() || !vidfile.is_video()){
                 // if we fail to open video file, stop displaying videos
-                goto done;
-            }
-
-            /** \todo do not ignore width/height */
-            if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0) {
-                // if we fail at reading video info, stop displaying videos
-                goto done;
+                exit_replay = true;
+                break;
             }
 
             while (keep_going) {
@@ -131,7 +124,7 @@ void Replay(char plr, int num,
                 display::graphics.videoRect().h = height;
 
                 /** \todo track decoding time and adjust delays */
-                if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
+                if (vidfile.draw_video_frame(*display::graphics.videoOverlay())) {
                     // if video ends (or breaks) - exit loop, move on to the next one
                     break;
                 }
@@ -147,40 +140,29 @@ void Replay(char plr, int num,
                 }
 
                 /** \todo idle_loop is too inaccurate for this */
-                idle_loop_secs(1.0 / fps);
+                idle_loop_secs(1.0 / vidfile.fps());
             }
-
-            mm_close(&vidfile);
         }
         if (exit_replay) break;
     }
-
-done:
-    mm_close(&vidfile);
     display::graphics.videoRect().w = 0;
     display::graphics.videoRect().h = 0;
 }
 
-void
-DispBaby(int x, int y, int loc, char neww)
+void DispBaby(int x, int y, int loc, char neww)
 {
-    int i;
-    FILE *fin;
-    uint16_t *bot, off = 0;
-    int32_t locl;
-    display::AutoPal p(display::graphics.legacyScreen());
-
-    off = 224;
+    display::AutoPal p{display::graphics.legacyScreen()};
 
     display::LegacySurface boob(68, 46);
-    bot = (uint16_t *) boob.pixels();
+    uint16_t* bot = (uint16_t*) boob.pixels();
 
-    fin = sOpen("BABYPICX.CDR", "rb", FT_DATA);
-    locl = (int32_t) 1612 * loc;  // First Image
+    FILE* fin = sOpen("BABYPICX.CDR", "rb", FT_DATA);
+    int32_t locl = (int32_t) 1612 * loc;  // First Image
 
     fseek(fin, locl, SEEK_SET);
 
-    for (i = 0; i < 48; i++) {
+    uint16_t off = 224;
+    for (int i = 0; i < 48; i++) {
         p.pal[off * 3 + i] = 0;
     }
 
@@ -188,12 +170,12 @@ DispBaby(int x, int y, int loc, char neww)
     fread(boob.pixels(), 1564, 1, fin);
     fclose(fin);
 
-    for (i = 0; i < 782; i++) {
+    for (int i = 0; i < 782; i++) {
         bot[i + 782] = ((bot[i] & 0xF0F0) >> 4);
         bot[i] = (bot[i] & 0x0F0F);
     }
 
-    for (i = 0; i < 1564; i++) {
+    for (int i = 0; i < 1564; i++) {
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
     }
@@ -221,43 +203,31 @@ void AbzFrame(int plr, int dx, int dy, int width, int height,
 void AbzFrame(int plr, int dx, int dy, int width, int height,
               std::string sequence)
 {
-    int j = 0;
-    mm_file vidfile;
-    std::vector<struct MissionSequenceKey> sSeq;
+    // load JSON file that translates from internal sequence code into filename
+    std::vector<MissionSequenceKey> sSeq;
 
     DESERIALIZE_JSON_FILE(&sSeq, locate_file("seq.json", FT_DATA));
 
-    for (j = 0; j < sSeq.size(); j++) {
-        if (sSeq.at(j).MissionIdSequence == sequence) {
-            break;
-        }
-    }
+    auto Seq_iter = std::find_if(sSeq.begin(), sSeq.end(), 
+                                 [&](const MissionSequenceKey& ms){
+                                     return ms.MissionIdSequence == sequence;
+                                });
+    // if step information is bogus, bail
+    if (Seq_iter == sSeq.end()) return;
 
-    if (j == sSeq.size()) {
-        return;
-    }
-
-    std::string video = sSeq.at(j).video.at(0) + ".ogg";
+    std::string video = Seq_iter->video.at(0) + ".ogg";
 
     INFO2("opening video file `%s'", video.c_str());
 
-    if (mm_open_fp(&vidfile, sOpen(video.c_str(), "rb", FT_VIDEO)) <= 0) {
-        return;
+    Multimedia vidfile{sOpen(video.c_str(), "rb", FT_VIDEO)};
+    if (!vidfile.is_good() || !vidfile.is_video()) {
+        return; // if we failed to open video file, bail
     }
 
-    if (mm_video_info(&vidfile, NULL, NULL, NULL) <= 0) {
-        goto done;
-    }
-
-    if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
-        goto done;
-    }
+    vidfile.draw_video_frame(*display::graphics.videoOverlay());
 
     display::graphics.videoRect().x = dx;
     display::graphics.videoRect().y = dy;
     display::graphics.videoRect().w = width;
     display::graphics.videoRect().h = height;
-
-done:
-    mm_close(&vidfile);
 }
