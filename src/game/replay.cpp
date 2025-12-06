@@ -112,6 +112,7 @@ void Replay(char plr, int num,
             Multimedia vidfile{sOpen(video_filename.c_str(), "rb", FT_VIDEO)};
             if (!vidfile.is_good() || !vidfile.is_video()){
                 // if we fail to open video file, stop displaying videos
+                WARNING1("unable to open the video from replay");
                 exit_replay = true;
                 break;
             }
@@ -124,8 +125,9 @@ void Replay(char plr, int num,
                 display::graphics.videoRect().h = height;
 
                 /** \todo track decoding time and adjust delays */
-                if (vidfile.draw_video_frame(*display::graphics.videoOverlay())) {
+                if (vidfile.draw_video_frame(*display::graphics.videoOverlay()) == false) {
                     // if video ends (or breaks) - exit loop, move on to the next one
+                    if (!vidfile.is_good()) {WARNING1("error in drawing the replay frame");}
                     break;
                 }
 
