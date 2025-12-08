@@ -842,7 +842,7 @@ bool PlayNewsAnim(Multimedia& fp)
         skip_frame = 1;
     }
 
-    if (fp.draw_video_frame(display::graphics.newsOverlay()) == false) {
+    if (fp.draw_video_frame(*display::graphics.newsOverlay()) == false) {
         MaxFrame = Frame;
         return true;
     }
@@ -926,7 +926,7 @@ void LoadNewsAnim(int plr, bool bw, int type, int Mode, Multimedia& fp)
     // Specs: Display Single Frame
     if (Mode == FIRST_FRAME && fp.is_video()) {
         /* XXX: error checking */
-        fp.draw_video_frame(display::graphics.newsOverlay());
+        fp.draw_video_frame(*display::graphics.newsOverlay());
     }
 
     // *************** TCS001 my kludge (tom) 3/15/94
@@ -939,7 +939,7 @@ void LoadNewsAnim(int plr, bool bw, int type, int Mode, Multimedia& fp)
 
         /* XXX: error checking */
         if (fp.is_video()) {
-            fp.draw_video_frame(display::graphics.newsOverlay());
+            fp.draw_video_frame(*display::graphics.newsOverlay());
         }
 
         /* This fade was too long given current fades impl. */
