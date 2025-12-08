@@ -421,7 +421,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
             if (hold_count == 0) {
 
                 /** \todo track decoding time and adjust delays */
-                if (vidfile.draw_video_frame(display::graphics.videoOverlay()) == false) {
+                if (vidfile.draw_video_frame(*display::graphics.videoOverlay()) == false) {
                     break;
                 }
 
