@@ -98,24 +98,20 @@ void OpenNews(char plr, char *buf, int bud);
 void DispNews(char plr, char *src, char *dest);
 void DrawNText(char plr, char got);
 char ResolveEvent(char plr);
-int PlayNewsAnim(mm_file *);
-mm_file *LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp);
+bool PlayNewsAnim(Multimedia&);
+void LoadNewsAnim(int plr, bool bw, int type, int Mode, Multimedia& fp);
 void ShowEvt(char plr, char crd);
 void LoadEventData(char plr);
 void LoadNewsData(char plr);
 
 
-void
-GoNews(char plr)
+void GoNews(char plr)
 {
-    int i, j;
-    struct rNews *list;
-
     memset(Name, 0x00, sizeof Name);
     memset(buffer, 0x00, 20480);   // clear buffer
     display::graphics.setForegroundColor(1);
 
-    j = ResolveEvent(plr);
+    int j = ResolveEvent(plr);
 
     if (j > 0) {
         Data->Events[Data->Count] = j + 99;
@@ -130,9 +126,9 @@ GoNews(char plr)
 
     j = 0;
     memset(buffer + 6000, 0x00, 8000);  // clear memory
-    list = (struct rNews *)(buffer + 6000);
+    rNews* list = (struct rNews *)(buffer + 6000);
 
-    for (i = 0; i < (int) strlen(buffer); i++) {
+    for (int i = 0, len = (int)strlen(buffer); i < len; i++) {
         if (buffer[i] == 'x') {
             list[i].chrs = j;
             list[i].offset = i;
@@ -164,27 +160,21 @@ void OpenNews(char plr, char *buf, int bud)
     //Astronaut info
     LoadNewsData(plr);
     
-    int i = 0; // counter
-
+    bufsize = strlen(buf);
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
-            i++;
+            strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
         }
     }
 
     // Nauts in the news....
-    bufsize = strlen(buf);
-    
-    if (i > 0) {
-        strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
-    }
     
     for (int j = 0; j < Data->P[plr].AstroCount; j++) {
         if (Data->P[plr].Pool[j].Special > 0) {
             // 12 ideas
             bufsize = strlen(buf);
             strcpy(&buf[bufsize], Data->P[plr].Pool[j].Name); // Copy Naut Name
-            i = Data->P[plr].Pool[j].Special;
+            int i = Data->P[plr].Pool[j].Special;
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], naut_news[i].c_str(), naut_news[i].size());
         }
@@ -196,7 +186,7 @@ void OpenNews(char plr, char *buf, int bud)
              (Data->P[plr].Pool[j].Special > 0 && 
              (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9)) ) {
             //13 other things
-            i = Data->P[plr].Pool[j].RetirementReason - 1;
+            int i = Data->P[plr].Pool[j].RetirementReason - 1;
 
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], reasons[i].c_str(), reasons[i].size());
@@ -291,15 +281,16 @@ void OpenNews(char plr, char *buf, int bud)
 
     bufsize = strlen(buf);
 
+    int news_idx;
     if (plr == 0) {
         // Pool of 6 us news per year
-        i = (Data->Year - 57) * 6 + Data->Season * 3 + brandom(3) + 1;
+        news_idx = (Data->Year - 57) * 6 + Data->Season * 3 + brandom(3) + 1;
     } else {
         // Pool of 4 soviet news per year
-        i = (Data->Year - 57) * 4 + Data->Season * 2 + brandom(2) + 1;
+        news_idx = (Data->Year - 57) * 4 + Data->Season * 2 + brandom(2) + 1;
     }
 
-    strncpy(&buf[bufsize], news[i].c_str(), news[i].size());
+    strncpy(&buf[bufsize], news[news_idx].c_str(), news[news_idx].size());
     strcat(buf, "x");
     bufsize = strlen(buf);
     
@@ -308,8 +299,7 @@ void OpenNews(char plr, char *buf, int bud)
 }
 
 
-void
-DispNews(char plr, char *src, char *dest)
+void DispNews(char plr, char *src, char *dest)
 {
     int j = 0, k = 0;
 
@@ -385,42 +375,29 @@ DispNews(char plr, char *src, char *dest)
                 if (Data->Year <= 59) {
                     strcpy(&Name[0], "EISENHOWER");
                 }
-
-                if (Data->Year >= 60 && Data->Year <= 63) {
+                else if (Data->Year >= 60 && Data->Year <= 63) {
                     strcpy(&Name[0], "KENNEDY");
                 }
-
-                if (Data->Year >= 64 && Data->Year <= 67) {
+                else if (Data->Year >= 64 && Data->Year <= 67) {
                     strcpy(&Name[0], "JOHNSON");
                 }
-
-                if (Data->Year >= 68 && Data->Year <= 73) {
+                else if (Data->Year >= 68 && Data->Year <= 73) {
                     strcpy(&Name[0], "NIXON");
                 }
-
-                if (Data->Year >= 74 && Data->Year <= 75) {
+                else if (Data->Year >= 74 && Data->Year <= 75) {
                     strcpy(&Name[0], "FORD");
                 }
-
-                if (Data->Year >= 76 && Data->Year <= 79) {
+                else {
                     strcpy(&Name[0], "CARTER");
                 }
             }
 
             if (plr == 1) {
-                if (Data->Year < 64) {
+                if (Data->Year < 64
+                    || (Data->Year == 64 && Data->Season == 0)) {
                     strcpy(&Name[0], "KHRUSHCHEV");
                 }
-
-                if (Data->Year == 64 && Data->Season == 0) {
-                    strcpy(&Name[0], "KHRUSHCHEV");
-                }
-
-                if (Data->Year == 64 && Data->Season == 1) {
-                    strcpy(&Name[0], "BREZHNEV");
-                }
-
-                if (Data->Year > 65) {
+                else {
                     strcpy(&Name[0], "BREZHNEV");
                 }
             }
@@ -460,88 +437,68 @@ DispNews(char plr, char *src, char *dest)
 }
 
 
-void
-DrawNText(char plr, char got)
+void DrawNText(char plr, char got)
 {
-    int xx = 12, yy = 128, i;
-    char *buf;
-
-    buf = buffer;
-    display::graphics.setForegroundColor(1);
-
-    for (i = 0; i < got; i++) {
+    char* buf = buffer;
+    for (int i = 0; i < got; i++) {
         while (*buf != 'x') {
             buf++;
         }
-
         buf++;
-
-        if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
-            display::graphics.setForegroundColor(11);
-        }
-
-        if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
-            display::graphics.setForegroundColor(12);
-        }
-
-        if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
-            display::graphics.setForegroundColor(11);
-        }
-
-        if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
-            display::graphics.setForegroundColor(12);
-        }
-
-        if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
-            display::graphics.setForegroundColor(11);
-        }
-
-        if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
-            display::graphics.setForegroundColor(11);
-        }
-
-        if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
-            display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
-        }
     }
 
-    for (i = 0; i < 8; i++) {
+    if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
+        display::graphics.setForegroundColor(11);
+    }
+    else if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
+        display::graphics.setForegroundColor(12);
+    }
+    else if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
+        display::graphics.setForegroundColor(11);
+    }
+    else if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
+        display::graphics.setForegroundColor(12);
+    }
+    else if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
+        display::graphics.setForegroundColor(11);
+    }
+    else if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
+        display::graphics.setForegroundColor(11);
+    }
+    else if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
+        display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
+    }
+
+    int xx = 12, yy = 128;
+    for (int i = 0; i < 8; i++) {
         fill_rectangle(5, yy - 7, 296, yy + 1, 7 + 3 * plr);
         grMoveTo(xx, yy);
 
         if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
+        else if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
             display::graphics.setForegroundColor(12);
         }
-
-        if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
+        else if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
+        else if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
             display::graphics.setForegroundColor(12);
         }
-
-        if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
+        else if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "AND THAT'S THE NEWS", 19) == 0) {
+        else if (strncmp(&buf[0], "AND THAT'S THE NEWS", 19) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "THIS CONCLUDES OUR NEWS", 23) == 0) {
+        else if (strncmp(&buf[0], "THIS CONCLUDES OUR NEWS", 23) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
+        else if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
             display::graphics.setForegroundColor(11);
         }
-
-        if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
+        else if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
             display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
         }
 
@@ -555,25 +512,16 @@ DrawNText(char plr, char got)
         buf++;
 
         if (*buf == '\0') {
-            i = 9;
+            break;
         }
     }
-
 }
 
 
-void
-News(char plr)
+void News(char plr)
 {
-    int bline = 0, ctop = 0, i;
-    char cYr[5];
-    char loc = 0;
-    uint8_t Status = 0, BW = 0;
-    mm_file video_file, *fp = &video_file;
+    bool BW = (Data->Year <= 63);
 
-    BW = (Data->Year <= 63);
-
-    memset(fp, 0, sizeof(*fp));
 
     // Autosave Fix
     // An autosave stores the state of the game at the time it was
@@ -603,19 +551,20 @@ News(char plr)
 
     if ((plr == 0 && LOAD_US == 0) || (plr == 1 && LOAD_SV == 0)) {
 
-        snprintf(cYr, sizeof(cYr), "%d", 1900 + Data->Year);
-
         if (Data->Season == 1) {
             draw_heading(42 + (BW * 200), 40 - (plr * 4), "FALL", 0, -1);
         } else {
             draw_heading(37 + (BW * 200), 40 - (plr * 4), "SPRING", 0, -1);
         }
 
+        char cYr[5];
+        snprintf(cYr, sizeof(cYr), "%d", 1900 + Data->Year);
         draw_heading(48 + (BW * 200), 63 - (4 * plr), &cYr[0], 0, -1);
 
     }
 
-    for (i = 0; i < (int) strlen(buffer); i++) {
+    int bline = 0;
+    for (int i = 0, len=(int)strlen(buffer); i < len; i++) {
         if (buffer[i] == 'x') {
             bline++;
         }
@@ -628,35 +577,37 @@ News(char plr)
     music_start_loop((plr % 2) ? M_NEW1950 : M_NEW1970, false);
 
     /* Tom's News kludge, also open and load first anim */
-    fp = LoadNewsAnim(plr, BW, NEWS_ANGLE, TOMS_BUGFIX, fp);
-    loc = 1;
-    Status = 0;
+    Multimedia video_file{};
+    LoadNewsAnim(plr, BW, NEWS_ANGLE, TOMS_BUGFIX, video_file);
+    char loc = 1;
+    bool Status = 0;
 
     helpText = "i002";
     WaitForMouseUp();
 
+    int ctop = 0;
     while (1) {
         key = 0;
         GetMouse_fast();
 
-        if (!(loc == 0 && Status == 1)) {
+        if (!(loc == 0 && Status)) {
             NUpdateVoice();
         }
 
-        i = AnimSoundCheck();
+        int i = AnimSoundCheck(); // bool?
 
-        if (Status == 1 || (loc == 3 && i == 1))
+        if (Status || (loc == 3 && i == 1))
             switch (loc) {
             case 0:        //: Angle In
                 AnimIndex = 255;
-                LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
-                Status = 0;
+                LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, video_file);
+                Status = false;
                 loc++;
                 break;
 
             case 1:        //: Intro
-                LoadNewsAnim(plr, BW, NEWS_OPENING, FIRST_FRAME, fp);
-                Status = 0;
+                LoadNewsAnim(plr, BW, NEWS_OPENING, FIRST_FRAME, video_file);
+                Status = false;
 
                 if (AnimIndex == 5) {
 
@@ -665,10 +616,10 @@ News(char plr)
                 }
 
                 NGetVoice(plr, 0);
-                PlayNewsAnim(fp);
-                PlayNewsAnim(fp);
-                PlayNewsAnim(fp);
-                PlayNewsAnim(fp);
+                PlayNewsAnim(video_file);
+                PlayNewsAnim(video_file);
+                PlayNewsAnim(video_file);
+                PlayNewsAnim(video_file);
                 loc++;
                 break;
 
@@ -677,29 +628,31 @@ News(char plr)
 
                 if (IsChannelMute(AV_SOUND_CHANNEL)) {
                     /* if no sound then just skip event picture */
-                    Status = 1;
+                    Status = true;
                     break;
                 }
 
                 NGetVoice(plr, Data->Events[Data->Count] + 2);
-                Status = 0;
-                i = bline;
-                ShowEvt(plr, Data->Events[Data->Count]);
-                bline = i;
+                Status = false;
+                {
+                    int tmp = bline;
+                    ShowEvt(plr, Data->Events[Data->Count]);
+                    bline = tmp;
+                }
                 break;
 
             case 3:        //: Close
-                LoadNewsAnim(plr, BW, NEWS_CLOSING, FIRST_FRAME, fp);
-                Status = 0;
+                LoadNewsAnim(plr, BW, NEWS_CLOSING, FIRST_FRAME, video_file);
+                Status = false;
                 NGetVoice(plr, 1);
 
                 if (plr == 0) {
                     // This is done to sync with audio
-                    PlayNewsAnim(fp);
-                    PlayNewsAnim(fp);
-                    PlayNewsAnim(fp);
-                    PlayNewsAnim(fp);
-                    PlayNewsAnim(fp);
+                    PlayNewsAnim(video_file);
+                    PlayNewsAnim(video_file);
+                    PlayNewsAnim(video_file);
+                    PlayNewsAnim(video_file);
+                    PlayNewsAnim(video_file);
                 }
 
                 loc++;
@@ -709,13 +662,13 @@ News(char plr)
             case 4:        //: Angle Out
                 music_stop();  // Should have ended, but force stop.
                 music_start_loop((plr % 2) ? M_NEW1950 : M_NEW1970, false);
-                LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, fp);
-                Status = 0;
+                LoadNewsAnim(plr, BW, NEWS_ANGLE, FIRST_FRAME, video_file);
+                Status = false;
                 loc++;
                 break;
 
             case 5:        //: Event (no sound)
-                Status = 0;
+                Status = false;
                 loc++;
 
                 if (AnimIndex == 9) {
@@ -729,11 +682,11 @@ News(char plr)
 
                 }
 
-                i = bline;
-
-                ShowEvt(plr, Data->Events[Data->Count]);
-
-                bline = i;
+                {
+                    int tmp = bline;
+                    ShowEvt(plr, Data->Events[Data->Count]);
+                    bline = tmp;
+                }
 
                 break;
 
@@ -742,7 +695,7 @@ News(char plr)
             };
 
         if (loc != 3 && loc != 6 && !Status) {
-            Status = PlayNewsAnim(fp);
+            Status = PlayNewsAnim(video_file);
         } else {
             idle_loop_secs(.05);    /* was: .125 */
         }
@@ -751,7 +704,7 @@ News(char plr)
         if (key == 'R' && loc == 6) {
             stop_voice();
             loc = 0;
-            Status = 1;
+            Status = true;
         }
 
         if (ctop > 0 && key == K_HOME) {
@@ -822,16 +775,13 @@ News(char plr)
 //   gr_sync ();
     }
 
-    mm_close(fp);
-
     display::graphics.newsRect().w = 0;
 
     display::graphics.newsRect().h = 0;
 }
 
 
-void
-AIEvent(char plr)
+void AIEvent(char plr)
 {
     int turn = 2 * (Data->Year - 57) + Data->Season + 1;  // start at turn 1
     bool freshNews = (turn > Data->P[plr].eCount);
@@ -847,12 +797,11 @@ AIEvent(char plr)
 
 // ResolveEvent seems to set a flag in the BadCard array
 // and return the index into that array
-char
-ResolveEvent(char plr)
+char ResolveEvent(char plr)
 {
-    int bad, ctr = 0;
+    int ctr = 0;
 
-    bad = REvent(plr);
+    int bad = REvent(plr);
 
     if (bad) {
         // News event was bad, find an open slot to record the bad event
@@ -877,15 +826,14 @@ ResolveEvent(char plr)
 
 
 /* modified to return true if end of anim */
-int
-PlayNewsAnim(mm_file *fp)
+bool PlayNewsAnim(Multimedia& fp)
 {
     double delta;
     double fps = 15;            /* TODO hardcoded fps here! */
     int skip_frame = 0;
 
     if (Frame == MaxFrame) {
-        return 1;
+        return true;
     }
 
     delta = get_time() - load_news_anim_start;
@@ -894,9 +842,9 @@ PlayNewsAnim(mm_file *fp)
         skip_frame = 1;
     }
 
-    if (mm_decode_video(fp, display::graphics.newsOverlay()) <= 0) {
+    if (fp.draw_video_frame(*display::graphics.newsOverlay()) == false) {
         MaxFrame = Frame;
-        return 1;
+        return true;
     }
 
     /* TODO skipping frames should not use decode_video */
@@ -912,12 +860,11 @@ PlayNewsAnim(mm_file *fp)
 
     Frame += 1;
 
-    return 0;
+    return false;
 }
 
 
-static void
-DrawTopNewsBox(int player)
+static void DrawTopNewsBox(int player)
 {
     OutBox(0, 0, 319, 113);
     display::graphics.legacyScreen()->outlineRect(1, 1, 318, 112, 3);
@@ -932,8 +879,7 @@ DrawTopNewsBox(int player)
 }
 
 
-static void
-DrawBottomNewsBox(int player)
+static void DrawBottomNewsBox(int player)
 {
     ShBox(0, 115, 319, 199);
     InBox(4, 118, 297, 196);
@@ -948,16 +894,13 @@ DrawBottomNewsBox(int player)
 }
 
 
-mm_file *
-LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
+void LoadNewsAnim(int plr, bool bw, int type, int Mode, Multimedia& fp)
 {
     int Index = news_index[plr][bw][type];
 
     if (AnimIndex != Index) {
         char fname[100];
-        unsigned h = 0, w = 0;
 
-        mm_close(fp);
         display::graphics.newsRect().w = 0;
         display::graphics.newsRect().h = 0;
 
@@ -967,12 +910,11 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
                  news_shots[type]);
 
         /* XXX error checking */
-        mm_open_fp(fp, sOpen(fname, "rb", FT_VIDEO));
+        fp = Multimedia{sOpen(fname, "rb", FT_VIDEO)};
 
         /* XXX we know fps anyway */
-        mm_video_info(fp, &w, &h, NULL);
-        display::graphics.newsRect().h = h;
-        display::graphics.newsRect().w = w;
+        display::graphics.newsRect().h = fp.h();
+        display::graphics.newsRect().w = fp.w();
         display::graphics.newsRect().x = 4;
         display::graphics.newsRect().y = 4;
     }
@@ -982,9 +924,9 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     MaxFrame = 0;
 
     // Specs: Display Single Frame
-    if (Mode == FIRST_FRAME && fp->video) {
+    if (Mode == FIRST_FRAME && fp.is_video()) {
         /* XXX: error checking */
-        mm_decode_video(fp, display::graphics.newsOverlay());
+        fp.draw_video_frame(*display::graphics.newsOverlay());
     }
 
     // *************** TCS001 my kludge (tom) 3/15/94
@@ -996,8 +938,8 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
         DrawBottomNewsBox(plr);
 
         /* XXX: error checking */
-        if (fp->video) {
-            mm_decode_video(fp, display::graphics.newsOverlay());
+        if (fp.is_video()) {
+            fp.draw_video_frame(*display::graphics.newsOverlay());
         }
 
         /* This fade was too long given current fades impl. */
@@ -1005,8 +947,6 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
     }
 
     load_news_anim_start = get_time();
-
-    return fp;
 }
 
 
@@ -1020,8 +960,7 @@ LoadNewsAnim(int plr, int bw, int type, int Mode, mm_file *fp)
  * \param plr  0 for USA event images, 1 for USSR event images.
  * \param crd  the index of the news event (0-114).
  */
-void
-ShowEvt(char plr, char crd)
+void ShowEvt(char plr, char crd)
 {
     // Clear out the palette from color index 32 onward.
     {

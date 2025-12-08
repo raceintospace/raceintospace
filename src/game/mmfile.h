@@ -110,7 +110,7 @@ private:
     ogg_page last_read;
 
 public:
-    Multimedia(FILE* fp);
+    Multimedia(FILE* fp = nullptr);
     Multimedia& operator=(Multimedia&&);
     ~Multimedia();
 
