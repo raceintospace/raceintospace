@@ -99,14 +99,14 @@ char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, int clock, int mode, int time);
-void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
-            const std::vector<struct Infin> &Mob,
-            const std::vector<struct OF> &Mob2);
+void DoPack(char plr, FILE* ffin, char mode, char* cde, char* fName,
+            const std::vector<struct Infin>& Mob,
+            const std::vector<struct OF>& Mob2);
 void GuyDisp(int xa, int ya, Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
 BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step);
-int ImportInfin(FILE *fin, struct Infin &target);
-int ImportOF(FILE *fin, struct OF &target);
+int ImportInfin(FILE* fin, Infin& target);
+int ImportOF(FILE* fin, OF& target);
 void InRFBox(int a, int b, int c, int d, int col);
 std::string getEquipAnimID(char plr, const MisEval& step);
 int getEquipAnimIndex(std::string name);
@@ -126,22 +126,15 @@ void loadIndexEntry();
  * \param Seq Sequence-Code for the movies (Mev[STEP].Name + XFails.fail)
  * \param mode mode 1 branches to fseq.dat so it's probably failure. However mode 2 is defined by a female 'naut's presence
  */
-void PlaySequence(char plr, int step, const char *InSeq, char mode)
+void PlaySequence(char plr, int step, const char* InSeq, char mode)
 {
     //DEBUG1("->PlaySequence()");
     DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
     int i, j, k;
-    unsigned int max;
-    char lnch = 0;
     char AEPT, BABY, Tst2, Tst3;
-    unsigned char sts = 0, fem = 0;
     FILE *ffin, *nfin;
-    char err = 0;
-    mm_file vidfile;
-    FILE *mmfp;
-    float fps;
-    std::vector<struct Infin> Mob;
-    std::vector<struct OF> Mob2;
+    std::vector<Infin> Mob;
+    std::vector<OF> Mob2;
     std::string ID;
 
     // since Seq apparently needs to be mutable, copy the input parameter
@@ -160,11 +153,12 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     //Specs: female 'naut kludge
+	bool fem;
     if (mode == 2) {
-        fem = 1;  //Spec: additional search param.
+        fem = true;  //Spec: additional search param.
         mode = 0;
     } else {
-        fem = 0;
+        fem = false;
     }
 
     //Specs: LEM Activities Kludge
@@ -235,11 +229,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     //Specs: launch sync
-    if (Seq[0] == '#') {
-        lnch = 1;
-    } else {
-        lnch = 0;
-    }
+	bool lnch = (Seq[0] == '#');
 
     if (Seq[0] == 'A' || Seq[0] == 'E' || Seq[0] == 'P' || Seq[0] == 'T' || Seq[0] == '#') {
         AEPT = 1;
@@ -247,6 +237,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         AEPT = 0;
     }
 
+	bool err = false;
     if (mode == 1) {
 
         /* i: the first element in fSeq belonging to the right step */
@@ -257,9 +248,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         }
 
         if (i == Assets->fSeq.size()) {
-            err = 1;
+            err = true;
         }
-
     }
 
     if (mode == 0) {
@@ -270,7 +260,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             j++;
 
             if (j == Assets->sSeq.size()) {
-                err = 1;
+                err = true;
                 break;
             } else {
                 ID = Assets->sSeq.at(j).MissionIdSequence;
@@ -278,12 +268,12 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         }
 
         if (ID[2] - 0x30 == 1) {
-            if (fem == 0) {
+            if (!fem) {
                 j++;
                 ID = Assets->sSeq.at(j).MissionIdSequence;
             }
         }
-    } else if (err == 0) {
+    } else if (!err) {
         j = i;
         ID = Assets->fSeq.at(j).MissionIdSequence;
 
@@ -291,12 +281,12 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             j++;
 
             if (j == Assets->fSeq.size()) {
-                err = 1;
+                err = true;
                 break;
             } else {
                 if (strncmp(Assets->fSeq.at(j).MissionStep.c_str(), Mev[step].FName, 4) != 0) {
                     // j is already entering the next MissionStep
-                    err = 1;
+                    err = true;
                     break;
                 } else {
                     ID = Assets->fSeq.at(j).MissionIdSequence;
@@ -314,7 +304,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     // Specs: Sequence Variation :
     //::::::::::::::::::::::::::::
     if (ID[0] - 0x30 != 1) {
-        max = (unsigned)(ID[0] - 0x30);
+        unsigned int max = (unsigned)(ID[0] - 0x30);
         j += Mev[step].rnum % max;
 
         if (mode == 0) {
@@ -356,8 +346,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         Mob.reserve(CLIF_TABLE);
 
         // Specs: First Table
-        for (i = 0; i < CLIF_TABLE; i++) {
-            struct Infin entry;
+        for (int i = 0; i < CLIF_TABLE; i++) {
+            Infin entry;
             ImportInfin(nfin, entry);
             Mob.push_back(entry);
         }
@@ -366,8 +356,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         Mob2.reserve(SCND_TABLE);
 
         // Specs: Second Table
-        for (i = 0; i < SCND_TABLE; i++) {
-            struct OF entry;
+        for (int i = 0; i < SCND_TABLE; i++) {
+            OF entry;
             ImportOF(nfin, entry);
             entry.Name[MIN(sizeof(entry.Name), strlen(entry.Name)) - 3] = '-'; // patch
             Mob2.push_back(entry);
@@ -378,8 +368,8 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         nfin = open_gamedat("BABYNORM.CDR");
         Mob.reserve(NORM_TABLE);
 
-        for (i = 0; i < NORM_TABLE; i++) {
-            struct Infin entry;
+        for (int i = 0; i < NORM_TABLE; i++) {
+            Infin entry;
             ImportInfin(nfin, entry);
             Mob.push_back(entry);
         }
@@ -387,15 +377,14 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
         fclose(nfin);
     }
 
-    i = 0;
-
-    max = ID[1] - '0';
     INFO2("playing sequence ID `%s'", ID.c_str());
 
     bool keep_going = true;
     k = j;
+    unsigned char sts = 0;
+    int max = ID[1] - '0';
 
-    while (keep_going && i < (int)max) {
+    for(int i=0; keep_going && i < max; ++i) {
         char seq_name[20];
         char name[20]; /** \todo assumption about seq_filename len */
 
@@ -413,23 +402,15 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
 
         snprintf(name, sizeof(name), "%s.ogg", seq_name);
 
-        mmfp = sOpen(name, "rb", FT_VIDEO);
-
         INFO2("opening video file `%s'", name);
 
-        if (mm_open_fp(&vidfile, mmfp) <= 0) {
+		Multimedia vidfile{sOpen(name, "rb", FT_VIDEO)};
+        if (!vidfile.is_good() || !vidfile.is_video()) {
             break;
         }
 
-        /** \todo do not ignore width/height */
-        if (mm_video_info(&vidfile, NULL, NULL, &fps) <= 0) {
-            break;
-        }
-
-        j = 0;
-
+        int j = 0;
         int hold_count = 0;
-
         while (keep_going) {
             av_step();
 
@@ -440,7 +421,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             if (hold_count == 0) {
 
                 /** \todo track decoding time and adjust delays */
-                if (mm_decode_video(&vidfile, display::graphics.videoOverlay()) <= 0) {
+                if (vidfile.draw_video_frame(*display::graphics.videoOverlay()) == false) {
                     break;
                 }
 
@@ -487,7 +468,7 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
             }
 
             /** \todo idle_loop is too inaccurate for this */
-            idle_loop_secs(1.0 / fps);
+            idle_loop_secs(1.0 / vidfile.fps());
 
             if (sts < 23) {
                 if (BABY == 0 && !fullscreenMissionPlayback) {
@@ -513,14 +494,10 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
                 j++;
             }
         }
-
-        mm_close(&vidfile);
-
-        i++;
     }
 
     if (!IsChannelMute(AV_SOUND_CHANNEL)) {
-        if (lnch == 0) {
+        if (!lnch) {
             play_audio("wh", 0);
         }
 
@@ -548,7 +525,6 @@ void PlaySequence(char plr, int step, const char *InSeq, char mode)
     }
 
     fclose(ffin);  // Specs: babypicx.cdr
-    mm_close(&vidfile);
     display::graphics.videoRect().h = 0;
     display::graphics.videoRect().w = 0;
     DEBUG1("<-PlaySequence()");
@@ -663,7 +639,6 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 {
     int x, y, attempt, which, mx2, mx1;
     uint16_t *bot, off = 0;
-    int32_t locl;
     static char kk = 0, bub = 0;
     char Val1[12]{}, Val2[12]{}, loc;
 
@@ -848,15 +823,13 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
         }
     }
 
-    //Specs: which holds baby num
-    locl = (int32_t) 1612 * which;
-
     if (which < 580) {
         display::AutoPal p(display::graphics.legacyScreen());
         memset(&p.pal[off * 3], 0x00, 48);
     }
 
-    fseek(ffin, (int32_t)locl, SEEK_SET);
+    int32_t location_in_file = 1612*which; //Specs: which holds baby num
+    fseek(ffin, location_in_file, SEEK_SET);
     {
         display::AutoPal p(display::graphics.legacyScreen());
         fread(&p.pal[off * 3], 48, 1, ffin);
@@ -923,9 +896,6 @@ void GuyDisp(int xa, int ya, Astros* Guy)
  */
 char FailureMode(char plr, int prelim, char *text)
 {
-    int i, j, k;
-    double last_secs;
-    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
     FadeOut(2, 10, 0, 0);
 
@@ -946,7 +916,7 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(1);
     MisStep(9, 34, Mev[STEP].loc);
-    e = GetEquipment(Mev[STEP]);
+    Equipment* e = GetEquipment(Mev[STEP]);
     draw_string(9, 41, "MISSION STEP: ");
     draw_number(0, 0, STEP);
     draw_string(9, 48, e->Name);
@@ -1098,13 +1068,13 @@ char FailureMode(char plr, int prelim, char *text)
 
     display::graphics.setForegroundColor(11);
 
-    j = 0;
+    int j = 0;
 
-    k = 163;
+    int k = 163;
 
     grMoveTo(12, k);
 
-    for (i = 0; i < 200; i++) {
+    for (int i = 0; i < 200; i++) {
         if (j > 40 && text[i] == ' ') {
             k += 7;
             j = 0;
@@ -1140,10 +1110,11 @@ char FailureMode(char plr, int prelim, char *text)
     int index = getEquipAnimIndex(ID);
     loadFrames(index);
     
+    double last_secs;
     if (index > -1) {
         last_secs = get_time();
         playEquipAnim(index);
-    }
+    } // else error??
     
     /*
     if (modelAnim) {
@@ -1215,29 +1186,26 @@ void FirstManOnMoon(char plr, char isAI, char misNum,
                     const MisEval& step)
 {
     int nautsOnMoon = 0;
-    Equipment *e = GetEquipment(step);
+    Equipment* e = GetEquipment(step);
 
     dayOnMoon = brandom(daysAMonth[Data->P[plr].Mission[step.pad].Month]) + 1;
 
     if (misNum == Mission_Soyuz_LL && plr == 1) {
         nautsOnMoon = 3;
     }
-
     //Direct Ascent
     if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name) == 0) {
         nautsOnMoon = 4;
     }
-
     //2 men LL
-    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
+    else if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 2;
     }
-
     //1 man LL
-    if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
+    else if (strcmp(e->Name, Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Name) == 0) {
         nautsOnMoon = 1;
     }
-
+    //else error??
 
     if (nautsOnMoon == 1) {
         manOnMoon = 2;
@@ -1256,14 +1224,13 @@ void FirstManOnMoon(char plr, char isAI, char misNum,
 
 // TODO: Move drawing the interface into its own function distinct
 // from the main control loop.
-char DrawMoonSelection(char plr, char nauts, const MisEval &step)
+char DrawMoonSelection(char plr, char nauts, const MisEval& step)
 {
     // TODO: Using MX as a copy of MA to avoid modifying it is nice,
     // but it never gets modified and a global var (MA) is still being
     // directly accessed.
     MisAst MX[2][4];
     double last_secs;
-    Equipment *e;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
@@ -1460,7 +1427,7 @@ BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step)
  * \param fin  Pointer to a FILE object that specifies an input stream.
  * \param target  The destination for the read data.
  */
-int ImportInfin(FILE *fin, struct Infin &target)
+int ImportInfin(FILE* fin, Infin& target)
 {
     // struct Infin {
     //     char Code[9], Qty;
@@ -1485,7 +1452,7 @@ int ImportInfin(FILE *fin, struct Infin &target)
  * \param target  The destination for the read data
  * \return
  */
-int ImportOF(FILE *fin, struct OF &target)
+int ImportOF(FILE* fin, OF& target)
 {
     // struct OF {
     //     char Name[8];
@@ -1506,7 +1473,7 @@ void InRFBox(int a, int b, int c, int d, int col)
 }
 
 
-std::string getEquipAnimID(char plr, const struct MisEval &step) 
+std::string getEquipAnimID(char plr, const MisEval& step) 
 {
     std::string name("XXXX");
 
