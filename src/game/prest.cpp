@@ -41,7 +41,6 @@ int Check_Photo(void);
 int Check_Dock(int limit);
 int PrestMap(int val);
 int PrestCheck(char plr);
-char Did_Fail(void);
 char PosGoal(char *PVal);
 char NegGoal(char *PVal);
 char SupGoal(char *PVal);
@@ -617,44 +616,6 @@ char Set_Goal(char plr, char which, char control)
     default:
         return 0;
     }
-}
-
-/** Only sets negative for highest failed goal step
- *
- * checks if entire mission was a failure
- */
-char Did_Fail(void)
-{
-    char bra = 0;
-    unsigned int fail = 0;
-
-    for (char i = 0; i != 0x7f; i = Mev[i].trace) {
-        if (Mev[i].StepInfo >= 5000) {
-            return -1;
-        }
-
-        if (Mev[i].StepInfo >= 4000 && Mev[i].StepInfo <= 4999) {
-            return -1;
-        }
-
-        if (Mev[i].StepInfo >= 3000 && Mev[i].StepInfo <= 3999) {
-            return -1;
-        }
-
-        if (Mev[i].StepInfo >= 2000 && Mev[i].StepInfo <= 2999) {
-            fail += 10;
-        }
-
-        if (Mev[i].StepInfo >= 1000 && Mev[i].StepInfo <= 1999) {
-            fail += 1;
-        }
-
-        if (Mev[i].trace != (i + 1)) {
-            return -1;
-        }
-    }
-
-    return (fail < 90)? 1 : -1;
 }
 
 /*
