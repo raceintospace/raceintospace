@@ -425,8 +425,27 @@ extern struct LogAppender *log_defaultLogAppender;
 
 /** @name Logging Macros */
 //@{
-// Thank God for Emacs...
-// Many repetitions follow...
+#define CAT_LOG(category, priority, message, ...) _LOG_PRE(_LOGV(c),p,message) __VA_OPT__(,) __VA_ARGS__ _LOG_POST
+#define CAT_TRACE(c,m,...)      CAT_LOG(c,LP_TRACE    ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_DEBUG(c,m,...)      CAT_LOG(c,LP_DEBUG    ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_INFO(c,m,...)       CAT_LOG(c,LP_INFO     ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_NOTICE(c,m,...)     CAT_LOG(c,LP_NOTICE   ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_WARNING(c,m,...)    CAT_LOG(c,LP_WARNING  ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_ERROR(c,m,...)      CAT_LOG(c,LP_ERROR    ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_CRITICAL(c,m,...)   CAT_LOG(c,LP_CRITICAL ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_ALERT(c,m,...)      CAT_LOG(c,LP_ALERT    ,m __VA_OPT__(,) __VA_ARGS__)
+#define CAT_EMERGENCY(c,m,...)  CAT_LOG(c,LP_EMERGENCY,m __VA_OPT__(,) __VA_ARGS__)
+
+#define LOG_TRACE(m,...)     CAT_LOG(*_log_defaultCategory,LP_TRACE    ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_DEBUG(m,...)     CAT_LOG(*_log_defaultCategory,LP_DEBUG    ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_INFO(m,...)      CAT_LOG(*_log_defaultCategory,LP_INFO     ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_NOTICE(m,...)    CAT_LOG(*_log_defaultCategory,LP_NOTICE   ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_WARNING(m,...)   CAT_LOG(*_log_defaultCategory,LP_WARNING  ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_ERROR(m,...)     CAT_LOG(*_log_defaultCategory,LP_ERROR    ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_CRITICAL(m,...)  CAT_LOG(*_log_defaultCategory,LP_CRITICAL ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_ALERT(m,...)     CAT_LOG(*_log_defaultCategory,LP_ALERT    ,m __VA_OPT__(,) __VA_ARGS__)
+#define LOG_EMERGENCY(m,...) CAT_LOG(*_log_defaultCategory,LP_EMERGENCY,m __VA_OPT__(,) __VA_ARGS__)
+
 #define CLOG3(c, p, f) _LOG_PRE(_LOGV(c),p,f) _LOG_POST
 #define CTRACE2(c, f) CLOG3(c, LP_TRACE, f)
 #define CDEBUG2(c, f) CLOG3(c, LP_DEBUG, f)
