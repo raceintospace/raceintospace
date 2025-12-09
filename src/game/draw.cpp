@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -141,25 +142,12 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
 
 void draw_number(int xx, int yy, int num)
 {
-    if (xx != 0 && yy != 0) {
+    if (xx != 0 || yy != 0) {
         grMoveTo(xx, yy);
     }
 
-    if (num < 0) {
-        draw_string(0, 0, "-");
-    }
-    num = abs(num);
-
-
-    int n0 = num / 1000;
-    int n1 = num / 100 - n0 * 10;
-    int n2 = num / 10 - n0 * 100 - n1 * 10;
-    int n3 = num - n0 * 1000 - n1 * 100 - n2 * 10;
-
-    if (n0 != 0) draw_character(n0 + '0');
-    if (n1 != 0) draw_character(n1 + '0');
-    if (n2 != 0) draw_character(n2 + '0');
-    draw_character(n3 + '0');
+    std::string text = std::to_string(num);
+    draw_string(0, 0, text.c_str());
 }
 
 
