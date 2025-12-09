@@ -101,30 +101,30 @@ Multimedia::Multimedia(FILE* fp)
     /* get first page to start things up */
     get_page(); // read from the file through sync buffer into ogg_page
     if (!good) {
-        WARNING1("unable to decode stream");
+        LOG_WARNING("unable to decode stream");
         return;
     }
 
-    TRACE1("trying theora decoder...");
+    CAT_TRACE(video, "trying theora decoder...");
     init_theora(); // if it's a video file, is_video() will be returning true
     if (!good) {
-        WARNING1("unable to decode stream");
+        CAT_WARNING(video, "unable to decode stream");
         return;
     }
 
-    TRACE1("trying vorbis decoder...");
+    CAT_TRACE(audio, "trying vorbis decoder...");
     init_vorbis(); // if it's an audio file, is_audio() will be returning true
     if (!good) {
-        WARNING1("unable to decode stream");
+        CAT_WARNING(audio, "unable to decode stream");
         return;
     }
 
     if (is_audio()) {
-        TRACE3("audio %u channel(s) at %u Hz", channels(), audio_rate());
+        CAT_TRACE(audio, "audio %u channel(s) at %u Hz", channels(), audio_rate());
     }
 
     if (is_video()) {
-        INFO4("video %ux%u pixels at %g fps", w(), h(), fps());
+        CAT_INFO(video, "video %ux%u pixels at %g fps", w(), h(), fps());
     }
 
     good = is_audio() || is_video(); // if both parsers rejected the file we are no good
@@ -180,7 +180,7 @@ int Multimedia::decode_audio(void* buf, int buflen)
     if (!is_audio()) return -1;
 
     if (ignore_stream[AUDIO]) {
-        WARNING1("requested decode but AUDIO is set to ignore");
+        CAT_WARNING(audio, "requested decode but AUDIO is set to ignore");
         return -1;
     }
     
@@ -238,7 +238,7 @@ int Multimedia::decode_audio(void* buf, int buflen)
                 vorbis_synthesis_blockin(mmf.audio_ctx.get(), mmf.audio_blk.get());
                 break;
             } else {
-                WARNING1("packet does not contain a valid vorbis frame");
+                CAT_WARNING(audio, "packet does not contain a valid vorbis frame");
                 /* get next packet */
             }
         }
@@ -261,7 +261,7 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
     if (!is_video()) return false;
 
     if (ignore_stream[VIDEO]) {
-        WARNING1("requested decode but VIDEO is set to ignore");
+        CAT_WARNING(video, "requested decode but VIDEO is set to ignore");
         return false;
     }
 
@@ -274,7 +274,7 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
         if (theora_decode_packetin(mmf.video_ctx.get(), &pkt) == 0) {
             break;
         } else {
-            WARNING1("packet does not contain theora frame");
+            CAT_WARNING(video, "packet does not contain theora frame");
             /* get next packet */
         }
     }
@@ -297,17 +297,17 @@ bool Multimedia::draw_video_frame(SDL_Overlay& ovl)
         break;
 
     default:
-        WARNING1("only IYUV and YV12 SDL overlay formats supported");
+        CAT_WARNING(video, "only IYUV and YV12 SDL overlay formats supported");
         return false;
     }
 
     if (mmf.video_info.get()->pixelformat != OC_PF_420) {
-        WARNING1("unknown/unsupported theora pixel format");
+        CAT_WARNING(video, "unknown/unsupported theora pixel format");
         return false;
     }
 
     if (SDL_LockYUVOverlay(&ovl) < 0) {
-        WARNING1("unable to lock overlay");
+        CAT_WARNING(video, "unable to lock overlay");
         return false;
     }
 
@@ -358,7 +358,7 @@ void Multimedia::get_page()
         const int bufsize = 8192;
         char* p = ogg_sync_buffer(&mmf.sync, bufsize); // give us space to write into
         if (p == nullptr) {
-            ERROR1("ogg buffer synchronization failed");
+            LOG_ERROR("ogg buffer synchronization failed");
             good = false;
             return;
         }
@@ -370,7 +370,7 @@ void Multimedia::get_page()
         }
 
         if (ogg_sync_wrote(&mmf.sync, n)) { // notify buffer how much we have written
-            ERROR1("buffer overflow in ogg_sync_wrote");
+            LOG_ERROR("buffer overflow in ogg_sync_wrote");
             good = false;
             return;
         }
@@ -425,7 +425,7 @@ void Multimedia::init_theora()
 
         case OC_VERSION:
         case OC_NEWPACKET:
-            INFO1("incompatible theora file");
+            CAT_INFO(video, "incompatible theora file");
             // [[fallthrough]]
         case OC_BADHEADER:
         default:
@@ -490,7 +490,7 @@ void Multimedia::init_vorbis()
             break;
 
         case OV_EBADHEADER:
-            INFO1("bad vorbis header");
+            CAT_INFO(audio, "bad vorbis header");
 
         case OV_ENOTVORBIS:
         default:
@@ -546,8 +546,8 @@ ogg_packet Multimedia::get_packet(enum media_type media)
             ogg_packet packet;
             while (ogg_stream_packetout(other.get(), &packet));
         } else {
-            INFO2("got page not associated with any stream, "
-                  "serial 0x%x", ogg_page_serialno(&last_read));
+            LOG_INFO("got page not associated with any stream, "
+                     "serial 0x%x", ogg_page_serialno(&last_read));
         }
     }
 
