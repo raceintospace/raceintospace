@@ -425,7 +425,7 @@ extern struct LogAppender *log_defaultLogAppender;
 
 /** @name Logging Macros */
 //@{
-#define CAT_LOG(category, priority, message, ...) _LOG_PRE(_LOGV(c),p,message) __VA_OPT__(,) __VA_ARGS__ _LOG_POST
+#define CAT_LOG(category, priority, message, ...) _LOG_PRE(_LOGV(category), priority, message) __VA_OPT__(,) __VA_ARGS__ _LOG_POST
 #define CAT_TRACE(c,m,...)      CAT_LOG(c,LP_TRACE    ,m __VA_OPT__(,) __VA_ARGS__)
 #define CAT_DEBUG(c,m,...)      CAT_LOG(c,LP_DEBUG    ,m __VA_OPT__(,) __VA_ARGS__)
 #define CAT_INFO(c,m,...)       CAT_LOG(c,LP_INFO     ,m __VA_OPT__(,) __VA_ARGS__)
