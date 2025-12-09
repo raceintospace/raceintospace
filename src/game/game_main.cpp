@@ -1037,9 +1037,9 @@ int MisRandom()
 void setup_logging() // todo move to logging.cpp or smth
 {
     log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.debug_level_main));
-    log_setThreshold(&_LOGV(multimedia), MAX(0, LP_NOTICE - (int)options.debug_level_multimedia));
-    log_setThreshold(&_LOGV(video), MAX(0, LP_NOTICE - (int)options.debug_level_video));
-    log_setThreshold(&_LOGV(audio), MAX(0, LP_NOTICE - (int)options.debug_level_audio));
+    if(options.debug_level_multimedia != -1) log_setThreshold(&_LOGV(multimedia), MAX(0, LP_NOTICE - (int)options.debug_level_multimedia));
+    if(options.debug_level_video != -1) log_setThreshold(&_LOGV(video), MAX(0, LP_NOTICE - (int)options.debug_level_video));
+    if(options.debug_level_audio != -1) log_setThreshold(&_LOGV(audio), MAX(0, LP_NOTICE - (int)options.debug_level_audio));
 }
 
 
