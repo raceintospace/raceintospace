@@ -432,9 +432,9 @@ void ResetToDefaultOptions()
     options.want_4xscale = 1;
 	
     options.debug_level_main = 0;
-    options.debug_level_multimedia = 0;
-    options.debug_level_video = 0;
-    options.debug_level_audio = 0;
+    options.debug_level_multimedia = -1;
+    options.debug_level_video = -1;
+    options.debug_level_audio = -1;
 
     // Gameplay aspects
     options.classic = 0;
