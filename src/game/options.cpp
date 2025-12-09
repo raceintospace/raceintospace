@@ -26,6 +26,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
+#include <string>
 
 #include <SDL.h>
 
@@ -36,29 +38,15 @@
 #include "pace.h"
 #include "utils.h"
 
-#define ENVIRON_DATADIR ("BARIS_DATA")
-#define ENVIRON_SAVEDIR ("BARIS_SAVE")
+static std::string get_homedir();
 
-/*
-#if CONFIG_WIN32
-#  define DEFAULT_DATADIR ("c:/" PACKAGE_TARNAME )
-#  define DEFAULT_SAVEDIR ("c:/" PACKAGE_TARNAME "/savedat")
-#elif CONFIG_LINUX
-#  define DEFAULT_DATADIR CONFIG_DATADIR
-#  define DEFAULT_SAVEDIR (".")
-#elif CONFIG_MACOSX
-#  define DEFAULT_DATADIR CONFIG_DATADIR
-#  define DEFAULT_SAVEDIR (".")
-#endif
-*/
-
-/* and provide defaults for unspecified OS */
+/* if paths aren't provided at compile-time, set up defaults */
 #ifndef DEFAULT_DATADIR
 #  define DEFAULT_DATADIR (".")
 #endif
 
 #ifndef DEFAULT_SAVEDIR
-#  define DEFAULT_SAVEDIR (".")
+#  define DEFAULT_SAVEDIR (get_homedir() + "/." + PACKAGE_TARNAME)
 #endif
 
 #if !HAVE_GETENV
@@ -70,30 +58,29 @@
 #  endif
 #endif
 
-game_options options;
+game_options options{};
 
 LOG_DEFAULT_CATEGORY(config)
 
-/*set up array for environment vars */
-static struct {
-    const char *name;
-    char **dest;
-    const char *def_val;
+static struct Env_Conf{
+    const char *name;    /**< name of enviromental variable */
+    char **dest;         /**< pointer to the variable holding the string */
+    std::string def_val; /**< default value if not provided */
 } env_vars[] = {
-    {ENVIRON_DATADIR, &options.dir_gamedata, DEFAULT_DATADIR},
-    {ENVIRON_SAVEDIR, &options.dir_savegame, DEFAULT_SAVEDIR},
+    {"BARIS_DATA", &options.dir_gamedata, DEFAULT_DATADIR},
+    {"BARIS_SAVE", &options.dir_savegame, DEFAULT_SAVEDIR},
 };
 
-static const struct {
-    const char *name; /**< name of option */
-    const void *dest; /**< pointer to the variable holding the content */
-    const char *format; /**< scanf format of the data we get */
-    int need_alloc; /**< max memory size to be allocated for value */
+static const struct Conf_Str{
+    const char *name;    /**< name of option */
+    const void *dest;    /**< pointer to the variable holding the content */
+    const char *format;  /**< scanf format of the data we get */
+    int need_alloc;      /**< max memory size to be allocated for value */
     const char *comment; /**< a note to the user */
 } config_strings[] = {
     {
         "datadir", &options.dir_gamedata, "%1024[^\n\r]", 1025,
-        "Path to directory with game data files (only if different from default location)."
+        "Path to directory with game data files (enable only if different from default location)."
     },
     {
         "audio", &options.want_audio, "%u", 0,
@@ -112,14 +99,25 @@ static const struct {
         "Set to 1 if you want to display the game at full-screen."
     },
     {
-	"xscale",  &options.want_4xscale, "%u", 0,
-	"By default now the game is displayed at 4x scale."
-	"\n# Set to 0 if you want to display the game at the classic 2x scale."
+		"xscale",  &options.want_4xscale, "%u", 0,
+		"By default now the game is displayed at 4x scale."
+		"\n# Set to 0 if you want to display the game at the classic 2x scale."
+    },
+
+    {
+        "debug_level_main", &options.debug_level_main, "%u", 0,
+        "Set to positive values to increase debugging verbosity of specified category."
     },
     {
-        "debuglevel", &options.want_debug, "%u", 0,
-        "Set to positive values to increase debugging verbosity."
+        "debug_level_multimedia", &options.debug_level_multimedia, "%u", 0, nullptr
     },
+    {
+        "debug_level_video", &options.debug_level_video, "%u", 0, nullptr
+    },
+    {
+        "debug_level_audio", &options.debug_level_audio, "%u", 0, nullptr
+    },
+
     {
         "game_style", &options.classic, "%u", 0,
         "Set to 1 to play the game in the classic style."
@@ -223,62 +221,57 @@ void ResetToClassicOptions();
  *
  * \param fail sets the exit code
  */
-static void
-usage(int fail)
+static void usage(int fail)
 {
     fprintf(stderr, "usage:   raceintospace [options...]\n"
-            "options: -a -i -f -s -v -n\n"
-            "\t-v verbose mode\n\t\tadd this several times to get to DEBUG level\n"
+            "options: -i -c -a -f -e -s\n"
+            "\t-i disable intro\n"
+            "\t-c enable classic mode\n"
+            "\t-a disable audio\n"
             "\t-f fullscreen mode\n"
-	    "\t-s 4x scale mode\n"
+            "\t-e easy mode (enables all cheats)\n"
+            "\t-s small scale mode\n"
+            "BARIS_DATA={path} to overwrite data folder\n"
+		    "BARIS_SAVE={path} to overwrite config and saves folder"
            );
     exit((fail) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void
-shift_argv(char **argv, int len, int shift)
+static void shift_argv(char** argv, int len, int shift)
 {
-    int i = 0;
-
     assert(shift >= 0);
     assert(len >= 0);
 
-    for (i = shift; i < len; ++i) {
+    for (int i = shift; i < len; ++i) {
         argv[i - shift] = argv[i];
-        argv[i] = NULL;
+        argv[i] = nullptr;
     }
 }
 
-static int
-skip_past_newline(FILE *f)
+static void skip_past_newline(FILE* f)
 {
     assert(f);
-    return fscanf(f, "%*[^\r\n] ");
+    fscanf(f, "%*[^\r\n] ");
 }
 
-static int
-parse_var_value(FILE *f, int index)
+// return true on successful parsing
+static bool parse_var_value(FILE* f, Conf_Str& conf_str)
 {
-    char format[128];
-    int need_alloc;
-    int res = 0, chars = 0, i = index;
-
     assert(f);
-    assert(i >= 0 && i < (int)ARRAY_LENGTH(config_strings));
 
-    need_alloc = config_strings[i].need_alloc;
-    snprintf(format, sizeof(format), " %s%%n", config_strings[i].format);
+    int need_alloc = conf_str.need_alloc;
 
     if (need_alloc > 0) {
-        /* config_strings[].dest points to a pointer */
-        void **target = (void **)config_strings[i].dest;
+        /* conf_str.dest points to a pointer */
+        void **target = (void **)conf_str.dest;
 
+        char format[128];
+        snprintf(format, sizeof(format), " %s%%n", conf_str.format);
+        
         *target = xrealloc(*target, need_alloc);
-
-        res = fscanf(f, format, *target, &chars);
-
-        if (res < 1) {
-            return -1;
+		int chars;
+        if (1 > fscanf(f, format, *target, &chars)) {
+            return false; // failed to parse
         }
 
         if (chars < need_alloc) {
@@ -286,113 +279,73 @@ parse_var_value(FILE *f, int index)
         }
     } else {
         /* config_strings[].dest points to a value */
-        const void *target = config_strings[i].dest;
-
-        res = fscanf(f, format, target, &chars);
-
-        if (res < 1) {
-            return -1;
+        if (1 > fscanf(f, conf_str.format, conf_str.dest)) {
+            return false; // failed to parse
         }
     }
 
-    return 0;
+    return true;
 }
 
 /** read the config file
- *
- *
- *
  * \return -1 if the config file is unavailable
  */
-static int
-read_config_file(void)
+static int read_config_file()
 {
-    FILE *f = open_savedat("config", "rt");
-    char config_word[32 + 1];
-    int err = 0, res = 0, i = 0;
-    char c[2];
-
+    fixpath_options(); // fix slashes
+    FILE* f = open_savedat("config", "rt");
     if (!f) {
-        INFO1("could not open config file");
+        LOG_INFO("could not open config file");
         return -1;
     }
 
-    while (1) {
+    for (fscanf(f," ");!feof(f);skip_past_newline(f)) { // scan 1 line at a time till EOF
         /* skip comments */
-        if ((res = fscanf(f, " %1[#]", c)) == 1) {
-            goto skip_newline;
-        }
-
-        if (res == EOF) {
-            break;
+        char c[2];
+        if (fscanf(f, "%1[#]", c) == 1) { // test if first proper character in the line is '#'
+            continue; // if it is, skip the line
         }
 
         /* get configuration variable name */
         /** \note config variables may be 32 characters of alphas plus dash and underscore */
-        res = fscanf(f, "%32[a-zA-Z_-]", config_word);
-
-        /* do we have a match? */
-        if (res == 1) {
-            for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
-                if (strcmp(config_word, config_strings[i].name) == 0) {
-                    res = parse_var_value(f, i);
-
-                    if (res != 0 && feof(f)) {
-                        goto skip_newline;
-                    } else if (res != 0) {
-                        NOTICE2("wrong value type for variable `%s'",
-                                config_word);
-                        goto skip_newline;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            /* none matched */
-            if (i == (int) ARRAY_LENGTH(config_strings)) {
-                NOTICE2("unknown variable in file `%s'",
-                        config_word);
-                goto skip_newline;
-            }
-        } else if (res == EOF) {
-            break;
-        } else {
-            NOTICE1("expected variable name");
-            goto skip_newline;
+        char config_word[32 + 1];
+        if (fscanf(f, "%32[a-zA-Z_-]", config_word) != 1) {
+	        // if we failed to parse it both as a comment and as a variable name - log the problem and skip to the next line
+            LOG_NOTICE("expected variable name");
+            continue;
         }
 
-skip_newline:
-
-        if (EOF == skip_past_newline(f)) {
-            break;
+        // now we have config variable name - search for it in config_strings
+        auto iter = std::find_if(std::begin(config_strings), std::end(config_strings), 
+                                [](Conf_Str& conf_str){return strcmp(config_word, config_strings[i].name) == 0;});
+        if (iter == std::end(config_strings)) { // not in config_strings? log the problem
+            LOG_NOTICE("unknown variable in config file `%s'", config_word);
+            continue;
+        }
+        // now we found which config is being given
+        if (!parse_var_value(f, *iter) && !feof(f)) { // if we failed to parse and not due to the EOF - log the problem
+            LOG_NOTICE("wrong value type for variable `%s'", config_word);
         }
     }
 
-    err = !feof(f);
-
+    inr err = !feof(f);
     fclose(f);
-
     return -err;
 }
 
-static int
-write_default_config(void)
+static int write_default_config()
 {
-    int i = 0;
-    int err = 0;
-    FILE *f = NULL;
-
     create_save_dir();
-    f = open_savedat("config", "wt");
+    FILE* f = open_savedat("config", "wt");
 
-    if (!f) {
-        WARNING4("can't write defaults to file `%s/%s': %s\n",
-                 options.dir_savegame, "config", strerror(errno));
+    if (f == nullptr) {
+        LOG_WARNING("can't write defaults to file `%s/config': %s\n",
+                     options.dir_savegame, strerror(errno));
         return -1;
-    } else
-        NOTICE3("written defaults to file `%s/%s'",
-                options.dir_savegame, "config");
+    } else {
+        LOG_NOTICE("writing default config to file `%s/config'",
+                    options.dir_savegame);
+	}
 
     fprintf(f, "# This is the Advanced Configuration file for %s\n",
             PACKAGE_STRING);
@@ -404,56 +357,56 @@ write_default_config(void)
     fprintf(f, "# (but without the # and space at the beginning)\n\n");
     fprintf(f, "# 'Classic' settings return to how the game worked in BARIS.\n");
     fprintf(f, "# If you should want to return this file to default settings, you can\n");
-    fprintf(f, "# delete it and the game will create a fresh one next time it opens.\n\n\n");
+    fprintf(f, "# delete it and the game will create a fresh one next time it opens.\n\n");
 
-    for (i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
-        fprintf(f, "# %s\n# %s\n\n",
-                config_strings[i].comment, config_strings[i].name);
+    for (int i = 0; i < (int) ARRAY_LENGTH(config_strings); ++i) {
+		if (config_strings[i].comment != nullptr)
+		{
+        	fprintf(f, "\n# %s\n", config_strings[i].comment);
+		}
+		fprintf(f, "# %s\n", config_strings[i].name);
     }
 
-    err = ferror(f);
-
-    if (err) {
-        WARNING2("read error: %s", strerror(errno));
+	int err = ferror(f);
+    if (err != 0) {
+        LOG_WARNING("error in writing default config: %s", strerror(errno));
     }
 
     fclose(f);
     return err;
 }
 
-/* return the location of user's home directory, or NULL if unknown.
- * returned string is malloc-ed */
-static char *get_homedir(void)
+// return the location of user's home directory, or empty string if unknown.
+static std::string get_homedir()
 {
-    char *s = NULL;
-
-    if ((s = getenv("HOME"))) {
-        return xstrdup(s);
+    char* home = getenv("HOME");
+    if (home != nullptr) {
+        return s;
     }
 
 #if CONFIG_WIN32
 
-    if ((s = getenv("HOMEPATH"))) {
-        char *s2 = NULL;
-        std::string path(s);
+	char* path = getenv("HOMEPATH");
+    if (path != nullptr) {
+        char* path2 = getenv("HOMEDRIVE");
+		if (path2 == nullptr) path2 = getenv("HOMESHARE");
 
-        if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
-            std::string drive(s2);
-            drive += path;
-            return xstrdup(drive.c_str());
+        if (path2 != nullptr) {
+            std::string drive(path2);
+            return drive+path;
         }
     }
 
-    if ((s = getenv("USERPROFILE"))) {
-        return xstrdup(s);
+	char* profile = getenv("USERPROFILE");
+    if (profile != nullptr) {
+        return profile;
     }
 
 #endif
-    return NULL;
+    return {"."};
 }
 
-static void
-fixpath_options(void)
+static void fixpath_options()
 {
     fix_pathsep(options.dir_savegame);
     fix_pathsep(options.dir_gamedata);
@@ -477,7 +430,11 @@ void ResetToDefaultOptions()
     options.want_cheats = 0;
     options.want_fullscreen = 0;
     options.want_4xscale = 1;
-    options.want_debug = 0;
+	
+    options.debug_level_main = 0;
+    options.debug_level_multimedia = 0;
+    options.debug_level_video = 0;
+    options.debug_level_audio = 0;
 
     // Gameplay aspects
     options.classic = 0;
@@ -531,57 +488,48 @@ void ResetToClassicOptions()
     options.feat_eq_new_name = 0;
 }
 
+void enable_cheats()
+{
+    options.cheat_no_damage = 1;
+    options.cheat_atlasOnMoon = 1;
+    options.cheat_addMaxS = 0;
+    options.no_money_cheat = 1;
+    // options.cheat_no_fail = 1;
+}
+
 };  // End of anonymous namespace
 
 
-/** read the commandline options
+/** read options from envvars, command line and config file
  *
  * \return length of modified argv
  *
  * \todo possibly maintain a list of dirs to search??
  */
-int
-setup_options(int argc, char *argv[])
+int setup_options(int argc, char *argv[])
 {
-    char *str = NULL;
-    int pos, i;
-
-    /* first set up defaults */
-    for (i = 0; i < (int) ARRAY_LENGTH(env_vars); ++i) {
-        if ((str = getenv(env_vars[i].name))) {
-            *env_vars[i].dest = xstrdup(str);
-        } else if (strcmp(env_vars[i].name, ENVIRON_SAVEDIR) == 0
-                   && (str = get_homedir())) {
-            size_t len = strlen(str) + strlen(PACKAGE_TARNAME) + 3;
-
-            *env_vars[i].dest = (char *)xmalloc(len);
-            snprintf(*env_vars[i].dest, len, "%s/.%s",
-                     str, PACKAGE_TARNAME);
-            free(str);
-        } else {
-            *env_vars[i].dest = xstrdup(env_vars[i].def_val);
-        }
-    }
-
     ResetToDefaultOptions();
 
-    fixpath_options();
-
-    /* now try to read config file, if it exists */
-    if (read_config_file() < 0) {
-        /* if not, then write default config template */
-        write_default_config();
+    // check envvars
+    for (int i = 0; i < (int) ARRAY_LENGTH(env_vars); ++i) {
+		char* str = getenv(env_vars[i].name); // search with getenv
+        if (str != nullptr) { // if found - use that
+            *env_vars[i].dest = xstrdup(str);
+			continue;
+        } 
+        // otherwise use default
+		*env_vars[i].dest = xstrdup(env_vars[i].def_val.c_str());
     }
 
     /* first pass: command line options */
-    for (pos = 1; pos < argc; ++pos) {
-        str = argv[pos];
+    for (int pos = 1; pos < argc; ++pos) {
+        char* str = argv[pos];
 
         if (str[0] != '-') {
             continue;
         }
 
-        if (!str[1]) {
+        if (str[1] == '\0') {
             continue;
         }
 
@@ -593,22 +541,22 @@ setup_options(int argc, char *argv[])
 
         /* check what option matches */
         if (strcmp(str, "-h") == 0) {
-            usage(0);
+            usage(0); // exits
         } else if (strcmp(str, "-i") == 0) {
             options.want_intro = 0;
-        } else if (strcmp(str, "-n") == 0) {
-            options.want_cheats = 1;
+        } else if (strcmp(str, "-c") == 0) {
+            options.classic = 1;
         } else if (strcmp(str, "-a") == 0) {
             options.want_audio = 0;
         } else if (strcmp(str, "-f") == 0) {
             options.want_fullscreen = 1;
-	} else if (strcmp(str, "-s") == 0) {
+        } else if (strcmp(str, "-e") == 0) {
+            //options.want_cheats = 1;
+		} else if (strcmp(str, "-s") == 0) {
             options.want_4xscale = 0;
-        } else if (strcmp(str, "-v") == 0) {
-            options.want_debug++;
         } else {
-            ERROR2("unknown option %s", str);
-            usage(1);
+            LOG_ERROR("unknown option %s", str);
+            usage(1); // exits
         }
 
         shift_argv(argv + pos, argc - pos, 1);
@@ -617,31 +565,25 @@ setup_options(int argc, char *argv[])
     }
 
     /* second pass: variable assignments */
-    for (pos = 1; pos < argc; ++pos) {
-        /** \todo should use PATH_MAX or something similar here */
-        char name[32 + 1], *value;
+    for (int pos = 1; pos < argc; ++pos) {
+        /** \todo should use PATH_MAX or something similar here */ // ???
+
+        char envvar_name[32 + 1]{};
         int offset = 0;
-        int fields = 0;
-
-        fields = sscanf(argv[pos], "%32[A-Z_]=%n", name, &offset);
-
-        /* it is unclear whether %n increments return value */
-        if (fields < 1) {
+        if (sscanf(argv[pos], "%32[A-Z_]=%n", envvar_name, &offset) < 1) {
+			LOG_NOTICE("unsupported format of command line argument: '%s'", argv[pos]);
             continue;
         }
 
-        value = argv[pos] + offset;
 
-        for (i = 0; i < (int) ARRAY_LENGTH(env_vars); ++i) {
-            if (strcmp(name, env_vars[i].name) == 0) {
-                free(*env_vars[i].dest);
-                *env_vars[i].dest = xstrdup(value);
-                break;
-            }
-        }
-
-        if (i == (int) ARRAY_LENGTH(env_vars)) {
-            WARNING2("unsupported command line variable `%s'", name);
+        auto iter = std::find_if(std::begin(env_vars), std::end(env_vars),
+                                 [=](const Env_Conf& env_conf){return strcmp(envvar_name, env_conf.name)==0;})
+        if (iter == std::end(env_vars)) {
+            LOG_WARNING("unsupported envvar variable `%s'", name);
+        } else {
+		    free(*iter.dest);
+	        char* envvar_value = argv[pos] + offset;
+            *iter.dest = xstrdup(envvar_value);
         }
 
         /* remove matched string from argv */
@@ -655,11 +597,23 @@ setup_options(int argc, char *argv[])
         argc--;
     }
 
-    fixpath_options();
-
+    /* now try to read config file, if it exists */
+    if (read_config_file() < 0) {
+        /* if not, then write default config template */
+        write_default_config();
+    }
+	
+    fixpath_options(); // fix slashes
+	
     if (options.classic) {
         ResetToClassicOptions();
     }
+
+    /* // currently want_cheats is used for no_fail, uncomment when that's fixed
+    if (options.want_cheats) {
+        enable_cheats();
+    }
+    */
 
     return argc;
 }
