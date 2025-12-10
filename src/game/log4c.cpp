@@ -71,7 +71,7 @@ static const char *initCategory(struct LogCategory *category)
 {
     if (category == &_LOGV(LOG_ROOT_CAT)) {
         if (category->thresholdPriority == LP_UNINITIALIZED) {
-            category->thresholdPriority = LP_WARNING;
+            category->thresholdPriority = LP_NONE;
         }
 
         if (!category->appender) {

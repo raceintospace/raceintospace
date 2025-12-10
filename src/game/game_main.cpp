@@ -142,14 +142,14 @@ const char *S_Name[] = {
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-
+void setup_logging();
 int game_main_impl(int argc, char *argv[]);
 int CheckIfMissionGo(char plr, char launchIdx);
 void ConfigureAudio();
-void InitData(void);
-void MainLoop(void);
-void DockingKludge(void);
-void OpenEmUp(void);
+void InitData();
+void MainLoop();
+void DockingKludge();
+void OpenEmUp();
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
 
@@ -157,7 +157,7 @@ void VerifyCrews(char plr);
 
 int game_main_impl(int argc, char *argv[])
 {
-    const char *see_readme = "look for further instructions in the README file";
+    const char* see_readme = "look for further instructions in the README file";
 
     char ex, choice;
 
@@ -175,25 +175,24 @@ int game_main_impl(int argc, char *argv[])
     setup_options(argc, argv);
     Filesystem::addPath(options.dir_gamedata);
     Filesystem::addPath(options.dir_savegame);
-    /* hacking... */
-    log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.want_debug));
+    setup_logging();
     
     std::ifstream file(locate_file("usa_port.json", FT_DATA));
     if (!file) {
-        CRITICAL1("can't find game data files");
-        NOTICE1("set environment variable BARIS_DATA or edit config file");
-        NOTICE2("%s", see_readme);
+        LOG_CRITICAL("can't find game data files");
+        LOG_NOTICE("set environment variable BARIS_DATA or edit config file");
+        LOG_NOTICE("%s", see_readme);
         
         crash("Data missing", "Unable to locate game data files.");
     } else {
-        INFO1("game data files found");
+        LOG_INFO("game data files found");
     }
     
     if (create_save_dir() != 0) {
-        CRITICAL3("can't create save directory `%s': %s",
-                  options.dir_savegame, strerror(errno));
-        NOTICE1("set environment variable BARIS_SAVE to a writable directory");
-        NOTICE2("%s", see_readme);
+        LOG_CRITICAL("can't create save directory `%s': %s",
+                     options.dir_savegame, strerror(errno));
+        LOG_NOTICE("set environment variable BARIS_SAVE to a writable directory");
+        LOG_NOTICE("%s", see_readme);
 
         crash("Save directory", "Couldn't create save directory");
     }
@@ -239,7 +238,7 @@ int game_main_impl(int argc, char *argv[])
 
         if (Data->Checksum != (sizeof(struct Players))) {
             /* XXX: too drastic */
-            CRITICAL1("wrong version of data file");
+            LOG_CRITICAL("wrong version of data file");
             exit(EXIT_FAILURE);
         }
 
@@ -317,7 +316,7 @@ int game_main_impl(int argc, char *argv[])
                 if (Option == -1) {
                     MainLoop();    //Regular game
                 } else { //Modem game
-                    WARNING1("can't do modem games");
+                    LOG_WARNING("can't do modem games");
                     break;
                 }
             } else if (!QUIT) {
@@ -440,8 +439,8 @@ int CheckIfMissionGo(char plr, char launchIdx)
 
         default:  // Catch anything weird
             assert(false);
-            WARNING2("Unexpected MissionHardwareType=%d found in "
-                     "CheckIfMissionGo()", idx);
+            LOG_WARNING("Unexpected MissionHardwareType=%d found in "
+                         "CheckIfMissionGo()", idx);
             E = NULL;
             break;
         }
@@ -829,15 +828,13 @@ void ConfigureAudio()
 }
 
 
-void DockingKludge(void)
+void DockingKludge()
 {
     for (int j = 0; j < NUM_PLAYERS; j++) {
         Data->P[j].Misc[MISC_HW_DOCKING_MODULE].MSF =
             MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
                 Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
     }
-
-    return;
 }
 
 
@@ -861,8 +858,7 @@ void DestroyPad(char plr, char pad, int cost, char mode)
     return;
 }
 
-void
-GetMouse(void)
+void GetMouse()
 {
     av_block();
     GetMouse_fast();
@@ -870,7 +866,7 @@ GetMouse(void)
 
 
 /* get mouse of keyboard input, non-blocking */
-void GetMouse_fast(void)
+void GetMouse_fast()
 {
     mousebuttons = 0;
     oldx = x;
@@ -915,7 +911,7 @@ void GetMouse_fast(void)
     }
 }
 
-void WaitForMouseUp(void)
+void WaitForMouseUp()
 {
     // Wait for mouse and key to be up
     while (mousebuttons) {
@@ -923,7 +919,7 @@ void WaitForMouseUp(void)
     }
 }
 
-void WaitForKeyOrMouseDown(void)
+void WaitForKeyOrMouseDown()
 {
     // Wait for mouse and key to be up
     while (mousebuttons == 0 && key == 0) {
@@ -932,7 +928,7 @@ void WaitForKeyOrMouseDown(void)
 }
 
 
-void PauseMouse(void)
+void PauseMouse()
 {
     /* wait until mouse button is released */
     while (1)  {
@@ -1009,7 +1005,7 @@ void VerifyCrews(char plr)
  * random number generator that is slightly biased against high
  * numbers.
  */
-int MisRandom(void)
+int MisRandom()
 {
     const double mu = 57;
     const double sigma = sqrt(1000);
@@ -1036,6 +1032,14 @@ int MisRandom(void)
     } while ((r_gaussian >= 101) || (r_gaussian < brandom_threshold));
 
     return (int) r_gaussian;
+}
+
+void setup_logging() // todo move to logging.cpp or smth
+{
+    log_setThreshold(&_LOGV(LOG_ROOT_CAT), MAX(0, LP_NOTICE - (int)options.debug_level_main));
+    if(options.debug_level_multimedia != -1) log_setThreshold(&_LOGV(multimedia), MAX(0, LP_NOTICE - (int)options.debug_level_multimedia));
+    if(options.debug_level_video != -1) log_setThreshold(&_LOGV(video), MAX(0, LP_NOTICE - (int)options.debug_level_video));
+    if(options.debug_level_audio != -1) log_setThreshold(&_LOGV(audio), MAX(0, LP_NOTICE - (int)options.debug_level_audio));
 }
 
 

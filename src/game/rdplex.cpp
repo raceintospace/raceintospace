@@ -96,9 +96,7 @@ enum {
  * @param encoded
  * @return number of rolls
  */
-static inline
-uint8_t
-decodeNumRolls(uint8_t encoded)
+static uint8_t decodeNumRolls(uint8_t encoded)
 {
     return encoded / NUM_ROLLS_MULT;
 }
@@ -108,9 +106,7 @@ decodeNumRolls(uint8_t encoded)
  * @param encoded
  * @return sum of dice rolls
  */
-static inline
-uint8_t
-decodeRollValue(uint8_t encoded)
+static uint8_t decodeRollValue(uint8_t encoded)
 {
     return encoded % NUM_ROLLS_MULT;
 }
@@ -121,9 +117,7 @@ decodeRollValue(uint8_t encoded)
  * @param value sum of rolled dice
  * @return encoded value
  */
-static inline
-uint8_t
-encodeRolls(uint8_t nRolls, uint8_t value)
+static uint8_t encodeRolls(uint8_t nRolls, uint8_t value)
 {
     return nRolls * NUM_ROLLS_MULT + value;
 }
@@ -289,9 +283,7 @@ void DrawRDButtons(char plr, int maxButton)
 }
 
 
-
-void
-RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Screen, Nikakd, 10/8/10
+void RDButTxt(int cost, int encodedRolls, char playerIndex, char SpDModule)  //DM Screen, Nikakd, 10/8/10
 {
     fill_rectangle(166, 185, 314, 193, 3);
     display::graphics.setForegroundColor(1);
@@ -910,9 +902,8 @@ char MaxChk(char hardware_index, char unit_index, char player_index)
  * @param[in] playerIndex
  * @return encoded number of dice and sum of rolls
  */
-uint8_t
-RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls,
-       char playerIndex)
+uint8_t RDUnit(char hardwareTypeIndex, char hardwareIndex, char nRolls,
+               char playerIndex)
 {
     assert(hardwareTypeIndex >= PROBE_HARDWARE);
     assert(hardwareTypeIndex <= MISC_HARDWARE);
@@ -1119,11 +1110,12 @@ void ShowUnit(char hw, char un, char player_index)
         draw_number(242, 139, program.MaxRD);
         draw_character('%');
 
+        /* todo : should be replaced with logging or become part of actual UI or smth
         if (options.want_debug) {
             draw_string(0, 0, " / ");
             draw_number(0, 0, program.MSF);
             draw_character('%');  // Used to test if MSF was holding the right value
-        }
+        }*/
     } else {
         draw_string(242, 139, "--");
     }
@@ -1177,7 +1169,6 @@ void OnHand(char qty)
 
     draw_string(170, 90, "UNITS ON HAND:");
     draw_number(251, 90, qty);
-    return;
 }
 
 void DrawHPurc(char player_index)
@@ -1247,8 +1238,6 @@ void DrawHPurc(char player_index)
     ShowUnit(PROBE_HARDWARE, PROBE_HW_ORBITAL, player_index);
     helpText = "i008";
     keyHelpText = "k008";
-
-    return;
 }
 
 char HPurc(char player_index)
@@ -1496,8 +1485,7 @@ char HPurc(char player_index)
  * @param player_index player doing the purchase
  */
 
-void
-BuyUnit(char category, char unit, char player_index)
+void BuyUnit(char category, char unit, char player_index)
 {
     short n1, n2, n3, n4, n5, n6, n7;
     char new_program = 0;
@@ -2141,7 +2129,6 @@ BuyUnit(char category, char unit, char player_index)
     }
 
     ShowUnit(category, unit, player_index);
-    return;
 }
 
 
