@@ -39,6 +39,7 @@
 #include "utils.h"
 
 static std::string get_homedir();
+static void fixpath_options();
 
 /* if paths aren't provided at compile-time, set up defaults */
 #ifndef DEFAULT_DATADIR
@@ -255,7 +256,7 @@ static void skip_past_newline(FILE* f)
 }
 
 // return true on successful parsing
-static bool parse_var_value(FILE* f, Conf_Str& conf_str)
+static bool parse_var_value(FILE* f, const Conf_Str& conf_str)
 {
     assert(f);
 
@@ -317,7 +318,7 @@ static int read_config_file()
 
         // now we have config variable name - search for it in config_strings
         auto iter = std::find_if(std::begin(config_strings), std::end(config_strings), 
-                                [](Conf_Str& conf_str){return strcmp(config_word, config_strings[i].name) == 0;});
+                                [&](Conf_Str& conf_str){return strcmp(config_word, conf_str.name) == 0;});
         if (iter == std::end(config_strings)) { // not in config_strings? log the problem
             LOG_NOTICE("unknown variable in config file `%s'", config_word);
             continue;
@@ -328,7 +329,7 @@ static int read_config_file()
         }
     }
 
-    inr err = !feof(f);
+    int err = !feof(f);
     fclose(f);
     return -err;
 }
@@ -381,7 +382,7 @@ static std::string get_homedir()
 {
     char* home = getenv("HOME");
     if (home != nullptr) {
-        return s;
+        return home;
     }
 
 #if CONFIG_WIN32
@@ -577,13 +578,13 @@ int setup_options(int argc, char *argv[])
 
 
         auto iter = std::find_if(std::begin(env_vars), std::end(env_vars),
-                                 [=](const Env_Conf& env_conf){return strcmp(envvar_name, env_conf.name)==0;})
+                                 [=](const Env_Conf& env_conf){return strcmp(envvar_name, env_conf.name)==0;});
         if (iter == std::end(env_vars)) {
             LOG_WARNING("unsupported envvar variable `%s'", name);
         } else {
-		    free(*iter.dest);
+		    free(*iter->dest);
 	        char* envvar_value = argv[pos] + offset;
-            *iter.dest = xstrdup(envvar_value);
+            *iter->dest = xstrdup(envvar_value);
         }
 
         /* remove matched string from argv */
