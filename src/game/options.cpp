@@ -516,10 +516,12 @@ int setup_options(int argc, char *argv[])
     for (int i = 0; i < (int) ARRAY_LENGTH(env_vars); ++i) {
 		char* str = getenv(env_vars[i].name); // search with getenv
         if (str != nullptr) { // if found - use that
+			LOG_TRACE("found %s : %s", env_vars[i].name, str);
             *env_vars[i].dest = xstrdup(str);
 			continue;
         } 
         // otherwise use default
+		LOG_TRACE("using default value for %s : %s", env_vars[i].name, env_vars[i].def_val.c_str());
 		*env_vars[i].dest = xstrdup(env_vars[i].def_val.c_str());
     }
 
