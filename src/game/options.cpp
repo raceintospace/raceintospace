@@ -252,7 +252,8 @@ static void shift_argv(char** argv, int len, int shift)
 static void skip_past_newline(FILE* f)
 {
     assert(f);
-    fscanf(f, "%*[^\r\n] ");
+    fscanf(f, "%*[^\r\n]");
+    fscanf(f, " ");
 }
 
 // return true on successful parsing
