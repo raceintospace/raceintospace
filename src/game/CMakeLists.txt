@@ -5,6 +5,7 @@ endif (PBEM)
 # Silence some warnings on MSVC
 if (MSVC)
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+  add_compile_options(/Zc:preprocessor)
 else (MSVC)
   # add_definitions(-Werror=format -Werror=format-security)
 endif (MSVC)
