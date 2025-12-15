@@ -347,7 +347,7 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {  // Flight Crew Settings
+        for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {  // Flight Crew Settings
             if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
                 || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
                 stflag = 0;
@@ -519,7 +519,7 @@ void FutSt(char plr, int pr, int p, int b)
 {
     int i;
 
-    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+    for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         if (i == p) {
             FutSt2(i, 3);
         }

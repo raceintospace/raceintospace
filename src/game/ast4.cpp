@@ -586,7 +586,7 @@ void Programs(char plr, char prog)
     DrawProgs(plr, prog);
     Flts(0, 0);
 
-    for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+    for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         CrewCount[i] = Data->P[plr].CrewCount[prog][i];
 
         if (CrewCount[i] == 0) {

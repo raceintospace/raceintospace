@@ -171,7 +171,7 @@ struct LegacyAstros {
 
         // SECURITY: Data sanitization
         ASSERT(Assign >= 0 && Assign <= NUM_PROGRAMS + 1);
-        ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
+        ASSERT(Crew >= 0 && Crew <= MAX_CREWS_IN_PROGRAM);
 
     }
 };
@@ -236,8 +236,8 @@ struct LegacyBuzzData {                   // master data list for Buzz Aldrin's
     char unused_VList[5]; // unused
     char unused_VTop; // unused
     int8_t IntelHardwareTable[5][7];                // safety factor for intelligence
-    int8_t CrewCount[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
-    int8_t Crew[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
+    int8_t CrewCount[ASTRONAUT_POOLS + 1][MAX_CREWS_IN_PROGRAM];               // Count of num in groups
+    int8_t Crew[ASTRONAUT_POOLS + 1][MAX_CREWS_IN_PROGRAM][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
     // [5] - Program #
     // [8] - Eight Crews Max
     // [4] - Four Max per Crew
@@ -351,7 +351,7 @@ struct LegacyBuzzData {                   // master data list for Buzz Aldrin's
         }
 
         for (int i = 0; i <= ASTRONAUT_POOLS; i++) {
-            for (int j = 0; j < ASTRONAUT_CREW_MAX; j++) {
+            for (int j = 0; j < MAX_CREWS_IN_PROGRAM; j++) {
                 for (int k = 0; k <= ASTRONAUT_FLT_CREW_MAX; k++) {
                     ASSERT(Crew[i][j][k] >= 0 && Crew[i][j][k] <= MAX_POOL);
                 }
