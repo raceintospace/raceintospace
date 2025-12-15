@@ -300,7 +300,7 @@ static int read_config_file()
         return -1;
     }
 
-    for (fscanf(f," ");!feof(f);skip_past_newline(f)) { // scan 1 line at a time till EOF
+    for (fscanf(f," ");!feof(f) && !ferror(f);skip_past_newline(f)) { // scan 1 line at a time till EOF
         /* skip comments */
         char c[2];
         if (fscanf(f, "%1[#]", c) == 1) { // test if first proper character in the line is '#'
