@@ -113,7 +113,7 @@
  *@{
  */
 #define ASTRONAUT_POOLS             5
-#define ASTRONAUT_CREW_MAX          8
+#define MAX_CREWS_IN_PROGRAM        8
 #define ASTRONAUT_FLT_CREW_MAX      4
 #define MAX_POOL                    65
 #define MAX_ROSTER                  212
@@ -381,9 +381,9 @@ struct MissionType {
         ASSERT(Joint == 0 || Joint == 1);
         ASSERT(part == 0 || part == 1);
         ASSERT(Prog >= 0 && Prog < NUM_PROGRAMS + 1);
-        ASSERT(PCrew >= 0 && PCrew <= ASTRONAUT_CREW_MAX);
-        ASSERT(BCrew >= 0 && BCrew <= ASTRONAUT_CREW_MAX);
-        ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
+        ASSERT(PCrew >= 0 && PCrew <= MAX_CREWS_IN_PROGRAM);
+        ASSERT(BCrew >= 0 && BCrew <= MAX_CREWS_IN_PROGRAM);
+        ASSERT(Crew >= 0 && Crew <= MAX_CREWS_IN_PROGRAM);
         ASSERT(Men >= 0 && Men <= ASTRONAUT_FLT_CREW_MAX);
 
         for (int i = 0; i < Mission_PrimaryBooster; i++) {
@@ -552,7 +552,7 @@ struct Astros {
 
         // SECURITY: Data sanitization
         ASSERT(Assign >= 0 && Assign <= NUM_PROGRAMS + 1);
-        ASSERT(Crew >= 0 && Crew <= ASTRONAUT_CREW_MAX);
+        ASSERT(Crew >= 0 && Crew <= MAX_CREWS_IN_PROGRAM);
 
     }
 };
@@ -674,8 +674,8 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     char unused_VList[5]; // unused
     char unused_VTop; // unused
     int8_t IntelHardwareTable[5][7];                // safety factor for intelligence
-    int8_t CrewCount[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX];               // Count of num in groups
-    int8_t Crew[ASTRONAUT_POOLS + 1][ASTRONAUT_CREW_MAX][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
+    int8_t CrewCount[ASTRONAUT_POOLS + 1][MAX_CREWS_IN_PROGRAM];               // Count of num in groups
+    int8_t Crew[ASTRONAUT_POOLS + 1][MAX_CREWS_IN_PROGRAM][ASTRONAUT_FLT_CREW_MAX + 1];          // Flt Crews
     // [5] - Program #
     // [8] - Eight Crews Max
     // [4] - Four Max per Crew
@@ -789,7 +789,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         }
 
         for (int i = 0; i <= ASTRONAUT_POOLS; i++) {
-            for (int j = 0; j < ASTRONAUT_CREW_MAX; j++) {
+            for (int j = 0; j < MAX_CREWS_IN_PROGRAM; j++) {
                 for (int k = 0; k <= ASTRONAUT_FLT_CREW_MAX; k++) {
                     ASSERT(Crew[i][j][k] >= 0 && Crew[i][j][k] <= MAX_POOL);
                 }

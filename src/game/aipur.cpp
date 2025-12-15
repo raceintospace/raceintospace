@@ -621,7 +621,7 @@ void DumpAstro(char plr, int inx)
         }
     }
 
-    for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+    for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         for (int j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
             if (pData->Crew[inx][i][j] > 0
                 && pData->Pool[pData->Crew[inx][i][j] - 1].Prime < 1) {
@@ -727,7 +727,7 @@ void TransAstro(char plr, int inx)
         flt1 = -1;
         flt2 = -1;
 
-        for (i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+        for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
             if (pData->CrewCount[inx][i] == 0) {
                 if (flt1 == -1) {
                     flt1 = i;

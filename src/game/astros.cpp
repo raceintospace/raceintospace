@@ -37,7 +37,7 @@ int AvailableCrewsCount(int plr, int program)
 {
     int count = 0;
 
-    for (int i = 0; i < ASTRONAUT_CREW_MAX; i++) {
+    for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         const int commanderIndex = Data->P[plr].Crew[program][i][0];
         if (commanderIndex == 0) continue;
         
@@ -61,7 +61,7 @@ int AvailableCrewsCount(int plr, int program)
 void CheckFlightCrews(int player)
 {
     for (int k = 0; k < ASTRONAUT_POOLS + 1; k++) {
-        for (int j = 0; j < ASTRONAUT_CREW_MAX; j++) {
+        for (int j = 0; j < MAX_CREWS_IN_PROGRAM; j++) {
             int crew_count = Data->P[player].CrewCount[k][j];
             if (crew_count <= 0) continue;
             
