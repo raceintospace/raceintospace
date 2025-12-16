@@ -38,7 +38,7 @@ void draw_string(int x, int y, const char *s)
 {
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
-    } else if (xx != 0 || yy != 0) {
+    } else if (x != 0 || y != 0) {
         LOG_WARNING("incorrect call for string continuation at (%d, %d) with string %s", x, y, s);
     }
 
