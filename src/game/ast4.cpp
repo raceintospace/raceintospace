@@ -63,8 +63,7 @@ int sON;
 
 void AstLevel(char plr, char prog, char crew, char ast)
 {
-    int i, k, man, over = 0, temp, val;
-    man = Guy(plr, prog, crew, ast);
+    int man = Guy(plr, prog, crew, ast);
 
     display::LegacySurface local(143, 74);
     local.copyFrom(display::graphics.legacyScreen(), 94, 38, 236, 111);
@@ -73,12 +72,12 @@ void AstLevel(char plr, char prog, char crew, char ast)
     fill_rectangle(99, 42, 231, 60, 7 + plr * 3);
     display::graphics.setForegroundColor(12);
     draw_string(115, 48, "COMPATIBILITY");
-    over = 0;
-    val = 0;
+    int over = 0;
+    int val = 0;
 
-    for (i = 0; i < Data->P[plr].CrewCount[prog][crew]; i++) {
+    for (int i = 0; i < Data->P[plr].CrewCount[prog][crew]; i++) {
         if (man != Guy(plr, prog, crew, i)) {
-            temp = 0;
+            int temp = 0;
 
             if (Compatible(Data->P[plr].Pool[man],
                            Data->P[plr].Pool[Guy(plr, prog, crew, i)])) {
@@ -105,6 +104,7 @@ void AstLevel(char plr, char prog, char crew, char ast)
         }
     }
 
+    int i;
     switch (prog) {
     case 1:
         i = 16;
@@ -313,7 +313,6 @@ void DrawProgs(char plr, char prog)
 
     display::graphics.setForegroundColor(1);
     draw_heading(40, 5, title.c_str(), 0, -1);
-    return;
 }
 
 /** need to check programs to see if there are adequate astronauts there
@@ -324,20 +323,13 @@ void DrawProgs(char plr, char prog)
  */
 int CheckProgram(char plr, char prog)
 {
-    int check = 0;
-
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Crew != 0) {
-            ++check;
+        if (Data->P[plr].Pool[i].Crew != 0) { // if any astronaught is assigned to any crew anywhere...
+            return 1;                         // something seems wrong in this code, needs investigating
         }
     }
 
-    if (check > 0) {
-        return 1;
-    }
-
-    check = 0;
-
+    int check = 0;
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Assign == prog) {
             ++check;
@@ -361,37 +353,33 @@ int CheckProgram(char plr, char prog)
 
 void FixPrograms(char plr)
 {
-    int i;
-
-    for (i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; i++) {
         if (Data->P[plr].Manned[i].DCost > 0 &&
             Data->P[plr].Manned[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 2, i);
         }
     }
 
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (Data->P[plr].Rocket[i].DCost > 0 &&
             Data->P[plr].Rocket[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 1, i);
         }
     }
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (Data->P[plr].Misc[i].DCost > 0 &&
             Data->P[plr].Misc[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 3, i);
         }
     }
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (Data->P[plr].Probe[i].DCost > 0 &&
             Data->P[plr].Probe[i].DCost <= Data->P[plr].Cash) {
             DamProb(plr, 0, i);
         }
     }
-
-    return;
 }
 
 
@@ -415,7 +403,7 @@ void DamProb(char plr, char prog, int chk)
 
     display::graphics.screen()->clear();
 
-    Equipment &hardware = HardwareProgram(plr, prog, chk);
+    Equipment& hardware = HardwareProgram(plr, prog, chk);
 
     assert(hardware.DCost <= Data->P[plr].Cash);
 
@@ -500,7 +488,6 @@ void DamProb(char plr, char prog, int chk)
 
 void DrawPosition(char prog, int pos)
 {
-
     display::graphics.setForegroundColor(5);
 
     switch (pos) {
@@ -545,8 +532,6 @@ void DrawPosition(char prog, int pos)
     }
 
     display::graphics.setForegroundColor(1);
-
-    return;
 }
 
 
@@ -1129,7 +1114,6 @@ void Programs(char plr, char prog)
  */
 void ClearIt(void)
 {
-
     fill_rectangle(16, 87, 75, 91, 3);
     fill_rectangle(5, 87, 11, 91, 3);
     fill_rectangle(16, 96, 75, 100, 3);
@@ -1139,8 +1123,6 @@ void ClearIt(void)
     fill_rectangle(16, 114, 75, 118, 3);
     fill_rectangle(5, 114, 11, 118, 3);
     fill_rectangle(16, 87, 238, 121, 3);
-
-    return;
 }
 
 
@@ -1178,8 +1160,6 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
     } else {
         DrawPosition(prog, 4);
     }
-
-    return;
 }
 
 /** Draws Astronaut attributes
@@ -1197,107 +1177,90 @@ void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
  */
 void AstStats(int plr, int program, int man, int num)
 {
-    int y, yy;
-    display::graphics.setForegroundColor(1);
-    y = 91 + man * 9;
+    int y = 91 + man * 9;
+    const auto& spaceman = Data->P[plr].Pool[num];
 
+    display::graphics.setForegroundColor(1);
     if (man == 0) {
         display::graphics.setForegroundColor(11);   /* Highlight CA for command pilot */
     }
 
     draw_string(119, y, "CA:");
-    yy = 0;
-
-    if (Data->P[plr].Pool[num].Cap == 1) {
-        yy = 134;
+    if (spaceman.Cap == 1) { // special case to make number more visible
+        draw_number(134, y, spaceman.Cap);
+    } else {
+        draw_number(0, 0, spaceman.Cap);
     }
 
-    draw_number(yy, y, Data->P[plr].Pool[num].Cap);
     display::graphics.setForegroundColor(1);
-
     if (man == 1 && program > 1) {
         display::graphics.setForegroundColor(11);   /* Highlight LM for LM pilot */
     }
 
     draw_string(143, y, "LM:");
-    yy = 0;
-
-    if (Data->P[plr].Pool[num].LM == 1) {
-        yy = 158;
+    if (spaceman.LM == 1) { // special case to make number more visible
+        draw_number(158, y, spaceman.LM);
+    } else {
+        draw_number(0, 0, spaceman.LM);
     }
 
-    draw_number(yy, y, Data->P[plr].Pool[num].LM);
     display::graphics.setForegroundColor(1);
-
     if (program == 1 || ((program == 2 || program == 3 || program == 4) && man == 1) || (program == 5 && man > 1)) {
         display::graphics.setForegroundColor(11);   /* Highlight EV for EVA specialist */
     }
 
     draw_string(167, y, "EV:");
-    yy = 0;
-
-    if (Data->P[plr].Pool[num].EVA == 1) {
-        yy = 182;
+    if (spaceman.EVA == 1) { // special case to make number more visible
+        draw_number(182, y, spaceman.EVA);
+    } else {
+        draw_number(0, 0, spaceman.EVA);
     }
 
-    draw_number(yy, y, Data->P[plr].Pool[num].EVA);
     display::graphics.setForegroundColor(1);
-
     if ((program == 2 && man == 0) || ((program == 3 || program == 4) && man == 2)) {
         display::graphics.setForegroundColor(11);   /* Highlight DO for docking specialist */
     }
 
     draw_string(192, y, "DO:");
-    yy = 0;
-
-    if (Data->P[plr].Pool[num].Docking == 1) {
-        yy = 207;
+    if (spaceman.Docking == 1) { // special case to make number more visible
+        draw_number(207, y, spaceman.Docking);
+    } else {
+        draw_number(0, 0, spaceman.Docking);
     }
-
-    draw_number(yy, y, Data->P[plr].Pool[num].Docking);
 
     display::graphics.setForegroundColor(1);  /* Never highlight EN skill */
     draw_string(217, y, "EN:");
-    yy = 0;
-
-    if (Data->P[plr].Pool[num].Endurance == 1) {
-        yy = 232;
+    if (spaceman.Endurance == 1) { // special case to make number more visible
+        draw_number(232, y, spaceman.Endurance);
+    } else {
+        draw_number(0, 0, spaceman.Endurance);
     }
 
-    draw_number(yy, y, Data->P[plr].Pool[num].Endurance);
 
     fill_rectangle(4, 40, 54, 66, 3);
     // Now tell if this 'naut is assigned to a crew
 
-    if (Data->P[plr].Pool[num].Prime == 3) {
+    if (spaceman.Prime == 3) {
         display::graphics.setForegroundColor(6);
         draw_string(11, 45, "PRIMARY");
         draw_string(19, 53, "CREW");
         draw_string(6, 61, "THIS TURN");
-    }
-
-    if (Data->P[plr].Pool[num].Prime == 4) {
+    } else if (spaceman.Prime == 4) {
         display::graphics.setForegroundColor(17);
         draw_string(11, 45, "PRIMARY");
         draw_string(19, 53, "CREW");
         draw_string(5, 61, "NEXT TURN");
-    }
-
-    if (Data->P[plr].Pool[num].Prime == 1) {
+    } else if (spaceman.Prime == 1) {
         display::graphics.setForegroundColor(5);
         draw_string(13, 45, "BACKUP");
         draw_string(19, 53, "CREW");
         draw_string(6, 61, "THIS TURN");
-    }
-
-    if (Data->P[plr].Pool[num].Prime == 2) {
+    } else if (spaceman.Prime == 2) {
         display::graphics.setForegroundColor(16);
         draw_string(13, 45, "BACKUP");
         draw_string(19, 53, "CREW");
         draw_string(5, 61, "NEXT TURN");
     }
-
-    return;
 }
 
 

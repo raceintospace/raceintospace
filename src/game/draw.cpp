@@ -38,6 +38,8 @@ void draw_string(int x, int y, const char *s)
 {
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
+    } else if (x != 0 || y != 0) {
+        LOG_WARNING("incorrect call for string continuation at (%d, %d) with string %s", x, y, s);
     }
 
     int len = strlen(s);
@@ -140,10 +142,13 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
     }
 }
 
+// use xx=yy=0 to continue drawing from where last draw call ended
 void draw_number(int xx, int yy, int num)
 {
-    if (xx != 0 || yy != 0) {
+    if (xx != 0 && yy != 0) {
         grMoveTo(xx, yy);
+    } else if (xx != 0 || yy != 0) {
+        LOG_WARNING("incorrect call for string continuation at (%d, %d) with number %d", xx, yy, num);
     }
 
     std::string text = std::to_string(num);
