@@ -436,7 +436,8 @@ extern struct LogAppender *log_defaultLogAppender;
 #define CAT_ALERT(c,m,...)      CAT_LOG(c,LP_ALERT    ,m __VA_OPT__(,) __VA_ARGS__)
 #define CAT_EMERGENCY(c,m,...)  CAT_LOG(c,LP_EMERGENCY,m __VA_OPT__(,) __VA_ARGS__)
 
-#define LOG_LOG(priority, message, ...) CAT_LOG(*_log_defaultCategory, priority, message __VA_OPT__(,) __VA_ARGS__)
+                                                // V note no "_LOGV" here
+#define LOG_LOG(priority, message, ...) _LOG_PRE(*_log_defaultCategory,priority,message) __VA_OPT__(,) __VA_ARGS__ _LOG_POST
 #define LOG_TRACE(m,...)     LOG_LOG(LP_TRACE    ,m __VA_OPT__(,) __VA_ARGS__)
 #define LOG_DEBUG(m,...)     LOG_LOG(LP_DEBUG    ,m __VA_OPT__(,) __VA_ARGS__)
 #define LOG_INFO(m,...)      LOG_LOG(LP_INFO     ,m __VA_OPT__(,) __VA_ARGS__)
