@@ -69,60 +69,46 @@ void MisOrd(char num);
  * \return 0 if date and budget are the same
  * \return 1 if first budget is lower than second
  */
-static int
-cmp_order(const void *p1, const void *p2)
+static int cmp_order(const void* p1, const void* p2)
 {
-    struct order *o1 = (struct order *) p1;
-    struct order *o2 = (struct order *) p2;
+    order* o1 = (order*) p1;
+    order* o2 = (order*) p2;
 
-    if (o1->date < o2->date) {
+    if (o1->date < o2->date) return -1;
+    if (o1->date > o2->date) return 1;
+    
+    if (o1->budget > o2->budget) return -1;
+    if (o1->budget < o2->budget) return 1;
+    
+    // Never randomly reshuffle missions by the same player as
+    // this would break mail games; order by launch pad in
+    // this case.
+    if (o1->plr != o2->plr) (brandom(2) == 1) ? 1 : -1;
+    
+    if (o1->loc < o2->loc) {
         return -1;
-    } else if (o1->date == o2->date) {
-        if (o1->budget > o2->budget) {
-            return -1;
-        } else if (o1->budget == o2->budget) {
-
-            // Never randomly reshuffle missions by the same player as
-            // this would break mail games; order by launch pad in
-            // this case.
-            if (o1->plr == o2->plr) {
-                if (o1->loc < o2->loc) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-            return (brandom(2) == 1) ? 1 : -1;
-        } else {
-            return 1;
-        }
     } else {
         return 1;
     }
 }
 
-char
-OrderMissions(void)
+char OrderMissions()
 {
-    int i, j, k;
-
     memset(Order, 0x00, sizeof Order);
     // Sort Missions for Proper Order
-    k = 0;
+    int k = 0;
 
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        for (j = 0; j < MAX_MISSIONS; j++) {
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        for (int j = 0; j < MAX_MISSIONS; j++) {
             // Don't run the Soviet missions during the U.S. turn
-            if (!((MAIL == 0 && i == 1) || (MAIL == 3 && i == 0))) {
-                if (Data->P[i].Mission[j].MissionCode
-                    && Data->P[i].Mission[j].part != 1) {
-                    Order[k].plr = i;
-                    Order[k].loc = j;
-                    Order[k].budget = Data->P[i].Budget;
-                    Order[k].date = Data->P[i].Mission[j].Month;
-                    k++;
-                }
+            if ((MAIL == 0 && i == 1) || (MAIL == 3 && i == 0)) continue;
+            if (Data->P[i].Mission[j].MissionCode
+                && Data->P[i].Mission[j].part != 1) {
+                Order[k].plr = i;
+                Order[k].loc = j;
+                Order[k].budget = Data->P[i].Budget;
+                Order[k].date = Data->P[i].Mission[j].Month;
+                k++;
             }
         }
     }
@@ -143,19 +129,17 @@ namespace   // Unnamed namespace part 2
 
 void MisOrd(char num)
 {
-    int i, j = 0;
-
     ShBox(63, 19, 257, 173);
     InBox(74, 36, 246, 163);
     display::graphics.setForegroundColor(36);
     draw_string(77, 30, "       LAUNCH ORDER");
 
-    for (i = 0; i < num; i++) {
-        InBox(78, 39 + 21 * j, 105, 55 + 21 * j);
-        draw_small_flag(Order[i].plr, 79, 40 + 21 * j);
+    for (int i = 0; i < num; i++) {
+        InBox(78, 39 + 21 * i, 105, 55 + 21 * i);
+        draw_small_flag(Order[i].plr, 79, 40 + 21 * i);
         display::graphics.setForegroundColor(16);
-        draw_string(110, 45 + 21 * j, "SCHEDULED LAUNCH");
-        draw_string(110, 52 + 21 * j, "DATE: ");
+        draw_string(110, 45 + 21 * i, "SCHEDULED LAUNCH");
+        draw_string(110, 52 + 21 * i, "DATE: ");
         display::graphics.setForegroundColor(1);
 
         draw_string(0, 0,
@@ -163,7 +147,6 @@ void MisOrd(char num)
 
         draw_string(0, 0, " 19");
         draw_number(0, 0, Data->Year);
-        j++;
     }
 
     FadeIn(2, 10, 0, 0);
@@ -182,8 +165,6 @@ void MisOrd(char num)
 
 void MisAnn(char plr, char pad)
 {
-    int i, j, bud;
-    char k, hold, HelpFlag = 0;
     char pad_str[2] = {static_cast<char>('A' + pad), '\0'};
 
     display::graphics.screen()->clear();
@@ -213,17 +194,17 @@ void MisAnn(char plr, char pad)
     draw_number(0, 0, Data->Year);
     display::graphics.setForegroundColor(1);
 
-    struct mStr plan =
-        GetMissionPlan(Data->P[plr].Mission[pad].MissionCode);
+    mStr plan = GetMissionPlan(Data->P[plr].Mission[pad].MissionCode);
 
     // Check to ensure there is a docking module in orbit before
     // allowing a docking mission to proceed.
     // This assumes an unmanned docking mission cannot be attempted
     // without including a docking module.
+    bool HelpFlag = false;
     if ((plan.mVab[0] & 0x10) == 0x10 &&
         Data->P[plr].DockingModuleInOrbit <= 0) {
         Downgrader::Options options = LoadJsonDowngrades("DOWNGRADES.JSON");
-        Downgrader replace(Data->P[plr].Mission[pad], options);
+        Downgrader replace{Data->P[plr].Mission[pad], options};
         MissionType downgrade;
 
         //  Assumes Mission_None is not a docking mission...
@@ -235,9 +216,9 @@ void MisAnn(char plr, char pad)
             downgrade = replace.current();
         } catch (IOException &err) {
             // TODO: Can't download to Earth Orbital if Joint mission.
-            CCRITICAL3(baris, "Error loading mission downgrades: %s",
+            CAT_CRITICAL(baris, "Error loading mission downgrades: %s",
                        err.what());
-            CWARNING2(baris, "Defaulting to Manned Earth Orbital.");
+            CAT_WARNING(baris, "Defaulting to Manned Earth Orbital.");
             downgrade = Data->P[plr].Mission[pad];
             downgrade.MissionCode = Mission_Earth_Orbital;
             downgrade.Duration = 1;
@@ -245,7 +226,7 @@ void MisAnn(char plr, char pad)
 
         Downgrade(plr, pad, downgrade);
         plan = GetMissionPlan(Data->P[plr].Mission[pad].MissionCode);
-        HelpFlag = 1;
+        HelpFlag = true;
     }
 
     draw_string(127, 54, (plan.Abbr).c_str());
@@ -318,227 +299,205 @@ void MisAnn(char plr, char pad)
 
     }
 
-    for (i = 0; i < Data->P[plr].Mission[pad].Joint + 1; i++) {
-        k = 0;
+    for (int i = 0; i < Data->P[plr].Mission[pad].Joint + 1; i++) {
+        int k = 0; // some kind of y-coordinate variable
+        int bud = (i == 0)?59 :168; // some kind of x-coordinate variable
 
-        if (i == 0) {
-            bud = 59;
-        } else {
-            bud = 168;
-        }
-
-        for (j = Mission_Capsule; j <= Mission_EVA; j++) {
-            hold = Data->P[plr].Mission[pad + i].Hard[j];
+        for (int j = Mission_Capsule; j <= Mission_EVA; j++) {
+            int hold = Data->P[plr].Mission[pad + i].Hard[j];
 
             switch (j) {
             case Mission_Capsule:
-                if (hold > -1) {
-                    if (Data->P[plr].Manned[hold].SaveCard > 0) {
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud - 8, 100 + 14 * k, "+");
-                    }
-                    display::graphics.setForegroundColor(7);
-                    draw_string(bud, 100 + 14 * k, "CAPSULE: ");
-                    display::graphics.setForegroundColor(1);
-                    draw_string(0, 0, &Data->P[plr].Manned[hold].Name[0]);
+                {
+                if (hold <= -1) break;
+                    
+                if (Data->P[plr].Manned[hold].SaveCard > 0) {
                     display::graphics.setForegroundColor(11);
-                    draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                    if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(11);
-                    }
-
-                    draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
-                                Data->P[plr].Manned[hold].Damage);
-                    draw_string(0, 0, "%");
-                    ++k;
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
+                display::graphics.setForegroundColor(7);
+                draw_string(bud, 100 + 14 * k, "CAPSULE: ");
+                display::graphics.setForegroundColor(1);
+                draw_string(0, 0, &Data->P[plr].Manned[hold].Name[0]);
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
 
+                if (Data->P[plr].Manned[hold].Damage != 0) display::graphics.setForegroundColor(9);
+                else if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD) display::graphics.setForegroundColor(11);
+                else display::graphics.setForegroundColor(1);
+
+                draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
+                            Data->P[plr].Manned[hold].Damage);
+                draw_string(0, 0, "%");
+                    
+                ++k;
                 break;
+                }
 
             case Mission_Kicker:
-                if (hold > -1) {
-                    if (Data->P[plr].Misc[hold].SaveCard > 0) {
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud - 8, 100 + 14 * k, "+");
-                    }
-                    display::graphics.setForegroundColor(7);
-                    draw_string(bud, 100 + 14 * k, "KICKER: ");
-                    display::graphics.setForegroundColor(1);
-                    draw_string(0, 0, &Data->P[plr].Misc[hold].Name[0]);
+                {
+                if (hold <= -1) break;
+                    
+                if (Data->P[plr].Misc[hold].SaveCard > 0) {
                     display::graphics.setForegroundColor(11);
-                    draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                    if (Data->P[plr].Misc[hold].Safety < Data->P[plr].Misc[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(11);
-                    }
-
-                    draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
-                                Data->P[plr].Misc[hold].Damage);
-                    draw_string(0, 0, "%");
-                    ++k;
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
+                display::graphics.setForegroundColor(7);
+                draw_string(bud, 100 + 14 * k, "KICKER: ");
+                display::graphics.setForegroundColor(1);
+                draw_string(0, 0, &Data->P[plr].Misc[hold].Name[0]);
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
+
+                if (Data->P[plr].Misc[hold].Damage != 0) display::graphics.setForegroundColor(9);
+                else if (Data->P[plr].Misc[hold].Safety < Data->P[plr].Misc[hold].MaxRD) display::graphics.setForegroundColor(11);
+                else display::graphics.setForegroundColor(1);
+                draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
+                            Data->P[plr].Misc[hold].Damage);
+                draw_string(0, 0, "%");
+                ++k;
 
                 break;
+                }
 
             case Mission_LM:
-                if (hold > -1) {
-                    if (Data->P[plr].Manned[hold].SaveCard > 0) {
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud - 8, 100 + 14 * k, "+");
-                    }
-                    display::graphics.setForegroundColor(7);
-                    draw_string(bud, 100 + 14 * k, "LM: ");
-                    display::graphics.setForegroundColor(1);
-                    draw_string(0, 0, &Data->P[plr].Manned[hold].Name[0]);
+                {
+                if (hold <= -1) break;
+                    
+                if (Data->P[plr].Manned[hold].SaveCard > 0) {
                     display::graphics.setForegroundColor(11);
-                    draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                    Data->P[plr].Manned[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                    if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD && Data->P[plr].Manned[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(11);
-                    }
-
-                    draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
-                                Data->P[plr].Manned[hold].Damage);
-                    draw_string(0, 0, "%");
-                    ++k;
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
+                display::graphics.setForegroundColor(7);
+                draw_string(bud, 100 + 14 * k, "LM: ");
+                    
+                display::graphics.setForegroundColor(1);
+                draw_string(0, 0, &Data->P[plr].Manned[hold].Name[0]);
+                    
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
+
+                if (Data->P[plr].Manned[hold].Damage != 0) display::graphics.setForegroundColor(9);
+                else if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD) display::graphics.setForegroundColor(11);
+                else display::graphics.setForegroundColor(1);
+                draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
+                            Data->P[plr].Manned[hold].Damage);
+                draw_string(0, 0, "%");
+                ++k;
 
                 break;
+                }
 
             case Mission_Probe_DM:
-
+                {
 //draw_number(150, 116, Data->P[plr].Probe[hold].MaxRD);
-                if (hold > -1) {
-                    if (hold < 3) {
-                        if (Data->P[plr].Probe[hold].SaveCard > 0) {
-                            display::graphics.setForegroundColor(11);
-                            draw_string(bud - 8, 100 + 14 * k, "+");
-                        }
-                        display::graphics.setForegroundColor(7);
-                        draw_string(bud, 100 + 14 * k, "PROBE: ");
-                        display::graphics.setForegroundColor(1);
-                        draw_string(0, 0, &Data->P[plr].Probe[hold].Name[0]);
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Probe[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                        if (Data->P[plr].Probe[hold].Safety < Data->P[plr].Probe[hold].MaxRD && Data->P[plr].Probe[hold].Damage == 0) {
-                            display::graphics.setForegroundColor(11);
-                        }
-
-                        draw_number(0, 0, Data->P[plr].Probe[hold].Safety +
-                                    Data->P[plr].Probe[hold].Damage);
-                        draw_string(0, 0, "%");
-                        ++k;
-                    } else if (hold == 4) {
-                        if (Data->P[plr].Misc[hold].SaveCard > 0) {
-                            display::graphics.setForegroundColor(11);
-                            draw_string(bud - 8, 100 + 14 * k, "+");
-                        }
-                        display::graphics.setForegroundColor(7);
-                        draw_string(bud, 100 + 14 * k, "DOCKING: ");
-                        display::graphics.setForegroundColor(1);
-                        draw_string(0, 0, &Data->P[plr].Misc[hold].Name[0]);
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Misc[hold].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                        if (Data->P[plr].Probe[hold].Safety < Data->P[plr].Probe[hold].MaxRD && Data->P[plr].Probe[hold].Damage == 0) {
-                            display::graphics.setForegroundColor(11);
-                        }
-
-                        draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
-                                    Data->P[plr].Misc[hold].Damage);
-                        draw_string(0, 0, "%");
-                        ++k;
-                    }
+                if (hold <= -1 || hold > 4) break;
+                auto& Plr = Data->P[plr];
+                    
+                int SaveCard = (hold < 3)?Plr.Misc[hold].SaveCard
+                                         :Plr.Probe[hold].SaveCard;
+                if (SaveCard > 0) {
+                    display::graphics.setForegroundColor(11);
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
-
+                    
+                display::graphics.setForegroundColor(7);
+                const char* str1 = (hold < 3)?"PROBE: "
+                                             :"DOCKING: ";
+                draw_string(bud, 100 + 14 * k, str1);
+                    
+                display::graphics.setForegroundColor(1);
+                const char* str2 = (hold < 3)?&Plr.Probe[hold].Name[0]
+                                             :&Plr.Misc[hold].Name[0];
+                draw_string(0, 0, str2);
+                    
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
+                    
+                int Damage = (hold < 3)? Plr.Probe[hold].Damage
+                                       : Plr.Misc[hold].Damage;
+                int Safety = (hold < 3)? Plr.Probe[hold].Safety
+                                       : Plr.Misc[hold].Safety;
+                int MaxRD = (hold < 3)? Plr.Probe[hold].MaxRD
+                                      : Plr.Misc[hold].MaxRD;
+                if (Damage != 0) display::graphics.setForegroundColor(9);
+                else if (Safety < MaxRD) display::graphics.setForegroundColor(11);
+                else display::graphics.setForegroundColor(1);
+                draw_number(0, 0, Safety + Damage);
+                draw_string(0, 0, "%");
+                    
+                ++k;
                 break;
+                }
 
             case Mission_PrimaryBooster:
-                if (hold > -1) {
-                    if (hold < 5) {
-                        if (Data->P[plr].Rocket[hold - 1].SaveCard > 0) {
-                            display::graphics.setForegroundColor(11);
-                            draw_string(bud - 8, 100 + 14 * k, "+");
-                        }
-                        display::graphics.setForegroundColor(7);
-                        draw_string(bud, 100 + 14 * k, "ROCKET: ");
-                        display::graphics.setForegroundColor(1);
-                        draw_string(0, 0, &Data->P[plr].Rocket[hold - 1].Name[0]);
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                        Data->P[plr].Rocket[hold - 1].Damage != 0 ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment, Nikakd, 10/8/10
-
-                        if (Data->P[plr].Rocket[hold - 1].Safety < Data->P[plr].Rocket[hold - 1].MaxRD && Data->P[plr].Rocket[hold - 1].Damage == 0) {
-                            display::graphics.setForegroundColor(11);
-                        }
-
-                        draw_number(0, 0, Data->P[plr].Rocket[hold - 1].Safety +
-                                    Data->P[plr].Rocket[hold - 1].Damage);
-                        draw_string(0, 0, "%");
-                        ++k;
-                    } else {
-                        if (Data->P[plr].Rocket[hold - 5].SaveCard > 0) {
-                            display::graphics.setForegroundColor(11);
-                            draw_string(bud - 8, 100 + 14 * k, "+");
-                        }
-                        display::graphics.setForegroundColor(7);
-                        draw_string(bud, 100 + 14 * k, "ROCKET: ");
-                        display::graphics.setForegroundColor(1);
-                        draw_string(0, 0, &Data->P[plr].Rocket[hold - 5].Name[0]);
-                        draw_string(0, 0, " W/B");
-                        display::graphics.setForegroundColor(11);
-                        draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                        (Data->P[plr].Rocket[hold - 5].Damage != 0 || Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage != 0) ? display::graphics.setForegroundColor(9) : display::graphics.setForegroundColor(1); //Damaged Equipment && Booster's Safety Mod, Nikakd, 10/8/10
-
-                        if ((Data->P[plr].Rocket[hold - 5].Safety < Data->P[plr].Rocket[hold - 5].MaxRD || Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety < Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].MaxRD) && Data->P[plr].Rocket[hold - 5].Damage == 0 && Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage == 0) {
-                            display::graphics.setForegroundColor(11);
-                        }
-
-                        draw_number(0, 0, RocketBoosterSafety(Data->P[plr].Rocket[hold - 5].Safety + Data->P[plr].Rocket[hold - 5].Damage, Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Safety + Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Damage));
-                        draw_string(0, 0, "%");
-                        ++k;
-                    }
+                {
+                if (hold <= -1) break;
+                auto& Rocket = (hold < 5)? Data->P[plr].Rocket[hold - 1]
+                                         : Data->P[plr].Rocket[hold - 5];
+                auto& Boosters = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
+                    
+                if (Rocket.SaveCard > 0) {
+                    display::graphics.setForegroundColor(11);
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
+                display::graphics.setForegroundColor(7);
+                draw_string(bud, 100 + 14 * k, "ROCKET: ");
+                    
+                display::graphics.setForegroundColor(1);
+                draw_string(0, 0, &Rocket.Name[0]);
+                if (hold >= 5) draw_string(0, 0, " W/B");
 
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
+
+                if (Rocket.Damage != 0 || (hold >= 5 && Boosters.Damage != 0)) {
+                    display::graphics.setForegroundColor(9);
+                } else if (Rocket.Safety < Rocket.MaxRD 
+                           || (hold >= 5 && Boosters.Safety < Boosters.MaxRD)) {
+                    display::graphics.setForegroundColor(11);
+                }
+                else display::graphics.setForegroundColor(1);
+                if (hold < 5) {
+                    draw_number(0, 0, Rocket.Safety + Rocket.Damage);
+                } else {
+                    draw_number(0, 0, RocketBoosterSafety(Rocket.Safety + Rocket.Damage, Boosters.Safety + Boosters.Damage));
+                }
+                draw_string(0, 0, "%");
+                ++k;
                 break;
+                }
 
             case Mission_EVA:
-
+                {
                 // EVA suits are added to _all_ manned missions once
                 // developed (for emergencies). Only display if needed.
-                if (hold > -1 &&
-                    IsEVA(Data->P[plr].Mission[pad].MissionCode)) {
-                    if (Data->P[plr].Misc[hold].SaveCard > 0) {
-                        display::graphics.setForegroundColor(44);
-                        draw_string(bud - 8, 100 + 14 * k, "+");
-                    }
-                    display::graphics.setForegroundColor(7);
-                    draw_string(bud, 100 + 14 * k, "EVA: ");
-                    display::graphics.setForegroundColor(1);
-                    draw_string(0, 0, &Data->P[plr].Misc[hold].Name[0]);
-                    display::graphics.setForegroundColor(11);
-                    draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
-                    display::graphics.setForegroundColor(
-                        Data->P[plr].Misc[hold].Damage != 0 ? 9 : 1);
+                if (hold <= -1) break;
+                if (!IsEVA(Data->P[plr].Mission[pad].MissionCode)) break;
 
-                    if (Data->P[plr].Misc[hold].Safety < Data->P[plr].Misc[hold].MaxRD && Data->P[plr].Misc[hold].Damage == 0) {
-                        display::graphics.setForegroundColor(11);
-                    }
-
-                    draw_number(0, 0, Data->P[plr].Misc[hold].Safety +
-                                Data->P[plr].Misc[hold].Damage);
-                    draw_string(0, 0, "%");
-                    ++k;
+                auto& EVA_Suit = Data->P[plr].Misc[hold];
+                if (EVA_Suit.SaveCard > 0) {
+                    display::graphics.setForegroundColor(44);
+                    draw_string(bud - 8, 100 + 14 * k, "+");
                 }
+                display::graphics.setForegroundColor(7);
+                draw_string(bud, 100 + 14 * k, "EVA: ");
+                    
+                display::graphics.setForegroundColor(1);
+                draw_string(0, 0, &EVA_Suit.Name[0]);
+                    
+                display::graphics.setForegroundColor(11);
+                draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
 
+                if (EVA_Suit.Damage != 0) display::graphics.setForegroundColor(9);
+                else if (EVA_Suit.Safety < EVA_Suit.MaxRD) display::graphics.setForegroundColor(11);
+                else display::graphics.setForegroundColor(1);
+                draw_number(0, 0, EVA_Suit.Safety + EVA_Suit.Damage);
+                draw_string(0, 0, "%");
+                    
+                ++k;
                 break;
+                }
 
             default:
                 break;
@@ -582,9 +541,7 @@ void MisAnn(char plr, char pad)
             FadeOut(2, 10, 0, 0);
             fullscreenMissionPlayback = true;
             return;
-        }
-
-        else if ((x >= 207 && y >= 70 && x <= 264 && y <= 82 && mousebuttons > 0) || key == 'S') {
+        } else if ((x >= 207 && y >= 70 && x <= 264 && y <= 82 && mousebuttons > 0) || key == 'S') {
             InBox(207, 70, 264, 82);
             WaitForMouseUp();
             OutBox(207, 70, 264, 82);
@@ -634,7 +591,7 @@ void AI_Begin(char plr)
     FadeIn(2, 10, 0, 0);
 }
 
-void AI_Done(void)
+void AI_Done()
 {
     music_stop();
     FadeOut(2, 10, 0, 0);
