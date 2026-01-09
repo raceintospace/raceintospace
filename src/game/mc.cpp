@@ -103,8 +103,7 @@ void DrawControl(char plr)
 
 void SetW(char ch)
 {
-    int i;
-    i = 0;
+    int i = 0;
 
     while (Mev[i].Name[0] != 'W') {
         i++;
@@ -115,8 +114,6 @@ void SetW(char ch)
 
 int Launch(char plr, char mis)
 {
-    int i, j, t, k, mcode, avg, spResult, temp = 0;
-    char total;
     STEP = FINAL = JOINT = PastBANG = 0;
     tMen = 0x00; // clear mission status flags
 
@@ -125,8 +122,7 @@ int Launch(char plr, char mis)
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
         // Check for Mission death
-        spResult = Data->P[plr].History[Data->P[plr].PastMissionCount].spResult;
-
+        int spResult = Data->P[plr].History[Data->P[plr].PastMissionCount].spResult;
         if (spResult >= 3000 && spResult < 5000) {
             death = 1;
         } else {
@@ -159,13 +155,11 @@ int Launch(char plr, char mis)
 
     JOINT = Data->P[plr].Mission[mis].Joint;
 
-    temp = CheckCrewOK(plr, mis);
-
-    if (temp == 1) { // found mission no crews
+    if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
         ScrubMission(plr, mis - Data->P[plr].Mission[mis].part);
     }
 
-    if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode) {
+    if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode != Mission_None) {
         MisAnn(plr, mis);
     }
 
@@ -180,15 +174,15 @@ int Launch(char plr, char mis)
 
     memset(MA, 0x00, sizeof MA);
 
-    for (i = 0; i < (1 + JOINT); i++) {
+    for (int i = 0; i < (1 + JOINT); i++) {
         // Decide who to use for each pad
         Data->P[plr].Mission[mis + i].Crew = (Data->P[plr].Mission[mis + i].PCrew > 0) ?
                                              Data->P[plr].Mission[mis + i].PCrew :  Data->P[plr].Mission[mis + i].BCrew ;
 
-        for (j = 0; j < MANNED[i]; j++) {
-            t = Data->P[plr].Mission[mis + i].Prog;
-            k = Data->P[plr].Mission[mis + i].Crew - 1;
-            total = Data->P[plr].Crew[t][k][j] - 1;
+        for (int j = 0; j < MANNED[i]; j++) {
+            int t = Data->P[plr].Mission[mis + i].Prog;
+            int k = Data->P[plr].Mission[mis + i].Crew - 1;
+            int total = Data->P[plr].Crew[t][k][j] - 1;
             MA[i][j].A = &Data->P[plr].Pool[total];
             MA[i][j].loc = i;
         }
@@ -198,7 +192,7 @@ int Launch(char plr, char mis)
 
     CAP[0] = LM[0] = EVA[0] = DOC[0] = CAP[1] = LM[1] = EVA[1] = DOC[1] = -1;
 
-    for (i = 0; i < (1 + JOINT); i++) {
+    for (int i = 0; i < (1 + JOINT); i++) {
         switch (MANNED[i]) {
         case 0:
             CAP[i] = LM[i] = EVA[i] = DOC[i] = -1;
@@ -233,8 +227,9 @@ int Launch(char plr, char mis)
 
     // Do actual Missions
 
-    mcc = mcode = Data->P[plr].Mission[mis].MissionCode;
-    struct mStr misType = GetMissionPlan(mcode);
+    int mcode = Data->P[plr].Mission[mis].MissionCode;
+    mcc = Data->P[plr].Mission[mis].MissionCode;
+    mStr misType = GetMissionPlan(mcode);
 
     // Fixup for Mercury Duration C stuff
     if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 0) {
@@ -298,9 +293,10 @@ int Launch(char plr, char mis)
     // since there are (unimplemented) rescue missions with mission
     // codes greater than the lunar landing missions.
     if (!AI[plr] && mcode >= Mission_HistoricalLanding) {
-        avg = temp = 0;
+        int avg = 0;
+        int temp = 0;
 
-        for (i = 0; Mev[i].loc != 0x7f; ++i) {
+        for (int i = 0; Mev[i].loc != 0x7f; ++i) {
             /* Bugfix -> We need to skip cases when Mev[i].E is NULL */
             /* Same solution as used in mis_m.c (MisCheck):207 */
             if (!GetEquipment(Mev[i])) {
@@ -346,21 +342,20 @@ int Launch(char plr, char mis)
         Data->Step[mis] = STEPnum;
     }
 
-    total = Update_Prestige_Data(plr, mis, misType.Index);
+    int total = Update_Prestige_Data(plr, mis, misType.Index);
 
     MissionSetDown(plr, mis);
     MissionPast(plr, mis, total);
     // Update the Astros
 
-    for (i = 0; i < 1 + JOINT; i++) {
+    for (int i = 0; i < 1 + JOINT; i++) {
         /* XXX: was MANNED[i]+1, but why? */
-        for (j = 0; j < MANNED[i]; j++) {
-            if (MA[i][j].A) {
-                if (FINAL >= 100) {
-                    MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Successful
-                } else if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
-                    MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Failure
-                }
+        for (int j = 0; j < MANNED[i]; j++) {
+            if (MA[i][j].A == nullptr) continue;
+            if (FINAL >= 100) {
+                MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Successful
+            } else if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
+                MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Failure
             }
         }
     }
