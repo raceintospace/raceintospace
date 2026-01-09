@@ -26,12 +26,15 @@
 
 #include "Buzz_inc.h"
 #include "game_main.h"
+#include "logging.h"
 #include "mc.h"
 #include "mis_c.h"
 #include "mis_m.h"
 #include "mission_util.h"
 #include "pace.h"
 #include "pbm.h"
+
+LOG_DEFAULT_CATEGORY(prestige)
 
 char tYr, tMo;
 
@@ -622,10 +625,10 @@ char Set_Goal(char plr, char which, char control)
  * Mev is some sort of flattened linked list?
  * TODO: rewrite this function somewhat better
  */
-int MaxFail(void)
+int MaxFail()
 {
     int t = 0, count = 0;
-    for (auto& Mev_item = Mev[0];;Mev_item = Mev[Mev_item.trace],++count) {
+    for (auto& Mev_item = Mev[0];;(Mev_item = Mev[Mev_item.trace]),++count) {
         if (Mev_item.StepInfo == 0) {
             Mev_item.StepInfo = 1003;
         }
@@ -704,6 +707,7 @@ int PrestNeg(char plr, int i)
 
 int AllotPrest(char plr, char mis)
 {
+    LOG_INFO("Calculating prestige for %s player, mission %i", (plr==0)?"US":"USSR", mis);
     char PVal[MAXIMUM_PRESTIGE_NUM]{};
 
     hero = 0;
@@ -715,6 +719,7 @@ int AllotPrest(char plr, char mis)
     const mStr misType = GetMissionPlan(mcode);
 
     int other = MaxFail();
+    LOG_TRACE("MaxFail() returned %i", other);
 
     for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
         // PComp == 5 means alternate branch
@@ -733,14 +738,14 @@ int AllotPrest(char plr, char mis)
     }
 
     // FEMALE 'NAUTS
-    PVal[Prestige_WomanInSpace] = (MA[0][0].A != NULL && MA[0][0].A->Sex)
-                                  || (MA[0][1].A != NULL && MA[0][1].A->Sex)
-                                  || (MA[0][2].A != NULL && MA[0][2].A->Sex)
-                                  || (MA[0][3].A != NULL && MA[0][3].A->Sex)
-                                  || (MA[1][0].A != NULL && MA[1][0].A->Sex)
-                                  || (MA[1][1].A != NULL && MA[1][1].A->Sex)
-                                  || (MA[1][2].A != NULL && MA[1][2].A->Sex)
-                                  || (MA[1][3].A != NULL && MA[1][3].A->Sex);
+    PVal[Prestige_WomanInSpace] = (MA[0][0].A != nullptr && MA[0][0].A->Sex)
+                                  || (MA[0][1].A != nullptr && MA[0][1].A->Sex)
+                                  || (MA[0][2].A != nullptr && MA[0][2].A->Sex)
+                                  || (MA[0][3].A != nullptr && MA[0][3].A->Sex)
+                                  || (MA[1][0].A != nullptr && MA[1][0].A->Sex)
+                                  || (MA[1][1].A != nullptr && MA[1][1].A->Sex)
+                                  || (MA[1][2].A != nullptr && MA[1][2].A->Sex)
+                                  || (MA[1][3].A != nullptr && MA[1][3].A->Sex);
 
     for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
         int ival = abs(Mev[i].Prest);
@@ -760,18 +765,20 @@ int AllotPrest(char plr, char mis)
     }
 
     // EVA FIX FOR ALTERNATE STEPS LATER IN MISSION
-    if (misType.EVA == 1 &&
-        (PVal[Prestige_Spacewalk] == 0 ||
-         PVal[Prestige_Spacewalk] == 5)) {
+    if (misType.EVA == 1 
+        && (PVal[Prestige_Spacewalk] == 0 
+            || PVal[Prestige_Spacewalk] == 5)
+        ) {
         PVal[Prestige_Spacewalk] = 4;
     } else if (misType.EVA == 0 && PVal[Prestige_Spacewalk] == 5) {
         PVal[Prestige_Spacewalk] = 0;
     }
 
     // DOCKING FIX FOR ALTERNATE STEPS LATER IN SESSION
-    if (misType.Doc == 1 &&
-        (PVal[Prestige_MannedDocking] == 0 ||
-         PVal[Prestige_MannedDocking] == 5)) {
+    if (misType.Doc == 1 
+        && (PVal[Prestige_MannedDocking] == 0 
+           || PVal[Prestige_MannedDocking] == 5)
+        ) {
         PVal[Prestige_MannedSpaceMission] = 4;
     } else if (misType.EVA == 0 && PVal[Prestige_MannedDocking] == 5) {
         PVal[Prestige_MannedDocking] = 0;
@@ -800,6 +807,7 @@ int AllotPrest(char plr, char mis)
 
     // GOAL FILTER: MANNED
     int P_Goal = PosGoal(PVal);
+    LOG_TRACE("PosGoal() returned %i", P_Goal);
 
     for (int i = 0; i < MAX_PCAT; i++) {
         int N_Goal = misType.PCat[i];
@@ -811,7 +819,9 @@ int AllotPrest(char plr, char mis)
     }
 
     int N_Goal = NegGoal(PVal);
+    LOG_TRACE("NegGoal() returned %i", N_Goal);
     int S_Goal = SupGoal(PVal);
+    LOG_TRACE("SupGoal() returned %i", S_Goal);
 
     if (P_Goal == Prestige_MannedLunarLanding) {  // make sure EVA was done
         if (!(PVal[Prestige_Spacewalk] >= 1 && PVal[Prestige_Spacewalk] <= 3)) {
@@ -863,7 +873,7 @@ int AllotPrest(char plr, char mis)
     }
 
     int mike;
-    if (!misType.Dur) {
+    if (misType.Dur != 0) {
         switch (P_Goal) {
         case Prestige_MannedSpaceMission:
             mike = 7;
@@ -871,7 +881,8 @@ int AllotPrest(char plr, char mis)
             break;
 
         case Prestige_MannedOrbital:
-            mike = (misType.Index <= Mission_Earth_Orbital_EVA) ? (Data->P[plr].Mission[mis].Duration = 1, 7) : (Data->P[plr].Mission[mis].Duration = 2, 12);
+            mike = (misType.Index <= Mission_Earth_Orbital_EVA) ? (Data->P[plr].Mission[mis].Duration = 1, 7) 
+                                                                : (Data->P[plr].Mission[mis].Duration = 2, 12);
             break;
 
         case Prestige_MannedLunarPass:
@@ -907,9 +918,11 @@ int AllotPrest(char plr, char mis)
     // GOAL POSITIVE
     if (P_Goal != -1) {
         total = Set_Goal(plr, P_Goal, 0);
+        LOG_TRACE("Set_Goal() returned %i", total);
 
-        if (P_Goal != 27) {
+        if (P_Goal != 27) { // add prestige points for manned mission?
             total += Set_Goal(plr, 27, 0);
+            LOG_TRACE("As P_Goal isn't 27, total got modified to %i", total);
             PVal[Prestige_MannedSpaceMission] = 0;
         }
 
@@ -920,6 +933,7 @@ int AllotPrest(char plr, char mis)
     // GOAL NEGATIVE
     if (N_Goal != -1) {
         negs += PrestNeg(plr, N_Goal);
+        LOG_TRACE("PrestNeg() returned %i", negs);
         PVal[N_Goal] = 0;
     }
 
@@ -931,20 +945,32 @@ int AllotPrest(char plr, char mis)
     // TOTAL ALL MISSION FIRSTS
     for (int i = 0; i < 28; i++) {
         if (PVal[i] == 1 || (PVal[i] == 2 && other < 3000)) {
+            LOG_TRACE("MissionFirst check succeded for i=%i", i);
             total += Set_Goal(plr, i, 0);
+            LOG_TRACE("total is now %i", total);
         }
     }
 
     //else if (PVal[i]==4) negs+=Set_Goal(plr,i,0);
 
     // CAPSULE FIRSTS   need to check for failure on capsule
-    if ((P_Goal != -1 || S_Goal != -1) && other < 3000 && MANNED[0] > 0 && Data->P[plr].Mission[mis].Hard[Mission_Capsule] != -1) {  // Hardware on first part
+    if ((P_Goal != -1 || S_Goal != -1) 
+         && other < 3000 && MANNED[0] > 0 
+         && Data->P[plr].Mission[mis].Hard[Mission_Capsule] != -1) {  // Hardware on first part
+
+        LOG_TRACE("CapsuleFirst check succeded for the first rocket");
         total += Set_Goal(plr, 12 + Data->P[plr].Mission[mis].Prog, 0);
+        LOG_TRACE("total is now %i", total);
     }
 
-    if ((P_Goal != -1 || S_Goal != -1) && other < 3000 && MANNED[1] > 0 && Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] != -1 &&
-        Data->P[plr].Mission[mis + 1].part == 1) {
+    if ((P_Goal != -1 || S_Goal != -1) 
+         && other < 3000 && MANNED[1] > 0 
+         && Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] != -1 
+         && Data->P[plr].Mission[mis + 1].part == 1) {
+
+        LOG_TRACE("CapsuleFirst check succeded for the second rocket");
         total += Set_Goal(plr, 12 + Data->P[plr].Mission[mis + 1].Prog, 0);
+        LOG_TRACE("total is now %i", total);
     }
 
 #define DNE(a,b) (Data->Prestige[b].Place==(a) || Data->Prestige[b].mPlace==(a))
@@ -965,9 +991,11 @@ int AllotPrest(char plr, char mis)
 
     // TOTAL ALL MISSION SUBSEQUENTS
     if (total == 0) {
+        LOG_TRACE("total == 0, attempting subsequent/secondary prestige award");
         // SET SUBSEQUENT Goal
         if (S_Goal != -1 && other < 3000) {
             total = Set_Goal(plr, S_Goal, 0);
+            LOG_TRACE("total is now %i", total);
         }
 
         for (int i = 0; i < 28; i++) {
@@ -989,12 +1017,16 @@ int AllotPrest(char plr, char mis)
     }
 
     // ADD IN NEGATIVES AND RETURN MIN of -10
+    LOG_TRACE("finalizing prestige calculation, total=%i, negs=%i", total, negs);
     total = ((total + negs) < -10) ? -10 : total + negs;
+    LOG_TRACE("clamped value is %i", total);
 
     if (!death && total == -10) {
         total = -7;
+        LOG_TRACE("no deaths on the mission, additional clamp applied. total=-7");
     }
 
+    LOG_INFO("Final mission prestige is %i", total);
     return total;
 }
 
