@@ -75,7 +75,7 @@ static int cmp_order(const void* p1, const void* p2)
     order* o2 = (order*) p2;
 
     if (o1->date < o2->date) return -1;
-    if (o1->date > o2->date) return 1
+    if (o1->date > o2->date) return 1;
     
     if (o1->budget > o2->budget) return -1;
     if (o1->budget < o2->budget) return 1;
@@ -323,7 +323,7 @@ void MisAnn(char plr, char pad)
                 draw_string(bud, 107 + 14 * k, "SAFETY FACTOR: ");
 
                 if (Data->P[plr].Manned[hold].Damage != 0) display::graphics.setForegroundColor(9);
-                else if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD)) display::graphics.setForegroundColor(11);
+                else if (Data->P[plr].Manned[hold].Safety < Data->P[plr].Manned[hold].MaxRD) display::graphics.setForegroundColor(11);
                 else display::graphics.setForegroundColor(1);
 
                 draw_number(0, 0, Data->P[plr].Manned[hold].Safety +
@@ -425,8 +425,8 @@ void MisAnn(char plr, char pad)
                 else display::graphics.setForegroundColor(1);
                 draw_number(0, 0, Safety + Damage);
                 draw_string(0, 0, "%");
-                ++k
-
+                    
+                ++k;
                 break;
                 }
 
