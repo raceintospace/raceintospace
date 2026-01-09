@@ -146,10 +146,10 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 int game_main_impl(int argc, char *argv[]);
 int CheckIfMissionGo(char plr, char launchIdx);
 void ConfigureAudio();
-void InitData(void);
-void MainLoop(void);
-void DockingKludge(void);
-void OpenEmUp(void);
+void InitData();
+void MainLoop();
+void DockingKludge();
+void OpenEmUp();
 void CloseEmUp(unsigned char error, unsigned int value);
 void VerifyCrews(char plr);
 
@@ -669,57 +669,53 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         DockingKludge();  // fixup for both sides
 
         // Do Missions Here
-        int kik = OrderMissions();
-
+        int kik = OrderMissions(); // orders mission by launch order
         for (int i = 0; i < kik; i++) {
-            if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
-                if (AI[Order[i].plr] == 1) {
-                    if (!CheckIfMissionGo(Order[i].plr, Order[i].loc)) {
-                        ScrubMission(Order[i].plr, Order[i].loc);
-                    }
+            if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode == Mission_None) continue; // skip empty missions
+            if (AI[Order[i].plr]) {
+                if (!CheckIfMissionGo(Order[i].plr, Order[i].loc)) { // last check for Ai launch
+                    ScrubMission(Order[i].plr, Order[i].loc);
+                }
+            } else {
+                IDLE[0] = IDLE[1] = 0; // resets countdown to idle ending
+            }
+
+            if (Data->P[Order[i].plr].Mission[Order[i].loc].part == 1) continue; // skip 2nd launch of joint missions
+            if (Data->P[Order[i].plr].Mission[Order[i].loc].Hard[4] == 0) continue; // ??
+            
+            prest = Launch(Order[i].plr, Order[i].loc);
+
+            // check for prestige firsts
+            if (AI[Order[i].plr] == 1 
+                || (MAIL == 1 && Order[i].plr == 0) 
+                || (MAIL == 2 && Order[i].plr == 1) && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {   // supposed to be 1
+                PlayAllFirsts(Order[i].plr);
+            }
+
+            // check for Moon landing success
+            if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
+                if (MAIL != 0 && MAIL != 3) {
+                    UpdateRecords(1);
+                    NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
+
+                    // Immediately hand over to the other player
+                    MailSwitchEndgame();
+                    return;
                 }
 
-                if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode) {
-                    if (!AI[Order[i].plr]) {
-                        IDLE[0] = IDLE[1] = 0;
-                    }
-
-                    if (Data->P[Order[i].plr].Mission[Order[i].loc].part != 1
-                        && Data->P[Order[i].plr].Mission[Order[i].loc].Hard[4]) {
-                        prest = Launch(Order[i].plr, Order[i].loc);
-
-                        // check for prestige firsts
-                        if (AI[Order[i].plr] == 1 || (MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1) && Data->Prestige[Prestige_MannedLunarLanding].Place == -1) {   // supposed to be 1
-                            PlayAllFirsts(Order[i].plr);
-                        }
-
-                        if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
-                            if (MAIL != 0 && MAIL != 3) {
-                                UpdateRecords(1);
-                                NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, Order[i].loc);
-
-                                // Immediately hand over to the other player
-                                MailSwitchEndgame();
-
-                                return;
-                            }
-
-                            // TODO: Don't perform missions after the L.L.
-                            else {
-                                break;
-                            }
-
-
-                        }
-
-                        if (!(AI[Order[i].plr] || (MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1)) && prest != -20) { // -20 means scrubbed
-                            MisRev(Order[i].plr, prest, Data->P[Order[i].plr].PastMissionCount - 1);
-                        }
-                    }
+                // TODO: Don't perform missions after the L.L.
+                else {
+                    break;
                 }
+            }
 
-            }                             //for(i=0...
-        }
+            // after all is done, attempt mission review
+            if (AI[Order[i].plr]) continue; // no review for Ai
+            if ((MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1)) continue; // no review for mail player
+            if (prest == -20) continue; // no review if mission was scrubbed (-20 means scrubbed)
+            
+            MisRev(Order[i].plr, prest, Data->P[Order[i].plr].PastMissionCount - 1);
+        }                             //for(i=0...
 
         if (MAIL == 0 || MAIL == 3) { // Hand over to the other side
             // Restore mission counter
@@ -808,8 +804,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     Museum(0);
 
     Museum(1);
-
-    return;
 }
 
 
@@ -829,15 +823,13 @@ void ConfigureAudio()
 }
 
 
-void DockingKludge(void)
+void DockingKludge()
 {
     for (int j = 0; j < NUM_PLAYERS; j++) {
         Data->P[j].Misc[MISC_HW_DOCKING_MODULE].MSF =
             MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
                 Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
     }
-
-    return;
 }
 
 
@@ -857,12 +849,9 @@ void DestroyPad(char plr, char pad, int cost, char mode)
     } else {
         ScrubMission(plr, pad);
     }
-
-    return;
 }
 
-void
-GetMouse(void)
+void GetMouse()
 {
     av_block();
     GetMouse_fast();
@@ -870,7 +859,7 @@ GetMouse(void)
 
 
 /* get mouse of keyboard input, non-blocking */
-void GetMouse_fast(void)
+void GetMouse_fast()
 {
     mousebuttons = 0;
     oldx = x;
@@ -915,7 +904,7 @@ void GetMouse_fast(void)
     }
 }
 
-void WaitForMouseUp(void)
+void WaitForMouseUp()
 {
     // Wait for mouse and key to be up
     while (mousebuttons) {
@@ -923,7 +912,7 @@ void WaitForMouseUp(void)
     }
 }
 
-void WaitForKeyOrMouseDown(void)
+void WaitForKeyOrMouseDown()
 {
     // Wait for mouse and key to be up
     while (mousebuttons == 0 && key == 0) {
@@ -932,7 +921,7 @@ void WaitForKeyOrMouseDown(void)
 }
 
 
-void PauseMouse(void)
+void PauseMouse()
 {
     /* wait until mouse button is released */
     while (1)  {
@@ -1009,7 +998,7 @@ void VerifyCrews(char plr)
  * random number generator that is slightly biased against high
  * numbers.
  */
-int MisRandom(void)
+int MisRandom()
 {
     const double mu = 57;
     const double sigma = sqrt(1000);
