@@ -707,7 +707,7 @@ int PrestNeg(char plr, int i)
 
 int AllotPrest(char plr, char mis)
 {
-    LOG_INFO("Calculating prestige for %s player, mission %i", (plr==0)?"US":"USSR", mis);
+    LOG_INFO("Calculating prestige for %s player, mission %i (manned)", (plr==0)?"US":"USSR", mis);
     char PVal[MAXIMUM_PRESTIGE_NUM]{};
 
     hero = 0;
@@ -1084,11 +1084,13 @@ int Find_MaxGoal(void)
 
 int U_AllotPrest(char plr, char mis)
 {
-    int i = 0, total, negs;
+    LOG_INFO("Calculating prestige for %s player, mission %i (unmanned)", (plr==0)?"US":"USSR", mis);
+    int i = 0;
     char PVal[28]{};
 
     // CLEAR TOTAL VALUE
-    total = 0, negs = 0;
+    int total = 0;
+    int negs = 0;
     tMo = Data->P[plr].Mission[mis].Month;
     tYr = Data->Year;
 
@@ -1149,8 +1151,10 @@ int U_AllotPrest(char plr, char mis)
             }
 
             total = Set_Goal(plr, i, 0);
+            LOG_DEBUG("Set_Goal() returned %i", total);
         } else {
             negs = PrestNeg(plr, i);
+            LOG_DEBUG("PrestNeg() returned %i", negs);
         }
 
         auto& Photo_Recon = Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
@@ -1182,6 +1186,7 @@ int U_AllotPrest(char plr, char mis)
         }
     }
 
+    LOG_INFO("total=%i negs=%i, resulting prestige=%i", total, negs, total+negs);
     return total + negs;
 }
 
