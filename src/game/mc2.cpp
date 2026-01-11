@@ -983,7 +983,7 @@ void MisRush(char plr, char rush_level)
 {
 	LOG_TRACE("MisRush(plr=%i, rush_level=%i)", plr, rush_level);
     if (!AI[plr]) {
-        LOG_INFO("applying rushing penalty %d to mission safety", -diff);
+        LOG_INFO("applying rushing penalty %d to mission safety", -3*rush_level);
     }
 
     if (rush_level == 0) return;
