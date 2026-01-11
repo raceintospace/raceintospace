@@ -27,6 +27,7 @@
 
 #include "mc2.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "Buzz_inc.h"
@@ -39,11 +40,11 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
-int CrewEndurance(const struct MisAst *crew, size_t crewSize);
-void MissionParse(char plr, struct mStr &misType, char pad);
+int CrewEndurance(const MisAst* crew, size_t crewSize);
+void MissionParse(char plr, mStr& misType, char pad);
 char WhichPart(char plr, int which);
 void MissionSteps(char plr, int mcode, int step, int pad,
-                  const struct mStr &mission);
+                  const mStr& mission);
 
 
 //********************************************************************
@@ -63,13 +64,12 @@ void MissionSteps(char plr, int mcode, int step, int pad,
  */
 void MissionCodes(char plr, char val, char pad)
 {
-    struct mStr plan = GetMissionPlan(val);
+    mStr plan = GetMissionPlan(val);
     MissionParse(plr, plan, pad);
-    return;
 }
 
 
-int CrewEndurance(const struct MisAst *crew, size_t crewSize)
+int CrewEndurance(const MisAst* crew, size_t crewSize)
 {
     assert(crew);
 
@@ -87,7 +87,7 @@ int CrewEndurance(const struct MisAst *crew, size_t crewSize)
 void MissionParse(char plr, mStr& misType, char pad)
 {
 	const std::string& MCode = misType.Code;
-	DEBUG2("MCode: %s", MCode.c_str());
+	LOG_DEBUG("MissionParse(plr=%i, pad=%i) - MCode: %s", plr, pad, MCode.c_str());
 	
 	int loc = pad;
     STEP = 0;
@@ -138,38 +138,18 @@ void MissionParse(char plr, mStr& misType, char pad)
 			i++;
             break;
 
-        case 'A': // standard steps
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-        case 'G':
-        case 'H':
-        case 'I':
-        case 'J':
-        case 'K':
-        case 'L':
-        case 'M':
-        case 'N':
-        case 'O':
-        case 'P':
-        case 'Q':
-        case 'R':
-        case 'S':
-        case 'T':
-        case 'U':
-        case 'V':
-        case 'W':
-        case 'X':
-        case 'Y':
-        case 'Z':
-        case 'a':
-        case 'b':
-        case 'c':
-        case 'd':
-        case 'e':
-        case 'f':
+		// standard steps
+        case 'A': case 'B': case 'C':
+        case 'D': case 'E': case 'F':
+        case 'G': case 'H': case 'I':
+        case 'J': case 'K': case 'L':
+        case 'M': case 'N': case 'O':
+        case 'P': case 'Q': case 'R':
+        case 'S': case 'T': case 'U':
+        case 'V': case 'W': case 'X':
+        case 'Y': case 'Z':
+        case 'a': case 'b': case 'c':
+        case 'd': case 'e': case 'f':
         case 'g':
         case '!':
             if (MCode[i] == 'I') {
@@ -199,12 +179,12 @@ char WhichPart(char plr, int which)
     return val;
 }
 
-Equipment *GetEquipment(const struct MisEval &Mev)
+Equipment* GetEquipment(const MisEval& Mev)
 {
-    Equipment *e = MH[Mev.pad][Mev.Class];
+    Equipment* e = MH[Mev.pad][Mev.Class];
 
     // Some equipment like docking module can be attached to the other pad
-    if (!e) {
+    if (e == nullptr) {
         e = MH[other(Mev.pad)][Mev.Class];
     }
 
@@ -213,7 +193,7 @@ Equipment *GetEquipment(const struct MisEval &Mev)
 }
 
 void MissionSteps(char plr, int mcode, int step, int pad,
-                  const struct mStr &mission)
+                  const mStr& mission)
 {
     switch (mcode) {
     // Booster Programs    :: VAB order for the class
@@ -222,18 +202,11 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         break;
 
     // Manned Programs : Capsule
-    case 'D':
-    case 'E':
-    case 'F':
-    case 'G':
-    case 'K':
-    case 'M':
-    case 'N':
-    case 'O':
-    case 'X':
+    case 'D': case 'E': case 'F':
+    case 'G': case 'K': case 'M':
+    case 'N': case 'O': case 'X':
     case 'Y':
-    case 'f':
-    case 'g':
+    case 'f': case 'g':
         if (MH[pad][Mission_Kicker] &&
             MH[pad][Mission_Kicker]->ID[1] == 0x32) {
             Mev[step].Class = Mission_Kicker;  // Kicker-C
@@ -243,8 +216,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         break;
 
-    case 'b':
-    case 'c':   // Duration Step
+    case 'b': case 'c':   // Duration Step
         Mev[step].Class = 10;
         break;
 
@@ -258,7 +230,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         if (MH[pad][Mission_Kicker] &&
             MH[pad][Mission_Kicker]->ID[1] == 0x32) {
             Mev[step].Class = Mission_Kicker;  // Kicker-C
-        } else if (MH[pad][Mission_LM] && MH[pad][Mission_LM] != NULL) {
+        } else if (MH[pad][Mission_LM] && MH[pad][Mission_LM] != nullptr) {
             Mev[step].Class = Mission_LM;
         } else {
             Mev[step].Class = Mission_Probe_DM;
@@ -266,16 +238,13 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         break;
 
-    case 'V':
-    case 'W':
-    case 'Z':
+    case 'V': case 'W': case 'Z':
     case 'e':
         Mev[step].Class = Mission_Probe_DM;  // Satellite
         break;
 
     // Misc Programs
-    case 'H':
-    case 'P':
+    case 'H': case 'P':
         Mev[step].Class = Mission_EVA;  // EVA Suits
         break;
 
@@ -285,35 +254,30 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         break;
 
     // Special Cases (when is there not one?)
-    case 'B':
-    case 'J':
-    case 'L':
-        if (MH[pad][Mission_Kicker] != NULL) {
+    case 'B': case 'J': case 'L':
+        if (MH[pad][Mission_Kicker] != nullptr) {
             Mev[step].Class = Mission_Kicker;  // Kicker
-        } else if (MH[pad][Mission_Capsule] != NULL) {
+        } else if (MH[pad][Mission_Capsule] != nullptr) {
             Mev[step].Class = Mission_Capsule;  // Cap
-        } else if (MH[pad][Mission_LM] != NULL) {
+        } else if (MH[pad][Mission_LM] != nullptr) {
             Mev[step].Class = Mission_LM;    // LM
         } else {
             Mev[step].Class = Mission_Probe_DM;  // Satellite
         }
 
-        if (step > 11 && MH[pad][Mission_Capsule] != NULL) {
+        if (step > 11 && MH[pad][Mission_Capsule] != nullptr) {
             Mev[step].Class = Mission_Capsule;  // Cap L->E
         }
 
         break;
 
-    case 'Q':
-    case 'R':
-    case 'S':
-    case 'T':
+    case 'Q': case 'R': case 'S': case 'T':
         if (MH[pad][Mission_Kicker] &&
             MH[pad][Mission_Kicker]->ID[1] == 0x32) {
             Mev[step].Class = Mission_Kicker;  // Kicker-C
-        } else if (MH[pad][Mission_LM] != NULL) {
+        } else if (MH[pad][Mission_LM] != nullptr) {
             Mev[step].Class = Mission_LM;  // LM
-        } else if (MH[pad][Mission_Capsule] != NULL) {
+        } else if (MH[pad][Mission_Capsule] != nullptr) {
             Mev[step].Class = Mission_Capsule;  // Capsule
         } else {
             Mev[step].Class = Mission_Probe_DM;  // Satellite
@@ -334,7 +298,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
     switch (mcode) {
     case 'B':
-        if (MH[pad][Mission_Capsule] != NULL) {
+        if (MH[pad][Mission_Capsule] != nullptr) {
             Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -18);    // CAP
         } else {
             Mev[step].Prest = -100;
@@ -373,7 +337,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
         // Award Manned Lunar Orbital only if done by a (manned)
         // capsule and not when parking an unmanned LM during an
         // LOR mission
-        if (MH[pad][Mission_Capsule] != NULL) {
+        if (MH[pad][Mission_Capsule] != nullptr) {
             Mev[step].PComp = WhichPart(plr, Mev[step].Prest = -20);    // CAP
         } else {
             Mev[step].Prest = -100;
@@ -584,13 +548,13 @@ void MissionSteps(char plr, int mcode, int step, int pad,
                 strcat(Mev[step].Name, "C4");    // FourMan
             } else {  // standard LMs
                 if (mcode == 'P') {
-                    if (MH[pad][Mission_LM] != NULL) {
+                    if (MH[pad][Mission_LM] != nullptr) {
                         strncat(Mev[step].Name, MH[pad][Mission_LM]->ID, 2);
                     } else if (MH[1][Mission_LM]) {
                         strncat(Mev[step].Name, MH[1][Mission_LM]->ID, 2);
                     }
                 } else {
-                    if (MH[pad][Mission_Capsule] != NULL) {
+                    if (MH[pad][Mission_Capsule] != nullptr) {
                         strncat(Mev[step].Name, MH[pad][Mission_Capsule]->ID, 2);
                     } else if (MH[1][Mission_Capsule]) {
                         strncat(Mev[step].Name, MH[1][Mission_Capsule]->ID, 2);
@@ -601,7 +565,7 @@ void MissionSteps(char plr, int mcode, int step, int pad,
 
         // Select animation w/ boosters if appropriate
         if (Mev[step].Name[0] == 'A' &&
-            MH[pad][Mission_SecondaryBooster] != NULL) {
+            MH[pad][Mission_SecondaryBooster] != nullptr) {
             Mev[step].Name[3] += 4;
         }
 
@@ -724,8 +688,6 @@ void MissionSteps(char plr, int mcode, int step, int pad,
     }
 
     Mev[step].StepInfo = 0;
-
-    return;
 }
 
 
@@ -735,44 +697,44 @@ void MissionSteps(char plr, int mcode, int step, int pad,
  */
 void MissionSetup(char plr, char mis)
 {
-    char i, j, t;
+	LOG_TRACE("MissionSetup(plr=%i, mis=%i)", plr, mis);
     DMFake = 0;
-    const struct mStr plan =
-        GetMissionPlan(Data->P[plr].Mission[mis].MissionCode);
+	
+	auto& mission = Data->P[plr].Mission[mis];
+    const mStr plan = GetMissionPlan(mission.MissionCode);
 
-    for (j = 0; j < (1 + Data->P[plr].Mission[mis].Joint); j++) {
-
-        if ((plan.mVab[j] & 0x10) > 0 &&
-            Data->P[plr].DockingModuleInOrbit > 0) {  // DMO
+    for (int j = 0; j < (1 + mission.Joint); j++) {
+        if ((plan.mVab[j] & 0x10) > 0 
+			&& Data->P[plr].DockingModuleInOrbit > 0) {  // DMO
             Data->P[plr].Mission[mis + j].Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
 
         if (j == 0) {
             // Apollo (1) + LM (1)
-            if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
-                Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
+            if (mission.Hard[Mission_Capsule] == 2 && mission.Hard[Mission_LM] >= 0) {
+                mission.Hard[Mission_Probe_DM] = 4;
                 DMFake = 1;
             }
 
-            if (Data->P[plr].Mission[mis].Joint) {
+            if (mission.Joint) {
                 // Apollo (2) + LM (1)
-                if (Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] == 2 && Data->P[plr].Mission[mis].Hard[Mission_LM] >= 0) {
-                    Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
+                if (Data->P[plr].Mission[mis + 1].Hard[Mission_Capsule] == 2 && mission.Hard[Mission_LM] >= 0) {
+                    mission.Hard[Mission_Probe_DM] = 4;
                     DMFake = 1;
                 }
             }
         }
 
-        if (Data->P[plr].Mission[mis].MissionCode == Mission_Soyuz_LL) {  // Soyuz Kicker-C
-            Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = 4;
+        if (mission.MissionCode == Mission_Soyuz_LL) {  // Soyuz Kicker-C
+            mission.Hard[Mission_Probe_DM] = 4;
             DMFake = 1;
         }
 
-        for (i = Mission_Capsule; i < Mission_PhotoRecon; i++) {
-            Equipment *eq = NULL;  // Clear Pointers
+        for (int i = Mission_Capsule; i < Mission_PhotoRecon; i++) {
+            Equipment* eq = nullptr;  // Clear Pointers
 
-            t = Data->P[plr].Mission[mis + j].Hard[i];
+            int t = Data->P[plr].Mission[mis + j].Hard[i];
 
             if (t >= 0) {
                 switch (i) {
@@ -853,7 +815,7 @@ void MissionSetup(char plr, char mis)
                     break;
                 }
 
-                if (eq != NULL) {
+                if (eq != nullptr) {
                     eq->MisSaf = eq->Safety + eq->SMods + eq->Damage;
 
                     if (eq->ID[1] >= 0x35 && i == Mission_LM &&
@@ -890,88 +852,83 @@ void MissionSetup(char plr, char mis)
     if (DMFake == 1) {
         Data->P[plr].Mission[mis].Hard[Mission_Probe_DM] = -1;
     }
-
-    return;
 }
 
 
 // Update the Current Hardware for the Mission
 void MissionSetDown(char plr, char mis)
 {
-    char i, j;
+	LOG_TRACE("MissionSetDown(plr=%i, mis=%i)", plr, mis);
+    for (int j = 0; j < (Data->P[plr].Mission[mis].Joint + 1); j++) {
+        for (int i = 0; i < 7; i++) {  // Ignore Boosters
+            if (MH[j][i] == nullptr) continue;
+			if (MH[j][i]->MisSucc[j] <= 0 && MH[j][i]->MisFail[j] <= 0) continue;
 
-    for (j = 0; j < (Data->P[plr].Mission[mis].Joint + 1); j++) {
-        for (i = 0; i < 7; i++) {  // Ignore Boosters
-            if (MH[j][i] != NULL && (MH[j][i]->MisSucc[j] > 0 || MH[j][i]->MisFail[j] > 0)) {
+			MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
 
-                MH[j][i]->SMods = MH[j][i]->Damage = MH[j][i]->DCost = 0;
+			if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc[j] > 0) {
+				MH[j][i]->Safety = MIN(MH[j][i]->Safety + 1, MH[j][i]->MaxSafety);
 
-                if (strncmp(MH[j][i]->Name, (i == Mission_Probe_DM) ? "DOC" : "PHO", 3) != 0 && MH[j][i]->MisSucc[j] > 0) {
-                    MH[j][i]->Safety = MIN(MH[j][i]->Safety + 1, MH[j][i]->MaxSafety);
+				if (options.cheat_addMaxS) {
+					MH[j][i]->MaxRD++;
+				}
 
-                    if (options.cheat_addMaxS) {
-                        MH[j][i]->MaxRD++;
-                    }
+				if (MH[j][i]->MaxRD > MH[j][i]->MaxSafety - 2) {
+					MH[j][i]->MaxRD = MH[j][i]->MaxSafety - 2;
+				}
+			}
 
-                    if (MH[j][i]->MaxRD > MH[j][i]->MaxSafety - 2) {
-                        MH[j][i]->MaxRD = MH[j][i]->MaxSafety - 2;
-                    }
-                }
+			if (strncmp(MH[j][i]->Name, "DOC", 3) == 0 && (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0) {
+				MH[j][i]->MisFail[j] = 1;
+			}
 
-                if (strncmp(MH[j][i]->Name, "DOC", 3) == 0 && (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0) {
-                    MH[j][i]->MisFail[j] = 1;
-                }
+			if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && (strncmp(MH[j][i]->ID, "M3", 2) != 0)) {
+				MH[j][i]->MisFail[j]++;
+			}
 
-                if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && (strncmp(MH[j][i]->ID, "M3", 2) != 0)) {
-                    MH[j][i]->MisFail[j]++;
-                }
-
-                if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && MH[j][i]->ID[0] == 'P') {
-                    MH[j][i]->MisFail[j]++;
-                }
+			if ((MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]) == 0 && MH[j][i]->ID[0] == 'P') {
+				MH[j][i]->MisFail[j]++;
+			}
 
 
-                MH[j][i]->Failures += MH[j][i]->MisFail[j];
+			MH[j][i]->Failures += MH[j][i]->MisFail[j];
 
-                MH[j][i]->Steps += (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]);
+			MH[j][i]->Steps += (MH[j][i]->MisFail[j] + MH[j][i]->MisSucc[j]);
 
-                if (i == Mission_PrimaryBooster &&
-                    MH[j][Mission_SecondaryBooster] != NULL) {  // Boosters
-                    if (MH[j][Mission_PrimaryBooster]->MisSucc[j] > 0)  {
-                        MH[j][Mission_SecondaryBooster]->Safety =
-                            MIN(MH[j][Mission_SecondaryBooster]->Safety + 1,
-                                MH[j][Mission_SecondaryBooster]->MaxSafety);
+			if (i == Mission_PrimaryBooster &&
+				MH[j][Mission_SecondaryBooster] != nullptr) {  // Boosters
+				if (MH[j][Mission_PrimaryBooster]->MisSucc[j] > 0)  {
+					MH[j][Mission_SecondaryBooster]->Safety =
+						MIN(MH[j][Mission_SecondaryBooster]->Safety + 1,
+							MH[j][Mission_SecondaryBooster]->MaxSafety);
 
-                        if (options.cheat_addMaxS) {
-                            MH[j][Mission_SecondaryBooster]->MaxRD++;
-                        }
+					if (options.cheat_addMaxS) {
+						MH[j][Mission_SecondaryBooster]->MaxRD++;
+					}
 
-                        if (MH[j][Mission_SecondaryBooster]->MaxRD > MH[j][Mission_SecondaryBooster]->MaxSafety - 2) {
-                            MH[j][Mission_SecondaryBooster]->MaxRD = MH[j][Mission_SecondaryBooster]->MaxSafety - 2;
-                        }
-                    }
+					if (MH[j][Mission_SecondaryBooster]->MaxRD > MH[j][Mission_SecondaryBooster]->MaxSafety - 2) {
+						MH[j][Mission_SecondaryBooster]->MaxRD = MH[j][Mission_SecondaryBooster]->MaxSafety - 2;
+					}
+				}
 
-                    MH[j][Mission_SecondaryBooster]->SMods = 0;
-                    MH[j][Mission_SecondaryBooster]->Damage = 0;
-                    MH[j][Mission_SecondaryBooster]->DCost = 0;
+				MH[j][Mission_SecondaryBooster]->SMods = 0;
+				MH[j][Mission_SecondaryBooster]->Damage = 0;
+				MH[j][Mission_SecondaryBooster]->DCost = 0;
 
-                    MH[j][Mission_SecondaryBooster]->Failures +=
-                        MH[j][Mission_PrimaryBooster]->MisFail[j];
-                    MH[j][Mission_SecondaryBooster]->Steps +=
-                        (MH[j][Mission_PrimaryBooster]->MisFail[j] +
-                         MH[j][Mission_PrimaryBooster]->MisSucc[j]);
-                    MH[j][Mission_SecondaryBooster]->MisSucc[j] = 0;
-                    MH[j][Mission_SecondaryBooster]->MisFail[j] = 0;
-                }
+				MH[j][Mission_SecondaryBooster]->Failures +=
+					MH[j][Mission_PrimaryBooster]->MisFail[j];
+				MH[j][Mission_SecondaryBooster]->Steps +=
+					(MH[j][Mission_PrimaryBooster]->MisFail[j] +
+					 MH[j][Mission_PrimaryBooster]->MisSucc[j]);
+				MH[j][Mission_SecondaryBooster]->MisSucc[j] = 0;
+				MH[j][Mission_SecondaryBooster]->MisFail[j] = 0;
+			}
 
-                MH[j][i]->MisSucc[j] = MH[j][i]->MisFail[j] = 0;
-            }  // if
+			MH[j][i]->MisSucc[j] = MH[j][i]->MisFail[j] = 0;
         }  // for i
 
         VerifySafety(j);
     }  // for j
-
-    return;
 }
 
 
@@ -984,41 +941,36 @@ void MissionSetDown(char plr, char mis)
  * \param plr      the index of the current player
  * \param mission  the mission plan with configured Days duration.
  */
-void
-MisSkip(const char plr, const struct mStr &mission)
+void MisSkip(const char plr, const mStr& mission)
 {
-    int i, j, k, diff, done;
-
-    // MAX is a macro, not a function, so don't combine...
-    diff = AchievementPenalty(plr, mission);
-    diff = MAX(diff, 0);
+	LOG_TRACE("MisSkip(plr=%i)", plr);
+    int diff = std::max(0, AchievementPenalty(plr, mission));
 
     if (!AI[plr]) {
-        INFO2("applying general penalty %d to mission safety", -diff);
+        LOG_INFO("applying general penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0) {
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
-                if (MH[i][j] != NULL) {
-                    // Don't subtract twice if already done
-                    done = 0;
+    if (diff == 0) return;
+	
+	for (int i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+		for (int j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
+			if (MH[i][j] == nullptr) continue;
+			
+			// Don't subtract twice if already done
+			bool done = 0;
 
-                    if (i) {
-                        for (k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
-                            if (MH[0][k] == MH[i][j]) {
-                                done = 1;
-                            }
-                        }
-                    }
+			for (int k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
+				if (MH[0][k] == MH[i][j]) {
+					done = 1;
+					break;
+				}
+			}
 
-                    if (!done) {
-                        MH[i][j]->MisSaf -= diff;
-                    }
-                }
-            }
-        }
-    }
+			if (i!=0 || !done) {
+				MH[i][j]->MisSaf -= diff;
+			}
+		}
+	}
 }
 
 /**
@@ -1027,39 +979,32 @@ MisSkip(const char plr, const struct mStr &mission)
  * \param plr current player
  * \param rush_level
  */
-void
-MisRush(char plr, char rush_level)
+void MisRush(char plr, char rush_level)
 {
-    int i, j, k, diff, done;
-
-    diff = 3 * rush_level;
-
+	LOG_TRACE("MisRush(plr=%i, rush_level=%i)", plr, rush_level);
     if (!AI[plr]) {
-        INFO2("applying rushing penalty %d to mission safety", -diff);
+        LOG_INFO("applying rushing penalty %d to mission safety", -diff);
     }
 
-    if (diff != 0) {
-        for (i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
-            for (j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
-                if (MH[i][j] != NULL) {
-                    // Don't subtract twice if already done
-                    done = 0;
+    if (rush_level == 0) return;
+	
+	for (int i = 0; i < (int) ARRAY_LENGTH(MH); i++) {
+		for (int j = 0; j < (int) ARRAY_LENGTH(MH[0]); j++) {
+			if (MH[i][j] == nullptr) continue;
+			// Don't subtract twice if already done
+			bool done = false;
+			for (int k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
+				if (MH[0][k] == MH[i][j]) {
+					done = true;
+					break;
+				}
+			}
 
-                    if (i) {
-                        for (k = 0; k < (int) ARRAY_LENGTH(MH[0]); k++) {
-                            if (MH[0][k] == MH[i][j]) {
-                                done = 1;
-                            }
-                        }
-                    }
-
-                    if (!done) {
-                        MH[i][j]->MisSaf -= diff;
-                    }
-                }
-            }
-        }
-    }
+			if (i != 0 || !done) {
+				MH[i][j]->MisSaf -= 3*rush_level;
+			}
+		}
+	}
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */
