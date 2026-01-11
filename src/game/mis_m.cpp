@@ -63,15 +63,15 @@ char Dock_Skip; /**< used for mission branching */
 extern char tMen;
 extern bool fullscreenMissionPlayback;
 
-void GetFailStat(struct XFails *Now, char *FName, int rnum);
-int MCGraph(char plr, int lc, int safety, int val, char prob);
-void F_KillCrew(char mode, struct Astros *Victim);
-void F_IRCrew(char mode, struct Astros *Guy);
-int FailEval(char plr, int type, char *text, int val, int xtra);
-Equipment *FindLunarModule();
-std::vector<Astros *> LMCrew(int pad, Equipment *module);
+void GetFailStat(XFails* Now, char* FName, int rnum);
+int MCGraph(char plr, int lc, int safety, int val, bool prob);
+void F_KillCrew(char mode, Astros* Victim);
+void F_IRCrew(char mode, Astros* Guy);
+int FailEval(char plr, int type, char* text, int val, int xtra);
+Equipment* FindLunarModule();
+std::vector<Astros*> LMCrew(int pad, Equipment* module);
 void InvalidatePrestige();
-void BranchIfAlive(int *FNote);
+void BranchIfAlive(int* FNote);
 
 /**
  * Load the failure state information explaining a mission step
@@ -102,37 +102,34 @@ void BranchIfAlive(int *FNote);
  * \param rnum   between -1 and -5 for unmanned steps, 0 and 10000 for
  *               manned.
  */
-void GetFailStat(struct XFails *Now, char *FName, int rnum)
+void GetFailStat(XFails* Now, char* FName, int rnum)
 {
-    DEBUG3("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
-    assert(Now != NULL);
+    LOG_DEBUG("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
+    assert(Now != nullptr);
 
     for (int i = 0; i < Assets->fails.size(); i++) {
-        if (!xstrncasecmp(Assets->fails.at(i).MissionStep.c_str(), FName, 4)) {
-            if (rnum < 0) { // unmanned
-                if (Assets->fails.at(i).percentage == rnum) {
-                    *Now = Assets->fails.at(i);
-                    break;
-                }
-            } else { // manned
-                if (Assets->fails.at(i).percentage > rnum) {
-                    *Now = Assets->fails.at(i);
-                    break;
-                }
+        if (xstrncasecmp(Assets->fails.at(i).MissionStep.c_str(), FName, 4) != 0) continue;
+        if (rnum < 0) { // unmanned
+            if (Assets->fails.at(i).percentage == rnum) {
+                *Now = Assets->fails.at(i);
+                break;
+            }
+        } else { // manned
+            if (Assets->fails.at(i).percentage > rnum) {
+                *Now = Assets->fails.at(i);
+                break;
             }
         }
     }
 
-    DEBUG1("<-GetFailStat()");
+    LOG_DEBUG("<-GetFailStat()");
 }
 
 
 void MisCheck(char plr, char mpad)
 {
-    int save, PROBLEM, i, lc, durxx;
-    struct XFails Now;
-
-    lc = 0; /* XXX check uninitialized */
+    LOG_DEBUG("MisCheck() was called");
+    XFails Now{};
 
     STEPnum = STEP;
     FINAL = STEP = MFlag = 0;  // Clear Everything
@@ -142,14 +139,15 @@ void MisCheck(char plr, char mpad)
     SCRUBS = noDock = InSpace = 0;
 
     const int code = Data->P[plr].Mission[mpad].MissionCode;
-    const struct mStr plan = GetMissionPlan(code);
+    const mStr plan = GetMissionPlan(code);
 
+    int lc = 0;
     if (!AI[plr] && !fullscreenMissionPlayback) {
         //FadeOut(1,pal,100,128,1);
         if (plr == 1) {
             fill_rectangle(189, 173, 249, 196, 55);
 
-            for (i = 190; i < 250; i += 2) {
+            for (int i = 190; i < 250; i += 2) {
                 display::graphics.legacyScreen()->setPixel(i, 178, 61);
                 display::graphics.legacyScreen()->setPixel(i, 184, 61);
                 display::graphics.legacyScreen()->setPixel(i, 190, 61);
@@ -159,7 +157,7 @@ void MisCheck(char plr, char mpad)
         } else if (plr == 0) {
             fill_rectangle(73, 173, 133, 196, 55);
 
-            for (i = 73; i < 133; i += 2) {
+            for (int i = 73; i < 133; i += 2) {
                 display::graphics.legacyScreen()->setPixel(i, 178, 61);
                 display::graphics.legacyScreen()->setPixel(i, 184, 61);
                 display::graphics.legacyScreen()->setPixel(i, 190, 61);
@@ -176,7 +174,8 @@ void MisCheck(char plr, char mpad)
     Mev[0].trace = 0;
     death = 0;
 
-    durxx = durx = -1;
+    int durxx = -1;
+    durx = -1;
 
     if (Data->P[plr].Mission[mpad].Duration > 0) {
         durxx = Data->P[plr].Mission[mpad].Duration - 1;
@@ -273,7 +272,7 @@ void MisCheck(char plr, char mpad)
             if (name.length()) {
                 name[0] = '#';  // Launch Code
             } else {
-                WARNING2("Video sequence not listed for step %d", STEP);
+                LOG_WARNING("Video sequence not listed for step %d", STEP);
             }
 
             // Special Case #47236
@@ -281,7 +280,7 @@ void MisCheck(char plr, char mpad)
         }
 
         // Necessary to keep code from crashing on bogus mission step
-        while (GetEquipment(Mev[STEP]) == NULL) {
+        while (GetEquipment(Mev[STEP]) == nullptr) {
             STEP++;
         }
 
@@ -316,14 +315,14 @@ void MisCheck(char plr, char mpad)
         int val = Mev[STEP].dice;
         int safety = StepSafety(Mev[STEP]);
 
-        save = (GetEquipment(Mev[STEP])->SaveCard == 1) ? 1 : 0;
-        PROBLEM = val > safety;
+        bool save = (GetEquipment(Mev[STEP])->SaveCard == 1) ? 1 : 0;
+        bool PROBLEM = val > safety;
 
         if (!AI[plr] && options.want_cheats) {
             PROBLEM = 0;
         }
 
-        DEBUG6("step %c:%s safety %d rolled %d%s", Mev[STEP].Name[0], S_Name[Mev[STEP].loc],
+        LOG_DEBUG("step %c:%s safety %d rolled %d%s", Mev[STEP].Name[0], S_Name[Mev[STEP].loc],
                safety, val,
                PROBLEM ? " problem" : (options.want_cheats ? " cheating" : ""));
 
@@ -332,7 +331,7 @@ void MisCheck(char plr, char mpad)
                 lc = MCGraph(plr, lc, MAX(0, safety), MAX(0, val), PROBLEM);    // Graph Chart
             }
 
-        if (PROBLEM && save == 1) {  // Failure Saved
+        if (PROBLEM && save) {  // Failure Saved
             GetEquipment(Mev[STEP])->SaveCard--;    // Deduct SCard
             PROBLEM = 0;  // Fix problem
         }
@@ -344,7 +343,7 @@ void MisCheck(char plr, char mpad)
             Mev[STEP].Name[5] = GetEquipment(Mev[STEP])->ID[1];
         }
 
-        if (PROBLEM == 1) {  // Step Problem
+        if (PROBLEM) {  // Step Problem
             // for the unmanned mission
             if (MANNED[Mev[STEP].pad] == 0 && MANNED[other(Mev[STEP].pad)] == 0) {
                 Mev[STEP].rnum = (-1) * (brandom(5) + 1);
@@ -398,7 +397,7 @@ void MisCheck(char plr, char mpad)
             if (tomflag) {
                 GetFailStat(&Now, Mev[STEP].FName, 7595);
             } else {
-                DEBUG1("Failing !tomflag - calling GetFailStat");
+                LOG_DEBUG("Failing !tomflag - calling GetFailStat");
                 GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
             }
 
@@ -451,14 +450,14 @@ void MisCheck(char plr, char mpad)
 
             // TODO: Move to function...
             bool femaleEVA =
-                ((MA[0][0].A != NULL && MA[0][0].A->Sex && EVA[0] == 0)
-                 || (MA[0][1].A != NULL && MA[0][1].A->Sex && EVA[0] == 1)
-                 || (MA[0][2].A != NULL && MA[0][2].A->Sex && EVA[0] == 2)
-                 || (MA[0][3].A != NULL && MA[0][3].A->Sex && EVA[0] == 3)
-                 || (MA[1][0].A != NULL && MA[1][0].A->Sex && EVA[1] == 0)
-                 || (MA[1][1].A != NULL && MA[1][1].A->Sex && EVA[1] == 1)
-                 || (MA[1][2].A != NULL && MA[1][2].A->Sex && EVA[1] == 2)
-                 || (MA[1][3].A != NULL && MA[1][3].A->Sex && EVA[1] == 3));
+                ((MA[0][0].A != nullptr && MA[0][0].A->Sex && EVA[0] == 0)
+                 || (MA[0][1].A != nullptr && MA[0][1].A->Sex && EVA[0] == 1)
+                 || (MA[0][2].A != nullptr && MA[0][2].A->Sex && EVA[0] == 2)
+                 || (MA[0][3].A != nullptr && MA[0][3].A->Sex && EVA[0] == 3)
+                 || (MA[1][0].A != nullptr && MA[1][0].A->Sex && EVA[1] == 0)
+                 || (MA[1][1].A != nullptr && MA[1][1].A->Sex && EVA[1] == 1)
+                 || (MA[1][2].A != nullptr && MA[1][2].A->Sex && EVA[1] == 2)
+                 || (MA[1][3].A != nullptr && MA[1][3].A->Sex && EVA[1] == 3));
 
             // Play Animations
             PlaySequence(plr, STEP, Mev[STEP].Name, femaleEVA ? 2 : 0);
@@ -481,11 +480,13 @@ void MisCheck(char plr, char mpad)
         }
 
         if (Mev[STEP].loc == 0x7f || Mev[STEP].sgoto == 100) {  // force mission end
+            LOG_DEBUG("forcing mission end");
             Mev[STEP].trace = 0x7f;
         }
 
         if ((mcc == Mission_MarsFlyby || mcc == Mission_JupiterFlyby ||
              mcc == Mission_SaturnFlyby) && STEP == 2) {
+            LOG_DEBUG("long duration mission, end of trace");
             Mev[STEP].trace = 0x7f;
         }
 
@@ -541,16 +542,19 @@ void MisCheck(char plr, char mpad)
         delay(1000);
     }
 
-    if ((MA[0][0].A != NULL && MA[0][0].A->Status == AST_ST_DEAD)
-        || (MA[0][1].A != NULL && MA[0][1].A->Status == AST_ST_DEAD)
-        || (MA[0][2].A != NULL && MA[0][2].A->Status == AST_ST_DEAD)
-        || (MA[0][3].A != NULL && MA[0][3].A->Status == AST_ST_DEAD)
-        || (MA[1][0].A != NULL && MA[1][0].A->Status == AST_ST_DEAD)
-        || (MA[1][1].A != NULL && MA[1][1].A->Status == AST_ST_DEAD)
-        || (MA[1][2].A != NULL && MA[1][2].A->Status == AST_ST_DEAD)
-        || (MA[1][3].A != NULL && MA[1][3].A->Status == AST_ST_DEAD)) {
-        // Mission Death
-        if (!AI[plr]) {
+    death = 0;
+    for (int i=0; i<2; ++i) // 2 is max launches in mission
+    {
+        bool loop_break = false;
+        for (int j=0; j<4; ++j) // 4 is max crew in capsule
+        {
+            if (MA[i][j].A == nullptr) continue; // skip empty slots
+            if (MA[i][j].A->Status != AST_ST_DEAD) continue; // skip alive spacemen
+            // Mission Death
+            death = 1;
+            loop_break = true;
+            if (AI[plr]) break;
+            
             if (!fullscreenMissionPlayback) {
                 display::AutoPal p(display::graphics.legacyScreen());
                 memset(&p.pal[64 * 3], 0x00, 64 * 3);  //Specs: 0x08
@@ -569,18 +573,11 @@ void MisCheck(char plr, char mpad)
             }
 
             PlaySequence(plr, STEP, (plr == 0) ? "UFUN" : "SFUN", 0);
-        }
-
-        if (!AI[plr]) {
             delay(1000);
+            break;
         }
-
-        death = 1;
-    } else {
-        death = 0;
+        if (loop_break) break;
     }
-
-    return;
 }
 
 
@@ -595,7 +592,7 @@ void MisCheck(char plr, char mpad)
  *
  * \param step  the current mission step.
  */
-int StepSafety(const struct MisEval &step)
+int StepSafety(const MisEval& step)
 {
     int safety = GetEquipment(step)->MisSaf;
 
@@ -630,32 +627,36 @@ int StepSafety(const struct MisEval &step)
  *
  * \return new value of lc
  */
-int MCGraph(char plr, int lc, int safety, int val, char prob)
+int MCGraph(char plr, int lc, int safety, int val, bool prob)
 {
-    int i;
-    TRACE5("->MCGraph(plr, lc %d, safety %d, val %d, prob %c)", lc, safety, val, prob);
-    fill_rectangle(lc - 2, 195, lc, 195 - safety * 22 / 100, 11);
-    fill_rectangle(lc - 2, 195, lc, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+    if (AI[plr])
+    {
+        LOG_WARNING("MCGraph() was called for Ai player");
+        return lc;
+    }
+    LOG_TRACE("->MCGraph(plr, lc %d, safety %d, val %d, prob %i)", lc, safety, val, prob);
 
-    for (i = 195; i > 195 - val * 22 / 100; i--) {
+    // draw safety
+    fill_rectangle(lc - 2, 195, lc, 195 - safety * 22 / 100, 11); // total safety (component+crew) in yellow
+    fill_rectangle(lc - 2, 195, lc, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6); // draw over with only component safety on top
+    
+    for (int i = 195; i > 195 - val * 22 / 100; i--) { // slowly draw the roll result
         fill_rectangle(lc - 2, 195, lc, i, 21);
         delay(15);
     }
 
-
-    if (plr == 1 && !AI[plr]) {
-        if (val > safety && prob == 0) {
-            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
-            lc = 191;
-        } else if (val > safety) {
-            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
-            lc += 5;
-        } else {
-            if (lc >= 241) {
-                display::graphics.setForegroundColor(55);
+    if (val > safety) { // step has failed, redraw final rectange in red
+        fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
+        if (prob == 0) return 76; // if it's not a problem (nofail or savecard or smth), next draw should start from the beginning(??)
+        else return lc + 5;       // otherwise next draw will be in the next column
+    } else { // step was good
+        int right_border = (plr == 0)?126 :241;
+        if (lc < right_border) return lc + 5; // if all fits, next draw will be in the next column
+        else {                                // otherwise we'll need to clean everything
+            if (plr == 1) { // TODO: clean this up even more
                 fill_rectangle(189, 173, 249, 196, 55);
 
-                for (i = 190; i < 250; i += 2) {
+                for (int i = 190; i < 250; i += 2) {
                     display::graphics.legacyScreen()->setPixel(i, 178, 61);
                     display::graphics.legacyScreen()->setPixel(i, 184, 61);
                     display::graphics.legacyScreen()->setPixel(i, 190, 61);
@@ -669,24 +670,11 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                     fill_rectangle(189, 195 - safety * 22 / 100, 191, 195 - safety * 22 / 100, 11);
                 }
 
-                lc = 196;
-                /* lc > 241 */
+                return 196;
             } else {
-                lc += 5;
-            }
-        } /* check safety and problem */
-    } else if (plr == 0 && !AI[plr]) {
-        if (val > safety && prob == 0) {
-            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
-            lc = 76;
-        } else if (val > safety) {
-            fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
-            lc += 5;
-        } else {
-            if (lc >= 126) {
                 fill_rectangle(73, 173, 133, 196, 55);
 
-                for (i = 73; i < 133; i += 2) {
+                for (int i = 73; i < 133; i += 2) {
                     display::graphics.legacyScreen()->setPixel(i, 178, 61);
                     display::graphics.legacyScreen()->setPixel(i, 184, 61);
                     display::graphics.legacyScreen()->setPixel(i, 190, 61);
@@ -700,15 +688,10 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
                     fill_rectangle(74, 195 - safety * 22 / 100, 76, 195 - safety * 22 / 100, 11);
                 }
 
-                lc = 81;
-            } else {
-                lc += 5;
+                return 81;
             }
         }
     }
-
-    TRACE1("<-MCGraph()");
-    return lc;
 }
 
 #define F_ALL 0
@@ -728,15 +711,13 @@ int MCGraph(char plr, int lc, int safety, int val, char prob)
  * \param mode  F_ONE or F_ALL
  * \param Victim  if F_ONE is set, the crew member to kill.
  */
-void F_KillCrew(char mode, struct Astros *Victim)
+void F_KillCrew(char mode, Astros* Victim)
 {
+    LOG_TRACE("F_KillCrew() was called");
     int k = 0, p = 0;
-    struct Astros *Guy;
-
-    Guy = NULL; /* XXX check uninitialized */
 
     // Reset Hardware
-    if (Victim >= &Data->P[1].Pool[0]) {
+    if (Victim >= &Data->P[1].Pool[0]) { // ??
         p = 1;
     }
 
@@ -753,19 +734,18 @@ void F_KillCrew(char mode, struct Astros *Victim)
 
     if (mode == F_ALL) {
         for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
-            Guy = MA[Mev[STEP].pad][k].A;
-
-            if (Guy != NULL) {
-                Guy->Status = AST_ST_DEAD;
-                Guy->Special = 3;
-                Guy->RetirementReason = 8;
-                Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
-                tMen++;
-                death = 1;
-            }
+            Astros* Guy = MA[Mev[STEP].pad][k].A;
+            if (Guy == nullptr) continue;
+        
+            Guy->Status = AST_ST_DEAD;
+            Guy->Special = 3;
+            Guy->RetirementReason = 8;
+            Guy->Assign = Guy->Moved = Guy->Crew = Guy->Task = Guy->Unassigned = 0;
+            tMen++;
+            death = 1;
         }
     } else if (mode == F_ONE) {  // should work in news
-        if (Victim == NULL) {
+        if (Victim == nullptr) {
             return;
         }
 
@@ -786,9 +766,10 @@ void F_KillCrew(char mode, struct Astros *Victim)
 #define F_RET 0
 #define F_INJ 1
 
-void F_IRCrew(char mode, struct Astros *Guy)
+// Injure/Retire
+void F_IRCrew(char mode, Astros* Guy)
 {
-    if (Guy == NULL || Guy->Status == AST_ST_DEAD) {
+    if (Guy == nullptr || Guy->Status == AST_ST_DEAD) {
         return;
     }
 
@@ -806,20 +787,14 @@ void F_IRCrew(char mode, struct Astros *Guy)
     }
 }
 
-int FailEval(char plr, int type, char *text, int val, int xtra)
+int FailEval(char plr, int type, char* text, int val, int xtra)
 {
-    int FNote = 0, temp, k, ctr = 0;
-    char PROBLEM = 0;
-    struct Astros *crw;
-
-    temp = 0; /* XXX check uninitialized */
-
-    if (!(strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) == 0 && Mev[STEP].loc == 0x02)) {
+    if (strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) != 0 || Mev[STEP].loc != 0x02) {
         GetEquipment(Mev[STEP])->MisFail[Mev[STEP].pad]++;  // set failure for all but docking power on
     }
 
     Mev[STEP].StepInfo = 1003;
-    FNote = 5;  // Mission Failure
+    int FNote = 5;  // Mission Failure
 
     if (Unm == 0) {
         Mev[STEP].trace = 0x7f;
@@ -980,7 +955,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 0;
         Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
 
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) < val) {
                 if (brandom(100) >= xtra) {
                     F_IRCrew(F_INJ, MA[Mev[STEP].pad][k].A);
@@ -1005,7 +980,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 0;
         Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
 
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) < xtra) {
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 2300 + Mev[STEP].loc;
@@ -1013,12 +988,11 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
             }
         }
 
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) >= val) {
                 F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
                 Mev[STEP].StepInfo = 3300 + Mev[STEP].loc;
                 FNote = 8;
-                ctr++;
             }
         }
 
@@ -1082,7 +1056,8 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         if (brandom(100) > val) {
             FNote = 8;
-            crw = (EVA[Mev[STEP].pad] != -1) ? MA[Mev[STEP].pad][EVA[Mev[STEP].pad]].A : MA[other(Mev[STEP].pad)][EVA[other(Mev[STEP].pad)]].A;
+            Astros* crw = (EVA[Mev[STEP].pad] != -1) ? MA[Mev[STEP].pad][EVA[Mev[STEP].pad]].A
+                                             : MA[other(Mev[STEP].pad)][EVA[other(Mev[STEP].pad)]].A;
             F_KillCrew(F_ONE, crw);
 
             if (Mev[STEP].Name[6] == 0x36) {
@@ -1104,7 +1079,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         FNote = 0;
         Mev[STEP].StepInfo = 23 + Mev[STEP].loc;
 
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
             if (brandom(100) < val) {
                 FNote = 9;
                 F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
@@ -1178,12 +1153,13 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 31:  // kill LM crew and branch VAL steps
+        {
         Mev[STEP].trace = Mev[STEP].dgoto;
         Mev[STEP].StepInfo = 3100 + STEP;
 
         // Code 31 errors can also occur during direct ascent missions
         // or Soyuz L.L. missions. Kill 'em all in this case.
-        temp = Data->P[plr].Mission[Mev[STEP].pad].MissionCode;
+        int temp = Data->P[plr].Mission[Mev[STEP].pad].MissionCode;
 
         if (temp == Mission_DirectAscent_LL || temp == Mission_Soyuz_LL) {
             F_KillCrew(F_ALL, 0);
@@ -1202,6 +1178,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
         death = 1;
         break;
+        }
 
     case 33:  // Kill Crew on All Capsules (happens only on dockings)
         FNote = 8;
@@ -1221,20 +1198,19 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         break;
 
     case 40:  // minor docking failure
-
+        {
         FNote = 1;
         Mev[STEP].StepInfo = 1951;
 
         /* Scrub the mission if docking is required for any subsequent step */
 
-        ctr = 0;
-
-        for (k = 0; k < 60; k++) {
+        bool ctr = false;
+        for (int k = 0; k < 60; k++) {
             switch (Mev[k].loc) {
             case 9: // trans-lunar injection
             case 26: // LEM thrust test
             case 28: // joint duration
-                ctr = 1;
+                ctr = true;
             }
         }
 
@@ -1261,6 +1237,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
         }
 
         break;
+        }
 
     case 1:
     case 8:
@@ -1285,7 +1262,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     }
 
     if ((Mev[STEP].Name[0] == 'A') &&
-        MH[Mev[STEP].pad][Mission_SecondaryBooster] != NULL) {
+        MH[Mev[STEP].pad][Mission_SecondaryBooster] != nullptr) {
         // boosters involved
         if (MH[Mev[STEP].pad][Mission_PrimaryBooster]->Safety ==
             MH[Mev[STEP].pad][Mission_PrimaryBooster]->Base) {
@@ -1302,6 +1279,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
 
     key = 0;
 
+    int temp = 0;
     if (!AI[plr]) {
         temp = FailureMode(plr, FNote, text);
     }
@@ -1314,11 +1292,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
     }
 
     if (SCRUBS == 1) {
-        if (Mev[STEP].loc == 8 && noDock == 1) {
-            PROBLEM = 1;
-        }
-
-        if (PROBLEM == 0) {
+        if (Mev[STEP].loc != 8 || noDock != 1) {
             if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
                 InvalidatePrestige();
                 Mev[STEP].trace = 0x7F;  // End of Mission Signal
@@ -1364,7 +1338,7 @@ int FailEval(char plr, int type, char *text, int val, int xtra)
  *
  * \return the LM, or NULL if there is none for the mission.
  */
-Equipment *FindLunarModule()
+Equipment* FindLunarModule()
 {
     // For joint missions, the LM is always found on the first launch,
     // because if there's a problem launching it, there's no reason to
@@ -1382,30 +1356,30 @@ Equipment *FindLunarModule()
  * \param pad  0 for primary launch, 1 for secondary launch
  * \param module  The lunar module
  */
-std::vector<Astros *> LMCrew(int pad, Equipment *module)
+std::vector<Astros*> LMCrew(int pad, Equipment* module)
 {
     int8_t cPad;
 
     assert(pad >= 0 && pad <= JOINT);
 
-    if (MA[pad][0].A != NULL) {
+    if (MA[pad][0].A != nullptr) {
         cPad = pad;
-    } else if (MA[other(pad)][0].A != NULL) {
+    } else if (MA[other(pad)][0].A != nullptr) {
         cPad = other(pad);
     } else {
-        ERROR1("LMCrew: cannot find current pad");
+        LOG_ERROR("LMCrew: cannot find current pad");
     }
 
-    if (module == NULL) {
-        ERROR1("LMCrew: argument 'module' is null");
+    if (module == nullptr) {
+        LOG_ERROR("LMCrew: argument 'module' is null");
     } else if (HardwareType(*module) != Mission_LM) {
-        ERROR3("LMCrew: module ID %c%c is not a lunar module",
-               module->ID[0], module->ID[1]);
+        LOG_ERROR("LMCrew: module ID %c%c is not a lunar module",
+                  module->ID[0], module->ID[1]);
     }
 
     assert(module && HardwareType(*module) == Mission_LM);
 
-    std::vector<Astros *> crew;
+    std::vector<Astros*> crew;
     int capacity = CrewSize(*module);
 
     if (LM[cPad] > 0 && MA[cPad][LM[cPad]].A) {
@@ -1417,8 +1391,8 @@ std::vector<Astros *> LMCrew(int pad, Equipment *module)
     }
 
     if (crew.size() != capacity) {
-        ERROR3("LM module should have %d crew, only found %d",
-               capacity, crew.size());
+        LOG_ERROR("LM module should have %d crew, only found %d",
+                  capacity, crew.size());
     }
 
     return crew;
@@ -1438,21 +1412,16 @@ void InvalidatePrestige()
 /* Perform branching to alternate unless all nauts have been killed.
    Abort the mission in case of launch failures.
  */
-void BranchIfAlive(int *FNote)
+void BranchIfAlive(int* FNote)
 {
-    struct Astros *crw;
-    int ctr, k;
-
     // Check for all astros that are dead. End mission if this is the case.
-    ctr = 0;
+    int ctr = 0;
+    for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
+        Astros* crw = MA[Mev[STEP].pad][k].A;
+        if (crw == nullptr) continue;
 
-    for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-        crw = MA[Mev[STEP].pad][k].A;
-
-        if (crw != NULL) {
-            if (crw->Status == AST_ST_DEAD) {
-                ctr++;
-            }
+        if (crw->Status == AST_ST_DEAD) {
+            ctr++;
         }
     }
 
@@ -1465,7 +1434,6 @@ void BranchIfAlive(int *FNote)
         if (*FNote == 0) {
             *FNote = 1;
         }
-
         Mev[STEP].trace = Mev[STEP].fgoto;
     } else {
         Mev[STEP].trace = STEP + 1;
@@ -1475,7 +1443,6 @@ void BranchIfAlive(int *FNote)
         if (*FNote == 0) {
             *FNote = 5;
         }
-
         Mev[STEP].trace = 0x7f;
     }
 }
@@ -1484,9 +1451,7 @@ void BranchIfAlive(int *FNote)
 #ifdef DEBUG
 void clear_steps(int n)
 {
-    int i;
-
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         Mev[i].dice = -128;
     }
 }
