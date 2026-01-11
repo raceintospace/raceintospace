@@ -64,7 +64,7 @@ extern char tMen;
 extern bool fullscreenMissionPlayback;
 
 void GetFailStat(XFails* Now, char* FName, int rnum);
-int MCGraph(char plr, int lc, int safety, int val, char prob);
+int MCGraph(char plr, int lc, int safety, int val, bool prob);
 void F_KillCrew(char mode, Astros* Victim);
 void F_IRCrew(char mode, Astros* Guy);
 int FailEval(char plr, int type, char* text, int val, int xtra);
@@ -627,14 +627,14 @@ int StepSafety(const MisEval& step)
  *
  * \return new value of lc
  */
-int MCGraph(char plr, int lc, int safety, int val, char prob)
+int MCGraph(char plr, int lc, int safety, int val, bool prob)
 {
     if (AI[plr])
     {
         LOG_WARNING("MCGraph() was called for Ai player");
         return lc;
     }
-    LOG_TRACE("->MCGraph(plr, lc %d, safety %d, val %d, prob %c)", lc, safety, val, prob);
+    LOG_TRACE("->MCGraph(plr, lc %d, safety %d, val %d, prob %i)", lc, safety, val, prob);
 
     // draw safety
     fill_rectangle(lc - 2, 195, lc, 195 - safety * 22 / 100, 11); // total safety (component+crew) in yellow
