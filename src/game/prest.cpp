@@ -633,7 +633,7 @@ int MaxFail()
             Mev[i].StepInfo = 1003;
         }
 
-        maxval = std::max(Mev[i].StepInfo, maxval);
+        maxval = std::max((int)Mev[i].StepInfo, maxval);
 
         if (count == 53) return 1;
     }
