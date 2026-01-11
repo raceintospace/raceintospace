@@ -629,15 +629,15 @@ int MaxFail()
 {
     int maxval = 0;
     for (int i = count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
-        if (Mev_item.StepInfo == 0) {
-            Mev_item.StepInfo = 1003;
+        if (Mev[i].StepInfo == 0) {
+            Mev[i].StepInfo = 1003;
         }
 
-        maxval = std::max(Mev_item.StepInfo, maxval);
+        maxval = std::max(Mev[i].StepInfo, maxval);
 
         if (count == 53) return 1;
     }
-    return t;
+    return maxval;
 }
 
 #define PSTS(a)  (PVal[a]==1 || PVal[a]==2)
