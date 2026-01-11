@@ -628,7 +628,7 @@ char Set_Goal(char plr, char which, char control)
 int MaxFail()
 {
     int maxval = 0;
-    for (int i = count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
+    for (int i = 0, count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
         if (Mev[i].StepInfo == 0) {
             Mev[i].StepInfo = 1003;
         }
