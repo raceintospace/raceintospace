@@ -35,6 +35,7 @@
 #include "data.h"
 #include "filesystem.h"
 #include "game_main.h"
+#include "logging.h"
 #include "mc2.h"
 #include "mis.h"
 #include "mis_c.h"
@@ -50,9 +51,11 @@
 #include "sdlhelper.h"
 #include "randomize.h"
 
-Equipment *MH[2][8];   // Pointer to the hardware
-struct MisAst MA[2][4];  //[2][4]
-struct MisEval Mev[60];  // was *Mev;
+LOG_DEFAULT_CATEGORY(mission)
+
+Equipment* MH[2][8];   // Pointer to the hardware
+MisAst MA[2][4];  //[2][4]
+MisEval Mev[60];  // was *Mev;
 REPLAY Rep;
 
 char tMen;
@@ -114,11 +117,13 @@ void SetW(char ch)
 
 int Launch(char plr, char mis)
 {
+    LOG_DEBUG("Launch(plr=%i, mis=%i)", plr, mis);
     STEP = FINAL = JOINT = PastBANG = 0;
     tMen = 0x00; // clear mission status flags
 
     // Don't do missions twice, just update prestige data
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
+        LOG_DEBUG("Mail game replay state detected");
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
         // Check for Mission death
@@ -145,6 +150,7 @@ int Launch(char plr, char mis)
     memset(buffer, 0x00, BUFFER_SIZE); // Clear Buffer
     memset(MH, 0x00, sizeof MH);
     memset(Mev, 0x00, sizeof Mev);
+    LOG_DEBUG("buffers cleared to zero");
 
     if (Data->P[plr].Mission[mis].MissionCode == Mission_SubOrbital) {
         Data->P[plr].Mission[mis].Duration = 1;
@@ -156,6 +162,7 @@ int Launch(char plr, char mis)
     JOINT = Data->P[plr].Mission[mis].Joint;
 
     if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
+        LOG_DEBUG("Crew is not good, mission scrubbed");
         ScrubMission(plr, mis - Data->P[plr].Mission[mis].part);
     }
 
@@ -278,6 +285,7 @@ int Launch(char plr, char mis)
     // and Rushing penalties. MisSkip requires the second argument to be
     // loaded with the mission data AND corrects Days value for a
     // duration mission.
+    LOG_DEBUG("checking penalties");
     MisSkip(plr, misType);
     MisRush(plr, Data->P[plr].Mission[mis].Rushing);
     STEPnum = 0;
@@ -293,6 +301,7 @@ int Launch(char plr, char mis)
     // since there are (unimplemented) rescue missions with mission
     // codes greater than the lunar landing missions.
     if (!AI[plr] && mcode >= Mission_HistoricalLanding) {
+        LOG_DEBUG("Calculating average chance of succesful lunar mission");
         int avg = 0;
         int temp = 0;
 
@@ -307,6 +316,7 @@ int Launch(char plr, char mis)
             temp += 1;
         }
 
+        LOG_DEBUG("avg=%i, temp=%i", avg, tmp);
         if (temp) {
             avg /= temp;
         } else {
@@ -324,15 +334,19 @@ int Launch(char plr, char mis)
     // and opponent difficulty I.
     if ((Data->Def.Lev1 == 0 && Data->Def.Lev2 == 2) ||
         (Data->Def.Lev2 == 0 && Data->Def.Lev1 == 2)) {
+        LOG_DEBUG("applying EASYMODE");
         xMODE |= EASYMODE;    // set easy flag
     }
 
     if (AI[plr]) {
+        LOG_DEBUG("dis=applying EASYMODE(?)")
         xMODE &= ~xMODE_EASYMODE;    // map out computer from really easy level
     }
 
 
+    LOG_DEBUG("%i", Mev[0].trace);
     MisCheck(plr, mis); // Mission Resolution
+    LOG_DEBUG("%i", Mev[0].trace);
 
     xMODE &= ~xMODE_EASYMODE;
 
@@ -371,190 +385,185 @@ int Launch(char plr, char mis)
 
 void MissionPast(char plr, char pad, int prest)
 {
-    int loc, i, j, loop, mc;
-    unsigned int num;
+    LOG_DEBUG("MissionPast(plr=%i, pad=%i, prest=%i)", plr, pad, prest);
     char dys[7] = {0, 2, 5, 7, 12, 16, 20};
 
-    loc = Data->P[plr].PastMissionCount;
-    mc = Data->P[plr].Mission[pad].MissionCode;
-    memset(&Data->P[plr].History[loc], -1, sizeof(struct PastInfo));
-    strcpy(&Data->P[plr].History[loc].MissionName[0][0], Data->P[plr].Mission[pad].Name);
-    Data->P[plr].History[loc].Patch[0] = Data->P[plr].Mission[pad].Patch;
+    int loc = Data->P[plr].PastMissionCount;
+    int mc = Data->P[plr].Mission[pad].MissionCode;
+    
+    PastInfo& hist = Data->P[plr].History[loc];
+    memset(&hist, -1, sizeof(struct PastInfo));
+    strcpy(&hist.MissionName[0][0], Data->P[plr].Mission[pad].Name);
+    hist.Patch[0] = Data->P[plr].Mission[pad].Patch;
 
     if (Data->P[plr].Mission[pad].Joint == 1) {
-        strcpy(&Data->P[plr].History[loc].MissionName[1][0], Data->P[plr].Mission[pad + 1].Name);
-        Data->P[plr].History[loc].Patch[1] = Data->P[plr].Mission[pad + 1].Patch;
+        strcpy(&hist.MissionName[1][0], Data->P[plr].Mission[pad + 1].Name);
+        hist.Patch[1] = Data->P[plr].Mission[pad + 1].Patch;
     } else {
-        Data->P[plr].History[loc].MissionName[1][0] = 0;
+        hist.MissionName[1][0] = 0;
     }
 
     // TODO: There's a lot of what appears to be duplicated code here,
-    // concerning Data->P[plr].History[loc].Event & .Saf
+    // concerning hist.Event & .Saf
 
     // Flag for if mission is done
-    Data->P[plr].History[loc].Event = 0;
-    Data->P[plr].History[loc].Saf = 0;
+    hist.Event = 0;
+    hist.Saf = 0;
 
     if (mc == Mission_MarsFlyby) {
-        Data->P[plr].History[loc].Event = 2;
+        hist.Event = 2;
     } else if (mc == Mission_JupiterFlyby) {
-        Data->P[plr].History[loc].Event = 4;
+        hist.Event = 4;
     } else if (mc == Mission_SaturnFlyby) {
-        Data->P[plr].History[loc].Event = 7;
+        hist.Event = 7;
     }
 
     if ((mc == Mission_MarsFlyby || mc == Mission_JupiterFlyby ||
          mc == Mission_SaturnFlyby) && prest != 0) {
-        Data->P[plr].History[loc].Event = 0;
+        hist.Event = 0;
     }
 
     if (MH[0][Mission_Probe_DM]) {
-        Data->P[plr].History[loc].Saf = MH[0][Mission_Probe_DM]->MisSaf;
+        hist.Saf = MH[0][Mission_Probe_DM]->MisSaf;
     }
 
     if (!(mc == Mission_MarsFlyby || mc == Mission_JupiterFlyby ||
           mc == Mission_SaturnFlyby)) {
-        Data->P[plr].History[loc].Event = Data->P[plr].History[loc].Saf = 0;
+        hist.Event = hist.Saf = 0;
     }
 
-    Data->P[plr].History[loc].MissionCode = Data->P[plr].Mission[pad].MissionCode;
-    Data->P[plr].History[loc].MissionYear = Data->Year;
-    Data->P[plr].History[loc].Month = Data->P[plr].Mission[pad].Month;
-    Data->P[plr].History[loc].Prestige = MAX(prest, -10);
-    Data->P[plr].History[loc].Duration = Data->P[plr].Mission[pad].Duration;
+    hist.MissionCode = Data->P[plr].Mission[pad].MissionCode;
+    hist.MissionYear = Data->Year;
+    hist.Month = Data->P[plr].Mission[pad].Month;
+    hist.Prestige = MAX(prest, -10);
+    hist.Duration = Data->P[plr].Mission[pad].Duration;
 
     int nd = 0;
 
-    for (loop = 0; loop < (Data->P[plr].Mission[pad].Joint + 1); loop++) {
-        i = Data->P[plr].Mission[pad + loop].Prog;
-        j = Data->P[plr].Mission[pad + loop].Crew - 1;
+    int number_of_launches = Data->P[plr].Mission[pad].Joint + 1;
+    for (int loop = 0; loop < number_of_launches; loop++) {
+        int launchpad = pad+loop;
+        auto& mission = Data->P[plr].Mission[launchpad];
+        int i = mission.Prog;
+        int j = mission.Crew - 1;
 
-        if (Data->P[plr].Mission[pad + loop].Men > 0) {
-            Data->P[plr].History[loc].Man[loop][0] = Data->P[plr].Crew[i][j][0] - 1;
-            Data->P[plr].History[loc].Man[loop][1] = Data->P[plr].Crew[i][j][1] - 1;
-            Data->P[plr].History[loc].Man[loop][2] = Data->P[plr].Crew[i][j][2] - 1;
-            Data->P[plr].History[loc].Man[loop][3] = Data->P[plr].Crew[i][j][3] - 1;
-        } else {
-            Data->P[plr].History[loc].Man[loop][0] = Data->P[plr].History[loc].Man[loop][1] =
-                        Data->P[plr].History[loc].Man[loop][2] = Data->P[plr].History[loc].Man[loop][3] = -1;
+        for(int q=0; q<4; ++q) {
+            hist.Man[loop][q] = (mission.Men > 0)? Data->P[plr].Crew[i][j][q] - 1
+                                                 : -1;
         }
 
-        if (Data->P[plr].Mission[pad + loop].Men > 0) {
-            for (i = 0; i < 4; i++) {
-                j = Data->P[plr].Crew[Data->P[plr].Mission[pad + loop].Prog][Data->P[plr].Mission[pad + loop].Crew - 1][i] - 1;
+        if (mission.Men <= 0) continue;
+        
+        for (int i = 0; i < 4; i++) {
+            int j = Data->P[plr].Crew[mission.Prog][mission.Crew - 1][i] - 1;
+            if (j < 0) continue;
 
-                if (j >= 0) {
-                    Data->P[plr].Pool[j].MissionNum[Data->P[plr].Pool[j].Missions] = loc;
-                }
+            Data->P[plr].Pool[j].MissionNum[Data->P[plr].Pool[j].Missions] = loc;
 
-                if (j >= 0) {
-                    Data->P[plr].Pool[j].Missions++;
-                    Data->P[plr].Pool[j].Prestige += prest;
-                    int tnd = dys[Data->P[plr].Mission[pad + loop].Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
+            Data->P[plr].Pool[j].Missions++;
+            Data->P[plr].Pool[j].Prestige += prest;
+            int tnd = dys[mission.Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
 
-                    if (nd == 0 || nd > 20) {  // Don't do the following if nd is already set, or each crew member will get a different # of days
-                        nd = tnd;
-                        int miscode = Data->P[plr].Mission[pad].MissionCode;   // Get mission number
+            if (nd == 0 || nd > 20) {  // Don't do the following if nd is already set, or each crew member will get a different # of days
+                nd = tnd;
+                int miscode = Data->P[plr].Mission[pad].MissionCode;   // Get mission number
 
-                        switch (tnd) {
-                        case 0:   // Unmanned mission
-                            break;
+                switch (tnd) {
+                case 0:   // Unmanned mission
+                    break;
 
-                        case 2:   // Duration A
-                            if (miscode < 14) {
-                                nd = 1;  // Suborbital, Orbital, Orbital EVA = 1; docking, LM test = 2 days
-                            }
-
-                            break;
-
-                        case 5:   // Duration B
-                            if (miscode < 27) {
-                                nd = 3;  // Duration, DurEVA = 3 days
-                            } else if (miscode < 40) {
-                                nd = 4;  // Jt docking = 4 days; Jt LM test = 5 days
-                            }
-
-                            break;
-
-                        case 7:   // Duration C
-                            if (miscode < 32) {
-                                nd = 6;  // Duration = 6 days; MOL, Lunar Pass 7 days
-                            }
-
-                            break;
-
-                        case 12:  // Duration D
-                            if (miscode < 44) {
-                                nd = 8;  // Duration = 8 days
-                            } else if (miscode < 44 || miscode == 46 || miscode == 48 || miscode == 50)  {
-                                nd = 8 + brandom(4);  // Random 8-11 days for single lunar orbitals
-                            } else {
-                                nd = 9 + brandom(4);  // Random 9-12 days for Jt lunar orbitals or any lunar landing
-                            }
-
-                            break;
-
-                        case 16:  // Duration E
-                            nd = 13 + brandom(4);  // Random 13-16 days for any Dur E
-                            break;
-
-                        case 20:  // Duration F
-                            nd = 17 + brandom(4);  // Random 17-20 days for any Dur F
-                            break;
-                        }
+                case 2:   // Duration A
+                    if (miscode < 14) {
+                        nd = 1;  // Suborbital, Orbital, Orbital EVA = 1; docking, LM test = 2 days
                     }
 
-                    Data->P[plr].Pool[j].Days += nd;
+                    break;
 
-                    if (hero & 0x01) {
-                        Data->P[plr].Pool[j].Hero = 1;
-                    } else if (hero & 0x02 && j == EVA[loop]) {
-                        Data->P[plr].Pool[j].Hero = 1;
+                case 5:   // Duration B
+                    if (miscode < 27) {
+                        nd = 3;  // Duration, DurEVA = 3 days
+                    } else if (miscode < 40) {
+                        nd = 4;  // Jt docking = 4 days; Jt LM test = 5 days
                     }
+
+                    break;
+
+                case 7:   // Duration C
+                    if (miscode < 32) {
+                        nd = 6;  // Duration = 6 days; MOL, Lunar Pass 7 days
+                    }
+
+                    break;
+
+                case 12:  // Duration D
+                    if (miscode < 44) {
+                        nd = 8;  // Duration = 8 days
+                    } else if (miscode < 44 || miscode == 46 || miscode == 48 || miscode == 50)  {
+                        nd = 8 + brandom(4);  // Random 8-11 days for single lunar orbitals
+                    } else {
+                        nd = 9 + brandom(4);  // Random 9-12 days for Jt lunar orbitals or any lunar landing
+                    }
+
+                    break;
+
+                case 16:  // Duration E
+                    nd = 13 + brandom(4);  // Random 13-16 days for any Dur E
+                    break;
+
+                case 20:  // Duration F
+                    nd = 17 + brandom(4);  // Random 17-20 days for any Dur F
+                    break;
                 }
+            }
+
+            Data->P[plr].Pool[j].Days += nd;
+
+            if (hero & 0x01) {
+                Data->P[plr].Pool[j].Hero = 1;
+            } else if (hero & 0x02 && j == EVA[loop]) {
+                Data->P[plr].Pool[j].Hero = 1;
             }
         }
     }
 
-    for (i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
-        Data->P[plr].History[loc].Hard[PAD_A][i] = Data->P[plr].Mission[pad].Hard[i];
+    for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
+        hist.Hard[PAD_A][i] = Data->P[plr].Mission[pad].Hard[i];
 
         if (Data->P[plr].Mission[pad].Joint == 1) {
-            Data->P[plr].History[loc].Hard[PAD_B][i] = Data->P[plr].Mission[pad + 1].Hard[i];
+            hist.Hard[PAD_B][i] = Data->P[plr].Mission[pad + 1].Hard[i];
         }
     }
 
-    Data->P[plr].History[loc].result = FINAL;
-    Data->P[plr].History[loc].spResult = MaxFail();
+    hist.result = FINAL;
+    hist.spResult = MaxFail();
 
-    if (Data->P[plr].History[loc].spResult >= 4000 && MANNED[0] > 0 && MANNED[1] > 0) {
+    if (hist.spResult >= 4000 && MANNED[0] > 0 && MANNED[1] > 0) {
         // first -all killed
         if (MaxFailPad(0) >= 4000 && MaxFailPad(1) < 4000) {
-            Data->P[plr].History[loc].spResult = 4197;
+            hist.spResult = 4197;
         }
         // second -all killed
         else if (MaxFailPad(0) < 4000 && MaxFailPad(1) >= 4000) {
-            Data->P[plr].History[loc].spResult = 4198;
+            hist.spResult = 4198;
         }
 
         // first and second all killed
         else if (MaxFailPad(0) >= 4000 && MaxFailPad(1) >= 4000) {
-            Data->P[plr].History[loc].spResult = 4199;
+            hist.spResult = 4199;
         }
 
         if (MANNED[0] > 0 && MANNED[1] > 0 && tMen == (MANNED[0] + MANNED[1])) {
-            Data->P[plr].History[loc].spResult = 4199;
+            hist.spResult = 4199;
         }
 
     }
 
-    if (interimData.tempReplay.at((plr * 100) + loc).size() == 1 && Data->P[plr].History[loc].spResult < 3000) {
-        Data->P[plr].History[loc].spResult = 1999;
+    if (interimData.tempReplay.at((plr * 100) + loc).size() == 1 && hist.spResult < 3000) {
+        hist.spResult = 1999;
     }
 
     Data->P[plr].PastMissionCount++;
     assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
-    return;
 }
 
 
