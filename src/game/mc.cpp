@@ -316,7 +316,7 @@ int Launch(char plr, char mis)
             temp += 1;
         }
 
-        LOG_DEBUG("avg=%i, temp=%i", avg, tmp);
+        LOG_DEBUG("avg=%i, temp=%i", avg, temp);
         if (temp) {
             avg /= temp;
         } else {
@@ -339,7 +339,7 @@ int Launch(char plr, char mis)
     }
 
     if (AI[plr]) {
-        LOG_DEBUG("dis=applying EASYMODE(?)")
+        LOG_DEBUG("dis=applying EASYMODE(?)");
         xMODE &= ~xMODE_EASYMODE;    // map out computer from really easy level
     }
 
