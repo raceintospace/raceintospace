@@ -49,17 +49,14 @@ struct DisplayContext {
 };
 
 void DrawHardef(char plr);
-void HDispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t);
-void PInfo(char plr, char loc, DisplayContext &dctx);
-void HInfo(char plr, char loc, char w, DisplayContext &dctx);
+void HDispIt(const DisplayContext& dctx, int x1, int y1, int x2, int y2, int s, int t);
+void PInfo(char plr, char loc, DisplayContext& dctx);
+void HInfo(char plr, char loc, char w, DisplayContext& dctx);
 void DrawRank(char plr);
 
 
-void
-DrawHardef(char plr)
+void DrawHardef(char plr)
 {
-    int i;
-
     FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
@@ -76,7 +73,7 @@ DrawHardef(char plr)
     IOBox(243, 162, 315, 197);
     GradRect(4, 23, 315, 159, 0);
 
-    for (i = 4; i < 316; i += 2) {
+    for (int i = 4; i < 316; i += 2) {
         display::graphics.legacyScreen()->setPixel(i, 57, 11);
         display::graphics.legacyScreen()->setPixel(i, 91, 11);
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
@@ -102,14 +99,11 @@ DrawHardef(char plr)
     display::graphics.setForegroundColor(6);
     draw_string(163, 18, "SUCCESS");
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
-void
-ShowHard(char plr)
+void ShowHard(char plr)
 {
-    int i, place = -1;
+    int place = -1;
     char Cnt = 0;               // switch between screens
     DisplayContext dctx;
 
@@ -153,7 +147,7 @@ ShowHard(char plr)
                 GradRect(4, 23, 315, 159, 0);
                 InBox(2, 2, 31, 20);
 
-                for (i = 4; i < 316; i += 2) {
+                for (int i = 4; i < 316; i += 2) {
                     display::graphics.legacyScreen()->setPixel(i, 57, 11);
                     display::graphics.legacyScreen()->setPixel(i, 91, 11);
                     display::graphics.legacyScreen()->setPixel(i, 125, 11);
@@ -242,45 +236,34 @@ ShowHard(char plr)
     }
 }
 
-void
-HDispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t)
+void HDispIt(const DisplayContext& dctx, int x1, int y1, int x2, int y2, int s, int t)
 {
-    int w;
-    int h;
-
-    w = x2 - x1 + 1;
-    h = y2 - y1 + 1;
+    int w = x2 - x1 + 1;
+    int h = y2 - y1 + 1;
     display::LegacySurface local(w, h);
     local.copyFrom(dctx.intel.get(), x1, y1, x2, y2, 0, 0);
     local.setTransparentColor(0);
     display::graphics.screen()->draw(local, s, t);
 }
 
-void
-PInfo(char plr, char loc, DisplayContext &dctx)
+void PInfo(char plr, char loc, DisplayContext& dctx)
 {
-    char j, PrestigeTable[4][7], prestigeSum;
-    int i, tot, sfu;
+    char PrestigeTable[4][7]{}, prestigeSum;
+    int tot;
     float ScaleAmt = 0.0;
 
     GradRect(4, 23, 315, 159, 0);
 
-    for (i = 4; i < 316; i += 2) {
+    for (int i = 4; i < 316; i += 2) {
         display::graphics.legacyScreen()->setPixel(i, 57, 11);
         display::graphics.legacyScreen()->setPixel(i, 91, 11);
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 7; j++) {
-            PrestigeTable[i][j] = 0;
-        }
-    }
-
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
+    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].Prestige > 0) {
             prestigeSum = Data->P[plr].History[i].Prestige;
-            j = 0;
+            int j = 0;
 
             if (Data->P[plr].History[i].Hard[j][Mission_Capsule] > -1) {
                 PrestigeTable[MANNED_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Capsule]] += prestigeSum;
@@ -318,8 +301,8 @@ PInfo(char plr, char loc, DisplayContext &dctx)
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
 
     // make sure there are no negative vals in Pt
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 7; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 7; j++) {
             PrestigeTable[i][j] = MAX(PrestigeTable[i][j], 0);
         }
     }
@@ -328,39 +311,46 @@ PInfo(char plr, char loc, DisplayContext &dctx)
 
     switch (loc) {
     case PROBE_HARDWARE:
+        {
         if (PrestigeTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE] >= PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE]) {
             tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
         } else {
             tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         }
 
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (tot <= PrestigeTable[PROBE_HARDWARE][i]) {
                 tot = PrestigeTable[PROBE_HARDWARE][i];
             }
         }
 
         break;
+        }
 
     case ROCKET_HARDWARE:
-        for (i = 0; i < 4; i++) {
+        {
+        for (int i = 0; i < 4; i++) {
             if (tot <= PrestigeTable[ROCKET_HARDWARE][i]) {
                 tot = PrestigeTable[ROCKET_HARDWARE][i];
             }
         }
 
         break;
+        }
 
     case MANNED_HARDWARE:
-        for (i = 0; i < 5; i++) {
+        {
+        for (int i = 0; i < 5; i++) {
             if (tot <= PrestigeTable[MANNED_HARDWARE][i]) {
                 tot = PrestigeTable[MANNED_HARDWARE][i];
             }
         }
 
         break;
+        }
 
     case MISC_HARDWARE:
+        {
         if (PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] >= PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE]) {
             tot = PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
         } else {
@@ -384,6 +374,7 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         break;
+        }
 
     default:
         break;
@@ -417,73 +408,69 @@ PInfo(char plr, char loc, DisplayContext &dctx)
 
     switch (loc) {
     case ROCKET_HARDWARE:
-        for (i = 0; i < 4; i++) {
-            sfu = -1;
-
-            if (Data->P[plr].Rocket[i].Num >= 0) {
-                sfu = ScaleAmt * PrestigeTable[ROCKET_HARDWARE][i];
-            }
+        {
+        for (int i = 0; i < 4; i++) {
+            if (Data->P[plr].Rocket[i].Num < 0) continue;
+            
+            int sfu = ScaleAmt * PrestigeTable[ROCKET_HARDWARE][i];
+            if (sfu <= 0) continue;
 
             switch (i) {
             case ROCKET_HW_ONE_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 6);
-                    fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 5);
-                }
+                {
+                fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 6);
+                fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 5);
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 101, 1, 115, 57, 15, 104);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 129, 1, 149, 85, 15, 75);
                 }
 
                 break;
-
-            case ROCKET_HW_TWO_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(86, 159 - sfu * 136 / 100, 124, 159, 6);
-                    fill_rectangle(86, 159 - sfu * 136 / 100, 123, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case ROCKET_HW_TWO_STAGE:
+                {
+                fill_rectangle(86, 159 - sfu * 136 / 100, 124, 159, 6);
+                fill_rectangle(86, 159 - sfu * 136 / 100, 123, 158, 5);
+
+                if (plr == 0) {
                     HDispIt(dctx, 115, 0, 124, 68, 82, 92);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 151, 1, 170, 95, 82, 65);
                 }
 
                 break;
-
-            case ROCKET_HW_THREE_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(175, 159 - sfu * 136 / 100, 213, 159,
-                                   6);
-                    fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case ROCKET_HW_THREE_STAGE:
+                {
+                fill_rectangle(175, 159 - sfu * 136 / 100, 213, 159, 6);
+                fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158, 5);
+
+                if (plr == 0) {
                     HDispIt(dctx, 172, 1, 209, 133, 146, 27);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 211, 1, 243, 133, 148, 27);
                 }
 
                 break;
-
-            case ROCKET_HW_MEGA_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 298, 159,
-                                   6);
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case ROCKET_HW_MEGA_STAGE:
+                {
+                fill_rectangle(260, 159 - sfu * 136 / 100, 298, 159, 6);
+                fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158, 5);
+
+                if (plr == 0) {
                     HDispIt(dctx, 245, 1, 285, 137, 231, 23);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 287, 1, 318, 132, 231, 28);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -491,10 +478,11 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }                      // end case 1 'rockets'
 
         break;
+        }
 
     case PROBE_HARDWARE:
-        sfu = -1;
-
+        {
+        int sfu = -1;
         if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         }
@@ -527,61 +515,54 @@ PInfo(char plr, char loc, DisplayContext &dctx)
             HDispIt(dctx, 31, 153, 56, 182, 83, 126);
         }
 
-        for (i = 0; i < 3; i++) {
-            sfu = -1;
+        for (int i = 0; i < 3; i++) {
+            if (Data->P[plr].Probe[i].Num < 0) continue;
 
-            if (Data->P[plr].Probe[i].Num >= 0) {
-                sfu = ScaleAmt * PrestigeTable[PROBE_HARDWARE][i];
-            }
+            int sfu = ScaleAmt * PrestigeTable[PROBE_HARDWARE][i];
+            if (sfu <= 0) continue;
 
             switch (i) {
             case PROBE_HW_ORBITAL:
-                if (sfu > 0) {
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 190, 159,
-                                   6);
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158,
-                                   5);
-                }
+                {
+                fill_rectangle(152, 159 - sfu * 136 / 100, 190, 159, 6);
+                fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158, 5);
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 58, 180, 71, 196, 147, 138);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 73, 180, 89, 195, 147, 139);
                 }
 
                 break;
-
-            case PROBE_HW_INTERPLANETARY:
-                if (sfu > 0) {
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 250, 159,
-                                   6);
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 249, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case PROBE_HW_INTERPLANETARY:
+                {
+                fill_rectangle(212, 159 - sfu * 136 / 100, 250, 159, 6);
+                fill_rectangle(212, 159 - sfu * 136 / 100, 249, 158, 5);
+
+                if (plr == 0) {
                     HDispIt(dctx, 91, 178, 115, 195, 198, 139);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 153, 142, 176, 166, 198, 132);
                 }
 
                 break;
-
-            case PROBE_HW_LUNAR:
-                if (sfu > 0) {
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 310, 159,
-                                   6);
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 309, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case PROBE_HW_LUNAR:
+                {
+                fill_rectangle(272, 159 - sfu * 136 / 100, 310, 159, 6);
+                fill_rectangle(272, 159 - sfu * 136 / 100, 309, 158, 5);
+
+                if (plr == 0) {
                     HDispIt(dctx, 121, 142, 151, 166, 253, 132);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 178, 142, 201, 160, 253, 138);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -589,91 +570,86 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }                      // end case 2 'misc programs + lm'
 
         break;
+        }
 
     case MANNED_HARDWARE:
-        for (i = 0; i < 5; i++) {
-            sfu = -1;
+        {
+        for (int i = 0; i < 5; i++) {
+            if (Data->P[plr].Manned[i].Num < 0) continue;
 
-            if (Data->P[plr].Manned[i].Num >= 0) {
-                sfu = ScaleAmt * PrestigeTable[MANNED_HARDWARE][i];
-            }
+            int sfu = ScaleAmt * PrestigeTable[MANNED_HARDWARE][i];
+            if (sfu <= 0) continue;
 
             switch (i) {
             case MANNED_HW_ONE_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 6);
-                    fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 5);
-                }
-
-                if (plr == 0 && sfu > 0) {
+                {
+                fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 6);
+                fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 5);
+                
+                if (plr == 0) {
                     HDispIt(dctx, 12, 91, 25, 116, 12, 137);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 0, 56, 26, 89, 14, 123);
                 }
 
                 break;
-
-            case MANNED_HW_TWO_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 6);
-                    fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case MANNED_HW_TWO_MAN_CAPSULE:
+                {
+                fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 6);
+                fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 5);
+                
+                if (plr == 0) {
                     HDispIt(dctx, 27, 98, 49, 127, 66, 127);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 28, 62, 49, 96, 66, 122);
                 }
 
                 break;
-
-            case MANNED_HW_THREE_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(142, 159 - sfu * 136 / 100, 180, 159,
-                                   6);
-                    fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case MANNED_HW_THREE_MAN_CAPSULE:
+                {
+                fill_rectangle(142, 159 - sfu * 136 / 100, 180, 159, 6);
+                fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158, 5);
+                
+                if (plr == 0) {
                     HDispIt(dctx, 95, 77, 117, 127, 130, 106);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 119, 97, 170, 140, 122, 113);
                 }
 
                 break;
-
-            case MANNED_HW_MINISHUTTLE:
-                if (sfu > 0) {
-                    fill_rectangle(198, 159 - sfu * 136 / 100, 236, 159,
-                                   6);
-                    fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case MANNED_HW_MINISHUTTLE:
+                {
+                fill_rectangle(198, 159 - sfu * 136 / 100, 236, 159, 6);
+                fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158, 5);
+                
+                if (plr == 0) {
                     HDispIt(dctx, 3, 1, 16, 54, 191, 103);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 18, 1, 32, 48, 191, 109);
                 }
 
                 break;
-
-            case MANNED_HW_FOUR_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(266, 159 - sfu * 136 / 100, 304, 159,
-                                   6);
-                    fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158,
-                                   5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+            case MANNED_HW_FOUR_MAN_CAPSULE:
+                {
+                fill_rectangle(266, 159 - sfu * 136 / 100, 304, 159, 6);
+                fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158, 5);
+                
+                if (plr == 0) {
                     HDispIt(dctx, 34, 1, 65, 60, 248, 97);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 67, 1, 100, 60, 248, 97);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -681,10 +657,11 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }                      // end case 2 'manned' programs
 
         break;
+        }
 
     case MISC_HARDWARE:
-        sfu = -1;
-
+        {
+        int sfu = -1;
         if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
         }
@@ -701,7 +678,6 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         sfu = -1;
-
         if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
         }
@@ -718,7 +694,6 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         sfu = -1;
-
         if (Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
         }
@@ -735,7 +710,6 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         sfu = -1;
-
         if (Data->P[plr].Misc[MISC_HW_KICKER_A].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_A];
         }
@@ -752,7 +726,6 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         sfu = -1;
-
         if (Data->P[plr].Misc[MISC_HW_KICKER_B].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         }
@@ -769,7 +742,6 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         sfu = -1;
-
         if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C];
         }
@@ -784,31 +756,28 @@ PInfo(char plr, char loc, DisplayContext &dctx)
         }
 
         break;
+        }
 
     default:
         break;
     }
-
-    return;
 }
 
-void
-HInfo(char plr, char loc, char w, DisplayContext &dctx)
+void HInfo(char plr, char loc, char w, DisplayContext& dctx)
 {
-    int i, sfu, sfs, tot;
-    float ov, un, ScaleAmt = 0.0;
+    float ScaleAmt = 0.0;
 
     if (w == 0) {
         GradRect(4, 23, 315, 159, 0);
 
-        for (i = 4; i < 316; i += 2) {
+        for (int i = 4; i < 316; i += 2) {
             display::graphics.legacyScreen()->setPixel(i, 57, 11);
             display::graphics.legacyScreen()->setPixel(i, 91, 11);
             display::graphics.legacyScreen()->setPixel(i, 125, 11);
         }
 
         // determine scale x5
-        tot = 0;
+        int tot = 0;
 
         switch (loc) {
         case 0:
@@ -819,7 +788,7 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                 tot = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
             }
 
-            for (i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 if (tot <= Data->P[plr].Probe[i].Steps) {
                     tot = Data->P[plr].Probe[i].Steps;
                 }
@@ -828,7 +797,7 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
             break;
 
         case 1:
-            for (i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++) {
                 if (tot <= Data->P[plr].Rocket[i].Steps) {
                     tot = Data->P[plr].Rocket[i].Steps;
                 }
@@ -837,7 +806,7 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
             break;
 
         case 2:
-            for (i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 if (tot <= Data->P[plr].Manned[i].Steps) {
                     tot = Data->P[plr].Manned[i].Steps;
                 }
@@ -897,69 +866,63 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
     ScaleAmt = 25.0 / ScaleAmt;
     display::graphics.setForegroundColor(1);
 
-    switch (loc) {
+    switch (loc) { // TODO: separate "draw one hardware stat" into a separate function
     case ROCKET_HARDWARE:                //draw_string(137,150,"ROCKETS");
-        for (i = 0; i < 4; i++) {
-            sfu = -1;
-            sfs = -1;
+        {
+        for (int i = 0; i < 4; i++) {
+            if (Data->P[plr].Rocket[i].Num < 0) continue;
+            
+            int sfu = ScaleAmt * Data->P[plr].Rocket[i].Steps;
+            if (sfu <= 0) continue;
 
-            if (Data->P[plr].Rocket[i].Num >= 0) {
-                sfu = ScaleAmt * Data->P[plr].Rocket[i].Steps;
-
-                if (sfu > 0) {
-                    ov = Data->P[plr].Rocket[i].Steps -
-                         Data->P[plr].Rocket[i].Failures;
-                    un = Data->P[plr].Rocket[i].Steps;
-                    sfs = sfu * (ov / un);
-                }
-            }
+            float ov = Data->P[plr].Rocket[i].Steps
+                       - Data->P[plr].Rocket[i].Failures;
+            float un = Data->P[plr].Rocket[i].Steps;
+            int sfs = sfu * (ov / un);
 
             switch (i) {
             case ROCKET_HW_ONE_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 9);
-                    fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 8);
-                }
+                {
+                fill_rectangle(22, 159 - sfu * 136 / 100, 60, 159, 9);
+                fill_rectangle(22, 159 - sfu * 136 / 100, 59, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(22, 159 - sfs * 136 / 100, 55, 159, 6);
                     fill_rectangle(22, 159 - sfs * 136 / 100, 54, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 101, 1, 115, 57, 15, 104);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 129, 1, 149, 85, 15, 75);
                 }
 
                 break;
+                }
 
             case ROCKET_HW_TWO_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(86, 159 - sfu * 136 / 100, 124, 159, 9);
-                    fill_rectangle(86, 159 - sfu * 136 / 100, 123, 158, 8);
-                }
+                {
+                fill_rectangle(86, 159 - sfu * 136 / 100, 124, 159, 9);
+                fill_rectangle(86, 159 - sfu * 136 / 100, 123, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(86, 159 - sfs * 136 / 100, 119, 159, 6);
                     fill_rectangle(86, 159 - sfs * 136 / 100, 118, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 115, 0, 124, 68, 82, 92);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 151, 1, 170, 95, 82, 65);
                 }
 
                 break;
+                }
 
             case ROCKET_HW_THREE_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(175, 159 - sfu * 136 / 100, 213, 159,
-                                   9);
-                    fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(175, 159 - sfu * 136 / 100, 213, 159, 9);
+                fill_rectangle(175, 159 - sfu * 136 / 100, 212, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(175, 159 - sfs * 136 / 100, 208, 159,
@@ -968,21 +931,19 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 172, 1, 209, 133, 146, 27);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 211, 1, 243, 133, 148, 27);
                 }
 
                 break;
+                }
 
             case ROCKET_HW_MEGA_STAGE:
-                if (sfu > 0) {
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 298, 159,
-                                   9);
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(260, 159 - sfu * 136 / 100, 298, 159, 9);
+                fill_rectangle(260, 159 - sfu * 136 / 100, 297, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(260, 159 - sfs * 136 / 100, 293, 159,
@@ -991,13 +952,14 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 245, 1, 285, 137, 231, 23);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 287, 1, 318, 132, 231, 28);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -1005,69 +967,64 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
         }                      // end case 1 'rockets'
 
         break;
+        }
 
     case MANNED_HARDWARE:                //draw_string(137,150,"CAPSULES");
-        for (i = 0; i < 5; i++) {
-            sfu = -1;
-            sfs = -1;
-
-            if (Data->P[plr].Manned[i].Num >= 0) {
-                sfu = ScaleAmt * Data->P[plr].Manned[i].Steps;
-
-                if (sfu > 0) {
-                    ov = Data->P[plr].Manned[i].Steps -
-                         Data->P[plr].Manned[i].Failures;
-                    un = Data->P[plr].Manned[i].Steps;
-                    sfs = sfu * (ov / un);
-                }
-            }
+        {
+        for (int i = 0; i < 5; i++) {
+            if (Data->P[plr].Manned[i].Num < 0) continue;
+            
+            int sfu = ScaleAmt * Data->P[plr].Manned[i].Steps;
+            if (sfu <= 0) continue;
+            
+            float ov = Data->P[plr].Manned[i].Steps
+                       - Data->P[plr].Manned[i].Failures;
+            float un = Data->P[plr].Manned[i].Steps;
+            int sfs = sfu * (ov / un);
 
             switch (i) {
             case MANNED_HW_ONE_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 9);
-                    fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 8);
-                }
-
+                {
+                fill_rectangle(16, 159 - sfu * 136 / 100, 54, 159, 9);
+                fill_rectangle(16, 159 - sfu * 136 / 100, 53, 158, 8);
+                
                 if (sfs > 0) {
                     fill_rectangle(16, 159 - sfs * 136 / 100, 49, 159, 6);
                     fill_rectangle(16, 159 - sfs * 136 / 100, 48, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 12, 91, 25, 116, 12, 137);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 0, 56, 26, 89, 14, 123);
                 }
 
                 break;
-
-            case MANNED_HW_TWO_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 9);
-                    fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 8);
                 }
 
+            case MANNED_HW_TWO_MAN_CAPSULE:
+                {
+                fill_rectangle(77, 159 - sfu * 136 / 100, 115, 159, 9);
+                fill_rectangle(77, 159 - sfu * 136 / 100, 114, 158, 8);
+                
                 if (sfs > 0) {
                     fill_rectangle(77, 159 - sfs * 136 / 100, 110, 159, 6);
                     fill_rectangle(77, 159 - sfs * 136 / 100, 109, 158, 5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 27, 98, 49, 127, 66, 127);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 28, 62, 49, 96, 66, 122);
                 }
 
                 break;
+                }
 
             case MANNED_HW_THREE_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(142, 159 - sfu * 136 / 100, 180, 159,
-                                   9);
-                    fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(142, 159 - sfu * 136 / 100, 180, 159, 9);
+                fill_rectangle(142, 159 - sfu * 136 / 100, 179, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(142, 159 - sfs * 136 / 100, 175, 159,
@@ -1076,21 +1033,19 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 95, 77, 117, 127, 130, 106);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 119, 97, 170, 140, 122, 113);
                 }
 
                 break;
+                }
 
             case MANNED_HW_MINISHUTTLE:
-                if (sfu > 0) {
-                    fill_rectangle(198, 159 - sfu * 136 / 100, 236, 159,
-                                   9);
-                    fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(198, 159 - sfu * 136 / 100, 236, 159, 9);
+                fill_rectangle(198, 159 - sfu * 136 / 100, 235, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(198, 159 - sfs * 136 / 100, 231, 159,
@@ -1099,21 +1054,19 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 3, 1, 16, 54, 191, 103);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 18, 1, 32, 48, 191, 109);
                 }
 
                 break;
+                }
 
             case MANNED_HW_FOUR_MAN_CAPSULE:
-                if (sfu > 0) {
-                    fill_rectangle(266, 159 - sfu * 136 / 100, 304, 159,
-                                   9);
-                    fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(266, 159 - sfu * 136 / 100, 304, 159, 9);
+                fill_rectangle(266, 159 - sfu * 136 / 100, 303, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(266, 159 - sfs * 136 / 100, 299, 159,
@@ -1122,13 +1075,14 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 34, 1, 65, 60, 248, 97);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 67, 1, 100, 60, 248, 97);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -1136,10 +1090,13 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
         }                      // end case 2 'manned' programs
 
         break;
+        }
 
     case PROBE_HARDWARE:                //draw_string(100,150,"SATELLITES & LM'S");
-        sfu = -1;
-        sfs = -1;
+        {
+        int sfu = -1;
+        int sfs = -1;
+        float ov, un;
 
         if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
             sfu = ScaleAmt * Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
@@ -1198,29 +1155,23 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
             HDispIt(dctx, 31, 153, 56, 182, 83, 128);
         }
 
-        for (i = 0; i < 3; i++) {
-            sfu = -1;
+        for (int i = 0; i < 3; i++) {
+            if (Data->P[plr].Probe[i].Num < 0) continue;
+            
+            sfu = ScaleAmt * Data->P[plr].Probe[i].Steps;
+            if (sfu <= 0) continue;
+            
             sfs = -1;
-
-            if (Data->P[plr].Probe[i].Num >= 0) {
-                sfu = ScaleAmt * Data->P[plr].Probe[i].Steps;
-
-                if (sfu > 0) {
-                    ov = Data->P[plr].Probe[i].Steps -
-                         Data->P[plr].Probe[i].Failures;
-                    un = Data->P[plr].Probe[i].Steps;
-                    sfs = sfu * (ov / un);
-                }
-            }
+            ov = Data->P[plr].Probe[i].Steps -
+                 Data->P[plr].Probe[i].Failures;
+            un = Data->P[plr].Probe[i].Steps;
+            sfs = sfu * (ov / un);
 
             switch (i) {
             case PROBE_HW_ORBITAL:
-                if (sfu > 0) {
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 190, 159,
-                                   9);
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(152, 159 - sfu * 136 / 100, 190, 159, 9);
+                fill_rectangle(152, 159 - sfu * 136 / 100, 189, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(152, 159 - sfs * 136 / 100, 185, 159,
@@ -1229,21 +1180,19 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 58, 180, 71, 196, 147, 138);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 73, 180, 89, 195, 147, 139);
                 }
 
                 break;
+                }
 
             case PROBE_HW_INTERPLANETARY:
-                if (sfu > 0) {
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 250, 159,
-                                   9);
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 249, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(212, 159 - sfu * 136 / 100, 250, 159, 9);
+                fill_rectangle(212, 159 - sfu * 136 / 100, 249, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(212, 159 - sfs * 136 / 100, 245, 159,
@@ -1252,21 +1201,19 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 91, 178, 115, 195, 198, 139);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 153, 142, 176, 166, 198, 132);
                 }
 
                 break;
+                }
 
             case PROBE_HW_LUNAR:
-                if (sfu > 0) {
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 310, 159,
-                                   9);
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 309, 158,
-                                   8);
-                }
+                {
+                fill_rectangle(272, 159 - sfu * 136 / 100, 310, 159, 9);
+                fill_rectangle(272, 159 - sfu * 136 / 100, 309, 158, 8);
 
                 if (sfs > 0) {
                     fill_rectangle(272, 159 - sfs * 136 / 100, 305, 159,
@@ -1275,13 +1222,14 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
                                    5);
                 }
 
-                if (plr == 0 && sfu > 0) {
+                if (plr == 0) {
                     HDispIt(dctx, 121, 142, 151, 166, 253, 132);
-                } else if (sfu > 0) {
+                } else {
                     HDispIt(dctx, 178, 142, 201, 160, 253, 138);
                 }
 
                 break;
+                }
 
             default:
                 break;
@@ -1289,10 +1237,13 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
         }                      // end case 2 'misc programs + lm'
 
         break;
+        }
 
     case MISC_HARDWARE:                //draw_string(100,150,"ADDITIONAL PROGRAMS");
-        sfu = -1;
-        sfs = -1;
+        {
+        int sfu = -1;
+        int sfs = -1;
+        float ov, un;
 
         if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
             sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
@@ -1470,14 +1421,12 @@ HInfo(char plr, char loc, char w, DisplayContext &dctx)
         }
 
         break;
+        }
     }
 }
 
-void
-RankMe(char plr)
+void RankMe(char plr)
 {
-    int i;
-
     FadeOut(2, 5, 0, 0);
     PortPal(plr);
     display::graphics.screen()->clear();
@@ -1502,7 +1451,7 @@ RankMe(char plr)
     grLineTo(291, 182);
     display::graphics.setForegroundColor(7);
 
-    for (i = 0; i < 22; i++) {
+    for (int i = 0; i < 22; i++) {
         if (i < 11) {
             grMoveTo(33, 56 + (i * 12));
             grLineTo(285, 56 + (i * 12));
@@ -1553,11 +1502,9 @@ RankMe(char plr)
     }
 }
 
-void
-DrawRank(char plr)
+void DrawRank(char plr)
 {
-    int i, MaxPz = 0, MaxNg = 0, Px, Py, t1, t2, Cur = 0, OffSet, Year_Inc =
-                                  12, score;
+    int MaxPz = 0, MaxNg = 0, t1, t2, Cur = 0, OffSet, Year_Inc = 12, score;
 
     helpText = "i030";
     keyHelpText = "k030";
@@ -1567,8 +1514,8 @@ DrawRank(char plr)
     InBox(281, 4, 308, 20);
     draw_small_flag(0, 13, 5);
     draw_small_flag(1, 282, 5);
-    Px = 0;
-    Py = 1;
+    int Px = 0;
+    int Py = 1;
 
     while (Px != -1 || Py != -1) {
         if (Px != -1) {
@@ -1579,7 +1526,7 @@ DrawRank(char plr)
 
         t1 = 0;
 
-        for (i = 0; i < Data->P[Cur].PastMissionCount; i++) {
+        for (int i = 0; i < Data->P[Cur].PastMissionCount; i++) {
             if (Data->P[Cur].History[i].Prestige < -15) {
                 Data->P[Cur].History[i].Prestige = 0;
             }
@@ -1606,101 +1553,77 @@ DrawRank(char plr)
 
     OffSet = 0;
 
-    for (i = 0; i < 50; i += 2) {
+    for (int i = 0; i < 50; i += 2) {
+        if (OffSet != 0) break;
         if (MaxNg != 0) {
             if ((MaxNg >= -(i * 10)) && (MaxPz < i * 40))
-                if (OffSet == 0) {
-                    OffSet = i * 10;
-                }
+                OffSet = i * 10;
         } else {
-            if (MaxPz < i * 40)
-                if (OffSet == 0) {
-                    OffSet = i * 10;
-                }
+            if (MaxPz < i * 40) OffSet = i * 10;
         }
     }
 
     display::graphics.setForegroundColor(6);
 
-    for (i = 0; i < 11; i++) {
+    for (int i = 0; i < 11; i++) {
         draw_number(29 + (24 * i), 43, (i * 2) + 57);
         draw_number(41 + (24 * i), 192, (i * 2) + 58);
     }
 
     display::graphics.setForegroundColor(6);
-
-    for (i = 0; i < 6; i++) {
-        switch (i) {
-        case 0:
-            if (OffSet < 10) {
-                draw_number(15, 178, -OffSet);
-                draw_number(311, 178, -OffSet);
-            } else if (OffSet < 100) {
-                draw_number(4, 178, -OffSet);
-                draw_number(300, 178, -OffSet);
-            } else {
-                draw_number(3, 178, -OffSet);
-                draw_number(299, 178, -OffSet);
-            }
-
-            break;
-
-        case 1:
-            draw_number(10, 154, 0);
-            draw_number(306, 154, 0);
-            break;
-
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            if (OffSet * (i - 1) < 10) {
-                draw_number(15, 178 - (i * 24), OffSet * (i - 1));
-                draw_number(311, 178 - (i * 24), OffSet * (i - 1));
-            } else if (OffSet * (i - 1) < 100) {
-                draw_number(6, 178 - (i * 24), OffSet * (i - 1));
-                draw_number(302, 178 - (i * 24), OffSet * (i - 1));
-            } else {
-                draw_number(3, 178 - (i * 24), OffSet * (i - 1));
-                draw_number(299, 178 - (i * 24), OffSet * (i - 1));
-            }
-
-            break;
-
-        default:
-            break;
+    
+    if (OffSet < 10) {
+        draw_number(15, 178, -OffSet);
+        draw_number(311, 178, -OffSet);
+    } else if (OffSet < 100) {
+        draw_number(4, 178, -OffSet);
+        draw_number(300, 178, -OffSet);
+    } else {
+        draw_number(3, 178, -OffSet);
+        draw_number(299, 178, -OffSet);
+    }
+    
+    draw_number(10, 154, 0);
+    draw_number(306, 154, 0);
+    
+    for (int i = 2; i < 6; i++) {
+        if (OffSet * (i - 1) < 10) {
+            draw_number(15, 178 - (i * 24), OffSet * (i - 1));
+            draw_number(311, 178 - (i * 24), OffSet * (i - 1));
+        } else if (OffSet * (i - 1) < 100) {
+            draw_number(6, 178 - (i * 24), OffSet * (i - 1));
+            draw_number(302, 178 - (i * 24), OffSet * (i - 1));
+        } else {
+            draw_number(3, 178 - (i * 24), OffSet * (i - 1));
+            draw_number(299, 178 - (i * 24), OffSet * (i - 1));
         }
     }
 
     //Win=Data->Prestige[Prestige_MannedLunarLanding].Place;
-    i = 0;
     t1 = 152;
     display::graphics.setForegroundColor(5);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==0 || MAIL==0)
 
     if (Option == -1 || Option == 0)
-        while (i < Data->P[0].PastMissionCount) {
+        for (int i=0; i < Data->P[0].PastMissionCount; ++i) {
             t2 = Data->P[0].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[0].History[i].MissionYear -
                                       57) + Data->P[0].History[i].Month, t1);
-            i++;
         }
 
-    i = 0;
     t1 = 152;
     display::graphics.setForegroundColor(9);
     grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==1 || MAIL==1)
 
     if (Option == -1 || Option == 1)
-        while (i < Data->P[1].PastMissionCount) {
+        for (int i=0; i < Data->P[1].PastMissionCount; ++i) {
             t2 = Data->P[1].History[i].Prestige;
             t1 = t1 - (t2 * ((float) 24 / OffSet));
             grLineTo(34 + Year_Inc * (Data->P[1].History[i].MissionYear -
                                       57) + Data->P[1].History[i].Month, t1);
-            i++;
         }
 
     display::graphics.setForegroundColor(1);
@@ -1740,8 +1663,7 @@ DrawRank(char plr)
  * \param lvA  the player's difficulty level.
  * \param lvB  the opponent's difficulty level.
  */
-int
-CalcScore(char plr, char lvA, char lvB)
+int CalcScore(char plr, char lvA, char lvB)
 {
     int total = 0;
 
@@ -1749,75 +1671,74 @@ CalcScore(char plr, char lvA, char lvB)
     ++lvB;
 
     for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].Prestige > 0) {
-            switch (lvA) {
-            case 1:
-                total += Data->P[plr].History[i].Prestige;
-                break;
+        if (Data->P[plr].History[i].Prestige <= 0) continue;
+        switch (lvA) {
+        case 1:
+            total += Data->P[plr].History[i].Prestige;
+            break;
 
-            case 2:
-                if (lvB == 1)
-                    total +=
-                        2 * Data->P[plr].History[i].Prestige +
-                        Data->P[plr].History[i].Prestige / 3;
-                else if (lvB == 3)
-                    total +=
-                        Data->P[plr].History[i].Prestige +
-                        (2 * Data->P[plr].History[i].Prestige) / 3;
-                else {
-                    total += 2 * Data->P[plr].History[i].Prestige;
-                }
-
-                break;
-
-            case 3:
-                if (lvB == 1)
-                    total +=
-                        3 * Data->P[plr].History[i].Prestige +
-                        (2 * Data->P[plr].History[i].Prestige) / 3;
-                else if (lvB == 2)
-                    total +=
-                        3 * Data->P[plr].History[i].Prestige +
-                        Data->P[plr].History[i].Prestige / 3;
-                else {
-                    total += 3 * Data->P[plr].History[i].Prestige;
-                }
-
-                break;
-
-            default:
-                break;
+        case 2:
+            if (lvB == 1)
+                total +=
+                    2 * Data->P[plr].History[i].Prestige +
+                    Data->P[plr].History[i].Prestige / 3;
+            else if (lvB == 3)
+                total +=
+                    Data->P[plr].History[i].Prestige +
+                    (2 * Data->P[plr].History[i].Prestige) / 3;
+            else {
+                total += 2 * Data->P[plr].History[i].Prestige;
             }
+
+            break;
+
+        case 3:
+            if (lvB == 1)
+                total +=
+                    3 * Data->P[plr].History[i].Prestige +
+                    (2 * Data->P[plr].History[i].Prestige) / 3;
+            else if (lvB == 2)
+                total +=
+                    3 * Data->P[plr].History[i].Prestige +
+                    Data->P[plr].History[i].Prestige / 3;
+            else {
+                total += 3 * Data->P[plr].History[i].Prestige;
+            }
+
+            break;
+
+        default:
+            break;
         }
     }
 
-    if (plr == Data->Prestige[Prestige_MannedLunarLanding].Place) {
-        if (lvA == 1) {
-            if (Data->Year <= 67) {
-                total += 50;
-            } else if (Data->Year <= 69) {
-                total += 25;
-            }
-        } else if (lvA == 2) {
-            if (Data->Year <= 67) {
-                total += 75;
-            } else if (Data->Year <= 69) {
-                total += 50;
-            } else if (Data->Year <= 73) {
-                total += 25;
-            }
-        } else if (lvA == 3) {
-            if (Data->Year <= 67) {
-                total += 150;
-            } else if (Data->Year <= 69) {
-                total += 75;
-            } else if (Data->Year <= 73) {
-                total += 50;
-            }
+    if (plr != Data->Prestige[Prestige_MannedLunarLanding].Place) return total;
+    
+    if (lvA == 1) {
+        if (Data->Year <= 67) {
+            total += 50;
+        } else if (Data->Year <= 69) {
+            total += 25;
+        }
+    } else if (lvA == 2) {
+        if (Data->Year <= 67) {
+            total += 75;
+        } else if (Data->Year <= 69) {
+            total += 50;
+        } else if (Data->Year <= 73) {
+            total += 25;
+        }
+    } else if (lvA == 3) {
+        if (Data->Year <= 67) {
+            total += 150;
+        } else if (Data->Year <= 69) {
+            total += 75;
+        } else if (Data->Year <= 73) {
+            total += 50;
         }
     }
 
-    return (total);
+    return total;
 }
 
 /* EOF */
