@@ -647,7 +647,7 @@ int MCGraph(char plr, int lc, int safety, int val, bool prob)
 
     if (val > safety) { // step has failed, redraw final rectange in red
         fill_rectangle(lc - 2, 195, lc, 195 - val * 22 / 100, 9);
-        if (prob == 0) return 76; // if it's not a problem (nofail or savecard or smth), next draw should start from the beginning(??)
+        if (prob == 0) return (plr == 0)?76 :191; // if it's not a problem (nofail or savecard or smth), next draw should start from the beginning(??)
         else return lc + 5;       // otherwise next draw will be in the next column
     } else { // step was good
         int right_border = (plr == 0)?126 :241;
