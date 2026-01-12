@@ -21,8 +21,7 @@
 
 LOG_DEFAULT_CATEGORY(utils)
 
-double
-get_time(void)
+double get_time()
 {
 #ifdef CONFIG_WIN32
     /* mingw was complaining */
@@ -38,8 +37,7 @@ get_time(void)
 #endif
 }
 
-int
-xstrcasecmp(const char *a, const char *b)
+int xstrcasecmp(const char* a, const char* b)
 {
     while (*a) {
         if (tolower(*a & 0xff) != tolower(*b & 0xff)) {
@@ -53,8 +51,7 @@ xstrcasecmp(const char *a, const char *b)
     return (tolower(*a) - tolower(*b));
 }
 
-int
-xstrncasecmp(const char *a, const char *b, size_t n)
+int xstrncasecmp(const char* a, const char* b, size_t n)
 {
     while (n && *a) {
         if (tolower(*a & 0xff) != tolower(*b & 0xff)) {
@@ -69,90 +66,82 @@ xstrncasecmp(const char *a, const char *b, size_t n)
     return (tolower(*a) - tolower(*b));
 }
 
-void *
-xmalloc(size_t n)
+void* xmalloc(size_t n)
 {
-    void *p = malloc(n);
+    void* p = malloc(n);
 
-    if (!p) {
-        CRITICAL2("allocation failure: %s", strerror(errno));
+    if (p == nullptr) {
+        LOG_CRITICAL("allocation failure: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    return (p);
+    return p;
 }
 
-void *
-xcalloc(size_t a, size_t b)
+void* xcalloc(size_t a, size_t b)
 {
-    void *p = calloc(a, b);
+    void* p = calloc(a, b);
 
-    if (!p) {
-        CRITICAL2("callocation failure: %s", strerror(errno));
+    if (p == nullptr) {
+        LOG_CRITICAL("callocation failure: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    return (p);
+    return p;
 }
 
 /** duplicates a string and returns a pointer to the new string
  */
-char *
-xstrdup(const char *s)
+char* xstrdup(const char* s)
 {
-    char *p;
-
-    p = (char *)xmalloc(strlen(s) + 1);
+    char* p = (char*)xmalloc(strlen(s) + 1);
     strcpy(p, s);
-    return (p);
+    return p;
 }
 
-char *
-xstrcat2(const char *s1, const char *s2)
+char* xstrcat2(const char* s1, const char* s2)
 {
-    char *s = NULL;
     assert(s1 && s2);
-    s = (char *)xmalloc(strlen(s1) + strlen(s2) + 1);
+    char* s = (char*)xmalloc(strlen(s1) + strlen(s2) + 1);
     strcpy(s, s1);
     strcat(s, s2);
     return s;
 }
 
-void *
-xrealloc(void *ptr, size_t size)
+void* xrealloc(void* ptr, size_t size)
 {
-    void *p = realloc(ptr, size);
+    void* p = realloc(ptr, size);
 
     if (!p) {
-        CRITICAL2("reallocation failure: %s", strerror(errno));
+        LOG_CRITICAL("reallocation failure: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
-    return (p);
+    return p;
 }
 
-ssize_t
-fread_dyn(char **destp, size_t *n, FILE *stream)
+ssize_t fread_dyn(char** destp, size_t* n, FILE* stream)
 {
     const unsigned bsize = 8192;
-    size_t total = 0, cnt = 0;
 
     assert(destp);
     assert(n);
     assert(stream);
 
-    if (!*destp) {
-        *destp = (char *)xmalloc(*n = bsize);
+    if (*destp == nullptr) {
+        *n = bsize;
+        *destp = (char*)xmalloc(bsize);
     }
 
+    size_t total = 0;
     while (1) {
-        cnt = fread(*destp + total, 1, *n - total, stream);
+        size_t cnt = fread(*destp + total, 1, *n - total, stream);
 
         if (cnt != *n - total) {
             if (feof(stream)) {
                 return total + cnt;
             } else if (ferror(stream)) {
-                CWARNING3(filesys, "read error: %s", strerror(errno));
+                CAT_WARNING(filesys, "read error: %s", strerror(errno));
                 return -1;
             }
         }
@@ -160,7 +149,7 @@ fread_dyn(char **destp, size_t *n, FILE *stream)
         total += cnt;
 
         if (*n <= total) {
-            *destp = (char *)xrealloc(*destp, *n *= 2);
+            *destp = (char*)xrealloc(*destp, *n *= 2);
         }
     }
 }
