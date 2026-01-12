@@ -22,6 +22,7 @@
 
 #include "prest.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "Buzz_inc.h"
@@ -623,21 +624,20 @@ char Set_Goal(char plr, char which, char control)
 
 /*
  * Mev is some sort of flattened linked list?
- * TODO: rewrite this function somewhat better
  */
 int MaxFail()
 {
-    int t = 0, count = 0;
-    for (auto& Mev_item = Mev[0];;(Mev_item = Mev[Mev_item.trace]),++count) {
-        if (Mev_item.StepInfo == 0) {
-            Mev_item.StepInfo = 1003;
+    int maxval = 0;
+    for (int i = 0, count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
+        if (Mev[i].StepInfo == 0) {
+            Mev[i].StepInfo = 1003;
         }
 
-        t = MAX(Mev_item.StepInfo, t);
+        maxval = std::max((int)Mev[i].StepInfo, maxval);
 
         if (count == 53) return 1;
-        if (Mev_item.trace == 0x7f) return t;
     }
+    return maxval;
 }
 
 #define PSTS(a)  (PVal[a]==1 || PVal[a]==2)
