@@ -78,36 +78,36 @@ enum FMFields {
 // TODO: Localize these. Too many global/file global variables.
 
 bool JointFlag, MarsFlag, JupiterFlag, SaturnFlag;
-display::LegacySurface *vh;
+display::LegacySurface* vh;
 std::vector<struct mStr> missionData;
 // missionData is used in Future, UpSearchRout and DownSearchRout
 } // End unnamed namespace
 
 
-void LoadFutureButtons(void);
-void LoadFuturePalette(void);
+void LoadFutureButtons();
+void LoadFuturePalette();
 bool JointMissionOK(char plr, char pad);
-void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav);
-void ClearDisplay(void);
-void DrawPenalty(char plr, const struct mStr &mission);
-void DrawPenaltyPopup(char plr, const struct mStr &mission);
-void DrawLocks(const MissionNavigator &nav);
+void DrawFuture(char plr, int mis, char pad, MissionNavigator& nav);
+void ClearDisplay();
+void DrawPenalty(char plr, const mStr& mission);
+void DrawPenaltyPopup(char plr, const mStr& mission);
+void DrawLocks(const MissionNavigator& nav);
 void Toggle(FMFields button, int state);
 void TogBox(int x, int y, int st);
-void PianoKey(const struct mStr &mission, MissionNavigator &nav);
+void PianoKey(const mStr& mission, MissionNavigator& nav);
 void DrawPie(int s);
 void PlaceRX(FMFields button);
 void ClearRX(FMFields button);
-bool NavMatch(const MissionNavigator &nav, const struct mStr &mission);
-void NavReset(MissionNavigator &nav);
-int UpSearchRout(int num, char plr, const MissionNavigator &navigator);
-int DownSearchRout(int num, char plr, const MissionNavigator &navigator);
+bool NavMatch(const MissionNavigator& nav, const mStr& mission);
+void NavReset(MissionNavigator& nav);
+int UpSearchRout(int num, char plr, const MissionNavigator& navigator);
+int DownSearchRout(int num, char plr, const MissionNavigator& navigator);
 void PrintDuration(int duration, int color);
-void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav);
+void DrawMission(char plr, int X, int Y, int val, MissionNavigator& nav);
 void MissionPath(char plr, int val, int pad);
-bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis);
-int WarningRocketShown;
-int WarningCapsuleShown;
+bool FutureMissionOk(char plr, const MissionNavigator& nav, int mis);
+bool WarningRocket_Shown = false;
+bool WarningCapsule_Shown= false;
 
 /**
  * Loads the Future console graphics into the vh global display buffer.
@@ -119,14 +119,12 @@ int WarningCapsuleShown;
  * - The palette is identical to the color palette used by as fmin.but.
  * - There is an empty 32-color space from [208,240).
  */
-void LoadFutureButtons(void)
+void LoadFutureButtons()
 {
     boost::shared_ptr<display::PalettizedSurface> console(
         Filesystem::readImage("images/nfutbut.but.0.png"));
     vh->palette().copy_from(console->palette());
     vh->draw(console, 0, 0);
-
-    return;
 }
 
 
@@ -135,7 +133,7 @@ void LoadFutureButtons(void)
  *
  * \throws runtime_error  if Filesystem is unable to read images.
  */
-void LoadFuturePalette(void)
+void LoadFuturePalette()
 {
     // May be done via fmin.img.0.png or nfutbut.but.0.png.
     {
@@ -177,7 +175,7 @@ bool JointMissionOK(char plr, char pad)
  * \param mis  The mission type.
  * \param pad  0, 1, or 2 depending on which pad is being used.
  */
-void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
+void DrawFuture(char plr, int mis, char pad, MissionNavigator& nav)
 {
     FadeOut(2, 10, 0, 0);
 
@@ -285,17 +283,15 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
     draw_heading(40, 5, "FUTURE MISSIONS", 0, -1);
     FadeIn(2, 10, 0, 0);
 
-    if (WarningRocketShown < 1 && Data->P[plr].Rocket[0].Delay > 1) {
+    if (!WarningRocket_Shown && Data->P[plr].Rocket[0].Delay > 1) {
         Help("i169");
-        WarningRocketShown = 1;
+        WarningRocket_Shown = true;
     }
 
-    if (WarningCapsuleShown < 1 && Data->P[plr].Manned[0].Delay > 1) {
+    if (!WarningCapsule_Shown && Data->P[plr].Manned[0].Delay > 1) {
         Help("i170");
-        WarningCapsuleShown = 1;
+        WarningCapsule_Shown = true;
     }
-
-    return;
 }
 
 
@@ -305,7 +301,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator &nav)
  * and season, some combination of Mars, Jupiter, and Saturn may be
  * depicted.
  */
-void ClearDisplay(void)
+void ClearDisplay()
 {
     boost::shared_ptr<display::PalettizedSurface> background(Filesystem::readImage("images/fmin.img.0.png"));
 
@@ -324,8 +320,6 @@ void ClearDisplay(void)
     if (SaturnFlag == true) {
         display::graphics.screen()->draw(background, 66, 1, 49, 53, 266, 135);
     }
-
-    return;
 }
 
 
@@ -339,13 +333,12 @@ void ClearDisplay(void)
  * \param plr
  * \param mission
  */
-void DrawPenalty(char plr, const struct mStr &mission)
+void DrawPenalty(char plr, const mStr& mission)
 {
-    int u;
-
     char penalty = AchievementPenalty(plr, mission);
     fill_rectangle(206, 36, 235, 44, 7);
 
+	int u;
     if (penalty < 3) {
         u = 1;     //ok
     } else if (penalty < 9) {
@@ -365,8 +358,6 @@ void DrawPenalty(char plr, const struct mStr &mission)
 
     draw_number(0, 0, penalty);
     display::graphics.setForegroundColor(1);
-
-    return;
 }
 
 
@@ -385,7 +376,7 @@ void DrawPenalty(char plr, const struct mStr &mission)
  * \param plr  the player index
  * \param mission  the selected mission
  */
-void DrawPenaltyPopup(char plr, const struct mStr &mission)
+void DrawPenaltyPopup(char plr, const mStr& mission)
 {
     int milestonePenalty = MilestonePenalty(plr, mission);
     int durationPenalty = DurationPenalty(plr, mission);
@@ -493,7 +484,7 @@ void DrawPenaltyPopup(char plr, const struct mStr &mission)
  *
  * \param nav TODO.
  */
-void DrawLocks(const MissionNavigator &nav)
+void DrawLocks(const MissionNavigator& nav)
 {
     if (nav.duration.lock) {
         PlaceRX(FM_Duration);
@@ -524,8 +515,6 @@ void DrawLocks(const MissionNavigator &nav)
     } else {
         ClearRX(FM_Joint);
     }
-
-    return;
 }
 
 
@@ -541,7 +530,7 @@ void DrawLocks(const MissionNavigator &nav)
  */
 void Toggle(FMFields button, int state)
 {
-    TRACE3("->Toggle(button %d, state %d)", button, state);
+    LOG_TRACE("->Toggle(button %d, state %d)", button, state);
 
     switch (button) {
     case FM_Docking:
@@ -594,13 +583,12 @@ void Toggle(FMFields button, int state)
         break;
 
     default:
-        ERROR3("Invalid argument to Toggle(button = %d, state = %d)",
-               button, state);
+        LOG_ERROR("Invalid argument to Toggle(button = %d, state = %d)",
+                  button, state);
         break;
     }
 
-    TRACE1("<-Toggle()");
-    return;
+    LOG_TRACE("<-Toggle()");
 }
 
 
@@ -615,7 +603,7 @@ void Toggle(FMFields button, int state)
  */
 void TogBox(int x, int y, int st)
 {
-    TRACE4("->TogBox(x %d, y %d, st %d)", x, y, st);
+    LOG_TRACE("->TogBox(x %d, y %d, st %d)", x, y, st);
     char sta[2][2] = {{2, 4}, {4, 2}};
 
     display::graphics.setForegroundColor(sta[st][0]);
@@ -629,8 +617,7 @@ void TogBox(int x, int y, int st)
     grLineTo(x + 35, y + 23);
     grLineTo(x + 35, y + 0);
 
-    TRACE1("<-TogBox()");
-    return;
+    LOG_TRACE("<-TogBox()");
 }
 
 
@@ -640,9 +627,9 @@ void TogBox(int x, int y, int st)
  * \param mission  the mission data (mStr.Index or MissionType.MissionCode).
  * \param nav TODO.
  */
-void PianoKey(const struct mStr &mission, MissionNavigator &nav)
+void PianoKey(const mStr& mission, MissionNavigator& nav)
 {   
-    TRACE2("->PianoKey(mission index %d)", mission.Index);
+    LOG_TRACE("->PianoKey(mission index %d)", mission.Index);
 	
     if (! nav.docking.lock) {
         nav.docking.value = mission.Doc;
@@ -675,8 +662,7 @@ void PianoKey(const struct mStr &mission, MissionNavigator &nav)
     }
 
     DrawLocks(nav);
-    TRACE1("<-PianoKey()");
-    return;
+    LOG_TRACE("<-PianoKey()");
 }
 
 
@@ -693,16 +679,9 @@ void PianoKey(const struct mStr &mission, MissionNavigator &nav)
  */
 void DrawPie(int s)
 {
-    int off;
-
-    if (s == 0) {
-        off = 1;
-    } else {
-        off = s * 20;
-    }
+    int off = (s == 0)? 1 : s*20;
 
     vh->copyTo(display::graphics.legacyScreen(), off, 1, 7, 51, 25, 69);
-    return;
 }
 
 
@@ -743,11 +722,9 @@ void PlaceRX(FMFields button)
         break;
 
     default:
-        ERROR2("Invalid argument passed to PlaceRX(button = %d)", button);
+        LOG_ERROR("Invalid argument passed to PlaceRX(button = %d)", button);
         break;
     }
-
-    return;
 }
 
 
@@ -788,11 +765,9 @@ void ClearRX(FMFields button)
         break;
 
     default:
-        ERROR2("Invalid argument passed to ClearRX(button = %d)", button);
+        LOG_ERROR("Invalid argument passed to ClearRX(button = %d)", button);
         break;
     }
-
-    return;
 }
 
 
@@ -805,7 +780,7 @@ void ClearRX(FMFields button)
  * \return false if any of the locked navigator values contradict a
  *         mission parameter, true otherwise.
  */
-bool NavMatch(const MissionNavigator &nav, const struct mStr &mission)
+bool NavMatch(const MissionNavigator& nav, const mStr& mission)
 {
     return (! mission.Index)
         || (! nav.docking.lock || nav.docking.value == mission.Doc) &&
@@ -822,7 +797,7 @@ bool NavMatch(const MissionNavigator &nav, const struct mStr &mission)
  *
  * \param nav A set of mission parameters to be cleared.
  */
-void NavReset(MissionNavigator &nav)
+void NavReset(MissionNavigator& nav)
 {
     nav.duration.value = 0;
     nav.docking.value = 0;
@@ -846,7 +821,7 @@ void NavReset(MissionNavigator &nav)
  * \return           The code of the next matching mission, or 0 if no other
  *                   mission is found.
  */
-int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
+int UpSearchRout(int num, char plr, const MissionNavigator& navigator)
  {
     do {
         ++num;
@@ -876,7 +851,7 @@ int UpSearchRout(int num, char plr, const MissionNavigator &navigator)
  * \return            The code of the next matching mission, or 0 if no other
  *                    mission is found.
  */
-int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
+int DownSearchRout(int num, char plr, const MissionNavigator& navigator)
 {
     do {
         --num;
@@ -907,7 +882,7 @@ int DownSearchRout(int num, char plr, const MissionNavigator &navigator)
 void Future(char plr)
 {
     // TODO: the whole Future()-function is 500 >lines and unreadable
-    TRACE1("->Future(plr)");
+    LOG_TRACE("->Future(plr)");
     const int MaxDur = 6;
     int pad = 0;
     int setting = -1, prev_setting = -1;
@@ -919,12 +894,12 @@ void Future(char plr)
 
     unsigned int year = Data->Year;
     unsigned int season = Data->Season;
-    TRACE3("--- Setting year=Year (%d), season=Season (%d)", year, season);
+    LOG_TRACE("--- Setting year=Year (%d), season=Season (%d)", year, season);
 	
 	if (missionData.empty()) {
 		missionData = GetMissionData();
 	}
-	struct mStr mission;
+	mStr mission;
 
     MarsFlag = MissionTimingOk(Mission_MarsFlyby, year, season);
     JupiterFlag = MissionTimingOk(Mission_JupiterFlyby, year, season);
@@ -1016,8 +991,8 @@ void Future(char plr)
                 Data->P[plr].Future[pad].Duration = duration;
 
                 int Ok = HardCrewAssign(plr, pad, misType, NewType);
-                DEBUG5("HardCrewAssign(plr %d, pad %d, misType %d, mCrew %d)", plr, pad, misType, NewType);
-                DEBUG2("Ok = %d", Ok); 
+                LOG_DEBUG("HardCrewAssign(plr %d, pad %d, misType %d, mCrew %d)", plr, pad, misType, NewType);
+                LOG_DEBUG("Ok = %d", Ok); 
 
                 local2.copyTo(display::graphics.legacyScreen(), 74, 3);
 
@@ -1368,7 +1343,7 @@ void Future(char plr)
 
     delete vh;
     vh = NULL;
-    TRACE1("<-Future()");
+    LOG_TRACE("<-Future()");
 }
 
 
@@ -1416,12 +1391,10 @@ void PrintDuration(int duration, int color)
         break;
 
     default:
-        ERROR3("Invalid argument to PrintDuration(duration = %d, color = %d)",
-               duration, color);
+        LOG_ERROR("Invalid argument to PrintDuration(duration = %d, color = %d)",
+                   duration, color);
         break;
     }
-
-    return;
 }
 
 
@@ -1443,11 +1416,11 @@ void PrintDuration(int duration, int color)
  * \param bub  if set to 0 or 3 the function will not draw stuff (???)
  * \param nav  the set of mission parameters for mission selection.
  */
-void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
+void DrawMission(char plr, int X, int Y, int val, MissionNavigator& nav)
 {
-    TRACE4("->DrawMission(plr, X %d, Y %d, val %d, nav)", X, Y, val);
+    LOG_TRACE("->DrawMission(plr, X %d, Y %d, val %d, nav)", X, Y, val);
 	
-	struct mStr mission = GetMissionPlan(val);
+	mStr mission = GetMissionPlan(val);
 	
     // PianoKey is used whenever the mission selection changes, to
     // update the mission navigator with parameters matching the
@@ -1485,7 +1458,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
     }
 
     gr_sync();
-    TRACE1("<-DrawMission()");
+    LOG_TRACE("<-DrawMission()");
 }  // end function DrawMission
 
 
@@ -1508,9 +1481,9 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator &nav)
  * \param mis  The mission's index code.
  * \return true if the mission is OK, false otherwise.
  */
-bool FutureMissionOk(char plr, const MissionNavigator &nav, int mis)
+bool FutureMissionOk(char plr, const MissionNavigator& nav, int mis)
 {
-    struct mStr mission = GetMissionPlan(mis);
+    mStr mission = GetMissionPlan(mis);
 
     if (mission.Dur && nav.duration.value < mission.Days) {
         Help("i160");
