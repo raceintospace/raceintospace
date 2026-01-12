@@ -28,6 +28,8 @@
 
 #include "review.h"
 
+#include <algorithm>
+
 #include "display/graphics.h"
 #include "display/palettized_surface.h"
 
@@ -49,9 +51,6 @@ void DrawReviewText(char plr, int val);
 
 void DrawReview(char plr)
 {
-    int clr, i, cte, P_value;
-    char Fired_Flag = 0, Reset_Flag = 0;
-
     if (Data->P[plr].PresRev[0] != 0x7F) {
         FadeOut(2, 10, 0, 0);
     }
@@ -59,11 +58,12 @@ void DrawReview(char plr)
     PortPal(plr);
     display::graphics.screen()->clear();
 
+    bool Fired_Flag = false, Reset_Flag = false;
     if (Data->P[plr].PresRev[0] == 0x7F) {
-        Fired_Flag = 1;
+        Fired_Flag = true;
         Data->P[plr].PresRev[0] = 16;
     } else if (Data->P[plr].PresRev[0] >= 16) {
-        Reset_Flag = 1;
+        Reset_Flag = true;
         Data->P[plr].PresRev[0] = 15;
     }
 
@@ -121,12 +121,14 @@ void DrawReview(char plr)
     pline(33, 102, 171, 102);
     InBox(32, 39, 172, 111);
 
-    for (i = 0; i < 5; i++) if (Data->P[plr].PresRev[i] > 16) {
+    for (int i = 0; i < 5; i++) {
+        if (Data->P[plr].PresRev[i] > 16) {
             Data->P[plr].PresRev[i] = 16;
         }
+    }
 
-    for (i = 0; i < 5; i++) {
-        cte = 0;
+    for (int i = 0; i < 5; i++) {
+        int cte = 0;
 
         if (Data->P[plr].PresRev[i] < 8) {
             if (Data->P[plr].PresRev[i] == 7) {
@@ -151,16 +153,15 @@ void DrawReview(char plr)
         pline(167 - i * 28, 75, 167 - i * 28, cte);
     }
 
-    if (Fired_Flag == 1) {
-        clr = 0;
-
-        for (i = 0; i < Data->P[plr].AstroCount; i++) {
+    if (Fired_Flag) {
+        int deaths = 0;
+        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
             if (Data->P[plr].Pool[i].Status == AST_ST_DEAD) {
-                clr++;
+                deaths++;
             }
         }
 
-        Data->P[plr].PresRev[0] = (clr >= 2) ? 17 : 16;
+        Data->P[plr].PresRev[0] = (deaths >= 2) ? 17 : 16;
     }
 
     DrawReviewText(plr, Data->P[plr].PresRev[0]);
@@ -169,7 +170,7 @@ void DrawReview(char plr)
         Data->P[plr].PresRev[0] = 16;
     }
 
-    P_value = 0;
+    int P_value = 0;
 
     // 0 pres. 1 v.p.
     if (plr == 0) {
@@ -250,13 +251,11 @@ void DrawReview(char plr)
         }
     }
 
-    if (Reset_Flag == 1) {
+    if (Reset_Flag) {
         Data->P[plr].PresRev[0] = 16;
     }
 
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
 
@@ -303,7 +302,6 @@ void MisRev(char plr, int pres, int mis)
     Draw_Mis_Stats(plr, mis, 1);
     key = 0;
     display::graphics.screen()->clear();
-    return;
 }
 
 
@@ -325,46 +323,46 @@ void PresPict(char image)
 }
 
 
-void CalcPresRev(void)
+void CalcPresRev()
 {
-    int16_t *ip;
-    int val, max, min, i, j;
-    char plr;
-
     if (Data->Year == 57 && Data->Season == 0) {
         return;
     }
 
     // Move PresRev down One
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        for (i = 4; i > 0; i--) {
+    for (int j = 0; j < NUM_PLAYERS; j++) {
+        for (int i = 4; i > 0; i--) {
             Data->P[j].PresRev[i] = Data->P[j].PresRev[i - 1];
         }
     }
 
     Data->P[0].Prestige = Data->P[1].Prestige = 0;  // Clear Prest when finished
 
-    for (plr = 0; plr < NUM_PLAYERS; plr++) {
-        ip = &Data->P[plr].PresRev[0];
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        int max = std::max(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
+        int min = std::min(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
 
-        max = MAX(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
-        min = MIN(Data->P[plr].tempPrestige[0], Data->P[plr].tempPrestige[1]);
+        int val = ((max >= 0 && min >= 0) || (max <= 0 && min <= 0)) ? max + min : max / 2 + min;
 
-        val = ((max >= 0 && min >= 0) || (max <= 0 && min <= 0)) ? max + min : max / 2 + min;
+        int16_t& ip = Data->P[plr].PresRev[0];
 
-        *ip = (val < 0 && (*ip < 4)) ? *ip + 1 : ((val > 1 && val <= 10) ? *ip - 1
-                : ((val >= 11 && val <= 20) ? ((*ip < 4) ? *ip - 1 : *ip - 2)
-                   : ((val >= 21) ? ((*ip < 4) ? *ip - 1 : *ip - 3)
-                      : ((val >= -9 && val <= 0) ? *ip + 1 : ((val <= -10) ?
-                              ((plr == 0) ? *ip + Data->Def.Lev1 + 1 : *ip + Data->Def.Lev2 + 1) : *ip)))));
+        //     -10 -5  0  1  5 15 21
+        // big lvl +1 +1  0 -1 -2 -3
+        // sml  +1 +1  0  0 -1 -1 -1
+        if (val < 0 && ip < 4)           ip++;
+        else if (val > 1 && val <= 10)   ip--;
+        else if (val >= 11 && val <= 20) ip -= (ip < 4) ? 1 : 2;
+        else if (val >= 21)              ip -= (ip < 4)? 1 : 3;
+        else if (val >= -9 && val <= 0)  ip++;
+        else if (val <= -10)             ip += 1 + (plr==0)?Data->Def.Lev1 : Data->Def.Lev2;
 
-        *ip = (*ip > 16) ? 16 : ((*ip < 1) ? 1 : *ip);
+        if (ip > 16) ip = 16;
+        if (ip < 1) ip = 1;
 
         Data->P[plr].tempPrestige[0] = 0;
         Data->P[plr].tempPrestige[1] = 0;
-        Data->P[plr].PresRev[0] += (Data->P[plr].PresRev[0] > Data->P[abs(plr - 1)].PresRev[0]) ? 1 : 0;
+        if (Data->P[plr].PresRev[0] > Data->P[abs(plr - 1)].PresRev[0]) Data->P[plr].PresRev[0] += 1; // US looks at last year SV review??
     }
-
 }
 
 /**
@@ -372,13 +370,9 @@ void CalcPresRev(void)
  */
 void DrawReviewText(char plr, int val)
 {
-    int index = 0;
-    int length = 0;
-    int line = 0;
     //FILE *fin;
     //char *text = new char[205];
-    char text[205];
-    memset(text, 0, sizeof(*text));
+    char text[205]{};
     
     std::vector<std::string> review;
     
@@ -402,6 +396,9 @@ void DrawReviewText(char plr, int val)
 
     grMoveTo(20, 140);
 
+    int index = 0;
+    int length = 0;
+    int line = 0;
     do {
         if (text[index] == '*') {
             length = 0;
