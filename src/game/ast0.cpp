@@ -46,7 +46,6 @@
 
 uint8_t MCol[MAX_ROSTER];
 uint8_t sel[MAX_SELECTION];
-uint8_t MaxSel;
 
 
 void SatDraw(char plr);

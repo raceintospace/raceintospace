@@ -77,7 +77,11 @@ enum ProfileDisplay {
                                                "NAVY", "MARINE CORPS",  \
                                                "S. ROCKET FORCE",       \
                                                "AIR DEF. FORCE", "FOREIGN"};
-}
+
+
+uint8_t MaxSel;
+} // namespace
+
 
 int AstSelectPrompt(char plr, int cost);
 void DispEight(int now, int loc);
