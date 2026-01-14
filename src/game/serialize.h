@@ -1,16 +1,15 @@
 #ifndef SERIALIZE_H
 #define SERIALIZE_H
 
+#include <fstream>
+#include <algorithm>
+
 #include <cereal/cereal.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/map.hpp>
-#include <fstream>
-#include <algorithm>
-
-using namespace std;
 
 #define ARCHIVE_VECTOR(arr, type, size)                 \
     do {                                                \
@@ -21,7 +20,7 @@ using namespace std;
 
 #define ARCHIVE_STRING(arr)                             \
     do {                                                \
-        string str = arr;                               \
+        std::string str = arr;                          \
         ar(cereal::make_nvp(#arr, str));                \
         strntcpy(arr, str.c_str(), sizeof(arr));        \
     } while (0)
@@ -35,14 +34,14 @@ using namespace std;
 
 #define SERIALIZE_XML_FILE(x, filename)         \
     do {                                        \
-        ofstream os(filename);                  \
+        std::ofstream os(filename);             \
         cereal::XMLOutputArchive archive(os);   \
         archive(x);                             \
     } while (0)
 
 #define SERIALIZE_XML_STRING(x, str)                    \
     do {                                                \
-        stringstream stream;                            \
+        std::stringstream stream;                       \
         {                                               \
             cereal::XMLOutputArchive archive(stream);   \
             archive(x);                                 \
@@ -52,21 +51,21 @@ using namespace std;
 
 #define DESERIALIZE_XML_FILE(x, filename)                \
     do {                                                 \
-        ifstream is(filename);                           \
+        std::ifstream is(filename);                      \
         cereal::XMLInputArchive iarchive(is);            \
         iarchive(*x);                                    \
     } while (0)
 
 #define SERIALIZE_JSON_FILE(x, filename)                                \
     do {                                                                \
-        ofstream os(filename);                                          \
+        std::ofstream os(filename);                                     \
         cereal::JSONOutputArchive archive(os);                          \
         archive(x);                                                     \
     } while (0)
 
 #define DESERIALIZE_JSON_FILE(x, filename)       \
     do {                                         \
-        ifstream is(filename);                   \
+        std::ifstream is(filename);              \
         cereal::JSONInputArchive iarchive(is);   \
         iarchive(*x);                            \
     } while (0)
