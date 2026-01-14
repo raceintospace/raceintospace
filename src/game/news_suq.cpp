@@ -112,7 +112,7 @@ char REvent(char plr)
         if (index >= 0 && index < nTable.size()){
             Data->P[plr].Budget += nTable[index];
         } else {
-            std:cerr << "Index out of ntable range: " << index << std::endl;
+            std::cerr << "Index out of ntable range: " << index << std::endl;
             return 1;
         }
         
