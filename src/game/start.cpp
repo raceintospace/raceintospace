@@ -132,8 +132,8 @@ static void updateAstronautSkills(unsigned plr, Astros& astro)
         &astro.Docking,
         &astro.Endurance,
     };
-    const char skillMax = 4;
-    const char skillMin = 0;
+    const int skillMax = 4;
+    const int skillMin = 0;
 
     /* Moved to better prog, increase morale */
     if ((astro.Moved == 0) && (astro.oldAssign < astro.Assign)) {
@@ -298,15 +298,15 @@ void AssignMissionName(int plr, int pad)
             capsule = mission.Prog - 1;
         }
         equip = &Data->P[plr].Manned[capsule];
-        mission.Patch = equip.Code % 10;
+        mission.Patch = equip->Code % 10;
     }
     
-    std::string name = std::string{equip.Name} + " " + RomanNumeral(equip.Code + 1);
+    std::string name = std::string{equip->Name} + " " + RomanNumeral(equip->Code + 1);
     strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
     if (mission.MissionCode != Mission_None 
         && !(mission.Joint && mission.Prog == 0))
     {
-        equip.Code++;   // Increase Planned Mission Count
+        equip->Code++;   // Increase Planned Mission Count
     }
 }
 
@@ -432,7 +432,7 @@ void AstroTurn()
                     int num = brandom(100);
                     int enduranceFactor =
                         options.feat_use_endurance
-                        ? 10 * std::max(0, spaceman.Endurance)
+                        ? 10 * std::max(0, (int)spaceman.Endurance)
                         : 0;
 
                     if (num > (74 - enduranceFactor)) {
