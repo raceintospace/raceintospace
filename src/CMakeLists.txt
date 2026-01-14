@@ -7,7 +7,7 @@ include(TestBigEndian)
 
 if (NOT WINDOWS)
   check_function_exists(mkdir HAVE_MKDIR)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-sign-compare")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-sign-compare -Wno-char-subscripts")
   set (HAVE_LRINT true)
 else ()
   check_function_exists(_mkdir HAVE__MKDIR)
