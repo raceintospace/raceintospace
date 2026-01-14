@@ -83,7 +83,7 @@ static int cmp_order(const void* p1, const void* p2)
     // Never randomly reshuffle missions by the same player as
     // this would break mail games; order by launch pad in
     // this case.
-    if (o1->plr != o2->plr) (brandom(2) == 1) ? 1 : -1;
+    if (o1->plr != o2->plr) return (brandom(2) == 1) ? 1 : -1;
     
     if (o1->loc < o2->loc) {
         return -1;
