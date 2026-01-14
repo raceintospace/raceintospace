@@ -923,7 +923,7 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
     std::vector<struct ManPool> all = usaRoster;
     all.insert(all.end(), sovRoster.begin(), sovRoster.end());
 
-    stringstream stream;
+    std::stringstream stream;
     {
         cereal::JSONOutputArchive::Options options = cereal::JSONOutputArchive::Options::NoIndent();
         cereal::JSONOutputArchive archive(stream, options);
