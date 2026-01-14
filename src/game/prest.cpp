@@ -41,14 +41,13 @@ char tYr, tMo;
 
 void Set_Dock(char plr, char total);
 void Set_LM(char plr, char total);
-int Check_Photo(void);
+int Check_Photo();
 int Check_Dock(int limit);
 int PrestMap(int val);
-int PrestCheck(char plr);
-char PosGoal(char *PVal);
-char NegGoal(char *PVal);
-char SupGoal(char *PVal);
-char PosGoal_Check(char *PVal);
+char PosGoal(char* PVal);
+char NegGoal(char* PVal);
+char SupGoal(char* PVal);
+char PosGoal_Check(char* PVal);
 
 
 /**
@@ -62,7 +61,7 @@ char PosGoal_Check(char *PVal);
  * \param mission  the mission to evaluate
  * \return  sum of prestige, duration, and new mission penalties.
  */
-int AchievementPenalty(char plr, const struct mStr &mission)
+int AchievementPenalty(char plr, const mStr& mission)
 {
     return MilestonePenalty(plr, mission) +
            DurationPenalty(plr, mission) +
@@ -86,27 +85,27 @@ int AchievementPenalty(char plr, const struct mStr &mission)
  * \param mission  the mission to evaluate
  * \return  Five times the number of duration steps skipped.
  */
-int DurationPenalty(char plr, const struct mStr &mission)
+int DurationPenalty(char plr, const mStr& mission)
 {
     if (mission.Index == Mission_None) {
         return 0;
     }
 
-    int reqDuration = MAX(mission.Days  - 1, 0);
-    int playerDuration = MAX(Data->P[plr].DurationLevel, 0);
+    int reqDuration = std::max(mission.Days  - 1, 0);
+    int playerDuration = std::max((int)Data->P[plr].DurationLevel, 0);
 
     for (int i = 0; i < 5; i++) {
         int milestone = PrestMap(mission.PCat[i]);
 
         if (milestone == Milestone_LunarPass) {
-            reqDuration = MAX(reqDuration, 3);
+            reqDuration = std::max(reqDuration, 3);
         } else if (milestone == Milestone_LunarOrbit ||
                    milestone == Milestone_LunarLanding) {
-            reqDuration = MAX(reqDuration, 4);
+            reqDuration = std::max(reqDuration, 4);
         }
     }
 
-    return MAX(5 * (reqDuration - playerDuration), 0);
+    return std::max(5 * (reqDuration - playerDuration), 0);
 }
 
 
@@ -121,7 +120,7 @@ int DurationPenalty(char plr, const struct mStr &mission)
  * \param mission  the mission to evaluate
  * \return  Three times the number of milestones skipped
  */
-int MilestonePenalty(char plr, const struct mStr &mission)
+int MilestonePenalty(char plr, const mStr& mission)
 {
     int maxMilestone = 0, penalty = 0;
 
@@ -133,7 +132,7 @@ int MilestonePenalty(char plr, const struct mStr &mission)
     // milestone
     for (int i = 0; i < 5; i++) {
         int milestone = PrestMap(mission.PCat[i]);
-        maxMilestone = MAX(maxMilestone, milestone);
+        maxMilestone = std::max(maxMilestone, milestone);
     }
 
     // Walk all milestones lower than maximum required for mission
@@ -197,7 +196,7 @@ void Set_LM(char plr, char total)
     }
 }
 
-int Check_Photo(void)
+int Check_Photo()
 {
     for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 20 && Mev[i].StepInfo == 1) {
@@ -216,7 +215,7 @@ int Check_Photo(void)
     return 0;
 }
 
-int Check_Lab(void)
+int Check_Lab()
 {
     for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 28 && Mev[i].StepInfo == 1) {
@@ -279,99 +278,6 @@ int PrestMap(int val)
     default:
         return -1;
     }
-}
-
-
-/** Returns the amount of prestige added
- *
- * TODO: This function no longer appears to be used. Find out why
- * it's useful or mark for deletion. -- rnyoakum
- *
- * \note Assumes that the Mis Structure is Loaded
- */
-int PrestCheck(char plr, int code)
-{
-    int total = 0;
-
-    const mStr misType = GetMissionPlan(code);
-
-    char prg = misType.mEq;
-
-    // Sum all first/second Nation Bonuses
-    for (int i = 0; i < 5; i++) {
-        char tm = misType.PCat[i]; // Look through prestige categories mission can apply for
-
-        if (tm == -1) continue; // skip empty
-        if (Data->Prestige[tm].Goal[plr] != 0) continue; // skip already achieved
-        
-        if (Data->Prestige[tm].Goal[other(plr)] == 0 && tm < 27) {
-            total += Data->Prestige[tm].Add[0];    // you're first
-        } else {
-            total += Data->Prestige[tm].Add[1];    // you're second
-        }
-    }
-
-    if (misType.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
-        if (Data->Prestige[Prestige_MannedDocking].Goal[other(plr)] == 0) {
-            total += Data->Prestige[Prestige_MannedDocking].Add[0];    // you're first
-        } else {
-            total += Data->Prestige[Prestige_MannedDocking].Add[1];    // you're second
-        }
-    }
-
-    if (misType.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
-        if (Data->Prestige[Prestige_Spacewalk].Goal[other(plr)] == 0) {
-            total += Data->Prestige[Prestige_Spacewalk].Add[0];    // you're first
-        } else {
-            total += Data->Prestige[Prestige_Spacewalk].Add[1];    // you're second
-        }
-    }
-
-    if (misType.Days > 1 && Data->P[plr].DurationLevel < misType.Days) {
-        if (misType.Days == 6 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
-        } else if (misType.Days == 5 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
-        } else if (misType.Days == 4 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
-        } else if (misType.Days == 3 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
-        } else if (misType.Days == 2 && Data->Prestige[Prestige_Duration_Calc - misType.Days].Goal[plr] == 0) {
-            total += Data->Prestige[Prestige_Duration_Calc - misType.Days].Add[0];
-        }
-    }
-
-    // Hardware Checks
-    if (misType.Days > 1 && Data->Prestige[Prestige_Duration_B + prg].Goal[plr] == 0) {
-        if (Data->Prestige[Prestige_Duration_B + prg].Goal[other(plr)] == 0) {
-            total += Data->Prestige[Prestige_Duration_B + prg].Add[0];    // you're first
-        } else {
-            total += Data->Prestige[Prestige_Duration_B + prg].Add[1];    // you're second
-        }
-    }
-
-    if (total != 0) {
-        return total;
-    }
-
-    // Other mission bonus
-
-    // Sum all additional Mission Bonuses
-    for (int i = 0; i < 5; i++) {
-        if (misType.PCat[i] != -1) {
-            total += Data->Prestige[misType.PCat[i]].Add[2];
-        }
-    }
-
-    if (misType.Doc == 1 && Data->Prestige[Prestige_MannedDocking].Goal[plr] == 0) {
-        total += Data->Prestige[Prestige_MannedDocking].Add[2];
-    }
-
-    if (misType.EVA == 1 && Data->Prestige[Prestige_Spacewalk].Goal[plr] == 0) {
-        total += Data->Prestige[Prestige_Spacewalk].Add[2];
-    }
-
-    return total;
 }
 
 char HeroCheck(int which)
@@ -550,61 +456,61 @@ char Set_Goal(char plr, char which, char control)
 
     switch (which) {
     case Prestige_OrbitalSatellite:
-        return (sum);
+        return sum;
 
     case Prestige_MannedSpaceMission:
-        return (sum);
+        return sum;
 
     case Prestige_MannedOrbital:
-        return (sum + Set_Goal(plr, Prestige_OrbitalSatellite, 1));
+        return sum + Set_Goal(plr, Prestige_OrbitalSatellite, 1);
 
     case Prestige_LunarFlyby:
-        return (sum + Set_Goal(plr, Prestige_MannedOrbital, 1));
+        return sum + Set_Goal(plr, Prestige_MannedOrbital, 1);
 
     case Prestige_LunarProbeLanding:
-        return (sum + Set_Goal(plr, Prestige_LunarFlyby, 1));
+        return sum + Set_Goal(plr, Prestige_LunarFlyby, 1);
 
     case Prestige_MannedLunarPass:
-        return (sum + Set_Goal(plr, Prestige_LunarProbeLanding, 1));
+        return sum + Set_Goal(plr, Prestige_LunarProbeLanding, 1);
 
     case Prestige_MannedLunarOrbit:
-        return (sum + Set_Goal(plr, Prestige_MannedLunarPass, 1));
+        return sum + Set_Goal(plr, Prestige_MannedLunarPass, 1);
 
     case Prestige_MannedLunarLanding:
-        return (sum + Set_Goal(plr, Prestige_MannedLunarOrbit, 1));
+        return sum + Set_Goal(plr, Prestige_MannedLunarOrbit, 1);
 
     case Prestige_Duration_A:
-        return (sum);
+        return sum;
 
     case Prestige_Duration_B:
-        return (sum);
+        return sum;
 
     case Prestige_Duration_C:
-        return (sum + Set_Goal(plr, Prestige_Duration_B, 1));
+        return sum + Set_Goal(plr, Prestige_Duration_B, 1);
 
     case Prestige_Duration_D:
-        return (sum + Set_Goal(plr, Prestige_Duration_C, 1));
+        return sum + Set_Goal(plr, Prestige_Duration_C, 1);
 
     case Prestige_Duration_E:
-        return (sum + Set_Goal(plr, Prestige_Duration_D, 1));
+        return sum + Set_Goal(plr, Prestige_Duration_D, 1);
 
     case Prestige_Duration_F:
-        return (sum + Set_Goal(plr, Prestige_Duration_E, 1));
+        return sum + Set_Goal(plr, Prestige_Duration_E, 1);
 
     case Prestige_OnePerson:
-        return (sum);
+        return sum;
 
     case Prestige_TwoPerson:
-        return (sum + Set_Goal(plr, Prestige_OnePerson, 1));
+        return sum + Set_Goal(plr, Prestige_OnePerson, 1);
 
     case Prestige_ThreePerson:
-        return (sum + Set_Goal(plr, Prestige_TwoPerson, 1));
+        return sum + Set_Goal(plr, Prestige_TwoPerson, 1);
 
     case Prestige_Minishuttle:
-        return (sum + Set_Goal(plr, Prestige_ThreePerson, 1));
+        return sum + Set_Goal(plr, Prestige_ThreePerson, 1);
 
     case Prestige_FourPerson:
-        return (sum + Set_Goal(plr, Prestige_Minishuttle, 1));
+        return sum + Set_Goal(plr, Prestige_Minishuttle, 1);
 
     case Prestige_MercuryFlyby:
     case Prestige_VenusFlyby:
@@ -615,7 +521,7 @@ char Set_Goal(char plr, char which, char control)
     case Prestige_Spacewalk:
     case Prestige_MannedDocking:
     case Prestige_WomanInSpace:
-        return (sum);
+        return sum;
 
     default:
         return 0;
@@ -646,7 +552,7 @@ int MaxFail()
 #define STSp(a)  (PVal[a]==1 || PVal[a]==2)
 #define STSn(a)  (PVal[a]==4)
 
-char PosGoal(char *PVal)
+char PosGoal(char* PVal)
 {
     if (PSTS(Prestige_MannedLunarLanding)) {
         return Prestige_MannedLunarLanding;
@@ -663,7 +569,7 @@ char PosGoal(char *PVal)
     }
 }
 
-char NegGoal(char *PVal)
+char NegGoal(char* PVal)
 {
     if (NSTS(Prestige_MannedLunarLanding)) {
         return Prestige_MannedLunarLanding;
@@ -680,7 +586,7 @@ char NegGoal(char *PVal)
     }
 }
 
-char SupGoal(char *PVal)
+char SupGoal(char* PVal)
 {
     if (SSTS(Prestige_MannedLunarLanding)) {
         return Prestige_MannedLunarLanding;
@@ -805,7 +711,7 @@ int AllotPrest(char plr, char mis)
         }
     }
 
-    Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = MIN(Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
+    Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety = std::min((int)Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety, 99);
 
     if (death == 1) {
         LOG_DEBUG("death detected, setting all achieved prestige goals to failure");
@@ -849,10 +755,12 @@ int AllotPrest(char plr, char mis)
     if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         if (Check_Dock(500) == 2) {  // Success
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
+                                                                       , Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
         } else if (Check_Dock(500) == 1) {
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = MIN(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
+                                                                      , Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
         }
     }
 
@@ -877,10 +785,11 @@ int AllotPrest(char plr, char mis)
     }
 
     // DURATION FIRSTS
-    Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, 1);
+    Data->P[plr].Mission[mis].Duration = std::max((int)Data->P[plr].Mission[mis].Duration, 1);
 
     if (Data->P[plr].Mission[mis].Joint) {
-        Data->P[plr].Mission[mis].Duration = MAX(Data->P[plr].Mission[mis].Duration, Data->P[plr].Mission[mis + 1].Duration);
+        Data->P[plr].Mission[mis].Duration = std::max(Data->P[plr].Mission[mis].Duration
+                                                    , Data->P[plr].Mission[mis + 1].Duration);
     }
 
     int mike;
@@ -1042,7 +951,7 @@ int AllotPrest(char plr, char mis)
 }
 
 
-char PosGoal_Check(char *PVal)
+char PosGoal_Check(char* PVal)
 {
     if (PSTS(Prestige_MannedLunarLanding)) {
         return Prestige_MannedLunarLanding;
@@ -1066,7 +975,7 @@ char PosGoal_Check(char *PVal)
 }
 
 
-int Find_MaxGoal(void)
+int Find_MaxGoal()
 {
     char PVal[28]{};
 
@@ -1085,10 +994,6 @@ int Find_MaxGoal(void)
 int U_AllotPrest(char plr, char mis)
 {
     LOG_INFO("Calculating prestige for %s player, mission %i (unmanned)", (plr==0)?"US":"USSR", mis);
-    int i = 0;
-    char PVal[28]{};
-
-    // CLEAR TOTAL VALUE
     int total = 0;
     int negs = 0;
     tMo = Data->P[plr].Mission[mis].Month;
@@ -1108,6 +1013,7 @@ int U_AllotPrest(char plr, char mis)
 
     if ((mcode >= Mission_LunarFlyby && mcode <= Mission_SaturnFlyby) ||
         mcode == Mission_Orbital_Satellite) {  // Unmanned Probes
+        int i = 0;
         switch (mcode) {
         case Mission_Orbital_Satellite:
             i = Prestige_OrbitalSatellite;
@@ -1161,14 +1067,14 @@ int U_AllotPrest(char plr, char mis)
         if (mcode == Mission_LunarFlyby || mcode == Mission_Lunar_Probe) {
             if (lun == 1) {  // UNMANNED PHOTO RECON
                 Photo_Recon.Safety += 5;
-                Photo_Recon.Safety = MIN(Photo_Recon.Safety, 99);
+                Photo_Recon.Safety = std::min((int)Photo_Recon.Safety, 99);
             } // if
         } // if
 
         if (mcode == Mission_Lunar_Probe && MaxFail() == 1) {  // extra 10 for landing on Moon
             if (lun == 1) {  // UNMANNED PHOTO RECON
                 Photo_Recon.Safety += 10;
-                Photo_Recon.Safety = MIN(Photo_Recon.Safety, 99);
+                Photo_Recon.Safety = std::min((int)Photo_Recon.Safety, 99);
             } // if
         } // if
 
@@ -1179,10 +1085,10 @@ int U_AllotPrest(char plr, char mis)
         auto& Docking_Mod = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
         if (Check_Dock(2) == 2) {
             Docking_Mod.Safety += 10;
-            Docking_Mod.Safety = MIN(Docking_Mod.Safety, Docking_Mod.MaxSafety);
+            Docking_Mod.Safety = std::min(Docking_Mod.Safety, Docking_Mod.MaxSafety);
         } else if (Check_Dock(2) == 1) {
             Docking_Mod.Safety += 5;
-            Docking_Mod.Safety = MIN(Docking_Mod.Safety, Docking_Mod.MaxSafety);
+            Docking_Mod.Safety = std::min(Docking_Mod.Safety, Docking_Mod.MaxSafety);
         }
     }
 
@@ -1200,14 +1106,10 @@ int Update_Prestige_Data(char plr, char mis, int code)
 
     const mStr misType = GetMissionPlan(code);
 
-    int total;
-    if (misType.Days == 0) {
-        total = U_AllotPrest(plr, mis);    // Unmanned Prestige
-    } else {
-        total = AllotPrest(plr, mis);    // Manned Prestige
-    }
+    int total = (misType.Days == 0) ? U_AllotPrest(plr, mis)    // Unmanned Prestige
+                                    : AllotPrest(plr, mis);     // Manned Prestige
 
-    total = total - (pNeg[plr][mis] * 3);
+    total -= pNeg[plr][mis] * 3;
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
