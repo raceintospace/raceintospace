@@ -12,6 +12,5 @@ void SatBld(char plr);
 
 extern uint8_t MCol[MAX_ROSTER];
 extern uint8_t sel[MAX_SELECTION];
-extern uint8_t MaxSel;
 
 #endif // AST0_H
