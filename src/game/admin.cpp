@@ -1661,7 +1661,7 @@ void LoadGame(const char *filename)
         buf[usize - 1] = 0;
 
         try {
-            stringstream stream;
+            std::stringstream stream;
             stream << buf;
             cereal::JSONInputArchive archive(stream);
 
@@ -1879,7 +1879,7 @@ void write_save_file(const char *Name, SaveFileHdr header)
     header.Season = Data->Season;
     header.Year = Data->Year;
 
-    stringstream stream;
+    std::stringstream stream;
     {
         cereal::JSONOutputArchive::Options options = 
             cereal::JSONOutputArchive::Options::NoIndent();
