@@ -232,7 +232,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     }
 
     // Serialize legacy data to JSON and deserialize it into the new struct
-    stringstream stream;
+    std::stringstream stream;
     {
         cereal::JSONOutputArchive oarchive(stream);
         oarchive(cereal::make_nvp("Data", *legacyData));
