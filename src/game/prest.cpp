@@ -755,12 +755,12 @@ int AllotPrest(char plr, char mis)
     if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
         if (Check_Dock(500) == 2) {  // Success
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 10;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
-                                                                       , Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min((int)Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
+                                                                       ,(int)Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
         } else if (Check_Dock(500) == 1) {
             Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety += 5;
-            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min(Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
-                                                                      , Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
+            Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety = std::min((int)Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety
+                                                                       ,(int)Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].MaxSafety);
         }
     }
 
@@ -1085,10 +1085,10 @@ int U_AllotPrest(char plr, char mis)
         auto& Docking_Mod = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
         if (Check_Dock(2) == 2) {
             Docking_Mod.Safety += 10;
-            Docking_Mod.Safety = std::min(Docking_Mod.Safety, Docking_Mod.MaxSafety);
+            Docking_Mod.Safety = std::min((int)Docking_Mod.Safety, (int)Docking_Mod.MaxSafety);
         } else if (Check_Dock(2) == 1) {
             Docking_Mod.Safety += 5;
-            Docking_Mod.Safety = std::min(Docking_Mod.Safety, Docking_Mod.MaxSafety);
+            Docking_Mod.Safety = std::min((int)Docking_Mod.Safety, (int)Docking_Mod.MaxSafety);
         }
     }
 
