@@ -276,6 +276,7 @@ void AssignMissionName(int plr, int pad)
     assert(pad >= 0 && pad < MAX_MISSIONS);
 
     MissionType& mission = Data->P[plr].Mission[pad];
+    if (mission.MissionCode == Mission_None) return;
     
     Equipment* equip;
     if (mission.MissionCode == Mission_Orbital_Satellite) {
@@ -289,7 +290,7 @@ void AssignMissionName(int plr, int pad)
                 mission.MissionCode <= Mission_SaturnFlyby)) {
         equip = &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY];
         mission.Patch = -1;
-    } else if (mission.MissionCode != Mission_None) {
+    } else {
         int capsule;
         if (mission.Joint != 0 && mission.Prog == 0) {
             assert(pad + 1 < MAX_MISSIONS);
