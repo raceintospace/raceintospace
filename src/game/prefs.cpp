@@ -547,7 +547,7 @@ int Preferences(int player, int where)
                         std::string fname =
                             locate_file("hist.json", FT_DATA);
 
-                        ifstream os(fname);
+                        std::ifstream os(fname);
                         cereal::JSONInputArchive ar(os);
 
                         // Don't make a loop over the players as this
