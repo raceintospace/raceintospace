@@ -43,12 +43,12 @@
 
 
 void AssignMissionName(int plr, int pad);
-int AstroConflictsMod(int player, struct Astros &astro);
-void AstroTurn(void);
-int  CrewConflicts(int player, const struct Astros &astro);
+int  AstroConflictsMod(int player, Astros& astro);
+void AstroTurn();
+int  CrewConflicts(int player, const Astros& astro);
 void TestFMis(int plr, int i);
 void UpdateFlybys();
-void UpdateHardTurn(char plr);
+void UpdateHardTurn(int plr);
 
 
 #define EVENT_PERIODS 6
@@ -121,24 +121,23 @@ void InitializeEvents()
 /**
  * Handle astronaut mood and training
  */
-static void
-updateAstronautSkills(unsigned plr, struct Astros *astro)
+static void updateAstronautSkills(unsigned plr, Astros& astro)
 {
     /* Constants related to training */
     const unsigned NUM_SKILLS = 5;
-    int8_t *skills[5] = {
-        &astro->Cap,
-        &astro->LM,
-        &astro->EVA,
-        &astro->Docking,
-        &astro->Endurance,
+    int8_t* skills[5] = {
+        &astro.Cap,
+        &astro.LM,
+        &astro.EVA,
+        &astro.Docking,
+        &astro.Endurance,
     };
-    const char skillMax = 4;
-    const char skillMin = 0;
+    const int skillMax = 4;
+    const int skillMin = 0;
 
     /* Moved to better prog, increase morale */
-    if ((astro->Moved == 0) && (astro->oldAssign < astro->Assign)) {
-        astro->Mood += 5;
+    if ((astro.Moved == 0) && (astro.oldAssign < astro.Assign)) {
+        astro.Mood += 5;
     }
 
     // Determine Astronaut/Cosmonaut Level setting
@@ -147,33 +146,33 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     /* TODO: Moved has to be reset somewhere, right? */
 
     /* Increase number of seasons astronaut was in active duty */
-    if (astro->Status != AST_ST_DEAD && astro->Status != AST_ST_RETIRED) {
-        astro->Active++;
+    if (astro.Status != AST_ST_DEAD && astro.Status != AST_ST_RETIRED) {
+        astro.Active++;
     }
 
     /* Move All unassigned astros to limbo */
-    if ((astro->Unassigned == 0)
-        && (astro->Status == AST_ST_ACTIVE)
-        && (astro->Assign != 0)) {
-        astro->Assign = 0;
-        astro->Moved = 0;
-        astro->Special = 11 + plr;  /* WTF? */
+    if ((astro.Unassigned == 0)
+        && (astro.Status == AST_ST_ACTIVE)
+        && (astro.Assign != 0)) {
+        astro.Assign = 0;
+        astro.Moved = 0;
+        astro.Special = 11 + plr;  /* WTF? */
     }
 
     /* Update skills after training */
-    switch (astro->Status) {
+    switch (astro.Status) {
     case AST_ST_TRAIN_BASIC_1:
     case AST_ST_TRAIN_BASIC_2:
     case AST_ST_TRAIN_BASIC_3: {
         /* FIXME: factor out a separate function? */
-        if (astro->Status == AST_ST_TRAIN_BASIC_3) {
-            astro->Special = 7;
-            astro->TrainingLevel = AST_ST_TRAIN_BASIC_3;
-            astro->Status = AST_ST_ACTIVE;
-            astro->Assign = 0;          /* Put in Limbo */
+        if (astro.Status == AST_ST_TRAIN_BASIC_3) {
+            astro.Special = 7;
+            astro.TrainingLevel = AST_ST_TRAIN_BASIC_3;
+            astro.Status = AST_ST_ACTIVE;
+            astro.Assign = 0;          /* Put in Limbo */
         } else {
-            astro->TrainingLevel = astro->Status;
-            astro->Status++;
+            astro.TrainingLevel = astro.Status;
+            astro.Status++;
         }
 
         /* 70% for increase by 1, 30% for increase by 2 */
@@ -181,10 +180,9 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
         /* Find skills that are below maximum */
         unsigned choices[NUM_SKILLS];
-        unsigned i = 0;
         unsigned j = 0;
 
-        for (i = 0; i < NUM_SKILLS; ++i) {
+        for (int i = 0; i < NUM_SKILLS; ++i) {
             if (*skills[i] < skillMax) {
                 choices[j++] = i;
             }
@@ -192,12 +190,12 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
 
         if (j > 0) {
             /* If found, pick one skill at random */
-            int8_t *skill = skills[choices[brandom(j)]];
-            *skill = MIN(*skill + delta, skillMax);
+            int8_t* skill = skills[choices[brandom(j)]];
+            *skill = std::min(*skill + delta, skillMax);
         }
 
         /* Not sure why do it here, but let's keep it */
-        for (i = 0; i < NUM_SKILLS; ++i) {
+        for (int i = 0; i < NUM_SKILLS; ++i) {
             if (*skills[i] < skillMin) {
                 *skills[i] = skillMin;
             }
@@ -207,50 +205,50 @@ updateAstronautSkills(unsigned plr, struct Astros *astro)
     }
 
     case AST_ST_TRAIN_ADV_1:
-        astro->TrainingLevel = AST_ST_TRAIN_ADV_1;
-        astro->Status = AST_ST_TRAIN_ADV_2;
-        astro->Mood += 6 - AstLevel;
+        astro.TrainingLevel = AST_ST_TRAIN_ADV_1;
+        astro.Status = AST_ST_TRAIN_ADV_2;
+        astro.Mood += 6 - AstLevel;
         break;
 
     case AST_ST_TRAIN_ADV_2:
-        astro->TrainingLevel = AST_ST_TRAIN_ADV_2;
+        astro.TrainingLevel = AST_ST_TRAIN_ADV_2;
 
         if (options.feat_shorter_advanced_training) {
-            astro->Status = AST_ST_TRAIN_ADV_4;
+            astro.Status = AST_ST_TRAIN_ADV_4;
         } else {
-            astro->Status = AST_ST_TRAIN_ADV_3;
+            astro.Status = AST_ST_TRAIN_ADV_3;
         }
 
-        astro->Mood += 6 - AstLevel;
+        astro.Mood += 6 - AstLevel;
 
         // Block created to localize 'skill' declaration
         {
-            assert((unsigned) astro->Focus <= NUM_SKILLS);
+            assert((unsigned) astro.Focus <= NUM_SKILLS);
             /* Increase trained skill by 1 ('naut is halfway through Adv Training) */
-            int8_t *skill = skills[astro->Focus - 1];
-            *skill = MIN(*skill + 1, skillMax);
+            int8_t *skill = skills[astro.Focus - 1];
+            *skill = std::min(*skill + 1, skillMax);
         }
 
         break;
 
     case AST_ST_TRAIN_ADV_3:
-        astro->TrainingLevel = AST_ST_TRAIN_ADV_3;
-        astro->Status = AST_ST_TRAIN_ADV_4;
-        astro->Mood += 6 - AstLevel;
+        astro.TrainingLevel = AST_ST_TRAIN_ADV_3;
+        astro.Status = AST_ST_TRAIN_ADV_4;
+        astro.Mood += 6 - AstLevel;
         break;
 
     case AST_ST_TRAIN_ADV_4: {
-        astro->Special = 8;
-        astro->TrainingLevel = astro->Status;
-        astro->Status = AST_ST_ACTIVE;
-        astro->Assign = 0;  /* Put in Limbo */
-        astro->Mood += 6 - AstLevel;
+        astro.Special = 8;
+        astro.TrainingLevel = astro.Status;
+        astro.Status = AST_ST_ACTIVE;
+        astro.Assign = 0;  /* Put in Limbo */
+        astro.Mood += 6 - AstLevel;
 
-        assert((unsigned) astro->Focus <= NUM_SKILLS);
+        assert((unsigned) astro.Focus <= NUM_SKILLS);
 
         /* Increase trained skill by 1 */
-        int8_t *skill = skills[astro->Focus - 1];
-        *skill = MIN(*skill + 1, skillMax);
+        int8_t* skill = skills[astro.Focus - 1];
+        *skill = std::min(*skill + 1, skillMax);
 
         break;
     }
@@ -277,69 +275,38 @@ void AssignMissionName(int plr, int pad)
     assert(plr >= 0 && plr < NUM_PLAYERS);
     assert(pad >= 0 && pad < MAX_MISSIONS);
 
-    struct MissionType &mission = Data->P[plr].Mission[pad];
-    Equipment *equip = NULL;
-
+    MissionType& mission = Data->P[plr].Mission[pad];
+    
+    Equipment* equip;
     if (mission.MissionCode == Mission_Orbital_Satellite) {
         equip = &Data->P[plr].Probe[PROBE_HW_ORBITAL];
         mission.Patch = -1;
-        std::string name(equip->Name);
-        name += " ";
-        name += RomanNumeral(equip->Code + 1);
-        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
-        equip->Code++;  // Increase Planned Mission Count
     } else if (mission.MissionCode == Mission_Lunar_Probe) {
         equip = &Data->P[plr].Probe[PROBE_HW_LUNAR];
         mission.Patch = -1;
-        std::string name(equip->Name);
-        name += " ";
-        name += RomanNumeral(equip->Code + 1);
-        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
-        equip->Code++;  // Increase Planned Mission Count
     } else if (mission.MissionCode == Mission_LunarFlyby ||
                (mission.MissionCode >= Mission_VenusFlyby &&
                 mission.MissionCode <= Mission_SaturnFlyby)) {
         equip = &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY];
         mission.Patch = -1;
-        std::string name(equip->Name);
-        name += " ";
-        name += RomanNumeral(equip->Code + 1);
-        strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
-        equip->Code++;  // Increase Planned Mission Count
-    } else if (mission.MissionCode > 0) {
-        if (mission.Joint == 0) {
-            int capsule = mission.Prog - 1;
-            equip = &Data->P[plr].Manned[capsule];
-            mission.Patch = equip->Code % 10;
-            std::string name(equip->Name);
-            name += " ";
-            name += RomanNumeral(equip->Code + 1);
-            strncpy(&mission.Name[0], name.c_str(),
-                    sizeof(mission.Name) - 1);
-            equip->Code++;  // Increase Planned Mission Count
+    } else if (mission.MissionCode != Mission_None) {
+        int capsule;
+        if (mission.Joint != 0 && mission.Prog == 0) {
+            assert(pad + 1 < MAX_MISSIONS);
+            capsule = Data->P[plr].Mission[pad + 1].Prog - 1;
         } else {
-            if (mission.Prog == 0) {
-                assert(pad + 1 < MAX_MISSIONS);
-                int capsule = Data->P[plr].Mission[pad + 1].Prog - 1;
-                equip = &Data->P[plr].Manned[capsule];
-                mission.Patch = equip->Code % 10;
-                std::string name(equip->Name);
-                name += " ";
-                name += RomanNumeral(equip->Code + 1);
-                strncpy(&mission.Name[0], name.c_str(),
-                        sizeof(mission.Name) - 1);
-            } else {
-                int capsule = mission.Prog - 1;
-                equip = &Data->P[plr].Manned[capsule];
-                mission.Patch = equip->Code % 10;
-                std::string name(equip->Name);
-                name += " ";
-                name += RomanNumeral(equip->Code + 1);
-                strncpy(&mission.Name[0], name.c_str(),
-                        sizeof(mission.Name) - 1);
-                equip->Code++;  // Increase Planned Mission Count
-            }
+            capsule = mission.Prog - 1;
         }
+        equip = &Data->P[plr].Manned[capsule];
+        mission.Patch = equip->Code % 10;
+    }
+    
+    std::string name = std::string{equip->Name} + " " + RomanNumeral(equip->Code + 1);
+    strncpy(&mission.Name[0], name.c_str(), sizeof(mission.Name) - 1);
+    if (mission.MissionCode != Mission_None 
+        && !(mission.Joint && mission.Prog == 0))
+    {
+        equip->Code++;   // Increase Planned Mission Count
     }
 }
 
@@ -347,7 +314,7 @@ void AssignMissionName(int plr, int pad)
 /**
  * Modifier to astronaut/cosmonaut's morale due to flight crew conflicts.
  */
-int AstroConflictsMod(int player, struct Astros &astro)
+int AstroConflictsMod(int player, Astros& astro)
 {
     //-2 for each conflict in Jupiter/Minishuttle, -3 in others
     return -((astro.Assign == 5 || astro.Assign == 4) ? 2 : 3) *
@@ -356,174 +323,170 @@ int AstroConflictsMod(int player, struct Astros &astro)
 
 
 /** \todo: This code must be split... it's cluttered beyond hope */
-void
-AstroTurn(void)
+void AstroTurn()
 {
-    int i, j, k, num, temp;
-    int ActTotal[2] = {0, 0};  /* Count of active astronauts per player */
-
     /* Count total number of active astronauts */
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        for (i = 0; i < Data->P[j].AstroCount; i++) {
-            if (Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
-                ActTotal[j]++;
+    int ActTotal[2] = {0, 0};  /* Count of active astronauts per player */
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+            auto& spaceman = Data->P[plr].Pool[i];
+            if (spaceman.Status == AST_ST_ACTIVE) {
+                ActTotal[plr]++;
             }
         }
     }
 
     /* Update All Astronauts */
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        for (i = 0; i < Data->P[j].AstroCount; i++) {
-            updateAstronautSkills(j, &Data->P[j].Pool[i]);
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+            auto& spaceman = Data->P[plr].Pool[i];
+            updateAstronautSkills(plr, spaceman);
         }
     }
 
-    for (j = 0; j < NUM_PLAYERS; j++) {  /* Player Analysis */
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {  /* Player Analysis */
         int retirements = 0;
 
-        for (i = 0; i < Data->P[j].AstroCount; i++) {
-            int prog = Data->P[j].Pool[i].Assign;  // Program index
-            int crew = Data->P[j].Pool[i].Crew - 1;  // Crew index
+        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+            auto& spaceman = Data->P[plr].Pool[i];
+            int prog = spaceman.Assign;  // Program index
+            int crew = spaceman.Crew - 1;  // Crew index
             // Work with mood as a temporary value rather than storing
             // an illegal value. Also stops int8_t overflow.
-            int mood = Data->P[j].Pool[i].Mood;
+            int mood = spaceman.Mood;
 
             /* Injury Resolution */
-            if (Data->P[j].Pool[i].Status == AST_ST_INJURED) {
-                Data->P[j].Pool[i].InjuryDelay--;
+            if (spaceman.Status == AST_ST_INJURED) {
+                spaceman.InjuryDelay--;
 
-                if (Data->P[j].Pool[i].InjuryDelay == 0) {
-                    Data->P[j].Pool[i].Status = AST_ST_ACTIVE;
-                    prog = Data->P[j].Pool[i].Assign = 0;
-                    Data->P[j].Pool[i].Special = 5;
+                if (spaceman.InjuryDelay == 0) {
+                    spaceman.Status = AST_ST_ACTIVE;
+                    prog = spaceman.Assign = 0;
+                    spaceman.Special = 5;
                 }
             }
 
             /* Mustering Out - even seasons after 8 */
-            if ((Data->P[j].Pool[i].Active >= 8)
-                && Data->P[j].Pool[i].Active % 2 == 0
-                && Data->P[j].Pool[i].Status == AST_ST_ACTIVE
-                && Data->P[j].Pool[i].RetirementDelay == 0) {
-                num = brandom(100);
+            if ((spaceman.Active >= 8)
+                && spaceman.Active % 2 == 0
+                && spaceman.Status == AST_ST_ACTIVE
+                && spaceman.RetirementDelay == 0) {
+                int num = brandom(100);
 
                 if (num > 89) {
                     /* Guy retires */
-                    if (j == 0) {
-                        Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
-                        Data->P[j].Pool[i].Special = 1;
+                    if (plr == 0) {
+                        spaceman.RetirementDelay = 3;  /* US Guy Retires in 2 */
+                        spaceman.Special = 1;
                     }
 
-                    if (j == 1) {
-                        Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires in 1 */
-                        Data->P[j].Pool[i].Special = 1;
+                    if (plr == 1) {
+                        spaceman.RetirementDelay = 2;  /* URS Guy Retires in 1 */
+                        spaceman.Special = 1;
                     }
 
                     /* Reason for Retirement */
-                    Data->P[j].Pool[i].RetirementReason = brandom(6) + 1;
+                    spaceman.RetirementReason = brandom(6) + 1;
                 }
             }
 
-            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1 &&
-                Data->P[j].Pool[i].RetirementDelay == 0 &&
-                Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
+            if (Data->P[plr].MissionCatastrophicFailureOnTurn & 1 &&
+                spaceman.RetirementDelay == 0 &&
+                spaceman.Status == AST_ST_ACTIVE) {
                 /* Catastrophic Failure */
-                num = brandom(100);
+                int num = brandom(100);
 
-                if (j == 1) {
-                    temp = 89;
-                } else {
-                    temp = 79;
-                }
+                int temp = (plr == 0)? 79 : 89;
 
                 // TODO: The cap on retirements means it's more likely
                 // for astronauts earlier in the pool to retire. This
                 // is justifiable for earlier groups vs later ones,
                 // but since the pool is subordered alphabetically...
-                if (num > temp && retirements < (ActTotal[j] * .4)) {
+                if (num > temp && retirements < (ActTotal[plr] * .4)) {
                     /* Guy retires due to being scared */
-                    if (j == 0) {
-                        Data->P[j].Pool[i].RetirementDelay = 3;  /* US Guy Retires in 2 */
-                        Data->P[j].Pool[i].Special = 1;
+                    if (plr == 0) {
+                        spaceman.RetirementDelay = 3;  /* US Guy Retires in 2 */
+                        spaceman.Special = 1;
                     }
 
                     // TODO: Either the comment is wrong or the delay
                     // is wrong -- rnyoakum
-                    if (j == 1) {
-                        Data->P[j].Pool[i].RetirementDelay = 2;  /* URS Guy Retires Now */
-                        Data->P[j].Pool[i].Special = 1;
+                    if (plr == 1) {
+                        spaceman.RetirementDelay = 2;  /* URS Guy Retires Now */
+                        spaceman.Special = 1;
                     }
 
-                    Data->P[j].Pool[i].RetirementReason = 11;    /* Reason=Scared */
+                    spaceman.RetirementReason = 11;    /* Reason=Scared */
 
                     retirements++;
                 }
             }
 
             /* Training Washout */
-            if (Data->P[j].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
-                && Data->P[j].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
-                && strncmp(Data->P[j].Pool[i].Name, "ALDRIN", 6) != 0) {
-                num = brandom(100);
+            if (spaceman.Status >= AST_ST_TRAIN_BASIC_1
+                && spaceman.Status <= AST_ST_TRAIN_BASIC_3
+                && strncmp(spaceman.Name, "ALDRIN", 6) != 0) {
+                int num = brandom(100);
 
                 if (num > 94) {
-                    num = brandom(100);
+                    int num = brandom(100);
                     int enduranceFactor =
                         options.feat_use_endurance
-                        ? 10 * MAX(0, Data->P[j].Pool[i].Endurance)
+                        ? 10 * std::max(0, (int)spaceman.Endurance)
                         : 0;
 
                     if (num > (74 - enduranceFactor)) {
-                        Data->P[j].Pool[i].Status = AST_ST_INJURED;
-                        Data->P[j].Pool[i].InjuryDelay = 2;
+                        spaceman.Status = AST_ST_INJURED;
+                        spaceman.InjuryDelay = 2;
 
-                        if (options.feat_use_endurance && (brandom(100) < (Data->P[j].Pool[i].Endurance - 1) * 25)) {
-                            Data->P[j].Pool[i].InjuryDelay = 1;  // High endurance can shorten time in hospital to half a year
+                        if (options.feat_use_endurance && (brandom(100) < (spaceman.Endurance - 1) * 25)) {
+                            spaceman.InjuryDelay = 1;  // High endurance can shorten time in hospital to half a year
                         }
 
-                        if (options.feat_use_endurance && Data->P[j].Pool[i].Endurance < 1 && brandom(100) < 25) {
-                            Data->P[j].Pool[i].InjuryDelay = 3;  // An Endurance of 0 can mean 3 turns in the hospital instead
+                        if (options.feat_use_endurance && spaceman.Endurance < 1 && brandom(100) < 25) {
+                            spaceman.InjuryDelay = 3;  // An Endurance of 0 can mean 3 turns in the hospital instead
                         }
 
-                        Data->P[j].Pool[i].Special = 9;
+                        spaceman.Special = 9;
                     } else {
                         // Injury washout and retirement
-                        Data->P[j].Pool[i].Status = AST_ST_RETIRED;
-                        Data->P[j].Pool[i].Special = 10;
-                        Data->P[j].Pool[i].RetirementReason = 12;
+                        spaceman.Status = AST_ST_RETIRED;
+                        spaceman.Special = 10;
+                        spaceman.RetirementReason = 12;
                     }
 
-                    if (Data->P[j].Pool[i].Cap < 0) {
-                        Data->P[j].Pool[i].Cap = 0;
+                    if (spaceman.Cap < 0) {
+                        spaceman.Cap = 0;
                     }
 
-                    if (Data->P[j].Pool[i].LM < 0) {
-                        Data->P[j].Pool[i].LM = 0;
+                    if (spaceman.LM < 0) {
+                        spaceman.LM = 0;
                     }
 
-                    if (Data->P[j].Pool[i].EVA < 0) {
-                        Data->P[j].Pool[i].EVA = 0;
+                    if (spaceman.EVA < 0) {
+                        spaceman.EVA = 0;
                     }
 
-                    if (Data->P[j].Pool[i].Docking < 0) {
-                        Data->P[j].Pool[i].Docking = 0;
+                    if (spaceman.Docking < 0) {
+                        spaceman.Docking = 0;
                     }
 
-                    if (Data->P[j].Pool[i].Endurance < 0) {
-                        Data->P[j].Pool[i].Endurance = 0;
+                    if (spaceman.Endurance < 0) {
+                        spaceman.Endurance = 0;
                     }
                 }
             }
 
-            if (Data->P[j].Pool[i].RetirementDelay >= 1
-                && (Data->P[j].Pool[i].Status > AST_ST_INJURED
-                    || Data->P[j].Pool[i].Status == AST_ST_ACTIVE)) {
+            if (spaceman.RetirementDelay >= 1
+                && (spaceman.Status > AST_ST_INJURED
+                    || spaceman.Status == AST_ST_ACTIVE)) {
                 /* Actual retirement */
-                Data->P[j].Pool[i].RetirementDelay--;
+                spaceman.RetirementDelay--;
 
-                if (Data->P[j].Pool[i].RetirementDelay == 0) {
-                    Data->P[j].Pool[i].Status = AST_ST_RETIRED;
-                    prog = Data->P[j].Pool[i].Assign = 0;
-                    Data->P[j].Pool[i].Special = 2;
+                if (spaceman.RetirementDelay == 0) {
+                    spaceman.Status = AST_ST_RETIRED;
+                    prog = spaceman.Assign = 0;
+                    spaceman.Special = 2;
                 }
             }
 
@@ -531,23 +494,23 @@ AstroTurn(void)
             // is no longer in service.
 
             /* END OF SEASON - Positive */
-            if (Data->P[j].MissionCatastrophicFailureOnTurn & 4) {
+            if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
                 /* Program First */
                 mood += 5;
 
-                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_FAILURE) {
+                if (spaceman.currentMissionStatus == ASTRO_MISSION_FAILURE) {
                     mood += 20;    /* Self */
                 }
             }
 
-            if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SUCCESS) {
-                if (j == 0 && Data->Def.Ast1 == 0) {
+            if (spaceman.currentMissionStatus == ASTRO_MISSION_SUCCESS) {
+                if (plr == 0 && Data->Def.Ast1 == 0) {
                     mood += 20;
                 } else {
                     mood += 15;
                 }
 
-                if (j == 1 && Data->Def.Ast2 == 0) {
+                if (plr == 1 && Data->Def.Ast2 == 0) {
                     mood += 20;
                 } else {
                     mood += 15;
@@ -556,25 +519,22 @@ AstroTurn(void)
 
             if (Data->Season == 1) {
                 /* End of turn what the hell 5% happy */
-                num = brandom(100);
-
-                if (num > 94) {
+                if (brandom(100) > 94) {
                     mood += 5;
                 }
             }
 
-            if (prog > 0) {
-                temp = 0;
-
-                if (crew > -1) {
-                    for (k = 0; k < Data->P[j].CrewCount[prog][crew]; k++) {
-                        if (Data->P[j].Pool[Data->P[j].Crew[prog][crew][k] - 1].Hero == 1) {
-                            temp++;
-                        }
+            if (prog > 0 && crew > -1) {
+                bool temp = false;
+                for (int k = 0; k < Data->P[plr].CrewCount[prog][crew]; k++) {
+                    int spaceman_idx = Data->P[plr].Crew[prog][crew][k] - 1;
+                    if (Data->P[plr].Pool[spaceman_idx].Hero == 1) {
+                        temp = true;
+                        break;
                     }
                 }
 
-                if (temp > 1) {
+                if (temp) {
                     mood += 5;    /* Hero Mod */
                 }
             }
@@ -582,38 +542,38 @@ AstroTurn(void)
             /* END OF SEASON - Negative */
 
             /* In Merc for too long */
-            if (Data->P[j].Pool[i].Assign == 1
-                && Data->P[j].Pool[i].Moved >= 6) {
+            if (spaceman.Assign == 1
+                && spaceman.Moved >= 6) {
                 mood -= 4;
             }
 
             /* Moved Around */
-            if (Data->P[j].Pool[i].Moved == 0) {
+            if (spaceman.Moved == 0) {
                 mood -= 4;
             }
 
             // Mission Stuff
-            if (Data->P[j].Pool[i].Prime == 3
-                || Data->P[j].Pool[i].Prime == 1) {
-                Data->P[j].Pool[i].Prime = 0;
+            if (spaceman.Prime == 3
+                || spaceman.Prime == 1) {
+                spaceman.Prime = 0;
             }
 
-            if (Data->P[j].Pool[i].Prime == 4
-                || Data->P[j].Pool[i].Prime == 2) {
-                Data->P[j].Pool[i].Prime--;
+            if (spaceman.Prime == 4
+                || spaceman.Prime == 2) {
+                spaceman.Prime--;
             }
 
-            if (Data->P[j].Pool[i].Status != AST_ST_INJURED) {
-                if (Data->P[j].Pool[i].Prime == 0) {
+            if (spaceman.Status != AST_ST_INJURED) {
+                if (spaceman.Prime == 0) {
                     mood -= 6;
                 }
 
-                if (Data->P[j].Pool[i].Prime > 0) {
+                if (spaceman.Prime > 0) {
                     mood -= 3;
                 }
 
                 /* scrubbed mission */
-                if (Data->P[j].Pool[i].currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
+                if (spaceman.currentMissionStatus == ASTRO_MISSION_SCRUBBED) {
                     mood -= 5;
                 }
 
@@ -623,58 +583,54 @@ AstroTurn(void)
             }
 
             /* catastrophic death */
-            if (Data->P[j].MissionCatastrophicFailureOnTurn & 1) {
+            if (Data->P[plr].MissionCatastrophicFailureOnTurn & 1) {
                 mood -= 5;
             }
 
             /* card death */
-            if (Data->P[j].MissionCatastrophicFailureOnTurn & 2) {
+            if (Data->P[plr].MissionCatastrophicFailureOnTurn & 2) {
                 mood -= brandom(2) + 1;
             }
 
             /* Compatibility */
             if (prog > 0) {
-                mood += AstroConflictsMod(j, Data->P[j].Pool[i]);
+                mood += AstroConflictsMod(plr, spaceman);
             }
 
             /* Final record updating */
-            Data->P[j].Pool[i].Mood = MAX(0, MIN(100, mood));
+            spaceman.Mood = std::max(0, std::min(100, mood));
 
-            Data->P[j].Pool[i].Moved++;
+            spaceman.Moved++;
 
             /* Retirement stuff */
 
-            if (Data->P[j].Pool[i].Mood < 20
-                && Data->P[j].Pool[i].RetirementDelay == 0
-                && Data->P[j].Pool[i].Status == AST_ST_ACTIVE) {
-                if (j == 0) {
-                    Data->P[j].Pool[i].RetirementDelay = 2;  /* US Guy Retires in 2 */
-                    Data->P[j].Pool[i].Special = 1;
+            if (spaceman.Mood < 20
+                && spaceman.RetirementDelay == 0
+                && spaceman.Status == AST_ST_ACTIVE) {
+                if (plr == 0) {
+                    spaceman.RetirementDelay = 2;  /* US Guy Retires in 2 */
+                    spaceman.Special = 1;
+                } else {
+                    spaceman.Status = AST_ST_RETIRED; /* URS Guy Retires Now */
+                    spaceman.Special = 2;
                 }
 
-                if (j == 1) {
-                    Data->P[j].Pool[i].Status = AST_ST_RETIRED; /* URS Guy Retires Now */
-                    Data->P[j].Pool[i].Special = 2;
-                }
-
-                Data->P[j].Pool[i].RetirementReason = 13;    /* Reason=Unhappy */
+                spaceman.RetirementReason = 13;    /* Reason=Unhappy */
             }
 
-            Data->P[j].Pool[i].currentMissionStatus = ASTRO_MISSION_CLEAR;
+            spaceman.currentMissionStatus = ASTRO_MISSION_CLEAR;
         }
 
-        Data->P[j].MissionCatastrophicFailureOnTurn = 0;
+        Data->P[plr].MissionCatastrophicFailureOnTurn = 0;
     }
 
     // Break all groups with dead, injured or retired folks.
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        CheckFlightCrews(j);
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        CheckFlightCrews(plr);
     }
 
     UpdateHardTurn(0);
     UpdateHardTurn(1);
-
-    return;
 }
 
 
@@ -682,7 +638,7 @@ AstroTurn(void)
  * Count how many personality conflicts the astronaut/cosmonaut has
  * with their flight crew.
  */
-int CrewConflicts(const int player, const struct Astros &astro)
+int CrewConflicts(const int player, const Astros& astro)
 {
     int conflicts = 0;
 
@@ -732,35 +688,32 @@ std::string RomanNumeral(unsigned int value)
 }
 
 
-void Update(void)
+void Update()
 {
-    int i, j, k;
-    char p0, p1;
-
-    for (j = 0; j < NUM_PLAYERS; j++) {
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
 
         // If the Docking module is in orbit, reduce the usable seasons
-        if (Data->P[j].DockingModuleInOrbit) {
-            Data->P[j].DockingModuleInOrbit--;
+        if (Data->P[plr].DockingModuleInOrbit) {
+            Data->P[plr].DockingModuleInOrbit--;
         }
 
         // Decrement the Astronaut delays counter
-        if (Data->P[j].AstroDelay) {
-            Data->P[j].AstroDelay--;
+        if (Data->P[plr].AstroDelay) {
+            Data->P[plr].AstroDelay--;
         }
 
-        for (i = 0; i < MAX_MISSIONS; i++) {
-            memcpy(&Data->P[j].Mission[i], &Data->P[j].Future[i], sizeof(struct MissionType));
-            memset(&Data->P[j].Future[i], 0x00, sizeof(struct MissionType));
-            strcpy(Data->P[j].Future[i].Name, "UNDETERMINED");
+        for (int i = 0; i < MAX_MISSIONS; i++) {
+            memcpy(&Data->P[plr].Mission[i], &Data->P[plr].Future[i], sizeof(struct MissionType));
+            memset(&Data->P[plr].Future[i], 0x00, sizeof(struct MissionType));
+            strcpy(Data->P[plr].Future[i].Name, "UNDETERMINED");
 
-        }  /* End j for loop */
-    }  /* End i for loop */
+        }  /* End i for loop */
+    }  /* End plr for loop */
 
     // Name the upcoming Missions
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        for (i = 0; i < MAX_MISSIONS; i++) {
-            AssignMissionName(j, i);
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        for (int i = 0; i < MAX_MISSIONS; i++) {
+            AssignMissionName(plr, i);
         }
     }
 
@@ -770,15 +723,15 @@ void Update(void)
 
     AstroTurn();   /* Process all astronauts */
 
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        Data->P[j].RD_Mods_For_Turn = 0;
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        Data->P[plr].RD_Mods_For_Turn = 0;
 
-        if (Data->P[j].RD_Mods_For_Year > 0) {
-            Data->P[j].RD_Mods_For_Turn = Data->P[j].RD_Mods_For_Year;
-            Data->P[j].RD_Mods_For_Year = 0;
+        if (Data->P[plr].RD_Mods_For_Year > 0) {
+            Data->P[plr].RD_Mods_For_Turn = Data->P[plr].RD_Mods_For_Year;
+            Data->P[plr].RD_Mods_For_Year = 0;
         }
 
-        Data->P[j].TurnOnly = Data->P[j].MissionCatastrophicFailureOnTurn = Data->P[j].Block = 0;
+        Data->P[plr].TurnOnly = Data->P[plr].MissionCatastrophicFailureOnTurn = Data->P[plr].Block = 0;
     }
 
     UpdateFlybys();
@@ -786,26 +739,27 @@ void Update(void)
     memset(pNeg, 0x00, sizeof pNeg);
 
     // Fix Prestige Values for Mars, Jup, Sat.
-    for (j = 0; j < NUM_PLAYERS; j++) {
-        Data->Prestige[Prestige_MarsFlyby].Goal[j] = 0;  // Clear Mars
-        Data->Prestige[Prestige_JupiterFlyby].Goal[j] = 0;  // Clear Jupiter
-        Data->Prestige[Prestige_SaturnFlyby].Goal[j] = 0;  // Clear Saturn
-        Data->P[j].Probe[PROBE_HW_ORBITAL].Failures = Data->P[j].Probe[PROBE_HW_LUNAR].Failures = 0;
-        Data->P[j].Probe[PROBE_HW_ORBITAL].Used = Data->P[j].Probe[PROBE_HW_LUNAR].Used = 0;
+    for (int plr = 0; plr < NUM_PLAYERS; plr++) {
+        Data->Prestige[Prestige_MarsFlyby].Goal[plr] = 0;  // Clear Mars
+        Data->Prestige[Prestige_JupiterFlyby].Goal[plr] = 0;  // Clear Jupiter
+        Data->Prestige[Prestige_SaturnFlyby].Goal[plr] = 0;  // Clear Saturn
+        Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures = Data->P[plr].Probe[PROBE_HW_LUNAR].Failures = 0;
+        Data->P[plr].Probe[PROBE_HW_ORBITAL].Used = Data->P[plr].Probe[PROBE_HW_LUNAR].Used = 0;
 
-        for (i = 0; i < Data->P[j].PastMissionCount; i++) {
-            if (Data->P[j].History[i].Event == 0) {
-                switch (Data->P[j].History[i].MissionCode) {
+        for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
+            auto& mission = Data->P[plr].History[i];
+            if (mission.Event == 0) {
+                switch (mission.MissionCode) {
                 case Mission_MarsFlyby:
-                    Data->Prestige[Prestige_MarsFlyby].Goal[j]++;
+                    Data->Prestige[Prestige_MarsFlyby].Goal[plr]++;
                     break;  // Mars
 
                 case Mission_JupiterFlyby:
-                    Data->Prestige[Prestige_JupiterFlyby].Goal[j]++;
+                    Data->Prestige[Prestige_JupiterFlyby].Goal[plr]++;
                     break;  // Jupiter
 
                 case Mission_SaturnFlyby:
-                    Data->Prestige[Prestige_SaturnFlyby].Goal[j]++;
+                    Data->Prestige[Prestige_SaturnFlyby].Goal[plr]++;
                     break;  // Saturn
 
                 default:
@@ -813,28 +767,26 @@ void Update(void)
                 }
             }
 
-            switch (Data->P[j].History[i].MissionCode) {
+            switch (mission.MissionCode) {
             case Mission_Orbital_Satellite:
-                if (Data->P[j].History[i].spResult != 1) {
-                    Data->P[j].Probe[PROBE_HW_ORBITAL].Failures++;
+                if (mission.spResult != 1) {
+                    Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures++;
                 }
 
-                Data->P[j].Probe[PROBE_HW_ORBITAL].Used++;
+                Data->P[plr].Probe[PROBE_HW_ORBITAL].Used++;
                 break;
 
             case Mission_Lunar_Probe:
-                if (Data->P[j].History[i].spResult != 1) {
-                    Data->P[j].Probe[PROBE_HW_LUNAR].Failures++;
+                if (mission.spResult != 1) {
+                    Data->P[plr].Probe[PROBE_HW_LUNAR].Failures++;
                 }
 
-                Data->P[j].Probe[PROBE_HW_LUNAR].Used++;
+                Data->P[plr].Probe[PROBE_HW_LUNAR].Used++;
                 break;
             }
 
         }
     }
-
-    return;
 }
 
 
@@ -846,35 +798,40 @@ void Update(void)
  */
 void TestFMis(int plr, int i)
 {
-    int misCode;
+    auto& mission = Data->P[plr].History[i];
 
-    if (Data->P[plr].History[i].Saf == 0) {
-        return;
+    if (mission.Saf == 0) return;
+    if (mission.Event <= 0) return;
+
+    mission.Event--;
+
+    if (brandom(100) > mission.Saf) {
+        /* Failed Mission */
+        int misCode = mission.MissionCode;
+        mission.Event = mission.Saf = 0;
+        // TODO: Break this line up; it's unreadable!
+        mission.Prestige =
+            PrestNeg(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby 
+                            : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby 
+                                : Prestige_SaturnFlyby);
+        Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x01 
+                                : (misCode == Mission_JupiterFlyby) ? 0x02 
+                                    : 0x04;
+        mission.spResult = 5000;
     }
 
-    if (Data->P[plr].History[i].Event > 0) {
-        Data->P[plr].History[i].Event--;
-
-        if (brandom(100) > Data->P[plr].History[i].Saf) {
-            /* Failed Mission */
-            misCode = Data->P[plr].History[i].MissionCode;
-            Data->P[plr].History[i].Event = Data->P[plr].History[i].Saf = 0;
-            // TODO: Break this line up; it's unreadable!
-            Data->P[plr].History[i].Prestige =
-                PrestNeg(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby : Prestige_SaturnFlyby);
-            Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x01 : (misCode == Mission_JupiterFlyby) ? 0x02 : 0x04;
-            Data->P[plr].History[i].spResult = 5000;
-        }
-
-        if (Data->P[plr].History[i].Event == 0
-            && Data->P[plr].History[i].Prestige == 0) {
-            misCode = Data->P[plr].History[i].MissionCode;
-            Data->P[plr].History[i].Prestige =
-                Set_Goal(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby : Prestige_SaturnFlyby, 3);
-            Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x10 : (misCode == Mission_JupiterFlyby) ? 0x20 : 0x40;
-            Data->P[plr].History[i].spResult = 1;
-            Data->P[plr].History[i].Saf = 0;
-        }
+    if (mission.Event == 0 && mission.Prestige == 0) {
+        int misCode = mission.MissionCode;
+        mission.Prestige =
+            Set_Goal(plr, (misCode == Mission_MarsFlyby) ? Prestige_MarsFlyby 
+                              : (misCode == Mission_JupiterFlyby) ? Prestige_JupiterFlyby 
+                                  : Prestige_SaturnFlyby
+                    , 3);
+        Data->P[plr].Plans |= (misCode == Mission_MarsFlyby) ? 0x10 
+                                : (misCode == Mission_JupiterFlyby) ? 0x20 
+                                    : 0x40;
+        mission.spResult = 1;
+        mission.Saf = 0;
     }
 }
 
@@ -895,29 +852,25 @@ void UpdateFlybys()
     // If budgets are tied, a coin is tossed.
     while (p0 < Data->P[0].PastMissionCount &&
            p1 < Data->P[1].PastMissionCount) {
-        if (Data->P[0].History[p0].MissionYear < Data->P[1].History[p1].MissionYear) {
+        auto& hist_us = Data->P[0].History[p0];
+        auto& hist_sv = Data->P[1].History[p1];
+        
+        if (hist_us.MissionYear < hist_sv.MissionYear) { // order by Year
             TestFMis(0, p0++);
-        } else if (Data->P[0].History[p0].MissionYear > Data->P[1].History[p1].MissionYear) {
+        } else if (hist_us.MissionYear > hist_sv.MissionYear) {
             TestFMis(1, p1++);
-        } else {  // Same year
-            if (Data->P[0].History[p0].Month < Data->P[1].History[p1].Month) {
-                TestFMis(0, p0++);
-            } else if (Data->P[0].History[p0].Month > Data->P[1].History[p1].Month) {
-                TestFMis(1, p1++);
-            } else {
-                if (Data->P[0].Budget < Data->P[1].Budget) {
-                    TestFMis(0, p0++);
-                } else if (Data->P[0].Budget > Data->P[1].Budget) {
-                    TestFMis(1, p1++);
-                } else {
-                    // If the tie-breaker is tied, toss a coin.
-                    if (brandom(100) < 50) {
-                        TestFMis(0, p0++);
-                    } else {
-                        TestFMis(1, p1++);
-                    }
-                }
-            }
+        } else if (hist_us.Month < hist_sv.Month) { // if equal, order by month
+            TestFMis(0, p0++);
+        } else if (hist_us.Month > hist_sv.Month) {
+            TestFMis(1, p1++);
+        } else if (Data->P[0].Budget < Data->P[1].Budget) { // in case of a tie, the player with the lower budget wins.
+            TestFMis(0, p0++);
+        } else if (Data->P[0].Budget > Data->P[1].Budget) {
+            TestFMis(1, p1++);
+        } else if (brandom(100) < 50) { // if budgets are tied, a coin is tossed.
+            TestFMis(0, p0++);
+        } else {
+            TestFMis(1, p1++);
         }
     }
 
@@ -935,21 +888,20 @@ void UpdateFlybys()
 
 /** End of turn equipment accounting update
  */
-void
-UpdateHardTurn(char plr)
+void UpdateHardTurn(int plr)
 {
-    BuzzData *p = &Data->P[plr];
+    BuzzData& p = Data->P[plr];
+    
     Equipment *e;
-
     for (int i = 0; i < 4; i++) {
         if (i == 0) {
-            e = &p->Probe[0];
+            e = &p.Probe[0];
         } else if (i == 1) {
-            e = &p->Rocket[0];
+            e = &p.Rocket[0];
         } else if (i == 2) {
-            e = &p->Manned[0];
+            e = &p.Manned[0];
         } else if (i == 3) {
-            e = &p->Misc[0];
+            e = &p.Misc[0];
         }
 
         for (int j = 0; j < 7; j++) {
