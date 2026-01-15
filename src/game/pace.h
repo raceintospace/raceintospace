@@ -22,13 +22,12 @@ int RLED_img(const char *src, char *dest, unsigned int src_size,
              int w, int h);
 char *seq_filename(int seq, int mode);
 void idle_loop_secs(double secs);
-int getch(void);
+int getch();
 char DoModem(int sel);
-void MesCenter(void);
+void MesCenter();
 void StopAudio(char mode);
-void stop_voice(void);
+void stop_voice();
 void NGetVoice(char plr, char val);
-void PlayVoice(void);
 ssize_t load_audio_file(const char *, char **data, size_t *size, bool music);
 void idle_loop(int ticks);
 void play_audio(std::string str, int mode);
