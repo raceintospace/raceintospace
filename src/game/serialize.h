@@ -1,8 +1,9 @@
 #ifndef SERIALIZE_H
 #define SERIALIZE_H
 
-#include <fstream>
 #include <algorithm>
+#include <cstream>
+#include <fstream>
 
 #include <cereal/cereal.hpp>
 #include <cereal/archives/xml.hpp>
@@ -34,8 +35,8 @@
 
 #define SERIALIZE_XML_FILE(x, filename)         \
     do {                                        \
-        std::ofstream os(filename);             \
-        cereal::XMLOutputArchive archive(os);   \
+        std::ofstream os{filename};             \
+        cereal::XMLOutputArchive archive{os};   \
         archive(x);                             \
     } while (0)
 
@@ -43,7 +44,7 @@
     do {                                                \
         std::stringstream stream;                       \
         {                                               \
-            cereal::XMLOutputArchive archive(stream);   \
+            cereal::XMLOutputArchive archive{stream};   \
             archive(x);                                 \
         }                                               \
         str = stream.str();                             \
@@ -51,22 +52,22 @@
 
 #define DESERIALIZE_XML_FILE(x, filename)                \
     do {                                                 \
-        std::ifstream is(filename);                      \
-        cereal::XMLInputArchive iarchive(is);            \
+        std::ifstream is{filename};                      \
+        cereal::XMLInputArchive iarchive{is};            \
         iarchive(*x);                                    \
     } while (0)
 
 #define SERIALIZE_JSON_FILE(x, filename)                                \
     do {                                                                \
-        std::ofstream os(filename);                                     \
-        cereal::JSONOutputArchive archive(os);                          \
+        std::ofstream os{filename};                                     \
+        cereal::JSONOutputArchive archive{os};                          \
         archive(x);                                                     \
     } while (0)
 
 #define DESERIALIZE_JSON_FILE(x, filename)       \
     do {                                         \
-        std::ifstream is(filename);              \
-        cereal::JSONInputArchive iarchive(is);   \
+        std::ifstream is{filename};              \
+        cereal::JSONInputArchive iarchive{is};   \
         iarchive(*x);                            \
     } while (0)
 
@@ -81,9 +82,10 @@
 
 
 /* Null-terminated version of strncpy */
-static inline char *strntcpy(char *dest, const char *src, size_t n)
+static inline char* strntcpy(char* dest, const char* src, size_t n)
 {
-    strncpy(dest, src, n);
+    if (n == 0) return dest;
+    strncpy(dest, src, n-1);
     dest[n - 1] = 0;
     return dest;
 }
