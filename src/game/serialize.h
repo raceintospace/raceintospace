@@ -2,7 +2,7 @@
 #define SERIALIZE_H
 
 #include <algorithm>
-#include <cstream>
+#include <cstring>
 #include <fstream>
 
 #include <cereal/cereal.hpp>
