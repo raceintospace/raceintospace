@@ -302,7 +302,7 @@ ssize_t load_audio_file(const char* name, char** data, size_t* size, bool music)
         return -1;
     }
 
-    if (mf.channels() != 2 || mf.rate() != 44100) {
+    if (mf.channels() != 2 || mf.audio_rate() != 44100) {
         CAT_ERROR(audio, "file `%s' should be stereo, 44100Hz", name);
         return -1;
     }
