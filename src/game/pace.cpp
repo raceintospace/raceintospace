@@ -16,22 +16,22 @@
 #include "utils.h"
 
 
-void randomize(void);
-double get_time(void);
-
+void randomize();
+double get_time();
+void PlayVoice(size_t soundbuf_used);
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 
 char DoModem(int sel)
 {
-    NOTICE1("DoModem not implemented");
-    return (0);
+    LOG_NOTICE("DoModem not implemented");
+    return 0;
 }
 
 char MPrefs(char mode)
 {
-    return (0);
+    return 0;
 }
 
 int put_serial(unsigned char n)
@@ -39,45 +39,45 @@ int put_serial(unsigned char n)
     return 0;
 }
 
-void MesCenter(void) {}
+void MesCenter() {}
 
-char *letter_data;
+char* letter_data;
 
-void OpenEmUp(void)
+void OpenEmUp()
 {
     randomize();
     letter_data = load_gamedata("letter.json");
     
-    if (!letter_data || letter_data[0] == '\0') {
-            throw std::runtime_error("Error: load letter has failed.");
-        }
+    if (letter_data == nullptr || letter_data[0] == '\0') {
+        throw std::runtime_error("Error: load letter has failed.");
+    }
 }
 
-int PCX_D(const char *src_raw, char *dest_raw, unsigned src_size)
+int PCX_D(const char* src_raw, char* dest_raw, unsigned src_size)
 {
-    const char *src = (const char *)src_raw;
-    char *dest = (char *)dest_raw;
-    char num;
-    char *orig_dest = dest;
+    const char* src = src_raw;
+    char* dest = dest_raw;
+    char* orig_dest = dest;
 
-    do {
+    for(;src_size > 0; --src_size) {
         if ((*src & 0xc0) == 0xc0) {
-            num = *(src++) & 0x3f;
+            int num = *src & 0x3f;
+            src++;
             src_size--;
 
-            while ((num--) > 0) {
-                *(dest++) = *src;
+            for (; num > 0; --num) {
+                *dest = *src;
+                dest++;
             }
 
             src++;
-            src_size--;
         } else {
-            (*dest++) = *(src++);
-            src_size--;
+            *dest = *src;
+            dest++; src++;
         }
-    }  while (src_size);
+    }
 
-    return (dest - orig_dest);
+    return dest - orig_dest;
 }
 
 /* Run-length Encoding Decompression algorithm.
@@ -89,84 +89,75 @@ int PCX_D(const char *src_raw, char *dest_raw, unsigned src_size)
  * \param src_size  Length of the compressed file, in bytes.
  * \return  Size of the decompressed data in bytes.
  */
-int RLED(const char *src_raw, char *dest_raw, unsigned int src_size)
+int RLED(const char* src_raw, char* dest_raw, unsigned int src_size)
 {
-    const signed char *src = (const signed char *)src_raw;
-    signed char *dest = (signed char *)dest_raw;
-    unsigned int used;
-    int count, val;
-    int i;
-
-    used = 0;
+    const signed char* src = (const signed char*)src_raw;
+    signed char* dest = (signed char*)dest_raw;
+    unsigned int used = 0;
 
     while (used < src_size) {
-        count = src[used++];
+        int count = src[used];
+        used++;
 
         if (count < 0) {
-            count = -count + 1;
-            val = src[used++];
+            int val = src[used];
+            used++;
 
-            for (i = 0; i < count; i++) {
-                *dest++ = val;
+            for (int i = 0; i < (-count+1); i++) {
+                *dest = val;
+                dest++;
             }
         } else {
-            count++;
-
-            for (i = 0; i < count; i++) {
-                *dest++ = src[used++];
+            for (int i = 0; i < count+1; i++) {
+                *dest = src[used];
+                dest++; used++;
             }
         }
     }
 
-    return ((char *)dest - (char *)dest_raw);
+    return ((char*)dest - (char*)dest_raw);
 }
 
-int RLED_img(const char *src_raw, char *dest_raw, unsigned int src_size,
+int RLED_img(const char* src_raw, char* dest_raw, unsigned int src_size,
              int w, int h)
 {
-    const signed char *src = (const signed char *)src_raw;
-    signed char *dest;
-    unsigned int used;
-    int count, val;
-    int total;
+    const signed char* src = (const signed char*)src_raw;
     signed char buf[128 * 1024];
-    int row;
+    signed char* dest = buf;
 
-    dest = buf;
-
-    used = 0;
-
+    unsigned int used = 0;
     while (used < src_size) {
-        count = src[used++];
+        int count = src[used];
+        used++;
 
         if (count < 0) {
-            count = -count + 1;
-            val = src[used++];
-            memset(dest, val, count);
-            dest += count;
+            int val = src[used];
+            used++;
+            
+            memset(dest, val, (-count+1));
+            dest += (-count+1);
         } else {
-            count++;
-            memcpy(dest, &src[used], count);
-            used += count;
-            dest += count;
+            memcpy(dest, &src[used], count+1);
+            used += count+1;
+            dest += count+1;
         }
     }
 
-    total = dest - buf;
+    int total = dest - buf;
 
     if (total < w * h + h) {
         memcpy(dest_raw, buf, w * h);
-        return (w * h);
+        return w * h;
     }
 
-    dest = (signed char *)dest_raw;
+    dest = (signed char*)dest_raw;
 
-    for (row = 0; row < h; row++) {
+    for (int row = 0; row < h; row++) {
         memcpy(dest, &buf[row * (w + 1)], w);
         dest += w;
     }
 
-    return (w * h);
+    return w * h;
 }
 
 /**
@@ -224,7 +215,7 @@ void bzdelay(int ticks)
 int brandom(int limit)
 {
     if (limit == 0) {
-        return (0);
+        return 0;
     }
 
     return (int)(limit * (rand() / (RAND_MAX + 1.0)));
@@ -241,7 +232,7 @@ void CloseEmUp(unsigned char error, unsigned int value)
     exit(EXIT_SUCCESS);
 }
 
-void randomize(void)
+void randomize()
 {
     srand(get_time() * 1000);
 }
@@ -254,11 +245,9 @@ void randomize(void)
  */
 void idle_loop_secs(double secs)
 {
-    double start;
-
     gr_sync();
 
-    start = get_time();
+    double start = get_time();
 
     while (1) {
         av_block();
@@ -278,10 +267,9 @@ void idle_loop(int ticks)
     idle_loop_secs(ticks / 2000.0);
 }
 
-char *soundbuf = NULL;
+char* soundbuf = nullptr;
 size_t soundbuf_size = 0;
-size_t soundbuf_used = 0;
-struct audio_chunk news_chunk;
+audio_chunk news_chunk;
 
 /* Loads an audio file.
  *
@@ -292,13 +280,9 @@ struct audio_chunk news_chunk;
  *
  * \return Number of bytes written to the data buffer.
  */
-ssize_t load_audio_file(const char *name, char **data, size_t *size, bool music)
+ssize_t load_audio_file(const char* name, char** data, size_t* size, bool music)
 {
-    mm_file mf;
-    unsigned channels, rate;
     const size_t def_size = 1024 * (music ? 192 : 32768); // increase from 16b for hq audio files
-    size_t offset = 0;
-    ssize_t read = 0;
     double start = get_time();
 
     /* make compiler happy */
@@ -308,28 +292,30 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size, bool music)
     assert(data);
     assert(size);
 
-    if (mm_open_fp(&mf, sOpen(name, "rb", FT_AUDIO)) < 0) {
+    Multimedia mf{sOpen(name, "rb", FT_AUDIO)};
+    if (!mf.is_good()) {
         return -1;
     }
 
-    if (mm_audio_info(&mf, &channels, &rate) < 0) {
-        CWARNING3(audio, "no audio data in file `%s'", name);
-        mm_close(&mf);
+    if (!mf.is_audio()) {
+        CAT_WARNING(audio, "no audio data in file `%s'", name);
         return -1;
     }
 
-    if (channels != 2 || rate != 44100) {
-        CERROR3(audio, "file `%s' should be stereo, 44100Hz", name);
-        mm_close(&mf);
+    if (mf.channels() != 2 || mf.audio_rate() != 44100) {
+        CAT_ERROR(audio, "file `%s' should be stereo, 44100Hz", name);
         return -1;
     }
 
-    if (!*data) {
-        *data = (char *)xmalloc(*size = def_size);
+    if (*data == nullptr) {
+        *data = (char*)xmalloc(*size = def_size);
     }
 
-    while (0 < (read = mm_decode_audio(&mf,
-                                       *data + offset, *size - offset))) {
+    size_t offset = 0;
+    while (true) {
+        ssize_t read = mf.decode_audio(*data + offset, *size - offset);
+        if (read <= 0) break;
+        
         offset += read;
 
         /* Do not use a dynamically growing buffer for non-music
@@ -340,15 +326,13 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size, bool music)
         }
         else {
             if (*size <= offset) {
-                *data = (char *)xrealloc(*data, *size *= 2);
+                *data = (char*)xrealloc(*data, *size *= 2);
             }
         }
     }
 
-    mm_close(&mf);
-
-    CDEBUG4(audio, "loading file `%s' took %5.4f seconds",
-            name, get_time() - start);
+    CAT_DEBUG(audio, "loading file `%s' took %5.4f seconds",
+                                  name, get_time() - start);
 
     return offset;
 }
@@ -356,53 +340,46 @@ ssize_t load_audio_file(const char *name, char **data, size_t *size, bool music)
 void NGetVoice(char plr, char val)
 {
     char fname[100];
-    ssize_t bytes = 0;
 
     snprintf(fname, sizeof(fname), "%s_%03d.ogg",(plr ? "sov" : "usa"), val);
-    bytes = load_audio_file(fname, &soundbuf, &soundbuf_size, false);
-    soundbuf_used = (bytes > 0) ? bytes : 0;
-    PlayVoice();
+    ssize_t bytes = load_audio_file(fname, &soundbuf, &soundbuf_size, false);
+    if (bytes > 0) PlayVoice(bytes);
 }
 
-void PlayVoice(void)
+void PlayVoice(size_t soundbuf_used)
 {
-    if (!soundbuf_used) {
+    if (soundbuf_used == 0) {
         return;
     }
 
     news_chunk.data = soundbuf;
     news_chunk.size = soundbuf_used;
-    news_chunk.next = NULL;
+    news_chunk.next = nullptr;
     play(&news_chunk, AV_SOUND_CHANNEL);
 }
 
-void stop_voice(void)
+void stop_voice()
 {
     av_silence(AV_SOUND_CHANNEL);
 }
 
-int getch(void)
+int getch()
 {
-    int c;
-
     while (1) {
         av_block();
 
+        int c;
         if ((c = bioskey(0)) != 0) {
-            return (c);
+            return c;
         }
     }
 }
 
 void play_audio(std::string str, int mode)
 {
-    char filename[40];
-    ssize_t size;
+    str += ".ogg";
 
-    snprintf(filename, sizeof(filename), "%s.ogg", str.c_str());
-
-    CINFO3(audio, "play sound file `%s'", filename);
-    size = load_audio_file(filename, &soundbuf, &soundbuf_size, false);
-    soundbuf_used = (size > 0) ? size : 0;
-    PlayVoice();
+    CAT_INFO(audio, "playing sound file `%s'", str.c_str());
+    ssize_t size = load_audio_file(str.c_str(), &soundbuf, &soundbuf_size, false);
+    if (size > 0) PlayVoice(size);
 }
