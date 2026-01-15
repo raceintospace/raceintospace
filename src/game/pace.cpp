@@ -18,7 +18,7 @@
 
 void randomize();
 double get_time();
-
+void PlayVoice(size_t soundbuf_used)
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
