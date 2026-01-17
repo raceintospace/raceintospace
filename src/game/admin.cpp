@@ -105,7 +105,7 @@ struct SaveGameEnumerator : public PhysFsEnumerator {
     int maxSaves = 100;
     std::vector<SFInfo> results;
 
-    SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : type(type), maxSaves(maxSaves), PhysFsEnumerator("/") {}
+    SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : PhysFsEnumerator("/"), type(type), maxSaves(maxSaves) {}
     virtual PHYSFS_EnumerateCallbackResult onItem(const std::string &origdir, const std::string &fname);
 };
 
@@ -339,7 +339,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
 PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &origdir, const std::string &fname)
 {
     size_t len = fname.size();
-    SaveGameType type;
+  //  SaveGameType type;
     std::string name;
     SFInfo saveInfo;
 
@@ -390,7 +390,7 @@ void FileAccess(char mode)
 {
     char sc = 0;
     int i, now, done, BarB, temp;
-    FILE *fin, *fout;
+    FILE *fout;
     SaveGameType saveType = SAVEGAME_Normal;
 
     //sp. case -> no regular save off mail/modem game
