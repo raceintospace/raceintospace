@@ -22,9 +22,9 @@
 void Records(char plr);
 void UpdateRecords(char Ty);
 void SafetyRecords(char plr, int temp);
-void MakeRecords(void);
+void MakeRecords();
 
-typedef struct pEtype {
+struct Record_Entry {
     char country;
     char month;
     char yr;
@@ -34,7 +34,7 @@ typedef struct pEtype {
     char place;
     char name[20];
     char astro[14];
-}  Record_Entry;
+};
 
 extern Record_Entry rec[56][3];
 
@@ -45,9 +45,9 @@ extern Record_Entry rec[56][3];
 
 extern int Pict[56];
 
-extern const char *Record_Names[56];
+extern const char* Record_Names[56];
 
-extern const char *Months[12];
+extern const char* Months[12];
 
 
 #endif // RECORDS_H
