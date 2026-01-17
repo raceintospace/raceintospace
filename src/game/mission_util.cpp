@@ -40,7 +40,7 @@ std::vector<struct mStr> missionData;
  * \param m2  The second instance.
  * \returns  true if equivalent.
  */
-bool Equals(const struct MissionType &m1, const struct MissionType &m2)
+bool Equals(const MissionType& m1, const MissionType& m2)
 {
     return m1.MissionCode == m2.MissionCode &&
            (strcmp(&m1.Name[0], &m2.Name[0]) == 0) &&
@@ -206,7 +206,7 @@ bool IsManned(int mission)
  * \param duration  the mission length in increments (0-6).
  * \return  a string literal of the form " (X)".
  */
-const char *GetDurationParens(int duration)
+const char* GetDurationParens(int duration)
 {
     switch (duration) {
     case 0:
@@ -229,7 +229,7 @@ const char *GetDurationParens(int duration)
         return " (F)";
 
     default:
-        ERROR2("Invalid arg to GetDurationParens(duration = %d)",
+        LOG_ERROR("Invalid arg to GetDurationParens(duration = %d)",
                duration);
         return "";
     }
@@ -251,9 +251,9 @@ std::vector<struct mStr> GetMissionData()
       throw IOException("Error. Could not open mission.json");
     }
 
-    cereal::JSONInputArchive ar(file);
+    cereal::JSONInputArchive ar{file};
     ar(CEREAL_NVP(missionData));
-    DEBUG1("missionData successfully uploaded.");
+    LOG_DEBUG("missionData successfully uploaded.");
     return missionData;
 }
 
@@ -267,14 +267,14 @@ std::vector<struct mStr> GetMissionData()
  * \return  the mStr with the given mStr.Index value.
  * \throws IOException  if unable to read MISSION.DAT.
  */
-struct mStr GetMissionPlan(const int code)
+mStr GetMissionPlan(const int code)
 {
     if (missionData.empty()) {
         GetMissionData();
     }
     
     mStr mission = missionData[code];
-    TRACE2("mission plan `%d' loaded.", code);
+    LOG_TRACE("mission plan `%d' loaded.", code);
     
     return mission;
 }
@@ -291,15 +291,15 @@ struct mStr GetMissionPlan(const int code)
  */
 void DrawMissionName(int val, int posX, int posY, int len)
 {
-    TRACE5("->DrawMissionName(val %d, posX %d, posxY %d, len %d)",
+    LOG_TRACE("->DrawMissionName(val %d, posX %d, posxY %d, len %d)",
            val, posX, posY, len);
-    int i, j = 0;
 
     grMoveTo(posX, posY);
     
     mStr mission = GetMissionPlan(val);    
     
-    for (i = 0; i < 50; i++) {
+    int j = 0;
+    for (int i = 0; i < 50; i++) {
         if (j > len && mission.Name[i] == ' ') {
             posY += 7;
             j = 0;
@@ -315,9 +315,7 @@ void DrawMissionName(int val, int posX, int posY, int len)
         }
     }
 
-    TRACE1("<-DrawMissionName");
-
-    return;
+    LOG_TRACE("<-DrawMissionName");
 }
 
 /**
