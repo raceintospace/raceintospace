@@ -54,8 +54,8 @@ void Drec(char *pos, char *pos2, char mde);
 void WriteRecord(int i, int j, int k, int temp);
 void SwapRec(int Rc, int pl1, int pl2);
 char CheckSucess(int i, int j);
-size_t ImportRecordEntry(FILE *fin, Record_Entry &dst);
-size_t ExportRecordEntry(FILE *fout, const Record_Entry &src);
+void ImportRecordTable();
+void ExportRecordTable();
 
 int Pict[56] = {
     411, 2, 1, 177, 272, 275, 409, 501, 504, 507, 414,
@@ -132,47 +132,32 @@ const char *Months[12] = {
 };
 
 
-void MakeRecords(void)
+void MakeRecords()
 {
-    FILE *file;
-    int i, j;
+    // check if Records file exists
+    FILE* file = sOpen("RECORDS.DAT", "rb", FT_SAVE_CHECK);
+    if (file != nullptr) { // if it does, we're done
+        fclose(file);
+        return;
+    }
 
-    if ((file = sOpen("RECORDS.DAT", "rb", FT_SAVE_CHECK)) == NULL) {
-        file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
-
-        if (file == NULL) {
-            /* XXX: very drastic */
-            CRITICAL1("can't create required file RECORDS.DAT");
-            exit(EXIT_FAILURE);
-        }
-
-        for (i = 0; i < 56; i++) {
-            for (j = 0; j < 3; j++) {
-                rec[i][j].country = -1;
-                rec[i][j].tag = rec[i][j].month = rec[i][j].yr = rec[i][j].program = rec[i][j].type = 0;
-                rec[i][j].place = 0;
-
-                ExportRecordEntry(file, rec[i][j]);
-            }
+    for (int i = 0; i < 56; i++) {
+        for (int j = 0; j < 3; j++) { // default values
+            rec[i][j].country = -1;
+            rec[i][j].tag = rec[i][j].month = rec[i][j].yr = rec[i][j].program = rec[i][j].type = 0;
+            rec[i][j].place = 0;
         }
     }
 
-    fclose(file);
+    // write defaults out
+    ExportRecordTable();
 }
 
 void Records(char plr)
 {
-    FILE *file;
     char pos = 0, pos2 = 0;
-    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
-
-    for (int i = 0; i < 56; i++) {
-        for (int j = 0; j < 3; j++) {
-            ImportRecordEntry(file, rec[i][j]);
-        }
-    }
-
-    fclose(file);
+    
+    ImportRecordTable();
 
     FadeOut(2, 5, 0, 0);
     PortPal(plr);
@@ -290,24 +275,15 @@ void Move2rec(char *pos, char *pos2, char val)
 
 void ClearRecord(char *pos2)
 {
-    FILE *file;
     int choice = Help("i125");
 
     if (choice == -1) {
         return;
     }
 
-    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
+    ImportRecordTable();
 
-    for (int i = 0; i < 56; i++) {
-        for (int j = 0; j < 3; j++) {
-            ImportRecordEntry(file, rec[i][j]);
-        }
-    }
-
-    fclose(file);
-
-//clear record
+    //clear record
     for (int j = 0; j < 3; j++) {
         NREC[*pos2][j] = 0x00;
         rec[*pos2][j].country = -1;
@@ -326,16 +302,7 @@ void ClearRecord(char *pos2)
     draw_number(12, 66, 2);
     draw_number(12, 90, 3);
 
-    file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
-
-    for (int i = 0; i < 56; i++) {
-        for (int j = 0; j < 3; j++) {
-            ExportRecordEntry(file, rec[i][j]);
-        }
-    }
-
-    fclose(file);
-    return;
+    ExportRecordTable();
 }
 
 void BackTop(char *pos, char *pos2)
@@ -764,27 +731,17 @@ char CheckSucess(int i, int j)
 
 void SafetyRecords(char plr, int temp)
 {
-    int j, k;
-    FILE *fin, *bo;
-    fin = sOpen("RECORDS.DAT", "rb", FT_SAVE);
-
-    for (int i = 0; i < 56; i++) {
-        for (j = 0; j < 3; j++) {
-            ImportRecordEntry(fin, rec[i][j]);
-        }
-    }
-
-    fclose(fin);
-// deal with case highest safety and lowest safety average
+    ImportRecordTable();
+    
+    // deal with case highest safety and lowest safety average
     rec[24][0].type = 3;
     rec[24][1].type = 3;
     rec[24][2].type = 3;
     rec[25][0].type = 3;
     rec[25][1].type = 3;
     rec[25][2].type = 3;
-    k = 24;
-    j = 0;  //starting value
-
+    
+    int j=0, k=24; //starting value
     while (k != -1) {
         switch (rec[k][0].place) {
         case 0:
@@ -842,17 +799,7 @@ void SafetyRecords(char plr, int temp)
         }
     }  //end while
 
-    bo = sOpen("RECORDS.DAT", "wb", FT_SAVE);
-
-    for (int i = 0; i < 56; i++) {
-        for (j = 0; j < 3; j++) {
-            ExportRecordEntry(bo, rec[i][j]);
-        }
-    }
-
-    fclose(bo);
-
-    return;
+    ExportRecordTable();
 }
 
 void UpdateRecords(char Ty)
@@ -860,7 +807,6 @@ void UpdateRecords(char Ty)
     int i, j, k, m, loop, temp, max;
 
     char Rec_Change, hold, craft;
-    FILE *file;
 
     hold = 0; /* XXX check uninitialized */
 
@@ -870,15 +816,7 @@ void UpdateRecords(char Ty)
         }
     }
 
-    file = sOpen("RECORDS.DAT", "rb", FT_SAVE);
-
-    for (i = 0; i < 56; i++) {
-        for (j = 0; j < 3; j++) {
-            ImportRecordEntry(file, rec[i][j]);
-        }
-    }
-
-    fclose(file);
+    ImportRecordTable();
 
     for (i = 0; i < NUM_PLAYERS; i++) {
         if (!AI[i])
@@ -2070,16 +2008,7 @@ void UpdateRecords(char Ty)
     }
 
     //Change and Update Records
-    file = sOpen("RECORDS.DAT", "wb", FT_SAVE);
-
-    for (i = 0; i < 56; i++) {
-        for (j = 0; j < 3; j++) {
-            ExportRecordEntry(file, rec[i][j]);
-        }
-    }
-
-    fclose(file);
-    return;
+    ExportRecordTable();
 }
 
 void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hold)
@@ -2402,37 +2331,33 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
     default:
         break;
     }  // end switch (Rec_Change)
-
-    return;
 }
 
 
 /**
  * Read packed Record_Entry data from a file into an instance.
- *
- * If the entry is not read successfully, reading is stopped.
- * The entry may be partially read, and the file may be checked
- * for errors.
- *
- * \param fin  an open file handle.
- * \param dst  where to store the byte data.
- * \return  1 on success, 0 otherwise.
  */
-size_t ImportRecordEntry(FILE *fin, Record_Entry &dst)
+void ImportRecordTable()
 {
-    bool success = true &&
-                   fread(&dst.country, sizeof(dst.country), 1, fin) &&
-                   fread(&dst.month, sizeof(dst.month), 1, fin) &&
-                   fread(&dst.yr, sizeof(dst.yr), 1, fin) &&
-                   fread(&dst.program, sizeof(dst.program), 1, fin) &&
-                   fread(&dst.tag, sizeof(dst.tag), 1, fin) &&
-                   fread(&dst.type, sizeof(dst.type), 1, fin) &&
-                   fread(&dst.place, sizeof(dst.place), 1, fin) &&
-                   fread(&dst.name[0], sizeof(dst.name), 1, fin) &&
-                   fread(&dst.astro[0], sizeof(dst.astro), 1, fin);
-
-    Swap16bit(dst.tag);
-    return (success ? 1 : 0);
+    FILE* fin = sOpen("RECORDS.DAT", "rb", FT_SAVE);
+    for (int i=0; i<56; ++i)
+    {
+        for (int j=0; j<3; ++j)
+        {
+            auto& dst = rec[i][j];
+            fread(&dst.country, sizeof(dst.country), 1, fin);
+            fread(&dst.month, sizeof(dst.month), 1, fin);
+            fread(&dst.yr, sizeof(dst.yr), 1, fin);
+            fread(&dst.program, sizeof(dst.program), 1, fin);
+            fread(&dst.tag, sizeof(dst.tag), 1, fin);
+            fread(&dst.type, sizeof(dst.type), 1, fin);
+            fread(&dst.place, sizeof(dst.place), 1, fin);
+            fread(&dst.name[0], sizeof(dst.name), 1, fin);
+            fread(&dst.astro[0], sizeof(dst.astro), 1, fin);
+            Swap16bit(dst.tag);
+        }
+    }
+    fclose(fin);
 }
 
 
@@ -2440,26 +2365,34 @@ size_t ImportRecordEntry(FILE *fin, Record_Entry &dst)
  * Write a Record_Entry instance as a packed byte stream to a file.
  *
  * Outputs using little-endian ordering.
- *
- * \param fout  an open file handle.
- * \param src
- * \return  1 on success, 0 otherwise.
+ * TODO: JSON
  */
-size_t ExportRecordEntry(FILE *fout, const Record_Entry &src)
+void ExportRecordTable()
 {
-    uint16_t tempTag = src.tag;
-    Swap16bit(tempTag);
+    FILE* fout = sOpen("RECORDS.DAT", "wb", FT_SAVE);
+    if (fout == nullptr) {
+        /* XXX: very drastic */
+        LOG_CRITICAL("can't create required file RECORDS.DAT");
+        exit(EXIT_FAILURE);
+    }
 
-    bool success = true &&
-                   fwrite(&src.country, sizeof(src.country), 1, fout) &&
-                   fwrite(&src.month, sizeof(src.month), 1, fout) &&
-                   fwrite(&src.yr, sizeof(src.yr), 1, fout) &&
-                   fwrite(&src.program, sizeof(src.program), 1, fout) &&
-                   fwrite(&tempTag, sizeof(tempTag), 1, fout) &&
-                   fwrite(&src.type, sizeof(src.type), 1, fout) &&
-                   fwrite(&src.place, sizeof(src.place), 1, fout) &&
-                   fwrite(&src.name[0], sizeof(src.name), 1, fout) &&
-                   fwrite(&src.astro[0], sizeof(src.astro), 1, fout);
-
-    return (success ? 1 : 0);
+    for (int i=0; i<56; ++i)
+    {
+        for (int j=0; j<3; ++j)
+        {
+            auto& src = re[i][j];
+            uint16_t tempTag = src.tag;
+            Swap16bit(tempTag);
+            fwrite(&src.country, sizeof(src.country), 1, fout);
+            fwrite(&src.month, sizeof(src.month), 1, fout);
+            fwrite(&src.yr, sizeof(src.yr), 1, fout);
+            fwrite(&src.program, sizeof(src.program), 1, fout);
+            fwrite(&tempTag, sizeof(tempTag), 1, fout);
+            fwrite(&src.type, sizeof(src.type), 1, fout);
+            fwrite(&src.place, sizeof(src.place), 1, fout);
+            fwrite(&src.name[0], sizeof(src.name), 1, fout);
+            fwrite(&src.astro[0], sizeof(src.astro), 1, fout);
+        }
+    }
+    fclose(fout);
 }
