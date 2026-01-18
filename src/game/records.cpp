@@ -2380,7 +2380,7 @@ void ExportRecordTable()
     {
         for (int j=0; j<3; ++j)
         {
-            auto& src = re[i][j];
+            auto& src = rec[i][j];
             uint16_t tempTag = src.tag;
             Swap16bit(tempTag);
             fwrite(&src.country, sizeof(src.country), 1, fout);
