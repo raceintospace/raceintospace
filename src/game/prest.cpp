@@ -41,7 +41,7 @@ char tYr, tMo;
 
 void Set_Dock(char plr, char total);
 void Set_LM(char plr, char total);
-int Check_Photo();
+bool Check_Photo();
 int Check_Dock(int limit);
 int PrestMap(int val);
 char PosGoal(char* PVal);
@@ -196,23 +196,23 @@ void Set_LM(char plr, char total)
     }
 }
 
-int Check_Photo()
+bool Check_Photo()
 {
     for (int i = 0; i < STEPnum; i++) {
         if (Mev[i].loc == 20 && Mev[i].StepInfo == 1) {
-            return 1;
+            return true;
         }
 
         if (Mev[i].loc == 22 && i == 4 && Mev[i].StepInfo == 1) {
-            return 1;
+            return true;
         }
 
-        if (Mev[i].loc == 20 && Mev[i].StepInfo > 1) {
-            return 2;
+        if (Mev[i].loc == 20 && Mev[i].StepInfo > 1) { // photo recon fail
+            return false;
         }
     }
 
-    return 0;
+    return false;
 }
 
 int Check_Lab()
@@ -533,8 +533,11 @@ char Set_Goal(char plr, char which, char control)
  */
 int MaxFail()
 {
+    LOG_DEBUG("MaxFail() was called");
     int maxval = 0;
     for (int i = 0, count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
+        LOG_TRACE("Mev dump: i=%i, count=%i, trace=%i, StepInfo=%i"
+                           , i,    count, Mev[i].trace, Mev[i].StepInfo);
         if (Mev[i].StepInfo == 0) {
             Mev[i].StepInfo = 1003;
         }
@@ -543,6 +546,7 @@ int MaxFail()
 
         if (count == 53) return 1;
     }
+    LOG_DEBUG("MaxFail() returned %i", maxval);
     return maxval;
 }
 
@@ -1001,12 +1005,13 @@ int U_AllotPrest(char plr, char mis)
 
     // SETUP INFO
     int mcode = Data->P[plr].Mission[mis].MissionCode;
+    LOG_DEBUG("Mission code = %i", mcode);
 
-    int lun = Check_Photo();
+    bool lun = Check_Photo();
 
     // Don't improve photo recon twice in mail games
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
-        lun = 0;
+        lun = false;
     }
 
     int other = MaxFail();
@@ -1053,6 +1058,7 @@ int U_AllotPrest(char plr, char mis)
             if (mcode == Mission_MarsFlyby ||
                 mcode == Mission_JupiterFlyby ||
                 mcode == Mission_SaturnFlyby) {
+                LOG_DEBUG("Long duration mission, no prestige yet");
                 return 0;
             }
 
@@ -1065,14 +1071,16 @@ int U_AllotPrest(char plr, char mis)
 
         auto& Photo_Recon = Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
         if (mcode == Mission_LunarFlyby || mcode == Mission_Lunar_Probe) {
-            if (lun == 1) {  // UNMANNED PHOTO RECON
+            if (lun) {  // UNMANNED PHOTO RECON
+                LOG_DEBUG("Successful photo recon, +5 safety");
                 Photo_Recon.Safety += 5;
                 Photo_Recon.Safety = std::min((int)Photo_Recon.Safety, 99);
             } // if
         } // if
 
         if (mcode == Mission_Lunar_Probe && MaxFail() == 1) {  // extra 10 for landing on Moon
-            if (lun == 1) {  // UNMANNED PHOTO RECON
+            if (lun) {  // UNMANNED PHOTO RECON
+                LOG_DEBUG("Safe Moon landing, +10 photo recon safety");
                 Photo_Recon.Safety += 10;
                 Photo_Recon.Safety = std::min((int)Photo_Recon.Safety, 99);
             } // if
@@ -1082,6 +1090,7 @@ int U_AllotPrest(char plr, char mis)
 
     // Don't increase docking safety twice in mail games
     if (!((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1))) {
+        LOG_DEBUG("Docking safety check");
         auto& Docking_Mod = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
         if (Check_Dock(2) == 2) {
             Docking_Mod.Safety += 10;
@@ -1110,6 +1119,7 @@ int Update_Prestige_Data(char plr, char mis, int code)
                                     : AllotPrest(plr, mis);     // Manned Prestige
 
     total -= pNeg[plr][mis] * 3;
+    LOG_DEBUG("total change in prestige written to history: %i", total);
     Data->P[plr].History[Data->P[plr].PastMissionCount].Prestige = total;
 
     if ((MAIL == 1 && plr == 0) || (MAIL == 2 && plr == 1)) {
@@ -1119,6 +1129,7 @@ int Update_Prestige_Data(char plr, char mis, int code)
 
     // Player prestige is delayed in mail games
     if (MAIL != 0 && MAIL != 3) {
+        LOG_DEBUG("Mail game prestige delay");
         Data->P[plr].Prestige += total;
     }
 
