@@ -62,11 +62,11 @@ char Dock_Skip; /**< used for mission branching */
 extern char tMen;
 extern bool fullscreenMissionPlayback;
 
-void GetFailStat(XFails* Now, char* FName, int rnum);
+XFails GetFailStat(char* FName, int rnum);
 int MCGraph(char plr, int lc, int safety, int crew_safety, int val, bool prob);
 void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad = false);
 void F_IRCrew(char mode, Astros* Guy);
-int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step);
+int FailEval(char plr, const XFails& fail, MisEval& step);
 Equipment* FindLunarModule();
 std::vector<Astros*> LMCrew(int pad, Equipment* module);
 void InvalidatePrestige(MisEval& step);
@@ -95,42 +95,36 @@ void BranchIfAlive(int* FNote, MisEval& step);
  * TODO: Add error handling in case FName does not match a code.
  * At minimum, log an error. Preferably, throw an exception.
  *
- * \param Now    destination for the fail state read from the file
- *               (Not NULL).
  * \param FName  the code giving the step failure type.
  * \param rnum   between -1 and -5 for unmanned steps, 0 and 10000 for
  *               manned.
  */
-void GetFailStat(XFails* Now, char* FName, int rnum)
+Xfails GetFailStat(char* FName, int rnum)
 {
-    LOG_DEBUG("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
-    assert(Now != nullptr);
+    LOG_DEBUG("->GetFailStat(FName %s, rnum %d)", FName, rnum);
 
-    for (int i = 0; i < Assets->fails.size(); i++) {
-        if (xstrncasecmp(Assets->fails.at(i).MissionStep.c_str(), FName, 4) != 0) continue;
+    for (XFails& fail : Assets->fails) {
+        if (xstrncasecmp(fail.MissionStep.c_str(), FName, 4) != 0) continue;
         if (rnum < 0) { // unmanned
-            if (Assets->fails.at(i).percentage == rnum) {
-                LOG_DEBUG("unmanned trigger at idx %i", i);
-                *Now = Assets->fails.at(i);
-                break;
+            if (fail.percentage == rnum) {
+                LOG_DEBUG("Unmanned fail determined");
+                return fail;
             }
         } else { // manned
-            if (Assets->fails.at(i).percentage > rnum) {
-                LOG_DEBUG("manned trigger at idx %i", i);
-                *Now = Assets->fails.at(i);
-                break;
+            if (fail.percentage > rnum) {
+                LOG_DEBUG("Manned fail determined");
+                return fail;
             }
         }
     }
-
-    LOG_DEBUG("<-GetFailStat()");
+    LOG_WARNING("GetFailStat didn't find the fail");
+    return {};
 }
 
 
 void MisCheck(char plr, char mpad)
 {
     LOG_DEBUG("MisCheck() was called");
-    XFails Now{};
 
     STEPnum = STEP;
     FINAL = STEP = MFlag = 0;  // Clear Everything
@@ -334,6 +328,7 @@ void MisCheck(char plr, char mpad)
             }
 
         if (PROBLEM && save) {  // Failure Saved
+            LOG_DEBUG("Safety card saves the day);
             GetEquipment(Mev[STEP])->SaveCard--;    // Deduct SCard
             PROBLEM = 0;  // Fix problem
         }
@@ -356,9 +351,6 @@ void MisCheck(char plr, char mpad)
                 Mev[STEP].rnum = (-1) * (brandom(5) + 1);
             }
 
-            memset(&Now, 0x00, sizeof Now);
-
-
             //***************TC Special little HMOON EVA FAILURE FIX
 
             bool tomflag = false;
@@ -375,6 +367,7 @@ void MisCheck(char plr, char mpad)
                 }
 
                 tomflag = true;
+                LOG_DEBUG("tomflag is set");
             }
 
 
@@ -395,13 +388,8 @@ void MisCheck(char plr, char mpad)
 
 // *********** TOM's FAIL HMOON KLUDGE
 
-            // if HMOON FAILURE
-            if (tomflag) {
-                GetFailStat(&Now, Mev[STEP].FName, 7595);
-            } else {
-                LOG_DEBUG("Failing !tomflag - calling GetFailStat");
-                GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
-            }
+            int tom_kludge_rnum = (tomflag)? 7595 : Mev[STEP].rnum;
+            Xfails Now = GetFailStat(Mev[STEP].FName, tom_kludge_rnum);
 
             //:::::: STEP FAILURE :::::::::
             //:::::::::::::::::::::::::::::
@@ -411,7 +399,7 @@ void MisCheck(char plr, char mpad)
             name.push_back(0x30 + (Now.fail / 10));
             name.push_back(0x30 + Now.fail % 10);
             PlaySequence(plr, STEP, name.c_str(), 1);
-            FailEval(plr, Now.code, Now.text, Now.val, Now.xtra, Mev[STEP]);
+            FailEval(plr, Now, Mev[STEP], noDock);
         } else {   // Step Success
 
             if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
@@ -783,12 +771,13 @@ void F_IRCrew(char mode, Astros* Guy)
     }
 }
 
-int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
+int FailEval(char plr, const XFails& fail, MisEval& step, bool noDock)
 {
     const int pad = step.pad;
     const int loc = step.loc;
-    if (strncmp(GetEquipment(step)->Name, "DO", 2) != 0 || loc != 0x02) {
-        GetEquipment(step)->MisFail[pad]++;  // set failure for all but docking power on
+    auto Eq = GetEquipment(step);
+    if (strncmp(Eq->Name, "DO", 2) != 0 || loc != 0x02) {
+        Eq->MisFail[pad]++;  // set failure for all but docking power on
     }
 
     step.StepInfo = 1003;
@@ -797,12 +786,12 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     if (Unm == 0) {
         step.trace = 0x7f;
 
-        if (type == 12) {
+        if (fail.code == 12) {
             DestroyPad(plr, MPad + pad, 20, 0);
         }
 
         if (!AI[plr]) {
-            FailureMode(plr, FNote, text);
+            FailureMode(plr, FNote, fail.text);
         }
 
         // Special Case for PhotoRecon with Lunar Probe
@@ -815,7 +804,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
 
     step.StepInfo = 0;
 
-    switch (type) {
+    switch (fail.code) {
 
     case 0:   // Failure has no effect on Mission
     case 20:   // don't want to test for crew experience
@@ -842,7 +831,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     case 3:  // Kill ALL Crew and END Mission
         FNote = 8;
 
-        if (InSpace > 0 && MANNED[pad] == 0 && strncmp(GetEquipment(step)->ID, "M2", 2) == 0) {
+        if (InSpace > 0 && MANNED[pad] == 0 && strncmp(Eq->ID, "M2", 2) == 0) {
             // for Kicker-C problems
             F_KillCrew(F_ALL, plr, nullptr, step, true);
         } else {
@@ -872,10 +861,10 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
 
     case 6:   // Reduce Safety by VAL% temp
         FNote = 0;
-        GetEquipment(step)->MisSaf -= abs(val);
+        Eq->MisSaf -= abs(fail.val);
 
-        if (GetEquipment(step)->MisSaf <= 0) {
-            GetEquipment(step)->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
         step.StepInfo = 900 + loc;
@@ -916,15 +905,15 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
 
     case 12:  // Subtract VAL% from Safety, repair Pad for XTRA (launch only)
         FNote = 5;
-        GetEquipment(step)->MisSaf -= abs(val);
+        Eq->MisSaf -= abs(fail.val);
 
-        if (GetEquipment(step)->MisSaf <= 0) {
-            GetEquipment(step)->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
         step.StepInfo = 1600 + loc;
 
-        DestroyPad(plr, MPad + pad, abs(xtra), 0);  // Destroy Pad
+        DestroyPad(plr, MPad + pad, abs(fail.xtra), 0);  // Destroy Pad
 
         step.trace = 0x7F;  // signal end of mission
         break;
@@ -932,17 +921,17 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     case 13:  // Kill Crew, repair Pad for VAL
         FNote = 8;
         F_KillCrew(F_ALL, plr, nullptr, step);
-        DestroyPad(plr, pad + MPad, (val == 0) ? abs(xtra) : abs(val), 0);  // Destroy Pad
+        DestroyPad(plr, pad + MPad, (fail.val == 0) ? abs(fail.xtra) : abs(fail.val), 0);  // Destroy Pad
         step.StepInfo = 4500 + loc;
         step.trace = 0x7F;
         break;
 
     case 15:  // Give option to Scrub  1%->20% negative of part
         FNote = 3;
-        GetEquipment(step)->MisSaf -= brandom(20) + 1;
+        Eq->MisSaf -= brandom(20) + 1;
 
-        if (GetEquipment(step)->MisSaf <= 0) {
-            GetEquipment(step)->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
         step.StepInfo = 15;
@@ -953,8 +942,8 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         step.StepInfo = 1100 + loc;
 
         for (int k = 0; k < MANNED[pad]; k++) {
-            if (brandom(100) < val) {
-                if (brandom(100) >= xtra) {
+            if (brandom(100) < fail.val) {
+                if (brandom(100) >= fail.xtra) {
                     F_IRCrew(F_INJ, MA[pad][k].A);
                     step.StepInfo =
                         MAX(2100 + loc, step.StepInfo);
@@ -978,7 +967,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         step.StepInfo = 1300 + loc;
 
         for (int k = 0; k < MANNED[pad]; k++) {
-            if (brandom(100) < xtra) {
+            if (brandom(100) < fail.xtra) {
                 F_IRCrew(F_RET, MA[pad][k].A);
                 step.StepInfo = 2300 + loc;
                 FNote = 9;
@@ -986,7 +975,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         }
 
         for (int k = 0; k < MANNED[pad]; k++) {
-            if (brandom(100) >= val) {
+            if (brandom(100) >= fail.val) {
                 F_KillCrew(F_ONE, plr, MA[pad][k].A, step);
                 step.StepInfo = 3300 + loc;
                 FNote = 8;
@@ -997,7 +986,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         break;
 
     case 18:    // set MFlag from VAL, branch if already set
-        if ((MFlag & val) > 0) {
+        if ((MFlag & fail.val) > 0) {
             FNote = 1;
             step.StepInfo = 1800 + loc;
 
@@ -1017,7 +1006,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         } else {
             FNote = 0;
             step.StepInfo = 18;
-            MFlag = MFlag | val;
+            MFlag = MFlag | fail.val;
 
             if (step.fgoto == -1) {
                 step.trace = 0x7F;
@@ -1035,13 +1024,13 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
             InSpace--;
         }
 
-        if ((MFlag & val) > 0) {
+        if ((MFlag & fail.val) > 0) {
             step.StepInfo = 1200 + loc;
             FNote = 2;
         } else {
             FNote = 2;
             step.StepInfo = 19;
-            MFlag = MFlag | val;
+            MFlag = MFlag | fail.val;
         }
 
         step.trace = STEP;          // recheck step
@@ -1054,7 +1043,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     case 22:  // one man % survival :: EVA
         step.StepInfo = 19;
 
-        if (brandom(100) > val) {
+        if (brandom(100) > fail.val) {
             FNote = 8;
             Astros* crw = (EVA[pad] != -1) ? MA[pad][EVA[pad]].A
                                            : MA[other(pad)][EVA[other(pad)]].A;
@@ -1080,7 +1069,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         step.StepInfo = 23 + loc;
 
         for (int k = 0; k < MANNED[pad]; k++) {
-            if (brandom(100) < val) {
+            if (brandom(100) < fail.val) {
                 FNote = 9;
                 F_IRCrew(F_RET, MA[pad][k].A);
                 step.StepInfo = 2400 + loc;
@@ -1103,10 +1092,10 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
 
     case 24:   // Reduce Safety by VAL% perm :: hardware recovered
         FNote = 5;
-        GetEquipment(step)->Safety -= brandom(10);
+        Eq->Safety -= brandom(10);
 
-        if (GetEquipment(step)->Safety <= 0) {
-            GetEquipment(step)->Safety = 1;
+        if (Eq->Safety <= 0) {
+            Eq->Safety = 1;
         }
 
         step.StepInfo = 800 + loc;
@@ -1123,10 +1112,10 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     case 26:  // Subtract VAL% from Equip perm and branch to alternate
         FNote = 1;
         step.StepInfo = 1926;
-        GetEquipment(step)->Safety -= brandom(10);
+        Eq->Safety -= brandom(10);
 
-        if (GetEquipment(step)->Safety <= 0) {
-            GetEquipment(step)->Safety = 1;
+        if (Eq->Safety <= 0) {
+            Eq->Safety = 1;
         }
 
         if (step.fgoto == -1) {
@@ -1272,7 +1261,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
     key = 0;
 
     if (FNote == 3) {
-        if (AI[plr] || FailureMode(plr, FNote, text) == 0) {
+        if (AI[plr] || FailureMode(plr, FNote, fail.text) == 0) {
             step.trace = STEP + 1;
         } else {
             step.StepInfo += 1000;
@@ -1296,7 +1285,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         }
     }
 
-    if (strncmp(GetEquipment(step)->ID, "M3", 2) == 0) {
+    if (strncmp(Eq->ID, "M3", 2) == 0) {
         death = 0;    //what???
     }
 
@@ -1309,7 +1298,7 @@ int FailEval(char plr, int type, char* text, int val, int xtra, MisEval& step)
         }
     }
 
-    if (type == 9 || type == 19) {
+    if (fail.code == 9 || fail.code == 19) {
         step.trace = STEP;
         step.rnum = brandom(10000) + 1;  // new failure roll
         step.dice = brandom(100) + 1;  // new die roll
