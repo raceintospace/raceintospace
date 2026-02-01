@@ -389,7 +389,7 @@ void MisCheck(char plr, char mpad)
 // *********** TOM's FAIL HMOON KLUDGE
 
             int tom_kludge_rnum = (tomflag)? 7595 : Mev[STEP].rnum;
-            Xfails Now = GetFailStat(Mev[STEP].FName, tom_kludge_rnum);
+            XFails Now = GetFailStat(Mev[STEP].FName, tom_kludge_rnum);
 
             //:::::: STEP FAILURE :::::::::
             //:::::::::::::::::::::::::::::
