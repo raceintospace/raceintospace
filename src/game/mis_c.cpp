@@ -894,7 +894,7 @@ void GuyDisp(int xa, int ya, Astros* Guy)
  * \param text   description of the problem encountered.
  * \return  0 to continue the mission, 1 to scrub.
  */
-char FailureMode(char plr, int prelim, char *text)
+char FailureMode(char plr, int prelim, const char* text)
 {
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
     FadeOut(2, 10, 0, 0);
