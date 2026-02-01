@@ -204,13 +204,13 @@ int game_main_impl(int argc, char *argv[])
 
     xMODE = 0;
 
-    Data = new struct Players{};
+    Data = new Players{};
 
     buffer = (char *)xmalloc(BUFFER_SIZE);
     LOG_DEBUG("main buffer %p (%d)", buffer, BUFFER_SIZE);
     memset(buffer, 0x00, BUFFER_SIZE);
 
-    Assets = new struct AssetData{};
+    Assets = new AssetData{};
 
     DESERIALIZE_JSON_FILE(&Assets->sSeq, locate_file("seq.json", FT_DATA));
     DESERIALIZE_JSON_FILE(&Assets->fSeq, locate_file("fseq.json", FT_DATA));
