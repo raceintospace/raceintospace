@@ -99,7 +99,7 @@ void BranchIfAlive(int* FNote, MisEval& step);
  * \param rnum   between -1 and -5 for unmanned steps, 0 and 10000 for
  *               manned.
  */
-Xfails GetFailStat(char* FName, int rnum)
+XFails GetFailStat(char* FName, int rnum)
 {
     LOG_DEBUG("->GetFailStat(FName %s, rnum %d)", FName, rnum);
 
@@ -328,7 +328,7 @@ void MisCheck(char plr, char mpad)
             }
 
         if (PROBLEM && save) {  // Failure Saved
-            LOG_DEBUG("Safety card saves the day);
+            LOG_DEBUG("Safety card saves the day");
             GetEquipment(Mev[STEP])->SaveCard--;    // Deduct SCard
             PROBLEM = 0;  // Fix problem
         }
