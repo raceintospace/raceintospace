@@ -66,7 +66,7 @@ XFails GetFailStat(char* FName, int rnum);
 int MCGraph(char plr, int lc, int safety, int crew_safety, int val, bool prob);
 void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad = false);
 void F_IRCrew(char mode, Astros* Guy);
-int FailEval(char plr, const XFails& fail, MisEval& step);
+int FailEval(char plr, const XFails& fail, MisEval& step, bool noDock);
 Equipment* FindLunarModule();
 std::vector<Astros*> LMCrew(int pad, Equipment* module);
 void InvalidatePrestige(MisEval& step);
