@@ -78,7 +78,7 @@
 #endif
 
 char Name[20];
-struct Players *Data;
+Players* Data;
 int x;
 int y;
 int mousebuttons;
@@ -91,7 +91,7 @@ unsigned char AL_CALL;
 char plr[NUM_PLAYERS];
 std::string helpText;
 std::string keyHelpText;
-char *buffer;
+char* buffer;
 char pNeg[NUM_PLAYERS][MAX_MISSIONS];
 int32_t xMODE;
 char Option = -1;
@@ -102,9 +102,9 @@ char dayOnMoon = 20;
 char AI[2] = {0, 0};
 // Used to hold mid-turn save game related information
 INTERIMDATA interimData;
-struct AssetData *Assets;
+AssetData* Assets;
 
-const char *S_Name[] = {
+const char* S_Name[] = {
     "LAUNCH",
     "ORBITAL INS. BURN",
     "HARDWARE POWER-ON",
@@ -157,17 +157,14 @@ void VerifyCrews(char plr);
 
 int game_main_impl(int argc, char *argv[])
 {
-    const char *see_readme = "look for further instructions in the README file";
-
-    char ex, choice;
+    const char* see_readme = "look for further instructions in the README file";
 
     // initialize the filesystem
     Filesystem::init(argv[0]);
 
     if (!display::image::libpng_versions_match()) {
         std::stringstream message;
-        message
-                << "This build was compiled against libpng " << display::image::libpng_headers_version()
+        message << "This build was compiled against libpng " << display::image::libpng_headers_version()
                 << ", but is running with libpng " << display::image::libpng_runtime_version() << ".";
         crash("libpng mismatch", message.str());
     }
@@ -180,20 +177,20 @@ int game_main_impl(int argc, char *argv[])
     
     std::ifstream file(locate_file("usa_port.json", FT_DATA));
     if (!file) {
-        CRITICAL1("can't find game data files");
-        NOTICE1("set environment variable BARIS_DATA or edit config file");
-        NOTICE2("%s", see_readme);
+        LOG_CRITICAL("can't find game data files");
+        LOG_NOTICE("set environment variable BARIS_DATA or edit config file");
+        LOG_NOTICE("%s", see_readme);
         
         crash("Data missing", "Unable to locate game data files.");
     } else {
-        INFO1("game data files found");
+        LOG_INFO("game data files found");
     }
     
     if (create_save_dir() != 0) {
-        CRITICAL3("can't create save directory `%s': %s",
+        LOG_CRITICAL("can't create save directory `%s': %s",
                   options.dir_savegame, strerror(errno));
-        NOTICE1("set environment variable BARIS_SAVE to a writable directory");
-        NOTICE2("%s", see_readme);
+        LOG_NOTICE("set environment variable BARIS_SAVE to a writable directory");
+        LOG_NOTICE("%s", see_readme);
 
         crash("Save directory", "Couldn't create save directory");
     }
@@ -207,14 +204,13 @@ int game_main_impl(int argc, char *argv[])
 
     xMODE = 0;
 
-    Data = new struct Players;
-    memset(Data, 0x00, sizeof(struct Players));
+    Data = new struct Players{};
 
     buffer = (char *)xmalloc(BUFFER_SIZE);
-    DEBUG3("main buffer %p (%d)", buffer, BUFFER_SIZE);
+    LOG_DEBUG("main buffer %p (%d)", buffer, BUFFER_SIZE);
     memset(buffer, 0x00, BUFFER_SIZE);
 
-    Assets = new struct AssetData;
+    Assets = new struct AssetData{};
 
     DESERIALIZE_JSON_FILE(&Assets->sSeq, locate_file("seq.json", FT_DATA));
     DESERIALIZE_JSON_FILE(&Assets->fSeq, locate_file("fseq.json", FT_DATA));
@@ -229,8 +225,7 @@ int game_main_impl(int argc, char *argv[])
         Introd();
     }
 
-    ex = 0;
-
+    char ex = 0;
     while (ex == 0) {
         bool launchGame = false;
         MakeRecords();
@@ -239,7 +234,7 @@ int game_main_impl(int argc, char *argv[])
 
         if (Data->Checksum != (sizeof(struct Players))) {
             /* XXX: too drastic */
-            CRITICAL1("wrong version of data file");
+            LOG_CRITICAL("wrong version of data file");
             exit(EXIT_FAILURE);
         }
 
@@ -251,7 +246,7 @@ int game_main_impl(int argc, char *argv[])
 
         music_start(M_LIFTOFF);
 
-        choice = MainMenuChoice();
+        int choice = MainMenuChoice();
 
         switch (choice) {
         case MAIN_NEW_GAME:  // New Game
@@ -374,13 +369,9 @@ int game_main(int argc, char *argv[])
  */
 int CheckIfMissionGo(char plr, char launchIdx)
 {
-    char idx, mcode;
-    struct MissionType *pMission;
-    Equipment *E = NULL;  /* Pointer to Equipment we're looking at */
-
     // Grab the Mission Code from the current Launch Index
-    mcode = Data->P[plr].Mission[launchIdx].MissionCode;
-    pMission = &Data->P[plr].Mission[launchIdx];
+    int mcode = Data->P[plr].Mission[launchIdx].MissionCode;
+    MissionType* pMission = &Data->P[plr].Mission[launchIdx];
 
     // Always a go for Unmanned missions
     if (! IsManned(mcode)) {
@@ -391,7 +382,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
     // TODO: The EVA suit safety should be checked, but since EVA
     // suits are _always_ included in missions that will require
     // reworking the EVA suit inclusion.
-    for (idx = Mission_Capsule; idx <= Mission_PrimaryBooster; idx++) {
+    for (int idx = Mission_Capsule; idx <= Mission_PrimaryBooster; idx++) {
         // Mission components in struct MissionType.Hard are indexed
         // starting at 0 per EquipProbeIndex, EquipMannedIndex, etc.
         // EXCEPT for rockets (more below) so a missing component is
@@ -399,7 +390,8 @@ int CheckIfMissionGo(char plr, char launchIdx)
         if (pMission->Hard[idx] < 0) {
             continue;
         }
-
+        
+        Equipment* E;
         switch (idx) {
         case Mission_Capsule:
         case Mission_LM:
@@ -435,14 +427,14 @@ int CheckIfMissionGo(char plr, char launchIdx)
         break;
 
         case Mission_Probe_DM:
-            E = NULL;  // TODO: Might want to consider checking DM.
+            E = nullptr;  // TODO: Might want to consider checking DM.
             break;
 
         default:  // Catch anything weird
             assert(false);
-            WARNING2("Unexpected MissionHardwareType=%d found in "
+            LOG_WARNING("Unexpected MissionHardwareType=%d found in "
                      "CheckIfMissionGo()", idx);
-            E = NULL;
+            E = nullptr;
             break;
         }
 
@@ -458,7 +450,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
     return 1;
 }
 
-void InitData(void)
+void InitData()
 {
     InitializeEvents();                  // RESET EVENT CARDS
     Data->Count = 0;               // SET EVENT COUNTER TO ZERO
@@ -468,22 +460,19 @@ void InitData(void)
             Data->P[j].PresRev[i] = 8;
         }
     }
-
-    return;
 }
 
-void MainLoop(void)
+void MainLoop()
 {
-    int t1, t2, t3, prest, sign, turn, old_mission_count;
-    bool newTurn;
-    std::array<char, 2> IDLE = {0, 0};
-    struct PrestType oldPrestige[MAXIMUM_PRESTIGE_NUM];
-
     if (LOAD != 1) {
         Data->P[0].Cash = Data->P[0].Budget; // INCREMENT BY BUDGET
         Data->P[1].Cash = Data->P[1].Budget;
     }
 
+    int turn;
+    bool newTurn;
+    std::array<char, 2> IDLE = {0, 0};
+    PrestType oldPrestige[MAXIMUM_PRESTIGE_NUM]{};
 restart:                              // ON A LOAD PROG JUMPS TO HERE
 
     // Standard saves are created using a stored game state from before
@@ -557,11 +546,11 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
         for (int i = 0; i < NUM_PLAYERS; i++) {
 
-            if (!i && (MAIL_PLAYER == 1)) { // Soviet turn coming up
+            if (i == 0 && (MAIL_PLAYER == 1)) { // Soviet turn coming up
                 continue;
             }
 
-            if (i && (MAIL_PLAYER == 0)) { // U.S. turn coming up
+            if (i == 1 && (MAIL_PLAYER == 0)) { // U.S. turn coming up
                 continue;
             }
 
@@ -569,16 +558,24 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             // computer vs. human
 
-            if ((IDLE[0] > 12 || IDLE[1] > 12) || ((AI[i] && plr[other(i)] < NUM_PLAYERS && ((Data->Def.Lev1 != 0 && other(i) == 0) || (Data->Def.Lev2 != 0 && other(i) == 1))))) {
-                if (IDLE[0] > 12 || IDLE[1] > 12 || Data->P[abs(i - 1)].PresRev[0] >= 16) {
+            if ((IDLE[0] > 12 || IDLE[1] > 12) 
+                || (AI[i] 
+                    && plr[other(i)] < NUM_PLAYERS 
+                    && ((Data->Def.Lev1 != 0 && other(i) == 0) 
+                        || (Data->Def.Lev2 != 0 && other(i) == 1)
+                       )
+                   )
+                ) {
+                if (IDLE[0] > 12 || IDLE[1] > 12 
+                    || Data->P[other(i)].PresRev[0] >= 16) {
                     helpText = "i136";
-                    Data->P[abs(i - 1)].PresRev[0] = 0x7F;
+                    Data->P[other(i)].PresRev[0] = 0x7F;
                     helpText = "i000";
 
                     if (IDLE[0] > 12 || IDLE[1] > 12) {
                         SpecialEnd();
                     } else {
-                        Review(abs(i - 1));
+                        Review(other(i));
                         FakeWin(plr[i] - 2);
                     }
 
@@ -594,11 +591,9 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
                 // Show prestige resulution from the previous turn
                 if (MAIL == 1 || MAIL == 2) {
-
                     if (Data->Prestige[Prestige_MannedLunarLanding].Place != -1) {
                         UpdateRecords(1);
                         NewEnd(Data->Prestige[Prestige_MannedLunarLanding].Place, 0);
-
                         FadeOut(2, 10, 0, 0);
                         return;
                     }
@@ -623,17 +618,20 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
                 //soften sound
 //       SetVoiceVolume(80);            // 80% seems good MWR
+                LOG_DEBUG("Calling Master()");
                 Master(plr[i]);                // PLAY TURN
+                LOG_DEBUG("Master() returned");
                 //restore sound
 //       SetVoiceVolume(115);
                 display::graphics.screen()->clear();
 
                 if (LOAD == 1) {
+                    LOG_DEBUG("Savefile loaded, restarting turn loop");
                     goto restart;    // TEST FOR LOAD
                 }
 
                 IDLE.at(plr[i])++;
-            } else {
+            } else { // AI[i]
                 AI_Begin(plr[i] - 2); // Turns off Mouse for AI
                 GetMouse();
                 VerifySafety(plr[i] - 2);
@@ -646,7 +644,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             // Only increase the global event counter if this is really a new
             // turn and not one already played in a save game
             if (Data->Count == 2 * (2 * (Data->Year - 57) + Data->Season)
-                + (MAIL_INVERTED == 1 ? 1 ^ i : i)) {
+                + (MAIL_INVERTED == 1 ? other(i) : i)) {
                 Data->Count++;
             }
 
@@ -660,6 +658,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         // prevent unwarranted milestone/duration penalties, but the
         // actual prestige resolution is done after the opponent's
         // turn.
+        int old_mission_count;
         if (MAIL == 0 || MAIL == 3) {
             memcpy(oldPrestige, Data->Prestige, MAXIMUM_PRESTIGE_NUM * sizeof(struct PrestType));
             // Save the current mission counter
@@ -683,7 +682,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             if (Data->P[Order[i].plr].Mission[Order[i].loc].part == 1) continue; // skip 2nd launch of joint missions
             if (Data->P[Order[i].plr].Mission[Order[i].loc].Hard[4] == 0) continue; // ??
             
-            prest = Launch(Order[i].plr, Order[i].loc);
+            int prest = Launch(Order[i].plr, Order[i].loc);
 
             // check for prestige firsts
             if (AI[Order[i].plr] == 1 
@@ -711,7 +710,8 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
             // after all is done, attempt mission review
             if (AI[Order[i].plr]) continue; // no review for Ai
-            if ((MAIL == 1 && Order[i].plr == 0) || (MAIL == 2 && Order[i].plr == 1)) continue; // no review for mail player
+            if ((MAIL == 1 && Order[i].plr == 0) 
+                || (MAIL == 2 && Order[i].plr == 1)) continue; // no review for mail player
             if (prest == -20) continue; // no review if mission was scrubbed (-20 means scrubbed)
             
             MisRev(Order[i].plr, prest, Data->P[Order[i].plr].PastMissionCount - 1);
@@ -749,13 +749,13 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         // move prestige history down one;
-        for (t3 = 0; t3 < 2; t3++) { // t3 is the index to the real and random hists
-            for (t1 = 0; t1 < NUM_PLAYERS; t1++) { // t1 is the player index
-                for (t2 = 4; t2 > 0; t2--) { // t2 is the time index
+        for (int t3 = 0; t3 < 2; t3++) { // t3 is the index to the real and random hists
+            for (int t1 = 0; t1 < NUM_PLAYERS; t1++) { // t1 is the player index
+                for (int t2 = 4; t2 > 0; t2--) { // t2 is the time index
                     Data->P[t1].PrestHist[t2][t3] = Data->P[t1].PrestHist[t2 - 1][t3];
                 }
 
-                sign = (Data->P[t1].Prestige < 0) ? -1 : 1;
+                int sign = (Data->P[t1].Prestige < 0) ? -1 : 1;
 
                 Data->P[t1].PrestHist[0][t3] = (t3 == 0) ? Data->P[t1].Prestige
                                                : (Data->P[t1].Prestige * 4) / 5 + sign * brandom(Data->P[t1].Prestige * 2 / 5) + 1;
@@ -802,7 +802,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     FadeOut(2, 10, 0, 0);
 
     Museum(0);
-
     Museum(1);
 }
 
@@ -1003,7 +1002,6 @@ int MisRandom()
     const double mu = 57;
     const double sigma = sqrt(1000);
     const int brandom_threshold = 66;
-    double u1, u2, r_gaussian;
 
     int r_uniform = brandom(100) + 1;
 
@@ -1011,10 +1009,11 @@ int MisRandom()
         return r_uniform;
     }
 
+    double r_gaussian;
     do {
         // Generate two uniformly distributed random numbers.
-        u1 = rand() / (double) RAND_MAX;
-        u2 = rand() / (double) RAND_MAX;
+        double u1 = rand() / (double) RAND_MAX;
+        double u2 = rand() / (double) RAND_MAX;
 
         // Box-Muller transform to obtain a Gaussian random variable
         // with mean mu and standard deviation sigma. A value of 0.5
