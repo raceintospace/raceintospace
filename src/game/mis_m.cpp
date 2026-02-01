@@ -56,22 +56,21 @@ char durx;
 char MPad;
 char Unm;
 char SCRUBS;
-char noDock;
 char InSpace;
 char Dock_Skip; /**< used for mission branching */
 
 extern char tMen;
 extern bool fullscreenMissionPlayback;
 
-void GetFailStat(XFails* Now, char* FName, int rnum);
-int MCGraph(char plr, int lc, int safety, int val, bool prob);
-void F_KillCrew(char mode, Astros* Victim);
+XFails GetFailStat(char* FName, int rnum);
+int MCGraph(char plr, int lc, int safety, int crew_safety, int val, bool prob);
+void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad = false);
 void F_IRCrew(char mode, Astros* Guy);
-int FailEval(char plr, int type, char* text, int val, int xtra);
+int FailEval(char plr, const XFails& fail, MisEval& step, bool noDock);
 Equipment* FindLunarModule();
 std::vector<Astros*> LMCrew(int pad, Equipment* module);
-void InvalidatePrestige();
-void BranchIfAlive(int* FNote);
+void InvalidatePrestige(MisEval& step);
+void BranchIfAlive(int* FNote, MisEval& step);
 
 /**
  * Load the failure state information explaining a mission step
@@ -96,47 +95,44 @@ void BranchIfAlive(int* FNote);
  * TODO: Add error handling in case FName does not match a code.
  * At minimum, log an error. Preferably, throw an exception.
  *
- * \param Now    destination for the fail state read from the file
- *               (Not NULL).
  * \param FName  the code giving the step failure type.
  * \param rnum   between -1 and -5 for unmanned steps, 0 and 10000 for
  *               manned.
  */
-void GetFailStat(XFails* Now, char* FName, int rnum)
+XFails GetFailStat(char* FName, int rnum)
 {
-    LOG_DEBUG("->GetFailStat(XFails *Now, FName %s, rnum %d)", FName, rnum);
-    assert(Now != nullptr);
+    LOG_DEBUG("->GetFailStat(FName %s, rnum %d)", FName, rnum);
 
-    for (int i = 0; i < Assets->fails.size(); i++) {
-        if (xstrncasecmp(Assets->fails.at(i).MissionStep.c_str(), FName, 4) != 0) continue;
+    for (XFails& fail : Assets->fails) {
+        if (xstrncasecmp(fail.MissionStep.c_str(), FName, 4) != 0) continue;
         if (rnum < 0) { // unmanned
-            if (Assets->fails.at(i).percentage == rnum) {
-                *Now = Assets->fails.at(i);
-                break;
+            if (fail.percentage == rnum) {
+                LOG_DEBUG("Unmanned fail determined");
+                return fail;
             }
         } else { // manned
-            if (Assets->fails.at(i).percentage > rnum) {
-                *Now = Assets->fails.at(i);
-                break;
+            if (fail.percentage > rnum) {
+                LOG_DEBUG("Manned fail determined");
+                return fail;
             }
         }
     }
-
-    LOG_DEBUG("<-GetFailStat()");
+    LOG_WARNING("GetFailStat didn't find the fail");
+    return {};
 }
 
 
 void MisCheck(char plr, char mpad)
 {
     LOG_DEBUG("MisCheck() was called");
-    XFails Now{};
 
     STEPnum = STEP;
     FINAL = STEP = MFlag = 0;  // Clear Everything
     Unm = MANNED[0] + MANNED[1];
     Dock_Skip = 0;  // used for mission branching
     MPad = mpad;
-    SCRUBS = noDock = InSpace = 0;
+    bool noDock = false;
+    SCRUBS = InSpace = 0;
 
     const int code = Data->P[plr].Mission[mpad].MissionCode;
     const mStr plan = GetMissionPlan(code);
@@ -189,7 +185,7 @@ void MisCheck(char plr, char mpad)
 
     do {
         if (STEP > 30 || STEP < 0) {
-            delay(20);
+            delay(20); // ??
         }
 
         if (Dock_Skip == 1) {
@@ -269,7 +265,7 @@ void MisCheck(char plr, char mpad)
 
             std::string name(Mev[STEP].Name);
 
-            if (name.length()) {
+            if (name.length() != 0) {
                 name[0] = '#';  // Launch Code
             } else {
                 LOG_WARNING("Video sequence not listed for step %d", STEP);
@@ -286,7 +282,7 @@ void MisCheck(char plr, char mpad)
 
         // Draw Mission Step Name
         if (!AI[plr] && !fullscreenMissionPlayback) {
-            if (!(fEarly && STEP != 0)) {
+            if (!fEarly || STEP == 0) {
                 if (plr == 0) {
                     x = 5;
                     y = 112;
@@ -327,11 +323,12 @@ void MisCheck(char plr, char mpad)
                PROBLEM ? " problem" : (options.want_cheats ? " cheating" : ""));
 
         if (!AI[plr] && !fullscreenMissionPlayback)
-            if (!(fEarly && STEP != 0)) {
-                lc = MCGraph(plr, lc, MAX(0, safety), MAX(0, val), PROBLEM);    // Graph Chart
+            if (!fEarly || STEP == 0) {
+                lc = MCGraph(plr, lc, MAX(0, safety), Mev[STEP].asf, MAX(0, val), PROBLEM);    // Graph Chart
             }
 
         if (PROBLEM && save) {  // Failure Saved
+            LOG_DEBUG("Safety card saves the day");
             GetEquipment(Mev[STEP])->SaveCard--;    // Deduct SCard
             PROBLEM = 0;  // Fix problem
         }
@@ -350,12 +347,9 @@ void MisCheck(char plr, char mpad)
             }
 
             // Unmanned also
-            if (MANNED[Mev[STEP].pad] == 0 && noDock == 0) {
+            if (MANNED[Mev[STEP].pad] == 0 && !noDock) {
                 Mev[STEP].rnum = (-1) * (brandom(5) + 1);
             }
-
-            memset(&Now, 0x00, sizeof Now);
-
 
             //***************TC Special little HMOON EVA FAILURE FIX
 
@@ -373,6 +367,7 @@ void MisCheck(char plr, char mpad)
                 }
 
                 tomflag = true;
+                LOG_DEBUG("tomflag is set");
             }
 
 
@@ -393,13 +388,8 @@ void MisCheck(char plr, char mpad)
 
 // *********** TOM's FAIL HMOON KLUDGE
 
-            // if HMOON FAILURE
-            if (tomflag) {
-                GetFailStat(&Now, Mev[STEP].FName, 7595);
-            } else {
-                LOG_DEBUG("Failing !tomflag - calling GetFailStat");
-                GetFailStat(&Now, Mev[STEP].FName, Mev[STEP].rnum);     // all others
-            }
+            int tom_kludge_rnum = (tomflag)? 7595 : Mev[STEP].rnum;
+            XFails Now = GetFailStat(Mev[STEP].FName, tom_kludge_rnum);
 
             //:::::: STEP FAILURE :::::::::
             //:::::::::::::::::::::::::::::
@@ -409,7 +399,7 @@ void MisCheck(char plr, char mpad)
             name.push_back(0x30 + (Now.fail / 10));
             name.push_back(0x30 + Now.fail % 10);
             PlaySequence(plr, STEP, name.c_str(), 1);
-            FailEval(plr, Now.code, Now.text, Now.val, Now.xtra);
+            FailEval(plr, Now, Mev[STEP], noDock);
         } else {   // Step Success
 
             if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
@@ -450,14 +440,14 @@ void MisCheck(char plr, char mpad)
 
             // TODO: Move to function...
             bool femaleEVA =
-                ((MA[0][0].A != nullptr && MA[0][0].A->Sex && EVA[0] == 0)
+                (   (MA[0][0].A != nullptr && MA[0][0].A->Sex && EVA[0] == 0)
                  || (MA[0][1].A != nullptr && MA[0][1].A->Sex && EVA[0] == 1)
                  || (MA[0][2].A != nullptr && MA[0][2].A->Sex && EVA[0] == 2)
                  || (MA[0][3].A != nullptr && MA[0][3].A->Sex && EVA[0] == 3)
                  || (MA[1][0].A != nullptr && MA[1][0].A->Sex && EVA[1] == 0)
                  || (MA[1][1].A != nullptr && MA[1][1].A->Sex && EVA[1] == 1)
                  || (MA[1][2].A != nullptr && MA[1][2].A->Sex && EVA[1] == 2)
-                 || (MA[1][3].A != nullptr && MA[1][3].A->Sex && EVA[1] == 3));
+                 || (MA[1][3].A != nullptr && MA[1][3].A->Sex && EVA[1] == 3) );
 
             // Play Animations
             PlaySequence(plr, STEP, Mev[STEP].Name, femaleEVA ? 2 : 0);
@@ -491,7 +481,7 @@ void MisCheck(char plr, char mpad)
         }
 
         if (STEP > 30 || STEP < 0) {
-            delay(20);
+            delay(20); // ??
         }
 
         if (Mev[STEP].sgoto == Mev[STEP].fgoto && Mev[STEP].trace != 0x7f) {
@@ -499,7 +489,7 @@ void MisCheck(char plr, char mpad)
         }
 
         if (Mev[STEP].loc == 8 && Mev[STEP].StepInfo == 1) {
-            noDock = 1;
+            noDock = true;
         }
 
         if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
@@ -517,14 +507,9 @@ void MisCheck(char plr, char mpad)
 
         if (Mev[STEP].trace == 0x7f && STEP == 3) {
             switch (code) {
-            case 19:
-            case 22:
-            case 23:
-            case 30:
-            case 32:
-            case 35:
-            case 36:
-            case 37:
+            case 19: case 22: case 23:
+            case 30: case 32: case 35:
+            case 36: case 37:
                 InSpace = 1;
                 Mev[STEP].trace = Mev[STEP].dgoto;
 
@@ -594,18 +579,21 @@ void MisCheck(char plr, char mpad)
  */
 int StepSafety(const MisEval& step)
 {
-    int safety = GetEquipment(step)->MisSaf;
+    auto Eq = GetEquipment(step);
+    int safety = Eq->MisSaf;
+    int loc = step.loc;
+    int pad = step.pad;
 
-    if ((step.Name[0] == 'A') && MH[step.pad][Mission_SecondaryBooster]) {
+    if ((step.Name[0] == 'A') && MH[pad][Mission_SecondaryBooster]) {
         // Account for Boosters - if used - on launch steps
-        safety = RocketBoosterSafety( safety, MH[step.pad][Mission_SecondaryBooster]->Safety);
-    } else if ((step.loc == 28 || step.loc == 27) && InSpace == 2) {
+        safety = RocketBoosterSafety(safety, MH[pad][Mission_SecondaryBooster]->Safety);
+    } else if ((loc == 28 || loc == 27) && InSpace == 2) {
         // For joint duration tests, use the average capsule safety
         safety = (MH[0][Mission_Capsule]->MisSaf +
-                  MH[1][Mission_Capsule]->MisSaf) / 2;
-    } else if (strncmp(GetEquipment(step)->Name, "DO", 2) == 0) {
-        if (step.loc == 1 || step.loc == 2) {
-            safety = GetEquipment(step)->MSF;
+                  MH[1][Mission_Capsule]->MisSaf  ) / 2;
+    } else if (strncmp(Eq->Name, "DO", 2) == 0) {
+        if (loc == 1 || loc == 2) {
+            safety = Eq->MSF;
         }
     }
 
@@ -627,7 +615,7 @@ int StepSafety(const MisEval& step)
  *
  * \return new value of lc
  */
-int MCGraph(char plr, int lc, int safety, int val, bool prob)
+int MCGraph(char plr, int lc, int safety, int crew_safety, int val, bool prob)
 {
     if (AI[plr])
     {
@@ -638,7 +626,7 @@ int MCGraph(char plr, int lc, int safety, int val, bool prob)
 
     // draw safety
     fill_rectangle(lc - 2, 195, lc, 195 - safety * 22 / 100, 11); // total safety (component+crew) in yellow
-    fill_rectangle(lc - 2, 195, lc, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6); // draw over with only component safety on top
+    fill_rectangle(lc - 2, 195, lc, 195 - (safety - crew_safety) * 22 / 100, 6); // draw over with only component safety on top
     
     for (int i = 195; i > 195 - val * 22 / 100; i--) { // slowly draw the roll result
         fill_rectangle(lc - 2, 195, lc, i, 21);
@@ -663,10 +651,10 @@ int MCGraph(char plr, int lc, int safety, int val, bool prob)
                 }
 
                 fill_rectangle(189, 195, 191, 195 - safety * 22 / 100, 11);
-                fill_rectangle(189, 195, 191, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+                fill_rectangle(189, 195, 191, 195 - (safety - crew_safety) * 22 / 100, 6);
                 fill_rectangle(189, 195, 191, 195 - val * 22 / 100, 21);
 
-                if (Mev[STEP].asf > 0) {
+                if (crew_safety > 0) {
                     fill_rectangle(189, 195 - safety * 22 / 100, 191, 195 - safety * 22 / 100, 11);
                 }
 
@@ -681,10 +669,10 @@ int MCGraph(char plr, int lc, int safety, int val, bool prob)
                 }
 
                 fill_rectangle(74, 195, 76, 195 - safety * 22 / 100, 11);
-                fill_rectangle(74, 195, 76, 195 - (safety - Mev[STEP].asf) * 22 / 100, 6);
+                fill_rectangle(74, 195, 76, 195 - (safety - crew_safety) * 22 / 100, 6);
                 fill_rectangle(74, 195, 76, 195 - val * 22 / 100, 21);
 
-                if (Mev[STEP].asf > 0) {
+                if (crew_safety > 0) {
                     fill_rectangle(74, 195 - safety * 22 / 100, 76, 195 - safety * 22 / 100, 11);
                 }
 
@@ -711,30 +699,28 @@ int MCGraph(char plr, int lc, int safety, int val, bool prob)
  * \param mode  F_ONE or F_ALL
  * \param Victim  if F_ONE is set, the crew member to kill.
  */
-void F_KillCrew(char mode, Astros* Victim)
+void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad)
 {
     LOG_TRACE("F_KillCrew() was called");
-    int k = 0, p = 0;
+    
+    int pad = step.pad; if (invert_pad) pad = other(pad);
 
-    // Reset Hardware
-    if (Victim >= &Data->P[1].Pool[0]) { // ??
-        p = 1;
-    }
-
-    if ((Data->Def.Lev1 == 0 && p == 0) || (Data->Def.Lev2 == 0 && p == 1)) {
+    // Reset Hardware safety
+    auto Eq = GetEquipment(step);
+    if ((Data->Def.Lev1 == 0 && plr == 0) || (Data->Def.Lev2 == 0 && plr == 1)) { // easy difficulty
         // VerifySafety will check whether Safety falls below Base
-        GetEquipment(Mev[STEP])->Safety /= 2;
+        Eq->Safety /= 2;
     } else {
-        GetEquipment(Mev[STEP])->Safety = GetEquipment(Mev[STEP])->Base;
+        Eq->Safety = Eq->Base;
     }
 
-    if (GetEquipment(Mev[STEP])->MaxRD) {
-        GetEquipment(Mev[STEP])->MaxRD = GetEquipment(Mev[STEP])->MSF;
+    if (Eq->MaxRD != 0) { // ??
+        Eq->MaxRD = Eq->MSF;
     }
 
     if (mode == F_ALL) {
-        for (k = 0; k < MANNED[Mev[STEP].pad]; k++) {  // should work in news
-            Astros* Guy = MA[Mev[STEP].pad][k].A;
+        for (int k = 0; k < MANNED[pad]; k++) {  // should work in news
+            Astros* Guy = MA[pad][k].A;
             if (Guy == nullptr) continue;
         
             Guy->Status = AST_ST_DEAD;
@@ -745,9 +731,7 @@ void F_KillCrew(char mode, Astros* Victim)
             death = 1;
         }
     } else if (mode == F_ONE) {  // should work in news
-        if (Victim == nullptr) {
-            return;
-        }
+        if (Victim == nullptr) return;
 
         Victim->Status = AST_ST_DEAD;
         Victim->Special = 3;
@@ -787,47 +771,50 @@ void F_IRCrew(char mode, Astros* Guy)
     }
 }
 
-int FailEval(char plr, int type, char* text, int val, int xtra)
+int FailEval(char plr, const XFails& fail, MisEval& step, bool noDock)
 {
-    if (strncmp(GetEquipment(Mev[STEP])->Name, "DO", 2) != 0 || Mev[STEP].loc != 0x02) {
-        GetEquipment(Mev[STEP])->MisFail[Mev[STEP].pad]++;  // set failure for all but docking power on
+    const int pad = step.pad;
+    const int loc = step.loc;
+    auto Eq = GetEquipment(step);
+    if (strncmp(Eq->Name, "DO", 2) != 0 || loc != 0x02) {
+        Eq->MisFail[pad]++;  // set failure for all but docking power on
     }
 
-    Mev[STEP].StepInfo = 1003;
+    step.StepInfo = 1003;
     int FNote = 5;  // Mission Failure
 
     if (Unm == 0) {
-        Mev[STEP].trace = 0x7f;
+        step.trace = 0x7f;
 
-        if (type == 12) {
-            DestroyPad(plr, MPad + Mev[STEP].pad, 20, 0);
+        if (fail.code == 12) {
+            DestroyPad(plr, MPad + pad, 20, 0);
         }
 
         if (!AI[plr]) {
-            FailureMode(plr, FNote, text);
+            FailureMode(plr, FNote, fail.text);
         }
 
         // Special Case for PhotoRecon with Lunar Probe
-        if (Mev[STEP].loc == 20 && mcc == Mission_Lunar_Probe) {
-            GetEquipment(Mev[STEP - 1])->MisFail[Mev[STEP].pad]++;
+        if (loc == 20 && mcc == Mission_Lunar_Probe) {
+            GetEquipment(Mev[STEP - 1])->MisFail[pad]++;
         }
 
         return 0;
     }
 
-    Mev[STEP].StepInfo = 0;
+    step.StepInfo = 0;
 
-    switch (type) {
+    switch (fail.code) {
 
     case 0:   // Failure has no effect on Mission
     case 20:   // don't want to test for crew experience
         FNote = 0;
-        Mev[STEP].StepInfo = 50;
+        step.StepInfo = 50;
 
-        if (Mev[STEP].fgoto == -1) {
-            Mev[STEP].trace = 0x7F;
+        if (step.fgoto == -1) {
+            step.trace = 0x7F;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
@@ -835,8 +822,8 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
 
     case 2:  // End of Mission Failure
         FNote = 5;
-        Mev[STEP].StepInfo = 1000 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7f;
+        step.StepInfo = 1000 + loc;
+        step.trace = 0x7f;
         break;
 
 
@@ -844,61 +831,60 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
     case 3:  // Kill ALL Crew and END Mission
         FNote = 8;
 
-        if (InSpace > 0 && MANNED[Mev[STEP].pad] == 0 && strncmp(GetEquipment(Mev[STEP])->ID, "M2", 2) == 0) {
-            Mev[STEP].pad = other(Mev[STEP].pad);  // for Kicker-C problems
-            F_KillCrew(F_ALL, 0);
-            Mev[STEP].pad = other(Mev[STEP].pad);
+        if (InSpace > 0 && MANNED[pad] == 0 && strncmp(Eq->ID, "M2", 2) == 0) {
+            // for Kicker-C problems
+            F_KillCrew(F_ALL, plr, nullptr, step, true);
         } else {
-            F_KillCrew(F_ALL, 0);
+            F_KillCrew(F_ALL, plr, nullptr, step);
         }
 
-        Mev[STEP].StepInfo = 4600 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7F;
+        step.StepInfo = 4600 + loc;
+        step.trace = 0x7F;
         break;
 
     case 4:  // Branch to Alternate Step
         FNote = 1;
-        Mev[STEP].StepInfo = 1900 + Mev[STEP].loc;
+        step.StepInfo = 1900 + loc;
 
-        if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
-            InvalidatePrestige();
-            Mev[STEP].trace = 0x7F;  // End of Mission Signal
+        if (step.fgoto == -1) {  // End of Mission Flag
+            InvalidatePrestige(step);
+            step.trace = 0x7F;  // End of Mission Signal
             FNote = 5;
-        } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-            InvalidatePrestige();
-            Mev[STEP].trace = Mev[STEP].fgoto;
+        } else if (step.fgoto != -2) {  // Alternate Step is other num
+            InvalidatePrestige(step);
+            step.trace = step.fgoto;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
 
     case 6:   // Reduce Safety by VAL% temp
         FNote = 0;
-        GetEquipment(Mev[STEP])->MisSaf -= abs(val);
+        Eq->MisSaf -= abs(fail.val);
 
-        if (GetEquipment(Mev[STEP])->MisSaf <= 0) {
-            GetEquipment(Mev[STEP])->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
-        Mev[STEP].StepInfo = 900 + Mev[STEP].loc;
+        step.StepInfo = 900 + loc;
 
-        if (Mev[STEP].fgoto == -1 && Unm == 0) {
-            Mev[STEP].trace = 0x7F;
+        if (step.fgoto == -1 && Unm == 0) {
+            step.trace = 0x7F;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
 
     case 7:   // Reduce Safety by VAL% perm
         FNote = 0;
-        Mev[STEP].StepInfo = 1700 + Mev[STEP].loc;
+        step.StepInfo = 1700 + loc;
 
-        if (Mev[STEP].fgoto == -1) {
-            Mev[STEP].trace = 0x7F;
+        if (step.fgoto == -1) {
+            step.trace = 0x7F;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
@@ -906,123 +892,126 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
     case 9:  // Recheck Step
 
         // We have not reached space yet
-        if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
+        if (loc == 0 && MANNED[pad] > 0) {
             InSpace--;
         }
 
         FNote = 2;
-        Mev[STEP].StepInfo = 9;
-//         Mev[STEP].rnum=random(10000)+1;  // new failure roll
-//         Mev[STEP].dice=random(100)+1;    // new die roll
-        Mev[STEP].trace = STEP;          // redo step
+        step.StepInfo = 9;
+//         step.rnum=random(10000)+1;  // new failure roll
+//         step.dice=random(100)+1;    // new die roll
+        step.trace = STEP;          // redo step
         break;
 
     case 12:  // Subtract VAL% from Safety, repair Pad for XTRA (launch only)
         FNote = 5;
-        GetEquipment(Mev[STEP])->MisSaf -= abs(val);
+        Eq->MisSaf -= abs(fail.val);
 
-        if (GetEquipment(Mev[STEP])->MisSaf <= 0) {
-            GetEquipment(Mev[STEP])->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
-        Mev[STEP].StepInfo = 1600 + Mev[STEP].loc;
+        step.StepInfo = 1600 + loc;
 
-        DestroyPad(plr, MPad + Mev[STEP].pad, abs(xtra), 0);  // Destroy Pad
+        DestroyPad(plr, MPad + pad, abs(fail.xtra), 0);  // Destroy Pad
 
-        Mev[STEP].trace = 0x7F;  // signal end of mission
+        step.trace = 0x7F;  // signal end of mission
         break;
 
     case 13:  // Kill Crew, repair Pad for VAL
         FNote = 8;
-        F_KillCrew(F_ALL, 0);
-        DestroyPad(plr, Mev[STEP].pad + MPad, (val == 0) ? abs(xtra) : abs(val), 0);  // Destroy Pad
-        Mev[STEP].StepInfo = 4500 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7F;
+        F_KillCrew(F_ALL, plr, nullptr, step);
+        DestroyPad(plr, pad + MPad, (fail.val == 0) ? abs(fail.xtra) : abs(fail.val), 0);  // Destroy Pad
+        step.StepInfo = 4500 + loc;
+        step.trace = 0x7F;
         break;
 
     case 15:  // Give option to Scrub  1%->20% negative of part
         FNote = 3;
-        GetEquipment(Mev[STEP])->MisSaf -= brandom(20) + 1;
+        Eq->MisSaf -= brandom(20) + 1;
 
-        if (GetEquipment(Mev[STEP])->MisSaf <= 0) {
-            GetEquipment(Mev[STEP])->MisSaf = 1;
+        if (Eq->MisSaf <= 0) {
+            Eq->MisSaf = 1;
         }
 
-        Mev[STEP].StepInfo = 15;
+        step.StepInfo = 15;
         break;
 
     case 16:  // VAL% injury,  XTRA% death
         FNote = 0;
-        Mev[STEP].StepInfo = 1100 + Mev[STEP].loc;
+        step.StepInfo = 1100 + loc;
 
-        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) < val) {
-                if (brandom(100) >= xtra) {
-                    F_IRCrew(F_INJ, MA[Mev[STEP].pad][k].A);
-                    Mev[STEP].StepInfo =
-                        MAX(2100 + Mev[STEP].loc, Mev[STEP].StepInfo);
+        for (int k = 0; k < MANNED[pad]; k++) {
+            if (brandom(100) < fail.val) {
+                if (brandom(100) >= fail.xtra) {
+                    F_IRCrew(F_INJ, MA[pad][k].A);
+                    step.StepInfo =
+                        MAX(2100 + loc, step.StepInfo);
 
                     if (FNote == 0) {
                         FNote = 9;
                     }
                 } else {
-                    F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
-                    Mev[STEP].StepInfo = 3100 + Mev[STEP].loc;
+                    F_KillCrew(F_ONE, plr, MA[pad][k].A, step);
+                    step.StepInfo = 3100 + loc;
                     FNote = 8;
                 }
             }
         }
 
-        BranchIfAlive(&FNote);
+        BranchIfAlive(&FNote, step);
         break;
 
     case 17:  // VAL% survival and XTRA% of injury and retirement
         FNote = 0;
-        Mev[STEP].StepInfo = 1300 + Mev[STEP].loc;
+        step.StepInfo = 1300 + loc;
 
-        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) < xtra) {
-                F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
-                Mev[STEP].StepInfo = 2300 + Mev[STEP].loc;
+        for (int k = 0; k < MANNED[pad]; k++) {
+            if (brandom(100) < fail.xtra) {
+                F_IRCrew(F_RET, MA[pad][k].A);
+                step.StepInfo = 2300 + loc;
                 FNote = 9;
             }
         }
 
-        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) >= val) {
-                F_KillCrew(F_ONE, MA[Mev[STEP].pad][k].A);
-                Mev[STEP].StepInfo = 3300 + Mev[STEP].loc;
+        for (int k = 0; k < MANNED[pad]; k++) {
+            if (brandom(100) >= fail.val) {
+                F_KillCrew(F_ONE, plr, MA[pad][k].A, step);
+                step.StepInfo = 3300 + loc;
                 FNote = 8;
             }
         }
 
-        BranchIfAlive(&FNote);
+        BranchIfAlive(&FNote, step);
         break;
 
     case 18:    // set MFlag from VAL, branch if already set
-        if ((MFlag & val) > 0) {
+        if ((MFlag & fail.val) > 0) {
             FNote = 1;
-            Mev[STEP].StepInfo = 1800 + Mev[STEP].loc;
+            step.StepInfo = 1800 + loc;
 
-            if (Mev[STEP].fgoto == -1) {
-                InvalidatePrestige();
-                Mev[STEP].trace = 0x7F;
+            if (step.fgoto == -2) {
+                step.trace = STEP + 1;
+                break;
+            }
+            
+            InvalidatePrestige(step);
+            
+            if (step.fgoto == -1) {
+                step.trace = 0x7F;
                 FNote = 0;
-            } else if (Mev[STEP].fgoto != -2) {
-                InvalidatePrestige();
-                Mev[STEP].trace = Mev[STEP].fgoto;
             } else {
-                Mev[STEP].trace = STEP + 1;
+                step.trace = step.fgoto;
             }
         } else {
             FNote = 0;
-            Mev[STEP].StepInfo = 18;
-            MFlag = MFlag | val;
+            step.StepInfo = 18;
+            MFlag = MFlag | fail.val;
 
-            if (Mev[STEP].fgoto == -1) {
-                Mev[STEP].trace = 0x7F;
+            if (step.fgoto == -1) {
+                step.trace = 0x7F;
             } else {
-                Mev[STEP].trace = STEP + 1;
+                step.trace = STEP + 1;
             }
         }
 
@@ -1031,148 +1020,148 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
     case 19:   // Set mission flag and recheck step
 
         // We have not reached space yet
-        if (Mev[STEP].loc == 0 && MANNED[Mev[STEP].pad] > 0) {
+        if (loc == 0 && MANNED[pad] > 0) {
             InSpace--;
         }
 
-        if ((MFlag & val) > 0) {
-            Mev[STEP].StepInfo = 1200 + Mev[STEP].loc;
+        if ((MFlag & fail.val) > 0) {
+            step.StepInfo = 1200 + loc;
             FNote = 2;
         } else {
             FNote = 2;
-            Mev[STEP].StepInfo = 19;
-            MFlag = MFlag | val;
+            step.StepInfo = 19;
+            MFlag = MFlag | fail.val;
         }
 
-        Mev[STEP].trace = STEP;          // recheck step
+        step.trace = STEP;          // recheck step
 
-//         Mev[STEP].rnum=random(10000)+1;  // new failure roll
-//         Mev[STEP].dice=random(100)+1;    // new die roll
+//         step.rnum=random(10000)+1;  // new failure roll
+//         step.dice=random(100)+1;    // new die roll
         break;
 
 
     case 22:  // one man % survival :: EVA
-        Mev[STEP].StepInfo = 19;
+        step.StepInfo = 19;
 
-        if (brandom(100) > val) {
+        if (brandom(100) > fail.val) {
             FNote = 8;
-            Astros* crw = (EVA[Mev[STEP].pad] != -1) ? MA[Mev[STEP].pad][EVA[Mev[STEP].pad]].A
-                                             : MA[other(Mev[STEP].pad)][EVA[other(Mev[STEP].pad)]].A;
-            F_KillCrew(F_ONE, crw);
+            Astros* crw = (EVA[pad] != -1) ? MA[pad][EVA[pad]].A
+                                           : MA[other(pad)][EVA[other(pad)]].A;
+            F_KillCrew(F_ONE, plr, crw, step);
 
-            if (Mev[STEP].Name[6] == 0x36) {
+            if (step.Name[6] == 0x36) {
                 death = 1;    // one-man lem
             }
 
-            Mev[STEP].StepInfo = 3200 + Mev[STEP].loc;
+            step.StepInfo = 3200 + loc;
         }
 
-        if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-            Mev[STEP].trace = Mev[STEP].fgoto;
+        if (step.fgoto != -2) {  // Alternate Step is other num
+            step.trace = step.fgoto;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
 
     case 23:  // VAL% retirement, hardware cut %XTRA perm
         FNote = 0;
-        Mev[STEP].StepInfo = 23 + Mev[STEP].loc;
+        step.StepInfo = 23 + loc;
 
-        for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-            if (brandom(100) < val) {
+        for (int k = 0; k < MANNED[pad]; k++) {
+            if (brandom(100) < fail.val) {
                 FNote = 9;
-                F_IRCrew(F_RET, MA[Mev[STEP].pad][k].A);
-                Mev[STEP].StepInfo = 2400 + Mev[STEP].loc;
+                F_IRCrew(F_RET, MA[pad][k].A);
+                step.StepInfo = 2400 + loc;
             }
         }
 
         // Used to reduce safety
 
-        if (Mev[STEP].fgoto == -1) {
-            InvalidatePrestige();
-            Mev[STEP].trace = 0x7F;
-        } else if (Mev[STEP].fgoto != -2) {
-            InvalidatePrestige();
-            Mev[STEP].trace = Mev[STEP].fgoto;
+        if (step.fgoto == -1) {
+            InvalidatePrestige(step);
+            step.trace = 0x7F;
+        } else if (step.fgoto != -2) {
+            InvalidatePrestige(step);
+            step.trace = step.fgoto;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
 
     case 24:   // Reduce Safety by VAL% perm :: hardware recovered
         FNote = 5;
-        GetEquipment(Mev[STEP])->Safety -= brandom(10);
+        Eq->Safety -= brandom(10);
 
-        if (GetEquipment(Mev[STEP])->Safety <= 0) {
-            GetEquipment(Mev[STEP])->Safety = 1;
+        if (Eq->Safety <= 0) {
+            Eq->Safety = 1;
         }
 
-        Mev[STEP].StepInfo = 800 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7F;
+        step.StepInfo = 800 + loc;
+        step.trace = 0x7F;
 
         break;
 
     case 25:    // Mission Failure recover Minishuttle
         FNote = 5;
-        Mev[STEP].StepInfo = 700;
-        Mev[STEP].trace = 0x7F;  // End of Mission
+        step.StepInfo = 700;
+        step.trace = 0x7F;  // End of Mission
         break;
 
     case 26:  // Subtract VAL% from Equip perm and branch to alternate
         FNote = 1;
-        Mev[STEP].StepInfo = 1926;
-        GetEquipment(Mev[STEP])->Safety -= brandom(10);
+        step.StepInfo = 1926;
+        Eq->Safety -= brandom(10);
 
-        if (GetEquipment(Mev[STEP])->Safety <= 0) {
-            GetEquipment(Mev[STEP])->Safety = 1;
+        if (Eq->Safety <= 0) {
+            Eq->Safety = 1;
         }
 
-        if (Mev[STEP].fgoto == -1) {
-            InvalidatePrestige();
-            Mev[STEP].trace = 0x7F;
+        if (step.fgoto == -1) {
+            InvalidatePrestige(step);
+            step.trace = 0x7F;
             FNote = 7;
-        } else if (Mev[STEP].fgoto != -2) {
-            InvalidatePrestige();
-            Mev[STEP].trace = Mev[STEP].fgoto;
+        } else if (step.fgoto != -2) {
+            InvalidatePrestige(step);
+            step.trace = step.fgoto;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;
 
 
     case 30:  // Duration Failure
-        Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 1; //Original code would also return 1
+        Data->P[plr].Mission[MPad + pad].Duration = 1; //Original code would also return 1
         durx = -1;  // end durations
         FNote = 7;
-        Mev[STEP].StepInfo = 1950;
-        Mev[STEP].trace = STEP + 1;
+        step.StepInfo = 1950;
+        step.trace = STEP + 1;
 
         break;
 
     case 31:  // kill LM crew and branch VAL steps
         {
-        Mev[STEP].trace = Mev[STEP].dgoto;
-        Mev[STEP].StepInfo = 3100 + STEP;
+        step.trace = step.dgoto;
+        step.StepInfo = 3100 + STEP;
 
         // Code 31 errors can also occur during direct ascent missions
         // or Soyuz L.L. missions. Kill 'em all in this case.
-        int temp = Data->P[plr].Mission[Mev[STEP].pad].MissionCode;
+        int temp = Data->P[plr].Mission[pad].MissionCode;
 
         if (temp == Mission_DirectAscent_LL || temp == Mission_Soyuz_LL) {
-            F_KillCrew(F_ALL, 0);
+            F_KillCrew(F_ALL, plr, nullptr, step);
         } else  {
             // This error can occur on Photo Recon tests, so the LM must
             // be identified first.
 
             std::vector<Astros *> crew =
-                LMCrew(Mev[STEP].pad, FindLunarModule());
+                LMCrew(pad, FindLunarModule());
 
             for (std::vector<Astros *>::iterator it = crew.begin();
                  it != crew.end(); it++) {
-                F_KillCrew(F_ONE, *it);
+                F_KillCrew(F_ONE, plr, *it, step);
             }
         }
 
@@ -1183,30 +1172,28 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
     case 33:  // Kill Crew on All Capsules (happens only on dockings)
         FNote = 8;
 
-        if (MANNED[Mev[STEP].pad] > 0) {
-            F_KillCrew(F_ALL, 0);
+        if (MANNED[pad] > 0) {
+            F_KillCrew(F_ALL, plr, nullptr, step);
         }
 
-        if (MANNED[other(Mev[STEP].pad)] > 0)  {
-            Mev[STEP].pad = other(Mev[STEP].pad);  // switch pad for a sec
-            F_KillCrew(F_ALL, 0);
-            Mev[STEP].pad = other(Mev[STEP].pad);  // restore current pad
+        if (MANNED[other(pad)] > 0)  {
+            F_KillCrew(F_ALL, plr, nullptr, step, true);
         }
 
-        Mev[STEP].StepInfo = 4600 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7F;
+        step.StepInfo = 4600 + loc;
+        step.trace = 0x7F;
         break;
 
     case 40:  // minor docking failure
         {
         FNote = 1;
-        Mev[STEP].StepInfo = 1951;
+        step.StepInfo = 1951;
 
         /* Scrub the mission if docking is required for any subsequent step */
 
         bool ctr = false;
         for (int k = 0; k < 60; k++) {
-            switch (Mev[k].loc) {
+            switch (loc) {
             case 9: // trans-lunar injection
             case 26: // LEM thrust test
             case 28: // joint duration
@@ -1215,59 +1202,53 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
         }
 
         if (ctr) {
-            if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
-                InvalidatePrestige();
-                Mev[STEP].trace = 0x7F;  // End of Mission Signal
+            if (step.fgoto == -1) {  // End of Mission Flag
+                InvalidatePrestige(step);
+                step.trace = 0x7F;  // End of Mission Signal
                 FNote = 5;
-            } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-                InvalidatePrestige();
-                Mev[STEP].trace = Mev[STEP].fgoto;
+            } else if (step.fgoto != -2) {  // Alternate Step is other num
+                InvalidatePrestige(step);
+                step.trace = step.fgoto;
             } else {
-                Mev[STEP].trace = STEP + 1;
+                step.trace = STEP + 1;
             }
         }  else {
             FNote = 7;
-            InvalidatePrestige();
+            InvalidatePrestige(step);
 
-            if (Mev[STEP].fgoto == -1) {
-                Mev[STEP].trace = 0x7F;
+            if (step.fgoto == -1) {
+                step.trace = 0x7F;
             } else {
-                Mev[STEP].trace = STEP + 1;
+                step.trace = STEP + 1;
             }
         }
 
         break;
         }
 
-    case 1:
-    case 8:
-    case 10:
-    case 11:
-    case 14:
-    case 21:
-    case 27:
-    case 28:
-    case 29:
+    case 1:  case 8:  case 10:
+    case 11: case 14: case 21:
+    case 27: case 28: case 29:
     default:
         FNote = 0;
-        Mev[STEP].StepInfo = 50;
+        step.StepInfo = 50;
 
-        if (Mev[STEP].fgoto == -1) {
-            Mev[STEP].trace = 0x7F;
+        if (step.fgoto == -1) {
+            step.trace = 0x7F;
         } else {
-            Mev[STEP].trace = STEP + 1;
+            step.trace = STEP + 1;
         }
 
         break;  // nothing : continue steps
     }
 
-    if ((Mev[STEP].Name[0] == 'A') &&
-        MH[Mev[STEP].pad][Mission_SecondaryBooster] != nullptr) {
+    if ((step.Name[0] == 'A') &&
+        MH[pad][Mission_SecondaryBooster] != nullptr) {
         // boosters involved
-        if (MH[Mev[STEP].pad][Mission_PrimaryBooster]->Safety ==
-            MH[Mev[STEP].pad][Mission_PrimaryBooster]->Base) {
-            MH[Mev[STEP].pad][Mission_SecondaryBooster]->Safety =
-                MH[Mev[STEP].pad][Mission_SecondaryBooster]->Base;
+        if (MH[pad][Mission_PrimaryBooster]->Safety ==
+            MH[pad][Mission_PrimaryBooster]->Base) {
+            MH[pad][Mission_SecondaryBooster]->Safety =
+                MH[pad][Mission_SecondaryBooster]->Base;
         }
     }
 
@@ -1279,50 +1260,48 @@ int FailEval(char plr, int type, char* text, int val, int xtra)
 
     key = 0;
 
-    int temp = 0;
-    if (!AI[plr]) {
-        temp = FailureMode(plr, FNote, text);
-    }
-
-    if (temp == 0 && FNote == 3) {
-        Mev[STEP].trace = STEP + 1;
-    } else if (FNote == 3) {
-        Mev[STEP].StepInfo += 1000;
-        SCRUBS = 1;
+    if (FNote == 3) {
+        if (AI[plr] || FailureMode(plr, FNote, fail.text) == 0) {
+            step.trace = STEP + 1;
+        } else {
+            step.StepInfo += 1000;
+            SCRUBS = 1;
+        }
     }
 
     if (SCRUBS == 1) {
-        if (Mev[STEP].loc != 8 || noDock != 1) {
-            if (Mev[STEP].fgoto == -1) {  // End of Mission Flag
-                InvalidatePrestige();
-                Mev[STEP].trace = 0x7F;  // End of Mission Signal
-                FNote = 5;
-            } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
-                InvalidatePrestige();
-                Mev[STEP].trace = Mev[STEP].fgoto;
+        if (loc != 8 || !noDock) {
+            if (step.fgoto == -2) {
+                step.trace = STEP + 1;
             } else {
-                Mev[STEP].trace = STEP + 1;
+                InvalidatePrestige(step);
+                if (step.fgoto == -1) {  // End of Mission Flag
+                    step.trace = 0x7F;  // End of Mission Signal
+                    FNote = 5;
+                } else {  // Alternate Step is other num
+                    step.trace = step.fgoto;
+                }
             }
         }
     }
 
-    if (strncmp(GetEquipment(Mev[STEP])->ID, "M3", 2) == 0) {
+    if (strncmp(Eq->ID, "M3", 2) == 0) {
         death = 0;    //what???
     }
 
     // New death branching code
     if (death == 1) {
-        if (Mev[STEP].dgoto == 0) {
-            Mev[STEP].trace = 0x7f;
-        } else if (Mev[STEP].dgoto > 0) {
-            Mev[STEP].trace = Mev[STEP].dgoto;
+        if (step.dgoto == 0) {
+            step.trace = 0x7f;
+        } else if (step.dgoto > 0) {
+            step.trace = step.dgoto;
         }
     }
 
-    if (type == 9 || type == 19) {
-        Mev[STEP].trace = STEP;
-        Mev[STEP].rnum = brandom(10000) + 1;  // new failure roll
-        Mev[STEP].dice = brandom(100) + 1;  // new die roll
+    if (fail.code == 9 || fail.code == 19) {
+        step.trace = STEP;
+        step.rnum = brandom(10000) + 1;  // new failure roll
+        step.dice = brandom(100) + 1;  // new die roll
     }
 
     death = 0;
@@ -1402,22 +1381,25 @@ std::vector<Astros*> LMCrew(int pad, Equipment* module)
 /* Set the PComp flag such that prestige is not being awarded for step
  * failures.
  */
-void InvalidatePrestige()
+void InvalidatePrestige(MisEval& step)
 {
-    if (Mev[STEP].PComp > 0) {
-        Mev[STEP].PComp = 4;
+    if (step.PComp > 0) {
+        step.PComp = 4;
     }
 }
 
 /* Perform branching to alternate unless all nauts have been killed.
    Abort the mission in case of launch failures.
  */
-void BranchIfAlive(int* FNote)
+void BranchIfAlive(int* FNote, MisEval& step)
 {
+    int pad = step.pad;
+    int loc = step.loc;
+    
     // Check for all astros that are dead. End mission if this is the case.
     int ctr = 0;
-    for (int k = 0; k < MANNED[Mev[STEP].pad]; k++) {
-        Astros* crw = MA[Mev[STEP].pad][k].A;
+    for (int k = 0; k < MANNED[pad]; k++) {
+        Astros* crw = MA[pad][k].A;
         if (crw == nullptr) continue;
 
         if (crw->Status == AST_ST_DEAD) {
@@ -1425,25 +1407,25 @@ void BranchIfAlive(int* FNote)
         }
     }
 
-    if (ctr == MANNED[Mev[STEP].pad]) {
-        Mev[STEP].StepInfo = 4100 + Mev[STEP].loc;
-        Mev[STEP].trace = 0x7F;
-    } else if (Mev[STEP].fgoto == -1) {
-        Mev[STEP].trace = 0x7F;
-    } else if (Mev[STEP].fgoto != -2) {  // Alternate Step is other num
+    if (ctr == MANNED[pad]) {
+        step.StepInfo = 4100 + loc;
+        step.trace = 0x7F;
+    } else if (step.fgoto == -1) {
+        step.trace = 0x7F;
+    } else if (step.fgoto != -2) {  // Alternate Step is other num
         if (*FNote == 0) {
             *FNote = 1;
         }
-        Mev[STEP].trace = Mev[STEP].fgoto;
+        step.trace = step.fgoto;
     } else {
-        Mev[STEP].trace = STEP + 1;
+        step.trace = STEP + 1;
     }
 
-    if (Mev[STEP].FName[2] == '0' && Mev[STEP].FName[3] == '0') {
+    if (step.FName[2] == '0' && step.FName[3] == '0') {
         if (*FNote == 0) {
             *FNote = 5;
         }
-        Mev[STEP].trace = 0x7f;
+        step.trace = 0x7f;
     }
 }
 
