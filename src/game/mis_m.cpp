@@ -137,7 +137,7 @@ void MisCheck(char plr, char mpad)
     Unm = MANNED[0] + MANNED[1];
     Dock_Skip = 0;  // used for mission branching
     MPad = mpad;
-    bool nodock = false;
+    bool noDock = false;
     SCRUBS = InSpace = 0;
 
     const int code = Data->P[plr].Mission[mpad].MissionCode;
@@ -711,7 +711,7 @@ int MCGraph(char plr, int lc, int safety, int crew_safety, int val, bool prob)
  * \param mode  F_ONE or F_ALL
  * \param Victim  if F_ONE is set, the crew member to kill.
  */
-void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad = false)
+void F_KillCrew(char mode, int plr, Astros* Victim, const MisEval& step, bool invert_pad)
 {
     LOG_TRACE("F_KillCrew() was called");
     
