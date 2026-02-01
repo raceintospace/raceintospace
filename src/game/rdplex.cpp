@@ -672,8 +672,8 @@ char RD(char player_index)
                 InBox(245, 5, 314, 17);
                 WaitForMouseUp();
 
-                for (i = 0; i < 4; i++) {
-                    for (j = 0; j < 7; j++) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 7; j++) {
                         Data->P[player_index].Buy[i][j] = buy[i][j];
                     }
                 }
@@ -684,8 +684,8 @@ char RD(char player_index)
             } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {
                 InBox(5, 73, 152, 83);
 
-                for (i = 0; i < 4; i++) {
-                    for (j = 0; j < 7; j++) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 7; j++) {
                         Data->P[player_index].Buy[i][j] = buy[i][j];
                     }
                 }
@@ -711,8 +711,8 @@ char RD(char player_index)
                 unit = DisplayedUnit;
                 call = 0;
 
-                for (i = 0; i < 4; i++) {
-                    for (j = 0; j < 7; j++) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 7; j++) {
                         buy[i][j] = Data->P[player_index].Buy[i][j];
                     }
                 }
