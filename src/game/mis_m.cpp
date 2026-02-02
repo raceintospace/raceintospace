@@ -174,6 +174,7 @@ void MisCheck(char plr, char mpad)
     durx = -1;
 
     if (Data->P[plr].Mission[mpad].Duration > 0) {
+        LOG_DEBUG("loading durxx");
         durxx = Data->P[plr].Mission[mpad].Duration - 1;
         Data->P[plr].Mission[mpad].Duration = 0;
     }
@@ -277,6 +278,7 @@ void MisCheck(char plr, char mpad)
 
         // Necessary to keep code from crashing on bogus mission step
         while (GetEquipment(Mev[STEP]) == nullptr) {
+            LOG_WARNING("Bogus mission step, skipping");
             STEP++;
         }
 
@@ -322,10 +324,12 @@ void MisCheck(char plr, char mpad)
                safety, val,
                PROBLEM ? " problem" : (options.want_cheats ? " cheating" : ""));
 
-        if (!AI[plr] && !fullscreenMissionPlayback)
+        if (!AI[plr] && !fullscreenMissionPlayback) {
             if (!fEarly || STEP == 0) {
+                LOG_DEBUG("drawing the roll");
                 lc = MCGraph(plr, lc, MAX(0, safety), Mev[STEP].asf, MAX(0, val), PROBLEM);    // Graph Chart
             }
+        }
 
         if (PROBLEM && save) {  // Failure Saved
             LOG_DEBUG("Safety card saves the day");
@@ -341,6 +345,8 @@ void MisCheck(char plr, char mpad)
         }
 
         if (PROBLEM) {  // Step Problem
+            LOG_DEBUG("handling problem");
+            
             // for the unmanned mission
             if (MANNED[Mev[STEP].pad] == 0 && MANNED[other(Mev[STEP].pad)] == 0) {
                 Mev[STEP].rnum = (-1) * (brandom(5) + 1);
@@ -401,6 +407,7 @@ void MisCheck(char plr, char mpad)
             PlaySequence(plr, STEP, name.c_str(), 1);
             FailEval(plr, Now, Mev[STEP], noDock);
         } else {   // Step Success
+            LOG_DEBUG("handling step success");
 
             if (Mev[STEP].loc == 28 || Mev[STEP].loc == 27) {
                 strcpy(Mev[STEP].Name, (plr == 0) ? "bUC0" : "bSC0");
@@ -521,6 +528,7 @@ void MisCheck(char plr, char mpad)
 //  if (Mev[STEP].trace==0x7f && InSpace>0) Mev[STEP].trace=STEP+1;
 
     } while (Mev[STEP].trace != 0x7f);         // End mission
+    LOG_DEBUG("loop exit, mission end");
 
     //end do
     if (!AI[plr] && death == 0) {
@@ -537,6 +545,7 @@ void MisCheck(char plr, char mpad)
             if (MA[i][j].A->Status != AST_ST_DEAD) continue; // skip alive spacemen
             // Mission Death
             death = 1;
+            LOG_DEBUG("death detected, ship %i, crewmember %i", i, j);
             loop_break = true;
             if (AI[plr]) break;
             
