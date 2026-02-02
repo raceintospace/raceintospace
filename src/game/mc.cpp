@@ -167,6 +167,7 @@ int Launch(char plr, char mis)
     }
 
     if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode != Mission_None) {
+        LOG_DEBUG("Calling MisAnn()");
         MisAnn(plr, mis);
     }
 
@@ -174,6 +175,7 @@ int Launch(char plr, char mis)
         return -20;
     }
 
+    LOG_DEBUG("Calling MissionSetup()");
     MissionSetup(plr, mis);
 
     // ****************************************
@@ -235,7 +237,7 @@ int Launch(char plr, char mis)
     // Do actual Missions
 
     int mcode = Data->P[plr].Mission[mis].MissionCode;
-    mcc = Data->P[plr].Mission[mis].MissionCode;
+    mcc = mcode;
     mStr misType = GetMissionPlan(mcode);
 
     // Fixup for Mercury Duration C stuff
@@ -243,6 +245,7 @@ int Launch(char plr, char mis)
         Data->P[plr].Mission[mis].Duration = MIN(2, Data->P[plr].Mission[mis].Duration);
     }
 
+    LOG_DEBUG("Calling MissionCodes()");
     MissionCodes(plr, mcode, mis);
 
     /////////////////////////////////////////////////
@@ -339,14 +342,14 @@ int Launch(char plr, char mis)
     }
 
     if (AI[plr]) {
-        LOG_DEBUG("dis=applying EASYMODE(?)");
+        LOG_DEBUG("dis-applying EASYMODE(?)");
         xMODE &= ~xMODE_EASYMODE;    // map out computer from really easy level
     }
 
 
-    LOG_DEBUG("%i", Mev[0].trace);
+    LOG_DEBUG("Calling MisCheck(), Mev[0].trace = %i", Mev[0].trace);
     MisCheck(plr, mis); // Mission Resolution
-    LOG_DEBUG("%i", Mev[0].trace);
+    LOG_DEBUG("MisCheck() returned, Mev[0].trace = %i", Mev[0].trace);
 
     xMODE &= ~xMODE_EASYMODE;
 
