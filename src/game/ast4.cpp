@@ -395,23 +395,11 @@ void FixPrograms(char plr)
  */
 void DamProb(char plr, char prog, int chk)
 {
-    char Name[30];
-
-    Saf_Loss = D_Cost = ESafety = 0;
-
-    FadeOut(2, 10, 0, 0);
-
-    display::graphics.screen()->clear();
-
     Equipment& hardware = HardwareProgram(plr, prog, chk);
-
     assert(hardware.DCost <= Data->P[plr].Cash);
 
-    int D_Cost = hardware.DCost;
-    int Saf_Loss = hardware.Damage;
-    int ESafety = hardware.Safety;
-    strcpy(Name, hardware.Name);
-
+    FadeOut(2, 10, 0, 0);
+    display::graphics.screen()->clear();
     ShBox(35, 81, 288, 159);
     InBox(40, 86, 111, 126);
     InBox(116, 86, 283, 126);
@@ -421,10 +409,11 @@ void DamProb(char plr, char prog, int chk)
     draw_heading(135, 136, "YES", 1, 0);
     draw_heading(225, 136, "NO", 1, 0);
     draw_heading(44, 135, "REPAIR", 1, -1);
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 95, "DIRECTOR: ");
-    display::graphics.setForegroundColor(8);
 
+    display::graphics.setForegroundColor(8);
     if (plr == 0) {
         draw_string(0, 0, &Data->P[Data->plr[0]].Name[0]);
     } else {
@@ -433,23 +422,36 @@ void DamProb(char plr, char prog, int chk)
 
     display::graphics.setForegroundColor(6);
     draw_string(121, 104, "DAMAGE: ");
-    display::graphics.setForegroundColor(11);
+    
+    char Name[30];
+    strcpy(Name, hardware.Name);
     strcat(Name, " PROGRAM");
+    display::graphics.setForegroundColor(11);
     draw_string(0, 0, &Name[0]);
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 113, "DAMAGE COST: ");
+
+    int D_Cost = hardware.DCost;
     display::graphics.setForegroundColor(1);
     draw_number(0, 0, D_Cost);
     draw_string(0, 0, " M.B.  (OF ");
     draw_megabucks(0, 0, Data->P[plr].Cash);
     draw_string(0, 0, ")");
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 122, "SAFETY LOSS: ");
+    
+
+    int Saf_Loss = hardware.Damage;
     display::graphics.setForegroundColor(1);
     draw_number(0, 0, Saf_Loss);
     draw_string(0, 0, "%  (FROM ");
+    
+    int ESafety = hardware.Safety;
     draw_number(0, 0, ESafety);
     draw_string(0, 0, "%)");
+    
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
