@@ -44,6 +44,7 @@
 #include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "start.h"
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
@@ -53,9 +54,9 @@ void DrawProgs(char plr, char prog);
 int CheckProgram(char plr, char prog);
 void DrawPosition(char prog, int pos);
 void ClearIt(void);
-void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4);
+void NewAstList(char plr, char prog, int8_t* spacecrew);
 void AstStats(int plr, int prog, int man, int num);
-void AstNames(int man, const Astros &crew);
+void AstNames(int man, const Astros& crew);
 void Flts(char old, char nw);
 void FltsTxt(char nw, char col);
 int sON;
@@ -394,24 +395,11 @@ void FixPrograms(char plr)
  */
 void DamProb(char plr, char prog, int chk)
 {
-    int D_Cost, Saf_Loss, ESafety;
-    char Name[30];
-
-    Saf_Loss = D_Cost = ESafety = 0;
-
-    FadeOut(2, 10, 0, 0);
-
-    display::graphics.screen()->clear();
-
     Equipment& hardware = HardwareProgram(plr, prog, chk);
-
     assert(hardware.DCost <= Data->P[plr].Cash);
 
-    D_Cost = hardware.DCost;
-    Saf_Loss = hardware.Damage;
-    ESafety = hardware.Safety;
-    strcpy(Name, hardware.Name);
-
+    FadeOut(2, 10, 0, 0);
+    display::graphics.screen()->clear();
     ShBox(35, 81, 288, 159);
     InBox(40, 86, 111, 126);
     InBox(116, 86, 283, 126);
@@ -421,10 +409,11 @@ void DamProb(char plr, char prog, int chk)
     draw_heading(135, 136, "YES", 1, 0);
     draw_heading(225, 136, "NO", 1, 0);
     draw_heading(44, 135, "REPAIR", 1, -1);
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 95, "DIRECTOR: ");
-    display::graphics.setForegroundColor(8);
 
+    display::graphics.setForegroundColor(8);
     if (plr == 0) {
         draw_string(0, 0, &Data->P[Data->plr[0]].Name[0]);
     } else {
@@ -433,23 +422,36 @@ void DamProb(char plr, char prog, int chk)
 
     display::graphics.setForegroundColor(6);
     draw_string(121, 104, "DAMAGE: ");
-    display::graphics.setForegroundColor(11);
+    
+    char Name[30];
+    strcpy(Name, hardware.Name);
     strcat(Name, " PROGRAM");
+    display::graphics.setForegroundColor(11);
     draw_string(0, 0, &Name[0]);
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 113, "DAMAGE COST: ");
+
+    int D_Cost = hardware.DCost;
     display::graphics.setForegroundColor(1);
     draw_number(0, 0, D_Cost);
     draw_string(0, 0, " M.B.  (OF ");
     draw_megabucks(0, 0, Data->P[plr].Cash);
     draw_string(0, 0, ")");
+    
     display::graphics.setForegroundColor(6);
     draw_string(121, 122, "SAFETY LOSS: ");
+    
+
+    int Saf_Loss = hardware.Damage;
     display::graphics.setForegroundColor(1);
     draw_number(0, 0, Saf_Loss);
     draw_string(0, 0, "%  (FROM ");
+    
+    int ESafety = hardware.Safety;
     draw_number(0, 0, ESafety);
     draw_string(0, 0, "%)");
+    
     FadeIn(2, 10, 0, 0);
 
     WaitForMouseUp();
@@ -620,9 +622,7 @@ void Programs(char plr, char prog)
     }
 
     DispLeft(plr, BarA, count, now2, &M[0]);
-    NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-               Data->P[plr].Crew[prog][grp][1],
-               Data->P[plr].Crew[prog][grp][2], Data->P[plr].Crew[prog][grp][3]);
+    NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
     FadeIn(2, 10, 0, 0);
 
     chk = CheckProgram(plr, prog);
@@ -827,10 +827,7 @@ void Programs(char plr, char prog)
                 }
 
                 Flts(ksel, grp);
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
 
                 if (key > 0) {
                     delay(150);
@@ -841,10 +838,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 0);
                 grp = 0;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 164 && y >= 154 && x <= 238 && y <= 166
                        && mousebuttons > 0) {
@@ -852,10 +846,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 1);
                 grp = 1;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 164 && y >= 169 && x <= 238 && y <= 181
                        && mousebuttons > 0) {
@@ -863,10 +854,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 2);
                 grp = 2;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 164 && y >= 184 && x <= 238 && y <= 196
                        && mousebuttons > 0) {
@@ -874,10 +862,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 3);
                 grp = 3;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 241 && y >= 139 && x <= 315 && y <= 151
                        && mousebuttons > 0) {
@@ -885,10 +870,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 4);
                 grp = 4;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 241 && y >= 154 && x <= 315 && y <= 166
                        && mousebuttons > 0) {
@@ -896,10 +878,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 5);
                 grp = 5;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 241 && y >= 169 && x <= 315 && y <= 181
                        && mousebuttons > 0) {
@@ -907,10 +886,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 6);
                 grp = 6;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (x >= 241 && y >= 184 && x <= 315 && y <= 196
                        && mousebuttons > 0) {
@@ -918,10 +894,7 @@ void Programs(char plr, char prog)
                 ClearIt();
                 Flts(grp, 7);
                 grp = 7;
-                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                           Data->P[plr].Crew[prog][grp][1],
-                           Data->P[plr].Crew[prog][grp][2],
-                           Data->P[plr].Crew[prog][grp][3]);
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                 WaitForMouseUp();
             } else if (((x >= 245 && y >= 88 && x <= 314 && y <= 100
                          && mousebuttons > 0) || key == 'A')
@@ -966,10 +939,7 @@ void Programs(char plr, char prog)
                         FltsTxt(grp, 9);
                     }
 
-                    NewAstList(plr, prog, Data->P[plr].Crew[prog][grp][0],
-                               Data->P[plr].Crew[prog][grp][1],
-                               Data->P[plr].Crew[prog][grp][2],
-                               Data->P[plr].Crew[prog][grp][3]);
+                    NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
                     WaitForMouseUp();
 
                     if (key > 0) {
@@ -1112,7 +1082,7 @@ void Programs(char plr, char prog)
 
 /** clears the screen
  */
-void ClearIt(void)
+void ClearIt()
 {
     fill_rectangle(16, 87, 75, 91, 3);
     fill_rectangle(5, 87, 11, 91, 3);
@@ -1126,39 +1096,21 @@ void ClearIt(void)
 }
 
 
-void NewAstList(char plr, char prog, int M1, int M2, int M3, int M4)
+void NewAstList(char plr, char prog, int8_t* spacecrew)
 {
     /* Clear area that says Primary Crew Next Turn etc. */
     fill_rectangle(4, 40, 54, 66, 3);
     fill_rectangle(13, 86, 231, 122, 3);  /* Clear Astro Area */
     display::graphics.setForegroundColor(1);
 
-    if (M1 > 0) {
-        AstNames(0, Data->P[plr].Pool[M1 - 1]);
-        AstStats(plr, prog, 0, M1 - 1);
-    } else {
-        DrawPosition(prog, 1);
-    }
-
-    if (M2 > 0) {
-        AstNames(1, Data->P[plr].Pool[M2 - 1]);
-        AstStats(plr, prog, 1, M2 - 1);
-    } else {
-        DrawPosition(prog, 2);
-    }
-
-    if (M3 > 0) {
-        AstNames(2, Data->P[plr].Pool[M3 - 1]);
-        AstStats(plr, prog, 2, M3 - 1);
-    } else {
-        DrawPosition(prog, 3);
-    }
-
-    if (M4 > 0) {
-        AstNames(3, Data->P[plr].Pool[M4 - 1]);
-        AstStats(plr, prog, 3, M4 - 1);
-    } else {
-        DrawPosition(prog, 4);
+    for(int i=0; i<4; ++i) {
+        if (spacecrew[i] > 0) {
+            int pool_idx = spacecrew[i] - 1;
+            AstNames(i, Data->P[plr].Pool[pool_idx]);
+            AstStats(plr, prog, i, pool_idx);
+        } else {
+            DrawPosition(prog, i+1);
+        }
     }
 }
 
@@ -1264,225 +1216,45 @@ void AstStats(int plr, int program, int man, int num)
 }
 
 
-void AstNames(int man, const Astros &crew)
+void AstNames(int man, const Astros& crew)
 {
-    switch (man) {
-    case 0:
-        fill_rectangle(16, 87, 75, 91, 3);
-        fill_rectangle(5, 87, 11, 91, 3);
-        break;
+    fill_rectangle(16, 87+9*man, 75, 91+9*man, 3);
+    fill_rectangle(5, 87+9*man, 11, 91+9*man, 3);
 
-    case 1:
-        fill_rectangle(16, 96, 75, 100, 3);
-        fill_rectangle(5, 96, 11, 100, 3);
-        break;
-
-    case 2:
-        fill_rectangle(16, 105, 75, 109, 3);
-        fill_rectangle(5, 105, 11, 109, 3);
-        break;
-
-    case 3:
-        fill_rectangle(16, 114, 75, 118, 3);
-        fill_rectangle(5, 114, 11, 118, 3);
-        break;
-    }
-
-    display::graphics.setForegroundColor(1);
-
-    if (crew.Sex == 1) {
-        // Show name in blue if 'naut is female.
-        display::graphics.setForegroundColor(18);
-    }
-
-    if (crew.RetirementDelay > 0) {
-        // Show name in black if 'naut is male and has announced retirement.
-        display::graphics.setForegroundColor(0);
-    }
-
-    if (crew.Sex == 1 && crew.RetirementDelay > 0) {
-        // Show name in purple if 'naut is female and has announced retirement.
-        display::graphics.setForegroundColor(7);
-    }
+    int colors[4]{1, 18, 0, 7};
+    int clr_idx = (crew.Sex == 1) + (crew.RetirementDelay > 0)*2;
+    display::graphics.setForegroundColor(colors[clr_idx]);
 
     std::string name(&crew.Name[0], ARRAY_LENGTH(crew.Name));
-
-    switch (man) {
-    case 0:
-        draw_string(17, 91, name.c_str());
-
-        if (crew.Missions > 0) {
-            draw_string(0, 0, " (");
-            draw_number(0, 0, crew.Missions);
-            draw_string(0, 0, ")");
-        }
-
-        break;
-
-    case 1:
-        draw_string(17, 100, name.c_str());
-
-        if (crew.Missions > 0) {
-            draw_string(0, 0, " (");
-            draw_number(0, 0, crew.Missions);
-            draw_string(0, 0, ")");
-        }
-
-        break;
-
-    case 2:
-        draw_string(17, 109, name.c_str());
-
-        if (crew.Missions > 0) {
-            draw_string(0, 0, " (");
-            draw_number(0, 0, crew.Missions);
-            draw_string(0, 0, ")");
-        }
-
-        break;
-
-    case 3:
-        draw_string(17, 118, name.c_str());
-
-        if (crew.Missions > 0) {
-            draw_string(0, 0, " (");
-            draw_number(0, 0, crew.Missions);
-            draw_string(0, 0, ")");
-        }
-
-        break;
+    draw_string(17, 91+9*man, name.c_str());
+    if (crew.Missions > 0) {
+        draw_string(0, 0, " (");
+        draw_number(0, 0, crew.Missions);
+        draw_string(0, 0, ")");
     }
 
     uint8_t color = MoodColor(crew.Mood);
-
-    switch (man) {
-    case 0:
-        fill_rectangle(5, 87, 11, 91, color);
-        break;
-
-    case 1:
-        fill_rectangle(5, 96, 11, 100, color);
-        break;
-
-    case 2:
-        fill_rectangle(5, 105, 11, 109, color);
-        break;
-
-    case 3:
-        fill_rectangle(5, 114, 11, 118, color);
-        break;
-    }
+    fill_rectangle(5, 87+9*man, 11, 91+9*man, color);
 }
 
 void Flts(char old, char nw)
 {
+    int old_row = old%4;
+    int old_column = old/4;
+    OutBox(164+77*old_column, 139+15*old_row, 238+77*old_column, 151+15*old_row);
 
-    switch (old) {
-    case 0:
-        OutBox(164, 139, 238, 151);
-        break;
-
-    case 1:
-        OutBox(164, 154, 238, 166);
-        break;
-
-    case 2:
-        OutBox(164, 169, 238, 181);
-        break;
-
-    case 3:
-        OutBox(164, 184, 238, 196);
-        break;
-
-    case 4:
-        OutBox(241, 139, 315, 151);
-        break;
-
-    case 5:
-        OutBox(241, 154, 315, 166);
-        break;
-
-    case 6:
-        OutBox(241, 169, 315, 181);
-        break;
-
-    case 7:
-        OutBox(241, 184, 315, 196);
-        break;
-    }
-
-    switch (nw) {
-    case 0:
-        InBox(164, 139, 238, 151);
-        break;
-
-    case 1:
-        InBox(164, 154, 238, 166);
-        break;
-
-    case 2:
-        InBox(164, 169, 238, 181);
-        break;
-
-    case 3:
-        InBox(164, 184, 238, 196);
-        break;
-
-    case 4:
-        InBox(241, 139, 315, 151);
-        break;
-
-    case 5:
-        InBox(241, 154, 315, 166);
-        break;
-
-    case 6:
-        InBox(241, 169, 315, 181);
-        break;
-
-    case 7:
-        InBox(241, 184, 315, 196);
-        break;
-    }
+    int new_row = nw%4;
+    int new_column = nw/4;
+    InBox(164+77*new_column, 139+15*new_row, 238+77*new_column, 151+15*new_row);
 }  /* End of Flts */
 
 void FltsTxt(char nw, char col)
 {
     display::graphics.setForegroundColor(col);
-
-    switch (nw) {
-    case 0:
-        draw_string(169, 147, "FLT. CREW I");
-        break;
-
-    case 1:
-        draw_string(169, 162, "FLT. CREW II");
-        break;
-
-    case 2:
-        draw_string(169, 177, "FLT. CREW III");
-        break;
-
-    case 3:
-        draw_string(169, 192, "FLT. CREW IV");
-        break;
-
-    case 4:
-        draw_string(246, 147, "FLT. CREW V");
-        break;
-
-    case 5:
-        draw_string(246, 162, "FLT. CREW VI");
-        break;
-
-    case 6:
-        draw_string(246, 177, "FLT. CREW VII");
-        break;
-
-    case 7:
-        draw_string(246, 192, "FLT. CREW VIII");
-        break;
-    }
+    int row = nw%4;
+    int column = nw/4;
+    draw_string(169+77*column,147+15*row,"FLT. Crew ");
+    draw_string(0,0, RomanNumeral(nw).c_str());
 }  /* End of FltsTxt */
 
 /* vi: set noet ts=4 sw=4 tw=78: */
