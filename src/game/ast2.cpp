@@ -245,12 +245,12 @@ void Limbo(char plr)
                     && x <= 151 && y <= (137 + i * 8) 
                     && mousebuttons > 0 
     	            && (now2 - BarA + i) <= (AstroList.size() - 1)) {
-    		        now2 -= BarA;
-    		        now2 += i;
-    		        BarA = i;
-    		        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-    		        LimboText(plr, AstroList.at(now2));
-    		        WaitForMouseUp();
+                    now2 -= BarA;
+                    now2 += i;
+                    BarA = i;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                    WaitForMouseUp();
     	        }
     	    }
         }
@@ -269,25 +269,22 @@ void Limbo(char plr)
         }
 
         // Left Arrow Up
-    	if (AstroList.size()) {
+    	if (AstroList.size()
     	    && (mousebuttons > 0 && x >= 6  && y >= 130 
-                                && x <= 18 && y <= 161 
-                || key == UP_ARROW)) {
+                                && x <= 18 && y <= 161)
+                || key == UP_ARROW) {
             InBox(6, 130, 18, 161);
 
             for (int i = 0; i < 50; i++) {
                 key = 0;
                 GetMouse();
                 delay(10);
-
                 if (mousebuttons == 0) {
-
                     if (BarA == 0 && now2 > 0) {
                         now2--;
                         DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
                         LimboText(plr, AstroList.at(now2));
                     }
-
                     if (BarA > 0) {
                         BarA--;
                         now2--;
@@ -300,13 +297,11 @@ void Limbo(char plr)
 
             while (mousebuttons == 1 || key == UP_ARROW) {
                 delay(100);
-
                 if (BarA == 0 && now2 > 0) {
                     now2--;
                     DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
                     LimboText(plr, AstroList.at(now2));
                 }
-
                 if (BarA > 0) {
                     BarA--;
                     now2--;
@@ -378,14 +373,12 @@ void Limbo(char plr)
                         DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
                         LimboText(plr, AstroList.at(now2));
                     }
-
                     if (BarA < 7 && now2 < AstroList.size() - 1) {
                         BarA++;
                         now2++;
                         DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
                         LimboText(plr, AstroList.at(now2));
                     }
-
                     break;
                 }
             }
@@ -398,7 +391,6 @@ void Limbo(char plr)
                     DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
                     LimboText(plr, AstroList.at(now2));
                 }
-
                 if (BarA < 7 && now2 < AstroList.size() - 1) {
                     BarA++;
                     now2++;
