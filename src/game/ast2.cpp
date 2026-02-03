@@ -41,6 +41,7 @@
 #include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "start.h"
 
 namespace
 {
