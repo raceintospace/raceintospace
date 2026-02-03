@@ -41,6 +41,7 @@
 #include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
+#include "start.h"
 
 namespace
 {
@@ -53,7 +54,7 @@ enum LimboOperation {
 
 
 void DrawLimbo(char plr);
-void Clear(void);
+void Clear();
 void LimboText(char plr, int astroIndex);
 
 
@@ -194,31 +195,27 @@ void DrawLimbo(char plr)
     draw_string(102, 92, "DOCK:");
     draw_string(102, 100, "END:");
     draw_small_flag(plr, 4, 4);
-
-    return;
 }
 
 
 void Limbo(char plr)
 {
-    int BarA, now2, tag ;
-    std::vector<int> AstroList;
-
     DrawLimbo(plr);
     music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
 
-    now2 = BarA = 0;
-
+    std::vector<int> AstroList;
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE && Data->P[plr].Pool[i].Assign == 0) {
             AstroList.push_back(i);
         }
     }
  
+    int now2 = 0, BarA = 0;
     DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
     FadeIn(2, 10, 0, 0);
 
+    int tag;
     if (AstroList.size()) {
         InBox(167, 48, 225, 65);  // Default Transfer Astronaut button
         tag = OP_TRANSFER;
@@ -243,19 +240,20 @@ void Limbo(char plr)
 
         //Mouse ManSelect from being Clicked on
         if (AstroList.size()) {
-	    for (int i = 0; i < 8; i++) {
-	        if (x >= 27 && y >= (131 + i * 8) && x <= 151 
-	        && y <= (137 + i * 8) && mousebuttons > 0 
-	        && (now2 - BarA + i) <= (AstroList.size() - 1)) {
-		        now2 -= BarA;
-		        now2 += i;
-		        BarA = i;
-		        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-		        LimboText(plr, AstroList.at(now2));
-		        WaitForMouseUp();
-	        }
-	    }
-	  }
+    	    for (int i = 0; i < 8; i++) {
+    	        if (x >= 27 && y >= (131 + i * 8) 
+                    && x <= 151 && y <= (137 + i * 8) 
+                    && mousebuttons > 0 
+    	            && (now2 - BarA + i) <= (AstroList.size() - 1)) {
+                    now2 -= BarA;
+                    now2 += i;
+                    BarA = i;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                    WaitForMouseUp();
+    	        }
+    	    }
+        }
         
         if (key == K_HOME) {
             InBox(6, 130, 18, 161);
@@ -271,60 +269,53 @@ void Limbo(char plr)
         }
 
         // Left Arrow Up
-	if (AstroList.size()) {
-	    if (mousebuttons > 0 && x >= 6 && y >= 130 && x <= 18 
-	    && y <= 161 || key == UP_ARROW) {
-	        InBox(6, 130, 18, 161);
+    	if (AstroList.size()
+    	    && (mousebuttons > 0 && x >= 6  && y >= 130 
+                                && x <= 18 && y <= 161)
+                || key == UP_ARROW) {
+            InBox(6, 130, 18, 161);
 
-	        for (int i = 0; i < 50; i++) {
-		        key = 0;
-		        GetMouse();
-		        delay(10);
+            for (int i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
+                if (mousebuttons == 0) {
+                    if (BarA == 0 && now2 > 0) {
+                        now2--;
+                        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                        LimboText(plr, AstroList.at(now2));
+                    }
+                    if (BarA > 0) {
+                        BarA--;
+                        now2--;
+                        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                        LimboText(plr, AstroList.at(now2));
+                    }
+                    break;
+                }
+            }
 
-		        if (mousebuttons == 0) {
+            while (mousebuttons == 1 || key == UP_ARROW) {
+                delay(100);
+                if (BarA == 0 && now2 > 0) {
+                    now2--;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                }
+                if (BarA > 0) {
+                    BarA--;
+                    now2--;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                }
+                key = 0;
+                GetMouse();
+            }
 
-			        if (BarA == 0 && now2 > 0) {
-				        now2--;
-				        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-				        LimboText(plr, AstroList.at(now2));
-			        }
-
-			        if (BarA > 0) {
-				        BarA--;
-				        now2--;
-				        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-				        LimboText(plr, AstroList.at(now2));
-			        }
-			        i = 51;
-		        }
-	        }
-
-	        while (mousebuttons == 1 || key == UP_ARROW) {
-		        delay(100);
-
-		        if (BarA == 0 && now2 > 0) {
-			        now2--;
-			        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-			        LimboText(plr, AstroList.at(now2));
-		        }
-
-		        if (BarA > 0) {
-			        BarA--;
-			        now2--;
-			        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-			        LimboText(plr, AstroList.at(now2));
-		        }
-
-		        key = 0;
-
-		        GetMouse();
-	        }
-
-	        //WaitForMouseUp();key=0;
-	        OutBox(6, 130, 18, 161);
-	        delay(10);
-		}
-	}
+            //WaitForMouseUp();key=0;
+            OutBox(6, 130, 18, 161);
+            delay(10);
+    	}
 		
         if (key == K_PGUP) {
             InBox(6, 130, 18, 161);
@@ -366,61 +357,58 @@ void Limbo(char plr)
         }
 
         // Left Arrow Down
-	if (AstroList.size()) {
-	    if ((mousebuttons > 0 && x >= 6 && y >= 163 && x <= 18 && y <= 194) 
-	    || key == DN_ARROW) {
-	        InBox(6, 163, 18, 194);
-	        for (int i = 0; i < 50; i++) {
-		        key = 0;
-		        GetMouse();
-		        delay(10);
+    	if (AstroList.size()
+    	    && ((mousebuttons > 0 && x >=  6 && y >= 163 
+                                  && x <= 18 && y <= 194) 
+    	       || key == DN_ARROW)) {
+            InBox(6, 163, 18, 194);
+            for (int i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
 
-		        if (mousebuttons == 0) {
-		            if (BarA == 7 && (now2 < AstroList.size() - 1)) {
-			            now2++;
-			            DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-			            LimboText(plr, AstroList.at(now2));
-		            }
+                if (mousebuttons == 0) {
+                    if (BarA == 7 && (now2 < AstroList.size() - 1)) {
+                        now2++;
+                        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                        LimboText(plr, AstroList.at(now2));
+                    }
+                    if (BarA < 7 && now2 < AstroList.size() - 1) {
+                        BarA++;
+                        now2++;
+                        DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                        LimboText(plr, AstroList.at(now2));
+                    }
+                    break;
+                }
+            }
 
-		            if (BarA < 7 && now2 < AstroList.size() - 1) {
-			            BarA++;
-			            now2++;
-			            DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-			            LimboText(plr, AstroList.at(now2));
-		            }
+            while (mousebuttons == 1 || key == DN_ARROW) {
+                delay(100);
 
-		            i = 51;
-		        }
-	        }
+                if (BarA == 7 && (now2 < AstroList.size() - 1)) {
+                    now2++;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                }
+                if (BarA < 7 && now2 < AstroList.size() - 1) {
+                    BarA++;
+                    now2++;
+                    DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
+                    LimboText(plr, AstroList.at(now2));
+                }
 
-	        while (mousebuttons == 1 || key == DN_ARROW) {
-	            delay(100);
+                key = 0;
+                GetMouse();
+            }
 
-	            if (BarA == 7 && (now2 < AstroList.size() - 1)) {
-		            now2++;
-		            DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-		            LimboText(plr, AstroList.at(now2));
-	            }
-
-	            if (BarA < 7 && now2 < AstroList.size() - 1) {
-		            BarA++;
-		            now2++;
-		            DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
-		            LimboText(plr, AstroList.at(now2));
-	            }
-
-	            key = 0;
-	            GetMouse();
-	        }
-
-	        OutBox(6, 163, 18, 194);
-	        delay(10);
-	    }
-	}
+            OutBox(6, 163, 18, 194);
+            delay(10);
+    	}
 
         // Continue
         if ((mousebuttons > 0 && x >= 245 && y >= 5 && x <= 314 && y <= 17) 
-        || key == K_ENTER || key == K_ESCAPE) {
+            || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
 
@@ -494,9 +482,11 @@ void Limbo(char plr)
         // Selection Loops
         for (int i = 0; i < 5; i++) {
             // Program Transfer
-            if ((tag == OP_TRANSFER && Data->P[plr].Manned[i].Num >= 0) &&
-            ((mousebuttons > 0 && x >= 167 && y >= (95 + 21 * i) && x <= 236 
-            && y <= (109 + 21 * i)) || key == 0x0030 + i)) {
+            if ((tag == OP_TRANSFER && Data->P[plr].Manned[i].Num >= 0) 
+                &&((mousebuttons > 0 
+                      && x >= 167 && y >= (95 + 21 * i) 
+                      && x <= 236 && y <= (109 + 21 * i)) 
+                   || key == 0x0030 + i)) {
                 InBox(167, 95 + 21 * i, 236, 109 + 21 * i);
 
                 if (key > 0) {
@@ -536,9 +526,10 @@ void Limbo(char plr)
             }
 
             // Program Visit
-            if ((tag == OP_VISIT && Data->P[plr].Manned[i].Num >= 0) &&
-                ((mousebuttons > 0 && x >= 167 && y >= (95 + 21 * i) && x <= 236 && y <= (109 + 21 * i))
-                 || key == 0x0030 + i)) {
+            if ((tag == OP_VISIT && Data->P[plr].Manned[i].Num >= 0) 
+                && ((mousebuttons > 0 && x >= 167 && y >= (95 + 21 * i) 
+                                      && x <= 236 && y <= (109 + 21 * i))
+                   || key == 0x0030 + i)) {
                 InBox(167, 95 + 21 * i, 236, 109 + 21 * i);
 
                 if (key > 0) {
@@ -571,9 +562,11 @@ void Limbo(char plr)
             }
 
             // Training Transfer
-            if ((tag == OP_TRANSFER && AstroList.size() > 0) &&
-            ((mousebuttons > 0 && x >= 244 && y >= (95 + 21 * i) && x <= 313 && y <= (109 + 21 * i)) 
-            || key == 0x0035 + i)) {
+            if ((tag == OP_TRANSFER && AstroList.size() > 0) 
+                &&((mousebuttons > 0 
+                     && x >= 244 && y >= (95 + 21 * i) 
+                     && x <= 313 && y <= (109 + 21 * i)) 
+                   || key == 0x0035 + i)) {
                 InBox(244, 95 + 21 * i, 313, 109 + 21 * i);
 
                 if (key > 0) {
@@ -584,26 +577,17 @@ void Limbo(char plr)
                 key = 0;
                 OutBox(244, 95 + 21 * i, 313, 109 + 21 * i);
 
-                int skilLev = 0;
-
                 // Figure out relevant skill level before sending to Adv Training -Leon
+                int skilLev = 0;
                 if (i == 0) {
                     skilLev = Data->P[plr].Pool[AstroList.at(now2)].Cap;
-                }
-
-                if (i == 1) {
+                } else if (i == 1) {
                     skilLev = Data->P[plr].Pool[AstroList.at(now2)].LM;
-                }
-
-                if (i == 2) {
+                } else if (i == 2) {
                     skilLev = Data->P[plr].Pool[AstroList.at(now2)].EVA;
-                }
-
-                if (i == 3) {
+                } else if (i == 3) {
                     skilLev = Data->P[plr].Pool[AstroList.at(now2)].Docking;
-                }
-
-                if (i == 4) {
+                } else if (i == 4) {
                     skilLev = Data->P[plr].Pool[AstroList.at(now2)].Endurance;
                 }
 
@@ -657,9 +641,10 @@ void Limbo(char plr)
             }  // if adv training
 
             // Training Visit
-            if (tag == OP_VISIT &&
-            ((mousebuttons > 0 && x >= 244 && y >= (95 + 21 * i) && x 
-            <= 313 && y <= (109 + 21 * i)) || key == 0x0035 + i)) {
+            if (tag == OP_VISIT 
+                && ((mousebuttons > 0 && x >= 244 && y >= (95 + 21 * i) 
+                                      && x <= 313 && y <= (109 + 21 * i)) 
+                   || key == 0x0035 + i)) {
                 InBox(244, 95 + 21 * i, 313, 109 + 21 * i);
 
                 if (key > 0) {
@@ -692,9 +677,10 @@ void Limbo(char plr)
             }
 
             // Transfer all eligible astronauts/cosmonauts to a program
-            if ((tag == OP_SENDALL && Data->P[plr].Manned[i].Num >= 0) &&
-                ((mousebuttons > 0 && x >= 167 && y >= (95 + 21 * i) && x <= 236 && y <= (109 + 21 * i))
-                 || key == 0x0030 + i)) {
+            if ((tag == OP_SENDALL && Data->P[plr].Manned[i].Num >= 0) 
+                && ((mousebuttons > 0 && x >= 167 && y >= (95 + 21 * i) 
+                                      && x <= 236 && y <= (109 + 21 * i))
+                    || key == 0x0030 + i)) {
                 InBox(167, 95 + 21 * i, 236, 109 + 21 * i);
 
                 if (key > 0) {
@@ -705,7 +691,7 @@ void Limbo(char plr)
                 key = 0;
 
                 for (auto astroIndex : AstroList) {
-                    Astros &astro = Data->P[plr].Pool[astroIndex];
+                    Astros& astro = Data->P[plr].Pool[astroIndex];
 
                     if (astro.Mood >= 20 && astro.RetirementDelay == 0) {
                         astro.Assign = i + 1;
@@ -717,8 +703,8 @@ void Limbo(char plr)
                 AstroList.clear();
 
                 for (int i = 0; i < Data->P[plr].AstroCount; i++) {
-                    if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE &&
-                        Data->P[plr].Pool[i].Assign == 0) {
+                    if (Data->P[plr].Pool[i].Status == AST_ST_ACTIVE 
+                        && Data->P[plr].Pool[i].Assign == 0) {
                         AstroList.push_back(i);
                     }
                 }
@@ -745,7 +731,7 @@ void Limbo(char plr)
 /**
  * Clear the Astronaut profile display fast.
  */
-void Clear(void)
+void Clear()
 {
     fill_rectangle(44, 31, 145, 40, 3);
     fill_rectangle(49, 112, 65, 119, 3);
@@ -755,13 +741,12 @@ void Clear(void)
     fill_rectangle(123, 95, 145, 101, 3);
     fill_rectangle(127, 113, 141, 120, 3);
     fill_rectangle(130, 54, 155, 61, 3);
-    return;
 }
 
 
 void LimboText(char plr, int astroIndex)
 {
-    struct Astros &astro = Data->P[plr].Pool[astroIndex];
+    const Astros& astro = Data->P[plr].Pool[astroIndex];
     int color = MoodColor(astro.Mood);
 
     Clear();
@@ -773,35 +758,15 @@ void LimboText(char plr, int astroIndex)
     if (astro.RetirementDelay > 0) {
         display::graphics.setForegroundColor(0);
     }
-
     draw_string(46, 37, astro.Name);
+    
     display::graphics.setForegroundColor(11);
-
-    switch (astro.Group) {
-    case 0:
-        draw_string(53, 118, "I");
-        break;
-
-    case 1:
-        draw_string(53, 118, "II");
-        break;
-
-    case 2:
-        draw_string(53, 118, "III");
-        break;
-
-    case 3:
-        draw_string(53, 118, "IV");
-        break;
-
-    case 4:
-        draw_string(53, 118, "V");
-        break;
-    }
+    draw_string(53, 118, RomanNumeral(astro.Group+1).c_str());
 
     // Print 'naut mood in green/yellow/red/black depending on mood -Leon
     display::graphics.setForegroundColor(color);
     draw_number(132, 60, astro.Mood);
+    
     display::graphics.setForegroundColor(11);
     draw_number(125, 68, astro.Cap);
     draw_number(123, 76, astro.LM);
@@ -810,7 +775,6 @@ void LimboText(char plr, int astroIndex)
     draw_number(125, 100, astro.Endurance);
     draw_number(130, 118, astro.Active);
     AstFaces(plr, 10, 52, astro.Face);
-    return;
 }
 
 
