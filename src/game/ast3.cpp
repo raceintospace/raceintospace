@@ -738,6 +738,7 @@ void InjuredNautCenter(char plr, int sel)
     int j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
 
     int count = 0;
+    int M[100];
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == j) {
             M[count++] = i;
@@ -746,7 +747,6 @@ void InjuredNautCenter(char plr, int sel)
 
     int now2 = 0;
     int BarA = 0;
-    int M[100]{};
     DispLeft(plr, BarA, count, now2, M);
 
     FadeIn(2, 10, 0, 0);
