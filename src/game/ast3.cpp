@@ -254,7 +254,7 @@ void TrainText(char plr, int astro, int cnt)
 
     display::graphics.setForegroundColor(11);
     if (spaceman.Group >= 0 && spaceman.Group <= 3) {
-        draw_string(203,97, RomanNumeral(spaceman.Group+1));
+        draw_string(203,97, RomanNumeral(spaceman.Group+1).c_str());
     } else {
         draw_string(203,97, "A.F.");
     }
@@ -297,6 +297,7 @@ void Train(char plr, int level)
 
     DrawTrain(plr, level);
 
+    int count = 0;
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         auto& spaceman = Data->P[plr].Pool[i];
         if (spaceman.Status >= AST_ST_TRAIN_BASIC_1
@@ -312,7 +313,7 @@ void Train(char plr, int level)
         }
     }
 
-    int now2 = BarA = count = 0;
+    int now2 = 0, BarA = 0;
     DispLeft(plr, BarA, count, now2, M);
 
     if (count > 0) {
@@ -553,46 +554,47 @@ void Train(char plr, int level)
                     temp = Help("i109");
                 }
 
+                auto& spaceman = Data->P[plr].Pool[M[now2]];
                 if (temp == 1) {
-                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1) {
+                    if (spaceman.Status == AST_ST_TRAIN_ADV_1) {
                         Data->P[plr].Cash += 3;  // refund for early withdrawal
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
+                    if (spaceman.Status == AST_ST_TRAIN_ADV_2) {
                         Data->P[plr].Cash += 2;  // partial refund for early withdrawal
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_3) {
+                    if (spaceman.Status == AST_ST_TRAIN_ADV_3) {
                         Data->P[plr].Cash += 1;  // partial refund for early withdrawal
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_1 || Data->P[plr].Pool[M[now2]].Status == AST_ST_TRAIN_ADV_2) {
-                        Data->P[plr].Pool[M[now2]].TrainingLevel = 0;
+                    if (spaceman.Status == AST_ST_TRAIN_ADV_1 || spaceman.Status == AST_ST_TRAIN_ADV_2) {
+                        spaceman.TrainingLevel = 0;
                     } else {
-                        Data->P[plr].Pool[M[now2]].TrainingLevel = Data->P[plr].Pool[M[now2]].Status;
+                        spaceman.TrainingLevel = spaceman.Status;
                     }
 
-                    Data->P[plr].Pool[M[now2]].Status = AST_ST_ACTIVE;
-                    Data->P[plr].Pool[M[now2]].Assign = 0;
+                    spaceman.Status = AST_ST_ACTIVE;
+                    spaceman.Assign = 0;
 
-                    if (Data->P[plr].Pool[M[now2]].Cap < 0) {
-                        Data->P[plr].Pool[M[now2]].Cap = 0;
+                    if (spaceman.Cap < 0) {
+                        spaceman.Cap = 0;
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].LM < 0) {
-                        Data->P[plr].Pool[M[now2]].LM = 0;
+                    if (spaceman.LM < 0) {
+                        spaceman.LM = 0;
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].EVA < 0) {
-                        Data->P[plr].Pool[M[now2]].EVA = 0;
+                    if (spaceman.EVA < 0) {
+                        spaceman.EVA = 0;
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Docking < 0) {
-                        Data->P[plr].Pool[M[now2]].Docking = 0;
+                    if (spaceman.Docking < 0) {
+                        spaceman.Docking = 0;
                     }
 
-                    if (Data->P[plr].Pool[M[now2]].Endurance < 0) {
-                        Data->P[plr].Pool[M[now2]].Endurance = 0;
+                    if (spaceman.Endurance < 0) {
+                        spaceman.Endurance = 0;
                     }
 
                     for (int i = now2; i < count; i++) {
@@ -656,8 +658,6 @@ void Train(char plr, int level)
  */
 void InjuredNautCenter(char plr, int sel)
 {
-    int M[100]{};
-
     if (sel == HOSPITAL_BLD) {
         helpText = "i041";
         keyHelpText = "k041";
@@ -666,20 +666,15 @@ void InjuredNautCenter(char plr, int sel)
         keyHelpText = "k020";
     }
 
-    int now2 = 0;
-    int BarA = count = 0;
-
     FadeOut(2, 10, 0, 0);
 
     char filename[128];
-
     if (sel == HOSPITAL_BLD) {
         snprintf(filename, sizeof(filename), "images/hospital.%d.png", plr);
     } else if (sel == CEMETERY_BLD) {
         snprintf(filename, sizeof(filename), "images/cemetery.%d.png", plr);
     }
-
-    boost::shared_ptr<display::PalettizedSurface> location(Filesystem::readImage(filename));
+    boost::shared_ptr<display::PalettizedSurface> location{Filesystem::readImage(filename)};
     location->exportPalette(32, 255);
 
     display::graphics.screen()->clear();
@@ -742,13 +737,17 @@ void InjuredNautCenter(char plr, int sel)
 
     int j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
 
+    int count = 0;
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == j) {
             M[count++] = i;
         }
     }
 
-    DispLeft(plr, BarA, count, now2, &M[0]);
+    int now2 = 0;
+    int BarA = 0;
+    int M[100]{};
+    DispLeft(plr, BarA, count, now2, M);
 
     FadeIn(2, 10, 0, 0);
 
@@ -764,7 +763,7 @@ void InjuredNautCenter(char plr, int sel)
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 WaitForMouseUp();
 
             }
@@ -777,13 +776,13 @@ void InjuredNautCenter(char plr, int sel)
             if (BarA == 0)
                 if (now2 > 0) {
                     now2--;
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                    DispLeft(plr, BarA, count, now2, M);
                 }
 
             if (BarA > 0) {
                 BarA--;
                 now2--;
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
             }
 
             // WaitForMouseUp();
@@ -797,14 +796,14 @@ void InjuredNautCenter(char plr, int sel)
             if (BarA == 7)
                 if (now2 < count - 1) {
                     now2++;
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                    DispLeft(plr, BarA, count, now2, M);
                 }
 
             if (BarA < 7)
                 if (now2 < count - 1) {
                     BarA++;
                     now2++;
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                    DispLeft(plr, BarA, count, now2, M);
                 }
 
             // WaitForMouseUp();
