@@ -46,6 +46,7 @@
 #include "place.h"
 #include "replay.h"
 #include "sdlhelper.h"
+#include "start.h"
 
 namespace
 {
@@ -82,8 +83,7 @@ void InjuredNautCenter(char plr, int sel);
 
 void DrawTrain(char plr, char lvl)
 {
-    char TrnName[20];
-    const char *Trner = "TRAINING\0";
+    const char* Trner = "TRAINING\0";
 
     if (lvl == 0) {
         helpText = "i038";
@@ -112,8 +112,8 @@ void DrawTrain(char plr, char lvl)
     InBox(3, 27, 154, 110);
     draw_up_arrow(9, 133);
     draw_down_arrow(9, 166);
+    
     display::graphics.setForegroundColor(5);
-
     if (plr == 0) {
         draw_string(20, 124, "ASTRONAUTS");
     } else {
@@ -121,12 +121,12 @@ void DrawTrain(char plr, char lvl)
     }
 
     draw_string(0, 0, " IN TRAINING");
-    memset(TrnName, 0x00, sizeof(TrnName));
 
     // TODO: Should use AstronautAdvancedFocus enum, but since it
     // doesn't include an option for Basic Training, lvl cannot be
     // defined by the enum, and so cannot be held to the same
     // restrictions. -- rnyoakum
+    char TrnName[20]{};
     switch (lvl) {
     case 0:
         strcpy(TrnName, "BASIC ");
@@ -166,17 +166,13 @@ void DrawTrain(char plr, char lvl)
     }
 
     display::graphics.setForegroundColor(1);
-
     draw_string(258, 13, "CONTINUE");
 
     display::graphics.setForegroundColor(7);
-
     draw_string(169, 88, "NAME:");      /* 196,32 */
 
     display::graphics.setForegroundColor(1);
-
     draw_string(169, 97, "GROUP ");
-
     draw_string(222, 97, "TENURE: ");
 
     grMoveTo(201, 97);
@@ -184,47 +180,31 @@ void DrawTrain(char plr, char lvl)
     /*  Data->P[plr].AstroLevel     201,41 */
 
     display::graphics.setForegroundColor(7);
-
     draw_string(169, 111, "STATUS:");
-
     draw_string(169, 120, "MOOD:");
 
     display::graphics.setForegroundColor(9);
-
     draw_string(169, 133, "SKILL:");
 
     display::graphics.setForegroundColor(7);
-
     draw_string(192, 142, "CAP:");
-
     draw_string(192, 150, "L.M.:");
-
     draw_string(192, 158, "E.V.A.:");
-
     draw_string(192, 166, "DOCK:");
-
     draw_string(192, 174, "END:");
 
     display::graphics.setForegroundColor(9);
-
     draw_string(181, 189, "W");
-
     display::graphics.setForegroundColor(1);
-
     draw_string(0, 0, "ITHDRAW FROM TRAINING");
 
     fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
 
     draw_small_flag(plr, 4, 4);
-
-    return;
 }
 
-void
-TrainText(char plr, int astro, int cnt)
+void TrainText(char plr, int astro, int cnt)
 {
-    char Fritz[20];
-
     fill_rectangle(200, 83, 291, 88, 3);
     fill_rectangle(200, 116, 220, 120, 3);
     fill_rectangle(202, 93, 220, 97, 3);
@@ -241,117 +221,59 @@ TrainText(char plr, int astro, int cnt)
         return;
     }
 
-    display::graphics.setForegroundColor(1);
-    if (Data->P[plr].Pool[astro].Sex == 1) {
+    auto& spaceman = Data->P[plr].Pool[astro];
+
+    if (spaceman.Sex == 1) {
         display::graphics.setForegroundColor(6);  // Show women in navy blue
+    } else {
+        display::graphics.setForegroundColor(1);
     }
-    draw_string(200, 88, &Data->P[plr].Pool[astro].Name[0]);
+    draw_string(200, 88, spaceman.Name);
 
     // Print 'naut name in green/yellow/red/black depending on mood -Leon
-    int color = MoodColor(Data->P[plr].Pool[astro].Mood);
+    int color = MoodColor(spaceman.Mood);
     display::graphics.setForegroundColor(color);
     draw_string(200, 120, "   ");
-    draw_number(200, 120, Data->P[plr].Pool[astro].Mood);
+    draw_number(200, 120, spaceman.Mood);
+    
     grMoveTo(212, 111);
     display::graphics.setForegroundColor(11);
-    memset(Fritz, 0x00, sizeof(Fritz));
-
-    if (Data->P[plr].Pool[astro].Status >= AST_ST_TRAIN_BASIC_1
-        && Data->P[plr].Pool[astro].Status <= AST_ST_TRAIN_BASIC_3) {
-        strncpy(Fritz, "BASIC TRAINING ", 14);
-    }
-
-    switch (Data->P[plr].Pool[astro].Status) {
-    case AST_ST_ACTIVE:
-        draw_string(0, 0, "ACTIVE");
-        break;
-
-    case AST_ST_TRAIN_BASIC_1:
-        strcat(Fritz, " I");
-        draw_string(0, 0, &Fritz[0]);
-        break;
-
-    case AST_ST_TRAIN_BASIC_2:
-        strcat(Fritz, " II");
-        draw_string(0, 0, &Fritz[0]);
-        break;
-
-    case AST_ST_TRAIN_BASIC_3:
-        strcat(Fritz, " III");
-        draw_string(0, 0, &Fritz[0]);
-        break;
-
-    case AST_ST_TRAIN_ADV_1:
-        draw_string(0, 0, "ADV TRAINING I");
-        break;
-
-    case AST_ST_TRAIN_ADV_2:
-        draw_string(0, 0, "ADV TRAINING II");
-        break;
-
-    case AST_ST_TRAIN_ADV_3:
-        draw_string(0, 0, "ADV TRAINING III");
-        break;
-
-    case AST_ST_TRAIN_ADV_4:
-        if (options.feat_shorter_advanced_training) {
-            draw_string(0, 0, "ADV TRAINING III");
-        } else    {
-            draw_string(0, 0, "ADV TRAINING IV");
-        }
-
-        break;
+    if (spaceman.Status == AST_ST_ACTIVE) {
+        draw_string(0,0,"ACTIVE");
+    } else if (spaceman.Status >= AST_ST_TRAIN_BASIC_1
+               && spaceman.Status <= AST_ST_TRAIN_BASIC_3) {
+        int season = spaceman.Status - AST_ST_TRAIN_BASIC_1 + 1;
+        std::string text = "BASIC TRAINING " + RomanNumeral(season);
+        draw_string(0,0,text.c_str());
+    } else {
+        int season = spaceman.Status - AST_ST_TRAIN_ADV_1 + 1;
+        if (season == 4 && options.feat_shorter_advanced_training) season = 3;
+        std::string text = "ADV TRAINING " + RomanNumeral(season);
+        draw_string(0,0, text.c_str());
     }
 
     display::graphics.setForegroundColor(11);
-
-    grMoveTo(203, 97);
-
-    switch (Data->P[plr].Pool[astro].Group) {
-    case 0:
-        draw_string(0, 0, "I");
-        break;
-
-    case 1:
-        draw_string(0, 0, "II");
-        break;
-
-    case 2:
-        draw_string(0, 0, "III");
-        break;
-
-    case 3:
-        draw_string(0, 0, "IV");
-        break;
-
-    default:
-        draw_string(0, 0, "A.F.");
-        break;
+    if (spaceman.Group >= 0 && spaceman.Group <= 3) {
+        draw_string(203,97, RomanNumeral(spaceman.Group+1));
+    } else {
+        draw_string(203,97, "A.F.");
     }
 
     fill_rectangle(264, 90, 315, 100, 3);
-    draw_number(264, 97, Data->P[plr].Pool[astro].Active);
+    draw_number(264, 97, spaceman.Active);
     draw_string(0, 0, " SEASON");
-
-    if (Data->P[plr].Pool[astro].Active != 1) {
+    if (spaceman.Active != 1) {
         draw_string(0, 0, "S");
     }
 
     display::graphics.setForegroundColor(1);
+    draw_number(215, 142, spaceman.Cap);
+    draw_number(213, 150, spaceman.LM);
+    draw_number(221, 158, spaceman.EVA);
+    draw_number(220, 166, spaceman.Docking);
+    draw_number(215, 174, spaceman.Endurance);
 
-    draw_number(215, 142, Data->P[plr].Pool[astro].Cap);
-
-    draw_number(213, 150, Data->P[plr].Pool[astro].LM);
-
-    draw_number(221, 158, Data->P[plr].Pool[astro].EVA);
-
-    draw_number(220, 166, Data->P[plr].Pool[astro].Docking);
-
-    draw_number(215, 174, Data->P[plr].Pool[astro].Endurance);
-
-    AstFaces(plr, 203, 29, Data->P[plr].Pool[astro].Face);
-
-    return;
+    AstFaces(plr, 203, 29, spaceman.Face);
 }
 
 
@@ -366,32 +288,32 @@ TrainText(char plr, int astro, int cnt)
 
 void Train(char plr, int level)
 {
-    int now2, BarA, count, i, M[100];
-    char temp, Train[10];
-    static int m = 1;
+    static int video_idx = 1;
 
-    for (i = 0; i < 100; i++) {
+    int M[100];
+    for (int i = 0; i < 100; i++) {
         M[i] = -1;
     }
 
-    now2 = BarA = count = 0;
     DrawTrain(plr, level);
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_1
-            && Data->P[plr].Pool[i].Status <= AST_ST_TRAIN_BASIC_3
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+        auto& spaceman = Data->P[plr].Pool[i];
+        if (spaceman.Status >= AST_ST_TRAIN_BASIC_1
+            && spaceman.Status <= AST_ST_TRAIN_BASIC_3
             && level == 0) {
             M[count++] = i;
         }
 
-        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_ADV_1
-            && Data->P[plr].Pool[i].Status <= AST_ST_TRAIN_ADV_4
-            && Data->P[plr].Pool[i].Focus == level) {
+        if (spaceman.Status >= AST_ST_TRAIN_ADV_1
+            && spaceman.Status <= AST_ST_TRAIN_ADV_4
+            && spaceman.Focus == level) {
             M[count++] = i;
         }
     }
 
-    DispLeft(plr, BarA, count, now2, &M[0]);
+    int now2 = BarA = count = 0;
+    DispLeft(plr, BarA, count, now2, M);
 
     if (count > 0) {
         TrainText(plr, M[0], count);
@@ -404,27 +326,26 @@ void Train(char plr, int level)
     FadeIn(2, 10, 0, 0);
 
     if (level == 0) {
-        if (m > 4) {
-            m = 1;
-        } else {
-            m++;
-        }
-
-        level = m;
-    }
-
-    memset(Train, 0x00, sizeof(Train));
-
-    if (level == 0) {
         music_start((plr == 0) ? M_ASTTRNG : M_ASSEMBLY);
     } else {
         music_start(M_DRUMSM);
+    }
+    
+    if (level == 0) {
+        if (video_idx > 4) {
+            video_idx = 1;
+        } else {
+            video_idx++;
+        }
+
+        level = video_idx;
     }
 
     // TODO: This should use the AstronautAdvancedFocus enum, but
     // level is designed to incorporate Basic training, which is
     // not part of the enum, so consistency between level and the
     // enum cannot be guaranteed.  -- rnyoakum
+    char Train[10]{};
     switch (level) {
     case 1:
         strcpy(Train, (plr == 0) ? "UTCP" : "STCP");
@@ -449,25 +370,22 @@ void Train(char plr, int level)
     default:
         break;
     }
-
-    VideoBlock video(plr, Train);
+    VideoBlock video{plr, Train};
 
     WaitForMouseUp();
-
     while (1) {
         key = 0;
         GetMouse();
 
-        for (i = 0; i < 8; i++) {  // Right Select Box
+        for (int i = 0; i < 8; i++) {  // Right Select Box
             if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0 && (now2 - BarA + i) <= (count - 1)) {  // Left
 
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
                 WaitForMouseUp();
-
             }
         }
 
@@ -476,28 +394,25 @@ void Train(char plr, int level)
                 /* Left Up */
                 InBox(6, 130, 18, 161);
 
-                for (i = 0; i < 50; i++) {
+                for (int i = 0; i < 50; i++) {
                     key = 0;
                     GetMouse();
                     delay(10);
 
                     if (mousebuttons == 0) {
-
-                        if (BarA == 0)
+                        if (BarA == 0) {
                             if (now2 > 0) {
                                 now2--;
-                                DispLeft(plr, BarA, count, now2, &M[0]);
+                                DispLeft(plr, BarA, count, now2, M);
                                 TrainText(plr, M[now2], count);
                             }
-
-                        if (BarA > 0) {
+                        } else if (BarA > 0) {
                             BarA--;
                             now2--;
-                            DispLeft(plr, BarA, count, now2, &M[0]);
+                            DispLeft(plr, BarA, count, now2, M);
                             TrainText(plr, M[now2], count);
                         }
-
-                        i = 51;
+                        break;
                     }
                 }
 
@@ -507,14 +422,14 @@ void Train(char plr, int level)
                     if (BarA == 0)
                         if (now2 > 0) {
                             now2--;
-                            DispLeft(plr, BarA, count, now2, &M[0]);
+                            DispLeft(plr, BarA, count, now2, M);
                             TrainText(plr, M[now2], count);
                         }
 
                     if (BarA > 0) {
                         BarA--;
                         now2--;
-                        DispLeft(plr, BarA, count, now2, &M[0]);
+                        DispLeft(plr, BarA, count, now2, M);
                         TrainText(plr, M[now2], count);
                     }
 
@@ -529,7 +444,7 @@ void Train(char plr, int level)
             } else if (key == K_HOME) {
                 BarA = 0;
                 now2 = 0;
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
                 key = 0;
                 GetMouse();
@@ -539,52 +454,49 @@ void Train(char plr, int level)
                 /* Left Dwn */
                 InBox(6, 163, 18, 194);
 
-                for (i = 0; i < 50; i++) {
+                for (int i = 0; i < 50; i++) {
                     key = 0;
                     GetMouse();
                     delay(10);
 
                     if (mousebuttons == 0) {
-
-                        if (BarA == 7)
+                        if (BarA == 7) {
                             if (now2 < count - 1) {
                                 now2++;
-                                DispLeft(plr, BarA, count, now2, &M[0]);
+                                DispLeft(plr, BarA, count, now2, M);
                                 TrainText(plr, M[now2], count);
                             }
-
-                        if (BarA < 7)
+                        } else if (BarA < 7) {
                             if (now2 < count - 1) {
                                 BarA++;
                                 now2++;
-                                DispLeft(plr, BarA, count, now2, &M[0]);
+                                DispLeft(plr, BarA, count, now2, M);
                                 TrainText(plr, M[now2], count);
                             }
-
-                        i = 51;
+                        }
+                        break;
                     }
                 }
 
                 while (mousebuttons == 1 || key == DN_ARROW) {
                     delay(100);
 
-                    if (BarA == 7)
+                    if (BarA == 7) {
                         if (now2 < count - 1) {
                             now2++;
-                            DispLeft(plr, BarA, count, now2, &M[0]);
+                            DispLeft(plr, BarA, count, now2, M);
                             TrainText(plr, M[now2], count);
                         }
-
-                    if (BarA < 7)
+                    } else if (BarA < 7) {
                         if (now2 < count - 1) {
                             BarA++;
                             now2++;
-                            DispLeft(plr, BarA, count, now2, &M[0]);
+                            DispLeft(plr, BarA, count, now2, M);
                             TrainText(plr, M[now2], count);
                         }
+                    }
 
                     key = 0;
-
                     GetMouse();
                 }
 
@@ -599,7 +511,7 @@ void Train(char plr, int level)
                     now2 = 0;
                 }
 
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
                 key = 0;
                 delay(10);
@@ -611,14 +523,14 @@ void Train(char plr, int level)
                     now2 = count - 1;
                 }
 
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
                 key = 0;
                 delay(10);
             } else if (key == K_END) {
                 BarA = 7;
                 now2 = count - 1;
-                DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
                 key = 0;
                 delay(10);
@@ -634,6 +546,7 @@ void Train(char plr, int level)
                 OutBox(168, 181, 314, 193);
                 // Help box: are you sure you want to withdraw from training early?
 
+                char temp;
                 if (plr == 0) {
                     temp = Help("i102");
                 } else {
@@ -682,11 +595,10 @@ void Train(char plr, int level)
                         Data->P[plr].Pool[M[now2]].Endurance = 0;
                     }
 
-                    for (i = now2; i < count; i++) {
+                    for (int i = now2; i < count; i++) {
                         M[i] = M[i + 1];
                     }
-
-                    M[i] = -1;
+                    M[count] = -1;
                     count--;
 
                     if (count == 0) {
@@ -703,10 +615,9 @@ void Train(char plr, int level)
                         }
                     }
 
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                    DispLeft(plr, BarA, count, now2, M);
 
                     TrainText(plr, M[now2], count);
-
                 }
 
             }  /* end x-y if */
@@ -745,12 +656,7 @@ void Train(char plr, int level)
  */
 void InjuredNautCenter(char plr, int sel)
 {
-    int now2;
-    int BarA;
-    int count;
-    int i;
-    int j;
-    int M[100];
+    int M[100]{};
 
     if (sel == HOSPITAL_BLD) {
         helpText = "i041";
@@ -760,12 +666,8 @@ void InjuredNautCenter(char plr, int sel)
         keyHelpText = "k020";
     }
 
-    for (i = 0; i < 100; i++) {
-        M[i] = 0;
-    }
-
-    now2 = 0;
-    BarA = count = 0;
+    int now2 = 0;
+    int BarA = count = 0;
 
     FadeOut(2, 10, 0, 0);
 
@@ -838,9 +740,9 @@ void InjuredNautCenter(char plr, int sel)
 
     draw_string(0, 0, " SELECTION");
 
-    j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
+    int j = (sel == HOSPITAL_BLD) ? AST_ST_INJURED : AST_ST_DEAD;
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Status == j) {
             M[count++] = i;
         }
@@ -856,7 +758,7 @@ void InjuredNautCenter(char plr, int sel)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0 && (now2 - BarA + i) <= (count - 1)) {
 
                 now2 -= BarA;
