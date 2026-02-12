@@ -24,6 +24,8 @@ The most recent stable release is 2.0.0, released on March 27, 2025. The release
 Further information can be found at the [release page](https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0). The [game manual](https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md
 ) can be viewed from our docs section.
 
+Note for MacOS players: To run the .app file in MacOS, right-click->`Open` the .app file, or run `xattr -c raceintospace.app` to de-quarantine the app. Additionally, run `brew install sdl12-compat`. These two requirements will be automated in a future release.
+
 # License
 
 Race  Into Space  is distributed  under GNU  General Public  License
@@ -150,7 +152,7 @@ You need CMake, which is readily obtained from
 [Homebrew](http://mxcl.github.com/homebrew/), which you probably have anyway. You also need `pkg-config`, 
 if you don't have it already. The only external dependency needed is `sdl`.
 
-    $ brew install cmake sdl pkg-config
+    $ brew install cmake sdl pkg-config sdl12-compat
 
 CMake and vcpkg automatically handle all other dependencies.
 
