@@ -535,7 +535,7 @@ int MaxFail()
 {
     LOG_DEBUG("MaxFail() was called");
     int maxval = 0;
-    for (int i = 0, count = 0; Mev[i].trace != 0x7f; (i = Mev[i].trace),++count) {
+    for (int i = 0, count = 0; i != 0x7f; (i = Mev[i].trace),++count) {
         LOG_TRACE("Mev dump: i=%i, count=%i, trace=%i, StepInfo=%i"
                            , i,    count, Mev[i].trace, Mev[i].StepInfo);
         if (Mev[i].StepInfo == 0) {
@@ -631,7 +631,7 @@ int AllotPrest(char plr, char mis)
     int other = MaxFail();
     LOG_DEBUG("MaxFail() returned %i", other);
 
-    for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
+    for (int i = 0; i != 0x7F; i = Mev[i].trace) {
         LOG_TRACE("Flight step dump: i=%i step=%i loc=%i StepInfo=%i Prest=%i PComp=%i pad=%i Class=%i"
                                 , i, Mev[i].step, Mev[i].loc, Mev[i].StepInfo, Mev[i].Prest
                                                                             , Mev[i].PComp
@@ -661,7 +661,7 @@ int AllotPrest(char plr, char mis)
                                   || (MA[1][2].A != nullptr && MA[1][2].A->Sex)
                                   || (MA[1][3].A != nullptr && MA[1][3].A->Sex);
 
-    for (int i = 0; Mev[i].trace != 0x7F; i = Mev[i].trace) {
+    for (int i = 0; i != 0x7F; i = Mev[i].trace) {
         int ival = abs(Mev[i].Prest);
         int cval = Mev[i].PComp;
 
