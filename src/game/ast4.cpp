@@ -48,10 +48,17 @@
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
+enum ProgramStatus
+{
+    PROGRAM_HAS_CREW,
+    PROGRAM_HAS_ENOUGH_SPACEMEN,
+    PROGRAM_IS_UNDERCREWED
+};
+const int crew_capacity_per_program[6] = {0,1,2,3,3,4}; // unassigned, 1-, 2-, 3-crew, shuttle, 4-crew
 
 void AstLevel(char plr, char prog, char crew, char ast);
 void DrawProgs(char plr, char prog);
-int CheckProgram(char plr, char prog);
+ProgramStatus CheckProgram(char plr, char prog);
 void DrawPosition(char prog, int pos);
 void ClearIt(void);
 void NewAstList(char plr, char prog, int8_t* spacecrew);
@@ -322,34 +329,34 @@ void DrawProgs(char plr, char prog)
  *
  *
  */
-int CheckProgram(char plr, char prog)
+ProgramStatus CheckProgram(char plr, char prog)
 {
-    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Crew != 0) { // if any astronaught is assigned to any crew anywhere...
-            return 1;                         // something seems wrong in this code, needs investigating
+    // if there is at least one assigned crew, proceed
+    for (int crew = 0; crew < MAX_CREWS_IN_PROGRAM; crew++) {
+        if (Data->P[plr].CrewCount[prog][crew] != 0) {
+            return PROGRAM_HAS_CREW;
         }
     }
 
-    int check = 0;
+    // otherwise count the number of spacemen assigned
+    int assigned_spacemen = 0;
     for (int i = 0; i < Data->P[plr].AstroCount; i++) {
         if (Data->P[plr].Pool[i].Assign == prog) {
-            ++check;
+            ++assigned_spacemen;
         }
     }
-
-    if (prog >= 1 && prog <= 3 && check >= prog) {
-        return 2;
-    } else if ((prog == 4 || prog == 5) && check >= prog - 1) {
-        return 2;
-    } else {  // return to limbo
-        for (int i = 0; i < Data->P[plr].AstroCount; i++) {
-            if (Data->P[plr].Pool[i].Assign == prog) {
-                Data->P[plr].Pool[i].Assign = 0;
-            }
+    // if there is enough to create at least 1 full crew, proceed
+    if (assigned_spacemen >= crew_capacity_per_program[prog]) {
+        return PROGRAM_HAS_ENOUGH_SPACEMEN;
+    }
+    
+    // otherwise, return assignees back to limbo
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+        if (Data->P[plr].Pool[i].Assign == prog) {
+            Data->P[plr].Pool[i].Assign = 0;
         }
     }
-
-    return 0;
+    return PROGRAM_IS_UNDERCREWED;
 }
 
 void FixPrograms(char plr)
@@ -549,25 +556,20 @@ void DrawPosition(char prog, int pos)
  */
 void Programs(char plr, char prog)
 {
-    int i, max, chk, tst;
+    int tst;
     int now2 = 0, count = 0, grp = 0, BarA = 0;
-    int M[100], CrewCount[8];
+    int CrewCount[8];
     char ksel = 0;
 
     helpText = "i036";
     keyHelpText = "k036";
 
-    for (i = 0; i < 100; i++) {
+    int M[100];
+    for (int i = 0; i < 100; i++) {
         M[i] = -1;
     }
 
-    if (prog > 4) {
-        max = 4;
-    } else if (prog == 4) {
-        max = 3;
-    } else {
-        max = prog;
-    }
+    int crew_capacity = crew_capacity_per_program[prog];
 
     music_start(M_PRGMTRG);
     DrawProgs(plr, prog);
@@ -580,11 +582,11 @@ void Programs(char plr, char prog)
             FltsTxt(i, 8);
         }
 
-        if (CrewCount[i] < max && CrewCount[i] != 0) {
+        if (CrewCount[i] < crew_capacity && CrewCount[i] != 0) {
             FltsTxt(i, 9);
         }
 
-        if (CrewCount[i] == max) {
+        if (CrewCount[i] == crew_capacity) {
             int stt = 1;
 
             tst = Data->P[plr].Crew[prog][i][0] - 1;
@@ -614,9 +616,10 @@ void Programs(char plr, char prog)
         }
     }
 
-    for (i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Assign == prog
-            && Data->P[plr].Pool[i].Crew == 0) {
+    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
+        auto& spaceman = Data->P[plr].Pool[i];
+        if (spaceman.Assign == prog
+            && spaceman.Crew == 0) {
             M[count++] = i;
         }
     }
@@ -625,17 +628,12 @@ void Programs(char plr, char prog)
     NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
     FadeIn(2, 10, 0, 0);
 
-    chk = CheckProgram(plr, prog);
-
-    if (chk == 0) {
+    if (CheckProgram(plr, prog) == PROGRAM_IS_UNDERCREWED) {
         if (plr == 0) {
             Help("i113");
         } else {
             Help("i114");
         }
-
-        music_stop();
-        return;
     }
 
     WaitForMouseUp();
@@ -644,7 +642,7 @@ void Programs(char plr, char prog)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             // Right Select Box
             if (x >= 27 && y >= (131 + i * 8) && x <= 151
                 && y <= (137 + i * 8) && mousebuttons > 0
@@ -669,7 +667,7 @@ void Programs(char plr, char prog)
                 /* Lft Up */
                 InBox(6, 130, 18, 161);
 
-                for (i = 0; i < 50; i++) {
+                for (int i = 0; i < 50; i++) {
                     key = 0;
                     GetMouse();
                     delay(10);
@@ -688,7 +686,7 @@ void Programs(char plr, char prog)
                             DispLeft(plr, BarA, count, now2, &M[0]);
                         }
 
-                        i = 51;
+                        break;
                     }
                 }
 
@@ -720,7 +718,7 @@ void Programs(char plr, char prog)
                 /* Left Dwn */
                 InBox(6, 163, 18, 194);
 
-                for (i = 0; i < 50; i++) {
+                for (int i = 0; i < 50; i++) {
                     key = 0;
                     GetMouse();
                     delay(10);
@@ -740,7 +738,7 @@ void Programs(char plr, char prog)
                                 DispLeft(plr, BarA, count, now2, &M[0]);
                             }
 
-                        i = 51;
+                        break;
                     }
                 }
 
@@ -898,56 +896,63 @@ void Programs(char plr, char prog)
                 WaitForMouseUp();
             } else if (((x >= 245 && y >= 88 && x <= 314 && y <= 100
                          && mousebuttons > 0) || key == 'A')
-                       && CrewCount[grp] < max) {
+                       && CrewCount[grp] < crew_capacity) {
                 /* Assign 'Naut */
-                if (Data->P[plr].Crew[prog][grp][CrewCount[grp]] == 0
-                    && count > 0) {
-                    InBox(245, 88, 314, 100);
-                    Data->P[plr].Crew[prog][grp][CrewCount[grp]] = M[now2] + 1;
+                if (count == 0) continue; // no spaceman to assign
+                
+                int& crew_slot = Data->P[plr].Crew[prog][grp][CrewCount[grp]];
+                if (crew_slot != 0) {
+                    LOG_WARNING("Trying to assign spaceman into an occupied spot?");
+                    continue;
+                }
+                
+                InBox(245, 88, 314, 100);
+                crew_slot = M[now2] + 1;
+                auto& spaceman = Data->P[plr].Pool[M[now2]];
 
-                    AstNames(CrewCount[grp], Data->P[plr].Pool[M[now2]]);
-                    Data->P[plr].Pool[M[now2]].Crew = grp + 1;
-                    Data->P[plr].Pool[M[now2]].Task = CrewCount[grp];
-                    Data->P[plr].Pool[M[now2]].Unassigned = 1;
+                AstNames(CrewCount[grp], spaceman);
+                spaceman.Crew = grp + 1;
+                spaceman.Task = CrewCount[grp];
+                spaceman.Unassigned = 1;
 
-                    for (i = now2; i < count; i++) {
-                        M[i] = M[i + 1];
+                int i;
+                for (i = now2; i < count; i++) {
+                    M[i] = M[i + 1];
+                }
+                M[i] = -1;
+                
+                count--;
+
+                if (now2 == count) {
+                    if (now2 > 0) {
+                        now2--;
                     }
 
-                    M[i] = -1;
-                    count--;
-
-                    if (now2 == count) {
-                        if (now2 > 0) {
-                            now2--;
-                        }
-
-                        if (BarA > 0) {
-                            BarA--;
-                        }
+                    if (BarA > 0) {
+                        BarA--;
                     }
+                }
 
-                    DispLeft(plr, BarA, count, now2, &M[0]);
+                DispLeft(plr, BarA, count, now2, &M[0]);
 
-                    CrewCount[grp]++;
+                CrewCount[grp]++;
 
-                    Data->P[plr].CrewCount[prog][grp] = CrewCount[grp];
+                Data->P[plr].CrewCount[prog][grp] = CrewCount[grp];
 
-                    if (CrewCount[grp] == max) {
-                        FltsTxt(grp, 1);
-                    } else {
-                        FltsTxt(grp, 9);
-                    }
+                if (CrewCount[grp] == crew_capacity) {
+                    FltsTxt(grp, 1);
+                } else {
+                    FltsTxt(grp, 9);
+                }
 
-                    NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
-                    WaitForMouseUp();
+                NewAstList(plr, prog, Data->P[plr].Crew[prog][grp]);
+                WaitForMouseUp();
 
-                    if (key > 0) {
-                        delay(150);
-                    }
+                if (key > 0) {
+                    delay(150);
+                }
 
-                    OutBox(245, 88, 314, 100);
-                }                 /* End outer if */
+                OutBox(245, 88, 314, 100);
             } else if ((x >= 245 && y >= 106 && x <= 314 && y <= 118
                         && mousebuttons > 0) || key == 'B') {
                 /* Break Group */
@@ -993,9 +998,8 @@ void Programs(char plr, char prog)
                     draw_string(88, 104, "CANNOT BREAK THIS CREW.");
 
                     WaitForMouseUp();
-                    i = 1;
-
-                    while (i == 1) {
+                    
+                    while (true) {
                         key = 0;
                         GetMouse();
 
@@ -1009,7 +1013,7 @@ void Programs(char plr, char prog)
                                  * Redraw the screen behind it from buffer */
                                 buffer.copyTo(display::graphics.legacyScreen(),
                                               75, 43);
-                                i = 2;
+                                break;
                             }
                         }
                     }
@@ -1033,7 +1037,7 @@ void Programs(char plr, char prog)
 
                     DispLeft(plr, BarA, count, now2, &M[0]);
 
-                    for (i = 1; i < 5; i++) {
+                    for (int i = 1; i < 5; i++) {
                         DrawPosition(prog, i);
                     }
 
@@ -1053,17 +1057,18 @@ void Programs(char plr, char prog)
                 OutBox(245, 5, 314, 17);
                 delay(10);
 
-                for (i = 0; i < 8; i++) {
-                    if (CrewCount[i] < max)
+                for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
+                    if (CrewCount[i] < crew_capacity) {
                         while (CrewCount[i] > 0) {
-                            M[count] =
-                                Data->P[plr].Crew[prog][i][CrewCount[i] - 1] - 1;
-                            Data->P[plr].Crew[prog][i][CrewCount[i] - 1] = 0;
+                            auto& crew = Data->P[plr].Crew[prog][i];
+                            M[count] = crew[CrewCount[i] - 1] - 1;
+                            crew[CrewCount[i] - 1] = 0;
                             Data->P[plr].Pool[M[count]].Crew = 0;
                             Data->P[plr].CrewCount[prog][i] = 0;
                             CrewCount[i]--;
                             count++;
                         }
+                    }
 
                     Data->P[plr].CrewCount[prog][i] = CrewCount[i];
                 }
@@ -1073,7 +1078,6 @@ void Programs(char plr, char prog)
                 }
 
                 music_stop();
-
                 return;            /* Done */
             }
         }
@@ -1254,7 +1258,7 @@ void FltsTxt(char nw, char col)
     int row = nw%4;
     int column = nw/4;
     draw_string(169+77*column,147+15*row,"FLT. Crew ");
-    draw_string(0,0, RomanNumeral(nw).c_str());
+    draw_string(0,0, RomanNumeral(nw+1).c_str());
 }  /* End of FltsTxt */
 
 /* vi: set noet ts=4 sw=4 tw=78: */
