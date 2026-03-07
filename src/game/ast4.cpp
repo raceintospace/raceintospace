@@ -41,10 +41,13 @@
 #include "game_main.h"
 #include "gr.h"
 #include "hardware.h"
+#include "logging.h"
 #include "pace.h"
 #include "place.h"
 #include "sdlhelper.h"
 #include "start.h"
+
+LOG_DEFAULT_CATEGORY(baris)
 
 #define Guy(a,b,c,d) (Data->P[a].Crew[b][c][d]-1)
 
@@ -575,7 +578,7 @@ void Programs(char plr, char prog)
     DrawProgs(plr, prog);
     Flts(0, 0);
 
-    for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
+    for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         CrewCount[i] = Data->P[plr].CrewCount[prog][i];
 
         if (CrewCount[i] == 0) {
@@ -900,7 +903,7 @@ void Programs(char plr, char prog)
                 /* Assign 'Naut */
                 if (count == 0) continue; // no spaceman to assign
                 
-                int& crew_slot = Data->P[plr].Crew[prog][grp][CrewCount[grp]];
+                int8_t& crew_slot = Data->P[plr].Crew[prog][grp][CrewCount[grp]];
                 if (crew_slot != 0) {
                     LOG_WARNING("Trying to assign spaceman into an occupied spot?");
                     continue;
@@ -1073,7 +1076,7 @@ void Programs(char plr, char prog)
                     Data->P[plr].CrewCount[prog][i] = CrewCount[i];
                 }
 
-                for (i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     Data->P[plr].Pool[M[i]].Assign = 0;
                 }
 
