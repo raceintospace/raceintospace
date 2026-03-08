@@ -34,6 +34,9 @@
             "displayName": "Common vcpkg settings",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "./vcpkg/scripts/buildsystems/vcpkg.cmake"
+            },
+            "environment": {
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5"
             }
         },
         {
