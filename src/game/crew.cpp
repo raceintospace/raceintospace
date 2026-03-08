@@ -227,7 +227,6 @@ void ClrFut(char plr, char pad)
     Data->P[plr].Future[pad].Duration = 0;
     Data->P[plr].Future[pad].Joint = 0;
     Data->P[plr].Future[pad].MissionCode = Mission_None;
-    return;
 }
 
 /* Create an interface and select a Primary and/or Secondary flight crew
@@ -241,12 +240,8 @@ void ClrFut(char plr, char pad)
  */
 int AsnCrew(char plr, int missionCode, char pad, char part)
 {
-    int count = 0, i, prg = 0, grp = -1, prime = -1, men = 0, back = -1, t = 0, s = 0, k = 0, yes = 0, stflag = 0, bug;
-
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k200";
-    men = Data->P[plr].Future[pad].Men;
-    prg = Data->P[plr].Future[pad].Prog;
 
     // Any existing astronauts *were* unassigned here. However...
     // since preceding call to SecondHard sets Men, Prog fields,
@@ -254,28 +249,24 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
     // Men & Prog fields may be different from when they were assigned.
     if (Data->P[plr].Future[pad].PCrew > 0 ||
         Data->P[plr].Future[pad].BCrew > 0) {
-        CERROR7(future, "AsnCrew(plr = %d, pad = %d, part = %d) "
+        CAT_ERROR(future, "AsnCrew(plr = %d, pad = %d, part = %d) "
                 "is setting new crew before old crew PCrew = %d, "
                 "BCrew = %d has been unassigned",
                 plr, pad, part, Data->P[plr].Future[pad].PCrew,
                 Data->P[plr].Future[pad].BCrew);
     }
 
-    prime = -1;
-    back = -1;
-    count = AvailableCrewsCount(plr, prg);
+    int prg = Data->P[plr].Future[pad].Prog;
+    int count = AvailableCrewsCount(plr, prg);
 
-    if (count < 2 && options.feat_no_backup == 0) {
+    if (count < 2 && !options.feat_no_backup) {
         keyHelpText = oldKeyHelpText;
         Help("i107");
         return 0;
-    } else if (!count && options.feat_no_backup) {
+    } else if (count < 1 && options.feat_no_backup) {
         keyHelpText = oldKeyHelpText;
         Help("i099");
         return 0;
-    } else {
-        // TODO: If this doesn't trigger, bug is never initialized.
-        bug = 0;
     }
 
     ShBox(74, 3, 244, 190);
@@ -287,17 +278,17 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
     fill_rectangle(81, 37, 237, 98, 7 + 3 * plr);
     ShBox(80, 24, 238, 33);
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         IOBox(78, 121 + 16 * i, 156, 139 + 16 * i);
         FutFltsTxt(i, 1);
     }
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         IOBox(162, 121 + 16 * i, 240, 139 + 16 * i);
         FutFltsTxt(i + 4, 1);
     }
 
-    FutSt(plr, prg, prime, back);
+    FutSt(plr, prg, -1, -1);
 
     display::graphics.setForegroundColor(1);
 
@@ -343,76 +334,71 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
 
     WaitForMouseUp();
 
+    int grp = -1;
+    int men = Data->P[plr].Future[pad].Men;
+    int prime = -1;
+    int back = -1;
     while (1) {
         key = 0;
         GetMouse();
 
-        for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {  // Flight Crew Settings
-            if (Data->P[plr].Crew[prg][i][0] == 0 || (options.feat_no_cTraining == 0 && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
+        for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {  // Flight Crew Settings
+            if (Data->P[plr].Crew[prg][i][0] == 0 
+                || (options.feat_no_cTraining == 0 
+                    && Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Moved == 0) //No Capsule Training, Nikakd, 10/8/10
                 || Data->P[plr].Pool[Data->P[plr].Crew[prg][i][0] - 1].Prime > 0) {
-                stflag = 0;
-            } else {
-                stflag = 1;
+                continue;
+            }
+            if (grp == i) continue;
+
+            int column = i/4;
+            int row = i%4;
+
+            bool yes = false;
+            if (mousebuttons != 0
+                && x >=  80+84*column && y >= 123 + row * 16 
+                && x <= 154+84*column && y <= 137 + row * 16 ) {
+                yes = true;
+            } else if (key == '1' + i) {
+                yes = true;
+            }
+            if (!yes) continue;
+            
+            if (grp != -1) {
+                int grp_column = grp/4;
+                int grp_row = grp%4;
+                OutBox(80+84*grp_column, 123+grp_row * 16, 154+84*grp_column, 137+grp_row * 16);
             }
 
-            t = (i < 4) ? 0 : 1;
-            yes = 0;
+            InBox(80+84*column, 123+row*16, 154+84*column, 137+row*16);
 
-            if (t == 1) {
-                k = i - 4;
-            } else {
-                k = i;    // adjust for second side
-            }
+            grp = i;
+            FutAstList(plr, missionCode, men,
+                       Data->P[plr].Crew[prg][grp][0],
+                       Data->P[plr].Crew[prg][grp][1],
+                       Data->P[plr].Crew[prg][grp][2],
+                       Data->P[plr].Crew[prg][grp][3]);
 
-            if (!t && x >= 80 && y >= 123 + k * 16 && x <= 154 && y <= 137 + k * 16 && grp != i && mousebuttons != 0 && stflag == 1) {
-                yes = 1;
-            } else if (t && x >= 164 && y >= 123 + k * 16 && x <= 238 && y <= 137 + k * 16 && (grp != i) && mousebuttons != 0 && stflag == 1) {
-                yes = 1;
-            } else if (grp != i && stflag == 1 && key == '1' + i) {
-                yes = 1;
-            }
-
-            if (yes == 1 && bug == 0) {
-
-                if (grp != -1) {
-                    if (grp < 4) {
-                        OutBox(80, 123 + grp * 16, 154, 137 + grp * 16);
-                    } else {
-                        s = grp - 4;
-                        OutBox(164, 123 + s * 16, 238, 137 + s * 16);
-                    }
-                }
-
-                if (i < 4) {
-                    InBox(80, 123 + i * 16, 154, 137 + i * 16);
-                } else {
-                    InBox(164, 123 + k * 16, 238, 137 + k * 16);
-                }
-
-                grp = i;
-                FutAstList(plr, missionCode, men,
-                           Data->P[plr].Crew[prg][grp][0],
-                           Data->P[plr].Crew[prg][grp][1],
-                           Data->P[plr].Crew[prg][grp][2],
-                           Data->P[plr].Crew[prg][grp][3]);
-
-                WaitForMouseUp();
-            }
+            WaitForMouseUp();
         }
 
-        if (((x >= 166 && y >= 9 && x <= 236 && y <= 19 && mousebuttons > 0) || key == K_ENTER || key == 'A') && prime != -1 && (back != -1 || options.feat_no_backup == 1) && bug == 0) {
+        if ((x >= 166 && y >= 9 && x <= 236 && y <= 19 && mousebuttons > 0) 
+             || key == K_ENTER 
+             || key == 'A') {
             // Assign
+            if (prime == -1) continue;
+            if (back == -1 && !options.feat_no_backup) continue;
 
             InBox(166, 9, 236, 19);
 
-            for (i = 0; i < men; i++) {
+            for (int i = 0; i < men; i++) {
                 Data->P[plr].Pool[Data->P[plr].Crew[prg][prime][i] - 1].Prime = 4;
             }
 
             Data->P[plr].Future[pad].PCrew = prime + 1;
             Data->P[plr].Future[pad].BCrew = back + 1;
 
-            for (i = 0; i < men; i++) {
+            for (int i = 0; i < men; i++) {
                 Data->P[plr].Pool[Data->P[plr].Crew[prg][back][i] - 1].Prime = 2;
             }
 
@@ -435,7 +421,11 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
             ClrFut(plr, pad);
             keyHelpText = oldKeyHelpText;
             return 0;  // Abort - Redo Mission
-        } else if (((x >= 82 && y >= 104 && x <= 155 && y <= 114 && mousebuttons > 0) || key == 'P') && prime != grp && back != grp && grp != -1 && bug == 0) {
+        } else if (((x >= 82 && y >= 104 && x <= 155 && y <= 114 && mousebuttons > 0) 
+                    || key == 'P') 
+                   && prime != grp 
+                   && back != grp 
+                   && grp != -1) {
             InBox(82, 104, 155, 114);
             prime = grp;
             FutSt(plr, prg, prime, back);
@@ -447,7 +437,11 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
 
             OutBox(82, 104, 155, 114);
         } // End Primary Set
-        else if (((x >= 163 && y >= 104 && x <= 236 && y <= 114 && mousebuttons > 0) || key == 'B')  && prime != grp && back != grp && grp != -1 && bug == 0) {
+        else if (((x >= 163 && y >= 104 && x <= 236 && y <= 114 && mousebuttons > 0) 
+                  || key == 'B')
+                 && prime != grp 
+                 && back != grp 
+                 && grp != -1) {
             InBox(163, 104, 236, 114);
             back = grp;
             FutSt(plr, prg, prime, back);
@@ -511,15 +505,11 @@ void FutFltsTxt(char nw, char col)
     default:
         break;
     }
-
-    return;
 }
 
 void FutSt(char plr, int pr, int p, int b)
 {
-    int i;
-
-    for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
+    for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
         if (i == p) {
             FutSt2(i, 3);
         }
@@ -540,8 +530,6 @@ void FutSt(char plr, int pr, int p, int b)
             }
         }
     }
-
-    return;
 }
 
 void FutSt2(int num, int type)
@@ -593,8 +581,6 @@ void FutSt2(int num, int type)
         draw_string(0, 0, "ASSIGNED");
         break;
     }
-
-    return;
 }
 
 void FutAstList(char plr, int missionCode, char men,
@@ -737,8 +723,6 @@ void FutAstList(char plr, int missionCode, char men,
             draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Endurance);
         }
     }
-
-    return;
 }
 
 
@@ -768,7 +752,7 @@ void DrawHard(char mode, char pad, char mis, char plr)
     }
 
     display::graphics.setForegroundColor(1);
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
     draw_string(85, 70, (plan.Abbr).c_str());
 //Missions(plr,85,70,mis,0);
 
@@ -811,7 +795,6 @@ void DrawHard(char mode, char pad, char mis, char plr)
              Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
     draw_string(159, 143, str, ALIGN_CENTER);
     draw_string(142, 162, "CANCEL");
-    return;
 }
 
 
@@ -834,12 +817,12 @@ void DrawHard(char mode, char pad, char mis, char plr)
  */
 int HardRequest(char plr, char mode, char mis, char pad)
 {
-    int i = 0, pr[5], t = 0;
+    int pr[5], t = 0;
 
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k201";
 
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (Data->P[plr].Manned[i].Num >= 0) { // Is program purchased?
             pr[i] = 1;
             t++;
@@ -848,7 +831,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
         }
     }
 
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
 
     // Exceptions
     // One-man capsules cannot perform Lunar missions, Docking missions.
@@ -923,7 +906,7 @@ int HardRequest(char plr, char mode, char mis, char pad)
         IOBox(121, 134, 198, 148);
     }
 
-    i = 0;
+    int i = 0;
     WaitForMouseUp();
 
     while (i == 0) {
@@ -997,13 +980,12 @@ int HardRequest(char plr, char mode, char mis, char pad)
  */
 int SecondHard(char plr, char mode, char mis, char pad)
 {
-
-    int i = 0, men = 0, prg = 0, prog[5], t = 0;
+    int men = 0, prg = 0, prog[5], t = 0;
 
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k201";
 
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (Data->P[plr].Manned[i].Num >= 0) {
             men++;
         }
@@ -1019,7 +1001,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
         pad++;    // if second part of Joint mission
     }
 
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         if (Data->P[plr].Manned[i].Num >= 0) {
             prog[i] = 1;
             t++;
@@ -1028,7 +1010,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
         }
     }
 
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
 
     // Exceptions
     // One-man capsules cannot perform Lunar missions, Docking missions.
@@ -1102,7 +1084,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
         IOBox(121, 134, 198, 148);
     }
 
-    i = 0;
+    int i = 0;
     WaitForMouseUp();
 
     while (i == 0) {
