@@ -72,12 +72,26 @@ if (WINDOWS)
 	install(DIRECTORY data/audio data/gamedata data/images data/video icons DESTINATION .)
 	install(FILES COPYING README.md AUTHORS DESTINATION .)
 elseif(APPLE)
+	# sdl12-compat dlopen()s SDL2 at runtime; find it at configure time so
+	# fixup_bundle can copy it into the bundle alongside libSDL-1.2.0.dylib.
+	# Prefer the versioned name (libSDL2-2.0.0.dylib) since that is the first
+	# filename sdl12-compat tries via @loader_path.
+	find_library(SDL2_LIBRARY NAMES SDL2-2.0.0 SDL2
+		PATHS /opt/homebrew/opt/sdl2/lib /usr/local/opt/sdl2/lib
+		NO_DEFAULT_PATH)
+	if(NOT SDL2_LIBRARY)
+		find_library(SDL2_LIBRARY NAMES SDL2-2.0.0 SDL2 REQUIRED)
+	endif()
 	install(TARGETS raceintospace BUNDLE DESTINATION .)
 	set(CPACK_GENERATOR DragNDrop)
 	set(CPACK_DMG_VOLUME_NAME "Race Into Space")
 	install(CODE "
 		include(BundleUtilities)
 		fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/raceintospace.app\" \"\" \"\")
+		# sdl12-compat dlopen()s SDL2 at runtime via @loader_path; it must be
+		# present alongside libSDL-1.2.0.dylib in Contents/Frameworks/.
+		file(COPY \"${SDL2_LIBRARY}\"
+			DESTINATION \"\${CMAKE_INSTALL_PREFIX}/raceintospace.app/Contents/Frameworks/\")
 		execute_process(COMMAND codesign --sign - --force --deep \"\${CMAKE_INSTALL_PREFIX}/raceintospace.app\")
 	")
 else() # Linux
