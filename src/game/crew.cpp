@@ -382,7 +382,7 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
             WaitForMouseUp();
         }
 
-        if (((x >= 166 && y >= 9 && x <= 236 && y <= 19 && mousebuttons > 0) 
+        if ((x >= 166 && y >= 9 && x <= 236 && y <= 19 && mousebuttons > 0) 
              || key == K_ENTER 
              || key == 'A') {
             // Assign
