@@ -1097,7 +1097,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
     case MISC_HARDWARE:  // Misc hardware (Kicker, EVA, Docking Module)
         if (pData->Misc[unit_index].Num >= 2) break;
-        {  // Misc Programs
+        // Misc Programs
         if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
             // Simply return when starting the EVA program, no cost for this
             return 1;
