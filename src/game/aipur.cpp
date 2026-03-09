@@ -199,178 +199,178 @@ void Stat(char Win)
         };
 
         for (j = 0; j < 5; j++) {
-            if (AI[Win] == 0) {
-                if ((x >= starty + (j * 33) && y >= 87 && x <= 31 + starty + (j * 33) && y <= 107 && mousebuttons > 0) || ((key >= '1' && key <= '4') || key == '0')) {
-                    if (key > 0) {
-                        switch (key) {
-                        case '0':
-                            j = 0;
-                            break;
-
-                        case '1':
-                            j = 1;
-                            break;
-
-                        case '2':
-                            j = 2;
-                            break;
-
-                        case '3':
-                            j = 3;
-                            break;
-
-                        case '4':
-                            j = 4;
-                            break;
-
-                        default:
-                            break;
-                        }
-                    }
-
-                    InBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
-                    WaitForMouseUp();
-                    key = 0;
-                    keyHelpText = "k999";
-
-                    switch (j) {
-                    case 0:
-                        helpText = "i130";
-                        keyHelpText = "k031";
-
-                        if (Option == -1 || (Option == Win)) {
-                            ShowSpHist(Win);
-                        }
-
-                        //ShowSpHist(Win);
+            if (AI[Win] != 0) continue;
+            
+            if ((x >= starty + (j * 33) && y >= 87 && x <= 31 + starty + (j * 33) && y <= 107 && mousebuttons > 0) || ((key >= '1' && key <= '4') || key == '0')) {
+                if (key > 0) {
+                    switch (key) {
+                    case '0':
+                        j = 0;
                         break;
 
-                    case 1:
-                        helpText = "i131";
-                        keyHelpText = "k321";
-                        Records(Win);
+                    case '1':
+                        j = 1;
                         break;
 
-                    case 2:
-                        helpText = "i132";
-                        keyHelpText = "k033";
-                        ShowPrest(Win);
+                    case '2':
+                        j = 2;
                         break;
 
-                    case 3:
-                        helpText = "i034";
-                        ShowHard(Win);
+                    case '3':
+                        j = 3;
                         break;
 
-                    case 4:
-                        helpText = (Win == 0) ? "i133" : "i134";
-                        keyHelpText = (Win == 0) ? "k035" : "k441";
-
-                        if (Data->P[Win].AstroCount > 0)
-                            if (Option == -1 || Option == Win) {
-                                ShowAstrosHist(Win);
-                            }
+                    case '4':
+                        j = 4;
+                        break;
 
                     default:
                         break;
                     }
-
-                    helpText = "i000";
-                    keyHelpText = "k000";
-                    DrawStatistics(Win);
-                    key = 0;
-                    i = 0;
-                    OutBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
                 }
-            }  // matches AI[Win]==0
+
+                InBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
+                WaitForMouseUp();
+                key = 0;
+                keyHelpText = "k999";
+
+                switch (j) {
+                case 0:
+                    helpText = "i130";
+                    keyHelpText = "k031";
+
+                    if (Option == -1 || (Option == Win)) {
+                        ShowSpHist(Win);
+                    }
+
+                    //ShowSpHist(Win);
+                    break;
+
+                case 1:
+                    helpText = "i131";
+                    keyHelpText = "k321";
+                    Records(Win);
+                    break;
+
+                case 2:
+                    helpText = "i132";
+                    keyHelpText = "k033";
+                    ShowPrest(Win);
+                    break;
+
+                case 3:
+                    helpText = "i034";
+                    ShowHard(Win);
+                    break;
+
+                case 4:
+                    helpText = (Win == 0) ? "i133" : "i134";
+                    keyHelpText = (Win == 0) ? "k035" : "k441";
+
+                    if (Data->P[Win].AstroCount > 0)
+                        if (Option == -1 || Option == Win) {
+                            ShowAstrosHist(Win);
+                        }
+
+                default:
+                    break;
+                }
+
+                helpText = "i000";
+                keyHelpText = "k000";
+                DrawStatistics(Win);
+                key = 0;
+                i = 0;
+                OutBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
+            }
         }
 
         for (j = 0; j < 5; j++) {
-            if (AI[other(Win)] == 0) {
-                if ((x >= starty + (j * 33) && y >= 132 && x <= 31 + starty + (j * 33) && y <= 152 && mousebuttons > 0) || (key >= '5' && key <= '9')) {
-                    if (key > 0) {
-                        switch (key) {
-                        case '5':
-                            j = 0;
-                            break;
-
-                        case '6':
-                            j = 1;
-                            break;
-
-                        case '7':
-                            j = 2;
-                            break;
-
-                        case '8':
-                            j = 3;
-                            break;
-
-                        case '9':
-                            j = 4;
-                            break;
-
-                        default:
-                            break;
-                        }
-                    }
-
-                    InBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
-                    WaitForMouseUp();
-                    key = 0;
-
-                    switch (j) {
-                    case 0:
-                        helpText = "i130";
-                        keyHelpText = "k031";
-
-                        if (Option == -1 || Option == other(Win)) {
-                            ShowSpHist(other(Win));
-                        }
-
-                        //ShowSpHist(other(Win));
+            if (AI[other(Win)] != 0) continue;
+            
+            if ((x >= starty + (j * 33) && y >= 132 && x <= 31 + starty + (j * 33) && y <= 152 && mousebuttons > 0) || (key >= '5' && key <= '9')) {
+                if (key > 0) {
+                    switch (key) {
+                    case '5':
+                        j = 0;
                         break;
 
-                    case 1:
-                        helpText = "i131";
-                        keyHelpText = "k321";
-                        Records(other(Win));
+                    case '6':
+                        j = 1;
                         break;
 
-                    case 2:
-                        helpText = "i132";
-                        keyHelpText = "k033";
-                        ShowPrest(other(Win));
+                    case '7':
+                        j = 2;
                         break;
 
-                    case 3:
-                        helpText = "i034";
-                        keyHelpText = "k999";
-                        ShowHard(other(Win));
+                    case '8':
+                        j = 3;
                         break;
 
-                    case 4:
-                        helpText = (Win == 0) ? "i133" : "i134";
-                        keyHelpText = (Win == 0) ? "k035" : "k441";
-
-                        if (Data->P[other(Win)].AstroCount > 0)
-                            if (Option == -1 || Option == other(Win)) {
-                                ShowAstrosHist(other(Win));
-                            }
-
+                    case '9':
+                        j = 4;
                         break;
 
                     default:
                         break;
                     }
-
-                    helpText = "i000";
-                    keyHelpText = "k000";
-                    DrawStatistics(Win);
-                    key = 0;
-                    i = 0;
-                    OutBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
                 }
+
+                InBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
+                WaitForMouseUp();
+                key = 0;
+
+                switch (j) {
+                case 0:
+                    helpText = "i130";
+                    keyHelpText = "k031";
+
+                    if (Option == -1 || Option == other(Win)) {
+                        ShowSpHist(other(Win));
+                    }
+
+                    //ShowSpHist(other(Win));
+                    break;
+
+                case 1:
+                    helpText = "i131";
+                    keyHelpText = "k321";
+                    Records(other(Win));
+                    break;
+
+                case 2:
+                    helpText = "i132";
+                    keyHelpText = "k033";
+                    ShowPrest(other(Win));
+                    break;
+
+                case 3:
+                    helpText = "i034";
+                    keyHelpText = "k999";
+                    ShowHard(other(Win));
+                    break;
+
+                case 4:
+                    helpText = (Win == 0) ? "i133" : "i134";
+                    keyHelpText = (Win == 0) ? "k035" : "k441";
+
+                    if (Data->P[other(Win)].AstroCount > 0)
+                        if (Option == -1 || Option == other(Win)) {
+                            ShowAstrosHist(other(Win));
+                        }
+
+                    break;
+
+                default:
+                    break;
+                }
+
+                helpText = "i000";
+                keyHelpText = "k000";
+                DrawStatistics(Win);
+                key = 0;
+                i = 0;
+                OutBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
             }
         }
     }
@@ -640,38 +640,40 @@ char Skill(char plr, char type)
     struct BuzzData *pData = &Data->P[plr];
 
     for (m = 0; m < pData->AstroCount; m++) {
-        if (pData->Pool[m].Status == AST_ST_ACTIVE && pData->Pool[m].Assign == 0 && pData->Pool[m].Prime < 1) {
-            tst = 0;
+        if (pData->Pool[m].Status != AST_ST_ACTIVE) continue; 
+        if (pData->Pool[m].Assign != 0) continue; 
+        if (pData->Pool[m].Prime >= 1) continue;
+        
+        tst = 0;
 
-            switch (type) {
-            case 1:
-                tst = pData->Pool[m].Cap + pData->Pool[m].EVA;
-                break;
+        switch (type) {
+        case 1:
+            tst = pData->Pool[m].Cap + pData->Pool[m].EVA;
+            break;
 
-            case 2:
-                tst = pData->Pool[m].LM + pData->Pool[m].EVA;
-                break;
+        case 2:
+            tst = pData->Pool[m].LM + pData->Pool[m].EVA;
+            break;
 
-            case 3:
-                tst = pData->Pool[m].Docking;
-                break;
+        case 3:
+            tst = pData->Pool[m].Docking;
+            break;
 
-            case 4:
-                tst = pData->Pool[m].Cap;
-                break;
+        case 4:
+            tst = pData->Pool[m].Cap;
+            break;
 
-            case 5:
-                tst = pData->Pool[m].EVA;
-                break;
+        case 5:
+            tst = pData->Pool[m].EVA;
+            break;
 
-            default:
-                break;
-            }
+        default:
+            break;
+        }
 
-            if (tst >= hgh) {
-                ind = m;
-                hgh = tst;
-            }
+        if (tst >= hgh) {
+            ind = m;
+            hgh = tst;
         }
     }
 
@@ -728,12 +730,12 @@ void TransAstro(char plr, int inx)
         flt2 = -1;
 
         for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
-            if (pData->CrewCount[inx][i] == 0) {
-                if (flt1 == -1) {
-                    flt1 = i;
-                } else if (flt2 == -1) {
-                    flt2 = i;
-                }
+            if (pData->CrewCount[inx][i] != 0) continue;
+            
+            if (flt1 == -1) {
+                flt1 = i;
+            } else if (flt2 == -1) {
+                flt2 = i;
             }
         }
 
@@ -748,71 +750,73 @@ void TransAstro(char plr, int inx)
                 found = 0;
 
                 while (w < pData->AstroCount && found == 0) {
-                    if (pData->Pool[w].Status == AST_ST_ACTIVE && pData->Pool[w].Assign == 0 && pData->Pool[w].Prime < 1) {
-                        // based on [j] an program and position pick best skill
-                        switch (inx) {
-                        case 1:
+                    if (pData->Pool[w].Status != AST_ST_ACTIVE) continue;
+                    if (pData->Pool[w].Assign != 0) continue;
+                    if (pData->Pool[w].Prime >= 1) continue;
+                    
+                    // based on [j] an program and position pick best skill
+                    switch (inx) {
+                    case 1:
+                        w = Skill(plr, 1);
+                        break;
+
+                    case 2:
+                        if (j == 1) {
                             w = Skill(plr, 1);
-                            break;
-
-                        case 2:
-                            if (j == 1) {
-                                w = Skill(plr, 1);
-                            } else {
-                                w = Skill(plr, 2);
-                            }
-
-                            break;
-
-                        case 3:
-                            if (j == 1) {
-                                w = Skill(plr, 1);
-                            } else if (j == 2) {
-                                w = Skill(plr, 2);
-                            } else {
-                                w = Skill(plr, 3);
-                            }
-
-                            break;
-
-                        case 4:
-                            if (j == 1) {
-                                w = Skill(plr, 4);
-                            } else if (j == 2) {
-                                w = Skill(plr, 2);
-                            } else {
-                                w = Skill(plr, 3);
-                            }
-
-                            break;
-
-                        case 5:
-                            if (j == 1) {
-                                w = Skill(plr, 4);
-                            } else if (j == 2) {
-                                w = Skill(plr, 4);
-                            } else {
-                                w = Skill(plr, 5);
-                            }
-
-                            break;
-
-                        default:
-                            break;
-                        }
-
-                        if (i == 0) {
-                            pData->Pool[w].Assign = inx;
-                            pData->Pool[w].Unassigned = 1;
-                            pData->Crew[inx][flt1][j - 1] = w + 1;
-                            found = 1;
                         } else {
-                            pData->Pool[w].Assign = inx;
-                            pData->Pool[w].Unassigned = 1;
-                            pData->Crew[inx][flt2][j - 1] = w + 1;
-                            found = 1;
+                            w = Skill(plr, 2);
                         }
-                    }  // end if
+
+                        break;
+
+                    case 3:
+                        if (j == 1) {
+                            w = Skill(plr, 1);
+                        } else if (j == 2) {
+                            w = Skill(plr, 2);
+                        } else {
+                            w = Skill(plr, 3);
+                        }
+
+                        break;
+
+                    case 4:
+                        if (j == 1) {
+                            w = Skill(plr, 4);
+                        } else if (j == 2) {
+                            w = Skill(plr, 2);
+                        } else {
+                            w = Skill(plr, 3);
+                        }
+
+                        break;
+
+                    case 5:
+                        if (j == 1) {
+                            w = Skill(plr, 4);
+                        } else if (j == 2) {
+                            w = Skill(plr, 4);
+                        } else {
+                            w = Skill(plr, 5);
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    if (i == 0) {
+                        pData->Pool[w].Assign = inx;
+                        pData->Pool[w].Unassigned = 1;
+                        pData->Crew[inx][flt1][j - 1] = w + 1;
+                        found = 1;
+                    } else {
+                        pData->Pool[w].Assign = inx;
+                        pData->Pool[w].Unassigned = 1;
+                        pData->Crew[inx][flt2][j - 1] = w + 1;
+                        found = 1;
+                    }
 
                     ++w;
                 }  // end while
@@ -839,14 +843,15 @@ void CheckAdv(char plr)
 
     if (count <= 3) {
         for (int i = 0; i < pData->AstroCount; i++) {
-            if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
-                pData->Pool[i].Focus = brandom(4) + 1;
+            if (pData->Pool[i].Status != AST_ST_ACTIVE) continue; 
+            if (pData->Pool[i].Assign != 0) continue;
+            
+            pData->Pool[i].Focus = brandom(4) + 1;
 
-                if (pData->Pool[i].Focus > 0) {
-                    pData->Cash -= 3;
-                    pData->Pool[i].Assign = 0;
-                    pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
-                }
+            if (pData->Pool[i].Focus > 0) {
+                pData->Cash -= 3;
+                pData->Pool[i].Assign = 0;
+                pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
             }
         }
     }
@@ -966,155 +971,65 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
     switch (hardware_index) {
     case PROBE_HARDWARE:  // Probe
-        if (pData->Probe[unit_index].Num < 2) {
-            // Probe Programs
-            if (pData->Probe[unit_index].Num == PROGRAM_NOT_STARTED) {
-                if (pData->Probe[unit_index].InitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Probe[unit_index].InitCost;
-                    pData->Probe[unit_index].Num = 1;
-                    itemPurchased = true;
-                    newProgramStarted = true;
-                }
-            } else {
-                // Do we have enough to purchase one?
-                if (pData->Probe[unit_index].UnitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Probe[unit_index].UnitCost;
-                    pData->Probe[unit_index].Num = pData->Probe[unit_index].Num + 1;
-                    itemPurchased = true;
-                }
+        if (pData->Probe[unit_index].Num >= 2) break;
+        
+        // Probe Programs
+        if (pData->Probe[unit_index].Num == PROGRAM_NOT_STARTED) {
+            if (pData->Probe[unit_index].InitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Probe[unit_index].InitCost;
+                pData->Probe[unit_index].Num = 1;
+                itemPurchased = true;
+                newProgramStarted = true;
+            }
+        } else {
+            // Do we have enough to purchase one?
+            if (pData->Probe[unit_index].UnitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Probe[unit_index].UnitCost;
+                pData->Probe[unit_index].Num = pData->Probe[unit_index].Num + 1;
+                itemPurchased = true;
+            }
 
 #ifndef DISABLE_AI_CHEAT
-                else {
-                    // Just give it to them anyway
-                    itemPurchased = true;
-                    ++pData->Probe[unit_index].Num;
-                }
+            else {
+                // Just give it to them anyway
+                itemPurchased = true;
+                ++pData->Probe[unit_index].Num;
+            }
 
 #endif
-            }
-        };  // end case PROBE_HARDWARE
+        }  // end case PROBE_HARDWARE
 
         break;
 
     case ROCKET_HARDWARE:  // Rockets
-        if (pData->Rocket[unit_index].Num < ROCKET_HW_THREE_STAGE) {
-            // Rocket Programs Purchasing
-            if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
-                // Do we have enough to purchase one?
-                if (pData->Rocket[unit_index].InitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Rocket[unit_index].InitCost;
+        if (pData->Rocket[unit_index].Num >= ROCKET_HW_THREE_STAGE) break;
+        
+        // Rocket Programs Purchasing
+        if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
+            // Do we have enough to purchase one?
+            if (pData->Rocket[unit_index].InitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Rocket[unit_index].InitCost;
 
-                    if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
-                        pData->Rocket[unit_index].Num = 1;
-                    } else {
-                        ++pData->Rocket[unit_index].Num;
-                    }
-
-                    itemPurchased = true;
-                    newProgramStarted = true;
+                if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
+                    pData->Rocket[unit_index].Num = 1;
+                } else {
+                    ++pData->Rocket[unit_index].Num;
                 }
-            } else {
-                if (pData->Rocket[unit_index].Num == 1 && (pData->Rocket[unit_index].Safety < pData->Rocket[unit_index].MaxRD - 15)) {
-                    // AI Player does R&D on this purchased item
-                    RDafford(plr, ROCKET_HARDWARE, unit_index);
-                    pData->Buy[ROCKET_HARDWARE][unit_index] = 0;  // Reset the record of this?
-                    itemPurchased = true;
-                } else if (pData->Rocket[unit_index].Num >= 0) {
-                    // Do we have enough to purchase one?
-                    if (pData->Rocket[unit_index].UnitCost < pData->Cash) {
-                        pData->Cash = pData->Cash - pData->Rocket[unit_index].UnitCost;
-                        ++pData->Rocket[unit_index].Num;
-                        itemPurchased = true;
-                    }
 
-#ifndef DISABLE_AI_CHEAT
-                    else {
-                        // Just give them one anyway
-                        itemPurchased = true;
-                        ++pData->Rocket[unit_index].Num;
-                    }
-
-#endif
-                }
+                itemPurchased = true;
+                newProgramStarted = true;
             }
-        };  // end case ROCKET_HARDWARE
-
-        break;
-
-    case MANNED_HARDWARE: // Manned Capsules
-        if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[MANNED_HW_MINISHUTTLE].Num == 1) {
-            // Only need one Minishuttle
-            return 1;
-        } else if (pData->Manned[unit_index].Num < MANNED_HW_THREE_MAN_CAPSULE) {
-            // Manned Programs
-            if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
+        } else {
+            if (pData->Rocket[unit_index].Num == 1 && (pData->Rocket[unit_index].Safety < pData->Rocket[unit_index].MaxRD - 15)) {
+                // AI Player does R&D on this purchased item
+                RDafford(plr, ROCKET_HARDWARE, unit_index);
+                pData->Buy[ROCKET_HARDWARE][unit_index] = 0;  // Reset the record of this?
+                itemPurchased = true;
+            } else if (pData->Rocket[unit_index].Num >= 0) {
                 // Do we have enough to purchase one?
-                if (pData->Manned[unit_index].InitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Manned[unit_index].InitCost;
-
-                    if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
-                        pData->Manned[unit_index].Num = 1;
-                    } else {
-                        ++pData->Manned[unit_index].Num;
-                    }
-
-                    itemPurchased = true;
-                    newProgramStarted = true;
-                }
-            } else {
-                if (pData->Manned[unit_index].Num == 1 && (pData->Manned[unit_index].Safety < pData->Manned[unit_index].MaxRD - 15)) {
-                    // AI Player does R&D on this purchased item
-                    RDafford(plr, MANNED_HARDWARE, unit_index);
-                    pData->Buy[MANNED_HARDWARE][unit_index] = 0;  // reset the record of this?
-                    itemPurchased = true;
-                } else if (pData->Manned[unit_index].Num >= 0) {
-                    // Do we have enough to purchase one?
-                    if (pData->Manned[unit_index].UnitCost < pData->Cash) {
-                        pData->Cash = pData->Cash - pData->Manned[unit_index].UnitCost;
-                        ++pData->Manned[unit_index].Num;
-                        itemPurchased = true;
-                    }
-
-#ifndef DISABLE_AI_CHEAT
-                    else {
-                        // Just give it to them anyway
-                        itemPurchased = true;
-                        ++pData->Manned[unit_index].Num;
-                    }
-
-#endif
-                }
-            }
-        };  // end case MANNED_HARDWARE
-
-        break;
-
-    case MISC_HARDWARE:  // Misc hardware (Kicker, EVA, Docking Module)
-        if (pData->Misc[unit_index].Num < 2) {  // Misc Programs
-            if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
-                // Simply return when starting the EVA program, no cost for this
-                return 1;
-            }
-
-            if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
-                // Do we have enough to purchase one?
-                if (pData->Misc[unit_index].InitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Misc[unit_index].InitCost;
-
-                    if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
-                        pData->Misc[unit_index].Num = 1;
-                    } else {
-                        ++pData->Misc[unit_index].Num;
-                    }
-
-                    itemPurchased = true;
-                    newProgramStarted = true;
-                }
-            } else if (pData->Misc[unit_index].Num >= 0) {
-                // Do we have enough to purchase one?
-                if (pData->Misc[unit_index].UnitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Misc[unit_index].UnitCost;
-                    ++pData->Misc[unit_index].Num;
+                if (pData->Rocket[unit_index].UnitCost < pData->Cash) {
+                    pData->Cash = pData->Cash - pData->Rocket[unit_index].UnitCost;
+                    ++pData->Rocket[unit_index].Num;
                     itemPurchased = true;
                 }
 
@@ -1122,12 +1037,103 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 else {
                     // Just give them one anyway
                     itemPurchased = true;
-                    ++pData->Misc[unit_index].Num;
+                    ++pData->Rocket[unit_index].Num;
                 }
 
 #endif
             }
-        };  // end case MISC_HARDWARE
+        }  // end case ROCKET_HARDWARE
+
+        break;
+
+    case MANNED_HARDWARE: // Manned Capsules
+        if (unit_index == MANNED_HW_MINISHUTTLE && pData->Manned[MANNED_HW_MINISHUTTLE].Num == 1) {
+            // Only need one Minishuttle
+            return 1;
+        }
+        if (pData->Manned[unit_index].Num >= MANNED_HW_THREE_MAN_CAPSULE) break;
+        
+        // Manned Programs
+        if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
+            // Do we have enough to purchase one?
+            if (pData->Manned[unit_index].InitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Manned[unit_index].InitCost;
+
+                if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
+                    pData->Manned[unit_index].Num = 1;
+                } else {
+                    ++pData->Manned[unit_index].Num;
+                }
+
+                itemPurchased = true;
+                newProgramStarted = true;
+            }
+        } else {
+            if (pData->Manned[unit_index].Num == 1 && (pData->Manned[unit_index].Safety < pData->Manned[unit_index].MaxRD - 15)) {
+                // AI Player does R&D on this purchased item
+                RDafford(plr, MANNED_HARDWARE, unit_index);
+                pData->Buy[MANNED_HARDWARE][unit_index] = 0;  // reset the record of this?
+                itemPurchased = true;
+            } else if (pData->Manned[unit_index].Num >= 0) {
+                // Do we have enough to purchase one?
+                if (pData->Manned[unit_index].UnitCost < pData->Cash) {
+                    pData->Cash = pData->Cash - pData->Manned[unit_index].UnitCost;
+                    ++pData->Manned[unit_index].Num;
+                    itemPurchased = true;
+                }
+
+#ifndef DISABLE_AI_CHEAT
+                else {
+                    // Just give it to them anyway
+                    itemPurchased = true;
+                    ++pData->Manned[unit_index].Num;
+                }
+
+#endif
+            }
+        }  // end case MANNED_HARDWARE
+
+        break;
+
+    case MISC_HARDWARE:  // Misc hardware (Kicker, EVA, Docking Module)
+        if (pData->Misc[unit_index].Num >= 2) break;
+        {  // Misc Programs
+        if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
+            // Simply return when starting the EVA program, no cost for this
+            return 1;
+        }
+
+        if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
+            // Do we have enough to purchase one?
+            if (pData->Misc[unit_index].InitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Misc[unit_index].InitCost;
+
+                if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
+                    pData->Misc[unit_index].Num = 1;
+                } else {
+                    ++pData->Misc[unit_index].Num;
+                }
+
+                itemPurchased = true;
+                newProgramStarted = true;
+            }
+        } else if (pData->Misc[unit_index].Num >= 0) {
+            // Do we have enough to purchase one?
+            if (pData->Misc[unit_index].UnitCost < pData->Cash) {
+                pData->Cash = pData->Cash - pData->Misc[unit_index].UnitCost;
+                ++pData->Misc[unit_index].Num;
+                itemPurchased = true;
+            }
+
+#ifndef DISABLE_AI_CHEAT
+            else {
+                // Just give them one anyway
+                itemPurchased = true;
+                ++pData->Misc[unit_index].Num;
+            }
+
+#endif
+        }  // end case MISC_HARDWARE
 
         break;
 
