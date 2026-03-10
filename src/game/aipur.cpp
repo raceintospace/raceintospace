@@ -38,6 +38,7 @@
 #include "game_main.h"
 #include "gr.h"
 #include "hardef.h"
+#include "logging.h"
 #include "museum.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "pace.h"
@@ -46,6 +47,8 @@
 #include "records.h"
 #include "sdlhelper.h"
 #include "serialize.h"
+
+LOG_DEFAULT_CATEGORY(baris)
 
 std::vector<ManPool> Men;
 std::vector<std::vector<int8_t>> portbuttons;//(7, std::vector<int8_t>(570));
@@ -871,10 +874,10 @@ void RDafford(char plr, int equipment_class, int index)
         return;
     }
 
-    Equipment* e = (equipment_class == PROBE_HARDWARE)? pData->Probe[index]
-                   : (equipment_class == ROCKET_HARDWARE)?pData->Rocket[index]
-                   : (equipment_class == MANNED_HARDWARE)?pData->Manned[index]
-                   : (equipment_class == MISC_HARDWARE)? pData->Misc[index]
+    Equipment* e = (equipment_class == PROBE_HARDWARE)?   &pData->Probe[index]
+                   : (equipment_class == ROCKET_HARDWARE)?&pData->Rocket[index]
+                   : (equipment_class == MANNED_HARDWARE)?&pData->Manned[index]
+                   : (equipment_class == MISC_HARDWARE)?  &pData->Misc[index]
                    : nullptr;
     if (!e) {
         LOG_WARNING("RDafford called with equipment_class = %i", equipment_class);
