@@ -38,6 +38,7 @@
 #include "game_main.h"
 #include "gr.h"
 #include "hardef.h"
+#include "logging.h"
 #include "museum.h"
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "pace.h"
@@ -47,7 +48,9 @@
 #include "sdlhelper.h"
 #include "serialize.h"
 
-std::vector<struct ManPool> Men;
+LOG_DEFAULT_CATEGORY(baris)
+
+std::vector<ManPool> Men;
 std::vector<std::vector<int8_t>> portbuttons;//(7, std::vector<int8_t>(570));
   //std::vector<std::vector<int8_t>> portbuttons = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
 uint8_t AIsel[25];
@@ -67,8 +70,10 @@ void CheckAdv(char plr);
  */
 void DrawStatistics(char Win)
 {
-    char AImg[7] = {8, 9, 10, 11, 13, 14, 0};
-    int starty, qty, i;
+    char AImg[7] = {8, 9, 10, 11, 13, 14, 0}; // TODO: switch from current pixel-data-in-json to actual images
+                                              // images are already in images/portbut and are already used by BChoice()
+                                              // json simply has images with indexes listed here, but in a row
+    int starty, qty;
     helpText = "i145";
     keyHelpText = "k045";
     FadeOut(2, 10, 0, 0);
@@ -107,7 +112,7 @@ void DrawStatistics(char Win)
     // AI strategy is listed.
     if (AI[Win] || AI[other(Win)]) {
         display::graphics.setForegroundColor(6);
-        draw_string(122, 84, "AI STRATEGY: ");
+        draw_string(122, 84, "AI STRATEGY: "); // TODO: should write on correct player, not on the winner
         display::graphics.setForegroundColor(8);
 
         int ai_player = AI[Win] ? Win : other(Win);
@@ -127,7 +132,7 @@ void DrawStatistics(char Win)
     
     OutBox(152, 41, 183, 61); // directors ranking
 
-    for (i = 0; i < qty; i++) {
+    for (int i = 0; i < qty; i++) {
         if (i <= 4 && AI[Win] == 0) {
             OutBox(starty + (i * 33), 87, 31 + starty + (i * 33), 107);
         }
@@ -155,16 +160,16 @@ void DrawStatistics(char Win)
     }
 
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
+// endgame statistics screen
+// TODO: move to endgame.cpp?
 void Stat(char Win)
 {
-    int j, i, starty;
+    int starty;
     DrawStatistics(Win);
     WaitForMouseUp();
-    i = 0;
+    int i = 0;
     key = 0;
     starty = 118;
 
@@ -198,10 +203,14 @@ void Stat(char Win)
             OutBox(152, 41, 183, 61);
         };
 
-        for (j = 0; j < 5; j++) {
+        for (int j = 0; j < 5; j++) {
             if (AI[Win] != 0) continue;
             
-            if ((x >= starty + (j * 33) && y >= 87 && x <= 31 + starty + (j * 33) && y <= 107 && mousebuttons > 0) || ((key >= '1' && key <= '4') || key == '0')) {
+            if ((x >= starty + (j * 33) && y >= 87 
+                  && x <= 31 + starty + (j * 33) && y <= 107 
+                  && mousebuttons > 0) 
+                || ((key >= '1' && key <= '4') 
+                || key == '0')) {
                 if (key > 0) {
                     switch (key) {
                     case '0':
@@ -285,10 +294,13 @@ void Stat(char Win)
             }
         }
 
-        for (j = 0; j < 5; j++) {
+        for (int j = 0; j < 5; j++) {
             if (AI[other(Win)] != 0) continue;
             
-            if ((x >= starty + (j * 33) && y >= 132 && x <= 31 + starty + (j * 33) && y <= 152 && mousebuttons > 0) || (key >= '5' && key <= '9')) {
+            if ((x >= starty + (j * 33) && y >= 132 
+                  && x <= 31 + starty + (j * 33) && y <= 152 
+                  && mousebuttons > 0) 
+                || (key >= '5' && key <= '9')) {
                 if (key > 0) {
                     switch (key) {
                     case '5':
@@ -374,18 +386,16 @@ void Stat(char Win)
             }
         }
     }
-
-    return;
 }
 
 /** AI Wants to purchase Astronauts
  */
 void AIAstroPur(char plr)
 {
-    int cost;
     int astrosInPool = 0;
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
+    int cost;
     if (pData->AstroLevel == 0) {
         cost = 20;
     } else {
@@ -427,9 +437,7 @@ void AIAstroPur(char plr)
 //Naut Randomize, Nikakd, 10/8/10
 void AIRandomizeNauts()
 {
-    int i;
-
-    for (i = 0; i < Men.size(); i++) {
+    for (int i = 0; i < Men.size(); i++) {
         Men[i].Cap = brandom(5);
         Men[i].LM  = brandom(5);
         Men[i].EVA = brandom(5);
@@ -461,10 +469,9 @@ void AIRandomizeNauts()
  */
 void SelectBest(char plr, int pos)
 {
-    int count = 0, now, MaxMen = 0, Index, AIMaxSel = 0, i, j;
-    FILE *fin;
+    int count = 0, now, MaxMen = 0, Index, AIMaxSel = 0;
     char tot, done;
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     // pData->FemaleAstronautsAllowed is the news event flag that
     // allows & requires female astronauts.
@@ -476,7 +483,7 @@ void SelectBest(char plr, int pos)
         pData->FemaleAstronautsAllowed == 1 ||
         options.feat_female_nauts == 3;
 
-    for (i = 0; i < 25; i++) {
+    for (int i = 0; i < 25; i++) {
         AIsel[i] = 0;
     }
 
@@ -533,11 +540,11 @@ void SelectBest(char plr, int pos)
 
     // TODO: This is a crude way of ordering all the candidates.
     // It could be replaced with a superior method.
-    for (i = 16; i > 0; i--) {
+    for (int i = 16; i > 0; i--) {
         done = 0;
 
         while (count <= AIMaxSel && done == 0) {
-            for (j = now; j < now + MaxMen + 1; j++) {
+            for (int j = now; j < now + MaxMen + 1; j++) {
                 tot = Men[j].Cap + Men[j].LM + Men[j].EVA + Men[j].Docking;
 
                 if (i == tot) {
@@ -551,7 +558,7 @@ void SelectBest(char plr, int pos)
         }
     };
 
-    for (i = 0; i < AIMaxSel; i++) {
+    for (int i = 0; i < AIMaxSel; i++) {
         strcpy(&pData->Pool[i + pData->AstroCount].Name[0], &Men[AIsel[i]].Name[0]);
         pData->Pool[i + pData->AstroCount].Sex = Men[AIsel[i]].Sex;
         pData->Pool[i + pData->AstroCount].Cap = Men[AIsel[i]].Cap;
@@ -601,18 +608,16 @@ void SelectBest(char plr, int pos)
     }
 
     // remove from the bottom up out of training
-    for (i = 0; i < pData->AstroCount; i++) {
+    for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_TRAIN_BASIC_1) {
             pData->Pool[i].Status = AST_ST_ACTIVE;
         }
     }
-
-    return;
 }
 
 void DumpAstro(char plr, int inx)
 {
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Assign == inx && pData->Pool[i].Prime < 1) {
@@ -630,16 +635,14 @@ void DumpAstro(char plr, int inx)
             }
         }
     }
-
-    return;
 }
 
 char Skill(char plr, char type)
 {
-    char m, hgh = 0, tst, ind = 0;
-    struct BuzzData *pData = &Data->P[plr];
+    char hgh = 0, tst, ind = 0;
+    BuzzData* pData = &Data->P[plr];
 
-    for (m = 0; m < pData->AstroCount; m++) {
+    for (char m = 0; m < pData->AstroCount; m++) {
         if (pData->Pool[m].Status != AST_ST_ACTIVE) continue; 
         if (pData->Pool[m].Assign != 0) continue; 
         if (pData->Pool[m].Prime >= 1) continue;
@@ -683,10 +686,10 @@ char Skill(char plr, char type)
 void TransAstro(char plr, int inx)
 // indexed 1 through 5
 {
-    int i, j, w, count = 0, max, found, flt1, flt2, bug = 1;
-    struct BuzzData *pData = &Data->P[plr];
+    int w, count = 0, max, found, flt1, flt2;
+    BuzzData* pData = &Data->P[plr];
 
-    while (bug == 1) {
+    while (true) {
         count = 0;
 
         if (inx == 5) {
@@ -701,7 +704,7 @@ void TransAstro(char plr, int inx)
             return;
         }
 
-        for (i = 0; i < pData->AstroCount; i++) {
+        for (int i = 0; i < pData->AstroCount; i++) {
             pData->Pool[i].Mood = 100;
 
             if (pData->Pool[i].Status == AST_ST_RETIRED || pData->Pool[i].Status == AST_ST_DEAD) {
@@ -729,7 +732,7 @@ void TransAstro(char plr, int inx)
         flt1 = -1;
         flt2 = -1;
 
-        for (i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
+        for (int i = 0; i < MAX_CREWS_IN_PROGRAM; i++) {
             if (pData->CrewCount[inx][i] != 0) continue;
             
             if (flt1 == -1) {
@@ -744,8 +747,8 @@ void TransAstro(char plr, int inx)
             return;
         }
 
-        for (i = 0; i < 2; i++) {
-            for (j = 1; j <= max; j++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 1; j <= max; j++) {
                 w = 0;
                 found = 0;
 
@@ -826,14 +829,12 @@ void TransAstro(char plr, int inx)
             pData->CrewCount[inx][flt2] = max;
         }
     }  // end while
-
-    return;
 }
 
 void CheckAdv(char plr)
 {
     int count = 0;
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     for (int i = 0; i < pData->AstroCount; i++) {
         if (pData->Pool[i].Status == AST_ST_ACTIVE && pData->Pool[i].Assign == 0) {
@@ -841,22 +842,20 @@ void CheckAdv(char plr)
         }
     }
 
-    if (count <= 3) {
-        for (int i = 0; i < pData->AstroCount; i++) {
-            if (pData->Pool[i].Status != AST_ST_ACTIVE) continue; 
-            if (pData->Pool[i].Assign != 0) continue;
-            
-            pData->Pool[i].Focus = brandom(4) + 1;
+    if (count > 3) return;
+    
+    for (int i = 0; i < pData->AstroCount; i++) {
+        if (pData->Pool[i].Status != AST_ST_ACTIVE) continue; 
+        if (pData->Pool[i].Assign != 0) continue;
+        
+        pData->Pool[i].Focus = brandom(4) + 1;
 
-            if (pData->Pool[i].Focus > 0) {
-                pData->Cash -= 3;
-                pData->Pool[i].Assign = 0;
-                pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
-            }
+        if (pData->Pool[i].Focus > 0) {
+            pData->Cash -= 3;
+            pData->Pool[i].Assign = 0;
+            pData->Pool[i].Status = AST_ST_TRAIN_ADV_1;
         }
     }
-
-    return;
 }
 
 /**
@@ -869,44 +868,34 @@ void CheckAdv(char plr)
  */
 void RDafford(char plr, int equipment_class, int index)
 {
-    int16_t cost = 0, roll = 0, ok = 0;
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     if (pData->Buy[equipment_class][index] > 0) {
         return;
     }
 
-    if (equipment_class == PROBE_HARDWARE) {
-        cost = pData->Probe[index].RDCost;
-        roll = pData->Probe[index].MaxRD - pData->Probe[index].Safety;
+    Equipment* e = (equipment_class == PROBE_HARDWARE)?   &pData->Probe[index]
+                   : (equipment_class == ROCKET_HARDWARE)?&pData->Rocket[index]
+                   : (equipment_class == MANNED_HARDWARE)?&pData->Manned[index]
+                   : (equipment_class == MISC_HARDWARE)?  &pData->Misc[index]
+                   : nullptr;
+    if (!e) {
+        LOG_WARNING("RDafford called with equipment_class = %i", equipment_class);
+        return;
     }
+    
+    int cost = e->RDCost;
+    int rnd_left = e->MaxRD - e->Safety;
 
-    if (equipment_class == ROCKET_HARDWARE) {
-        cost = pData->Rocket[index].RDCost;
-        roll = pData->Rocket[index].MaxRD - pData->Rocket[index].Safety;
-    }
-
-    if (equipment_class == MANNED_HARDWARE) {
-        cost += pData->Manned[index].RDCost;
-        roll = pData->Manned[index].MaxRD - pData->Manned[index].Safety;
-    }
-
-    if (equipment_class == MISC_HARDWARE) {
-        cost = pData->Misc[index].RDCost;
-        roll = pData->Misc[index].MaxRD - pData->Misc[index].Safety;
-    }
-
-    roll = MAX(((roll * 10) / 35), 5);
-    ok = 0;
-
-    while (ok == 0 && roll != 0) {
-        if ((cost * roll <= pData->Cash) && QueryUnit(equipment_class, index, plr) == 1
+    for(int roll = MAX(((rnd_left * 10) / 35), 5); roll != 0; --roll) {
+        int total_price = cost*roll;
+        if (total_price > pData->Cash) continue;
+        
+        if( QueryUnit(equipment_class, index, plr) == 1
             && MaxChk(equipment_class, index, plr)) {
             pData->Buy[equipment_class][index] = RDUnit(equipment_class, index, roll, plr);
-            pData->Cash = (pData->Cash - (cost * roll));
-            ok = 1; // jump out of the loop
-        } else {
-            roll -= 1;
+            pData->Cash -= total_price;
+            return;
         }
     }
 }
@@ -918,7 +907,7 @@ void RDafford(char plr, int equipment_class, int index)
  */
 void AIPur(char plr)
 {
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     if (pData->AIStat == 0) {
         pData->AIStat = 1;
@@ -958,9 +947,8 @@ int GenPur(char plr, int hardware_index, int unit_index)
 {
     bool newProgramStarted = false;
     bool itemPurchased = false;
-    int n1, n2, n3, n4, n5, n6, n7;  // scratch variables for base safety value init
 
-    struct BuzzData *pData = &Data->P[plr];
+    BuzzData* pData = &Data->P[plr];
 
     // Force the Docking Module Instead before Kickers
     if (hardware_index == MISC_HARDWARE &&
@@ -971,78 +959,74 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
     switch (hardware_index) {
     case PROBE_HARDWARE:  // Probe
-        if (pData->Probe[unit_index].Num >= 2) break;
+        {
+        Equipment& Probe = pData->Probe[unit_index];
+        if (Probe.Num >= 2) break;
         
         // Probe Programs
-        if (pData->Probe[unit_index].Num == PROGRAM_NOT_STARTED) {
-            if (pData->Probe[unit_index].InitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Probe[unit_index].InitCost;
-                pData->Probe[unit_index].Num = 1;
+        if (Probe.Num == PROGRAM_NOT_STARTED) {
+            if (Probe.InitCost < pData->Cash) {
+                pData->Cash -= Probe.InitCost;
+                Probe.Num = 1;
                 itemPurchased = true;
                 newProgramStarted = true;
             }
         } else {
             // Do we have enough to purchase one?
-            if (pData->Probe[unit_index].UnitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Probe[unit_index].UnitCost;
-                pData->Probe[unit_index].Num = pData->Probe[unit_index].Num + 1;
+            if (Probe.UnitCost < pData->Cash) {
+                pData->Cash -= Probe.UnitCost;
+                ++Probe.Num;
                 itemPurchased = true;
             }
-
 #ifndef DISABLE_AI_CHEAT
             else {
                 // Just give it to them anyway
                 itemPurchased = true;
-                ++pData->Probe[unit_index].Num;
+                ++Probe.Num;
             }
-
 #endif
+        }
         }  // end case PROBE_HARDWARE
 
         break;
 
     case ROCKET_HARDWARE:  // Rockets
-        if (pData->Rocket[unit_index].Num >= ROCKET_HW_THREE_STAGE) break;
+        {
+        Equipment& Rocket = pData->Rocket[unit_index];
+        if (Rocket.Num >= 2) break;
         
         // Rocket Programs Purchasing
-        if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
+        if (Rocket.Num == PROGRAM_NOT_STARTED) {
             // Do we have enough to purchase one?
-            if (pData->Rocket[unit_index].InitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Rocket[unit_index].InitCost;
-
-                if (pData->Rocket[unit_index].Num == PROGRAM_NOT_STARTED) {
-                    pData->Rocket[unit_index].Num = 1;
-                } else {
-                    ++pData->Rocket[unit_index].Num;
-                }
-
+            if (Rocket.InitCost < pData->Cash) {
+                pData->Cash -= Rocket.InitCost;
+                Rocket.Num = 1;
                 itemPurchased = true;
                 newProgramStarted = true;
             }
         } else {
-            if (pData->Rocket[unit_index].Num == 1 && (pData->Rocket[unit_index].Safety < pData->Rocket[unit_index].MaxRD - 15)) {
+            if (Rocket.Num == 1 && (Rocket.Safety < Rocket.MaxRD - 15)) {
                 // AI Player does R&D on this purchased item
                 RDafford(plr, ROCKET_HARDWARE, unit_index);
                 pData->Buy[ROCKET_HARDWARE][unit_index] = 0;  // Reset the record of this?
                 itemPurchased = true;
-            } else if (pData->Rocket[unit_index].Num >= 0) {
+            } else if (Rocket.Num >= 0) {
                 // Do we have enough to purchase one?
-                if (pData->Rocket[unit_index].UnitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Rocket[unit_index].UnitCost;
-                    ++pData->Rocket[unit_index].Num;
+                if (Rocket.UnitCost < pData->Cash) {
+                    pData->Cash -= Rocket.UnitCost;
+                    ++Rocket.Num;
                     itemPurchased = true;
                 }
-
 #ifndef DISABLE_AI_CHEAT
                 else {
                     // Just give them one anyway
                     itemPurchased = true;
-                    ++pData->Rocket[unit_index].Num;
+                    ++Rocket.Num;
                 }
-
 #endif
             }
-        }  // end case ROCKET_HARDWARE
+        }
+        } // end case ROCKET_HARDWARE
 
         break;
 
@@ -1051,34 +1035,30 @@ int GenPur(char plr, int hardware_index, int unit_index)
             // Only need one Minishuttle
             return 1;
         }
-        if (pData->Manned[unit_index].Num >= MANNED_HW_THREE_MAN_CAPSULE) break;
+        {
+        Equipment& Capsule = pData->Manned[unit_index];
+        if (Capsule.Num >= 2) break;
         
         // Manned Programs
-        if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
+        if (Capsule.Num == PROGRAM_NOT_STARTED) {
             // Do we have enough to purchase one?
-            if (pData->Manned[unit_index].InitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Manned[unit_index].InitCost;
-
-                if (pData->Manned[unit_index].Num == PROGRAM_NOT_STARTED) {
-                    pData->Manned[unit_index].Num = 1;
-                } else {
-                    ++pData->Manned[unit_index].Num;
-                }
-
+            if (Capsule.InitCost < pData->Cash) {
+                pData->Cash -= Capsule.InitCost;
+                Capsule.Num = 1;
                 itemPurchased = true;
                 newProgramStarted = true;
             }
         } else {
-            if (pData->Manned[unit_index].Num == 1 && (pData->Manned[unit_index].Safety < pData->Manned[unit_index].MaxRD - 15)) {
+            if (Capsule.Num == 1 && (Capsule.Safety < Capsule.MaxRD - 15)) {
                 // AI Player does R&D on this purchased item
                 RDafford(plr, MANNED_HARDWARE, unit_index);
                 pData->Buy[MANNED_HARDWARE][unit_index] = 0;  // reset the record of this?
                 itemPurchased = true;
-            } else if (pData->Manned[unit_index].Num >= 0) {
+            } else if (Capsule.Num >= 0) {
                 // Do we have enough to purchase one?
-                if (pData->Manned[unit_index].UnitCost < pData->Cash) {
-                    pData->Cash = pData->Cash - pData->Manned[unit_index].UnitCost;
-                    ++pData->Manned[unit_index].Num;
+                if (Capsule.UnitCost < pData->Cash) {
+                    pData->Cash = pData->Cash - Capsule.UnitCost;
+                    ++Capsule.Num;
                     itemPurchased = true;
                 }
 
@@ -1086,53 +1066,48 @@ int GenPur(char plr, int hardware_index, int unit_index)
                 else {
                     // Just give it to them anyway
                     itemPurchased = true;
-                    ++pData->Manned[unit_index].Num;
+                    ++Capsule.Num;
                 }
-
 #endif
             }
+        }
         }  // end case MANNED_HARDWARE
 
         break;
 
     case MISC_HARDWARE:  // Misc hardware (Kicker, EVA, Docking Module)
-        if (pData->Misc[unit_index].Num >= 2) break;
+        {
+        Equipment& Misc = pData->Misc[unit_index];
+        if (Misc.Num >= 2) break;
         // Misc Programs
-        if (unit_index == MISC_HW_EVA_SUITS && pData->Misc[unit_index].Num == 1) {
+        if (unit_index == MISC_HW_EVA_SUITS && Misc.Num == 1) {
             // Simply return when starting the EVA program, no cost for this
             return 1;
         }
 
-        if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
+        if (Misc.Num == PROGRAM_NOT_STARTED) {
             // Do we have enough to purchase one?
-            if (pData->Misc[unit_index].InitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Misc[unit_index].InitCost;
-
-                if (pData->Misc[unit_index].Num == PROGRAM_NOT_STARTED) {
-                    pData->Misc[unit_index].Num = 1;
-                } else {
-                    ++pData->Misc[unit_index].Num;
-                }
-
+            if (Misc.InitCost < pData->Cash) {
+                pData->Cash -= Misc.InitCost;
+                Misc.Num = 1;
                 itemPurchased = true;
                 newProgramStarted = true;
             }
-        } else if (pData->Misc[unit_index].Num >= 0) {
+        } else if (Misc.Num >= 0) {
             // Do we have enough to purchase one?
-            if (pData->Misc[unit_index].UnitCost < pData->Cash) {
-                pData->Cash = pData->Cash - pData->Misc[unit_index].UnitCost;
-                ++pData->Misc[unit_index].Num;
+            if (Misc.UnitCost < pData->Cash) {
+                pData->Cash -= Misc.UnitCost;
+                ++Misc.Num;
                 itemPurchased = true;
             }
-
 #ifndef DISABLE_AI_CHEAT
             else {
                 // Just give them one anyway
                 itemPurchased = true;
-                ++pData->Misc[unit_index].Num;
+                ++Misc.Num;
             }
-
 #endif
+        }
         }  // end case MISC_HARDWARE
 
         break;
@@ -1141,9 +1116,11 @@ int GenPur(char plr, int hardware_index, int unit_index)
         break;
     }  // end switch
 
+    if (! newProgramStarted) return (itemPurchased == true);
+    
     // Initialize starting and cost bonuses
-    if (hardware_index == PROBE_HARDWARE && newProgramStarted) {
-        Equipment *e = &pData->Probe[unit_index];  // Hardware we're modifying
+    if (hardware_index == PROBE_HARDWARE) {
+        Equipment* e = &pData->Probe[unit_index];  // Hardware we're modifying
 
         switch (unit_index) {
         case PROBE_HW_ORBITAL:
@@ -1183,8 +1160,9 @@ int GenPur(char plr, int hardware_index, int unit_index)
         e->Base = e->Safety;  // Set the base safety level
     };
 
-    if (hardware_index == ROCKET_HARDWARE && newProgramStarted) {
-        Equipment *e = &pData->Rocket[unit_index];  // Hardware we're modifying
+    if (hardware_index == ROCKET_HARDWARE) {
+        Equipment* e = &pData->Rocket[unit_index];  // Hardware we're modifying
+        int n1, n2, n3, n4, n5, n6, n7;  // scratch variables for base safety value init
 
         // Safety levels of existing programs
         n1 = pData->Rocket[ROCKET_HW_ONE_STAGE].Safety;
@@ -1257,8 +1235,9 @@ int GenPur(char plr, int hardware_index, int unit_index)
         e->Base = e->Safety;  // Set the base safety level
     };
 
-    if (hardware_index == MANNED_HARDWARE && newProgramStarted) {
-        Equipment *e = &pData->Manned[unit_index];  // Hardware we're modifying
+    if (hardware_index == MANNED_HARDWARE) {
+        Equipment* e = &pData->Manned[unit_index];  // Hardware we're modifying
+        int n1, n2, n3, n4, n5, n6, n7;  // scratch variables for base safety value init
 
         // Safety levels of existing programs copied to working vars
         n1 = pData->Manned[MANNED_HW_ONE_MAN_CAPSULE].Safety;
@@ -1352,8 +1331,8 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
     }
 
-    if (hardware_index == MISC_HARDWARE && newProgramStarted) {
-        Equipment *e = &pData->Misc[unit_index];  // Hardware we're modifying
+    if (hardware_index == MISC_HARDWARE) {
+        Equipment* e = &pData->Misc[unit_index];  // Hardware we're modifying
 
         switch (unit_index) {
         case MISC_HW_KICKER_A:
