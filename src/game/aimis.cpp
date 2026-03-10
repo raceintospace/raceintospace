@@ -48,15 +48,15 @@ struct {
 } Mew[5];
 int whe[2], rck[2];
 char pc[2], bc[2], Alt_A[2] = {0, 0}, Alt_B[2] = {0, 0};
-void Strategy_One(char plr, int *m_1, int *m_2, int *m_3);
-void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3);
-void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3);
+void Strategy_One(char plr, int* m_1, int* m_2, int* m_3);
+void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3);
+void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3);
 
 void AIVabCheck(char plr, char mis, char prog);
-char Best(void);
+char Best();
 int ICost(char plr, char h, char i);
 void CalcSaf(char plr, char vs);
-char Panic_Level(char plr, int *m_1, int *m_2);
+char Panic_Level(char plr, int* m_1, int* m_2);
 
 
 
@@ -119,7 +119,7 @@ void AIVabCheck(char plr, char mis, char prog)
     }
 }
 
-char Best(void)
+char Best()
 {
     char valid[5]{};
 
@@ -261,7 +261,7 @@ void CalcSaf(char plr, char vs)
     }
 }
 
-char Panic_Level(char plr, int *m_1, int *m_2)
+char Panic_Level(char plr, int* m_1, int* m_2)
 {
 // PANIC level manned docking/EVA/duration
     if (Alt_B[plr] <= 1 &&
@@ -301,7 +301,7 @@ char Panic_Level(char plr, int *m_1, int *m_2)
     return 0;
 }
 
-void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
+void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
 {
 //AI version 12/26/92
     switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
@@ -490,7 +490,7 @@ void Strategy_One(char plr, int *m_1, int *m_2, int *m_3)
     }
 }
 
-void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
+void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
 {
 // AI version 12/28/92
     switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
@@ -673,7 +673,7 @@ void Strategy_Two(char plr, int *m_1, int *m_2, int *m_3)
     }
 }
 
-void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
+void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3)
 {
 //new version undated
     switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
@@ -862,10 +862,8 @@ void Strategy_Thr(char plr, int *m_1, int *m_2, int *m_3)
 
 void NewAI(char plr, char frog)
 {
-    char i, spc[2], prg[2], primaryPad, secondaryPad, hsf, Panic_Check = 0;
+    char hsf, spc[2]{}, prg[2], primaryPad, secondaryPad, Panic_Check = 0;
     int mis1, mis2, mis3, val;
-
-    spc[0] = 0; /* XXX check uninitialized */
 
     prg[0] = frog;
     mis1 = mis2 = mis3 = Mission_None;
@@ -878,7 +876,7 @@ void NewAI(char plr, char frog)
         mis3 = Mission_None;
         hsf = 0;
 
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if (Data->P[plr].Probe[hsf].Safety <= Data->P[plr].Probe[i].Safety) {
                 hsf = i;
             }
@@ -887,11 +885,8 @@ void NewAI(char plr, char frog)
         RDafford(plr, PROBE_HARDWARE, hsf);
 
         if (Data->P[plr].Probe[hsf].Safety < 90) {
-            if (GenPur(plr, PROBE_HARDWARE, hsf)) {
-                RDafford(plr, PROBE_HARDWARE, hsf);
-            } else {
-                RDafford(plr, PROBE_HARDWARE, hsf);
-            }
+            GenPur(plr, PROBE_HARDWARE, hsf);
+            RDafford(plr, PROBE_HARDWARE, hsf);
         }
 
         Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num = 2;
@@ -1316,10 +1311,8 @@ void NewAI(char plr, char frog)
     AILaunch(plr);
 }
 
-void AIFuture(char plr, char mis, char pad, char *prog)
-{
-    char max, men;
-    
+void AIFuture(char plr, char mis, char pad, char* prog)
+{    
     char fake_prog[2]{};
     if (prog == NULL) {
         prog = fake_prog;
@@ -1330,63 +1323,64 @@ void AIFuture(char plr, char mis, char pad, char *prog)
     }
 
     const mStr plan = GetMissionPlan(mis);
+    auto& Future = Data->P[plr].Future;
 
     for (int i = 0; i < (plan.Jt + 1); i++) {
-        Data->P[plr].Future[pad + i].MissionCode = mis;
-        Data->P[plr].Future[pad + i].part = i;
+        Future[pad + i].MissionCode = mis;
+        Future[pad + i].part = i;
 
         // duration
-        if (Data->P[plr].DurationLevel <= 5 && Data->P[plr].Future[pad + i].Duration == 0) {
-            if (plan.Dur == 1) Data->P[plr].Future[pad + i].Duration =
+        if (Data->P[plr].DurationLevel <= 5 && Future[pad + i].Duration == 0) {
+            if (plan.Dur == 1) Future[pad + i].Duration =
                     MAX(plan.Days, MIN(Data->P[plr].DurationLevel + 1, 6));
             else {
-                Data->P[plr].Future[pad + i].Duration = plan.Days;
+                Future[pad + i].Duration = plan.Days;
             }
         }
 
-        if (Data->P[plr].Mission[0].Duration == Data->P[plr].Future[pad + i].Duration ||
-            Data->P[plr].Mission[1].Duration == Data->P[plr].Future[pad + i].Duration) {
-            ++Data->P[plr].Future[pad + i].Duration;
+        if (Data->P[plr].Mission[0].Duration == Future[pad + i].Duration ||
+            Data->P[plr].Mission[1].Duration == Future[pad + i].Duration) {
+            ++Future[pad + i].Duration;
         }
 
-        if (pad == 1 && Data->P[plr].Future[0].Duration == Data->P[plr].Future[pad + i].Duration) {
-            ++Data->P[plr].Future[pad + i].Duration;
+        if (pad == 1 && Future[0].Duration == Future[pad + i].Duration) {
+            ++Future[pad + i].Duration;
         }
 
-        if (Data->P[plr].Future[pad + i].Duration >= 6) {
-            Data->P[plr].Future[pad + i].Duration = 6;
+        if (Future[pad + i].Duration >= 6) {
+            Future[pad + i].Duration = 6;
         }
 
         // one-man capsule duration kludge
-        if (Data->P[plr].Future[pad + i].Prog == 1) {
+        if (Future[pad + i].Prog == 1) {
             if (Data->P[plr].DurationLevel == 0) {
-                Data->P[plr].Future[pad + i].Duration = 1;
+                Future[pad + i].Duration = 1;
             } else {
-                Data->P[plr].Future[pad + i].Duration = 2;
+                Future[pad + i].Duration = 2;
             }
         }; // limit duration 'C' one-man capsule
 
         // lunar mission kludge
         if (plan.Lun == 1 ||
-            Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_EOR ||
-            Data->P[plr].Future[pad + i].MissionCode == Mission_Jt_LunarLanding_LOR ||
-            Data->P[plr].Future[pad + i].MissionCode == Mission_HistoricalLanding) {
-            Data->P[plr].Future[pad + i].Duration = 4;
+            Future[pad + i].MissionCode == Mission_Jt_LunarLanding_EOR ||
+            Future[pad + i].MissionCode == Mission_Jt_LunarLanding_LOR ||
+            Future[pad + i].MissionCode == Mission_HistoricalLanding) {
+            Future[pad + i].Duration = 4;
         }
 
         // unmanned duration kludge
         if (plan.Days == 0) {
-            Data->P[plr].Future[pad + i].Duration = 0;
+            Future[pad + i].Duration = 0;
         }
 
-        Data->P[plr].Future[pad + i].Joint = plan.Jt;
-        Data->P[plr].Future[pad + i].Month = 0;
+        Future[pad + i].Joint = plan.Jt;
+        Future[pad + i].Month = 0;
 
         if (mis == 1) {
             prog[i] = 0;
         }
 
-        Data->P[plr].Future[pad + i].Prog = prog[0];
+        Future[pad + i].Prog = prog[0];
 
         if (prog[i] > 0 && plan.Days > 0) {
             for (int j = 1; j < 6; j++) {
@@ -1396,23 +1390,23 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             TransAstro(plr, prog[i]); //indexed OK
 
             int primary_crew = -1;
-            if (Data->P[plr].Future[pad + i].PCrew != 0) {
-                primary_crew = Data->P[plr].Future[pad + i].PCrew - 1;
+            if (Future[pad + i].PCrew != 0) {
+                primary_crew = Future[pad + i].PCrew - 1;
             }
 
             int backup_crew = -1;
-            if (Data->P[plr].Future[pad + i].BCrew != 0) {
-                backup_crew = Data->P[plr].Future[pad + i].BCrew - 1;
+            if (Future[pad + i].BCrew != 0) {
+                backup_crew = Future[pad + i].BCrew - 1;
             }
 
-            max = prog[i];
+            int max = prog[i];
 
             if (prog[i] > 3) {
                 max = prog[i] - 1;
             }
 
-            Data->P[plr].Future[pad + i].Men = max;
-            men = Data->P[plr].Future[pad + i].Men;
+            Future[pad + i].Men = max;
+            int men = Future[pad + i].Men;
 
             if (primary_crew != -1)
                 for (int j = 0; j < men; j++) {
@@ -1426,8 +1420,8 @@ void AIFuture(char plr, char mis, char pad, char *prog)
                     Data->P[plr].Pool[pool_idx].Prime = 0;
                 }
 
-            Data->P[plr].Future[pad + i].PCrew = 0;
-            Data->P[plr].Future[pad + i].BCrew = 0;
+            Future[pad + i].PCrew = 0;
+            Future[pad + i].BCrew = 0;
             pc[i] = -1;
             bc[i] = -1;
 
@@ -1442,16 +1436,16 @@ void AIFuture(char plr, char mis, char pad, char *prog)
             if (pc[i] == -1) {
                 // astronaut/duration kludge
                 if (plan.Days > 0) {
-                    Data->P[plr].Future[pad + i].Men = max;
+                    Future[pad + i].Men = max;
                 }
 
                 // no astronauts available have to go unmanned
-                Data->P[plr].Future[pad + i].Men = 0;
-                Data->P[plr].Future[pad + i].PCrew = 0;
-                Data->P[plr].Future[pad + i].BCrew = 0;
+                Future[pad + i].Men = 0;
+                Future[pad + i].PCrew = 0;
+                Future[pad + i].BCrew = 0;
 
                 Downgrader::Options options = LoadJsonDowngrades("DOWNGRADES.JSON");
-                Downgrader replace(Data->P[plr].Future[pad + i], options);
+                Downgrader replace{Future[pad + i], options};
                 char mcode = -1;
 
                 //  Find a mission that can be flown unmanned
@@ -1485,20 +1479,20 @@ void AIFuture(char plr, char mis, char pad, char *prog)
                         }
                     }
 
-                    TRACE3("AI replacing mission code %i by %i", Data->P[plr].Future[pad + i].MissionCode, mcode);
-                    Data->P[plr].Future[pad + i].MissionCode = mcode;
+                    LOG_TRACE("AI replacing mission code %i by %i", Future[pad + i].MissionCode, mcode);
+                    Future[pad + i].MissionCode = mcode;
 
                 } catch (IOException &err) {
                     // TODO: Can't download to Earth Orbital if Joint mission.
-                    CRITICAL2("Error loading data file: %s", err.what());
-                    WARNING1("Defaulting to Unmanned Earth Orbital.");
-                    Data->P[plr].Future[pad + i].MissionCode = Mission_Unmanned_Earth_Orbital;
+                    LOG_CRITICAL("Error loading data file: %s", err.what());
+                    LOG_WARNING("Defaulting to Unmanned Earth Orbital.");
+                    Future[pad + i].MissionCode = Mission_Unmanned_Earth_Orbital;
                 }
 
                 return;
             }
 
-            Data->P[plr].Future[pad + i].PCrew = pc[i] + 1;
+            Future[pad + i].PCrew = pc[i] + 1;
             bc[i] = -1;
 
             for (int j = 0; j < 8; j++) {
@@ -1510,7 +1504,7 @@ void AIFuture(char plr, char mis, char pad, char *prog)
                 }
             }
 
-            Data->P[plr].Future[pad + i].BCrew = bc[i] + 1;
+            Future[pad + i].BCrew = bc[i] + 1;
 
             for (int j = 0; j < men; j++) {
                 Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][pc[i]][j] - 1].Prime = 4;
@@ -1520,24 +1514,24 @@ void AIFuture(char plr, char mis, char pad, char *prog)
                 Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][bc[i]][j] - 1].Prime = 2;
             }
         } else {
-            Data->P[plr].Future[pad + i].Men = 0;
-            Data->P[plr].Future[pad + i].PCrew = 0;
-            Data->P[plr].Future[pad + i].BCrew = 0;
+            Future[pad + i].Men = 0;
+            Future[pad + i].PCrew = 0;
+            Future[pad + i].BCrew = 0;
         }
     }
 
 // joint mission Mission_Jt_LunarLanding_EOR and Mission_Jt_LunarLanding_LOR men kludge
     if (mis == Mission_Jt_LunarLanding_EOR || mis == Mission_Jt_LunarLanding_LOR) {
-        Data->P[plr].Future[pad + 1].Men = Data->P[plr].Future[pad].Men;
-        Data->P[plr].Future[pad + 1].PCrew = Data->P[plr].Future[pad].PCrew;
-        Data->P[plr].Future[pad + 1].BCrew = Data->P[plr].Future[pad].BCrew;
-        Data->P[plr].Future[pad + 1].Prog = Data->P[plr].Future[pad].Prog;
-        Data->P[plr].Future[pad].Men = 0;
-        Data->P[plr].Future[pad].PCrew = 0;
-        Data->P[plr].Future[pad].BCrew = 0;
-        Data->P[plr].Future[pad].Prog = 0;
-        Data->P[plr].Future[pad + 1].Duration = Data->P[plr].Future[pad].Duration;
-        Data->P[plr].Future[pad].Duration = 0;
+        Future[pad + 1].Men = Future[pad].Men;
+        Future[pad + 1].PCrew = Future[pad].PCrew;
+        Future[pad + 1].BCrew = Future[pad].BCrew;
+        Future[pad + 1].Prog = Future[pad].Prog;
+        Future[pad].Men = 0;
+        Future[pad].PCrew = 0;
+        Future[pad].BCrew = 0;
+        Future[pad].Prog = 0;
+        Future[pad + 1].Duration = Future[pad].Duration;
+        Future[pad].Duration = 0;
     }
 }
 
@@ -1670,12 +1664,13 @@ void AILaunch(char plr)
             rck[1] = -1;
 
             for (int k = 0; k < 7; k++) {
-                if (boos[k] != -1 && bwgt[k] >= wgt) {
-                    if (rck[1] == -1) {
-                        rck[1] = k;
-                    } else if (boos[k] >= boos[rck[1]]) {
-                        rck[1] = k;
-                    }
+                if (boos[k] == -1) continue;
+                if (bwgt[k] < wgt) continue;
+                
+                if (rck[1] == -1) {
+                    rck[1] = k;
+                } else if (boos[k] >= boos[rck[1]]) {
+                    rck[1] = k;
                 }
             }
 
@@ -1686,107 +1681,111 @@ void AILaunch(char plr)
             JoinedMissionSecond.Hard[Mission_PrimaryBooster] = rck[1] + 1;
         }
     }
+    
+    auto& MisData = Data->P[plr].Mission;
 
 // JOINT MISSION KLUDGE MISSION Mission_Jt_LunarLanding_EOR & Mission_Jt_LunarLanding_LOR
-    if (Data->P[plr].Mission[0].MissionCode == Mission_Jt_LunarLanding_EOR) {
-        Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
-        Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
-        Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
+    if (MisData[0].MissionCode == Mission_Jt_LunarLanding_EOR) {
+        MisData[1].Hard[Mission_Capsule] = MisData[1].Prog - 1;
+        MisData[0].Hard[Mission_LM] = 6; // LM
+        MisData[0].Hard[Mission_Probe_DM] = 4; // DM
         Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
-        Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1; // kicker second part
+        MisData[1].Hard[Mission_Kicker] = 1; // kicker second part
     };
 
-    if (Data->P[plr].Mission[0].MissionCode == Mission_Jt_LunarLanding_LOR) {
-        Data->P[plr].Mission[1].Hard[Mission_Capsule] = Data->P[plr].Mission[1].Prog - 1;
-        Data->P[plr].Mission[0].Hard[Mission_LM] = 6; // LM
-        Data->P[plr].Mission[0].Hard[Mission_Probe_DM] = 4; // DM
+    if (MisData[0].MissionCode == Mission_Jt_LunarLanding_LOR) {
+        MisData[1].Hard[Mission_Capsule] = MisData[1].Prog - 1;
+        MisData[0].Hard[Mission_LM] = 6; // LM
+        MisData[0].Hard[Mission_Probe_DM] = 4; // DM
         Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
-        Data->P[plr].Mission[0].Hard[Mission_Kicker] = 1;
-        Data->P[plr].Mission[1].Hard[Mission_Kicker] = 1;
+        MisData[0].Hard[Mission_Kicker] = 1;
+        MisData[1].Hard[Mission_Kicker] = 1;
     };
 
     // lunar module kludge
     for (int i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].Hard[Mission_LM] >= 5) {
-            Data->P[plr].Mission[i].Hard[Mission_LM] = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety >= Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety ? 5 : 6;
-        }
+        if (MisData[i].Hard[Mission_LM] < 5) continue;
+        
+        int two_man = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
+        int one_man = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
+        MisData[i].Hard[Mission_LM] = (two_man >= one_man) ? 5 : 6;
     }
 
     bool joint_launch = false;
     int number_of_missions = 0;
 
     for (int i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].Joint == 1) {
+        if (MisData[i].Joint == 1) {
             joint_launch = true;
         }
 
-        if (Data->P[plr].Mission[i].MissionCode != Mission_None &&
-            Data->P[plr].Mission[i].part == 0) {
+        if (MisData[i].MissionCode != Mission_None &&
+            MisData[i].part == 0) {
             number_of_missions++;
         }
 
-        Data->P[plr].Mission[i].Rushing = 0; // Clear Data
+        MisData[i].Rushing = 0; // Clear Data
     }
 
     if (number_of_missions == 3) { // Three non-joint missions
-        Data->P[plr].Mission[0].Month = 2 + Data->Season * 6;
-        Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
-        Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+        MisData[0].Month = 2 + Data->Season * 6;
+        MisData[1].Month = 3 + Data->Season * 6;
+        MisData[2].Month = 4 + Data->Season * 6;
     };
 
     if (number_of_missions == 2 && !joint_launch) { // Two non-joint missions
         int l = 3;
 
-        if (Data->P[plr].Mission[0].MissionCode != Mission_None) {
-            Data->P[plr].Mission[0].Month = l + Data->Season * 6;
+        if (MisData[0].MissionCode != Mission_None) {
+            MisData[0].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[1].MissionCode != Mission_None) {
-            Data->P[plr].Mission[1].Month = l + Data->Season * 6;
+        if (MisData[1].MissionCode != Mission_None) {
+            MisData[1].Month = l + Data->Season * 6;
             l += 2;
         };
 
-        if (Data->P[plr].Mission[2].MissionCode != Mission_None) {
-            Data->P[plr].Mission[2].Month = l + Data->Season * 6;
+        if (MisData[2].MissionCode != Mission_None) {
+            MisData[2].Month = l + Data->Season * 6;
         }
     };
 
     if (number_of_missions == 1 && !joint_launch) { // Single Mission Non-joint
-        if (Data->P[plr].Mission[0].MissionCode) {
-            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
+        if (MisData[0].MissionCode) {
+            MisData[0].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[1].MissionCode) {
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
+        if (MisData[1].MissionCode) {
+            MisData[1].Month = 4 + Data->Season * 6;
         }
 
-        if (Data->P[plr].Mission[2].MissionCode) {
-            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+        if (MisData[2].MissionCode) {
+            MisData[2].Month = 4 + Data->Season * 6;
         }
     };
 
     if (number_of_missions == 2 && joint_launch) { // Two launches, one Joint;
-        if (Data->P[plr].Mission[1].part == 1) { // Joint first
-            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
+        if (MisData[1].part == 1) { // Joint first
+            MisData[0].Month = 3 + Data->Season * 6;
+            MisData[1].Month = 3 + Data->Season * 6;
+            MisData[2].Month = 5 + Data->Season * 6;
         };
 
-        if (Data->P[plr].Mission[2].part == 1) { // Joint second
-            Data->P[plr].Mission[0].Month = 3 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 5 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 5 + Data->Season * 6;
+        if (MisData[2].part == 1) { // Joint second
+            MisData[0].Month = 3 + Data->Season * 6;
+            MisData[1].Month = 5 + Data->Season * 6;
+            MisData[2].Month = 5 + Data->Season * 6;
         };
     };
 
     if (number_of_missions == 1 && joint_launch) { //  Single Joint Launch
-        if (Data->P[plr].Mission[1].part == 1) { // found on pad 1+2
-            Data->P[plr].Mission[0].Month = 4 + Data->Season * 6;
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
+        if (MisData[1].part == 1) { // found on pad 1+2
+            MisData[0].Month = 4 + Data->Season * 6;
+            MisData[1].Month = 4 + Data->Season * 6;
         } else {   // found on pad 2+3
-            Data->P[plr].Mission[1].Month = 4 + Data->Season * 6;
-            Data->P[plr].Mission[2].Month = 4 + Data->Season * 6;
+            MisData[1].Month = 4 + Data->Season * 6;
+            MisData[2].Month = 4 + Data->Season * 6;
         };
     }
 }
