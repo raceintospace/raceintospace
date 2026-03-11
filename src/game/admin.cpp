@@ -106,24 +106,24 @@ struct SaveGameEnumerator : public PhysFsEnumerator {
     std::vector<SFInfo> results;
 
     SaveGameEnumerator(SaveGameType type, int maxSaves = 100) : PhysFsEnumerator("/"), type(type), maxSaves(maxSaves) {}
-    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string &origdir, const std::string &fname);
+    virtual PHYSFS_EnumerateCallbackResult onItem(const std::string& origdir, const std::string& fname);
 };
 
 
 };  // End of anon namespace
 
 
-void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames);
+void DrawFiles(char now, char loc, const std::vector<SFInfo>& savegames);
 void DrawTimeCapsule(int display);
 std::vector<SFInfo> GenerateTables(SaveGameType saveType);
 std::string GetBlockName();
-SaveGameType GetSaveType(const SaveFileHdr &header);
-void FileText(const char *name);
+SaveGameType GetSaveType(const SaveFileHdr& header);
+void FileText(const char* name);
 int FutureCheck(char plr, char type);
-void LoadGame(const char *filename);
-bool OrderSaves(const SFInfo &a, const SFInfo &b);
-char RequestX(const char *s, char md);
-void write_save_file(const char *Name, SaveFileHdr header);
+void LoadGame(const char* filename);
+bool OrderSaves(const SFInfo& a, const SFInfo& b);
+char RequestX(const char* s, char md);
+void write_save_file(const char* Name, SaveFileHdr header);
 int SaveGame(const std::vector<SFInfo> savegames);
 
 namespace
@@ -150,7 +150,6 @@ inline SaveGameType operator&(SaveGameType a, SaveGameType b)
  */
 void Admin(char plr)
 {
-    int i, beg;
     char AName[7][22] = {"BUDGET OFFICE", "HARDWARE PURCHASE", "FUTURE MISSIONS",
                          "ASTRONAUT RECRUITING", "PREFERENCES", "TIME CAPSULE", "EXIT ADMINISTRATION"
                         };
@@ -164,7 +163,7 @@ void Admin(char plr)
         AImg[3] = 5;
     }
 
-    beg = 1;
+    int beg = 1;
     bool exit = false;
 
     do {
@@ -181,7 +180,7 @@ void Admin(char plr)
         helpText = (plr == 0) ? "i702" : "i703";
         keyHelpText = (plr == 0) ? "k601" : "k602";
 
-        i = BChoice(plr, 7, (char *)AName, AImg);
+        int i = BChoice(plr, 7, (char *)AName, AImg);
 
         switch (i) {
         case 1:
@@ -274,8 +273,7 @@ void Admin(char plr)
  */
 void CacheCrewFile()
 {
-    FILE *fin;
-
+    FILE* fin;
     if (Data->Def.Input % 2 == 0) {
         // Historical Crews
         fin = sOpen("crew.json", "r", FT_DATA);
@@ -293,7 +291,7 @@ void CacheCrewFile()
 
     size_t size;
     char buffer[BUFSIZ];
-    FILE *dest = sOpen("roster.json", "w", FT_SAVE);
+    FILE* dest = sOpen("roster.json", "w", FT_SAVE);
 
     if (!dest) {
         throw IOException("Unable to open roster.json");
@@ -307,13 +305,13 @@ void CacheCrewFile()
     fclose(dest);
 }
 
-bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
+bool ReadGameSaveInfo(const std::string& fname, SFInfo& saveInfo)
 {
     SaveFileHdr header;
-    FILE *fin = sOpen(fname.c_str(), "rb", FT_SAVE);
+    FILE* fin = sOpen(fname.c_str(), "rb", FT_SAVE);
 
     if (fin == NULL) {
-        NOTICE2("Unable to open save file %s, skipping",
+        LOG_NOTICE("Unable to open save file %s, skipping",
                 fname.c_str());
         return false;
     }
@@ -322,7 +320,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
     fclose(fin);
 
     if (bytes != sizeof(header)) {
-        NOTICE2("Unable to read save file %s, skipping",
+        LOG_NOTICE("Unable to read save file %s, skipping",
                 fname.c_str());
         return false;
     }
@@ -336,7 +334,7 @@ bool ReadGameSaveInfo(const std::string &fname, SFInfo &saveInfo)
     return true;
 }
 
-PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string &origdir, const std::string &fname)
+PHYSFS_EnumerateCallbackResult SaveGameEnumerator::onItem(const std::string& origdir, const std::string& fname)
 {
     size_t len = fname.size();
   //  SaveGameType type;
@@ -389,8 +387,7 @@ std::vector<SFInfo> GenerateTables(SaveGameType saveType)
 void FileAccess(char mode)
 {
     char sc = 0;
-    int i, now, done, BarB, temp;
-    FILE *fout;
+    int now, done, BarB, temp;
     SaveGameType saveType = SAVEGAME_Normal;
 
     //sp. case -> no regular save off mail/modem game
@@ -465,7 +462,7 @@ void FileAccess(char mode)
     while (!done) {
         GetMouse();
 
-        for (i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             // Right Select Box
             if (x >= 40 && y >= (53 + i * 8) && x <= 188 && y <= (59 + i * 8) 
             && mousebuttons > 0 && (now - BarB + i) <= (savegames.size() - 1)) {
@@ -535,7 +532,7 @@ void FileAccess(char mode)
             WaitForMouseUp();
             OutBox(209, 92, 278, 100);
             // perform delete
-            i = RequestX("DELETE FILE", 1);
+            int i = RequestX("DELETE FILE", 1);
 
             if (i == 1) {
 
@@ -574,7 +571,7 @@ void FileAccess(char mode)
             WaitForMouseUp();
             OutBox(209, 120, 278, 128);
             // perform quit
-            i = RequestX("QUIT", 1);
+            int i = RequestX("QUIT", 1);
 
             // Modem Play => reset the modem
             if (Option != -1 && i == 1) {
@@ -793,9 +790,8 @@ void FileAccess(char mode)
  * \param loc     The display index of the current save file.
  * \param savegames  TODO
  */
-void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
+void DrawFiles(char now, char loc, const std::vector<SFInfo>& savegames)
 {
-    int j = 0;
     int start = now - loc;
 
     fill_rectangle(38, 49, 190, 127, 0);
@@ -806,7 +802,7 @@ void DrawFiles(char now, char loc, const std::vector<SFInfo> &savegames)
 
     display::graphics.setForegroundColor(1);
 
-    for (int i = start; i < start + 9 && i < savegames.size(); i++, j++) {
+    for (int i = start, j=0; i < start + 9 && i < savegames.size(); i++, j++) {
         if (savegames[i].type == SAVEGAME_PlayByMail) {
             display::graphics.setForegroundColor(11);  // Show PBEM saves in yellow
         } else {
@@ -900,7 +896,7 @@ void DrawTimeCapsule(int display)
  * \param header  the header of a save game file.
  * \return  if standard, PBEM, or network game.
  */
-SaveGameType GetSaveType(const SaveFileHdr &header)
+SaveGameType GetSaveType(const SaveFileHdr& header)
 {
     if (header.Country[0] == 8 || header.Country[1] == 9) {
         return SAVEGAME_PlayByMail;
@@ -923,12 +919,9 @@ SaveGameType GetSaveType(const SaveFileHdr &header)
  *
  * \param name  The filename to write the save under.
  */
-void autosave_game(const char *name)
+void autosave_game(const char* name)
 {
-    FILE *outf;
-    SaveFileHdr hdr;
-
-    memset(&hdr, 0, sizeof hdr);
+    SaveFileHdr hdr{};
 
     hdr.ID = RaceIntoSpace_Signature;
     strcpy(hdr.Name, "AUTOSAVE");
@@ -1031,7 +1024,7 @@ std::string GetBlockName()
  */
 void BadFileType()
 {
-    display::LegacySurface local(164, 77);
+    display::LegacySurface local{164, 77};
     local.copyFrom(display::graphics.legacyScreen(), 39, 50, 202, 126);
     ShBox(39, 50, 202, 126);
     InBox(43, 67, 197, 77);
@@ -1052,14 +1045,11 @@ void BadFileType()
  *
  * \param name  A savegame filename.
  */
-void FileText(const char *name)
+void FileText(const char* name)
 {
-    FILE *fin;
-    SaveFileHdr header;
-
     fill_rectangle(38, 133, 279, 155, 3);
     display::graphics.setForegroundColor(1);
-    fin = sOpen(name, "rb", FT_SAVE);
+    FILE* fin = sOpen(name, "rb", FT_SAVE);
 
     if (fin == NULL) {
         display::graphics.setForegroundColor(11);
@@ -1067,6 +1057,7 @@ void FileText(const char *name)
         return;
     }
 
+    SaveFileHdr header;
     fread(&header, sizeof(header), 1, fin);
 
     fclose(fin);
@@ -1155,10 +1146,8 @@ void FileText(const char *name)
 int FutureCheck(char plr, char type)
 {
     assert(type == 0 || type == 1);
-    int xx;
-    int yy;
     LaunchFacility_Status* p = Data->P[plr].LaunchFacility;
-    LaunchFacility_Status old_p[3];
+    LaunchFacility_Status old_p[MAX_LAUNCHPADS];
     int m[MAX_LAUNCHPADS];
     int t = 0;
     int tx[MAX_LAUNCHPADS] = {0, 0, 0};
@@ -1177,7 +1166,7 @@ int FutureCheck(char plr, char type)
     PortPal(plr);
 
     boost::shared_ptr<display::PalettizedSurface> 
-      launchPads(Filesystem::readImage("images/lpads.but.1.png"));
+      launchPads{Filesystem::readImage("images/lpads.but.1.png")};
 
     if (type == 0) {
         helpText = "i010";
@@ -1254,7 +1243,7 @@ int FutureCheck(char plr, char type)
             // TODO: Rewrite this to use a MissionType& and remove the
             //       duplicate code.
             if (type == 1) {   // VAB/VIB
-                const struct mStr plan = GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
+                const mStr plan = GetMissionPlan(Data->P[plr].Mission[i].MissionCode);
                 draw_string(111, 41 + i * 51, (plan.Abbr).c_str());
                 int MisCod = Data->P[plr].Mission[i].MissionCode;
 
@@ -1287,7 +1276,7 @@ int FutureCheck(char plr, char type)
                     display::graphics.setForegroundColor(8);
                 }
 
-                const struct mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
+                const mStr plan = GetMissionPlan(Data->P[plr].Future[i].MissionCode);
                 display::graphics.setForegroundColor(1);
                 draw_string(111, 41 + i * 51, (plan.Abbr).c_str());
                 int MisCod = Data->P[plr].Future[i].MissionCode;
@@ -1449,6 +1438,7 @@ int FutureCheck(char plr, char type)
                         }
 
                         if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            int xx, yy;
                             if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                                 xx = 113;
                                 yy = 56 + ii * 51;
@@ -1501,6 +1491,7 @@ int FutureCheck(char plr, char type)
                         }
 
                         if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            int xx, yy;
                             if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                                 xx = 113;
                                 yy = 56 + ii * 51;
@@ -1567,6 +1558,7 @@ int FutureCheck(char plr, char type)
                          }
 
                         if (p[ii] == LAUNCHPAD_NOT_BUILT || p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
+                            int xx, yy;
                             if (p[ii] >= LAUNCHPAD_DAMAGED_MARGIN) {
                                 xx = 113;
                                 yy = 56 + ii * 51;
@@ -1618,39 +1610,36 @@ int FutureCheck(char plr, char type)
  * \param filename  the name, including extension, relative to the
  *     save directory.
  */
-void LoadGame(const char *filename)
+void LoadGame(const char* filename)
 {
-    LEGACY_REPLAY *load_buffer = NULL;
-    SaveFileHdr header;
-    unsigned char magic[2];
-    unsigned char *cbuf, *buf;
-    uLongf usize = 0;
-    int i, ok, offset;
-
-    FILE *fin = sOpen(filename, "rb", FT_SAVE);
+    FILE* fin = sOpen(filename, "rb", FT_SAVE);
 
     fseek(fin, 0, SEEK_END);
     size_t fileLength = ftell(fin);
     rewind(fin);
+
+    SaveFileHdr header;
     fread(&header, 1, sizeof(header), fin);
 
     // Read the uncompressed size in big endian
-    for (i = 3; i >= 0; i--) {
+    uLongf usize = 0;
+    for (int i = 3; i >= 0; i--) {
         usize += header.dataSize[i] << 8 * i;
     }
 
+    unsigned char magic[2];
     fread(magic, 1, 2, fin);
     fseek(fin, -2, SEEK_CUR);
 
     if (magic[0] == 0x78 && magic[1] == 0xDA) {  // zlib magic numbers
         size_t csize = fileLength - sizeof(header);
-        cbuf = (unsigned char *) malloc(csize);
-        buf = (unsigned char *) malloc(usize);
+        unsigned char* cbuf = malloc(csize);
+        unsigned char* buf = malloc(usize);
         assert(cbuf && buf);
         fread(cbuf, csize, 1, fin);
         fclose(fin);
 
-        ok = uncompress(buf, &usize, cbuf, csize);
+        int ok = uncompress(buf, &usize, cbuf, csize);
 
         if (ok != Z_OK) {
             BadFileType();
@@ -1671,7 +1660,7 @@ void LoadGame(const char *filename)
             // Load Replay and Event Data
             archive(interimData);
         } catch (std::exception &e) {
-            WARNING1(e.what());
+            LOG_WARNING(e.what());
             BadFileType();
             return;
         }
@@ -1744,28 +1733,28 @@ void LoadGame(const char *filename)
 //Checks for MSF in 1st Probe in player, if == 0 resets all MSF Equipment to MaxRD
 // For both players
 void CheckMSF (){
-    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF == 0) {
-      for (int j = 0; j < NUM_PLAYERS; j++) {
-          for (int k = 0; k < 3; k++) {
+    if (Data->P[0].Probe[PROBE_HW_ORBITAL].MSF != 0) return;
+    
+    for (int j = 0; j < NUM_PLAYERS; j++) {
+        for (int k = 0; k < 3; k++) {
             Data->P[j].Probe[k].MSF = Data->P[j].Probe[k].MaxRD;
-          }
-          for (int k = 0; k < 5; k++) {
+        }
+        for (int k = 0; k < 5; k++) {
             Data->P[j].Rocket[k].MSF = Data->P[j].Rocket[k].MaxRD;
-          }
-          for (int k = 0; k < 7; k++) {
+        }
+        for (int k = 0; k < 7; k++) {
             Data->P[j].Manned[k].MSF = Data->P[j].Manned[k].MaxRD;
-          }
-          for (int k = 0; k < 6; k++) {
+        }
+        for (int k = 0; k < 6; k++) {
             Data->P[j].Misc[k].MSF = Data->P[j].Misc[k].MaxRD;
-          }
-      }
+        }
     }
 }
 
 /**
  * Sort SFInfo objects by Title then Name.
  */
-bool OrderSaves(const SFInfo &a, const SFInfo &b)
+bool OrderSaves(const SFInfo& a, const SFInfo& b)
 {
     int titleOrder = xstrcasecmp(a.Title, b.Title);
     return (titleOrder < 0) ||
@@ -1779,16 +1768,15 @@ bool OrderSaves(const SFInfo &a, const SFInfo &b)
  * \param md  1 if the background underneath should be redrawn on close.
  * \return    1 for yes, 0 for no.
  */
-char RequestX(const char *s, char md)
+char RequestX(const char* s, char md)
 {
-    char i;
     display::LegacySurface local(196, 84);
 
     if (md == 1) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
-    i = strlen(s) >> 1;
+    int px_len = strlen(s) >> 1;
     display::graphics.setForegroundColor(0);
     ShBox(85, 52, 249, 135);
     IOBox(170, 103, 243, 130);
@@ -1798,12 +1786,11 @@ char RequestX(const char *s, char md)
     draw_heading(111, 110, "YES", 0, 0);
     draw_heading(193, 110, "NO", 0, 0);
     display::graphics.setForegroundColor(11);
-    draw_heading(166 - i * 10, 65, &s[0], 0, -1);
+    draw_heading(166 - px_len * 10, 65, &s[0], 0, -1);
     draw_string(136, 94, "ARE YOU SURE?");
 
     WaitForMouseUp();
-    i = 2;
-
+    int i = 2;
     while (i == 2) {
         GetMouse();
 
@@ -1839,13 +1826,8 @@ char RequestX(const char *s, char md)
  * data are serialized into a JSON string, compressed by zlib, and
  * written to disk.
  */
-void write_save_file(const char *Name, SaveFileHdr header)
+void write_save_file(const char* Name, SaveFileHdr header)
 {
-    FILE *fin;
-    int i, offset, size;
-    long unsigned int csize;
-    unsigned char *cbuf;
-
     strcpy(header.PName[0], Data->P[plr[0] % 2].Name);
     strcpy(header.PName[1], Data->P[plr[1] % 2].Name);
 
@@ -1881,8 +1863,8 @@ void write_save_file(const char *Name, SaveFileHdr header)
 
     std::stringstream stream;
     {
-        cereal::JSONOutputArchive::Options options = 
-            cereal::JSONOutputArchive::Options::NoIndent();
+        using Opt = cereal::JSONOutputArchive::Options;
+        Opt options = Opt::NoIndent();
         cereal::JSONOutputArchive archive(stream, options);
 
         // Save End of Turn Data
@@ -1892,24 +1874,24 @@ void write_save_file(const char *Name, SaveFileHdr header)
         archive(interimData);
     }
 
-    size = sizeof(char) * stream.str().size() + 1;
+    int size = sizeof(char) * stream.str().size() + 1;
 
-    fin = sOpen(Name, "wb", FT_SAVE);
+    FILE* fin = sOpen(Name, "wb", FT_SAVE);
 
     // Uncompressed size in big endian
-    for (i = 3; i >= 0; i--) {
+    for (int i = 3; i >= 0; i--) {
         header.dataSize[i] = size >> 8 * i;
     }
 
     // Write the Save Game Header
     fwrite(&header, sizeof(header), 1, fin);
 
-    csize = compressBound(size);
+    unsigned long csize = compressBound(size);
 
-    cbuf = (unsigned char *) malloc(csize);
+    unsigned char* cbuf = malloc(csize);
     assert(cbuf);
 
-    compress2(cbuf, &csize, (unsigned char *) stream.str().data(), size, 9);
+    compress2(cbuf, &csize, (unsigned char*) stream.str().data(), size, 9);
     fwrite(cbuf, csize, 1, fin);
 
     fclose(fin);
@@ -1927,15 +1909,15 @@ void write_save_file(const char *Name, SaveFileHdr header)
  */
 int SaveGame(const std::vector<SFInfo> savegames)
 {
-    int done = 0, temp, i;
-    FILE *fin;
-    SaveFileHdr header;
+    int done = 0, temp;
+    FILE* fin;
     std::string title;
 
-    memset(&header, 0x00, sizeof(header));
+    SaveFileHdr header{};
     header.ID = RaceIntoSpace_Signature;
     header.Name[sizeof(header.Name) - 1] = 0x1a;
 
+    int i;
     do {
         title = GetBlockName();
 
