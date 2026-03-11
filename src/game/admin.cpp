@@ -1633,8 +1633,8 @@ void LoadGame(const char* filename)
 
     if (magic[0] == 0x78 && magic[1] == 0xDA) {  // zlib magic numbers
         size_t csize = fileLength - sizeof(header);
-        unsigned char* cbuf = malloc(csize);
-        unsigned char* buf = malloc(usize);
+        unsigned char* cbuf = (unsigned char*)malloc(csize);
+        unsigned char* buf = (unsigned char*)malloc(usize);
         assert(cbuf && buf);
         fread(cbuf, csize, 1, fin);
         fclose(fin);
@@ -1888,7 +1888,7 @@ void write_save_file(const char* Name, SaveFileHdr header)
 
     unsigned long csize = compressBound(size);
 
-    unsigned char* cbuf = malloc(csize);
+    unsigned char* cbuf = (unsigned char*)malloc(csize);
     assert(cbuf);
 
     compress2(cbuf, &csize, (unsigned char*) stream.str().data(), size, 9);
