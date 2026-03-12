@@ -117,7 +117,6 @@ set(game_libraries
   "$<IF:$<TARGET_EXISTS:PhysFS::PhysFS>,PhysFS::PhysFS,${physfs_library}>"
   ZLIB::ZLIB
   raceintospace_display
-  raceintospace_protobuf
   )
 
 # Defer to the platform-specific CMakeLists for building the actual game target

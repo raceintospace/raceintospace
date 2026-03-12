@@ -1,5 +1,0 @@
-find_package(Protobuf REQUIRED)
-include_directories(${Protobuf_INCLUDE_DIRS})
-add_library(raceintospace_protobuf raceintospace.proto)
-protobuf_generate(TARGET raceintospace_protobuf)
-target_include_directories(raceintospace_protobuf INTERFACE ${CMAKE_CURRENT_BINARY_DIR})

@@ -7,7 +7,6 @@
     "libpng",
     "zlib",
     "cereal",
-    "protobuf",
     "libtheora",
     "libogg",
     "libvorbis",

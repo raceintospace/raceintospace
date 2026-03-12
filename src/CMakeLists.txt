@@ -64,9 +64,6 @@ include_directories(${PROJECT_BINARY_DIR}/config)
 # build src/display
 add_subdirectory("display")
 
-# build src/protobuf
-add_subdirectory("protobuf")
-
 # build src/game
 add_subdirectory("game")
 
