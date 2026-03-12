@@ -182,5 +182,35 @@
                 "DragNDrop"
             ]
         }
+    ],
+    "testPresets": [
+        {
+            "name": "windows-vcpkg",
+            "configurePreset": "windows-vcpkg",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "linux-release",
+            "configurePreset": "linux-release",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "linux-vcpkg",
+            "configurePreset": "linux-vcpkg",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "macos-vcpkg",
+            "configurePreset": "macos-vcpkg",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
     ]
 }

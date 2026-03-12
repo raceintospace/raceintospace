@@ -2,6 +2,7 @@
   "dependencies": [
     "boost-algorithm",
     "boost-format",
+    "boost-test",
     "boost-foreach",
     "boost-smart-ptr",
     "libpng",

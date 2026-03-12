@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
 
-#include "game/roster.h"
-#include "game/roster_group.h"
-#include "game/roster_entry.h"
+#include "roster.h"
+#include "roster_group.h"
+#include "roster_entry.h"
 
 
 BOOST_AUTO_TEST_SUITE(roster_suite)
