@@ -61,7 +61,7 @@ Placeholder suite for roster module tests.
 
 ## CI
 
-Tests run automatically on every push and pull request via `.github/workflows/CI.yaml`
+Tests run automatically on all pull requests and every push to master branch via `.github/workflows/CI.yaml`
 across four matrix entries: `windows-vcpkg`, `linux-vcpkg`, `linux-release`, and
 `macos-vcpkg`. Results are published as GitHub check annotations on PRs.
 
