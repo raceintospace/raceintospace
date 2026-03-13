@@ -144,7 +144,7 @@ if(BUILD_TESTING)
     )
 
   add_executable(game_test ${test_dir}/test_main.cpp ${test_sources} ${game_sources})
-  set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
+  set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1 -DBOOST_TEST_NO_DYN_LINK=1")
   target_include_directories(game_test PRIVATE "${PROJECT_SOURCE_DIR}/src/game")
   target_compile_definitions(game_test PRIVATE TEST_DATADIR="${PROJECT_SOURCE_DIR}/data")
   target_link_libraries(game_test ${game_libraries} Boost::headers)
