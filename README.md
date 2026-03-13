@@ -51,6 +51,8 @@ report bugs, discuss tasks, or pick up work there. If you want to make
 changes, please fork, edit, and [send us a pull
 request](https://github.com/raceintospace/raceintospace/pull/new/master).
 
+For information on running and writing tests, see [TESTING.md](TESTING.md).
+
 There's a `.git-hooks` directory in the root. This contains a `pre-commit`
 hook that verifies code styling before accepting changes. You can add this to
 your local repository's `.git/hooks/` directory like:
@@ -208,6 +210,14 @@ Add:
    BARIS_SAVE=.\save
 ```
 Click "run"
+
+# Testing
+
+The project has a Boost.Test-based test suite covering mission logic, predicates,
+and step-chain traversal. See [TESTING.md](TESTING.md) for how to run tests
+locally, what the suites cover, and known coverage gaps.
+
+Tests run automatically in CI on every push and pull request.
 
 # Music
 

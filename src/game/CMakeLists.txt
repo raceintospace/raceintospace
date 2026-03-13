@@ -132,19 +132,27 @@ endif()
 # populated with platform-specific files.
 # Not using (file GLOB ...) because CMake documentation recommends
 # against it (https://cmake.org/cmake/help/v3.14/command/file.html)
-# set(test_dir ${PROJECT_SOURCE_DIR}/test)
-# set(test_sources
-#   music_none.cpp
-#   ${test_dir}/game/dummy_test.cpp
-#   ${test_dir}/game/mission_test.cpp
-#   ${test_dir}/game/downgrade_test.cpp
-#   ${test_dir}/game/roster_test.cpp
-#   )
+if(BUILD_TESTING)
+  set(test_dir ${PROJECT_SOURCE_DIR}/test)
+  set(test_sources
+    ${test_dir}/music_none.cpp
+    ${test_dir}/game/mission_test.cpp
+    ${test_dir}/game/mission_predicates_test.cpp
+    ${test_dir}/game/mission_step_chain_test.cpp
+    ${test_dir}/game/downgrade_test.cpp
+    ${test_dir}/game/roster_test.cpp
+    )
 
-# add_executable(game_test ../../test/test_main.cpp ${test_sources} ${game_sources})
-# set_target_properties(game_test PROPERTIES COMPILE_FLAGS "-DBOOST_TEST_NO_LIB=1")
-# target_link_libraries(game_test ${game_libraries})
-# add_test(
-#   NAME game_test
-#   COMMAND game_test --catch_system_errors=yes
-#   )
+  add_executable(game_test ${test_dir}/test_main.cpp ${test_sources} ${game_sources})
+  target_include_directories(game_test PRIVATE "${PROJECT_SOURCE_DIR}/src/game")
+  target_compile_definitions(game_test PRIVATE
+    BOOST_TEST_NO_LIB
+    BOOST_TEST_INCLUDED
+    TEST_DATADIR="${PROJECT_SOURCE_DIR}/data"
+  )
+  target_link_libraries(game_test ${game_libraries} Boost::headers)
+  add_test(
+    NAME game_test
+    COMMAND game_test --catch_system_errors=yes
+    )
+endif()

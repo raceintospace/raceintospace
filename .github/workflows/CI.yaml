@@ -5,7 +5,8 @@
 # Source: https://raw.githubusercontent.com/lukka/CppBuildTasks-Validation/v10/.github/workflows/hosted-ninja-vcpkg_submod-autocache.yml
 name: CI
 on:
-  push: {}
+  push:
+    branches: [master]
   workflow_dispatch: {}
   pull_request:
     types: [opened, synchronize, reopened]
@@ -14,19 +15,24 @@ jobs:
   job:
     permissions:
       actions: read  # vcpkg-cache uses github's action cache, needs only read permission
+      checks: write  # dorny/test-reporter posts test results as a check
     strategy:
       fail-fast: true
       matrix:
         include:
           - os: windows
             preset: windows-vcpkg
+            buildDir: build/release
             # package: windows-release
           - os: ubuntu
             preset: linux-vcpkg
+            buildDir: build/debug
           - os: ubuntu
             preset: linux-release
+            buildDir: build/release
           - os: macos
             preset: macos-vcpkg
+            buildDir: build/debug
 
     runs-on: ${{ matrix.os }}-latest
     name: ${{ github.workflow }}-${{ matrix.preset }}
@@ -79,7 +85,7 @@ jobs:
         id: linux-deps
         run: |
           sudo apt update
-          sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
+          sudo apt-get install libsdl1.2-dev libcereal-dev libphysfs-dev libboost-dev libboost-test-dev libpng-dev libjsoncpp-dev libogg-dev libvorbis-dev libtheora-dev libprotobuf-dev protobuf-compiler
 
       - name: Run CMake and CPack # CMake makes exe, CPack makes installer (package)
         uses: lukka/run-cmake@v10
@@ -91,6 +97,17 @@ jobs:
           packagePreset: ${{ matrix.package }}
         env:
           VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite" # makes CMake aware of vcpkg-cache's cache
+
+      - name: Run tests
+        run: ctest --test-dir ${{ matrix.buildDir }} --output-on-failure --output-junit test-results.xml
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v2
+        if: always() && steps.runcmake.conclusion == 'success'
+        with:
+          name: Tests (${{ matrix.preset }})
+          path: ${{ matrix.buildDir }}/test-results.xml
+          reporter: java-junit
 
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE

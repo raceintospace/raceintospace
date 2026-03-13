@@ -2,8 +2,8 @@
 
 #include <cstring>
 
-#include "game/downgrader.h"
-#include "game/mission_util.h"
+#include "downgrader.h"
+#include "mission_util.h"
 
 struct DowngradeFixture {
     DowngradeFixture() 
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(DowngradeNextThrowTest)
 
 
 // This isn't working. I believe the problem is rooted in
-// Downgrader::next() relying on GetMissionType(), which uses the
+// Downgrader::next() relying on GetMissionPlan(), which uses the
 // filesystem. Trying to read files through the RIS code seems to
 // always cause problems.
 // BOOST_AUTO_TEST_CASE(DowngradeNextTest)

@@ -2,7 +2,7 @@
 cmake_minimum_required (VERSION 3.25...3.29)
 project(raceintospace VERSION 2.0.0)
 
-enable_testing()
+include(CTest)
 
 set (raceintospace_VERSION_EXTRA)
 set (raceintospace_VERSION_FULL
