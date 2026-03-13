@@ -94,27 +94,27 @@ BOOST_AUTO_TEST_CASE(GetDurationParens_known_values)
 
 BOOST_AUTO_TEST_CASE(MissionTimingOk_regular_missions_always_ok)
 {
-    BOOST_CHECK(MissionTimingOk(Mission_Earth_Orbital, 60, 0));
-    BOOST_CHECK(MissionTimingOk(Mission_Earth_Orbital, 77, 1));
-    BOOST_CHECK(MissionTimingOk(Mission_HistoricalLanding, 68, 0));
+    BOOST_TEST(MissionTimingOk(Mission_Earth_Orbital, 60, 0));
+    BOOST_TEST(MissionTimingOk(Mission_Earth_Orbital, 77, 1));
+    BOOST_TEST(MissionTimingOk(Mission_HistoricalLanding, 68, 0));
 }
 
 BOOST_AUTO_TEST_CASE(MissionTimingOk_Mars_windows)
 {
-    BOOST_CHECK( MissionTimingOk(Mission_MarsFlyby, 60, 0));
-    BOOST_CHECK(!MissionTimingOk(Mission_MarsFlyby, 60, 1)); // wrong season
-    BOOST_CHECK( MissionTimingOk(Mission_MarsFlyby, 62, 0));
-    BOOST_CHECK(!MissionTimingOk(Mission_MarsFlyby, 61, 0)); // wrong year
-    BOOST_CHECK( MissionTimingOk(Mission_MarsFlyby, 69, 1));
-    BOOST_CHECK(!MissionTimingOk(Mission_MarsFlyby, 69, 0)); // wrong season
+    BOOST_TEST(MissionTimingOk(Mission_MarsFlyby, 60, 0));
+    BOOST_TEST(! MissionTimingOk(Mission_MarsFlyby, 60, 1)); // wrong season
+    BOOST_TEST(MissionTimingOk(Mission_MarsFlyby, 62, 0));
+    BOOST_TEST(! MissionTimingOk(Mission_MarsFlyby, 61, 0)); // wrong year
+    BOOST_TEST(MissionTimingOk(Mission_MarsFlyby, 69, 1));
+    BOOST_TEST(! MissionTimingOk(Mission_MarsFlyby, 69, 0)); // wrong season
 }
 
 BOOST_AUTO_TEST_CASE(MissionTimingOk_Jupiter_windows)
 {
-    BOOST_CHECK( MissionTimingOk(Mission_JupiterFlyby, 60, 0));
-    BOOST_CHECK( MissionTimingOk(Mission_JupiterFlyby, 60, 1)); // either season
-    BOOST_CHECK(!MissionTimingOk(Mission_JupiterFlyby, 61, 0)); // wrong year
-    BOOST_CHECK( MissionTimingOk(Mission_JupiterFlyby, 77, 0));
+    BOOST_TEST(MissionTimingOk(Mission_JupiterFlyby, 60, 0));
+    BOOST_TEST(MissionTimingOk(Mission_JupiterFlyby, 60, 1)); // either season
+    BOOST_TEST(! MissionTimingOk(Mission_JupiterFlyby, 61, 0)); // wrong year
+    BOOST_TEST(MissionTimingOk(Mission_JupiterFlyby, 77, 0));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

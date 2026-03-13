@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(roster_suite)
 
 BOOST_AUTO_TEST_CASE(roster_test)
 {
-    BOOST_CHECK(2 + 2 == 4);
+    BOOST_TEST(2 + 2 == 4);
 }
 
 // BOOST_AUTO_TEST_CASE(TestLoadRoster)
