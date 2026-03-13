@@ -15,6 +15,7 @@ jobs:
   job:
     permissions:
       actions: read  # vcpkg-cache uses github's action cache, needs only read permission
+      checks: write  # dorny/test-reporter posts test results as a check
     strategy:
       fail-fast: true
       matrix:
@@ -99,6 +100,14 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir ${{ matrix.buildDir }} --output-on-failure --output-junit test-results.xml
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v2
+        if: always() && steps.runcmake.conclusion == 'success'
+        with:
+          name: Tests (${{ matrix.preset }})
+          path: ${{ matrix.buildDir }}/test-results.xml
+          reporter: java-junit
 
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
