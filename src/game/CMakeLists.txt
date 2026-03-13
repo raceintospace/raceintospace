@@ -134,7 +134,7 @@ endif()
 # against it (https://cmake.org/cmake/help/v3.14/command/file.html)
 set(test_dir ${PROJECT_SOURCE_DIR}/test)
 set(test_sources
-  music_none.cpp
+  ${test_dir}/music_none.cpp
   ${test_dir}/game/mission_test.cpp
   ${test_dir}/game/mission_predicates_test.cpp
   ${test_dir}/game/mission_step_chain_test.cpp

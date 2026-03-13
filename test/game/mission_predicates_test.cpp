@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(mission_predicates_suite)
 
 BOOST_AUTO_TEST_CASE(IsDuration_agrees_with_json)
 {
-    for (const struct mStr &m : GetMissionData()) {
+    for (const mStr& m : GetMissionData()) {
         bool expected = m.Dur >= 1;
         bool actual   = IsDuration(m.Index);
         BOOST_CHECK_MESSAGE(
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(IsDuration_agrees_with_json)
 
 BOOST_AUTO_TEST_CASE(IsEVA_agrees_with_json)
 {
-    for (const struct mStr &m : GetMissionData()) {
+    for (const mStr& m : GetMissionData()) {
         bool expected = m.EVA >= 1;
         bool actual   = IsEVA(m.Index);
         BOOST_CHECK_MESSAGE(
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(IsEVA_agrees_with_json)
 
 BOOST_AUTO_TEST_CASE(IsDocking_agrees_with_json)
 {
-    for (const struct mStr &m : GetMissionData()) {
+    for (const mStr& m : GetMissionData()) {
         bool expected = m.Doc >= 1;
         bool actual   = IsDocking(m.Index);
         BOOST_CHECK_MESSAGE(
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(IsDocking_agrees_with_json)
 
 BOOST_AUTO_TEST_CASE(IsJoint_agrees_with_json)
 {
-    for (const struct mStr &m : GetMissionData()) {
+    for (const mStr& m : GetMissionData()) {
         bool expected = m.Jt >= 1;
         bool actual   = IsJoint(m.Index);
         BOOST_CHECK_MESSAGE(
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(IsJoint_agrees_with_json)
 
 BOOST_AUTO_TEST_CASE(IsLM_agrees_with_json)
 {
-    for (const struct mStr &m : GetMissionData()) {
+    for (const mStr& m : GetMissionData()) {
         bool expected = m.LM >= 1;
         bool actual   = IsLM(m.Index);
         BOOST_CHECK_MESSAGE(
