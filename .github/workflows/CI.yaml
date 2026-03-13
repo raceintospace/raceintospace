@@ -14,8 +14,6 @@ jobs:
   job:
     permissions:
       actions: read  # vcpkg-cache uses github's action cache, needs only read permission
-      checks: write  # publish-unit-test-result-action posts test results as a check
-      pull-requests: write  # publish-unit-test-result-action comments on PRs
     strategy:
       fail-fast: true
       matrix:
@@ -100,13 +98,6 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir ${{ matrix.buildDir }} --output-on-failure --output-junit test-results.xml
-
-      - name: Publish test results
-        if: always() && steps.runcmake.conclusion == 'success'
-        uses: EnricoMi/publish-unit-test-result-action@v7
-        with:
-          files: ${{ matrix.buildDir }}/test-results.xml
-          check_name: "Tests (${{ matrix.preset }})"
 
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
