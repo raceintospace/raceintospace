@@ -76,11 +76,8 @@ int MoodColor(const uint8_t mood)
 
 void Moon(char plr)
 {
-    int val;
-    long size;
     helpText = "i029";
     keyHelpText = "k029";
-    val = Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety;
     FadeOut(2, 0, 0, 0);
 
 
@@ -92,8 +89,9 @@ void Moon(char plr)
     fill_rectangle(114, 131, 217, 145, 7 + 3 * other(plr));
     IOBox(113, 150, 218, 164);
 
-    size = ((val - 55) / 3);
-
+    int val = Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety;
+    
+    long size = ((val - 55) / 3);
     if (size > 13) {
         size = 13;
     } else if (size < 0) {
@@ -110,12 +108,14 @@ void Moon(char plr)
     ShBox(113, 42, 143, 60);
     fill_rectangle(113, 42, 142, 59, 3);
     InBox(113, 42, 140, 58);
+    
     display::graphics.setForegroundColor(11);
     draw_string(134, 35, "PHOTO RECON.");
     draw_string(129, 137, "CURRENT RECON ");
     draw_string(127, 143, "LEVEL IS AT ");
     draw_number(0, 0, val);
     draw_string(0, 0, "%");
+    
     display::graphics.setForegroundColor(1);
     draw_string(143, 159, "CONTINUE");
     draw_small_flag(plr, 114, 43);
@@ -128,7 +128,8 @@ void Moon(char plr)
         key = 0;
         GetMouse();
 
-        if ((x >= 115 && y >= 152 && x <= 216 && y <= 162 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
+        if ((x >= 115 && y >= 152 && x <= 216 && y <= 162 && mousebuttons > 0) 
+            || key == K_ENTER || key == K_ESCAPE) {
             InBox(115, 152, 216, 162);
             WaitForMouseUp();
 
@@ -145,46 +146,42 @@ void Moon(char plr)
 
 
 
-void DispLeft(char plr, int lc, int cnt, int nw, const int *ary)
+void DispLeft(char plr, int lc, int cnt, int nw, const int* ary)
 {
-    int i, start, num;
-    start = nw - lc;
-    num = (cnt < 8) ? cnt : 8;
-
     fill_rectangle(26, 129, 153, 195, 0);
     ShBox(26, 130 + lc * 8, 152, 138 + lc * 8);
 
     display::graphics.setForegroundColor(11);
 
-    for (i = start; i < start + num; i++) {
-        if (ary[i] >= 0) {
-            display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
+    int start = nw - lc;
+    int num = (cnt < 8) ? cnt : 8;
+    for (int i = start; i < start + num; i++) {
+        if (ary[i] < 0) continue;
+        
+        display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
 
-            if (Data->P[plr].Pool[ary[i]].RetirementDelay > 0) {
-                display::graphics.setForegroundColor(9);  // Print name in gray if 'naut has announced retirement (black shows poorly here) -Leon
-            }
-            draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
+        if (Data->P[plr].Pool[ary[i]].RetirementDelay > 0) {
+            display::graphics.setForegroundColor(9);  // Print name in gray if 'naut has announced retirement (black shows poorly here) -Leon
+        }
+        draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
 
-            if (Data->P[plr].Pool[ary[i]].InjuryDelay > 0) {
-                if (Data->P[plr].Pool[ary[i]].InjuryDelay == 1) {
-                    draw_number(120, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
-                    draw_string(0, 0, " TURN");
-                } else {
-                    draw_number(118, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
-                    draw_string(0, 0, " TRNS");
-                }
-            } else if (Data->P[plr].Pool[ary[i]].Missions > 0) {
-                draw_string(0, 0, " (");
-                draw_number(0, 0, Data->P[plr].Pool[ary[i]].Missions);
-                draw_string(0, 0, ")");
+        if (Data->P[plr].Pool[ary[i]].InjuryDelay > 0) {
+            if (Data->P[plr].Pool[ary[i]].InjuryDelay == 1) {
+                draw_number(120, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+                draw_string(0, 0, " TURN");
+            } else {
+                draw_number(118, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+                draw_string(0, 0, " TRNS");
             }
+        } else if (Data->P[plr].Pool[ary[i]].Missions > 0) {
+            draw_string(0, 0, " (");
+            draw_number(0, 0, Data->P[plr].Pool[ary[i]].Missions);
+            draw_string(0, 0, ")");
         }
     }
-
-    return;
 }
 
-void BarSkill(char plr, int lc, int nw, int *ary)
+void BarSkill(char plr, int lc, int nw, int* ary)
 {
     display::graphics.setForegroundColor(11);
 
@@ -204,15 +201,11 @@ void BarSkill(char plr, int lc, int nw, int *ary)
     draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Docking);
     draw_string(0, 0, " EN:");
     draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Endurance);
-    return;
 }
 
 
 void SatDraw(char plr)
 {
-    int i;
-    int loc[4];
-
     FadeOut(2, 0, 0, 0);
 
     display::graphics.screen()->clear();
@@ -220,7 +213,7 @@ void SatDraw(char plr)
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         ShBox(1 + i * 80, 24, 79 + i * 80, 71);
         ShBox(1 + i * 80, 73, 79 + i * 80, 199);
 
@@ -237,13 +230,13 @@ void SatDraw(char plr)
         }
     }
 
+    int loc[4];
     loc[0] = (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 : 1 + plr * 3;
     loc[1] = (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num < 0) ? 0 : 2 + plr * 3;
     loc[2] = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num < 0) ? 0 : 0;
     loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 : 3 + plr * 3;
 
-    for (i = 0; i < 4; i++) {
-
+    for (int i = 0; i < 4; i++) {
         char filename[128];
         snprintf(filename, sizeof(filename), "images/satbld.but.%d.png", loc[i]);
         boost::shared_ptr<display::PalettizedSurface> satellite(Filesystem::readImage(filename));
@@ -254,7 +247,6 @@ void SatDraw(char plr)
         } else {
             display::graphics.screen()->draw(satellite, 0, 0, 71, 28, 5 + i * 80, 28);
         }
-
     }
 
     draw_small_flag(plr, 5, 4);
@@ -268,14 +260,11 @@ void SatDraw(char plr)
     draw_heading(40, 5, "SATELLITE BUILDING", 0, -1);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
-
-    return;
 }
 
 
 void LMDraw(char plr)
 {
-    char ind = 0;
     FadeOut(2, 0, 0, 0);
 
     display::graphics.screen()->clear();
@@ -286,12 +275,12 @@ void LMDraw(char plr)
     InBox(4, 26, 316, 116);
     fill_rectangle(5, 27, 315, 115, 0);  // middle screen
 
+    char ind;
     if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
         ind = 4 + plr;
     } else {
         ind = 0 + plr;
     }
-
     LMPict(ind);
 
     if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
@@ -299,8 +288,8 @@ void LMDraw(char plr)
     } else {
         ind = 2 + plr;
     }
-
     LMPict(ind);
+    
     ShBox(110, 24, 203, 36);
     InBox(112, 26, 201, 34);
     display::graphics.setForegroundColor(1);
@@ -309,54 +298,28 @@ void LMDraw(char plr)
     draw_heading(50, 5, "LUNAR MODULE", 0, -1);
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
-
-    return;
 }
 
 void SatText(char plr)
 {
-    int i;
-
     display::graphics.setForegroundColor(11);
 
-    for (i = 0; i < 4; i++) {
-        if (i != 2) {
+    for (int i = 0; i < 4; i++) {
+        if (i == 2)  {
+            PlanText(plr, 0);
+        } else {
             display::graphics.setForegroundColor(11);
-
             switch (i) {
             case 0:
                 draw_string(5 + i * 80, 80, "DUR LVL: ");  // Show highest Duration level achieved -Leon
 
-                switch (Data->P[plr].DurationLevel) {
-                case 1:
-                    draw_string(0, 0, "A");
-                    break;
-
-                case 2:
-                    draw_string(0, 0, "B");
-                    break;
-
-                case 3:
-                    draw_string(0, 0, "C");
-                    break;
-
-                case 4:
-                    draw_string(0, 0, "D");
-                    break;
-
-                case 5:
-                    draw_string(0, 0, "E");
-                    break;
-
-                case 6:
-                    draw_string(0, 0, "F");
-                    break;
-
-                default:
+                if (Data->P[plr].DurationLevel >= 1 && Data->P[plr].DurationLevel <= 6) {
+                    char dur = 'A' - 1 + Data->P[plr].DurationLevel;
+                    draw_character(dur);
+                } else {
                     draw_string(0, 0, "NONE");
-                    break;
                 }
-
+                
                 draw_string(5 + i * 80, 94, "DOCKING");
 
                 if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
@@ -364,7 +327,6 @@ void SatText(char plr)
                 } else {
                     draw_number(5 + i * 80, 110, 0);
                 }
-
                 draw_string(0, 0, "%");
 
                 draw_number(5 + i * 80, 127, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps);
@@ -396,7 +358,6 @@ void SatText(char plr)
                 } else {
                     draw_number(5 + i * 80, 110, 0);
                 }
-
                 draw_string(0, 0, "%");
 
                 draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
@@ -429,7 +390,6 @@ void SatText(char plr)
                 } else {
                     draw_number(5 + i * 80, 110, 0);
                 }
-
                 draw_string(0, 0, "%");
 
                 draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
@@ -452,10 +412,7 @@ void SatText(char plr)
 
                 draw_number(5 + i * 80, 195, Data->Prestige[Prestige_LunarProbeLanding].Points[plr]);
                 break;
-
             }
-        } else {
-            PlanText(plr, 0);
         }
 
         display::graphics.setForegroundColor(6 + 3 * plr);
@@ -465,37 +422,27 @@ void SatText(char plr)
         draw_string(5 + i * 80, 154, "% SUCCESS:");
         draw_string(5 + i * 80, 171, "FIRST:");
         draw_string(5 + i * 80, 188, "PRESTIGE:");
-
     }
-
-
-    return;
 }
 
 void PlanText(char plr, char plan)
 {
-    char tx;
-    int pUsed, pFails, Find, i;
-
-    Find = 0; /* XXX check uninitialized */
-
-    tx = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) ? 1 : 0;
-
     fill_rectangle(164, 75, 78 + 160, 89, 3);
     fill_rectangle(162, 105, 218, 113, 3);
     fill_rectangle(162, 123, 218, 131, 3);
     fill_rectangle(162, 157, 218, 165, 3);
     fill_rectangle(162, 173, 218, 181, 3);
     fill_rectangle(162, 190, 218, 198, 3);
-
     fill_rectangle(162, 139, 218, 145, 3);
 
+    char tx = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) ? 1 : 0;
     if (tx == 1) {
         fill_rectangle(165, 28, 235, 55, 0);
     }
 
     display::graphics.setForegroundColor(11);
 
+    int Find = 0; /* XXX check uninitialized */
     switch (plan) {
     case 0:
         draw_string(4 + 160, 80, "LUNAR FLYBY");
@@ -542,9 +489,9 @@ void PlanText(char plr, char plan)
         break;
     }
 
-    pUsed = pFails = 0;
-
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
+    int pUsed = 0;
+    int pFails = 0;
+    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
         if (Data->P[plr].History[i].MissionCode == Find) {
             pUsed++;
 
@@ -557,11 +504,10 @@ void PlanText(char plr, char plan)
     draw_number(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
     draw_string(0, 0, "%");
 
-
     draw_number(5 + 160, 127, pUsed);
     draw_number(5 + 160, 144, pUsed - pFails);
 
-    if (pUsed) {
+    if (pUsed != 0) {
         draw_number(5 + 160, 161, 100 * (pUsed - pFails) / pUsed);
     } else {
         draw_number(5 + 160, 161, 0);
@@ -576,9 +522,6 @@ void PlanText(char plr, char plan)
     }
 
     draw_number(5 + 160, 195, Data->Prestige[1 + plan].Points[plr]);
-
-
-    return;
 }
 
 
@@ -618,7 +561,7 @@ void LMBld(char plr)
     }
 
     for (int i = 0; i < 2; i++) {
-        int m = i ? 12 : 172;
+        int m = (i==0)? 172 : 12;
 
         display::graphics.setForegroundColor(8);
         draw_string(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
@@ -686,15 +629,13 @@ void LMBld(char plr)
 
 void SatBld(char plr)
 {
-    int plan;
-    plan = 0;
     SatDraw(plr);
     SatText(plr);
     helpText = "i019";
     keyHelpText = "k019";
 
     if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) {
-        PlanText(plr, plan);
+        PlanText(plr, 0);
     }
 
     music_start(M_HISTORY);
@@ -703,10 +644,12 @@ void SatBld(char plr)
     key = 0;
     WaitForMouseUp();
 
+    int plan = 0;
     while (1) {
         GetMouse();
 
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) 
+            || key == K_ENTER || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
 
@@ -718,7 +661,9 @@ void SatBld(char plr)
             music_stop();
             key = 0;
             return; // Continue
-        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 && ((x >= 166 && y >= 60 && x <= 199 && y <= 66 && mousebuttons > 0) || key == LT_ARROW)) {
+        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 
+                   && ((x >= 166 && y >= 60 && x <= 199 && y <= 66 && mousebuttons > 0) 
+                       || key == LT_ARROW)) {
             InBox(166, 60, 199, 66);
             key = 0;
             WaitForMouseUp();
@@ -733,7 +678,9 @@ void SatBld(char plr)
 
             PlanText(plr, plan);
             OutBox(166, 60, 199, 66);
-        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 && ((x >= 201 && y >= 60 && x <= 234 && y <= 66 && mousebuttons > 0) || key == RT_ARROW)) {
+        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 
+                   && ((x >= 201 && y >= 60 && x <= 234 && y <= 66 && mousebuttons > 0) 
+                       || key == RT_ARROW)) {
             InBox(201, 60, 234, 66);
             key = 0;
             WaitForMouseUp();
@@ -751,6 +698,5 @@ void SatBld(char plr)
         }
     }
 }
-
 
 // EOF
