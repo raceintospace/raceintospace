@@ -34,7 +34,7 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
  * \param s pointer to char-array (string) to print
  *
  */
-void draw_string(int x, int y, const char *s)
+void draw_string(int x, int y, const char* s)
 {
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
@@ -53,7 +53,7 @@ void draw_string(int x, int y, const char *s)
 }
 
 
-void draw_string(int x, int y, const char *s, StringAlign align)
+void draw_string(int x, int y, const char* s, StringAlign align)
 {
     int xpos = x;
 
@@ -62,14 +62,14 @@ void draw_string(int x, int y, const char *s, StringAlign align)
     } else if (align == ALIGN_RIGHT) {
         xpos = x - TextDisplayLength(s);
     } else if (align != ALIGN_LEFT) {
-        WARNING1("Invalid text alignment in call to draw_string");
+        LOG_WARNING("Invalid text alignment in call to draw_string");
     }
 
     draw_string(xpos, y, s);
 }
 
 
-void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
+void draw_string_highlighted(int x, int y, const char* s, unsigned int position)
 {
     draw_string(x, y, s);
     grMoveTo(x, y);
@@ -86,7 +86,7 @@ void draw_string_highlighted(int x, int y, const char *s, unsigned int position)
  * \param mode  0 or 1 (Unused).
  * \param te  Highlight the letter at index te (0-based) in red.
  */
-void draw_heading(int x, int y, const char *txt, char mode, char te)
+void draw_heading(int x, int y, const char* txt, char mode, char te)
 {
     struct LET {
         char width, img[15][21];
@@ -116,12 +116,12 @@ void draw_heading(int x, int y, const char *txt, char mode, char te)
         } else if (c >= 'A' && c <= '`') {
             px = c - 33;
         } else {
-            WARNING2("Cannot print header character %c", txt[i]);
+            LOG_WARNING("Cannot print header character %c", txt[i]);
             continue;
         }
 
         // Read into letter piecewise to avoid packing issues.
-        const char *offset = letter_data + (letterSize * px);
+        const char* offset = letter_data + (letterSize * px);
         memcpy(&letter.width, offset, sizeof(letter.width));
         memcpy(&letter.img, offset + sizeof(letter.width),
                sizeof(letter.img));
@@ -669,7 +669,8 @@ void draw_character(char chr)
         break;
 
     case '-':
-        MR(0, -2), LR(3, 0);
+        MR(0, -2);
+        LR(3, 0);
         MR(2, 2);
         break;
 
@@ -853,7 +854,7 @@ void draw_character(char chr)
  * \param   a text string
  * \return  count in pixels.
  */
-int TextDisplayLength(const char *str)
+int TextDisplayLength(const char* str)
 {
     unsigned int pixels = 0;
     int count = (int) strlen(str);
@@ -862,49 +863,22 @@ int TextDisplayLength(const char *str)
     for (int i = 0; i < count; i++) {
 
         switch (toupper(str[i])) {
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-        case 'G':
-        case 'H':
-        case 'J':
-        case 'K':
-        case 'L':
-        case 'M':
-        case 'N':
-        case 'O':
-        case 'P':
-        case 'Q':
-        case 'R':
-        case 'S':
-        case 'T':
-        case 'U':
-        case 'V':
-        case 'W':
-        case 'X':
-        case 'Y':
-        case 'Z':
-        case '0':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
+        case 'A': case 'B': case 'C':
+        case 'D': case 'E': case 'F':
+        case 'G': case 'H':
+        case 'J': case 'K': case 'L':
+        case 'M': case 'N': case 'O':
+        case 'P': case 'Q': case 'R':
+        case 'S': case 'T': case 'U':
+        case 'V': case 'W': case 'X':
+        case 'Y': case 'Z':
+        case '0':           case '2':
+        case '3': case '4': case '5':
+        case '6': case '7': case '8':
         case '9':
-        case '+':
-        case '&':
-        case '@':
-        case '#':
-        case '%':
-        case '/':
-        case '<':
-        case '>':
-        case '*':
+        case '+': case '&': case '@':
+        case '#': case '%': case '/':
+        case '<': case '>': case '*':
         case '?':
             pixels += 6;
             break;
@@ -913,22 +887,17 @@ int TextDisplayLength(const char *str)
             pixels += 5;
             break;
 
-        case 'I':
-        case '1':
+        case 'I': case '1':
             pixels += 4;
             break;
 
-        case ',':
-        case ' ':
-        case '(':
-        case ')':
-        case '^':  // 3 pixels, no trailing space
+        case ',': case ' ': case '^':
+        case '(': case ')':
+        // 3 pixels, no trailing space
             pixels += 3;
             break;
 
-        case '.':
-        case ':':
-        case '!':
+        case '.': case ':': case '!':
         case 0x27: // single quote
         case 0x14:
             pixels += 2;
