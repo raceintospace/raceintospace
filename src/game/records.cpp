@@ -28,6 +28,7 @@
 #include "game_main.h"
 #include "gr.h"
 #include "hardef.h"
+#include "logging.h"
 #include "mission_util.h"
 #include "pace.h"
 #include "place.h"
@@ -44,13 +45,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 char NREC[56][3];
 Record_Entry rec[56][3];
 
-void Move2rec(char *pos, char *pos2, char val);
-void ClearRecord(char *pos2);
-void BackTop(char *pos, char *pos2);
-void Back1rec(char *pos, char *pos2);
-void For1rec(char *pos, char *pos2);
-void ForEnd(char *pos, char *pos2);
-void Drec(char *pos, char *pos2, char mde);
+void Move2rec(char* pos, char* pos2, char val);
+void ClearRecord(char* pos2);
+void BackTop(char* pos, char* pos2);
+void Back1rec(char* pos, char* pos2);
+void For1rec(char* pos, char* pos2);
+void ForEnd(char* pos, char* pos2);
+void Drec(char* pos, char* pos2, char mde);
 void WriteRecord(int i, int j, int k, int temp);
 void SwapRec(int Rc, int pl1, int pl2);
 char CheckSucess(int i, int j);
@@ -66,7 +67,7 @@ int Pict[56] = {
     317, 247, 239, 322, 291
 };
 
-const char *Record_Names[56] = {
+const char* Record_Names[56] = {
     "ORBITAL SATELLITE",
     "MAN IN SPACE",
     "WOMAN IN SPACE",
@@ -126,7 +127,7 @@ const char *Record_Names[56] = {
 };
 
 
-const char *Months[12] = {
+const char* Months[12] = {
     "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
     "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 };
@@ -203,8 +204,11 @@ void Records(char plr)
         GetMouse();
 
         // Parse Button actions, note that return is embedded in first pButton
-        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) ||
-            key == K_ENTER || key == K_ESCAPE) {
+        if ((x >= 245 && y >= 5 
+              && x <= 314 && y <= 17 
+              && mousebuttons > 0) 
+            || key == K_ENTER 
+            || key == K_ESCAPE) {
             InBox(245, 5, 314, 17);
 
             if (key > 0) {
@@ -253,27 +257,27 @@ void Records(char plr)
 
         pButton(297, 129, 307, 158, Back1rec(&pos, &pos2), key >> 8, 72);
         pButton(297, 160, 307, 189, For1rec(&pos, &pos2), key >> 8, 80);
-        pButton(236, 86, 307, 97, ClearRecord(&pos2), key, 'C');
-        Button2(15, 129, 160, 133, Move2rec(&pos, &pos2, 0), key, 49);
-        Button2(15, 136, 160, 140, Move2rec(&pos, &pos2, 1), key, 50);
-        Button2(15, 143, 160, 147, Move2rec(&pos, &pos2, 2), key, 51);
-        Button2(15, 150, 160, 154, Move2rec(&pos, &pos2, 3), key, 52);
-        Button2(15, 157, 160, 161, Move2rec(&pos, &pos2, 4), key, 53);
-        Button2(15, 164, 160, 168, Move2rec(&pos, &pos2, 5), key, 54);
-        Button2(15, 171, 160, 175, Move2rec(&pos, &pos2, 6), key, 55);
-        Button2(15, 178, 160, 182, Move2rec(&pos, &pos2, 7), key, 56);
-        Button2(15, 185, 160, 189, Move2rec(&pos, &pos2, 8), key, 57);
+        pButton(236,  86, 307,  97, ClearRecord(&pos2), key, 'C');
+        Button2( 15, 129, 160, 133, Move2rec(&pos, &pos2, 0), key, 49);
+        Button2( 15, 136, 160, 140, Move2rec(&pos, &pos2, 1), key, 50);
+        Button2( 15, 143, 160, 147, Move2rec(&pos, &pos2, 2), key, 51);
+        Button2( 15, 150, 160, 154, Move2rec(&pos, &pos2, 3), key, 52);
+        Button2( 15, 157, 160, 161, Move2rec(&pos, &pos2, 4), key, 53);
+        Button2( 15, 164, 160, 168, Move2rec(&pos, &pos2, 5), key, 54);
+        Button2( 15, 171, 160, 175, Move2rec(&pos, &pos2, 6), key, 55);
+        Button2( 15, 178, 160, 182, Move2rec(&pos, &pos2, 7), key, 56);
+        Button2( 15, 185, 160, 189, Move2rec(&pos, &pos2, 8), key, 57);
         key = 0;
     }
 }
 
-void Move2rec(char *pos, char *pos2, char val)
+void Move2rec(char* pos, char* pos2, char val)
 {
     *pos2 = *pos + val;
     Drec(pos, pos2, 1);
 }
 
-void ClearRecord(char *pos2)
+void ClearRecord(char* pos2)
 {
     int choice = Help("i125");
 
@@ -305,15 +309,14 @@ void ClearRecord(char *pos2)
     ExportRecordTable();
 }
 
-void BackTop(char *pos, char *pos2)
+void BackTop(char* pos, char* pos2)
 {
     *pos = 0;
     *pos2 = 0;
     Drec(pos, pos2, 1);
-    return;
 }
 
-void Back1rec(char *pos, char *pos2)
+void Back1rec(char* pos, char* pos2)
 {
     if (*pos2 == 0) {
         return;
@@ -326,10 +329,9 @@ void Back1rec(char *pos, char *pos2)
     }
 
     Drec(pos, pos2, 1);
-    return;
 }
 
-void For1rec(char *pos, char *pos2)
+void For1rec(char* pos, char* pos2)
 {
     if (*pos2 == 55) {
         return;
@@ -343,22 +345,18 @@ void For1rec(char *pos, char *pos2)
     }
 
     Drec(pos, pos2, 1);
-    return;
 }
 
-void ForEnd(char *pos, char *pos2)
+void ForEnd(char* pos, char* pos2)
 {
     *pos = 47;
     *pos2 = 55;
     Drec(pos, pos2, 1);
-    return;
 }
 
 
-void Drec(char *pos, char *pos2, char mde)
+void Drec(char* pos, char* pos2, char mde)
 {
-    char i, j = 0;
-
     display::graphics.setForegroundColor(1);
     draw_number(12, 42, 1);
     draw_number(12, 66, 2);
@@ -403,7 +401,7 @@ void Drec(char *pos, char *pos2, char mde)
 
     display::graphics.setForegroundColor(2);
 
-    for (i = *pos; i < *pos + 9; i++, j++) {
+    for (int i = *pos, j=0; i < *pos + 9; i++, j++) {
         if (i == *pos2) {
             display::graphics.setForegroundColor(11);
         }
@@ -423,7 +421,7 @@ void Drec(char *pos, char *pos2, char mde)
     display::graphics.setForegroundColor(1);
     draw_string(83, 117, Record_Names[*pos2]);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (rec[*pos2][i].country == NOT_SET) {
 
             return;
@@ -510,12 +508,8 @@ void Drec(char *pos, char *pos2, char mde)
             draw_string(0, 0, rec[*pos2][i].astro);
 
             switch (*pos2) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
+            case 1: case 2: case 3:
+            case 4: case 5: case 6:
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "DATE: ");
                 display::graphics.setForegroundColor(1);
@@ -524,24 +518,21 @@ void Drec(char *pos, char *pos2, char mde)
                 draw_number(0, 0, rec[*pos2][i].yr + 1900);
                 break;
 
-            case 35:
-            case 36:
+            case 35: case 36:
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "MISSIONS: ");
                 display::graphics.setForegroundColor(1);
                 draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
-            case 37:
-            case 38:
+            case 37: case 38:
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "PRESTIGE: ");
                 display::graphics.setForegroundColor(1);
                 draw_number(0, 0, rec[*pos2][i].tag);
                 break;
 
-            case 39:
-            case 40:
+            case 39: case 40:
                 display::graphics.setForegroundColor(6);
                 draw_string(143, 48 + (i * 24), "DAYS: ");
                 display::graphics.setForegroundColor(1);
@@ -577,23 +568,19 @@ void Drec(char *pos, char *pos2, char mde)
                 draw_number(101, 38 + (i * 24), rec[*pos2][i].tag);
 
                 switch (*pos2) {
-                case 22:
-                case 23:
+                case 22: case 23:
                     draw_string(0, 0, " CASUALTIES");
                     break;
 
-                case 24:
-                case 25:
+                case 24: case 25:
                     draw_string(0, 0, " PERCENT");
                     break;
 
-                case 31:
-                case 32:
+                case 31: case 32:
                     draw_string(0, 0, " MISSIONS");
                     break;
 
-                case 33:
-                case 34:
+                case 33: case 34:
                     draw_string(0, 0, " MISSIONS");
                     break;
 
@@ -601,17 +588,12 @@ void Drec(char *pos, char *pos2, char mde)
                     draw_string(0, 0, " POINTS");
                     break;
 
-                case 43:
-                case 44:
+                case 43: case 44:
                     draw_string(0, 0, " M.B.");
                     break;
 
-                case 50:
-                case 51:
-                case 52:
-                case 53:
-                case 54:
-                case 55:
+                case 50: case 51: case 52:
+                case 53: case 54: case 55:
                     draw_string(0, 0, " TIMES");
                     break;
 
@@ -626,14 +608,11 @@ void Drec(char *pos, char *pos2, char mde)
             break;
         }
     }
-
-    return;
 }
 
 void WriteRecord(int i, int j, int k, int temp)
 {
-    char t;
-    t = rec[k][0].place;
+    char t = rec[k][0].place;
     NREC[k][t] = 1;
     ++rec[k][0].place;
 
@@ -676,32 +655,18 @@ void WriteRecord(int i, int j, int k, int temp)
 
     strcpy(&rec[k][t].name[0], &Data->P[i].Name[0]);
     rec[k][t].country = i;
-    return;
 }
 
 void SwapRec(int Rc, int pl1, int pl2)
 {
-    int temp;
     char Tmp[20];
 
-    temp = NREC[Rc][pl1];
-    NREC[Rc][pl1] = NREC[Rc][pl2];
-    NREC[Rc][pl2] = temp;
-
-    temp = rec[Rc][pl1].country;
-    rec[Rc][pl1].country = rec[Rc][pl2].country;
-    rec[Rc][pl2].country = temp;
-    temp = rec[Rc][pl1].yr;
-    rec[Rc][pl1].yr = rec[Rc][pl2].yr;
-    rec[Rc][pl2].yr = temp;
-    temp = rec[Rc][pl1].month;
-    rec[Rc][pl1].month = rec[Rc][pl2].month = temp;
-    temp = rec[Rc][pl1].program;
-    rec[Rc][pl1].program = rec[Rc][pl2].program;
-    rec[Rc][pl2].program = temp;
-    temp = rec[Rc][pl1].tag;
-    rec[Rc][pl1].tag = rec[Rc][pl2].tag;
-    rec[Rc][pl2].tag = temp;
+    std::swap(NREC[Rc][pl1], NREC[Rc][pl2]);
+    std::swap(rec[Rc][pl1].country, rec[Rc][pl2].country);
+    std::swap(rec[Rc][pl1].yr, rec[Rc][pl2].yr);
+    std::swap(rec[Rc][pl1].month, rec[Rc][pl2].month);
+    std::swap(rec[Rc][pl1].program, rec[Rc][pl2].program);
+    std::swap(rec[Rc][pl1].tag, rec[Rc][pl2].tag);
 // Swap Astro
     strcpy(&Tmp[0], &rec[Rc][pl1].astro[0]);
     strcpy(&rec[Rc][pl1].astro[0], &rec[Rc][pl2].astro[0]);
@@ -710,7 +675,6 @@ void SwapRec(int Rc, int pl1, int pl2)
     strcpy(&Tmp[0], &rec[Rc][pl1].name[0]);
     strcpy(&rec[Rc][pl1].name[0], &rec[Rc][pl2].name[0]);
     strcpy(&rec[Rc][pl2].name[0], &Tmp[0]);
-    return;
 }
 
 
@@ -804,23 +768,21 @@ void SafetyRecords(char plr, int temp)
 
 void UpdateRecords(char Ty)
 {
-    int i, j, k, m, loop, temp, max;
+    int k, m, loop, temp, max;
 
-    char Rec_Change, hold, craft;
+    char Rec_Change, hold = 0, craft;
 
-    hold = 0; /* XXX check uninitialized */
-
-    for (j = 0; j < 56; j++) {
-        for (i = 0; i < 3; i++) {
+    for (int j = 0; j < 56; j++) {
+        for (int i = 0; i < 3; i++) {
             NREC[j][i] = 0x00;
         }
     }
 
     ImportRecordTable();
 
-    for (i = 0; i < NUM_PLAYERS; i++) {
-        if (!AI[i])
-            for (j = 0; j < Data->P[i].PastMissionCount; j++) {
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        if (AI[i]) continue;
+            for (int j = 0; j < Data->P[i].PastMissionCount; j++) {
                 if (CheckSucess(i, j) == 1)
                     for (k = 0; k < 56; k++) {
                         Rec_Change = -1;
@@ -829,12 +791,12 @@ void UpdateRecords(char Ty)
 
                         //GetMisData(Data->P[i].History[j].MissionCode);
                         switch (k) {
-                        case 0:
+                        case 0: //Orbital Satellite
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Orbital Satellite
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_Orbital_Satellite) {
                                     Rec_Change = 0;
                                 }
@@ -922,12 +884,12 @@ void UpdateRecords(char Ty)
                             Rec_Change = -1;
                             break;
 
-                        case 4:
+                        case 4: //EVA record (MALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            //EVA record (MALE)
+                            
                             switch (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule]) {
                             case MANNED_HW_ONE_MAN_CAPSULE:
                                 m = 0;
@@ -966,12 +928,12 @@ void UpdateRecords(char Ty)
                             Rec_Change = -1;
                             break;
 
-                        case 5:
+                        case 5: //EVA record (FEMALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            //EVA record (FEMALE)
+                            
                             switch (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule]) {
                             case MANNED_HW_ONE_MAN_CAPSULE:
                                 m = 0;
@@ -1010,12 +972,12 @@ void UpdateRecords(char Ty)
                             Rec_Change = -1;
                             break;
 
-                        case 6:
+                        case 6: //LUNAR flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //LUNAR flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1025,12 +987,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 7:
+                        case 7: //MERCURY flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //MERCURY flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_MercuryFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1040,12 +1002,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 8:
+                        case 8: //VENUS flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //VENUS flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_VenusFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1055,12 +1017,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 9:
+                        case 9: //MARS flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //MARS flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_MarsFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1070,12 +1032,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 10:
+                        case 10: //JUPITER flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //JUPITER flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_JupiterFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1085,12 +1047,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 11:
+                        case 11: //SATURN flyby
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //SATURN flyby
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_SaturnFlyby) {
                                     Rec_Change = 0;
                                 }
@@ -1100,12 +1062,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 12:
+                        case 12: //LUNAR PROBE landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //LUNAR PROBE landing
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_Lunar_Probe) {
                                     Rec_Change = 0;
                                 }
@@ -1115,82 +1077,92 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 13:
+                        case 13: //ONE-person craft
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //ONE-person craft
-                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE 
+                                    && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_ONE_MAN_CAPSULE 
+                                       && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 14:
+                        case 14: //TWO-person craft
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //TWO-person craft
-                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE 
+                                    && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_TWO_MAN_CAPSULE 
+                                       && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 15:
+                        case 15: //THREE-person craft
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //THREE-person craft
-                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE 
+                                    && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     WriteRecord(i, j, k, 0);
                                 }
-                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_THREE_MAN_CAPSULE 
+                                       && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 16:
+                        case 16: //MINISHUTTLE craft
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //MINISHUTTLE craft
-                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE 
+                                    && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_MINISHUTTLE 
+                                       && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 17:
+                        case 17: //FOUR-person craft
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //FOUR-person craft
-                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE 
+                                    && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE && Data->P[i].History[j].Man[PAD_A][0] != -1) {
+                            } else if (Data->P[i].History[j].Hard[PAD_A][Mission_Capsule] == MANNED_HW_FOUR_MAN_CAPSULE 
+                                       && Data->P[i].History[j].Man[PAD_A][0] != -1) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 18:
+                        case 18: //Spacecraft Prestige Points
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
@@ -1200,7 +1172,7 @@ void UpdateRecords(char Ty)
                                     max = temp = 0;
                                     Rec_Change = -1;
 
-                                    for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
+                                    for (int loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
                                         if (Data->P[i].History[loop].Prestige > 0) {
                                             max = Data->P[i].History[loop].Prestige;
 
@@ -1214,7 +1186,7 @@ void UpdateRecords(char Ty)
                                     hold = j;
                                     j = craft;
 
-                                    for (loop = 0; loop < 3; loop++) {
+                                    for (int loop = 0; loop < 3; loop++) {
                                         if (rec[k][loop].program == j && rec[k][loop].tag == temp) {
                                             Rec_Change = -1;
                                         }
@@ -1275,14 +1247,14 @@ void UpdateRecords(char Ty)
                             } // if (Ty
 
                             Rec_Change = -1;
-                            break;  //Spacecraft Prestige Points
+                            break;
 
-                        case 19:
+                        case 19: //Earliest Manned Lunar Pass
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Pass
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarPass) {
                                     Rec_Change = 0;
                                 }
@@ -1294,12 +1266,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 20:
+                        case 20: //Earliest Manned Lunar Orbit
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Orbit
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_LunarOrbital ||
                                     Data->P[i].History[j].MissionCode == Mission_Lunar_Orbital) {
                                     Rec_Change = 0;
@@ -1313,12 +1285,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 21:
+                        case 21: //Earliest Manned Lunar Landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Manned Lunar Landing
+                            if (rec[k][0].place == 0) {
                                 if (MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) {
                                     Rec_Change = 0;
                                 }
@@ -1330,64 +1302,66 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 22:
+                        case 22: //Fewest Casualties In A Game
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {  //Fewest Casualties In A Game
-                                temp = 0;
+                            if (Ty != 1) break;
+                            
+                            temp = 0;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
-                                    if (Data->P[i].Pool[loop].Status == AST_ST_DEAD) {
-                                        ++temp;
-                                    }
+                            for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                if (Data->P[i].Pool[loop].Status == AST_ST_DEAD) {
+                                    ++temp;
+                                }
+                            }
+
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 4;
+                            }
+
+                            break;
+
+                        case 23: //Most Casualties In A Game
+                            rec[k][0].type = 3;
+                            rec[k][1].type = 3;
+                            rec[k][2].type = 3;
+
+                            if (Ty != 1) break;
+                            
+                            temp = 0;
+
+                            for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                if (Data->P[i].Pool[loop].Status == AST_ST_DEAD) {
+                                    ++temp;
                                 }
 
                                 if (rec[k][0].place == 0) {
                                     Rec_Change = 0;
                                 } else {
-                                    Rec_Change = 4;
+                                    Rec_Change = 3;
                                 }
                             }
 
                             break;
 
-                        case 23:
-                            rec[k][0].type = 3;
-                            rec[k][1].type = 3;
-                            rec[k][2].type = 3;
-
-                            if (Ty == 1) {  //Most Casualties In A Game
-                                temp = 0;
-
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
-                                    if (Data->P[i].Pool[loop].Status == AST_ST_DEAD) {
-                                        ++temp;
-                                    }
-
-                                    if (rec[k][0].place == 0) {
-                                        Rec_Change = 0;
-                                    } else {
-                                        Rec_Change = 3;
-                                    }
-                                }
-                            }
-
+                        case 24: //Highest Safety Average (Lunar Mission)
+                            // TODO
                             break;
 
-                        case 24:
-                            break;  //Highest Safety Average (Lunar Mission)
+                        case 25: //Lowest Safety Average (Lunar Mission)
+                            // TODO
+                            break;
 
-                        case 25:
-                            break;  //Lowest Safety Average (Lunar Mission)
-
-                        case 26:
+                        case 26: //Earliest Docking Mission
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Docking Mission
+                            if (rec[k][0].place == 0) {
                                 if (IsDocking(Data->P[i].History[j].MissionCode)) {
                                     Rec_Change = 0;
                                 }
@@ -1397,43 +1371,47 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 27:
+                        case 27: //Earliest Manned Docking
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Manned Docking
-                                if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
-                                    IsDocking(Data->P[i].History[j].MissionCode)) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D 
+                                    && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking 
+                                    && IsDocking(Data->P[i].History[j].MissionCode)) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking &&
-                                       IsDocking(Data->P[i].History[j].MissionCode)) {
+                            } else if (Data->P[i].History[j].MissionCode != Mission_U_Orbital_D 
+                                       && Data->P[i].History[j].MissionCode != Mission_Jt_Unmanned_Orbital_Docking 
+                                       && IsDocking(Data->P[i].History[j].MissionCode)) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 28:
+                        case 28: //Earliest Orbital Laboratory
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Orbital Laboratory
-                                if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
+                            if (rec[k][0].place == 0) {
+                                if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab 
+                                    || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
                                     Rec_Change = 0;
                                 }
-                            } else if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
+                            } else if (Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab 
+                                       || Data->P[i].History[j].MissionCode == Mission_Jt_OrbitingLab_EVA) {
                                 Rec_Change = 1;
                             }
 
                             break;
 
-                        case 29:
+                        case 29: //Longest Mission Duration
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
-                            temp = Data->P[i].History[j].Duration;  //Longest Mission Duration
+                            temp = Data->P[i].History[j].Duration;
 
                             if (rec[k][0].place == 0) {
                                 if (temp > 0) {
@@ -1447,11 +1425,11 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 30:
+                        case 30: //Single Mission Prestige
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
-                            temp = Data->P[i].History[j].Prestige;  //Single Mission Prestige
+                            temp = Data->P[i].History[j].Prestige;
 
                             if (rec[k][0].place == 0) {
                                 if (temp > 0) {
@@ -1465,103 +1443,103 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 31:
+                        case 31: //Fewest Missions
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {
-                                temp = Data->P[i].PastMissionCount;  //Fewest Missions
+                            if (Ty != 1) break;
+                            
+                            temp = Data->P[i].PastMissionCount;
 
-                                if (rec[k][0].place == 0) {
-                                    if (temp > 0) {
-                                        Rec_Change = 0;
-                                    }
-                                } else if (temp > 0) {
-                                    Rec_Change = 4;
-                                } else {
-                                    Rec_Change = -1;
-                                }
-                            }
-
-                            break;
-
-                        case 32:
-                            rec[k][0].type = 3;
-                            rec[k][1].type = 3;
-                            rec[k][2].type = 3;
-
-                            if (Ty == 1) {
-                                temp = Data->P[i].PastMissionCount;  //Most Missions
-
-                                if (rec[k][0].place == 0) {
-                                    if (temp > 0) {
-                                        Rec_Change = 0;
-                                    }
-                                } else if (temp > 0) {
-                                    Rec_Change = 3;
-                                }
-                            }
-
-                            break;
-
-                        case 33:
-                            rec[k][0].type = 3;
-                            rec[k][1].type = 3;
-                            rec[k][2].type = 3;
-
-                            if (Ty == 1) {  //Most Space Missions Attempted
-                                temp = 0;
-
-                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
-                                    if (Data->P[i].History[loop].Duration > 0) {
-                                        ++temp;
-                                    }
-                                }
-
-                                if (rec[k][0].place == 0) {
+                            if (rec[k][0].place == 0) {
+                                if (temp > 0) {
                                     Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 3;
                                 }
+                            } else if (temp > 0) {
+                                Rec_Change = 4;
+                            } else {
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 34:
+                        case 32: //Most Missions
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {  //Most Successful Space Missions
-                                temp = 0;
+                            if (Ty != 1) break;
+                            
+                            temp = Data->P[i].PastMissionCount;
 
-                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
-                                    if (Data->P[i].History[loop].Duration > 0 && CheckSucess(i, loop) == 1) {
-                                        ++temp;
-                                    }
-                                }
-
-                                if (rec[k][0].place == 0) {
+                            if (rec[k][0].place == 0) {
+                                if (temp > 0) {
                                     Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 3;
                                 }
+                            } else if (temp > 0) {
+                                Rec_Change = 3;
                             }
 
                             break;
 
-                        case 35:
+                        case 33: //Most Space Missions Attempted
+                            rec[k][0].type = 3;
+                            rec[k][1].type = 3;
+                            rec[k][2].type = 3;
+
+                            if (Ty != 1) break;
+                            
+                            temp = 0;
+
+                            for (int loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
+                                if (Data->P[i].History[loop].Duration > 0) {
+                                    ++temp;
+                                }
+                            }
+
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 3;
+                            }
+
+                            break;
+
+                        case 34: //Most Successful Space Missions
+                            rec[k][0].type = 3;
+                            rec[k][1].type = 3;
+                            rec[k][2].type = 3;
+
+                            if (Ty != 1) break;
+                            
+                            temp = 0;
+
+                            for (int loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
+                                if (Data->P[i].History[loop].Duration > 0 && CheckSucess(i, loop) == 1) {
+                                    ++temp;
+                                }
+                            }
+
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 3;
+                            }
+
+                            break;
+
+                        case 35: //Most Missions (MALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
                             max = 0;
 
-                            if (Ty == 1) {  //Most Missions (MALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Missions >= max && Data->P[i].Pool[loop].Sex == 0) {
@@ -1581,16 +1559,16 @@ void UpdateRecords(char Ty)
                             Rec_Change = -1;
                             break;
 
-                        case 36:
+                        case 36: //Most Missions (FEMALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Most Missions (FEMALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Missions >= max && Data->P[i].Pool[loop].Sex == 1) {
@@ -1610,16 +1588,16 @@ void UpdateRecords(char Ty)
                             Rec_Change = -1;
                             break;
 
-                        case 37:
+                        case 37: //Most Prestige (MALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Most Prestige (MALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Prestige >= max && Data->P[i].Pool[loop].Sex == 0) {
@@ -1640,16 +1618,16 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 38:
+                        case 38: //Most Prestige (FEMALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Most Prestige (FEMALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Prestige >= max && Data->P[i].Pool[loop].Sex == 1) {
@@ -1670,16 +1648,16 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 39:
+                        case 39: //Most Days (MALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Most Days (MALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Days >= max && Data->P[i].Pool[loop].Sex == 0) {
@@ -1700,16 +1678,16 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 40:
+                        case 40: //Most Days (FEMALE)
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Most Days (FEMALE)
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Days >= max && Data->P[i].Pool[loop].Sex == 1) {
@@ -1730,16 +1708,16 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 41:
+                        case 41: //Longest Term Of Duty
                             rec[k][0].type = 2;
                             rec[k][1].type = 2;
                             rec[k][2].type = 2;
 
-                            if (Ty == 1) {  //Longest Term Of Duty
+                            if (Ty == 1) {
                                 temp = 0;
                                 max = 1;
 
-                                for (loop = 0; loop < Data->P[i].AstroCount; loop++) {
+                                for (int loop = 0; loop < Data->P[i].AstroCount; loop++) {
                                     max = 1;
 
                                     if (Data->P[i].Pool[loop].Active >= max) {
@@ -1760,106 +1738,106 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 42:
+                        case 42: //Highest Rating
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
-                            temp = max = 0;  //Highest Rating
+                            temp = max = 0;
 
-                            if (Ty == 1) {
-                                if (i == 0) {
-                                    temp = (unsigned)CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
-                                } else if (i == 1) {
-                                    temp = (unsigned)CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
-                                }
+                            if (Ty != 1) break;
+                            
+                            if (i == 0) {
+                                temp = (unsigned)CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
+                            } else if (i == 1) {
+                                temp = (unsigned)CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
+                            }
 
-                                if (rec[k][0].place == 0) {
-                                    Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 3;
-                                }
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 3;
                             }
 
                             break;
 
-                        case 43:
+                        case 43: //Highest Average Budget
                             temp = max = 0;
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {  //Highest Average Budget
-                                for (loop = 0; loop < 40; ++loop) {
-                                    if (Data->P[i].BudgetHistory[loop] != 0) {
-                                        temp += Data->P[i].BudgetHistory[loop];
-                                    } else if (loop >= 6 && max == 0) {
-                                        max = loop - 1;
-                                    }
+                            if (Ty != 1) break;
+                            
+                            for (int loop = 0; loop < 40; ++loop) {
+                                if (Data->P[i].BudgetHistory[loop] != 0) {
+                                    temp += Data->P[i].BudgetHistory[loop];
+                                } else if (loop >= 6 && max == 0) {
+                                    max = loop - 1;
                                 }
+                            }
 
-                                temp = temp / max;
+                            temp = temp / max;
 
-                                if (rec[k][0].place == 0) {
-                                    Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 3;
-                                }
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 3;
                             }
 
                             break;
 
-                        case 44:
+                        case 44: //Lowest Average Budget
                             temp = max = 0;
                             rec[k][0].type = 3;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {  //Lowest Average Budget
-                                for (loop = 0; loop < 40; ++loop) {
-                                    if (Data->P[i].BudgetHistory[loop] != 0) {
-                                        temp += Data->P[i].BudgetHistory[loop];
-                                    } else if (loop >= 6 && max == 0) {
-                                        max = loop - 1;
-                                    }
+                            if (Ty != 1) break;
+                            
+                            for (int loop = 0; loop < 40; ++loop) {
+                                if (Data->P[i].BudgetHistory[loop] != 0) {
+                                    temp += Data->P[i].BudgetHistory[loop];
+                                } else if (loop >= 6 && max == 0) {
+                                    max = loop - 1;
                                 }
+                            }
 
-                                temp = temp / max;
+                            temp = temp / max;
 
-                                if (rec[k][0].place == 0) {
-                                    Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 4;
-                                }
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 4;
                             }
 
                             break;
 
-                        case 45:
+                        case 45: //Highest Prestige Total
                             rec[k][0].type = 3;
                             temp = 0;
                             rec[k][1].type = 3;
                             rec[k][2].type = 3;
 
-                            if (Ty == 1) {  //Highest Prestige Total
-                                for (loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
-                                    temp += Data->P[i].History[loop].Prestige;
-                                }
+                            if (Ty != 1) break;
+                            
+                            for (int loop = 0; loop < Data->P[i].PastMissionCount; loop++) {
+                                temp += Data->P[i].History[loop].Prestige;
+                            }
 
-                                if (rec[k][0].place == 0) {
-                                    Rec_Change = 0;
-                                } else {
-                                    Rec_Change = 3;
-                                }
+                            if (rec[k][0].place == 0) {
+                                Rec_Change = 0;
+                            } else {
+                                Rec_Change = 3;
                             }
 
                             break;
 
-                        case 46:
+                        case 46: //Earliest EOR Landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest EOR Landing
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR) {
                                     Rec_Change = 0;
                                 }
@@ -1871,12 +1849,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 47:
+                        case 47: //Earliest LOR Landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest LOR Landing
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR) {
                                     Rec_Change = 0;
                                 }
@@ -1888,12 +1866,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 48:
+                        case 48: //Earliest Direct Ascent Landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Direct Ascent Landing
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL) {
                                     Rec_Change = 0;
                                 }
@@ -1905,12 +1883,12 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 49:
+                        case 49: //Earliest Historical Lunar Landing
                             rec[k][0].type = 1;
                             rec[k][1].type = 1;
                             rec[k][2].type = 1;
 
-                            if (rec[k][0].place == 0) {  //Earliest Historical Lunar Landing
+                            if (rec[k][0].place == 0) {
                                 if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding) {
                                     Rec_Change = 0;
                                 }
@@ -1922,76 +1900,84 @@ void UpdateRecords(char Ty)
 
                             break;
 
-                        case 50:
-                            if (Ty == 1) {  //Total US Wins
-                                if (MLL(i, j) == 1 && Data->Prestige[Prestige_MannedLunarLanding].Place == 0) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].place = 1;
-                                    rec[k][0].type = 3;
-                                    rec[k][0].country = 0;
-                                    Rec_Change = -1;
-                                }
+                        case 50: //Total US Wins
+                            if (Ty != 1) break;
+                            
+                            if (MLL(i, j) == 1 
+                                && Data->Prestige[Prestige_MannedLunarLanding].Place == 0) {
+                                ++rec[k][0].tag;
+                                rec[k][0].place = 1;
+                                rec[k][0].type = 3;
+                                rec[k][0].country = 0;
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 51:
-                            if (Ty == 1) {  //Total SOVIET Wins
-                                if ((MLL(i, j) == 1 || (i == 1 && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].place = 1;
-                                    rec[k][0].type = 3;
-                                    rec[k][0].country = 1;
-                                    Rec_Change = -1;
-                                }
+                        case 51: //Total SOVIET Wins
+                            if (Ty != 1) break;
+                            
+                            if ((MLL(i, j) == 1 
+                                  || (i == 1 
+                                      && Data->P[i].History[j].MissionCode == Mission_Soyuz_LL)) 
+                                && Data->Prestige[Prestige_MannedLunarLanding].Place == 1) {
+                                ++rec[k][0].tag;
+                                rec[k][0].place = 1;
+                                rec[k][0].type = 3;
+                                rec[k][0].country = 1;
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 52:
-                            if (Ty == 1) {  //Total LOR Wins
-                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR && CheckSucess(i, j) == 1) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].country = 2;
-                                    rec[k][0].type = 3;
-                                    Rec_Change = -1;
-                                }
+                        case 52: //Total LOR Wins
+                            if (Ty != 1) break;
+                            
+                            if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_EOR 
+                                && CheckSucess(i, j) == 1) {
+                                ++rec[k][0].tag;
+                                rec[k][0].country = 2;
+                                rec[k][0].type = 3;
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 53:
-                            if (Ty == 1) {  //Total EOR Wins
-                                if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR && CheckSucess(i, j) == 1) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].country = 2;
-                                    rec[k][0].type = 3;
-                                    Rec_Change = -1;
-                                }
+                        case 53: //Total EOR Wins
+                            if (Ty != 1) break;
+                            
+                            if (Data->P[i].History[j].MissionCode == Mission_Jt_LunarLanding_LOR 
+                                && CheckSucess(i, j) == 1) {
+                                ++rec[k][0].tag;
+                                rec[k][0].country = 2;
+                                rec[k][0].type = 3;
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 54:
-                            if (Ty == 1) {  //Total Direct Ascent Wins
-                                if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL && CheckSucess(i, j) == 1) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].country = 2;
-                                    rec[k][0].type = 3;
-                                    Rec_Change = -1;
-                                }
+                        case 54:  //Total Direct Ascent Wins
+                            if (Ty != 1) break;
+                            
+                            if (Data->P[i].History[j].MissionCode == Mission_DirectAscent_LL 
+                                && CheckSucess(i, j) == 1) {
+                                ++rec[k][0].tag;
+                                rec[k][0].country = 2;
+                                rec[k][0].type = 3;
+                                Rec_Change = -1;
                             }
 
                             break;
 
-                        case 55:
-                            if (Ty == 1) {  //Total Historical Wins
-                                if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding && CheckSucess(i, j) == 1) {
-                                    ++rec[k][0].tag;
-                                    rec[k][0].country = 2;
-                                    rec[k][0].type = 3;
-                                    Rec_Change = -1;
-                                }
+                        case 55: //Total Historical Wins
+                            if (Ty != 1) break;
+                            
+                            if (Data->P[i].History[j].MissionCode == Mission_HistoricalLanding 
+                                && CheckSucess(i, j) == 1) {
+                                ++rec[k][0].tag;
+                                rec[k][0].country = 2;
+                                rec[k][0].type = 3;
+                                Rec_Change = -1;
                             }
 
                             break;
@@ -2004,7 +1990,6 @@ void UpdateRecords(char Ty)
                             RecChange(i, j, k, temp, max, Rec_Change, hold);
                         }
                     }
-            }
     }
 
     //Change and Update Records
@@ -2013,12 +1998,11 @@ void UpdateRecords(char Ty)
 
 void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hold)
 {
-    int loop;
-
     /* XXX: SEGFAULT - some record entries are null (rec[k][loop].astro) */
 
     if (Rec_Change != 0)
-        for (loop = 0; loop < 3; loop++) {
+    {
+        for (int loop = 0; loop < 3; loop++) {
             if (rec[k][loop].type == 3 && rec[k][loop].tag == temp && (rec[k][loop].country == i)) {
                 Rec_Change = -1;
             }
@@ -2026,10 +2010,14 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
             // rec[k][loop].country is sometimes -1
             // guard against this case
             // (is this the issue cited above?)
-            if (rec[k][loop].type == 2 && rec[k][loop].country >= 0 && strcmp(&rec[k][loop].astro[0], &Data->P[rec[k][loop].country].Pool[temp].Name[0]) == 0) {
+            if (rec[k][loop].type == 2 
+                && rec[k][loop].country >= 0 
+                && strcmp(&rec[k][loop].astro[0]
+                          , &Data->P[rec[k][loop].country].Pool[temp].Name[0]) == 0) {
                 Rec_Change = -1;
             }
         }
+    }
 
     switch (Rec_Change) {
     case 0:
@@ -2041,8 +2029,7 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
         WriteRecord(i, j, k, temp);
         break;
 
-    case 1:
-    case 2:
+    case 1: case 2:
         if (Rec_Change == 2) {
             temp = Data->P[i].History[j].Man[PAD_A][max];
         } else {
@@ -2236,11 +2223,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
         case 2:
             if (rec[k][1].tag == temp)
+            {
                 if ((rec[k][1].yr > Data->P[i].History[j].MissionYear) ||
                     (rec[k][1].yr == Data->P[i].History[j].MissionYear &&
                      rec[k][1].month >= Data->P[i].History[j].Month)) {
                     hold = 1;
                 }
+            }
 
             if (rec[k][1].tag < temp) {
                 hold = 1;
@@ -2252,11 +2241,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
                 SwapRec(k, 2, 1);
 
                 if (rec[k][0].tag == temp)
+                {
                     if ((rec[k][0].yr > Data->P[i].History[j].MissionYear) ||
                         (rec[k][0].yr == Data->P[i].History[j].MissionYear &&
                          rec[k][0].month >= Data->P[i].History[j].Month)) {
                         hold = 1;
                     }
+                }
 
                 if (rec[k][0].tag < temp) {
                     hold = 1;
@@ -2273,11 +2264,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
 
         case 3:
             if (rec[k][2].tag == temp)
+            {
                 if ((rec[k][2].yr > Data->P[i].History[j].MissionYear) ||
                     (rec[k][2].yr == Data->P[i].History[j].MissionYear &&
                      rec[k][2].month >= Data->P[i].History[j].Month)) {
                     hold = 1;
                 }
+            }
 
             if (rec[k][2].tag < temp) {
                 hold = 1;
@@ -2289,11 +2282,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
                 WriteRecord(i, j, k, temp);
 
                 if (rec[k][1].tag == temp)
+                {
                     if ((rec[k][1].yr > Data->P[i].History[j].MissionYear) ||
                         (rec[k][1].yr == Data->P[i].History[j].MissionYear &&
                          rec[k][1].month >= Data->P[i].History[j].Month)) {
                         hold = 1;
                     }
+                }
 
                 if (rec[k][1].tag < temp) {
                     hold = 1;
@@ -2304,11 +2299,13 @@ void RecChange(int i, int j, int k, int temp, int max, char Rec_Change, char hol
                     SwapRec(k, 2, 1);
 
                     if (rec[k][0].tag == temp)
+                    {
                         if ((rec[k][0].yr > Data->P[i].History[j].MissionYear) ||
                             (rec[k][0].yr == Data->P[i].History[j].MissionYear &&
                              rec[k][0].month >= Data->P[i].History[j].Month)) {
                             hold = 1;
                         }
+                    }
 
                     if (rec[k][0].tag < temp) {
                         hold = 1;
