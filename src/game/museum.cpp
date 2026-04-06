@@ -1437,7 +1437,10 @@ void DisplAstData(char plr, char* where, char* where2, display::LegacySurface* v
     draw_string(43, 63, "DURATION: ");
 
     int dur = hist.Duration;
-    if (dur >= 1 && dur <= 6) draw_character(93,63, 'A'+dur-1);
+    if (dur >= 1 && dur <= 6) {
+        grMoveTo(93, 63);
+        draw_character('A'+dur-1);
+    }
 
     draw_string(10, 83, "DESCRIPTION: ");
 
@@ -1483,10 +1486,11 @@ void DisplAstData(char plr, char* where, char* where2, display::LegacySurface* v
     draw_number(93, 128, hist2.Prestige);
     draw_string(43, 138, "DURATION: ");
 
-    int dur = hist2.Duration;
-    if (dur >= 1 && dur <= 6)
+    int dur2 = hist2.Duration;
+    if (dur2 >= 1 && dur2 <= 6)
     {
-        draw_character(93,138, 'A'+dur-1);
+        grMoveTo(93, 138);
+        draw_character('A'+dur-1);
     }
 
     draw_string(10, 158, "DESCRIPTION: ");
