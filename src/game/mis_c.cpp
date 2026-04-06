@@ -735,11 +735,7 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         if (attempt >= NORM_TABLE || attempt >= Mob.size()) {
             which = 415 + brandom(25);
         } else {
-            if (brandom(Mob[attempt].Qty) >= 10) {
-                which = Mob[attempt].List[which % 10];
-            } else {
-                which = Mob[attempt].List[which];
-            }
+			which = Mob[attempt].List[brandom(Mob[attempt].Qty) % 10];
         }
     }
 
