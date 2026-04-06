@@ -640,9 +640,6 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         return;
     }
 
-    char loc = kk;
-    uint16_t off = 64 + kk * 16;
-	
     char Val1[12]{};
     strcpy(Val1, cde);
     if (Val1[0] == 'W') {
@@ -745,6 +742,8 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
             }
         }
     }
+
+    uint16_t off = 64 + kk * 16;
 
     if (which < 580) {
         display::AutoPal p(display::graphics.legacyScreen());
