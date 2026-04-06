@@ -27,6 +27,7 @@
 
 #include "mis_c.h"
 
+#include <array>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -93,15 +94,15 @@ std::vector<boost::shared_ptr<display::Surface>> animCache;
 boost::shared_ptr<display::Surface> equipAnim;
 int frameCounter = 0;
 
-char SHTS[4];
 char STEPnum;
 char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, int clock, int mode, int time);
-void DoPack(char plr, FILE* ffin, char mode, char* cde, char* fName,
+void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
             const std::vector<struct Infin>& Mob,
-            const std::vector<struct OF>& Mob2);
+            const std::vector<struct OF>& Mob2,
+            std::array<int, 4>& SHTS);
 void GuyDisp(int xa, int ya, Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
 BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step);
@@ -128,32 +129,20 @@ void loadIndexEntry();
  */
 void PlaySequence(char plr, int step, const char* InSeq, char mode)
 {
-    //DEBUG1("->PlaySequence()");
-    DEBUG4("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
-    int i, j, k;
-    char AEPT, BABY, Tst2, Tst3;
-    FILE *ffin, *nfin;
-    std::vector<Infin> Mob;
-    std::vector<OF> Mob2;
-    std::string ID;
+    //LOG_DEBUG("->PlaySequence()");
+    LOG_DEBUG("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
+	
+    if (fEarly && step != 0) {
+        LOG_DEBUG("PlaySequence(): Unmanned early return");
+        return;    //Specs: unmanned mission cut short
+    }
 
     // since Seq apparently needs to be mutable, copy the input parameter
     char Seq[128];
     strncpy(Seq, InSeq, sizeof(Seq));
 
-    i = j = k = 0; /* XXX check uninitialized */
-
-    SHTS[0] = brandom(10);
-    SHTS[1] = brandom(10);
-    SHTS[2] = brandom(10);
-    SHTS[3] = brandom(10);
-
-    if (fEarly && step != 0) {
-        return;    //Specs: unmanned mission cut short
-    }
-
     //Specs: female 'naut kludge
-	bool fem;
+    bool fem;
     if (mode == 2) {
         fem = true;  //Spec: additional search param.
         mode = 0;
@@ -217,29 +206,19 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
         if (Seq[0] == 'P') {
             //TC changero kludge
             if (Seq[5] == '6') {
-                Tst2 = Seq[4];
-                Tst3 = Seq[5];
-                Seq[4] = Seq[2];
-                Seq[5] = Seq[3];
-                Seq[2] = Tst2;
-                Seq[3] = Tst3;
+                std::swap(Seq[4], Seq[2]);
+                std::swap(Seq[5], Seq[3]);
                 strncpy(Mev[step].FName, "F115", 4);
             }
         }
     }
 
     //Specs: launch sync
-	bool lnch = (Seq[0] == '#');
+    bool lnch = (Seq[0] == '#');
 
-    if (Seq[0] == 'A' || Seq[0] == 'E' || Seq[0] == 'P' || Seq[0] == 'T' || Seq[0] == '#') {
-        AEPT = 1;
-    } else {
-        AEPT = 0;
-    }
-
-	bool err = false;
+    bool err = false;
+    int i=0;
     if (mode == 1) {
-
         /* i: the first element in fSeq belonging to the right step */
         for (i = 0; i < Assets->fSeq.size(); i++) {
             if (strncmp(Assets->fSeq.at(i).MissionStep.c_str(), Mev[step].FName, 4) == 0) {
@@ -252,6 +231,8 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
         }
     }
 
+    int j=0;
+    std::string ID;
     if (mode == 0) {
         j = 0;
         ID = Assets->sSeq.at(j).MissionIdSequence;
@@ -314,14 +295,6 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
         }
     }
 
-    BABY = 0;
-
-    if (mode == 0) {
-        if (j >= 1 && j <= 22) {
-            BABY = 1;
-        }
-    }
-
     if (mode == 0) {
         interimData.tempReplay.at((plr * 100) + Data->P[plr].PastMissionCount).push_back({false, ID});
     } else {
@@ -332,14 +305,19 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
         return;
     }
 
-    ffin = open_gamedat("BABYPICX.CDR");
+    FILE* ffin = open_gamedat("BABYPICX.CDR");
 
-    if (AEPT && !mode) {
+    bool AEPT = (Seq[0] == 'A' || Seq[0] == 'E' || Seq[0] == 'P' || Seq[0] == 'T' || Seq[0] == '#') && (mode == 0);
+    std::vector<Infin> Mob;
+    std::vector<OF> Mob2;
+    if (AEPT) {
         // BABYCLIF.CDR consists of two tables:
         //  * 240 Infin entries, each 40 bytes (7200 bytes)
         //  * 486 OF entries, each 10 bytes (4860 bytes)
         // totaling 12060 bytes.
-        if ((nfin = open_gamedat("BABYCLIF.CDR")) == NULL) {
+        FILE* nfin = open_gamedat("BABYCLIF.CDR");
+        if (nfin == nullptr) {
+            LOG_WARNING("Could not open BABYCLIF.CDR");
             return;
         }
 
@@ -365,7 +343,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 
         fclose(nfin);
     } else {
-        nfin = open_gamedat("BABYNORM.CDR");
+        FILE* nfin = open_gamedat("BABYNORM.CDR");
         Mob.reserve(NORM_TABLE);
 
         for (int i = 0; i < NORM_TABLE; i++) {
@@ -377,39 +355,39 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
         fclose(nfin);
     }
 
-    INFO2("playing sequence ID `%s'", ID.c_str());
+    LOG_INFO("playing sequence ID `%s'", ID.c_str());
 
-    bool keep_going = true;
-    k = j;
     unsigned char sts = 0;
     int max = ID[1] - '0';
+    bool BABY = (mode == 0) && (j >= 1 && j <= 22);
+    std::array<int,4> SHTS {brandom(10), brandom(10), brandom(10), brandom(10)};
 
+    bool keep_going = true;
     for(int i=0; keep_going && i < max; ++i) {
         char seq_name[20];
         char name[20]; /** \todo assumption about seq_filename len */
 
         if (mode == 0) {
-            play_audio(Assets->sSeq.at(k).audio.at(i), mode);
+            play_audio(Assets->sSeq.at(j).audio.at(i), mode);
         } else {
-            play_audio(Assets->fSeq.at(k).audio.at(i), mode);
+            play_audio(Assets->fSeq.at(j).audio.at(i), mode);
         }
 
         if (mode == 0) {
-            strntcpy(seq_name, Assets->sSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
+            strntcpy(seq_name, Assets->sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
         } else {
-            strntcpy(seq_name, Assets->fSeq.at(k).video.at(i).c_str(), sizeof(seq_name));
+            strntcpy(seq_name, Assets->fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
         }
 
         snprintf(name, sizeof(name), "%s.ogg", seq_name);
 
-        INFO2("opening video file `%s'", name);
+        LOG_INFO("opening video file `%s'", name);
 
-		Multimedia vidfile{sOpen(name, "rb", FT_VIDEO)};
+        Multimedia vidfile{sOpen(name, "rb", FT_VIDEO)};
         if (!vidfile.is_good() || !vidfile.is_video()) {
             break;
         }
 
-        int j = 0;
         int hold_count = 0;
         while (keep_going) {
             av_step();
@@ -450,7 +428,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
                 idle_loop(FRM_Delay);
                 hold_count++;
             } else {
-                DEBUG1("need to come out of hold");
+                LOG_DEBUG("need to come out of hold");
             }
 
             display::graphics.videoRect().w = 160;
@@ -472,8 +450,8 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 
             if (sts < 23) {
                 if (BABY == 0 && !fullscreenMissionPlayback) {
-                    DoPack(plr, ffin, (AEPT && !mode) ? 1 : 0, Seq,
-                           seq_name, Mob, Mob2);
+                    DoPack(plr, ffin, (int)AEPT, Seq,
+                           seq_name, Mob, Mob2, SHTS);
                 }
 
                 ++sts;
@@ -490,8 +468,6 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
                 if (Data->Def.Anim) {
                     idle_loop(FRM_Delay * 3);
                 }
-
-                j++;
             }
         }
     }
@@ -527,9 +503,8 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
     fclose(ffin);  // Specs: babypicx.cdr
     display::graphics.videoRect().h = 0;
     display::graphics.videoRect().w = 0;
-    DEBUG1("<-PlaySequence()");
+    LOG_DEBUG("<-PlaySequence()");
 }
-
 
 void Tick(char plr)
 {
@@ -633,66 +608,56 @@ void Clock(char plr, int clock, int mode, int time)
     }
 }
 
-void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
-            const std::vector<struct Infin> &Mob,
-            const std::vector<struct OF> &Mob2)
+// I think this function chooses when and what image to show in 4 smaller pictures in mission control screen
+// and then draws it
+void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
+            const std::vector<struct Infin>& Mob,
+            const std::vector<struct OF>& Mob2,
+            std::array<int, 4>& SHTS)
 {
-    int x, y, attempt, which, mx2, mx1;
-    uint16_t *bot, off = 0;
     static char kk = 0, bub = 0;
-    char Val1[12]{}, Val2[12]{}, loc;
 
-    strcpy(Val1, cde);
-
-    if (Val1[0] == 'W') {
-        Val1[2] = 'P';    // for planetary steps
-    }
-
-    if (bub < 2) { //4
+    // behaviour changes in a loop of 4 invocations
+    // 2 of them are forced to be mode 3 (static noise on display?)
+    // 1 uses native mode it is called with
+    // and last one draws nothing, only changes the selected screen
+    ++bub;
+    if (bub < 2) {
         mode = 3;
-        loc = kk;
-    } else if (bub == 2) { //4
-        ++bub;
-        loc = kk;
-    } else {
+    } else if (bub == 3) {
         bub = 0;
+
         SHTS[0]++;
         SHTS[1]++;
         SHTS[2]++;
         SHTS[3]++;
-        mx1 = MAX(SHTS[0], SHTS[2]);
-        mx2 = MAX(SHTS[1], SHTS[3]);
 
-        if (mx1 > mx2) {
-            loc = (SHTS[0] > SHTS[2]) ? 0 : 2 ;
-        } else {
-            loc = (SHTS[1] > SHTS[3]) ? 1 : 3 ;
-        }
-
-        SHTS[loc] = brandom(3);
-        kk = loc;
+        // replace largest and save the index
+        auto iter = std::max_element(SHTS.begin(), SHTS.end());
+        *iter = brandom(3);
+		
+        kk = std::distance(SHTS.begin(), iter);
         return;
     }
 
-    x = (loc == 0 || loc == 1) ? 6 : 246;
-
-    y = (loc == 0 || loc == 2) ? 5 + 2 * plr : 57 + plr * 9;
-
-    off = 64 + loc * 16;
+    char Val1[12]{};
+    strcpy(Val1, cde);
+    if (Val1[0] == 'W') {
+        Val1[2] = 'P';    // for planetary steps
+    }
 
     // TODO: Rename variable to indicate purpose.
-    display::LegacySurface boob(68, 46);
-
-    bot = (uint16_t *) boob.pixels();
+    display::LegacySurface boob{68, 46};
+    uint16_t* bot = (uint16_t*) boob.pixels();
 
     //:::::::::::::::::::::::::::::::
     //Specs: which holds baby frame :
     //:::::::::::::::::::::::::::::::
+    int which;
     if (mode == 3) {
         which = 580 + bub; //Specs: static frames
-        ++bub;
     } else if (mode == 1) {
-        attempt = 0;
+        int attempt = 0;
         which = 0;
 
         while (attempt < SCND_TABLE && attempt < Mob2.size()) {
@@ -710,62 +675,21 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             which = 415 + brandom(25);
         } else {
             if (Val1[0] != '#') {
-                switch (Mob2[attempt].idx) {
-                case 0:
-                    strcat(Val1, "0\0");
-                    break;
-
-                case 1:
-                    strcat(Val1, "1\0");
-                    break;
-
-                case 2:
-                    strcat(Val1, "2\0");
-                    break;
-
-                case 3:
-                    strcat(Val1, "3\0");
-                    break;
-
-                case 4:
-                    strcat(Val1, "0\0");
-                    break;
-
-                case 5:
-                    strcat(Val1, "1\0");
-                    break;
-
-                case 6:
-                    strcat(Val1, "2\0");
-                    break;
-
-                case 7:
-                    strcat(Val1, "0\0");
-                    break;
-
-                case 8:
-                    strcat(Val1, "1\0");
-                    break;
-
-                case 9:
-                    strcat(Val1, "2\0");
-                    break;
-
-                case 10:
-                    strcat(Val1, "0\0");
-                    break;
-
-                case 11:
-                    strcat(Val1, "1\0");
-                    break;
-
-                default:
+                const char* to_strcat[] = {"0", "1", "2", "3",
+                                           "0", "1", "2",
+                                           "0", "1", "2",
+                                           "0", "1"};
+                int idx = Mob2[attempt].idx;
+                if (idx >= 0 && idx <= 11) {
+                    strcat(Val1, to_strcat[idx]);
+                } else {
                     which = 415 + brandom(25);
                 }
             }
 
             if (which == 0) {
-                attempt = 0;
+                int attempt = 0;
+                char Val2[12]{};
                 assert(sizeof(Val2) >= sizeof(Mob[0].Code));
 
                 while (attempt < CLIF_TABLE && attempt < Mob.size()) {
@@ -783,9 +707,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
                 if (attempt >= CLIF_TABLE || attempt >= Mob.size()) {
                     which = 415 + brandom(25);
                 } else {
-                    which = brandom(Mob[attempt].Qty);
-
-                    if (which >= 10) {
+                    if (brandom(Mob[attempt].Qty) >= 10) {
                         which = Mob[attempt].List[which % 10];
                     } else {
                         which = Mob[attempt].List[which];
@@ -794,7 +716,8 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
             }
         }
     } else {
-        attempt = 0;
+        int attempt = 0;
+        char Val2[12]{};
         assert(sizeof(Val2) >= sizeof(Mob[0].Code));
 
         while (attempt < NORM_TABLE && attempt < Mob.size()) {
@@ -812,16 +735,15 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
         if (attempt >= NORM_TABLE || attempt >= Mob.size()) {
             which = 415 + brandom(25);
         } else {
-            which = brandom(Mob[attempt].Qty);
-
-            if (which >= 10) {
+            if (brandom(Mob[attempt].Qty) >= 10) {
                 which = Mob[attempt].List[which % 10];
             } else {
-
                 which = Mob[attempt].List[which];
             }
         }
     }
+
+    uint16_t off = 64 + kk * 16;
 
     if (which < 580) {
         display::AutoPal p(display::graphics.legacyScreen());
@@ -845,7 +767,9 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
     }
-
+		
+    int x = 6 + 240*(kk/2);
+    int y = (plr==0)? 5 + 52*(kk%2) : 7 + 59*(kk%2);
     boob.copyTo(display::graphics.legacyScreen(), x, y);
 }
 
@@ -853,7 +777,7 @@ void DoPack(char plr, FILE *ffin, char mode, char *cde, char *fName,
 void GuyDisp(int xa, int ya, Astros* Guy)
 {
     display::graphics.setForegroundColor(1);
-    assert(Guy != NULL);
+    assert(Guy != nullptr);
 
     if (Guy->Sex == 1) {
         display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white  -Leon
@@ -896,7 +820,7 @@ void GuyDisp(int xa, int ya, Astros* Guy)
  */
 char FailureMode(char plr, int prelim, const char* text)
 {
-    display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
+    display::LegacySurface saveScreen{display::graphics.screen()->width(), display::graphics.screen()->height()};
     FadeOut(2, 10, 0, 0);
 
     // this destroys what's in the current page frames
@@ -928,7 +852,7 @@ char FailureMode(char plr, int prelim, const char* text)
 
     draw_heading(45, 5, "STEP FAILURE", 0, -1);
 
-//  InRFBox(4,61,153,109,0); // Image, Small Left Side
+    // InRFBox(4,61,153,109,0); // Image, Small Left Side
 
     // Status/Scrub
     InRFBox(4, 112, 153, 128, 0);
@@ -1068,28 +992,18 @@ char FailureMode(char plr, int prelim, const char* text)
 
     display::graphics.setForegroundColor(11);
 
-    int j = 0;
-
     int k = 163;
-
     grMoveTo(12, k);
-
-    for (int i = 0; i < 200; i++) {
+    for (int i=0, j=0; i < 200 && text[i] != '\0'; i++) {
         if (j > 40 && text[i] == ' ') {
             k += 7;
             j = 0;
             grMoveTo(12, k);
         } else {
             draw_character(text[i]);
-        }
-
-        j++;
-
-        if (text[i] == '\0') {
-            break;
+            j++;
         }
     }
-
 
     // Failure Diagram
     InRFBox(162, 28, 312, 42, 10);
@@ -1229,16 +1143,15 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
     // TODO: Using MX as a copy of MA to avoid modifying it is nice,
     // but it never gets modified and a global var (MA) is still being
     // directly accessed.
-    MisAst MX[2][4];
-    double last_secs;
     display::LegacySurface saveScreen(display::graphics.screen()->width(), display::graphics.screen()->height());
 
+    MisAst MX[2][4];
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
+	
     char cPad;
-
-    if (MX[step.pad][0].A != NULL) {
+    if (MX[step.pad][0].A != nullptr) {
         cPad = step.pad;
-    } else if (MX[other(step.pad)][0].A != NULL) {
+    } else if (MX[other(step.pad)][0].A != nullptr) {
         cPad = other(step.pad);
     } else {
         return 2;
@@ -1270,6 +1183,7 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
     int index = getEquipAnimIndex(ID);
     loadFrames(index);
     
+    double last_secs;
     if (index > -1) {
         last_secs = get_time();
         playEquipAnim(index);
@@ -1296,9 +1210,8 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
     InRFBox(25, 51, 135, 85, 10);
     display::graphics.setForegroundColor(11);
     draw_string(35, 60, "Who should be the");
-    draw_string(31, 70, plr == 0 ?
-                "first astronaut to" :
-                "first cosmonaut to");
+    draw_string(31, 70, (plr == 0) ? "first astronaut to" 
+                                   : "first cosmonaut to");
     draw_string(35, 80, "walk on the moon?");
 
     for (int i = 0; i < nauts; i++) {
@@ -1398,7 +1311,7 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
  * Note that GetEquipment uses the global value MH, so this will only
  * work _during_ a mission.
  */
-BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step)
+BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step)
 {
     BZAnimation::Ptr model;
     std::string name("XXXX.BZ");
@@ -1413,7 +1326,7 @@ BZAnimation::Ptr FindHardwareAnim(char plr, const struct MisEval &step)
     try {
         model = BZAnimation::load("LIFTOFF.ABZ", name.c_str(), 188, 47);
     } catch (IOException &err) {
-        ERROR4("Unable to load animation %s in file %s: %s",
+        LOG_ERROR("Unable to load animation %s in file %s: %s",
                name.c_str(), "LIFTOFF.ABZ", err.what());
     }
 
@@ -1469,13 +1382,12 @@ void InRFBox(int a, int b, int c, int d, int col)
 {
     InBox(a, b, c, d);
     fill_rectangle(a + 1, b + 1, c - 1, d - 1, col);
-    return;
 }
 
 
 std::string getEquipAnimID(char plr, const MisEval& step) 
 {
-    std::string name("XXXX");
+    std::string name{"XXXX"};
 
     if (step.Class == Mission_PhotoRecon) {
         name.replace(0, 4, "XCAM");
@@ -1496,13 +1408,13 @@ int getEquipAnimIndex(std::string name)
       
     for (int i = 0; i < 41; i++) {
         /*
-        DEBUG5("comparing name %s (length: %zu) with ID %s (length: %zu)", 
+        LOG_DEBUG("comparing name %s (length: %zu) with ID %s (length: %zu)", 
            name.c_str(), name.length(), indexEntry[i].ID.c_str(), 
            indexEntry[i].ID.length());
         */
         if (name == indexEntry[i].ID) {
             int index = i;
-            DEBUG3("EquipAnim ID %s match index %d", name.c_str(), index);
+            LOG_DEBUG("EquipAnim ID %s match index %d", name.c_str(), index);
             return index;
         }
     }
@@ -1529,7 +1441,7 @@ void loadFrames(int index) {
     }
     
     if (!animCache.empty()) {
-    	DEBUG2("frames for %s loaded", (indexEntry[index].ID).c_str());
+    	LOG_DEBUG("frames for %s loaded", (indexEntry[index].ID).c_str());
     } else {
     	throw std::runtime_error("Error. " + indexEntry[index].ID 
     	  + " frames could not be loaded.");
@@ -1543,11 +1455,11 @@ void playEquipAnim (int index) {
     }
     
     if (frameCounter < header[index].fNum) {
-    	equipAnim = animCache[frameCounter];
-    	// This avoid frame overlap and the background is a nice blue
-    	fill_rectangle(162, 46, 312, 127, 7);
-    	display::graphics.screen()->draw(equipAnim, 188, 47);
-	frameCounter++;	
+        equipAnim = animCache[frameCounter];
+        // This avoid frame overlap and the background is a nice blue
+        fill_rectangle(162, 46, 312, 127, 7);
+        display::graphics.screen()->draw(equipAnim, 188, 47);
+        frameCounter++;	
     }
 }
 
@@ -1560,9 +1472,9 @@ void loadHeader() {
     if (!file) {
         throw std::runtime_error("liftoff.json could not be opened.");
     }
-    cereal::JSONInputArchive ar(file);
+    cereal::JSONInputArchive ar{file};
     ar(CEREAL_NVP(header));
-    DEBUG1("header deserialized.");
+    LOG_DEBUG("header deserialized.");
 }
 
 
@@ -1573,7 +1485,7 @@ void loadIndexEntry() {
     if (!file) {
         throw std::runtime_error("liftoff.json could not be opened.");
     }
-    cereal::JSONInputArchive ar(file);
+    cereal::JSONInputArchive ar{file};
     ar(indexEntry);
-    DEBUG1("IndexEntry deserialized");
+    LOG_DEBUG("IndexEntry deserialized");
 }
