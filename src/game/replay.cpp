@@ -68,12 +68,12 @@ void Replay(char plr, int num,
 
     WaitForMouseUp();
 
-    DEBUG2("video sequence: %d segments", Rep.size());
+    LOG_DEBUG("video sequence: %d segments", Rep.size());
 
     int dbg_segment_idx = -1;
     for (const REPLAY& r : Rep) {
         ++dbg_segment_idx;
-        DEBUG3("playing segment %d: %s", dbg_segment_idx, r.seq.c_str());
+        LOG_DEBUG("playing segment %d: %s", dbg_segment_idx, r.seq.c_str());
 
         // select correct json
         auto& Sequence_container = (r.Failure)? fSeq : sSeq;
@@ -107,12 +107,12 @@ void Replay(char plr, int num,
              * pallettized surface, so we use a global Overlay initialized in
              * sdl.c. */
 
-            INFO2("opening video file `%s'", video_filename.c_str());
+            LOG_INFO("opening video file `%s'", video_filename.c_str());
 
             Multimedia vidfile{sOpen(video_filename.c_str(), "rb", FT_VIDEO)};
             if (!vidfile.is_good() || !vidfile.is_video()){
                 // if we fail to open video file, stop displaying videos
-                WARNING1("unable to open the video from replay");
+                LOG_WARNING("unable to open the video from replay");
                 exit_replay = true;
                 break;
             }
@@ -219,7 +219,7 @@ void AbzFrame(int plr, int dx, int dy, int width, int height,
 
     std::string video = Seq_iter->video.at(0) + ".ogg";
 
-    INFO2("opening video file `%s'", video.c_str());
+    LOG_INFO("opening video file `%s'", video.c_str());
 
     Multimedia vidfile{sOpen(video.c_str(), "rb", FT_VIDEO)};
     if (!vidfile.is_good() || !vidfile.is_video()) {
