@@ -88,28 +88,28 @@ char tame[29][40] = {
 #endif
 
 
-void Move2(char plr, char *pos, char *pos2, char val);
-void BackTop(char plr, char *pos, char *pos2);
-void BackOne(char plr, char *pos, char *pos2);
-void ForOne(char plr, char *pos, char *pos2);
-void ForEnd(char plr, char *pos, char *pos2);
-void DPrest(char plr, char *pos, char *pos2);
+void Move2(char plr, char* pos, char* pos2, char val);
+void BackTop(char plr, char* pos, char* pos2);
+void BackOne(char plr, char* pos, char* pos2);
+void ForOne(char plr, char* pos, char* pos2);
+void ForEnd(char plr, char* pos, char* pos2);
+void DPrest(char plr, char* pos, char* pos2);
 void DrawMisHist(char plr, int turn);
 void DrawSpaceHistoryInterface(int plr);
-void Mission_Data_Buttons(char plr, int *where);
-void FastOne(char plr, int *where);
-void FullRewind(char plr, int *where);
-void RewindOne(char plr, int *where);
-void FullFast(char plr, int *where);
-void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void ShowAstroDown(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void ShowAstroBack(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void ShowAstroFor(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void DispLoc(char plr, char *where);
-void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void DownAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
-void UpAstroData(char plr, char *where, char *where2, display::LegacySurface *vhptr2);
+void Mission_Data_Buttons(char plr, int* where);
+void FastOne(char plr, int* where);
+void FullRewind(char plr, int* where);
+void RewindOne(char plr, int* where);
+void FullFast(char plr, int* where);
+void DisplAst(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void ShowAstroUp(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void ShowAstroDown(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void ShowAstroBack(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void ShowAstroFor(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void DispLoc(char plr, char* where);
+void DisplAstData(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void DownAstroData(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
+void UpAstroData(char plr, char* where, char* where2, display::LegacySurface* vhptr2);
 int astcomp(const void *no1, const void *no2);
 
 
@@ -142,7 +142,6 @@ void Display_ARROW(char num, int x, int y)
 
 void Museum(char plr)
 {
-    int i;
     int tots = 7;
     char AName[7][22] = { "DIRECTOR RANKING", "SPACE HISTORY",
                           "MISSION RECORDS", "PRESTIGE SUMMARY",
@@ -177,7 +176,7 @@ void Museum(char plr)
 
         helpText = (plr == 0) ? "i700" : "i701";
         keyHelpText = (plr == 0) ? "k603" : "k604";
-        i = BChoice(plr, tots, &AName[0][0], &AImg[0]);
+        int i = BChoice(plr, tots, &AName[0][0], &AImg[0]);
 
         switch (i) {
         case 1:
@@ -232,15 +231,11 @@ void Museum(char plr)
     } while (! exit);
 
     music_stop();
-    return;
 }
 
 
 void ShowPrest(char plr)
 {
-    char pos = -1;
-    char pos2 = -1;
-
     FadeOut(2, 5, 0, 0);
     PortPal(plr);
     display::graphics.screen()->clear();
@@ -293,7 +288,11 @@ void ShowPrest(char plr)
     draw_string(135, 99, "USSR");
     draw_up_arrow(299, 131);
     draw_down_arrow(299, 162);
+    
+    char pos = -1;
+    char pos2 = -1;
     DPrest(plr, &pos, &pos2);
+    
     FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
@@ -370,7 +369,7 @@ void ShowPrest(char plr)
 }
 
 
-void Move2(char plr, char *pos, char *pos2, char val)
+void Move2(char plr, char* pos, char* pos2, char val)
 {
     *pos2 = *pos + val;
 
@@ -382,16 +381,15 @@ void Move2(char plr, char *pos, char *pos2, char val)
 }
 
 
-void BackTop(char plr, char *pos, char *pos2)
+void BackTop(char plr, char* pos, char* pos2)
 {
     *pos = -1;
     *pos2 = -1;
     DPrest(plr, pos, pos2);
-    return;
 }
 
 
-void BackOne(char plr, char *pos, char *pos2)
+void BackOne(char plr, char* pos, char* pos2)
 {
     if (*pos2 == -1) {
         return;
@@ -412,13 +410,12 @@ void BackOne(char plr, char *pos, char *pos2)
     }
 
     DPrest(plr, pos, pos2);
-    return;
 }
 
 
 // TODO: This uses hard-coded values for the length of an array found
 // in another file. Replace this ASAP.
-void ForOne(char plr, char *pos, char *pos2)
+void ForOne(char plr, char* pos, char* pos2)
 {
     if (*pos2 == 27) {
         return;
@@ -445,24 +442,20 @@ void ForOne(char plr, char *pos, char *pos2)
     }
 
     DPrest(plr, pos, pos2);
-    return;
 }
 
 
-void ForEnd(char plr, char *pos, char *pos2)
+void ForEnd(char plr, char* pos, char* pos2)
 {
     *pos = 18;
     *pos2 = 27;
     DPrest(plr, pos, pos2);
-    return;
 }
 
 
-// TODO: This function is a mess, with variables being reused.
-void DPrest(char plr, char *pos, char *pos2)
+// TODO: This function is a mess.
+void DPrest(char plr, char* pos, char* pos2)
 {
-    int i, j = 0, tmp, tt;
-
     fill_rectangle(12, 129, 295, 190, 0);
     fill_rectangle(70, 31, 175, 40, 3);
     fill_rectangle(183, 31, 300, 40, 3);
@@ -478,9 +471,8 @@ void DPrest(char plr, char *pos, char *pos2)
     }
 
     display::graphics.setForegroundColor(2);
-    tt = 0;
 
-    for (i = *pos; i < *pos + 9 + tt; i++, j++) {  // *pos+9+tt
+    for (int i=*pos, j=0, tt=0; i < *pos + 9 + tt; i++, j++) {  // *pos+9+tt
         if (i == 21) {
             i++;
             tt = 1;
@@ -515,7 +507,7 @@ void DPrest(char plr, char *pos, char *pos2)
     fill_rectangle(10, 86, 55, 92, 3);
     display::graphics.setForegroundColor(3);
 
-    for (i = 1; i < 3; i++) {
+    for (int i = 1; i < 3; i++) {
         pline(71, 91 - 16 * i, 173, 91 - 16 * i);
     }
 
@@ -526,11 +518,11 @@ void DPrest(char plr, char *pos, char *pos2)
             draw_small_flag(Data->Prestige[*pos2].Place, 18, 47);
         }
 
-        i = MAX(Data->Prestige[*pos2].Goal[0], Data->Prestige[*pos2].Goal[1]);
+        int i = MAX(Data->Prestige[*pos2].Goal[0], Data->Prestige[*pos2].Goal[1]);
 
         if (i != 0) {
-            j = Data->Prestige[*pos2].Goal[0];
-            tmp = Data->Prestige[*pos2].Goal[1];
+            int j = Data->Prestige[*pos2].Goal[0];
+            int tmp = Data->Prestige[*pos2].Goal[1];
 
             fill_rectangle(85, (int) 91 - 48 * ((float)j / i), 111, 91, 5);
             fill_rectangle(133, (int) 91 - 48 * ((float)tmp / i), 159, 91, 8);
@@ -554,21 +546,21 @@ void DPrest(char plr, char *pos, char *pos2)
 
         display::graphics.setForegroundColor(3);
 
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
         }
 
-        i = MAX(abs(Data->Prestige[*pos2].Points[0]), abs(Data->Prestige[*pos2].Points[1]));
+        int ii = MAX(abs(Data->Prestige[*pos2].Points[0]), abs(Data->Prestige[*pos2].Points[1]));
         display::graphics.setForegroundColor(5);
         pline(205, 67, 231, 67);
         display::graphics.setForegroundColor(8);
         pline(258, 67, 284, 67);
 
-        if (i != 0) {
-            j = Data->Prestige[*pos2].Points[0];
-            tmp = Data->Prestige[*pos2].Points[1];
-            fill_rectangle(205, 67, 231, 67 - (float)j * 24 / i, 5);
-            fill_rectangle(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
+        if (ii != 0) {
+            int j = Data->Prestige[*pos2].Points[0];
+            int tmp = Data->Prestige[*pos2].Points[1];
+            fill_rectangle(205, 67, 231, 67 - (float)j * 24 / ii, 5);
+            fill_rectangle(258, 67, 284, 67 - (float)tmp * 24 / ii, 8);
             display::graphics.setForegroundColor(11);
 
             if (j != 0) {
@@ -580,15 +572,13 @@ void DPrest(char plr, char *pos, char *pos2)
             }
         }
     } else {
-        j = 0;
-        tmp = 0;
-
-        for (i = 0; i < 28; i++) {
+        int j = 0;
+        int tmp = 0;
+        for (int i = 0; i < 28; i++) {
             j += (Data->Prestige[i].Place == 0) ? 1 :  0;
             tmp += (Data->Prestige[i].Place == 1) ? 1 : 0;
         }
-
-        i = MAX(j, tmp);
+        int i = MAX(j, tmp);
 
         if (i != 0) {
             if (j == tmp) {
@@ -614,40 +604,36 @@ void DPrest(char plr, char *pos, char *pos2)
             fill_rectangle(18, 47, 43, 61, 3);
         }
 
-        j = 0;
-        tmp = 0;
-
-        for (i = 0; i < 28; i++) {
-            j += Data->Prestige[i].Points[0];
-            tmp += Data->Prestige[i].Points[1];
+        int jj = 0;
+        int tmp2 = 0;
+        for (int i = 0; i < 28; i++) {
+            jj += Data->Prestige[i].Points[0];
+            tmp2 += Data->Prestige[i].Points[1];
         }
 
         display::graphics.setForegroundColor(3);
-
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             pline(186, 79 - 12 * i, 303, 79 - 12 * i);
         }
 
-        i = MAX(abs(j), abs(tmp));
+        int ii = MAX(abs(jj), abs(tmp2));
         pline(205, 67, 231, 67);
         pline(258, 67, 284, 67);
 
-        if (i != 0) {
-            fill_rectangle(205, 67, 231, 67 - (float)j * 24 / i, 5);
-            fill_rectangle(258, 67, 284, 67 - (float)tmp * 24 / i, 8);
+        if (ii != 0) {
+            fill_rectangle(205, 67, 231, 67 - (float)jj * 24 / ii, 5);
+            fill_rectangle(258, 67, 284, 67 - (float)tmp2 * 24 / ii, 8);
             display::graphics.setForegroundColor(11);
 
-            if (j != 0) {
-                draw_number(212, (j > 0) ? 65 : 73, j);
+            if (jj != 0) {
+                draw_number(212, (jj > 0) ? 65 : 73, jj);
             }
 
-            if (tmp != 0) {
-                draw_number(267, (tmp > 0) ? 65 : 73, tmp);
+            if (tmp2 != 0) {
+                draw_number(267, (tmp2 > 0) ? 65 : 73, tmp2);
             }
         }
     }
-
-    return;
 }
 
 
@@ -668,12 +654,11 @@ void DPrest(char plr, char *pos, char *pos2)
  */
 void ShowSpHist(char plr)
 {
-    int pos;
-
     FadeOut(2, 5, 0, 0);
     PatchMe(0, 0, 0, 0, 0);  // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
+    int pos;
     if ((Data->Year == 57 && Data->Season == 0) ||
         Data->P[plr].PastMissionCount == 0) {
         pos = (Data->Year - 57) * 2 + Data->Season;
@@ -717,27 +702,25 @@ void ShowSpHist(char plr)
     }
 }
 
-
-void Mission_Data_Buttons(char plr, int *where)
+void Mission_Data_Buttons(char plr, int* where)
 {
-    char index, yr, season, j, temp = 0;
-
-    auto launchReview = [](int plr, int index, int *where) {
-        Draw_Mis_Stats(plr, index, 0);
-        DrawSpaceHistoryInterface(plr);
-        DrawMisHist(plr, *where);
-    };
-
     /* Okay, now we have to decide whether there are any missions displayed
        on the screen at this time. If there are any, parse the button. */
     if (Data->P[plr].PastMissionCount == 0) {
         return;
     }
+    
+    auto launchReview = [](int plr, int index, int* where) {
+        Draw_Mis_Stats(plr, index, 0);
+        DrawSpaceHistoryInterface(plr);
+        DrawMisHist(plr, *where);
+    };
 
-    index = 0;
-    season = *where % 2;
-    yr = (*where - season) / 2 + 57;
+    int index = 0;
+    int season = *where % 2;
+    int yr = (*where - season) / 2 + 57;
 
+    // can't simply do "auto& hist = Data->P[plr].History[index];" anywhere in the function because index keep getting changed :/
     while (yr > Data->P[plr].History[index].MissionYear) {
         index++;
     }
@@ -756,13 +739,14 @@ void Mission_Data_Buttons(char plr, int *where)
         }
     }
 
+    int temp = 0;
     do {
         if (Data->P[plr].History[index].Month > 6 && season == 0) {
             break;
         }
 
-        j = (Data->P[plr].History[index].Month < 6) ? Data->P[plr].History[index].Month
-            : Data->P[plr].History[index].Month - 6;
+        int j = (Data->P[plr].History[index].Month < 6) ? Data->P[plr].History[index].Month
+                                                        : Data->P[plr].History[index].Month - 6;
 
         Button2(13 + 49 * j, 40 * (1 + temp), 62 + 49 * j, 40 * (2 + temp),
                 launchReview(plr, index, where),
@@ -774,16 +758,13 @@ void Mission_Data_Buttons(char plr, int *where)
 }
 
 
-void FastOne(char plr, int *where)
+void FastOne(char plr, int* where)
 {
-
-    int last;
-
     if (Data->P[plr].PastMissionCount == 0) {
         return ;
     }
 
-    last = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
+    int last = (Data->P[plr].History[Data->P[plr].PastMissionCount - 1].MissionYear - 57) * 2 +
            ((Data->P[plr].History[Data->P[plr].PastMissionCount - 1].Month <= 5) ? 0 : 1);
 
     if (*where >= last) {
@@ -792,19 +773,17 @@ void FastOne(char plr, int *where)
 
     *where += 1;
     DrawMisHist(plr, *where);
-    return;
 }
 
 
-void FullRewind(char plr, int *where)
+void FullRewind(char plr, int* where)
 {
     *where = 0;
     DrawMisHist(plr, *where);
-    return;
 }
 
 
-void RewindOne(char plr, int *where)
+void RewindOne(char plr, int* where)
 {
     if (Data->P[plr].PastMissionCount == 0) {
         return;
@@ -815,11 +794,10 @@ void RewindOne(char plr, int *where)
     }
 
     DrawMisHist(plr, *where);
-    return;
 }
 
 
-void FullFast(char plr, int *where)
+void FullFast(char plr, int* where)
 {
     if (Data->P[plr].PastMissionCount == 0) {
         return;
@@ -846,10 +824,10 @@ void DrawMisHist(char plr, int turn)
 
     // AI kludge (TODO: Explain -- ryoakum)
     for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        struct PastInfo &mission = Data->P[plr].History[i];
+        PastInfo& mission = Data->P[plr].History[i];
 
-        if (mission.MissionCode == Mission_Jt_LunarLanding_EOR ||
-            mission.MissionCode == Mission_Jt_LunarLanding_LOR) {
+        if (mission.MissionCode == Mission_Jt_LunarLanding_EOR 
+            || mission.MissionCode == Mission_Jt_LunarLanding_LOR) {
             for (int8_t j = 0; j < ASTRONAUT_FLT_CREW_MAX; j++) {
                 if (mission.Man[PAD_A][j] != -1) {
                     mission.Man[PAD_B][j] = mission.Man[PAD_A][j];
@@ -912,7 +890,7 @@ void DrawMisHist(char plr, int turn)
     }
 
     do {
-        const struct PastInfo &mission = Data->P[plr].History[index];
+        const PastInfo& mission = Data->P[plr].History[index];
 
         if (mission.Month >= 6 && season == 0) {
             break;
@@ -1048,10 +1026,8 @@ void DrawMisHist(char plr, int turn)
         }
 
         temp++;
-    } while (++index < MAX_MISSION_COUNT &&
-             Data->P[plr].History[index].MissionYear == yr);
-
-    return;
+    } while (++index < MAX_MISSION_COUNT 
+             && Data->P[plr].History[index].MissionYear == yr);
 }
 
 
@@ -1086,11 +1062,11 @@ void DrawSpaceHistoryInterface(int plr)
 
 void ShowAstrosHist(char plr)
 {
-    display::LegacySurface *vhptr2;
+    display::LegacySurface* vhptr2;
 
     char pos = 0, pos2 = 0;
     vhptr2 = new display::LegacySurface(112, 55);
-    abuf = (struct Astros *) buffer;
+    abuf = (Astros*) buffer;
 
     if (Data->P[plr].AstroCount == 0) {
         return;
@@ -1217,7 +1193,7 @@ void ShowAstrosHist(char plr)
     }
 }
 
-void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void DisplAst(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
     if (Data->P[plr].AstroCount == 0) {
         return;
@@ -1302,7 +1278,7 @@ void DisplAst(char plr, char *where, char *where2, display::LegacySurface *vhptr
 }
 
 
-void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void ShowAstroUp(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
     if (*where == Data->P[plr].AstroCount - 1) {
         return;
@@ -1314,7 +1290,7 @@ void ShowAstroUp(char plr, char *where, char *where2, display::LegacySurface *vh
 }
 
 
-void ShowAstroDown(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void ShowAstroDown(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
     if (*where == 0) {
         return;
@@ -1326,7 +1302,7 @@ void ShowAstroDown(char plr, char *where, char *where2, display::LegacySurface *
 }
 
 
-void ShowAstroBack(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void ShowAstroBack(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
     if (*where == 0) {
         return;
@@ -1338,7 +1314,7 @@ void ShowAstroBack(char plr, char *where, char *where2, display::LegacySurface *
 }
 
 
-void ShowAstroFor(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void ShowAstroFor(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
     if (*where == Data->P[plr].AstroCount - 1) {
         return;
@@ -1350,12 +1326,10 @@ void ShowAstroFor(char plr, char *where, char *where2, display::LegacySurface *v
 }
 
 
-void DispLoc(char plr, char *where)
+void DispLoc(char plr, char* where)
 {
-    int ass;
-
     display::graphics.setForegroundColor(9);
-    ass = abuf[*where].Assign;
+    int ass = abuf[*where].Assign;
 
     switch (abuf[*where].Status) {
     case AST_ST_ACTIVE:
@@ -1387,11 +1361,11 @@ void DispLoc(char plr, char *where)
         return;
 
     case AST_ST_INJURED:
-	if (plr == 1) {
-	        draw_string(216, 159, "INFIRMARY");
-	} else {
-	        draw_string(216, 159, "HOSPITAL");
-	}
+        if (plr == 1) {
+            draw_string(216, 159, "INFIRMARY");
+        } else {
+            draw_string(216, 159, "HOSPITAL");
+        }
         return;
 
     case AST_ST_TRAIN_BASIC_1:
@@ -1429,10 +1403,8 @@ void DispLoc(char plr, char *where)
 }
 
 
-void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *vhptr2)
+void DisplAstData(char plr, char* where, char* where2, display::LegacySurface* vhptr2)
 {
-    int num = abuf[*where].MissionNum[*where2], num2;
-
     fill_rectangle(1, 40, 157, 182, 3);
 
     if (abuf[*where].Missions == 0) {
@@ -1447,57 +1419,32 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
     pline(20, 113, 138, 113);
 
 
-    if (Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule] != -1) {
+    int num = abuf[*where].MissionNum[*where2], num2;
+    auto& hist = Data->P[plr].History[num];
+    if (hist.Hard[PAD_A][Mission_Capsule] != -1) {
         PatchMe(plr, 7, 41,
-                Data->P[plr].History[num].Hard[PAD_A][Mission_Capsule],
-                Data->P[plr].History[num].Patch[0]);
+                hist.Hard[PAD_A][Mission_Capsule],
+                hist.Patch[0]);
     } else {
         PatchMe(plr, 7, 41,
-                Data->P[plr].History[num].Hard[PAD_B][Mission_Capsule],
-                Data->P[plr].History[num].Patch[1]);
+                hist.Hard[PAD_B][Mission_Capsule],
+                hist.Patch[1]);
     }
 
     display::graphics.setForegroundColor(1);
     draw_string(43, 53, "PRESTIGE: ");
-    draw_number(93, 53, Data->P[plr].History[num].Prestige);
+    draw_number(93, 53, hist.Prestige);
     draw_string(43, 63, "DURATION: ");
 
-    switch (Data->P[plr].History[num].Duration) {
-    case 1:
-        draw_string(93, 63, "A");
-        break;
-
-    case 2:
-        draw_string(93, 63, "B");
-        break;
-
-    case 3:
-        draw_string(93, 63, "C");
-        break;
-
-    case 4:
-        draw_string(93, 63, "D");
-        break;
-
-    case 5:
-        draw_string(93, 63, "E");
-        break;
-
-    case 6:
-        draw_string(93, 63, "F");
-        break;
-
-    default:
-        break;
-    }
+    int dur = hist.Duration;
+    if (dur >= 1 && dur <= 6) draw_character(93,63, 'A'+dur-1);
 
     draw_string(10, 83, "DESCRIPTION: ");
 
     display::graphics.setForegroundColor(9);
-    draw_string(43, 45, &Data->P[plr].History[num].MissionName[0][0]);
+    draw_string(43, 45, &hist.MissionName[0][0]);
 
-    const struct mStr type =
-        GetMissionPlan(Data->P[plr].History[num].MissionCode);
+    const mStr type = GetMissionPlan(hist.MissionCode);
     draw_string(10, 93, (type.Abbr).c_str());
 
     if (*where2 == abuf[*where].Missions - 1) {
@@ -1512,66 +1459,42 @@ void DisplAstData(char plr, char *where, char *where2, display::LegacySurface *v
         return;
     }
 
+    auto& hist2 = Data->P[plr].History[num2];
+    
     // astro history patch fix
-    if (Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule] != -1) {
+    if (hist2.Hard[PAD_A][Mission_Capsule] != -1) {
         PatchMe(plr, 7, 116,
-                Data->P[plr].History[num2].Hard[PAD_A][Mission_Capsule],
-                Data->P[plr].History[num2].Patch[0]);
+                hist2.Hard[PAD_A][Mission_Capsule],
+                hist2.Patch[0]);
     } else {
         PatchMe(plr, 7, 116,
-                Data->P[plr].History[num2].Hard[PAD_B][Mission_Capsule],
-                Data->P[plr].History[num2].Patch[1]);
+                hist2.Hard[PAD_B][Mission_Capsule],
+                hist2.Patch[1]);
     }
 
     display::graphics.setForegroundColor(9);
-    draw_string(43, 120, &Data->P[plr].History[num2].MissionName[0][0]);
+    draw_string(43, 120, &hist2.MissionName[0][0]);
 
-    const struct mStr type2 =
-        GetMissionPlan(Data->P[plr].History[num2].MissionCode);
+    const mStr type2 = GetMissionPlan(hist2.MissionCode);
     draw_string(10, 168, (type2.Abbr).c_str());
 
     display::graphics.setForegroundColor(1);
     draw_string(43, 128, "PRESTIGE: ");
-    draw_number(93, 128, Data->P[plr].History[num2].Prestige);
+    draw_number(93, 128, hist2.Prestige);
     draw_string(43, 138, "DURATION: ");
 
-    switch (Data->P[plr].History[num2].Duration) {
-    case 1:
-        draw_string(93, 138, "A");
-        break;
-
-    case 2:
-        draw_string(93, 138, "B");
-        break;
-
-    case 3:
-        draw_string(93, 138, "C");
-        break;
-
-    case 4:
-        draw_string(93, 138, "D");
-        break;
-
-    case 5:
-        draw_string(93, 138, "E");
-        break;
-
-    case 6:
-        draw_string(93, 138, "F");
-        break;
-
-    default:
-        break;
+    int dur = hist2.Duration;
+    if (dur >= 1 && dur <= 6)
+    {
+        draw_character(93,138, 'A'+dur-1);
     }
 
     draw_string(10, 158, "DESCRIPTION: ");
-
-    return;
 }
 
 
-void DownAstroData(char plr, char *where, char *where2,
-                   display::LegacySurface *vhptr2)
+void DownAstroData(char plr, char* where, char* where2,
+                   display::LegacySurface* vhptr2)
 {
     if (*where2 == 0) {
         return;
@@ -1580,12 +1503,11 @@ void DownAstroData(char plr, char *where, char *where2,
     }
 
     DisplAstData(plr, where, where2, vhptr2);
-    return;
 }
 
 
-void UpAstroData(char plr, char *where, char *where2,
-                 display::LegacySurface *vhptr2)
+void UpAstroData(char plr, char* where, char* where2,
+                 display::LegacySurface* vhptr2)
 {
     if ((*where2 + 2) <= abuf[*where].Missions - 1) {
         *where2 += 2;
@@ -1594,14 +1516,13 @@ void UpAstroData(char plr, char *where, char *where2,
     }
 
     DisplAstData(plr, where, where2, vhptr2);
-    return;
 }
 
 
 int astcomp(const void *no1, const void *no2)
 {
-    return strcmp(((struct Astros *) no1)->Name,
-                  ((struct Astros *) no2)->Name);
+    return strcmp(((Astros*) no1)->Name,
+                  ((Astros*) no2)->Name);
 }
 
 // EOF
