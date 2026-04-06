@@ -611,7 +611,7 @@ void Clock(char plr, int clock, int mode, int time)
 // and then draws it
 void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
             const std::vector<struct Infin>& Mob,
-            const std::vector<struct OF>& Mob2.
+            const std::vector<struct OF>& Mob2,
             int SHTS[4])
 {
     static char kk = 0, bub = 0;
