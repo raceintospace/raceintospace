@@ -27,6 +27,7 @@
 
 #include "mis_c.h"
 
+#include <array>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -101,7 +102,7 @@ void Clock(char plr, int clock, int mode, int time);
 void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
             const std::vector<struct Infin>& Mob,
             const std::vector<struct OF>& Mob2,
-            int SHTS[4]);
+            std::array<int, 4>& SHTS);
 void GuyDisp(int xa, int ya, Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
 BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step);
@@ -359,7 +360,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
     unsigned char sts = 0;
     int max = ID[1] - '0';
     bool BABY = (mode == 0) && (j >= 1 && j <= 22);
-    int SHTS[4] {brandom(10), brandom(10), brandom(10), brandom(10)};
+    std::array<int,4> SHTS {brandom(10), brandom(10), brandom(10), brandom(10)};
 
     bool keep_going = true;
     for(int i=0; keep_going && i < max; ++i) {
@@ -612,7 +613,7 @@ void Clock(char plr, int clock, int mode, int time)
 void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
             const std::vector<struct Infin>& Mob,
             const std::vector<struct OF>& Mob2,
-            int SHTS[4])
+            std::array<int, 4>& SHTS)
 {
     static char kk = 0, bub = 0;
 
@@ -632,10 +633,10 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         SHTS[3]++;
 
         // replace largest and save the index
-        auto iter = std::max_element(std::begin(SHTS), std::end(SHTS));
+        auto iter = std::max_element(SHTS.begin(), SHTS.end());
         *iter = brandom(3);
 		
-        kk = std::distance(SHTS, iter);
+        kk = std::distance(SHTS.begin(), iter);
         return;
     }
 
