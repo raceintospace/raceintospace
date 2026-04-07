@@ -27,6 +27,7 @@
 
 #include "budget.h"
 
+#include <algorithm>
 #include <string>
 
 #include "display/graphics.h"
@@ -51,21 +52,17 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 char olderMiss;
 
 
-void DrawBudget(char player, char *pStatus);
-void DrawPastExp(char player, char *pStatus);
+void DrawBudget(char player, char* pStatus);
+void DrawPastExp(char player, char* pStatus);
 void DrawViewing(char plr);
-void DrawViewstandNews(const std::string &card, int got);
+void DrawViewstandNews(const std::string& card, int got);
 void DrawPreviousMissions(char plr);
 std::string OldNewsCard(char plr, int card);
 
 
 
-void DrawBudget(char player, char *pStatus)
+void DrawBudget(char player, char* pStatus)
 {
-    int i, j, max = 0, k, pscale;
-    char name[20], str[10];
-
-
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 47);
@@ -106,12 +103,15 @@ void DrawBudget(char player, char *pStatus)
     display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
     InBox(30, 148, 125, 183);
     InBox(29, 85, 141, 121);
+    
     // Draw the Prestige Screen
+    int i, j, max = 0, k, pscale;
+    char name[20], str[10];
+
     k = (player == 0) ? 0 : 1;  // max only checks your prestige and guessed
 
     for (i = 0; i < 5; i++) {  // value for other player
-        max = (max > abs(Data->P[player].PrestHist[i][k])) ? max
-              : abs(Data->P[player].PrestHist[i][k]);
+        max = std::max(max, abs(Data->P[player].PrestHist[i][k]));
     }
 
     if (player == 0) {
@@ -123,8 +123,7 @@ void DrawBudget(char player, char *pStatus)
     }
 
     for (i = 0; i < 5; i++) {
-        max = (max > abs(Data->P[j].PrestHist[i][k])) ? max
-              : abs(Data->P[j].PrestHist[i][k]);
+        max = std::max(max, abs(Data->P[j].PrestHist[i][k]));
     }
 
     if (max < 20) {
@@ -140,7 +139,7 @@ void DrawBudget(char player, char *pStatus)
         draw_number(11, 87, max);
     }
 
-    pscale = max >> 1;    // Half the estimated prestige
+    pscale = max/2;    // Half the estimated prestige
 
     // draw the splash image
     {
@@ -153,7 +152,7 @@ void DrawBudget(char player, char *pStatus)
     }
 
     // draw the buttons
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         char filename[128];
         snprintf(filename, sizeof(filename), "images/budget_button.%d.png", i);
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
@@ -172,9 +171,9 @@ void DrawBudget(char player, char *pStatus)
         display::graphics.setForegroundColor(8);
     }
 
-    grMoveTo(30, 103 - Data->P[i].PrestHist[4][0] * 8 / pscale);
-    grLineTo(57, 103 - Data->P[i].PrestHist[3][0] * 8 / pscale);
-    grLineTo(85, 103 - Data->P[i].PrestHist[2][0] * 8 / pscale);
+    grMoveTo( 30, 103 - Data->P[i].PrestHist[4][0] * 8 / pscale);
+    grLineTo( 57, 103 - Data->P[i].PrestHist[3][0] * 8 / pscale);
+    grLineTo( 85, 103 - Data->P[i].PrestHist[2][0] * 8 / pscale);
     grLineTo(113, 103 - Data->P[i].PrestHist[1][0] * 8 / pscale);
     grLineTo(140, 103 - Data->P[i].PrestHist[0][0] * 8 / pscale);
 
@@ -184,9 +183,9 @@ void DrawBudget(char player, char *pStatus)
         display::graphics.setForegroundColor(5);
     }
 
-    grMoveTo(30, 103 - Data->P[j].PrestHist[4][1] * 8 / pscale);
-    grLineTo(57, 103 - Data->P[j].PrestHist[3][1] * 8 / pscale);
-    grLineTo(85, 103 - Data->P[j].PrestHist[2][1] * 8 / pscale);
+    grMoveTo( 30, 103 - Data->P[j].PrestHist[4][1] * 8 / pscale);
+    grLineTo( 57, 103 - Data->P[j].PrestHist[3][1] * 8 / pscale);
+    grLineTo( 85, 103 - Data->P[j].PrestHist[2][1] * 8 / pscale);
     grLineTo(113, 103 - Data->P[j].PrestHist[1][1] * 8 / pscale);
     grLineTo(140, 103 - Data->P[j].PrestHist[0][1] * 8 / pscale);
 
@@ -279,7 +278,7 @@ void DrawBudget(char player, char *pStatus)
     grMoveTo(187, 107);
     grLineTo(311, 107);
 
-    for (i = 187; i < 312; i += 2) {
+    for (int i = 187; i < 312; i += 2) {
         display::graphics.legacyScreen()->setPixel(i, 157, 4);
         display::graphics.legacyScreen()->setPixel(i, 137, 4);
         display::graphics.legacyScreen()->setPixel(i, 117, 4);
@@ -294,11 +293,12 @@ void DrawBudget(char player, char *pStatus)
     draw_number(194, 174, Data->Year - 4);
 
     if (player == 0) {
-        for (i = 0; i < 5; i++) {
-            fill_rectangle(197 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 6);
-            fill_rectangle(206 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 9);
-            fill_rectangle(196 + i * 26, 164 - (Data->P[0].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 5);
-            fill_rectangle(205 + i * 26, 164 - (Data->P[1].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 8);
+        for (int i = 0; i < 5; i++) {
+            int gameyear = Data->Year - 57 + i;
+            fill_rectangle(197 + i * 26, 164 - (Data->P[0].BudgetHistory[gameyear] * 74) / 200,  190 + i * 26, 164, 6);
+            fill_rectangle(206 + i * 26, 164 - (Data->P[1].BudgetHistoryF[gameyear] * 74) / 200, 199 + i * 26, 164, 9);
+            fill_rectangle(196 + i * 26, 164 - (Data->P[0].BudgetHistory[gameyear] * 74) / 200,  190 + i * 26, 163, 5);
+            fill_rectangle(205 + i * 26, 164 - (Data->P[1].BudgetHistoryF[gameyear] * 74) / 200, 199 + i * 26, 163, 8);
         }
 
         fill_rectangle(176, 185, 182, 189, 6);
@@ -311,11 +311,12 @@ void DrawBudget(char player, char *pStatus)
     }
 
     if (player == 1) {
-        for (i = 0; i < 5; i++) {
-            fill_rectangle(197 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 164, 9);
-            fill_rectangle(206 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 164, 6);
-            fill_rectangle(196 + i * 26, 164 - (Data->P[1].BudgetHistory[Data->Year - 57 + i] * 74) / 200, 190 + i * 26, 163, 8);
-            fill_rectangle(205 + i * 26, 164 - (Data->P[0].BudgetHistoryF[Data->Year - 57 + i] * 74) / 200, 199 + i * 26, 163, 5);
+        for (int i = 0; i < 5; i++) {
+            int gameyear = Data->Year - 57 + i;
+            fill_rectangle(197 + i * 26, 164 - (Data->P[1].BudgetHistory[gameyear] * 74) / 200,  190 + i * 26, 164, 9);
+            fill_rectangle(206 + i * 26, 164 - (Data->P[0].BudgetHistoryF[gameyear] * 74) / 200, 199 + i * 26, 164, 6);
+            fill_rectangle(196 + i * 26, 164 - (Data->P[1].BudgetHistory[gameyear] * 74) / 200,  190 + i * 26, 163, 8);
+            fill_rectangle(205 + i * 26, 164 - (Data->P[0].BudgetHistoryF[gameyear] * 74) / 200, 199 + i * 26, 163, 5);
         }
 
         fill_rectangle(176, 185, 182, 189, 9);
@@ -329,16 +330,10 @@ void DrawBudget(char player, char *pStatus)
 
     DrawPastExp(player, pStatus);
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
-void DrawPastExp(char player, char *pStatus)
+void DrawPastExp(char player, char* pStatus)
 {
-    int i, j;
-    int max = 0;
-    int pScale = 25;
-
     fill_rectangle(31, 149, 124, 182, 7 + 3 * player);
     display::graphics.setForegroundColor(4);
     display::graphics.legacyScreen()->outlineRect(30, 148, 125, 183, 4);
@@ -347,56 +342,56 @@ void DrawPastExp(char player, char *pStatus)
     display::graphics.legacyScreen()->outlineRect(30, 157, 125, 165, 4);
     display::graphics.legacyScreen()->outlineRect(30, 165, 125, 174, 4);
 
-    for (j = 0; j < 5; j++) {
-        for (i = 0; i < 4; i++) {
+    int max = 0;
+    for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < 4; i++) {
             max = (max > Data->P[player].Spend[j][i]) ? max : Data->P[player].Spend[j][i];
         }
     }
 
+    int pScale;
     if (max <= 100) {
+        pScale = 25;
         draw_string(12, 150, "100");
         draw_string(12, 159, "75");
         draw_string(12, 167, "50");
         draw_string(12, 176, "25");
         draw_string(8, 185, "0 MB");
     } else {
-        pScale = max >> 2;
-        draw_number(12, 150, max);
-        i = (max * 3) >> 2;
-        draw_number(12, 159, i);
-        i = max >> 1;
-        draw_number(12, 167, i);
-        i = max >> 2;
-        draw_number(12, 176, i);
+        pScale = max/4;
+        draw_number(12, 150,   max);
+        draw_number(12, 159, 3*max/4);
+        draw_number(12, 167,   max/2);
+        draw_number(12, 176,   max/4);
         draw_string(8, 185, "0 MB");
     }
 
-    for (i = 0; i < 4; i++) {
-        if (pStatus[i] == 1) {
-            switch (i) {
-            case 0:
-                display::graphics.setForegroundColor(11);
-                break;
+    for (int i = 0; i < 4; i++) {
+        if (pStatus[i] != 1) continue;
+        
+        switch (i) {
+        case 0:
+            display::graphics.setForegroundColor(11);
+            break;
 
-            case 1:
-                display::graphics.setForegroundColor(8);
-                break;
+        case 1:
+            display::graphics.setForegroundColor(8);
+            break;
 
-            case 2:
-                display::graphics.setForegroundColor(5);
-                break;
+        case 2:
+            display::graphics.setForegroundColor(5);
+            break;
 
-            case 3:
-                display::graphics.setForegroundColor(16);
-                break;
-            }
-
-            grMoveTo(31, 182 - (Data->P[player].Spend[4][i] * 8) / pScale);
-            grLineTo(54, 182 - (Data->P[player].Spend[3][i] * 8) / pScale);
-            grLineTo(77, 182 - (Data->P[player].Spend[2][i] * 8) / pScale);
-            grLineTo(101, 182 - (Data->P[player].Spend[1][i] * 8) / pScale);
-            grLineTo(124, 182 - (Data->P[player].Spend[0][i] * 8) / pScale);
+        case 3:
+            display::graphics.setForegroundColor(16);
+            break;
         }
+
+        grMoveTo( 31, 182 - (Data->P[player].Spend[4][i] * 8) / pScale);
+        grLineTo( 54, 182 - (Data->P[player].Spend[3][i] * 8) / pScale);
+        grLineTo( 77, 182 - (Data->P[player].Spend[2][i] * 8) / pScale);
+        grLineTo(101, 182 - (Data->P[player].Spend[1][i] * 8) / pScale);
+        grLineTo(124, 182 - (Data->P[player].Spend[0][i] * 8) / pScale);
     }
 
     InBox(30, 148, 125, 183);
@@ -484,34 +479,32 @@ void Budget(char player)
 
 void DrawPreviousMissions(char plr)
 {
-    int i, misnum = 0;
     InBox(5, 41, 314, 91);
     fill_rectangle(6, 42, 313, 90, 0);
-    i = Data->P[plr].PastMissionCount - olderMiss;
     display::graphics.setForegroundColor(2);
 
+    int misnum = 0;
+    int i = Data->P[plr].PastMissionCount - olderMiss;
     while (i > (Data->P[plr].PastMissionCount - olderMiss - 3) && i >= 0) {
+        auto& hist = Data->P[plr].History[i];
+        const mStr mission = GetMissionPlan(hist.MissionCode);
 
-        const struct mStr mission =
-            GetMissionPlan(Data->P[plr].History[i].MissionCode);
-
-        draw_string(9, 49 + 16 * misnum,
-                    Data->P[plr].History[i].MissionName[0]);
+        draw_string(9, 49 + 16 * misnum, hist.MissionName[0]);
         draw_string(9, 55 + 16 * misnum, mission.Abbr.c_str());
 
         // Check the mission code to see if it's a duration mission.
         // If so, include the duration length.
-        if (IsDuration(Data->P[plr].History[i].MissionCode)) {
-            int duration = Data->P[plr].History[i].Duration;
+        if (IsDuration(hist.MissionCode)) {
+            int duration = hist.Duration;
             draw_string(0, 0, GetDurationParens(duration));
         }
 
         draw_string(140, 49 + 16 * misnum, "PRESTIGE: ");
-        draw_number(0, 0, Data->P[plr].History[i].Prestige);
+        draw_number(0, 0, hist.Prestige);
 
-        draw_string(230, 49 + 16 * misnum, Months[Data->P[plr].History[i].Month]);
+        draw_string(230, 49 + 16 * misnum, Months[hist.Month]);
         draw_string(0, 0, " 19");
-        draw_number(0, 0, Data->P[plr].History[i].MissionYear);
+        draw_number(0, 0, hist.MissionYear);
         i--;
         misnum++;
     }
@@ -524,7 +517,6 @@ void DrawPreviousMissions(char plr)
 
 void DrawViewing(char plr)
 {
-
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
@@ -573,14 +565,12 @@ void DrawViewing(char plr)
 
     draw_left_arrow(24, 30);
     draw_right_arrow(262, 30);
-
-    return;
 }
 
-void DrawViewstandNews(const std::string &card, int got)
+void DrawViewstandNews(const std::string& card, int got)
 {
     int xx = 10, yy = 122, i;
-    const char *buf = card.c_str();
+    const char* buf = card.c_str();
     display::graphics.setForegroundColor(1);
 
     for (i = 0; i < got; i++) {
@@ -623,7 +613,7 @@ void DrawViewstandNews(const std::string &card, int got)
         }
     }
 
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         fill_rectangle(6, yy - 4, 300, yy + 1, 0);
         grMoveTo(xx, yy);
 
@@ -668,11 +658,9 @@ void DrawViewstandNews(const std::string &card, int got)
         buf++;
 
         if (*buf == '\0') {
-            i = 9;
+            break;
         }
     }
-
-    return;
 }
 
 std::string OldNewsCard(char plr, int card)
@@ -699,13 +687,13 @@ void Viewing(char plr)
     const int turn = 2 * (Data->Year - 57) + Data->Season;
 
     if (maxcard < 0 || maxcard > turn) {
-        ERROR3("Invalid event card count %d: Must be in range (0, %d]",
+        LOG_ERROR("Invalid event card count %d: Must be in range (0, %d]",
                Data->P[plr].eCount, turn + 1);
         return;
     }
 
     if (Data->P[plr].eCount != turn + 1) {
-        WARNING3("Unexpected event count: turn=%d, event=%d", turn + 1,
+        LOG_WARNING("Unexpected event count: turn=%d, event=%d", turn + 1,
                  Data->P[plr].eCount);
     }
 
