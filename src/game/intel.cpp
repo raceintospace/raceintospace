@@ -29,8 +29,9 @@
 #include "intel.h"
 
 #include <cassert>
-#include <stdexcept>
 #include <numeric>
+#include <stdexcept>
+#include <vector>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -426,7 +427,7 @@ int MissionIntelFake(char plr)
     } else {
         era = 2;
     }
-    const std::vector<char>& era_weights = Weights[era];
+    const std::vector<int>& era_weights = Weights[era];
 
     int sumWeight = std::accumulate(era_weights.begin(),
                                     era_weights.end(),
