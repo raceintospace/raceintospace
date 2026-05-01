@@ -97,7 +97,7 @@ find_package(Vorbis REQUIRED)
 find_package(jsoncpp REQUIRED)
 include(FixJsonCppTargets)
 find_package(cereal REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # vcpkg only works with CONFIG
