@@ -1,5 +1,5 @@
 find_package(SDL REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 add_library(
   raceintospace_display STATIC
