@@ -307,7 +307,7 @@ int Launch(char plr, char mis)
         int temp = 0;
 
         for (int i = 0; Mev[i].loc != 0x7f; ++i) {
-            /* Bugfix -> We need to skip cases when Mev[i].E is NULL */
+            /* Bugfix -> We need to skip cases when Mev[i].E is nullptr */
             /* Same solution as used in mis_m.c (MisCheck):207 */
             if (!GetEquipment(Mev[i])) {
                 continue;

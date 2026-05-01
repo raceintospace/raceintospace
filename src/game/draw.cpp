@@ -91,7 +91,7 @@ void draw_heading(int x, int y, const char* txt, char mode, char te)
     } letter;
     const int letterSize = sizeof(letter.width) + sizeof(letter.img);
 
-    if (txt == NULL) {
+    if (txt == nullptr) {
         // TODO: This should log an error or throw an exception.
         return;
     }

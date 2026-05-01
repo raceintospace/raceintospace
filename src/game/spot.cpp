@@ -81,7 +81,7 @@ boost::shared_ptr<display::LegacySurface> portViewBuffer;
 bool SUSPEND = true;
 bool isTrackPlaying = false;
 int16_t stepCount;     // stepCount is the number of steps
-FILE *sFin = NULL;
+FILE *sFin = nullptr;
 struct SpotHeader mainHeader;
 struct AnimationStep sPath;
 struct CelHeader sImg;
@@ -140,7 +140,7 @@ void SpotClose()
  */
 void SpotInit()
 {
-    sFin = NULL;
+    sFin = nullptr;
     stepCount = -1;
     SUSPEND = false;
     isTrackPlaying = false;
@@ -169,7 +169,7 @@ void SpotKill()
 {
     if (sFin) {
         fclose(sFin);
-        sFin = NULL;
+        sFin = nullptr;
     }
 
     sPath.iHold = 0;
@@ -398,9 +398,9 @@ void AdvanceFrame()
         display::graphics.legacyScreen(), sPath.xPut, sPath.yPut);
 
     delete frameBackground;
-    frameBackground = NULL;
+    frameBackground = nullptr;
     delete celImage;
-    celImage = NULL;
+    celImage = nullptr;
 }
 
 

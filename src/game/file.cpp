@@ -11,7 +11,7 @@
 #define throw_error do { \
     PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
     const char *error = PHYSFS_getErrorByCode(code); \
-    if (error == NULL) \
+    if (error == nullptr) \
         error = "unknown filesystem error"; \
     throw std::runtime_error(error); \
     } while (0)
@@ -35,7 +35,7 @@ void File::close()
         success = PHYSFS_close(m_phys_handle);
 
         if (success) {
-            m_handle = NULL;
+            m_handle = nullptr;
         }
     }
 }

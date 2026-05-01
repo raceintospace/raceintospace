@@ -210,7 +210,7 @@ void OpenNews(char plr, char *buf, int bud)
         FILE *messages = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA);
         char old[120];
 
-        if (messages != NULL) {
+        if (messages != nullptr) {
             fread(&old, sizeof(old), 1, messages);
 
             if (old[0] != 0x00) {

@@ -505,7 +505,7 @@ news_open(char *fname) {
 
     n->anim_idx = -1;
     n->frame_idx = -1;
-    n->frames = NULL;
+    n->frames = nullptr;
     return n;
 }
 
@@ -623,7 +623,7 @@ write_image(char *data, int width, int height, unsigned char *palette,
     char fname[1000];
     unsigned char r, g, b, pix;
     int i;
-    unsigned char *pp = NULL;
+    unsigned char *pp = nullptr;
     struct type {
         int is_usa;
         int is_bw;
@@ -732,7 +732,7 @@ main(int argc, char **argv)
         usage(EXIT_FAILURE);
     }
 
-    if ((news = news_open(filename)) == NULL) {
+    if ((news = news_open(filename)) == nullptr) {
         fprintf(stderr, "can't open %s\n", filename);
         exit(EXIT_FAILURE);
     }

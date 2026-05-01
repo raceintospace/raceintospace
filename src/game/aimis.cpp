@@ -1313,7 +1313,7 @@ void NewAI(char plr, char frog)
 void AIFuture(char plr, char mis, char pad, char* prog)
 {    
     char fake_prog[2]{};
-    if (prog == NULL) {
+    if (prog == nullptr) {
         prog = fake_prog;
     }
 

@@ -191,9 +191,9 @@ void _SwapGameDat(struct LegacyPlayers *pData)
  */
 void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
 {
-    LEGACY_REPLAY *load_buffer = NULL;
+    LEGACY_REPLAY *load_buffer = nullptr;
     uint16_t dataSize, compSize;
-    int i, j;
+    int i;
     const int legacySize = 38866;
     struct LegacyPlayers *legacyData;
 
@@ -249,7 +249,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
     fread(load_buffer, 1, sizeof(LEGACY_REPLAY) * MAX_REPLAY_ITEMS, fin);
 
     if (endianSwap) {
-        LEGACY_REPLAY *r = NULL;
+        LEGACY_REPLAY *r = nullptr;
         r = load_buffer;
 
         for (int j = 0; j < MAX_REPLAY_ITEMS; j++) {

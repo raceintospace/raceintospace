@@ -460,7 +460,7 @@ int FillVab(char plr, char f, char mode)
             MissionHardware(plr, static_cast<MissionHardwareType>(i),
                             VAS[f][i].dex);
 
-        if (equip == NULL || equip->Num == PROGRAM_NOT_STARTED) {
+        if (equip == nullptr || equip->Num == PROGRAM_NOT_STARTED) {
             continue;
         }
 
@@ -498,7 +498,7 @@ int ChkDelVab(char plr, char f)
             MissionHardware(plr, static_cast<MissionHardwareType>(i),
                             VAS[f][i].dex);
 
-        if (equip != NULL && (equip->Num - equip->Spok) <= 0 &&
+        if (equip != nullptr && (equip->Num - equip->Spok) <= 0 &&
             equip->Delay > 0) {
             return 0;
         }
@@ -944,7 +944,7 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
  * \param plr      the player index
  * \param slot     the mission payload slot
  * \param program  the equipment index (EquipProbeIndex, etc.)
- * \return   the equipment entry, or NULL if no match (program < 0).
+ * \return   the equipment entry, or nullptr if no match (program < 0).
  */
 Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
                            int program)
@@ -952,7 +952,7 @@ Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
     assert(0 <= plr && plr < NUM_PLAYERS);
 
     if (program < 0) {
-        return NULL;
+        return nullptr;
     }
 
     switch (slot) {

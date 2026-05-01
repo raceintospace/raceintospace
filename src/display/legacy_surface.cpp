@@ -10,7 +10,7 @@ namespace display
 {
 
 LegacySurface::LegacySurface(unsigned int width, unsigned int height) :
-    Surface(NULL),   // see note below
+    Surface(nullptr),   // see note below
     _hasValidPalette(false)
 {
     // Ideally, this constructor would be:
@@ -32,7 +32,7 @@ LegacySurface::~LegacySurface()
 void LegacySurface::clear(char colour)
 {
     _dirty = true;
-    SDL_FillRect(_screen, NULL, colour);
+    SDL_FillRect(_screen, nullptr, colour);
 }
 
 void LegacySurface::fillRect(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, char color)

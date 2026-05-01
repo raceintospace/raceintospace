@@ -85,7 +85,7 @@ fix_pathsep(char *name)
 static FILE *
 try_fopen(const char *fname, const char *mode)
 {
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
     assert(fname);
     assert(mode);
     TRACE3("trying to open `%s' (mode %s)", fname, mode);
@@ -106,10 +106,10 @@ try_fopen(const char *fname, const char *mode)
 static file
 s_open_helper(const char *base, const char *name, const char *mode, ...)
 {
-    FILE *fh = NULL;
-    file f = {NULL, NULL};
+    FILE *fh = nullptr;
+    file f = {nullptr, nullptr};
     int serrno;
-    char *p = NULL;
+    char *p = nullptr;
     char *cooked = (char *)xmalloc(1024);
     size_t len = 1024, len2 = 0;
     size_t len_base = strlen(base), len_name = strlen(name);
@@ -122,7 +122,7 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
     va_start(ap, mode);
 
     for (p = va_arg(ap, char *); p; p = va_arg(ap, char *)) {
-        char *s = NULL;
+        char *s = nullptr;
         int was_upper = 0;
         size_t len_p = strlen(p);
 
@@ -193,7 +193,7 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
 static file
 try_find_file(const char *name, const char *mode, int type)
 {
-    file f = {NULL, NULL};
+    file f = {nullptr, nullptr};
     char *gd = options.dir_gamedata;
     char *sd = options.dir_savegame;
     char *where = "";
@@ -222,7 +222,7 @@ try_find_file(const char *name, const char *mode, int type)
     case FT_DATA:
         f = s_open_helper(gd, name, newmode,
                           "gamedata",
-                          NULL);
+                          nullptr);
         where = "game data";
         break;
 
@@ -230,7 +230,7 @@ try_find_file(const char *name, const char *mode, int type)
     case FT_SAVE_CHECK:
         f = s_open_helper(sd, name, newmode,
                           "",
-                          NULL);
+                          nullptr);
         where = "savegame";
         break;
 
@@ -240,7 +240,7 @@ try_find_file(const char *name, const char *mode, int type)
                           "audio/music",
                           "audio/news",
                           "audio/sounds",
-                          NULL);
+                          nullptr);
         where = "audio";
         break;
 
@@ -249,14 +249,14 @@ try_find_file(const char *name, const char *mode, int type)
                           "video/mission",
                           "video/news",
                           "video/training",
-                          NULL);
+                          nullptr);
         where = "video";
         break;
 
     case FT_IMAGE:
         f = s_open_helper(gd, name, newmode,
                           "images",
-                          NULL);
+                          nullptr);
         where = "image";
         break;
 
@@ -265,7 +265,7 @@ try_find_file(const char *name, const char *mode, int type)
                           "audio/midi",
                           "midi",
                           "audio/music",
-                          NULL);
+                          nullptr);
         where = "midi";
         break;
 
@@ -273,7 +273,7 @@ try_find_file(const char *name, const char *mode, int type)
         assert("Unknown FT_* specified");
     }
 
-    if (f.handle == NULL && type != FT_SAVE_CHECK) {
+    if (f.handle == nullptr && type != FT_SAVE_CHECK) {
         int serrno = errno;
         WARNING3("can't find file `%s' in %s dir(s)", name, where);
         errno = serrno;
@@ -306,7 +306,7 @@ std::string locate_file(const char *name, int type)
         fclose(f.handle);
     }
 
-    if (f.path != NULL) {
+    if (f.path != nullptr) {
         std::string path(f.path);
         free(f.path);
         return path;

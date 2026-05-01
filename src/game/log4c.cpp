@@ -43,7 +43,7 @@
 struct LogCategory _LOGV(LOG_ROOT_CAT) = {
     0, 0, 0,
     STRINGIFY(LOG_ROOT_CAT), LP_UNINITIALIZED, 0,
-    NULL, 0
+    nullptr, 0
 };
 
 void _log_logEvent(struct LogCategory *category, struct LogEvent *ev, ...)
@@ -53,7 +53,7 @@ void _log_logEvent(struct LogCategory *category, struct LogEvent *ev, ...)
     while (1) {
         struct LogAppender *appender = cat->appender;
 
-        if (appender != NULL) {
+        if (appender != nullptr) {
             va_start(ev->ap, ev);
             appender->doAppend(appender, ev);
             va_end(ev->ap);
@@ -100,13 +100,13 @@ int _log_initCat(int priority, struct LogCategory *category)
 void log_setParent(struct LogCategory *cat, struct LogCategory *parent)
 {
 
-    assert(parent != NULL);
+    assert(parent != nullptr);
 
     // unlink from current parent
     if (cat->thresholdPriority != LP_UNINITIALIZED) {
         struct LogCategory **cpp = &parent->firstChild;
 
-        while (*cpp != cat && *cpp != NULL) {
+        while (*cpp != cat && *cpp != nullptr) {
             cpp = &(*cpp)->nextSibling;
         }
 
@@ -133,7 +133,7 @@ static void setInheritedThresholds(struct LogCategory *cat)
 {
     struct LogCategory *child = cat->firstChild;
 
-    for (; child != NULL; child = child->nextSibling) {
+    for (; child != nullptr; child = child->nextSibling) {
         if (child->isThreshInherited) {
             child->thresholdPriority = cat->thresholdPriority;
             setInheritedThresholds(child);

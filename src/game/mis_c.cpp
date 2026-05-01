@@ -722,7 +722,6 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         while (attempt < NORM_TABLE && attempt < Mob.size()) {
             strncpy(Val2, &Mob[attempt].Code[0],
                     sizeof(Mob[attempt].Code));
-            int maxlength = MIN(strlen(Val2), sizeof(Val2));
 
             if (strncmp(Val1, Val2, strlen(Val2)) == 0) {
                 break;

@@ -467,7 +467,7 @@ void write_player_data(FILE *fp)
 
 //#define WRITE_UNCOMPRESSED_RAST_DAT_FILE
 #ifdef WRITE_UNCOMPRESSED_RAST_DAT_FILE
-    FILE *fout = NULL;
+    FILE *fout = nullptr;
     fout = fopen("URAST.DAT", "wb");
     fwrite(&record, bytes_uncompressed, 1, fout);
     fclose(fout);
@@ -611,9 +611,9 @@ void write_help(FILE *fp)
         strncpy(record.Code, helpHdr[i].Code, 6);
         token = strtok(buffer, "\n\r");
 
-        while (token != NULL && n < 100) {
+        while (token != nullptr && n < 100) {
             strncpy(record.description[n++], token, 40);
-            token = strtok(NULL, "\n\r");
+            token = strtok(nullptr, "\n\r");
         }
 
         RecordStart();

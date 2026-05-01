@@ -76,11 +76,11 @@ frm_open(char *filename) {
     struct frm *frm;
     FILE *fin;
 
-    if ((fin = fopen(filename, "rb")) == NULL) {
-        return (NULL);
+    if ((fin = fopen(filename, "rb")) == nullptr) {
+        return (nullptr);
     }
 
-    if ((frm = calloc(1, sizeof *frm)) == NULL) {
+    if ((frm = calloc(1, sizeof *frm)) == nullptr) {
         fprintf(stderr, "out of memory\n");
         exit(EXIT_FAILURE);
     }
@@ -207,7 +207,7 @@ main(int argc, char **argv)
         usage();
     }
 
-    if ((frm = frm_open(filename)) == NULL) {
+    if ((frm = frm_open(filename)) == nullptr) {
         fprintf(stderr, "can't open %s\n", filename);
         exit(EXIT_FAILURE);
     }
@@ -228,7 +228,7 @@ main(int argc, char **argv)
         snprintf(outfname, sizeof(outfname), "%s/%s.%04d.ppm",
                  dirname, basename, num++);
 
-        if ((movief = fopen(outfname, "wb")) == NULL) {
+        if ((movief = fopen(outfname, "wb")) == nullptr) {
             fprintf(stderr, "can't create %s\n", outfname);
             exit(EXIT_FAILURE);
         }

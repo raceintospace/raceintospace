@@ -63,7 +63,7 @@ struct music_key {
     { M_USPORT, "usport2" },
     { M_USSRMIL, "ussrmil" },
     { M_VICTORY, "victory" },
-    { M_MAX_MUSIC, NULL },
+    { M_MAX_MUSIC, nullptr },
 };
 
 // This structure defines each track
@@ -91,7 +91,7 @@ void music_load(enum music_track track)
     ssize_t bytes;
 
     // Check to see if the track is already loaded or known broken; if so, we're already done
-    if (music_files[track].buf != NULL || music_files[track].unplayable) {
+    if (music_files[track].buf != nullptr || music_files[track].unplayable) {
         return;
     }
 

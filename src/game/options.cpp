@@ -64,7 +64,7 @@
 #    define getenv SDL_getenv
 #  else
 #    warn I do not know a way to read environment on this system
-#    define getenv(a) (NULL)
+#    define getenv(a) (nullptr)
 #  endif
 #endif
 
@@ -243,7 +243,7 @@ shift_argv(char **argv, int len, int shift)
 
     for (i = shift; i < len; ++i) {
         argv[i - shift] = argv[i];
-        argv[i] = NULL;
+        argv[i] = nullptr;
     }
 }
 
@@ -379,7 +379,7 @@ write_default_config(void)
 {
     int i = 0;
     int err = 0;
-    FILE *f = NULL;
+    FILE *f = nullptr;
 
     create_save_dir();
     f = open_savedat("config", "wt");
@@ -419,11 +419,11 @@ write_default_config(void)
     return err;
 }
 
-/* return the location of user's home directory, or NULL if unknown.
+/* return the location of user's home directory, or nullptr if unknown.
  * returned string is malloc-ed */
 static char *get_homedir(void)
 {
-    char *s = NULL;
+    char *s = nullptr;
 
     if ((s = getenv("HOME"))) {
         return xstrdup(s);
@@ -432,7 +432,7 @@ static char *get_homedir(void)
 #if CONFIG_WIN32
 
     if ((s = getenv("HOMEPATH"))) {
-        char *s2 = NULL;
+        char *s2 = nullptr;
         std::string path(s);
 
         if ((s2 = getenv("HOMEDRIVE")) || (s2 = getenv("HOMESHARE"))) {
@@ -447,7 +447,7 @@ static char *get_homedir(void)
     }
 
 #endif
-    return NULL;
+    return nullptr;
 }
 
 static void
@@ -541,7 +541,7 @@ void ResetToClassicOptions()
 int
 setup_options(int argc, char *argv[])
 {
-    char *str = NULL;
+    char *str = nullptr;
     int pos, i;
 
     /* first set up defaults */

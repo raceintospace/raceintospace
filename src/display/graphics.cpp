@@ -16,11 +16,11 @@ namespace display
 Graphics graphics;
 
 Graphics::Graphics():
-    _screen(NULL),
-    _scaledScreen(NULL),
-    _display(NULL),
-    _video(NULL),
-    _news(NULL)
+    _screen(nullptr),
+    _scaledScreen(nullptr),
+    _display(nullptr),
+    _video(nullptr),
+    _news(nullptr)
 {
 }
 
@@ -84,7 +84,7 @@ void Graphics::create(const std::string &title, bool fullscreen)
         throw std::runtime_error(SDL_GetError());
     }
 
-    SDL_WM_SetCaption(title.c_str(), NULL);
+    SDL_WM_SetCaption(title.c_str(), nullptr);
 
 }
 
@@ -102,11 +102,11 @@ void Graphics::destroy()
 
     SDL_FreeSurface(_display);
 
-    _video = NULL;
-    _news = NULL;
-    _scaledScreen = NULL;
-    _screen = NULL;
-    _display = NULL;
+    _video = nullptr;
+    _news = nullptr;
+    _scaledScreen = nullptr;
+    _screen = nullptr;
+    _display = nullptr;
 
     SDL_Quit();
 }
@@ -129,7 +129,7 @@ void Graphics::updateScale(int scale)
 /*
 void Display::present() {
     doScale();
-    SDL_BlitSurface( _scaledScreen, NULL, _display, NULL );
+    SDL_BlitSurface( _scaledScreen, nullptr, _display, nullptr );
     SDL_UpdateRect( _display, 0, 0, 0, 0 );
 }
 
