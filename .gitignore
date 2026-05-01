@@ -8,3 +8,4 @@ CMakeUserPresets.json
 .vscode
 vcpkg_installed
 .cache
+/data/audio/music/
