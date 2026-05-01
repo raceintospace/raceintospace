@@ -29,12 +29,11 @@
 
 #include <vector>
 
-#include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "raceintospace_config.h"
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "draw.h"
 #include "filesystem.h"
 #include "game_main.h"

@@ -2,9 +2,7 @@
 
 #include <cassert>
 
-#include "Buzz_inc.h"
-#include "game_main.h"
-
+#include "Buzz_inc.h" // IWYU pragma: keep
 
 // Need these functions to always exist
 uint32_t _Swap32bit(uint32_t value)

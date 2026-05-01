@@ -21,11 +21,10 @@
 
 // This file handles music (as you might guess by the name)
 
-#include "Buzz_inc.h"
 #include "music.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "pace.h"
 #include "sdlhelper.h"
-#include "utils.h"
 
 // A map of music_tracks to filenames
 struct music_key {

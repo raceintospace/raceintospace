@@ -32,7 +32,6 @@
 #include "game_main.h"
 #include "gr.h"
 #include "logging.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "pace.h"

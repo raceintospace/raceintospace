@@ -39,12 +39,10 @@
 #include "draw.h"
 #include "filesystem.h"
 #include "game_main.h"
-#include "gr.h"
 #include "hardware.h"
 #include "logging.h"
 #include "pace.h"
 #include "place.h"
-#include "sdlhelper.h"
 #include "start.h"
 
 LOG_DEFAULT_CATEGORY(baris)

@@ -32,7 +32,6 @@
 #include <math.h>
 
 #include <sstream>
-#include <stdexcept>
 
 #include "game_main.h"
 

@@ -7,8 +7,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "graphics.h"
-#include "palette.h"
 #include "palettized_surface.h"
 #include "surface.h"
 

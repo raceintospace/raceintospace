@@ -21,7 +21,6 @@
 #include "options.h"
 
 #include <cassert>
-#include <cctype>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
@@ -29,11 +28,10 @@
 
 #include <SDL.h>
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "fs.h"
 #include "logging.h"
 #include "macros.h"
-#include "pace.h"
 #include "utils.h"
 
 #define ENVIRON_DATADIR ("BARIS_DATA")

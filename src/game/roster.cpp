@@ -1,7 +1,6 @@
 #include "roster.h"
 
 #include <cassert>
-#include <cstdlib>
 #include <fstream>
 
 #include <json/json.h>

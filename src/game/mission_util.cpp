@@ -3,10 +3,9 @@
 #include "mission_util.h"
 
 #include <cstring>
-#include <cstdio>
 #include <vector>
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "draw.h"
 #include "gr.h"
 #include "ioexception.h"

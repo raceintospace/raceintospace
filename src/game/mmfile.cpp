@@ -25,7 +25,6 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <memory>
 #include <limits>
 
@@ -42,9 +41,7 @@
 #include "fake_unistd.h"
 #endif
 
-#include "macros.h"
 #include "logging.h"
-#include "utils.h"
 
 LOG_DEFAULT_CATEGORY(multimedia)
 

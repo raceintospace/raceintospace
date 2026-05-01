@@ -31,7 +31,6 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
 #include "draw.h"
@@ -41,8 +40,6 @@
 #include "intel.h"
 #include "pace.h"
 #include "port.h"
-#include "rdplex.h"
-#include "sdlhelper.h"
 
 struct DisplayContext {
     boost::shared_ptr<display::LegacySurface> intel;

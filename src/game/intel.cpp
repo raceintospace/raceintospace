@@ -41,17 +41,13 @@
 #include "filesystem.h"
 #include "gamedata.h"
 #include "game_main.h"
-#include "gr.h"
 #include "hardware.h"
 #include "hardware_buttons.h"
 #include "logging.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "pace.h"
 #include "place.h"
 #include "port.h"
-#include "rdplex.h"
-#include "sdlhelper.h"
 
 
 /**

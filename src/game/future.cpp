@@ -36,16 +36,13 @@
 #include "futbub.h"
 #include "game_main.h"
 #include "gr.h"
-#include "ioexception.h"
 #include "logging.h"
 #include "mc.h"
-#include "mc2.h"
 #include "mission_util.h"
 #include "options.h"
 #include "pace.h"
 #include "place.h"
 #include "prest.h"
-#include "sdlhelper.h"
 
 
 LOG_DEFAULT_CATEGORY(future)
@@ -783,12 +780,12 @@ void ClearRX(FMFields button)
 bool NavMatch(const MissionNavigator& nav, const mStr& mission)
 {
     return (! mission.Index)
-        || (! nav.docking.lock || nav.docking.value == mission.Doc) &&
+        || ((! nav.docking.lock || nav.docking.value == mission.Doc) &&
         (! nav.EVA.lock || nav.EVA.value == mission.EVA) &&
         (! nav.LM.lock || nav.LM.value == mission.LM) &&
         (! nav.joint.lock || nav.joint.value == mission.Jt) &&
         (! nav.duration.lock || nav.duration.value == mission.Days ||
-          (mission.Dur && nav.duration.value >= mission.Days));
+          (mission.Dur && nav.duration.value >= mission.Days)));
 }
 
 

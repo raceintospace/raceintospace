@@ -10,7 +10,6 @@
 #include "Buzz_inc.h"
 #include "draw.h"
 #include "filesystem.h"
-#include "game_main.h"
 #include "gr.h"
 #include "pace.h"
 #include "sdlhelper.h"

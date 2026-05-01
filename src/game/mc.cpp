@@ -48,8 +48,6 @@
 #include "prest.h"
 #include "records.h"
 #include "state_utils.h"
-#include "sdlhelper.h"
-#include "randomize.h"
 
 LOG_DEFAULT_CATEGORY(mission)
 

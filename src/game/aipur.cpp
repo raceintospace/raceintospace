@@ -30,13 +30,11 @@
 #include "aipur.h"
 
 #include "display/graphics.h"
-#include "display/palettized_surface.h"
 
 #include "Buzz_inc.h"
 #include "data.h"
 #include "draw.h"
 #include "game_main.h"
-#include "gr.h"
 #include "hardef.h"
 #include "logging.h"
 #include "museum.h"
@@ -45,7 +43,6 @@
 #include "port.h"
 #include "rdplex.h"
 #include "records.h"
-#include "sdlhelper.h"
 #include "serialize.h"
 
 LOG_DEFAULT_CATEGORY(baris)

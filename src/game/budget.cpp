@@ -39,11 +39,9 @@
 #include "filesystem.h"
 #include "game_main.h"
 #include "gr.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "pace.h"
 #include "records.h"
-#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 

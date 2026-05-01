@@ -28,7 +28,6 @@
 #include "sdlhelper.h"
 
 #include <cassert>
-#include <memory>
 
 #include <SDL.h>
 #include "display/graphics.h"
@@ -37,7 +36,6 @@
 
 #include "Buzz_inc.h"
 #include "options.h"
-#include "utils.h"
 
 #define MAX_X   320
 #define MAX_Y   200

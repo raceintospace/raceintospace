@@ -25,7 +25,6 @@
 #include "astros.h"
 #include "Buzz_inc.h"
 #include "game_main.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "news.h"
 #include "news_sup.h"

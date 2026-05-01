@@ -21,14 +21,12 @@
 #include "place.h"
 
 #include <cassert>
-#include <stdexcept>
 #include <string>
 
 #include <boost/format.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/algorithm/string/join.hpp>
 
-#include "display/image.h"
 #include "display/graphics.h"
 #include "display/surface.h"
 #include "display/palettized_surface.h"
@@ -39,12 +37,8 @@
 #include "filesystem.h"
 #include "game_main.h"
 #include "gamedata.h"
-#include "gr.h"
-#include "ioexception.h"
 #include "logging.h"
-#include "mc.h"
 #include "mission_util.h"
-#include "museum.h"
 #include "pace.h"
 #include "pbm.h"
 #include "port.h"

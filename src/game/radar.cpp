@@ -38,12 +38,10 @@
 #include "filesystem.h"
 #include "gamedata.h"
 #include "game_main.h"
-#include "gr.h"
 #include "mission_util.h"
 #include "news_suq.h"
 #include "pace.h"
 #include "place.h"
-#include "sdlhelper.h"
 #include "start.h"
 #include "state_utils.h"
 

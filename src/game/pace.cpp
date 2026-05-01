@@ -3,13 +3,9 @@
 #include "pace.h"
 
 #include <cassert>
-#include <cctype>
 
-#include "display/graphics.h"
-#include "display/surface.h"
 
-#include "Buzz_inc.h"
-#include "game_main.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "gr.h"
 #include "mmfile.h"
 #include "sdlhelper.h"

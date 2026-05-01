@@ -33,7 +33,6 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "ast0.h"
 #include "Buzz_inc.h"
@@ -45,7 +44,6 @@
 #include "pace.h"
 #include "place.h"
 #include "replay.h"
-#include "sdlhelper.h"
 #include "start.h"
 
 namespace

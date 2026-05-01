@@ -9,13 +9,11 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "filesystem.h"
 #include "gr.h"
 #include "logging.h"
 #include "pace.h"
-#include "sdlhelper.h"
 
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
