@@ -42,7 +42,6 @@
 #include "pace.h"
 #include "place.h"
 #include "port.h"
-#include "sdlhelper.h"
 
 void DrawReview(char plr);
 void PresPict(char image);

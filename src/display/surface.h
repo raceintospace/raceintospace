@@ -1,10 +1,9 @@
 #ifndef DISPLAY_SURFACE_H
 #define DISPLAY_SURFACE_H
 
+#include "display/color.h"
 #include <SDL.h>
 #include <boost/shared_ptr.hpp>
-
-#include "palette.h"
 
 namespace display
 {

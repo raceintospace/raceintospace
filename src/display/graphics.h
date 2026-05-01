@@ -3,7 +3,6 @@
 
 #include <SDL.h>
 #include <string>
-#include <vector>
 
 #include "deprecated.h"
 #include "palette.h"

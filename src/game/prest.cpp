@@ -32,7 +32,6 @@
 #include "mis_c.h"
 #include "mis_m.h"
 #include "mission_util.h"
-#include "pace.h"
 #include "pbm.h"
 
 LOG_DEFAULT_CATEGORY(prestige)

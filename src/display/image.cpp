@@ -1,7 +1,6 @@
 #include "image.h"
 
 #include <cassert>
-#include <cerrno>
 #include <stdexcept>
 #include <string>
 
@@ -9,7 +8,6 @@
 #include <png.h>
 #include <zlib.h>
 
-#include "graphics.h"
 #include "surface.h"
 #include "palettized_surface.h"
 

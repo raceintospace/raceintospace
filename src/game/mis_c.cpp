@@ -35,7 +35,6 @@
 #include <boost/shared_ptr.hpp>
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "Buzz_inc.h"
 #include "bzanim.h"

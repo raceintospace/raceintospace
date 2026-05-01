@@ -38,11 +38,8 @@
 #include "gr.h"
 #include "pace.h"
 #include "place.h"
-#include "sdlhelper.h"
 
 #include <boost/format.hpp>
-#include <iostream>
-#include <sstream>
 
 uint8_t MCol[MAX_ROSTER];
 uint8_t sel[MAX_SELECTION];

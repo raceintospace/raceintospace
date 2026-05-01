@@ -32,20 +32,17 @@
 #include <vector>
 
 #include "display/graphics.h"
-#include "display/surface.h"
 
 #include "Buzz_inc.h"
 #include "data.h"
 #include "draw.h"
 #include "game_main.h"
-#include "gr.h"
 #include "hardware.h"
 #include "mc.h"
 #include "mis_c.h"
 #include "mission_util.h"
 #include "options.h"
 #include "pace.h"
-#include "sdlhelper.h"
 #include "utils.h"
 
 LOG_DEFAULT_CATEGORY(mission)

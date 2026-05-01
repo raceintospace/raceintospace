@@ -5,9 +5,8 @@
 #include "gr.h"
 
 #include "display/graphics.h"
-#include "display/surface.h"
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "sdlhelper.h"
 
 using std::swap;

@@ -38,7 +38,6 @@
 #include "gr.h"
 #include "mmfile.h"
 #include "pace.h"
-#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

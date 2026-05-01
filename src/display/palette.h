@@ -4,7 +4,6 @@
 #include "color.h"
 
 #include <cassert>
-#include <cstdio>
 
 #include <SDL.h>
 

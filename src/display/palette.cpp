@@ -1,7 +1,6 @@
 #include "palette.h"
 
 #include <cassert>
-#include <memory>
 
 #include "graphics.h"
 

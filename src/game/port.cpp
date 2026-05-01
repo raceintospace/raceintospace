@@ -35,7 +35,6 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "admin.h"
 #include "ast0.h"
@@ -47,10 +46,7 @@
 #include "draw.h"
 #include "filesystem.h"
 #include "game_main.h"
-#include "gr.h"
 #include "intel.h"
-#include "mc.h"
-#include "mission_util.h"
 #include "museum.h"
 #include "pace.h"
 #include "place.h"

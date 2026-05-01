@@ -37,10 +37,8 @@
 #include "Buzz_inc.h"
 #include "draw.h"
 #include "game_main.h"
-#include "gr.h"
 #include "pace.h"
 #include "place.h"
-#include "sdlhelper.h"
 #include "start.h"
 
 namespace

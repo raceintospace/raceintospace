@@ -31,22 +31,18 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "Buzz_inc.h"
 #include "downgrader.h"
 #include "draw.h"
 #include "filesystem.h"
 #include "game_main.h"
-#include "gr.h"
 #include "ioexception.h"
 #include "logging.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "pace.h"
 #include "place.h"
 #include "prest.h"
-#include "sdlhelper.h"
 #include "state_utils.h"
 
 // Function Prototype

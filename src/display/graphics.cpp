@@ -2,18 +2,13 @@
 
 #include <cassert>
 #include <string>
-#include <vector>
 #include <stdexcept>
-#include <memory>
 
 #include <SDL.h>
 
-#include "surface.h"
 #include "legacy_surface.h"
 #include "../game/options.h" // for setting the scaling
 
-// FIXME: let's try to avoid this
-#include "../game/sdlhelper.h"
 
 namespace display
 {

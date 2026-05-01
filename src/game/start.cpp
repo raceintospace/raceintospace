@@ -35,7 +35,7 @@
 #include <vector>
 
 #include "astros.h"
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "game_main.h"
 #include "options.h"
 #include "pace.h"

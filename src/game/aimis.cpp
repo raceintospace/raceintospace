@@ -36,7 +36,6 @@
 #include "hardware.h"
 #include "ioexception.h"
 #include "logging.h"
-#include "mc.h"
 #include "mission_util.h"
 #include "state_utils.h"
 #include "vab.h"

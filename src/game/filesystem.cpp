@@ -8,7 +8,6 @@
 
 #include "display/image.h"
 
-#include "raceintospace_config.h"
 
 using boost::format;
 

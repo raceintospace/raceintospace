@@ -26,7 +26,6 @@
 #include "draw.h"
 #include "endianness.h"
 #include "game_main.h"
-#include "gr.h"
 #include "hardef.h"
 #include "logging.h"
 #include "mission_util.h"
@@ -35,7 +34,6 @@
 #include "place.h"
 #include "port.h"
 #include "replay.h"
-#include "sdlhelper.h"
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 

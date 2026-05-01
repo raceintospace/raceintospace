@@ -4,7 +4,6 @@
 #include <cctype>
 #include <cerrno>
 #include <cstring>
-#include <memory>
 
 #include "logging.h"
 #include "raceintospace_config.h"

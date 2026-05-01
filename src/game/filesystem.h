@@ -5,8 +5,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-#include "display/image.h"
-
+#include "display/palettized_surface.h"
 #include "file.h"
 
 class Filesystem

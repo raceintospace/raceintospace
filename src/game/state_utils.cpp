@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <cstdio>
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "crew.h"
 #include "game_main.h"
 #include "mission_util.h"

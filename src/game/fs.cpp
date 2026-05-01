@@ -30,9 +30,8 @@
 #include <sys/stat.h>
 #include <physfs.h>
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "options.h"
-#include "pace.h"
 #include "raceintospace_config.h"
 #include "utils.h"
 

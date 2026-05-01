@@ -23,7 +23,7 @@
 #include <fstream>
 #include <json/json.h>
 
-#include "Buzz_inc.h"
+#include "Buzz_inc.h" // IWYU pragma: keep
 #include "ioexception.h"
 #include "logging.h"
 #include "mission_util.h"

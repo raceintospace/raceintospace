@@ -3,7 +3,6 @@
 
 #include <json/json.h>
 
-#include <string>
 #include <list>
 
 #include "roster_entry.h"

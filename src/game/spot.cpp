@@ -34,7 +34,6 @@
 
 #include "display/graphics.h"
 
-#include "data.h"
 #include "endianness.h"
 #include "fs.h"
 #include "gamedata.h"

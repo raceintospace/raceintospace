@@ -32,7 +32,6 @@
 
 #include "display/graphics.h"
 #include "display/surface.h"
-#include "display/image.h"
 
 #include "admin.h"
 #include "ast_mod.h"
