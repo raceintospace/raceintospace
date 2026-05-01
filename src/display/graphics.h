@@ -56,7 +56,8 @@ public:
         return _screen;
     }
 
-    DEPRECATED(LegacySurface *legacyScreen());
+    // TODO: Remove all uses of legacyScreen
+    LegacySurface *legacyScreen();
 
     SDL_Rect &videoRect()
     {
