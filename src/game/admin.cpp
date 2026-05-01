@@ -308,7 +308,7 @@ bool ReadGameSaveInfo(const std::string& fname, SFInfo& saveInfo)
     SaveFileHdr header;
     FILE* fin = sOpen(fname.c_str(), "rb", FT_SAVE);
 
-    if (fin == NULL) {
+    if (fin == nullptr) {
         LOG_NOTICE("Unable to open save file %s, skipping",
                 fname.c_str());
         return false;
@@ -1049,7 +1049,7 @@ void FileText(const char* name)
     display::graphics.setForegroundColor(1);
     FILE* fin = sOpen(name, "rb", FT_SAVE);
 
-    if (fin == NULL) {
+    if (fin == nullptr) {
         display::graphics.setForegroundColor(11);
         draw_string(70, 147, "NO HISTORY RECORDED");
         return;

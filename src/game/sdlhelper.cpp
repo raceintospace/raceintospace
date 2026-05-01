@@ -180,7 +180,7 @@ play(struct audio_chunk *new_chunk, int channel)
         }
     }
 
-    new_chunk->next = NULL;
+    new_chunk->next = nullptr;
     *chp->chunk_tailp = new_chunk;
     SDL_UnlockAudio();
 }
@@ -199,7 +199,7 @@ av_silence(int channel)
 
         if (Channels[channel].chunk) {
             SDL_LockAudio();
-            Channels[channel].chunk = NULL;
+            Channels[channel].chunk = nullptr;
             Channels[channel].chunk_tailp = &Channels[channel].chunk;
             Channels[channel].offset = 0;
             SDL_UnlockAudio();
@@ -242,8 +242,8 @@ av_setup(void)
     if (!icon_path.empty()) {
         SDL_Surface *icon = SDL_LoadBMP(icon_path.c_str());
 
-        if (icon != NULL) {
-            SDL_WM_SetIcon(icon, NULL);
+        if (icon != nullptr) {
+            SDL_WM_SetIcon(icon, nullptr);
         } else {
             INFO2("setting icon failed: %s\n", SDL_GetError());
         }
@@ -274,13 +274,13 @@ av_setup(void)
         for (i = 0; i < AV_NUM_CHANNELS; ++i) {
             Channels[i].volume = AV_MAX_VOLUME;
             Channels[i].mute = 0;
-            Channels[i].chunk = NULL;
+            Channels[i].chunk = nullptr;
             Channels[i].chunk_tailp = &Channels[i].chunk;
             Channels[i].offset = 0;
         }
 
         /* we don't care what we got, library will convert for us */
-        if (SDL_OpenAudio(&audio_desired, NULL) < 0) {
+        if (SDL_OpenAudio(&audio_desired, nullptr) < 0) {
             ERROR2("SDL_OpenAudio error: %s", SDL_GetError());
             NOTICE1("disabling audio");
             have_audio = 0;
@@ -289,7 +289,7 @@ av_setup(void)
         }
     }
 
-    SDL_AddTimer(30, sdl_timer_callback, NULL);
+    SDL_AddTimer(30, sdl_timer_callback, nullptr);
 }
 
 static void
@@ -511,7 +511,7 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
 
     if (!dst) {
-        return NULL;
+        return nullptr;
     }
 
     bpp = pf->BytesPerPixel;
@@ -521,7 +521,7 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
         || bpp != dst->format->BytesPerPixel) {
         SDL_SetError("dst surface size or bpp mismatch (%d vs %d)",
                      bpp, dst->format->BytesPerPixel);
-        return NULL;
+        return nullptr;
     }
 
     if (bpp == 1) {
@@ -618,14 +618,14 @@ SDL_Scale4x(SDL_Surface *src, SDL_Surface *dst)
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
 
     if (!dst) {
-        return NULL;
+        return nullptr;
     }
 
     bpp = pf->BytesPerPixel;
 
     if (4 * src->h != dst->h || 4 * src->w != dst->w || bpp != dst->format->BytesPerPixel) {
         SDL_SetError("dst surface size or bpp mismatch (%d vs %d)", bpp, dst->format->BytesPerPixel);
-        return NULL;
+        return nullptr;
     }
 
     if (bpp == 1) {
@@ -860,7 +860,7 @@ av_sync(void)
     
     transform_palette();
     SDL_SetColors(display::graphics.scaledScreenSurface(), pal_colors, 0, 256);
-    SDL_BlitSurface(display::graphics.scaledScreenSurface(), NULL, display::graphics.displaySurface(), NULL);
+    SDL_BlitSurface(display::graphics.scaledScreenSurface(), nullptr, display::graphics.displaySurface(), nullptr);
 
     if (display::graphics.videoRect().h && display::graphics.videoRect().w) {
         r.h = display::graphics.SCALE * display::graphics.videoRect().h;

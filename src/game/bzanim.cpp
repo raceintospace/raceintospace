@@ -60,11 +60,11 @@ void SeekAnimation(FILE *fin, const char *name);
 BZAnimation::Ptr BZAnimation::load(
     const char *file, const char *id, int x, int y)
 {
-    if (file == NULL) {
+    if (file == nullptr) {
         throw std::invalid_argument("Parameter file may not be null.");
     }
 
-    if (id == NULL) {
+    if (id == nullptr) {
         throw std::invalid_argument("Parameter id may not be null.");
     }
 
@@ -117,7 +117,7 @@ BZAnimation::BZAnimation(struct AnimType header,
                          std::vector<uint8_t *> frames,
                          int x,
                          int y)
-    : mDisplay(NULL), mHeader(header), mFrameData(frames)
+    : mDisplay(nullptr), mHeader(header), mFrameData(frames)
 {
     if (x < 0 || x >= display::Graphics::WIDTH) {
         WARNING2("Animation param x=%d out of range.", x);

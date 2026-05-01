@@ -1321,7 +1321,7 @@ int FailEval(char plr, const XFails& fail, MisEval& step, bool noDock)
  * This is used to find the LM for steps that affect the LM but do
  * not test the LM directly, such as Photo Recon tests.
  *
- * \return the LM, or NULL if there is none for the mission.
+ * \return the LM, or nullptr if there is none for the mission.
  */
 Equipment* FindLunarModule()
 {

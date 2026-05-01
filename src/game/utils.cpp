@@ -31,7 +31,7 @@ double get_time()
 #else
     struct timeval tv;
 
-    gettimeofday(&tv, NULL);
+    gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec / 1e6;
 #endif
 }

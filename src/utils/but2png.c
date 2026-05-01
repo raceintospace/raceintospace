@@ -206,7 +206,7 @@ int write_image()
         return 4;
     }
 
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
     if (!png_ptr) {
         return 5;
@@ -262,7 +262,7 @@ int write_image()
     }
 
     if (maximum_transparent_color >= 0) {
-        png_set_tRNS(png_ptr, info_ptr, alpha_values, maximum_transparent_color + 1, NULL);
+        png_set_tRNS(png_ptr, info_ptr, alpha_values, maximum_transparent_color + 1, nullptr);
     }
 
     // copy the offset, if any
@@ -276,7 +276,7 @@ int write_image()
 
     png_set_rows(png_ptr, info_ptr, rows);
 
-    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
 
     return 0;
 }

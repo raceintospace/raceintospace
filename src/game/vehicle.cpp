@@ -34,7 +34,7 @@
  * \param hasBoosters
  */
 Vehicle::Vehicle(int player, int rocketIndex, bool hasBoosters)
-    : mPrimary(NULL), mSecondary(NULL)
+    : mPrimary(nullptr), mSecondary(nullptr)
 {
     if (player < 0 || player >= NUM_PLAYERS) {
         std::stringstream err;
@@ -167,7 +167,7 @@ std::list<Equipment *> Vehicle::needed()
         parts.push_back(mPrimary);
     }
 
-    if (mSecondary != NULL && mSecondary->Num <= mSecondary->Spok) {
+    if (mSecondary != nullptr && mSecondary->Num <= mSecondary->Spok) {
         parts.push_back(mSecondary);
     }
 

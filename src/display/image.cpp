@@ -64,14 +64,14 @@ void throw_exception_on_png_error(png_structp png_ptr, png_const_charp error_msg
 
 PNGReader::PNGReader(const void *b, size_t l) : buffer((const char *)b), length(l), cursor(0)
 {
-    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, throw_exception_on_png_error, NULL);
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, throw_exception_on_png_error, nullptr);
     info_ptr = png_create_info_struct(png_ptr);
     png_set_read_fn(png_ptr, this, read_png_from_memory);
 }
 
 PNGReader::~PNGReader()
 {
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
 }
 
 PalettizedSurface *PNGReader::readIntoPalettizedSurface()
@@ -85,7 +85,7 @@ PalettizedSurface *PNGReader::readIntoPalettizedSurface()
     // read the alpha values into a local
     uint8_t *trans;
     int num_trans;
-    png_color_16p trans_values = NULL;
+    png_color_16p trans_values = nullptr;
 
     if (png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, &trans_values) == 0) {
         // no transparency
@@ -136,7 +136,7 @@ PalettizedSurface *readPalettizedPNG(const void *buffer, size_t length)
 {
     PNGReader r(buffer, length);
 
-    png_read_png(r.png_ptr, r.info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, NULL);
+    png_read_png(r.png_ptr, r.info_ptr, PNG_TRANSFORM_PACKING | PNG_TRANSFORM_STRIP_16, nullptr);
 
     switch (png_get_color_type(r.png_ptr, r.info_ptr)) {
     case PNG_COLOR_TYPE_PALETTE: {

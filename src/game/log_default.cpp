@@ -53,7 +53,7 @@ static struct DefaultLogAppender {
     struct LogAppender appender;
     FILE *file;
     int printLoc;
-} defaultLogAppender = { { doAppend }, NULL, 1 } ;
+} defaultLogAppender = { { doAppend }, nullptr, 1 } ;
 
 struct LogAppender *log_defaultLogAppender  = &defaultLogAppender.appender;
 
@@ -61,11 +61,11 @@ static void doAppend(struct LogAppender *this0, struct LogEvent *ev)
 {
 
     // TODO: define a format field in struct for timestamp, etc.
-    const char *pn = NULL;
+    const char *pn = nullptr;
     char buf[30];
     struct DefaultLogAppender *appender = (struct DefaultLogAppender *)this0;
 
-    if (appender->file == NULL) {
+    if (appender->file == nullptr) {
         appender->file = stderr;
     }
 

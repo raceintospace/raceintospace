@@ -514,7 +514,7 @@ void DrawAstSel(char plr)
  *
  * \param x       the x coord of the top-left corner of the profile space.
  * \param y       the y coord of the top-left corner of the profile space.
- * \param recruit  the astronaut/cosmonaut or NULL for an empty profile.
+ * \param recruit  the astronaut/cosmonaut or nullptr for an empty profile.
  * \param display  flags indicating which recruit skills to reveal.
  */
 void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
@@ -779,7 +779,7 @@ void AstSel(char plr)
     DispEight(now, BarB);
     DrawRecruitProfile(173, 47, &Men[now], showStats);
     DispEight2(now2, BarA, count);
-    DrawRecruitProfile(12, 47, NULL, showStats);
+    DrawRecruitProfile(12, 47, nullptr, showStats);
 
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
@@ -1209,7 +1209,7 @@ void AstSel(char plr)
 
             DispEight2(now2, BarA, count);
             DrawRecruitProfile(
-                12, 47, (count > 0) ? &Men[sel[now2]] : NULL, showStats);
+                12, 47, (count > 0) ? &Men[sel[now2]] : nullptr, showStats);
             DispEight(now, BarB);
             DrawRecruitProfile(173, 47, &Men[now], showStats);
 

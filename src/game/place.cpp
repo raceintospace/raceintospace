@@ -453,7 +453,7 @@ int Help(const char *FName)
     int fsize;
 
     mode = 0; /* XXX check uninitialized */
-    NTxt = NULL; /* XXX check uninitialized */
+    NTxt = nullptr; /* XXX check uninitialized */
 
     if (!FName || strncmp(&FName[1], "000", 3) == 0) {
         return 0;
@@ -494,12 +494,12 @@ int Help(const char *FName)
             i += 6;
         } else if (Help[i] == 0x2e) {  // Period
             i++;
-            assert(NTxt != NULL);
+            assert(NTxt != nullptr);
             NTxt[j++] = (char) 0xcc;
             NTxt[j++] = (Help[i] - 0x30) * 100 + (Help[i + 1] - 0x30) * 10 + (Help[i + 2] - 0x30);
             i += 5;
         } else {   // Text of Line
-            assert(NTxt != NULL);
+            assert(NTxt != nullptr);
 
             while (Help[i] != 0x0d) {
                 NTxt[j++] = Help[i++];

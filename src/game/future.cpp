@@ -1339,7 +1339,7 @@ void Future(char plr)
     }                              // Launch pad selection loop
 
     delete vh;
-    vh = NULL;
+    vh = nullptr;
     LOG_TRACE("<-Future()");
 }
 

@@ -17,7 +17,7 @@ Surface::Surface(SDL_Surface *surface) :
 Surface::~Surface()
 {
     SDL_FreeSurface(_screen);
-    _screen = NULL;
+    _screen = nullptr;
 }
 
 SDL_Surface *Surface::surface() const

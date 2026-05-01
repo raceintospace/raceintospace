@@ -759,7 +759,7 @@ void PortRestore(unsigned int Count)
     }
 
     free(pPortOutlineRestore);
-    pPortOutlineRestore = NULL;
+    pPortOutlineRestore = nullptr;
 }
 
 

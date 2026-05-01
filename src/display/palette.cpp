@@ -49,9 +49,9 @@ const Color Palette::get(uint8_t index) const
 SDLPaletteWrapper::SDLPaletteWrapper(SDL_Surface *sdl_surface)
     : _sdl_surface(sdl_surface)
 {
-    assert(sdl_surface != NULL);
-    assert(sdl_surface->format != NULL);
-    assert(sdl_surface->format->palette != NULL);
+    assert(sdl_surface != nullptr);
+    assert(sdl_surface->format != nullptr);
+    assert(sdl_surface->format->palette != nullptr);
 }
 
 SDLPaletteWrapper::~SDLPaletteWrapper()

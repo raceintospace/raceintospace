@@ -99,7 +99,7 @@ void SaveAudioSettings(const AudioConfig &settings)
     if (configFileName.empty()) {
         FILE *file = sOpen("settings.json", "wb", FT_SAVE);
 
-        if (file == NULL) {
+        if (file == nullptr) {
             throw IOException("Unable to create config file "
                               "settings.json");
         }

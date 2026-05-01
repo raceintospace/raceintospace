@@ -1161,7 +1161,7 @@ void ShowAstrosHist(char plr)
             OutBox(245, 5, 314, 17);
 
             delete vhptr2;
-            vhptr2 = NULL;
+            vhptr2 = nullptr;
             key = 0;
 
             return;

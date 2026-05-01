@@ -14,7 +14,7 @@ using boost::format;
 #define throw_error do { \
     PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
     const char *error = PHYSFS_getErrorByCode(code); \
-    if (error == NULL) \
+    if (error == nullptr) \
         error = "unknown filesystem error"; \
     throw std::runtime_error(error); \
     } while (0)
@@ -23,7 +23,7 @@ using boost::format;
 #define throw_error_with_detail(detail) do { \
     PHYSFS_ErrorCode code = PHYSFS_getLastErrorCode(); \
     const char *error = PHYSFS_getErrorByCode(code); \
-    if (error == NULL) \
+    if (error == nullptr) \
         error = "unknown filesystem error"; \
     std::string msg = (format("%1%: %2%") % error % detail).str(); \
     throw std::runtime_error(msg); \
@@ -61,21 +61,21 @@ void Filesystem::init(const char *argv0)
         if (basedir.substr(basedir.length() - 5, 5) == ".app/") {
             // smells like a Mac OS X application bundle
             std::string resource_path = basedir + "Contents/Resources";
-            PHYSFS_mount(resource_path.c_str(), NULL, 0);
+            PHYSFS_mount(resource_path.c_str(), nullptr, 0);
         } else {
             // er, uh... search in the base directory?
-            PHYSFS_mount(basedir.c_str(), NULL, 0);
+            PHYSFS_mount(basedir.c_str(), nullptr, 0);
         }
 
         // get a platform-specific sensible directory for the app
         const char *prefdir = PHYSFS_getPrefDir("raceintospace.org", "Race Into Space");
 
-        if (prefdir == NULL) {
+        if (prefdir == nullptr) {
             throw_error_with_detail(prefdir);
         }
 
         // use this for reading, *before* the expected game data directory, thereby allowing overlays
-        success = PHYSFS_mount(prefdir, NULL, 0);
+        success = PHYSFS_mount(prefdir, nullptr, 0);
 
         if (!success) {
             throw_error_with_detail(prefdir);
@@ -96,7 +96,7 @@ void Filesystem::addPath(const char *s)
         throw_error;
     }
 
-    int success = PHYSFS_mount(s, NULL, 0);
+    int success = PHYSFS_mount(s, nullptr, 0);
 
     if (!success) {
         throw_error_with_detail(s);

@@ -933,7 +933,7 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
 
     FILE *file = sOpen("user.json", "w", FT_SAVE);
 
-    if (file == NULL) {
+    if (file == nullptr) {
         throw IOException("Unable to open file user.json for writing");
     } else {
         CINFO2(filesys, "Exporting custom rosters to user.json...");

@@ -449,7 +449,7 @@ int WriteImage(const char *filename, int width, int height, Color pal[256],
     }
 
     png_ptr = png_create_write_struct(
-        PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
     if (!png_ptr) {
         return 5;
@@ -500,7 +500,7 @@ int WriteImage(const char *filename, int width, int height, Color pal[256],
 
     png_set_rows(png_ptr, info_ptr, rows);
 
-    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
 
     return 0;
 }
