@@ -67,9 +67,6 @@ void CheckAdv(char plr);
  */
 void DrawStatistics(char Win)
 {
-    char AImg[7] = {8, 9, 10, 11, 13, 14, 0}; // TODO: switch from current pixel-data-in-json to actual images
-                                              // images are already in images/portbut and are already used by BChoice()
-                                              // json simply has images with indexes listed here, but in a row
     int starty, qty;
     helpText = "i145";
     keyHelpText = "k045";
@@ -1159,7 +1156,7 @@ int GenPur(char plr, int hardware_index, int unit_index)
 
     if (hardware_index == ROCKET_HARDWARE) {
         Equipment* e = &pData->Rocket[unit_index];  // Hardware we're modifying
-        int n1, n2, n3, n4, n5, n6, n7;  // scratch variables for base safety value init
+        int n1, n2, n3, n4, n5;  // scratch variables for base safety value init
 
         // Safety levels of existing programs
         n1 = pData->Rocket[ROCKET_HW_ONE_STAGE].Safety;

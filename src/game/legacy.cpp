@@ -193,7 +193,7 @@ void LegacyLoad(SaveFileHdr header, FILE *fin, size_t fileLength)
 {
     LEGACY_REPLAY *load_buffer = nullptr;
     uint16_t dataSize, compSize;
-    int i, j;
+    int i;
     const int legacySize = 38866;
     struct LegacyPlayers *legacyData;
 

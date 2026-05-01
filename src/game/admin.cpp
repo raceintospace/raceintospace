@@ -1908,7 +1908,6 @@ void write_save_file(const char* Name, SaveFileHdr header)
 int SaveGame(const std::vector<SFInfo> savegames)
 {
     int done = 0, temp;
-    FILE* fin;
     std::string title;
 
     SaveFileHdr header{};
