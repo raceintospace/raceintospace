@@ -41,12 +41,12 @@ private:
         int life;
     };
 
-    const unsigned int mParticles;
-    const int mPlayer;
-    int mBombAge;
     int mMaxBombLife;
     int mMaxInitSpeed;
     int mMinInitSpeed;
+    const unsigned int mParticles;
+    int mBombAge;
+    const int mPlayer;
     Burst *mBomb;
     display::LegacySurface *mBackground;
 
