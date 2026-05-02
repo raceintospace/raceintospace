@@ -47,7 +47,7 @@ else()
 endif ()
 
 if (GIT)
-  execute_process(COMMAND ${GIT} describe
+  execute_process(COMMAND ${GIT} describe --tags
 		  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		  OUTPUT_VARIABLE raceintospace_BUILD OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
