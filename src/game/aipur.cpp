@@ -747,9 +747,12 @@ void TransAstro(char plr, int inx)
                 found = 0;
 
                 while (w < pData->AstroCount && found == 0) {
-                    if (pData->Pool[w].Status != AST_ST_ACTIVE) continue;
-                    if (pData->Pool[w].Assign != 0) continue;
-                    if (pData->Pool[w].Prime >= 1) continue;
+                    if (pData->Pool[w].Status != AST_ST_ACTIVE ||
+                        pData->Pool[w].Assign != 0 ||
+                        pData->Pool[w].Prime >= 1) {
+                            w++;
+                            continue;
+                        }
                     
                     // based on [j] an program and position pick best skill
                     switch (inx) {
