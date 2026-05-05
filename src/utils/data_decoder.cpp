@@ -1,12 +1,14 @@
 #include <stdint.h>
 
 #include <cassert>
-#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
+
+#include "../game/data.h"
 
 void print_escaped_string(const char *string, int max_length)
 {
@@ -448,8 +450,6 @@ void write_budget_mods(FILE *fp)
         printf("};\n\n");
     }
 }
-
-#include "../game/data.h"
 
 void write_player_data(FILE *fp)
 {

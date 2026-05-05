@@ -1,8 +1,8 @@
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 #include <inttypes.h>
 #include "../game/gamedata.h"
 
@@ -390,8 +390,8 @@ static uint8_t overlay[ovl_w *ovl_h][3] = {
 int
 RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 {
-    signed char *src = src_raw;
-    signed char *dest = dest_raw;
+    signed char *src = (signed char *)src_raw;
+    signed char *dest = (signed char *)dest_raw;
     unsigned short used;
     short count, val;
     short i;
@@ -433,7 +433,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
         }
     }
 
-    return ((void *) dest - dest_raw);
+    return ((char *) dest - (char *)dest_raw);
 }
 
 void
@@ -475,7 +475,7 @@ struct news *
 news_open(char *fname) {
     int i = 0;
     SimpleHdrW headers[12];
-    struct news *n = malloc(sizeof *n);
+    struct news *n = (struct news *)malloc(sizeof *n);
 
     if (!n) {
         pexit("malloc");
@@ -522,7 +522,7 @@ news_next_animation(struct news *n, int *x, int *y, int *w, int *h)
     }
 
     nframes = n->animations[idx].frames;
-    n->frames = realloc(n->frames, nframes * sizeof(*n->frames));
+    n->frames = (SimpleHdr *)realloc(n->frames, nframes * sizeof(*n->frames));
 
     if (!n->frames) {
         pexit("realloc");
@@ -612,8 +612,8 @@ news_close(struct news *n)
     assert(n);
 }
 
-char *dirname = ".";
-char *basename = "";
+char *output_dir = ".";
+char *output_basename = "";
 
 void
 write_image(char *data, int width, int height, unsigned char *palette,
@@ -627,7 +627,7 @@ write_image(char *data, int width, int height, unsigned char *palette,
     struct type {
         int is_usa;
         int is_bw;
-        char *shot;
+        const char *shot;
     } sequence[] = {
         { 1, 1, "opening"},
         { 1, 0, "opening"},
@@ -645,8 +645,8 @@ write_image(char *data, int width, int height, unsigned char *palette,
 
     /* who the hell designed these indices?? */
     snprintf(fname, sizeof(fname), "%s/%s%s%s_%s_%s_%02d.ppm",
-             dirname, basename,
-             (basename[0] ? "_" : ""),
+             output_dir, output_basename,
+             (output_basename[0] ? "_" : ""),
              (sequence[anim_no].is_usa ? "usa" : "sov"),
              (sequence[anim_no].is_bw  ? "bw"  : "col"),
              sequence[anim_no].shot, frame_no);
@@ -702,11 +702,11 @@ main(int argc, char **argv)
     while ((c = getopt(argc, argv, "hod:b:")) != EOF) {
         switch (c) {
         case 'd':
-            dirname = optarg;
+            output_dir = optarg;
             break;
 
         case 'b':
-            basename = optarg;
+            output_basename = optarg;
             break;
 
         case 'o':

@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include <png.h>
+#include <string.h>
 #include <zlib.h>
 
 
