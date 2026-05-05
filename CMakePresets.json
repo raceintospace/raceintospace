@@ -152,6 +152,11 @@
             "configurePreset": "linux-release"
         },
         {
+            "name": "linux-debug",
+            "displayName": "Linux debug build",
+            "configurePreset": "linux-debug"
+        },
+        {
             "name": "linux-vcpkg",
             "displayName": "Linux vcpkg build",
             "configurePreset": "linux-vcpkg"
