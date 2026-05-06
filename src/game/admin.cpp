@@ -540,7 +540,6 @@ void FileAccess(char mode)
                 now = 0;
                 BarB = 0;
                 DrawFiles(now, BarB, savegames);
-                FileText(&savegames[now].Name[0]);
 
                 if (savegames.size() == 0) {
                     InBox(207, 48, 280, 60);
@@ -552,7 +551,9 @@ void FileAccess(char mode)
                     display::graphics.setForegroundColor(1);
                     draw_string_highlighted(226, 98, "DELETE", 0);
                 }
-
+                else {
+                    FileText(&savegames[now].Name[0]);
+                }
             }
 
             key = 0;
