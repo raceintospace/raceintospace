@@ -434,7 +434,7 @@ void FileAccess(char mode)
         }
     }
 
-    if (savegames.size() > 0) {
+    if (!savegames.empty()) {
         enable |= ENABLE_DELETE;
 
         if (sc == 0 || sc == 2) {
@@ -523,7 +523,7 @@ void FileAccess(char mode)
             if (QUIT) {
                 return;
             }
-        } else if (savegames.size() > 0 && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
+        } else if (!savegames.empty() && ((x >= 209 && y >= 92 && x <= 278 && y <= 100 && mousebuttons > 0)
                                             || (key == 'D'))) {
             InBox(209, 92, 278, 100);
             delay(250);
@@ -540,9 +540,8 @@ void FileAccess(char mode)
                 now = 0;
                 BarB = 0;
                 DrawFiles(now, BarB, savegames);
-                FileText(&savegames[now].Name[0]);
 
-                if (savegames.size() == 0) {
+                if (savegames.empty()) {
                     InBox(207, 48, 280, 60);
                     fill_rectangle(208, 49, 279, 59, 3);
                     display::graphics.setForegroundColor(1);
@@ -552,7 +551,9 @@ void FileAccess(char mode)
                     display::graphics.setForegroundColor(1);
                     draw_string_highlighted(226, 98, "DELETE", 0);
                 }
-
+                else {
+                    FileText(&savegames[now].Name[0]);
+                }
             }
 
             key = 0;
@@ -794,7 +795,7 @@ void DrawFiles(char now, char loc, const std::vector<SFInfo>& savegames)
 
     fill_rectangle(38, 49, 190, 127, 0);
 
-    if (savegames.size() > 0) {
+    if (!savegames.empty()) {
         ShBox(39, 52 + loc * 8, 189, 60 + loc * 8);
     }
 
