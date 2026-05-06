@@ -495,7 +495,7 @@ void Limbo(char plr)
                 key = 0;
                 OutBox(167, 95 + 21 * i, 236, 109 + 21 * i);
 
-                if (AstroList.size() > 0) {
+                if (!AstroList.empty()) {
                     Data->P[plr].Pool[AstroList.at(now2)].Assign = i + 1;
                     Data->P[plr].Pool[AstroList.at(now2)].Unassigned = 0;
                     Data->P[plr].Pool[AstroList.at(now2)].Moved = 0;
@@ -515,7 +515,7 @@ void Limbo(char plr)
 
                 DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
-                if (AstroList.size() > 0) {
+                if (!AstroList.empty()) {
                     LimboText(plr, AstroList.at(now2));
                 } else {
                     fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
@@ -552,7 +552,7 @@ void Limbo(char plr)
 
                 DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
-                if (AstroList.size() > 0) {
+                if (!AstroList.empty()) {
                     LimboText(plr, AstroList.at(now2));
                 }
 
@@ -560,7 +560,7 @@ void Limbo(char plr)
             }
 
             // Training Transfer
-            if ((tag == OP_TRANSFER && AstroList.size() > 0) 
+            if ((tag == OP_TRANSFER && !AstroList.empty()) 
                 &&((mousebuttons > 0 
                      && x >= 244 && y >= (95 + 21 * i) 
                      && x <= 313 && y <= (109 + 21 * i)) 
@@ -628,7 +628,7 @@ void Limbo(char plr)
 
                     DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
-                    if (AstroList.size() > 0) {
+                    if (!AstroList.empty()) {
                         LimboText(plr, AstroList.at(now2));
                     } else {
                         // Clear portrait display area
@@ -667,7 +667,7 @@ void Limbo(char plr)
 
                 DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
-                if (AstroList.size() > 0) {
+                if (!AstroList.empty()) {
                     LimboText(plr, AstroList.at(now2));
                 }
 
@@ -712,7 +712,7 @@ void Limbo(char plr)
                 now2 = BarA = 0;
                 DispLeft(plr, BarA, AstroList.size(), now2, AstroList.data());
 
-                if (AstroList.size() > 0) {
+                if (!AstroList.empty()) {
                     LimboText(plr, AstroList.at(now2));
                 } else {
                     fill_rectangle(10, 52, 89, 101, 7 + plr * 3);
