@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* known strategies:
     utils/but2png ../gamedata/prefs.but "320x240 RLE"
@@ -113,7 +114,7 @@ void PortPal(int player)
 int
 RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
 {
-    signed char *src = src_raw;
+    signed char *src = (signed char *)src_raw;
     signed char *dest;
     unsigned int used;
     int count, val;
@@ -148,7 +149,7 @@ RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
         return (w * h);
     }
 
-    dest = dest_raw;
+    dest = (signed char *)dest_raw;
 
     for (row = 0; row < h; row++) {
         memcpy(dest, &buf[row * (w + 1)], w);
@@ -161,8 +162,8 @@ RLED_img(void *src_raw, void *dest_raw, unsigned int src_size, int w, int h)
 int
 PCX_D(void *src_raw, void *dest_raw, unsigned src_size)
 {
-    char *src = src_raw;
-    char *dest = dest_raw;
+    char *src = (char *)src_raw;
+    char *dest = (char *)dest_raw;
     char num;
     char *orig_dest = dest;
 

@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
 #include <string.h>
 
@@ -8,8 +8,8 @@ int vflag;
 int
 RLED(void *src_raw, void *dest_raw, unsigned int src_size)
 {
-    signed char *src = src_raw;
-    signed char *dest = dest_raw;
+    signed char *src = (signed char *)src_raw;
+    signed char *dest = (signed char *)dest_raw;
     unsigned short used;
     short count, val;
     short i;
@@ -51,7 +51,7 @@ RLED(void *src_raw, void *dest_raw, unsigned int src_size)
         }
     }
 
-    return ((void *) dest - dest_raw);
+    return ((char *) dest - (char *)dest_raw);
 }
 
 void
@@ -80,7 +80,7 @@ frm_open(char *filename) {
         return (nullptr);
     }
 
-    if ((frm = calloc(1, sizeof *frm)) == nullptr) {
+    if ((frm = (struct frm *)calloc(1, sizeof *frm)) == nullptr) {
         fprintf(stderr, "out of memory\n");
         exit(EXIT_FAILURE);
     }

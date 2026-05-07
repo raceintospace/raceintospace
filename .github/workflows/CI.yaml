@@ -30,6 +30,9 @@ jobs:
           - os: ubuntu
             preset: linux-release
             buildDir: build/release
+          - os: ubuntu
+            preset: linux-debug-utils
+            buildDir: build/debug
           - os: macos
             preset: macos-vcpkg
             buildDir: build/debug

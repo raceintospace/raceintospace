@@ -253,3 +253,17 @@ DECL_PUT_END
 DECL_FREAD(, SimpleHdr, 32)
 /* DECL_FWRITE(, SimpleHdr, 32) */
 
+/* SimpleHdrW */
+
+DECL_GET_START(, SimpleHdrW)
+    DECL_GET_FIELD_SCALAR(uint32_t, size, 1)
+    DECL_GET_FIELD_SCALAR(uint32_t, offset, 1)
+DECL_GET_END
+
+DECL_PUT_START(, SimpleHdrW)
+    DECL_PUT_FIELD_SCALAR(uint32_t, size, 1)
+    DECL_PUT_FIELD_SCALAR(uint32_t, offset, 1)
+DECL_PUT_END
+
+DECL_FREAD(, SimpleHdrW, 32)
+/* DECL_FWRITE(, SimpleHdrW, 32) */

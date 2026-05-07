@@ -68,6 +68,15 @@
             ]
         },
         {
+            "name": "windows-debug-utils",
+            "displayName": "Windows debug build with utils",
+            "inherits": [
+                "debug",
+                "vcpkg",
+                "windows"
+            ]
+        },
+        {
             "name": "linux",
             "displayName": "Linux build vcpkg & ninja settings",
             "condition": {
@@ -87,6 +96,14 @@
         {
             "name": "linux-debug",
             "displayName": "Linux debug build",
+            "inherits": [
+                "debug",
+                "linux"
+            ]
+        },
+        {
+            "name": "linux-debug-utils",
+            "displayName": "Linux debug build with utils",
             "inherits": [
                 "debug",
                 "linux"
@@ -147,6 +164,14 @@
             "configurePreset": "windows-debug"
         },
         {
+            "name": "windows-debug-utils",
+            "displayName": "Windows debug build with utils",
+            "configurePreset": "windows-debug-utils",
+            "targets": [
+                "all", "but2png", "data_decoder", "mkmovie", "mknews", "news2png"
+            ]
+        },
+        {
             "name": "linux-release",
             "displayName": "Linux release build",
             "configurePreset": "linux-release"
@@ -155,6 +180,14 @@
             "name": "linux-debug",
             "displayName": "Linux debug build",
             "configurePreset": "linux-debug"
+        },
+        {
+            "name": "linux-debug-utils",
+            "displayName": "Linux debug build with utils",
+            "configurePreset": "linux-debug-utils",
+            "targets": [
+                "all", "but2png", "data_decoder", "mkmovie", "mknews", "news2png"
+            ]
         },
         {
             "name": "linux-vcpkg",
