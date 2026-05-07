@@ -1,0 +1,96 @@
+  This is a place where to put all the thoughts about the code and all the other stuff in the repo, to stop holding knowledge only in the head
+
+keep it in one file first, organize better when the need comes
+
+be free to change/add onto the existng entries, especialy if something is wrong
+
+----
+
+  Game is old - same year as DOOM. Some code is indeed that old in style.  
+Like in archeology, you can feel different eras layered on top each other
+
+----
+
+  Game code is designed to be straightforward - each game screen has one function that draws it, all screens are nested.
+That means that player pressing a button to go to different location is just a call to a function  
+Player exiting a building is just a `return`
+
+Main menu (game_main.cpp -> game_main_impl)
+\_ Difficulty (NewGamePreferences)
+   or save select (FileAccess)
+   \_ Spaceport (port.cpp -> Master, Port)
+      |\_ Admin building (admin.cpp -> Admin)
+      |   |\_ Budget (budget.cpp -> Budget)
+      |   |\_ RnD (rdplex.cpp -> HPurc)
+      |   |\_ Future missions (Future)
+      |   |\_ Spacemen buying (AstSel)
+      |   |\_ In-game options (IngamePreferences)
+      |    \_ Save select (FileAccess)
+      |\_ VAB (VAB)
+      |\_ Training buildings (Train)
+      |\_ Spacemen complex (Limbo)
+      |\_ Hospital (Hospital)
+      |\_ RnD (rdplex.cpp -> RD)
+      |\_ Moon (Moon)
+      |\_ Museum (museum.cpp -> Museum)
+      |   |\_ Ranking (RankMe)
+      |   |\_ Launch history (ShowSpHist)
+      |   |\_ Records (Records)
+      |   |\_ Prestige (ShowPrest)
+      |   |\_ Efficiency stats (ShowHard)
+      |    \_ Spacemen history (ShowAstrosHist)
+      |\_ Program-specific buildings (SatBld, LMBld, Programs)
+      |\_ Government (Review)
+      |\_ Launchpads (ShowPad)
+      |\_ Cemetery (Cemetery)
+      |\_ Intel (Intel)
+      |\_ Viewing stand (Viewing)
+      \__ Mission control (MissionStatus)
+       
+----
+
+  Graphics is pixel-based and palette-based. Internally we keep 320x200 graphics::legacy_screen which in essense is just a char[]  
+When time comes (sdlhelper.cpp -> av_sync() -> SDL_SetColors()), said chars are used simply as indicies into a palette, where actual colors are stored
+Sometimes said palette changes or gets mixed - there are some bugs due to that
+
+----
+
+  Code style is easy to proclaim, harder to adhere, and impossible not to nitpick.
+ That's why it's usually called "guidelines", not rules
+ But consistent "look" of the code does help
+ 
+ currently code either follows or slowly converted to follow these directions:
+ 1) 4 spaces, no tabs
+    too late to change and almost invisible to diagnose by eye
+    there's a lot of code that spills to multiple lines, so needs spaces for staying neat
+    between mixed and spaces-only latter one is easier to type
+    
+ 2) `if() {`, `} else {` and other expressions of curcly brace on same line
+    probably feels nice to not waste lines for once in the already-wasteful code?
+    tho personally this is the easiest guideline to break, as some code needs breathing room between condition and code
+    function signature is always on the different line, tho
+    ```
+    void foo()
+    {
+    ```
+    
+ 3) variables should be declared as late as possible
+    this is battle against C style, where `goto` can't jump over variable declarations
+    we don't use goto, so we can declare variables late to easily see where and in which scope they are used
+    
+ 4) ```
+    if (AAAAA
+        || BBBBB)
+    ```
+    having OR and AND on new line helps with rule 2
+    
+ 5) `if(! A)`, `if(!A && !B)`
+    it looks neat and attracts the eye to most important bits
+    
+ 6) `type* var`, `type& var` - stick ymbol-modifier to the type
+    general C++ style. Types are expressive, variables are dumb
+    since variables are declared and assigned mostly at the same time, you don't encounter the need for `type *a, *b` much
+    
+
+Future screen seems to store endurance length in Future[pad].Endurance
+Update() copies Future[] into Mission[], ...but that happens after launch already conclude
