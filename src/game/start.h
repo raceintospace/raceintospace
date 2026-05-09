@@ -3,10 +3,8 @@
 
 #include <string>
 
-
-void InitializeEvents(void);
+void InitializeEvents();
 std::string RomanNumeral(unsigned int value);
-void Update(void);
-
+void Update();
 
 #endif // START_H
