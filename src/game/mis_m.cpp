@@ -198,6 +198,7 @@ void MisCheck(char plr, char mpad)
 
         // Duration Hack Part 1 of 3   (during the Duration stuff)
         if ((Mev[STEP].loc == 27 || Mev[STEP].loc == 28) && durx > 0) {
+            LOG_DEBUG("Applying Duration hack part 1, StepInfo = %i", Mev[STEP].StepInfo);
 
             if (Mev[STEP].StepInfo != 1) {
                 Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 1;  // Original code would also return 1
@@ -229,7 +230,9 @@ void MisCheck(char plr, char mpad)
         }
 
         // Duration Hack Part 2 of 3    (set up durx for duration use)
+        // (Part 3 was incorporated into StepSafety() function)
         if ((Mev[STEP].loc == 27 || Mev[STEP].loc == 28) && durx == -1) {
+            LOG_DEBUG("Applying Duration hack part 2);
             durx = durxx - 1;
             Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 2;
         }
@@ -378,6 +381,8 @@ void MisCheck(char plr, char mpad)
             //:::::: Failure docking kludge
 
             if (Mev[STEP].Name[0] == 'I') {
+                LOG_DEBUG("Docking fail kludge");
+                
                 int program = Data->P[plr].Mission[mpad].Prog;
 
                 if (program == 2) {
@@ -535,16 +540,14 @@ void MisCheck(char plr, char mpad)
     death = 0;
     for (int i=0; i<2; ++i) // 2 is max launches in mission
     {
-        bool loop_break = false;
-        for (int j=0; j<4; ++j) // 4 is max crew in capsule
+        for (int j=0; j < ASTRONAUT_FLT_CREW_MAX; ++j)
         {
             if (MA[i][j].A == nullptr) continue; // skip empty slots
             if (MA[i][j].A->Status != AST_ST_DEAD) continue; // skip alive spacemen
             // Mission Death
             death = 1;
             LOG_DEBUG("death detected, ship %i, crewmember %i", i, j);
-            loop_break = true;
-            if (AI[plr]) break;
+            if (AI[plr]) return;
             
             if (!fullscreenMissionPlayback) {
                 display::AutoPal p(display::graphics.legacyScreen());
@@ -565,9 +568,8 @@ void MisCheck(char plr, char mpad)
 
             PlaySequence(plr, STEP, (plr == 0) ? "UFUN" : "SFUN", 0);
             delay(1000);
-            break;
+            return;
         }
-        if (loop_break) break;
     }
 }
 
