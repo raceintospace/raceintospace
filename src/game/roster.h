@@ -7,15 +7,15 @@
 
 #include "roster_group.h"
 
-typedef std::list<RosterGroup> roster_groups_t;
+using roster_groups_t = std::list<RosterGroup>;
 
 class Roster
 {
 public:
-    Roster(std::istream &input_stream);
+    Roster(std::istream& input_stream);
     ~Roster() = default;
 
-    RosterGroup &getGroup(int player, int group_number);
+    RosterGroup& getGroup(int player, int group_number);
 
     static Roster load(const std::string& filename = "roster.json");
 
