@@ -6,7 +6,6 @@
 
 #include "data.h"
 
-
 /**
  * This class functions as an interface between the player's data
  * structures and the VAB.
@@ -24,7 +23,7 @@ public:
         return mIndex;
     };
     std::string name() const;
-    std::list<Equipment *> needed();
+    std::list<Equipment*> needed();
     void release();
     int safety() const;
     int MaxRD() const;
@@ -34,11 +33,10 @@ public:
 private:
     int mIndex;
     int mPlayer;
-    Equipment *mPrimary;
-    Equipment *mSecondary;
+    Equipment* mPrimary;
+    Equipment* mSecondary;
 
     void reserve();
 };
-
 
 #endif // VEHICLE_H
