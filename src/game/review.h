@@ -3,6 +3,6 @@
 
 void Review(char plr);
 void MisRev(char plr, int pres, int mis);
-void CalcPresRev(void);
+void CalcPresRev();
 
 #endif // REVIEW_H
