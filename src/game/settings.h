@@ -39,9 +39,7 @@ struct AudioConfig {
     }
 };
 
-
 AudioConfig LoadAudioSettings();
-void SaveAudioSettings(const AudioConfig &settings);
-
+void SaveAudioSettings(const AudioConfig& settings);
 
 #endif // RIS_SETTINGS
