@@ -4,7 +4,7 @@
 #include "data.h"
 
 void MisCheck(char plr, char mpad);
-int StepSafety(const struct MisEval &step);
+int StepSafety(const MisEval& step);
 
 extern char death;
 
