@@ -15,6 +15,6 @@
 
 void ShowPrestigeResults(char plr);
 void MailSwitchPlayer();
-void MailSwitchEndgame(void);
+void MailSwitchEndgame();
 
 #endif //PBM_H
