@@ -11,7 +11,7 @@ class RosterGroup;
 class RosterEntry
 {
 public:
-    RosterEntry(const RosterGroup &group, const Json::Value &json_object);
+    RosterEntry(const RosterGroup& group, const Json::Value& json_object);
     ~RosterEntry() = default;
 
     std::string getName() const;
@@ -32,7 +32,7 @@ public:
     void randomize();
 
     // recruit this roster entry into an astronaut
-    Astros *recruit(BuzzData &player) const;
+    Astros* recruit(BuzzData& player) const;
 
 private:
     std::string m_name;
