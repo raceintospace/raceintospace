@@ -100,7 +100,7 @@ struct oLIST {
 
 struct oGROUP {
     char ID[10];            /**< Sequence identifier */
-    oLIST oLIST[5];  /**< Audio/video file indexes */
+    ::oLIST oLIST[5];  /**< Audio/video file indexes */
 };
 #define sizeof_oGROUP (10 + 5*sizeof_oLIST)
 size_t fread_oGROUP(oGROUP* dst, size_t num, FILE* f);
@@ -118,7 +118,7 @@ size_t fread_Table(Table* dst, size_t num, FILE* f);
 
 struct oFGROUP {
     char ID[15];            /**< Sequence identifier */
-    oLIST oLIST[5];  /**< Audio/video file indexes */
+    ::oLIST oLIST[5];  /**< Audio/video file indexes */
 };
 #define sizeof_oFGROUP (15 + 5*sizeof_oLIST)
 size_t fread_oFGROUP(oFGROUP* dst, size_t num, FILE* f);
