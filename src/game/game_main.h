@@ -10,14 +10,14 @@ namespace display
 class LegacySurface;
 };
 
-void WaitForMouseUp(void);
-void GetMouse(void);
-void WaitForKeyOrMouseDown(void);
+void WaitForMouseUp();
+void GetMouse();
+void WaitForKeyOrMouseDown();
 void VerifySafety(char plr);
-int MisRandom(void);
+int MisRandom();
 void DestroyPad(char plr, char pad, int cost, char mode);
-void PauseMouse(void);
-void GetMouse_fast(void);
+void PauseMouse();
+void GetMouse_fast();
 
 extern char Option;
 extern char AI[2];
@@ -33,16 +33,16 @@ extern int oldy;
 extern unsigned char LOAD;
 extern unsigned char QUIT;
 extern char plr[NUM_PLAYERS];
-extern struct Players *Data;
+extern Players* Data;
 extern int x;
 extern int y;
 extern int mousebuttons;
 extern int key;
 extern char Name[20];
-extern char *buffer;
+extern char* buffer;
 extern int32_t xMODE;
-extern const char *S_Name[];
+extern const char** S_Name;
 extern INTERIMDATA interimData;
-extern struct AssetData *Assets;
+extern AssetData* Assets;
 
 #endif // GAME_MAIN_H
