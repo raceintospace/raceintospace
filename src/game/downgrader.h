@@ -6,7 +6,6 @@
 
 #include "data.h"
 
-
 /**
  * This class takes a base, or seed, mission instance and generates
  * a cyclical list of "downgraded" mission instances that share the
@@ -30,16 +29,16 @@ public:
         std::vector< std::vector<int> > mDowngrades;
     };
 
-    Downgrader(const struct MissionType &mission,
-               const std::vector<int> &downgrades);
-    Downgrader(const struct MissionType &mission, const Options downgrades);
+    Downgrader(const MissionType& mission,
+               const std::vector<int>& downgrades);
+    Downgrader(const MissionType& mission, const Options downgrades);
     ~Downgrader();
 
-    struct MissionType current() const;
-    struct MissionType next();
+    MissionType current() const;
+    MissionType next();
 private:
-    const struct MissionType mBasis;
-    struct MissionType mCurrent;
+    const MissionType mBasis;
+    MissionType mCurrent;
     std::vector<int> mCodes;
     std::vector<int>::iterator mIndex;
     int mDuration;
