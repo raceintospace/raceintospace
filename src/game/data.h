@@ -934,7 +934,7 @@ struct XFails {
 
 };
 
-struct Help {
+struct Help_t {
     std::string Code;
     std::vector<std::string> description;
 
@@ -1399,7 +1399,7 @@ struct AssetData {
     std::vector<MissionSequenceKey> sSeq; // Success sequences
     std::vector<MissionSequenceKey> fSeq; // Failure sequences
     std::vector<XFails> fails; // Failure texts and codes
-    std::vector<Help> help; // Help entries
+    std::vector<Help_t> help; // Help entries
 };
 
 #pragma pack(pop)
