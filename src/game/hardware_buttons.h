@@ -13,7 +13,7 @@ public:
     void drawButtons(int highlighted_button = -1) const;
 
 protected:
-    void drawButton(int group, bool highlighted, display::Surface &target, int x, int y) const;
+    void drawButton(int group, bool highlighted, display::Surface& target, int x, int y) const;
 
     boost::shared_ptr<display::Surface> buttons;
     int _y;
