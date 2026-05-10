@@ -3,8 +3,8 @@
 
 void MisAnn(char plr, char pad);
 void AI_Begin(char plr);
-void AI_Done(void);
-char OrderMissions(void);
+void AI_Done();
+char OrderMissions();
 
 extern char Month[12][11];
 extern struct order Order[7];
