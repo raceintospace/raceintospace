@@ -12,8 +12,11 @@ struct Color {
         : r(rgba >> 24), g((rgba >> 16) & 0xff), b((rgba >> 8) & 0xff), a(rgba & 0xff) {};
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0)
         : r(r), g(g), b(b), a(a) {};
-    Color(const Color &copy)
-        : r(copy.r), g(copy.g), b(copy.b), a(copy.a) {};
+
+    Color(const Color&) = default;
+    Color& operator=(const Color&) = default;
+    Color(Color&&) = default;
+    Color& operator=(Color&&) = default;
 
     uint8_t r;
     uint8_t g;
