@@ -13,8 +13,8 @@
 uint32_t _Swap32bit(uint32_t value);
 uint16_t _Swap16bit(uint16_t value);
 float _SwapFloat(float value);
-void _SwapPatchHdr(PatchHdr *hdr);
-void _SwapPatchHdrSmall(PatchHdrSmall *hdr);
+void _SwapPatchHdr(PatchHdr* hdr);
+void _SwapPatchHdrSmall(PatchHdrSmall* hdr);
 
 #if BOOST_ENDIAN_BIG_BYTE || defined(BOOST_BIG_ENDIAN)
 
