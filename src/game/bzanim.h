@@ -10,7 +10,6 @@
 
 #include "data.h"
 
-
 /**
  * This class is an interface for an animation loaded from a .abz
  * animation file.
@@ -23,7 +22,7 @@ class BZAnimation
 public:
     typedef boost::shared_ptr<BZAnimation> Ptr;
 
-    static Ptr load(const char *file, const char *id, int x, int y);
+    static Ptr load(const char* file, const char* id, int x, int y);
 
     ~BZAnimation();
 
@@ -33,15 +32,12 @@ private:
     int mX, mY;
     int mCurrentFrame;
     // mDisplay is where frames are staged before being drawn.
-    display::LegacySurface *mDisplay;
-    struct AnimType mHeader;
-    std::vector<uint8_t *> mFrameData;
+    display::LegacySurface* mDisplay;
+    AnimType mHeader;
+    std::vector<uint8_t*> mFrameData;
 
-    BZAnimation(struct AnimType header, display::Palette palette,
-                std::vector<uint8_t *> frames, int x, int y);
-
+    BZAnimation(AnimType header, display::Palette palette,
+                std::vector<uint8_t*> frames, int x, int y);
 };
-
-
 
 #endif // BZ_ANIMATION_H
