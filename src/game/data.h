@@ -144,7 +144,7 @@ struct Defl {
     int8_t Sound;       /**< 0=On, 1=Off (DEPRECATED) */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(Plr1));
         ar(CEREAL_NVP(Plr2));
@@ -176,7 +176,7 @@ struct PrestType {
     int8_t Year;          /**< Date of the First */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         /*        std::vector<int8_t> vAdd(Add, Add+4);
         ar(cereal::make_nvp("Add", vAdd));
@@ -282,7 +282,7 @@ struct Equipment {
     int8_t MisFail[2];       /**< Mission Failures */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         std::string sName = Name;
         ar(cereal::make_nvp("Name", sName));
@@ -358,7 +358,7 @@ struct MissionType {
     int8_t Crew;          /**< Actual Mission Crew */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ARCHIVE_STRING(Name);
 
@@ -503,7 +503,7 @@ struct Astros {
     int8_t Hero;         /**< Hero Status */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ARCHIVE_STRING(Name);
 
@@ -578,7 +578,7 @@ struct PastInfo {
     int8_t Duration;                 /**< Length of Mission (units:ABCDEF) */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         std::string sMissionName[2];
         sMissionName[0] = MissionName[0];
@@ -664,12 +664,12 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     int8_t AstroCount;                 // Current # in Program
     int8_t AstroLevel;                 // Level of selection
     int8_t AstroDelay;                 // Wait until next selection
-    struct Astros Pool[MAX_POOL];      // Pool of SpaceMen
+    Astros Pool[MAX_POOL];      // Pool of SpaceMen
     struct {
         char Vle;
         char Asp;
     } unused_WList[5]; // unused
-    struct Prest_Upd Udp[3];
+    Prest_Upd Udp[3];
     char unused_WTop; // unused
     char unused_VList[5]; // unused
     char unused_VTop; // unused
@@ -680,10 +680,10 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     // [8] - Eight Crews Max
     // [4] - Four Max per Crew
     int8_t FemaleAstronautsAllowed;                     // FemaleAstronautsAlloweds allowed in program
-    struct MissionType Mission[MAX_MISSIONS];   // Current Mission Info
+    MissionType Mission[MAX_MISSIONS];   // Current Mission Info
     int8_t Block;                      // Blocked Mission Number
-    struct MissionType Future[MAX_MISSIONS];    // Future Mission Info
-    struct PastInfo History[MAX_MISSION_COUNT];    // Past Mission History
+    MissionType Future[MAX_MISSIONS];    // Future Mission Info
+    PastInfo History[MAX_MISSION_COUNT];    // Past Mission History
     int16_t PastMissionCount;                   // Number of Past Missions
     int8_t MissionCatastrophicFailureOnTurn;                      // Catastrophic Fail on Turn
     // 1 = Cat Failure
@@ -701,7 +701,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
         int8_t cdex;
 
         template<class Archive>
-        void serialize(Archive &ar, uint32_t const version)
+        void serialize(Archive& ar, uint32_t const version)
         {
             ar(CEREAL_NVP(code));
             ar(CEREAL_NVP(num));
@@ -729,7 +729,7 @@ struct BuzzData {                   // master data list for Buzz Aldrin's
     int8_t Port[MAX_PORT_LEVEL];                   // Levels for SPort display
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ARCHIVE_STRING(Name);
 
@@ -807,7 +807,7 @@ struct MisEval {
     int8_t loc;               /**< Mission Step Name Index */
     uint16_t StepInfo;      /**< ID of step success  1=succ   !1=fail */
     union {
-        Equipment *Ep;      /**< Pointer into equipment, use GetEquipment() */
+        Equipment* Ep;      /**< Pointer into equipment, use GetEquipment() */
         uint64_t Ebits;     /**< keep 64b also on 32b platforms.  */
     };
     int8_t Prest;             /**< Prestige Step #  (-1 for none) */
@@ -826,7 +826,7 @@ struct MisEval {
     char Name[10];          /**< Name of Anim Code */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(step));
         ar(CEREAL_NVP(loc));
@@ -860,22 +860,22 @@ struct Players {
     char BUZZ[4];                    /**< Save Version Marker */
     uint32_t Checksum;               /**< Checksum of Data */
     int8_t plr[NUM_PLAYERS];        /**< Order of Turns */
-    struct Defl Def;                 /**< Defaults */
+    Defl Def;                 /**< Defaults */
     int8_t Year;                    /**< Game Turn */
     int8_t Season;                  /**< Season of Year */
-    struct PrestType Prestige[MAXIMUM_PRESTIGE_NUM];   /**< Definitions of Prest Vals */
-    struct BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
+    PrestType Prestige[MAXIMUM_PRESTIGE_NUM];   /**< Definitions of Prest Vals */
+    BuzzData P[NUM_PLAYERS];  /**< Player Game Data */
     int8_t unused_EMark[3]           ; /**< unused - Event Marker */
     int8_t Events[MAXIMUM_NEWS_EVENTS]; /**< History of Event Cards */
     int8_t Count;                      /**< Number of Events Picked */
     int8_t PD[NUM_PLAYERS][MAXIMUM_PRESTIGE_NUM]; /**< Prestige First Displayed: First Bit: Seen in MisRev, Second Bit: Seen by Opponent */
     int8_t Mile[NUM_PLAYERS][10];      /**< MileStone Calcs */
     int8_t Mail;                       /* Current status of PBEM game */
-    struct MisEval Mev[MAX_LAUNCHPADS][60]; /** < Mission eval for mail games */
+    MisEval Mev[MAX_LAUNCHPADS][60]; /** < Mission eval for mail games */
     int8_t Step[MAX_LAUNCHPADS]; /** Number of mission steps for mail games */
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(BUZZ));
         ar(CEREAL_NVP(Checksum));
@@ -908,7 +908,7 @@ struct Players {
 CEREAL_CLASS_VERSION(struct Players, 1)
 
 struct MisAst {  // This struct will be -1's if empty
-    struct Astros *A;
+    Astros* A;
     char loc;
 };
 
@@ -920,7 +920,7 @@ struct XFails {
     char text[200];// Failure Text
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(MissionStep));
         ar(CEREAL_NVP(percentage));
@@ -939,7 +939,7 @@ struct Help {
     std::vector<std::string> description;
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
       ar(CEREAL_NVP(Code));
       ar(CEREAL_NVP(description));
@@ -960,7 +960,7 @@ struct AnimType {
     // char cPal[cNum];    // Placemarker for RGB Colors
     
     template <class Archive>
-    void serialize(Archive &ar) {
+    void serialize(Archive& ar) {
         ar(CEREAL_NVP(ID));
         ar(CEREAL_NVP(OVL)); 
         ar(CEREAL_NVP(SD)); 
@@ -1001,7 +1001,7 @@ struct mStr {
          LMAd;             /**< LM Addition Points */
 
     template <class Archive>
-    void serialize(Archive &ar, uint32_t const version) {
+    void serialize(Archive& ar, uint32_t const version) {
         ar(CEREAL_NVP(Index)); 
         ar(CEREAL_NVP(Name));
         ar(CEREAL_NVP(Abbr));
@@ -1044,7 +1044,7 @@ struct ManPool {
     int8_t Sex, Service, Race, Cap, LM, EVA, Docking, Endurance;
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ARCHIVE_STRING(Name);
         ar(CEREAL_NVP(Sex));
@@ -1257,7 +1257,7 @@ struct MissionSequenceKey {
     std::vector<std::string> audio;
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         try {
             ar(CEREAL_NVP(MissionStep));
@@ -1278,7 +1278,7 @@ struct LegacyReplayItem {
     uint16_t Off[35];     // Offsets to Each animated Part
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(Qty));
         ARCHIVE_VECTOR(Off, uint16_t, 35);
@@ -1295,7 +1295,7 @@ struct ReplayItem {
     std::string seq;
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         if (version >= 2) {
             ar(CEREAL_NVP(Failure));
@@ -1314,7 +1314,7 @@ struct OLDNEWS {
     uint16_t size;      // Size of the old news string
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         ar(CEREAL_NVP(offset));
         ar(CEREAL_NVP(size));
@@ -1352,7 +1352,7 @@ struct INTERIMDATA {
     std::string filename;
 
     template<class Archive>
-    void serialize(Archive &ar, uint32_t const version)
+    void serialize(Archive& ar, uint32_t const version)
     {
         if (version == 1) {
             ARCHIVE_ARRAY(tempReplay, std::vector <REPLAY>);
@@ -1396,10 +1396,10 @@ struct INTERIMDATA {
 CEREAL_CLASS_VERSION(INTERIMDATA, 1);
 
 struct AssetData {
-    std::vector<struct MissionSequenceKey> sSeq; // Success sequences
-    std::vector<struct MissionSequenceKey> fSeq; // Failure sequences
-    std::vector<struct XFails> fails; // Failure texts and codes
-    std::vector<struct Help> help; // Help entries
+    std::vector<MissionSequenceKey> sSeq; // Success sequences
+    std::vector<MissionSequenceKey> fSeq; // Failure sequences
+    std::vector<XFails> fails; // Failure texts and codes
+    std::vector<Help> help; // Help entries
 };
 
 #pragma pack(pop)
