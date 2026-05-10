@@ -12,10 +12,10 @@ typedef std::list<RosterEntry> roster_entries_t;
 class RosterGroup
 {
 public:
-    RosterGroup(int player, int group_number, const Json::Value &json_array);
+    RosterGroup(int player, int group_number, const Json::Value& json_array);
     ~RosterGroup() = default;
 
-    const roster_entries_t &getRosterEntries(bool include_females) const;
+    const roster_entries_t& getRosterEntries(bool include_females) const;
 
     int getPlayer() const;
 

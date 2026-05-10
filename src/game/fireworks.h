@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 namespace display
 {
 class LegacySurface;
@@ -47,8 +46,8 @@ private:
     const unsigned int mParticles;
     int mBombAge;
     const int mPlayer;
-    Burst *mBomb;
-    display::LegacySurface *mBackground;
+    Burst* mBomb;
+    display::LegacySurface* mBackground;
 
     void bombStep();
     void clearDisplay();

@@ -1,9 +1,9 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H
 
-typedef struct {
-    char *dir_savegame;
-    char *dir_gamedata;
+struct game_options {
+    char* dir_savegame;
+    char* dir_gamedata;
     unsigned want_audio;
     unsigned want_fullscreen;
     unsigned want_4xscale;
@@ -26,9 +26,9 @@ typedef struct {
     unsigned cheat_atlasOnMoon;
     unsigned cheat_addMaxS;
     unsigned boosterSafety;
-} game_options;
+};
 
 extern game_options options;
-extern int setup_options(int argc, char **argv);
+extern int setup_options(int argc, char** argv);
 
 #endif /* _OPTIONS_H */

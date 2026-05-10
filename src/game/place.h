@@ -11,14 +11,14 @@ enum MainMenuOption {
     MAIN_EXIT
 };
 
-int Help(const char *FName);
+int Help(const char* FName);
 void Draw_Mis_Stats(int plr, int index, int mode);
 void PatchMe(char plr, int x, int y, char prog, char poff);
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh);
 void AstFaces(char plr, int x, int y, char face);
 void SmHardMe(char plr, int x, int y, char prog, char planet,
               unsigned char coff);
-int BChoice(int plr, int qty, char *Name, char *Imx,
+int BChoice(int plr, int qty, char* Name, char* Imx,
             bool mayEscape = true);
 int MainMenuChoice();
 bool ScrubMissionQuery(char plr, int pad);

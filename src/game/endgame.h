@@ -5,7 +5,7 @@ void FakeWin(char win);
 void NewEnd(char win, char loc);
 void PlayFirst(char plr, char first);
 void PlayAllFirsts(char plr);
-void SpecialEnd(void);
+void SpecialEnd();
 
 extern char PF[29][40];
 

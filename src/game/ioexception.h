@@ -7,7 +7,7 @@
 class IOException : public std::runtime_error
 {
 public:
-    IOException(const std::string &message)
+    IOException(const std::string& message)
         : std::runtime_error(message) { };
 };
 

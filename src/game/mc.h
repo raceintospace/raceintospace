@@ -5,10 +5,10 @@
 
 int Launch(char plr, char mis);
 
-extern struct mStr Mis;
-extern Equipment *MH[2][8];
-extern struct MisAst MA[2][4];
-extern struct MisEval Mev[60];
+extern mStr Mis;
+extern Equipment* MH[2][8];
+extern MisAst MA[2][4];
+extern MisEval Mev[60];
 extern REPLAY Rep;
 extern char MANNED[2];
 extern char CAP[2];
@@ -24,6 +24,6 @@ extern char fEarly;
 extern char mcc;
 extern char hero;
 
-Equipment *GetEquipment(const struct MisEval &Mev);
+Equipment* GetEquipment(const MisEval& Mev);
 
 #endif // MC_H

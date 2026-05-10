@@ -7,10 +7,10 @@ enum StringAlign {
     ALIGN_RIGHT
 };
 
-void draw_string(int x, int y, const char *s);
-void draw_string(int x, int y, const char *s, StringAlign align);
-void draw_string_highlighted(int x, int y, const char *s, unsigned int position);
-void draw_heading(int x, int y, const char *txt, char mode, char te);
+void draw_string(int x, int y, const char* s);
+void draw_string(int x, int y, const char* s, StringAlign align);
+void draw_string_highlighted(int x, int y, const char* s, unsigned int position);
+void draw_heading(int x, int y, const char* txt, char mode, char te);
 void draw_number(int xx, int yy, int num);
 void draw_megabucks(int x, int y, int val);
 void ShBox(int x1, int y1, int x2, int y2);
@@ -28,6 +28,6 @@ void GradRect(int x1, int y1, int x2, int y2, char plr);
 void draw_small_flag(char plr, int xm, int ym);
 void draw_flag(int x, int y, char plr);
 void draw_character(char chr);
-int TextDisplayLength(const char *str);
+int TextDisplayLength(const char* str);
 
 #endif // DRAW_H

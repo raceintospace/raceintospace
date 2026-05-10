@@ -4,8 +4,8 @@
 #include <SDL.h>
 
 struct audio_chunk {
-    struct audio_chunk *next;
-    void *data;
+    audio_chunk* next;
+    void* data;
     unsigned size;
     int loop;
 };
@@ -13,24 +13,24 @@ struct audio_chunk {
 struct audio_channel {
     unsigned                volume;
     unsigned                mute;
-    struct audio_chunk     *chunk;           // played chunk
-    struct audio_chunk    **chunk_tailp;     // tail of chunk list?
+    audio_chunk*            chunk;           // played chunk
+    audio_chunk**           chunk_tailp;     // tail of chunk list?
     unsigned                offset;          // data offset in chunk
 };
 
 
 int IsChannelMute(int channel);
-void NUpdateVoice(void);
-void av_step(void);
+void NUpdateVoice();
+void av_step();
 void av_silence(int channel);
 void MuteChannel(int channel, int mute);
-char AnimSoundCheck(void);
-void av_block(void);
-void UpdateAudio(void);
+char AnimSoundCheck();
+void av_block();
+void UpdateAudio();
 void av_set_fading(int type, int from, int to, int steps, int preserve);
-void av_sync(void);
-void av_setup(void);
-void play(struct audio_chunk *cp, int channel);
+void av_sync();
+void av_setup();
+void play(audio_chunk* cp, int channel);
 
 extern int av_mouse_cur_x;
 extern int av_mouse_cur_y;
