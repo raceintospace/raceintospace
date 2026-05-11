@@ -232,7 +232,7 @@ void MisCheck(char plr, char mpad)
         // Duration Hack Part 2 of 3    (set up durx for duration use)
         // (Part 3 was incorporated into StepSafety() function)
         if ((Mev[STEP].loc == 27 || Mev[STEP].loc == 28) && durx == -1) {
-            LOG_DEBUG("Applying Duration hack part 2);
+            LOG_DEBUG("Applying Duration hack part 2");
             durx = durxx - 1;
             Data->P[plr].Mission[MPad + Mev[STEP].pad].Duration = 2;
         }
