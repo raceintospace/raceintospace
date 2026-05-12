@@ -268,9 +268,12 @@ void Limbo(char plr)
 
         // Left Arrow Up
     	if (AstroList.size()
-    	    && (mousebuttons > 0 && x >= 6  && y >= 130 
-                                && x <= 18 && y <= 161)
-                || key == UP_ARROW) {
+    	    && ((mousebuttons > 0 && x >= 6  && y >= 130 
+                                && x <= 18 && y <= 161
+                 )
+                || key == UP_ARROW
+                )
+            ) {
             InBox(6, 130, 18, 161);
 
             for (int i = 0; i < 50; i++) {
