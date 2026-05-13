@@ -1345,16 +1345,15 @@ Equipment* FindLunarModule()
  */
 std::vector<Astros*> LMCrew(int pad, Equipment* module)
 {
-    int8_t cPad;
-
     assert(pad >= 0 && pad <= JOINT);
 
     if (MA[pad][0].A != nullptr) {
-        cPad = pad;
+        // primary launch
     } else if (MA[other(pad)][0].A != nullptr) {
-        cPad = other(pad);
+        pad = other(pad); // secondary launch in joined missions
     } else {
         LOG_ERROR("LMCrew: cannot find current pad");
+        assert(false && "LMCrew was called with no crew on either pad");
     }
 
     if (module == nullptr) {
@@ -1369,12 +1368,12 @@ std::vector<Astros*> LMCrew(int pad, Equipment* module)
     std::vector<Astros*> crew;
     int capacity = CrewSize(*module);
 
-    if (LM[cPad] > 0 && MA[cPad][LM[cPad]].A) {
-        crew.push_back(MA[cPad][LM[cPad]].A);
+    if (LM[pad] > 0 && MA[pad][LM[pad]].A) {
+        crew.push_back(MA[pad][LM[pad]].A);
     }
 
-    if (capacity == 2 && CAP[cPad] >= 0 && MA[cPad][CAP[cPad]].A) {
-        crew.push_back(MA[cPad][CAP[cPad]].A);
+    if (capacity == 2 && CAP[pad] >= 0 && MA[pad][CAP[pad]].A) {
+        crew.push_back(MA[pad][CAP[pad]].A);
     }
 
     if (crew.size() != capacity) {
