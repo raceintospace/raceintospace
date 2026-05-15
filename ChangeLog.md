@@ -13,6 +13,7 @@
 ### BUG FIXES AND PROBLEMS SOLVED
 
 **LARGER ITEMS**
+
 (none)
 
 **SMALLER ITEMS**
@@ -28,6 +29,7 @@
 ### GAME CHANGES
 
 **LARGER ITEMS**
+
 *A couple of the launch movies for the N1 looked very bad.  n1sr_01 shows it zigzagging as it rises from the gantry, and n1lh_03 shows the rocket tilted at an impossible angle relative to its exhaust plume.  I straightened those movies out.  (#112)
 * The UR-700 rocket launch, vulk_01, shows it rising much too fast; in reality, a mega rocket like that would lift off slowly.  So I've slowed it down.  (#112)
 * The mission movies for the LK lander now show something like the LK, rather than what we had before, which was the designers' (poor) guess at what it might have looked like (#859)
