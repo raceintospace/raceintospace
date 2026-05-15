@@ -30,22 +30,22 @@
 
 **LARGER ITEMS**
 
-* A couple of the launch movies for the N1 looked very bad.  n1sr_01 shows it zigzagging as it rises from the gantry, and n1lh_03 shows the rocket tilted at an impossible angle relative to its exhaust plume.  I straightened those movies out.  (#112)
-* The UR-700 rocket launch, vulk_01, shows it rising much too fast; in reality, a mega rocket like that would lift off slowly.  So I've slowed it down.  (#112)
-* The mission movies for the LK lander now show something like the LK, rather than what we had before, which was the designers' (poor) guess at what it might have looked like (#859)
+* A couple of the launch movies for the N1 looked very bad.  n1sr_01 shows it zigzagging as it rises from the gantry, and n1lh_03 shows the rocket tilted at an impossible angle relative to its exhaust plume.  Those are now straightened out.  (#112)
+* The UR-700 rocket launch, vulk_01, shows it rising much too fast; in reality, a mega rocket like that would lift off slowly.  So it's been slowed somewhat.  (#112)
+* The mission movies for the LK lander now show something like the LK rather than what we had before, which was the designers' guess at what it might have looked like (#859)
 * There are now updated images of the LK lander for the spinning image in Step Failure - so it looks much more like the real thing (#859)
 
 **SMALLER ITEMS**
 * There were three odd black spots on the Moon in the Satellite screen. They've been removed. (#1008)
 * The Ranger probe looks much better now in the Satellite screen (#1005)
+* The Ranger probe small icon for Intel, Space History, and the VAB looked pretty poor.  We've improved it a bit. (975)
 * First woman in space now gets a hero medal (#816)
 * In the VAB/VIB, hitting the Scrub button, and saying No to scrub, leaves you in the VAB/VIB, rather than kicking you back out to the Launch Selection screen (#969)
 * Now, if you won't be able to buy capsules or rockets next turn (due to newscast), Future Missions will warn you about it only once per turn (#938)
 * Now, the warnings in R&D (re. EVA suits, DMs, kickers, and low cash) will warn you only once per turn each (related to #938)
 * The newscast that says someone retired due to sports injury now says they may not retire after all if they make a good recovery (because that's now possible for those with higher EN)
-* The Ranger probe small icon for Intel, Space History, and the VAB looked pretty poor.  We've improved it a bit. (975)
 * The world map in Preferences was badly distorted in places; now it looks a bit closer to the real thing (#972)
-* Future Missions now remembers whether you had the Draw Mission Steps button on or off.  Next time you open Future Missions it will be the same as you had it before. (#956)
+* Future Missions now remembers whether you had the Draw Mission Steps button on or off.  Next time you open Future Missions it will be the same as you had it before, rather than always defaulting to off. (#956)
 * Now if you don't have a mission selected, pressing Esc will close Future Missions - so if you're in the middle of planning one and want to back out of Future Missions to check something or assign people to crews, you can press Esc twice to close it quickly
 
 
