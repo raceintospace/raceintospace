@@ -19,7 +19,7 @@ The most recent stable release is 2.0.0, released on March 27, 2025. The release
 * [raceintospace-2.0.0-Linux.tar.gz](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Linux.tar.gz)
 * [raceintospace-2.0.0-Source.tar.gz](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Source.tar.gz)
 * [raceintospace-2.0.0-win32.exe](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-win32.exe)
-* [raceintospace-macos-arm64.zip](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-macos-arm64.zip)
+* [raceintospace-macos-Darwin.zip](https://github.com/raceintospace/raceintospace/releases/download/v2.0.0/raceintospace-2.0.0-Darwin.dmg)
 
 Further information can be found at the [release page](https://github.com/raceintospace/raceintospace/releases/tag/v2.0.0). The [game manual](https://github.com/raceintospace/raceintospace/blob/master/doc/manual/manual.md
 ) can be viewed from our docs section.
