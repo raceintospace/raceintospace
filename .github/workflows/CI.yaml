@@ -105,7 +105,7 @@ jobs:
         run: ctest --test-dir ${{ matrix.buildDir }} --output-on-failure --output-junit test-results.xml
 
       - name: Publish test results
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v3
         if: always() && steps.runcmake.conclusion == 'success'
         with:
           name: Tests (${{ matrix.preset }})
@@ -146,7 +146,7 @@ jobs:
 
       - name: Upload windows installer artifact
         if: ${{ matrix.package }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-installer-latest 
           overwrite: true # keep only one artifact to limit storage requirements
