@@ -53,7 +53,7 @@ jobs:
       - name: Get CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: "~3.31.0"
+          cmakeVersion: "~4.3.0"
 
       - name: List $RUNNER_WORKSPACE before vcpkg is setup
         run: find $RUNNER_WORKSPACE
