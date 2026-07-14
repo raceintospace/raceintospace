@@ -796,7 +796,7 @@ int AllotPrest(char plr, char mis)
     }
 
     int mike;
-    if (misType.Dur != 0) {
+    if (misType.Dur == 0) {
         switch (P_Goal) {
         case Prestige_MannedSpaceMission:
             mike = 7;
