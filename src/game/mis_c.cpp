@@ -364,7 +364,8 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
     bool keep_going = true;
     for(int i=0; keep_going && i < max; ++i) {
         char seq_name[20];
-        char name[20]; /** \todo assumption about seq_filename len */
+        const char seq_extension[] = ".ogg";
+        char name[sizeof(seq_name) + sizeof(seq_extension)];
 
         if (mode == 0) {
             play_audio(Assets->sSeq.at(j).audio.at(i), mode);
@@ -378,7 +379,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
             strntcpy(seq_name, Assets->fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
         }
 
-        snprintf(name, sizeof(name), "%s.ogg", seq_name);
+        snprintf(name, sizeof(name), "%s%s", seq_name, seq_extension);
 
         LOG_INFO("opening video file `%s'", name);
 
