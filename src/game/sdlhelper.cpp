@@ -519,34 +519,34 @@ SDL_Surface* SDL_Scale2x(SDL_Surface* src, SDL_Surface* dst)
 
             switch (bpp) {
 #define ASSIGN(TYPE) do { \
-                    *(TYPE *(to)) = *(TYPE *from); \
-                    *(TYPE *(to+bpp)) = *(TYPE *from); \
-                    *(TYPE *(to+dst->pitch)) = *(TYPE *from); \
-                    *(TYPE *(to+dst->pitch+bpp)) = *(TYPE *from); \
+                    *((TYPE) (to)) = *((TYPE) from); \
+                    *((TYPE) (to+bpp)) = *((TYPE) from); \
+                    *((TYPE) (to+dst->pitch)) = *((TYPE) from); \
+                    *((TYPE) (to+dst->pitch+bpp)) = *((TYPE) from); \
                 } while (0)
 
             case 1:
-                ASSIGN(uint8_t);
+                ASSIGN(uint8_t*);
                 break;
 
             case 2:
-                ASSIGN(uint16_t);
+                ASSIGN(uint16_t*);
                 break;
 
             case 3:
-                ASSIGN(uint8_t);
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
-                ASSIGN(uint8_t);
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
-                ASSIGN(uint8_t);
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
                 break;
 
             case 4:
-                ASSIGN(uint32_t);
+                ASSIGN(uint32_t*);
                 break;
 #undef ASSIGN
             }
