@@ -98,6 +98,12 @@ jobs:
           configurePreset: ${{ matrix.preset }}
           buildPreset: ${{ matrix.preset }}
           packagePreset: ${{ matrix.package }}
+          # need to overwrite vcpkg env because default one uses 
+          # cmake from visual studio in the github's image, 
+          # rather than one from PATH that we installed with get-cmake
+          # see https://github.com/lukka/run-cmake/issues/160
+          # although I don't think it is visible which cmake gets used by vcpkg when everything works...
+          runVcpkgEnvFormatString: "[`env`, `--bin`, `--include`, `--python`, `--triplet`, `$[env.VCPKG_DEFAULT_TRIPLET]`, `set`]"
         env:
           VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite" # makes CMake aware of vcpkg-cache's cache
 
@@ -105,7 +111,7 @@ jobs:
         run: ctest --test-dir ${{ matrix.buildDir }} --output-on-failure --output-junit test-results.xml
 
       - name: Publish test results
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v3
         if: always() && steps.runcmake.conclusion == 'success'
         with:
           name: Tests (${{ matrix.preset }})
@@ -146,7 +152,7 @@ jobs:
 
       - name: Upload windows installer artifact
         if: ${{ matrix.package }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-installer-latest 
           overwrite: true # keep only one artifact to limit storage requirements
