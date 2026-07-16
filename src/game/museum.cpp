@@ -1060,10 +1060,9 @@ void DrawSpaceHistoryInterface(int plr)
 
 void ShowAstrosHist(char plr)
 {
-    display::LegacySurface* vhptr2;
+    display::LegacySurface vhptr2(112,55);
 
     char pos = 0, pos2 = 0;
-    vhptr2 = new display::LegacySurface(112, 55);
     abuf = (Astros*) buffer;
 
     if (Data->P[plr].AstroCount == 0) {
@@ -1078,7 +1077,7 @@ void ShowAstrosHist(char plr)
     draw_heading(68, 71, "NO", 0, -1);
     draw_heading(46, 90, "MISSION", 0, -1);
     draw_heading(27, 109, "EXPERIENCE", 0, -1);
-    vhptr2->copyFrom(display::graphics.legacyScreen(), 22, 69, 133, 123);
+    vhptr2.copyFrom(display::graphics.legacyScreen(), 22, 69, 133, 123);
     PatchMe(0, 0, 0, 0, 0);  // For loading the Patches color palette?
     display::graphics.screen()->clear();
 
@@ -1137,8 +1136,8 @@ void ShowAstrosHist(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(37, 34, "PREVIOUS MISSION");
     draw_string(47, 193, "NEXT MISSION");
-    DisplAst(plr, &pos, &pos2, vhptr2);
-    DisplAstData(plr, &pos, &pos2, vhptr2);
+    DisplAst(plr, &pos, &pos2, &vhptr2);
+    DisplAstData(plr, &pos, &pos2, &vhptr2);
     FadeIn(2, 5, 0, 0);
 
     WaitForMouseUp();
@@ -1160,19 +1159,17 @@ void ShowAstrosHist(char plr)
 
             OutBox(245, 5, 314, 17);
 
-            delete vhptr2;
-            vhptr2 = nullptr;
             key = 0;
 
             return;
         }
 
-        pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 80);
-        pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2, vhptr2), key >> 8, 72);
-        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2, vhptr2), key >> 8, 71);  // Down to prev Astro
-        pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2, vhptr2), key >> 8, 75);
-        pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2, vhptr2), key >> 8, 77);
-        pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2, vhptr2), key >> 8, 79);
+        pButton(8, 187, 151, 195, UpAstroData(plr, &pos, &pos2, &vhptr2), key >> 8, 80);
+        pButton(8, 28, 151, 36, DownAstroData(plr, &pos, &pos2, &vhptr2), key >> 8, 72);
+        pButton(167, 177, 202, 194, ShowAstroBack(plr, &pos, &pos2, &vhptr2), key >> 8, 71);  // Down to prev Astro
+        pButton(204, 177, 239, 194, ShowAstroDown(plr, &pos, &pos2, &vhptr2), key >> 8, 75);
+        pButton(241, 177, 276, 194, ShowAstroUp(plr, &pos, &pos2, &vhptr2), key >> 8, 77);
+        pButton(278, 177, 313, 194, ShowAstroFor(plr, &pos, &pos2, &vhptr2), key >> 8, 79);
 
         if (key >= 'A' && key <= 'Z') {
             int astroIndex= 0;
@@ -1183,7 +1180,7 @@ void ShowAstrosHist(char plr)
             }
 
             pos = astroIndex;
-            DisplAst(plr, &pos, &pos2, vhptr2);
+            DisplAst(plr, &pos, &pos2, &vhptr2);
             key = 0;
         }
 
