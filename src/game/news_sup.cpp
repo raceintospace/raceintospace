@@ -32,8 +32,11 @@
 #include "Buzz_inc.h"
 #include "game_main.h"
 #include "hardware.h"
+#include "logging.h"
 #include "options.h"
 #include "pace.h"
+
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
 /**
  *
@@ -41,34 +44,31 @@
  */
 int Steal(int plr, int prog, int type)
 {
-    int i = 0, j = 0, k = 0, save[28], lo = 0, hi = 28;
-
     // Iterate among enum without requiring elements to have specific
     // values.
     int hwMap[4] = { PROBE_HARDWARE, ROCKET_HARDWARE, MANNED_HARDWARE,
                      MISC_HARDWARE
                    };
 
-    memset(save, 0x00, sizeof save);
-
+    int save[28]{};
     for (int hwType = 0; hwType < 4; hwType++) {
         for (int i = 0; i < 7; i++) {
             int eqIndex = i + 7 * hwType;
-            Equipment &equip = HardwareProgram(plr, hwMap[hwType], i);
-            Equipment &rival =
-                HardwareProgram(other(plr), hwMap[hwType], i);
+            Equipment& equip = HardwareProgram(plr, hwMap[hwType], i);
+            if (equip.Num < 0) continue;
+            Equipment& rival = HardwareProgram(other(plr), hwMap[hwType], i);
+            if (rival.Num < 0) continue;
+            
+            if (type == 1) {
+                save[eqIndex] = rival.Safety - equip.Safety;
+            } else {
+                save[eqIndex] = equip.Safety - rival.Safety;
+            }
 
-            if (equip.Num >= 0 && rival.Num >= 0) {
-                if (type == 1) {
-                    save[eqIndex] = rival.Safety - equip.Safety;
-                } else {
-                    save[eqIndex] = equip.Safety - rival.Safety;
-                }
-
-                if (type == -1 && save[eqIndex] < 0 &&
-                    (equip.Safety + save[eqIndex]) < equip.Base) {
-                    save[eqIndex] = 0;
-                }
+            if (type == -1 && save[eqIndex] < 0 
+                && (equip.Safety + save[eqIndex]) < equip.Base
+               ) {
+                save[eqIndex] = 0;
             }
         }
     }
@@ -77,14 +77,16 @@ int Steal(int plr, int prog, int type)
     save[12] = save[13] = 0;
     save[3] = save[4] = save[5] = save[6] = 0;
 
+    int lo = 0;
+    int hi = 28;
     if (type == 1) {
-        for (i = lo; i < hi; i++) {
+        for (int i = lo; i < hi; i++) {
             if (save[i] <= 0) {
                 save[i] = 0;    // Positive Only
             }
         }
     } else {
-        for (i = lo; i < hi; i++) {
+        for (int i = lo; i < hi; i++) {
             if (save[i] >= 0) {
                 save[i] = 0;    // Negatives Only
             } else {
@@ -93,28 +95,27 @@ int Steal(int plr, int prog, int type)
         }
     }
 
-    for (i = lo; i < hi; i++) {
+    int count = 0;
+    for (int i = lo; i < hi; i++) {
         if (save[i] > 0) {
-            j++;    // Check if event is good.
+            count++;    // Check if event is good.
         }
     }
-
-    if (j == 0) {
+    if (count == 0) {
         return 0;
     }
 
-    j = brandom(hi - lo) + lo;
-
+    int j = brandom(hi - lo) + lo;
+    int k = 0;
     while ((k < 100) && (save[j] <= 0)) { // finds candidate
         j = brandom(hi - lo) + lo;
         k++;
     }
-
     if (k == 100) {
         return 0;
     }
 
-    Equipment &chosen = HardwareProgram(plr, hwMap[j / 7], j % 7);
+    Equipment& chosen = HardwareProgram(plr, hwMap[j / 7], j % 7);
     chosen.Safety += (save[j] * type);
     strcpy(&Name[0], &chosen.Name[0]);
 
@@ -128,18 +129,18 @@ int Steal(int plr, int prog, int type)
  */
 int NMod(int plr, int prog, int type, int per)
 {
-    int i = 0, j = 0, save[28], lo = 0, hi = 28;
-    Equipment *Eptr[28];
+    int save[28];
+    Equipment* Eptr[28];
 
-    lo = (prog > 0) ? (prog - 1) * 7 : 0;
-    hi = (prog > 0) ? lo + 7 : 28;
+    int lo = (prog > 0) ? (prog - 1) * 7 : 0;
+    int hi = (prog > 0) ? lo + 7 : 28;
 
     if (prog == 1) {
         hi = lo + 3;
     }
 
     /* drvee: this loop was going to 25, not 28 */
-    for (i = 0; i < (int)ARRAY_LENGTH(Eptr); i++) {
+    for (int i = 0; i < (int)ARRAY_LENGTH(Eptr); i++) {
         /** \bug Mismatch between data.h(250) and this code here */
         Eptr[i] = &Data->P[plr].Probe[i];
         save[i] = ((Eptr[i]->Safety + per * type) <= (Eptr[i]->MaxSafety) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety + per * type : 0;
@@ -149,7 +150,7 @@ int NMod(int plr, int prog, int type, int per)
         }
     }
 
-    for (i = 0; i < (int)ARRAY_LENGTH(save); i++) {
+    for (int i = 0; i < (int)ARRAY_LENGTH(save); i++) {
         if (save[i] < 0) {
             save[i] = 0;
         }
@@ -157,7 +158,8 @@ int NMod(int plr, int prog, int type, int per)
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) {
+    int j = 0;
+    for (int i = lo; i < hi; i++) {
         if (save[i] > 0) {
             j++;    // Check if event is good.
         }
@@ -187,20 +189,19 @@ int NMod(int plr, int prog, int type, int per)
 
 int DamMod(int plr, int prog, int dam, int cost)
 {
-    int i = 0, j = 0, lo = 0, hi = 28;
-    int save[28];
-    Equipment *Eptr[28];
+    int save[28]{};
+    Equipment* Eptr[28];
 
-    memset(save, 0x00, sizeof save);
-    lo = (prog > 0) ? (prog - 1) * 7 : 0;
-    hi = (prog > 0) ? lo + 7 : 28;
+    int lo = (prog > 0) ? (prog - 1) * 7 : 0;
+    int hi = (prog > 0) ? lo + 7 : 28;
 
-    for (i = 0; i < 25; i++) {
+    // what does 25 mean here?
+    for (int i = 0; i < 25; i++) {
         Eptr[i] = &Data->P[plr].Probe[i];
         save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
     }
 
-    for (i = 0; i < 25; i++) {
+    for (int i = 0; i < 25; i++) {
         if (save[i] < dam) {
             save[i] = 0;
         }
@@ -209,7 +210,8 @@ int DamMod(int plr, int prog, int dam, int cost)
     save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = save[11] = 0;
     save[19] = save[20] = 0; //remove LM's
 
-    for (i = lo; i < hi; i++) {
+    int j = 0;
+    for (int i = lo; i < hi; i++) {
         if (save[i] > 0) {
             j++;    // Check if event is good.
         }
@@ -241,30 +243,32 @@ int DamMod(int plr, int prog, int dam, int cost)
 
 int RDMods(int plr, int prog, int type, int val)
 {
-    int i = 0, j = 0, save[28], lo = 0, hi = 28;
-    Equipment *Eptr[28];
+    Equipment* Eptr[28];
+    int save[28]{};
+    int lo = (prog > 0) ? (prog - 1) * 7 : 0;
+    int hi = (prog > 0) ? lo + 7 : 28;
 
-    memset(save, 0x00, sizeof save);
-    lo = (prog > 0) ? (prog - 1) * 7 : 0;
-    hi = (prog > 0) ? lo + 7 : 28;
-
-    for (i = 0; i < 25; i++) {
+    // what does 25 mean here?
+    for (int i = 0; i < 25; i++) {
         Eptr[i] = &Data->P[plr].Probe[i];
-        save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) && Eptr[i]->Num >= 0) ? Eptr[i]->Safety : 0;
+        save[i] = ((Eptr[i]->Safety > Eptr[i]->Base) 
+                   && Eptr[i]->Num >= 0) ? Eptr[i]->Safety 
+                                         : 0;
     }
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < 28; i++) {
         if (save[i] < 0) {
             save[i] = 0;
         }
     }
 
-    for (i = lo; i < hi; i++) {
-        if (save[i] > 0) {
-            j++;    // Check if event is good.
-        }
+    int j = 0;
+    for (int i = lo; i < hi; i++) {
+        if (save[i] <= 0) continue;
+        
+        j++;    // Check if event is good.
     }
 
     if (j == 0) {
@@ -277,6 +281,7 @@ int RDMods(int plr, int prog, int type, int val)
         j--;
     }
 
+    assert(j < 25);
     strcpy(&Name[0], &Eptr[j]->Name[0]);
     Eptr[j]->RDCost += type * val;
     return save[j];
@@ -285,12 +290,7 @@ int RDMods(int plr, int prog, int type, int val)
 
 int SaveMods(char plr, char prog)
 {
-    int i = 0, j = 0, save[28], lo = 0, hi = 28;
-
-    for (i = 0; i < 28; i++) {
-        save[i] = 0;
-    }
-
+    int lo, hi;
     switch (prog) {
     case 0:
         lo = 0;
@@ -316,9 +316,16 @@ int SaveMods(char plr, char prog)
         lo = 18;
         hi = 21;
         break;  // check LEM   programs
+
+    default:
+        lo = 0;
+        hi = 28;
+        LOG_NOTICE("SaveMods() got passed prog = %i, idk what it means.", prog);
+        break;
     }
 
-    for (i = 0; i < 7; i++) {
+    int save[28]{};
+    for (int i = 0; i < 7; i++) {
         if (Data->P[plr].Probe[i].Num >= 0) {
             save[i] = 1;
         }
@@ -338,10 +345,11 @@ int SaveMods(char plr, char prog)
 
     save[11] = save[25] = save[26] = save[27] = save[12] = save[13] = save[3] = save[4] = save[5] = save[6] = 0;
 
-    for (i = lo; i < hi; i++) {
-        if (save[i] > 0) {
-            j++;    // Check if event is good.
-        }
+    int j = 0;
+    for (int i = lo; i < hi; i++) {
+        if (save[i] <= 0) continue;
+        
+        j++;    // Check if event is good.
     }
 
     if (j == 0) {
@@ -388,31 +396,35 @@ void NewNauts(int plr) {
     int UsStatsEVA[3] = {2, 0 ,1};
     int UsStatsDock[3] = {1, 1, 1};
     int UsStatsEndur[3] = {3, 0, 2};
-	
+    
     // USSR Cosmonauts
     char SovName[3][14] = { "ILYUSHIN", "KRAMARENKO", "DOLGOV"};
     int SovStatsCap[3] = {3, 2, 2};
     int SovStatsLM[3] = {0, 1, 3};
     int SovStatsEVA[3] = {0, 2 ,0};
     int SovStatsDock[3] = {3, 0, 0};
-    int SovStatsEndur[3] = {3, 3, 1};	
-	
+    int SovStatsEndur[3] = {3, 3, 1};
+    
     for (int i = 0; i < 3; i++) {
-        strcpy(&Data->P[plr].Pool[Data->P[plr].AstroCount].Name[0], plr ? SovName[i]: UsName[i]);
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Cap = plr ? SovStatsCap[i] : UsStatsCap[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].LM = plr ? SovStatsLM[i] : UsStatsLM[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].EVA = plr ? SovStatsEVA[i] : UsStatsEVA[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Docking = plr ? SovStatsDock[i] : UsStatsDock[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Endurance = plr ? SovStatsEndur[i] : UsStatsEndur[i];
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Status = AST_ST_TRAIN_BASIC_1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Face = brandom(10) + 1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Service = 1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Compat = brandom(10) + 1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].CR = brandom(2) + 1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].CL = brandom(2) + 1;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Group = 9;
-        Data->P[plr].Pool[Data->P[plr].AstroCount].Mood = 85 + 5 * brandom(4);
-        Data->P[plr].AstroCount++;
+        auto& AstroCount = Data->P[plr].AstroCount;
+        auto& spaceman = Data->P[plr].Pool[AstroCount];
+        
+        strcpy(&spaceman.Name[0], plr ? SovName[i]: UsName[i]);
+        spaceman.Cap = plr ? SovStatsCap[i] : UsStatsCap[i];
+        spaceman.LM = plr ? SovStatsLM[i] : UsStatsLM[i];
+        spaceman.EVA = plr ? SovStatsEVA[i] : UsStatsEVA[i];
+        spaceman.Docking = plr ? SovStatsDock[i] : UsStatsDock[i];
+        spaceman.Endurance = plr ? SovStatsEndur[i] : UsStatsEndur[i];
+        spaceman.Status = AST_ST_TRAIN_BASIC_1;
+        spaceman.Face = brandom(10) + 1;
+        spaceman.Service = 1;
+        spaceman.Compat = brandom(10) + 1;
+        spaceman.CR = brandom(2) + 1;
+        spaceman.CL = brandom(2) + 1;
+        spaceman.Group = 9;
+        spaceman.Mood = 85 + 5 * brandom(4);
+        
+        AstroCount++;
     }
 }
 
