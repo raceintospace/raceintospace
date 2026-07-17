@@ -55,7 +55,7 @@ int av_mouse_pressed_latched;
 
 static SDL_Color pal_colors[256];
 
-static struct audio_channel Channels[AV_NUM_CHANNELS];
+static audio_channel Channels[AV_NUM_CHANNELS];
 
 /* information about current fading operation */
 static struct {
@@ -75,53 +75,50 @@ static int do_fading;
 
 static SDL_AudioSpec audio_desired;
 
-static void
-audio_callback(void *userdata, Uint8 *stream, int len)
+void audio_callback(void* userdata, Uint8* stream, int len)
 {
     int ch = 0;
 
     memset(stream, 0, len);
 
     for (ch = 0; ch < AV_NUM_CHANNELS; ++ch) {
+        audio_channel* chp = &Channels[ch];
+        if(chp->mute) continue;
+        if (chp->volume == 0) continue;
+        
         int pos = 0;
-        struct audio_channel *chp = &Channels[ch];
+        audio_chunk* ac = chp->chunk;
+        while (ac) {
+            int bytes =
+                MIN(len - pos, (int) ac->size - (int) chp->offset);
+    
+            int i = 0;
+            int16_t* dst = (int16_t*)(stream + pos);
+            const int16_t* src = (int16_t*)((uint8_t*)ac->data + chp->offset);
 
-        if (!chp->mute && chp->volume) {
-            struct audio_chunk *ac = chp->chunk;
+            for (i = 0; i < bytes / 2; ++i) {
+                dst[i] += src[i] * chp->volume / AV_MAX_VOLUME / AV_NUM_CHANNELS;
+            }
 
-            while (ac) {
-                int bytes =
-                    MIN(len - pos, (int) ac->size - (int) chp->offset);
-
-                int i = 0;
-                int16_t *dst = (int16_t *)(stream + pos);
-                const int16_t *src = (int16_t *)((uint8_t *) ac->data + chp->offset);
-
-                for (i = 0; i < bytes / 2; ++i) {
-                    dst[i] += src[i] * chp->volume / AV_MAX_VOLUME / AV_NUM_CHANNELS;
-                }
-
-                pos += bytes;
-                chp->offset += bytes;
-
-                if (chp->offset == ac->size) {
-                    chp->offset = 0;
-
-                    if (!ac->loop) {
-                        ac = chp->chunk = chp->chunk->next;
-
-                        if (!chp->chunk) {
-                            chp->chunk_tailp = &chp->chunk;
-                        }
-
-                        /* why this tailp?? */
+            pos += bytes;
+            chp->offset += bytes;
+                
+            if (chp->offset == ac->size) {
+                chp->offset = 0;
+                
+                if (!ac->loop) {
+                    ac = chp->chunk = chp->chunk->next;
+                
+                    if (!chp->chunk) {
+                        chp->chunk_tailp = &chp->chunk;
                     }
+        
+                    /* why this tailp?? */
                 }
-
-                if (pos == len) {
+            }
+                
+            if (pos == len) {
                     break;
-                }
-
             }
         }
     }
@@ -131,21 +128,19 @@ audio_callback(void *userdata, Uint8 *stream, int len)
  * Currently #AV_SOUND_CHANNEL is used only for animation sounds.
  * \return 0 means busy playing audio; 1 means idle
  */
-char
-AnimSoundCheck(void)
+char AnimSoundCheck()
 {
     /* assume sound channel */
     av_step();
 
     if (Channels[AV_SOUND_CHANNEL].chunk) {
-        return (0);
+        return 0;
     }
 
-    return (1);
+    return 1;
 }
 
-int
-IsChannelMute(int channel)
+int IsChannelMute(int channel)
 {
     assert(channel >= 0 && channel < AV_NUM_CHANNELS);
 
@@ -156,15 +151,9 @@ IsChannelMute(int channel)
     return Channels[channel].mute;
 }
 
-void
-play(struct audio_chunk *new_chunk, int channel)
+void play(audio_chunk* new_chunk, int channel)
 {
-    struct audio_chunk *cp;
-    struct audio_channel *chp;
-
     assert(channel >= 0 && channel < AV_NUM_CHANNELS);
-
-    chp = &Channels[channel];
 
     if (!have_audio) {
         return;
@@ -172,12 +161,13 @@ play(struct audio_chunk *new_chunk, int channel)
 
     SDL_LockAudio();
 
-    for (cp = chp->chunk; cp; cp = cp->next) {
-        if (cp == new_chunk) {
-            DEBUG1("attempt to do add duplicate chunk");
-            av_silence(channel);
-            break;
-        }
+    audio_channel* chp = &Channels[channel];
+    for (audio_chunk* cp = chp->chunk; cp; cp = cp->next) {
+        if (cp != new_chunk) continue;
+        
+        LOG_DEBUG("attempt to do add duplicate chunk");
+        av_silence(channel);
+        break;
     }
 
     new_chunk->next = nullptr;
@@ -185,43 +175,39 @@ play(struct audio_chunk *new_chunk, int channel)
     SDL_UnlockAudio();
 }
 
-void
-av_silence(int channel)
+void av_silence(int channel)
 {
-    int i = channel;
-
     if (channel == AV_ALL_CHANNELS) {
-        for (i = 0; i < AV_NUM_CHANNELS; ++i) {
+        for (int i = 0; i < AV_NUM_CHANNELS; ++i) {
             av_silence(i);
         }
-    } else {
-        assert(channel >= 0 && channel < AV_NUM_CHANNELS);
-
-        if (Channels[channel].chunk) {
-            SDL_LockAudio();
-            Channels[channel].chunk = nullptr;
-            Channels[channel].chunk_tailp = &Channels[channel].chunk;
-            Channels[channel].offset = 0;
-            SDL_UnlockAudio();
-        }
+        return;
     }
+    
+    assert(channel >= 0 && channel < AV_NUM_CHANNELS);
+
+    if (Channels[channel].chunk == nullptr) return;
+    
+    SDL_LockAudio();
+    Channels[channel].chunk = nullptr;
+    Channels[channel].chunk_tailp = &Channels[channel].chunk;
+    Channels[channel].offset = 0;
+    SDL_UnlockAudio();
 }
 
-Uint32
-sdl_timer_callback(Uint32 interval, void *param)
+Uint32 sdl_timer_callback(Uint32 interval, void* param)
 {
     static SDL_Event tick;
 
     tick.type = SDL_USEREVENT;
     SDL_PushEvent(&tick);
-    return (interval);
+    return interval;
 }
 
 /**
  * Set up SDL audio, video and window subsystems.
  */
-void
-av_setup(void)
+void av_setup()
 {
     std::string title(PACKAGE_STRING " " PACKAGE_VERSION);
 #ifdef PACKAGE_BUILD
@@ -245,7 +231,7 @@ av_setup(void)
         if (icon != nullptr) {
             SDL_WM_SetIcon(icon, nullptr);
         } else {
-            INFO2("setting icon failed: %s\n", SDL_GetError());
+            LOG_INFO("setting icon failed: %s\n", SDL_GetError());
         }
     }
 
@@ -261,8 +247,6 @@ av_setup(void)
                         SDL_DEFAULT_REPEAT_INTERVAL);
 
     if (have_audio) {
-        int i = 0;
-
         audio_desired.freq = 44100;
         audio_desired.format = AUDIO_S16SYS;
         audio_desired.channels = 2;
@@ -271,7 +255,7 @@ av_setup(void)
         audio_desired.callback = audio_callback;
 
         /* initialize audio channels */
-        for (i = 0; i < AV_NUM_CHANNELS; ++i) {
+        for (int i = 0; i < AV_NUM_CHANNELS; ++i) {
             Channels[i].volume = AV_MAX_VOLUME;
             Channels[i].mute = 0;
             Channels[i].chunk = nullptr;
@@ -281,8 +265,8 @@ av_setup(void)
 
         /* we don't care what we got, library will convert for us */
         if (SDL_OpenAudio(&audio_desired, nullptr) < 0) {
-            ERROR2("SDL_OpenAudio error: %s", SDL_GetError());
-            NOTICE1("disabling audio");
+            LOG_ERROR("SDL_OpenAudio error: %s", SDL_GetError());
+            LOG_NOTICE("disabling audio");
             have_audio = 0;
         } else {
             SDL_PauseAudio(0);
@@ -292,19 +276,18 @@ av_setup(void)
     SDL_AddTimer(30, sdl_timer_callback, nullptr);
 }
 
-static void
-av_process_event(SDL_Event *evp)
+void av_process_event(SDL_Event* evp)
 {
     int c;
 
     switch (evp->type) {
     case SDL_QUIT:
-        TRACE2("event %04x", evp->type);
+        LOG_TRACE("av_event %04x", evp->type);
         exit(0);
         break;
 
     case SDL_USEREVENT:
-        /* TRACE2("event %04x", evp->type); */
+        /* LOG_TRACE("event %04x", evp->type); */
         break;
 
     case SDL_KEYDOWN:
@@ -358,10 +341,10 @@ av_process_event(SDL_Event *evp)
             break;
         }
 
-        TRACE4("event %04x %04x %04x", evp->type,
+        LOG_TRACE("event %04x %04x %04x", evp->type,
                evp->key.keysym.sym, evp->key.keysym.unicode);
 
-        if (c) {
+        if (c != 0) {
             keybuf[keybuf_in_idx] = c;
             keybuf_in_idx = (keybuf_in_idx + 1) % KEYBUF_SIZE;
         }
@@ -373,40 +356,43 @@ av_process_event(SDL_Event *evp)
         av_mouse_pressed_latched = 1;
         av_mouse_pressed_x = evp->button.x;
         av_mouse_pressed_y = evp->button.y;
-        TRACE5("event %04x %04x %04x %04x", evp->type,
+        LOG_TRACE("event %04x %04x %04x %04x", evp->type,
                evp->button.x, evp->button.y, evp->button.button);
         break;
 
     case SDL_MOUSEBUTTONUP:
-        TRACE5("event %04x %04x %04x %04x", evp->type,
+        {
+        LOG_TRACE("event %04x %04x %04x %04x", evp->type,
                evp->button.x, evp->button.y, evp->button.button);
         av_mouse_pressed_cur = 0;
 
-        /* if we get a mouse wheel event then translate it to arrow keypress */
-        if (evp->button.button == SDL_BUTTON_WHEELUP
-            || evp->button.button == SDL_BUTTON_WHEELDOWN) {
-            SDL_Event ev;
-            int up = evp->button.button == SDL_BUTTON_WHEELUP;
-            SDLMod mod = SDL_GetModState();
-            SDLKey key;
+        /* if we get a mouse wheel event then translate it to arrow keypress 
+           otherwise we're done*/
+        if (evp->button.button != SDL_BUTTON_WHEELUP
+            && evp->button.button != SDL_BUTTON_WHEELDOWN) break;
+        
+        SDL_Event ev;
+        int up = evp->button.button == SDL_BUTTON_WHEELUP;
+        SDLMod mod = SDL_GetModState();
+        SDLKey key;
 
-            if (mod & KMOD_SHIFT) {
-                key = up ? SDLK_LEFT : SDLK_RIGHT;
-            } else {
-                key = up ? SDLK_UP : SDLK_DOWN;
-            }
-
-            ev.type = SDL_KEYDOWN;
-            ev.key.type = SDL_KEYDOWN;
-            ev.key.state = SDL_RELEASED;
-            ev.key.keysym.scancode = 0;
-            ev.key.keysym.mod = mod;
-            ev.key.keysym.unicode = 0;
-            ev.key.keysym.sym = key;
-            av_process_event(&ev);
+        if (mod & KMOD_SHIFT) {
+            key = up ? SDLK_LEFT : SDLK_RIGHT;
+        } else {
+            key = up ? SDLK_UP : SDLK_DOWN;
         }
 
+        ev.type = SDL_KEYDOWN;
+        ev.key.type = SDL_KEYDOWN;
+        ev.key.state = SDL_RELEASED;
+        ev.key.keysym.scancode = 0;
+        ev.key.keysym.mod = mod;
+        ev.key.keysym.unicode = 0;
+        ev.key.keysym.sym = key;
+        av_process_event(&ev);
+
         break;
+        }
 
     case SDL_MOUSEMOTION:
         av_mouse_cur_x = evp->motion.x;
@@ -419,14 +405,13 @@ av_process_event(SDL_Event *evp)
         break;
 
     default:
-        TRACE2("got unknown event %d", evp->type);
+        LOG_TRACE("got unknown event %d", evp->type);
         break;
     }
 }
 
 /* non-blocking */
-void
-av_step(void)
+void av_step()
 {
     SDL_Event ev;
 
@@ -444,8 +429,7 @@ av_step(void)
  * We have a 30ms timer going, so that is the
  * maximum wait time.
  */
-void
-av_block(void)
+void av_block()
 {
     SDL_Event ev;
 
@@ -455,57 +439,46 @@ av_block(void)
     }
 }
 
-int
-bioskey(int peek)
+int bioskey(int peek)
 {
-    int c;
-
     av_step();
 
     if (peek) {
         if (keybuf_in_idx != keybuf_out_idx) {
-            return (1);
+            return 1;
         }
 
-        return (0);
+        return 0;
     }
 
     if (keybuf_in_idx == keybuf_out_idx) {
-        return (0);
+        return 0;
     }
 
-    c = keybuf[keybuf_out_idx];
+    int c = keybuf[keybuf_out_idx];
     keybuf_out_idx = (keybuf_out_idx + 1) % KEYBUF_SIZE;
 
-    return (c);
+    return c;
 }
 
-void
-UpdateAudio(void)
+void UpdateAudio()
 {
 //  av_step ();
 }
 
-void
-NUpdateVoice(void)
+void NUpdateVoice()
 {
     av_step();
 }
 
-static SDL_Surface *
-SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
+SDL_Surface* SDL_Scale2x(SDL_Surface* src, SDL_Surface* dst)
 {
-    int x, y, bpp;
-    uint8_t *from, *to;
-    SDL_Rect clp;
-    SDL_PixelFormat *pf;
-
     assert(src);
     assert(src != dst);
 
-    pf = src->format;
+    SDL_PixelFormat* pf = src->format;
 
-    if (!dst)
+    if (dst == nullptr)
         dst = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    2 * src->w, 2 * src->h,
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
@@ -514,8 +487,7 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
         return nullptr;
     }
 
-    bpp = pf->BytesPerPixel;
-
+    int bpp = pf->BytesPerPixel;
     if (2 * src->h != dst->h
         || 2 * src->w != dst->w 
         || bpp != dst->format->BytesPerPixel) {
@@ -536,53 +508,46 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
         SDL_LockSurface(dst);
     }
 
+    SDL_Rect clp;
     SDL_GetClipRect(dst, &clp);
 
-    for (y = clp.y / 2; y < clp.y / 2 + clp.h / 2; ++y) {
-        for (x = clp.x / 2; x < clp.x / 2 + clp.w / 2; ++x) {
-            from = ((uint8_t *) src->pixels) + y * src->pitch + x * bpp;
-            to = ((uint8_t *) dst->pixels) + 2 * y * dst->pitch +
+    for (int y = clp.y / 2; y < clp.y / 2 + clp.h / 2; ++y) {
+        for (int x = clp.x / 2; x < clp.x / 2 + clp.w / 2; ++x) {
+            uint8_t* from = ((uint8_t *) src->pixels) + y * src->pitch + x * bpp;
+            uint8_t* to = ((uint8_t *) dst->pixels) + 2 * y * dst->pitch +
                  2 * x * bpp;
 
             switch (bpp) {
-#define ASSIGN do { \
-                    *(TYPE (to)) = *(TYPE from); \
-                    *(TYPE (to+bpp)) = *(TYPE from); \
-                    *(TYPE (to+dst->pitch)) = *(TYPE from); \
-                    *(TYPE (to+dst->pitch+bpp)) = *(TYPE from); \
+#define ASSIGN(TYPE) do { \
+                    *((TYPE) (to)) = *((TYPE) from); \
+                    *((TYPE) (to+bpp)) = *((TYPE) from); \
+                    *((TYPE) (to+dst->pitch)) = *((TYPE) from); \
+                    *((TYPE) (to+dst->pitch+bpp)) = *((TYPE) from); \
                 } while (0)
 
             case 1:
-#define TYPE (uint8_t *)
-                ASSIGN;
+                ASSIGN(uint8_t*);
                 break;
-#undef TYPE
 
             case 2:
-#define TYPE (uint16_t *)
-                ASSIGN;
+                ASSIGN(uint16_t*);
                 break;
-#undef TYPE
 
             case 3:
-#define TYPE (uint8_t *)
-                ASSIGN;
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
-                ASSIGN;
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
-                ASSIGN;
+                ASSIGN(uint8_t*);
                 to++;
                 from++;
                 break;
-#undef TYPE
 
             case 4:
-#define TYPE (uint32_t *)
-                ASSIGN;
+                ASSIGN(uint32_t*);
                 break;
-#undef TYPE
 #undef ASSIGN
             }
         }
@@ -599,30 +564,21 @@ SDL_Scale2x(SDL_Surface *src, SDL_Surface *dst)
     return dst;
 }
 
-static SDL_Surface *
-SDL_Scale4x(SDL_Surface *src, SDL_Surface *dst)
+SDL_Surface* SDL_Scale4x(SDL_Surface* src, SDL_Surface* dst)
 {
-    int x, y, bpp;
-    uint8_t *from, *to;
-    SDL_Rect clp;
-    SDL_PixelFormat *pf;
-
     assert(src);
     assert(src != dst);
-
-    pf = src->format;
-
+    
+    SDL_PixelFormat* pf = src->format;
     if (!dst)
         dst = SDL_CreateRGBSurface(SDL_SWSURFACE,
                                    4 * src->w, 4 * src->h,
                                    pf->BitsPerPixel, pf->Rmask, pf->Gmask, pf->Bmask, pf->Amask);
-
     if (!dst) {
         return nullptr;
     }
 
-    bpp = pf->BytesPerPixel;
-
+    int bpp = pf->BytesPerPixel;
     if (4 * src->h != dst->h || 4 * src->w != dst->w || bpp != dst->format->BytesPerPixel) {
         SDL_SetError("dst surface size or bpp mismatch (%d vs %d)", bpp, dst->format->BytesPerPixel);
         return nullptr;
@@ -640,142 +596,33 @@ SDL_Scale4x(SDL_Surface *src, SDL_Surface *dst)
         SDL_LockSurface(dst);
     }
 
+    SDL_Rect clp;
     SDL_GetClipRect(dst, &clp);
 
     int src_pitch = src->pitch;
     int dst_pitch = dst->pitch;
 
-    for (y = 0; y < src->h; ++y) {
-        from = (uint8_t *)src->pixels + y * src_pitch;
-        to = (uint8_t *)dst->pixels + 4 * y * dst_pitch;
+    for (int y = 0; y < src->h; ++y) {
+        uint8_t* from = (uint8_t *)src->pixels + y * src_pitch;
+        uint8_t* to = (uint8_t *)dst->pixels + 4 * y * dst_pitch;
 
-        for (x = 0; x < src->w; ++x) {
-            uint8_t *src_pixel = from + x * bpp;
-            uint8_t *dst_pixel = to + 4 * x * bpp;
+        for (int x = 0; x < src->w; ++x) {
+            uint8_t* src_pixel = from + x * bpp;
+            uint8_t* dst_pixel = to + 4 * x * bpp;
 
-            switch (bpp) {
-                case 1:
-                    dst_pixel[0] = src_pixel[0];
-                    dst_pixel[1] = src_pixel[0];
-                    dst_pixel[2] = src_pixel[0];
-                    dst_pixel[3] = src_pixel[0];
-                    dst_pixel[dst_pitch] = src_pixel[0];
-                    dst_pixel[dst_pitch + 1] = src_pixel[0];
-                    dst_pixel[dst_pitch + 2] = src_pixel[0];
-                    dst_pixel[dst_pitch + 3] = src_pixel[0];
-                    dst_pixel[2 * dst_pitch] = src_pixel[0];
-                    dst_pixel[2 * dst_pitch + 1] = src_pixel[0];
-                    dst_pixel[2 * dst_pitch + 2] = src_pixel[0];
-                    dst_pixel[2 * dst_pitch + 3] = src_pixel[0];
-                    dst_pixel[3 * dst_pitch] = src_pixel[0];
-                    dst_pixel[3 * dst_pitch + 1] = src_pixel[0];
-                    dst_pixel[3 * dst_pitch + 2] = src_pixel[0];
-                    dst_pixel[3 * dst_pitch + 3] = src_pixel[0];
-                    break;
-                case 2:
-                    ((uint16_t *)dst_pixel)[0] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)dst_pixel)[1] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)dst_pixel)[2] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)dst_pixel)[3] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 2 * dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[0] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[1] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[2] = ((uint16_t *)src_pixel)[0];
-                    ((uint16_t *)(dst_pixel + 3 * dst_pitch))[3] = ((uint16_t *)src_pixel)[0];
-                    break;
-                case 3:
-                    dst_pixel[0] = src_pixel[0];
-                    dst_pixel[1] = src_pixel[1];
-                    dst_pixel[2] = src_pixel[2];
-                    dst_pixel[3] = src_pixel[0];
-                    dst_pixel[4] = src_pixel[1];
-                    dst_pixel[5] = src_pixel[2];
-                    dst_pixel[6] = src_pixel[0];
-                    dst_pixel[7] = src_pixel[1];
-                    dst_pixel[8] = src_pixel[2];
-                    dst_pixel[9] = src_pixel[0];
-                    dst_pixel[10] = src_pixel[1];
-                    dst_pixel[11] = src_pixel[2];
-                    dst_pixel[12] = src_pixel[0];
-                    dst_pixel[13] = src_pixel[1];
-                    dst_pixel[14] = src_pixel[2];
-                    dst_pixel[15] = src_pixel[0];
-                    dst_pixel[16] = src_pixel[1];
-                    dst_pixel[17] = src_pixel[2];
-                    dst_pixel[18] = src_pixel[0];
-                    dst_pixel[19] = src_pixel[1];
-                    dst_pixel[20] = src_pixel[2];
-                    dst_pixel[21] = src_pixel[0];
-                    dst_pixel[22] = src_pixel[1];
-                    dst_pixel[23] = src_pixel[2];
-                    dst_pixel[24] = src_pixel[0];
-                    dst_pixel[25] = src_pixel[1];
-                    dst_pixel[26] = src_pixel[2];
-                    dst_pixel[27] = src_pixel[0];
-                    dst_pixel[27] = src_pixel[1];
-                    dst_pixel[28] = src_pixel[2];
-                    dst_pixel[29] = src_pixel[0];
-                    dst_pixel[30] = src_pixel[1];
-                    dst_pixel[31] = src_pixel[2];
-                    dst_pixel[32] = src_pixel[0];
-                    dst_pixel[33] = src_pixel[1];
-                    dst_pixel[34] = src_pixel[2];
-                    dst_pixel[35] = src_pixel[0];
-                    dst_pixel[36] = src_pixel[1];
-                    dst_pixel[37] = src_pixel[2];
-                    dst_pixel[38] = src_pixel[0];
-                    dst_pixel[39] = src_pixel[1];
-                    dst_pixel[40] = src_pixel[2];
-                    dst_pixel[41] = src_pixel[0];
-                    dst_pixel[42] = src_pixel[1];
-                    dst_pixel[43] = src_pixel[2];
-                    dst_pixel[44] = src_pixel[0];
-                    dst_pixel[45] = src_pixel[1];
-                    dst_pixel[46] = src_pixel[2];
-                    dst_pixel[47] = src_pixel[0];
-                    dst_pixel[48] = src_pixel[1];
-                    dst_pixel[49] = src_pixel[2];
-                    dst_pixel[50] = src_pixel[0];
-                    dst_pixel[51] = src_pixel[1];
-                    dst_pixel[52] = src_pixel[2];
-                    dst_pixel[53] = src_pixel[0];
-                    dst_pixel[54] = src_pixel[1];
-                    dst_pixel[55] = src_pixel[2];
-                    dst_pixel[56] = src_pixel[0];
-                    dst_pixel[57] = src_pixel[1];
-                    dst_pixel[58] = src_pixel[2];
-                    dst_pixel[59] = src_pixel[0];
-                    dst_pixel[60] = src_pixel[1];
-                    dst_pixel[61] = src_pixel[2];
-                    dst_pixel[62] = src_pixel[0];
-                    dst_pixel[63] = src_pixel[1];
-                    dst_pixel[64] = src_pixel[2];
-                    break;
-                case 4:
-                    ((uint32_t *)dst_pixel)[0] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)dst_pixel)[1] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)dst_pixel)[2] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)dst_pixel)[3] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 2 * dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[0] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[1] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[2] = ((uint32_t *)src_pixel)[0];
-                    ((uint32_t *)(dst_pixel + 3 * dst_pitch))[3] = ((uint32_t *)src_pixel)[0];
-                    break;
+            for(int i=0; i<4; ++i)
+            {
+                for(int j=0; j<4; ++j)
+                {
+                    for(int k=0; k<bpp; ++k)
+                    {
+                        int byte_idx = (dst_pitch*i+j)*bpp;
+                        dst_pixel[byte_idx+k] = src_pixel[k];
+                        // we simply copy pixel data into 4x4 pixel data slots
+                        // this whole code (together with 2x version) needs replacement anyway,
+                        // whenever that will arrive (SDL3, gpu, float-point arbitrary resizing done by the library for us)
+                    }
+                }
             }
         }
     }
@@ -791,18 +638,16 @@ SDL_Scale4x(SDL_Surface *src, SDL_Surface *dst)
     return dst;
 }
 
-static void
-transform_palette(void)
+void transform_palette()
 {
-    unsigned i, j, step, steps;
     struct range {
         unsigned start, end;
     } ranges[] = {{0, fade_info.from}, {fade_info.to, 256}};
 
     display::AutoPal p(display::graphics.legacyScreen());
 
-    for (j = 0; j < ARRAY_LENGTH(ranges); ++j) {
-        for (i = ranges[j].start; i < ranges[j].end; ++i) {
+    for (int j = 0; j < ARRAY_LENGTH(ranges); ++j) {
+        for (int i = ranges[j].start; i < ranges[j].end; ++i) {
             if (!fade_info.force_black) {
                 pal_colors[i].r = p.pal[3 * i] * 4;
                 pal_colors[i].g = p.pal[3 * i + 1] * 4;
@@ -815,12 +660,12 @@ transform_palette(void)
         }
     }
 
-    step = fade_info.step;
-    steps = fade_info.steps;
+    int step = fade_info.step;
+    int steps = fade_info.steps;
     /* sanity checks */
     assert(steps != 0 && step <= steps);
 
-    for (i = fade_info.from; i < fade_info.to; ++i) {
+    for (int i = fade_info.from; i < fade_info.to; ++i) {
         /*
          * This should be done this way, but unfortunately some image files
          * have palettes for which pal * 4 overflows single byte. They display
@@ -839,8 +684,7 @@ transform_palette(void)
     }
 }
 
-void
-av_sync(void)
+void av_sync()
 {
     SDL_Rect r;
 
@@ -852,11 +696,11 @@ av_sync(void)
 
     //Screen scaling Options
     if (!options.want_4xscale) {
-		SDL_Scale2x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
-	}
-	else {
-		SDL_Scale4x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
-	}
+        SDL_Scale2x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
+    }
+    else {
+        SDL_Scale4x(display::graphics.screen()->surface(), display::graphics.scaledScreenSurface());
+    }
     
     transform_palette();
     SDL_SetColors(display::graphics.scaledScreenSurface(), pal_colors, 0, 256);
@@ -883,19 +727,17 @@ av_sync(void)
     SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, display::graphics.WIDTH * display::graphics.SCALE, display::graphics.HEIGHT * display::graphics.SCALE);
 }
 
-void
-MuteChannel(int channel, int mute)
+void MuteChannel(int channel, int mute)
 {
-    int i;
-
     if (channel == AV_ALL_CHANNELS) {
-        for (i = 0; i < AV_NUM_CHANNELS; ++i) {
+        for (int i = 0; i < AV_NUM_CHANNELS; ++i) {
             MuteChannel(i, mute);
         }
-    } else {
-        assert(channel >= 0 && channel < AV_NUM_CHANNELS);
-        Channels[channel].mute = mute;
+        return;
     }
+    
+    assert(channel >= 0 && channel < AV_NUM_CHANNELS);
+    Channels[channel].mute = mute;
 }
 
 /**
@@ -915,8 +757,7 @@ MuteChannel(int channel, int mute)
  * The only thing allowed is SDL_PushEvent, and we don't have event-driven
  * setup. So for now either this or nothing.
  */
-void
-av_set_fading(int type, int from, int to, int steps, int preserve)
+void av_set_fading(int type, int from, int to, int steps, int preserve)
 {
     int dir = (type == AV_FADE_IN) ? 1 : -1;
     unsigned st;
