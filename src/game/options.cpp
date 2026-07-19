@@ -110,9 +110,9 @@ static const struct {
         "Set to 1 if you want to display the game at full-screen."
     },
     {
-	"xscale",  &options.want_4xscale, "%u", 0,
-	"By default now the game is displayed at 4x scale."
-	"\n# Set to 0 if you want to display the game at the classic 2x scale."
+    "xscale",  &options.want_4xscale, "%u", 0,
+    "By default now the game is displayed at 4x scale."
+    "\n# Set to 0 if you want to display the game at the classic 2x scale."
     },
     {
         "debuglevel", &options.want_debug, "%u", 0,
@@ -228,7 +228,7 @@ usage(int fail)
             "options: -a -i -f -s -v -n\n"
             "\t-v verbose mode\n\t\tadd this several times to get to DEBUG level\n"
             "\t-f fullscreen mode\n"
-	    "\t-s 4x scale mode\n"
+        "\t-s 4x scale mode\n"
            );
     exit((fail) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -311,7 +311,7 @@ read_config_file(void)
     char c[2];
 
     if (!f) {
-        INFO1("could not open config file");
+        LOG_INFO("could not open config file");
         return -1;
     }
 
@@ -338,7 +338,7 @@ read_config_file(void)
                     if (res != 0 && feof(f)) {
                         goto skip_newline;
                     } else if (res != 0) {
-                        NOTICE2("wrong value type for variable `%s'",
+                        LOG_NOTICE("wrong value type for variable `%s'",
                                 config_word);
                         goto skip_newline;
                     } else {
@@ -349,14 +349,14 @@ read_config_file(void)
 
             /* none matched */
             if (i == (int) ARRAY_LENGTH(config_strings)) {
-                NOTICE2("unknown variable in file `%s'",
+                LOG_NOTICE("unknown variable in file `%s'",
                         config_word);
                 goto skip_newline;
             }
         } else if (res == EOF) {
             break;
         } else {
-            NOTICE1("expected variable name");
+            LOG_NOTICE("expected variable name");
             goto skip_newline;
         }
 
@@ -385,11 +385,11 @@ write_default_config(void)
     f = open_savedat("config", "wt");
 
     if (!f) {
-        WARNING4("can't write defaults to file `%s/%s': %s\n",
+        LOG_WARNING("can't write defaults to file `%s/%s': %s\n",
                  options.dir_savegame, "config", strerror(errno));
         return -1;
     } else
-        NOTICE3("written defaults to file `%s/%s'",
+        LOG_NOTICE("written defaults to file `%s/%s'",
                 options.dir_savegame, "config");
 
     fprintf(f, "# This is the Advanced Configuration file for %s\n",
@@ -412,7 +412,7 @@ write_default_config(void)
     err = ferror(f);
 
     if (err) {
-        WARNING2("read error: %s", strerror(errno));
+        LOG_WARNING("read error: %s", strerror(errno));
     }
 
     fclose(f);
@@ -600,12 +600,12 @@ setup_options(int argc, char *argv[])
             options.want_audio = 0;
         } else if (strcmp(str, "-f") == 0) {
             options.want_fullscreen = 1;
-	} else if (strcmp(str, "-s") == 0) {
+    } else if (strcmp(str, "-s") == 0) {
             options.want_4xscale = 0;
         } else if (strcmp(str, "-v") == 0) {
             options.want_debug++;
         } else {
-            ERROR2("unknown option %s", str);
+            LOG_ERROR("unknown option %s", str);
             usage(1);
         }
 
@@ -639,7 +639,7 @@ setup_options(int argc, char *argv[])
         }
 
         if (i == (int) ARRAY_LENGTH(env_vars)) {
-            WARNING2("unsupported command line variable `%s'", name);
+            LOG_WARNING("unsupported command line variable `%s'", name);
         }
 
         /* remove matched string from argv */
