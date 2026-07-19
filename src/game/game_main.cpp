@@ -311,7 +311,7 @@ int game_main_impl(int argc, char *argv[])
                 if (Option == -1) {
                     MainLoop();    //Regular game
                 } else { //Modem game
-                    WARNING1("can't do modem games");
+                    LOG_WARNING("can't do modem games");
                     break;
                 }
             } else if (!QUIT) {
