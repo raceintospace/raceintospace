@@ -164,7 +164,7 @@ void IncreasePathResolution()
  */
 void MissionPath(char plr, int val, int pad)
 {
-    TRACE3("->MissionPath(plr, val %d, pad %d)", val, pad);
+    LOG_TRACE("->MissionPath(plr, val %d, pad %d)", val, pad);
 
     // Clear existing global / file global mission step information.
     // These are cleared by DrawMission, but no point taking chances.
@@ -306,7 +306,7 @@ void MissionPath(char plr, int val, int pad)
 
     MissionCodes(plr, val, pad);
 
-    TRACE1("<-MissionPath()");
+    LOG_TRACE("<-MissionPath()");
 }
 
 
@@ -338,11 +338,10 @@ namespace
  */
 void Bd(int x, int y)
 {
-    int x1, y1, x2, y2;
-    x1 = x - 2;
-    y1 = y;
-    x2 = x - 1;
-    y2 = y - 1;
+    int x1 = x - 2;
+    int y1 = y;
+    int x2 = x - 1;
+    int y2 = y - 1;
     fill_rectangle(x1, y1, x1 + 8, y1 + 4, 21);
     fill_rectangle(x2, y2, x2 + 6, y2 + 6, 21);
     display::graphics.setForegroundColor(1);
@@ -421,8 +420,6 @@ void drawBspline(int segments, char color, ...)
             oldy = y;
         }
     }
-
-    return;
 }
 
 
@@ -435,8 +432,6 @@ void Draw_IJ(char w)
     if (w == 1) {
         Bd(77, 142);    // bubble 'J'
     }
-
-    return;
 }
 
 void Draw_GH(char a, char b)
@@ -455,8 +450,6 @@ void Draw_GH(char a, char b)
     if (b == 1) {
         Bd(77, 150);    // bubble 'K'
     }
-
-    return;
 }
 
 void Draw_IJV(char w)
@@ -467,8 +460,6 @@ void Draw_IJV(char w)
     if (w == 1) {
         Bd(102, 141);    // bubble 'V'
     }
-
-    return;
 }
 
 void OrbIn(char a, char b, char c)
@@ -493,8 +484,6 @@ void OrbIn(char a, char b, char c)
     if (c == 1) {
         Bd(95, 118);    // bubble 'W'
     }
-
-    return;
 }
 
 void OrbMid(char a, char b, char c, char d)
@@ -528,15 +517,12 @@ void OrbMid(char a, char b, char c, char d)
     if (d == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
-void Q_Patch(void)
+void Q_Patch()
 {
     Bub_Num = 2;
     drawBspline(SEG, 5, 85, 151, 107, 144);
-    return;
 }
 
 void OrbOut(char a, char b, char c)
@@ -561,8 +547,6 @@ void OrbOut(char a, char b, char c)
     if (c == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
 void LefEarth(char a, char b)
@@ -583,7 +567,6 @@ void LefEarth(char a, char b)
 
     Bub_Num = 2;
     drawBspline(SEG, 5, 85, 151, 107, 144);
-    return;
 }
 
 
@@ -614,11 +597,9 @@ void LefOrb(char a, char b, char c, char d)
     if (d == 1) {
         Bd(47, 135);    // bubble 'd'
     }
-
-    return;
 }
 
-void Fly_By(void)
+void Fly_By()
 {
     /* bubbles I_J_F */
     Bub_Num = 8;
@@ -626,7 +607,6 @@ void Fly_By(void)
     Bub_Num = 6;
     drawBspline(SEG, 5, 36, 137, 20, 149, 36, 157, 41, 159, 46, 162, 69, 164);
     Bd(59, 160); // bubble 'F'
-    return;
 }
 
 void VenMarMerc(char x)
@@ -655,11 +635,9 @@ void VenMarMerc(char x)
         drawBspline(SEG, 5, 125, 170, 138, 171, 153, 170, 166, 165);
         Bd(160, 161); // bubble 'M'
     }
-
-    return;
 }
 
-void Draw_PQR(void)
+void Draw_PQR()
 {
     Bub_Num = 5;
     drawBspline(SEG, 5, 65, 164, 91, 168, 162, 186, 198, 190, 203, 190);
@@ -670,10 +648,9 @@ void Draw_PQR(void)
     Bub_Num = 2;
     drawBspline(SEG, 5, 249, 179, 263, 172);
     Bd(261, 170); // bubble 'R'
-    return;
 }
 
-void Draw_PST(void)
+void Draw_PST()
 {
     Bub_Num = 5;
     drawBspline(SEG, 5, 65, 164, 91, 168, 162, 186, 198, 190, 203, 190);
@@ -684,7 +661,6 @@ void Draw_PST(void)
     Bub_Num = 2;
     drawBspline(SEG, 5, 279, 191, 303, 190);
     Bd(300, 188); // bubble 'T'
-    return;
 }
 
 void Draw_LowS(char a, char b, char c, char x, char y, char z)
@@ -730,8 +706,6 @@ void Draw_LowS(char a, char b, char c, char x, char y, char z)
     if (z == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 void Draw_HighS(char x, char y, char z)
@@ -758,8 +732,6 @@ void Draw_HighS(char x, char y, char z)
     if (z == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 void RghtMoon(char x, char y)
@@ -780,7 +752,6 @@ void RghtMoon(char x, char y)
 
     Bub_Num = 2;
     drawBspline(SEG, 5, 272, 73, 268, 75);
-    return;
 }
 
 void DrawLunPas(char x, char y, char z, char w)
@@ -812,8 +783,6 @@ void DrawLunPas(char x, char y, char z, char w)
     if (w == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
 void DrawLefMoon(char x, char y)
@@ -831,8 +800,6 @@ void DrawLefMoon(char x, char y)
     if (y == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 
@@ -889,20 +856,15 @@ void DrawMoon(char x, char y, char z, char w, char j, char k, char l)
 
     Bub_Num = 3;
     drawBspline(SEG, 5, 246, 73, 240, 69, 251, 58);
-    return;
 }
 
-
-
-
-void DrawZ(void)
+void DrawZ()
 {
     Bub_Num = 4;
     drawBspline(SEG, 5, 307, 46, 301, 40, 294, 38, 301, 40);
     Bd(290, 37); // little bubble 'z'
     Bub_Num = 7;
     drawBspline(SEG, 5, 301, 40, 307, 46, 308, 55, 302, 61, 282, 71, 272, 73, 268, 75);
-    return;
 }
 
 void DrawSTUV(char x, char y, char z, char w)
@@ -936,8 +898,6 @@ void DrawSTUV(char x, char y, char z, char w)
     if (w == 1) {
         Bd(276, 68);    // bubble 's'
     }
-
-    return;
 }
 
 void LefGap(char x)
@@ -948,8 +908,6 @@ void LefGap(char x)
     if (x == 1) {
         Bd(303, 64);
     }
-
-    return;
 }
 
 void S_Patch(char x)
@@ -962,8 +920,6 @@ void S_Patch(char x)
         Bd(291, 54);
         Bd(279, 51);
     }
-
-    return;
 }
 
 };  // End of Anonymous namespace
