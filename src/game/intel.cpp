@@ -1228,7 +1228,7 @@ void DrawIntelImage(char plr, char poff)
     try {
         image = Filesystem::readImage(filename);
     } catch (const std::runtime_error &err) {
-        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        CAT_ERROR(filesys, "error loading %s: %s", filename, err.what());
         return;
     }
 
@@ -1723,7 +1723,7 @@ boost::shared_ptr<display::LegacySurface> LoadCIASprite()
     // try {
     //     sprite = Filesystem::readImage(filename);
     // } catch (const std::runtime_error &err) {
-    //     CERROR4(filesys, "Error loading %s: %s", filename.c_str(),
+    //     CAT_ERROR(filesys, "Error loading %s: %s", filename.c_str(),
     //             err.what());
     //     return;
     // }
