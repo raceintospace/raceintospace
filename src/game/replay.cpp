@@ -126,7 +126,7 @@ void Replay(char plr, int num,
                 /** \todo track decoding time and adjust delays */
                 if (vidfile.draw_video_frame(*display::graphics.videoOverlay()) == false) {
                     // if video ends (or breaks) - exit loop, move on to the next one
-                    if (!vidfile.is_good()) {WARNING1("error in drawing the replay frame");}
+                    if (! vidfile.is_good()) {LOG_WARNING("error in drawing the replay frame");}
                     break;
                 }
 

@@ -120,11 +120,11 @@ BZAnimation::BZAnimation(struct AnimType header,
     : mDisplay(nullptr), mHeader(header), mFrameData(frames)
 {
     if (x < 0 || x >= display::Graphics::WIDTH) {
-        WARNING2("Animation param x=%d out of range.", x);
+        LOG_WARNING("Animation param x=%d out of range.", x);
     }
 
     if (y < 0 || y >= display::Graphics::HEIGHT) {
-        WARNING2("Animation param y=%d out of range.", y);
+        LOG_WARNING("Animation param y=%d out of range.", y);
     }
 
     mX = x;

@@ -950,7 +950,7 @@ void DrawMisHist(char plr, int turn)
                 try {
                     planet = GetMissionPlan(pmis).Lun ? 6 : 7;
                 } catch (IOException &err) {
-                    CERROR2(multimedia, "Unable to load mission data,"
+                    CAT_ERROR(multimedia, "Unable to load mission data,"
                             " defaulting to Earth icon");
                     planet = 7;
                 }
@@ -1005,7 +1005,7 @@ void DrawMisHist(char plr, int turn)
                 try {
                     planet = GetMissionPlan(pmis).Lun ? 6 : 7;
                 } catch (IOException &err) {
-                    CERROR2(multimedia, "Unable to load mission data,"
+                    CAT_ERROR(multimedia, "Unable to load mission data,"
                             " defaulting to Earth icon");
                     planet = 7;
                 }
