@@ -127,22 +127,22 @@ struct MOBJ {
 };
 
 struct IMG {
-	int32_t Size;         // Size of Image (bytes)
-	char Comp;            // Type of Compression Used
-	int16_t Width;        // Width of Image
-	int16_t Height;       // Height of Image
-	int16_t PlaceX;       // Where to Place Img:X
-	int16_t PlaceY;       // Where to Place Img:Y
-	
-	template<class Archive>
-	void serialize(Archive & ar) {
+    int32_t Size;         // Size of Image (bytes)
+    char Comp;            // Type of Compression Used
+    int16_t Width;        // Width of Image
+    int16_t Height;       // Height of Image
+    int16_t PlaceX;       // Where to Place Img:X
+    int16_t PlaceY;       // Where to Place Img:Y
+    
+    template<class Archive>
+    void serialize(Archive & ar) {
         ar(Size);
         ar(Comp);
         ar(Width);
         ar(Height);
         ar(PlaceX);
         ar(PlaceY);
-	}  
+    }  
 };
 
 struct OUTLINE {
@@ -164,43 +164,43 @@ struct PORTOUTLINE {
 int Vab_Spot; // Global variable
 
 namespace // Local global variables
-{	
-	std::vector<MOBJ> MObj(S_MOBJ);
-	std::vector<IMG> Img(S_QTY);
-	std::vector<OUTLINE> pOutline(55);
-	
-	PORTOUTLINE *pPortOutlineRestore;
-	
-	/** These are the valid hotkeys */
-	char HotKeyList[] = "AIMRPVCQETBHLS\0";
-	char RUSH;
-	int FCtr;
+{    
+    std::vector<MOBJ> MObj(S_MOBJ);
+    std::vector<IMG> Img(S_QTY);
+    std::vector<OUTLINE> pOutline(55);
+    
+    PORTOUTLINE* pPortOutlineRestore;
+    
+    /** These are the valid hotkeys */
+    char HotKeyList[] = "AIMRPVCQETBHLS\0";
+    char RUSH;
+    int FCtr;
 
-	boost::shared_ptr<display::PalettizedSurface> flaggy;
+    boost::shared_ptr<display::PalettizedSurface> flaggy;
 
-	enum MissionReadyStatus {
-		MISSIONS_NONE = 0,
-		MISSIONS_UNSTAGED,
-		MISSIONS_UNSCHEDULED,
-		MISSIONS_READY
-	};
+    enum MissionReadyStatus {
+        MISSIONS_NONE = 0,
+        MISSIONS_UNSTAGED,
+        MISSIONS_UNSCHEDULED,
+        MISSIONS_READY
+    };
 };  // End of namespace
 
 
-void WaveFlagSetup(void);
-void WaveFlagDel(void);
+void WaveFlagSetup();
+void WaveFlagDel();
 void LoadImg(int plr, int indx);
 void PortText(int x, int y, std::string txt, char col);
-void UpdatePortOverlays(void);
-void DoCycle(void);
+void UpdatePortOverlays();
+void DoCycle();
 bool EndTurnOk(int plr);
 int MissionStatus(int plr);
-void PortOutLine(unsigned int Count, uint16_t *buf, char mode);
+void PortOutLine(unsigned int Count, uint16_t* buf, char mode);
 void PortRestore(unsigned int Count);
-int MapKey(char plr, int key, int old) ;
+int MapKey(char plr, int key, int old);
 void Port(char plr);
 char PortSel(char plr, char loc);
-char Request(char plr, const char *s, char md);
+char Request(char plr, const char* s, char md);
 int SpaceportAnimationEntry(int plr);
 int SpaceportAnimationOngoing(int plr);
 void LoadPOutline(int plr); 
@@ -213,7 +213,7 @@ void WaveFlagSetup(char plr)
     flaggy = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 }
 
-void WaveFlagDel(void)
+void WaveFlagDel()
 {
     flaggy.reset();
 }
@@ -238,17 +238,17 @@ void LoadImg(int plr, int indx)
     std::string filename;
     
     // Load port sprites
-	if (plr == 0) {
-		filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
-	} else {
-		filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
-	}
+    if (plr == 0) {
+        filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
+    } else {
+        filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
+    }
     
     boost::shared_ptr<display::PalettizedSurface> image;
     if (image = Filesystem::readImage(filename)) {
-		TRACE2("load image `%s'", filename.c_str());
+        LOG_TRACE("load image `%s'", filename.c_str());
     } else {
-		throw std::runtime_error(filename + " could not be loaded.");
+        throw std::runtime_error(filename + " could not be loaded.");
     }    
     
     //image->exportPalette(Img[indx].Width, Img[indx].Height);
@@ -270,14 +270,14 @@ void LoadImg(int plr, int indx)
 void PortPal(char plr)
 {   
     std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
     
     // Deserialize palette
     std::vector<uint8_t> palette;
     std::ifstream file(locate_file(filename.c_str(), FT_DATA));
     if (!file) {
-		throw std::runtime_error(filename + " could not be opened.");
-	}
+        throw std::runtime_error(filename + " could not be opened.");
+    }
     cereal::JSONInputArchive ar(file);
     ar(CEREAL_NVP(palette));
         
@@ -291,23 +291,23 @@ void PortPal(char plr)
 
 void DrawSpaceport(char plr)
 {
-	std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
-	
-	// Deserialize Img and MObj
-	{
-		std::ifstream file(locate_file(filename.c_str(), FT_DATA));
-		if (!file) {
-			throw std::runtime_error(filename + " could not be opened.");
-		}
-		
-		cereal::JSONInputArchive ar(file);
-		ar(CEREAL_NVP(MObj));
-		ar(CEREAL_NVP(Img));
+    std::string filename;
+    filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    
+    // Deserialize Img and MObj
+    {
+        std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+        if (!file) {
+            throw std::runtime_error(filename + " could not be opened.");
+        }
+        
+        cereal::JSONInputArchive ar(file);
+        ar(CEREAL_NVP(MObj));
+        ar(CEREAL_NVP(Img));
     }
     
     // Draw the main port image
-	LoadImg(plr, 0);
+    LoadImg(plr, 0);
 
     UpdatePortOverlays();
 
@@ -416,7 +416,7 @@ void PortText(int x, int y, std::string txt, char col)
 }
 
 
-void UpdatePortOverlays(void)
+void UpdatePortOverlays()
 {
     for (int8_t i = 0; i < NUM_PLAYERS; i++) {  // Programs
         for (int8_t j = 0; j < 5; j++) {
@@ -508,16 +508,16 @@ void Master(char plr)
     keyHelpText = "i000";
     WaveFlagSetup(plr);
     Vab_Spot = 0;
-	
-	/*
+    
+    /*
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
     for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
-	*/
-	
+    */
+    
     // Entering screen for the first time so fade out and in.
     FadeOut(2, 10, 0, 0);
     DrawSpaceport(plr);
@@ -531,7 +531,7 @@ void Master(char plr)
     SpotLoad(animation);
 
 #endif
-	
+    
     Port(plr);
     helpText = "i000";
     keyHelpText = "i000";
@@ -585,7 +585,7 @@ done:
 }
 
 
-void DoCycle(void)                   // Three ranges of color cycling
+void DoCycle()                   // Three ranges of color cycling
 {
     int i, tmp1, tmp2, tmp3, j;
     display::AutoPal p(display::graphics.legacyScreen());
@@ -721,12 +721,11 @@ int MissionStatus(int plr)
 void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
-    unsigned int i;
 
-    pPortOutlineRestore = (PORTOUTLINE *)xrealloc(pPortOutlineRestore,
+    pPortOutlineRestore = (PORTOUTLINE*)xrealloc(pPortOutlineRestore,
                           sizeof(PORTOUTLINE) * Count);
 
-    for (i = 0; i < Count; i++) {
+    for (int i = 0; i < Count; i++) {
         if (mode == 1) {
             // Save value from the screen
             pPortOutlineRestore[i].loc = outline[i];    // Offset of the outline into the buffer
@@ -746,11 +745,9 @@ void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
 void PortRestore(unsigned int Count)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
-    unsigned int i;
-    int loc;
 
-    for (i = 0; i < Count; i++) {
-        loc = pPortOutlineRestore[i].loc;
+    for (int i = 0; i < Count; i++) {
+        int loc = pPortOutlineRestore[i].loc;
         display::graphics.legacyScreen()->pixels()[loc] = pPortOutlineRestore[i].val;
         min_x = MIN(min_x, loc % MAX_X);
         min_y = MIN(min_y, loc / MAX_X);
@@ -944,14 +941,14 @@ void Port(char plr)
     int i, j, kMode, kEnt, k;
     char good, res;
     int kPad, pKey, index;
-    uint16_t Count, *bone;
+    uint16_t Count;
 
     helpText = "i043";
     keyHelpText = "k043";
-    bone = (uint16_t *) buffer;
+    uint16_t* bone = (uint16_t *) buffer;
     
-	LoadPOutline(plr);
-	
+    LoadPOutline(plr);
+    
     if (plr == 0 && Data->Year > 65) {
         PortText(5, 196, "CAPE KENNEDY", 12);
     } else if (plr == 0) {
@@ -1175,10 +1172,10 @@ void Port(char plr)
 
                             if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
                                 
-                        		index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
-				                Count = pOutline[index].Count;
-				                bone = new uint16_t[pOutline[index].bone.size()];
-                    			std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);                                
+                                index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+                                Count = pOutline[index].Count;
+                                bone = new uint16_t[pOutline[index].bone.size()];
+                                std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);                                
 
                                 PortOutLine(Count, bone, 1);
                                 delete [] bone;
@@ -1213,7 +1210,7 @@ void Port(char plr)
                 kEnt++;
             }
         } while ((kMode == 0 && i < S_MOBJ && i >= 0) 
-    	  || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
+          || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
     }  // while
 }
 
@@ -1482,8 +1479,7 @@ char PortSel(char plr, char loc)
     }
 }
 
-
-char Request(char plr, const char *s, char md)
+char Request(char plr, const char* s, char md)
 {
     char i;
     display::LegacySurface local(196, 84);
@@ -1779,17 +1775,16 @@ int SpaceportAnimationOngoing(int plr)
 
 // Deserialize Count and bone data in pOutline vector
 void LoadPOutline(int plr) {
-	
-	std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
-	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
-	  if (!file) {
-	  throw std::runtime_error(filename + " could not be opened.");  
-	}
+    std::string filename;
+    filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+      if (!file) {
+      throw std::runtime_error(filename + " could not be opened.");  
+    }
 
-	cereal::JSONInputArchive ar(file);
-	ar(CEREAL_NVP(pOutline));
-	INFO1("pOutline succesfully uploaded.");
+    cereal::JSONInputArchive ar(file);
+    ar(CEREAL_NVP(pOutline));
+    LOG_INFO("pOutline succesfully uploaded.");
 }
 
 
