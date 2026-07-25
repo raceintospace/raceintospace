@@ -377,9 +377,10 @@ char RD(char player_index)
 
                 if (Program.Damage &&
                     Program.DCost <= Data->P[player_index].Cash) {
-                    InBox(280, 90, 302, 100);
+                    OutBox(278, 89, 304, 103);
                     DamProb(player_index, hardware, unit);
                     DrawRD(player_index);
+                    InBox(278, 89, 304, 103);
                     hardware_buttons.drawButtons(hardware);
                     ShowUnit(hardware, unit, player_index);
                     DrawRDButtons(player_index,
@@ -967,14 +968,14 @@ void ShowUnit(char hw, char un, char player_index)
     draw_string(170, 139, "MAXIMUM R&D:");
 
     if (program.Damage) {
-        IOBox(278, 88, 304, 102);
+        IOBox(278, 89, 304, 103);
 
         if (program.DCost > Data->P[player_index].Cash) {
-            InBox(280, 90, 302, 100);
+            //InBox(280, 90, 302, 100);
         }
 
         display::graphics.setForegroundColor(8);
-        draw_string(284, 97, "F");
+        draw_string(284, 98, "F");
         display::graphics.setForegroundColor(11);
         draw_string(0, 0, "IX");
     }
