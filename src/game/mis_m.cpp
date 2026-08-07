@@ -43,6 +43,7 @@
 #include "mission_util.h"
 #include "options.h"
 #include "pace.h"
+#include "sdlhelper.h"
 #include "utils.h"
 
 LOG_DEFAULT_CATEGORY(mission)
