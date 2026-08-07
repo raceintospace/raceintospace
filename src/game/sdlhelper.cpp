@@ -77,40 +77,37 @@ static SDL_AudioSpec audio_desired;
 
 void audio_callback(void* userdata, Uint8* stream, int len)
 {
-    int ch = 0;
-
     memset(stream, 0, len);
 
-    for (ch = 0; ch < AV_NUM_CHANNELS; ++ch) {
-        audio_channel* chp = &Channels[ch];
-        if(chp->mute) continue;
-        if (chp->volume == 0) continue;
+    for (audio_channel& chp : Channels) {
+        if (chp.mute) continue;
+        if (chp.volume == 0) continue;
         
         int pos = 0;
-        audio_chunk* ac = chp->chunk;
+        audio_chunk* ac = chp.chunk;
         while (ac) {
             int bytes =
-                MIN(len - pos, (int) ac->size - (int) chp->offset);
+                MIN(len - pos, (int) ac->size - (int) chp.offset);
     
             int i = 0;
             int16_t* dst = (int16_t*)(stream + pos);
-            const int16_t* src = (int16_t*)((uint8_t*)ac->data + chp->offset);
+            const int16_t* src = (int16_t*)((uint8_t*)ac->data + chp.offset);
 
             for (i = 0; i < bytes / 2; ++i) {
-                dst[i] += src[i] * chp->volume / AV_MAX_VOLUME / AV_NUM_CHANNELS;
+                dst[i] += src[i] * chp.volume / AV_MAX_VOLUME / AV_NUM_CHANNELS;
             }
 
             pos += bytes;
-            chp->offset += bytes;
+            chp.offset += bytes;
                 
-            if (chp->offset == ac->size) {
-                chp->offset = 0;
+            if (chp.offset == ac->size) {
+                chp.offset = 0;
                 
                 if (!ac->loop) {
-                    ac = chp->chunk = chp->chunk->next;
+                    ac = chp.chunk = chp.chunk->next;
                 
-                    if (!chp->chunk) {
-                        chp->chunk_tailp = &chp->chunk;
+                    if (!chp.chunk) {
+                        chp.chunk_tailp = &chp.chunk;
                     }
         
                     /* why this tailp?? */
@@ -195,6 +192,8 @@ void av_silence(int channel)
     SDL_UnlockAudio();
 }
 
+// callback called by timer every 30ms (set at the end pf av_setup)
+// simply adds synthetic user events to break any "wait until event" blocking loops
 Uint32 sdl_timer_callback(Uint32 interval, void* param)
 {
     static SDL_Event tick;
@@ -566,7 +565,7 @@ SDL_Surface* SDL_Scale2x(SDL_Surface* src, SDL_Surface* dst)
 
 SDL_Surface* SDL_Scale4x(SDL_Surface* src, SDL_Surface* dst)
 {
-    assert(src);
+    assert(src != nullptr);
     assert(src != dst);
     
     SDL_PixelFormat* pf = src->format;
