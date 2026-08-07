@@ -16,37 +16,49 @@ That means that player pressing a button to go to different location is just a c
 Player exiting a building is just a `return`
 
 Main menu (game_main.cpp -> game_main_impl)
-\_ Difficulty (NewGamePreferences)
-   or save select (FileAccess)
+|\_Credits (intro.cpp -> Credits)
+ \_Difficulty (prefs.cpp -> NewGamePreferences)
+   or save select (admin.cpp -> FileAccess)
+   \_ Who Plays next (intro.cpp -> NextTurn)
+    /
+   \_ News (news.cpp -> News)
+    /
    \_ Spaceport (port.cpp -> Master, Port)
-      |\_ Admin building (admin.cpp -> Admin)
-      |   |\_ Budget (budget.cpp -> Budget)
-      |   |\_ RnD (rdplex.cpp -> HPurc)
-      |   |\_ Future missions (Future)
-      |   |\_ Spacemen buying (AstSel)
-      |   |\_ In-game options (IngamePreferences)
-      |    \_ Save select (FileAccess)
-      |\_ VAB (VAB)
-      |\_ Training buildings (Train)
-      |\_ Spacemen complex (Limbo)
-      |\_ Hospital (Hospital)
-      |\_ RnD (rdplex.cpp -> RD)
-      |\_ Moon (Moon)
-      |\_ Museum (museum.cpp -> Museum)
-      |   |\_ Ranking (RankMe)
-      |   |\_ Launch history (ShowSpHist)
-      |   |\_ Records (Records)
-      |   |\_ Prestige (ShowPrest)
-      |   |\_ Efficiency stats (ShowHard)
-      |    \_ Spacemen history (ShowAstrosHist)
-      |\_ Program-specific buildings (SatBld, LMBld, Programs)
-      |\_ Government (Review)
-      |\_ Launchpads (ShowPad)
-      |\_ Cemetery (Cemetery)
-      |\_ Intel (Intel)
-      |\_ Viewing stand (Viewing)
-      \__ Mission control (MissionStatus)
-       
+    / |\_ Admin building (admin.cpp -> Admin)
+   |  |   |\_ Budget (budget.cpp -> Budget)
+   |  |   |\_ RnD (rdplex.cpp -> HPurc)
+   |  |   |\_ Future missions (future.cpp -> Future)
+   |  |   |\_ Spacemen buying (ast1.cpp -> AstSel)
+   |  |   |\_ In-game options (pref.cpp -> IngamePreferences)
+   |  |    \_ Save select (admin.cpp -> FileAccess)
+   |  |\_ VAB (vab.cpp -> VAB)
+   |  |\_ Training buildings (ast3.cpp -> Train)
+   |  |\_ Spacemen complex (ast2.cpp -> Limbo)
+   |  |\_ Hospital (ast3.cpp -> Hospital)
+   |  |\_ RnD (rdplex.cpp -> RD)
+   |  |\_ Moon (ast0.cpp -> Moon)
+   |  |\_ Museum (museum.cpp -> Museum)
+   |  |   |\_ Ranking (RankMe)
+   |  |   |\_ Launch history (ShowSpHist)
+   |  |   |\_ Records (Records)
+   |  |   |\_ Prestige (ShowPrest)
+   |  |   |\_ Efficiency stats (ShowHard)
+   |  |    \_ Spacemen history (ShowAstrosHist)
+   |  |\_ Program-specific buildings (SatBld, LMBld, Programs)
+   |  |\_ Government (review.cpp -> Review)
+   |  |\_ Launchpads (radar.cpp -> ShowPad)
+   |  |\_ Cemetery (ast3.cpp -> Cemetery)
+   |  |\_ Intel (intel.cpp -> Intel)
+   |  |\_ Viewing stand (budget.cpp -> Viewing)
+   |  \__ Mission control (rush.cpp -> Rush)
+   |
+    \_ List of launches
+     /
+     \_ Details of current launch, last chance to scrap
+      /
+     \_ Launch
+      /
+     \_ Results of launch
 ----
 
   Graphics is pixel-based and palette-based. Internally we keep 320x200 graphics::legacy_screen which in essense is just a char[]  
@@ -90,7 +102,8 @@ Sometimes said palette changes or gets mixed - there are some bugs due to that
  6) `type* var`, `type& var` - stick ymbol-modifier to the type
     general C++ style. Types are expressive, variables are dumb
     since variables are declared and assigned mostly at the same time, you don't encounter the need for `type *a, *b` much
-    
+
+----
 
 Future screen seems to store endurance length in Future[pad].Endurance
-Update() copies Future[] into Mission[], ...but that happens after launch already conclude
+Update() copies Future[] into Mission[], ...but that happens after launch already concludes
