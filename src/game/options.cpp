@@ -110,9 +110,9 @@ static const struct {
         "Set to 1 if you want to display the game at full-screen."
     },
     {
-	"xscale",  &options.want_4xscale, "%u", 0,
-	"By default now the game is displayed at 4x scale."
-	"\n# Set to 0 if you want to display the game at the classic 2x scale."
+        "xscale",  &options.want_4xscale, "%u", 0,
+        "By default now the game is displayed at 4x scale."
+        "\n# Set to 0 if you want to display the game at the classic 2x scale."
     },
     {
         "debuglevel", &options.want_debug, "%u", 0,
@@ -228,7 +228,7 @@ usage(int fail)
             "options: -a -i -f -s -v -n\n"
             "\t-v verbose mode\n\t\tadd this several times to get to DEBUG level\n"
             "\t-f fullscreen mode\n"
-	    "\t-s 4x scale mode\n"
+            "\t-s 4x scale mode\n"
            );
     exit((fail) ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -450,14 +450,6 @@ static char *get_homedir(void)
     return nullptr;
 }
 
-static void
-fixpath_options(void)
-{
-    fix_pathsep(options.dir_savegame);
-    fix_pathsep(options.dir_gamedata);
-}
-
-
 namespace
 {
 
@@ -563,8 +555,6 @@ setup_options(int argc, char *argv[])
 
     ResetToDefaultOptions();
 
-    fixpath_options();
-
     /* now try to read config file, if it exists */
     if (read_config_file() < 0) {
         /* if not, then write default config template */
@@ -600,7 +590,7 @@ setup_options(int argc, char *argv[])
             options.want_audio = 0;
         } else if (strcmp(str, "-f") == 0) {
             options.want_fullscreen = 1;
-	} else if (strcmp(str, "-s") == 0) {
+        } else if (strcmp(str, "-s") == 0) {
             options.want_4xscale = 0;
         } else if (strcmp(str, "-v") == 0) {
             options.want_debug++;
@@ -652,8 +642,6 @@ setup_options(int argc, char *argv[])
         pos--;
         argc--;
     }
-
-    fixpath_options();
 
     if (options.classic) {
         ResetToClassicOptions();

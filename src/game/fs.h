@@ -40,13 +40,12 @@ private:
     std::string m_name;
 };
 
-extern FILE* sOpen(const char* name, const char* mode, int type);
-extern std::string locate_file(const char* name, int type);
-extern FILE* open_gamedat(const char* name);
-extern FILE* open_savedat(const char* name, const char* mode);
-extern char* load_gamedata(const char* name);
-extern int create_save_dir();
-extern int remove_savedat(const char* name);
-extern void fix_pathsep(char* path);
+FILE* sOpen(const char* name, const char* mode, int type);
+std::string locate_file(const char* name, int type);
+FILE* open_gamedat(const char* name);
+FILE* open_savedat(const char* name, const char* mode);
+char* load_gamedata(const char* name);
+int create_save_dir();
+int remove_savedat(const char* name);
 
 #endif /* _FS_H */
