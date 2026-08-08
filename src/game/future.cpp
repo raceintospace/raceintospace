@@ -43,6 +43,7 @@
 #include "pace.h"
 #include "place.h"
 #include "prest.h"
+#include "sdlhelper.h"
 
 
 LOG_DEFAULT_CATEGORY(future)
