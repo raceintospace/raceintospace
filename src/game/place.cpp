@@ -46,23 +46,23 @@
 #include "sdlhelper.h"
 #include "utils.h"
 
-void BCDraw(int y);
-void DispHelp(char top, char bot, const char *txt);
-void writePrestigeFirst(char index);
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
 
+void BCDraw(int y);
+void DispHelp(char top, char bot, const char* txt);
+void writePrestigeFirst(char index);
 
 void BCDraw(int y)
 {
     ShBox(23, y, 54, 20 + y); //ShBox(56,y,296,20+y);
-    return;
 }
 
 int MainMenuChoice()
 {
     struct {
-        const char *label;
+        const char* label;
         int y;
-        const char *hotkeys;
+        const char* hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9 + 27 * MAIN_NEW_GAME, "N" },
         { "OLD GAME", 9 + 27 * MAIN_OLD_GAME, "O" },
@@ -150,9 +150,8 @@ int MainMenuChoice()
  *          or -1 to abort.
  * \throws runtime_error  if Filesystem cannot read the icon images.
  */
-int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
+int BChoice(int plr, int qty, char* Name, char* Imx, bool mayEscape)
 {
-    int j;
     int starty = 100;
     char filename[128];
     //FadeOut(2,pal,10,0,0);
@@ -175,7 +174,7 @@ int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
     // FadeIn(2,pal,10,0,0);
     key = 0;
     WaitForMouseUp();
-    j = -1;
+    int j = -1;
 
     while (j == -1) {
         av_block();
@@ -350,8 +349,6 @@ void SmHardMe(char plr, int x, int y, char prog, char planet,
     if (planet == 7 || planet == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }
-
-    return;
 }
 
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
@@ -404,11 +401,9 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
     }
 }
 
-void
-DispHelp(char top, char bot, const char *txt)
+void DispHelp(char top, char bot, const char* txt)
 {
     int i = 0;
-    int pl = 0;
 
     while (i++ < top) {
         if (txt[i * 42] == (char) 0xcc) {
@@ -419,6 +414,7 @@ DispHelp(char top, char bot, const char *txt)
     i = top;
     fill_rectangle(38, 49, 260, 127, 3);
 
+    int pl = 0;
     while (i <= bot && pl < 11) {
         if (txt[i * 42] == (char) 0xCC) {
             display::graphics.setForegroundColor(txt[i * 42 + 1]);
@@ -430,8 +426,6 @@ DispHelp(char top, char bot, const char *txt)
         pl++;
         i++;
     }
-
-    return;
 }
 
 /**
@@ -445,17 +439,18 @@ DispHelp(char top, char bot, const char *txt)
  * \throws IOException  if unable to open the help file.
  * \throws runtime_error  if help entry seems invalid.
  */
-int Help(const char *FName)
+int Help(const char* FName)
 {
+    LOG_DEBUG("-> Help( FName = %s )", FName);
     const int PAGE_SIZE = 11;
     int i, j, line, top = 0, bot = 0, plc = 0;
-    char *NTxt, mode;
     int fsize;
 
-    mode = 0; /* XXX check uninitialized */
-    NTxt = nullptr; /* XXX check uninitialized */
+    char mode = 0; /* XXX check uninitialized */
+    char* NTxt = nullptr; /* XXX check uninitialized */
 
-    if (!FName || strncmp(&FName[1], "000", 3) == 0) {
+    if (FName == nullptr || strncmp(&FName[1], "000", 3) == 0) {
+        LOG_DEBUG("Help() called on Screen without help text, we do nothing");
         return 0;
     }
    
@@ -466,13 +461,13 @@ int Help(const char *FName)
     }
 
     if (i == Assets->help.size()) {
-        CERROR3(baris, "Could not find help entry %s", FName);
+        LOG_ERROR("Could not find help entry %s", FName);
         return 0;
     }
 
     AL_CALL = 1;
     std::string str = boost::algorithm::join(Assets->help.at(i).description, "\r\n") + "\r\n";
-    const char *Help = str.c_str();
+    const char* Help = str.c_str();
 
     // Process entry
     i = 0;
@@ -669,6 +664,7 @@ int Help(const char *FName)
     free(NTxt);
 
     AL_CALL = 0;
+    LOG_DEBUG("<- Help()");
     return i;
 }
 
@@ -816,6 +812,9 @@ void writePrestigeFirst(char index)   ///index==plr
  */
 void Draw_Mis_Stats(int plr, int index, int mode)
 {
+    auto& hist = Data->P[plr].History[index];
+    int mcode = hist.MissionCode;
+    
     if (mode == 0) {
         InBox(245, 5, 314, 17);
     }
@@ -834,7 +833,7 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     draw_string(58, 41, "MISSION INFORMATION");
     draw_string(12, 104, "MISSION DURATION: ");
 
-    char duration = 'A' + Data->P[plr].History[index].Duration - 1;
+    char duration = 'A' + hist.Duration - 1;
 
     if (duration >= 'A' && duration <= 'F') {
         draw_character(duration);
@@ -845,17 +844,16 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     draw_string(12, 112, "PRESTIGE EARNED: ");
 
     if ((MAIL != 0 && MAIL != 3 && Option == -1) || mode == 0) {
-        draw_number(0, 0, Data->P[plr].History[index].Prestige);
+        draw_number(0, 0, hist.Prestige);
     } else {
         draw_string(0, 0, "PENDING");
     }
 
-    int mcode = Data->P[plr].History[index].MissionCode;
-    const struct mStr plan = GetMissionPlan(mcode);
+    const mStr plan = GetMissionPlan(mcode);
 
     display::graphics.setForegroundColor(1);
     draw_string(12, 56, "MISSION NAME: ");
-    draw_string(0, 0, (char *)Data->P[plr].History[index].MissionName);
+    draw_string(0, 0, (char *)hist.MissionName);
     draw_string(12, 64, "MISSION TYPE:");
     display::graphics.setForegroundColor(11);
     draw_string(15, 72, (plan.Abbr).c_str());
@@ -863,28 +861,28 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     display::graphics.setForegroundColor(1);
     draw_string(12, 80, "RESULT: ");
 
-    if (Data->P[plr].History[index].Duration != 0) {
+    if (hist.Duration != 0) {
 
-        if (Data->P[plr].History[index].spResult == 4197) {
+        if (hist.spResult == 4197) {
             draw_string(0, 0, "PRIMARY CREW DEAD");
-        } else if (Data->P[plr].History[index].spResult == 4198) {
+        } else if (hist.spResult == 4198) {
             draw_string(0, 0, "SECONDARY CREW DEAD");
-        } else if (Data->P[plr].History[index].spResult == 4199) {
+        } else if (hist.spResult == 4199) {
             draw_string(0, 0, "BOTH CREWS DEAD");
-        } else draw_string(0, 0, ((Data->P[plr].History[index].spResult < 500) || (Data->P[plr].History[index].spResult >= 5000)) ? "SUCCESS" :
-                               (Data->P[plr].History[index].spResult < 1999) ? "PARTIAL FAILURE" :
-                               (Data->P[plr].History[index].spResult == 1999) ? "FAILURE" :
-                               (Data->P[plr].History[index].spResult < 3000) ? "MISSION INJURY" :
-                               (Data->P[plr].History[index].spResult < 4000) ? "MISSION DEATH" :
+        } else draw_string(0, 0, ((hist.spResult < 500) || (hist.spResult >= 5000)) ? "SUCCESS" :
+                               (hist.spResult < 1999) ? "PARTIAL FAILURE" :
+                               (hist.spResult == 1999) ? "FAILURE" :
+                               (hist.spResult < 3000) ? "MISSION INJURY" :
+                               (hist.spResult < 4000) ? "MISSION DEATH" :
                                "ALL DEAD");
-    } else if (Data->P[plr].History[index].Event == 0) {
-        draw_string(0, 0, (Data->P[plr].History[index].spResult == 1) ? "SUCCESS" : "FAILURE");
-    } else if (Data->P[plr].History[index].Event > 0) {
+    } else if (hist.Event == 0) {
+        draw_string(0, 0, (hist.spResult == 1) ? "SUCCESS" : "FAILURE");
+    } else if (hist.Event > 0) {
         draw_string(0, 0, "ARRIVE IN ");
-        draw_number(0, 0, Data->P[plr].History[index].Event);
+        draw_number(0, 0, hist.Event);
         draw_string(0, 0, " SEASON");
 
-        if (Data->P[plr].History[index].Event >= 2) {
+        if (hist.Event >= 2) {
             draw_string(0, 0, "S");
         }
     }
@@ -914,16 +912,16 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     // Crew Stuff
     display::graphics.setForegroundColor(11);
 
-    if (Data->P[plr].History[index].Man[PAD_A][0] == -1 &&
-        Data->P[plr].History[index].Man[PAD_B][0] == -1) {
+    if (hist.Man[PAD_A][0] == -1 &&
+        hist.Man[PAD_B][0] == -1) {
         draw_string(13, 137, "UNMANNED MISSION");
     } else {
         int let = 0;
 
         // First Part -- Men
-        if (Data->P[plr].History[index].Man[PAD_A][0] != -1) {
+        if (hist.Man[PAD_A][0] != -1) {
             for (int j = 0; j < 4; j++) {
-                int k = Data->P[plr].History[index].Man[PAD_A][j];
+                int k = hist.Man[PAD_A][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     display::graphics.setForegroundColor(18);    // Display women in blue, not yellow
@@ -940,9 +938,9 @@ void Draw_Mis_Stats(int plr, int index, int mode)
         }
 
         // Second Part -- Men
-        if (Data->P[plr].History[index].Man[PAD_B][0] != -1) {
+        if (hist.Man[PAD_B][0] != -1) {
             for (int j = 0; j < 4; j++) {
-                int k = Data->P[plr].History[index].Man[PAD_B][j];
+                int k = hist.Man[PAD_B][j];
 
                 if (Data->P[plr].Pool[k].Sex == 1) {
                     // Display women in blue, not yellow
@@ -1027,27 +1025,29 @@ void Draw_Mis_Stats(int plr, int index, int mode)
                 display::graphics.screen()->clear();
                 FadeIn(2, 10, 0, 0);
 
-                if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
-                    Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
-                    Data->P[plr].History[index].MissionCode == Mission_SaturnFlyby) {
-                    if (Data->P[plr].History[index].Event == 0 &&
-                        Data->P[plr].History[index].spResult == 1)
-                        switch (Data->P[plr].History[index].MissionCode) {
-                        case Mission_MarsFlyby:
-                            Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUM1" : "WSM1");
-                            break;
+                if ((mcode == Mission_MarsFlyby 
+                     || mcode == Mission_JupiterFlyby
+                     || mcode == Mission_SaturnFlyby
+                     )
+                    && hist.Event == 0 
+                    && hist.spResult == 1)
+                {
+                    switch (mcode) {
+                    case Mission_MarsFlyby:
+                        Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUM1" : "WSM1");
+                        break;
 
-                        case Mission_JupiterFlyby:
-                            Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUJ1" : "WSJ1");
-                            break;
+                    case Mission_JupiterFlyby:
+                        Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUJ1" : "WSJ1");
+                        break;
 
-                        case Mission_SaturnFlyby:
-                            Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUS1" : "WSS1");
-                            break;
+                    case Mission_SaturnFlyby:
+                        Replay(plr, index, 0, 0, 320, 200, (plr == 0) ? "WUS1" : "WSS1");
+                        break;
 
-                        default:
-                            break;
-                        };
+                    default:
+                        break;
+                    };
                 } else {
                     Replay(plr, index, 0, 0, 320, 200, "OOOO");
                 }
@@ -1067,26 +1067,26 @@ void Draw_Mis_Stats(int plr, int index, int mode)
 
             } else {
                 //Specs: Planetary Mission Kludge
-                if (Data->P[plr].History[index].MissionCode == Mission_MarsFlyby ||
-                    Data->P[plr].History[index].MissionCode == Mission_JupiterFlyby ||
-                    Data->P[plr].History[index].MissionCode == Mission_SaturnFlyby) {
-                    if (Data->P[plr].History[index].Event == 0 &&
-                        Data->P[plr].History[index].spResult == 1) {
-                        switch (Data->P[plr].History[index].MissionCode) {
-                        case Mission_MarsFlyby:
-                            Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUM1" : "WSM1");
-                            break;
+                if ((mcode == Mission_MarsFlyby
+                     || mcode == Mission_JupiterFlyby
+                     || mcode == Mission_SaturnFlyby
+                    )
+                    && hist.Event == 0 
+                    && hist.spResult == 1
+                   )
+                {
+                    switch (mcode) {
+                    case Mission_MarsFlyby:
+                        Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUM1" : "WSM1");
+                        break;
 
-                        case Mission_JupiterFlyby:
-                            Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUJ1" : "WSJ1");
-                            break;
+                    case Mission_JupiterFlyby:
+                        Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUJ1" : "WSJ1");
+                        break;
 
-                        case Mission_SaturnFlyby:
-                            Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUS1" : "WSS1");
-                            break;
-                        }
-                    } else {
-                        Replay(plr, index, 215, 56, 94, 60, "OOOO");
+                    case Mission_SaturnFlyby:
+                        Replay(plr, index, 215, 56, 94, 60, (plr == 0) ? "WUS1" : "WSS1");
+                        break;
                     }
                 } else {
                     Replay(plr, index, 215, 56, 94, 60, "OOOO");
