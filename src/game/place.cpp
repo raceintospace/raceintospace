@@ -47,22 +47,21 @@
 #include "utils.h"
 
 void BCDraw(int y);
-void DispHelp(char top, char bot, const char *txt);
+void DispHelp(char top, char bot, const char* txt);
 void writePrestigeFirst(char index);
 
 
 void BCDraw(int y)
 {
     ShBox(23, y, 54, 20 + y); //ShBox(56,y,296,20+y);
-    return;
 }
 
 int MainMenuChoice()
 {
     struct {
-        const char *label;
+        const char* label;
         int y;
-        const char *hotkeys;
+        const char* hotkeys;
     } const menu_options[] = {
         { "NEW GAME", 9 + 27 * MAIN_NEW_GAME, "N" },
         { "OLD GAME", 9 + 27 * MAIN_OLD_GAME, "O" },
@@ -102,7 +101,7 @@ int MainMenuChoice()
             // Check for hotkeys
             for (int i = 0; i < menu_option_count; i++) {
                 // Iterate over each hotkey
-                for (const char *hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
+                for (const char* hotkey = menu_options[i].hotkeys; *hotkey; hotkey++) {
                     if (*hotkey == key) {
                         // Match!
                         selected_option = i;
@@ -150,7 +149,7 @@ int MainMenuChoice()
  *          or -1 to abort.
  * \throws runtime_error  if Filesystem cannot read the icon images.
  */
-int BChoice(int plr, int qty, char *Name, char *Imx, bool mayEscape)
+int BChoice(int plr, int qty, char* Name, char* Imx, bool mayEscape)
 {
     int j;
     int starty = 100;
@@ -350,8 +349,6 @@ void SmHardMe(char plr, int x, int y, char prog, char planet,
     if (planet == 7 || planet == 6) {
         SmHardMe(plr, x + planet * 2, y + 5, prog, 0, coff);
     }
-
-    return;
 }
 
 void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
@@ -404,8 +401,7 @@ void BigHardMe(char plr, int x, int y, char hw, char unit, char sh)
     }
 }
 
-void
-DispHelp(char top, char bot, const char *txt)
+void DispHelp(char top, char bot, const char* txt)
 {
     int i = 0;
     int pl = 0;
@@ -430,8 +426,6 @@ DispHelp(char top, char bot, const char *txt)
         pl++;
         i++;
     }
-
-    return;
 }
 
 /**
@@ -445,7 +439,7 @@ DispHelp(char top, char bot, const char *txt)
  * \throws IOException  if unable to open the help file.
  * \throws runtime_error  if help entry seems invalid.
  */
-int Help(const char *FName)
+int Help(const char* FName)
 {
     const int PAGE_SIZE = 11;
     int i, j, line, top = 0, bot = 0, plc = 0;
@@ -466,7 +460,7 @@ int Help(const char *FName)
     }
 
     if (i == Assets->help.size()) {
-        CERROR3(baris, "Could not find help entry %s", FName);
+        CAT_ERROR(baris, "Could not find help entry %s", FName);
         return 0;
     }
 
@@ -674,9 +668,9 @@ int Help(const char *FName)
 
 void writePrestigeFirst(char index)   ///index==plr
 {
-    char w = 0, i, draw = 0;
+    char w = 0, draw = 0;
 
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < 28; i++) {
         //Prestige First
         if (w < 6 && Data->Prestige[i].Place == index && !(Data->PD[index][i] & 1)) {
             if (draw == 0) {
@@ -741,7 +735,7 @@ void writePrestigeFirst(char index)   ///index==plr
         }
     }
 
-    for (i = 0; i < 28; i++) {
+    for (int i = 0; i < 28; i++) {
         // Prestige Seconds
         if (w < 6 && Data->Prestige[i].mPlace == index &&
             Data->PD[index][i] == 0) {

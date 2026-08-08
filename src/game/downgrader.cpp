@@ -166,7 +166,7 @@ struct MissionType Downgrader::next()
     try {
         style = GetMissionPlan(*mIndex);
     } catch (IOException &err) {
-        CCRITICAL2(filesys, err.what());
+        CAT_CRITICAL(filesys, err.what());
         mCurrent = mBasis;
         return mCurrent;
     }
@@ -182,7 +182,7 @@ struct MissionType Downgrader::next()
         try {
             style = GetMissionPlan(*mIndex);
         } catch (IOException &err) {
-            CCRITICAL2(filesys, err.what());
+            CAT_CRITICAL(filesys, err.what());
             mCurrent = mBasis;
             return mCurrent;
         }

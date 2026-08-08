@@ -65,37 +65,35 @@
 
 LOG_DEFAULT_CATEGORY(filesys)
 
-static DIR *save_dir;
+static DIR* save_dir;
 
 /** used internally to find and open files */
 typedef struct file {
-    FILE *handle;   /**< standard filehandle */
-    char *path;     /**< path to file */
+    FILE* handle;   /**< standard filehandle */
+    char* path;     /**< path to file */
 } file;
 
 /**
  * gamedata & savedata access functions
  */
 
-void
-fix_pathsep(char *name)
+void fix_pathsep(char* name)
 {
 }
 
-static FILE *
-try_fopen(const char *fname, const char *mode)
+static FILE* try_fopen(const char* fname, const char* mode)
 {
-    FILE *fp = nullptr;
+    FILE* fp = nullptr;
     assert(fname);
     assert(mode);
-    TRACE3("trying to open `%s' (mode %s)", fname, mode);
+    LOG_TRACE("trying to open `%s' (mode %s)", fname, mode);
 
     fp = fopen(fname, mode);
 
     /** \todo ENOENT is POSIX, ANSI equivalent for file does not exist??? */
     if (!fp && errno != ENOENT) {
         int esave = errno;
-        WARNING3("can't access file `%s': %s", fname, strerror(errno));
+        LOG_WARNING("can't access file `%s': %s", fname, strerror(errno));
         errno = esave;
     }
 
@@ -103,14 +101,13 @@ try_fopen(const char *fname, const char *mode)
 }
 
 /** try to open base/xxx/name for xxx = arg4 ... */
-static file
-s_open_helper(const char *base, const char *name, const char *mode, ...)
+static file s_open_helper(const char* base, const char* name, const char* mode, ...)
 {
-    FILE *fh = nullptr;
+    FILE* fh = nullptr;
     file f = {nullptr, nullptr};
     int serrno;
-    char *p = nullptr;
-    char *cooked = (char *)xmalloc(1024);
+    char* p = nullptr;
+    char* cooked = (char *)xmalloc(1024);
     size_t len = 1024, len2 = 0;
     size_t len_base = strlen(base), len_name = strlen(name);
     va_list ap;
@@ -121,15 +118,15 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
 
     va_start(ap, mode);
 
-    for (p = va_arg(ap, char *); p; p = va_arg(ap, char *)) {
-        char *s = nullptr;
+    for (p = va_arg(ap, char*); p; p = va_arg(ap, char*)) {
+        char* s = nullptr;
         int was_upper = 0;
         size_t len_p = strlen(p);
 
         len2 = len_base + len_name + len_p + 3;
 
         if (len2 > len) {
-            cooked = (char *)xrealloc(cooked, (len = len2));
+            cooked = (char*)xrealloc(cooked, (len = len2));
         }
 
         if (strlen(p)) {
@@ -190,16 +187,15 @@ s_open_helper(const char *base, const char *name, const char *mode, ...)
  *
  * \return fileinformation including opened filehandle
  */
-static file
-try_find_file(const char *name, const char *mode, int type)
+static file try_find_file(const char* name, const char* mode, int type)
 {
     file f = {nullptr, nullptr};
-    char *gd = options.dir_gamedata;
-    char *sd = options.dir_savegame;
-    char *where = "";
+    char* gd = options.dir_gamedata;
+    char* sd = options.dir_savegame;
+    char* where = "";
     const char *newmode = mode;
 
-    TRACE2("looking for file `%s'", name);
+    LOG_TRACE("looking for file `%s'", name);
 
     /** \note allows write access only to savegame files */
     if (type != FT_SAVE) {
@@ -214,7 +210,7 @@ try_find_file(const char *name, const char *mode, int type)
                 inner_newmode = "r";
             }
 
-            DEBUG3("access mode changed from `%s' to `%s'", mode, inner_newmode);
+            LOG_DEBUG("access mode changed from `%s' to `%s'", mode, inner_newmode);
         }
     }
 
@@ -275,20 +271,19 @@ try_find_file(const char *name, const char *mode, int type)
 
     if (f.handle == nullptr && type != FT_SAVE_CHECK) {
         int serrno = errno;
-        WARNING3("can't find file `%s' in %s dir(s)", name, where);
+        LOG_WARNING("can't find file `%s' in %s dir(s)", name, where);
         errno = serrno;
     }
 
     return f;
 }
 
-FILE *
-sOpen(const char *name, const char *mode, int type)
+FILE* sOpen(const char* name, const char* mode, int type)
 {
     file f = try_find_file(name, mode, type);
 
     if (f.path) {
-        INFO3("opened file `%s' (mode %s)", f.path, mode);
+        LOG_INFO("opened file `%s' (mode %s)", f.path, mode);
         free(f.path);
     }
 
@@ -297,12 +292,12 @@ sOpen(const char *name, const char *mode, int type)
 
 /** Find and open file, if found return full path.
  */
-std::string locate_file(const char *name, int type)
+std::string locate_file(const char* name, int type)
 {
     file f = try_find_file(name, "rb", type);
 
     if (f.handle) {
-        INFO2("found file `%s'", f.path);
+        LOG_INFO("found file `%s'", f.path);
         fclose(f.handle);
     }
 
@@ -315,52 +310,49 @@ std::string locate_file(const char *name, int type)
     return "";
 }
 
-int
-remove_savedat(const char *name)
+int remove_savedat(const char* name)
 {
     size_t len_base = strlen(options.dir_savegame) + 1;
     size_t len_name = strlen(name) + 1;
-    char *cooked = (char *)xmalloc(len_base + len_name);
+    char* cooked = (char*)xmalloc(len_base + len_name);
     int rv = 0;
 
     snprintf(cooked, len_base + len_name, "%s/%s",
              options.dir_savegame, name);
-    INFO2("removing save game file `%s'", cooked);
+    LOG_INFO("removing save game file `%s'", cooked);
     fix_pathsep(cooked);
     rv = remove(cooked);
 
     if (rv < 0 && errno != ENOENT)
-        WARNING3("failed to remove save game file `%s': %s",
+        LOG_WARNING("failed to remove save game file `%s': %s",
                  cooked, strerror(errno));
 
     free(cooked);
     return rv;
 }
 
-FILE *
-open_gamedat(const char *name)
+FILE* open_gamedat(const char* name)
 {
     return sOpen(name, "rb", FT_DATA);
 }
 
-FILE *
-open_savedat(const char *name, const char *mode)
+FILE* open_savedat(const char* name, const char* mode)
 {
     return sOpen(name, mode, FT_SAVE_CHECK);
 }
 
-char * load_gamedata(const char *name)
+char* load_gamedata(const char* name)
 {
-	// Deserialize in vector data
-	std::vector<uint8_t> data;
-	DESERIALIZE_JSON_FILE(&data, locate_file(name, FT_DATA));
-	
-	// Transform vector data in char pointer p
-	char* p = new char[data.size() + 1]; // +1 for null char
-	std::copy(data.begin(), data.end(), p);
+    // Deserialize in vector data
+    std::vector<uint8_t> data;
+    DESERIALIZE_JSON_FILE(&data, locate_file(name, FT_DATA));
+    
+    // Transform vector data in char pointer p
+    char* p = new char[data.size() + 1]; // +1 for null char
+    std::copy(data.begin(), data.end(), p);
     p[data.size()] = '\0'; // Add null
-	
-	return p;
+    
+    return p;
 }
 
 
@@ -373,11 +365,10 @@ char * load_gamedata(const char *name)
  * \return -1 on error
  * \return 0 on success
  */
-int
-create_save_dir(void)
+int create_save_dir()
 {
     if (mkdir(options.dir_savegame, 0777) < 0 && errno != EEXIST) {
-        WARNING3("can't create savegame directory `%s': %s",
+        LOG_WARNING("can't create savegame directory `%s': %s",
                  options.dir_savegame, strerror(errno));
         return -1;
     }
@@ -385,16 +376,14 @@ create_save_dir(void)
     return 0;
 }
 
-int
-PhysFsEnumerator::enumerate()
+int PhysFsEnumerator::enumerate()
 {
     return PHYSFS_enumerate(this->m_name.c_str(), this->enumerate_callback, this);
 }
 
-PHYSFS_EnumerateCallbackResult
-PhysFsEnumerator::enumerate_callback(void *data, const char *origdir, const char *fname)
+PHYSFS_EnumerateCallbackResult PhysFsEnumerator::enumerate_callback(void* data, const char* origdir, const char* fname)
 {
-    PhysFsEnumerator *self = static_cast<PhysFsEnumerator *>(data);
+    PhysFsEnumerator* self = static_cast<PhysFsEnumerator*>(data);
     return self->onItem(origdir, fname);
 }
 

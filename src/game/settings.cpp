@@ -28,7 +28,7 @@
 namespace
 {
 
-void ResetAudioSettings(AudioConfig &audio);
+void ResetAudioSettings(AudioConfig& audio);
 
 };
 
@@ -49,7 +49,7 @@ AudioConfig LoadAudioSettings()
     if (!configFileName.empty()) {
         DESERIALIZE_JSON_FILE(&audio, configFileName);
     } else {
-        CNOTICE3(filesys,
+        CAT_NOTICE(filesys,
                  "Could not find audio configuration file %s,"
                  " supplying defaults",
                  "settings.json");
@@ -64,12 +64,12 @@ AudioConfig LoadAudioSettings()
 
         try {
             SaveAudioSettings(audio);
-        } catch (const IOException &err) {
-            CERROR3(filesys,
+        } catch (const IOException& err) {
+            CAT_ERROR(filesys,
                     "Could not create audio configuration file %s",
                     "settings.json");
-        } catch (const cereal::Exception &err) {
-            CERROR3(filesys,
+        } catch (const cereal::Exception& err) {
+            CAT_ERROR(filesys,
                     "Could not export audio configuration data to %s",
                     "settings.json");
         }
@@ -91,13 +91,13 @@ AudioConfig LoadAudioSettings()
  * \throws IOException  if unable to create audio settings file.
  * \throws cereal::Exception  if cereal cannot write to the JSON file.
  */
-void SaveAudioSettings(const AudioConfig &settings)
+void SaveAudioSettings(const AudioConfig& settings)
 {
     std::string configFileName =
         locate_file("settings.json", FT_SAVE_CHECK);
 
     if (configFileName.empty()) {
-        FILE *file = sOpen("settings.json", "wb", FT_SAVE);
+        FILE* file = sOpen("settings.json", "wb", FT_SAVE);
 
         if (file == nullptr) {
             throw IOException("Unable to create config file "
@@ -125,7 +125,7 @@ void SaveAudioSettings(const AudioConfig &settings)
 namespace
 {
 
-void ResetAudioSettings(AudioConfig &audio)
+void ResetAudioSettings(AudioConfig& audio)
 {
     audio.master.muted = audio.music.muted = audio.soundFX.muted = false;
     audio.master.volume = audio.music.volume = audio.soundFX.volume = 100;

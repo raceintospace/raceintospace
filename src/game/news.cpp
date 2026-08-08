@@ -855,7 +855,7 @@ bool PlayNewsAnim(Multimedia& fp)
         to_sleep = (Frame - delta * fps) / fps - diff;
         idle_loop_secs(to_sleep);
         diff = get_time() - t1 - to_sleep;
-        CTRACE4(video, "sleep % 4.3f, drift % 4.3f", to_sleep, diff);
+        CAT_TRACE(video, "sleep % 4.3f, drift % 4.3f", to_sleep, diff);
     }
 
     Frame += 1;
@@ -1011,7 +1011,7 @@ void ShowEvt(char plr, char crd)
     try {
         image = Filesystem::readImage(filename);
     } catch (const std::runtime_error &err) {
-        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        CAT_ERROR(filesys, "error loading %s: %s", filename, err.what());
         return;
     }
 

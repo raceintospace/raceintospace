@@ -81,18 +81,18 @@ boost::shared_ptr<display::LegacySurface> portViewBuffer;
 bool SUSPEND = true;
 bool isTrackPlaying = false;
 int16_t stepCount;     // stepCount is the number of steps
-FILE *sFin = nullptr;
-struct SpotHeader mainHeader;
-struct AnimationStep sPath;
-struct CelHeader sImg;
+FILE* sFin = nullptr;
+SpotHeader mainHeader;
+AnimationStep sPath;
+CelHeader sImg;
 uint32_t pLoc;
 
 void AdvanceFrame();
 #if BABYSND
 std::string AudioTrack(int trackIndex);
 #endif
-size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target);
-size_t ImportSPath(FILE *fin, struct AnimationStep &target);
+size_t ImportSpotHeader(FILE* fin, SpotHeader& target);
+size_t ImportSPath(FILE* fin, AnimationStep& target);
 void SeekCelData(int celIndex);
 void SeekAnimation(int index);
 };
@@ -256,7 +256,7 @@ void SpotLoad(int animationIndex)
 
     if (animationIndex < 0 || animationIndex >= mainHeader.Qty) {
         SpotKill();
-        CERROR3(multimedia,
+        CAT_ERROR(multimedia,
                 "Cannot load spaceport animation %d: Invalid choice",
                 animationIndex);
         return;
@@ -316,7 +316,8 @@ void SpotRefresh()
         display::graphics.legacyScreen(),
         0, 0,
         display::graphics.screen()->width() - 1,
-        display::graphics.screen()->height() - 1);
+        display::graphics.screen()->height() - 1
+    );
 }
 
 
@@ -383,7 +384,7 @@ void AdvanceFrame()
         celImage = scaledImage;
     }
 
-    display::LegacySurface *frameBackground =
+    display::LegacySurface* frameBackground =
         new display::LegacySurface(sImg.w, sImg.h);
 
     frameBackground->copyFrom(portViewBuffer.get(),
@@ -453,7 +454,7 @@ std::string AudioTrack(int trackIndex)
         return "crane";
 
     default:
-        CNOTICE3(multimedia,
+        CAT_NOTICE(multimedia,
                  "No entry for Spaceport Animation soundtrack index %d",
                  trackIndex);
         break;
@@ -475,13 +476,13 @@ std::string AudioTrack(int trackIndex)
  * \param target  The destination for the read data.
  * \return  1 if successfully read, 0 otherwise.
  */
-size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target)
+size_t ImportSpotHeader(FILE* fin, SpotHeader& target)
 {
     bool read =
-        fread(&target.ID[0], sizeof(target.ID),   1, sFin) &&
-        fread(&target.Qty,   sizeof(target.Qty),  1, sFin) &&
-        fread(&target.sOff,  sizeof(target.sOff), 1, sFin) &&
-        fread(&target.pOff,  sizeof(target.pOff), 1, sFin);
+        fread(&target.ID[0], sizeof(target.ID),   1, sFin)
+        && fread(&target.Qty,   sizeof(target.Qty),  1, sFin)
+        && fread(&target.sOff,  sizeof(target.sOff), 1, sFin)
+        && fread(&target.pOff,  sizeof(target.pOff), 1, sFin);
 
     if (read) {
         Swap32bit(target.sOff);
@@ -509,15 +510,15 @@ size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target)
  * \param target  The destination for the read data.
  * \return  1 if successfully read, 0 otherwise.
  */
-size_t ImportSPath(FILE *fin, struct AnimationStep &target)
+size_t ImportSPath(FILE* fin, AnimationStep& target)
 {
     // Chain freads so they stop if one fails...
     bool read =
-        fread(&target.Image, sizeof(target.Image), 1, fin) &&
-        fread(&target.xPut, sizeof(target.xPut), 1, fin) &&
-        fread(&target.yPut, sizeof(target.yPut), 1, fin) &&
-        fread(&target.iHold, sizeof(target.iHold), 1, fin) &&
-        fread(&target.Scale, sizeof(target.Scale), 1, fin);
+        fread(&target.Image, sizeof(target.Image), 1, fin) 
+        && fread(&target.xPut, sizeof(target.xPut), 1, fin)
+        && fread(&target.yPut, sizeof(target.yPut), 1, fin)
+        && fread(&target.iHold, sizeof(target.iHold), 1, fin)
+        && fread(&target.Scale, sizeof(target.Scale), 1, fin);
 
     if (read) {
         Swap16bit(target.Image);

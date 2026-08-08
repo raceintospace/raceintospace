@@ -122,8 +122,8 @@ void AstronautModification()
                 }
 
             } else {
-            // Should this be CNOTICE2?
-                CINFO2(filesys,
+            // Should this be CAT_NOTICE?
+                CAT_INFO(filesys,
                        "user.json not found. Loading crew.json rosters...");
                 DESERIALIZE_JSON_FILE(&all, locate_file("crew.json", FT_DATA));
             }
@@ -135,7 +135,7 @@ void AstronautModification()
 
         } catch (const std::exception& err) {
             // TODO: Use a pop-up error display.
-            CERROR3(filesys, "Unable to access rosters: %s", err.what());
+            CAT_ERROR(filesys, "Unable to access rosters: %s", err.what());
             return;
         }
     }
@@ -178,7 +178,7 @@ void AstronautModification()
                     try {
                         ExportRoster(usaRoster, sovRoster);
                     } catch (IOException &err) {
-                        CERROR3(filesys, "Unable to save roster changes: %s",
+                        CAT_ERROR(filesys, "Unable to save roster changes: %s",
                                 err.what());
                     }
                 }
@@ -908,14 +908,14 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
 {
     if (usaRoster.size() != ROSTER_SIZE) {
         // TODO: Throw an exception instead?
-        CERROR4(baris, "USA roster is %d entries, expecting %d",
+        CAT_ERROR(baris, "USA roster is %d entries, expecting %d",
                 usaRoster.size(), ROSTER_SIZE);
         return;
     }
 
     if (sovRoster.size() != ROSTER_SIZE) {
         // TODO: Throw an exception instead?
-        CERROR4(baris, "Soviet roster is %d entries, expecting %d",
+        CAT_ERROR(baris, "Soviet roster is %d entries, expecting %d",
                 sovRoster.size(), ROSTER_SIZE);
         return;
     }
@@ -936,7 +936,7 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
     if (file == nullptr) {
         throw IOException("Unable to open file user.json for writing");
     } else {
-        CINFO2(filesys, "Exporting custom rosters to user.json...");
+        CAT_INFO(filesys, "Exporting custom rosters to user.json...");
     }
 
     std::string str = stream.str();
@@ -1063,7 +1063,7 @@ void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
         break;
 
     default:
-        CWARNING3(baris, "Unrecognized value %d for parameter `skill`",
+        CAT_WARNING(baris, "Unrecognized value %d for parameter `skill`",
                   skill);
         break;
     }
@@ -1096,7 +1096,7 @@ int SkillLevel(const struct ManPool &recruit, SkillSelection skill)
         break;
 
     default:
-        CWARNING3(baris, "Unrecognized value %d for parameter `skill`",
+        CAT_WARNING(baris, "Unrecognized value %d for parameter `skill`",
                   skill);
         break;
     }

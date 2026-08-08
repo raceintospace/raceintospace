@@ -61,20 +61,20 @@ struct DisplayContext {
 };
 
 void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
-               DisplayContext &dctx);
+               DisplayContext& dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
 void HModel(char mode, char tx);
-void Levels(char plr, char which, char x, DisplayContext &dctx);
+void Levels(char plr, char which, char x, DisplayContext& dctx);
 void BinT(int x, int y, char st);
-void PLevels(char side, char wh, DisplayContext &dctx);
-void CLevels(char side, char wh, DisplayContext &dctx);
+void PLevels(char side, char wh, DisplayContext& dctx);
+void CLevels(char side, char wh, DisplayContext& dctx);
 int Preferences(int player, int where);
-void SavePreferences(const AudioConfig &audio);
+void SavePreferences(const AudioConfig& audio);
 
 
 void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
-               DisplayContext &dctx)
+               DisplayContext& dctx)
 {
     int mode = 0;
 
@@ -199,7 +199,6 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
 
     // if (where==0 || where==2)
     FadeIn(2, 10, 0, 0);
-    return;
 }
 
 
@@ -341,19 +340,15 @@ void HModel(char mode, char tx)
     } else {
         draw_string(100, 128, "CUSTOM ROSTER");
     }
-
-    return;
 }
 
 
-void Levels(char plr, char which, char x, DisplayContext &dctx)
+void Levels(char plr, char which, char x, DisplayContext& dctx)
 {
     unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + which * 72, 30 + x * 30,
                                            71, 29, v[0][plr], v[1][x]);
-
-    return;
 }
 
 void BinT(int x, int y, char st)
@@ -372,13 +367,10 @@ void BinT(int x, int y, char st)
     grMoveTo(12 + x, y + 31);
     grLineTo(73 + x, y + 31);
     grLineTo(73 + x, y + 0);
-
-    return;
 }
 
-void PLevels(char side, char wh, DisplayContext &dctx)
+void PLevels(char side, char wh, DisplayContext& dctx)
 {
-
     if (side == 0) {  // Draw map on US side
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
@@ -386,20 +378,15 @@ void PLevels(char side, char wh, DisplayContext &dctx)
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19, 239,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
     }
-
-    return;
 }
 
-void CLevels(char side, char wh, DisplayContext &dctx)
+void CLevels(char side, char wh, DisplayContext& dctx)
 {
-
     if (side == 0) {
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 9, 78);
     } else {
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 239, 78);
     }
-
-    return;
 }
 
 
@@ -520,17 +507,11 @@ int Preferences(int player, int where)
 
                 if (Data->Def.Plr1 != Data->Def.Plr2) {
                     if (Data->Def.Plr1 == 1) {
-                        int tmp;
-
                         strcpy(&Name[0], &Data->P[0].Name[0]);
                         strcpy(&Data->P[0].Name[0], &Data->P[1].Name[0]);
                         strcpy(&Data->P[1].Name[0], &Name[0]);
-                        tmp = Data->Def.Lev1;
-                        Data->Def.Lev1 = Data->Def.Lev2;
-                        Data->Def.Lev2 = tmp;
-                        tmp = Data->Def.Ast1;
-                        Data->Def.Ast1 = Data->Def.Ast2;
-                        Data->Def.Ast2 = tmp;
+                        std::swap(Data->Def.Lev1, Data->Def.Lev2);
+                        std::swap(Data->Def.Ast1, Data->Def.Ast2);
                     }
 
                     Data->Def.Plr1 += hum1 * 2;
@@ -569,10 +550,8 @@ int Preferences(int player, int where)
                         RandomizeEq();
                     }
 
-                    int i, k;
-
-                    for (i = 0; i < NUM_PLAYERS; i++) {
-                        for (k = 0; k < 7; k++) {
+                    for (int i = 0; i < NUM_PLAYERS; i++) {
+                        for (int k = 0; k < 7; k++) {
                             Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
                             Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
                             Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
@@ -781,14 +760,14 @@ int Preferences(int player, int where)
 }
 
 
-void SavePreferences(const AudioConfig &audio)
+void SavePreferences(const AudioConfig& audio)
 {
     try {
         SaveAudioSettings(audio);
     } catch (const IOException &err) {
-        CERROR2(filesys, err.what());
+        CAT_ERROR(filesys, err.what());
     } catch (const cereal::Exception &err) {
-        CERROR2(filesys, err.what());
+        CAT_ERROR(filesys, err.what());
     }
 }
 
