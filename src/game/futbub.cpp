@@ -34,6 +34,7 @@
 #include "logging.h"
 #include "mc.h"
 #include "mc2.h"
+#include "sdlhelper.h"
 
 
 LOG_DEFAULT_CATEGORY(future)
