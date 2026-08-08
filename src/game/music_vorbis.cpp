@@ -211,7 +211,7 @@ void music_pump()
     // This doesn't apply to looped tracks, since those keep playing forever
 }
 
-void music_set_mute(int muted)
+void music_set_mute(bool needs_to_be_muted)
 {
     MuteChannel(AV_MUSIC_CHANNEL, muted);
 }

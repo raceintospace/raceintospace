@@ -80,7 +80,7 @@ void audio_callback(void* userdata, Uint8* stream, int len)
     memset(stream, 0, len);
 
     for (audio_channel& chp : Channels) {
-        if (chp.mute) continue;
+        if (chp.is_muted) continue;
         if (chp.volume == 0) continue;
         
         int pos = 0;
@@ -137,15 +137,15 @@ char AnimSoundCheck()
     return 1;
 }
 
-int IsChannelMute(int channel)
+bool IsChannelMute(int channel)
 {
     assert(channel >= 0 && channel < AV_NUM_CHANNELS);
 
     if (!have_audio) {
-        return 1;
+        return true;
     }
 
-    return Channels[channel].mute;
+    return Channels[channel].is_muted;
 }
 
 void play(audio_chunk* new_chunk, int channel)
@@ -256,7 +256,7 @@ void av_setup()
         /* initialize audio channels */
         for (int i = 0; i < AV_NUM_CHANNELS; ++i) {
             Channels[i].volume = AV_MAX_VOLUME;
-            Channels[i].mute = 0;
+            Channels[i].is_muted = false;
             Channels[i].chunk = nullptr;
             Channels[i].chunk_tailp = &Channels[i].chunk;
             Channels[i].offset = 0;
@@ -726,17 +726,17 @@ void av_sync()
     SDL_UpdateRect(display::graphics.displaySurface(), 0, 0, display::graphics.WIDTH * display::graphics.SCALE, display::graphics.HEIGHT * display::graphics.SCALE);
 }
 
-void MuteChannel(int channel, int mute)
+void MuteChannel(int channel, bool should_be_muted)
 {
     if (channel == AV_ALL_CHANNELS) {
         for (int i = 0; i < AV_NUM_CHANNELS; ++i) {
-            MuteChannel(i, mute);
+            MuteChannel(i, should_be_muted);
         }
         return;
     }
     
     assert(channel >= 0 && channel < AV_NUM_CHANNELS);
-    Channels[channel].mute = mute;
+    Channels[channel].is_muted = should_be_muted;
 }
 
 /**

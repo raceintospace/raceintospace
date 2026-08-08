@@ -72,5 +72,5 @@ int music_is_track_playing(enum music_track track);
 void music_pump();
 
 // Toggle muting of the music system
-void music_set_mute(int muted);
+void music_set_mute(bool needs_to_be_muted);
 #endif // MUSIC_H

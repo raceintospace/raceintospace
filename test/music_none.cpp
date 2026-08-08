@@ -9,4 +9,4 @@ void music_stop_all() {}
 int  music_is_playing() { return 0; }
 int  music_is_track_playing(enum music_track) { return 0; }
 void music_pump() {}
-void music_set_mute(int) {}
+void music_set_mute(bool) {}
