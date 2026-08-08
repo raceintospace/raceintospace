@@ -241,7 +241,7 @@ void randomize()
  */
 void idle_loop_secs(double secs)
 {
-    gr_sync();
+    av_sync();
 
     double start = get_time();
 

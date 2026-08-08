@@ -47,6 +47,7 @@
 #include "options.h"
 #include "pace.h"
 #include "place.h"
+#include "sdlhelper.h"
 
 namespace
 {
@@ -752,7 +753,7 @@ char RD(char player_index)
             }
         }
 
-        gr_sync();
+        av_sync();
     }
 }
 

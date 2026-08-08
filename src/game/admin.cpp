@@ -973,7 +973,7 @@ std::string GetBlockName()
         throw IOException("Not enough disk space");
     }
 
-    gr_sync();
+    av_sync();
 
     int key = 0;
     std::string name;
@@ -987,7 +987,7 @@ std::string GetBlockName()
 
     while (!(key == K_ENTER || key == K_ESCAPE)) {
         av_block();
-        gr_sync();
+        av_sync();
         key = bioskey(0);
 
         if (key >= 'a' && key <= 'z') {

@@ -772,7 +772,7 @@ void News(char plr)
             draw_down_arrow_highlight(305, 163);
         }
 
-//   gr_sync ();
+//   av_sync ();
     }
 
     display::graphics.newsRect().w = 0;
