@@ -752,7 +752,7 @@ char RD(char player_index)
             }
         }
 
-        gr_sync();
+        av_sync();
     }
 }
 

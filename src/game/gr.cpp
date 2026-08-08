@@ -21,23 +21,18 @@ int grGetMouseButtons()
     return val;
 }
 
-int grGetMousePressedPos(int *xp, int *yp)
+int grGetMousePressedPos(int* xp, int* yp)
 {
     *xp = av_mouse_pressed_x / display::graphics.SCALE;
     *yp = av_mouse_pressed_y / display::graphics.SCALE;
     return 0;
 }
 
-int grGetMouseCurPos(int *xp, int *yp)
+int grGetMouseCurPos(int* xp, int* yp)
 {
     *xp = av_mouse_cur_x / display::graphics.SCALE;
     *yp = av_mouse_cur_y / display::graphics.SCALE;
     return 0;
-}
-
-void gr_sync(void)
-{
-    av_sync();
 }
 
 // Moves pen onto new (absolute) location without drawing

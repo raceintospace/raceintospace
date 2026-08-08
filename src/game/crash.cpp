@@ -100,7 +100,7 @@ void pretty_crash(const std::string &title, const std::string &message)
 
     while (!(key == K_ENTER || key == K_ESCAPE || key == K_SPACE)) {
         av_block();
-        gr_sync();
+        av_sync();
         key = bioskey(0);
     }
 

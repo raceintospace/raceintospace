@@ -863,7 +863,7 @@ void GetMouse_fast()
     oldx = x;
     oldy = y;
 
-    gr_sync();
+    av_sync();
     av_step();
 
     if (grGetMouseButtons()) {

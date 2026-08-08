@@ -130,7 +130,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 {
     //LOG_DEBUG("->PlaySequence()");
     LOG_DEBUG("->PlaySequence(plr, step %d, Seq %s, mode %d)", step, InSeq, mode);
-	
+    
     if (fEarly && step != 0) {
         LOG_DEBUG("PlaySequence(): Unmanned early return");
         return;    //Specs: unmanned mission cut short
@@ -495,7 +495,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 
             if (!BABY && !fullscreenMissionPlayback) {
                 Tick(plr);
-                gr_sync();
+                av_sync();
             }
         }
     }
@@ -635,7 +635,7 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         // replace largest and save the index
         auto iter = std::max_element(SHTS.begin(), SHTS.end());
         *iter = brandom(3);
-		
+        
         kk = std::distance(SHTS.begin(), iter);
         return;
     }
@@ -734,7 +734,7 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         if (attempt >= NORM_TABLE || attempt >= Mob.size()) {
             which = 415 + brandom(25);
         } else {
-			which = Mob[attempt].List[brandom(Mob[attempt].Qty) % 10];
+            which = Mob[attempt].List[brandom(Mob[attempt].Qty) % 10];
         }
     }
 
@@ -762,7 +762,7 @@ void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
         boob.pixels()[i] += off;
         boob.pixels()[1564 + i] += off;
     }
-		
+        
     int x = 6 + 240*(kk/2);
     int y = (plr==0)? 5 + 52*(kk%2) : 7 + 59*(kk%2);
     boob.copyTo(display::graphics.legacyScreen(), x, y);
@@ -1142,7 +1142,7 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
 
     MisAst MX[2][4];
     memcpy(MX, MA, 8 * sizeof(struct MisAst));
-	
+    
     char cPad;
     if (MX[step.pad][0].A != nullptr) {
         cPad = step.pad;
@@ -1428,18 +1428,18 @@ void loadFrames(int index) {
     animCache.resize(header[index].fNum); 
     
     for (int i = 0; i < header[index].fNum; i++) {
-    	filename =  "images/liftoff/liftoff." + indexEntry[index].ID + "." 
+        filename =  "images/liftoff/liftoff." + indexEntry[index].ID + "." 
           + std::to_string(i) + ".png"; 
         
         // Load cache
-    	animCache[i] = Filesystem::readImage(filename);    	
+        animCache[i] = Filesystem::readImage(filename);        
     }
     
     if (!animCache.empty()) {
-    	LOG_DEBUG("frames for %s loaded", (indexEntry[index].ID).c_str());
+        LOG_DEBUG("frames for %s loaded", (indexEntry[index].ID).c_str());
     } else {
-    	throw std::runtime_error("Error. " + indexEntry[index].ID 
-    	  + " frames could not be loaded.");
+        throw std::runtime_error("Error. " + indexEntry[index].ID 
+          + " frames could not be loaded.");
     }
 }
 
@@ -1454,7 +1454,7 @@ void playEquipAnim (int index) {
         // This avoid frame overlap and the background is a nice blue
         fill_rectangle(162, 46, 312, 127, 7);
         display::graphics.screen()->draw(equipAnim, 188, 47);
-        frameCounter++;	
+        frameCounter++;    
     }
 }
 

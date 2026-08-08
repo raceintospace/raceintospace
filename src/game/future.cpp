@@ -179,7 +179,7 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator& nav)
     LoadFuturePalette();
     display::graphics.screen()->clear();
 
-    gr_sync();
+    av_sync();
 
     fill_rectangle(1, 1, 318, 21, 3);
     fill_rectangle(317, 22, 318, 198, 3);
@@ -239,8 +239,8 @@ void DrawFuture(char plr, int mis, char pad, MissionNavigator& nav)
         InBox(5, 132, 16, 146);
     }
 
-    gr_sync();
-	
+    av_sync();
+    
     DrawMission(plr, 8, 37, mis, nav);
 
     display::graphics.setForegroundColor(5);
@@ -335,7 +335,7 @@ void DrawPenalty(char plr, const mStr& mission)
     char penalty = AchievementPenalty(plr, mission);
     fill_rectangle(206, 36, 235, 44, 7);
 
-	int u;
+    int u;
     if (penalty < 3) {
         u = 1;     //ok
     } else if (penalty < 9) {
@@ -627,7 +627,7 @@ void TogBox(int x, int y, int st)
 void PianoKey(const mStr& mission, MissionNavigator& nav)
 {   
     LOG_TRACE("->PianoKey(mission index %d)", mission.Index);
-	
+    
     if (! nav.docking.lock) {
         nav.docking.value = mission.Doc;
         Toggle(FM_Docking, nav.docking.value);
@@ -892,11 +892,11 @@ void Future(char plr)
     unsigned int year = Data->Year;
     unsigned int season = Data->Season;
     LOG_TRACE("--- Setting year=Year (%d), season=Season (%d)", year, season);
-	
-	if (missionData.empty()) {
-		missionData = GetMissionData();
-	}
-	mStr mission;
+    
+    if (missionData.empty()) {
+        missionData = GetMissionData();
+    }
+    mStr mission;
 
     MarsFlag = MissionTimingOk(Mission_MarsFlyby, year, season);
     JupiterFlag = MissionTimingOk(Mission_JupiterFlyby, year, season);
@@ -916,7 +916,7 @@ void Future(char plr)
             nav.joint.value = 0;
             nav.joint.lock = true;
         }
-		
+        
         DrawFuture(plr, misType, pad, nav);
 
         while (1) {
@@ -959,7 +959,7 @@ void Future(char plr)
             }
 
             if (((x >= 244 && y >= 5 && x <= 313 && y <= 17 
-            	&& mousebuttons > 0) || key == K_ENTER || (misType == 0 && key == K_ESCAPE))) {
+                && mousebuttons > 0) || key == K_ENTER || (misType == 0 && key == K_ESCAPE))) {
                 InBox(244, 5, 313, 17);
                 WaitForMouseUp();
 
@@ -1018,8 +1018,8 @@ void Future(char plr)
                 WaitForMouseUp();
 
             } else if (nav.duration.lock != true && 
-            	((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
-                	key == '1')) {  // Duration toggle
+                ((x >= 5 && y >= 49 && x <= 53 && y <= 72 && mousebuttons > 0) ||
+                    key == '1')) {  // Duration toggle
                 InBox(5, 49, 53, 72);
 
                 if (nav.duration.value == MaxDur) {
@@ -1037,14 +1037,14 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-		        if (missionData[misType].Dur) {
-		            mission = GetMissionPlan(misType);
-		            int duration = MAX(nav.duration.value, missionData[misType].Days);
-		            bool valid = (nav.duration.value >= missionData[misType].Days);
-		            PrintDuration(duration, valid ? 5 : 9);
+                if (missionData[misType].Dur) {
+                    mission = GetMissionPlan(misType);
+                    int duration = MAX(nav.duration.value, missionData[misType].Days);
+                    bool valid = (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
 
-		            mission.Days = duration;
-		            DrawPenalty(plr, mission);
+                    mission.Days = duration;
+                    DrawPenalty(plr, mission);
                         }
 
                 WaitForMouseUp();
@@ -1054,8 +1054,8 @@ void Future(char plr)
                 OutBox(5, 49, 53, 72);
 
             } else if (nav.duration.lock != true &&
-            	(key == 'A' || key == 'B' || key == 'C' || key == 'D' || 
-            		key == 'E' || key == 'F')) {  // Set Duration A-F
+                (key == 'A' || key == 'B' || key == 'C' || key == 'D' || 
+                    key == 'E' || key == 'F')) {  // Set Duration A-F
                 InBox(5, 49, 53, 72);
 
                 int al = int(key) - 64;  // Convert A-F to 1-6
@@ -1071,14 +1071,14 @@ void Future(char plr)
 
                 // If a duration mission, update the duration & mission
                 // penalty displays
-				if (missionData[misType].Dur) {
-		            mission = GetMissionPlan(misType);
-		            int duration = MAX(nav.duration.value, missionData[misType].Days);
-		            bool valid = (nav.duration.value >= missionData[misType].Days);
-		            PrintDuration(duration, valid ? 5 : 9);
+                if (missionData[misType].Dur) {
+                    mission = GetMissionPlan(misType);
+                    int duration = MAX(nav.duration.value, missionData[misType].Days);
+                    bool valid = (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
 
-		            mission.Days = duration;
-		            DrawPenalty(plr, mission);
+                    mission.Days = duration;
+                    DrawPenalty(plr, mission);
                 }
 
                 WaitForMouseUp();
@@ -1233,16 +1233,16 @@ void Future(char plr)
                 delay(150);
                 OutBox(203, 33, 238, 47);
                 OutBox(203, 34, 238, 47);
-				
-		// If a duration mission, update the duration & mission
+                
+        // If a duration mission, update the duration & mission
                 // penalty displays
-				if (missionData[misType].Dur) {
-		            mission = GetMissionPlan(misType);
-		            int duration = MAX(nav.duration.value, missionData[misType].Days);
-		            bool valid = (nav.duration.value >= missionData[misType].Days);
-		            PrintDuration(duration, valid ? 5 : 9);
+                if (missionData[misType].Dur) {
+                    mission = GetMissionPlan(misType);
+                    int duration = MAX(nav.duration.value, missionData[misType].Days);
+                    bool valid = (nav.duration.value >= missionData[misType].Days);
+                    PrintDuration(duration, valid ? 5 : 9);
 
-		            mission.Days = duration;
+                    mission.Days = duration;
                     DrawPenaltyPopup(plr, mission);
                 } else {
                     DrawPenaltyPopup(plr, missionData[misType]);
@@ -1416,9 +1416,9 @@ void PrintDuration(int duration, int color)
 void DrawMission(char plr, int X, int Y, int val, MissionNavigator& nav)
 {
     LOG_TRACE("->DrawMission(plr, X %d, Y %d, val %d, nav)", X, Y, val);
-	
-	mStr mission = GetMissionPlan(val);
-	
+    
+    mStr mission = GetMissionPlan(val);
+    
     // PianoKey is used whenever the mission selection changes, to
     // update the mission navigator with parameters matching the
     // newly displayed mission. This ensures the navigation display
@@ -1432,7 +1432,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator& nav)
     draw_string(55, 30, "TYPE: ");
     draw_number(0, 0, val);
     display::graphics.setForegroundColor(5);
-	
+    
     // If a duration mission, print the selected duration so long as
     // it is greater than the minimum mission duration.
     if (mission.Dur) {
@@ -1454,7 +1454,7 @@ void DrawMission(char plr, int X, int Y, int val, MissionNavigator& nav)
         MissionPath(plr, val, 0);
     }
 
-    gr_sync();
+    av_sync();
     LOG_TRACE("<-DrawMission()");
 }  // end function DrawMission
 

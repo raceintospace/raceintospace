@@ -302,7 +302,7 @@ void MissionPath(char plr, int val, int pad)
         }
     }
 
-    gr_sync();
+    av_sync();
 
     MissionCodes(plr, val, pad);
 
