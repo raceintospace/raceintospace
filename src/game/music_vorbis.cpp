@@ -213,5 +213,5 @@ void music_pump()
 
 void music_set_mute(bool needs_to_be_muted)
 {
-    MuteChannel(AV_MUSIC_CHANNEL, muted);
+    MuteChannel(AV_MUSIC_CHANNEL, needs_to_be_muted);
 }
