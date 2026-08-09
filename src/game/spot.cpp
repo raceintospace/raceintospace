@@ -30,6 +30,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <memory>
 #include <string>
 
 #include "display/graphics.h"
@@ -81,18 +82,18 @@ boost::shared_ptr<display::LegacySurface> portViewBuffer;
 bool SUSPEND = true;
 bool isTrackPlaying = false;
 int16_t stepCount;     // stepCount is the number of steps
-FILE *sFin = nullptr;
-struct SpotHeader mainHeader;
-struct AnimationStep sPath;
-struct CelHeader sImg;
+FILE* sFin = nullptr;
+SpotHeader mainHeader;
+AnimationStep sPath;
+CelHeader sImg;
 uint32_t pLoc;
 
 void AdvanceFrame();
 #if BABYSND
 std::string AudioTrack(int trackIndex);
 #endif
-size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target);
-size_t ImportSPath(FILE *fin, struct AnimationStep &target);
+size_t ImportSpotHeader(FILE* fin, SpotHeader& target);
+size_t ImportSPath(FILE* fin, AnimationStep& target);
 void SeekCelData(int celIndex);
 void SeekAnimation(int index);
 };
@@ -256,7 +257,7 @@ void SpotLoad(int animationIndex)
 
     if (animationIndex < 0 || animationIndex >= mainHeader.Qty) {
         SpotKill();
-        CERROR3(multimedia,
+        CAT_ERROR(multimedia,
                 "Cannot load spaceport animation %d: Invalid choice",
                 animationIndex);
         return;
@@ -368,23 +369,22 @@ void AdvanceFrame()
     fread(&sImg.h, sizeof(sImg.h), 1, sFin);
 
     // Read in the raw image data
-    display::LegacySurface *celImage =
-        new display::LegacySurface(sImg.w, sImg.h);
+    std::unique_ptr<display::LegacySurface> celImage{
+        new display::LegacySurface(sImg.w, sImg.h)};
     fread(celImage->pixels(), sImg.w * sImg.h, 1, sFin);
 
     if (sPath.Scale != 1.0) {
         sImg.w = (int)((float) sImg.w * sPath.Scale);
         sImg.h = (int)((float) sImg.h * sPath.Scale);
-        display::LegacySurface *scaledImage =
-            new display::LegacySurface(sImg.w, sImg.h);
+        display::LegacySurface* scaledImage{
+            new display::LegacySurface(sImg.w, sImg.h)};
         celImage->scaleTo(scaledImage);
 
-        delete celImage;
-        celImage = scaledImage;
+        celImage.reset(scaledImage);
     }
 
-    display::LegacySurface *frameBackground =
-        new display::LegacySurface(sImg.w, sImg.h);
+    std::unique_ptr<display::LegacySurface> frameBackground{
+        new display::LegacySurface(sImg.w, sImg.h)};
 
     frameBackground->copyFrom(portViewBuffer.get(),
                               sPath.xPut, sPath.yPut,
@@ -393,14 +393,9 @@ void AdvanceFrame()
                               0, 0);
 
     celImage->maskCopy(
-        frameBackground, 0, display::LegacySurface::DestinationEqual, 0);
+        frameBackground.get(), 0, display::LegacySurface::DestinationEqual, 0);
     celImage->copyTo(
         display::graphics.legacyScreen(), sPath.xPut, sPath.yPut);
-
-    delete frameBackground;
-    frameBackground = nullptr;
-    delete celImage;
-    celImage = nullptr;
 }
 
 
@@ -453,7 +448,7 @@ std::string AudioTrack(int trackIndex)
         return "crane";
 
     default:
-        CNOTICE3(multimedia,
+        CAT_NOTICE(multimedia,
                  "No entry for Spaceport Animation soundtrack index %d",
                  trackIndex);
         break;
@@ -475,7 +470,7 @@ std::string AudioTrack(int trackIndex)
  * \param target  The destination for the read data.
  * \return  1 if successfully read, 0 otherwise.
  */
-size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target)
+size_t ImportSpotHeader(FILE* fin, SpotHeader& target)
 {
     bool read =
         fread(&target.ID[0], sizeof(target.ID),   1, sFin) &&
@@ -509,7 +504,7 @@ size_t ImportSpotHeader(FILE *fin, struct SpotHeader &target)
  * \param target  The destination for the read data.
  * \return  1 if successfully read, 0 otherwise.
  */
-size_t ImportSPath(FILE *fin, struct AnimationStep &target)
+size_t ImportSPath(FILE* fin, AnimationStep& target)
 {
     // Chain freads so they stop if one fails...
     bool read =
