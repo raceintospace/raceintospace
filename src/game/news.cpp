@@ -83,6 +83,7 @@ static int news_index[2][2][3] = {
 };
 
 static std::vector<std::string> event;
+static std::vector<std::tuple<std::string, int>> event2;
 static std::vector<std::string> naut_news;
 static std::vector<std::string> reasons;
 static std::vector<std::string> news;
@@ -1025,6 +1026,7 @@ void ShowEvt(char plr, char crd)
 }
 
 void LoadEventData(char plr) {
+    LOG_DEBUG("-> LoadEventData(plr = %i)", (int)plr);
     // Deserialize Events
     std::ifstream file(locate_file("event.json", FT_DATA));
     if (!file) {
@@ -1032,11 +1034,21 @@ void LoadEventData(char plr) {
     }
     cereal::JSONInputArchive ar(file);
     
+    std::ifstream file(locate_file("event2.json", FT_DATA));
+    if (!file) {
+        throw std::runtime_error("event2.json could not be opened.");
+    }
+    cereal::JSONInputArchive ar2{file};
+    
     if (plr == 0) {
         ar(cereal::make_nvp("us_event", event));
+        ar2(cereal::make_nvp("us_event", event2));
     } else {
         ar(cereal::make_nvp("sov_event", event));
+        ar2(cereal::make_nvp("sov_event", event2));
     }
+    LOG_DEBUG("event.size() = %i; event2.size() = %i", event.size(), event2.size());
+    LOG_DEBUG("<- LoadEventData()");
 }
 
 void LoadNewsData(char plr) {
