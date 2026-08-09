@@ -12,18 +12,18 @@ struct audio_chunk {
 
 struct audio_channel {
     unsigned                volume;
-    unsigned                mute;
+    bool                    is_muted;
     audio_chunk*            chunk;           // played chunk
     audio_chunk**           chunk_tailp;     // tail of chunk list?
     unsigned                offset;          // data offset in chunk
 };
 
 
-int IsChannelMute(int channel);
+bool IsChannelMute(int channel);
 void NUpdateVoice();
 void av_step();
 void av_silence(int channel);
-void MuteChannel(int channel, int mute);
+void MuteChannel(int channel, bool mute);
 char AnimSoundCheck();
 void av_block();
 void UpdateAudio();

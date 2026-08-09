@@ -83,7 +83,7 @@ struct {
 };
 
 // Whether or not the music should be globally muted
-int mute_music = 0;
+bool music_is_muted = false;
 
 // This structure defines each track
 struct music_file {
@@ -213,7 +213,7 @@ void music_start_loop(enum music_track track, int loop)
     music_stop();
     
     // If we're muted, mark this track as muted, and bail out
-    if (mute_music) {
+    if (music_is_muted) {
         music_files[track].muted = 1;
         return;
     }
@@ -353,9 +353,9 @@ void music_pump()
     }
 }
 
-void music_set_mute(int muted)
+void music_set_mute(bool needs_to_be_muted)
 {
-    if (muted != 0 && !mute_music) {
+    if (needs_to_be_muted && !music_is_muted) {
         // Mute all playing tracks
         for (int i = 0; i < M_MAX_MUSIC; i++) {
             if (music_files[i].playing) {
@@ -369,12 +369,12 @@ void music_set_mute(int muted)
         }
         
         // Set mute flag
-        mute_music = 1;
+        music_is_muted = true;
     }
     
-    if (muted == 0 && mute_music) {
+    if (!needs_to_be_muted && music_is_muted) {
         // Un-set mute flag
-        mute_music = 0;
+        music_is_muted = false;
 
         // Start all muted tracks
         for (int i = 0; i < M_MAX_MUSIC; i++) {
