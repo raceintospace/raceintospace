@@ -31,6 +31,7 @@
 #include "news.h"
 
 #include <stdexcept>
+#include <utility>
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -49,7 +50,7 @@
 #include "sdlhelper.h"
 #include "utils.h"
 
-/* LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT); */
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
 static const char *news_shots[] = { "angle", "opening", "closing" };
 
@@ -1034,11 +1035,11 @@ void LoadEventData(char plr) {
     }
     cereal::JSONInputArchive ar(file);
     
-    std::ifstream file(locate_file("event2.json", FT_DATA));
-    if (!file) {
+    std::ifstream file2(locate_file("event2.json", FT_DATA));
+    if (!file2) {
         throw std::runtime_error("event2.json could not be opened.");
     }
-    cereal::JSONInputArchive ar2{file};
+    cereal::JSONInputArchive ar2{file2};
     
     if (plr == 0) {
         ar(cereal::make_nvp("us_event", event));
