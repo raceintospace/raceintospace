@@ -376,15 +376,15 @@ void AdvanceFrame()
     if (sPath.Scale != 1.0) {
         sImg.w = (int)((float) sImg.w * sPath.Scale);
         sImg.h = (int)((float) sImg.h * sPath.Scale);
-        display::LegacySurface* scaledImage =
-            new display::LegacySurface(sImg.w, sImg.h);
+        display::LegacySurface* scaledImage{
+            new display::LegacySurface(sImg.w, sImg.h)};
         celImage->scaleTo(scaledImage);
 
         celImage.reset(scaledImage);
     }
 
-    std::unique_ptr<display::LegacySurface> frameBackground =
-        new display::LegacySurface(sImg.w, sImg.h);
+    std::unique_ptr<display::LegacySurface> frameBackground{
+        new display::LegacySurface(sImg.w, sImg.h)};
 
     frameBackground->copyFrom(portViewBuffer.get(),
                               sPath.xPut, sPath.yPut,
