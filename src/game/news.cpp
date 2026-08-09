@@ -88,7 +88,7 @@ struct Event {
     int color;
 
     template<class Archive>
-    void serialize(Archive& ar, uint32_t const version)
+    void serialize(Archive& ar)
     {
         ar(CEREAL_NVP(text));
         ar(CEREAL_NVP(color));
