@@ -83,8 +83,20 @@ static int news_index[2][2][3] = {
     },
 };
 
+struct Event {
+    std::string text;
+    int color;
+
+    template<class Archive>
+    void serialize(Archive& ar, uint32_t const version)
+    {
+        ar(CEREAL_NVP(text));
+        ar(CEREAL_NVP(color));
+    }
+}
+
 static std::vector<std::string> event;
-static std::vector<std::tuple<std::string, int>> event2;
+static std::vector<Event> event2;
 static std::vector<std::string> naut_news;
 static std::vector<std::string> reasons;
 static std::vector<std::string> news;
