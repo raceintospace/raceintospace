@@ -1632,13 +1632,12 @@ void LoadGame(const char* filename)
 
     if (magic[0] == 0x78 && magic[1] == 0xDA) {  // zlib magic numbers
         size_t csize = fileLength - sizeof(header);
-        unsigned char* cbuf = (unsigned char*)malloc(csize);
-        unsigned char* buf = (unsigned char*)malloc(usize);
-        assert(cbuf && buf);
-        fread(cbuf, csize, 1, fin);
+        std::unique_ptr<unsigned char[]> cbuf {new unsigned char[csize]{}};
+        std::unique_ptr<unsigned char[]> buf {new unsigned char[usize]{}};
+        fread(cbuf.get(), csize, 1, fin);
         fclose(fin);
 
-        int ok = uncompress(buf, &usize, cbuf, csize);
+        int ok = uncompress(buf.get(), &usize, cbuf.get(), csize);
 
         if (ok != Z_OK) {
             BadFileType();
@@ -1650,8 +1649,8 @@ void LoadGame(const char* filename)
 
         try {
             std::stringstream stream;
-            stream << buf;
-            cereal::JSONInputArchive archive(stream);
+            stream << buf.get();
+            cereal::JSONInputArchive archive{stream};
 
             // Load game data
             archive(cereal::make_nvp("Data", *Data));
@@ -1887,15 +1886,12 @@ void write_save_file(const char* Name, SaveFileHdr header)
 
     unsigned long csize = compressBound(size);
 
-    unsigned char* cbuf = (unsigned char*)malloc(csize);
-    assert(cbuf);
+    std::unique_ptr<unsigned char[]> cbuf{new unsigned char[csize]{}};
 
-    compress2(cbuf, &csize, (unsigned char*) stream.str().data(), size, 9);
-    fwrite(cbuf, csize, 1, fin);
+    compress2(cbuf.get(), &csize, (unsigned char*) stream.str().data(), size, 9);
+    fwrite(cbuf.get(), csize, 1, fin);
 
     fclose(fin);
-
-    free(cbuf);
 }
 
 /**
