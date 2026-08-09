@@ -369,8 +369,8 @@ void AdvanceFrame()
     fread(&sImg.h, sizeof(sImg.h), 1, sFin);
 
     // Read in the raw image data
-    std::unique_ptr<display::LegacySurface> celImage =
-        new display::LegacySurface(sImg.w, sImg.h);
+    std::unique_ptr<display::LegacySurface> celImage{
+        new display::LegacySurface(sImg.w, sImg.h)};
     fread(celImage->pixels(), sImg.w * sImg.h, 1, sFin);
 
     if (sPath.Scale != 1.0) {
