@@ -528,7 +528,7 @@ int BuyVabRkt(char plr, Vehicle& rocket, char mode)
     std::list<Equipment*> components = rocket.needed();
 
     for (auto& comp : components) {
-        cost += sale ? std::max(1, comp.UnitCost / 2) : comp.UnitCost;
+        cost += sale ? std::max(1, comp->UnitCost / 2) : comp->UnitCost;
     }
 
     if (mode == 1 && cost > pData.Cash) {
@@ -542,7 +542,7 @@ int BuyVabRkt(char plr, Vehicle& rocket, char mode)
         pData.Cash -= cost;
 
         for (auto& comp : components) {
-            comp.Num++;
+            comp->Num++;
         }
     }
 
@@ -711,7 +711,7 @@ void ShowRkt(const Vehicle& rocket, int payloadWeight)
  */
 void DispVA(char plr, char payload, const display::LegacySurface* hw)
 {
-    unit8_t images = 0;  /**< number of pictures */
+    uint8_t images = 0;  /**< number of pictures */
 
     for (int i = 0; i < 4; i++) {
         if (VAS[payload][i].img > 0) {
@@ -1088,7 +1088,7 @@ void VAB(char plr)
     // to select a launch pad (or exit). It returns the chosen pad
     // index (or exit code).
     while ((mis = FutureCheck(plr, 1)) < MAX_MISSIONS) {
-        auto& mission = pData.mission[mis];
+        auto& mission = pData.Mission[mis];
         auto& mcode = mission.MissionCode;
 
         // If a manned mission's Primary & Backup flight crews are
@@ -1655,14 +1655,14 @@ void VVals(char plr, char tx, Equipment& EQ, char v4, char sprite)
 
     if (tx == Mission_Probe_DM && v4 == MISC_HW_DOCKING_MODULE &&
         AI[plr] == 1) {
-        VAS[VASqty][tx].sf = EQ->MSF;
+        VAS[VASqty][tx].sf = EQ.MSF;
     } else {
-        VAS[VASqty][tx].sf = EQ->Safety;
+        VAS[VASqty][tx].sf = EQ.Safety;
     }
 
     VAS[VASqty][tx].dex = v4;
     VAS[VASqty][tx].img = sprite;
-    VAS[VASqty][tx].dmg = EQ->Damage != 0 ? 1 : 0;
+    VAS[VASqty][tx].dmg = EQ.Damage != 0 ? 1 : 0;
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */
