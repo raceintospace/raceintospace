@@ -19,8 +19,8 @@ if (WINDOWS)
   set(CMAKE_INSTALL_PREFIX "C:/Program Files/Race Into Space")
 endif (WINDOWS)
 
-# Require C++11
-set (CMAKE_CXX_STANDARD 11)
+# Require C++14
+set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 option(PBEM "Enable Play-by-EMail feature" ON)
