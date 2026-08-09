@@ -1889,7 +1889,7 @@ void write_save_file(const char* Name, SaveFileHdr header)
     std::unique_ptr<unsigned char[]> cbuf{new unsigned char[csize]{}};
 
     compress2(cbuf.get(), &csize, (unsigned char*) stream.str().data(), size, 9);
-    fwrite(cbuf, csize, 1, fin);
+    fwrite(cbuf.get(), csize, 1, fin);
 
     fclose(fin);
 }
