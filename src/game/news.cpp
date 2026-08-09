@@ -93,7 +93,7 @@ struct Event {
         ar(CEREAL_NVP(text));
         ar(CEREAL_NVP(color));
     }
-}
+};
 
 static std::vector<std::string> event;
 static std::vector<Event> event2;
