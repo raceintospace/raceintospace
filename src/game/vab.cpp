@@ -100,7 +100,7 @@ struct MDA {
     int16_t x1, y1, x2, y2, yOffset;
 
     template<class Archive>
-    void serialize(Archive & ar, std::uint32_t const version ) {
+    void serialize(Archive& ar, std::uint32_t const version ) {
         ar(CEREAL_NVP(x1));
         ar(CEREAL_NVP(y1));
         ar(CEREAL_NVP(x2));
@@ -157,19 +157,19 @@ bool ChkVabRkt(const Vehicle &rocket);
 void GradRect2(int x1, int y1, int x2, int y2, char plr);
 void DispVAB(char plr, char pad);
 int FillVab(char plr, char f, char mode);
-int  BuyVabRkt(char plr, Vehicle &rocket, char mode);
-void ShowAutopurchase(char plr, int payload, Vehicle &rocket);
+int  BuyVabRkt(char plr, Vehicle& rocket, char mode);
+void ShowAutopurchase(char plr, int payload, Vehicle& rocket);
 void ShowVA(char f);
-void ShowRkt(const Vehicle &rocket, int payloadWeight);
-void DispVA(char plr, char f, const display::LegacySurface *hw);
-void DispRck(char plr, char wh, const display::LegacySurface *hw);
+void ShowRkt(const Vehicle& rocket, int payloadWeight);
+void DispVA(char plr, char f, const display::LegacySurface* hw);
+void DispRck(char plr, char wh, const display::LegacySurface* hw);
 void DispWts(int payload, int thrust);
-Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
+Equipment* MissionHardware(char plr, enum MissionHardwareType slot,
                            int program);
 bool PayloadReady(int plr, int payload);
-void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket);
+void ReserveHardware(int plr, int pad, int payload, Vehicle& rocket);
 void LMAdd(char plr, char prog, char kic, char part);
-void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite);
+void VVals(char plr, char tx, Equipment& EQ, char v4, char sprite);
 
 /* Load the coordinates of vehicle hardware components' images into the
  * MI global variable.
@@ -196,7 +196,7 @@ void LoadMIVals() {
             throw std::runtime_error("Error: vector MI  doesn't have expected size.");
         }
 
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         throw std::runtime_error("Error in deserialization of vtable.json.");
     }
 }
@@ -257,7 +257,9 @@ void GradRect2(int x1, int y1, int x2, int y2, char plr)
  */
 void DispVAB(char plr, char pad)
 {
-    struct MissionType &mission = Data->P[plr].Mission[pad];
+    auto& pData = Data->P[plr];
+    MissionType& mission = pData.Mission[pad];
+    auto& mcode = mission.MissionCode;
 
     FadeOut(2, 10, 0, 0);
 
@@ -272,7 +274,7 @@ void DispVAB(char plr, char pad)
     IOBox(175, 183, 220, 197);
 
     // Disable the Scrub buttons if there is no mission.
-    if (mission.MissionCode) {
+    if (mcode != Mission_None) {
         IOBox(271, 183, 316, 197);
     } else {
         InBox(271, 183, 316, 197);
@@ -280,8 +282,8 @@ void DispVAB(char plr, char pad)
 
     // Disable the Delay button if there is no mission OR if it
     // cannot be delayed.
-    if (mission.MissionCode &&
-        MissionTimingOk(mission.MissionCode, Data->Year, Data->Season)) {
+    if (mcode != Mission_None
+        && MissionTimingOk(mcode, Data->Year, Data->Season)) {
         IOBox(223, 183, 268, 197);
     } else {
         InBox(223, 183, 268, 197);
@@ -368,68 +370,61 @@ void DispVAB(char plr, char pad)
     draw_string(40, 111, "MISSION HARDWARE:");
     draw_string(10, 119, "SELECT PAYLOADS AND BOOSTER");
 
-    struct mStr missionPlan = GetMissionPlan(mission.MissionCode);
+    mStr missionPlan = GetMissionPlan(mcode);
 
     display::graphics.setForegroundColor(1);
     draw_string(5, 53, (missionPlan.Abbr).c_str());
 
     // Show duration level only on missions with a Duration step  -Leon
-    if (IsDuration(mission.MissionCode)) {
+    if (IsDuration(mcode)) {
         draw_string(0, 0, GetDurationParens(mission.Duration));
     }
 
     EVAmis = 0;
 
-    if (IsEVA(Data->P[plr].Mission[pad].MissionCode) &&
-        Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety > 0) {
-        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
-             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
-            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
-            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
-                draw_string(147, 71, "NO");
-                draw_string(144, 78, "EVA");
-                IOBox(140, 64, 165, 82);
-            } else {
-                draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
-                // Show it in yellow because it's below Max R&D
-                display::graphics.setForegroundColor(11);
+    // something feels wrong in this logic
+    auto& suits = pData.Misc[MISC_HW_EVA_SUITS];
+    if (IsEVA(mcode) && suits.Safety > 0 
+        && (suits.Safety + suits.Damage) < suits.MaxRD) {
+        if (suits.Num < 0) {
+            draw_string(147, 71, "NO");
+            draw_string(144, 78, "EVA");
+            IOBox(140, 64, 165, 82);
+        } else {
+            draw_string(144, 71, "EVA");  // Show EVA, if below Max R&D
+            // Show it in yellow because it's below Max R&D
+            display::graphics.setForegroundColor(11);
 
-                if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage != 0) {
-                    display::graphics.setForegroundColor(9);  // Show in red if EVA suits are damaged
-                }
-
-                draw_number(144, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
-                draw_string(0, 0, "%");
-                IOBox(140, 64, 165, 82);
-                EVAmis = 1;
+            if (suits.Damage != 0) {
+                display::graphics.setForegroundColor(9);  // Show in red if EVA suits are damaged
             }
+
+            draw_number(144, 78, suits.Safety + suits.Damage);
+            draw_string(0, 0, "%");
+            IOBox(140, 64, 165, 82);
+            EVAmis = 1;
         }
-    } else if (IsLM(Data->P[plr].Mission[pad].MissionCode)) {
+    } else if (IsLM(mcode) 
+               && (suits.Safety + suits.Damage) < suits.MaxRD) {
         // Any mission using an LM could require an emergency EVA for 
         // crew to return to the capsule.
-        if ((Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety +
-             Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage) <
-            Data->P[plr].Misc[MISC_HW_EVA_SUITS].MaxRD) {
-            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0) {
-                draw_string(147, 71, "NO");
-                draw_string(144, 78, "EVA");
-                IOBox(140, 64, 165, 82);
-            } else {
-                draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
-                // Show it in light green if there may be an emergency EVA
-                // on this mission (because it uses an LM)
-                display::graphics.setForegroundColor(15);
-                draw_number(145, 78, Data->P[plr].Misc[MISC_HW_EVA_SUITS].Safety + Data->P[plr].Misc[MISC_HW_EVA_SUITS].Damage);
-                draw_string(0, 0, "%");
-                IOBox(140, 64, 165, 82);
-                EVAmis = 2;
-            }
+        if (suits.Num < 0) {
+            draw_string(147, 71, "NO");
+            draw_string(144, 78, "EVA");
+            IOBox(140, 64, 165, 82);
+        } else {
+            draw_string(145, 71, "EVA");  // Show EVA, if below Max R&D
+            // Show it in light green if there may be an emergency EVA
+            // on this mission (because it uses an LM)
+            display::graphics.setForegroundColor(15);
+            draw_number(145, 78, suits.Safety + suits.Damage);
+            draw_string(0, 0, "%");
+            IOBox(140, 64, 165, 82);
+            EVAmis = 2;
         }
     }
 
     draw_small_flag(plr, 4, 4);
-
-    return;
 }
 
 
@@ -452,11 +447,12 @@ void DispVAB(char plr, char pad)
  */
 int FillVab(char plr, char f, char mode)
 {
+    auto& pData = Data->P[plr];
     int cost = 0;
-    bool sale = (Data->P[plr].TurnOnly == 3);
+    bool sale = (pData.TurnOnly == 3);
 
     for (int i = 0; i < 4; i++) {
-        Equipment *equip =
+        Equipment* equip =
             MissionHardware(plr, static_cast<MissionHardwareType>(i),
                             VAS[f][i].dex);
 
@@ -471,7 +467,7 @@ int FillVab(char plr, char f, char mode)
             unitCost = (equip->UnitCost > 0) ? MAX(unitCost, 1) : 0;
 
             if (mode == 1) {
-                Data->P[plr].Cash -= unitCost;
+                pData.Cash -= unitCost;
                 equip->Num++;
             } else {
                 cost += unitCost;
@@ -494,12 +490,11 @@ int FillVab(char plr, char f, char mode)
 int ChkDelVab(char plr, char f)
 {
     for (int i = 0; i < 4; i++) {
-        Equipment *equip =
-            MissionHardware(plr, static_cast<MissionHardwareType>(i),
-                            VAS[f][i].dex);
+        Equipment* equip = MissionHardware(plr, 
+                                           static_cast<MissionHardwareType>(i),
+                                           VAS[f][i].dex);
 
-        if (equip != nullptr && (equip->Num - equip->Spok) <= 0 &&
-            equip->Delay > 0) {
+        if (equip != nullptr && (equip->Num - equip->Spok) <= 0 && equip->Delay > 0) {
             return 0;
         }
     }
@@ -521,34 +516,33 @@ int ChkDelVab(char plr, char f)
  * \param mode    0 to query the cost, 1 to purchase the rocket parts.
  * \return        The cost of the rocket, 0 if it was purchased.
  */
-int BuyVabRkt(char plr, Vehicle &rocket, char mode)
+int BuyVabRkt(char plr, Vehicle& rocket, char mode)
 {
+    auto& pData = Data->P[plr];
     if (! rocket.started()) {
         return 0;
     }
 
     int cost = 0;
-    bool sale = (Data->P[plr].TurnOnly == 3);
-    std::list<Equipment *> components = rocket.needed();
+    bool sale = (pData.TurnOnly == 3);
+    std::list<Equipment*> components = rocket.needed();
 
-    for (std::list<Equipment *>::iterator it = components.begin();
-         it != components.end(); it++) {
-        cost += sale ? std::max(1, (*it)->UnitCost / 2) : (*it)->UnitCost;
+    for (auto& comp : components) {
+        cost += sale ? std::max(1, comp->UnitCost / 2) : comp->UnitCost;
     }
 
-    if (mode == 1 && cost > Data->P[plr].Cash) {
-        ERROR3("Cannot purchase launch vehicle components:"
+    if (mode == 1 && cost > pData.Cash) {
+        LOG_ERROR("Cannot purchase launch vehicle components:"
                " cost of %dMBs, have %dMBs on hand",
-               cost, Data->P[plr].Cash);
+               cost, pData.Cash);
         return cost;
     }
 
     if (mode == 1) {
-        Data->P[plr].Cash -= cost;
+        pData.Cash -= cost;
 
-        for (std::list<Equipment *>::iterator it = components.begin();
-             it != components.end(); it++) {
-            (*it)->Num++;
+        for (auto& comp : components) {
+            comp->Num++;
         }
     }
 
@@ -562,7 +556,7 @@ int BuyVabRkt(char plr, Vehicle &rocket, char mode)
  * \param rocket  a rocket w/ optional booster.
  * \return  true if the vehicle is in stock or may be purchased.
  */
-bool ChkVabRkt(const Vehicle &rocket)
+bool ChkVabRkt(const Vehicle& rocket)
 {
     return (rocket.available() > 0) || !rocket.delayed();
 }
@@ -576,12 +570,11 @@ bool ChkVabRkt(const Vehicle &rocket)
  * \param payload  The VAS index of the given payload hardware set.
  * \param rocket   A rocket w/ optional booster.
  */
-void ShowAutopurchase(const char plr, const int payload, Vehicle &rocket)
+void ShowAutopurchase(const char plr, const int payload, Vehicle& rocket)
 {
-    int hasDelay, cost;
-
-    hasDelay = ChkDelVab(plr, payload) || ChkVabRkt(rocket);
-    cost = FillVab(plr, payload, 0) + BuyVabRkt(plr, rocket, 0);
+    auto& pData = Data->P[plr];
+    int hasDelay = ChkDelVab(plr, payload) || ChkVabRkt(rocket);
+    int cost = FillVab(plr, payload, 0) + BuyVabRkt(plr, rocket, 0);
 
     fill_rectangle(7, 87, 162, 93, 3);
     display::graphics.setForegroundColor(9);
@@ -589,14 +582,14 @@ void ShowAutopurchase(const char plr, const int payload, Vehicle &rocket)
     display::graphics.setForegroundColor(1);
 
     // if can't buy (delay, cost>cash), show in red
-    if (hasDelay == 0 || cost > Data->P[plr].Cash) {
+    if (hasDelay == 0 || cost > pData.Cash) {
         display::graphics.setForegroundColor(9);
     }
 
     draw_string(0, 0, "UTOPURCHASE (");
     draw_number(0, 0, cost);
     draw_string(0, 0, " OF ");
-    draw_megabucks(0, 0, Data->P[plr].Cash);
+    draw_megabucks(0, 0, pData.Cash);
     draw_string(0, 0, ")");
 }
 
@@ -649,8 +642,6 @@ void ShowVA(char f)
 
         draw_string(0, 0, "%");
     }
-
-    return;
 }
 
 
@@ -662,7 +653,7 @@ void ShowVA(char f)
  * \param rocket
  * \param payloadWeight
  */
-void ShowRkt(const Vehicle &rocket, int payloadWeight)
+void ShowRkt(const Vehicle& rocket, int payloadWeight)
 {
     fill_rectangle(65, 182, 160, 190, 3);
 
@@ -701,8 +692,6 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
 
     draw_string(0, 0, "%");
     currentPayload = payloadWeight;
-
-    return;
 }
 
 
@@ -720,35 +709,30 @@ void ShowRkt(const Vehicle &rocket, int payloadWeight)
  * \param payload  The VAS index of the given payload hardware set.
  * \param hw       The VAB loaded hardware bitmap.
  */
-void DispVA(char plr, char payload, const display::LegacySurface *hw)
+void DispVA(char plr, char payload, const display::LegacySurface* hw)
 {
-    int i, TotY, IncY;
-    int casingWidth, casingHeight, x1, y1, x2, y2, w2, h2, cx, off = 0;
-    uint8_t casing, images, img;
+    uint8_t images = 0;  /**< number of pictures */
 
-    images = 0;  /**< number of pictures */
-
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (VAS[payload][i].img > 0) {
             images++;
         }
     }
 
-    casing = ((images == 1 && VAS[payload][Mission_Probe_DM].img > 0) ||
+    uint8_t casing = ((images == 1 && VAS[payload][Mission_Probe_DM].img > 0) ||
               images == 0) ? VabImg_CasingSmall : VabImg_CasingLarge;
 
     // The Mercury capsule has a tower that sticks through the top of
     // the casing. On the large casing image, there isn't space to
     // display this, so the smaller casing image is forced.
-    if (plr == 0 &&
-        VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
+    if (plr == 0 && VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
         casing = VabImg_CasingSmall;
     }
 
     /* TotY: sum of height of all payload images */
-    TotY = 0;
+    int TotY = 0;
 
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (VAS[payload][i].img > 1) {
             TotY += MI[plr * 28 + VAS[payload][i].img].y2 -
                     MI[plr * 28 + VAS[payload][i].img].y1 + 1;
@@ -756,16 +740,16 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     }
 
     /* Load proper (casing) background into buffer */
-    x1 = MI[plr * 28 + casing].x1;
-    y1 = MI[plr * 28 + casing].y1;
-    x2 = MI[plr * 28 + casing].x2;
-    y2 = MI[plr * 28 + casing].y2;
-    casingWidth = x2 - x1 + 1;
-    casingHeight = y2 - y1 + 1;
+    int x1 = MI[plr * 28 + casing].x1;
+    int y1 = MI[plr * 28 + casing].y1;
+    int x2 = MI[plr * 28 + casing].x2;
+    int y2 = MI[plr * 28 + casing].y2;
+    int casingWidth = x2 - x1 + 1;
+    int casingHeight = y2 - y1 + 1;
 
     // Mercury capsule has a tower extending outside of the casing
-    if (plr == 0 &&
-        VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
+    int off = 0;
+    if (plr == 0 && VAS[payload][Mission_Capsule].img == VabImg_OneManCapsule) {
         casingHeight += 13;
         off = 13;
     }
@@ -799,7 +783,7 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
      * Mercury capsules, as usual, start at the very top with extra
      * space allotted for that big tower.
      */
-    IncY = (casingHeight - TotY) / 2;
+    int IncY = (casingHeight - TotY) / 2;
 
     if (VAS[payload][Mission_Capsule].img > 0) {
         if (plr == 0 &&
@@ -811,27 +795,28 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     }
 
     /* Draw each of the component images into the local2 buffer */
-    for (i = 0; i < 4; i++) {
-        if (VAS[payload][i].img > 0) {
-            img = VAS[payload][i].img;
-            x1 = MI[plr * 28 + img].x1;
-            y1 = MI[plr * 28 + img].y1;
-            x2 = MI[plr * 28 + img].x2;
-            y2 = MI[plr * 28 + img].y2;
-            w2 = x2 - x1 + 1;
-            h2 = y2 - y1 + 1;
-            cx = casingWidth / 2 - w2 / 2 - 1;  // Center on x axis
+    int w2, h2, cx;
+    for (int i = 0; i < 4; i++) {
+        if (VAS[payload][i].img <= 0) continue;
+        
+        uint8_t img = VAS[payload][i].img;
+        int x1 = MI[plr * 28 + img].x1;
+        int y1 = MI[plr * 28 + img].y1;
+        int x2 = MI[plr * 28 + img].x2;
+        int y2 = MI[plr * 28 + img].y2;
+        int w2 = x2 - x1 + 1;
+        int h2 = y2 - y1 + 1;
+        int cx = casingWidth / 2 - w2 / 2 - 1;  // Center on x axis
 
-            if (cx + w2 > casingWidth || IncY + h2 > casingHeight) {
-                CWARNING3(graphic, "can't fit %s image into spaceship casing!",
-                          VAS[payload][i].name);
-                continue;
-            } else {
-                local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
-            }
-
-            IncY += h2 + 1;
+        if (cx + w2 > casingWidth || IncY + h2 > casingHeight) {
+            CAT_WARNING(graphic, "can't fit %s image into spaceship casing!",
+                      VAS[payload][i].name);
+            continue;
+        } else {
+            local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
         }
+
+        IncY += h2 + 1;
     }
 
     local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
@@ -841,33 +826,33 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
     // If using a large casing, fill the unused space at the bottom
     // with fiery rocket power!
     if (casing == VabImg_CasingLarge) {
-        x1 = MI[plr * 28 + VabImg_FillerLarge].x1;
-        y1 = MI[plr * 28 + VabImg_FillerLarge].y1;
-        x2 = MI[plr * 28 + VabImg_FillerLarge].x2;
-        y2 = MIN(y1 + (casingHeight - IncY - 1),
-                 MI[plr * 28 + VabImg_FillerLarge].y2);
-        w2 = x2 - x1 + 1;
-        cx = casingWidth / 2 - w2 / 2 - 1;
+        int x1 = MI[plr * 28 + VabImg_FillerLarge].x1;
+        int y1 = MI[plr * 28 + VabImg_FillerLarge].y1;
+        int x2 = MI[plr * 28 + VabImg_FillerLarge].x2;
+        int y2 = MIN(y1 + (casingHeight - IncY - 1),
+                     MI[plr * 28 + VabImg_FillerLarge].y2);
+        int w2 = x2 - x1 + 1;
+        int cx = casingWidth / 2 - w2 / 2 - 1;
         local2.copyFrom(hw, x1, y1, x2, y2, cx, IncY);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
 
-        x1 = MI[plr * 28 + VabImg_ShroudLarge].x1;
-        y1 = MI[plr * 28 + VabImg_ShroudLarge].y1;
-        x2 = MI[plr * 28 + VabImg_ShroudLarge].x2;
-        y2 = MI[plr * 28 + VabImg_ShroudLarge].y2;
-        h2 = y2 - y1 + 1;
+        int x1_2 = MI[plr * 28 + VabImg_ShroudLarge].x1;
+        int y1_2 = MI[plr * 28 + VabImg_ShroudLarge].y1;
+        int x2_2 = MI[plr * 28 + VabImg_ShroudLarge].x2;
+        int y2_2 = MI[plr * 28 + VabImg_ShroudLarge].y2;
+        int h2 = y2 - y1 + 1;
 
-        local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
+        local2.copyFrom(hw, x1_2, y1_2, x2_2, y2_2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
     } else {
         // There is no small filler defined, so skip to the shroud.
-        x1 = MI[plr * 28 + VabImg_ShroudSmall].x1;
-        y1 = MI[plr * 28 + VabImg_ShroudSmall].y1;
-        x2 = MI[plr * 28 + VabImg_ShroudSmall].x2;
-        y2 = MI[plr * 28 + VabImg_ShroudSmall].y2;
-        h2 = y2 - y1 + 1;
+        int x1 = MI[plr * 28 + VabImg_ShroudSmall].x1;
+        int y1 = MI[plr * 28 + VabImg_ShroudSmall].y1;
+        int x2 = MI[plr * 28 + VabImg_ShroudSmall].x2;
+        int y2 = MI[plr * 28 + VabImg_ShroudSmall].y2;
+        int h2 = y2 - y1 + 1;
         local2.copyFrom(hw, x1, y1, x2, y2, 0, casingHeight - h2);
 
         local.maskCopy(&local2, 0, display::LegacySurface::SourceNotEqual);
@@ -899,25 +884,16 @@ void DispVA(char plr, char payload, const display::LegacySurface *hw)
  * \param wh   The rocket's index in the MI[] array.
  * \param hw   The VAB hardware sprite
  */
-void DispRck(char plr, char wh, const display::LegacySurface *hw)
+void DispRck(char plr, char wh, const display::LegacySurface* hw)
 {
-    int w;
-    int h;
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    int middle_w;
-    int middle_h;
-
-    x1 = MI[plr * 28 + wh].x1;
-    y1 = MI[plr * 28 + wh].y1;
-    x2 = MI[plr * 28 + wh].x2;
-    y2 = MI[plr * 28 + wh].y2;
-    w = x2 - x1 + 1;
-    h = y2 - y1 + 1;
-    middle_w = 282 - w / 2;
-    middle_h = 103 - h / 2;
+    int x1 = MI[plr * 28 + wh].x1;
+    int y1 = MI[plr * 28 + wh].y1;
+    int x2 = MI[plr * 28 + wh].x2;
+    int y2 = MI[plr * 28 + wh].y2;
+    int w = x2 - x1 + 1;
+    int h = y2 - y1 + 1;
+    int middle_w = 282 - w / 2;
+    int middle_h = 103 - h / 2;
     display::LegacySurface local(w, h);
     display::LegacySurface local2(w, h);
 
@@ -946,10 +922,11 @@ void DispRck(char plr, char wh, const display::LegacySurface *hw)
  * \param program  the equipment index (EquipProbeIndex, etc.)
  * \return   the equipment entry, or nullptr if no match (program < 0).
  */
-Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
+Equipment* MissionHardware(char plr, enum MissionHardwareType slot,
                            int program)
 {
     assert(0 <= plr && plr < NUM_PLAYERS);
+    auto& pData = Data->P[plr];
 
     if (program < 0) {
         return nullptr;
@@ -958,42 +935,41 @@ Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
     switch (slot) {
     case Mission_Capsule:
     case Mission_LM:
-        return &Data->P[plr].Manned[program];
+        return &pData.Manned[program];
         break;
 
     case Mission_Kicker:
-        return &Data->P[plr].Misc[program];
+        return &pData.Misc[program];
         break;
 
     case Mission_Probe_DM:
         if (program == MISC_HW_DOCKING_MODULE) {
-            return &Data->P[plr].Misc[program];
+            return &pData.Misc[program];
         } else {
-            return &Data->P[plr].Probe[program];
+            return &pData.Probe[program];
         }
 
         break;
 
     case Mission_PrimaryBooster:
-        return &Data->P[plr].Rocket[program];
+        return &pData.Rocket[program];
         break;
 
     case Mission_EVA:
         // Should program == MISC_HW_EVA_SUITS be enforced?
-        return &Data->P[plr].Misc[MISC_HW_EVA_SUITS];
+        return &pData.Misc[MISC_HW_EVA_SUITS];
         break;
 
     case Mission_PhotoRecon:
         // Should program == MISC_HW_PHOTO_RECON be enforced?
-        return &Data->P[plr].Misc[MISC_HW_PHOTO_RECON];
+        return &pData.Misc[MISC_HW_PHOTO_RECON];
         break;
 
     // Mission_SecondaryBooster isn't used, per data.h
     // case Mission_SecondaryBooster:
 
     default:
-        throw std::logic_error(
-            "Illegal hardware type passed to MissionHardware");
+        throw std::logic_error("Illegal hardware type passed to MissionHardware");
         break;
     }
 }
@@ -1009,7 +985,7 @@ Equipment *MissionHardware(char plr, enum MissionHardwareType slot,
 bool PayloadReady(int plr, int payload)
 {
     for (int i = 0; i < 4; i++) {
-        Equipment *equip =
+        Equipment* equip =
             MissionHardware(plr, static_cast<MissionHardwareType>(i),
                             VAS[payload][i].dex);
 
@@ -1036,29 +1012,31 @@ bool PayloadReady(int plr, int payload)
  * \param payload  the payload index in VAS.
  * \param rocket   the rocket index (+ ROCKET_HW_BOOSTERS if B/Rocket).
  */
-void ReserveHardware(int plr, int pad, int payload, Vehicle &rocket)
+void ReserveHardware(int plr, int pad, int payload, Vehicle& rocket)
 {
     assert(0 <= plr && plr < NUM_PLAYERS);
     assert(0 <= pad && pad < MAX_MISSIONS);
     assert(0 <= payload && payload < 7);
+    auto& pData = Data->P[plr];
+    auto& mission = pData.Mission[pad];
 
     for (int i = Mission_Capsule; i <= Mission_Probe_DM; i++) {
         int index = VAS[payload][i].dex;
-        Data->P[plr].Mission[pad].Hard[i] = index;
-        Equipment *equip =
-            MissionHardware(plr, static_cast<MissionHardwareType>(i),
-                            index);
+        mission.Hard[i] = index;
+        Equipment* equip = MissionHardware(plr, 
+                                           static_cast<MissionHardwareType>(i),
+                                           index);
 
         if (index >= 0 && equip) {
             equip->Spok++;
         }
     }
 
-    if (IsManned(Data->P[plr].Mission[pad].MissionCode) &&
-        Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num != PROGRAM_NOT_STARTED) {
-        Data->P[plr].Mission[pad].Hard[Mission_EVA] = MISC_HW_EVA_SUITS;
+    if (IsManned(mission.MissionCode) &&
+        pData.Misc[MISC_HW_EVA_SUITS].Num != PROGRAM_NOT_STARTED) {
+        mission.Hard[Mission_EVA] = MISC_HW_EVA_SUITS;
     } else {
-        Data->P[plr].Mission[pad].Hard[Mission_EVA] = -1;
+        mission.Hard[Mission_EVA] = -1;
     }
 
     rocket.assignTo(pad);
@@ -1089,13 +1067,13 @@ void DispWts(int payload, int thrust)
     }
 
     draw_number(0, 0, payload);
-
-    return;
 }
 
 
 void VAB(char plr)
 {
+    auto& pData = Data->P[plr];
+    
     int ccc;  // Payload index
     int mis, weight;
     VehicleSelector rocketList(plr);
@@ -1110,6 +1088,8 @@ void VAB(char plr)
     // to select a launch pad (or exit). It returns the chosen pad
     // index (or exit code).
     while ((mis = FutureCheck(plr, 1)) < MAX_MISSIONS) {
+        auto& mission = pData.Mission[mis];
+        auto& mcode = mission.MissionCode;
 
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
@@ -1121,8 +1101,7 @@ void VAB(char plr)
         helpText = "i016";
         keyHelpText = "k016";
 
-        struct mStr missionPlan =
-            GetMissionPlan(Data->P[plr].Mission[mis].MissionCode);
+        mStr missionPlan = GetMissionPlan(mcode);
 
         // When reassembling Hardware, any hardware previously assigned to
         // the mission should be unassigned so it may be used (or not) in
@@ -1131,7 +1110,7 @@ void VAB(char plr)
 
         // Clear mission hardware
         for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
-            Data->P[plr].Mission[mis].Hard[i] = 0;
+            mission.Hard[i] = 0;
         }
 
         BuildVAB(plr, mis, 0, 0, 0);  // now holds the mission info
@@ -1140,7 +1119,7 @@ void VAB(char plr)
         DispVAB(plr, mis);
         hw = LoadVABSprite(plr);
 
-        if (Data->P[plr].Mission[mis].MissionCode) {
+        if (mcode != Mission_None) {
             ButOn = 1;
         } else {
             ButOn = 0;
@@ -1189,7 +1168,7 @@ void VAB(char plr)
                 int cost = FillVab(plr, ccc, 0) +
                            BuyVabRkt(plr, rocket, 0);
 
-                if (Data->P[plr].Cash >= cost && ac == true) {
+                if (pData.Cash >= cost && ac == true) {
                     int goAhead;
 
                     if (rocket.thrust() >= currentPayload) {
@@ -1233,14 +1212,13 @@ void VAB(char plr)
                 OutBox(177, 185, 218, 195);
 
                 break;
-            } else if (((x >= 225 && y >= 185 && x <= 268 && y <= 195 && mousebuttons > 0) || key == 'D') && Data->P[plr].Mission[mis].MissionCode) {
+            } else if (((x >= 225 && y >= 185 && x <= 268 && y <= 195 && mousebuttons > 0) || key == 'D') && mcode != Mission_None) {
                 // DELAY the mission for a turn
 
                 // There are restrictions on Mars/Jupiter/Saturn Flybys, so
                 // check that this mission _could_ be launched at this time.
                 bool validLaunch =
-                    MissionTimingOk(Data->P[plr].Mission[mis].MissionCode,
-                                    Data->Year, Data->Season);
+                    MissionTimingOk(mcode, Data->Year, Data->Season);
 
                 if (validLaunch) {
                     InBox(225, 185, 266, 195);
@@ -1254,13 +1232,13 @@ void VAB(char plr)
 
                     // Check if there's a Future Mission which would be
                     // displaced by delaying the mission.
-                    if (Data->P[plr].Future[mis].MissionCode) {
+                    if (pData.Future[mis].MissionCode) {
                         conflict = true;
-                    } else if (Data->P[plr].Mission[mis].Joint) {
-                        int other = (Data->P[plr].Mission[mis].part) ?
+                    } else if (mission.Joint) {
+                        int other = (mission.part) ?
                                     mis - 1 : mis + 1;
 
-                        if (Data->P[plr].Future[other].MissionCode) {
+                        if (pData.Future[other].MissionCode) {
                             conflict = true;
                         }
                     }
@@ -1274,7 +1252,7 @@ void VAB(char plr)
                         OutBox(225, 185, 266, 195);
                     }
                 }
-            } else if (((x >= 273 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && Data->P[plr].Mission[mis].MissionCode) {
+            } else if (((x >= 273 && y >= 185 && x <= 314 && y <= 195 && mousebuttons > 0) || key == 'S') && mcode != Mission_None) {
                 // SCRUB The whole mission
                 InBox(273, 185, 314, 195);
                 WaitForMouseUp();
@@ -1293,14 +1271,14 @@ void VAB(char plr)
             } else if (((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) &&
                        ccc != 0 && ButOn == 1 && weight <= rocket.thrust()) {
                 if (missionPlan.EVA == 1 &&
-                    Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
+                    pData.Misc[MISC_HW_EVA_SUITS].Num == PROGRAM_NOT_STARTED) {
                     Help("i158");
                 } else if (missionPlan.Doc == 1 &&
-                           Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
+                           pData.Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
                     Help("i159");
                 } else {
                     if ((missionPlan.mVab[0] & 0x10) == 0x10 &&
-                        Data->P[plr].DockingModuleInOrbit <= 0) {
+                        pData.DockingModuleInOrbit <= 0) {
                         Help("i155");    // No docking module in orbit
                     }
 
@@ -1324,7 +1302,7 @@ void VAB(char plr)
 
                 rocket = rocketList.next();
 
-                if (! IsLEORegion(Data->P[plr].Mission[mis].MissionCode) &&
+                if (! IsLEORegion(mcode) &&
                     ! rocket.translunar()) {
                     if (options.cheat_atlasOnMoon == 0) {
                         rocket = rocketList.next();
@@ -1344,7 +1322,7 @@ void VAB(char plr)
 
                 OutBox(64, 181, 161, 191);
 
-            } else if ((x >= 139 && y >= 64 && x <= 168 && y <= 82) && (EVAmis > 0 || Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num < 0)) {
+            } else if ((x >= 139 && y >= 64 && x <= 168 && y <= 82) && (EVAmis > 0 || pData.Misc[MISC_HW_EVA_SUITS].Num < 0)) {
                 OutBox(140, 64, 165, 82);
                 delay(100);
                 Help("i171");  // Pull up help text explaining why player's seeing EVA box
@@ -1382,7 +1360,7 @@ void VAB(char plr)
         }
     }
 
-    Vab_Spot = (Data->P[plr].Mission[PAD_A].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
+    Vab_Spot = (pData.Mission[PAD_A].Hard[Mission_PrimaryBooster] > 0) ? 1 : 0;
     music_stop();
 }
 
@@ -1418,19 +1396,23 @@ void VAB(char plr)
  */
 void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 {
-    char i, j, part, mcode, prog, ext = 0;
+    auto& pData = Data->P[plr];
+    auto& mission = pData.Mission[mis];
+    
+    char part, prog, ext = 0;
     unsigned char VX;
 
     memset(VAS, 0x00, sizeof VAS);
 
+    char mcode;
     if (ty == 0) {
-        part = Data->P[plr].Mission[mis].part;
-        mcode = Data->P[plr].Mission[mis].MissionCode;
-        prog = Data->P[plr].Mission[mis].Prog - 1;
+        part = mission.part;
+        mcode = mission.MissionCode;
+        prog = mission.Prog - 1;
 
         if (part == 0) {
-            if (Data->P[plr].Mission[mis].Joint == 1) {
-                ext = Data->P[plr].Mission[mis + 1].Prog - 1;
+            if (mission.Joint == 1) {
+                ext = pData.Mission[mis + 1].Prog - 1;
             }
         } else {
             ext = prog;
@@ -1443,8 +1425,8 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     VX = GetMissionPlan(mcode).mVab[part];
 
-    for (i = 0; i < 7; i++) {
-        for (j = 0; j < 4; j++) {
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 4; j++) {
             strcpy(&VAS[i][j].name[0], "NONE");
             VAS[i][j].qty = VAS[i][j].sf = VAS[i][j].wt = VAS[i][j].dmg = 0;
             VAS[i][j].dex = VAS[i][j].img = -1;
@@ -1454,11 +1436,11 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
     VASqty = 0;
 
     if (VX & 0x80) {  // Capsule
-        j = (part == 0) ? prog : ext;
+        int j = (part == 0) ? prog : ext;
 
-        for (i = 1; i < 6; i++) {  // Fill all parts with CAP
+        for (int i = 1; i < 6; i++) {  // Fill all parts with CAP
             VASqty++;
-            VVals(plr, Mission_Capsule, &Data->P[plr].Manned[j], j,
+            VVals(plr, Mission_Capsule, pData.Manned[j], j,
                   VabImg_OneManCapsule + j);
         }
     }
@@ -1467,18 +1449,18 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     if (VX == 0x20 && part == 0 && mcode == Mission_Orbital_Satellite) {  // P:Sxx XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_ORBITAL], PROBE_HW_ORBITAL, VabImg_OrbitalSat);
+        VVals(plr, Mission_Probe_DM, pData.Probe[PROBE_HW_ORBITAL], PROBE_HW_ORBITAL, VabImg_OrbitalSat);
     }
 
     if (VX == 0x20 && part == 0 && mcode != Mission_Orbital_Satellite) {  // P:xDM XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
+        VVals(plr, Mission_Probe_DM, pData.Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
     } else if (VX == 0x04 && part == 0) {  // P:INTER XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_INTERPLANETARY], PROBE_HW_INTERPLANETARY, VabImg_InterplanetaryProbe);
+        VVals(plr, Mission_Probe_DM, pData.Probe[PROBE_HW_INTERPLANETARY], PROBE_HW_INTERPLANETARY, VabImg_InterplanetaryProbe);
     } else if (VX == 0x02 && part == 0) {  // P:PRO XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Probe[PROBE_HW_LUNAR], PROBE_HW_LUNAR, VabImg_LunarProbe);
+        VVals(plr, Mission_Probe_DM, pData.Probe[PROBE_HW_LUNAR], PROBE_HW_LUNAR, VabImg_LunarProbe);
     } else if (VX == 0x60 && part == 0) {  // P:LM+SDM XX
         LMAdd(plr, ext, -1, 1);
     } else if (VX == 0xe8 && part == 0) {  // P:LM+SDM+EVA XX
@@ -1488,7 +1470,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         LMAdd(plr, ext, MISC_HW_KICKER_B, 1);
     } else if (VX == 0x21 && part == 0) {  // P:SDM+KIC-C XX
         VASqty++;
-        VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_C], MISC_HW_KICKER_C, VabImg_KickerC);
+        VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_C], MISC_HW_KICKER_C, VabImg_KickerC);
     }
 
     else if (VX == 0x80) {
@@ -1502,7 +1484,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa0 && part == 0) {  // P:CAP+SDM XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
+        VVals(plr, Mission_Probe_DM, pData.Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
     }
 
     else if (VX == 0x90 && part == 0) {  // P:CAP+DMO XX
@@ -1511,7 +1493,7 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
 
     else if (VX == 0xa8 && part == 0) {  // P:CAP+SDM+EVA XX
         VASqty++;
-        VVals(plr, Mission_Probe_DM, &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
+        VVals(plr, Mission_Probe_DM, pData.Misc[MISC_HW_DOCKING_MODULE], MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
         // EVA Check
     }
 
@@ -1530,14 +1512,14 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
             prog == MANNED_HW_MINISHUTTLE) {
             if (mcode != 52) {  // Special Case EOR LM Test
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
             } else {
                 VASqty++;
                 // TODO: Check this out - seems like the sprite image
                 // should be VabImg_KickerB.
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
             }
         } else {
             VASqty = 1;
@@ -1557,24 +1539,21 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
         if (prog != MANNED_HW_THREE_MAN_CAPSULE) {
             if (mcode != Mission_Jt_LunarLanding_EOR) {  // Special Case EOR Lunar Landing
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_A], MISC_HW_KICKER_A, VabImg_KickerA);
                 VASqty++;
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerB);
             } else {
                 VASqty++;
                 // TODO: Check this out - seems like sprite image should
                 // be VabImg_KickerB.
-                VVals(plr, Mission_Kicker, &Data->P[plr].Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
+                VVals(plr, Mission_Kicker, pData.Misc[MISC_HW_KICKER_B], MISC_HW_KICKER_B, VabImg_KickerA);
             }
         } else {
             VASqty = 1;
         }
 
         // EVA Check
-
     }
-
-    return;
 }
 
 
@@ -1586,20 +1565,21 @@ void BuildVAB(char plr, char mis, char ty, char pa, char pr)
  */
 void LMAdd(char plr, char prog, char kic, char part)
 {
+    auto& pData = Data->P[plr];
     if (prog == MANNED_HW_TWO_MAN_CAPSULE) {
         VASqty++;
         VVals(plr, Mission_Probe_DM,
-              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              pData.Misc[MISC_HW_DOCKING_MODULE],
               MISC_HW_DOCKING_MODULE,
               VabImg_DockingModule);
         VVals(plr, Mission_LM,
-              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              pData.Manned[MANNED_HW_ONE_MAN_MODULE],
               MANNED_HW_ONE_MAN_MODULE,
               VabImg_OneManLM);
 
         if (kic >= 0) {
             VVals(plr, Mission_Kicker,
-                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
+                  pData.Misc[kic], kic, VabImg_KickerA + kic);
         }
 
     }
@@ -1607,54 +1587,52 @@ void LMAdd(char plr, char prog, char kic, char part)
     else if (prog == MANNED_HW_THREE_MAN_CAPSULE) {
         VASqty++;
         VVals(plr, Mission_LM,
-              &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE],
+              pData.Manned[MANNED_HW_TWO_MAN_MODULE],
               MANNED_HW_TWO_MAN_MODULE, VabImg_TwoManLM);
 
         if (part == 1 && kic >= 0) {
-            VVals(plr, Mission_Kicker, &Data->P[plr].Misc[kic], kic,
+            VVals(plr, Mission_Kicker, pData.Misc[kic], kic,
                   VabImg_KickerA + kic);
         }
 
         VASqty++;
         VVals(plr, Mission_LM,
-              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              pData.Manned[MANNED_HW_ONE_MAN_MODULE],
               MANNED_HW_ONE_MAN_MODULE, VabImg_OneManLM);
 
         if (part == 1 && kic >= 0) {
             VVals(plr, Mission_Kicker,
-                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
+                  pData.Misc[kic], kic, VabImg_KickerA + kic);
         }
     }
 
     else if (prog == MANNED_HW_MINISHUTTLE) {
         VASqty++;
         VVals(plr, Mission_Probe_DM,
-              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              pData.Misc[MISC_HW_DOCKING_MODULE],
               MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
         VVals(plr, Mission_LM,
-              &Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE],
+              pData.Manned[MANNED_HW_TWO_MAN_MODULE],
               MANNED_HW_TWO_MAN_MODULE, VabImg_TwoManLM);
 
         if (kic >= 0) {
             VVals(plr, Mission_Kicker,
-                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
+                  pData.Misc[kic], kic, VabImg_KickerA + kic);
         }
 
         VASqty++;
         VVals(plr, Mission_Probe_DM,
-              &Data->P[plr].Misc[MISC_HW_DOCKING_MODULE],
+              pData.Misc[MISC_HW_DOCKING_MODULE],
               MISC_HW_DOCKING_MODULE, VabImg_DockingModule);
         VVals(plr, Mission_LM,
-              &Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE],
+              pData.Manned[MANNED_HW_ONE_MAN_MODULE],
               MANNED_HW_ONE_MAN_MODULE, VabImg_OneManLM);
 
         if (kic >= 0) {
             VVals(plr, Mission_Kicker,
-                  &Data->P[plr].Misc[kic], kic, VabImg_KickerA + kic);
+                  pData.Misc[kic], kic, VabImg_KickerA + kic);
         }
     }
-
-    return;
 }
 
 
@@ -1667,25 +1645,24 @@ void LMAdd(char plr, char prog, char kic, char part)
  * \param v4   the equipment index (EquipProbeIndex, etc.)
  * \param sprite  the hardware's sprite index
  */
-void VVals(char plr, char tx, Equipment *EQ, char v4, char sprite)
+void VVals(char plr, char tx, Equipment& EQ, char v4, char sprite)
 {
-    strcpy(&VAS[VASqty][tx].name[0], &EQ->Name[0]);
-    VAS[VASqty][tx].qty = EQ->Num;
-    VAS[VASqty][tx].ac = EQ->Spok;
-    VAS[VASqty][tx].wt = EQ->UnitWeight;
-    VAS[VASqty][tx].MaxRD = EQ->MaxRD;
+    strcpy(&VAS[VASqty][tx].name[0], &EQ.Name[0]);
+    VAS[VASqty][tx].qty = EQ.Num;
+    VAS[VASqty][tx].ac = EQ.Spok;
+    VAS[VASqty][tx].wt = EQ.UnitWeight;
+    VAS[VASqty][tx].MaxRD = EQ.MaxRD;
 
     if (tx == Mission_Probe_DM && v4 == MISC_HW_DOCKING_MODULE &&
         AI[plr] == 1) {
-        VAS[VASqty][tx].sf = EQ->MSF;
+        VAS[VASqty][tx].sf = EQ.MSF;
     } else {
-        VAS[VASqty][tx].sf = EQ->Safety;
+        VAS[VASqty][tx].sf = EQ.Safety;
     }
 
     VAS[VASqty][tx].dex = v4;
     VAS[VASqty][tx].img = sprite;
-    VAS[VASqty][tx].dmg = EQ->Damage != 0 ? 1 : 0;
-    return;
+    VAS[VASqty][tx].dmg = EQ.Damage != 0 ? 1 : 0;
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */
