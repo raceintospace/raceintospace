@@ -36,9 +36,7 @@
 #include "mc2.h"
 #include "sdlhelper.h"
 
-
 LOG_DEFAULT_CATEGORY(future)
-
 
 static const int MAXBUB = 30;
 
@@ -49,7 +47,7 @@ namespace
 struct StepInfo {
     int16_t x_cor;
     int16_t y_cor;
-} StepBub[MAXBUB];
+} StepBub[MAXBUB]{};
 
 
 int Bub_Num;
@@ -61,11 +59,11 @@ int bubCount;
 int SEG = 15;
 char missStep[1024];
 
-
 static inline char B_Mis(char x)
 {
-    return missStep[x] - 0x30;
+    return missStep[x] - '0';
 };
+
 void Bd(int x, int y);
 void drawBspline(int segments, char color, ...);
 void Draw_IJ(char w);
@@ -76,18 +74,18 @@ void DrawLefMoon(char x, char y);
 void DrawSTUV(char x, char y, char z, char w);
 void Draw_HighS(char x, char y, char z);
 void DrawMoon(char x, char y, char z, char w, char j, char k, char l);
-void Draw_PQR(void);
-void Draw_PST(void);
+void Draw_PQR();
+void Draw_PST();
 void Draw_GH(char a, char b);
-void DrawZ(void);
-void Fly_By(void);
+void DrawZ();
+void Fly_By();
 void LefEarth(char a, char b);
 void LefGap(char x);
 void LefOrb(char a, char b, char c, char d);
 void OrbIn(char a, char b, char c);
 void OrbMid(char a, char b, char c, char d);
 void OrbOut(char a, char b, char c);
-void Q_Patch(void);
+void Q_Patch();
 void RghtMoon(char x, char y);
 void S_Patch(char x);
 void VenMarMerc(char x);
@@ -142,11 +140,10 @@ void IncreasePathResolution()
 /* Illustrates the mission path on the starfield and loads mission
  * step information.
  *
- * This populates the global variable Mev and the file variable
- * missStep with data about the specified mission.
+ * This populates the global variable Mev with data about the specified mission via MissionCodes().
  *
- * Flight path information is stored in the file missStep.dat.
- * missStep.dat is plain text, with:
+ * Flight path information is stored in the file missSteps.json.
+ * missSteps.json contains:
  *  -  Mission Number (2 first bytes of each line)
  *  -  A Coded letter, each drawing a different line
  *  -  Numbers following each letter, which are the parameters
@@ -155,9 +152,8 @@ void IncreasePathResolution()
  * Any other char is ignored, but it's easier for a human to read that
  * way.
  *
- * This modifies the global variables Mev via MissionCodes().
- *
  * TODO: This should try to redraw the starfield.
+ * TODO: separate drawing routine from loading Mev
  *
  * \param plr  See MissionCodes().
  * \param val  The mission code.
@@ -165,7 +161,7 @@ void IncreasePathResolution()
  */
 void MissionPath(char plr, int val, int pad)
 {
-    TRACE3("->MissionPath(plr, val %d, pad %d)", val, pad);
+    LOG_TRACE("->MissionPath(plr, val %d, pad %d)", val, pad);
 
     // Clear existing global / file global mission step information.
     // These are cleared by DrawMission, but no point taking chances.
@@ -185,7 +181,7 @@ void MissionPath(char plr, int val, int pad)
         if ((code[0] - '0') * 10 + (code[1] - '0') == val) { 
             break;
         }
-      index++;
+        index++;
     }
     
     strncpy(missStep, code.c_str(), 1024 - 1);
@@ -305,9 +301,9 @@ void MissionPath(char plr, int val, int pad)
 
     av_sync();
 
-    MissionCodes(plr, val, pad);
+    MissionCodes(plr, val, pad); // why are we doing something with global Mev in a drawing routine?
 
-    TRACE1("<-MissionPath()");
+    LOG_TRACE("<-MissionPath()");
 }
 
 
@@ -339,11 +335,10 @@ namespace
  */
 void Bd(int x, int y)
 {
-    int x1, y1, x2, y2;
-    x1 = x - 2;
-    y1 = y;
-    x2 = x - 1;
-    y2 = y - 1;
+    int x1 = x - 2;
+    int y1 = y;
+    int x2 = x - 1;
+    int y2 = y - 1;
     fill_rectangle(x1, y1, x1 + 8, y1 + 4, 21);
     fill_rectangle(x2, y2, x2 + 6, y2 + 6, 21);
     display::graphics.setForegroundColor(1);
@@ -353,68 +348,70 @@ void Bd(int x, int y)
     StepBub[bubCount].x_cor = x1;
     StepBub[bubCount].y_cor = y1;
     ++bubCount;
-    return;
 }
 
-
+// draws splite between points
+// number of points is passed in Bub_Num global
+// each point is passed as pair of ints x y
+// spline between each consequitive pair of points gets drawn as `segments` amount of straight lines
+// TODO: replace this with function accepting vector instead
 void drawBspline(int segments, char color, ...)
 {
+    assert(2 <= Bub_Num && Bub_Num < 18);
+
     va_list coord;
-    int xpoint[20], ypoint[20], i = 1, j, x, y, oldx, oldy, last, yx, yy, yyy = 0;
-    float u, nc1, nc2, nc3, nc4;
-    int SamCol;
-
-    yy = yx = 0; /* XXX check uninitialized */
-
-    display::graphics.setForegroundColor(color);
-    /* initialize the array  */
-    memset(xpoint, 0, sizeof(xpoint));
-    memset(ypoint, 0, sizeof(ypoint));
+    int xpoint[20]{}, ypoint[20]{};
 
     va_start(coord, color);
-
-    for (i = 1; i <= Bub_Num; i++) {
+    for (int i = 1; i <= Bub_Num; i++) {
         xpoint[i] = va_arg(coord, int);
         ypoint[i] = va_arg(coord, int);
     }
-
     va_end(coord);
+    
     xpoint[0] = xpoint[1];
     ypoint[0] = ypoint[1];
-    oldx = xpoint[0];
-    oldy = ypoint[0];
+    int oldx = xpoint[0];
+    int oldy = ypoint[0];
 
-    for (j = i; j <= i + 1; j++) {
+    for (int j = Bub_Num+1; j <= Bub_Num + 2; j++) {
         xpoint[j] = xpoint[j - 1];
         ypoint[j] = ypoint[j - 1];
     }
 
-    last = j;
+    int yy = 0;
+    int yx = 0;
+    bool yyy = false; // some kind of flag that's false for 1st segment and last point, but true in between
 
-    for (i = 1; i <= last - 3; i++) {
-        for (u = 0; u <= 1; u += 1.0 / segments) {
-            nc1 = -(u * u * u / 6) + u * u / 2 - u / 2 + 1.0 / 6;
-            nc2 = u * u * u / 2 - u * u + 2.0 / 3;
-            nc3 = (-u * u * u + u * u + u) / 2 + 1.0 / 6;
-            nc4 = u * u * u / 6;
-            x = (nc1 * xpoint[i - 1] + nc2 * xpoint[i] + nc3 * xpoint[i + 1] + nc4 * xpoint[i + 2]);
-            y = (nc1 * ypoint[i - 1] + nc2 * ypoint[i] + nc3 * ypoint[i + 1] + nc4 * ypoint[i + 2]);
-            SamCol = display::graphics.legacyScreen()->getPixel(x, y);
+    display::graphics.setForegroundColor(color);
+        
+    for (int i = 1; i <= Bub_Num; i++) {
+        for (int j = 0; j <= segments; ++j) {
+            float u = float(j) / segments;
+            
+            float nc1 = -(u*u*u / 6) + u*u / 2 - u / 2 + 1.0 / 6;
+            float nc2 = u*u*u / 2 - u * u + 2.0 / 3;
+            float nc3 = (-u*u*u + u*u + u) / 2 + 1.0 / 6;
+            float nc4 = u*u*u / 6;
+            
+            int x = (nc1 * xpoint[i - 1] + nc2 * xpoint[i] + nc3 * xpoint[i + 1] + nc4 * xpoint[i + 2]);
+            int y = (nc1 * ypoint[i - 1] + nc2 * ypoint[i] + nc3 * ypoint[i + 1] + nc4 * ypoint[i + 2]);
+            int SamCol = display::graphics.legacyScreen()->getPixel(x, y);
 
-            if (yyy == 1) {
+            if (yyy) {
                 display::graphics.legacyScreen()->setPixel(yx, yy, 5);
-                yyy = 0;
+                yyy = false;
             }
 
             if ((SamCol != 1) && (SamCol != 21)) {
                 grMoveTo(oldx, oldy);
                 grLineTo(x, y);
 
-                if (i < (last - 3)) {
+                if (i < Bub_Num) {
                     display::graphics.legacyScreen()->setPixel(x, y, 40);
                     yx = x;
                     yy = y;
-                    yyy = 1;
+                    yyy = true;
                 }
             }
 
@@ -422,8 +419,6 @@ void drawBspline(int segments, char color, ...)
             oldy = y;
         }
     }
-
-    return;
 }
 
 
@@ -436,8 +431,6 @@ void Draw_IJ(char w)
     if (w == 1) {
         Bd(77, 142);    // bubble 'J'
     }
-
-    return;
 }
 
 void Draw_GH(char a, char b)
@@ -456,8 +449,6 @@ void Draw_GH(char a, char b)
     if (b == 1) {
         Bd(77, 150);    // bubble 'K'
     }
-
-    return;
 }
 
 void Draw_IJV(char w)
@@ -468,8 +459,6 @@ void Draw_IJV(char w)
     if (w == 1) {
         Bd(102, 141);    // bubble 'V'
     }
-
-    return;
 }
 
 void OrbIn(char a, char b, char c)
@@ -494,8 +483,6 @@ void OrbIn(char a, char b, char c)
     if (c == 1) {
         Bd(95, 118);    // bubble 'W'
     }
-
-    return;
 }
 
 void OrbMid(char a, char b, char c, char d)
@@ -529,15 +516,12 @@ void OrbMid(char a, char b, char c, char d)
     if (d == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
-void Q_Patch(void)
+void Q_Patch()
 {
     Bub_Num = 2;
     drawBspline(SEG, 5, 85, 151, 107, 144);
-    return;
 }
 
 void OrbOut(char a, char b, char c)
@@ -562,8 +546,6 @@ void OrbOut(char a, char b, char c)
     if (c == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
 void LefEarth(char a, char b)
@@ -584,7 +566,6 @@ void LefEarth(char a, char b)
 
     Bub_Num = 2;
     drawBspline(SEG, 5, 85, 151, 107, 144);
-    return;
 }
 
 
@@ -615,11 +596,9 @@ void LefOrb(char a, char b, char c, char d)
     if (d == 1) {
         Bd(47, 135);    // bubble 'd'
     }
-
-    return;
 }
 
-void Fly_By(void)
+void Fly_By()
 {
     /* bubbles I_J_F */
     Bub_Num = 8;
@@ -627,7 +606,6 @@ void Fly_By(void)
     Bub_Num = 6;
     drawBspline(SEG, 5, 36, 137, 20, 149, 36, 157, 41, 159, 46, 162, 69, 164);
     Bd(59, 160); // bubble 'F'
-    return;
 }
 
 void VenMarMerc(char x)
@@ -656,11 +634,9 @@ void VenMarMerc(char x)
         drawBspline(SEG, 5, 125, 170, 138, 171, 153, 170, 166, 165);
         Bd(160, 161); // bubble 'M'
     }
-
-    return;
 }
 
-void Draw_PQR(void)
+void Draw_PQR()
 {
     Bub_Num = 5;
     drawBspline(SEG, 5, 65, 164, 91, 168, 162, 186, 198, 190, 203, 190);
@@ -671,10 +647,9 @@ void Draw_PQR(void)
     Bub_Num = 2;
     drawBspline(SEG, 5, 249, 179, 263, 172);
     Bd(261, 170); // bubble 'R'
-    return;
 }
 
-void Draw_PST(void)
+void Draw_PST()
 {
     Bub_Num = 5;
     drawBspline(SEG, 5, 65, 164, 91, 168, 162, 186, 198, 190, 203, 190);
@@ -685,7 +660,6 @@ void Draw_PST(void)
     Bub_Num = 2;
     drawBspline(SEG, 5, 279, 191, 303, 190);
     Bd(300, 188); // bubble 'T'
-    return;
 }
 
 void Draw_LowS(char a, char b, char c, char x, char y, char z)
@@ -697,7 +671,7 @@ void Draw_LowS(char a, char b, char c, char x, char y, char z)
         Bd(116, 137);    // bubble 'a'
     }
 
-    Bub_Num =  3;
+    Bub_Num = 3;
     drawBspline(SEG, 5, 125, 137, 146, 131, 152, 127);
 
     if (b == 1) {
@@ -731,8 +705,6 @@ void Draw_LowS(char a, char b, char c, char x, char y, char z)
     if (z == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 void Draw_HighS(char x, char y, char z)
@@ -759,8 +731,6 @@ void Draw_HighS(char x, char y, char z)
     if (z == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 void RghtMoon(char x, char y)
@@ -781,7 +751,6 @@ void RghtMoon(char x, char y)
 
     Bub_Num = 2;
     drawBspline(SEG, 5, 272, 73, 268, 75);
-    return;
 }
 
 void DrawLunPas(char x, char y, char z, char w)
@@ -813,8 +782,6 @@ void DrawLunPas(char x, char y, char z, char w)
     if (w == 1) {
         Bd(109, 112);    // bubble 'X'
     }
-
-    return;
 }
 
 void DrawLefMoon(char x, char y)
@@ -832,8 +799,6 @@ void DrawLefMoon(char x, char y)
     if (y == 1) {
         Bd(243, 60);    // bubble 'm'
     }
-
-    return;
 }
 
 
@@ -890,20 +855,16 @@ void DrawMoon(char x, char y, char z, char w, char j, char k, char l)
 
     Bub_Num = 3;
     drawBspline(SEG, 5, 246, 73, 240, 69, 251, 58);
-    return;
 }
 
 
-
-
-void DrawZ(void)
+void DrawZ()
 {
     Bub_Num = 4;
     drawBspline(SEG, 5, 307, 46, 301, 40, 294, 38, 301, 40);
     Bd(290, 37); // little bubble 'z'
     Bub_Num = 7;
     drawBspline(SEG, 5, 301, 40, 307, 46, 308, 55, 302, 61, 282, 71, 272, 73, 268, 75);
-    return;
 }
 
 void DrawSTUV(char x, char y, char z, char w)
@@ -937,8 +898,6 @@ void DrawSTUV(char x, char y, char z, char w)
     if (w == 1) {
         Bd(276, 68);    // bubble 's'
     }
-
-    return;
 }
 
 void LefGap(char x)
@@ -949,8 +908,6 @@ void LefGap(char x)
     if (x == 1) {
         Bd(303, 64);
     }
-
-    return;
 }
 
 void S_Patch(char x)
@@ -963,8 +920,6 @@ void S_Patch(char x)
         Bd(291, 54);
         Bd(279, 51);
     }
-
-    return;
 }
 
 };  // End of Anonymous namespace
