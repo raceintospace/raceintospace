@@ -311,7 +311,7 @@ int game_main_impl(int argc, char *argv[])
                 if (Option == -1) {
                     MainLoop();    //Regular game
                 } else { //Modem game
-                    WARNING1("can't do modem games");
+                    LOG_WARNING("can't do modem games");
                     break;
                 }
             } else if (!QUIT) {
@@ -344,10 +344,10 @@ int game_main(int argc, char *argv[])
     // Do all the work in game_main_impl(), but trap exceptions here, since we're called from C
     try {
         return game_main_impl(argc, argv);
-    } catch (const std::exception &e) {
+    } catch (const std::exception& e) {
         fprintf(stderr, "unhandled exception: %s\n", e.what());
         abort();
-    } catch (const std::string &e) {
+    } catch (const std::string& e) {
         fprintf(stderr, "unhandled exception: %s\n", e.c_str());
         abort();
     } catch (...) {
@@ -368,9 +368,10 @@ int game_main(int argc, char *argv[])
  */
 int CheckIfMissionGo(char plr, char launchIdx)
 {
+    auto& pData = Data->P[plr];
     // Grab the Mission Code from the current Launch Index
-    int mcode = Data->P[plr].Mission[launchIdx].MissionCode;
-    MissionType* pMission = &Data->P[plr].Mission[launchIdx];
+    MissionType& pMission = pData.Mission[launchIdx];
+    int mcode = pMission.MissionCode;
 
     // Always a go for Unmanned missions
     if (! IsManned(mcode)) {
@@ -386,7 +387,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
         // starting at 0 per EquipProbeIndex, EquipMannedIndex, etc.
         // EXCEPT for rockets (more below) so a missing component is
         // flagged with a negative value.
-        if (pMission->Hard[idx] < 0) {
+        if (pMission.Hard[idx] < 0) {
             continue;
         }
         
@@ -394,12 +395,12 @@ int CheckIfMissionGo(char plr, char launchIdx)
         switch (idx) {
         case Mission_Capsule:
         case Mission_LM:
-            E = &Data->P[plr].Manned[pMission->Hard[idx]];
+            E = &pData.Manned[pMission.Hard[idx]];
             E->MisSaf = E->Safety;
             break;
 
         case Mission_Kicker:
-            E = &Data->P[plr].Misc[pMission->Hard[idx]];
+            E = &pData.Misc[pMission.Hard[idx]];
             E->MisSaf = E->Safety;
             break;
 
@@ -410,14 +411,14 @@ int CheckIfMissionGo(char plr, char launchIdx)
             //     Hard[Mission_PrimaryBooster] > 0
             // MissionSetup() will correct for that in mc2.cpp.
         {
-            int rocketIndex = pMission->Hard[idx] - 1;
-            E = &Data->P[plr].Rocket[rocketIndex % ROCKET_HW_BOOSTERS];
+            int rocketIndex = pMission.Hard[idx] - 1;
+            E = &pData.Rocket[rocketIndex % ROCKET_HW_BOOSTERS];
 
             if (rocketIndex >= ROCKET_HW_BOOSTERS) {
-                const Equipment *boosters =
-                    &Data->P[plr].Rocket[ROCKET_HW_BOOSTERS];
+                const Equipment& boosters =
+                    pData.Rocket[ROCKET_HW_BOOSTERS];
                 E->MisSaf =
-                    RocketBoosterSafety(E->Safety, boosters->Safety);
+                    RocketBoosterSafety(E->Safety, boosters.Safety);
             } else {
                 E->MisSaf = E->Safety;
             }
@@ -437,7 +438,7 @@ int CheckIfMissionGo(char plr, char launchIdx)
             break;
         }
 
-        if (E && idx != Mission_Probe_DM && pMission->Hard[idx] >= 0) {
+        if (E && idx != Mission_Probe_DM && pMission.Hard[idx] >= 0) {
             // If mission Safety is not within 15 points of the MaxRD
             // then NO Go
             if (E->MisSaf < (E->MaxRD - 15)) {
@@ -498,30 +499,28 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
     while (Data->Year < 78) {            // WHILE THE YEAR IS NOT 1977
 
         if (newTurn) {
-            // CLEAR ALL TURN RD MODS
-            Data->P[0].RD_Mods_For_Turn = 0;
-            Data->P[1].RD_Mods_For_Turn = 0;
-
-            // RECORD BUDGET
-            Data->P[0].BudgetHistory[Data->Year - 53] = Data->P[0].Budget;
-            Data->P[1].BudgetHistory[Data->Year - 53] = Data->P[1].Budget;
-
-            // MAKE ESTIMATE OF BUDGETS
-            Data->P[0].BudgetHistoryF[Data->Year - 53] =
-                (Data->P[0].Budget * (brandom(40) + 80)) / 100;
-            Data->P[1].BudgetHistoryF[Data->Year - 53] =
-                (Data->P[1].Budget * (brandom(40) + 80)) / 100;
-
-            // MOVE EXPENDITURES DOWN
             for (int i = 0; i < NUM_PLAYERS; i++) {
+                auto& pData = Data->P[i];
+                
+                // CLEAR ALL TURN RD MODS
+                pData.RD_Mods_For_Turn = 0;
+
+                // RECORD BUDGET
+                pData.BudgetHistory[Data->Year - 53] = pData.Budget;
+                    
+                // MAKE ESTIMATE OF BUDGETS
+                pData.BudgetHistoryF[Data->Year - 53] =
+                    (pData.Budget * (brandom(40) + 80)) / 100;
+                
+                // MOVE EXPENDITURES DOWN
                 for ( int j = 3; j >= 0; j--) {
                     for (int k = 0; k < 4; k++) {
-                        Data->P[i].Spend[j][k] =Data->P[i].Spend[j+1][k];
+                        pData.Spend[j][k] = pData.Spend[j+1][k];
                     }
                 }
                 // RESET FIRST ROW
                 for (int k = 0; k < 4; k++) {
-                    Data->P[i].Spend[0][k] = 0;
+                    pData.Spend[0][k] = 0;
                 }
             }
 
@@ -540,7 +539,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
                     IntelPhase(plr[i] - 2 * AI[i], 0);
                 }
             }
-
         }
 
         for (int i = 0; i < NUM_PLAYERS; i++) {
@@ -668,6 +666,7 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
 
         // Do Missions Here
         int kik = OrderMissions(); // orders mission by launch order
+                                   // returns in global Order[], TODO: fix
         for (int i = 0; i < kik; i++) {
             if (Data->P[Order[i].plr].Mission[Order[i].loc].MissionCode == Mission_None) continue; // skip empty missions
             if (AI[Order[i].plr]) {
@@ -786,7 +785,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
             Data->Season++;
         }
 
-
         // End of turn MAIL update
         if (MAIL == 1) {
             MAIL = 3;
@@ -795,7 +793,6 @@ restart:                              // ON A LOAD PROG JUMPS TO HERE
         }
 
         newTurn = true;
-
     }
 
     FadeOut(2, 10, 0, 0);
@@ -824,9 +821,11 @@ void ConfigureAudio()
 void DockingKludge()
 {
     for (int j = 0; j < NUM_PLAYERS; j++) {
-        Data->P[j].Misc[MISC_HW_DOCKING_MODULE].MSF =
-            MAX(MAX(Data->P[j].Probe[PROBE_HW_ORBITAL].Safety, Data->P[j].Probe[PROBE_HW_INTERPLANETARY].Safety),
-                Data->P[j].Probe[PROBE_HW_LUNAR].Safety);
+        auto& pData = Data->P[j];
+        pData.Misc[MISC_HW_DOCKING_MODULE].MSF =
+            MAX(MAX(pData.Probe[PROBE_HW_ORBITAL].Safety, 
+                    pData.Probe[PROBE_HW_INTERPLANETARY].Safety),
+                pData.Probe[PROBE_HW_LUNAR].Safety);
     }
 }
 
@@ -948,14 +947,14 @@ void VerifySafety(char plr)
     // Check for safety for each Equipment
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < sizes[i]; j++) {
-            Equipment *px = &arrays[i][j];
+            Equipment& px = arrays[i][j];
 
-            if (px->Safety > px->MaxSafety) {
-                px->Safety = px->MaxSafety;
+            if (px.Safety > px.MaxSafety) {
+                px.Safety = px.MaxSafety;
             }
 
-            if (px->Safety < px->Base) {
-                px->Safety = px->Base;
+            if (px.Safety < px.Base) {
+                px.Safety = px.Base;
             }
         }
     }
@@ -963,29 +962,34 @@ void VerifySafety(char plr)
 
 void VerifyCrews(char plr)
 {
+    auto& pData = Data->P[plr];
     for (int i = 0; i < 3; i++) {
-        if (Data->P[plr].Mission[i].MissionCode == Mission_Jt_Unmanned_Orbital_Docking && Data->P[plr].Mission[i].part == 0) {
-            Data->P[plr].Mission[i].Joint = 1;
-            Data->P[plr].Mission[i + 1].Joint = 1;
-            Data->P[plr].Mission[i].part = 0;
-            Data->P[plr].Mission[i + 1].part = 1;
+        auto& main_launch = pData.Mission[i];
+        if (main_launch.MissionCode == Mission_Jt_Unmanned_Orbital_Docking 
+            && main_launch.part == 0) {
+
+            auto& second_launch = pData.Mission[i+1];
+            
+            main_launch.Joint = 1;
+            second_launch.Joint = 1;
+            main_launch.part = 0;
+            second_launch.part = 1;
         }
 
-        if (Data->P[plr].Mission[i].PCrew > 0) { // primary verify
-            int t = Data->P[plr].Mission[i].Prog;
-            int k = Data->P[plr].Mission[i].PCrew - 1;
+        if (main_launch.PCrew > 0) { // primary verify
+            int t = main_launch.Prog;
+            int k = main_launch.PCrew - 1;
 
-            if (Data->P[plr].CrewCount[t][k] == 0) {
-                Data->P[plr].Mission[i].PCrew = 0;
+            if (pData.CrewCount[t][k] == 0) {
+                main_launch.PCrew = 0;
             }
 
-            t = Data->P[plr].Mission[i].Prog; // backup verify
-            k = Data->P[plr].Mission[i].BCrew - 1;
+            t = main_launch.Prog; // backup verify
+            k = main_launch.BCrew - 1;
 
-            if (Data->P[plr].CrewCount[t][k] == 0) {
-                Data->P[plr].Mission[i].BCrew = 0;
+            if (pData.CrewCount[t][k] == 0) {
+                main_launch.BCrew = 0;
             }
-
         }
     }
 }
@@ -1024,5 +1028,3 @@ int MisRandom()
 
     return (int) r_gaussian;
 }
-
-
