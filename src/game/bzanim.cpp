@@ -19,6 +19,7 @@
 #include "bzanim.h"
 
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 
 #include "display/graphics.h"
@@ -37,11 +38,11 @@ LOG_DEFAULT_CATEGORY(video)
 
 namespace
 {
-size_t ImportAnimType(FILE *fin, struct AnimType &target);
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target);
-uint8_t *ReadFrame(FILE *fin, int width, int height);
-display::Palette ReadPalette(FILE *fin, int offset, int colors);
-void SeekAnimation(FILE *fin, const char *name);
+size_t ImportAnimType(FILE* fin, AnimType& target);
+size_t ImportBlockHead(FILE* fin, BlockHead& target);
+uint8_t* ReadFrame(FILE* fin, int width, int height);
+display::Palette ReadPalette(FILE* fin, int offset, int colors);
+void SeekAnimation(FILE* fin, const char* name);
 };
 
 
@@ -58,7 +59,7 @@ void SeekAnimation(FILE *fin, const char *name);
  * \throw IOException  if an error occurs while reading the file.
  */
 BZAnimation::Ptr BZAnimation::load(
-    const char *file, const char *id, int x, int y)
+    const char* file, const char* id, int x, int y)
 {
     if (file == nullptr) {
         throw std::invalid_argument("Parameter file may not be null.");
@@ -68,17 +69,17 @@ BZAnimation::Ptr BZAnimation::load(
         throw std::invalid_argument("Parameter id may not be null.");
     }
 
-    FILE *fin = open_gamedat(file);
+    FILE* fin = open_gamedat(file);
 
-    if (!fin) {
+    if (fin == nullptr) {
         std::string msg("Cannot open file ");
         msg += file;
         throw IOException(msg);
     }
 
-    struct AnimType header;
+    AnimType header;
 
-    std::vector<uint8_t *> frames;
+    std::vector<uint8_t*> frames;
 
     SeekAnimation(fin, id);
 
@@ -88,7 +89,7 @@ BZAnimation::Ptr BZAnimation::load(
         ReadPalette(fin, header.cOff, header.cNum);
 
     for (int i = 0; i < header.fNum; i++) {
-        uint8_t *pixels = ReadFrame(fin, header.w, header.h);
+        uint8_t* pixels = ReadFrame(fin, header.w, header.h);
         frames.push_back(pixels);
     }
 
@@ -112,19 +113,19 @@ BZAnimation::Ptr BZAnimation::load(
  * \param x  the top-left x coordinate of the animation window.
  * \param y  the top-left y coordinate of the animation window.
  */
-BZAnimation::BZAnimation(struct AnimType header,
+BZAnimation::BZAnimation(AnimType header,
                          display::Palette palette,
-                         std::vector<uint8_t *> frames,
+                         std::vector<uint8_t*> frames,
                          int x,
                          int y)
     : mDisplay(nullptr), mHeader(header), mFrameData(frames)
 {
     if (x < 0 || x >= display::Graphics::WIDTH) {
-        WARNING2("Animation param x=%d out of range.", x);
+        LOG_WARNING("Animation param x=%d out of range.", x);
     }
 
     if (y < 0 || y >= display::Graphics::HEIGHT) {
-        WARNING2("Animation param y=%d out of range.", y);
+        LOG_WARNING("Animation param y=%d out of range.", y);
     }
 
     mX = x;
@@ -172,7 +173,7 @@ void BZAnimation::advance()
     }
 
     if (mCurrentFrame < mHeader.fNum) {
-        uint8_t *pixels = mFrameData[mCurrentFrame];
+        uint8_t* pixels = mFrameData[mCurrentFrame];
         memcpy(mDisplay->pixels(), pixels, mDisplay->width() * mDisplay->height());
 
         // dply->palette().copy_from(display::graphics.legacyScreen()->palette());
@@ -194,7 +195,7 @@ namespace
  * \param target  The destination for the read data.
  * \return  1 if successful, 0 otherwise.
  */
-size_t ImportAnimType(FILE *fin, struct AnimType &target)
+size_t ImportAnimType(FILE* fin, AnimType& target)
 {
     bool success =
         fread(&target.ID[0], sizeof(target.ID), 1, fin) &&
@@ -226,7 +227,7 @@ size_t ImportAnimType(FILE *fin, struct AnimType &target)
  * \param target  The destination for the read data
  * \return  1 if successful, 0 otherwise
  */
-size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
+size_t ImportBlockHead(FILE* fin, BlockHead& target)
 {
     bool success =
         fread(&target.cType, sizeof(target.cType), 1, fin) &&
@@ -249,32 +250,32 @@ size_t ImportBlockHead(FILE *fin, struct BlockHead &target)
  * \param height  The frame height (in pixels).
  * \return  uncompressed pixel data.
  */
-uint8_t *ReadFrame(FILE *fin, int width, int height)
+uint8_t* ReadFrame(FILE* fin, int width, int height)
 {
     assert(fin);
 
-    struct BlockHead header;
+    BlockHead header;
     ImportBlockHead(fin, header);
 
     assert(header.fSize < 128 * 1024);
-    uint8_t *buf = (uint8_t *)alloca(header.fSize);
-    fread(buf, header.fSize, 1, fin);
+    std::unique_ptr<uint8_t[]> buf(new uint8_t[header.fSize]{});
+    fread(buf.get(), header.fSize, 1, fin);
 
-    uint8_t *frame = new uint8_t[width * height];
+    std::unique_ptr<uint8_t[]> frame(new uint8_t[width * height]{});
 
     // TODO: Create an enum for the different compression codes.
     // TODO: What makes codes 1 & 2 different?  - rnyoakum
     switch (header.cType) {
     case 0:
-        memcpy(frame, buf, header.fSize);
+        memcpy(frame.get(), buf.get(), header.fSize);
         break;
 
     case 1:
-        RLED_img((char *)buf, (char *)frame, header.fSize, width, height);
+        RLED_img((char *)buf.get(), (char *)frame.get(), header.fSize, width, height);
         break;
 
     case 2:
-        RLED_img((char *)buf, (char *)frame, header.fSize, width, height);
+        RLED_img((char *)buf.get(), (char *)frame.get(), header.fSize, width, height);
         break;
 
     default:
@@ -283,7 +284,7 @@ uint8_t *ReadFrame(FILE *fin, int width, int height)
 
     frame[width * height - 1] = frame[width * height - 2];
 
-    return frame;
+    return frame.release();
 }
 
 
@@ -296,7 +297,7 @@ uint8_t *ReadFrame(FILE *fin, int width, int height)
  * \return  a palette with colors defined for [offset, offset + colors).
  * \throws  IOException  if palette data could not be read.
  */
-display::Palette ReadPalette(FILE *fin, int offset, int colors)
+display::Palette ReadPalette(FILE* fin, int offset, int colors)
 {
     assert(fin);
     display::Palette palette;
@@ -324,7 +325,7 @@ display::Palette ReadPalette(FILE *fin, int offset, int colors)
  * \param fin   An open .abz animation file.
  * \param name  The 4-character animation identifier.
  */
-void SeekAnimation(FILE *fin, const char *name)
+void SeekAnimation(FILE* fin, const char* name)
 {
     struct BZFileHeader {
         char ID[4];
