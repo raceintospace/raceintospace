@@ -1004,7 +1004,7 @@ void Port(char plr)
 
                     // Search hotkey string for valid selection
                     bool good = std::any_of(HotKeyList, HotKeyList+strlen(HotKeyList),
-                                       [key](char c){return c == ((char)(0x00ff & key));});
+                                            [](char c){return c == ((char)(0x00ff & key));});
 
                     auto& MObjRegCD = MObjReg.CD[j];
                     while (x >= MObjRegCD.x1 &&
