@@ -1133,7 +1133,7 @@ void Port(char plr)
                                 index = MObjReg.sNum;
                                 Count = pOutline[index].Count;
                                 
-                                std::unqiue_ptr<uint16_t[]> bone = std::make_unique<uint16_t[]>(pOutline[index].bone.size());
+                                std::unique_ptr<uint16_t[]> bone = std::make_unique<uint16_t[]>(pOutline[index].bone.size());
                                 std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone.get());                                
 
                                 PortOutLine(Count, bone.get(), 1);
