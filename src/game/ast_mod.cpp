@@ -960,7 +960,7 @@ std::string LaunchNameEditor(const ManPool& recruit)
             draw_string(211, 164, name.c_str());
             display::graphics.setForegroundColor(9);
             draw_character(0x14);
-            key = 0
+            key = 0;
         }
     }
 
