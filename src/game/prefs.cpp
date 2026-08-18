@@ -55,26 +55,25 @@ enum PreferencesMode {
     PREFS_NEWPBEM = 3
 };
 
-
 struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
 
 void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
-               DisplayContext &dctx);
+               DisplayContext& dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
 void HModel(char mode, char tx);
-void Levels(char plr, char which, char x, DisplayContext &dctx);
+void Levels(char plr, char which, char x, DisplayContext& dctx);
 void BinT(int x, int y, char st);
-void PLevels(char side, char wh, DisplayContext &dctx);
-void CLevels(char side, char wh, DisplayContext &dctx);
+void PLevels(char side, char wh, DisplayContext& dctx);
+void CLevels(char side, char wh, DisplayContext& dctx);
 int Preferences(int player, int where);
-void SavePreferences(const AudioConfig &audio);
+void SavePreferences(const AudioConfig& audio);
 
 
 void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
-               DisplayContext &dctx)
+               DisplayContext& dctx)
 {
     int mode = 0;
 
@@ -199,7 +198,6 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
 
     // if (where==0 || where==2)
     FadeIn(2, 10, 0, 0);
-    return;
 }
 
 
@@ -238,7 +236,7 @@ std::string GetTextInput(int x, int y, int maxLength)
     fill_rectangle(x, y - 4, x + width, y, 0);
     display::graphics.setForegroundColor(1);
     grMoveTo(x, y);
-    draw_character(0x14);
+    draw_character(0x14); // what is this?
     av_sync();
 
     do {
@@ -251,7 +249,7 @@ std::string GetTextInput(int x, int y, int maxLength)
         }
 
         if (key == 0x08) {  // Backspace
-            if (input.length()) {
+            if (input.length() > 0) {
                 input.pop_back();
                 fill_rectangle(x, y - 4, x + width, y, 0);
                 draw_string(x, y, input.c_str());
@@ -274,11 +272,11 @@ std::string GetTextInput(int x, int y, int maxLength)
     fill_rectangle(x, y - 4, x + width, y, 0);
 
     // Trim trailing whitespace
-    while (input.length() && input.back() == ' ') {
+    while (input.length() > 0 && input.back() == ' ') {
         input.pop_back();
     }
 
-    return (key == K_ENTER && input.length()) ? input : "";
+    return (key == K_ENTER && input.length() > 0) ? input : "";
 }
 
 
@@ -341,19 +339,15 @@ void HModel(char mode, char tx)
     } else {
         draw_string(100, 128, "CUSTOM ROSTER");
     }
-
-    return;
 }
 
 
-void Levels(char plr, char which, char x, DisplayContext &dctx)
+void Levels(char plr, char which, char x, DisplayContext& dctx)
 {
     unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + which * 72, 30 + x * 30,
                                            71, 29, v[0][plr], v[1][x]);
-
-    return;
 }
 
 void BinT(int x, int y, char st)
@@ -372,13 +366,10 @@ void BinT(int x, int y, char st)
     grMoveTo(12 + x, y + 31);
     grLineTo(73 + x, y + 31);
     grLineTo(73 + x, y + 0);
-
-    return;
 }
 
-void PLevels(char side, char wh, DisplayContext &dctx)
+void PLevels(char side, char wh, DisplayContext& dctx)
 {
-
     if (side == 0) {  // Draw map on US side
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
@@ -386,20 +377,15 @@ void PLevels(char side, char wh, DisplayContext &dctx)
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19, 239,  55);
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
     }
-
-    return;
 }
 
-void CLevels(char side, char wh, DisplayContext &dctx)
+void CLevels(char side, char wh, DisplayContext& dctx)
 {
-
     if (side == 0) {
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 9, 78);
     } else {
         display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 239, 78);
     }
-
-    return;
 }
 
 
@@ -455,7 +441,7 @@ void CLevels(char side, char wh, DisplayContext &dctx)
 int Preferences(int player, int where)
 {
     int hum1 = 0, hum2 = 0, ksel = 0;
-    char Name[20];
+    char Name[20]{};
     DisplayContext dctx;
     AudioConfig audio = LoadAudioSettings();
 
@@ -543,11 +529,8 @@ int Preferences(int player, int where)
                     key = 0;
 
                     if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                        std::string fname =
-                            locate_file("hist.json", FT_DATA);
-
-                        std::ifstream os(fname);
-                        cereal::JSONInputArchive ar(os);
+                        std::ifstream os{locate_file("hist.json", FT_DATA)};
+                        cereal::JSONInputArchive ar{os};
 
                         // Don't make a loop over the players as this
                         // will break the preprocessor macro.
@@ -561,7 +544,6 @@ int Preferences(int player, int where)
                         ARCHIVE_VECTOR(Data->P[1].Rocket, struct Equipment, 7);
                         ARCHIVE_VECTOR(Data->P[1].Manned, struct Equipment, 7);
                         ARCHIVE_VECTOR(Data->P[1].Misc, struct Equipment, 7);
-
                     }
 
                     // Random Equipment
@@ -569,10 +551,8 @@ int Preferences(int player, int where)
                         RandomizeEq();
                     }
 
-                    int i, k;
-
-                    for (i = 0; i < NUM_PLAYERS; i++) {
-                        for (k = 0; k < 7; k++) {
+                    for (int i = 0; i < NUM_PLAYERS; i++) {
+                        for (int k = 0; k < 7; k++) {
                             Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
                             Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
                             Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
@@ -609,7 +589,8 @@ int Preferences(int player, int where)
                     display::graphics.setForegroundColor(9);
                     draw_string(23, 30, "PLAYER 1");
                 }
-            } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0) || key == 'E') {
+            } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
+                       || key == 'E') {
                 // Edit astronauts has been ripped out
                 InBox(146, 30, 219, 61);
                 delay(500);
@@ -618,7 +599,8 @@ int Preferences(int player, int where)
                 // correct values!
                 DrawPrefs(where, hum1, hum2, audio, dctx);
 
-            } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) && (where == 3 || where == 0)) {  // Hist
+            } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) 
+                       && (where == 3 || where == 0)) {  // Hist
                 char maxHModels;
                 maxHModels = options.feat_random_eq > 0 ? 5 : 3;
                 WaitForMouseUp();
@@ -643,7 +625,6 @@ int Preferences(int player, int where)
                         33, 29, 101, 31);
                     OutBox(100, 30, 135, 61);
                 }
-
                 /* Music Level */
             } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
                 if (!audio.master.muted) {
@@ -659,10 +640,8 @@ int Preferences(int player, int where)
                 }
 
                 /* Sound Level */
-            }
-
-            else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && where == 0 && mousebuttons > 0) ||
-                     (where == 0 && ksel == 0 && key == 'H')) {
+            } else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && where == 0 && mousebuttons > 0) 
+                     || (where == 0 && ksel == 0 && key == 'H')) {
                 InBox(8, 77, 18, 85);
                 WaitForMouseUp();
                 hum1++;
@@ -683,8 +662,8 @@ int Preferences(int player, int where)
                 }
 
                 Levels(0, Data->Def.Lev1, 1, dctx);
-            } else if ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) ||
-                       ((where == 3 || where == 0) && ksel == 0 && key == 'G')) {
+            } else if ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) 
+                       || ((where == 3 || where == 0) && ksel == 0 && key == 'G')) {
                 InBox(8, 107, 81, 138);
                 WaitForMouseUp();
                 OutBox(8, 107, 81, 138);
@@ -696,8 +675,8 @@ int Preferences(int player, int where)
 
                 Levels(0, Data->Def.Lev1, 1, dctx);
                 /* P1: Game Level */
-            } else if ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && ((where == 0 || where == 3) && mousebuttons > 0)) ||
-                       ((where == 3 || where == 0) && ksel == 0 && key == 'L')) {
+            } else if ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && ((where == 0 || where == 3) && mousebuttons > 0)) 
+                       || ((where == 3 || where == 0) && ksel == 0 && key == 'L')) {
                 InBox(8, 160, 81, 191);
                 WaitForMouseUp();
                 OutBox(8, 160, 81, 191);
@@ -709,10 +688,8 @@ int Preferences(int player, int where)
 
                 Levels(0, Data->Def.Ast1, 0, dctx);
                 /* P1: Astro Level */
-            }
-
-            else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) ||
-                     (where == 0 && ksel == 1 && key == 'H')) {
+            } else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) 
+                       || (where == 0 && ksel == 1 && key == 'H')) {
                 InBox(238, 77, 248, 85);
                 WaitForMouseUp();
                 hum2++;
@@ -733,8 +710,8 @@ int Preferences(int player, int where)
                 }
 
                 Levels(1, Data->Def.Lev2, 1, dctx);
-            } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) ||
-                       ((where == 0 || where == 3) && ksel == 1 && key == 'G')) {
+            } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) 
+                       || ((where == 0 || where == 3) && ksel == 1 && key == 'G')) {
                 InBox(238, 107, 311, 138);
                 WaitForMouseUp();
                 OutBox(238, 107, 311, 138);
@@ -746,8 +723,8 @@ int Preferences(int player, int where)
 
                 Levels(1, Data->Def.Lev2, 1, dctx);
                 /* P2: Game Level */
-            } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && (where == 0 || where == 3) && mousebuttons > 0) ||
-                       ((where == 0 || where == 3) && ksel == 1 && key == 'L')) {
+            } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && (where == 0 || where == 3) && mousebuttons > 0) 
+                       || ((where == 0 || where == 3) && ksel == 1 && key == 'L')) {
                 InBox(238, 160, 311, 191);
                 WaitForMouseUp();
                 OutBox(238, 160, 311, 191);
@@ -759,17 +736,15 @@ int Preferences(int player, int where)
 
                 Levels(1, Data->Def.Ast2, 0, dctx);
                 /* P2: Astro Level */
-            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0) ||
-                       (ksel == 0 && key == 'N')) {
-
+            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
+                       || (ksel == 0 && key == 'N')) {
                 /* P1: Director Name */
                 if (where == 0 || where == 3 ||
                     (where == 1 && (player == 0 || !IsHumanPlayer(0)))) {
                     EditDirectorName(0);
                 }
-            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0) ||
-                       (ksel == 1 && key == 'N')) {
-
+            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
+                       || (ksel == 1 && key == 'N')) {
                 /* P2: Director Name */
                 if (where == 0 || where == 3 ||
                     (where == 1 && (player == 1 || !IsHumanPlayer(1)))) {
@@ -780,15 +755,14 @@ int Preferences(int player, int where)
     }
 }
 
-
-void SavePreferences(const AudioConfig &audio)
+void SavePreferences(const AudioConfig& audio)
 {
     try {
         SaveAudioSettings(audio);
     } catch (const IOException &err) {
-        CERROR2(filesys, err.what());
-    } catch (const cereal::Exception &err) {
-        CERROR2(filesys, err.what());
+        CAT_ERROR(filesys, err.what());
+    } catch (const cereal::Exception& err) {
+        CAT_ERROR(filesys, err.what());
     }
 }
 
