@@ -115,7 +115,11 @@ void SetW(char ch)
 
 int Launch(char plr, char mis)
 {
+    auto& pData = Data->P[plr];
+    auto& mission = pData.Mission[mis];
+    int mcode = mission.MissionCode;
     LOG_DEBUG("Launch(plr=%i, mis=%i)", plr, mis);
+    
     STEP = FINAL = JOINT = PastBANG = 0;
     tMen = 0x00; // clear mission status flags
 
@@ -125,23 +129,22 @@ int Launch(char plr, char mis)
         STEPnum = Data->Step[mis];
         memcpy(Mev, Data->Mev[mis], 60 * sizeof(struct MisEval));
         // Check for Mission death
-        int spResult = Data->P[plr].History[Data->P[plr].PastMissionCount].spResult;
+        int spResult = pData.History[pData.PastMissionCount].spResult;
         if (spResult >= 3000 && spResult < 5000) {
             death = 1;
         } else {
             death = 0;
         }
 
-        MANNED[0] = Data->P[plr].Mission[mis].Men;
-        MANNED[1] = Data->P[plr].Mission[mis].Joint ? Data->P[plr].Mission[mis + 1].Men : 0;
+        MANNED[0] = mission.Men;
+        MANNED[1] = mission.Joint ? pData.Mission[mis + 1].Men : 0;
 
-        return Update_Prestige_Data(
-                   plr, mis, Data->P[plr].Mission[mis].MissionCode);
+        return Update_Prestige_Data(plr, mis, mcode);
     }
 
     remove_savedat("REPLAY.TMP");  // make sure replay buffer isn't there
 
-    if (Data->P[plr].Mission[mis].part == 1) {
+    if (mission.part == 1) {
         return 0;
     }
 
@@ -150,27 +153,27 @@ int Launch(char plr, char mis)
     memset(Mev, 0x00, sizeof Mev);
     LOG_DEBUG("buffers cleared to zero");
 
-    if (Data->P[plr].Mission[mis].MissionCode == Mission_SubOrbital) {
-        Data->P[plr].Mission[mis].Duration = 1;
+    if (mcode == Mission_SubOrbital) {
+        mission.Duration = 1;
     }
 
-    MANNED[0] = Data->P[plr].Mission[mis].Men;
-    MANNED[1] = Data->P[plr].Mission[mis].Joint ? Data->P[plr].Mission[mis + 1].Men : 0;
+    MANNED[0] = mission.Men;
+    MANNED[1] = mission.Joint ? pData.Mission[mis + 1].Men : 0;
 
-    JOINT = Data->P[plr].Mission[mis].Joint;
+    JOINT = mission.Joint;
 
     if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
         LOG_DEBUG("Crew is not good, mission scrubbed");
-        ScrubMission(plr, mis - Data->P[plr].Mission[mis].part);
+        ScrubMission(plr, mis);
     }
 
-    if (!AI[plr] && Data->P[plr].Mission[mis].MissionCode != Mission_None) {
+    if (mcode == Mission_None) {
+        return -20;
+    }
+    
+    if (! AI[plr]) {
         LOG_DEBUG("Calling MisAnn()");
         MisAnn(plr, mis);
-    }
-
-    if (Data->P[plr].Mission[mis].MissionCode == Mission_None) {
-        return -20;
     }
 
     LOG_DEBUG("Calling MissionSetup()");
@@ -182,15 +185,16 @@ int Launch(char plr, char mis)
     memset(MA, 0x00, sizeof MA);
 
     for (int i = 0; i < (1 + JOINT); i++) {
+        auto& launch_part = pData.Mission[mis + i];
         // Decide who to use for each pad
-        Data->P[plr].Mission[mis + i].Crew = (Data->P[plr].Mission[mis + i].PCrew > 0) ?
-                                             Data->P[plr].Mission[mis + i].PCrew :  Data->P[plr].Mission[mis + i].BCrew ;
+        launch_part.Crew = (launch_part.PCrew > 0) ? launch_part.PCrew 
+                                                   : launch_part.BCrew;
 
         for (int j = 0; j < MANNED[i]; j++) {
-            int t = Data->P[plr].Mission[mis + i].Prog;
-            int k = Data->P[plr].Mission[mis + i].Crew - 1;
-            int total = Data->P[plr].Crew[t][k][j] - 1;
-            MA[i][j].A = &Data->P[plr].Pool[total];
+            int t = launch_part.Prog;
+            int k = launch_part.Crew - 1;
+            int total = pData.Crew[t][k][j] - 1;
+            MA[i][j].A = &pData.Pool[total];
             MA[i][j].loc = i;
         }
     }
@@ -234,13 +238,12 @@ int Launch(char plr, char mis)
 
     // Do actual Missions
 
-    int mcode = Data->P[plr].Mission[mis].MissionCode;
     mcc = mcode;
     mStr misType = GetMissionPlan(mcode);
 
     // Fixup for Mercury Duration C stuff
-    if (Data->P[plr].Mission[mis].Hard[Mission_Capsule] == 0) {
-        Data->P[plr].Mission[mis].Duration = MIN(2, Data->P[plr].Mission[mis].Duration);
+    if (mission.Hard[Mission_Capsule] == 0) {
+        mission.Duration = MIN(2, mission.Duration);
     }
 
     LOG_DEBUG("Calling MissionCodes()");
@@ -279,7 +282,7 @@ int Launch(char plr, char mis)
     STEPnum = STEP;
 
     if (misType.Dur >= 1) {
-        misType.Days = Data->P[plr].Mission[mis].Duration;
+        misType.Days = mission.Duration;
     }
 
     // Apply general mission penalties (Duration, Milestone, New Mission)
@@ -288,7 +291,7 @@ int Launch(char plr, char mis)
     // duration mission.
     LOG_DEBUG("checking penalties");
     MisSkip(plr, misType);
-    MisRush(plr, Data->P[plr].Mission[mis].Rushing);
+    MisRush(plr, mission.Rushing);
     STEPnum = 0;
 
     if (!AI[plr] && !fullscreenMissionPlayback) {
@@ -369,7 +372,7 @@ int Launch(char plr, char mis)
             if (MA[i][j].A == nullptr) continue;
             if (FINAL >= 100) {
                 MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Successful
-            } else if (Data->P[plr].MissionCatastrophicFailureOnTurn & 4) {
+            } else if (pData.MissionCatastrophicFailureOnTurn & 4) {
                 MA[i][j].A->currentMissionStatus = ASTRO_MISSION_SUCCESS;    // Failure
             }
         }
@@ -387,19 +390,21 @@ int Launch(char plr, char mis)
 void MissionPast(char plr, char pad, int prest)
 {
     LOG_DEBUG("MissionPast(plr=%i, pad=%i, prest=%i)", plr, pad, prest);
-    char dys[7] = {0, 2, 5, 7, 12, 16, 20};
 
-    int loc = Data->P[plr].PastMissionCount;
-    int mc = Data->P[plr].Mission[pad].MissionCode;
+    auto& pData = Data->P[plr];
+    auto& mission = pData.Mission[pad];
+    int loc = pData.PastMissionCount;
+    int mcode = mission.MissionCode;
     
-    PastInfo& hist = Data->P[plr].History[loc];
+    PastInfo& hist = pData.History[loc];
+    
     memset(&hist, -1, sizeof(struct PastInfo));
-    strcpy(&hist.MissionName[0][0], Data->P[plr].Mission[pad].Name);
-    hist.Patch[0] = Data->P[plr].Mission[pad].Patch;
+    strcpy(&hist.MissionName[0][0], mission.Name);
+    hist.Patch[0] = mission.Patch;
 
-    if (Data->P[plr].Mission[pad].Joint == 1) {
-        strcpy(&hist.MissionName[1][0], Data->P[plr].Mission[pad + 1].Name);
-        hist.Patch[1] = Data->P[plr].Mission[pad + 1].Patch;
+    if (mission.Joint == 1) {
+        strcpy(&hist.MissionName[1][0], pData.Mission[pad + 1].Name);
+        hist.Patch[1] = pData.Mission[pad + 1].Patch;
     } else {
         hist.MissionName[1][0] = 0;
     }
@@ -411,16 +416,16 @@ void MissionPast(char plr, char pad, int prest)
     hist.Event = 0;
     hist.Saf = 0;
 
-    if (mc == Mission_MarsFlyby) {
+    if (mcode == Mission_MarsFlyby) {
         hist.Event = 2;
-    } else if (mc == Mission_JupiterFlyby) {
+    } else if (mcode == Mission_JupiterFlyby) {
         hist.Event = 4;
-    } else if (mc == Mission_SaturnFlyby) {
+    } else if (mcode == Mission_SaturnFlyby) {
         hist.Event = 7;
     }
 
-    if ((mc == Mission_MarsFlyby || mc == Mission_JupiterFlyby ||
-         mc == Mission_SaturnFlyby) && prest != 0) {
+    if ((mcode == Mission_MarsFlyby || mcode == Mission_JupiterFlyby ||
+         mcode == Mission_SaturnFlyby) && prest != 0) {
         hist.Event = 0;
     }
 
@@ -428,46 +433,48 @@ void MissionPast(char plr, char pad, int prest)
         hist.Saf = MH[0][Mission_Probe_DM]->MisSaf;
     }
 
-    if (!(mc == Mission_MarsFlyby || mc == Mission_JupiterFlyby ||
-          mc == Mission_SaturnFlyby)) {
+    if (!(mcode == Mission_MarsFlyby || mcode == Mission_JupiterFlyby ||
+          mcode == Mission_SaturnFlyby)) {
         hist.Event = hist.Saf = 0;
     }
 
-    hist.MissionCode = Data->P[plr].Mission[pad].MissionCode;
+    hist.MissionCode = mcode;
     hist.MissionYear = Data->Year;
-    hist.Month = Data->P[plr].Mission[pad].Month;
+    hist.Month = mission.Month;
     hist.Prestige = MAX(prest, -10);
-    hist.Duration = Data->P[plr].Mission[pad].Duration;
+    hist.Duration = mission.Duration;
 
     int nd = 0;
 
-    int number_of_launches = Data->P[plr].Mission[pad].Joint + 1;
+    int number_of_launches = mission.Joint + 1;
     for (int loop = 0; loop < number_of_launches; loop++) {
         int launchpad = pad+loop;
-        auto& mission = Data->P[plr].Mission[launchpad];
-        int i = mission.Prog;
-        int j = mission.Crew - 1;
+        auto& mission_part = pData.Mission[launchpad];
+        int i = mission_part.Prog;
+        int j = mission_part.Crew - 1;
 
         for(int q=0; q<4; ++q) {
-            hist.Man[loop][q] = (mission.Men > 0)? Data->P[plr].Crew[i][j][q] - 1
-                                                 : -1;
+            hist.Man[loop][q] = (mission_part.Men > 0)? pData.Crew[i][j][q] - 1
+                                                      : -1;
         }
 
-        if (mission.Men <= 0) continue;
+        if (mission_part.Men <= 0) continue;
         
         for (int i = 0; i < 4; i++) {
-            int j = Data->P[plr].Crew[mission.Prog][mission.Crew - 1][i] - 1;
+            int j = pData.Crew[mission_part.Prog][mission_part.Crew - 1][i] - 1;
             if (j < 0) continue;
+            auto& spaceman = pData.Pool[j];
 
-            Data->P[plr].Pool[j].MissionNum[Data->P[plr].Pool[j].Missions] = loc;
+            spaceman.MissionNum[spaceman.Missions] = loc;
 
-            Data->P[plr].Pool[j].Missions++;
-            Data->P[plr].Pool[j].Prestige += prest;
-            int tnd = dys[mission.Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
+            spaceman.Missions++;
+            spaceman.Prestige += prest;
+            char dys[7] = {0, 2, 5, 7, 12, 16, 20};
+            int tnd = dys[mission_part.Duration];  // Variables for total # days possible for the mission, actual days spent on the mission
 
             if (nd == 0 || nd > 20) {  // Don't do the following if nd is already set, or each crew member will get a different # of days
                 nd = tnd;
-                int miscode = Data->P[plr].Mission[pad].MissionCode;   // Get mission number
+                int miscode = mission_part.MissionCode;   // Get mission number
 
                 switch (tnd) {
                 case 0:   // Unmanned mission
@@ -517,21 +524,21 @@ void MissionPast(char plr, char pad, int prest)
                 }
             }
 
-            Data->P[plr].Pool[j].Days += nd;
+            spaceman.Days += nd;
 
             if (hero & 0x01) {
-                Data->P[plr].Pool[j].Hero = 1;
+                spaceman.Hero = 1;
             } else if (hero & 0x02 && j == EVA[loop]) {
-                Data->P[plr].Pool[j].Hero = 1;
+                spaceman.Hero = 1;
             }
         }
     }
 
     for (int i = Mission_Capsule; i <= Mission_PrimaryBooster; i++) {
-        hist.Hard[PAD_A][i] = Data->P[plr].Mission[pad].Hard[i];
+        hist.Hard[PAD_A][i] = mission.Hard[i];
 
-        if (Data->P[plr].Mission[pad].Joint == 1) {
-            hist.Hard[PAD_B][i] = Data->P[plr].Mission[pad + 1].Hard[i];
+        if (mission.Joint == 1) {
+            hist.Hard[PAD_B][i] = pData.Mission[pad + 1].Hard[i];
         }
     }
 
@@ -563,8 +570,8 @@ void MissionPast(char plr, char pad, int prest)
         hist.spResult = 1999;
     }
 
-    Data->P[plr].PastMissionCount++;
-    assert(Data->P[plr].PastMissionCount < MAX_MISSION_COUNT);
+    pData.PastMissionCount++;
+    assert(pData.PastMissionCount < MAX_MISSION_COUNT);
 }
 
 
