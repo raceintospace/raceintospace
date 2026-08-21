@@ -81,7 +81,7 @@
 
 
 // imported from CODENAME.DAT
-const char *code_names[] = {
+const char* code_names[] = {
     "BASEBALL",
     "TUMBLEWEED",
     "BUMBLEBEE",
@@ -303,7 +303,7 @@ void DrawBre(char plr);
 void Bre(char plr);
 void DrawIStat(char plr);
 void IStat(char plr);
-void IInfo(char plr, char loc, char w, const DisplayContext &dctx);
+void IInfo(char plr, char loc, char w, const DisplayContext& dctx);
 
 void ClearIntelReportText();
 void DrawIntelImage(char plr, char poff);
@@ -343,7 +343,6 @@ void Intel(char plr)
 {
     char IName[3][22] = {"LIBRARY", "CIA STATISTICS", "EXIT INTELLIGENCE"};
     char IImg[3] = {15, 17, 0};
-    int i, beg;
 
     // FadeOut(2,pal,10,0,0);
     if (plr == 1) {
@@ -353,8 +352,8 @@ void Intel(char plr)
         music_start(M_INTEL);
     }
 
-    beg = 1;
-
+    bool beg = 1;
+    int i;
     do {
         if (beg) {
             beg = 0;
@@ -404,7 +403,6 @@ void Intel(char plr)
  */
 int MissionIntelFake(char plr)
 {
-    int era, k, total = 0, roll = 0, sumWeight;
     static const char F[3][15] = {
         {6, 1, 2, 3, 4, 5},  // 58 & 59
         {14, 6, 25, 7, 9, 10, 11, 12, 13, 8, 14, 15, 18, 16},  // 60 to 64
@@ -416,6 +414,7 @@ int MissionIntelFake(char plr)
         {11, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1}  // 65 and up
     };
 
+    int era;
     if (Data->Year <= 59) {
         era = 0;
     } else if (Data->Year <= 64) {
@@ -424,13 +423,13 @@ int MissionIntelFake(char plr)
         era = 2;
     }
 
-    sumWeight = std::accumulate(&Weights[era][1],
+    int sumWeight = std::accumulate(&Weights[era][1],
                                 Weights[era] + Weights[era][0],
                                 0);
 
-    roll = brandom(sumWeight) + 1;
-    k = 1;
-    total = 0;
+    int roll = brandom(sumWeight) + 1;
+    int k = 1;
+    int total = 0;
 
     do {
         total += Weights[era][k];
@@ -448,7 +447,7 @@ int MissionIntelFake(char plr)
  */
 int MissionIntelReal(char plr)
 {
-    int save[2 * MAX_MISSIONS];
+    int save[2 * MAX_MISSIONS]{};
     int found = 0;
 
     for (int i = 0; i < MAX_MISSIONS; i++) {
@@ -475,7 +474,6 @@ int MissionIntelReal(char plr)
  */
 void MissionIntel(char plr, bool acc)
 {
-    bool prevReported = false;
     int mis = Mission_None;
 
     if (acc) {
@@ -491,6 +489,8 @@ void MissionIntel(char plr, bool acc)
     // Soviet side has 57 missions (Soyuz L.L.)
     assert(mis >= 0 && mis <= 56 + (1 ^ plr));
 
+    bool prevReported = false;
+    
     for (int i = 0; i < Data->P[plr].PastIntel[0].cur; i++) {
         if (Data->P[plr].PastIntel[i].prog == 5 &&
             Data->P[plr].PastIntel[i].index == mis) {
@@ -517,7 +517,7 @@ void MissionIntel(char plr, bool acc)
  */
 void XSpec(char plr, char mis, char year)
 {
-    const struct mStr plan = GetMissionPlan(mis);
+    const mStr plan = GetMissionPlan(mis);
     display::graphics.setForegroundColor(6);
     draw_string(17, 75, "CLASS: ");
     display::graphics.setForegroundColor(9);
@@ -593,7 +593,6 @@ void XSpec(char plr, char mis, char year)
  */
 void Special(char plr, int ind)
 {
-
     display::graphics.setForegroundColor(6);
 
     if (ind >= 5) {
@@ -656,8 +655,8 @@ void Special(char plr, int ind)
 
     draw_string(33, 169, "PURCHASED ");
     draw_string(0, 0, "A NEW");
+    
     display::graphics.setForegroundColor(9);
-
     if (ind >= 5) {
         draw_string(0, 0, " GROUP OF ");
 
@@ -694,17 +693,14 @@ void Special(char plr, int ind)
  */
 void BackIntel(char plr, char year)
 {
-    int prg, ind, xc, yc;
-    char code, w;
-
-    prg = Data->P[plr].PastIntel[year].prog;
-    ind = Data->P[plr].PastIntel[year].index;
+    auto& pData = Data->P[plr];
+    auto& intel = pData.PastIntel[year];
 
     display::graphics.setForegroundColor(6);
     draw_string(17, 37, "CODE: ");
     display::graphics.setForegroundColor(9);
-    draw_number(0, 0, Data->P[plr].PastIntel[year].num);
-    draw_character(Data->P[plr].PastIntel[year].code);
+    draw_number(0, 0, intel.num);
+    draw_character(intel.code);
     draw_string(0, 0, "-");
 
     // TODO: BackIntel uses the current season even when displaying
@@ -733,34 +729,32 @@ void BackIntel(char plr, char year)
     display::graphics.setForegroundColor(6);
     draw_string(17, 51, "CODE NAME: ");
     display::graphics.setForegroundColor(1);
-    xc = 39;
-    yc = 59;
 // CODE NAME GOES HERE
-    code = -1;
 
-    if (prg == 0) {
-        code = ind;
-    } else if (prg == 1) {
-        code = ind + 7;
-    } else if (prg == 2) {
-        code = ind + 12;
-    } else if (prg == 5) {
-        code = Data->P[plr].PastIntel[year].SafetyFactor - 1;
+    char code = -1;
+    if (intel.prog == 0) {
+        code = intel.index;
+    } else if (intel.prog == 1) {
+        code = intel.index + 7;
+    } else if (intel.prog == 2) {
+        code = intel.index + 12;
+    } else if (intel.prog == 5) {
+        code = intel.SafetyFactor - 1;
     }
 
+    int xc = 39;
+    int yc = 59;
     if (code == -1) {
         draw_string(xc, yc, "TOP SECRET");
     } else {
-        w = Data->P[plr].PastIntel[year].cdex;
-
-        int code_name_index = code * 6 + w;
+        int code_name_index = code * 6 + intel.cdex;
         assert(code_name_index >= 0);
         assert(code_name_index < (sizeof(code_names) / sizeof(code_names[0])));
         draw_string(xc, yc, code_names[code_name_index]);
     }
 
-    if (prg == 5) {
-        XSpec(plr, ind, year);
+    if (intel.prog == 5) {
+        XSpec(plr, intel.index, year);
         return;
     }
 
@@ -768,9 +762,9 @@ void BackIntel(char plr, char year)
     draw_string(17, 75, "CLASS: ");
     display::graphics.setForegroundColor(9);
 
-    switch (prg) {
+    switch (intel.prog) {
     case 0:
-        if (ind >= 5 && ind <= 6) {
+        if (intel.index >= 5 && intel.index <= 6) {
             if (plr == 0) {
                 draw_string(39, 82, "COSMO");
             } else {
@@ -778,7 +772,7 @@ void BackIntel(char plr, char year)
             }
 
             draw_string(0, 0, "NAUTS");
-        } else if (ind >= 3 && ind <= 4) {
+        } else if (intel.index >= 3 && intel.index <= 4) {
             draw_string(39, 81, "LAUNCH FACILITY");
         } else {
             draw_string(39, 81, "PROBE");
@@ -791,7 +785,7 @@ void BackIntel(char plr, char year)
         break;
 
     case 2:
-        if (ind < 5) {
+        if (intel.index < 5) {
             draw_string(39, 81, "CAPSULE");
         } else {
             draw_string(39, 81, "LUNAR MODULE");
@@ -800,11 +794,11 @@ void BackIntel(char plr, char year)
         break;
 
     case 3:
-        if (ind < 3) {
+        if (intel.index < 3) {
             draw_string(39, 81, "KICKER");
-        } else if (ind == 3) {
+        } else if (intel.index == 3) {
             draw_string(39, 81, "EVA SUITS");
-        } else if (ind == 4) {
+        } else if (intel.index == 4) {
             draw_string(39, 81, "DOCKING MODULES");
         }
 
@@ -814,8 +808,8 @@ void BackIntel(char plr, char year)
         break;
     }
 
-    if (prg == 0 && ind >= 3) {
-        Special(plr, ind);
+    if (intel.prog == 0 && intel.index >= 3) {
+        Special(plr, intel.index);
         return;
     }
 
@@ -823,13 +817,13 @@ void BackIntel(char plr, char year)
     draw_string(17, 96, "CREW: ");
     display::graphics.setForegroundColor(9);
 
-    if (prg == 2) {
-        if (ind >= 0 && ind <= 2) {
-            draw_number(0, 0, ind + 1);
-        } else if (ind == 3 || ind == 4) {
-            draw_number(0, 0, ind);
+    if (intel.prog == 2) {
+        if (intel.index >= 0 && intel.index <= 2) {
+            draw_number(0, 0, intel.index + 1);
+        } else if (intel.index == 3 || intel.index == 4) {
+            draw_number(0, 0, intel.index);
         } else {
-            draw_number(0, 0, ind - 4);
+            draw_number(0, 0, intel.index - 4);
         }
 
         draw_string(0, 0, " PERSON");
@@ -841,7 +835,7 @@ void BackIntel(char plr, char year)
     draw_string(17, 112, "PROGRAM: ");
     display::graphics.setForegroundColor(9);
 
-    Equipment &hardware = HardwareProgram(abs(plr - 1), prg, ind);
+    Equipment &hardware = HardwareProgram(other(plr), intel.prog, intel.index);
     draw_string(0, 0, &hardware.Name[0]);
 
     display::graphics.setForegroundColor(6);
@@ -865,12 +859,8 @@ void BackIntel(char plr, char year)
     }
 
     draw_string(0, 0, "REPORTS THAT THE ");
-
-    if (plr == 0) {
-        draw_string(0, 0, "SOVIET UNION IS");
-    } else {
-        draw_string(0, 0, "UNITED STATES IS");
-    }
+    draw_string(0, 0, (plr==0)?"SOVIET UNION IS"
+                              :"UNITED STATES IS");
 
     draw_string(33, 169, "DEVELOPING THE ");
     display::graphics.setForegroundColor(9);
@@ -878,11 +868,11 @@ void BackIntel(char plr, char year)
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, " AND RATES THE");
     draw_string(33, 183, "RELIABILITY AT ABOUT ");
-    draw_number(0, 0, Data->P[plr].PastIntel[year].SafetyFactor);
+    draw_number(0, 0, intel.SafetyFactor);
     draw_string(0, 0, " PERCENT.");
 
-    if (prg != 5) {
-        DrawIntelImage(plr, prg * 7 + ind);
+    if (intel.prog != 5) {
+        DrawIntelImage(plr, intel.prog * 7 + intel.index);
     }
 }
 
@@ -901,227 +891,204 @@ void BackIntel(char plr, char year)
  */
 void HarIntel(char plr, char acc)
 {
-    int mr, i, prg = 0, ind = 0, j = 0, k = 0, save[28], lo = 0, hi = 28, tot = 0, nf = 0, seg = 0;
-
-    static char F[10][11] = {
-        {7, 0, 7, 8, 11, 14, 15, 12, 12, 12},  //58
-        {4, 3, 5, 17, 12, 12, 12, 12, 12, 12},  //59
-        {3, 16, 24, 12, 12, 12, 12, 12, 12, 12},  //60
-        {9, 1, 4, 6, 8, 11, 14, 15, 17, 24},  //61
-        {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18},  //62
-        {5, 19, 20, 9, 12, 12, 12, 12, 12, 12},  //63
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //64
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //65
-        {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}  //66
-    };
-    static char W[10][15] = {
-        {9, 8, 3, 2, 1, 1, 3, 1},  // 58
-        {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1},  // 59
-        {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2},  // 60
-        {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2},  // 61
-        {5, 10, 3, 3, 2, 3, 2, 3, 2, 2},  // 62
-        {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3},  // 63
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 64
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 65
-        {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}  // 66
-    };
-
-    for (i = 0; i < 28; i++) {
-        save[i] = 0;
-    }
-
+    int j = 0;
+    int save[28]{};
     if (acc == 0) {
+        static char F[10][11] = {
+            {7, 0, 7, 8, 11, 14, 15, 12, 12, 12},  //58
+            {4, 3, 5, 17, 12, 12, 12, 12, 12, 12},  //59
+            {3, 16, 24, 12, 12, 12, 12, 12, 12, 12},  //60
+            {9, 1, 4, 6, 8, 11, 14, 15, 17, 24},  //61
+            {10, 1, 2, 4, 6, 8, 11, 15, 16, 17, 18},  //62
+            {5, 19, 20, 9, 12, 12, 12, 12, 12, 12},  //63
+            {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //64
+            {5, 9, 10, 18, 12, 12, 12, 12, 12, 12},  //65
+            {5, 9, 10, 18, 12, 12, 12, 12, 12, 12}  //66
+        };
         switch (Data->Year) {
         case 58:
-            for (i = 1; i < F[0][0]; i++) {
+            for (int i = 1; i < F[0][0]; i++) {
                 save[F[0][i]] = 1;
             }
 
             break;
 
         case 59:
-            for (i = 1; i < F[0][0]; i++) {
+            for (int i = 1; i < F[0][0]; i++) {
                 save[F[0][i]] = 1;
             }
 
-            for (i = 1; i < F[1][0]; i++) {
+            for (int i = 1; i < F[1][0]; i++) {
                 save[F[1][i]] = 1;
             }
 
             break;
 
         case 60:
-            for (i = 1; i < F[0][0]; i++) {
+            for (int i = 1; i < F[0][0]; i++) {
                 save[F[0][i]] = 1;
             }
 
-            for (i = 1; i < F[1][0]; i++) {
+            for (int i = 1; i < F[1][0]; i++) {
                 save[F[1][i]] = 1;
             }
 
-            for (i = 1; i < F[2][0]; i++) {
+            for (int i = 1; i < F[2][0]; i++) {
                 save[F[2][i]] = 1;
             }
 
             break;
 
         case 61:
-            for (i = 1; i < F[2][0]; i++) {
+            for (int i = 1; i < F[2][0]; i++) {
                 save[F[2][i]] = 1;
             }
 
-            for (i = 1; i < F[3][0]; i++) {
+            for (int i = 1; i < F[3][0]; i++) {
                 save[F[3][i]] = 1;
             }
 
             break;
 
         case 62:
-            for (i = 1; i < F[4][0]; i++) {
+            for (int i = 1; i < F[4][0]; i++) {
                 save[F[4][i]] = 1;
             }
 
             break;
 
         case 63:
-            for (i = 1; i < F[4][0]; i++) {
+            for (int i = 1; i < F[4][0]; i++) {
                 save[F[4][i]] = 1;
             }
 
-            for (i = 1; i < F[5][0]; i++) {
+            for (int i = 1; i < F[5][0]; i++) {
                 save[F[5][i]] = 1;
             }
 
             break;
 
         case 64:
-            for (i = 1; i < F[4][0]; i++) {
+            for (int i = 1; i < F[4][0]; i++) {
                 save[F[4][i]] = 1;
             }
 
-            for (i = 1; i < F[5][0]; i++) {
+            for (int i = 1; i < F[5][0]; i++) {
                 save[F[5][i]] = 1;
             }
 
-            for (i = 1; i < F[6][0]; i++) {
+            for (int i = 1; i < F[6][0]; i++) {
                 save[F[6][i]] = 1;
             }
 
             break;
 
         case 65:
-            for (i = 1; i < F[4][0]; i++) {
+            for (int i = 1; i < F[4][0]; i++) {
                 save[F[4][i]] = 1;
             }
 
-            for (i = 1; i < F[5][0]; i++) {
+            for (int i = 1; i < F[5][0]; i++) {
                 save[F[5][i]] = 1;
             }
 
-            for (i = 1; i < F[7][0]; i++) {
+            for (int i = 1; i < F[7][0]; i++) {
                 save[F[7][i]] = 1;
             }
 
             break;
 
         default:
-            for (i = 1; i < F[4][0]; i++) {
+            for (int i = 1; i < F[4][0]; i++) {
                 save[F[4][i]] = 1;
             }
 
-            for (i = 1; i < F[5][0]; i++) {
+            for (int i = 1; i < F[5][0]; i++) {
                 save[F[5][i]] = 1;
             }
 
-            for (i = 1; i < F[8][0]; i++) {
+            for (int i = 1; i < F[8][0]; i++) {
                 save[F[8][i]] = 1;
             }
 
             break;
         }
 
-        i = Data->Year - 58;
+        static char W[10][15] = {
+            {9,  8, 3, 2, 1, 1, 3, 1},  // 58
+            {7, 11, 3, 1, 1, 2, 1, 1, 3, 1, 1},  // 59
+            {5, 13, 1, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2},  // 60
+            {5, 12, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2},  // 61
+            {5, 10, 3, 3, 2, 3, 2, 3, 2, 2},  // 62
+            {3, 14, 3, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 3},  // 63
+            {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 64
+            {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3},  // 65
+            {3, 15, 3, 3, 2, 3, 3, 1, 2, 2, 2, 2, 1, 2, 3}  // 66
+        };
+    
+        int i = std::min(Data->Year - 58, 8);
+        int seg = W[i][0];
+        int k = 2;
+        int limit = brandom(100);
+        for (int tot = 0; k < W[i][1]; ++k) {
+            tot += W[i][k] * seg;
 
-        if (Data->Year >= 66) {
-            i = 8;
-        }
-
-        seg = W[i][0];
-        j = brandom(100);
-        k = 2;
-        nf = 0;
-        tot = 0;
-
-        while (nf == 0 && k < W[i][1]) {
-            tot = tot + W[i][k] * seg;
-
-            if (j <= tot) {
-                nf = 1;
-            } else {
-                k++;
+            if (limit <= tot) {
+                break;
             }
         }
 
-        nf = 0;
-        j = 0;
-        tot = 0;
         k = k - 2;
 
-        while (nf == 0 && j < 28) {
-            if (tot == k) {
-                nf = 1;
-            } else if (save[j] == 1) {
+        j = 0;
+        for (int tot = 0; j < 28 && tot < k; ++j) {
+            if (save[j] == 1) {
                 tot++;
-            }
-
-            if (nf == 0) {
-                j++;
             }
         }
 
         if (j > 0) {
             j = j - 1;    // adjust
         }
-
     } else {
         // accurate programs pick one
-        for (i = 0; i < 7; i++) {
-            if (Data->P[abs(plr - 1)].Probe[i].Num >= 0) {
+        for (int i = 0; i < 7; i++) {
+            if (Data->P[other(plr)].Probe[i].Num >= 0) {
                 save[i] = 1;
             }
 
-            if (Data->P[abs(plr - 1)].Rocket[i].Num >= 0) {
+            if (Data->P[other(plr)].Rocket[i].Num >= 0) {
                 save[i + 7] = 1;
             }
 
-            if (Data->P[abs(plr - 1)].Manned[i].Num >= 0) {
+            if (Data->P[other(plr)].Manned[i].Num >= 0) {
                 save[i + 14] = 1;
             }
 
-            if (Data->P[abs(plr - 1)].Misc[i].Num >= 0) {
+            if (Data->P[other(plr)].Misc[i].Num >= 0) {
                 save[i + 21] = 1;
             }
         }
 
         save[3] = save[4] = save[5] = save[6] = save[12] = save[13] = save[26] = save[27] = 0;
 
-        if (Data->P[abs(plr - 1)].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
+        if (Data->P[other(plr)].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             save[3] = 1;
         }
 
-        if (Data->P[abs(plr - 1)].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
+        if (Data->P[other(plr)].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
             save[4] = 1;
         }
 
-        if (Data->P[abs(plr - 1)].AstroLevel == 0) {
+        if (Data->P[other(plr)].AstroLevel == 0) {
             save[5] = 1;
         }
 
-        if (Data->P[abs(plr - 1)].AstroLevel == 1) {
+        if (Data->P[other(plr)].AstroLevel == 1) {
             save[6] = 1;
         }
 
-        for (i = lo; i < hi; i++) {
+        for (int i = 0; i < 28; i++) {
             if (save[i] > 0) {
                 j++;    // Check if event is good.
             }
@@ -1132,12 +1099,12 @@ void HarIntel(char plr, char acc)
             return;
         }
 
-        j = brandom(hi - lo);
-        k = 0;
+        j = brandom(28);
+        int k = 0;
 
-        while ((k < (hi - lo)) && (save[j] != 1)) {  // finds candidate
+        while ((k < 28) && (save[j] != 1)) {  // finds candidate
 // draw_number(100,5+k*6,j);
-            j = brandom(hi - lo);
+            j = brandom(28);
             k++;
         }
 
@@ -1147,6 +1114,7 @@ void HarIntel(char plr, char acc)
         }
     }  // end else
 
+    int prg, ind;
     if (j >= 0 && j < 7) {
         prg = 0;
         ind = j;
@@ -1159,19 +1127,26 @@ void HarIntel(char plr, char acc)
     } else if (j >= 21 && j < 28) {
         prg = 3;
         ind = j - 21;
+    } else { // I think this one shouldn't happen?
+        prg = 0;
+        ind = 0;
     }
 
-    mr = Data->P[plr].PastIntel[0].cur;
-    nf = 0;
+    int mr = Data->P[plr].PastIntel[0].cur;
+    bool nf = false;
 
-    for (i = 0; i < mr; i++) {
+    for (int i = 0; i < mr; i++) {
         if (Data->P[plr].PastIntel[i].prog == prg && Data->P[plr].PastIntel[i].index == ind) {
-            nf = 1;
+            nf = true;
+            break;
         }
     }
 
-    if (nf == 1 || (prg == 1 && ind == 5) || (prg == 1 && ind == 6) ||
-        (prg == 3 && ind == 5) || (prg == 3 && ind == 6)) {
+    if (nf 
+        || (prg == 1 && ind == 5) 
+        || (prg == 1 && ind == 6) 
+        || (prg == 3 && ind == 5) 
+        || (prg == 3 && ind == 6)) {
         MissionIntel(plr, false);
         return;
     }
@@ -1228,7 +1203,7 @@ void DrawIntelImage(char plr, char poff)
     try {
         image = Filesystem::readImage(filename);
     } catch (const std::runtime_error &err) {
-        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        CAT_ERROR(filesys, "error loading %s: %s", filename, err.what());
         return;
     }
 
@@ -1296,30 +1271,21 @@ void DrawIntelImage(char plr, char poff)
  */
 void SaveIntel(char plr, char prg, char ind)
 {
-    char Op[61] = {
-        0, 19, 20, 20, 21, 21, 21, 22, 28, 24, 25,
-        23, 26, 27, 21, 21, 21, 21, 21, 21, 21,
-        21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
-        21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
-        21, 28, 28, 28, 30, 30, 30, 30, 30, 30,
-        30, 30, 31, 31, 31, 31, 31
-    };
-    int mr, safetyFactor, j, k;
-    char ky;
+    auto& pData = Data->P[plr];
+    auto& intel = pData.PastIntel[pData.PastIntel[0].cur];
 
     if (prg == 5 && ind == 0) {
         ind = 1;
     }
 
-    mr = brandom(9998) + 1;
-    ky = 65 + brandom(26);
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].code = ky;
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].num = mr;
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].prog = prg;
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].index = ind;
-    j = brandom(100);
-
+    intel.code = 65 + brandom(26);
+    intel.num = brandom(9998) + 1;
+    intel.prog = prg;
+    intel.index = ind;
+    
+    int j = brandom(100);
     // TODO: Why not k = brandom(3)? Or k = brandom(99) / 33?
+    int k;
     if (j < 33) {
         k = 0;
     } else if (j < 66) {
@@ -1332,18 +1298,27 @@ void SaveIntel(char plr, char prg, char ind)
         k = k + 3;
     }
 
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].cdex = k;
+    intel.cdex = k;
 
+    int safetyFactor;
     if (prg == 5) {
+        char Op[61] = {
+            0, 19, 20, 20, 21, 21, 21, 22, 28, 24, 25,
+            23, 26, 27, 21, 21, 21, 21, 21, 21, 21,
+            21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
+            21, 21, 21, 21, 21, 21, 21, 21, 21, 21,
+            21, 28, 28, 28, 30, 30, 30, 30, 30, 30,
+            30, 30, 31, 31, 31, 31, 31
+        };
         safetyFactor = Op[ind];
     } else {
         safetyFactor = brandom(22) + 77;
     }
 
-    Data->P[plr].PastIntel[Data->P[plr].PastIntel[0].cur].SafetyFactor = safetyFactor;
+    intel.SafetyFactor = safetyFactor;
 
     if (prg != 5) {
-        Data->P[plr].IntelHardwareTable[prg][ind] = safetyFactor;
+        pData.IntelHardwareTable[prg][ind] = safetyFactor;
     }
 }
 
@@ -1363,7 +1338,7 @@ void SaveIntel(char plr, char prg, char ind)
 void ImpHard(char plr, char hd, char dx)
 {
     // based on the hardware improve safety factor
-    Equipment &program = HardwareProgram(plr, hd, dx);
+    Equipment& program = HardwareProgram(plr, hd, dx);
     Data->P[plr].IntelHardwareTable[hd][dx] =
         program.MaxRD - brandom(program.MaxSafety - program.MaxRD);
 }
@@ -1379,8 +1354,8 @@ void ImpHard(char plr, char hd, char dx)
 void UpDateTable(char plr)
 {
     // based on prestige
-    char j, p;
-    p = other(plr);
+    char j;
+    char p = other(plr);
 
     if (Data->P[p].LMpts > 0) {
         j = brandom(100);
@@ -1505,8 +1480,6 @@ void UpDateTable(char plr)
  */
 void IntelPhase(char plr, char pt)
 {
-    int i, splt, acc, Plr_Level, Acc_Coef;
-
     if (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)) {
         return;
     }
@@ -1525,9 +1498,10 @@ void IntelPhase(char plr, char pt)
         return;
     }
 
-    splt = brandom(1000);
-    i = brandom(1000);
+    int splt = brandom(1000);
+    int i = brandom(1000);
 
+    int Plr_Level;
     if (plr == 0) {
         Plr_Level = Data->Def.Lev1;
     } else {
@@ -1535,6 +1509,7 @@ void IntelPhase(char plr, char pt)
     }
 
     // stagger accuracy for player levels
+    int Acc_Coef;
     if (Plr_Level == 0) {
         Acc_Coef = 600;
     } else if (Plr_Level == 1) {
@@ -1543,6 +1518,7 @@ void IntelPhase(char plr, char pt)
         Acc_Coef = 400;
     }
 
+    int acc;
     if (i < Acc_Coef) {
         acc = 1;
     } else {
@@ -1723,7 +1699,7 @@ boost::shared_ptr<display::LegacySurface> LoadCIASprite()
     // try {
     //     sprite = Filesystem::readImage(filename);
     // } catch (const std::runtime_error &err) {
-    //     CERROR4(filesys, "Error loading %s: %s", filename.c_str(),
+    //     CAT_ERROR(filesys, "Error loading %s: %s", filename.c_str(),
     //             err.what());
     //     return;
     // }
@@ -1739,8 +1715,6 @@ boost::shared_ptr<display::LegacySurface> LoadCIASprite()
  */
 void DrawIStat(char plr)
 {
-    int i;
-
     FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
@@ -1757,7 +1731,7 @@ void DrawIStat(char plr)
     IOBox(243, 162, 315, 197);
     GradRect(4, 23, 315, 159, 0);
 
-    for (i = 4; i < 316; i += 2) {
+    for (int i = 4; i < 316; i += 2) {
         display::graphics.legacyScreen()->setPixel(i, 57, 11);
         display::graphics.legacyScreen()->setPixel(i, 91, 11);
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
@@ -1777,7 +1751,6 @@ void DrawIStat(char plr)
     display::graphics.setForegroundColor(1);
     draw_string(256, 13, "CONTINUE");
     FadeIn(2, 10, 0, 0);
-
 }
 
 
@@ -1869,13 +1842,10 @@ void IStat(char plr)
  * \param s     top-left x coordinate of the destination in the display
  * \param t     top-left y coordinate of the destination in the display
  */
-void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, int t)
+void DispIt(const DisplayContext& dctx, int x1, int y1, int x2, int y2, int s, int t)
 {
-    int w;
-    int h;
-
-    w = x2 - x1 + 1;
-    h = y2 - y1 + 1;
+    int w = x2 - x1 + 1;
+    int h = y2 - y1 + 1;
     display::LegacySurface local(w, h);
     local.copyFrom(dctx.intel.get(), x1, y1, x2, y2, 0, 0);
     local.setTransparentColor(0);
@@ -1903,15 +1873,16 @@ void DispIt(const DisplayContext &dctx, int x1, int y1, int x2, int y2, int s, i
  * \param w     false if the graph area should be redrawn.
  * \param dctx  the sprite with the hardware models.
  */
-void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
+void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
 {
-    int i, sfu, sfs;
+    auto& pData = Data->P[plr];
+    int sfu, sfs;
 
     // Redraw the chart background
     if (w == 0) {
         GradRect(4, 23, 315, 159, 0);
 
-        for (i = 4; i < 316; i += 2) {
+        for (int i = 4; i < 316; i += 2) {
             display::graphics.legacyScreen()->setPixel(i, 57, 11);
             display::graphics.legacyScreen()->setPixel(i, 91, 11);
             display::graphics.legacyScreen()->setPixel(i, 125, 11);
@@ -1928,37 +1899,40 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
     display::graphics.setForegroundColor(1);
 
+    auto draw_rectangle = [&](int x_coord, int value, int clr){
+        fill_rectangle(x_coord, 159 - value * 136 / 100, x_coord+8, 159, clr);
+        fill_rectangle(x_coord, 159 - value * 136 / 100, x_coord+7, 158, clr-1);
+    };
+    
     switch (loc) {
     case ROCKET_HARDWARE:  //draw_string(137,150,"ROCKETS");
-        for (i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             sfu = -1;
             sfs = -1;
 
             if (plr == 0) {
-                if (Data->P[0].Rocket[i].Num >= 0) {
-                    sfu = Data->P[0].Rocket[i].Safety;
+                if (pData.Rocket[i].Num >= 0) {
+                    sfu = pData.Rocket[i].Safety;
                 }
 
-                sfs = Data->P[0].IntelHardwareTable[ROCKET_HARDWARE][i];
+                sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][i];
             } else if (plr == 1) {
-                if (Data->P[1].Rocket[i].Num >= 0) {
-                    sfs = Data->P[1].Rocket[i].Safety;
+                if (pData.Rocket[i].Num >= 0) {
+                    sfs = pData.Rocket[i].Safety;
                 }
 
-                sfu = Data->P[1].IntelHardwareTable[ROCKET_HARDWARE][i];
+                sfu = pData.IntelHardwareTable[ROCKET_HARDWARE][i];
             }
 
             switch (i) {
             case ROCKET_HW_ONE_STAGE:
                 if (sfu > 0) {
-                    fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
-                    fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
+                    draw_rectangle(19,sfu,6);
                     DispIt(dctx, 101, 1, 115, 57, 11, 104);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(50, 159 - sfs * 136 / 100, 58, 159, 9);
-                    fill_rectangle(50, 159 - sfs * 136 / 100, 57, 158, 8);
+                    draw_rectangle(50,sfs,9);
                     DispIt(dctx, 125, 1, 149, 85, 33, 75);
                 }
 
@@ -1966,14 +1940,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case ROCKET_HW_TWO_STAGE:
                 if (sfu > 0) {
-                    fill_rectangle(78, 159 - sfu * 136 / 100, 86, 159, 6);
-                    fill_rectangle(78, 159 - sfu * 136 / 100, 85, 158, 5);
+                    draw_rectangle(78,sfu,6);
                     DispIt(dctx, 115, 0, 124, 68, 73, 92);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(103, 159 - sfs * 136 / 100, 111, 159, 9);
-                    fill_rectangle(103, 159 - sfs * 136 / 100, 110, 158, 8);
+                    draw_rectangle(103,sfs,9);
                     DispIt(dctx, 151, 1, 170, 95, 88, 65);
                 }
 
@@ -1981,14 +1953,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case ROCKET_HW_THREE_STAGE:
                 if (sfu > 0) {
-                    fill_rectangle(159, 159 - sfu * 136 / 100, 167, 159, 6);
-                    fill_rectangle(159, 159 - sfu * 136 / 100, 166, 158, 5);
+                    draw_rectangle(159,sfu,6);
                     DispIt(dctx, 172, 1, 209, 133, 130, 27);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(200, 159 - sfs * 136 / 100, 208, 159, 9);
-                    fill_rectangle(200, 159 - sfs * 136 / 100, 207, 158, 8);
+                    draw_rectangle(200,sfs,9);
                     DispIt(dctx, 211, 1, 243, 133, 172, 27);
                 }
 
@@ -1996,14 +1966,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case ROCKET_HW_MEGA_STAGE:
                 if (sfu > 0) {
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 268, 159, 6);
-                    fill_rectangle(260, 159 - sfu * 136 / 100, 267, 158, 5);
+                    draw_rectangle(260,sfu,6);
                     DispIt(dctx, 245, 1, 285, 137, 231, 23);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
-                    fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
+                    draw_rectangle(302,sfs,9);
                     DispIt(dctx, 287, 1, 318, 132, 274, 28);
                 }
 
@@ -2017,35 +1985,33 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
         break;
 
     case MANNED_HARDWARE:  // draw_string(137,150,"CAPSULES");
-        for (i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             sfu = -1;
             sfs = -1;
 
             if (plr == 0) {
-                if (Data->P[0].Manned[i].Num >= 0) {
-                    sfu = Data->P[0].Manned[i].Safety;
+                if (pData.Manned[i].Num >= 0) {
+                    sfu = pData.Manned[i].Safety;
                 }
 
-                sfs = Data->P[0].IntelHardwareTable[MANNED_HARDWARE][i];
+                sfs = pData.IntelHardwareTable[MANNED_HARDWARE][i];
             } else if (plr == 1) {
-                if (Data->P[1].Manned[i].Num >= 0) {
-                    sfs = Data->P[1].Manned[i].Safety;
+                if (pData.Manned[i].Num >= 0) {
+                    sfs = pData.Manned[i].Safety;
                 }
 
-                sfu = Data->P[1].IntelHardwareTable[MANNED_HARDWARE][i];
+                sfu = pData.IntelHardwareTable[MANNED_HARDWARE][i];
             }
 
             switch (i) {
             case MANNED_HW_ONE_MAN_CAPSULE:
                 if (sfu > 0) {
-                    fill_rectangle(13, 159 - sfu * 136 / 100, 21, 159, 6);
-                    fill_rectangle(13, 159 - sfu * 136 / 100, 20, 158, 5);
+                    draw_rectangle(13,sfu,6);
                     DispIt(dctx, 12, 91, 25, 116, 11, 137);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(41, 159 - sfs * 136 / 100, 49, 159, 9);
-                    fill_rectangle(41, 159 - sfs * 136 / 100, 48, 158, 8);
+                    draw_rectangle(41,sfs,9);
                     DispIt(dctx, 0, 56, 26, 89, 27, 123);
                 }
 
@@ -2053,14 +2019,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case MANNED_HW_TWO_MAN_CAPSULE:
                 if (sfu > 0) {
-                    fill_rectangle(70, 159 - sfu * 136 / 100, 78, 159, 6);
-                    fill_rectangle(70, 159 - sfu * 136 / 100, 77, 158, 5);
+                    draw_rectangle(70,sfu,6);
                     DispIt(dctx, 27, 98, 49, 127, 59, 127);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(97, 159 - sfs * 136 / 100, 105, 159, 9);
-                    fill_rectangle(97, 159 - sfs * 136 / 100, 104, 158, 8);
+                    draw_rectangle(97,sfs,9);
                     DispIt(dctx, 28, 62, 49, 96, 84, 122);
                 }
 
@@ -2068,14 +2032,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case MANNED_HW_THREE_MAN_CAPSULE:
                 if (sfu > 0) {
-                    fill_rectangle(132, 159 - sfu * 136 / 100, 140, 159, 6);
-                    fill_rectangle(132, 159 - sfu * 136 / 100, 139, 158, 5);
+                    draw_rectangle(132,sfu,6);
                     DispIt(dctx, 95, 77, 117, 127, 117, 106);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(174, 159 - sfs * 136 / 100, 182, 159, 9);
-                    fill_rectangle(174, 159 - sfs * 136 / 100, 181, 158, 8);
+                    draw_rectangle(174,sfs,9);
                     DispIt(dctx, 119, 97, 170, 140, 144, 113);
                 }
 
@@ -2083,14 +2045,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case MANNED_HW_MINISHUTTLE:
                 if (sfu > 0) {
-                    fill_rectangle(210, 159 - sfu * 136 / 100, 218, 159, 6);
-                    fill_rectangle(210, 159 - sfu * 136 / 100, 217, 158, 5);
+                    draw_rectangle(210,sfu,6);
                     DispIt(dctx, 3, 1, 16, 54, 203, 103);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(232, 159 - sfs * 136 / 100, 240, 159, 9);
-                    fill_rectangle(232, 159 - sfs * 136 / 100, 239, 158, 8);
+                    draw_rectangle(232,sfs,9);
                     DispIt(dctx, 18, 1, 32, 48, 223, 109);
                 }
 
@@ -2098,14 +2058,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case MANNED_HW_FOUR_MAN_CAPSULE:
                 if (sfu > 0) {
-                    fill_rectangle(269, 159 - sfu * 136 / 100, 277, 159, 6);
-                    fill_rectangle(269, 159 - sfu * 136 / 100, 276, 158, 5);
+                    draw_rectangle(269,sfu,6);
                     DispIt(dctx, 34, 1, 65, 60, 248, 97);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(305, 159 - sfs * 136 / 100, 313, 159, 9);
-                    fill_rectangle(305, 159 - sfs * 136 / 100, 312, 158, 8);
+                    draw_rectangle(305,sfs,9);
                     DispIt(dctx, 67, 1, 100, 60, 281, 97);
                 }
 
@@ -2123,90 +2081,83 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfu = Data->P[0].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
+            if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
+                sfu = pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
+            sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         } else if (plr == 1) {
-            if (Data->P[1].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfs = Data->P[1].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
+            if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
+                sfs = pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
+            sfu = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
         }
 
         if (sfu > 0) {
-            fill_rectangle(25, 159 - sfu * 136 / 100, 33, 159, 6);
-            fill_rectangle(25, 159 - sfu * 136 / 100, 32, 158, 5);
+            draw_rectangle(25,sfu,6);
             DispIt(dctx, 60, 153, 88, 176, 9, 132);
         }
 
         if (sfs > 0) {
-            fill_rectangle(61, 159 - sfs * 136 / 100, 69, 159, 9);
-            fill_rectangle(61, 159 - sfs * 136 / 100, 68, 158, 8);
+            draw_rectangle(61,sfs,9);
             DispIt(dctx, 31, 153, 56, 182, 41, 126);
         }
 
         sfu = -1;
-
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfu = Data->P[0].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
+            if (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
+                sfu = pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
+            sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
         } else if (plr == 1) {
-            if (Data->P[1].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfs = Data->P[1].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
+            if (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
+                sfs = pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
+            sfu = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
         }
 
         if (sfu > 0) {
-            fill_rectangle(101, 159 - sfu * 136 / 100, 109, 159, 6);
-            fill_rectangle(101, 159 - sfu * 136 / 100, 108, 158, 5);
+            draw_rectangle(101,sfu,6);
             DispIt(dctx, 1, 153, 29, 182, 83, 128);
         }
 
         if (sfs > 0) {
-            fill_rectangle(132, 159 - sfs * 136 / 100, 140, 159, 9);
-            fill_rectangle(132, 159 - sfs * 136 / 100, 139, 158, 8);
+            draw_rectangle(132,sfs,9);
             DispIt(dctx, 90, 151, 119, 176, 112, 131);
         }
 
-        for (i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             sfu = -1;
             sfs = -1;
 
             if (plr == 0) {
-                if (Data->P[0].Probe[i].Num >= 0) {
-                    sfu = Data->P[0].Probe[i].Safety;
+                if (pData.Probe[i].Num >= 0) {
+                    sfu = pData.Probe[i].Safety;
                 }
 
-                sfs = Data->P[0].IntelHardwareTable[PROBE_HARDWARE][i];
+                sfs = pData.IntelHardwareTable[PROBE_HARDWARE][i];
             } else if (plr == 1) {
-                if (Data->P[1].Probe[i].Num >= 0) {
-                    sfs = Data->P[1].Probe[i].Safety;
+                if (pData.Probe[i].Num >= 0) {
+                    sfs = pData.Probe[i].Safety;
                 }
 
-                sfu = Data->P[1].IntelHardwareTable[PROBE_HARDWARE][i];
+                sfu = pData.IntelHardwareTable[PROBE_HARDWARE][i];
             }
 
             switch (i) {
             case PROBE_HW_ORBITAL:
                 if (sfu > 0) {
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 160, 159, 6);
-                    fill_rectangle(152, 159 - sfu * 136 / 100, 159, 158, 5);
+                    draw_rectangle(152,sfu,6);
                     DispIt(dctx, 58, 180, 71, 196, 147, 138);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(173, 159 - sfs * 136 / 100, 181, 159, 9);
-                    fill_rectangle(173, 159 - sfs * 136 / 100, 180, 158, 8);
+                    draw_rectangle(173,sfs,9);
                     DispIt(dctx, 73, 180, 89, 195, 165, 139);
                 }
 
@@ -2214,14 +2165,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case PROBE_HW_INTERPLANETARY:
                 if (sfu > 0) {
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 220, 159, 6);
-                    fill_rectangle(212, 159 - sfu * 136 / 100, 219, 158, 5);
+                    draw_rectangle(212,sfu,6);
                     DispIt(dctx, 91, 178, 115, 195, 198, 139);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(237, 159 - sfs * 136 / 100, 245, 159, 9);
-                    fill_rectangle(237, 159 - sfs * 136 / 100, 244, 158, 8);
+                    draw_rectangle(237,sfs,9);
                     DispIt(dctx, 153, 142, 176, 166, 227, 132);
                 }
 
@@ -2229,14 +2178,12 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
 
             case PROBE_HW_LUNAR:
                 if (sfu > 0) {
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 280, 159, 6);
-                    fill_rectangle(272, 159 - sfu * 136 / 100, 279, 158, 5);
+                    draw_rectangle(272,sfu,6);
                     DispIt(dctx, 121, 142, 151, 166, 253, 132);
                 }
 
                 if (sfs > 0) {
-                    fill_rectangle(302, 159 - sfs * 136 / 100, 310, 159, 9);
-                    fill_rectangle(302, 159 - sfs * 136 / 100, 309, 158, 8);
+                    draw_rectangle(302,sfs,9);
                     DispIt(dctx, 178, 142, 201, 160, 284, 138);
                 }
 
@@ -2254,164 +2201,149 @@ void IInfo(char plr, char loc, char w, const DisplayContext &dctx)
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
-                sfu = Data->P[0].Misc[MISC_HW_EVA_SUITS].Safety;
+            if (pData.Misc[MISC_HW_EVA_SUITS].Num >= 0) {
+                sfu = pData.Misc[MISC_HW_EVA_SUITS].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
+            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
-                sfs = Data->P[1].Misc[MISC_HW_EVA_SUITS].Safety;
+            if (pData.Misc[MISC_HW_EVA_SUITS].Num >= 0) {
+                sfs = pData.Misc[MISC_HW_EVA_SUITS].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
+            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
         }
 
         if (sfu > 0) {
-            fill_rectangle(19, 159 - sfu * 136 / 100, 27, 159, 6);
-            fill_rectangle(19, 159 - sfu * 136 / 100, 26, 158, 5);
+            draw_rectangle(19,sfu,6);
             DispIt(dctx, 68, 65, 76, 75, 17, 145);
         }
 
         if (sfs > 0) {
-            fill_rectangle(30, 159 - sfs * 136 / 100, 38, 159, 9);
-            fill_rectangle(30, 159 - sfs * 136 / 100, 37, 158, 8);
+            draw_rectangle(30,sfs,9);
             DispIt(dctx, 78, 65, 86, 75, 31, 145);
         }
 
         sfu = -1;
-
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                sfu = Data->P[0].Misc[MISC_HW_DOCKING_MODULE].Safety;
+            if (pData.Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
+                sfu = pData.Misc[MISC_HW_DOCKING_MODULE].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
+            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                sfs = Data->P[1].Misc[MISC_HW_DOCKING_MODULE].Safety;
+            if (pData.Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
+                sfs = pData.Misc[MISC_HW_DOCKING_MODULE].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
+            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
         }
 
         if (sfu > 0) {
-            fill_rectangle(72, 159 - sfu * 136 / 100, 80, 159, 6);
-            fill_rectangle(72, 159 - sfu * 136 / 100, 79, 158, 5);
+            draw_rectangle(72,sfu,6);
             DispIt(dctx, 88, 62, 100, 75, 64, 143);
         }
 
         if (sfs > 0) {
-            fill_rectangle(91, 159 - sfs * 136 / 100, 99, 159, 9);
-            fill_rectangle(91, 159 - sfs * 136 / 100, 98, 158, 8);
+            draw_rectangle(91,sfs,9);
             DispIt(dctx, 102, 66, 114, 75, 84, 147);
         }
 
         sfu = -1;
-
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
-                sfu = Data->P[0].Rocket[ROCKET_HW_BOOSTERS].Safety;
+            if (pData.Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
+                sfu = pData.Rocket[ROCKET_HW_BOOSTERS].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
+            sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
         } else if (plr == 1) {
-            if (Data->P[1].Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
-                sfs = Data->P[1].Rocket[ROCKET_HW_BOOSTERS].Safety;
+            if (pData.Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
+                sfs = pData.Rocket[ROCKET_HW_BOOSTERS].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
+            sfu = pData.IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
         }
 
         if (sfu > 0) {
-            fill_rectangle(118, 159 - sfu * 136 / 100, 126, 159, 6);
-            fill_rectangle(118, 159 - sfu * 136 / 100, 125, 158, 5);
+            draw_rectangle(118,sfu,6);
             DispIt(dctx, 1, 120, 14, 151, 113, 125);
         }
 
         if (sfs > 0) {
-            fill_rectangle(143, 159 - sfs * 136 / 100, 151, 159, 9);
-            fill_rectangle(143, 159 - sfs * 136 / 100, 150, 158, 8);
+            draw_rectangle(143,sfs,9);
             DispIt(dctx, 16, 130, 31, 151, 134, 135);
         }
 
         sfu = -1;
-
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MISC_HW_KICKER_A].Num >= 0) {
-                sfu = Data->P[0].Misc[MISC_HW_KICKER_A].Safety;
+            if (pData.Misc[MISC_HW_KICKER_A].Num >= 0) {
+                sfu = pData.Misc[MISC_HW_KICKER_A].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
+            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MISC_HW_KICKER_A].Num >= 0) {
-                sfs = Data->P[1].Misc[MISC_HW_KICKER_A].Safety;
+            if (pData.Misc[MISC_HW_KICKER_A].Num >= 0) {
+                sfs = pData.Misc[MISC_HW_KICKER_A].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
+            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
         }
 
         if (sfu > 0) {
-            fill_rectangle(173, 159 - sfu * 136 / 100, 181, 159, 6);
-            fill_rectangle(173, 159 - sfu * 136 / 100, 180, 158, 5);
+            draw_rectangle(173,sfu,6);
             DispIt(dctx, 33, 140, 47, 151, 165, 145);
         }
 
         if (sfs > 0) {
-            fill_rectangle(195, 159 - sfs * 136 / 100, 203, 159, 9);
-            fill_rectangle(195, 159 - sfs * 136 / 100, 202, 158, 8);
+            draw_rectangle(195,sfs,9);
             DispIt(dctx, 49, 138, 61, 151, 188, 143);
         }
 
         sfu = -1;
-
         sfs = -1;
 
         if (plr == 0) {
-            if (Data->P[0].Misc[MISC_HW_KICKER_B].Num >= 0) {
-                sfu = Data->P[0].Misc[MISC_HW_KICKER_B].Safety;
+            if (pData.Misc[MISC_HW_KICKER_B].Num >= 0) {
+                sfu = pData.Misc[MISC_HW_KICKER_B].Safety;
             }
 
-            sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
+            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         } else if (plr == 1) {
-            if (Data->P[1].Misc[MISC_HW_KICKER_B].Num >= 0) {
-                sfs = Data->P[1].Misc[MISC_HW_KICKER_B].Safety;
+            if (pData.Misc[MISC_HW_KICKER_B].Num >= 0) {
+                sfs = pData.Misc[MISC_HW_KICKER_B].Safety;
             }
 
-            sfu = Data->P[1].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
+            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
         }
 
         if (sfu > 0) {
-            fill_rectangle(226, 159 - sfu * 136 / 100, 234, 159, 6);
-            fill_rectangle(226, 159 - sfu * 136 / 100, 233, 158, 5);
+            draw_rectangle(226,sfu,6);
             DispIt(dctx, 63, 131, 75, 151, 219, 136);
         }
 
         if (sfs > 0) {
-            fill_rectangle(246, 159 - sfs * 136 / 100, 254, 159, 9);
-            fill_rectangle(246, 159 - sfs * 136 / 100, 253, 158, 8);
+            draw_rectangle(246,sfs,9);
             DispIt(dctx, 77, 129, 88, 151, 240, 134);
         }
 
         sfs = -1;
 
         if (plr == 1) {
-            if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
-                sfs = Data->P[1].Misc[MISC_HW_KICKER_C].Safety;
+            if (pData.Misc[MISC_HW_KICKER_C].Num >= 0) {
+                sfs = pData.Misc[MISC_HW_KICKER_C].Safety;
             }
         } else if (plr == 0) {
-            sfs = Data->P[0].IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_C];
+            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_C];
         }
 
         if (sfs > 0) {
-            fill_rectangle(296, 159 - sfs * 136 / 100, 304, 159, 9);
-            fill_rectangle(296, 159 - sfs * 136 / 100, 303, 158, 8);
+            draw_rectangle(296,sfs,9);
             DispIt(dctx, 51, 77, 93, 127, 266, 106);
         }
 
