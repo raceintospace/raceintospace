@@ -29,7 +29,9 @@
 
 #include "port.h"
 
+#include <algorithm>
 #include <cstdio>
+#include <memory>
 
 #include <boost/shared_ptr.hpp>
 
@@ -127,22 +129,22 @@ struct MOBJ {
 };
 
 struct IMG {
-	int32_t Size;         // Size of Image (bytes)
-	char Comp;            // Type of Compression Used
-	int16_t Width;        // Width of Image
-	int16_t Height;       // Height of Image
-	int16_t PlaceX;       // Where to Place Img:X
-	int16_t PlaceY;       // Where to Place Img:Y
-	
-	template<class Archive>
-	void serialize(Archive & ar) {
+    int32_t Size;         // Size of Image (bytes)
+    char Comp;            // Type of Compression Used
+    int16_t Width;        // Width of Image
+    int16_t Height;       // Height of Image
+    int16_t PlaceX;       // Where to Place Img:X
+    int16_t PlaceY;       // Where to Place Img:Y
+    
+    template<class Archive>
+    void serialize(Archive & ar) {
         ar(Size);
         ar(Comp);
         ar(Width);
         ar(Height);
         ar(PlaceX);
         ar(PlaceY);
-	}  
+    }  
 };
 
 struct OUTLINE {
@@ -164,43 +166,43 @@ struct PORTOUTLINE {
 int Vab_Spot; // Global variable
 
 namespace // Local global variables
-{	
-	std::vector<MOBJ> MObj(S_MOBJ);
-	std::vector<IMG> Img(S_QTY);
-	std::vector<OUTLINE> pOutline(55);
-	
-	PORTOUTLINE *pPortOutlineRestore;
-	
-	/** These are the valid hotkeys */
-	char HotKeyList[] = "AIMRPVCQETBHLS\0";
-	char RUSH;
-	int FCtr;
+{    
+    std::vector<MOBJ> MObj(S_MOBJ);
+    std::vector<IMG> Img(S_QTY);
+    std::vector<OUTLINE> pOutline(55);
+    
+    PORTOUTLINE* pPortOutlineRestore;
+    
+    /** These are the valid hotkeys */
+    char HotKeyList[] = "AIMRPVCQETBHLS\0";
+    char RUSH;
+    int FCtr;
 
-	boost::shared_ptr<display::PalettizedSurface> flaggy;
+    boost::shared_ptr<display::PalettizedSurface> flaggy;
 
-	enum MissionReadyStatus {
-		MISSIONS_NONE = 0,
-		MISSIONS_UNSTAGED,
-		MISSIONS_UNSCHEDULED,
-		MISSIONS_READY
-	};
+    enum MissionReadyStatus {
+        MISSIONS_NONE = 0,
+        MISSIONS_UNSTAGED,
+        MISSIONS_UNSCHEDULED,
+        MISSIONS_READY
+    };
 };  // End of namespace
 
 
-void WaveFlagSetup(void);
-void WaveFlagDel(void);
+void WaveFlagSetup();
+void WaveFlagDel();
 void LoadImg(int plr, int indx);
 void PortText(int x, int y, std::string txt, char col);
-void UpdatePortOverlays(void);
-void DoCycle(void);
+void UpdatePortOverlays();
+void DoCycle();
 bool EndTurnOk(int plr);
 int MissionStatus(int plr);
-void PortOutLine(unsigned int Count, uint16_t *buf, char mode);
+void PortOutLine(unsigned int Count, uint16_t* buf, char mode);
 void PortRestore(unsigned int Count);
 int MapKey(char plr, int key, int old) ;
 void Port(char plr);
 char PortSel(char plr, char loc);
-char Request(char plr, const char *s, char md);
+char Request(char plr, const char* s, char md);
 int SpaceportAnimationEntry(int plr);
 int SpaceportAnimationOngoing(int plr);
 void LoadPOutline(int plr); 
@@ -213,7 +215,7 @@ void WaveFlagSetup(char plr)
     flaggy = boost::shared_ptr<display::PalettizedSurface>(Filesystem::readImage(filename));
 }
 
-void WaveFlagDel(void)
+void WaveFlagDel()
 {
     flaggy.reset();
 }
@@ -238,17 +240,17 @@ void LoadImg(int plr, int indx)
     std::string filename;
     
     // Load port sprites
-	if (plr == 0) {
-		filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
-	} else {
-		filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
-	}
+    if (plr == 0) {
+        filename = "images/port/usa_port.dat." + std::to_string(indx) + ".png";
+    } else {
+        filename = "images/port/sov_port.dat." + std::to_string(indx) + ".png";
+    }
     
     boost::shared_ptr<display::PalettizedSurface> image;
     if (image = Filesystem::readImage(filename)) {
-		TRACE2("load image `%s'", filename.c_str());
+        LOG_TRACE("load image `%s'", filename.c_str());
     } else {
-		throw std::runtime_error(filename + " could not be loaded.");
+        throw std::runtime_error(filename + " could not be loaded.");
     }    
     
     //image->exportPalette(Img[indx].Width, Img[indx].Height);
@@ -269,16 +271,16 @@ void LoadImg(int plr, int indx)
  */
 void PortPal(char plr)
 {   
-    std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
+    std::string filename = (plr == 0) ? "usa_port.json" 
+                                      : "sov_port.json";
     
     // Deserialize palette
     std::vector<uint8_t> palette;
     std::ifstream file(locate_file(filename.c_str(), FT_DATA));
     if (!file) {
-		throw std::runtime_error(filename + " could not be opened.");
-	}
-    cereal::JSONInputArchive ar(file);
+        throw std::runtime_error(filename + " could not be opened.");
+    }
+    cereal::JSONInputArchive ar{file};
     ar(CEREAL_NVP(palette));
         
     // Display p and copy data to p.pal
@@ -291,23 +293,24 @@ void PortPal(char plr)
 
 void DrawSpaceport(char plr)
 {
-	std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
-	
-	// Deserialize Img and MObj
-	{
-		std::ifstream file(locate_file(filename.c_str(), FT_DATA));
-		if (!file) {
-			throw std::runtime_error(filename + " could not be opened.");
-		}
-		
-		cereal::JSONInputArchive ar(file);
-		ar(CEREAL_NVP(MObj));
-		ar(CEREAL_NVP(Img));
+    auto& pData = Data->P[plr];
+    std::string filename = (plr == 0) ? "usa_port.json" 
+                                      : "sov_port.json";
+    
+    // Deserialize Img and MObj
+    {
+        std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+        if (!file) {
+            throw std::runtime_error(filename + " could not be opened.");
+        }
+        
+        cereal::JSONInputArchive ar{file};
+        ar(CEREAL_NVP(MObj));
+        ar(CEREAL_NVP(Img));
     }
     
     // Draw the main port image
-	LoadImg(plr, 0);
+    LoadImg(plr, 0);
 
     UpdatePortOverlays();
 
@@ -317,22 +320,22 @@ void DrawSpaceport(char plr)
 
     // Pads
     for (int i = 0; i < MAX_LAUNCHPADS; i++) {
-        Data->P[plr].Port[PORT_LaunchPad_A + i] = 1;  // Draw launch pad
+        pData.Port[PORT_LaunchPad_A + i] = 1;  // Draw launch pad
 
-        if (Data->P[plr].Mission[i].MissionCode) {
-            Data->P[plr].Port[PORT_LaunchPad_A + i] = 2;  // Draw damaged launch pad
-        } else if (Data->P[plr].LaunchFacility[i] >= LAUNCHPAD_DAMAGED_MARGIN) {
-            Data->P[plr].Port[PORT_LaunchPad_A + i] = 3;
-        } else if (Data->P[plr].LaunchFacility[i] == LAUNCHPAD_NOT_BUILT) {  // No launch facility
-            Data->P[plr].Port[PORT_LaunchPad_A + i] = 0;
+        if (pData.Mission[i].MissionCode) {
+            pData.Port[PORT_LaunchPad_A + i] = 2;  // Draw damaged launch pad
+        } else if (pData.LaunchFacility[i] >= LAUNCHPAD_DAMAGED_MARGIN) {
+            pData.Port[PORT_LaunchPad_A + i] = 3;
+        } else if (pData.LaunchFacility[i] == LAUNCHPAD_NOT_BUILT) {  // No launch facility
+            pData.Port[PORT_LaunchPad_A + i] = 0;
         }
     }
 
-    if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
-        Data->P[plr].Port[PORT_LaunchPad_A] = plr;
+    if (Vab_Spot == 1 && pData.Port[PORT_VAB] == 2) {
+        pData.Port[PORT_LaunchPad_A] = plr;
     }
 
-    if (Data->P[plr].AstroCount > 0) {
+    if (pData.AstroCount > 0) {
         LoadImg(plr, 16 - plr * 4);  // Draw CPX
         HotKeyList[9] = 'T';
         HotKeyList[10] = 'B';
@@ -341,24 +344,24 @@ void DrawSpaceport(char plr)
         HotKeyList[10] = '\0';
     }
 
-    if (Data->P[plr].Pool[0].Active >= 1) {
+    if (pData.Pool[0].Active >= 1) {
         LoadImg(plr, 17 - plr * 4);    // Draw TRN
     }
 
-    if (Data->P[plr].Port[PORT_Research] > 1) {
+    if (pData.Port[PORT_Research] > 1) {
         LoadImg(plr, 13 + 15 * plr);    // RD Stuff
     }
 
-    if (Data->P[plr].Port[PORT_Research] > 2) {
+    if (pData.Port[PORT_Research] > 2) {
         LoadImg(plr, 14 + 15 * plr);
     }
 
-    if (Data->P[plr].Port[PORT_Research] == 3) {
+    if (pData.Port[PORT_Research] == 3) {
         LoadImg(plr, 15 + 15 * plr);
     }
 
     for (int fm = 0; fm < S_MOBJ; fm++) {
-        int idx = Data->P[plr].Port[fm];  // Current Port Level for MObj
+        int idx = pData.Port[fm];  // Current Port Level for MObj
 
         if (MObj[fm].Reg[idx].PreDraw > 0) {  // PreDrawn Shape
             LoadImg(plr, MObj[fm].Reg[idx].PreDraw);
@@ -373,10 +376,10 @@ void DrawSpaceport(char plr)
 
     display::graphics.setForegroundColor(0);
     draw_string(257, 197, "CASH:");
-    draw_megabucks(285, 197, Data->P[plr].Cash);
+    draw_megabucks(285, 197, pData.Cash);
     display::graphics.setForegroundColor(11);
     draw_string(256, 196, "CASH:");
-    draw_megabucks(284, 196, Data->P[plr].Cash);
+    draw_megabucks(284, 196, pData.Cash);
 
     display::graphics.setForegroundColor(0);
 
@@ -416,87 +419,90 @@ void PortText(int x, int y, std::string txt, char col)
 }
 
 
-void UpdatePortOverlays(void)
+void UpdatePortOverlays()
 {
     for (int8_t i = 0; i < NUM_PLAYERS; i++) {  // Programs
+        auto& pData = Data->P[i];
         for (int8_t j = 0; j < 5; j++) {
-            Data->P[i].Port[PORT_Mercury - j] = (Data->P[i].Manned[j].Num >= 0) ? 1 : 0;
+            pData.Port[PORT_Mercury - j] = (pData.Manned[j].Num >= 0) ? 1 : 0;
         }
 
 #ifdef DEADCODE
         // Zond thingy -- this was never implemented and was available after 6 manned seasons
-        // if (i==1 && Data->P[i].Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) Data->P[i].Port[PORT_Zond]=1;
+        // if (i==1 && pData.Manned[MANNED_HW_THREE_MAN_CAPSULE].Seas>6) pData.Port[PORT_Zond]=1;
 #endif
 
-        if (Data->P[i].Probe[PROBE_HW_ORBITAL].Num >= 0 || Data->P[i].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 ||
-            Data->P[i].Probe[PROBE_HW_LUNAR].Num >= 0) {
-            Data->P[i].Port[PORT_Satellite] = 1;
+        if (pData.Probe[PROBE_HW_ORBITAL].Num >= 0 
+            || pData.Probe[PROBE_HW_INTERPLANETARY].Num >= 0 
+            || pData.Probe[PROBE_HW_LUNAR].Num >= 0) {
+            pData.Port[PORT_Satellite] = 1;
         }
 
-        if (Data->P[i].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 || Data->P[i].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-            Data->P[i].Port[PORT_LM] = 1;
+        if (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0 
+            || pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
+            pData.Port[PORT_LM] = 1;
         }
 
         // Museum
         if (Data->Prestige[Prestige_MannedOrbital].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 1);    // Mus:1
+            pData.Port[PORT_Museum] = MAX(pData.Port[PORT_Museum], 1);    // Mus:1
         }
 
         if (Data->Prestige[Prestige_LunarFlyby].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 2);    // Mus:2
+            pData.Port[PORT_Museum] = MAX(pData.Port[PORT_Museum], 2);    // Mus:2
         }
 
         if (Data->Prestige[Prestige_MannedLunarOrbit].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Museum] = MAX(Data->P[i].Port[PORT_Museum], 3);    // Mus:3
+            pData.Port[PORT_Museum] = MAX(pData.Port[PORT_Museum], 3);    // Mus:3
         }
 
         // R&D
-        if (Data->P[i].Budget >= 85) {
-            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 1);    // RD:1
+        if (pData.Budget >= 85) {
+            pData.Port[PORT_Research] = MAX(pData.Port[PORT_Research], 1);    // RD:1
         }
 
-        if (Data->P[i].Budget >= 112) {
-            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 2);    // RD:2
+        if (pData.Budget >= 112) {
+            pData.Port[PORT_Research] = MAX(pData.Port[PORT_Research], 2);    // RD:2
         }
 
-        if (Data->P[i].Budget >= 150) {
-            Data->P[i].Port[PORT_Research] = MAX(Data->P[i].Port[PORT_Research], 3);    // RD:3
+        if (pData.Budget >= 150) {
+            pData.Port[PORT_Research] = MAX(pData.Port[PORT_Research], 3);    // RD:3
         }
 
         // VAB
 
         if (Data->Prestige[Prestige_Duration_B].Goal[i] > 0) {
-            Data->P[i].Port[PORT_VAB] = MAX(Data->P[i].Port[PORT_VAB], 1);    // VAB:1
+            pData.Port[PORT_VAB] = MAX(pData.Port[PORT_VAB], 1);    // VAB:1
         }
 
-        if (Data->P[i].Budget > 115) {
-            Data->P[i].Port[PORT_VAB] = MAX(Data->P[i].Port[PORT_VAB], 2);    // VAB:2
+        if (pData.Budget > 115) {
+            pData.Port[PORT_VAB] = MAX(pData.Port[PORT_VAB], 2);    // VAB:2
         }
 
         // Admin
-        if (Data->P[i].AstroLevel >= 2) {
-            Data->P[i].Port[PORT_Admin] = MAX(Data->P[i].Port[PORT_Admin], 1);    // Adm:1
+        if (pData.AstroLevel >= 2) {
+            pData.Port[PORT_Admin] = MAX(pData.Port[PORT_Admin], 1);    // Adm:1
         }
 
-        if (Data->P[i].AstroLevel >= 4) {
-            Data->P[i].Port[PORT_Admin] = MAX(Data->P[i].Port[PORT_Admin], 2);    // Adm:2
+        if (pData.AstroLevel >= 4) {
+            pData.Port[PORT_Admin] = MAX(pData.Port[PORT_Admin], 2);    // Adm:2
         }
 
         if (Data->Prestige[Prestige_OnePerson].Goal[i] > 0) {
-            Data->P[i].Port[PORT_Tracking] = MAX(Data->P[i].Port[PORT_Tracking], 1);    // Trk:1
+            pData.Port[PORT_Tracking] = MAX(pData.Port[PORT_Tracking], 1);    // Trk:1
         }
 
         if (Data->Prestige[Prestige_MannedLunarPass].Goal[i] > 0) {
-            Data->P[i].Port[PORT_MissionControl] = MAX(Data->P[i].Port[PORT_MissionControl], 1);    // MC:1
+            pData.Port[PORT_MissionControl] = MAX(pData.Port[PORT_MissionControl], 1);    // MC:1
         }
 
-        if (Data->P[i].AstroCount > 0) {
-            Data->P[i].Port[PORT_AstroComplex] = Data->P[i].Port[PORT_BasicTraining] = 1;
+        if (pData.AstroCount > 0) {
+            pData.Port[PORT_AstroComplex] = pData.Port[PORT_BasicTraining] = 1;
         }
 
-        if (Data->P[i].Pool[0].Active > 0) {     // Astros
-            Data->P[i].Port[PORT_Helipad] = Data->P[i].Port[PORT_Pool] = Data->P[i].Port[PORT_Planetarium] = 1;
-            Data->P[i].Port[PORT_Centrifuge] = Data->P[i].Port[PORT_MedicalCtr] = Data->P[i].Port[PORT_Airfield] = 1;
+        if (pData.Pool[0].Active > 0) {     // Astros
+            pData.Port[PORT_Helipad] = pData.Port[PORT_Pool] = pData.Port[PORT_Planetarium] = 1;
+            pData.Port[PORT_Centrifuge] = pData.Port[PORT_MedicalCtr] = pData.Port[PORT_Airfield] = 1;
         }
     }
 }
@@ -508,16 +514,16 @@ void Master(char plr)
     keyHelpText = "i000";
     WaveFlagSetup(plr);
     Vab_Spot = 0;
-	
-	/*
+    
+    /*
     // TODO: Is there a point to this loop? Can it just be removed?
     // Can any Mission modification be moved to start-of-turn upkeep?
     for (int i = 0; i < 3; i++) {
         Data->P[plr].Mission[i].Joint =
             GetMissionPlan(Data->P[plr].Mission[i].MissionCode).Jt;
     }
-	*/
-	
+    */
+    
     // Entering screen for the first time so fade out and in.
     FadeOut(2, 10, 0, 0);
     DrawSpaceport(plr);
@@ -531,7 +537,7 @@ void Master(char plr)
     SpotLoad(animation);
 
 #endif
-	
+    
     Port(plr);
     helpText = "i000";
     keyHelpText = "i000";
@@ -585,59 +591,15 @@ done:
 }
 
 
-void DoCycle(void)                   // Three ranges of color cycling
+void DoCycle()                   // Three ranges of color cycling
 {
-    int i, tmp1, tmp2, tmp3, j;
     display::AutoPal p(display::graphics.legacyScreen());
 
-    j = 384;
+    int j = 384;
 
-    i = 0;
-    tmp1 = p.pal[j + 3 * i + 0];
-    tmp2 = p.pal[j + 3 * i + 1];
-    tmp3 = p.pal[j + 3 * i + 2];
-
-    for (; i < 3; i++) {
-        p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
-        p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
-        p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    }
-
-    p.pal[j + 3 * i] = tmp1;
-    p.pal[j + 3 * i + 1] = tmp2;
-    p.pal[j + 3 * i + 2] = tmp3;
-
-    i = 4;
-
-    tmp1 = p.pal[j + 3 * i + 0];
-    tmp2 = p.pal[j + 3 * i + 1];
-    tmp3 = p.pal[j + 3 * i + 2];
-
-    for (; i < 11; i++) {
-        p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
-        p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
-        p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    }
-
-    p.pal[j + 3 * i] = tmp1;
-    p.pal[j + 3 * i + 1] = tmp2;
-    p.pal[j + 3 * i + 2] = tmp3;
-
-    i = 12;
-
-    tmp1 = p.pal[j + 3 * i + 0];
-    tmp2 = p.pal[j + 3 * i + 1];
-    tmp3 = p.pal[j + 3 * i + 2];
-
-    for (; i < 15; i++) {
-        p.pal[j + i * 3 + 0] = p.pal[j + (i + 1) * 3 + 0];
-        p.pal[j + i * 3 + 1] = p.pal[j + (i + 1) * 3 + 1];
-        p.pal[j + i * 3 + 2] = p.pal[j + (i + 1) * 3 + 2];
-    }
-
-    p.pal[j + 3 * i] = tmp1;
-    p.pal[j + 3 * i + 1] = tmp2;
-    p.pal[j + 3 * i + 2] = tmp3;
+    std::rotate(&p.pal[j+3*0],  &p.pal[j+3*1],  &p.pal[j+3*4]);
+    std::rotate(&p.pal[j+3*4],  &p.pal[j+3*5],  &p.pal[j+3*12]);
+    std::rotate(&p.pal[j+3*12], &p.pal[j+3*13], &p.pal[j+3*16]);
 }
 
 
@@ -698,12 +660,13 @@ int MissionStatus(int plr)
 
     // Check to see if missions are good to go
     for (int i = 0; i < MAX_MISSIONS; i++) {
-        if (Data->P[plr].Mission[i].MissionCode &&
-            Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
+        auto& mission = Data->P[plr].Mission[i];
+        if (mission.MissionCode != Mission_None
+            && mission.Hard[Mission_PrimaryBooster] == 0) {
             return MISSIONS_UNSTAGED;
         }
 
-        prepped |= (Data->P[plr].Mission[i].MissionCode != Mission_None);
+        prepped |= (mission.MissionCode != Mission_None);
     }
 
     if (!prepped) {
@@ -718,15 +681,14 @@ int MissionStatus(int plr)
  *
  * \param mode ...  0 = ?   1 = copy stored outline ?
  */
-void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
+void PortOutLine(unsigned int Count, uint16_t* outline, char mode)
 {
     int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
-    unsigned int i;
 
-    pPortOutlineRestore = (PORTOUTLINE *)xrealloc(pPortOutlineRestore,
-                          sizeof(PORTOUTLINE) * Count);
+    pPortOutlineRestore = (PORTOUTLINE*)xrealloc(pPortOutlineRestore,
+                                                 sizeof(PORTOUTLINE) * Count);
 
-    for (i = 0; i < Count; i++) {
+    for (int i = 0; i < Count; i++) {
         if (mode == 1) {
             // Save value from the screen
             pPortOutlineRestore[i].loc = outline[i];    // Offset of the outline into the buffer
@@ -745,12 +707,10 @@ void PortOutLine(unsigned int Count, uint16_t *outline, char mode)
 
 void PortRestore(unsigned int Count)
 {
-    int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0;
-    unsigned int i;
-    int loc;
+    int min_x = MAX_X, min_y = MAX_Y, max_x = 0, max_y = 0; // I think these are unused, but maybe will be useful for gpu or smth?
 
-    for (i = 0; i < Count; i++) {
-        loc = pPortOutlineRestore[i].loc;
+    for (int i = 0; i < Count; i++) {
+        int loc = pPortOutlineRestore[i].loc;
         display::graphics.legacyScreen()->pixels()[loc] = pPortOutlineRestore[i].val;
         min_x = MIN(min_x, loc % MAX_X);
         min_y = MIN(min_y, loc / MAX_X);
@@ -767,11 +727,12 @@ void PortRestore(unsigned int Count)
  */
 int MapKey(char plr, int key, int old)
 {
+    auto& pData = Data->P[plr];
     int val, found = 0;
     char high = -1, low = -1;
 
     for (int j = 0; j < S_MOBJ; j++) {
-        if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
+        if (MObj[j].Reg[pData.Port[j]].sNum > 0) {
             if (low == -1) {
                 low = j;
             }
@@ -784,7 +745,7 @@ int MapKey(char plr, int key, int old)
 
     switch (key) {
     case 'A':
-        if (MObj[6].Reg[Data->P[plr].Port[PORT_Admin]].sNum > 0) {
+        if (MObj[6].Reg[pData.Port[PORT_Admin]].sNum > 0) {
             val = PORT_Admin;
         }
 
@@ -792,7 +753,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'H':
-        if (MObj[8].Reg[Data->P[plr].Port[PORT_MedicalCtr]].sNum > 0) {
+        if (MObj[8].Reg[pData.Port[PORT_MedicalCtr]].sNum > 0) {
             val = PORT_MedicalCtr;
         }
 
@@ -800,7 +761,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'I':
-        if (MObj[1].Reg[Data->P[plr].Port[PORT_Pentagon]].sNum > 0) {
+        if (MObj[1].Reg[pData.Port[PORT_Pentagon]].sNum > 0) {
             val = PORT_Pentagon;
         }
 
@@ -814,7 +775,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'M':
-        if (MObj[5].Reg[Data->P[plr].Port[PORT_Museum]].sNum > 0) {
+        if (MObj[5].Reg[pData.Port[PORT_Museum]].sNum > 0) {
             val = PORT_Museum;
         }
 
@@ -822,7 +783,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'R':
-        if (MObj[22].Reg[Data->P[plr].Port[PORT_Research]].sNum > 0) {
+        if (MObj[22].Reg[pData.Port[PORT_Research]].sNum > 0) {
             val = PORT_Research;
         }
 
@@ -836,7 +797,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'P':
-        if (MObj[2].Reg[Data->P[plr].Port[PORT_Capitol]].sNum > 0) {
+        if (MObj[2].Reg[pData.Port[PORT_Capitol]].sNum > 0) {
             val = PORT_Capitol;
         }
 
@@ -844,7 +805,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'V':
-        if (MObj[4].Reg[Data->P[plr].Port[PORT_VAB]].sNum > 0) {
+        if (MObj[4].Reg[pData.Port[PORT_VAB]].sNum > 0) {
             val = PORT_VAB;
         }
 
@@ -852,7 +813,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'C':
-        if (MObj[26].Reg[Data->P[plr].Port[PORT_MissionControl]].sNum > 0) {
+        if (MObj[26].Reg[pData.Port[PORT_MissionControl]].sNum > 0) {
             val = PORT_MissionControl;
         }
 
@@ -860,7 +821,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'Q':
-        if (MObj[29].Reg[Data->P[plr].Port[PORT_Gate]].sNum > 0) {
+        if (MObj[29].Reg[pData.Port[PORT_Gate]].sNum > 0) {
             val = PORT_Gate;
         }
 
@@ -868,7 +829,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'E':
-        if (MObj[28].Reg[Data->P[plr].Port[PORT_FlagPole]].sNum > 0) {
+        if (MObj[28].Reg[pData.Port[PORT_FlagPole]].sNum > 0) {
             val = PORT_FlagPole;
         }
 
@@ -876,7 +837,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'T':
-        if (MObj[7].Reg[Data->P[plr].Port[PORT_AstroComplex]].sNum > 0) {
+        if (MObj[7].Reg[pData.Port[PORT_AstroComplex]].sNum > 0) {
             val = PORT_AstroComplex;
         }
 
@@ -884,7 +845,7 @@ int MapKey(char plr, int key, int old)
         break;
 
     case 'B':
-        if (MObj[9].Reg[Data->P[plr].Port[PORT_BasicTraining]].sNum > 0) {
+        if (MObj[9].Reg[pData.Port[PORT_BasicTraining]].sNum > 0) {
             val = PORT_BasicTraining;
         }
 
@@ -901,7 +862,7 @@ int MapKey(char plr, int key, int old)
         found = 0;
 
         for (int j = old; j < high + 1; j++) {
-            if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
+            if (MObj[j].Reg[pData.Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
@@ -921,7 +882,7 @@ int MapKey(char plr, int key, int old)
         found = 0;
 
         for (int j = old; j > low - 1; j--) {
-            if (MObj[j].Reg[Data->P[plr].Port[j]].sNum > 0) {
+            if (MObj[j].Reg[pData.Port[j]].sNum > 0) {
                 if (found == 0) {
                     val = j;
                     found = 1;
@@ -941,17 +902,12 @@ int MapKey(char plr, int key, int old)
 
 void Port(char plr)
 {
-    int i, j, kMode, kEnt, k;
-    char good, res;
-    int kPad, pKey, index;
-    uint16_t Count, *bone;
-
+    auto& pData = Data->P[plr];
     helpText = "i043";
     keyHelpText = "k043";
-    bone = (uint16_t *) buffer;
     
-	LoadPOutline(plr);
-	
+    LoadPOutline(plr);
+    
     if (plr == 0 && Data->Year > 65) {
         PortText(5, 196, "CAPE KENNEDY", 12);
     } else if (plr == 0) {
@@ -960,12 +916,14 @@ void Port(char plr)
         PortText(5, 196, "BAIKONUR", 12);
     }
 
-    pKey = 0;
-
     music_start((plr == 0) ? M_USPORT : M_SVPORT);
-    kMode = kPad = kEnt = 0;
-    i = 0;  // this is used to loop through all the selection regions on the port
+    int kPad = 0, kMode = 0, kEnt = 0;
+    int i = 0;  // this is used to loop through all the selection regions on the port
 
+    char res;
+    int index;
+    uint16_t Count;
+    int pKey = 0;
     while (1) {
         av_block();
 
@@ -1005,52 +963,54 @@ void Port(char plr)
                     kMode = 1;
                 }
 
-                if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                    x = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].x1;
-                    y = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].y1;
+                if (MObj[i].Reg[pData.Port[i]].sNum > 0) {
+                    x = MObj[i].Reg[pData.Port[i]].CD[0].x1;
+                    y = MObj[i].Reg[pData.Port[i]].CD[0].y1;
                     kEnt = i;
                 }
             }
+            
+            auto& MObjReg = MObj[i].Reg[pData.Port[i]];
 
             if (kMode == 1 && kEnt == i) {
-                x = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].x1;
-                y = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].y1;
+                x = MObjReg.CD[0].x1;
+                y = MObjReg.CD[0].y1;
             } else if (kMode == 1 && kEnt != i) {
                 x = -1;
                 y = -1;
             }
 
-            for (j = 0; j < MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].qty; j++) {
-                if (x >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x1 &&
-                    y >= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].y1 &&
-                    x <= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].x2 &&
-                    y <= MObj[(kMode == 0) ? i : kEnt].Reg[Data->P[plr].Port[(kMode == 0) ? i : kEnt]].CD[j].y2) {
+            for (int j = 0; ; j++) {
+                int pseudo_j = (kMode == 0) ? i : kEnt;                           // I have no idea
+                auto& pseudo_MObjReg = MObj[pseudo_j].Reg[pData.Port[pseudo_j]];  // what these are for
+                if (j >= pseudo_MObjReg.qty) break;
+                
+                if (x >= pseudo_MObjReg.CD[j].x1 &&
+                    y >= pseudo_MObjReg.CD[j].y1 &&
+                    x <= pseudo_MObjReg.CD[j].x2 &&
+                    y <= pseudo_MObjReg.CD[j].y2) {
                     PortText(5, 196, MObj[i].Name, 11);
 
-                    if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
-                        index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
+                    if (MObjReg.sNum > 0) {
+                        index = MObjReg.sNum;
                         Count = pOutline[index].Count;
-                        bone = new uint16_t[pOutline[index].bone.size()];
-                        std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);
+                        
+                        std::unique_ptr<uint16_t[]> bone = std::make_unique<uint16_t[]>(pOutline[index].bone.size());
+                        std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone.get());
       
-                        PortOutLine(Count, bone, 1);
-                        delete [] bone;
+                        PortOutLine(Count, bone.get(), 1);
                         strncpy(&helpText[1], (MObj[i].Help).c_str(), 3);
                     }
 
-                    good = 0;
-
                     // Search hotkey string for valid selection
-                    for (k = 0; k < (int)strlen(HotKeyList); k++) {
-                        if (HotKeyList[k] == ((char)(0x00ff & key))) {
-                            good = 1;
-                        }
-                    }
+                    bool good = std::any_of(HotKeyList, HotKeyList+strlen(HotKeyList),
+                                            [](char c){return c == ((char)(0x00ff & key));});
 
-                    while (x >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].x1 &&
-                           y >= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].y1 &&
-                           x <= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].x2 &&
-                           y <= MObj[i].Reg[Data->P[plr].Port[i]].CD[j].y2) {
+                    auto& MObjRegCD = MObjReg.CD[j];
+                    while (x >= MObjRegCD.x1 &&
+                           y >= MObjRegCD.y1 &&
+                           x <= MObjRegCD.x2 &&
+                           y <= MObjRegCD.y2) {
                         av_block();
 #if BABYSND
                         UpdateAudio();
@@ -1069,8 +1029,8 @@ void Port(char plr)
                         }
 
                         if (kMode == 1) {
-                            x = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].x1;
-                            y = MObj[i].Reg[Data->P[plr].Port[i]].CD[0].y1;
+                            x = MObjReg.CD[0].x1;
+                            y = MObjReg.CD[0].y1;
                         }
 
                         if (key > 0 && kMode == 1)  // got a keypress
@@ -1080,16 +1040,19 @@ void Port(char plr)
                                 kPad = key;
                             }
 
-                        if (good == 1 || (kMode == 0 && mousebuttons == 1) || (kMode == 1 && key == K_ENTER)
+                        if (good 
+                            || (kMode == 0 && mousebuttons == 1) 
+                            || (kMode == 1 && key == K_ENTER)
                             || (kMode == 0 && key == K_ENTER)) {
+                            good = false;
                             PortRestore(Count);
                             Count = 0;
 
                             // || i==33
 
-                            if (!(i == PORT_FlagPole || i == PORT_Gate ||
-                                  i == PORT_Monument || i == PORT_SovMonumentAlt ||
-                                  (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
+                            if (!(i == PORT_FlagPole || i == PORT_Gate 
+                                  || i == PORT_Monument || i == PORT_SovMonumentAlt 
+                                  || (Data->Year == 57 || (Data->Year == 58 && Data->Season == 0)))) {
 #if SPOT_ON
                                 SpotKill();
 #endif
@@ -1131,13 +1094,6 @@ void Port(char plr)
                                 SpotLoad(SpaceportAnimationOngoing(plr));
 #endif
                                 Vab_Spot = 0;
-#ifdef DEADCODE
-                                // I'm not sure why we're redrawing the outlines here;
-                                // commenting it out for now.  If no problems are seen
-                                // with the port outlines then restore this
-                                //   if (pPortOutlineRestore)
-                                //      PortOutLine(Count,bone,0);
-#endif
                                 PortText(5, 196, MObj[i].Name, 11);
                                 break;
 
@@ -1170,18 +1126,17 @@ void Port(char plr)
                                 return;
                             }  // switch
 
-                            kMode = good = 0;
+                            kMode = 0;
                             SpotResume();
 
-                            if (MObj[i].Reg[Data->P[plr].Port[i]].sNum > 0) {
+                            if (MObjReg.sNum > 0) {
+                                index = MObjReg.sNum;
+                                Count = pOutline[index].Count;
                                 
-                        		index = MObj[i].Reg[Data->P[plr].Port[i]].sNum;
-				                Count = pOutline[index].Count;
-				                bone = new uint16_t[pOutline[index].bone.size()];
-                    			std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone);                                
+                                std::unique_ptr<uint16_t[]> bone = std::make_unique<uint16_t[]>(pOutline[index].bone.size());
+                                std::copy(pOutline[index].bone.begin(), pOutline[index].bone.end(), bone.get());                                
 
-                                PortOutLine(Count, bone, 1);
-                                delete [] bone;
+                                PortOutLine(Count, bone.get(), 1);
                             }
 
                             while (mousebuttons == 1) {
@@ -1213,7 +1168,7 @@ void Port(char plr)
                 kEnt++;
             }
         } while ((kMode == 0 && i < S_MOBJ && i >= 0) 
-    	  || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
+                 || (kMode == 1 && kEnt < S_MOBJ && kEnt >= 0));
     }  // while
 }
 
@@ -1225,7 +1180,6 @@ void Port(char plr)
  */
 char PortSel(char plr, char loc)
 {
-    int MisOK;
     Vab_Spot = 0;  // clear the damn thing.
 
     switch (loc) {
@@ -1399,9 +1353,10 @@ char PortSel(char plr, char loc)
         return pREDRAW;
 
     case PORT_MissionControl:
+        {
         helpText = "i018";
         keyHelpText = "k018";
-        MisOK = MissionStatus(plr);
+        int MisOK = MissionStatus(plr);
 
         if (MisOK == MISSIONS_NONE) {
             Help("i104");
@@ -1414,7 +1369,7 @@ char PortSel(char plr, char loc)
         }
 
         return pNOFADE;
-
+        }
     case PORT_ViewingStand:
         helpText = "i017";
         keyHelpText = "k017";
@@ -1483,16 +1438,14 @@ char PortSel(char plr, char loc)
 }
 
 
-char Request(char plr, const char *s, char md)
+char Request(char plr, const char* s, char md)
 {
-    char i;
     display::LegacySurface local(196, 84);
 
     if (md > 0) {  // Save Buffer
         local.copyFrom(display::graphics.legacyScreen(), 85, 52, 280, 135);
     }
 
-    i = strlen(s) >> 1;
     display::graphics.setForegroundColor(0);
     ShBox(85, 52, 249, 135);
     IOBox(170, 103, 243, 130);
@@ -1505,8 +1458,10 @@ char Request(char plr, const char *s, char md)
     display::graphics.setForegroundColor(11);
 
     if (md == 6)  {
+        char i = strlen(s) >> 1;
         draw_string(166 - i * 7, 65, s);
     } else {
+        char i = strlen(s) >> 1;
         draw_heading(166 - i * 10, 65, &s[0], 0, -1);
     }
 
@@ -1524,7 +1479,7 @@ char Request(char plr, const char *s, char md)
         }
     }
 
-    i = 2;
+    int i = 2;
 
     while (i == 2) {
         if (md != 6) {
@@ -1573,14 +1528,15 @@ char Request(char plr, const char *s, char md)
  */
 char MisReq(char plr)
 {
-    int i, num = 0;
     display::LegacySurface local(184, 132);
 
     local.copyFrom(display::graphics.legacyScreen(), 53, 29, 236, 160);
 
-    for (i = 0; i < 3; i++) {
-        if ((Data->P[plr].Mission[i].MissionCode) &&
-            (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0)) {
+    int num = 0;
+    for (int i = 0; i < 3; i++) {
+        auto& mission = Data->P[plr].Mission[i];
+        if ((mission.MissionCode != Mission_None)
+            && (mission.Hard[Mission_PrimaryBooster] == 0)) {
             num++;
         }
     }
@@ -1619,29 +1575,30 @@ char MisReq(char plr)
 
     display::graphics.setForegroundColor(1);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
+        auto& mission = Data->P[plr].Mission[i];
         draw_string(68, 59 + 20 * i, "PAD ");
         draw_character(0x41 + i);
         draw_string(0, 0, ": ");
 
-        if (Data->P[plr].Mission[i].MissionCode) {
-            draw_string(0, 0, &Data->P[plr].Mission[i].Name[0]);
+        if (mission.MissionCode == Mission_None) continue;
+        
+        draw_string(0, 0, &mission.Name[0]);
 
-            if (Data->P[plr].Mission[i].Men > 0) {
-                draw_string(86, 65 + 20 * i, "MANNED MISSION");
-            } else {
-                draw_string(86, 65 + 20 * i, "UNMANNED MISSION");
-            }
-
-            if (Data->P[plr].Mission[i].Hard[Mission_PrimaryBooster] == 0) {
-                display::graphics.setForegroundColor(9);
-                draw_string(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
-            } else {
-                draw_string(86, 71 + 20 * i, "HARDWARE ASSIGNED");
-            }
-
-            display::graphics.setForegroundColor(1);
+        if (mission.Men > 0) {
+            draw_string(86, 65 + 20 * i, "MANNED MISSION");
+        } else {
+            draw_string(86, 65 + 20 * i, "UNMANNED MISSION");
         }
+
+        if (mission.Hard[Mission_PrimaryBooster] == 0) {
+            display::graphics.setForegroundColor(9);
+            draw_string(86, 71 + 20 * i, "HARDWARE UNASSIGNED");
+        } else {
+            draw_string(86, 71 + 20 * i, "HARDWARE ASSIGNED");
+        }
+
+        display::graphics.setForegroundColor(1);
     }
 
     while (1) {
@@ -1656,7 +1613,7 @@ char MisReq(char plr)
         }
     }
 
-    i = 2;
+    int i = 2;
 
     while (i == 2) {
         if (plr == 0) {
@@ -1699,19 +1656,16 @@ char MisReq(char plr)
 
 int SpaceportAnimationEntry(int plr)
 {
-    bool helipadBuilt = Data->P[plr].Port[PORT_Helipad] > 0;
-    bool crewInTraining = false;
+    auto& pData = Data->P[plr];
+    bool helipadBuilt = pData.Port[PORT_Helipad] > 0;
 
-    for (int i = 0; i < Data->P[plr].AstroCount; i++) {
-        if (Data->P[plr].Pool[i].Status >= AST_ST_TRAIN_BASIC_2) {
-            crewInTraining = true;
-        }
-    }
+    bool crewInTraining = std::any_of(pData.Pool, pData.Pool + pData.AstroCount,
+                                      [](auto& spaceman){return spaceman.Status >= AST_ST_TRAIN_BASIC_2;});
 
     int roll = brandom(1000);
 
     if (xMODE & xMODE_CLOUDS) {
-        if (plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+        if (plr == 0 && pData.Port[PORT_VAB] == 0) {
             return USA_STORM_CLOUDS;
         } else if (plr == 1) {
             return SOV_STORM_CLOUDS;
@@ -1722,7 +1676,7 @@ int SpaceportAnimationEntry(int plr)
     } else if (crewInTraining && helipadBuilt) {
         return plr == 0 ? USA_LM_TEST : SOV_LM_TEST;
     } else if (roll < 150) {
-        if (plr == 1 && Data->P[plr].Port[PORT_Airfield] == 1) {
+        if (plr == 1 && pData.Port[PORT_Airfield] == 1) {
             return SOV_NEW_PLANE;
         } else {
             return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
@@ -1737,10 +1691,11 @@ int SpaceportAnimationEntry(int plr)
 
 int SpaceportAnimationOngoing(int plr)
 {
+    auto& port = Data->P[plr].Port;
     int roll = brandom(100);
 
-    if (Vab_Spot == 1 && Data->P[plr].Port[PORT_VAB] == 2) {
-        Data->P[plr].Port[PORT_LaunchPad_A] = 1;
+    if (Vab_Spot == 1 && port[PORT_VAB] == 2) {
+        port[PORT_LaunchPad_A] = 1;
 
         if (plr == 0) {
             if (roll <= 60) {
@@ -1751,7 +1706,7 @@ int SpaceportAnimationOngoing(int plr)
         } else if (plr == 1) {
             return SOV_ROCKET_TO_PAD;
         }
-    } else if (Vab_Spot == 4 && plr == 0 && Data->P[plr].Port[PORT_VAB] == 0) {
+    } else if (Vab_Spot == 4 && plr == 0 && port[PORT_VAB] == 0) {
         return USA_ROTATING_CRANE;
     } else if (Vab_Spot == 2 && plr == 1) {
         return SOV_GATE;
@@ -1762,7 +1717,7 @@ int SpaceportAnimationOngoing(int plr)
             return USA_TRACKING;
         }
     } else if (roll < 30) {
-        if (plr == 1 && Data->P[plr].Port[PORT_MedicalCtr] == 1) {
+        if (plr == 1 && port[PORT_MedicalCtr] == 1) {
             return SOV_NEW_PLANE;
         } else {
             return plr == 0 ? USA_PLANE_FLY_BY : SOV_PLANE_FLY_BY;
@@ -1779,17 +1734,16 @@ int SpaceportAnimationOngoing(int plr)
 
 // Deserialize Count and bone data in pOutline vector
 void LoadPOutline(int plr) {
-	
-	std::string filename;
-	filename = (plr == 0) ? "usa_port.json" : "sov_port.json";
-	std::ifstream file(locate_file(filename.c_str(), FT_DATA));
-	  if (!file) {
-	  throw std::runtime_error(filename + " could not be opened.");  
-	}
+    std::string filename = (plr == 0) ? "usa_port.json" 
+                                      : "sov_port.json";
+    std::ifstream file(locate_file(filename.c_str(), FT_DATA));
+    if (!file) {
+        throw std::runtime_error(filename + " could not be opened.");  
+    }
 
-	cereal::JSONInputArchive ar(file);
-	ar(CEREAL_NVP(pOutline));
-	INFO1("pOutline succesfully uploaded.");
+    cereal::JSONInputArchive ar{file};
+    ar(CEREAL_NVP(pOutline));
+    LOG_INFO("pOutline succesfully uploaded.");
 }
 
 
