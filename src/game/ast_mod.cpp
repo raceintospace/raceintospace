@@ -45,11 +45,10 @@ enum EditorMode {
     EDITOR_SKILLS
 };
 
-
 bool Clicked(int x1, int y1, int x2, int y2);
-void DisplayRecruit(int plr, const struct ManPool &recruit);
+void DisplayRecruit(int plr, const ManPool& recruit);
 void DisplayRoster(int plr, int selected, int bar,
-                   const std::vector<struct ManPool> &roster);
+                   const std::vector<ManPool>& roster);
 void DisplaySkillRating(int rating);
 void DrawArrows(int x, int y);
 void DrawEditorMode(EditorMode mode);
@@ -57,13 +56,13 @@ void DrawInterface();
 void DrawNameEditor();
 void DrawSkillEditor();
 void DrawSkillSelect(SkillSelection button, bool selected);
-void ExportRoster(const std::vector<struct ManPool> &usaRoster,
-                  const std::vector<struct ManPool> &sovRoster);
-std::string LaunchNameEditor(const struct ManPool &recruit);
-std::vector<struct ManPool> LoadRoster(FILE *file, int plr);
-void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
+void ExportRoster(const std::vector<ManPool>& usaRoster,
+                  const std::vector<ManPool>& sovRoster);
+std::string LaunchNameEditor(const ManPool& recruit);
+std::vector<ManPool> LoadRoster(FILE* file, int plr);
+void SetSkillLevel(ManPool& recruit, SkillSelection skill,
                    int rating);
-int SkillLevel(const struct ManPool &recruit, SkillSelection skill);
+int SkillLevel(const ManPool& recruit, SkillSelection skill);
 };
 
 
@@ -104,26 +103,22 @@ void AstronautModification()
 
     // Would prefer to instantiate rosters with call,
     // but can't do that within the try...catch scope.
-    std::vector<struct ManPool> usaRoster;
-    std::vector<struct ManPool> sovRoster;
-    std::vector<struct ManPool> all;
+    std::vector<ManPool> usaRoster;
+    std::vector<ManPool> sovRoster;
+    std::vector<ManPool> all;
 
     {
         try {
-
-            if(!locate_file("user.json", FT_SAVE_CHECK).empty()) {
-                bool useOriginal = Help("I105") > 0;
-
-                if (useOriginal) {
+            if(! locate_file("user.json", FT_SAVE_CHECK).empty()) {
+                if (Help("I105") > 0) {
                     DESERIALIZE_JSON_FILE(&all, locate_file("crew.json", FT_DATA));
                 }
                 else {
                     DESERIALIZE_JSON_FILE(&all, locate_file("user.json", FT_SAVE));
                 }
-
             } else {
-            // Should this be CNOTICE2?
-                CINFO2(filesys,
+            // Should this be CAT_NOTICE?
+                CAT_INFO(filesys,
                        "user.json not found. Loading crew.json rosters...");
                 DESERIALIZE_JSON_FILE(&all, locate_file("crew.json", FT_DATA));
             }
@@ -132,10 +127,9 @@ void AstronautModification()
                 usaRoster.push_back(all.at(i));
                 sovRoster.push_back(all.at(i + all.size() / 2));
             }
-
         } catch (const std::exception& err) {
             // TODO: Use a pop-up error display.
-            CERROR3(filesys, "Unable to access rosters: %s", err.what());
+            CAT_ERROR(filesys, "Unable to access rosters: %s", err.what());
             return;
         }
     }
@@ -157,8 +151,9 @@ void AstronautModification()
             key = toupper(key);
         }
 
-        if (Clicked(246, 5, 314, 17) || key == K_ESCAPE ||
-            (mode != EDITOR_SKILLS && key == K_ENTER)) {
+        if (Clicked(246, 5, 314, 17)
+            || key == K_ESCAPE
+            || (mode != EDITOR_SKILLS && key == K_ENTER)) {
             // IOBox(244, 3, 316, 19);
             InBox(246, 5, 314, 17);
             WaitForMouseUp();
@@ -177,8 +172,8 @@ void AstronautModification()
                 if (proceed) {
                     try {
                         ExportRoster(usaRoster, sovRoster);
-                    } catch (IOException &err) {
-                        CERROR3(filesys, "Unable to save roster changes: %s",
+                    } catch (IOException& err) {
+                        CAT_ERROR(filesys, "Unable to save roster changes: %s",
                                 err.what());
                     }
                 }
@@ -219,7 +214,6 @@ void AstronautModification()
 
             WaitForMouseUp();
         } else if (Clicked(26, 48, 153, 114)) {
-
             // Clicked on a USA roster entry
             if (nation == 0) {
                 for (int i = 0; i < 8; i++) {
@@ -241,29 +235,28 @@ void AstronautModification()
 
             WaitForMouseUp();
         } else if (Clicked(186, 48, 313, 114)) {
-
             // Clicked on a Soviet roster entry
             if (nation == 1) {
                 for (int i = 0; i < 8; i++) {
-                    if (Clicked(187, 49 + i * 8, 312, 57 + i * 8)) {
-                        sovIndex = sovIndex + (i - sovBar);
-                        sovBar = i;
-                        DisplayRoster(nation, sovIndex, sovBar, sovRoster);
-                        DisplayRecruit(nation, sovRoster[sovIndex]);
-                        DrawSkillSelect(current, false);
-                        current = SKILL_NONE;
-                        prev = SKILL_NONE;
-                        mode = EDITOR_NAME;
-                        DrawNameEditor();
+                    if (! Clicked(187, 49 + i * 8, 312, 57 + i * 8)) continue;
+                    
+                    sovIndex = sovIndex + (i - sovBar);
+                    sovBar = i;
+                    DisplayRoster(nation, sovIndex, sovBar, sovRoster);
+                    DisplayRecruit(nation, sovRoster[sovIndex]);
+                    DrawSkillSelect(current, false);
+                    current = SKILL_NONE;
+                    prev = SKILL_NONE;
+                    mode = EDITOR_NAME;
+                    DrawNameEditor();
 
-                        break;
-                    }
+                    break;
                 }
             }
 
             WaitForMouseUp();
-        } else if (Clicked(6, 124, 42, 196) || key == 'C' ||
-                   key == 'L' || key == 'E' || key == 'D' || key == 'N') {
+        } else if (Clicked(6, 124, 42, 196) 
+                   || key == 'C' || key == 'L' || key == 'E' || key == 'D' || key == 'N') {
             if (nation >= 0 && nation < NUM_PLAYERS) {
                 int selection = SKILL_NONE;
 
@@ -312,216 +305,192 @@ void AstronautModification()
                     WaitForMouseUp();
                 }
             }
-        } else if (Clicked(6, 49, 18, 80) ||
-                   (nation == 0 && key == UP_ARROW)) {
+        } else if (Clicked(6, 49, 18, 80)
+                   || (nation == 0 && key == UP_ARROW)) {
+            if (nation == 1) continue;
+            if (usaIndex <= 0) continue;
+            
+            InBox(6, 49, 18, 80);
 
-            if (nation == 0 && usaIndex > 0) {
-                InBox(6, 49, 18, 80);
+            do {
+                usaIndex--;
 
-                do {
-                    usaIndex--;
+                if (usaBar > 0) {
+                    usaBar--;
+                }
 
-                    if (usaBar > 0) {
-                        usaBar--;
-                    }
+                DisplayRoster(nation, usaIndex, usaBar, usaRoster);
+                DisplayRecruit(nation, usaRoster[usaIndex]);
+                DrawSkillSelect(current, false);
+                current = SKILL_NONE;
+                prev = SKILL_NONE;
+                mode = EDITOR_NAME;
+                DrawNameEditor();
+                delay(50);
 
-                    DisplayRoster(nation, usaIndex, usaBar, usaRoster);
-                    DisplayRecruit(nation, usaRoster[usaIndex]);
-                    DrawSkillSelect(current, false);
-                    current = SKILL_NONE;
-                    prev = SKILL_NONE;
-                    mode = EDITOR_NAME;
-                    DrawNameEditor();
-                    delay(50);
+                if (mousebuttons > 0) {
+                    GetMouse();
+                }
+            } while (mousebuttons > 0 && usaIndex > 0);
 
-                    if (mousebuttons > 0) {
-                        GetMouse();
-                    }
-                } while (mousebuttons > 0 && usaIndex > 0);
+            OutBox(6, 49, 18, 80);
+        } else if (Clicked(6, 82, 18, 113) 
+                   || (nation == 0 && key == DN_ARROW)) {
+            if (nation == 1) continue;
+            if (usaIndex >= usaRoster.size() - 1) continue;
+            
+            InBox(6, 82, 18, 113);
 
-                OutBox(6, 49, 18, 80);
-            }
+            do {
+                usaIndex++;
 
-        } else if (Clicked(6, 82, 18, 113) ||
-                   (nation == 0 && key == DN_ARROW)) {
+                if (usaBar < 7) {
+                    usaBar++;
+                }
 
-            if (nation == 0 && usaIndex < usaRoster.size() - 1) {
-                InBox(6, 82, 18, 113);
+                DisplayRoster(nation, usaIndex, usaBar, usaRoster);
+                DisplayRecruit(nation, usaRoster[usaIndex]);
+                DrawSkillSelect(current, false);
+                current = SKILL_NONE;
+                prev = SKILL_NONE;
+                mode = EDITOR_NAME;
+                DrawNameEditor();
+                delay(50);
 
-                do {
-                    usaIndex++;
+                if (mousebuttons > 0) {
+                    GetMouse();
+                }
+            } while (mousebuttons > 0 &&
+                     usaIndex < usaRoster.size() - 1);
 
-                    if (usaBar < 7) {
-                        usaBar++;
-                    }
+            OutBox(6, 82, 18, 113);
+        } else if (Clicked(166, 49, 178, 80)
+                   || (nation == 1 && key == UP_ARROW)) {
+            if (nation == 0) continue;
+            if (sovIndex <= 0) continue;
+            
+            InBox(166, 49, 178, 80);
 
-                    DisplayRoster(nation, usaIndex, usaBar, usaRoster);
-                    DisplayRecruit(nation, usaRoster[usaIndex]);
-                    DrawSkillSelect(current, false);
-                    current = SKILL_NONE;
-                    prev = SKILL_NONE;
-                    mode = EDITOR_NAME;
-                    DrawNameEditor();
-                    delay(50);
+            do {
+                sovIndex--;
 
-                    if (mousebuttons > 0) {
-                        GetMouse();
-                    }
-                } while (mousebuttons > 0 &&
-                         usaIndex < usaRoster.size() - 1);
+                if (sovBar > 0) {
+                    sovBar--;
+                }
 
-                OutBox(6, 82, 18, 113);
-            }
+                DisplayRoster(nation, sovIndex, sovBar, sovRoster);
+                DisplayRecruit(nation, sovRoster[sovIndex]);
+                DrawSkillSelect(current, false);
+                current = SKILL_NONE;
+                prev = SKILL_NONE;
+                mode = EDITOR_NAME;
+                DrawNameEditor();
+                delay(50);
 
-        } else if (Clicked(166, 49, 178, 80) ||
-                   (nation == 1 && key == UP_ARROW)) {
+                if (mousebuttons > 0) {
+                    GetMouse();
+                }
+            } while (mousebuttons > 0 && sovIndex > 0);
 
-            if (nation == 1 && sovIndex > 0) {
-                InBox(166, 49, 178, 80);
+            OutBox(166, 49, 178, 80);
+        } else if (Clicked(166, 82, 178, 113) 
+                   || (nation == 1 && key == DN_ARROW)) {
+            if (nation == 0) continue;
+            if (sovIndex >= sovRoster.size() - 1) continue;
+            
+            InBox(166, 82, 178, 113);
 
-                do {
-                    sovIndex--;
+            do {
+                sovIndex++;
 
-                    if (sovBar > 0) {
-                        sovBar--;
-                    }
+                if (sovBar < 7) {
+                    sovBar++;
+                }
 
-                    DisplayRoster(nation, sovIndex, sovBar, sovRoster);
-                    DisplayRecruit(nation, sovRoster[sovIndex]);
-                    DrawSkillSelect(current, false);
-                    current = SKILL_NONE;
-                    prev = SKILL_NONE;
-                    mode = EDITOR_NAME;
-                    DrawNameEditor();
-                    delay(50);
+                DisplayRoster(nation, sovIndex, sovBar, sovRoster);
+                DisplayRecruit(nation, sovRoster[sovIndex]);
+                DrawSkillSelect(current, false);
+                current = SKILL_NONE;
+                prev = SKILL_NONE;
+                mode = EDITOR_NAME;
+                DrawNameEditor();
+                delay(50);
 
-                    if (mousebuttons > 0) {
-                        GetMouse();
-                    }
-                } while (mousebuttons > 0 && sovIndex > 0);
+                if (mousebuttons > 0) {
+                    GetMouse();
+                }
+            } while (mousebuttons > 0 
+                     && sovIndex < sovRoster.size() - 1);
 
-                OutBox(166, 49, 178, 80);
-            }
-
-        } else if (Clicked(166, 82, 178, 113) ||
-                   (nation == 1 && key == DN_ARROW)) {
-
-            if (nation == 1 && sovIndex < sovRoster.size() - 1) {
-                InBox(166, 82, 178, 113);
-
-                do {
-                    sovIndex++;
-
-                    if (sovBar < 7) {
-                        sovBar++;
-                    }
-
-                    DisplayRoster(nation, sovIndex, sovBar, sovRoster);
-                    DisplayRecruit(nation, sovRoster[sovIndex]);
-                    DrawSkillSelect(current, false);
-                    current = SKILL_NONE;
-                    prev = SKILL_NONE;
-                    mode = EDITOR_NAME;
-                    DrawNameEditor();
-                    delay(50);
-
-                    if (mousebuttons > 0) {
-                        GetMouse();
-                    }
-                } while (mousebuttons > 0 &&
-                         sovIndex < sovRoster.size() - 1);
-
-                OutBox(166, 82, 178, 113);
-            }
-
+            OutBox(166, 82, 178, 113);
         } else if (key == K_PGUP) {
             if (nation == 0) {
                 usaIndex = MAX(usaIndex - 7, 0);
                 usaBar = 0;
                 DisplayRoster(nation, usaIndex, usaBar, usaRoster);
                 DisplayRecruit(nation, usaRoster[usaIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             } else if (nation == 1) {
                 sovIndex = MAX(sovIndex - 7, 0);
                 sovBar = 0;
                 DisplayRoster(nation, sovIndex, sovBar, sovRoster);
                 DisplayRecruit(nation, sovRoster[sovIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             }
+            DrawSkillSelect(current, false);
+            current = SKILL_NONE;
+            prev = SKILL_NONE;
+            mode = EDITOR_NAME;
+            DrawNameEditor();
         } else if (key == K_PGDN) {
             if (nation == 0) {
                 usaIndex = MIN(usaIndex + 7, usaRoster.size() - 1);
                 usaBar = 7;
                 DisplayRoster(nation, usaIndex, usaBar, usaRoster);
                 DisplayRecruit(nation, usaRoster[usaIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             } else if (nation == 1) {
                 sovIndex = MIN(sovIndex + 7, usaRoster.size() - 1);
                 sovBar = 7;
                 DisplayRoster(nation, sovIndex, sovBar, sovRoster);
                 DisplayRecruit(nation, sovRoster[sovIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             }
+            DrawSkillSelect(current, false);
+            current = SKILL_NONE;
+            prev = SKILL_NONE;
+            mode = EDITOR_NAME;
+            DrawNameEditor();
         } else if (key == K_HOME) {
             if (nation == 0) {
                 usaIndex = 0;
                 usaBar = 0;
                 DisplayRoster(nation, usaIndex, usaBar, usaRoster);
                 DisplayRecruit(nation, usaRoster[usaIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             } else if (nation == 1) {
                 sovIndex = 0;
                 sovBar = 0;
                 DisplayRoster(nation, sovIndex, sovBar, sovRoster);
                 DisplayRecruit(nation, sovRoster[sovIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             }
+            DrawSkillSelect(current, false);
+            current = SKILL_NONE;
+            prev = SKILL_NONE;
+            mode = EDITOR_NAME;
+            DrawNameEditor();
         } else if (key == K_END) {
             if (nation == 0) {
                 usaIndex = usaRoster.size() - 1;
                 usaBar = MIN(7, usaIndex);
                 DisplayRoster(nation, usaIndex, usaBar, usaRoster);
                 DisplayRecruit(nation, usaRoster[usaIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             } else if (nation == 1) {
                 sovIndex = sovRoster.size() - 1;
                 sovBar = MIN(7, sovIndex);
                 DisplayRoster(nation, sovIndex, sovBar, sovRoster);
                 DisplayRecruit(nation, sovRoster[sovIndex]);
-                DrawSkillSelect(current, false);
-                current = SKILL_NONE;
-                prev = SKILL_NONE;
-                mode = EDITOR_NAME;
-                DrawNameEditor();
             }
+            DrawSkillSelect(current, false);
+            current = SKILL_NONE;
+            prev = SKILL_NONE;
+            mode = EDITOR_NAME;
+            DrawNameEditor();
         } else if (mode == EDITOR_SKILLS) {
             if (Clicked(209, 168, 251, 176) || key == '-') {
                 // IOBox(207, 166, 253, 178);
@@ -584,16 +553,17 @@ void AstronautModification()
                 DrawNameEditor();
 
             }
-        } else if (mode == EDITOR_NAME &&
-                   (Clicked(208, 156, 305, 167) || key == K_SPACE)) {
+        } else if (mode == EDITOR_NAME
+                   && (Clicked(208, 156, 305, 167) 
+                       || key == K_SPACE)) {
             WaitForMouseUp();
 
             if (key) {
                 delay(100);
             }
 
-            struct ManPool &recruit = nation ? sovRoster[sovIndex] :
-                                          usaRoster[usaIndex];
+            ManPool& recruit = nation ? sovRoster[sovIndex]
+                                      : usaRoster[usaIndex];
 
             std::string name = LaunchNameEditor(recruit);
 
@@ -613,8 +583,6 @@ void AstronautModification()
             DrawNameEditor();
         }
     }
-
-    return;
 }
 
 
@@ -656,7 +624,7 @@ bool Clicked(int x1, int y1, int x2, int y2)
  *
  * This does not handle full 14-character names well.
  */
-void DisplayRecruit(int plr, const struct ManPool &recruit)
+void DisplayRecruit(int plr, const ManPool& recruit)
 {
     fill_rectangle(100, 134, 185, 140, 3);
     fill_rectangle(125, 150, 135, 187, 3);
@@ -673,7 +641,7 @@ void DisplayRecruit(int plr, const struct ManPool &recruit)
 
 
 void DisplayRoster(int plr, int selected, int bar,
-                   const std::vector<struct ManPool> &roster)
+                   const std::vector<ManPool>& roster)
 {
     assert(bar >= 0 && bar < 8);
     assert(plr >= 0 && plr < NUM_PLAYERS);
@@ -903,24 +871,24 @@ void DrawSkillSelect(SkillSelection button, bool selected)
  *
  * TODO: Check the return values of the fwrite commands.
  */
-void ExportRoster(const std::vector<struct ManPool> &usaRoster,
-                  const std::vector<struct ManPool> &sovRoster)
+void ExportRoster(const std::vector<ManPool>& usaRoster,
+                  const std::vector<ManPool>& sovRoster)
 {
     if (usaRoster.size() != ROSTER_SIZE) {
         // TODO: Throw an exception instead?
-        CERROR4(baris, "USA roster is %d entries, expecting %d",
+        CAT_ERROR(baris, "USA roster is %d entries, expecting %d",
                 usaRoster.size(), ROSTER_SIZE);
         return;
     }
 
     if (sovRoster.size() != ROSTER_SIZE) {
         // TODO: Throw an exception instead?
-        CERROR4(baris, "Soviet roster is %d entries, expecting %d",
+        CAT_ERROR(baris, "Soviet roster is %d entries, expecting %d",
                 sovRoster.size(), ROSTER_SIZE);
         return;
     }
 
-    std::vector<struct ManPool> all = usaRoster;
+    std::vector<ManPool> all = usaRoster;
     all.insert(all.end(), sovRoster.begin(), sovRoster.end());
 
     std::stringstream stream;
@@ -931,13 +899,12 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
         archive(all);
     }
 
-    FILE *file = sOpen("user.json", "w", FT_SAVE);
-
+    FILE* file = sOpen("user.json", "w", FT_SAVE);
     if (file == nullptr) {
         throw IOException("Unable to open file user.json for writing");
-    } else {
-        CINFO2(filesys, "Exporting custom rosters to user.json...");
     }
+    
+    CAT_INFO(filesys, "Exporting custom rosters to user.json...");
 
     std::string str = stream.str();
     fwrite(str.data(), sizeof(char), str.size(), file);
@@ -951,7 +918,7 @@ void ExportRoster(const std::vector<struct ManPool> &usaRoster,
  *
  * \return  the new name (original if cancelled).
  */
-std::string LaunchNameEditor(const struct ManPool &recruit)
+std::string LaunchNameEditor(const ManPool& recruit)
 {
     const int maxLength = sizeof(recruit.Name) - 1;
     std::string originalName(
@@ -980,26 +947,20 @@ std::string LaunchNameEditor(const struct ManPool &recruit)
         }
 
         if (key & 0x00ff) {
-
             if ((name.length() < maxLength)
-                && ((key == ' ') || ((key >= 'A' && key <= 'Z')) ||
-                    (key >= '0' && key <= '9'))) {
+                && ((key == ' ') 
+                    || (key >= 'A' && key <= 'Z')
+                    || (key >= '0' && key <= '9'))) {
                 name.push_back(key);
-                fill_rectangle(208, 156, 305, 167, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(211, 164, name.c_str());
-                display::graphics.setForegroundColor(9);
-                draw_character(0x14);
-                key = 0;
-            } else if (name.length() && key == 0x08) {
+            } else if (name.length() > 0 && key == 0x08) {
                 name.erase(name.end() - 1);
-                fill_rectangle(208, 156, 305, 167, 0);
-                display::graphics.setForegroundColor(1);
-                draw_string(211, 164, name.c_str());
-                display::graphics.setForegroundColor(9);
-                draw_character(0x14);
-                key = 0;
             }
+            fill_rectangle(208, 156, 305, 167, 0);
+            display::graphics.setForegroundColor(1);
+            draw_string(211, 164, name.c_str());
+            display::graphics.setForegroundColor(9);
+            draw_character(0x14);
+            key = 0;
         }
     }
 
@@ -1012,13 +973,12 @@ std::string LaunchNameEditor(const struct ManPool &recruit)
  *
  *
  */
-std::vector<struct ManPool> LoadRoster(FILE *file, int plr)
+std::vector<ManPool> LoadRoster(FILE* file, int plr)
 {
     assert(plr >= 0 && plr < NUM_PLAYERS);
 
-    struct ManPool recruit;
-
-    std::vector<struct ManPool> roster;
+    ManPool recruit;
+    std::vector<ManPool> roster;
 
     fseek(file, plr * (sizeof(struct ManPool)) * ROSTER_SIZE, SEEK_SET);
 
@@ -1035,7 +995,7 @@ std::vector<struct ManPool> LoadRoster(FILE *file, int plr)
 }
 
 
-void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
+void SetSkillLevel(ManPool& recruit, SkillSelection skill,
                    int rating)
 {
     assert(skill >= SKILL_CAP && skill <= SKILL_ENDR);
@@ -1063,40 +1023,35 @@ void SetSkillLevel(struct ManPool &recruit, SkillSelection skill,
         break;
 
     default:
-        CWARNING3(baris, "Unrecognized value %d for parameter `skill`",
+        CAT_WARNING(baris, "Unrecognized value %d for parameter `skill`",
                   skill);
         break;
     }
 }
 
 
-int SkillLevel(const struct ManPool &recruit, SkillSelection skill)
+int SkillLevel(const ManPool& recruit, SkillSelection skill)
 {
     assert(skill >= SKILL_CAP && skill <= SKILL_ENDR);
 
     switch (skill) {
     case SKILL_CAP:
         return recruit.Cap;
-        break;
 
     case SKILL_LM:
         return recruit.LM;
-        break;
 
     case SKILL_EVA:
         return recruit.EVA;
-        break;
 
     case SKILL_DOCK:
         return recruit.Docking;
-        break;
 
     case SKILL_ENDR:
         return recruit.Endurance;
-        break;
 
     default:
-        CWARNING3(baris, "Unrecognized value %d for parameter `skill`",
+        CAT_WARNING(baris, "Unrecognized value %d for parameter `skill`",
                   skill);
         break;
     }
