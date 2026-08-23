@@ -23,21 +23,6 @@ extern "C" {
     int game_main(int argc, char *argv[]);
 }
 
-#ifdef __GNUG__
-// suppress literal-strings-as-char* warning
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
-
-#if __clang__
-// suppress "char as array subscript" warning
-#pragma clang diagnostic ignored "-Wchar-subscripts"
-#endif
-
-#ifdef _WIN32
-// Note, this cannot be removed until the packing problem (below) is worked out
-#include <winsock2.h>
-#endif
-
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -49,30 +34,7 @@ extern "C" {
 #include "proto.h"    // prototypes and general defines
 #include "music.h"    // defines for music names
 
-/* Originally, the code relied upon tight struct packing, because
- * file data was read directly into the memory space of data structures.
- * An open-ended pragma was used to enforce tight packing. However,
- * this created several problems:
- *   - It caused problems in gamedata.h
- *   - Header files with structs/classes defined could be interpreted
- *   differently by code in multiple files, with one section of code
- *   treating the struct as packed and another as unpacked
- *   - It locks the structs/classes so they cannot be modified, which
- *   is inconvenient for major data types.
- *   - It dictated include ordering.
- *
- * If restoring tight packing, define ALTERED_STRUCTURE_PACKING as
- * some files - gamedata.h - do not like the tight packing and check
- * for ALTERED_STRUCTURE_PACKING to see if it is enabled.
- */
-// #pragma pack( 1 )
-
 #include "data.h"     // main data structures
-
-/* get the alignment back to defaults */
-/* #pragma pack() */
-// #define ALTERED_STRUCTURE_PACKING
-
 
 #include "macros.h"     // Collected Macros
 #include "fs.h"
