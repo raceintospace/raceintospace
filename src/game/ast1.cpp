@@ -41,6 +41,7 @@
 
 #include "ast1.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "display/graphics.h"
@@ -53,7 +54,7 @@
 #include "options.h"   //Naut Randomize && Naut Compatibility, Nikakd, 10/8/10
 #include "pace.h"
 #include "place.h"
-
+#include "start.h"
 
 enum DialogueResponse {
     DLG_RESPONSE_YES = 1,
@@ -71,7 +72,7 @@ enum ProfileDisplay {
     SHOW_ENDURANCE = 0x10
 };
 
-  constexpr std::array<char* , 7>AstService = {"CIVILIAN", "AIR FORCE", \
+  constexpr std::array<const char* , 7>AstService = {"CIVILIAN", "AIR FORCE", \
                                                "NAVY", "MARINE CORPS",  \
                                                "S. ROCKET FORCE",       \
                                                "AIR DEF. FORCE", "FOREIGN"};
@@ -86,7 +87,7 @@ void DispEight(int now, int loc);
 void DispEight2(int nw, int lc, int cnt);
 void DrawAstCheck(char plr);
 void DrawAstSel(char plr);
-void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
+void DrawRecruitProfile(int x, int y, const ManPool* recruit,
                         int display);
 int ProfileMask(int player);
 void RandomizeNauts();
@@ -156,13 +157,11 @@ int AstSelectPrompt(char plr, int cost)
  */
 void DispEight(int now, int loc)
 {
-    int i, start;
-    start = now - loc;
-
     fill_rectangle(186, 129, 314, 195, 0);  // Blank display area
     ShBox(187, 130 + loc * 8, 313, 138 + loc * 8);  // Selection bar
 
-    for (i = start; i < start + 8; i++) {
+    int start = now - loc;
+    for (int i = start; i < start + 8; i++) {
         if (MCol[i] == 1) {
             display::graphics.setForegroundColor(8);
         } else {
@@ -171,8 +170,6 @@ void DispEight(int now, int loc)
 
         draw_string(189, 136 + (i - start) * 8, &Men[i].Name[0]);
     }
-
-    return;
 } /* End of Disp8 */
 
 
@@ -185,95 +182,59 @@ void DispEight(int now, int loc)
  */
 void DispEight2(int nw, int lc, int cnt)
 {
-    int i, start, num;
-    start = nw - lc;
-    num = (cnt < 8) ? cnt : 8;
-
     fill_rectangle(26, 129, 153, 195, 0);
     ShBox(26, 130 + lc * 8, 152, 138 + lc * 8);
 
     display::graphics.setForegroundColor(11);
 
-    for (i = start; i < start + num; i++) {
-        if (sel[i] != -1) {
-            display::graphics.setForegroundColor(6 + (Men[sel[i]].Sex + 1) * 6);
-            draw_string(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
-        }
+    int start = nw - lc;
+    int num = std::min(cnt, 8);
+    for (int i = start; i < start + num; i++) {
+        if (sel[i] == -1) continue;
+        
+        display::graphics.setForegroundColor(6 + (Men[sel[i]].Sex + 1) * 6);
+        draw_string(28, 136 + (i - start) * 8, &Men[ sel[i] ].Name[0]);
     }
-
-    return;
 }
 
 
 void DrawAstCheck(char plr)
 {
-    int i, pos, ad = 0;
-
-    pos = 0;  /* XXX check uninitialized */
-
-    if (Data->P[plr].AstroDelay > 0) {
-        ad = 1;
-    }
-
+    auto& pData = Data->P[plr];
+    
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
+    
     ShBox(80, 44, 237, 155);
     InBox(87, 49, 230, 103);
     fill_rectangle(88, 50, 229, 102, 7 + plr * 3);
     IOBox(98, 133, 150, 149);
     IOBox(166, 133, 218, 149);
+    
     display::graphics.setForegroundColor(5);
-
     if (plr == 0) {
         draw_string(99, 60, "ASTRONAUT");
     } else {
         draw_string(99, 60, "COSMONAUT");
     }
-
     draw_string(0, 0, " RECRUITMENT");
+    
     display::graphics.setForegroundColor(11);
     draw_string(100, 73, "GROUP ");
-
-    switch (Data->P[plr].AstroLevel) {
-    case 0:
-        draw_string(0, 0, "I");
-        pos = ASTRO_POOL_LVL1;
-        break;
-
-    case 1:
-        draw_string(0, 0, "II");
-        pos = ASTRO_POOL_LVL2;
-        break;
-
-    case 2:
-        draw_string(0, 0, "III");
-        pos = ASTRO_POOL_LVL3;
-        break;
-
-    case 3:
-        draw_string(0, 0, "IV");
-        pos = ASTRO_POOL_LVL4;
-        break;
-
-    case 4:
-        draw_string(0, 0, "V");
-        pos = ASTRO_POOL_LVL5;
-        break;
-    }
-
+    draw_string(0,0, RomanNumeral(pData.AstroLevel + 1).c_str());
+    
     if (Data->Season == 0) {
         draw_string(160, 73, "SPRING 19");
     } else {
         draw_string(170, 73, "FALL 19");
     }
-
     draw_number(0, 0, Data->Year);
 
-    if (Data->P[plr].AstroLevel == 0) {
-        i = 20;
-    } else {
-        i = 15;
-    }
+    int pos_table[] = {ASTRO_POOL_LVL1, ASTRO_POOL_LVL2, ASTRO_POOL_LVL3, ASTRO_POOL_LVL4, ASTRO_POOL_LVL5};
+    int pos = pos_table[pData.AstroLevel];
+
+    int cost = (pData.AstroLevel == 0)? 20 : 15;
+    int ad = (pData.AstroDelay > 0);
 
     if (ad == 0) {
         if (pos < 10) {
@@ -281,30 +242,26 @@ void DrawAstCheck(char plr)
         } else {
             draw_number(108, 86, pos);
         }
-
         draw_string(0, 0, " POSITIONS TO FILL");
+        
         draw_string(116, 97, "COST: ");
         display::graphics.setForegroundColor(1);
-        draw_number(0, 0, i);
-        draw_string(0, 0, " MB ");
+        draw_megabucks(0, 0, cost);
         display::graphics.setForegroundColor(11);
-        draw_string(0, 0, "(OF ");
-        draw_number(0, 0, Data->P[plr].Cash);
+        draw_string(0, 0, " (OF ");
+        draw_number(0, 0, pData.Cash);
         draw_string(0, 0, ")");
     } else {
-        if (Data->P[plr].AstroDelay != 1) {
-            draw_number(114, 86, Data->P[plr].AstroDelay);
+        if (pData.AstroDelay != 1) { // TODO use draw_string(StringAlign)
+            draw_number(114, 86, pData.AstroDelay);
         } else {
-            draw_number(118, 86, Data->P[plr].AstroDelay);
+            draw_number(118, 86, pData.AstroDelay);
         }
 
-        draw_string(0, 0, " SEASON");
-
-        if (Data->P[plr].AstroDelay != 1) {
-            draw_string(0, 0, "S");
-        }
-
+        draw_string(0, 0, (pData.AstroDelay == 1) ?" SEASON"
+                                                  :" SEASONS");
         draw_string(0, 0, " TO WAIT");
+        
         draw_string(104, 97, "FOR THE NEW RECRUITS");
     }
 
@@ -325,7 +282,7 @@ void DrawAstCheck(char plr)
     }
 
     if (ad == 0) {
-        if (Data->P[plr].Cash < i) {
+        if (pData.Cash < cost) {
             draw_string(111, 113, "YOU CANNOT AFFORD");
 
             if (plr == 0) {
@@ -360,8 +317,6 @@ void DrawAstCheck(char plr)
     draw_small_flag(plr, 4, 4);
 
     FadeIn(2, 10, 0, 0);
-
-    return;
 }
 
 
@@ -370,11 +325,12 @@ void DrawAstCheck(char plr)
  */
 void DrawAstSel(char plr)
 {
-
     helpText = "i012";
     keyHelpText = "k012";
+    
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
+    
     ShBox(0, 0, 319, 22);
     ShBox(0, 24, 158, 199);
     ShBox(161, 24, 319, 199);
@@ -422,28 +378,7 @@ void DrawAstSel(char plr)
 
     display::graphics.setForegroundColor(11);
     draw_string(12, 41, "GROUP ");
-
-    switch (Data->P[plr].AstroLevel) {
-    case 0:
-        draw_string(0, 0, "I");
-        break;
-
-    case 1:
-        draw_string(0, 0, "II");
-        break;
-
-    case 2:
-        draw_string(0, 0, "III");
-        break;
-
-    case 3:
-        draw_string(0, 0, "IV");
-        break;
-
-    case 4:
-        draw_string(0, 0, "V");
-        break;
-    }
+    draw_string(0, 0, RomanNumeral(Data->P[plr].AstroLevel + 1).c_str());
 
     draw_string(185, 41, "REMAINING POSITIONS: ");
 
@@ -452,8 +387,8 @@ void DrawAstSel(char plr)
     } else {
         draw_string(98, 41, "FALL 19");
     }
-
     draw_number(0, 0, Data->Year);
+    
     display::graphics.setForegroundColor(9);
     draw_string(12, 52, "NAME:");
     draw_string(173, 52, "NAME:");
@@ -464,26 +399,32 @@ void DrawAstSel(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(54, 70, "CAPSULE PILOT:");
     draw_string(215, 70, "CAPSULE PILOT:");
+    
     display::graphics.setForegroundColor(11);
     draw_string(54, 78, "L.M. PILOT: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "--");
+    
     display::graphics.setForegroundColor(11);
     draw_string(215, 78, "L.M. PILOT: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "--");
+    
     display::graphics.setForegroundColor(11);
     draw_string(54, 86, "E.V.A.: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "--");
+    
     display::graphics.setForegroundColor(11);
     draw_string(215, 86, "E.V.A.: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "--");
+    
     display::graphics.setForegroundColor(11);
     draw_string(54, 94, "DOCKING: ");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "--");
+    
     display::graphics.setForegroundColor(11);
     draw_string(215, 94, "DOCKING: ");
     display::graphics.setForegroundColor(1);
@@ -491,16 +432,16 @@ void DrawAstSel(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(54, 102, "ENDURANCE:");
     draw_string(215, 102, "ENDURANCE:");
+    
     display::graphics.setForegroundColor(6);
     draw_string(33, 119, "D");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ISMISS APPLICANT");
+    
     display::graphics.setForegroundColor(6);
     draw_string(194, 119, "R");
     display::graphics.setForegroundColor(1);
     draw_string(0, 0, "ECRUIT APPLICANT");
-
-    return;
 }
 
 
@@ -517,7 +458,7 @@ void DrawAstSel(char plr)
  * \param recruit  the astronaut/cosmonaut or nullptr for an empty profile.
  * \param display  flags indicating which recruit skills to reveal.
  */
-void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
+void DrawRecruitProfile(int x, int y, const ManPool* recruit,
                         int display)
 {
     // Regular text has a height of 5 pixels.
@@ -538,31 +479,31 @@ void DrawRecruitProfile(int x, int y, const struct ManPool *recruit,
         draw_string(x + 48, y + 14, AstService.at(recruit->Service));
     }
 
-    if (recruit && display & SHOW_CAPSULE) {
+    if (recruit && (display & SHOW_CAPSULE)) {
         draw_number(x + 121, y + 23, recruit->Cap);
     } else {
         draw_string(x + 121, y + 23, "--");  // Capsule rating
     }
 
-    if (recruit && display & SHOW_LM) {
+    if (recruit && (display & SHOW_LM)) {
         draw_number(x + 95, y + 31, recruit->LM);
     } else {
         draw_string(x + 94, y + 31, "--");  // LM rating
     }
 
-    if (recruit && display & SHOW_EVA) {
+    if (recruit && (display & SHOW_EVA)) {
         draw_number(x + 72, y + 39, recruit->EVA);
     } else {
         draw_string(x + 71, y + 39, "--");  // EVA rating
     }
 
-    if (recruit && display & SHOW_DOCKING) {
+    if (recruit && (display & SHOW_DOCKING)) {
         draw_number(x + 88, y + 47, recruit->Docking);
     } else {
         draw_string(x + 87, y + 47, "--");  // Docking rating
     }
 
-    if (recruit && display & SHOW_ENDURANCE) {
+    if (recruit && (display & SHOW_ENDURANCE)) {
         draw_number(x + 102, y + 55, recruit->Endurance);
     } else {
         draw_string(x + 102, y + 55, "--");  // Endurance rating
@@ -598,9 +539,7 @@ int ProfileMask(int player)
 // Note: These stats are far more generous than the historical ones.
 void RandomizeNauts()
 {
-    int i;
-
-    for (i = 0; i < Men.size(); i++) {
+    for (int i = 0; i < Men.size(); i++) {
         Men[i].Cap = brandom(5);
         Men[i].LM  = brandom(5);
         Men[i].EVA = brandom(5);
@@ -625,7 +564,7 @@ void RandomizeNauts()
  */
 void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 {
-    struct Astros &recruit = Data->P[plr].Pool[pool];
+    Astros& recruit = Data->P[plr].Pool[pool];
 
     strcpy(&recruit.Name[0], &Men[candidate].Name[0]);
     recruit.Sex = Men[candidate].Sex;
@@ -689,27 +628,20 @@ void Recruit(const char plr, const uint8_t pool, const uint8_t candidate)
 
 void AstSel(char plr)
 {
-    int i, BarA, BarB, MaxMen, Index, now, now2, max, min, count,
-         ksel = 0;
-
-    bool femaleAstronautsAllowed =
-        (options.feat_female_nauts ||
-         Data->P[plr].FemaleAstronautsAllowed == 1);
-    bool femaleAstronautsRequired = Data->P[plr].FemaleAstronautsAllowed;
-
-    MaxMen = Index = now = now2 = max = min = count = 0;
+    auto& pData = Data->P[plr];
 
     music_start(M_DRUMSM);
 
-    int cost = (Data->P[plr].AstroLevel == 0) ? 20 : 15;
+    bool femaleAstronauts_Allowed =
+        (options.feat_female_nauts 
+         || pData.femaleAstronauts_Allowed == 1);
+    int cost = (pData.AstroLevel == 0) ? 20 : 15;
 
     if (AstSelectPrompt(plr, cost) != DLG_RESPONSE_YES) {
         music_stop();    /* too poor for astronauts or NO */
         return;
     }
 
-    BarA = 0;
-    BarB = 0;
     DrawAstSel(plr);
 
     memset(sel, -1, sizeof(sel));
@@ -721,45 +653,26 @@ void AstSel(char plr)
         RandomizeNauts();    //Naut Randomize, Nikakd, 10/8/10
     }
 
-    switch (Data->P[plr].AstroLevel) {
-    case 0:
-        MaxMen = femaleAstronautsAllowed ? 13 : 10;
-        MaxSel = ASTRO_POOL_LVL1;
-        Index = 0;
-        break;
+    int MaxMenWomenTable[] = {13,20,22,30,22};
+    int MaxMenTable[]      = {10,17,19,27,19};
+    int MaxMen = (femaleAstronauts_Allowed)? MaxMenWomenTable[pData.AstroLevel] 
+                                            : MaxMenTable[pData.AstroLevel];
 
-    case 1:
-        MaxMen = femaleAstronautsAllowed ? 20 : 17;
-        MaxSel = ASTRO_POOL_LVL2;
-        Index = 14;
-        break;
+    int IndexTable[]       = { 0,14,35,58,89}; 
+    int Index = IndexTable[pData.AstroLevel];
 
-    case 2:
-        MaxMen = femaleAstronautsAllowed ? 22 : 19;
-        MaxSel = ASTRO_POOL_LVL3;
-        Index = 35;
-        break;
+    bool RequiredTable[]   = { 1, 1, 1, 0, 0};
+    bool femaleAstronauts_Required = (RequiredTable[pData.AstroLevel]) ? pData.femaleAstronauts_Allowed
+                                                                       : false;
 
-    case 3:
-        MaxMen = femaleAstronautsAllowed ? 30 : 27;
-        MaxSel = ASTRO_POOL_LVL4;
-        Index = 58;
-        femaleAstronautsRequired = false;
-        break;
-
-    case 4:
-        MaxMen = femaleAstronautsAllowed ? 22 : 19;
-        MaxSel = ASTRO_POOL_LVL5;
-        Index = 89;
-        femaleAstronautsRequired = false;
-        break;
-    }
+    int MaxSelTable[] = {ASTRO_POOL_LVL1, ASTRO_POOL_LVL2, ASTRO_POOL_LVL3, ASTRO_POOL_LVL4, ASTRO_POOL_LVL5};
+    MaxSel = MaxSelTable[pData.AstroLevel];
 
     display::graphics.setForegroundColor(11);
     draw_number(292, 41, MaxSel);
 
-    Data->P[plr].Cash -= cost;
-    Data->P[plr].Spend[0][2] += cost;
+    pData.Cash -= cost;
+    pData.Spend[0][2] += cost;
 
     // A lot of the right-side astronaut selection logic depends on
     // having 8+ constant selections at all times.
@@ -769,11 +682,11 @@ void AstSel(char plr)
 
     Index += plr * Men.size() / 2;
 
-    now = Index;
-    max = Index + MaxMen;
-    min = Index;
-    now2 = 0;
-    count = 0;  /* counter for # selected */
+    // setting up 2 scrollbars
+    int ksel = 0; // this expresses which scrollbar is currently active and reacts to buttons
+    int now = Index, now2 = 0, max = Index + MaxMen, min = Index;
+    int BarA = 0, BarB = 0;
+    int count = 0;  /* counter for # selected */
 
     DispEight(now, BarB);
     DrawRecruitProfile(173, 47, &Men[now], showStats);
@@ -787,8 +700,7 @@ void AstSel(char plr)
         key = 0;
         GetMouse();
 
-        for (i = 0; i < 8; i++) {
-
+        for (int i = 0; i < 8; i++) {
             if (((x >= 188 && y >= (131 + i * 8) && x <= 312 && y <= (137 + i * 8) && mousebuttons > 0)
                  || (key == RT_ARROW && ksel == 1)) && (now - BarB + i) <= max) {
                 // Right Select Box
@@ -854,32 +766,31 @@ void AstSel(char plr)
             /* Left Up */
             InBox(6, 130, 18, 161);
 
-            for (i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) {
                 key = 0;
                 GetMouse();
                 delay(10);
 
-                if (mousebuttons == 0) {
-
-                    if (BarA == 0) {
-                        if (now2 > 0) {
-                            now2--;
-                            DispEight2(now2, BarA, count);
-                            DrawRecruitProfile(
-                                12, 47, &Men[sel[now2]], showStats);
-                        }
-                    }
-
-                    if (BarA > 0) {
-                        BarA--;
+                if (mousebuttons != 0) continue;
+                
+                if (BarA == 0) {
+                    if (now2 > 0) {
                         now2--;
                         DispEight2(now2, BarA, count);
                         DrawRecruitProfile(
                             12, 47, &Men[sel[now2]], showStats);
                     }
-
-                    i = 51;
                 }
+
+                if (BarA > 0) {
+                    BarA--;
+                    now2--;
+                    DispEight2(now2, BarA, count);
+                    DrawRecruitProfile(
+                        12, 47, &Men[sel[now2]], showStats);
+                }
+
+                break;
             }
 
             while (mousebuttons == 1 || key == UP_ARROW) {
@@ -913,34 +824,32 @@ void AstSel(char plr)
             /* Left Down */
             InBox(6, 163, 18, 194);
 
-            for (i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) {
                 key = 0;
                 GetMouse();
                 delay(10);
 
-                if (mousebuttons == 0) {
-
-                    if (BarA == 7) {
-                        if (now2 < count - 1) {
-                            now2++;
-                            DispEight2(now2, BarA, count);
-                            DrawRecruitProfile(
-                                12, 47, &Men[sel[now2]], showStats);
-                        }
+                if (mousebuttons != 0) continue;
+                if (BarA == 7) {
+                    if (now2 < count - 1) {
+                        now2++;
+                        DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
                     }
-
-                    if (BarA < 7) {
-                        if (now2 < count - 1) {
-                            BarA++;
-                            now2++;
-                            DispEight2(now2, BarA, count);
-                            DrawRecruitProfile(
-                                12, 47, &Men[sel[now2]], showStats);
-                        }
-                    }
-
-                    i = 51;
                 }
+
+                if (BarA < 7) {
+                    if (now2 < count - 1) {
+                        BarA++;
+                        now2++;
+                        DispEight2(now2, BarA, count);
+                        DrawRecruitProfile(
+                            12, 47, &Men[sel[now2]], showStats);
+                    }
+                }
+
+                break;
             }
 
             while (mousebuttons == 1 || key == DN_ARROW) {
@@ -1037,32 +946,31 @@ void AstSel(char plr)
             /* Right Up */
             InBox(167, 130, 179, 161);
 
-            for (i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) {
                 key = 0;
                 ksel = 0;
                 GetMouse();
                 delay(10);
 
-                if (mousebuttons == 0) {
-
-                    if (BarB == 0) {
-                        if (now > min) {
-                            now--;
-                            DispEight(now, BarB);
-                            DrawRecruitProfile(
-                                173, 47, &Men[now], showStats);
-                        }
-                    }
-
-                    if (BarB > 0) {
-                        BarB--;
+                if (mousebuttons != 0) continue;
+                
+                if (BarB == 0) {
+                    if (now > min) {
                         now--;
                         DispEight(now, BarB);
-                        DrawRecruitProfile(173, 47, &Men[now], showStats);
+                        DrawRecruitProfile(
+                            173, 47, &Men[now], showStats);
                     }
-
-                    i = 51;
                 }
+
+                if (BarB > 0) {
+                    BarB--;
+                    now--;
+                    DispEight(now, BarB);
+                    DrawRecruitProfile(173, 47, &Men[now], showStats);
+                }
+
+                break;
             }
 
             while (mousebuttons == 1 || key == UP_ARROW) {
@@ -1095,34 +1003,33 @@ void AstSel(char plr)
             /* Right Down */
             InBox(167, 163, 179, 194);
 
-            for (i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) {
                 key = 0;
                 GetMouse();
                 delay(10);
 
-                if (mousebuttons == 0) {
-
-                    if (BarB == 7) {
-                        if (now <= max) {
-                            if (now < max) {
-                                now++;
-                            }
-
-                            DispEight(now, BarB);
-                            DrawRecruitProfile(
-                                173, 47, &Men[now], showStats);
+                if (mousebuttons != 0) continue;
+                
+                if (BarB == 7) {
+                    if (now <= max) {
+                        if (now < max) {
+                            now++;
                         }
-                    }
 
-                    if (BarB < 7) {
-                        BarB++;
-                        now++;
                         DispEight(now, BarB);
-                        DrawRecruitProfile(173, 47, &Men[now], showStats);
+                        DrawRecruitProfile(
+                            173, 47, &Men[now], showStats);
                     }
-
-                    i = 51;
                 }
+
+                if (BarB < 7) {
+                    BarB++;
+                    now++;
+                    DispEight(now, BarB);
+                    DrawRecruitProfile(173, 47, &Men[now], showStats);
+                }
+
+                break;
             }
 
             while (mousebuttons == 1 || key == DN_ARROW) {
@@ -1190,11 +1097,10 @@ void AstSel(char plr)
             count--;
             MCol[sel[now2]] = 0;
 
-            for (i = now2; i < count + 1; i++) {
+            for (int i = now2; i < count + 1; i++) {
                 sel[i] = sel[i + 1];
             }
-
-            sel[i] = -1;  /* remove astronaut from left */
+            sel[count+1] = -1;  /* remove astronaut from left */
 
             if (now2 == count) {
                 if (now2 > 0) {
@@ -1263,77 +1169,47 @@ void AstSel(char plr)
             }
 
             OutBox(168, 111, 313, 123);
-        }
-
-        if ((x >= 246 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  /* Exit - not 'til done */
-            bool femaleAstronautsSelected = false;
-
-            if (femaleAstronautsRequired) {
-                for (i = 0; i < count; i++) {
-                    if (Men[sel[i]].Sex == 1) {
-                        femaleAstronautsSelected = true;
-                        break;
-                    }
-                }
-
-                if (! femaleAstronautsSelected) {
-                    InBox(246, 5, 314, 17);
-                    Help("i100");
-                    OutBox(246, 5, 314, 17);
-                }
-            }
-
-            if (count != MaxSel) {
-                Help("i045");
-            }
-
-            if ((! femaleAstronautsRequired || femaleAstronautsSelected) &&
-                count == MaxSel) {
+        } else if ((x >= 246 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  /* Exit - not 'til done */
+            if (femaleAstronauts_Required) {
+                && std::none_of(&sel[0], &sel[count], // if woman is required, but we haven't selected any, display message to the player and don't accept
+                                 [](int i){return Man[i].Sex == 1;})) {
                 InBox(246, 5, 314, 17);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                for (i = 0; i < count; i++) {
-                    Recruit(plr, i + Data->P[plr].AstroCount, sel[i]);
-                }
-
-                Data->P[plr].AstroLevel++;
-                Data->P[plr].AstroCount += count;
-
-                switch (Data->P[plr].AstroLevel) {
-                case 1:
-                    Data->P[plr].AstroDelay = 6;
-                    break;
-
-                case 2:
-                case 3:
-                    Data->P[plr].AstroDelay = 4;
-                    break;
-
-                case 4:
-                    Data->P[plr].AstroDelay = 8;
-                    break;
-
-                case 5:
-                    Data->P[plr].AstroDelay = 99;
-                    break;
-                }
-
+                Help("i100");
                 OutBox(246, 5, 314, 17);
-
-                music_stop();
-
-                return;  /* Done */
+                continue;
             }
-        }
 
-        if ((x >= 174 && y >= 5 && x <= 238 && y <= 17 && mousebuttons > 0) || key == K_ESCAPE) {  /* Cancel - and give the player a refund */
+            if (count != MaxSel) { // if we haven't selected the full group, display message and don't accept
+                Help("i045");
+                continue;
+            }
+
+            InBox(246, 5, 314, 17);
+            WaitForMouseUp();
+
+            if (key > 0) {
+                delay(150);
+            }
+
+            for (int i = 0; i < count; i++) {
+                Recruit(plr, i + pData.AstroCount, sel[i]);
+            }
+
+            int DelayTable[] = {6,4,4,8,99}
+            pData.AstroDelay = DelayTable[pData.AstroLevel];
+
+            pData.AstroLevel++;
+            pData.AstroCount += count;
+
+            OutBox(246, 5, 314, 17);
+
+            music_stop();
+
+            return;  /* Done */
+        } else if ((x >= 174 && y >= 5 && x <= 238 && y <= 17 && mousebuttons > 0) || key == K_ESCAPE) {  /* Cancel - and give the player a refund */
             InBox(174, 5, 238, 17);
             WaitForMouseUp();
-            Data->P[plr].Cash += cost;
+            pData.Cash += cost;
             OutBox(174, 5, 238, 17);
             return;  /* Cancel out */
         }
