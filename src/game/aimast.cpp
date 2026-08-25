@@ -87,6 +87,7 @@ void AIMaster(char plr)
     Cur_Status = Equal;
 
 // *** check status ***
+    int P_total = 0;
     for (int i = 0; i < PData.PastMissionCount; i++) {
         P_total += PData.History[i].Prestige;
     }
