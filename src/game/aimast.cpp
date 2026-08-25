@@ -72,16 +72,8 @@ void AIMaster(char plr)
     }
 
     // Randomly select the AI strategy
-    int P_total = brandom(100);
-
     if (PData.AIStrategy[AI_STRATEGY] == 0) {
-        if (P_total < 33) {
-            PData.AIStrategy[AI_STRATEGY] = 1;
-        } else if (P_total < 66) {
-            PData.AIStrategy[AI_STRATEGY] = 2;
-        } else {
-            PData.AIStrategy[AI_STRATEGY] = 3;
-        }
+        PData.AIStrategy[AI_STRATEGY] = 1 + brandom(3);
     }
 
     Cur_Status = Equal;
