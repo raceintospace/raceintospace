@@ -634,7 +634,7 @@ void AstSel(char plr)
 
     bool femaleAstronauts_Allowed =
         (options.feat_female_nauts 
-         || pData.femaleAstronauts_Allowed == 1);
+         || pData.femaleAstronautsAllowed == 1);
     int cost = (pData.AstroLevel == 0) ? 20 : 15;
 
     if (AstSelectPrompt(plr, cost) != DLG_RESPONSE_YES) {
@@ -662,7 +662,7 @@ void AstSel(char plr)
     int Index = IndexTable[pData.AstroLevel];
 
     bool RequiredTable[]   = { 1, 1, 1, 0, 0};
-    bool femaleAstronauts_Required = (RequiredTable[pData.AstroLevel]) ? pData.femaleAstronauts_Allowed
+    bool femaleAstronauts_Required = (RequiredTable[pData.AstroLevel]) ? pData.femaleAstronautsAllowed
                                                                        : false;
 
     int MaxSelTable[] = {ASTRO_POOL_LVL1, ASTRO_POOL_LVL2, ASTRO_POOL_LVL3, ASTRO_POOL_LVL4, ASTRO_POOL_LVL5};
@@ -1170,7 +1170,7 @@ void AstSel(char plr)
 
             OutBox(168, 111, 313, 123);
         } else if ((x >= 246 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER) {  /* Exit - not 'til done */
-            if (femaleAstronauts_Required) {
+            if (femaleAstronauts_Required
                 && std::none_of(&sel[0], &sel[count], // if woman is required, but we haven't selected any, display message to the player and don't accept
                                  [](int i){return Man[i].Sex == 1;})) {
                 InBox(246, 5, 314, 17);
