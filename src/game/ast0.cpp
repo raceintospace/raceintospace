@@ -295,7 +295,7 @@ void SatText(char plr)
         int rate = (attempts > 0)? 100 * (attempts - fails) / attempts : 0;
         draw_number(x, 161, rate);        
     };
-    auto draw_who_first = [](int x, int prestige_category){
+    auto draw_who_first = [plr](int x, int prestige_category){
         auto& prest = Data->Prestige[prestige_category];
         draw_string(x, 178, (prest.Place == 0)? "U.S."
                             : (prest.Place == 1)? "SOVIET"
