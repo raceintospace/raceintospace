@@ -10,7 +10,4 @@ int MoodColor(uint8_t mood);
 void Moon(char plr);
 void SatBld(char plr);
 
-extern uint8_t MCol[MAX_ROSTER];
-extern uint8_t sel[MAX_SELECTION];
-
 #endif // AST0_H

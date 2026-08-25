@@ -78,7 +78,9 @@ enum ProfileDisplay {
                                                "AIR DEF. FORCE", "FOREIGN"};
 
 
-uint8_t MaxSel;
+    int MCol[MAX_ROSTER];
+    int sel[MAX_SELECTION];
+    int MaxSel;
 } // namespace
 
 

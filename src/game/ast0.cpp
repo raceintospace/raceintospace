@@ -41,16 +41,11 @@
 
 #include <boost/format.hpp>
 
-uint8_t MCol[MAX_ROSTER];
-uint8_t sel[MAX_SELECTION];
-
-
 void SatDraw(char plr);
 void LMDraw(char plr);
 void SatText(char plr);
 void PlanText(char plr, char plan);
 void LMPict(char poff);
-
 
 /**
  * Get the color corresponding to the Astronaut/Cosmonaut's mood.
