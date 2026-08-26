@@ -193,7 +193,7 @@ static file try_find_file(const char* name, const char* mode, int type)
         if (strchr(mode, 'w')
             || strchr(mode, 'a')
             || strncmp(mode, "r+", 2) == 0) {
-            char *inner_newmode;
+            const char* inner_newmode;
 
             if (strchr(mode, 'b')) {
                 inner_newmode = "rb";
