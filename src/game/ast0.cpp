@@ -44,7 +44,7 @@
 void SatDraw(char plr);
 void LMDraw(char plr);
 void SatText(char plr);
-void PlanText(char plr, char plan);
+void PlanetText(char plr, char planet);
 void LMPict(char poff);
 
 /**
@@ -65,15 +65,14 @@ int MoodColor(const uint8_t mood)
     }
 }
 
-
 void Moon(char plr)
 {
     helpText = "i029";
     keyHelpText = "k029";
+    
     FadeOut(2, 0, 0, 0);
-
-
     display::graphics.screen()->clear();
+    
     ShBox(109, 24, 222, 167);
     InBox(113, 27, 218, 39);
     fill_rectangle(114, 28, 217, 38, 7 + 3 * plr);
@@ -136,8 +135,6 @@ void Moon(char plr)
     }
 }
 
-
-
 void DispLeft(char plr, int lc, int cnt, int nw, const int* ary)
 {
     fill_rectangle(26, 129, 153, 195, 0);
@@ -149,25 +146,26 @@ void DispLeft(char plr, int lc, int cnt, int nw, const int* ary)
     int num = (cnt < 8) ? cnt : 8;
     for (int i = start; i < start + num; i++) {
         if (ary[i] < 0) continue;
+        auto& spaceman = Data->P[plr].Pool[ary[i]];
         
-        display::graphics.setForegroundColor(11 + 7 * Data->P[plr].Pool[ary[i]].Sex);
+        display::graphics.setForegroundColor(11 + 7 * spaceman.Sex);
 
-        if (Data->P[plr].Pool[ary[i]].RetirementDelay > 0) {
+        if (spaceman.RetirementDelay > 0) {
             display::graphics.setForegroundColor(9);  // Print name in gray if 'naut has announced retirement (black shows poorly here) -Leon
         }
-        draw_string(28, 136 + (i - start) * 8, &Data->P[plr].Pool[ary[i]].Name[0]);
+        draw_string(28, 136 + (i - start) * 8, &spaceman.Name[0]);
 
-        if (Data->P[plr].Pool[ary[i]].InjuryDelay > 0) {
-            if (Data->P[plr].Pool[ary[i]].InjuryDelay == 1) {
-                draw_number(120, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+        if (spaceman.InjuryDelay > 0) {
+            if (spaceman.InjuryDelay == 1) {
+                draw_number(120, 136 + (i - start) * 8, spaceman.InjuryDelay);
                 draw_string(0, 0, " TURN");
             } else {
-                draw_number(118, 136 + (i - start) * 8, Data->P[plr].Pool[ary[i]].InjuryDelay);
+                draw_number(118, 136 + (i - start) * 8, spaceman.InjuryDelay);
                 draw_string(0, 0, " TRNS");
             }
-        } else if (Data->P[plr].Pool[ary[i]].Missions > 0) {
+        } else if (spaceman.Missions > 0) {
             draw_string(0, 0, " (");
-            draw_number(0, 0, Data->P[plr].Pool[ary[i]].Missions);
+            draw_number(0, 0, spaceman.Missions);
             draw_string(0, 0, ")");
         }
     }
@@ -175,24 +173,23 @@ void DispLeft(char plr, int lc, int cnt, int nw, const int* ary)
 
 void BarSkill(char plr, int lc, int nw, int* ary)
 {
-    display::graphics.setForegroundColor(11);
-
-    if (Data->P[plr].Pool[ary[nw]].Sex == 1) {
-        display::graphics.setForegroundColor(18);    // Print in blue if 'naut is female
-    }
+    auto& spaceman = Data->P[plr].Pool[ary[nw]];
+    
+    display::graphics.setForegroundColor((spaceman.Sex == 1)? 18  // Print in blue if 'naut is female
+                                                            : 11); 
 
     grMoveTo(28, 136 + lc * 8);
     // CA LM EV DO EN
     draw_string(0, 0, "CA:");
-    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Cap);
+    draw_number(0, 0, spaceman.Cap);
     draw_string(0, 0, " LM:");
-    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].LM);
+    draw_number(0, 0, spaceman.LM);
     draw_string(0, 0, " EV:");
-    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].EVA);
+    draw_number(0, 0, spaceman.EVA);
     draw_string(0, 0, " DO:");
-    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Docking);
+    draw_number(0, 0, spaceman.Docking);
     draw_string(0, 0, " EN:");
-    draw_number(0, 0, Data->P[plr].Pool[ary[nw]].Endurance);
+    draw_number(0, 0, spaceman.Endurance);
 }
 
 
@@ -223,10 +220,13 @@ void SatDraw(char plr)
     }
 
     int loc[4];
-    loc[0] = (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 : 1 + plr * 3;
-    loc[1] = (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num < 0) ? 0 : 2 + plr * 3;
-    loc[2] = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num < 0) ? 0 : 0;
-    loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 : 3 + plr * 3;
+    loc[0] = (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num < 0) ? 0 
+                                                                 : 1 + plr * 3;
+    loc[1] = (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num < 0) ? 0 
+                                                            : 2 + plr * 3;
+    loc[2] = 0;
+    loc[3] = (Data->P[plr].Probe[PROBE_HW_LUNAR].Num < 0) ? 0 
+                                                          : 3 + plr * 3;
 
     for (int i = 0; i < 4; i++) {
         char filename[128];
@@ -257,9 +257,11 @@ void SatDraw(char plr)
 
 void LMDraw(char plr)
 {
+    auto& capsules = Data->P[plr].Manned;
+    
     FadeOut(2, 0, 0, 0);
-
     display::graphics.screen()->clear();
+    
     ShBox(1, 0, 319, 22);
     IOBox(243, 3, 316, 19);
     InBox(4, 3, 31, 19);
@@ -267,20 +269,8 @@ void LMDraw(char plr)
     InBox(4, 26, 316, 116);
     fill_rectangle(5, 27, 315, 115, 0);  // middle screen
 
-    char ind;
-    if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-        ind = 4 + plr;
-    } else {
-        ind = 0 + plr;
-    }
-    LMPict(ind);
-
-    if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-        ind = 6 + plr;
-    } else {
-        ind = 2 + plr;
-    }
-    LMPict(ind);
+    LMPict(plr + ((capsules[MANNED_HW_ONE_MAN_MODULE].Num >= 0)?4:0));
+    LMPict(plr + ((capsules[MANNED_HW_TWO_MAN_MODULE].Num >= 0)?6:2));
     
     ShBox(110, 24, 203, 36);
     InBox(112, 26, 201, 34);
@@ -294,120 +284,58 @@ void LMDraw(char plr)
 
 void SatText(char plr)
 {
+    auto draw_safety = [](int x, Equipment& eq){
+        int safety = (eq.Num >= 0) * eq.Safety;
+        draw_number(x, 110, safety);
+        draw_string(0, 0, "%");
+    };
+    auto draw_win_rate = [](int x, int attempts, int fails){
+        draw_number(x, 127, attempts);
+        draw_number(x, 144, attempts - fails);
+        int rate = (attempts > 0)? 100 * (attempts - fails) / attempts : 0;
+        draw_number(x, 161, rate);        
+    };
+    auto draw_who_first = [plr](int x, int prestige_category){
+        auto& prest = Data->Prestige[prestige_category];
+        draw_string(x, 178, (prest.Place == 0)? "U.S."
+                            : (prest.Place == 1)? "SOVIET"
+                                                  : "NONE");
+    
+        draw_number(x, 195, prest.Points[plr]);
+    };
+
     display::graphics.setForegroundColor(11);
+    
+    draw_string(5, 80, "DUR LVL: ");  // Show highest Duration level achieved -Leon
+    if (Data->P[plr].DurationLevel >= 1 && Data->P[plr].DurationLevel <= 6) {
+        char dur = 'A' - 1 + Data->P[plr].DurationLevel;
+        draw_character(dur);
+    } else {
+        draw_string(0, 0, "NONE");
+    }
+    
+    draw_string(5, 94, "DOCKING");
+    auto& docking_module = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
+    draw_safety(5, docking_module);
+    draw_win_rate(5, docking_module.Steps, docking_module.Failures);
+    draw_who_first(5, Prestige_MannedDocking);
 
+    draw_string(85, 80, "ORBITAL SAT.");
+    auto& orbital_probe = Data->P[plr].Probe[PROBE_HW_ORBITAL];
+    draw_safety(85, orbital_probe);
+    draw_win_rate(85, orbital_probe.Used, orbital_probe.Failures);
+    draw_who_first(85, Prestige_OrbitalSatellite);
+
+    PlanetText(plr, 0);
+
+    draw_string(245, 80, "LUNAR PROBE");
+    auto& lunar_probe = Data->P[plr].Probe[PROBE_HW_LUNAR];
+    draw_safety(245, lunar_probe);
+    draw_win_rate(245, lunar_probe.Used, lunar_probe.Failures);
+    draw_who_first(245, Prestige_LunarProbeLanding);
+    
+    display::graphics.setForegroundColor(6 + 3 * plr);
     for (int i = 0; i < 4; i++) {
-        if (i == 2)  {
-            PlanText(plr, 0);
-        } else {
-            display::graphics.setForegroundColor(11);
-            switch (i) {
-            case 0:
-                draw_string(5 + i * 80, 80, "DUR LVL: ");  // Show highest Duration level achieved -Leon
-
-                if (Data->P[plr].DurationLevel >= 1 && Data->P[plr].DurationLevel <= 6) {
-                    char dur = 'A' - 1 + Data->P[plr].DurationLevel;
-                    draw_character(dur);
-                } else {
-                    draw_string(0, 0, "NONE");
-                }
-                
-                draw_string(5 + i * 80, 94, "DOCKING");
-
-                if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                    draw_number(5 + i * 80, 110, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety);
-                } else {
-                    draw_number(5 + i * 80, 110, 0);
-                }
-                draw_string(0, 0, "%");
-
-                draw_number(5 + i * 80, 127, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps);
-
-                draw_number(5 + i * 80, 144, Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures);
-
-                if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps > 0) {
-                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps - Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures) / Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps);
-                } else {
-                    draw_number(5 + i * 80, 161, 0);
-                }
-
-                if (Data->Prestige[Prestige_MannedDocking].Place == 0) {
-                    draw_string(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[Prestige_MannedDocking].Place == 1) {
-                    draw_string(5 + i * 80, 178, "SOVIET");
-                } else {
-                    draw_string(5 + i * 80, 178, "NONE");
-                }
-
-                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_MannedDocking].Points[plr]);
-                break;
-
-            case 1:
-                draw_string(5 + i * 80, 80, "ORBITAL SAT.");
-
-                if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 0) {
-                    draw_number(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_ORBITAL].Safety);
-                } else {
-                    draw_number(5 + i * 80, 110, 0);
-                }
-                draw_string(0, 0, "%");
-
-                draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
-
-                draw_number(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures);
-
-                if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used > 0) {
-                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_ORBITAL].Used - Data->P[plr].Probe[PROBE_HW_ORBITAL].Failures) / Data->P[plr].Probe[PROBE_HW_ORBITAL].Used);
-                } else {
-                    draw_number(5 + i * 80, 161, 0);
-                }
-
-                if (Data->Prestige[Prestige_OrbitalSatellite].Place == 0) {
-                    draw_string(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[Prestige_OrbitalSatellite].Place == 1) {
-                    draw_string(5 + i * 80, 178, "SOVIET");
-                } else {
-                    draw_string(5 + i * 80, 178, "NONE");
-                }
-
-                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_OrbitalSatellite].Points[plr]);
-                break;
-
-
-            case 3:
-                draw_string(5 + i * 80, 80, "LUNAR PROBE");
-
-                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Num >= 0) {
-                    draw_number(5 + i * 80, 110, Data->P[plr].Probe[PROBE_HW_LUNAR].Safety);
-                } else {
-                    draw_number(5 + i * 80, 110, 0);
-                }
-                draw_string(0, 0, "%");
-
-                draw_number(5 + i * 80, 127, Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
-
-                draw_number(5 + i * 80, 144, Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures);
-
-                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Used > 0) {
-                    draw_number(5 + i * 80, 161, 100 * (Data->P[plr].Probe[PROBE_HW_LUNAR].Used - Data->P[plr].Probe[PROBE_HW_LUNAR].Failures) / Data->P[plr].Probe[PROBE_HW_LUNAR].Used);
-                } else {
-                    draw_number(5 + i * 80, 161, 0);
-                }
-
-                if (Data->Prestige[Prestige_LunarProbeLanding].Place == 0) {
-                    draw_string(5 + i * 80, 178, "U.S.");
-                } else if (Data->Prestige[Prestige_LunarProbeLanding].Place == 1) {
-                    draw_string(5 + i * 80, 178, "SOVIET");
-                } else {
-                    draw_string(5 + i * 80, 178, "NONE");
-                }
-
-                draw_number(5 + i * 80, 195, Data->Prestige[Prestige_LunarProbeLanding].Points[plr]);
-                break;
-            }
-        }
-
-        display::graphics.setForegroundColor(6 + 3 * plr);
         draw_string(5 + i * 80, 103, "SAFETY:");
         draw_string(5 + i * 80, 120, "ATTEMPTS:");
         draw_string(5 + i * 80, 137, "SUCCESSFUL:");
@@ -417,7 +345,7 @@ void SatText(char plr)
     }
 }
 
-void PlanText(char plr, char plan)
+void PlanetText(char plr, char planet)
 {
     fill_rectangle(164, 75, 78 + 160, 89, 3);
     fill_rectangle(162, 105, 218, 113, 3);
@@ -427,15 +355,15 @@ void PlanText(char plr, char plan)
     fill_rectangle(162, 190, 218, 198, 3);
     fill_rectangle(162, 139, 218, 145, 3);
 
-    char tx = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) ? 1 : 0;
-    if (tx == 1) {
+    bool interplanetary_exists = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0);
+    if (interplanetary_exists) {
         fill_rectangle(165, 28, 235, 55, 0);
     }
 
     display::graphics.setForegroundColor(11);
 
     int Find = 0; /* XXX check uninitialized */
-    switch (plan) {
+    switch (planet) {
     case 0:
         draw_string(4 + 160, 80, "LUNAR FLYBY");
         display::graphics.setForegroundColor(11);
@@ -444,7 +372,7 @@ void PlanText(char plr, char plan)
         draw_string(0, 0, "%");
         Find = Mission_LunarFlyby;
 
-        if (tx == 1) {
+        if (interplanetary_exists) {
             SmHardMe(plr, 190, 34, 6, 6, 32);
         }
 
@@ -484,16 +412,16 @@ void PlanText(char plr, char plan)
     int pUsed = 0;
     int pFails = 0;
     for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].MissionCode == Find) {
-            pUsed++;
+        if (Data->P[plr].History[i].MissionCode != Find) continue;
+        
+        pUsed++;
 
-            if (Data->P[plr].History[i].spResult != 1) {
-                pFails++;
-            }
+        if (Data->P[plr].History[i].spResult != 1) {
+            pFails++;
         }
     }
 
-    draw_number(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * tx);
+    draw_number(5 + 160, 110, Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety * interplanetary_exists);
     draw_string(0, 0, "%");
 
     draw_number(5 + 160, 127, pUsed);
@@ -505,15 +433,15 @@ void PlanText(char plr, char plan)
         draw_number(5 + 160, 161, 0);
     }
 
-    if (Data->Prestige[1 + plan].Place == 0) {
+    if (Data->Prestige[1 + planet].Place == 0) {
         draw_string(5 + 160, 178, "U.S.");
-    } else if (Data->Prestige[1 + plan].Place == 1) {
+    } else if (Data->Prestige[1 + planet].Place == 1) {
         draw_string(5 + 160, 178, "SOVIET");
     } else {
         draw_string(5 + 160, 178, "NONE");
     }
 
-    draw_number(5 + 160, 195, Data->Prestige[1 + plan].Points[plr]);
+    draw_number(5 + 160, 195, Data->Prestige[1 + planet].Points[plr]);
 }
 
 
@@ -544,8 +472,8 @@ void LMBld(char plr)
     IOBox(41, 172, 279, 193);
     draw_heading(71, 176, "TOTAL LM POINTS", 0, -1);
 
-    if (Data->P[plr].LMpts > 999) {
-        draw_heading(240, 176, "999+", 0, -1);
+    if (Data->P[plr].LMpts > 99) {
+        draw_heading(240, 176, "99+", 0, -1);
     } else {
         char points[5];
         snprintf(&points[0], sizeof(points), "%d", Data->P[plr].LMpts);
@@ -553,16 +481,17 @@ void LMBld(char plr)
     }
 
     for (int i = 0; i < 2; i++) {
+        auto& capsule = Data->P[plr].Manned[5 + i];
         int m = (i==0)? 172 : 12;
 
         display::graphics.setForegroundColor(8);
-        draw_string(m, 130, &Data->P[plr].Manned[5 + i].Name[0]);
+        draw_string(m, 130, capsule.Name);
         display::graphics.setForegroundColor(9);
         display::graphics.setForegroundColor(6);
         draw_string(m + 66, 130, "AVOID FAIL: ");
         display::graphics.setForegroundColor(11);
 
-        if (Data->P[plr].Manned[5 + i].SaveCard > 0) {
+        if (capsule.SaveCard > 0) {
             draw_string(m + 124, 130, "YES");
         } else {
             draw_string(m + 126, 130, "NO");
@@ -571,21 +500,21 @@ void LMBld(char plr)
         display::graphics.setForegroundColor(6);
         draw_string(m, 138, "SAFETY FACTOR: ");
         display::graphics.setForegroundColor(1);
-        draw_number(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Safety : 0);
+        draw_number(0, 0, (capsule.Num >= 0) * capsule.Safety);
         draw_string(0, 0, "%");
         display::graphics.setForegroundColor(6);
         draw_string(m, 146, "CURRENT QUANTITY: ");
         display::graphics.setForegroundColor(1);
-        draw_number(0, 0, (Data->P[plr].Manned[5 + i].Num >= 0) ? Data->P[plr].Manned[5 + i].Num : 0);
+        draw_number(0, 0, (capsule.Num >= 0) * capsule.Num);
 
         display::graphics.setForegroundColor(6);
         draw_string(m, 154, "NUMBER OF ATTEMPTS: ");
         display::graphics.setForegroundColor(1);
-        draw_number(0, 0, Data->P[plr].Manned[5 + i].Steps);
+        draw_number(0, 0, capsule.Steps);
         display::graphics.setForegroundColor(6);
         draw_string(m, 162, "SUCCESSFUL ATTEMPTS: ");
         display::graphics.setForegroundColor(1);
-        draw_number(0, 0, Data->P[plr].Manned[5 + i].Steps - Data->P[plr].Manned[5 + i].Failures);
+        draw_number(0, 0, capsule.Steps - capsule.Failures);
     }
 
     music_start(M_HISTORY);
@@ -607,9 +536,7 @@ void LMBld(char plr)
             music_stop();
             key = 0;
             return;  // Continue
-        }
-
-        if (x >= 41 && y >= 172 && x <= 314 && y <= 193 && mousebuttons > 0) {
+        } else if (x >= 41 && y >= 172 && x <= 314 && y <= 193 && mousebuttons > 0) {
             OutBox(41, 172, 279, 193);
             delay(100);
             WaitForMouseUp();
@@ -626,8 +553,9 @@ void SatBld(char plr)
     helpText = "i019";
     keyHelpText = "k019";
 
-    if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0) {
-        PlanText(plr, 0);
+    bool interplanetary_exists = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0);
+    if (interplanetary_exists) {
+        PlanetText(plr, 0);
     }
 
     music_start(M_HISTORY);
@@ -636,7 +564,7 @@ void SatBld(char plr)
     key = 0;
     WaitForMouseUp();
 
-    int plan = 0;
+    int planet = 0;
     while (1) {
         GetMouse();
 
@@ -653,7 +581,7 @@ void SatBld(char plr)
             music_stop();
             key = 0;
             return; // Continue
-        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 
+        } else if (interplanetary_exists
                    && ((x >= 166 && y >= 60 && x <= 199 && y <= 66 && mousebuttons > 0) 
                        || key == LT_ARROW)) {
             InBox(166, 60, 199, 66);
@@ -662,15 +590,15 @@ void SatBld(char plr)
             delay(10);
             key = 0;
 
-            if (plan == 0) {
-                plan = 5;
+            if (planet == 0) {
+                planet = 5;
             } else {
-                plan--;
+                planet--;
             }
 
-            PlanText(plr, plan);
+            PlanetText(plr, planet);
             OutBox(166, 60, 199, 66);
-        } else if (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Num >= 0 
+        } else if (interplanetary_exists
                    && ((x >= 201 && y >= 60 && x <= 234 && y <= 66 && mousebuttons > 0) 
                        || key == RT_ARROW)) {
             InBox(201, 60, 234, 66);
@@ -679,13 +607,13 @@ void SatBld(char plr)
             delay(10);
             key = 0;
 
-            if (plan > 4) {
-                plan = 0;
+            if (planet > 4) {
+                planet = 0;
             } else {
-                plan++;
+                planet++;
             }
 
-            PlanText(plr, plan);
+            PlanetText(plr, planet);
             OutBox(201, 60, 234, 66);
         }
     }
