@@ -269,8 +269,8 @@ void LMDraw(char plr)
     InBox(4, 26, 316, 116);
     fill_rectangle(5, 27, 315, 115, 0);  // middle screen
 
-    LMPict(plr + (capsules[MANNED_HW_ONE_MAN_MODULE].Num >= 0)?4:0);
-    LMPict(plr + (capsules[MANNED_HW_TWO_MAN_MODULE].Num >= 0)?6:2);
+    LMPict(plr + ((capsules[MANNED_HW_ONE_MAN_MODULE].Num >= 0)?4:0));
+    LMPict(plr + ((capsules[MANNED_HW_TWO_MAN_MODULE].Num >= 0)?6:2));
     
     ShBox(110, 24, 203, 36);
     InBox(112, 26, 201, 34);
