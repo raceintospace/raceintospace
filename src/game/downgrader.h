@@ -20,19 +20,17 @@ public:
     class Options
     {
     public:
-        Options();
-        ~Options();
+        Options() = default;
 
         void add(int mission, int code);
         const std::vector<int> downgrades(int mission) const;
     private:
-        std::vector< std::vector<int> > mDowngrades;
+        std::vector<std::vector<int>> mDowngrades;
     };
 
     Downgrader(const MissionType& mission,
                const std::vector<int>& downgrades);
     Downgrader(const MissionType& mission, const Options downgrades);
-    ~Downgrader();
 
     MissionType current() const;
     MissionType next();

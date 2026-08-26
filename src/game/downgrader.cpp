@@ -32,16 +32,6 @@
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
 
-Downgrader::Options::Options()
-{
-}
-
-
-Downgrader::Options::~Options()
-{
-}
-
-
 void Downgrader::Options::add(const int mission, const int code)
 {
     if (mission >= mDowngrades.size()) {
@@ -57,7 +47,7 @@ void Downgrader::Options::add(const int mission, const int code)
 const std::vector<int> Downgrader::Options::downgrades(int mission) const
 {
     return (mDowngrades.size() > mission) ?  mDowngrades[mission]
-           : std::vector<int>();
+                                          : std::vector<int>();
 }
 
 
@@ -68,8 +58,8 @@ const std::vector<int> Downgrader::Options::downgrades(int mission) const
  * \param mission  The original mission to be downgraded.
  * \param downgrades  A set of MissionType.MissionCode(s).
  */
-Downgrader::Downgrader(const struct MissionType &mission,
-                       const std::vector<int> &downgrades)
+Downgrader::Downgrader(const MissionType& mission,
+                       const std::vector<int>& downgrades)
     : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
 {
     // if (downgrades.find(mission.MissionCode) != downgrades.end()) {
@@ -95,7 +85,7 @@ Downgrader::Downgrader(const struct MissionType &mission,
  * \param mission  The original mission to be downgraded.
  * \param downgrades  A collection of mission downgrade choices.
  */
-Downgrader::Downgrader(const struct MissionType &mission,
+Downgrader::Downgrader(const MissionType& mission,
                        const Options downgrades)
     : mBasis(mission), mCurrent(mission), mDuration(mission.Duration)
 {
@@ -117,17 +107,12 @@ Downgrader::Downgrader(const struct MissionType &mission,
 }
 
 
-Downgrader::~Downgrader()
-{
-}
-
-
 /* Generates an instance of the currently selected alternate mission.
  *
  * \return  The last value returned by next(), or the original mission
  *          if next() has not been called.
  */
-struct MissionType Downgrader::current() const {
+MissionType Downgrader::current() const {
     return mCurrent;
 }
 
@@ -158,22 +143,22 @@ struct MissionType Downgrader::current() const {
  *
  * \return  a new instance of the next downgrade option in the cycle.
  */
-struct MissionType Downgrader::next()
+MissionType Downgrader::next()
 {
     // Advance the cycle to the next option.
-    struct mStr style;
+    mStr style;
 
     try {
         style = GetMissionPlan(*mIndex);
-    } catch (IOException &err) {
-        CCRITICAL2(filesys, err.what());
+    } catch (IOException& err) {
+        CAT_CRITICAL(filesys, err.what());
         mCurrent = mBasis;
         return mCurrent;
     }
 
     // If not on a Duration mission, advance to the next mission code.
-    if (style.Index != mBasis.MissionCode || ! style.Dur ||
-        --mDuration < style.Days) {
+    if (style.Index != mBasis.MissionCode || ! style.Dur 
+        || --mDuration < style.Days) {
 
         if (++mIndex == mCodes.end()) {
             mIndex = mCodes.begin();
@@ -181,8 +166,8 @@ struct MissionType Downgrader::next()
 
         try {
             style = GetMissionPlan(*mIndex);
-        } catch (IOException &err) {
-            CCRITICAL2(filesys, err.what());
+        } catch (IOException& err) {
+            CAT_CRITICAL(filesys, err.what());
             mCurrent = mBasis;
             return mCurrent;
         }
@@ -233,8 +218,7 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     std::string path = locate_file(filename.c_str(), FT_DATA);
 
     if (path.empty()) {
-        throw IOException(std::string("Unable to open path to ") +
-                          filename);
+        throw IOException(std::string("Unable to open path to ") + filename);
     }
 
     std::ifstream input(path);
@@ -253,14 +237,14 @@ Downgrader::Options LoadJsonDowngrades(std::string filename)
     Downgrader::Options options;
 
     for (int i = 0; i < missionList.size(); i++) {
-        const Json::Value &missionEntry = missionList[i];
+        const Json::Value& missionEntry = missionList[i];
         assert(missionEntry.isObject());
 
         int missionCode = missionEntry.get("mission", -1).asInt();
         assert(missionCode >= 0);
         // assert(missionCode >= 0 && missionCode <= 61);
 
-        const Json::Value &codeGroup = missionEntry["downgrades"];
+        const Json::Value& codeGroup = missionEntry["downgrades"];
         assert(codeGroup.isArray());
 
         for (int j = 0; j < codeGroup.size(); j++) {
