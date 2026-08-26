@@ -1907,22 +1907,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
     switch (loc) {
     case ROCKET_HARDWARE:  //draw_string(137,150,"ROCKETS");
         for (int i = 0; i < 4; i++) {
-            sfu = -1;
-            sfs = -1;
-
-            if (plr == 0) {
-                if (pData.Rocket[i].Num >= 0) {
-                    sfu = pData.Rocket[i].Safety;
-                }
-
-                sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][i];
-            } else if (plr == 1) {
-                if (pData.Rocket[i].Num >= 0) {
-                    sfs = pData.Rocket[i].Safety;
-                }
-
-                sfu = pData.IntelHardwareTable[ROCKET_HARDWARE][i];
-            }
+            int sfu = (pData.Rocket[i].Num >= 0)? pData.Rocket[i].Safety : -1;
+            int sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][i];
+            if (plr == 1) std::swap(sfu, sfs);
 
             switch (i) {
             case ROCKET_HW_ONE_STAGE:
@@ -1986,22 +1973,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
 
     case MANNED_HARDWARE:  // draw_string(137,150,"CAPSULES");
         for (int i = 0; i < 5; i++) {
-            sfu = -1;
-            sfs = -1;
-
-            if (plr == 0) {
-                if (pData.Manned[i].Num >= 0) {
-                    sfu = pData.Manned[i].Safety;
-                }
-
-                sfs = pData.IntelHardwareTable[MANNED_HARDWARE][i];
-            } else if (plr == 1) {
-                if (pData.Manned[i].Num >= 0) {
-                    sfs = pData.Manned[i].Safety;
-                }
-
-                sfu = pData.IntelHardwareTable[MANNED_HARDWARE][i];
-            }
+            int sfu = (pData.Manned[i].Num >= 0)? pData.Manned[i].Safety : -1;
+            int sfs = pData.IntelHardwareTable[MANNED_HARDWARE][i];
+            if (plr == 1) std::swap(sfu, sfs);
 
             switch (i) {
             case MANNED_HW_ONE_MAN_CAPSULE:
@@ -2077,22 +2051,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
         break;
 
     case PROBE_HARDWARE:  // draw_string(100,150,"SATELLITES & LM'S");
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfu = pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
-        } else if (plr == 1) {
-            if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-                sfs = pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
-        }
+        sfu = (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0)? pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety : -1;
+        sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(25,sfu,6);
@@ -2104,22 +2065,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
             DispIt(dctx, 31, 153, 56, 182, 41, 126);
         }
 
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfu = pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
-        } else if (plr == 1) {
-            if (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-                sfs = pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
-        }
+        sfu = (pData.Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0)? pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety : -1;
+        sfs = pData.IntelHardwareTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(101,sfu,6);
@@ -2132,22 +2080,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
         }
 
         for (int i = 0; i < 3; i++) {
-            sfu = -1;
-            sfs = -1;
-
-            if (plr == 0) {
-                if (pData.Probe[i].Num >= 0) {
-                    sfu = pData.Probe[i].Safety;
-                }
-
-                sfs = pData.IntelHardwareTable[PROBE_HARDWARE][i];
-            } else if (plr == 1) {
-                if (pData.Probe[i].Num >= 0) {
-                    sfs = pData.Probe[i].Safety;
-                }
-
-                sfu = pData.IntelHardwareTable[PROBE_HARDWARE][i];
-            }
+            sfu = (pData.Probe[i].Num >= 0)? pData.Probe[i].Safety : -1;
+            sfs = pData.IntelHardwareTable[PROBE_HARDWARE][i];
+            if (plr == 1) std::swap(sfu, sfs);
 
             switch (i) {
             case PROBE_HW_ORBITAL:
@@ -2197,22 +2132,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
         break;
 
     case MISC_HARDWARE:  // draw_string(100,150,"ADDITIONAL PROGRAMS");
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Misc[MISC_HW_EVA_SUITS].Num >= 0) {
-                sfu = pData.Misc[MISC_HW_EVA_SUITS].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
-        } else if (plr == 1) {
-            if (pData.Misc[MISC_HW_EVA_SUITS].Num >= 0) {
-                sfs = pData.Misc[MISC_HW_EVA_SUITS].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
-        }
+        sfu = (pData.Misc[MISC_HW_EVA_SUITS].Num >= 0)? pData.Misc[MISC_HW_EVA_SUITS].Safety : -1;
+        sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(19,sfu,6);
@@ -2224,22 +2146,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
             DispIt(dctx, 78, 65, 86, 75, 31, 145);
         }
 
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                sfu = pData.Misc[MISC_HW_DOCKING_MODULE].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
-        } else if (plr == 1) {
-            if (pData.Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-                sfs = pData.Misc[MISC_HW_DOCKING_MODULE].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
-        }
+        sfu = (pData.Misc[MISC_HW_DOCKING_MODULE].Num >= 0)? pData.Misc[MISC_HW_DOCKING_MODULE].Safety : -1;
+        sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(72,sfu,6);
@@ -2251,22 +2160,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
             DispIt(dctx, 102, 66, 114, 75, 84, 147);
         }
 
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
-                sfu = pData.Rocket[ROCKET_HW_BOOSTERS].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
-        } else if (plr == 1) {
-            if (pData.Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
-                sfs = pData.Rocket[ROCKET_HW_BOOSTERS].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
-        }
+        sfu = (pData.Rocket[ROCKET_HW_BOOSTERS].Num >= 0)? pData.Rocket[ROCKET_HW_BOOSTERS].Safety : -1;
+        sfs = pData.IntelHardwareTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(118,sfu,6);
@@ -2278,22 +2174,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
             DispIt(dctx, 16, 130, 31, 151, 134, 135);
         }
 
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Misc[MISC_HW_KICKER_A].Num >= 0) {
-                sfu = pData.Misc[MISC_HW_KICKER_A].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
-        } else if (plr == 1) {
-            if (pData.Misc[MISC_HW_KICKER_A].Num >= 0) {
-                sfs = pData.Misc[MISC_HW_KICKER_A].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
-        }
+        sfu = (pData.Misc[MISC_HW_KICKER_A].Num >= 0)? pData.Misc[MISC_HW_KICKER_A].Safety : -1;
+        sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_A];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(173,sfu,6);
@@ -2305,22 +2188,9 @@ void IInfo(char plr, char loc, char w, const DisplayContext& dctx)
             DispIt(dctx, 49, 138, 61, 151, 188, 143);
         }
 
-        sfu = -1;
-        sfs = -1;
-
-        if (plr == 0) {
-            if (pData.Misc[MISC_HW_KICKER_B].Num >= 0) {
-                sfu = pData.Misc[MISC_HW_KICKER_B].Safety;
-            }
-
-            sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
-        } else if (plr == 1) {
-            if (pData.Misc[MISC_HW_KICKER_B].Num >= 0) {
-                sfs = pData.Misc[MISC_HW_KICKER_B].Safety;
-            }
-
-            sfu = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
-        }
+        sfu = (pData.Misc[MISC_HW_KICKER_B].Num >= 0)? pData.Misc[MISC_HW_KICKER_B].Safety : -1;
+        sfs = pData.IntelHardwareTable[MISC_HARDWARE][MISC_HW_KICKER_B];
+        if (plr == 1) std::swap(sfu, sfs);
 
         if (sfu > 0) {
             draw_rectangle(226,sfu,6);
