@@ -795,7 +795,6 @@ void DispVA(char plr, char payload, const display::LegacySurface* hw)
     }
 
     /* Draw each of the component images into the local2 buffer */
-    int w2, h2, cx;
     for (int i = 0; i < 4; i++) {
         if (VAS[payload][i].img <= 0) continue;
         
