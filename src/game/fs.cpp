@@ -65,8 +65,6 @@
 
 LOG_DEFAULT_CATEGORY(filesys)
 
-static DIR* save_dir;
-
 /** used internally to find and open files */
 struct file {
     FILE* handle;   /**< standard filehandle */
@@ -183,9 +181,9 @@ static file s_open_helper(const char* base, const char* name, const char* mode, 
 static file try_find_file(const char* name, const char* mode, int type)
 {
     file f = {nullptr, nullptr};
-    char* gd = options.dir_gamedata;
-    char* sd = options.dir_savegame;
-    char* where = "";
+    const char* gd = options.dir_gamedata;
+    const char* sd = options.dir_savegame;
+    const char* where = "";
     const char* newmode = mode;
 
     LOG_TRACE("looking for file `%s'", name);
