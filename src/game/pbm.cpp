@@ -38,22 +38,20 @@
  */
 void ShowPrestigeResults(char plr)
 {
-    int i, turn, mturn, old_mail;
+    int turn = 2 * (Data->Year - 57) + Data->Season;
 
-    turn = 2 * (Data->Year - 57) + Data->Season;
-
-    for (i = 0; i < Data->P[plr].PastMissionCount; i++) {
+    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
         // Spring: Jan to Jun
         // Fall: Jul to Dec
 
-        mturn = (2 * (Data->P[plr].History[i].MissionYear - 57));
+        int mturn = (2 * (Data->P[plr].History[i].MissionYear - 57));
 
         if (Data->P[plr].History[i].Month > 5) {
             mturn++;
         }
 
         if (turn == mturn + 1) {
-            old_mail = MAIL;
+            int old_mail = MAIL;
             MAIL = -1; // Don't want to show prestige as "PENDING"
             MisRev(plr, Data->P[plr].History[i].Prestige, i);
             MAIL = old_mail;
@@ -64,7 +62,7 @@ void ShowPrestigeResults(char plr)
 /* Saves the current game. Only fades out if the game is not a PBEM
  * game.
  */
-void MailSwitchPlayer(void)
+void MailSwitchPlayer()
 {
     if (MAIL != -1) {
         FileAccess(2);
@@ -75,7 +73,7 @@ void MailSwitchPlayer(void)
 
 /* Immediately hand over to the other player during the endgame. MAIL
    must be either 1 or 2 to show endgame. */
-void MailSwitchEndgame(void)
+void MailSwitchEndgame()
 {
     switch (MAIL) {
     case 0:
