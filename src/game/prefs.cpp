@@ -105,12 +105,12 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
     ShBox(230, 24, 319, 199);
 
     if (where == 2) {
-        where = mode = 1;    //modem kludge
+        mode = 2;    //modem kludge
     } else if (where == 3) {
-        where = mode = 2;    //play-by-mail
+        mode = 3;    //play-by-mail
     }
 
-    if (where == 0 || where == 2) {
+    if (where == 0 || where == 3) {
         music_start(M_SOVTYP);
         IOBox(6, 105, 83, 140);
         IOBox(6, 158, 83, 193);
@@ -144,7 +144,7 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
 
     if (mode == 0) {
         draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
-    } else if (mode == 2) {
+    } else if (mode == 3) {
         draw_heading(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
     } else {
         draw_heading(6, 5, "MODEM GAME SELECTIONS", 0, -1);
@@ -162,7 +162,7 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
     Levels(1, Data->Def.Lev2, 1, dctx);
     Levels(1, Data->Def.Ast2, 0, dctx);
 
-    if (where == 0 || where == 2) {
+    if (where == 0 || where == 3) {
         display::graphics.setForegroundColor(9);
     } else {
         display::graphics.setForegroundColor(34);
