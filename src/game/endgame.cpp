@@ -620,7 +620,7 @@ void FakeWin(char win)
     draw_string(258, 13, "CONTINUE");
 
     int r = brandom(100);
-    int mis;
+    int miss;
     if (r < 45) {
         miss = Mission_HistoricalLanding;
     } else if (r < 50) {
