@@ -27,6 +27,7 @@
 
 #include "rush.h"
 
+#include <algorithm>
 #include <stdexcept>
 
 #include "display/graphics.h"
@@ -376,10 +377,6 @@ void DrawRush(char plr)
 void Rush(char plr)
 {
     auto& pData = Data->P[plr];
-    int R1, R2, R3, oR1, oR2, oR3;
-    char pRush = 0;
-
-    R1 = R2 = R3 = oR1 = oR2 = oR3 = 0;
 
     // Reset Rushing status for missions.
     for (int pad = 0; pad < 3; pad++) {
@@ -409,14 +406,15 @@ void Rush(char plr)
     };
 
     DrawRush(plr);
-    pRush = (pData.Cash >= 3) ? 1 : 0;
     int fCsh = pData.Cash;
+    bool pRush = (pData.Cash >= 3);
     display::graphics.setForegroundColor(1);
 
     music_start((plr == 0) ? M_USMIL : M_USSRMIL);
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
 
+    int R[3]{}, oR[3]{};
     while (1) {
         key = 0;
         GetMouse();
@@ -424,69 +422,69 @@ void Rush(char plr)
         if (mousebuttons > 0 || key > 0) {
             if (((y >= 32 && y <= 74 && x >= 280 && x <= 312 && mousebuttons > 0) || (key >= '1' && key <= '3'))
                 && pRush && pData.Mission[0].MissionCode && pData.Mission[0].part != 1) {  /* L1: Row One */
-                // R1=oR1;
-                if (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && oR1 != 1 && fCsh < 3) {
+                // R[0]=oR[0];
+                if (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && oR[0] != 1 && fCsh < 3) {
                     Help("i117");
                 }
 
-                R1 = (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && fCsh >= 3) ? 1 : R1;
+                R[0] = (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && fCsh >= 3) ? 1 : R[0];
 
-                if (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && oR1 != 2 && fCsh < 6) {
+                if (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && oR[0] != 2 && fCsh < 6) {
                     Help("i117");
                 }
 
-                R1 = (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && fCsh >= 6) ? 2 : R1;
-                R1 = ((y >= 32 && y <= 40 && mousebuttons > 0) || key == '1') ? 0 : R1;
+                R[0] = (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && fCsh >= 6) ? 2 : R[0];
+                R[0] = ((y >= 32 && y <= 40 && mousebuttons > 0) || key == '1') ? 0 : R[0];
 
-                if (oR1 != R1) {
-                    ResetRush(oR1, PAD_A);
-                    SetRush(R1, PAD_A);
-                    fCsh -= (R1 - oR1) * 3;
-                    oR1 = R1;
+                if (oR[0] != R[0]) {
+                    ResetRush(oR[0], PAD_A);
+                    SetRush(R[0], PAD_A);
+                    fCsh -= (R[0] - oR[0]) * 3;
+                    oR[0] = R[0];
                 }
             } else if (((x >= 280 && x <= 312 && y >= 90 && y <= 132 && mousebuttons > 0) || (key >= '4' && key <= '6'))
                        && pRush && pData.Mission[1].MissionCode && pData.Mission[1].part != 1) {  /* L2: Row One */
-                // R2=oR2;
-                if (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && oR2 != 1 && fCsh < 3) {
+                // R[1]=oR[1];
+                if (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && oR[1] != 1 && fCsh < 3) {
                     Help("i117");
                 }
 
-                R2 = (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && fCsh >= 3) ? 1 : R2;
+                R[1] = (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && fCsh >= 3) ? 1 : R[1];
 
-                if (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && oR2 != 2 && fCsh < 6) {
+                if (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && oR[1] != 2 && fCsh < 6) {
                     Help("i117");
                 }
 
-                R2 = (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && fCsh >= 6) ? 2 : R2;
-                R2 = ((y >= 90 && y <= 98 && mousebuttons > 0) || key == '4') ? 0 : R2;
+                R[1] = (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && fCsh >= 6) ? 2 : R[1];
+                R[1] = ((y >= 90 && y <= 98 && mousebuttons > 0) || key == '4') ? 0 : R[1];
 
-                if (oR2 != R2) {
-                    ResetRush(oR2, PAD_B);
-                    SetRush(R2, PAD_B);
-                    fCsh -= (R2 - oR2) * 3;
-                    oR2 = R2;
+                if (oR[1] != R[1]) {
+                    ResetRush(oR[1], PAD_B);
+                    SetRush(R[1], PAD_B);
+                    fCsh -= (R[1] - oR[1]) * 3;
+                    oR[1] = R[1];
                 }
             } else if (((x >= 280 && x <= 312 && y >= 148 && y <= 190 && mousebuttons > 0) || (key >= '7' && key <= '9'))
                        && pRush && pData.Mission[2].MissionCode && pData.Mission[2].part != 1) {  /* L3: Row One */
-                // R3=oR3;
-                if (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && oR3 != 1 && fCsh < 3) {
+                // R[2]=oR[2];
+                if (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && oR[2] != 1 && fCsh < 3) {
                     Help("i117");
                 }
 
-                R3 = (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && fCsh >= 3) ? 1 : R3;
+                R[2] = (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && fCsh >= 3) ? 1 : R[2];
 
-                if (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && oR3 != 2 && fCsh < 6) {
+                if (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && oR[2] != 2 && fCsh < 6) {
                     Help("i117");
                 }
 
-                R3 = (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && fCsh >= 6) ? 2 : R3;
-                R3 = ((y >= 148 && y <= 156 && mousebuttons > 0) || key == '7') ? 0 : R3;
+                R[2] = (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && fCsh >= 6) ? 2 : R[2];
+                R[2] = ((y >= 148 && y <= 156 && mousebuttons > 0) || key == '7') ? 0 : R[2];
 
-                if (oR3 != R3) {
-                    ResetRush(oR3, PAD_C);
-                    SetRush(R3, PAD_C);
-                    fCsh -= (R3 - oR3) * 3;
-                    oR3 = R3;
+                if (oR[2] != R[2]) {
+                    ResetRush(oR[2], PAD_C);
+                    SetRush(R[2], PAD_C);
+                    fCsh -= (R[2] - oR[2]) * 3;
+                    oR[2] = R[2];
                 }
             } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 
                        && pData.Mission[0].MissionCode != Mission_None && pData.Mission[0].part != 1) {
@@ -533,17 +531,17 @@ void Rush(char plr)
                 }
             }
 
-            for (int i = 0; i < 3; i++) {
-                if (x >= 91 && x <= 264 && y >= 41 + i * 59 && y <= 59 + i * 59 && mousebuttons > 0
-                    && pData.Mission[i].MissionCode
-                    && pData.Mission[i].part != 1) {  // Downgrade
+            for (int pad = 0; pad < 3; pad++) {
+                if (x >= 91 && x <= 264 && y >= 41 + pad * 59 && y <= 59 + pad * 59 && mousebuttons > 0
+                    && pData.Mission[pad].MissionCode
+                    && pData.Mission[pad].part != 1) {  // Downgrade
 
-                    InBox(91, 41 + i * 58, 264, 59 + i * 58);
+                    InBox(91, 41 + pad * 58, 264, 59 + pad * 58);
 
-                    DrawMissionEntry(plr, i, downgradeList[i].next());
+                    DrawMissionEntry(plr, pad, downgradeList[pad].next());
 
                     WaitForMouseUp();
-                    OutBox(91, 41 + i * 58, 264, 59 + i * 58);
+                    OutBox(91, 41 + pad * 58, 264, 59 + pad * 58);
                 }
             }
 
@@ -558,42 +556,29 @@ void Rush(char plr)
                 OutBox(245, 5, 314, 17);
                 delay(10);
 
-                for (int i = 0; i < 3; i++) {
-                    if (pData.Mission[i].MissionCode != Mission_None
-                        && pData.Mission[i].part != 1 
-                        && ! Equals(pData.Mission[i],
-                                    downgradeList[i].current())) {
-                        Downgrade(plr, i, downgradeList[i].current());
-                    }
+                for (int pad = 0; pad < 3; pad++) {
+                    if (pData.Mission[pad].MissionCode == Mission_None) continue;
+                    if (pData.Mission[pad].part == 1) continue; 
+                    if (Equals(pData.Mission[pad], downgradeList[pad].current())) continue;
+                    
+                    Downgrade(plr, pad, downgradeList[pad].current());
                 }
 
                 if (pData.Mission[1].part == 1) {
-                    R2 = R1;
+                    R[1] = R[0];
                 }
 
                 if (pData.Mission[2].part == 1) {
-                    R3 = R2;
+                    R[2] = R[1];
                 }
 
-                if (pData.Mission[0].MissionCode &&
-                    pData.Cash >= 3 * R1) {
-                    pData.Cash -= 3 * R1;
-                    pData.Mission[0].Month -= R1;
-                    pData.Mission[0].Rushing = R1;
-                }
-
-                if (pData.Mission[1].MissionCode &&
-                    pData.Cash >= 3 * R2) {
-                    pData.Cash -= 3 * R2;
-                    pData.Mission[1].Month -= R2;
-                    pData.Mission[1].Rushing = R2;
-                }
-
-                if (pData.Mission[2].MissionCode &&
-                    pData.Cash >= 3 * R3) {
-                    pData.Cash -= 3 * R3;
-                    pData.Mission[2].Month -= R3;
-                    pData.Mission[2].Rushing = R3;
+                for (int pad=0; pad < 3; ++pad) {
+                    if (pData.Mission[pad].MissionCode == Mission_None) continue;
+                    if (pData.Cash >= 3 * R[pad]) {
+                        pData.Cash -= 3 * R[pad];
+                        pData.Mission[pad].Month -= R[pad];
+                        pData.Mission[pad].Rushing = R[pad];
+                    }
                 }
 
                 music_stop();
@@ -629,84 +614,22 @@ void ResetRush(const int mode, const int pad)
 void SetLaunchDates(const char plr)
 {
     auto& pData = Data->P[plr];
-    int missionCount = 0;
-    bool joint = false;
+    int missionCount = std::count_if(pData.Mission, pData.Mission+MAX_MISSIONS, [](auto& mission){return mission.MissionCode != Mission_None
+                                                                                                         && mission.part == 0;});
 
     // Currently, can only handle 3 missions.
     // assert(MAX_MISSIONS == 3);
 
-    for (int i = 0; i < MAX_MISSIONS; i++) {
-        auto& mission = pData.Mission[i];
-        if (mission.Joint == 1) {
-            joint = true;
-        }
-
-        if (mission.MissionCode != Mission_None
-            && mission.part == 0) {
-            missionCount++;
-        }
-    }
-
-    if (missionCount == 3) {  // Three non-joint missions
-        pData.Mission[0].Month = 2 + Data->Season * 6;
-        pData.Mission[1].Month = 3 + Data->Season * 6;
-        pData.Mission[2].Month = 4 + Data->Season * 6;
-    }
-
-    if (missionCount == 2 && joint == false) {  // Two non-joint missions
-        int start = 3;
-
-        if (pData.Mission[0].MissionCode) {
-            pData.Mission[0].Month = start + Data->Season * 6;
-            start += 2;
-        }
-
-        if (pData.Mission[1].MissionCode) {
-            pData.Mission[1].Month = start + Data->Season * 6;
-            start += 2;
-        }
-
-        if (pData.Mission[2].MissionCode) {
-            pData.Mission[2].Month = start + Data->Season * 6;
-        }
-    }
-
-    if (missionCount == 1 && joint == false) {  // Single Mission Non-joint
-        if (pData.Mission[0].MissionCode) {
-            pData.Mission[0].Month = 4 + Data->Season * 6;
-        }
-
-        if (pData.Mission[1].MissionCode) {
-            pData.Mission[1].Month = 4 + Data->Season * 6;
-        }
-
-        if (pData.Mission[2].MissionCode) {
-            pData.Mission[2].Month = 4 + Data->Season * 6;
-        }
-    }
-
-    if (missionCount == 2 && joint == true) {  // Two launches, one Joint;
-        if (pData.Mission[1].part == 1) {  // Joint first
-            pData.Mission[0].Month = 3 + Data->Season * 6;
-            pData.Mission[1].Month = 3 + Data->Season * 6;
-            pData.Mission[2].Month = 5 + Data->Season * 6;
-        }
-
-        if (pData.Mission[2].part == 1) {  // Joint second
-            pData.Mission[0].Month = 3 + Data->Season * 6;
-            pData.Mission[1].Month = 5 + Data->Season * 6;
-            pData.Mission[2].Month = 5 + Data->Season * 6;
-        }
-    }
-
-    if (missionCount == 1 && joint == true) {  // Single Joint Launch
-        if (pData.Mission[1].part == 1) {  // found on pad 1+2
-            pData.Mission[0].Month = 4 + Data->Season * 6;
-            pData.Mission[1].Month = 4 + Data->Season * 6;
-        } else {   // found on pad 2+3
-            pData.Mission[1].Month = 4 + Data->Season * 6;
-            pData.Mission[2].Month = 4 + Data->Season * 6;
-        }
+    int launch_months[3][3] = {
+        {4},
+        {3,5},
+        {2,3,4},
+    };
+    int launch = -1;
+    for (int pad = 0; pad < MAX_MISSIONS; ++pad){
+        if (pData.Mission[pad] == Mission_None) continue;
+        if (pData.Mission[pad].part == 0) ++launch;
+        pData.Mission[pad].Month = launch_months[missionCount][launch] + Data->Season*6;
     }
 }
 
@@ -734,7 +657,7 @@ void SetRush(int mode, int pad)
 
 void DrawPenaltyPopup(char plr, const MissionType& mission)
 {
-    struct mStr plan = GetMissionPlan(mission.MissionCode);
+    mStr plan = GetMissionPlan(mission.MissionCode);
 
     if (plan.Dur) {
         plan.Days = mission.Duration;
@@ -826,9 +749,8 @@ void DrawPenaltyPopup(char plr, const mStr& mission)
     IOBox(91, 127, 243, 148);
     display::graphics.setForegroundColor(5);
     draw_heading(123, 131, "CONTINUE", 0, -2);
-    bool close = false;
 
-    while (! close) {
+    while (true) {
         key = 0;
         GetMouse();
 
@@ -842,9 +764,9 @@ void DrawPenaltyPopup(char plr, const mStr& mission)
                 key = 0;
             }
 
-            close = true;
             OutBox(91, 127, 243, 148);
             delay(50);
+            break;
         }
     }
 
