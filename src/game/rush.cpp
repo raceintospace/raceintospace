@@ -627,9 +627,10 @@ void SetLaunchDates(const char plr)
     };
     int launch = -1;
     for (int pad = 0; pad < MAX_MISSIONS; ++pad){
-        if (pData.Mission[pad] == Mission_None) continue;
-        if (pData.Mission[pad].part == 0) ++launch;
-        pData.Mission[pad].Month = launch_months[missionCount][launch] + Data->Season*6;
+        auto& mission = pData.Mission[pad];
+        if (mission.MissionCode == Mission_None) continue;
+        if (mission.part == 0) ++launch;
+        mission.Month = launch_months[missionCount][launch] + Data->Season*6;
     }
 }
 
