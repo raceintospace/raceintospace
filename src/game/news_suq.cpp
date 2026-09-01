@@ -47,24 +47,24 @@ int rollSixDie(int nrolls) {
  *
  * \return true (1) if need to scrub mission because of crews
  */
-char CheckCrewOK(char plr, char pad)
+bool MissionCrewCantFly(char plr, char pad)
 {
     BuzzData& pData = Data->P[plr];
     auto& mission = pData.Mission[pad];
 
     int mis = mission.MissionCode;
-    if (mis == Mission_None) return 0; // no mission - no problem
+    if (mis == Mission_None) return false; // no mission - no problem
     
     int prog = mission.Prog;
     int P_crew = mission.PCrew - 1;
-    if (pData.CrewCount[prog][P_crew] != 0) return 0; // primary crew is fine
+    if (pData.CrewCount[prog][P_crew] != 0) return false; // primary crew is fine
     
     int B_crew = mission.BCrew - 1;
-    if (pData.CrewCount[prog][P_crew] != 0) return 0; // backup crew is fine
+    if (pData.CrewCount[prog][P_crew] != 0) return false; // backup crew is fine
 
-    if (mission.Men <= 0) return 0; // don't care about unmanned missions(?)
+    if (mission.Men <= 0) return false; // don't care about unmanned missions(?)
 
-    if (AI[plr]) return 0; // ???
+    if (AI[plr]) return false; // ???
     
     switch (pad) {              // THE PRIMARY AND SECONDARY CREWS
     case 0:                     // OF THE MISSION ON PAD [] HAVE BEEN
@@ -80,7 +80,7 @@ char CheckCrewOK(char plr, char pad)
         break;
     }
 
-    return 1;
+    return true;
 }
 
 
