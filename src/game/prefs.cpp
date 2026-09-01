@@ -728,15 +728,13 @@ int Preferences(int player, PreferencesMode where)
             } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
                        || (ksel == 0 && key == 'N')) {
                 /* P1: Director Name */
-                if (where != PREFS_INGAME ||
-                    (player == 0 || !IsHumanPlayer(0))) {
+                if (where != PREFS_INGAME || player == 0 || !IsHumanPlayer(0)) {
                     EditDirectorName(0);
                 }
             } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
                        || (ksel == 1 && key == 'N')) {
                 /* P2: Director Name */
-                if (where != PREFS_INGAME ||
-                    (player == 1 || !IsHumanPlayer(1))) {
+                if (where != PREFS_INGAME || player == 1 || !IsHumanPlayer(1)) {
                     EditDirectorName(1);
                 }
             }
