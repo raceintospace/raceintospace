@@ -50,9 +50,9 @@
 
 
 enum PreferencesMode {
-    PREFS_INGAME = 1,
-    PREFS_NEWGAME = 0,
-    PREFS_NEWPBEM = 3
+    PREFS_NEWGAME,
+    PREFS_NEWPBEM,
+    PREFS_INGAME,
 };
 
 struct DisplayContext {
