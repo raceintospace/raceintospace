@@ -435,7 +435,7 @@ void Rush(char plr)
                     if ((y >= 32+rush_level*17+pad*58 && y <= 57+rush_level*17+pad*58 && mousebuttons > 0)
                         || key == '1'+rush_level+pad*3) {
 
-                        if (fCsh < 3*(rush_level - R[pad]) {
+                        if (fCsh < 3*(rush_level - R[pad])) {
                             Help("i117");
                             break;
                         }
