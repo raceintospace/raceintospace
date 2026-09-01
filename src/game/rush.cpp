@@ -445,7 +445,7 @@ void Rush(char plr)
                         ResetRush(R[pad], pad);
                         SetRush(rush_level, pad);
                         fCsh -= (rush_level - R[pad]) * 3;
-                        R[0] = rush_level;
+                        R[pad] = rush_level;
                     }
                 }
             }
