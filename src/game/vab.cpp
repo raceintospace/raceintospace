@@ -1092,7 +1092,7 @@ void VAB(char plr)
 
         // If a manned mission's Primary & Backup flight crews are
         // unavailable, scrub the mission.
-        if (CheckCrewOK(plr, mis) == 1) {  // found mission no crews
+        if (MissionCrewCantFly(plr, mis)) {  // found mission no crews
             ScrubMission(plr, mis);
             continue;
         }

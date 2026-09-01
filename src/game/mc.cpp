@@ -162,7 +162,7 @@ int Launch(char plr, char mis)
 
     JOINT = mission.Joint;
 
-    if (CheckCrewOK(plr, mis) == 1) { // found mission no crews
+    if (MissionCrewCantFly(plr, mis)) { // found mission no crews
         LOG_DEBUG("Crew is not good, mission scrubbed");
         ScrubMission(plr, mis);
     }

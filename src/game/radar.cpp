@@ -397,9 +397,8 @@ void ShowPad(char plr, char pad)
     
     music_start((plr == 0) ? M_USMIL : M_USSRMIL);
     PadDraw(plr, pad);
-    char temp = CheckCrewOK(plr, pad);
 
-    if (temp == 1) {  //found mission no crews
+    if (MissionCrewCantFly(plr, pad)) {  //found mission no crews
         ScrubMission(plr, pad);
         return;
     }
@@ -478,6 +477,7 @@ void ShowPad(char plr, char pad)
             key = 0;
             WaitForMouseUp();
 
+            bool temp = false;
             if (Data->P[plr].Cash >= launchpad_status) {
                 temp = Help("i115");
 
@@ -492,7 +492,7 @@ void ShowPad(char plr, char pad)
             OutBox(169, 181, 314, 193);
             key = 0;
 
-            if (temp == 1) {
+            if (temp) {
                 return;
             }
         } else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
