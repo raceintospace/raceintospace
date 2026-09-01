@@ -466,7 +466,7 @@ void Rush(char plr)
         std::string_view keyboard_shortcuts = "QRU"sv;
         for (int pad=0; pad < 3; ++pad) { // downgrade
             if (pData.Mission[pad].MissionCode == Mission_None) continue;
-            if (pData.Mission[i].part == 1) continue;
+            if (pData.Mission[pad].part == 1) continue;
 
             if ((x >= 91 && x <= 264 && y >= 41 + pad * 58 && y <= 59 + pad * 58 && mousebuttons > 0)
                 || key == keyboard_shortcuts[pad]) {
