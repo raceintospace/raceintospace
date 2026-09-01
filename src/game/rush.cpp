@@ -29,6 +29,8 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <string_view>
+using namespace std::literals::string_view_literals;
 
 #include "display/graphics.h"
 #include "display/surface.h"
@@ -414,176 +416,104 @@ void Rush(char plr)
     FadeIn(2, 10, 0, 0);
     WaitForMouseUp();
 
-    int R[3]{}, oR[3]{};
+    int R[3]{};
     while (1) {
         key = 0;
         GetMouse();
 
-        if (mousebuttons > 0 || key > 0) {
-            if (((y >= 32 && y <= 74 && x >= 280 && x <= 312 && mousebuttons > 0) || (key >= '1' && key <= '3'))
-                && pRush && pData.Mission[0].MissionCode && pData.Mission[0].part != 1) {  /* L1: Row One */
-                // R[0]=oR[0];
-                if (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && oR[0] != 1 && fCsh < 3) {
-                    Help("i117");
-                }
+        if (mousebuttons == 0 && key == 0) continue;
+    
+        for (int pad=0; pad < 3; ++pad) { // rush
+            if (! pRush) break;
+            if (pData.Mission[pad].MissionCode == Mission_None) continue;
+            if (pData.Mission[pad].part == 1) continue;
 
-                R[0] = (((y >= 49 && y <= 57 && mousebuttons > 0) || key == '2') && fCsh >= 3) ? 1 : R[0];
+            if ((x >= 280 && x <= 312 && y >= 32+pad*58 && y <= 74+pad*58 && mousebuttons > 0)
+                || (key >= '1'+pad*3 && key <= '3'+pad*3)) {
 
-                if (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && oR[0] != 2 && fCsh < 6) {
-                    Help("i117");
-                }
+                for (int rush_level=0; rush_level < 3; ++rush_level) {
+                    if ((y >= 32+rush_level*17+pad*58 && y <= 57+rush_level*17+pad*58 && mousebuttons > 0)
+                        || key == '1'+rush_level+pad*3) {
 
-                R[0] = (((y >= 66 && y <= 74 && mousebuttons > 0) || key == '3') && fCsh >= 6) ? 2 : R[0];
-                R[0] = ((y >= 32 && y <= 40 && mousebuttons > 0) || key == '1') ? 0 : R[0];
+                        if (fCsh < 3*(rush_level - R[pad])) {
+                            Help("i117");
+                            break;
+                        }
 
-                if (oR[0] != R[0]) {
-                    ResetRush(oR[0], PAD_A);
-                    SetRush(R[0], PAD_A);
-                    fCsh -= (R[0] - oR[0]) * 3;
-                    oR[0] = R[0];
-                }
-            } else if (((x >= 280 && x <= 312 && y >= 90 && y <= 132 && mousebuttons > 0) || (key >= '4' && key <= '6'))
-                       && pRush && pData.Mission[1].MissionCode && pData.Mission[1].part != 1) {  /* L2: Row One */
-                // R[1]=oR[1];
-                if (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && oR[1] != 1 && fCsh < 3) {
-                    Help("i117");
-                }
+                        if (R[pad] == rush_level) break;
 
-                R[1] = (((y >= 107 && y <= 115 && mousebuttons > 0) || key == '5') && fCsh >= 3) ? 1 : R[1];
-
-                if (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && oR[1] != 2 && fCsh < 6) {
-                    Help("i117");
-                }
-
-                R[1] = (((y >= 124 && y <= 132 && mousebuttons > 0) || key == '6') && fCsh >= 6) ? 2 : R[1];
-                R[1] = ((y >= 90 && y <= 98 && mousebuttons > 0) || key == '4') ? 0 : R[1];
-
-                if (oR[1] != R[1]) {
-                    ResetRush(oR[1], PAD_B);
-                    SetRush(R[1], PAD_B);
-                    fCsh -= (R[1] - oR[1]) * 3;
-                    oR[1] = R[1];
-                }
-            } else if (((x >= 280 && x <= 312 && y >= 148 && y <= 190 && mousebuttons > 0) || (key >= '7' && key <= '9'))
-                       && pRush && pData.Mission[2].MissionCode && pData.Mission[2].part != 1) {  /* L3: Row One */
-                // R[2]=oR[2];
-                if (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && oR[2] != 1 && fCsh < 3) {
-                    Help("i117");
-                }
-
-                R[2] = (((y >= 165 && y <= 173 && mousebuttons > 0) || key == '8') && fCsh >= 3) ? 1 : R[2];
-
-                if (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && oR[2] != 2 && fCsh < 6) {
-                    Help("i117");
-                }
-
-                R[2] = (((y >= 182 && y <= 190 && mousebuttons > 0) || key == '9') && fCsh >= 6) ? 2 : R[2];
-                R[2] = ((y >= 148 && y <= 156 && mousebuttons > 0) || key == '7') ? 0 : R[2];
-
-                if (oR[2] != R[2]) {
-                    ResetRush(oR[2], PAD_C);
-                    SetRush(R[2], PAD_C);
-                    fCsh -= (R[2] - oR[2]) * 3;
-                    oR[2] = R[2];
-                }
-            } else if (x >= 20 && x <= 60 && y >= 38 && y <= 69 && mousebuttons > 0 
-                       && pData.Mission[0].MissionCode != Mission_None && pData.Mission[0].part != 1) {
-                OutBox(20, 38, 60, 69);
-                delay(150);
-                InBox(20, 38, 60, 69);
-                DrawPenaltyPopup(plr, downgradeList[0].current());
-            } else if (x >= 20 && x <= 60 && y >= 96 && y <= 127 && mousebuttons > 0 
-                       && pData.Mission[1].MissionCode != Mission_None && pData.Mission[1].part != 1) {
-                OutBox(20, 96, 60, 127);
-                delay(150);
-                InBox(20, 96, 60, 127);
-                DrawPenaltyPopup(plr, downgradeList[1].current());
-            } else if (x >= 20 && x <= 60 && y >= 154 && y <= 185 && mousebuttons > 0 
-                       && pData.Mission[2].MissionCode != Mission_None && pData.Mission[2].part != 1) {
-                OutBox(20, 154, 60, 185);
-                delay(150);
-                InBox(20, 154, 60, 185);
-                DrawPenaltyPopup(plr, downgradeList[2].current());
-            }
-
-            // DOWNGRADE MISSION KEYBOARD
-            if (key == 'Q' || key == 'R' || key == 'U') {
-                int i = 0;
-
-                if (key == 'Q') {
-                    i = PAD_A;
-                } else if (key == 'R') {
-                    i = PAD_B;
-                } else if (key == 'U') {
-                    i = PAD_C;
-                } else {
-                    i = 0;
-                }
-
-                if (pData.Mission[i].MissionCode != Mission_None && pData.Mission[i].part != 1) {
-                    InBox(91, 41 + i * 58, 264, 59 + i * 58);
-
-                    DrawMissionEntry(plr, i, downgradeList[i].next());
-
-                    WaitForMouseUp();
-                    OutBox(91, 41 + i * 58, 264, 59 + i * 58);
-
-                }
-            }
-
-            for (int pad = 0; pad < 3; pad++) {
-                if (x >= 91 && x <= 264 && y >= 41 + pad * 59 && y <= 59 + pad * 59 && mousebuttons > 0
-                    && pData.Mission[pad].MissionCode
-                    && pData.Mission[pad].part != 1) {  // Downgrade
-
-                    InBox(91, 41 + pad * 58, 264, 59 + pad * 58);
-
-                    DrawMissionEntry(plr, pad, downgradeList[pad].next());
-
-                    WaitForMouseUp();
-                    OutBox(91, 41 + pad * 58, 264, 59 + pad * 58);
-                }
-            }
-
-            if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || (key == K_ENTER || key == K_ESCAPE)) {  // CONTINUE
-                InBox(245, 5, 314, 17);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                OutBox(245, 5, 314, 17);
-                delay(10);
-
-                for (int pad = 0; pad < 3; pad++) {
-                    if (pData.Mission[pad].MissionCode == Mission_None) continue;
-                    if (pData.Mission[pad].part == 1) continue; 
-                    if (Equals(pData.Mission[pad], downgradeList[pad].current())) continue;
-                    
-                    Downgrade(plr, pad, downgradeList[pad].current());
-                }
-
-                if (pData.Mission[1].part == 1) {
-                    R[1] = R[0];
-                }
-
-                if (pData.Mission[2].part == 1) {
-                    R[2] = R[1];
-                }
-
-                for (int pad=0; pad < 3; ++pad) {
-                    if (pData.Mission[pad].MissionCode == Mission_None) continue;
-                    if (pData.Cash >= 3 * R[pad]) {
-                        pData.Cash -= 3 * R[pad];
-                        pData.Mission[pad].Month -= R[pad];
-                        pData.Mission[pad].Rushing = R[pad];
+                        ResetRush(R[pad], pad);
+                        SetRush(rush_level, pad);
+                        fCsh -= (rush_level - R[pad]) * 3;
+                        R[pad] = rush_level;
                     }
                 }
-
-                music_stop();
-                return;  // Done
             }
+        }
+
+        for (int pad = 0; pad < 3; ++pad) { // Penalty explainer
+            if (pData.Mission[pad].MissionCode != Mission_None) continue;
+            if (pData.Mission[pad].part == 1) continue;
+
+            if (x >= 20 && x <= 60 && y >= 38+pad*58 && y <= 69+pad*58 && mousebuttons > 0) {
+                OutBox(20, 38+pad*58, 60, 69+pad*58);
+                delay(150);
+                InBox(20, 38+pad*58, 60, 69+pad*58);
+                DrawPenaltyPopup(plr, downgradeList[pad].current());
+            }
+        }
+
+        std::string_view keyboard_shortcuts = "QRU"sv;
+        for (int pad=0; pad < 3; ++pad) { // downgrade
+            if (pData.Mission[pad].MissionCode == Mission_None) continue;
+            if (pData.Mission[pad].part == 1) continue;
+
+            if ((x >= 91 && x <= 264 && y >= 41 + pad * 58 && y <= 59 + pad * 58 && mousebuttons > 0)
+                || key == keyboard_shortcuts[pad]) {
+                InBox(91, 41 + pad * 58, 264, 59 + pad * 58);
+
+                DrawMissionEntry(plr, pad, downgradeList[pad].next());
+
+                WaitForMouseUp();
+                OutBox(91, 41 + pad * 58, 264, 59 + pad * 58);
+            }
+        }
+
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || (key == K_ENTER || key == K_ESCAPE)) {  // CONTINUE
+            InBox(245, 5, 314, 17);
+            WaitForMouseUp();
+
+            if (key > 0) {
+                delay(150);
+            }
+
+            OutBox(245, 5, 314, 17);
+            delay(10);
+
+            for (int pad = 0; pad < 3; pad++) {
+                if (pData.Mission[pad].MissionCode == Mission_None) continue;
+                if (pData.Mission[pad].part == 1) continue; 
+                if (Equals(pData.Mission[pad], downgradeList[pad].current())) continue;
+                
+                Downgrade(plr, pad, downgradeList[pad].current());
+            } 
+
+            for (int sec_pad = 1; sec_pad < 3; ++sec_pad) {
+                if (pData.Mission[sec_pad].part == 1) {
+                    R[sec_pad] = R[sec_pad - 1];
+                } 
+            } 
+
+            pData.Cash = fCsh;
+            for (int pad=0; pad < 3; ++pad) {
+                if (pData.Mission[pad].MissionCode == Mission_None) continue;
+                
+                pData.Mission[pad].Month -= R[pad];
+                pData.Mission[pad].Rushing = R[pad];
+            } 
+    
+            music_stop();
+            return;  // Done
         }
     }
 }
