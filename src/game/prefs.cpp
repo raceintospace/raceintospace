@@ -50,16 +50,16 @@
 
 
 enum PreferencesMode {
-    PREFS_INGAME = 1,
-    PREFS_NEWGAME = 0,
-    PREFS_NEWPBEM = 3
+    PREFS_NEWGAME,
+    PREFS_NEWPBEM,
+    PREFS_INGAME,
 };
 
 struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
 
-void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
+void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
                DisplayContext& dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
@@ -68,15 +68,13 @@ void Levels(char plr, char which, char x, DisplayContext& dctx);
 void BinT(int x, int y, char st);
 void PLevels(char side, char wh, DisplayContext& dctx);
 void CLevels(char side, char wh, DisplayContext& dctx);
-int Preferences(int player, int where);
+int Preferences(int player, PreferencesMode where);
 void SavePreferences(const AudioConfig& audio);
 
 
-void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
+void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
                DisplayContext& dctx)
 {
-    int mode = 0;
-
     FadeOut(2, 10, 0, 0);
 
     display::graphics.screen()->clear();
@@ -104,13 +102,7 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
     fill_rectangle(96, 114, 223, 194, 0);
     ShBox(230, 24, 319, 199);
 
-    if (where == 2) {
-        where = mode = 1;    //modem kludge
-    } else if (where == 3) {
-        where = mode = 2;    //play-by-mail
-    }
-
-    if (where == 0 || where == 2) {
+    if (where != PREFS_INGAME) {
         music_start(M_SOVTYP);
         IOBox(6, 105, 83, 140);
         IOBox(6, 158, 83, 193);
@@ -142,12 +134,10 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
         fill_rectangle(7, 35, 82, 41, 0);
     }
 
-    if (mode == 0) {
-        draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
-    } else if (mode == 2) {
+    if (where == PREFS_NEWPBEM) {
         draw_heading(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
     } else {
-        draw_heading(6, 5, "MODEM GAME SELECTIONS", 0, -1);
+        draw_heading(6, 5, "PREFERENCES SELECTIONS", 0, -1);
     }
 
     IOBox(243, 3, 316, 19);
@@ -162,7 +152,7 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
     Levels(1, Data->Def.Lev2, 1, dctx);
     Levels(1, Data->Def.Ast2, 0, dctx);
 
-    if (where == 0 || where == 2) {
+    if (where != PREFS_INGAME) {
         display::graphics.setForegroundColor(9);
     } else {
         display::graphics.setForegroundColor(34);
@@ -196,7 +186,6 @@ void DrawPrefs(int where, char a1, char a2, AudioConfig audio,
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
     HModel(Data->Def.Input, 1);
 
-    // if (where==0 || where==2)
     FadeIn(2, 10, 0, 0);
 }
 
@@ -438,7 +427,7 @@ void CLevels(char side, char wh, DisplayContext& dctx)
  *                3: New PBEM game)
  * \return PREFS_ABORTED if cancelling out of menu, PREFS_SET otherwise.
  */
-int Preferences(int player, int where)
+int Preferences(int player, PreferencesMode where)
 {
     int hum1 = 0, hum2 = 0, ksel = 0;
     char Name[20]{};
@@ -448,9 +437,9 @@ int Preferences(int player, int where)
     helpText = "i013";
     keyHelpText = "K013";
 
-    if (where != 3) {
+    if (where != PREFS_NEWPBEM) {
         // If starting a new game, set default configuration
-        if (where == 0) {
+        if (where == PREFS_NEWGAME) {
             Data->Def.Plr2 = 1;
             Data->Def.Plr1 = 0;
             hum1 = 0, hum2 = 1;
@@ -522,13 +511,13 @@ int Preferences(int player, int where)
                     Data->Def.Plr1 += hum1 * 2;
                     Data->Def.Plr2 += hum2 * 2;
 
-                    if (where == 0 || where == 3) {
+                    if (where != PREFS_INGAME) {
                         FadeOut(2, 10, 0, 0);
                     }
 
                     key = 0;
 
-                    if ((where == 0 || where == 3) && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
+                    if (where != PREFS_INGAME && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
                         std::ifstream os{locate_file("hist.json", FT_DATA)};
                         cereal::JSONInputArchive ar{os};
 
@@ -547,7 +536,7 @@ int Preferences(int player, int where)
                     }
 
                     // Random Equipment
-                    if ((where == 0 || where == 3) && (Data->Def.Input == 4 || Data->Def.Input == 5)) {
+                    if (where != PREFS_INGAME && (Data->Def.Input == 4 || Data->Def.Input == 5)) {
                         RandomizeEq();
                     }
 
@@ -572,7 +561,7 @@ int Preferences(int player, int where)
                 music_stop();
                 FadeOut(2, 10, 0, 0);
                 return PREFS_ABORTED;
-            } else if (key == 'P' && (where == 0 || where == 3)) {
+            } else if (key == 'P' && where != PREFS_INGAME) {
                 fill_rectangle(59, 26, 68, 31, 3);
                 fill_rectangle(290, 26, 298, 31, 3);
 
@@ -600,7 +589,7 @@ int Preferences(int player, int where)
                 DrawPrefs(where, hum1, hum2, audio, dctx);
 
             } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) 
-                       && (where == 3 || where == 0)) {  // Hist
+                       && where != PREFS_INGAME) {  // Hist
                 char maxHModels;
                 maxHModels = options.feat_random_eq > 0 ? 5 : 3;
                 WaitForMouseUp();
@@ -640,8 +629,8 @@ int Preferences(int player, int where)
                 }
 
                 /* Sound Level */
-            } else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && where == 0 && mousebuttons > 0) 
-                     || (where == 0 && ksel == 0 && key == 'H')) {
+            } else if (where == PREFS_NEWGAME && ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
+                     || (ksel == 0 && key == 'H'))) {
                 InBox(8, 77, 18, 85);
                 WaitForMouseUp();
                 hum1++;
@@ -662,8 +651,8 @@ int Preferences(int player, int where)
                 }
 
                 Levels(0, Data->Def.Lev1, 1, dctx);
-            } else if ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) 
-                       || ((where == 3 || where == 0) && ksel == 0 && key == 'G')) {
+            } else if (where != PREFS_INGAME && ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
+                       || (ksel == 0 && key == 'G'))) {
                 InBox(8, 107, 81, 138);
                 WaitForMouseUp();
                 OutBox(8, 107, 81, 138);
@@ -675,8 +664,8 @@ int Preferences(int player, int where)
 
                 Levels(0, Data->Def.Lev1, 1, dctx);
                 /* P1: Game Level */
-            } else if ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && ((where == 0 || where == 3) && mousebuttons > 0)) 
-                       || ((where == 3 || where == 0) && ksel == 0 && key == 'L')) {
+            } else if (where != PREFS_INGAME && ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
+                       || (ksel == 0 && key == 'L'))) {
                 InBox(8, 160, 81, 191);
                 WaitForMouseUp();
                 OutBox(8, 160, 81, 191);
@@ -688,8 +677,8 @@ int Preferences(int player, int where)
 
                 Levels(0, Data->Def.Ast1, 0, dctx);
                 /* P1: Astro Level */
-            } else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && where == 0 && mousebuttons > 0) 
-                       || (where == 0 && ksel == 1 && key == 'H')) {
+            } else if (where == PREFS_NEWGAME && ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
+                       || (ksel == 1 && key == 'H'))) {
                 InBox(238, 77, 248, 85);
                 WaitForMouseUp();
                 hum2++;
@@ -710,8 +699,8 @@ int Preferences(int player, int where)
                 }
 
                 Levels(1, Data->Def.Lev2, 1, dctx);
-            } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && (where == 0 || where == 3) && mousebuttons > 0) 
-                       || ((where == 0 || where == 3) && ksel == 1 && key == 'G')) {
+            } else if (where != PREFS_INGAME && ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
+                       || (ksel == 1 && key == 'G'))) {
                 InBox(238, 107, 311, 138);
                 WaitForMouseUp();
                 OutBox(238, 107, 311, 138);
@@ -723,8 +712,8 @@ int Preferences(int player, int where)
 
                 Levels(1, Data->Def.Lev2, 1, dctx);
                 /* P2: Game Level */
-            } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && (where == 0 || where == 3) && mousebuttons > 0) 
-                       || ((where == 0 || where == 3) && ksel == 1 && key == 'L')) {
+            } else if (where != PREFS_INGAME && ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
+                       || (ksel == 1 && key == 'L'))) {
                 InBox(238, 160, 311, 191);
                 WaitForMouseUp();
                 OutBox(238, 160, 311, 191);
@@ -739,15 +728,13 @@ int Preferences(int player, int where)
             } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
                        || (ksel == 0 && key == 'N')) {
                 /* P1: Director Name */
-                if (where == 0 || where == 3 ||
-                    (where == 1 && (player == 0 || !IsHumanPlayer(0)))) {
+                if (where != PREFS_INGAME || player == 0 || !IsHumanPlayer(0)) {
                     EditDirectorName(0);
                 }
             } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
                        || (ksel == 1 && key == 'N')) {
                 /* P2: Director Name */
-                if (where == 0 || where == 3 ||
-                    (where == 1 && (player == 1 || !IsHumanPlayer(1)))) {
+                if (where != PREFS_INGAME || player == 1 || !IsHumanPlayer(1)) {
                     EditDirectorName(1);
                 }
             }
