@@ -263,7 +263,7 @@ void DrawPastExp(char plr, char* pStatus)
     int max = 100;
     for (int j = 0; j < 5; j++) {
         for (int i = 0; i < 4; i++) {
-            max = std::max(max, pData.Spend[j][i]);
+            max = std::max(max, (int)pData.Spend[j][i]);
         }
     }
 
@@ -389,6 +389,7 @@ void DrawPreviousMissions(char plr)
 
 void DrawViewing(char plr)
 {
+    auto& pData = Data->P[plr];
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
     ShBox(0, 0, 319, 22);
