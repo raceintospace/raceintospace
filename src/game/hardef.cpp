@@ -760,37 +760,37 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
 
         switch (loc) {
         case 0:
-            tot = std::max(tot, pData.Manned[MANNED_HW_ONE_MAN_MODULE].Steps);
-            tot = std::max(tot, pData.Manned[MANNED_HW_TWO_MAN_MODULE].Steps);
+            tot = std::max(tot, (int)pData.Manned[MANNED_HW_ONE_MAN_MODULE].Steps);
+            tot = std::max(tot, (int)pData.Manned[MANNED_HW_TWO_MAN_MODULE].Steps);
 
             for (int i = 0; i < 3; i++) {
-                tot = std::max(tot, pData.Probe[i].Steps);
+                tot = std::max(tot, (int)pData.Probe[i].Steps);
             }
 
             break;
 
         case 1:
             for (int i = 0; i < 4; i++) {
-                tot = std::max(tot, pData.Rocket[i].Steps);
+                tot = std::max(tot, (int)pData.Rocket[i].Steps);
             }
 
             break;
 
         case 2:
             for (int i = 0; i < 5; i++) {
-                tot = std::max(tot, pData.Manned[i].Steps);
+                tot = std::max(tot, (int)pData.Manned[i].Steps);
             }
 
             break;
 
         case 3:
-            tot = std::max(tot, pData.Misc[MISC_HW_EVA_SUITS].Steps);
-            tot = std::max(tot, pData.Misc[MISC_HW_DOCKING_MODULE].Steps);
-            tot = std::max(tot, pData.Misc[ROCKET_HW_BOOSTERS].Steps);
-            tot = std::max(tot, pData.Misc[MISC_HW_KICKER_A].Steps);
-            tot = std::max(tot, pData.Misc[MISC_HW_KICKER_B].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_EVA_SUITS].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_DOCKING_MODULE].Steps);
+            tot = std::max(tot, (int)pData.Misc[ROCKET_HW_BOOSTERS].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_A].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_B].Steps);
             if (plr == 1) {
-                tot = std::max(tot, pData.Misc[MISC_HW_KICKER_C].Steps);
+                tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_C].Steps);
             }
 
             break;
