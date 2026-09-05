@@ -20,6 +20,7 @@
 
 #include "crew.h"
 
+#include <algorithm>
 #include <cassert>
 #include <string>
 
@@ -36,6 +37,7 @@
 #include "options.h"  //No Capsule Training, Nikakd, 10/8/10 - Also No requirement to assign Backup crews -Leon
 #include "pace.h"
 #include "place.h"
+#include "start.h"
 #include "state_utils.h"
 
 int AsnCrew(char plr, int missionCode, char pad, char part);
@@ -83,24 +85,13 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
         return 1;
 
     case 1:  // Unmanned capsule/minishuttle single launch
-        M = HardRequest(plr, 0, misType, pad);
-
-        if (M == 0) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return HardRequest(plr, 0, misType, pad) != 0;
 
     case 2:  // Manned single launch
-        M = SecondHard(plr, 0, misType, pad);
-
-        if (M != 0) {
-            M = AsnCrew(plr, misType, pad, 0);
-        } else {
+        if (SecondHard(plr, 0, misType, pad) == 0) {
             return 0;
         }
-
-        return (M != 0);
+        return AsnCrew(plr, misType, pad, 0) != 0;
 
     case 3:  // A joint mission with a single manned launch
         M = SecondHard(plr, 1, misType, pad);
@@ -200,32 +191,34 @@ int HardCrewAssign(char plr, char pad, int misType, char newType)
  */
 void ClrFut(char plr, char pad)
 {
+    auto& launch = Data->P[plr].Future[pad];
     ClearFutureCrew(plr, pad, CREW_ALL);
 
-    if (Data->P[plr].Future[pad].Joint == 1) {
-        char part = Data->P[plr].Future[pad].part;
+    if (launch.Joint == 1) {
+        char part = launch.part;
         char jointPad = (part == 0) ? pad + 1 : pad - 1;
+        auto& other_launch = Data->P[plr].Future[jointPad];
 
-        // if (! Data->P[plr].Future[jointPad].Joint ||
-        //     Data->P[plr].Future[jointPad].Joint == part) {
+        // if (! other_launch.Joint ||
+        //     other_launch.Joint == part) {
         // }
 
         ClearFutureCrew(plr, jointPad, CREW_ALL);
 
-        Data->P[plr].Future[jointPad].part = 0;
-        Data->P[plr].Future[jointPad].Prog = 0;
-        Data->P[plr].Future[jointPad].Duration = 0;
-        Data->P[plr].Future[jointPad].Joint = 0;
-        Data->P[plr].Future[jointPad].Men = 0;
-        Data->P[plr].Future[jointPad].MissionCode = Mission_None;
+        other_launch.part = 0;
+        other_launch.Prog = 0;
+        other_launch.Duration = 0;
+        other_launch.Joint = 0;
+        other_launch.Men = 0;
+        other_launch.MissionCode = Mission_None;
     }
 
-    Data->P[plr].Future[pad].part = 0;
-    Data->P[plr].Future[pad].Prog = 0;
-    Data->P[plr].Future[pad].Men = 0;
-    Data->P[plr].Future[pad].Duration = 0;
-    Data->P[plr].Future[pad].Joint = 0;
-    Data->P[plr].Future[pad].MissionCode = Mission_None;
+    launch.part = 0;
+    launch.Prog = 0;
+    launch.Men = 0;
+    launch.Duration = 0;
+    launch.Joint = 0;
+    launch.MissionCode = Mission_None;
 }
 
 /* Create an interface and select a Primary and/or Secondary flight crew
@@ -294,37 +287,27 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
     draw_string(100, 16, "CANCEL");
 
     display::graphics.setForegroundColor(9);
-
     draw_string(185, 16, "A");
-
     display::graphics.setForegroundColor(1);
-
     draw_string(0, 0, "SSIGN");
 
     draw_string(86, 111, "MAKE ");
 
     display::graphics.setForegroundColor(9);
-
     draw_string(0, 0, "P");
-
     display::graphics.setForegroundColor(1);
-
     draw_string(0, 0, "RIMARY");
 
     draw_string(169, 111, "MAKE ");
 
     display::graphics.setForegroundColor(9);
-
     draw_string(0, 0, "B");
-
     display::graphics.setForegroundColor(1);
-
     draw_string(0, 0, "ACKUP");
 
     display::graphics.setForegroundColor(11);
-
     if (part == 0) {
-        draw_string(106, 30, "SELECT PRIMARY CREW");
+        draw_string(106, 30, "SELECT PRIMARY CREW"); // todo StringAlign
     } else {
         draw_string(100, 30, "SELECT SECONDARY CREW");
     }
@@ -457,53 +440,12 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
 
 void FutFltsTxt(char nw, char col)
 {
-    int temp = 0;
-
     display::graphics.setForegroundColor(col);
 
-    if (nw < 4) {
-        draw_string(83, 129 + nw * 16, "FLT. CREW ");
-    } else {
-        temp = nw - 4;
-        draw_string(167, 129 + temp * 16, "FLT. CREW ");
-    }
-
-    switch (nw) {
-    case 0:
-        draw_string(0, 0, "I");
-        break;
-
-    case 1:
-        draw_string(0, 0, "II");
-        break;
-
-    case 2:
-        draw_string(0, 0, "III");
-        break;
-
-    case 3:
-        draw_string(0, 0, "IV");
-        break;
-
-    case 4:
-        draw_string(0, 0, "V");
-        break;
-
-    case 5:
-        draw_string(0, 0, "VI");
-        break;
-
-    case 6:
-        draw_string(0, 0, "VII");
-        break;
-
-    case 7:
-        draw_string(0, 0, "VIII");
-        break;
-
-    default:
-        break;
-    }
+    int row = nw/4;
+    int column = nw%4;
+    draw_string(83+84*row, 129 + column * 16, "FLT. CREW ");
+    draw_string(0, 0, RomanNumeral(nw+1).c_str());
 }
 
 void FutSt(char plr, int pr, int p, int b)
@@ -593,134 +535,135 @@ void FutAstList(char plr, int missionCode, char men,
     display::graphics.setForegroundColor(1);
 
     for (int i = 0; i < men; i++) {
-        if (m[i] > 0) {
-            // Set color back to white in case ENs are set to yellow
-            display::graphics.setForegroundColor(1);
+        if (m[i] <= 0) continue;
+        auto& spaceman = Data->P[plr].Pool[m[i] - 1];
+        
+        // Set color back to white in case ENs are set to yellow
+        display::graphics.setForegroundColor(1);
 
-            if (Data->P[plr].Pool[m[i] - 1].Sex == 1) {
-                // Print name in blue if 'naut is female
-                display::graphics.setForegroundColor(5);
-            }
-
-            if (Data->P[plr].Pool[m[i] - 1].RetirementDelay > 0) {
-                // Print name in gray if 'naut has announced retirement
-                // (black doesn't show well here) -Leon
-                display::graphics.setForegroundColor(3);
-            }
-
-            draw_string(100, 44 + i * 14, &Data->P[plr].Pool[m[i] - 1].Name[0]);
-            display::graphics.setForegroundColor(3);
-
-            if (Data->P[plr].Pool[m[i] - 1].Missions > 0) {
-                draw_string(0, 0, " (");
-                draw_number(0, 0, Data->P[plr].Pool[m[i] - 1].Missions);
-                draw_string(0, 0, ")");
-            }
-
-            display::graphics.setForegroundColor(1);
-            fill_rectangle(87, 39 + i * 14, 94, 39 + i * 14, 2);  // Top
-            fill_rectangle(87, 39 + i * 14, 87, 44 + i * 14, 2);  // Left
-            fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3);  // Bottom
-            fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3);  // Right
-
-            int color = MoodColor(Data->P[plr].Pool[m[i] - 1].Mood);
-            fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, color);
-
-            //87 - 169
-            if (i == 0) {
-                // Highlight CA for Command Pilot
-                display::graphics.setForegroundColor(11);
-            }
-
-            int xloc;
-
-            draw_string(87, 51 + i * 14, "CA:");
-
-            if (Data->P[plr].Pool[m[i] - 1].Cap == 1) {
-                xloc = 102;
-            } else {
-                xloc = 101;
-            }
-
-            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Cap);
-            display::graphics.setForegroundColor(1);
-
-            // Highlight LM for LM Pilot, if the mission involves
-            // LM skill.
-            if (i == 1 && men > 1 && IsLM(missionCode)) {
-                display::graphics.setForegroundColor(11);
-            }
-
-            draw_string(113, 51 + i * 14, "LM:");
-
-            if (Data->P[plr].Pool[m[i] - 1].LM == 1) {
-                xloc = 128;
-            } else {
-                xloc = 127;
-            }
-
-            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].LM);
-            display::graphics.setForegroundColor(1);
-
-            // Highlight EVA for EVA Specialist, if the mission...
-            if (men == 1 || ((men == 2 || men == 3) && i == 1) ||
-                (men == 4 && i > 1)) {
-                if (IsEVA(missionCode)) {
-                    // ...will include an EVA...
-                    display::graphics.setForegroundColor(11);
-                } else if (IsLM(missionCode)) {
-                    // ... or might include an emergency EVA
-                    display::graphics.setForegroundColor(15);
-                }
-            }
-
-            draw_string(139, 51 + i * 14, "EV:");
-
-            if (Data->P[plr].Pool[m[i] - 1].EVA == 1) {
-                xloc = 154;
-            } else {
-                xloc = 153;
-            }
-
-            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].EVA);
-
-            // Highlight DO for Docking Specialist, if the mission
-            // will include docking
-            if (((men == 2 && i == 0) || (men == 3 && i == 2)) &&
-                IsDocking(missionCode)) {
-                display::graphics.setForegroundColor(11);
-            } else {
-                display::graphics.setForegroundColor(1);
-            }
-
-            draw_string(165, 51 + i * 14, "DO:");
-
-            if (Data->P[plr].Pool[m[i] - 1].Docking == 1) {
-                xloc = 180;
-            } else {
-                xloc = 179;
-            }
-
-            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Docking);
-
-            // Highlight EN skill for everyone on Duration missions,
-            // unless EN is disabled (Classic behavior)
-            if (IsDuration(missionCode) && options.feat_use_endurance) {
-                display::graphics.setForegroundColor(11);
-            } else {
-                display::graphics.setForegroundColor(1);
-            }
-
-            draw_string(191, 51 + i * 14, "EN:");
-
-            if (Data->P[plr].Pool[m[i] - 1].Endurance == 1) {
-                xloc = 206;
-            } else {
-                xloc = 205;
-            }
-
-            draw_number(xloc, 51 + i * 14, Data->P[plr].Pool[m[i] - 1].Endurance);
+        if (spaceman.Sex == 1) {
+            // Print name in blue if 'naut is female
+            display::graphics.setForegroundColor(5);
         }
+
+        if (spaceman.RetirementDelay > 0) {
+            // Print name in gray if 'naut has announced retirement
+            // (black doesn't show well here) -Leon
+            display::graphics.setForegroundColor(3);
+        }
+
+        draw_string(100, 44 + i * 14, spaceman.Name);
+        display::graphics.setForegroundColor(3);
+
+        if (spaceman.Missions > 0) {
+            draw_string(0, 0, " (");
+            draw_number(0, 0, spaceman.Missions);
+            draw_string(0, 0, ")");
+        }
+
+        display::graphics.setForegroundColor(1);
+        fill_rectangle(87, 39 + i * 14, 94, 39 + i * 14, 2);  // Top
+        fill_rectangle(87, 39 + i * 14, 87, 44 + i * 14, 2);  // Left
+        fill_rectangle(87, 45 + i * 14, 94, 45 + i * 14, 3);  // Bottom
+        fill_rectangle(95, 39 + i * 14, 95, 45 + i * 14, 3);  // Right
+
+        int color = MoodColor(spaceman.Mood);
+        fill_rectangle(88, 40 + i * 14, 94, 44 + i * 14, color);
+
+        //87 - 169
+        if (i == 0) {
+            // Highlight CA for Command Pilot
+            display::graphics.setForegroundColor(11);
+        }
+
+
+        draw_string(87, 51 + i * 14, "CA:");
+
+        int xloc;
+        if (spaceman.Cap == 1) {
+            xloc = 102;
+        } else {
+            xloc = 101;
+        }
+
+        draw_number(xloc, 51 + i * 14, spaceman.Cap);
+        display::graphics.setForegroundColor(1);
+
+        // Highlight LM for LM Pilot, if the mission involves
+        // LM skill.
+        if (i == 1 && men > 1 && IsLM(missionCode)) {
+            display::graphics.setForegroundColor(11);
+        }
+
+        draw_string(113, 51 + i * 14, "LM:");
+
+        if (spaceman.LM == 1) {
+            xloc = 128;
+        } else {
+            xloc = 127;
+        }
+
+        draw_number(xloc, 51 + i * 14, spaceman.LM);
+        display::graphics.setForegroundColor(1);
+
+        // Highlight EVA for EVA Specialist, if the mission...
+        if (men == 1 || ((men == 2 || men == 3) && i == 1) ||
+            (men == 4 && i > 1)) {
+            if (IsEVA(missionCode)) {
+                // ...will include an EVA...
+                display::graphics.setForegroundColor(11);
+            } else if (IsLM(missionCode)) {
+                // ... or might include an emergency EVA
+                display::graphics.setForegroundColor(15);
+            }
+        }
+
+        draw_string(139, 51 + i * 14, "EV:");
+
+        if (spaceman.EVA == 1) {
+            xloc = 154;
+        } else {
+            xloc = 153;
+        }
+
+        draw_number(xloc, 51 + i * 14, spaceman.EVA);
+
+        // Highlight DO for Docking Specialist, if the mission
+        // will include docking
+        if (((men == 2 && i == 0) || (men == 3 && i == 2)) &&
+            IsDocking(missionCode)) {
+            display::graphics.setForegroundColor(11);
+        } else {
+            display::graphics.setForegroundColor(1);
+        }
+
+        draw_string(165, 51 + i * 14, "DO:");
+
+        if (spaceman.Docking == 1) {
+            xloc = 180;
+        } else {
+            xloc = 179;
+        }
+
+        draw_number(xloc, 51 + i * 14, spaceman.Docking);
+
+        // Highlight EN skill for everyone on Duration missions,
+        // unless EN is disabled (Classic behavior)
+        if (IsDuration(missionCode) && options.feat_use_endurance) {
+            display::graphics.setForegroundColor(11);
+        } else {
+            display::graphics.setForegroundColor(1);
+        }
+
+        draw_string(191, 51 + i * 14, "EN:");
+
+        if (spaceman.Endurance == 1) {
+            xloc = 206;
+        } else {
+            xloc = 205;
+        }
+
+        draw_number(xloc, 51 + i * 14, spaceman.Endurance);
     }
 }
 
@@ -737,6 +680,7 @@ void FutAstList(char plr, int missionCode, char men,
  */
 void DrawHard(char mode, char pad, char mis, char plr)
 {
+    auto& pData = Data->P[plr];
     ShBox(75, 43, 244, 173);
     InBox(81, 60, 238, 95);
     IOBox(81, 154, 238, 167);  // continue
@@ -756,42 +700,29 @@ void DrawHard(char mode, char pad, char mis, char plr)
 //Missions(plr,85,70,mis,0);
 
     // Show duration level only on missions with a Duration step - Leon
-    if (IsDuration(Data->P[plr].Future[pad].MissionCode)) {
-        int duration = Data->P[plr].Future[pad].Duration;
+    if (IsDuration(pData.Future[pad].MissionCode)) {
+        int duration = pData.Future[pad].Duration;
         draw_string(0, 0, GetDurationParens(duration));
     }
 
     draw_string(85, 85, "PAD: ");  // Used to be followed by: "draw_number(0,0,pad+1);"--now shows PAD: A/B/C instead of 1/2/3 -Leon
-
-    switch (pad) {
-    case 0:
-        draw_string(0, 0, "A");
-        break;
-
-    case 1:
-        draw_string(0, 0, "B");
-        break;
-
-    case 2:
-        draw_string(0, 0, "C");
-        break;
-    }
+    draw_character('A'+pad);
 
     char str[21];  // Make sure the capsule/shuttle name is centered
     snprintf(str, sizeof(str), "%s",
-             Data->P[plr].Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
+             pData.Manned[MANNED_HW_ONE_MAN_CAPSULE].Name);
     draw_string(119, 109, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
-             Data->P[plr].Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
+             pData.Manned[MANNED_HW_TWO_MAN_CAPSULE].Name);
     draw_string(198, 109, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
-             Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
+             pData.Manned[MANNED_HW_THREE_MAN_CAPSULE].Name);
     draw_string(119, 126, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
-             Data->P[plr].Manned[MANNED_HW_MINISHUTTLE].Name);
+             pData.Manned[MANNED_HW_MINISHUTTLE].Name);
     draw_string(198, 126, str, ALIGN_CENTER);
     snprintf(str, sizeof(str), "%s",
-             Data->P[plr].Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
+             pData.Manned[MANNED_HW_FOUR_MAN_CAPSULE].Name);
     draw_string(159, 143, str, ALIGN_CENTER);
     draw_string(142, 162, "CANCEL");
 }
@@ -911,44 +842,43 @@ int HardRequest(char plr, char mode, char mis, char pad)
     while (i == 0) {
         key = 0;
         GetMouse();
+        if (mousebuttons == 0 && key == 0) continue;
+        
+        if (((x >= 83 && y >= 102 && x <= 156 && y <= 112) || key == '1') && pr[0]) {
+            InBox(83, 102, 156, 112);
+            i = 1;
+            WaitForMouseUp();
+        } // Mercury/Vostok
+        else if (((x >= 163 && y >= 102 && x <= 236 && y <= 112) || key == '2') && pr[1]) {
+            InBox(163, 102, 236, 112);
+            i = 2;
+            WaitForMouseUp();
+        } // Gemini/Voskhod
+        else if (((x >= 83 && y >= 119 && x <= 156 && y <= 129) || key == '3') && pr[2]) {
+            InBox(83, 119, 156, 129);
+            i = 3;
+            WaitForMouseUp();
+        } // Apollo/Soyuz
+        else if (((x >= 163 && y >= 119 && x <= 236 && y <= 129) || key == '4') && pr[3]) {
+            InBox(163, 119, 236, 129);
+            i = 4;
+            WaitForMouseUp();
+        } // XMS-2 / Lapot
+        else if (((x >= 123 && y >= 136 && x <= 196 && y <= 146) || key == '5') && pr[4]) {
+            InBox(123, 136, 196, 146);
+            i = 5;
+            WaitForMouseUp();
+        } // Jupiter/Kvartet
+        else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
+            InBox(83, 156, 236, 165);
+            WaitForMouseUp();
 
-        if (mousebuttons != 0 || key > 0) {
-            if (((x >= 83 && y >= 102 && x <= 156 && y <= 112) || key == '1') && pr[0]) {
-                InBox(83, 102, 156, 112);
-                i = 1;
-                WaitForMouseUp();
-            } // Mercury/Vostok
-            else if (((x >= 163 && y >= 102 && x <= 236 && y <= 112) || key == '2') && pr[1]) {
-                InBox(163, 102, 236, 112);
-                i = 2;
-                WaitForMouseUp();
-            } // Gemini/Voskhod
-            else if (((x >= 83 && y >= 119 && x <= 156 && y <= 129) || key == '3') && pr[2]) {
-                InBox(83, 119, 156, 129);
-                i = 3;
-                WaitForMouseUp();
-            } // Apollo/Soyuz
-            else if (((x >= 163 && y >= 119 && x <= 236 && y <= 129) || key == '4') && pr[3]) {
-                InBox(163, 119, 236, 129);
-                i = 4;
-                WaitForMouseUp();
-            } // XMS-2 / Lapot
-            else if (((x >= 123 && y >= 136 && x <= 196 && y <= 146) || key == '5') && pr[4]) {
-                InBox(123, 136, 196, 146);
-                i = 5;
-                WaitForMouseUp();
-            } // Jupiter/Kvartet
-            else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(83, 156, 236, 165);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                keyHelpText = oldKeyHelpText;
-                return 0;  // Abort - Redo Mission
+            if (key > 0) {
+                delay(150);
             }
+
+            keyHelpText = oldKeyHelpText;
+            return 0;  // Abort - Redo Mission
         }
     } /* End while */
 
@@ -979,16 +909,13 @@ int HardRequest(char plr, char mode, char mis, char pad)
  */
 int SecondHard(char plr, char mode, char mis, char pad)
 {
-    int men = 0, prg = 0, prog[5], t = 0;
+    int prg = 0, prog[5], t = 0;
 
     std::string oldKeyHelpText = keyHelpText;
     keyHelpText = "k201";
 
-    for (int i = 0; i < 5; i++) {
-        if (Data->P[plr].Manned[i].Num >= 0) {
-            men++;
-        }
-    }
+    auto& capsules = Data->P[plr].Manned;
+    int men = std::count_if(capsules, capsules+5, [](auto& program){return program.Num >= 0;});
 
     if (men == 0) {
         Help("i126");
@@ -1014,8 +941,8 @@ int SecondHard(char plr, char mode, char mis, char pad)
     // Exceptions
     // One-man capsules cannot perform Lunar missions, Docking missions.
     // TODO: plan.Days value differs from logic in HardRequest
-    if (plan.Lun == 1 || plan.Doc == 1 || plan.mEq > 1 || plan.Days > 2 ||
-        Data->P[plr].Future[pad].Duration > 2) {
+    if (plan.Lun == 1 || plan.Doc == 1 || plan.mEq > 1 || plan.Days > 2
+        || Data->P[plr].Future[pad].Duration > 2) {
         prog[0] = 0;
     }
 
@@ -1089,49 +1016,48 @@ int SecondHard(char plr, char mode, char mis, char pad)
     while (i == 0) {
         key = 0;
         GetMouse();
+        if (mousebuttons == 0 && key == 0) continue;
+        
+        if (((x >= 83 && y >= 102 && x <= 156 && y <= 112 && mousebuttons != 0) || key == '1') && prog[0] != 0 && prg != 1) {
+            men = 1;
+            InBox(83, 102, 156, 112);
+            i = 1;
+            WaitForMouseUp();
+        } // One-Man Program
+        else if (((x >= 163 && y >= 102 && x <= 236 && y <= 112 && mousebuttons != 0) || key == '2') && prog[1] != 0 && prg != 3) {
+            men = 2;
+            InBox(163, 102, 236, 112);
+            i = 2;
+            WaitForMouseUp();
+        } // Two-Man Program
+        else if (((x >= 83 && y >= 119 && x <= 156 && y <= 129 && mousebuttons != 0) || key == '3') && prog[2] != 0 && prg != 2) {
+            men = 3;
+            InBox(83, 119, 156, 129);
+            i = 3;
+            WaitForMouseUp();
+        } // Three-Man Program
+        else if (((x >= 163 && y >= 119 && x <= 236 && y <= 129 && mousebuttons != 0) || key == '4') && prog[3] != 0 && prg != 4) {
+            men = 3;
+            InBox(163, 119, 236, 129);
+            i = 4;
+            WaitForMouseUp();
+        } // Minishuttle Man Program
+        else if (((x >= 123 && y >= 136 && x <= 196 && y <= 146 && mousebuttons != 0) || key == '5') && prog[4] != 0 && prg != 5) {
+            men = 4;
+            InBox(123, 136, 196, 146);
+            i = 5;
+            WaitForMouseUp();
+        } // Four-Man Program
+        else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
+            InBox(83, 156, 236, 165);
+            WaitForMouseUp();
 
-        if (mousebuttons > 0 || key > 0) {
-            if (((x >= 83 && y >= 102 && x <= 156 && y <= 112 && mousebuttons != 0) || key == '1') && prog[0] != 0 && prg != 1) {
-                men = 1;
-                InBox(83, 102, 156, 112);
-                i = 1;
-                WaitForMouseUp();
-            } // One-Man Program
-            else if (((x >= 163 && y >= 102 && x <= 236 && y <= 112 && mousebuttons != 0) || key == '2') && prog[1] != 0 && prg != 3) {
-                men = 2;
-                InBox(163, 102, 236, 112);
-                i = 2;
-                WaitForMouseUp();
-            } // Two-Man Program
-            else if (((x >= 83 && y >= 119 && x <= 156 && y <= 129 && mousebuttons != 0) || key == '3') && prog[2] != 0 && prg != 2) {
-                men = 3;
-                InBox(83, 119, 156, 129);
-                i = 3;
-                WaitForMouseUp();
-            } // Three-Man Program
-            else if (((x >= 163 && y >= 119 && x <= 236 && y <= 129 && mousebuttons != 0) || key == '4') && prog[3] != 0 && prg != 4) {
-                men = 3;
-                InBox(163, 119, 236, 129);
-                i = 4;
-                WaitForMouseUp();
-            } // Minishuttle Man Program
-            else if (((x >= 123 && y >= 136 && x <= 196 && y <= 146 && mousebuttons != 0) || key == '5') && prog[4] != 0 && prg != 5) {
-                men = 4;
-                InBox(123, 136, 196, 146);
-                i = 5;
-                WaitForMouseUp();
-            } // Four-Man Program
-            else if ((x >= 83 && y >= 156 && x <= 236 && y <= 165 && mousebuttons != 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(83, 156, 236, 165);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                keyHelpText = oldKeyHelpText;
-                return 0;  // Abort - Redo Mission
+            if (key > 0) {
+                delay(150);
             }
+
+            keyHelpText = oldKeyHelpText;
+            return 0;  // Abort - Redo Mission
         }
     }
 
