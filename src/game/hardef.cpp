@@ -1562,7 +1562,7 @@ void DrawRank(char plr)
     draw_number(310, 27, Data->Def.Lev2 + 1);
 
     display::graphics.setForegroundColor(1);
-    int coords[2][] = {
+    int coords[2][6] = {
         {55,21,116,29,    60,   95},
         {203,21,264,29,  208,  243}
     };
