@@ -29,6 +29,8 @@
 
 #include "hardef.h"
 
+#include <algorithm>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 
@@ -117,118 +119,118 @@ void ShowHard(char plr)
     while (1) {
         key = 0;
         GetMouse();
+        if (mousebuttons == 0 || key == 0) continue;
+        
+        /* Gameplay */
+        if (((x >= 7 && y >= 164 && x <= 75 && y <= 195
+              && mousebuttons > 0) || key == 'U') && place != 0) {
+            InBox(7, 164, 75, 195);
+            WaitForMouseUp();
+            OutBox(7, 164, 75, 195);
+            hardware_buttons.drawButtons(0);
+            place = 0;
 
-        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
-            if (((x >= 7 && y >= 164 && x <= 75 && y <= 195
-                  && mousebuttons > 0) || key == 'U') && place != 0) {
-                InBox(7, 164, 75, 195);
-                WaitForMouseUp();
-                OutBox(7, 164, 75, 195);
-                hardware_buttons.drawButtons(0);
-                place = 0;
+            if (Cnt == 0) {
+                HInfo(plr, place, 0, dctx);
+            } else {
+                PInfo(plr, place, dctx);
+            }
 
-                if (Cnt == 0) {
-                    HInfo(plr, place, 0, dctx);
-                } else {
-                    PInfo(plr, place, dctx);
-                }
+            /* UnManned */
+        } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
+                    && mousebuttons > 0) || key == 'T') {
+            OutBox(2, 2, 31, 20);
+            WaitForMouseUp();
+            FadeOut(2, 10, 0, 0);
+            fill_rectangle(33, 1, 239, 21, 3);
+            fill_rectangle(4, 23, 315, 159, 0);
+            GradRect(4, 23, 315, 159, 0);
+            InBox(2, 2, 31, 20);
 
-                /* UnManned */
-            } else if ((x >= 3 && y >= 3 && x <= 30 && y <= 19
-                        && mousebuttons > 0) || key == 'T') {
-                OutBox(2, 2, 31, 20);
-                WaitForMouseUp();
-                FadeOut(2, 10, 0, 0);
-                fill_rectangle(33, 1, 239, 21, 3);
-                fill_rectangle(4, 23, 315, 159, 0);
-                GradRect(4, 23, 315, 159, 0);
-                InBox(2, 2, 31, 20);
+            for (int i = 4; i < 316; i += 2) {
+                display::graphics.legacyScreen()->setPixel(i, 57, 11);
+                display::graphics.legacyScreen()->setPixel(i, 91, 11);
+                display::graphics.legacyScreen()->setPixel(i, 125, 11);
+            }
 
-                for (int i = 4; i < 316; i += 2) {
-                    display::graphics.legacyScreen()->setPixel(i, 57, 11);
-                    display::graphics.legacyScreen()->setPixel(i, 91, 11);
-                    display::graphics.legacyScreen()->setPixel(i, 125, 11);
-                }
+            if (Cnt == 0) {
+                display::graphics.setForegroundColor(1);
+                draw_heading(40, 5, "PRESTIGE POINTS", 1, -1);
+                Cnt = 1;
+                PInfo(plr, place, dctx);
+            } else {
+                display::graphics.setForegroundColor(1);
+                draw_heading(40, 5, "EFFICIENCY", 1, -1);
+                fill_rectangle(149, 2, 157, 10, 9);
+                fill_rectangle(149, 2, 156, 9, 8);
+                display::graphics.setForegroundColor(9);
+                draw_string(163, 8, "ATTEMPTS");
+                fill_rectangle(149, 12, 157, 20, 6);
+                fill_rectangle(149, 12, 156, 19, 5);
+                display::graphics.setForegroundColor(6);
+                draw_string(163, 18, "SUCCESS");
+                Cnt = 0;
+                HInfo(plr, place, 0, dctx);
+            }
 
-                if (Cnt == 0) {
-                    display::graphics.setForegroundColor(1);
-                    draw_heading(40, 5, "PRESTIGE POINTS", 1, -1);
-                    Cnt = 1;
-                    PInfo(plr, place, dctx);
-                } else {
-                    display::graphics.setForegroundColor(1);
-                    draw_heading(40, 5, "EFFICIENCY", 1, -1);
-                    fill_rectangle(149, 2, 157, 10, 9);
-                    fill_rectangle(149, 2, 156, 9, 8);
-                    display::graphics.setForegroundColor(9);
-                    draw_string(163, 8, "ATTEMPTS");
-                    fill_rectangle(149, 12, 157, 20, 6);
-                    fill_rectangle(149, 12, 156, 19, 5);
-                    display::graphics.setForegroundColor(6);
-                    draw_string(163, 18, "SUCCESS");
-                    Cnt = 0;
-                    HInfo(plr, place, 0, dctx);
-                }
+            FadeIn(2, 10, 0, 0);
 
-                FadeIn(2, 10, 0, 0);
+        } else if (((x >= 83 && y >= 164 && x <= 156 && y <= 195
+                     && mousebuttons > 0) || key == 'R') && place != 1) {
+            InBox(83, 164, 156, 195);
+            WaitForMouseUp();
+            OutBox(83, 164, 156, 195);
+            hardware_buttons.drawButtons(1);
+            place = 1;
 
-            } else if (((x >= 83 && y >= 164 && x <= 156 && y <= 195
-                         && mousebuttons > 0) || key == 'R') && place != 1) {
-                InBox(83, 164, 156, 195);
-                WaitForMouseUp();
-                OutBox(83, 164, 156, 195);
-                hardware_buttons.drawButtons(1);
-                place = 1;
-
-                if (Cnt == 0) {
-                    HInfo(plr, place, 0, dctx);
-                } else {
-                    PInfo(plr, place, dctx);
-                }
+            if (Cnt == 0) {
+                HInfo(plr, place, 0, dctx);
+            } else {
+                PInfo(plr, place, dctx);
+            }
 
                 /* Rocket */
-            } else if (((x >= 164 && y >= 164 && x <= 237 && y <= 195
-                         && mousebuttons > 0) || key == 'C') && place != 2) {
-                InBox(164, 164, 237, 195);
-                WaitForMouseUp();
-                OutBox(164, 164, 237, 195);
+        } else if (((x >= 164 && y >= 164 && x <= 237 && y <= 195
+                     && mousebuttons > 0) || key == 'C') && place != 2) {
+            InBox(164, 164, 237, 195);
+            WaitForMouseUp();
+            OutBox(164, 164, 237, 195);
                 /* MANNED */
-                hardware_buttons.drawButtons(2);
-                place = 2;
+            hardware_buttons.drawButtons(2);
+            place = 2;
 
-                if (Cnt == 0) {
-                    HInfo(plr, place, 0, dctx);
-                } else {
-                    PInfo(plr, place, dctx);
-                }
-            } else if (((x >= 245 && y >= 164 && x <= 313 && y <= 195
-                         && mousebuttons > 0) || key == 'M') && place != 3) {
-                InBox(245, 164, 313, 195);
-                WaitForMouseUp();
-                OutBox(245, 164, 313, 195);
-                hardware_buttons.drawButtons(3);
-                place = 3;
+            if (Cnt == 0) {
+                HInfo(plr, place, 0, dctx);
+            } else {
+                PInfo(plr, place, dctx);
+            }
+        } else if (((x >= 245 && y >= 164 && x <= 313 && y <= 195
+                     && mousebuttons > 0) || key == 'M') && place != 3) {
+            InBox(245, 164, 313, 195);
+            WaitForMouseUp();
+            OutBox(245, 164, 313, 195);
+            hardware_buttons.drawButtons(3);
+            place = 3;
 
-                if (Cnt == 0) {
-                    HInfo(plr, place, 0, dctx);
-                } else {
-                    PInfo(plr, place, dctx);
-                }
+            if (Cnt == 0) {
+                HInfo(plr, place, 0, dctx);
+            } else {
+                PInfo(plr, place, dctx);
+            }
 
                 /* MISC */
-            } else if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0)
-                       || key == K_ENTER || key == K_ESCAPE) {
-                InBox(244, 5, 314, 17);
+        } else if ((x >= 244 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0)
+                   || key == K_ENTER || key == K_ESCAPE) {
+            InBox(244, 5, 314, 17);
 
-                if (key > 0) {
-                    delay(250);
-                    key = 0;
-                }
-
-                WaitForMouseUp();
-                OutBox(244, 5, 314, 17);
-                return;            /* Done */
+            if (key > 0) {
+                delay(250);
+                key = 0;
             }
+
+            WaitForMouseUp();
+            OutBox(244, 5, 314, 17);
+            return;            /* Done */
         }
     }
 }
@@ -245,9 +247,8 @@ void HDispIt(const DisplayContext& dctx, int x1, int y1, int x2, int y2, int s, 
 
 void PInfo(char plr, char loc, DisplayContext& dctx)
 {
-    char PrestigeTable[4][7]{}, prestigeSum;
-    int tot;
-    float ScaleAmt = 0.0;
+    auto& pData = Data->P[plr];
+    int PrestigeTable[4][7]{}, prestigeSum;
 
     GradRect(4, 23, 315, 159, 0);
 
@@ -257,42 +258,42 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
         display::graphics.legacyScreen()->setPixel(i, 125, 11);
     }
 
-    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].Prestige > 0) {
-            prestigeSum = Data->P[plr].History[i].Prestige;
-            int j = 0;
+    for (int i = 0; i < pData.PastMissionCount; i++) {
+        auto& mission = pData.History[i];
+        if (mission.Prestige <= 0) continue;
+        
+        prestigeSum = mission.Prestige;
 
-            if (Data->P[plr].History[i].Hard[j][Mission_Capsule] > -1) {
-                PrestigeTable[MANNED_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Capsule]] += prestigeSum;
+        if (mission.Hard[0][Mission_Capsule] > -1) {
+            PrestigeTable[MANNED_HARDWARE][mission.Hard[0][Mission_Capsule]] += prestigeSum;
+        }
+
+        if (mission.Hard[0][Mission_Kicker] > -1) {
+            PrestigeTable[MISC_HARDWARE][mission.Hard[0][Mission_Kicker]] += prestigeSum;
+        }
+
+        if (mission.Hard[0][Mission_LM] > -1) {
+            PrestigeTable[MANNED_HARDWARE][mission.Hard[0][Mission_LM]] += prestigeSum;
+        }
+
+        if (mission.Hard[0][Mission_Probe_DM] > -1) {
+            if (mission.Hard[0][Mission_Probe_DM] < 4) {
+                PrestigeTable[PROBE_HARDWARE][mission.Hard[0][Mission_Probe_DM]] += prestigeSum;
+            } else {
+                PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE] += prestigeSum;
             }
+        }
 
-            if (Data->P[plr].History[i].Hard[j][Mission_Kicker] > -1) {
-                PrestigeTable[MISC_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Kicker]] += prestigeSum;
+        // This is for boosters
+        if (mission.Hard[0][Mission_PrimaryBooster] > 0) {
+            if (mission.Hard[0][Mission_PrimaryBooster] < 5) {
+                PrestigeTable[ROCKET_HARDWARE][mission.Hard[0][Mission_PrimaryBooster] - 1] += prestigeSum;
+            } else {
+                PrestigeTable[ROCKET_HARDWARE][mission.Hard[0][Mission_PrimaryBooster] - 5] += prestigeSum;
+                PrestigeTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS] += prestigeSum;
             }
-
-            if (Data->P[plr].History[i].Hard[j][Mission_LM] > -1) {
-                PrestigeTable[MANNED_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_LM]] += prestigeSum;
-            }
-
-            if (Data->P[plr].History[i].Hard[j][Mission_Probe_DM] > -1) {
-                if (Data->P[plr].History[i].Hard[j][Mission_Probe_DM] < 4) {
-                    PrestigeTable[PROBE_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_Probe_DM]] += prestigeSum;
-                } else {
-                    PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE] += prestigeSum;
-                }
-            }
-
-            // This is for boosters
-            if (Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] > 0) {
-                if (Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] < 5) {
-                    PrestigeTable[ROCKET_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] - 1] += prestigeSum;
-                } else {
-                    PrestigeTable[ROCKET_HARDWARE][Data->P[plr].History[i].Hard[j][Mission_PrimaryBooster] - 5] += prestigeSum;
-                    PrestigeTable[ROCKET_HARDWARE][ROCKET_HW_BOOSTERS] += prestigeSum;
-                }
-            }                      // end if
-        }                         // end if
-    }                            // end if
+        }                    // end if
+    }                       // end for
 
     //EVA suit kludge
     PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] += Data->Prestige[Prestige_Spacewalk].Points[plr];
@@ -304,21 +305,16 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
         }
     }
 
-    tot = 0;
+    int tot = 0;
 
     switch (loc) {
     case PROBE_HARDWARE:
         {
-        if (PrestigeTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE] >= PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE]) {
-            tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE];
-        } else {
-            tot = PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE];
-        }
+        tot = std::max(tot, PrestigeTable[MANNED_HARDWARE][MANNED_HW_ONE_MAN_MODULE]);
+        tot = std::max(tot, PrestigeTable[MANNED_HARDWARE][MANNED_HW_TWO_MAN_MODULE]);
 
         for (int i = 0; i < 3; i++) {
-            if (tot <= PrestigeTable[PROBE_HARDWARE][i]) {
-                tot = PrestigeTable[PROBE_HARDWARE][i];
-            }
+            tot = std::max(tot, PrestigeTable[PROBE_HARDWARE][i]);
         }
 
         break;
@@ -327,9 +323,7 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
     case ROCKET_HARDWARE:
         {
         for (int i = 0; i < 4; i++) {
-            if (tot <= PrestigeTable[ROCKET_HARDWARE][i]) {
-                tot = PrestigeTable[ROCKET_HARDWARE][i];
-            }
+            tot = std::max(tot, PrestigeTable[ROCKET_HARDWARE][i]);
         }
 
         break;
@@ -338,9 +332,7 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
     case MANNED_HARDWARE:
         {
         for (int i = 0; i < 5; i++) {
-            if (tot <= PrestigeTable[MANNED_HARDWARE][i]) {
-                tot = PrestigeTable[MANNED_HARDWARE][i];
-            }
+            tot = std::max(tot, PrestigeTable[MANNED_HARDWARE][i]);
         }
 
         break;
@@ -348,26 +340,12 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
 
     case MISC_HARDWARE:
         {
-        if (PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS] >= PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE]) {
-            tot = PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS];
-        } else {
-            tot = PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE];
-        }
-
-        if (tot <= PrestigeTable[ROCKET_HARDWARE][MISC_HW_DOCKING_MODULE]) {
-            tot = PrestigeTable[ROCKET_HARDWARE][MISC_HW_DOCKING_MODULE];
-        }
-
-        if (tot <= PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_A]) {
-            tot = PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_A];
-        }
-
-        if (tot <= PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_B]) {
-            tot = PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_B];
-        }
-
-        if (tot <= PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C] && plr == 1) {
-            tot = PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C];
+        tot = std::max(tot, PrestigeTable[MISC_HARDWARE][MISC_HW_EVA_SUITS]);
+        tot = std::max(tot, PrestigeTable[MISC_HARDWARE][MISC_HW_DOCKING_MODULE]);
+        tot = std::max(tot, PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_A]);
+        tot = std::max(tot, PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_B]);
+        if (plr == 1) {
+            tot = std::max(tot, PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C]);
         }
 
         break;
@@ -377,6 +355,7 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
         break;
     }
 
+    float ScaleAmt = 0.0;
     if (tot < 20) {
         ScaleAmt = 5.0;
     } else if (tot < 40) {
@@ -513,7 +492,8 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
         }
 
         for (int i = 0; i < 3; i++) {
-            if (Data->P[plr].Probe[i].Num < 0) continue;
+            auto& probe = Data->P[plr].Probe[i];
+            if (probe.Num < 0) continue;
 
             int sfu = ScaleAmt * PrestigeTable[PROBE_HARDWARE][i];
             if (sfu <= 0) continue;
@@ -738,17 +718,18 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
             HDispIt(dctx, 77, 129, 88, 151, 219, 134);
         }
 
+        if (plr != 1) break;
         sfu = -1;
         if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
             sfu = ScaleAmt * PrestigeTable[MISC_HARDWARE][MISC_HW_KICKER_C];
         }
 
-        if (sfu > 0 && plr == 1) {
+        if (sfu > 0) {
             fill_rectangle(275, 159 - sfu * 136 / 100, 313, 159, 6);
             fill_rectangle(275, 159 - sfu * 136 / 100, 312, 158, 5);
         }
 
-        if (sfu > 0 && plr == 1) {
+        if (sfu > 0) {
             HDispIt(dctx, 51, 77, 93, 127, 270, 106);
         }
 
@@ -762,6 +743,7 @@ void PInfo(char plr, char loc, DisplayContext& dctx)
 
 void HInfo(char plr, char loc, char w, DisplayContext& dctx)
 {
+    auto& pData = Data->P[plr];
     float ScaleAmt = 0.0;
 
     if (w == 0) {
@@ -778,60 +760,37 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
 
         switch (loc) {
         case 0:
-            if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Steps >=
-                Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps) {
-                tot = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Steps;
-            } else {
-                tot = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
-            }
+            tot = std::max(tot, (int)pData.Manned[MANNED_HW_ONE_MAN_MODULE].Steps);
+            tot = std::max(tot, (int)pData.Manned[MANNED_HW_TWO_MAN_MODULE].Steps);
 
             for (int i = 0; i < 3; i++) {
-                if (tot <= Data->P[plr].Probe[i].Steps) {
-                    tot = Data->P[plr].Probe[i].Steps;
-                }
+                tot = std::max(tot, (int)pData.Probe[i].Steps);
             }
 
             break;
 
         case 1:
             for (int i = 0; i < 4; i++) {
-                if (tot <= Data->P[plr].Rocket[i].Steps) {
-                    tot = Data->P[plr].Rocket[i].Steps;
-                }
+                tot = std::max(tot, (int)pData.Rocket[i].Steps);
             }
 
             break;
 
         case 2:
             for (int i = 0; i < 5; i++) {
-                if (tot <= Data->P[plr].Manned[i].Steps) {
-                    tot = Data->P[plr].Manned[i].Steps;
-                }
+                tot = std::max(tot, (int)pData.Manned[i].Steps);
             }
 
             break;
 
         case 3:
-            if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps >= Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps) {
-                tot = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
-            } else {
-                tot = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
-            }
-
-            if (tot <= Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps) {
-                tot = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps;
-            }
-
-            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_A].Steps) {
-                tot = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
-            }
-
-            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_B].Steps) {
-                tot = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
-            }
-
-            if (tot <= Data->P[plr].Misc[MISC_HW_KICKER_C].Steps && plr == 1) {
-                tot = Data->P[plr].Misc[MISC_HW_KICKER_C].Steps;
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_EVA_SUITS].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_DOCKING_MODULE].Steps);
+            tot = std::max(tot, (int)pData.Misc[ROCKET_HW_BOOSTERS].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_A].Steps);
+            tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_B].Steps);
+            if (plr == 1) {
+                tot = std::max(tot, (int)pData.Misc[MISC_HW_KICKER_C].Steps);
             }
 
             break;
@@ -867,14 +826,14 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
     case ROCKET_HARDWARE:                //draw_string(137,150,"ROCKETS");
         {
         for (int i = 0; i < 4; i++) {
-            if (Data->P[plr].Rocket[i].Num < 0) continue;
+            auto& rocket = pData.Rocket[i];
+            if (rocket.Num < 0) continue;
             
-            int sfu = ScaleAmt * Data->P[plr].Rocket[i].Steps;
+            int sfu = ScaleAmt * rocket.Steps;
             if (sfu <= 0) continue;
 
-            float ov = Data->P[plr].Rocket[i].Steps
-                       - Data->P[plr].Rocket[i].Failures;
-            float un = Data->P[plr].Rocket[i].Steps;
+            float ov = rocket.Steps - rocket.Failures;
+            float un = rocket.Steps;
             int sfs = sfu * (ov / un);
 
             switch (i) {
@@ -969,14 +928,14 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
     case MANNED_HARDWARE:                //draw_string(137,150,"CAPSULES");
         {
         for (int i = 0; i < 5; i++) {
-            if (Data->P[plr].Manned[i].Num < 0) continue;
+            auto& capsule = pData.Manned[i];
+            if (capsule.Num < 0) continue;
             
-            int sfu = ScaleAmt * Data->P[plr].Manned[i].Steps;
+            int sfu = ScaleAmt * capsule.Steps;
             if (sfu <= 0) continue;
             
-            float ov = Data->P[plr].Manned[i].Steps
-                       - Data->P[plr].Manned[i].Failures;
-            float un = Data->P[plr].Manned[i].Steps;
+            float ov = capsule.Steps - capsule.Failures;
+            float un = capsule.Steps;
             int sfs = sfu * (ov / un);
 
             switch (i) {
@@ -1093,15 +1052,14 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         {
         int sfu = -1;
         int sfs = -1;
-        float ov, un;
 
-        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
+        auto& one_man = pData.Manned[MANNED_HW_ONE_MAN_MODULE];
+        if (one_man.Num >= 0) {
+            sfu = ScaleAmt * one_man.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps -
-                     Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Failures;
-                un = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Steps;
+                float ov = one_man.Steps - one_man.Failures;
+                float un = one_man.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1125,13 +1083,13 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Steps;
+        auto& two_man = pData.Manned[MANNED_HW_TWO_MAN_MODULE];
+        if (two_man.Num >= 0) {
+            sfu = ScaleAmt * two_man.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Steps -
-                     Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Failures;
-                un = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Steps;
+                float ov = two_man.Steps - two_man.Failures;
+                float un = two_man.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1153,15 +1111,14 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         }
 
         for (int i = 0; i < 3; i++) {
-            if (Data->P[plr].Probe[i].Num < 0) continue;
+            auto& probe = pData.Probe[i];
+            if (probe.Num < 0) continue;
             
-            sfu = ScaleAmt * Data->P[plr].Probe[i].Steps;
+            sfu = ScaleAmt * probe.Steps;
             if (sfu <= 0) continue;
             
-            sfs = -1;
-            ov = Data->P[plr].Probe[i].Steps -
-                 Data->P[plr].Probe[i].Failures;
-            un = Data->P[plr].Probe[i].Steps;
+            float ov = probe.Steps - probe.Failures;
+            float un = probe.Steps;
             sfs = sfu * (ov / un);
 
             switch (i) {
@@ -1240,15 +1197,14 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         {
         int sfu = -1;
         int sfs = -1;
-        float ov, un;
 
-        if (Data->P[plr].Misc[MISC_HW_EVA_SUITS].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
+        auto& eva_suit = pData.Misc[MISC_HW_EVA_SUITS];
+        if (eva_suit.Num >= 0) {
+            sfu = ScaleAmt * eva_suit.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps -
-                     Data->P[plr].Misc[MISC_HW_EVA_SUITS].Failures;
-                un = Data->P[plr].Misc[MISC_HW_EVA_SUITS].Steps;
+                float ov = eva_suit.Steps - eva_suit.Failures;
+                float un = eva_suit.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1272,13 +1228,13 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
+        auto& docking_module = pData.Misc[MISC_HW_DOCKING_MODULE];
+        if (docking_module.Num >= 0) {
+            sfu = ScaleAmt * docking_module.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps -
-                     Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Failures;
-                un = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Steps;
+                float ov = docking_module.Steps - docking_module.Failures;
+                float un = docking_module.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1302,13 +1258,13 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps;
+        auto& boosters = pData.Rocket[ROCKET_HW_BOOSTERS];
+        if (boosters.Num >= 0) {
+            sfu = ScaleAmt * boosters.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps -
-                     Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Failures;
-                un = Data->P[plr].Rocket[ROCKET_HW_BOOSTERS].Steps;
+                float ov = boosters.Steps - boosters.Failures;
+                float un = boosters.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1332,13 +1288,13 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Misc[MISC_HW_KICKER_A].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
+        auto& kicker_a = pData.Misc[MISC_HW_KICKER_A];
+        if (kicker_a.Num >= 0) {
+            sfu = ScaleAmt * kicker_a.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps -
-                     Data->P[plr].Misc[MISC_HW_KICKER_A].Failures;
-                un = Data->P[plr].Misc[MISC_HW_KICKER_A].Steps;
+                float ov = kicker_a.Steps - kicker_a.Failures;
+                float un = kicker_a.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1362,13 +1318,13 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[plr].Misc[MISC_HW_KICKER_B].Num >= 0) {
-            sfu = ScaleAmt * Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
+        auto& kicker_b = pData.Misc[MISC_HW_KICKER_B];
+        if (kicker_b.Num >= 0) {
+            sfu = ScaleAmt * kicker_b.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps -
-                     Data->P[plr].Misc[MISC_HW_KICKER_B].Failures;
-                un = Data->P[plr].Misc[MISC_HW_KICKER_B].Steps;
+                float ov = kicker_b.Steps - kicker_b.Failures;
+                float un = kicker_b.Steps;
                 sfs = sfu * (ov / un);
             }
         }
@@ -1389,31 +1345,33 @@ void HInfo(char plr, char loc, char w, DisplayContext& dctx)
             HDispIt(dctx, 77, 129, 88, 151, 219, 134);
         }
 
+        if (plr == 0) break;
+
         sfu = -1;
         sfs = -1;
 
-        if (Data->P[1].Misc[MISC_HW_KICKER_C].Num >= 0) {
-            sfu = ScaleAmt * Data->P[1].Misc[MISC_HW_KICKER_C].Steps;
+        auto& kicker_c = Data->P[1].Misc[MISC_HW_KICKER_C];
+        if (kicker_c.Num >= 0) {
+            sfu = ScaleAmt * kicker_c.Steps;
 
             if (sfu > 0) {
-                ov = Data->P[1].Misc[MISC_HW_KICKER_C].Steps -
-                     Data->P[1].Misc[MISC_HW_KICKER_C].Failures;
-                un = Data->P[1].Misc[MISC_HW_KICKER_C].Steps;
+                float ov = kicker_c.Steps - kicker_c.Failures;
+                float un = kicker_c.Steps;
                 sfs = sfu * (ov / un);
             }
         }
 
-        if (sfu > 0 && plr == 1) {
+        if (sfu > 0) {
             fill_rectangle(275, 159 - sfu * 136 / 100, 313, 159, 9);
             fill_rectangle(275, 159 - sfu * 136 / 100, 312, 158, 8);
         }
 
-        if (sfs > 0 && plr == 1) {
+        if (sfs > 0) {
             fill_rectangle(275, 159 - sfs * 136 / 100, 308, 159, 6);
             fill_rectangle(275, 159 - sfs * 136 / 100, 307, 158, 5);
         }
 
-        if (sfu > 0 && plr == 1) {
+        if (sfu > 0) {
             HDispIt(dctx, 51, 77, 93, 127, 270, 106);
         }
 
@@ -1501,8 +1459,6 @@ void RankMe(char plr)
 
 void DrawRank(char plr)
 {
-    int MaxPz = 0, MaxNg = 0, t1, t2, Cur = 0, OffSet, Year_Inc = 12, score;
-
     helpText = "i030";
     keyHelpText = "k030";
 
@@ -1511,24 +1467,20 @@ void DrawRank(char plr)
     InBox(281, 4, 308, 20);
     draw_small_flag(0, 13, 5);
     draw_small_flag(1, 282, 5);
-    int Px = 0;
-    int Py = 1;
 
-    while (Px != -1 || Py != -1) {
-        if (Px != -1) {
-            Cur = Px;
-        } else if (Py != -1) {
-            Cur = Py;
-        }
+    int MaxPz=0, MaxNg=0;
+    for(int plr_idx = 0; plr_idx < 2; ++plr_idx) {
+        auto& pData = Data->P[plr_idx];
 
-        t1 = 0;
+        int t1 = 0;
 
-        for (int i = 0; i < Data->P[Cur].PastMissionCount; i++) {
-            if (Data->P[Cur].History[i].Prestige < -15) {
-                Data->P[Cur].History[i].Prestige = 0;
+        for (int i = 0; i < pData.PastMissionCount; i++) {
+            auto& mission = pData.History[i];
+            if (mission.Prestige < -15) {
+                mission.Prestige = 0;
             }
 
-            t1 += Data->P[Cur].History[i].Prestige;
+            t1 += mission.Prestige;
 
             if (t1 >= 0) {
                 if (t1 >= MaxPz) {
@@ -1540,25 +1492,11 @@ void DrawRank(char plr)
                 }
             }
         }
-
-        if (Cur == Px) {
-            Px = -1;
-        } else if (Cur == Py) {
-            Py = -1;
-        }
     }
 
-    OffSet = 0;
-
-    for (int i = 0; i < 50; i += 2) {
-        if (OffSet != 0) break;
-        if (MaxNg != 0) {
-            if ((MaxNg >= -(i * 10)) && (MaxPz < i * 40))
-                OffSet = i * 10;
-        } else {
-            if (MaxPz < i * 40) OffSet = i * 10;
-        }
-    }
+    int MaxOffset = MaxPz/80 + 1;
+    int MinOffset = (MaxNg == 0)? 0 : (-MaxNg)/20 + 1;
+    int OffSet = std::max(MaxOffset, MinOffset) * 20;
 
     display::graphics.setForegroundColor(6);
 
@@ -1569,7 +1507,7 @@ void DrawRank(char plr)
 
     display::graphics.setForegroundColor(6);
     
-    if (OffSet < 10) {
+    if (OffSet < 10) { // todo StringAlign
         draw_number(15, 178, -OffSet);
         draw_number(311, 178, -OffSet);
     } else if (OffSet < 100) {
@@ -1597,31 +1535,23 @@ void DrawRank(char plr)
     }
 
     //Win=Data->Prestige[Prestige_MannedLunarLanding].Place;
-    t1 = 152;
-    display::graphics.setForegroundColor(5);
-    grMoveTo(34, 152);
     //if ((Option==-1 && MAIL==-1) || Option==0 || MAIL==0)
 
-    if (Option == -1 || Option == 0)
-        for (int i=0; i < Data->P[0].PastMissionCount; ++i) {
-            t2 = Data->P[0].History[i].Prestige;
-            t1 = t1 - (t2 * ((float) 24 / OffSet));
-            grLineTo(34 + Year_Inc * (Data->P[0].History[i].MissionYear -
-                                      57) + Data->P[0].History[i].Month, t1);
+    int colors[2] = {5,9};
+    for (int plr_idx = 0; plr_idx < 2; ++plr_idx) {
+        if (Option == other(plr_idx)) continue;
+        auto& pData = Data->P[plr_idx];
+        int t1 = 152;
+        
+        display::graphics.setForegroundColor(colors[plr_idx]);
+        grMoveTo(34, t1);
+        for (int i=0; i < pData.PastMissionCount; ++i) {
+            auto& mission = pData.History[i];
+            t1 -= mission.Prestige * ((float) 24 / OffSet);
+            int Year_Inc = 12;
+            grLineTo(34 + Year_Inc * (mission.MissionYear - 57) + mission.Month, t1);
         }
-
-    t1 = 152;
-    display::graphics.setForegroundColor(9);
-    grMoveTo(34, 152);
-    //if ((Option==-1 && MAIL==-1) || Option==1 || MAIL==1)
-
-    if (Option == -1 || Option == 1)
-        for (int i=0; i < Data->P[1].PastMissionCount; ++i) {
-            t2 = Data->P[1].History[i].Prestige;
-            t1 = t1 - (t2 * ((float) 24 / OffSet));
-            grLineTo(34 + Year_Inc * (Data->P[1].History[i].MissionYear -
-                                      57) + Data->P[1].History[i].Month, t1);
-        }
+    }
 
     display::graphics.setForegroundColor(1);
     draw_string(6, 27, "LEVEL:");
@@ -1631,20 +1561,21 @@ void DrawRank(char plr)
     display::graphics.setForegroundColor(0);
     draw_number(310, 27, Data->Def.Lev2 + 1);
 
-    if (Option == -1 || Option == 0) {
-        InBox(55, 21, 116, 29);
-        display::graphics.setForegroundColor(1);
-        draw_string(60, 27, "SCORE:");
-        score = CalcScore(0, Data->Def.Lev1, Data->Def.Lev2);
-        draw_number(95, 27, score);
-    }
-
-    if (Option == -1 || Option == 1) {
-        InBox(203, 21, 264, 29);
-        display::graphics.setForegroundColor(1);
-        draw_string(208, 27, "SCORE:");
-        score = CalcScore(1, Data->Def.Lev2, Data->Def.Lev1);
-        draw_number(243, 27, score);
+    display::graphics.setForegroundColor(1);
+    int coords[2][6] = {
+        {55,21,116,29,    60,   95},
+        {203,21,264,29,  208,  243}
+    };
+    for (int plr_idx = 0; plr_idx < 2; ++plr_idx) {
+        if (Option == other(plr_idx)) continue;
+        int* coord = coords[plr_idx];
+        InBox(coord[0],coord[1],coord[2],coord[3]);
+        draw_string(coord[4], 27, "SCORE:");
+        
+        int lev1 = Data->Def.Lev1;
+        int lev2 = Data->Def.Lev2;
+        if (plr_idx == 1) std::swap(lev1, lev2);
+        draw_number(coord[5], 27, CalcScore(0, lev1, lev2));        
     }
 }
 
@@ -1662,44 +1593,42 @@ void DrawRank(char plr)
  */
 int CalcScore(char plr, char lvA, char lvB)
 {
+    auto& pData = Data->P[plr];
     int total = 0;
 
     ++lvA;
     ++lvB;
 
-    for (int i = 0; i < Data->P[plr].PastMissionCount; i++) {
-        if (Data->P[plr].History[i].Prestige <= 0) continue;
+    for (int i = 0; i < pData.PastMissionCount; i++) {
+        auto& mission = pData.History[i];
+        if (mission.Prestige <= 0) continue;
         switch (lvA) {
         case 1:
-            total += Data->P[plr].History[i].Prestige;
+            total += mission.Prestige;
             break;
 
         case 2:
             if (lvB == 1)
-                total +=
-                    2 * Data->P[plr].History[i].Prestige +
-                    Data->P[plr].History[i].Prestige / 3;
+                total += 2 * mission.Prestige 
+                         + mission.Prestige / 3;
             else if (lvB == 3)
-                total +=
-                    Data->P[plr].History[i].Prestige +
-                    (2 * Data->P[plr].History[i].Prestige) / 3;
+                total += mission.Prestige 
+                         + (2 * mission.Prestige) / 3;
             else {
-                total += 2 * Data->P[plr].History[i].Prestige;
+                total += 2 * mission.Prestige;
             }
 
             break;
 
         case 3:
             if (lvB == 1)
-                total +=
-                    3 * Data->P[plr].History[i].Prestige +
-                    (2 * Data->P[plr].History[i].Prestige) / 3;
+                total += 3 * mission.Prestige 
+                         + (2 * mission.Prestige) / 3;
             else if (lvB == 2)
-                total +=
-                    3 * Data->P[plr].History[i].Prestige +
-                    Data->P[plr].History[i].Prestige / 3;
+                total += 3 * mission.Prestige 
+                         + mission.Prestige / 3;
             else {
-                total += 3 * Data->P[plr].History[i].Prestige;
+                total += 3 * mission.Prestige;
             }
 
             break;
