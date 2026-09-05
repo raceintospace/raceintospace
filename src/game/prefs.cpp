@@ -563,7 +563,8 @@ int Preferences(int player, PreferencesMode where)
 
             int color1 = 34;
             int color2 = 9;
-            if (ksel == 1) std::swap(color1, color2)
+            if (ksel == 1) std::swap(color1, color2);
+            
             display::graphics.setForegroundColor(color1);
             draw_string(23, 30, "PLAYER 1");
             display::graphics.setForegroundColor(color2);
