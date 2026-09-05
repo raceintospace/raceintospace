@@ -915,7 +915,7 @@ int SecondHard(char plr, char mode, char mis, char pad)
     keyHelpText = "k201";
 
     auto& capsules = Data->P[plr].Manned;
-    int men = std::count_if(capsules, capsules+5, [](auto& program){return progran.Num >= 0;});
+    int men = std::count_if(capsules, capsules+5, [](auto& program){return program.Num >= 0;});
 
     if (men == 0) {
         Help("i126");
