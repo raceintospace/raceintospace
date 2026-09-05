@@ -248,7 +248,7 @@ void HDispIt(const DisplayContext& dctx, int x1, int y1, int x2, int y2, int s, 
 void PInfo(char plr, char loc, DisplayContext& dctx)
 {
     auto& pData = Data->P[plr];
-    char PrestigeTable[4][7]{}, prestigeSum;
+    int PrestigeTable[4][7]{}, prestigeSum;
 
     GradRect(4, 23, 315, 159, 0);
 
