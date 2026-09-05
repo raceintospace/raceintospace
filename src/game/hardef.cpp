@@ -29,6 +29,8 @@
 
 #include "hardef.h"
 
+#include <algorithm>
+
 #include "display/graphics.h"
 #include "display/surface.h"
 
