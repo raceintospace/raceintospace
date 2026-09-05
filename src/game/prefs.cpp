@@ -172,8 +172,8 @@ void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
     draw_string(20, 155, "SELECTION");
     display::graphics.setForegroundColor(1);
     draw_string(258, 13, "CONTINUE");
-    draw_string(8, 40, &Data->P[ Data->Def.Plr1 ].Name[0]);
-    draw_string(238, 40, &Data->P[ Data->Def.Plr2 ].Name[0]);
+    draw_string(8, 40, Data->P[ Data->Def.Plr1 ].Name);
+    draw_string(238, 40, Data->P[ Data->Def.Plr2 ].Name);
 
     display::graphics.legacyScreen()->draw(
         dctx.prefs_image, 153 + 34 * (audio.music.muted ? 0 : 1), 0,
@@ -203,7 +203,7 @@ void EditDirectorName(int plr)
     }
 
     display::graphics.setForegroundColor(1);
-    draw_string(x + 1, 40, &Data->P[plr].Name[0]);
+    draw_string(x + 1, 40, Data->P[plr].Name);
     av_sync();
 }
 
@@ -430,7 +430,6 @@ void CLevels(char side, char wh, DisplayContext& dctx)
 int Preferences(int player, PreferencesMode where)
 {
     int hum1 = 0, hum2 = 0, ksel = 0;
-    char Name[20]{};
     DisplayContext dctx;
     AudioConfig audio = LoadAudioSettings();
 
@@ -471,272 +470,256 @@ int Preferences(int player, PreferencesMode where)
     while (1) {
         key = 0;
         GetMouse();
+        if (mousebuttons == 0 && key == 0) continue;
+        
+        /* Gameplay */
+        if (((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) && !(hum1 == 1 && hum2 == 1)) {
+            InBox(245, 5, 314, 17);
+            WaitForMouseUp();
 
-        if (mousebuttons > 0 || key > 0) {  /* Gameplay */
-            if (((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) && !(hum1 == 1 && hum2 == 1)) {
-                InBox(245, 5, 314, 17);
-                WaitForMouseUp();
+            if (key > 0) {
+                delay(150);
+            }
 
-                if (key > 0) {
-                    delay(150);
+            OutBox(245, 5, 314, 17);
+
+            if (!(Data->Def.Input == 2 || Data->Def.Input == 3)) {
+                if (options.feat_eq_new_name && hum1 != 1) {
+                    SetEquipName(0);
                 }
 
-                OutBox(245, 5, 314, 17);
-
-                if (!(Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                    if (options.feat_eq_new_name && hum1 != 1) {
-                        SetEquipName(0);
-                    }
-
-                    if (options.feat_eq_new_name && hum2 != 1) {
-                        SetEquipName(1);
-                    }
-                }  // Change Name, if basic mode and for human players
-
-                if (Data->Def.Plr1 != Data->Def.Plr2) {
-                    if (Data->Def.Plr1 == 1) {
-                        int tmp;
-
-                        strcpy(&Name[0], &Data->P[0].Name[0]);
-                        strcpy(&Data->P[0].Name[0], &Data->P[1].Name[0]);
-                        strcpy(&Data->P[1].Name[0], &Name[0]);
-                        tmp = Data->Def.Lev1;
-                        Data->Def.Lev1 = Data->Def.Lev2;
-                        Data->Def.Lev2 = tmp;
-                        tmp = Data->Def.Ast1;
-                        Data->Def.Ast1 = Data->Def.Ast2;
-                        Data->Def.Ast2 = tmp;
-                    }
-
-                    Data->Def.Plr1 += hum1 * 2;
-                    Data->Def.Plr2 += hum2 * 2;
-
-                    if (where != PREFS_INGAME) {
-                        FadeOut(2, 10, 0, 0);
-                    }
-
-                    key = 0;
-
-                    if (where != PREFS_INGAME && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                        std::ifstream os{locate_file("hist.json", FT_DATA)};
-                        cereal::JSONInputArchive ar{os};
-
-                        // Don't make a loop over the players as this
-                        // will break the preprocessor macro.
-
-                        ARCHIVE_VECTOR(Data->P[0].Probe, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[0].Rocket, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[0].Manned, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[0].Misc, struct Equipment, 7);
-
-                        ARCHIVE_VECTOR(Data->P[1].Probe, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[1].Rocket, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[1].Manned, struct Equipment, 7);
-                        ARCHIVE_VECTOR(Data->P[1].Misc, struct Equipment, 7);
-                    }
-
-                    // Random Equipment
-                    if (where != PREFS_INGAME && (Data->Def.Input == 4 || Data->Def.Input == 5)) {
-                        RandomizeEq();
-                    }
-
-                    for (int i = 0; i < NUM_PLAYERS; i++) {
-                        for (int k = 0; k < 7; k++) {
-                            Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
-                            Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
-                            Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
-                            Data->P[i].Misc[k].MSF = Data->P[i].Misc[k].MaxRD;
-                        }
-                    }
-
-                    CacheCrewFile();
-                    SavePreferences(audio);
-
-                    music_stop();
-                    return PREFS_SET;
+                if (options.feat_eq_new_name && hum2 != 1) {
+                    SetEquipName(1);
                 }
-            } else if (key == K_ESCAPE) {
-                SavePreferences(audio);
+            }  // Change Name, if basic mode and for human players
 
-                music_stop();
+            if (Data->Def.Plr1 == Data->Def.Plr2) continue;
+            
+            if (Data->Def.Plr1 == 1) {
+                char Name[20]{};
+                strcpy(Name, Data->P[0].Name);
+                strcpy(Data->P[0].Name, Data->P[1].Name);
+                strcpy(Data->P[1].Name, Name);
+                
+                std::swap(Data->Def.Lev1, Data->Def.Lev2);
+                std::swap(Data->Def.Ast1, Data->Def.Ast2);
+            }
+
+            Data->Def.Plr1 += hum1 * 2;
+            Data->Def.Plr2 += hum2 * 2;
+
+            if (where != PREFS_INGAME) {
                 FadeOut(2, 10, 0, 0);
-                return PREFS_ABORTED;
-            } else if (key == 'P' && where != PREFS_INGAME) {
-                fill_rectangle(59, 26, 68, 31, 3);
-                fill_rectangle(290, 26, 298, 31, 3);
+            }
 
-                if (ksel == 0) {
-                    ksel = 1;
-                    display::graphics.setForegroundColor(9);
-                    draw_string(253, 30, "PLAYER 2");
-                    display::graphics.setForegroundColor(34);
-                    draw_string(23, 30, "PLAYER 1");
-                } else {
-                    ksel = 0;
-                    display::graphics.setForegroundColor(34);
-                    draw_string(253, 30, "PLAYER 2");
-                    display::graphics.setForegroundColor(9);
-                    draw_string(23, 30, "PLAYER 1");
+            key = 0;
+
+            if (where != PREFS_INGAME && (Data->Def.Input == 2 || Data->Def.Input == 3)) {
+                std::ifstream os{locate_file("hist.json", FT_DATA)};
+                cereal::JSONInputArchive ar{os};
+
+                // Don't make a loop over the players as this
+                // will break the preprocessor macro.
+
+                ARCHIVE_VECTOR(Data->P[0].Probe, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[0].Rocket, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[0].Manned, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[0].Misc, struct Equipment, 7);
+
+                ARCHIVE_VECTOR(Data->P[1].Probe, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[1].Rocket, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[1].Manned, struct Equipment, 7);
+                ARCHIVE_VECTOR(Data->P[1].Misc, struct Equipment, 7);
+            }
+
+            // Random Equipment
+            if (where != PREFS_INGAME && (Data->Def.Input == 4 || Data->Def.Input == 5)) {
+                RandomizeEq();
+            }
+
+            for (int i = 0; i < NUM_PLAYERS; i++) {
+                for (int k = 0; k < 7; k++) {
+                    Data->P[i].Probe[k].MSF = Data->P[i].Probe[k].MaxRD;
+                    Data->P[i].Rocket[k].MSF = Data->P[i].Rocket[k].MaxRD;
+                    Data->P[i].Manned[k].MSF = Data->P[i].Manned[k].MaxRD;
+                    Data->P[i].Misc[k].MSF = Data->P[i].Misc[k].MaxRD;
                 }
-            } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
-                       || key == 'E') {
-                // Edit astronauts has been ripped out
-                InBox(146, 30, 219, 61);
-                delay(500);
-                AstronautModification();
-                // TODO: Make sure *everything* is redrawn with the
-                // correct values!
-                DrawPrefs(where, hum1, hum2, audio, dctx);
+            }
 
-            } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) 
-                       && where != PREFS_INGAME) {  // Hist
-                char maxHModels;
-                maxHModels = options.feat_random_eq > 0 ? 5 : 3;
-                WaitForMouseUp();
-                Data->Def.Input++;
+            CacheCrewFile();
+            SavePreferences(audio);
 
-                if (Data->Def.Input > maxHModels) {
-                    Data->Def.Input = 0;
-                }
+            music_stop();
+            return PREFS_SET;
+        } else if (key == K_ESCAPE) {
+            SavePreferences(audio);
 
-                HModel(Data->Def.Input, 0);
-            } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
-                /* disable this option right now */
-            } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
-                if (!audio.master.muted) {
-                    InBox(100, 30, 135, 61);
-                    WaitForMouseUp();
-                    audio.music.muted = !audio.music.muted;
-                    music_set_mute(audio.music.muted);
-                    display::graphics.legacyScreen()->draw(
-                        dctx.prefs_image,
-                        153 + 34 * (audio.music.muted ? 0 : 1), 0,
-                        33, 29, 101, 31);
-                    OutBox(100, 30, 135, 61);
-                }
-                /* Music Level */
-            } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
-                if (!audio.master.muted) {
-                    InBox(100, 70, 135, 101);
-                    WaitForMouseUp();
-                    audio.soundFX.muted = !audio.soundFX.muted;
-                    MuteChannel(AV_SOUND_CHANNEL, audio.soundFX.muted);
-                    display::graphics.legacyScreen()->draw(
-                        dctx.prefs_image,
-                        221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
-                        33, 29, 101, 71);
-                    OutBox(100, 70, 135, 101);
-                }
+            music_stop();
+            FadeOut(2, 10, 0, 0);
+            return PREFS_ABORTED;
+        } else if (key == 'P' && where != PREFS_INGAME) {
+            fill_rectangle(59, 26, 68, 31, 3);
+            fill_rectangle(290, 26, 298, 31, 3);
 
-                /* Sound Level */
-            } else if (where == PREFS_NEWGAME && ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
-                     || (ksel == 0 && key == 'H'))) {
-                InBox(8, 77, 18, 85);
-                WaitForMouseUp();
-                hum1++;
+            int color1 = 34;
+            int color2 = 9;
+            if (ksel == 1) std::swap(color1, color2);
+            
+            display::graphics.setForegroundColor(color1);
+            draw_string(23, 30, "PLAYER 1");
+            display::graphics.setForegroundColor(color2);
+            draw_string(253, 30, "PLAYER 2");
+            
+            ksel = other(ksel);
+        } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
+                   || key == 'E') {
+            // Edit astronauts has been ripped out
+            InBox(146, 30, 219, 61);
+            delay(500);
+            AstronautModification();
+            // TODO: Make sure *everything* is redrawn with the
+            // correct values!
+            DrawPrefs(where, hum1, hum2, audio, dctx);
 
-                if (hum1 > 1) {
-                    hum1 = 0;
-                }
+        } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) 
+                   && where != PREFS_INGAME) {  // Hist
+            char maxHModels = options.feat_random_eq > 0 ? 5 : 3;
+            WaitForMouseUp();
+            Data->Def.Input++;
 
-                CLevels(0, hum1, dctx);
-                OutBox(8, 77, 18, 85);
+            if (Data->Def.Input > maxHModels) {
+                Data->Def.Input = 0;
+            }
 
-                /* P1: Human/Computer */
-                //change human to dif 1 and comp to 3
-                if (hum1 == 1) {
-                    Data->Def.Lev1 = 2;
-                } else {
-                    Data->Def.Lev1 = 0;
-                }
+            HModel(Data->Def.Input, 0);
+        } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
+            /* disable this option right now */
+        } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
+            if (audio.master.muted) continue;
+            
+            InBox(100, 30, 135, 61);
+            WaitForMouseUp();
+            audio.music.muted = !audio.music.muted;
+            music_set_mute(audio.music.muted);
+            display::graphics.legacyScreen()->draw(
+                dctx.prefs_image,
+                153 + 34 * (!audio.music.muted), 0,
+                33, 29, 101, 31);
+            OutBox(100, 30, 135, 61);
+            /* Music Level */
+        } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
+            if (audio.master.muted) continue;
+            
+            InBox(100, 70, 135, 101);
+            WaitForMouseUp();
+            audio.soundFX.muted = !audio.soundFX.muted;
+            MuteChannel(AV_SOUND_CHANNEL, audio.soundFX.muted);
+            display::graphics.legacyScreen()->draw(
+                dctx.prefs_image,
+                221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
+                33, 29, 101, 71);
+            OutBox(100, 70, 135, 101);
 
-                Levels(0, Data->Def.Lev1, 1, dctx);
-            } else if (where != PREFS_INGAME && ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
-                       || (ksel == 0 && key == 'G'))) {
-                InBox(8, 107, 81, 138);
-                WaitForMouseUp();
-                OutBox(8, 107, 81, 138);
-                Data->Def.Lev1++;
+            /* Sound Level */
+        } else if (where == PREFS_NEWGAME && ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
+                 || (ksel == 0 && key == 'H'))) {
+            InBox(8, 77, 18, 85);
+            WaitForMouseUp();
+            hum1 = !hum1;
 
-                if (Data->Def.Lev1 > 2) {
-                    Data->Def.Lev1 = 0;
-                }
+            CLevels(0, hum1, dctx);
+            OutBox(8, 77, 18, 85);
 
-                Levels(0, Data->Def.Lev1, 1, dctx);
-                /* P1: Game Level */
-            } else if (where != PREFS_INGAME && ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
-                       || (ksel == 0 && key == 'L'))) {
-                InBox(8, 160, 81, 191);
-                WaitForMouseUp();
-                OutBox(8, 160, 81, 191);
-                Data->Def.Ast1++;
+            /* P1: Human/Computer */
+            //change human to dif 1 and comp to 3
+            if (hum1 == 1) {
+                Data->Def.Lev1 = 2;
+            } else {
+                Data->Def.Lev1 = 0;
+            }
 
-                if (Data->Def.Ast1 > 2) {
-                    Data->Def.Ast1 = 0;
-                }
+            Levels(0, Data->Def.Lev1, 1, dctx);
+        } else if (where != PREFS_INGAME && ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
+                   || (ksel == 0 && key == 'G'))) {
+            InBox(8, 107, 81, 138);
+            WaitForMouseUp();
+            OutBox(8, 107, 81, 138);
+            Data->Def.Lev1++;
 
-                Levels(0, Data->Def.Ast1, 0, dctx);
-                /* P1: Astro Level */
-            } else if (where == PREFS_NEWGAME && ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
-                       || (ksel == 1 && key == 'H'))) {
-                InBox(238, 77, 248, 85);
-                WaitForMouseUp();
-                hum2++;
+            if (Data->Def.Lev1 > 2) {
+                Data->Def.Lev1 = 0;
+            }
 
-                if (hum2 > 1) {
-                    hum2 = 0;
-                }
+            Levels(0, Data->Def.Lev1, 1, dctx);
+            /* P1: Game Level */
+        } else if (where != PREFS_INGAME && ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
+                   || (ksel == 0 && key == 'L'))) {
+            InBox(8, 160, 81, 191);
+            WaitForMouseUp();
+            OutBox(8, 160, 81, 191);
+            Data->Def.Ast1++;
 
-                CLevels(1, hum2, dctx);
-                OutBox(238, 77, 248, 85);
+            if (Data->Def.Ast1 > 2) {
+                Data->Def.Ast1 = 0;
+            }
 
-                /* P2:Human/Computer */
-                //change human to dif 1 and comp to 3
-                if (hum2 == 1) {
-                    Data->Def.Lev2 = 2;
-                } else {
-                    Data->Def.Lev2 = 0;
-                }
+            Levels(0, Data->Def.Ast1, 0, dctx);
+            /* P1: Astro Level */
+        } else if (where == PREFS_NEWGAME && ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
+                   || (ksel == 1 && key == 'H'))) {
+            InBox(238, 77, 248, 85);
+            WaitForMouseUp();
+            hum2 = !hum2;
 
-                Levels(1, Data->Def.Lev2, 1, dctx);
-            } else if (where != PREFS_INGAME && ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
-                       || (ksel == 1 && key == 'G'))) {
-                InBox(238, 107, 311, 138);
-                WaitForMouseUp();
-                OutBox(238, 107, 311, 138);
-                Data->Def.Lev2++;
+            CLevels(1, hum2, dctx);
+            OutBox(238, 77, 248, 85);
 
-                if (Data->Def.Lev2 > 2) {
-                    Data->Def.Lev2 = 0;
-                }
+            /* P2:Human/Computer */
+            //change human to dif 1 and comp to 3
+            if (hum2 == 1) {
+                Data->Def.Lev2 = 2;
+            } else {
+                Data->Def.Lev2 = 0;
+            }
 
-                Levels(1, Data->Def.Lev2, 1, dctx);
-                /* P2: Game Level */
-            } else if (where != PREFS_INGAME && ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
-                       || (ksel == 1 && key == 'L'))) {
-                InBox(238, 160, 311, 191);
-                WaitForMouseUp();
-                OutBox(238, 160, 311, 191);
-                Data->Def.Ast2++;
+            Levels(1, Data->Def.Lev2, 1, dctx);
+        } else if (where != PREFS_INGAME && ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
+                   || (ksel == 1 && key == 'G'))) {
+            InBox(238, 107, 311, 138);
+            WaitForMouseUp();
+            OutBox(238, 107, 311, 138);
+            Data->Def.Lev2++;
 
-                if (Data->Def.Ast2 > 2) {
-                    Data->Def.Ast2 = 0;
-                }
+            if (Data->Def.Lev2 > 2) {
+                Data->Def.Lev2 = 0;
+            }
 
-                Levels(1, Data->Def.Ast2, 0, dctx);
-                /* P2: Astro Level */
-            } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
-                       || (ksel == 0 && key == 'N')) {
-                /* P1: Director Name */
-                if (where != PREFS_INGAME || player == 0 || !IsHumanPlayer(0)) {
-                    EditDirectorName(0);
-                }
-            } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
-                       || (ksel == 1 && key == 'N')) {
-                /* P2: Director Name */
-                if (where != PREFS_INGAME || player == 1 || !IsHumanPlayer(1)) {
-                    EditDirectorName(1);
-                }
+            Levels(1, Data->Def.Lev2, 1, dctx);
+            /* P2: Game Level */
+        } else if (where != PREFS_INGAME && ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
+                   || (ksel == 1 && key == 'L'))) {
+            InBox(238, 160, 311, 191);
+            WaitForMouseUp();
+            OutBox(238, 160, 311, 191);
+            Data->Def.Ast2++;
+
+            if (Data->Def.Ast2 > 2) {
+                Data->Def.Ast2 = 0;
+            }
+
+            Levels(1, Data->Def.Ast2, 0, dctx);
+            /* P2: Astro Level */
+        } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
+                   || (ksel == 0 && key == 'N')) {
+            /* P1: Director Name */
+            if (where != PREFS_INGAME || player == 0 || !IsHumanPlayer(0)) {
+                EditDirectorName(0);
+            }
+        } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
+                   || (ksel == 1 && key == 'N')) {
+            /* P2: Director Name */
+            if (where != PREFS_INGAME || player == 1 || !IsHumanPlayer(1)) {
+                EditDirectorName(1);
             }
         }
     }
@@ -746,7 +729,7 @@ void SavePreferences(const AudioConfig& audio)
 {
     try {
         SaveAudioSettings(audio);
-    } catch (const IOException &err) {
+    } catch (const IOException& err) {
         CAT_ERROR(filesys, err.what());
     } catch (const cereal::Exception& err) {
         CAT_ERROR(filesys, err.what());
