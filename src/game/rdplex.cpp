@@ -370,361 +370,23 @@ char RD(char player_index)
     while (1) {
         key = 0;
         GetMouse();
-
-        if (mousebuttons > 0 || key > 0) {
-            if ((x >= 279 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
-                Equipment &Program =
-                    HardwareProgram(player_index, hardware, unit);
-
-                if (Program.Damage &&
-                    Program.DCost <= Data->P[player_index].Cash) {
-                    OutBox(278, 89, 304, 103);
-                    DamProb(player_index, hardware, unit);
-                    DrawRD(player_index);
-                    InBox(278, 89, 304, 103);
-                    hardware_buttons.drawButtons(hardware);
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index, Program));
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    ManSel(decodeNumRolls(buy[hardware][unit]),
-                           MaxTeamsNeeded(player_index, Program));
-
-                    helpText = "i009";
-                    keyHelpText = "k009";
-
-                    FadeIn(2, 10, 0, 0);
-                }
-            } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
-                if (((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') && hardware != PROBE_HARDWARE) {  /* Unmanned */
-                    roll = 0;
-                    hardware = PROBE_HARDWARE;
-                    hardware_buttons.drawButtons(hardware);
-                    unit = PROBE_HW_ORBITAL;
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index,
-                                                 hardware, unit));
-                    ManSel(decodeNumRolls(buy[hardware][unit]),
-                           MaxTeamsNeeded(player_index, hardware, unit));
-
-                    b = Data->P[player_index].Probe[unit].RDCost;
-
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') && hardware != ROCKET_HARDWARE) {  /* Rockets */
-                    roll = 0;
-                    hardware = ROCKET_HARDWARE;
-                    hardware_buttons.drawButtons(hardware);
-                    unit = ROCKET_HW_ONE_STAGE;
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index,
-                                                 hardware, unit));
-                    ManSel(decodeNumRolls(buy[hardware][unit]),
-                           MaxTeamsNeeded(player_index, hardware, unit));
-
-                    b = Data->P[player_index].Rocket[unit].RDCost;
-
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') && hardware != MANNED_HARDWARE) {  /* Manned */
-                    roll = 0;
-                    hardware = MANNED_HARDWARE;
-                    hardware_buttons.drawButtons(hardware);
-                    unit = MANNED_HW_ONE_MAN_CAPSULE;
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index,
-                                                 hardware, unit));
-                    ManSel(decodeNumRolls(buy[hardware][unit]),
-                           MaxTeamsNeeded(player_index, hardware, unit));
-
-                    b = Data->P[player_index].Manned[unit].RDCost;
-
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                } else if (((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') && hardware != MISC_HARDWARE) {  /* Misc */
-                    roll = 0;
-                    hardware = MISC_HARDWARE;
-                    hardware_buttons.drawButtons(hardware);
-                    unit = MISC_HW_KICKER_A;
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index,
-                                                 hardware, unit));
-                    ManSel(decodeNumRolls(buy[hardware][unit]),
-                           MaxTeamsNeeded(player_index, hardware, unit));
-
-                    b = Data->P[player_index].Misc[unit].RDCost;
-
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                }
-            } else if (((x >= 165 && x <= 315 && y >= 157 && y <= 175 && mousebuttons > 0) || (key >= '0' && key <= '5')) && buy[hardware][unit] == 0) {
-                /*  R&D Amount */
-                if (((x >= 165 && x <= 185 && mousebuttons > 0) || key == '0') && roll != 0 && MaxTeamsNeeded(player_index, hardware, unit) >= 0) {
-                    roll = 0;
-                }
-
-                if (((x >= 191 && x <= 211 && mousebuttons > 0) || key == '1') && roll != 1 && MaxTeamsNeeded(player_index, hardware, unit) >= 1) {
-                    roll = 1;
-                }
-
-                if (((x >= 217 && x <= 238 && mousebuttons > 0) || key == '2') && roll != 2 && MaxTeamsNeeded(player_index, hardware, unit) >= 2) {
-                    roll = 2;
-                }
-
-                if (((x >= 243 && x <= 263 && mousebuttons > 0) || key == '3') && roll != 3 && MaxTeamsNeeded(player_index, hardware, unit) >= 3) {
-                    roll = 3;
-                }
-
-                if (((x >= 269 && x <= 289 && mousebuttons > 0) || key == '4') && roll != 4 && MaxTeamsNeeded(player_index, hardware, unit) >= 4) {
-                    roll = 4;
-                }
-
-                if (((x >= 295 && x <= 315 && mousebuttons > 0) || key == '5') && roll != 5 && MaxTeamsNeeded(player_index, hardware, unit) >= 5) {
-                    roll = 5;
-                }
-
-                b = HardwareProgram(player_index, hardware, unit).RDCost;
-
-                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                ManSel(roll, MaxTeamsNeeded(player_index, hardware, unit));
-                WaitForMouseUp();
-            } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) {  /* LEFT ARROW */
-                roll = 0;
-                InBox(5, 184, 74, 194);
-                WaitForMouseUp();
-
-                unit--;
-
-                switch (hardware) {
-                case PROBE_HARDWARE:
-                    if (unit < PROBE_HW_ORBITAL) {
-                        unit = PROBE_HW_LUNAR;
-                    }
-
-                    break;
-
-                case ROCKET_HARDWARE:
-                    if (unit < ROCKET_HW_ONE_STAGE) {
-                        unit = ROCKET_HW_BOOSTERS;
-                    }
-
-                    break;
-
-                case MANNED_HARDWARE:
-                    if (unit < MANNED_HW_ONE_MAN_CAPSULE) {
-                        unit = MANNED_HW_ONE_MAN_MODULE;
-                    }
-
-                    break;
-
-                case MISC_HARDWARE:
-                    if (unit < MISC_HW_KICKER_A) {
-                        unit = MISC_HW_DOCKING_MODULE;
-                    }
-
-                    if (player_index == 0 && unit == MISC_HW_KICKER_C) {
-                        unit--;
-                    }
-
-                    break;
-                }
-
-                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-
-                if (buy[hardware][unit] == 0) {
-                    QueryUnit(hardware, unit, player_index);
-                } else {
-                    InBox(165, 184, 315, 194);
-                }
-
-                ShowUnit(hardware, unit, player_index);
-                DrawRDButtons(player_index,
-                              MaxTeamsNeeded(player_index,
-                                             hardware, unit));
-                ManSel(decodeNumRolls(buy[hardware][unit]),
-                       MaxTeamsNeeded(player_index, hardware, unit));
-
-                OutBox(5, 184, 74, 194);
-            } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) {  /* RIGHT ARROW */
-                roll = 0;
-                InBox(83, 184, 152, 194);
-                WaitForMouseUp();
-                unit++;
-
-                switch (hardware) {
-                case PROBE_HARDWARE:
-                    if (unit > PROBE_HW_LUNAR) {
-                        unit = PROBE_HW_ORBITAL;
-                    }
-
-                    break;
-
-                case ROCKET_HARDWARE:
-                    if (unit > ROCKET_HW_BOOSTERS) {
-                        unit = ROCKET_HW_ONE_STAGE;
-                    }
-
-                    break;
-
-                case MANNED_HARDWARE:
-                    if (unit > MANNED_HW_ONE_MAN_MODULE) {
-                        unit = MANNED_HW_ONE_MAN_CAPSULE;
-                    }
-
-                    break;
-
-                case MISC_HARDWARE:
-                    if (unit > MISC_HW_DOCKING_MODULE) {
-                        unit = MISC_HW_KICKER_A;
-                    }
-
-                    if (player_index == 0 && unit == MISC_HW_KICKER_C) {
-                        unit++;
-                    }
-
-                    break;   // DM Screen, Nikakd, 10/8/10
-                }
-
-                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-
-                if (buy[hardware][unit] == 0) {
-                    QueryUnit(hardware, unit, player_index);
-                } else {
-                    InBox(165, 184, 315, 194);
-                }
-
-                ShowUnit(hardware, unit, player_index);
-                DrawRDButtons(player_index,
-                              MaxTeamsNeeded(player_index,
-                                             hardware, unit));
-                ManSel(decodeNumRolls(buy[hardware][unit]),
-                       MaxTeamsNeeded(player_index, hardware, unit));
-
-                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-
-                OutBox(83, 184, 152, 194);
-            } else if (((x >= 165 && y >= 184 && x <= 315 && y <= 194 && mousebuttons > 0) || key == 'S') && buy[hardware][unit] == 0
-                       && roll != 0) {
-                // b is the cost per roll
-
-                b = HardwareProgram(player_index, hardware, unit).RDCost;
-
-                // Add to the expenditure data
-                if ((b * roll <= Data->P[player_index].Cash) && QueryUnit(hardware, unit, player_index)
-                    && MaxChk(hardware, unit, player_index)) {
-                    buy[hardware][unit] = RDUnit(hardware, unit, roll, player_index);
-
-                    if (buy[hardware][unit] == 0) {
-                        QueryUnit(hardware, unit, player_index);
-                    } else {
-                        InBox(165, 184, 315, 194);
-                    }
-
-                    Data->P[player_index].Cash -= b * roll;
-
-                    // add the amount to the expenditure budget
-                    Data->P[player_index].Spend[0][hardware] += b * roll;
-
-                    ShowUnit(hardware, unit, player_index);
-                    DrawRDButtons(player_index,
-                                  MaxTeamsNeeded(player_index,
-                                                 hardware, unit));
-
-                    RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
-                } else {
-                    QueryUnit(hardware, unit, player_index);
-                }
-            } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(245, 5, 314, 17);
-                WaitForMouseUp();
-
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 7; j++) {
-                        Data->P[player_index].Buy[i][j] = buy[i][j];
-                    }
-                }
-
-                music_stop();
-                call = 0;
-                return 0;
-            } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {
-                InBox(5, 73, 152, 83);
-
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 7; j++) {
-                        Data->P[player_index].Buy[i][j] = buy[i][j];
-                    }
-                }
-
-                music_stop();
-
-                DisplayedHardware = hardware;
-                DisplayedUnit = unit;
-
-                //DM Screen, Nikakd, 10/8/10 (Removed line)
-                if (call == 1) {
-                    return 1;    // go back through gateway
-                }
-
-                call = 1;
-                HPurc(player_index);
-
-                if (call == 0) {
-                    return 0;
-                }
-
-                hardware = DisplayedHardware;
-                unit = DisplayedUnit;
-                call = 0;
-
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 7; j++) {
-                        buy[i][j] = Data->P[player_index].Buy[i][j];
-                    }
-                }
-
+        if (mousebuttons == 0 && key == 0) continue;
+        
+        if ((x >= 279 && y >= 90 && x <= 302 && y <= 100) || key == 'F') {
+            Equipment& Program =
+                HardwareProgram(player_index, hardware, unit);
+
+            if (Program.Damage
+                && Program.DCost <= Data->P[player_index].Cash) {
+                OutBox(278, 89, 304, 103);
+                DamProb(player_index, hardware, unit);
                 DrawRD(player_index);
+                InBox(278, 89, 304, 103);
                 hardware_buttons.drawButtons(hardware);
                 ShowUnit(hardware, unit, player_index);
                 DrawRDButtons(player_index,
-                              MaxTeamsNeeded(player_index,
-                                             hardware, unit));
-                RDButTxt(0, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+                              MaxTeamsNeeded(player_index, Program));
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
 
                 if (buy[hardware][unit] == 0) {
                     QueryUnit(hardware, unit, player_index);
@@ -732,25 +394,356 @@ char RD(char player_index)
                     InBox(165, 184, 315, 194);
                 }
 
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, Program));
+
+                helpText = "i009";
+                keyHelpText = "k009";
+
                 FadeIn(2, 10, 0, 0);
-
-                music_start(M_HARDWARE);
-
-                WaitForMouseUp();
-
-            } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
-                OutBox(26, 94, 131, 172);
-                delay(10);
-                WaitForMouseUp();
-                InBox(26, 94, 131, 172);
-                ShowHardwareDescription(player_index, hardware, unit);
-            } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0 && HardwareProgram(player_index, hardware, unit).SaveCard > 0) {
-                OutBox(285, 70, 317, 87);
-                delay(10);
-                WaitForMouseUp();
-                InBox(285, 70, 317, 87);
-                Help("i168");
             }
+        } else if ((y >= 29 && y <= 60 && mousebuttons > 0) || (key == 'U' || key == 'R' || key == 'M' || key == 'C')) {
+            if ((x >= 7 && x <= 75 && mousebuttons > 0) || key == 'U') {  /* Unmanned */
+                if (hardware == PROBE_HARDWARE) continue;
+                
+                roll = 0;
+                hardware = PROBE_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
+                unit = PROBE_HW_ORBITAL;
+
+                if (buy[hardware][unit] == 0) {
+                    QueryUnit(hardware, unit, player_index);
+                } else {
+                    InBox(165, 184, 315, 194);
+                }
+
+                ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
+
+                b = Data->P[player_index].Probe[unit].RDCost;
+
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            } else if ((x >= 83 && x <= 156 && mousebuttons > 0) || key == 'R') {  /* Rockets */
+                if (hardware == ROCKET_HARDWARE) continue;
+                
+                roll = 0;
+                hardware = ROCKET_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
+                unit = ROCKET_HW_ONE_STAGE;
+
+                if (buy[hardware][unit] == 0) {
+                    QueryUnit(hardware, unit, player_index);
+                } else {
+                    InBox(165, 184, 315, 194);
+                }
+
+                ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
+
+                b = Data->P[player_index].Rocket[unit].RDCost;
+
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            } else if ((x >= 164 && x <= 237 && mousebuttons > 0) || key == 'C') {  /* Manned */
+                if (hardware == MANNED_HARDWARE) continue;
+
+                roll = 0;
+                hardware = MANNED_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
+                unit = MANNED_HW_ONE_MAN_CAPSULE;
+
+                if (buy[hardware][unit] == 0) {
+                    QueryUnit(hardware, unit, player_index);
+                } else {
+                    InBox(165, 184, 315, 194);
+                }
+
+                ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
+
+                b = Data->P[player_index].Manned[unit].RDCost;
+
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            } else if ((x >= 245 && x <= 313 && mousebuttons > 0) || key == 'M') {  /* Misc */
+                if (hardware == MISC_HARDWARE) continue;
+
+                roll = 0;
+                hardware = MISC_HARDWARE;
+                hardware_buttons.drawButtons(hardware);
+                unit = MISC_HW_KICKER_A;
+
+                if (buy[hardware][unit] == 0) {
+                    QueryUnit(hardware, unit, player_index);
+                } else {
+                    InBox(165, 184, 315, 194);
+                }
+
+                ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+                ManSel(decodeNumRolls(buy[hardware][unit]),
+                       MaxTeamsNeeded(player_index, hardware, unit));
+
+                b = Data->P[player_index].Misc[unit].RDCost;
+
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            }
+        } else if ((x >= 165 && x <= 315 && y >= 157 && y <= 175 && mousebuttons > 0) || (key >= '0' && key <= '5')) {
+            if (buy[hardware][unit] != 0) continue;
+            /*  R&D Amount */
+            for (int i=0; i<6; ++i) {
+                if ((x >= 165+26*i && x <= 185+26*i && mousebuttons > 0) || key == '0'+i) {
+                    if (roll == i) break;
+                    if (MaxTeamsNeeded(player_index, hardware, unit) < i) break;
+                    
+                    roll = i;
+                }
+            }
+
+            b = HardwareProgram(player_index, hardware, unit).RDCost;
+
+            RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            ManSel(roll, MaxTeamsNeeded(player_index, hardware, unit));
+            WaitForMouseUp();
+        } else if ((x >= 5 && y >= 184 && x <= 74 && y <= 194 && mousebuttons > 0) || key == LT_ARROW) {  /* LEFT ARROW */
+            roll = 0;
+            InBox(5, 184, 74, 194);
+            WaitForMouseUp();
+
+            unit--;
+
+            switch (hardware) {
+            case PROBE_HARDWARE:
+                if (unit < PROBE_HW_ORBITAL) {
+                    unit = PROBE_HW_LUNAR;
+                }
+
+                break;
+
+            case ROCKET_HARDWARE:
+                if (unit < ROCKET_HW_ONE_STAGE) {
+                    unit = ROCKET_HW_BOOSTERS;
+                }
+
+                break;
+
+            case MANNED_HARDWARE:
+                if (unit < MANNED_HW_ONE_MAN_CAPSULE) {
+                    unit = MANNED_HW_ONE_MAN_MODULE;
+                }
+
+                break;
+
+            case MISC_HARDWARE:
+                if (unit < MISC_HW_KICKER_A) {
+                    unit = MISC_HW_DOCKING_MODULE;
+                }
+
+                if (player_index == 0 && unit == MISC_HW_KICKER_C) {
+                    unit--;
+                }
+
+                break;
+            }
+
+            RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+
+            if (buy[hardware][unit] == 0) {
+                QueryUnit(hardware, unit, player_index);
+            } else {
+                InBox(165, 184, 315, 194);
+            }
+
+            ShowUnit(hardware, unit, player_index);
+            DrawRDButtons(player_index,
+                          MaxTeamsNeeded(player_index,
+                                         hardware, unit));
+            ManSel(decodeNumRolls(buy[hardware][unit]),
+                   MaxTeamsNeeded(player_index, hardware, unit));
+
+            OutBox(5, 184, 74, 194);
+        } else if ((x >= 83 && y >= 184 && x <= 152 && y <= 194 && mousebuttons > 0) || key == RT_ARROW) {  /* RIGHT ARROW */
+            roll = 0;
+            InBox(83, 184, 152, 194);
+            WaitForMouseUp();
+            unit++;
+
+            switch (hardware) {
+            case PROBE_HARDWARE:
+                if (unit > PROBE_HW_LUNAR) {
+                    unit = PROBE_HW_ORBITAL;
+                }
+
+                break;
+
+            case ROCKET_HARDWARE:
+                if (unit > ROCKET_HW_BOOSTERS) {
+                    unit = ROCKET_HW_ONE_STAGE;
+                }
+
+                break;
+
+            case MANNED_HARDWARE:
+                if (unit > MANNED_HW_ONE_MAN_MODULE) {
+                    unit = MANNED_HW_ONE_MAN_CAPSULE;
+                }
+
+                break;
+
+            case MISC_HARDWARE:
+                if (unit > MISC_HW_DOCKING_MODULE) {
+                    unit = MISC_HW_KICKER_A;
+                }
+
+                if (player_index == 0 && unit == MISC_HW_KICKER_C) {
+                    unit++;
+                }
+
+                break;   // DM Screen, Nikakd, 10/8/10
+            }
+
+            RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+
+            if (buy[hardware][unit] == 0) {
+                QueryUnit(hardware, unit, player_index);
+            } else {
+                InBox(165, 184, 315, 194);
+            }
+
+            ShowUnit(hardware, unit, player_index);
+            DrawRDButtons(player_index,
+                          MaxTeamsNeeded(player_index,
+                                         hardware, unit));
+            ManSel(decodeNumRolls(buy[hardware][unit]),
+                   MaxTeamsNeeded(player_index, hardware, unit));
+
+            RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+
+            OutBox(83, 184, 152, 194);
+        } else if (((x >= 165 && y >= 184 && x <= 315 && y <= 194 && mousebuttons > 0) || key == 'S') && buy[hardware][unit] == 0
+                   && roll != 0) {
+            // b is the cost per roll
+
+            b = HardwareProgram(player_index, hardware, unit).RDCost;
+
+            // Add to the expenditure data
+            if ((b * roll <= Data->P[player_index].Cash) && QueryUnit(hardware, unit, player_index)
+                && MaxChk(hardware, unit, player_index)) {
+                buy[hardware][unit] = RDUnit(hardware, unit, roll, player_index);
+
+                if (buy[hardware][unit] == 0) {
+                    QueryUnit(hardware, unit, player_index);
+                } else {
+                    InBox(165, 184, 315, 194);
+                }
+
+                Data->P[player_index].Cash -= b * roll;
+
+                // add the amount to the expenditure budget
+                Data->P[player_index].Spend[0][hardware] += b * roll;
+
+                ShowUnit(hardware, unit, player_index);
+                DrawRDButtons(player_index,
+                              MaxTeamsNeeded(player_index,
+                                             hardware, unit));
+
+                RDButTxt(b * roll, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+            } else {
+                QueryUnit(hardware, unit, player_index);
+            }
+        } else if (((y >= 3 && y <= 19) && (x >= 243 && x <= 316 && mousebuttons > 0)) || key == K_ENTER || key == K_ESCAPE) {
+            InBox(245, 5, 314, 17);
+            WaitForMouseUp();
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 7; j++) {
+                    Data->P[player_index].Buy[i][j] = buy[i][j];
+                }
+            }
+
+            music_stop();
+            call = 0;
+            return 0;
+        } else if ((x >= 5 && y >= 73 && x <= 152 && y <= 83 && mousebuttons > 0) || key == 'V') {
+            InBox(5, 73, 152, 83);
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 7; j++) {
+                    Data->P[player_index].Buy[i][j] = buy[i][j];
+                }
+            }
+
+            music_stop();
+
+            DisplayedHardware = hardware;
+            DisplayedUnit = unit;
+
+            //DM Screen, Nikakd, 10/8/10 (Removed line)
+            if (call == 1) {
+                return 1;    // go back through gateway
+            }
+
+            call = 1;
+            HPurc(player_index);
+
+            if (call == 0) {
+                return 0;
+            }
+
+            hardware = DisplayedHardware;
+            unit = DisplayedUnit;
+            call = 0;
+
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 7; j++) {
+                    buy[i][j] = Data->P[player_index].Buy[i][j];
+                }
+            }
+
+            DrawRD(player_index);
+            hardware_buttons.drawButtons(hardware);
+            ShowUnit(hardware, unit, player_index);
+            DrawRDButtons(player_index,
+                          MaxTeamsNeeded(player_index,
+                                         hardware, unit));
+            RDButTxt(0, buy[hardware][unit], player_index, (hardware == MISC_HARDWARE && unit == MISC_HW_DOCKING_MODULE));  //DM Screen, Nikakd, 10/8/10
+
+            if (buy[hardware][unit] == 0) {
+                QueryUnit(hardware, unit, player_index);
+            } else {
+                InBox(165, 184, 315, 194);
+            }
+
+            FadeIn(2, 10, 0, 0);
+
+            music_start(M_HARDWARE);
+
+            WaitForMouseUp();
+
+        } else if ((x >= 26 && y >= 94 && x <= 131 && y <= 172 && mousebuttons > 0) || key == '?') {
+            OutBox(26, 94, 131, 172);
+            delay(10);
+            WaitForMouseUp();
+            InBox(26, 94, 131, 172);
+            ShowHardwareDescription(player_index, hardware, unit);
+        } else if (x >= 285 && y >= 70 && x <= 317 && y <= 87 && mousebuttons > 0 && HardwareProgram(player_index, hardware, unit).SaveCard > 0) {
+            OutBox(285, 70, 317, 87);
+            delay(10);
+            WaitForMouseUp();
+            InBox(285, 70, 317, 87);
+            Help("i168");
         }
 
         av_sync();
