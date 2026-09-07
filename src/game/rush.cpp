@@ -556,9 +556,10 @@ void SetLaunchDates(const char plr)
     // assert(MAX_MISSIONS == 3);
 
     int launch_months[3][3] = {
-        {4},
-        {3,5},
-        {2,3,4},
+        {},      // 0 missions
+        {4},     // 1 mission
+        {3,5},   // 2 missions
+        {2,3,4}, // 3 missions
     };
     int launch = -1;
     for (int pad = 0; pad < MAX_MISSIONS; ++pad){
