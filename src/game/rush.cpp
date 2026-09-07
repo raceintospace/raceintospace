@@ -555,7 +555,7 @@ void SetLaunchDates(const char plr)
     // Currently, can only handle 3 missions.
     // assert(MAX_MISSIONS == 3);
 
-    int launch_months[3][3] = {
+    int launch_months[][3] = {
         {},      // 0 missions
         {4},     // 1 mission
         {3,5},   // 2 missions
