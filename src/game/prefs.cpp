@@ -64,10 +64,10 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
 void HModel(char mode, char tx);
-void Levels(char plr, char which, char x, DisplayContext& dctx);
-void BinT(int x, int y, char st);
-void PLevels(char side, char wh, DisplayContext& dctx);
-void CLevels(char side, bool is_AI, DisplayContext& dctx);
+void DrawLevel(char side, char button, char level, DisplayContext& dctx);
+void DrawMapOutline(int x, int y);
+void DrawMap(char side, char country, DisplayContext& dctx);
+void DrawPlayerIcon(char side, bool is_AI, DisplayContext& dctx);
 int Preferences(int player, PreferencesMode where);
 void SavePreferences(const AudioConfig& audio);
 
@@ -114,9 +114,8 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
         fill_rectangle(237, 53, 312, 86, 0);
         OutBox(8, 77, 18, 85);
         OutBox(238, 77, 248, 85);
-        //BinT(8,54,0);BinT(238,54,0);  // Old way with buttons
-        BinT(8, 54, 1);
-        BinT(238, 54, 1);  // No select Buttons
+        DrawMapOutline(8, 54);
+        DrawMapOutline(238, 54);  // No select Buttons
         fill_rectangle(250, 75, 250, 84, 4);
         fill_rectangle(237, 35, 312, 41, 0);
         fill_rectangle(7, 35, 82, 41, 0);
@@ -128,8 +127,8 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
         InBox(238, 160, 311, 191);
         InBox(8, 77, 18, 85);
         InBox(238, 77, 248, 85);
-        BinT(8, 54, 1);
-        BinT(238, 54, 1);
+        DrawMapOutline(8, 54);
+        DrawMapOutline(238, 54);
         fill_rectangle(237, 35, 312, 41, 0);
         fill_rectangle(7, 35, 82, 41, 0);
     }
@@ -143,14 +142,14 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
     IOBox(243, 3, 316, 19);
     InBox(236, 34, 313, 42);
     InBox(6, 34, 83, 42);
-    PLevels(0, Data->Def.Plr1, dctx);
-    CLevels(0, is_AI_1, dctx);
-    PLevels(1, Data->Def.Plr2, dctx);
-    CLevels(1, is_AI_2, dctx);
-    Levels(0, Data->Def.Lev1, 1, dctx);
-    Levels(0, Data->Def.Ast1, 0, dctx);
-    Levels(1, Data->Def.Lev2, 1, dctx);
-    Levels(1, Data->Def.Ast2, 0, dctx);
+    DrawMap(0, Data->Def.Plr1, dctx);
+    DrawPlayerIcon(0, is_AI_1, dctx);
+    DrawMap(1, Data->Def.Plr2, dctx);
+    DrawPlayerIcon(1, is_AI_2, dctx);
+    DrawLevel(0, 0, Data->Def.Ast1, dctx);
+    DrawLevel(0, 1, Data->Def.Lev1, dctx);
+    DrawLevel(1, 0, Data->Def.Ast2, dctx);
+    DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
     if (where != PREFS_INGAME) {
         display::graphics.setForegroundColor(9);
@@ -331,25 +330,26 @@ void HModel(char mode, char tx)
 }
 
 
-void Levels(char plr, char which, char x, DisplayContext& dctx)
+void DrawLevel(char side, char button, char level, DisplayContext& dctx)
 {
-    unsigned char v[2][2] = {{9, 239}, {161, 108}};
+    unsigned int srcX = level * 72;
+    unsigned int srcY = (button == 0) ? 30 : 60;
+    unsigned int x = (side == 0) ? 9 : 239;
+    unsigned int y = (button == 0) ? 161 : 108;
+    // unsigned char v[2][2] = {{9, 239}, {161, 108}};
 
-    display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + which * 72, 30 + x * 30,
-                                           71, 29, v[0][plr], v[1][x]);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX, srcY, 71, 29, x, y);
 }
 
-void BinT(int x, int y, char st)
+void DrawMapOutline(int x, int y)
 {
-    char sta[2][2] = {{2, 4}, {4, 2}};
-
-    display::graphics.setForegroundColor(sta[st][0]);
+    display::graphics.setForegroundColor(4);
     grMoveTo(0 + x, y + 20);
     grLineTo(0 + x, y + 0);
     grLineTo(72 + x, y + 0);
     grMoveTo(12 + x, y + 21);
     grLineTo(12 + x, y + 30);
-    display::graphics.setForegroundColor(sta[st][1]);
+    display::graphics.setForegroundColor(2);
     grMoveTo(0 + x, y + 21);
     grLineTo(11 + x, y + 21);
     grMoveTo(12 + x, y + 31);
@@ -357,25 +357,23 @@ void BinT(int x, int y, char st)
     grLineTo(73 + x, y + 0);
 }
 
-void PLevels(char side, char wh, DisplayContext& dctx)
+void DrawMap(char side, char country, DisplayContext& dctx)
 {
-    if (side == 0) {  // Draw map on US side
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
-    } else {          // Draw map on Soviet side
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19, 239,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
-    }
+    unsigned int srcX = (country == 0) ? 0 : 72;
+    unsigned int x = (side == 0) ? 9 : 239;
+
+    // Map is drawn in 2 rectangles to preserve the player icon
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX,      0, 12, 19, x     , 55);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX + 11, 0, 60, 29, x + 12, 55);
+
 }
 
-void CLevels(char side, bool is_AI, DisplayContext& dctx)
+void DrawPlayerIcon(char side, bool is_AI, DisplayContext& dctx)
 {
+    unsigned int x = (side == 0) ? 9 : 239;
     unsigned int srcY = is_AI ? 7 : 0;
-    if (side == 0) {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, srcY, 9, 7, 9, 78);
-    } else {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, srcY, 9, 7, 239, 78);
-    }
+
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, srcY, 9, 7, x, 78);
 }
 
 
@@ -636,7 +634,7 @@ int Preferences(int player, PreferencesMode where)
             WaitForMouseUp();
             is_AI_1 = !is_AI_1;
 
-            CLevels(0, is_AI_1, dctx);
+            DrawPlayerIcon(0, is_AI_1, dctx);
             OutBox(8, 77, 18, 85);
 
             /* P1: Human/Computer */
@@ -647,7 +645,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Lev1 = 0;
             }
 
-            Levels(0, Data->Def.Lev1, 1, dctx);
+            DrawLevel(0, 1, Data->Def.Lev1, dctx);
         } else if (where != PREFS_INGAME && ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'G'))) {
             InBox(8, 107, 81, 138);
@@ -659,7 +657,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Lev1 = 0;
             }
 
-            Levels(0, Data->Def.Lev1, 1, dctx);
+            DrawLevel(0, 1, Data->Def.Lev1, dctx);
             /* P1: Game Level */
         } else if (where != PREFS_INGAME && ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'L'))) {
@@ -672,7 +670,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Ast1 = 0;
             }
 
-            Levels(0, Data->Def.Ast1, 0, dctx);
+            DrawLevel(0, 0, Data->Def.Ast1, dctx);
             /* P1: Astro Level */
         } else if (where == PREFS_NEWGAME && ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'H'))) {
@@ -680,7 +678,7 @@ int Preferences(int player, PreferencesMode where)
             WaitForMouseUp();
             is_AI_2 = !is_AI_2;
 
-            CLevels(1, is_AI_2, dctx);
+            DrawPlayerIcon(1, is_AI_2, dctx);
             OutBox(238, 77, 248, 85);
 
             /* P2:Human/Computer */
@@ -691,7 +689,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Lev2 = 0;
             }
 
-            Levels(1, Data->Def.Lev2, 1, dctx);
+            DrawLevel(1, 1, Data->Def.Lev2, dctx);
         } else if (where != PREFS_INGAME && ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'G'))) {
             InBox(238, 107, 311, 138);
@@ -703,7 +701,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Lev2 = 0;
             }
 
-            Levels(1, Data->Def.Lev2, 1, dctx);
+            DrawLevel(1, 1, Data->Def.Lev2, dctx);
             /* P2: Game Level */
         } else if (where != PREFS_INGAME && ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'L'))) {
@@ -716,7 +714,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Ast2 = 0;
             }
 
-            Levels(1, Data->Def.Ast2, 0, dctx);
+            DrawLevel(1, 0, Data->Def.Ast2, dctx);
             /* P2: Astro Level */
         } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'N')) {
