@@ -48,6 +48,8 @@ using namespace std::literals::string_view_literals;
 #include "prest.h"
 #include "state_utils.h"
 
+LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT)
+
 // Function Prototype
 
 char Mon[12][4] = {
@@ -378,6 +380,7 @@ void DrawRush(char plr)
  */
 void Rush(char plr)
 {
+    LOG_DEBUG("-> Rush()");
     auto& pData = Data->P[plr];
 
     // Reset Rushing status for missions.
@@ -513,6 +516,7 @@ void Rush(char plr)
             } 
     
             music_stop();
+            LOG_DEBUG("<- Rush()");
             return;  // Done
         }
     }
@@ -546,6 +550,7 @@ void SetLaunchDates(const char plr)
     auto& pData = Data->P[plr];
     int missionCount = std::count_if(pData.Mission, pData.Mission+MAX_MISSIONS, [](auto& mission){return mission.MissionCode != Mission_None
                                                                                                          && mission.part == 0;});
+    LOG_DEBUG("missionCount = %i", missionCount);
 
     // Currently, can only handle 3 missions.
     // assert(MAX_MISSIONS == 3);
@@ -561,6 +566,7 @@ void SetLaunchDates(const char plr)
         if (mission.MissionCode == Mission_None) continue;
         if (mission.part == 0) ++launch;
         mission.Month = launch_months[missionCount][launch] + Data->Season*6;
+        LOG_DEBUG("for pad = %i, mission.Month = %i", pad, mission.Month);
     }
 }
 
