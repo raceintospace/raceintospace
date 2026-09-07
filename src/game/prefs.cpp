@@ -114,11 +114,6 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
         fill_rectangle(237, 53, 312, 86, 0);
         OutBox(8, 77, 18, 85);
         OutBox(238, 77, 248, 85);
-        DrawMapOutline(8, 54);
-        DrawMapOutline(238, 54);  // No select Buttons
-        fill_rectangle(250, 75, 250, 84, 4);
-        fill_rectangle(237, 35, 312, 41, 0);
-        fill_rectangle(7, 35, 82, 41, 0);
     } else {
         music_start(M_DRUMSM);
         InBox(8, 107, 81, 138);
@@ -127,11 +122,12 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
         InBox(238, 160, 311, 191);
         InBox(8, 77, 18, 85);
         InBox(238, 77, 248, 85);
-        DrawMapOutline(8, 54);
-        DrawMapOutline(238, 54);
-        fill_rectangle(237, 35, 312, 41, 0);
-        fill_rectangle(7, 35, 82, 41, 0);
     }
+
+    DrawMapOutline(8, 54);
+    DrawMapOutline(238, 54);
+    fill_rectangle(237, 35, 312, 41, 0);
+    fill_rectangle(7, 35, 82, 41, 0);
 
     if (where == PREFS_NEWPBEM) {
         draw_heading(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
