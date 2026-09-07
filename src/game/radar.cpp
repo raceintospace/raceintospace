@@ -48,6 +48,35 @@
 
 void PadDraw(char plr, char pad);
 void PadPict(char poff);
+void DrawCrew(int x_coord, int y_coord, int plr, int Capsule, int crew);
+
+void DrawCrew(int x_coord, int y_coord, int plr, int Capsule, int crew)
+{
+    auto& pData = Data->P[plr];
+    for (int i = 0; i < pData.CrewCount[Capsule][crew]; i++) {
+        int Crew_idx = pData.Crew[Capsule][crew][i] - 1;
+        const Astros& CrewMember = pData.Pool[Crew_idx];
+        
+        // Draw a morale box for each crew member -Leon
+        fill_rectangle(x_coord, y_coord + 7 * i, x_coord+8, y_coord + 6 + 7 * i, 4);
+        fill_rectangle(x_coord, y_coord + 7 * i, x_coord+7, y_coord + 5 + 7 * i, 2);
+        
+        int color = MoodColor(CrewMember.Mood);
+        fill_rectangle(x_coord + 1, y_coord + 1 + 7 * i, x_coord + 7, y_coord + 5 + 7 * i, color);
+
+        int colors[] = {1, 5,
+                        0, 7};
+        display::graphics.setForegroundColor(colors[CrewMember.Sex + 2 * (CrewMember.RetirementDelay > 0)]);
+        draw_string(x_coord + 12, y_coord + 5 + 7 * i, CrewMember.Name);
+        
+        int missions = CrewMember.Missions;
+        if (missions > 0) {
+            draw_string(0, 0, " (");
+            draw_number(0, 0, missions);
+            draw_string(0, 0, ")");
+        }
+    }
+}
 
 
 void PadDraw(char plr, char pad)
@@ -221,51 +250,14 @@ void PadDraw(char plr, char pad)
     draw_string(13, 107, "PRIMARY CREW  ");
 
     if (primary_crew >= 0) {
-        display::graphics.setForegroundColor(11);  // Now display the crew number, for reference -Leon
-        if (primary_crew < 8)
-        {
-            draw_string(0,0, "(CREW ");
-            draw_string(0,0, RomanNumeral(primary_crew+1).c_str());
-            draw_string(0,0, ")");
-        }
+        assert(primary_crew < 8);
+        
+        display::graphics.setForegroundColor(11);  // Now display the crew number, for reference -Leon        
+        draw_string(0,0, "(CREW ");
+        draw_string(0,0, RomanNumeral(primary_crew+1).c_str());
+        draw_string(0,0, ")");
 
-        for (int i = 0; i < Data->P[plr].CrewCount[Capsule][primary_crew]; i++) {
-            int Crew_idx = Data->P[plr].Crew[Capsule][primary_crew][i] - 1;
-            const Astros& CrewMember = Data->P[plr].Pool[Crew_idx];
-            
-            // Draw a morale box for each crew member -Leon
-            display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 110 + 7 * i, 20, 110 + 7 * i, 2);  // Top
-            fill_rectangle(13, 110 + 7 * i, 13, 116 + 7 * i, 2);  // Left
-            fill_rectangle(13, 116 + 7 * i, 20, 116 + 7 * i, 4);  // Bottom
-            fill_rectangle(21, 110 + 7 * i, 21, 116 + 7 * i, 4);  // Right
-
-            int color = MoodColor(CrewMember.Mood);
-            fill_rectangle(14, 111 + 7 * i, 20, 115 + 7 * i, color);
-
-            display::graphics.setForegroundColor(1);
-
-            if (CrewMember.Sex == 1) {
-                display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
-            }
-
-            if (CrewMember.RetirementDelay > 0) {
-                display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
-            }
-
-            if (CrewMember.Sex == 1 && CrewMember.RetirementDelay > 0) {
-                display::graphics.setForegroundColor(7);
-            }
-
-            draw_string(25, 115 + 7 * i, &CrewMember.Name[0]);   // Show women who've announced retirement in purple
-            int missions = CrewMember.Missions;
-
-            if (missions > 0) {
-                draw_string(0, 0, " (");
-                draw_number(0, 0, missions);
-                draw_string(0, 0, ")");
-            }
-        }
+        DrawCrew(13, 110, plr, Capsule, primary_crew);
 
         if (backup_crew == -1) {
             draw_string(25, 174, "UNAVAILABLE");
@@ -276,46 +268,15 @@ void PadDraw(char plr, char pad)
     draw_string(13, 145, "BACKUP CREW  ");
 
     if (backup_crew >= 0) {
+        assert(backup_crew < 8);
+        
         display::graphics.setForegroundColor(11);  // Now display the crew number, for player's reference -Leon
+        draw_string(0,0, "(CREW ");
+        draw_string(0,0, RomanNumeral(backup_crew+1).c_str());
+        draw_string(0,0, ")");
 
-        if (backup_crew < 8) {
-            draw_string(0,0, "(CREW ");
-            draw_string(0,0, RomanNumeral(backup_crew+1).c_str());
-            draw_string(0,0, ")");
-        }
-
-        int BackupCrewCount = Data->P[plr].CrewCount[Capsule][backup_crew];
-        for (int i = 0; i < BackupCrewCount; i++) {
-            int crew_idx = Data->P[plr].Crew[Capsule][backup_crew][i] - 1;
-            const Astros& CrewMember = Data->P[plr].Pool[crew_idx];
-            
-            // Draw a morale box for each crew member -Leon
-            display::graphics.setForegroundColor(1);
-            fill_rectangle(13, 148 + 7 * i, 20, 148 + 7 * i, 2);  // Top
-            fill_rectangle(13, 148 + 7 * i, 13, 154 + 7 * i, 2);  // Left
-            fill_rectangle(13, 154 + 7 * i, 20, 154 + 7 * i, 4);  // Bottom
-            fill_rectangle(21, 148 + 7 * i, 21, 154 + 7 * i, 4);  // Right
-
-            int color = MoodColor(CrewMember.Mood);
-            fill_rectangle(14, 149 + 7 * i, 20, 153 + 7 * i, color);
-
-            display::graphics.setForegroundColor(1);
-
-            if (CrewMember.Sex == 1) {
-                display::graphics.setForegroundColor(5);    // Show female 'nauts in blue
-            }
-
-            if (CrewMember.RetirementDelay > 0) {
-                display::graphics.setForegroundColor(0);    // Show men who've announced retirement in black
-            }
-
-            if (CrewMember.Sex == 1 && CrewMember.RetirementDelay > 0) {
-                display::graphics.setForegroundColor(7);
-            }
-
-            draw_string(25, 153 + 7 * i, &CrewMember.Name[0]);   // Show women who've announced retirement in purple
-        }
-
+        DrawCrew(13, 148, plr, Capsule, backup_crew);
+        
         if (primary_crew == -1) {
             draw_string(25, 136, "UNAVAILABLE");
         }
