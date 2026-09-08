@@ -557,19 +557,20 @@ int Preferences(int player, PreferencesMode where)
             return PREFS_ABORTED;
 
         } else if (key == 'P' && where != PREFS_INGAME) {
+            selected_player = other(selected_player);
+
             fill_rectangle(59, 26, 68, 31, 3);
             fill_rectangle(290, 26, 298, 31, 3);
 
             int color1 = 34;
             int color2 = 9;
-            if (selected_player == 1) std::swap(color1, color2);
+            if (selected_player == 0) std::swap(color1, color2);
             
             display::graphics.setForegroundColor(color1);
             draw_string(23, 30, "PLAYER 1");
             display::graphics.setForegroundColor(color2);
             draw_string(253, 30, "PLAYER 2");
             
-            selected_player = !selected_player;
         } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
                    || key == 'E') {
             // Edit astronauts has been ripped out
