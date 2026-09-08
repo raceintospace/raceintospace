@@ -412,10 +412,8 @@ void DrawPlayerIcon(char side, bool is_AI, DisplayContext& dctx)
  * See documentation for HModel() for more about the Hardware Model /
  * Roster settings.
  *
+ * \param player current player (only relevant when called ingame)
  * \param where  current game state used for determining options
- *               (0: Pregame setup
- *                1: In-game settings menu
- *                3: New PBEM game)
  * \return PREFS_ABORTED if cancelling out of menu, PREFS_SET otherwise.
  */
 int Preferences(int player, PreferencesMode where)
@@ -467,9 +465,9 @@ int Preferences(int player, PreferencesMode where)
         GetMouse();
         if (mousebuttons == 0 && key == 0) continue;
         
-        /* Gameplay */
         if ((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
-            if (is_AI_1 && is_AI_2) continue;
+            if (is_AI_1 && is_AI_2) continue;   // Can't set the game with 2 AIs
+            /* Quit & apply preferences */
 
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
@@ -577,7 +575,8 @@ int Preferences(int player, PreferencesMode where)
             
         } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
                    || key == 'E') {
-            // Edit astronauts has been ripped out
+            /* Modify astronauts */
+
             InBox(146, 30, 219, 61);
             delay(500);
             AstronautModification();
@@ -587,6 +586,7 @@ int Preferences(int player, PreferencesMode where)
 
         } else if ((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) {
             if (where == PREFS_INGAME) continue;
+            /* Select Model & Roster */
 
             WaitForMouseUp();
             Data->Def.Input = (Data->Def.Input + 1) % numHModels;
@@ -596,7 +596,8 @@ int Preferences(int player, PreferencesMode where)
             /* disable this option right now */
         } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
             if (audio.master.muted) continue;
-            
+            /* Music mute toggle */
+
             InBox(100, 30, 135, 61);
             WaitForMouseUp();
             audio.music.muted = !audio.music.muted;
@@ -605,10 +606,10 @@ int Preferences(int player, PreferencesMode where)
                 dctx.prefs_image, (audio.music.muted ? 153 : 187), 0, 33, 29, 101, 31);
             OutBox(100, 30, 135, 61);
 
-            /* Music Level */
         } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
             if (audio.master.muted) continue;
-            
+            /* Sound mute toggle */
+
             InBox(100, 70, 135, 101);
             WaitForMouseUp();
             audio.soundFX.muted = !audio.soundFX.muted;
@@ -617,10 +618,10 @@ int Preferences(int player, PreferencesMode where)
                 dctx.prefs_image, (audio.soundFX.muted ? 221 : 255), 0, 33, 29, 101, 71);
             OutBox(100, 70, 135, 101);
 
-            /* Sound Level */
         } else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'H')) {
             if (where != PREFS_NEWGAME) continue;
+            /* P1: Human/Computer */
 
             InBox(8, 77, 18, 85);
             WaitForMouseUp();
@@ -629,14 +630,14 @@ int Preferences(int player, PreferencesMode where)
             DrawPlayerIcon(0, is_AI_1, dctx);
             OutBox(8, 77, 18, 85);
 
-            /* P1: Human/Computer */
-            //change human to dif 1 and comp to 3
+            // change human to difficulty 1 and computer to 3
             Data->Def.Lev1 = is_AI_1 ? 2 : 0;
             DrawLevel(0, 1, Data->Def.Lev1, dctx);
 
         } else if ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'G')) {
             if (where == PREFS_INGAME) continue;
+            /* P1: Game Level */
 
             InBox(8, 107, 81, 138);
             WaitForMouseUp();
@@ -644,10 +645,10 @@ int Preferences(int player, PreferencesMode where)
             Data->Def.Lev1 = (Data->Def.Lev1 + 1) % 3;
             DrawLevel(0, 1, Data->Def.Lev1, dctx);
 
-            /* P1: Game Level */
         } else if ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'L')) {
             if (where == PREFS_INGAME) continue;
+            /* P1: Astro Level */
 
             InBox(8, 160, 81, 191);
             WaitForMouseUp();
@@ -655,10 +656,10 @@ int Preferences(int player, PreferencesMode where)
             Data->Def.Ast1 = (Data->Def.Ast1 + 1) % 3;
             DrawLevel(0, 0, Data->Def.Ast1, dctx);
 
-            /* P1: Astro Level */
         } else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'H')) {
             if (where != PREFS_NEWGAME) continue;
+            /* P2:Human/Computer */
 
             InBox(238, 77, 248, 85);
             WaitForMouseUp();
@@ -667,14 +668,14 @@ int Preferences(int player, PreferencesMode where)
             DrawPlayerIcon(1, is_AI_2, dctx);
             OutBox(238, 77, 248, 85);
 
-            /* P2:Human/Computer */
-            //change human to dif 1 and comp to 3
+            // change human to difficulty 1 and computer to 3
             Data->Def.Lev2 = is_AI_2 ? 2 : 0;
             DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
         } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'G')) {
             if (where == PREFS_INGAME) continue;
+            /* P2: Game Level */
 
             InBox(238, 107, 311, 138);
             WaitForMouseUp();
@@ -682,10 +683,10 @@ int Preferences(int player, PreferencesMode where)
             Data->Def.Lev2 = (Data->Def.Lev2 + 1) % 3;
             DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
-            /* P2: Game Level */
         } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
                    || (selected_player == 1 && key == 'L')) {
             if (where == PREFS_INGAME) continue;
+            /* P2: Astro Level */
 
             InBox(238, 160, 311, 191);
             WaitForMouseUp();
@@ -693,7 +694,6 @@ int Preferences(int player, PreferencesMode where)
             Data->Def.Ast2 = (Data->Def.Ast2 + 1) % 3;
             DrawLevel(1, 0, Data->Def.Ast2, dctx);
 
-            /* P2: Astro Level */
         } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
                    || (selected_player == 0 && key == 'N')) {
             /* P1: Director Name */
