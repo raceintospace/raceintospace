@@ -239,19 +239,19 @@ void MisAnn(char plr, char pad)
     display::graphics.setForegroundColor(9);
     draw_string(65, 78, "C");
     display::graphics.setForegroundColor(1);
-    draw_string(65, 78, "ONTINUE");
+    draw_string(0, 0, "ONTINUE");
     
     IOBox(129, 68, 195, 84);
     display::graphics.setForegroundColor(9);
     draw_string(137, 78, "P");
     display::graphics.setForegroundColor(1);
-    draw_string(137, 78, "LAY FULL");
+    draw_string(0, 0, "LAY FULL");
     
     IOBox(205, 68, 266, 84);
     display::graphics.setForegroundColor(9);
     draw_string(221, 78, "S");
     display::graphics.setForegroundColor(1);
-    draw_string(221, 78, "CRUB");
+    draw_string(0, 0, "CRUB");
 
     //IOBox(85,68,158,84);IOBox(172,68,245,84);
     //display::graphics.setForegroundColor(1);draw_string(102,78,"CONTINUE");draw_string(189,78,"SCRUB");
