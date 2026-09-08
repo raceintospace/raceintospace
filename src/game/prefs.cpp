@@ -59,20 +59,20 @@ struct DisplayContext {
     boost::shared_ptr<display::PalettizedSurface> prefs_image;
 };
 
-void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
+void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig audio,
                DisplayContext& dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
-void HModel(char mode, char tx);
-void Levels(char plr, char which, char x, DisplayContext& dctx);
-void BinT(int x, int y, char st);
-void PLevels(char side, char wh, DisplayContext& dctx);
-void CLevels(char side, char wh, DisplayContext& dctx);
+void DrawModel(char model);
+void DrawLevel(char side, char button, char level, DisplayContext& dctx);
+void DrawMapOutline(int x, int y);
+void DrawMap(char side, char country, DisplayContext& dctx);
+void DrawPlayerIcon(char side, bool is_AI, DisplayContext& dctx);
 int Preferences(int player, PreferencesMode where);
 void SavePreferences(const AudioConfig& audio);
 
 
-void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
+void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig audio,
                DisplayContext& dctx)
 {
     FadeOut(2, 10, 0, 0);
@@ -114,12 +114,6 @@ void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
         fill_rectangle(237, 53, 312, 86, 0);
         OutBox(8, 77, 18, 85);
         OutBox(238, 77, 248, 85);
-        //BinT(8,54,0);BinT(238,54,0);  // Old way with buttons
-        BinT(8, 54, 1);
-        BinT(238, 54, 1);  // No select Buttons
-        fill_rectangle(250, 75, 250, 84, 4);
-        fill_rectangle(237, 35, 312, 41, 0);
-        fill_rectangle(7, 35, 82, 41, 0);
     } else {
         music_start(M_DRUMSM);
         InBox(8, 107, 81, 138);
@@ -128,11 +122,12 @@ void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
         InBox(238, 160, 311, 191);
         InBox(8, 77, 18, 85);
         InBox(238, 77, 248, 85);
-        BinT(8, 54, 1);
-        BinT(238, 54, 1);
-        fill_rectangle(237, 35, 312, 41, 0);
-        fill_rectangle(7, 35, 82, 41, 0);
     }
+
+    DrawMapOutline(8, 54);
+    DrawMapOutline(238, 54);
+    fill_rectangle(237, 35, 312, 41, 0);
+    fill_rectangle(7, 35, 82, 41, 0);
 
     if (where == PREFS_NEWPBEM) {
         draw_heading(3, 5, "PLAY BY MAIL SELECTIONS", 0, -1);
@@ -143,14 +138,14 @@ void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
     IOBox(243, 3, 316, 19);
     InBox(236, 34, 313, 42);
     InBox(6, 34, 83, 42);
-    PLevels(0, Data->Def.Plr1, dctx);
-    CLevels(0, a1, dctx);
-    PLevels(1, Data->Def.Plr2, dctx);
-    CLevels(1, a2, dctx);
-    Levels(0, Data->Def.Lev1, 1, dctx);
-    Levels(0, Data->Def.Ast1, 0, dctx);
-    Levels(1, Data->Def.Lev2, 1, dctx);
-    Levels(1, Data->Def.Ast2, 0, dctx);
+    DrawMap(0, Data->Def.Plr1, dctx);
+    DrawPlayerIcon(0, is_AI_1, dctx);
+    DrawMap(1, Data->Def.Plr2, dctx);
+    DrawPlayerIcon(1, is_AI_2, dctx);
+    DrawLevel(0, 0, Data->Def.Ast1, dctx);
+    DrawLevel(0, 1, Data->Def.Lev1, dctx);
+    DrawLevel(1, 0, Data->Def.Ast2, dctx);
+    DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
     if (where != PREFS_INGAME) {
         display::graphics.setForegroundColor(9);
@@ -176,15 +171,13 @@ void DrawPrefs(PreferencesMode where, char a1, char a2, AudioConfig audio,
     draw_string(238, 40, Data->P[ Data->Def.Plr2 ].Name);
 
     display::graphics.legacyScreen()->draw(
-        dctx.prefs_image, 153 + 34 * (audio.music.muted ? 0 : 1), 0,
-        33, 29, 101, 31);
+        dctx.prefs_image, (audio.music.muted ? 153 : 187), 0, 33, 29, 101, 31);
     display::graphics.legacyScreen()->draw(
-        dctx.prefs_image, 221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
-        33, 29, 101, 71);
+        dctx.prefs_image, (audio.soundFX.muted ? 221 : 255), 0, 33, 29, 101, 71);
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 216, 30, 71, 29, 147, 31);
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
-    HModel(Data->Def.Input, 1);
+    DrawModel(Data->Def.Input);
 
     FadeIn(2, 10, 0, 0);
 }
@@ -291,12 +284,11 @@ std::string GetTextInput(int x, int y, int maxLength)
  * Modifies the main screen palette.
  *
  * \param mode  The current model/roster setup (0-5).
- * \param tx    This option is unused, so who knows?
  */
-void HModel(char mode, char tx)
+void DrawModel(char model)
 {
     char filename[128];
-    int image = (mode == 0 || mode == 1 || mode == 4) ? 1 : 0;
+    int image = (model == 0 || model == 1 || model == 4) ? 1 : 0;
     snprintf(filename, sizeof(filename), "images/prfx.but.%d.png", image);
 
     boost::shared_ptr<display::PalettizedSurface> prefsImage(
@@ -313,17 +305,17 @@ void HModel(char mode, char tx)
 
     display::graphics.setForegroundColor(11);
 
-    if (mode == 2 || mode == 3) {
-        draw_string(100, 122, "HISTORICAL MODEL");
-    } else if (mode == 0 || mode == 1) {
+    if (model <= 1) {
         draw_string(100, 122, "BASIC MODEL");
-    } else if (mode == 4 || mode == 5) {
+    } else if (model <= 3) {
+        draw_string(100, 122, "HISTORICAL MODEL");
+    } else {
         draw_string(100, 122, "RANDOM MODEL");
     }
 
     display::graphics.setForegroundColor(9);
 
-    if (mode == 0 || mode == 2 || mode == 4) {
+    if (model % 2 == 0) {
         draw_string(100, 128, "HISTORICAL ROSTER");
     } else {
         draw_string(100, 128, "CUSTOM ROSTER");
@@ -331,25 +323,25 @@ void HModel(char mode, char tx)
 }
 
 
-void Levels(char plr, char which, char x, DisplayContext& dctx)
+void DrawLevel(char side, char button, char level, DisplayContext& dctx)
 {
-    unsigned char v[2][2] = {{9, 239}, {161, 108}};
+    unsigned int srcX = level * 72;
+    unsigned int srcY = (button == 0) ? 30 : 60;
+    unsigned int x = (side == 0) ? 9 : 239;
+    unsigned int y = (button == 0) ? 161 : 108;
 
-    display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + which * 72, 30 + x * 30,
-                                           71, 29, v[0][plr], v[1][x]);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX, srcY, 71, 29, x, y);
 }
 
-void BinT(int x, int y, char st)
+void DrawMapOutline(int x, int y)
 {
-    char sta[2][2] = {{2, 4}, {4, 2}};
-
-    display::graphics.setForegroundColor(sta[st][0]);
+    display::graphics.setForegroundColor(4);
     grMoveTo(0 + x, y + 20);
     grLineTo(0 + x, y + 0);
     grLineTo(72 + x, y + 0);
     grMoveTo(12 + x, y + 21);
     grLineTo(12 + x, y + 30);
-    display::graphics.setForegroundColor(sta[st][1]);
+    display::graphics.setForegroundColor(2);
     grMoveTo(0 + x, y + 21);
     grLineTo(11 + x, y + 21);
     grMoveTo(12 + x, y + 31);
@@ -357,24 +349,23 @@ void BinT(int x, int y, char st)
     grLineTo(73 + x, y + 0);
 }
 
-void PLevels(char side, char wh, DisplayContext& dctx)
+void DrawMap(char side, char country, DisplayContext& dctx)
 {
-    if (side == 0) {  // Draw map on US side
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19,  9,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 21,  55);
-    } else {          // Draw map on Soviet side
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72,     0, 12, 19, 239,  55);
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 0 + wh * 72 + 11,  0, 60, 29, 251,  55);
-    }
+    unsigned int srcX = (country == 0) ? 0 : 72;
+    unsigned int x = (side == 0) ? 9 : 239;
+
+    // Map is drawn in 2 rectangles to preserve the player icon
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX,      0, 12, 19, x     , 55);
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, srcX + 11, 0, 60, 29, x + 12, 55);
+
 }
 
-void CLevels(char side, char wh, DisplayContext& dctx)
+void DrawPlayerIcon(char side, bool is_AI, DisplayContext& dctx)
 {
-    if (side == 0) {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 9, 78);
-    } else {
-        display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, wh * 7, 9, 7, 239, 78);
-    }
+    unsigned int x = (side == 0) ? 9 : 239;
+    unsigned int srcY = is_AI ? 7 : 0;
+
+    display::graphics.legacyScreen()->draw(dctx.prefs_image, 144, srcY, 9, 7, x, 78);
 }
 
 
@@ -421,17 +412,18 @@ void CLevels(char side, char wh, DisplayContext& dctx)
  * See documentation for HModel() for more about the Hardware Model /
  * Roster settings.
  *
+ * \param player current player (only relevant when called ingame)
  * \param where  current game state used for determining options
- *               (0: Pregame setup
- *                1: In-game settings menu
- *                3: New PBEM game)
  * \return PREFS_ABORTED if cancelling out of menu, PREFS_SET otherwise.
  */
 int Preferences(int player, PreferencesMode where)
 {
-    int hum1 = 0, hum2 = 0, ksel = 0;
+    int selected_player = 0;
+    bool is_AI_1 = false;
+    bool is_AI_2 = false;
     DisplayContext dctx;
     AudioConfig audio = LoadAudioSettings();
+    char numHModels = options.feat_random_eq > 0 ? 6 : 4;
 
     helpText = "i013";
     keyHelpText = "K013";
@@ -439,9 +431,10 @@ int Preferences(int player, PreferencesMode where)
     if (where != PREFS_NEWPBEM) {
         // If starting a new game, set default configuration
         if (where == PREFS_NEWGAME) {
-            Data->Def.Plr2 = 1;
             Data->Def.Plr1 = 0;
-            hum1 = 0, hum2 = 1;
+            Data->Def.Plr2 = 1;
+            is_AI_1 = false;
+            is_AI_2 = true;
             Data->Def.Lev1 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
             Data->Def.Lev2 = 2;   // start computer level 3
             Data->Def.Input = 2;  // Historical Model / Historical Roster
@@ -449,12 +442,12 @@ int Preferences(int player, PreferencesMode where)
 
         if (Data->Def.Plr1 > 1) {
             Data->Def.Plr1 -= 2;
-            hum1 = 1;
+            is_AI_1 = true;
         }
 
         if (Data->Def.Plr2 > 1) {
             Data->Def.Plr2 -= 2;
-            hum2 = 1;
+            is_AI_2 = true;
         }
     } else {
         Data->Def.Lev1 = Data->Def.Lev2 = Data->Def.Ast1 = Data->Def.Ast2 = 0;
@@ -464,7 +457,7 @@ int Preferences(int player, PreferencesMode where)
     boost::shared_ptr<display::PalettizedSurface> prefs_image(Filesystem::readImage("images/preferences.png"));
     dctx.prefs_image = prefs_image;
 
-    DrawPrefs(where, hum1, hum2, audio, dctx);
+    DrawPrefs(where, is_AI_1, is_AI_2, audio, dctx);
     WaitForMouseUp();
 
     while (1) {
@@ -472,8 +465,10 @@ int Preferences(int player, PreferencesMode where)
         GetMouse();
         if (mousebuttons == 0 && key == 0) continue;
         
-        /* Gameplay */
-        if (((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) && !(hum1 == 1 && hum2 == 1)) {
+        if ((x >= 245 && y >= 5 && x <= 314 && y <= 17) || key == K_ENTER) {
+            if (is_AI_1 && is_AI_2) continue;   // Can't set the game with 2 AIs
+            /* Quit & apply preferences */
+
             InBox(245, 5, 314, 17);
             WaitForMouseUp();
 
@@ -484,11 +479,11 @@ int Preferences(int player, PreferencesMode where)
             OutBox(245, 5, 314, 17);
 
             if (!(Data->Def.Input == 2 || Data->Def.Input == 3)) {
-                if (options.feat_eq_new_name && hum1 != 1) {
+                if (options.feat_eq_new_name && !is_AI_1) {
                     SetEquipName(0);
                 }
 
-                if (options.feat_eq_new_name && hum2 != 1) {
+                if (options.feat_eq_new_name && !is_AI_2) {
                     SetEquipName(1);
                 }
             }  // Change Name, if basic mode and for human players
@@ -505,8 +500,12 @@ int Preferences(int player, PreferencesMode where)
                 std::swap(Data->Def.Ast1, Data->Def.Ast2);
             }
 
-            Data->Def.Plr1 += hum1 * 2;
-            Data->Def.Plr2 += hum2 * 2;
+            if (is_AI_1) {
+                Data->Def.Plr1 += 2;
+            }
+            if (is_AI_2) {
+                Data->Def.Plr2 += 2;
+            }
 
             if (where != PREFS_INGAME) {
                 FadeOut(2, 10, 0, 0);
@@ -548,175 +547,161 @@ int Preferences(int player, PreferencesMode where)
 
             CacheCrewFile();
             SavePreferences(audio);
-
             music_stop();
             return PREFS_SET;
+
         } else if (key == K_ESCAPE) {
             SavePreferences(audio);
-
             music_stop();
             FadeOut(2, 10, 0, 0);
             return PREFS_ABORTED;
-        } else if (key == 'P' && where != PREFS_INGAME) {
+
+        } else if (key == 'P') {
+            if (where == PREFS_INGAME) continue;
+
+            selected_player = other(selected_player);
+
             fill_rectangle(59, 26, 68, 31, 3);
             fill_rectangle(290, 26, 298, 31, 3);
 
             int color1 = 34;
             int color2 = 9;
-            if (ksel == 1) std::swap(color1, color2);
+            if (selected_player == 0) std::swap(color1, color2);
             
             display::graphics.setForegroundColor(color1);
             draw_string(23, 30, "PLAYER 1");
             display::graphics.setForegroundColor(color2);
             draw_string(253, 30, "PLAYER 2");
             
-            ksel = other(ksel);
         } else if ((x >= 146 && y >= 30 && x <= 219 && y <= 61 && mousebuttons > 0)
                    || key == 'E') {
-            // Edit astronauts has been ripped out
+            /* Modify astronauts */
+
             InBox(146, 30, 219, 61);
             delay(500);
             AstronautModification();
             // TODO: Make sure *everything* is redrawn with the
             // correct values!
-            DrawPrefs(where, hum1, hum2, audio, dctx);
+            DrawPrefs(where, is_AI_1, is_AI_2, audio, dctx);
 
-        } else if (((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) 
-                   && where != PREFS_INGAME) {  // Hist
-            char maxHModels = options.feat_random_eq > 0 ? 5 : 3;
+        } else if ((x >= 96 && y >= 114 && x <= 223 && y <= 194 && mousebuttons > 0) || key == K_SPACE) {
+            if (where == PREFS_INGAME) continue;
+            /* Select Model & Roster */
+
             WaitForMouseUp();
-            Data->Def.Input++;
+            Data->Def.Input = (Data->Def.Input + 1) % numHModels;
+            DrawModel(Data->Def.Input);
 
-            if (Data->Def.Input > maxHModels) {
-                Data->Def.Input = 0;
-            }
-
-            HModel(Data->Def.Input, 0);
         } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
             /* disable this option right now */
         } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
             if (audio.master.muted) continue;
-            
+            /* Music mute toggle */
+
             InBox(100, 30, 135, 61);
             WaitForMouseUp();
             audio.music.muted = !audio.music.muted;
             music_set_mute(audio.music.muted);
             display::graphics.legacyScreen()->draw(
-                dctx.prefs_image,
-                153 + 34 * (!audio.music.muted), 0,
-                33, 29, 101, 31);
+                dctx.prefs_image, (audio.music.muted ? 153 : 187), 0, 33, 29, 101, 31);
             OutBox(100, 30, 135, 61);
-            /* Music Level */
+
         } else if ((x >= 100 && y >= 70 && x <= 135 && y <= 101 && mousebuttons > 0) || key == 'S') {
             if (audio.master.muted) continue;
-            
+            /* Sound mute toggle */
+
             InBox(100, 70, 135, 101);
             WaitForMouseUp();
             audio.soundFX.muted = !audio.soundFX.muted;
             MuteChannel(AV_SOUND_CHANNEL, audio.soundFX.muted);
             display::graphics.legacyScreen()->draw(
-                dctx.prefs_image,
-                221 + 34 * (audio.soundFX.muted ? 0 : 1), 0,
-                33, 29, 101, 71);
+                dctx.prefs_image, (audio.soundFX.muted ? 221 : 255), 0, 33, 29, 101, 71);
             OutBox(100, 70, 135, 101);
 
-            /* Sound Level */
-        } else if (where == PREFS_NEWGAME && ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
-                 || (ksel == 0 && key == 'H'))) {
+        } else if ((x >= 8 && y >= 77 && x <= 18 && y <= 85 && mousebuttons > 0)
+                   || (selected_player == 0 && key == 'H')) {
+            if (where != PREFS_NEWGAME) continue;
+            /* P1: Human/Computer */
+
             InBox(8, 77, 18, 85);
             WaitForMouseUp();
-            hum1 = !hum1;
+            is_AI_1 = !is_AI_1;
 
-            CLevels(0, hum1, dctx);
+            DrawPlayerIcon(0, is_AI_1, dctx);
             OutBox(8, 77, 18, 85);
 
-            /* P1: Human/Computer */
-            //change human to dif 1 and comp to 3
-            if (hum1 == 1) {
-                Data->Def.Lev1 = 2;
-            } else {
-                Data->Def.Lev1 = 0;
-            }
+            // change human to difficulty 1 and computer to 3
+            Data->Def.Lev1 = is_AI_1 ? 2 : 0;
+            DrawLevel(0, 1, Data->Def.Lev1, dctx);
 
-            Levels(0, Data->Def.Lev1, 1, dctx);
-        } else if (where != PREFS_INGAME && ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
-                   || (ksel == 0 && key == 'G'))) {
+        } else if ((x >= 8 && y >= 107 && x <= 81 && y <= 138 && mousebuttons > 0)
+                   || (selected_player == 0 && key == 'G')) {
+            if (where == PREFS_INGAME) continue;
+            /* P1: Game Level */
+
             InBox(8, 107, 81, 138);
             WaitForMouseUp();
             OutBox(8, 107, 81, 138);
-            Data->Def.Lev1++;
+            Data->Def.Lev1 = (Data->Def.Lev1 + 1) % 3;
+            DrawLevel(0, 1, Data->Def.Lev1, dctx);
 
-            if (Data->Def.Lev1 > 2) {
-                Data->Def.Lev1 = 0;
-            }
+        } else if ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
+                   || (selected_player == 0 && key == 'L')) {
+            if (where == PREFS_INGAME) continue;
+            /* P1: Astro Level */
 
-            Levels(0, Data->Def.Lev1, 1, dctx);
-            /* P1: Game Level */
-        } else if (where != PREFS_INGAME && ((x >= 8 && y >= 160 && x <= 81 && y <= 191 && mousebuttons > 0)
-                   || (ksel == 0 && key == 'L'))) {
             InBox(8, 160, 81, 191);
             WaitForMouseUp();
             OutBox(8, 160, 81, 191);
-            Data->Def.Ast1++;
+            Data->Def.Ast1 = (Data->Def.Ast1 + 1) % 3;
+            DrawLevel(0, 0, Data->Def.Ast1, dctx);
 
-            if (Data->Def.Ast1 > 2) {
-                Data->Def.Ast1 = 0;
-            }
+        } else if ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
+                   || (selected_player == 1 && key == 'H')) {
+            if (where != PREFS_NEWGAME) continue;
+            /* P2:Human/Computer */
 
-            Levels(0, Data->Def.Ast1, 0, dctx);
-            /* P1: Astro Level */
-        } else if (where == PREFS_NEWGAME && ((x >= 238 && y >= 77 && x <= 248 && y <= 85 && mousebuttons > 0)
-                   || (ksel == 1 && key == 'H'))) {
             InBox(238, 77, 248, 85);
             WaitForMouseUp();
-            hum2 = !hum2;
+            is_AI_2 = !is_AI_2;
 
-            CLevels(1, hum2, dctx);
+            DrawPlayerIcon(1, is_AI_2, dctx);
             OutBox(238, 77, 248, 85);
 
-            /* P2:Human/Computer */
-            //change human to dif 1 and comp to 3
-            if (hum2 == 1) {
-                Data->Def.Lev2 = 2;
-            } else {
-                Data->Def.Lev2 = 0;
-            }
+            // change human to difficulty 1 and computer to 3
+            Data->Def.Lev2 = is_AI_2 ? 2 : 0;
+            DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
-            Levels(1, Data->Def.Lev2, 1, dctx);
-        } else if (where != PREFS_INGAME && ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
-                   || (ksel == 1 && key == 'G'))) {
+        } else if ((x >= 238 && y >= 107 && x <= 311 && y <= 138 && mousebuttons > 0)
+                   || (selected_player == 1 && key == 'G')) {
+            if (where == PREFS_INGAME) continue;
+            /* P2: Game Level */
+
             InBox(238, 107, 311, 138);
             WaitForMouseUp();
             OutBox(238, 107, 311, 138);
-            Data->Def.Lev2++;
+            Data->Def.Lev2 = (Data->Def.Lev2 + 1) % 3;
+            DrawLevel(1, 1, Data->Def.Lev2, dctx);
 
-            if (Data->Def.Lev2 > 2) {
-                Data->Def.Lev2 = 0;
-            }
+        } else if ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
+                   || (selected_player == 1 && key == 'L')) {
+            if (where == PREFS_INGAME) continue;
+            /* P2: Astro Level */
 
-            Levels(1, Data->Def.Lev2, 1, dctx);
-            /* P2: Game Level */
-        } else if (where != PREFS_INGAME && ((x >= 238 && y >= 160 && x <= 311 && y <= 191 && mousebuttons > 0)
-                   || (ksel == 1 && key == 'L'))) {
             InBox(238, 160, 311, 191);
             WaitForMouseUp();
             OutBox(238, 160, 311, 191);
-            Data->Def.Ast2++;
+            Data->Def.Ast2 = (Data->Def.Ast2 + 1) % 3;
+            DrawLevel(1, 0, Data->Def.Ast2, dctx);
 
-            if (Data->Def.Ast2 > 2) {
-                Data->Def.Ast2 = 0;
-            }
-
-            Levels(1, Data->Def.Ast2, 0, dctx);
-            /* P2: Astro Level */
         } else if ((x >= 6 && y >= 34 && x <= 83 && y <= 42 && mousebuttons > 0)
-                   || (ksel == 0 && key == 'N')) {
+                   || (selected_player == 0 && key == 'N')) {
             /* P1: Director Name */
             if (where != PREFS_INGAME || player == 0 || !IsHumanPlayer(0)) {
                 EditDirectorName(0);
             }
         } else if ((x >= 236 && y >= 34 && x <= 313 && y <= 42 && mousebuttons > 0)
-                   || (ksel == 1 && key == 'N')) {
+                   || (selected_player == 1 && key == 'N')) {
             /* P2: Director Name */
             if (where != PREFS_INGAME || player == 1 || !IsHumanPlayer(1)) {
                 EditDirectorName(1);
