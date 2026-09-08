@@ -319,6 +319,7 @@ void OpenNews(char plr, char* buf, int bud)
 // lowercase letters get decoded into stuff
 void DispNews(char plr, char* src, char* dest)
 {
+    auto& pData = Data->P[plr];
     int j = 0, k = 0;
 
     for (int i = 0; i < (int) strlen(src); i++) {
