@@ -52,7 +52,7 @@
 
 LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
 
-static const char *news_shots[] = { "angle", "opening", "closing" };
+static const char* news_shots[] = { "angle", "opening", "closing" };
 
 double load_news_anim_start;
 
@@ -107,8 +107,8 @@ struct rNews {
 
 
 void GoNews(char plr);
-void OpenNews(char plr, char *buf, int bud);
-void DispNews(char plr, char *src, char *dest);
+void OpenNews(char plr, char* buf, int bud);
+void DispNews(char plr, char* src, char* dest);
 void DrawNText(char plr, char got);
 char ResolveEvent(char plr);
 bool PlayNewsAnim(Multimedia&);
@@ -139,7 +139,7 @@ void GoNews(char plr)
 
     j = 0;
     memset(buffer + 6000, 0x00, 8000);  // clear memory
-    rNews* list = (struct rNews *)(buffer + 6000);
+    rNews* list = (rNews*)(buffer + 6000);
 
     for (int i = 0, len = (int)strlen(buffer); i < len; i++) {
         if (buffer[i] == 'x') {
@@ -153,15 +153,16 @@ void GoNews(char plr)
 
 
 // Open News Constructs a complete event array.
-void OpenNews(char plr, char *buf, int bud)
+void OpenNews(char plr, char* buf, int bud)
 {
+    auto& pData = Data->P[plr];
     int size = 250;
     //size = (plr == 0) ? 232 : 177;
     
     LoadEventData(plr);
     
     // News Intro - "GOOD EVENING..."
-    strncpy(&buf[0], event[0].text.c_str(), event[0].text.size());
+    strncpy(buf, event[0].text.c_str(), event[0].text.size());
     
     // Event News
     bufsize = strlen(buf);
@@ -174,20 +175,22 @@ void OpenNews(char plr, char *buf, int bud)
     LoadNewsData(plr);
     
     bufsize = strlen(buf);
-    for (int j = 0; j < Data->P[plr].AstroCount; j++) {
-        if (Data->P[plr].Pool[j].Special > 0) {
-            strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
-        }
+    for (int j = 0; j < pData.AstroCount; j++) {
+        auto& spaceman = pData.Pool[j];
+        if (spaceman.Special <= 0) continue;
+        
+        strncpy(&buf[bufsize], naut_news[0].c_str(), naut_news[0].size());
     }
 
     // Nauts in the news....
     
-    for (int j = 0; j < Data->P[plr].AstroCount; j++) {
-        if (Data->P[plr].Pool[j].Special > 0) {
+    for (int j = 0; j < pData.AstroCount; j++) {
+        auto& spaceman = pData.Pool[j];
+        if (spaceman.Special > 0) {
             // 12 ideas
             bufsize = strlen(buf);
-            strcpy(&buf[bufsize], Data->P[plr].Pool[j].Name); // Copy Naut Name
-            int i = Data->P[plr].Pool[j].Special;
+            strcpy(&buf[bufsize], spaceman.Name); // Copy Naut Name
+            int i = spaceman.Special;
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], naut_news[i].c_str(), naut_news[i].size());
         }
@@ -195,17 +198,17 @@ void OpenNews(char plr, char *buf, int bud)
         /* Show reasons for retirement announcements, mission deaths (8), and
            retirements due to mission injuries (9) */
         // (Special == 1,) OR (Special greater than 0 AND RetirementReason 8 or 9).
-        if ( (Data->P[plr].Pool[j].Special == 1) || 
-             (Data->P[plr].Pool[j].Special > 0 && 
-             (Data->P[plr].Pool[j].RetirementReason == 8 || Data->P[plr].Pool[j].RetirementReason == 9)) ) {
+        if ( (spaceman.Special == 1)
+             || (spaceman.Special > 0 
+                && (spaceman.RetirementReason == 8 || spaceman.RetirementReason == 9)) ) {
             //13 other things
-            int i = Data->P[plr].Pool[j].RetirementReason - 1;
+            int i = spaceman.RetirementReason - 1;
 
             bufsize = strlen(buf);
             strncpy(&buf[bufsize], reasons[i].c_str(), reasons[i].size());
         }
 
-        Data->P[plr].Pool[j].Special = 0;
+        spaceman.Special = 0;
     }
 
     if (Data->Year >= 58) {
@@ -220,7 +223,7 @@ void OpenNews(char plr, char *buf, int bud)
     //Specs: check tracking station for director's message |
     //------------------------------------------------------
     if (Option != -1) {
-        FILE *messages = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA);
+        FILE* messages = sOpen((Option == 0) ? "SENDR.MSG" : "SENDH.MSG", "rb", FT_DATA);
         char old[120];
 
         if (messages != nullptr) {
@@ -242,49 +245,49 @@ void OpenNews(char plr, char *buf, int bud)
 
     bufsize = strlen(buf);
 
-    if (Data->P[plr].Plans & 0xff) {
+    if (pData.Plans & 0xff) {
         display::graphics.setForegroundColor(16);
         strcpy(&buf[bufsize], "xPLANETARY MISSION UPDATES...x");
     }
 
     // Past Mission Info
-    if (Data->P[plr].Plans & 0x0f) {
+    if (pData.Plans & 0x0f) {
         // Failures
         display::graphics.setForegroundColor(6);
 
-        if (Data->P[plr].Plans & 0x01) {
+        if (pData.Plans & 0x01) {
             strcpy(&buf[strlen(buf)], "MARS FLYBY FAILS!x");
         }
 
-        if (Data->P[plr].Plans & 0x02) {
+        if (pData.Plans & 0x02) {
             strcpy(&buf[strlen(buf)], "JUPITER FLYBY FAILS!x");
         }
 
-        if (Data->P[plr].Plans & 0x04) {
+        if (pData.Plans & 0x04) {
             strcpy(&buf[strlen(buf)], "SATURN FLYBY FAILS!x");
         }
     }
 
-    if (Data->P[plr].Plans & 0xf0) {
+    if (pData.Plans & 0xf0) {
         display::graphics.setForegroundColor(5);
 
-        if (Data->P[plr].Plans & 0x10) {
+        if (pData.Plans & 0x10) {
             display::graphics.setForegroundColor(13);
             strcpy(&buf[strlen(buf)], "MARS FLYBY SUCCEEDS!x");
         }
 
-        if (Data->P[plr].Plans & 0x20) {
+        if (pData.Plans & 0x20) {
             display::graphics.setForegroundColor(23);
             strcpy(&buf[strlen(buf)], "JUPITER FLYBY SUCCEEDS!x");
         }
 
-        if (Data->P[plr].Plans & 0x40) {
+        if (pData.Plans & 0x40) {
             display::graphics.setForegroundColor(16);
             strcpy(&buf[strlen(buf)], "SATURN FLYBY SUCCEEDS!x");
         }
     }
 
-    Data->P[plr].Plans = 0;
+    pData.Plans = 0;
 
     // History News
     bufsize = strlen(buf);
@@ -311,8 +314,10 @@ void OpenNews(char plr, char *buf, int bud)
     strncpy(&buf[bufsize], event[1].text.c_str(), event[1].text.size());
 }
 
-
-void DispNews(char plr, char *src, char *dest)
+// more like DecodeNews()
+// all actual news text is upper-case,
+// lowercase letters get decoded into stuff
+void DispNews(char plr, char* src, char* dest)
 {
     int j = 0, k = 0;
 
@@ -320,110 +325,98 @@ void DispNews(char plr, char *src, char *dest)
         dest[j] = src[i];
 
         switch (dest[j]) {
-        case 'a':
-        case 'd':
-        case 'f':
-        case 'j':
-        case 'i':
-            snprintf(&Name[0], sizeof(Name), "%d", evflag);
-            strncpy(&dest[j], &Name[0], strlen(Name));
+        case 'a': case 'd': case 'f':
+        case 'j': case 'i':
+            snprintf(Name, sizeof(Name), "%d", evflag);
+            strncpy(&dest[j], Name, strlen(Name));
             j += strlen(Name) - 1;
             break;
 
         case 'b':
             switch (evflag) {
             case 0:
-                strcpy(&Name[0], "FIRST");
+                strcpy(Name, "FIRST");
                 break;
 
             case 1:
-                strcpy(&Name[0], "SECOND");
+                strcpy(Name, "SECOND");
                 break;
 
             case 2:
-                strcpy(&Name[0], "THIRD");
+                strcpy(Name, "THIRD");
                 break;
             }
 
-            strncpy(&dest[j], &Name[0], strlen(Name));
-
+            strncpy(&dest[j], Name, strlen(Name));
             j += strlen(Name) - 1;
 
             break;
 
-        case 'c':
-            strncpy(&dest[j], &Name[0], strlen(Name));
-            j += strlen(Name) - 1;
-            break;
-
-        case 'e':
-            strncpy(&dest[j], &Name[0], strlen(Name));
+        case 'c': case 'e':
+            strncpy(&dest[j], Name, strlen(Name));
             j += strlen(Name) - 1;
             break;
 
         case 'h':
             switch (evflag) {
             case 0:
-                strcpy(&Name[0], "PRIMARY");
+                strcpy(Name, "PRIMARY");
                 break;
 
             case 1:
-                strcpy(&Name[0], "SECONDARY");
+                strcpy(Name, "SECONDARY");
                 break;
 
             case 2:
-                strcpy(&Name[0], "THIRD");
+                strcpy(Name, "THIRD");
                 break;
 
             default:
                 break;
             }
 
-            strncpy(&dest[j], &Name[0], strlen(Name));
+            strncpy(&dest[j], Name, strlen(Name));
             j += strlen(Name) - 1;
             break;
 
         case 'g':
             if (plr == 0) {
                 if (Data->Year <= 59) {
-                    strcpy(&Name[0], "EISENHOWER");
+                    strcpy(Name, "EISENHOWER");
                 }
                 else if (Data->Year >= 60 && Data->Year <= 63) {
-                    strcpy(&Name[0], "KENNEDY");
+                    strcpy(Name, "KENNEDY");
                 }
                 else if (Data->Year >= 64 && Data->Year <= 67) {
-                    strcpy(&Name[0], "JOHNSON");
+                    strcpy(Name, "JOHNSON");
                 }
                 else if (Data->Year >= 68 && Data->Year <= 73) {
-                    strcpy(&Name[0], "NIXON");
+                    strcpy(Name, "NIXON");
                 }
                 else if (Data->Year >= 74 && Data->Year <= 75) {
-                    strcpy(&Name[0], "FORD");
+                    strcpy(Name, "FORD");
                 }
                 else {
-                    strcpy(&Name[0], "CARTER");
+                    strcpy(Name, "CARTER");
                 }
-            }
-
-            if (plr == 1) {
+            } else {
                 if (Data->Year < 64
                     || (Data->Year == 64 && Data->Season == 0)) {
-                    strcpy(&Name[0], "KHRUSHCHEV");
+                    strcpy(Name, "KHRUSHCHEV");
                 }
                 else {
-                    strcpy(&Name[0], "BREZHNEV");
+                    strcpy(Name, "BREZHNEV");
                 }
             }
 
-            strncpy(&dest[j], &Name[0], strlen(Name));
-
+            strncpy(&dest[j], Name, strlen(Name));
             j += strlen(Name) - 1;
 
             break;
 
         case 'm':
-            strncpy(&dest[j], Data->P[plr].Name, strlen(Data->P[plr].Name));
-            j += strlen(Data->P[plr].Name) - 1;
+            strncpy(&dest[j], pData.Name, strlen(pData.Name));
+            j += strlen(pData.Name) - 1;
             break;
 
         case 'x':
@@ -460,25 +453,25 @@ void DrawNText(char plr, char got)
         buf++;
     }
 
-    if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
+    if (strncmp(buf, "ASTRONAUTS IN THE NEWS", 22) == 0) {
         display::graphics.setForegroundColor(11);
     }
-    else if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
+    else if (strncmp(buf, "ALSO IN THE NEWS", 16) == 0) {
         display::graphics.setForegroundColor(12);
     }
-    else if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
+    else if (strncmp(buf, "IN COSMONAUT NEWS", 17) == 0) {
         display::graphics.setForegroundColor(11);
     }
-    else if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
+    else if (strncmp(buf, "OTHER EVENTS IN THE NEWS", 24) == 0) {
         display::graphics.setForegroundColor(12);
     }
-    else if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
+    else if (strncmp(buf, "PLANETARY", 9) == 0) {
         display::graphics.setForegroundColor(11);
     }
-    else if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
+    else if (strncmp(buf, "CHECK INTEL", 11) == 0) {
         display::graphics.setForegroundColor(11);
     }
-    else if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
+    else if (strncmp(buf, "CHECK THE TRACKING STATION", 26) == 0) {
         display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
     }
 
@@ -487,31 +480,31 @@ void DrawNText(char plr, char got)
         fill_rectangle(5, yy - 7, 296, yy + 1, 7 + 3 * plr);
         grMoveTo(xx, yy);
 
-        if (strncmp(&buf[0], "ASTRONAUTS IN THE NEWS", 22) == 0) {
+        if (strncmp(buf, "ASTRONAUTS IN THE NEWS", 22) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "ALSO IN THE NEWS", 16) == 0) {
+        else if (strncmp(buf, "ALSO IN THE NEWS", 16) == 0) {
             display::graphics.setForegroundColor(12);
         }
-        else if (strncmp(&buf[0], "IN COSMONAUT NEWS", 17) == 0) {
+        else if (strncmp(buf, "IN COSMONAUT NEWS", 17) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "OTHER EVENTS IN THE NEWS", 24) == 0) {
+        else if (strncmp(buf, "OTHER EVENTS IN THE NEWS", 24) == 0) {
             display::graphics.setForegroundColor(12);
         }
-        else if (strncmp(&buf[0], "PLANETARY", 9) == 0) {
+        else if (strncmp(buf, "PLANETARY", 9) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "AND THAT'S THE NEWS", 19) == 0) {
+        else if (strncmp(buf, "AND THAT'S THE NEWS", 19) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "THIS CONCLUDES OUR NEWS", 23) == 0) {
+        else if (strncmp(buf, "THIS CONCLUDES OUR NEWS", 23) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "CHECK INTEL", 11) == 0) {
+        else if (strncmp(buf, "CHECK INTEL", 11) == 0) {
             display::graphics.setForegroundColor(11);
         }
-        else if (strncmp(&buf[0], "CHECK THE TRACKING STATION", 26) == 0) {
+        else if (strncmp(buf, "CHECK THE TRACKING STATION", 26) == 0) {
             display::graphics.setForegroundColor((plr == 0) ? 9 : 7);
         }
 
@@ -789,7 +782,6 @@ void News(char plr)
     }
 
     display::graphics.newsRect().w = 0;
-
     display::graphics.newsRect().h = 0;
 }
 
@@ -828,7 +820,7 @@ char ResolveEvent(char plr)
                 memset(&Data->P[plr].BadCardEventFlag[0], 0x00, sizeof(Data->P[plr].BadCardEventFlag));
                 ctr = 0;
             }
-        } while (Data->P[plr].BadCardEventFlag[bad] != 0);
+        } while (Data->P[plr].BadCardEventFlag[bad] != 0); // is this even used anywhere?
 
         Data->P[plr].BadCardEventFlag[bad] = 1;
         bad++;
@@ -868,7 +860,7 @@ bool PlayNewsAnim(Multimedia& fp)
         to_sleep = (Frame - delta * fps) / fps - diff;
         idle_loop_secs(to_sleep);
         diff = get_time() - t1 - to_sleep;
-        CTRACE4(video, "sleep % 4.3f, drift % 4.3f", to_sleep, diff);
+        CAT_TRACE(video, "sleep % 4.3f, drift % 4.3f", to_sleep, diff);
     }
 
     Frame += 1;
@@ -1024,7 +1016,7 @@ void ShowEvt(char plr, char crd)
     try {
         image = Filesystem::readImage(filename);
     } catch (const std::runtime_error &err) {
-        CERROR4(filesys, "error loading %s: %s", filename, err.what());
+        CAT_ERROR(filesys, "error loading %s: %s", filename, err.what());
         return;
     }
 
