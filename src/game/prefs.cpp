@@ -63,7 +63,7 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
                DisplayContext& dctx);
 void EditDirectorName(int plr);
 std::string GetTextInput(int x, int y, int maxLength);
-void HModel(char mode, char tx);
+void DrawModel(char model);
 void DrawLevel(char side, char button, char level, DisplayContext& dctx);
 void DrawMapOutline(int x, int y);
 void DrawMap(char side, char country, DisplayContext& dctx);
@@ -179,7 +179,7 @@ void DrawPrefs(PreferencesMode where, bool is_AI_1, bool is_AI_2, AudioConfig au
 
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 216, 30, 71, 29, 147, 31);
     display::graphics.legacyScreen()->draw(dctx.prefs_image, 72 * (Data->Def.Anim), 90, 71, 29, 147, 71);
-    HModel(Data->Def.Input, 1);
+    DrawModel(Data->Def.Input);
 
     FadeIn(2, 10, 0, 0);
 }
@@ -286,12 +286,11 @@ std::string GetTextInput(int x, int y, int maxLength)
  * Modifies the main screen palette.
  *
  * \param mode  The current model/roster setup (0-5).
- * \param tx    This option is unused, so who knows?
  */
-void HModel(char mode, char tx)
+void DrawModel(char model)
 {
     char filename[128];
-    int image = (mode == 0 || mode == 1 || mode == 4) ? 1 : 0;
+    int image = (model == 0 || model == 1 || model == 4) ? 1 : 0;
     snprintf(filename, sizeof(filename), "images/prfx.but.%d.png", image);
 
     boost::shared_ptr<display::PalettizedSurface> prefsImage(
@@ -308,17 +307,17 @@ void HModel(char mode, char tx)
 
     display::graphics.setForegroundColor(11);
 
-    if (mode == 2 || mode == 3) {
-        draw_string(100, 122, "HISTORICAL MODEL");
-    } else if (mode == 0 || mode == 1) {
+    if (model <= 1) {
         draw_string(100, 122, "BASIC MODEL");
-    } else if (mode == 4 || mode == 5) {
+    } else if (model <= 3) {
+        draw_string(100, 122, "HISTORICAL MODEL");
+    } else {
         draw_string(100, 122, "RANDOM MODEL");
     }
 
     display::graphics.setForegroundColor(9);
 
-    if (mode == 0 || mode == 2 || mode == 4) {
+    if (model % 2 == 0) {
         draw_string(100, 128, "HISTORICAL ROSTER");
     } else {
         draw_string(100, 128, "CUSTOM ROSTER");
@@ -594,7 +593,7 @@ int Preferences(int player, PreferencesMode where)
                 Data->Def.Input = 0;
             }
 
-            HModel(Data->Def.Input, 0);
+            DrawModel(Data->Def.Input);
         } else if ((x >= 146 && y >= 70 && x <= 219 && y <= 101 && mousebuttons > 0) || key == 'A') {
             /* disable this option right now */
         } else if ((x >= 100 && y >= 30 && x <= 135 && y <= 61 && mousebuttons > 0) || key == 'M') {
