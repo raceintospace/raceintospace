@@ -545,11 +545,11 @@ void FileAccess(char mode)
                     InBox(207, 48, 280, 60);
                     fill_rectangle(208, 49, 279, 59, 3);
                     display::graphics.setForegroundColor(1);
-                    draw_string_highlighted(233, 56, "LOAD", 0);
+                    draw_string_highlighted(233, 56, "LOAD", 0, 9);
                     InBox(207, 90, 280, 102);
                     fill_rectangle(208, 91, 279, 101, 3);
                     display::graphics.setForegroundColor(1);
-                    draw_string_highlighted(226, 98, "DELETE", 0);
+                    draw_string_highlighted(226, 98, "DELETE", 0, 9);
                 }
                 else {
                     FileText(&savegames[now].Name[0]);
@@ -873,17 +873,12 @@ void DrawTimeCapsule(int display)
     draw_string(65, 42, "TIME CAPSULE REQUEST");
     draw_string(219, 42, "FUNCTIONS");
     display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 56, "LOAD", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 70, "SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(221, 84, "MAIL SAVE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(227, 98, "DELETE", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(233, 112, "PLAY", 0);
-    display::graphics.setForegroundColor(1);
-    draw_string_highlighted(234, 126, "QUIT", 0);
+    draw_string_highlighted(233, 56, "LOAD", 0, 9);
+    draw_string_highlighted(233, 70, "SAVE", 0, 9);
+    draw_string_highlighted(221, 84, "MAIL SAVE", 0, 9);
+    draw_string_highlighted(227, 98, "DELETE", 0, 9);
+    draw_string_highlighted(233, 112, "PLAY", 0, 9);
+    draw_string_highlighted(234, 126, "QUIT", 0, 9);
 }
 
 
@@ -1181,10 +1176,8 @@ int FutureCheck(char plr, char type)
     fill_rectangle(65, 18, 212, 28, 7);
     ShBox(217, 17, 264, 29);
     IOBox(217, 17, 264, 29);
-    display::graphics.setForegroundColor(11);
-    draw_string(231, 25, "E");
     display::graphics.setForegroundColor(9);
-    draw_string(236, 25, "XIT");
+    draw_string_highlighted(231, 25, "EXIT", 0, 11);
     display::graphics.setForegroundColor(11);
 
     if (type == 0) {
