@@ -34,15 +34,16 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
  */
 void draw_string(int x, int y, const char* s)
 {
+    int len = strlen(s);
+    if (len > 100) {
+        LOG_ERROR("String too long (>100 characters) in call to draw_string");
+        return;
+    }
+
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
     } else if (x != 0 || y != 0) {
         LOG_WARNING("incorrect call for string continuation at (%d, %d) with string %s", x, y, s);
-    }
-
-    int len = strlen(s);
-    if (len > 100) {
-        return;
     }
 
     for (int i = 0; i < len; i++) {
