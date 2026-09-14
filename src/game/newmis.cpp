@@ -236,27 +236,13 @@ void MisAnn(char plr, char pad)
     }
 
     IOBox(57, 68, 118, 84);
-    display::graphics.setForegroundColor(9);
-    draw_string(65, 78, "C");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ONTINUE");
-    
     IOBox(129, 68, 195, 84);
-    display::graphics.setForegroundColor(9);
-    draw_string(137, 78, "P");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "LAY FULL");
-    
     IOBox(205, 68, 266, 84);
-    display::graphics.setForegroundColor(9);
-    draw_string(221, 78, "S");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "CRUB");
 
-    //IOBox(85,68,158,84);IOBox(172,68,245,84);
-    //display::graphics.setForegroundColor(1);draw_string(102,78,"CONTINUE");draw_string(189,78,"SCRUB");
-    //display::graphics.setForegroundColor(9);
-    //draw_string(102,78,"C");draw_string(189,78,"S");
+    display::graphics.setForegroundColor(1);
+    draw_string_keyhint(65, 78, "CONTINUE", 'C', 9);
+    draw_string_keyhint(137, 78, "PLAY FULL", 'P', 9);
+    draw_string_keyhint(221, 78, "SCRUB", 'S', 9);
 
     if (mission.Joint == 0) {
         draw_string(126, 91, "SINGLE LAUNCH");
@@ -265,12 +251,10 @@ void MisAnn(char plr, char pad)
         draw_string(129, 91, "JOINT LAUNCH");
         
         display::graphics.setForegroundColor(11);
-        draw_string(59, 92, "PART 1: ");
-        draw_string(0, 0, "PAD ");
+        draw_string(59, 92, "PART 1: PAD ");
         draw_character('A' + pad);
 
-        draw_string(201, 92, "PART 2: ");
-        draw_string(0, 0, "PAD ");
+        draw_string(201, 92, "PART 2: PAD ");
         draw_character('A' + pad + 1);
     }
 

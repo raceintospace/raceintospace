@@ -408,26 +408,14 @@ void Draw_NewEnd(char win)
     IOBox(132, 180, 187, 192);
     IOBox(192, 180, 247, 192);
     IOBox(252, 180, 307, 192);
-    display::graphics.setForegroundColor(9);
-    draw_string(21, 188, "H");
+
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ISTORY");
-    display::graphics.setForegroundColor(9);
-    draw_string(85, 188, "S");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "TATS");
-    display::graphics.setForegroundColor(9);
-    draw_string(142, 188, "P");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ARADE");
-    display::graphics.setForegroundColor(9);
-    draw_string(198, 188, "M");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "OON EVA");
-    display::graphics.setForegroundColor(9);
-    draw_string(270, 188, "E");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "XIT");
+    draw_string_keyhint(21, 188, "HISTORY", 'H', 9);
+    draw_string_keyhint(85, 188, "STATS", 'S', 9);
+    draw_string_keyhint(142, 188, "PARADE", 'P', 9);
+    draw_string_keyhint(198, 188, "MOON EVA", 'M', 9);
+    draw_string_keyhint(270, 188, "EXIT", 'E', 9);
+
     FadeIn(0, 10, 128, 0);
     Load_LenFlag(win);
     FadeIn(1, 40, 128, 1);

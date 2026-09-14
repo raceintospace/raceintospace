@@ -298,30 +298,16 @@ void DispVAB(char plr, char pad)
 
     IOBox(4, 84, 165, 96);
 
-    display::graphics.setForegroundColor(9);
-    draw_string(188, 192, "E");
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "XIT");
-    display::graphics.setForegroundColor(9);
-    draw_string(231, 192, "D");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ELAY");
-    display::graphics.setForegroundColor(9);
-    draw_string(279, 192, "S");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "CRUB");
+    draw_string_keyhint(188, 192, "EXIT", 'E', 9);
+    draw_string_keyhint(231, 192, "DELAY", 'D', 9);
+    draw_string_keyhint(279, 192, "SCRUB", 'S', 9);
     draw_string(263, 13, "ASSIGN");
-    display::graphics.setForegroundColor(9);
-    draw_string(18, 136, "P");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "RIMARY:");
+    draw_string_keyhint(18, 136, "PRIMARY:", 'P', 9);
     draw_string(24, 148, "KICKER:");
     draw_string(42, 160, "L.M.:");
     draw_string(16, 172, "PAYLOAD:");
-    display::graphics.setForegroundColor(9);
-    draw_string(22, 188, "R");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "OCKET:     ");
+    draw_string_keyhint(22, 188, "ROCKET:", 'R', 9);
 
     InBox(4, 27, 166, 37);
     fill_rectangle(5, 28, 165, 36, 10);
@@ -577,16 +563,14 @@ void ShowAutopurchase(const char plr, const int payload, Vehicle& rocket)
     int cost = FillVab(plr, payload, 0) + BuyVabRkt(plr, rocket, 0);
 
     fill_rectangle(7, 87, 162, 93, 3);
-    display::graphics.setForegroundColor(9);
-    draw_string(13, 92, "A");
-    display::graphics.setForegroundColor(1);
 
     // if can't buy (delay, cost>cash), show in red
     if (hasDelay == 0 || cost > pData.Cash) {
         display::graphics.setForegroundColor(9);
+    } else {
+        display::graphics.setForegroundColor(1);
     }
-
-    draw_string(0, 0, "UTOPURCHASE (");
+    draw_string_keyhint(13, 92, "AUTOPURCHASE (", 'A', 9);
     draw_number(0, 0, cost);
     draw_string(0, 0, " OF ");
     draw_megabucks(0, 0, pData.Cash);

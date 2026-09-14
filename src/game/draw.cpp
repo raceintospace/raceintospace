@@ -34,15 +34,16 @@ LOG_DEFAULT_CATEGORY(LOG_ROOT_CAT);
  */
 void draw_string(int x, int y, const char* s)
 {
+    int len = strlen(s);
+    if (len > 100) {
+        LOG_ERROR("String too long (>100 characters) in call to draw_string");
+        return;
+    }
+
     if (x != 0 && y != 0) {
         grMoveTo(x, y);
     } else if (x != 0 || y != 0) {
         LOG_WARNING("incorrect call for string continuation at (%d, %d) with string %s", x, y, s);
-    }
-
-    int len = strlen(s);
-    if (len > 100) {
-        return;
     }
 
     for (int i = 0; i < len; i++) {
@@ -67,12 +68,33 @@ void draw_string(int x, int y, const char* s, StringAlign align)
 }
 
 
-void draw_string_highlighted(int x, int y, const char* s, unsigned int position)
+void draw_string_keyhint(int x, int y, const char* s, char key, char color)
 {
-    draw_string(x, y, s);
-    grMoveTo(x, y);
-    display::graphics.setForegroundColor(9);
-    draw_character(s[position]);
+    int len = strlen(s);
+    if (len > 100) {
+        LOG_ERROR("String too long (>100 characters) in call to draw_string_keyhint");
+        return;
+    }
+
+    if (x != 0 && y != 0) {
+        grMoveTo(x, y);
+    } else if (x != 0 || y != 0) {
+        LOG_WARNING("incorrect call for string continuation at (%d, %d) with string %s", x, y, s);
+    }
+
+    char prevColor = display::graphics.getForegroundColor();
+    bool done = false;
+
+    for (int i = 0; i < len; i++) {
+        if (s[i] == key && !done) {
+            display::graphics.setForegroundColor(color);
+            draw_character(s[i]);
+            display::graphics.setForegroundColor(prevColor);
+            done = true;
+        } else {
+            draw_character(s[i]);
+        }
+    }
 }
 
 /**

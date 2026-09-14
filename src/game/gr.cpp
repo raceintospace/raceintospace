@@ -77,9 +77,9 @@ void grLineTo(int x_arg, int y_arg)
 
     for (int x = x0, y = y0; x <= x1; x++) {
         if (steep) {
-            display::graphics.legacyScreen()->setPixel(y, x, display::graphics.foregroundColor());
+            display::graphics.legacyScreen()->setPixel(y, x, display::graphics.getForegroundColor());
         } else {
-            display::graphics.legacyScreen()->setPixel(x, y, display::graphics.foregroundColor());
+            display::graphics.legacyScreen()->setPixel(x, y, display::graphics.getForegroundColor());
         }
 
         error = error + deltay;

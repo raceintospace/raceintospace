@@ -69,12 +69,12 @@ public:
         return _newsRect;
     }
 
-    char foregroundColor() const
+    char getForegroundColor() const
     {
         return _foregroundColor;
     }
 
-    char backgroundColor() const
+    char getBackgroundColor() const
     {
         return _backgroundColor;
     }

@@ -197,19 +197,10 @@ void PadDraw(char plr, char pad)
     draw_string(258, 13, "CONTINUE");
 
     if (launchpad_status == LAUNCHPAD_OPERATIONAL) {
-        display::graphics.setForegroundColor(9);
-        draw_string(189, 189, "D");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "ELAY");
-        display::graphics.setForegroundColor(9);
-        draw_string(264, 189, "S");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "CRUB");
+        draw_string_keyhint(189, 189, "DELAY", 'D', 9);
+        draw_string_keyhint(264, 189, "SCRUB", 'S', 9);
     } else {
-        display::graphics.setForegroundColor(9);
-        draw_string(205, 189, "F");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "IX LAUNCH PAD");
+        draw_string_keyhint(205, 189, "FIX LAUNCH PAD", 'F', 9);
     }
 
     draw_heading(37, 5, "LAUNCH FACILITY", 0, -1);

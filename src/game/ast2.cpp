@@ -103,10 +103,8 @@ void DrawLimbo(char plr)
     InBox(9, 28, 148, 42);
     InBox(9, 108, 148, 123);
 
-    display::graphics.setForegroundColor(11);
-    draw_string(172, 55, "T");
     display::graphics.setForegroundColor(20);
-    draw_string(0, 0, "RANSFER");
+    draw_string_keyhint(172, 55, "TRANSFER", 'T', 11);
 
     if (plr == 0) {
         draw_string(170, 62, "ASTRONAUT");
@@ -114,18 +112,10 @@ void DrawLimbo(char plr)
         draw_string(170, 62, "COSMONAUT");
     }
 
-    display::graphics.setForegroundColor(11);
-    draw_string(230, 55, "S");
-    display::graphics.setForegroundColor(20);
-    draw_string(0, 0, "END");
+    draw_string_keyhint(230, 55, "SEND", 'S', 11);
     draw_string(233, 62, "ALL");
-
-    display::graphics.setForegroundColor(11);
-    draw_string(264, 55, "F");
-    display::graphics.setForegroundColor(20);
-    draw_string(0, 0, "ACILITY");
+    draw_string_keyhint(264, 55, "FACILITY", 'F', 11);
     draw_string(262, 62, "TRANSFER");
-    
     
     for (int i = 0; i < 5; i++) {
         char str[21];

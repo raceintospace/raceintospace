@@ -898,15 +898,15 @@ void Draw_Mis_Stats(int plr, int index, int mode)
     AbzFrame(plr, 215, 56, 94, 60, index);
 
     IOBox(214, 134, 310, 148);
-    display::graphics.setForegroundColor(9);
-    draw_string(224, 143, "R");
+
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "EPLAY MISSION");
+    draw_string_keyhint(224, 143, "REPLAY MISSION", 'R', 9);
 
     if (mode == 0) {
         IOBox(214, 151, 310, 165);
+
         display::graphics.setForegroundColor(1);
-        draw_string(252, 160, "EXIT");
+        draw_string_keyhint(252, 160, "EXIT", 'E', 9);
     }
 
     // Crew Stuff

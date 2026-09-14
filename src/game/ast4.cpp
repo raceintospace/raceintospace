@@ -233,21 +233,14 @@ void DrawProgs(char plr, char prog)
     }
 
     draw_small_flag(plr, 4, 4);
-    display::graphics.setForegroundColor(9);
-    draw_string(250, 96, "A");
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "SSIGN CREW");
-    display::graphics.setForegroundColor(9);
-    draw_string(252, 114, "B");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "REAK CREW");
+    draw_string_keyhint(250, 96, "ASSIGN CREW", 'A', 9);
+    draw_string_keyhint(252, 114, "BREAK CREW", 'B', 9);
     draw_string(258, 13, "CONTINUE");
+
     display::graphics.setForegroundColor(5);
-    draw_string(183, 133, "FLIGHT ");
-    display::graphics.setForegroundColor(9);
-    draw_string(0, 0, "C");
-    display::graphics.setForegroundColor(5);
-    draw_string(0, 0, "REW SELECTION");
+    draw_string_keyhint(183, 133, "FLIGHT CREW SELECTION", 'C', 9);
+
     display::graphics.setForegroundColor(7);
     draw_string(152, 34, &Data->P[plr].Manned[prog - 1].Name[0]);
 

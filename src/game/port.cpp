@@ -1553,14 +1553,8 @@ char MisReq(char plr)
         display::graphics.setForegroundColor(1);
         draw_string(70, 129, "CONFIRM LAUNCH SCHEDULE OR");
         draw_string(80, 136, "CHOOSE TO REVIEW IT.");
-        display::graphics.setForegroundColor(8);
-        draw_string(85, 150, "C");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "ONFIRM");
-        display::graphics.setForegroundColor(8);
-        draw_string(179, 150, "R");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "EVIEW");
+        draw_string_keyhint(85, 150, "CONFIRM", 'C', 8);
+        draw_string_keyhint(179, 150, "REVIEW", 'R', 8);
     } else {
         IOBox(60, 141, 229, 155);
         display::graphics.setForegroundColor(1);

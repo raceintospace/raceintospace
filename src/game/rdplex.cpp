@@ -194,10 +194,8 @@ void DrawRD(char player_index)
     // GradRect(27,95,130,171,player_index*16+128);
     fill_rectangle(27, 95, 130, 171, 0);
 
-    display::graphics.setForegroundColor(9);
-    draw_string(12, 80, "V");
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ISIT PURCHASING FACILITY");
+    draw_string_keyhint(12, 80, "VISIT PURCHASING FACILITY", 'V', 9);
 
     display::graphics.setForegroundColor(3);
     grMoveTo(296, 174);
@@ -294,11 +292,7 @@ void RDButTxt(int cost, int encodedRolls, char playerIndex, bool SpDModule)  //D
     }
 
     if (diceRoll == 0) {
-        draw_string(169, 191, "RE");
-        display::graphics.setForegroundColor(9);
-        draw_string(0, 0, "S");
-        display::graphics.setForegroundColor(1);
-        draw_string(0, 0, "EARCH PROGRAM FOR ");
+        draw_string_keyhint(169, 191, "RESEARCH PROGRAM FOR ", 'S', 9);
         display::graphics.setForegroundColor(9);
         draw_number(0, 0, cost);
         display::graphics.setForegroundColor(1);
@@ -968,10 +962,8 @@ void ShowUnit(char hw, char un, char player_index)
             //InBox(280, 90, 302, 100);
         }
 
-        display::graphics.setForegroundColor(8);
-        draw_string(284, 98, "F");
         display::graphics.setForegroundColor(11);
-        draw_string(0, 0, "IX");
+        draw_string_keyhint(284, 98, "FIX", 'F', 8);
     }
 
     int SCol = (program.Num < 0) ? 20 : ((program.Safety < 75) ? 8 : 16);
@@ -1193,15 +1185,12 @@ void DrawHPurc(char player_index)
 
     draw_left_arrow(24, 186);
     draw_right_arrow(101, 186);
-    display::graphics.setForegroundColor(9);
-    draw_string(32, 80, "V");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ISIT R&D FACILITY");
 
-    display::graphics.setForegroundColor(9);
-    draw_string(191, 190, "P");
+    display::graphics.setForegroundColor(1);
+    draw_string_keyhint(32, 80, "VISIT R&D FACILITY", 'V', 9);
+
     display::graphics.setForegroundColor(11);
-    draw_string(0, 0, "URCHASE EQUIPMENT");
+    draw_string_keyhint(191, 190, "PURCHASE EQUIPMENT", 'P', 9);
 
     if (Data->Season == 0) {
         draw_string(157, 9, "SPRING");
