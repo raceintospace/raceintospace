@@ -191,10 +191,8 @@ void DrawTrain(char plr, char lvl)
     draw_string(192, 166, "DOCK:");
     draw_string(192, 174, "END:");
 
-    display::graphics.setForegroundColor(9);
-    draw_string(181, 189, "W");
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ITHDRAW FROM TRAINING");
+    draw_string_keyhint(181, 189, "WITHDRAW FROM TRAINING", 'W', 9);
 
     fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
 

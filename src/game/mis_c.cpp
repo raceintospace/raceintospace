@@ -856,11 +856,7 @@ char FailureMode(char plr, int prelim, const char* text)
     if (prelim == 3) {
         ShBox(6, 114, 151, 126);
         display::graphics.setForegroundColor(9);
-        draw_string(15, 122, "RECOMMEND MISSION ");
-        display::graphics.setForegroundColor(11);
-        draw_string(0, 0, "S");
-        display::graphics.setForegroundColor(9);
-        draw_string(0, 0, "CRUB");
+        draw_string_keyhint(15, 122, "RECOMMEND MISSION SCRUB", 'S', 11);
         draw_string(7, 108, "(TEMP. PENALTY TO HARDWARE)");
     } else {
         display::graphics.setForegroundColor(9);

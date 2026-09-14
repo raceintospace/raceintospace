@@ -283,27 +283,10 @@ int AsnCrew(char plr, int missionCode, char pad, char part)
     FutSt(plr, prg, -1, -1);
 
     display::graphics.setForegroundColor(1);
-
     draw_string(100, 16, "CANCEL");
-
-    display::graphics.setForegroundColor(9);
-    draw_string(185, 16, "A");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "SSIGN");
-
-    draw_string(86, 111, "MAKE ");
-
-    display::graphics.setForegroundColor(9);
-    draw_string(0, 0, "P");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "RIMARY");
-
-    draw_string(169, 111, "MAKE ");
-
-    display::graphics.setForegroundColor(9);
-    draw_string(0, 0, "B");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ACKUP");
+    draw_string_keyhint(185, 16, "ASSIGN", 'A', 9);
+    draw_string_keyhint(86, 111, "MAKE PRIMARY", 'P', 9);
+    draw_string_keyhint(169, 111, "MAKE BACKUP", 'B', 9);
 
     display::graphics.setForegroundColor(11);
     if (part == 0) {

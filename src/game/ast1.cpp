@@ -305,14 +305,9 @@ void DrawAstCheck(char plr)
                 draw_string(100, 122, "COSMONAUTS THIS TURN?");
             }
 
-            display::graphics.setForegroundColor(6);
-            draw_string(116, 143, "Y");
             display::graphics.setForegroundColor(1);
-            draw_string(0, 0, "ES");
-            display::graphics.setForegroundColor(6);
-            draw_string(187, 143, "N");
-            display::graphics.setForegroundColor(1);
-            draw_string(0, 0, "O");
+            draw_string_keyhint(116, 143, "YES", 'Y', 6);
+            draw_string_keyhint(187, 143, "NO", 'N', 6);
         }
     }
 
@@ -434,16 +429,10 @@ void DrawAstSel(char plr)
     display::graphics.setForegroundColor(11);
     draw_string(54, 102, "ENDURANCE:");
     draw_string(215, 102, "ENDURANCE:");
-    
-    display::graphics.setForegroundColor(6);
-    draw_string(33, 119, "D");
+
     display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ISMISS APPLICANT");
-    
-    display::graphics.setForegroundColor(6);
-    draw_string(194, 119, "R");
-    display::graphics.setForegroundColor(1);
-    draw_string(0, 0, "ECRUIT APPLICANT");
+    draw_string_keyhint(33, 119, "DISMISS APPLICANT", 'D', 6);
+    draw_string_keyhint(194, 119, "RECRUIT APPLICANT", 'R', 6);
 }
 
 
