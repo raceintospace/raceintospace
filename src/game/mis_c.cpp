@@ -363,27 +363,15 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 
     bool keep_going = true;
     for(int i=0; keep_going && i < max; ++i) {
-        char seq_name[20];
-        const char seq_extension[] = ".ogg";
-        char name[sizeof(seq_name) + sizeof(seq_extension)];
-
-        if (mode == 0) {
-            play_audio(Assets->sSeq.at(j).audio.at(i), mode);
-        } else {
-            play_audio(Assets->fSeq.at(j).audio.at(i), mode);
-        }
-
-        if (mode == 0) {
-            strntcpy(seq_name, Assets->sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-        } else {
-            strntcpy(seq_name, Assets->fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-        }
-
-        snprintf(name, sizeof(name), "%s%s", seq_name, seq_extension);
-
-        LOG_INFO("opening video file `%s'", name);
-
-        Multimedia vidfile{sOpen(name, "rb", FT_VIDEO)};
+        auto& asset_container = (mode == 0)? Assets->sSeq
+                                           : Assets->fSeq;
+        play_audio(asset_container.at(j).audio.at(i), mode);
+        
+        std::string vid_filename = asset_container.at(j).video.at(i) + ".ogg";
+        
+        LOG_INFO("opening video file `%s'", vid_filename.c_str());
+        
+        Multimedia vidfile{sOpen(vid_filename.c_str(), "rb", FT_VIDEO)};
         if (!vidfile.is_good() || !vidfile.is_video()) {
             break;
         }
