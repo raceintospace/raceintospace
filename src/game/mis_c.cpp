@@ -98,9 +98,9 @@ char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, int clock, int mode, int time);
-void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
-            const std::vector<struct Infin>& Mob,
-            const std::vector<struct OF>& Mob2,
+void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
+            const std::vector<Infin>& Mob,
+            const std::vector<OF>& Mob2,
             std::array<int, 4>& SHTS);
 void GuyDisp(int xa, int ya, Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
@@ -598,7 +598,7 @@ void Clock(char plr, int clock, int mode, int time)
 
 // I think this function chooses when and what image to show in 4 smaller pictures in mission control screen
 // and then draws it
-void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
+void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
             const std::vector<struct Infin>& Mob,
             const std::vector<struct OF>& Mob2,
             std::array<int, 4>& SHTS)
