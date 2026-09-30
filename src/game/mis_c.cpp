@@ -439,7 +439,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
             if (sts < 23) {
                 if (BABY == 0 && !fullscreenMissionPlayback) {
                     DoPack(plr, ffin, (int)AEPT, Seq,
-                           seq_name, Mob, Mob2, SHTS);
+                           vid_filename.c_str(), Mob, Mob2, SHTS);
                 }
 
                 ++sts;
