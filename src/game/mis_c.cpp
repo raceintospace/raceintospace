@@ -87,8 +87,8 @@ struct BZFileHeader {
 };
 
 
-std::vector<struct BZFileHeader> indexEntry(41);    
-std::vector<struct AnimType> header(41);
+std::vector<BZFileHeader> indexEntry(41);    
+std::vector<AnimType> header(41);
 std::vector<boost::shared_ptr<display::Surface>> animCache;
 boost::shared_ptr<display::Surface> equipAnim;
 int frameCounter = 0;
@@ -102,7 +102,7 @@ void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
             const std::vector<Infin>& Mob,
             const std::vector<OF>& Mob2,
             std::array<int, 4>& SHTS);
-void GuyDisp(int xa, int ya, Astros* Guy);
+void GuyDisp(int xa, int ya, const Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
 BZAnimation::Ptr FindHardwareAnim(char plr, const MisEval& step);
 int ImportInfin(FILE* fin, Infin& target);
@@ -599,8 +599,8 @@ void Clock(char plr, int clock, int mode, int time)
 // I think this function chooses when and what image to show in 4 smaller pictures in mission control screen
 // and then draws it
 void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
-            const std::vector<struct Infin>& Mob,
-            const std::vector<struct OF>& Mob2,
+            const std::vector<Infin>& Mob,
+            const std::vector<OF>& Mob2,
             std::array<int, 4>& SHTS)
 {
     static char kk = 0, bub = 0;
@@ -757,15 +757,12 @@ void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
 }
 
 
-void GuyDisp(int xa, int ya, Astros* Guy)
+void GuyDisp(int xa, int ya, const Astros* Guy)
 {
-    display::graphics.setForegroundColor(1);
     assert(Guy != nullptr);
-
-    if (Guy->Sex == 1) {
-        display::graphics.setForegroundColor(6);    // Display female 'nauts in navy blue, not white  -Leon
-    }
-
+    
+    display::graphics.setForegroundColor((Guy->Sex == 1)? 6   // Display female 'nauts in navy blue, not white  -Leon
+                                                        : 1);
     draw_string(xa, ya, Guy->Name);
     draw_string(0, 0, ": ");
 
@@ -901,22 +898,12 @@ char FailureMode(char plr, int prelim, const char* text)
     draw_string(9, 146, "STATUS");
 
     if (MANNED[Mev[STEP].pad] > 0) {
-        GuyDisp(49, 139, MA[Mev[STEP].pad][0].A);
-    }
-
-    if (MANNED[Mev[STEP].pad] > 1) {
-        GuyDisp(49, 146, MA[Mev[STEP].pad][1].A);
-    }
-
-    if (MANNED[Mev[STEP].pad] > 2) {
-        GuyDisp(182, 139, MA[Mev[STEP].pad][2].A);
-    }
-
-    if (MANNED[Mev[STEP].pad] > 3) {
-        GuyDisp(182, 146, MA[Mev[STEP].pad][3].A);
-    }
-
-    if (MANNED[Mev[STEP].pad] == 0) {
+        int x_coords[] = {49,182};
+        int y_coords[] = {139,146};
+        for (int i=0; i < MANNED[Mev[STEP].pad]; ++i) {
+            GuyDisp(x_coords[i/2], y_coords[i%2], MA[Mev[STEP].pad][i].A);
+        }
+    } else {
         if (((e->ID[1] == 0x35 || e->ID[1] == 0x36) && STEP > 5)) {  // if LEMS
             GuyDisp(49, 138, MA[1][LM[1]].A);
 
@@ -941,31 +928,9 @@ char FailureMode(char plr, int prelim, const char* text)
         display::graphics.setForegroundColor(1);
         int xloc = (Mev[STEP].dice > 99) ? 62 : 57;
 
-        switch (Mev[STEP].ast) {
-        case 0:
-            draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][0].A->Name);
-            draw_string(0, 0, ")");
-            break;
-
-        case 1:
-            draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][1].A->Name);
-            draw_string(0, 0, ")");
-            break;
-
-        case 2:
-            draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][2].A->Name);
-            draw_string(0, 0, ")");
-            break;
-
-        case 3:
-            draw_string(xloc, 55, "(");
-            draw_string(0, 0, MA[Mev[STEP].pad][3].A->Name);
-            draw_string(0, 0, ")");
-            break;
-        }
+        draw_string(xloc, 55, "(");
+        draw_string(0, 0, MA[Mev[STEP].pad][Mev[STEP].ast].A->Name);
+        draw_string(0, 0, ")");
     }
 
     // Display Failure Text
