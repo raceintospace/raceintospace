@@ -98,9 +98,9 @@ char daysAMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void Tick(char plr);
 void Clock(char plr, int clock, int mode, int time);
-void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
-            const std::vector<struct Infin>& Mob,
-            const std::vector<struct OF>& Mob2,
+void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
+            const std::vector<Infin>& Mob,
+            const std::vector<OF>& Mob2,
             std::array<int, 4>& SHTS);
 void GuyDisp(int xa, int ya, Astros* Guy);
 char DrawMoonSelection(char plr, char nauts, const MisEval& step);
@@ -363,27 +363,15 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
 
     bool keep_going = true;
     for(int i=0; keep_going && i < max; ++i) {
-        char seq_name[20];
-        const char seq_extension[] = ".ogg";
-        char name[sizeof(seq_name) + sizeof(seq_extension)];
-
-        if (mode == 0) {
-            play_audio(Assets->sSeq.at(j).audio.at(i), mode);
-        } else {
-            play_audio(Assets->fSeq.at(j).audio.at(i), mode);
-        }
-
-        if (mode == 0) {
-            strntcpy(seq_name, Assets->sSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-        } else {
-            strntcpy(seq_name, Assets->fSeq.at(j).video.at(i).c_str(), sizeof(seq_name));
-        }
-
-        snprintf(name, sizeof(name), "%s%s", seq_name, seq_extension);
-
-        LOG_INFO("opening video file `%s'", name);
-
-        Multimedia vidfile{sOpen(name, "rb", FT_VIDEO)};
+        auto& asset_container = (mode == 0)? Assets->sSeq
+                                           : Assets->fSeq;
+        play_audio(asset_container.at(j).audio.at(i), mode);
+        
+        std::string vid_filename = asset_container.at(j).video.at(i) + ".ogg";
+        
+        LOG_INFO("opening video file `%s'", vid_filename.c_str());
+        
+        Multimedia vidfile{sOpen(vid_filename.c_str(), "rb", FT_VIDEO)};
         if (!vidfile.is_good() || !vidfile.is_video()) {
             break;
         }
@@ -451,7 +439,7 @@ void PlaySequence(char plr, int step, const char* InSeq, char mode)
             if (sts < 23) {
                 if (BABY == 0 && !fullscreenMissionPlayback) {
                     DoPack(plr, ffin, (int)AEPT, Seq,
-                           seq_name, Mob, Mob2, SHTS);
+                           vid_filename.c_str(), Mob, Mob2, SHTS);
                 }
 
                 ++sts;
@@ -610,7 +598,7 @@ void Clock(char plr, int clock, int mode, int time)
 
 // I think this function chooses when and what image to show in 4 smaller pictures in mission control screen
 // and then draws it
-void DoPack(char plr, FILE* ffin, int mode, char* cde, char* fName,
+void DoPack(char plr, FILE* ffin, int mode, const char* cde, const char* fName,
             const std::vector<struct Infin>& Mob,
             const std::vector<struct OF>& Mob2,
             std::array<int, 4>& SHTS)
