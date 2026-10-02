@@ -1188,7 +1188,7 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
         GetMouse();
         for (int i=0; i < nauts; ++i) {
             if (MX[cPad][i].A->Status == AST_ST_DEAD) continue;
-            if (key == '1'+i || (x >= 25 && x <= 135 && y >= 100+25*i && y <= 115+25*i && mousebuttons > 0))) {
+            if (key == '1'+i || (x >= 25 && x <= 135 && y >= 100+25*i && y <= 115+25*i && mousebuttons > 0)) {
                 InBox(27, 102+25*i, 133, 113+25*i);
                 WaitForMouseUp();
                 OutBox(27, 102+25*i, 133, 113+25*i);
