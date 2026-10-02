@@ -1186,65 +1186,21 @@ char DrawMoonSelection(char plr, char nauts, const MisEval& step)
         */
         
         GetMouse();
-
-        if (MX[cPad][0].A->Status != AST_ST_DEAD &&
-            (key == '1' || (x >= 25 && x <= 135 && y >= 100 && y <= 115 && mousebuttons > 0))) {
-            InBox(27, 102, 133, 113);
-            WaitForMouseUp();
-            OutBox(27, 102, 133, 113);
-            delay(10);
-            FadeOut(2, 10, 0, 0);
-            display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
-            display::graphics.screen()->draw(saveScreen, 0, 0);
-
-            FadeIn(2, 10, 0, 0);
-            key = 0;
-            return 1;
-        }
-
-        if (MX[cPad][1].A->Status != AST_ST_DEAD &&
-            (key == '2' || (x >= 25 && x <= 135 && y >= 125 && y <= 140 && mousebuttons > 0))) {
-            InBox(27, 127, 133, 138);
-            WaitForMouseUp();
-            OutBox(27, 127, 133, 138);
-            delay(10);
-            FadeOut(2, 10, 0, 0);
-            display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
-            display::graphics.screen()->draw(saveScreen, 0, 0);
-
-            FadeIn(2, 10, 0, 0);
-            key = 0;
-            return 2;
-        }
-
-        if (nauts >= 3 && MX[cPad][2].A->Status != AST_ST_DEAD &&
-            (key == '3' || (x >= 25 && x <= 135 && y >= 150 && y <= 165 && mousebuttons > 0))) {
-            InBox(27, 152, 133, 163);
-            WaitForMouseUp();
-            OutBox(27, 152, 133, 163);
-            delay(10);
-            FadeOut(2, 10, 0, 0);
-            display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
-            display::graphics.screen()->draw(saveScreen, 0, 0);
-
-            FadeIn(2, 10, 0, 0);
-            key = 0;
-            return 3;
-        }
-
-        if (nauts >= 4 && MX[cPad][3].A->Status != AST_ST_DEAD &&
-            (key == '4' || (x >= 25 && x <= 135 && y >= 175 && y <= 190 && mousebuttons > 0))) {
-            InBox(27, 177, 133, 188);
-            WaitForMouseUp();
-            OutBox(27, 177, 133, 188);
-            delay(10);
-            FadeOut(2, 10, 0, 0);
-            display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
-            display::graphics.screen()->draw(saveScreen, 0, 0);
-
-            FadeIn(2, 10, 0, 0);
-            key = 0;
-            return 4;
+        for (int i=0; i < nauts; ++i) {
+            if (MX[cPad][i].A->Status == AST_ST_DEAD) continue;
+            if (key == '1'+i || (x >= 25 && x <= 135 && y >= 100+25*i && y <= 115+25*i && mousebuttons > 0))) {
+                InBox(27, 102+25*i, 133, 113+25*i);
+                WaitForMouseUp();
+                OutBox(27, 102+25*i, 133, 113+25*i);
+                delay(10);
+                FadeOut(2, 10, 0, 0);
+                display::graphics.legacyScreen()->palette().copy_from(saveScreen.palette());
+                display::graphics.screen()->draw(saveScreen, 0, 0);
+    
+                FadeIn(2, 10, 0, 0);
+                key = 0;
+                return i+1;
+            }
         }
     }
 }
