@@ -67,7 +67,6 @@ void CheckAdv(char plr);
  */
 void DrawStatistics(char Win)
 {
-    int starty, qty;
     helpText = "i145";
     keyHelpText = "k045";
     FadeOut(2, 10, 0, 0);
@@ -118,8 +117,8 @@ void DrawStatistics(char Win)
         draw_number(0, 0, strat);
     }
 
-    qty = 6;
-    starty = 118;
+    int qty = 6;
+    int starty = 118;
     display::LegacySurface local(30, 19);
     
     DESERIALIZE_JSON_FILE(&portbuttons, locate_file("portbut.json", FT_DATA));
@@ -160,14 +159,11 @@ void DrawStatistics(char Win)
 // TODO: move to endgame.cpp?
 void Stat(char Win)
 {
-    int starty;
     DrawStatistics(Win);
     WaitForMouseUp();
-    int i = 0;
-    key = 0;
-    starty = 118;
+    int starty = 118;
 
-    while (i == 0) {
+    while (true) {
         key = 0;
         GetMouse();
 
@@ -179,9 +175,9 @@ void Stat(char Win)
                 delay(150);
             }
 
-            i = 1;
             key = 0;
             OutBox(193, 42, 278, 60);
+            break;
         } else if ((x >= 152 && y >= 41 && x <= 183 && y <= 61 && mousebuttons > 0) || key == 'D') {
             InBox(152, 41, 183, 61);
             WaitForMouseUp();
@@ -192,45 +188,17 @@ void Stat(char Win)
 
             RankMe(Win);
             DrawStatistics(Win);
-            key = 0;
-            i = 0;
             OutBox(152, 41, 183, 61);
+            continue;
         };
 
         for (int j = 0; j < 5; j++) {
-            if (AI[Win] != 0) continue;
+            if (AI[Win] != 0) break;
             
-            if ((x >= starty + (j * 33) && y >= 87 
+            if ((    x >=      starty + (j * 33) && y >= 87 
                   && x <= 31 + starty + (j * 33) && y <= 107 
                   && mousebuttons > 0) 
-                || ((key >= '1' && key <= '4') 
-                || key == '0')) {
-                if (key > 0) {
-                    switch (key) {
-                    case '0':
-                        j = 0;
-                        break;
-
-                    case '1':
-                        j = 1;
-                        break;
-
-                    case '2':
-                        j = 2;
-                        break;
-
-                    case '3':
-                        j = 3;
-                        break;
-
-                    case '4':
-                        j = 4;
-                        break;
-
-                    default:
-                        break;
-                    }
-                }
+                || key == '0'+j) {
 
                 InBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
                 WaitForMouseUp();
@@ -270,10 +238,11 @@ void Stat(char Win)
                     helpText = (Win == 0) ? "i133" : "i134";
                     keyHelpText = (Win == 0) ? "k035" : "k441";
 
-                    if (Data->P[Win].AstroCount > 0)
+                    if (Data->P[Win].AstroCount > 0) {
                         if (Option == -1 || Option == Win) {
                             ShowAstrosHist(Win);
                         }
+                    }
 
                 default:
                     break;
@@ -282,45 +251,18 @@ void Stat(char Win)
                 helpText = "i000";
                 keyHelpText = "k000";
                 DrawStatistics(Win);
-                key = 0;
-                i = 0;
                 OutBox(starty + (j * 33), 87, 31 + starty + (j * 33), 107);
+                break;
             }
         }
 
         for (int j = 0; j < 5; j++) {
-            if (AI[other(Win)] != 0) continue;
+            if (AI[other(Win)] != 0) break;
             
-            if ((x >= starty + (j * 33) && y >= 132 
+            if ((    x >=      starty + (j * 33) && y >= 132 
                   && x <= 31 + starty + (j * 33) && y <= 152 
                   && mousebuttons > 0) 
-                || (key >= '5' && key <= '9')) {
-                if (key > 0) {
-                    switch (key) {
-                    case '5':
-                        j = 0;
-                        break;
-
-                    case '6':
-                        j = 1;
-                        break;
-
-                    case '7':
-                        j = 2;
-                        break;
-
-                    case '8':
-                        j = 3;
-                        break;
-
-                    case '9':
-                        j = 4;
-                        break;
-
-                    default:
-                        break;
-                    }
-                }
+                || key == '5'+j) {
 
                 InBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
                 WaitForMouseUp();
@@ -374,9 +316,8 @@ void Stat(char Win)
                 helpText = "i000";
                 keyHelpText = "k000";
                 DrawStatistics(Win);
-                key = 0;
-                i = 0;
                 OutBox(starty + (j * 33), 132, 31 + starty + (j * 33), 152);
+                break;
             }
         }
     }
@@ -389,12 +330,8 @@ void AIAstroPur(char plr)
     int astrosInPool = 0;
     BuzzData* pData = &Data->P[plr];
 
-    int cost;
-    if (pData->AstroLevel == 0) {
-        cost = 20;
-    } else {
-        cost = 15;
-    }
+    int cost = (pData->AstroLevel == 0)? 20
+                                       : 15;
 
     // Player has no cash, no astronauts
     if (cost > pData->Cash) {
@@ -463,19 +400,17 @@ void AIRandomizeNauts()
  */
 void SelectBest(char plr, int pos)
 {
-    int count = 0, now, MaxMen = 0, Index, AIMaxSel = 0;
-    char tot, done;
     BuzzData* pData = &Data->P[plr];
 
     // pData->FemaleAstronautsAllowed is the news event flag that
     // allows & requires female astronauts.
     // The configurable option should not affect its value.
     bool femaleAstronautsAllowed =
-        pData->FemaleAstronautsAllowed == 1 ||
-        (options.feat_female_nauts > 0 && options.feat_female_nauts != 2);
+        pData->FemaleAstronautsAllowed == 1 
+        || (options.feat_female_nauts > 0 && options.feat_female_nauts != 2);
     bool femaleAstronautsRequired =
-        pData->FemaleAstronautsAllowed == 1 ||
-        options.feat_female_nauts == 3;
+        pData->FemaleAstronautsAllowed == 1 
+        || options.feat_female_nauts == 3;
 
     for (int i = 0; i < 25; i++) {
         AIsel[i] = 0;
@@ -488,118 +423,73 @@ void SelectBest(char plr, int pos)
         AIRandomizeNauts();    //Naut Randomize, Nikakd, 10/8/10
     }
 
-    switch (pData->AstroLevel) {
-    case 0:
-        MaxMen = femaleAstronautsAllowed ? 13 : 10;
-        AIMaxSel = ASTRO_POOL_LVL1;
-        Index = 0;
-        break;
+    assert(pData->AstroLevel >= 0 && pData->AstroLevel <= 4);
+    int male_MaxMen[] =   {10,17,19,27,19};
+    int female_MaxMen[] = {13,20,22,27,19};
+    int MaxMen = femaleAstronautsAllowed ? female_MaxMen[pData->AstroLevel]
+                                     : male_MaxMen[pData->AstroLevel];
 
-    case 1:
-        MaxMen = femaleAstronautsAllowed ? 20 : 17;
-        AIMaxSel = ASTRO_POOL_LVL2;
-        Index = 14;
-        break;
+    int max_sel[] = {ASTRO_POOL_LVL1, ASTRO_POOL_LVL2, ASTRO_POOL_LVL3, ASTRO_POOL_LVL4, ASTRO_POOL_LVL5};
+    int AIMaxSel = max_sel[pData->AstroLevel];
 
-    case 2:
-        MaxMen = femaleAstronautsAllowed ? 22 : 19;
-        AIMaxSel = ASTRO_POOL_LVL3;
-        Index = 35;
-        break;
-
-    case 3:
-        MaxMen = 27;
-        AIMaxSel = ASTRO_POOL_LVL4;
-        Index = 58;
-        break;
-
-    case 4:
-        MaxMen = 19;
-        AIMaxSel = ASTRO_POOL_LVL5;
-        Index = 86;
-        break;
-
-    default:
-        // TODO: Log an error...
-        MaxMen = 0;
-        AIMaxSel = 0;
-        Index = 0;
-        break;
-    }
+    int Index_arr[] = {0,14,35,58,86}
+    int Index = Index_arr[pData->AstroLevel];
 
     Index += plr * Men.size() / 2;
 
-    now = Index;
-    count = 0;
+    int now = Index;
+    int count = 0;
 
     // TODO: This is a crude way of ordering all the candidates.
     // It could be replaced with a superior method.
     for (int i = 16; i > 0; i--) {
-        done = 0;
+        if (count > AIMaxSel) break;
+        
+        for (int j = now; j < now + MaxMen + 1; j++) {
+            int tot = Men[j].Cap + Men[j].LM + Men[j].EVA + Men[j].Docking;
 
-        while (count <= AIMaxSel && done == 0) {
-            for (int j = now; j < now + MaxMen + 1; j++) {
-                tot = Men[j].Cap + Men[j].LM + Men[j].EVA + Men[j].Docking;
-
-                if (i == tot) {
-                    AIsel[count++] = j;
-                } else if (femaleAstronautsRequired && Men[j].Sex == 1) {
-                    AIsel[count++] = j;
-                }
+            if (i == tot) {
+                AIsel[count++] = j;
+            } else if (femaleAstronautsRequired && Men[j].Sex == 1) {
+                AIsel[count++] = j;
             }
-
-            done = 1;
         }
     };
 
     for (int i = 0; i < AIMaxSel; i++) {
-        strcpy(&pData->Pool[i + pData->AstroCount].Name[0], &Men[AIsel[i]].Name[0]);
-        pData->Pool[i + pData->AstroCount].Sex = Men[AIsel[i]].Sex;
-        pData->Pool[i + pData->AstroCount].Cap = Men[AIsel[i]].Cap;
-        pData->Pool[i + pData->AstroCount].LM = Men[AIsel[i]].LM;
-        pData->Pool[i + pData->AstroCount].EVA = Men[AIsel[i]].EVA;
-        pData->Pool[i + pData->AstroCount].Docking = Men[AIsel[i]].Docking;
-        pData->Pool[i + pData->AstroCount].Endurance = Men[AIsel[i]].Endurance;
-        pData->Pool[i + pData->AstroCount].Status = AST_ST_ACTIVE;
-        pData->Pool[i + pData->AstroCount].oldAssign = -1;
-        pData->Pool[i + pData->AstroCount].TrainingLevel = 1;
-        pData->Pool[i + pData->AstroCount].Group = pData->AstroLevel;
-        pData->Pool[i + pData->AstroCount].CR = brandom(2) + 1;
-        pData->Pool[i + pData->AstroCount].CL = brandom(2) + 1;
-        pData->Pool[i + pData->AstroCount].Task = 0;
-        pData->Pool[i + pData->AstroCount].Crew = 0;
-        pData->Pool[i + pData->AstroCount].Unassigned = 0;
-        pData->Pool[i + pData->AstroCount].Pool = 0;
-        pData->Pool[i + pData->AstroCount].Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
-        pData->Pool[i + pData->AstroCount].Mood = 100;
-        pData->Pool[i + pData->AstroCount].Face = brandom(77);
+        auto& spaceman = pData->Pool[i + pData->AstroCount];
+        
+        strcpy(spaceman.Name, Men[AIsel[i]].Name);
+        spaceman.Sex = Men[AIsel[i]].Sex;
+        spaceman.Cap = Men[AIsel[i]].Cap;
+        spaceman.LM = Men[AIsel[i]].LM;
+        spaceman.EVA = Men[AIsel[i]].EVA;
+        spaceman.Docking = Men[AIsel[i]].Docking;
+        spaceman.Endurance = Men[AIsel[i]].Endurance;
+        spaceman.Status = AST_ST_ACTIVE;
+        spaceman.oldAssign = -1;
+        spaceman.TrainingLevel = 1;
+        spaceman.Group = pData->AstroLevel;
+        spaceman.CR = brandom(2) + 1;
+        spaceman.CL = brandom(2) + 1;
+        spaceman.Task = 0;
+        spaceman.Crew = 0;
+        spaceman.Unassigned = 0;
+        spaceman.Pool = 0;
+        spaceman.Compat = brandom(options.feat_compat_nauts) + 1;  //Naut Compatibility, Nikakd, 10/8/10
+        spaceman.Mood = 100;
+        spaceman.Face = brandom(77);
 
-        if (pData->Pool[i + pData->AstroCount].Sex == 1) {
-            pData->Pool[i + pData->AstroCount].Face = 77 + brandom(8);
+        if (spaceman.Sex == 1) {
+            spaceman.Face = 77 + brandom(8);
         }
     }
 
     pData->AstroLevel++;
     pData->AstroCount = pData->AstroCount + pos;
 
-    switch (pData->AstroLevel) {
-    case 1:
-        pData->AstroDelay = 6;
-        break;
-
-    case 2:
-    case 3:
-        pData->AstroDelay = 4;
-        break;
-
-    case 4:
-        pData->AstroDelay = 8;
-        break;
-
-    case 5:
-        pData->AstroDelay = 99;
-        break;
-    }
+    int delays[] = {0,6,4,4,8,99};
+    pData->AstroDelay = delays[pData->AstroLevel];
 
     // remove from the bottom up out of training
     for (int i = 0; i < pData->AstroCount; i++) {
@@ -948,9 +838,9 @@ int GenPur(char plr, int hardware_index, int unit_index)
     BuzzData* pData = &Data->P[plr];
 
     // Force the Docking Module Instead before Kickers
-    if (hardware_index == MISC_HARDWARE &&
-        unit_index <= MISC_HW_KICKER_B &&
-        pData->Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
+    if (hardware_index == MISC_HARDWARE 
+        && unit_index <= MISC_HW_KICKER_B
+        && pData->Misc[MISC_HW_DOCKING_MODULE].Num == PROGRAM_NOT_STARTED) {
         unit_index = MISC_HW_DOCKING_MODULE;
     };
 
