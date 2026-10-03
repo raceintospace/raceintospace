@@ -432,7 +432,7 @@ void SelectBest(char plr, int pos)
     int max_sel[] = {ASTRO_POOL_LVL1, ASTRO_POOL_LVL2, ASTRO_POOL_LVL3, ASTRO_POOL_LVL4, ASTRO_POOL_LVL5};
     int AIMaxSel = max_sel[pData->AstroLevel];
 
-    int Index_arr[] = {0,14,35,58,86}
+    int Index_arr[] = {0,14,35,58,86};
     int Index = Index_arr[pData->AstroLevel];
 
     Index += plr * Men.size() / 2;
