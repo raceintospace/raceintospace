@@ -154,7 +154,7 @@ int ICost(char plr, char h, char i)
     auto& pData = Data->P[plr];
     int cost = 0;
 
-    auto next_price = [](auto& part){
+    auto next_price = [](auto& part) -> int {
         if (part.Num < 0) return part.InitCost;
         return part.UnitCost;
     };
@@ -1568,7 +1568,7 @@ void AILaunch(char plr)
         MisData[i].Rushing = 0; // Clear Data
     }
 
-    int launch_months[3][] = {
+    int launch_months[][3] = {
         {}, // 0 launches
         {4}, // 1 launch
         {3,5}, // 2 launches
@@ -1577,7 +1577,7 @@ void AILaunch(char plr)
 
     for(int mission_idx = -1, pad = 0; pad < 3; ++pad) {
         auto& launch = MisData[pad];
-        if (launch.MissionCode == MissionNone) continue;
+        if (launch.MissionCode == Mission_None) continue;
         if (launch.part == 0) mission_idx++;
         MisData[pad].Month = launch_months[number_of_missions][mission_idx];
     }
