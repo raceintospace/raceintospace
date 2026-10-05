@@ -130,7 +130,6 @@ char Best()
             if (strncmp("NONE", &VAS[i][j].name[0], 4) != 0) {
                 ct1++;
             }
-
             if (VAS[i][j].qty >= 0) {
                 ct += VAS[i][j].sf;
             }
@@ -142,7 +141,6 @@ char Best()
     }
 
     int ct1 = 0;
-
     for (int i = 1; i < VASqty + 1; i++) {
         ct1 = (valid[i] > valid[ct1]) ? i : ct1;
     }
@@ -153,73 +151,47 @@ char Best()
 
 int ICost(char plr, char h, char i)
 {
+    auto& pData = Data->P[plr];
     int cost = 0;
+
+    auto next_price = [](auto& part) -> int {
+        if (part.Num < 0) return part.InitCost;
+        return part.UnitCost;
+    };
     
     switch (h) {
     case Mission_Capsule:
     case Mission_LM:
-    {
-        auto& MannedCapsule = Data->P[plr].Manned[i];
-        cost = cost + MannedCapsule.MaxRD - MannedCapsule.Safety;
-        cost = cost / 3.5;
-        cost = cost * MannedCapsule.RDCost;
-
-        if (MannedCapsule.Num < 0) {
-            cost += MannedCapsule.InitCost;
-        }
-
-        if (MannedCapsule.Num == 0) {
-            cost += MannedCapsule.UnitCost;
-        }
-    }
+        {
+        auto& MannedCapsule = pData.Manned[i];
+        cost += MannedCapsule.MaxRD - MannedCapsule.Safety;
+        cost /= 3.5;
+        cost *= MannedCapsule.RDCost;
+        cost += next_price(MannedCapsule);
         break;
+        }
 
     case Mission_Kicker:
-    {
-        auto& Kicker = Data->P[plr].Misc[i];
-
-        cost = cost + Kicker.MaxRD - Kicker.Safety;
-        cost = cost / 3.5;
-        cost = cost * Kicker.RDCost;
-
-        if (Kicker.Num < 0) {
-            cost += Kicker.InitCost;
-        }
-
-        if (Kicker.Num == 0) {
-            cost += Kicker.UnitCost;
-        }
-    }
+        {
+        auto& Kicker = pData.Misc[i];
+        cost += Kicker.MaxRD - Kicker.Safety;
+        cost /= 3.5;
+        cost *= Kicker.RDCost;
+        cost += next_price(Kicker);
         break;
+        }
 
     case Mission_Probe_DM:
-    {
         if (i < 4) {
-            auto& Probe = Data->P[plr].Probe[i];
-
-            cost = cost + Probe.MaxRD - Probe.Safety;
-            cost = cost / 3.5;
-            cost = cost * Probe.RDCost;
-
-            if (Probe.Num < 0) {
-                cost += Probe.InitCost;
-            }
-
-            if (Probe.Num == 0) {
-                cost += Probe.UnitCost;
-            }
+            auto& Probe = pData.Probe[i];
+            cost += Probe.MaxRD - Probe.Safety;
+            cost /= 3.5;
+            cost *= Probe.RDCost;
+            cost += next_price(Probe);
         } else {
-            auto& DockingModule = Data->P[plr].Misc[MISC_HW_DOCKING_MODULE];
-            
-            if (DockingModule.Num < 0) {
-                cost += DockingModule.InitCost;
-            }
-
-            if (DockingModule.Num == 0) {
-                cost += DockingModule.UnitCost;
-            }
+            auto& DockingModule = pData.Misc[MISC_HW_DOCKING_MODULE];
+            cost += next_price(DockingModule);
         }
-    }
         break;
 
     default:
@@ -262,13 +234,14 @@ void CalcSaf(char plr, char vs)
 
 char Panic_Level(char plr, int* m_1, int* m_2)
 {
+    auto& pData = Data->P[plr];
 // PANIC level manned docking/EVA/duration
     if (Alt_B[plr] <= 1 &&
-        Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] == 4 &&
+        pData.AIStrategy[AI_END_STAGE_LOCATION] == 4 &&
         PrestigeCheck(plr, Prestige_MannedDocking) == 0 &&
         PrestigeCheck(plr, Prestige_Spacewalk) == 0 &&
-        Data->P[plr].Mission[0].MissionCode != Mission_U_Orbital_D &&
-        Data->P[plr].Mission[1].MissionCode != Mission_Manned_Orbital_Docking_EVA
+        pData.Mission[0].MissionCode != Mission_U_Orbital_D &&
+        pData.Mission[1].MissionCode != Mission_Manned_Orbital_Docking_EVA
        ) {
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_Manned_Orbital_Docking_EVA;
@@ -277,22 +250,16 @@ char Panic_Level(char plr, int* m_1, int* m_2)
     }
 
 // PANIC lunar pass/probe landing/lunar flyby
-    if (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] == 5 &&
+    if (pData.AIStrategy[AI_END_STAGE_LOCATION] == 5 &&
         !PrestigeCheck(plr, Prestige_LunarFlyby) &&
         !PrestigeCheck(plr, Prestige_LunarProbeLanding) &&
         Cur_Status == Ahead &&
         Alt_A[plr] <= 2
        ) {
         *m_1 = Mission_LunarFlyby;
-
-        if (Data->P[plr].DurationLevel <= 2) {
-            *m_2 = Mission_Orbital_Duration;
-        } else {
-            *m_2 = Mission_Lunar_Probe;
-        }
-
+        *m_2 = (pData.DurationLevel <= 2)? Mission_Orbital_Duration
+                                         : Mission_Lunar_Probe;
         ++Alt_A[plr];
-
         return 1;
     }
 
@@ -303,40 +270,35 @@ char Panic_Level(char plr, int* m_1, int* m_2)
 void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
 {
 //AI version 12/26/92
-    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
+    auto& pData = Data->P[plr];
+    switch (pData.AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_U_Orbital_D;
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 1:
         *m_1 = Mission_U_Orbital_D;
-
-        if (PrestigeCheck(plr, Prestige_Spacewalk) == 0) {
-            *m_2 = Mission_Manned_Orbital_Docking_EVA;
-        } else {
-            *m_2 = Mission_Orbital_Docking;
-        }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
-
+        *m_2 = (PrestigeCheck(plr, Prestige_Spacewalk) == 0)? Mission_Manned_Orbital_Docking_EVA
+                                                            : Mission_Orbital_Docking;
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 2:
         if (PrestigeCheck(plr, Prestige_MannedDocking) && PrestigeCheck(plr, Prestige_Spacewalk)) {
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_Docking_Duration;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_Manned_Orbital_Docking_EVA;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         }
 
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = Mission_Lunar_Probe;
         }
 
@@ -349,89 +311,79 @@ void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
             *m_2 = Mission_Orbital_Duration;
         }
 
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = Mission_Lunar_Probe;
         }
 
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
-        switch (Data->P[plr].DurationLevel) {
-        case 0:
-        case 1:
+        switch (pData.DurationLevel) {
+        case 0: case 1:
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_EVA_Duration;
             break;
 
         case 2:
             *m_1 = Mission_Orbital_Docking_Duration;
-            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby : Mission_U_Orbital_D;
+            *m_2 = (pData.Probe[PROBE_HW_INTERPLANETARY].Safety >= pData.Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby 
+                                                                                                                    : Mission_U_Orbital_D;
             *m_3 = Mission_LunarFlyby;
             break;
 
-        case 3:
-        case 4:
-        case 5:
+        case 3: case 4: case 5:
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_LunarFlyby;
             *m_3 = Mission_Lunar_Probe;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
             break;
         }
 
-        if (Data->P[plr].Cash <= 0) {
-            Data->P[plr].Cash = 0;
+        if (pData.Cash <= 0) {
+            pData.Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
+        pData.Cash += pData.Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
         GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
         RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
-        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
+        if (pData.Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
+            pData.AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
-        Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
+        pData.Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
         RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
         break;
 
-    case 5:
+    case 5: //lunar pass
         *m_1 = Mission_LunarPass;
-
         if (Cur_Status == Behind) {
             *m_2 = Mission_LunarOrbital;
         }
-
-        //lunar pass
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
-    case 6:
-        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
-            *m_1 = Mission_Lunar_Orbital;
-        } else {
-            *m_1 = Mission_LunarOrbital;    //lunar orbit
-        }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+    case 6: //lunar orbit
+        *m_1 = (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety > pData.Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10)? Mission_Lunar_Orbital
+                                                                                                                  : Mission_LunarOrbital; 
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PrestigeCheck(plr, Prestige_MannedLunarPass) == 0) {
             *m_1 = Mission_LunarPass;
-            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
-        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && Data->P[plr].Mission[0].MissionCode != Mission_LunarOrbital) {
+            pData.AIStrategy[AI_END_STAGE_LOCATION] = 6;
+        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && pData.Mission[0].MissionCode != Mission_LunarOrbital) {
             *m_1 = Mission_LunarOrbital;
         } else {
             *m_1 = Mission_Lunar_Orbital;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -441,30 +393,23 @@ void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
             } else {
                 *m_1 = Mission_LunarOrbital;
             }
-        } else if (Data->P[plr].LMpts == 0 && Data->P[plr].Mission[0].MissionCode != Mission_Lunar_Orbital) {
+        } else if (pData.LMpts == 0 && pData.Mission[0].MissionCode != Mission_Lunar_Orbital) {
             *m_1 = Mission_Lunar_Orbital;
         } else {
             *m_1 = Mission_HistoricalLanding;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
-        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
-            switch (Data->P[plr].LMpts) {
-            case 0:
-            case 1:
-                if (Data->P[plr].Mission[0].MissionCode == Mission_Lunar_Orbital) {
-                    *m_1 = Mission_HistoricalLanding;
-                } else {
-                    *m_1 = Mission_Lunar_Orbital;
-                }
-
+        if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+            switch (pData.LMpts) {
+            case 0: case 1:
+                *m_1 = (pData.Mission[0].MissionCode == Mission_Lunar_Orbital)? Mission_HistoricalLanding
+                                                                              : Mission_Lunar_Orbital;
                 break;
 
-            case 2:
-            case 3:
+            case 2: case 3:
                 *m_1 = Mission_HistoricalLanding;
                 break;
 
@@ -474,14 +419,12 @@ void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
             }
         } else {
             *m_1 = Mission_U_Orbital_D;
-
-            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety < 60) { // bug?
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
             }
         }
-
         break;
 
     default:
@@ -492,55 +435,49 @@ void Strategy_One(char plr, int* m_1, int* m_2, int* m_3)
 void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
 {
 // AI version 12/28/92
-    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
+    auto& pData = Data->P[plr];
+    switch (pData.AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_U_Orbital_D;
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 1:
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_Orbital_Docking;
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 2:
         if (PrestigeCheck(plr, Prestige_MannedDocking) && PrestigeCheck(plr, Prestige_Spacewalk)) {
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_Docking_Duration;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_Manned_Orbital_Docking_EVA;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         }
-
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
+        
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = Mission_Lunar_Probe;
         }
-
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 3:
         *m_1 = Mission_Orbital_Duration;
         *m_2 = Mission_Orbital_Docking_Duration;
+        *m_3 = (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10)? Mission_Lunar_Probe
+                                                                                            : Mission_LunarFlyby;
 
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
-            *m_3 = Mission_Lunar_Probe;
-        } else {
-            *m_3 = Mission_LunarFlyby;
-        }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
-        switch (Data->P[plr].DurationLevel) {
-        case 0:
-        case 1:
+        switch (pData.DurationLevel) {
+        case 0: case 1:
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_EVA_Duration;
             *m_3 = Mission_LunarFlyby;
@@ -548,73 +485,64 @@ void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
 
         case 2:
             *m_1 = Mission_Orbital_Docking_Duration;
-            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby : Mission_U_Orbital_D;
+            *m_2 = (pData.Probe[PROBE_HW_INTERPLANETARY].Safety >= pData.Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby 
+                                                                                                                    : Mission_U_Orbital_D;
             *m_3 = Mission_LunarFlyby;
             break;
 
-        case 3:
-        case 4:
-        case 5:
+        case 3: case 4: case 5:
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_LunarFlyby;
             *m_3 = Mission_Lunar_Probe;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
             break;
         }
 
-        if (Data->P[plr].Cash <= 0) {
-            Data->P[plr].Cash = 0;
+        if (pData.Cash <= 0) {
+            pData.Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
+        pData.Cash += pData.Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
-        if (GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE)) {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
-        } else {
-            RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+        GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+        RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
+
+        if (pData.Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
+            pData.AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
-        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
-        }
-
-        Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
+        pData.Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
         RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
         break;
 
-    case 5:
+    case 5: //lunar pass
         *m_1 = Mission_LunarPass;
-
         if (Cur_Status == Behind) {
             *m_2 = Mission_LunarOrbital;
         }
-
-        //lunar pass
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
-    case 6:
-        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
-            *m_1 = Mission_LunarOrbital;    //lunar orbit
+    case 6: //lunar orbit
+        if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety > pData.Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
+            *m_1 = Mission_LunarOrbital;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PrestigeCheck(plr, Prestige_MannedLunarPass) == 0) {
             *m_1 = Mission_LunarPass;
-            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
-        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && Data->P[plr].Mission[0].MissionCode != Mission_LunarOrbital) {
+            pData.AIStrategy[AI_END_STAGE_LOCATION] = 6;
+        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && pData.Mission[0].MissionCode != Mission_LunarOrbital) {
             *m_1 = Mission_LunarOrbital;
         } else {
             *m_1 = Mission_Lunar_Orbital;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -624,30 +552,23 @@ void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
             } else {
                 *m_1 = Mission_LunarOrbital;
             }
-        } else if (Data->P[plr].LMpts == 0 && Data->P[plr].Mission[0].MissionCode != Mission_Lunar_Orbital) {
+        } else if (pData.LMpts == 0 && pData.Mission[0].MissionCode != Mission_Lunar_Orbital) {
             *m_1 = Mission_Lunar_Orbital;
         } else {
             *m_1 = Mission_HistoricalLanding;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
-        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
-            switch (Data->P[plr].LMpts) {
-            case 0:
-            case 1:
-                if (Data->P[plr].Mission[0].MissionCode == Mission_Lunar_Orbital) {
-                    *m_1 = Mission_HistoricalLanding;
-                } else {
-                    *m_1 = Mission_Lunar_Orbital;
-                }
-
+        if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+            switch (pData.LMpts) {
+            case 0: case 1:
+                *m_1 = (pData.Mission[0].MissionCode == Mission_Lunar_Orbital)? Mission_HistoricalLanding
+                                                                              : Mission_Lunar_Orbital;
                 break;
 
-            case 2:
-            case 3:
+            case 2: case 3:
                 *m_1 = Mission_HistoricalLanding;
                 break;
 
@@ -657,14 +578,12 @@ void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
             }
         } else {
             *m_1 = Mission_U_Orbital_D;
-
-            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety < 60) { // bug?
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
             }
         }
-
         break;
 
     default:
@@ -675,133 +594,116 @@ void Strategy_Two(char plr, int* m_1, int* m_2, int* m_3)
 void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3)
 {
 //new version undated
-    switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
+    auto& pData = Data->P[plr];
+    switch (pData.AIStrategy[AI_END_STAGE_LOCATION]) {
     case 0:// mission 26 -> if manned docking and eva  -> DurationLevel+1
         *m_1 = Mission_U_Orbital_D;
         *m_2 = Mission_U_Orbital_D;
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 1:
         *m_1 = Mission_U_Orbital_D;
-
-        if (PrestigeCheck(plr, Prestige_Spacewalk) == 0) {
-            *m_2 = Mission_Manned_Orbital_Docking_EVA;
-        } else {
-            *m_2 = Mission_Orbital_Docking;
-        }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
-
+        *m_2 = (PrestigeCheck(plr, Prestige_Spacewalk) == 0)? Mission_Manned_Orbital_Docking_EVA
+                                                            : Mission_Orbital_Docking;
         *m_3 = Mission_LunarFlyby;
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 2:
         if (PrestigeCheck(plr, Prestige_MannedDocking) && PrestigeCheck(plr, Prestige_Spacewalk)) {
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_Docking_Duration;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         } else {
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_Manned_Orbital_Docking_EVA;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
         }
 
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = Mission_Lunar_Probe;
         }
-
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 3:
         *m_1 = Mission_Orbital_Docking_Duration;
-
         if (Cur_Status == Behind) {
             *m_2 = Mission_Orbital_Duration;
         }
-
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 10) {
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 10) {
             *m_3 = Mission_Lunar_Probe;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 4:
-        switch (Data->P[plr].DurationLevel) {
-        case 0:
-        case 1:
+        switch (pData.DurationLevel) {
+        case 0: case 1:
             *m_1 = Mission_Orbital_Duration;
             *m_2 = Mission_Orbital_EVA_Duration;
             break;
 
         case 2:
             *m_1 = Mission_Orbital_Docking_Duration;
-            *m_2 = (Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety >= Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby : Mission_U_Orbital_D;
+            *m_2 = (pData.Probe[PROBE_HW_INTERPLANETARY].Safety >= pData.Probe[PROBE_HW_INTERPLANETARY].MaxRD - 10) ? Mission_LunarFlyby 
+                                                                                                                    : Mission_U_Orbital_D;
             *m_3 = Mission_LunarFlyby;
             break;
 
-        case 3:
-        case 4:
-        case 5:
+        case 3: case 4: case 5:
             *m_1 = Mission_U_Orbital_D;
             *m_2 = Mission_LunarFlyby;
             *m_3 = Mission_Lunar_Probe;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         default:
             break;
         }
 
-        if (Data->P[plr].Cash <= 0) {
-            Data->P[plr].Cash = 0;
+        if (pData.Cash <= 0) {
+            pData.Cash = 0;
         }
 
-        Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
+        pData.Cash += pData.Rocket[ROCKET_HW_THREE_STAGE].InitCost + 25;
 
         GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
         RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
 
-        if (Data->P[plr].Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
-            Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
+        if (pData.Rocket[ROCKET_HW_THREE_STAGE].Num >= 0) {
+            pData.AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
         }
 
-        Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
+        pData.Buy[ROCKET_HARDWARE][ROCKET_HW_THREE_STAGE] = 0;
         RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_THREE_STAGE);
         break;
 
-    case 5:
+    case 5: //lunar pass
         *m_1 = Mission_LunarPass;
-
         if (Cur_Status == Behind) {
             *m_2 = Mission_LunarOrbital;
         }
-
-        //lunar pass
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
-    case 6:
-        if (Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety > Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
-            *m_1 = Mission_LunarOrbital;    //lunar orbit
+    case 6: //lunar orbit
+        if (pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety > pData.Manned[MANNED_HW_ONE_MAN_MODULE].MaxRD - 10) {
+            *m_1 = Mission_LunarOrbital;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 7:
         if (PrestigeCheck(plr, Prestige_MannedLunarPass) == 0) {
             *m_1 = Mission_LunarPass;
-            Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION] = 6;
-        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && Data->P[plr].Mission[0].MissionCode != Mission_LunarOrbital) {
+            pData.AIStrategy[AI_END_STAGE_LOCATION] = 6;
+        } else if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0 && pData.Mission[0].MissionCode != Mission_LunarOrbital) {
             *m_1 = Mission_LunarOrbital;
         } else {
             *m_1 = Mission_Lunar_Orbital;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 8:
@@ -811,33 +713,23 @@ void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3)
             } else {
                 *m_1 = Mission_LunarOrbital;
             }
-        } else if (Data->P[plr].LMpts == 0 && Data->P[plr].Mission[0].MissionCode != Mission_Lunar_Orbital) {
+        } else if (pData.LMpts == 0 && pData.Mission[0].MissionCode != Mission_Lunar_Orbital) {
             *m_1 = Mission_Lunar_Orbital;
         } else {
             *m_1 = Mission_HistoricalLanding;
         }
-
-        ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+        ++pData.AIStrategy[AI_END_STAGE_LOCATION];
         break;
 
     case 9:
-        if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
-            switch (Data->P[plr].LMpts) {
-            case 0:
-            case 1:
-                if (Data->P[plr].Mission[0].MissionCode == Mission_Lunar_Orbital) {
-                    *m_1 = Mission_HistoricalLanding;
-                } else {
-                    *m_1 = Mission_Lunar_Orbital;
-                }
-
+        if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety >= 80) {
+            switch (pData.LMpts) {
+            case 0: case 1:
+                *m_1 = (pData.Mission[0].MissionCode == Mission_Lunar_Orbital)? Mission_HistoricalLanding
+                                                                              : Mission_Lunar_Orbital;
                 break;
 
-            case 2:
-            case 3:
-                *m_1 = Mission_HistoricalLanding;
-                break;
-
+            case 2: case 3:
             default:
                 *m_1 = Mission_HistoricalLanding;
                 break;
@@ -845,13 +737,12 @@ void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3)
         } else {
             *m_1 = Mission_U_Orbital_D;
 
-            if (Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Safety < 60) {
+            if (pData.Misc[MISC_HW_DOCKING_MODULE].Safety < 60) { // bug?
                 *m_2 = Mission_Orbital_Docking;
             } else {
                 *m_2 = Mission_U_Orbital_D;
             }
         }
-
         break;
 
     default:
@@ -861,7 +752,8 @@ void Strategy_Thr(char plr, int* m_1, int* m_2, int* m_3)
 
 void NewAI(char plr, char frog)
 {
-    char hsf, spc[2]{}, prg[2], primaryPad, secondaryPad, Panic_Check = 0;
+    auto& pData = Data->P[plr];
+    char hsf, spc[2]{}, prg[2]{}, primaryPad, secondaryPad, Panic_Check = 0;
     int mis1, mis2, mis3, val;
 
     prg[0] = frog;
@@ -869,57 +761,53 @@ void NewAI(char plr, char frog)
     primaryPad = secondaryPad = PAD_NONE;
     GenPur(plr, MANNED_HARDWARE, frog - 1);
 
-    if (Data->P[plr].AILunar < 4) {
-        mis1 = Mission_None;
-        mis2 = Mission_None;
-        mis3 = Mission_None;
+    if (pData.AILunar < 4) {
         hsf = 0;
 
         for (int i = 0; i < 3; i++) {
-            if (Data->P[plr].Probe[hsf].Safety <= Data->P[plr].Probe[i].Safety) {
+            if (pData.Probe[hsf].Safety <= pData.Probe[i].Safety) {
                 hsf = i;
             }
         }
 
         RDafford(plr, PROBE_HARDWARE, hsf);
 
-        if (Data->P[plr].Probe[hsf].Safety < 90) {
+        if (pData.Probe[hsf].Safety < 90) {
             GenPur(plr, PROBE_HARDWARE, hsf);
             RDafford(plr, PROBE_HARDWARE, hsf);
         }
 
-        Data->P[plr].Misc[MISC_HW_DOCKING_MODULE].Num = 2;
+        pData.Misc[MISC_HW_DOCKING_MODULE].Num = 2;
         Panic_Check = Panic_Level(plr, &mis1, &mis2);
 
         if (!Panic_Check) {
-            if (Data->P[plr].AIStrategy[AI_STRATEGY] == 1) {
+            if (pData.AIStrategy[AI_STRATEGY] == 1) {
                 Strategy_One(plr, &mis1, &mis2, &mis3);
-            } else if (Data->P[plr].AIStrategy[AI_STRATEGY] == 2) {
+            } else if (pData.AIStrategy[AI_STRATEGY] == 2) {
                 Strategy_Two(plr, &mis1, &mis2, &mis3);
             } else {
                 Strategy_Thr(plr, &mis1, &mis2, &mis3);
             }
 
-            if (mis1 == Mission_HistoricalLanding)
-                switch (Data->P[plr].AILunar) {
+            if (mis1 == Mission_HistoricalLanding) {
+                switch (pData.AILunar) {
                 case 1:
                     mis1 = Mission_HistoricalLanding; //Apollo behind Gemini
+                    if (frog != 2) break;
+                    if (pData.AISec != Mission_Lunar_Probe && pData.AISec != Mission_VenusFlyby) break;
+                    
+                    val = pData.AISec;
 
-                    if (frog == 2 && (Data->P[plr].AISec == Mission_Lunar_Probe || Data->P[plr].AISec == Mission_VenusFlyby)) {
-                        val = Data->P[plr].AISec;
-
-                        if (val < 7) {
-                            val = val - 4;
-                        } else {
-                            val = val - 5;
-                        }
-
-                        if (Data->P[plr].Manned[val - 1].Safety >= Data->P[plr].Manned[val - 1].MaxRD - 10) {
-                            mis2 = Mission_HistoricalLanding;
-                            spc[0] = val;
-                        }
+                    if (val < 7) {
+                        val = val - 4;
+                    } else {
+                        val = val - 5;
                     }
 
+                    if (pData.Manned[val - 1].Safety >= pData.Manned[val - 1].MaxRD - 10) {
+                        mis2 = Mission_HistoricalLanding;
+                        spc[0] = val;
+                    }
                     break;
 
                 case 2:
@@ -935,45 +823,45 @@ void NewAI(char plr, char frog)
                 default:
                     break;
                 }
+            }
         }
     } else {
-        switch (Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION]) {
+        switch (pData.AIStrategy[AI_END_STAGE_LOCATION]) {
         case 0:
             mis1 = Mission_Orbital_Duration;
             mis2 = Mission_Manned_Orbital_Docking_EVA;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 1:
             mis1 = Mission_Orbital_Duration;
             mis2 = Mission_Orbital_Duration;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 2:
-            if (Data->P[plr].Cash <= 0) {
-                Data->P[plr].Cash = 0;
+            if (pData.Cash <= 0) {
+                pData.Cash = 0;
             }
 
-            Data->P[plr].Cash += Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].InitCost + 25;
+            pData.Cash += pData.Rocket[ROCKET_HW_MEGA_STAGE].InitCost + 25;
 
             GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
 
-            if (Data->P[plr].Rocket[ROCKET_HW_MEGA_STAGE].Num >= 0) {
-                Data->P[plr].AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
+            if (pData.Rocket[ROCKET_HW_MEGA_STAGE].Num >= 0) {
+                pData.AIStrategy[AI_LARGER_ROCKET_STRATEGY] = 1;
             }
 
-            Data->P[plr].Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
+            pData.Buy[ROCKET_HARDWARE][ROCKET_HW_MEGA_STAGE] = 0;
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_MEGA_STAGE);
             mis1 = Mission_Orbital_Duration;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 3:
-            switch (Data->P[plr].DurationLevel) {
-            case 0:
-            case 1:
+            switch (pData.DurationLevel) {
+            case 0: case 1:
                 mis1 = Mission_Orbital_Duration;
                 mis2 = Mission_Orbital_Duration;
                 break;
@@ -981,15 +869,13 @@ void NewAI(char plr, char frog)
             case 2:
                 mis1 = Mission_Orbital_Duration;
                 mis2 = Mission_LunarFlyby;
-                ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+                ++pData.AIStrategy[AI_END_STAGE_LOCATION];
                 break;
 
-            case 3:
-            case 4:
-            case 5:
+            case 3: case 4: case 5:
                 mis1 = Mission_LunarFlyby;
                 mis2 = Mission_LunarFlyby;
-                ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+                ++pData.AIStrategy[AI_END_STAGE_LOCATION];
                 break;
 
             default:
@@ -1001,65 +887,56 @@ void NewAI(char plr, char frog)
         case 4:
             mis1 = Mission_Orbital_Duration;
             mis2 = Mission_LunarFlyby;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 5:
-            switch (Data->P[plr].DurationLevel) {
-            case 0:
-            case 1:
-            case 2:
+            switch (pData.DurationLevel) {
+            case 0: case 1: case 2:
                 mis1 = Mission_Orbital_Duration;
                 break;
 
             case 3:
-                mis1 = (PrestigeCheck(plr, Prestige_MannedOrbital) == 0) ? Mission_Orbital_EVA_Duration : Mission_Orbital_Duration;
+                mis1 = (PrestigeCheck(plr, Prestige_MannedOrbital) == 0) ? Mission_Orbital_EVA_Duration 
+                                                                         : Mission_Orbital_Duration;
                 break;
 
-            case 4:
-            case 5:
+            case 4: case 5:
                 if (PrestigeCheck(plr, Prestige_LunarFlyby) == plr || PrestigeCheck(plr, Prestige_LunarProbeLanding) == plr) {
                     mis1 = Mission_LunarPass;
                 } else {
                     mis1 = Mission_LunarFlyby;
                     mis2 = Mission_Lunar_Probe;
                 }
-
                 break;
 
             default:
                 break;
             }
-
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 6:
             mis1 = Mission_LunarPass;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 7:
-            if (PrestigeCheck(plr, Prestige_MannedLunarPass) == 0) {
-                mis1 = Mission_LunarPass;
-            } else {
-                mis1 = Mission_LunarOrbital;
-            }
-
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            mis1 = (PrestigeCheck(plr, Prestige_MannedLunarPass) == 0)? Mission_LunarPass
+                                                                      : Mission_LunarOrbital;
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 8:
             mis1 = Mission_LunarOrbital;
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
             break;
 
         case 9:
             if (PrestigeCheck(plr, Prestige_MannedLunarOrbit) == 0) {
                 mis1 = Mission_LunarOrbital;
             }
-
-            ++Data->P[plr].AIStrategy[AI_END_STAGE_LOCATION];
+            ++pData.AIStrategy[AI_END_STAGE_LOCATION];
 
             break;
 
@@ -1085,7 +962,7 @@ void NewAI(char plr, char frog)
 
 //lunar flyby/probe landing kludge
     if (mis1 == Mission_LunarFlyby && mis2 == Mission_LunarFlyby)
-        if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15) {
+        if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 15) {
             mis2 = Mission_Lunar_Probe;
         }
 
@@ -1093,21 +970,21 @@ void NewAI(char plr, char frog)
 
 // deal with lunar modules
     if (plan.LM == 1) {
-        if (Data->P[plr].AIStrategy[AI_LUNAR_MODULE] > 0) {
-            GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
+        if (pData.AIStrategy[AI_LUNAR_MODULE] > 0) {
+            GenPur(plr, MANNED_HARDWARE, pData.AIStrategy[AI_LUNAR_MODULE]);
+            RDafford(plr, MANNED_HARDWARE, pData.AIStrategy[AI_LUNAR_MODULE]);
         } else {
-            Data->P[plr].AIStrategy[AI_LUNAR_MODULE] = 6;
+            pData.AIStrategy[AI_LUNAR_MODULE] = 6;
 
-            GenPur(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
-            RDafford(plr, MANNED_HARDWARE, Data->P[plr].AIStrategy[AI_LUNAR_MODULE]);
+            GenPur(plr, MANNED_HARDWARE, pData.AIStrategy[AI_LUNAR_MODULE]);
+            RDafford(plr, MANNED_HARDWARE, pData.AIStrategy[AI_LUNAR_MODULE]);
         }
     }
 
     if (plan.Jt == 1) {
         // JOINT LAUNCH
-        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == LAUNCHPAD_OPERATIONAL &&
-            Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
+        if (pData.Future[0].MissionCode == Mission_None && pData.LaunchFacility[0] == LAUNCHPAD_OPERATIONAL &&
+            pData.Future[1].MissionCode == Mission_None && pData.LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             primaryPad = PAD_A;
         }
 
@@ -1125,11 +1002,11 @@ void NewAI(char plr, char frog)
             prg[0] = 0;
         }
 
-        if (Data->P[plr].Future[0].MissionCode == Mission_None && Data->P[plr].LaunchFacility[0] == LAUNCHPAD_OPERATIONAL) {
+        if (pData.Future[0].MissionCode == Mission_None && pData.LaunchFacility[0] == LAUNCHPAD_OPERATIONAL) {
             primaryPad = PAD_A;
         }
 
-        if (Data->P[plr].Future[1].MissionCode == Mission_None && Data->P[plr].LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
+        if (pData.Future[1].MissionCode == Mission_None && pData.LaunchFacility[1] == LAUNCHPAD_OPERATIONAL) {
             if (primaryPad == PAD_A) {
                 secondaryPad = PAD_B;
             } else {
@@ -1137,7 +1014,7 @@ void NewAI(char plr, char frog)
             }
         }
 
-        if (Data->P[plr].Future[2].MissionCode == Mission_None && Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
+        if (pData.Future[2].MissionCode == Mission_None && pData.LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) {
             if (primaryPad != PAD_A && secondaryPad != PAD_B) {
                 if (primaryPad == PAD_B) {
                     secondaryPad = PAD_C;
@@ -1180,11 +1057,11 @@ void NewAI(char plr, char frog)
         }
     }
 
-    if (Data->P[plr].Future[2].MissionCode == Mission_None &&
-        Data->P[plr].LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) 
+    if (pData.Future[2].MissionCode == Mission_None 
+        && pData.LaunchFacility[2] == LAUNCHPAD_OPERATIONAL) 
     {
-        auto& ThreeMan = Data->P[plr].Manned[MANNED_HW_THREE_MAN_CAPSULE];
-        auto& Minishuttle = Data->P[plr].Manned[MANNED_HW_MINISHUTTLE];
+        auto& ThreeMan = pData.Manned[MANNED_HW_THREE_MAN_CAPSULE];
+        auto& Minishuttle = pData.Manned[MANNED_HW_MINISHUTTLE];
         if ( (mis1 == 0 && frog == 2 
               && (ThreeMan.Safety >= ThreeMan.MaxRD - 10)
              ) 
@@ -1218,69 +1095,42 @@ void NewAI(char plr, char frog)
                     mis3 = Mission_LunarFlyby;
                 }
 
-                if (Data->P[plr].Probe[PROBE_HW_LUNAR].Safety > Data->P[plr].Probe[PROBE_HW_LUNAR].MaxRD - 15)
-                    if (PrestigeCheck(plr, Prestige_LunarProbeLanding) == 0 ||
-                        Data->P[plr].Misc[MISC_HW_PHOTO_RECON].Safety < 85) {
+                if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 15) {
+                    if (PrestigeCheck(plr, Prestige_LunarProbeLanding) == 0 
+                        || pData.Misc[MISC_HW_PHOTO_RECON].Safety < 85) {
                         if (mis3 == Mission_None) {
                             mis3 = Mission_Lunar_Probe;
                         }
                     }
+                }
 
-                if ((Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].Safety > Data->P[plr].Probe[PROBE_HW_INTERPLANETARY].MaxRD - 15) 
+                if ((pData.Probe[PROBE_HW_INTERPLANETARY].Safety > pData.Probe[PROBE_HW_INTERPLANETARY].MaxRD - 15) 
                     && mis3 == Mission_None
                    ) {
-                    if (PrestigeCheck(plr, Prestige_LunarFlyby) == 0 &&
-                        PrestigeCheck(other(plr), Prestige_LunarFlyby) == 0 &&
-                        Data->P[plr].Mission[2].MissionCode != Mission_LunarFlyby
-                       ) {
-                        mis3 = Mission_LunarFlyby;
-                    } else if (PrestigeCheck(plr, Prestige_MercuryFlyby) == 0 &&
-                               PrestigeCheck(other(plr), Prestige_MercuryFlyby) == 0 &&
-                               Data->P[plr].Mission[2].MissionCode != Mission_MercuryFlyby) {
-                        mis3 = Mission_MercuryFlyby;
-                    } else if (PrestigeCheck(plr, Prestige_VenusFlyby) == 0 &&
-                               PrestigeCheck(other(plr), Prestige_VenusFlyby) == 0 &&
-                               Data->P[plr].Mission[2].MissionCode != Mission_VenusFlyby) {
-                        mis3 = Mission_VenusFlyby;
-                    } else if (PrestigeCheck(plr, Prestige_MarsFlyby) == 0 &&
-                               PrestigeCheck(other(plr), Prestige_MarsFlyby) == 0 &&
-                               Data->P[plr].Mission[2].MissionCode != Mission_MarsFlyby) {
-                        mis3 = Mission_MarsFlyby;
-                    } else if (PrestigeCheck(plr, Prestige_JupiterFlyby) == 0 &&
-                               PrestigeCheck(other(plr), Prestige_JupiterFlyby) == 0 &&
-                               Data->P[plr].Mission[2].MissionCode != Mission_JupiterFlyby) {
-                        mis3 = Mission_JupiterFlyby;
-                    } else if (PrestigeCheck(plr, Prestige_SaturnFlyby) == 0 &&
-                               PrestigeCheck(other(plr), Prestige_SaturnFlyby) == 0 &&
-                               Data->P[plr].Mission[2].MissionCode != Mission_SaturnFlyby) {
-                        mis3 = Mission_SaturnFlyby;
+                    int prest[] = {
+                        Prestige_LunarFlyby,Prestige_MercuryFlyby,Prestige_VenusFlyby
+                       ,Prestige_MarsFlyby,Prestige_JupiterFlyby,Prestige_SaturnFlyby
+                    };
+                    int miss[] = {
+                        Mission_LunarFlyby, Mission_MercuryFlyby, Mission_VenusFlyby
+                       ,Mission_MarsFlyby, Mission_JupiterFlyby, Mission_SaturnFlyby
+                    };
+                    for (int i=0; i < sizeof(prest)/sizeof(prest[0]); ++i) {
+                        if (PrestigeCheck(plr, prest[i]) != 0) continue;
+                        if (PrestigeCheck(other(plr), prest[i]) != 0) continue;
+                        if (pData.Mission[2].MissionCode == miss[i]) continue;
+                        
+                        mis3 = miss[i];
+                        break;
                     }
-
                     if (mis3 == Mission_None) {
-                        if (PrestigeCheck(plr, Prestige_LunarFlyby) == 0 &&
-                            PrestigeCheck(other(plr), Prestige_LunarFlyby) == 1 &&
-                            Data->P[plr].Mission[2].MissionCode != Mission_LunarFlyby) {
-                            mis3 = Mission_LunarFlyby;
-                        } else if (PrestigeCheck(plr, Prestige_MercuryFlyby) == 0 &&
-                                   PrestigeCheck(other(plr), Prestige_MercuryFlyby) == 1 &&
-                                   Data->P[plr].Mission[2].MissionCode != Mission_MercuryFlyby) {
-                            mis3 = Mission_MercuryFlyby;
-                        } else if (PrestigeCheck(plr, Prestige_VenusFlyby) == 0 &&
-                                   PrestigeCheck(other(plr), Prestige_VenusFlyby) == 1 &&
-                                   Data->P[plr].Mission[2].MissionCode != Mission_VenusFlyby) {
-                            mis3 = Mission_VenusFlyby;
-                        } else if (PrestigeCheck(plr, Prestige_MarsFlyby) == 0 &&
-                                   PrestigeCheck(other(plr), Prestige_MarsFlyby) == 1 &&
-                                   Data->P[plr].Mission[2].MissionCode != Mission_MarsFlyby) {
-                            mis3 = Mission_MarsFlyby;
-                        } else if (PrestigeCheck(plr, Prestige_JupiterFlyby) == 0 &&
-                                   PrestigeCheck(other(plr), Prestige_JupiterFlyby) == 1 &&
-                                   Data->P[plr].Mission[2].MissionCode != Mission_JupiterFlyby) {
-                            mis3 = Mission_JupiterFlyby;
-                        } else if (PrestigeCheck(plr, Prestige_SaturnFlyby) == 0 &&
-                                   PrestigeCheck(other(plr), Prestige_SaturnFlyby) == 1 &&
-                                   Data->P[plr].Mission[2].MissionCode != Mission_SaturnFlyby) {
-                            mis3 = Mission_SaturnFlyby;
+                        for (int i=0; i < sizeof(prest)/sizeof(prest[0]); ++i) {
+                            if (PrestigeCheck(plr, prest[i]) != 0) continue;
+                            if (PrestigeCheck(other(plr), prest[i]) != 1) continue;
+                            if (pData.Mission[2].MissionCode == miss[i]) continue;
+                            
+                            mis3 = miss[i];
+                            break;
                         }
                     }
                 }
@@ -1293,7 +1143,7 @@ void NewAI(char plr, char frog)
             GenPur(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
             RDafford(plr, ROCKET_HARDWARE, ROCKET_HW_ONE_STAGE);
 
-            if (Data->P[plr].Probe[PROBE_HW_ORBITAL].Num >= 1 && Data->P[plr].Rocket[ROCKET_HW_ONE_STAGE].Num >= 1) {
+            if (pData.Probe[PROBE_HW_ORBITAL].Num >= 1 && pData.Rocket[ROCKET_HW_ONE_STAGE].Num >= 1) {
                 mis3 = Mission_Orbital_Satellite;
             }
         }
@@ -1312,6 +1162,7 @@ void NewAI(char plr, char frog)
 
 void AIFuture(char plr, char mis, char pad, char* prog)
 {    
+    auto& pData = Data->P[plr];
     char fake_prog[2]{};
     if (prog == nullptr) {
         prog = fake_prog;
@@ -1322,64 +1173,65 @@ void AIFuture(char plr, char mis, char pad, char* prog)
     }
 
     const mStr plan = GetMissionPlan(mis);
-    auto& Future = Data->P[plr].Future;
+    auto& Future = pData.Future;
 
     for (int i = 0; i < (plan.Jt + 1); i++) {
-        Future[pad + i].MissionCode = mis;
-        Future[pad + i].part = i;
+        auto& launch = Future[pad + i];
+        launch.MissionCode = mis;
+        launch.part = i;
 
         // duration
-        if (Data->P[plr].DurationLevel <= 5 && Future[pad + i].Duration == 0) {
-            if (plan.Dur == 1) Future[pad + i].Duration =
-                    MAX(plan.Days, MIN(Data->P[plr].DurationLevel + 1, 6));
+        if (pData.DurationLevel <= 5 && launch.Duration == 0) {
+            if (plan.Dur == 1) launch.Duration =
+                    MAX(plan.Days, MIN(pData.DurationLevel + 1, 6));
             else {
-                Future[pad + i].Duration = plan.Days;
+                launch.Duration = plan.Days;
             }
         }
 
-        if (Data->P[plr].Mission[0].Duration == Future[pad + i].Duration ||
-            Data->P[plr].Mission[1].Duration == Future[pad + i].Duration) {
-            ++Future[pad + i].Duration;
+        if (pData.Mission[0].Duration == launch.Duration ||
+            pData.Mission[1].Duration == launch.Duration) {
+            ++launch.Duration;
         }
 
-        if (pad == 1 && Future[0].Duration == Future[pad + i].Duration) {
-            ++Future[pad + i].Duration;
+        if (pad == 1 && Future[0].Duration == launch.Duration) {
+            ++launch.Duration;
         }
 
-        if (Future[pad + i].Duration >= 6) {
-            Future[pad + i].Duration = 6;
+        if (launch.Duration >= 6) {
+            launch.Duration = 6;
         }
 
         // one-man capsule duration kludge
-        if (Future[pad + i].Prog == 1) {
-            if (Data->P[plr].DurationLevel == 0) {
-                Future[pad + i].Duration = 1;
+        if (launch.Prog == 1) {
+            if (pData.DurationLevel == 0) {
+                launch.Duration = 1;
             } else {
-                Future[pad + i].Duration = 2;
+                launch.Duration = 2;
             }
         }; // limit duration 'C' one-man capsule
 
         // lunar mission kludge
-        if (plan.Lun == 1 ||
-            Future[pad + i].MissionCode == Mission_Jt_LunarLanding_EOR ||
-            Future[pad + i].MissionCode == Mission_Jt_LunarLanding_LOR ||
-            Future[pad + i].MissionCode == Mission_HistoricalLanding) {
-            Future[pad + i].Duration = 4;
+        if (plan.Lun == 1 
+            || launch.MissionCode == Mission_Jt_LunarLanding_EOR 
+            || launch.MissionCode == Mission_Jt_LunarLanding_LOR 
+            || launch.MissionCode == Mission_HistoricalLanding) {
+            launch.Duration = 4;
         }
 
         // unmanned duration kludge
         if (plan.Days == 0) {
-            Future[pad + i].Duration = 0;
+            launch.Duration = 0;
         }
 
-        Future[pad + i].Joint = plan.Jt;
-        Future[pad + i].Month = 0;
+        launch.Joint = plan.Jt;
+        launch.Month = 0;
 
         if (mis == 1) {
             prog[i] = 0;
         }
 
-        Future[pad + i].Prog = prog[0];
+        launch.Prog = prog[0];
 
         if (prog[i] > 0 && plan.Days > 0) {
             for (int j = 1; j < 6; j++) {
@@ -1389,13 +1241,13 @@ void AIFuture(char plr, char mis, char pad, char* prog)
             TransAstro(plr, prog[i]); //indexed OK
 
             int primary_crew = -1;
-            if (Future[pad + i].PCrew != 0) {
-                primary_crew = Future[pad + i].PCrew - 1;
+            if (launch.PCrew != 0) {
+                primary_crew = launch.PCrew - 1;
             }
 
             int backup_crew = -1;
-            if (Future[pad + i].BCrew != 0) {
-                backup_crew = Future[pad + i].BCrew - 1;
+            if (launch.BCrew != 0) {
+                backup_crew = launch.BCrew - 1;
             }
 
             int max = prog[i];
@@ -1404,47 +1256,49 @@ void AIFuture(char plr, char mis, char pad, char* prog)
                 max = prog[i] - 1;
             }
 
-            Future[pad + i].Men = max;
-            int men = Future[pad + i].Men;
+            launch.Men = max;
+            int men = launch.Men;
 
-            if (primary_crew != -1)
+            if (primary_crew != -1) {
                 for (int j = 0; j < men; j++) {
-                    int pool_idx = Data->P[plr].Crew[prog[i]][primary_crew][j] - 1;
-                    Data->P[plr].Pool[pool_idx].Prime = 0;
+                    int pool_idx = pData.Crew[prog[i]][primary_crew][j] - 1;
+                    pData.Pool[pool_idx].Prime = 0;
                 }
+            }
 
-            if (backup_crew != -1)
+            if (backup_crew != -1) {
                 for (int j = 0; j < men; j++) {
-                    int pool_idx = Data->P[plr].Crew[prog[i]][backup_crew][j] - 1;
-                    Data->P[plr].Pool[pool_idx].Prime = 0;
+                    int pool_idx = pData.Crew[prog[i]][backup_crew][j] - 1;
+                    pData.Pool[pool_idx].Prime = 0;
                 }
+            }
 
-            Future[pad + i].PCrew = 0;
-            Future[pad + i].BCrew = 0;
-            pc[i] = -1;
+            launch.PCrew = 0;
+            launch.BCrew = 0;
             bc[i] = -1;
 
+            pc[i] = -1;
             for (int j = 0; j < 8; j++) {
-                if (pc[i] == -1 &&
-                    Data->P[plr].Crew[prog[i]][j][0] != 0 &&
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][j][0] - 1].Prime == 0) {
-                    pc[i] = j;
-                }
+                if (pData.Crew[prog[i]][j][0] == 0) continue;
+                if (pData.Pool[pData.Crew[prog[i]][j][0] - 1].Prime != 0) continue;
+                
+                pc[i] = j;
+                break;
             }
 
             if (pc[i] == -1) {
                 // astronaut/duration kludge
                 if (plan.Days > 0) {
-                    Future[pad + i].Men = max;
+                    launch.Men = max;
                 }
 
                 // no astronauts available have to go unmanned
-                Future[pad + i].Men = 0;
-                Future[pad + i].PCrew = 0;
-                Future[pad + i].BCrew = 0;
+                launch.Men = 0;
+                launch.PCrew = 0;
+                launch.BCrew = 0;
 
                 Downgrader::Options options = LoadJsonDowngrades("DOWNGRADES.JSON");
-                Downgrader replace{Future[pad + i], options};
+                Downgrader replace{launch, options};
                 char mcode = -1;
 
                 //  Find a mission that can be flown unmanned
@@ -1452,12 +1306,10 @@ void AIFuture(char plr, char mis, char pad, char* prog)
                     std::vector<mStr> missionData = GetMissionData();
 
                     while (mcode < 0) {
-
                         std::string cName = missionData.at(replace.current().MissionCode).Name;
                         std::size_t pos = cName.find("MANNED");
 
                         if (pos != std::string::npos) {
-
                             // "MANNED" -> "UNMANNED"
                             std::string uName = cName.replace(pos, 0, "UN");
 
@@ -1478,44 +1330,43 @@ void AIFuture(char plr, char mis, char pad, char* prog)
                         }
                     }
 
-                    LOG_TRACE("AI replacing mission code %i by %i", Future[pad + i].MissionCode, mcode);
-                    Future[pad + i].MissionCode = mcode;
+                    LOG_TRACE("AI replacing mission code %i by %i", launch.MissionCode, mcode);
+                    launch.MissionCode = mcode;
 
                 } catch (IOException &err) {
                     // TODO: Can't download to Earth Orbital if Joint mission.
                     LOG_CRITICAL("Error loading data file: %s", err.what());
                     LOG_WARNING("Defaulting to Unmanned Earth Orbital.");
-                    Future[pad + i].MissionCode = Mission_Unmanned_Earth_Orbital;
+                    launch.MissionCode = Mission_Unmanned_Earth_Orbital;
                 }
-
                 return;
             }
 
-            Future[pad + i].PCrew = pc[i] + 1;
+            launch.PCrew = pc[i] + 1;
+            
             bc[i] = -1;
-
             for (int j = 0; j < 8; j++) {
-                if (bc[i] == -1 &&
-                    j != pc[i] &&
-                    Data->P[plr].Crew[prog[i]][j][0] != 0 &&
-                    Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][j][0] - 1].Prime == 0) {
-                    bc[i] = j;
-                }
+                if (j == pc[i]) continue;
+                if (pData.Crew[prog[i]][j][0] == 0) continue;
+                if (pData.Pool[pData.Crew[prog[i]][j][0] - 1].Prime != 0) continue;
+                
+                bc[i] = j;
+                break;
             }
 
-            Future[pad + i].BCrew = bc[i] + 1;
+            launch.BCrew = bc[i] + 1;
 
             for (int j = 0; j < men; j++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][pc[i]][j] - 1].Prime = 4;
+                pData.Pool[pData.Crew[prog[i]][pc[i]][j] - 1].Prime = 4;
             }
 
             for (int j = 0; j < men; j++) {
-                Data->P[plr].Pool[Data->P[plr].Crew[prog[i]][bc[i]][j] - 1].Prime = 2;
+                pData.Pool[pData.Crew[prog[i]][bc[i]][j] - 1].Prime = 2;
             }
         } else {
-            Future[pad + i].Men = 0;
-            Future[pad + i].PCrew = 0;
-            Future[pad + i].BCrew = 0;
+            launch.Men = 0;
+            launch.PCrew = 0;
+            launch.BCrew = 0;
         }
     }
 
@@ -1525,22 +1376,24 @@ void AIFuture(char plr, char mis, char pad, char* prog)
         Future[pad + 1].PCrew = Future[pad].PCrew;
         Future[pad + 1].BCrew = Future[pad].BCrew;
         Future[pad + 1].Prog = Future[pad].Prog;
+        Future[pad + 1].Duration = Future[pad].Duration;
+        
         Future[pad].Men = 0;
         Future[pad].PCrew = 0;
         Future[pad].BCrew = 0;
         Future[pad].Prog = 0;
-        Future[pad + 1].Duration = Future[pad].Duration;
         Future[pad].Duration = 0;
     }
 }
 
 void AILaunch(char plr)
 {
+    auto& pData = Data->P[plr];
     int bwgt[7];
     char boos[7]; // safety of first stage combination?
     
     for (int i = 0; i < 7; i++) {
-        auto& RocketData = Data->P[plr].Rocket;
+        auto& RocketData = pData.Rocket;
         
         boos[i] = (i > 3) ?
                   RocketBoosterSafety(RocketData[i - 4].Safety, RocketData[ROCKET_HW_BOOSTERS].Safety)
@@ -1553,22 +1406,24 @@ void AILaunch(char plr)
             boos[i] = -1;    // Get Rid of any Unsafe rocket systems
         }
 
-        if (RocketData[ROCKET_HW_BOOSTERS].Num < 1) 
+        if (RocketData[ROCKET_HW_BOOSTERS].Num < 1) {
             for (int j = 4; j < 7; j++) {
                 boos[j] = -1;
             }
+        }
 
-        for (int j = 0; j < 4; j++) 
+        for (int j = 0; j < 4; j++) {
             if (RocketData[j].Num < 1) {
                 boos[j] = -1;
             }
+        }
     }
 
     // iterate over planned launches
     for (int i = 0; i < 3; i++) {
-        auto& PlannedMission = Data->P[plr].Mission[i];
+        auto& PlannedMission = pData.Mission[i];
         if (PlannedMission.MissionCode == Mission_Orbital_DockingInOrbit_Duration 
-            && Data->P[plr].DockingModuleInOrbit == 0
+            && pData.DockingModuleInOrbit == 0
            ) {
             PlannedMission.MissionCode = Mission_None;
             continue;
@@ -1579,25 +1434,21 @@ void AILaunch(char plr)
         whe[0] = whe[1] = -1;
 
         if (PlannedMission.Joint == 1) {
-            auto& JoinedMissionSecond = Data->P[plr].Mission[i + 1];
+            auto& JoinedMissionSecond = pData.Mission[i + 1];
             AIVabCheck(plr, PlannedMission.MissionCode, JoinedMissionSecond.Prog);
         } else {
             AIVabCheck(plr, PlannedMission.MissionCode, PlannedMission.Prog);
         }
 
         if (whe[0] > 0) {
-            if (PlannedMission.Prog == 0) {
-                BuildVAB(plr, PlannedMission.MissionCode, 1, 0, PlannedMission.Prog);
-            } else {
-                BuildVAB(plr, PlannedMission.MissionCode, 1, 0, PlannedMission.Prog - 1);
-            }
+            BuildVAB(plr, PlannedMission.MissionCode, 1, 0, (PlannedMission.Prog == 0)? PlannedMission.Prog
+                                                                                      : PlannedMission.Prog - 1);
 
             for (int j = Mission_Capsule; j <= Mission_Probe_DM; j++) {
                 PlannedMission.Hard[j] = VAS[whe[0]][j].dex;
             }
 
             int wgt = 0;
-
             for (int j = 0; j < 4; j++) {
                 wgt += VAS[whe[0]][j].wt;
             }
@@ -1605,12 +1456,13 @@ void AILaunch(char plr)
             rck[0] = -1;
 
             for (int k = 0; k < 7; k++) {
-                if (boos[k] != -1 && bwgt[k] >= wgt) {
-                    if (rck[0] == -1) {
-                        rck[0] = k;
-                    } else if (boos[k] >= boos[rck[0]]) {
-                        rck[0] = k;
-                    }
+                if (boos[k] == -1) continue;
+                if (bwgt[k] < wgt) continue;
+                
+                if (rck[0] == -1) {
+                    rck[0] = k;
+                } else if (boos[k] >= boos[rck[0]]) {
+                    rck[0] = k;
                 }
             }
 
@@ -1642,20 +1494,16 @@ void AILaunch(char plr)
         }
 
         // joint mission part
-        if (whe[1] > 0 && Data->P[plr].Mission[i + 1].part == 1) {
-            auto& JoinedMissionSecond = Data->P[plr].Mission[i + 1];
-            if (PlannedMission.Prog == 0) {
-                BuildVAB(plr, PlannedMission.MissionCode, 1, 1, PlannedMission.Prog);
-            } else {
-                BuildVAB(plr, PlannedMission.MissionCode, 1, 1, PlannedMission.Prog - 1);
-            }
+        if (whe[1] > 0 && pData.Mission[i + 1].part == 1) {
+            auto& JoinedMissionSecond = pData.Mission[i + 1];
+            BuildVAB(plr, PlannedMission.MissionCode, 1, 1, (PlannedMission.Prog == 0)? PlannedMission.Prog
+                                                                                      : PlannedMission.Prog - 1);
 
             for (int j = Mission_Capsule ; j <= Mission_Probe_DM; j++) {
                 JoinedMissionSecond.Hard[j] = VAS[whe[1]][j].dex;
             }
 
             int wgt = 0;
-
             for (int j = 0; j < 4; j++) {
                 wgt += VAS[whe[1]][j].wt;
             }
@@ -1681,14 +1529,14 @@ void AILaunch(char plr)
         }
     }
     
-    auto& MisData = Data->P[plr].Mission;
+    auto& MisData = pData.Mission;
 
 // JOINT MISSION KLUDGE MISSION Mission_Jt_LunarLanding_EOR & Mission_Jt_LunarLanding_LOR
     if (MisData[0].MissionCode == Mission_Jt_LunarLanding_EOR) {
         MisData[1].Hard[Mission_Capsule] = MisData[1].Prog - 1;
         MisData[0].Hard[Mission_LM] = 6; // LM
         MisData[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
+        pData.Misc[MISC_HW_KICKER_B].Safety = MAX(pData.Misc[MISC_HW_KICKER_B].Safety, pData.Misc[MISC_HW_KICKER_B].MaxRD);
         MisData[1].Hard[Mission_Kicker] = 1; // kicker second part
     };
 
@@ -1696,7 +1544,7 @@ void AILaunch(char plr)
         MisData[1].Hard[Mission_Capsule] = MisData[1].Prog - 1;
         MisData[0].Hard[Mission_LM] = 6; // LM
         MisData[0].Hard[Mission_Probe_DM] = 4; // DM
-        Data->P[plr].Misc[MISC_HW_KICKER_B].Safety = MAX(Data->P[plr].Misc[MISC_HW_KICKER_B].Safety, Data->P[plr].Misc[MISC_HW_KICKER_B].MaxRD);
+        pData.Misc[MISC_HW_KICKER_B].Safety = MAX(pData.Misc[MISC_HW_KICKER_B].Safety, pData.Misc[MISC_HW_KICKER_B].MaxRD);
         MisData[0].Hard[Mission_Kicker] = 1;
         MisData[1].Hard[Mission_Kicker] = 1;
     };
@@ -1705,87 +1553,33 @@ void AILaunch(char plr)
     for (int i = 0; i < 3; i++) {
         if (MisData[i].Hard[Mission_LM] < 5) continue;
         
-        int two_man = Data->P[plr].Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
-        int one_man = Data->P[plr].Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
+        int two_man = pData.Manned[MANNED_HW_TWO_MAN_MODULE].Safety;
+        int one_man = pData.Manned[MANNED_HW_ONE_MAN_MODULE].Safety;
         MisData[i].Hard[Mission_LM] = (two_man >= one_man) ? 5 : 6;
     }
 
-    bool joint_launch = false;
     int number_of_missions = 0;
-
     for (int i = 0; i < 3; i++) {
-        if (MisData[i].Joint == 1) {
-            joint_launch = true;
-        }
-
-        if (MisData[i].MissionCode != Mission_None &&
-            MisData[i].part == 0) {
+        if (MisData[i].MissionCode != Mission_None 
+            && MisData[i].part == 0) {
             number_of_missions++;
         }
 
         MisData[i].Rushing = 0; // Clear Data
     }
 
-    if (number_of_missions == 3) { // Three non-joint missions
-        MisData[0].Month = 2 + Data->Season * 6;
-        MisData[1].Month = 3 + Data->Season * 6;
-        MisData[2].Month = 4 + Data->Season * 6;
+    int launch_months[][3] = {
+        {}, // 0 launches
+        {4}, // 1 launch
+        {3,5}, // 2 launches
+        {2,3,4}, // 3 launches
     };
 
-    if (number_of_missions == 2 && !joint_launch) { // Two non-joint missions
-        int l = 3;
-
-        if (MisData[0].MissionCode != Mission_None) {
-            MisData[0].Month = l + Data->Season * 6;
-            l += 2;
-        };
-
-        if (MisData[1].MissionCode != Mission_None) {
-            MisData[1].Month = l + Data->Season * 6;
-            l += 2;
-        };
-
-        if (MisData[2].MissionCode != Mission_None) {
-            MisData[2].Month = l + Data->Season * 6;
-        }
-    };
-
-    if (number_of_missions == 1 && !joint_launch) { // Single Mission Non-joint
-        if (MisData[0].MissionCode) {
-            MisData[0].Month = 4 + Data->Season * 6;
-        }
-
-        if (MisData[1].MissionCode) {
-            MisData[1].Month = 4 + Data->Season * 6;
-        }
-
-        if (MisData[2].MissionCode) {
-            MisData[2].Month = 4 + Data->Season * 6;
-        }
-    };
-
-    if (number_of_missions == 2 && joint_launch) { // Two launches, one Joint;
-        if (MisData[1].part == 1) { // Joint first
-            MisData[0].Month = 3 + Data->Season * 6;
-            MisData[1].Month = 3 + Data->Season * 6;
-            MisData[2].Month = 5 + Data->Season * 6;
-        };
-
-        if (MisData[2].part == 1) { // Joint second
-            MisData[0].Month = 3 + Data->Season * 6;
-            MisData[1].Month = 5 + Data->Season * 6;
-            MisData[2].Month = 5 + Data->Season * 6;
-        };
-    };
-
-    if (number_of_missions == 1 && joint_launch) { //  Single Joint Launch
-        if (MisData[1].part == 1) { // found on pad 1+2
-            MisData[0].Month = 4 + Data->Season * 6;
-            MisData[1].Month = 4 + Data->Season * 6;
-        } else {   // found on pad 2+3
-            MisData[1].Month = 4 + Data->Season * 6;
-            MisData[2].Month = 4 + Data->Season * 6;
-        };
+    for(int mission_idx = -1, pad = 0; pad < 3; ++pad) {
+        auto& launch = MisData[pad];
+        if (launch.MissionCode == Mission_None) continue;
+        if (launch.part == 0) mission_idx++;
+        MisData[pad].Month = launch_months[number_of_missions][mission_idx];
     }
 }
 
