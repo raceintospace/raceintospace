@@ -373,10 +373,12 @@ void Train(char plr, int level)
     while (1) {
         key = 0;
         GetMouse();
+        if (mousebuttons == 0 && key == 0) continue;
 
         for (int i = 0; i < 8; i++) {  // Right Select Box
-            if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8) && mousebuttons > 0 && (now2 - BarA + i) <= (count - 1)) {  // Left
-
+            if ((now2 - BarA + i) > (count - 1)) break;
+            if (mousebuttons == 0) break;
+            if (x >= 27 && y >= (131 + i * 8) && x <= 151 && y <= (137 + i * 8)) {
                 now2 -= BarA;
                 now2 += i;
                 BarA = i;
@@ -385,266 +387,221 @@ void Train(char plr, int level)
                 WaitForMouseUp();
             }
         }
+        
+        if ((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || key == UP_ARROW) {
+            /* Left Up */
+            if (count == 0) continue;
+            InBox(6, 130, 18, 161);
 
-        if (mousebuttons > 0 || key > 0) {
-            if (((x >= 6 && y >= 130 && x <= 18 && y <= 161 && mousebuttons > 0) || key == UP_ARROW) && count > 0) {
-                /* Left Up */
-                InBox(6, 130, 18, 161);
+            auto scroll_up_once = [&](){
+                if (BarA == 0 && now2 == 0) return;
+                
+                now2--;
+                if (BarA > 0) BarA--;
+                
+                DispLeft(plr, BarA, count, now2, M);
+                TrainText(plr, M[now2], count);
+            };
 
-                for (int i = 0; i < 50; i++) {
-                    key = 0;
-                    GetMouse();
-                    delay(10);
+            for (int i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
+                if (mousebuttons != 0) continue;
+                
+                scroll_up_once();
+                break;
+            }
 
-                    if (mousebuttons == 0) {
-                        if (BarA == 0) {
-                            if (now2 > 0) {
-                                now2--;
-                                DispLeft(plr, BarA, count, now2, M);
-                                TrainText(plr, M[now2], count);
-                            }
-                        } else if (BarA > 0) {
-                            BarA--;
-                            now2--;
-                            DispLeft(plr, BarA, count, now2, M);
-                            TrainText(plr, M[now2], count);
-                        }
-                        break;
-                    }
+            while (mousebuttons == 1 || key == UP_ARROW) {
+                delay(100);
+                scroll_up_once();
+                key = 0;
+                GetMouse();
+            }
+
+            // WaitForMouseUp();
+            OutBox(6, 130, 18, 161);
+            delay(10);
+        } else if (key == K_HOME) {
+            BarA = 0;
+            now2 = 0;
+            DispLeft(plr, BarA, count, now2, M);
+            TrainText(plr, M[now2], count);
+            key = 0;
+            GetMouse();
+            OutBox(6, 130, 18, 161);
+            delay(10);
+        } else if ((x >= 6 && y >= 163 && x <= 18 && y <= 194 && mousebuttons > 0) || key == DN_ARROW) {
+            /* Left Dwn */
+            if (count == 0) continue;
+            InBox(6, 163, 18, 194);
+
+            auto scroll_down_once = [&](){
+                if (now2 == count - 1) return;
+                
+                now2++;
+                if (BarA < 7) BarA++;
+                
+                DispLeft(plr, BarA, count, now2, M);
+                TrainText(plr, M[now2], count);
+            };
+
+            for (int i = 0; i < 50; i++) {
+                key = 0;
+                GetMouse();
+                delay(10);
+                if (mousebuttons != 0) continue;
+                
+                scroll_down_once();
+                break;
+            }
+
+            while (mousebuttons == 1 || key == DN_ARROW) {
+                delay(100);
+                scroll_down_once();
+                key = 0;
+                GetMouse();
+            }
+
+            // WaitForMouseUp();
+            OutBox(6, 163, 18, 194);
+            delay(10);
+        } else if (key == K_PGUP) {
+            BarA = 0;
+            now2 -= 7;
+
+            if (now2 < 0) {
+                now2 = 0;
+            }
+
+            DispLeft(plr, BarA, count, now2, M);
+            TrainText(plr, M[now2], count);
+            key = 0;
+            delay(10);
+        } else if (key == K_PGDN) {
+            BarA = 7;
+            now2 += 7;
+
+            if (now2 > count - 1) {
+                now2 = count - 1;
+            }
+
+            DispLeft(plr, BarA, count, now2, M);
+            TrainText(plr, M[now2], count);
+            key = 0;
+            delay(10);
+        } else if (key == K_END) {
+            BarA = 7;
+            now2 = count - 1;
+            DispLeft(plr, BarA, count, now2, M);
+            TrainText(plr, M[now2], count);
+            key = 0;
+            delay(10);
+        } else if ((x >= 168 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0) || key == 'W') {
+            if (count == 0) continue;
+            
+            InBox(168, 181, 314, 193);
+            WaitForMouseUp();
+            if (key > 0) delay(150);
+            OutBox(168, 181, 314, 193);
+
+            // Help box: are you sure you want to withdraw from training early?
+            char temp = Help((plr == 0)? "i102"
+                                       : "i109");
+
+            auto& spaceman = Data->P[plr].Pool[M[now2]];
+            if (temp == 1) {
+                if (spaceman.Status == AST_ST_TRAIN_ADV_1) {
+                    Data->P[plr].Cash += 3;  // refund for early withdrawal
                 }
 
-                while (mousebuttons == 1 || key == UP_ARROW) {
-                    delay(100);
+                if (spaceman.Status == AST_ST_TRAIN_ADV_2) {
+                    Data->P[plr].Cash += 2;  // partial refund for early withdrawal
+                }
 
-                    if (BarA == 0)
-                        if (now2 > 0) {
-                            now2--;
-                            DispLeft(plr, BarA, count, now2, M);
-                            TrainText(plr, M[now2], count);
-                        }
+                if (spaceman.Status == AST_ST_TRAIN_ADV_3) {
+                    Data->P[plr].Cash += 1;  // partial refund for early withdrawal
+                }
+
+                if (spaceman.Status == AST_ST_TRAIN_ADV_1 || spaceman.Status == AST_ST_TRAIN_ADV_2) {
+                    spaceman.TrainingLevel = 0;
+                } else {
+                    spaceman.TrainingLevel = spaceman.Status;
+                }
+
+                spaceman.Status = AST_ST_ACTIVE;
+                spaceman.Assign = 0;
+
+                if (spaceman.Cap < 0) {
+                    spaceman.Cap = 0;
+                }
+
+                if (spaceman.LM < 0) {
+                    spaceman.LM = 0;
+                }
+
+                if (spaceman.EVA < 0) {
+                    spaceman.EVA = 0;
+                }
+
+                if (spaceman.Docking < 0) {
+                    spaceman.Docking = 0;
+                }
+
+                if (spaceman.Endurance < 0) {
+                    spaceman.Endurance = 0;
+                }
+
+                for (int i = now2; i < count; i++) {
+                    M[i] = M[i + 1];
+                }
+                M[count] = -1;
+                count--;
+
+                if (count == 0) {
+                    fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
+                }
+
+                if (now2 == count) {
+                    if (now2 > 0) {
+                        now2--;
+                    }
 
                     if (BarA > 0) {
                         BarA--;
-                        now2--;
-                        DispLeft(plr, BarA, count, now2, M);
-                        TrainText(plr, M[now2], count);
                     }
-
-                    key = 0;
-
-                    GetMouse();
-                }
-
-                // WaitForMouseUp();
-                OutBox(6, 130, 18, 161);
-                delay(10);
-            } else if (key == K_HOME) {
-                BarA = 0;
-                now2 = 0;
-                DispLeft(plr, BarA, count, now2, M);
-                TrainText(plr, M[now2], count);
-                key = 0;
-                GetMouse();
-                OutBox(6, 130, 18, 161);
-                delay(10);
-            } else if (((x >= 6 && y >= 163 && x <= 18 && y <= 194 && mousebuttons > 0) || key == DN_ARROW) && count > 0) {
-                /* Left Dwn */
-                InBox(6, 163, 18, 194);
-
-                for (int i = 0; i < 50; i++) {
-                    key = 0;
-                    GetMouse();
-                    delay(10);
-
-                    if (mousebuttons == 0) {
-                        if (BarA == 7) {
-                            if (now2 < count - 1) {
-                                now2++;
-                                DispLeft(plr, BarA, count, now2, M);
-                                TrainText(plr, M[now2], count);
-                            }
-                        } else if (BarA < 7) {
-                            if (now2 < count - 1) {
-                                BarA++;
-                                now2++;
-                                DispLeft(plr, BarA, count, now2, M);
-                                TrainText(plr, M[now2], count);
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                while (mousebuttons == 1 || key == DN_ARROW) {
-                    delay(100);
-
-                    if (BarA == 7) {
-                        if (now2 < count - 1) {
-                            now2++;
-                            DispLeft(plr, BarA, count, now2, M);
-                            TrainText(plr, M[now2], count);
-                        }
-                    } else if (BarA < 7) {
-                        if (now2 < count - 1) {
-                            BarA++;
-                            now2++;
-                            DispLeft(plr, BarA, count, now2, M);
-                            TrainText(plr, M[now2], count);
-                        }
-                    }
-
-                    key = 0;
-                    GetMouse();
-                }
-
-                // WaitForMouseUp();
-                OutBox(6, 163, 18, 194);
-                delay(10);
-            } else if (key == K_PGUP) {
-                BarA = 0;
-                now2 -= 7;
-
-                if (now2 < 0) {
-                    now2 = 0;
                 }
 
                 DispLeft(plr, BarA, count, now2, M);
                 TrainText(plr, M[now2], count);
-                key = 0;
-                delay(10);
-            } else if (key == K_PGDN) {
-                BarA = 7;
-                now2 += 7;
+            }
+        }  /* end x-y if */
+        else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
+            InBox(245, 5, 314, 17);
+            WaitForMouseUp();
 
-                if (now2 > count - 1) {
-                    now2 = count - 1;
-                }
-
-                DispLeft(plr, BarA, count, now2, M);
-                TrainText(plr, M[now2], count);
-                key = 0;
-                delay(10);
-            } else if (key == K_END) {
-                BarA = 7;
-                now2 = count - 1;
-                DispLeft(plr, BarA, count, now2, M);
-                TrainText(plr, M[now2], count);
-                key = 0;
-                delay(10);
-
-            } else if (((x >= 168 && y >= 181 && x <= 314 && y <= 193 && mousebuttons > 0) || key == 'W') && count > 0) {
-                InBox(168, 181, 314, 193);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                OutBox(168, 181, 314, 193);
-                // Help box: are you sure you want to withdraw from training early?
-
-                char temp;
-                if (plr == 0) {
-                    temp = Help("i102");
-                } else {
-                    temp = Help("i109");
-                }
-
-                auto& spaceman = Data->P[plr].Pool[M[now2]];
-                if (temp == 1) {
-                    if (spaceman.Status == AST_ST_TRAIN_ADV_1) {
-                        Data->P[plr].Cash += 3;  // refund for early withdrawal
-                    }
-
-                    if (spaceman.Status == AST_ST_TRAIN_ADV_2) {
-                        Data->P[plr].Cash += 2;  // partial refund for early withdrawal
-                    }
-
-                    if (spaceman.Status == AST_ST_TRAIN_ADV_3) {
-                        Data->P[plr].Cash += 1;  // partial refund for early withdrawal
-                    }
-
-                    if (spaceman.Status == AST_ST_TRAIN_ADV_1 || spaceman.Status == AST_ST_TRAIN_ADV_2) {
-                        spaceman.TrainingLevel = 0;
-                    } else {
-                        spaceman.TrainingLevel = spaceman.Status;
-                    }
-
-                    spaceman.Status = AST_ST_ACTIVE;
-                    spaceman.Assign = 0;
-
-                    if (spaceman.Cap < 0) {
-                        spaceman.Cap = 0;
-                    }
-
-                    if (spaceman.LM < 0) {
-                        spaceman.LM = 0;
-                    }
-
-                    if (spaceman.EVA < 0) {
-                        spaceman.EVA = 0;
-                    }
-
-                    if (spaceman.Docking < 0) {
-                        spaceman.Docking = 0;
-                    }
-
-                    if (spaceman.Endurance < 0) {
-                        spaceman.Endurance = 0;
-                    }
-
-                    for (int i = now2; i < count; i++) {
-                        M[i] = M[i + 1];
-                    }
-                    M[count] = -1;
-                    count--;
-
-                    if (count == 0) {
-                        fill_rectangle(203, 29, 282, 78, 7 + (plr * 3));
-                    }
-
-                    if (now2 == count) {
-                        if (now2 > 0) {
-                            now2--;
-                        }
-
-                        if (BarA > 0) {
-                            BarA--;
-                        }
-                    }
-
-                    DispLeft(plr, BarA, count, now2, M);
-
-                    TrainText(plr, M[now2], count);
-                }
-
-            }  /* end x-y if */
-            else if ((x >= 245 && y >= 5 && x <= 314 && y <= 17 && mousebuttons > 0) || key == K_ENTER || key == K_ESCAPE) {
-                InBox(245, 5, 314, 17);
-                WaitForMouseUp();
-
-                if (key > 0) {
-                    delay(150);
-                }
-
-                OutBox(245, 5, 314, 17);
-                music_stop();
-                return;  /* Done */
-            }  /* end x-y if */
-
-            if (now2 < count - 1 && count > 8 && (8 - BarA) + now2 < count) {
-                draw_down_arrow_highlight(9, 166);
-            } else {
-                draw_down_arrow(9, 166);
+            if (key > 0) {
+                delay(150);
             }
 
-            if (now2 - BarA > 0) {
-                draw_up_arrow_highlight(9, 133);
-            } else {
-                draw_up_arrow(9, 133);
-            }
+            OutBox(245, 5, 314, 17);
+            music_stop();
+            return;  /* Done */
+        }  /* end x-y if */
 
-        }  /* end mouse if */
+        // update arrows
+        if (now2 < count - 1 && count > 8 && (8 - BarA) + now2 < count) {
+            draw_down_arrow_highlight(9, 166);
+        } else {
+            draw_down_arrow(9, 166);
+        }
+
+        if (now2 - BarA > 0) {
+            draw_up_arrow_highlight(9, 133);
+        } else {
+            draw_up_arrow(9, 133);
+        }
     }  /* end while */
 }  /* end Limbo */
 
