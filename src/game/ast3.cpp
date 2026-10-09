@@ -415,7 +415,7 @@ void Train(char plr, int level)
 
             while (mousebuttons == 1 || key == UP_ARROW) {
                 delay(100);
-                scroll_up_once()
+                scroll_up_once();
                 key = 0;
                 GetMouse();
             }
