@@ -46,7 +46,7 @@ struct CREDIT_t {
     char page;       // Page to display in
     int col;         // Text's colour
     int x, y;        // Text's position
-    const char *Txt; // "WORDING"
+    const char* Txt; // "WORDING"
 };
 
 std::vector<CREDIT_t> CREDIT = {
@@ -162,7 +162,7 @@ std::vector<CREDIT_t> CREDIT = {
 // Note: the structure of the items above is:
 // { Screen to display in, Color, X position, Y position, "WORDING"},
 
-void Credits(void)
+void Credits()
 {
     keyHelpText = "i999";
 
@@ -224,7 +224,7 @@ void Introd()
     /* Frame 0 is Interplay, and frame 1 is Strategic Visions */
     /* These are both defunct, so start at frame 2 instead */
     for (int k = 2; k < INTRO_IMAGE_COUNT; k++) {
-        char filename[64];
+        char filename[64]{};
         snprintf(filename, sizeof(filename), "images/first.img.%i.png", k);
 
         boost::shared_ptr<display::PalettizedSurface> image(Filesystem::readImage(filename));
@@ -281,8 +281,8 @@ void NextTurn(char plr)
     } else {
         draw_string(0, 0, "FALL 19");
     }
-
     draw_number(0, 0, Data->Year);
+    
     display::graphics.screen()->draw(countrySeals, 110 * plr, 0, 107, 95, 30, 85);
 
     FadeIn(2, 10, 0, 0);
@@ -295,7 +295,6 @@ void NextTurn(char plr)
     music_stop();
     FadeOut(2, 10, 0, 0);
     display::graphics.screen()->clear();
-    return;
 }
 
 /* vim: set noet ts=4 sw=4 tw=77: */
