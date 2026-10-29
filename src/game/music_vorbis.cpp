@@ -29,7 +29,7 @@
 // A map of music_tracks to filenames
 struct music_key {
     enum music_track track;
-    const char *name;
+    const char* name;
 } music_key[] = {
     { M_ASSEMBLY, "assembly" },
     { M_ASTTRNG, "asttrng" },
@@ -69,7 +69,7 @@ struct music_key {
 // This structure defines each track
 struct music_file {
     // Pointer to the audio buffer, once loaded from disk
-    char *buf;
+    char* buf;
     size_t buf_size;
 
     // Can this track be played? i.e., does it exist?
@@ -79,15 +79,14 @@ struct music_file {
     int playing;
 
     // The SDL audio chunk describing this track
-    struct audio_chunk chunk;
+    audio_chunk chunk;
 };
-struct music_file music_files[M_MAX_MUSIC];
+music_file music_files[M_MAX_MUSIC];
 
 // Ensure that the specified music track is in memory, loading it if required
 void music_load(enum music_track track)
 {
     char fname[20] = "";
-    int i;
     ssize_t bytes;
 
     // Check to see if the track is already loaded or known broken; if so, we're already done
@@ -96,7 +95,7 @@ void music_load(enum music_track track)
     }
 
     // Find the name for this track
-    for (i = 0; music_key[i].track != M_MAX_MUSIC; i++) {
+    for (int i = 0; music_key[i].track != M_MAX_MUSIC; i++) {
         if (music_key[i].track == track && music_key[i].name) {
             snprintf(fname, sizeof(fname), "%s.OGG", music_key[track].name);
             break;
@@ -165,22 +164,20 @@ void music_start_loop(enum music_track track, int loop)
 // Stop a specific track
 void music_stop_track(enum music_track track)
 {
-    if (music_files[track].playing) {
-        // XXX: stop the global music channel
-        // This should be assigned on a per-track basis
-        av_silence(AV_MUSIC_CHANNEL);
+    if (! music_files[track].playing) return;
+ 
+    // XXX: stop the global music channel
+    // This should be assigned on a per-track basis
+    av_silence(AV_MUSIC_CHANNEL);
 
-        music_files[track].playing = 0;
-    }
+    music_files[track].playing = 0;
 }
 
 // Stop all tracks
 void music_stop()
 {
-    int i;
-
     // Iterate through the list and stop any playing tracks by calling music_stop_track()
-    for (i = 0; i < M_MAX_MUSIC; i ++) {
+    for (int i = 0; i < M_MAX_MUSIC; i ++) {
         if (music_files[i].playing) {
             music_stop_track((music_track)i);
         }
@@ -189,9 +186,7 @@ void music_stop()
 
 int music_is_playing()
 {
-    int i;
-
-    for (i = 0; i < M_MAX_MUSIC; i ++) {
+    for (int i = 0; i < M_MAX_MUSIC; i ++) {
         if (music_files[i].playing) {
             return 1;
         }
