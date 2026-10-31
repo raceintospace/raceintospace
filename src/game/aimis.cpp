@@ -954,12 +954,6 @@ void NewAI(char plr, char frog)
         }
     };
 
-// unmanned/manned kludge
-    if (mis1 == Mission_Orbital_Docking && mis2 == Mission_U_Orbital_D) {
-        mis2 = Mission_U_Orbital_D;
-        mis1 = Mission_Orbital_Docking;
-    };
-
 //lunar flyby/probe landing kludge
     if (mis1 == Mission_LunarFlyby && mis2 == Mission_LunarFlyby)
         if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 15) {
@@ -1089,11 +1083,6 @@ void NewAI(char plr, char frog)
 
         if (mis3 == Mission_None)
             if (mis1 != Mission_LunarFlyby && mis1 != Mission_Lunar_Probe) {
-                if (mis1 == Mission_LunarFlyby) {
-                    mis3 = Mission_Lunar_Probe;
-                } else if (mis1 == Mission_Lunar_Probe) {
-                    mis3 = Mission_LunarFlyby;
-                }
 
                 if (pData.Probe[PROBE_HW_LUNAR].Safety > pData.Probe[PROBE_HW_LUNAR].MaxRD - 15) {
                     if (PrestigeCheck(plr, Prestige_LunarProbeLanding) == 0 
